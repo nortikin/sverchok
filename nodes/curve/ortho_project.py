@@ -7,12 +7,7 @@ from bpy.props import BoolProperty, IntProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 from sverchok.utils.curve import SvCurve
-from sverchok.utils.dummy_nodes import add_dummy
-from sverchok.dependencies import scipy
 from sverchok.utils.manifolds import ortho_project_curve
-
-if scipy is None:
-    add_dummy('SvExOrthoProjectCurveNode', "Ortho Project on Curve", 'scipy')
 
 
 class SvExOrthoProjectCurveNode(SverchCustomTreeNode, bpy.types.Node):
@@ -24,6 +19,7 @@ class SvExOrthoProjectCurveNode(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Ortho Project on Curve'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_ORTHO_CURVE'
+    sv_dependencies = {'scipy'}
 
     samples : IntProperty(
         name = "Init Resolution",
@@ -86,11 +82,8 @@ class SvExOrthoProjectCurveNode(SverchCustomTreeNode, bpy.types.Node):
 
 
 def register():
-    if scipy is not None:
-        bpy.utils.register_class(SvExOrthoProjectCurveNode)
+    bpy.utils.register_class(SvExOrthoProjectCurveNode)
 
 
 def unregister():
-    if scipy is not None:
-        bpy.utils.unregister_class(SvExOrthoProjectCurveNode)
-
+    bpy.utils.unregister_class(SvExOrthoProjectCurveNode)

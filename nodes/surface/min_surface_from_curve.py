@@ -10,13 +10,10 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 from sverchok.utils.curve import SvCurve, SvCurveOnSurface, SvCircle
 from sverchok.utils.surface.rbf import SvRbfSurface
-from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import scipy
 from sverchok.utils.math import rbf_functions
 
-if scipy is None:
-    add_dummy('SvExMinSurfaceFromCurveNode', "Minimal Surface from Curve", 'scipy')
-else:
+if scipy is not None:
     from scipy.interpolate import Rbf
 
 
@@ -29,6 +26,7 @@ class SvExMinSurfaceFromCurveNode(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Minimal Surface from Curve'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_EX_MINSURFACE'
+    sv_dependencies = {'scipy'}
 
     function : EnumProperty(
             name = "Function",
@@ -131,10 +129,8 @@ class SvExMinSurfaceFromCurveNode(SverchCustomTreeNode, bpy.types.Node):
 
 
 def register():
-    if scipy is not None:
-        bpy.utils.register_class(SvExMinSurfaceFromCurveNode)
+    bpy.utils.register_class(SvExMinSurfaceFromCurveNode)
 
 
 def unregister():
-    if scipy is not None:
-        bpy.utils.unregister_class(SvExMinSurfaceFromCurveNode)
+    bpy.utils.unregister_class(SvExMinSurfaceFromCurveNode)

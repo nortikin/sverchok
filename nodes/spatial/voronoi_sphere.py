@@ -9,12 +9,9 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat
 from sverchok.utils.math import project_to_sphere
 from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh, bmesh_from_pydata
-from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import scipy
 
-if scipy is None:
-    add_dummy('SvExVoronoiSphereNode', "Voronoi Sphere", 'scipy')
-else:
+if scipy is not None:
     from scipy.spatial import SphericalVoronoi
 
 
@@ -27,6 +24,7 @@ class SvExVoronoiSphereNode(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Voronoi Sphere'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_VORONOI'
+    sv_dependencies = {'scipy'}
 
     radius: FloatProperty(name="Radius", default=1.0, min=0.0, update=updateNode)
 
@@ -81,11 +79,8 @@ class SvExVoronoiSphereNode(SverchCustomTreeNode, bpy.types.Node):
 
 
 def register():
-    if scipy is not None:
-        bpy.utils.register_class(SvExVoronoiSphereNode)
+    bpy.utils.register_class(SvExVoronoiSphereNode)
 
 
 def unregister():
-    if scipy is not None:
-        bpy.utils.unregister_class(SvExVoronoiSphereNode)
-
+    bpy.utils.unregister_class(SvExVoronoiSphereNode)

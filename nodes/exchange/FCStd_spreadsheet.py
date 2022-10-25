@@ -5,13 +5,9 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 from sverchok.utils.logging import info
 from sverchok.dependencies import FreeCAD
-from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
 
-if FreeCAD is None:
-    add_dummy('SvFCStdSpreadsheetNode', 'SvFCStdSpreadsheetNode', 'FreeCAD')
-
-else:
+if FreeCAD is not None:
     F = FreeCAD
 
 
@@ -41,6 +37,7 @@ class SvFCStdSpreadsheetNode(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Read/write Spreadsheets'
     bl_icon = 'IMPORT'
     sv_category = "Solid Outputs"
+    sv_dependencies = {'FreeCAD'}
 
     auto_update : BoolProperty(name="auto_update", default=True)
     write_update : BoolProperty(name="read_update", default=True)
@@ -256,17 +253,15 @@ def WriteParameter(fc_file,spreadsheet,alias,par_write,write):
     return cell_out
 
 
-
 def register():
-    if FreeCAD is not None:
-        bpy.utils.register_class(SvFCStdSpreadsheetNode)
-        bpy.utils.register_class(SvShowFcstdSpreadsheetsOp)
-        bpy.utils.register_class(SvShowFcstdParNamesOp)
-        bpy.utils.register_class(SvFCStdSpreadsheetOperator)
+    bpy.utils.register_class(SvFCStdSpreadsheetNode)
+    bpy.utils.register_class(SvShowFcstdSpreadsheetsOp)
+    bpy.utils.register_class(SvShowFcstdParNamesOp)
+    bpy.utils.register_class(SvFCStdSpreadsheetOperator)
+
 
 def unregister():
-    if FreeCAD is not None:
-        bpy.utils.unregister_class(SvFCStdSpreadsheetNode)
-        bpy.utils.unregister_class(SvShowFcstdSpreadsheetsOp)
-        bpy.utils.unregister_class(SvShowFcstdParNamesOp)
-        bpy.utils.unregister_class(SvFCStdSpreadsheetOperator)
+    bpy.utils.unregister_class(SvFCStdSpreadsheetNode)
+    bpy.utils.unregister_class(SvShowFcstdSpreadsheetsOp)
+    bpy.utils.unregister_class(SvShowFcstdParNamesOp)
+    bpy.utils.unregister_class(SvFCStdSpreadsheetOperator)

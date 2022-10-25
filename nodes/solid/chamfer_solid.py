@@ -4,12 +4,6 @@ from bpy.props import FloatProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 from sverchok.data_structure import match_long_repeat as mlr, fullList
-from sverchok.dependencies import FreeCAD
-from sverchok.utils.dummy_nodes import add_dummy
-
-
-if FreeCAD is None:
-    add_dummy('SvChamferSolidNode', 'Chamfer Solid', 'FreeCAD')
 
 
 class SvChamferSolidNode(SverchCustomTreeNode, bpy.types.Node):
@@ -22,6 +16,7 @@ class SvChamferSolidNode(SverchCustomTreeNode, bpy.types.Node):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_CHAMFER_SOLID'
     sv_category = "Solid Operators"
+    sv_dependencies = {'FreeCAD'}
 
     replacement_nodes = [('SvFilletSolidNode', None, None)]
 
@@ -70,9 +65,8 @@ class SvChamferSolidNode(SverchCustomTreeNode, bpy.types.Node):
 
 
 def register():
-    if FreeCAD is not None:
-        bpy.utils.register_class(SvChamferSolidNode)
+    bpy.utils.register_class(SvChamferSolidNode)
+
 
 def unregister():
-    if FreeCAD is not None:
-        bpy.utils.unregister_class(SvChamferSolidNode)
+    bpy.utils.unregister_class(SvChamferSolidNode)

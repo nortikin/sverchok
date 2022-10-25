@@ -8,11 +8,6 @@ from sverchok.data_structure import (updateNode, zip_long_repeat, ensure_nesting
                                      repeat_last_for_length)
 from sverchok.utils.surface import SvSurface
 from sverchok.utils.manifolds import raycast_surface
-from sverchok.utils.dummy_nodes import add_dummy
-from sverchok.dependencies import scipy
-
-if scipy is None:
-    add_dummy('SvExRaycastSurfaceNode', "Raycast on Surface", 'scipy')
 
 
 class SvExRaycastSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
@@ -24,6 +19,7 @@ class SvExRaycastSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Raycast on Surface'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_SURFACE_RAYCAST'
+    sv_dependencies = {'scipy'}
 
     samples : IntProperty(
         name = "Init Resolution",
@@ -146,10 +142,8 @@ class SvExRaycastSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
 
 
 def register():
-    if scipy is not None:
-        bpy.utils.register_class(SvExRaycastSurfaceNode)
+    bpy.utils.register_class(SvExRaycastSurfaceNode)
 
 
 def unregister():
-    if scipy is not None:
-        bpy.utils.unregister_class(SvExRaycastSurfaceNode)
+    bpy.utils.unregister_class(SvExRaycastSurfaceNode)

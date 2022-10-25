@@ -14,17 +14,15 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (zip_long_repeat, ensure_nesting_level, updateNode,
                                      get_data_nesting_level)
 from sverchok.utils.geom import PlaneEquation, LineEquation, linear_approximation
-from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import FreeCAD
 from sverchok.utils.handle_blender_data import keep_enum_reference
 
-if FreeCAD is None:
-    add_dummy('SvSelectSolidNode', 'Select Solid Elements', 'FreeCAD')
-else:
+if FreeCAD is not None:
     import FreeCAD
     import Part
     from FreeCAD import Base
     from sverchok.utils.solid import SvSolidTopology
+
 
 class SvSelectSolidNode(SverchCustomTreeNode, bpy.types.Node):
     """
@@ -35,6 +33,7 @@ class SvSelectSolidNode(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Select Solid Elements'
     bl_icon = 'UV_SYNC_SELECT'
     sv_category = "Solid Operators"
+    sv_dependencies = {'FreeCAD'}
 
     element_types = [
             ('VERTS', "Vertices", "Select vertices first, and then select adjacent edges and faces", 'VERTEXSEL', 0),
@@ -512,11 +511,10 @@ class SvSelectSolidNode(SverchCustomTreeNode, bpy.types.Node):
         self.outputs['EdgesMask'].sv_set(edge_mask_out)
         self.outputs['FacesMask'].sv_set(face_mask_out)
 
+
 def register():
-    if FreeCAD is not None:
-        bpy.utils.register_class(SvSelectSolidNode)
+    bpy.utils.register_class(SvSelectSolidNode)
+
 
 def unregister():
-    if FreeCAD is not None:
-        bpy.utils.unregister_class(SvSelectSolidNode)
-
+    bpy.utils.unregister_class(SvSelectSolidNode)

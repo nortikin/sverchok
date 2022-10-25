@@ -5,13 +5,9 @@ from sverchok.node_tree import SverchCustomTreeNode # OLD throttled
 from sverchok.data_structure import updateNode, match_long_repeat # NEW throttle_and_update_node
 from sverchok.utils.logging import info
 from sverchok.dependencies import FreeCAD
-from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
 
-if FreeCAD is None:
-    add_dummy('SvWriteFCStdNode', 'SvWriteFCStdNode', 'FreeCAD')
-
-else:
+if FreeCAD is not None:
     F = FreeCAD
 
 
@@ -42,6 +38,7 @@ class SvWriteFCStdNode(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Write FCStd'
     bl_icon = 'IMPORT'
     sv_category = "Solid Inputs"
+    sv_dependencies = {'FreeCAD'}
 
     write_update : BoolProperty(
         name="write_update",
@@ -208,11 +205,10 @@ def fc_write_parts(fc_file, verts, faces, part_name, solid, mod):
 
 
 def register():
-    if FreeCAD is not None:
-        bpy.utils.register_class(SvWriteFCStdNode)
-        bpy.utils.register_class(SvWriteFCStdOperator)
+    bpy.utils.register_class(SvWriteFCStdNode)
+    bpy.utils.register_class(SvWriteFCStdOperator)
+
 
 def unregister():
-    if FreeCAD is not None:
-        bpy.utils.unregister_class(SvWriteFCStdNode)
-        bpy.utils.unregister_class(SvWriteFCStdOperator)
+    bpy.utils.unregister_class(SvWriteFCStdNode)
+    bpy.utils.unregister_class(SvWriteFCStdOperator)

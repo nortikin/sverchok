@@ -4,11 +4,8 @@ from bpy.props import FloatProperty, FloatVectorProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat as mlr
 from sverchok.dependencies import FreeCAD
-from sverchok.utils.dummy_nodes import add_dummy
 
-if FreeCAD is None:
-    add_dummy('SvToursSolidNode', 'Torus (Solid)', 'FreeCAD')
-else:
+if FreeCAD is not None:
     import Part
     from FreeCAD import Base
 
@@ -22,6 +19,7 @@ class SvToursSolidNode(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Torus (Solid)'
     bl_icon = 'MESH_TORUS'
     sv_category = "Solid Inputs"
+    sv_dependencies = {'FreeCAD'}
 
     cylinder_radius: FloatProperty(
         name="Radius R",
@@ -79,9 +77,8 @@ class SvToursSolidNode(SverchCustomTreeNode, bpy.types.Node):
 
 
 def register():
-    if FreeCAD is not None:
-        bpy.utils.register_class(SvToursSolidNode)
+    bpy.utils.register_class(SvToursSolidNode)
+
 
 def unregister():
-    if FreeCAD is not None:
-        bpy.utils.unregister_class(SvToursSolidNode)
+    bpy.utils.unregister_class(SvToursSolidNode)

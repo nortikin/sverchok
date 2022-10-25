@@ -9,11 +9,8 @@ from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_
 from sverchok.utils.curve import SvBezierCurve
 from sverchok.utils.geom import linear_approximation, Spline
 from sverchok.dependencies import scipy
-from sverchok.utils.dummy_nodes import add_dummy
 
-if scipy is None:
-    add_dummy('SvExBezierCurveFitNode', "Approximate Bezier Curve", 'scipy')
-else:
+if scipy is not None:
     from scipy.optimize import curve_fit
 
 
@@ -44,6 +41,7 @@ class SvExBezierCurveFitNode(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Approximate Bezier Curve'
     bl_icon = 'CURVE_NCURVE'
     sv_icon = 'SV_APPROXIMATE_BEZIER'
+    sv_dependencies = {'scipy'}
 
     degree : IntProperty(
             name = "Degree",
@@ -107,10 +105,8 @@ class SvExBezierCurveFitNode(SverchCustomTreeNode, bpy.types.Node):
 
 
 def register():
-    if scipy is not None:
-        bpy.utils.register_class(SvExBezierCurveFitNode)
+    bpy.utils.register_class(SvExBezierCurveFitNode)
+
 
 def unregister():
-    if scipy is not None:
-        bpy.utils.unregister_class(SvExBezierCurveFitNode)
-
+    bpy.utils.unregister_class(SvExBezierCurveFitNode)

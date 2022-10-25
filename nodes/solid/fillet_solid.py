@@ -3,11 +3,6 @@ from bpy.props import FloatProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat as mlr, fullList
-from sverchok.dependencies import FreeCAD
-from sverchok.utils.dummy_nodes import add_dummy
-
-if FreeCAD is None:
-    add_dummy('SvFilletSolidNode', 'Fillet Solid', 'FreeCAD')
 
 
 class SvFilletSolidNode(SverchCustomTreeNode, bpy.types.Node):
@@ -20,6 +15,7 @@ class SvFilletSolidNode(SverchCustomTreeNode, bpy.types.Node):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_FILLET_SOLID'
     sv_category = "Solid Operators"
+    sv_dependencies = {'FreeCAD'}
 
     replacement_nodes = [('SvChamferSolidNode', None, None)]
 
@@ -68,9 +64,8 @@ class SvFilletSolidNode(SverchCustomTreeNode, bpy.types.Node):
 
 
 def register():
-    if FreeCAD is not None:
-        bpy.utils.register_class(SvFilletSolidNode)
+    bpy.utils.register_class(SvFilletSolidNode)
+
 
 def unregister():
-    if FreeCAD is not None:
-        bpy.utils.unregister_class(SvFilletSolidNode)
+    bpy.utils.unregister_class(SvFilletSolidNode)

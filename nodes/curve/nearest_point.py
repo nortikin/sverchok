@@ -6,11 +6,6 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 from sverchok.utils.curve import SvCurve
 from sverchok.utils.manifolds import nearest_point_on_curve
-from sverchok.utils.dummy_nodes import add_dummy
-from sverchok.dependencies import scipy
-
-if scipy is None:
-    add_dummy('SvExNearestPointOnCurveNode', "Nearest Point on Curve", 'scipy')
 
 
 class SvExNearestPointOnCurveNode(SverchCustomTreeNode, bpy.types.Node):
@@ -22,6 +17,7 @@ class SvExNearestPointOnCurveNode(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Nearest Point on Curve'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_NEAREST_CURVE'
+    sv_dependencies = {'scipy'}
 
     samples : IntProperty(
         name = "Init Resolution",
@@ -97,11 +93,8 @@ class SvExNearestPointOnCurveNode(SverchCustomTreeNode, bpy.types.Node):
 
 
 def register():
-    if scipy is not None:
-        bpy.utils.register_class(SvExNearestPointOnCurveNode)
+    bpy.utils.register_class(SvExNearestPointOnCurveNode)
 
 
 def unregister():
-    if scipy is not None:
-        bpy.utils.unregister_class(SvExNearestPointOnCurveNode)
-
+    bpy.utils.unregister_class(SvExNearestPointOnCurveNode)

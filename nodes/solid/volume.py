@@ -6,17 +6,14 @@
 # License-Filename: LICENSE
 
 import bpy
-from bpy.props import BoolProperty, FloatProperty, EnumProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, map_recursive
+from sverchok.data_structure import map_recursive
 from sverchok.dependencies import FreeCAD
-from sverchok.utils.dummy_nodes import add_dummy
 
-if FreeCAD is None:
-    add_dummy('SvSolidVolumeNode', 'Solid Volume', 'FreeCAD')
-else:
+if FreeCAD is not None:
     import Part
+
 
 class SvSolidVolumeNode(SverchCustomTreeNode, bpy.types.Node):
     """
@@ -27,6 +24,7 @@ class SvSolidVolumeNode(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Solid Volume'
     bl_icon = 'SNAP_VOLUME'
     sv_category = "Solid Operators"
+    sv_dependencies = {'FreeCAD'}
 
     def sv_init(self, context):
         self.inputs.new('SvSolidSocket', "Solid")
@@ -48,11 +46,10 @@ class SvSolidVolumeNode(SverchCustomTreeNode, bpy.types.Node):
 
         self.outputs['Volume'].sv_set(volume_out)
 
+
 def register():
-    if FreeCAD is not None:
-        bpy.utils.register_class(SvSolidVolumeNode)
+    bpy.utils.register_class(SvSolidVolumeNode)
+
 
 def unregister():
-    if FreeCAD is not None:
-        bpy.utils.unregister_class(SvSolidVolumeNode)
-
+    bpy.utils.unregister_class(SvSolidVolumeNode)

@@ -5,24 +5,19 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
-import numpy as np
-
 import bpy
 from bpy.props import BoolProperty, EnumProperty, FloatProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import zip_long_repeat, ensure_nesting_level, updateNode, get_data_nesting_level
+from sverchok.data_structure import ensure_nesting_level, updateNode, get_data_nesting_level
 from sverchok.utils.surface.core import SvSurface
 from sverchok.utils.surface.freecad import surface_to_freecad, is_solid_face_surface
-from sverchok.utils.dummy_nodes import add_dummy
 
 from sverchok.dependencies import FreeCAD
 
-if FreeCAD is None:
-    add_dummy('SvSolidFromFacesNode', 'Solid from Faces', 'FreeCAD')
-else:
+if FreeCAD is not None:
     import Part
-    from FreeCAD import Base
+
 
 class SvSolidFromFacesNode(SverchCustomTreeNode, bpy.types.Node):
     """
@@ -34,6 +29,7 @@ class SvSolidFromFacesNode(SverchCustomTreeNode, bpy.types.Node):
     bl_icon = 'EDGESEL'
     sv_icon = 'SV_MAKE_SOLID'
     solid_catergory = "Input"
+    sv_dependencies = {'FreeCAD'}
 
     validate : BoolProperty(
             name = "Validate",
@@ -106,11 +102,10 @@ class SvSolidFromFacesNode(SverchCustomTreeNode, bpy.types.Node):
 
         self.outputs['Solid'].sv_set(solids_out)
 
+
 def register():
-    if FreeCAD is not None:
-        bpy.utils.register_class(SvSolidFromFacesNode)
+    bpy.utils.register_class(SvSolidFromFacesNode)
+
 
 def unregister():
-    if FreeCAD is not None:
-        bpy.utils.unregister_class(SvSolidFromFacesNode)
-
+    bpy.utils.unregister_class(SvSolidFromFacesNode)

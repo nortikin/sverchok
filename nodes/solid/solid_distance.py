@@ -5,11 +5,8 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 from sverchok.data_structure import match_long_repeat as mlr
 from sverchok.dependencies import FreeCAD
-from sverchok.utils.dummy_nodes import add_dummy
 
-if FreeCAD is None:
-    add_dummy('SvSolidDistanceNode', 'Solid Distance', 'FreeCAD')
-else:
+if FreeCAD is not None:
     import Part
     from FreeCAD import Base
 
@@ -37,6 +34,7 @@ class SvSolidDistanceNode(SverchCustomTreeNode, bpy.types.Node):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_SOLID_DISTANCE'
     sv_category = "Solid Operators"
+    sv_dependencies = {'FreeCAD'}
 
     modes = [
         ('Solid', 'Solid', '', 0),
@@ -152,9 +150,8 @@ class SvSolidDistanceNode(SverchCustomTreeNode, bpy.types.Node):
 
 
 def register():
-    if FreeCAD is not None:
-        bpy.utils.register_class(SvSolidDistanceNode)
+    bpy.utils.register_class(SvSolidDistanceNode)
+
 
 def unregister():
-    if FreeCAD is not None:
-        bpy.utils.unregister_class(SvSolidDistanceNode)
+    bpy.utils.unregister_class(SvSolidDistanceNode)

@@ -7,12 +7,7 @@ from bpy.props import IntProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 from sverchok.utils.surface import SvSurface
-from sverchok.utils.dummy_nodes import add_dummy
-from sverchok.dependencies import scipy
 from sverchok.utils.manifolds import ortho_project_surface
-
-if scipy is None:
-    add_dummy('SvExOrthoProjectSurfaceNode', "Ortho Project on Surface", 'scipy')
 
 
 class SvExOrthoProjectSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
@@ -24,6 +19,7 @@ class SvExOrthoProjectSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Ortho Project on Surface'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_ORTHO_SURFACE'
+    sv_dependencies = {'scipy'}
 
     samples : IntProperty(
         name = "Init Resolution",
@@ -70,10 +66,8 @@ class SvExOrthoProjectSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
 
 
 def register():
-    if scipy is not None:
-        bpy.utils.register_class(SvExOrthoProjectSurfaceNode)
+    bpy.utils.register_class(SvExOrthoProjectSurfaceNode)
 
 
 def unregister():
-    if scipy is not None:
-        bpy.utils.unregister_class(SvExOrthoProjectSurfaceNode)
+    bpy.utils.unregister_class(SvExOrthoProjectSurfaceNode)

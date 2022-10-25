@@ -6,17 +6,14 @@
 # License-Filename: LICENSE
 
 import bpy
-from bpy.props import BoolProperty, FloatProperty, EnumProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, map_recursive
+from sverchok.data_structure import map_recursive
 from sverchok.dependencies import FreeCAD
-from sverchok.utils.dummy_nodes import add_dummy
 
-if FreeCAD is None:
-    add_dummy('SvSolidCenterOfMassNode', 'Center of Mass', 'FreeCAD')
-else:
+if FreeCAD is not None:
     import Part
+
 
 class SvSolidCenterOfMassNode(SverchCustomTreeNode, bpy.types.Node):
     """
@@ -26,6 +23,7 @@ class SvSolidCenterOfMassNode(SverchCustomTreeNode, bpy.types.Node):
     bl_idname = 'SvSolidCenterOfMassNode'
     bl_label = 'Center of Mass'
     sv_category = "Solid Operators"
+    sv_dependencies = {'FreeCAD'}
 
     def sv_init(self, context):
         self.inputs.new('SvSolidSocket', "Solid")
@@ -47,11 +45,10 @@ class SvSolidCenterOfMassNode(SverchCustomTreeNode, bpy.types.Node):
 
         self.outputs['Center'].sv_set(centers_out)
 
+
 def register():
-    if FreeCAD is not None:
-        bpy.utils.register_class(SvSolidCenterOfMassNode)
+    bpy.utils.register_class(SvSolidCenterOfMassNode)
+
 
 def unregister():
-    if FreeCAD is not None:
-        bpy.utils.unregister_class(SvSolidCenterOfMassNode)
-
+    bpy.utils.unregister_class(SvSolidCenterOfMassNode)

@@ -11,11 +11,7 @@ from bpy.props import FloatProperty, StringProperty, BoolProperty, EnumProperty,
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, ensure_nesting_level, zip_long_repeat, get_data_nesting_level
 from sverchok.utils.alpha_shape import alpha_shape
-from sverchok.utils.dummy_nodes import add_dummy
-from sverchok.dependencies import scipy
 
-if scipy is None:
-    add_dummy('SvConcaveHullNode', "Concave Hull", 'scipy')
 
 class SvConcaveHullNode(SverchCustomTreeNode, bpy.types.Node):
     """
@@ -26,6 +22,7 @@ class SvConcaveHullNode(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Concave Hull'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_CONCAVE_HULL'
+    sv_dependencies = {'scipy'}
 
     volume_threshold : FloatProperty(
         name = "PlanarThreshold",
@@ -98,11 +95,10 @@ class SvConcaveHullNode(SverchCustomTreeNode, bpy.types.Node):
         self.outputs['Edges'].sv_set(edges_out)
         self.outputs['Faces'].sv_set(faces_out)
 
+
 def register():
-    if scipy is not None:
-        bpy.utils.register_class(SvConcaveHullNode)
+    bpy.utils.register_class(SvConcaveHullNode)
+
 
 def unregister():
-    if scipy is not None:
-        bpy.utils.unregister_class(SvConcaveHullNode)
-
+    bpy.utils.unregister_class(SvConcaveHullNode)

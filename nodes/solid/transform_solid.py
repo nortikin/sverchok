@@ -4,11 +4,6 @@ from bpy.props import FloatProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat as mlr
 from sverchok.utils.solid import transform_solid
-from sverchok.dependencies import FreeCAD
-from sverchok.utils.dummy_nodes import add_dummy
-
-if FreeCAD is None:
-    add_dummy('SvTransformSolidNode', 'Transform Solid', 'FreeCAD')
 
 
 class SvTransformSolidNode(SverchCustomTreeNode, bpy.types.Node):
@@ -21,6 +16,7 @@ class SvTransformSolidNode(SverchCustomTreeNode, bpy.types.Node):
     bl_icon = 'MESH_CUBE'
     sv_icon = 'SV_TRANSFORM_SOLID'
     sv_category = "Solid Operators"
+    sv_dependencies = {'FreeCAD'}
 
     precision: FloatProperty(
         name="Precision",
@@ -48,9 +44,8 @@ class SvTransformSolidNode(SverchCustomTreeNode, bpy.types.Node):
 
 
 def register():
-    if FreeCAD is not None:
-        bpy.utils.register_class(SvTransformSolidNode)
+    bpy.utils.register_class(SvTransformSolidNode)
+
 
 def unregister():
-    if FreeCAD is not None:
-        bpy.utils.unregister_class(SvTransformSolidNode)
+    bpy.utils.unregister_class(SvTransformSolidNode)

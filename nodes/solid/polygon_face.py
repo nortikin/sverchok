@@ -5,23 +5,18 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
-import numpy as np
-
 import bpy
 from bpy.props import BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import zip_long_repeat, ensure_nesting_level, updateNode
 from sverchok.utils.surface.freecad import SvSolidFaceSurface
-from sverchok.utils.dummy_nodes import add_dummy
-
 from sverchok.dependencies import FreeCAD
 
-if FreeCAD is None:
-    add_dummy('SvSolidPolygonFaceNode', 'Polygon Face (Solid)', 'FreeCAD')
-else:
+if FreeCAD is not None:
     import Part
     from FreeCAD import Base
+
 
 class SvSolidPolygonFaceNode(SverchCustomTreeNode, bpy.types.Node):
     """
@@ -33,6 +28,7 @@ class SvSolidPolygonFaceNode(SverchCustomTreeNode, bpy.types.Node):
     bl_icon = 'EDGESEL'
     sv_icon = 'SV_POLYGON_FACE'
     sv_category = "Solid Inputs"
+    sv_dependencies = {'FreeCAD'}
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', "Vertices")
@@ -82,11 +78,10 @@ class SvSolidPolygonFaceNode(SverchCustomTreeNode, bpy.types.Node):
 
         self.outputs['SolidFaces'].sv_set(solids_out)
 
+
 def register():
-    if FreeCAD is not None:
-        bpy.utils.register_class(SvSolidPolygonFaceNode)
+    bpy.utils.register_class(SvSolidPolygonFaceNode)
+
 
 def unregister():
-    if FreeCAD is not None:
-        bpy.utils.unregister_class(SvSolidPolygonFaceNode)
-
+    bpy.utils.unregister_class(SvSolidPolygonFaceNode)

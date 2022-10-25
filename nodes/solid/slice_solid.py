@@ -5,13 +5,10 @@ from bpy.props import BoolProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat as mlr
 from sverchok.dependencies import FreeCAD
-from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.utils.curve.freecad import SvSolidEdgeCurve
 from sverchok.utils.surface.freecad import SvSolidFaceSurface
 
-if FreeCAD is None:
-    add_dummy('SvSliceSolidNode', 'Transform Solid', 'FreeCAD')
-else:
+if FreeCAD is not None:
     from FreeCAD import Base
     import Part
 
@@ -26,6 +23,7 @@ class SvSliceSolidNode(SverchCustomTreeNode, bpy.types.Node):
     bl_icon = 'MESH_CUBE'
     sv_icon = 'SV_SLICE_SOLID'
     sv_category = "Solid Operators"
+    sv_dependencies = {'FreeCAD'}
 
     flat_output: BoolProperty(
         name="Flat Output",
@@ -80,10 +78,8 @@ class SvSliceSolidNode(SverchCustomTreeNode, bpy.types.Node):
 
 
 def register():
-    if FreeCAD is not None:
-        bpy.utils.register_class(SvSliceSolidNode)
+    bpy.utils.register_class(SvSliceSolidNode)
+
 
 def unregister():
-    if FreeCAD is not None:
-        bpy.utils.unregister_class(SvSliceSolidNode)
-
+    bpy.utils.unregister_class(SvSliceSolidNode)

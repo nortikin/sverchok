@@ -9,12 +9,9 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level
 from sverchok.utils.field.scalar import SvScalarField
 from sverchok.dependencies import skimage
-from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.utils.marching_squares import make_contours
 
-if skimage is None:
-    add_dummy('SvExMarchingSquaresNode', "Marching Squares", 'skimage')
-else:
+if skimage is not None:
     from skimage import measure
 
 
@@ -27,6 +24,7 @@ class SvExMarchingSquaresNode(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Marching Squares'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_EX_MSQUARES'
+    sv_dependencies = {'skimage'}
 
     iso_value : FloatProperty(
             name = "Value",
@@ -200,10 +198,8 @@ class SvExMarchingSquaresNode(SverchCustomTreeNode, bpy.types.Node):
 
 
 def register():
-    if skimage is not None:
-        bpy.utils.register_class(SvExMarchingSquaresNode)
+    bpy.utils.register_class(SvExMarchingSquaresNode)
+
 
 def unregister():
-    if skimage is not None:
-        bpy.utils.unregister_class(SvExMarchingSquaresNode)
-
+    bpy.utils.unregister_class(SvExMarchingSquaresNode)

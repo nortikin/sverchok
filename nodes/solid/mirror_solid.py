@@ -5,11 +5,8 @@ from mathutils import Vector
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat as mlr
 from sverchok.dependencies import FreeCAD
-from sverchok.utils.dummy_nodes import add_dummy
 
-if FreeCAD is None:
-    add_dummy('SvMirrorSolidNode', 'Mirror Solid', 'FreeCAD')
-else:
+if FreeCAD is not None:
     from FreeCAD import Base
 
 
@@ -23,6 +20,7 @@ class SvMirrorSolidNode(SverchCustomTreeNode, bpy.types.Node):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_MIRROR_SOLID'
     sv_category = "Solid Operators"
+    sv_dependencies = {'FreeCAD'}
 
     precision: FloatProperty(
         name="Precision",
@@ -50,10 +48,10 @@ class SvMirrorSolidNode(SverchCustomTreeNode, bpy.types.Node):
 
         self.outputs['Solid'].sv_set(solids)
 
+
 def register():
-    if FreeCAD is not None:
-        bpy.utils.register_class(SvMirrorSolidNode)
+    bpy.utils.register_class(SvMirrorSolidNode)
+
 
 def unregister():
-    if FreeCAD is not None:
-        bpy.utils.unregister_class(SvMirrorSolidNode)
+    bpy.utils.unregister_class(SvMirrorSolidNode)

@@ -14,14 +14,7 @@ from sverchok.utils.surface.core import SvSurface
 from sverchok.utils.field.scalar import SvScalarField
 from sverchok.utils.surface.freecad import is_solid_face_surface, surface_to_freecad
 from sverchok.utils.voronoi3d import lloyd_on_fc_face
-from sverchok.utils.dummy_nodes import add_dummy
-from sverchok.dependencies import scipy, FreeCAD
 
-if scipy is None or FreeCAD is None:
-    add_dummy('SvLloydSolidFaceNode', "Lloyd on Solid Face", 'scipy and FreeCAD')
-
-if FreeCAD is not None:
-    import Part
 
 class SvLloydSolidFaceNode(SverchCustomTreeNode, bpy.types.Node):
     """
@@ -32,6 +25,7 @@ class SvLloydSolidFaceNode(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Lloyd on Solid Face'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_VORONOI'
+    sv_dependencies = {'FreeCAD', 'scipy'}
 
     iterations : IntProperty(
         name = "Iterations",
@@ -101,11 +95,10 @@ class SvLloydSolidFaceNode(SverchCustomTreeNode, bpy.types.Node):
         self.outputs['Sites'].sv_set(verts_out)
         self.outputs['UVPoints'].sv_set(uvpoints_out)
 
+
 def register():
-    if scipy is not None and FreeCAD is not None:
-        bpy.utils.register_class(SvLloydSolidFaceNode)
+    bpy.utils.register_class(SvLloydSolidFaceNode)
+
 
 def unregister():
-    if scipy is not None and FreeCAD is not None:
-        bpy.utils.unregister_class(SvLloydSolidFaceNode)
-
+    bpy.utils.unregister_class(SvLloydSolidFaceNode)

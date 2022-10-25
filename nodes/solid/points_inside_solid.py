@@ -5,11 +5,8 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 from sverchok.data_structure import match_long_repeat as mlr
 from sverchok.dependencies import FreeCAD
-from sverchok.utils.dummy_nodes import add_dummy
 
-if FreeCAD is None:
-    add_dummy('SvIsInsideSolidNode', 'Point Inside Solid', 'FreeCAD')
-else:
+if FreeCAD is not None:
     from FreeCAD import Base
 
 
@@ -23,6 +20,7 @@ class SvIsInsideSolidNode(SverchCustomTreeNode, bpy.types.Node):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_POINTS_INSIDE_SOLID'
     sv_category = "Solid Operators"
+    sv_dependencies = {'FreeCAD'}
 
     tolerance: FloatProperty(
         name="Tolerance",
@@ -78,9 +76,8 @@ class SvIsInsideSolidNode(SverchCustomTreeNode, bpy.types.Node):
 
 
 def register():
-    if FreeCAD is not None:
-        bpy.utils.register_class(SvIsInsideSolidNode)
+    bpy.utils.register_class(SvIsInsideSolidNode)
+
 
 def unregister():
-    if FreeCAD is not None:
-        bpy.utils.unregister_class(SvIsInsideSolidNode)
+    bpy.utils.unregister_class(SvIsInsideSolidNode)

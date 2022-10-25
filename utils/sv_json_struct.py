@@ -16,7 +16,6 @@ from typing import Type, Generator, TYPE_CHECKING, Dict, Tuple, Optional, List, 
 
 import bpy
 from sverchok import old_nodes
-from sverchok.utils import dummy_nodes
 from sverchok.utils.handle_blender_data import BPYPointers, BPYProperty
 from sverchok.utils.sv_node_utils import recursive_framed_location_finder
 
@@ -322,8 +321,6 @@ class FileStruct(Struct):
                     # register optional node classes
                     if old_nodes.is_old(node_struct.read_bl_type()):
                         old_nodes.register_old(node_struct.read_bl_type())
-                    if dummy_nodes.is_dependent(node_struct.read_bl_type()):
-                        dummy_nodes.register_dummy(node_struct.read_bl_type())
 
                     # add node an save its new name
                     node = tree.nodes.new(node_struct.read_bl_type())
@@ -519,8 +516,6 @@ class TreeStruct(Struct):
                     # register optional node classes
                     if old_nodes.is_old(node_struct.read_bl_type()):
                         old_nodes.register_old(node_struct.read_bl_type())
-                    if dummy_nodes.is_dependent(node_struct.read_bl_type()):
-                        dummy_nodes.register_dummy(node_struct.read_bl_type())
 
                     # add node an save its new name
                     node = tree.nodes.new(node_struct.read_bl_type())

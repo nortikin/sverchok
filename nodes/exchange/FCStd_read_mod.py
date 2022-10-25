@@ -5,14 +5,9 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 from sverchok.utils.logging import info
 from sverchok.dependencies import FreeCAD
-from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
 
-if FreeCAD is None:
-    add_dummy('SvReadFCStdModNode', 'SvReadFCStdModNode', 'FreeCAD')
-
-else:
-
+if FreeCAD is not None:
     # june '22
     # modified version of FCStd_read includes changes by rastart, zeffii, et al
     # please feed changes back to the Sverchok issue tracker.
@@ -101,6 +96,7 @@ class SvReadFCStdModNode(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Read FCStd MOD'
     bl_icon = 'IMPORT'
     sv_category = "Solid Outputs"
+    sv_dependencies = {'FreeCAD'}
 
     read_update : BoolProperty(name="read_update", default=True)
     read_body : BoolProperty(name="read_body", default=True, update=updateNode)
@@ -334,13 +330,12 @@ def unitCheck(solid, scale_factor):
 
 
 def register():
-    if FreeCAD:
-        bpy.utils.register_class(SvReadFCStdModNode)
-        bpy.utils.register_class(SvShowFcstdNamesModOp)
-        bpy.utils.register_class(SvReadFCStdModOperator)
+    bpy.utils.register_class(SvReadFCStdModNode)
+    bpy.utils.register_class(SvShowFcstdNamesModOp)
+    bpy.utils.register_class(SvReadFCStdModOperator)
+
 
 def unregister():
-    if FreeCAD:
-        bpy.utils.unregister_class(SvReadFCStdModOperator)
-        bpy.utils.unregister_class(SvShowFcstdNamesModOp)
-        bpy.utils.unregister_class(SvReadFCStdModNode)
+    bpy.utils.unregister_class(SvReadFCStdModOperator)
+    bpy.utils.unregister_class(SvShowFcstdNamesModOp)
+    bpy.utils.unregister_class(SvReadFCStdModNode)

@@ -1,11 +1,6 @@
 import bpy
 
-from sverchok.dependencies import FreeCAD
-from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.node_tree import SverchCustomTreeNode
-
-if FreeCAD is None:
-    add_dummy('SvSolidVerticesNode', 'Solid Vertices', 'FreeCAD')
 
 
 class SvSolidVerticesNode(SverchCustomTreeNode, bpy.types.Node):
@@ -17,6 +12,7 @@ class SvSolidVerticesNode(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Solid Vertices'
     bl_icon = 'VERTEXSEL'
     sv_category = "Solid Outputs"
+    sv_dependencies = {'FreeCAD'}
 
     def sv_init(self, context):
         self.inputs.new('SvSolidSocket', "Solid")
@@ -41,9 +37,8 @@ class SvSolidVerticesNode(SverchCustomTreeNode, bpy.types.Node):
 
 
 def register():
-    if FreeCAD is not None:
-        bpy.utils.register_class(SvSolidVerticesNode)
+    bpy.utils.register_class(SvSolidVerticesNode)
+
 
 def unregister():
-    if FreeCAD is not None:
-        bpy.utils.unregister_class(SvSolidVerticesNode)
+    bpy.utils.unregister_class(SvSolidVerticesNode)

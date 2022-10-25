@@ -30,7 +30,6 @@ from sverchok.ui import presets
 from sverchok.ui.presets import apply_default_preset
 from sverchok.utils import yaml_parser
 from sverchok.utils.modules_inspection import iter_classes_from_module
-from sverchok.utils.dummy_nodes import dummy_nodes_dict
 
 
 """
@@ -70,16 +69,6 @@ sv_tree_types = {'SverchCustomTreeType', }
 
 
 class MenuItem(ABC):
-    _node_classes = dict()
-
-    @property
-    def node_classes(self) -> dict[str, type]:  # todo can be removed after removing dummy nodes
-        if not self._node_classes:
-            import sverchok  # not available during initialization of the module
-            for cls_ in iter_classes_from_module(sverchok.nodes, [bpy.types.Node]):
-                self._node_classes[cls_.bl_idname] = cls_
-        return self._node_classes
-
     @property
     def icon_prop(self):
         if hasattr(self, 'icon'):
@@ -189,52 +178,47 @@ class AddNode(MenuItem):
             node_cls = bpy.types.Node.bl_rna_get_subclass_py(self.bl_idname)
             if self.bl_idname == 'NodeReroute':
                 self._icon_prop = icon('SV_REROUTE')
-            elif self.dependency:
-                if cls := self.node_classes.get(self.bl_idname):
-                    self._icon_prop = node_icon(cls)
-                else:
-                    self._icon_prop = {'icon': 'ERROR'}
-            elif node_cls is not None:  # can be dummy class here
+            elif node_cls is not None:
+                self._icon_prop = node_icon(node_cls)
+            elif node_cls.missing_dependency:
                 self._icon_prop = node_icon(node_cls)
             else:
                 self._icon_prop = {'icon': 'ERROR'}
         return self._icon_prop
 
-    @property
-    def dependency(self):
-        _, dep = dummy_nodes_dict.get(self.bl_idname, (None, ''))
-        return dep
-
-    def draw(self, layout, only_icon=False):
+    def draw(self, layout):
         node_cls = bpy.types.Node.bl_rna_get_subclass_py(self.bl_idname)
-        if only_icon:
-            icon_prop = self.icon_prop or {'icon': 'OUTLINER_OB_EMPTY'}
-        else:
-            icon_prop = self.icon_prop if get_icon_switch() else {}
+        icon_prop = self.icon_prop if get_icon_switch() else {}
 
-        if not self.dependency and node_cls is None:
+        if node_cls is None:
             layout.label(text=self.label, **icon_prop)
             return
 
-        op = ShowMissingDependsOperator if self.dependency else SvNodeAddOperator
+        if getattr(node_cls, 'missing_dependency', False):  # reroutes do not have
+            op = ShowMissingDependsOperator
+        else:
+            op = SvNodeAddOperator
         default_context = bpy.app.translations.contexts.default
         add = layout.operator(op.bl_idname,
-                              text=self.label if not only_icon else '',
+                              text=self.label,
                               text_ctxt=default_context,
                               **icon_prop)
         add.type = self.bl_idname
         add.use_transform = True
-        add.dependency = self.dependency
 
     def draw_icon(self, layout):
+        """Only icon will be drawn"""
         node_cls = bpy.types.Node.bl_rna_get_subclass_py(self.bl_idname)
         icon_prop = self.icon_prop or {'icon': 'OUTLINER_OB_EMPTY'}
 
-        if not self.dependency and node_cls is None:
+        if node_cls is None:
             layout.label(text=self.label, **icon_prop)
             return
 
-        op = ShowMissingDependsOperator if self.dependency else SvNodeAddOperator
+        if getattr(node_cls, 'missing_dependency', False):
+            op = ShowMissingDependsOperator
+        else:
+            op = SvNodeAddOperator
         default_context = bpy.app.translations.contexts.default
         add = layout.operator(op.bl_idname,
                               text='',
@@ -242,7 +226,6 @@ class AddNode(MenuItem):
                               **icon_prop)
         add.type = self.bl_idname
         add.use_transform = True
-        add.dependency = self.dependency
         add.extra_description = f'Add {self.label} node'
 
     def search_match(self, request: str) -> bool:
@@ -463,32 +446,20 @@ add_node_menu = Category.from_config(yaml_parser.load(menu_file), 'All Categorie
 
 
 class AddNodeOp(bl_operators.node.NodeAddOperator):
-    dependency: StringProperty()
-
-    _node_classes = dict()
     extra_description: StringProperty()
-
-    @classmethod
-    def node_classes(cls) -> dict[str, type]:
-        if not cls._node_classes:
-            import sverchok  # not available during initialization of the module
-            for cls_ in iter_classes_from_module(sverchok.nodes, [bpy.types.Node]):
-                cls._node_classes[cls_.bl_idname] = cls_
-        return cls._node_classes
 
     @classmethod
     def description(cls, _context, properties):
         node_type = properties["type"]
         extra = properties.get("extra_description", "")
         tooltip = extra + ("\n" if extra else "")
-        if node_type in dummy_nodes_dict:
-            if node_cls := cls.node_classes().get(node_type):
-                tooltip = node_cls.docstring.get_tooltip()
+        node_cls = bpy.types.Node.bl_rna_get_subclass_py(node_type)
+        if node_cls is None:
+            return f'"{node_type}" node is not found'
+        tooltip += node_cls.docstring.get_tooltip()
+        if node_cls.missing_dependency:
             gap = "\n\n" if tooltip else ''
-            tooltip = tooltip + f"{gap}Dependency: {properties.dependency}"
-        else:
-            if node_cls := bpy.types.Node.bl_rna_get_subclass_py(node_type):
-                tooltip += node_cls.docstring.get_tooltip()
+            tooltip += f"{gap}Dependency: {node_cls.sv_dependencies}"
         return tooltip
 
 

@@ -21,7 +21,6 @@ from bpy.props import IntProperty, EnumProperty, PointerProperty
 
 from sverchok.utils.context_managers import sv_preferences
 from sverchok.settings import get_dpi_factor
-from sverchok.utils.dummy_nodes import is_dependent
 from sverchok.utils.logging import debug
 from collections import namedtuple
 
@@ -408,10 +407,14 @@ class SvDisplayNodePanelProperties(bpy.types.PropertyGroup):
             return
 
         for i, name in enumerate(node_names):
+            cls = bpy.types.Node.bl_rna_get_subclass_py(name)
+            if cls is None:
+                debug(f'Class of the "{name}" node was not found')
+                continue
             if name == "separator":
                 debug("SKIPPING separator node")
                 continue
-            if is_dependent(name):
+            if cls.missing_dependency:
                 debug("SKIPPING dependent node %d of %d : %s" % (i+1, N, name))
                 continue
             if '@' in name:
@@ -437,7 +440,12 @@ class SvDisplayNodePanelProperties(bpy.types.PropertyGroup):
         # update the total/hidden node count (e.g. nodes with dependency are hidden)
         node_names = get_nodes_in_category(self.category)
         self.total_num_nodes = len(node_names)
-        other_node_names = [name for name in node_names if is_dependent(name)]
+        other_node_names = []
+        for name in node_names:
+            cls = bpy.types.Node.bl_rna_get_subclass_py(name)
+            if cls is not None and cls.missing_dependency:
+                continue
+            other_node_names.append(name)
         self.hidden_num_nodes = len(other_node_names)
 
     constrain_layout: EnumProperty(

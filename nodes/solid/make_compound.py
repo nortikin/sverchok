@@ -1,18 +1,13 @@
 
 import bpy
-from bpy.props import StringProperty, EnumProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import flatten_data, map_recursive, zip_long_repeat, ensure_nesting_level, get_data_nesting_level
+from sverchok.data_structure import zip_long_repeat, ensure_nesting_level, get_data_nesting_level
 from sverchok.utils.curve.core import SvCurve
 from sverchok.utils.surface.core import SvSurface
 from sverchok.dependencies import FreeCAD
-from sverchok.utils.dummy_nodes import add_dummy
 
-if FreeCAD is None:
-    add_dummy('SvCompoundSolidNode', 'Compound Solid', 'FreeCAD')
-else:
-
+if FreeCAD is not None:
     from FreeCAD import Part
     try:
         import Part as PartModule
@@ -31,6 +26,7 @@ class SvCompoundSolidNode(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Compound Solid'
     bl_icon = 'STICKY_UVS_LOC'
     sv_category = "Solid Outputs"
+    sv_dependencies = {'FreeCAD'}
 
     def sv_init(self, context):
         self.inputs.new('SvSolidSocket', "Solids")
@@ -76,10 +72,8 @@ class SvCompoundSolidNode(SverchCustomTreeNode, bpy.types.Node):
 
 
 def register():
-    if FreeCAD is not None:
-        bpy.utils.register_class(SvCompoundSolidNode)
+    bpy.utils.register_class(SvCompoundSolidNode)
+
 
 def unregister():
-    if FreeCAD is not None:
-        bpy.utils.unregister_class(SvCompoundSolidNode)
-
+    bpy.utils.unregister_class(SvCompoundSolidNode)

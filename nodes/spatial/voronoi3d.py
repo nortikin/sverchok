@@ -16,12 +16,9 @@ from sverchok.data_structure import updateNode, zip_long_repeat, get_data_nestin
 from sverchok.utils.sv_mesh_utils import polygons_to_edges, mesh_join
 from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh, bmesh_from_pydata, bmesh_clip
 from sverchok.utils.geom import calc_bounds
-from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import scipy
 
-if scipy is None:
-    add_dummy('SvExVoronoi3DNode', "Voronoi 3D", 'scipy')
-else:
+if scipy is not None:
     from scipy.spatial import Voronoi
 
 
@@ -34,6 +31,7 @@ class SvExVoronoi3DNode(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Voronoi 3D'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_VORONOI'
+    sv_dependencies = {'scipy'}
 
     out_modes = [
         ('RIDGES', "Ridges", "Ridges", 0),
@@ -248,10 +246,8 @@ class SvExVoronoi3DNode(SverchCustomTreeNode, bpy.types.Node):
 
 
 def register():
-    if scipy is not None:
-        bpy.utils.register_class(SvExVoronoi3DNode)
+    bpy.utils.register_class(SvExVoronoi3DNode)
 
 
 def unregister():
-    if scipy is not None:
-        bpy.utils.unregister_class(SvExVoronoi3DNode)
+    bpy.utils.unregister_class(SvExVoronoi3DNode)

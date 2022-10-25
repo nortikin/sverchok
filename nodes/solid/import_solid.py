@@ -2,11 +2,8 @@ import bpy
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.dependencies import FreeCAD
-from sverchok.utils.dummy_nodes import add_dummy
 
-if FreeCAD is None:
-    add_dummy('SvImportSolidNode', 'Import Solid', 'FreeCAD')
-else:
+if FreeCAD is not None:
     import Part
 
 
@@ -19,6 +16,7 @@ class SvImportSolidNode(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Import Solid'
     bl_icon = 'IMPORT'
     sv_category = "Solid Inputs"
+    sv_dependencies = {'FreeCAD'}
 
     def sv_init(self, context):
         self.inputs.new('SvFilePathSocket', "File Path")
@@ -41,9 +39,8 @@ class SvImportSolidNode(SverchCustomTreeNode, bpy.types.Node):
 
 
 def register():
-    if FreeCAD is not None:
-        bpy.utils.register_class(SvImportSolidNode)
+    bpy.utils.register_class(SvImportSolidNode)
+
 
 def unregister():
-    if FreeCAD is not None:
-        bpy.utils.unregister_class(SvImportSolidNode)
+    bpy.utils.unregister_class(SvImportSolidNode)

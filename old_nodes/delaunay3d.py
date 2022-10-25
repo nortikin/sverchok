@@ -6,12 +6,9 @@ from bpy.props import FloatProperty, BoolProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat
-from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import scipy
 
-if scipy is None:
-    add_dummy('SvExDelaunay3DNode', "Delaunay 3D", 'scipy')
-else:
+if scipy is not None:
     from scipy.spatial import Delaunay
 
 
@@ -24,6 +21,7 @@ class SvExDelaunay3DNode(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Delaunay 3D'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_VORONOI'
+    sv_dependencies = {'scipy'}
 
     join : BoolProperty(
         name = "Join",
@@ -119,10 +117,8 @@ class SvExDelaunay3DNode(SverchCustomTreeNode, bpy.types.Node):
 
 
 def register():
-    if scipy is not None:
-        bpy.utils.register_class(SvExDelaunay3DNode)
+    bpy.utils.register_class(SvExDelaunay3DNode)
 
 
 def unregister():
-    if scipy is not None:
-        bpy.utils.unregister_class(SvExDelaunay3DNode)
+    bpy.utils.unregister_class(SvExDelaunay3DNode)

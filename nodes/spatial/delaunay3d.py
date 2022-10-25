@@ -10,22 +10,14 @@ from itertools import combinations
 
 import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
-import bmesh
-from mathutils import Matrix
 
-import sverchok
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level
-from sverchok.utils.sv_mesh_utils import polygons_to_edges, mesh_join
-from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh, bmesh_from_pydata
-from sverchok.utils.logging import info, exception
-from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import scipy
 
-if scipy is None:
-    add_dummy('SvDelaunay3dMk2Node', "Delaunay 3D", 'scipy')
-else:
+if scipy is not None:
     from scipy.spatial import Delaunay
+
 
 class SvDelaunay3dMk2Node(SverchCustomTreeNode, bpy.types.Node):
     """
@@ -36,6 +28,7 @@ class SvDelaunay3dMk2Node(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Delaunay 3D'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_DELAUNAY'
+    sv_dependencies = {'scipy'}
 
     join : BoolProperty(
         name = "Join",
@@ -168,11 +161,10 @@ class SvDelaunay3dMk2Node(SverchCustomTreeNode, bpy.types.Node):
         self.outputs['Edges'].sv_set(edges_out)
         self.outputs['Faces'].sv_set(faces_out)
 
+
 def register():
-    if scipy is not None:
-        bpy.utils.register_class(SvDelaunay3dMk2Node)
+    bpy.utils.register_class(SvDelaunay3dMk2Node)
+
 
 def unregister():
-    if scipy is not None:
-        bpy.utils.unregister_class(SvDelaunay3dMk2Node)
-
+    bpy.utils.unregister_class(SvDelaunay3dMk2Node)

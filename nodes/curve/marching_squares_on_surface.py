@@ -3,21 +3,16 @@ import numpy as np
 
 import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty, StringProperty
-from mathutils import Vector, Matrix
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, describe_data_shape, describe_data_structure
-from sverchok.utils.logging import info, exception
+from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 from sverchok.utils.field.scalar import SvScalarField
 from sverchok.utils.surface import SvSurface
 from sverchok.utils.marching_squares import make_contours
 from sverchok.utils.sv_mesh_utils import mesh_join
-from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import skimage
 
-if skimage is None:
-    add_dummy('SvExMSquaresOnSurfaceNode', "Marching Squares on Surface", 'skimage')
-else:
+if skimage is not None:
     from skimage import measure
 
 
@@ -30,6 +25,7 @@ class SvExMSquaresOnSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Marching Squares on Surface'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_EX_MSQUARES'
+    sv_dependencies = {'skimage'}
 
     iso_value : FloatProperty(
             name = "Value",
@@ -152,10 +148,8 @@ class SvExMSquaresOnSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
 
 
 def register():
-    if skimage is not None:
-        bpy.utils.register_class(SvExMSquaresOnSurfaceNode)
+    bpy.utils.register_class(SvExMSquaresOnSurfaceNode)
+
 
 def unregister():
-    if skimage is not None:
-        bpy.utils.unregister_class(SvExMSquaresOnSurfaceNode)
-
+    bpy.utils.unregister_class(SvExMSquaresOnSurfaceNode)

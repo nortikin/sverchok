@@ -7,12 +7,9 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 from sverchok.utils.surface import SvSurface
 from sverchok.utils.field.scalar import SvScalarField
-from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import scipy
 
-if scipy is None:
-    add_dummy('SvExSurfaceExtremesNode', "Surface Extremes", 'scipy')
-else:
+if scipy is not None:
     from scipy.optimize import minimize
 
 
@@ -25,6 +22,7 @@ class SvExSurfaceExtremesNode(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Surface Extremes'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_SURFACE_EXTREMES'
+    sv_dependencies = {'scipy'}
 
     directions = [
             ('MIN', "Min", "Find the minimum of the field", 0),
@@ -170,11 +168,8 @@ class SvExSurfaceExtremesNode(SverchCustomTreeNode, bpy.types.Node):
 
 
 def register():
-    if scipy is not None:
-        bpy.utils.register_class(SvExSurfaceExtremesNode)
+    bpy.utils.register_class(SvExSurfaceExtremesNode)
 
 
 def unregister():
-    if scipy is not None:
-        bpy.utils.unregister_class(SvExSurfaceExtremesNode)
-
+    bpy.utils.unregister_class(SvExSurfaceExtremesNode)

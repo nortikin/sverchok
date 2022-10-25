@@ -4,11 +4,8 @@ from bpy.props import FloatProperty, BoolProperty, EnumProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat as mlr
 from sverchok.dependencies import FreeCAD
-from sverchok.utils.dummy_nodes import add_dummy
 
-if FreeCAD is None:
-    add_dummy('SvOffsetSolidNode', 'Offset Solid', 'FreeCAD')
-else:
+if FreeCAD is not None:
     import Part
 
 
@@ -22,6 +19,7 @@ class SvOffsetSolidNode(SverchCustomTreeNode, bpy.types.Node):
     bl_icon = 'MESH_CUBE'
     sv_icon = 'SV_OFFSET_SOLID'
     sv_category = "Solid Operators"
+    sv_dependencies = {'FreeCAD'}
 
     offset: FloatProperty(
         name="Offset",
@@ -90,9 +88,8 @@ class SvOffsetSolidNode(SverchCustomTreeNode, bpy.types.Node):
 
 
 def register():
-    if FreeCAD is not None:
-        bpy.utils.register_class(SvOffsetSolidNode)
+    bpy.utils.register_class(SvOffsetSolidNode)
+
 
 def unregister():
-    if FreeCAD is not None:
-        bpy.utils.unregister_class(SvOffsetSolidNode)
+    bpy.utils.unregister_class(SvOffsetSolidNode)

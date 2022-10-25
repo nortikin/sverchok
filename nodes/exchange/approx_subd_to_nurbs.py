@@ -5,13 +5,9 @@ from bpy.props import BoolProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 from sverchok.dependencies import FreeCAD
-from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
 
-if FreeCAD is None:
-    add_dummy('SvApproxSubdtoNurbsNode', 'SvReadFCStdNode', 'FreeCAD')
-
-else:
+if FreeCAD is not None:
     F = FreeCAD
 
 
@@ -50,6 +46,7 @@ class SvApproxSubdtoNurbsNode(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Approximate Subd to Nurb'
     bl_icon = 'IMPORT'
     sv_category = "Solid Outputs"
+    sv_dependencies = {'FreeCAD'}
 
     auto_update : BoolProperty(name="auto_update", default=True)
 
@@ -254,12 +251,12 @@ def ApproxSubdToNurbs(Object):
 
     return [SHELL]
 
+
 def register():
-    if FreeCAD is not None:
-        bpy.utils.register_class(SvApproxSubdtoNurbsOperator)
-        bpy.utils.register_class(SvApproxSubdtoNurbsNode)
+    bpy.utils.register_class(SvApproxSubdtoNurbsOperator)
+    bpy.utils.register_class(SvApproxSubdtoNurbsNode)
+
 
 def unregister():
-    if FreeCAD is not None:
-        bpy.utils.unregister_class(SvApproxSubdtoNurbsOperator)
-        bpy.utils.unregister_class(SvApproxSubdtoNurbsNode)
+    bpy.utils.unregister_class(SvApproxSubdtoNurbsOperator)
+    bpy.utils.unregister_class(SvApproxSubdtoNurbsNode)

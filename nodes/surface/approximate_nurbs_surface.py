@@ -5,12 +5,9 @@ from bpy.props import EnumProperty, BoolProperty, IntProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 from sverchok.utils.surface.nurbs import SvGeomdlSurface
-from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import geomdl
 
-if geomdl is None:
-    add_dummy('SvExApproxNurbsSurfaceNode', "Approximate NURBS Surface", 'geomdl')
-else:
+if geomdl is not None:
     from geomdl import fitting
 
 
@@ -22,6 +19,7 @@ class SvExApproxNurbsSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
     bl_idname = 'SvExApproxNurbsSurfaceNode'
     bl_label = 'Approximate NURBS Surface'
     bl_icon = 'SURFACE_NSURFACE'
+    sv_dependencies = {'geomdl'}
 
     input_modes = [
             ('1D', "Single list", "List of all control points (concatenated)", 1),
@@ -159,10 +157,8 @@ class SvExApproxNurbsSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
 
 
 def register():
-    if geomdl is not None:
-        bpy.utils.register_class(SvExApproxNurbsSurfaceNode)
+    bpy.utils.register_class(SvExApproxNurbsSurfaceNode)
+
 
 def unregister():
-    if geomdl is not None:
-        bpy.utils.unregister_class(SvExApproxNurbsSurfaceNode)
-
+    bpy.utils.unregister_class(SvExApproxNurbsSurfaceNode)

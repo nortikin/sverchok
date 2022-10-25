@@ -7,13 +7,9 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 from sverchok.utils.logging import info
 from sverchok.dependencies import FreeCAD
-from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
 
-if FreeCAD is None:
-    add_dummy('SvReadFCStdSketchNode', 'SvReadFCStdSketchNode', 'FreeCAD')
-
-else:
+if FreeCAD is not None:
     F = FreeCAD
 
 
@@ -43,6 +39,7 @@ class SvReadFCStdSketchNode(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Read FCStd Sketches'
     bl_icon = 'IMPORT'
     sv_category = "Solid Outputs"
+    sv_dependencies = {'FreeCAD'}
 
     max_points : IntProperty(name="max_points", default=50, update = updateNode)
     read_update : BoolProperty(name="read_update", default=True)
@@ -348,14 +345,14 @@ def FreeCAD_abs_placement(sketch_placement,p_co):
     local_placement.Base = p_co
     return sketch_placement.multiply(local_placement)
 
+
 def register():
-    if FreeCAD is not None:
-        bpy.utils.register_class(SvReadFCStdSketchNode)
-        bpy.utils.register_class(SvShowFcstdSketchNamesOp)
-        bpy.utils.register_class(SvReadFCStdSketchOperator)
+    bpy.utils.register_class(SvReadFCStdSketchNode)
+    bpy.utils.register_class(SvShowFcstdSketchNamesOp)
+    bpy.utils.register_class(SvReadFCStdSketchOperator)
+
 
 def unregister():
-    if FreeCAD is not None:
-        bpy.utils.unregister_class(SvReadFCStdSketchNode)
-        bpy.utils.unregister_class(SvShowFcstdSketchNamesOp)
-        bpy.utils.unregister_class(SvReadFCStdSketchOperator)
+    bpy.utils.unregister_class(SvReadFCStdSketchNode)
+    bpy.utils.unregister_class(SvShowFcstdSketchNamesOp)
+    bpy.utils.unregister_class(SvReadFCStdSketchOperator)

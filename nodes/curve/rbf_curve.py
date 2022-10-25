@@ -8,13 +8,10 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 from sverchok.utils.curve import make_euclidean_ts
 from sverchok.utils.curve.rbf import SvRbfCurve
-from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import scipy
 from sverchok.utils.math import rbf_functions
 
-if scipy is None:
-    add_dummy('SvRbfCurveNode', "RBF Curve", 'scipy')
-else:
+if scipy is not None:
     from scipy.interpolate import Rbf
 
 
@@ -27,6 +24,7 @@ class SvExRbfCurveNode(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'RBF Curve'
     bl_icon = 'CURVE_NCURVE'
     sv_icon = 'SV_INTERP_CURVE'
+    sv_dependencies = {'scipy'}
 
     function : EnumProperty(
             name = "Function",
@@ -84,11 +82,8 @@ class SvExRbfCurveNode(SverchCustomTreeNode, bpy.types.Node):
 
 
 def register():
-    if scipy is not None:
-        bpy.utils.register_class(SvExRbfCurveNode)
+    bpy.utils.register_class(SvExRbfCurveNode)
 
 
 def unregister():
-    if scipy is not None:
-        bpy.utils.unregister_class(SvExRbfCurveNode)
-
+    bpy.utils.unregister_class(SvExRbfCurveNode)
