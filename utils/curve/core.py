@@ -931,10 +931,11 @@ class SvTaylorCurve(SvCurve):
 
         mr = calc_taylor_nurbs_matrices(p, self.get_u_bounds())
         M, R = mr['M'], mr['R']
+        RM = R @ M
 
         control_points = np.zeros((p+1, self.ndim))
         for axis in range(self.ndim):
-            control_points[:,axis] = np.linalg.solve(R @ M, coeffs[:,axis])
+            control_points[:,axis] = np.linalg.solve(RM, coeffs[:,axis])
 
         return control_points
 
@@ -1054,7 +1055,7 @@ def calc_taylor_nurbs_matrices(degree, u_bounds=(0.0,1.0), calc_M=True, calc_R=T
     result = dict()
     if calc_M:
         if p in _taylor_nurbs_matrix_cache:
-            result['M'] = _taylor_nurbs_matrix_cache[p]
+            M = result['M'] = _taylor_nurbs_matrix_cache[p]
         else:
             M = np.zeros((p+1, p+1), dtype=np.float64)
             for k in range(p+1):
