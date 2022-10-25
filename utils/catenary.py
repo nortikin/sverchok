@@ -110,6 +110,9 @@ class CatenarySolver(object):
         self.point1 = point1
         self.point2 = point2
         self.length = length
+        distance = np.linalg.norm(point1 - point2)
+        if length < distance:
+            raise Exception(f"Cannot build catenary curve from {point1} to {point2} with length {length} - length must be at least {distance}")
         self.force = force / np.linalg.norm(force)
         self._init()
 
@@ -136,7 +139,10 @@ class CatenarySolver(object):
         d = self.dx
         S = self.S
         x2 = d*d * (5*d + sqrt(5*d * (6*S - d))) / (60 * (S - d))
-        return sqrt(x2) / 2
+        try:
+            return sqrt(x2) / 2
+        except ValueError:
+            raise Exception(f"Cannot build catenary curve from {self.point1} to {self.point2} with length {self.length} - probably length must be greater")
 
     def _bracket(self, A0):
         dA = 0.1
