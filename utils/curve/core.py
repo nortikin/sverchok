@@ -929,13 +929,12 @@ class SvTaylorCurve(SvCurve):
         p = self.get_degree()
         coeffs = self.get_coefficients()
 
-        M, R = calc_taylor_nurbs_matrices(p, self.get_u_bounds())
-        M1 = np.linalg.inv(M)
-        R1 = np.linalg.inv(R)
+        mr = calc_taylor_nurbs_matrices(p, self.get_u_bounds())
+        M, R = mr['M'], mr['R']
 
         control_points = np.zeros((p+1, self.ndim))
         for axis in range(self.ndim):
-            control_points[:,axis] = M1 @ R1 @ coeffs[:,axis]
+            control_points[:,axis] = np.linalg.solve(R @ M, coeffs[:,axis])
 
         return control_points
 
@@ -1001,27 +1000,93 @@ class SvTaylorCurve(SvCurve):
         square.u_bounds = self.u_bounds
         return square
 
-def calc_taylor_nurbs_matrices(degree, u_bounds):
-    # Refer to The NURBS Book, 2nd ed., p. 6.6
+_taylor_nurbs_matrix_cache = dict()
+_taylor_nurbs_inverse_matrix_cache = dict()
+
+def calc_taylor_nurbs_matrices(degree, u_bounds=(0.0,1.0), calc_M=True, calc_R=True, calc_M1=False, calc_R1=False):
+    """
+    Calculate two matrices, M and R, such that coefficients
+    of polynomial representation of Bezier curve can be expressed
+    in terms of Bezier control points as
+
+        coeffs[:,axis] = R @ M @ control_points[:,axis]
+
+    Correspondingly, the same matrices can be used to convert
+    polynomial representation of curve into control points of Bezier
+    curve as
+
+        control_points[:,k] = M1 @ R1 @ coeffs[:,axis]
+
+    where M1 is inverse of M and R1 is inverse of R.
+
+    Note that M matrix depends only on degree, and R depends both on
+    degree and u_bounds. M matrix is always lower-triangular matrix.
+    R matrix is upper-triangular matrix. If u_bounds[0] == 0.0, then
+    R is diagonal matrix.
+
+    Refer to The NURBS Book, 2nd ed., p. 6.6
+
+    Args:
+        degree: degree of Bezier curve
+        u_bounds: tuple of (u_min, u_max) - domain of the curve.
+        calc_M: whether to calculate M matrix
+        calc_R: whether to calculate R matrix
+
+    Returns:
+        dictionary with string keys:
+        * 'M': np.array of shape (degree+1, degree+1) - present only if calc_M == True
+        * 'R': np.array of shape (degree+1, degree+1) - present only if calc_R == True
+    """
+
+    global _taylor_nurbs_matrix_cache
+    global _taylor_nurbs_inverse_matrix_cache
 
     p = degree
-    u1, u2 = u_bounds
-    binom = binomial_array(p+1)
 
-    M = np.zeros((p+1, p+1), dtype=np.float64)
-    for k in range(p+1):
-        sign = 1.0
-        for j in range(k, p+1):
-            M[j,k] = sign * binom[p,k] * binom[p-k, j-k]
-            sign = - sign
+    if calc_M1:
+        calc_M = True
+    if calc_R1:
+        calc_R = True
 
-    c = 1.0 / (u2 - u1)
-    d = -u1 / (u2 - u1)
+    if calc_M or calc_R:
+        binom = binomial_array(p+1)
 
-    R = np.zeros((p+1, p+1), dtype=np.float64)
-    for i in range(p+1):
-        for j in range(i, p+1):
-            R[i,j] = binom[j, i] * c**i * d**(j-i)
+    result = dict()
+    if calc_M:
+        if p in _taylor_nurbs_matrix_cache:
+            result['M'] = _taylor_nurbs_matrix_cache[p]
+        else:
+            M = np.zeros((p+1, p+1), dtype=np.float64)
+            for k in range(p+1):
+                sign = 1.0
+                for j in range(k, p+1):
+                    M[j,k] = sign * binom[p,k] * binom[p-k, j-k]
+                    sign = - sign
+            result['M'] = M
+            _taylor_nurbs_matrix_cache[p] = M
+        if calc_M1:
+            if p in _taylor_nurbs_inverse_matrix_cache:
+                result['M1'] = _taylor_nurbs_inverse_matrix_cache[p]
+            else:
+                M1 = np.linalg.inv(M)
+                result['M1'] = M1
+                _taylor_nurbs_inverse_matrix_cache[p] = M1
 
-    return M, R
+    if calc_R:
+        u1, u2 = u_bounds
+        c = 1.0 / (u2 - u1)
+        d = -u1 / (u2 - u1)
+
+        R = np.zeros((p+1, p+1), dtype=np.float64)
+        c_i = 1.0
+        for i in range(p+1):
+            for j in range(i, p+1):
+                R[i,j] = binom[j, i] * c_i * d**(j-i)
+            c_i *= c
+        result['R'] = R
+
+        if calc_R1:
+            result['R1'] = np.linalg.inv(R)
+
+    return result
 
