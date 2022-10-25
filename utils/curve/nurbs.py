@@ -31,7 +31,7 @@ from sverchok.utils.nurbs_common import (
 from sverchok.utils.surface.nurbs import SvNativeNurbsSurface, SvGeomdlSurface
 from sverchok.utils.surface.algorithms import nurbs_revolution_surface
 from sverchok.utils.math import binomial_array, cmp
-from sverchok.utils.geom import bounding_box, LineEquation
+from sverchok.utils.geom import bounding_box, LineEquation, are_points_coplanar, get_common_plane
 from sverchok.utils.logging import getLogger
 from sverchok.dependencies import geomdl
 
@@ -289,6 +289,14 @@ class SvNurbsCurve(SvCurve):
         w, W = weights.min(), weights.max()
         return (W - w) > tolerance
 
+    def is_planar(self, tolerance=1e-6):
+        cpts = self.get_control_points()
+        return are_points_coplanar(cpts, tolerance)
+
+    def get_plane(self, tolerance=1e-6):
+        cpts = self.get_control_points()
+        return get_common_plane(cpts, tolerance)
+
     def get_knotvector(self):
         """
         Get NURBS curve knotvector.
@@ -480,9 +488,23 @@ class SvNurbsCurve(SvCurve):
         return curve1, curve2
 
     def split_at(self, t):
-        c1, c2 = self._split_at(t)
         degree = self.get_degree()
         implementation = self.get_nurbs_implementation()
+
+#         if self.is_bezier() and self.is_rational():
+#             bezier = SvBezierCurve.from_control_points(self.get_control_points())
+#             kv = sv_knotvector.generate(degree, degree+1)
+#             u_min, u_max = kv[0], kv[-1]
+#             b1, b2 = bezier.split_at(t)
+#             c1 = SvNurbsCurve.build(implementation,
+#                     degree, sv_knotvector.rescale(kv, u_min, t),
+#                     b1.get_control_points())
+#             c2 = SvNurbsCurve.build(implementation,
+#                     degree, sv_knotvector.rescale(kv, t, u_max),
+#                     b2.get_control_points())
+#             return c1, c2
+
+        c1, c2 = self._split_at(t)
 
         if c1 is not None:
             knotvector1, control_points_1, weights_1 = c1
@@ -557,7 +579,7 @@ class SvNurbsCurve(SvCurve):
         begin, end = self.get_end_points()
         cpts = self.get_control_points()
         # direction from first to last point of the curve
-        direction = cpts[-1] - cpts[0]
+        direction = end - begin
         if np.linalg.norm(direction) < tolerance:
             return True
         line = LineEquation.from_direction_and_point(direction, begin)
@@ -606,7 +628,7 @@ class SvNurbsCurve(SvCurve):
             n = len(points)
             p = self.get_degree()
             raise UnsupportedCurveTypeException(f"Curve with {n} control points and {p}'th degree can not be converted into Bezier curve")
-        return SvBezierCurve(points)
+        return SvBezierCurve.from_control_points(points)
 
     def to_bezier_segments(self, to_bezier_class=True):
         """
@@ -645,7 +667,8 @@ class SvNurbsCurve(SvCurve):
         p = self.get_degree()
         cpts = self.get_homogenous_control_points()
 
-        M, R = calc_taylor_nurbs_matrices(p, self.get_u_bounds())
+        mr = calc_taylor_nurbs_matrices(p, self.get_u_bounds())
+        M, R = mr['M'], mr['R']
 
         coeffs = np.zeros((4, p+1))
         for k in range(4):
@@ -1015,7 +1038,12 @@ class SvNativeNurbsCurve(SvNurbsCurve):
         return self.degree
 
     def evaluate(self, t):
-        #return self.evaluate_array(np.array([t]))[0]
+        if self.is_bezier() and self.is_rational():
+            u_min, u_max = self.get_u_bounds()
+            t1 = (t - u_min) / (u_max - u_min)
+            bezier = SvBezierCurve.from_control_points(self.get_control_points())
+            return bezier.evaluate(t1)
+
         numerator, denominator = self.fraction_single(0, t)
         if denominator == 0:
             return np.array([0,0,0])
@@ -1049,6 +1077,12 @@ class SvNativeNurbsCurve(SvNurbsCurve):
         return numerator, denominator
 
     def evaluate_array(self, ts):
+        if self.is_bezier() and self.is_rational():
+            u_min, u_max = self.get_u_bounds()
+            ts1 = (ts - u_min) / (u_max - u_min)
+            bezier = SvBezierCurve.from_control_points(self.get_control_points())
+            return bezier.evaluate_array(ts1)
+
         numerator, denominator = self.fraction(0, ts)
 #         if (denominator == 0).any():
 #             print("Num:", numerator)
