@@ -1067,11 +1067,11 @@ class SvNativeNurbsCurve(SvNurbsCurve):
         return self.degree
 
     def evaluate(self, t):
-#         if self.is_bezier() and self.is_rational():
-#             u_min, u_max = self.get_u_bounds()
-#             t1 = (t - u_min) / (u_max - u_min)
-#             bezier = SvBezierCurve.from_control_points(self.get_control_points())
-#             return bezier.evaluate(t1)
+        if self.is_bezier() and not self.is_rational():
+            u_min, u_max = self.get_u_bounds()
+            t1 = (t - u_min) / (u_max - u_min)
+            bezier = SvBezierCurve.from_control_points(self.get_control_points())
+            return bezier.evaluate(t1)
 
         numerator, denominator = self.fraction_single(0, t)
         if denominator == 0:
@@ -1106,11 +1106,11 @@ class SvNativeNurbsCurve(SvNurbsCurve):
         return numerator, denominator
 
     def evaluate_array(self, ts):
-#         if self.is_bezier() and self.is_rational():
-#             u_min, u_max = self.get_u_bounds()
-#             ts1 = (ts - u_min) / (u_max - u_min)
-#             bezier = SvBezierCurve.from_control_points(self.get_control_points())
-#             return bezier.evaluate_array(ts1)
+        if self.is_bezier() and not self.is_rational():
+            u_min, u_max = self.get_u_bounds()
+            ts1 = (ts - u_min) / (u_max - u_min)
+            bezier = SvBezierCurve.from_control_points(self.get_control_points())
+            return bezier.evaluate_array(ts1)
 
         numerator, denominator = self.fraction(0, ts)
 #         if (denominator == 0).any():
@@ -1967,11 +1967,11 @@ def interpolate(cls, degree, points, metric=&#39;DISTANCE&#39;, **kwargs):
         return self.degree
 
     def evaluate(self, t):
-#         if self.is_bezier() and self.is_rational():
-#             u_min, u_max = self.get_u_bounds()
-#             t1 = (t - u_min) / (u_max - u_min)
-#             bezier = SvBezierCurve.from_control_points(self.get_control_points())
-#             return bezier.evaluate(t1)
+        if self.is_bezier() and not self.is_rational():
+            u_min, u_max = self.get_u_bounds()
+            t1 = (t - u_min) / (u_max - u_min)
+            bezier = SvBezierCurve.from_control_points(self.get_control_points())
+            return bezier.evaluate(t1)
 
         numerator, denominator = self.fraction_single(0, t)
         if denominator == 0:
@@ -2006,11 +2006,11 @@ def interpolate(cls, degree, points, metric=&#39;DISTANCE&#39;, **kwargs):
         return numerator, denominator
 
     def evaluate_array(self, ts):
-#         if self.is_bezier() and self.is_rational():
-#             u_min, u_max = self.get_u_bounds()
-#             ts1 = (ts - u_min) / (u_max - u_min)
-#             bezier = SvBezierCurve.from_control_points(self.get_control_points())
-#             return bezier.evaluate_array(ts1)
+        if self.is_bezier() and not self.is_rational():
+            u_min, u_max = self.get_u_bounds()
+            ts1 = (ts - u_min) / (u_max - u_min)
+            bezier = SvBezierCurve.from_control_points(self.get_control_points())
+            return bezier.evaluate_array(ts1)
 
         numerator, denominator = self.fraction(0, ts)
 #         if (denominator == 0).any():
