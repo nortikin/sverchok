@@ -517,7 +517,7 @@ class SvConcatCurve(SvCurve):
         return "+".join([str(curve) for curve in self.curves])
 
     def get_u_bounds(self):
-        return (0.0, self.u_max)
+        return (self.min_bounds[0], self.u_max)
 
     def _get_ts_grouped(self, ts):
         index = self.min_bounds.searchsorted(ts, side='left') - 1
