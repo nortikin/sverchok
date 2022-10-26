@@ -1,15 +1,14 @@
 
+import math
+import bpy
+from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
+
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import updateNode, match_long_repeat as mlr
 
 from sverchok.dependencies import FreeCAD
 
 if FreeCAD is not None:
-    import math
-    import bpy
-    from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
-
-    from sverchok.node_tree import SverchCustomTreeNode
-    from sverchok.data_structure import updateNode, match_long_repeat as mlr
-
     import MeshPart
 
 

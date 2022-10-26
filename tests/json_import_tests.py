@@ -101,7 +101,7 @@ class ExamplesImportTest(SverchokTestCase):
                             if is_old(node):
                                 error_format = "This example contains deprecated node `{}' ({}). Please upgrade the example file."
                                 self.fail(error_format.format(node.name, node.bl_idname))
-                            if node.missing_dependency:
+                            if getattr(node, 'missing_dependency', False):
                                 self.skipTest("Some dependencies was not installed")
                         if importer.has_fails:
                             raise ImportError(importer.fail_massage)
