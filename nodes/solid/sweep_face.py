@@ -5,8 +5,6 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
-import numpy as np
-
 import bpy
 from bpy.props import BoolProperty, EnumProperty, FloatVectorProperty, FloatProperty
 
@@ -16,16 +14,12 @@ from sverchok.utils.curve.core import SvCurve
 from sverchok.utils.curve.freecad import curve_to_freecad_nurbs
 from sverchok.utils.surface.core import SvSurface
 from sverchok.utils.surface.freecad import surface_to_freecad, is_solid_face_surface
-from sverchok.utils.dummy_nodes import add_dummy
-
 from sverchok.dependencies import FreeCAD
 
-if FreeCAD is None:
-    add_dummy('SvSweepSolidFaceNode', 'Sweep Face (Solid)', 'FreeCAD')
-else:
+if FreeCAD is not None:
     import Part
-    from FreeCAD import Base
     from Part import BRepOffsetAPI 
+
 
 class SvSweepSolidFaceNode(SverchCustomTreeNode, bpy.types.Node):
     """
@@ -37,6 +31,7 @@ class SvSweepSolidFaceNode(SverchCustomTreeNode, bpy.types.Node):
     bl_icon = 'EDGESEL'
     sv_icon = 'SV_SWEEP_FACE'
     sv_category = "Solid Operators"
+    sv_dependencies = {'FreeCAD'}
 
     use_frenet : BoolProperty(
             name = "Frenet",
@@ -107,11 +102,10 @@ class SvSweepSolidFaceNode(SverchCustomTreeNode, bpy.types.Node):
 
         self.outputs['Solid'].sv_set(solid_out)
 
+
 def register():
-    if FreeCAD is not None:
-        bpy.utils.register_class(SvSweepSolidFaceNode)
+    bpy.utils.register_class(SvSweepSolidFaceNode)
+
 
 def unregister():
-    if FreeCAD is not None:
-        bpy.utils.unregister_class(SvSweepSolidFaceNode)
-
+    bpy.utils.unregister_class(SvSweepSolidFaceNode)

@@ -8,11 +8,8 @@ from sverchok.utils.solid import mesh_from_solid_faces, mesh_from_solid_faces_MO
 from sverchok.utils.sv_bmesh_utils import recalc_normals
 from sverchok.utils.sv_mesh_utils import non_redundant_faces_indices_np as clean
 from sverchok.dependencies import FreeCAD
-from sverchok.utils.dummy_nodes import add_dummy
 
-if FreeCAD is None:
-    add_dummy('SvSolidToMeshNodeMk2', 'Solid to Mesh', 'FreeCAD')
-else:
+if FreeCAD is not None:
     import MeshPart
 
 
@@ -30,6 +27,7 @@ class SvSolidToMeshNodeMk2(SverchCustomTreeNode, bpy.types.Node):
     bl_icon = 'MESH_CUBE'
     sv_icon = 'SV_SOLID_TO_MESH'
     sv_category = "Solid Outputs"
+    sv_dependencies = {'FreeCAD'}
     modes = [
         ('Basic',    'Basic',    '', 0),
         ('Standard', 'Standard', '', 1),
@@ -270,9 +268,8 @@ class SvSolidToMeshNodeMk2(SverchCustomTreeNode, bpy.types.Node):
 
 
 def register():
-    if FreeCAD is not None:
-        bpy.utils.register_class(SvSolidToMeshNodeMk2)
+    bpy.utils.register_class(SvSolidToMeshNodeMk2)
+
 
 def unregister():
-    if FreeCAD is not None:
-        bpy.utils.unregister_class(SvSolidToMeshNodeMk2)
+    bpy.utils.unregister_class(SvSolidToMeshNodeMk2)

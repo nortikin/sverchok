@@ -25,11 +25,7 @@ from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_
 from sverchok.utils.sv_bmesh_utils import recalc_normals
 from sverchok.utils.sv_mesh_utils import mesh_join
 from sverchok.utils.voronoi3d import voronoi_on_mesh
-from sverchok.utils.dummy_nodes import add_dummy
-from sverchok.dependencies import scipy
 
-if scipy is None:
-    add_dummy('SvVoronoiOnMeshNode', "Voronoi on Mesh", 'scipy')
 
 class SvVoronoiOnMeshNode(SverchCustomTreeNode, bpy.types.Node):
     """
@@ -40,6 +36,7 @@ class SvVoronoiOnMeshNode(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Voronoi on Mesh'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_VORONOI'
+    sv_dependencies = {'scipy'}
 
     modes = [
             ('VOLUME', "Split Volume", "Split volume of the mesh into regions of Voronoi diagram", 0),
@@ -186,11 +183,10 @@ class SvVoronoiOnMeshNode(SverchCustomTreeNode, bpy.types.Node):
         self.outputs['Faces'].sv_set(faces_out)
         #self.outputs['AllSites'].sv_set(sites_out)
 
+
 def register():
-    if scipy is not None:
-        bpy.utils.register_class(SvVoronoiOnMeshNode)
+    bpy.utils.register_class(SvVoronoiOnMeshNode)
+
 
 def unregister():
-    if scipy is not None:
-        bpy.utils.unregister_class(SvVoronoiOnMeshNode)
-
+    bpy.utils.unregister_class(SvVoronoiOnMeshNode)

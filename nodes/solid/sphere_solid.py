@@ -4,11 +4,8 @@ from bpy.props import FloatProperty, FloatVectorProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat as mlr
 from sverchok.dependencies import FreeCAD
-from sverchok.utils.dummy_nodes import add_dummy
 
-if FreeCAD is None:
-    add_dummy('SvSphereSolidNode', 'Sphere (Solid)', 'FreeCAD')
-else:
+if FreeCAD is not None:
     import Part
     from FreeCAD import Base
 
@@ -22,6 +19,7 @@ class SvSphereSolidNode(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Sphere (Solid)'
     bl_icon = 'META_BALL'
     sv_category = "Solid Inputs"
+    sv_dependencies = {'FreeCAD'}
 
     sphere_radius: FloatProperty(
         name="Radius",
@@ -90,9 +88,8 @@ class SvSphereSolidNode(SverchCustomTreeNode, bpy.types.Node):
 
 
 def register():
-    if FreeCAD is not None:
-        bpy.utils.register_class(SvSphereSolidNode)
+    bpy.utils.register_class(SvSphereSolidNode)
+
 
 def unregister():
-    if FreeCAD is not None:
-        bpy.utils.unregister_class(SvSphereSolidNode)
+    bpy.utils.unregister_class(SvSphereSolidNode)

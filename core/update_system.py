@@ -184,6 +184,8 @@ class SearchTree:
         If suppress is True an error during node execution will be suppressed"""
         with AddStatistic(node, suppress):
             prepare_input_data(self.previous_sockets(node), node.inputs)
+            if error := node.dependency_error:
+                raise error
             node.process()
 
     def _remove_reroutes(self):
@@ -460,6 +462,8 @@ class UpdateTree(SearchTree):
                     with AddStatistic(node):
                         yield node
                         prepare_input_data(prev_socks, node.inputs)
+                        if error := node.dependency_error:
+                            raise error
                         node.process()
             except CancelError:
                 pass

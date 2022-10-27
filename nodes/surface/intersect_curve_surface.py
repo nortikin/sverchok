@@ -7,11 +7,6 @@ from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_
 from sverchok.utils.curve import SvCurve
 from sverchok.utils.surface import SvSurface
 from sverchok.utils.manifolds import intersect_curve_surface
-from sverchok.utils.dummy_nodes import add_dummy
-from sverchok.dependencies import scipy
-
-if scipy is None:
-    add_dummy('SvExCrossCurveSurfaceNode', "Intersect Curve with Surface", 'scipy')
 
 
 class SvExCrossCurveSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
@@ -23,6 +18,7 @@ class SvExCrossCurveSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Intersect Curve with Surface'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_CROSS_CURVE_SURFACE'
+    sv_dependencies = {'scipy'}
 
     raycast_samples : IntProperty(
         name = "Init Surface Samples",
@@ -113,11 +109,8 @@ class SvExCrossCurveSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
 
 
 def register():
-    if scipy is not None:
-        bpy.utils.register_class(SvExCrossCurveSurfaceNode)
+    bpy.utils.register_class(SvExCrossCurveSurfaceNode)
 
 
 def unregister():
-    if scipy is not None:
-        bpy.utils.unregister_class(SvExCrossCurveSurfaceNode)
-
+    bpy.utils.unregister_class(SvExCrossCurveSurfaceNode)

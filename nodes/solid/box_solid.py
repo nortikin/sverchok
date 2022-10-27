@@ -2,14 +2,11 @@ import bpy
 from bpy.props import FloatProperty, FloatVectorProperty, EnumProperty
 
 from sverchok.dependencies import FreeCAD
-from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 from sverchok.data_structure import match_long_repeat as mlr
 
-if FreeCAD is None:
-    add_dummy('SvBoxSolidNode', 'Box (Solid)', 'FreeCAD')
-else:
+if FreeCAD is not None:
     import Part
     from FreeCAD import Base
 
@@ -23,6 +20,8 @@ class SvBoxSolidNode(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Box (Solid)'
     bl_icon = 'META_CUBE'
     sv_category = "Solid Inputs"
+    sv_dependencies = {'FreeCAD'}
+
     box_length: FloatProperty(
         name="Length",
         default=1,
@@ -97,9 +96,8 @@ class SvBoxSolidNode(SverchCustomTreeNode, bpy.types.Node):
 
 
 def register():
-    if FreeCAD is not None:
-        bpy.utils.register_class(SvBoxSolidNode)
+    bpy.utils.register_class(SvBoxSolidNode)
+
 
 def unregister():
-    if FreeCAD is not None:
-        bpy.utils.unregister_class(SvBoxSolidNode)
+    bpy.utils.unregister_class(SvBoxSolidNode)

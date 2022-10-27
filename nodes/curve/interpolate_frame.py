@@ -12,11 +12,6 @@ from sverchok.utils.curve import SvCurve
 from sverchok.utils.geom import PlaneEquation
 from sverchok.utils.math import xyz_axes
 from sverchok.utils.manifolds import intersect_curve_plane
-from sverchok.utils.dummy_nodes import add_dummy
-from sverchok.dependencies import scipy
-
-if scipy is None:
-    add_dummy('SvExSlerpCurveFrameNode', "Interpolate Curve Frame", 'scipy')
 
 
 def nearest_solution(point, solutions):
@@ -101,6 +96,7 @@ class SvExSlerpCurveFrameNode(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Interpolate Curve Frame'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_INTERP_FRAME'
+    sv_dependencies = {'scipy'}
 
     samples : IntProperty(
         name = "Curve Resolution",
@@ -178,11 +174,8 @@ class SvExSlerpCurveFrameNode(SverchCustomTreeNode, bpy.types.Node):
 
 
 def register():
-    if scipy is not None:
-        bpy.utils.register_class(SvExSlerpCurveFrameNode)
+    bpy.utils.register_class(SvExSlerpCurveFrameNode)
 
 
 def unregister():
-    if scipy is not None:
-        bpy.utils.unregister_class(SvExSlerpCurveFrameNode)
-
+    bpy.utils.unregister_class(SvExSlerpCurveFrameNode)

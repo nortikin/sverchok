@@ -12,14 +12,12 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, zip_long_repeat,
                                      ensure_nesting_level, get_data_nesting_level)
 from sverchok.dependencies import FreeCAD
-from sverchok.utils.dummy_nodes import add_dummy
 
-if FreeCAD is None:
-    add_dummy('SvSolidGeneralFuseNode', 'Solid General Fuse', 'FreeCAD')
-else:
+if FreeCAD is not None:
     from sverchok.utils.solid import SvGeneralFuse, SvBoolResult
 
     import Part
+
 
 class SvSolidGeneralFuseNode(SverchCustomTreeNode, bpy.types.Node):
     """
@@ -31,6 +29,7 @@ class SvSolidGeneralFuseNode(SverchCustomTreeNode, bpy.types.Node):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_GENERAL_FUSE'
     sv_category = "Solid Operators"
+    sv_dependencies = {'FreeCAD'}
 
     def update_sockets(self, context):
         hide_masks = self.merge_result and self.refine_solid
@@ -241,11 +240,10 @@ class SvSolidGeneralFuseNode(SverchCustomTreeNode, bpy.types.Node):
         self.outputs['FacesMask'].sv_set(face_masks_out)
         self.outputs['FaceSources'].sv_set(face_srcs_out)
 
+
 def register():
-    if FreeCAD is not None:
-        bpy.utils.register_class(SvSolidGeneralFuseNode)
+    bpy.utils.register_class(SvSolidGeneralFuseNode)
+
 
 def unregister():
-    if FreeCAD is not None:
-        bpy.utils.unregister_class(SvSolidGeneralFuseNode)
-
+    bpy.utils.unregister_class(SvSolidGeneralFuseNode)

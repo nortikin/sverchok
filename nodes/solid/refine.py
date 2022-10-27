@@ -6,17 +6,14 @@
 # License-Filename: LICENSE
 
 import bpy
-from bpy.props import BoolProperty, FloatProperty, EnumProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, map_recursive
+from sverchok.data_structure import map_recursive
 from sverchok.dependencies import FreeCAD
-from sverchok.utils.dummy_nodes import add_dummy
 
-if FreeCAD is None:
-    add_dummy('SvRefineSolidNode', 'Refine Solid', 'FreeCAD')
-else:
+if FreeCAD is not None:
     import Part
+
 
 class SvRefineSolidNode(SverchCustomTreeNode, bpy.types.Node):
     """
@@ -26,6 +23,7 @@ class SvRefineSolidNode(SverchCustomTreeNode, bpy.types.Node):
     bl_idname = 'SvRefineSolidNode'
     bl_label = 'Refine Solid'
     sv_category = "Solid Operators"
+    sv_dependencies = {'FreeCAD'}
 
     def sv_init(self, context):
         self.inputs.new('SvSolidSocket', "Solid")
@@ -44,11 +42,10 @@ class SvRefineSolidNode(SverchCustomTreeNode, bpy.types.Node):
 
         self.outputs['Solid'].sv_set(solids_out)
 
+
 def register():
-    if FreeCAD is not None:
-        bpy.utils.register_class(SvRefineSolidNode)
+    bpy.utils.register_class(SvRefineSolidNode)
+
 
 def unregister():
-    if FreeCAD is not None:
-        bpy.utils.unregister_class(SvRefineSolidNode)
-
+    bpy.utils.unregister_class(SvRefineSolidNode)

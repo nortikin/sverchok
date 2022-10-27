@@ -8,12 +8,9 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 from sverchok.utils.curve.nurbs import SvNurbsCurve, SvGeomdlCurve
 from sverchok.utils.surface.nurbs import SvNurbsSurface, SvGeomdlSurface
-from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import geomdl
 
-if geomdl is None:
-    add_dummy('SvExNurbsToJsonNode', "NURBS to JSON", 'geomdl')
-else:
+if geomdl is not None:
     # FIXME: Ugly temporary hack... Has to be replaced after
     # https://github.com/orbingol/NURBS-Python/issues/76 is fixed.
     from geomdl import _exchange
@@ -67,6 +64,7 @@ class SvExNurbsToJsonNode(SverchCustomTreeNode, bpy.types.Node):
     bl_idname = 'SvExNurbsToJsonNode'
     bl_label = 'NURBS to JSON'
     bl_icon = 'CURVE_NCURVE'
+    sv_dependencies = {'geomdl'}
 
     text_block : StringProperty(
             name = "Text",
@@ -136,12 +134,10 @@ class SvExNurbsToJsonNode(SverchCustomTreeNode, bpy.types.Node):
 
 
 def register():
-    if geomdl is not None:
-        bpy.utils.register_class(SvExNurbsToJsonOp)
-        bpy.utils.register_class(SvExNurbsToJsonNode)
+    bpy.utils.register_class(SvExNurbsToJsonOp)
+    bpy.utils.register_class(SvExNurbsToJsonNode)
+
 
 def unregister():
-    if geomdl is not None:
-        bpy.utils.unregister_class(SvExNurbsToJsonNode)
-        bpy.utils.unregister_class(SvExNurbsToJsonOp)
-
+    bpy.utils.unregister_class(SvExNurbsToJsonNode)
+    bpy.utils.unregister_class(SvExNurbsToJsonOp)

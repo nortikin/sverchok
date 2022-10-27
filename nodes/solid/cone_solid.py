@@ -4,11 +4,8 @@ from bpy.props import FloatProperty, FloatVectorProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat as mlr
 from sverchok.dependencies import FreeCAD
-from sverchok.utils.dummy_nodes import add_dummy
 
-if FreeCAD is None:
-    add_dummy('SvConeSolidNode', 'Cone (Solid)', 'FreeCAD')
-else:
+if FreeCAD is not None:
     import Part
     from FreeCAD import Base
 
@@ -22,6 +19,7 @@ class SvConeSolidNode(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Cone (Solid)'
     bl_icon = 'MESH_CONE'
     sv_category = "Solid Inputs"
+    sv_dependencies = {'FreeCAD'}
 
     cylinder_radius: FloatProperty(
         name="Radius Bottom",
@@ -82,9 +80,8 @@ class SvConeSolidNode(SverchCustomTreeNode, bpy.types.Node):
 
 
 def register():
-    if FreeCAD is not None:
-        bpy.utils.register_class(SvConeSolidNode)
+    bpy.utils.register_class(SvConeSolidNode)
+
 
 def unregister():
-    if FreeCAD is not None:
-        bpy.utils.unregister_class(SvConeSolidNode)
+    bpy.utils.unregister_class(SvConeSolidNode)

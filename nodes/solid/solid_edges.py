@@ -5,11 +5,8 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, map_recursive, flatten_data
 from sverchok.utils.curve.freecad import SvSolidEdgeCurve
 from sverchok.dependencies import FreeCAD
-from sverchok.utils.dummy_nodes import add_dummy
 
-if FreeCAD is None:
-    add_dummy('SvSolidEdgesNode', 'Solid Edges', 'FreeCAD')
-else:
+if FreeCAD is not None:
     import Part
 
 
@@ -22,7 +19,7 @@ class SvSolidEdgesNode(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Solid Edges (Curves)'
     bl_icon = 'EDGESEL'
     sv_category = "Solid Outputs"
-
+    sv_dependencies = {'FreeCAD'}
 
     flat_output: BoolProperty(
         name="Flat Output",
@@ -72,10 +69,8 @@ class SvSolidEdgesNode(SverchCustomTreeNode, bpy.types.Node):
 
 
 def register():
-    if FreeCAD is not None:
-        bpy.utils.register_class(SvSolidEdgesNode)
+    bpy.utils.register_class(SvSolidEdgesNode)
+
 
 def unregister():
-    if FreeCAD is not None:
-        bpy.utils.unregister_class(SvSolidEdgesNode)
-
+    bpy.utils.unregister_class(SvSolidEdgesNode)

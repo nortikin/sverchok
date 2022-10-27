@@ -8,13 +8,10 @@ from mathutils import Matrix
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, zip_long_repeat, ensure_nesting_level,
                                      get_data_nesting_level)
-from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import scipy
 from sverchok.utils.surface.rbf import SvRbfSurface
 
-if scipy is None:
-    add_dummy('SvExMinimalSurfaceNode', "Minimal Surface", 'scipy')
-else:
+if scipy is not None:
     from scipy.interpolate import Rbf
 
 
@@ -27,6 +24,7 @@ class SvExMinimalSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Minimal Surface'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_EX_MINSURFACE'
+    sv_dependencies = {'scipy'}
 
     def update_sockets(self, context):
         self.inputs['Matrix'].hide_safe = self.coord_mode == 'UV'
@@ -239,9 +237,8 @@ class SvExMinimalSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
 
 
 def register():
-    if scipy is not None:
-        bpy.utils.register_class(SvExMinimalSurfaceNode)
+    bpy.utils.register_class(SvExMinimalSurfaceNode)
+
 
 def unregister():
-    if scipy is not None:
-        bpy.utils.unregister_class(SvExMinimalSurfaceNode)
+    bpy.utils.unregister_class(SvExMinimalSurfaceNode)

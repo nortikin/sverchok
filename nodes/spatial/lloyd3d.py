@@ -12,11 +12,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, ensure_nesting_level, zip_long_repeat, get_data_nesting_level
 from sverchok.utils.field.scalar import SvScalarField
 from sverchok.utils.voronoi3d import Bounds, lloyd3d_bounded
-from sverchok.utils.dummy_nodes import add_dummy
-from sverchok.dependencies import scipy
 
-if scipy is None:
-    add_dummy('SvLloyd3dNode', "Lloyd 3D", 'scipy')
 
 class SvLloyd3dNode(SverchCustomTreeNode, bpy.types.Node):
     """
@@ -27,6 +23,7 @@ class SvLloyd3dNode(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Lloyd 3D'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_VORONOI'
+    sv_dependencies = {'scipy'}
 
     iterations : IntProperty(
         name = "Iterations",
@@ -97,11 +94,10 @@ class SvLloyd3dNode(SverchCustomTreeNode, bpy.types.Node):
 
         self.outputs['Sites'].sv_set(verts_out)
 
+
 def register():
-    if scipy is not None:
-        bpy.utils.register_class(SvLloyd3dNode)
+    bpy.utils.register_class(SvLloyd3dNode)
+
 
 def unregister():
-    if scipy is not None:
-        bpy.utils.unregister_class(SvLloyd3dNode)
-
+    bpy.utils.unregister_class(SvLloyd3dNode)

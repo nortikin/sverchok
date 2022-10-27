@@ -9,16 +9,9 @@ import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
+from sverchok.data_structure import updateNode, zip_long_repeat
 from sverchok.utils.curve.freecad import make_helix
-from sverchok.utils.dummy_nodes import add_dummy
-from sverchok.dependencies import FreeCAD
 
-if FreeCAD is None:
-    add_dummy('SvFreeCadHelixNode', 'Helix (FreeCAD)', 'FreeCAD')
-else:
-    import Part
-    from FreeCAD import Base
 
 class SvFreeCadHelixNode(SverchCustomTreeNode, bpy.types.Node):
     """
@@ -28,6 +21,7 @@ class SvFreeCadHelixNode(SverchCustomTreeNode, bpy.types.Node):
     bl_idname = 'SvFreeCadHelixNode'
     bl_label = 'Helix (FreeCAD)'
     bl_icon = 'MOD_SCREW'
+    sv_dependencies = {'FreeCAD'}
 
     radius : FloatProperty(
         name = "Radius",
@@ -90,11 +84,10 @@ class SvFreeCadHelixNode(SverchCustomTreeNode, bpy.types.Node):
 
         self.outputs['Curve'].sv_set(curve_out)
 
+
 def register():
-    if FreeCAD is not None:
-        bpy.utils.register_class(SvFreeCadHelixNode)
+    bpy.utils.register_class(SvFreeCadHelixNode)
+
 
 def unregister():
-    if FreeCAD is not None:
-        bpy.utils.unregister_class(SvFreeCadHelixNode)
-
+    bpy.utils.unregister_class(SvFreeCadHelixNode)

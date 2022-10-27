@@ -5,21 +5,14 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
-import numpy as np
-
 import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
-import sverchok
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level
 from sverchok.utils.field.scalar import SvScalarField
 from sverchok.utils.voronoi3d import lloyd_on_sphere
-from sverchok.utils.dummy_nodes import add_dummy
-from sverchok.dependencies import scipy
 
-if scipy is None:
-    add_dummy('SvLloydOnSphereNode', "Lloyd on Sphere", 'scipy')
 
 class SvLloydOnSphereNode(SverchCustomTreeNode, bpy.types.Node):
     """
@@ -30,6 +23,7 @@ class SvLloydOnSphereNode(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Lloyd on Sphere'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_VORONOI'
+    sv_dependencies = {'scipy'}
 
     radius: FloatProperty(name="Radius", default=1.0, min=0.0, update=updateNode)
 
@@ -85,11 +79,10 @@ class SvLloydOnSphereNode(SverchCustomTreeNode, bpy.types.Node):
 
         self.outputs['Sites'].sv_set(verts_out)
 
+
 def register():
-    if scipy is not None:
-        bpy.utils.register_class(SvLloydOnSphereNode)
+    bpy.utils.register_class(SvLloydOnSphereNode)
+
 
 def unregister():
-    if scipy is not None:
-        bpy.utils.unregister_class(SvLloydOnSphereNode)
-
+    bpy.utils.unregister_class(SvLloydOnSphereNode)

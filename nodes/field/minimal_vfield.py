@@ -3,20 +3,14 @@ import numpy as np
 
 import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
-from mathutils import Matrix
 
-import sverchok
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level
-from sverchok.utils.logging import info, exception
+from sverchok.data_structure import updateNode, zip_long_repeat
 from sverchok.utils.field.rbf import SvRbfVectorField
-from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import scipy
 from sverchok.utils.math import rbf_functions
 
-if scipy is None:
-    add_dummy('SvExMinimalVectorFieldNode', "Minimal Vector Field", 'scipy')
-else:
+if scipy is not None:
     from scipy.interpolate import Rbf
 
 
@@ -27,6 +21,7 @@ class SvExMinimalVectorFieldNode(SverchCustomTreeNode, bpy.types.Node):
     """
     bl_idname = 'SvExMinimalVectorFieldNode'
     bl_label = 'RBF Vector Field'
+    sv_dependencies = {'scipy'}
 
     function : EnumProperty(
             name = "Function",
@@ -107,10 +102,8 @@ class SvExMinimalVectorFieldNode(SverchCustomTreeNode, bpy.types.Node):
 
 
 def register():
-    if scipy is not None:
-        bpy.utils.register_class(SvExMinimalVectorFieldNode)
+    bpy.utils.register_class(SvExMinimalVectorFieldNode)
+
 
 def unregister():
-    if scipy is not None:
-        bpy.utils.unregister_class(SvExMinimalVectorFieldNode)
-
+    bpy.utils.unregister_class(SvExMinimalVectorFieldNode)

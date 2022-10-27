@@ -265,11 +265,6 @@ class TreeGenerator:
             if old_nodes.is_old(bl_type):  # old node classes are registered only by request
                 old_nodes.register_old(bl_type)
             # import only here to do not create a cyclic import
-            from sverchok.utils import dummy_nodes
-            if dummy_nodes.is_dependent(bl_type):
-                # some node types are not registered if dependencies are not installed
-                # in this case such nodes are registered as dummies
-                dummy_nodes.register_dummy(bl_type)
             node = self._tree.nodes.new(bl_type)
             node.name = node_name
             return node

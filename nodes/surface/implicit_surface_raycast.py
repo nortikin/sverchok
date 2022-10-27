@@ -7,12 +7,9 @@ from bpy.props import FloatProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 from sverchok.utils.field.scalar import SvScalarField
-from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import scipy
 
-if scipy is None:
-    add_dummy('SvExImplSurfaceRaycastNode', "Implicit Surface Raycast", 'scipy')
-else:
+if scipy is not None:
     from scipy.optimize import root_scalar
 
 
@@ -64,6 +61,7 @@ class SvExImplSurfaceRaycastNode(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Implicit Surface Raycast'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_IMPL_SURF_RAYCAST'
+    sv_dependencies = {'scipy'}
 
     max_distance : FloatProperty(
             name = "Max Distance",
@@ -130,11 +128,8 @@ class SvExImplSurfaceRaycastNode(SverchCustomTreeNode, bpy.types.Node):
 
 
 def register():
-    if scipy is not None:
-        bpy.utils.register_class(SvExImplSurfaceRaycastNode)
+    bpy.utils.register_class(SvExImplSurfaceRaycastNode)
 
 
 def unregister():
-    if scipy is not None:
-        bpy.utils.unregister_class(SvExImplSurfaceRaycastNode)
-
+    bpy.utils.unregister_class(SvExImplSurfaceRaycastNode)

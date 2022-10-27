@@ -12,14 +12,11 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, zip_long_repeat,
                                      ensure_nesting_level, get_data_nesting_level)
 from sverchok.dependencies import FreeCAD
-from sverchok.utils.dummy_nodes import add_dummy
 
-if FreeCAD is None:
-    add_dummy('SvSolidBooleanNode', 'Solid Boolean', 'FreeCAD')
-else:
+if FreeCAD is not None:
     from sverchok.utils.solid import SvGeneralFuse, SvBoolResult
-
     import Part
+
 
 class SvSolidBooleanNode(SverchCustomTreeNode, bpy.types.Node):
     """
@@ -31,6 +28,7 @@ class SvSolidBooleanNode(SverchCustomTreeNode, bpy.types.Node):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_SOLID_BOOLEAN'
     sv_category = "Solid Operators"
+    sv_dependencies = {'FreeCAD'}
 
     mode_options = [
         ("ITX", "Intersect", "", 0),
@@ -220,10 +218,10 @@ class SvSolidBooleanNode(SverchCustomTreeNode, bpy.types.Node):
         if 'FaceSources' in self.outputs:
             self.outputs['FaceSources'].sv_set(face_srcs_out)
 
+
 def register():
-    if FreeCAD is not None:
-        bpy.utils.register_class(SvSolidBooleanNode)
+    bpy.utils.register_class(SvSolidBooleanNode)
+
 
 def unregister():
-    if FreeCAD is not None:
-        bpy.utils.unregister_class(SvSolidBooleanNode)
+    bpy.utils.unregister_class(SvSolidBooleanNode)

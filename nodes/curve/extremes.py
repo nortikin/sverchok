@@ -8,11 +8,6 @@ from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_
 from sverchok.utils.curve import SvCurve
 from sverchok.utils.field.scalar import SvScalarField
 from sverchok.utils.manifolds import curve_extremes
-from sverchok.utils.dummy_nodes import add_dummy
-from sverchok.dependencies import scipy
-
-if scipy is None:
-    add_dummy('SvExCurveExtremesNode', "Curve Extremes", 'scipy')
 
 
 def goal(curve, point_from):
@@ -31,6 +26,7 @@ class SvExCurveExtremesNode(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Curve Extremes'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_CURVE_EXTREMES'
+    sv_dependencies = {'scipy'}
 
     samples : IntProperty(
         name = "Max Points",
@@ -103,11 +99,8 @@ class SvExCurveExtremesNode(SverchCustomTreeNode, bpy.types.Node):
 
 
 def register():
-    if scipy is not None:
-        bpy.utils.register_class(SvExCurveExtremesNode)
+    bpy.utils.register_class(SvExCurveExtremesNode)
 
 
 def unregister():
-    if scipy is not None:
-        bpy.utils.unregister_class(SvExCurveExtremesNode)
-
+    bpy.utils.unregister_class(SvExCurveExtremesNode)

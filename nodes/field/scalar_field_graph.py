@@ -8,12 +8,9 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat
 from sverchok.utils.sv_mesh_utils import mesh_join
 from sverchok.utils.marching_squares import make_contours
-from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import skimage
 
-if skimage is None:
-    add_dummy('SvExScalarFieldGraphNode', "Scalar Field Graph", 'skimage')
-else:
+if skimage is not None:
     from skimage import measure
 
 
@@ -24,6 +21,7 @@ class SvExScalarFieldGraphNode(SverchCustomTreeNode, bpy.types.Node):
     """
     bl_idname = 'SvExScalarFieldGraphNode'
     bl_label = 'Scalar Field Graph'
+    sv_dependencies = {'skimage'}
 
     samples_xy : IntProperty(
         name = "Samples X/Y",
@@ -167,10 +165,8 @@ class SvExScalarFieldGraphNode(SverchCustomTreeNode, bpy.types.Node):
 
 
 def register():
-    if skimage is not None:
-        bpy.utils.register_class(SvExScalarFieldGraphNode)
+    bpy.utils.register_class(SvExScalarFieldGraphNode)
+
 
 def unregister():
-    if skimage is not None:
-        bpy.utils.unregister_class(SvExScalarFieldGraphNode)
-
+    bpy.utils.unregister_class(SvExScalarFieldGraphNode)

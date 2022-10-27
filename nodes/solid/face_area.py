@@ -6,19 +6,12 @@
 # License-Filename: LICENSE
 
 import bpy
-from bpy.props import BoolProperty, FloatProperty, EnumProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, map_recursive
+from sverchok.data_structure import map_recursive
 from sverchok.utils.surface import SvSurface
 from sverchok.utils.surface.freecad import surface_to_freecad, is_solid_face_surface
-from sverchok.dependencies import FreeCAD
-from sverchok.utils.dummy_nodes import add_dummy
 
-if FreeCAD is None:
-    add_dummy('SvSolidFaceAreaNode', 'Solid Face Area', 'FreeCAD')
-else:
-    import Part
 
 class SvSolidFaceAreaNode(SverchCustomTreeNode, bpy.types.Node):
     """
@@ -30,6 +23,7 @@ class SvSolidFaceAreaNode(SverchCustomTreeNode, bpy.types.Node):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_AREA'
     sv_category = "Solid Operators"
+    sv_dependencies = {'FreeCAD'}
 
     def sv_init(self, context):
         self.inputs.new('SvSurfaceSocket', "SolidFace")
@@ -51,11 +45,9 @@ class SvSolidFaceAreaNode(SverchCustomTreeNode, bpy.types.Node):
 
         self.outputs['Area'].sv_set(area_out)
 
+
 def register():
-    if FreeCAD is not None:
-        bpy.utils.register_class(SvSolidFaceAreaNode)
+    bpy.utils.register_class(SvSolidFaceAreaNode)
 
 def unregister():
-    if FreeCAD is not None:
-        bpy.utils.unregister_class(SvSolidFaceAreaNode)
-
+    bpy.utils.unregister_class(SvSolidFaceAreaNode)

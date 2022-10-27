@@ -23,11 +23,6 @@ from sverchok.ui.bgl_callback_3dview import callback_disable, callback_enable
 from sverchok.utils.sv_shader_sources import dashed_vertex_shader, dashed_fragment_shader
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.utils.modules.geom_utils import obtain_normal3 as normal
-from sverchok.dependencies import FreeCAD
-from sverchok.utils.dummy_nodes import add_dummy
-
-if FreeCAD is None:
-    add_dummy('SvSolidViewerNode', 'Solid Viewer', 'FreeCAD')
 
 
 def generate_facet_data(verts, faces, face_color, vector_light):
@@ -261,6 +256,7 @@ class SvSolidViewerNode(SverchCustomTreeNode, bpy.types.Node):
     bl_icon = 'GREASEPENCIL'
     sv_icon = 'SV_DRAW_VIEWER'
     sv_category = "Solid Outputs"
+    sv_dependencies = {'FreeCAD'}
     node_dict = {}
 
     def wrapped_update(self, context=None):
@@ -523,10 +519,10 @@ class SvSolidViewerNode(SverchCustomTreeNode, bpy.types.Node):
             else:
                 callback_disable(node_id(self))
 
+
 def register():
-    if FreeCAD is not None:
-        bpy.utils.register_class(SvSolidViewerNode)
+    bpy.utils.register_class(SvSolidViewerNode)
+
 
 def unregister():
-    if FreeCAD is not None:
-        bpy.utils.unregister_class(SvSolidViewerNode)
+    bpy.utils.unregister_class(SvSolidViewerNode)

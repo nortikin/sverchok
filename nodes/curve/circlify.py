@@ -7,11 +7,7 @@ from mathutils import Vector, Matrix
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 from sverchok.utils.curve import SvCircle
-from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import circlify
-
-if circlify is None:
-    add_dummy('SvExCirclifyNode', "Circlify", 'circlify')
 
 
 class SvExCirclifyNode(SverchCustomTreeNode, bpy.types.Node):
@@ -23,6 +19,7 @@ class SvExCirclifyNode(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Circlify'
     bl_icon = 'MESH_CIRCLE'
     sv_icon = 'SV_CIRCLIFY'
+    sv_dependencies = {'circlify'}
 
     major_radius : FloatProperty(
         name = "Major Radius",
@@ -117,10 +114,8 @@ class SvExCirclifyNode(SverchCustomTreeNode, bpy.types.Node):
 
 
 def register():
-    if circlify is not None:
-        bpy.utils.register_class(SvExCirclifyNode)
+    bpy.utils.register_class(SvExCirclifyNode)
+
 
 def unregister():
-    if circlify is not None:
-        bpy.utils.unregister_class(SvExCirclifyNode)
-
+    bpy.utils.unregister_class(SvExCirclifyNode)

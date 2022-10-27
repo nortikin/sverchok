@@ -3,7 +3,6 @@ import bpy
 from sverchok.utils.testing import SverchokTestCase
 from sverchok.utils.modules_inspection import iter_classes_from_module
 import sverchok
-from sverchok.utils.dummy_nodes import is_dependent
 
 
 class NodesAPITest(SverchokTestCase):
@@ -18,7 +17,7 @@ class NodesAPITest(SverchokTestCase):
         """All nodes should be either registered or saved as dummy nodes"""
         for node_class in iter_classes_from_module(sverchok.nodes, [bpy.types.Node]):
             bl_class = bpy.types.Node.bl_rna_get_subclass_py(node_class.bl_idname)
-            if bl_class is None and not is_dependent(node_class.bl_idname):
+            if bl_class is None and not node_class.missing_dependency:
                 with self.subTest(node=node_class.bl_idname):
                     self.assertIsNotNone(
                         bl_class,

@@ -6,11 +6,8 @@ from mathutils.geometry import tessellate_polygon as tessellate
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat as mlr
 from sverchok.dependencies import FreeCAD
-from sverchok.utils.dummy_nodes import add_dummy
 
-if FreeCAD is None:
-    add_dummy('SvMeshToSolidNode', 'Mesh to Solid', 'FreeCAD')
-else:
+if FreeCAD is not None:
     import Part
     import Mesh
 
@@ -64,6 +61,7 @@ class SvMeshToSolidNode(SverchCustomTreeNode, bpy.types.Node):
     bl_icon = 'MESH_CUBE'
     sv_icon = 'SV_MESH_TO_SOLID'
     sv_category = "Solid Inputs"
+    sv_dependencies = {'FreeCAD'}
 
     precision: FloatProperty(
         name="Precision",
@@ -112,9 +110,8 @@ class SvMeshToSolidNode(SverchCustomTreeNode, bpy.types.Node):
 
 
 def register():
-    if FreeCAD is not None:
-        bpy.utils.register_class(SvMeshToSolidNode)
+    bpy.utils.register_class(SvMeshToSolidNode)
+
 
 def unregister():
-    if FreeCAD is not None:
-        bpy.utils.unregister_class(SvMeshToSolidNode)
+    bpy.utils.unregister_class(SvMeshToSolidNode)

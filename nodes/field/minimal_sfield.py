@@ -8,12 +8,9 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat
 from sverchok.utils.field.rbf import SvRbfScalarField
 from sverchok.utils.math import rbf_functions
-from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import scipy
 
-if scipy is None:
-    add_dummy('SvExMinimalScalarFieldNode', "Minimal Scalar Field", 'scipy')
-else:
+if scipy is not None:
     from scipy.interpolate import Rbf
 
 
@@ -24,6 +21,7 @@ class SvExMinimalScalarFieldNode(SverchCustomTreeNode, bpy.types.Node):
     """
     bl_idname = 'SvExMinimalScalarFieldNode'
     bl_label = 'RBF Scalar Field'
+    sv_dependencies = {'scipy'}
 
     function : EnumProperty(
             name = "Function",
@@ -89,11 +87,8 @@ class SvExMinimalScalarFieldNode(SverchCustomTreeNode, bpy.types.Node):
 
 
 def register():
-    if scipy is not None:
-        bpy.utils.register_class(SvExMinimalScalarFieldNode)
+    bpy.utils.register_class(SvExMinimalScalarFieldNode)
 
 
 def unregister():
-    if scipy is not None:
-        bpy.utils.unregister_class(SvExMinimalScalarFieldNode)
-
+    bpy.utils.unregister_class(SvExMinimalScalarFieldNode)

@@ -11,7 +11,6 @@ from sverchok.core.socket_data import clear_all_socket_cache
 from sverchok.ui import bgl_callback_nodeview, bgl_callback_3dview
 from sverchok.utils import app_handler_ops
 from sverchok.utils.handle_blender_data import BlTrees
-from sverchok.utils import dummy_nodes
 from sverchok.utils.logging import catch_log_error, debug
 
 _state = {'frame': None}
@@ -164,9 +163,7 @@ def sv_post_load(scene):
     with catch_log_error():
         if any(not n.is_registered_node_type() for ng in BlTrees().sv_trees for n in ng.nodes):
             old_nodes.register_all()
-            dummy_nodes.register_all()
         old_nodes.mark_all()
-        dummy_nodes.mark_all()
 
     with catch_log_error():
         settings.apply_theme_if_necessary()

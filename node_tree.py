@@ -35,8 +35,9 @@ import bpy
 from bpy.props import StringProperty, BoolProperty, EnumProperty
 from bpy.types import NodeTree, NodeSocket
 
-from sverchok.core.sv_custom_exceptions import SvNoDataError
+from sverchok.core.sv_custom_exceptions import SvNoDataError, DependencyError
 import sverchok.core.events as ev
+import sverchok.dependencies as sv_deps
 from sverchok.core.event_system import handle_event
 from sverchok.data_structure import classproperty, post_load_call
 from sverchok.utils import get_node_class_reference
@@ -460,7 +461,7 @@ class UpdateNodes:
         if error is not None:
             color = no_data_color if isinstance(error, SvNoDataError) else exception_color
             self.set_temp_color(color)
-            sv_bgl.draw_text(self, repr(error), error_pref + self.node_id, color, 1.3, "UP")
+            sv_bgl.draw_text(self, str(error), error_pref + self.node_id, color, 1.3, "UP")
         else:
             sv_bgl.callback_disable(error_pref + self.node_id)
             self.set_temp_color()
@@ -591,7 +592,58 @@ class NodeUtils:
             self.debug(failure_message or canned_msg)
 
 
-class SverchCustomTreeNode(UpdateNodes, NodeUtils):
+class NodeDependencies:
+    """The mix-in keeps information about optional libraries which are used by
+    a node. Names of libraries should be assigned to `NodeDependencies.sv_dependencies`
+    only if a node can't work without them. In this case it won't be possible
+    to add the node into a node tree and its tooltip will show the names of
+    dependent libraries.
+
+    ![image](https://user-images.githubusercontent.com/28003269/197936383-e6b80beb-43f2-4168-8082-5ba92f1e72f4.png)
+
+    If opened tree already has dependent nodes the Dependency error will be
+    shown with names of dependent libraries.
+
+    ![image](https://user-images.githubusercontent.com/28003269/197694508-da963845-574b-4087-8c55-108c9b41ba47.png)
+
+    If libraries are optional and a node has a mode which lets to execute the
+    node without them don't assign any libraries to `NodeDependencies.sv_dependencies`.
+    Check availability the libraries manually inside the `process` method and
+    call the `DependencyError` if appropriate.
+    """
+    sv_dependencies: set[str] = set()  #: dependent module names
+
+    _missing_dependency = None
+    _dependency_error = None
+
+    @classproperty
+    def missing_dependency(cls) -> bool:
+        """Returns True if any of dependent libraries are not installed"""
+        if cls._missing_dependency is None:
+            for dep in cls.sv_dependencies:
+                if getattr(sv_deps, dep) is None:
+                    cls._missing_dependency = True
+                    break
+            else:
+                cls._missing_dependency = False
+        return cls._missing_dependency
+
+    @property
+    def dependency_error(self):
+        """Returns DependencyError instance with the library names if some of
+        them are not installed or None"""
+        if self.missing_dependency:
+            if self._dependency_error is None:
+                msg = ", ".join(f'"{s}"' for s in self.sv_dependencies)
+                if len(self.sv_dependencies) == 1:
+                    self._dependency_error = DependencyError(f'{msg} is not installed')
+                else:
+                    self._dependency_error = DependencyError(f'{msg} are not installed')
+            return self._dependency_error
+        return
+
+
+class SverchCustomTreeNode(UpdateNodes, NodeUtils, NodeDependencies):
     """Base class for all nodes. Documentation of a custom node class is used
     to give information about the node UI. Minimal example of a custom node:
 

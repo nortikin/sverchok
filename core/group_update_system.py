@@ -86,6 +86,8 @@ class GroupUpdateTree(us.UpdateTree):
             for node, prev_socks in walker:
                 with us.AddStatistic(node):
                     us.prepare_input_data(prev_socks, node.inputs)
+                    if error := node.dependency_error:
+                        raise error
                     node.process()
 
             if is_opened_tree:

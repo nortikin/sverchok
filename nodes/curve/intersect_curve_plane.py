@@ -8,11 +8,6 @@ from sverchok.utils.curve import SvCurve
 from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.geom import PlaneEquation
 from sverchok.utils.manifolds import intersect_curve_plane, EQUATION, NURBS
-from sverchok.utils.dummy_nodes import add_dummy
-from sverchok.dependencies import scipy
-
-if scipy is None:
-    add_dummy('SvExCrossCurvePlaneNode', "Intersect Curve with Plane", 'scipy')
 
 
 class SvExCrossCurvePlaneNode(SverchCustomTreeNode, bpy.types.Node):
@@ -24,6 +19,7 @@ class SvExCrossCurvePlaneNode(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Intersect Curve with Plane'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_CROSS_CURVE_PLANE'
+    sv_dependencies = {'scipy'}
 
     samples : IntProperty(
         name = "Init Resolution",
@@ -118,11 +114,8 @@ class SvExCrossCurvePlaneNode(SverchCustomTreeNode, bpy.types.Node):
 
 
 def register():
-    if scipy is not None:
-        bpy.utils.register_class(SvExCrossCurvePlaneNode)
+    bpy.utils.register_class(SvExCrossCurvePlaneNode)
 
 
 def unregister():
-    if scipy is not None:
-        bpy.utils.unregister_class(SvExCrossCurvePlaneNode)
-
+    bpy.utils.unregister_class(SvExCrossCurvePlaneNode)

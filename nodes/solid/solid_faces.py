@@ -8,13 +8,10 @@ from sverchok.utils.surface.core import SvSurface
 from sverchok.utils.curve.freecad import SvSolidEdgeCurve
 from sverchok.utils.surface.freecad import SvSolidFaceSurface
 from sverchok.dependencies import FreeCAD
-from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.utils.surface.nurbs import SvNurbsSurface
 from sverchok.utils.curve.freecad import SvFreeCadNurbsCurve, SvFreeCadCurve
 
-if FreeCAD is None:
-    add_dummy('SvSolidFacesNode', 'Solid Faces', 'FreeCAD')
-else:
+if FreeCAD is not None:
     import Part
 
 
@@ -27,7 +24,7 @@ class SvSolidFacesNode(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Solid Faces (Surfaces)'
     bl_icon = 'FACESEL'
     sv_category = "Solid Outputs"
-
+    sv_dependencies = {'FreeCAD'}
 
     flat_output: BoolProperty(
         name="Flat Output",
@@ -109,9 +106,8 @@ class SvSolidFacesNode(SverchCustomTreeNode, bpy.types.Node):
 
 
 def register():
-    if FreeCAD is not None:
-        bpy.utils.register_class(SvSolidFacesNode)
+    bpy.utils.register_class(SvSolidFacesNode)
+
 
 def unregister():
-    if FreeCAD is not None:
-        bpy.utils.unregister_class(SvSolidFacesNode)
+    bpy.utils.unregister_class(SvSolidFacesNode)
