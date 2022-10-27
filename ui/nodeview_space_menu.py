@@ -122,10 +122,11 @@ class Operator(MenuItem):
 
 
 class CustomMenu(MenuItem):
-    def __init__(self, name, custom_menu, icon_name=''):
+    def __init__(self, name, custom_menu, icon_name='', extra_menu=''):
         self.name = name
         self.bl_idname = custom_menu
         self.icon = icon_name
+        self.extra_menu = extra_menu
 
     def draw(self, layout):
         layout.menu(self.bl_idname, text=self.name, **self.icon_prop)
@@ -502,9 +503,8 @@ class CallPartialMenu(SverchokContext, bpy.types.Operator):
     def execute(self, context):
 
         def draw(_self, context):
-            _self.layout.prop_menu_enum(self, 'test')
-            for cat in add_node_menu.walk_categories():
-                if cat.extra_menu == self.menu_name:
+            for cat in add_node_menu:
+                if getattr(cat, 'extra_menu', '') == self.menu_name:
                     cat.draw(_self.layout)
 
         context.window_manager.popup_menu(draw, title=self.menu_name, icon='BLANK1')
