@@ -75,8 +75,9 @@ import bpy
 from bpy.props import StringProperty, BoolProperty, EnumProperty
 from bpy.types import NodeTree, NodeSocket
 
-from sverchok.core.sv_custom_exceptions import SvNoDataError
+from sverchok.core.sv_custom_exceptions import SvNoDataError, DependencyError
 import sverchok.core.events as ev
+import sverchok.dependencies as sv_deps
 from sverchok.core.event_system import handle_event
 from sverchok.data_structure import classproperty, post_load_call
 from sverchok.utils import get_node_class_reference
@@ -500,7 +501,7 @@ class UpdateNodes:
         if error is not None:
             color = no_data_color if isinstance(error, SvNoDataError) else exception_color
             self.set_temp_color(color)
-            sv_bgl.draw_text(self, repr(error), error_pref + self.node_id, color, 1.3, &#34;UP&#34;)
+            sv_bgl.draw_text(self, str(error), error_pref + self.node_id, color, 1.3, &#34;UP&#34;)
         else:
             sv_bgl.callback_disable(error_pref + self.node_id)
             self.set_temp_color()
@@ -631,7 +632,58 @@ class NodeUtils:
             self.debug(failure_message or canned_msg)
 
 
-class SverchCustomTreeNode(UpdateNodes, NodeUtils):
+class NodeDependencies:
+    &#34;&#34;&#34;The mix-in keeps information about optional libraries which are used by
+    a node. Names of libraries should be assigned to `NodeDependencies.sv_dependencies`
+    only if a node can&#39;t work without them. In this case it won&#39;t be possible
+    to add the node into a node tree and its tooltip will show the names of
+    dependent libraries.
+
+    ![image](https://user-images.githubusercontent.com/28003269/197936383-e6b80beb-43f2-4168-8082-5ba92f1e72f4.png)
+
+    If opened tree already has dependent nodes the Dependency error will be
+    shown with names of dependent libraries.
+
+    ![image](https://user-images.githubusercontent.com/28003269/197694508-da963845-574b-4087-8c55-108c9b41ba47.png)
+
+    If libraries are optional and a node has a mode which lets to execute the
+    node without them don&#39;t assign any libraries to `NodeDependencies.sv_dependencies`.
+    Check availability the libraries manually inside the `process` method and
+    call the `DependencyError` if appropriate.
+    &#34;&#34;&#34;
+    sv_dependencies: set[str] = set()  #: dependent module names
+
+    _missing_dependency = None
+    _dependency_error = None
+
+    @classproperty
+    def missing_dependency(cls) -&gt; bool:
+        &#34;&#34;&#34;Returns True if any of dependent libraries are not installed&#34;&#34;&#34;
+        if cls._missing_dependency is None:
+            for dep in cls.sv_dependencies:
+                if getattr(sv_deps, dep) is None:
+                    cls._missing_dependency = True
+                    break
+            else:
+                cls._missing_dependency = False
+        return cls._missing_dependency
+
+    @property
+    def dependency_error(self):
+        &#34;&#34;&#34;Returns DependencyError instance with the library names if some of
+        them are not installed or None&#34;&#34;&#34;
+        if self.missing_dependency:
+            if self._dependency_error is None:
+                msg = &#34;, &#34;.join(f&#39;&#34;{s}&#34;&#39; for s in self.sv_dependencies)
+                if len(self.sv_dependencies) == 1:
+                    self._dependency_error = DependencyError(f&#39;{msg} is not installed&#39;)
+                else:
+                    self._dependency_error = DependencyError(f&#39;{msg} are not installed&#39;)
+            return self._dependency_error
+        return
+
+
+class SverchCustomTreeNode(UpdateNodes, NodeUtils, NodeDependencies):
     &#34;&#34;&#34;Base class for all nodes. Documentation of a custom node class is used
     to give information about the node UI. Minimal example of a custom node:
 
@@ -907,6 +959,119 @@ def add_use_fake_user_to_trees():
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
+<dt id="sverchok.node_tree.NodeDependencies"><code class="flex name class">
+<span>class <span class="ident">NodeDependencies</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>The mix-in keeps information about optional libraries which are used by
+a node. Names of libraries should be assigned to <code><a title="sverchok.node_tree.NodeDependencies.sv_dependencies" href="#sverchok.node_tree.NodeDependencies.sv_dependencies">NodeDependencies.sv_dependencies</a></code>
+only if a node can't work without them. In this case it won't be possible
+to add the node into a node tree and its tooltip will show the names of
+dependent libraries.</p>
+<p><img alt="image" src="https://user-images.githubusercontent.com/28003269/197936383-e6b80beb-43f2-4168-8082-5ba92f1e72f4.png"></p>
+<p>If opened tree already has dependent nodes the Dependency error will be
+shown with names of dependent libraries.</p>
+<p><img alt="image" src="https://user-images.githubusercontent.com/28003269/197694508-da963845-574b-4087-8c55-108c9b41ba47.png"></p>
+<p>If libraries are optional and a node has a mode which lets to execute the
+node without them don't assign any libraries to <code><a title="sverchok.node_tree.NodeDependencies.sv_dependencies" href="#sverchok.node_tree.NodeDependencies.sv_dependencies">NodeDependencies.sv_dependencies</a></code>.
+Check availability the libraries manually inside the <code>process</code> method and
+call the <code>DependencyError</code> if appropriate.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class NodeDependencies:
+    &#34;&#34;&#34;The mix-in keeps information about optional libraries which are used by
+    a node. Names of libraries should be assigned to `NodeDependencies.sv_dependencies`
+    only if a node can&#39;t work without them. In this case it won&#39;t be possible
+    to add the node into a node tree and its tooltip will show the names of
+    dependent libraries.
+
+    ![image](https://user-images.githubusercontent.com/28003269/197936383-e6b80beb-43f2-4168-8082-5ba92f1e72f4.png)
+
+    If opened tree already has dependent nodes the Dependency error will be
+    shown with names of dependent libraries.
+
+    ![image](https://user-images.githubusercontent.com/28003269/197694508-da963845-574b-4087-8c55-108c9b41ba47.png)
+
+    If libraries are optional and a node has a mode which lets to execute the
+    node without them don&#39;t assign any libraries to `NodeDependencies.sv_dependencies`.
+    Check availability the libraries manually inside the `process` method and
+    call the `DependencyError` if appropriate.
+    &#34;&#34;&#34;
+    sv_dependencies: set[str] = set()  #: dependent module names
+
+    _missing_dependency = None
+    _dependency_error = None
+
+    @classproperty
+    def missing_dependency(cls) -&gt; bool:
+        &#34;&#34;&#34;Returns True if any of dependent libraries are not installed&#34;&#34;&#34;
+        if cls._missing_dependency is None:
+            for dep in cls.sv_dependencies:
+                if getattr(sv_deps, dep) is None:
+                    cls._missing_dependency = True
+                    break
+            else:
+                cls._missing_dependency = False
+        return cls._missing_dependency
+
+    @property
+    def dependency_error(self):
+        &#34;&#34;&#34;Returns DependencyError instance with the library names if some of
+        them are not installed or None&#34;&#34;&#34;
+        if self.missing_dependency:
+            if self._dependency_error is None:
+                msg = &#34;, &#34;.join(f&#39;&#34;{s}&#34;&#39; for s in self.sv_dependencies)
+                if len(self.sv_dependencies) == 1:
+                    self._dependency_error = DependencyError(f&#39;{msg} is not installed&#39;)
+                else:
+                    self._dependency_error = DependencyError(f&#39;{msg} are not installed&#39;)
+            return self._dependency_error
+        return</code></pre>
+</details>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="sverchok.node_tree.SverchCustomTreeNode" href="#sverchok.node_tree.SverchCustomTreeNode">SverchCustomTreeNode</a></li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sverchok.node_tree.NodeDependencies.missing_dependency"><code class="name">var <span class="ident">missing_dependency</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.node_tree.NodeDependencies.sv_dependencies"><code class="name">var <span class="ident">sv_dependencies</span> : set</code></dt>
+<dd>
+<div class="desc"><p>dependent module names</p></div>
+</dd>
+</dl>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sverchok.node_tree.NodeDependencies.dependency_error"><code class="name">var <span class="ident">dependency_error</span></code></dt>
+<dd>
+<div class="desc"><p>Returns DependencyError instance with the library names if some of
+them are not installed or None</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def dependency_error(self):
+    &#34;&#34;&#34;Returns DependencyError instance with the library names if some of
+    them are not installed or None&#34;&#34;&#34;
+    if self.missing_dependency:
+        if self._dependency_error is None:
+            msg = &#34;, &#34;.join(f&#39;&#34;{s}&#34;&#39; for s in self.sv_dependencies)
+            if len(self.sv_dependencies) == 1:
+                self._dependency_error = DependencyError(f&#39;{msg} is not installed&#39;)
+            else:
+                self._dependency_error = DependencyError(f&#39;{msg} are not installed&#39;)
+        return self._dependency_error
+    return</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
 <dt id="sverchok.node_tree.NodeUtils"><code class="flex name class">
 <span>class <span class="ident">NodeUtils</span></span>
 </code></dt>
@@ -1325,11 +1490,11 @@ self.wrapper_tracked_ui_draw_op(row, "node.view3d_align_from", icon='CURSOR', te
 </ul>
 <h3>Class variables</h3>
 <dl>
-<dt id="sverchok.node_tree.SvNodeTreeCommon.show_time_mode"><code class="name">var <span class="ident">show_time_mode</span> : <_PropertyDeferred, <built-in function EnumProperty>, {'items': [('Per node', 'Per node', ''), ('Cumulative', 'Cumulative', '')], 'options': set(), 'update': <function <a title="sverchok.node_tree.SvNodeTreeCommon" href="#sverchok.node_tree.SvNodeTreeCommon">SvNodeTreeCommon</a>.<lambda> at 0x7f746b54a310>, 'description': 'Mode of showing node update timings', 'attr': 'show_time_mode'}></code></dt>
+<dt id="sverchok.node_tree.SvNodeTreeCommon.show_time_mode"><code class="name">var <span class="ident">show_time_mode</span> : <_PropertyDeferred, <built-in function EnumProperty>, {'items': [('Per node', 'Per node', ''), ('Cumulative', 'Cumulative', '')], 'options': set(), 'update': <function <a title="sverchok.node_tree.SvNodeTreeCommon" href="#sverchok.node_tree.SvNodeTreeCommon">SvNodeTreeCommon</a>.<lambda> at 0x7f50cf543d30>, 'description': 'Mode of showing node update timings', 'attr': 'show_time_mode'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.node_tree.SvNodeTreeCommon.sv_show_time_nodes"><code class="name">var <span class="ident">sv_show_time_nodes</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Node times', 'default': False, 'options': set(), 'update': <function <a title="sverchok.node_tree.SvNodeTreeCommon" href="#sverchok.node_tree.SvNodeTreeCommon">SvNodeTreeCommon</a>.<lambda> at 0x7f746b540430>, 'attr': 'sv_show_time_nodes'}></code></dt>
+<dt id="sverchok.node_tree.SvNodeTreeCommon.sv_show_time_nodes"><code class="name">var <span class="ident">sv_show_time_nodes</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Node times', 'default': False, 'options': set(), 'update': <function <a title="sverchok.node_tree.SvNodeTreeCommon" href="#sverchok.node_tree.SvNodeTreeCommon">SvNodeTreeCommon</a>.<lambda> at 0x7f50cf594ca0>, 'attr': 'sv_show_time_nodes'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -1613,11 +1778,11 @@ even if the tree is not in the Live update mode</p></div>
 effect not all nodes but only those which have property
 <code><a title="sverchok.node_tree.UpdateNodes.is_animatable" href="#sverchok.node_tree.UpdateNodes.is_animatable">UpdateNodes.is_animatable</a></code> enabled.</p></div>
 </dd>
-<dt id="sverchok.node_tree.SverchCustomTree.sv_draft"><code class="name">var <span class="ident">sv_draft</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Draft', 'description': 'Draft (simplified processing) mode', 'default': False, 'update': <function <a title="sverchok.node_tree.SverchCustomTree.on_draft_mode_changed" href="#sverchok.node_tree.SverchCustomTree.on_draft_mode_changed">SverchCustomTree.on_draft_mode_changed()</a> at 0x7f746b54a700>, 'options': set(), 'attr': 'sv_draft'}></code></dt>
+<dt id="sverchok.node_tree.SverchCustomTree.sv_draft"><code class="name">var <span class="ident">sv_draft</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Draft', 'description': 'Draft (simplified processing) mode', 'default': False, 'update': <function <a title="sverchok.node_tree.SverchCustomTree.on_draft_mode_changed" href="#sverchok.node_tree.SverchCustomTree.on_draft_mode_changed">SverchCustomTree.on_draft_mode_changed()</a> at 0x7f50cf5ce160>, 'options': set(), 'attr': 'sv_draft'}></code></dt>
 <dd>
 <div class="desc"><p>Draft mode replaces selected properties of certain nodes with smaller values to lighten cpu load.</p></div>
 </dd>
-<dt id="sverchok.node_tree.SverchCustomTree.sv_process"><code class="name">var <span class="ident">sv_process</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Process', 'default': True, 'description': 'Update upon tree and node property changes', 'update': <function <a title="sverchok.node_tree.SverchCustomTree" href="#sverchok.node_tree.SverchCustomTree">SverchCustomTree</a>.<lambda> at 0x7f746b54a790>, 'options': set(), 'attr': 'sv_process'}></code></dt>
+<dt id="sverchok.node_tree.SverchCustomTree.sv_process"><code class="name">var <span class="ident">sv_process</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Process', 'default': True, 'description': 'Update upon tree and node property changes', 'update': <function <a title="sverchok.node_tree.SverchCustomTree" href="#sverchok.node_tree.SverchCustomTree">SverchCustomTree</a>.<lambda> at 0x7f50cf5ce1f0>, 'options': set(), 'attr': 'sv_process'}></code></dt>
 <dd>
 <div class="desc"><p>If enabled it means that the tree will be evaluated upon changes in its
 topology, changes in node properties or scene changes made by user.
@@ -1638,7 +1803,7 @@ reevaluated upon changes in the scene. It will effect only nodes with
 <li>etc.</li>
 </ul></div>
 </dd>
-<dt id="sverchok.node_tree.SverchCustomTree.sv_show"><code class="name">var <span class="ident">sv_show</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Show', 'default': True, 'description': 'Show this layout', 'update': <function <a title="sverchok.node_tree.SverchCustomTree.turn_off_ng" href="#sverchok.node_tree.SverchCustomTree.turn_off_ng">SverchCustomTree.turn_off_ng()</a> at 0x7f746b54a670>, 'options': set(), 'attr': 'sv_show'}></code></dt>
+<dt id="sverchok.node_tree.SverchCustomTree.sv_show"><code class="name">var <span class="ident">sv_show</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Show', 'default': True, 'description': 'Show this layout', 'update': <function <a title="sverchok.node_tree.SverchCustomTree.turn_off_ng" href="#sverchok.node_tree.SverchCustomTree.turn_off_ng">SverchCustomTree.turn_off_ng()</a> at 0x7f50cf5ce0d0>, 'options': set(), 'attr': 'sv_show'}></code></dt>
 <dd>
 <div class="desc"><p>See `SverchCustomTree.turn_off_ng</p></div>
 </dd>
@@ -1831,7 +1996,7 @@ until new release.</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class SverchCustomTreeNode(UpdateNodes, NodeUtils):
+<pre><code class="python">class SverchCustomTreeNode(UpdateNodes, NodeUtils, NodeDependencies):
     &#34;&#34;&#34;Base class for all nodes. Documentation of a custom node class is used
     to give information about the node UI. Minimal example of a custom node:
 
@@ -2065,6 +2230,7 @@ until new release.</p>
 <ul class="hlist">
 <li><a title="sverchok.node_tree.UpdateNodes" href="#sverchok.node_tree.UpdateNodes">UpdateNodes</a></li>
 <li><a title="sverchok.node_tree.NodeUtils" href="#sverchok.node_tree.NodeUtils">NodeUtils</a></li>
+<li><a title="sverchok.node_tree.NodeDependencies" href="#sverchok.node_tree.NodeDependencies">NodeDependencies</a></li>
 </ul>
 <h3>Subclasses</h3>
 <ul class="hlist">
@@ -3117,6 +3283,12 @@ This UI is displayed on a property panel of the tree editor.</p></div>
 <li><code><a title="sverchok.node_tree.NodeUtils.wrapper_tracked_ui_draw_op" href="#sverchok.node_tree.NodeUtils.wrapper_tracked_ui_draw_op">wrapper_tracked_ui_draw_op</a></code></li>
 </ul>
 </li>
+<li><code><b><a title="sverchok.node_tree.NodeDependencies" href="#sverchok.node_tree.NodeDependencies">NodeDependencies</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sverchok.node_tree.NodeDependencies.dependency_error" href="#sverchok.node_tree.NodeDependencies.dependency_error">dependency_error</a></code></li>
+<li><code><a title="sverchok.node_tree.NodeDependencies.sv_dependencies" href="#sverchok.node_tree.NodeDependencies.sv_dependencies">sv_dependencies</a></code></li>
+</ul>
+</li>
 </ul>
 </dd>
 <dt id="sverchok.node_tree.UpdateNodes"><code class="flex name class">
@@ -3337,7 +3509,7 @@ This UI is displayed on a property panel of the tree editor.</p></div>
         if error is not None:
             color = no_data_color if isinstance(error, SvNoDataError) else exception_color
             self.set_temp_color(color)
-            sv_bgl.draw_text(self, repr(error), error_pref + self.node_id, color, 1.3, &#34;UP&#34;)
+            sv_bgl.draw_text(self, str(error), error_pref + self.node_id, color, 1.3, &#34;UP&#34;)
         else:
             sv_bgl.callback_disable(error_pref + self.node_id)
             self.set_temp_color()
@@ -3364,7 +3536,7 @@ This UI is displayed on a property panel of the tree editor.</p></div>
 </ul>
 <h3>Class variables</h3>
 <dl>
-<dt id="sverchok.node_tree.UpdateNodes.is_animatable"><code class="name">var <span class="ident">is_animatable</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Animate Node', 'description': 'Update Node on frame change', 'default': True, 'update': <function <a title="sverchok.node_tree.UpdateNodes" href="#sverchok.node_tree.UpdateNodes">UpdateNodes</a>.<lambda> at 0x7f746b54aca0>, 'attr': 'is_animatable'}></code></dt>
+<dt id="sverchok.node_tree.UpdateNodes.is_animatable"><code class="name">var <span class="ident">is_animatable</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Animate Node', 'description': 'Update Node on frame change', 'default': True, 'update': <function <a title="sverchok.node_tree.UpdateNodes" href="#sverchok.node_tree.UpdateNodes">UpdateNodes</a>.<lambda> at 0x7f50cf5ce700>, 'attr': 'is_animatable'}></code></dt>
 <dd>
 <div class="desc"><p>A switch for user to make a node to update on frame changes in a scene.
 Use <code><a title="sverchok.node_tree.UpdateNodes.is_animation_dependent" href="#sverchok.node_tree.UpdateNodes.is_animation_dependent">UpdateNodes.is_animation_dependent</a></code> to display the option in node UI.</p></div>
@@ -3375,7 +3547,7 @@ Use <code><a title="sverchok.node_tree.UpdateNodes.is_animation_dependent" href=
 Also the node should use <code><a title="sverchok.node_tree.SverchCustomTreeNode.sv_draw_buttons" href="#sverchok.node_tree.SverchCustomTreeNode.sv_draw_buttons">SverchCustomTreeNode.sv_draw_buttons()</a></code>.</p>
 <p><img alt="image" src="https://user-images.githubusercontent.com/28003269/193507101-60a28c3f-50a1-4117-a66f-25b0b4e07e13.png"></p></div>
 </dd>
-<dt id="sverchok.node_tree.UpdateNodes.is_interactive"><code class="name">var <span class="ident">is_interactive</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'default': True, 'description': 'Update node upon changes in the scene', 'update': <function <a title="sverchok.node_tree.UpdateNodes.update_interactive_mode" href="#sverchok.node_tree.UpdateNodes.update_interactive_mode">UpdateNodes.update_interactive_mode()</a> at 0x7f746b54ab80>, 'name': 'Interactive', 'attr': 'is_interactive'}></code></dt>
+<dt id="sverchok.node_tree.UpdateNodes.is_interactive"><code class="name">var <span class="ident">is_interactive</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'default': True, 'description': 'Update node upon changes in the scene', 'update': <function <a title="sverchok.node_tree.UpdateNodes.update_interactive_mode" href="#sverchok.node_tree.UpdateNodes.update_interactive_mode">UpdateNodes.update_interactive_mode()</a> at 0x7f50cf5ce5e0>, 'name': 'Interactive', 'attr': 'is_interactive'}></code></dt>
 <dd>
 <div class="desc"><p>When this option is on arbitrary changes in scene will update this node.
 Those changes can be:
@@ -3405,7 +3577,7 @@ should be used instead.</p>
 <pre><code class="language-text">⚠️ There is no sense to override this property
 </code></pre></div>
 </dd>
-<dt id="sverchok.node_tree.UpdateNodes.refresh"><code class="name">var <span class="ident">refresh</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Update Node', 'description': 'Update Node', 'update': <function <a title="sverchok.node_tree.UpdateNodes.refresh_node" href="#sverchok.node_tree.UpdateNodes.refresh_node">UpdateNodes.refresh_node()</a> at 0x7f746b54ac10>, 'attr': 'refresh'}></code></dt>
+<dt id="sverchok.node_tree.UpdateNodes.refresh"><code class="name">var <span class="ident">refresh</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Update Node', 'description': 'Update Node', 'update': <function <a title="sverchok.node_tree.UpdateNodes.refresh_node" href="#sverchok.node_tree.UpdateNodes.refresh_node">UpdateNodes.refresh_node()</a> at 0x7f50cf5ce670>, 'attr': 'refresh'}></code></dt>
 <dd>
 <div class="desc"><p>See <code><a title="sverchok.node_tree.UpdateNodes.refresh_node" href="#sverchok.node_tree.UpdateNodes.refresh_node">UpdateNodes.refresh_node()</a></code>.</p>
 <p><img alt="image" src="https://user-images.githubusercontent.com/28003269/193505561-395ca65c-3354-4e23-b5f7-765b2d830e4b.png"></p>
@@ -3759,7 +3931,7 @@ in the tree editors space and to show execution time</p></div>
     if error is not None:
         color = no_data_color if isinstance(error, SvNoDataError) else exception_color
         self.set_temp_color(color)
-        sv_bgl.draw_text(self, repr(error), error_pref + self.node_id, color, 1.3, &#34;UP&#34;)
+        sv_bgl.draw_text(self, str(error), error_pref + self.node_id, color, 1.3, &#34;UP&#34;)
     else:
         sv_bgl.callback_disable(error_pref + self.node_id)
         self.set_temp_color()
@@ -3792,6 +3964,14 @@ in the tree editors space and to show execution time</p></div>
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
+<li>
+<h4><code><a title="sverchok.node_tree.NodeDependencies" href="#sverchok.node_tree.NodeDependencies">NodeDependencies</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.node_tree.NodeDependencies.dependency_error" href="#sverchok.node_tree.NodeDependencies.dependency_error">dependency_error</a></code></li>
+<li><code><a title="sverchok.node_tree.NodeDependencies.missing_dependency" href="#sverchok.node_tree.NodeDependencies.missing_dependency">missing_dependency</a></code></li>
+<li><code><a title="sverchok.node_tree.NodeDependencies.sv_dependencies" href="#sverchok.node_tree.NodeDependencies.sv_dependencies">sv_dependencies</a></code></li>
+</ul>
+</li>
 <li>
 <h4><code><a title="sverchok.node_tree.NodeUtils" href="#sverchok.node_tree.NodeUtils">NodeUtils</a></code></h4>
 <ul class="">

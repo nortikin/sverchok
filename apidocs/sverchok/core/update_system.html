@@ -212,6 +212,8 @@ class SearchTree:
         If suppress is True an error during node execution will be suppressed&#34;&#34;&#34;
         with AddStatistic(node, suppress):
             prepare_input_data(self.previous_sockets(node), node.inputs)
+            if error := node.dependency_error:
+                raise error
             node.process()
 
     def _remove_reroutes(self):
@@ -488,6 +490,8 @@ class UpdateTree(SearchTree):
                     with AddStatistic(node):
                         yield node
                         prepare_input_data(prev_socks, node.inputs)
+                        if error := node.dependency_error:
+                            raise error
                         node.process()
             except CancelError:
                 pass
@@ -1056,6 +1060,8 @@ compared with new one to define differences.</p></div>
         If suppress is True an error during node execution will be suppressed&#34;&#34;&#34;
         with AddStatistic(node, suppress):
             prepare_input_data(self.previous_sockets(node), node.inputs)
+            if error := node.dependency_error:
+                raise error
             node.process()
 
     def _remove_reroutes(self):
@@ -1408,6 +1414,8 @@ If suppress is True an error during node execution will be suppressed</p></div>
     If suppress is True an error during node execution will be suppressed&#34;&#34;&#34;
     with AddStatistic(node, suppress):
         prepare_input_data(self.previous_sockets(node), node.inputs)
+        if error := node.dependency_error:
+            raise error
         node.process()</code></pre>
 </details>
 </dd>
@@ -1512,6 +1520,8 @@ method</p></div>
                     with AddStatistic(node):
                         yield node
                         prepare_input_data(prev_socks, node.inputs)
+                        if error := node.dependency_error:
+                            raise error
                         node.process()
             except CancelError:
                 pass
@@ -1821,6 +1831,8 @@ def main_update(cls, tree: NodeTree, update_nodes=True, update_interface=True) -
                 with AddStatistic(node):
                     yield node
                     prepare_input_data(prev_socks, node.inputs)
+                    if error := node.dependency_error:
+                        raise error
                     node.process()
         except CancelError:
             pass
