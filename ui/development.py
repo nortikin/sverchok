@@ -17,7 +17,6 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import os
-from os.path import exists, isfile
 import subprocess
 import webbrowser
 import socket
@@ -27,15 +26,12 @@ from bpy.props import StringProperty
 
 # global variables in tools
 import sverchok
-import sverchok.ui.nodeview_space_menu as sm
 from sverchok.utils.context_managers import sv_preferences
 from sverchok.utils import get_node_class_reference
 from sverchok.utils.development import get_branch
 from sverchok.ui.nodes_replacement import set_inputs_mapping, set_outputs_mapping
 from sverchok.ui.presets import get_presets, SverchPresetReplaceOperator, SvSaveSelected, node_supports_presets
-from sverchok.nodes.__init__ import nodes_dict
 from sverchok.settings import PYPATH
-from sverchok.utils.extra_categories import external_node_docs
 
 
 def displaying_sverchok_nodes(context):
@@ -87,16 +83,6 @@ class SvRunPydoc(bpy.types.Operator):
             subprocess.Popen(cmd)
         return {'FINISHED'}
 
-def get_docs_filepath(string_dir, filename):
-    filepath = os.path.join(
-        os.path.dirname(sverchok.__file__),
-        'docs',
-        'nodes',
-        string_dir.replace(' ', '_'),
-        filename + '.rst'
-        )
-    return filepath
-
 
 class SvViewHelpForNode(bpy.types.Operator):
     """ Open docs on site, on local PC or on github """
@@ -105,67 +91,19 @@ class SvViewHelpForNode(bpy.types.Operator):
 
     kind: StringProperty(default='online')
 
+    @classmethod
+    def poll(cls, context):
+        return hasattr(context, 'active_node') and\
+               hasattr(context.active_node, 'get_doc_link')
+
     def execute(self, context):
-        n = context.active_node
-
-        cat = sm.add_node_menu.get_category(n.bl_idname)
-        if not cat:  # external node
-            print('external_node')
-            return external_node_docs(self, n, self.kind)
-
-        string_dir = cat.name.lower().replace('_', ' ')
-
-        filename = n.__module__.split('.')[-1]
-        if filename in ('mask','mask_convert','mask_join'):
-            string_dir = 'list_masks'
-        elif filename in ('modifier'):
-            string_dir = 'list_mutators'
-        elif string_dir == 'curves' or string_dir == 'curves @ primitives' or string_dir == 'curves @ bezier' or string_dir == 'curves @ nurbs':
-            string_dir = 'curve'
-        elif string_dir == 'surfaces' or string_dir == 'surfaces @ nurbs':
-            string_dir = 'surface'
-        elif string_dir == 'fields':
-            string_dir = 'field'
-        elif string_dir == 'solids' or string_dir == 'solids @ analyze':
-            string_dir = 'solid'
-        elif string_dir == 'analyzers':
-            string_dir = 'analyzer'
-        elif string_dir == 'cad':
-            string_dir = 'CAD'
-
-        help_url = string_dir + '/' + filename
-        # first let's find if this is a valid doc file, by inspecting locally for the rst file.
-        VALID = False
-        try:
-            tk = get_docs_filepath(string_dir, filename)
-            print(tk)
-            VALID = exists(tk) and isfile(tk)
-            # if is not valid we check if it is another folder (for nodes in Alpha, Beta, CAD...)
-            if not VALID:
-                for folder in nodes_dict.keys():
-                    tk = get_docs_filepath(folder, filename)
-                    VALID = exists(tk) and isfile(tk)
-                    if VALID:
-                        help_url = folder + '/' + filename
-                        break
-        except:
-            pass
-
-        if not VALID:
-            self.throw_404(n)
+        node = context.active_node
+        link = node.get_doc_link(self.kind.upper())
+        if not link:
+            self.throw_404(node)
             return {'CANCELLED'}
 
-        # valid doc link!
-        help_url = help_url.replace(' ', '_')
-        if self.kind == 'online':
-            destination = 'http://nortikin.github.io/sverchok/docs/nodes/' + help_url + '.html'
-        elif self.kind == 'offline':
-            basepath = os.path.dirname(sverchok.__file__) + '/docs/nodes/'
-            destination = r'file:///' + basepath + help_url + '.rst'
-        elif self.kind == 'github':
-            destination = 'https://github.com/nortikin/sverchok/blob/master/docs/nodes/' + help_url + '.rst'
-
-        webbrowser.open(destination)
+        webbrowser.open(link)
         return {'FINISHED'}
 
     def throw_404(self, n):
@@ -178,7 +116,6 @@ class SvViewHelpForNode(bpy.types.Operator):
         else:
             self.report({'INFO'}, "This Node does not have bl_label")
             return
-        
 
 
 class SvViewSourceForNode(bpy.types.Operator):
