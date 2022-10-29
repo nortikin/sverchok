@@ -85,24 +85,24 @@ class SvBisectNode(
     bmesh_inputs = [0, 1]
 
     inner: BoolProperty(
-        name='inner', description='clear inner',
+        name='inner', description='Clear inner (don’t include the negative side of the Matrix cut)',
         default=False, update=updateNode)
 
     outer: BoolProperty(
-        name='outer', description='clear outer',
+        name='outer', description='Clear outer (don’t include the positive side of the Matrix cut)',
         default=False, update=updateNode)
 
     fill: BoolProperty(
-        name='fill', description='Fill cuts',
+        name='fill', description='Fill cuts (generates a polygon from the bisections)',
         default=False, update=updateNode)
 
     slice_mode: BoolProperty(
         name="Per Object", update=updateNode, default=False,
-        description="slice each object with all matrices, or match object and matrices individually")
+        description="Slice each object with all matrices, or match object and matrices individually")
 
     slice_mode: BoolProperty(
         name="Per Object", update=updateNode, default=False,
-        description="slice each object with all matrices, or match object and matrices individually")
+        description="Slice each object with all matrices, or match object and matrices individually")
 
     remove_empty: BoolProperty(
         name="Clean Output", update=updateNode, default=False,

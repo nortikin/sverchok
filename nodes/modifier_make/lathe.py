@@ -51,13 +51,13 @@ class SvLatheNode(EdgeGeneratorLiteNode, SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Lathe'
     bl_icon = 'MOD_SCREW'
 
-    remove_doubles: BoolProperty(name='merge', description='Remove doubles', update=updateNode)
+    remove_doubles: BoolProperty(name='merge', update=updateNode, description='Remove doubles')
     dist: FloatProperty(name="merge distance", default=0.0001, update=updateNode)
-    Degrees: FloatProperty(name="Degrees", default=360.0, update=updateNode)
-    Steps: IntProperty(name="Steps", default=20, min=0, update=updateNode)
-    cent: FloatVectorProperty(name='cent', size=3, update=updateNode)
-    dvec: FloatVectorProperty(name='dvec', size=3, update=updateNode)
-    axis: FloatVectorProperty(name='axis', size=3, update=updateNode, default=(0, 0, 1))
+    Degrees: FloatProperty(name="Degrees", default=360.0, update=updateNode, description='Angle of the total rotation')
+    Steps: IntProperty(name="Steps", default=20, min=0, update=updateNode, description='Number of rotation steps')
+    cent: FloatVectorProperty(name='cent', size=3, update=updateNode, description='Central coordinate around which to pivot')
+    dvec: FloatVectorProperty(name='dvec', size=3, update=updateNode, description='Is used to push the center Vector by a Vector quantity per step')
+    axis: FloatVectorProperty(name='axis', size=3, update=updateNode, default=(0, 0, 1), description='Axis around which to rotate around the pivot')
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', 'Verts')

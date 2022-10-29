@@ -44,7 +44,7 @@ class SvOffsetNode(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
         default=0.04, update=updateNode)
 
     nsides: IntProperty(
-        name='nsides', description='number of sides',
+        name='nsides', description='number of rounded sides',
         default=1, min=1, max=64, update=updateNode)
 
     radius: FloatProperty(

@@ -89,7 +89,7 @@ class SvBevelNode(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
         default=0.5, min=0.0, max=1.0, update=updateNode)
 
     vertexOnly: BoolProperty(
-        name="Vertex mode", description="Only bevel edges, not edges",
+        name="Vertex mode", description="Only bevel vertices, not edges",
         default=False, update=mode_change)
 
     clamp_overlap : BoolProperty(
