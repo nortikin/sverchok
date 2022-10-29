@@ -42,6 +42,11 @@ This node has the following outputs:
 - **PolyEdge F**. PolyEdge data with vertices which are false (index referred to "Vertices F" output)
 
 
+See also
+--------
+
+* List-> :doc:`List Mask Converter </nodes/list_masks/mask_convert>`
+
 Examples of usage
 -----------------
 

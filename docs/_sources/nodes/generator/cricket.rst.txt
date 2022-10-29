@@ -1,4 +1,4 @@
-cricket
+Cricket
 =======
 
 .. image:: https://user-images.githubusercontent.com/14288520/188717448-34db1b79-fb19-49fb-b0da-9ce05e0e52f9.png

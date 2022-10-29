@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cross Section &mdash; Sverchok 1, 1, 0 documentation</title>
+  <title>Cross Section &mdash; Sverchok 1, 2, 0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
@@ -34,7 +34,7 @@
             <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1, 1, 0
+                1, 2, 0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -88,7 +88,9 @@
 <li class="toctree-l3"><a class="reference internal" href="offset_line.html">Offset Line</a></li>
 <li class="toctree-l3"><a class="reference internal" href="pipe_tubes.html">Pipe</a></li>
 <li class="toctree-l3"><a class="reference internal" href="solidify_mk2.html">Solidify</a></li>
+<li class="toctree-l3"><a class="reference internal" href="subdivide_lite.html">Subdivide Lite Node</a></li>
 <li class="toctree-l3"><a class="reference internal" href="sweep_modulator.html">Sweep Modulator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="unsubdivide.html">Unsubdivide node</a></li>
 <li class="toctree-l3"><a class="reference internal" href="uv_connect.html">UV Connection</a></li>
 <li class="toctree-l3"><a class="reference internal" href="wafel.html">Wafel</a></li>
 <li class="toctree-l3"><a class="reference internal" href="wireframe.html">Wireframe</a></li>
@@ -150,9 +152,11 @@
              
   <section id="cross-section">
 <h1>Cross Section<a class="headerlink" href="#cross-section" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198750762-7dab4e74-e87e-4d72-b25b-90e0814c327b.png"><img alt="https://user-images.githubusercontent.com/14288520/198750762-7dab4e74-e87e-4d72-b25b-90e0814c327b.png" src="https://user-images.githubusercontent.com/14288520/198750762-7dab4e74-e87e-4d72-b25b-90e0814c327b.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>Sect object with blender operator to edges/polygons (F or Alt+F cases). In some cases work better than new bisect node.</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198750770-d8a0e626-91c8-44ba-ab39-8fa26a932ecf.png"><img alt="https://user-images.githubusercontent.com/14288520/198750770-d8a0e626-91c8-44ba-ab39-8fa26a932ecf.png" src="https://user-images.githubusercontent.com/14288520/198750770-d8a0e626-91c8-44ba-ab39-8fa26a932ecf.png" /></a>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
@@ -184,6 +188,7 @@
 </tr>
 </tbody>
 </table>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198751510-df7f9d23-5ca4-476c-8953-9081b5b88c7b.png"><img alt="https://user-images.githubusercontent.com/14288520/198751510-df7f9d23-5ca4-476c-8953-9081b5b88c7b.png" src="https://user-images.githubusercontent.com/14288520/198751510-df7f9d23-5ca4-476c-8953-9081b5b88c7b.png" /></a>
 </section>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
@@ -191,7 +196,24 @@
 </section>
 <section id="example-of-usage">
 <h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
-<img alt="cross_section.jpg" src="https://cloud.githubusercontent.com/assets/5783432/4222739/260e6252-3916-11e4-8044-66b70f3e15c9.jpg" />
+<a class="reference external image-reference" href="https://cloud.githubusercontent.com/assets/5783432/4222739/260e6252-3916-11e4-8044-66b70f3e15c9.jpg"><img alt="cross_section.jpg" src="https://cloud.githubusercontent.com/assets/5783432/4222739/260e6252-3916-11e4-8044-66b70f3e15c9.jpg" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/sphere.html"><span class="doc">Sphere</span></a></p></li>
+<li><p>Float Serier (Old node): Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_in.html"><span class="doc">Vector In</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198751767-869bcfae-1ada-4fc7-bd54-e90d80bb9113.png"><img alt="https://user-images.githubusercontent.com/14288520/198751767-869bcfae-1ada-4fc7-bd54-e90d80bb9113.png" src="https://user-images.githubusercontent.com/14288520/198751767-869bcfae-1ada-4fc7-bd54-e90d80bb9113.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/torus_mk2.html"><span class="doc">Torus</span></a></p></li>
+<li><p>Analyzers-&gt; <a class="reference internal" href="../analyzer/bbox_mk3.html"><span class="doc">Bounding Box</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_in.html"><span class="doc">Vector In</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+</ul>
 </section>
 </section>
 

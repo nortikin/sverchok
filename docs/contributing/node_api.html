@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Node API &mdash; Sverchok 1, 1, 0 documentation</title>
+  <title>Node API &mdash; Sverchok 1, 2, 0 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
     <link rel="shortcut icon" href="../_static/sverchock_icon_b.ico"/>
@@ -34,7 +34,7 @@
             <img src="../_static/title_big_b.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1, 1, 0
+                1, 2, 0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -89,6 +89,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#upgrade-node">Upgrade Node</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#improve-existing-node">Improve existing node</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#create-new-node-version">Create new node version</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#alpha-beta-node-state">Alpha/Beta Node State</a></li>
 </ul>
 </li>
 </ul>
@@ -129,7 +130,8 @@
 <p>This page claims to define all aspects of node creation. A brief introduction
 to node creation is represented <a class="reference internal" href="add_new_node.html"><span class="doc">on this page</span></a>. Api
 documentation of base class of all nodes can be found
-<a class="reference external" href="http://nortikin.github.io/sverchok/apidocs/sverchok/node_tree.html">here</a></p>
+<a class="reference external" href="http://nortikin.github.io/sverchok/apidocs/sverchok/node_tree.html">here</a>.
+Also read the <a class="reference internal" href="#alpha-beta-node-state">Alpha/Beta Node State</a> section before creating new ndoe.</p>
 <p>The Code of a new node should be created in a separate file. The file should be placed in
 one of the available categories in the <code class="docutils literal notranslate"><span class="pre">nodes</span></code> folder.</p>
 <p>Usually the structure of the file looks like:</p>
@@ -998,6 +1000,24 @@ impossible it’s possible to copy properties manually by adding
 work should be done with sockets it’s possible to implement in
 <code class="docutils literal notranslate"><span class="pre">migrate_props_pre_relink(self,</span> <span class="pre">old_node)</span></code> method which will be called before
 links creation.</p>
+</section>
+<section id="alpha-beta-node-state">
+<h3>Alpha/Beta Node State<a class="headerlink" href="#alpha-beta-node-state" title="Permalink to this heading">¶</a></h3>
+<p>When new node is created or existing version of a node is improved we usually
+would like to have some time to catch and fix bugs. It can be done the better
+the more people will test the node. Thus we have to merge changes into master.
+But when node is in master users can save them in their layout and farther fixes
+of the node can break them. To avoid this it’s possible to mark a node to show
+to users that the node is in development state and that backwards incompatible
+changes can be introduced. In order to do this Alpa or Beta icon should be
+assigned to <code class="docutils literal notranslate"><span class="pre">sv_icon</span></code> attribute of the node class.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Node</span><span class="p">:</span>
+    <span class="n">sv_icon</span> <span class="o">=</span> <span class="s1">&#39;SV_ALPHA`  # or &#39;</span><span class="n">SV_BETA</span><span class="s1">&#39;</span>
+</pre></div>
+</div>
+<p>It’s recommended to mark new nodes and new version of existing node with
+<em>in development</em> state if there are doubts in robustness of the nodes. A node
+should loos the state when new Sverchok’s release is introduced.</p>
 </section>
 </section>
 </section>

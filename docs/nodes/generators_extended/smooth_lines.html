@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Smooth Lines &mdash; Sverchok 1, 1, 0 documentation</title>
+  <title>Smooth Lines &mdash; Sverchok 1, 2, 0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
@@ -34,7 +34,7 @@
             <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1, 1, 0
+                1, 2, 0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -146,6 +146,7 @@
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This can transform the inputted polyline into a polyline with smooth/curved corners. The curve is generated currently via a bezier interpolation or trigonometric arc. This is an early preview, maybe more modes will be incorporated at a later stage.</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198749423-c3afeac5-2cf2-43b4-9c04-298e22e6ca01.png"><img alt="https://user-images.githubusercontent.com/14288520/198749423-c3afeac5-2cf2-43b4-9c04-298e22e6ca01.png" src="https://user-images.githubusercontent.com/14288520/198749423-c3afeac5-2cf2-43b4-9c04-298e22e6ca01.png" /></a>
 </section>
 <section id="inputs-parameters">
 <h2>Inputs &amp; Parameters<a class="headerlink" href="#inputs-parameters" title="Permalink to this heading">¶</a></h2>
@@ -181,10 +182,11 @@
 </tbody>
 </table>
 <ul class="simple">
-<li><p>Absolute mode hopes to use the inputted weight value to give a symmetric curve (think of it as a lazy radius).</p></li>
-<li><p>Relative mode uses the weights to interpolate between points, and produce a bezier curve that is weighted in a distinct direction if one edge is longer.</p></li>
-<li><p>Arc mode generates a true trigonometric radial fillet for the corners/weights provided. It uses the weight as the fillet radius.</p></li>
+<li><p><strong>Absolute</strong> mode hopes to use the inputted weight value to give a symmetric curve (think of it as a lazy radius).</p></li>
+<li><p><strong>Relative</strong> mode uses the weights to interpolate between points, and produce a bezier curve that is weighted in a distinct direction if one edge is longer.</p></li>
+<li><p><strong>Arc</strong> mode generates a true trigonometric radial fillet for the corners/weights provided. It uses the weight as the fillet radius.</p></li>
 </ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198749905-0c3811a0-a9e7-490f-9038-9c5694a74569.png"><img alt="https://user-images.githubusercontent.com/14288520/198749905-0c3811a0-a9e7-490f-9038-9c5694a74569.png" src="https://user-images.githubusercontent.com/14288520/198749905-0c3811a0-a9e7-490f-9038-9c5694a74569.png" /></a>
 </section>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>

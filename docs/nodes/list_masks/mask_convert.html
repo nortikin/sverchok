@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mask Converter &mdash; Sverchok 1, 1, 0 documentation</title>
+  <title>Mask Converter &mdash; Sverchok 1, 2, 0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
@@ -34,7 +34,7 @@
             <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1, 1, 0
+                1, 2, 0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -80,6 +80,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#outputs">Outputs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#see-also">See also</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#examples-of-usage">Examples of usage</a></li>
 </ul>
 </li>
@@ -162,9 +163,9 @@
 </li>
 <li><p><strong>Include partial selection</strong>. If checked, then partially selected elements will be accounted as selected.</p>
 <ul>
-<li><p>Vertex can be never partially selected, it is either selected or not.</p></li>
-<li><p>Edge is partially selected if it has only one of its vertices selected.</p></li>
-<li><p>Face is partially selected if only some of its vertices or faces are selected.</p></li>
+<li><p><strong>Vertex</strong> can be never partially selected, it is either selected or not.</p></li>
+<li><p><strong>Edge</strong> is partially selected if it has only one of its vertices selected.</p></li>
+<li><p><strong>Face</strong> is partially selected if only some of its vertices or faces are selected.</p></li>
 </ul>
 </li>
 </ul>
@@ -176,6 +177,12 @@
 <li><p><strong>VerticesMask</strong>. Mask for vertices. This output is not available if parameter <strong>From</strong> is set to <strong>Vertices</strong>.</p></li>
 <li><p><strong>EdgesMask</strong>. Mask for edges. This output is not available if parameter <strong>From</strong> is set to <strong>Edges</strong>.</p></li>
 <li><p><strong>FacesMask</strong>. Mask for faces. This output is not available if parameter <strong>From</strong> is set to <strong>Faces</strong>.</p></li>
+</ul>
+</section>
+<section id="see-also">
+<h2>See also<a class="headerlink" href="#see-also" title="Permalink to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>Transform-&gt; <a class="reference internal" href="../transforms/transform_select.html"><span class="doc">Transform Select</span></a></p></li>
 </ul>
 </section>
 <section id="examples-of-usage">
@@ -191,6 +198,7 @@
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_idx28.html"><span class="doc">Viewer Index+</span></a></p></li>
 <li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
 </ul>
+<hr class="docutils" />
 <p><strong>Select face of cube by selecting its vertices, and extrude it:</strong></p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/188221928-47e369de-3ef5-4044-aa76-53397f9f1dee.png"><img alt="https://user-images.githubusercontent.com/14288520/188221928-47e369de-3ef5-4044-aa76-53397f9f1dee.png" src="https://user-images.githubusercontent.com/14288520/188221928-47e369de-3ef5-4044-aa76-53397f9f1dee.png" /></a>
 <ul class="simple">
@@ -202,10 +210,13 @@
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_idx28.html"><span class="doc">Viewer Index+</span></a></p></li>
 <li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
 </ul>
+<hr class="docutils" />
 <p><strong>Select faces of sphere with small area, and move corresponding vertices:</strong></p>
 <a class="reference external image-reference" href="https://cloud.githubusercontent.com/assets/284644/25284914/5843a476-26da-11e7-908a-5eb9ed694ccb.png"><img alt="https://cloud.githubusercontent.com/assets/284644/25284914/5843a476-26da-11e7-908a-5eb9ed694ccb.png" src="https://cloud.githubusercontent.com/assets/284644/25284914/5843a476-26da-11e7-908a-5eb9ed694ccb.png" /></a>
+<hr class="docutils" />
 <p><strong>Select edges of randomly selected faces:</strong></p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/28003269/83627743-7a1c8680-a5a8-11ea-99d1-ff9f01762216.png"><img alt="https://user-images.githubusercontent.com/28003269/83627743-7a1c8680-a5a8-11ea-99d1-ff9f01762216.png" src="https://user-images.githubusercontent.com/28003269/83627743-7a1c8680-a5a8-11ea-99d1-ff9f01762216.png" /></a>
+<hr class="docutils" />
 <p>Filter vertices and edges if some faces hided:</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/188969070-a084e68a-a657-4106-b9bf-a538f218a16c.png"><img alt="https://user-images.githubusercontent.com/14288520/188969070-a084e68a-a657-4106-b9bf-a538f218a16c.png" src="https://user-images.githubusercontent.com/14288520/188969070-a084e68a-a657-4106-b9bf-a538f218a16c.png" /></a>
 <ul class="simple">

@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CSG Boolean MK2 &mdash; Sverchok 1, 1, 0 documentation</title>
+  <title>CSG Boolean MK2 &mdash; Sverchok 1, 2, 0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
@@ -34,7 +34,7 @@
             <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1, 1, 0
+                1, 2, 0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -69,6 +69,7 @@
 <li class="toctree-l3"><a class="reference internal" href="contour2D.html">Contour 2D</a></li>
 <li class="toctree-l3"><a class="reference internal" href="cross_section.html">Cross Section</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">CSG Boolean MK2</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#warnings">warnings</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#why-add-it-if-it-s-flawed">Why add it if it’s flawed?</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#alternatives">Alternatives</a></li>
@@ -86,7 +87,9 @@
 <li class="toctree-l3"><a class="reference internal" href="offset_line.html">Offset Line</a></li>
 <li class="toctree-l3"><a class="reference internal" href="pipe_tubes.html">Pipe</a></li>
 <li class="toctree-l3"><a class="reference internal" href="solidify_mk2.html">Solidify</a></li>
+<li class="toctree-l3"><a class="reference internal" href="subdivide_lite.html">Subdivide Lite Node</a></li>
 <li class="toctree-l3"><a class="reference internal" href="sweep_modulator.html">Sweep Modulator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="unsubdivide.html">Unsubdivide node</a></li>
 <li class="toctree-l3"><a class="reference internal" href="uv_connect.html">UV Connection</a></li>
 <li class="toctree-l3"><a class="reference internal" href="wafel.html">Wafel</a></li>
 <li class="toctree-l3"><a class="reference internal" href="wireframe.html">Wireframe</a></li>
@@ -148,13 +151,25 @@
              
   <section id="csg-boolean-mk2">
 <h1>CSG Boolean MK2<a class="headerlink" href="#csg-boolean-mk2" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198852539-b0583c14-01a2-4cba-a8a1-fd8d872d7975.png"><img alt="https://user-images.githubusercontent.com/14288520/198852539-b0583c14-01a2-4cba-a8a1-fd8d872d7975.png" src="https://user-images.githubusercontent.com/14288520/198852539-b0583c14-01a2-4cba-a8a1-fd8d872d7975.png" /></a>
+<section id="functionality">
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node implements the 3 boolean <em>3d Mesh</em> functions; Intersect, Join, Difference.</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198852978-c958f428-50f0-43f0-9e88-50e315b510d9.png"><img alt="https://user-images.githubusercontent.com/14288520/198852978-c958f428-50f0-43f0-9e88-50e315b510d9.png" src="https://user-images.githubusercontent.com/14288520/198852978-c958f428-50f0-43f0-9e88-50e315b510d9.png" /></a>
 <p>There are switches and modes.</p>
 <ul class="simple">
 <li><p>Nested Accumulate (bool first two objects, then applies the rest to the result one by one.</p></li>
 <li><p>Only final result (output only last iteration result)</p></li>
 </ul>
-<p>::<img alt="csg demo" src="https://user-images.githubusercontent.com/619340/99914900-b7b0cf80-2d00-11eb-81a2-562d131e82a3.png" /></p>
+<p>::<a class="reference external" href="https://user-images.githubusercontent.com/14288520/198853352-112f44c9-0a3f-4cc4-8a24-9a930c900050.png"><img alt="csg demo" src="https://user-images.githubusercontent.com/14288520/198853352-112f44c9-0a3f-4cc4-8a24-9a930c900050.png" /></a></p>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/line_mk4.html"><span class="doc">Line</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/circle.html"><span class="doc">Circle</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/apply_and_join.html"><span class="doc">Matrix Apply to Mesh</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+</section>
 <section id="warnings">
 <h2>warnings<a class="headerlink" href="#warnings" title="Permalink to this heading">¶</a></h2>
 <p>This Boolean implementation is by no means fast, nor does it generate optimal output geometry. It is however often “correct”. There are operational limitations to be aware of.</p>

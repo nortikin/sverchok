@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Inset Faces &mdash; Sverchok 1, 1, 0 documentation</title>
+  <title>Inset Faces &mdash; Sverchok 1, 2, 0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
@@ -34,7 +34,7 @@
             <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1, 1, 0
+                1, 2, 0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -107,12 +107,9 @@
 <li class="toctree-l3"><a class="reference internal" href="smooth.html">Smooth Vertices</a></li>
 <li class="toctree-l3"><a class="reference internal" href="split_faces.html">Split Faces</a></li>
 <li class="toctree-l3"><a class="reference internal" href="split_mesh_elements.html">Split Mesh Elements</a></li>
-<li class="toctree-l3"><a class="reference internal" href="subdivide_lite.html">Subdivide Lite Node</a></li>
 <li class="toctree-l3"><a class="reference internal" href="subdivide_mk2.html">Subdivide</a></li>
 <li class="toctree-l3"><a class="reference internal" href="subdivide_to_quads.html">Subdivide to Quads</a></li>
 <li class="toctree-l3"><a class="reference internal" href="triangulate.html">Triangulate Mesh</a></li>
-<li class="toctree-l3"><a class="reference internal" href="triangulate_heavy.html">Triangulate Mesh (Heavy)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="unsubdivide.html">Unsubdivide node</a></li>
 <li class="toctree-l3"><a class="reference internal" href="vertices_mask.html">Mask Vertices</a></li>
 </ul>
 </li>
@@ -173,11 +170,12 @@
              
   <section id="inset-faces">
 <h1>Inset Faces<a class="headerlink" href="#inset-faces" title="Permalink to this heading">¶</a></h1>
-<img alt="https://user-images.githubusercontent.com/28003269/70852237-a89e8c00-1eb8-11ea-8563-1ef453f0f50d.png" src="https://user-images.githubusercontent.com/28003269/70852237-a89e8c00-1eb8-11ea-8563-1ef453f0f50d.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198664663-2d7b6f52-e955-4078-8a13-27a42d860aba.png"><img alt="https://user-images.githubusercontent.com/14288520/198664663-2d7b6f52-e955-4078-8a13-27a42d860aba.png" src="https://user-images.githubusercontent.com/14288520/198664663-2d7b6f52-e955-4078-8a13-27a42d860aba.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
-<p>The node has similar functionality with Blender inset command, so it just insert face into face.
+<p>The node has similar functionality with <a class="reference external" href="https://docs.blender.org/manual/en/latest/modeling/meshes/editing/face/inset_faces.html">Blender inset command</a>, so it just insert face into face.
 In spite of Blender inset command the node can apply different values per face in most cases.</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198678410-7781881d-a942-40f4-9fec-5b25d09f1602.png"><img alt="https://user-images.githubusercontent.com/14288520/198678410-7781881d-a942-40f4-9fec-5b25d09f1602.png" src="https://user-images.githubusercontent.com/14288520/198678410-7781881d-a942-40f4-9fec-5b25d09f1602.png" /></a>
 </section>
 <section id="category">
 <h2>Category<a class="headerlink" href="#category" title="Permalink to this heading">¶</a></h2>
@@ -204,6 +202,11 @@ In spite of Blender inset command the node can apply different values per face i
 <li><p><strong>Face data</strong> - give values according topological changes if face data was given via input socket else give indexes of old faces.</p></li>
 <li><p><strong>Mask</strong> - give selection mask according chosen option(s).</p></li>
 </ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198688719-9e5f5fca-d749-460e-910d-86e15cc0f766.png"><img alt="https://user-images.githubusercontent.com/14288520/198688719-9e5f5fca-d749-460e-910d-86e15cc0f766.png" src="https://user-images.githubusercontent.com/14288520/198688719-9e5f5fca-d749-460e-910d-86e15cc0f766.png" /></a>
+<ul class="simple">
+<li><p>Number-&gt; <a class="reference internal" href="../number/list_input.html"><span class="doc">List Input</span></a></p></li>
+<li><p>List-&gt; <a class="reference internal" href="../list_masks/index_to_mask.html"><span class="doc">Index To Mask</span></a></p></li>
+</ul>
 </section>
 <section id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
@@ -226,6 +229,7 @@ In spite of Blender inset command the node can apply different values per face i
 </tr>
 </tbody>
 </table>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198690674-3f61a1eb-686d-42ea-b573-d77852221cde.png"><img alt="https://user-images.githubusercontent.com/14288520/198690674-3f61a1eb-686d-42ea-b573-d77852221cde.png" src="https://user-images.githubusercontent.com/14288520/198690674-3f61a1eb-686d-42ea-b573-d77852221cde.png" /></a>
 </section>
 <section id="n-panel">
 <h2>N panel<a class="headerlink" href="#n-panel" title="Permalink to this heading">¶</a></h2>
@@ -256,36 +260,81 @@ In spite of Blender inset command the node can apply different values per face i
 </tr>
 <tr class="row-odd"><td><p>Edge Rail</p></td>
 <td><p>bool</p></td>
-<td><dl class="simple">
-<dt>Created vertices slide along the original edges of the inner</dt><dd><p>geometry, instead of the normals</p>
-</dd>
-</dl>
+<td><p>Created vertices slide along the original edges of the inner</p>
+<p>geometry, instead of the normals</p>
 </td>
 </tr>
 <tr class="row-even"><td><p>Outset</p></td>
 <td><p>bool</p></td>
-<td><dl class="simple">
-<dt>Create an outset rather than an inset. Causes the geometry to be</dt><dd><p>“created surrounding selection (instead of within)</p>
-</dd>
-</dl>
+<td><p>Create an outset rather than an inset. Causes the geometry to be</p>
+<p>created surrounding selection (instead of within)</p>
 </td>
 </tr>
 </tbody>
 </table>
+<ul class="simple">
+<li><p>offset even:</p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198692610-3c5f55a7-d781-4f4c-8539-1a6fa4aae88b.gif"><img alt="https://user-images.githubusercontent.com/14288520/198692610-3c5f55a7-d781-4f4c-8539-1a6fa4aae88b.gif" src="https://user-images.githubusercontent.com/14288520/198692610-3c5f55a7-d781-4f4c-8539-1a6fa4aae88b.gif" /></a>
+<ul class="simple">
+<li><p>Offset Relative</p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198694750-95eb0beb-5246-498e-9d66-3eb915d895a3.gif"><img alt="https://user-images.githubusercontent.com/14288520/198694750-95eb0beb-5246-498e-9d66-3eb915d895a3.gif" src="https://user-images.githubusercontent.com/14288520/198694750-95eb0beb-5246-498e-9d66-3eb915d895a3.gif" /></a>
+<ul class="simple">
+<li><p>Outset</p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198709376-f9510293-bf9c-463c-b2fa-236de2677cbd.gif"><img alt="https://user-images.githubusercontent.com/14288520/198709376-f9510293-bf9c-463c-b2fa-236de2677cbd.gif" src="https://user-images.githubusercontent.com/14288520/198709376-f9510293-bf9c-463c-b2fa-236de2677cbd.gif" /></a>
 </section>
 <section id="usage">
 <h2>Usage<a class="headerlink" href="#usage" title="Permalink to this heading">¶</a></h2>
 <p>Inserting faces with different thickness per face:</p>
-<img alt="https://user-images.githubusercontent.com/28003269/70705645-d5527800-1ced-11ea-9042-6a1ec6e09d5b.png" src="https://user-images.githubusercontent.com/28003269/70705645-d5527800-1ced-11ea-9042-6a1ec6e09d5b.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198697606-43ab8b0c-e141-433a-8330-2690442facbb.png"><img alt="https://user-images.githubusercontent.com/14288520/198697606-43ab8b0c-e141-433a-8330-2690442facbb.png" src="https://user-images.githubusercontent.com/14288520/198697606-43ab8b0c-e141-433a-8330-2690442facbb.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/list_input.html"><span class="doc">List Input</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_struct/shuffle.html"><span class="doc">List Shuffle</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>Using face data node for setting color to faces:</p>
-<img alt="https://user-images.githubusercontent.com/28003269/70713317-2fa80480-1cff-11ea-9bb7-b8db2fb6264a.png" src="https://user-images.githubusercontent.com/28003269/70713317-2fa80480-1cff-11ea-9bb7-b8db2fb6264a.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198701958-1aa3d8e9-a43b-4786-8989-bb83f42e2a69.png"><img alt="https://user-images.githubusercontent.com/14288520/198701958-1aa3d8e9-a43b-4786-8989-bb83f42e2a69.png" src="https://user-images.githubusercontent.com/14288520/198701958-1aa3d8e9-a43b-4786-8989-bb83f42e2a69.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/random_num_gen.html"><span class="doc">Random Num Gen</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>Color-&gt; <a class="reference internal" href="../color/color_in_mk1.html"><span class="doc">Color In</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_main/length.html"><span class="doc">List Length</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_struct/shuffle.html"><span class="doc">List Shuffle</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/mesh_viewer.html"><span class="doc">Mesh Viewer</span></a></p></li>
+<li><p>BPY Data-&gt;Vertex Color MK3 (No in docs. TODO)</p></li>
+</ul>
+<hr class="docutils" />
 <p>Mask can be used ofr filtering output mesh with <cite>list mask out</cite> node for example:</p>
-<img alt="https://user-images.githubusercontent.com/28003269/70850212-39696d80-1ea1-11ea-9c41-0b6e9b99d420.gif" src="https://user-images.githubusercontent.com/28003269/70850212-39696d80-1ea1-11ea-9c41-0b6e9b99d420.gif" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198705342-3cd37bed-c44f-47a2-9d9b-55c002b548ce.png"><img alt="https://user-images.githubusercontent.com/14288520/198705342-3cd37bed-c44f-47a2-9d9b-55c002b548ce.png" src="https://user-images.githubusercontent.com/14288520/198705342-3cd37bed-c44f-47a2-9d9b-55c002b548ce.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/random_num_gen.html"><span class="doc">Random Num Gen</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>Color-&gt; <a class="reference internal" href="../color/color_in_mk1.html"><span class="doc">Color In</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_main/length.html"><span class="doc">List Length</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_struct/shuffle.html"><span class="doc">List Shuffle</span></a></p></li>
+<li><p><strong>List</strong>-&gt; <a class="reference internal" href="../list_masks/mask.html"><span class="doc">List Mask (Out)</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/mesh_viewer.html"><span class="doc">Mesh Viewer</span></a></p></li>
+<li><p>BPY Data-&gt;Vertex Color MK3 (No in docs. TODO)</p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198705028-1566d419-c9fe-40fa-a70e-9a14a8b8d159.gif"><img alt="https://user-images.githubusercontent.com/14288520/198705028-1566d419-c9fe-40fa-a70e-9a14a8b8d159.gif" src="https://user-images.githubusercontent.com/14288520/198705028-1566d419-c9fe-40fa-a70e-9a14a8b8d159.gif" /></a>
+<hr class="docutils" />
 <p>Insert region mode can be used with multiple input values of thickness and depth
 but in this case sometimes result can be unexpected.
 The logic of work in this mode is next: mesh split into islands divided by faces with 0 values or 0 mask,
 then for each island average thickness and depth is calculated and then faces are inserted.</p>
 <p>In this mode outset is not supported.</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198709953-733864cb-6d0f-443c-8de4-1def3704ea45.png"><img alt="https://user-images.githubusercontent.com/14288520/198709953-733864cb-6d0f-443c-8de4-1def3704ea45.png" src="https://user-images.githubusercontent.com/14288520/198709953-733864cb-6d0f-443c-8de4-1def3704ea45.png" /></a>
 <img alt="https://user-images.githubusercontent.com/28003269/70794911-2e86de00-1db8-11ea-8e13-1dd8d52fe38b.png" src="https://user-images.githubusercontent.com/28003269/70794911-2e86de00-1db8-11ea-8e13-1dd8d52fe38b.png" />
 </section>
 <section id="examples">

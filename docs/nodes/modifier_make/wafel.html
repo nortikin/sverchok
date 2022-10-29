@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Wafel &mdash; Sverchok 1, 1, 0 documentation</title>
+  <title>Wafel &mdash; Sverchok 1, 2, 0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
@@ -34,7 +34,7 @@
             <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1, 1, 0
+                1, 2, 0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -81,7 +81,9 @@
 <li class="toctree-l3"><a class="reference internal" href="offset_line.html">Offset Line</a></li>
 <li class="toctree-l3"><a class="reference internal" href="pipe_tubes.html">Pipe</a></li>
 <li class="toctree-l3"><a class="reference internal" href="solidify_mk2.html">Solidify</a></li>
+<li class="toctree-l3"><a class="reference internal" href="subdivide_lite.html">Subdivide Lite Node</a></li>
 <li class="toctree-l3"><a class="reference internal" href="sweep_modulator.html">Sweep Modulator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="unsubdivide.html">Unsubdivide node</a></li>
 <li class="toctree-l3"><a class="reference internal" href="uv_connect.html">UV Connection</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Wafel</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
@@ -152,6 +154,7 @@
              
   <section id="wafel">
 <h1>Wafel<a class="headerlink" href="#wafel" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198853646-b8016856-ae35-4f76-aeba-c249f955f627.png"><img alt="https://user-images.githubusercontent.com/14288520/198853646-b8016856-ae35-4f76-aeba-c249f955f627.png" src="https://user-images.githubusercontent.com/14288520/198853646-b8016856-ae35-4f76-aeba-c249f955f627.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node make section possible to make as manufactured wafel structure. There is always pair of wafel nodes, two directions.</p>
@@ -163,28 +166,36 @@
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
-<p><strong>vecLine</strong> - lines sected between sections of solid object. Form factor of object. each object has only two certices defining this section.</p>
-<p><strong>vecPlane</strong> - vectors of one side section.</p>
-<p><strong>edgPlane</strong> - closed edges (not planes) of one side section.</p>
-<p><strong>thickness</strong> - thickness of material to use in thickness of waffel slots.</p>
+<ul class="simple">
+<li><p><strong>vecLine</strong> - lines sected between sections of solid object. Form factor of object. each object has only two certices defining this section.</p></li>
+<li><p><strong>vecPlane</strong> - vectors of one side section.</p></li>
+<li><p><strong>edgPlane</strong> - closed edges (not planes) of one side section.</p></li>
+<li><p><strong>thickness</strong> - thickness of material to use in thickness of waffel slots.</p></li>
+</ul>
 </section>
 <section id="properties">
 <h2>Properties<a class="headerlink" href="#properties" title="Permalink to this heading">¶</a></h2>
-<p><strong>threshold</strong> - threshold of line length from <strong>vecLine</strong> to limit cut material when producing.</p>
-<p><strong>Up/Down</strong> - direction of slots, there is only two cases, up or down. Not left and right and no XY directed vecLines never.  Remember this.</p>
+<ul class="simple">
+<li><p><strong>threshold</strong> - threshold of line length from <strong>vecLine</strong> to limit cut material when producing.</p></li>
+<li><p><strong>Up/Down</strong> - direction of slots, there is only two cases, up or down. Not left and right and no XY directed vecLines never.  Remember this.</p></li>
+</ul>
 </section>
 <section id="properties-extended">
 <h2>Properties_extended<a class="headerlink" href="#properties-extended" title="Permalink to this heading">¶</a></h2>
-<p><strong>rounded</strong> - rounded edges.</p>
-<p><strong>Bind2</strong> - circles to bind.</p>
-<p><strong>Contra</strong> - contrplane to define where to flip Up and Down direction. It is same as <strong>vecPlane</strong>.</p>
-<p><strong>Tube</strong> - case of section lines, making holes in body. It is same as <strong>vecLine</strong>.</p>
+<ul class="simple">
+<li><p><strong>rounded</strong> - rounded edges.</p></li>
+<li><p><strong>Bind2</strong> - circles to bind.</p></li>
+<li><p><strong>Contra</strong> - contrplane to define where to flip Up and Down direction. It is same as <strong>vecPlane</strong>.</p></li>
+<li><p><strong>Tube</strong> - case of section lines, making holes in body. It is same as <strong>vecLine</strong>.</p></li>
+</ul>
 </section>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
-<p><strong>vert</strong> - vertices of output.</p>
-<p><strong>edge</strong> - edges of output.</p>
-<p><strong>centers</strong> - polygons centers.</p>
+<ul class="simple">
+<li><p><strong>vert</strong> - vertices of output.</p></li>
+<li><p><strong>edge</strong> - edges of output.</p></li>
+<li><p><strong>centers</strong> - polygons centers.</p></li>
+</ul>
 </section>
 <section id="notes">
 <h2>Notes<a class="headerlink" href="#notes" title="Permalink to this heading">¶</a></h2>
@@ -196,8 +207,8 @@
 </section>
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
-<img alt="noalt" src="https://cloud.githubusercontent.com/assets/5783432/5235611/25661e04-7812-11e4-9dba-c05f9733e966.png" />
-<img alt="noalt" src="https://cloud.githubusercontent.com/assets/5783432/5235612/258da21c-7812-11e4-91cf-6da1dbe395b4.png" />
+<a class="reference external image-reference" href="https://cloud.githubusercontent.com/assets/5783432/5235611/25661e04-7812-11e4-9dba-c05f9733e966.png"><img alt="noalt" src="https://cloud.githubusercontent.com/assets/5783432/5235611/25661e04-7812-11e4-9dba-c05f9733e966.png" /></a>
+<a class="reference external image-reference" href="https://cloud.githubusercontent.com/assets/5783432/5235612/258da21c-7812-11e4-91cf-6da1dbe395b4.png"><img alt="noalt" src="https://cloud.githubusercontent.com/assets/5783432/5235612/258da21c-7812-11e4-91cf-6da1dbe395b4.png" /></a>
 </section>
 </section>
 

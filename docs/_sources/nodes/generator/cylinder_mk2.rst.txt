@@ -4,13 +4,13 @@ Cylinder MK2
 .. image:: https://user-images.githubusercontent.com/14288520/188698444-3c371e60-6887-4359-86e2-47bfc66568e5.png
   :target: https://user-images.githubusercontent.com/14288520/188698444-3c371e60-6887-4359-86e2-47bfc66568e5.png
 
-.. image:: https://user-images.githubusercontent.com/14288520/191251147-947ec5e5-d7db-4d6d-9d9a-122c261295c9.png
-  :target: https://user-images.githubusercontent.com/14288520/191251147-947ec5e5-d7db-4d6d-9d9a-122c261295c9.png
-
 Functionality
 -------------
 
 This node generates primarily cylindrical shapes, but its settings allow to create a wide variety of tube like shapes.
+
+.. image:: https://user-images.githubusercontent.com/14288520/191251147-947ec5e5-d7db-4d6d-9d9a-122c261295c9.png
+  :target: https://user-images.githubusercontent.com/14288520/191251147-947ec5e5-d7db-4d6d-9d9a-122c261295c9.png
 
 Inputs
 ------

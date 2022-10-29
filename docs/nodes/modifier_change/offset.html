@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Offset &mdash; Sverchok 1, 1, 0 documentation</title>
+  <title>Offset &mdash; Sverchok 1, 2, 0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
@@ -34,7 +34,7 @@
             <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1, 1, 0
+                1, 2, 0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -88,6 +88,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#outputs">Outputs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#see-also">See also</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#examples-of-usage">Examples of usage</a></li>
 </ul>
 </li>
@@ -104,12 +105,9 @@
 <li class="toctree-l3"><a class="reference internal" href="smooth.html">Smooth Vertices</a></li>
 <li class="toctree-l3"><a class="reference internal" href="split_faces.html">Split Faces</a></li>
 <li class="toctree-l3"><a class="reference internal" href="split_mesh_elements.html">Split Mesh Elements</a></li>
-<li class="toctree-l3"><a class="reference internal" href="subdivide_lite.html">Subdivide Lite Node</a></li>
 <li class="toctree-l3"><a class="reference internal" href="subdivide_mk2.html">Subdivide</a></li>
 <li class="toctree-l3"><a class="reference internal" href="subdivide_to_quads.html">Subdivide to Quads</a></li>
 <li class="toctree-l3"><a class="reference internal" href="triangulate.html">Triangulate Mesh</a></li>
-<li class="toctree-l3"><a class="reference internal" href="triangulate_heavy.html">Triangulate Mesh (Heavy)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="unsubdivide.html">Unsubdivide node</a></li>
 <li class="toctree-l3"><a class="reference internal" href="vertices_mask.html">Mask Vertices</a></li>
 </ul>
 </li>
@@ -171,9 +169,14 @@
   <section id="offset">
 <h1>Offset<a class="headerlink" href="#offset" title="Permalink to this heading">¶</a></h1>
 <p><em>destination after Beta: Modifier Change</em></p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198389030-a350590c-5bc6-4d62-97f4-168089f275d7.png"><img alt="https://user-images.githubusercontent.com/14288520/198389030-a350590c-5bc6-4d62-97f4-168089f275d7.png" src="https://user-images.githubusercontent.com/14288520/198389030-a350590c-5bc6-4d62-97f4-168089f275d7.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>Make offset for polygons with bevel in corners. Output inner and outer polygons separately.</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198391035-85e9ac62-fe9f-4c32-8ac6-9061824d1dd2.png"><img alt="https://user-images.githubusercontent.com/14288520/198391035-85e9ac62-fe9f-4c32-8ac6-9061824d1dd2.png" src="https://user-images.githubusercontent.com/14288520/198391035-85e9ac62-fe9f-4c32-8ac6-9061824d1dd2.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
+</ul>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
@@ -184,6 +187,10 @@
 <li><p><strong>offset</strong> - offset values. Vectorized for every polygon as [[f,f,f,f,f]]</p></li>
 <li><p><strong>nsides</strong> - number of rounded sides</p></li>
 <li><p><strong>radius</strong> - bevel radius. Vectorized for every polygon as [[f,f,f,f,f]]</p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198395930-ec31a765-51b3-4cc9-9198-cd96099d930c.png"><img alt="https://user-images.githubusercontent.com/14288520/198395930-ec31a765-51b3-4cc9-9198-cd96099d930c.png" src="https://user-images.githubusercontent.com/14288520/198395930-ec31a765-51b3-4cc9-9198-cd96099d930c.png" /></a>
+<ul class="simple">
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
 </ul>
 </section>
 <section id="parameters">
@@ -232,15 +239,44 @@
 <li><p><strong>OutPols</strong> - get polygons that lay in outer polygon’s line.</p></li>
 <li><p><strong>InPols</strong> - get polygons that lay in inner polygon’s line.</p></li>
 </ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198396663-60cd7f42-e708-4042-aa9b-183409fa2676.png"><img alt="https://user-images.githubusercontent.com/14288520/198396663-60cd7f42-e708-4042-aa9b-183409fa2676.png" src="https://user-images.githubusercontent.com/14288520/198396663-60cd7f42-e708-4042-aa9b-183409fa2676.png" /></a>
+</section>
+<section id="see-also">
+<h2>See also<a class="headerlink" href="#see-also" title="Permalink to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>CAD-&gt; <a class="reference internal" href="../analyzer/inscribed_circle.html"><span class="doc">Inscribed Circle</span></a></p></li>
+<li><p>CAD-&gt; <a class="reference internal" href="../analyzer/steiner_ellipse.html"><span class="doc">Steiner Ellipse</span></a></p></li>
+</ul>
 </section>
 <section id="examples-of-usage">
 <h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>Offset and radius are defined by distance between point and polygon’s center, divided by some number:</p>
-<img alt="https://cloud.githubusercontent.com/assets/5783432/18608956/88a1eaba-7d07-11e6-8f69-763ac4172c6a.png" src="https://cloud.githubusercontent.com/assets/5783432/18608956/88a1eaba-7d07-11e6-8f69-763ac4172c6a.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198399486-6c35dc6b-8cd4-4673-8594-84e00a9dfb3d.png"><img alt="https://user-images.githubusercontent.com/14288520/198399486-6c35dc6b-8cd4-4673-8594-84e00a9dfb3d.png" src="https://user-images.githubusercontent.com/14288520/198399486-6c35dc6b-8cd4-4673-8594-84e00a9dfb3d.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/icosphere.html"><span class="doc">IcoSphere</span></a></p></li>
+<li><p>Transform-&gt; <a class="reference internal" href="../transforms/noise_displace.html"><span class="doc">Noise Displace</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198399530-ed4fa6db-c6c2-4aac-91fc-5ef6f723803a.gif"><img alt="https://user-images.githubusercontent.com/14288520/198399530-ed4fa6db-c6c2-4aac-91fc-5ef6f723803a.gif" src="https://user-images.githubusercontent.com/14288520/198399530-ed4fa6db-c6c2-4aac-91fc-5ef6f723803a.gif" /></a>
+<hr class="docutils" />
 <p>Parameters’ cases, that make different polygons (decomposer list node used to separate):</p>
-<img alt="https://cloud.githubusercontent.com/assets/5783432/18608957/8e4a5696-7d07-11e6-8f7f-ccfc6886a781.png" src="https://cloud.githubusercontent.com/assets/5783432/18608957/8e4a5696-7d07-11e6-8f7f-ccfc6886a781.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198401754-ec11ec2a-2d9d-4298-84c6-4a1f368fddca.png"><img alt="https://user-images.githubusercontent.com/14288520/198401754-ec11ec2a-2d9d-4298-84c6-4a1f368fddca.png" src="https://user-images.githubusercontent.com/14288520/198401754-ec11ec2a-2d9d-4298-84c6-4a1f368fddca.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/decompose.html"><span class="doc">List Decompose</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_idx28.html"><span class="doc">Viewer Index+</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>Upper image can be defined by one offset and list (range) of numbers, plugged to offset/radius, which are vectorised:</p>
-<img alt="https://cloud.githubusercontent.com/assets/5783432/18608958/9194df92-7d07-11e6-9652-457776d42aaa.png" src="https://cloud.githubusercontent.com/assets/5783432/18608958/9194df92-7d07-11e6-9652-457776d42aaa.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198402357-4ed1ba2d-d21a-487f-acd8-fc0a5045602b.png"><img alt="https://user-images.githubusercontent.com/14288520/198402357-4ed1ba2d-d21a-487f-acd8-fc0a5045602b.png" src="https://user-images.githubusercontent.com/14288520/198402357-4ed1ba2d-d21a-487f-acd8-fc0a5045602b.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_main/length.html"><span class="doc">List Length</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_idx28.html"><span class="doc">Viewer Index+</span></a></p></li>
+</ul>
 </section>
 </section>
 

@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bevel &mdash; Sverchok 1, 1, 0 documentation</title>
+  <title>Bevel &mdash; Sverchok 1, 2, 0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
@@ -34,7 +34,7 @@
             <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1, 1, 0
+                1, 2, 0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -65,6 +65,10 @@
 <li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#profile">Profile</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#spread">Spread</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#loop-slide">Loop Slide</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#miter-type">Miter type</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#outputs">Outputs</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#examples-of-usage">Examples of usage</a></li>
 </ul>
@@ -104,12 +108,9 @@
 <li class="toctree-l3"><a class="reference internal" href="smooth.html">Smooth Vertices</a></li>
 <li class="toctree-l3"><a class="reference internal" href="split_faces.html">Split Faces</a></li>
 <li class="toctree-l3"><a class="reference internal" href="split_mesh_elements.html">Split Mesh Elements</a></li>
-<li class="toctree-l3"><a class="reference internal" href="subdivide_lite.html">Subdivide Lite Node</a></li>
 <li class="toctree-l3"><a class="reference internal" href="subdivide_mk2.html">Subdivide</a></li>
 <li class="toctree-l3"><a class="reference internal" href="subdivide_to_quads.html">Subdivide to Quads</a></li>
 <li class="toctree-l3"><a class="reference internal" href="triangulate.html">Triangulate Mesh</a></li>
-<li class="toctree-l3"><a class="reference internal" href="triangulate_heavy.html">Triangulate Mesh (Heavy)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="unsubdivide.html">Unsubdivide node</a></li>
 <li class="toctree-l3"><a class="reference internal" href="vertices_mask.html">Mask Vertices</a></li>
 </ul>
 </li>
@@ -170,9 +171,11 @@
              
   <section id="bevel">
 <h1>Bevel<a class="headerlink" href="#bevel" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197881511-44a2a2d4-b5a1-496c-bdf4-9242d0fe7e89.png"><img alt="https://user-images.githubusercontent.com/14288520/197881511-44a2a2d4-b5a1-496c-bdf4-9242d0fe7e89.png" src="https://user-images.githubusercontent.com/14288520/197881511-44a2a2d4-b5a1-496c-bdf4-9242d0fe7e89.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node applies Bevel operator to the input mesh. You can specify edges to be beveled.</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197888952-7b24fc4f-37a0-474d-bc4b-692c544a2447.png"><img alt="https://user-images.githubusercontent.com/14288520/197888952-7b24fc4f-37a0-474d-bc4b-692c544a2447.png" src="https://user-images.githubusercontent.com/14288520/197888952-7b24fc4f-37a0-474d-bc4b-692c544a2447.png" /></a>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
@@ -222,56 +225,64 @@ value different from <strong>Sharp</strong>. The default value is 0.0.</p></li>
 <tbody>
 <tr class="row-even"><td><p><strong>Amount type</strong></p></td>
 <td><p>Offset or</p>
-<p>Width or
-Depth or</p>
+<p>Width or</p>
+<p>Depth or</p>
 <p>Percent</p>
 </td>
 <td><p>Offset</p></td>
-<td><ul class="simple">
-<li><p>Offset - Amount is offset of new edges from
-original.</p></li>
+<td><ul>
+<li><p>Offset - Amount is offset of new edges from</p>
+<p>original.</p>
+</li>
 <li><p>Width - Amount is width of new face.</p></li>
-<li><p>Depth - Amount is perpendicular distance from
-original edge to bevel face.</p></li>
-<li><p>Percent - Amount is percent of adjacent edge
-length.</p></li>
+<li><p>Depth - Amount is perpendicular distance from</p>
+<p>original edge to bevel face.</p>
+</li>
+<li><p>Percent - Amount is percent of adjacent edge</p>
+<p>length.</p>
+</li>
 </ul>
 </td>
 </tr>
 <tr class="row-odd"><td><p><strong>Vertex mode</strong></p></td>
 <td><p>Boolean</p></td>
 <td><p>False</p></td>
-<td><p>Bevel edges or only vertex. When activated the mask
-will switch from ‘Bevel Edges’ to ‘MaskVertices’</p></td>
+<td><p>Bevel edges or only vertex. When activated the mask</p>
+<p>will switch from ‘Bevel Edges’ to ‘MaskVertices’</p>
+</td>
 </tr>
 <tr class="row-even"><td><p><strong>Clamp Overlap</strong></p></td>
 <td><p>Boolean</p></td>
 <td><p>False</p></td>
-<td><p>If checked, do not allow beveled edges/vertices to
-overlap each other</p></td>
+<td><p>If checked, do not allow beveled edges/vertices to</p>
+<p>overlap each other</p>
+</td>
 </tr>
 <tr class="row-odd"><td><p><strong>Amount</strong></p></td>
 <td><p>Float</p></td>
 <td><p>0.0</p></td>
-<td><p>Amount to offset beveled edge. Exact
-interpretation of this parameter depends on
-<code class="docutils literal notranslate"><span class="pre">Amount</span> <span class="pre">type</span></code> parameter. Default value of zero
-means do not bevel. This parameter can also be
-specified via corresponding input.</p></td>
+<td><p>Amount to offset beveled edge. Exact</p>
+<p>interpretation of this parameter depends on</p>
+<p><code class="docutils literal notranslate"><span class="pre">Amount</span> <span class="pre">type</span></code> parameter. Default value of zero</p>
+<p>means do not bevel. This parameter can also be</p>
+<p>specified via corresponding input.</p>
+</td>
 </tr>
 <tr class="row-even"><td><p><strong>Segments</strong></p></td>
 <td><p>Int</p></td>
 <td><p>1</p></td>
-<td><p>Number of segments in bevel. This parameter can
-also be specified via corresponding input.</p></td>
+<td><p>Number of segments in bevel. This parameter can</p>
+<p>also be specified via corresponding input.</p>
+</td>
 </tr>
 <tr class="row-odd"><td><p><strong>Profile</strong></p></td>
 <td><p>Float</p></td>
 <td><p>0.5</p></td>
-<td><p>Profile shape - a float number from 0 to 1;
-default value of 0.5 means round shape.  This
-parameter can also be specified via corresponding
-input.</p></td>
+<td><p>Profile shape - a float number from 0 to 1;</p>
+<p>default value of 0.5 means round shape.  This</p>
+<p>parameter can also be specified via corresponding</p>
+<p>input.</p>
+</td>
 </tr>
 <tr class="row-even"><td><p><strong>Spread</strong></p></td>
 <td><p>Float</p></td>
@@ -281,32 +292,56 @@ input.</p></td>
 <tr class="row-odd"><td><p><strong>Loop Slide</strong></p></td>
 <td><p>Boolean</p></td>
 <td><p>True</p></td>
-<td><p>If checked, prefer to slide along edges to having
-even widths. This parameter is available in the
-N panel only.</p></td>
+<td><p>If checked, prefer to slide along edges to having</p>
+<p>even widths. This parameter is available in the</p>
+<p>N panel only.</p>
+</td>
 </tr>
-<tr class="row-even"><td><p><strong>Miter type</strong> /
-<strong>Inner</strong></p></td>
-<td><p>Sharp or
-Patch or
-Arc</p></td>
+<tr class="row-even"><td><p><strong>Miter type</strong> /</p>
+<p><strong>Inner</strong></p>
+</td>
+<td><p>Sharp or</p>
+<p>Patch or</p>
+<p>Arc</p>
+</td>
 <td><p>Sharp</p></td>
-<td><p>Inner miter type. See Blender documentation for
-the details. This parameter is available in the N
-panel only.</p></td>
+<td><p>Inner miter type. See Blender documentation for</p>
+<p>the details. This parameter is available in the N</p>
+<p>panel only.</p>
+</td>
 </tr>
-<tr class="row-odd"><td><p><strong>Miter type</strong> /
-<strong>Outer</strong></p></td>
-<td><p>Sharp or
-Patch or
-Arc</p></td>
+<tr class="row-odd"><td><p><strong>Miter type</strong> /</p>
+<p><strong>Outer</strong></p>
+</td>
+<td><p>Sharp or</p>
+<p>Patch or</p>
+<p>Arc</p>
+</td>
 <td><p>Sharp</p></td>
-<td><p>Outer miter type. See Blender documentation for
-the details. This parameter is available in the N
-panel only.</p></td>
+<td><p>Outer miter type. See Blender documentation for</p>
+<p>the details. This parameter is available in the N</p>
+<p>panel only.</p>
+</td>
 </tr>
 </tbody>
 </table>
+<p><a class="reference external" href="https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/bevel.html">Bevel Bevel Modifier Documentation</a></p>
+</section>
+<section id="profile">
+<h2>Profile<a class="headerlink" href="#profile" title="Permalink to this heading">¶</a></h2>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197985396-d661c052-4678-440a-819a-4758f1b627d9.png"><img alt="https://user-images.githubusercontent.com/14288520/197985396-d661c052-4678-440a-819a-4758f1b627d9.png" src="https://user-images.githubusercontent.com/14288520/197985396-d661c052-4678-440a-819a-4758f1b627d9.png" /></a>
+</section>
+<section id="spread">
+<h2>Spread<a class="headerlink" href="#spread" title="Permalink to this heading">¶</a></h2>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197967980-f01b33bc-8cb1-462c-a65b-2f68e83858dd.png"><img alt="https://user-images.githubusercontent.com/14288520/197967980-f01b33bc-8cb1-462c-a65b-2f68e83858dd.png" src="https://user-images.githubusercontent.com/14288520/197967980-f01b33bc-8cb1-462c-a65b-2f68e83858dd.png" /></a>
+</section>
+<section id="loop-slide">
+<h2>Loop Slide<a class="headerlink" href="#loop-slide" title="Permalink to this heading">¶</a></h2>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197971748-568283ee-5834-491d-a909-79afb8947a87.gif"><img alt="https://user-images.githubusercontent.com/14288520/197971748-568283ee-5834-491d-a909-79afb8947a87.gif" src="https://user-images.githubusercontent.com/14288520/197971748-568283ee-5834-491d-a909-79afb8947a87.gif" /></a>
+</section>
+<section id="miter-type">
+<h2>Miter type<a class="headerlink" href="#miter-type" title="Permalink to this heading">¶</a></h2>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197964779-a9439e7d-d0ae-47a8-8717-af82660a445a.png"><img alt="https://user-images.githubusercontent.com/14288520/197964779-a9439e7d-d0ae-47a8-8717-af82660a445a.png" src="https://user-images.githubusercontent.com/14288520/197964779-a9439e7d-d0ae-47a8-8717-af82660a445a.png" /></a>
 </section>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
@@ -323,17 +358,57 @@ contains one item for each output mesh face.</p></li>
 <section id="examples-of-usage">
 <h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>Beveled cube:</p>
-<img alt="https://cloud.githubusercontent.com/assets/284644/5888719/add3aebe-a42c-11e4-8da5-3321f93e1ff0.png" src="https://cloud.githubusercontent.com/assets/284644/5888719/add3aebe-a42c-11e4-8da5-3321f93e1ff0.png" />
-<p>Only two edges of cube beveled:</p>
-<img alt="https://cloud.githubusercontent.com/assets/284644/5888718/adc718b6-a42c-11e4-80d6-7793e682f8e4.png" src="https://cloud.githubusercontent.com/assets/284644/5888718/adc718b6-a42c-11e4-80d6-7793e682f8e4.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198134853-c65d807f-586b-4d63-b42a-e830fa9ba7b0.png"><img alt="https://user-images.githubusercontent.com/14288520/198134853-c65d807f-586b-4d63-b42a-e830fa9ba7b0.png" src="https://user-images.githubusercontent.com/14288520/198134853-c65d807f-586b-4d63-b42a-e830fa9ba7b0.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
+<p>Only three edges of cube beveled:</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198137479-17935dcc-d2f6-4a0f-8cef-f6a5cecb0e8a.png"><img alt="https://user-images.githubusercontent.com/14288520/198137479-17935dcc-d2f6-4a0f-8cef-f6a5cecb0e8a.png" src="https://user-images.githubusercontent.com/14288520/198137479-17935dcc-d2f6-4a0f-8cef-f6a5cecb0e8a.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/list_input.html"><span class="doc">List Input</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_main/length.html"><span class="doc">List Length</span></a></p></li>
+<li><p>List-&gt; <a class="reference internal" href="../list_masks/index_to_mask.html"><span class="doc">Index To Mask</span></a></p></li>
+<li><p>List-&gt; <a class="reference internal" href="../list_masks/mask.html"><span class="doc">List Mask (Out)</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_idx28.html"><span class="doc">Viewer Index+</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>Another sort of cage:</p>
-<img alt="https://cloud.githubusercontent.com/assets/284644/5888727/dc332794-a42c-11e4-9007-d86610405164.png" src="https://cloud.githubusercontent.com/assets/284644/5888727/dc332794-a42c-11e4-9007-d86610405164.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198138428-54d3a271-f363-4e6a-9f9b-277af95faa41.png"><img alt="https://user-images.githubusercontent.com/14288520/198138428-54d3a271-f363-4e6a-9f9b-277af95faa41.png" src="https://user-images.githubusercontent.com/14288520/198138428-54d3a271-f363-4e6a-9f9b-277af95faa41.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<p>See also:</p>
+<ul class="simple">
+<li><p>CAD-&gt; <a class="reference internal" href="offset.html"><span class="doc">Offset</span></a> (Outpols)</p></li>
+</ul>
+<hr class="docutils" />
 <p>You can work with multiple objects:</p>
-<img alt="https://cloud.githubusercontent.com/assets/5783432/18603141/322847ce-7c80-11e6-8357-6ef4673add4d.png" src="https://cloud.githubusercontent.com/assets/5783432/18603141/322847ce-7c80-11e6-8357-6ef4673add4d.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198144631-e56529ea-e679-4b45-b0be-35dfad4358f4.png"><img alt="https://user-images.githubusercontent.com/14288520/198144631-e56529ea-e679-4b45-b0be-35dfad4358f4.png" src="https://user-images.githubusercontent.com/14288520/198144631-e56529ea-e679-4b45-b0be-35dfad4358f4.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_in.html"><span class="doc">Vector In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>Vertex mode and multiple radius:</p>
-<img alt="https://user-images.githubusercontent.com/10011941/38384563-cb1bb8a6-390f-11e8-82cc-d2a978cb8d52.png" src="https://user-images.githubusercontent.com/10011941/38384563-cb1bb8a6-390f-11e8-82cc-d2a978cb8d52.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198154647-36db9675-c302-498c-ba80-f9405682de69.png"><img alt="https://user-images.githubusercontent.com/14288520/198154647-36db9675-c302-498c-ba80-f9405682de69.png" src="https://user-images.githubusercontent.com/14288520/198154647-36db9675-c302-498c-ba80-f9405682de69.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/line_mk4.html"><span class="doc">Line</span></a></p></li>
+<li><p>Generator-&gt;Generators Extended-&gt; <a class="reference internal" href="../generators_extended/triangle.html"><span class="doc">Triangle</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/list_input.html"><span class="doc">List Input</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_main/length.html"><span class="doc">List Length</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_idx28.html"><span class="doc">Viewer Index+</span></a></p></li>
+</ul>
 <p>An example of “FaceData” sockets usage:</p>
-<img alt="https://user-images.githubusercontent.com/284644/70852164-0682a200-1ec0-11ea-8b65-75b0bced3659.png" src="https://user-images.githubusercontent.com/284644/70852164-0682a200-1ec0-11ea-8b65-75b0bced3659.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/70852164-0682a200-1ec0-11ea-8b65-75b0bced3659.png"><img alt="https://user-images.githubusercontent.com/284644/70852164-0682a200-1ec0-11ea-8b65-75b0bced3659.png" src="https://user-images.githubusercontent.com/284644/70852164-0682a200-1ec0-11ea-8b65-75b0bced3659.png" /></a>
 </section>
 </section>
 

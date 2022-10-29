@@ -33,9 +33,9 @@ This node has the following parameters:
   - **Faces**. Convert mask for faces to masks for vertices and edges.
 - **Include partial selection**. If checked, then partially selected elements will be accounted as selected.
 
-  - Vertex can be never partially selected, it is either selected or not.
-  - Edge is partially selected if it has only one of its vertices selected.
-  - Face is partially selected if only some of its vertices or faces are selected.
+  - **Vertex** can be never partially selected, it is either selected or not.
+  - **Edge** is partially selected if it has only one of its vertices selected.
+  - **Face** is partially selected if only some of its vertices or faces are selected.
 
 Outputs
 -------
@@ -45,6 +45,11 @@ This node has the following outputs:
 * **VerticesMask**. Mask for vertices. This output is not available if parameter **From** is set to **Vertices**.
 * **EdgesMask**. Mask for edges. This output is not available if parameter **From** is set to **Edges**.
 * **FacesMask**. Mask for faces. This output is not available if parameter **From** is set to **Faces**.
+
+See also
+--------
+
+* Transform-> :doc:`Transform Select </nodes/transforms/transform_select>`
 
 Examples of usage
 -----------------
@@ -62,6 +67,8 @@ Examples of usage
 * Viz-> :doc:`Viewer Index+ </nodes/viz/viewer_idx28>`
 * Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
 
+---------
+
 **Select face of cube by selecting its vertices, and extrude it:**
 
 .. image:: https://user-images.githubusercontent.com/14288520/188221928-47e369de-3ef5-4044-aa76-53397f9f1dee.png
@@ -75,16 +82,21 @@ Examples of usage
 * Viz-> :doc:`Viewer Index+ </nodes/viz/viewer_idx28>`
 * Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
 
+---------
 
 **Select faces of sphere with small area, and move corresponding vertices:**
 
 .. image:: https://cloud.githubusercontent.com/assets/284644/25284914/5843a476-26da-11e7-908a-5eb9ed694ccb.png
   :target: https://cloud.githubusercontent.com/assets/284644/25284914/5843a476-26da-11e7-908a-5eb9ed694ccb.png
 
+---------
+
 **Select edges of randomly selected faces:**
 
 .. image:: https://user-images.githubusercontent.com/28003269/83627743-7a1c8680-a5a8-11ea-99d1-ff9f01762216.png
   :target: https://user-images.githubusercontent.com/28003269/83627743-7a1c8680-a5a8-11ea-99d1-ff9f01762216.png
+
+---------
 
 Filter vertices and edges if some faces hided:
 

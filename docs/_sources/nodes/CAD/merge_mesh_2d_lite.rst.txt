@@ -1,7 +1,8 @@
 Merge mesh 2D lite
 ===================
 
-.. image:: https://user-images.githubusercontent.com/28003269/70966958-47400e00-20ae-11ea-98bb-0745c2da1bd6.png
+.. image:: https://user-images.githubusercontent.com/14288520/198846078-a212b959-f165-4e7d-a324-10904d848b9c.png
+  :target: https://user-images.githubusercontent.com/14288520/198846078-a212b959-f165-4e7d-a324-10904d848b9c.png
 
 Functionality
 -------------

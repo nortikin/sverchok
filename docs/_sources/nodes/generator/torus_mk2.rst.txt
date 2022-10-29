@@ -4,13 +4,13 @@ Torus
 .. image:: https://user-images.githubusercontent.com/14288520/188714711-643291b3-6234-4a66-8c1b-8382d6ae3bac.png
   :target: https://user-images.githubusercontent.com/14288520/188714711-643291b3-6234-4a66-8c1b-8382d6ae3bac.png
 
-.. image:: https://user-images.githubusercontent.com/14288520/191261409-2e7c851b-1fc3-4978-97f7-0fcad4763cea.png
-  :target: https://user-images.githubusercontent.com/14288520/191261409-2e7c851b-1fc3-4978-97f7-0fcad4763cea.png
-
 Functionality
 -------------
 
 This node generates torus like meshes.
+
+.. image:: https://user-images.githubusercontent.com/14288520/191261409-2e7c851b-1fc3-4978-97f7-0fcad4763cea.png
+  :target: https://user-images.githubusercontent.com/14288520/191261409-2e7c851b-1fc3-4978-97f7-0fcad4763cea.png
 
 Inputs
 ------

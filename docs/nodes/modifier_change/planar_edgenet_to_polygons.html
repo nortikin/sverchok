@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Planar Edgenet to Polygons &mdash; Sverchok 1, 1, 0 documentation</title>
+  <title>Planar Edgenet to Polygons &mdash; Sverchok 1, 2, 0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
@@ -34,7 +34,7 @@
             <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1, 1, 0
+                1, 2, 0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -103,12 +103,9 @@
 <li class="toctree-l3"><a class="reference internal" href="smooth.html">Smooth Vertices</a></li>
 <li class="toctree-l3"><a class="reference internal" href="split_faces.html">Split Faces</a></li>
 <li class="toctree-l3"><a class="reference internal" href="split_mesh_elements.html">Split Mesh Elements</a></li>
-<li class="toctree-l3"><a class="reference internal" href="subdivide_lite.html">Subdivide Lite Node</a></li>
 <li class="toctree-l3"><a class="reference internal" href="subdivide_mk2.html">Subdivide</a></li>
 <li class="toctree-l3"><a class="reference internal" href="subdivide_to_quads.html">Subdivide to Quads</a></li>
 <li class="toctree-l3"><a class="reference internal" href="triangulate.html">Triangulate Mesh</a></li>
-<li class="toctree-l3"><a class="reference internal" href="triangulate_heavy.html">Triangulate Mesh (Heavy)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="unsubdivide.html">Unsubdivide node</a></li>
 <li class="toctree-l3"><a class="reference internal" href="vertices_mask.html">Mask Vertices</a></li>
 </ul>
 </li>
@@ -169,11 +166,13 @@
              
   <section id="planar-edgenet-to-polygons">
 <h1>Planar Edgenet to Polygons<a class="headerlink" href="#planar-edgenet-to-polygons" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198831339-af1c6420-50e2-4733-88b1-461cc544085c.png"><img alt="https://user-images.githubusercontent.com/14288520/198831339-af1c6420-50e2-4733-88b1-461cc544085c.png" src="https://user-images.githubusercontent.com/14288520/198831339-af1c6420-50e2-4733-88b1-461cc544085c.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>It fills all closed countors of edge net. Be careful edge net have to be planar otherwise work of node will be broken or even you can receive memory error caused of everlasting cycle.</p>
 <p>See here, what planar edge net is - <a class="reference external" href="https://en.wikipedia.org/wiki/Planar_graph">https://en.wikipedia.org/wiki/Planar_graph</a></p>
 <p>Some details is here - <a class="reference external" href="https://github.com/nortikin/sverchok/issues/86">https://github.com/nortikin/sverchok/issues/86</a></p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198832447-a6664361-0cd8-44ee-8e92-58d42efd3ef9.png"><img alt="https://user-images.githubusercontent.com/14288520/198832447-a6664361-0cd8-44ee-8e92-58d42efd3ef9.png" src="https://user-images.githubusercontent.com/14288520/198832447-a6664361-0cd8-44ee-8e92-58d42efd3ef9.png" /></a>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
@@ -191,11 +190,36 @@
 </section>
 <section id="examples-of-usage">
 <h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
-<img alt="https://user-images.githubusercontent.com/28003269/37073575-31ba7430-21e1-11e8-8642-928dda1688a6.png" src="https://user-images.githubusercontent.com/28003269/37073575-31ba7430-21e1-11e8-8642-928dda1688a6.png" />
-<p><a class="reference external" href="https://gist.github.com/6252a8e55ddfacca2c023a2eef8b1fd0">https://gist.github.com/6252a8e55ddfacca2c023a2eef8b1fd0</a></p>
-<p>Unlike fill node</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198833226-242b6102-1f35-4927-8310-d44d1078c7e1.png"><img alt="https://user-images.githubusercontent.com/14288520/198833226-242b6102-1f35-4927-8310-d44d1078c7e1.png" src="https://user-images.githubusercontent.com/14288520/198833226-242b6102-1f35-4927-8310-d44d1078c7e1.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/list_input.html"><span class="doc">List Input</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/random_num_gen.html"><span class="doc">Random Num Gen</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_main/length.html"><span class="doc">List Length</span></a></p></li>
+<li><p>List-&gt; <a class="reference internal" href="../list_masks/mask_convert.html"><span class="doc">Mask Converter</span></a></p></li>
+<li><p>List-&gt; <a class="reference internal" href="../list_masks/mask.html"><span class="doc">List Mask (Out)</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_idx28.html"><span class="doc">Viewer Index+</span></a></p></li>
+</ul>
+<hr class="docutils" />
+<p>Compare with “Fill holes” node:</p>
 <img alt="https://user-images.githubusercontent.com/28003269/37105808-8e29b4f2-2249-11e8-9f36-e1da399153fc.png" src="https://user-images.githubusercontent.com/28003269/37105808-8e29b4f2-2249-11e8-9f36-e1da399153fc.png" />
 <p><a class="reference external" href="https://gist.github.com/b0eb16271d33924457e443d74ac3c8d1">https://gist.github.com/b0eb16271d33924457e443d74ac3c8d1</a></p>
+<p>Replay with new nodes:</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198833958-e1c3989d-be89-4285-b7c7-cf23ee0d93dd.png"><img alt="https://user-images.githubusercontent.com/14288520/198833958-e1c3989d-be89-4285-b7c7-cf23ee0d93dd.png" src="https://user-images.githubusercontent.com/14288520/198833958-e1c3989d-be89-4285-b7c7-cf23ee0d93dd.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/list_input.html"><span class="doc">List Input</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/list_input.html"><span class="doc">List Input</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/random_num_gen.html"><span class="doc">Random Num Gen</span></a></p></li>
+<li><p>Modifiers-&gt;Modifier Change-&gt; <a class="reference internal" href="holes_fill.html"><span class="doc">Viewer Index+</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_main/length.html"><span class="doc">List Length</span></a></p></li>
+<li><p>List-&gt; <a class="reference internal" href="../list_masks/mask_convert.html"><span class="doc">Mask Converter</span></a></p></li>
+<li><p>List-&gt; <a class="reference internal" href="../list_masks/mask.html"><span class="doc">List Mask (Out)</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_idx28.html"><span class="doc">Viewer Index+</span></a></p></li>
+</ul>
 </section>
 </section>
 

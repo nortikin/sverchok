@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Intersect Edges &mdash; Sverchok 1, 1, 0 documentation</title>
+  <title>Intersect Edges &mdash; Sverchok 1, 2, 0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
@@ -34,7 +34,7 @@
             <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1, 1, 0
+                1, 2, 0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -135,10 +135,11 @@
              
   <section id="intersect-edges">
 <h1>Intersect Edges<a class="headerlink" href="#intersect-edges" title="Permalink to this heading">¶</a></h1>
-<img alt="https://user-images.githubusercontent.com/28003269/70894030-a7c74080-2005-11ea-8594-dced40b05c03.png" src="https://user-images.githubusercontent.com/28003269/70894030-a7c74080-2005-11ea-8594-dced40b05c03.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198360363-7ddcfba9-21a3-4fb9-b6c5-b32dc8509ab9.png"><img alt="https://user-images.githubusercontent.com/14288520/198360363-7ddcfba9-21a3-4fb9-b6c5-b32dc8509ab9.png" src="https://user-images.githubusercontent.com/14288520/198360363-7ddcfba9-21a3-4fb9-b6c5-b32dc8509ab9.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>The node is designed for finding intersections of inputs edges and returns mesh based on intersection result.</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198371404-f31e1d28-39a1-4633-ad43-30c22abdb0a6.png"><img alt="https://user-images.githubusercontent.com/14288520/198371404-f31e1d28-39a1-4633-ad43-30c22abdb0a6.png" src="https://user-images.githubusercontent.com/14288520/198371404-f31e1d28-39a1-4633-ad43-30c22abdb0a6.png" /></a>
 <p>This node contains several algorithm of finding edge intersections:</p>
 <p><strong>3D algorithm:</strong></p>
 <p>This is a brute force algorithm written in NumPy, it is pretty fast and pretty consistent but can produce double points that can be
@@ -168,7 +169,7 @@ But after intersection is found it projects intersection point back onto one of 
 This means that input mesh still should be flat but it can be located in space however you like.
 Only location of input flatten mesh along Z coordinate will bring the error.</p>
 <p><strong>Blender mode</strong></p>
-<p>This mode is using internal Blender function from <cite>mathutils</cite> module.
+<p>This mode is using internal Blender function from <cite>mathutils</cite> module <a class="reference external" href="https://docs.blender.org/api/current/mathutils.geometry.html?highlight=delaunay_2d_cdt#mathutils.geometry.delaunay_2d_cdt">mathutils.geometry.delaunay_2d_cdt</a>.
 It is pretty fast with not big number of intersections (about 1000)
 but is quite unstable and can cause crash of Blender easily.
 Also it is not design for such cases where one edge is intersect with all or most of all other edges. Use with care.
@@ -307,16 +308,21 @@ Intersec.</p></td>
 </section>
 <section id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
-<dl class="simple">
-<dt><strong>Include ‘On touch’</strong><span class="classifier">consider a valid intersection when one end of the edge lays on another edge.</span></dt><dd><p>Generates double points so if active “remove doubles” switch is recommended. Only for Np and 3d mode</p>
-</dd>
-</dl>
-<p><strong>Doubles</strong>: Merges points that are closer than the defined distance. Only for Alg_1, Np and 3d mode</p>
+<ul class="simple">
+<li><p><strong>Include ‘On touch’</strong> : consider a valid intersection when one end of the edge lays on another edge. Generates double points so if active “remove doubles” switch is recommended. Only for Np and 3d mode</p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198378350-fb74cbaa-a998-43f7-b128-735ab81fa921.png"><img alt="https://user-images.githubusercontent.com/14288520/198378350-fb74cbaa-a998-43f7-b128-735ab81fa921.png" src="https://user-images.githubusercontent.com/14288520/198378350-fb74cbaa-a998-43f7-b128-735ab81fa921.png" /></a>
+<ul class="simple">
+<li><p><strong>doubles</strong> : Merges points that are closer than the defined distance. Only for Alg_1, Np and 3d mode</p></li>
+<li><p><strong>delta</strong> : Finds groups of vertices closer than dist and merges them together, using the weld verts  <a class="reference external" href="https://docs.blender.org/api/current/bmesh.ops.html">bmop (BMesh Operators)</a></p></li>
+</ul>
 </section>
 <section id="parameters-n-panel">
 <h2>Parameters N-panel<a class="headerlink" href="#parameters-n-panel" title="Permalink to this heading">¶</a></h2>
-<p>Epsilon - For comparing float figures. Does not effect on performance.</p>
-<p>Big data Limit - Number of incoming edges where the node will switch to a slower-but-safer implementation of the algorithm (for Alg_1)</p>
+<ul class="simple">
+<li><p><strong>Epsilon</strong> - For comparing float figures. Does not effect on performance.</p></li>
+<li><p><strong>Big data Limit</strong> - Number of incoming edges where the node will switch to a slower-but-safer implementation of the algorithm (for Alg_1)</p></li>
+</ul>
 </section>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
@@ -324,7 +330,31 @@ Intersec.</p></td>
 </section>
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
-<img alt="https://cloud.githubusercontent.com/assets/619340/2811581/16032c72-ce26-11e3-9055-925d2cd03719.png" src="https://cloud.githubusercontent.com/assets/619340/2811581/16032c72-ce26-11e3-9055-925d2cd03719.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198387622-bd5c0f08-b5f6-4efa-8d25-ef2909de747a.png"><img alt="https://user-images.githubusercontent.com/14288520/198387622-bd5c0f08-b5f6-4efa-8d25-ef2909de747a.png" src="https://user-images.githubusercontent.com/14288520/198387622-bd5c0f08-b5f6-4efa-8d25-ef2909de747a.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198382966-d8b2eca3-de79-4729-adf3-f4b5f6d04aa1.png"><img alt="https://user-images.githubusercontent.com/14288520/198382966-d8b2eca3-de79-4729-adf3-f4b5f6d04aa1.png" src="https://user-images.githubusercontent.com/14288520/198382966-d8b2eca3-de79-4729-adf3-f4b5f6d04aa1.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/line_mk4.html"><span class="doc">Line</span></a></p></li>
+<li><p>Generator-&gt;Generatots Extended-&gt; <a class="reference internal" href="../generators_extended/hilbert.html"><span class="doc">Hilbert</span></a></p></li>
+<li><p>Modifier-&gt;Modifier Change-&gt; <a class="reference internal" href="../modifier_change/mesh_join_mk2.html"><span class="doc">Mesh Join</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_polar_in.html"><span class="doc">Vector Polar Input</span></a></p></li>
+<li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/join.html"><span class="doc">List Join</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_idx28.html"><span class="doc">Viewer Index+</span></a></p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198383104-f7f2a44e-5bc7-4468-86a4-66cbb5ea3d1e.gif"><img alt="https://user-images.githubusercontent.com/14288520/198383104-f7f2a44e-5bc7-4468-86a4-66cbb5ea3d1e.gif" src="https://user-images.githubusercontent.com/14288520/198383104-f7f2a44e-5bc7-4468-86a4-66cbb5ea3d1e.gif" /></a>
+<hr class="docutils" />
+<a class="reference external image-reference" href="https://cloud.githubusercontent.com/assets/619340/2811581/16032c72-ce26-11e3-9055-925d2cd03719.png"><img alt="https://cloud.githubusercontent.com/assets/619340/2811581/16032c72-ce26-11e3-9055-925d2cd03719.png" src="https://cloud.githubusercontent.com/assets/619340/2811581/16032c72-ce26-11e3-9055-925d2cd03719.png" /></a>
+<ul class="simple">
+<li><p>Scene-&gt; <a class="reference internal" href="../scene/objects_in_lite.html"><span class="doc">Objects In Lite</span></a></p></li>
+<li><p>Remove Doubles - old nodes. Not exists.</p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_idx28.html"><span class="doc">Viewer Index+</span></a></p></li>
+</ul>
 <p>See the progress of how this node came to life <a class="reference external" href="https://github.com/nortikin/sverchok/issues/109">here</a> (gifs, screenshots)</p>
 </section>
 </section>

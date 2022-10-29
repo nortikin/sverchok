@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Merge Mesh 2d &mdash; Sverchok 1, 1, 0 documentation</title>
+  <title>Merge Mesh 2d &mdash; Sverchok 1, 2, 0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
@@ -34,7 +34,7 @@
             <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1, 1, 0
+                1, 2, 0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -136,7 +136,7 @@
              
   <section id="merge-mesh-2d">
 <h1>Merge Mesh 2d<a class="headerlink" href="#merge-mesh-2d" title="Permalink to this heading">¶</a></h1>
-<img alt="https://user-images.githubusercontent.com/28003269/68468490-91bda780-0231-11ea-8c7d-c37c6d4f372f.png" src="https://user-images.githubusercontent.com/28003269/68468490-91bda780-0231-11ea-8c7d-c37c6d4f372f.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198841517-5262e19f-3881-4e1c-ad1b-46f35a38db1e.png"><img alt="https://user-images.githubusercontent.com/14288520/198841517-5262e19f-3881-4e1c-ad1b-46f35a38db1e.png" src="https://user-images.githubusercontent.com/14288520/198841517-5262e19f-3881-4e1c-ad1b-46f35a38db1e.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node merging to input meshes in one with finding intersections and providing extra information about faces.</p>
@@ -151,6 +151,7 @@ what can seem obvious that it should be but it was a bit tricky in implementatio
 Also the node can create holes in polygons.
 The algorithm will split polygon with holes into some pieces so holes lay on boundary of new pieces.</p>
 <p>The node can use information related with faces of initial meshes for assign them to new mesh.</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198845493-94f3bdb3-391a-4689-974e-9e453908b535.png"><img alt="https://user-images.githubusercontent.com/14288520/198845493-94f3bdb3-391a-4689-974e-9e453908b535.png" src="https://user-images.githubusercontent.com/14288520/198845493-94f3bdb3-391a-4689-974e-9e453908b535.png" /></a>
 </section>
 <section id="performance">
 <h2>Performance<a class="headerlink" href="#performance" title="Permalink to this heading">¶</a></h2>
@@ -185,6 +186,7 @@ if there is at least one edge which has a lot of overlapping with other edges.</
 <li><p><strong>Face Index A</strong> (hidden by default) - list of indexes with range from -1 to infinite related with <cite>faces</cite> socket output where index points to face from mesh A</p></li>
 <li><p><strong>Face Index B</strong> (hidden by default) - list of indexes with range from -1 to infinite related with <cite>faces</cite> socket output where index points to face from mesh B</p></li>
 </ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198845254-c9f95b1f-f0cb-487d-b1d3-1431003e3bf1.png"><img alt="https://user-images.githubusercontent.com/14288520/198845254-c9f95b1f-f0cb-487d-b1d3-1431003e3bf1.png" src="https://user-images.githubusercontent.com/14288520/198845254-c9f95b1f-f0cb-487d-b1d3-1431003e3bf1.png" /></a>
 </section>
 <section id="n-panel">
 <h2>N panel<a class="headerlink" href="#n-panel" title="Permalink to this heading">¶</a></h2>

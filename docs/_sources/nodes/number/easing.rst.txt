@@ -31,3 +31,7 @@ Add the node to the tree and connect something useful to the input, and scroll t
 
 .. image:: https://user-images.githubusercontent.com/14288520/189158182-ba3c78dc-bf17-415c-874a-ec6c3590ab5a.gif
   :target: https://user-images.githubusercontent.com/14288520/189158182-ba3c78dc-bf17-415c-874a-ec6c3590ab5a.gif
+
+* Number-> :doc:`List Input </nodes/number/list_input>`
+
+Ctrl-Mouse scroll over drop down list will scroll items in the list.

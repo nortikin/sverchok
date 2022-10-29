@@ -1,6 +1,8 @@
 Inset Special
 =============
 
+.. image:: https://user-images.githubusercontent.com/14288520/198552761-a6e9f488-d584-444c-935d-ea15c7ded82f.png
+  :target: https://user-images.githubusercontent.com/14288520/198552761-a6e9f488-d584-444c-935d-ea15c7ded82f.png
 
 Functionality
 -------------
