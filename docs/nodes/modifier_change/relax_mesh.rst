@@ -1,6 +1,9 @@
 Relax Mesh
 ==========
 
+.. image:: https://user-images.githubusercontent.com/14288520/198748668-f00fe217-fdb8-4fca-bb91-a3077ceb5e27.png
+  :target: https://user-images.githubusercontent.com/14288520/198748668-f00fe217-fdb8-4fca-bb91-a3077ceb5e27.png
+
 Functionality
 -------------
 

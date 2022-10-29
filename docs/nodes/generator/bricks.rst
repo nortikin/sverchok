@@ -4,9 +4,6 @@ Bricks Grid
 .. image:: https://user-images.githubusercontent.com/14288520/190888043-47886557-91b2-498f-a939-eb4ea881af87.png
   :target: https://user-images.githubusercontent.com/14288520/190888043-47886557-91b2-498f-a939-eb4ea881af87.png
 
-.. image:: https://user-images.githubusercontent.com/14288520/190888015-c19cc1ea-f742-4216-9bc6-bdb8ed9a77b5.png
-  :target: https://user-images.githubusercontent.com/14288520/190888015-c19cc1ea-f742-4216-9bc6-bdb8ed9a77b5.png
-
 Functionality
 -------------
 
@@ -18,6 +15,9 @@ randomization of each parameter.
 
 Optionally the grid may be cyclic in one or two directions. This can be useful
 if you are going to map the grid onto some sort of cyclic or toroidal surface.
+
+.. image:: https://user-images.githubusercontent.com/14288520/190888015-c19cc1ea-f742-4216-9bc6-bdb8ed9a77b5.png
+  :target: https://user-images.githubusercontent.com/14288520/190888015-c19cc1ea-f742-4216-9bc6-bdb8ed9a77b5.png
 
 
 Inputs & Parameters

@@ -1,8 +1,8 @@
 Points Inside Mesh
 ==================
 
-.. image:: https://user-images.githubusercontent.com/14288520/196739187-57e41099-2f8b-4f1b-92eb-c87cd3cd9579.png
-  :target: https://user-images.githubusercontent.com/14288520/196739187-57e41099-2f8b-4f1b-92eb-c87cd3cd9579.png
+.. image:: https://user-images.githubusercontent.com/14288520/198854766-ac4b81c7-d9ef-4377-bec1-ddb15157329f.png
+  :target: https://user-images.githubusercontent.com/14288520/198854766-ac4b81c7-d9ef-4377-bec1-ddb15157329f.png
 
 .. image:: https://user-images.githubusercontent.com/14288520/196754002-c9ab80b9-29ef-48bc-a47b-f3ea836fb09e.png
   :target: https://user-images.githubusercontent.com/14288520/196754002-c9ab80b9-29ef-48bc-a47b-f3ea836fb09e.png
@@ -83,7 +83,7 @@ Examples of use
 
 * Generator-> :doc:`Plane </nodes/generator/plane_mk3>`
 * Generator-> :doc:`NGon </nodes/generator/ngon>`
-* Analyzers-> :ref:`Component Analyzer/Faces/Faces <FACES_CENTER>`
+* Analyzers-> :ref:`Component Analyzer/Faces/Center <FACES_CENTER>`
 * Modifier->Modifier Change-> :doc:`Inset Faces </nodes/modifier_change/inset_faces>`
 * Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`
 * List-> :doc:`List Mask (Out) </nodes/list_masks/mask>`

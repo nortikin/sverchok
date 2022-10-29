@@ -76,6 +76,11 @@ This node has the following outputs:
 .. image:: https://user-images.githubusercontent.com/14288520/197339778-127d8e76-31b7-4106-82af-effedf52ffcb.png
   :target: https://user-images.githubusercontent.com/14288520/197339778-127d8e76-31b7-4106-82af-effedf52ffcb.png
 
+See also
+--------
+
+* CAD-> :doc:`Offset </nodes/modifier_change/offset>`
+
 Examples of usage
 -----------------
 
