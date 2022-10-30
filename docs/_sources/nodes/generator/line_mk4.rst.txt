@@ -62,30 +62,53 @@ Parameters
 | output**      | (N panel)           |              |                                                         |
 +---------------+---------------------+--------------+---------------------------------------------------------+
 
-**Step length mode** - expect array of steps with help of which a line can be subdivided into unequal parts.
-
-**Step + size mode** - expect array of steps with help of which a line can be subdivided into proportional parts
-with custom line length.
+* **Step length mode** - expect array of steps with help of which a line can be subdivided into unequal parts.
+* **Step + size mode** - expect array of steps with help of which a line can be subdivided into proportional parts with custom line length.
 
 Example of usage
 ----------------
 
-.. image:: https://user-images.githubusercontent.com/14288520/188505912-c4647f6d-8870-438c-a6d6-01e5d9769bc8.png
-  :target: https://user-images.githubusercontent.com/14288520/188505912-c4647f6d-8870-438c-a6d6-01e5d9769bc8.png
+The first example shows just an standard line with 4 vertices and 1.00 ud between them
 
-The first example shows just an standard line with 5 vertices and 1.00 ud between them
+.. image:: https://user-images.githubusercontent.com/14288520/198871911-350fbb39-c61b-4236-9ea7-f3ce4aeaac2e.png
+  :target: https://user-images.githubusercontent.com/14288520/198871911-350fbb39-c61b-4236-9ea7-f3ce4aeaac2e.png
+
+* Number-> :doc:`List Input </nodes/number/list_input>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+* Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
+
+---------
+
+In this example the step is given by a series of numbers
 
 .. image:: https://user-images.githubusercontent.com/14288520/188505926-6df53a6f-c74c-42d3-b663-e5285e501729.png
   :target: https://user-images.githubusercontent.com/14288520/188505926-6df53a6f-c74c-42d3-b663-e5285e501729.png
 
-In this example the step is given by a series of numbers
+* Number-> :doc:`List Input </nodes/number/list_input>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+* Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
+
+---------
+
+You can create multiple lines if input multiple lists
 
 .. image:: https://user-images.githubusercontent.com/14288520/188505934-2d16c5e3-7392-40ab-9a84-6c8e91bda75a.png
   :target: https://user-images.githubusercontent.com/14288520/188505934-2d16c5e3-7392-40ab-9a84-6c8e91bda75a.png
 
-You can create multiple lines if input multiple lists
+* Number-> :doc:`List Input </nodes/number/list_input>`
+* List->List Struct-> :doc:`List Length </nodes/list_main/length>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+* Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
+
+---------
+
+The "OD" mode (Origin Direction) can be used to visualize normals
 
 .. image:: https://user-images.githubusercontent.com/14288520/188507605-ffcd79cf-498d-4fcd-8ac1-a5f7966aacd0.png
   :target: https://user-images.githubusercontent.com/14288520/188507605-ffcd79cf-498d-4fcd-8ac1-a5f7966aacd0.png
 
-The "OD" mode (Origin Direction) can be used to visualize normals
+* Generator-> :doc:`Line </nodes/generator/line_mk4>`
+* Generator-> :doc:`IcoSphere </nodes/generator/icosphere>`
+* Analyzers-> :ref:`Component Analyzer/Faces/Center <FACES_CENTER>`
+* Analyzers-> :ref:`Component Analyzer/Faces/Normal <FACES_NORMAL>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`

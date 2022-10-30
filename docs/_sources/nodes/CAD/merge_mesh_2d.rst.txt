@@ -1,8 +1,8 @@
 Merge Mesh 2d
 =============
 
-.. image:: https://user-images.githubusercontent.com/14288520/198841517-5262e19f-3881-4e1c-ad1b-46f35a38db1e.png
-  :target: https://user-images.githubusercontent.com/14288520/198841517-5262e19f-3881-4e1c-ad1b-46f35a38db1e.png
+.. image:: https://user-images.githubusercontent.com/14288520/198872809-790f46b2-31dc-4e28-8e30-36f0b3f75f79.png
+  :target: https://user-images.githubusercontent.com/14288520/198872809-790f46b2-31dc-4e28-8e30-36f0b3f75f79.png
 
 Functionality
 -------------

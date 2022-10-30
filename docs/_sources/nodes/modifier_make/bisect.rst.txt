@@ -61,7 +61,10 @@ Outputs
 
 *Vertices*, *Edges*, and *Polygons*.
 
+See also
+--------
 
+* CAD-> :doc:`Crop Mesh 2D </nodes/CAD/crop_mesh_2d>`
 
 Examples
 --------

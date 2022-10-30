@@ -57,6 +57,9 @@ Example of usage
 * Transform-> :doc:`Move </nodes/transforms/move_mk3>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 
+.. image:: https://user-images.githubusercontent.com/14288520/198873245-034064a0-0ba8-4dfd-820c-5750d6f28e93.gif
+  :target: https://user-images.githubusercontent.com/14288520/198873245-034064a0-0ba8-4dfd-820c-5750d6f28e93.gif
+
 ---------
 
 .. image:: https://cloud.githubusercontent.com/assets/619340/3172893/08952296-ebdd-11e3-8e9b-574495b1a92c.png

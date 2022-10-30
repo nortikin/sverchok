@@ -64,6 +64,10 @@ Examples
 .. image:: https://user-images.githubusercontent.com/14288520/188726666-1a155458-74f1-443e-bc3b-854f6b2fdf22.gif
   :target: https://user-images.githubusercontent.com/14288520/188726666-1a155458-74f1-443e-bc3b-854f6b2fdf22.gif
 
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+
+---------
+
 .. image:: https://cloud.githubusercontent.com/assets/5783432/19576172/09c7d264-9723-11e6-86fc-3b6acd0b5d53.png
   :target: https://cloud.githubusercontent.com/assets/5783432/19576172/09c7d264-9723-11e6-86fc-3b6acd0b5d53.png
   :alt: randomvector1.PNG
