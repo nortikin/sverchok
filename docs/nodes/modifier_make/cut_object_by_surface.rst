@@ -99,8 +99,8 @@ This node has the following outputs:
   where the "object" is cut by "surface" (i.e. there will be holes). This
   output is only available if the **Make cut pieces** parameter is checked.
 
-.. image:: https://user-images.githubusercontent.com/14288520/198825392-15e3f585-2453-4ada-8623-204a9e2662c3.png
-  :target: https://user-images.githubusercontent.com/14288520/198825392-15e3f585-2453-4ada-8623-204a9e2662c3.png
+.. image:: https://user-images.githubusercontent.com/14288520/198872895-229c30cb-3e5b-4f3a-b456-b16b27fcf96a.png
+  :target: https://user-images.githubusercontent.com/14288520/198872895-229c30cb-3e5b-4f3a-b456-b16b27fcf96a.png
 
 Examples of usage
 -----------------

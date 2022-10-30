@@ -83,6 +83,11 @@ Parameters
 but there is some cases when the node can stuck in error and playing with the parameter can resolve the error.
 This parameter does not have any affect to performance in spite of its name.
 
+See also
+--------
+
+* Modifiers->Modifier Make-> :doc:`Bisect </nodes/modifier_make/bisect>`
+
 Usage
 -----
 

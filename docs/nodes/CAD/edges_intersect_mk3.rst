@@ -9,8 +9,8 @@ Functionality
 
 The node is designed for finding intersections of inputs edges and returns mesh based on intersection result.
 
-.. image:: https://user-images.githubusercontent.com/14288520/198371404-f31e1d28-39a1-4633-ad43-30c22abdb0a6.png
-  :target: https://user-images.githubusercontent.com/14288520/198371404-f31e1d28-39a1-4633-ad43-30c22abdb0a6.png
+.. image:: https://user-images.githubusercontent.com/14288520/198872539-90d20aa8-fe32-404d-ad10-7c6c3238a7a7.png
+  :target: https://user-images.githubusercontent.com/14288520/198872539-90d20aa8-fe32-404d-ad10-7c6c3238a7a7.png
 
 This node contains several algorithm of finding edge intersections:
 
