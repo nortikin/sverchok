@@ -30,7 +30,7 @@ import time
 from contextlib import contextmanager
 from itertools import chain, cycle
 from pathlib import Path
-from typing import Iterable, final
+from typing import Iterable, final, Optional
 
 import bpy
 from bpy.props import StringProperty, BoolProperty, EnumProperty
@@ -657,7 +657,7 @@ class NodeDocumentation:
             cls._docstring = SvDocstring(cls.__doc__)
         return cls._docstring
 
-    def get_doc_link(self, link_type='ONLINE'):
+    def get_doc_link(self, link_type='ONLINE') -> Optional[str]:
         *_, node_file_name = self.__module__.rpartition('.')
         node_docs = Path(sverchok.__file__).parent / 'docs' / 'nodes'
         for path in node_docs.rglob('*.rst'):
