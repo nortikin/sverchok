@@ -646,6 +646,20 @@ class NodeDependencies:
 
 
 class NodeDocumentation:
+    """
+    Documentation of a custom node class is used
+    to give information about the node UI.
+
+    ```py
+    class SvSomeOperationNode(SverchCustomTreeNode, bpy.types.Node):
+        \"""
+        Triggers: vector multiply scale  # <- tags
+        Tooltip: This node performs some operation
+
+        Merely for illustration of node creation workflow  # Description
+        \"""
+    ```
+    """
     _docstring = None  # A cache for docstring property
 
     @classproperty
@@ -658,6 +672,10 @@ class NodeDocumentation:
         return cls._docstring
 
     def get_doc_link(self, link_type='ONLINE') -> Optional[str]:
+        """Returns URL to online documentation of the node, or to GitHub
+        documentation, or path to a documentation file of the node, or None.
+        This method can be overriden by Sverchok's extensions to implement
+        their own way to generate the links."""
         *_, node_file_name = self.__module__.rpartition('.')
         node_docs = Path(sverchok.__file__).parent / 'docs' / 'nodes'
         for path in node_docs.rglob('*.rst'):
@@ -678,21 +696,7 @@ class NodeDocumentation:
 
 
 class SverchCustomTreeNode(UpdateNodes, NodeUtils, NodeDependencies, NodeDocumentation):
-    """Base class for all nodes. Documentation of a custom node class is used
-    to give information about the node UI. Minimal example of a custom node:
-
-    ```py
-    class SvSomeOperationNode(SverchCustomTreeNode, bpy.types.Node):
-    \"""
-    Triggers: vector multiply scale  # <- tags
-    Tooltip: This node performs some operation
-
-    Merely for illustration of node creation workflow  # Description
-    \"""
-    bl_idname = 'SvSomeOperationNode'  # should be added to `sverchok/index.md` file
-    bl_label = 'Name shown in menu'
-    bl_icon = 'GREASEPENCIL'
-    ```
+    """Base class for all nodes.
 
     It's possible to apply Alpha/Beta icons to sv_icon class attribute of the
     node to mark a node as in development state and that it can change its
