@@ -189,7 +189,16 @@ def interpolate_nurbs_curve(degree, points, metric=&#39;DISTANCE&#39;, tknots=No
     problem_type, residue, curve = solver.solve_ex(problem_types = {SvNurbsCurveSolver.PROBLEM_WELLDETERMINED},
                                     implementation = implementation,
                                     logger = logger)
-    return curve</code></pre>
+    return curve
+
+def curve_to_nurbs(degree, curve, samples, logger=None):
+    is_cyclic = curve.is_closed()
+    t_min, t_max = curve.get_u_bounds()
+    ts = np.linspace(t_min, t_max, num=samples)
+    if is_cyclic:
+        ts = ts[:-1]
+    points = curve.evaluate_array(ts)
+    return interpolate_nurbs_curve(degree, points, cyclic=is_cyclic, logger=logger)</code></pre>
 </details>
 </section>
 <section>
@@ -298,6 +307,25 @@ weights. None means all weights are equal.</dd>
     solver.set_curve_params(n_cpts, knotvector = knotvector)
     solver.add_goal(goal)
     return solver.solve(implementation=implementation)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.nurbs_solver_applications.curve_to_nurbs"><code class="name flex">
+<span>def <span class="ident">curve_to_nurbs</span></span>(<span>degree, curve, samples, logger=None)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def curve_to_nurbs(degree, curve, samples, logger=None):
+    is_cyclic = curve.is_closed()
+    t_min, t_max = curve.get_u_bounds()
+    ts = np.linspace(t_min, t_max, num=samples)
+    if is_cyclic:
+        ts = ts[:-1]
+    points = curve.evaluate_array(ts)
+    return interpolate_nurbs_curve(degree, points, cyclic=is_cyclic, logger=logger)</code></pre>
 </details>
 </dd>
 <dt id="sverchok.utils.curve.nurbs_solver_applications.deform_curve_with_falloff"><code class="name flex">
@@ -473,6 +501,7 @@ shape (n,). If None, these values will be calculated based on metric.</dd>
 <ul class="">
 <li><code><a title="sverchok.utils.curve.nurbs_solver_applications.adjust_curve_points" href="#sverchok.utils.curve.nurbs_solver_applications.adjust_curve_points">adjust_curve_points</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs_solver_applications.approximate_nurbs_curve" href="#sverchok.utils.curve.nurbs_solver_applications.approximate_nurbs_curve">approximate_nurbs_curve</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs_solver_applications.curve_to_nurbs" href="#sverchok.utils.curve.nurbs_solver_applications.curve_to_nurbs">curve_to_nurbs</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs_solver_applications.deform_curve_with_falloff" href="#sverchok.utils.curve.nurbs_solver_applications.deform_curve_with_falloff">deform_curve_with_falloff</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs_solver_applications.interpolate_nurbs_curve" href="#sverchok.utils.curve.nurbs_solver_applications.interpolate_nurbs_curve">interpolate_nurbs_curve</a></code></li>
 </ul>

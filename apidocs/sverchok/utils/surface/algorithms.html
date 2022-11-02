@@ -44,10 +44,10 @@ from sverchok.utils.math import (
         np_dot
     )
 from sverchok.utils.geom import (
-        LineEquation, CircleEquation3D,
+        LineEquation, CircleEquation3D, PlaneEquation,
         rotate_vector_around_vector, rotate_vector_around_vector_np,
         autorotate_householder, autorotate_track, autorotate_diff,
-        linear_approximation
+        center, linear_approximation
     )
 from sverchok.utils.curve.core import SvFlipCurve, UnsupportedCurveTypeException
 from sverchok.utils.curve.primitives import SvCircle
@@ -1517,7 +1517,7 @@ def make_planar_surface(origin, u_axis, v_axis, degree_u, degree_v, ncpts_u, ncp
                 knotvector_u, knotvector_v,
                 cpts)
 
-def nurbs_surface_from_points(points, degree_u, degree_v, num_cpts_u, num_cpts_v, implementation = SvNurbsSurface.NATIVE):
+def nurbs_surface_from_points(points, degree_u, degree_v, num_cpts_u, num_cpts_v, normal = None, implementation = SvNurbsSurface.NATIVE):
     &#34;&#34;&#34;
     Generate a NURBS surface which passes either through or near the specified points.
     Parameters:
@@ -1550,18 +1550,23 @@ def nurbs_surface_from_points(points, degree_u, degree_v, num_cpts_u, num_cpts_v
         y_axis /= np.linalg.norm(y_axis)
         return y_axis
 
-    linear = linear_approximation(points)
-    center = linear.center
-    plane = linear.most_similar_plane()
+    if normal is None:
+        linear = linear_approximation(points)
+        origin = linear.center
+        plane = linear.most_similar_plane()
+    else:
+        origin = center(points)
+        plane = PlaneEquation.from_normal_and_point(normal, origin)
+
     start = points[0]
     start_projection = np.asarray(plane.projection_of_point(start))
-    x_axis = start_projection - center
+    x_axis = start_projection - origin
     x_axis /= np.linalg.norm(x_axis)
     y_axis = calc_y_axis(plane, x_axis)
-    distances = np.linalg.norm(points - center, axis=1)
+    distances = np.linalg.norm(points - origin, axis=1)
     max_distance = distances.max()
     
-    planar_surface = make_planar_surface(center,
+    planar_surface = make_planar_surface(origin,
                     x_axis, y_axis,
                     degree_u, degree_v,
                     num_cpts_u, num_cpts_v,
@@ -1890,7 +1895,7 @@ through projections of specified points to the surface.</p></div>
 </details>
 </dd>
 <dt id="sverchok.utils.surface.algorithms.nurbs_surface_from_points"><code class="name flex">
-<span>def <span class="ident">nurbs_surface_from_points</span></span>(<span>points, degree_u, degree_v, num_cpts_u, num_cpts_v, implementation='NATIVE')</span>
+<span>def <span class="ident">nurbs_surface_from_points</span></span>(<span>points, degree_u, degree_v, num_cpts_u, num_cpts_v, normal=None, implementation='NATIVE')</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Generate a NURBS surface which passes either through or near the specified points.
@@ -1918,7 +1923,7 @@ np.array of shape (n, 3).</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def nurbs_surface_from_points(points, degree_u, degree_v, num_cpts_u, num_cpts_v, implementation = SvNurbsSurface.NATIVE):
+<pre><code class="python">def nurbs_surface_from_points(points, degree_u, degree_v, num_cpts_u, num_cpts_v, normal = None, implementation = SvNurbsSurface.NATIVE):
     &#34;&#34;&#34;
     Generate a NURBS surface which passes either through or near the specified points.
     Parameters:
@@ -1951,18 +1956,23 @@ np.array of shape (n, 3).</p></div>
         y_axis /= np.linalg.norm(y_axis)
         return y_axis
 
-    linear = linear_approximation(points)
-    center = linear.center
-    plane = linear.most_similar_plane()
+    if normal is None:
+        linear = linear_approximation(points)
+        origin = linear.center
+        plane = linear.most_similar_plane()
+    else:
+        origin = center(points)
+        plane = PlaneEquation.from_normal_and_point(normal, origin)
+
     start = points[0]
     start_projection = np.asarray(plane.projection_of_point(start))
-    x_axis = start_projection - center
+    x_axis = start_projection - origin
     x_axis /= np.linalg.norm(x_axis)
     y_axis = calc_y_axis(plane, x_axis)
-    distances = np.linalg.norm(points - center, axis=1)
+    distances = np.linalg.norm(points - origin, axis=1)
     max_distance = distances.max()
     
-    planar_surface = make_planar_surface(center,
+    planar_surface = make_planar_surface(origin,
                     x_axis, y_axis,
                     degree_u, degree_v,
                     num_cpts_u, num_cpts_v,
