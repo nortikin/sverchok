@@ -29,12 +29,14 @@ import inspect
 import time
 from contextlib import contextmanager
 from itertools import chain, cycle
-from typing import Iterable, final
+from pathlib import Path
+from typing import Iterable, final, Optional
 
 import bpy
 from bpy.props import StringProperty, BoolProperty, EnumProperty
 from bpy.types import NodeTree, NodeSocket
 
+import sverchok
 from sverchok.core.sv_custom_exceptions import SvNoDataError, DependencyError
 import sverchok.core.events as ev
 import sverchok.dependencies as sv_deps
@@ -643,22 +645,58 @@ class NodeDependencies:
         return
 
 
-class SverchCustomTreeNode(UpdateNodes, NodeUtils, NodeDependencies):
-    """Base class for all nodes. Documentation of a custom node class is used
-    to give information about the node UI. Minimal example of a custom node:
+class NodeDocumentation:
+    """
+    Documentation of a custom node class is used
+    to give information about the node UI.
 
     ```py
     class SvSomeOperationNode(SverchCustomTreeNode, bpy.types.Node):
-    \"""
-    Triggers: vector multiply scale  # <- tags
-    Tooltip: This node performs some operation
+        \"""
+        Triggers: vector multiply scale  # <- tags
+        Tooltip: This node performs some operation
 
-    Merely for illustration of node creation workflow  # Description
-    \"""
-    bl_idname = 'SvSomeOperationNode'  # should be added to `sverchok/index.md` file
-    bl_label = 'Name shown in menu'
-    bl_icon = 'GREASEPENCIL'
+        Merely for illustration of node creation workflow  # Description
+        \"""
     ```
+    """
+    _docstring = None  # A cache for docstring property
+
+    @classproperty
+    def docstring(cls):
+        """
+        Get SvDocstring instance parsed from node's docstring.
+        """
+        if cls._docstring is None:
+            cls._docstring = SvDocstring(cls.__doc__)
+        return cls._docstring
+
+    def get_doc_link(self, link_type='ONLINE') -> Optional[str]:
+        """Returns URL to online documentation of the node, or to GitHub
+        documentation, or path to a documentation file of the node, or None.
+        This method can be overriden by Sverchok's extensions to implement
+        their own way to generate the links."""
+        *_, node_file_name = self.__module__.rpartition('.')
+        node_docs = Path(sverchok.__file__).parent / 'docs' / 'nodes'
+        for path in node_docs.rglob('*.rst'):
+            doc_file_name = path.stem
+            if node_file_name != doc_file_name:
+                continue
+
+            help_url = str(path.relative_to(node_docs)).replace(' ', '_').removesuffix('.rst')
+            if link_type == 'ONLINE':
+                return f'http://nortikin.github.io/sverchok/docs/nodes/{help_url}.html'
+            elif link_type == 'OFFLINE':
+                return f'file:///{path}'
+            elif link_type == 'GITHUB':
+                return f'https://github.com/nortikin/sverchok/blob/master/docs/nodes/{help_url}.rst'
+            else:
+                raise TypeError(f"{link_type=} is not supported")
+        return None
+
+
+class SverchCustomTreeNode(UpdateNodes, NodeUtils, NodeDependencies, NodeDocumentation):
+    """Base class for all nodes.
 
     It's possible to apply Alpha/Beta icons to sv_icon class attribute of the
     node to mark a node as in development state and that it can change its
@@ -670,7 +708,6 @@ class SverchCustomTreeNode(UpdateNodes, NodeUtils, NodeDependencies):
 
     ![image](https://user-images.githubusercontent.com/28003269/194234662-2a55bb27-fa58-4935-a433-f2beed1591cd.png)
     """
-    _docstring = None  # A cache for docstring property
     sv_category = ''  #: Add node to a category by its name to display with Shift+S
 
     @final
@@ -721,15 +758,6 @@ class SverchCustomTreeNode(UpdateNodes, NodeUtils, NodeDependencies):
         Also, there are some basic implementations `sverchok.utils.nodes_mixins.sockets_config`"""
         for link in self.internal_links:
             yield link.from_socket, link.to_socket
-
-    @classproperty
-    def docstring(cls):
-        """
-        Get SvDocstring instance parsed from node's docstring.
-        """
-        if cls._docstring is None:
-            cls._docstring = SvDocstring(cls.__doc__)
-        return cls._docstring
 
     @classmethod
     def poll(cls, ntree):

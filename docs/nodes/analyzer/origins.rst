@@ -96,7 +96,7 @@ Using matrix output for mesh instancing, looks like work of adaptive polygon nod
 * Number-> :doc:`A Number </nodes/number/numbers>`
 * Number-> :doc:`Easing 0..1 </nodes/number/easing>`
 * Vector-> :doc:`Vector In </nodes/vector/vector_in>`
-* Matrix-> :doc:`Matrix Deform </nodes/matrix/deform>`
+* Matrix-> :doc:`Matrix Deform </nodes/matrix/matrix_deform>`
 * Matrix-> :doc:`Matrix Apply to Mesh </nodes/matrix/apply_and_join>`
 * List->List Struct-> :doc:`List Slice </nodes/list_struct/slice>`
 * Viz-> :doc:`Mesh Viewer </nodes/viz/mesh_viewer>`

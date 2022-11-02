@@ -1,50 +1,56 @@
-
-import unittest
-from os.path import basename, splitext, dirname, join, exists
-from os import walk
-from glob import glob
-
 import sverchok
 from sverchok.utils.testing import *
-from sverchok.utils.logging import debug, info, error
+
 
 class DocumentationTests(SverchokTestCase):
+
+    def setUp(self):
+        self.node_file_names = set()
+        self.doc_file_names = set()
+
+        sv_root = Path(sverchok.__file__).parent
+        nodes_folder = sv_root / 'nodes'
+        for path in nodes_folder.rglob('*.py'):
+            file_name = path.stem
+            if file_name == '__init__':
+                continue
+            self.node_file_names.add(file_name)
+
+        doc_folder = sv_root / 'docs' / 'nodes'
+        for path in doc_folder.rglob('*.rst'):
+            file_name = path.stem
+            index_file = f'{path.parent.stem}_index'
+            if file_name == index_file:
+                continue
+            self.doc_file_names.add(file_name)
 
     def get_nodes_docs_directory(self):
         sv_init = sverchok.__file__
         return join(dirname(sv_init), "docs", "nodes")
 
+    def test_uniq_node_modules(self):
+        sv_root = Path(sverchok.__file__).parent
+        nodes_folder = sv_root / 'nodes'
+        modules = dict()
+        for path in nodes_folder.rglob('*.py'):
+            file_name = path.stem
+            if file_name == '__init__':
+                continue
+            with self.subTest(node_module=f"{file_name}.py"):
+                if file_name in modules:
+                    self.fail(f'There are tow modules with the same name "{file_name}" \n'
+                              f'File 1: {Path(modules[file_name]).relative_to(sv_root)} \n'
+                              f'file 2: {Path(path).relative_to(sv_root)}')
+                else:
+                    modules[file_name] = path
+
     def test_unused_docs(self):
-        sv_init = sverchok.__file__
-        nodes_dir = join(dirname(sv_init), "nodes")
-        docs_dir = self.get_nodes_docs_directory()
-
-        def check_dir(directory):
-            dir_name = basename(directory)
-            bad_files = []
-            for doc_path in glob(join(directory, "*.rst")):
-                if doc_path.endswith("_index.rst"):
-                    continue
-                doc_file = basename(doc_path)
-                doc_name, ext = splitext(doc_file)
-                py_name = doc_name + ".py"
-                py_path = join(nodes_dir, dir_name, py_name)
-                if not exists(py_path):
-                    bad_files.append(doc_file)
-
-            if bad_files:
-                error("Category %s: The following documentation files do not have respective python modules:\n%s", dir_name, "\n".join(bad_files))
-                self.fail("There are excessive documentation files.")
-
-        for directory, subdirs, fnames in walk(docs_dir):
-            with self.subTest(directory=basename(directory)):
-                check_dir(directory)
+        for doc_name in self.doc_file_names:
+            with self.subTest(documentation_file=f"{doc_name}.rst"):
+                if doc_name not in self.node_file_names:
+                    self.fail("The documentation file does not have respective python module")
 
     def test_node_docs_existance(self):
-        sv_init = sverchok.__file__
-        nodes_dir = join(dirname(sv_init), "nodes")
-        docs_dir = self.get_nodes_docs_directory()
-
         known_problems = """
 obj_edit.py
 BMOperatorsMK2.py
@@ -71,42 +77,23 @@ pulga_physics.py
 limited_dissolve.py
 limited_dissolve_mk2.py
 mesh_separate_mk2.py
-symmetrize.py
 approx_subd_to_nurbs.py
 vd_attr_node_mk2.py
 scalar_field_point.py
 quads_to_nurbs.py
 location.py
-sun_position.py""".split("\n")
+sun_position.py
+flip_surface.py
+ruled_surface.py
+""".split("\n")
 
-        def check_category(directory):
-            dir_name = basename(directory)
-            bad_files = []
-            known = []
-
-            for module_path in glob(join(directory, "*.py")):
-                module_file = basename(module_path)
-                if module_file == "__init__.py":
-                    continue
-                module_name, ext = splitext(module_file)
-                doc_name = module_name + ".rst"
-                doc_path = join(docs_dir, dir_name, doc_name)
-                if not exists(doc_path):
-                    if module_file in known_problems:
-                        known.append(module_file)
-                    else:
-                        bad_files.append(module_file)
-
-            category = dir_name
-            
-            if known:
-                explicitly_missing = "\n".join(known)
-                info(f"{category=}: Tolerating missing documentation for the following nodes for now:\n{explicitly_missing=}")
-
-            if bad_files:
-                missing = "\n".join(bad_files)
-                self.fail(f"Not all nodes of {category=} have corresponding documentation; \n{missing=}")
-
-        for directory, subdirs, fnames in walk(nodes_dir):
-            with self.subTest(directory=basename(directory)):
-                check_category(directory)
+        for module_name in self.node_file_names:
+            with self.subTest(node_module=f"{module_name}.py"):
+                if module_name not in self.doc_file_names:
+                    if f'{module_name}.py' not in known_problems:
+                        self.fail(f"Node module={module_name}.py does not have"
+                                  f" documentation")
+                else:
+                    if f'{module_name}.py' in known_problems:
+                        self.fail(f"Exclude the node module={module_name}.py"
+                                  f" from the Known Problems list")
