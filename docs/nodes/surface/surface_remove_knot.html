@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Remove Knot (NURBS Surface) &mdash; Sverchok 1, 2, 0 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+    <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Reparametrize Surface" href="surface_reparametrize.html" />
+    <link rel="prev" title="Remove Excessive Knots (NURBS Surface)" href="surface_remove_excessive_knots.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../main.html" class="icon icon-home"> Sverchok
+            <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                1, 2, 0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../introduction/introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_interface/user_interface.html">User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tree_evaluation_system.html">Node tree evaluation system</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data_structure/data_structure_index.html">Data structure</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../nodes.html">Nodes</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../generator/generator_index.html">Generators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generators_extended/generators_extended_index.html">Generators Extended</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../curve/curve_index.html">Curves</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="surface_index.html">Surfaces</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="adaptive_tessellate.html">Adaptive Tessellate Surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apply_field_to_surface.html">Apply Field to Surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="approximate_nurbs_surface.html">Approximate NURBS Surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="blend_surface.html">Blend Surfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="coons_patch.html">Surface from Four Curves</a></li>
+<li class="toctree-l3"><a class="reference internal" href="curvatures.html">Surface Curvatures</a></li>
+<li class="toctree-l3"><a class="reference internal" href="curve_lerp.html">Ruled Surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="deconstruct_surface.html">Deconstruct Surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="evaluate_surface.html">Evaluate Surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="extrude_curve.html">Extrude Curve Along Curve</a></li>
+<li class="toctree-l3"><a class="reference internal" href="extrude_point.html">Extrude to Point</a></li>
+<li class="toctree-l3"><a class="reference internal" href="extrude_vector.html">Extrude Curve Along Vector</a></li>
+<li class="toctree-l3"><a class="reference internal" href="flip.html">Flip Surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gauss_curvature.html">Surface Gauss Curvature</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gordon_surface.html">NURBS Surface from Curves Net</a></li>
+<li class="toctree-l3"><a class="reference internal" href="implicit_surface_raycast.html">Implicit Surface Raycast</a></li>
+<li class="toctree-l3"><a class="reference internal" href="interpolate_nurbs_surface.html">Interpolate NURBS Surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="interpolating_surface.html">Surface from Curves</a></li>
+<li class="toctree-l3"><a class="reference internal" href="intersect_curve_surface.html">Intersect Curve with Surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="marching_cubes.html">Marching Cubes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="min_surface_from_curve.html">Minimal Surface from Curve</a></li>
+<li class="toctree-l3"><a class="reference internal" href="minimal_surface.html">Minimal Surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="normals.html">Surface Frame</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nurbs_birail.html">NURBS Birail</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nurbs_loft.html">NURBS Loft</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nurbs_surface.html">Build NURBS surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nurbs_sweep.html">NURBS Sweep</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pipe.html">Pipe Surface Along Curve</a></li>
+<li class="toctree-l3"><a class="reference internal" href="plane.html">Plane (Surface)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="raycast.html">Raycast on Surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="revolution_surface.html">Revolution Surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="subdomain.html">Surface Subdomain</a></li>
+<li class="toctree-l3"><a class="reference internal" href="surface_bevel_curve.html">Bevel a Curve (Surface)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="surface_domain.html">Surface Domain</a></li>
+<li class="toctree-l3"><a class="reference internal" href="surface_elevate_degree.html">Elevate Degree (NURBS Surface)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="surface_extremes.html">Surface Extremes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="surface_formula.html">Surface Formula</a></li>
+<li class="toctree-l3"><a class="reference internal" href="surface_insert_knot.html">Insert Knot (NURBS Surface)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="surface_lerp.html">Surface Lerp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="surface_nearest_point.html">Nearest Point on Surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="surface_ortho_project.html">Orthogonal Project on Surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="surface_reduce_degree.html">Reduce Degree (NURBS Surface)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="surface_remove_excessive_knots.html">Remove Excessive Knots (NURBS Surface)</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Remove Knot (NURBS Surface)</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#outputs">Outputs</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="surface_reparametrize.html">Reparametrize Surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="surface_sphere.html">Sphere (Surface)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="swap.html">Swap Surface U/V</a></li>
+<li class="toctree-l3"><a class="reference internal" href="taper_sweep.html">Taper Sweep Surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tessellate_trim.html">Tessellate &amp; Trim Surface</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../field/field_index.html">Fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../solid/solid_index.html">Solids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spatial/spatial_index.html">Spatial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../transforms/transforms_index.html">Transforms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../analyzer/analyzer_index.html">Analyzers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modifier_change/modifier_change_index.html">Modifier Change</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modifier_make/modifier_make_index.html">Modifier Make</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../CAD/CAD_index.html">CAD</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../number/number_index.html">Number</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../vector/vector_index.html">Vector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../matrix/matrix_index.html">Matrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../quaternion/quaternion_index.html">Quaternion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../color/color_index.html">Color</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../logic/logic_index.html">Logic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_main/list_main_index.html">List Main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_struct/list_struct_index.html">List Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_masks/list_masks_index.html">List Masks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_mutators/list_mutators_index.html">List Mutators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../dictionary/dictionary_index.html">Dictionary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../viz/viz_index.html">Viz</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../text/text_index.html">Text</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../script/script_index.html">Script</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scene/scene_index.html">Scene</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../object_nodes/object_nodes_index.html">Object</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../layout/layout_index.html">Layout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../network/network_index.html">Network</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pulga_physics/pulga_physics_index.html">Pulga Physics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../exchange/exchange_index.html">Exchange</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../svg/svg_index.html">SVG</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing/contributing_to_sverchok.html">Contributing to sverchok</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../main.html">Sverchok</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../main.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="../../nodes.html">Nodes</a></li>
+          <li class="breadcrumb-item"><a href="surface_index.html">Surface</a></li>
+      <li class="breadcrumb-item active">Remove Knot (NURBS Surface)</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/nodes/surface/surface_remove_knot.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="remove-knot-nurbs-surface">
+<h1>Remove Knot (NURBS Surface)<a class="headerlink" href="#remove-knot-nurbs-surface" title="Permalink to this heading">¶</a></h1>
+<section id="functionality">
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<p>This node performs “knot removal” procedure for a NURBS Surface.</p>
+<p>Given a NURBS Surface object and a knot value, the node reduces the
+multiplicity of this knot in surface’s U- or V-knotvector. This procedure can
+not always be performed. In general, this procedure changes the shape of the
+surface. There is “tolerance” parameter, defining how much is it allowed to
+change the shape of the surface.</p>
+<p>This node can work only with NURBS surfaces.</p>
+</section>
+<section id="inputs">
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
+<p>This node has the following inputs:</p>
+<ul class="simple">
+<li><p><strong>Surface</strong>. The surface to work on. This input is mandatory.</p></li>
+<li><p><strong>Knot</strong>. The value of the knot to be removed. The default value is 0.5.</p></li>
+<li><p><strong>Count</strong>. Number of times the knot is to be removed. The default value is 1.</p></li>
+</ul>
+</section>
+<section id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
+<p>This node has the following parameters:</p>
+<ul class="simple">
+<li><p><strong>Direction</strong>. This defines the parametric direction on the surface, for
+which to perform knot removal procedure. The available options are <strong>U</strong> and
+<strong>V</strong>. The default value is <strong>V</strong>.</p></li>
+<li><p><strong>Only if possible</strong>. If this flag is checked, the node will try to remove
+the knot <strong>Count</strong> times; if it is not possible to remove it that many times,
+the node will just remove it as many times as it can. If not checked, then
+the node will fail (become red) in such a situation, and the processing will
+stop. Unchecked by default.</p></li>
+<li><p><strong>Tolerance</strong>. This parameter is available in the N panel only. This defines
+how much is it allowed to change the shape of the surface by knot removal
+procedure. The default value is <code class="docutils literal notranslate"><span class="pre">10^-6</span></code>.</p></li>
+</ul>
+</section>
+<section id="outputs">
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
+<p>This node has the following output:</p>
+<ul class="simple">
+<li><p><strong>Surface</strong>. The resulting Surface object.</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="surface_remove_excessive_knots.html" class="btn btn-neutral float-left" title="Remove Excessive Knots (NURBS Surface)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="surface_reparametrize.html" class="btn btn-neutral float-right" title="Reparametrize Surface" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2014...2022, sverchok team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

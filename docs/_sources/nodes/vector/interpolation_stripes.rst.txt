@@ -72,7 +72,7 @@ Making surface with stripes separated in two groups of nodes for UVconnect node 
 * Generator-> :doc:`Torus </nodes/generator/torus_mk2>`
 * Generator-> :doc:`Cylinder </nodes/generator/cylinder_mk2>`
 * Generator-> :doc:`Sphere </nodes/generator/sphere>`
-* Curves-> :doc:`Circle (Curve) </nodes/curve/circle>`
+* Curves-> :doc:`Circle (Curve) </nodes/curve/curve_circle>`
 * Curves-> :doc:`Curve Frame </nodes/curve/curve_frame>`
 * Modifiers->Modifier Make-> :doc:`UV Connection </nodes/modifier_make/uv_connect>`
 * Number-> :doc:`Number Range </nodes/number/number_range>`
