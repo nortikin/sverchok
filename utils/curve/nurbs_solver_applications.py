@@ -160,3 +160,12 @@ def interpolate_nurbs_curve(degree, points, metric='DISTANCE', tknots=None, cycl
                                     logger = logger)
     return curve
 
+def curve_to_nurbs(degree, curve, samples, logger=None):
+    is_cyclic = curve.is_closed()
+    t_min, t_max = curve.get_u_bounds()
+    ts = np.linspace(t_min, t_max, num=samples)
+    if is_cyclic:
+        ts = ts[:-1]
+    points = curve.evaluate_array(ts)
+    return interpolate_nurbs_curve(degree, points, cyclic=is_cyclic, logger=logger)
+
