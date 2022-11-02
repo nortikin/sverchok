@@ -84,10 +84,10 @@ Solved problem: Which is the smallest box (as the sum of faces area) in which I 
     :target: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/logic/evolver/evolver_genetics_algorithm_sverchok_blender_example_01.png
 
 * Transform-> :doc:`Rotate </nodes/transforms/rotate_mk3>`
+* Transform-> :doc:`Matrix Apply (verts) </nodes/transforms/apply>`
 * Analyzers-> :doc:`Bounding Box </nodes/analyzer/bbox_mk3>`
 * Analyzers-> :doc:`Area </nodes/analyzer/area>`
 * Number-> :doc:`A Number </nodes/number/numbers>`
-* Matrix-> :doc:`Matrix Apply (verts) </nodes/transforms/apply>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 * Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
 * Scene-> :doc:`Objects In Lite </nodes/scene/objects_in_lite>`
@@ -112,9 +112,9 @@ Solved problem: Which is the shortest path that cycles through all the points?
 .. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/logic/evolver/evolver_genetics_algorithm_sverchok_blender_example_03.png
     :target: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/logic/evolver/evolver_genetics_algorithm_sverchok_blender_example_03.png
 
-* Analyzers-> :doc:`Path Length </nodes/analyzer/path_length_2>`
 * Generator-> :doc:`Circle </nodes/generator/circle>`
-* Number-> :doc:`Random Vector </nodes/generator/random_vector_mk3>`
+* Generator-> :doc:`Random Vector </nodes/generator/random_vector_mk3>`
+* Analyzers-> :doc:`Path Length </nodes/analyzer/path_length_2>`
 * Number-> :doc:`List Input </nodes/number/list_input>`
 * Vector-> :doc:`Vector Rewire </nodes/vector/vector_rewire>`
 * List->List Struct-> :doc:`List Item </nodes/list_struct/item>`

@@ -50,7 +50,7 @@ def join_tris(verts, faces, self):
     return (verts_out, faces_out)
 
 
-class SvJoinTrianglesNode(ModifierLiteNode, bpy.types.Node, SverchCustomTreeNode):
+class SvJoinTrianglesNode(ModifierLiteNode, SverchCustomTreeNode, bpy.types.Node):
 
     """
     Triggers: join tris to quads

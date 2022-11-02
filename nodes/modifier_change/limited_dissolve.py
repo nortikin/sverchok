@@ -26,7 +26,7 @@ from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
 
 
-class SvLimitedDissolve(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
+class SvLimitedDissolve(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
     ''' Limited Dissolve '''
     bl_idname = 'SvLimitedDissolve'
     bl_label = 'Limited Dissolve'

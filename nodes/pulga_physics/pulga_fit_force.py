@@ -23,7 +23,7 @@ from sverchok.data_structure import (enum_item_4, updateNode)
 from sverchok.utils.pulga_physics_modular_core import SvFitForce
 from sverchok.dependencies import scipy, Cython
 
-class SvPulgaFitForceNode(bpy.types.Node, SverchCustomTreeNode):
+class SvPulgaFitForceNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Grow / Shrink Force
     Tooltip: Shrink Radius (reducing mass) if collide with others / Grow if does not

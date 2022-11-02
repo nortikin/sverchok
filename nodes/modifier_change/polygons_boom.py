@@ -22,7 +22,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.nodes_mixins.sockets_config import ModifierLiteNode
 
 
-class PolygonBoomNode(ModifierLiteNode, bpy.types.Node, SverchCustomTreeNode):
+class PolygonBoomNode(ModifierLiteNode, SverchCustomTreeNode, bpy.types.Node):
     ''' Destroy object to many object of polygons '''
     bl_idname = 'PolygonBoomNode'
     bl_label = 'Polygon Boom'

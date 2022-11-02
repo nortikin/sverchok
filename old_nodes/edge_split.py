@@ -11,7 +11,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import match_long_repeat, fixed_iter
 
 
-class SvSplitEdgesNode(bpy.types.Node, SverchCustomTreeNode):
+class SvSplitEdgesNode(SverchCustomTreeNode, bpy.types.Node):
     ''' Split Edges '''
     bl_idname = 'SvSplitEdgesNode'
     bl_label = 'Split Edges'

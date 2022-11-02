@@ -9,7 +9,7 @@ from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_
 from sverchok.utils.logging import info, exception
 from sverchok.utils.surface import SvSurface, SvSurfaceSubdomain
 
-class SvSurfaceSubdomainNode(bpy.types.Node, SverchCustomTreeNode):
+class SvSurfaceSubdomainNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Surface Subdomain (iso trim)
     Tooltip: Take a sub-domain of the surface - trim a surface along constant U/V curves.

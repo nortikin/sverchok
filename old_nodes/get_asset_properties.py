@@ -58,7 +58,7 @@ def frame_from_available2(current_frame, layer):
     return inp_to_index.get(tval, 0)
 
 
-class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
+class SvGetAssetProperties(SverchCustomTreeNode, bpy.types.Node):
     ''' Get Asset Props '''
     bl_idname = 'SvGetAssetProperties'
     bl_label = 'Object ID Selector'

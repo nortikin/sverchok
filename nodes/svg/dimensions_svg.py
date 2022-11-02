@@ -156,7 +156,7 @@ class SvgDimension():
         return text_svg
 
 
-class SvSvgDimensionNode(bpy.types.Node, SverchCustomTreeNode):
+class SvSvgDimensionNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Text SVG
     Tooltip: Creates SVG Dimensions

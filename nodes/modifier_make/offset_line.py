@@ -182,7 +182,7 @@ def offset_edges(verts_in, edges_in, shift_in):
     return verts_out, faces_out, outer_edges, vers_mask
 
 
-class SvOffsetLineNode(EdgeGeneratorLiteNode, bpy.types.Node, SverchCustomTreeNode):
+class SvOffsetLineNode(EdgeGeneratorLiteNode, SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Offset Line 2D
     Tooltip: Offsetting a Line into 2D space

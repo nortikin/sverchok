@@ -42,7 +42,7 @@ output_sockets = {
 }
 
 
-class SvQuaternionOutNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
+class SvQuaternionOutNodeMK2(SverchCustomTreeNode, bpy.types.Node, SvAngleHelper):
     """
     Triggers: Quaternions, Out
     Tooltip: Convert quaternions into various quaternion components.\n\tIn:\n\t\tQuaternion: WXYZ=[0,0,0,0]\n\t\tNormalize: On/[Off]\n\tOut:\n\t\tComponents: WXYZ\n\t\tMatrix\n\t\tAngle X/Y/Z\n\t\tAxis/Angle

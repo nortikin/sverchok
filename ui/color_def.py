@@ -20,10 +20,10 @@
 import bpy
 from bpy.props import StringProperty
 
-from sverchok.menu import make_node_cats
 from sverchok.utils.logging import debug
 import sverchok
 from sverchok.utils.handle_blender_data import BlTrees
+from sverchok.ui.nodeview_space_menu import add_node_menu
 
 colors_cache = {}
 
@@ -102,14 +102,16 @@ def sv_colors_definition():
             }
     else:
         sv_node_colors = default_theme
-    sv_node_cats = make_node_cats()
     sv_cats_node = {}
-    for ca, no in sv_node_cats.items():
-        for n in no:
+
+    for cat in add_node_menu.walk_categories():
+        for elem in cat:
+            if not hasattr(elem, 'bl_idname'):
+                continue
             try:
-                sv_cats_node[n[0]] = sv_node_colors[ca]
+                sv_cats_node[elem.bl_idname] = sv_node_colors[cat.name]
             except:
-                sv_cats_node[n[0]] = False
+                sv_cats_node[elem.bl_idname] = False
     return sv_cats_node
 
 def rebuild_color_cache():

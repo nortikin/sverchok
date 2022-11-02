@@ -20,7 +20,7 @@ from sverchok.utils.surface.nurbs import nurbs_sweep
 from sverchok.dependencies import geomdl
 from sverchok.dependencies import FreeCAD
 
-class SvNurbsSweepNode(bpy.types.Node, SverchCustomTreeNode):
+class SvNurbsSweepNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: NURBS Sweep / Monorail
     Tooltip: Generate a NURBS surface by sweeping one curve along another (a.k.a monorail)

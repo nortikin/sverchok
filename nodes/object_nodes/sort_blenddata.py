@@ -22,7 +22,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode)
 
 
-class SvSortObjsNode(bpy.types.Node, SverchCustomTreeNode):
+class SvSortObjsNode(SverchCustomTreeNode, bpy.types.Node):
     ''' Sort Objects '''
     bl_idname = 'SvSortObjsNode'
     bl_label = 'Object ID Sort'

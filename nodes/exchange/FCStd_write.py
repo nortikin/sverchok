@@ -1,141 +1,137 @@
+import bpy
+from bpy.props import StringProperty, BoolProperty,EnumProperty
+
+from sverchok.node_tree import SverchCustomTreeNode # OLD throttled
+from sverchok.data_structure import updateNode, match_long_repeat # NEW throttle_and_update_node
+from sverchok.utils.logging import info
 from sverchok.dependencies import FreeCAD
-from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
 
-if FreeCAD is None:
-    add_dummy('SvWriteFCStdNode', 'SvWriteFCStdNode', 'FreeCAD')
-
-else:
+if FreeCAD is not None:
     F = FreeCAD
-    import bpy
-    from bpy.props import StringProperty, BoolProperty,EnumProperty
-    from sverchok.node_tree import SverchCustomTreeNode # OLD throttled
-    from sverchok.data_structure import updateNode, match_long_repeat # NEW throttle_and_update_node
-    from sverchok.utils.logging import info
 
 
-    class SvWriteFCStdOperator(bpy.types.Operator, SvGenericNodeLocator):
+class SvWriteFCStdOperator(bpy.types.Operator, SvGenericNodeLocator):
 
-        bl_idname = "node.sv_write_fcstd_operator"
-        bl_label = "write freecad file"
-        bl_options = {'INTERNAL', 'REGISTER'}
+    bl_idname = "node.sv_write_fcstd_operator"
+    bl_label = "write freecad file"
+    bl_options = {'INTERNAL', 'REGISTER'}
 
-        def execute(self, context):
-            node = self.get_node(context)
+    def execute(self, context):
+        node = self.get_node(context)
 
-            if not node: return {'CANCELLED'}     
+        if not node: return {'CANCELLED'}
 
-            node.write_FCStd(node)
-            updateNode(node,context)
+        node.write_FCStd(node)
+        updateNode(node,context)
 
-            return {'FINISHED'}
-
-
-    class SvWriteFCStdNode(bpy.types.Node, SverchCustomTreeNode):
-        """
-        Triggers: write FreeCAD file
-        Tooltip: write parts in a .FCStd file 
-        """
-    
-        bl_idname = 'SvWriteFCStdNode'
-        bl_label = 'Write FCStd'
-        bl_icon = 'IMPORT'
-        solid_catergory = "Inputs"
-        
-        write_update : BoolProperty(
-            name="write_update", 
-            default=False)
-
-        part_name : StringProperty(
-            name="part_name", 
-            default="part_name")
-
-        #@throttled
-        def changeMode(self, context):
-
-            if self.obj_format == 'mesh':
-                if 'Verts' not in self.inputs:
-                    self.inputs.remove(self.inputs['Solid'])
-                    self.inputs.new('SvVerticesSocket', 'Verts')
-                    self.inputs.new('SvVerticesSocket', 'Faces')
-                    return
-            else:
-                if 'Solid' not in self.inputs:
-                    self.inputs.remove(self.inputs['Verts'])
-                    self.inputs.remove(self.inputs['Faces'])
-                    self.inputs.new('SvSolidSocket', 'Solid')
-                    return
-
-        
-        obj_format : EnumProperty(
-                    name='format',
-                    description='choose format',
-                    items={
-                    ('solid', 'solid', 'solid'),
-                    ('mesh', 'mesh', 'mesh')},
-                    default='solid',
-                    update=changeMode)
-
-        def draw_buttons(self, context, layout):
-
-            layout.label(text="write name:")
-            col = layout.column(align=True)
-            col.prop(self, 'part_name',text="")  
-            col.prop(self, 'obj_format',text="")     
-            col.prop(self, 'write_update')
-            if self.obj_format == 'mesh':
-                col.label(text="need triangle meshes")
-            self.wrapper_tracked_ui_draw_op(layout, SvWriteFCStdOperator.bl_idname, icon='FILE_REFRESH', text="UPDATE")  
+        return {'FINISHED'}
 
 
-        def sv_init(self, context):
-            self.inputs.new('SvFilePathSocket', "File Path")
+class SvWriteFCStdNode(SverchCustomTreeNode, bpy.types.Node):
+    """
+    Triggers: write FreeCAD file
+    Tooltip: write parts in a .FCStd file
+    """
 
-            if self.obj_format == 'mesh':
-                self.inputs.new('SvVerticesSocket', "Verts")
-                self.inputs.new('SvStringsSocket', "Faces")
+    bl_idname = 'SvWriteFCStdNode'
+    bl_label = 'Write FCStd'
+    bl_icon = 'IMPORT'
+    sv_category = "Solid Inputs"
+    sv_dependencies = {'FreeCAD'}
 
-            else:
+    write_update : BoolProperty(
+        name="write_update",
+        default=False)
+
+    part_name : StringProperty(
+        name="part_name",
+        default="part_name")
+
+    #@throttled
+    def changeMode(self, context):
+
+        if self.obj_format == 'mesh':
+            if 'Verts' not in self.inputs:
+                self.inputs.remove(self.inputs['Solid'])
+                self.inputs.new('SvVerticesSocket', 'Verts')
+                self.inputs.new('SvVerticesSocket', 'Faces')
+                return
+        else:
+            if 'Solid' not in self.inputs:
+                self.inputs.remove(self.inputs['Verts'])
+                self.inputs.remove(self.inputs['Faces'])
                 self.inputs.new('SvSolidSocket', 'Solid')
-           
-        def write_FCStd(self,node):
-
-            if not node.inputs['File Path'].is_linked:
-                return
-            
-            files = node.inputs['File Path'].sv_get()
-
-            if  not len(files[0]) == 1:
-                print ('FCStd write node support just 1 file at once')
                 return
 
-            fc_file=files[0][0]
+    obj_format : EnumProperty(
+                name='format',
+                description='choose format',
+                items={
+                ('solid', 'solid', 'solid'),
+                ('mesh', 'mesh', 'mesh')},
+                default='solid',
+                update=changeMode)
 
-            if node.obj_format == 'mesh':
+    def draw_buttons(self, context, layout):
 
-                if any((node.inputs['Verts'].is_linked,node.inputs['Faces'].is_linked)):
+        layout.label(text="write name:")
+        col = layout.column(align=True)
+        col.prop(self, 'part_name',text="")
+        col.prop(self, 'obj_format',text="")
+        col.prop(self, 'write_update')
+        if self.obj_format == 'mesh':
+            col.label(text="need triangle meshes")
+        self.wrapper_tracked_ui_draw_op(layout, SvWriteFCStdOperator.bl_idname, icon='FILE_REFRESH', text="UPDATE")
 
-                    verts_in = node.inputs['Verts'].sv_get(deepcopy=False)
-                    pols_in = node.inputs['Faces'].sv_get(deepcopy=False)
-                    verts, pols = match_long_repeat([verts_in, pols_in])
-                    fc_write_parts(fc_file, verts, pols, node.part_name, None, node.obj_format)
 
-            elif node.obj_format == 'solid':
+    def sv_init(self, context):
+        self.inputs.new('SvFilePathSocket', "File Path")
 
-                if node.inputs['Solid'].is_linked:
-                    solid=node.inputs['Solid'].sv_get()
-                    fc_write_parts(fc_file, None, None, node.part_name, solid, node.obj_format)
+        if self.obj_format == 'mesh':
+            self.inputs.new('SvVerticesSocket', "Verts")
+            self.inputs.new('SvStringsSocket', "Faces")
 
-            else:
-                return
+        else:
+            self.inputs.new('SvSolidSocket', 'Solid')
 
-        def process(self):
+    def write_FCStd(self,node):
 
-            if self.write_update:
-                self.write_FCStd(self)   
-            else:
-                return
+        if not node.inputs['File Path'].is_linked:
+            return
 
+        files = node.inputs['File Path'].sv_get()
+
+        if  not len(files[0]) == 1:
+            print ('FCStd write node support just 1 file at once')
+            return
+
+        fc_file=files[0][0]
+
+        if node.obj_format == 'mesh':
+
+            if any((node.inputs['Verts'].is_linked,node.inputs['Faces'].is_linked)):
+
+                verts_in = node.inputs['Verts'].sv_get(deepcopy=False)
+                pols_in = node.inputs['Faces'].sv_get(deepcopy=False)
+                verts, pols = match_long_repeat([verts_in, pols_in])
+                fc_write_parts(fc_file, verts, pols, node.part_name, None, node.obj_format)
+
+        elif node.obj_format == 'solid':
+
+            if node.inputs['Solid'].is_linked:
+                solid=node.inputs['Solid'].sv_get()
+                fc_write_parts(fc_file, None, None, node.part_name, solid, node.obj_format)
+
+        else:
+            return
+
+    def process(self):
+
+        if self.write_update:
+            self.write_FCStd(self)
+        else:
+            return
 
 
 def fc_write_parts(fc_file, verts, faces, part_name, solid, mod):
@@ -209,11 +205,10 @@ def fc_write_parts(fc_file, verts, faces, part_name, solid, mod):
 
 
 def register():
-    if FreeCAD is not None:
-        bpy.utils.register_class(SvWriteFCStdNode)
-        bpy.utils.register_class(SvWriteFCStdOperator)
+    bpy.utils.register_class(SvWriteFCStdNode)
+    bpy.utils.register_class(SvWriteFCStdOperator)
+
 
 def unregister():
-    if FreeCAD is not None:
-        bpy.utils.unregister_class(SvWriteFCStdNode)
-        bpy.utils.unregister_class(SvWriteFCStdOperator)
+    bpy.utils.unregister_class(SvWriteFCStdNode)
+    bpy.utils.unregister_class(SvWriteFCStdOperator)

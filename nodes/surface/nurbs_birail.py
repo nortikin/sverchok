@@ -19,7 +19,7 @@ from sverchok.utils.surface.nurbs import nurbs_birail
 from sverchok.dependencies import geomdl
 from sverchok.dependencies import FreeCAD
 
-class SvNurbsBirailNode(bpy.types.Node, SverchCustomTreeNode):
+class SvNurbsBirailNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: NURBS Birail
     Tooltip: Generate a NURBS surface by sweeping one curve along two other curves (a.k.a. birail)

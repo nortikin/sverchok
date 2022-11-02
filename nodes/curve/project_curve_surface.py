@@ -15,17 +15,14 @@ from sverchok.utils.curve.core import SvCurve
 from sverchok.utils.curve.freecad import SvFreeCadNurbsCurve, SvSolidEdgeCurve, curve_to_freecad_nurbs
 from sverchok.utils.surface.core import SvSurface
 from sverchok.utils.surface.freecad import surface_to_freecad, is_solid_face_surface
-from sverchok.utils.dummy_nodes import add_dummy
-
 from sverchok.dependencies import FreeCAD
 
-if FreeCAD is None:
-    add_dummy('SvProjectCurveSurfaceNode', 'Project Curve to Surface (NURBS)', 'FreeCAD')
-else:
+if FreeCAD is not None:
     import Part
     from FreeCAD import Base
 
-class SvProjectCurveSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
+
+class SvProjectCurveSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Project Curve Surface NURBS
     Tooltip: Project a NURBS Curve onto a Face or Surface
@@ -34,6 +31,7 @@ class SvProjectCurveSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = "Project Curve to Surface (NURBS)"
     bl_icon = 'EDGESEL'
     sv_icon = 'SV_PROJECT_CURVE'
+    sv_dependencies = {'FreeCAD'}
 
     def update_sockets(self, context):
         self.inputs['Point'].hide_safe = self.projection_type != 'PERSPECTIVE'
@@ -144,11 +142,10 @@ class SvProjectCurveSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs['Curves'].sv_set(edges_out)
         self.outputs['TrimCurves'].sv_set(trims_out)
 
+
 def register():
-    if FreeCAD is not None:
-        bpy.utils.register_class(SvProjectCurveSurfaceNode)
+    bpy.utils.register_class(SvProjectCurveSurfaceNode)
+
 
 def unregister():
-    if FreeCAD is not None:
-        bpy.utils.unregister_class(SvProjectCurveSurfaceNode)
-
+    bpy.utils.unregister_class(SvProjectCurveSurfaceNode)

@@ -23,7 +23,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, Vector_generate, match_long_repeat, enum_item as e)
 
 
-class SvMatrixTrackToNode(bpy.types.Node, SverchCustomTreeNode):
+class SvMatrixTrackToNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Align to Track & Up vectors
     Tooltip:  Construct a Matrix from arbitrary Track and Up vectors\n\tIn: Location, Scale, Directions A and B\n\tParams: TrackUp Axes, AB\n\tOut: Matrix, X, Y, Z

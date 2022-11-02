@@ -30,7 +30,7 @@ from sverchok.utils.nodes_mixins.sockets_config import ModifierLiteNode
 
 
 class SvInsetSpecialMk2(
-        ModifierLiteNode, bpy.types.Node, SverchCustomTreeNode, SvRecursiveNode):
+        ModifierLiteNode, SverchCustomTreeNode, bpy.types.Node, SvRecursiveNode):
     """
     Triggers: or Extrude (Fast)
     Tooltip: Fast Inset or extrude geometry
@@ -53,16 +53,16 @@ class SvInsetSpecialMk2(
     )
     inset: FloatProperty(
         name='Inset',
-        description='inset amount',
+        description='Inset amount',
         min=0.0,
         default=0.1, update=updateNode)
     distance: FloatProperty(
         name='Distance',
-        description='Distance',
+        description='Offset distance along normal',
         default=0.0, update=updateNode)
 
-    ignore: IntProperty(name='Ignore', description='skip polygons', default=0, update=updateNode)
-    make_inner: IntProperty(name='Make Inner', description='Make inner polygon', default=1, update=updateNode)
+    ignore: IntProperty(name='Ignore', description='Skip polygons (mask of affected polygons)', default=0, update=updateNode)
+    make_inner: IntProperty(name='Make Inner', description='Determine if inner face should be created (0-do not create, 1-create)', default=1, update=updateNode)
 
     zero_modes = [
         ("SKIP", "Skip", "Do not process such faces", 0),

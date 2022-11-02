@@ -74,7 +74,7 @@ mapper_funcs = {
 }
 
 
-class SvTextureEvaluateNodeMk2(bpy.types.Node, SverchCustomTreeNode):
+class SvTextureEvaluateNodeMk2(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Scene Texture In
     Tooltip: Evaluate Scene texture at input coordinates.\n\tIn:Vertices, Texture\n\tParams: Mapping Object/[UV Coordinates], Channel: [Alpha]/R/G/B/Hue/Sat/Val/RGB Aver/Lumin/Color\n\tOut: value (float)

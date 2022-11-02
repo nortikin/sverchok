@@ -243,7 +243,7 @@ def make_edg_pol(x_verts, y_verts, z_verts, flags):
 
 socket_names = ['Vertices', 'Edges', 'Polygons']
 
-class SvBoxNodeMk2(bpy.types.Node, SverchCustomTreeNode):
+class SvBoxNodeMk2(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Box
     Tooltip: Generate a Box primitive. [default]\n\tOrigin: Center/Bottom/Corner, [Center]\n\tSize: (float). Num or List of float, [1.0] \n\tDivisions: X / Y / Z (int), [1]\n\tMatrix Transform

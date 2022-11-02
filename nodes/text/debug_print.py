@@ -24,7 +24,7 @@ from sverchok.data_structure import multi_socket, updateNode
 
 defaults = [True for i in range(32)]
 
-class SvDebugPrintNode(bpy.types.Node, SverchCustomTreeNode):
+class SvDebugPrintNode(SverchCustomTreeNode, bpy.types.Node):
     ''' print socket data to terminal '''
     bl_idname = 'SvDebugPrintNode'
     bl_label = 'Debug Print'

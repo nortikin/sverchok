@@ -73,7 +73,7 @@ mapper_funcs = {
 }
 
 
-class SvTextureEvaluateNode(bpy.types.Node, SverchCustomTreeNode):
+class SvTextureEvaluateNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Scence Texture In
     Tooltip: Evaluate Scene texture at input coordinates

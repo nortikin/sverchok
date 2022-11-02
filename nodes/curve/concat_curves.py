@@ -11,7 +11,7 @@ from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.curve.algorithms import concatenate_curves
 from sverchok.utils.curve.nurbs_algorithms import concatenate_nurbs_curves
 
-class SvConcatCurvesNode(bpy.types.Node, SverchCustomTreeNode):
+class SvConcatCurvesNode(SverchCustomTreeNode, bpy.types.Node):
         """
         Triggers: Concatenate Curves
         Tooltip: Concatenate several curves into one

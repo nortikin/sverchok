@@ -67,7 +67,7 @@ def mirrorPlane(vertex, matrix):
     return vert
 
 
-class SvMirrorNode(bpy.types.Node, SverchCustomTreeNode):
+class SvMirrorNode(SverchCustomTreeNode, bpy.types.Node):
     ''' Mirroring, Symmetry'''
     bl_idname = 'SvMirrorNode'
     bl_label = 'Mirror'

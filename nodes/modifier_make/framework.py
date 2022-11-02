@@ -116,7 +116,7 @@ def process_edge(bm, z_idx, verts1_bm, verts2_bm, step1, step2, conn1, conn2, ma
         connect_verts(bm, z_idx, v, verts2_bm, conn1, max_rho1)
 
 
-class SvFrameworkNode(EdgeGeneratorNode, bpy.types.Node, SverchCustomTreeNode):
+class SvFrameworkNode(EdgeGeneratorNode, SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Framework / carcass / ferme
     Tooltip: Generate construction framework

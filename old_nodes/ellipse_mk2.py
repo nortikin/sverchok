@@ -34,7 +34,7 @@ mode_items = [("AB", "a b", "Major Radius / Minor Radius", 1),
               ("AC", "a c", "Major Radius / Focal Length", 3)]
 
 
-class SvEllipseNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
+class SvEllipseNodeMK2(SverchCustomTreeNode, bpy.types.Node, SvAngleHelper):
     """
     Triggers: Ellipse
     Tooltip: Generate ellipses

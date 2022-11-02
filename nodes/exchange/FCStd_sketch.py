@@ -1,176 +1,177 @@
-from sverchok.dependencies import FreeCAD
-from sverchok.utils.dummy_nodes import add_dummy
+import bpy
+import numpy as np
 import mathutils
+from bpy.props import StringProperty, IntProperty, BoolProperty, EnumProperty
+
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import updateNode
+from sverchok.utils.logging import info
+from sverchok.dependencies import FreeCAD
 from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
 
-if FreeCAD is None:
-    add_dummy('SvReadFCStdSketchNode', 'SvReadFCStdSketchNode', 'FreeCAD')
-
-else:
+if FreeCAD is not None:
     F = FreeCAD
-    import bpy
-    import numpy as np
-    from bpy.props import StringProperty, IntProperty, BoolProperty, EnumProperty
-    from sverchok.node_tree import SverchCustomTreeNode
-    from sverchok.data_structure import updateNode
-    from sverchok.utils.logging import info
 
-    class SvReadFCStdSketchOperator(bpy.types.Operator, SvGenericNodeLocator):
 
-        bl_idname = "node.sv_read_fcstd_sketch_operator"
-        bl_label = "read freecad sketch"
-        bl_options = {'INTERNAL', 'REGISTER'}
+class SvReadFCStdSketchOperator(bpy.types.Operator, SvGenericNodeLocator):
 
-        def execute(self, context):
-            node = self.get_node(context)
+    bl_idname = "node.sv_read_fcstd_sketch_operator"
+    bl_label = "read freecad sketch"
+    bl_options = {'INTERNAL', 'REGISTER'}
 
-            if not node: return {'CANCELLED'}     
+    def execute(self, context):
+        node = self.get_node(context)
 
-            node.read_sketch(node)
-            updateNode(node,context)
+        if not node: return {'CANCELLED'}
 
-            return {'FINISHED'}
+        node.read_sketch(node)
+        updateNode(node,context)
 
-    class SvReadFCStdSketchNode(bpy.types.Node, SverchCustomTreeNode):
-        """
-        Triggers: Read FreeCAD file
-        Tooltip: import parts from a .FCStd file 
-        """
-        bl_idname = 'SvReadFCStdSketchNode'
-        bl_label = 'Read FCStd Sketches'
-        bl_icon = 'IMPORT'
-        solid_catergory = "Outputs"
-        
-        max_points : IntProperty(name="max_points", default=50, update = updateNode) 
-        read_update : BoolProperty(name="read_update", default=True)
-        inv_filter : BoolProperty(name="inv_filter", default=False, update = updateNode)
-        selected_label : StringProperty(default='Select FC Part')
-        selected_part : StringProperty(default='',update = updateNode) 
+        return {'FINISHED'}
 
-        read_mode : EnumProperty(
-                    name='mode',
-                    description='read geometry / construction',
-                    items=[
-                    ('geometry', 'geometry', 'geometry'),
-                    ('construction', 'construction', 'construction'),
-                    ('BOTH', 'BOTH', 'BOTH')],
-                    default='geometry',
-                    update = updateNode )
 
-        def draw_buttons(self, context, layout):
+class SvReadFCStdSketchNode(SverchCustomTreeNode, bpy.types.Node):
+    """
+    Triggers: Read FreeCAD file
+    Tooltip: import parts from a .FCStd file
+    """
+    bl_idname = 'SvReadFCStdSketchNode'
+    bl_label = 'Read FCStd Sketches'
+    bl_icon = 'IMPORT'
+    sv_category = "Solid Outputs"
+    sv_dependencies = {'FreeCAD'}
 
-            col = layout.column(align=True)
-            col.prop(self, 'read_mode')  
+    max_points : IntProperty(name="max_points", default=50, update = updateNode)
+    read_update : BoolProperty(name="read_update", default=True)
+    inv_filter : BoolProperty(name="inv_filter", default=False, update = updateNode)
+    selected_label : StringProperty(default='Select FC Part')
+    selected_part : StringProperty(default='',update = updateNode)
 
-            if self.inputs['File Path'].is_linked:
-                self.wrapper_tracked_ui_draw_op(
-                    col, SvShowFcstdSketchNamesOp.bl_idname, 
-                    icon= 'TRIA_DOWN',
-                    text= self.selected_label )
-                  
-            col.prop(self, 'max_points')   
-            col.prop(self, 'read_update')   
-            col.prop(self, 'inv_filter')
-            self.wrapper_tracked_ui_draw_op(layout, SvReadFCStdSketchOperator.bl_idname, icon='FILE_REFRESH', text="UPDATE")  
+    read_mode : EnumProperty(
+                name='mode',
+                description='read geometry / construction',
+                items=[
+                ('geometry', 'geometry', 'geometry'),
+                ('construction', 'construction', 'construction'),
+                ('BOTH', 'BOTH', 'BOTH')],
+                default='geometry',
+                update = updateNode )
 
-        def sv_init(self, context):
-            self.inputs.new('SvFilePathSocket', "File Path")
-            self.inputs.new('SvStringsSocket', "Sketch Filter")   
+    def draw_buttons(self, context, layout):
 
-            self.outputs.new('SvVerticesSocket', "Verts")
-            self.outputs.new('SvStringsSocket', "Edges")
-            self.outputs.new('SvCurveSocket', "Curve")
+        col = layout.column(align=True)
+        col.prop(self, 'read_mode')
 
-        def read_sketch(self,node):
+        if self.inputs['File Path'].is_linked:
+            self.wrapper_tracked_ui_draw_op(
+                col, SvShowFcstdSketchNamesOp.bl_idname,
+                icon= 'TRIA_DOWN',
+                text= self.selected_label )
 
-            if not any(socket.is_linked for socket in node.outputs):
-                return
+        col.prop(self, 'max_points')
+        col.prop(self, 'read_update')
+        col.prop(self, 'inv_filter')
+        self.wrapper_tracked_ui_draw_op(layout, SvReadFCStdSketchOperator.bl_idname, icon='FILE_REFRESH', text="UPDATE")
 
-            if not node.inputs['File Path'].is_linked:
-                return            
+    def sv_init(self, context):
+        self.inputs.new('SvFilePathSocket', "File Path")
+        self.inputs.new('SvStringsSocket', "Sketch Filter")
 
-            if node.read_update:
-                
-                files = node.inputs['File Path'].sv_get()[0]
+        self.outputs.new('SvVerticesSocket', "Verts")
+        self.outputs.new('SvStringsSocket', "Edges")
+        self.outputs.new('SvCurveSocket', "Curve")
 
-                sketch_filter = []
-                if node.inputs['Sketch Filter'].is_linked:
-                    sketch_filter = node.inputs['Sketch Filter'].sv_get()[0]
-                
-                if node.selected_part != '' and not node.selected_part in sketch_filter:
-                    sketch_filter.append(node.selected_part)
+    def read_sketch(self,node):
 
-                Verts = []
-                Edges = []
-                curves_out = []
-                for f in files:
-                    S = LoadSketch(f, sketch_filter, node.max_points, node.inv_filter, node.read_mode)
-                    for i in S[0]:
-                        Verts.append(i)
-                    for i in S[1]:
-                        Edges.append(i)
-                    for i in S[2]:
-                        curves_out.append(i)                
-                node.outputs['Verts'].sv_set([Verts])
-                node.outputs['Edges'].sv_set([Edges])
-                node.outputs['Curve'].sv_set(curves_out)
-            
-            else:
-                return
+        if not any(socket.is_linked for socket in node.outputs):
+            return
 
-        def process(self):
-            self.read_sketch(self)
+        if not node.inputs['File Path'].is_linked:
+            return
 
-    class SvShowFcstdSketchNamesOp(bpy.types.Operator):
-        bl_idname = "node.sv_show_fcstd_sketch_names"
-        bl_label = "Show parts list"
-        bl_options = {'INTERNAL', 'REGISTER'}
-        bl_property = "option"
+        if node.read_update:
 
-        def LabelReader(self,context):
-            labels=[('','','')]
+            files = node.inputs['File Path'].sv_get()[0]
 
-            tree = bpy.data.node_groups[self.tree_name]
-            node = tree.nodes[self.node_name]
-            fc_file_list = node.inputs['File Path'].sv_get()[0]
+            sketch_filter = []
+            if node.inputs['Sketch Filter'].is_linked:
+                sketch_filter = node.inputs['Sketch Filter'].sv_get()[0]
 
-            try:
+            if node.selected_part != '' and not node.selected_part in sketch_filter:
+                sketch_filter.append(node.selected_part)
 
-                for f in fc_file_list:
-                    F.open(f) 
-                    Fname = bpy.path.display_name_from_filepath(f)
-                    F.setActiveDocument(Fname)
+            Verts = []
+            Edges = []
+            curves_out = []
+            for f in files:
+                S = LoadSketch(f, sketch_filter, node.max_points, node.inv_filter, node.read_mode)
+                for i in S[0]:
+                    Verts.append(i)
+                for i in S[1]:
+                    Edges.append(i)
+                for i in S[2]:
+                    curves_out.append(i)
+            node.outputs['Verts'].sv_set([Verts])
+            node.outputs['Edges'].sv_set([Edges])
+            node.outputs['Curve'].sv_set(curves_out)
 
-                    for obj in F.ActiveDocument.Objects:
+        else:
+            return
 
-                        if obj.Module == 'Sketcher':
-                            labels.append( (obj.Label, obj.Label, obj.Label) )
-                    F.closeDocument(Fname)
+    def process(self):
+        self.read_sketch(self)
 
-            except:
-                info('FCStd read error')  
-            
-            return labels
-            
-        option : EnumProperty(items=LabelReader)
-        tree_name : StringProperty()
-        node_name : StringProperty() 
 
-        def execute(self, context):
+class SvShowFcstdSketchNamesOp(bpy.types.Operator):
+    bl_idname = "node.sv_show_fcstd_sketch_names"
+    bl_label = "Show parts list"
+    bl_options = {'INTERNAL', 'REGISTER'}
+    bl_property = "option"
 
-            tree = bpy.data.node_groups[self.tree_name]
-            node = tree.nodes[self.node_name]
-            node.name_filter = self.option
-            node.selected_label = self.option
-            node.selected_part = self.option
-            bpy.context.area.tag_redraw()
-            return {'FINISHED'}
+    def LabelReader(self,context):
+        labels=[('','','')]
 
-        def invoke(self, context, event):
-            context.space_data.cursor_location_from_region(event.mouse_region_x, event.mouse_region_y)
-            wm = context.window_manager
-            wm.invoke_search_popup(self)
-            return {'FINISHED'}
+        tree = bpy.data.node_groups[self.tree_name]
+        node = tree.nodes[self.node_name]
+        fc_file_list = node.inputs['File Path'].sv_get()[0]
+
+        try:
+
+            for f in fc_file_list:
+                F.open(f)
+                Fname = bpy.path.display_name_from_filepath(f)
+                F.setActiveDocument(Fname)
+
+                for obj in F.ActiveDocument.Objects:
+
+                    if obj.Module == 'Sketcher':
+                        labels.append( (obj.Label, obj.Label, obj.Label) )
+                F.closeDocument(Fname)
+
+        except:
+            info('FCStd read error')
+
+        return labels
+
+    option : EnumProperty(items=LabelReader)
+    tree_name : StringProperty()
+    node_name : StringProperty()
+
+    def execute(self, context):
+
+        tree = bpy.data.node_groups[self.tree_name]
+        node = tree.nodes[self.node_name]
+        node.name_filter = self.option
+        node.selected_label = self.option
+        node.selected_part = self.option
+        bpy.context.area.tag_redraw()
+        return {'FINISHED'}
+
+    def invoke(self, context, event):
+        context.space_data.cursor_location_from_region(event.mouse_region_x, event.mouse_region_y)
+        wm = context.window_manager
+        wm.invoke_search_popup(self)
+        return {'FINISHED'}
    
 
 def LoadSketch(fc_file, sketch_filter, max_points, inv_filter, read_mode):
@@ -344,14 +345,14 @@ def FreeCAD_abs_placement(sketch_placement,p_co):
     local_placement.Base = p_co
     return sketch_placement.multiply(local_placement)
 
+
 def register():
-    if FreeCAD is not None:
-        bpy.utils.register_class(SvReadFCStdSketchNode)
-        bpy.utils.register_class(SvShowFcstdSketchNamesOp)
-        bpy.utils.register_class(SvReadFCStdSketchOperator)
+    bpy.utils.register_class(SvReadFCStdSketchNode)
+    bpy.utils.register_class(SvShowFcstdSketchNamesOp)
+    bpy.utils.register_class(SvReadFCStdSketchOperator)
+
 
 def unregister():
-    if FreeCAD is not None:
-        bpy.utils.unregister_class(SvReadFCStdSketchNode)
-        bpy.utils.unregister_class(SvShowFcstdSketchNamesOp)
-        bpy.utils.unregister_class(SvReadFCStdSketchOperator)
+    bpy.utils.unregister_class(SvReadFCStdSketchNode)
+    bpy.utils.unregister_class(SvShowFcstdSketchNamesOp)
+    bpy.utils.unregister_class(SvReadFCStdSketchOperator)

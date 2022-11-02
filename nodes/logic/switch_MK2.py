@@ -80,7 +80,7 @@ def switch_data_np(states, a, b):
         raise ValueError(f"Wrong input type of a-{type(a)} or b-{type(b)}, ndarray, None or bool expected")
 
 
-class SvSwitchNodeMK2(bpy.types.Node, SverchCustomTreeNode):
+class SvSwitchNodeMK2(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Switch MK2
     Tooltip: You can deal with empty data connected to input sockets (True or False).\n\tIn: state True/[False], A(_N), B(_N)\n\tExtra Params: in/out input number [1]\n\tOut(_N): A(_N)/B(_N)

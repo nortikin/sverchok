@@ -150,7 +150,7 @@ def inset_special(vertices, faces, inset_rates, distances, ignores, make_inners,
     return new_verts, new_faces, new_ignores, new_insets
 
 
-class SvInsetSpecial(bpy.types.Node, SverchCustomTreeNode):
+class SvInsetSpecial(SverchCustomTreeNode, bpy.types.Node):
     '''
     Insets geometry, optional remove and/or translate
     Don't think of this as a realtime effect.

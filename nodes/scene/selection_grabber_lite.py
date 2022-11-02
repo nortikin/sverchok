@@ -11,7 +11,7 @@ import bmesh
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 
-class SvSelectionGrabberLite(bpy.types.Node, SverchCustomTreeNode):
+class SvSelectionGrabberLite(SverchCustomTreeNode, bpy.types.Node):
     
     """
     Triggers: SvSelectionGrabberLite

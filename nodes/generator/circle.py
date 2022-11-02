@@ -25,7 +25,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (fullList, match_long_repeat, updateNode)
 
 
-class SvCircleNode(bpy.types.Node, SverchCustomTreeNode):
+class SvCircleNode(SverchCustomTreeNode, bpy.types.Node):
     ''' Circle. [default]
         Radius (float): [1.0]
         Num verts (int), min 3: [24]

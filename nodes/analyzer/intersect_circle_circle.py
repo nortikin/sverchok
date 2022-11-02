@@ -84,7 +84,7 @@ def compute_intersect_circle_circle(params, result, gates):
             res.append(local_result[i])
 
 
-class SvIntersectCircleCircleNode(bpy.types.Node, SverchCustomTreeNode):
+class SvIntersectCircleCircleNode(SverchCustomTreeNode, bpy.types.Node):
     '''
     Triggers: Intersect Circle Circle
     Tooltip: Intersect between to co-planar Circles.
@@ -95,7 +95,7 @@ class SvIntersectCircleCircleNode(bpy.types.Node, SverchCustomTreeNode):
     sv_icon = 'SV_CIRCLE_INTERSECTION'
 
     radius_A: FloatProperty(
-        name="Radius", description='intersection tolerance',
+        name="Radius", description='Radius of circle A',
         default=1, min=0.0,
         update=updateNode)
 
@@ -105,7 +105,7 @@ class SvIntersectCircleCircleNode(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode)
 
     radius_B: FloatProperty(
-        name="Radius", description='intersection tolerance',
+        name="Radius", description='Radius of circle B',
         default=1, min=0.0,
         update=updateNode)
 

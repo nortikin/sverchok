@@ -1,0 +1,848 @@
+# This file is parsed by sverchok.ui.nodeview_space_menu
+# It's quite limited representation of yaml syntax, stick to existing lexical
+# constructions
+
+# Shift+A / Add(Node) Menu
+
+- Search:  # Label of an operator
+    - icon_name: OUTLINER_DATA_FONT  # icon name to show
+    - operator: node.sv_extra_search  # name of on an operator to call
+    # custom properties for operators are not supported currently
+
+- ---  # Separator
+
+- Generator:  # Name of a node category
+    - icon_name: OBJECT_DATAMODE  # icon name to show
+    - extra_menu: MeshPartialMenu  # to make the category available in another menu (1,2,3,4,5)
+    - SvLineNodeMK4  # bl_idname of a node
+    - SvSegmentGenerator
+    - SvPlaneNodeMk3
+    - SvNGonNode
+    - SvBoxNodeMk2
+    - SvCircleNode
+    - SvCylinderNodeMK2
+    - SphereNode
+    - SvIcosphereNode
+    - SvTorusNodeMK2
+    - SvSuzanneNode
+    - SvCricketNode
+    - ---
+    - BasicSplineNode
+    - SvQuadraticSplineNode
+    - svBasicArcNode
+    - RandomVectorNodeMK3
+    - ImageNode
+    - SvFormulaShapeNode
+
+    # this is a nested category
+    - Generators Extended:
+        - icon_name: PLUGIN
+        - SvBoxRoundedNode
+        - SvBricksNode
+        - SvPolygonGridNode
+        - HilbertNode
+        - Hilbert3dNode
+        - HilbertImageNode
+        - SvImageComponentsNode
+        - SvWFCTextureNode
+        - SvTorusKnotNodeMK2
+        - SvRingNodeMK2
+        - SvEllipseNodeMK3
+        - SvSuperEllipsoidNode
+        - SvRegularSolid
+        - SvConicSectionNode
+        - SvTriangleNode
+        - SvPentagonTilerNode
+        - SvSpiralNodeMK2
+
+
+- Curves:
+    - icon_name: OUTLINER_OB_CURVE
+    - extra_menu: AdvancedObjectsPartialMenu
+    - Curve Primitives:
+        - SvExLineCurveNode
+        - SvCircleCurveMk2Node
+        - SvEllipseCurveNode
+        - SvRoundedRectangleNode
+        - SvArc3ptCurveNode
+        - SvArcSedCurveNode
+        - SvExCatenaryCurveNode
+        - SvFreeCadHelixNode
+        - ---
+        - SvExPolylineNode
+        - SvExFilletPolylineNode
+        - SvKinkyCurveNode
+        - SvBiArcNode
+        - SvPolyArcNode
+    - SvExCurveFormulaNode
+    - SvExCubicSplineNode
+    - SvTangentsCurveNode
+    - SvExRbfCurveNode
+    - SvExCirclifyNode
+    - Curve Bezier:
+        - SvBezierSplineNode
+        - SvExBezierCurveFitNode
+    - Curve NURBS:
+        - SvExNurbsCurveNode
+        - SvApproxNurbsCurveMk2Node
+        - SvExInterpolateNurbsCurveNode
+        - SvDeconstructCurveNode
+        - SvNurbsCurveNodesNode
+        - ---
+        - SvNurbsCurveMovePointNode
+        - ---
+        - SvCurveInsertKnotNode
+        - SvCurveRemoveKnotNode
+        - SvRefineNurbsCurveNode
+        - SvCurveRemoveExcessiveKnotsNode
+        - ---
+        - SvCurveElevateDegreeNode
+        - SvCurveReduceDegreeNode
+        - ---
+        - SvAdaptivePlotNurbsCurveNode
+    - ---
+    - SvExMarchingSquaresNode
+    - SvExMSquaresOnSurfaceNode
+    - ---
+    - SvExApplyFieldToCurveNode
+    - SvExCastCurveNode
+    - SvProjectCurveSurfaceNode
+    - SvOffsetCurveMk2Node
+    - SvCurveOffsetOnSurfaceNode
+    - SvExIsoUvCurveNode
+    - SvExCurveOnSurfaceNode
+    - ---
+    - SvExCurveLerpCurveNode
+    - SvSortCurvesNode
+    - SvExConcatCurvesNode
+    - SvExBlendCurvesMk2Node
+    - SvExFlipCurveNode
+    - SvReparametrizeCurveNode
+    - SvExSurfaceBoundaryNode
+    - ---
+    - SvIntersectNurbsCurvesNode
+    - SvExNearestPointOnCurveNode
+    - SvExOrthoProjectCurveNode
+    - SvExCurveEndpointsNode
+    - SvExCurveSegmentNode
+    - SvExCurveRangeNode
+    - SvExtendCurveNode
+    - SvSplitCurveNode
+    - SvExCurveLengthNode
+    - SvExCurveFrameNode
+    - SvCurveFrameOnSurfNode
+    - SvExCurveCurvatureNode
+    - SvExCurveTorsionNode
+    - SvExCurveExtremesNode
+    - SvExCurveZeroTwistFrameNode
+    - SvExSlerpCurveFrameNode
+    - SvExCurveLengthParameterNode
+    - SvLengthRebuildCurveNode
+    - SvExCrossCurvePlaneNode
+    - SvExCrossCurveSurfaceNode
+    - ---
+    - SvAdaptivePlotCurveNode
+    - SvExEvalCurveNode
+
+- Surfaces:
+    - icon_name: SURFACE_DATA
+    - extra_menu: AdvancedObjectsPartialMenu
+    - SvExPlaneSurfaceNode
+    - SvExSphereNode
+    - SvExSurfaceFormulaNode
+    - SvInterpolatingSurfaceNode
+    - SvExMinimalSurfaceNode
+    - SvExMinSurfaceFromCurveNode
+    - Surface NURBS:
+        - SvExNurbsSurfaceNode
+        - SvExApproxNurbsSurfaceNode
+        - SvExInterpolateNurbsSurfaceNode
+        - SvNurbsLoftNode
+        - SvNurbsSweepNode
+        - SvNurbsBirailNode
+        - SvGordonSurfaceNode
+        - SvDeconstructSurfaceNode
+        - ---
+        - SvExQuadsToNurbsNode
+        - ---
+        - SvSurfaceInsertKnotNode
+        - SvSurfaceRemoveKnotNode
+        - SvSurfaceRemoveExcessiveKnotsNode
+        - ---
+        - SvSurfaceElevateDegreeNode
+        - SvSurfaceReduceDegreeNode
+    - ---
+    - SvExRevolutionSurfaceNode
+    - SvExTaperSweepSurfaceNode
+    - SvBendCurveSurfaceNode
+    - SvExExtrudeCurveVectorNode
+    - SvExExtrudeCurveCurveSurfaceNode
+    - SvExExtrudeCurvePointNode
+    - SvPipeSurfaceNode
+    - SvExCurveLerpNode
+    - SvExSurfaceLerpNode
+    - SvCoonsPatchNode
+    - SvBlendSurfaceNode
+    - SvExApplyFieldToSurfaceNode
+    - ---
+    - SvExSurfaceDomainNode
+    - SvExSurfaceSubdomainNode
+    - SvFlipSurfaceNode
+    - SvSwapSurfaceNode
+    - SvReparametrizeSurfaceNode
+    - SvSurfaceNormalsNode
+    - SvSurfaceGaussCurvatureNode
+    - SvSurfaceCurvaturesNode
+    - SvExSurfaceExtremesNode
+    - SvExNearestPointOnSurfaceNode
+    - SvExOrthoProjectSurfaceNode
+    - SvExRaycastSurfaceNode
+    - ---
+    - SvExImplSurfaceRaycastNode
+    - SvExMarchingCubesNode
+    - ---
+    - SvExTessellateTrimSurfaceNode
+    - SvAdaptiveTessellateNode
+    - SvExEvalSurfaceNode
+
+- Fields:
+    - icon_name: OUTLINER_OB_FORCE_FIELD
+    - extra_menu: AdvancedObjectsPartialMenu
+    - SvCoordScalarFieldNode
+    - SvExScalarFieldFormulaNode
+    - SvExVectorFieldFormulaNode
+    - SvExComposeVectorFieldNode
+    - SvExDecomposeVectorFieldNode
+    - SvExScalarFieldPointNode
+    - SvAttractorFieldNodeMk2
+    - SvRotationFieldNode
+    - SvExImageFieldNode
+    - SvMeshSurfaceFieldNode
+    - SvExMeshNormalFieldNode
+    - SvExVoronoiFieldNode
+    - SvExMinimalScalarFieldNode
+    - SvExMinimalVectorFieldNode
+    - SvExNoiseVectorFieldNode
+    - ---
+    - SvExScalarFieldMathNode
+    - SvExVectorFieldMathNode
+    - SvScalarFieldCurveMapNode
+    - SvExFieldDiffOpsNode
+    - SvScalarFieldCurvatureNode
+    - SvExMergeScalarFieldsNode
+    - ---
+    - SvExBendAlongCurveFieldNode
+    - SvExBendAlongSurfaceFieldNode
+    - ---
+    - SvExScalarFieldEvaluateNode
+    - SvExVectorFieldEvaluateNode
+    - SvExVectorFieldApplyNode
+    - ---
+    - SvExVectorFieldGraphNode
+    - SvExVectorFieldLinesNode
+    - SvExScalarFieldGraphNode
+
+- Solids:
+    - icon_name: MESH_CUBE
+    - extra_menu: AdvancedObjectsPartialMenu
+    - SvBoxSolidNode
+    - SvCylinderSolidNode
+    - SvConeSolidNode
+    - SvSphereSolidNode
+    - SvToursSolidNode
+    - Solid Make Face:
+        - SvSolidPolygonFaceNode
+        - SvSolidWireFaceNode
+        - SvProjectTrimFaceNode
+    - SvSolidFaceExtrudeNode
+    - SvSolidFaceSolidifyNode
+    - SvSolidFaceRevolveNode
+    - SvSweepSolidFaceNode
+    - SvRuledSolidNode
+    - SvSolidFromFacesNode
+    - ---
+    - SvTransformSolidNode
+    - SvChamferSolidNode
+    - SvFilletSolidNode
+    - SvSolidBooleanNode
+    - SvSolidGeneralFuseNode
+    - SvMirrorSolidNode
+    - SvOffsetSolidNode
+    - SvSplitSolidNode
+    - SvHollowSolidNode
+    - ---
+    - SvIsInsideSolidNode
+    - SvSolidDistanceNode
+    - SvSliceSolidNode
+    - SvMeshToSolidNode
+    - SvSolidToMeshNodeMk2
+    - SvSolidVerticesNode
+    - SvSolidEdgesNode
+    - SvSolidFacesNode
+    - SvSelectSolidNode
+    - SvCompoundSolidNode
+    - Solid Analyze:
+        - SvSolidValidateNode
+        - SvRefineSolidNode
+        - SvIsSolidClosedNode
+        - SvSolidCenterOfMassNode
+        - SvSolidFaceAreaNode
+        - SvSolidAreaNode
+        - SvSolidVolumeNode
+        - SvSolidBoundBoxNode
+    - SvSolidViewerNode
+
+- Spatial:
+    - icon_name: POINTCLOUD_DATA
+    - extra_menu: AdvancedObjectsPartialMenu
+    - SvHomogenousVectorField
+    - SvRandomPointsOnMesh
+    - SvPopulateSurfaceMk2Node
+    - SvPopulateSolidMk2Node
+    - SvFieldRandomProbeMk3Node
+    - ---
+    - DelaunayTriangulation2DNode
+    - SvDelaunay2DCdt
+    - SvDelaunay3dMk2Node
+    - ---
+    - Voronoi2DNode
+    - SvExVoronoi3DNode
+    - SvExVoronoiSphereNode
+    - SvVoronoiOnSurfaceNode
+    - SvVoronoiOnMeshNode
+    - SvVoronoiOnSolidNode
+    - ---
+    - SvLloyd2dNode
+    - SvLloyd3dNode
+    - SvLloydOnSphereNode
+    - SvLloydOnMeshNode
+    - SvLloydSolidNode
+    - SvLloydSolidFaceNode
+    - ---
+    - SvConvexHullNodeMK2
+    - SvConcaveHullNode
+
+- Transforms:
+    - icon_name: ORIENTATION_LOCAL
+    - extra_menu: MeshPartialMenu
+    - SvMoveNodeMk3
+    - SvRotationNodeMk3
+    - SvScaleNodeMk3
+    - SvSymmetrizeNode
+    - SvMirrorNodeMk2
+    - MatrixApplyNode
+    - SvBarycentricTransformNode
+    - SvAlignMeshByMesh
+    - ---
+    - SvTransformSelectNode
+    - SvTransformMesh
+    - SvSimpleDeformNode
+    - SvBendAlongPathNode
+    - SvBendAlongSurfaceNode
+    - SvDisplaceNodeMk2
+    - SvNoiseDisplaceNode
+    - SvRandomizeVerticesNode
+    - SvCastNode
+    - SvFormulaDeformMK2Node
+
+- Analyzers:
+    - icon_name: VIEWZOOM
+    - extra_menu: MeshPartialMenu
+    - SvBBoxNodeMk3
+    - SvComponentAnalyzerNode
+    - SvDiameterNode
+    - SvVolumeNodeMK2
+    - SvAreaNode
+    - DistancePPNode
+    - SvDistancePointLineNode
+    - SvDistancePointPlaneNode
+    - SvDistancetLineLineNode
+    - SvPathLengthMk2Node
+    - SvOrigins
+    - SvGetNormalsNodeMk2
+    - SvIntersectLineSphereNode
+    - SvIntersectCircleCircleNode
+    - SvIntersectPlanePlaneNode
+    - SvKDTreeNodeMK2
+    - SvKDTreeEdgesNodeMK3
+    - SvKDTreePathNode
+    - SvNearestPointOnMeshNode
+    - SvBvhOverlapNodeNew
+    - SvMeshFilterNode
+    - SvEdgeAnglesNode
+    - SvPointInside
+    - SvProportionalEditNode
+    - SvWavePainterNode
+    - SvRaycasterLiteNode
+    - SvOBJInsolationNode
+    - SvDeformationNode
+    - SvLinkedVertsNode
+    - SvProjectPointToLine
+    - ---
+    - SvLinearApproxNode
+    - SvCircleApproxNode
+    - SvSphereApproxNode
+    - SvInscribedCircleNode
+    - SvSteinerEllipseNode
+    - ---
+    - SvMeshSelectNodeMk2
+    - SvSelectSimilarNode
+    - SvChessSelection
+
+- Modifiers:
+    - icon_name: MODIFIER
+    - extra_menu: MeshPartialMenu
+    - Modifier Change:
+        - SvDeleteLooseNode
+        - SvMergeByDistanceNode
+        - SvMeshCleanNode
+        - SvSeparateMeshNode
+        - SvSeparatePartsToIndexes
+        - SvEdgenetToPathsNode
+        - SvLimitedDissolve
+        - SvLimitedDissolveMK2
+        - SvPlanarFacesNode
+        - SvSplitFacesNode
+        - SvMeshBeautify
+        - SvTriangulateNode
+        - SvJoinTrianglesNode
+        - SvMakeMonotone
+        - ---
+        - SvSplitMeshElements
+        - PolygonBoomNode
+        - SvEdgeBoomNode
+        - SvDissolveMeshElements
+        - SvPols2EdgsNodeMk2
+        - SvMeshJoinNodeMk2
+        - ---
+        - SvFillsHoleNode
+        - SvRecalcNormalsNode
+        - SvFlipNormalsNode
+        - ---
+        - SvExtrudeEdgesNodeMk2
+        - SvExtrudeSeparateNode
+        - SvExtrudeSeparateLiteNode
+        - SvMultiExtrudeAlt
+        - SvExtrudeRegionNode
+        - SvPokeFacesNode
+        - SvVertMaskNode
+        - SvSplitEdgesMk3Node
+        - SvRigidOrigamiNode
+        - ---
+        - SvFollowActiveQuads
+        - SvFlatGeometryNode
+
+    - Modifier Make:
+        - LineConnectNodeMK2
+        - ---
+        - SvOpenSubdivisionNode
+        - SvSubdivideNodeMK2
+        - SvSubdivideLiteNode
+        - SvSubdivideToQuadsNode
+        - SvUnsubdivideNode
+        - SvOffsetLineNode
+        - SvContourNode
+        - ---
+        - SvDualMeshNode
+        - SvDiamondMeshNode
+        - SvClipVertsNode
+        - ---
+        - SvBevelCurveNode
+        - SvSweepModulator
+        - SvAdaptiveEdgeNode
+        - SvAdaptivePolygonsNodeMk3
+        - SvDuplicateAlongEdgeNode
+        - SvFractalCurveNode
+        - SvFrameworkNode
+        - SvSolidifyNodeMk2
+        - SvWireframeNode
+        - SvPipeNode
+        - SvMatrixTubeNode
+        - ---
+        - SvBManalyzinNode
+        - SvBMObjinputNode
+        - SvBMoutputNode
+        - SvBMtoElementNode
+        - SvBMOpsNodeMK2
+
+- CAD:
+    - icon_name: TOOL_SETTINGS
+    - extra_menu: MeshPartialMenu
+    - SvBevelNode
+    - SvIntersectEdgesNodeMK3
+    - SvOffsetNode
+    - SvInsetSpecialMk2
+    - SvInsetFaces
+    - SvLatheNode
+    - SvSmoothNode
+    - SvRelaxMeshNode
+    - SvSmoothLines
+    - ---
+    - CrossSectionNode
+    - SvBisectNode
+    - SvCutObjBySurfaceNode
+    - SvEdgesToFaces2D
+    - SvPlanarEdgenetToPolygons
+    - SvMergeMesh2D
+    - SvMergeMesh2DLite
+    - SvCropMesh2D
+    - SvCSGBooleanNodeMK2
+    - SvWafelNode
+
+- ---
+
+- Number:
+    - icon_name: SV_NUMBER
+    - extra_menu: BasicDataPartialMenu
+    - SvNumberNode
+    - SvScalarMathNodeMK4
+    - SvGenNumberRange
+    - SvListInputNode
+    - SvRndNumGen
+    - RandomNode
+    - Float2IntNode
+    - ---
+    - SvMapRangeNode
+    - SvEasingNode
+    - SvCurveMapperNode
+    - SvMixNumbersNode
+    - SvMixInputsNode
+    - ---
+    - SvGenFibonacci
+    - SvGenExponential
+    - SvOscillatorNode
+    - SvSmoothNumbersNode
+
+
+- Vector:
+    - icon_name: SV_VECTOR
+    - extra_menu: BasicDataPartialMenu
+    - GenVectorsNode
+    - VectorsOutNode
+    - SvAxisInputNodeMK2
+    - SvVectorMathNodeMK3
+    - VertsDelDoublesNode
+    - SvVectorRewire
+    - ---
+    - SvVertSortNode
+    - SvQuadGridSortVertsNode
+    - VectorDropNode
+    - VectorPolarInNode
+    - VectorPolarOutNode
+    - SvAttractorNode
+    - ---
+    - SvVectorLerp
+    - SvInterpolationStripesNode
+    - SvInterpolationNodeMK3
+    - SvInterpolationNodeMK2
+    - ---
+    - SvNoiseNodeMK3
+    - SvTurbulenceNode
+    - SvLacunarityNode
+    - SvVectorFractal
+
+- Matrix:
+    - icon_name: EMPTY_AXIS
+    - extra_menu: BasicDataPartialMenu
+    - SvMatrixInNodeMK4
+    - SvMatrixOutNodeMK2
+    - SvMatrixApplyJoinNode
+    - SvIterateNode
+    - MatrixDeformNode
+    - SvMatrixValueIn
+    - SvMatrixEulerNode
+    - MatrixShearNode
+    - SvMatrixNormalNode
+    - SvMatrixTrackToNode
+    - SvMatrixMathNode
+    - MatrixInterpolationNode
+
+- Quaternion:
+    - icon_name: SV_QUATERNION
+    - extra_menu: BasicDataPartialMenu
+    - SvQuaternionInNodeMK2
+    - SvQuaternionOutNodeMK2
+    - SvQuaternionMathNode
+    - SvRotationDifference
+
+- Color:
+    - icon_name: COLOR
+    - extra_menu: BasicDataPartialMenu
+    - SvColorInputNode
+    - SvColorsInNodeMK1
+    - SvColorsOutNodeMK1
+    - SvColorMixNode
+    - SvFormulaColorNode
+    - SvColorRampNode
+    - ---
+    - SvTextureEvaluateNodeMk2
+
+- Logic:
+    - icon_name: SV_LOGIC
+    - extra_menu: BasicDataPartialMenu
+    - SvLogicNodeMK2
+    - SvSwitchNodeMK2
+    - SvInputSwitchNodeMOD
+    - SvNeuroElman1LNode
+    - SvCustomSwitcher
+    - SvRangeSwitchNode
+    - ---
+    - SvLoopInNode
+    - SvLoopOutNode
+    - ---
+    - SvEvolverNode
+    - SvGenesHolderNode
+
+- List:
+    - icon_name: NLA
+    - extra_menu: BasicDataPartialMenu
+    - List Main:
+        - ListJoinNode
+        - SvConstantListNode
+        - ZipNode
+        - ListLevelsNode
+        - ListLengthNode
+        - ListSumNodeMK2
+        - ListMatchNode
+        - ListFuncNode
+        - SvListDecomposeNode
+        - SvListStatisticsNode
+        - SvIndexListNode
+    - List Struct:
+        - ShiftNodeMK2
+        - ListRepeaterNode
+        - ListSliceNode
+        - SvListSliceLiteNode
+        - SvListSplitNode
+        - ListFLNode
+        - SvListItemNode
+        - SvListItemInsertNode
+        - ListReverseNode
+        - ListShuffleNode
+        - SvListSortNode
+        - ListFlipNode
+        - SvListLevelsNodeMK2
+        - SvNumpyArrayNode
+    - MaskListNode
+    - SvMaskJoinNodeMK2
+    - SvMaskConvertNode
+    - SvMaskToIndexNode
+    - SvIndexToMaskNode
+    - SvCalcMaskNode
+    - ---
+    - SvListModifierNode
+    - SvUniqueItemsNode
+    - SvFixEmptyObjectsNode
+    - SvDatetimeStrings
+    - SvVDAttrsNodeMk2
+    - SvPolygonSortNode
+    - SvFindClosestValue
+    - SvCacheNode
+    - SvMultiCacheNode
+    - SvCombinatoricsNode
+
+- Dictionary:
+    - icon_name: OUTLINER_OB_FONT
+    - extra_menu: BasicDataPartialMenu
+    - SvDictionaryIn
+    - SvDictionaryOut
+
+- ---
+
+- Viz:
+    - icon_name: RESTRICT_VIEW_OFF
+    - extra_menu: ConnectionPartialMenu
+    - Sv3DviewPropsNode
+    - ---
+    - SvViewerDrawMk4
+    - SvMatrixViewer28
+    - SvIDXViewer28
+    - SvViewer2D
+    - SvCurveViewerDrawNode
+    - SvSurfaceViewerDrawNode
+    - ---
+    - SvMeshViewer
+    - SvCurveViewerNodeV28
+    - SvPolylineViewerNode
+    - SvTypeViewerNodeV28
+    - SvSkinViewerNodeV28
+    - SvMetaballOutNode
+    - SvBezierCurveOutNode
+    - SvNurbsCurveOutNode
+    - SvNurbsSurfaceOutNode
+    - ---
+    - SvInstancerNodeMK3
+    - SvDupliInstancesMK5
+    - SvDupliInstancesLite
+    - ---
+    - SvLightViewerNode
+    - ---
+    - SvGreasePencilStrokes
+    - SvEmptyOutNode
+    - ---
+    - SvTextureViewerNode
+    - SvTextureViewerNodeLite
+    - SvWaveformViewer
+    - SvConsoleNode
+
+- Text:
+    - icon_name: TEXT
+    - extra_menu: ConnectionPartialMenu
+    - ViewerNodeTextMK3
+    - SvDataShapeNode
+    - SvStethoscopeNodeMK2
+    - SvDebugPrintNode
+    - ---
+    - SvTextInNodeMK2
+    - SvTextOutNodeMK2
+    - ---
+    - NoteNode
+    - SvGTextNode
+    - ---
+    - SvStringsToolsNode
+    - SvSimpleTextNode
+
+- Scene:
+    - icon_name: SCENE_DATA
+    - extra_menu: ConnectionPartialMenu
+    - SvGetObjectsData
+    - SvObjInLite
+    - SvCurveInputNode
+    - SvFCurveInNodeMK1
+    - SvCollectionPicker
+    - SvBezierInNode
+    - SvExNurbsInNode
+    - SvParticlesMK2Node
+    - ---
+    - SvSelectionGrabberLite
+    - SvObjEdit
+    - ---
+    - SvFrameInfoNodeMK2
+    - SvTimerNode
+
+- Exchange:
+    - icon_name: ARROW_LEFTRIGHT
+    - extra_menu: ConnectionPartialMenu
+    - SvExNurbsToJsonNode
+    - SvExJsonToNurbsNode
+    - SvImportSolidNode
+    - SvExportSolidNode
+    - SvReceiveFromSorcarNode
+    - SvExportGcodeNode
+    - SvReadFCStdNode
+    - SvReadFCStdModNode
+    - SvWriteFCStdNode
+    - SvReadFCStdSketchNode
+    - SvFCStdSpreadsheetNode
+    - SvApproxSubdtoNurbsNode
+
+- Layout:
+    - icon_name: NODETREE
+    - extra_menu: UiToolsPartialMenu
+    - WifiInNode
+    - WifiOutNode
+    - NodeReroute
+    - ConverterNode
+
+- BPY Data:
+    - icon_name: BLENDER
+    - extra_menu: ConnectionPartialMenu
+    - SvObjRemoteNodeMK2
+    - SvNodeRemoteNodeMK2
+    - SvGetAssetPropertiesMK2
+    - SvSetDataObjectNodeMK2
+    - SvSortObjsNode
+    - SvFilterObjsNode
+    - SvSetMeshAttributeNode
+    - SvNamedMeshAttributeNode
+    - SvPointOnMeshNodeMK2
+    - SvOBJRayCastNodeMK2
+    - SvSCNRayCastNodeMK2
+    - SvSetLoopNormalsNode
+    - SvSetCustomMeshNormals
+    - SvSetCollection
+    - SvCopyModifiersNode
+    - SvVertexGroupNodeMK2
+    - SvVertexColorNodeMK3
+    - SvAssignMaterialListNode
+    - SvMaterialIndexNode
+    - SvSetCustomUVMap
+    - SvUVtextureNode
+    - SvMeshUVColorNode
+    - SvUVPointonMeshNode
+    - SvSampleUVColorNode
+    - SvArmaturePropsNode
+    - SvLatticePropsNode
+    - SvSculptMaskNode
+    - SvSelectMeshVerts
+
+- ---
+
+- Script:
+    - icon_name: WORDWRAP_ON
+    - extra_menu: AdvancedObjectsPartialMenu
+    - SvFormulaNodeMk5
+    - SvFormulaInterpolateNode
+    - SvExecNodeMod
+    - SvProfileNodeMK3
+    - SvMeshEvalNode
+    - SvSNFunctorB
+    - SvGenerativeArtNode
+    - SvTopologySimple
+    - ---
+    - SvScriptNodeLite
+    - SvGetPropNodeMK2
+    - SvSetPropNodeMK2
+
+- Network:
+    - icon_name: SYSTEM
+    - extra_menu: ConnectionPartialMenu
+    - UdpClientNode
+    - SvFilePathNode
+
+- Pulga Physics:
+    - icon_name: MOD_PHYSICS
+    - extra_menu: AdvancedObjectsPartialMenu
+    - SvPulgaPhysicsSolverNode
+    - SvPulgaVectorForceNode
+    - SvPulgaSpringsForceNode
+    - SvPulgaDragForceNode
+    - SvPulgaPinForceNode
+    - SvPulgaTimedForceNode
+    - SvPulgaCollisionForceNode
+    - SvPulgaAttractionForceNode
+    - SvPulgaAlignForceNode
+    - SvPulgaFitForceNode
+    - SvPulgaObstacleForceNode
+    - SvPulgaRandomForceNode
+    - SvPulgaBoundingBoxForceNode
+    - SvPulgaInflateForceNode
+    - SvPulgaAttractorsForceNodeMk2
+    - SvPulgaAngleForceNode
+    - SvPulgaVortexForceNode
+    - SvPulgaPhysicsNode
+
+- SVG:
+    - icon_name: SV_SVG
+    - extra_menu: ConnectionPartialMenu
+    - SvSvgDocumentNode
+    - SvSvgCircleNode
+    - SvSvgPathNodeMk2
+    - SvSvgMeshNode
+    - SvSvgTextNode
+    - SvSvgDimensionNode
+    - SvSvgGroupNode
+    - SvSvgFillStrokeNodeMk2
+    - SvSvgPatternNode
+
+- ---
+
+- Group:  # label of custom menu to show
+    - custom_menu: NODE_MT_SverchokGroupMenu  # bl_idname of the custom menu
+    - icon_name: NODETREE
+    - extra_menu: UiToolsPartialMenu
+
+- Presets:
+    - custom_menu: NODEVIEW_MT_AddPresetMenu
+    - icon_name: SETTINGS
+    - extra_menu: UiToolsPartialMenu

@@ -37,7 +37,7 @@ ABC = tuple('ABCDEFGHIJKLMNOPQRSTUVWXYZ')  # input socket labels
 multiple_input_operations = {"PRODUCT"}
 
 
-class SvCombinatoricsNode(bpy.types.Node, SverchCustomTreeNode):
+class SvCombinatoricsNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Product, Permutations, Combinations
     Tooltip: Generate various combinatoric operations

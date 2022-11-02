@@ -5,7 +5,7 @@ from sverchok.core.socket_data import clear_all_socket_cache
 reload_event = False
 
 root_modules = [
-    "menu", "node_tree", "data_structure", "core",
+    "node_tree", "data_structure", "core",
     "utils", "ui", "nodes", "old_nodes"
 ]
 
@@ -22,10 +22,10 @@ core_modules = [
 
 def sv_register_modules(modules):
     for m in modules:
-        if m.__name__ != "sverchok.menu":
-            if hasattr(m, "register"):
-                # print("Registering module: {}".format(m.__name__))
-                m.register()
+        if hasattr(m, "register"):
+            # print("Registering module: {}".format(m.__name__))
+            m.register()
+
 
 def sv_unregister_modules(modules):
     clear_all_socket_cache()

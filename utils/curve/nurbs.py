@@ -5,6 +5,10 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
+"""
+Definition of Sverchok NURBS curve abstract class and some implementations.
+"""
+
 from copy import deepcopy
 import numpy as np
 from math import pi, sqrt
@@ -15,7 +19,8 @@ from sverchok.utils.curve.core import SvCurve, SvTaylorCurve, UnsupportedCurveTy
 from sverchok.utils.curve.bezier import SvBezierCurve
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.algorithms import unify_curves_degree
-from sverchok.utils.curve.nurbs_algorithms import interpolate_nurbs_curve, unify_two_curves, unify_curves
+from sverchok.utils.curve.nurbs_algorithms import unify_two_curves
+from sverchok.utils.curve.nurbs_solver_applications import interpolate_nurbs_curve
 from sverchok.utils.nurbs_common import (
         SvNurbsMaths,SvNurbsBasisFunctions,
         nurbs_divide, elevate_bezier_degree, reduce_bezier_degree,
@@ -26,7 +31,7 @@ from sverchok.utils.nurbs_common import (
 from sverchok.utils.surface.nurbs import SvNativeNurbsSurface, SvGeomdlSurface
 from sverchok.utils.surface.algorithms import nurbs_revolution_surface
 from sverchok.utils.math import binomial_array, cmp
-from sverchok.utils.geom import bounding_box, LineEquation
+from sverchok.utils.geom import bounding_box, LineEquation, are_points_coplanar, get_common_plane
 from sverchok.utils.logging import getLogger
 from sverchok.dependencies import geomdl
 
@@ -57,8 +62,10 @@ class SvNurbsCurve(SvCurve):
     def to_nurbs(cls, curve, implementation = NATIVE):
         """
         Try to convert arbitrary curve into NURBS.
-        Returns: an instance of SvNurbsCurve, or None,
-                 if this curve can not be converted to NURBS.
+
+        Returns:
+            an instance of SvNurbsCurve, or None,
+            if this curve can not be converted to NURBS.
         """
         if isinstance(curve, SvNurbsCurve):
             return curve
@@ -84,52 +91,6 @@ class SvNurbsCurve(SvCurve):
                     self.get_degree(), knotvector,
                     control_points, weights,
                     normalize_knots = normalize_knots)
-
-    @classmethod
-    def interpolate(cls, degree, points, metric='DISTANCE'):
-        return interpolate_nurbs_curve(cls, degree, points, metric)
-
-    @classmethod
-    def interpolate_list(cls, degree, points, metric='DISTANCE'):
-        n_curves, n_points, _ = points.shape
-        tknots = [Spline.create_knots(points[i], metric=metric) for i in range(n_curves)]
-        knotvectors = [sv_knotvector.from_tknots(degree, tknots[i]) for i in range(n_curves)]
-        functions = [SvNurbsBasisFunctions(knotvectors[i]) for i in range(n_curves)]
-        coeffs_by_row = [[functions[curve_idx].function(idx, degree)(tknots[curve_idx]) for idx in range(n_points)] for curve_idx in range(n_curves)]
-        coeffs_by_row = np.array(coeffs_by_row)
-        A = np.zeros((n_curves, 3*n_points, 3*n_points))
-        for curve_idx in range(n_curves):
-            for equation_idx, t in enumerate(tknots[curve_idx]):
-                for unknown_idx in range(n_points):
-                    coeff = coeffs_by_row[curve_idx][unknown_idx][equation_idx]
-                    row = 3*equation_idx
-                    col = 3*unknown_idx
-                    A[curve_idx,row,col] = A[curve_idx,row+1,col+1] = A[curve_idx,row+2,col+2] = coeff
-
-        B = np.zeros((n_curves, 3*n_points,1))
-        for curve_idx in range(n_curves):
-            for point_idx, point in enumerate(points[curve_idx]):
-                row = 3*point_idx
-                B[curve_idx, row:row+3] = point[:,np.newaxis]
-
-        x = np.linalg.solve(A, B)
-
-        curves = []
-        weights = np.ones((n_points,))
-        for curve_idx in range(n_curves):
-            control_points = []
-            for i in range(n_points):
-                row = i*3
-                control = x[curve_idx][row:row+3,0].T
-                control_points.append(control)
-            control_points = np.array(control_points)
-
-            curve = SvNurbsCurve.build(cls.get_nurbs_implementation(),
-                    degree, knotvectors[curve_idx],
-                    control_points, weights)
-            curves.append(curve)
-
-        return curves
 
     def get_bounding_box(self):
         if not hasattr(self, '_bounding_box') or self._bounding_box is None:
@@ -289,23 +250,29 @@ class SvNurbsCurve(SvCurve):
 
     @classmethod
     def get_nurbs_implementation(cls):
+        """
+        Return a string identifying the implementation of NURBS mathematics used by this curve.
+        """
         raise Exception("NURBS implementation is not defined")
 
     def get_control_points(self):
-        """
-        returns: np.array of shape (k, 3)
-        """
         raise Exception("Not implemented!")
 
     def get_weights(self):
         """
-        returns: np.array of shape (k,)
+        Get NURBS curve weights.
+
+        Returns:
+            np.array of shape (k,)
         """
         raise Exception("Not implemented!")
 
     def get_homogenous_control_points(self):
         """
-        returns: np.array of shape (k, 4)
+        Get NURBS curve control points and weights, unified in homogenous coordinates.
+
+        Returns:
+            np.array of shape (k, 4)
         """
         points = self.get_control_points()
         weights = self.get_weights()[np.newaxis].T
@@ -322,9 +289,20 @@ class SvNurbsCurve(SvCurve):
         w, W = weights.min(), weights.max()
         return (W - w) > tolerance
 
+    def is_planar(self, tolerance=1e-6):
+        cpts = self.get_control_points()
+        return are_points_coplanar(cpts, tolerance)
+
+    def get_plane(self, tolerance=1e-6):
+        cpts = self.get_control_points()
+        return get_common_plane(cpts, tolerance)
+
     def get_knotvector(self):
         """
-        returns: np.array of shape (X,)
+        Get NURBS curve knotvector.
+
+        Returns:
+            np.array of shape (X,)
         """
         raise Exception("Not implemented!")
 
@@ -510,9 +488,23 @@ class SvNurbsCurve(SvCurve):
         return curve1, curve2
 
     def split_at(self, t):
-        c1, c2 = self._split_at(t)
         degree = self.get_degree()
         implementation = self.get_nurbs_implementation()
+
+#         if self.is_bezier() and self.is_rational():
+#             bezier = SvBezierCurve.from_control_points(self.get_control_points())
+#             kv = sv_knotvector.generate(degree, degree+1)
+#             u_min, u_max = kv[0], kv[-1]
+#             b1, b2 = bezier.split_at(t)
+#             c1 = SvNurbsCurve.build(implementation,
+#                     degree, sv_knotvector.rescale(kv, u_min, t),
+#                     b1.get_control_points())
+#             c2 = SvNurbsCurve.build(implementation,
+#                     degree, sv_knotvector.rescale(kv, t, u_max),
+#                     b2.get_control_points())
+#             return c1, c2
+
+        c1, c2 = self._split_at(t)
 
         if c1 is not None:
             knotvector1, control_points_1, weights_1 = c1
@@ -534,6 +526,12 @@ class SvNurbsCurve(SvCurve):
         return curve1, curve2
 
     def cut_segment(self, new_t_min, new_t_max, rescale=False):
+        """
+        Return a new curve which is the segment of original curve between specified parameter values.
+
+        Returns:
+            a new instance of the same class.
+        """
         t_min, t_max = self.get_u_bounds()
         degree = self.get_degree()
         implementation = self.get_nurbs_implementation()
@@ -570,10 +568,6 @@ class SvNurbsCurve(SvCurve):
             end = self.evaluate(u_max)
             return begin, end
 
-    def is_closed(self, tolerance=1e-6):
-        begin, end = self.get_end_points()
-        return np.linalg.norm(begin - end) < tolerance
-
     def is_line(self, tolerance=0.001):
         """
         Check that the curve is nearly a straight line segment.
@@ -585,7 +579,9 @@ class SvNurbsCurve(SvCurve):
         begin, end = self.get_end_points()
         cpts = self.get_control_points()
         # direction from first to last point of the curve
-        direction = cpts[-1] - cpts[0]
+        direction = end - begin
+        if np.linalg.norm(direction) < tolerance:
+            return True
         line = LineEquation.from_direction_and_point(direction, begin)
         distances = line.distance_to_points(cpts)
         # Technically, this means that all control points lie
@@ -618,14 +614,29 @@ class SvNurbsCurve(SvCurve):
         return knots
 
     def to_bezier(self):
+        """
+        Try to convert this cure to Bezier curve.
+
+        Returns:
+            an instance of SvBezierCurve.
+
+        Raises:
+            UnsupportedCurveTypeException: when this curve can not be represented as Bezier curve.
+        """
         points = self.get_control_points()
         if not self.is_bezier():
             n = len(points)
             p = self.get_degree()
             raise UnsupportedCurveTypeException(f"Curve with {n} control points and {p}'th degree can not be converted into Bezier curve")
-        return SvBezierCurve(points)
+        return SvBezierCurve.from_control_points(points)
 
     def to_bezier_segments(self, to_bezier_class=True):
+        """
+        Split the curve into a list of Bezier curves.
+
+        Returns:
+            If `to_bezier_class` is True, then a list of SvBezierCurve instances. Otherwise, a list of SvNurbsCurve instances.
+        """
         if to_bezier_class and self.is_rational():
             raise UnsupportedCurveTypeException("Rational NURBS curve can not be converted into non-rational Bezier curves")
         if self.is_bezier():
@@ -656,7 +667,8 @@ class SvNurbsCurve(SvCurve):
         p = self.get_degree()
         cpts = self.get_homogenous_control_points()
 
-        M, R = calc_taylor_nurbs_matrices(p, self.get_u_bounds())
+        mr = calc_taylor_nurbs_matrices(p, self.get_u_bounds())
+        M, R = mr['M'], mr['R']
 
         coeffs = np.zeros((4, p+1))
         for k in range(4):
@@ -697,9 +709,9 @@ class SvNurbsCurve(SvCurve):
     def get_min_continuity(self):
         """
         Return minimum continuity degree of the curve (guaranteed by curve's knotvector):
-        0 - point-wise continuity only (C0),
-        1 - tangent continuity (C1),
-        2 - 2nd derivative continuity (C2), and so on.
+        * 0 - point-wise continuity only (C0),
+        * 1 - tangent continuity (C1),
+        * 2 - 2nd derivative continuity (C2), and so on.
         """
         kv = self.get_knotvector()
         degree = self.get_degree()
@@ -708,10 +720,13 @@ class SvNurbsCurve(SvCurve):
     def transform(self, frame, vector):
         """
         Apply transformation matrix to the curve.
-        Inputs:
-        * frame: np.array of shape (3,3) - transformation matrix
-        * vector: np.array of shape (3,) - translation vector
-        Output: new NURBS curve of the same implementation.
+
+        Args:
+            frame: np.array of shape (3,3) - transformation matrix
+            vector: np.array of shape (3,) - translation vector
+        
+        Returns:
+            new NURBS curve of the same implementation.
         """
         if frame is None and vector is None:
             return self
@@ -775,6 +790,7 @@ class SvNurbsCurve(SvCurve):
         """
         If this method returns True, then the whole curve lies outside the
         specified sphere.
+
         If this method returns False, then the curve may partially or wholly
         lie inside the sphere, or may not touch it at all.
         """
@@ -839,24 +855,12 @@ class SvGeomdlCurve(SvNurbsCurve):
         return SvGeomdlCurve.build_geomdl(degree, knotvector, control_points, weights, normalize_knots)
 
     @classmethod
-    def interpolate(cls, degree, points, metric='DISTANCE'):
+    def interpolate(cls, degree, points, metric='DISTANCE', **kwargs):
         if metric not in {'DISTANCE', 'CENTRIPETAL'}:
             raise Exception("Unsupported metric")
         centripetal = metric == 'CENTRIPETAL'
         curve = fitting.interpolate_curve(points.tolist(), degree, centripetal=centripetal)
         return SvGeomdlCurve(curve)
-
-    @classmethod
-    def interpolate_list(cls, degree, points, metric='DISTANCE'):
-        if metric not in {'DISTANCE', 'CENTRIPETAL'}:
-            raise Exception("Unsupported metric")
-        centripetal = metric == 'CENTRIPETAL'
-        curves = []
-        for curve_points in points:
-            curve = fitting.interpolate_curve(curve_points.tolist(), degree, centripetal=centripetal)
-            curve = SvGeomdlCurve(curve)
-            curves.append(curve)
-        return curves
 
     @classmethod
     def from_any_nurbs(cls, curve):
@@ -1013,6 +1017,10 @@ class SvNativeNurbsCurve(SvNurbsCurve):
     def build(cls, implementation, degree, knotvector, control_points, weights=None, normalize_knots=False):
         return SvNativeNurbsCurve(degree, knotvector, control_points, weights, normalize_knots)
 
+    @classmethod
+    def interpolate(cls, degree, points, metric='DISTANCE', tknots=None, cyclic=False, logger=None):
+        return interpolate_nurbs_curve(degree, points, metric=metric, tknots=tknots, cyclic=cyclic, logger=logger)
+
     def is_rational(self, tolerance=1e-6):
         w, W = self.weights.min(), self.weights.max()
         return (W - w) > tolerance
@@ -1030,7 +1038,12 @@ class SvNativeNurbsCurve(SvNurbsCurve):
         return self.degree
 
     def evaluate(self, t):
-        #return self.evaluate_array(np.array([t]))[0]
+        if self.is_bezier() and not self.is_rational():
+            u_min, u_max = self.get_u_bounds()
+            t1 = (t - u_min) / (u_max - u_min)
+            bezier = SvBezierCurve.from_control_points(self.get_control_points())
+            return bezier.evaluate(t1)
+
         numerator, denominator = self.fraction_single(0, t)
         if denominator == 0:
             return np.array([0,0,0])
@@ -1064,6 +1077,12 @@ class SvNativeNurbsCurve(SvNurbsCurve):
         return numerator, denominator
 
     def evaluate_array(self, ts):
+        if self.is_bezier() and not self.is_rational():
+            u_min, u_max = self.get_u_bounds()
+            ts1 = (ts - u_min) / (u_max - u_min)
+            bezier = SvBezierCurve.from_control_points(self.get_control_points())
+            return bezier.evaluate_array(ts1)
+
         numerator, denominator = self.fraction(0, ts)
 #         if (denominator == 0).any():
 #             print("Num:", numerator)

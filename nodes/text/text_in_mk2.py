@@ -71,7 +71,7 @@ def pop_all_data(node, n_id):
     node.json_data.pop(n_id, None)
 
 
-class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode):
+class SvTextInNodeMK2(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Text in from datablock
     Tooltip: Quickly load text from datablock into NodeView

@@ -1,11 +1,14 @@
 Select Similar
 ==============
 
+.. image:: https://user-images.githubusercontent.com/14288520/197363787-fc0253a1-087e-4f65-9b89-338ac6a426ab.png
+  :target: https://user-images.githubusercontent.com/14288520/197363787-fc0253a1-087e-4f65-9b89-338ac6a426ab.png
+
 Functionality
 -------------
 
 This node allows to select mesh elements (vertices, edges and faces), which are similar to elements already selected in some aspect.
-This is the implementation of Blender's own "Select Similar" (Shift+G) feature. So fo additional information, please refer to the Blender's documentation on this feature.
+This is the implementation of Blender's own "Select Similar" (Shift+G) feature. So fo additional information, please refer to the Blender's `documentation <https://docs.blender.org/manual/en/latest/modeling/meshes/selecting/similar.html>`_ on this feature.
 
 Inputs
 ------
@@ -63,12 +66,15 @@ Examples of usage
 Select faces with similar normal vector. Originally selected faces are marked with red color.
 
 .. image:: https://cloud.githubusercontent.com/assets/284644/25073036/6cabd4da-22ff-11e7-9880-143d8af4b8c9.png
+  :target: https://cloud.githubusercontent.com/assets/284644/25073036/6cabd4da-22ff-11e7-9880-143d8af4b8c9.png
 
 Select faces with similar area. Originally selected faces are marked with red color.
 
 .. image:: https://cloud.githubusercontent.com/assets/284644/25073037/6ce11f50-22ff-11e7-8744-f5aefb616f23.png
+  :target: https://cloud.githubusercontent.com/assets/284644/25073037/6ce11f50-22ff-11e7-8744-f5aefb616f23.png
 
 Select edges with direction similar to selected edges. Originally selected edges are marked with orange color.
 
 .. image:: https://cloud.githubusercontent.com/assets/284644/25073037/6ce11f50-22ff-11e7-8744-f5aefb616f23.png
+  :target: https://cloud.githubusercontent.com/assets/284644/25073037/6ce11f50-22ff-11e7-8744-f5aefb616f23.png
 

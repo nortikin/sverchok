@@ -266,7 +266,7 @@ class DonorData():
         self.face_data_i = []
 
 
-class SvAdaptivePolygonsNodeMk3(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
+class SvAdaptivePolygonsNodeMk3(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Tessellate (Tissue)
     Tooltip: Generate an adapted copy of donor object along each face of recipient object.

@@ -4,13 +4,13 @@ Sphere
 .. image:: https://user-images.githubusercontent.com/14288520/188705207-d867778f-3c69-42ba-a9b6-e5372e14ee0f.png
   :target: https://user-images.githubusercontent.com/14288520/188705207-d867778f-3c69-42ba-a9b6-e5372e14ee0f.png
 
-.. image:: https://user-images.githubusercontent.com/14288520/191253032-e64e2969-7e14-41ce-a81c-feaeb1814002.png
-  :target: https://user-images.githubusercontent.com/14288520/191253032-e64e2969-7e14-41ce-a81c-feaeb1814002.png
-
 Functionality
 -------------
 
 Sphere generator will create a sphere based on its Radius and de U and V subdivisions.
+
+.. image:: https://user-images.githubusercontent.com/14288520/191253032-e64e2969-7e14-41ce-a81c-feaeb1814002.png
+  :target: https://user-images.githubusercontent.com/14288520/191253032-e64e2969-7e14-41ce-a81c-feaeb1814002.png
 
 Inputs
 ------

@@ -10,11 +10,11 @@ from sverchok.utils.geom import LinearSpline, CubicSpline
 from sverchok.utils.surface.algorithms import SvInterpolatingSurface
 from sverchok.utils.curve import SvSplineCurve, make_euclidean_ts
 from sverchok.dependencies import geomdl, scipy
-from sverchok.utils.curve.nurbs import SvNurbsCurve, SvGeomdlCurve, SvNativeNurbsCurve
+from sverchok.utils.nurbs_common import SvNurbsMaths
 from sverchok.utils.curve.rbf import SvRbfCurve
 from sverchok.utils.math import rbf_functions
 
-class SvInterpolatingSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
+class SvInterpolatingSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Loft / Interpolating surface from curves
     Tooltip: Generate interpolating surface across several curves
@@ -40,8 +40,8 @@ class SvInterpolatingSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
 
     implementations = []
     if geomdl is not None:
-        implementations.append((SvNurbsCurve.GEOMDL, "Geomdl", "Geomdl (NURBS-Python) package implementation", 0))
-    implementations.append((SvNurbsCurve.NATIVE, "Sverchok", "Sverchok built-in implementation", 1))
+        implementations.append((SvNurbsMaths.GEOMDL, "Geomdl", "Geomdl (NURBS-Python) package implementation", 0))
+    implementations.append((SvNurbsMaths.NATIVE, "Sverchok", "Sverchok built-in implementation", 1))
 
     nurbs_implementation : EnumProperty(
             name = "Implementation",
@@ -102,10 +102,11 @@ class SvInterpolatingSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
             def make(vertices):
                 metric = 'CENTRIPETAL' if self.centripetal else 'DISTANCE'
                 vertices = np.array(vertices)
-                if geomdl is not None and self.nurbs_implementation == SvNurbsCurve.GEOMDL:
-                    curve = SvGeomdlCurve.interpolate(degree, vertices, metric=metric)
+                if geomdl is not None and self.nurbs_implementation == SvNurbsMaths.GEOMDL:
+                    implementation = SvNurbsMaths.GEOMDL
                 else:
-                    curve = SvNativeNurbsCurve.interpolate(degree, vertices, metric=metric)
+                    implementation = SvNurbsMaths.NATIVE
+                curve = SvNurbsMaths.interpolate_curve(implementation, degree, vertices, metric=metric)
                 return curve
             return make
         elif scipy is not None and self.interp_mode == 'RBF':

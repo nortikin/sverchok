@@ -32,7 +32,7 @@ from sverchok.data_structure import (
 from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
 
 
-class SvOffsetNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
+class SvOffsetNode(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
     ''' Doing offset of polygons '''
     bl_idname = 'SvOffsetNode'
     bl_label = 'Offset'
@@ -44,7 +44,7 @@ class SvOffsetNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
         default=0.04, update=updateNode)
 
     nsides: IntProperty(
-        name='nsides', description='number of sides',
+        name='nsides', description='number of rounded sides',
         default=1, min=1, max=64, update=updateNode)
 
     radius: FloatProperty(

@@ -5,8 +5,6 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
-import numpy as np
-
 import bpy
 from bpy.props import BoolProperty, EnumProperty, FloatVectorProperty, FloatProperty
 
@@ -15,15 +13,12 @@ from sverchok.data_structure import zip_long_repeat, ensure_nesting_level, updat
 from sverchok.utils.surface.core import SvSurface
 from sverchok.utils.curve.freecad import get_edge_endpoints
 from sverchok.utils.surface.freecad import surface_to_freecad, is_solid_face_surface, SvFreeCadNurbsSurface
-from sverchok.utils.dummy_nodes import add_dummy
 
 from sverchok.dependencies import FreeCAD
 
-if FreeCAD is None:
-    add_dummy('SvRuledSolidNode', 'Solid from two Faces', 'FreeCAD')
-else:
+if FreeCAD is not None:
     import Part
-    from FreeCAD import Base
+
 
 def calc_rho(edges1, edges2):
     s = 0
@@ -53,7 +48,7 @@ def reverse_edges(edges, reverse=True, flip=True):
         result.append(edge)
     return result
 
-class SvRuledSolidNode(bpy.types.Node, SverchCustomTreeNode):
+class SvRuledSolidNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Ruled Solid Surface
     Tooltip: Make a Solid from two Faces ("floor" and "ceil") by adding ruled surfaces between them ("walls")
@@ -62,7 +57,8 @@ class SvRuledSolidNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Solid from two Faces'
     bl_icon = 'EDGESEL'
     sv_icon = 'SV_RULED_SOLID'
-    solid_catergory = "Operators"
+    sv_category = "Solid Operators"
+    sv_dependencies = {'FreeCAD'}
 
     flip_face1 : BoolProperty(
             name = "Flip Face",
@@ -198,11 +194,10 @@ class SvRuledSolidNode(bpy.types.Node, SverchCustomTreeNode):
 
         self.outputs['Solid'].sv_set(solids_out)
 
+
 def register():
-    if FreeCAD is not None:
-        bpy.utils.register_class(SvRuledSolidNode)
+    bpy.utils.register_class(SvRuledSolidNode)
+
 
 def unregister():
-    if FreeCAD is not None:
-        bpy.utils.unregister_class(SvRuledSolidNode)
-
+    bpy.utils.unregister_class(SvRuledSolidNode)

@@ -13,7 +13,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat
 from sverchok.utils.modules import sv_bmesh
 
-class SvCricketNode(bpy.types.Node, SverchCustomTreeNode):
+class SvCricketNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: cricket
     Tooltip:  Lowpoly cricket model. [default]\n\tScale: [4.0]

@@ -194,6 +194,17 @@ class Spline(object):
             self._single_eval_cache[t] = result
             return result
 
+    @classmethod
+    def create(cls, vertices, tknots = None, metric = None, is_cyclic = False):
+        raise Exception("Unsupported spline type")
+
+    @classmethod
+    def resample(cls, old_ts, old_values, new_ts):
+        verts = np.array([[t,y,0.0] for t,y in zip(old_ts, old_values)])
+        spline = cls.create(verts, tknots=old_ts)
+        new_verts = spline.eval(new_ts)
+        return new_verts[:,1]
+
 class CubicSpline(Spline):
     def __init__(self, vertices, tknots = None, metric = None, is_cyclic = False):
         """
@@ -287,6 +298,10 @@ class CubicSpline(Spline):
             return splines
         
         self.splines = calc_cubic_splines(tknots, n, locs)
+
+    @classmethod
+    def create(cls, vertices, tknots = None, metric = None, is_cyclic = False):
+        return CubicSpline(vertices, tknots=tknots, metric=metric, is_cyclic=is_cyclic)
 
     def eval(self, t_in, tknots = None):
         """
@@ -405,6 +420,10 @@ class LinearSpline(Spline):
         self.pts = pts
         self.tknots = tknots
         self.is_cyclic = is_cyclic
+
+    @classmethod
+    def create(cls, vertices, tknots = None, metric = None, is_cyclic = False):
+        return LinearSpline(vertices, tknots=tknots, metric=metric, is_cyclic=is_cyclic)
 
     def get_t_segments(self):
         return list(zip(self.tknots, self.tknots[1:]))
@@ -675,8 +694,11 @@ def diameter(vertices, axis):
 
 def center(data):
     """
-    input: data - a list of 3-tuples or numpy array of same shape
-    output: 3-tuple - arithmetical average of input vertices (barycenter)
+    Args:
+        data: a list of 3-tuples or numpy array of same shape
+
+    Returns:
+        3-tuple - arithmetical average of input vertices (barycenter)
     """
     array = np.array(data)
     n = array.shape[0]
@@ -711,8 +733,11 @@ def calc_normal(vertices):
     Ngon will be triangulated, and then the average normal of
     all resulting tris will be returned.
 
-    input: list of 3-tuples or list of mathutils.Vector.
-    output: mathutils.Vector.
+    Args:
+        vertices: list of 3-tuples or list of mathutils.Vector.
+
+    Returns:
+        mathutils.Vector.
     """
     n = len(vertices)
     vertices = list(map(mathutils.Vector, vertices))
@@ -832,6 +857,11 @@ class PlaneEquation(object):
         value = a*x + b*y + c*z + d
         return abs(value) < eps
 
+    def eval_point(self, point):
+        a, b, c, d = self.a, self.b, self.c, self.d
+        x, y, z = point[0], point[1], point[2]
+        return a*x + b*y + c*z + d
+
     def second_vector(self):
         eps = 1e-6
         if abs(self.c) > eps:
@@ -917,8 +947,14 @@ class PlaneEquation(object):
         input: Vector or 3-tuple
         output: float.
         """
-        point_on_plane = self.nearest_point_to_origin()
-        return mathutils.geometry.distance_point_to_plane(mathutils.Vector(point), point_on_plane, self.normal)
+        p = self.normalized()
+        a, b, c, d = p.a, p.b, p.c, p.d
+        x, y, z = point
+        numerator = abs(a*x + b*y + c*z + d)
+        #denominator = sqrt(a*a + b*b* + c*c)
+        return numerator
+        #point_on_plane = self.nearest_point_to_origin()
+        #return mathutils.geometry.distance_point_to_plane(mathutils.Vector(point), point_on_plane, self.normal)
 
     def distance_to_points(self, points):
         """
@@ -987,30 +1023,30 @@ class PlaneEquation(object):
             matrix = np.array([
                         [b, -a, 0],
                         [c, 0, -a],
-                        [self.a, self.b, self.c]])
+                        [self.a, self.b, self.c]], dtype=np.float64)
             free = np.array([
                         b*x0 - a*y0,
                         c*x0 - a*z0,
-                        -self.d])
+                        -self.d], dtype=np.float64)
         elif abs(b) > epsilon:
             matrix = np.array([
                         [b, -a, 0],
                         [0, c, -b],
-                        [self.a, self.b, self.c]])
+                        [self.a, self.b, self.c]], dtype=np.float64)
 
             free = np.array([
                         b*x0 - a*y0,
                         c*y0 - b*z0,
-                        -self.d])
+                        -self.d], dtype=np.float64)
         elif abs(c) > epsilon:
             matrix = np.array([
                         [c, 0, -a],
                         [0, c, -b],
-                        [self.a, self.b, self.c]])
+                        [self.a, self.b, self.c]], dtype=np.float64)
             free = np.array([
                         c*x0 - a*z0,
                         c*y0 - b*z0,
-                        -self.d])
+                        -self.d], dtype=np.float64)
         else:
             raise Exception("Invalid plane: all coefficients are (nearly) zero: {}, {}, {}".format(a, b, c))
 
@@ -1070,9 +1106,9 @@ class PlaneEquation(object):
         normal = self.normal.normalized()
         distance = abs(self.distance_to_point(point))
         sign = self.side_of_point(point)
-        result = Vector(point) - sign * distance * normal
+        result = np.asarray(point) - sign * distance * np.asarray(normal)
         #info("P(%s): %s - %s * [%s] * %s = %s", point, point, sign, distance, normal, result)
-        return result
+        return Vector(result)
     
     def projection_of_points(self, points):
         """
@@ -1142,42 +1178,15 @@ class PlaneEquation(object):
             debug("{} is parallel to {}".format(self, plane2))
             return None
 
-        # We need an arbitrary point on this plane and two vectors.
-        # Draw two lines in this plane and see for theirs intersection
-        # with another plane.
-        p0 = self.nearest_point_to_origin()
-        v1, v2 = self.two_vectors()
-        # it might be that p0 belongs to plane2; in that case we choose
-        # another point in the same plane
-        if plane2.check(p0):
-            # Since v1 and v2 are orthogonal, it may not be that they are
-            # both parallel to plane2.
-            if not plane2.is_parallel(v1):
-                p0 = p0 + v1
-            else:
-                p0 = p0 + v2
-        line1 = LineEquation.from_direction_and_point(v1, p0).normalized()
-        line2 = LineEquation.from_direction_and_point(v2, p0).normalized()
+        direction = self.normal.cross(plane2.normal)
 
-        # it might be that one of vectors we chose is parallel to plane2
-        # (since we are choosing them arbitrarily); but from the way
-        # we are choosing v1 and v2, we know they are orthogonal.
-        # So if we just rotate them by pi/4, they will no longer be
-        # parallel to plane2.
-        if plane2.is_parallel(line1) or plane2.is_parallel(line2):
-            v1_new = v1 + v2
-            v2_new = v1 - v2
-            # debug("{}, {} => {}, {}".format(v1, v2, v1_new, v2_new))
-            line1 = LineEquation.from_direction_and_point(v1_new, p0)
-            line2 = LineEquation.from_direction_and_point(v2_new, p0)
+        A = np.array([[self.a, self.b, self.c], [plane2.a, plane2.b, plane2.c]])
+        B = np.array([[-self.d], [-plane2.d]])
 
-        p1 = plane2.intersect_with_line(line1)
-        p2 = plane2.intersect_with_line(line2)
-        if p1 is None:
-            raise Exception(f"Plane {self} does not intersect with plane {plane2}, because the last does not intersect with line {line1}")
-        if p2 is None:
-            raise Exception(f"Plane {self} does not intersect with plane {plane2}, because the last does not intersect with line {line2}")
-        return LineEquation.from_two_points(p1, p2)
+        A1 = np.linalg.pinv(A)
+        p1 = (A1 @ B).T[0]
+
+        return LineEquation.from_direction_and_point(direction, p1)
 
     def is_parallel(self, other, eps=1e-8):
         """
@@ -1261,6 +1270,15 @@ class LineEquation(object):
         value2 = c * (y - y0) - b * (z - z0)
 
         return abs(value1) < eps and abs(value2) < eps
+
+    def eval_point(self, point):
+        a, b, c = self.a, self.b, self.c
+        x0, y0, z0 = self.x0, self.y0, self.z0
+        x, y, z = point[0], point[1], point[2]
+
+        value1 = b * (x - x0) - a * (y - y0)
+        value2 = c * (y - y0) - b * (z - z0)
+        return abs(value1) + abs(value2)
 
     @property
     def x0(self):
@@ -1859,6 +1877,9 @@ class Triangle(object):
         return Ellipse3D(ellipse.center, ellipse.semi_major_axis / 2.0, ellipse.semi_minor_axis / 2.0)
 
 class BoundingBox(object):
+    """
+    Class representing bounding box, i.e. a box with all planes parallel to coordinate planes.
+    """
     def __init__(self, min_x=0, max_x=0, min_y=0, max_y=0, min_z=0, max_z=0):
         self.min = np.array([min_x, min_y, min_z])
         self.max = np.array([max_x, max_y, max_z])
@@ -1987,6 +2008,15 @@ class BoundingBox(object):
         return f"<BBox: {self.min} .. {self.max}>"
 
 def bounding_box(vectors):
+    """
+    Calculate bounding box for a set of points.
+
+    Args:
+        vectors: list of 3-tuples or np.ndarray of shape (n,3).
+
+    Returns:
+        an instance of BoundingBox.
+    """
     vectors = np.asarray(vectors)
     r = BoundingBox()
     r.min = vectors.min(axis=0)
@@ -1994,6 +2024,16 @@ def bounding_box(vectors):
     return r
 
 def intersects_line_bbox(line, bbox):
+    """
+    Check if line intersects specified bounding box.
+
+    Args:
+        line: an instance of LineEquation
+        bbox: an instance of BoundingBox
+
+    Returns:
+        boolean.
+    """
     planes = [bbox.get_plane(axis, side) for axis in [0,1,2] for side in ['MIN', 'MAX']]
     intersections = [plane.intersect_with_line(line) is not None for plane in planes]
     good = [point for point in intersections if point in bbox]
@@ -2014,7 +2054,7 @@ class LinearApproximationData(object):
         Return coefficients of an equation of a plane, which
         is the best linear approximation for input vertices.
 
-        output: an instance of PlaneEquation class.
+        Returns: an instance of PlaneEquation class.
         """
 
         idx = np.argmin(self.eigenvalues)
@@ -2026,7 +2066,7 @@ class LinearApproximationData(object):
         Return coefficients of an equation of a plane, which
         is the best linear approximation for input vertices.
 
-        output: an instance of LineEquation class.
+        Returns: an instance of LineEquation class.
         """
 
         idx = np.argmax(self.eigenvalues)
@@ -2041,8 +2081,11 @@ def linear_approximation(data):
     Input vertices can be approximated by a plane or by a line,
     or both.
 
-    input: list of 3-tuples.
-    output: an instance of LinearApproximationData class.
+    Args:
+        data: list of 3-tuples.
+
+    Returns:
+        an instance of LinearApproximationData class.
     """
 
     data = np.asarray(data)
@@ -2084,6 +2127,40 @@ def linear_approximation(data):
     result.center = tuple(center)
     result.eigenvalues, result.eigenvectors = linalg.eig(matrix)
     return result
+
+def are_points_coplanar(points, tolerance=1e-6):
+    """
+    Check if points lie in the same plane.
+
+    Args:
+        points: list of 3-tuples or np.array of shape (n,3)
+        tolerance: maximum allowable distance from plane to the point
+
+    Returns:
+        True if all points lie in the same plane.
+    """
+    plane = linear_approximation(points).most_similar_plane()
+    max_distance = abs(plane.distance_to_points(points)).max()
+    return max_distance < tolerance
+
+def get_common_plane(points, tolerance=1e-6):
+    """
+    Get a plane in which all points lie, or None.
+
+    Args:
+        points: list of 3-tuples or np.array of shape (n,3)
+        tolerance: maximum allowable distance from plane to the point
+
+    Returns:
+        If all points line in the same plane, return that plane (an instance of
+        PlaneEquation class).  Otherwise, return None.
+    """
+    plane = linear_approximation(points).most_similar_plane()
+    max_distance = abs(plane.distance_to_points(points)).max()
+    if max_distance < tolerance:
+        return plane
+    else:
+        return None
 
 def linear_approximation_array(data):
     data = np.asarray(data)
@@ -2140,6 +2217,7 @@ class SphericalApproximationData(object):
     """
     This class contains results of approximation of
     vertices by a sphere.
+
     It's instance is returned by spherical_approximation() method.
     """
     def __init__(self, center=None, radius=0.0):
@@ -2166,8 +2244,11 @@ def spherical_approximation(data):
     Calculate best approximation of the list of vertices
     by a sphere.
 
-    input: list of 3-tuples.
-    output. an instance of SphericalApproximationData class.
+    Args:
+        data: list of 3-tuples.
+
+    Returns:
+        an instance of SphericalApproximationData class.
     """
 
     data = np.array(data)
@@ -2207,8 +2288,10 @@ class CircleEquation3D(object):
     """
     This class contains results of approximation of set of vertices
     by a circle (lying in 2D or 3D).
+
     It's instances are returned form circle_approximation_2d() and
     circle_approximation() methods.
+
     The `normal` member is None for 2D approximation.
     """
     def __init__(self):
@@ -2285,8 +2368,11 @@ def circle_approximation_2d(data, mean_is_zero=False):
     Calculate best approximation of set of 2D vertices
     by a 2D circle.
 
-    input: list of 2-tuples or np.array of shape (n, 2). 
-    output: an instance of CircleEquation3D class.
+    Args:
+        data: list of 2-tuples or np.array of shape (n, 2). 
+
+    Returns:
+        an instance of CircleEquation3D class.
     """
     data = np.array(data)
     data_x = data[:,0]
@@ -2338,8 +2424,11 @@ def circle_approximation(data):
     Calculate best approximation of set of 3D vertices
     by a circle lying in 3D space.
 
-    input: list of 3-tuples
-    output: an instance of CircleEquation3D class.
+    Args:
+        data: list of 3-tuples
+
+    Returns:
+        an instance of CircleEquation3D class.
     """
     # Approximate vertices with a plane
     linear = linear_approximation(data)
@@ -2371,8 +2460,11 @@ def circle_by_three_points(p1, p2, p3):
     Calculate parameters of the circle (or circular arc)
     by three points on this circle.
 
-    input: p1, p2, p3 - 3-tuples or mathutils.Vectors
-    output: an CircleEquation3D instance.
+    Args:
+        p1, p2, p3: 3-tuples or mathutils.Vectors
+
+    Returns:
+        an CircleEquation3D instance.
 
     factored out from basic_3pt_arc.py.
     """
@@ -2416,8 +2508,11 @@ def circle_by_start_end_tangent(start, end, tangent):
     Build a circular arc from starting point, end point
     and the tangent vector at the start point.
 
-    input: mathutils.Vectors or 3-tuples or np.arrays of shape (3,).
-    output: instance of CircleEquation3D.
+    Args:
+        start, end, tangent: mathutils.Vectors or 3-tuples or np.arrays of shape (3,).
+
+    Returns:
+        instance of CircleEquation3D.
     """
     start = Vector(start)
     end = Vector(end)
@@ -2457,7 +2552,15 @@ def circle_by_two_derivatives(start, tangent, second):
     return circle
 
 class CylinderEquation(object):
+    """
+    A class representing (infinite) cylindrical surface.
+    """
     def __init__(self, axis, radius):
+        """
+        Args:
+            axis: an instance of LineEquation
+            radius: float
+        """
         self.axis = axis
         self.radius = radius
 
@@ -2523,8 +2626,8 @@ def distance_line_line(line_a, line_b, result, gates, tolerance):
     if inter_p:
         dist = (inter_p[0] - inter_p[1]).length
         intersect = dist < tolerance
-        is_a_in_segment = point_in_segment(inter_p[0], line_origin_a, line_end_a, tolerance)
-        is_b_in_segment = point_in_segment(inter_p[1], line_origin_b, line_end_b, tolerance)
+        is_a_in_segment = point_in_segment(inter_p[1], line_origin_b, line_end_b, tolerance)
+        is_b_in_segment = point_in_segment(inter_p[0], line_origin_a, line_end_a, tolerance)
 
         local_result = [dist, intersect, list(inter_p[1]), list(inter_p[0]), is_a_in_segment, is_b_in_segment]
     else:
@@ -2607,6 +2710,17 @@ def bounding_sphere(vertices, algorithm=TRIVIAL):
     return c, radius
 
 def scale_relative(points, center, scale):
+    """
+    Scale points with relation to specified center.
+
+    Args:
+        points: points to be scaled - np.array of shape (n,3)
+        center: the center of scale - np.array of shape (3,)
+        scale: scale coefficient
+
+    Returns:
+        np.array of shape (n,3)
+    """
     points = np.asarray(points)
     center = np.asarray(center)
     points -= center

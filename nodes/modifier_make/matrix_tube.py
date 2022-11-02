@@ -23,7 +23,7 @@ from sverchok.data_structure import (Vector_generate, Matrix_generate)
 from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
 
 
-class SvMatrixTubeNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
+class SvMatrixTubeNode(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
     ''' takes a list of vertices and a list of matrices
         the vertices are to be joined in a ring, copied and transformed by the 1st matrix
         and this ring joined to the previous ring.

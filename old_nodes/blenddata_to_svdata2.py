@@ -23,7 +23,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode)
 
 
-class SvObjectToMeshNodeMK2(bpy.types.Node, SverchCustomTreeNode):
+class SvObjectToMeshNodeMK2(SverchCustomTreeNode, bpy.types.Node):
     '''Get Object Data'''
     bl_idname = 'SvObjectToMeshNodeMK2'
     bl_label = 'Object ID Out MK2'

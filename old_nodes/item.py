@@ -30,11 +30,10 @@ from sverchok.data_structure import (changable_sockets, repeat_last, updateNode)
 # by Linus Yng
 
 
-class ListItem2Node(bpy.types.Node, SverchCustomTreeNode):
+class ListItem2Node(SverchCustomTreeNode, bpy.types.Node):
     ''' List item '''
     bl_idname = 'ListItem2Node'
     bl_label = 'List Item'
-    bl_icon = 'OUTLINER_OB_EMPTY'
 
     replacement_nodes = [('SvListItemNode', {"Item":"Index"}, None)]
 

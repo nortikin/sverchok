@@ -48,7 +48,7 @@ def Boolean(VA, PA, VB, PB, operation):
     return [vertices, faces]
 
 
-class SvCSGBooleanNodeMK2(ModifierLiteNode, bpy.types.Node, SverchCustomTreeNode):
+class SvCSGBooleanNodeMK2(ModifierLiteNode, SverchCustomTreeNode, bpy.types.Node):
     '''CSG Boolean Node MK2'''
     bl_idname = 'SvCSGBooleanNodeMK2'
     bl_label = 'CSG Boolean MK2'

@@ -9,7 +9,7 @@ from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_
 from sverchok.utils.logging import info, exception
 from sverchok.utils.curve import SvCurve, SvCurveLerpCurve
 
-class SvCurveLerpCurveNode(bpy.types.Node, SverchCustomTreeNode):
+class SvCurveLerpCurveNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Curve Lerp
     Tooltip: Generate a curve by linear interpolation of two curves

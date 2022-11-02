@@ -12,19 +12,14 @@ from bpy.props import BoolProperty, EnumProperty, FloatVectorProperty, FloatProp
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import zip_long_repeat, ensure_nesting_level, updateNode, repeat_last_for_length, get_data_nesting_level
-from sverchok.utils.surface.core import SvSurface
-from sverchok.utils.surface.freecad import SvSolidFaceSurface, surface_to_freecad, is_solid_face_surface
-from sverchok.utils.dummy_nodes import add_dummy
 
 from sverchok.dependencies import FreeCAD
 
-if FreeCAD is None:
-    add_dummy('SvHollowSolidNode', 'Hollow Solid', 'FreeCAD')
-else:
+if FreeCAD is not None:
     import Part
-    from FreeCAD import Base
 
-class SvHollowSolidNode(bpy.types.Node, SverchCustomTreeNode):
+
+class SvHollowSolidNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Hollow Solid
     Tooltip: Make a hollow solid shell out a solid body
@@ -33,7 +28,8 @@ class SvHollowSolidNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Hollow Solid'
     bl_icon = 'MOD_THICKNESS'
     sv_icon = 'SV_HOLLOW_SOLID'
-    solid_catergory = "Operators"
+    sv_category = "Solid Operators"
+    sv_dependencies = {'FreeCAD'}
 
     thickness : FloatProperty(
             name = "Thickness",
@@ -117,11 +113,10 @@ class SvHollowSolidNode(bpy.types.Node, SverchCustomTreeNode):
 
         self.outputs['Solid'].sv_set(solids_out)
 
+
 def register():
-    if FreeCAD is not None:
-        bpy.utils.register_class(SvHollowSolidNode)
+    bpy.utils.register_class(SvHollowSolidNode)
+
 
 def unregister():
-    if FreeCAD is not None:
-        bpy.utils.unregister_class(SvHollowSolidNode)
-
+    bpy.utils.unregister_class(SvHollowSolidNode)

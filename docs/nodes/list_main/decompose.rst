@@ -45,6 +45,8 @@ Example of usage
 * Number-> :doc:`Number Range </nodes/number/number_range>`
 * Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
 
+---------
+
 **Use 'Auto set' button:**
 
 1. Set Level
@@ -55,6 +57,8 @@ Example of usage
 
 * Number-> :doc:`List Input </nodes/number/list_input>`
 * Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
+
+---------
 
 **Decompose list of Bezier Curves:**
 
@@ -67,3 +71,11 @@ Example of usage
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 * Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
 
+---------
+
+.. image:: https://user-images.githubusercontent.com/14288520/197343084-8d8eac6d-e364-48a4-9125-b5cd739e77b9.png
+  :target: https://user-images.githubusercontent.com/14288520/197343084-8d8eac6d-e364-48a4-9125-b5cd739e77b9.png
+
+* Generator-> :doc:`Random Vector </nodes/generator/random_vector_mk3>`
+* Generator->Generators Extended-> :doc:`Triangle </nodes/generators_extended/triangle>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`

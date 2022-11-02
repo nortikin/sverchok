@@ -54,7 +54,7 @@ def maxlen(data):
         le.append(len(l))
     return max(le)
 
-class ListFlipNode(bpy.types.Node, SverchCustomTreeNode):
+class ListFlipNode(SverchCustomTreeNode, bpy.types.Node):
     '''
     Triggers: Transpose Lists Axis
     Tooltip: Flip axis of lists\n\t[1,2,3],[4,5,6] => [1,4],[2,5],[3,6]

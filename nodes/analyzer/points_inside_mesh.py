@@ -139,7 +139,7 @@ def get_points_in_mesh_2D_clip(verts, faces, points, normal, clip_distance, eps=
     return mask_totals
 
 
-class SvPointInside(bpy.types.Node, SverchCustomTreeNode):
+class SvPointInside(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Mask verts with geom
     Tooltip:  Mask points inside geometry in 2D or 3D

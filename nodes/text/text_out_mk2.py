@@ -114,7 +114,7 @@ def get_sv_data(node):
     return out
 
 
-class SvTextOutNodeMK2(bpy.types.Node, SverchCustomTreeNode):
+class SvTextOutNodeMK2(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Text Out to datablock
     Tooltip: Quickly write data from NodeView to text datablock

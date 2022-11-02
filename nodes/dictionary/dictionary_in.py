@@ -14,7 +14,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 from sverchok.utils.dictionary import SvDict
 
-class SvDictionaryIn(bpy.types.Node, SverchCustomTreeNode):
+class SvDictionaryIn(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Put given data to dictionary with custom key
 

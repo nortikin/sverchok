@@ -46,7 +46,7 @@ def scale_meshes(params, constant, matching_f):
     return result
 
 
-class SvScaleNodeMk3(bpy.types.Node, SverchCustomTreeNode):
+class SvScaleNodeMk3(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Scale vertices
     Tooltip: Scales vectors from a center point
@@ -64,12 +64,12 @@ class SvScaleNodeMk3(bpy.types.Node, SverchCustomTreeNode):
         size=3, default=(0, 0, 0),
         update=updateNode)
     scale: FloatVectorProperty(
-        name='Scale', description='Center of the scaling transform',
+        name='Scale', description='Axis scaling',
         size=3, default=(1, 1, 1),
         update=updateNode)
 
     multiplier: FloatProperty(
-        name='Multiplier', description='Multiplier factor',
+        name='Multiplier', description='Multiplier factor of the Axis scaling',
         default=1.0, update=updateNode)
 
     list_match: EnumProperty(

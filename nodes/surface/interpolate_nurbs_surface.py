@@ -10,14 +10,12 @@ from sverchok.utils.nurbs_common import SvNurbsMaths
 from sverchok.utils.surface.nurbs import SvGeomdlSurface, interpolate_nurbs_surface
 from sverchok.utils.math import supported_metrics
 from sverchok.dependencies import geomdl
-from sverchok.utils.dummy_nodes import add_dummy
 
-if geomdl is None:
-    add_dummy('SvExInterpolateNurbsSurfaceNode', "Interpolate NURBS Surface", 'geomdl')
-else:
+if geomdl is not None:
     from geomdl import fitting
-    
-class SvExInterpolateNurbsSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
+
+
+class SvExInterpolateNurbsSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: NURBS Surface Interpolate
     Tooltip: Interpolate NURBS Surface
@@ -25,6 +23,7 @@ class SvExInterpolateNurbsSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvExInterpolateNurbsSurfaceNode'
     bl_label = 'Interpolate NURBS Surface'
     bl_icon = 'SURFACE_NSURFACE'
+    sv_dependencies = {'geomdl'}
 
     input_modes = [
             ('1D', "Single list", "List of all control points (concatenated)", 1),
@@ -154,11 +153,10 @@ class SvExInterpolateNurbsSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs['KnotsU'].sv_set(knots_u_out)
         self.outputs['KnotsV'].sv_set(knots_v_out)
 
+
 def register():
-    if geomdl is not None:
-        bpy.utils.register_class(SvExInterpolateNurbsSurfaceNode)
+    bpy.utils.register_class(SvExInterpolateNurbsSurfaceNode)
+
 
 def unregister():
-    if geomdl is not None:
-        bpy.utils.unregister_class(SvExInterpolateNurbsSurfaceNode)
-
+    bpy.utils.unregister_class(SvExInterpolateNurbsSurfaceNode)

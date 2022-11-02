@@ -36,7 +36,7 @@ def check_numpy(new_dict, old_dict):
 
 
 class SvSubdivideToQuadsNode(
-        ModifierNode, bpy.types.Node, SverchCustomTreeNode, SvRecursiveNode):
+        ModifierNode, SverchCustomTreeNode, bpy.types.Node, SvRecursiveNode):
     """
     Triggers: Mesh Subdivision Surface
     Tooltip: Subdivide polygon to quads, similar to subdivision surface modifier.

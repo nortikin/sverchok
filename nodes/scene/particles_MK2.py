@@ -23,7 +23,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, cycle_for_length
 
 
-class SvParticlesMK2Node(bpy.types.Node, SverchCustomTreeNode):
+class SvParticlesMK2Node(SverchCustomTreeNode, bpy.types.Node):
     ''' Particles input node new '''
     bl_idname = 'SvParticlesMK2Node'
     bl_label = 'Particles MK2'

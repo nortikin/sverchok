@@ -24,7 +24,7 @@ from sverchok.data_structure import updateNode, repeat_last
 from sverchok.utils.mesh_functions import meshes_np, meshes_py, apply_matrix, apply_matrices, to_elements, repeat_meshes
 
 
-class MatrixApplyNode(bpy.types.Node, SverchCustomTreeNode):
+class MatrixApplyNode(SverchCustomTreeNode, bpy.types.Node):
     ''' Multiply vectors on matrixes with several objects in output '''
     bl_idname = 'MatrixApplyNode'
     bl_label = 'Matrix Apply (verts)'

@@ -14,7 +14,7 @@ from sverchok.utils.geom_2d.merge_mesh import edges_to_faces
 from sverchok.utils.nodes_mixins.sockets_config import ModifierLiteNode
 
 
-class SvEdgesToFaces2D(ModifierLiteNode, bpy.types.Node, SverchCustomTreeNode):
+class SvEdgesToFaces2D(ModifierLiteNode, SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: create polygons from given edges
     Tooltip: can generate holes in mesh

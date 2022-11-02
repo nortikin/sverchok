@@ -35,7 +35,7 @@ def matrix_euler(param, order):
     return mats
 
 
-class SvMatrixEulerNode(bpy.types.Node, SverchCustomTreeNode):
+class SvMatrixEulerNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: from axis rotation
     Tooltip:  Create a transformation Matrix by defining the angles with X, Y and Z and the rotation order.\n\tIn: X/Y/Z [0.0]\n\tParams: Order ([XYZ]/.../ZYX)\n\tOut: Matrix

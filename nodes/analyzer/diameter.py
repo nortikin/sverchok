@@ -24,7 +24,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat
 from sverchok.utils.geom import diameter
 
-class SvDiameterNode(bpy.types.Node, SverchCustomTreeNode):
+class SvDiameterNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Diameter
     Tooltip: Calculate diameter of input object

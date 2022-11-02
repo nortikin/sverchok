@@ -163,7 +163,7 @@ class SvSVGWrite(bpy.types.Operator, SvGenericNodeLocator):
         return {'FINISHED'}
 
 
-class SvSvgDocumentNode(bpy.types.Node, SverchCustomTreeNode):
+class SvSvgDocumentNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Output SVG
     Tooltip: Creates SVG document, define location, size and units

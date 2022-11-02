@@ -18,19 +18,17 @@ from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.curve.freecad import SvFreeCadNurbsCurve, SvFreeCadCurve, SvSolidEdgeCurve
 from sverchok.utils.surface.core import SvSurface
 from sverchok.utils.surface.freecad import SvFreeCadNurbsSurface, surface_to_freecad, is_solid_face_surface
-from sverchok.utils.dummy_nodes import add_dummy
 
 from sverchok.dependencies import FreeCAD
 
-if FreeCAD is None:
-    add_dummy('SvProjectTrimFaceNode', 'Face from Surface (Solid)', 'FreeCAD')
-else:
+if FreeCAD is not None:
     import Part
     from FreeCAD import Base
 
     line2d = Part.Geom2d.Line2dSegment
 
-class SvProjectTrimFaceNode(bpy.types.Node, SverchCustomTreeNode):
+
+class SvProjectTrimFaceNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Solid Face Trim Surface
     Tooltip: Make a Face of a Solid by trimming a Surface with projected Curve(s)
@@ -39,7 +37,8 @@ class SvProjectTrimFaceNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = "Face from Surface (Solid)"
     bl_icon = 'EDGESEL'
     sv_icon = 'SV_PROJECT_CUT_FACE'
-    solid_catergory = "Inputs"
+    sv_category = "Solid Inputs"
+    sv_dependencies = {'FreeCAD'}
 
     def update_sockets(self, context):
         self.inputs['Point'].hide_safe = self.projection_type != 'PERSPECTIVE'
@@ -214,12 +213,10 @@ class SvProjectTrimFaceNode(bpy.types.Node, SverchCustomTreeNode):
         if 'Edges' in self.outputs:
             self.outputs['Edges'].sv_set(edges_out)
 
+
 def register():
-    if FreeCAD is not None:
-        bpy.utils.register_class(SvProjectTrimFaceNode)
+    bpy.utils.register_class(SvProjectTrimFaceNode)
+
 
 def unregister():
-    if FreeCAD is not None:
-        bpy.utils.unregister_class(SvProjectTrimFaceNode)
-
-
+    bpy.utils.unregister_class(SvProjectTrimFaceNode)

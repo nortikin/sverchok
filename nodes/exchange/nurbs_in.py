@@ -37,7 +37,7 @@ class SvExNurbsInCallbackOp(bpy.types.Operator, SvGenericNodeLocator):
         getattr(node, self.fn_name)(self)
 
 
-class SvExNurbsInNode(Show3DProperties, bpy.types.Node, SverchCustomTreeNode):
+class SvExNurbsInNode(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Input NURBS
     Tooltip: Get NURBS curve or surface objects from scene

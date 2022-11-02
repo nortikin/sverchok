@@ -220,7 +220,7 @@ def make_bmesh_geometry_merged(node, obj_index, context, yielder_object):
     sv_object.matrix_local = Matrix.Identity(4)
 
 
-class SvBmeshViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
+class SvBmeshViewerNodeV28(SverchCustomTreeNode, bpy.types.Node, SvObjHelper):
     """ bmv Generate Live geom """
 
     bl_idname = 'SvBmeshViewerNodeV28'

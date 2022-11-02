@@ -46,7 +46,7 @@ def get_delaunay(verts, edges=None, faces=None, face_data=None, mode=0, epsilon=
     return [v.to_3d()[:] for v in new_verts], new_edges, new_faces, face_data_out
 
 
-class SvDelaunay2DCdt(bpy.types.Node, SverchCustomTreeNode):
+class SvDelaunay2DCdt(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Delaunay triangulation 2D
     Tooltip: Can crete triangulation inside given faces or closed edge loops

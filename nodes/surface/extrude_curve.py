@@ -15,7 +15,7 @@ from sverchok.utils.surface.algorithms import (
     )
 from sverchok.utils.math import ZERO, FRENET, HOUSEHOLDER, TRACK, DIFF, NORMAL_DIR
 
-class SvExtrudeCurveCurveSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
+class SvExtrudeCurveCurveSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Extrude Curve along Curve
     Tooltip: Generate a surface by extruding a curve along another curve

@@ -26,16 +26,13 @@ from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_
 from sverchok.utils.voronoi3d import voronoi_on_solid
 from sverchok.utils.geom import scale_relative, center, diameter
 from sverchok.utils.solid import BMESH, svmesh_to_solid
-from sverchok.utils.dummy_nodes import add_dummy
-from sverchok.dependencies import scipy, FreeCAD
-
-if scipy is None or FreeCAD is None:
-    add_dummy('SvVoronoiOnSolidNode', "Voronoi on Solid", 'scipy and FreeCAD')
+from sverchok.dependencies import FreeCAD
 
 if FreeCAD is not None:
     import Part
 
-class SvVoronoiOnSolidNode(bpy.types.Node, SverchCustomTreeNode):
+
+class SvVoronoiOnSolidNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Voronoi Solid
     Tooltip: Generate Voronoi diagram on the Solid object
@@ -44,6 +41,7 @@ class SvVoronoiOnSolidNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Voronoi on Solid'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_VORONOI'
+    sv_dependencies = {'scipy', 'FreeCAD'}
 
     modes = [
             ('SURFACE', "Surface", "Generate regions of Voronoi diagram on the surface of the solid", 0),
@@ -188,11 +186,10 @@ class SvVoronoiOnSolidNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs['InnerSolid'].sv_set(inner_fragments_out)
         self.outputs['OuterSolid'].sv_set(outer_fragments_out)
 
+
 def register():
-    if scipy is not None and FreeCAD is not None:
-        bpy.utils.register_class(SvVoronoiOnSolidNode)
+    bpy.utils.register_class(SvVoronoiOnSolidNode)
+
 
 def unregister():
-    if scipy is not None and FreeCAD is not None:
-        bpy.utils.unregister_class(SvVoronoiOnSolidNode)
-
+    bpy.utils.unregister_class(SvVoronoiOnSolidNode)

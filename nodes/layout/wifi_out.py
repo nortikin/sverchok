@@ -29,7 +29,7 @@ OLD_OP = "node.sverchok_generic_callback_old"
 # bl_idname and var_name is used by the update system
 
 
-class WifiOutNode(bpy.types.Node, SverchCustomTreeNode):
+class WifiOutNode(SverchCustomTreeNode, bpy.types.Node):
     ''' WifiOutNode '''
     bl_idname = 'WifiOutNode'
     bl_label = 'Wifi Out'

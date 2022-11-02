@@ -26,7 +26,7 @@ from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
 
 
-class SvSmoothNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
+class SvSmoothNode(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Smooth vertices
     Tooltip: Smooth the mesh by flattering the angles between the faces/edges.
@@ -46,10 +46,10 @@ class SvSmoothNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
         default=False, update=update_mode)
 
     iterations: IntProperty(
-        name="Iterations", min=1, max=1000, default=1, update=updateNode)
+        name="Iterations", min=1, max=1000, default=1, update=updateNode, description="Number of smoothing operation iterations")
 
     factor: FloatProperty(
-        name="Factor", description="Smoothing factor", min=0.0, default=0.5, update=updateNode)
+        name="Factor", description="Smoothing factor (0 - no smoothing)", min=0.0, default=0.5, update=updateNode)
 
     border_factor: FloatProperty(
         name="Border factor", description="Smoothing factor in border",
@@ -68,7 +68,7 @@ class SvSmoothNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
         default=False, update=updateNode)
 
     clip_dist: FloatProperty(
-        name="Clip threshold", description="Clipping threshold",
+        name="Clip threshold", description="Clipping threshold (for 'Clip X/Y/Z' procedure)",
         min=0.0, default=0.0001, update=updateNode)
 
     use_x: BoolProperty(

@@ -100,7 +100,7 @@ def ring_polygons(N1, N2):
     return listPolys
 
 
-class SvRingNode(bpy.types.Node, SverchCustomTreeNode):
+class SvRingNode(SverchCustomTreeNode, bpy.types.Node):
 
     ''' Ring '''
     bl_idname = 'SvRingNode'

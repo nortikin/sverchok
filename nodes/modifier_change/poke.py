@@ -26,7 +26,7 @@ from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh, 
 from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
 
 
-class SvPokeFacesNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
+class SvPokeFacesNode(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Poke Faces
     Tooltip: Poke selected faces

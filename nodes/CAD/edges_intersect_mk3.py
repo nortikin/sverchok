@@ -30,27 +30,27 @@ try:
 except ImportError:
     bl_intersect = None
 
-modeItems = [("2D", "2D", "", 0), ("3D", "3D", "", 1)]
+modeItems = [("2D", "2D", "", 0), ("3D", "3D", "This is a brute force algorithm written in NumPy", 1)]
 
 ''' helpers '''
 
 
 class SvIntersectEdgesNodeMK3(
-        ModifierLiteNode, bpy.types.Node, SverchCustomTreeNode):
+        ModifierLiteNode, SverchCustomTreeNode, bpy.types.Node):
 
     bl_idname = 'SvIntersectEdgesNodeMK3'
     bl_label = 'Intersect Edges'
     sv_icon = 'SV_XALL'
 
-    mode_items_2d = [("Alg_1", "Alg_1", "", 0),
-                     ("Sweep_line", "Sweep line", "", 1),
-                     ("Blender", "Blender", "", 2),
-                     ("Np", "Np", "", 3)]
+    mode_items_2d = [("Alg_1", "Alg_1", "A brute force algorithm/intersect_line_line", 0),
+                     ("Sweep_line", "Sweep line", "This algorithm is based on sweep line", 1),
+                     ("Blender", "Blender", "This mode is using internal Blender function", 2),
+                     ("Np", "Np", "A brute force algorithm written in NumPy", 3)]
 
     mode: bpy.props.EnumProperty(items=modeItems, default="3D", update=updateNode)
-    rm_switch: bpy.props.BoolProperty(update=updateNode)
-    rm_doubles: bpy.props.FloatProperty(min=0.0, default=0.0001, step=0.1, update=updateNode)
-    epsilon: bpy.props.IntProperty(min=3, default=5, update=updateNode)
+    rm_switch: bpy.props.BoolProperty(update=updateNode, description="Merges points that are closer than the defined distance")
+    rm_doubles: bpy.props.FloatProperty(min=0.0, default=0.0001, step=0.1, update=updateNode, description="Finds groups of vertices closer than dist and merges them together, using the weld verts bmop")
+    epsilon: bpy.props.IntProperty(min=3, default=5, update=updateNode, description="For comparing float figures")
     alg_mode_2d: bpy.props.EnumProperty(items=mode_items_2d, default="Alg_1", update=updateNode)
     only_touching: bpy.props.BoolProperty(
         name='Include "On touch"',

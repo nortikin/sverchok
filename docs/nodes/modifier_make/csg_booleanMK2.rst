@@ -1,7 +1,16 @@
 CSG Boolean MK2
 ===============
 
+.. image:: https://user-images.githubusercontent.com/14288520/198852539-b0583c14-01a2-4cba-a8a1-fd8d872d7975.png
+  :target: https://user-images.githubusercontent.com/14288520/198852539-b0583c14-01a2-4cba-a8a1-fd8d872d7975.png
+
+Functionality
+-------------
+
 This node implements the 3 boolean *3d Mesh* functions; Intersect, Join, Difference. 
+
+.. image:: https://user-images.githubusercontent.com/14288520/198852978-c958f428-50f0-43f0-9e88-50e315b510d9.png
+  :target: https://user-images.githubusercontent.com/14288520/198852978-c958f428-50f0-43f0-9e88-50e315b510d9.png
 
 There are switches and modes.
 
@@ -9,6 +18,12 @@ There are switches and modes.
 - Only final result (output only last iteration result)
 
 ::|csg demo|
+
+* Generator-> :doc:`Line </nodes/generator/line_mk4>`
+* Generator-> :doc:`Circle </nodes/generator/circle>`
+* Generator-> :doc:`Box </nodes/generator/box_mk2>`
+* Matrix-> :doc:`Matrix Apply to Mesh </nodes/matrix/apply_and_join>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 
 warnings
 --------
@@ -42,4 +57,5 @@ Alternatives
 
 Consider booleans as "beta" in Sverchok. You might be interested in the FreeCAD implementation discussed here. https://github.com/nortikin/sverchok/issues/3430
 
-.. |csg demo| image:: https://user-images.githubusercontent.com/619340/99914900-b7b0cf80-2d00-11eb-81a2-562d131e82a3.png
+.. |csg demo| image:: https://user-images.githubusercontent.com/14288520/198853352-112f44c9-0a3f-4cc4-8a24-9a930c900050.png
+            :target: https://user-images.githubusercontent.com/14288520/198853352-112f44c9-0a3f-4cc4-8a24-9a930c900050.png

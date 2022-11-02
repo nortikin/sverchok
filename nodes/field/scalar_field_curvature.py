@@ -10,7 +10,7 @@ from sverchok.utils.logging import info, exception
 
 from sverchok.utils.field.scalar import SvScalarField, SvScalarFieldGaussCurvature, SvScalarFieldMeanCurvature, SvScalarFieldPrincipalCurvature, ScalarFieldCurvatureCalculator
 
-class SvScalarFieldCurvatureNode(bpy.types.Node, SverchCustomTreeNode):
+class SvScalarFieldCurvatureNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Scalar Field Curvature
     Tooltip: Scalar Field Curvature

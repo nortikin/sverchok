@@ -27,7 +27,7 @@ xyz_axes = [
     ]
 
 coordinate_modes = [
-    ('XYZ', "Carthesian", "Carthesian coordinates - x, y, z", 0),
+    ('XYZ', "Cartesian", "Cartesian coordinates - x, y, z", 0),
     ('CYL', "Cylindrical", "Cylindrical coordinates - rho, phi, z", 1),
     ('SPH', "Spherical", "Spherical coordinates - rho, phi, theta", 2)
 ]
@@ -298,15 +298,23 @@ def binomial(n,k):
         n -= 1
     return b
 
+_binomial_array_cache = dict()
+
 def binomial_array(size, dtype=np.float64):
-    binom = np.zeros((size, size), dtype=dtype)
-    binom[:,0] = 1.0
-    for j in range(size):
-        binom[j,j] = 1.0
-    for n in range(2, size):
-        for k in range(1, n):
-            binom[n,k] = binom[n-1, k-1] + binom[n-1, k]
-    return binom
+    global _binomial_array_cache
+
+    if size in _binomial_array_cache:
+        return _binomial_array_cache[size]
+    else:
+        binom = np.zeros((size, size), dtype=dtype)
+        binom[:,0] = 1.0
+        for j in range(size):
+            binom[j,j] = 1.0
+        for n in range(2, size):
+            for k in range(1, n):
+                binom[n,k] = binom[n-1, k-1] + binom[n-1, k]
+        _binomial_array_cache[size] = binom
+        return binom
 
 def np_mixed_product(a, b, c):
     return np.dot(a, np.cross(b, c))

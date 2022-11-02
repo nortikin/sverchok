@@ -14,7 +14,7 @@ from sverchok.utils.nodes_mixins.generating_objects import SvViewerNode, SvLight
 from sverchok.utils.handle_blender_data import correct_collection_length
 
 
-class SvLightViewerNode(SvViewerNode, bpy.types.Node, SverchCustomTreeNode):
+class SvLightViewerNode(SvViewerNode, SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: lamp light sun
     Tooltip: Generate Lamp objects. Properties of lamps in Blender.\n\tIn: Origin, Size, Strength, Color\n\tParams: base name, Collection, Type (Point/Sun/Spot/Area)\n\tExtra: Cast Shaddow, Show cone (N-panel)\n\tOut: Objects

@@ -155,7 +155,7 @@ modes_dict = {
     'EULER': (euler_rotate_meshes, ['X', 'Y', 'Z']),
     'QUAT':  (quat_rotate_meshes,  ['X', 'Y', 'Z', 'W'])
 }
-class SvRotationNodeMk3(bpy.types.Node, SverchCustomTreeNode):
+class SvRotationNodeMk3(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Rotate vertices
     Tooltip: Rotate input vertices using Axis/Angle, Euler or Quaternion
@@ -263,7 +263,7 @@ class SvRotationNodeMk3(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         layout.prop(self, "mode", expand=True)
         if self.mode == 'EULER':
-            layout.prop(self, "order", text="Order:")
+            layout.prop(self, "order", text="Order")
 
     def draw_buttons_ext(self, context, layout):
         '''draw buttons on the N-panel'''

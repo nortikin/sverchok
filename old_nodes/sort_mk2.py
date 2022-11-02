@@ -23,7 +23,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, changable_sockets,
                                      dataCorrect, levelsOflist)
 
-class ListSortNodeMK2(bpy.types.Node, SverchCustomTreeNode):
+class ListSortNodeMK2(SverchCustomTreeNode, bpy.types.Node):
     ''' List Sort MK2 '''
     bl_idname = 'ListSortNodeMK2'
     bl_label = 'List Sort'

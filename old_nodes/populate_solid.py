@@ -18,15 +18,13 @@ from sverchok.utils.field.probe import field_random_probe
 from sverchok.utils.surface.populate import populate_surface
 from sverchok.utils.surface.freecad import SvSolidFaceSurface
 from sverchok.dependencies import FreeCAD
-from sverchok.utils.dummy_nodes import add_dummy
 
-if FreeCAD is None:
-    add_dummy('SvPopulateSolidNode', 'Populate Solid', 'FreeCAD')
-else:
+if FreeCAD is not None:
     from FreeCAD import Base
     import Part
 
-class SvPopulateSolidNode(bpy.types.Node, SverchCustomTreeNode):
+
+class SvPopulateSolidNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Populate Solid
     Tooltip: Generate random points within solid body
@@ -35,6 +33,7 @@ class SvPopulateSolidNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Populate Solid'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_POPULATE_SOLID'
+    sv_dependencies = {'FreeCAD'}
 
     replacement_nodes = [('SvPopulateSolidMk2Node', None, None)]
 
@@ -204,11 +203,10 @@ class SvPopulateSolidNode(bpy.types.Node, SverchCustomTreeNode):
 
         self.outputs['Vertices'].sv_set(verts_out)
 
+
 def register():
-    if FreeCAD is not None:
-        bpy.utils.register_class(SvPopulateSolidNode)
+    bpy.utils.register_class(SvPopulateSolidNode)
+
 
 def unregister():
-    if FreeCAD is not None:
-        bpy.utils.unregister_class(SvPopulateSolidNode)
-
+    bpy.utils.unregister_class(SvPopulateSolidNode)

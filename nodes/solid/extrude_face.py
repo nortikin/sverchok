@@ -14,17 +14,13 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import zip_long_repeat, ensure_nesting_level, updateNode
 from sverchok.utils.surface.core import SvSurface
 from sverchok.utils.surface.freecad import surface_to_freecad, is_solid_face_surface
-from sverchok.utils.dummy_nodes import add_dummy
-
 from sverchok.dependencies import FreeCAD
 
-if FreeCAD is None:
-    add_dummy('SvSolidFaceExtrudeNode', 'Extrude Face (Solid)', 'FreeCAD')
-else:
-    import Part
+if FreeCAD is not None:
     from FreeCAD import Base
 
-class SvSolidFaceExtrudeNode(bpy.types.Node, SverchCustomTreeNode):
+
+class SvSolidFaceExtrudeNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Extrude Solid Face
     Tooltip: Make a Solid by extruding one face along a vector
@@ -33,7 +29,8 @@ class SvSolidFaceExtrudeNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Extrude Face (Solid)'
     bl_icon = 'EDGESEL'
     sv_icon = 'SV_EXTRUDE_FACE'
-    solid_catergory = "Operators"
+    sv_category = "Solid Operators"
+    sv_dependencies = {'FreeCAD'}
 
     refine_solid: BoolProperty(
             name="Refine Solid",
@@ -75,11 +72,10 @@ class SvSolidFaceExtrudeNode(bpy.types.Node, SverchCustomTreeNode):
 
         self.outputs['Solid'].sv_set(solids_out)
 
+
 def register():
-    if FreeCAD is not None:
-        bpy.utils.register_class(SvSolidFaceExtrudeNode)
+    bpy.utils.register_class(SvSolidFaceExtrudeNode)
+
 
 def unregister():
-    if FreeCAD is not None:
-        bpy.utils.unregister_class(SvSolidFaceExtrudeNode)
-
+    bpy.utils.unregister_class(SvSolidFaceExtrudeNode)

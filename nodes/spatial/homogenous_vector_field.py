@@ -79,7 +79,7 @@ def field_faces_and_edges(xdim, ydim, zdim, get_edges, get_faces):
     return edges, faces
 
 
-class SvHomogenousVectorField(bpy.types.Node, SverchCustomTreeNode):
+class SvHomogenousVectorField(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: hv 3d vector grid
     Tooltip: Evenly spaced vector field.

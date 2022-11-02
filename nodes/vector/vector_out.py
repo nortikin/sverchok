@@ -31,7 +31,7 @@ def unpack_list(obj):
 def unpack_list_to_np(obj):
     return (array(x) for x in zip(*obj))
 
-class VectorsOutNode(bpy.types.Node, SverchCustomTreeNode):
+class VectorsOutNode(SverchCustomTreeNode, bpy.types.Node):
     '''Vectors out (decomposition).
     In:
         a List of Vectors [[(x,y,z), ...]]

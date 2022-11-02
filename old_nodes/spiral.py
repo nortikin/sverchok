@@ -453,7 +453,7 @@ def normalize_spiral(verts, normalize_eR, eR, iR, scale):
     return verts
 
 
-class SvSpiralNode(bpy.types.Node, SverchCustomTreeNode):
+class SvSpiralNode(SverchCustomTreeNode, bpy.types.Node):
     ''' Spiral '''
     bl_idname = 'SvSpiralNode'
     bl_label = 'Spiral'

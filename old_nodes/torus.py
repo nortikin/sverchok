@@ -120,7 +120,7 @@ def torus_polygons(N1, N2, t):
     return listPolys
 
 
-class SvTorusNode(bpy.types.Node, SverchCustomTreeNode):
+class SvTorusNode(SverchCustomTreeNode, bpy.types.Node):
     ''' Torus '''
     bl_idname = 'SvTorusNode'
     bl_label = 'Torus'

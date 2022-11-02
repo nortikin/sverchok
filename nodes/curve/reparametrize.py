@@ -9,7 +9,7 @@ from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_
 from sverchok.utils.curve import SvCurve
 from sverchok.utils.curve.algorithms import reparametrize_curve
 
-class SvReparametrizeCurveNode(bpy.types.Node, SverchCustomTreeNode):
+class SvReparametrizeCurveNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Reparametrize Curve
     Tooltip: Change parameterization of the curve by linear mapping of T parameter to the new bounds

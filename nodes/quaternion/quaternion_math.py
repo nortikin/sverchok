@@ -71,7 +71,7 @@ id_quat = [Quaternion([1, 0, 0, 0])]
 ABC = tuple('ABCDEFGHIJKLMNOPQRSTUVWXYZ')
 
 
-class SvQuaternionMathNode(bpy.types.Node, SverchCustomTreeNode):
+class SvQuaternionMathNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Quaternions, Math
     Tooltip: Compute various arithmetic operations on quaternions\n\tAdd\n\tSub Pre/Post\n\tMult Pre/Post\n\tDiv\n\tRot\n\tDot\n\tDist\n\tNegate\n\tConjugate\n\tInvert\n\tNorm\n\tScale WXYZ\n\tQuadrance\n\tMagnitude

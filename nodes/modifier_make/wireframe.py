@@ -46,7 +46,7 @@ def wireframe(vertices, faces, t, self):
     return pydata_from_bmesh(bm)
 
 
-class SvWireframeNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
+class SvWireframeNode(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
     '''wf Wireframe Modif.'''
     bl_idname = 'SvWireframeNode'
     bl_label = 'Wireframe'

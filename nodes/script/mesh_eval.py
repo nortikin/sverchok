@@ -256,7 +256,7 @@ class SvJsonFromMesh(bpy.types.Operator):
         bpy.data.texts[text].clear()
         bpy.data.texts[text].write(values)
 
-class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode):
+class SvMeshEvalNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: mesh JSON eval expression
     Tooltip: Generate mesh from parametric JSON expression

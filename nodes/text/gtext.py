@@ -140,7 +140,7 @@ class SverchokGText(bpy.types.Operator):
 
 
 
-class SvGTextNode(bpy.types.Node, SverchCustomTreeNode):
+class SvGTextNode(SverchCustomTreeNode, bpy.types.Node):
 
     def wrapped_update(self, context):
         self.draw_gtext()

@@ -85,7 +85,7 @@ def compute_distances_np(line, pts, result, gates, tolerance):
             res.append(local_result[i].tolist() if not gates[5] else local_result[i])
 
 
-class SvDistancePointLineNode(bpy.types.Node, SverchCustomTreeNode):
+class SvDistancePointLineNode(SverchCustomTreeNode, bpy.types.Node):
     '''
     Triggers: Perpendicular to segment
     Tooltip: Distance Point to line and closest point in the line

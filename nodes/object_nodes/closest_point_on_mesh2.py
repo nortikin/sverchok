@@ -24,7 +24,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, second_as_first_cycle)
 
 
-class SvPointOnMeshNodeMK2(bpy.types.Node, SverchCustomTreeNode):
+class SvPointOnMeshNodeMK2(SverchCustomTreeNode, bpy.types.Node):
     ''' Point on Mesh '''
     bl_idname = 'SvPointOnMeshNodeMK2'
     bl_label = 'Object ID Point on Mesh MK2' #new is pointless name

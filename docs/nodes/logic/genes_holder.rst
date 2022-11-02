@@ -45,10 +45,10 @@ Solved problem: Which is the shortest path that cycles through all the points?. 
 .. image:: https://user-images.githubusercontent.com/10011941/84772313-113b0280-afdb-11ea-89ec-971d19aee2cc.png
     :target: https://user-images.githubusercontent.com/10011941/84772313-113b0280-afdb-11ea-89ec-971d19aee2cc.png
 
+* Generator-> :doc:`Random Vector </nodes/generator/random_vector_mk3>`
 * Analyzers-> :doc:`Path Length </nodes/analyzer/path_length_2>`
 * Modifiers->Modifier Make-> :doc:`UV Connection </nodes/modifier_make/uv_connect>`
 * Number-> :doc:`Number Range </nodes/number/number_range>`
-* Number-> :doc:`Random Vector </nodes/generator/random_vector_mk3>`
 * List->List Struct-> :doc:`List Item </nodes/list_struct/item>`
 * Logic-> :doc:`Evolver </nodes/logic/evolver>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`

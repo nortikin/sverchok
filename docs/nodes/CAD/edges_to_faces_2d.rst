@@ -1,7 +1,8 @@
 Edges to Faces 2D
 =================
 
-.. image:: https://user-images.githubusercontent.com/28003269/67938049-30218b80-fbe8-11e9-9da7-c65df2de733e.png
+.. image:: https://user-images.githubusercontent.com/14288520/198830130-e36d3ad2-ac99-4ef9-a654-dd3e876445c3.png
+  :target: https://user-images.githubusercontent.com/14288520/198830130-e36d3ad2-ac99-4ef9-a654-dd3e876445c3.png
 
 Functionality
 -------------

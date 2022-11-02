@@ -9,7 +9,7 @@ from sverchok.data_structure import updateNode, zip_long_repeat, repeat_last_for
 from sverchok.utils.logging import info, exception
 from sverchok.utils.mesh_functions import mesh_join
 
-class SvVectorFieldLinesNode(bpy.types.Node, SverchCustomTreeNode):
+class SvVectorFieldLinesNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Vector Field Lines
     Tooltip: Generate vector field lines

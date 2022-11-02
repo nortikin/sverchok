@@ -24,7 +24,7 @@ from sverchok.data_structure import changable_sockets, multi_socket, updateNode
 from sverchok.utils.listutils import preobrazovatel
 
 
-class ZipNode(bpy.types.Node, SverchCustomTreeNode):
+class ZipNode(SverchCustomTreeNode, bpy.types.Node):
     ''' List Zip. Minimal level is 1.
     Level 1:   [[1, 2, 3]], [['a', 'b', 'c']]   => [[ [1, 'a'], [2, 'b'], [3, 'c'] ]]
     Level 1: [ [[1, 2, 3]], [['a', 'b', 'c']] ] => [[[ [1, 2, 3], ['a', 'b', 'c'] ]]]

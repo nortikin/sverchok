@@ -54,7 +54,7 @@ def get_operation(op_id):
             return function
     raise Exception("Unsupported operation: " + op_id)
 
-class SvScalarFieldMathNode(bpy.types.Node, SverchCustomTreeNode):
+class SvScalarFieldMathNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Scalar Field Math
     Tooltip: Scalar Field Math

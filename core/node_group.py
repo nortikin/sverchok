@@ -272,6 +272,7 @@ class SvGroupTree(SvNodeTreeCommon, bpy.types.NodeTree):
 
 class BaseNode:
     n_id: bpy.props.StringProperty(options={'SKIP_SAVE'})
+    dependency_error = None
 
     @property
     def node_id(self):

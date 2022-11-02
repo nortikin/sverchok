@@ -9,7 +9,7 @@ from sverchok.data_structure import updateNode, zip_long_repeat
 from sverchok.utils.field.vector import (SvAverageVectorField, SvRotationVectorField, SvSelectVectorField)
 from sverchok.utils.math import all_falloff_types, falloff_array
 
-class SvRotationFieldNode(bpy.types.Node, SverchCustomTreeNode):
+class SvRotationFieldNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Spin Field
     Tooltip: Generate vector rotation field

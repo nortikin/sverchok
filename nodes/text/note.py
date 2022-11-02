@@ -36,7 +36,7 @@ def format_text(text, width):
     return out
 
 
-class NoteNode(bpy.types.Node, SverchCustomTreeNode):
+class NoteNode(SverchCustomTreeNode, bpy.types.Node):
     ''' Note '''
     bl_idname = 'NoteNode'
     bl_label = 'Note'

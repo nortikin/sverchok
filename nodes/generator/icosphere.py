@@ -85,7 +85,7 @@ def icosahedron(r):
     vertices = [from_cylindrical(rho, phi, z, 'radians') for rho, phi, z in vertices]
     return vertices, edges, faces
 
-class SvIcosphereNode(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNode):
+class SvIcosphereNode(SverchCustomTreeNode, bpy.types.Node, SvRecursiveNode):
     """IcoSphere. [default]
     Subdivisions, min (0): [2]
     Radius, min (0): [1.0]

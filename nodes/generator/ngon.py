@@ -78,7 +78,7 @@ def make_faces(nsides, shift, divs):
     face = list(vs)
     return [face]
 
-class SvNGonNode(bpy.types.Node, SverchCustomTreeNode):
+class SvNGonNode(SverchCustomTreeNode, bpy.types.Node):
     ''' NGon. [default]
     Radius: [1.]
     N Sides, min=3: [5]

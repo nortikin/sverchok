@@ -86,7 +86,7 @@ def cylinder_faces(Subd, Vertices, Cap):
     return listPlg
 
 
-class CylinderNode(bpy.types.Node, SverchCustomTreeNode):
+class CylinderNode(SverchCustomTreeNode, bpy.types.Node):
     ''' Cylinder '''
     bl_idname = 'CylinderNode'
     bl_label = 'Cylinder'

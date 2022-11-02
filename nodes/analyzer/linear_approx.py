@@ -25,7 +25,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode)
 from sverchok.utils.geom import linear_approximation
 
-class SvLinearApproxNode(bpy.types.Node, SverchCustomTreeNode):
+class SvLinearApproxNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Linear Approximation
     Tooltip: Approximate vertices with straight line or plane.
@@ -36,8 +36,8 @@ class SvLinearApproxNode(bpy.types.Node, SverchCustomTreeNode):
     sv_icon = 'SV_LINEAR_APPROXIMATION'
 
     modes = [
-            ("Line", "Line", "Straight line", 1),
-            ("Plane", "Plane", "Plane", 2)
+            ("Line", "Line", "Approximate vertices by straight line", 1),
+            ("Plane", "Plane", "Approximate vertices by a plane", 2)
         ]
 
     def update_mode(self, context):

@@ -23,7 +23,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, fullList
 from sverchok.utils.sv_IO_pointer_helpers import pack_pointer_property_name, unpack_pointer_property_name
 
-class ImageNode(bpy.types.Node, SverchCustomTreeNode):
+class ImageNode(SverchCustomTreeNode, bpy.types.Node):
     ''' Image '''
     bl_idname = 'ImageNode'
     bl_label = 'Image'

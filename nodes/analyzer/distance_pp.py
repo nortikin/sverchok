@@ -26,7 +26,7 @@ from sverchok.data_structure import (
     updateNode, list_match_func, list_match_modes
 )
 
-class DistancePPNode(bpy.types.Node, SverchCustomTreeNode):
+class DistancePPNode(SverchCustomTreeNode, bpy.types.Node):
     ''' Distance Point to Point '''
     bl_idname = 'DistancePPNode'
     bl_label = 'Distance'

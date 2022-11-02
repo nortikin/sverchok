@@ -23,7 +23,7 @@ from sverchok.data_structure import (updateNode, match_long_cycle as C)
 from mathutils.bvhtree import BVHTree
 
 
-class SvBVHnearNewNode(bpy.types.Node, SverchCustomTreeNode):
+class SvBVHnearNewNode(SverchCustomTreeNode, bpy.types.Node):
     ''' BVH Find Nearest '''
     bl_idname = 'SvBVHnearNewNode'
     bl_label = 'bvh_nearest'

@@ -9,4 +9,5 @@ Contributing to sverchok
    contribute_general
    add_new_node
    node_api
+   api_documentation
    testing

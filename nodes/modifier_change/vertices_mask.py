@@ -25,7 +25,7 @@ from sverchok.data_structure import (dataCorrect, repeat_last)
 from sverchok.utils.nodes_mixins.sockets_config import ModifierLiteNode
 
 
-class SvVertMaskNode(ModifierLiteNode, bpy.types.Node, SverchCustomTreeNode):
+class SvVertMaskNode(ModifierLiteNode, SverchCustomTreeNode, bpy.types.Node):
     '''Delete verts from mesh'''
     bl_idname = 'SvVertMaskNode'
     bl_label = 'Mask Vertices'

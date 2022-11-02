@@ -20,4 +20,3 @@ Provides a convenient way to
 
 While working with Sverchok we often adjust various Blender settings, having this nodes allows you to configure 3dview without leaving NodeView.
 
-

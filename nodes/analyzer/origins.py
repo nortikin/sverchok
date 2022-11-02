@@ -99,7 +99,7 @@ def iter_last(l):
     return chain(l, cycle([l[-1]]))
 
 
-class SvOrigins(bpy.types.Node, SverchCustomTreeNode):
+class SvOrigins(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: origin center normal tangent matrix
 

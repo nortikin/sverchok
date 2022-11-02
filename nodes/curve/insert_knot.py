@@ -13,7 +13,7 @@ from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_
 from sverchok.utils.curve import SvCurve
 from sverchok.utils.curve.nurbs import SvNurbsCurve
 
-class SvCurveInsertKnotNode(bpy.types.Node, SverchCustomTreeNode):
+class SvCurveInsertKnotNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Insert Knot
     Tooltip: Inset knot in a NURBS curve

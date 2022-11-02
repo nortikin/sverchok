@@ -24,7 +24,7 @@ from sverchok.data_structure import updateNode
 from sverchok.utils.voronoi import Site, computeVoronoiDiagram, computeDelaunayTriangulation
 
 # computeDelaunayTriangulation
-class DelaunayTriangulation2DNode(bpy.types.Node, SverchCustomTreeNode):
+class DelaunayTriangulation2DNode(SverchCustomTreeNode, bpy.types.Node):
     '''dea Verts. Triangulation '''
     bl_idname = 'DelaunayTriangulation2DNode'
     bl_label = 'Delaunay 2D'

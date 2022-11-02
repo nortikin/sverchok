@@ -183,7 +183,7 @@ class ImageComponentsOps(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class SvImageComponentsNode(bpy.types.Node, SverchCustomTreeNode):
+class SvImageComponentsNode(SverchCustomTreeNode, bpy.types.Node):
     '''Image Decompose.
     In: xy_spread, z_spread
     Params: image selector, Filter, Skip n pixels

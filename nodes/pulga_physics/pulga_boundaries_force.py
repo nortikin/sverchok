@@ -30,7 +30,7 @@ from sverchok.utils.pulga_physics_modular_core import (
     SvBoundingSolidForce)
 from sverchok.dependencies import FreeCAD
 
-class SvPulgaBoundingBoxForceNode(bpy.types.Node, SverchCustomTreeNode):
+class SvPulgaBoundingBoxForceNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Spacial Ambit
     Tooltip: Define simulation Limits by Volume or Surface

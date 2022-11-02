@@ -27,7 +27,7 @@ from sverchok.utils.geom import autorotate_diff
 from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
 
 
-class SvFractalCurveNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
+class SvFractalCurveNode(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Fractal Curve
     Tooltip: Generate fractal (self-repeating) curve

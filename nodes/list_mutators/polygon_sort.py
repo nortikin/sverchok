@@ -133,7 +133,7 @@ def polygon_normal_angle_D(verts, poly, D):
     return angle
 
 
-class SvPolygonSortNode(bpy.types.Node, SverchCustomTreeNode):
+class SvPolygonSortNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Polygon, Sorting
     Tooltip: Sort the polygons by various criteria: distance, angle, area.

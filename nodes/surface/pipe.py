@@ -9,7 +9,7 @@ from sverchok.utils.curve import SvCurve
 from sverchok.utils.surface.algorithms import SvConstPipeSurface
 from sverchok.utils.math import ZERO, FRENET, HOUSEHOLDER, TRACK, DIFF, TRACK_NORMAL
 
-class SvPipeSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
+class SvPipeSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Constant Cylindric Pipe
     Tooltip: Generate a cylindric pipe surface

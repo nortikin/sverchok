@@ -11,7 +11,7 @@ from sverchok.utils.surface import SvSurface
 U_SOCKET = 1
 V_SOCKET = 2
 
-class SvEvalSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
+class SvEvalSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Surface to mesh
     Tooltip: Evaluate Surface

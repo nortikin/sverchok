@@ -262,7 +262,7 @@ VERT_MODES = ['BySide', 'BBox', 'BySphere', 'ByPlane', 'ByCylinder']
 EDGE_MODES = ['EdgeDir']
 FACE_MODES = ['ByNormal', 'Outside']
 
-class SvMeshSelectNodeMk2(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNode):
+class SvMeshSelectNodeMk2(SverchCustomTreeNode, bpy.types.Node, SvRecursiveNode):
     '''
     Triggers: Mask by geometry
     Tooltip: Select vertices, edges, faces by geometric criteria

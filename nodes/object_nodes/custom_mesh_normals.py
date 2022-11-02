@@ -24,7 +24,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, second_as_first_cycle as safc)
 
 
-class SvSetCustomMeshNormals(bpy.types.Node, SverchCustomTreeNode):
+class SvSetCustomMeshNormals(SverchCustomTreeNode, bpy.types.Node):
     ''' Set custom normals for verts or loops '''
     bl_idname = 'SvSetCustomMeshNormals'
     bl_label = 'Set Custom Normals'

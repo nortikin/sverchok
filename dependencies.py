@@ -1,3 +1,26 @@
+# This file is part of project Sverchok. It's copyrighted by the contributors
+# recorded in the version control history of the file, available from
+# its original location https://github.com/nortikin/sverchok/commit/master
+#
+# SPDX-License-Identifier: GPL3
+# License-Filename: LICENSE
+
+"""
+This module contains some general code to support external dependencies in
+Sverchok, and declarations of specific dependencies.
+
+In most cases, one imports required dependency modules from this module.
+If the corresponding library is not installed, this will import None value
+instead of actual module, so that one can execute another version of code:
+
+    from sverchok.dependencies import scipy
+
+    if scipy is None:
+        print("SciPy is not available, will try to do without it")
+    else:
+        from scipy.optimize import minimize_scalar
+        ...
+"""
 
 import logging
 
@@ -14,22 +37,47 @@ logger.addHandler(ch)
 info, debug, error = logger.info, logger.debug, logger.error
 
 class SvDependency():
+    """
+    Definition of external dependency package.
+    """
     def __init__(self, package, url, module=None, message=None):
+        """
+        Args:
+            package: name of package
+            url: home URL of the package
+            module: main package module object
+            message: message about this dependency, to be displayed in settings
+                dialog and in logs
+        """
         self.package = package
         self.module = module
         self.message = message
         self.url = url
         self.pip_installable = False
 
+"""
+Dictionary with Sverchok dependencies
+"""
 sv_dependencies = dict()
 
 def get_icon(package):
+    """
+    Return name of icon to be displayed in preferences dialog, depending on
+    whether the dependency is available or not.
+    """
     if package is None:
         return 'CANCEL'
     else:
         return 'CHECKMARK'
 
 def draw_message(box, package, dependencies=None):
+    """
+    Draw standard set of UI elements about dependency in preferences dialog:
+
+    * message about whether the dependency is installed
+    * visit package website
+    * install or upgrade with PIP, if possible
+    """
     if dependencies is None:
         dependencies = sv_dependencies
 
@@ -71,8 +119,6 @@ try:
     scipy_d.message = "SciPy is available"
     scipy_d.module = scipy
 except ImportError:
-    scipy_d.message = "sv: SciPy package is not available. Voronoi nodes and RBF-based nodes will not be available."
-    info(scipy_d.message)
     scipy = None
 
 geomdl_d = sv_dependencies["geomdl"] = SvDependency("geomdl", "https://github.com/orbingol/NURBS-Python/tree/master/geomdl")
@@ -82,8 +128,6 @@ try:
     geomdl_d.message = "geomdl package is available"
     geomdl_d.module = geomdl
 except ImportError:
-    geomdl_d.message = "sv: geomdl package is not available, some NURBS related nodes will not be available"
-    info(geomdl_d.message)
     geomdl = None
 
 skimage_d = sv_dependencies["skimage"] = SvDependency("scikit-image", "https://scikit-image.org/")
@@ -93,8 +137,6 @@ try:
     skimage_d.message = "SciKit-Image package is available"
     skimage_d.module = skimage
 except ImportError:
-    skimage_d.message = "sv: SciKit-Image package is not available; SciKit-based implementation of Marching Cubes and Marching Squares will not be available"
-    info(skimage_d.message)
     skimage = None
 
 mcubes_d = sv_dependencies["mcubes"] = SvDependency("mcubes", "https://github.com/pmneila/PyMCubes")
@@ -103,8 +145,6 @@ try:
     mcubes_d.message = "PyMCubes package is available"
     mcubes_d.module = mcubes
 except ImportError:
-    mcubes_d.message = "sv: PyMCubes package is not available. PyMCubes-based implementation of Marching Cubes will not be available"
-    info(mcubes_d.message)
     mcubes = None
 
 circlify_d = sv_dependencies["circlify"] = SvDependency("circlify", "https://github.com/elmotec/circlify")
@@ -114,8 +154,6 @@ try:
     circlify_d.message = "Circlify package is available"
     circlify_d.module = circlify
 except ImportError:
-    circlify_d.message = "sv: Circlify package is not available. Circlify node will not be available"
-    info(circlify_d.message)
     circlify = None
 
 freecad_d = sv_dependencies["freecad"] = SvDependency("FreeCAD", "https://www.freecadweb.org/")
@@ -124,8 +162,6 @@ try:
     freecad_d.message = "FreeCAD package is available"
     freecad_d.module = FreeCAD
 except ImportError:
-    freecad_d.message = "sv: FreeCAD package is not available, Solids nodes will not be available"
-    info(freecad_d.message)
     FreeCAD = None
 
 cython_d = sv_dependencies["cython"] = SvDependency("Cython", "https://cython.org/")
@@ -135,8 +171,6 @@ try:
     cython_d.message = "Cython package is available"
     cython_d.module = Cython
 except ImportError:
-    cython_d.message = "sv: Cython package is not available, Enhanched KDTree search will not be available"
-    info(cython_d.message)
     Cython = None
 
 numba_d = sv_dependencies["numba"] = SvDependency("Numba", "https://numba.pydata.org/")
@@ -146,8 +180,6 @@ try:
     numba_d.message = "Numba package is available"
     numba_d.module = numba
 except ImportError:
-    numba_d.message = "sv: Numba package is not available, njit compiled functions will not be available"
-    info(numba_d.message)
     numba = None
 
 pyOpenSubdiv_d = sv_dependencies["pyOpenSubdiv"] = SvDependency("pyOpenSubdiv","https://github.com/GeneralPancakeMSTR/pyOpenSubdivision")
@@ -157,8 +189,6 @@ try:
     pyOpenSubdiv_d.message = "pyOpenSubdiv package is available"
     pyOpenSubdiv_d.module = pyOpenSubdiv
 except ImportError:
-    pyOpenSubdiv_d.message = "sv: pyOpenSubdiv package is not available, the OpenSubdivision node (Catmull-Clark subdivision) will not be available"
-    info(pyOpenSubdiv_d.message)
     pyOpenSubdiv = None 
 
 good_names = [d.package for d in sv_dependencies.values() if d.module is not None and d.package is not None]

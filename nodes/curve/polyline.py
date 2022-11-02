@@ -8,7 +8,7 @@ from sverchok.utils.geom import LinearSpline, CubicSpline
 from sverchok.utils.curve.primitives import SvLine
 from sverchok.utils.curve import SvSplineCurve
 
-class SvPolylineNode(bpy.types.Node, SverchCustomTreeNode):
+class SvPolylineNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Polyline
     Tooltip: Generate segments of straight lines to connect several points

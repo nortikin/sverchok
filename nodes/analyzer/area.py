@@ -30,7 +30,7 @@ from sverchok.utils.modules.polygon_utils import areas_from_polygons
 
 
 
-class SvAreaNode(bpy.types.Node, SverchCustomTreeNode):
+class SvAreaNode(SverchCustomTreeNode, bpy.types.Node):
     ''' Area '''
     bl_idname = 'SvAreaNode'
     bl_label = 'Area'

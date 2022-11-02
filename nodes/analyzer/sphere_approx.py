@@ -25,7 +25,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode)
 from sverchok.utils.geom import spherical_approximation
 
-class SvSphereApproxNode(bpy.types.Node, SverchCustomTreeNode):
+class SvSphereApproxNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Sphere Fit
     Tooltip: Fit a sphere through vertices

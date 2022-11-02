@@ -24,7 +24,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, changable_sockets, levels_of_list_or_np
 
 
-class ListFLNode(bpy.types.Node, SverchCustomTreeNode):
+class ListFLNode(SverchCustomTreeNode, bpy.types.Node):
     '''
     Triggers: Split First and Last items
     Tooltip: Get first and last elements of a list, also available the middle.\n\t[[0,1,2,3,4]]:\n\t\tfirst: [[0]]\n\t\tlast: [[4]]\n\t\tmiddle: [[1,2,3]]

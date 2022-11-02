@@ -118,7 +118,7 @@ def join_meshes(*, vertices: List[SvVerts], edges: List[SvEdges], polygons: List
     return joined_vertices, joined_edges, joined_polygons
 
 
-class SvMatrixApplyJoinNode(bpy.types.Node, SverchCustomTreeNode):
+class SvMatrixApplyJoinNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: matrix mesh join
     Tooltip: Multiply vectors on matrices with several objects in output, processes edges & faces too. It can also join the output meshes in to a single one\n\t-\n\tIn: Verts, Edges, Faces, Matrices\n\tParam: Join On/[Off]\n\tOut:Verts, Edges, Faces

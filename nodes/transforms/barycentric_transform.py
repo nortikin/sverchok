@@ -100,7 +100,7 @@ def compute_barycentric_transform_mu(params, result):
 
 
 class SvBarycentricTransformNode(
-        ModifierLiteNode, bpy.types.Node, SverchCustomTreeNode):
+        ModifierLiteNode, SverchCustomTreeNode, bpy.types.Node):
     '''
     Triggers: Adaptive Triangles
     Tooltip: Adaptive Triangles. Barycentric transformation between triangles.

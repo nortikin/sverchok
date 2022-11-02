@@ -184,7 +184,7 @@ class SvPointSharpToggle(bpy.types.Operator):
         updateNode(node, context)
         return {'FINISHED'}
 
-class SvFormulaInterpolateNode(bpy.types.Node, SverchCustomTreeNode):
+class SvFormulaInterpolateNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: formula interpolate
     Tooltip: Interpolate between control points specified by formulas

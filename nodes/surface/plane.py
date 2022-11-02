@@ -9,7 +9,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 from sverchok.utils.surface import SvPlane
 
-class SvPlaneSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
+class SvPlaneSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Plane
     Tooltip: Generate planar surface

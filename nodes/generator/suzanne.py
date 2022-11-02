@@ -26,7 +26,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 
-class SvSuzanneNode(bpy.types.Node, SverchCustomTreeNode):
+class SvSuzanneNode(SverchCustomTreeNode, bpy.types.Node):
     """Lowpoly Suzanne model. No params"""
 
     bl_idname = "SvSuzanneNode"

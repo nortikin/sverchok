@@ -33,7 +33,7 @@ def var_func(position, distortion, _noise_type1, _noise_type2):
 avail_noise = [(t[0], t[0].title(), t[0].title(), '', t[1]) for t in noise_options]
 
 
-class SvLacunarityNode(bpy.types.Node, SverchCustomTreeNode):
+class SvLacunarityNode(SverchCustomTreeNode, bpy.types.Node):
     '''Variable lacunarity node.
     In: Vertices, Seed, Distortion
     Params: Type1, Type2 Blender/[Perlin]/Voronoi/Cellnoise

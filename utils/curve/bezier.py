@@ -9,16 +9,67 @@ import numpy as np
 
 from sverchok.data_structure import zip_long_repeat
 from sverchok.utils.math import binomial
-from sverchok.utils.geom import Spline, bounding_box
+from sverchok.utils.geom import Spline, bounding_box, are_points_coplanar, get_common_plane, PlaneEquation, LineEquation
 from sverchok.utils.nurbs_common import SvNurbsMaths
-from sverchok.utils.curve.core import SvCurve, UnsupportedCurveTypeException
+from sverchok.utils.curve.core import SvCurve, UnsupportedCurveTypeException, calc_taylor_nurbs_matrices
 from sverchok.utils.curve.algorithms import concatenate_curves
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.nurbs_common import elevate_bezier_degree
 
 # Pure-python (+ numpy) Bezier curves implementation
 
-class SvBezierCurve(SvCurve):
+class SvBezierSplitMixin:
+    def de_casteljau_points(self, t):
+        ndim = 3
+        p = self.get_degree()
+        n = p+1
+        dpts = np.zeros((n, n, ndim))
+        dpts[:] = self.get_control_points()
+        for j in range(1, n):
+            for k in range(n - j):
+                dpts[j,k] = dpts[j-1, k] * (1 - t) + dpts[j-1, k+1] * t
+        return dpts
+    
+#     DeCasteljau variant
+#     def split_at(self, t):
+#         dpts = self.de_casteljau_points(t)
+#         cpts1 = dpts[:,0]
+#         cpts2 = dpts[-1,:]
+#         return SvBezierCurve.from_control_points(cpts1), SvBezierCurve.from_control_points(cpts2)
+
+#   def cut_segment(self, new_t_min, new_t_max, rescale=False):
+#         if new_t_min >= 0:
+#             c1, c2 = self.split_at(new_t_min)
+#         else:
+#             c2 = self
+#         if new_t_max <= 1.0:
+#             t1 = (new_t_max - new_t_min) / (1.0 - new_t_min)
+#             c3, c4 = c2.split_at(t1)
+#         else:
+#             c3 = c2
+#         return c3
+
+    def cut_segment(self, new_t_min, new_t_max, rescale=False):
+        ndim = 3
+        p = self.get_degree()
+        cpts = self.get_control_points()
+
+        matrices = calc_taylor_nurbs_matrices(p, u_bounds=(new_t_min, new_t_max), calc_M=True, calc_R=True, calc_M1=True, calc_R1=True)
+        M = matrices['M']
+        R1 = matrices['R1']
+        M1 = matrices['M1']
+
+        MR1M = M1 @ R1 @ M
+
+        new_cpts = MR1M @ cpts
+        return SvBezierCurve(new_cpts)
+
+    def split_at(self, t):
+        segment1 = self.cut_segment(0.0, t)
+        segment2 = self.cut_segment(t, 1.0)
+        return segment1, segment2
+
+class SvBezierCurve(SvCurve, SvBezierSplitMixin):
     """
     Bezier curve of arbitrary degree.
     """
@@ -27,6 +78,13 @@ class SvBezierCurve(SvCurve):
         self.tangent_delta = 0.001
         n = self.degree = len(points) - 1
         self.__description__ = "Bezier[{}]".format(n)
+
+    @classmethod
+    def from_control_points(cls, points):
+        if len(points) == 4:
+            return SvCubicBezierCurve(points[0], points[1], points[2], points[3])
+        else:
+            return SvBezierCurve(points)
 
     @classmethod
     def from_points_and_tangents(cls, p0, t0, t1, p1):
@@ -150,6 +208,24 @@ class SvBezierCurve(SvCurve):
             controls.append(control)
             #print(control)
         return SvBezierCurve(controls)
+    
+    def is_line(self, tolerance=0.001):
+        cpts = self.get_control_points()
+        begin, end = cpts[0], cpts[-1]
+        # direction from first to last point of the curve
+        direction = end - begin
+        if np.linalg.norm(direction) < tolerance:
+            return True
+        line = LineEquation.from_direction_and_point(direction, begin)
+        distances = line.distance_to_points(cpts[1:-1])
+        # Technically, this means that all control points lie
+        # inside the cylinder, defined as "distance from line < tolerance";
+        # As a consequence, the convex hull of control points lie in the
+        # same cylinder; and the curve lies in that convex hull.
+        return (distances < tolerance).all()
+
+    def get_end_points(self):
+        return self.points[0], self.points[-1]
 
     @classmethod
     def coefficient(cls, n, k, ts):
@@ -281,6 +357,12 @@ class SvBezierCurve(SvCurve):
     def is_rational(self):
         return False
 
+    def is_planar(self, tolerance=1e-6):
+        return are_points_coplanar(self.points, tolerance)
+
+    def get_plane(self, tolerance=1e-6):
+        return get_common_plane(self.points, tolerance)
+
     def get_control_points(self):
         return self.points
 
@@ -334,11 +416,6 @@ class SvBezierCurve(SvCurve):
             return SvBezierCurve(points)
         return self.to_nurbs().lerp_to(curve2, coefficient)
     
-    def split_at(self, t):
-        return self.to_nurbs().split_at(t)
-
-    def cut_segment(self, new_t_min, new_t_max, rescale=False):
-        return self.to_nurbs().cut_segment(new_t_min, new_t_max, rescale=rescale)
 
     def to_bezier(self):
         return self
@@ -349,7 +426,7 @@ class SvBezierCurve(SvCurve):
     def reverse(self):
         return SvBezierCurve(self.points[::-1])
 
-class SvCubicBezierCurve(SvCurve):
+class SvCubicBezierCurve(SvCurve, SvBezierSplitMixin):
     __description__ = "Bezier[3*]"
     def __init__(self, p0, p1, p2, p3):
         self.p0 = np.array(p0)
@@ -440,6 +517,9 @@ class SvCubicBezierCurve(SvCurve):
     def is_rational(self):
         return False
 
+    def get_end_points(self):
+        return self.p0, self.p3
+
     def get_control_points(self):
         return np.array([self.p0, self.p1, self.p2, self.p3])
 
@@ -499,12 +579,31 @@ class SvCubicBezierCurve(SvCurve):
             p4 = (1.0 - coefficient) * self.p4 + coefficient * curve2.p4
             return SvCubicBezierCurve(p1, p2, p3, p4)
         return self.to_nurbs().lerp_to(curve2, coefficient)
-    
-    def split_at(self, t):
-        return self.to_nurbs().split_at(t)
 
-    def cut_segment(self, new_t_min, new_t_max, rescale=False):
-        return self.to_nurbs().cut_segment(new_t_min, new_t_max, rescale=rescale)
+    def is_line(self, tolerance=0.001):
+        begin, end = self.p0, self.p3
+        # direction from first to last point of the curve
+        direction = end - begin
+        if np.linalg.norm(direction) < tolerance:
+            return True
+        line = LineEquation.from_direction_and_point(direction, begin)
+        distances = line.distance_to_points([self.p1, self.p2])
+        # Technically, this means that all control points lie
+        # inside the cylinder, defined as "distance from line < tolerance";
+        # As a consequence, the convex hull of control points lie in the
+        # same cylinder; and the curve lies in that convex hull.
+        return (distances < tolerance).all()
+
+    def is_planar(self, tolerance=1e-6):
+        plane = PlaneEquation.from_three_points(self.p0, self.p1, self.p2)
+        return plane.distance_to_point(self.p3) < tolerance
+
+    def get_plane(self, tolerance=1e-6):
+        plane = PlaneEquation.from_three_points(self.p0, self.p1, self.p2)
+        if plane.distance_to_point(self.p3) < tolerance:
+            return plane
+        else:
+            return None
 
     def to_bezier(self):
         return self

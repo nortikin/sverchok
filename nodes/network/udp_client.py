@@ -25,7 +25,7 @@ from sverchok.utils.profile import profile
 from sverchok.data_structure import updateNode
 
 
-class UdpClientNode(bpy.types.Node, SverchCustomTreeNode):
+class UdpClientNode(SverchCustomTreeNode, bpy.types.Node):
 
     bl_idname = 'UdpClientNode'
     bl_label = 'UDP Client'

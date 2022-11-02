@@ -63,7 +63,8 @@ class KnotvectorDict(object):
                         found_knot = k
                         break
         if found_idx is not None:
-            self.multiplicities[found_idx] = (curve_idx, knot, multiplicity)
+            m = self.multiplicities[found_idx][2]
+            self.multiplicities[found_idx] = (curve_idx, knot, max(m, multiplicity))
             self.skip_insertions[curve_idx].append(found_knot)
         else:
             self.multiplicities.append((curve_idx, knot, multiplicity))
@@ -92,6 +93,12 @@ class KnotvectorDict(object):
 def unify_curves(curves, method='UNIFY', accuracy=6):
     tolerance = 10**(-accuracy)
     curves = [curve.reparametrize(0.0, 1.0) for curve in curves]
+    kvs = [curve.get_knotvector() for curve in curves]
+    lens = [len(kv) for kv in kvs]
+    if all(l == lens[0] for l in lens):
+        diffs = np.array([kv - kvs[0] for kv in kvs])
+        if abs(diffs).max() < tolerance:
+            return curves
 
     if method == 'UNIFY':
         dst_knots = KnotvectorDict(accuracy)
@@ -100,6 +107,7 @@ def unify_curves(curves, method='UNIFY', accuracy=6):
             #print(f"Curve #{i}: degree={curve.get_degree()}, cpts={len(curve.get_control_points())}, {m}")
             for u, count in m:
                 dst_knots.update(i, u, count)
+        #print("Dst", dst_knots)
 
         result = []
 #     for i, curve1 in enumerate(curves):
@@ -147,56 +155,8 @@ def unify_curves(curves, method='UNIFY', accuracy=6):
         result = [curve.copy(knotvector = knotvector_u) for curve in curves]
         return result
 
-def interpolate_nurbs_curve(cls, degree, points, metric='DISTANCE', tknots=None):
-    n = len(points)
-    if points.ndim != 2:
-        raise Exception(f"Array of points was expected, but got {points.shape}: {points}")
-    ndim = points.shape[1] # 3 or 4
-    if ndim not in {3,4}:
-        raise Exception(f"Only 3D and 4D points are supported, but ndim={ndim}")
-    #points3d = points[:,:3]
-    #print("pts:", points)
-    if tknots is None:
-        tknots = Spline.create_knots(points, metric=metric) # In 3D or in 4D, in general?
-    knotvector = sv_knotvector.from_tknots(degree, tknots)
-    functions = SvNurbsBasisFunctions(knotvector)
-    coeffs_by_row = [functions.function(idx, degree)(tknots) for idx in range(n)]
-    A = np.zeros((ndim*n, ndim*n))
-    for equation_idx, t in enumerate(tknots):
-        for unknown_idx in range(n):
-            coeff = coeffs_by_row[unknown_idx][equation_idx]
-            row = ndim*equation_idx
-            col = ndim*unknown_idx
-            for d in range(ndim):
-                A[row+d, col+d] = coeff
-    B = np.zeros((ndim*n,1))
-    for point_idx, point in enumerate(points):
-        row = ndim*point_idx
-        B[row:row+ndim] = point[:,np.newaxis]
-
-    x = np.linalg.solve(A, B)
-
-    control_points = []
-    for i in range(n):
-        row = i*ndim
-        control = x[row:row+ndim,0].T
-        control_points.append(control)
-    control_points = np.array(control_points)
-    if ndim == 3:
-        weights = np.ones((n,))
-    else: # 4
-        control_points, weights = from_homogenous(control_points)
-
-    if type(cls) == type:
-        return cls.build(cls.get_nurbs_implementation(),
-                    degree, knotvector,
-                    control_points, weights)
-    elif isinstance(cls, str):
-        return SvNurbsMaths.build_curve(cls,
-                    degree, knotvector,
-                    control_points, weights)
-    else:
-        raise TypeError(f"Unsupported type of `cls` parameter: {type(cls)}")
+def interpolate_nurbs_curve(cls, degree, points, metric='DISTANCE', tknots=None, **kwargs):
+    return SvNurbsMaths.interpolate_curve(cls, degree, points, metric=metric, tknots=tknots, **kwargs)
 
 def concatenate_nurbs_curves(curves, tolerance=1e-6):
     if not curves:
@@ -397,10 +357,11 @@ def intersect_nurbs_curves(curve1, curve2, method='SLSQP', numeric_precision=0.0
         t1_min, t1_max = c1_bounds
         t2_min, t2_max = c2_bounds
 
-        #logger.debug(f"check: [{t1_min} - {t1_max}] x [{t2_min} - {t2_max}]")
 
         bbox1 = curve1.get_bounding_box().increase(bbox_tolerance)
         bbox2 = curve2.get_bounding_box().increase(bbox_tolerance)
+
+        #logger.debug(f"check: [{t1_min} - {t1_max}] x [{t2_min} - {t2_max}], bbox1: {bbox1.size()}, bbox2: {bbox2.size()}")
         if not bbox1.intersects(bbox2):
             return []
 

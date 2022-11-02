@@ -26,7 +26,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, list_match_modes, list_match_func
 from sverchok.utils.geom import interpolate_quadratic_bezier
 
-class SvQuadraticSplineNode(bpy.types.Node, SverchCustomTreeNode):
+class SvQuadraticSplineNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Bezier Quadratic Curve Spline
     Tooltip: Generate quadratic Bezier curve by two end points and one control point. [default]\n\tNum Verts: [10]\n\tKnot1\n\tKnot2\n\tHandle

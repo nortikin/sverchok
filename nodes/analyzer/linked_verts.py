@@ -79,7 +79,7 @@ def calc_connexions(meshes, gates, result):
     return result
 
 
-class SvLinkedVertsNode(bpy.types.Node, SverchCustomTreeNode):
+class SvLinkedVertsNode(SverchCustomTreeNode, bpy.types.Node):
     '''
     Triggers: Connected Vertices
     Tooltip: Get the vertices connected to input vertices

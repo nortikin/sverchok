@@ -161,7 +161,7 @@ def section(cut_me_vertices, cut_me_edges, mx, pp, pno, FILL=False, TRI=True):
         return False
 
 
-class CrossSectionNode(ModifierLiteNode, bpy.types.Node, SverchCustomTreeNode):
+class CrossSectionNode(ModifierLiteNode, SverchCustomTreeNode, bpy.types.Node):
     '''Plane Intersection'''
     bl_idname = 'CrossSectionNode'
     bl_label = 'Cross Section'

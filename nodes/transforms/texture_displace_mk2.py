@@ -40,7 +40,7 @@ mapper_funcs = {
 }
 
 
-class SvDisplaceNodeMk2(bpy.types.Node, SverchCustomTreeNode):
+class SvDisplaceNodeMk2(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Add texture to verts
     Tooltip: Affect input verts/mesh with a scene texture. Mimics Blender Displace modifier
@@ -70,13 +70,13 @@ class SvDisplaceNodeMk2(bpy.types.Node, SverchCustomTreeNode):
 
     def change_mode(self, context):
         inputs = self.inputs
-        if self.tex_coord_type == 'Texture Matrix':
+        if self.tex_coord_type == 'Texture_Matrix':
             if 'Texture Matrix' not in inputs:
                 if 'UV coords' in inputs:
                     inputs[4].hide_safe = False
                 inputs[4].replace_socket('SvMatrixSocket', 'Texture Matrix')
 
-        elif self.tex_coord_type == 'Mesh Matrix':
+        elif self.tex_coord_type == 'Mesh_Matrix':
             if 'Mesh Matrix' not in inputs:
                 if 'UV coords' in inputs:
                     inputs[4].hide_safe = False

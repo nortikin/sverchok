@@ -21,7 +21,7 @@ from sverchok.utils.curve.nurbs_algorithms import (
             move_curve_point_by_moving_control_points, TANGENT_PRESERVE,
             move_curve_point_by_inserting_knot)
 
-class SvNurbsCurveMovePointNode(bpy.types.Node, SverchCustomTreeNode):
+class SvNurbsCurveMovePointNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Move NURBS curve point
     Tooltip: Adjust NURBS curve to move it's point to another location

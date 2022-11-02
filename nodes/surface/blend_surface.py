@@ -15,7 +15,7 @@ from sverchok.utils.curve.algorithms import reverse_curve
 from sverchok.utils.surface import SvSurface
 from sverchok.utils.surface.algorithms import SvBlendSurface
 
-class SvBlendSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
+class SvBlendSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Blend / Fillet Surface
     Tooltip: Generate additional interface surface to blend two surfaces smoothly

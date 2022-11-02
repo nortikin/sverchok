@@ -29,7 +29,7 @@ centeringItems = [("F1", "F1", ""), ("C", "C", ""), ("F2", "F2", "")]
 modeItems = [("AB", "a b", ""), ("AE", "a e", ""), ("AC", "a c", "")]
 
 
-class SvEllipseNode(bpy.types.Node, SverchCustomTreeNode):
+class SvEllipseNode(SverchCustomTreeNode, bpy.types.Node):
     ''' Ellipse '''
     bl_idname = 'SvEllipseNode'
     bl_label = 'Ellipse'

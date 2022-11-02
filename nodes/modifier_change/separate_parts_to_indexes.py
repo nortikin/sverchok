@@ -104,7 +104,7 @@ def mark_verts(bm_verts, v_layer, by_edges=False, e_layer=None, by_faces=False, 
                 break
 
 
-class SvSeparatePartsToIndexes(bpy.types.Node, SverchCustomTreeNode):
+class SvSeparatePartsToIndexes(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: separate index mask
 

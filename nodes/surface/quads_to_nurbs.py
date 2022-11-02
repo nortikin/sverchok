@@ -6,18 +6,17 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, fullList, ensure_nesting_level
-from sverchok.utils.logging import info, exception
+from sverchok.data_structure import updateNode, zip_long_repeat, fullList
 from sverchok.utils.sv_mesh_utils import polygons_to_edges
-from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, edge_data_from_bmesh_edges
+from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.utils.geom import PlaneEquation, center
 from sverchok.utils.nurbs_common import SvNurbsMaths
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.surface.nurbs import SvNurbsSurface
-from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.dependencies import geomdl, FreeCAD
 
-class SvExQuadsToNurbsNode(bpy.types.Node, SverchCustomTreeNode):
+
+class SvExQuadsToNurbsNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Quad to NURBS
     Tooltip: Make a smooth NURBS surface patch from each quad face

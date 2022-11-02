@@ -14,7 +14,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 from sverchok.utils.curve.biarc import SvBiArc
 
-class SvBiArcNode(bpy.types.Node, SverchCustomTreeNode):
+class SvBiArcNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Bi Arc
     Tooltip: Generate a curve made of two circular arcs

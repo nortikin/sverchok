@@ -117,7 +117,7 @@ def compute_distances_np(plane, pts, result, gates, tolerance):
             r.append(local_result[i].tolist() if not gates[6] else local_result[i])
 
 
-class SvDistancePointPlaneNode(bpy.types.Node, SverchCustomTreeNode):
+class SvDistancePointPlaneNode(SverchCustomTreeNode, bpy.types.Node):
     '''
     Triggers: Perpendicular to triangle
     Tooltip: Distance Point to plane and closest point in the plane

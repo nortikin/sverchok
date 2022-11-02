@@ -28,7 +28,7 @@ from sverchok.data_structure import (updateNode, second_as_first_cycle as safc)
 # pylint: disable=w0613
 
 
-class SvSetDataObjectNodeMK2(bpy.types.Node, SverchCustomTreeNode):
+class SvSetDataObjectNodeMK2(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: obj id set data
     Tooltip: Set Object Properties

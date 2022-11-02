@@ -12,7 +12,7 @@ from sverchok.data_structure import updateNode
 from sverchok.utils.nodes_mixins.show_3d_properties import Show3DProperties
 
 
-class SvCustomSwitcher(Show3DProperties, bpy.types.Node, SverchCustomTreeNode):
+class SvCustomSwitcher(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: custom switcher
     Convert input to buttons

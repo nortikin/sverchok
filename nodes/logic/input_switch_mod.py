@@ -43,7 +43,7 @@ def get_indices_for_groupnum(node, group_lookup):
     return list(range(idx, idx + node.num_items_per_group))
 
 
-class SvInputSwitchNodeMOD(bpy.types.Node, SverchCustomTreeNode):
+class SvInputSwitchNodeMOD(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Sets, Switch, Select
     Tooltip: Switch among multiple input sets.\n\tInSelected (int), Alpha_N, Beta_N,... Omega_N\n\tParams: Num Socket Per Set [2]\n\tOut: Data 0, Data 1,... Data N

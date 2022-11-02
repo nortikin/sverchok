@@ -1,7 +1,8 @@
 Merge Mesh 2d
 =============
 
-.. image:: https://user-images.githubusercontent.com/28003269/68468490-91bda780-0231-11ea-8c7d-c37c6d4f372f.png
+.. image:: https://user-images.githubusercontent.com/14288520/198872809-790f46b2-31dc-4e28-8e30-36f0b3f75f79.png
+  :target: https://user-images.githubusercontent.com/14288520/198872809-790f46b2-31dc-4e28-8e30-36f0b3f75f79.png
 
 Functionality
 -------------
@@ -21,6 +22,9 @@ Also the node can create holes in polygons.
 The algorithm will split polygon with holes into some pieces so holes lay on boundary of new pieces.
 
 The node can use information related with faces of initial meshes for assign them to new mesh.
+
+.. image:: https://user-images.githubusercontent.com/14288520/198845493-94f3bdb3-391a-4689-974e-9e453908b535.png
+  :target: https://user-images.githubusercontent.com/14288520/198845493-94f3bdb3-391a-4689-974e-9e453908b535.png
 
 Performance
 -----------
@@ -57,6 +61,9 @@ Outputs
 - **Mask B** - list of 0 and 1 related with `faces` socket output where 1 means that face lays inside mesh B
 - **Face Index A** (hidden by default) - list of indexes with range from -1 to infinite related with `faces` socket output where index points to face from mesh A
 - **Face Index B** (hidden by default) - list of indexes with range from -1 to infinite related with `faces` socket output where index points to face from mesh B
+
+.. image:: https://user-images.githubusercontent.com/14288520/198845254-c9f95b1f-f0cb-487d-b1d3-1431003e3bf1.png
+  :target: https://user-images.githubusercontent.com/14288520/198845254-c9f95b1f-f0cb-487d-b1d3-1431003e3bf1.png
 
 N panel
 -------

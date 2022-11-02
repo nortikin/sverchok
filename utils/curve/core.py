@@ -5,6 +5,10 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
+"""
+General definition of Sverchok curve classes and basic utilities.
+"""
+
 import numpy as np
 from math import sin, cos, pi, radians, sqrt
 
@@ -46,12 +50,33 @@ class SvCurve(object):
         return "<{} curve>".format(description)
 
     def evaluate(self, t):
+        """
+        Evaluate the curve at one point.
+
+        Args:
+            t: curve parameter value.
+
+        Returns:
+            Curve point - np.array of shape (3,).
+        """
         raise Exception("not implemented!")
 
     def evaluate_array(self, ts):
+        """
+        Evaluate the curve at a series of points.
+
+        Args:
+            ts: curve parameter values. np.array of shape (n,).
+
+        Returns:
+            Curve points - np.array of shape (n,3).
+        """
         raise Exception("not implemented!")
 
     def get_tangent_delta(self, tangent_delta=None):
+        """
+        Utility method to define delta for curve derivatives calculation.
+        """
         if tangent_delta is None:
             if hasattr(self, 'tangent_delta'):
                 h = self.tangent_delta
@@ -62,6 +87,10 @@ class SvCurve(object):
         return h
 
     def calc_length(self, t_min, t_max, resolution = 50):
+        """
+        Calculate the length of curve segment by interpolating that segment
+        with polyline.
+        """
         ts = np.linspace(t_min, t_max, num=resolution)
         vectors = self.evaluate_array(ts)
         dvs = vectors[1:] - vectors[:-1]
@@ -69,12 +98,32 @@ class SvCurve(object):
         return np.sum(lengths)
 
     def tangent(self, t, tangent_delta=None):
+        """
+        Calculate curve tangent vector at one point.
+
+        Args:
+            t: curve parameter value.
+            tangent_delta: delta value for derivative calculation.
+
+        Returns:
+            tangent vector - np.array of shape (3,).
+        """
         v = self.evaluate(t)
         h = self.get_tangent_delta(tangent_delta)
         v_h = self.evaluate(t+h)
         return (v_h - v) / h
 
     def tangent_array(self, ts, tangent_delta=None):
+        """
+        Calculate curve tangent vectors at a series of points.
+
+        Args:
+            ts: curve parameter values - np.array of shape (n,).
+            tangent_delta: delta value for derivative calculation.
+
+        Returns:
+            tangent vectors - np.array of shape (n,3).
+        """
         vs = self.evaluate_array(ts)
         h = self.get_tangent_delta(tangent_delta)
         u_max = self.get_u_bounds()[1]
@@ -271,19 +320,22 @@ class SvCurve(object):
 
     def frame_array(self, ts, on_zero_curvature=ASIS, tangent_delta=None):
         """
-        input:
-            * ts - np.array of shape (n,)
-            * on_zero_curvature - what to do if the curve has zero curvature at one of T values.
+        Calculate curve frames at a series of points.
+
+        Args:
+            ts: np.array of shape (n,)
+            on_zero_curvature: what to do if the curve has zero curvature at one of T values.
               The supported options are:
               * SvCurve.FAIL: raise ZeroCurvatureException
               * SvCurve.RETURN_NONE: return None
               * SvCurve.ASIS: do not perform special check for this case, the
                 algorithm will raise a general LinAlgError exception if it can't calculate the matrix.
 
-        output: tuple:
-            * matrices: np.array of shape (n, 3, 3)
-            * normals: np.array of shape (n, 3)
-            * binormals: np.array of shape (n, 3)
+        Returns:
+            tuple:
+                * matrices: np.array of shape (n, 3, 3)
+                * normals: np.array of shape (n, 3)
+                * binormals: np.array of shape (n, 3)
         """
         h = self.get_tangent_delta(tangent_delta)
         tangents, normals, binormals = self.tangent_normal_binormal_array(ts, tangent_delta=h)
@@ -311,10 +363,15 @@ class SvCurve(object):
 
     def zero_torsion_frame_array(self, ts, tangent_delta=None):
         """
-        input: ts - np.array of shape (n,)
-        output: tuple:
-            * cumulative torsion - np.array of shape (n,) (rotation angles in radians)
-            * matrices - np.array of shape (n, 3, 3)
+        Calculate curve frames with zero integral torsion, at a series of points.
+
+        Args:
+            ts: np.array of shape (n,)
+
+        Returns:
+            tuple:
+                * cumulative torsion - np.array of shape (n,) (rotation angles in radians)
+                * matrices - np.array of shape (n, 3, 3)
         """
         if not hasattr(self, '_torsion_integral'):
             raise Exception("pre_calc_torsion_integral() has to be called first")
@@ -368,14 +425,36 @@ class SvCurve(object):
         return self._torsion_integral.evaluate_cubic(ts)
 
     def get_u_bounds(self):
+        """
+        Obtain curve domain.
+
+        Returns:
+            Tuple: minimum and maximum value of curve's parameter.
+        """
         raise Exception("not implemented!")
 
+    def get_end_points(self):
+        u_min, u_max = self.get_u_bounds()
+        begin = self.evaluate(u_min)
+        end = self.evaluate(u_max)
+        return begin, end
+
+    def is_closed(self, tolerance=1e-6):
+        begin, end = self.get_end_points()
+        return np.linalg.norm(begin - end) < tolerance
+
     def get_degree(self):
+        """
+        Get curve degree, if applicable.
+        """
         raise Exception("`Get Degree' method is not applicable to curve of type `{}'".format(type(self)))
 
     def get_control_points(self):
         """
-        Returns: np.array of shape (n, 3)
+        Get curve control points, if applicable.
+
+        Returns:
+            np.array of shape (n, 3)
         """
         return np.array([])
         #raise Exception("Curve of type type `{}' does not have control points".format(type(self)))
@@ -850,13 +929,13 @@ class SvTaylorCurve(SvCurve):
         p = self.get_degree()
         coeffs = self.get_coefficients()
 
-        M, R = calc_taylor_nurbs_matrices(p, self.get_u_bounds())
-        M1 = np.linalg.inv(M)
-        R1 = np.linalg.inv(R)
+        mr = calc_taylor_nurbs_matrices(p, self.get_u_bounds())
+        M, R = mr['M'], mr['R']
+        RM = R @ M
 
         control_points = np.zeros((p+1, self.ndim))
         for axis in range(self.ndim):
-            control_points[:,axis] = M1 @ R1 @ coeffs[:,axis]
+            control_points[:,axis] = np.linalg.solve(RM, coeffs[:,axis])
 
         return control_points
 
@@ -922,27 +1001,93 @@ class SvTaylorCurve(SvCurve):
         square.u_bounds = self.u_bounds
         return square
 
-def calc_taylor_nurbs_matrices(degree, u_bounds):
-    # Refer to The NURBS Book, 2nd ed., p. 6.6
+_taylor_nurbs_matrix_cache = dict()
+_taylor_nurbs_inverse_matrix_cache = dict()
+
+def calc_taylor_nurbs_matrices(degree, u_bounds=(0.0,1.0), calc_M=True, calc_R=True, calc_M1=False, calc_R1=False):
+    """
+    Calculate two matrices, M and R, such that coefficients
+    of polynomial representation of Bezier curve can be expressed
+    in terms of Bezier control points as
+
+        coeffs[:,axis] = R @ M @ control_points[:,axis]
+
+    Correspondingly, the same matrices can be used to convert
+    polynomial representation of curve into control points of Bezier
+    curve as
+
+        control_points[:,k] = M1 @ R1 @ coeffs[:,axis]
+
+    where M1 is inverse of M and R1 is inverse of R.
+
+    Note that M matrix depends only on degree, and R depends both on
+    degree and u_bounds. M matrix is always lower-triangular matrix.
+    R matrix is upper-triangular matrix. If u_bounds[0] == 0.0, then
+    R is diagonal matrix.
+
+    Refer to The NURBS Book, 2nd ed., p. 6.6
+
+    Args:
+        degree: degree of Bezier curve
+        u_bounds: tuple of (u_min, u_max) - domain of the curve.
+        calc_M: whether to calculate M matrix
+        calc_R: whether to calculate R matrix
+
+    Returns:
+        dictionary with string keys:
+        * 'M': np.array of shape (degree+1, degree+1) - present only if calc_M == True
+        * 'R': np.array of shape (degree+1, degree+1) - present only if calc_R == True
+    """
+
+    global _taylor_nurbs_matrix_cache
+    global _taylor_nurbs_inverse_matrix_cache
 
     p = degree
-    u1, u2 = u_bounds
-    binom = binomial_array(p+1)
 
-    M = np.zeros((p+1, p+1), dtype=np.float64)
-    for k in range(p+1):
-        sign = 1.0
-        for j in range(k, p+1):
-            M[j,k] = sign * binom[p,k] * binom[p-k, j-k]
-            sign = - sign
+    if calc_M1:
+        calc_M = True
+    if calc_R1:
+        calc_R = True
 
-    c = 1.0 / (u2 - u1)
-    d = -u1 / (u2 - u1)
+    if calc_M or calc_R:
+        binom = binomial_array(p+1)
 
-    R = np.zeros((p+1, p+1), dtype=np.float64)
-    for i in range(p+1):
-        for j in range(i, p+1):
-            R[i,j] = binom[j, i] * c**i * d**(j-i)
+    result = dict()
+    if calc_M:
+        if p in _taylor_nurbs_matrix_cache:
+            M = result['M'] = _taylor_nurbs_matrix_cache[p]
+        else:
+            M = np.zeros((p+1, p+1), dtype=np.float64)
+            for k in range(p+1):
+                sign = 1.0
+                for j in range(k, p+1):
+                    M[j,k] = sign * binom[p,k] * binom[p-k, j-k]
+                    sign = - sign
+            result['M'] = M
+            _taylor_nurbs_matrix_cache[p] = M
+        if calc_M1:
+            if p in _taylor_nurbs_inverse_matrix_cache:
+                result['M1'] = _taylor_nurbs_inverse_matrix_cache[p]
+            else:
+                M1 = np.linalg.inv(M)
+                result['M1'] = M1
+                _taylor_nurbs_inverse_matrix_cache[p] = M1
 
-    return M, R
+    if calc_R:
+        u1, u2 = u_bounds
+        c = 1.0 / (u2 - u1)
+        d = -u1 / (u2 - u1)
+
+        R = np.zeros((p+1, p+1), dtype=np.float64)
+        c_i = 1.0
+        for i in range(p+1):
+            for j in range(i, p+1):
+                R[i,j] = binom[j, i] * c_i * d**(j-i)
+            c_i *= c
+        result['R'] = R
+
+        if calc_R1:
+            result['R1'] = np.linalg.inv(R)
+
+    return result
 

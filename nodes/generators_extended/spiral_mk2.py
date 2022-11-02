@@ -436,7 +436,7 @@ def normalize_spiral(verts, normalize_eR, eR, iR, scale):
     return verts
 
 
-class SvSpiralNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
+class SvSpiralNodeMK2(SverchCustomTreeNode, bpy.types.Node, SvAngleHelper):
     """
     Triggers: Spiral
     Tooltip: Generate spiral curves.\n\tIn: Radiuses, Exponent, Turns/Resolution, Scale, Height, Phase, Arms\n\tOut: Vertices, Edges

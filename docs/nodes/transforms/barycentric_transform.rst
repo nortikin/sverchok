@@ -1,6 +1,9 @@
 Barycentric Transform
 =====================
 
+.. image:: https://user-images.githubusercontent.com/14288520/191480063-8fa7e15d-1638-4c88-be8c-fcf9e5018e35.png
+  :target: https://user-images.githubusercontent.com/14288520/191480063-8fa7e15d-1638-4c88-be8c-fcf9e5018e35.png
+
 Functionality
 -------------
 
@@ -49,18 +52,44 @@ Example of usage
 
 The node can be used to place geometry over triangular faces.
 
-.. image:: https://github.com/vicdoval/sverchok/raw/docs_images/images_for_docs/transforms/barycentric_transform/barycentric_transform_sverchok_blender_adaptative_tris.png
-  :alt: barycentric_transform/barycentric_transform_sverchok_blender_adaptative_tris.png
+.. image:: https://user-images.githubusercontent.com/14288520/191495780-406666a4-bc4d-4621-9620-fdff0ea1c574.png
+  :target: https://user-images.githubusercontent.com/14288520/191495780-406666a4-bc4d-4621-9620-fdff0ea1c574.png
 
+* Generator-> :doc:`Cricket </nodes/generator/cricket>`
+* Generator-> :doc:`Circle </nodes/generator/circle>`
+* Generator-> :doc:`IcoSphere </nodes/generator/icosphere>`
+* Transform-> :doc:`Rotate </nodes/transforms/rotate_mk3>`
+* Transform-> :doc:`Move </nodes/transforms/move_mk3>`
+* Modifier->Modifier Change-> :doc:`Polygon Boom </nodes/modifier_change/polygons_boom>`
+* Vector-> :doc:`Vector In </nodes/vector/vector_in>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+
+---------
 
 The List Match option can offer different output combinations, in this case Cyclic is used
 
-.. image:: https://github.com/vicdoval/sverchok/raw/docs_images/images_for_docs/transforms/barycentric_transform/barycentric_transform_sverchok_blender_list_match.png
-  :alt: barycentric_transform_sverchok_blender_list_match.png
+.. image:: https://user-images.githubusercontent.com/14288520/191519778-704fb127-c913-4be2-93c6-d8838d563d7d.png
+  :target: https://user-images.githubusercontent.com/14288520/191519778-704fb127-c913-4be2-93c6-d8838d563d7d.png
 
+* Generator-> :doc:`Circle </nodes/generator/circle>`
+* Generator-> :doc:`IcoSphere </nodes/generator/icosphere>`
+* Number-> :doc:`Number Range </nodes/number/number_range>`
+* Modifier->Modifier Change-> :doc:`Polygon Boom </nodes/modifier_change/polygons_boom>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+* Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
+
+---------
 
 Custom triangular Tessellation in this case Cyclic is used to alternate between the input geometry
 
-.. image:: https://github.com/vicdoval/sverchok/raw/docs_images/images_for_docs/transforms/barycentric_transform/barycentric_transform_sverchok_blender_triangle_tesselation.png
-  :alt: barycentric_transform_sverchok_blender_list_match.png
+.. image:: https://user-images.githubusercontent.com/14288520/191517586-499375dd-1dad-4fa0-9a65-dc622f7ad7a5.png
+  :target: https://user-images.githubusercontent.com/14288520/191517586-499375dd-1dad-4fa0-9a65-dc622f7ad7a5.png
 
+* Generator-> :doc:`Circle </nodes/generator/circle>`
+* Generator->Generator Extended-> :doc:`Polygon Grid </nodes/generators_extended/polygon_grid>`
+* Transform-> :doc:`Rotate </nodes/transforms/rotate_mk3>`
+* Modifier->Modifier Change-> :doc:`Polygon Boom </nodes/modifier_change/polygons_boom>`
+* Number-> :doc:`List Input </nodes/number/list_input>`
+* Vector-> :doc:`Vector In </nodes/vector/vector_in>`
+* Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`

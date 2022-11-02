@@ -23,7 +23,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import get_other_socket, updateNode, match_long_repeat
 
 
-class SvSwitchNode(bpy.types.Node, SverchCustomTreeNode):
+class SvSwitchNode(SverchCustomTreeNode, bpy.types.Node):
     ''' Switch Node '''
     bl_idname = 'SvSwitchNode'
     bl_label = 'Switch'

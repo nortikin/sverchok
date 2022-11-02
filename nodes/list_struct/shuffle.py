@@ -25,7 +25,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, changable_sockets
 import numpy as np
 from numpy import random as np_random, ndarray, array
-class ListShuffleNode(bpy.types.Node, SverchCustomTreeNode):
+class ListShuffleNode(SverchCustomTreeNode, bpy.types.Node):
     '''
     Triggers: Randomize list order
     Tooltip: Change randomly the order of the elements in a list\n\t [[0,1,2,3,4,5]] => [[4,2,1,0,5,3]]

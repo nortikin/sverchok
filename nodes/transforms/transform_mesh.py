@@ -474,7 +474,7 @@ def get_item_last(seq, ind):
         return seq[-1]
 
 
-class SvTransformMesh(bpy.types.Node, SverchCustomTreeNode):
+class SvTransformMesh(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: move rotate scale
 

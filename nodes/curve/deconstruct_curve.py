@@ -9,7 +9,7 @@ from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_
 from sverchok.utils.curve import SvCurve
 from sverchok.utils.curve.nurbs import SvNurbsCurve
 
-class SvDeconstructCurveNode(bpy.types.Node, SverchCustomTreeNode):
+class SvDeconstructCurveNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Deconstruct Curve
     Tooltip: Output degree, control points, weights, knot vector of the curve (when they are defined)

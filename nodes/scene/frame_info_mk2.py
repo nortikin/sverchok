@@ -21,7 +21,7 @@ import bpy
 from sverchok.node_tree import SverchCustomTreeNode
 
 
-class SvFrameInfoNodeMK2(bpy.types.Node, SverchCustomTreeNode):
+class SvFrameInfoNodeMK2(SverchCustomTreeNode, bpy.types.Node):
     ''' Frame Info '''
     bl_idname = 'SvFrameInfoNodeMK2'
     bl_label = 'Frame Info'

@@ -23,7 +23,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, changable_sockets, fixed_iter)
 
 
-class ListRepeaterNode(bpy.types.Node, SverchCustomTreeNode):
+class ListRepeaterNode(SverchCustomTreeNode, bpy.types.Node):
     ''' List repeater
     [[0,1,2,3,]] L=1,*3 => [[ [0,1,2,3], [0,1,2,3], [0,1,2,3] ]]
     '''

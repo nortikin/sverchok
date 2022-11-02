@@ -25,7 +25,7 @@ from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, transpose_list
 
-class SvQuadGridSortVertsNode(bpy.types.Node, SverchCustomTreeNode):
+class SvQuadGridSortVertsNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: sort vertices quad grid
     Tooltip: Sort vertices from a quad grid (subdivided plane) mesh, row by row\n\tIn: Vertices, Edges, Faces\n\tParams: Reverse rows On/[Off], Reverse Columns On/[Off], Transpose On/[Off], Join Rows On/[Off]\n\tOut: Vertices, Indexes

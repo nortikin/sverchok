@@ -10,7 +10,7 @@ from sverchok.utils.curve import SvCurve, ZeroCurvatureException
 from sverchok.utils.curve.algorithms import curve_frame_on_surface_array
 from sverchok.utils.surface.core import SvSurface
 
-class SvCurveFrameOnSurfNode(bpy.types.Node, SverchCustomTreeNode):
+class SvCurveFrameOnSurfNode(SverchCustomTreeNode, bpy.types.Node):
         """
         Triggers: Curve Frame on Surface
         Tooltip: Calculate reference frame of the curve in UV space of the surface, which is lying in the surface

@@ -17,7 +17,7 @@ from sverchok.core.sv_custom_exceptions import SvNoDataError
 from sverchok.utils.field.scalar import SvScalarField
 from sverchok.utils.field.probe import field_random_probe
 
-class SvFieldRandomProbeMk3Node(bpy.types.Node, SverchCustomTreeNode):
+class SvFieldRandomProbeMk3Node(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Scalar Field Random Probe
     Tooltip: Generate random points according to scalar field

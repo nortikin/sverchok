@@ -84,7 +84,7 @@ for idx, new_type in enumerate(noise_numpy_types.keys()):
     avail_noise.append((new_type, new_type.title().replace('_', ' '), new_type.title(), '', 100 + idx))
 
 
-class SvNoiseNodeMK3(bpy.types.Node, SverchCustomTreeNode):
+class SvNoiseNodeMK3(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Vector Noise
     Tooltip: Affect input verts with a noise function.\n\tIn: Vertices, Seed, Noise Matrix\n\tParams: Out Type [Scalar]/Vector; Noise Type: Blender/Perlin/Voronoi/CellNoise/Gradient and other\n\tOut: Floats [0.0 to 1.0] / Vectors

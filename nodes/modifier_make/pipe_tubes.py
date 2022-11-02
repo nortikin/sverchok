@@ -25,7 +25,7 @@ from math import sin, cos, radians, sqrt
 from sverchok.utils.nodes_mixins.sockets_config import EdgeGeneratorLiteNode
 
 
-class SvPipeNode(EdgeGeneratorLiteNode, bpy.types.Node, SverchCustomTreeNode):
+class SvPipeNode(EdgeGeneratorLiteNode, SverchCustomTreeNode, bpy.types.Node):
     ''' Pipe from edges '''
     bl_idname = 'SvPipeNode'
     bl_label = 'Pipe'

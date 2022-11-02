@@ -25,7 +25,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, second_as_first_cycle as safc)
 
 
-class SvMeshUVColorNode(bpy.types.Node, SverchCustomTreeNode):
+class SvMeshUVColorNode(SverchCustomTreeNode, bpy.types.Node):
     ''' Find pixel on UV texture from mesh object and change its color'''
     bl_idname = 'SvMeshUVColorNode'
     bl_label = 'Set UV Color'

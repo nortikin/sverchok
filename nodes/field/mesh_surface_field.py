@@ -5,8 +5,6 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
-import numpy as np
-
 import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
@@ -14,21 +12,17 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, get_data_nesting_level, ensure_nesting_level
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.utils.field.rbf import mesh_field
-from sverchok.dependencies import scipy
-from sverchok.utils.dummy_nodes import add_dummy
 from sverchok.utils.math import rbf_functions
 
-if scipy is None:
-    add_dummy('SvMeshSurfaceFieldNode', "Mesh Smoothed Surface Field", 'scipy')
 
-class SvMeshSurfaceFieldNode(bpy.types.Node, SverchCustomTreeNode):
+class SvMeshSurfaceFieldNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Mesh Surface Field
     Tooltip: Generate scalar field, defining a smoothed surface of the mesh
     """
     bl_idname = 'SvMeshSurfaceFieldNode'
     bl_label = 'Mesh Smoothed Surface Field'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_dependencies = {'scipy'}
 
     function : EnumProperty(
             name = "Function",
@@ -122,11 +116,10 @@ class SvMeshSurfaceFieldNode(bpy.types.Node, SverchCustomTreeNode):
 
         self.outputs['Field'].sv_set(fields_out)
 
+
 def register():
-    if scipy is not None:
-        bpy.utils.register_class(SvMeshSurfaceFieldNode)
+    bpy.utils.register_class(SvMeshSurfaceFieldNode)
+
 
 def unregister():
-    if scipy is not None:
-        bpy.utils.unregister_class(SvMeshSurfaceFieldNode)
-
+    bpy.utils.unregister_class(SvMeshSurfaceFieldNode)

@@ -9,7 +9,7 @@ from sverchok.data_structure import updateNode, zip_long_repeat
 from sverchok.utils.surface.algorithms import SvDeformedByFieldSurface, PROJECT, COPROJECT
 from sverchok.utils.surface.nurbs import SvNurbsSurface
 
-class SvApplyFieldToSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
+class SvApplyFieldToSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
         """
         Triggers: Apply field to surface
         Tooltip: Apply vector field to surface

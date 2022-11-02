@@ -51,7 +51,7 @@ def make_line(steps, center, direction, vert_a, vert_b):
     return verts, edges
 
 
-class SvLineNodeMK3(bpy.types.Node, SverchCustomTreeNode):
+class SvLineNodeMK3(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Line, segment.
     Tooltip: Generate line.

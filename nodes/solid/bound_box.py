@@ -11,15 +11,13 @@ from bpy.props import BoolProperty, BoolVectorProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, map_recursive, unzip_dict_recursive
 from sverchok.dependencies import FreeCAD
-from sverchok.utils.dummy_nodes import add_dummy
 
-if FreeCAD is None:
-    add_dummy('SvSolidBoundBoxNode', 'Solid Bounding Box', 'FreeCAD')
-else:
+if FreeCAD is not None:
     from FreeCAD import Base
     import Part
 
-class SvSolidBoundBoxNode(bpy.types.Node, SverchCustomTreeNode):
+
+class SvSolidBoundBoxNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Solid Bound Box
     Tooltip: Calculate bounding box of a Solid object
@@ -28,7 +26,8 @@ class SvSolidBoundBoxNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Solid Bounding Box'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_BOUNDING_BOX'
-    solid_catergory = "Operators"
+    sv_category = "Solid Operators"
+    sv_dependencies = {'FreeCAD'}
 
     def _get_socket(self, axis, key):
         return self.outputs[axis + key]
@@ -119,9 +118,10 @@ class SvSolidBoundBoxNode(bpy.types.Node, SverchCustomTreeNode):
         for key in bboxes:
             self.outputs[key].sv_set(bboxes[key])
 
+
 def register():
     bpy.utils.register_class(SvSolidBoundBoxNode)
 
+
 def unregister():
     bpy.utils.unregister_class(SvSolidBoundBoxNode)
-

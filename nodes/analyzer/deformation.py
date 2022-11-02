@@ -165,7 +165,7 @@ def calc_deformations(meshes, gates, result):
     return result
 
 
-class SvDeformationNode(bpy.types.Node, SverchCustomTreeNode):
+class SvDeformationNode(SverchCustomTreeNode, bpy.types.Node):
     '''
     Triggers: Measure deformation
     Tooltip: Deformation between to states, edge elong a area variation

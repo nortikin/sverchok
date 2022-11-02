@@ -24,7 +24,7 @@ from sverchok.data_structure import updateNode
 from sverchok.utils.sv_recursive import sv_recursive_transformations
 
 
-class SvMoveNodeMK2(bpy.types.Node, SverchCustomTreeNode):
+class SvMoveNodeMK2(SverchCustomTreeNode, bpy.types.Node):
     ''' Move vectors MK2 '''
     bl_idname = 'SvMoveNodeMK2'
     bl_label = 'Move'

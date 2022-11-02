@@ -21,7 +21,7 @@ from bpy.props import BoolProperty, EnumProperty, IntProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat, calc_mask
 
-class SvCalcMaskNode(bpy.types.Node, SverchCustomTreeNode):
+class SvCalcMaskNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Calculate Mask
     Tooltip: Calculate mask from two sets of objects\n\tSubset: [[0,1,2,3,0]], Set: [[0,5,1,4]] (lvl:0) => [[True, False, True, False]]

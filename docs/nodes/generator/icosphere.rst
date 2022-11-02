@@ -4,13 +4,13 @@ IcoSphere Node
 .. image:: https://user-images.githubusercontent.com/14288520/188708444-303645fa-7260-4326-94f7-0eb251740aa1.png
   :target: https://user-images.githubusercontent.com/14288520/188708444-303645fa-7260-4326-94f7-0eb251740aa1.png
 
-.. image:: https://user-images.githubusercontent.com/14288520/191254102-557f8ade-e6a9-4473-b86d-05cda5f22096.png
-  :target: https://user-images.githubusercontent.com/14288520/191254102-557f8ade-e6a9-4473-b86d-05cda5f22096.png
-
 Functionality
 -------------
 
 This node creates an IcoSphere primitive. In case of zero subdivisions, it simply produces right icosahedron.
+
+.. image:: https://user-images.githubusercontent.com/14288520/191254102-557f8ade-e6a9-4473-b86d-05cda5f22096.png
+  :target: https://user-images.githubusercontent.com/14288520/191254102-557f8ade-e6a9-4473-b86d-05cda5f22096.png
 
 Inputs
 ------

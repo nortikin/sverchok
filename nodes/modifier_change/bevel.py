@@ -50,7 +50,7 @@ def get_bevel_verts(bm, mask):
     return b_verts
 
 
-class SvBevelNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
+class SvBevelNode(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Bevel, Round, Smooth
     Tooltip: Bevel vertices, edges and faces. Create rounded corners.
@@ -89,7 +89,7 @@ class SvBevelNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
         default=0.5, min=0.0, max=1.0, update=updateNode)
 
     vertexOnly: BoolProperty(
-        name="Vertex mode", description="Only bevel edges, not edges",
+        name="Vertex mode", description="Only bevel vertices, not edges",
         default=False, update=mode_change)
 
     clamp_overlap : BoolProperty(

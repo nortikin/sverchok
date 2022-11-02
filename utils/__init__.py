@@ -132,7 +132,7 @@ utils_modules = [
     "wfc_algorithm", "handle_blender_data", "nodes_mixins.generating_objects", "decorators_compilation",
     "nodes_mixins.show_3d_properties", "modules_inspection", "sv_json_export", "sv_json_import",
     "meshes", "tree_walk", "mesh_functions", 'mesh.inset_faces', 'mesh.extrude_edges', "sv_json_struct",
-    "nodeview_time_graph_drawing", "modules.shader_utils", "modules.FreeCAD_utils", "dummy_nodes",
+    "nodeview_time_graph_drawing", "modules.shader_utils", "modules.FreeCAD_utils",
     "nodes_mixins.loop_nodes",
     # UI text editor ui
     "text_editor_submenu", "text_editor_plugins",
@@ -140,7 +140,7 @@ utils_modules = [
     "sv_IO_pointer_helpers",
     "sv_operator_mixins", "console_print",
     "sv_gist_tools", "sv_IO_panel_tools", "sv_load_archived_blend",
-    "sv_help", "sv_default_macros", "sv_macro_utils", "sv_extra_search", "sv_3dview_tools",
+    "sv_default_macros", "sv_macro_utils", "sv_extra_search", "sv_3dview_tools",
     "sv_update_utils", "sv_obj_helper", "sv_batch_primitives", "sv_idx_viewer28_draw",
     "sv_texture_utils",
     # geom 2d tools

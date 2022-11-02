@@ -7,8 +7,8 @@
 
 
 import bpy
+import sverchok.ui.nodeview_space_menu as sm
 from sverchok.utils.sv_node_utils import frame_adjust
-from sverchok.menu import draw_add_node_operator
 from sverchok.ui.presets import node_supports_presets, apply_default_preset
 from sverchok.core.sockets import SvCurveSocket, SvSurfaceSocket, SvStringsSocket, SvSolidSocket
 
@@ -23,6 +23,8 @@ common_nodes = [
     ['SvComponentAnalyzerNode'],
     ['---', 'NodeReroute', 'ListLengthNode']
 ]
+
+common_nodes = [sm.Separator() if n == '---' else sm.AddNode(n) for ns in common_nodes for n in ns]
 
 
 def connect_idx_viewer(tree, existing_node, new_node):
@@ -291,20 +293,15 @@ class SvNodeviewRClickMenu(bpy.types.Menu):
             col.prop(node, 'shrink')
 
         layout.separator()
-        layout.menu("NODEVIEW_MT_Dynamic_Menu", text='node menu')
+        layout.menu("NODEVIEW_MT_SvCategoryAllCategories", text='node menu')
         # layout.operator("node.duplicate_move")
         self.draw_conveniences(context, node)
 
     def draw_conveniences(self, context, node):
         layout = self.layout
         layout.separator()
-        for nodelist in common_nodes:
-            for named_node in nodelist:
-                if named_node == '---':
-                    layout.separator()
-                else:
-                    draw_add_node_operator(layout, named_node)
-
+        for menu_elem in common_nodes:
+            menu_elem.draw(layout)
 
 
 def register():

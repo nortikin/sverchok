@@ -46,7 +46,7 @@ def move_meshes(params, constant, matching_f):
     return result
 
 
-class SvMoveNodeMk3(bpy.types.Node, SverchCustomTreeNode):
+class SvMoveNodeMk3(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Moves Vertices
     Tooltip: Moves vectors based in another vector set and a multipier factor

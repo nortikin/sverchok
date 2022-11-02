@@ -24,7 +24,7 @@ from sverchok.utils.bvh_tree import bvh_tree_from_polygons
 # zeffii 2017 8 okt
 # airlifted from Kosvor's Raycast nodes..
 
-class SvRaycasterLiteNode(bpy.types.Node, SverchCustomTreeNode):
+class SvRaycasterLiteNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Raycast on Mesh
     Tooltip: Cast rays from arbitrary points on to a mesh a determine hiting location, normal at hitpoint, ray legngth and index of the hitted face.

@@ -27,7 +27,7 @@ from sverchok.utils.geom import Triangle
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.utils.curve import SvEllipse
 
-class SvSteinerEllipseNode(bpy.types.Node, SverchCustomTreeNode):
+class SvSteinerEllipseNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Steiner Ellipse
     Tooltip: Generate Steiner circumellipse or inner ellipse for triangular faces

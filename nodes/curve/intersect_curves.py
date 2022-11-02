@@ -17,15 +17,12 @@ from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.curve.nurbs_algorithms import intersect_nurbs_curves
 from sverchok.utils.curve.freecad import curve_to_freecad
 from sverchok.dependencies import FreeCAD, scipy
-from sverchok.utils.dummy_nodes import add_dummy
-
-if FreeCAD is None and scipy is None:
-    add_dummy('SvIntersectNurbsCurvesNode', "Intersect Curves", 'FreeCAD or scipy')
 
 if FreeCAD is not None:
     from FreeCAD import Base
 
-class SvIntersectNurbsCurvesNode(bpy.types.Node, SverchCustomTreeNode):
+
+class SvIntersectNurbsCurvesNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Intersect Curves
     Tooltip: Find intersection points of two NURBS curves
@@ -34,6 +31,7 @@ class SvIntersectNurbsCurvesNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Intersect NURBS Curves'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_INTERSECT_CURVES'
+    sv_dependencies = {'FreeCAD', 'scipy'}
 
     implementations = []
     if FreeCAD is not None:
@@ -220,11 +218,10 @@ class SvIntersectNurbsCurvesNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs['T1'].sv_set(t1_out)
         self.outputs['T2'].sv_set(t2_out)
 
+
 def register():
-    if FreeCAD is not None or scipy is not None:
-        bpy.utils.register_class(SvIntersectNurbsCurvesNode)
+    bpy.utils.register_class(SvIntersectNurbsCurvesNode)
+
 
 def unregister():
-    if FreeCAD is not None or scipy is not None:
-        bpy.utils.unregister_class(SvIntersectNurbsCurvesNode)
-
+    bpy.utils.unregister_class(SvIntersectNurbsCurvesNode)

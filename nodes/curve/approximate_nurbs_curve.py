@@ -17,15 +17,12 @@ from sverchok.utils.math import supported_metrics, xyz_metrics
 from sverchok.utils.curve.nurbs import SvGeomdlCurve
 from sverchok.utils.curve.splprep import scipy_nurbs_approximate
 from sverchok.dependencies import geomdl, scipy
-from sverchok.utils.dummy_nodes import add_dummy
-
-if geomdl is None and scipy is None:
-    add_dummy('SvApproxNurbsCurveMk2Node', "Approximate NURBS Curve", 'geomdl or scipy')
 
 if geomdl is not None:
     from geomdl import fitting
-    
-class SvApproxNurbsCurveMk2Node(bpy.types.Node, SverchCustomTreeNode):
+
+
+class SvApproxNurbsCurveMk2Node(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: NURBS Curve
     Tooltip: Approximate NURBS Curve
@@ -34,6 +31,7 @@ class SvApproxNurbsCurveMk2Node(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Approximate NURBS Curve'
     bl_icon = 'CURVE_NCURVE'
     sv_icon = 'SV_APPROXIMATE_CURVE'
+    sv_dependencies = {'geomdl', 'scipy'}
 
     degree : IntProperty(
             name = "Degree",
@@ -243,11 +241,10 @@ class SvApproxNurbsCurveMk2Node(bpy.types.Node, SverchCustomTreeNode):
         self.outputs['ControlPoints'].sv_set(points_out)
         self.outputs['Knots'].sv_set(knots_out)
 
+
 def register():
-    if geomdl is not None or scipy is not None:
-        bpy.utils.register_class(SvApproxNurbsCurveMk2Node)
+    bpy.utils.register_class(SvApproxNurbsCurveMk2Node)
+
 
 def unregister():
-    if geomdl is not None or scipy is not None:
-        bpy.utils.unregister_class(SvApproxNurbsCurveMk2Node)
-
+    bpy.utils.unregister_class(SvApproxNurbsCurveMk2Node)

@@ -29,7 +29,7 @@ from bpy.props import (
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import dataCorrect, updateNode
-from sverchok.nodes.object_nodes.getsetprop import assign_data, types
+from sverchok.old_nodes.getsetprop import assign_data
 
 
 class SvNodePickup(bpy.types.Operator):
@@ -48,7 +48,7 @@ class SvNodePickup(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class SvNodeRemoteNode(bpy.types.Node, SverchCustomTreeNode):
+class SvNodeRemoteNode(SverchCustomTreeNode, bpy.types.Node):
 
     bl_idname = 'SvNodeRemoteNode'
     bl_label = 'Node Remote (Control)'

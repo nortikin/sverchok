@@ -13,7 +13,7 @@ from sverchok.data_structure import updateNode
 from sverchok.utils.geom_2d.dissolve_mesh import dissolve_faces
 
 
-class SvDissolveFaces2D(bpy.types.Node, SverchCustomTreeNode):
+class SvDissolveFaces2D(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: dissolve selected by mask input faces
     Tooltip: can't produce disjoint parts

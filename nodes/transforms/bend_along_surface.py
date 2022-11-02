@@ -28,7 +28,7 @@ from sverchok.data_structure import updateNode, match_long_repeat, ensure_nestin
 from sverchok.utils.geom import diameter
 from sverchok.utils.geom import LinearSpline, CubicSpline, Spline2D
 
-class SvBendAlongSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
+class SvBendAlongSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
     '''
     Triggers: Bend Surface
     Tooltip: Bend mesh along surface (2-D spline)

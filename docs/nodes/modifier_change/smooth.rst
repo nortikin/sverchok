@@ -1,6 +1,9 @@
 Smooth Vertices
 ===============
 
+.. image:: https://user-images.githubusercontent.com/14288520/198741043-cb164215-839b-49ab-b926-0189158584ae.png
+  :target: https://user-images.githubusercontent.com/14288520/198741043-cb164215-839b-49ab-b926-0189158584ae.png
+
 Functionality
 -------------
 

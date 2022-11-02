@@ -5,7 +5,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 from sverchok.utils.surface import SvSurface
 
-class SvSurfaceDomainNode(bpy.types.Node, SverchCustomTreeNode):
+class SvSurfaceDomainNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Surface Domain / Range
     Tooltip: Output minimum and maximum values of U / V parameters allowed by the surface

@@ -11,7 +11,7 @@ from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_
 from sverchok.utils.geom import circle_by_three_points
 from sverchok.utils.curve import SvCircle
 
-class SvArc3ptCurveNode(bpy.types.Node, SverchCustomTreeNode):
+class SvArc3ptCurveNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Arc 3pt
     Tooltip: Generate an arc via three points

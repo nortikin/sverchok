@@ -84,7 +84,7 @@ def remove_doubles(vertices, faces, d, face_data=None, find_doubles=False):
     return (verts, edges, faces, face_data_out, doubles)
 
 
-class SvRemoveDoublesNode(bpy.types.Node, SverchCustomTreeNode):
+class SvRemoveDoublesNode(SverchCustomTreeNode, bpy.types.Node):
     '''Remove doubles'''
     bl_idname = 'SvRemoveDoublesNode'
     bl_label = 'Remove Doubles'

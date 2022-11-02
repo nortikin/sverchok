@@ -61,7 +61,7 @@ class SvgText():
         svg += '</text>'
         return svg
 
-class SvSvgTextNode(bpy.types.Node, SverchCustomTreeNode):
+class SvSvgTextNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Text SVG
     Tooltip: Creates SVG text.

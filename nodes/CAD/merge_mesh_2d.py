@@ -14,7 +14,7 @@ from sverchok.utils.geom_2d.merge_mesh import merge_mesh
 from sverchok.utils.nodes_mixins.sockets_config import ModifierLiteNode
 
 
-class SvMergeMesh2D(ModifierLiteNode, bpy.types.Node, SverchCustomTreeNode):
+class SvMergeMesh2D(ModifierLiteNode, SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Merge two 2d meshes
 

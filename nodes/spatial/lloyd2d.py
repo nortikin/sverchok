@@ -13,7 +13,7 @@ from sverchok.data_structure import updateNode, ensure_nesting_level, zip_long_r
 from sverchok.utils.voronoi import lloyd2d
 from sverchok.utils.field.scalar import SvScalarField
 
-class SvLloyd2dNode(bpy.types.Node, SverchCustomTreeNode):
+class SvLloyd2dNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Lloyd 2D
     Tooltip: Redistribute 2D points uniformly by use of Lloyd's algorithms

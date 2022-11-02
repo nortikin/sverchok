@@ -9,7 +9,7 @@ from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_
 from sverchok.utils.curve import SvCurve, SvCurveOnSurface
 from sverchok.utils.surface import SvSurface
 
-class SvCurveOnSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
+class SvCurveOnSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Curve on Surface
     Tooltip: Generate a curve in UV space of the surface

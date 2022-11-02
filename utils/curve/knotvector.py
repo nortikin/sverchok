@@ -19,6 +19,11 @@
 from collections import defaultdict
 import numpy as np
 
+from sverchok.utils.geom import CubicSpline, LinearSpline
+
+def knotvector_length(degree, num_ctrlpts):
+    return degree + num_ctrlpts + 1
+
 def generate(degree, num_ctrlpts, clamped=True):
     """ Generates an equally spaced knot vector.
 
@@ -62,25 +67,32 @@ def find_span(knot_vector, num_ctrlpts, knot):
 
     return span - 1
 
+def cubic_resample(tknots, new_count):
+    tknots = np.asarray(tknots)
+    old_idxs = np.linspace(0.0, 1.0, num=len(tknots))
+    new_idxs = np.linspace(0.0, 1.0, num=new_count)
+    resampled_tknots = CubicSpline.resample(old_idxs, tknots, new_idxs)
+    return resampled_tknots
+
+def linear_resample(tknots, new_count):
+    tknots = np.asarray(tknots)
+    old_idxs = np.linspace(0.0, 1.0, num=len(tknots))
+    new_idxs = np.linspace(0.0, 1.0, num=new_count)
+    resampled_tknots = LinearSpline.resample(old_idxs, tknots, new_idxs)
+    return resampled_tknots
+
 def from_tknots(degree, tknots, n_cpts=None):
     n = len(tknots)
     if n_cpts is None:
-        result = [0] * (degree+1)
+        result = [tknots[0]] * (degree+1)
         for j in range(1, n - degree):
             u = tknots[j:j+degree].sum() / degree
             result.append(u)
-        result.extend([1.0] * (degree+1))
+        result.extend([tknots[-1]] * (degree+1))
         return np.array(result)
     else:
-        d = float(n + 1) / (n_cpts - degree)
-        result = [0] * (degree+1)
-        for j in range(1, n_cpts - degree ):
-            i = int(j*d)
-            alpha = j*d - i
-            u = (1 - alpha)*tknots[i-1] + alpha*tknots[i]
-            result.append(u)
-        result.extend([1.0] * (degree+1))
-        return np.array(result)
+        resampled_tknots = linear_resample(tknots, n_cpts)
+        return from_tknots(degree, resampled_tknots)
 
 def normalize(knot_vector):
     """ Normalizes the input knot vector to [0, 1] domain.

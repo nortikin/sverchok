@@ -35,7 +35,7 @@ def unpack_list_to_np(obj):
     return (array(x) for x in zip(*obj))
 
 
-class SvColorsOutNodeMK1(bpy.types.Node, SverchCustomTreeNode):
+class SvColorsOutNodeMK1(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: col -> rgb, hsv, hsl
     Tooltip: Generator for Color data from color components.\n\tIn: Color\n\tParams: Color Space [RGB]/HSV/HSL\n\tOut: R,G,B / H,S,V / H,S,L

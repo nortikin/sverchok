@@ -72,7 +72,7 @@ def oscillator(params, constant, matching_f):
 
     return result
 
-class SvOscillatorNode(bpy.types.Node, SverchCustomTreeNode):
+class SvOscillatorNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Sine, Saw, Square
     Tooltip: Generate a oscillating values from a lineal values\n\tFunction: [Sine], Square, Saw, Triangle, Custom\n\tvalue: [.0]\n\tAmplitude: [1.]\n\tPeriod: 1.\n\tPhase: [1.]\n\tOffset: [1.]\n\tWave: List(verts)

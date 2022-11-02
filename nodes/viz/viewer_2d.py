@@ -496,7 +496,7 @@ def generate_mesh_geom(config, vecs_in):
     return geom
 
 
-class SvViewer2D(bpy.types.Node, SverchCustomTreeNode):
+class SvViewer2D(SverchCustomTreeNode, bpy.types.Node):
     '''Display data in the 2d view.
     In: Verts/Curve, Color Vertices/Edges
     Params: Mode (Number/Path,Curve/Mesh), Background Color, Viewer Image Size (X/Y), Vert Size, Edge Width

@@ -12,7 +12,7 @@ from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.curve.extend import extend_curve
 from sverchok.utils.geom import circle_by_two_derivatives
 
-class SvExtendCurveNode(bpy.types.Node, SverchCustomTreeNode):
+class SvExtendCurveNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Extend Curve
     Tooltip: Smoothly extend a curve beyond it's range

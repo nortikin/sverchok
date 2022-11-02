@@ -32,7 +32,7 @@ from numpy import ndarray, arange, delete
 # Other = data[:start]+data[stop:]
 
 
-class ListSliceNode(bpy.types.Node, SverchCustomTreeNode):
+class ListSliceNode(SverchCustomTreeNode, bpy.types.Node):
     ''' List Slice
     [0,1,2,3,4,5] [1:-1] => [1,2,3,4]
     [0,1,2,3,4,5] [1: 3] => [1,2]

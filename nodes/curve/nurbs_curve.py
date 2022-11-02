@@ -10,7 +10,7 @@ from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.dependencies import geomdl
 from sverchok.dependencies import FreeCAD
 
-class SvExNurbsCurveNode(bpy.types.Node, SverchCustomTreeNode):
+class SvExNurbsCurveNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: NURBS Curve
     Tooltip: Generate NURBS Curve

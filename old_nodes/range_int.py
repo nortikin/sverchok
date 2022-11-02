@@ -57,7 +57,7 @@ def countRange(start=0, step=1, count=10):
     return list(range(start, stop, step))
 
 
-class GenListRangeIntNode(bpy.types.Node, SverchCustomTreeNode):
+class GenListRangeIntNode(SverchCustomTreeNode, bpy.types.Node):
     ''' Generator range list of ints '''
     bl_idname = 'GenListRangeIntNode'
     bl_label = 'Range Int'

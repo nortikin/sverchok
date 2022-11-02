@@ -21,7 +21,7 @@ if skimage is not None:
 
 # This node can work without dependencies, but slower.
 
-class SvExMarchingCubesNode(DraftMode, bpy.types.Node, SverchCustomTreeNode):
+class SvExMarchingCubesNode(DraftMode, SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Marching Cubes
     Tooltip: Marching Cubes

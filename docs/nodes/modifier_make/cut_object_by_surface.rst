@@ -1,6 +1,9 @@
 Cut Object by Surface
 =====================
 
+.. image:: https://user-images.githubusercontent.com/14288520/198824817-a8729120-16f4-4c9c-baa5-6dec7dd049a7.png
+  :target: https://user-images.githubusercontent.com/14288520/198824817-a8729120-16f4-4c9c-baa5-6dec7dd049a7.png
+
 Functionality
 -------------
 
@@ -16,6 +19,9 @@ it finds intersections of **edges**, not intersections of volumes.
 the node requires that of each face of "object" mesh, only two edges intersect 
 the "surface" mesh. So, each face can be cut only in two pieces, not in three or more.
 The node will not crash, just ignore these options and simply output intersection points.
+
+.. image:: https://user-images.githubusercontent.com/14288520/198825816-dc69dab6-36fa-40a5-9ad5-481d9b43d17e.gif
+  :target: https://user-images.githubusercontent.com/14288520/198825816-dc69dab6-36fa-40a5-9ad5-481d9b43d17e.gif
 
 **Developer notes** : for those interested in removing this limitation, a general idea
 on how to proceed, with its limitations, is included in the code as comments.
@@ -93,6 +99,9 @@ This node has the following outputs:
   where the "object" is cut by "surface" (i.e. there will be holes). This
   output is only available if the **Make cut pieces** parameter is checked.
 
+.. image:: https://user-images.githubusercontent.com/14288520/198872895-229c30cb-3e5b-4f3a-b456-b16b27fcf96a.png
+  :target: https://user-images.githubusercontent.com/14288520/198872895-229c30cb-3e5b-4f3a-b456-b16b27fcf96a.png
+
 Examples of usage
 -----------------
 
@@ -101,21 +110,57 @@ connect resulting vertices. Note that in this case the number of box's
 subdivisions does not have any meaning, because the places of intersections of
 sphere's edges with the box are always the same.
 
-.. image:: https://user-images.githubusercontent.com/284644/72448547-033d4780-37d9-11ea-9016-79fb80523bcb.png
+.. image:: https://user-images.githubusercontent.com/14288520/198826268-d9f35b1a-0838-4247-89d7-2902a335e4f5.png
+  :target: https://user-images.githubusercontent.com/14288520/198826268-d9f35b1a-0838-4247-89d7-2902a335e4f5.png
+
+* Generator-> :doc:`Box </nodes/generator/box_mk2>`
+* Generator-> :doc:`Sphere </nodes/generator/sphere>`
+* Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+
+---------
 
 Box cut by sphere. Here we intersect edges of the box with the sphere, and then
 connect resulting vertices. Note that if we specify number of box's
 subdivisions = 1, we would get nothing at all.
 
-.. image:: https://user-images.githubusercontent.com/284644/72448413-ca9d6e00-37d8-11ea-9e84-5cacfac82c7e.png
+.. image:: https://user-images.githubusercontent.com/14288520/198826493-2f2b97bd-3fd1-415d-935b-737ad30d01f4.png
+  :target: https://user-images.githubusercontent.com/14288520/198826493-2f2b97bd-3fd1-415d-935b-737ad30d01f4.png
+
+* Generator-> :doc:`Box </nodes/generator/box_mk2>`
+* Generator-> :doc:`Sphere </nodes/generator/sphere>`
+* Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+
+.. image:: https://user-images.githubusercontent.com/14288520/198826593-e906e059-d88b-413b-add3-07c96b45051e.gif
+  :target: https://user-images.githubusercontent.com/14288520/198826593-e906e059-d88b-413b-add3-07c96b45051e.gif
+
+---------
 
 Intersection of eight cubes (green edges) with the icosphere (yellowish edges):
 
-.. image:: https://user-images.githubusercontent.com/284644/72447126-9aed6680-37d6-11ea-9dec-ae57cfeb836b.png
+.. image:: https://user-images.githubusercontent.com/14288520/198827326-1735070e-8862-42f3-9524-7eb317572fcc.png
+  :target: https://user-images.githubusercontent.com/14288520/198827326-1735070e-8862-42f3-9524-7eb317572fcc.png
+
+* Generator-> :doc:`Box </nodes/generator/box_mk2>`
+* Generator-> :doc:`Sphere </nodes/generator/sphere>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+
+.. image:: https://user-images.githubusercontent.com/14288520/198827251-28890723-1762-4265-85be-5e8f033f4253.gif
+  :target: https://user-images.githubusercontent.com/14288520/198827251-28890723-1762-4265-85be-5e8f033f4253.gif
+
+---------
 
 The same cut surface passed through the "split faces" node:
 
-.. image:: https://user-images.githubusercontent.com/284644/72447542-531b0f00-37d7-11ea-8ab5-e40afd8514b9.png
+.. image:: https://user-images.githubusercontent.com/14288520/198828991-37f88604-6cea-4cee-a980-11dbe8465a60.png
+  :target: https://user-images.githubusercontent.com/14288520/198828991-37f88604-6cea-4cee-a980-11dbe8465a60.png
+
+* Generator-> :doc:`Box </nodes/generator/box_mk2>`
+* Generator-> :doc:`Sphere </nodes/generator/sphere>`
+* Modifiers->Modifier Change-> :doc:`Split Faces </nodes/modifier_change/split_faces>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+
 
 Here you can see this node is not at all the boolean operation — it makes one
 big face where the boolean operation would make a part of sphere.

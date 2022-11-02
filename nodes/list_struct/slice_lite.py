@@ -59,7 +59,7 @@ def list_slices(node, data, slice_sizes):
     return out_data
 
 
-class SvListSliceLiteNode(bpy.types.Node, SverchCustomTreeNode):
+class SvListSliceLiteNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: ls slice incoming data
     Tooltip:  modified list slice node

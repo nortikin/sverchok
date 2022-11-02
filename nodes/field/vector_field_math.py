@@ -63,7 +63,7 @@ def get_sockets(op_id):
             return inputs, outputs
     raise Exception("unsupported operation")
 
-class SvVectorFieldMathNode(bpy.types.Node, SverchCustomTreeNode):
+class SvVectorFieldMathNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Vector Field Math
     Tooltip: Vector Field Math

@@ -60,7 +60,7 @@ input_sockets = {
 }
 
 
-class SvQuaternionInNode(bpy.types.Node, SverchCustomTreeNode):
+class SvQuaternionInNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Quaternions, In
     Tooltip: Generate quaternions from various quaternion components

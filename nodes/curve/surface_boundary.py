@@ -9,7 +9,7 @@ from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_
 from sverchok.utils.curve import SvCurve, SvIsoUvCurve, concatenate_curves, sort_curves_for_concat
 from sverchok.utils.surface import SvSurface
 
-class SvSurfaceBoundaryNode(bpy.types.Node, SverchCustomTreeNode):
+class SvSurfaceBoundaryNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Surface Boundary
     Tooltip: Generate a curve from curve's boundary

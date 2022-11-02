@@ -43,7 +43,7 @@
 bl_info = {
     "name": "Sverchok",
     "author": "sverchok-b3d@ya.ru various authors see https://github.com/nortikin/sverchok/graphs/contributors",
-    "version": (1, 1, 0),
+    "version": (1, 2, 0),
     "blender": (2, 93, 0),
     "location": "Node Editor",
     "category": "Node",
@@ -53,7 +53,7 @@ bl_info = {
     "tracker_url": "http://www.blenderartists.org/forum/showthread.php?272679"
 }
 
-VERSION = 'v1.1.0-beta'  # looks like the only way to have custom format for the version
+VERSION = 'v1.2.0-alpha'  # looks like the only way to have custom format for the version
 
 import sys
 import importlib
@@ -93,10 +93,8 @@ def register():
         sv_registration_utils.register_all(imported_modules + node_list)
         sverchok.core.init_bookkeeping(__name__)
 
-        menu.register()
         if reload_event:
             data_structure.RELOAD_EVENT = True
-            menu.reload_menu()
 
 
 def unregister():

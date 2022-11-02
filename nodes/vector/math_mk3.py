@@ -91,7 +91,7 @@ def recurse_fxy(l1, l2, func, level, min_l2_level):
     return res
 
 
-class SvVectorMathNodeMK3(bpy.types.Node, SverchCustomTreeNode):
+class SvVectorMathNodeMK3(SverchCustomTreeNode, bpy.types.Node):
     '''Vector Math Functions:
     Add
     Sub

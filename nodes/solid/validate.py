@@ -9,24 +9,22 @@ import bpy
 from bpy.props import BoolProperty, FloatProperty, EnumProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, map_unzip_recursirve
+from sverchok.data_structure import updateNode, map_unzip_recursirve
 from sverchok.dependencies import FreeCAD
-from sverchok.utils.dummy_nodes import add_dummy
 
-if FreeCAD is None:
-    add_dummy('SvSolidValidateNode', 'Validate & Fix Solid', 'FreeCAD')
-else:
+if FreeCAD is not None:
     import Part
 
-class SvSolidValidateNode(bpy.types.Node, SverchCustomTreeNode):
+
+class SvSolidValidateNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Validate Fix Solid
     Tooltip: Validate or fix Solid objects
     """
     bl_idname = 'SvSolidValidateNode'
     bl_label = 'Validate & Fix Solid'
-    bl_icon = 'OUTLINER_OB_EMPTY'
-    solid_catergory = "Operators"
+    sv_category = "Solid Operators"
+    sv_dependencies = {'FreeCAD'}
 
     precision : FloatProperty(
         name = "Precision",
@@ -69,11 +67,10 @@ class SvSolidValidateNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs['FixedSolid'].sv_set(solids_out)
         self.outputs['IsValid'].sv_set(valid_out)
 
+
 def register():
-    if FreeCAD is not None:
-        bpy.utils.register_class(SvSolidValidateNode)
+    bpy.utils.register_class(SvSolidValidateNode)
+
 
 def unregister():
-    if FreeCAD is not None:
-        bpy.utils.unregister_class(SvSolidValidateNode)
-
+    bpy.utils.unregister_class(SvSolidValidateNode)

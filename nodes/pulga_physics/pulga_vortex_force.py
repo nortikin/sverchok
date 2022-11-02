@@ -23,7 +23,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (zip_long_repeat, updateNode)
 from sverchok.utils.pulga_physics_modular_core import SvVortexForce
 
-class SvPulgaVortexForceNode(bpy.types.Node, SverchCustomTreeNode):
+class SvPulgaVortexForceNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Attraction Points
     Tooltip: Attractor/Repeller points with distance limit

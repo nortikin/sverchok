@@ -112,7 +112,7 @@ class SvgPath():
         svg += '/>'
         return svg
 
-class SvSvgPathNode(bpy.types.Node, SverchCustomTreeNode):
+class SvSvgPathNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: SVG Path
     Tooltip: Generate SVG Path

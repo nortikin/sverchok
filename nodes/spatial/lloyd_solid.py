@@ -12,16 +12,13 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, ensure_nesting_level, zip_long_repeat, get_data_nesting_level
 from sverchok.utils.field.scalar import SvScalarField
 from sverchok.utils.voronoi3d import lloyd_in_solid, lloyd_on_solid_surface
-from sverchok.utils.dummy_nodes import add_dummy
-from sverchok.dependencies import scipy, FreeCAD
-
-if scipy is None or FreeCAD is None:
-    add_dummy('SvLloydSolidNode', "Lloyd in Solid", 'scipy and FreeCAD')
+from sverchok.dependencies import FreeCAD
 
 if FreeCAD is not None:
     import Part
 
-class SvLloydSolidNode(bpy.types.Node, SverchCustomTreeNode):
+
+class SvLloydSolidNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Lloyd Solid
     Tooltip: Redistribute 3D points in the volume of a Solid body uniformly by use of Lloyd's algorithm
@@ -30,6 +27,7 @@ class SvLloydSolidNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Lloyd in Solid'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_VORONOI'
+    sv_dependencies = {'scipy', 'FreeCAD'}
 
     iterations : IntProperty(
         name = "Iterations",
@@ -124,11 +122,10 @@ class SvLloydSolidNode(bpy.types.Node, SverchCustomTreeNode):
 
         self.outputs['Sites'].sv_set(verts_out)
 
+
 def register():
-    if scipy is not None and FreeCAD is not None:
-        bpy.utils.register_class(SvLloydSolidNode)
+    bpy.utils.register_class(SvLloydSolidNode)
+
 
 def unregister():
-    if scipy is not None and FreeCAD is not None:
-        bpy.utils.unregister_class(SvLloydSolidNode)
-
+    bpy.utils.unregister_class(SvLloydSolidNode)

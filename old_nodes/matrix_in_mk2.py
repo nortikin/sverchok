@@ -32,7 +32,7 @@ def matrix_in(params):
     matrixes = matrixdef(orig, [loc], [scale], [rot], [angle], [rotA])
     return matrixes
 
-class SvMatrixGenNodeMK2(bpy.types.Node, SverchCustomTreeNode):
+class SvMatrixGenNodeMK2(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: From loc, scale, rot
     Tooltip:  Creates a transformation Matrix by defining its Location, Scale and Rotation.

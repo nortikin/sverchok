@@ -164,7 +164,7 @@ def edgenet_to_paths(verts_in, edges_in, close_loops):
 
     return verts_out_s, edges_out_s, index_vs_s, index_eds_s, closed
 
-class SvEdgenetToPathsNode(ModifierLiteNode, bpy.types.Node, SverchCustomTreeNode):
+class SvEdgenetToPathsNode(ModifierLiteNode, SverchCustomTreeNode, bpy.types.Node):
     '''
     Triggers: Mesh to polylines
     Tooltip: Sort Vertices and split different paths

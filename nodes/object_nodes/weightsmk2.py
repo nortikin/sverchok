@@ -23,7 +23,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, second_as_first_cycle)
 
 
-class SvVertexGroupNodeMK2(bpy.types.Node, SverchCustomTreeNode):
+class SvVertexGroupNodeMK2(SverchCustomTreeNode, bpy.types.Node):
     ''' Vertex Group Weights mk2'''
     bl_idname = 'SvVertexGroupNodeMK2'
     bl_label = 'Vertex Group Weights'

@@ -23,7 +23,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 
 
-class SvAxisInputNodeMK2(bpy.types.Node, SverchCustomTreeNode):
+class SvAxisInputNodeMK2(SverchCustomTreeNode, bpy.types.Node):
     '''Axis input. x/y/z: [-1,0,+1]
     In: No
     Out:

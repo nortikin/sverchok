@@ -27,7 +27,7 @@ from sverchok.utils.modules.geom_utils import interp_v3_v3v3, normalize, add_v3_
 from sverchok.utils.sv_mesh_utils import polygons_to_edges
 ## This node is a port to the  add_mesh_extra_objects.add_mesh_solid createSolid
 
-class SvRegularSolid(bpy.types.Node, SverchCustomTreeNode):
+class SvRegularSolid(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Platonic, Archimedean or Catalan solids.
     Tooltip: Add one of the Platonic, Archimedean or Catalan solids.\n\tIn: Size, Vertex Truncation, Edge Truncation\n\tParams: Presets, Source, Snub\n\tOut: Vertices, Edges, Polygons

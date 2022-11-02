@@ -7,7 +7,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 from sverchok.utils.curve import SvLengthRebuiltCurve, SvCurve
 
-class SvLengthRebuildCurveNode(bpy.types.Node, SverchCustomTreeNode):
+class SvLengthRebuildCurveNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Curve Length Rebuild
     Tooltip: Re-parametrize the curve to make it's parameter equal to it's length.

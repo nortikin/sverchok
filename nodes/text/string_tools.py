@@ -139,7 +139,7 @@ def string_tools(params, constant, matching_f):
 
     return result
 
-class SvStringsToolsNode(bpy.types.Node, SverchCustomTreeNode):
+class SvStringsToolsNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Text modifier
     Tooltip: Strings operations as split, to uppecase, find characters...

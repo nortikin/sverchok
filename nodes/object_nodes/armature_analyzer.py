@@ -20,7 +20,7 @@ import bpy
 from sverchok.node_tree import SverchCustomTreeNode
 
 
-class SvArmaturePropsNode(bpy.types.Node, SverchCustomTreeNode):
+class SvArmaturePropsNode(SverchCustomTreeNode, bpy.types.Node):
     '''Armature object props'''
     bl_idname = 'SvArmaturePropsNode'
     bl_label = 'Armature Props'

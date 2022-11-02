@@ -1,6 +1,9 @@
 Wafel
 =====
 
+.. image:: https://user-images.githubusercontent.com/14288520/198853646-b8016856-ae35-4f76-aeba-c249f955f627.png
+  :target: https://user-images.githubusercontent.com/14288520/198853646-b8016856-ae35-4f76-aeba-c249f955f627.png
+
 Functionality
 -------------
 
@@ -15,40 +18,31 @@ If you want start with this node - try open json first.
 Inputs
 ------
 
-**vecLine** - lines sected between sections of solid object. Form factor of object. each object has only two certices defining this section.     
-
-**vecPlane** - vectors of one side section.     
-
-**edgPlane** - closed edges (not planes) of one side section.     
-
-**thickness** - thickness of material to use in thickness of waffel slots.     
+* **vecLine** - lines sected between sections of solid object. Form factor of object. each object has only two certices defining this section.     
+* **vecPlane** - vectors of one side section.     
+* **edgPlane** - closed edges (not planes) of one side section.     
+* **thickness** - thickness of material to use in thickness of waffel slots.     
   
 Properties  
 ----------  
   
-**threshold** - threshold of line length from **vecLine** to limit cut material when producing.     
-
-**Up/Down** - direction of slots, there is only two cases, up or down. Not left and right and no XY directed vecLines never.  Remember this.     
+* **threshold** - threshold of line length from **vecLine** to limit cut material when producing.     
+* **Up/Down** - direction of slots, there is only two cases, up or down. Not left and right and no XY directed vecLines never.  Remember this.     
   
 Properties_extended  
 -------------------  
   
-**rounded** - rounded edges.     
-
-**Bind2** - circles to bind.      
-
-**Contra** - contrplane to define where to flip Up and Down direction. It is same as **vecPlane**.     
-
-**Tube** - case of section lines, making holes in body. It is same as **vecLine**.     
+* **rounded** - rounded edges.     
+* **Bind2** - circles to bind.      
+* **Contra** - contrplane to define where to flip Up and Down direction. It is same as **vecPlane**.     
+* **Tube** - case of section lines, making holes in body. It is same as **vecLine**.     
   
 Outputs  
 -------  
   
-**vert** - vertices of output.     
-
-**edge** - edges of output.     
-
-**centers** - polygons centers.     
+* **vert** - vertices of output.     
+* **edge** - edges of output.     
+* **centers** - polygons centers.     
   
 Notes
 -----
@@ -63,9 +57,10 @@ Notes
 Examples  
 --------  
   
-.. image:: https://cloud.githubusercontent.com/assets/5783432/5235611/25661e04-7812-11e4-9dba-c05f9733e966.png  
+.. image:: https://cloud.githubusercontent.com/assets/5783432/5235611/25661e04-7812-11e4-9dba-c05f9733e966.png
+  :target: https://cloud.githubusercontent.com/assets/5783432/5235611/25661e04-7812-11e4-9dba-c05f9733e966.png
   :alt: noalt  
 
-
 .. image:: https://cloud.githubusercontent.com/assets/5783432/5235612/258da21c-7812-11e4-91cf-6da1dbe395b4.png  
+  :target: https://cloud.githubusercontent.com/assets/5783432/5235612/258da21c-7812-11e4-91cf-6da1dbe395b4.png  
   :alt: noalt  

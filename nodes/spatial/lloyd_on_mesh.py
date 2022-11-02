@@ -12,13 +12,9 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, ensure_nesting_level, zip_long_repeat, get_data_nesting_level
 from sverchok.utils.field.scalar import SvScalarField
 from sverchok.utils.voronoi3d import lloyd_on_mesh, lloyd_in_mesh
-from sverchok.utils.dummy_nodes import add_dummy
-from sverchok.dependencies import scipy
 
-if scipy is None:
-    add_dummy('SvLloydOnMeshNode', "Lloyd on Mesh", 'scipy')
 
-class SvLloydOnMeshNode(bpy.types.Node, SverchCustomTreeNode):
+class SvLloydOnMeshNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Lloyd Mesh
     Tooltip: Redistribute 3D points on the surface of a mesh uniformly by use of Lloyd's algorithm
@@ -27,6 +23,7 @@ class SvLloydOnMeshNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Lloyd on Mesh'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_VORONOI'
+    sv_dependencies = {'scipy'}
 
     iterations : IntProperty(
         name = "Iterations",
@@ -103,11 +100,10 @@ class SvLloydOnMeshNode(bpy.types.Node, SverchCustomTreeNode):
 
         self.outputs['Sites'].sv_set(verts_out)
 
+
 def register():
-    if scipy is not None:
-        bpy.utils.register_class(SvLloydOnMeshNode)
+    bpy.utils.register_class(SvLloydOnMeshNode)
+
 
 def unregister():
-    if scipy is not None:
-        bpy.utils.unregister_class(SvLloydOnMeshNode)
-
+    bpy.utils.unregister_class(SvLloydOnMeshNode)

@@ -23,7 +23,7 @@ from sverchok.data_structure import updateNode, list_match_func, list_match_mode
 from sverchok.utils.sv_KDT_utils import kdt_closest_path
 
 
-class SvKDTreePathNode(bpy.types.Node, SverchCustomTreeNode):
+class SvKDTreePathNode(SverchCustomTreeNode, bpy.types.Node):
     '''
     Triggers: Nearest Verts Path
     Tooltip: Make a path (edges) verts joining each verts to the closest neighbor

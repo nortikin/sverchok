@@ -23,7 +23,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, enum_item as e)
 
 
-class SvNumpyArrayNode(bpy.types.Node, SverchCustomTreeNode):
+class SvNumpyArrayNode(SverchCustomTreeNode, bpy.types.Node):
     ''' Numpy Props '''
     bl_idname = 'SvNumpyArrayNode'
     bl_label = 'Numpy Array'

@@ -5,10 +5,10 @@ import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, repeat_last_for_length
+from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level
 from sverchok.utils.curve import SvCurve, SvBezierCurve, SvConcatCurve, SvCubicBezierCurve
 
-class SvTangentsCurveNode(bpy.types.Node, SverchCustomTreeNode):
+class SvTangentsCurveNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Tangents Curve
     Tooltip: Generate Bezier curve from points and tangent vectors
@@ -55,17 +55,28 @@ class SvTangentsCurveNode(bpy.types.Node, SverchCustomTreeNode):
         points_s = self.inputs['Points'].sv_get()
         tangents_s = self.inputs['Tangents'].sv_get()
 
-        points_s = ensure_nesting_level(points_s, 3)
-        tangents_s = ensure_nesting_level(tangents_s, 3)
+        input_level = get_data_nesting_level(points_s)
+        output_nested = input_level > 3
+        points_s = ensure_nesting_level(points_s, 4)
+        tangents_s = ensure_nesting_level(tangents_s, 4)
 
         curve_out = []
         controls_out = []
-        for points, tangents in zip_long_repeat(points_s, tangents_s):
-            new_controls, new_curves = SvBezierCurve.build_tangent_curve(points, tangents,
-                                            cyclic = self.cyclic, concat = self.concat,
-                                            as_nurbs = self.make_nurbs)
-            curve_out.append(new_curves)
-            controls_out.append(new_controls)
+        for params in zip_long_repeat(points_s, tangents_s):
+            curves_i = []
+            controls_i = []
+            for points, tangents in zip_long_repeat(*params):
+                new_controls, new_curve = SvBezierCurve.build_tangent_curve(points, tangents,
+                                                cyclic = self.cyclic, concat = self.concat,
+                                                as_nurbs = self.make_nurbs)
+                curves_i.append(new_curve)
+                controls_i.append(new_controls)
+            if output_nested:
+                curve_out.append(curves_i)
+                controls_out.append(controls_i)
+            else:
+                curve_out.extend(curves_i)
+                controls_out.extend(controls_i)
 
         self.outputs['Curve'].sv_set(curve_out)
         self.outputs['ControlPoints'].sv_set(controls_out)

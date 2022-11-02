@@ -37,7 +37,7 @@ def randomize(vertices, random_x, random_y, random_z, seed, output_numpy=False):
 
     return (np_verts + x_r) if output_numpy else (np_verts + x_r).tolist()
 
-class SvRandomizeVerticesNode(bpy.types.Node, SverchCustomTreeNode):
+class SvRandomizeVerticesNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Random Displacement
     Tooltip: Randomize input vertices locations.

@@ -11,7 +11,7 @@ from sverchok.utils.curve import SvLine
 from sverchok.utils.fillet import calc_fillet
 from sverchok.utils.curve.algorithms import concatenate_curves
 
-class SvFilletPolylineNode(bpy.types.Node, SverchCustomTreeNode):
+class SvFilletPolylineNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Arc Fillet Polyline
     Tooltip: Generate a polyline with arc fillets

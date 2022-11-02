@@ -24,7 +24,7 @@ from sverchok.data_structure import (updateNode, fullList, multi_socket, levelsO
 from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
 
 
-class LineConnectNodeMK2(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
+class LineConnectNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
     ''' uv Edges/Surfaces '''
     bl_idname = 'LineConnectNodeMK2'
     bl_label = 'UV Connection'

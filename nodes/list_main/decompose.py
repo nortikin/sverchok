@@ -26,7 +26,7 @@ from sverchok.data_structure import (levelsOflist, multi_socket, changable_socke
 
 OLD_OP = "node.sverchok_generic_callback_old"
 
-class SvListDecomposeNode(bpy.types.Node, SverchCustomTreeNode):
+class SvListDecomposeNode(SverchCustomTreeNode, bpy.types.Node):
     ''' List divided to multiple sockets in some level '''
     bl_idname = 'SvListDecomposeNode'
     bl_label = 'List Decompose'

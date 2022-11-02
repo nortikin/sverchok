@@ -1,0 +1,103 @@
+name: Build API documentation
+on:
+  push:
+    branches: 'master'
+    paths:
+      - 'utils/**'
+      - 'core/**'
+      - '*.py'
+      - '.github/workflows/apidocs_builder.yml'
+#   pull_request:
+#     branches: [ master ]
+#     paths:
+#       - 'utils/**'
+#       - 'core/**'
+#       - '*.py'
+#       - '.github/workflows/apidocs_builder.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      blender_version: "2.93"
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.9
+    - name: Cache
+      uses: actions/cache@v2
+      with:
+        path: ./installation
+        key: blender-${{ env.blender_version }}-${{ hashFiles('.github/workflows/apidocs_builder.yml') }}
+    - name: Install Blender
+      run: |
+        # echo "starting run"
+        BLENDER_VERSION=2.93
+        BLENDER_URL=https://ftp.nluug.nl/pub/graphics/blender/release/Blender2.93/blender-2.93.1-linux-x64.tar.xz
+        SVERCHOK_DIR=scripts/addons/sverchok
+        BLENDER_TAR=$(basename $BLENDER_URL)
+        BLENDER_DIR=$(basename $BLENDER_URL .tar.xz)
+        RELEASE=blender293_LTS
+
+        if [ ! -f installation/blender/blender ]
+        then
+            mkdir -p installation
+            cd installation
+
+            # not verbose, but not quiet.
+            wget -nv $BLENDER_URL
+
+            # unpack this tar to a known name
+            mkdir $RELEASE
+            tar xf $BLENDER_TAR -C $RELEASE --strip-components 1
+
+            rm $BLENDER_TAR
+            mv $RELEASE blender
+
+            pushd blender/
+            PYTHON=${BLENDER_VERSION}/python/bin/python3.9
+            $PYTHON -m ensurepip
+            $PYTHON -m pip install --upgrade pip setuptools wheel
+            $PYTHON -m pip install --upgrade scipy geomdl scikit-image
+            $PYTHON -m pip install --upgrade pdoc3
+            popd
+
+            cd ..
+        fi
+
+        #mkdir -p ${PWD}/installation/blender/${BLENDER_VERSION}/${SVERCHOK_DIR}
+        ln -s ${PWD} ${PWD}/installation/blender/${BLENDER_VERSION}/${SVERCHOK_DIR}
+        mkdir -p ~/.config/blender/${BLENDER_VERSION}/config/
+        ln -s ${PWD}/tests/references/userpref.blend ~/.config/blender/${BLENDER_VERSION}/config/
+        
+    - name: Checkout master
+      uses: actions/checkout@master
+      with:
+        path: 'master'
+
+    - name: Checkout gh-pages
+      uses: actions/checkout@master
+      with:
+        path: 'gh_pages'
+        ref: 'gh-pages'
+
+    - name: Generate API documentation
+      run: |
+        bash ./generate_api_documentation.sh -o "${GITHUB_WORKSPACE}/gh_pages/apidocs"
+      env:
+        BLENDER: |
+          ./installation/blender/blender-softwaregl
+
+    - name: Push changes in gh-pages
+      run: |
+        cd "${GITHUB_WORKSPACE}/gh_pages"
+        date > generated.txt
+        git config user.name github-actions
+        git config user.email github-actions@github.com
+        git add .
+        git commit -m "update API documentation bot"
+        git push
+

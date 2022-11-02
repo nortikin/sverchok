@@ -47,7 +47,7 @@ def convert_to_text(list):
         else: break
     return list
 
-class SvExportGcodeNode(bpy.types.Node, SverchCustomTreeNode):
+class SvExportGcodeNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Export G-code from vertices position
     Tooltip: Generate a gcode file from a list of vertices

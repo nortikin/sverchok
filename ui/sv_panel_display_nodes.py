@@ -17,15 +17,14 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from bpy.props import IntProperty, StringProperty, BoolProperty, FloatProperty, EnumProperty, PointerProperty
+from bpy.props import IntProperty, EnumProperty, PointerProperty
 
 from sverchok.utils.context_managers import sv_preferences
-from sverchok.menu import make_node_cats
 from sverchok.settings import get_dpi_factor
-from sverchok.utils.dummy_nodes import is_dependent
-from pprint import pprint
 from sverchok.utils.logging import debug
 from collections import namedtuple
+
+from sverchok.ui.nodeview_space_menu import add_node_menu
 
 _node_category_cache = {}  # cache for the node categories
 _spawned_nodes = {}  # cache for the spawned nodes
@@ -95,8 +94,7 @@ def binpack(nodes, max_bin_height, spacing=0):
 
 
 def should_display_node(name):
-    if name == "separator" or '@' in name or name == "SvFormulaNodeMk5":
-        # if name == "separator" or is_dependent(name) or '@' in name:
+    if name == "SvFormulaNodeMk5":
         return False
     else:
         return True
@@ -117,22 +115,18 @@ def cache_node_categories():
     if _node_category_cache:
         return
 
-    node_categories = make_node_cats()
-    categories = node_categories.keys()
-
-    debug("categories = %s" % list(categories))
+    categories = [c.name for c in add_node_menu.walk_categories()]
 
     _node_category_cache["categories"] = {}
     _node_category_cache["categories"]["names"] = list(categories)
     _node_category_cache["categories"]["names"].append("All")
     _node_category_cache["categories"]["All"] = {}
     _node_category_cache["categories"]["All"]["nodes"] = []
-    for category in categories:
-        debug("ADDING category: %s" % category)
-        nodes = [n for l in node_categories[category] for n in l]
+    for cat in add_node_menu.walk_categories():
+        nodes = [n.bl_idname for n in cat if hasattr(n, 'bl_idname')]
         nodes = list(filter(lambda node: should_display_node(node), nodes))
-        _node_category_cache["categories"][category] = {}
-        _node_category_cache["categories"][category]["nodes"] = nodes
+        _node_category_cache["categories"][cat.name] = {}
+        _node_category_cache["categories"][cat.name]["nodes"] = nodes
         _node_category_cache["categories"]["All"]["nodes"].extend(nodes)
 
     category_items = []
@@ -413,10 +407,14 @@ class SvDisplayNodePanelProperties(bpy.types.PropertyGroup):
             return
 
         for i, name in enumerate(node_names):
+            cls = bpy.types.Node.bl_rna_get_subclass_py(name)
+            if cls is None:
+                debug(f'Class of the "{name}" node was not found')
+                continue
             if name == "separator":
                 debug("SKIPPING separator node")
                 continue
-            if is_dependent(name):
+            if cls.missing_dependency:
                 debug("SKIPPING dependent node %d of %d : %s" % (i+1, N, name))
                 continue
             if '@' in name:
@@ -442,7 +440,12 @@ class SvDisplayNodePanelProperties(bpy.types.PropertyGroup):
         # update the total/hidden node count (e.g. nodes with dependency are hidden)
         node_names = get_nodes_in_category(self.category)
         self.total_num_nodes = len(node_names)
-        other_node_names = [name for name in node_names if is_dependent(name)]
+        other_node_names = []
+        for name in node_names:
+            cls = bpy.types.Node.bl_rna_get_subclass_py(name)
+            if cls is not None and cls.missing_dependency:
+                continue
+            other_node_names.append(name)
         self.hidden_num_nodes = len(other_node_names)
 
     constrain_layout: EnumProperty(

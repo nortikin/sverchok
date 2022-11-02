@@ -24,7 +24,7 @@ from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh, bmesh_from_pydata, 
 from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
 
 
-class SvClipVertsNode(ModifierNode, bpy.types.Node, SverchCustomTreeNode):
+class SvClipVertsNode(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Clip / Truncate Vertices
     Tooltip: Clip all vertices of the mesh

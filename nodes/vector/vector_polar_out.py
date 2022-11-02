@@ -48,7 +48,7 @@ def numpy_cartesian_to_polar(vs, coordinates, angles_mode, out_numpy):
 
     return [rho, phi, z] if out_numpy else [rho.tolist(), phi.tolist(), z.tolist()]
 
-class VectorPolarOutNode(bpy.types.Node, SverchCustomTreeNode, SvRecursiveNode):
+class VectorPolarOutNode(SverchCustomTreeNode, bpy.types.Node, SvRecursiveNode):
     '''
     Triggers: Spheric/ Cylindric coordinates
     Tooltip: Get cylindrical or spherical coordinates from vectors.\n\tIn: Vectors\n\tParams: [Cylinder]/Sphere; [Radians]/Degree\n\tOut: rho, phi, z/theta

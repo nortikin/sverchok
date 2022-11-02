@@ -5,6 +5,10 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
+"""
+An interface to `splprep` method from scipy.
+"""
+
 import numpy as np
 
 from sverchok.utils.curve.nurbs import SvNurbsCurve
@@ -15,6 +19,24 @@ if scipy is not None:
     from scipy import interpolate
 
 def scipy_nurbs_approximate(points, weights=None, metric='DISTANCE', degree=3, filter_doubles = None, smoothing=None, is_cyclic=False):
+    """
+    Approximate points by a NURBS curve by use of `splprep` method from scipy.
+
+    Args:
+        points: data points to be approximated. np.ndarray of shape (n, 3).
+        weights: point weights. np.ndarray of shape (n,) or None.
+        metric: metric to be used. See the list of supported metrics in `sverchok.utils.math.supported_metrics`.
+        degree: curve degree.
+        filter_doubles: if not None, this is the threshold for distance between
+            points, which are to be considered too close to one another; duplicates
+            are removed before approximation procedure. If None, duplicates
+            elimination is not performed.
+        smoothing: smoothing parameter to `splprep` method. None means scipy will decide on it's own.
+        is_cyclic: set to True if the curve must be closed.
+
+    Returns:
+        an instance of SvNurbsCurve.
+    """
     points = np.asarray(points)
     if weights is not None and len(points) != len(weights):
         raise Exception("Number of weights must be equal to number of points")

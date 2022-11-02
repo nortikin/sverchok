@@ -19,7 +19,7 @@ def interp_v3l_v3v3(a, b, t):
     else: return ((1.0 - t) * a) + (t * b)
 
 
-class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode):
+class SvSweepModulator(SverchCustomTreeNode, bpy.types.Node):
 
     """
     Triggers: SvSweepModulator
@@ -29,6 +29,7 @@ class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvSweepModulator'
     bl_label = 'Sweep Modulator'
     bl_icon = 'GP_MULTIFRAME_EDITING'
+    sv_icon = 'SV_BETA'
     is_scene_dependent = True
     is_animation_dependent = True
 

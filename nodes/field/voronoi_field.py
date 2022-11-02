@@ -10,7 +10,7 @@ from sverchok.utils.field.scalar import SvVoronoiScalarField
 from sverchok.utils.field.vector import SvVoronoiVectorField
 from sverchok.utils.field.voronoi import SvVoronoiFieldData
 
-class SvVoronoiFieldNode(bpy.types.Node, SverchCustomTreeNode):
+class SvVoronoiFieldNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Voronoi Field
     Tooltip: Generate Voronoi field

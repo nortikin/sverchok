@@ -11,7 +11,7 @@ from sverchok.data_structure import updateNode, zip_long_repeat
 BATCH_SIZE = 50
 MAX_ITERATIONS = 1000
 
-class SvFieldRandomProbeNode(bpy.types.Node, SverchCustomTreeNode):
+class SvFieldRandomProbeNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Scalar Field Random Probe
     Tooltip: Generate random points according to scalar field

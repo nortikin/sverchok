@@ -589,7 +589,7 @@ def get_framenodes(base_node, _):
             items.append((node.name, node.name, "Use Number nodes inside %s as genotype" % node.name, len(items)))
     return items
 
-class SvEvolverNode(bpy.types.Node, SverchCustomTreeNode):
+class SvEvolverNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Genetics algorithm
     Tooltip: Advanced node to find the best solution to a defined problem using a genetics algorithm technique

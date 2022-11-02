@@ -49,7 +49,7 @@ def exponential_b(x0, base, nmin, nmax, maxValue):
 
     return rescale(result, maxValue)
 
-class SvGenExponential(bpy.types.Node, SverchCustomTreeNode):
+class SvGenExponential(SverchCustomTreeNode, bpy.types.Node):
     '''Generate exponential sequence. [default]
     Mode: Log / [Base]
     x0: [1.]

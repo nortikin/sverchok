@@ -15,7 +15,7 @@ from sverchok.utils.nodes_mixins.sockets_config import TransformNode
 from sverchok.utils.handle_blender_data import keep_enum_reference
 
 
-class SvRelaxMeshNode(TransformNode, bpy.types.Node, SverchCustomTreeNode):
+class SvRelaxMeshNode(TransformNode, SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Relax Mesh
     Tooltip: Relax mesh

@@ -323,7 +323,7 @@ def get_belonging_indexes(indexes, coincidence, v_lines):
     return bel_temp
 
 
-class SvProjectPointToLine(bpy.types.Node, SverchCustomTreeNode):
+class SvProjectPointToLine(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: project point to line
     If there are point and line the node will find closest point on the line to point

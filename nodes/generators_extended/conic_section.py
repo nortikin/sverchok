@@ -29,7 +29,7 @@ from sverchok.utils.geom import rotate_vector_around_vector, PlaneEquation, Line
 
 SectionData = namedtuple('SectionData', ['verts', 'branch_mask', 'side_mask', 'get_branch', 'get_side', 'breaks'])
 
-class SvConicSectionNode(bpy.types.Node, SverchCustomTreeNode):
+class SvConicSectionNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Ellipse, Parabola, Hyperbola
     Tooltip: Generate 3D Conic Sections.\n\tIn: ConeApex, ConeDirection, Cone Angle, Count, Max Distance, Plane Point/Direction\n\tParams: Define Cone (Angle/Generating Vector), Even Distribution On/Off\n\tOut: Vertices, Edges, BranchMask, SideMask
