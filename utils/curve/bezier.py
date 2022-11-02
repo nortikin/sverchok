@@ -11,7 +11,7 @@ from math import sqrt
 from sverchok.data_structure import zip_long_repeat
 from sverchok.utils.math import binomial
 from sverchok.utils.geom import Spline, bounding_box, are_points_coplanar, get_common_plane, PlaneEquation, LineEquation
-from sverchok.utils.nurbs_common import SvNurbsMaths
+from sverchok.utils.nurbs_common import SvNurbsMaths, to_homogenous, from_homogenous
 from sverchok.utils.curve.core import SvCurve, UnsupportedCurveTypeException, calc_taylor_nurbs_matrices
 from sverchok.utils.curve.algorithms import concatenate_curves
 from sverchok.utils.curve import knotvector as sv_knotvector
@@ -498,6 +498,62 @@ class SvBezierCurve(SvCurve, SvBezierSplitMixin):
 
     def reverse(self):
         return SvBezierCurve(self.points[::-1])
+
+class SvRationalBezierCurve(SvBezierCurve):
+    def __init__(self, points, weights):
+        super().__init__(to_homogenous(points, weights))
+        self.weights = weights
+        self.points3d = points
+        self.__description__ = "Rational Bezier[{}]".format(len(points)-1)
+
+    def get_control_points(self):
+        return self.points3d
+
+    def get_weights(self):
+        return self.points[:,3]
+
+    def evaluate_array(self, ts):
+        homogenous = super().evaluate_array(ts)
+        return from_homogenous(homogenous)[0]
+
+    def tangent_array(self, ts, tangent_delta=None):
+        homogenous = super().tangent_array(ts)
+        return from_homogenous(homogenous)[0]
+
+    def second_derivative_array(self, ts, tangent_delta=None):
+        homogenous = super().second_derivative_array(ts)
+        return from_homogenous(homogenous)[0]
+
+    def third_derivative_array(self, ts, tangent_delta=None):
+        homogenous = super().third_derivative_array(ts)
+        return from_homogenous(homogenous)[0]
+
+    def is_rational(self):
+        return True
+
+    def is_planar(self, tolerance=1e-6):
+        return are_points_coplanar(self.points3d, tolerance)
+
+    def get_plane(self, tolerance=1e-6):
+        return get_common_plane(self.points3d, tolerance)
+
+    def elevate_degree(self, delta=None, target=None):
+        nonrational = super().elevate_degree(delta=delta, target=target)
+        points, weights = from_homogenous(nonrational.get_control_points())[0]
+        return SvRationalBezierCurve(points, weights)
+
+    def to_nurbs(self, implementation = SvNurbsMaths.NATIVE):
+        knotvector = sv_knotvector.generate(self.degree, len(self.points))
+        return SvNurbsMaths.build_curve(implementation,
+                degree = self.degree, knotvector = knotvector,
+                control_points = self.points3d,
+                weights = self.get_weights())
+
+    def lerp_to(self, curve2, coefficient):
+        return self.to_nurbs().lerp_to(curve2, coefficient)
+
+    def reverse(self):
+        return SvRationalBezierCurve(self.points3d[::-1], self.get_weights()[::-1])
 
 class SvCubicBezierCurve(SvCurve, SvBezierSplitMixin):
     __description__ = "Bezier[3*]"

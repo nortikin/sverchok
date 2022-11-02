@@ -13,8 +13,8 @@ from copy import deepcopy
 import numpy as np
 from math import pi
 
-from sverchok.utils.curve.core import SvCurve, SvTaylorCurve, SvReparametrizedCurve, UnsupportedCurveTypeException, calc_taylor_nurbs_matrices
-from sverchok.utils.curve.bezier import SvBezierCurve, SvCubicBezierCurve
+from sverchok.utils.curve.core import SvCurve, SvTaylorCurve, SvConcatCurve, SvReparametrizedCurve, UnsupportedCurveTypeException, calc_taylor_nurbs_matrices
+from sverchok.utils.curve.bezier import SvBezierCurve, SvRationalBezierCurve, SvCubicBezierCurve
 from sverchok.utils.curve import knotvector as sv_knotvector
 #from sverchok.utils.curve.primitives import SvPointCurve
 from sverchok.utils.curve.algorithms import unify_curves_degree
@@ -284,7 +284,8 @@ class SvNurbsCurve(SvCurve):
     def is_bezier(self):
         k = len(self.get_control_points())
         p = self.get_degree()
-        return p+1 == k
+        kv = self.get_knotvector()
+        return p+1 == k and sv_knotvector.is_clamped(kv, p)
 
     def is_rational(self, tolerance=1e-6):
         weights = self.get_weights()
@@ -690,7 +691,10 @@ class SvNurbsCurve(SvCurve):
             n = len(points)
             p = self.get_degree()
             raise UnsupportedCurveTypeException(f"Curve with {n} control points and {p}'th degree can not be converted into Bezier curve")
-        return SvBezierCurve.from_control_points(points)
+        if self.is_rational():
+            return SvRationalBezierCurve(points, self.get_weights())
+        else:
+            return SvBezierCurve.from_control_points(points)
 
     def to_bezier_segments(self, to_bezier_class=True):
         """
@@ -699,8 +703,6 @@ class SvNurbsCurve(SvCurve):
         Returns:
             If `to_bezier_class` is True, then a list of SvBezierCurve instances. Otherwise, a list of SvNurbsCurve instances.
         """
-        if to_bezier_class and self.is_rational():
-            raise UnsupportedCurveTypeException("Rational NURBS curve can not be converted into non-rational Bezier curves")
         if self.is_bezier():
             if to_bezier_class:
                 return [self.to_bezier()]
@@ -1155,19 +1157,7 @@ class SvNativeNurbsCurve(SvNurbsCurve):
 
     @classmethod
     def build(cls, implementation, degree, knotvector, control_points, weights=None, normalize_knots=False):
-        is_rational = True
-        if weights is None:
-            is_rational = False
-        else:
-            weights = np.asarray(weights)
-            if all_equal(weights):
-                is_rational = False
-
-        #print(f"Build, is_rational={is_rational}, weights={weights}")
-        if is_rational:
-            return SvNativeNurbsCurve(degree, knotvector, control_points, weights, normalize_knots)
-        else:
-            return SvNativeBSplineCurve(degree, knotvector, control_points, normalize_knots=normalize_knots)
+        return SvNativeBSplineCurve(degree, knotvector, control_points, weights=weights, normalize_knots=normalize_knots)
 
     @classmethod
     def interpolate(cls, degree, points, metric='DISTANCE', tknots=None, cyclic=False, logger=None):
@@ -1539,11 +1529,11 @@ class SvNativeNurbsCurve(SvNurbsCurve):
         return curve
 
 class SvNativeBSplineCurve(SvNativeNurbsCurve):
-    def __init__(self, degree, knotvector, control_points, normalize_knots=False):
-        SvNativeNurbsCurve.__init__(self, degree, knotvector, control_points, normalize_knots=normalize_knots)
+    def __init__(self, degree, knotvector, control_points, weights=None, normalize_knots=False):
+        SvNativeNurbsCurve.__init__(self, degree, knotvector, control_points, weights=weights, normalize_knots=normalize_knots)
         self._bezier_segments = None
         self._concatenated = None
-        self.__description__ = f"Native non-rational NURBS (degree={degree}, pts={len(control_points)})"
+        self.__description__ = f"Native* NURBS (degree={degree}, pts={len(control_points)})"
 
     @property
     def bezier_segments(self):
@@ -1562,9 +1552,6 @@ class SvNativeBSplineCurve(SvNativeNurbsCurve):
             u_bounds = self.get_u_bounds()
             self._concatenated = SvNativeBSplineCurve.calc_concatenated_curve(self.bezier_segments, u_bounds)
         return self._concatenated
-
-    def is_rational(self):
-        return False
 
     def evaluate(self, t):
         return self.concatenated.evaluate(t)
@@ -1590,14 +1577,15 @@ class SvNativeBSplineCurve(SvNativeNurbsCurve):
     def derivatives_array(self, n, ts, tangent_delta=None):
         return self.concatenated.derivatives_array(n, ts)
 
-    def _to_rational(self):
-        return SvNativeNurbsCurve(self.degree, self.knotvector, self.control_points)
+#     def _to_generic(self):
+#         return SvNativeNurbsCurve(self.degree, self.knotvector, self.control_points)
 
     def concatenate(self, curve2, tolerance=1e-6, remove_knots=False):
         result = super().concatenate(curve2, tolerance=tolerance, remove_knots=remove_knots)
         result = SvNativeBSplineCurve(result.get_degree(),
                             result.get_knotvector(),
-                            result.get_control_points())
+                            result.get_control_points(),
+                            result.get_weights())
 
         if isinstance(curve2, (SvBezierCurve, SvCubicBezierCurve)):
             bezier_segments = self.bezier_segments + [curve2]
@@ -1631,11 +1619,11 @@ class SvNativeBSplineCurve(SvNativeNurbsCurve):
 #             #print("call super")
 #             return super().split_at(t)
 #         else:
-#             nurbs = self._to_rational()
+#             nurbs = self._to_generic()
 #             t_min, t_max = self.get_u_bounds()
 #             t_less, t_greater = knots[index], knots[index+1]
 #             bezier_left, tmp_curve = nurbs.split_at(t_less)
-#             tmp_curve = tmp_curve._to_rational()
+#             tmp_curve = tmp_curve._to_generic()
 #             t1 = (t_greater - t_less) / (t_max - t_less)
 #             bezier_to_split, bezier_right = tmp_curve.split_at(t1)
 #             bezier_to_split = bezier_to_split.to_bezier()

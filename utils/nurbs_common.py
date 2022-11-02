@@ -168,6 +168,12 @@ def reduce_bezier_degree(self_degree, control_points, delta=1):
         max_error = max(max_error, error)
     return control_points, max_error
 
+def to_homogenous(control_points, weights):
+    if weights.ndim == 1:
+        weights = weights[np.newaxis].T
+    weighted = weights * control_points
+    return np.concatenate((weighted, weights), axis=1)
+
 def from_homogenous(control_points):
     if control_points.ndim == 2: # curve
         weights = control_points[:,3]
