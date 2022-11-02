@@ -172,6 +172,7 @@ class SvSvgDocumentNode(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'SVG Document'
     bl_icon = 'RNA'
     sv_icon = 'SV_SVG'
+    is_output = True
 
     mode_items = [
         ('MM', 'mm', '', 0),
@@ -200,7 +201,11 @@ class SvSvgDocumentNode(SverchCustomTreeNode, bpy.types.Node):
 
     file_name: StringProperty(name="Name", default="Sv_svg",
         description="File Name: this variable holds the name of the file only, the file extension will be added automatically by sverchok")
-    live_update: BoolProperty(name='Live Update', description="Automatically write file when input changes")
+    live_update: BoolProperty(
+        default=True,
+        name='Live Update',
+        description="Automatically write file when input changes",
+        update=lambda s, c: setattr(s, 'is_active', s.live_update))
 
     suffix_filename_with_framenumber: BoolProperty(
         name="Suffix with Frame Number", 

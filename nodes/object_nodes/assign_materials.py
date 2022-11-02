@@ -129,6 +129,7 @@ class SvAssignMaterialListNode(SverchCustomTreeNode, bpy.types.Node):
     bl_idname = 'SvAssignMaterialListNode'
     bl_label = "Assign Materials List"
     bl_icon = 'MATERIAL'
+    is_output = True
 
     @property
     def is_scene_dependent(self):

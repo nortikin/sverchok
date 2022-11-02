@@ -518,6 +518,7 @@ class SvViewerDrawMk4(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Viewer Draw'
     bl_icon = 'GREASEPENCIL'
     sv_icon = 'SV_DRAW_VIEWER'
+    is_output = True
 
     replacement_nodes = [('SvMeshViewer',
                             dict(Vertices = 'vertices',
@@ -536,7 +537,7 @@ class SvViewerDrawMk4(SverchCustomTreeNode, bpy.types.Node):
 
     activate: BoolProperty(
         name='Show', description='Activate drawing',
-        default=True, update=updateNode)
+        default=True, update=lambda s, c: setattr(s, 'is_active', s.activate))
 
     draw_gl_polygonoffset: BoolProperty(
         name="Draw gl polygon offset",

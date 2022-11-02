@@ -29,6 +29,7 @@ class SvVertexGroupNodeMK2(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Vertex Group Weights'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_VERTEX_WEIGHT'
+    is_output = True
     is_animation_dependent = True
     is_scene_dependent = True
 

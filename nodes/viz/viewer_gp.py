@@ -122,6 +122,7 @@ class SvGreasePencilStrokes(SverchCustomTreeNode, bpy.types.Node):
     bl_idname = 'SvGreasePencilStrokes'
     bl_label = 'Grease Pencil (BETA)'
     bl_icon = 'GREASEPENCIL'
+    is_output = True
 
     # SCREEN / 3DSPACE / 2DSPACE / 2DIMAGE
     mode_options = [(k, k, '', i) for i, k in enumerate(['3DSPACE', '2DSPACE'])]
@@ -147,7 +148,10 @@ class SvGreasePencilStrokes(SverchCustomTreeNode, bpy.types.Node):
     draw_cyclic: bpy.props.BoolProperty(default=True, update=updateNode)
     pressure: bpy.props.FloatProperty(default=2.0, min=0.1, max=8.0, update=updateNode)
     num_strokes: bpy.props.IntProperty()
-    active_sv_node: bpy.props.BoolProperty(name="Active", default=True, update=updateNode)
+    active_sv_node: bpy.props.BoolProperty(
+        name="Active",
+        default=True,
+        update=lambda s, c: setattr(s, 'is_active', s.active_sv_node))
 
     def local_updateNode(self, context):
         print('changed name')

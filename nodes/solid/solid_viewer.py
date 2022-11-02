@@ -257,6 +257,7 @@ class SvSolidViewerNode(SverchCustomTreeNode, bpy.types.Node):
     sv_icon = 'SV_DRAW_VIEWER'
     sv_category = "Solid Outputs"
     sv_dependencies = {'FreeCAD'}
+    is_output = True
     node_dict = {}
 
     def wrapped_update(self, context=None):
@@ -265,7 +266,11 @@ class SvSolidViewerNode(SverchCustomTreeNode, bpy.types.Node):
             self.process_node(context)
 
     #n_id: StringProperty(default='')
-    activate: BoolProperty(name='Show', description='Activate', default=True, update=updateNode)
+    activate: BoolProperty(
+        name='Show',
+        description='Activate',
+        default=True,
+        update=lambda s, c: setattr(s, 'is_active', s.activate))
 
     vert_color: FloatVectorProperty(
         subtype='COLOR', min=0, max=1, default=(0.8, 0.8, 0.8, 1.0),

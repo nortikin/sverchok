@@ -35,6 +35,7 @@ class SvMaterialIndexNode(SverchCustomTreeNode, bpy.types.Node):
     bl_idname = 'SvMaterialIndexNode'
     bl_label = "Set Material Index"
     bl_icon = 'MATERIAL'
+    is_output = True
 
     @property
     def is_scene_dependent(self):

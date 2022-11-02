@@ -56,11 +56,12 @@ class SvNodeRemoteNodeMK2(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Node Remote (Control)+'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_REMOTE_NODE'
+    is_output = True
 
     activate: BoolProperty(
         default=True,
         name='Show', description='Activate node?',
-        update=updateNode)
+        update=lambda s, c: setattr(s, 'is_active', s.activate))
 
     nodegroup_name: StringProperty(
         default='',

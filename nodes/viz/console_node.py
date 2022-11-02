@@ -456,6 +456,7 @@ class SvConsoleNode(SverchCustomTreeNode, bpy.types.Node, SvNodeViewDrawMixin):
     bl_idname = 'SvConsoleNode'
     bl_label = 'Console Node'
     bl_icon = 'CONSOLE'
+    is_output = True
 
     def local_updateNode(self, context):
         # self.process()
@@ -471,7 +472,10 @@ class SvConsoleNode(SverchCustomTreeNode, bpy.types.Node, SvNodeViewDrawMixin):
     texture_dict = {}
 
     local_scale: bpy.props.FloatProperty(default=1.0, min=0.2, name="scale", update=updateNode)
-    show_me: bpy.props.BoolProperty(default=True, name="show me", update=updateNode)
+    show_me: bpy.props.BoolProperty(
+        default=True,
+        name="show me",
+        update=lambda s, c: setattr(s, 'is_active', s.show_me))
 
     syntax_mode: bpy.props.EnumProperty(
         items=[(k, k, '', i) for i, k in enumerate(["Code", "f1", "None"])],

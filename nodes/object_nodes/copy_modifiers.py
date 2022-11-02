@@ -21,6 +21,7 @@ class SvCopyModifiersNode(SverchCustomTreeNode, bpy.types.Node):
     bl_idname = 'SvCopyModifiersNode'
     bl_label = 'Copy Modifiers'
     bl_icon = 'MODIFIER_DATA'
+    is_output = True
 
     @property
     def is_scene_dependent(self):

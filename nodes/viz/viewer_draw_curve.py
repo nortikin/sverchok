@@ -84,6 +84,7 @@ class SvCurveViewerDrawNode(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Viewer Draw Curve'
     bl_icon = 'GREASEPENCIL'
     sv_icon = 'SV_DRAW_VIEWER'
+    is_output = True
 
     resolution : IntProperty(
             name = "Resolution",
@@ -93,7 +94,7 @@ class SvCurveViewerDrawNode(SverchCustomTreeNode, bpy.types.Node):
 
     activate: BoolProperty(
         name='Show', description='Activate drawing',
-        default=True, update=updateNode)
+        default=True, update=lambda s, c: setattr(s, 'is_active', s.activate))
 
     draw_verts: BoolProperty(
         update=updateNode, name='Display Vertices', default=False)

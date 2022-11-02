@@ -30,6 +30,7 @@ class SvSetCustomMeshNormals(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Set Custom Normals'
     bl_icon = 'SNAP_NORMAL'
     sv_icon = 'SV_CUSTOM_NORMALS'
+    is_output = True
 
     @property
     def is_scene_dependent(self):

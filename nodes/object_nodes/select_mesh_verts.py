@@ -29,6 +29,7 @@ class SvSelectMeshVerts(SverchCustomTreeNode, bpy.types.Node):
     bl_idname = 'SvSelectMeshVerts'
     bl_label = 'Select Object Vertices'
     bl_icon = 'EDITMODE_HLT'
+    is_output = True
     is_animation_dependent = True
     is_scene_dependent = True
 

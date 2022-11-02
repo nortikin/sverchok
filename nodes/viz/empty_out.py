@@ -25,6 +25,7 @@ class SvEmptyOutNode(SverchCustomTreeNode, bpy.types.Node):
     bl_idname = 'SvEmptyOutNode'
     bl_label = 'Empty out'
     bl_icon = 'OUTLINER_DATA_EMPTY'
+    is_output = True
 
     def rename_empty(self, context):
         empty = self.find_empty()

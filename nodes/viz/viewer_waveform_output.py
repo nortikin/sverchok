@@ -260,6 +260,7 @@ class SvWaveformViewer(SverchCustomTreeNode, bpy.types.Node):
     bl_idname = 'SvWaveformViewer'
     bl_label = 'SvWaveformViewer'
     bl_icon = 'FORCE_HARMONIC'
+    is_output = True
 
     n_id: bpy.props.StringProperty(default='')
     location_theta: bpy.props.FloatProperty(name="location theta")
@@ -275,8 +276,10 @@ class SvWaveformViewer(SverchCustomTreeNode, bpy.types.Node):
         self.location_theta = props.render_location_xy_multiplier
         return props.render_scale
 
-
-    activate: bpy.props.BoolProperty(name="show graph", update=updateNode)
+    activate: bpy.props.BoolProperty(
+        default=True,
+        name="show graph",
+        update=lambda s, c: setattr(s, 'is_active', s.activate))
 
     num_channels: bpy.props.IntProperty(
         name='num channels', default=1, min=1, max=2,

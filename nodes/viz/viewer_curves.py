@@ -167,7 +167,7 @@ def make_curve_geometry(node, context, obj_index, verts, *topology):
     node.push_custom_matrix_if_present(sv_object, matrix)
 
 
-class SvCurveViewerNodeV28(SverchCustomTreeNode, bpy.types.Node, SvObjHelper):
+class SvCurveViewerNodeV28(SvObjHelper, SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: CV object curves
     Tooltip: Advanced 2D/3D curve outputting into scene.\n\tIn: Vertices, Edges, Matrix\n\tParams: Fill, radius, resolution, base name

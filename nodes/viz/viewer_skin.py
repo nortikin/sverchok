@@ -159,7 +159,7 @@ def make_bmesh_geometry(node, context, geometry, idx, layers):
     return obj, data_layers
 
 
-class SvSkinViewerNodeV28(SverchCustomTreeNode, bpy.types.Node, SvObjHelper):
+class SvSkinViewerNodeV28(SvObjHelper, SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Output Skin Mesh
     Tooltip: Outputs Blender Edges + Skin Modifier + Subdivision Surface.\n\tIn: vertices, edges, matrix, radius x/y\n\tParams: base name, subdiv view/render, merge distance

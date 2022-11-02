@@ -30,6 +30,7 @@ class SvMeshUVColorNode(SverchCustomTreeNode, bpy.types.Node):
     bl_idname = 'SvMeshUVColorNode'
     bl_label = 'Set UV Color'
     bl_icon = 'UV_DATA'
+    is_output = True
     is_scene_dependent = True
     is_animation_dependent = True
 

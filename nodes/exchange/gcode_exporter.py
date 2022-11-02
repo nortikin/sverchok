@@ -55,6 +55,7 @@ class SvExportGcodeNode(SverchCustomTreeNode, bpy.types.Node):
     bl_idname = 'SvExportGcodeNode'
     bl_label = 'Export G-code'
     bl_icon = 'COPYDOWN'
+    is_output = True
 
     last_e: FloatProperty(name="Pull", default=5.0, min=0, soft_max=10)
     path_length: FloatProperty(name="Pull", default=5.0, min=0, soft_max=10)

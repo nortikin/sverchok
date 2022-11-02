@@ -126,7 +126,6 @@ class SvDupliInstancesLite(SverchCustomTreeNode, bpy.types.Node, SvViewerNode):
         child.up_axis = self.up
         child.hide_set(not self.show_base_child)
     def process(self):
-        print(True)
         parent_objects = self.inputs['Parent'].sv_get(deepcopy=False)
         child_objects = self.inputs['Child'].sv_get(deepcopy=False)
         scale = self.inputs['Scale'].sv_get(deepcopy=False)

@@ -35,6 +35,7 @@ import bpy
 from bpy.props import StringProperty, BoolProperty, EnumProperty
 from bpy.types import NodeTree, NodeSocket
 
+from sverchok.core.update_system import SearchTree
 from sverchok.core.sv_custom_exceptions import SvNoDataError, DependencyError
 import sverchok.core.events as ev
 import sverchok.dependencies as sv_deps
@@ -227,6 +228,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
     def update(self):
         """This method is called if collection of nodes or links of the tree was changed"""
         handle_event(ev.TreeEvent(self))
+        self.disable_nodes()
 
     def force_update(self):
         """Update whole tree from scratch"""
@@ -250,6 +252,18 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         For `sverchok.core.handlers.sv_update_handler`.
         """
         handle_event(ev.AnimationEvent(self, frame_changed, animation_playing))
+
+    def disable_nodes(self):
+        st = SearchTree(self)
+        active = []
+        for node in self.nodes:
+            if node.bl_idname in {"NodeReroute", "NodeFrame"}:
+                continue
+            node.set_temp_color('disable', (0.081, 0.081, 0.081))
+            if node.is_output and node.is_active:
+                active.append(node)
+        for node in st.nodes_to(active):
+            node.set_temp_color('disable')
 
 
 class UpdateNodes:
@@ -334,6 +348,19 @@ class UpdateNodes:
     Also the node should use `SverchCustomTreeNode.sv_draw_buttons`.
     
     ![image](https://user-images.githubusercontent.com/28003269/193507101-60a28c3f-50a1-4117-a66f-25b0b4e07e13.png)"""
+
+    def update_active(self, context):
+        self.id_data.disable_nodes()
+        self.process_node(context)
+
+    is_active: BoolProperty(
+        name='Live',
+        default=True,
+        update=update_active,
+        description="When enabled this will process incoming data",
+    )
+
+    is_output = False
 
     def sv_init(self, context):
         """
@@ -460,11 +487,11 @@ class UpdateNodes:
         # update error colors
         if error is not None:
             color = no_data_color if isinstance(error, SvNoDataError) else exception_color
-            self.set_temp_color(color)
+            self.set_temp_color('error', color)
             sv_bgl.draw_text(self, str(error), error_pref + self.node_id, color, 1.3, "UP")
         else:
             sv_bgl.callback_disable(error_pref + self.node_id)
-            self.set_temp_color()
+            self.set_temp_color('error')
 
         # show update timing
         if update_time is not None:
@@ -680,6 +707,10 @@ class SverchCustomTreeNode(UpdateNodes, NodeUtils, NodeDependencies):
         use `SverchCustomTreeNode.sv_draw_buttons`."""
         if self.id_data.bl_idname == SverchCustomTree.bl_idname:
             row = layout.row(align=True)
+            if self.is_output:
+                row_ = row.row()
+                row_.ui_units_x = 1.5
+                row_.prop(self, 'is_active', toggle=True)
             if self.is_animation_dependent:
                 row.prop(self, 'is_animatable', icon='ANIM', icon_only=True)
             if self.is_scene_dependent:
@@ -700,6 +731,10 @@ class SverchCustomTreeNode(UpdateNodes, NodeUtils, NodeDependencies):
         on a property panel of the tree editor."""
         if self.id_data.bl_idname == SverchCustomTree.bl_idname:
             row = layout.row(align=True)
+            if self.is_output:
+                row_ = row.row()
+                row_.ui_units_x = 1.5
+                row_.prop(self, 'is_active', toggle=True)
             if self.is_animation_dependent:
                 row.prop(self, 'is_animatable', icon='ANIM')
             if self.is_scene_dependent:
@@ -752,24 +787,41 @@ class SverchCustomTreeNode(UpdateNodes, NodeUtils, NodeDependencies):
         """Returns default color of the node which can be changed in add-on settings."""
         return color_def.get_color(self.bl_idname)
 
-    def set_temp_color(self, color=None):
-        """This method memorize its initial color and override it with given one
-        if given color is None it tries to return its initial color or do nothing"""
+    def set_temp_color(self, color_name: str, color=None):
+        """This method memorize its initial color and override it with given one.
+        The node can keep several temporary colors simultaneously. It shows only
+        last temp color. When of a temp colors is removed (by colling the method
+        without color argument) it tries to show another temp color if available
+        otherwise it shows user color.
 
+        `color_name` is used to distinguish temp colors of different types
+        """
+        use_key = 'use_user_color'
+        color_key = 'user_color'
+        names_key = 'temp_colors'
+        if names_key not in self:
+            self[names_key] = dict()
+
+        # restore user or other tem color
         if color is None:
+            if color_name in self[names_key]:
+                del self[names_key][color_name]
+            if self[names_key]:  # there are other temp colors to show
+                self.color = list(self[names_key].values())[0]
             # looks like the node should return its initial color (user choice)
-            if 'user_color' in self:
-                self.use_custom_color = self['use_user_color']
-                del self['use_user_color']
-                self.color = self['user_color']
-                del self['user_color']
+            elif color_key in self:
+                self.use_custom_color = self[use_key]
+                del self[use_key]
+                self.color = self[color_key]
+                del self[color_key]
 
         # set temporary color
         else:
             # save overridden color (only once)
-            if 'user_color' not in self:
-                self['use_user_color'] = self.use_custom_color
-                self['user_color'] = self.color
+            if color_key not in self:
+                self[use_key] = self.use_custom_color
+                self[color_key] = self.color
+            self[names_key][color_name] = color
             self.use_custom_color = True
             self.color = color
 

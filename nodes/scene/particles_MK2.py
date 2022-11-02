@@ -28,6 +28,7 @@ class SvParticlesMK2Node(SverchCustomTreeNode, bpy.types.Node):
     bl_idname = 'SvParticlesMK2Node'
     bl_label = 'Particles MK2'
     bl_icon = 'PARTICLES'
+    is_output = True
     is_animation_dependent = True
     is_scene_dependent = True
 

@@ -31,6 +31,7 @@ class SvDataShapeNode(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Data Shape'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_DATA_SHAPE'
+    is_output = True
 
     text: StringProperty(name='Text')
 

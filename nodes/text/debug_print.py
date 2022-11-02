@@ -30,6 +30,7 @@ class SvDebugPrintNode(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Debug Print'
     bl_icon = 'CONSOLE'
     sv_icon = 'SV_DEBUG_PRINT'
+    is_output = True
 
     base_name = 'Data '
     multi_socket_type = 'SvStringsSocket'
@@ -39,7 +40,7 @@ class SvDebugPrintNode(SverchCustomTreeNode, bpy.types.Node):
 
     print_data: BoolProperty(
         name='Active', description='Turn on/off printing to stdout',
-        default=True, update=updateNode)
+        default=True, update=lambda s, c: setattr(s, 'is_active', s.print_data))
 
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', "Data 0")

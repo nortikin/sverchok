@@ -41,6 +41,7 @@ class NoteNode(SverchCustomTreeNode, bpy.types.Node):
     bl_idname = 'NoteNode'
     bl_label = 'Note'
     bl_icon = 'INFO'
+    is_output = True
 
     text_cache = {}
     n_id: StringProperty(default='')

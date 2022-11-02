@@ -28,6 +28,7 @@ class SvSculptMaskNode(SverchCustomTreeNode, bpy.types.Node):
     bl_idname = 'SvSculptMaskNode'
     bl_label = 'Vertex Sculpt Masking'
     bl_icon = 'SCULPTMODE_HLT'
+    is_output = True
 
     def sv_init(self, context):
         self.inputs.new('SvObjectSocket', "Object")

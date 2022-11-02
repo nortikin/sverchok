@@ -264,6 +264,7 @@ class SvSetPropNodeMK2(SverchCustomTreeNode, bpy.types.Node, SvPropNodeMixin):
     bl_label = 'Set Property MK2'
     bl_icon = 'FORCE_VORTEX'
     sv_icon = 'SV_PROP_SET'
+    is_output = True
 
     def local_updateNode(self, context):
         # no further interaction with the nodetree is required.
@@ -288,7 +289,7 @@ class SvSetPropNodeMK2(SverchCustomTreeNode, bpy.types.Node, SvPropNodeMixin):
         if s_type == "SvVerticesSocket":
             inputs[0].use_prop = True
 
-    def draw_buttons(self, context, layout):
+    def sv_draw_buttons(self, context, layout):
         layout.alert = self.bad_prop
         layout.prop(self, "prop_name", text="")
 

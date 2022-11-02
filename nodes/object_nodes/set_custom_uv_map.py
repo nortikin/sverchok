@@ -77,6 +77,7 @@ class SvSetCustomUVMap(SverchCustomTreeNode, bpy.types.Node):
     bl_idname = 'SvSetCustomUVMap'
     bl_label = 'Set Custom UV Map'
     bl_icon = 'GROUP_UVS'
+    is_output = True
 
     @property
     def is_scene_dependent(self):

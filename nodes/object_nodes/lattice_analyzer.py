@@ -25,6 +25,7 @@ class SvLatticePropsNode(SverchCustomTreeNode, bpy.types.Node):
     bl_idname = 'SvLatticePropsNode'
     bl_label = 'Lattice Props'
     bl_icon = 'MOD_LATTICE'
+    is_output = True
     is_scene_dependent = True
     is_animation_dependent = True
 

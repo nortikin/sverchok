@@ -166,8 +166,14 @@ class ViewerNodeTextMK3(SverchCustomTreeNode, bpy.types.Node):
     bl_idname = 'ViewerNodeTextMK3'
     bl_label = 'Viewer Text MK3'
     bl_icon = 'FILE_TEXT'
+    is_output = True
 
-    autoupdate: BoolProperty(name='update', default=False)
+    autoupdate: BoolProperty(
+        name='update',
+        default=True,
+        update=lambda s, c: setattr(s, 'is_active', s.autoupdate),
+    )
+
     frame: BoolProperty(name='frame', default=True)
     lines: IntProperty(name='lines', description='lines count to show', default=1000, min=1, max=2000)
 

@@ -116,6 +116,7 @@ class SvStethoscopeNodeMK2(SverchCustomTreeNode, bpy.types.Node, LexMixin, SvNod
     bl_idname = 'SvStethoscopeNodeMK2'
     bl_label = 'Stethoscope MK2'
     bl_icon = 'LONGDISPLAY'
+    is_output = True
 
     font_id: IntProperty(default=0, update=updateNode)
 
@@ -128,7 +129,7 @@ class SvStethoscopeNodeMK2(SverchCustomTreeNode, bpy.types.Node, LexMixin, SvNod
     activate: BoolProperty(
         name='Show', description='Activate node?',
         default=True,
-        update=updateNode)
+        update=lambda s, c: setattr(s, 'is_active', s.activate))
 
     #mode_options = [(i, i, '', idx) for idx, i in enumerate(["text-based", "graphical", "sv++"])]
     selected_mode: bpy.props.EnumProperty(

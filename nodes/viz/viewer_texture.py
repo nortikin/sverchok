@@ -104,6 +104,7 @@ class SvTextureViewerNode(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Texture viewer'
     bl_icon = 'IMAGE'
     sv_icon = 'SV_TEXTURE_VIEWER'
+    is_output = True
     texture = {}
 
     def wrapped_update(self, context):
@@ -122,7 +123,7 @@ class SvTextureViewerNode(SverchCustomTreeNode, bpy.types.Node):
 
     activate: BoolProperty(
         name='Show', description='Activate texture drawing',
-        default=True, update=updateNode)
+        default=True, update=lambda s, c: setattr(s, 'is_active', s.activate))
 
     selected_mode: EnumProperty(
         items=size_tex_list, description="Offers display sizing",

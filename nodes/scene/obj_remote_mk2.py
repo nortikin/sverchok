@@ -29,14 +29,12 @@ class SvObjRemoteNodeMK2(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Object Remote (Control) MK2'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_REMOTE_OBJECT'
+    is_output = True
 
     def sv_init(self, context):
         self.inputs.new('SvMatrixSocket', 'matrices')
         self.inputs.new('SvObjectSocket', 'objects')
         self.outputs.new('SvObjectSocket', 'objects')
-
-    def draw_buttons(self, context, layout):
-        pass
 
     def process(self):
         if not self.inputs[1] and not self.inputs[1].is_linked:

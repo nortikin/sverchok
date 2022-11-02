@@ -505,6 +505,7 @@ class SvViewer2D(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Viewer 2D'
     bl_icon = 'HIDE_OFF'
     sv_icon = 'SV_EASING'
+    is_output = True
 
     modes = [
         ('Number', 'Number', 'Visualize number list', '', 1),
@@ -549,8 +550,9 @@ class SvViewer2D(SverchCustomTreeNode, bpy.types.Node):
 
     activate: BoolProperty(
         name='Show', description='Activate drawing',
-        default=True, update=updateNode
+        default=True, update=lambda s, c: setattr(s, 'is_active', s.activate)
     )
+
     cyclic: BoolProperty(
         name='Cycle', description='Join first and last vertices',
         default=True, update=updateNode

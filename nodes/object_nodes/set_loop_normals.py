@@ -23,11 +23,12 @@ class SvSetLoopNormalsNode(SverchCustomTreeNode, bpy.types.Node):
     bl_idname = 'SvSetLoopNormalsNode'
     bl_label = 'Set Loop Normals'
     bl_icon = 'NORMALS_VERTEX'
+    is_output = True
 
     normalize: bpy.props.BoolProperty(name="Normalize", default=True, description="Normalize input normals",
                                       update=updateNode)
 
-    def draw_buttons(self, context, layout):
+    def sv_draw_buttons(self, context, layout):
         layout.prop(self, 'normalize')
 
     def sv_init(self, context):

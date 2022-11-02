@@ -37,6 +37,7 @@ class SvIDXViewer28(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Viewer Index+'
     bl_icon = 'INFO'
     sv_icon = 'SV_INDEX_VIEWER'
+    is_output = True
 
     def get_scale(self):
         try:
@@ -51,12 +52,10 @@ class SvIDXViewer28(SverchCustomTreeNode, bpy.types.Node):
             name=name, description='', size=4, min=0.0, max=1.0,
             default=col, subtype='COLOR', update=updateNode)
 
-    n_id: StringProperty(default='', options={'SKIP_SAVE'})
-
     activate: BoolProperty(
         name='Show', description='Activate node?',
         default=True,
-        update=updateNode)
+        update=lambda s, c: setattr(s, 'is_active', s.activate))
 
     draw_bg: BoolProperty(
         name='draw_bg', description='draw background poly?',
@@ -316,10 +315,6 @@ class SvIDXViewer28(SverchCustomTreeNode, bpy.types.Node):
 
     def sv_free(self):
         callback_disable(node_id(self))
-
-    def sv_copy(self, node):
-        ''' reset n_id on copy '''
-        self.n_id = ''
 
     def show_viewport(self, is_show: bool):
         """It should be called by node tree to show/hide objects"""

@@ -36,6 +36,7 @@ class SvTextureViewerNodeLite(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Texture viewer lite'
     bl_icon = 'IMAGE'
     sv_icon = 'SV_TEXTURE_VIEWER_LITE'
+    is_output = True
     texture = {}
 
     def pointer_update(self, context):

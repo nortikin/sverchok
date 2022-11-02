@@ -25,6 +25,7 @@ class SvArmaturePropsNode(SverchCustomTreeNode, bpy.types.Node):
     bl_idname = 'SvArmaturePropsNode'
     bl_label = 'Armature Props'
     bl_icon = 'MOD_ARMATURE'
+    is_output = True
     is_scene_dependent = True
     is_animation_dependent = True
 

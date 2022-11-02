@@ -597,6 +597,7 @@ class SvEvolverNode(SverchCustomTreeNode, bpy.types.Node):
     bl_idname = 'SvEvolverNode'
     bl_label = 'Evolver'
     bl_icon = 'RNA'
+    is_output = True
 
     def props_changed(self, context):
         if self.node_id in evolver_mem:

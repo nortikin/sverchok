@@ -81,6 +81,7 @@ class SvSetMeshAttributeNode(SverchCustomTreeNode, bpy.types.Node):
     bl_idname = 'SvSetMeshAttributeNode'
     bl_label = 'Set Mesh Attribute'
     bl_icon = 'SORTALPHA'
+    is_output = True
 
     def update_type(self, context):
         self.inputs['Value'].hide_safe = self.value_type not in ['FLOAT', 'INT', 'BOOLEAN']
@@ -96,7 +97,7 @@ class SvSetMeshAttributeNode(SverchCustomTreeNode, bpy.types.Node):
     value_type: bpy.props.EnumProperty(items=[(i, i.capitalize(), '') for i in value_types], update=update_type)
     last_objects: bpy.props.CollectionProperty(type=SvObjectsWithAttributes)
 
-    def draw_buttons(self, context, layout):
+    def sv_draw_buttons(self, context, layout):
         layout.prop(self, 'domain', text='Domain')
         layout.prop(self, 'value_type', text='Type')
 

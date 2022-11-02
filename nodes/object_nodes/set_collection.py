@@ -80,6 +80,7 @@ class SvSetCollection(SverchCustomTreeNode, bpy.types.Node):
     bl_idname = 'SvSetCollection'
     bl_label = 'Set Collection'
     bl_icon = 'OUTLINER_COLLECTION'
+    is_output = True
 
     collection: bpy.props.PointerProperty(type=bpy.types.Collection, update=updateNode)
     last_objects: bpy.props.CollectionProperty(type=SvObjectsWithCollections)
@@ -93,7 +94,7 @@ class SvSetCollection(SverchCustomTreeNode, bpy.types.Node):
         # new node new history
         self.last_objects.clear()
 
-    def draw_buttons(self, context, layout):
+    def sv_draw_buttons(self, context, layout):
         layout.operator('node.sv_unlink_from_other_collections', text="Unlink others", icon='UNLINKED')
 
     def process(self):

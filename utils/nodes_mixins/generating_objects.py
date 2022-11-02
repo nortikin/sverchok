@@ -352,9 +352,7 @@ class SvViewerNode(BlenderObjects):
     """
     Mixin for all nodes which displays any objects in viewport
     """
-
-    is_active: bpy.props.BoolProperty(name='Live', default=True, update=updateNode,
-                                      description="When enabled this will process incoming data",)
+    is_output = True
 
     base_data_name: bpy.props.StringProperty(
         default='Alpha',

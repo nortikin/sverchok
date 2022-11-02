@@ -132,7 +132,7 @@ class SvObjectsHelperCallback(bpy.types.Operator):
 
 
 class SvObjHelper():
-
+    is_output = True
     # hints found at ba.org/forum/showthread.php?290106
     # - this will not allow objects on multiple layers, yet.
     def g(self):
@@ -232,7 +232,7 @@ class SvObjHelper():
         name='activate',
         description="When enabled this will process incoming data",
         default=True,
-        update=updateNode)
+        update=lambda s, c: setattr(s, 'is_active', s.activate))
 
     basedata_name: StringProperty(
         name='basedata name',

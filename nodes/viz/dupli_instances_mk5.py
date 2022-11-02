@@ -58,7 +58,7 @@ def generate_mesh_data(transforms, child, mode, ignore_location):
 
     return verts, faces
 
-class SvDupliInstancesMK5(SverchCustomTreeNode, bpy.types.Node, SvViewerNode):
+class SvDupliInstancesMK5(SvViewerNode, SverchCustomTreeNode, bpy.types.Node):
     '''Blender functionality of Instancing on object Vertices or Faces.
     In: child object, vertices
     Params: base name, Collection, Child Visibility/Clear/Release

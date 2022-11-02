@@ -87,6 +87,7 @@ class SvVertexColorNodeMK3(SverchCustomTreeNode, bpy.types.Node):
     bl_idname = 'SvVertexColorNodeMK3'
     bl_label = 'Vertex Color MK3'
     bl_icon = 'COLOR'
+    is_output = True
 
     modes = [
         ("vertices", "Vert", "Vcol - color per vertex", 1),
@@ -117,7 +118,7 @@ class SvVertexColorNodeMK3(SverchCustomTreeNode, bpy.types.Node):
         default="RGBA", update=updateNode)
 
 
-    def draw_buttons(self, context, layout):
+    def sv_draw_buttons(self, context, layout):
         layout.prop(self, 'use_active')
         layout.prop(self, 'vertex_color')
         layout.prop(self, "mode", expand=True)

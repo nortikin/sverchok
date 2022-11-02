@@ -122,6 +122,7 @@ class SvTextOutNodeMK2(SverchCustomTreeNode, bpy.types.Node):
     bl_idname = 'SvTextOutNodeMK2'
     bl_label = 'Text Out+'
     bl_icon = 'COPYDOWN'
+    is_output = True
 
     sv_modes = [
         ('compact',     'Compact',      'Using str()',        1),
@@ -169,7 +170,13 @@ class SvTextOutNodeMK2(SverchCustomTreeNode, bpy.types.Node):
     base_name: StringProperty(name='base_name', default='Col ')
     multi_socket_type: StringProperty(name='multi_socket_type', default='SvStringsSocket')
 
-    autodump: BoolProperty(default=False, description="autodump", name="auto dump")
+    autodump: BoolProperty(
+        default=True,
+        description="autodump",
+        name="auto dump",
+        update=lambda s, c: setattr(s, 'is_active', s.autodump),
+    )
+
     unwrap: BoolProperty(default=True, description="unwrap", name="unwrap")
 
     def sv_init(self, context):
