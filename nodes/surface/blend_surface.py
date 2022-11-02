@@ -6,7 +6,7 @@
 # License-Filename: LICENSE
 
 import bpy
-from bpy.props import FloatProperty, EnumProperty, BoolProperty
+from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
@@ -14,6 +14,7 @@ from sverchok.utils.curve import SvCurve, SvLine
 from sverchok.utils.curve.algorithms import reverse_curve
 from sverchok.utils.surface import SvSurface
 from sverchok.utils.surface.algorithms import SvBlendSurface
+from sverchok.utils.surface.gordon import nurbs_blend_surfaces
 
 class SvBlendSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
     """
@@ -36,6 +37,7 @@ class SvBlendSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
     def update_sockets(self, context):
         self.inputs['UVCurve1'].hide_safe = self.curve1_mode != 'USER'
         self.inputs['UVCurve2'].hide_safe = self.curve2_mode != 'USER'
+        self.inputs['Samples'].hide_safe = not self.use_nurbs
         updateNode(self, context)
 
     curve1_mode : EnumProperty(
@@ -76,6 +78,18 @@ class SvBlendSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
             default = False,
             update = updateNode)
 
+    use_nurbs : BoolProperty(
+            name = "NURBS",
+            description = "Generate a NURBS surface",
+            default = False,
+            update = update_sockets)
+
+    samples : IntProperty(
+            name = "Samples",
+            default = 10,
+            min = 3,
+            update = updateNode)
+
     def draw_buttons(self, context, layout):
         box = layout.row(align=True)
         box.prop(self, 'curve1_mode', text='')
@@ -83,6 +97,7 @@ class SvBlendSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
         box = layout.row(align=True)
         box.prop(self, 'curve2_mode', text='')
         box.prop(self, 'flip2', toggle=True, text='Flip')
+        layout.prop(self, 'use_nurbs')
 
     def sv_init(self, context):
         self.inputs.new('SvSurfaceSocket', 'Surface1')
@@ -91,6 +106,7 @@ class SvBlendSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
         self.inputs.new('SvSurfaceSocket', 'Surface2')
         self.inputs.new('SvCurveSocket', 'UVCurve2')
         self.inputs.new('SvStringsSocket', 'Bulge2').prop_name = 'bulge2'
+        self.inputs.new('SvStringsSocket', 'Samples').prop_name = 'samples'
         self.outputs.new('SvSurfaceSocket', 'Surface')
         self.update_sockets(context)
 
@@ -131,6 +147,7 @@ class SvBlendSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
         uv_curve2_s = self.inputs['UVCurve2'].sv_get(default=[[None]])
         bulge1_s = self.inputs['Bulge1'].sv_get()
         bulge2_s = self.inputs['Bulge2'].sv_get()
+        samples_s = self.inputs['Samples'].sv_get()
 
         surface1_s = ensure_nesting_level(surface1_s, 2, data_types=(SvSurface,))
         if self.inputs['UVCurve1'].is_linked:
@@ -140,11 +157,12 @@ class SvBlendSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
             uv_curve2_s = ensure_nesting_level(uv_curve2_s, 2, data_types=(SvCurve,))
         bulge1_s = ensure_nesting_level(bulge1_s, 2)
         bulge2_s = ensure_nesting_level(bulge2_s, 2)
+        samples_s = ensure_nesting_level(samples_s, 2)
 
         surfaces_out = []
-        for surface1_i, curve1_i, bulge1_i, surface2_i, curve2_i, bulge2_i in zip_long_repeat(surface1_s, uv_curve1_s, bulge1_s, surface2_s, uv_curve2_s, bulge2_s):
+        for params in zip_long_repeat(surface1_s, uv_curve1_s, bulge1_s, surface2_s, uv_curve2_s, bulge2_s, samples_s):
             new_surfaces = []
-            for surface1, curve1, bulge1, surface2, curve2, bulge2 in zip_long_repeat(surface1_i, curve1_i, bulge1_i, surface2_i, curve2_i, bulge2_i):
+            for surface1, curve1, bulge1, surface2, curve2, bulge2, samples in zip_long_repeat(*params):
                 if self.curve1_mode != 'USER':
                     curve1 = self.make_uv_curve(surface1, self.curve1_mode, self.flip1)
                 elif self.flip1:
@@ -154,7 +172,10 @@ class SvBlendSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
                 elif self.flip2:
                     curve2 = reverse_curve(curve2)
 
-                surface = SvBlendSurface(surface1, surface2, curve1, curve2, bulge1, bulge2)
+                if self.use_nurbs:
+                    surface = nurbs_blend_surfaces(surface1, surface2, curve1, curve2, bulge1, bulge2, 3, samples)
+                else:
+                    surface = SvBlendSurface(surface1, surface2, curve1, curve2, bulge1, bulge2)
                 new_surfaces.append(surface)
             surfaces_out.append(new_surfaces)
 
