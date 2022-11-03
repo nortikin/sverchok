@@ -39,6 +39,7 @@ import math
 from sverchok.utils.nurbs_common import SvNurbsMaths
 from sverchok.utils.curve.core import SvCurve, UnsupportedCurveTypeException
 from sverchok.utils.curve.nurbs import SvNurbsCurve
+from sverchok.utils.curve.nurbs_solver_applications import interpolate_nurbs_curve
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.primitives import SvLine, SvCircle
 from sverchok.utils.curve.biarc import SvBiArc
@@ -284,6 +285,11 @@ class SvFreeCadNurbsCurve(SvNurbsCurve):
         curve = Geom2d.BSplineCurve2d()
         curve.buildFromPolesMultsKnots(pts, mults, knots, False, degree, weights)
         return SvFreeCadNurbsCurve(curve, ndim=2)
+
+    @classmethod
+    def interpolate(cls, degree, points, metric=&#39;DISTANCE&#39;, tknots=None, cyclic=False, logger=None, **kwargs):
+        curve = interpolate_nurbs_curve(degree, points, metric=metric, tknots=tknots, cyclic=cyclic, logger=logger)
+        return curve.copy(implementation = SvNurbsMaths.FREECAD)
 
     def to_2d(self):
         return SvFreeCadNurbsCurve.build_2d(self.get_degree(), self.get_knotvector(),
@@ -897,6 +903,11 @@ output: SvFreeCadNurbsCurve</p></div>
         curve.buildFromPolesMultsKnots(pts, mults, knots, False, degree, weights)
         return SvFreeCadNurbsCurve(curve, ndim=2)
 
+    @classmethod
+    def interpolate(cls, degree, points, metric=&#39;DISTANCE&#39;, tknots=None, cyclic=False, logger=None, **kwargs):
+        curve = interpolate_nurbs_curve(degree, points, metric=metric, tknots=tknots, cyclic=cyclic, logger=logger)
+        return curve.copy(implementation = SvNurbsMaths.FREECAD)
+
     def to_2d(self):
         return SvFreeCadNurbsCurve.build_2d(self.get_degree(), self.get_knotvector(),
                     self.get_control_points(), self.get_weights())
@@ -1102,6 +1113,21 @@ def from_any_nurbs(cls, curve):
                 curve.get_degree(), curve.get_knotvector(),
                 curve.get_control_points(), 
                 curve.get_weights())</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.freecad.SvFreeCadNurbsCurve.interpolate"><code class="name flex">
+<span>def <span class="ident">interpolate</span></span>(<span>degree, points, metric='DISTANCE', tknots=None, cyclic=False, logger=None, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def interpolate(cls, degree, points, metric=&#39;DISTANCE&#39;, tknots=None, cyclic=False, logger=None, **kwargs):
+    curve = interpolate_nurbs_curve(degree, points, metric=metric, tknots=tknots, cyclic=cyclic, logger=logger)
+    return curve.copy(implementation = SvNurbsMaths.FREECAD)</code></pre>
 </details>
 </dd>
 </dl>
@@ -1442,6 +1468,7 @@ def from_any_nurbs(cls, curve):
 <li><code><a title="sverchok.utils.curve.freecad.SvFreeCadNurbsCurve.derivatives_array" href="#sverchok.utils.curve.freecad.SvFreeCadNurbsCurve.derivatives_array">derivatives_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.freecad.SvFreeCadNurbsCurve.from_any_nurbs" href="#sverchok.utils.curve.freecad.SvFreeCadNurbsCurve.from_any_nurbs">from_any_nurbs</a></code></li>
 <li><code><a title="sverchok.utils.curve.freecad.SvFreeCadNurbsCurve.insert_knot" href="#sverchok.utils.curve.freecad.SvFreeCadNurbsCurve.insert_knot">insert_knot</a></code></li>
+<li><code><a title="sverchok.utils.curve.freecad.SvFreeCadNurbsCurve.interpolate" href="#sverchok.utils.curve.freecad.SvFreeCadNurbsCurve.interpolate">interpolate</a></code></li>
 <li><code><a title="sverchok.utils.curve.freecad.SvFreeCadNurbsCurve.is_closed" href="#sverchok.utils.curve.freecad.SvFreeCadNurbsCurve.is_closed">is_closed</a></code></li>
 <li><code><a title="sverchok.utils.curve.freecad.SvFreeCadNurbsCurve.remove_knot" href="#sverchok.utils.curve.freecad.SvFreeCadNurbsCurve.remove_knot">remove_knot</a></code></li>
 <li><code><a title="sverchok.utils.curve.freecad.SvFreeCadNurbsCurve.second_derivative" href="#sverchok.utils.curve.freecad.SvFreeCadNurbsCurve.second_derivative">second_derivative</a></code></li>

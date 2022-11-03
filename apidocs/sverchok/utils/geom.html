@@ -194,6 +194,8 @@ class Spline(object):
             tknots = tknots - tknots[0]
             if tknots[-1] != 0:
                 tknots = tknots / tknots[-1]
+        else:
+            raise Exception(f&#34;Unsupported metric: {metric}&#34;)
 
         return tknots
 
@@ -8502,6 +8504,8 @@ vertices by a sphere.</p>
             tknots = tknots - tknots[0]
             if tknots[-1] != 0:
                 tknots = tknots / tknots[-1]
+        else:
+            raise Exception(f&#34;Unsupported metric: {metric}&#34;)
 
         return tknots
 
@@ -8619,6 +8623,8 @@ def create_knots(cls, pts, metric=&#34;DISTANCE&#34;):
         tknots = tknots - tknots[0]
         if tknots[-1] != 0:
             tknots = tknots / tknots[-1]
+    else:
+        raise Exception(f&#34;Unsupported metric: {metric}&#34;)
 
     return tknots</code></pre>
 </details>
