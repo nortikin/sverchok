@@ -76,6 +76,13 @@ class SvSplineCurve(SvCurve):
         segments = [curve_constructor(points) for points in control_points]
         return segments
 
+    def concatenate(self, curve2, tolerance=1e-6, remove_knots=False):
+        curve2 = SvNurbsCurve.to_nurbs(curve2)
+        if curve2 is None:
+            raise UnsupportedCurveTypeException("second curve is not NURBS")
+        else:
+            return self.to_nurbs().concatenate(curve2, tolerance=tolerance, remove_knots=remove_knots)
+
     def make_revolution_surface(self, point, direction, v_min, v_max, global_origin):
         return self.to_nurbs().make_revolution_surface(point, direction, v_min, v_max, global_origin)
 
