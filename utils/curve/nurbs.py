@@ -1184,6 +1184,9 @@ class SvNativeNurbsCurve(SvNurbsCurve):
         s = sv_knotvector.find_multiplicity(u, u_bar)
         p = self.get_degree()
 
+        if u_bar < u[0] or u_bar > u[-1]:
+            raise CantInsertKnotException(f"Can't insert a knot t={u_bar} as it is outside curve domain")
+
         if (u_bar == u[0] or u_bar == u[-1]):
             if s+count > p+1:
                 if if_possible:
@@ -1207,6 +1210,8 @@ class SvNativeNurbsCurve(SvNurbsCurve):
             for i in range(N+1):
                 #print(f"I: i {i}, k {k}, p {p}, r {r}, s {s}, k-p+r-1 {k-p+r-1}, k-s {k-s}")
                 if i <= k-p+r-1:
+                    if i >= len(prev_control_points):
+                        raise CantInsertKnotException(f"Can't insert the knot t={u_bar} for {r}th time: T is too close to curve's end")
                     point = prev_control_points[i]
                     #print(f"P[{r},{i}] := {i}{prev_control_points[i]}")
                 elif k - p + r <= i <= k - s:
