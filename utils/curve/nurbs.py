@@ -1182,12 +1182,7 @@ class SvNativeNurbsCurve(SvNurbsCurve):
         N = len(self.control_points)
         u = self.get_knotvector()
         s = sv_knotvector.find_multiplicity(u, u_bar)
-        #print(f"I: kv {len(u)}{u}, u_bar {u_bar} => s {s}")
-        #k = np.searchsorted(u, u_bar, side='right')-1
-        k = sv_knotvector.find_span(u, N, u_bar)
         p = self.get_degree()
-        new_knotvector = sv_knotvector.insert(u, u_bar, count)
-        control_points = self.get_homogenous_control_points()
 
         if (u_bar == u[0] or u_bar == u[-1]):
             if s+count > p+1:
@@ -1202,6 +1197,10 @@ class SvNativeNurbsCurve(SvNurbsCurve):
                 else:
                     raise CantInsertKnotException(f"Can't insert knot t={u_bar} for {count} times")
 
+        k = u.searchsorted(u_bar, side='right')-1
+        new_knotvector = sv_knotvector.insert(u, u_bar, count)
+        control_points = self.get_homogenous_control_points()
+
         for r in range(1, count+1):
             prev_control_points = control_points
             control_points = []
@@ -1211,9 +1210,11 @@ class SvNativeNurbsCurve(SvNurbsCurve):
                     point = prev_control_points[i]
                     #print(f"P[{r},{i}] := {i}{prev_control_points[i]}")
                 elif k - p + r <= i <= k - s:
+                    if i >= len(prev_control_points):
+                        raise CantInsertKnotException(f"Can't insert the knot t={u_bar} for {r}th time: T is too close to curve's end")
                     denominator = u[i+p-r+1] - u[i]
                     if abs(denominator) < 1e-6:
-                        raise Exception(f"Can't insert the knot t={u_bar} for {i}th time: u[i+p-r+1]={u[i+p-r+1]}, u[i]={u[i]}, denom={denominator}")
+                        raise Exception(f"Can't insert the knot t={u_bar} for {r}th time: u[i+p-r+1]={u[i+p-r+1]}, u[i]={u[i]}, denom={denominator}")
                     alpha = (u_bar - u[i]) / denominator
                     point = alpha * prev_control_points[i] + (1.0 - alpha) * prev_control_points[i-1]
                     #print(f"P[{r},{i}]: alpha {alpha}, pts {i}{prev_control_points[i]}, {i-1}{prev_control_points[i-1]} => {point}")
