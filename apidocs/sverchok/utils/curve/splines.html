@@ -104,6 +104,13 @@ class SvSplineCurve(SvCurve):
         segments = [curve_constructor(points) for points in control_points]
         return segments
 
+    def concatenate(self, curve2, tolerance=1e-6, remove_knots=False):
+        curve2 = SvNurbsCurve.to_nurbs(curve2)
+        if curve2 is None:
+            raise UnsupportedCurveTypeException(&#34;second curve is not NURBS&#34;)
+        else:
+            return self.to_nurbs().concatenate(curve2, tolerance=tolerance, remove_knots=remove_knots)
+
     def make_revolution_surface(self, point, direction, v_min, v_max, global_origin):
         return self.to_nurbs().make_revolution_surface(point, direction, v_min, v_max, global_origin)
 
@@ -205,6 +212,13 @@ class SvSplineCurve(SvCurve):
         segments = [curve_constructor(points) for points in control_points]
         return segments
 
+    def concatenate(self, curve2, tolerance=1e-6, remove_knots=False):
+        curve2 = SvNurbsCurve.to_nurbs(curve2)
+        if curve2 is None:
+            raise UnsupportedCurveTypeException(&#34;second curve is not NURBS&#34;)
+        else:
+            return self.to_nurbs().concatenate(curve2, tolerance=tolerance, remove_knots=remove_knots)
+
     def make_revolution_surface(self, point, direction, v_min, v_max, global_origin):
         return self.to_nurbs().make_revolution_surface(point, direction, v_min, v_max, global_origin)
 
@@ -254,6 +268,23 @@ def from_points(cls, points, metric=None, is_cyclic=False):
 </dl>
 <h3>Methods</h3>
 <dl>
+<dt id="sverchok.utils.curve.splines.SvSplineCurve.concatenate"><code class="name flex">
+<span>def <span class="ident">concatenate</span></span>(<span>self, curve2, tolerance=1e-06, remove_knots=False)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def concatenate(self, curve2, tolerance=1e-6, remove_knots=False):
+    curve2 = SvNurbsCurve.to_nurbs(curve2)
+    if curve2 is None:
+        raise UnsupportedCurveTypeException(&#34;second curve is not NURBS&#34;)
+    else:
+        return self.to_nurbs().concatenate(curve2, tolerance=tolerance, remove_knots=remove_knots)</code></pre>
+</details>
+</dd>
 <dt id="sverchok.utils.curve.splines.SvSplineCurve.cut_segment"><code class="name flex">
 <span>def <span class="ident">cut_segment</span></span>(<span>self, new_t_min, new_t_max, rescale=False)</span>
 </code></dt>
@@ -425,6 +456,7 @@ def from_points(cls, points, metric=None, is_cyclic=False):
 <li>
 <h4><code><a title="sverchok.utils.curve.splines.SvSplineCurve" href="#sverchok.utils.curve.splines.SvSplineCurve">SvSplineCurve</a></code></h4>
 <ul class="">
+<li><code><a title="sverchok.utils.curve.splines.SvSplineCurve.concatenate" href="#sverchok.utils.curve.splines.SvSplineCurve.concatenate">concatenate</a></code></li>
 <li><code><a title="sverchok.utils.curve.splines.SvSplineCurve.cut_segment" href="#sverchok.utils.curve.splines.SvSplineCurve.cut_segment">cut_segment</a></code></li>
 <li><code><a title="sverchok.utils.curve.splines.SvSplineCurve.extrude_along_vector" href="#sverchok.utils.curve.splines.SvSplineCurve.extrude_along_vector">extrude_along_vector</a></code></li>
 <li><code><a title="sverchok.utils.curve.splines.SvSplineCurve.extrude_to_point" href="#sverchok.utils.curve.splines.SvSplineCurve.extrude_to_point">extrude_to_point</a></code></li>
