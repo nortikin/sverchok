@@ -177,7 +177,9 @@ class AddNode(MenuItem):
     def icon_prop(self):
         if self._icon_prop is None:
             node_cls = bpy.types.Node.bl_rna_get_subclass_py(self.bl_idname)
-            if self.bl_idname == 'NodeReroute':
+            if node_cls is None:
+                self._icon_prop = {'icon': 'ERROR'}
+            elif self.bl_idname == 'NodeReroute':
                 self._icon_prop = icon('SV_REROUTE')
             elif node_cls is not None:
                 self._icon_prop = node_icon(node_cls)
