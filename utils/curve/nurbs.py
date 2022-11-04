@@ -1008,7 +1008,7 @@ class SvNativeNurbsCurve(SvNurbsCurve):
         if normalize_knots:
             self.knotvector = sv_knotvector.normalize(self.knotvector)
         self.degree = degree
-        self.basis = SvNurbsBasisFunctions(knotvector)
+        self.basis = SvNurbsBasisFunctions(self.knotvector)
         self.tangent_delta = 0.001
         self.u_bounds = None # take from knotvector
         self.__description__ = f"Native NURBS (degree={degree}, pts={k})"
