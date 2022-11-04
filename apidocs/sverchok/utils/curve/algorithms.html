@@ -1054,14 +1054,14 @@ def split_curve(curve, splits, rescale=False):
             result.append(segment)
         return result
 
-def curve_segment(curve, new_t_min, new_t_max, rescale=False):
+def curve_segment(curve, new_t_min, new_t_max, use_native=True, rescale=False):
     &#34;&#34;&#34;
     Cut a segment out of the curve.
     &#34;&#34;&#34;
     t_min, t_max = curve.get_u_bounds()
-    if hasattr(curve, &#39;cut_segment&#39;):
+    if use_native and hasattr(curve, &#39;cut_segment&#39;):
         return curve.cut_segment(new_t_min, new_t_max, rescale=rescale)
-    elif hasattr(curve, &#39;split_at&#39;) and (new_t_min &gt; t_min or new_t_max &lt; t_max):
+    elif use_native and hasattr(curve, &#39;split_at&#39;) and (new_t_min &gt; t_min or new_t_max &lt; t_max):
         if new_t_min &gt; t_min:
             start, curve = curve.split_at(new_t_min)
         if new_t_max &lt; t_max:
@@ -1257,7 +1257,7 @@ other axes are surface's U and V). Default of 2 means X is U and Y is V.</dd>
 </details>
 </dd>
 <dt id="sverchok.utils.curve.algorithms.curve_segment"><code class="name flex">
-<span>def <span class="ident">curve_segment</span></span>(<span>curve, new_t_min, new_t_max, rescale=False)</span>
+<span>def <span class="ident">curve_segment</span></span>(<span>curve, new_t_min, new_t_max, use_native=True, rescale=False)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Cut a segment out of the curve.</p></div>
@@ -1265,14 +1265,14 @@ other axes are surface's U and V). Default of 2 means X is U and Y is V.</dd>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def curve_segment(curve, new_t_min, new_t_max, rescale=False):
+<pre><code class="python">def curve_segment(curve, new_t_min, new_t_max, use_native=True, rescale=False):
     &#34;&#34;&#34;
     Cut a segment out of the curve.
     &#34;&#34;&#34;
     t_min, t_max = curve.get_u_bounds()
-    if hasattr(curve, &#39;cut_segment&#39;):
+    if use_native and hasattr(curve, &#39;cut_segment&#39;):
         return curve.cut_segment(new_t_min, new_t_max, rescale=rescale)
-    elif hasattr(curve, &#39;split_at&#39;) and (new_t_min &gt; t_min or new_t_max &lt; t_max):
+    elif use_native and hasattr(curve, &#39;split_at&#39;) and (new_t_min &gt; t_min or new_t_max &lt; t_max):
         if new_t_min &gt; t_min:
             start, curve = curve.split_at(new_t_min)
         if new_t_max &lt; t_max:

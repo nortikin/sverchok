@@ -1213,6 +1213,9 @@ class SvNativeNurbsCurve(SvNurbsCurve):
         s = sv_knotvector.find_multiplicity(u, u_bar)
         p = self.get_degree()
 
+        if u_bar &lt; u[0] or u_bar &gt; u[-1]:
+            raise CantInsertKnotException(f&#34;Can&#39;t insert a knot t={u_bar} as it is outside curve domain&#34;)
+
         if (u_bar == u[0] or u_bar == u[-1]):
             if s+count &gt; p+1:
                 if if_possible:
@@ -1236,6 +1239,8 @@ class SvNativeNurbsCurve(SvNurbsCurve):
             for i in range(N+1):
                 #print(f&#34;I: i {i}, k {k}, p {p}, r {r}, s {s}, k-p+r-1 {k-p+r-1}, k-s {k-s}&#34;)
                 if i &lt;= k-p+r-1:
+                    if i &gt;= len(prev_control_points):
+                        raise CantInsertKnotException(f&#34;Can&#39;t insert the knot t={u_bar} for {r}th time: T is too close to curve&#39;s end&#34;)
                     point = prev_control_points[i]
                     #print(f&#34;P[{r},{i}] := {i}{prev_control_points[i]}&#34;)
                 elif k - p + r &lt;= i &lt;= k - s:
@@ -2114,6 +2119,9 @@ def interpolate(cls, degree, points, metric=&#39;DISTANCE&#39;, **kwargs):
         s = sv_knotvector.find_multiplicity(u, u_bar)
         p = self.get_degree()
 
+        if u_bar &lt; u[0] or u_bar &gt; u[-1]:
+            raise CantInsertKnotException(f&#34;Can&#39;t insert a knot t={u_bar} as it is outside curve domain&#34;)
+
         if (u_bar == u[0] or u_bar == u[-1]):
             if s+count &gt; p+1:
                 if if_possible:
@@ -2137,6 +2145,8 @@ def interpolate(cls, degree, points, metric=&#39;DISTANCE&#39;, **kwargs):
             for i in range(N+1):
                 #print(f&#34;I: i {i}, k {k}, p {p}, r {r}, s {s}, k-p+r-1 {k-p+r-1}, k-s {k-s}&#34;)
                 if i &lt;= k-p+r-1:
+                    if i &gt;= len(prev_control_points):
+                        raise CantInsertKnotException(f&#34;Can&#39;t insert the knot t={u_bar} for {r}th time: T is too close to curve&#39;s end&#34;)
                     point = prev_control_points[i]
                     #print(f&#34;P[{r},{i}] := {i}{prev_control_points[i]}&#34;)
                 elif k - p + r &lt;= i &lt;= k - s:
@@ -2467,6 +2477,9 @@ def interpolate(cls, degree, points, metric=&#39;DISTANCE&#39;, tknots=None, cyc
     s = sv_knotvector.find_multiplicity(u, u_bar)
     p = self.get_degree()
 
+    if u_bar &lt; u[0] or u_bar &gt; u[-1]:
+        raise CantInsertKnotException(f&#34;Can&#39;t insert a knot t={u_bar} as it is outside curve domain&#34;)
+
     if (u_bar == u[0] or u_bar == u[-1]):
         if s+count &gt; p+1:
             if if_possible:
@@ -2490,6 +2503,8 @@ def interpolate(cls, degree, points, metric=&#39;DISTANCE&#39;, tknots=None, cyc
         for i in range(N+1):
             #print(f&#34;I: i {i}, k {k}, p {p}, r {r}, s {s}, k-p+r-1 {k-p+r-1}, k-s {k-s}&#34;)
             if i &lt;= k-p+r-1:
+                if i &gt;= len(prev_control_points):
+                    raise CantInsertKnotException(f&#34;Can&#39;t insert the knot t={u_bar} for {r}th time: T is too close to curve&#39;s end&#34;)
                 point = prev_control_points[i]
                 #print(f&#34;P[{r},{i}] := {i}{prev_control_points[i]}&#34;)
             elif k - p + r &lt;= i &lt;= k - s:
