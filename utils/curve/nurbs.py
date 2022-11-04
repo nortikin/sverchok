@@ -857,7 +857,7 @@ class SvGeomdlCurve(SvNurbsCurve):
     @classmethod
     def interpolate(cls, degree, points, metric='DISTANCE', **kwargs):
         if metric not in {'DISTANCE', 'CENTRIPETAL'}:
-            raise Exception("Unsupported metric")
+            raise Exception(f"`{metric}` metric is not supported by interpolation routine of Geomdl library; supported are DISTANCE and CENTRIPETAL")
         centripetal = metric == 'CENTRIPETAL'
         curve = fitting.interpolate_curve(points.tolist(), degree, centripetal=centripetal)
         return SvGeomdlCurve(curve)
