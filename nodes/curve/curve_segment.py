@@ -34,6 +34,12 @@ class SvCurveSegmentNode(SverchCustomTreeNode, bpy.types.Node):
         default = False,
         update = updateNode)
 
+    use_nurbs : BoolProperty(
+        name = "NURBS if possible",
+        description = "If checked, for NURBS curves, calculate a new NURBS curve representing the segment of the old curve. Otherwise, always return a generic Curve object.",
+        default = True,
+        update = updateNode)
+
     join : BoolProperty(
             name = "Join",
             description = "Output single flat list of curves",
@@ -49,6 +55,10 @@ class SvCurveSegmentNode(SverchCustomTreeNode, bpy.types.Node):
     def draw_buttons(self, context, layout):
         layout.prop(self, "join")
         layout.prop(self, "rescale")
+
+    def draw_buttons_ext(self, context, layout):
+        self.draw_buttons(context, layout)
+        layout.prop(self, "use_nurbs")
 
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
@@ -67,7 +77,8 @@ class SvCurveSegmentNode(SverchCustomTreeNode, bpy.types.Node):
         for curves, tmins, tmaxs in zip_long_repeat(curve_s, tmin_s, tmax_s):
             new_curves = []
             for curve, t_min, t_max in zip_long_repeat(curves, tmins, tmaxs):
-                new_curve = curve_segment(curve, t_min, t_max, self.rescale)
+                new_curve = curve_segment(curve, t_min, t_max,
+                                use_native = self.use_nurbs, rescale = self.rescale)
                 new_curves.append(new_curve)
             if self.join:
                 curve_out.extend(new_curves)

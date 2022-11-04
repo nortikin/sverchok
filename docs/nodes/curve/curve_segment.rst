@@ -24,8 +24,13 @@ This node has the following inputs:
 Parameters
 ----------
 
-This node has the following parameter:
+This node has the following parameters:
 
+* **Join**. If checked, the node will always output single flat list of curves.
+* **NURBS if possible**. If checked, for NURBS and NURBS-like curves, the node
+  will calculate a new NURBS curve representing the segment of initial curve.
+  If not checked, the node will always return a generic Curve object. Checked
+  by default. This parameter is available in the N panel only.
 * **Rescale to 0..1**. If checked, then the generated curve will have the
   domain (allowed range of T parameter values)  of `[0.0 .. 1.0]`. Otherwise,
   the domain of generated curve will be defined by node's inputs, i.e. `[TMin
