@@ -63,7 +63,7 @@ class SvSplitFacesNode(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
 
     max_angle : FloatProperty(
         name = "Max. angle",
-        description = "total rotation angle (degrees)",
+        description = "Total rotation angle (degrees)",
         default = 5,
         min = 0, max = 180,
         update = updateNode)

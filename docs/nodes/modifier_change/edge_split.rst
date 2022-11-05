@@ -1,6 +1,9 @@
 Split Edges
 ===========
 
+.. image:: https://user-images.githubusercontent.com/14288520/200128313-beaf2178-fb18-4a82-a94c-f3db3e2b5ad9.png
+  :target: https://user-images.githubusercontent.com/14288520/200128313-beaf2178-fb18-4a82-a94c-f3db3e2b5ad9.png
+
 Functionality
 -------------
 
@@ -11,6 +14,9 @@ This node splits each edge of the input mesh. It supports the following modes of
 * Split each edge in three. The edge is split in two places. Each vertex is
   offset from one of vertices of the edge by user-provided factor value.
 * Split each edge in arbitrary number of pieces, by making several cuts. New vertices are placed evenly.
+
+.. image:: https://user-images.githubusercontent.com/14288520/200128601-00df8252-5379-4f1e-b820-18c14a45fda7.png
+  :target: https://user-images.githubusercontent.com/14288520/200128601-00df8252-5379-4f1e-b820-18c14a45fda7.png
 
 Inputs
 ------
@@ -56,6 +62,15 @@ This node has the following parameter:
 
   The default option is **Simple**.
 
+.. image:: https://user-images.githubusercontent.com/14288520/200128715-5db73e69-f2a0-4c3b-bb95-289aeb38c82d.png
+  :target: https://user-images.githubusercontent.com/14288520/200128715-5db73e69-f2a0-4c3b-bb95-289aeb38c82d.png
+
+.. image:: https://user-images.githubusercontent.com/14288520/200128842-f5f37c89-7fb2-4227-bf58-696eaf52e649.png
+  :target: https://user-images.githubusercontent.com/14288520/200128842-f5f37c89-7fb2-4227-bf58-696eaf52e649.png
+
+.. image:: https://user-images.githubusercontent.com/14288520/200128962-59ed9fb4-09b4-4f98-b76e-0109f3f21afb.png
+  :target: https://user-images.githubusercontent.com/14288520/200128962-59ed9fb4-09b4-4f98-b76e-0109f3f21afb.png
+
 Outputs
 -------
 
@@ -66,3 +81,17 @@ This node has the following outputs:
 * **Faces**. Faces of the output mesh. This output is empty if **Faces** input
   is not connected.
 
+Examples
+--------
+
+Split even edges
+
+.. image:: https://user-images.githubusercontent.com/14288520/200129550-d9c578a3-4f61-4ae2-98ee-24521f8adc6e.png
+  :target: https://user-images.githubusercontent.com/14288520/200129550-d9c578a3-4f61-4ae2-98ee-24521f8adc6e.png
+
+* Generator-> :doc:`NGon </nodes/generator/ngon>`
+* Number-> :doc:`Number Range </nodes/number/number_range>`
+* MODULE: Number-> :doc:`Scalar Math </nodes/number/scalar_mk4>`
+* List->List Struct-> :doc:`List Length </nodes/list_main/length>`
+* EQUAL: Logic-> :doc:`Logic Functions </nodes/logic/logic_node>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`

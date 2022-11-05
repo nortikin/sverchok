@@ -1,11 +1,17 @@
 Edge Boom
 =========
 
+.. image:: https://user-images.githubusercontent.com/14288520/199942622-8e6e9a9a-7f9b-43b2-9463-15e790b49610.png
+  :target: https://user-images.githubusercontent.com/14288520/199942622-8e6e9a9a-7f9b-43b2-9463-15e790b49610.png
+
 Functionality
 -------------
 
 This node splits the input mesh object into separate edges objects; it can be
 used to create a separate object from each edge of the input mesh.
+
+.. image:: https://user-images.githubusercontent.com/14288520/199942253-4212f665-4c91-48a0-ab74-b467c6a62d6f.png
+  :target: https://user-images.githubusercontent.com/14288520/199942253-4212f665-4c91-48a0-ab74-b467c6a62d6f.png
 
 Inputs
 ------
@@ -65,11 +71,39 @@ This node has the following outputs:
 Example of usage
 ----------------
 
+.. image:: https://user-images.githubusercontent.com/14288520/199945595-9b63fd1d-1fc1-42d7-80ae-e3524161b0e8.png
+  :target: https://user-images.githubusercontent.com/14288520/199945595-9b63fd1d-1fc1-42d7-80ae-e3524161b0e8.png
+
+* Generator-> :doc:`Segment </nodes/generator/segment>`
+* Generator-> :doc:`NGon </nodes/generator/ngon>`
+* Generator-> :doc:`Cylinder </nodes/generator/cylinder_mk2>`
+* Generator-> :doc:`Suzanne </nodes/generator/suzanne>`
+* Transform-> :doc:`Scale </nodes/transforms/scale_mk3>`
+* Analyzers-> :doc:`Origins </nodes/analyzer/origins>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+
+---------
+
 Replace each edge of a square with a segment with subdivisions:
 
-.. image:: https://user-images.githubusercontent.com/284644/76330373-942f2b80-630f-11ea-95ee-0c1f5f398e72.png
+.. image:: https://user-images.githubusercontent.com/14288520/199948148-a88d073c-c900-40ec-83b4-4a048ad82b58.png
+  :target: https://user-images.githubusercontent.com/14288520/199948148-a88d073c-c900-40ec-83b4-4a048ad82b58.png
+
+* Generator-> :doc:`Plane </nodes/generator/plane_mk3>`
+* Generator-> :doc:`Segment </nodes/generator/segment>`
+* Number-> :doc:`Number Range </nodes/number/number_range>`
+* List->List Struct-> :doc:`List Length </nodes/list_main/length>`
+* Color-> :doc:`Color Ramp </nodes/color/color_ramp>`
+
+---------
 
 Move each edge of input objects randomly:
 
-.. image:: https://user-images.githubusercontent.com/284644/76344998-5dafdb80-6324-11ea-9ff3-12ce2bf496c5.png
+.. image:: https://user-images.githubusercontent.com/14288520/199951691-afdae55c-3e88-4adb-8526-4a9173a8bcb6.png
+  :target: https://user-images.githubusercontent.com/14288520/199951691-afdae55c-3e88-4adb-8526-4a9173a8bcb6.png
 
+* Generator-> :doc:`NGon </nodes/generator/ngon>`
+* Generator-> :doc:`Random Vector </nodes/generator/random_vector_mk3>`
+* Number-> :doc:`List Input </nodes/number/list_input>`
+* List->List Struct-> :doc:`List Length </nodes/list_main/length>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`

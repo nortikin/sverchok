@@ -27,7 +27,7 @@ class SvRigidOrigamiNode(TransformNode, SverchCustomTreeNode, bpy.types.Node):
 
     folding_ratio : FloatProperty(
         name="Folding ratio",
-        description="folding ratio from 0.0 to 1.0",
+        description="Folding ratio from 0.0 to 1.0",
         default=0.0,
         min=0.0, max=1.0,
         update=updateNode)
@@ -41,7 +41,7 @@ class SvRigidOrigamiNode(TransformNode, SverchCustomTreeNode, bpy.types.Node):
 
     fixed_face_index : IntProperty(
         name="Fixed face index",
-        description="index of fixed face when folding",
+        description="Index of fixed face when folding",
         default=0,
         update=updateNode)
 

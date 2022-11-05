@@ -1,11 +1,17 @@
 Extrude Region
 ==============
 
+.. image:: https://user-images.githubusercontent.com/14288520/200082470-2101619a-c63c-45e6-8663-017922fafbc8.png
+  :target: https://user-images.githubusercontent.com/14288520/200082470-2101619a-c63c-45e6-8663-017922fafbc8.png
+
 Functionality
 -------------
 
 This node applies Extrude operator to the region of selected faces, as whole. After that, resulting faces can be either transformed by any matrix, or moved along normal and scaled.
 If transformation is specified by matrix, it is possible to provide specific matrix for each vertex.
+
+.. image:: https://user-images.githubusercontent.com/14288520/200111848-b798b6b6-06d8-4679-822c-957e3d7ea3ee.png
+  :target: https://user-images.githubusercontent.com/14288520/200111848-b798b6b6-06d8-4679-822c-957e3d7ea3ee.png
 
 Inputs
 ------
@@ -102,25 +108,89 @@ Examples of usage
 
 Extrude along normal:
 
-.. image:: https://cloud.githubusercontent.com/assets/284644/23824189/4686ba06-069c-11e7-9522-51d25e7667ad.png
+.. image:: https://user-images.githubusercontent.com/14288520/200112273-879eb030-b0fa-40c8-8b05-6b7fc03aa104.png
+  :target: https://user-images.githubusercontent.com/14288520/200112273-879eb030-b0fa-40c8-8b05-6b7fc03aa104.png
+
+* Generator-> :doc:`Box </nodes/generator/box_mk2>`
+* Analyzers-> :ref:`Select Mesh Elements (By Center and radius)<MODE_BY_CENTER_AND_RADIUS>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+
+---------
 
 Extrude by scale matrix:
 
-.. image:: https://cloud.githubusercontent.com/assets/284644/23824190/46b7b1a6-069c-11e7-87fb-ddabeb87e6b9.png
+.. image:: https://user-images.githubusercontent.com/14288520/200112489-b9eac1f7-25a8-4be3-bce9-6d29f5003017.png
+  :target: https://user-images.githubusercontent.com/14288520/200112489-b9eac1f7-25a8-4be3-bce9-6d29f5003017.png
+
+* Generator-> :doc:`Box </nodes/generator/box_mk2>`
+* Analyzers-> :ref:`Select Mesh Elements (By Center and radius)<MODE_BY_CENTER_AND_RADIUS>`
+* Number-> :doc:`A Number </nodes/number/numbers>`
+* Vector-> :doc:`Vector In </nodes/vector/vector_in>`
+* Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+
+---------
 
 Multiple extrusion mode:
 
-.. image:: https://cloud.githubusercontent.com/assets/284644/24330825/c914a3fe-1248-11e7-9694-3068659feaf7.png
+.. image:: https://user-images.githubusercontent.com/14288520/200115164-2be6a492-f834-46c4-b49a-443c9d15e0f6.png
+  :target: https://user-images.githubusercontent.com/14288520/200115164-2be6a492-f834-46c4-b49a-443c9d15e0f6.png
+
+* Generator-> :doc:`Plane </nodes/generator/plane_mk3>`
+* Analyzers-> :ref:`Select Mesh Elements (By Center and radius)<MODE_BY_CENTER_AND_RADIUS>`
+* Number-> :doc:`List Input </nodes/number/list_input>`
+* Vector-> :doc:`Vector In </nodes/vector/vector_in>`
+* Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+
+---------
 
 Example of FaceData sockets usage:
 
-.. image:: https://user-images.githubusercontent.com/284644/71816787-85c15b00-30a5-11ea-95c8-422f92712994.png
+.. image:: https://user-images.githubusercontent.com/14288520/200115914-b7cef699-9436-4157-990f-6d7f328a110d.png
+  :target: https://user-images.githubusercontent.com/14288520/200115914-b7cef699-9436-4157-990f-6d7f328a110d.png
+
+* Generator->Generator Extended-> :doc:`Polygon Grid </nodes/generators_extended/polygon_grid>`
+* Analyzers-> :ref:`Select Mesh Elements (By Center and radius)<MODE_BY_CENTER_AND_RADIUS>`
+* Analyzers-> :doc:`Wave Painter </nodes/analyzer/wave_paint>`
+* Modifiers->Modifier Change-> :doc:`Flip Normals </nodes/modifier_change/flip_normals>`
+* Number-> :doc:`Map Range </nodes/number/range_map>`
+* List->List Main-> :doc:`List Math </nodes/list_main/func>`
+* Color-> :doc:`Color In </nodes/color/color_in_mk1>`
+* NOT: Logic-> :doc:`Logic Functions </nodes/logic/logic_node>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+
+---------
 
 Example of Mask output usage together with Extrude Separate node:
 
 .. image:: https://user-images.githubusercontent.com/284644/71817318-4562dc80-30a7-11ea-9f44-ae2d2bae7acf.png
+  :target: https://user-images.githubusercontent.com/284644/71817318-4562dc80-30a7-11ea-9f44-ae2d2bae7acf.png
+
+replay with new nodes:
+
+.. image:: https://user-images.githubusercontent.com/14288520/200116794-70581c84-8f8f-4265-b4c4-7109375a863a.png
+  :target: https://user-images.githubusercontent.com/14288520/200116794-70581c84-8f8f-4265-b4c4-7109375a863a.png
+
+* Generator->Generator Extended-> :doc:`Polygon Grid </nodes/generators_extended/polygon_grid>`
+* Modifiers->Modifier Change-> :doc:`Flip Normals </nodes/modifier_change/flip_normals>`
+* Analyzers-> :ref:`Select Mesh Elements (By Center and radius)<MODE_BY_CENTER_AND_RADIUS>`
+* Analyzers-> :doc:`Wave Painter </nodes/analyzer/wave_paint>`
+* Number-> :doc:`List Input </nodes/number/list_input>`
+* Number-> :doc:`Map Range </nodes/number/range_map>`
+* List->List Main-> :doc:`List Math </nodes/list_main/func>`
+* Color-> :doc:`Color In </nodes/color/color_in_mk1>`
+* Modifier->Modifier Change-> :doc:`Extrude Separate Faces </nodes/modifier_change/extrude_separate>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+* BPY Date-> Vertex Color MK3 (No docs)
+
+---------
 
 Example of "Dissolve orthogonal edges" parameter usage:
 
-.. image:: https://user-images.githubusercontent.com/284644/93020158-1537ea00-f5f5-11ea-9857-ff9d2059bb36.png
+.. image:: https://user-images.githubusercontent.com/14288520/200117301-f28d4450-eeb4-4d30-b28f-22e3018003bf.png
+  :target: https://user-images.githubusercontent.com/14288520/200117301-f28d4450-eeb4-4d30-b28f-22e3018003bf.png
 
+* Generator-> :doc:`Box </nodes/generator/box_mk2>`
+* Analyzers-> :ref:`Select Mesh Elements (By Cylinder)<MODE_BY_CYLINDER>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
