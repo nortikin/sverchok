@@ -1,7 +1,8 @@
 Make Monotone
 =============
 
-.. image:: https://user-images.githubusercontent.com/28003269/67477849-eb3ba900-f66b-11e9-9892-392d5fb9a0c3.png
+.. image:: https://user-images.githubusercontent.com/14288520/199830268-ab7509ab-d566-4379-88ce-75e7874cf05a.png
+  :target: https://user-images.githubusercontent.com/14288520/199830268-ab7509ab-d566-4379-88ce-75e7874cf05a.png
 
 Functionality
 -------------

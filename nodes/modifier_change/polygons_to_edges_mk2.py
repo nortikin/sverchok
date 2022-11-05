@@ -37,7 +37,7 @@ class SvPols2EdgsNodeMk2(SverchCustomTreeNode, bpy.types.Node):
     sv_icon = 'SV_POLYGONS_TO_EDGES'
 
     unique_edges: BoolProperty(
-        name="Unique Edges", default=False, update=updateNode)
+        name="Unique Edges", default=False, description="When active the node will remove the doubled edges", update=updateNode)
 
     output_numpy: BoolProperty(
         name='Output NumPy',

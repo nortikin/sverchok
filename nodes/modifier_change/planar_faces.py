@@ -38,7 +38,7 @@ class SvPlanarFacesNode(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
 
     iterations : IntProperty(
         name = "Iterations",
-        description = " Number of times to flatten faces (for when connected faces are used)",
+        description = "Number of times to flatten faces (for when connected faces are used)",
         default = 1, min = 1,
         update = updateNode)
 

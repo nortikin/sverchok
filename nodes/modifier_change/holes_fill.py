@@ -49,7 +49,7 @@ class SvFillHolesNode(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
     sv_icon = 'SV_FILL_HOLES'
 
     sides: IntProperty(
-        name='Sides', description='Side to fill',
+        name='Sides', description='Number of sides that will be collapsed to polygon',
         default=4, min=3, update=updateNode)
 
     def sv_init(self, context):
