@@ -167,10 +167,12 @@
              
   <section id="extrude-region">
 <h1>Extrude Region<a class="headerlink" href="#extrude-region" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200082470-2101619a-c63c-45e6-8663-017922fafbc8.png"><img alt="https://user-images.githubusercontent.com/14288520/200082470-2101619a-c63c-45e6-8663-017922fafbc8.png" src="https://user-images.githubusercontent.com/14288520/200082470-2101619a-c63c-45e6-8663-017922fafbc8.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node applies Extrude operator to the region of selected faces, as whole. After that, resulting faces can be either transformed by any matrix, or moved along normal and scaled.
 If transformation is specified by matrix, it is possible to provide specific matrix for each vertex.</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200111848-b798b6b6-06d8-4679-822c-957e3d7ea3ee.png"><img alt="https://user-images.githubusercontent.com/14288520/200111848-b798b6b6-06d8-4679-822c-957e3d7ea3ee.png" src="https://user-images.githubusercontent.com/14288520/200111848-b798b6b6-06d8-4679-822c-957e3d7ea3ee.png" /></a>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
@@ -272,17 +274,74 @@ extrusion operation.</p>
 <section id="examples-of-usage">
 <h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>Extrude along normal:</p>
-<img alt="https://cloud.githubusercontent.com/assets/284644/23824189/4686ba06-069c-11e7-9522-51d25e7667ad.png" src="https://cloud.githubusercontent.com/assets/284644/23824189/4686ba06-069c-11e7-9522-51d25e7667ad.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200112273-879eb030-b0fa-40c8-8b05-6b7fc03aa104.png"><img alt="https://user-images.githubusercontent.com/14288520/200112273-879eb030-b0fa-40c8-8b05-6b7fc03aa104.png" src="https://user-images.githubusercontent.com/14288520/200112273-879eb030-b0fa-40c8-8b05-6b7fc03aa104.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
+<li><p>Analyzers-&gt; <a class="reference internal" href="../analyzer/mesh_select_mk2.html#mode-by-center-and-radius"><span class="std std-ref">Select Mesh Elements (By Center and radius)</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>Extrude by scale matrix:</p>
-<img alt="https://cloud.githubusercontent.com/assets/284644/23824190/46b7b1a6-069c-11e7-87fb-ddabeb87e6b9.png" src="https://cloud.githubusercontent.com/assets/284644/23824190/46b7b1a6-069c-11e7-87fb-ddabeb87e6b9.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200112489-b9eac1f7-25a8-4be3-bce9-6d29f5003017.png"><img alt="https://user-images.githubusercontent.com/14288520/200112489-b9eac1f7-25a8-4be3-bce9-6d29f5003017.png" src="https://user-images.githubusercontent.com/14288520/200112489-b9eac1f7-25a8-4be3-bce9-6d29f5003017.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
+<li><p>Analyzers-&gt; <a class="reference internal" href="../analyzer/mesh_select_mk2.html#mode-by-center-and-radius"><span class="std std-ref">Select Mesh Elements (By Center and radius)</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/numbers.html"><span class="doc">A Number</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_in.html"><span class="doc">Vector In</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>Multiple extrusion mode:</p>
-<img alt="https://cloud.githubusercontent.com/assets/284644/24330825/c914a3fe-1248-11e7-9694-3068659feaf7.png" src="https://cloud.githubusercontent.com/assets/284644/24330825/c914a3fe-1248-11e7-9694-3068659feaf7.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200115164-2be6a492-f834-46c4-b49a-443c9d15e0f6.png"><img alt="https://user-images.githubusercontent.com/14288520/200115164-2be6a492-f834-46c4-b49a-443c9d15e0f6.png" src="https://user-images.githubusercontent.com/14288520/200115164-2be6a492-f834-46c4-b49a-443c9d15e0f6.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Analyzers-&gt; <a class="reference internal" href="../analyzer/mesh_select_mk2.html#mode-by-center-and-radius"><span class="std std-ref">Select Mesh Elements (By Center and radius)</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/list_input.html"><span class="doc">List Input</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_in.html"><span class="doc">Vector In</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>Example of FaceData sockets usage:</p>
-<img alt="https://user-images.githubusercontent.com/284644/71816787-85c15b00-30a5-11ea-95c8-422f92712994.png" src="https://user-images.githubusercontent.com/284644/71816787-85c15b00-30a5-11ea-95c8-422f92712994.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200115914-b7cef699-9436-4157-990f-6d7f328a110d.png"><img alt="https://user-images.githubusercontent.com/14288520/200115914-b7cef699-9436-4157-990f-6d7f328a110d.png" src="https://user-images.githubusercontent.com/14288520/200115914-b7cef699-9436-4157-990f-6d7f328a110d.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt;Generator Extended-&gt; <a class="reference internal" href="../generators_extended/polygon_grid.html"><span class="doc">Polygon Grid</span></a></p></li>
+<li><p>Analyzers-&gt; <a class="reference internal" href="../analyzer/mesh_select_mk2.html#mode-by-center-and-radius"><span class="std std-ref">Select Mesh Elements (By Center and radius)</span></a></p></li>
+<li><p>Analyzers-&gt; <a class="reference internal" href="../analyzer/wave_paint.html"><span class="doc">Wave Painter</span></a></p></li>
+<li><p>Modifiers-&gt;Modifier Change-&gt; <a class="reference internal" href="flip_normals.html"><span class="doc">Flip Normals</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/range_map.html"><span class="doc">Map Range</span></a></p></li>
+<li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/func.html"><span class="doc">List Math</span></a></p></li>
+<li><p>Color-&gt; <a class="reference internal" href="../color/color_in_mk1.html"><span class="doc">Color In</span></a></p></li>
+<li><p>NOT: Logic-&gt; <a class="reference internal" href="../logic/logic_node.html"><span class="doc">Logic Functions</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>Example of Mask output usage together with Extrude Separate node:</p>
-<img alt="https://user-images.githubusercontent.com/284644/71817318-4562dc80-30a7-11ea-9f44-ae2d2bae7acf.png" src="https://user-images.githubusercontent.com/284644/71817318-4562dc80-30a7-11ea-9f44-ae2d2bae7acf.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/71817318-4562dc80-30a7-11ea-9f44-ae2d2bae7acf.png"><img alt="https://user-images.githubusercontent.com/284644/71817318-4562dc80-30a7-11ea-9f44-ae2d2bae7acf.png" src="https://user-images.githubusercontent.com/284644/71817318-4562dc80-30a7-11ea-9f44-ae2d2bae7acf.png" /></a>
+<p>replay with new nodes:</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200116794-70581c84-8f8f-4265-b4c4-7109375a863a.png"><img alt="https://user-images.githubusercontent.com/14288520/200116794-70581c84-8f8f-4265-b4c4-7109375a863a.png" src="https://user-images.githubusercontent.com/14288520/200116794-70581c84-8f8f-4265-b4c4-7109375a863a.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt;Generator Extended-&gt; <a class="reference internal" href="../generators_extended/polygon_grid.html"><span class="doc">Polygon Grid</span></a></p></li>
+<li><p>Modifiers-&gt;Modifier Change-&gt; <a class="reference internal" href="flip_normals.html"><span class="doc">Flip Normals</span></a></p></li>
+<li><p>Analyzers-&gt; <a class="reference internal" href="../analyzer/mesh_select_mk2.html#mode-by-center-and-radius"><span class="std std-ref">Select Mesh Elements (By Center and radius)</span></a></p></li>
+<li><p>Analyzers-&gt; <a class="reference internal" href="../analyzer/wave_paint.html"><span class="doc">Wave Painter</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/list_input.html"><span class="doc">List Input</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/range_map.html"><span class="doc">Map Range</span></a></p></li>
+<li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/func.html"><span class="doc">List Math</span></a></p></li>
+<li><p>Color-&gt; <a class="reference internal" href="../color/color_in_mk1.html"><span class="doc">Color In</span></a></p></li>
+<li><p>Modifier-&gt;Modifier Change-&gt; <a class="reference internal" href="extrude_separate.html"><span class="doc">Extrude Separate Faces</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>BPY Date-&gt; Vertex Color MK3 (No docs)</p></li>
+</ul>
+<hr class="docutils" />
 <p>Example of “Dissolve orthogonal edges” parameter usage:</p>
-<img alt="https://user-images.githubusercontent.com/284644/93020158-1537ea00-f5f5-11ea-9857-ff9d2059bb36.png" src="https://user-images.githubusercontent.com/284644/93020158-1537ea00-f5f5-11ea-9857-ff9d2059bb36.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200117301-f28d4450-eeb4-4d30-b28f-22e3018003bf.png"><img alt="https://user-images.githubusercontent.com/14288520/200117301-f28d4450-eeb4-4d30-b28f-22e3018003bf.png" src="https://user-images.githubusercontent.com/14288520/200117301-f28d4450-eeb4-4d30-b28f-22e3018003bf.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
+<li><p>Analyzers-&gt; <a class="reference internal" href="../analyzer/mesh_select_mk2.html#mode-by-cylinder"><span class="std std-ref">Select Mesh Elements (By Cylinder)</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 </section>
 </section>
 

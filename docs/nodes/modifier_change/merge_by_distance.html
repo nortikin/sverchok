@@ -167,14 +167,15 @@
              
   <section id="merge-by-distance">
 <h1>Merge by Distance<a class="headerlink" href="#merge-by-distance" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/199111364-34353398-2bc8-4d95-a8d5-db937f99fba2.png"><img alt="https://user-images.githubusercontent.com/14288520/199111364-34353398-2bc8-4d95-a8d5-db937f99fba2.png" src="https://user-images.githubusercontent.com/14288520/199111364-34353398-2bc8-4d95-a8d5-db937f99fba2.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
-<p>This merges vertices that are closer that a defined threshold, as do same-named command in blender</p>
+<p>This merges vertices that are closer that a defined threshold, as do same-named command in blender.</p>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
-<li><p><strong>Distance</strong></p></li>
+<li><p><strong>Distance</strong>. Remove distance</p></li>
 <li><p><strong>Vertices</strong></p></li>
 <li><p><strong>PolyEdge</strong></p></li>
 <li><p><strong>FaceData</strong>. List containing an arbitrary data item for each face of input
@@ -223,10 +224,41 @@ contains one item for each output mesh face.</p></li>
 </section>
 <section id="examples-of-usage">
 <h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
-<img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/modifier_change/merge_by_distance/sverchok_blender_merge_by_distance_example_01.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/modifier_change/merge_by_distance/sverchok_blender_merge_by_distance_example_01.png" />
-<img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/modifier_change/merge_by_distance/sverchok_blender_merge_by_distance_example_02.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/modifier_change/merge_by_distance/sverchok_blender_merge_by_distance_example_02.png" />
-<img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/modifier_change/merge_by_distance/sverchok_blender_merge_by_distance_example_03.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/modifier_change/merge_by_distance/sverchok_blender_merge_by_distance_example_03.png" />
-<img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/modifier_change/merge_by_distance/sverchok_blender_merge_by_distance_example_04.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/modifier_change/merge_by_distance/sverchok_blender_merge_by_distance_example_04.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/199113153-05fa7f2d-8ddb-4308-9a9b-ebb20e16f980.png"><img alt="https://user-images.githubusercontent.com/14288520/199113153-05fa7f2d-8ddb-4308-9a9b-ebb20e16f980.png" src="https://user-images.githubusercontent.com/14288520/199113153-05fa7f2d-8ddb-4308-9a9b-ebb20e16f980.png" /></a>
+<ul class="simple">
+<li><p>Number-&gt; <a class="reference internal" href="../number/list_input.html"><span class="doc">List Input</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_main/length.html"><span class="doc">List Length</span></a></p></li>
+<li><p>List-&gt; <a class="reference internal" href="../list_masks/index_to_mask.html"><span class="doc">Index To Mask</span></a></p></li>
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+</ul>
+<hr class="docutils" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/199118735-68850597-cf13-439a-a0fa-221d104ce55a.png"><img alt="https://user-images.githubusercontent.com/14288520/199118735-68850597-cf13-439a-a0fa-221d104ce55a.png" src="https://user-images.githubusercontent.com/14288520/199118735-68850597-cf13-439a-a0fa-221d104ce55a.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/icosphere.html"><span class="doc">IcoSphere</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/199118461-f9ce665f-e012-4b72-ba1d-e5c0af6bc165.png"><img alt="https://user-images.githubusercontent.com/14288520/199118461-f9ce665f-e012-4b72-ba1d-e5c0af6bc165.png" src="https://user-images.githubusercontent.com/14288520/199118461-f9ce665f-e012-4b72-ba1d-e5c0af6bc165.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Analyzers-&gt; <a class="reference internal" href="../analyzer/mesh_select_mk2.html"><span class="doc">Select Mesh Elements</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/199121377-5085556a-483f-422a-87ed-dea854ac8ec6.png"><img alt="https://user-images.githubusercontent.com/14288520/199121377-5085556a-483f-422a-87ed-dea854ac8ec6.png" src="https://user-images.githubusercontent.com/14288520/199121377-5085556a-483f-422a-87ed-dea854ac8ec6.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/torus_mk2.html"><span class="doc">Torus</span></a></p></li>
+<li><p>Analyzers-&gt; <a class="reference internal" href="../analyzer/mesh_select_mk2.html"><span class="doc">Select Mesh Elements</span></a></p></li>
+<li><p>Analyzers-&gt; <a class="reference internal" href="../analyzer/proportional.html"><span class="doc">Proportional Edit Falloff</span></a></p></li>
+<li><p>Modifier-&gt;Modifier Change-&gt; <a class="reference internal" href="smooth.html"><span class="doc">Smooth Vertices</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/numbers.html"><span class="doc">A Number</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/lerp.html"><span class="doc">Vector Lerp</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_polar_in.html"><span class="doc">Vector Polar Input</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_in.html"><span class="doc">Vector In</span></a></p></li>
+<li><p>NOT: Logic-&gt; <a class="reference internal" href="../logic/logic_node.html"><span class="doc">Logic Functions</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/199122167-9458221d-5946-443b-9801-095806253764.gif"><img alt="https://user-images.githubusercontent.com/14288520/199122167-9458221d-5946-443b-9801-095806253764.gif" src="https://user-images.githubusercontent.com/14288520/199122167-9458221d-5946-443b-9801-095806253764.gif" /></a>
 </section>
 </section>
 

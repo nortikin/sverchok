@@ -70,6 +70,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#outputs">Outputs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#examples">Examples</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="edgenet_to_paths.html">Edgenet to Paths</a></li>
@@ -166,6 +167,7 @@
              
   <section id="split-edges">
 <h1>Split Edges<a class="headerlink" href="#split-edges" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200128313-beaf2178-fb18-4a82-a94c-f3db3e2b5ad9.png"><img alt="https://user-images.githubusercontent.com/14288520/200128313-beaf2178-fb18-4a82-a94c-f3db3e2b5ad9.png" src="https://user-images.githubusercontent.com/14288520/200128313-beaf2178-fb18-4a82-a94c-f3db3e2b5ad9.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node splits each edge of the input mesh. It supports the following modes of operation:</p>
@@ -176,6 +178,7 @@ between two vertices of the edge with user-provided factor value.</p></li>
 offset from one of vertices of the edge by user-provided factor value.</p></li>
 <li><p>Split each edge in arbitrary number of pieces, by making several cuts. New vertices are placed evenly.</p></li>
 </ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200128601-00df8252-5379-4f1e-b820-18c14a45fda7.png"><img alt="https://user-images.githubusercontent.com/14288520/200128601-00df8252-5379-4f1e-b820-18c14a45fda7.png" src="https://user-images.githubusercontent.com/14288520/200128601-00df8252-5379-4f1e-b820-18c14a45fda7.png" /></a>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
@@ -225,6 +228,9 @@ defined by <strong>Cuts</strong> input.</p></li>
 <p>The default option is <strong>Simple</strong>.</p>
 </li>
 </ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200128715-5db73e69-f2a0-4c3b-bb95-289aeb38c82d.png"><img alt="https://user-images.githubusercontent.com/14288520/200128715-5db73e69-f2a0-4c3b-bb95-289aeb38c82d.png" src="https://user-images.githubusercontent.com/14288520/200128715-5db73e69-f2a0-4c3b-bb95-289aeb38c82d.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200128842-f5f37c89-7fb2-4227-bf58-696eaf52e649.png"><img alt="https://user-images.githubusercontent.com/14288520/200128842-f5f37c89-7fb2-4227-bf58-696eaf52e649.png" src="https://user-images.githubusercontent.com/14288520/200128842-f5f37c89-7fb2-4227-bf58-696eaf52e649.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200128962-59ed9fb4-09b4-4f98-b76e-0109f3f21afb.png"><img alt="https://user-images.githubusercontent.com/14288520/200128962-59ed9fb4-09b4-4f98-b76e-0109f3f21afb.png" src="https://user-images.githubusercontent.com/14288520/200128962-59ed9fb4-09b4-4f98-b76e-0109f3f21afb.png" /></a>
 </section>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
@@ -234,6 +240,19 @@ defined by <strong>Cuts</strong> input.</p></li>
 <li><p><strong>Edges</strong>. Edges of the output mesh.</p></li>
 <li><p><strong>Faces</strong>. Faces of the output mesh. This output is empty if <strong>Faces</strong> input
 is not connected.</p></li>
+</ul>
+</section>
+<section id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
+<p>Split even edges</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200129550-d9c578a3-4f61-4ae2-98ee-24521f8adc6e.png"><img alt="https://user-images.githubusercontent.com/14288520/200129550-d9c578a3-4f61-4ae2-98ee-24521f8adc6e.png" src="https://user-images.githubusercontent.com/14288520/200129550-d9c578a3-4f61-4ae2-98ee-24521f8adc6e.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>MODULE: Number-&gt; <a class="reference internal" href="../number/scalar_mk4.html"><span class="doc">Scalar Math</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_main/length.html"><span class="doc">List Length</span></a></p></li>
+<li><p>EQUAL: Logic-&gt; <a class="reference internal" href="../logic/logic_node.html"><span class="doc">Logic Functions</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
 </ul>
 </section>
 </section>

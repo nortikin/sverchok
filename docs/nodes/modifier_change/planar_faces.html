@@ -167,6 +167,7 @@
              
   <section id="make-faces-planar">
 <h1>Make Faces Planar<a class="headerlink" href="#make-faces-planar" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/199598558-cf12fd66-e331-434a-9ddc-1afb2fede49b.png"><img alt="https://user-images.githubusercontent.com/14288520/199598558-cf12fd66-e331-434a-9ddc-1afb2fede49b.png" src="https://user-images.githubusercontent.com/14288520/199598558-cf12fd66-e331-434a-9ddc-1afb2fede49b.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node adjusts the positions of mesh vertices, trying to make all it’s faces
@@ -174,6 +175,7 @@ planar (flat). Obviously, this makes sense only for meshes with Quad and/or
 NGon faces.</p>
 <p>This node implements standard <a class="reference external" href="https://docs.blender.org/manual/en/latest/modeling/meshes/editing/cleanup.html#make-planar-faces">Blender</a>’s function “Make Planar Faces”. Please
 refer to Blender documentation for more details.</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/199600666-7163d054-2891-41d6-819d-a925fad3715d.png"><img alt="https://user-images.githubusercontent.com/14288520/199600666-7163d054-2891-41d6-819d-a925fad3715d.png" src="https://user-images.githubusercontent.com/14288520/199600666-7163d054-2891-41d6-819d-a925fad3715d.png" /></a>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
@@ -190,6 +192,7 @@ value per input mesh.</p></li>
 is 0.5. This input can also be specified as a parameter. This input expects
 one value per input mesh.</p></li>
 </ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/199601915-a3f42c2b-e0f2-4466-a009-628e9df2c8bd.gif"><img alt="https://user-images.githubusercontent.com/14288520/199601915-a3f42c2b-e0f2-4466-a009-628e9df2c8bd.gif" src="https://user-images.githubusercontent.com/14288520/199601915-a3f42c2b-e0f2-4466-a009-628e9df2c8bd.gif" /></a>
 </section>
 <section id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
@@ -207,7 +210,22 @@ one value per input mesh.</p></li>
 <section id="example-of-usage">
 <h2>Example of Usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>Simple example:</p>
-<img alt="https://user-images.githubusercontent.com/284644/71113600-c0934a00-21ef-11ea-8c41-498f5d12a8f2.png" src="https://user-images.githubusercontent.com/284644/71113600-c0934a00-21ef-11ea-8c41-498f5d12a8f2.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/199604392-e5b9d3be-3e52-453e-95dd-3f572033a7ac.png"><img alt="https://user-images.githubusercontent.com/14288520/199604392-e5b9d3be-3e52-453e-95dd-3f572033a7ac.png" src="https://user-images.githubusercontent.com/14288520/199604392-e5b9d3be-3e52-453e-95dd-3f572033a7ac.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/random_vector_mk3.html"><span class="doc">Random Vector</span></a></p></li>
+<li><p>Spatial-&gt; <a class="reference internal" href="../spatial/convex_hull_mk2.html"><span class="doc">Convex Hull</span></a></p></li>
+<li><p>Modifiers-&gt;Modifier Make-&gt; <a class="reference internal" href="../modifier_make/dual_mesh.html"><span class="doc">Dual Mesh</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/199602183-77a598dd-bdea-46a5-b58d-87bcddeea5ab.png"><img alt="https://user-images.githubusercontent.com/14288520/199602183-77a598dd-bdea-46a5-b58d-87bcddeea5ab.png" src="https://user-images.githubusercontent.com/14288520/199602183-77a598dd-bdea-46a5-b58d-87bcddeea5ab.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
+<li><p>Transform-&gt; <a class="reference internal" href="../transforms/noise_displace.html"><span class="doc">Noise Displace</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 </section>
 </section>
 

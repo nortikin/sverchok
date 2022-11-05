@@ -167,6 +167,7 @@
              
   <section id="mesh-clean">
 <h1>Mesh Clean<a class="headerlink" href="#mesh-clean" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/199337786-a89d6976-e51a-4dc1-80a3-a3de9ec840bd.png"><img alt="https://user-images.githubusercontent.com/14288520/199337786-a89d6976-e51a-4dc1-80a3-a3de9ec840bd.png" src="https://user-images.githubusercontent.com/14288520/199337786-a89d6976-e51a-4dc1-80a3-a3de9ec840bd.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>Cleans input mesh by removing doubled, unreferenced or malformed elements.</p>
@@ -194,16 +195,22 @@
 <td><p>Remove the faces that point to un-existing vertices.</p></td>
 </tr>
 <tr class="row-odd"><td><p>Duplicated Edges</p></td>
-<td><p>Remove duplicated edges. Note that edges as <code class="docutils literal notranslate"><span class="pre">(0,1)</span></code> and <code class="docutils literal notranslate"><span class="pre">(1,0)</span></code> will be considered identical.</p></td>
+<td><p>Remove duplicated edges. Note that edges as <code class="docutils literal notranslate"><span class="pre">(0,1)</span></code> and <code class="docutils literal notranslate"><span class="pre">(1,0)</span></code> will be</p>
+<p>considered identical.</p>
+</td>
 </tr>
 <tr class="row-even"><td><p>Duplicated Faces</p></td>
-<td><p>Remove duplicated faces. Note that faces as <code class="docutils literal notranslate"><span class="pre">(0,1,2,3)</span></code> and <code class="docutils literal notranslate"><span class="pre">(1,0,3,2)</span></code> will be considered identical.</p></td>
+<td><p>Remove duplicated faces. Note that faces as <code class="docutils literal notranslate"><span class="pre">(0,1,2,3)</span></code> and <code class="docutils literal notranslate"><span class="pre">(1,0,3,2)</span></code> will be</p>
+<p>considered identical.</p>
+</td>
 </tr>
 <tr class="row-odd"><td><p>Degenerated Edges</p></td>
 <td><p>Check for edges with repeated indices and remove them.</p></td>
 </tr>
 <tr class="row-even"><td><p>Degenerated Faces</p></td>
-<td><p>Check for repeated indices on every face and remove them, if it has less than 3 vertices then the face will be removed</p></td>
+<td><p>Check for repeated indices on every face and remove them, if it has less than</p>
+<p>3 vertices then the face will be removed</p>
+</td>
 </tr>
 <tr class="row-odd"><td><p>Unused Vertices</p></td>
 <td><p>Removes the vertices not used to create any edge or face.</p></td>

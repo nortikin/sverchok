@@ -100,6 +100,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#outputs">Outputs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#see-also">See also</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#examples-of-usage">Examples of usage</a></li>
 </ul>
 </li>
@@ -167,6 +168,7 @@
              
   <section id="split-faces">
 <h1>Split Faces<a class="headerlink" href="#split-faces" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/199610547-42161738-df2e-4f0f-beb5-db668f72f7d6.png"><img alt="https://user-images.githubusercontent.com/14288520/199610547-42161738-df2e-4f0f-beb5-db668f72f7d6.png" src="https://user-images.githubusercontent.com/14288520/199610547-42161738-df2e-4f0f-beb5-db668f72f7d6.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node splits NGon faces of the input mesh into smaller faces by one of two available rules:</p>
@@ -180,6 +182,7 @@ planar.</p></li>
 Please note that this <strong>does not</strong> mean that it will split faces so that the
 resulting mesh will make convex volume - it only checks for convex polygons.</p></li>
 </ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/199610555-23dc58ae-10ac-48f9-9713-e87fc2b8d587.png"><img alt="https://user-images.githubusercontent.com/14288520/199610555-23dc58ae-10ac-48f9-9713-e87fc2b8d587.png" src="https://user-images.githubusercontent.com/14288520/199610555-23dc58ae-10ac-48f9-9713-e87fc2b8d587.png" /></a>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
@@ -218,12 +221,32 @@ mesh faces. Optional input.</p></li>
 contains one item for each output mesh face.</p></li>
 </ul>
 </section>
+<section id="see-also">
+<h2>See also<a class="headerlink" href="#see-also" title="Permalink to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>Modifier-&gt;Modifier Change-&gt; <a class="reference internal" href="triangulate.html"><span class="doc">Triangulate Mesh</span></a></p></li>
+</ul>
+</section>
 <section id="examples-of-usage">
 <h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>Simple example of splitting non-planar faces:</p>
-<img alt="https://user-images.githubusercontent.com/284644/71113680-e91b4400-21ef-11ea-87a8-51b5b947e9c7.png" src="https://user-images.githubusercontent.com/284644/71113680-e91b4400-21ef-11ea-87a8-51b5b947e9c7.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/199611523-ab25ea6b-f03d-4974-9a28-c3d2d17cabf9.png"><img alt="https://user-images.githubusercontent.com/14288520/199611523-ab25ea6b-f03d-4974-9a28-c3d2d17cabf9.png" src="https://user-images.githubusercontent.com/14288520/199611523-ab25ea6b-f03d-4974-9a28-c3d2d17cabf9.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/random_vector_mk3.html"><span class="doc">Random Vector</span></a></p></li>
+<li><p>Spatial-&gt; <a class="reference internal" href="../spatial/concave_hull.html"><span class="doc">Concave Hull</span></a></p></li>
+<li><p>Modifiers-&gt;Modifier Make-&gt; <a class="reference internal" href="../modifier_make/dual_mesh.html"><span class="doc">Dual Mesh</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>An example of splitting concave faces:</p>
-<img alt="https://user-images.githubusercontent.com/284644/71113601-c0934a00-21ef-11ea-9b75-50decaba0094.png" src="https://user-images.githubusercontent.com/284644/71113601-c0934a00-21ef-11ea-9b75-50decaba0094.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/199614376-e10cbdcb-1f21-4cfe-b816-dc12d4dacab0.png"><img alt="https://user-images.githubusercontent.com/14288520/199614376-e10cbdcb-1f21-4cfe-b816-dc12d4dacab0.png" src="https://user-images.githubusercontent.com/14288520/199614376-e10cbdcb-1f21-4cfe-b816-dc12d4dacab0.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt;Generatots Extended-&gt; <a class="reference internal" href="../generators_extended/hilbert.html"><span class="doc">Hilbert</span></a></p></li>
+<li><p>Modifiers-&gt;Modifier Make-&gt; <a class="reference internal" href="../modifier_make/offset_line.html"><span class="doc">Offset Line</span></a></p></li>
+<li><p>Modifiers-&gt;Modifier Change-&gt;Limited Dissolve (TODO)</p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 </section>
 </section>
 

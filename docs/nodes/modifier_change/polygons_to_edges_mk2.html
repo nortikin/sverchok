@@ -167,6 +167,7 @@
              
   <section id="polygons-to-edges">
 <h1>Polygons to Edges<a class="headerlink" href="#polygons-to-edges" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/199974343-7df85c98-c882-421e-8d5d-ce1d45e4e1d4.png"><img alt="https://user-images.githubusercontent.com/14288520/199974343-7df85c98-c882-421e-8d5d-ce1d45e4e1d4.png" src="https://user-images.githubusercontent.com/14288520/199974343-7df85c98-c882-421e-8d5d-ce1d45e4e1d4.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>Each polygon is defined by a closed chain of vertices which form the edges of the polygon. The edges of each polygon can be extracted. If a polygon is defined by a list of vertex indices (keys) as <code class="docutils literal notranslate"><span class="pre">[3,5,11,23]</span></code> then automatically the edge keys can be inferred as <code class="docutils literal notranslate"><span class="pre">[[3,5],[5,11],[11,23],[23,3]]</span></code>. Note here that the last key closes the edge loop and reconnects with the first key in the sequence.</p>
@@ -210,7 +211,12 @@
 </section>
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
-<img alt="Polygon_to_Edges_example" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/modifier_change/polygons_to_edges/blender_sverchok_parametric_polygons_to_edges.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200010424-48acc8ef-1522-471f-9b2d-cd7009e8bb49.png"><img alt="https://user-images.githubusercontent.com/14288520/200010424-48acc8ef-1522-471f-9b2d-cd7009e8bb49.png" src="https://user-images.githubusercontent.com/14288520/200010424-48acc8ef-1522-471f-9b2d-cd7009e8bb49.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
+<li><p>CAD-&gt; <a class="reference internal" href="../CAD/inset_special_mk2.html"><span class="doc">Inset Special</span></a></p></li>
+<li><p>CV Eta: Viz-&gt; <a class="reference internal" href="../viz/viewer_curves.html"><span class="doc">Curve Viewer</span></a></p></li>
+</ul>
 </section>
 </section>
 

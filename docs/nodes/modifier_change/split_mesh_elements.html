@@ -166,7 +166,7 @@
              
   <section id="split-mesh-elements">
 <h1>Split Mesh Elements<a class="headerlink" href="#split-mesh-elements" title="Permalink to this heading">¶</a></h1>
-<a class="reference internal image-reference" href="https://user-images.githubusercontent.com/28003269/178970616-173208d4-f0f9-48b1-8d79-4783f280c5a9.png"><img alt="https://user-images.githubusercontent.com/28003269/178970616-173208d4-f0f9-48b1-8d79-4783f280c5a9.png" class="align-right" src="https://user-images.githubusercontent.com/28003269/178970616-173208d4-f0f9-48b1-8d79-4783f280c5a9.png" style="width: 200px;" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/199832286-b909233f-7b40-4d38-9920-e56ca6b8f8b6.png"><img alt="https://user-images.githubusercontent.com/14288520/199832286-b909233f-7b40-4d38-9920-e56ca6b8f8b6.png" src="https://user-images.githubusercontent.com/14288520/199832286-b909233f-7b40-4d38-9920-e56ca6b8f8b6.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>The node split selected by mask elements. It has two modes:</p>
@@ -180,27 +180,40 @@ same way as in edges mode except that it also splits the vertices of the
 adjacent connecting edges.</p>
 </dd>
 </dl>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/199840145-a77199a7-7dbc-4736-a1f2-805015a99b82.png"><img alt="https://user-images.githubusercontent.com/14288520/199840145-a77199a7-7dbc-4736-a1f2-805015a99b82.png" src="https://user-images.githubusercontent.com/14288520/199840145-a77199a7-7dbc-4736-a1f2-805015a99b82.png" /></a>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
-<p><strong>Vertices</strong> - Vertices of the input object</p>
-<p><strong>Edges</strong> - Edges of the input object</p>
-<p><strong>Faces</strong> - Faces of the input object</p>
-<p><strong>FaceData</strong> - Face attribute of the input object</p>
-<p><strong>Mask</strong> - Selection mask. It also has option which type of selection is given
-(vertexes, edges or faces selection)</p>
+<ul class="simple">
+<li><p><strong>Vertices</strong> - Vertices of the input object</p></li>
+<li><p><strong>Edges</strong> - Edges of the input object</p></li>
+<li><p><strong>Faces</strong> - Faces of the input object</p></li>
+<li><p><strong>FaceData</strong> - Face attribute of the input object</p></li>
+<li><p><strong>Mask</strong> - Selection mask. It also has option which type of selection is given (vertexes, edges or faces selection)</p></li>
+</ul>
 </section>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
-<p><strong>Vertices</strong> - Vertices of the final object</p>
-<p><strong>Edges</strong> - Edges of the final object</p>
-<p><strong>Faces</strong> - Faces of the final object</p>
-<p><strong>FaceData</strong> - Face attribute of the final object</p>
+<ul class="simple">
+<li><p><strong>Vertices</strong> - Vertices of the final object</p></li>
+<li><p><strong>Edges</strong> - Edges of the final object</p></li>
+<li><p><strong>Faces</strong> - Faces of the final object</p></li>
+<li><p><strong>FaceData</strong> - Face attribute of the final object</p></li>
+</ul>
 </section>
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
 <p>Split a mesh into random pieces</p>
-<a class="reference internal image-reference" href="https://user-images.githubusercontent.com/28003269/110217341-e5471080-7ecc-11eb-9954-522478ada365.png"><img alt="https://user-images.githubusercontent.com/28003269/110217341-e5471080-7ecc-11eb-9954-522478ada365.png" src="https://user-images.githubusercontent.com/28003269/110217341-e5471080-7ecc-11eb-9954-522478ada365.png" style="width: 700px;" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/199853840-5d9fcb66-98fd-4621-97ed-1aefbc75a906.png"><img alt="https://user-images.githubusercontent.com/14288520/199853840-5d9fcb66-98fd-4621-97ed-1aefbc75a906.png" src="https://user-images.githubusercontent.com/14288520/199853840-5d9fcb66-98fd-4621-97ed-1aefbc75a906.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/suzanne.html"><span class="doc">Suzanne</span></a></p></li>
+<li><p>Modifiers-&gt;Modifier Change <a class="reference internal" href="mesh_separate.html"><span class="doc">Separate Loose Parts</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/list_input.html"><span class="doc">List Input</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/random_num_gen.html"><span class="doc">Random Num Gen</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_struct/levels.html"><span class="doc">List Levels</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/mesh_viewer.html"><span class="doc">Mesh Viewer</span></a></p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/199854590-62cdcaa6-6b30-4aef-a94d-64aa7a9cbdb3.gif"><img alt="https://user-images.githubusercontent.com/14288520/199854590-62cdcaa6-6b30-4aef-a94d-64aa7a9cbdb3.gif" src="https://user-images.githubusercontent.com/14288520/199854590-62cdcaa6-6b30-4aef-a94d-64aa7a9cbdb3.gif" /></a>
 </section>
 </section>
 

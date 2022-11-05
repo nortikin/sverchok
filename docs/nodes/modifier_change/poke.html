@@ -167,12 +167,14 @@
              
   <section id="poke-faces">
 <h1>Poke Faces<a class="headerlink" href="#poke-faces" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200118171-fdb70f73-ebaa-4f3a-bd8e-4db48a2e2342.png"><img alt="https://user-images.githubusercontent.com/14288520/200118171-fdb70f73-ebaa-4f3a-bd8e-4db48a2e2342.png" src="https://user-images.githubusercontent.com/14288520/200118171-fdb70f73-ebaa-4f3a-bd8e-4db48a2e2342.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node splits each selected faces into a triangle fan, creating a new center
 vertex and triangles between the original face edges and new center vertex. The
 <strong>Offset</strong> parameter can be used to make spikes or depressions.</p>
-<p>This node provides an interface to standard <a class="reference external" href="https://docs.blender.org/manual/en/latest/modeling/meshes/editing/faces.html">Blender</a>’s “Poke face” operator.
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200124892-b194ddeb-eb98-4258-9195-262bbf401d16.png"><img alt="https://user-images.githubusercontent.com/14288520/200124892-b194ddeb-eb98-4258-9195-262bbf401d16.png" src="https://user-images.githubusercontent.com/14288520/200124892-b194ddeb-eb98-4258-9195-262bbf401d16.png" /></a>
+<p>This node provides an interface to standard <a class="reference external" href="https://docs.blender.org/manual/en/latest/modeling/meshes/editing/face/poke_faces.html">Blender</a>’s “Poke face” operator.
 Please refer to Blender documentation for more details.</p>
 </section>
 <section id="inputs">
@@ -224,11 +226,26 @@ contains one item for each output mesh face.</p></li>
 <section id="examples-of-usage">
 <h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>Poke applied to a box:</p>
-<img alt="https://user-images.githubusercontent.com/284644/74262771-51cdfb00-4d1f-11ea-8b0d-9b31fb36380a.png" src="https://user-images.githubusercontent.com/284644/74262771-51cdfb00-4d1f-11ea-8b0d-9b31fb36380a.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200125162-ddafebd3-c15b-495f-8ae0-e2892eaf3259.png"><img alt="https://user-images.githubusercontent.com/14288520/200125162-ddafebd3-c15b-495f-8ae0-e2892eaf3259.png" src="https://user-images.githubusercontent.com/14288520/200125162-ddafebd3-c15b-495f-8ae0-e2892eaf3259.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>Applied to Icosphere:</p>
-<img alt="https://user-images.githubusercontent.com/284644/74262774-52ff2800-4d1f-11ea-94e7-6c295fdbdc55.png" src="https://user-images.githubusercontent.com/284644/74262774-52ff2800-4d1f-11ea-94e7-6c295fdbdc55.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/74262774-52ff2800-4d1f-11ea-94e7-6c295fdbdc55.png"><img alt="https://user-images.githubusercontent.com/284644/74262774-52ff2800-4d1f-11ea-94e7-6c295fdbdc55.png" src="https://user-images.githubusercontent.com/284644/74262774-52ff2800-4d1f-11ea-94e7-6c295fdbdc55.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/icosphere.html"><span class="doc">IcoSphere</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>Applied to only one face of the cube:</p>
-<img alt="https://user-images.githubusercontent.com/284644/74263493-c190b580-4d20-11ea-82bf-88e74a14aa87.png" src="https://user-images.githubusercontent.com/284644/74263493-c190b580-4d20-11ea-82bf-88e74a14aa87.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/74263493-c190b580-4d20-11ea-82bf-88e74a14aa87.png"><img alt="https://user-images.githubusercontent.com/284644/74263493-c190b580-4d20-11ea-82bf-88e74a14aa87.png" src="https://user-images.githubusercontent.com/284644/74263493-c190b580-4d20-11ea-82bf-88e74a14aa87.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
+<li><p>Analyzers-&gt; <a class="reference internal" href="../analyzer/mesh_select_mk2.html#mode-by-normal-direction"><span class="std std-ref">Select Mesh Elements (By Normal Direction)</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 </section>
 </section>
 

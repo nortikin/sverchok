@@ -83,6 +83,7 @@
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Mesh Join</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#inputs-outputs">Inputs &amp; Outputs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#see-also">See also</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#examples">Examples</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#notes">Notes</a></li>
 </ul>
@@ -166,9 +167,11 @@
              
   <section id="mesh-join">
 <h1>Mesh Join<a class="headerlink" href="#mesh-join" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200012677-336dc1a6-0b6b-4bc6-b9a7-9440529776c4.png"><img alt="https://user-images.githubusercontent.com/14288520/200012677-336dc1a6-0b6b-4bc6-b9a7-9440529776c4.png" src="https://user-images.githubusercontent.com/14288520/200012677-336dc1a6-0b6b-4bc6-b9a7-9440529776c4.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>Analogue to <code class="docutils literal notranslate"><span class="pre">Ctrl+J</span></code> in the 3dview of Blender. Separate nested lists of <em>vertices</em> and <em>polygons/edges</em> are merged. The keys in the Edge and Polygon lists are incremented to coincide with the newly created vertex list.</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200015469-69825d1f-a219-4bd7-bc0f-66e08eb9e1bc.png"><img alt="https://user-images.githubusercontent.com/14288520/200015469-69825d1f-a219-4bd7-bc0f-66e08eb9e1bc.png" src="https://user-images.githubusercontent.com/14288520/200015469-69825d1f-a219-4bd7-bc0f-66e08eb9e1bc.png" /></a>
 <p>The inner workings go something like:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">vertices_obj_1</span> <span class="o">=</span> <span class="p">[</span>
     <span class="p">(</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">),</span> <span class="p">(</span><span class="mf">1.2</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">),</span> <span class="p">(</span><span class="mf">1.2</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">),</span>
@@ -218,9 +221,35 @@
 <p>The inputs and outputs are <em>vertices</em>, edges and <em>polygons</em>.</p>
 <p>Expects a nested collection of vertex lists. Each nested list represents an object which can itself have many vertices and key lists.</p>
 </section>
+<section id="see-also">
+<h2>See also<a class="headerlink" href="#see-also" title="Permalink to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/apply_and_join.html"><span class="doc">Matrix Apply to Mesh</span></a> (param Join On/Off)</p></li>
+</ul>
+</section>
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
-<img alt="MeshJoinDemo1.PNG" src="https://cloud.githubusercontent.com/assets/619340/4186165/8ea02bde-375e-11e4-96d8-175959c26505.PNG" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200021156-1a575bae-42c8-43a8-b95e-5d0c112fb283.png"><img alt="https://user-images.githubusercontent.com/14288520/200021156-1a575bae-42c8-43a8-b95e-5d0c112fb283.png" src="https://user-images.githubusercontent.com/14288520/200021156-1a575bae-42c8-43a8-b95e-5d0c112fb283.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_main/length.html"><span class="doc">List Length</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>Color-&gt; <a class="reference internal" href="../color/color_ramp.html"><span class="doc">Color Ramp</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+</ul>
+<hr class="docutils" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200025633-d89e4b61-e303-4afa-ab2f-0df2c6e21ff9.png"><img alt="https://user-images.githubusercontent.com/14288520/200025633-d89e4b61-e303-4afa-ab2f-0df2c6e21ff9.png" src="https://user-images.githubusercontent.com/14288520/200025633-d89e4b61-e303-4afa-ab2f-0df2c6e21ff9.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/sphere.html"><span class="doc">Sphere</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/line_mk4.html"><span class="doc">Line</span></a></p></li>
+<li><p>Transform-&gt; <a class="reference internal" href="../transforms/apply.html"><span class="doc">Matrix Apply (verts)</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_main/length.html"><span class="doc">List Length</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_struct/repeater.html"><span class="doc">List Repeater</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+</ul>
 </section>
 <section id="notes">
 <h2>Notes<a class="headerlink" href="#notes" title="Permalink to this heading">¶</a></h2>

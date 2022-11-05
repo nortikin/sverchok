@@ -168,11 +168,17 @@
              
   <section id="dissolve-mesh-elements">
 <h1>Dissolve Mesh Elements<a class="headerlink" href="#dissolve-mesh-elements" title="Permalink to this heading">¶</a></h1>
-<img alt="https://user-images.githubusercontent.com/28003269/89492228-2d307880-d7c2-11ea-9a4a-ab12e7dd699a.png" src="https://user-images.githubusercontent.com/28003269/89492228-2d307880-d7c2-11ea-9a4a-ab12e7dd699a.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/199957635-d432411b-f465-4f2d-b861-78896ed70b73.png"><img alt="https://user-images.githubusercontent.com/14288520/199957635-d432411b-f465-4f2d-b861-78896ed70b73.png" src="https://user-images.githubusercontent.com/14288520/199957635-d432411b-f465-4f2d-b861-78896ed70b73.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>Dissolve will remove the geometry and fill in the surrounding geometry.
 Instead of removing the geometry, which may leave holes that you have to fill in again.</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/199959865-333bfc63-fe19-47b2-8920-826965f4fe83.png"><img alt="https://user-images.githubusercontent.com/14288520/199959865-333bfc63-fe19-47b2-8920-826965f4fe83.png" src="https://user-images.githubusercontent.com/14288520/199959865-333bfc63-fe19-47b2-8920-826965f4fe83.png" /></a>
+<ul class="simple">
+<li><p>Analyzers-&gt; <a class="reference internal" href="../analyzer/component_analyzer.html#vertices-is-interior"><span class="std std-ref">Component Analyzer/Vertices/Interior</span></a></p></li>
+</ul>
+<hr class="docutils" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/199963152-e3f375d2-77de-4cbc-b503-2921d16ba53e.png"><img alt="https://user-images.githubusercontent.com/14288520/199963152-e3f375d2-77de-4cbc-b503-2921d16ba53e.png" src="https://user-images.githubusercontent.com/14288520/199963152-e3f375d2-77de-4cbc-b503-2921d16ba53e.png" /></a>
 </section>
 <section id="category">
 <h2>Category<a class="headerlink" href="#category" title="Permalink to this heading">¶</a></h2>
@@ -192,20 +198,24 @@ Instead of removing the geometry, which may leave holes that you have to fill in
 <ul class="simple">
 <li><dl class="simple">
 <dt><strong>Mode</strong></dt><dd><ul>
-<li><p>Verts - Remove the vertex, merging all surrounding faces. In the case of two edges, merging them into a single edge</p></li>
-<li><p>Edges - Removes edges sharing two faces (joining those faces)</p></li>
-<li><p>Faces - Merges regions of faces that share edges into a single face</p></li>
+<li><p><strong>Verts</strong>. Remove the vertex, merging all surrounding faces. In the case of two edges, merging them into a single edge</p></li>
+<li><p><strong>Edges</strong>. Removes edges sharing two faces (joining those faces)</p></li>
+<li><p><strong>Faces</strong>. Merges regions of faces that share edges into a single face</p></li>
 </ul>
 </dd>
 </dl>
 </li>
-<li><p><strong>Use face split</strong> When dissolving vertices into surrounding faces, you can often end up with very large, uneven n-gons. The face split option limits dissolve to only use the corners of the faces connected to the vertex.</p></li>
-<li><p><strong>Use boundary tear</strong> Split off face corners instead of merging faces.</p></li>
-<li><p><strong>Use verts</strong> Undocumented</p></li>
+<li><p><strong>Use face split</strong>. When dissolving vertices into surrounding faces, you can often end up with very large, uneven n-gons. The face split option limits dissolve to only use the corners of the faces connected to the vertex.</p></li>
+<li><p><strong>Use boundary tear</strong>. Split off face corners instead of merging faces.</p></li>
+<li><p><strong>Use verts</strong>. Undocumented</p></li>
 </ul>
 <img alt="https://user-images.githubusercontent.com/28003269/89491528-87303e80-d7c0-11ea-99ad-63335902a996.png" src="https://user-images.githubusercontent.com/28003269/89491528-87303e80-d7c0-11ea-99ad-63335902a996.png" />
-<p><em>1) Original mesh. 2) Face Split: Off, Tear Boundaries: Off. 3) Face Split: On, Tear Boundaries: Off.
-4) Face Split: On/Off, Tear Boundaries: On.</em></p>
+<ol class="arabic simple">
+<li><p>Original mesh.</p></li>
+<li><p>Face Split: Off, Tear Boundaries: Off.</p></li>
+<li><p>Face Split: On, Tear Boundaries: Off.</p></li>
+<li><p>Face Split: On/Off, Tear Boundaries: On.</p></li>
+</ol>
 </section>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
@@ -224,14 +234,50 @@ For mapping operation `list item` node can be used.</em></p>
 </section>
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
+<p><strong>Dissolve random border faces</strong></p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/199965580-e20b169a-5ced-4e06-b12f-2a36a16eabb3.png"><img alt="https://user-images.githubusercontent.com/14288520/199965580-e20b169a-5ced-4e06-b12f-2a36a16eabb3.png" src="https://user-images.githubusercontent.com/14288520/199965580-e20b169a-5ced-4e06-b12f-2a36a16eabb3.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt;Generator Extended-&gt; <a class="reference internal" href="../generators_extended/polygon_grid.html"><span class="doc">Polygon Grid</span></a></p></li>
+<li><p>Analyzers-&gt; <a class="reference internal" href="../analyzer/component_analyzer.html#faces-is-boundary"><span class="std std-ref">Component Analyzer/Faces/Is_Boundary</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/list_input.html"><span class="doc">List Input</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/random_num_gen.html"><span class="doc">Random Num Gen</span></a></p></li>
+<li><p>AND: Logic-&gt; <a class="reference internal" href="../logic/logic_node.html"><span class="doc">Logic Functions</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_main/length.html"><span class="doc">List Length</span></a></p></li>
+<li><p>Color-&gt; <a class="reference internal" href="../color/color_ramp.html"><span class="doc">Color Ramp</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/199966076-4434102c-7f62-4548-b27d-efc3e21ed42e.gif"><img alt="https://user-images.githubusercontent.com/14288520/199966076-4434102c-7f62-4548-b27d-efc3e21ed42e.gif" src="https://user-images.githubusercontent.com/14288520/199966076-4434102c-7f62-4548-b27d-efc3e21ed42e.gif" /></a>
+<hr class="docutils" />
 <p><strong>Dissolve random edges</strong></p>
 <img alt="https://user-images.githubusercontent.com/28003269/89445808-af8a4f80-d764-11ea-8d00-66c8d58f7519.gif" src="https://user-images.githubusercontent.com/28003269/89445808-af8a4f80-d764-11ea-8d00-66c8d58f7519.gif" />
+<hr class="docutils" />
 <p><strong>Dissolve all edges except vertical and horizontal</strong></p>
-<img alt="https://user-images.githubusercontent.com/28003269/89520787-70eda700-d7ef-11ea-9a61-b2e8d8b9fd74.gif" src="https://user-images.githubusercontent.com/28003269/89520787-70eda700-d7ef-11ea-9a61-b2e8d8b9fd74.gif" />
-<img alt="https://user-images.githubusercontent.com/28003269/89520841-8531a400-d7ef-11ea-9c2d-67d43caeb09a.png" src="https://user-images.githubusercontent.com/28003269/89520841-8531a400-d7ef-11ea-9c2d-67d43caeb09a.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/28003269/89520787-70eda700-d7ef-11ea-9a61-b2e8d8b9fd74.gif"><img alt="https://user-images.githubusercontent.com/28003269/89520787-70eda700-d7ef-11ea-9a61-b2e8d8b9fd74.gif" src="https://user-images.githubusercontent.com/28003269/89520787-70eda700-d7ef-11ea-9a61-b2e8d8b9fd74.gif" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/28003269/89520841-8531a400-d7ef-11ea-9c2d-67d43caeb09a.png"><img alt="https://user-images.githubusercontent.com/28003269/89520841-8531a400-d7ef-11ea-9c2d-67d43caeb09a.png" src="https://user-images.githubusercontent.com/28003269/89520841-8531a400-d7ef-11ea-9c2d-67d43caeb09a.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/random_vector_mk3.html"><span class="doc">Random Vector</span></a></p></li>
+<li><p>COMPONENT-WISE: Vector-&gt; <a class="reference internal" href="../vector/math_mk3.html"><span class="doc">Vector Math</span></a></p></li>
+<li><p>Spatial-&gt; <a class="reference internal" href="../spatial/delaunay_2d.html"><span class="doc">Delaunay 2D</span></a></p></li>
+<li><p>Analyzers-&gt; <a class="reference internal" href="../analyzer/mesh_select_mk2.html"><span class="doc">Select Mesh Elements</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/numbers.html"><span class="doc">A Number</span></a></p></li>
+<li><p>OR, NOT: Logic-&gt; <a class="reference internal" href="../logic/logic_node.html"><span class="doc">Logic Functions</span></a></p></li>
+<li><p>Temporal Viewer: Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p><strong>Dissolve faces by area</strong></p>
-<img alt="https://user-images.githubusercontent.com/28003269/89521871-561c3200-d7f1-11ea-8c5b-6e1e38b4549b.gif" src="https://user-images.githubusercontent.com/28003269/89521871-561c3200-d7f1-11ea-8c5b-6e1e38b4549b.gif" />
-<img alt="https://user-images.githubusercontent.com/28003269/89521875-56b4c880-d7f1-11ea-98e4-a79ff30fecb0.png" src="https://user-images.githubusercontent.com/28003269/89521875-56b4c880-d7f1-11ea-98e4-a79ff30fecb0.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/28003269/89521871-561c3200-d7f1-11ea-8c5b-6e1e38b4549b.gif"><img alt="https://user-images.githubusercontent.com/28003269/89521871-561c3200-d7f1-11ea-8c5b-6e1e38b4549b.gif" src="https://user-images.githubusercontent.com/28003269/89521871-561c3200-d7f1-11ea-8c5b-6e1e38b4549b.gif" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/28003269/89521875-56b4c880-d7f1-11ea-98e4-a79ff30fecb0.png"><img alt="https://user-images.githubusercontent.com/28003269/89521875-56b4c880-d7f1-11ea-98e4-a79ff30fecb0.png" src="https://user-images.githubusercontent.com/28003269/89521875-56b4c880-d7f1-11ea-98e4-a79ff30fecb0.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/suzanne.html"><span class="doc">Suzanne</span></a></p></li>
+<li><p>Analyzers-&gt; <a class="reference internal" href="../analyzer/area.html"><span class="doc">Area</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/math_mk3.html"><span class="doc">Vector Math</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>List-&gt; <a class="reference internal" href="../list_masks/mask_convert.html"><span class="doc">List Mask Converter</span></a></p></li>
+<li><p>LESS X: Logic-&gt; <a class="reference internal" href="../logic/logic_node.html"><span class="doc">Logic Functions</span></a></p></li>
+<li><p>Logic-&gt; <a class="reference internal" href="../logic/switch_MK2.html"><span class="doc">Switch</span></a></p></li>
+<li><p>Temporal Viewer: Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 </section>
 </section>
 

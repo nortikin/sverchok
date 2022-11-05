@@ -167,10 +167,12 @@
              
   <section id="edge-boom">
 <h1>Edge Boom<a class="headerlink" href="#edge-boom" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/199942622-8e6e9a9a-7f9b-43b2-9463-15e790b49610.png"><img alt="https://user-images.githubusercontent.com/14288520/199942622-8e6e9a9a-7f9b-43b2-9463-15e790b49610.png" src="https://user-images.githubusercontent.com/14288520/199942622-8e6e9a9a-7f9b-43b2-9463-15e790b49610.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node splits the input mesh object into separate edges objects; it can be
 used to create a separate object from each edge of the input mesh.</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/199942253-4212f665-4c91-48a0-ab74-b467c6a62d6f.png"><img alt="https://user-images.githubusercontent.com/14288520/199942253-4212f665-4c91-48a0-ab74-b467c6a62d6f.png" src="https://user-images.githubusercontent.com/14288520/199942253-4212f665-4c91-48a0-ab74-b467c6a62d6f.png" /></a>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
@@ -230,10 +232,36 @@ available when the <strong>Output mode</strong> parameter is set to <strong>Obje
 </section>
 <section id="example-of-usage">
 <h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/199945595-9b63fd1d-1fc1-42d7-80ae-e3524161b0e8.png"><img alt="https://user-images.githubusercontent.com/14288520/199945595-9b63fd1d-1fc1-42d7-80ae-e3524161b0e8.png" src="https://user-images.githubusercontent.com/14288520/199945595-9b63fd1d-1fc1-42d7-80ae-e3524161b0e8.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/segment.html"><span class="doc">Segment</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/cylinder_mk2.html"><span class="doc">Cylinder</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/suzanne.html"><span class="doc">Suzanne</span></a></p></li>
+<li><p>Transform-&gt; <a class="reference internal" href="../transforms/scale_mk3.html"><span class="doc">Scale</span></a></p></li>
+<li><p>Analyzers-&gt; <a class="reference internal" href="../analyzer/origins.html"><span class="doc">Origins</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>Replace each edge of a square with a segment with subdivisions:</p>
-<img alt="https://user-images.githubusercontent.com/284644/76330373-942f2b80-630f-11ea-95ee-0c1f5f398e72.png" src="https://user-images.githubusercontent.com/284644/76330373-942f2b80-630f-11ea-95ee-0c1f5f398e72.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/199948148-a88d073c-c900-40ec-83b4-4a048ad82b58.png"><img alt="https://user-images.githubusercontent.com/14288520/199948148-a88d073c-c900-40ec-83b4-4a048ad82b58.png" src="https://user-images.githubusercontent.com/14288520/199948148-a88d073c-c900-40ec-83b4-4a048ad82b58.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/segment.html"><span class="doc">Segment</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_main/length.html"><span class="doc">List Length</span></a></p></li>
+<li><p>Color-&gt; <a class="reference internal" href="../color/color_ramp.html"><span class="doc">Color Ramp</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>Move each edge of input objects randomly:</p>
-<img alt="https://user-images.githubusercontent.com/284644/76344998-5dafdb80-6324-11ea-9ff3-12ce2bf496c5.png" src="https://user-images.githubusercontent.com/284644/76344998-5dafdb80-6324-11ea-9ff3-12ce2bf496c5.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/199951691-afdae55c-3e88-4adb-8526-4a9173a8bcb6.png"><img alt="https://user-images.githubusercontent.com/14288520/199951691-afdae55c-3e88-4adb-8526-4a9173a8bcb6.png" src="https://user-images.githubusercontent.com/14288520/199951691-afdae55c-3e88-4adb-8526-4a9173a8bcb6.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/random_vector_mk3.html"><span class="doc">Random Vector</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/list_input.html"><span class="doc">List Input</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_main/length.html"><span class="doc">List Length</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 </section>
 </section>
 

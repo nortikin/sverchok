@@ -1,6 +1,9 @@
 Flat Geometry
 =============
 
+.. image:: https://user-images.githubusercontent.com/14288520/200131215-89cec5f9-4ca1-4d73-a09f-59555cf99245.png
+  :target: https://user-images.githubusercontent.com/14288520/200131215-89cec5f9-4ca1-4d73-a09f-59555cf99245.png
+
 Functionality
 -------------
 
@@ -30,3 +33,4 @@ Examples
 --------
 
 .. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/modifier_change/flat_geometry/blender_sverchok_flat_geometry_example
+

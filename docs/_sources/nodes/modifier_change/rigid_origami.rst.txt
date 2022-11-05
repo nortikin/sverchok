@@ -1,6 +1,9 @@
 Rigid Origami
 =============
 
+.. image:: https://user-images.githubusercontent.com/14288520/200129870-2afae020-e39e-4013-a984-b57f6c244073.png
+  :target: https://user-images.githubusercontent.com/14288520/200129870-2afae020-e39e-4013-a984-b57f6c244073.png
+
 Functionality
 -------------
 

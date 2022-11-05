@@ -167,9 +167,11 @@
              
   <section id="extrude-edges">
 <h1>Extrude Edges<a class="headerlink" href="#extrude-edges" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200043893-b45dbc77-971a-439d-9be4-f64dcbde010d.png"><img alt="https://user-images.githubusercontent.com/14288520/200043893-b45dbc77-971a-439d-9be4-f64dcbde010d.png" src="https://user-images.githubusercontent.com/14288520/200043893-b45dbc77-971a-439d-9be4-f64dcbde010d.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>You can extrude edges along matrices. Every matrix influence on separate vertex of initial mesh.</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200049153-1522d39b-c89e-41e9-9259-b2a28cf6c8b7.png"><img alt="https://user-images.githubusercontent.com/14288520/200049153-1522d39b-c89e-41e9-9259-b2a28cf6c8b7.png" src="https://user-images.githubusercontent.com/14288520/200049153-1522d39b-c89e-41e9-9259-b2a28cf6c8b7.png" /></a>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
@@ -210,17 +212,63 @@ contains one item for each output mesh face.</p></li>
 <section id="examples-of-usage">
 <h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>Extruded circle in Z direction by sinus, drived by pi*N:</p>
-<img alt="https://cloud.githubusercontent.com/assets/5783432/18603880/8d81f272-7c86-11e6-8514-e241557730b0.png" src="https://cloud.githubusercontent.com/assets/5783432/18603880/8d81f272-7c86-11e6-8514-e241557730b0.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200052169-daf55b93-65a8-4926-9d03-c81f977f9b7f.png"><img alt="https://user-images.githubusercontent.com/14288520/200052169-daf55b93-65a8-4926-9d03-c81f977f9b7f.png" src="https://user-images.githubusercontent.com/14288520/200052169-daf55b93-65a8-4926-9d03-c81f977f9b7f.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/circle.html"><span class="doc">Circle</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/numbers.html"><span class="doc">A Number</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>SUB, MUL, SINE: Number-&gt; <a class="reference internal" href="../number/scalar_mk4.html"><span class="doc">Scalar Math</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_in.html"><span class="doc">Vector In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>Extruded circle in XY directions by sinus and cosinus drived by pi*N:</p>
-<img alt="https://cloud.githubusercontent.com/assets/5783432/18603878/8d80896e-7c86-11e6-8f4a-8d7024ae597b.png" src="https://cloud.githubusercontent.com/assets/5783432/18603878/8d80896e-7c86-11e6-8f4a-8d7024ae597b.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200053013-696b830d-9ec8-40c2-8662-1d08027d7c3b.png"><img alt="https://user-images.githubusercontent.com/14288520/200053013-696b830d-9ec8-40c2-8662-1d08027d7c3b.png" src="https://user-images.githubusercontent.com/14288520/200053013-696b830d-9ec8-40c2-8662-1d08027d7c3b.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/circle.html"><span class="doc">Circle</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/numbers.html"><span class="doc">A Number</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>SUB, MUL, SINCOS: Number-&gt; <a class="reference internal" href="../number/scalar_mk4.html"><span class="doc">Scalar Math</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_in.html"><span class="doc">Vector In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>Matrix input node can make skew in one or another direction:</p>
-<img alt="https://cloud.githubusercontent.com/assets/5783432/18603891/9fbcc44e-7c86-11e6-8f43-e48ef1eacd59.png" src="https://cloud.githubusercontent.com/assets/5783432/18603891/9fbcc44e-7c86-11e6-8f43-e48ef1eacd59.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200053481-4a5d04ae-39bb-4a94-a7dd-51d63a6bac7a.png"><img alt="https://user-images.githubusercontent.com/14288520/200053481-4a5d04ae-39bb-4a94-a7dd-51d63a6bac7a.png" src="https://user-images.githubusercontent.com/14288520/200053481-4a5d04ae-39bb-4a94-a7dd-51d63a6bac7a.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/circle.html"><span class="doc">Circle</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/input.html"><span class="doc">Matrix Input</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>Matrix input node can also scale extruded edges, so you will get bell:</p>
-<img alt="https://cloud.githubusercontent.com/assets/5783432/18603881/8d81e9e4-7c86-11e6-9a77-a9104bd234cc.png" src="https://cloud.githubusercontent.com/assets/5783432/18603881/8d81e9e4-7c86-11e6-9a77-a9104bd234cc.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200054071-6c774ff2-06ef-421b-945b-f842681eebbe.png"><img alt="https://user-images.githubusercontent.com/14288520/200054071-6c774ff2-06ef-421b-945b-f842681eebbe.png" src="https://user-images.githubusercontent.com/14288520/200054071-6c774ff2-06ef-421b-945b-f842681eebbe.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/circle.html"><span class="doc">Circle</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/input.html"><span class="doc">Matrix Input</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>Extrude only top edges of the cube:</p>
-<img alt="https://user-images.githubusercontent.com/284644/71553527-c9c3b880-2a32-11ea-8e87-c88bd6be744c.png" src="https://user-images.githubusercontent.com/284644/71553527-c9c3b880-2a32-11ea-8e87-c88bd6be744c.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200054687-06e9797c-39e3-47e4-9159-f5e45e8a46d8.png"><img alt="https://user-images.githubusercontent.com/14288520/200054687-06e9797c-39e3-47e4-9159-f5e45e8a46d8.png" src="https://user-images.githubusercontent.com/14288520/200054687-06e9797c-39e3-47e4-9159-f5e45e8a46d8.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
+<li><p>Analyzers-&gt; <a class="reference internal" href="../analyzer/mesh_select_mk2.html#mode-by-normal-direction"><span class="std std-ref">Select Mesh Elements (By Normal Direction)</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>Extrude only boundary edges of the plane; this also is an example of FaceData socket usage:</p>
-<img alt="https://user-images.githubusercontent.com/284644/71553528-ca5c4f00-2a32-11ea-95c4-80c1d85129f1.png" src="https://user-images.githubusercontent.com/284644/71553528-ca5c4f00-2a32-11ea-95c4-80c1d85129f1.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/71553528-ca5c4f00-2a32-11ea-95c4-80c1d85129f1.png"><img alt="https://user-images.githubusercontent.com/284644/71553528-ca5c4f00-2a32-11ea-95c4-80c1d85129f1.png" src="https://user-images.githubusercontent.com/284644/71553528-ca5c4f00-2a32-11ea-95c4-80c1d85129f1.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Analyzer-&gt; <a class="reference internal" href="../analyzer/mesh_filter.html"><span class="doc">Mesh Filter</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/random_num_gen.html"><span class="doc">Random Num Gen</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_main/length.html"><span class="doc">List Length</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/mesh_viewer.html"><span class="doc">Mesh Viewer</span></a></p></li>
+<li><p>BPY Data-&gt; <a class="reference internal" href="../object_nodes/assign_materials.html"><span class="doc">Assign Materials List</span></a></p></li>
+</ul>
 </section>
 </section>
 

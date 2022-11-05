@@ -104,6 +104,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#outputs">Outputs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#see-also">See also</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#examples-of-usage">Examples of usage</a></li>
 </ul>
 </li>
@@ -167,11 +168,14 @@
              
   <section id="triangulate-mesh">
 <h1>Triangulate Mesh<a class="headerlink" href="#triangulate-mesh" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/199673451-2f024398-99ef-4e8c-a946-23eb64fb0edd.png"><img alt="https://user-images.githubusercontent.com/14288520/199673451-2f024398-99ef-4e8c-a946-23eb64fb0edd.png" src="https://user-images.githubusercontent.com/14288520/199673451-2f024398-99ef-4e8c-a946-23eb64fb0edd.png" /></a>
 <p><em>This node testing is in progress, so it can be found under Beta menu</em></p>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
-<p>This node applies Triangulate operator (Ctrl+T in normal mode) to the mesh. It can triangulate all faces or only selected ones.
-This node is useful mainly when other node generates ngons, especially not-convex ones.</p>
+<p>This node applies Triangulate operator (Ctrl+T in normal mode) to the mesh. It can triangulate all faces or only selected ones.</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/199745393-91f9f48a-b2a4-40d5-b58a-eeb814f4caea.png"><img alt="https://user-images.githubusercontent.com/14288520/199745393-91f9f48a-b2a4-40d5-b58a-eeb814f4caea.png" src="https://user-images.githubusercontent.com/14288520/199745393-91f9f48a-b2a4-40d5-b58a-eeb814f4caea.png" /></a>
+<p>This node is useful mainly when other node generates ngons, especially not-convex ones.</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/199753486-0e465534-02e6-4eb8-827c-7dfa7a55f813.png"><img alt="https://user-images.githubusercontent.com/14288520/199753486-0e465534-02e6-4eb8-827c-7dfa7a55f813.png" src="https://user-images.githubusercontent.com/14288520/199753486-0e465534-02e6-4eb8-827c-7dfa7a55f813.png" /></a>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
@@ -189,24 +193,22 @@ mesh faces. Optional input.</p></li>
 <section id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following parameters:</p>
-<ul>
-<li><p><strong>Quads mode</strong>. Method of quads processing. Available modes are:</p>
-<dl class="simple">
-<dt>Beauty.</dt><dd><p>Split the quads in nice triangles, slower method.</p>
-</dd>
-<dt>Fixed</dt><dd><p>Split the quads on the 1st and 3rd vertices.</p>
-</dd>
-<dt>Fixed Alternate</dt><dd><p>Split the quads on the 2nd and 4th vertices.</p>
-</dd>
-<dt>Shortest Diagonal</dt><dd><p>Split the quads based on the distance between the vertices.</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt><strong>Quads mode</strong>. Method of quads processing. Available modes are:</dt><dd><ul>
+<li><p><strong>Beauty</strong>. Split the quads in nice triangles, slower method.</p></li>
+<li><p><strong>Fixed</strong>. Split the quads on the 1st and 3rd vertices.</p></li>
+<li><p><strong>Fixed Alternate</strong>. Split the quads on the 2nd and 4th vertices.</p></li>
+<li><p><strong>Shortest Diagonal</strong>. Split the quads based on the distance between the vertices.</p></li>
+</ul>
 </dd>
 </dl>
 </li>
-<li><p><strong>Ngon mode</strong>. Method of ngons processing. Available modes are:</p>
-<dl class="simple">
-<dt>Beauty.</dt><dd><p>Arrange the new triangles nicely, slower method.</p>
-</dd>
-<dt>Scanfill.</dt><dd><p>Split the ngons using a scanfill algorithm.</p>
+<li><dl class="simple">
+<dt><strong>Ngon mode</strong>. Method of ngons processing. Available modes are:</dt><dd><ul>
+<li><p><strong>Beauty</strong>. Arrange the new triangles nicely, slower method.</p></li>
+<li><p><strong>Scanfill</strong>. Split the ngons using a scanfill algorithm.</p></li>
+</ul>
 </dd>
 </dl>
 </li>
@@ -225,12 +227,31 @@ contains one item for each output mesh face.</p></li>
 <li><p><strong>NewPolys</strong>. This contains only new faces created by triangulation procedure. If <code class="docutils literal notranslate"><span class="pre">Mask</span></code> input is not used, then this output will contain the same as <code class="docutils literal notranslate"><span class="pre">Polygons</span></code> output.</p></li>
 </ul>
 </section>
+<section id="see-also">
+<h2>See also<a class="headerlink" href="#see-also" title="Permalink to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>Modifiers-&gt;Modifier Change-&gt; <a class="reference internal" href="split_faces.html"><span class="doc">Split Faces</span></a></p></li>
+</ul>
+</section>
 <section id="examples-of-usage">
 <h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>Triangulated cube:</p>
-<img alt="https://cloud.githubusercontent.com/assets/284644/6314915/4fb6a9c0-ba12-11e4-9600-4d08a5d67f86.png" src="https://cloud.githubusercontent.com/assets/284644/6314915/4fb6a9c0-ba12-11e4-9600-4d08a5d67f86.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/199747483-94750b00-c600-4bc9-847c-294105eca9ee.png"><img alt="https://user-images.githubusercontent.com/14288520/199747483-94750b00-c600-4bc9-847c-294105eca9ee.png" src="https://user-images.githubusercontent.com/14288520/199747483-94750b00-c600-4bc9-847c-294105eca9ee.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>Triangulate only two faces of extruded polygon:</p>
-<img alt="https://cloud.githubusercontent.com/assets/284644/6314914/4f821eb2-ba12-11e4-91c6-ea464efdfea5.png" src="https://cloud.githubusercontent.com/assets/284644/6314914/4f821eb2-ba12-11e4-91c6-ea464efdfea5.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/199759356-78797993-1d9d-4fb8-b3fc-e33b9563c040.png"><img alt="https://user-images.githubusercontent.com/14288520/199759356-78797993-1d9d-4fb8-b3fc-e33b9563c040.png" src="https://user-images.githubusercontent.com/14288520/199759356-78797993-1d9d-4fb8-b3fc-e33b9563c040.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>
+<li><p>Modifier Make-&gt; <a class="reference internal" href="../modifier_make/solidify_mk2.html"><span class="doc">Solidify</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/list_input.html"><span class="doc">List Input</span></a></p></li>
+<li><p>List-&gt; <a class="reference internal" href="../list_masks/index_to_mask.html"><span class="doc">Index To Mask</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_main/length.html"><span class="doc">List Length</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 </section>
 </section>
 
