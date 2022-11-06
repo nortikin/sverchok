@@ -1205,28 +1205,23 @@ class SvNativeNurbsCurve(SvNurbsCurve):
         control_points = self.get_homogenous_control_points()
 
         for r in range(1, count+1):
-            prev_control_points = control_points
-            control_points = []
-            for i in range(N+1):
-                #print(f"I: i {i}, k {k}, p {p}, r {r}, s {s}, k-p+r-1 {k-p+r-1}, k-s {k-s}")
-                if i <= k-p+r-1:
-                    if i >= len(prev_control_points):
-                        raise CantInsertKnotException(f"Can't insert the knot t={u_bar} for {r}th time: T is too close to curve's end")
-                    point = prev_control_points[i]
-                    #print(f"P[{r},{i}] := {i}{prev_control_points[i]}")
-                elif k - p + r <= i <= k - s:
-                    if i >= len(prev_control_points):
-                        raise CantInsertKnotException(f"Can't insert the knot t={u_bar} for {r}th time: T is too close to curve's end")
-                    denominator = u[i+p-r+1] - u[i]
-                    if abs(denominator) < 1e-6:
-                        raise Exception(f"Can't insert the knot t={u_bar} for {r}th time: u[i+p-r+1]={u[i+p-r+1]}, u[i]={u[i]}, denom={denominator}")
-                    alpha = (u_bar - u[i]) / denominator
-                    point = alpha * prev_control_points[i] + (1.0 - alpha) * prev_control_points[i-1]
-                    #print(f"P[{r},{i}]: alpha {alpha}, pts {i}{prev_control_points[i]}, {i-1}{prev_control_points[i-1]} => {point}")
-                else:
-                    point = prev_control_points[i-1]
-                    #print(f"P[{r},{i}] := {i-1}{prev_control_points[i-1]}")
-                control_points.append(point)
+            prev_control_points = control_points[:]
+
+            numerators = (u_bar - u)
+            denominators = u[p-r+1:] - u[:-p+r-1]
+
+            alphas = numerators[k-p+r : k-s+1] / denominators[k-p+r : k-s+1]
+            #print(f"R={r}, alphas = {alphas}")
+            alphas = alphas[np.newaxis].T
+
+            control_points_left = prev_control_points[: k-p+r]
+            control_points_right = prev_control_points[k-s:]
+            prev_control_points_mid = prev_control_points[k-p+r : k-s+1]
+            prev_control_points_mid1 = prev_control_points[k-p+r-1 : k-s]
+            control_points_mid = alphas * prev_control_points_mid + (1.0 - alphas) * prev_control_points_mid1
+            control_points = np.concatenate([control_points_left, control_points_mid, control_points_right])
+            #print(f"R={r}: u = {u}, u_bar={u_bar}, k={k}, len(left) = {len(control_points_left)}, len(right) = {len(control_points_right)}, len(mid) = {len(control_points_mid)}. cpts {prev_control_points.shape} => {control_points.shape}")
+
             N += 1
 
         control_points, weights = from_homogenous(np.array(control_points))
