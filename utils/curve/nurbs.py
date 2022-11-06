@@ -1157,6 +1157,7 @@ class SvNativeNurbsCurve(SvNurbsCurve):
 
     @classmethod
     def build(cls, implementation, degree, knotvector, control_points, weights=None, normalize_knots=False):
+        knotvector = np.asarray(knotvector)
         if sv_knotvector.is_clamped(knotvector, degree):
             return SvNativeBSplineCurve(degree, knotvector, control_points, weights=weights, normalize_knots=normalize_knots)
         else:
