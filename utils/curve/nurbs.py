@@ -1532,8 +1532,17 @@ class SvNativeBSplineCurve(SvNativeNurbsCurve):
     def __init__(self, degree, knotvector, control_points, weights=None, normalize_knots=False):
         SvNativeNurbsCurve.__init__(self, degree, knotvector, control_points, weights=weights, normalize_knots=normalize_knots)
         self._bezier_segments = None
+        self._bezier_bounds = None
         self._concatenated = None
         self.__description__ = f"Native* NURBS (degree={degree}, pts={len(control_points)})"
+
+    @property
+    def bezier_bounds(self):
+        if self._bezier_bounds is None:
+            kv = self.get_knotvector()
+            knots = np.unique(kv)
+            self._bezier_bounds = list(knots[1:] - knots[:-1])
+        return self._bezier_bounds
 
     @property
     def bezier_segments(self):
@@ -1542,15 +1551,16 @@ class SvNativeBSplineCurve(SvNativeNurbsCurve):
         return self._bezier_segments
 
     @staticmethod
-    def calc_concatenated_curve(bezier_segments, u_bounds):
-        u_min, u_max = u_bounds
-        return SvReparametrizedCurve(SvConcatCurve(bezier_segments), u_min, u_max)
+    def calc_concatenated_curve(bezier_segments, bezier_bounds, total_u_bounds):
+        concat = SvConcatCurve([SvReparametrizedCurve(segment, 0, bound) for segment, bound in zip(bezier_segments, bezier_bounds)])
+        u_min, u_max = total_u_bounds
+        return SvReparametrizedCurve(concat, u_min, u_max)
 
     @property
     def concatenated(self):
         if self._concatenated is None:
             u_bounds = self.get_u_bounds()
-            self._concatenated = SvNativeBSplineCurve.calc_concatenated_curve(self.bezier_segments, u_bounds)
+            self._concatenated = SvNativeBSplineCurve.calc_concatenated_curve(self.bezier_segments, self.bezier_bounds, u_bounds)
         return self._concatenated
 
     def evaluate(self, t):
@@ -1589,9 +1599,11 @@ class SvNativeBSplineCurve(SvNativeNurbsCurve):
 
         if isinstance(curve2, (SvBezierCurve, SvCubicBezierCurve)):
             bezier_segments = self.bezier_segments + [curve2]
+            c2_u_min, c2_u_max = curve2.get_u_bounds()
+            bezier_bounds = self.bezier_bounds + [c2_u_max - c2_u_min]
             u_bounds = result.get_u_bounds()
             result._bezier_segments = bezier_segments
-            result._concatenated = SvNativeBSplineCurve.calc_concatenated_curve(bezier_segments, u_bounds)
+            result._concatenated = SvNativeBSplineCurve.calc_concatenated_curve(bezier_segments, bezier_bounds, u_bounds)
 
         return result
 
