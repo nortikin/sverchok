@@ -54,6 +54,9 @@ class SvBezierSplitMixin:
         ndim = 3
         p = self.get_degree()
         cpts = self.get_control_points()
+        tolerance = 1e-6
+        if (new_t_max - new_t_min) < tolerance:
+            return None
 
         matrices = calc_taylor_nurbs_matrices(p, u_bounds=(new_t_min, new_t_max), calc_M=True, calc_R=True, calc_M1=True, calc_R1=True)
         M = matrices['M']

@@ -1622,21 +1622,35 @@ class SvNativeBSplineCurve(SvNativeNurbsCurve):
 
         return result
 
-#     def split_at(self, t):
-#         if self.is_bezier():
-#             bezier = SvBezierCurve.from_control_points(self.get_control_points())
-#             kv = sv_knotvector.generate(degree, degree+1)
-#             u_min, u_max = kv[0], kv[-1]
-#             b1, b2 = bezier.split_at(t)
-#             c1 = SvNurbsCurve.build(implementation,
-#                     degree, sv_knotvector.rescale(kv, u_min, t),
-#                     b1.get_control_points())
-#             c2 = SvNurbsCurve.build(implementation,
-#                     degree, sv_knotvector.rescale(kv, t, u_max),
-#                     b2.get_control_points())
-#             return c1, c2
-#         else:
-#             return super().split_at(t)
+    def split_at(self, t):
+        if self.is_bezier() and not self.is_rational():
+            kv = self.get_knotvector()
+            u_min, u_max = kv[0], kv[-1]
+            if t == u_min:
+                return None, self
+            elif t == u_max:
+                return self, None
+
+            degree = self.get_degree()
+            bezier = SvBezierCurve.from_control_points(self.get_control_points())
+            bezier_t = (t - u_min) / (u_max - u_min)
+            b1, b2 = bezier.split_at(bezier_t)
+            implementation = self.get_nurbs_implementation()
+            if b1 is None:
+                c1 = None
+            else:
+                c1 = SvNurbsCurve.build(implementation,
+                        degree, sv_knotvector.rescale(kv, u_min, t),
+                        b1.get_control_points())
+            if b2 is None:
+                c2 = None
+            else:
+                c2 = SvNurbsCurve.build(implementation,
+                        degree, sv_knotvector.rescale(kv, t, u_max),
+                        b2.get_control_points())
+            return c1, c2
+        else:
+            return super().split_at(t)
 
 #     def split_at(self, t):
 #         knots = np.unique(self.get_knotvector())
