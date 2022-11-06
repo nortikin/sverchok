@@ -1149,6 +1149,7 @@ class SvNativeNurbsCurve(SvNurbsCurve):
         self.knotvector = np.array(knotvector)
         if normalize_knots:
             self.knotvector = sv_knotvector.normalize(self.knotvector)
+        self._knot_multiplicities = None
         self.degree = degree
         self.basis = SvNurbsBasisFunctions(self.knotvector)
         self.tangent_delta = 0.001
@@ -1179,6 +1180,15 @@ class SvNativeNurbsCurve(SvNurbsCurve):
 
     def get_knotvector(self):
         return self.knotvector
+
+    @property
+    def knot_multiplicities(self):
+        if self._knot_multiplicities is None:
+            self._knot_multiplicities = dict(sv_knotvector.to_multiplicity(self.knotvector))
+        return self._knot_multiplicities
+
+    def get_knot_multiplicity(self, t):
+        return self.knot_multiplicities.get(t, 0)
 
     def get_degree(self):
         return self.degree
@@ -1327,7 +1337,7 @@ class SvNativeNurbsCurve(SvNurbsCurve):
         # "The NURBS book", 2nd edition, p.5.2, eq. 5.11
         N = len(self.control_points)
         u = self.get_knotvector()
-        s = sv_knotvector.find_multiplicity(u, u_bar)
+        s = self.get_knot_multiplicity(u_bar)
         p = self.get_degree()
 
         if u_bar < u[0] or u_bar > u[-1]:
@@ -1371,8 +1381,9 @@ class SvNativeNurbsCurve(SvNurbsCurve):
             N += 1
 
         control_points, weights = from_homogenous(np.array(control_points))
-        curve = SvNativeNurbsCurve(self.degree, new_knotvector,
-                    control_points, weights)
+        curve = self.copy(knotvector = new_knotvector, control_points = control_points, weights = weights)
+        curve._knot_multiplicities = self.knot_multiplicities.copy()
+        curve._knot_multiplicities[u_bar] = s + count
         return curve
 
     def remove_knot(self, u, count=1, target=None, tolerance=1e-6, if_possible=False, logger=None):
