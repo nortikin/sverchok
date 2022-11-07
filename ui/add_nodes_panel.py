@@ -118,14 +118,6 @@ class AddNodeToolPanel(bpy.types.Panel):
 
 
 class AddNodePanelSettings(bpy.types.PropertyGroup):
-    def search_tooltip(self, context, edit_text):
-        for cat in sm.add_node_menu.walk_categories():
-            for add_node in cat:
-                if not hasattr(add_node, 'search_match'):
-                    continue
-                if add_node.search_match(edit_text):
-                    yield add_node.label, "Some editional text"
-
     def categories(self, context):
         # this should be a function because new categories can be added
         # by Sverchok's extensions after the registration
@@ -142,13 +134,12 @@ class AddNodePanelSettings(bpy.types.PropertyGroup):
         update=AddNodeToolPanel.select_category_update,
     )
 
-    search_prop = dict(search=search_tooltip) if bpy.app.version >= (3, 3) else {}
     node_search: StringProperty(
         name="Search",
         description="Enter search term and press Enter to search; clear the"
                     " field to return to selection of node category.",
         update=AddNodeToolPanel.node_search_update,
-        **search_prop
+        options={'TEXTEDIT_UPDATE'},
     )
 
     icons_only: BoolProperty(

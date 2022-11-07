@@ -234,14 +234,19 @@ class AddNode(MenuItem):
     def search_match(self, request: str) -> bool:
         """Return True if the request satisfies to node search tags"""
         request = request.upper()
-        if request in self.label.upper():
+        words = [w for w in request.split(' ') if w]
+        label = self.label.upper()
+        if all(w in label for w in words):
             return True
+
         node_class = bpy.types.Node.bl_rna_get_subclass_py(self.bl_idname)
         if not node_class or not hasattr(node_class, 'docstring'):
             return False
-        if request in node_class.docstring.get_shorthand():
+        shorthand = node_class.docstring.get_shorthand()
+        if all(w in shorthand for w in words):
             return True
-        if request in node_class.docstring.get_tooltip():
+        tooltip = node_class.docstring.get_tooltip()
+        if all(w in tooltip for w in words):
             return True
         return False
 
