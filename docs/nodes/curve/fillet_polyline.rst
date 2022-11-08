@@ -31,6 +31,7 @@ This node has the following input:
   these points, and then will be filleted. This input is mandatory.
 * **Radius**. Fillet arc radius. This input can be provided with separate
   radius for each control point. The default value is 0.2.
+* **Factor**. The factor of the maximum radius of each fillet
 
 Parameters
 ----------

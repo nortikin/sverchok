@@ -21,6 +21,11 @@ class SvFilletPolylineNode(SverchCustomTreeNode, bpy.types.Node):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_FILLET_POLYLINE'
 
+    factor : FloatProperty(
+        name = "Factor",
+        default = 1.0,
+        update = updateNode)
+
     radius : FloatProperty(
         name = "Radius",
         min = 0.0,
@@ -76,17 +81,19 @@ class SvFilletPolylineNode(SverchCustomTreeNode, bpy.types.Node):
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', "Vertices")
         self.inputs.new('SvStringsSocket', "Radius").prop_name = 'radius'
+        self.inputs.new('SvStringsSocket', "Factor").prop_name = 'factor'
         self.outputs.new('SvCurveSocket', "Curve")
         self.outputs.new('SvMatrixSocket', "Centers")
 
     def make_curve(self, vertices, radiuses):
         if self.cyclic:
-            last_fillet = calc_fillet(vertices[-1], vertices[0], vertices[1], radiuses[0])
+            if radiuses[-1] == 0 :
+                last_fillet = None
+            else:
+                last_fillet = calc_fillet(vertices[-2], vertices[-1], vertices[0], radiuses[-1])
+            vertices = [vertices[-1]] + vertices + [vertices[0]] 
             prev_edge_start = vertices[0] if last_fillet is None else last_fillet.p2
-            radiuses = radiuses[1:] + [radiuses[0]]
             corners = list(zip(vertices, vertices[1:], vertices[2:], radiuses))
-            corners.append((vertices[-2], vertices[-1], vertices[0], radiuses[-1]))
-            corners.append((vertices[-1], vertices[0], vertices[1], radiuses[0]))
         else:
             prev_edge_start = vertices[0]
             corners = zip(vertices, vertices[1:], vertices[2:], radiuses)
@@ -94,18 +101,23 @@ class SvFilletPolylineNode(SverchCustomTreeNode, bpy.types.Node):
         curves = []
         centers = []
         for v1, v2, v3, radius in corners:
-            fillet = calc_fillet(v1, v2, v3, radius)
-            if fillet is not None:
+            if radius == 0 :
+                fillet = None
+            else:
+                fillet = calc_fillet(v1, v2, v3, radius)
+
+            if fillet is not None :
                 edge_direction = np.array(fillet.p1) - np.array(prev_edge_start)
                 edge_len = np.linalg.norm(edge_direction)
-                edge = SvLine(prev_edge_start, edge_direction / edge_len)
-                edge.u_bounds = (0.0, edge_len)
+                if edge_len != 0 :
+                    edge = SvLine(prev_edge_start, edge_direction / edge_len)
+                    edge.u_bounds = (0.0, edge_len)
+                    curves.append(edge)
                 if self.arc_mode == 'ARC':
                     arc = fillet.get_circular_arc()
                 else:
                     arc = fillet.get_bezier_arc()
                 prev_edge_start = fillet.p2
-                curves.append(edge)
                 curves.append(arc)
                 centers.append(fillet.matrix)
             else:
@@ -116,9 +128,10 @@ class SvFilletPolylineNode(SverchCustomTreeNode, bpy.types.Node):
         if not self.cyclic:
             edge_direction = np.array(vertices[-1]) - np.array(prev_edge_start)
             edge_len = np.linalg.norm(edge_direction)
-            edge = SvLine(prev_edge_start, edge_direction / edge_len)
-            edge.u_bounds = (0.0, edge_len)
-            curves.append(edge)
+            if edge_len != 0 :
+                edge = SvLine(prev_edge_start, edge_direction / edge_len)
+                edge.u_bounds = (0.0, edge_len)
+                curves.append(edge)
 
         if self.make_nurbs:
             if self.concat:
@@ -131,22 +144,38 @@ class SvFilletPolylineNode(SverchCustomTreeNode, bpy.types.Node):
         else:
             return curves, centers
 
+    def limit(self,vertices,radiuses,factors):
+        if self.cyclic:
+            vertices = [vertices[-1]]+ vertices + [vertices[0]] 
+        limit_radiuses = []
+        for v1,v2,v3,r,f in zip(vertices,vertices[1:],vertices[2:],radiuses,factors):
+            v1,v2,v3 = np.array(v1), np.array(v2), np.array(v3)
+            d1,d2 = np.linalg.norm(v2-v1),np.linalg.norm(v3-v2)
+            min_ = min([float(d1),float(d2)])*f/2
+            r = min([r,min_])
+            limit_radiuses.append(r)
+        return limit_radiuses
+
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
             return
 
         verts_s = self.inputs['Vertices'].sv_get()
         radius_s = self.inputs['Radius'].sv_get()
+        factor_s = self.inputs['Factor'].sv_get()
 
         verts_s = ensure_nesting_level(verts_s, 3)
         radius_s = ensure_nesting_level(radius_s, 2)
+        factor_s = ensure_nesting_level(factor_s,2)
 
         curves_out = []
         centers_out = []
-        for vertices, radiuses in zip_long_repeat(verts_s, radius_s):
+        for vertices, radiuses,factors in zip_long_repeat(verts_s, radius_s,factor_s):
             if len(vertices) < 3:
                 raise Exception("At least three vertices are required to make a fillet")
             radiuses = repeat_last_for_length(radiuses, len(vertices))
+            factors = repeat_last_for_length(factors, len(vertices))
+            radiuses = self.limit(vertices, radiuses,factors)
             curve, centers = self.make_curve(vertices, radiuses)
             curves_out.append(curve)
             centers_out.append(centers)
