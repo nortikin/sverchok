@@ -193,7 +193,7 @@ class SvStringsToolsNode(SverchCustomTreeNode, bpy.types.Node):
         name='Characters',
         description='Text to modify',
         default='', update=updateNode)
-    keep_brakes:BoolProperty(
+    keep_breaks:BoolProperty(
         name='Keep breaks',
         description='Text to modify',
         default=False, update=updateNode)
@@ -267,7 +267,7 @@ class SvStringsToolsNode(SverchCustomTreeNode, bpy.types.Node):
                 socket.label = socket.name
             elif s=="b":
                 socket = self.inputs.new('SvTextSocket', 'Keep Breaks')
-                socket.prop_name = 'keep_brakes'
+                socket.prop_name = 'keep_breaks'
 
             # all sockets will receive custom_draw
             socket.custom_draw = 'draw_prop_socket'
