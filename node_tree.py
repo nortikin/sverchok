@@ -674,7 +674,7 @@ class NodeDocumentation:
     def get_doc_link(self, link_type='ONLINE') -> Optional[str]:
         """Returns URL to online documentation of the node, or to GitHub
         documentation, or path to a documentation file of the node, or None.
-        This method can be overriden by Sverchok's extensions to implement
+        This method can be overridden by Sverchok's extensions to implement
         their own way to generate the links."""
         *_, node_file_name = self.__module__.rpartition('.')
         node_docs = Path(sverchok.__file__).parent / 'docs' / 'nodes'

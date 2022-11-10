@@ -4,7 +4,7 @@ Flip Curve
 Functionality
 -------------
 
-This node generates a curve by inverting the direciton of parametrization of another curve; in other words, it generates the curve identical to provided one, but with the opposite direction.
+This node generates a curve by inverting the direction of parametrization of another curve; in other words, it generates the curve identical to provided one, but with the opposite direction.
 
 Inputs
 ------
