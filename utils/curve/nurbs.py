@@ -340,11 +340,13 @@ class SvNurbsCurve(SvCurve):
                     degree+delta, knotvector, control_points, weights)
         else:
             src_t_min, src_t_max = self.get_u_bounds()
+            rs = sv_knotvector.get_internal_knots(self.get_knotvector(), output_multiplicity=True)
+            src_multiplicities = [p[1] for p in rs]
             segments = self.to_bezier_segments(to_bezier_class=False)
             segments = [segment.elevate_degree(orig_delta, orig_target) for segment in segments]
             result = segments[0]
-            for segment in segments[1:]:
-                result = result.concatenate(segment, remove_knots=True)
+            for segment, src_multiplicity in zip(segments[1:], src_multiplicities):
+                result = result.concatenate(segment, remove_knots=degree - src_multiplicity)
             result = result.reparametrize(src_t_min, src_t_max)
             return result
             #raise UnsupportedCurveTypeException("Degree elevation is not implemented for non-bezier curves yet")
