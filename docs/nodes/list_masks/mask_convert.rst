@@ -61,7 +61,7 @@ Examples of usage
 
 * Number-> :doc:`List Input </nodes/number/list_input>`
 * Generator-> :doc:`Box </nodes/generator/box_mk2>`
-* Modifier->Modifier Change-> :doc:`Mask Vertices </nodes/modifier_change/vertices_mask>`
+* Modifiers->Modifier Change-> :doc:`Mask Vertices </nodes/modifier_change/vertices_mask>`
 * Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 * Viz-> :doc:`Viewer Index+ </nodes/viz/viewer_idx28>`
@@ -76,7 +76,7 @@ Examples of usage
 
 * Number-> :doc:`List Input </nodes/number/list_input>`
 * Generator-> :doc:`Box </nodes/generator/box_mk2>`
-* Modifier->Modifier Change-> :doc:`Extrude Region </nodes/modifier_change/extrude_region>`
+* Modifiers->Modifier Change-> :doc:`Extrude Region </nodes/modifier_change/extrude_region>`
 * Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 * Viz-> :doc:`Viewer Index+ </nodes/viz/viewer_idx28>`
@@ -104,11 +104,11 @@ Filter vertices and edges if some faces hided:
   :target: https://user-images.githubusercontent.com/14288520/188969070-a084e68a-a657-4106-b9bf-a538f218a16c.png
 
 * Generator-> :doc:`Box </nodes/generator/box_mk2>`
-* List->List Main-> :doc:`List Length </nodes/list_main/length>`
-* List-> :doc:`List Mask (Out) </nodes/list_masks/mask>`
-* Logic-> :doc:`Logic Functions (Not) </nodes/logic/logic_node>`
-* Modifier->Modifier Change-> :doc:`Mask Vertices </nodes/modifier_change/vertices_mask>`
+* Modifiers->Modifier Change-> :doc:`Mask Vertices </nodes/modifier_change/vertices_mask>`
 * Number-> :doc:`Random Num Gen </nodes/number/random_num_gen>`
+* List-> :doc:`List Mask (Out) </nodes/list_masks/mask>`
+* List->List Main-> :doc:`List Length </nodes/list_main/length>`
+* Logic-> :doc:`Logic Functions (Not) </nodes/logic/logic_node>`
 
 .. image:: https://user-images.githubusercontent.com/14288520/188969187-0dafea41-0015-4eda-ae8d-ae8384b7f060.gif
   :target: https://user-images.githubusercontent.com/14288520/188969187-0dafea41-0015-4eda-ae8d-ae8384b7f060.gif

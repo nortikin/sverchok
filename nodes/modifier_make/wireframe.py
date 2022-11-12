@@ -53,7 +53,7 @@ class SvWireframeNode(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
     bl_icon = 'MOD_WIREFRAME'
 
     thickness: FloatProperty(
-        name='thickness', description='thickness',
+        name='thickness', description='The depth or size of the wireframes',
         default=0.01, min=0.0, update=updateNode)
 
     offset: FloatProperty(
@@ -61,19 +61,19 @@ class SvWireframeNode(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
         default=0.01, min=0.0, update=updateNode)
 
     replace: BoolProperty(
-        name='replace', description='replace',
+        name='replace', description='Replace original',
         default=True, update=updateNode)
 
     even_offset: BoolProperty(
-        name='even_offset', description='even_offset',
+        name='even_offset', description='Maintain thickness by adjusting for sharp corners',
         default=True, update=updateNode)
 
     relative_offset: BoolProperty(
-        name='relative_offset', description='even_offset',
+        name='relative_offset', description='Longer edges will be thicker',
         default=False, update=updateNode)
 
     boundary: BoolProperty(
-        name='boundary', description='boundry',
+        name='boundary', description='Creates wireframes on mesh island boundaries',
         default=True, update=updateNode)
 
     def sv_init(self, context):

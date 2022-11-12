@@ -85,7 +85,7 @@ You can change the socket labels in the N-Panel
 * CAD-> :doc:`Inset Special </nodes/CAD/inset_special_mk2>`
 * CA: Faces Area: Analyzers-> :doc:`Component Analyzer </nodes/analyzer/component_analyzer>`
 * CA: Faces Center: Analyzers-> :doc:`Component Analyzer </nodes/analyzer/component_analyzer>`
-* Modifier->Modifier Change-> :doc:`Smooth Vertices </nodes/modifier_change/smooth>`
+* Modifiers->Modifier Change-> :doc:`Smooth Vertices </nodes/modifier_change/smooth>`
 * Number-> :doc:`Random Num Gen </nodes/number/random_num_gen>`
 * MUL X Number-> :doc:`Scalar Math </nodes/number/scalar_mk4>`
 * Vector-> :doc:`Vector Noise </nodes/vector/noise_mk3>`

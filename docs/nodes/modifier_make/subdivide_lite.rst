@@ -1,10 +1,18 @@
 Subdivide Lite Node
 ===================
 
+.. image:: https://user-images.githubusercontent.com/14288520/200693616-08d9cb48-d5a1-4998-a9df-adc4fa3b6bf3.png
+  :target: https://user-images.githubusercontent.com/14288520/200693616-08d9cb48-d5a1-4998-a9df-adc4fa3b6bf3.png
+
 Functionality
 -------------
 
 This node applies Blender's Subvidide operation to the input mesh. Please note that of options available differs from usual editing operator.
+
+.. image:: https://user-images.githubusercontent.com/14288520/200693965-1f1a23d2-3203-4ab0-8e8e-b9d70a00b10e.png
+  :target: https://user-images.githubusercontent.com/14288520/200693965-1f1a23d2-3203-4ab0-8e8e-b9d70a00b10e.png
+
+For more info see: Modifiers->Modifier Make-> :doc:`Subdivide </nodes/modifier_change/subdivide_mk2>`
 
 Inputs
 ------

@@ -301,10 +301,12 @@ class SvAdaptivePolygonsNodeMk3(ModifierNode, SverchCustomTreeNode, bpy.types.No
 
     z_coef: FloatProperty(
         name='Z coeff',
+        description="Coefficient for donor object size along recipient object face normal",
         default=1.0, max=3.0, min=0.0, update=updateNode)
 
     z_offset: FloatProperty(
         name="Z offset",
+        description="Offset of donor objects along the normal of recipient object face",
         default=0.0,
         update=updateNode)
 

@@ -142,7 +142,7 @@ Examples
 
 * Generator-> :doc:`Line </nodes/generator/line_mk4>`
 * Generator->Generatots Extended-> :doc:`Hilbert </nodes/generators_extended/hilbert>`
-* Modifier->Modifier Change-> :doc:`Mesh Join </nodes/modifier_change/mesh_join_mk2>`
+* Modifiers->Modifier Change-> :doc:`Mesh Join </nodes/modifier_change/mesh_join_mk2>`
 * Vector-> :doc:`Vector Polar Input </nodes/vector/vector_polar_in>`
 * List->List Main-> :doc:`List Join </nodes/list_main/join>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`

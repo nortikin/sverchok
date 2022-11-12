@@ -60,7 +60,7 @@ In this mode and with numpy implementation mode you will get numpy output for ve
 See also
 --------
 
-* Modifier->Modifier Change-> :doc:`Mesh Join </nodes/modifier_change/mesh_join_mk2>`
+* Modifiers->Modifier Change-> :doc:`Mesh Join </nodes/modifier_change/mesh_join_mk2>`
 
 Examples
 --------

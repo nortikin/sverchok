@@ -51,7 +51,7 @@ class LineConnectNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
     cicl_check_V: BoolProperty(name='cycleV', description='cycle V', default=False, update=updateNode)
     cap_U: BoolProperty(name='capU', description='cap U', default=False, update=updateNode)
     cap_V: BoolProperty(name='capV', description='cap V', default=False, update=updateNode)
-    slice_check: BoolProperty(name='slice', description='slice polygon', default=True, update=updateNode)
+    slice_check: BoolProperty(name='slice', description='Slice polygon', default=True, update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', 'vertices')

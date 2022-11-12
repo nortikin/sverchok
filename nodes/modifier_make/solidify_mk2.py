@@ -157,10 +157,10 @@ class SvSolidifyNodeMk2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
     bl_icon = 'MOD_SOLIDIFY'
 
     thickness: FloatProperty(
-        name='Thickness', description='Shell thickness',
+        name='Thickness', description='Shell thickness (distance to extrude)',
         default=0.1, update=updateNode)
     offset: FloatProperty(
-        name='Offset', description='Offset Thickness from center',
+        name='Offset', description='Relative offset from original mesh',
         default=1, soft_min=-1, soft_max=1, update=updateNode)
     even: BoolProperty(
         name='Even Thickness', description='Mantain Thinkness by adjusting sharp corners',
