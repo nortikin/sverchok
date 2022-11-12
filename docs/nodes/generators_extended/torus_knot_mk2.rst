@@ -109,7 +109,7 @@ A set of extra parameters are available on the property panel. These parameters 
 Notes:
 
 * **[1]** : Used only when the Adaptive Resolution is on
-* **[2]** : Used without adaptive resolution these allow to create aliased torus knots resulting in all sorts of interesting shaped knots.
+* **[2]** : Used without adaptive resolution these allow to create aliased torus knots resulting in all sorts of interesting shaped knots. See: https://github.com/nortikin/sverchok/issues/4746#issuecomment-1304820037
 * **[3]** : Turn off normalization to save computation whenever the output vectors do not need to be normalized.
 
 Outputs

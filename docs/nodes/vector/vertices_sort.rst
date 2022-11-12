@@ -109,7 +109,7 @@ Example used to sort the vertices after the *Mesh Filter* node
 
 * Generator-> :doc:`Plane </nodes/generator/plane_mk3>`
 * Analyzer-> :doc:`Mesh Filter </nodes/analyzer/mesh_filter>`
-* Modifier->Modifier Change-> :doc:`Delete Loose </nodes/modifier_change/delete_loose>`
+* Modifiers->Modifier Change-> :doc:`Delete Loose </nodes/modifier_change/delete_loose>`
 * Modifiers->Modifier Make-> :doc:`UV Connection </nodes/modifier_make/uv_connect>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 

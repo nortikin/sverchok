@@ -80,7 +80,7 @@ class SvSubdivideNodeMK2(
 
         updateNode(self, context)
 
-    falloff_type: EnumProperty(name="Falloff", items=falloff_types, default="LINEAR", update=updateNode)
+    falloff_type: EnumProperty(name="Falloff", items=falloff_types, default="LINEAR", update=updateNode, description="Smooth falloff type")
     corner_type: EnumProperty(name="Corner Cut Type", items=corner_types, default="INNER_VERT", update=updateNode)
 
     cuts: IntProperty(
@@ -108,11 +108,11 @@ class SvSubdivideNodeMK2(
         name="Seed", default=0, update=updateNode)
 
     grid_fill: BoolProperty(
-        description="fill in fully-selected faces with a grid",
+        description="Fill in fully-selected faces with a grid (only quads). No effect if edges of quad not selected",
         name="Grid fill", default=True, update=updateNode)
 
     single_edge: BoolProperty(
-        description="tessellate the case of one edge selected in a quad or triangle",
+        description="Tessellate the case of one edge selected in a quad or triangle",
         name="Single edge", default=False, update=updateNode)
 
     only_quads: BoolProperty(

@@ -455,7 +455,7 @@ class SvContourNode(ModifierLiteNode, SverchCustomTreeNode, bpy.types.Node):
 
     intersecction_handle: EnumProperty(
         name="intersecction_handle",
-        description="Intersecction mode",
+        description="Intersection mode",
         items=intersec_mode_items, default="Circular",
         update=updateNode)
 

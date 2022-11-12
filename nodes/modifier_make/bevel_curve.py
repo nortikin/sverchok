@@ -104,7 +104,7 @@ class SvBevelCurveNode(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
         update = updateNode)
 
     tangent_precision: FloatProperty(name='Tangent precision',
-        description = "Step for tangents calculation. Lesser values correspond to better precision.",
+        description = "Step for tangents calculation. Lesser values correspond to better precision",
         default = 0.001, min=0.000001, max=0.1, precision=8,
         update=updateNode)
 

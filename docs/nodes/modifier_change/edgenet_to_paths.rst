@@ -42,7 +42,7 @@ Examples of usage
   :target: https://user-images.githubusercontent.com/14288520/199548730-05e2c86a-4b2e-447e-b75e-cf7999f485dc.png
 
 * Generator->Generator Extended-> :doc:`Polygon Grid </nodes/generators_extended/polygon_grid>`
-* Modifier->Modifier Change-> :doc:`Mask Vertices </nodes/modifier_change/vertices_mask>`
+* Modifiers->Modifier Change-> :doc:`Mask Vertices </nodes/modifier_change/vertices_mask>`
 * Number-> :doc:`List Input </nodes/number/list_input>`
 * Number-> :doc:`Random Num Gen </nodes/number/random_num_gen>`
 * Number-> :doc:`Number Range </nodes/number/number_range>`

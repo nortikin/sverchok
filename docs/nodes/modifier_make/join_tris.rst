@@ -57,6 +57,6 @@ Examples
   :target: https://user-images.githubusercontent.com/14288520/199772606-ca5afd88-096d-430b-a4a7-4e1e812c5280.png
 
 * Generator-> :doc:`Plane </nodes/generator/plane_mk3>`
-* Modifier->Modifier Change-> :doc:`Triangulate Mesh </nodes/modifier_change/triangulate>`
+* Modifiers->Modifier Change-> :doc:`Triangulate Mesh </nodes/modifier_change/triangulate>`
 * Transform-> :doc:`Noise Displace </nodes/transforms/noise_displace>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`

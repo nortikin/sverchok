@@ -55,7 +55,7 @@ Examples of usage
 
 * Generator-> :doc:`Circle </nodes/generator/circle>`
 * Transform-> :doc:`Matrix Apply (verts) </nodes/transforms/apply>`
-* Modifier->Modifier Change-> :doc:`Mesh Join </nodes/modifier_change/mesh_join_mk2>`
+* Modifiers->Modifier Change-> :doc:`Mesh Join </nodes/modifier_change/mesh_join_mk2>`
 * Number-> :doc:`List Input </nodes/number/list_input>`
 * Number-> :doc:`Number Range </nodes/number/number_range>`
 * Vector-> :doc:`Vector In </nodes/vector/vector_in>`
