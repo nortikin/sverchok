@@ -1,8 +1,8 @@
 Flat Geometry
 =============
 
-.. image:: https://user-images.githubusercontent.com/14288520/200131215-89cec5f9-4ca1-4d73-a09f-59555cf99245.png
-  :target: https://user-images.githubusercontent.com/14288520/200131215-89cec5f9-4ca1-4d73-a09f-59555cf99245.png
+.. image:: https://user-images.githubusercontent.com/14288520/201484959-30ddb7a4-daf1-4730-acb0-251e4f3e83a8.png
+  :target: https://user-images.githubusercontent.com/14288520/201484959-30ddb7a4-daf1-4730-acb0-251e4f3e83a8.png
 
 Functionality
 -------------

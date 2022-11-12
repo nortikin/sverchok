@@ -87,7 +87,7 @@ class SvFlatGeometryNode(TransformNode, SverchCustomTreeNode, bpy.types.Node):
     projection_mode: EnumProperty(
         name='Mode',
         description='Projection mode',
-        items=enum_item_4(["Orthogrphic", 'Perspective']),
+        items=enum_item_4(["Orthographic", 'Perspective']),
         update=updateNode)
 
     def sv_init(self, context):
@@ -107,7 +107,7 @@ class SvFlatGeometryNode(TransformNode, SverchCustomTreeNode, bpy.types.Node):
         if self.inputs['Vertices'].is_linked:
             verts_in = self.inputs['Vertices'].sv_get(deepcopy=False)
             plane_in = self.inputs['Plane Matrix'].sv_get(deepcopy=False)
-            if self.projection_mode == 'Orthogrphic':
+            if self.projection_mode == 'Orthographic':
                 verts_out, z_coord_out = ortho_projection(verts_in, plane_in)
             else:
                 verts_out, z_coord_out = perspective_projection(verts_in, plane_in, 2)
