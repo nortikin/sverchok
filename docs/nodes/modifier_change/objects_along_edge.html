@@ -167,6 +167,7 @@
              
   <section id="duplicate-objects-along-edge">
 <h1>Duplicate Objects Along Edge<a class="headerlink" href="#duplicate-objects-along-edge" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201220460-0bd7d0b2-dcf7-4c93-91b5-a928d266b9ef.png"><img alt="https://user-images.githubusercontent.com/14288520/201220460-0bd7d0b2-dcf7-4c93-91b5-a928d266b9ef.png" src="https://user-images.githubusercontent.com/14288520/201220460-0bd7d0b2-dcf7-4c93-91b5-a928d266b9ef.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node creates an array of copies of one (donor) mesh and aligns it along
@@ -186,6 +187,7 @@ one fits you better.</p>
 donor object to be aligned along recipient edge. By default, this node already
 applies that matrices to donor object; but you can turn this off, and apply
 matrices to donor object in another node, or apply them to different objects.</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201313387-af1ecff3-b4c1-46df-8e14-2f2a5128df58.png"><img alt="https://user-images.githubusercontent.com/14288520/201313387-af1ecff3-b4c1-46df-8e14-2f2a5128df58.png" src="https://user-images.githubusercontent.com/14288520/201313387-af1ecff3-b4c1-46df-8e14-2f2a5128df58.png" /></a>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
@@ -195,20 +197,34 @@ matrices to donor object in another node, or apply them to different objects.</p
 this input is not connected.</p></li>
 <li><p><strong>Edges</strong>. Edges of the donor mesh.</p></li>
 <li><p><strong>Polygons</strong>. Faces of the donor mesh.</p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201330888-49b42b2e-fd4f-49a3-91d5-6c08863a9bd6.png"><img alt="https://user-images.githubusercontent.com/14288520/201330888-49b42b2e-fd4f-49a3-91d5-6c08863a9bd6.png" src="https://user-images.githubusercontent.com/14288520/201330888-49b42b2e-fd4f-49a3-91d5-6c08863a9bd6.png" /></a>
+<ul class="simple">
 <li><p><strong>Vertex1</strong>. First vertex of recipient edge. This input is used only when
 “Fixed” input mode is used (see description of <code class="docutils literal notranslate"><span class="pre">Input</span> <span class="pre">mode</span></code> parameter
 below).</p></li>
 <li><p><strong>Vertex2</strong>. Second vertex of recipient edge. This input is used only when
 “Fixed” input mode is used.</p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201330149-7ccb866a-38be-4f61-87d9-18df92ccac3d.png"><img alt="https://user-images.githubusercontent.com/14288520/201330149-7ccb866a-38be-4f61-87d9-18df92ccac3d.png" src="https://user-images.githubusercontent.com/14288520/201330149-7ccb866a-38be-4f61-87d9-18df92ccac3d.png" /></a>
+<ul class="simple">
 <li><p><strong>VerticesR</strong>. Vertices of the recipient mesh. This input is used only when
 “Edges” input mode is used.</p></li>
 <li><p><strong>EdgesR</strong>. Edges of the recipient mesh. These edges will be actually used as
 recipient edges.  This input is used only when “Edges” input mode is used.</p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201318700-6bed15f8-471a-41a1-820f-92c37bcd9630.png"><img alt="https://user-images.githubusercontent.com/14288520/201318700-6bed15f8-471a-41a1-820f-92c37bcd9630.png" src="https://user-images.githubusercontent.com/14288520/201318700-6bed15f8-471a-41a1-820f-92c37bcd9630.png" /></a>
+<ul class="simple">
 <li><p><strong>Count</strong>. Number of objects in array. This input is used only in “Count”
-scaling mode (see description of <code class="docutils literal notranslate"><span class="pre">Scale</span> <span class="pre">mode</span></code> parameter below).</p></li>
+scaling mode (see description of <code class="docutils literal notranslate"><span class="pre">Scale</span> <span class="pre">mode</span></code> parameter below). Number-&gt; <a class="reference internal" href="../number/list_input.html"><span class="doc">List Input</span></a> allowed to connect to count socket.</p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201315561-08dcae28-9277-44c0-8763-ed3260406482.png"><img alt="https://user-images.githubusercontent.com/14288520/201315561-08dcae28-9277-44c0-8763-ed3260406482.png" src="https://user-images.githubusercontent.com/14288520/201315561-08dcae28-9277-44c0-8763-ed3260406482.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201333288-53c3d8db-5822-47e7-875f-8e71e4c364f6.png"><img alt="https://user-images.githubusercontent.com/14288520/201333288-53c3d8db-5822-47e7-875f-8e71e4c364f6.png" src="https://user-images.githubusercontent.com/14288520/201333288-53c3d8db-5822-47e7-875f-8e71e4c364f6.png" /></a>
+<ul class="simple">
 <li><p><strong>Padding</strong>. Portion of the recipient edge length that should be left empty
 from both sides. Default value of zero means fill whole available length.</p></li>
 </ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201314412-8f420136-b4a3-4ca6-9431-7b441d3f0cfc.png"><img alt="https://user-images.githubusercontent.com/14288520/201314412-8f420136-b4a3-4ca6-9431-7b441d3f0cfc.png" src="https://user-images.githubusercontent.com/14288520/201314412-8f420136-b4a3-4ca6-9431-7b441d3f0cfc.png" /></a>
 </section>
 <section id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
@@ -217,8 +233,8 @@ from both sides. Default value of zero means fill whole available length.</p></l
 <colgroup>
 <col style="width: 16%" />
 <col style="width: 14%" />
-<col style="width: 12%" />
-<col style="width: 58%" />
+<col style="width: 11%" />
+<col style="width: 59%" />
 </colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Parameter</p></th>
@@ -228,102 +244,115 @@ from both sides. Default value of zero means fill whole available length.</p></l
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p><strong>Scaling mode</strong></p></td>
-<td><p>Count or Up</p>
-<p>or Down or</p>
+<tr class="row-even"><td><p><strong>Scaling</strong></p>
+<p><strong>mode</strong></p>
+</td>
+<td><p>Count</p>
+<p>Up</p>
+<p>Down</p>
 <p>Off</p>
 </td>
 <td><p>Count</p></td>
-<td><ul class="simple">
-<li><p>Count: specify number of objects in array. Objects scale will
-be calculated so that copies will fill length of recipient
-edge.</p></li>
-<li><p>Up: count is determined automatically from length of recipient
-edge and size of donor mesh, and meshes are scaled only up
-(for example, if donor mesh is 1 unit long, and recipient edge
-is 3.6 units, then there will be 3 meshes scaled to be 1.2
-units long each).</p></li>
-<li><p>Down: the same as Up, but meshes are scaled only down.</p></li>
-<li><p>Off: the same as Up, but meshes are not scaled, so there will
-be some empty space between copies.</p></li>
-</ul>
+<td><p><strong>Count</strong>: specify number of objects in array. Objects scale</p>
+<p>will be calculated so that copies will fill length of</p>
+<p>recipient edge.</p>
+<p><strong>Up</strong>: count is determined automatically from length of</p>
+<p>recipient edge and size of donor mesh, and meshes are</p>
+<p>scaled only up (for example, if donor mesh is 1 unit long,</p>
+<p>and recipient edge is 3.6 units, then there will be 3</p>
+<p>meshes scaled to be 1.2 units long each).</p>
+<p><strong>Down</strong>: the same as Up, but meshes are scaled only down.</p>
+<p><strong>Off</strong>: the same as Up, but meshes are not scaled, so there</p>
+<p>will be some empty space between copies.</p>
 </td>
 </tr>
 <tr class="row-odd"><td><p><strong>Orientation</strong></p></td>
-<td><p>X or Y or Z</p></td>
+<td><p>X / Y / Z</p></td>
 <td><p>X</p></td>
-<td><p>Which axis of donor object should be aligned to direction of the
-recipient edge.</p></td>
+<td><p>Which axis of donor object should be aligned to direction</p>
+<p>of the recipient edge.</p>
+</td>
 </tr>
 <tr class="row-even"><td><p><strong>Algorithm</strong></p></td>
 <td><p>Householder</p>
 <p>or Tracking</p>
-<p>or Rotation
-Difference</p>
+<p>or Rotation</p>
+<p>Difference</p>
 </td>
-<td><p>Householder</p></td>
-<td><ul class="simple">
-<li><p>Householder: calculate rotation by using Householder’s
-reflection matrix (see <a class="reference external" href="https://en.wikipedia.org/wiki/QR_decomposition#Using_Householder_reflections">Wikipedia</a> article).</p></li>
-<li><p>Tracking: use the same algorithm as in Blender’s “TrackTo”
-kinematic constraint. This algorithm gives you a bit more
-flexibility comparing to other, by allowing to select the Up
-axis.</p></li>
-<li><p>Rotation difference: calculate rotation as rotation difference
-between two vertices.</p></li>
-</ul>
+<td><p>House</p>
+<p>holder</p>
+</td>
+<td><p><strong>Householder</strong>: calculate rotation by using Householder’s</p>
+<p>reflection matrix (see <a class="reference external" href="https://en.wikipedia.org/wiki/QR_decomposition#Using_Householder_reflections">Wikipedia</a> article).</p>
+<p><strong>Tracking</strong>: use the same algorithm as in Blender’s “TrackTo”</p>
+<p>kinematic constraint. This algorithm gives you a bit more</p>
+<p>flexibility comparing to other, by allowing to select the Up</p>
+<p>axis.</p>
+<p><strong>Rotation difference</strong>: calculate rotation as rotation</p>
+<p>difference between two vertices.</p>
 </td>
 </tr>
 <tr class="row-odd"><td><p><strong>Up axis</strong></p></td>
-<td><p>X or Y or Z</p></td>
+<td><p>X / Y / Z</p></td>
 <td><p>Z</p></td>
-<td><p>Axis of donor object that should point up in result. This
-parameter is available only when Tracking algorithm is selected.
-Value of this parameter must differ from <strong>Orientation</strong>
-parameter, otherwise you will get an error.</p></td>
-</tr>
-<tr class="row-even"><td><p><strong>Input mode</strong></p></td>
-<td><p>Edges or Fixed</p></td>
-<td><p>Edges</p></td>
-<td><ul class="simple">
-<li><p>Edges: recipient edges will be determined as all edges from
-the <code class="docutils literal notranslate"><span class="pre">EdgesR</span></code> input between vertices from <code class="docutils literal notranslate"><span class="pre">VerticesR</span></code>
-input.</p></li>
-<li><p>Fixed: recipient edge will be determied as an edge between the
-edge from <code class="docutils literal notranslate"><span class="pre">Vertex1</span></code> input and the vertex from <code class="docutils literal notranslate"><span class="pre">Vertex2</span></code>
-input.</p></li>
-</ul>
+<td><p>Axis of donor object that should point up in result. This</p>
+<p>parameter is available only when Tracking algorithm is</p>
+<p>selected. Value of this parameter must differ from</p>
+<p><strong>Orientation</strong> parameter, otherwise you will get an error.</p>
 </td>
 </tr>
-<tr class="row-odd"><td><p><strong>Scale all
-axes</strong></p></td>
+<tr class="row-even"><td><p><strong>Input</strong></p>
+<p><strong>mode</strong></p>
+</td>
+<td><p>Edges</p>
+<p>or</p>
+<p>Fixed</p>
+</td>
+<td><p>Edges</p></td>
+<td><p><strong>Edges</strong>: recipient edges will be determined as all edges</p>
+<p>from the <code class="docutils literal notranslate"><span class="pre">EdgesR</span></code> input between vertices from</p>
+<p><code class="docutils literal notranslate"><span class="pre">VerticesR</span></code> input.</p>
+<p><strong>Fixed</strong>: recipient edge will be determied as an edge</p>
+<p>between the edge from <code class="docutils literal notranslate"><span class="pre">Vertex1</span></code> input and the vertex</p>
+<p>from <code class="docutils literal notranslate"><span class="pre">Vertex2</span></code> input.</p>
+</td>
+</tr>
+<tr class="row-odd"><td><p><strong>Scale all</strong></p>
+<p><strong>axes</strong></p>
+</td>
 <td><p>Bool</p></td>
 <td><p>False</p></td>
-<td><p>If False, then donor object  will be scaled only along axis
-is aligned with recipient edge direction. If True, objects will
-be scaled along all axes (by the same factor).
-This parameter is available only in the N panel.</p></td>
+<td><p>If False, then donor object  will be scaled only along axis</p>
+<p>is aligned with recipient edge direction. If True, objects</p>
+<p>will be scaled along all axes (by the same factor).</p>
+<p>This parameter is available only in the N panel.</p>
+</td>
 </tr>
-<tr class="row-even"><td><p><strong>Apply
-matrces</strong></p></td>
+<tr class="row-even"><td><p><strong>Apply</strong></p>
+<p><strong>matrices</strong></p>
+</td>
 <td><p>Bool</p></td>
 <td><p>True</p></td>
-<td><p>Whether to apply calculated matrices to created objects.
-This parameter is available only in the N panel.</p></td>
+<td><p>Whether to apply calculated matrices to created objects.</p>
+<p>This parameter is available only in the N panel.</p>
+</td>
 </tr>
 <tr class="row-odd"><td><p><strong>Count</strong></p></td>
 <td><p>Int</p></td>
 <td><p>3</p></td>
-<td><p>Number of objects in array. This parameter can be determined
-from the corresponding input. It is used only in “Count” scaling
-mode.</p></td>
+<td><p>Number of objects in array. This parameter can be</p>
+<p>determined from the corresponding input. It is used only</p>
+<p>in “Count” scaling mode.</p>
+</td>
 </tr>
 <tr class="row-even"><td><p><strong>Padding</strong></p></td>
 <td><p>Float</p></td>
 <td><p>0.0</p></td>
-<td><p>Portion of the recipient edge length that should be left empty
-from both sides. Default value of zero means fill whole length
-available. Maximum value 0.49 means use only central 1% of edge.</p></td>
+<td><p>Portion of the recipient edge length that should be</p>
+<p>left empty from both sides. Default value of zero means</p>
+<p>fill whole length available. Maximum value 0.49 means</p>
+<p>use only central 1% of edge.</p>
+</td>
 </tr>
 </tbody>
 </table>
@@ -339,18 +368,48 @@ available. Maximum value 0.49 means use only central 1% of edge.</p></td>
 them along recipient edge. By default, this node already applies these
 matrices, so you do not need to do it second time.</p></li>
 </ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201331535-cab0d823-8dac-42bf-bbe3-de480356612a.png"><img alt="https://user-images.githubusercontent.com/14288520/201331535-cab0d823-8dac-42bf-bbe3-de480356612a.png" src="https://user-images.githubusercontent.com/14288520/201331535-cab0d823-8dac-42bf-bbe3-de480356612a.png" /></a>
 <p>This node will output something only when <code class="docutils literal notranslate"><span class="pre">Vertices</span></code> or <code class="docutils literal notranslate"><span class="pre">Matrices</span></code> output is connected.</p>
 </section>
 <section id="examples-of-usage">
 <h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
-<p>Cylinders duplicated along the segment between two specified points:</p>
-<img alt="https://user-images.githubusercontent.com/284644/33512207-00a41ef2-d74d-11e7-9ce2-e8f21b6342c8.png" src="https://user-images.githubusercontent.com/284644/33512207-00a41ef2-d74d-11e7-9ce2-e8f21b6342c8.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201381243-2d7a2132-2473-49cf-abfa-b4a7070b861d.png"><img alt="https://user-images.githubusercontent.com/14288520/201381243-2d7a2132-2473-49cf-abfa-b4a7070b861d.png" src="https://user-images.githubusercontent.com/14288520/201381243-2d7a2132-2473-49cf-abfa-b4a7070b861d.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/suzanne.html"><span class="doc">Suzanne</span></a></p></li>
+<li><p>Generator-&gt;Generators Extended <a class="reference internal" href="../generators_extended/torus_knot_mk2.html"><span class="doc">Torus Knot</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_main/length.html"><span class="doc">List Length</span></a></p></li>
+<li><p>Color-&gt; <a class="reference internal" href="../color/color_ramp.html"><span class="doc">Color Ramp</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+</ul>
+<hr class="docutils" />
+<p>Suzanne duplicated along the segment between two specified points:</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201382773-7fdb06b4-8361-442f-bbda-d61ad9da9dff.png"><img alt="https://user-images.githubusercontent.com/14288520/201382773-7fdb06b4-8361-442f-bbda-d61ad9da9dff.png" src="https://user-images.githubusercontent.com/14288520/201382773-7fdb06b4-8361-442f-bbda-d61ad9da9dff.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/suzanne.html"><span class="doc">Suzanne</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/segment.html"><span class="doc">Segment</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>Suzannes duplicated along the edges of Box:</p>
-<img alt="https://user-images.githubusercontent.com/284644/33512211-066ab80a-d74d-11e7-9907-3c2cf7c4894e.png" src="https://user-images.githubusercontent.com/284644/33512211-066ab80a-d74d-11e7-9907-3c2cf7c4894e.png" />
-<p>Complex object duplicated along circle, with Householder algorithm:</p>
-<img alt="https://user-images.githubusercontent.com/284644/33388133-e9a1c4b4-d550-11e7-9df2-e5c7899d6ca1.png" src="https://user-images.githubusercontent.com/284644/33388133-e9a1c4b4-d550-11e7-9df2-e5c7899d6ca1.png" />
-<p>The same setup, but with Tracking algorithm:</p>
-<img alt="https://user-images.githubusercontent.com/284644/33388143-f1740dbe-d550-11e7-8d05-82cc8fa95934.png" src="https://user-images.githubusercontent.com/284644/33388143-f1740dbe-d550-11e7-8d05-82cc8fa95934.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201384581-6f1bcd4a-ff14-4aaa-bf02-459b090e2d6c.png"><img alt="https://user-images.githubusercontent.com/14288520/201384581-6f1bcd4a-ff14-4aaa-bf02-459b090e2d6c.png" src="https://user-images.githubusercontent.com/14288520/201384581-6f1bcd4a-ff14-4aaa-bf02-459b090e2d6c.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/suzanne.html"><span class="doc">Suzanne</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
+<p>Complex object duplicated along circle:</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201387261-bad089f0-ea89-4d96-b895-00555ed3458c.png"><img alt="https://user-images.githubusercontent.com/14288520/201387261-bad089f0-ea89-4d96-b895-00555ed3458c.png" src="https://user-images.githubusercontent.com/14288520/201387261-bad089f0-ea89-4d96-b895-00555ed3458c.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
+<li><p>Generator-&gt;Generators Extended <a class="reference internal" href="../generators_extended/torus_knot_mk2.html"><span class="doc">Torus Knot</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/list_input.html"><span class="doc">List Input</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_main/length.html"><span class="doc">List Length</span></a></p></li>
+<li><p>List-&gt; <a class="reference internal" href="../list_masks/index_to_mask.html"><span class="doc">Index To Mask</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 <p>You can also find more examples and some discussion <a class="reference external" href="https://github.com/portnov/sverchok/issues/6">in the development thread</a>.</p>
 </section>
 </section>

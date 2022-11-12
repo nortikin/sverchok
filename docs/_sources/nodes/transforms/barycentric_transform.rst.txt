@@ -60,7 +60,7 @@ The node can be used to place geometry over triangular faces.
 * Generator-> :doc:`IcoSphere </nodes/generator/icosphere>`
 * Transform-> :doc:`Rotate </nodes/transforms/rotate_mk3>`
 * Transform-> :doc:`Move </nodes/transforms/move_mk3>`
-* Modifier->Modifier Change-> :doc:`Polygon Boom </nodes/modifier_change/polygons_boom>`
+* Modifiers->Modifier Change-> :doc:`Polygon Boom </nodes/modifier_change/polygons_boom>`
 * Vector-> :doc:`Vector In </nodes/vector/vector_in>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 
@@ -74,7 +74,7 @@ The List Match option can offer different output combinations, in this case Cycl
 * Generator-> :doc:`Circle </nodes/generator/circle>`
 * Generator-> :doc:`IcoSphere </nodes/generator/icosphere>`
 * Number-> :doc:`Number Range </nodes/number/number_range>`
-* Modifier->Modifier Change-> :doc:`Polygon Boom </nodes/modifier_change/polygons_boom>`
+* Modifiers->Modifier Change-> :doc:`Polygon Boom </nodes/modifier_change/polygons_boom>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 * Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
 
@@ -88,7 +88,7 @@ Custom triangular Tessellation in this case Cyclic is used to alternate between 
 * Generator-> :doc:`Circle </nodes/generator/circle>`
 * Generator->Generator Extended-> :doc:`Polygon Grid </nodes/generators_extended/polygon_grid>`
 * Transform-> :doc:`Rotate </nodes/transforms/rotate_mk3>`
-* Modifier->Modifier Change-> :doc:`Polygon Boom </nodes/modifier_change/polygons_boom>`
+* Modifiers->Modifier Change-> :doc:`Polygon Boom </nodes/modifier_change/polygons_boom>`
 * Number-> :doc:`List Input </nodes/number/list_input>`
 * Vector-> :doc:`Vector In </nodes/vector/vector_in>`
 * Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`

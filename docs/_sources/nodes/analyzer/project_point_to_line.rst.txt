@@ -122,7 +122,7 @@ Examples
 * Generator-> :doc:`NGon </nodes/generator/ngon>`
 * Transform-> :doc:`Rotate </nodes/transforms/rotate_mk3>`
 * Transform-> :doc:`Rotate </old/nodes/remove_doubles>`
-* Remove Doubles (OLD Node). Use: Modifier->Modifier Change-> :doc:`Merge by Distance </nodes/modifier_change/merge_by_distance>`
+* Remove Doubles (OLD Node). Use: Modifiers->Modifier Change-> :doc:`Merge by Distance </nodes/modifier_change/merge_by_distance>`
 * Vector-> :doc:`Vector In </nodes/vector/vector_in>`
 * ADD: Vector-> :doc:`Vector Math </nodes/vector/math_mk3>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`

@@ -152,13 +152,17 @@
              
   <section id="fractal-curve">
 <h1>Fractal Curve<a class="headerlink" href="#fractal-curve" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201398869-b97cd996-708d-45c5-8bc7-a0b712244774.png"><img alt="https://user-images.githubusercontent.com/14288520/201398869-b97cd996-708d-45c5-8bc7-a0b712244774.png" src="https://user-images.githubusercontent.com/14288520/201398869-b97cd996-708d-45c5-8bc7-a0b712244774.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node generates a fractal curve, by replacing each edge of input curve with a copy of that curve, several times.</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201400256-9234b87a-312d-4859-b95e-c8695f73126f.png"><img alt="https://user-images.githubusercontent.com/14288520/201400256-9234b87a-312d-4859-b95e-c8695f73126f.png" src="https://user-images.githubusercontent.com/14288520/201400256-9234b87a-312d-4859-b95e-c8695f73126f.png" /></a>
 <p>NB 1: Number of vertices in the output curve grows exponentially with number of iterations.</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201401867-3387e615-cdde-451a-b37f-2e181feccc01.png"><img alt="https://user-images.githubusercontent.com/14288520/201401867-3387e615-cdde-451a-b37f-2e181feccc01.png" src="https://user-images.githubusercontent.com/14288520/201401867-3387e615-cdde-451a-b37f-2e181feccc01.png" /></a>
 <p>NB 2: Usually you will want to use curves, for which diameter (distance between
 to most distant vertices) is less than distance from the first vertex to the
 last. Otherwise, the output curve can grow very large.</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201426832-5b90bb43-d6a0-472a-8aa7-be66f154dd71.png"><img alt="https://user-images.githubusercontent.com/14288520/201426832-5b90bb43-d6a0-472a-8aa7-be66f154dd71.png" src="https://user-images.githubusercontent.com/14288520/201426832-5b90bb43-d6a0-472a-8aa7-be66f154dd71.png" /></a>
 <p>NB 3: Usually you will want to use curves, edges of which have nearly the same length.</p>
 </section>
 <section id="inputs">
@@ -195,13 +199,37 @@ Connector</strong> node to draw edges between these vertices.</p>
 <section id="examples-of-usage">
 <h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>Classical example:</p>
-<img alt="https://user-images.githubusercontent.com/284644/57985244-96718200-7a7e-11e9-8559-61a6feb78882.png" src="https://user-images.githubusercontent.com/284644/57985244-96718200-7a7e-11e9-8559-61a6feb78882.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201405917-6ea4f7cd-3b0d-4fc7-a20b-82164649e0d3.png"><img alt="https://user-images.githubusercontent.com/14288520/201405917-6ea4f7cd-3b0d-4fc7-a20b-82164649e0d3.png" src="https://user-images.githubusercontent.com/14288520/201405917-6ea4f7cd-3b0d-4fc7-a20b-82164649e0d3.png" /></a>
+<ul class="simple">
+<li><p>Number-&gt; <a class="reference internal" href="../number/list_input.html"><span class="doc">List Input</span></a></p></li>
+<li><p>Analyzers-&gt; <a class="reference internal" href="../analyzer/bbox_mk3.html"><span class="doc">Bounding Box</span></a></p></li>
+<li><p>Transform-&gt; <a class="reference internal" href="../transforms/move_mk3.html"><span class="doc">Move</span></a></p></li>
+<li><p>Modifiers-&gt;Modifier Make-&gt; <a class="reference internal" href="uv_connect.html"><span class="doc">UV Connection</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>Another example:</p>
-<img alt="https://user-images.githubusercontent.com/284644/57985245-970a1880-7a7e-11e9-82ab-f69d61bd5e1d.png" src="https://user-images.githubusercontent.com/284644/57985245-970a1880-7a7e-11e9-82ab-f69d61bd5e1d.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201408641-ac592164-9872-423f-9575-a0dffac8c370.png"><img alt="https://user-images.githubusercontent.com/14288520/201408641-ac592164-9872-423f-9575-a0dffac8c370.png" src="https://user-images.githubusercontent.com/14288520/201408641-ac592164-9872-423f-9575-a0dffac8c370.png" /></a>
+<ul class="simple">
+<li><p>Number-&gt; <a class="reference internal" href="../number/list_input.html"><span class="doc">List Input</span></a></p></li>
+<li><p>Analyzers-&gt; <a class="reference internal" href="../analyzer/bbox_mk3.html"><span class="doc">Bounding Box</span></a></p></li>
+<li><p>Transform-&gt; <a class="reference internal" href="../transforms/move_mk3.html"><span class="doc">Move</span></a></p></li>
+<li><p>Modifiers-&gt;Modifier Make-&gt; <a class="reference internal" href="uv_connect.html"><span class="doc">UV Connection</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>This node can process 3D curves as well:</p>
-<img alt="https://user-images.githubusercontent.com/284644/57985246-970a1880-7a7e-11e9-84f3-198244d92df0.png" src="https://user-images.githubusercontent.com/284644/57985246-970a1880-7a7e-11e9-84f3-198244d92df0.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/57985246-970a1880-7a7e-11e9-84f3-198244d92df0.png"><img alt="https://user-images.githubusercontent.com/284644/57985246-970a1880-7a7e-11e9-84f3-198244d92df0.png" src="https://user-images.githubusercontent.com/284644/57985246-970a1880-7a7e-11e9-84f3-198244d92df0.png" /></a>
+<hr class="docutils" />
 <p>Vectorization example:</p>
-<img alt="https://user-images.githubusercontent.com/284644/58745914-074a6e00-8471-11e9-889d-f41f416fb744.png" src="https://user-images.githubusercontent.com/284644/58745914-074a6e00-8471-11e9-889d-f41f416fb744.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201425422-bb60a043-84e1-4d3f-96b0-9c663356f958.png"><img alt="https://user-images.githubusercontent.com/14288520/201425422-bb60a043-84e1-4d3f-96b0-9c663356f958.png" src="https://user-images.githubusercontent.com/14288520/201425422-bb60a043-84e1-4d3f-96b0-9c663356f958.png" /></a>
+<ul class="simple">
+<li><p>Number-&gt; <a class="reference internal" href="../number/list_input.html"><span class="doc">List Input</span></a></p></li>
+<li><p>Modifiers-&gt;Modifier Make-&gt; <a class="reference internal" href="uv_connect.html"><span class="doc">UV Connection</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vertices_sort.html"><span class="doc">Vector sort</span></a></p></li>
+<li><p>Scene-&gt; <a class="reference internal" href="../scene/get_objects_data.html"><span class="doc">Get Objects Data</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 </section>
 </section>
 

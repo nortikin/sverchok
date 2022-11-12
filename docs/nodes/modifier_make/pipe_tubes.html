@@ -84,6 +84,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#properties">Properties</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#outputs">Outputs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#see-also">See also</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#examples">Examples</a></li>
 </ul>
 </li>
@@ -152,31 +153,63 @@
              
   <section id="pipe">
 <h1>Pipe<a class="headerlink" href="#pipe" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201471088-81a81e4f-c550-41cc-b8dc-e0b3928ea082.png"><img alt="https://user-images.githubusercontent.com/14288520/201471088-81a81e4f-c550-41cc-b8dc-e0b3928ea082.png" src="https://user-images.githubusercontent.com/14288520/201471088-81a81e4f-c550-41cc-b8dc-e0b3928ea082.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>Making pipes from edges.</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201471091-8d941abe-eed5-4579-a601-2f912ae443f3.png"><img alt="https://user-images.githubusercontent.com/14288520/201471091-8d941abe-eed5-4579-a601-2f912ae443f3.png" src="https://user-images.githubusercontent.com/14288520/201471091-8d941abe-eed5-4579-a601-2f912ae443f3.png" /></a>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
-<p><strong>Vers</strong> - Vertices of piped object.</p>
-<p><strong>Edgs</strong> - Edges of piped object.</p>
-<p><strong>diameter</strong> - Diameter of pipe.</p>
-<p><strong>nsides</strong> - Number of sides of pipe.</p>
-<p><strong>offset</strong> - Offset on length to avoid self intersection.</p>
-<p><strong>extrude</strong> - Scale the pipe on local X direction.</p>
+<ul class="simple">
+<li><p><strong>Vers</strong> - Vertices of piped object.</p></li>
+<li><p><strong>Edgs</strong> - Edges of piped object.</p></li>
+<li><p><strong>diameter</strong> - Diameter of pipe.</p></li>
+<li><p><strong>nsides</strong> - Number of sides of pipe.</p></li>
+<li><p><strong>offset</strong> - Offset on length to avoid self intersection.</p></li>
+<li><p><strong>extrude</strong> - Scale the pipe on local X direction.</p></li>
+</ul>
 </section>
 <section id="properties">
 <h2>Properties<a class="headerlink" href="#properties" title="Permalink to this heading">¶</a></h2>
-<p><strong>close</strong> - Close pipes between each other to make complete topology of united mesh.</p>
+<ul class="simple">
+<li><p><strong>close</strong> - Close pipes between each other to make complete topology of united mesh.</p></li>
+</ul>
 </section>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
-<p><strong>Vers</strong> - Vertices of output.</p>
-<p><strong>Pols</strong> - Polygons of output.</p>
+<ul class="simple">
+<li><p><strong>Vers</strong> - Vertices of output.</p></li>
+<li><p><strong>Pols</strong> - Polygons of output.</p></li>
+</ul>
+</section>
+<section id="see-also">
+<h2>See also<a class="headerlink" href="#see-also" title="Permalink to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>Modifiers-&gt;Modifier Make-&gt; <a class="reference internal" href="bevel_curve.html#bevel-a-curve-algorithm"><span class="std std-ref">Bevel a Curve</span></a></p></li>
+</ul>
 </section>
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
-<img alt="noalt" src="https://cloud.githubusercontent.com/assets/5783432/5291188/cf0f6eb8-7b57-11e4-9adf-025bbd1d74eb.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201471241-581c2b5b-821a-4868-aeae-952f0b704fc6.png"><img alt="https://user-images.githubusercontent.com/14288520/201471241-581c2b5b-821a-4868-aeae-952f0b704fc6.png" src="https://user-images.githubusercontent.com/14288520/201471241-581c2b5b-821a-4868-aeae-952f0b704fc6.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt;Generatots Extended-&gt; <a class="reference internal" href="../generators_extended/hilbert.html"><span class="doc">Hilbert</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/interpolation_mk3.html"><span class="doc">Vector Interpolation</span></a></p></li>
+<li><p>Modifiers-&gt;Modifier Make-&gt; <a class="reference internal" href="uv_connect.html"><span class="doc">UV Connection</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_main/length.html"><span class="doc">List Length</span></a></p></li>
+<li><p>Color-&gt; <a class="reference internal" href="../color/color_ramp.html"><span class="doc">Color Ramp</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
+<a class="reference external image-reference" href="https://cloud.githubusercontent.com/assets/5783432/5291188/cf0f6eb8-7b57-11e4-9adf-025bbd1d74eb.png"><img alt="noalt" src="https://cloud.githubusercontent.com/assets/5783432/5291188/cf0f6eb8-7b57-11e4-9adf-025bbd1d74eb.png" /></a>
+<ul class="simple">
+<li><p>Text-&gt; <a class="reference internal" href="../text/note.html"><span class="doc">Note</span></a></p></li>
+<li><p>Float Series: Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/interpolation_mk3.html"><span class="doc">Vector Interpolation</span></a></p></li>
+<li><p>Modifiers-&gt;Modifier Make-&gt; <a class="reference internal" href="uv_connect.html"><span class="doc">UV Connection</span></a></p></li>
+<li><p>Bmesh Viewer Draw: Viz-&gt; <a class="reference internal" href="../viz/mesh_viewer.html"><span class="doc">Mesh Viewer</span></a></p></li>
+</ul>
 </section>
 </section>
 

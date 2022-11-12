@@ -1,16 +1,28 @@
 Fractal Curve
 =============
 
+.. image:: https://user-images.githubusercontent.com/14288520/201398869-b97cd996-708d-45c5-8bc7-a0b712244774.png
+  :target: https://user-images.githubusercontent.com/14288520/201398869-b97cd996-708d-45c5-8bc7-a0b712244774.png
+
 Functionality
 -------------
 
 This node generates a fractal curve, by replacing each edge of input curve with a copy of that curve, several times.
 
+.. image:: https://user-images.githubusercontent.com/14288520/201400256-9234b87a-312d-4859-b95e-c8695f73126f.png
+  :target: https://user-images.githubusercontent.com/14288520/201400256-9234b87a-312d-4859-b95e-c8695f73126f.png
+
 NB 1: Number of vertices in the output curve grows exponentially with number of iterations. 
+
+.. image:: https://user-images.githubusercontent.com/14288520/201401867-3387e615-cdde-451a-b37f-2e181feccc01.png
+  :target: https://user-images.githubusercontent.com/14288520/201401867-3387e615-cdde-451a-b37f-2e181feccc01.png
 
 NB 2: Usually you will want to use curves, for which diameter (distance between
 to most distant vertices) is less than distance from the first vertex to the
 last. Otherwise, the output curve can grow very large.
+
+.. image:: https://user-images.githubusercontent.com/14288520/201426832-5b90bb43-d6a0-472a-8aa7-be66f154dd71.png
+  :target: https://user-images.githubusercontent.com/14288520/201426832-5b90bb43-d6a0-472a-8aa7-be66f154dd71.png
 
 NB 3: Usually you will want to use curves, edges of which have nearly the same length.
 
@@ -51,17 +63,44 @@ Examples of usage
 
 Classical example:
 
-.. image:: https://user-images.githubusercontent.com/284644/57985244-96718200-7a7e-11e9-8559-61a6feb78882.png
+.. image:: https://user-images.githubusercontent.com/14288520/201405917-6ea4f7cd-3b0d-4fc7-a20b-82164649e0d3.png
+  :target: https://user-images.githubusercontent.com/14288520/201405917-6ea4f7cd-3b0d-4fc7-a20b-82164649e0d3.png
+
+* Number-> :doc:`List Input </nodes/number/list_input>`
+* Analyzers-> :doc:`Bounding Box </nodes/analyzer/bbox_mk3>`
+* Transform-> :doc:`Move </nodes/transforms/move_mk3>`
+* Modifiers->Modifier Make-> :doc:`UV Connection </nodes/modifier_make/uv_connect>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+
+---------
 
 Another example:
 
-.. image:: https://user-images.githubusercontent.com/284644/57985245-970a1880-7a7e-11e9-82ab-f69d61bd5e1d.png
+.. image:: https://user-images.githubusercontent.com/14288520/201408641-ac592164-9872-423f-9575-a0dffac8c370.png
+  :target: https://user-images.githubusercontent.com/14288520/201408641-ac592164-9872-423f-9575-a0dffac8c370.png
+
+* Number-> :doc:`List Input </nodes/number/list_input>`
+* Analyzers-> :doc:`Bounding Box </nodes/analyzer/bbox_mk3>`
+* Transform-> :doc:`Move </nodes/transforms/move_mk3>`
+* Modifiers->Modifier Make-> :doc:`UV Connection </nodes/modifier_make/uv_connect>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+
+---------
 
 This node can process 3D curves as well:
 
 .. image:: https://user-images.githubusercontent.com/284644/57985246-970a1880-7a7e-11e9-84f3-198244d92df0.png
+  :target: https://user-images.githubusercontent.com/284644/57985246-970a1880-7a7e-11e9-84f3-198244d92df0.png
+
+---------
 
 Vectorization example:
 
-.. image:: https://user-images.githubusercontent.com/284644/58745914-074a6e00-8471-11e9-889d-f41f416fb744.png
+.. image:: https://user-images.githubusercontent.com/14288520/201425422-bb60a043-84e1-4d3f-96b0-9c663356f958.png
+  :target: https://user-images.githubusercontent.com/14288520/201425422-bb60a043-84e1-4d3f-96b0-9c663356f958.png
 
+* Number-> :doc:`List Input </nodes/number/list_input>`
+* Modifiers->Modifier Make-> :doc:`UV Connection </nodes/modifier_make/uv_connect>`
+* Vector-> :doc:`Vector sort </nodes/vector/vertices_sort>`
+* Scene-> :doc:`Get Objects Data </nodes/scene/get_objects_data>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`

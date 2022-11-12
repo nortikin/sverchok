@@ -153,14 +153,15 @@
              
   <section id="contour-2d">
 <h1>Contour 2D<a class="headerlink" href="#contour-2d" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200914294-d50fef6e-77cc-465d-92d8-24fc1986e1bc.png"><img alt="https://user-images.githubusercontent.com/14288520/200914294-d50fef6e-77cc-465d-92d8-24fc1986e1bc.png" src="https://user-images.githubusercontent.com/14288520/200914294-d50fef6e-77cc-465d-92d8-24fc1986e1bc.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
-<img alt="https://user-images.githubusercontent.com/10011941/34644861-37e4c430-f33f-11e7-92e0-d89080effc4b.png" src="https://user-images.githubusercontent.com/10011941/34644861-37e4c430-f33f-11e7-92e0-d89080effc4b.png" />
 <p>This node creates one or many contours at specified distance.</p>
 <ul class="simple">
 <li><p>It is fed by sets of vertices and edges.</p></li>
 <li><p>Every set of vertices needs to share the Z coordinate in order to create a valid contour.</p></li>
 </ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200941341-4713e599-b1e4-4b9c-818d-ae099ca0c7ed.png"><img alt="https://user-images.githubusercontent.com/14288520/200941341-4713e599-b1e4-4b9c-818d-ae099ca0c7ed.png" src="https://user-images.githubusercontent.com/14288520/200941341-4713e599-b1e4-4b9c-818d-ae099ca0c7ed.png" /></a>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
@@ -192,8 +193,9 @@
 <tr class="row-even"><td><p><strong>Mode</strong></p></td>
 <td><p>Menu</p></td>
 <td><p>Constant</p></td>
-<td><p><strong>Constant</strong>: Constant distances on each perimeter.
-<strong>Weighted</strong>: Different distances per vertex.</p></td>
+<td><p><strong>Constant</strong>: Constant distances on each perimeter.</p>
+<p><strong>Weighted</strong>: Different distances per vertex.</p>
+</td>
 </tr>
 <tr class="row-odd"><td><p><strong>Remove Doubles</strong></p></td>
 <td><p>Float</p></td>
@@ -225,19 +227,23 @@
 <tr class="row-odd"><td><p><strong>Mask Tolerance</strong></p></td>
 <td><p>Float</p></td>
 <td><p>1.0e-5</p></td>
-<td><p>Tolerance on masking (for low Nº Vertices or small values)</p></td>
+<td><p>Tolerance on masking (for low Nº Vertices</p>
+<p>or small values)</p>
+</td>
 </tr>
 <tr class="row-even"><td><p><strong>Inters. Mode</strong></p></td>
 <td><p>Menu</p></td>
 <td><p>Circular</p></td>
-<td><p><strong>Circular</strong>: Intersection based on circles (Slower).
-<strong>Polygonal</strong>: Intersection based on polygons (Faster).</p></td>
+<td><p><strong>Circular</strong>: Intersection based on circles (Slower).</p>
+<p><strong>Polygonal</strong>: Intersection based on polygons (Faster).</p>
+</td>
 </tr>
 <tr class="row-odd"><td><p><strong>List Match</strong></p></td>
 <td><p>Menu</p></td>
 <td><p>Long Cycle</p></td>
-<td><p><strong>Long Repeat</strong>: After shortest list repeat last value.
-<strong>Long Cycle</strong>: After shortest list got to first last value.</p></td>
+<td><p><strong>Long Repeat</strong>: After shortest list repeat last value.</p>
+<p><strong>Long Cycle</strong>: After shortest list got to first last value.</p>
+</td>
 </tr>
 <tr class="row-even"><td><p><strong>Remove Caps</strong></p></td>
 <td><p>Boolean</p></td>
@@ -257,32 +263,97 @@
 </section>
 <section id="examples-of-usage">
 <h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/10011941/34644861-37e4c430-f33f-11e7-92e0-d89080effc4b.png"><img alt="https://user-images.githubusercontent.com/10011941/34644861-37e4c430-f33f-11e7-92e0-d89080effc4b.png" src="https://user-images.githubusercontent.com/10011941/34644861-37e4c430-f33f-11e7-92e0-d89080effc4b.png" /></a>
+<ul class="simple">
+<li><p>Number-&gt; <a class="reference internal" href="../number/list_input.html"><span class="doc">List Input</span></a></p></li>
+<li><p>Scene-&gt; <a class="reference internal" href="../scene/objects_in_lite.html"><span class="doc">Objects In Lite</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <ul class="simple">
 <li><p>When you input different distances:
 In constant mode independent contours will be created (one per distance)
 In Weighted mode will apply each distance to a vertex creating independent contours when there are more distances than vertices</p></li>
 </ul>
-<img alt="https://user-images.githubusercontent.com/10011941/34644863-41eabfde-f33f-11e7-8ed6-6e8fa7a1e6df.png" src="https://user-images.githubusercontent.com/10011941/34644863-41eabfde-f33f-11e7-8ed6-6e8fa7a1e6df.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/10011941/34644863-41eabfde-f33f-11e7-8ed6-6e8fa7a1e6df.png"><img alt="https://user-images.githubusercontent.com/10011941/34644863-41eabfde-f33f-11e7-8ed6-6e8fa7a1e6df.png" src="https://user-images.githubusercontent.com/10011941/34644863-41eabfde-f33f-11e7-8ed6-6e8fa7a1e6df.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/line_mk4.html"><span class="doc">Line</span></a></p></li>
+<li><p>Range Float: Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_struct/repeater.html"><span class="doc">List Repeater</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <ul class="simple">
 <li><p>When you input different objects independent contours will be created:</p></li>
 </ul>
-<img alt="https://user-images.githubusercontent.com/10011941/34644864-46463d24-f33f-11e7-80c1-bb0718d9966b.png" src="https://user-images.githubusercontent.com/10011941/34644864-46463d24-f33f-11e7-80c1-bb0718d9966b.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/10011941/34644864-46463d24-f33f-11e7-80c1-bb0718d9966b.png"><img alt="https://user-images.githubusercontent.com/10011941/34644864-46463d24-f33f-11e7-80c1-bb0718d9966b.png" src="https://user-images.githubusercontent.com/10011941/34644864-46463d24-f33f-11e7-80c1-bb0718d9966b.png" /></a>
+<ul class="simple">
+<li><p>Modifiers-&gt;Modifier Change-&gt; <a class="reference internal" href="../modifier_change/mesh_join_mk2.html"><span class="doc">Mesh Join</span></a></p></li>
+<li><p>Scene-&gt; <a class="reference internal" href="../scene/objects_in_lite.html"><span class="doc">Objects In Lite</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <ul class="simple">
 <li><p>With the intersection mode on “Circular” the intersection points will be placed as if we were using perfect circles. This will change the edges angles, but the distance between the intersection point and the original points will be maintained. On “Polygonal” the edges angles are preserved but the distance to original vertex will depend on the number of vertices.</p></li>
 </ul>
-<img alt="https://user-images.githubusercontent.com/10011941/35116834-027e2f8c-fc8d-11e7-9cff-35465e3e5e17.png" src="https://user-images.githubusercontent.com/10011941/35116834-027e2f8c-fc8d-11e7-9cff-35465e3e5e17.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/10011941/35116834-027e2f8c-fc8d-11e7-9cff-35465e3e5e17.png"><img alt="https://user-images.githubusercontent.com/10011941/35116834-027e2f8c-fc8d-11e7-9cff-35465e3e5e17.png" src="https://user-images.githubusercontent.com/10011941/35116834-027e2f8c-fc8d-11e7-9cff-35465e3e5e17.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/line_mk4.html"><span class="doc">Line</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <ul class="simple">
 <li><p>Integrated list match function can lead to different results:</p></li>
 </ul>
-<img alt="https://user-images.githubusercontent.com/10011941/34644870-5935b1ee-f33f-11e7-99ba-0c536bf67f91.png" src="https://user-images.githubusercontent.com/10011941/34644870-5935b1ee-f33f-11e7-99ba-0c536bf67f91.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/10011941/34644870-5935b1ee-f33f-11e7-99ba-0c536bf67f91.png"><img alt="https://user-images.githubusercontent.com/10011941/34644870-5935b1ee-f33f-11e7-99ba-0c536bf67f91.png" src="https://user-images.githubusercontent.com/10011941/34644870-5935b1ee-f33f-11e7-99ba-0c536bf67f91.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/line_mk4.html"><span class="doc">Line</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/list_input.html"><span class="doc">List Input</span></a></p></li>
+<li><p>Range Float: Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <ul class="simple">
 <li><p>Different ranges can be used to create a complex contour.</p></li>
 </ul>
-<img alt="https://user-images.githubusercontent.com/10011941/35116835-029ea8de-fc8d-11e7-9df0-f044677c059a.png" src="https://user-images.githubusercontent.com/10011941/35116835-029ea8de-fc8d-11e7-9df0-f044677c059a.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/10011941/35116835-029ea8de-fc8d-11e7-9df0-f044677c059a.png"><img alt="https://user-images.githubusercontent.com/10011941/35116835-029ea8de-fc8d-11e7-9df0-f044677c059a.png" src="https://user-images.githubusercontent.com/10011941/35116835-029ea8de-fc8d-11e7-9df0-f044677c059a.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>
+<li><p>Modifiers-&gt;Modifier Change-&gt; <a class="reference internal" href="../modifier_change/smooth.html"><span class="doc">Smooth Vertices</span></a></p></li>
+<li><p>Modifiers-&gt;Modifier Change-&gt; <a class="reference internal" href="../modifier_change/triangulate.html"><span class="doc">Triangulate Mesh</span></a></p></li>
+<li><p>Modifiers-&gt;Modifier Make-&gt; <a class="reference internal" href="uv_connect.html"><span class="doc">UV Connection</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/numbers.html"><span class="doc">A Number</span></a></p></li>
+<li><p>Range Float: Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_in.html"><span class="doc">Vector In</span></a></p></li>
+<li><p>ADD: Vector-&gt; <a class="reference internal" href="../vector/math_mk3.html"><span class="doc">Vector Math</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/interpolation_mk3.html"><span class="doc">Vector Interpolation</span></a></p></li>
+<li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/join.html"><span class="doc">List Join</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_struct/flip.html"><span class="doc">List Flip</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_struct/split.html"><span class="doc">List Split</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <ul class="simple">
 <li><p>When using text meshes it can get very slow but also interesting</p></li>
 </ul>
-<img alt="https://user-images.githubusercontent.com/10011941/35116836-02b9cc36-fc8d-11e7-9526-259c18c8556f.png" src="https://user-images.githubusercontent.com/10011941/35116836-02b9cc36-fc8d-11e7-9526-259c18c8556f.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/10011941/35116836-02b9cc36-fc8d-11e7-9526-259c18c8556f.png"><img alt="https://user-images.githubusercontent.com/10011941/35116836-02b9cc36-fc8d-11e7-9526-259c18c8556f.png" src="https://user-images.githubusercontent.com/10011941/35116836-02b9cc36-fc8d-11e7-9526-259c18c8556f.png" /></a>
+<ul class="simple">
+<li><p>Transform-&gt; <a class="reference internal" href="../transforms/apply.html"><span class="doc">Matrix Apply (verts)</span></a></p></li>
+<li><p>Analyzer-&gt; <a class="reference internal" href="../analyzer/mesh_filter.html"><span class="doc">Mesh Filter</span></a></p></li>
+<li><p>Analyzer-&gt; <a class="reference internal" href="../analyzer/mesh_filter.html"><span class="doc">Mesh Filter</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/numbers.html"><span class="doc">A Number</span></a></p></li>
+<li><p>ADD: Number-&gt; <a class="reference internal" href="../number/scalar_mk4.html"><span class="doc">Scalar Math</span></a></p></li>
+<li><p>Range Float: Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/join.html"><span class="doc">List Join</span></a></p></li>
+<li><p>Scene-&gt; <a class="reference internal" href="../scene/objects_in_lite.html"><span class="doc">Objects In Lite</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_curves.html"><span class="doc">Curve Viewer</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 </section>
 <section id="notes">
 <h2>Notes<a class="headerlink" href="#notes" title="Permalink to this heading">¶</a></h2>

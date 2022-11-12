@@ -68,6 +68,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#outputs">Outputs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#advice">Advice</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#examples-of-usage">Examples of usage</a></li>
 </ul>
 </li>
@@ -152,6 +153,7 @@
              
   <section id="bevel-a-curve-mesh">
 <h1>Bevel a Curve (Mesh)<a class="headerlink" href="#bevel-a-curve-mesh" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201133942-b9452f69-db06-4b11-bbd3-d71a092d64b5.png"><img alt="https://user-images.githubusercontent.com/14288520/201133942-b9452f69-db06-4b11-bbd3-d71a092d64b5.png" src="https://user-images.githubusercontent.com/14288520/201133942-b9452f69-db06-4b11-bbd3-d71a092d64b5.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node provides functionality similar to Blender’s standard “bevel curve”
@@ -172,20 +174,25 @@ several separate fragments. But it is supposed to be <strong>flat</strong> objec
 one of coordinate planes (XY, YZ or XZ). This plane defines the so-called
 “orientation axis” - a coordinate axis, which is perpendicular to “bevel
 object”; during extrusion, bevel object will be moved along orientation axis.</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201149971-b1be42ab-9af1-4b28-bab4-3de660a5a58b.png"><img alt="https://user-images.githubusercontent.com/14288520/201149971-b1be42ab-9af1-4b28-bab4-3de660a5a58b.png" src="https://user-images.githubusercontent.com/14288520/201149971-b1be42ab-9af1-4b28-bab4-3de660a5a58b.png" /></a>
 <p><strong>Note 2</strong>: “Taper object” is supposed to be an open curve, elongated along one of
 coordinate axes (X, Y or Z). That must be the orientation axis, i.e. the axis
 perpendicular to the plane of bevel object.</p>
 <p>In the most common case, “bevel object” will lay in XY plane, so that orientation axis will be Z.</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201141743-1e1d5d68-8e2a-4cb5-b564-bc0e82eb1b0f.png"><img alt="https://user-images.githubusercontent.com/14288520/201141743-1e1d5d68-8e2a-4cb5-b564-bc0e82eb1b0f.png" src="https://user-images.githubusercontent.com/14288520/201141743-1e1d5d68-8e2a-4cb5-b564-bc0e82eb1b0f.png" /></a>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
-<ul>
+<ul class="simple">
 <li><p><strong>Curve</strong>. List of vertices, which define the curve, along which the bevel
 will be made. Order of vertices in this input must be the same as the order
 of vertices on the curve being defined. If you are using an “Object In” node
-to provide this curve, you may want to use “Vector Sort” node in
+to provide this curve, you may want to use “Vector Sort” (Vector-&gt; <a class="reference internal" href="../vector/vertices_sort.html"><span class="doc">Vector sort</span></a>) node in
 “connections” mode to sort vertices properly. This input is mandatory.</p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201154479-ed3f8639-a190-444e-bdac-205585fb8519.png"><img alt="https://user-images.githubusercontent.com/14288520/201154479-ed3f8639-a190-444e-bdac-205585fb8519.png" src="https://user-images.githubusercontent.com/14288520/201154479-ed3f8639-a190-444e-bdac-205585fb8519.png" /></a>
+<ul>
 <li><p><strong>BevelVerts</strong>. List of vertices, which define the “bevel object”. This input is mandatory.</p></li>
 <li><p><strong>BevelEdges</strong>. List of edges of “bevel object”. You may not connect this
 input if you connected the <strong>BevelFaces</strong> input: in such a case, edges will be
@@ -225,9 +232,12 @@ evaluated. Default value is 10.</p></li>
 <section id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following parameters:</p>
-<ul>
+<ul class="simple">
 <li><p><strong>Orientation</strong>. The axis of “bevel object”, which should be oriented along
 the path. Default value is Z (which means that bevel object should lay in XY plane).</p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201473253-bb38b5df-7530-49f2-8859-5416722f8d47.png"><img alt="https://user-images.githubusercontent.com/14288520/201473253-bb38b5df-7530-49f2-8859-5416722f8d47.png" src="https://user-images.githubusercontent.com/14288520/201473253-bb38b5df-7530-49f2-8859-5416722f8d47.png" /></a>
+<ul id="bevel-a-curve-algorithm">
 <li><p><strong>Algorithm</strong>. Rotation calculation algorithm. Available values are:</p>
 <ul class="simple">
 <li><p>Householder: calculate rotation by using Householder’s reflection matrix
@@ -240,14 +250,26 @@ vectors.</p></li>
 </ul>
 <p>Default value is Householder.</p>
 </li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201160245-5feb3321-3eda-49b8-baef-a8d63e5903ca.png"><img alt="https://user-images.githubusercontent.com/14288520/201160245-5feb3321-3eda-49b8-baef-a8d63e5903ca.png" src="https://user-images.githubusercontent.com/14288520/201160245-5feb3321-3eda-49b8-baef-a8d63e5903ca.png" /></a>
+<ul class="simple">
 <li><p><strong>Up axis</strong>.  Axis of donor object that should point up in result. This
 parameter is available only when Tracking algorithm is selected.  Value of
 this parameter must differ from <strong>Orientation</strong> parameter, otherwise you will
 get an error. Default value is X.</p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201162989-e220a054-0212-4d22-87cf-997287799fe4.png"><img alt="https://user-images.githubusercontent.com/14288520/201162989-e220a054-0212-4d22-87cf-997287799fe4.png" src="https://user-images.githubusercontent.com/14288520/201162989-e220a054-0212-4d22-87cf-997287799fe4.png" /></a>
+<ul class="simple">
 <li><p><strong>Curve Mode</strong>. Path interpolation mode. Available values are Linear and Cubic.
 Default value is Cubic.</p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201161693-e2ec96be-2581-4b44-8de2-81ceb92ada84.png"><img alt="https://user-images.githubusercontent.com/14288520/201161693-e2ec96be-2581-4b44-8de2-81ceb92ada84.png" src="https://user-images.githubusercontent.com/14288520/201161693-e2ec96be-2581-4b44-8de2-81ceb92ada84.png" /></a>
+<ul class="simple">
 <li><p><strong>Taper Mode</strong>. Taper curve interpolation mode. Available values are Linear
 and Cubic. Default value is Cubic.</p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201176240-be53841b-d4b8-4751-bd5e-c31dd5cec127.png"><img alt="https://user-images.githubusercontent.com/14288520/201176240-be53841b-d4b8-4751-bd5e-c31dd5cec127.png" src="https://user-images.githubusercontent.com/14288520/201176240-be53841b-d4b8-4751-bd5e-c31dd5cec127.png" /></a>
+<ul>
 <li><p><strong>Twist Mode</strong>. Twist angles interpolation mode. Available values are Linear
 and Cubic. Default value is Linear.</p></li>
 <li><p><strong>Cyclic</strong>. Indicate whether the path is cyclic. Default value is false.</p></li>
@@ -266,10 +288,16 @@ logic is similar).</p>
 <p>This parameter has no meaning if <strong>TaperVerts</strong> input is not connected.</p>
 <p>Unchecked by default.</p>
 </li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201172816-feaa4498-0642-4154-ad0a-cbc0977321db.png"><img alt="https://user-images.githubusercontent.com/14288520/201172816-feaa4498-0642-4154-ad0a-cbc0977321db.png" src="https://user-images.githubusercontent.com/14288520/201172816-feaa4498-0642-4154-ad0a-cbc0977321db.png" /></a>
+<ul class="simple">
 <li><p><strong>Cap Start</strong>. Whether to create a cap faces at the beginning of curve.
 Unchecked by default.</p></li>
 <li><p><strong>Cap End</strong>. Whether to create a cap faces at the end of curve.  Unchecked by
 default.</p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201157034-8ea2b896-8172-459f-af86-2e9f73d5992e.png"><img alt="https://user-images.githubusercontent.com/14288520/201157034-8ea2b896-8172-459f-af86-2e9f73d5992e.png" src="https://user-images.githubusercontent.com/14288520/201157034-8ea2b896-8172-459f-af86-2e9f73d5992e.png" /></a>
+<ul class="simple">
 <li><p><strong>Flip Curve</strong>. This parameter is available only in the N panel. If checked,
 then direction of the curve is inverted comparing to the order of path vertices
 provided. Unchecked by default.</p></li>
@@ -286,7 +314,7 @@ usually gives good results. If you do not like results, try other options.
 This parameter is available only in the N panel.</p></li>
 <li><p><strong>Taper Metric</strong>. Defines the metric to use to calculate the spline for taper
 object. Available values are:</p>
-<ul class="simple">
+<ul>
 <li><p><strong>Same as Curve</strong> - use the same metric as for main curve. In many cases,
 this algorithm may be very imprecise.</p></li>
 <li><p><strong>Orientation Axis</strong> - use coordinates of taper object’s vertices along the
@@ -310,6 +338,12 @@ have to change the default value. This parameter is available only in the N pane
 <li><p><strong>Edges</strong></p></li>
 <li><p><strong>Faces</strong></p></li>
 </ul>
+</section>
+<section id="advice">
+<h2>Advice<a class="headerlink" href="#advice" title="Permalink to this heading">¶</a></h2>
+<p>To better practice you should orient start direction of curve and taper as axis in Bevel node:</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201178116-cd3bed6b-fef2-43c5-9604-c5198d3db244.png"><img alt="https://user-images.githubusercontent.com/14288520/201178116-cd3bed6b-fef2-43c5-9604-c5198d3db244.png" src="https://user-images.githubusercontent.com/14288520/201178116-cd3bed6b-fef2-43c5-9604-c5198d3db244.png" /></a>
+<p>A behavior in other directions is not obvious.</p>
 </section>
 <section id="examples-of-usage">
 <h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>

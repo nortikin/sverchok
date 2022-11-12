@@ -37,7 +37,7 @@ Examples
 * Generator-> :doc:`Line </nodes/generator/line_mk4>`
 * Generator-> :doc:`Plane </nodes/generator/plane_mk3>`
 * List->List Main-> :doc:`List Join </nodes/list_main/join>`
-* Modifier->Modifier Change-> :doc:`Mesh Join </nodes/modifier_change/mesh_join_mk2>`
+* Modifiers->Modifier Change-> :doc:`Mesh Join </nodes/modifier_change/mesh_join_mk2>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 
 ---------
@@ -47,10 +47,10 @@ Examples
 
 * Generator-> :doc:`Cylinder </nodes/generator/cylinder_mk2>`
 * Analyzers-> :doc:`Select Mesh Elements </nodes/analyzer/mesh_select_mk2>`
+* Modifiers->Modifier Change-> :doc:`Mask Vertices </nodes/modifier_change/vertices_mask>`
 * List-> :doc:`List Mask (Out) </nodes/list_masks/mask>`
-* NOT: Logic-> :doc:`Logic Functions </nodes/logic/logic_node>`
-* Modifier->Modifier Change-> :doc:`Mask Vertices </nodes/modifier_change/vertices_mask>`
 * List->List Main-> :doc:`List Decompose </nodes/list_main/decompose>`
+* NOT: Logic-> :doc:`Logic Functions </nodes/logic/logic_node>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 
 Notes

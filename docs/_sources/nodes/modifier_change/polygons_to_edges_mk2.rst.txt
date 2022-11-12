@@ -36,8 +36,8 @@ In the N-Panel (and on the right-click menu) you can find:
 Examples
 --------
 
-.. image:: https://user-images.githubusercontent.com/14288520/200010424-48acc8ef-1522-471f-9b2d-cd7009e8bb49.png
-  :target: https://user-images.githubusercontent.com/14288520/200010424-48acc8ef-1522-471f-9b2d-cd7009e8bb49.png
+.. image:: https://user-images.githubusercontent.com/14288520/201473890-64aad2fc-bae9-4dc8-a792-70530a34f444.png
+  :target: https://user-images.githubusercontent.com/14288520/201473890-64aad2fc-bae9-4dc8-a792-70530a34f444.png
 
 * Generator-> :doc:`Box </nodes/generator/box_mk2>`
 * CAD-> :doc:`Inset Special </nodes/CAD/inset_special_mk2>`

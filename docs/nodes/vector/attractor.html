@@ -70,6 +70,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#outputs">Outputs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#see-also">See also</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#examples-of-usage">Examples of usage</a></li>
 </ul>
 </li>
@@ -175,9 +176,9 @@ vertex.</p></li>
 <section id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following parameters:</p>
-<ul>
-<li><p><strong>Attractor type</strong>. Selects form of used attractor. Available values are:</p>
 <ul class="simple">
+<li><p><strong>Attractor type</strong>. Selects form of used attractor. Available values are:</p>
+<ul>
 <li><p><strong>Point</strong>. Default value. In simple case, attractor is just one point
 specified in <strong>Center</strong> input. Several points can be passed in that input;
 the method of attraction vector calculation in this case is controlled by
@@ -188,16 +189,15 @@ this line (<strong>Center</strong> input) and directing vector (<strong>Directio
 (<strong>Center</strong> input) and normal vector (<strong>Direction</strong> input).</p></li>
 </ul>
 </li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200179955-7dfe5db7-5c36-4d3a-b27e-f42f89b6850a.png"><img alt="https://user-images.githubusercontent.com/14288520/200179955-7dfe5db7-5c36-4d3a-b27e-f42f89b6850a.png" src="https://user-images.githubusercontent.com/14288520/200179955-7dfe5db7-5c36-4d3a-b27e-f42f89b6850a.png" /></a>
+<ul>
 <li><p><strong>Points mode</strong>. This defines how attraction vectors are calculated in case
 several points are provided as attraction centers. The available modes are:</p>
 <ul class="simple">
 <li><p><strong>Average</strong>. Attracting force for each vertex will be calculated as
 average of attracting forces towards each attractor point.</p></li>
-<li><dl class="simple">
-<dt><strong>Nearest</strong>. Attracting force for each vertex will be calculated as the</dt><dd><p>attracting force towards the nearest of attractor points.</p>
-</dd>
-</dl>
-</li>
+<li><p><strong>Nearest</strong>. Attracting force for each vertex will be calculated as the attracting force towards the nearest of attractor points.</p></li>
 </ul>
 <blockquote>
 <div><p>The default mode is <strong>Average</strong> (which is more physically correct). This
@@ -205,23 +205,28 @@ parameter is available only if <strong>Attractor type</strong> parameter is set 
 <strong>Point</strong>.</p>
 </div></blockquote>
 </li>
-<li><p><strong>Falloff type</strong>. Used falloff law. Available values are:</p>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200180797-4ac81fe7-6a59-445a-837e-5b5ac8181541.png"><img alt="https://user-images.githubusercontent.com/14288520/200180797-4ac81fe7-6a59-445a-837e-5b5ac8181541.png" src="https://user-images.githubusercontent.com/14288520/200180797-4ac81fe7-6a59-445a-837e-5b5ac8181541.png" /></a>
 <ul class="simple">
+<li><p><strong>Falloff type</strong>. Used falloff law. Available values are:</p>
+<ul>
 <li><p><strong>Inverse</strong>. Falloff law is 1/R, where R is distance from vertex to attractor.</p></li>
-<li><p><strong>Inverse square</strong>. Falloff law is 1/R^2. This law is most common in
-physics (gravity and electromagnetizm), so this is the default value.</p></li>
+<li><p><strong>Inverse square</strong>. Falloff law is 1/R^2. This law is most common in physics (gravity and electromagnetizm), so this is the default value.</p></li>
 <li><p><strong>Inverse cubic</strong>. Falloff law is 1/R^3.</p></li>
-<li><p><strong>Inverse exponent</strong>. Falloff law is <cite>exp(- C * R)</cite>, where R is distance
-from vertex to attractor, and C is value from <strong>Coefficient</strong> input.</p></li>
-<li><p><strong>Gauss</strong>. Falloff law is <cite>exp(- C * R^2 / 2)</cite>, where R is distance from
-vertex to attractor, and C is value from <strong>Coefficient</strong> input.</p></li>
+<li><p><strong>Inverse exponent</strong>. Falloff law is <cite>exp(- C * R)</cite>, where R is distance from vertex to attractor, and C is value from <strong>Coefficient</strong> input.</p></li>
+<li><p><strong>Gauss</strong>. Falloff law is <cite>exp(- C * R^2 / 2)</cite>, where R is distance fromcvertex to attractor, and C is value from <strong>Coefficient</strong> input.</p></li>
 </ul>
 </li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200181691-32baefab-07c5-4117-b2b6-72ebc276f62b.png"><img alt="https://user-images.githubusercontent.com/14288520/200181691-32baefab-07c5-4117-b2b6-72ebc276f62b.png" src="https://user-images.githubusercontent.com/14288520/200181691-32baefab-07c5-4117-b2b6-72ebc276f62b.png" /></a>
+<ul class="simple">
 <li><p><strong>Clamp</strong>. Whether to restrict output vector length with distance from vertex
 to attractor. If not checked, then attraction vector length can be very big
 for vertices close to attractor, depending on selected falloff type. Default
 value is True.</p></li>
 </ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200178995-517be50c-12bb-4e28-8188-66d608dba774.png"><img alt="https://user-images.githubusercontent.com/14288520/200178995-517be50c-12bb-4e28-8188-66d608dba774.png" src="https://user-images.githubusercontent.com/14288520/200178995-517be50c-12bb-4e28-8188-66d608dba774.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200178869-bb8de78b-861f-4073-8e1d-13f56e8c6561.png"><img alt="https://user-images.githubusercontent.com/14288520/200178869-bb8de78b-861f-4073-8e1d-13f56e8c6561.png" src="https://user-images.githubusercontent.com/14288520/200178869-bb8de78b-861f-4073-8e1d-13f56e8c6561.png" /></a>
 </section>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
@@ -230,6 +235,12 @@ value is True.</p></li>
 <li><p><strong>Vectors</strong>. Calculated attraction force vectors.</p></li>
 <li><p><strong>Directions</strong>. Unit vectors in the same directions as attracting force.</p></li>
 <li><p><strong>Coeffs</strong>. Lengths of calculated attraction force vectors.</p></li>
+</ul>
+</section>
+<section id="see-also">
+<h2>See also<a class="headerlink" href="#see-also" title="Permalink to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>Analyzers-&gt; <a class="reference internal" href="../analyzer/proportional.html"><span class="doc">Proportional Edit Falloff</span></a></p></li>
 </ul>
 </section>
 <section id="examples-of-usage">
@@ -264,7 +275,7 @@ value is True.</p></li>
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
 <li><p>Vector-&gt; <a class="reference internal" href="vector_in.html"><span class="doc">Vector In</span></a></p></li>
 <li><p>Analyzers-&gt; <a class="reference internal" href="../analyzer/component_analyzer.html"><span class="doc">Component Analyzer</span></a></p></li>
-<li><p>Modifier-&gt;Modifier Change-&gt; <a class="reference internal" href="../modifier_change/extrude_separate.html"><span class="doc">Extrude Separate Faces</span></a></p></li>
+<li><p>Modifiers-&gt;Modifier Change-&gt; <a class="reference internal" href="../modifier_change/extrude_separate.html"><span class="doc">Extrude Separate Faces</span></a></p></li>
 </ul>
 <p>Torus attracted by a line along X axis:</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189442343-9454a24b-796f-4cb7-ade8-82f61bcc16bc.png"><img alt="https://user-images.githubusercontent.com/14288520/189442343-9454a24b-796f-4cb7-ade8-82f61bcc16bc.png" src="https://user-images.githubusercontent.com/14288520/189442343-9454a24b-796f-4cb7-ade8-82f61bcc16bc.png" /></a>

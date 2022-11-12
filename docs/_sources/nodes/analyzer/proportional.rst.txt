@@ -44,6 +44,13 @@ Outputs
 
 This node has one output: **Coeffs**. It contains one real value for each input vertex. All values are between 0.0 and 1.0.
 
+**See also**:
+
+See also
+--------
+
+* Vector-> :doc:`Vector Attraction </nodes/vector/attractor>`
+
 Examples of usage
 -----------------
 
@@ -79,7 +86,7 @@ Example of usage with Extrude Separate node:
 * Analyzers-> :doc:`Origins </nodes/analyzer/origins>`
 * Analyzers-> :doc:`Select Mesh Elements </nodes/analyzer/mesh_select_mk2>`
 * Analyzers-> :doc:`Points Inside Mesh </nodes/analyzer/points_inside_mesh>`
-* Modifier->Modifier Change-> :doc:`Extrude Separate Faces </nodes/modifier_change/extrude_separate>`
+* Modifiers->Modifier Change-> :doc:`Extrude Separate Faces </nodes/modifier_change/extrude_separate>`
 * Number-> :doc:`A Number </nodes/number/numbers>`
 * SCALAR: Number-> :doc:`Scalar Math </nodes/number/scalar_mk4>`
 * Vector-> :doc:`Vector In </nodes/vector/vector_in>`

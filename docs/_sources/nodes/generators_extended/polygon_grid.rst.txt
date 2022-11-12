@@ -102,7 +102,7 @@ Example of usage
 
 * Vector-> :doc:`Vector Attraction </nodes/vector/attractor>`
 * Transform-> :doc:`Matrix Apply (verts) </nodes/transforms/apply>`
-* Modifier->Modifier Change-> :doc:`Delete Loose </nodes/modifier_change/delete_loose>`
+* Modifiers->Modifier Change-> :doc:`Delete Loose </nodes/modifier_change/delete_loose>`
 * Modifiers->Modifier Make-> :doc:`Wireframe </nodes/modifier_make/wireframe>`
 * Number-> :doc:`Random Num Gen </nodes/number/random_num_gen>`
 * ADD: Vector-> :doc:`Vector Math </nodes/vector/math_mk3>`
@@ -115,9 +115,9 @@ Example of usage
 .. image:: https://user-images.githubusercontent.com/14288520/190918897-10e98029-4367-4f44-895d-cab694f9b6b6.png
   :target: https://user-images.githubusercontent.com/14288520/190918897-10e98029-4367-4f44-895d-cab694f9b6b6.png
 
-* Modifier->Modifier Change-> :doc:`Delete Loose </nodes/modifier_change/delete_loose>`
 * CAD-> :doc:`Bevel </nodes/modifier_change/bevel>`
-* Modifier->Modifier Change-> :doc:`Polygon to Edges </nodes/modifier_change/polygons_to_edges_mk2>`
+* Modifiers->Modifier Change-> :doc:`Delete Loose </nodes/modifier_change/delete_loose>`
+* Modifiers->Modifier Change-> :doc:`Polygon to Edges </nodes/modifier_change/polygons_to_edges_mk2>`
 * Beta Nodes-> :doc:`Extrude Separate Faces Light </nodes/modifier_change/extrude_separate_lite>`
 * Number-> :doc:`Random Num Gen </nodes/number/random_num_gen>`
 * MUL X, Y: Number-> :doc:`Scalar Math </nodes/number/scalar_mk4>`

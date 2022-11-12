@@ -4,8 +4,8 @@ Viewer Draw
 .. image:: https://user-images.githubusercontent.com/14288520/189978461-92a31395-6702-4623-8904-952b96f4d8d3.png
   :target: https://user-images.githubusercontent.com/14288520/189978461-92a31395-6702-4623-8904-952b96f4d8d3.png
 
-.. image:: https://user-images.githubusercontent.com/14288520/190861303-a38c5dc0-d8c8-47b8-ac19-d824c7709021.png
-  :target: https://user-images.githubusercontent.com/14288520/190861303-a38c5dc0-d8c8-47b8-ac19-d824c7709021.png
+.. image:: https://user-images.githubusercontent.com/14288520/201473680-b993c305-99b4-4eea-8af4-93baf8a7329b.png
+  :target: https://user-images.githubusercontent.com/14288520/201473680-b993c305-99b4-4eea-8af4-93baf8a7329b.png
 
 Functionality
 -------------

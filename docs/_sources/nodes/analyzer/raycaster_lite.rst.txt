@@ -87,7 +87,7 @@ Usage
 * CAD-> :doc:`Intersect Edges </nodes/CAD/edges_intersect_mk3>`
 * CAD-> :doc:`Planar Edgenet to Faces </nodes/modifier_change/planar_edgenet_to_polygons>`
 * Analyzer-> :doc:`Mesh Filter </nodes/analyzer/mesh_filter>`
-* Modifier->Modifier Change-> :doc:`Delete Loose </nodes/modifier_change/delete_loose>`
+* Modifiers->Modifier Change-> :doc:`Delete Loose </nodes/modifier_change/delete_loose>`
 * Analyzers-> :doc:`Distance Point Plane </nodes/analyzer/distance_point_plane>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 

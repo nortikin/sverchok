@@ -151,45 +151,76 @@
              
   <section id="solidify">
 <h1>Solidify<a class="headerlink" href="#solidify" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201440855-0564d90d-6654-42d9-980c-2f856b57d4f0.png"><img alt="https://user-images.githubusercontent.com/14288520/201440855-0564d90d-6654-42d9-980c-2f856b57d4f0.png" src="https://user-images.githubusercontent.com/14288520/201440855-0564d90d-6654-42d9-980c-2f856b57d4f0.png" /></a>
 <p>Extrudes a mesh along its normal. Used usually to get a thick mesh from a planar mesh.</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201441550-c1a3bb63-693d-48b3-a8f1-8144296f4c12.png"><img alt="https://user-images.githubusercontent.com/14288520/201441550-c1a3bb63-693d-48b3-a8f1-8144296f4c12.png" src="https://user-images.githubusercontent.com/14288520/201441550-c1a3bb63-693d-48b3-a8f1-8144296f4c12.png" /></a>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
-<p><strong>Vertices</strong>: Mesh Vertices (mandatory)</p>
-<p><strong>Edges</strong>: Mesh Edges (optional, if you want to output edges makes the algorithm faster)</p>
-<p><strong>Polygons</strong>: Mesh Polygons (mandatory)</p>
-<p><strong>Thickness</strong>: Distance to extrude</p>
-<p><strong>Offset</strong>: Relative offset from original mesh</p>
+<ul class="simple">
+<li><p><strong>Vertices</strong>: Mesh Vertices (mandatory)</p></li>
+<li><p><strong>Edges</strong>: Mesh Edges (optional, if you want to output edges makes the algorithm faster)</p></li>
+<li><p><strong>Polygons</strong>: Mesh Polygons (mandatory)</p></li>
+<li><p><strong>Thickness</strong>: Distance to extrude</p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201442046-b93db529-8e17-47b7-995b-82acf469f27c.gif"><img alt="https://user-images.githubusercontent.com/14288520/201442046-b93db529-8e17-47b7-995b-82acf469f27c.gif" src="https://user-images.githubusercontent.com/14288520/201442046-b93db529-8e17-47b7-995b-82acf469f27c.gif" /></a>
+<ul class="simple">
+<li><p><strong>Offset</strong>: Relative offset from original mesh [-1.0; 1.0]</p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201442148-7ef38073-ee87-48a1-98ed-6a247687a0db.gif"><img alt="https://user-images.githubusercontent.com/14288520/201442148-7ef38073-ee87-48a1-98ed-6a247687a0db.gif" src="https://user-images.githubusercontent.com/14288520/201442148-7ef38073-ee87-48a1-98ed-6a247687a0db.gif" /></a>
 </section>
 <section id="options">
 <h2>Options<a class="headerlink" href="#options" title="Permalink to this heading">¶</a></h2>
-<p><strong>Even</strong>: adjust thickness in sharp corners to have a even thickness.</p>
-<dl class="simple">
-<dt><strong>Implementation</strong>: Algorithm used to compute.</dt><dd><ul class="simple">
+<ul class="simple">
+<li><p><strong>Even</strong>: adjust thickness in sharp corners to have a even thickness.</p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201442415-7e840cc4-af94-43b0-b4ee-0cf93c715832.gif"><img alt="https://user-images.githubusercontent.com/14288520/201442415-7e840cc4-af94-43b0-b4ee-0cf93c715832.gif" src="https://user-images.githubusercontent.com/14288520/201442415-7e840cc4-af94-43b0-b4ee-0cf93c715832.gif" /></a>
+<ul class="simple">
+<li><p><strong>Implementation</strong>: Algorithm used to compute.</p>
+<ul>
 <li><p>Sverchok: Faster all with more options</p></li>
 <li><p>Blender: Old method, left because it may differ in some corner cases</p></li>
 </ul>
-</dd>
-</dl>
+</li>
+</ul>
 </section>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
-<p><strong>Vertices</strong>, <strong>Edges</strong>, <strong>Polygons</strong>: Modified mesh</p>
-<p><strong>New Pols</strong>: New opposite polygons (in the same order as the originals)</p>
-<p><strong>Rim Pols</strong>: Side Polygons created in the boundaries of the mesh</p>
-<dl class="simple">
-<dt><strong>Pols Group</strong>: Outputs a list to mask polygons from the modified mesh,</dt><dd><p>0 = Original Polygon
-1 = New Polygon
-2 = Rim Polygon</p>
-</dd>
-</dl>
-<p><strong>New Verts Mask</strong>: To split old vertices form new vertices</p>
+<ul class="simple">
+<li><p><strong>Vertices</strong>, <strong>Edges</strong>, <strong>Polygons</strong>: Modified mesh</p></li>
+<li><p><strong>New Pols</strong>: New opposite polygons (in the same order as the originals)</p></li>
+<li><p><strong>Rim Pols</strong>: Side Polygons created in the boundaries of the mesh</p></li>
+<li><p><strong>Pols Group</strong>: Outputs a list to mask polygons from the modified mesh,</p>
+<ul>
+<li><p>0 = Original Polygon</p></li>
+<li><p>1 = New Polygon</p></li>
+<li><p>2 = Rim Polygon</p></li>
+</ul>
+</li>
+<li><p><strong>New Verts Mask</strong>: To split old vertices form new vertices</p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201444252-0c1d3bef-78c5-4527-8870-32c3ae2cb30e.png"><img alt="https://user-images.githubusercontent.com/14288520/201444252-0c1d3bef-78c5-4527-8870-32c3ae2cb30e.png" src="https://user-images.githubusercontent.com/14288520/201444252-0c1d3bef-78c5-4527-8870-32c3ae2cb30e.png" /></a>
+<ul class="simple">
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+</ul>
 </section>
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
 <p>Using variable thickness:</p>
-<img alt="https://user-images.githubusercontent.com/10011941/105902112-80bbaa80-601e-11eb-902b-5bd3797f257d.png" src="https://user-images.githubusercontent.com/10011941/105902112-80bbaa80-601e-11eb-902b-5bd3797f257d.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201444780-ff1a1ac7-c6ec-4215-8638-6f40bd38db81.png"><img alt="https://user-images.githubusercontent.com/14288520/201444780-ff1a1ac7-c6ec-4215-8638-6f40bd38db81.png" src="https://user-images.githubusercontent.com/14288520/201444780-ff1a1ac7-c6ec-4215-8638-6f40bd38db81.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/noise_mk3.html"><span class="doc">Vector Noise</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/range_map.html"><span class="doc">Map Range</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>Splitting Data: New Vertices in white, Old vertices in black, New Polys in grey, Rim Polys in white…</p>
-<img alt="https://user-images.githubusercontent.com/10011941/106249827-1fa8f800-6213-11eb-9e77-770f12d65e03.png" src="https://user-images.githubusercontent.com/10011941/106249827-1fa8f800-6213-11eb-9e77-770f12d65e03.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201445261-ebbee6d5-8e1a-4f85-a9fa-f05123d5efcd.png"><img alt="https://user-images.githubusercontent.com/14288520/201445261-ebbee6d5-8e1a-4f85-a9fa-f05123d5efcd.png" src="https://user-images.githubusercontent.com/14288520/201445261-ebbee6d5-8e1a-4f85-a9fa-f05123d5efcd.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/cylinder_mk2.html"><span class="doc">Cylinder</span></a></p></li>
+<li><p>DIV: Number-&gt; <a class="reference internal" href="../number/scalar_mk4.html"><span class="doc">Scalar Math</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 </section>
 </section>
 
