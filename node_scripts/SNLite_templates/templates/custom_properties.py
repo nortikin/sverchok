@@ -41,11 +41,11 @@ color_out = [[tuple(self['my_color'])]]
 str_out = [[self['my_string']]]
 
 if self['my_object'] in bpy.data.objects.keys():
-    obj_out = [[bpy.data.objects[self['my_object']]]]
+    obj_out = [bpy.data.objects[self['my_object']]]
 
 if self['my_collection'] in bpy.data.collections.keys():
     coll_objs = [obj for obj in bpy.data.collections[self['my_collection']].objects.values()]
-    coll_out = [[coll_objs]]
+    coll_out = coll_objs
 
 # UI
 def ui(self, context, layout):
