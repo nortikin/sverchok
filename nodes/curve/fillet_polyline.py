@@ -150,9 +150,12 @@ class SvFilletPolylineNode(SverchCustomTreeNode, bpy.types.Node):
         limit_radiuses = []
         for v1,v2,v3,r,f in zip(vertices,vertices[1:],vertices[2:],radiuses,factors):
             v1,v2,v3 = np.array(v1), np.array(v2), np.array(v3)
-            d1,d2 = np.linalg.norm(v2-v1),np.linalg.norm(v3-v2)
-            min_ = min([float(d1),float(d2)])*f/2
-            r = min([r,min_])
+            vector1,vector2 = v1-v2,v3-v2
+            d1,d2 = np.linalg.norm(vector1),np.linalg.norm(vector2)
+            min_length = d1 if d1<d2 else d2
+            angle = np.arccos(np.dot(vector1,vector2)/(d1*d2))
+            max_r = float(np.tan(angle/2)*min_length*f/2)
+            r = max_r if r>max_r else r
             limit_radiuses.append(r)
         return limit_radiuses
 
