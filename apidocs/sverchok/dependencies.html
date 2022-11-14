@@ -36,6 +36,7 @@ else:
     from scipy.optimize import minimize_scalar
     ...
 </code></pre>
+<p>todo: Create dependencies.txt file and import modules from there</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -62,6 +63,8 @@ instead of actual module, so that one can execute another version of code:
     else:
         from scipy.optimize import minimize_scalar
         ...
+
+todo: Create dependencies.txt file and import modules from there
 &#34;&#34;&#34;
 
 import logging
@@ -82,20 +85,22 @@ class SvDependency():
     &#34;&#34;&#34;
     Definition of external dependency package.
     &#34;&#34;&#34;
-    def __init__(self, package, url, module=None, message=None):
+    def __init__(self, package, url, module=None):
         &#34;&#34;&#34;
         Args:
             package: name of package
             url: home URL of the package
             module: main package module object
-            message: message about this dependency, to be displayed in settings
-                dialog and in logs
         &#34;&#34;&#34;
         self.package = package
         self.module = module
-        self.message = message
         self.url = url
         self.pip_installable = False
+
+    @property
+    def message(self):
+        return f&#34;{self.package} package is {&#39;&#39; if self.module else &#39;not &#39;}available&#34;
+
 
 &#34;&#34;&#34;
 Dictionary with Sverchok dependencies
@@ -137,10 +142,8 @@ def draw_message(box, package, dependencies=None):
 pip_d = sv_dependencies[&#34;pip&#34;] = SvDependency(&#34;pip&#34;, &#34;https://pypi.org/project/pip/&#34;)
 try:
     import pip
-    pip_d.message = &#34;PIP is available&#34;
     pip_d.module = pip
 except ImportError:
-    pip_d.message = &#34;sv: PIP is not installed&#34;
     debug(pip_d.message)
     pip = None
 
@@ -158,7 +161,6 @@ scipy_d = sv_dependencies[&#34;scipy&#34;] = SvDependency(&#34;scipy&#34;, &#34;
 scipy_d.pip_installable = True
 try:
     import scipy
-    scipy_d.message = &#34;SciPy is available&#34;
     scipy_d.module = scipy
 except ImportError:
     scipy = None
@@ -167,7 +169,6 @@ geomdl_d = sv_dependencies[&#34;geomdl&#34;] = SvDependency(&#34;geomdl&#34;, &#
 geomdl_d.pip_installable = True
 try:
     import geomdl
-    geomdl_d.message = &#34;geomdl package is available&#34;
     geomdl_d.module = geomdl
 except ImportError:
     geomdl = None
@@ -176,7 +177,6 @@ skimage_d = sv_dependencies[&#34;skimage&#34;] = SvDependency(&#34;scikit-image&
 skimage_d.pip_installable = True
 try:
     import skimage
-    skimage_d.message = &#34;SciKit-Image package is available&#34;
     skimage_d.module = skimage
 except ImportError:
     skimage = None
@@ -184,7 +184,6 @@ except ImportError:
 mcubes_d = sv_dependencies[&#34;mcubes&#34;] = SvDependency(&#34;mcubes&#34;, &#34;https://github.com/pmneila/PyMCubes&#34;)
 try:
     import mcubes
-    mcubes_d.message = &#34;PyMCubes package is available&#34;
     mcubes_d.module = mcubes
 except ImportError:
     mcubes = None
@@ -193,7 +192,6 @@ circlify_d = sv_dependencies[&#34;circlify&#34;] = SvDependency(&#34;circlify&#3
 circlify_d.pip_installable = True
 try:
     import circlify
-    circlify_d.message = &#34;Circlify package is available&#34;
     circlify_d.module = circlify
 except ImportError:
     circlify = None
@@ -201,7 +199,6 @@ except ImportError:
 freecad_d = sv_dependencies[&#34;freecad&#34;] = SvDependency(&#34;FreeCAD&#34;, &#34;https://www.freecadweb.org/&#34;)
 try:
     import FreeCAD
-    freecad_d.message = &#34;FreeCAD package is available&#34;
     freecad_d.module = FreeCAD
 except ImportError:
     FreeCAD = None
@@ -210,7 +207,6 @@ cython_d = sv_dependencies[&#34;cython&#34;] = SvDependency(&#34;Cython&#34;, &#
 cython_d.pip_installable = True
 try:
     import Cython
-    cython_d.message = &#34;Cython package is available&#34;
     cython_d.module = Cython
 except ImportError:
     Cython = None
@@ -219,7 +215,6 @@ numba_d = sv_dependencies[&#34;numba&#34;] = SvDependency(&#34;Numba&#34;, &#34;
 numba_d.pip_installable = True
 try:
     import numba
-    numba_d.message = &#34;Numba package is available&#34;
     numba_d.module = numba
 except ImportError:
     numba = None
@@ -228,7 +223,6 @@ pyOpenSubdiv_d = sv_dependencies[&#34;pyOpenSubdiv&#34;] = SvDependency(&#34;pyO
 pyOpenSubdiv_d.pip_installable = True
 try:
     import pyOpenSubdiv
-    pyOpenSubdiv_d.message = &#34;pyOpenSubdiv package is available&#34;
     pyOpenSubdiv_d.module = pyOpenSubdiv
 except ImportError:
     pyOpenSubdiv = None 
@@ -312,7 +306,7 @@ whether the dependency is available or not.</p></div>
 <dl>
 <dt id="sverchok.dependencies.SvDependency"><code class="flex name class">
 <span>class <span class="ident">SvDependency</span></span>
-<span>(</span><span>package, url, module=None, message=None)</span>
+<span>(</span><span>package, url, module=None)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Definition of external dependency package.</p>
@@ -324,9 +318,6 @@ whether the dependency is available or not.</p></div>
 <dd>home URL of the package</dd>
 <dt><strong><code>module</code></strong></dt>
 <dd>main package module object</dd>
-<dt><strong><code>message</code></strong></dt>
-<dd>message about this dependency, to be displayed in settings
-dialog and in logs</dd>
 </dl></div>
 <details class="source">
 <summary>
@@ -336,21 +327,37 @@ dialog and in logs</dd>
     &#34;&#34;&#34;
     Definition of external dependency package.
     &#34;&#34;&#34;
-    def __init__(self, package, url, module=None, message=None):
+    def __init__(self, package, url, module=None):
         &#34;&#34;&#34;
         Args:
             package: name of package
             url: home URL of the package
             module: main package module object
-            message: message about this dependency, to be displayed in settings
-                dialog and in logs
         &#34;&#34;&#34;
         self.package = package
         self.module = module
-        self.message = message
         self.url = url
-        self.pip_installable = False</code></pre>
+        self.pip_installable = False
+
+    @property
+    def message(self):
+        return f&#34;{self.package} package is {&#39;&#39; if self.module else &#39;not &#39;}available&#34;</code></pre>
 </details>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sverchok.dependencies.SvDependency.message"><code class="name">var <span class="ident">message</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def message(self):
+    return f&#34;{self.package} package is {&#39;&#39; if self.module else &#39;not &#39;}available&#34;</code></pre>
+</details>
+</dd>
+</dl>
 </dd>
 </dl>
 </section>
@@ -371,6 +378,9 @@ dialog and in logs</dd>
 <ul>
 <li>
 <h4><code><a title="sverchok.dependencies.SvDependency" href="#sverchok.dependencies.SvDependency">SvDependency</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.dependencies.SvDependency.message" href="#sverchok.dependencies.SvDependency.message">message</a></code></li>
+</ul>
 </li>
 </ul>
 </li>
