@@ -1,6 +1,9 @@
 Populate Surface
 ================
 
+.. image:: https://user-images.githubusercontent.com/14288520/201608736-28204c15-b113-4206-bcd6-13c98fdff4e9.png
+  :target: https://user-images.githubusercontent.com/14288520/201608736-28204c15-b113-4206-bcd6-13c98fdff4e9.png
+
 Functionality
 -------------
 

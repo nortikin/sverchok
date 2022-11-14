@@ -28,6 +28,7 @@ class SvPopulateSurfaceMk2Node(SverchCustomTreeNode, bpy.types.Node):
     threshold : FloatProperty(
             name = "Threshold",
             default = 0.5,
+            description="The node will not generate points in areas where the value of scalar field is less than this value",
             update = updateNode)
 
     field_min : FloatProperty(
@@ -40,12 +41,13 @@ class SvPopulateSurfaceMk2Node(SverchCustomTreeNode, bpy.types.Node):
             default = 1.0,
             update = updateNode)
 
-    seed: IntProperty(default=0, name='Seed', update=updateNode)
+    seed: IntProperty(default=0, name='Seed', description="Random seed", update=updateNode)
 
     count : IntProperty(
             name = "Count",
             default = 50,
             min = 1,
+            description="The number of points to be generated",
             update = updateNode)
 
     def update_sockets(self, context):
@@ -59,12 +61,14 @@ class SvPopulateSurfaceMk2Node(SverchCustomTreeNode, bpy.types.Node):
     proportional : BoolProperty(
             name = "Proportional",
             default = False,
+            description="If checked, then the points density will be distributed proportionally to the values of scalar field. Otherwise, the points will be uniformly distributed in the area where the value of scalar field exceeds threshold",
             update = update_sockets)
 
     min_r : FloatProperty(
             name = "Min Distance",
             default = 0.5,
             min = 0,
+            description="Minimum allowable distance between generated points (0 - no restriction)",
             update = updateNode)
 
     distance_modes = [
