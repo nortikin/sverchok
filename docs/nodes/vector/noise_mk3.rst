@@ -90,7 +90,7 @@ Using noise to mask a mesh
   :target: https://user-images.githubusercontent.com/14288520/189533504-00a43a7f-3d60-4739-92d4-e5225dc4c779.png
 
 * Generator-> :doc:`Plane </nodes/generator/plane_mk3>`
-* Modifier->Modifier Change-> :doc:`Mask Vertices </nodes/modifier_change/vertices_mask>`
+* Modifiers->Modifier Change-> :doc:`Mask Vertices </nodes/modifier_change/vertices_mask>`
 * Selected Statistics: List->List Main-> :doc:`List Statistics </nodes/list_main/statistics>`
 * BIG: Logic-> :doc:`Logic Functions </nodes/logic/logic_node>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`

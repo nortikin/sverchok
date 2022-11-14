@@ -77,7 +77,7 @@ Examples
     :target: https://user-images.githubusercontent.com/28003269/59979724-514feb00-95fc-11e9-9f59-cbf2df8832c7.png
 
 * Transform-> :doc:`Move </nodes/transforms/move_mk3>`
-* Modifier->Modifier Change-> :doc:`Delete Loose </nodes/modifier_change/delete_loose>`
+* Modifiers->Modifier Change-> :doc:`Delete Loose </nodes/modifier_change/delete_loose>`
 * ADD: Vector-> :doc:`Vector Math </nodes/vector/math_mk3>`
 * List->List Struct-> :doc:`List Item </nodes/list_struct/item>`
 * Scene-> :doc:`Objects In Lite </nodes/scene/objects_in_lite>`

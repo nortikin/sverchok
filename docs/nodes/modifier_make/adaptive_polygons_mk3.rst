@@ -1,6 +1,9 @@
 Adaptive Polygons Mk2
 =====================
 
+.. image:: https://user-images.githubusercontent.com/14288520/201205493-73992390-e046-405a-8a51-c2946588b294.png
+  :target: https://user-images.githubusercontent.com/14288520/201205493-73992390-e046-405a-8a51-c2946588b294.png
+
 Functionality
 -------------
 

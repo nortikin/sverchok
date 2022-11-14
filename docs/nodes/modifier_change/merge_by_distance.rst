@@ -79,7 +79,7 @@ Examples of usage
 * Generator-> :doc:`Torus </nodes/generator/torus_mk2>`
 * Analyzers-> :doc:`Select Mesh Elements </nodes/analyzer/mesh_select_mk2>`
 * Analyzers-> :doc:`Proportional Edit Falloff </nodes/analyzer/proportional>`
-* Modifier->Modifier Change-> :doc:`Smooth Vertices </nodes/modifier_change/smooth>`
+* Modifiers->Modifier Change-> :doc:`Smooth Vertices </nodes/modifier_change/smooth>`
 * Number-> :doc:`A Number </nodes/number/numbers>`
 * Vector-> :doc:`Vector Lerp </nodes/vector/lerp>`
 * Vector-> :doc:`Vector Polar Input </nodes/vector/vector_polar_in>`

@@ -123,7 +123,7 @@ One can generate a hyperbola (2-branched curve) and then use it to generate 1-sh
 .. image:: https://user-images.githubusercontent.com/14288520/191035609-4353b6d8-f1f8-4c60-8cb6-f9b5ba25103f.png
   :target: https://user-images.githubusercontent.com/14288520/191035609-4353b6d8-f1f8-4c60-8cb6-f9b5ba25103f.png
 
-* Modifier->Modifier Change-> :doc:`Mask Vertices </nodes/modifier_change/vertices_mask>`
+* Modifiers->Modifier Change-> :doc:`Mask Vertices </nodes/modifier_change/vertices_mask>`
 * CAD-> :doc:`Lathe </nodes/modifier_make/lathe>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 
@@ -132,7 +132,7 @@ or 2-sheet hyperboloid
 .. image:: https://user-images.githubusercontent.com/14288520/191035963-1cb09de2-dc4f-426a-b70a-faa3ad1dc263.png
   :target: https://user-images.githubusercontent.com/14288520/191035963-1cb09de2-dc4f-426a-b70a-faa3ad1dc263.png
 
-* Modifier->Modifier Change-> :doc:`Mask Vertices </nodes/modifier_change/vertices_mask>`
+* Modifiers->Modifier Change-> :doc:`Mask Vertices </nodes/modifier_change/vertices_mask>`
 * CAD-> :doc:`Lathe </nodes/modifier_make/lathe>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 

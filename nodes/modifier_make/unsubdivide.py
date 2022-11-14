@@ -36,7 +36,7 @@ class SvUnsubdivideNode(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
     def update_sockets(self, context):
         self.inputs['bmesh_list'].hide_safe = not self.show_bmesh_list
         self.outputs['bmesh_list'].hide_safe = not self.show_bmesh_list
-    iter: IntProperty(name='Iterations', default=1, min=1, update=updateNode)
+    iter: IntProperty(name='Iterations', default=1, min=1, description="Number of times to unsubdivide", update=updateNode)
 
     show_bmesh_list: BoolProperty(name='Show bmesh socket', default=False, update=updateNode)
 

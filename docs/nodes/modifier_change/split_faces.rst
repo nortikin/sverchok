@@ -61,7 +61,7 @@ This node has the following outputs:
 See also
 --------
 
-* Modifier->Modifier Change-> :doc:`Triangulate Mesh </nodes/modifier_change/triangulate>`
+* Modifiers->Modifier Change-> :doc:`Triangulate Mesh </nodes/modifier_change/triangulate>`
 
 Examples of usage
 -----------------

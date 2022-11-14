@@ -195,7 +195,7 @@ class SvOffsetLineNode(EdgeGeneratorLiteNode, SverchCustomTreeNode, bpy.types.No
     sv_icon = 'SV_OFFSET_LINE'
 
     offset: FloatProperty(
-        name='offset', description='distance of offset',
+        name='offset', description='Distance of offset (greater than zero. Zero will be replaced by 0.001)',
         default=0.1, update=updateNode)
 
     def sv_init(self, context):

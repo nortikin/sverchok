@@ -180,7 +180,7 @@ replay with new nodes:
 * Number-> :doc:`Map Range </nodes/number/range_map>`
 * List->List Main-> :doc:`List Math </nodes/list_main/func>`
 * Color-> :doc:`Color In </nodes/color/color_in_mk1>`
-* Modifier->Modifier Change-> :doc:`Extrude Separate Faces </nodes/modifier_change/extrude_separate>`
+* Modifiers->Modifier Change-> :doc:`Extrude Separate Faces </nodes/modifier_change/extrude_separate>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 * BPY Date-> Vertex Color MK3 (No docs)
 

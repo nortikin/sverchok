@@ -52,8 +52,8 @@ Parameters
 | Individual / Region      | switch | Switch between to modes                                                        |
 +--------------------------+--------+--------------------------------------------------------------------------------+
 
-.. image:: https://user-images.githubusercontent.com/14288520/198690674-3f61a1eb-686d-42ea-b573-d77852221cde.png
-  :target: https://user-images.githubusercontent.com/14288520/198690674-3f61a1eb-686d-42ea-b573-d77852221cde.png
+.. image:: https://user-images.githubusercontent.com/14288520/201482623-51d72d35-db63-4d5d-8a65-52e102249d2c.png
+  :target: https://user-images.githubusercontent.com/14288520/201482623-51d72d35-db63-4d5d-8a65-52e102249d2c.png
 
 N panel
 -------

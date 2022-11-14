@@ -45,32 +45,45 @@ This node has the following parameters:
     this line (**Center** input) and directing vector (**Direction** input).
   - **Plane**. Attractor is a plane, defined by a point belonging to this line
     (**Center** input) and normal vector (**Direction** input).
+
+.. image:: https://user-images.githubusercontent.com/14288520/200179955-7dfe5db7-5c36-4d3a-b27e-f42f89b6850a.png
+  :target: https://user-images.githubusercontent.com/14288520/200179955-7dfe5db7-5c36-4d3a-b27e-f42f89b6850a.png
+
 - **Points mode**. This defines how attraction vectors are calculated in case
   several points are provided as attraction centers. The available modes are:
 
   - **Average**. Attracting force for each vertex will be calculated as
     average of attracting forces towards each attractor point.
-  - **Nearest**. Attracting force for each vertex will be calculated as the
-     attracting force towards the nearest of attractor points.
+  - **Nearest**. Attracting force for each vertex will be calculated as the attracting force towards the nearest of attractor points.
 
    The default mode is **Average** (which is more physically correct). This
    parameter is available only if **Attractor type** parameter is set to
    **Point**.
+
+.. image:: https://user-images.githubusercontent.com/14288520/200180797-4ac81fe7-6a59-445a-837e-5b5ac8181541.png
+  :target: https://user-images.githubusercontent.com/14288520/200180797-4ac81fe7-6a59-445a-837e-5b5ac8181541.png
+
 - **Falloff type**. Used falloff law. Available values are:
 
   - **Inverse**. Falloff law is 1/R, where R is distance from vertex to attractor.
-  - **Inverse square**. Falloff law is 1/R^2. This law is most common in
-    physics (gravity and electromagnetizm), so this is the default value.
-    
+  - **Inverse square**. Falloff law is 1/R^2. This law is most common in physics (gravity and electromagnetizm), so this is the default value.
   - **Inverse cubic**. Falloff law is 1/R^3.
-  - **Inverse exponent**. Falloff law is `exp(- C * R)`, where R is distance
-    from vertex to attractor, and C is value from **Coefficient** input.
-  - **Gauss**. Falloff law is `exp(- C * R^2 / 2)`, where R is distance from
-    vertex to attractor, and C is value from **Coefficient** input.
+  - **Inverse exponent**. Falloff law is `exp(- C * R)`, where R is distance from vertex to attractor, and C is value from **Coefficient** input.
+  - **Gauss**. Falloff law is `exp(- C * R^2 / 2)`, where R is distance fromcvertex to attractor, and C is value from **Coefficient** input.
+
+.. image:: https://user-images.githubusercontent.com/14288520/200181691-32baefab-07c5-4117-b2b6-72ebc276f62b.png
+  :target: https://user-images.githubusercontent.com/14288520/200181691-32baefab-07c5-4117-b2b6-72ebc276f62b.png
+
 - **Clamp**. Whether to restrict output vector length with distance from vertex
   to attractor. If not checked, then attraction vector length can be very big
   for vertices close to attractor, depending on selected falloff type. Default
   value is True.
+
+.. image:: https://user-images.githubusercontent.com/14288520/200178995-517be50c-12bb-4e28-8188-66d608dba774.png
+  :target: https://user-images.githubusercontent.com/14288520/200178995-517be50c-12bb-4e28-8188-66d608dba774.png
+
+.. image:: https://user-images.githubusercontent.com/14288520/200178869-bb8de78b-861f-4073-8e1d-13f56e8c6561.png
+  :target: https://user-images.githubusercontent.com/14288520/200178869-bb8de78b-861f-4073-8e1d-13f56e8c6561.png
 
 Outputs
 -------
@@ -80,6 +93,11 @@ This node has the following outputs:
 - **Vectors**. Calculated attraction force vectors. 
 - **Directions**. Unit vectors in the same directions as attracting force.
 - **Coeffs**. Lengths of calculated attraction force vectors.
+
+See also
+--------
+
+* Analyzers-> :doc:`Proportional Edit Falloff </nodes/analyzer/proportional>`
 
 Examples of usage
 -----------------
@@ -122,7 +140,7 @@ Coefficients can be used without directions:
 * Generator-> :doc:`Plane </nodes/generator/plane_mk3>`
 * Vector-> :doc:`Vector In </nodes/vector/vector_in>`
 * Analyzers-> :doc:`Component Analyzer </nodes/analyzer/component_analyzer>`
-* Modifier->Modifier Change-> :doc:`Extrude Separate Faces </nodes/modifier_change/extrude_separate>`
+* Modifiers->Modifier Change-> :doc:`Extrude Separate Faces </nodes/modifier_change/extrude_separate>`
 
 Torus attracted by a line along X axis:
 
