@@ -20,6 +20,8 @@ instead of actual module, so that one can execute another version of code:
     else:
         from scipy.optimize import minimize_scalar
         ...
+
+todo: Create dependencies.txt file and import modules from there
 """
 
 import logging
@@ -40,20 +42,22 @@ class SvDependency():
     """
     Definition of external dependency package.
     """
-    def __init__(self, package, url, module=None, message=None):
+    def __init__(self, package, url, module=None):
         """
         Args:
             package: name of package
             url: home URL of the package
             module: main package module object
-            message: message about this dependency, to be displayed in settings
-                dialog and in logs
         """
         self.package = package
         self.module = module
-        self.message = message
         self.url = url
         self.pip_installable = False
+
+    @property
+    def message(self):
+        return f"{self.package} package is {'' if self.module else 'not '}available"
+
 
 """
 Dictionary with Sverchok dependencies
@@ -95,10 +99,8 @@ def draw_message(box, package, dependencies=None):
 pip_d = sv_dependencies["pip"] = SvDependency("pip", "https://pypi.org/project/pip/")
 try:
     import pip
-    pip_d.message = "PIP is available"
     pip_d.module = pip
 except ImportError:
-    pip_d.message = "sv: PIP is not installed"
     debug(pip_d.message)
     pip = None
 
@@ -116,7 +118,6 @@ scipy_d = sv_dependencies["scipy"] = SvDependency("scipy", "https://www.scipy.or
 scipy_d.pip_installable = True
 try:
     import scipy
-    scipy_d.message = "SciPy is available"
     scipy_d.module = scipy
 except ImportError:
     scipy = None
@@ -125,7 +126,6 @@ geomdl_d = sv_dependencies["geomdl"] = SvDependency("geomdl", "https://github.co
 geomdl_d.pip_installable = True
 try:
     import geomdl
-    geomdl_d.message = "geomdl package is available"
     geomdl_d.module = geomdl
 except ImportError:
     geomdl = None
@@ -134,7 +134,6 @@ skimage_d = sv_dependencies["skimage"] = SvDependency("scikit-image", "https://s
 skimage_d.pip_installable = True
 try:
     import skimage
-    skimage_d.message = "SciKit-Image package is available"
     skimage_d.module = skimage
 except ImportError:
     skimage = None
@@ -142,7 +141,6 @@ except ImportError:
 mcubes_d = sv_dependencies["mcubes"] = SvDependency("mcubes", "https://github.com/pmneila/PyMCubes")
 try:
     import mcubes
-    mcubes_d.message = "PyMCubes package is available"
     mcubes_d.module = mcubes
 except ImportError:
     mcubes = None
@@ -151,7 +149,6 @@ circlify_d = sv_dependencies["circlify"] = SvDependency("circlify", "https://git
 circlify_d.pip_installable = True
 try:
     import circlify
-    circlify_d.message = "Circlify package is available"
     circlify_d.module = circlify
 except ImportError:
     circlify = None
@@ -159,7 +156,6 @@ except ImportError:
 freecad_d = sv_dependencies["freecad"] = SvDependency("FreeCAD", "https://www.freecadweb.org/")
 try:
     import FreeCAD
-    freecad_d.message = "FreeCAD package is available"
     freecad_d.module = FreeCAD
 except ImportError:
     FreeCAD = None
@@ -168,7 +164,6 @@ cython_d = sv_dependencies["cython"] = SvDependency("Cython", "https://cython.or
 cython_d.pip_installable = True
 try:
     import Cython
-    cython_d.message = "Cython package is available"
     cython_d.module = Cython
 except ImportError:
     Cython = None
@@ -177,7 +172,6 @@ numba_d = sv_dependencies["numba"] = SvDependency("Numba", "https://numba.pydata
 numba_d.pip_installable = True
 try:
     import numba
-    numba_d.message = "Numba package is available"
     numba_d.module = numba
 except ImportError:
     numba = None
@@ -186,7 +180,6 @@ pyOpenSubdiv_d = sv_dependencies["pyOpenSubdiv"] = SvDependency("pyOpenSubdiv","
 pyOpenSubdiv_d.pip_installable = True
 try:
     import pyOpenSubdiv
-    pyOpenSubdiv_d.message = "pyOpenSubdiv package is available"
     pyOpenSubdiv_d.module = pyOpenSubdiv
 except ImportError:
     pyOpenSubdiv = None 
