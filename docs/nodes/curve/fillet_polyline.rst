@@ -31,7 +31,6 @@ This node has the following input:
   these points, and then will be filleted. This input is mandatory.
 * **Radius**. Fillet arc radius. This input can be provided with separate
   radius for each control point. The default value is 0.2.
-* **Factor**. The factor of the maximum radius of each fillet
 
 Parameters
 ----------
@@ -52,6 +51,7 @@ This node has the following parameters:
   parameter is only available if **Concatenate** parameter is checked.
   Unchecked by default.
 * **Cyclic**. If checked, the node will generate a cyclic (closed) curve. Unchecked by default.
+* **Clamp**. If checked, fillet will be limited to the maximum radius
 
 Outputs
 -------
