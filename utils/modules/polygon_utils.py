@@ -410,7 +410,7 @@ def pols_is_boundary(vertices, faces):
     bm = bmesh_from_pydata(vertices, [], faces, normal_update=True)
     interior, boundary, mask = Faces.process(bm, [], [])
     bm.free()
-    return mask, boundary, interior
+    return mask, interior, boundary
 
 
 def pols_edges(faces):
@@ -485,5 +485,5 @@ faces_modes_dict = {
     'Neighbor Faces':     (63, 'vp', '',   'u', pols_neighbor,         's',   'Faces', 'Faces that share a vertex with face'),
     'Adjacent Faces Idx': (64, 'p',  '',   'u', pols_adjacent_idx,     's',   'Faces Idx', 'Index of faces that share a edge with face'),
     'Neighbor Faces Idx': (65, 'vp', '',   'u', pols_neighbor_idx,     's',   'Faces Idx', 'Index of faces that share a vertex with face'),
-    'Is Boundary':        (70, 'vp', '',   '',  pols_is_boundary,      'sss', 'Mask, Boundary, Interior', 'Is the face boundary'),
+    'Is Boundary':        (70, 'vp', '',   '',  pols_is_boundary,      'sss', 'Mask, Interior, Boundary', 'Is the face boundary'),
     }
