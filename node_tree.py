@@ -26,6 +26,7 @@ a file (or probably even between files =).
 
 
 import inspect
+import sys
 import time
 from contextlib import contextmanager
 from itertools import chain, cycle
@@ -39,7 +40,6 @@ from bpy.types import NodeTree, NodeSocket
 import sverchok
 from sverchok.core.sv_custom_exceptions import SvNoDataError, DependencyError
 import sverchok.core.events as ev
-import sverchok.dependencies as sv_deps
 from sverchok.core.event_system import handle_event
 from sverchok.data_structure import classproperty, post_load_call
 from sverchok.utils import get_node_class_reference
@@ -622,8 +622,13 @@ class NodeDependencies:
     def missing_dependency(cls) -> bool:
         """Returns True if any of dependent libraries are not installed"""
         if cls._missing_dependency is None:
+            # node_module = sys.modules[cls.__module__]
+            extension_name, *_ = cls.__module__.partition('.')
+            deps_module = sys.modules.get(f"{extension_name}.dependencies")
+            if deps_module is None:
+                debug(f'Extension "{extension_name}" does node define the dependencies module')
             for dep in cls.sv_dependencies:
-                if getattr(sv_deps, dep) is None:
+                if getattr(deps_module, dep) is None:
                     cls._missing_dependency = True
                     break
             else:
