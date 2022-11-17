@@ -6,7 +6,7 @@ This page claims to define all aspects of node creation. A brief introduction
 to node creation is represented :doc:`on this page <add_new_node>`. Api
 documentation of base class of all nodes can be found
 `here <http://nortikin.github.io/sverchok/apidocs/sverchok/node_tree.html>`_.
-Also read the `Alpha/Beta Node State`_ section before creating new ndoe.
+Also read the `Alpha/Beta Node State`_ section before creating new node.
 
 The Code of a new node should be created in a separate file. The file should be placed in
 one of the available categories in the ``nodes`` folder.
@@ -576,7 +576,7 @@ There are helping functions / generators to perform data matching in
    and so they can't be recommended for use for now.
 
 .. note::
-   In future vectorization should leve the nodes area and arrive to execution
+   In future vectorization should leave the nodes area and arrive to execution
    system. In this case nodes only have to add information to sockets to give to
    execution system to know how to match data.
 
@@ -987,4 +987,4 @@ assigned to ``sv_icon`` attribute of the node class.
 
 It's recommended to mark new nodes and new version of existing node with
 *in development* state if there are doubts in robustness of the nodes. A node
-should loos the state when new Sverchok's release is introduced.
+should lose the state when new Sverchok's release is introduced.

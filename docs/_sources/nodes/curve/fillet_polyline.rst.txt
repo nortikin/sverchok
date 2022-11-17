@@ -51,6 +51,7 @@ This node has the following parameters:
   parameter is only available if **Concatenate** parameter is checked.
   Unchecked by default.
 * **Cyclic**. If checked, the node will generate a cyclic (closed) curve. Unchecked by default.
+* **Clamp**. If checked, fillet will be limited to the maximum radius
 
 Outputs
 -------
