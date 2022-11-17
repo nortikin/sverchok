@@ -49,7 +49,7 @@ registered. And un-registration is not needed because they will be reloaded
 during reloading Sverchok add-on (extensions can't be reloaded without reloading
 Sverchok)
 
-The module parses `index.yaml` file and creates tre like data structure `Category`
+The module parses `index.yaml` file and creates a tree-like data structure `Category`
 which is used for adding nodes in different areas of user interface. Also it
 contains `CallPartialMenu` which shows alternative menus by pressing 1, 2, 3, 4, 5.
 It's possible to add categories to the menus by adding `- extra_menu: menu_name`
@@ -322,7 +322,7 @@ class Category(MenuItem):
         - `'SomeNode'` - String of node `bl_idname` to define Add Node operator.
         - `{'Sub category name': [option, menu_item, ...]}` - Dictionary of
           a subcategory.
-        - `{'Operator name': [option, ...]}` - Dictionary of a custom opeartor
+        - `{'Operator name': [option, ...]}` - Dictionary of a custom operator
           to call. Options for operator call are not supported currently.
         - `{'Menu name': [option, ...]}` - Custom menu to show.
 
@@ -354,7 +354,7 @@ class Category(MenuItem):
 
         The example of format can be found in the `sverchok/index.yaml` file.
 
-        Extra_props should have keys oly from the __init__ method of `MenuItem`
+        Extra_props should have keys only from the __init__ method of `MenuItem`
         subclasses.
         """
         parsed_items = []
