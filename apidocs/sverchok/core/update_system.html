@@ -166,7 +166,7 @@ class SearchTree:
 
     def nodes_from_socket(self, socket: NodeSocket) -&gt; list[&#39;SvNode&#39;]:
         &#34;&#34;&#34;Returns linked to the given socket nodes.
-        The list will be empy if the socket is not connected.
+        The list will be empty if the socket is not connected.
         Connected input socket will always return list with one node&#34;&#34;&#34;
         if socket.is_output:
             next_socks = self._to_socks.get(socket, [])
@@ -1014,7 +1014,7 @@ compared with new one to define differences.</p></div>
 
     def nodes_from_socket(self, socket: NodeSocket) -&gt; list[&#39;SvNode&#39;]:
         &#34;&#34;&#34;Returns linked to the given socket nodes.
-        The list will be empy if the socket is not connected.
+        The list will be empty if the socket is not connected.
         Connected input socket will always return list with one node&#34;&#34;&#34;
         if socket.is_output:
             next_socks = self._to_socks.get(socket, [])
@@ -1305,7 +1305,7 @@ If socket is not connected it returns None</p></div>
 </code></dt>
 <dd>
 <div class="desc"><p>Returns linked to the given socket nodes.
-The list will be empy if the socket is not connected.
+The list will be empty if the socket is not connected.
 Connected input socket will always return list with one node</p></div>
 <details class="source">
 <summary>
@@ -1313,7 +1313,7 @@ Connected input socket will always return list with one node</p></div>
 </summary>
 <pre><code class="python">def nodes_from_socket(self, socket: NodeSocket) -&gt; list[&#39;SvNode&#39;]:
     &#34;&#34;&#34;Returns linked to the given socket nodes.
-    The list will be empy if the socket is not connected.
+    The list will be empty if the socket is not connected.
     Connected input socket will always return list with one node&#34;&#34;&#34;
     if socket.is_output:
         next_socks = self._to_socks.get(socket, [])
