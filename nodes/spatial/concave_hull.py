@@ -35,11 +35,13 @@ class SvConcaveHullNode(SverchCustomTreeNode, bpy.types.Node):
         name = "Alpha",
         min = 0,
         default = 2.0,
+        description="Alpha value for the Alpha Shape algorithm. Bigger values correspond to bigger volume of the generated mesh. If the value is too small, the mesh can be non-manifold (have holes in it)",
         update = updateNode)
 
     normals : BoolProperty(
         name = "Correct normals",
         default = True,
+        description="If checked, the node will recalculate the normals of generated mesh, so that they all point outside. Otherwise, the orientation of faces is not guaranteed",
         update = updateNode)
 
     def draw_buttons(self, context, layout):

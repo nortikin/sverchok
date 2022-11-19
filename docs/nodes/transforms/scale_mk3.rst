@@ -91,6 +91,6 @@ Deforming an icosphere into a distorted ovoid:
     :target: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/scale/scale_vectors_blender_sverchok_example_3.png
 
 * Generator-> :doc:`IcoSphere </nodes/generator/icosphere>`
-* List->List Struct-> :doc:`List Length </nodes/list_main/length>`
+* List->List Main-> :doc:`List Length </nodes/list_main/length>`
 * Number-> :doc:`Random Num Gen </nodes/number/random_num_gen>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`

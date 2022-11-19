@@ -42,6 +42,6 @@ Using the the node to place a mesh according to a base mesh vertex normals.
 * Generator-> :doc:`IcoSphere </nodes/generator/icosphere>`
 * Generator-> :doc:`NGon </nodes/generator/ngon>`
 * Analyzers-> :doc:`Component Analyzer </nodes/analyzer/component_analyzer>`
-* List->List Struct-> :doc:`List Length </nodes/list_main/length>`
+* List->List Main-> :doc:`List Length </nodes/list_main/length>`
 * Number-> :doc:`Random Num Gen </nodes/number/random_num_gen>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`

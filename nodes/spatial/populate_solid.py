@@ -59,29 +59,34 @@ class SvPopulateSolidMk2Node(SverchCustomTreeNode, bpy.types.Node):
     threshold : FloatProperty(
             name = "Threshold",
             default = 0.5,
+            description="The node will not generate points in areas where the value of scalar field is less than this value",
             update = updateNode)
 
     field_min : FloatProperty(
             name = "Field Minimum",
             default = 0.0,
+            description="Minimum value of scalar field reached within the area defined by Bounds input. This input is used to define the probability of vertices generation at certain points",
             update = updateNode)
 
     field_max : FloatProperty(
             name = "Field Maximum",
             default = 1.0,
+            description="Maximum value of scalar field reached within the area defined by Bounds input. This input is used to define the probability of vertices generation at certain points",
             update = updateNode)
 
-    seed: IntProperty(default=0, name='Seed', update=updateNode)
+    seed: IntProperty(default=0, name='Seed', description="Random seed", update=updateNode)
 
     count : IntProperty(
             name = "Count",
             default = 50,
             min = 1,
+            description="The number of points to be generated",
             update = updateNode)
 
     proportional : BoolProperty(
             name = "Proportional",
             default = False,
+            description="If checked, then the points density will be distributed proportionally to the values of scalar field. Otherwise, the points will be uniformly distributed in the area where the value of scalar field exceeds threshold",
             update = update_sockets)
 
     min_r : FloatProperty(
@@ -95,6 +100,7 @@ class SvPopulateSolidMk2Node(SverchCustomTreeNode, bpy.types.Node):
         name="Accuracy",
         default=5,
         min=1,
+        description="This defines the accuracy of defining whether the point lies on the surface of the body. The higher the value, the more precise this process is",
         update=updateNode)
 
     in_surface: BoolProperty(

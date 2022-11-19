@@ -49,11 +49,13 @@ class SvVoronoiOnMeshNode(SverchCustomTreeNode, bpy.types.Node):
         name = "Spacing",
         default = 0.0,
         min = 0.0,
+        description="Percent of space to leave between generated fragment meshes",
         update=updateNode)
 
     normals : BoolProperty(
         name = "Correct normals",
         default = True,
+        description="Make sure that all normals of generated meshes point outside",
         update = updateNode)
 
     def update_sockets(self, context):

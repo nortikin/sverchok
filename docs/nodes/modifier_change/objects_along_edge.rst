@@ -201,7 +201,7 @@ Examples of usage
 * Generator-> :doc:`Suzanne </nodes/generator/suzanne>`
 * Generator->Generators Extended :doc:`Torus Knot </nodes/generators_extended/torus_knot_mk2>`
 * Number-> :doc:`Number Range </nodes/number/number_range>`
-* List->List Struct-> :doc:`List Length </nodes/list_main/length>`
+* List->List Main-> :doc:`List Length </nodes/list_main/length>`
 * Color-> :doc:`Color Ramp </nodes/color/color_ramp>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 * Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
@@ -238,7 +238,7 @@ Complex object duplicated along circle:
 * Generator-> :doc:`Box </nodes/generator/box_mk2>`
 * Generator->Generators Extended :doc:`Torus Knot </nodes/generators_extended/torus_knot_mk2>`
 * Number-> :doc:`List Input </nodes/number/list_input>`
-* List->List Struct-> :doc:`List Length </nodes/list_main/length>`
+* List->List Main-> :doc:`List Length </nodes/list_main/length>`
 * List-> :doc:`Index To Mask </nodes/list_masks/index_to_mask>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 

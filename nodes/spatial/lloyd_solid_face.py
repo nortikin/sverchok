@@ -38,6 +38,7 @@ class SvLloydSolidFaceNode(SverchCustomTreeNode, bpy.types.Node):
         name = "Thickness",
         default = 1.0,
         min = 0.0,
+        description="Thickness of region where Voronoi diagram is generated",
         update=updateNode)
 
     def sv_init(self, context):

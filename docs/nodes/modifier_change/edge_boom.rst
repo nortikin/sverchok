@@ -92,7 +92,7 @@ Replace each edge of a square with a segment with subdivisions:
 * Generator-> :doc:`Plane </nodes/generator/plane_mk3>`
 * Generator-> :doc:`Segment </nodes/generator/segment>`
 * Number-> :doc:`Number Range </nodes/number/number_range>`
-* List->List Struct-> :doc:`List Length </nodes/list_main/length>`
+* List->List Main-> :doc:`List Length </nodes/list_main/length>`
 * Color-> :doc:`Color Ramp </nodes/color/color_ramp>`
 
 ---------
@@ -105,5 +105,5 @@ Move each edge of input objects randomly:
 * Generator-> :doc:`NGon </nodes/generator/ngon>`
 * Generator-> :doc:`Random Vector </nodes/generator/random_vector_mk3>`
 * Number-> :doc:`List Input </nodes/number/list_input>`
-* List->List Struct-> :doc:`List Length </nodes/list_main/length>`
+* List->List Main-> :doc:`List Length </nodes/list_main/length>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`

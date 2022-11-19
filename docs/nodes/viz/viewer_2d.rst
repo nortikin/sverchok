@@ -80,7 +80,7 @@ Feature Examples
   :target: https://user-images.githubusercontent.com/14288520/190157278-9c110e7c-5e60-4507-aa5b-31a0d44e6f2a.png
 
 * Generator->Generator Extended-> :doc:`NGon </nodes/generators_extended/polygon_grid>`
-* List->List Struct-> :doc:`List Length </nodes/list_main/length>`
+* List->List Main-> :doc:`List Length </nodes/list_main/length>`
 * Number-> :doc:`Number Range </nodes/number/number_range>`
 * Color-> :doc:`Color In </nodes/color/color_in_mk1>`
 * Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`

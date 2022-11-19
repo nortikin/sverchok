@@ -40,12 +40,14 @@ class SvLloydSolidNode(SverchCustomTreeNode, bpy.types.Node):
         name = "Thickness",
         default = 1.0,
         min = 0.0,
+        description="Thickness of region where Voronoi diagram is generated",
         update=updateNode)
 
     accuracy: IntProperty(
         name="Accuracy",
         default=5,
         min=1,
+        description="The accuracy of defining whether the point lies on the surface of the body",
         update=updateNode)
 
     def update_sockets(self, context):
