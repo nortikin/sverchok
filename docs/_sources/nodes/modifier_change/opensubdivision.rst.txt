@@ -102,7 +102,7 @@ Many Bodies:
 * MUL, DIV: Number-> :doc:`Scalar Math </nodes/number/scalar_mk4>`
 * Vector-> :doc:`Vector In </nodes/vector/vector_in>`
 * Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`
-* List->List Struct-> :doc:`List Length </nodes/list_main/length>`
+* List->List Main-> :doc:`List Length </nodes/list_main/length>`
 * Color-> :doc:`Color In </nodes/color/color_in_mk1>`
 * Color-> :doc:`Color Ramp </nodes/color/color_ramp>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`

@@ -150,6 +150,7 @@
              
   <section id="lloyd-3d">
 <h1>Lloyd 3D<a class="headerlink" href="#lloyd-3d" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202770272-e3256501-f4c1-4393-8ae9-464c2804fead.png"><img alt="https://user-images.githubusercontent.com/14288520/202770272-e3256501-f4c1-4393-8ae9-464c2804fead.png" src="https://user-images.githubusercontent.com/14288520/202770272-e3256501-f4c1-4393-8ae9-464c2804fead.png" /></a>
 <section id="dependencies">
 <h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this heading">¶</a></h2>
 <p>This node requires <a class="reference external" href="https://scipy.org/">SciPy</a> library to work.</p>
@@ -160,20 +161,31 @@
 (XOY plane) uniformly inside bounding box or bounding sphere.</p>
 <p>Optionally, weighted Lloyd algorithm can be used, to put points more dense in
 places to which higher weight is assigned.</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202794664-d44e94b0-de0a-4712-938d-805ca00f7d1f.gif"><img alt="https://user-images.githubusercontent.com/14288520/202794664-d44e94b0-de0a-4712-938d-805ca00f7d1f.gif" src="https://user-images.githubusercontent.com/14288520/202794664-d44e94b0-de0a-4712-938d-805ca00f7d1f.gif" /></a>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
 <li><p><strong>Sites</strong>. Initial points to be redistributed. This input is mandatory.</p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202796059-1b124063-5977-48a0-a2a1-d88b845e8894.png"><img alt="https://user-images.githubusercontent.com/14288520/202796059-1b124063-5977-48a0-a2a1-d88b845e8894.png" src="https://user-images.githubusercontent.com/14288520/202796059-1b124063-5977-48a0-a2a1-d88b845e8894.png" /></a>
+<ul class="simple">
 <li><p><strong>Clipping</strong>. Clipping distance for Voronoi diagram. This value will be added
 to size of bounding box or sphere. The default value is 1.0.</p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202797248-3c10c478-db02-4271-b082-77c834985b5d.gif"><img alt="https://user-images.githubusercontent.com/14288520/202797248-3c10c478-db02-4271-b082-77c834985b5d.gif" src="https://user-images.githubusercontent.com/14288520/202797248-3c10c478-db02-4271-b082-77c834985b5d.gif" /></a>
+<ul class="simple">
 <li><p><strong>Iterations</strong>. Number of Lloyd’s algorithm iterations. The default value is 3.</p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202796545-27303108-9532-45d8-91c9-6e50cb53f212.gif"><img alt="https://user-images.githubusercontent.com/14288520/202796545-27303108-9532-45d8-91c9-6e50cb53f212.gif" src="https://user-images.githubusercontent.com/14288520/202796545-27303108-9532-45d8-91c9-6e50cb53f212.gif" /></a>
+<ul class="simple">
 <li><p><strong>Weights</strong>. Scalar Field object used to assign different weights for
 different places in 3D space. More points will be put in places which have
 bigger weight. This input is optional. If not connected, uniform Lloyd
 algorithm will be used.</p></li>
 </ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202799380-4a66f4f5-23b5-4fa5-b041-f20259807169.gif"><img alt="https://user-images.githubusercontent.com/14288520/202799380-4a66f4f5-23b5-4fa5-b041-f20259807169.gif" src="https://user-images.githubusercontent.com/14288520/202799380-4a66f4f5-23b5-4fa5-b041-f20259807169.gif" /></a>
 </section>
 <section id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
@@ -187,6 +199,7 @@ algorithm will be used.</p></li>
 <p>The default value is <strong>Bounding box</strong>.</p>
 </li>
 </ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202795295-d642f1ae-e544-4dcb-9fc0-0cf6d8e56aa2.png"><img alt="https://user-images.githubusercontent.com/14288520/202795295-d642f1ae-e544-4dcb-9fc0-0cf6d8e56aa2.png" src="https://user-images.githubusercontent.com/14288520/202795295-d642f1ae-e544-4dcb-9fc0-0cf6d8e56aa2.png" /></a>
 </section>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
@@ -197,7 +210,11 @@ algorithm will be used.</p></li>
 </section>
 <section id="example-of-usage">
 <h2>Example of Usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
-<img alt="https://user-images.githubusercontent.com/284644/100535945-1dd8ad80-323f-11eb-981f-1d1743e1fd6b.png" src="https://user-images.githubusercontent.com/284644/100535945-1dd8ad80-323f-11eb-981f-1d1743e1fd6b.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202798423-78027419-5703-49a3-a38d-49fb20a98ee9.png"><img alt="https://user-images.githubusercontent.com/14288520/202798423-78027419-5703-49a3-a38d-49fb20a98ee9.png" src="https://user-images.githubusercontent.com/14288520/202798423-78027419-5703-49a3-a38d-49fb20a98ee9.png" /></a>
+<ul class="simple">
+<li><p>Spacial-&gt; <a class="reference internal" href="homogenous_vector_field.html"><span class="doc">Vector P Field</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 </section>
 </section>
 

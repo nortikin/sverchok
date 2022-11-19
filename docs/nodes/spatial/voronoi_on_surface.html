@@ -149,6 +149,7 @@
              
   <section id="voronoi-on-surface">
 <h1>Voronoi on Surface<a class="headerlink" href="#voronoi-on-surface" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202536634-cd7aa231-b742-4435-b2d5-e6a9751007d4.png"><img alt="https://user-images.githubusercontent.com/14288520/202536634-cd7aa231-b742-4435-b2d5-e6a9751007d4.png" src="https://user-images.githubusercontent.com/14288520/202536634-cd7aa231-b742-4435-b2d5-e6a9751007d4.png" /></a>
 <p>This node can require <a class="reference external" href="https://scipy.org/">SciPy</a> library to work, depending on selected operation mode.</p>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
@@ -174,20 +175,34 @@ planes can be applied.</p>
 <p>This node has the following parameters:</p>
 <ul class="simple">
 <li><p><strong>Surface</strong>. The surface to generate Voronoi diagram on. This input is mandatory.</p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202553503-d38a9107-0c9a-49cd-bde8-b128244f2a70.png"><img alt="https://user-images.githubusercontent.com/14288520/202553503-d38a9107-0c9a-49cd-bde8-b128244f2a70.png" src="https://user-images.githubusercontent.com/14288520/202553503-d38a9107-0c9a-49cd-bde8-b128244f2a70.png" /></a>
+<ul class="simple">
 <li><p><strong>UVPoints</strong>. Points (sites) in U/V space of the surface, for which Voronoi
 diagram is to be generated. Only X and Y coordinates of these points will be
 used. This input is mandatory.</p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202553842-bc6f9c7b-19b8-4ffd-ae41-cf9f32ad0894.png"><img alt="https://user-images.githubusercontent.com/14288520/202553842-bc6f9c7b-19b8-4ffd-ae41-cf9f32ad0894.png" src="https://user-images.githubusercontent.com/14288520/202553842-bc6f9c7b-19b8-4ffd-ae41-cf9f32ad0894.png" /></a>
+<ul class="simple">
 <li><p><strong>MaxSides</strong>. This input is available only when <strong>Mode</strong> parameter is set to
 <strong>UV Space</strong>, and <strong>Make faces</strong> parameter is checked. Maximum number of
 sides of Voronoi polygon, for which this node will generate edges. The
 default value is 10.</p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202554721-5f228bd1-e6af-4ff6-89a7-0ac304745926.png"><img alt="https://user-images.githubusercontent.com/14288520/202554721-5f228bd1-e6af-4ff6-89a7-0ac304745926.png" src="https://user-images.githubusercontent.com/14288520/202554721-5f228bd1-e6af-4ff6-89a7-0ac304745926.png" /></a>
+<ul class="simple">
 <li><p><strong>Thickness</strong>. This input is available only when <strong>Mode</strong> parameter is set to
-<strong>3D Regions</strong> or <strong>3D Regions</strong>. Thickness of Voronoi diagram objects. The
+<strong>3D Ridges</strong> or <strong>3D Regions</strong>. Thickness of Voronoi diagram objects. The
 default value is 1.0.</p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202865737-49786eee-d580-45bb-8967-14d36bc41196.png"><img alt="https://user-images.githubusercontent.com/14288520/202865737-49786eee-d580-45bb-8967-14d36bc41196.png" src="https://user-images.githubusercontent.com/14288520/202865737-49786eee-d580-45bb-8967-14d36bc41196.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202555250-d8e9b12d-2469-40b2-8641-1f008fd2b410.gif"><img alt="https://user-images.githubusercontent.com/14288520/202555250-d8e9b12d-2469-40b2-8641-1f008fd2b410.gif" src="https://user-images.githubusercontent.com/14288520/202555250-d8e9b12d-2469-40b2-8641-1f008fd2b410.gif" /></a>
+<ul class="simple">
 <li><p><strong>Clipping</strong>. This defines the distance from outermost sites to the clipping
 planes. This input is only available when the <strong>Clip</strong> parameter is checked.
 The default value is 1.0.</p></li>
 </ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202556515-6b5f47d5-69aa-4d86-a3a5-8bbf042156fc.gif"><img alt="https://user-images.githubusercontent.com/14288520/202556515-6b5f47d5-69aa-4d86-a3a5-8bbf042156fc.gif" src="https://user-images.githubusercontent.com/14288520/202556515-6b5f47d5-69aa-4d86-a3a5-8bbf042156fc.gif" /></a>
 </section>
 <section id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
@@ -206,25 +221,41 @@ only available when SciPy library is installed.</p></li>
 </ul>
 <p>The default mode is <strong>UV Space</strong>.</p>
 </li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202538580-e4564d08-caed-44e9-8bbf-9b2989d24877.png"><img alt="https://user-images.githubusercontent.com/14288520/202538580-e4564d08-caed-44e9-8bbf-9b2989d24877.png" src="https://user-images.githubusercontent.com/14288520/202538580-e4564d08-caed-44e9-8bbf-9b2989d24877.png" /></a>
+<ul class="simple">
 <li><p><strong>Make faces</strong>. This parameter is only available when <strong>Mode</strong> parameter is
 set to <strong>UV Space</strong>. This defines whether the node should generate polygons
 of Voronoi diagram. If not checked, the node will generate edges only.
 Unchecked by default.</p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202539745-bf3dd460-198e-40ff-b11d-41be7b3f7c81.png"><img alt="https://user-images.githubusercontent.com/14288520/202539745-bf3dd460-198e-40ff-b11d-41be7b3f7c81.png" src="https://user-images.githubusercontent.com/14288520/202539745-bf3dd460-198e-40ff-b11d-41be7b3f7c81.png" /></a>
+<ul class="simple">
 <li><p><strong>Flat output</strong>. This parameter is only available when <strong>Mode</strong> parameter is
 set to <strong>3D Ridges</strong> or <strong>3D Regions</strong>. If checked, the node will generate
 one flat list of objects for all sets of input parameters. Otherwise, a
 separate list of objects will be generated for each set of input parameter
 values. In 3D modes, this node generates a separate object for each region of
 Voronoi diagram.</p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202548155-84b76d0f-0aac-4036-a75c-2893734f6579.png"><img alt="https://user-images.githubusercontent.com/14288520/202548155-84b76d0f-0aac-4036-a75c-2893734f6579.png" src="https://user-images.githubusercontent.com/14288520/202548155-84b76d0f-0aac-4036-a75c-2893734f6579.png" /></a>
+<ul class="simple">
 <li><p><strong>Clip</strong>.  This parameter is only available when <strong>Mode</strong> parameter is
 set to <strong>3D Ridges</strong> or <strong>3D Regions</strong>. This defines whether the node will
 cut the generated diagram by clipping planes. If not checked, then this node
 can potentially generate very large objects near edges of the surface.
 Checked by default.</p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202549190-4c9c458b-5cfa-48e3-bae8-ed188b331bc0.gif"><img alt="https://user-images.githubusercontent.com/14288520/202549190-4c9c458b-5cfa-48e3-bae8-ed188b331bc0.gif" src="https://user-images.githubusercontent.com/14288520/202549190-4c9c458b-5cfa-48e3-bae8-ed188b331bc0.gif" /></a>
+<ul class="simple">
 <li><p><strong>Correct normals</strong>. This parameter is available when <strong>Mode</strong> parameter is
 set to <strong>3D Ridges</strong> or <strong>3D Regions</strong>, or when <strong>Make faces</strong> parameter is
 checked. This defines whether the node should recalculate the normals of
 generated objects so that they all point outwards. Checked by default.</p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202551772-c64ceccc-0754-41d7-a6e8-f7828f8751ca.png"><img alt="https://user-images.githubusercontent.com/14288520/202551772-c64ceccc-0754-41d7-a6e8-f7828f8751ca.png" src="https://user-images.githubusercontent.com/14288520/202551772-c64ceccc-0754-41d7-a6e8-f7828f8751ca.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202550834-0b0cea53-47af-4cdf-a0e1-8c15100f0947.gif"><img alt="https://user-images.githubusercontent.com/14288520/202550834-0b0cea53-47af-4cdf-a0e1-8c15100f0947.gif" src="https://user-images.githubusercontent.com/14288520/202550834-0b0cea53-47af-4cdf-a0e1-8c15100f0947.gif" /></a>
+<ul class="simple">
 <li><p><strong>Ordered faces</strong>. This parameter is available in the N palen only, when
 <strong>Mode</strong> parameter is set to <strong>UV Space</strong>, and only if <strong>Make Faces</strong>
 parameter is checked. If enabled, the node will make sure that generated
@@ -232,6 +263,7 @@ faces are in the same order as input vertices. This procedure can take
 additional time. If not checked, the order of faces will not be the same as
 order of initial points.</p></li>
 </ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202552963-54333d18-f83f-4e78-85f0-cdd5632b897a.gif"><img alt="https://user-images.githubusercontent.com/14288520/202552963-54333d18-f83f-4e78-85f0-cdd5632b897a.gif" src="https://user-images.githubusercontent.com/14288520/202552963-54333d18-f83f-4e78-85f0-cdd5632b897a.gif" /></a>
 </section>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
@@ -248,11 +280,21 @@ coordinate of these vertices will always be zero.</p></li>
 <section id="examples-of-usage">
 <h2>Examples of Usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>“UV Space** mode:</p>
-<img alt="https://user-images.githubusercontent.com/284644/100520549-18884e00-31c0-11eb-82ed-c18b84fd6fe8.png" src="https://user-images.githubusercontent.com/284644/100520549-18884e00-31c0-11eb-82ed-c18b84fd6fe8.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202558311-606e5fc4-6ab0-424b-9310-b9d3ea29efb3.png"><img alt="https://user-images.githubusercontent.com/14288520/202558311-606e5fc4-6ab0-424b-9310-b9d3ea29efb3.png" src="https://user-images.githubusercontent.com/14288520/202558311-606e5fc4-6ab0-424b-9310-b9d3ea29efb3.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Transform-&gt; <a class="reference internal" href="../transforms/randomize.html"><span class="doc">Randomize</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="../surface/nurbs_surface.html"><span class="doc">Build NURBS Surface</span></a></p></li>
+<li><p>Spatial-&gt; <a class="reference internal" href="populate_surface.html"><span class="doc">Populate Surface</span></a></p></li>
+<li><p>Surface-&gt; <a class="reference internal" href="../surface/evaluate_surface.html"><span class="doc">Evaluate Surface</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>“3D Ridges” mode:</p>
-<img alt="https://user-images.githubusercontent.com/284644/100520548-18884e00-31c0-11eb-8843-f721ecfb238d.png" src="https://user-images.githubusercontent.com/284644/100520548-18884e00-31c0-11eb-8843-f721ecfb238d.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202559021-dd66eab4-2b6f-4f8b-9bdf-b133a523d1db.png"><img alt="https://user-images.githubusercontent.com/14288520/202559021-dd66eab4-2b6f-4f8b-9bdf-b133a523d1db.png" src="https://user-images.githubusercontent.com/14288520/202559021-dd66eab4-2b6f-4f8b-9bdf-b133a523d1db.png" /></a>
+<hr class="docutils" />
 <p>“3D Regions” mode:</p>
-<img alt="https://user-images.githubusercontent.com/284644/100520547-17572100-31c0-11eb-9c58-0f2628629031.png" src="https://user-images.githubusercontent.com/284644/100520547-17572100-31c0-11eb-9c58-0f2628629031.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202563636-8632b4f8-2e1d-4ec2-aa85-b1697f9b12fa.png"><img alt="https://user-images.githubusercontent.com/14288520/202563636-8632b4f8-2e1d-4ec2-aa85-b1697f9b12fa.png" src="https://user-images.githubusercontent.com/14288520/202563636-8632b4f8-2e1d-4ec2-aa85-b1697f9b12fa.png" /></a>
 </section>
 </section>
 

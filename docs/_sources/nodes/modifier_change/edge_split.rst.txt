@@ -92,6 +92,6 @@ Split even edges
 * Generator-> :doc:`NGon </nodes/generator/ngon>`
 * Number-> :doc:`Number Range </nodes/number/number_range>`
 * MODULE: Number-> :doc:`Scalar Math </nodes/number/scalar_mk4>`
-* List->List Struct-> :doc:`List Length </nodes/list_main/length>`
+* List->List Main-> :doc:`List Length </nodes/list_main/length>`
 * EQUAL: Logic-> :doc:`Logic Functions </nodes/logic/logic_node>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`

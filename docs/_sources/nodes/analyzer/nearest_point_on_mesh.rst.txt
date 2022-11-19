@@ -77,7 +77,7 @@ Determine which polygons are nearer than a distance:
 * Generator-> :doc:`IcoSphere </nodes/generator/icosphere>`
 * Number-> :doc:`A Number </nodes/number/numbers>`
 * Vector-> :doc:`Vector In </nodes/vector/vector_in>`
-* List->List Struct-> :doc:`List Length </nodes/list_main/length>`
+* List->List Main-> :doc:`List Length </nodes/list_main/length>`
 * List-> :doc:`Index To Mask </nodes/list_masks/index_to_mask>`
 * Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
 

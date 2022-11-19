@@ -149,9 +149,11 @@
              
   <section id="convex-hull">
 <h1>Convex Hull<a class="headerlink" href="#convex-hull" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202848763-aae6268b-c900-4d81-b41b-82b788618b07.png"><img alt="https://user-images.githubusercontent.com/14288520/202848763-aae6268b-c900-4d81-b41b-82b788618b07.png" src="https://user-images.githubusercontent.com/14288520/202848763-aae6268b-c900-4d81-b41b-82b788618b07.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>Use this to skin a simple cloud of points. The algorithm is known as <a class="reference external" href="http://en.wikipedia.org/wiki/Convex_hull_algorithms">Convex Hull</a>, and implemented in <code class="docutils literal notranslate"><span class="pre">bmesh.ops.convex_hull</span></code>.</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202849112-808c0f4c-9d96-44e6-a833-14a6dc886900.gif"><img alt="https://user-images.githubusercontent.com/14288520/202849112-808c0f4c-9d96-44e6-a833-14a6dc886900.gif" src="https://user-images.githubusercontent.com/14288520/202849112-808c0f4c-9d96-44e6-a833-14a6dc886900.gif" /></a>
 </section>
 <section id="input">
 <h2>Input<a class="headerlink" href="#input" title="Permalink to this heading">¶</a></h2>
@@ -163,7 +165,38 @@
 </section>
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
-<img alt="ConvexHullDemo1.PNG" src="https://cloud.githubusercontent.com/assets/619340/4187179/8a1e6054-3767-11e4-9a18-97aa66629fcd.PNG" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202849248-6c2d96c3-cbaa-4f38-88a5-b6ae16feb4fc.png"><img alt="https://user-images.githubusercontent.com/14288520/202849248-6c2d96c3-cbaa-4f38-88a5-b6ae16feb4fc.png" src="https://user-images.githubusercontent.com/14288520/202849248-6c2d96c3-cbaa-4f38-88a5-b6ae16feb4fc.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/random_vector_mk3.html"><span class="doc">Random Vector</span></a></p></li>
+<li><p>Transform-&gt; <a class="reference internal" href="../transforms/noise_displace.html"><span class="doc">Noise Displace</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202849361-b398e216-9db2-4792-85f7-57158eb92e62.png"><img alt="https://user-images.githubusercontent.com/14288520/202849361-b398e216-9db2-4792-85f7-57158eb92e62.png" src="https://user-images.githubusercontent.com/14288520/202849361-b398e216-9db2-4792-85f7-57158eb92e62.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/random_vector_mk3.html"><span class="doc">Random Vector</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202858903-9b6bca6b-2e45-46b4-95b2-825264d3c1e4.png"><img alt="https://user-images.githubusercontent.com/14288520/202858903-9b6bca6b-2e45-46b4-95b2-825264d3c1e4.png" src="https://user-images.githubusercontent.com/14288520/202858903-9b6bca6b-2e45-46b4-95b2-825264d3c1e4.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/cricket.html"><span class="doc">Cricket</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
+<p>2D mode:</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202862429-0847cefc-1f23-445a-880e-dd7602617e11.png"><img alt="https://user-images.githubusercontent.com/14288520/202862429-0847cefc-1f23-445a-880e-dd7602617e11.png" src="https://user-images.githubusercontent.com/14288520/202862429-0847cefc-1f23-445a-880e-dd7602617e11.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>
+<li><p>Spatial-&gt; <a class="reference internal" href="random_points_on_mesh.html"><span class="doc">Populate Mesh</span></a></p></li>
+<li><p>Transform-&gt; <a class="reference internal" href="../transforms/noise_displace.html"><span class="doc">Noise Displace</span></a></p></li>
+<li><p>Modifiers-&gt;Modifier Change-&gt; <a class="reference internal" href="../modifier_change/mesh_join_mk2.html"><span class="doc">Mesh Join</span></a></p></li>
+<li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/join.html"><span class="doc">List Join</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202862610-ff58cfeb-ce96-4cb5-a511-991c5a18d153.gif"><img alt="https://user-images.githubusercontent.com/14288520/202862610-ff58cfeb-ce96-4cb5-a511-991c5a18d153.gif" src="https://user-images.githubusercontent.com/14288520/202862610-ff58cfeb-ce96-4cb5-a511-991c5a18d153.gif" /></a>
 </section>
 <section id="notes">
 <h2>Notes<a class="headerlink" href="#notes" title="Permalink to this heading">¶</a></h2>

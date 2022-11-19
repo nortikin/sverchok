@@ -171,7 +171,7 @@ Only three edges of cube beveled:
 
 * Generator-> :doc:`Box </nodes/generator/box_mk2>`
 * Number-> :doc:`List Input </nodes/number/list_input>`
-* List->List Struct-> :doc:`List Length </nodes/list_main/length>`
+* List->List Main-> :doc:`List Length </nodes/list_main/length>`
 * List-> :doc:`Index To Mask </nodes/list_masks/index_to_mask>`
 * List-> :doc:`List Mask (Out) </nodes/list_masks/mask>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
@@ -214,7 +214,7 @@ Vertex mode and multiple radius:
 * Generator->Generators Extended-> :doc:`Triangle </nodes/generators_extended/triangle>`
 * Number-> :doc:`List Input </nodes/number/list_input>`
 * Number-> :doc:`Number Range </nodes/number/number_range>`
-* List->List Struct-> :doc:`List Length </nodes/list_main/length>`
+* List->List Main-> :doc:`List Length </nodes/list_main/length>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 * Viz-> :doc:`Viewer Index+ </nodes/viz/viewer_idx28>`
 

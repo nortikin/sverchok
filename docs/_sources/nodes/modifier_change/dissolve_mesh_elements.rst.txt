@@ -79,7 +79,7 @@ Examples
 * Number-> :doc:`List Input </nodes/number/list_input>`
 * Number-> :doc:`Random Num Gen </nodes/number/random_num_gen>`
 * AND: Logic-> :doc:`Logic Functions </nodes/logic/logic_node>`
-* List->List Struct-> :doc:`List Length </nodes/list_main/length>`
+* List->List Main-> :doc:`List Length </nodes/list_main/length>`
 * Color-> :doc:`Color Ramp </nodes/color/color_ramp>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 * Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
