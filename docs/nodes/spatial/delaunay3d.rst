@@ -75,10 +75,13 @@ Example of usage
 * Analyzers-> :doc:`Origins </nodes/analyzer/origins>`
 * Analyzers-> :ref:`Component Analyzer/Faces/Center <FACES_CENTER>`
 * Number-> :doc:`Number Range </nodes/number/number_range>`
-* List->List Struct-> :doc:`List Length </nodes/list_main/length>`
+* List->List Main-> :doc:`List Length </nodes/list_main/length>`
 * List->List Struct-> :doc:`List Levels </nodes/list_struct/levels>`
 * Color-> :doc:`Color Ramp </nodes/color/color_ramp>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+
+.. image:: https://user-images.githubusercontent.com/14288520/202456423-a678eadd-7124-40fc-977d-fdc24a76b013.gif
+  :target: https://user-images.githubusercontent.com/14288520/202456423-a678eadd-7124-40fc-977d-fdc24a76b013.gif
 
 ---------
 

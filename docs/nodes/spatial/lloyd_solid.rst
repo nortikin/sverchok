@@ -1,6 +1,9 @@
 Lloyd in Solid
 ==============
 
+.. image:: https://user-images.githubusercontent.com/14288520/202816210-8d58c278-477c-4592-9274-b0425da1893c.png
+  :target: https://user-images.githubusercontent.com/14288520/202816210-8d58c278-477c-4592-9274-b0425da1893c.png
+
 Dependencies
 ------------
 
@@ -67,3 +70,8 @@ This node has the following output:
 
 * **Sites**. Redisrtibuted points.
 
+Examples
+--------
+
+.. image:: https://user-images.githubusercontent.com/14288520/202818068-bb50dc61-42cf-40f4-870b-b4ac03880286.png
+  :target: https://user-images.githubusercontent.com/14288520/202818068-bb50dc61-42cf-40f4-870b-b4ac03880286.png

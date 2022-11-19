@@ -122,7 +122,7 @@ Extrude only boundary edges of the plane; this also is an example of FaceData so
 * Generator-> :doc:`Plane </nodes/generator/plane_mk3>`
 * Analyzer-> :doc:`Mesh Filter </nodes/analyzer/mesh_filter>`
 * Number-> :doc:`Random Num Gen </nodes/number/random_num_gen>`
-* List->List Struct-> :doc:`List Length </nodes/list_main/length>`
+* List->List Main-> :doc:`List Length </nodes/list_main/length>`
 * Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`
 * Viz-> :doc:`Mesh Viewer </nodes/viz/mesh_viewer>`
 * BPY Data-> :doc:`Assign Materials List </nodes/object_nodes/assign_materials>`

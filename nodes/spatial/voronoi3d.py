@@ -34,8 +34,8 @@ class SvExVoronoi3DNode(SverchCustomTreeNode, bpy.types.Node):
     sv_dependencies = {'scipy'}
 
     out_modes = [
-        ('RIDGES', "Ridges", "Ridges", 0),
-        ('REGIONS', "Regions", "Regions", 1)
+        ('RIDGES', "Ridges", "Each output mesh object will represent one ridge, i.e. a part of plane which separates to regions of Voronoi diagram", 0),
+        ('REGIONS', "Regions", "Each output mesh will represent one region of Voronoi diagram, with ridges that separate it from neighbours", 1)
     ]
 
     out_mode : EnumProperty(
@@ -47,16 +47,19 @@ class SvExVoronoi3DNode(SverchCustomTreeNode, bpy.types.Node):
     join : BoolProperty(
         name = "Join",
         default = False,
+        description="If checked, then the node will join mesh objects for each ridge or region, and output one mesh object for each set of points. Otherwise, the node will output a separate mesh object for each ridge or region",
         update = updateNode)
 
     closed_only : BoolProperty(
         name = "Closed regions only",
         default = True,
+        description="If checked, then the node will generate mesh objects only for closed regions of Voronoi diagrams. Otherwise, it will generate open regions as well",
         update = updateNode)
 
     normals : BoolProperty(
         name = "Correct normals",
         default = True,
+        description="If checked, then the node will try to recalculate normals of faces of each region, so that they point outside of the region",
         update = updateNode)
 
     def update_sockets(self, context):
@@ -66,12 +69,14 @@ class SvExVoronoi3DNode(SverchCustomTreeNode, bpy.types.Node):
     do_clip : BoolProperty(
         name = "Clip",
         default = True,
+        description="If checked, then infinite Voronoi diagram will be clipped by horizontal and vertical planes, to generate a finite object",
         update = update_sockets)
 
     clipping : FloatProperty(
         name = "Clipping",
         default = 1.0,
         min = 0.0,
+        description="This defines the distance from outermost initial points to the clipping planes",
         update = updateNode)
 
     def sv_init(self, context):

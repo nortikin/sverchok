@@ -130,6 +130,14 @@ This node has the following parameters:
 .. image:: https://user-images.githubusercontent.com/14288520/202024927-d3b7bc4b-8130-4bd9-ba64-9d9284bb9112.gif
   :target: https://user-images.githubusercontent.com/14288520/202024927-d3b7bc4b-8130-4bd9-ba64-9d9284bb9112.gif
 
+* **Flat output**. If checked, the node will generate
+  one flat list of objects for all sets of input parameters. Otherwise, a
+  separate list of objects will be generated for each set of input parameter
+  values.
+
+.. image:: https://user-images.githubusercontent.com/14288520/202544718-b6bf467a-b044-42cb-b036-9214ed8d3c73.png
+  :target: https://user-images.githubusercontent.com/14288520/202544718-b6bf467a-b044-42cb-b036-9214ed8d3c73.png
+
 * **Random Radius**. This parameter is available only when **Distance**
   parameter is set to **RadiusField**. If checked, then radiuses of empty
   spheres will be generated randomly, by using uniform distribution between 0

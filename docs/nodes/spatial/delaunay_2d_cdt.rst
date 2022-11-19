@@ -99,7 +99,7 @@ Examples
 * Generator-> :doc:`Plane </nodes/generator/plane_mk3>`
 * Spatial-> :doc:`Populate Mesh </nodes/spatial/random_points_on_mesh>`
 * Number-> :doc:`Random Num Gen </nodes/number/random_num_gen>`
-* List->List Struct-> :doc:`List Length </nodes/list_main/length>`
+* List->List Main-> :doc:`List Length </nodes/list_main/length>`
 * Color-> :doc:`Color In </nodes/color/color_in_mk1>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 * Viz-> :doc:`Mesh Viewer </nodes/viz/mesh_viewer>`

@@ -50,7 +50,7 @@ Examples
 * Number-> :doc:`Number Range </nodes/number/number_range>`
 * Vector-> :doc:`Vector Interpolation </nodes/vector/interpolation_mk3>`
 * Modifiers->Modifier Make-> :doc:`UV Connection </nodes/modifier_make/uv_connect>`
-* List->List Struct-> :doc:`List Length </nodes/list_main/length>`
+* List->List Main-> :doc:`List Length </nodes/list_main/length>`
 * Color-> :doc:`Color Ramp </nodes/color/color_ramp>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 

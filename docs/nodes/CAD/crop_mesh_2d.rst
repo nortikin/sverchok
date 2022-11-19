@@ -112,7 +112,7 @@ Fit mesh inside mesh:
 * CAD-> :doc:`Objects In Lite </nodes/CAD/edges_to_faces_2d>`
 * Number-> :doc:`Random Num Gen </nodes/number/random_num_gen>`
 * Color-> :doc:`Color In </nodes/color/color_in_mk1>`
-* List->List Struct-> :doc:`List Length </nodes/list_main/length>`
+* List->List Main-> :doc:`List Length </nodes/list_main/length>`
 * List->List Struct-> :doc:`List Item </nodes/list_struct/item>`
 * BPY Date-> Vertex Color MK3 (No docs)
 * Scene-> :doc:`Objects In Lite </nodes/scene/objects_in_lite>`

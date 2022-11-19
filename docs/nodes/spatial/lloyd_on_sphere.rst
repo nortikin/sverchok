@@ -1,6 +1,9 @@
 Lloyd on Sphere
 ===============
 
+.. image:: https://user-images.githubusercontent.com/14288520/202800864-8c2b7767-d748-46cc-9817-0c23e80dc699.png
+  :target: https://user-images.githubusercontent.com/14288520/202800864-8c2b7767-d748-46cc-9817-0c23e80dc699.png
+
 Dependencies
 ------------
 
@@ -48,13 +51,39 @@ Example of Usage
 
 Let's start with boxes distributed randomly on a sphere:
 
-.. image:: https://user-images.githubusercontent.com/284644/100536534-229f6080-3243-11eb-99d7-99494d3207aa.png
+.. image:: https://user-images.githubusercontent.com/14288520/202802127-3ae8c392-6f8f-4122-9e1b-a5eaded79f03.png
+  :target: https://user-images.githubusercontent.com/14288520/202802127-3ae8c392-6f8f-4122-9e1b-a5eaded79f03.png
+
+* Generator-> :doc:`Box </nodes/generator/box_mk2>`
+* Generator-> :doc:`Random Vector </nodes/generator/random_vector_mk3>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+
+---------
 
 Note that the distribution is very unregular. Now we apply "Lloyd on Sphere" node:
 
-.. image:: https://user-images.githubusercontent.com/284644/100536535-2337f700-3243-11eb-8884-c4d0ec9070eb.png
+.. image:: https://user-images.githubusercontent.com/14288520/202803212-748a4d11-8054-4cc9-9791-c79d32cef6ae.png
+  :target: https://user-images.githubusercontent.com/14288520/202803212-748a4d11-8054-4cc9-9791-c79d32cef6ae.png
+
+* Generator-> :doc:`Box </nodes/generator/box_mk2>`
+* Generator-> :doc:`Random Vector </nodes/generator/random_vector_mk3>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+
+.. image:: https://user-images.githubusercontent.com/14288520/202803190-5106f5d6-177b-471b-b839-01d6367afa03.gif
+  :target: https://user-images.githubusercontent.com/14288520/202803190-5106f5d6-177b-471b-b839-01d6367afa03.gif
+
+---------
 
 Density of distribution can be controlled with a scalar field - in this example, by absolute value of Z coordinate:
 
-.. image:: https://user-images.githubusercontent.com/284644/100536623-a8231080-3243-11eb-8199-eb800dd2043b.png
+.. image:: https://user-images.githubusercontent.com/14288520/202804854-9c58b26e-148f-4055-a9db-9082f3e495a2.png
+  :target: https://user-images.githubusercontent.com/14288520/202804854-9c58b26e-148f-4055-a9db-9082f3e495a2.png
 
+* Generator-> :doc:`Box </nodes/generator/box_mk2>`
+* Generator-> :doc:`Random Vector </nodes/generator/random_vector_mk3>`
+* Fields-> :doc:`Coordinate Scalar Field </nodes/field/coordinate_scalar_field>`
+* Fields-> :doc:`Scalar Field Math </nodes/field/scalar_field_math>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+
+.. image:: https://user-images.githubusercontent.com/14288520/202804718-b87b02db-d756-4e81-a5a6-1683d0f8292a.gif
+  :target: https://user-images.githubusercontent.com/14288520/202804718-b87b02db-d756-4e81-a5a6-1683d0f8292a.gif

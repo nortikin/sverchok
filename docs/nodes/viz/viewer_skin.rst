@@ -68,5 +68,5 @@ Examples
 
 * Generator-> :doc:`NGon </nodes/generator/ngon>`
 * Number-> :doc:`Random Num Gen </nodes/number/random_num_gen>`
-* List->List Struct-> :doc:`List Length </nodes/list_main/length>`
+* List->List Main-> :doc:`List Length </nodes/list_main/length>`
 * Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`

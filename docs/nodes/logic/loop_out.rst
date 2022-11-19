@@ -44,7 +44,7 @@ Examples
 * Number-> :doc:`Random Num Gen </nodes/number/random_num_gen>`
 * MUL X: Number-> :doc:`Scalar Math </nodes/number/scalar_mk4>`
 * Logic-> :doc:`Loop In </nodes/logic/loop_in>`
-* List->List Struct-> :doc:`List Length </nodes/list_main/length>`
+* List->List Main-> :doc:`List Length </nodes/list_main/length>`
 * BIG X: Logic-> :doc:`Logic Functions </nodes/logic/logic_node>`
 * Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`

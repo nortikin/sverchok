@@ -56,6 +56,6 @@ Examples
 * Generator-> :doc:`Box </nodes/generator/box_mk2>`
 * Number-> :doc:`Random </nodes/number/random>`
 * Vector-> :doc:`Vector In </nodes/vector/vector_in>`
-* List->List Struct-> :doc:`List Length </nodes/list_main/length>`
+* List->List Main-> :doc:`List Length </nodes/list_main/length>`
 * List->List Struct-> :doc:`List Repeater </nodes/list_struct/repeater>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`

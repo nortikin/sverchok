@@ -139,7 +139,7 @@ Examples
   :target: https://user-images.githubusercontent.com/14288520/201541052-22d3d058-12dc-443d-b823-f3d290adc30c.png
 
 * Generator-> :doc:`Plane </nodes/generator/plane_mk3>`
-* List->List Struct-> :doc:`List Length </nodes/list_main/length>`
+* List->List Main-> :doc:`List Length </nodes/list_main/length>`
 * Number-> :doc:`Random Num Gen </nodes/number/random_num_gen>`
 * Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`
 * Transform-> :doc:`Noise Displace </nodes/transforms/noise_displace>`
