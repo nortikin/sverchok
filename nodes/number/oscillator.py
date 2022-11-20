@@ -58,7 +58,7 @@ def oscillator(params, constant, matching_f):
             res = amplitude - amplitude * (((val / period + phase) * 2) % 2) + offset
 
         elif mode == 'Triangular':
-            mask = ((val / period + phase) * 2) % 2 > 1
+            mask = ((val / period + phase) * 2) % 2 >= 1
             res = 2 * amplitude * (((val / period + phase)*2) % 1) - amplitude
             res[mask] *= -1
             res += offset
