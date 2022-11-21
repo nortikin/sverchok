@@ -20,7 +20,7 @@ The logic is close how Blender manipulate with mesh itself. Selection elements d
 * Generator-> :doc:`Plane </nodes/generator/plane_mk3>`
 * Number-> :doc:`List Input </nodes/number/list_input>`
 * List-> :doc:`Index To Mask </nodes/list_masks/index_to_mask>`
-* List->List Struct-> :doc:`List Length </nodes/list_main/length>`
+* List->List Main-> :doc:`List Length </nodes/list_main/length>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 * Viz-> :doc:`Viewer Index+ </nodes/viz/viewer_idx28>`
 
@@ -100,7 +100,7 @@ Examples
 
 * Generator-> :doc:`Line </nodes/generator/line_mk4>`
 * Number-> :doc:`Random Num Gen </nodes/number/random_num_gen>`
-* List->List Struct-> :doc:`List Length </nodes/list_main/length>`
+* List->List Main-> :doc:`List Length </nodes/list_main/length>`
 * Modifiers->Modifier Change-> :doc:`Separate Parts To Indexes </nodes/modifier_change/separate_parts_to_indexes>`
 * Set: List-> :doc:`List Modifier </nodes/list_mutators/modifier>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
@@ -132,7 +132,7 @@ Examples
     :target: https://user-images.githubusercontent.com/14288520/193649147-9fe39b7b-2999-466f-ac51-04822a3603d2.png
 
 * Generator-> :doc:`Plane </nodes/generator/plane_mk3>`
-* List->List Struct-> :doc:`List Length </nodes/list_main/length>`
+* List->List Main-> :doc:`List Length </nodes/list_main/length>`
 * Number-> :doc:`Random Num Gen </nodes/number/random_num_gen>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 

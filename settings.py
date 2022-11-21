@@ -205,13 +205,13 @@ class SverchokPreferences(AddonPreferences):
     no_data_color: FloatVectorProperty(
         name="No data", description='When a node can not get data',
         size=3, min=0.0, max=1.0,
-        default=(1, 0.3, 0), subtype='COLOR',
+        default=(1, 0.3, 0), subtype='COLOR_GAMMA',
     )
 
     exception_color: FloatVectorProperty(
         name="Error", description='When node has an exception',
         size=3, min=0.0, max=1.0,
-        default=(0.8, 0.0, 0), subtype='COLOR',
+        default=(0.8, 0.0, 0), subtype='COLOR_GAMMA',
     )
 
     # Profiling settings
@@ -250,31 +250,31 @@ class SverchokPreferences(AddonPreferences):
     color_viz: FloatVectorProperty(
         name="Visualization", description='',
         size=3, min=0.0, max=1.0,
-        default=(1, 0.589, 0.214), subtype='COLOR',
+        default=(1, 0.589, 0.214), subtype='COLOR_GAMMA',
         update=update_theme)
 
     color_tex: FloatVectorProperty(
         name="Text", description='',
         size=3, min=0.0, max=1.0,
-        default=(0.5, 0.5, 1), subtype='COLOR',
+        default=(0.5, 0.5, 1), subtype='COLOR_GAMMA',
         update=update_theme)
 
     color_sce: FloatVectorProperty(
         name="Scene", description='',
         size=3, min=0.0, max=1.0,
-        default=(0, 0.5, 0.2), subtype='COLOR',
+        default=(0, 0.5, 0.2), subtype='COLOR_GAMMA',
         update=update_theme)
 
     color_lay: FloatVectorProperty(
         name="Layout", description='',
         size=3, min=0.0, max=1.0,
-        default=(0.674, 0.242, 0.363), subtype='COLOR',
+        default=(0.674, 0.242, 0.363), subtype='COLOR_GAMMA',
         update=update_theme)
 
     color_gen: FloatVectorProperty(
         name="Generator", description='',
         size=3, min=0.0, max=1.0,
-        default=(0, 0.5, 0.5), subtype='COLOR',
+        default=(0, 0.5, 0.5), subtype='COLOR_GAMMA',
         update=update_theme)
 
     #  frame change

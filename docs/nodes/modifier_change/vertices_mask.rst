@@ -47,5 +47,5 @@ Examples of usage
 * Generator-> :doc:`Torus </nodes/generator/torus_mk2>`
 * Number-> :doc:`List Input </nodes/number/list_input>`
 * Number-> :doc:`Random Num Gen </nodes/number/random_num_gen>`
-* List->List Struct-> :doc:`List Length </nodes/list_main/length>`
+* List->List Main-> :doc:`List Length </nodes/list_main/length>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`

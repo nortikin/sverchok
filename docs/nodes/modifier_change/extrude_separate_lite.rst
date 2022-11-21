@@ -36,5 +36,5 @@ Example of usage
 * Number-> :doc:`List Input </nodes/number/list_input>`
 * Vector-> :doc:`Vector In </nodes/vector/vector_in>`
 * List-> :doc:`Index To Mask </nodes/list_masks/index_to_mask>`
-* List->List Struct-> :doc:`List Length </nodes/list_main/length>`
+* List->List Main-> :doc:`List Length </nodes/list_main/length>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`

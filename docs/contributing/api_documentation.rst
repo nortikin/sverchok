@@ -2,7 +2,7 @@
 Sverchok API Documentation
 ==========================
 
-Nowadays Sverchok has a large set of modules, classes and funtions, allowing to
+Nowadays Sverchok has a large set of modules, classes and functions, allowing to
 manipulate data structures, meshes, basic geometry objects, curves and surfaces
 (including NURBS), fields and solids (with help of FreeCAD library). These
 methods are used by Sverchok nodes internally. But also this API can be used by

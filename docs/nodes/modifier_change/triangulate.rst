@@ -86,5 +86,5 @@ Triangulate only two faces of extruded polygon:
 * Modifier Make-> :doc:`Solidify </nodes/modifier_make/solidify_mk2>`
 * Number-> :doc:`List Input </nodes/number/list_input>`
 * List-> :doc:`Index To Mask </nodes/list_masks/index_to_mask>`
-* List->List Struct-> :doc:`List Length </nodes/list_main/length>`
+* List->List Main-> :doc:`List Length </nodes/list_main/length>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`

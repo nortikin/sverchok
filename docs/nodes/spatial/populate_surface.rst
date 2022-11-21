@@ -1,6 +1,9 @@
 Populate Surface
 ================
 
+.. image:: https://user-images.githubusercontent.com/14288520/201608736-28204c15-b113-4206-bcd6-13c98fdff4e9.png
+  :target: https://user-images.githubusercontent.com/14288520/201608736-28204c15-b113-4206-bcd6-13c98fdff4e9.png
+
 Functionality
 -------------
 
@@ -34,11 +37,19 @@ This node has the following inputs:
 * **Field**. The scalar field defining the distribution of generated points. If
   this input is not connected, the node will generate evenly distributed
   points. This input is mandatory, if **Proportional** parameter is checked.
+
+.. image:: https://user-images.githubusercontent.com/14288520/201907163-7538e450-54dc-4e5f-8145-a37e875e6a68.png
+  :target: https://user-images.githubusercontent.com/14288520/201907163-7538e450-54dc-4e5f-8145-a37e875e6a68.png
+
 * **Count**. The number of points to be generated. The default value is 50.
 * **MinDistance**. This input is available only when **Distance** parameter is
   set to **Min. Distance**. Minimum allowable distance between generated
   points. If set to zero, there will be no restriction on distance between
   points. Default value is 0.
+
+.. image:: https://user-images.githubusercontent.com/14288520/201924063-ee6625d7-ef58-468a-9862-c1328f47194e.png
+  :target: https://user-images.githubusercontent.com/14288520/201924063-ee6625d7-ef58-468a-9862-c1328f47194e.png
+
 * **RadiusField**. This input is available and mandatory only when **Distance**
   parameter is set to **Radius Field**. The scalar field, which defines radius
   of free sphere around any generated point.
@@ -72,15 +83,25 @@ This node has the following parameters:
 
    The default value is **Min. Distance**.
 
+.. image:: https://user-images.githubusercontent.com/14288520/201926268-9c60c609-a218-4ee6-b33d-6273b5d64973.png
+  :target: https://user-images.githubusercontent.com/14288520/201926268-9c60c609-a218-4ee6-b33d-6273b5d64973.png
+
 * **Proportional**. If checked, then the points density will be distributed
   proportionally to the values of scalar field. Otherwise, the points will be
   uniformly distributed in the area where the value of scalar field exceeds
   threshold. Unchecked by default.
+
+.. image:: https://user-images.githubusercontent.com/14288520/201914936-7fe629b9-179f-40bf-a41e-5d413d69ad6d.png
+  :target: https://user-images.githubusercontent.com/14288520/201914936-7fe629b9-179f-40bf-a41e-5d413d69ad6d.png
+
 * **Random Radius**. This parameter is available only when **Distance**
   parameter is set to **RadiusField**. If checked, then radiuses of empty
   spheres will be generated randomly, by using uniform distribution between 0
   (zero) and the value defined by the scalar field provided in the
   **RadiusField** input. Unchecked by default.
+
+.. image:: https://user-images.githubusercontent.com/14288520/201896127-68213c7a-9fff-4a9a-b246-ec345f7836e0.gif
+  :target: https://user-images.githubusercontent.com/14288520/201896127-68213c7a-9fff-4a9a-b246-ec345f7836e0.gif
 
 When **Proportional** mode is enabled, then the probability of vertex
 appearance at the certain point is calculated as ``P = (V - FieldMin) /
@@ -101,9 +122,10 @@ Example of usage
 
 Distribute points on a Moebius band according to some attractor field:
 
-.. image:: https://user-images.githubusercontent.com/284644/99146076-7ed88100-2696-11eb-8175-67b5f268f36e.png
+.. image:: https://user-images.githubusercontent.com/14288520/201771930-bfc79962-80a4-47ac-b4fc-e198780d20f5.png
+  :target: https://user-images.githubusercontent.com/14288520/201771930-bfc79962-80a4-47ac-b4fc-e198780d20f5.png
 
 Example of "Radius Field" mode usage:
 
-.. image:: https://user-images.githubusercontent.com/284644/102106806-d5caa500-3e52-11eb-805e-73333b35350c.png
-
+.. image:: https://user-images.githubusercontent.com/14288520/201777764-65ecca39-799a-4b17-88d5-b1da8a4d84ad.png
+  :target: https://user-images.githubusercontent.com/14288520/201777764-65ecca39-799a-4b17-88d5-b1da8a4d84ad.png

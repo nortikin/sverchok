@@ -78,7 +78,7 @@ Examples
 
 * Generator-> :doc:`Box </nodes/generator/box_mk2>`
 * Number-> :doc:`Number Range </nodes/number/number_range>`
-* List->List Struct-> :doc:`List Length </nodes/list_main/length>`
+* List->List Main-> :doc:`List Length </nodes/list_main/length>`
 * Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`
 * Color-> :doc:`Color Ramp </nodes/color/color_ramp>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
@@ -92,7 +92,7 @@ Examples
 * Generator-> :doc:`Sphere </nodes/generator/sphere>`
 * Generator-> :doc:`Line </nodes/generator/line_mk4>`
 * Transform-> :doc:`Matrix Apply (verts) </nodes/transforms/apply>`
-* List->List Struct-> :doc:`List Length </nodes/list_main/length>`
+* List->List Main-> :doc:`List Length </nodes/list_main/length>`
 * List->List Struct-> :doc:`List Repeater </nodes/list_struct/repeater>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 * Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`

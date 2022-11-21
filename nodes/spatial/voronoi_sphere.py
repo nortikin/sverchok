@@ -26,7 +26,7 @@ class SvExVoronoiSphereNode(SverchCustomTreeNode, bpy.types.Node):
     sv_icon = 'SV_VORONOI'
     sv_dependencies = {'scipy'}
 
-    radius: FloatProperty(name="Radius", default=1.0, min=0.0, update=updateNode)
+    radius: FloatProperty(name="Radius", default=1.0, min=0.0, description="The sphere radius", update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', "Vertices")

@@ -77,3 +77,13 @@ Applied to Suzanne:
 
 * Generator-> :doc:`Suzanne </nodes/generator/suzanne>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+
+---------
+
+Apply node several times:
+
+.. image:: https://user-images.githubusercontent.com/14288520/201617752-5703d4be-d2ae-45e1-82e2-4a890a5081b6.png
+  :target: https://user-images.githubusercontent.com/14288520/201617752-5703d4be-d2ae-45e1-82e2-4a890a5081b6.png
+
+* Generator-> :doc:`Cylinder </nodes/generator/cylinder_mk2>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
