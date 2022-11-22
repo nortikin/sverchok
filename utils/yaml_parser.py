@@ -1,6 +1,6 @@
 """
 Limited implementation of reading yaml files. Should be replaced when such
-library is available in build-in Python source.
+library is available in built-in Python source.
 """
 
 
