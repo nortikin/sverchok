@@ -39,8 +39,8 @@ list_match_Items = [
     ("Long_Cycle", "Long Cycle", "Cycle through the shorter lists until match the longest list", 1)]
 
 intersec_mode_items = [
-    ("Circular", "Circular", "Intersecction based on distance (Slower)", 0),
-    ("Poligonal", "Poligonal", "Intersecction dependent from num. of vertices (Faster)", 1)]
+    ("Circular", "Circular", "Intersection based on distance (Slower)", 0),
+    ("Poligonal", "Poligonal", "Intersection dependent from num. of vertices (Faster)", 1)]
 
 
 def check_dist_to_verts(v, or_verts, or_radius, net, poli_ang_list, poly_ang_cos_list, mask_t):
@@ -362,10 +362,10 @@ def outside_angles(ang, ang_o, ang_f):
         return ang <= ang_o or ang >= ang_f
 
 
-def on_valid_angle_inter(ang, intersecctions):
+def on_valid_angle_inter(ang, intersections):
     out_side = True
-    for i in range(int(len(intersecctions)/2)):
-        out_side = out_side and outside_angles(ang, intersecctions[2*i][0], intersecctions[2*i+1][0])
+    for i in range(int(len(intersections)/2)):
+        out_side = out_side and outside_angles(ang, intersections[2*i][0], intersections[2*i+1][0])
         if not out_side:
             break
 
@@ -381,7 +381,7 @@ def on_valid_angle_connex(ang, net, connex):
     return out_side
 
 
-def create_valid_vert_edges(x, y, z, new_angs, intersecctions, net, connex):
+def create_valid_vert_edges(x, y, z, new_angs, intersections, net, connex):
     list_vert_x, list_vert_y, list_vert_z = [], [], []
     edg_list = []
     ed_ind = 0
@@ -390,14 +390,14 @@ def create_valid_vert_edges(x, y, z, new_angs, intersecctions, net, connex):
     last_ang = 0
 
     for ang_local, r, inter in new_angs:
-        out_side = on_valid_angle_inter(ang_local, intersecctions)
+        out_side = on_valid_angle_inter(ang_local, intersections)
         if out_side and connex > 1:
             out_side = on_valid_angle_connex(ang_local, net, connex)
 
         if out_side:
             if last_is_inter and inter:
                 mid_ang = normal_angle(last_ang + (ang_local - last_ang)*0.5)
-                if not on_valid_angle_inter(mid_ang, intersecctions)or not on_valid_angle_connex(mid_ang, net, connex):
+                if not on_valid_angle_inter(mid_ang, intersections)or not on_valid_angle_connex(mid_ang, net, connex):
                     edg_list.pop()
 
             last_is_inter = inter
@@ -412,7 +412,7 @@ def create_valid_vert_edges(x, y, z, new_angs, intersecctions, net, connex):
     if len(inter_list) > 0:
         if inter_list[-1][0] and inter_list[0][0]:
             mid_ang = normal_angle(inter_list[-1][1] + (inter_list[0][1] + 2*pi - inter_list[-1][1]) * 0.5)
-            if not on_valid_angle_inter(mid_ang, intersecctions)or not on_valid_angle_connex(mid_ang, net, connex):
+            if not on_valid_angle_inter(mid_ang, intersections)or not on_valid_angle_connex(mid_ang, net, connex):
                 edg_list.pop()
             else:
                 edg_list[-1] = (edg_list[-1][0], 0)
@@ -453,8 +453,8 @@ class SvContourNode(ModifierLiteNode, SverchCustomTreeNode, bpy.types.Node):
         min=-1.0, default=1.0e-5,
         step=0.02, update=updateNode)
 
-    intersecction_handle: EnumProperty(
-        name="intersecction_handle",
+    intersection_handle: EnumProperty(
+        name="intersection_handle",
         description="Intersection mode",
         items=intersec_mode_items, default="Circular",
         update=updateNode)
@@ -497,7 +497,7 @@ class SvContourNode(ModifierLiteNode, SverchCustomTreeNode, bpy.types.Node):
         layout.prop(self, "modeI", expand=True)
         layout.prop(self, 'rm_doubles')
         layout.prop(self, 'mask_t')
-        layout.prop(self, "intersecction_handle", expand=True)
+        layout.prop(self, "intersection_handle", expand=True)
         layout.prop(self, "list_match", expand=True)
         layout.prop(self, "remove_caps")
 
@@ -650,7 +650,7 @@ class SvContourNode(ModifierLiteNode, SverchCustomTreeNode, bpy.types.Node):
     def generate_outlines(self, output_lists, params):
         verts_in, _, _, edges_in = params
         is_edges_in_linked = self.inputs['Edges_in'].is_linked
-        poligonal_inter = (0 if self.intersecction_handle == "Circular" else 1)
+        poligonal_inter = (0 if self.intersection_handle == "Circular" else 1)
 
         v_len = len(verts_in)
         edges_in = [i for i in edges_in if i[0] < v_len and i[1] < v_len]
