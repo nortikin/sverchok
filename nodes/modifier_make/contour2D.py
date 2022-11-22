@@ -40,7 +40,7 @@ list_match_Items = [
 
 intersec_mode_items = [
     ("Circular", "Circular", "Intersection based on distance (Slower)", 0),
-    ("Poligonal", "Poligonal", "Intersection dependent from num. of vertices (Faster)", 1)]
+    ("Polygonal", "Polygonal", "Intersection dependent from num. of vertices (Faster)", 1)]
 
 
 def check_dist_to_verts(v, or_verts, or_radius, net, poli_ang_list, poly_ang_cos_list, mask_t):
@@ -502,7 +502,7 @@ class SvContourNode(ModifierLiteNode, SverchCustomTreeNode, bpy.types.Node):
         layout.prop(self, "remove_caps")
 
 
-    def build_net(self, verts_in, edges_in, v_len, radius, poligonal_inter):
+    def build_net(self, verts_in, edges_in, v_len, radius, polygonal_inter):
         '''calculate radial intersections and connexion angles and orientations'''
         net2 = []
         for j in range(v_len):
@@ -514,7 +514,7 @@ class SvContourNode(ModifierLiteNode, SverchCustomTreeNode, bpy.types.Node):
             side_edges_angles(net2, verts_in, edges_in, radius)
         # calculate orientation
         orientation_angle(net2)
-        if not poligonal_inter and v_len > 1:
+        if not polygonal_inter and v_len > 1:
             # calculate circular intersections
             ciruclar_intersections(net2, verts_in, edges_in, v_len, radius)
 
@@ -613,10 +613,10 @@ class SvContourNode(ModifierLiteNode, SverchCustomTreeNode, bpy.types.Node):
 
         return family
 
-    def adjust_parameters(self, params, v_len, actual_radius, poligonal_inter, edges_in):
+    def adjust_parameters(self, params, v_len, actual_radius, polygonal_inter, edges_in):
         verts_in, _, vertices, _ = params
         parameters = list_matcher([verts_in, vertices], self.list_match)
-        net = self.build_net(verts_in, edges_in, v_len, actual_radius, poligonal_inter)
+        net = self.build_net(verts_in, edges_in, v_len, actual_radius, polygonal_inter)
         parameters = list_matcher([verts_in, vertices, actual_radius, net], self.list_match)
         parameters = [data[0:v_len] for data in parameters]
 
@@ -650,7 +650,7 @@ class SvContourNode(ModifierLiteNode, SverchCustomTreeNode, bpy.types.Node):
     def generate_outlines(self, output_lists, params):
         verts_in, _, _, edges_in = params
         is_edges_in_linked = self.inputs['Edges_in'].is_linked
-        poligonal_inter = (0 if self.intersection_handle == "Circular" else 1)
+        polygonal_inter = (0 if self.intersection_handle == "Circular" else 1)
 
         v_len = len(verts_in)
         edges_in = [i for i in edges_in if i[0] < v_len and i[1] < v_len]
@@ -659,7 +659,7 @@ class SvContourNode(ModifierLiteNode, SverchCustomTreeNode, bpy.types.Node):
 
         for i in range(perimeter_number):
 
-            net, parameters = self.adjust_parameters(params, v_len, actual_radius[i], poligonal_inter, edges_in)
+            net, parameters = self.adjust_parameters(params, v_len, actual_radius[i], polygonal_inter, edges_in)
             verts_in, _, actual_radius[i], net = parameters
             if is_edges_in_linked and self.remove_caps:
                 edges_num = adjacent_edg_pol_num(verts_in, edges_in)
