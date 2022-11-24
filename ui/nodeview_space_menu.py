@@ -418,8 +418,15 @@ class Category(MenuItem):
         It should be called before registration functions
         """
         new_categories = []
+        top_menu_names = {c.name for c in self if getattr(c, 'name', None)}
         for cat in config:
             cat_name = list(cat.keys())[0]
+
+            # if extension is reloaded before Sverchok it can add the same menu
+            # twice, this condition should prevent it
+            if cat_name in top_menu_names:
+                continue
+
             items = list(cat.values())[0]
             new_categories.append(self.from_config(items, cat_name))
         self.menu_cls.draw_data.extend(new_categories)
