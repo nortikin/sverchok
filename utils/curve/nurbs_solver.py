@@ -225,6 +225,60 @@ class SvNurbsCurveTangents(SvNurbsCurvePoints):
     def get_src_points(self, solver):
         return solver.src_curve.tangent_array(self.us)
 
+class SvNurbsCurveDerivatives(SvNurbsCurvePoints):
+    def __init__(self, order, us, vectors, weights = None, relative=False):
+        self.order = order
+        self.us = np.asarray(us)
+        if self.us.ndim != 1:
+            raise Exception(f"T values array must be 1-dimensional, but got {self.us.shape}")
+        self.vectors = np.asarray(vectors)
+        if self.vectors.ndim != 2:
+            raise Exception(f"Vectors must be 2-dimensional, but got {self.vectors.shape}")
+        if len(us) != len(self.vectors):
+            raise Exception(f"Number of T values and number of points must be equal, but got #T = {len(us)}, #P = {len(self.vectors)}")
+        self.relative = relative
+        if weights is None:
+            self.weights = None
+        else:
+            self.weights = np.asarray(weights)
+
+    def __repr__(self):
+        if self.relative:
+            return f"<Relative Derivatives, order={self.order}, cnt={len(self.us)}>"
+        else:
+            return f"<Derivatives, order={self.order}, cnt={len(self.us)}>"
+
+    @staticmethod
+    def single(order, u, tangent, weight=None, relative=False):
+        if weight is None:
+            weights = None
+        else:
+            weights = [weight]
+        return SvNurbsCurveDerivatives(order, [u], [tangent], weights, relative=relative)
+
+    def copy(self):
+        return SvNurbsCurveDerivatives(self.order, self.us, self.vectors, self.weights, relative=self.relative)
+
+    def add(self, other):
+        if self.relative != other.relative:
+            return None
+        if self.order != other.order:
+            return None
+        g = self.copy()
+        g.us = np.concatenate((g.us, other.us))
+        g.vectors = np.concatenate((g.vectors, other.vectors))
+        g.weights = np.concatenate((g.get_weights(), other.get_weights()))
+        return g
+
+    def calc_alphas(self, solver, us):
+        p = solver.degree
+        betas = [solver.basis.weighted_derivative(k, p, self.order, solver.curve_weights)(us) for k in range(solver.n_cpts)]
+        betas = np.array(betas) # (n_cpts, n_points)
+        return betas
+    
+    def get_src_points(self, solver):
+        return solver.src_curve.tangent_array(self.us)
+
 class SvNurbsCurveSelfIntersections(SvNurbsCurveGoal):
     """
     Goal which says that the curve must have self-intersections at specified
