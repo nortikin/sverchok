@@ -136,8 +136,8 @@ This node has the following outputs:
 - **FaceData**. List containing data items from the **FaceData** input, which
   contains one item for each output mesh face.
 
-.. image:: https://user-images.githubusercontent.com/14288520/200062011-59dcc4f9-09db-4574-9b83-19c6bb5eb0ee.png
-  :target: https://user-images.githubusercontent.com/14288520/200062011-59dcc4f9-09db-4574-9b83-19c6bb5eb0ee.png
+.. image:: https://user-images.githubusercontent.com/14288520/202865440-2bb41cad-b22c-49bc-8efe-0600fa2627e0.png
+  :target: https://user-images.githubusercontent.com/14288520/202865440-2bb41cad-b22c-49bc-8efe-0600fa2627e0.png
 
 .. image:: https://user-images.githubusercontent.com/14288520/200063766-001beaba-ad54-4ab4-aa55-ceff013989b5.png
   :target: https://user-images.githubusercontent.com/14288520/200063766-001beaba-ad54-4ab4-aa55-ceff013989b5.png
@@ -194,7 +194,7 @@ Voronoi grid with each cell extruded by it's specific random matrix:
 * Transform-> :doc:`Randomize </nodes/transforms/randomize>`
 * Modifiers->Modifier Change-> :doc:`Fill Holes </nodes/modifier_change/holes_fill>`
 * Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`
-* List->List Struct-> :doc:`List Length </nodes/list_main/length>`
+* List->List Main-> :doc:`List Length </nodes/list_main/length>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 
 ---------

@@ -44,7 +44,7 @@ Examples of usage
 * Analyzers-> :ref:`Component Analyzer/Edges/Is Interior <EDGES_IS_INTERIOR>`
 * Number-> :doc:`List Input </nodes/number/list_input>`
 * Number-> :doc:`Random Num Gen </nodes/number/random_num_gen>`
-* List->List Struct-> :doc:`List Length </nodes/list_main/length>`
+* List->List Main-> :doc:`List Length </nodes/list_main/length>`
 * AND: Logic-> :doc:`Logic Functions </nodes/logic/logic_node>`
 * Modifiers->Modifier change-> :doc:`Disslove Mesh Elements </nodes/modifier_change/dissolve_mesh_elements>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`

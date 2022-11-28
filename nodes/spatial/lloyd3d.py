@@ -36,6 +36,7 @@ class SvLloyd3dNode(SverchCustomTreeNode, bpy.types.Node):
         name = "Clipping",
         default = 1.0,
         min = 0.0,
+        description="Clipping distance for Voronoi diagram. This value will be added to size of bounding box or sphere",
         update = updateNode)
 
     modes = [

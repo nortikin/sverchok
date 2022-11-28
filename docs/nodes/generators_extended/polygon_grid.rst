@@ -107,7 +107,7 @@ Example of usage
 * Number-> :doc:`Random Num Gen </nodes/number/random_num_gen>`
 * ADD: Vector-> :doc:`Vector Math </nodes/vector/math_mk3>`
 * Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`
-* List->List Struct-> :doc:`List Length </nodes/list_main/length>`
+* List->List Main-> :doc:`List Length </nodes/list_main/length>`
 * List-> :doc:`List Mask (Out) </nodes/list_masks/mask>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 * Viz-> :doc:`Viewer 2D </nodes/viz/viewer_2d>`
@@ -122,7 +122,7 @@ Example of usage
 * Number-> :doc:`Random Num Gen </nodes/number/random_num_gen>`
 * MUL X, Y: Number-> :doc:`Scalar Math </nodes/number/scalar_mk4>`
 * List-> :doc:`List Mask (Out) </nodes/list_masks/mask>`
-* List->List Struct-> :doc:`List Length </nodes/list_main/length>`
+* List->List Main-> :doc:`List Length </nodes/list_main/length>`
 * Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 * Viz-> :doc:`Viewer 2D </nodes/viz/viewer_2d>`

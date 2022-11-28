@@ -35,7 +35,7 @@ class Voronoi2DNode(SverchCustomTreeNode, bpy.types.Node):
     sv_icon = 'SV_VORONOI'
 
     clip: FloatProperty(
-        name='clip', description='Clipping Distance',
+        name='clip', description='Clipping Distance. Amount of space to be added for bounding line',
         default=1.0, min=0, update=updateNode)
 
     bound_modes = [

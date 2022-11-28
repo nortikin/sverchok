@@ -138,7 +138,7 @@ class SearchTree:
 
     def nodes_from_socket(self, socket: NodeSocket) -> list['SvNode']:
         """Returns linked to the given socket nodes.
-        The list will be empy if the socket is not connected.
+        The list will be empty if the socket is not connected.
         Connected input socket will always return list with one node"""
         if socket.is_output:
             next_socks = self._to_socks.get(socket, [])

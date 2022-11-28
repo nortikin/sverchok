@@ -33,6 +33,7 @@ class SvDelaunay3dMk2Node(SverchCustomTreeNode, bpy.types.Node):
     join : BoolProperty(
         name = "Join",
         default = False,
+        description="If checked, then the node will generate one mesh object, composed of all faces of all tetrahedrons (without duplicating vertices and faces). Otherwise, the node will generate a separate mesh object for each tetrahedron",
         update = updateNode)
 
     volume_threshold : FloatProperty(
@@ -40,6 +41,7 @@ class SvDelaunay3dMk2Node(SverchCustomTreeNode, bpy.types.Node):
         min = 0,
         default = 1e-4,
         precision = 4,
+        description="This defines the threshold used to filter “too flat” tetrahedrons out. Smaller values of threshold mean more “almost flat” tetrahedrons will be generated. Set this to 0 to skip this filtering step and allow to generate any tetrahedrons",
         update = updateNode)
 
     edge_threshold : FloatProperty(
@@ -47,6 +49,7 @@ class SvDelaunay3dMk2Node(SverchCustomTreeNode, bpy.types.Node):
         min = 0,
         default = 0,
         precision = 4,
+        description="This defines the threshold used to filter “too long” tetrahedrons out. Tetrahedrons which have one of their edges longer than value specified here will not be generated. Set this to 0 to skip this filtering step and allow to generate any tetrahedrons",
         update = updateNode)
 
     def draw_buttons(self, context, layout):

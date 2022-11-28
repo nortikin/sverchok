@@ -59,8 +59,8 @@ def gordon_surface(u_curves, v_curves, intersections, metric='POINTS', u_knots=N
     """
     Generate a NURBS surface from a net of NURBS curves, by use of Gordon's algorithm.
 
-    :param u_curves - list of NURBS curves along U direciton (length N)
-    :param v_curves - list of NURBS curves along V direcion (length M)
+    :param u_curves - list of NURBS curves along U direction (length N)
+    :param v_curves - list of NURBS curves along V direction (length M)
     :param intersections - np.array of shape (N, M, 3): points of curves intersection
     :param metric - metric function that can be used to calculate T values of curves
                     intersections from their positions.

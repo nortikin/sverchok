@@ -46,8 +46,7 @@ Examples of usage
 * Number-> :doc:`List Input </nodes/number/list_input>`
 * Number-> :doc:`Random Num Gen </nodes/number/random_num_gen>`
 * Number-> :doc:`Number Range </nodes/number/number_range>`
-* List->List Struct-> :doc:`List Length </nodes/list_main/length>`
-* List->List Struct-> :doc:`List Length </nodes/list_main/length>`
+* List->List Main-> :doc:`List Length </nodes/list_main/length>`
 * Color-> :doc:`Color In </nodes/color/color_in_mk1>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 
@@ -70,4 +69,4 @@ Simple:
 * CAD-> :doc:`Smooth Lines </nodes/generators_extended/smooth_lines>`
 * Number-> :doc:`Random Num Gen </nodes/number/random_num_gen>`
 * List-> :doc:`List Mask (Out) </nodes/list_masks/mask>`
-* List->List Struct-> :doc:`List Length </nodes/list_main/length>`
+* List->List Main-> :doc:`List Length </nodes/list_main/length>`

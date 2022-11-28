@@ -1,6 +1,9 @@
 Lloyd on Solid Face
 ===================
 
+.. image:: https://user-images.githubusercontent.com/14288520/202818473-83fa1801-84e2-4814-adb2-36df0c1e2474.png
+  :target: https://user-images.githubusercontent.com/14288520/202818473-83fa1801-84e2-4814-adb2-36df0c1e2474.png
+
 Dependencies
 ------------
 
@@ -27,6 +30,9 @@ places to which higher weight is assigned.
 Solid Face object can be created with nodes from "Make Face" submenu (such as
 "Face from Curve"); also any NURBS or NURBS-like surface can be used as a Solid
 Face.
+
+.. image:: https://user-images.githubusercontent.com/14288520/202818639-8128af91-b99f-4688-9d19-e44a0b30d4e0.png
+  :target: https://user-images.githubusercontent.com/14288520/202818639-8128af91-b99f-4688-9d19-e44a0b30d4e0.png
 
 .. _Lloyd: https://en.wikipedia.org/wiki/Lloyd%27s_algorithm
 
@@ -55,4 +61,3 @@ This node has the following outputs:
 * **Sites**. Redisrtibuted points in 3D space.
 * **UVPoints**. Redistributed points in U/V space of the surface. Z coordinate
   of these points will always be zero.
-

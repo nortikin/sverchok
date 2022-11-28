@@ -1,6 +1,9 @@
 Lloyd on Mesh
 =============
 
+.. image:: https://user-images.githubusercontent.com/14288520/202813275-96c4f11c-a95e-4cc2-aba1-420dd258ca36.png
+  :target: https://user-images.githubusercontent.com/14288520/202813275-96c4f11c-a95e-4cc2-aba1-420dd258ca36.png
+
 Dependencies
 ------------
 
@@ -52,5 +55,21 @@ This node has the following output:
 Example of Usage
 ----------------
 
-.. image:: https://user-images.githubusercontent.com/284644/100524663-d66d0580-31db-11eb-80f6-4c55523cfbb0.png
+.. image:: https://user-images.githubusercontent.com/14288520/202814364-f58907d3-67a4-467e-93e7-44acbe22be2b.png
+  :target: https://user-images.githubusercontent.com/14288520/202814364-f58907d3-67a4-467e-93e7-44acbe22be2b.png
 
+* Generator-> :doc:`Suzanne </nodes/generator/suzanne>`
+* Spatial-> :doc:`Populate Mesh </nodes/spatial/random_points_on_mesh>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+
+---------
+
+.. image:: https://user-images.githubusercontent.com/14288520/202815217-e3ce3c1c-1855-46b3-ae01-af3d36433fa9.png
+  :target: https://user-images.githubusercontent.com/14288520/202815217-e3ce3c1c-1855-46b3-ae01-af3d36433fa9.png
+
+* Generator-> :doc:`Suzanne </nodes/generator/suzanne>`
+* Spatial-> :doc:`Populate Mesh </nodes/spatial/random_points_on_mesh>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+
+.. image:: https://user-images.githubusercontent.com/14288520/202814946-ae47a3b1-3063-4254-aec2-f404327a590f.gif
+  :target: https://user-images.githubusercontent.com/14288520/202814946-ae47a3b1-3063-4254-aec2-f404327a590f.gif

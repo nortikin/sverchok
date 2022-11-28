@@ -96,7 +96,7 @@ You can create multiple lines if input multiple lists
   :target: https://user-images.githubusercontent.com/14288520/188505934-2d16c5e3-7392-40ab-9a84-6c8e91bda75a.png
 
 * Number-> :doc:`List Input </nodes/number/list_input>`
-* List->List Struct-> :doc:`List Length </nodes/list_main/length>`
+* List->List Main-> :doc:`List Length </nodes/list_main/length>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 * Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
 
