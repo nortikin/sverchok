@@ -327,6 +327,45 @@ An example with use of "default" and "let" statements:
         n = 10
       l {- straight_len * cos(phi)}, {straight_len * sin(phi)}
 
+A simple example of `@I` command used to define a quadratic interpolation curve through three points:
+
+.. image:: https://user-images.githubusercontent.com/284644/204350806-cba83beb-0eae-4ef5-ba42-15442029c6f2.png
+
+::
+
+      M R0,0
+      @I 2
+         {R0 + dR}, {0.5*H}
+         R0, H ;
+
+An example of closed interpolation curve:
+
+.. image:: https://user-images.githubusercontent.com/284644/204350799-6ee7e89f-0e27-45de-b523-7fae9c17eac8.png
+
+::
+
+      M 0,0
+      @I 3
+         1.5,2
+         2,0
+         0,-3
+         -2,0
+         -1.5,2
+         z ;
+
+An example of `@smooth` keyword usage, to smoothly continue the previous segment defined by C command:
+
+.. image:: https://user-images.githubusercontent.com/284644/204351808-26133e22-7b04-44ad-9c0a-40f97339a672.png
+
+::
+
+      M 0,0
+      C 1,0 1,3 0,3
+      @I @smooth 3
+         -0.8, 2
+         -1, 1
+         -2, 0 ;
+
 Gotchas
 -------
 
