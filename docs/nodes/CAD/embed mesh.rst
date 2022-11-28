@@ -1,4 +1,4 @@
-Delaunay 2D Cdt
+Embed Mesh
 ===============
 
 .. image:: https://user-images.githubusercontent.com/74725748/204120088-03599881-59d5-4f6c-b7de-3b90b1f620cc.png
