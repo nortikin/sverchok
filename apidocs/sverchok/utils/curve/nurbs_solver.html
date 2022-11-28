@@ -279,6 +279,60 @@ class SvNurbsCurveTangents(SvNurbsCurvePoints):
     def get_src_points(self, solver):
         return solver.src_curve.tangent_array(self.us)
 
+class SvNurbsCurveDerivatives(SvNurbsCurvePoints):
+    def __init__(self, order, us, vectors, weights = None, relative=False):
+        self.order = order
+        self.us = np.asarray(us)
+        if self.us.ndim != 1:
+            raise Exception(f&#34;T values array must be 1-dimensional, but got {self.us.shape}&#34;)
+        self.vectors = np.asarray(vectors)
+        if self.vectors.ndim != 2:
+            raise Exception(f&#34;Vectors must be 2-dimensional, but got {self.vectors.shape}&#34;)
+        if len(us) != len(self.vectors):
+            raise Exception(f&#34;Number of T values and number of points must be equal, but got #T = {len(us)}, #P = {len(self.vectors)}&#34;)
+        self.relative = relative
+        if weights is None:
+            self.weights = None
+        else:
+            self.weights = np.asarray(weights)
+
+    def __repr__(self):
+        if self.relative:
+            return f&#34;&lt;Relative Derivatives, order={self.order}, cnt={len(self.us)}&gt;&#34;
+        else:
+            return f&#34;&lt;Derivatives, order={self.order}, cnt={len(self.us)}&gt;&#34;
+
+    @staticmethod
+    def single(order, u, tangent, weight=None, relative=False):
+        if weight is None:
+            weights = None
+        else:
+            weights = [weight]
+        return SvNurbsCurveDerivatives(order, [u], [tangent], weights, relative=relative)
+
+    def copy(self):
+        return SvNurbsCurveDerivatives(self.order, self.us, self.vectors, self.weights, relative=self.relative)
+
+    def add(self, other):
+        if self.relative != other.relative:
+            return None
+        if self.order != other.order:
+            return None
+        g = self.copy()
+        g.us = np.concatenate((g.us, other.us))
+        g.vectors = np.concatenate((g.vectors, other.vectors))
+        g.weights = np.concatenate((g.get_weights(), other.get_weights()))
+        return g
+
+    def calc_alphas(self, solver, us):
+        p = solver.degree
+        betas = [solver.basis.weighted_derivative(k, p, self.order, solver.curve_weights)(us) for k in range(solver.n_cpts)]
+        betas = np.array(betas) # (n_cpts, n_points)
+        return betas
+    
+    def get_src_points(self, solver):
+        return solver.src_curve.tangent_array(self.us)
+
 class SvNurbsCurveSelfIntersections(SvNurbsCurveGoal):
     &#34;&#34;&#34;
     Goal which says that the curve must have self-intersections at specified
@@ -1233,6 +1287,164 @@ def single(u1, u2, weight=None, relative_u=False, relative=False):
 </dd>
 </dl>
 </dd>
+<dt id="sverchok.utils.curve.nurbs_solver.SvNurbsCurveDerivatives"><code class="flex name class">
+<span>class <span class="ident">SvNurbsCurveDerivatives</span></span>
+<span>(</span><span>order, us, vectors, weights=None, relative=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Goal which says that the curve must pass through the specified points at
+specified values of parameter.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvNurbsCurveDerivatives(SvNurbsCurvePoints):
+    def __init__(self, order, us, vectors, weights = None, relative=False):
+        self.order = order
+        self.us = np.asarray(us)
+        if self.us.ndim != 1:
+            raise Exception(f&#34;T values array must be 1-dimensional, but got {self.us.shape}&#34;)
+        self.vectors = np.asarray(vectors)
+        if self.vectors.ndim != 2:
+            raise Exception(f&#34;Vectors must be 2-dimensional, but got {self.vectors.shape}&#34;)
+        if len(us) != len(self.vectors):
+            raise Exception(f&#34;Number of T values and number of points must be equal, but got #T = {len(us)}, #P = {len(self.vectors)}&#34;)
+        self.relative = relative
+        if weights is None:
+            self.weights = None
+        else:
+            self.weights = np.asarray(weights)
+
+    def __repr__(self):
+        if self.relative:
+            return f&#34;&lt;Relative Derivatives, order={self.order}, cnt={len(self.us)}&gt;&#34;
+        else:
+            return f&#34;&lt;Derivatives, order={self.order}, cnt={len(self.us)}&gt;&#34;
+
+    @staticmethod
+    def single(order, u, tangent, weight=None, relative=False):
+        if weight is None:
+            weights = None
+        else:
+            weights = [weight]
+        return SvNurbsCurveDerivatives(order, [u], [tangent], weights, relative=relative)
+
+    def copy(self):
+        return SvNurbsCurveDerivatives(self.order, self.us, self.vectors, self.weights, relative=self.relative)
+
+    def add(self, other):
+        if self.relative != other.relative:
+            return None
+        if self.order != other.order:
+            return None
+        g = self.copy()
+        g.us = np.concatenate((g.us, other.us))
+        g.vectors = np.concatenate((g.vectors, other.vectors))
+        g.weights = np.concatenate((g.get_weights(), other.get_weights()))
+        return g
+
+    def calc_alphas(self, solver, us):
+        p = solver.degree
+        betas = [solver.basis.weighted_derivative(k, p, self.order, solver.curve_weights)(us) for k in range(solver.n_cpts)]
+        betas = np.array(betas) # (n_cpts, n_points)
+        return betas
+    
+    def get_src_points(self, solver):
+        return solver.src_curve.tangent_array(self.us)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.curve.nurbs_solver.SvNurbsCurvePoints" href="#sverchok.utils.curve.nurbs_solver.SvNurbsCurvePoints">SvNurbsCurvePoints</a></li>
+<li><a title="sverchok.utils.curve.nurbs_solver.SvNurbsCurveGoal" href="#sverchok.utils.curve.nurbs_solver.SvNurbsCurveGoal">SvNurbsCurveGoal</a></li>
+</ul>
+<h3>Static methods</h3>
+<dl>
+<dt id="sverchok.utils.curve.nurbs_solver.SvNurbsCurveDerivatives.single"><code class="name flex">
+<span>def <span class="ident">single</span></span>(<span>order, u, tangent, weight=None, relative=False)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def single(order, u, tangent, weight=None, relative=False):
+    if weight is None:
+        weights = None
+    else:
+        weights = [weight]
+    return SvNurbsCurveDerivatives(order, [u], [tangent], weights, relative=relative)</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.curve.nurbs_solver.SvNurbsCurveDerivatives.add"><code class="name flex">
+<span>def <span class="ident">add</span></span>(<span>self, other)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add(self, other):
+    if self.relative != other.relative:
+        return None
+    if self.order != other.order:
+        return None
+    g = self.copy()
+    g.us = np.concatenate((g.us, other.us))
+    g.vectors = np.concatenate((g.vectors, other.vectors))
+    g.weights = np.concatenate((g.get_weights(), other.get_weights()))
+    return g</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.nurbs_solver.SvNurbsCurveDerivatives.calc_alphas"><code class="name flex">
+<span>def <span class="ident">calc_alphas</span></span>(<span>self, solver, us)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def calc_alphas(self, solver, us):
+    p = solver.degree
+    betas = [solver.basis.weighted_derivative(k, p, self.order, solver.curve_weights)(us) for k in range(solver.n_cpts)]
+    betas = np.array(betas) # (n_cpts, n_points)
+    return betas</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.nurbs_solver.SvNurbsCurveDerivatives.copy"><code class="name flex">
+<span>def <span class="ident">copy</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def copy(self):
+    return SvNurbsCurveDerivatives(self.order, self.us, self.vectors, self.weights, relative=self.relative)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.nurbs_solver.SvNurbsCurveDerivatives.get_src_points"><code class="name flex">
+<span>def <span class="ident">get_src_points</span></span>(<span>self, solver)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_src_points(self, solver):
+    return solver.src_curve.tangent_array(self.us)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
 <dt id="sverchok.utils.curve.nurbs_solver.SvNurbsCurveGoal"><code class="flex name class">
 <span>class <span class="ident">SvNurbsCurveGoal</span></span>
 </code></dt>
@@ -1447,6 +1659,7 @@ specified values of parameter.</p></div>
 </ul>
 <h3>Subclasses</h3>
 <ul class="hlist">
+<li><a title="sverchok.utils.curve.nurbs_solver.SvNurbsCurveDerivatives" href="#sverchok.utils.curve.nurbs_solver.SvNurbsCurveDerivatives">SvNurbsCurveDerivatives</a></li>
 <li><a title="sverchok.utils.curve.nurbs_solver.SvNurbsCurveTangents" href="#sverchok.utils.curve.nurbs_solver.SvNurbsCurveTangents">SvNurbsCurveTangents</a></li>
 </ul>
 <h3>Static methods</h3>
@@ -2332,7 +2545,7 @@ curve = solver.solve()
 </details>
 </dd>
 <dt id="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.solve_ex"><code class="name flex">
-<span>def <span class="ident">solve_ex</span></span>(<span>self, problem_types={'WELLDETERMINED', 'OVERDETERMINED', 'UNDERDETERMINED'}, implementation='NATIVE', logger=None)</span>
+<span>def <span class="ident">solve_ex</span></span>(<span>self, problem_types={'OVERDETERMINED', 'UNDERDETERMINED', 'WELLDETERMINED'}, implementation='NATIVE', logger=None)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -2635,6 +2848,16 @@ def single(u, tangent, weight=None, relative=False):
 <li><code><a title="sverchok.utils.curve.nurbs_solver.SvNurbsCurveCotangents.copy" href="#sverchok.utils.curve.nurbs_solver.SvNurbsCurveCotangents.copy">copy</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs_solver.SvNurbsCurveCotangents.get_equations" href="#sverchok.utils.curve.nurbs_solver.SvNurbsCurveCotangents.get_equations">get_equations</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs_solver.SvNurbsCurveCotangents.single" href="#sverchok.utils.curve.nurbs_solver.SvNurbsCurveCotangents.single">single</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.curve.nurbs_solver.SvNurbsCurveDerivatives" href="#sverchok.utils.curve.nurbs_solver.SvNurbsCurveDerivatives">SvNurbsCurveDerivatives</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.curve.nurbs_solver.SvNurbsCurveDerivatives.add" href="#sverchok.utils.curve.nurbs_solver.SvNurbsCurveDerivatives.add">add</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs_solver.SvNurbsCurveDerivatives.calc_alphas" href="#sverchok.utils.curve.nurbs_solver.SvNurbsCurveDerivatives.calc_alphas">calc_alphas</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs_solver.SvNurbsCurveDerivatives.copy" href="#sverchok.utils.curve.nurbs_solver.SvNurbsCurveDerivatives.copy">copy</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs_solver.SvNurbsCurveDerivatives.get_src_points" href="#sverchok.utils.curve.nurbs_solver.SvNurbsCurveDerivatives.get_src_points">get_src_points</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs_solver.SvNurbsCurveDerivatives.single" href="#sverchok.utils.curve.nurbs_solver.SvNurbsCurveDerivatives.single">single</a></code></li>
 </ul>
 </li>
 <li>
