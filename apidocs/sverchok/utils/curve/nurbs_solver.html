@@ -613,6 +613,9 @@ class SvNurbsCurveSolver(SvCurve):
 
     def get_control_points(self):
         return self.to_nurbs().get_control_points()
+    
+    def get_knotvector(self):
+        return self.knotvector
 
     def set_curve_weights(self, weights):
         if len(weights) != self.n_cpts:
@@ -699,6 +702,11 @@ class SvNurbsCurveSolver(SvCurve):
 
     def solve(self, implementation = SvNurbsMaths.NATIVE, logger = None):
         problem_type, residue, curve = self.solve_ex(implementation = implementation, logger = logger)
+        return curve
+
+    def solve_welldetermined(self, implementation = SvNurbsMaths.NATIVE, logger = None):
+        problem_type, residue, curve = self.solve_ex(problem_types = {SvNurbsCurveSolver.PROBLEM_WELLDETERMINED},
+                                        implementation = implementation, logger = logger)
         return curve
 
     def solve_ex(self, problem_types = PROBLEM_ANY, implementation = SvNurbsMaths.NATIVE, logger = None):
@@ -1994,6 +2002,9 @@ curve = solver.solve()
 
     def get_control_points(self):
         return self.to_nurbs().get_control_points()
+    
+    def get_knotvector(self):
+        return self.knotvector
 
     def set_curve_weights(self, weights):
         if len(weights) != self.n_cpts:
@@ -2080,6 +2091,11 @@ curve = solver.solve()
 
     def solve(self, implementation = SvNurbsMaths.NATIVE, logger = None):
         problem_type, residue, curve = self.solve_ex(implementation = implementation, logger = logger)
+        return curve
+
+    def solve_welldetermined(self, implementation = SvNurbsMaths.NATIVE, logger = None):
+        problem_type, residue, curve = self.solve_ex(problem_types = {SvNurbsCurveSolver.PROBLEM_WELLDETERMINED},
+                                        implementation = implementation, logger = logger)
         return curve
 
     def solve_ex(self, problem_types = PROBLEM_ANY, implementation = SvNurbsMaths.NATIVE, logger = None):
@@ -2197,6 +2213,19 @@ curve = solver.solve()
     return solver</code></pre>
 </details>
 </dd>
+<dt id="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.get_knotvector"><code class="name flex">
+<span>def <span class="ident">get_knotvector</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_knotvector(self):
+    return self.knotvector</code></pre>
+</details>
+</dd>
 <dt id="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.guess_curve_params"><code class="name flex">
 <span>def <span class="ident">guess_curve_params</span></span>(<span>self)</span>
 </code></dt>
@@ -2303,7 +2332,7 @@ curve = solver.solve()
 </details>
 </dd>
 <dt id="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.solve_ex"><code class="name flex">
-<span>def <span class="ident">solve_ex</span></span>(<span>self, problem_types={'UNDERDETERMINED', 'OVERDETERMINED', 'WELLDETERMINED'}, implementation='NATIVE', logger=None)</span>
+<span>def <span class="ident">solve_ex</span></span>(<span>self, problem_types={'WELLDETERMINED', 'OVERDETERMINED', 'UNDERDETERMINED'}, implementation='NATIVE', logger=None)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -2362,6 +2391,21 @@ curve = solver.solve()
         cpts = self.src_curve.get_control_points() + d_cpts
         curve = SvNurbsMaths.build_curve(implementation, self.degree, self.knotvector, cpts, weights)
     return problem_type, residue, curve</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.solve_welldetermined"><code class="name flex">
+<span>def <span class="ident">solve_welldetermined</span></span>(<span>self, implementation='NATIVE', logger=None)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def solve_welldetermined(self, implementation = SvNurbsMaths.NATIVE, logger = None):
+    problem_type, residue, curve = self.solve_ex(problem_types = {SvNurbsCurveSolver.PROBLEM_WELLDETERMINED},
+                                    implementation = implementation, logger = logger)
+    return curve</code></pre>
 </details>
 </dd>
 <dt id="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.to_nurbs"><code class="name flex">
@@ -2637,6 +2681,7 @@ def single(u, tangent, weight=None, relative=False):
 <li><code><a title="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.PROBLEM_WELLDETERMINED" href="#sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.PROBLEM_WELLDETERMINED">PROBLEM_WELLDETERMINED</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.add_goal" href="#sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.add_goal">add_goal</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.copy" href="#sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.copy">copy</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.get_knotvector" href="#sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.get_knotvector">get_knotvector</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.guess_curve_params" href="#sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.guess_curve_params">guess_curve_params</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.guess_n_control_points" href="#sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.guess_n_control_points">guess_n_control_points</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.set_curve_params" href="#sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.set_curve_params">set_curve_params</a></code></li>
@@ -2645,6 +2690,7 @@ def single(u, tangent, weight=None, relative=False):
 <li><code><a title="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.set_knotvector" href="#sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.set_knotvector">set_knotvector</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.solve" href="#sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.solve">solve</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.solve_ex" href="#sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.solve_ex">solve_ex</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.solve_welldetermined" href="#sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.solve_welldetermined">solve_welldetermined</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.to_nurbs" href="#sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.to_nurbs">to_nurbs</a></code></li>
 </ul>
 </li>

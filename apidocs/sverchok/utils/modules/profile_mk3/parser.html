@@ -222,6 +222,18 @@ def parse_VertLineTo(src):
     for (is_abs, ys, num_segments, _), rest in parser(src):
         yield VerticalLineTo(is_abs, ys, num_segments), rest
 
+def parse_Interpolate(src):
+    parser = sequence(
+                parse_letter(&#34;@I&#34;, &#34;@i&#34;),
+                optional(parse_word(&#34;@smooth&#34;)),
+                parse_value,
+                many(parse_pair, backtracking=True),
+                optional(parse_parameter(&#34;n&#34;)),
+                optional(parse_word(&#34;z&#34;)),
+                parse_semicolon)
+    for (is_abs, smooth, degree, points, num_segments, z, _), rest in parser(src):
+        yield InterpolatedCurveTo(is_abs, degree, points, num_segments, &#39;DISTANCE&#39;, smooth is not None, z is not None), rest
+
 parse_CloseAll = parse_word(&#34;X&#34;, CloseAll())
 parse_ClosePath = parse_word(&#34;x&#34;, ClosePath())
 
@@ -259,6 +271,7 @@ parse_statement = one_of(
                     parse_QuadCurveTo,
                     parse_SmoothQuadCurveTo,
                     parse_ArcTo,
+                    parse_Interpolate,
                     parse_ClosePath,
                     parse_CloseAll
                 )
@@ -400,6 +413,28 @@ def parse_profile(src):
                 parse_semicolon)
     for (is_abs, xs, num_segments, _), rest in parser(src):
         yield HorizontalLineTo(is_abs, xs, num_segments), rest</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.modules.profile_mk3.parser.parse_Interpolate"><code class="name flex">
+<span>def <span class="ident">parse_Interpolate</span></span>(<span>src)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_Interpolate(src):
+    parser = sequence(
+                parse_letter(&#34;@I&#34;, &#34;@i&#34;),
+                optional(parse_word(&#34;@smooth&#34;)),
+                parse_value,
+                many(parse_pair, backtracking=True),
+                optional(parse_parameter(&#34;n&#34;)),
+                optional(parse_word(&#34;z&#34;)),
+                parse_semicolon)
+    for (is_abs, smooth, degree, points, num_segments, z, _), rest in parser(src):
+        yield InterpolatedCurveTo(is_abs, degree, points, num_segments, &#39;DISTANCE&#39;, smooth is not None, z is not None), rest</code></pre>
 </details>
 </dd>
 <dt id="sverchok.utils.modules.profile_mk3.parser.parse_LineTo"><code class="name flex">
@@ -696,6 +731,7 @@ def parse_profile(src):
 <li><code><a title="sverchok.utils.modules.profile_mk3.parser.parse_CurveTo" href="#sverchok.utils.modules.profile_mk3.parser.parse_CurveTo">parse_CurveTo</a></code></li>
 <li><code><a title="sverchok.utils.modules.profile_mk3.parser.parse_Default" href="#sverchok.utils.modules.profile_mk3.parser.parse_Default">parse_Default</a></code></li>
 <li><code><a title="sverchok.utils.modules.profile_mk3.parser.parse_HorLineTo" href="#sverchok.utils.modules.profile_mk3.parser.parse_HorLineTo">parse_HorLineTo</a></code></li>
+<li><code><a title="sverchok.utils.modules.profile_mk3.parser.parse_Interpolate" href="#sverchok.utils.modules.profile_mk3.parser.parse_Interpolate">parse_Interpolate</a></code></li>
 <li><code><a title="sverchok.utils.modules.profile_mk3.parser.parse_LineTo" href="#sverchok.utils.modules.profile_mk3.parser.parse_LineTo">parse_LineTo</a></code></li>
 <li><code><a title="sverchok.utils.modules.profile_mk3.parser.parse_MoveTo" href="#sverchok.utils.modules.profile_mk3.parser.parse_MoveTo">parse_MoveTo</a></code></li>
 <li><code><a title="sverchok.utils.modules.profile_mk3.parser.parse_QuadCurveTo" href="#sverchok.utils.modules.profile_mk3.parser.parse_QuadCurveTo">parse_QuadCurveTo</a></code></li>

@@ -46,6 +46,7 @@
 
 import ast
 from math import *
+import numpy as np
 
 from mathutils.geometry import interpolate_bezier
 from mathutils import Vector, Matrix
@@ -53,8 +54,12 @@ from mathutils import Vector, Matrix
 from sverchok.utils.logging import info, debug, warning
 from sverchok.utils.geom import interpolate_quadratic_bezier
 from sverchok.utils.sv_curve_utils import Arc
+from sverchok.utils.nurbs_common import SvNurbsMaths
 from sverchok.utils.curve import SvCircle, SvLine, SvBezierCurve, SvCubicBezierCurve
+import sverchok.utils.curve.knotvector as sv_knotvector
 from sverchok.utils.curve.nurbs import SvNurbsCurve
+from sverchok.utils.curve.nurbs_solver import SvNurbsCurveControlPoints
+from sverchok.utils.curve.nurbs_solver_applications import prepare_solver_for_interpolation
 
 def make_functions_dict(*functions):
     return dict([(function.__name__, function) for function in functions])
@@ -928,6 +933,115 @@ class ArcTo(Statement):
 
         interpreter.has_last_vertex = True
 
+class InterpolatedCurveTo(Statement):
+    def __init__(self, is_abs, degree, points, num_segments, metric, is_smooth, close):
+        self.is_abs = is_abs
+        self.degree = degree
+        self.points = points
+        self.metric = metric
+        self.num_segments = num_segments
+        self.is_smooth = is_smooth
+        self.close = close
+
+    def get_variables(self):
+        variables = set()
+        variables.update(self.degree.get_variables())
+        for point in self.points:
+            variables.update(point[0].get_variables())
+            variables.update(point[1].get_variables())
+        if self.num_segments:
+            variables.update(self.num_segments.get_variables())
+        return variables
+
+    def __repr__(self):
+        letter = &#34;I&#34; if self.is_abs else &#34;i&#34;
+        points = &#34; &#34;.join(str(point) for point in self.points)
+        return f&#34;{letter} {self.degree} {points} n={self.num_segments} {self.close}&#34;
+
+    def __eq__(self, other):
+        return isinstance(other, InterpolatedCurveTo) and \
+                self.is_abs == other.is_abs and \
+                self.points == other.points and \
+                self.degree == other.degree and \
+                self.metric == other.metric and \
+                self.num_segments == other.num_segments and \
+                self.is_smooth == other.is_smooth and \
+                self.close == other.close
+
+    def _make_curve(self, interpreter, degree, points):
+        points = np.array(points)
+        prev_control_point = None
+        if degree == 2 and interpreter.prev_quad_bezier_knot is not None:
+            prev_control_point = interpreter.to3d_np(interpreter.prev_quad_bezier_knot)
+        elif degree == 3 and interpreter.prev_bezier_knot is not None:
+            prev_control_point = interpreter.to3d_np(interpreter.prev_bezier_knot)
+        if self.is_smooth and prev_control_point is not None:
+            solver = prepare_solver_for_interpolation(degree,
+                                points,
+                                metric = self.metric,
+                                cyclic = self.close)
+            pos = interpreter.to3d_np(interpreter.position)
+            new_control_point = pos + (pos - prev_control_point)
+            print(f&#34;Prev CP: {prev_control_point}, pos: {pos}, new CP: {new_control_point}&#34;)
+            solver.add_goal(SvNurbsCurveControlPoints.single(1, new_control_point, relative=False))
+            knotvector = solver.get_knotvector()
+            n_cpts = solver.guess_n_control_points()
+            knotvector = sv_knotvector.add_one_by_resampling(knotvector, index=1, degree=degree)
+            solver.set_curve_params(n_cpts, knotvector)
+            curve = solver.solve_welldetermined()
+        else:
+            curve = SvNurbsMaths.interpolate_curve(SvNurbsMaths.NATIVE, degree,
+                                points,
+                                metric = self.metric,
+                                cyclic = self.close)
+        return curve
+
+    def interpret(self, interpreter, variables):
+        interpreter.assert_not_closed()
+        interpreter.start_new_segment()
+
+        v0 = interpreter.position
+        if interpreter.has_last_vertex:
+            v0_index = interpreter.get_last_vertex()
+        else:
+            v0_index = interpreter.new_vertex(*v0)
+
+        interpolated_points = [[v0[0], v0[1], 0.0]]
+        for i, pt in enumerate(self.points):
+            knot = interpreter.calc_vertex(self.is_abs, pt[0], pt[1], variables)
+            interpreter.new_knot(f&#34;I#.{i}&#34;, knot[0], knot[1])
+            interpolated_points.append([knot[0], knot[1], 0.0])
+
+        degree = interpreter.eval_(self.degree, variables)
+        curve = self._make_curve(interpreter, degree, interpolated_points)
+        interpreter.new_curve(curve, self)
+        interpreter.position = knot
+
+        cpts = curve.get_control_points()
+        if degree == 2:
+            interpreter.prev_quad_bezier_knot = (cpts[-2][0], cpts[-2][1])
+        elif degree == 3:
+            interpreter.prev_bezier_knot = (cpts[-2][0], cpts[-2][1])
+
+        if self.num_segments is not None:
+            r = interpreter.eval_(self.num_segments, variables)
+        else:
+            r = interpreter.dflt_num_verts
+
+        t_min, t_max = curve.get_u_bounds()
+        ts = np.linspace(t_min, t_max, num = r)
+        points = curve.evaluate_array(ts)
+
+        for point in points[1:]:
+            v1_index = interpreter.new_vertex(point[0], point[1])
+            interpreter.new_edge(v0_index, v1_index)
+            v0_index = v1_index
+
+        if self.close:
+            interpreter.close_segment(v1_index)
+
+        interpreter.has_last_vertex = True
+
 class CloseAll(Statement):
     def __init__(self):
         pass
@@ -1079,6 +1193,14 @@ class Interpreter(object):
             return Vector((vertex[0], 0, vertex[1]))
         else: # self.z_axis == &#39;Z&#39;:
             return Vector((vertex[0], vertex[1], 0))
+
+    def to3d_np(self, vertex):
+        if self.z_axis == &#39;X&#39;:
+            return np.array((0, vertex[0], vertex[1]))
+        elif self.z_axis == &#39;Y&#39;:
+            return np.array((vertex[0], 0, vertex[1]))
+        else: # self.z_axis == &#39;Z&#39;:
+            return np.array((vertex[0], vertex[1], 0))
 
     def assert_not_closed(self):
         if self.closed:
@@ -2269,6 +2391,209 @@ def from_string(cls, string):
 </dd>
 </dl>
 </dd>
+<dt id="sverchok.utils.modules.profile_mk3.interpreter.InterpolatedCurveTo"><code class="flex name class">
+<span>class <span class="ident">InterpolatedCurveTo</span></span>
+<span>(</span><span>is_abs, degree, points, num_segments, metric, is_smooth, close)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class InterpolatedCurveTo(Statement):
+    def __init__(self, is_abs, degree, points, num_segments, metric, is_smooth, close):
+        self.is_abs = is_abs
+        self.degree = degree
+        self.points = points
+        self.metric = metric
+        self.num_segments = num_segments
+        self.is_smooth = is_smooth
+        self.close = close
+
+    def get_variables(self):
+        variables = set()
+        variables.update(self.degree.get_variables())
+        for point in self.points:
+            variables.update(point[0].get_variables())
+            variables.update(point[1].get_variables())
+        if self.num_segments:
+            variables.update(self.num_segments.get_variables())
+        return variables
+
+    def __repr__(self):
+        letter = &#34;I&#34; if self.is_abs else &#34;i&#34;
+        points = &#34; &#34;.join(str(point) for point in self.points)
+        return f&#34;{letter} {self.degree} {points} n={self.num_segments} {self.close}&#34;
+
+    def __eq__(self, other):
+        return isinstance(other, InterpolatedCurveTo) and \
+                self.is_abs == other.is_abs and \
+                self.points == other.points and \
+                self.degree == other.degree and \
+                self.metric == other.metric and \
+                self.num_segments == other.num_segments and \
+                self.is_smooth == other.is_smooth and \
+                self.close == other.close
+
+    def _make_curve(self, interpreter, degree, points):
+        points = np.array(points)
+        prev_control_point = None
+        if degree == 2 and interpreter.prev_quad_bezier_knot is not None:
+            prev_control_point = interpreter.to3d_np(interpreter.prev_quad_bezier_knot)
+        elif degree == 3 and interpreter.prev_bezier_knot is not None:
+            prev_control_point = interpreter.to3d_np(interpreter.prev_bezier_knot)
+        if self.is_smooth and prev_control_point is not None:
+            solver = prepare_solver_for_interpolation(degree,
+                                points,
+                                metric = self.metric,
+                                cyclic = self.close)
+            pos = interpreter.to3d_np(interpreter.position)
+            new_control_point = pos + (pos - prev_control_point)
+            print(f&#34;Prev CP: {prev_control_point}, pos: {pos}, new CP: {new_control_point}&#34;)
+            solver.add_goal(SvNurbsCurveControlPoints.single(1, new_control_point, relative=False))
+            knotvector = solver.get_knotvector()
+            n_cpts = solver.guess_n_control_points()
+            knotvector = sv_knotvector.add_one_by_resampling(knotvector, index=1, degree=degree)
+            solver.set_curve_params(n_cpts, knotvector)
+            curve = solver.solve_welldetermined()
+        else:
+            curve = SvNurbsMaths.interpolate_curve(SvNurbsMaths.NATIVE, degree,
+                                points,
+                                metric = self.metric,
+                                cyclic = self.close)
+        return curve
+
+    def interpret(self, interpreter, variables):
+        interpreter.assert_not_closed()
+        interpreter.start_new_segment()
+
+        v0 = interpreter.position
+        if interpreter.has_last_vertex:
+            v0_index = interpreter.get_last_vertex()
+        else:
+            v0_index = interpreter.new_vertex(*v0)
+
+        interpolated_points = [[v0[0], v0[1], 0.0]]
+        for i, pt in enumerate(self.points):
+            knot = interpreter.calc_vertex(self.is_abs, pt[0], pt[1], variables)
+            interpreter.new_knot(f&#34;I#.{i}&#34;, knot[0], knot[1])
+            interpolated_points.append([knot[0], knot[1], 0.0])
+
+        degree = interpreter.eval_(self.degree, variables)
+        curve = self._make_curve(interpreter, degree, interpolated_points)
+        interpreter.new_curve(curve, self)
+        interpreter.position = knot
+
+        cpts = curve.get_control_points()
+        if degree == 2:
+            interpreter.prev_quad_bezier_knot = (cpts[-2][0], cpts[-2][1])
+        elif degree == 3:
+            interpreter.prev_bezier_knot = (cpts[-2][0], cpts[-2][1])
+
+        if self.num_segments is not None:
+            r = interpreter.eval_(self.num_segments, variables)
+        else:
+            r = interpreter.dflt_num_verts
+
+        t_min, t_max = curve.get_u_bounds()
+        ts = np.linspace(t_min, t_max, num = r)
+        points = curve.evaluate_array(ts)
+
+        for point in points[1:]:
+            v1_index = interpreter.new_vertex(point[0], point[1])
+            interpreter.new_edge(v0_index, v1_index)
+            v0_index = v1_index
+
+        if self.close:
+            interpreter.close_segment(v1_index)
+
+        interpreter.has_last_vertex = True</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.modules.profile_mk3.interpreter.Statement" href="#sverchok.utils.modules.profile_mk3.interpreter.Statement">Statement</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.modules.profile_mk3.interpreter.InterpolatedCurveTo.get_variables"><code class="name flex">
+<span>def <span class="ident">get_variables</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_variables(self):
+    variables = set()
+    variables.update(self.degree.get_variables())
+    for point in self.points:
+        variables.update(point[0].get_variables())
+        variables.update(point[1].get_variables())
+    if self.num_segments:
+        variables.update(self.num_segments.get_variables())
+    return variables</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.modules.profile_mk3.interpreter.InterpolatedCurveTo.interpret"><code class="name flex">
+<span>def <span class="ident">interpret</span></span>(<span>self, interpreter, variables)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def interpret(self, interpreter, variables):
+    interpreter.assert_not_closed()
+    interpreter.start_new_segment()
+
+    v0 = interpreter.position
+    if interpreter.has_last_vertex:
+        v0_index = interpreter.get_last_vertex()
+    else:
+        v0_index = interpreter.new_vertex(*v0)
+
+    interpolated_points = [[v0[0], v0[1], 0.0]]
+    for i, pt in enumerate(self.points):
+        knot = interpreter.calc_vertex(self.is_abs, pt[0], pt[1], variables)
+        interpreter.new_knot(f&#34;I#.{i}&#34;, knot[0], knot[1])
+        interpolated_points.append([knot[0], knot[1], 0.0])
+
+    degree = interpreter.eval_(self.degree, variables)
+    curve = self._make_curve(interpreter, degree, interpolated_points)
+    interpreter.new_curve(curve, self)
+    interpreter.position = knot
+
+    cpts = curve.get_control_points()
+    if degree == 2:
+        interpreter.prev_quad_bezier_knot = (cpts[-2][0], cpts[-2][1])
+    elif degree == 3:
+        interpreter.prev_bezier_knot = (cpts[-2][0], cpts[-2][1])
+
+    if self.num_segments is not None:
+        r = interpreter.eval_(self.num_segments, variables)
+    else:
+        r = interpreter.dflt_num_verts
+
+    t_min, t_max = curve.get_u_bounds()
+    ts = np.linspace(t_min, t_max, num = r)
+    points = curve.evaluate_array(ts)
+
+    for point in points[1:]:
+        v1_index = interpreter.new_vertex(point[0], point[1])
+        interpreter.new_edge(v0_index, v1_index)
+        v0_index = v1_index
+
+    if self.close:
+        interpreter.close_segment(v1_index)
+
+    interpreter.has_last_vertex = True</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
 <dt id="sverchok.utils.modules.profile_mk3.interpreter.Interpreter"><code class="flex name class">
 <span>class <span class="ident">Interpreter</span></span>
 <span>(</span><span>node, input_names, curves_form=None, force_curves_form=False, z_axis='Z')</span>
@@ -2315,6 +2640,14 @@ def from_string(cls, string):
             return Vector((vertex[0], 0, vertex[1]))
         else: # self.z_axis == &#39;Z&#39;:
             return Vector((vertex[0], vertex[1], 0))
+
+    def to3d_np(self, vertex):
+        if self.z_axis == &#39;X&#39;:
+            return np.array((0, vertex[0], vertex[1]))
+        elif self.z_axis == &#39;Y&#39;:
+            return np.array((vertex[0], 0, vertex[1]))
+        else: # self.z_axis == &#39;Z&#39;:
+            return np.array((vertex[0], vertex[1], 0))
 
     def assert_not_closed(self):
         if self.closed:
@@ -2669,6 +3002,24 @@ def from_string(cls, string):
         return Vector((vertex[0], 0, vertex[1]))
     else: # self.z_axis == &#39;Z&#39;:
         return Vector((vertex[0], vertex[1], 0))</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.modules.profile_mk3.interpreter.Interpreter.to3d_np"><code class="name flex">
+<span>def <span class="ident">to3d_np</span></span>(<span>self, vertex)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def to3d_np(self, vertex):
+    if self.z_axis == &#39;X&#39;:
+        return np.array((0, vertex[0], vertex[1]))
+    elif self.z_axis == &#39;Y&#39;:
+        return np.array((vertex[0], 0, vertex[1]))
+    else: # self.z_axis == &#39;Z&#39;:
+        return np.array((vertex[0], vertex[1], 0))</code></pre>
 </details>
 </dd>
 </dl>
@@ -3654,6 +4005,7 @@ def from_string(cls, string):
 <li><a title="sverchok.utils.modules.profile_mk3.interpreter.CurveTo" href="#sverchok.utils.modules.profile_mk3.interpreter.CurveTo">CurveTo</a></li>
 <li><a title="sverchok.utils.modules.profile_mk3.interpreter.Default" href="#sverchok.utils.modules.profile_mk3.interpreter.Default">Default</a></li>
 <li><a title="sverchok.utils.modules.profile_mk3.interpreter.HorizontalLineTo" href="#sverchok.utils.modules.profile_mk3.interpreter.HorizontalLineTo">HorizontalLineTo</a></li>
+<li><a title="sverchok.utils.modules.profile_mk3.interpreter.InterpolatedCurveTo" href="#sverchok.utils.modules.profile_mk3.interpreter.InterpolatedCurveTo">InterpolatedCurveTo</a></li>
 <li><a title="sverchok.utils.modules.profile_mk3.interpreter.LineTo" href="#sverchok.utils.modules.profile_mk3.interpreter.LineTo">LineTo</a></li>
 <li><a title="sverchok.utils.modules.profile_mk3.interpreter.MoveTo" href="#sverchok.utils.modules.profile_mk3.interpreter.MoveTo">MoveTo</a></li>
 <li><a title="sverchok.utils.modules.profile_mk3.interpreter.QuadraticCurveTo" href="#sverchok.utils.modules.profile_mk3.interpreter.QuadraticCurveTo">QuadraticCurveTo</a></li>
@@ -4017,6 +4369,13 @@ def from_string(cls, string):
 </ul>
 </li>
 <li>
+<h4><code><a title="sverchok.utils.modules.profile_mk3.interpreter.InterpolatedCurveTo" href="#sverchok.utils.modules.profile_mk3.interpreter.InterpolatedCurveTo">InterpolatedCurveTo</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.modules.profile_mk3.interpreter.InterpolatedCurveTo.get_variables" href="#sverchok.utils.modules.profile_mk3.interpreter.InterpolatedCurveTo.get_variables">get_variables</a></code></li>
+<li><code><a title="sverchok.utils.modules.profile_mk3.interpreter.InterpolatedCurveTo.interpret" href="#sverchok.utils.modules.profile_mk3.interpreter.InterpolatedCurveTo.interpret">interpret</a></code></li>
+</ul>
+</li>
+<li>
 <h4><code><a title="sverchok.utils.modules.profile_mk3.interpreter.Interpreter" href="#sverchok.utils.modules.profile_mk3.interpreter.Interpreter">Interpreter</a></code></h4>
 <ul class="two-column">
 <li><code><a title="sverchok.utils.modules.profile_mk3.interpreter.Interpreter.BEZIER" href="#sverchok.utils.modules.profile_mk3.interpreter.Interpreter.BEZIER">BEZIER</a></code></li>
@@ -4036,6 +4395,7 @@ def from_string(cls, string):
 <li><code><a title="sverchok.utils.modules.profile_mk3.interpreter.Interpreter.relative" href="#sverchok.utils.modules.profile_mk3.interpreter.Interpreter.relative">relative</a></code></li>
 <li><code><a title="sverchok.utils.modules.profile_mk3.interpreter.Interpreter.start_new_segment" href="#sverchok.utils.modules.profile_mk3.interpreter.Interpreter.start_new_segment">start_new_segment</a></code></li>
 <li><code><a title="sverchok.utils.modules.profile_mk3.interpreter.Interpreter.to3d" href="#sverchok.utils.modules.profile_mk3.interpreter.Interpreter.to3d">to3d</a></code></li>
+<li><code><a title="sverchok.utils.modules.profile_mk3.interpreter.Interpreter.to3d_np" href="#sverchok.utils.modules.profile_mk3.interpreter.Interpreter.to3d_np">to3d_np</a></code></li>
 </ul>
 </li>
 <li>

@@ -119,11 +119,27 @@ def linear_resample(tknots, new_count):
     resampled_tknots = LinearSpline.resample(old_idxs, tknots, new_idxs)
     return resampled_tknots
 
-def from_tknots(degree, tknots, n_cpts=None):
+def add_one_by_resampling(knot_vector, index = None, degree = None):
+    n = len(knot_vector)
+    if index is None:
+        return linear_resample(knot_vector, n+1)
+    else:
+        if degree is None:
+            raise Exception(&#34;If index is provided, degree must be provided too&#34;)
+        kv_before = knot_vector[:index]
+        kv_after = knot_vector[index + degree + 1 :]
+        kv = linear_resample(knot_vector[index : index + degree + 1], degree+2)
+        return np.concatenate([kv_before, kv, kv_after])
+
+def from_tknots(degree, tknots, include_endpoints=False, n_cpts=None):
     n = len(tknots)
     if n_cpts is None:
         result = [tknots[0]] * (degree+1)
-        for j in range(1, n - degree):
+        if include_endpoints:
+            j_min, j_max = 0, n - degree + 1
+        else:
+            j_min, j_max = 1, n - degree
+        for j in range(j_min, j_max):
             u = tknots[j:j+degree].sum() / degree
             result.append(u)
         result.extend([tknots[-1]] * (degree+1))
@@ -356,6 +372,28 @@ def check_multiplicity(degree, knot_vector, tolerance=1e-6):
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
+<dt id="sverchok.utils.curve.knotvector.add_one_by_resampling"><code class="name flex">
+<span>def <span class="ident">add_one_by_resampling</span></span>(<span>knot_vector, index=None, degree=None)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_one_by_resampling(knot_vector, index = None, degree = None):
+    n = len(knot_vector)
+    if index is None:
+        return linear_resample(knot_vector, n+1)
+    else:
+        if degree is None:
+            raise Exception(&#34;If index is provided, degree must be provided too&#34;)
+        kv_before = knot_vector[:index]
+        kv_after = knot_vector[index + degree + 1 :]
+        kv = linear_resample(knot_vector[index : index + degree + 1], degree+2)
+        return np.concatenate([kv_before, kv, kv_after])</code></pre>
+</details>
+</dd>
 <dt id="sverchok.utils.curve.knotvector.average"><code class="name flex">
 <span>def <span class="ident">average</span></span>(<span>knotvectors)</span>
 </code></dt>
@@ -632,7 +670,7 @@ None, if the knotvector is valid.</p></div>
 </details>
 </dd>
 <dt id="sverchok.utils.curve.knotvector.from_tknots"><code class="name flex">
-<span>def <span class="ident">from_tknots</span></span>(<span>degree, tknots, n_cpts=None)</span>
+<span>def <span class="ident">from_tknots</span></span>(<span>degree, tknots, include_endpoints=False, n_cpts=None)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -640,11 +678,15 @@ None, if the knotvector is valid.</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def from_tknots(degree, tknots, n_cpts=None):
+<pre><code class="python">def from_tknots(degree, tknots, include_endpoints=False, n_cpts=None):
     n = len(tknots)
     if n_cpts is None:
         result = [tknots[0]] * (degree+1)
-        for j in range(1, n - degree):
+        if include_endpoints:
+            j_min, j_max = 0, n - degree + 1
+        else:
+            j_min, j_max = 1, n - degree
+        for j in range(j_min, j_max):
             u = tknots[j:j+degree].sum() / degree
             result.append(u)
         result.extend([tknots[-1]] * (degree+1))
@@ -971,7 +1013,8 @@ None, if the knotvector is valid.</p></div>
 </ul>
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>
-<ul class="two-column">
+<ul class="">
+<li><code><a title="sverchok.utils.curve.knotvector.add_one_by_resampling" href="#sverchok.utils.curve.knotvector.add_one_by_resampling">add_one_by_resampling</a></code></li>
 <li><code><a title="sverchok.utils.curve.knotvector.average" href="#sverchok.utils.curve.knotvector.average">average</a></code></li>
 <li><code><a title="sverchok.utils.curve.knotvector.calc_nodes" href="#sverchok.utils.curve.knotvector.calc_nodes">calc_nodes</a></code></li>
 <li><code><a title="sverchok.utils.curve.knotvector.change_degree_pairs" href="#sverchok.utils.curve.knotvector.change_degree_pairs">change_degree_pairs</a></code></li>
