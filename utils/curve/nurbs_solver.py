@@ -559,6 +559,9 @@ class SvNurbsCurveSolver(SvCurve):
 
     def get_control_points(self):
         return self.to_nurbs().get_control_points()
+    
+    def get_knotvector(self):
+        return self.knotvector
 
     def set_curve_weights(self, weights):
         if len(weights) != self.n_cpts:
@@ -645,6 +648,11 @@ class SvNurbsCurveSolver(SvCurve):
 
     def solve(self, implementation = SvNurbsMaths.NATIVE, logger = None):
         problem_type, residue, curve = self.solve_ex(implementation = implementation, logger = logger)
+        return curve
+
+    def solve_welldetermined(self, implementation = SvNurbsMaths.NATIVE, logger = None):
+        problem_type, residue, curve = self.solve_ex(problem_types = {SvNurbsCurveSolver.PROBLEM_WELLDETERMINED},
+                                        implementation = implementation, logger = logger)
         return curve
 
     def solve_ex(self, problem_types = PROBLEM_ANY, implementation = SvNurbsMaths.NATIVE, logger = None):

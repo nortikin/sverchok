@@ -109,6 +109,33 @@ def approximate_nurbs_curve(degree, n_cpts, points, weights=None, metric='DISTAN
     solver.add_goal(goal)
     return solver.solve(implementation=implementation)
 
+def prepare_solver_for_interpolation(degree, points, metric='DISTANCE', tknots=None, cyclic=False):
+    n_points = len(points)
+    points = np.asarray(points)
+    if points.ndim != 2:
+        raise Exception(f"Array of points was expected, but got {points.shape}: {points}")
+    ndim = points.shape[1] # 3 or 4
+    if ndim not in {3,4}:
+        raise Exception(f"Only 3D and 4D points are supported, but ndim={ndim}")
+    if cyclic:
+        points = np.concatenate((points, points[0][np.newaxis]))
+    if tknots is None:
+        tknots = Spline.create_knots(points, metric=metric)
+    solver = SvNurbsCurveSolver(degree=degree, ndim=ndim)
+    solver.add_goal(SvNurbsCurvePoints(tknots, points, relative=False))
+    if cyclic:
+        k = 1.0/float(degree)
+        tangent = k*(points[1] - points[-2])
+        solver.add_goal(SvNurbsCurveTangents.single(0.0, tangent))
+        solver.add_goal(SvNurbsCurveTangents.single(1.0, tangent))
+        knotvector = sv_knotvector.from_tknots(degree, tknots, include_endpoints=True)
+    else:
+        knotvector = sv_knotvector.from_tknots(degree, tknots)
+
+    n_cpts = solver.guess_n_control_points()
+    solver.set_curve_params(n_cpts, knotvector)
+    return solver
+
 def interpolate_nurbs_curve(degree, points, metric='DISTANCE', tknots=None, cyclic=False, implementation=SvNurbsMaths.NATIVE, logger=None):
     """
     Interpolate points by a NURBS curve.
@@ -125,36 +152,9 @@ def interpolate_nurbs_curve(degree, points, metric='DISTANCE', tknots=None, cycl
     Returns:
         an instance of SvNurbsCurve.
     """
-    n_points = len(points)
-    points = np.asarray(points)
-    if points.ndim != 2:
-        raise Exception(f"Array of points was expected, but got {points.shape}: {points}")
-    ndim = points.shape[1] # 3 or 4
-    if ndim not in {3,4}:
-        raise Exception(f"Only 3D and 4D points are supported, but ndim={ndim}")
-    if cyclic:
-        points = np.concatenate((points, points[0][np.newaxis]))
-    if tknots is None:
-        tknots = Spline.create_knots(points, metric=metric)
-    points_goal = SvNurbsCurvePoints(tknots, points, relative=False)
-    solver = SvNurbsCurveSolver(degree=degree, ndim=ndim)
-    solver.add_goal(points_goal)
-    if cyclic:
-        k = 1.0/float(degree)
-        tangent = k*(points[1] - points[-2])
-        solver.add_goal(SvNurbsCurveTangents.single(0.0, tangent))
-        solver.add_goal(SvNurbsCurveTangents.single(1.0, tangent))
-        n_cpts = solver.guess_n_control_points()
-        t1 = k*tknots[0] + (1-k)*tknots[1]
-        t2 = k*tknots[-1] + (1-k)*tknots[-2]
-        tknots = np.insert(tknots, [1,-1], [t1,t2])
-        knotvector = sv_knotvector.from_tknots(degree, tknots)
-        solver.set_curve_params(n_cpts, knotvector)
-    else:
-        knotvector = sv_knotvector.from_tknots(degree, tknots)
-        n_cpts = solver.guess_n_control_points()
-        solver.set_curve_params(n_cpts, knotvector)
-
+    solver = prepare_solver_for_interpolation(degree, points,
+                    metric = metric, tknots = tknots,
+                    cyclic = cyclic)
     problem_type, residue, curve = solver.solve_ex(problem_types = {SvNurbsCurveSolver.PROBLEM_WELLDETERMINED},
                                     implementation = implementation,
                                     logger = logger)

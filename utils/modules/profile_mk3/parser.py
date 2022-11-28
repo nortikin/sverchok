@@ -194,6 +194,18 @@ def parse_VertLineTo(src):
     for (is_abs, ys, num_segments, _), rest in parser(src):
         yield VerticalLineTo(is_abs, ys, num_segments), rest
 
+def parse_Interpolate(src):
+    parser = sequence(
+                parse_letter("@I", "@i"),
+                optional(parse_word("@smooth")),
+                parse_value,
+                many(parse_pair, backtracking=True),
+                optional(parse_parameter("n")),
+                optional(parse_word("z")),
+                parse_semicolon)
+    for (is_abs, smooth, degree, points, num_segments, z, _), rest in parser(src):
+        yield InterpolatedCurveTo(is_abs, degree, points, num_segments, 'DISTANCE', smooth is not None, z is not None), rest
+
 parse_CloseAll = parse_word("X", CloseAll())
 parse_ClosePath = parse_word("x", ClosePath())
 
@@ -231,6 +243,7 @@ parse_statement = one_of(
                     parse_QuadCurveTo,
                     parse_SmoothQuadCurveTo,
                     parse_ArcTo,
+                    parse_Interpolate,
                     parse_ClosePath,
                     parse_CloseAll
                 )
