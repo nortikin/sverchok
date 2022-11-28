@@ -10,7 +10,7 @@ by adding some extensions and not supporting some features.
 Profile definition consists of a series of statements (also called commands).
 
 Statements may optionally be separated by semicolons (`;`).
-For some commands (namely: `H`/`h`, `V`/`v`) the trailing semicolon is **required**!
+For some commands (namely: `H`/`h`, `V`/`v`, `@i`) the trailing semicolon is **required**!
 
 There are the following statements supported:
 
@@ -26,33 +26,35 @@ There are the following statements supported:
 
 The following segment types are available:
 
-+---------------+-------+--------------------------------------------------------------------------------+
-| name          | cmd   | parameters                                                                     |
-+===============+=======+================================================================================+
-| MoveTo        | M,  m | <2v coordinate>                                                                |
-+---------------+-------+--------------------------------------------------------------------------------+
-| LineTo        | L,  l | (<2v coordinate>)+ ["n = " num_segments] [z]                                   |
-+---------------+-------+--------------------------------------------------------------------------------+
-| HorLineTo     | H,  h | (<x>)+ ["n = " num_segments] ";"                                               |
-+---------------+-------+--------------------------------------------------------------------------------+
-| VertLineTo    | V,  v | (<y>)+ ["n = " num_segments] ";"                                               |
-+---------------+-------+--------------------------------------------------------------------------------+
-| CurveTo       | C,  c | (<2v control1> <2v control2> <2v knot2>)+ ["n = " num_verts] [z]               |
-+---------------+-------+--------------------------------------------------------------------------------+
-| SmoothCurveTo | S,  s | (<2v control2> <2v knot2>)+ ["n = " num_verts] [z]                             |
-+---------------+-------+--------------------------------------------------------------------------------+
-| QuadCurveTo   | Q,  q | (<2v control> <2v knot2>)+ ["n = " num_segments] [z]                           |
-+---------------+-------+--------------------------------------------------------------------------------+
-| SmthQuadCurve | T,  t | (<2v knot2>)+ ["n = " num_segments] [z]                                        |
-+---------------+-------+--------------------------------------------------------------------------------+
-| ArcTo         | A,  a | <2v rx,ry> <float rot> <int flag1> <int flag2> <2v x,y> ["n = " num_verts] [z] |
-+---------------+-------+--------------------------------------------------------------------------------+
-| ClosePath     | x     |                                                                                |
-+---------------+-------+--------------------------------------------------------------------------------+
-| CloseAll      | X     |                                                                                |
-+---------------+-------+--------------------------------------------------------------------------------+
-| comment       | #     | anything after # is a comment.                                                 |
-+---------------+-------+--------------------------------------------------------------------------------+
++---------------+--------+--------------------------------------------------------------------------------+
+| name          | cmd    | parameters                                                                     |
++===============+========+================================================================================+
+| MoveTo        | M,  m  | <2v coordinate>                                                                |
++---------------+--------+--------------------------------------------------------------------------------+
+| LineTo        | L,  l  | (<2v coordinate>)+ ["n = " num_segments] [z]                                   |
++---------------+--------+--------------------------------------------------------------------------------+
+| HorLineTo     | H,  h  | (<x>)+ ["n = " num_segments] ";"                                               |
++---------------+--------+--------------------------------------------------------------------------------+
+| VertLineTo    | V,  v  | (<y>)+ ["n = " num_segments] ";"                                               |
++---------------+--------+--------------------------------------------------------------------------------+
+| CurveTo       | C,  c  | (<2v control1> <2v control2> <2v knot2>)+ ["n = " num_verts] [z]               |
++---------------+--------+--------------------------------------------------------------------------------+
+| SmoothCurveTo | S,  s  | (<2v control2> <2v knot2>)+ ["n = " num_verts] [z]                             |
++---------------+--------+--------------------------------------------------------------------------------+
+| QuadCurveTo   | Q,  q  | (<2v control> <2v knot2>)+ ["n = " num_segments] [z]                           |
++---------------+--------+--------------------------------------------------------------------------------+
+| SmthQuadCurve | T,  t  | (<2v knot2>)+ ["n = " num_segments] [z]                                        |
++---------------+--------+--------------------------------------------------------------------------------+
+| ArcTo         | A,  a  | <2v rx,ry> <float rot> <int flag1> <int flag2> <2v x,y> ["n = " num_verts] [z] |
++---------------+--------+--------------------------------------------------------------------------------+
+| Interpolate   | @I, @i | ["@smooth"] <degree> (<2v point>)+ ["n = " num_segments] [z] ";"               |
++---------------+--------+--------------------------------------------------------------------------------+
+| ClosePath     | x      |                                                                                |
++---------------+--------+--------------------------------------------------------------------------------+
+| CloseAll      | X      |                                                                                |
++---------------+--------+--------------------------------------------------------------------------------+
+| comment       | #      | anything after # is a comment.                                                 |
++---------------+--------+--------------------------------------------------------------------------------+
 
 ::
 
@@ -94,6 +96,19 @@ to keep it at one segment type per line is mainly to preserve readability.
 Other curve segments (C/c, S/s, Q/q, T/t) allow to draw several segments with
 one command, as well as in SVG; but still, in many cases it is a good idea to
 use one segment per command, for readability reasons.
+
+`@I` / `@i` command is an extension of SVG syntax. It defines a curve as
+interpolating NURBS curve through the provided list of points. Current point,
+at which the pen is located at the start of command, will be considered as
+first point to be interpolated. If `z` is specified in the end, the curve will
+be closed (cyclic); otherwise, this command will define an open curve. If
+special keyword, `@smooth`, is specified, then, while computing interpolation
+curve, this command will consider previous curve segment, defined by previous
+command (C/c, S/s, Q/q, T/t), if it is of the same degree, and draw the curve
+in such a way that in the starting point it will have the same tangent vector,
+as previous curve had in the end point; in other words, at the meeting point of
+segments, the curve will be smooth.  Providing `z` and `@smooth` for the same
+`@i` command is not supported.
 
 All curve segment types allow you to specify how many vertices are
 used to generate the segment. SVG doesn't let you specify such things, but it
