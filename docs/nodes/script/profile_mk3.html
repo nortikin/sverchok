@@ -146,7 +146,7 @@ Used domain-specific language (DSL) is based on SVG specification, but does not 
 by adding some extensions and not supporting some features.</p>
 <p>Profile definition consists of a series of statements (also called commands).</p>
 <p>Statements may optionally be separated by semicolons (<cite>;</cite>).
-For some commands (namely: <cite>H</cite>/<cite>h</cite>, <cite>V</cite>/<cite>v</cite>) the trailing semicolon is <strong>required</strong>!</p>
+For some commands (namely: <cite>H</cite>/<cite>h</cite>, <cite>V</cite>/<cite>v</cite>, <cite>&#64;i</cite>) the trailing semicolon is <strong>required</strong>!</p>
 <p>There are the following statements supported:</p>
 <ul class="simple">
 <li><p>“default” statement: <cite>default &lt;name&gt; = &lt;value&gt;</cite>. Here <cite>&lt;name&gt;</cite> is any valid python variable identifier,
@@ -163,7 +163,7 @@ will not appear as node inputs.</p></li>
 <table class="docutils align-default">
 <colgroup>
 <col style="width: 15%" />
-<col style="width: 7%" />
+<col style="width: 8%" />
 <col style="width: 78%" />
 </colgroup>
 <thead>
@@ -209,15 +209,19 @@ will not appear as node inputs.</p></li>
 <td><p>A,  a</p></td>
 <td><p>&lt;2v rx,ry&gt; &lt;float rot&gt; &lt;int flag1&gt; &lt;int flag2&gt; &lt;2v x,y&gt; [“n = ” num_verts] [z]</p></td>
 </tr>
-<tr class="row-odd"><td><p>ClosePath</p></td>
+<tr class="row-odd"><td><p>Interpolate</p></td>
+<td><p>&#64;I, &#64;i</p></td>
+<td><p>[“&#64;smooth”] &lt;degree&gt; (&lt;2v point&gt;)+ [“n = ” num_segments] [z] “;”</p></td>
+</tr>
+<tr class="row-even"><td><p>ClosePath</p></td>
 <td><p>x</p></td>
 <td></td>
 </tr>
-<tr class="row-even"><td><p>CloseAll</p></td>
+<tr class="row-odd"><td><p>CloseAll</p></td>
 <td><p>X</p></td>
 <td></td>
 </tr>
-<tr class="row-odd"><td><p>comment</p></td>
+<tr class="row-even"><td><p>comment</p></td>
 <td><p>#</p></td>
 <td><p>anything after # is a comment.</p></td>
 </tr>
@@ -259,6 +263,18 @@ to keep it at one segment type per line is mainly to preserve readability.</p>
 <p>Other curve segments (C/c, S/s, Q/q, T/t) allow to draw several segments with
 one command, as well as in SVG; but still, in many cases it is a good idea to
 use one segment per command, for readability reasons.</p>
+<p><cite>&#64;I</cite> / <cite>&#64;i</cite> command is an extension of SVG syntax. It defines a curve as
+interpolating NURBS curve through the provided list of points. Current point,
+at which the pen is located at the start of command, will be considered as
+first point to be interpolated. If <cite>z</cite> is specified in the end, the curve will
+be closed (cyclic); otherwise, this command will define an open curve. If
+special keyword, <cite>&#64;smooth</cite>, is specified, then, while computing interpolation
+curve, this command will consider previous curve segment, defined by previous
+command (C/c, S/s, Q/q, T/t), if it is of the same degree, and draw the curve
+in such a way that in the starting point it will have the same tangent vector,
+as previous curve had in the end point; in other words, at the meeting point of
+segments, the curve will be smooth.  Providing <cite>z</cite> and <cite>&#64;smooth</cite> for the same
+<cite>&#64;i</cite> command is not supported.</p>
 <p>All curve segment types allow you to specify how many vertices are
 used to generate the segment. SVG doesn’t let you specify such things, but it
 makes sense to allow it for the creation of geometry.</p>
@@ -444,6 +460,36 @@ See also <a class="reference external" href="https://github.com/nortikin/svercho
   <span class="p">{</span><span class="n">rem</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">cos</span><span class="p">(</span><span class="n">phi</span><span class="p">))},</span> <span class="p">{</span><span class="n">rem</span> <span class="o">*</span> <span class="n">sin</span><span class="p">(</span><span class="n">phi</span><span class="p">)}</span>
   <span class="n">n</span> <span class="o">=</span> <span class="mi">10</span>
 <span class="n">l</span> <span class="p">{</span><span class="o">-</span> <span class="n">straight_len</span> <span class="o">*</span> <span class="n">cos</span><span class="p">(</span><span class="n">phi</span><span class="p">)},</span> <span class="p">{</span><span class="n">straight_len</span> <span class="o">*</span> <span class="n">sin</span><span class="p">(</span><span class="n">phi</span><span class="p">)}</span>
+</pre></div>
+</div>
+<p>A simple example of <cite>&#64;I</cite> command used to define a quadratic interpolation curve through three points:</p>
+<img alt="https://user-images.githubusercontent.com/284644/204350806-cba83beb-0eae-4ef5-ba42-15442029c6f2.png" src="https://user-images.githubusercontent.com/284644/204350806-cba83beb-0eae-4ef5-ba42-15442029c6f2.png" />
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">M</span> <span class="n">R0</span><span class="p">,</span><span class="mi">0</span>
+<span class="nd">@I</span> <span class="mi">2</span>
+   <span class="p">{</span><span class="n">R0</span> <span class="o">+</span> <span class="n">dR</span><span class="p">},</span> <span class="p">{</span><span class="mf">0.5</span><span class="o">*</span><span class="n">H</span><span class="p">}</span>
+   <span class="n">R0</span><span class="p">,</span> <span class="n">H</span> <span class="p">;</span>
+</pre></div>
+</div>
+<p>An example of closed interpolation curve:</p>
+<img alt="https://user-images.githubusercontent.com/284644/204350799-6ee7e89f-0e27-45de-b523-7fae9c17eac8.png" src="https://user-images.githubusercontent.com/284644/204350799-6ee7e89f-0e27-45de-b523-7fae9c17eac8.png" />
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">M</span> <span class="mi">0</span><span class="p">,</span><span class="mi">0</span>
+<span class="nd">@I</span> <span class="mi">3</span>
+   <span class="mf">1.5</span><span class="p">,</span><span class="mi">2</span>
+   <span class="mi">2</span><span class="p">,</span><span class="mi">0</span>
+   <span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mi">3</span>
+   <span class="o">-</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span>
+   <span class="o">-</span><span class="mf">1.5</span><span class="p">,</span><span class="mi">2</span>
+   <span class="n">z</span> <span class="p">;</span>
+</pre></div>
+</div>
+<p>An example of <cite>&#64;smooth</cite> keyword usage, to smoothly continue the previous segment defined by C command:</p>
+<img alt="https://user-images.githubusercontent.com/284644/204351808-26133e22-7b04-44ad-9c0a-40f97339a672.png" src="https://user-images.githubusercontent.com/284644/204351808-26133e22-7b04-44ad-9c0a-40f97339a672.png" />
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">M</span> <span class="mi">0</span><span class="p">,</span><span class="mi">0</span>
+<span class="n">C</span> <span class="mi">1</span><span class="p">,</span><span class="mi">0</span> <span class="mi">1</span><span class="p">,</span><span class="mi">3</span> <span class="mi">0</span><span class="p">,</span><span class="mi">3</span>
+<span class="nd">@I</span> <span class="nd">@smooth</span> <span class="mi">3</span>
+   <span class="o">-</span><span class="mf">0.8</span><span class="p">,</span> <span class="mi">2</span>
+   <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span>
+   <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span> <span class="p">;</span>
 </pre></div>
 </div>
 </section>
