@@ -47,7 +47,7 @@ class SvFractalCurveNode(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
 
     precision : IntProperty(
         name="Precision", min=0, max=10, default=7, update=updateNode,
-        description="decimal precision of coordinates for calculations")
+        description="Decimal precision of coordinates for calculations")
 
     def move_to(self, curve, src, dst):
         vector = dst - src

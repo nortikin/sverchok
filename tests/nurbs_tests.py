@@ -417,6 +417,63 @@ class OtherNurbsTests(SverchokTestCase):
         result = inserted.evaluate_array(ts)
         self.assert_numpy_arrays_equal(result, expected, precision=8)
 
+    def test_insert_unclamped_native_middle(self):
+        points = np.array([[0, 0, 0], [1, 1, 0], [2,1,0], [3, 0, 0]])
+        degree = 2
+        kv = sv_knotvector.generate(degree, len(points), clamped=False)
+        curve = SvNativeNurbsCurve(degree, kv, points)
+        inserted = curve.insert_knot(0.5)
+        expected_cpts = np.array([[0.0,  0.0,  0.0 ],
+                                 [1.0,  1.0,  0.0 ],
+                                 [1.5, 1.0,  0.0 ],
+                                 [2.0,  1.0,  0.0 ],
+                                 [3.0,  0.0,  0.0 ]])
+        self.assert_numpy_arrays_equal(inserted.get_control_points(), expected_cpts, precision=8)
+
+    def test_insert_unclamped_native_end(self):
+        points = np.array([[0, 0, 0], [1, 1, 0], [2,1,0], [3, 0, 0]])
+        degree = 2
+        kv = sv_knotvector.generate(degree, len(points), clamped=False)
+        curve = SvNativeNurbsCurve(degree, kv, points)
+        u_bar = kv[-degree-1]
+        inserted = curve.insert_knot(u_bar)
+        expected_cpts = np.array([[0.0,  0.0,  0.0 ],
+                                 [1.0,  1.0,  0.0 ],
+                                 [2.0, 1.0,  0.0 ],
+                                 [2.5,  0.5,  0.0 ],
+                                 [3.0,  0.0,  0.0 ]])
+        self.assert_numpy_arrays_equal(inserted.get_control_points(), expected_cpts, precision=8)
+
+    @requires(geomdl)
+    def test_insert_unclamped_geomdl_middle(self):
+        points = np.array([[0, 0, 0], [1, 1, 0], [2,1,0], [3, 0, 0]])
+        degree = 2
+        kv = sv_knotvector.generate(degree, len(points), clamped=False)
+        curve = SvGeomdlCurve.build_geomdl(degree, kv, points)
+        inserted = curve.insert_knot(0.5)
+        expected_cpts = np.array([[0.0,  0.0,  0.0 ],
+                                 [1.0,  1.0,  0.0 ],
+                                 [1.5, 1.0,  0.0 ],
+                                 [2.0,  1.0,  0.0 ],
+                                 [3.0,  0.0,  0.0 ]])
+        self.assert_numpy_arrays_equal(inserted.get_control_points(), expected_cpts, precision=8)
+
+    @unittest.skip("Until https://github.com/orbingol/NURBS-Python/issues/158 is resolved")
+    @requires(geomdl)
+    def test_insert_unclamped_geomdl_end(self):
+        points = np.array([[0, 0, 0], [1, 1, 0], [2,1,0], [3, 0, 0]])
+        degree = 2
+        kv = sv_knotvector.generate(degree, len(points), clamped=False)
+        curve = SvGeomdlCurve.build_geomdl(degree, kv, points)
+        u_bar = kv[-degree-1]
+        inserted = curve.insert_knot(u_bar)
+        expected_cpts = np.array([[0.0,  0.0,  0.0 ],
+                                 [1.0,  1.0,  0.0 ],
+                                 [2.0, 1.0,  0.0 ],
+                                 [2.5,  0.5,  0.0 ],
+                                 [3.0,  0.0,  0.0 ]])
+        self.assert_numpy_arrays_equal(inserted.get_control_points(), expected_cpts, precision=8)
+
     #@unittest.skip
     def test_remove_1(self):
         points = np.array([[0, 0, 0], [1, 1, 0], [2, 1, 0], [3, 0, 0]])

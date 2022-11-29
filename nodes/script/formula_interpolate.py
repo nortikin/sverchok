@@ -26,7 +26,8 @@ from sverchok.data_structure import updateNode, zip_long_repeat, match_long_repe
 from sverchok.utils.logging import debug
 from sverchok.utils.modules.eval_formula import get_variables, safe_eval
 from sverchok.utils.geom import CubicSpline, LinearSpline
-from sverchok.utils.curve import SvSplineCurve, SvConcatCurve
+from sverchok.utils.curve import SvSplineCurve
+from sverchok.utils.curve.algorithms import concatenate_curves
 
 class ControlPoint(object):
     def __init__(self, x, y, sharp):
@@ -319,10 +320,11 @@ class SvFormulaInterpolateNode(SverchCustomTreeNode, bpy.types.Node):
         if len(curves) == 1:
             return curves[0]
         else:
-            return SvConcatCurve(curves)
+            return concatenate_curves(curves)
 
     def eval_spline(self, curve, xs):
         xs = np.array(xs)
+        min_x, max_x = xs[0], xs[-1]
         if self.is_cyclic:
             xs = min_x + (xs - min_x) % (max_x - min_x)
         return curve.evaluate_array(xs)[:,1].tolist()

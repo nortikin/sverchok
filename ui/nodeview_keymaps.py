@@ -98,7 +98,8 @@ class EnterExitGroupNodes(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        if context.space_data.tree_type in {'SverchCustomTreeType', 'SvGroupTree'}:
+        if getattr(context.space_data, 'tree_type', None) \
+                in {'SverchCustomTreeType', 'SvGroupTree'}:
             return True
         else:
             return False
@@ -107,6 +108,7 @@ class EnterExitGroupNodes(bpy.types.Operator):
 class PressingEscape(bpy.types.Operator):
     bl_idname = 'node.sv_abort_nodes_updating'
     bl_label = 'Abort nodes updating'
+    bl_options = {'INTERNAL'}
 
     def execute(self, context):
         if ts.tasks:

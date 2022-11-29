@@ -55,11 +55,11 @@ Examples of usage
 
 * Generator-> :doc:`Circle </nodes/generator/circle>`
 * Transform-> :doc:`Matrix Apply (verts) </nodes/transforms/apply>`
-* Modifier->Modifier Change-> :doc:`Mesh Join </nodes/modifier_change/mesh_join_mk2>`
+* Modifiers->Modifier Change-> :doc:`Mesh Join </nodes/modifier_change/mesh_join_mk2>`
 * Number-> :doc:`List Input </nodes/number/list_input>`
 * Number-> :doc:`Number Range </nodes/number/number_range>`
 * Vector-> :doc:`Vector In </nodes/vector/vector_in>`
-* List->List Struct-> :doc:`List Length </nodes/list_main/length>`
+* List->List Main-> :doc:`List Length </nodes/list_main/length>`
 * Logic-> :doc:`Switch </nodes/logic/switch_MK2>`
 * Text-> :doc:`Simple Text </nodes/text/simple_text>`
 * Text-> :doc:`String Tools </nodes/text/string_tools>`
@@ -75,7 +75,7 @@ Showing the different edges groups:
 
 * Analyzers-> :doc:`Bounding Box </nodes/analyzer/bbox_mk3>`
 * Number-> :doc:`List Input </nodes/number/list_input>`
-* List->List Struct-> :doc:`List Length </nodes/list_main/length>`
+* List->List Main-> :doc:`List Length </nodes/list_main/length>`
 * List-> :doc:`Index To Mask </nodes/list_masks/index_to_mask>`
 * Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`

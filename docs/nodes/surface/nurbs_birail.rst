@@ -74,9 +74,10 @@ This node has the following inputs:
 * **V1**, **V2**. Values of V parameter (i.e. path curve's T parameter), at which
   profile curves must be placed for lofting. This input is available and
   mandatory if **Explicit V Values** parameter is checked. The node expects
-  number of values in this input equal to number of profile curves. For one
-  profile curve, these inputs have no meaning. V1 input is for the first path,
-  and V2 input is for the second path.
+  number of values in this input equal to number of profile curves. The values 
+  fed in V1 and V2 must be in an ascending order, e.g. (0.0, 0.333, 0.667, 1.0). 
+  For one profile curve, these inputs have no meaning. V1 input is for the first 
+  path, and V2 input is for the second path.
 * **DegreeV**. Degree of NURBS curves used to interpolate in V direction. As
   most of Sverchok numeric inputs, this input can process data with nesting
   level up to 2 (list of lists of numbers). Degree of 1 will make a "linear

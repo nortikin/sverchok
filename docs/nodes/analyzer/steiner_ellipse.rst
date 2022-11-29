@@ -118,7 +118,7 @@ Inscribed ellipses for triangulated Suzanne:
 
 * Generator-> :doc:`Suzanne </nodes/generator/suzanne>`
 * Generator->Generator Extended-> :doc:`Ellipse </nodes/generators_extended/ellipse_mk3>`
-* Modifier->Modifier Change-> :doc:`Triangulate Mesh </nodes/modifier_change/triangulate>`
+* Modifiers->Modifier Change-> :doc:`Triangulate Mesh </nodes/modifier_change/triangulate>`
 * Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`
 * Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`

@@ -340,11 +340,13 @@ class SvNurbsCurve(SvCurve):
                     degree+delta, knotvector, control_points, weights)
         else:
             src_t_min, src_t_max = self.get_u_bounds()
+            rs = sv_knotvector.get_internal_knots(self.get_knotvector(), output_multiplicity=True)
+            src_multiplicities = [p[1] for p in rs]
             segments = self.to_bezier_segments(to_bezier_class=False)
             segments = [segment.elevate_degree(orig_delta, orig_target) for segment in segments]
             result = segments[0]
-            for segment in segments[1:]:
-                result = result.concatenate(segment, remove_knots=True)
+            for segment, src_multiplicity in zip(segments[1:], src_multiplicities):
+                result = result.concatenate(segment, remove_knots=degree - src_multiplicity)
             result = result.reparametrize(src_t_min, src_t_max)
             return result
             #raise UnsupportedCurveTypeException("Degree elevation is not implemented for non-bezier curves yet")
@@ -857,7 +859,7 @@ class SvGeomdlCurve(SvNurbsCurve):
     @classmethod
     def interpolate(cls, degree, points, metric='DISTANCE', **kwargs):
         if metric not in {'DISTANCE', 'CENTRIPETAL'}:
-            raise Exception("Unsupported metric")
+            raise Exception(f"`{metric}` metric is not supported by interpolation routine of Geomdl library; supported are DISTANCE and CENTRIPETAL")
         centripetal = metric == 'CENTRIPETAL'
         curve = fitting.interpolate_curve(points.tolist(), degree, centripetal=centripetal)
         return SvGeomdlCurve(curve)
@@ -1008,7 +1010,7 @@ class SvNativeNurbsCurve(SvNurbsCurve):
         if normalize_knots:
             self.knotvector = sv_knotvector.normalize(self.knotvector)
         self.degree = degree
-        self.basis = SvNurbsBasisFunctions(knotvector)
+        self.basis = SvNurbsBasisFunctions(self.knotvector)
         self.tangent_delta = 0.001
         self.u_bounds = None # take from knotvector
         self.__description__ = f"Native NURBS (degree={degree}, pts={k})"
@@ -1182,12 +1184,10 @@ class SvNativeNurbsCurve(SvNurbsCurve):
         N = len(self.control_points)
         u = self.get_knotvector()
         s = sv_knotvector.find_multiplicity(u, u_bar)
-        #print(f"I: kv {len(u)}{u}, u_bar {u_bar} => s {s}")
-        #k = np.searchsorted(u, u_bar, side='right')-1
-        k = sv_knotvector.find_span(u, N, u_bar)
         p = self.get_degree()
-        new_knotvector = sv_knotvector.insert(u, u_bar, count)
-        control_points = self.get_homogenous_control_points()
+
+        if u_bar < u[0] or u_bar > u[-1]:
+            raise CantInsertKnotException(f"Can't insert a knot t={u_bar} as it is outside curve domain")
 
         if (u_bar == u[0] or u_bar == u[-1]):
             if s+count > p+1:
@@ -1202,25 +1202,28 @@ class SvNativeNurbsCurve(SvNurbsCurve):
                 else:
                     raise CantInsertKnotException(f"Can't insert knot t={u_bar} for {count} times")
 
+        k = u.searchsorted(u_bar, side='right')-1
+        new_knotvector = sv_knotvector.insert(u, u_bar, count)
+        control_points = self.get_homogenous_control_points()
+
         for r in range(1, count+1):
-            prev_control_points = control_points
-            control_points = []
-            for i in range(N+1):
-                #print(f"I: i {i}, k {k}, p {p}, r {r}, s {s}, k-p+r-1 {k-p+r-1}, k-s {k-s}")
-                if i <= k-p+r-1:
-                    point = prev_control_points[i]
-                    #print(f"P[{r},{i}] := {i}{prev_control_points[i]}")
-                elif k - p + r <= i <= k - s:
-                    denominator = u[i+p-r+1] - u[i]
-                    if abs(denominator) < 1e-6:
-                        raise Exception(f"Can't insert the knot t={u_bar} for {i}th time: u[i+p-r+1]={u[i+p-r+1]}, u[i]={u[i]}, denom={denominator}")
-                    alpha = (u_bar - u[i]) / denominator
-                    point = alpha * prev_control_points[i] + (1.0 - alpha) * prev_control_points[i-1]
-                    #print(f"P[{r},{i}]: alpha {alpha}, pts {i}{prev_control_points[i]}, {i-1}{prev_control_points[i-1]} => {point}")
-                else:
-                    point = prev_control_points[i-1]
-                    #print(f"P[{r},{i}] := {i-1}{prev_control_points[i-1]}")
-                control_points.append(point)
+            prev_control_points = control_points[:]
+
+            numerators = (u_bar - u)
+            denominators = u[p-r+1:] - u[:-p+r-1]
+
+            alphas = numerators[k-p+r : k-s+1] / denominators[k-p+r : k-s+1]
+            #print(f"R={r}, alphas = {alphas}")
+            alphas = alphas[np.newaxis].T
+
+            control_points_left = prev_control_points[: k-p+r]
+            control_points_right = prev_control_points[k-s:]
+            prev_control_points_mid = prev_control_points[k-p+r : k-s+1]
+            prev_control_points_mid1 = prev_control_points[k-p+r-1 : k-s]
+            control_points_mid = alphas * prev_control_points_mid + (1.0 - alphas) * prev_control_points_mid1
+            control_points = np.concatenate([control_points_left, control_points_mid, control_points_right])
+            #print(f"R={r}: u = {u}, u_bar={u_bar}, k={k}, len(left) = {len(control_points_left)}, len(right) = {len(control_points_right)}, len(mid) = {len(control_points_mid)}. cpts {prev_control_points.shape} => {control_points.shape}")
+
             N += 1
 
         control_points, weights = from_homogenous(np.array(control_points))

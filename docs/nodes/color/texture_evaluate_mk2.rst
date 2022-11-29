@@ -47,7 +47,7 @@ Mixing 3 textures
 
 * Generator-> :doc:`Plane </nodes/generator/plane_mk3>`
 * Logic-> :doc:`Logic Functions </nodes/logic/logic_node>`
-* Modifier->Modifier Change-> :doc:`Mask Vertices </nodes/modifier_change/vertices_mask>`
+* Modifiers->Modifier Change-> :doc:`Mask Vertices </nodes/modifier_change/vertices_mask>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 
 Masking mesh with texture

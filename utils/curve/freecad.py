@@ -11,6 +11,7 @@ import math
 from sverchok.utils.nurbs_common import SvNurbsMaths
 from sverchok.utils.curve.core import SvCurve, UnsupportedCurveTypeException
 from sverchok.utils.curve.nurbs import SvNurbsCurve
+from sverchok.utils.curve.nurbs_solver_applications import interpolate_nurbs_curve
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.primitives import SvLine, SvCircle
 from sverchok.utils.curve.biarc import SvBiArc
@@ -256,6 +257,11 @@ class SvFreeCadNurbsCurve(SvNurbsCurve):
         curve = Geom2d.BSplineCurve2d()
         curve.buildFromPolesMultsKnots(pts, mults, knots, False, degree, weights)
         return SvFreeCadNurbsCurve(curve, ndim=2)
+
+    @classmethod
+    def interpolate(cls, degree, points, metric='DISTANCE', tknots=None, cyclic=False, logger=None, **kwargs):
+        curve = interpolate_nurbs_curve(degree, points, metric=metric, tknots=tknots, cyclic=cyclic, logger=logger)
+        return curve.copy(implementation = SvNurbsMaths.FREECAD)
 
     def to_2d(self):
         return SvFreeCadNurbsCurve.build_2d(self.get_degree(), self.get_knotvector(),

@@ -49,7 +49,7 @@ registered. And un-registration is not needed because they will be reloaded
 during reloading Sverchok add-on (extensions can't be reloaded without reloading
 Sverchok)
 
-The module parses `index.yaml` file and creates tre like data structure `Category`
+The module parses `index.yaml` file and creates a tree-like data structure `Category`
 which is used for adding nodes in different areas of user interface. Also it
 contains `CallPartialMenu` which shows alternative menus by pressing 1, 2, 3, 4, 5.
 It's possible to add categories to the menus by adding `- extra_menu: menu_name`
@@ -177,7 +177,9 @@ class AddNode(MenuItem):
     def icon_prop(self):
         if self._icon_prop is None:
             node_cls = bpy.types.Node.bl_rna_get_subclass_py(self.bl_idname)
-            if self.bl_idname == 'NodeReroute':
+            if node_cls is None:
+                self._icon_prop = {'icon': 'ERROR'}
+            elif self.bl_idname == 'NodeReroute':
                 self._icon_prop = icon('SV_REROUTE')
             elif node_cls is not None:
                 self._icon_prop = node_icon(node_cls)
@@ -232,14 +234,19 @@ class AddNode(MenuItem):
     def search_match(self, request: str) -> bool:
         """Return True if the request satisfies to node search tags"""
         request = request.upper()
-        if request in self.label.upper():
+        words = [w for w in request.split(' ') if w]
+        label = self.label.upper()
+        if all(w in label for w in words):
             return True
+
         node_class = bpy.types.Node.bl_rna_get_subclass_py(self.bl_idname)
         if not node_class or not hasattr(node_class, 'docstring'):
             return False
-        if request in node_class.docstring.get_shorthand():
+        shorthand = node_class.docstring.get_shorthand()
+        if all(w in shorthand for w in words):
             return True
-        if request in node_class.docstring.get_tooltip():
+        tooltip = node_class.docstring.get_tooltip()
+        if all(w in tooltip for w in words):
             return True
         return False
 
@@ -315,7 +322,7 @@ class Category(MenuItem):
         - `'SomeNode'` - String of node `bl_idname` to define Add Node operator.
         - `{'Sub category name': [option, menu_item, ...]}` - Dictionary of
           a subcategory.
-        - `{'Operator name': [option, ...]}` - Dictionary of a custom opeartor
+        - `{'Operator name': [option, ...]}` - Dictionary of a custom operator
           to call. Options for operator call are not supported currently.
         - `{'Menu name': [option, ...]}` - Custom menu to show.
 
@@ -347,7 +354,7 @@ class Category(MenuItem):
 
         The example of format can be found in the `sverchok/index.yaml` file.
 
-        Extra_props should have keys oly from the __init__ method of `MenuItem`
+        Extra_props should have keys only from the __init__ method of `MenuItem`
         subclasses.
         """
         parsed_items = []
@@ -411,8 +418,15 @@ class Category(MenuItem):
         It should be called before registration functions
         """
         new_categories = []
+        top_menu_names = {c.name for c in self if getattr(c, 'name', None)}
         for cat in config:
             cat_name = list(cat.keys())[0]
+
+            # if extension is reloaded before Sverchok it can add the same menu
+            # twice, this condition should prevent it
+            if cat_name in top_menu_names:
+                continue
+
             items = list(cat.values())[0]
             new_categories.append(self.from_config(items, cat_name))
         self.menu_cls.draw_data.extend(new_categories)
@@ -421,7 +435,7 @@ class Category(MenuItem):
 class SverchokContext:
     @classmethod
     def poll(cls, context):
-        tree_type = context.space_data.tree_type
+        tree_type = getattr(context.space_data, 'tree_type', None)
         if tree_type in sv_tree_types:
             return True
 

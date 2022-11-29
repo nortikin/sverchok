@@ -1170,7 +1170,6 @@ def simple_loft(curves, degree_v = None, knots_u = 'UNIFY', knotvector_accuracy=
         raise Exception(f"Unsupported knots_u option: {knots_u}")
     if logger is None:
         logger = getLogger()
-    curve_class = type(curves[0])
     curves = unify_curves_degree(curves)
     if knots_u == 'UNIFY':
         curves = unify_curves(curves, accuracy=knotvector_accuracy)
@@ -1198,7 +1197,7 @@ def simple_loft(curves, degree_v = None, knots_u = 'UNIFY', knotvector_accuracy=
     src_points = np.array(src_points)
     src_points = np.transpose(src_points, axes=(1,0,2))
 
-    v_curves = [SvNurbsMaths.interpolate_curve(curve_class, degree_v, points, metric=metric, tknots=tknots, logger=logger) for points in src_points]
+    v_curves = [SvNurbsMaths.interpolate_curve(implementation, degree_v, points, metric=metric, tknots=tknots, logger=logger) for points in src_points]
     control_points = [curve.get_homogenous_control_points() for curve in v_curves]
     control_points = np.array(control_points)
     #weights = [curve.get_weights() for curve in v_curves]

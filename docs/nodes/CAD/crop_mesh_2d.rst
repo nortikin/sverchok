@@ -112,7 +112,7 @@ Fit mesh inside mesh:
 * CAD-> :doc:`Objects In Lite </nodes/CAD/edges_to_faces_2d>`
 * Number-> :doc:`Random Num Gen </nodes/number/random_num_gen>`
 * Color-> :doc:`Color In </nodes/color/color_in_mk1>`
-* List->List Struct-> :doc:`List Length </nodes/list_main/length>`
+* List->List Main-> :doc:`List Length </nodes/list_main/length>`
 * List->List Struct-> :doc:`List Item </nodes/list_struct/item>`
 * BPY Date-> Vertex Color MK3 (No docs)
 * Scene-> :doc:`Objects In Lite </nodes/scene/objects_in_lite>`
@@ -138,11 +138,10 @@ Creating something like sewer grate:
 
 * Generator-> :doc:`Line </nodes/generator/line_mk4>`
 * Generator-> :doc:`Plane </nodes/generator/plane_mk3>`
-* Modifier->Modifier Change-> :doc:`Bevel </nodes/modifier_change/bevel>`
-* Modifier->Modifier Change-> :doc:`Mesh Join </nodes/modifier_change/mesh_join_mk2>`
-* Modifier->Modifier Change-> :doc:`Delete Loose </nodes/modifier_change/delete_loose>`
-* Modifier->Modifier Make-> :doc:`Contour 2D </nodes/modifier_make/contour2D>`
-* CAD-> :doc:`Contour 2D </nodes/CAD/edges_to_faces_2d>`
+* Modifiers->Modifier Change-> :doc:`Bevel </nodes/modifier_change/bevel>`
+* Modifiers->Modifier Change-> :doc:`Mesh Join </nodes/modifier_change/mesh_join_mk2>`
+* Modifiers->Modifier Change-> :doc:`Delete Loose </nodes/modifier_change/delete_loose>`
+* Modifiers->Modifier Make-> :doc:`Contour 2D </nodes/modifier_make/contour2D>`
 * Modifier Make-> :doc:`Solidify </nodes/modifier_make/solidify_mk2>`
 * Vector-> :doc:`Vector Polar Input </nodes/vector/vector_polar_in>`
 * ADD, Scale: Vector-> :doc:`Vector Math </nodes/vector/math_mk3>`

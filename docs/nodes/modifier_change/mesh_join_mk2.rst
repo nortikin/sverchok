@@ -1,10 +1,16 @@
 Mesh Join
 =========
 
+.. image:: https://user-images.githubusercontent.com/14288520/200012677-336dc1a6-0b6b-4bc6-b9a7-9440529776c4.png
+  :target: https://user-images.githubusercontent.com/14288520/200012677-336dc1a6-0b6b-4bc6-b9a7-9440529776c4.png
+
 Functionality
 -------------
 
 Analogue to ``Ctrl+J`` in the 3dview of Blender. Separate nested lists of *vertices* and *polygons/edges* are merged. The keys in the Edge and Polygon lists are incremented to coincide with the newly created vertex list.
+
+.. image:: https://user-images.githubusercontent.com/14288520/200015469-69825d1f-a219-4bd7-bc0f-66e08eb9e1bc.png
+  :target: https://user-images.githubusercontent.com/14288520/200015469-69825d1f-a219-4bd7-bc0f-66e08eb9e1bc.png
 
 The inner workings go something like::
 
@@ -59,12 +65,37 @@ The inputs and outputs are *vertices*, edges and *polygons*.
 
 Expects a nested collection of vertex lists. Each nested list represents an object which can itself have many vertices and key lists.
 
+See also
+--------
+
+* Matrix-> :doc:`Matrix Apply to Mesh </nodes/matrix/apply_and_join>` (param Join On/Off)
 
 Examples
 --------
 
-.. image:: https://cloud.githubusercontent.com/assets/619340/4186165/8ea02bde-375e-11e4-96d8-175959c26505.PNG
-  :alt: MeshJoinDemo1.PNG
+.. image:: https://user-images.githubusercontent.com/14288520/200021156-1a575bae-42c8-43a8-b95e-5d0c112fb283.png
+  :target: https://user-images.githubusercontent.com/14288520/200021156-1a575bae-42c8-43a8-b95e-5d0c112fb283.png
+
+* Generator-> :doc:`Box </nodes/generator/box_mk2>`
+* Number-> :doc:`Number Range </nodes/number/number_range>`
+* List->List Main-> :doc:`List Length </nodes/list_main/length>`
+* Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`
+* Color-> :doc:`Color Ramp </nodes/color/color_ramp>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+* Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
+
+---------
+
+.. image:: https://user-images.githubusercontent.com/14288520/200025633-d89e4b61-e303-4afa-ab2f-0df2c6e21ff9.png
+  :target: https://user-images.githubusercontent.com/14288520/200025633-d89e4b61-e303-4afa-ab2f-0df2c6e21ff9.png
+
+* Generator-> :doc:`Sphere </nodes/generator/sphere>`
+* Generator-> :doc:`Line </nodes/generator/line_mk4>`
+* Transform-> :doc:`Matrix Apply (verts) </nodes/transforms/apply>`
+* List->List Main-> :doc:`List Length </nodes/list_main/length>`
+* List->List Struct-> :doc:`List Repeater </nodes/list_struct/repeater>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+* Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
 
 Notes
 -----

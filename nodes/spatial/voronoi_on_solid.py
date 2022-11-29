@@ -64,6 +64,7 @@ class SvVoronoiOnSolidNode(SverchCustomTreeNode, bpy.types.Node):
         name = "Inset",
         min = 0.0, max = 1.0,
         default = 0.1,
+        description="Percentage of space to leave between generated Voronoi regions",
         update = updateNode)
 
     scale_types = [

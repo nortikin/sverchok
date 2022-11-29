@@ -54,7 +54,7 @@ def normalize(v):
 
 def sub_v3_v3v3(a, b):
     """
-    subtract b fom a.
+    subtract b from a.
 
     inputs: two 3-element-vector-like-iterables, a and b
     output: one 3-element-vector-like tuple

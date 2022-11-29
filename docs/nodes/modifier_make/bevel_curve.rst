@@ -1,6 +1,9 @@
 Bevel a Curve (Mesh)
 ====================
 
+.. image:: https://user-images.githubusercontent.com/14288520/201133942-b9452f69-db06-4b11-bbd3-d71a092d64b5.png
+  :target: https://user-images.githubusercontent.com/14288520/201133942-b9452f69-db06-4b11-bbd3-d71a092d64b5.png
+
 Functionality
 -------------
 
@@ -28,11 +31,17 @@ one of coordinate planes (XY, YZ or XZ). This plane defines the so-called
 "orientation axis" - a coordinate axis, which is perpendicular to "bevel
 object"; during extrusion, bevel object will be moved along orientation axis.
 
+.. image:: https://user-images.githubusercontent.com/14288520/201149971-b1be42ab-9af1-4b28-bab4-3de660a5a58b.png
+  :target: https://user-images.githubusercontent.com/14288520/201149971-b1be42ab-9af1-4b28-bab4-3de660a5a58b.png
+
 **Note 2**: "Taper object" is supposed to be an open curve, elongated along one of
 coordinate axes (X, Y or Z). That must be the orientation axis, i.e. the axis
 perpendicular to the plane of bevel object.
 
 In the most common case, "bevel object" will lay in XY plane, so that orientation axis will be Z.
+
+.. image:: https://user-images.githubusercontent.com/14288520/201141743-1e1d5d68-8e2a-4cb5-b564-bc0e82eb1b0f.png
+  :target: https://user-images.githubusercontent.com/14288520/201141743-1e1d5d68-8e2a-4cb5-b564-bc0e82eb1b0f.png
 
 Inputs
 ------
@@ -42,8 +51,12 @@ This node has the following inputs:
 * **Curve**. List of vertices, which define the curve, along which the bevel
   will be made. Order of vertices in this input must be the same as the order
   of vertices on the curve being defined. If you are using an "Object In" node
-  to provide this curve, you may want to use "Vector Sort" node in
+  to provide this curve, you may want to use "Vector Sort" (Vector-> :doc:`Vector sort </nodes/vector/vertices_sort>`) node in
   "connections" mode to sort vertices properly. This input is mandatory.
+
+.. image:: https://user-images.githubusercontent.com/14288520/201154479-ed3f8639-a190-444e-bdac-205585fb8519.png
+  :target: https://user-images.githubusercontent.com/14288520/201154479-ed3f8639-a190-444e-bdac-205585fb8519.png
+
 * **BevelVerts**. List of vertices, which define the "bevel object". This input is mandatory.
 * **BevelEdges**. List of edges of "bevel object". You may not connect this
   input if you connected the **BevelFaces** input: in such a case, edges will be
@@ -86,6 +99,12 @@ This node has the following parameters:
 
 - **Orientation**. The axis of "bevel object", which should be oriented along
   the path. Default value is Z (which means that bevel object should lay in XY plane).
+
+.. image:: https://user-images.githubusercontent.com/14288520/201473253-bb38b5df-7530-49f2-8859-5416722f8d47.png
+  :target: https://user-images.githubusercontent.com/14288520/201473253-bb38b5df-7530-49f2-8859-5416722f8d47.png
+
+.. _BEVEL_A_CURVE_ALGORITHM:
+
 - **Algorithm**. Rotation calculation algorithm. Available values are:
 
   * Householder: calculate rotation by using Householder's reflection matrix
@@ -98,14 +117,30 @@ This node has the following parameters:
 
   Default value is Householder.
 
+.. image:: https://user-images.githubusercontent.com/14288520/201160245-5feb3321-3eda-49b8-baef-a8d63e5903ca.png
+  :target: https://user-images.githubusercontent.com/14288520/201160245-5feb3321-3eda-49b8-baef-a8d63e5903ca.png
+
+
 - **Up axis**.  Axis of donor object that should point up in result. This
   parameter is available only when Tracking algorithm is selected.  Value of
   this parameter must differ from **Orientation** parameter, otherwise you will
   get an error. Default value is X.
+
+.. image:: https://user-images.githubusercontent.com/14288520/201162989-e220a054-0212-4d22-87cf-997287799fe4.png
+  :target: https://user-images.githubusercontent.com/14288520/201162989-e220a054-0212-4d22-87cf-997287799fe4.png
+
 - **Curve Mode**. Path interpolation mode. Available values are Linear and Cubic.
   Default value is Cubic.
+
+.. image:: https://user-images.githubusercontent.com/14288520/201161693-e2ec96be-2581-4b44-8de2-81ceb92ada84.png
+  :target: https://user-images.githubusercontent.com/14288520/201161693-e2ec96be-2581-4b44-8de2-81ceb92ada84.png
+
 - **Taper Mode**. Taper curve interpolation mode. Available values are Linear
   and Cubic. Default value is Cubic.
+
+.. image:: https://user-images.githubusercontent.com/14288520/201176240-be53841b-d4b8-4751-bd5e-c31dd5cec127.png
+  :target: https://user-images.githubusercontent.com/14288520/201176240-be53841b-d4b8-4751-bd5e-c31dd5cec127.png
+
 - **Twist Mode**. Twist angles interpolation mode. Available values are Linear
   and Cubic. Default value is Linear.
 - **Cyclic**. Indicate whether the path is cyclic. Default value is false.
@@ -126,10 +161,17 @@ This node has the following parameters:
 
   Unchecked by default.
 
+.. image:: https://user-images.githubusercontent.com/14288520/201172816-feaa4498-0642-4154-ad0a-cbc0977321db.png
+  :target: https://user-images.githubusercontent.com/14288520/201172816-feaa4498-0642-4154-ad0a-cbc0977321db.png
+
 - **Cap Start**. Whether to create a cap faces at the beginning of curve.
   Unchecked by default.
 - **Cap End**. Whether to create a cap faces at the end of curve.  Unchecked by
   default.
+
+.. image:: https://user-images.githubusercontent.com/14288520/201157034-8ea2b896-8172-459f-af86-2e9f73d5992e.png
+  :target: https://user-images.githubusercontent.com/14288520/201157034-8ea2b896-8172-459f-af86-2e9f73d5992e.png
+
 - **Flip Curve**. This parameter is available only in the N panel. If checked,
   then direction of the curve is inverted comparing to the order of path vertices
   provided. Unchecked by default.
@@ -170,6 +212,16 @@ This node has the following outputs:
 * **Vertices**. Output object vertices.
 * **Edges**
 * **Faces**
+
+Advice
+------
+
+To better practice you should orient start direction of curve and taper as axis in Bevel node:
+
+.. image:: https://user-images.githubusercontent.com/14288520/201178116-cd3bed6b-fef2-43c5-9604-c5198d3db244.png
+  :target: https://user-images.githubusercontent.com/14288520/201178116-cd3bed6b-fef2-43c5-9604-c5198d3db244.png
+
+A behavior in other directions is not obvious.
 
 Examples of usage
 -----------------

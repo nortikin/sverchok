@@ -1,7 +1,8 @@
 Follow Active Quads
 ===================
 
-.. image:: https://user-images.githubusercontent.com/28003269/72198433-af340b00-3446-11ea-95f3-caa61581220a.png
+.. image:: https://user-images.githubusercontent.com/14288520/200131060-e34dcf5d-597d-4578-814d-2167822902d7.png
+  :target: https://user-images.githubusercontent.com/14288520/200131060-e34dcf5d-597d-4578-814d-2167822902d7.png
 
 Functionality
 -------------

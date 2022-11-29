@@ -92,7 +92,7 @@ Using a range of integers as Distance input will expand the selection or the cre
 * Number-> :doc:`A Number </nodes/number/numbers>`
 * Number-> :doc:`Number Range </nodes/number/number_range>`
 * Number-> :doc:`Random Num Gen </nodes/number/random_num_gen>`
-* List->List Struct-> :doc:`List Length </nodes/list_main/length>`
+* List->List Main-> :doc:`List Length </nodes/list_main/length>`
 * List->List Struct-> :doc:`List Item </nodes/list_struct/item>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 * Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`

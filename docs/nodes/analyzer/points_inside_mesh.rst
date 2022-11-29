@@ -84,7 +84,7 @@ Examples of use
 * Generator-> :doc:`Plane </nodes/generator/plane_mk3>`
 * Generator-> :doc:`NGon </nodes/generator/ngon>`
 * Analyzers-> :ref:`Component Analyzer/Faces/Center <FACES_CENTER>`
-* Modifier->Modifier Change-> :doc:`Inset Faces </nodes/modifier_change/inset_faces>`
+* Modifiers->Modifier Change-> :doc:`Inset Faces </nodes/modifier_change/inset_faces>`
 * Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`
 * List-> :doc:`List Mask (Out) </nodes/list_masks/mask>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`

@@ -81,27 +81,32 @@ class SvVoronoiOnSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
         name = "Thickness",
         default = 1.0,
         min = 0.0,
+        description="Thickness of Voronoi diagram objects",
         update=updateNode)
 
     normals : BoolProperty(
         name = "Correct normals",
         default = True,
+        description="Recalculate the normals of generated objects so that they all point outwards",
         update = updateNode)
 
     do_clip : BoolProperty(
         name = "Clip",
         default = True,
+        description="Cut the generated diagram by clipping planes. If not checked, then this node can potentially generate very large objects near edges of the surface",
         update = update_sockets)
 
     clipping : FloatProperty(
         name = "Clipping",
         default = 1.0,
         min = 0.0,
+        description="The distance from outermost sites to the clipping planes",
         update = updateNode)
 
     flat_output : BoolProperty(
         name = "Flat output",
         default = True,
+        description="If checked, the node will generate one flat list of objects for all sets of input parameters. Otherwise, a separate list of objects will be generated for each set of input parameter values",
         update = updateNode)
 
     def sv_init(self, context):

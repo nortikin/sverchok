@@ -61,7 +61,7 @@ Range mode example, Break used to control the maximum vertices.
 * CAD-> :doc:`Inset Special </nodes/CAD/inset_special_mk2>`
 * Number-> :doc:`Random Num Gen </nodes/number/random_num_gen>`
 * MULT X: Number-> :doc:`Scalar Math </nodes/number/scalar_mk4>`
-* List->List Struct-> :doc:`List Length </nodes/list_main/length>`
+* List->List Main-> :doc:`List Length </nodes/list_main/length>`
 * BIG X:Logic-> :doc:`Logic Functions </nodes/logic/logic_node>`
 * Logic-> :doc:`Logic Functions </nodes/logic/loop_out>`
 
@@ -85,11 +85,11 @@ You can change the socket labels in the N-Panel
 * CAD-> :doc:`Inset Special </nodes/CAD/inset_special_mk2>`
 * CA: Faces Area: Analyzers-> :doc:`Component Analyzer </nodes/analyzer/component_analyzer>`
 * CA: Faces Center: Analyzers-> :doc:`Component Analyzer </nodes/analyzer/component_analyzer>`
-* Modifier->Modifier Change-> :doc:`Smooth Vertices </nodes/modifier_change/smooth>`
+* Modifiers->Modifier Change-> :doc:`Smooth Vertices </nodes/modifier_change/smooth>`
 * Number-> :doc:`Random Num Gen </nodes/number/random_num_gen>`
 * MUL X Number-> :doc:`Scalar Math </nodes/number/scalar_mk4>`
 * Vector-> :doc:`Vector Noise </nodes/vector/noise_mk3>`
-* List->List Struct-> :doc:`List Length </nodes/list_main/length>`
+* List->List Main-> :doc:`List Length </nodes/list_main/length>`
 * BIG X:Logic-> :doc:`Logic Functions </nodes/logic/logic_node>`
 * Logic-> :doc:`Loop Out </nodes/logic/loop_out>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`

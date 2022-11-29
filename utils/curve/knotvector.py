@@ -81,11 +81,27 @@ def linear_resample(tknots, new_count):
     resampled_tknots = LinearSpline.resample(old_idxs, tknots, new_idxs)
     return resampled_tknots
 
-def from_tknots(degree, tknots, n_cpts=None):
+def add_one_by_resampling(knot_vector, index = None, degree = None):
+    n = len(knot_vector)
+    if index is None:
+        return linear_resample(knot_vector, n+1)
+    else:
+        if degree is None:
+            raise Exception("If index is provided, degree must be provided too")
+        kv_before = knot_vector[:index]
+        kv_after = knot_vector[index + degree + 1 :]
+        kv = linear_resample(knot_vector[index : index + degree + 1], degree+2)
+        return np.concatenate([kv_before, kv, kv_after])
+
+def from_tknots(degree, tknots, include_endpoints=False, n_cpts=None):
     n = len(tknots)
     if n_cpts is None:
         result = [tknots[0]] * (degree+1)
-        for j in range(1, n - degree):
+        if include_endpoints:
+            j_min, j_max = 0, n - degree + 1
+        else:
+            j_min, j_max = 1, n - degree
+        for j in range(j_min, j_max):
             u = tknots[j:j+degree].sum() / degree
             result.append(u)
         result.extend([tknots[-1]] * (degree+1))

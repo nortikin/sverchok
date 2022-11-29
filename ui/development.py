@@ -35,7 +35,7 @@ from sverchok.settings import PYPATH
 
 
 def displaying_sverchok_nodes(context):
-    return context.space_data.tree_type in {'SverchCustomTreeType', }
+    return getattr(context.space_data, 'tree_type', None) in {'SverchCustomTreeType', }
 
 def node_show_branch(self, context):
     if not displaying_sverchok_nodes(context):

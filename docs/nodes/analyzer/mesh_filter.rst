@@ -134,7 +134,7 @@ Bevel only concave edges:
 * Generator-> :doc:`IcoSphere </nodes/generator/icosphere>`
 * Transform-> :doc:`Move </nodes/transforms/move_mk3>`
 * Transform-> :doc:`Scale </nodes/transforms/scale_mk3>`
-* Modifier->Modifier Change-> :doc:`Extrude Separate Faces </nodes/modifier_change/extrude_separate>`
+* Modifiers->Modifier Change-> :doc:`Extrude Separate Faces </nodes/modifier_change/extrude_separate>`
 * CAD-> :doc:`Bevel </nodes/modifier_change/bevel>`
 * Number-> :doc:`A Number </nodes/number/numbers>`
 * Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`
@@ -152,7 +152,7 @@ Extrude only boundary faces:
   :target: https://user-images.githubusercontent.com/14288520/196672202-23b0fc30-8d97-46de-9a72-7b1be48293d3.png
 
 * Generator->Generators Extended-> :doc:`Bricks Grid </nodes/generator/bricks>`
-* Modifier->Modifier Change-> :doc:`Extrude Separate Faces </nodes/modifier_change/extrude_separate>`
+* Modifiers->Modifier Change-> :doc:`Extrude Separate Faces </nodes/modifier_change/extrude_separate>`
 * Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`
 * Color-> :doc:`Color Input </nodes/color/color_input>`
 * Logic-> :doc:`Switch </nodes/logic/switch_MK2>`

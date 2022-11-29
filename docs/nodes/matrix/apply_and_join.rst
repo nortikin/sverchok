@@ -57,6 +57,10 @@ Applying list of matrices to a mesh creates its copies inside an object and tran
 Usage case is when there are bunch of separate meshes which should be copied inside their objects.
 In this mode and with numpy implementation mode you will get numpy output for vertices and edges anyway.
 
+See also
+--------
+
+* Modifiers->Modifier Change-> :doc:`Mesh Join </nodes/modifier_change/mesh_join_mk2>`
 
 Examples
 --------
@@ -77,7 +81,7 @@ Examples
 * Number-> :doc:`Random </nodes/number/random>`
 * Vector-> :doc:`Vector In </nodes/vector/vector_in>`
 * Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`
-* List->List Struct-> :doc:`List Length </nodes/list_main/length>`
+* List->List Main-> :doc:`List Length </nodes/list_main/length>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 * Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
 

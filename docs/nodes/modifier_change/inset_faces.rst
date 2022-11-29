@@ -52,8 +52,8 @@ Parameters
 | Individual / Region      | switch | Switch between to modes                                                        |
 +--------------------------+--------+--------------------------------------------------------------------------------+
 
-.. image:: https://user-images.githubusercontent.com/14288520/198690674-3f61a1eb-686d-42ea-b573-d77852221cde.png
-  :target: https://user-images.githubusercontent.com/14288520/198690674-3f61a1eb-686d-42ea-b573-d77852221cde.png
+.. image:: https://user-images.githubusercontent.com/14288520/201482623-51d72d35-db63-4d5d-8a65-52e102249d2c.png
+  :target: https://user-images.githubusercontent.com/14288520/201482623-51d72d35-db63-4d5d-8a65-52e102249d2c.png
 
 N panel
 -------
@@ -117,7 +117,7 @@ Using face data node for setting color to faces:
 * Number-> :doc:`Random Num Gen </nodes/number/random_num_gen>`
 * Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`
 * Color-> :doc:`Color In </nodes/color/color_in_mk1>`
-* List->List Struct-> :doc:`List Length </nodes/list_main/length>`
+* List->List Main-> :doc:`List Length </nodes/list_main/length>`
 * List->List Struct-> :doc:`List Shuffle </nodes/list_struct/shuffle>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 * Viz-> :doc:`Mesh Viewer </nodes/viz/mesh_viewer>`
@@ -135,7 +135,7 @@ Mask can be used ofr filtering output mesh with `list mask out` node for example
 * Number-> :doc:`Random Num Gen </nodes/number/random_num_gen>`
 * Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`
 * Color-> :doc:`Color In </nodes/color/color_in_mk1>`
-* List->List Struct-> :doc:`List Length </nodes/list_main/length>`
+* List->List Main-> :doc:`List Length </nodes/list_main/length>`
 * List->List Struct-> :doc:`List Shuffle </nodes/list_struct/shuffle>`
 * **List**-> :doc:`List Mask (Out) </nodes/list_masks/mask>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`

@@ -104,6 +104,6 @@ Upper image can be defined by one offset and list (range) of numbers, plugged to
 
 * Generator-> :doc:`Plane </nodes/generator/plane_mk3>`
 * Number-> :doc:`Number Range </nodes/number/number_range>`
-* List->List Struct-> :doc:`List Length </nodes/list_main/length>`
+* List->List Main-> :doc:`List Length </nodes/list_main/length>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 * Viz-> :doc:`Viewer Index+ </nodes/viz/viewer_idx28>`

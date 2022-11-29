@@ -160,6 +160,8 @@ class Spline(object):
             tknots = tknots - tknots[0]
             if tknots[-1] != 0:
                 tknots = tknots / tknots[-1]
+        else:
+            raise Exception(f"Unsupported metric: {metric}")
 
         return tknots
 

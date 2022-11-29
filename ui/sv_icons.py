@@ -68,8 +68,11 @@ def load_custom_icons():
         # some images for some reason are not displayed in UI, though ImagePreviews
         # return some icon_id. Such problem can be detected by checking the
         # icon_pixels, but iterating over them right after registration of a preview
-        # demolish the problem
-        any(preview.icon_pixels)
+        # demolish the problem, but it has big impact on add-on loading performance
+        # father investigations: icons are not loaded only in add node menu
+        # probably because icons are switched to rapidly and Blender can't manage
+        # to load them and memorize if they were loaded.
+        # any(preview.icon_pixels)
         # print(f"{iconID} => {any(preview.icon_pixels)}")
 
     for provider in _icon_providers.values():
@@ -114,9 +117,30 @@ def node_icon(node_ref):
         return {}
 
 
+class ShowSvIconsOp(bpy.types.Operator):
+    """Just shows list of all custom icons used in Sverchok. Open via F3 search"""
+    bl_idname = "node.show_sv_icons"
+    bl_label = "Sverchok Icons List"
+
+    def execute(self, context):
+        return {'FINISHED'}
+
+    def invoke(self, context, event):
+        wm = context.window_manager
+        return wm.invoke_props_dialog(self, width=600)
+
+    def draw(self, context):
+        layout = self.layout
+        grid = layout.grid_flow(row_major=True, align=True, columns=30)
+        for ic in _icon_collection['main'].values():
+            grid.label(text='', icon_value=ic.icon_id)
+
+
 def register():
     load_custom_icons()
+    bpy.utils.register_class(ShowSvIconsOp)
 
 
 def unregister():
     remove_custom_icons()
+    bpy.utils.unregister_class(ShowSvIconsOp)

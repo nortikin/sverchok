@@ -185,13 +185,13 @@ class SvSvgMeshNode(SverchCustomTreeNode, bpy.types.Node):
     invert_sort: BoolProperty(name='Invert Order', update=updateNode)
 
     def update_sockets(self, context):
-        self.inputs['Projection Plane'].hide_safe = self.projection_mode== "Orthogrphic" and self.projection_plane != 'User'
+        self.inputs['Projection Plane'].hide_safe = self.projection_mode== "Orthographic" and self.projection_plane != 'User'
         updateNode(self, context)
 
     projection_mode: EnumProperty(
         name='Mode',
         description='Projection mode',
-        items=enum_item_4(["Orthogrphic", 'Perspective']),
+        items=enum_item_4(["Orthographic", 'Perspective']),
         update=update_sockets)
 
     projection_plane: EnumProperty(
@@ -213,7 +213,7 @@ class SvSvgMeshNode(SverchCustomTreeNode, bpy.types.Node):
 
     def draw_buttons(self,context,layout):
         layout.prop(self, 'projection_mode')
-        if self.projection_mode == 'Orthogrphic':
+        if self.projection_mode == 'Orthographic':
             layout.prop(self, 'projection_plane')
         layout.prop(self, 'elements_sort')
         if self.elements_sort:
@@ -233,7 +233,7 @@ class SvSvgMeshNode(SverchCustomTreeNode, bpy.types.Node):
 
         shapes = []
         verts_to_project = []
-        if self.projection_mode == 'Orthogrphic':
+        if self.projection_mode == 'Orthographic':
             projection_func = ortho_projection_func_dict[self.projection_plane]
         else:
             projection_func = perspective_projection

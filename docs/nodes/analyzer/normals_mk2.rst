@@ -55,7 +55,7 @@ Move each face of cube along its normal:
 * Generator-> :doc:`Segment </nodes/generator/segment>`
 * Transform-> :doc:`Move </nodes/transforms/move_mk3>`
 * Analyzers-> :doc:`Origins </nodes/analyzer/origins>`
-* Modifier->Modifier Change-> :doc:`Polygon Boom </nodes/modifier_change/polygons_boom>`
+* Modifiers->Modifier Change-> :doc:`Polygon Boom </nodes/modifier_change/polygons_boom>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 
 .. image:: https://user-images.githubusercontent.com/14288520/195851616-d5b47ede-2a96-42f1-8de2-f1283386778e.gif

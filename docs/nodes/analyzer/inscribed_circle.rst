@@ -91,7 +91,7 @@ Inscribed circles for (triangulated) Suzanne:
 
 * Generator-> :doc:`Circle </nodes/generator/circle>`
 * Generator-> :doc:`Suzanne </nodes/generator/suzanne>`
-* Modifier->Modifier Change-> :doc:`Triangulate Mesh </nodes/modifier_change/triangulate>`
+* Modifiers->Modifier Change-> :doc:`Triangulate Mesh </nodes/modifier_change/triangulate>`
 * Number-> :doc:`Number Range </nodes/number/number_range>`
 * Color-> :doc:`Color In </nodes/color/color_in_mk1>`
-* List->List Struct-> :doc:`List Length </nodes/list_main/length>`
+* List->List Main-> :doc:`List Length </nodes/list_main/length>`
