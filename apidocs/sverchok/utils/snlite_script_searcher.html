@@ -73,7 +73,7 @@ class SvSnliteScriptSearch(bpy.types.Operator, SvGenericNodeLocator):
 
     @classmethod
     def poll(cls, context):
-        tree_type = context.space_data.tree_type
+        tree_type = getattr(context.space_data, &#39;tree_type&#39;, None)
         if tree_type in {&#39;SverchCustomTreeType&#39;, }:
             return True
 
@@ -175,7 +175,7 @@ register, unregister = bpy.utils.register_classes_factory(classes)</code></pre>
 
     @classmethod
     def poll(cls, context):
-        tree_type = context.space_data.tree_type
+        tree_type = getattr(context.space_data, &#39;tree_type&#39;, None)
         if tree_type in {&#39;SverchCustomTreeType&#39;, }:
             return True
 
@@ -225,7 +225,7 @@ register, unregister = bpy.utils.register_classes_factory(classes)</code></pre>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.utils.snlite_script_searcher.SvSnliteScriptSearch.my_enum"><code class="name">var <span class="ident">my_enum</span> : <_PropertyDeferred, <built-in function EnumProperty>, {'items': <function <a title="sverchok.utils.snlite_script_searcher.item_cb" href="#sverchok.utils.snlite_script_searcher.item_cb">item_cb()</a> at 0x7efd579f61f0>, 'attr': 'my_enum'}></code></dt>
+<dt id="sverchok.utils.snlite_script_searcher.SvSnliteScriptSearch.my_enum"><code class="name">var <span class="ident">my_enum</span> : <_PropertyDeferred, <built-in function EnumProperty>, {'items': <function <a title="sverchok.utils.snlite_script_searcher.item_cb" href="#sverchok.utils.snlite_script_searcher.item_cb">item_cb()</a> at 0x7f1877e3b8b0>, 'attr': 'my_enum'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -243,7 +243,7 @@ register, unregister = bpy.utils.register_classes_factory(classes)</code></pre>
 </summary>
 <pre><code class="python">@classmethod
 def poll(cls, context):
-    tree_type = context.space_data.tree_type
+    tree_type = getattr(context.space_data, &#39;tree_type&#39;, None)
     if tree_type in {&#39;SverchCustomTreeType&#39;, }:
         return True</code></pre>
 </details>
