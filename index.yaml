@@ -95,6 +95,7 @@
         - SvCurveRemoveKnotNode
         - SvRefineNurbsCurveNode
         - SvCurveRemoveExcessiveKnotsNode
+        - SvGenerateKnotvectorNode
         - ---
         - SvCurveElevateDegreeNode
         - SvCurveReduceDegreeNode

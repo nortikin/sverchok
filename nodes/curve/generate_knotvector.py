@@ -22,9 +22,9 @@ class SvGenerateKnotvectorNode(bpy.types.Node, SverchCustomTreeNode):
     Tooltip: Calculate knot values for a spline or NURBS curve
     """
     bl_idname = 'SvGenerateKnotvectorNode'
-    bl_label = 'Generate Knots'
+    bl_label = 'Generate Knotvector'
     bl_icon = 'CURVE_NCURVE'
-    sv_icon = 'SV_APPROXIMATE_CURVE'
+    sv_icon = 'SV_KNOTVECTOR'
 
     degree : IntProperty(
             name = "Degree",
@@ -124,7 +124,7 @@ class SvGenerateKnotvectorNode(bpy.types.Node, SverchCustomTreeNode):
                     if not self.rescale:
                         num_cpts = None
                     knots = Spline.create_knots(np.asarray(vertices), metric = self.metric)
-                    knotvector = sv_knotvector.from_tknots(degree, knots, num_cpts)
+                    knotvector = sv_knotvector.from_tknots(degree, knots, n_cpts=num_cpts)
                 if not self.numpy_out:
                     knots = knots.tolist()
                     knotvector = knotvector.tolist()
