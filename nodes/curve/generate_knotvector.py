@@ -54,12 +54,14 @@ class SvGenerateKnotvectorNode(bpy.types.Node, SverchCustomTreeNode):
 
     modes = [
             ('UNIFORM', "Uniform", "Generate uniform knotvector based on number of control points and degree", 0),
-            ('POINTS', "From Points", "Generate knotvector from point positions, based on some metric", 1)
+            ('POINTS', "From Points", "Generate knotvector from point positions, based on some metric", 1),
+            ('KNOTS', "From T Values", "Generate knotvector from values of T parameter", 2)
         ]
 
     def update_sockets(self, context):
         self.inputs['Vertices'].hide_safe = self.mode != 'POINTS'
         self.inputs['ControlPointsCount'].hide_safe = (self.mode != 'UNIFORM') and not self.rescale
+        self.inputs['Knots'].hide_safe = self.mode != 'KNOTS'
         updateNode(self, context)
 
     mode : EnumProperty(
@@ -74,6 +76,12 @@ class SvGenerateKnotvectorNode(bpy.types.Node, SverchCustomTreeNode):
             default = False,
             update = update_sockets)
 
+    include_endpoints : BoolProperty(
+            name = "Consider end points",
+            description = "Include first and last values of T parameter in knotvector calculation. This increases the length of knot vector by 2.",
+            default = False,
+            update = updateNode)
+
     numpy_out : BoolProperty(
             name = "NumPy output",
             default = False,
@@ -83,8 +91,10 @@ class SvGenerateKnotvectorNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, 'mode', text='')
         if self.mode == 'POINTS':
             layout.prop(self, 'metric')
+        if self.mode in ['POINTS', 'KNOTS']:
             layout.prop(self, 'rescale')
-        else:
+            layout.prop(self, 'include_endpoints')
+        if self.mode == 'UNIFORM':
             layout.prop(self, 'clamped')
 
     def draw_buttons_ext(self, context, layout):
@@ -93,6 +103,7 @@ class SvGenerateKnotvectorNode(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', "Vertices")
+        self.inputs.new('SvStringsSocket', "Knots")
         self.inputs.new('SvStringsSocket', "Degree").prop_name = 'degree'
         self.inputs.new('SvStringsSocket', "ControlPointsCount").prop_name = 'num_cpts'
         self.outputs.new('SvStringsSocket', "Knotvector")
@@ -104,32 +115,50 @@ class SvGenerateKnotvectorNode(bpy.types.Node, SverchCustomTreeNode):
             return
 
         vertices_s = self.inputs['Vertices'].sv_get(default = [[[[0]]]])
+        knots_s = self.inputs['Knots'].sv_get(default = [[[0]]])
         degree_s = self.inputs['Degree'].sv_get()
         num_cpts_s = self.inputs['ControlPointsCount'].sv_get()
 
+        input_level = get_data_nesting_level(vertices_s)
+        nested_output = input_level == 4
+
         vertices_s = ensure_nesting_level(vertices_s, 4)
+        knots_s = ensure_nesting_level(knots_s, 3)
         degree_s = ensure_nesting_level(degree_s, 2)
         num_cpts_s = ensure_nesting_level(num_cpts_s, 2)
 
         knotvector_out = []
         knots_out = []
-        for params in zip_long_repeat(vertices_s, degree_s, num_cpts_s):
+        for params in zip_long_repeat(vertices_s, knots_s, degree_s, num_cpts_s):
             new_knotvectors = []
             new_knots = []
-            for vertices, degree, num_cpts in zip_long_repeat(*params):
+            for vertices, knots, degree, num_cpts in zip_long_repeat(*params):
                 if self.mode == 'UNIFORM':
                     knotvector = sv_knotvector.generate(degree, num_cpts, clamped = self.clamped)
                     knots = np.unique(knotvector)
-                else:
+                elif self.mode == 'POINTS':
                     if not self.rescale:
                         num_cpts = None
                     knots = Spline.create_knots(np.asarray(vertices), metric = self.metric)
-                    knotvector = sv_knotvector.from_tknots(degree, knots, n_cpts=num_cpts)
+                    knotvector = sv_knotvector.from_tknots(degree, knots,
+                                        include_endpoints = self.include_endpoints,  n_cpts=num_cpts)
+                else: # KNOTS
+                    if not self.rescale:
+                        num_cpts = None
+                    knots = np.asarray(knots)
+                    knotvector = sv_knotvector.from_tknots(degree, knots,
+                                        include_endpoints = self.include_endpoints,  n_cpts=num_cpts)
                 if not self.numpy_out:
                     knots = knots.tolist()
                     knotvector = knotvector.tolist()
-                new_knotvectors.append(knotvector)
-                new_knots.append(knots)
+
+                if nested_output:
+                    new_knotvectors.append(knotvector)
+                    new_knots.append(knots)
+                else:
+                    new_knotvectors.extend(knotvector)
+                    new_knots.extend(knots)
+
             knotvector_out.append(new_knotvectors)
             knots_out.append(new_knots)
 
