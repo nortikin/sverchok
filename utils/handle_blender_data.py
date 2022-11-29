@@ -204,6 +204,8 @@ class BlModifier:
                     value = int(value)
                 elif sock.type == 'VALUE':
                     value = float(value)
+                elif sock.type == 'STRING':
+                    value = str(value)
                 self._mod[name] = value
 
         # transfer field
@@ -356,6 +358,9 @@ class BlSocket:
         'BOOLEAN': 'SvStringsSocket',
         'OBJECT': 'SvObjectSocket',
         'COLLECTION': 'SvCollectionSocket',
+        'MATERIAL': 'SvMaterialSocket',
+        'TEXTURE': 'SvTextureSocket',
+        'IMAGE': 'SvImageSocket',
     }
 
     def __init__(self, socket):
@@ -387,7 +392,11 @@ class BlSocket:
 
         elif hasattr(sv_sock, 'default_property'):
             sv_default = BPYProperty(sv_sock, 'default_property').default_value
-            if sv_default != sv_sock.default_property:
+            if isinstance(sv_sock.default_property, bpy.types.bpy_prop_array):
+                current = sv_sock.default_property[:]
+            else:
+                current = sv_sock.default_property
+            if sv_default != current:
                 return  # the value was already changed by user
             sv_sock.default_property = self._sock.default_value
             sv_sock.use_prop = True

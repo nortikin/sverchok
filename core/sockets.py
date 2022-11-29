@@ -1259,6 +1259,42 @@ class SvCollectionSocket(NodeSocket, SvSocketCommon):
         update=process_from_socket)
 
 
+class SvMaterialSocket(NodeSocket, SvSocketCommon):
+    bl_idname = "SvMaterialSocket"
+    bl_label = "Material Socket"
+
+    color = (0.92, 0.46, 0.51, 1.0)
+
+    default_property: PointerProperty(
+        name="Material",
+        type=bpy.types.Material,
+        update=process_from_socket)
+
+
+class SvTextureSocket(NodeSocket, SvSocketCommon):
+    bl_idname = "SvTextureSocket"
+    bl_label = "Texture Socket"
+
+    color = (0.62, 0.31, 0.64, 1.0)
+
+    default_property: PointerProperty(
+        name="Texture",
+        type=bpy.types.Texture,
+        update=process_from_socket)
+
+
+class SvImageSocket(NodeSocket, SvSocketCommon):
+    bl_idname = "SvImageSocket"
+    bl_label = "Image Socket"
+
+    color = (0.39, 0.22, 0.39, 1.0)
+
+    default_property: PointerProperty(
+        name="Image",
+        type=bpy.types.Image,
+        update=process_from_socket)
+
+
 class SvLinkNewNodeInput(bpy.types.Operator):
     ''' Spawn and link new node to the left of the caller node'''
     bl_idname = "node.sv_quicklink_new_node_input"
@@ -1502,6 +1538,9 @@ classes = [
     SvLoopControlSocket, SvLinkNewNodeInput,
     SvStringsSocketInterface, SvVerticesSocketInterface,
     SvCollectionSocket,
+    SvMaterialSocket,
+    SvTextureSocket,
+    SvImageSocket,
     SvSocketHelpOp, SvInputLinkMenuOp,
     SvSwitchDefaultOp,
 ]

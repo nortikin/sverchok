@@ -36,13 +36,18 @@ class SvGeoNodesViewerNode(
     bl_icon = 'GEOMETRY_NODES' if bpy.app.version >= (3, 3) else 'NODETREE'
 
     def generate_sockets(self, context):
+        # remove all extra sockets
         if not self.modifier:
             for sv_s in list(self.inputs)[:2:-1]:
                 self.inputs.remove(sv_s)
             self.process_node(context)
             return
+
+        # remove sockets which are not presented in the modifier
         for i in range(len(self.inputs)-1, len(self.modifier.inputs)+1, -1):
             self.inputs.remove(self.inputs[i])
+
+        # fix existing sockets
         for gn_s, sv_s in zip(self.modifier.inputs[1:], self.inputs[3:]):
             gn_s = BlSocket(gn_s)
             if sv_s.bl_idname != (s_type := gn_s.sverchok_type):
@@ -50,12 +55,15 @@ class SvGeoNodesViewerNode(
             gn_s.copy_properties(sv_s)
             if hasattr(sv_s, 'show_domain'):
                 sv_s.show_domain = True
+
+        # add new sockets
         for gn_s in self.modifier.inputs[len(self.inputs)-2:]:
             gn_s = BlSocket(gn_s)
             sv_s = self.inputs.new(gn_s.sverchok_type, '')
             gn_s.copy_properties(sv_s)
             if hasattr(sv_s, 'show_domain'):
                 sv_s.show_domain = True
+
         self.process_node(context)
 
     modifier: bpy.props.PointerProperty(
