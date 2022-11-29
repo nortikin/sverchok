@@ -503,6 +503,8 @@ class AddGroupNode(PlacingNodeOperator, bpy.types.Operator):
 
     @classmethod
     def can_be_added(cls, context) -> Tuple[bool, str]:
+        if not hasattr(context.space_data, 'path'):
+            return False, ''
         path = context.space_data.path[-1] if len(context.space_data.path) else None
         if not path:
             return False, ''
@@ -519,6 +521,7 @@ class AddNodeOutputInput(PlacingNodeOperator, bpy.types.Operator):
     """Operator for creating output and input nodes in sub trees"""
     bl_idname = "node.add_node_output_input"
     bl_label = "Add output input nodes"
+    bl_options = {'INTERNAL'}
 
     node_type: bpy.props.EnumProperty(items=[(i, i, '') for i in ['input', 'output']])
 
@@ -565,7 +568,7 @@ class AddGroupTreeFromSelected(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        path = context.space_data.path
+        path = getattr(context.space_data, 'path', [])
         if len(path):
             if path[-1].node_tree.bl_idname in {'SverchCustomTreeType', SvGroupTree.bl_idname}:
                 return bool(cls.filter_selected_nodes(path[-1].node_tree))

@@ -123,7 +123,7 @@ class SvNodeTreeExporter(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return bool(context.space_data.node_tree)
+        return bool(getattr(context.space_data, 'node_tree', None))
 
     def execute(self, context):
         if len(context.space_data.path) > 1:
@@ -288,7 +288,7 @@ class SvNodeTreeExportToGist(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return bool(context.space_data.node_tree)
+        return bool(getattr(context.space_data, 'node_tree', None))
 
     def execute(self, context):
         if len(context.space_data.path) > 1:

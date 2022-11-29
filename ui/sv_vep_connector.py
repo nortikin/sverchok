@@ -86,7 +86,7 @@ class SvNodeConnectorOperator(bpy.types.Operator):
     def poll(cls, context):
 
         space = context.space_data
-        tree_type = space.tree_type
+        tree_type = getattr(space, 'tree_type', None)
         return space.type == 'NODE_EDITOR' and tree_type in {'SverchCustomTreeType', }
 
     def execute(self, context):
