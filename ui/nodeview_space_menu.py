@@ -435,7 +435,7 @@ class Category(MenuItem):
 class SverchokContext:
     @classmethod
     def poll(cls, context):
-        tree_type = context.space_data.tree_type
+        tree_type = getattr(context.space_data, 'tree_type', None)
         if tree_type in sv_tree_types:
             return True
 

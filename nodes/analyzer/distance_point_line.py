@@ -31,7 +31,6 @@ def compute_distance(point, line, line_end, tolerance):
     inter_p = intersect_point_line(point, line, line_end)
     dist = (inter_p[0] - point).length
     segment_percent = inter_p[1]
-    print(tolerance, dist)
     is_in_line = dist < tolerance[0]
     closest_in_segment = 0 <= segment_percent <= 1
     is_in_segment = is_in_line and closest_in_segment

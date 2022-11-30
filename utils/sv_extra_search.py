@@ -141,7 +141,7 @@ class SvExtraSearch(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        tree_type = context.space_data.tree_type
+        tree_type = getattr(context.space_data, 'tree_type', None)
         if tree_type in {'SverchCustomTreeType', }:
             return True
 
