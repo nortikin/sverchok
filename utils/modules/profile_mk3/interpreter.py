@@ -18,6 +18,7 @@
 
 import ast
 from math import *
+import numpy as np
 
 from mathutils.geometry import interpolate_bezier
 from mathutils import Vector, Matrix
@@ -25,8 +26,12 @@ from mathutils import Vector, Matrix
 from sverchok.utils.logging import info, debug, warning
 from sverchok.utils.geom import interpolate_quadratic_bezier
 from sverchok.utils.sv_curve_utils import Arc
+from sverchok.utils.nurbs_common import SvNurbsMaths
 from sverchok.utils.curve import SvCircle, SvLine, SvBezierCurve, SvCubicBezierCurve
+import sverchok.utils.curve.knotvector as sv_knotvector
 from sverchok.utils.curve.nurbs import SvNurbsCurve
+from sverchok.utils.curve.nurbs_solver import SvNurbsCurveControlPoints
+from sverchok.utils.curve.nurbs_solver_applications import prepare_solver_for_interpolation
 
 def make_functions_dict(*functions):
     return dict([(function.__name__, function) for function in functions])
@@ -900,6 +905,115 @@ class ArcTo(Statement):
 
         interpreter.has_last_vertex = True
 
+class InterpolatedCurveTo(Statement):
+    def __init__(self, is_abs, degree, points, num_segments, metric, is_smooth, close):
+        self.is_abs = is_abs
+        self.degree = degree
+        self.points = points
+        self.metric = metric
+        self.num_segments = num_segments
+        self.is_smooth = is_smooth
+        self.close = close
+
+    def get_variables(self):
+        variables = set()
+        variables.update(self.degree.get_variables())
+        for point in self.points:
+            variables.update(point[0].get_variables())
+            variables.update(point[1].get_variables())
+        if self.num_segments:
+            variables.update(self.num_segments.get_variables())
+        return variables
+
+    def __repr__(self):
+        letter = "I" if self.is_abs else "i"
+        points = " ".join(str(point) for point in self.points)
+        return f"{letter} {self.degree} {points} n={self.num_segments} {self.close}"
+
+    def __eq__(self, other):
+        return isinstance(other, InterpolatedCurveTo) and \
+                self.is_abs == other.is_abs and \
+                self.points == other.points and \
+                self.degree == other.degree and \
+                self.metric == other.metric and \
+                self.num_segments == other.num_segments and \
+                self.is_smooth == other.is_smooth and \
+                self.close == other.close
+
+    def _make_curve(self, interpreter, degree, points):
+        points = np.array(points)
+        prev_control_point = None
+        if degree == 2 and interpreter.prev_quad_bezier_knot is not None:
+            prev_control_point = interpreter.to3d_np(interpreter.prev_quad_bezier_knot)
+        elif degree == 3 and interpreter.prev_bezier_knot is not None:
+            prev_control_point = interpreter.to3d_np(interpreter.prev_bezier_knot)
+        if self.is_smooth and prev_control_point is not None:
+            solver = prepare_solver_for_interpolation(degree,
+                                points,
+                                metric = self.metric,
+                                cyclic = self.close)
+            pos = interpreter.to3d_np(interpreter.position)
+            new_control_point = pos + (pos - prev_control_point)
+            print(f"Prev CP: {prev_control_point}, pos: {pos}, new CP: {new_control_point}")
+            solver.add_goal(SvNurbsCurveControlPoints.single(1, new_control_point, relative=False))
+            knotvector = solver.get_knotvector()
+            n_cpts = solver.guess_n_control_points()
+            knotvector = sv_knotvector.add_one_by_resampling(knotvector, index=1, degree=degree)
+            solver.set_curve_params(n_cpts, knotvector)
+            curve = solver.solve_welldetermined()
+        else:
+            curve = SvNurbsMaths.interpolate_curve(SvNurbsMaths.NATIVE, degree,
+                                points,
+                                metric = self.metric,
+                                cyclic = self.close)
+        return curve
+
+    def interpret(self, interpreter, variables):
+        interpreter.assert_not_closed()
+        interpreter.start_new_segment()
+
+        v0 = interpreter.position
+        if interpreter.has_last_vertex:
+            v0_index = interpreter.get_last_vertex()
+        else:
+            v0_index = interpreter.new_vertex(*v0)
+
+        interpolated_points = [[v0[0], v0[1], 0.0]]
+        for i, pt in enumerate(self.points):
+            knot = interpreter.calc_vertex(self.is_abs, pt[0], pt[1], variables)
+            interpreter.new_knot(f"I#.{i}", knot[0], knot[1])
+            interpolated_points.append([knot[0], knot[1], 0.0])
+
+        degree = interpreter.eval_(self.degree, variables)
+        curve = self._make_curve(interpreter, degree, interpolated_points)
+        interpreter.new_curve(curve, self)
+        interpreter.position = knot
+
+        cpts = curve.get_control_points()
+        if degree == 2:
+            interpreter.prev_quad_bezier_knot = (cpts[-2][0], cpts[-2][1])
+        elif degree == 3:
+            interpreter.prev_bezier_knot = (cpts[-2][0], cpts[-2][1])
+
+        if self.num_segments is not None:
+            r = interpreter.eval_(self.num_segments, variables)
+        else:
+            r = interpreter.dflt_num_verts
+
+        t_min, t_max = curve.get_u_bounds()
+        ts = np.linspace(t_min, t_max, num = r)
+        points = curve.evaluate_array(ts)
+
+        for point in points[1:]:
+            v1_index = interpreter.new_vertex(point[0], point[1])
+            interpreter.new_edge(v0_index, v1_index)
+            v0_index = v1_index
+
+        if self.close:
+            interpreter.close_segment(v1_index)
+
+        interpreter.has_last_vertex = True
+
 class CloseAll(Statement):
     def __init__(self):
         pass
@@ -1051,6 +1165,14 @@ class Interpreter(object):
             return Vector((vertex[0], 0, vertex[1]))
         else: # self.z_axis == 'Z':
             return Vector((vertex[0], vertex[1], 0))
+
+    def to3d_np(self, vertex):
+        if self.z_axis == 'X':
+            return np.array((0, vertex[0], vertex[1]))
+        elif self.z_axis == 'Y':
+            return np.array((vertex[0], 0, vertex[1]))
+        else: # self.z_axis == 'Z':
+            return np.array((vertex[0], vertex[1], 0))
 
     def assert_not_closed(self):
         if self.closed:
