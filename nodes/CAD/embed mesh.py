@@ -77,6 +77,12 @@ class Embed_Mesh:
             n1,n2 = len(verts),len(verts_a)
             face_edge = [(e1,e2) for e1,e2 in zip(range(n1)[-n2:],list(range(n1)[1-n2:])+[range(n1)[-n2]])]
             edges += face_edge
+            #Remove faces with point coincidences to prevent Mode 4 of the delaunay_2d_cdt from crashing
+            for n,f in enumerate(faces):
+                num = len(set([verts[i].to_tuple() for i in f]))
+                if num != len(f):
+                    faces[n] = []
+
             data = mathutils.geometry.delaunay_2d_cdt(verts_xy,edges,faces,4,self.epsilon,False)
 
             #Delaunay may remove certain coincident points, which will scramble the edge and surface data of the mesh, correct it (re-search sorting)
@@ -109,6 +115,8 @@ class Embed_Mesh:
         for e in E_B:
             v1,v2 = V_B[e[0]],V_B[e[1]]
             i1,i2 = kd.find(v1)[1],kd.find(v2)[1]
+            if i1 == i2 :
+                continue
             pair_v.append([bm.verts[i1],bm.verts[i2]])
         path_edges = []
         for pair in pair_v:
