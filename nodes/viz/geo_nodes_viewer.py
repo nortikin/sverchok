@@ -45,25 +45,37 @@ class SvGeoNodesViewerNode(
             return
 
         # remove sockets which are not presented in the modifier
-        for i in range(len(self.inputs)-1, len(self.modifier.inputs)+1, -1):
-            self.inputs.remove(self.inputs[i])
-
-        # fix existing sockets
-        for gn_s, sv_s in zip(self.modifier.inputs[1:], self.inputs[3:]):
-            gn_s = BlSocket(gn_s)
-            if sv_s.bl_idname != (s_type := gn_s.sverchok_type):
-                sv_s = sv_s.replace_socket(s_type)
-            gn_s.copy_properties(sv_s)
-            if hasattr(sv_s, 'show_domain'):
-                sv_s.show_domain = True
+        gn_socks = {s.identifier for s in self.modifier.inputs[1:]}
+        for sv_s in self.inputs[3:]:
+            if sv_s.identifier not in gn_socks:
+                self.inputs.remove(sv_s)
 
         # add new sockets
-        for gn_s in self.modifier.inputs[len(self.inputs)-2:]:
-            gn_s = BlSocket(gn_s)
-            sv_s = self.inputs.new(gn_s.sverchok_type, '')
-            gn_s.copy_properties(sv_s)
+        sv_socks = {s.identifier: i
+                    for i, s in enumerate(self.inputs[3:], start=3)}
+        for gn_s in self.modifier.inputs[1:]:
+            if gn_s.identifier in sv_socks:
+                continue
+            bl_s = BlSocket(gn_s)
+            sv_s = self.inputs.new(bl_s.sverchok_type, '', identifier=gn_s.identifier)
+            sv_socks[sv_s.identifier] = len(self.inputs)-1
+
+        # fix existing sockets
+        for gn_s in self.modifier.inputs[1:]:
+            sv_s = self.inputs[sv_socks[gn_s.identifier]]
+            bl_s = BlSocket(gn_s)
+            if sv_s.bl_idname != (s_type := bl_s.sverchok_type):
+                sv_s = sv_s.replace_socket(s_type)
+            bl_s.copy_properties(sv_s)
             if hasattr(sv_s, 'show_domain'):
                 sv_s.show_domain = True
+
+        # fix socket positions
+        for new_pos, gn_s in enumerate(self.modifier.inputs[1:], start=3):
+            if current_pos := sv_socks.get(gn_s.identifier, 0):
+                self.inputs.move(current_pos, new_pos)
+                sv_socks = {s.identifier: i for i, s
+                            in enumerate(self.inputs[3:], start=3)}
 
         self.process_node(context)
 
