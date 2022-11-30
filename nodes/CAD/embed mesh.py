@@ -139,6 +139,7 @@ class Embed_Mesh:
         edges = pols_edges(F_A)
         E_A = [tuple(e) for e in E_A]
         #For each pair (point:polygon): Whether the point is on the edge of the polygon, find another polygon that uses that edge, and if it exists, update to add a pair (point:polygon)
+        new_Index = tuple((i for i in Index))
         for v_i,f_i in enumerate(Index):
             face_edges = edges[f_i]
             p = mathutils.Vector(V_B[v_i])
@@ -153,8 +154,8 @@ class Embed_Mesh:
                     faces.remove(f_i)
                     if faces:
                         V_B.append(V_B[v_i])
-                        Index += (faces[0],)
-        return V_B,Index
+                        new_Index += (faces[0],)
+        return V_B,new_Index
     def main(self,V_A,E_A,F_A,V_B,E_B,F_B,Index):
         """
         V_A,E_A,F_A,V_B,E_B,F_B: mesh data of A,B
