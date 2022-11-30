@@ -170,6 +170,14 @@ class BlModifier:
     def __init__(self, modifier):
         self._mod: bpy.types.Modifier = modifier
 
+    @property
+    def node_group(self):
+        return getattr(self._mod, 'node_group', None)
+
+    @node_group.setter
+    def node_group(self, node_group):
+        self._mod.node_group = node_group
+
     def get_property(self, name):
         return getattr(self._mod, name)
 

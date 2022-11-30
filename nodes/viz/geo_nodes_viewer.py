@@ -34,6 +34,7 @@ class SvGeoNodesViewerNode(
     bl_idname = 'SvGeoNodesViewerNode'
     bl_label = 'Geo Nodes Viewer'
     bl_icon = 'GEOMETRY_NODES' if bpy.app.version >= (3, 3) else 'NODETREE'
+    sv_icon = 'SV_ALPHA'
 
     def generate_sockets(self, context):
         # remove all extra sockets
@@ -140,6 +141,8 @@ class SvGeoNodesViewerNode(
         else:
             for obj, prop in zip(objs, props):
                 mod = self.get_modifier(obj)
+                if mod.node_group != self.modifier:
+                    mod.node_group = self.modifier
                 for sv_s, gn_s, s_data in zip(self.inputs[3:], self.modifier.inputs[1:], prop):
                     domain = sv_s.domain if hasattr(sv_s, 'domain') else 'POINT'
                     mod.set_tree_data(gn_s.identifier, s_data, domain)
