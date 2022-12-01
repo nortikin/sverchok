@@ -52,6 +52,23 @@ def empty_bmesh(use_operators=True):
         raise error
 
 
+class EmptyBmesh:
+    """It's a bit faster than empty_bmesh because there is need to generate
+    new manger class each call"""
+    def __init__(self, use_operators=True):
+        """:supress: if True any errors during node execution will be suppressed"""
+        self._use_operators = use_operators
+        self._bm = bmesh.new(use_operators=use_operators)
+
+    def __enter__(self):
+        return self._bm
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self._bm.free()
+        if exc_val:
+            raise
+
+
 @contextmanager
 def bmesh_from_edit_mesh(mesh) -> ContextManager[bmesh.types.BMesh]:
     """Returns bmesh from given mesh in edit mode. All bmesh changes will effect the mesh"""

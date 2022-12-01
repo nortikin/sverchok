@@ -9,9 +9,9 @@ from __future__ import annotations
 
 from collections.abc import Iterable
 from enum import Enum
-from functools import singledispatch, wraps
+from functools import singledispatch, wraps, lru_cache, cached_property
 from itertools import chain
-from typing import Any, List, Union, TYPE_CHECKING
+from typing import Any, List, Union, TYPE_CHECKING, Optional
 
 import bpy
 from sverchok.data_structure import fixed_iter
@@ -169,6 +169,7 @@ class BlObject:
 class BlModifier:
     def __init__(self, modifier):
         self._mod: bpy.types.Modifier = modifier
+        self.gn_tree: Optional[BlTree] = None  # cache for performance
 
     @property
     def node_group(self):
@@ -197,7 +198,7 @@ class BlModifier:
         # transfer single value
         if not isinstance(data, (list, tuple)):
             data = [data]
-        if not BlTree(self._mod.node_group).is_field(name) and len(data) != 1:
+        if not self.gn_tree.is_field(name) and len(data) != 1:
             data = data[:1]
         if len(data) == 1:
             value = data[0]
@@ -207,7 +208,7 @@ class BlModifier:
                 for i, v in enumerate(value):
                     self._mod[name][i] = v
             else:
-                sock = BlSocket.from_identifier(self._mod.node_group.inputs, name)
+                sock = self.gn_tree.inputs[name]
                 if sock.type in {'INT', 'BOOLEAN'}:
                     value = int(value)
                 elif sock.type == 'VALUE':
@@ -221,10 +222,11 @@ class BlModifier:
             self._mod[f"{name}_use_attribute"] = 1
             self._mod[f"{name}_attribute_name"] = name
             obj = BlObject(self._mod.id_data)
-            sock = BlSocket.from_identifier(self._mod.node_group.inputs, name)
+            sock = self.gn_tree.inputs[name]
             if sock.type in {'INT', 'BOOLEAN'} and not isinstance(data[0], int):
                 data = [int(i) for i in data]
-            obj.set_attribute(data, name, domain, value_type=sock.attribute_type)
+            bl_sock = BlSocket(sock)
+            obj.set_attribute(data, name, domain, value_type=bl_sock.attribute_type)
 
     def remove(self):
         obj = self._mod.id_data
@@ -302,16 +304,21 @@ class BlTrees:
 class BlTree:
     def __init__(self, tree):
         self._tree = tree
+        self.inputs = {s.identifier: s for s in tree.inputs}
+        self.outputs = {s.identifier: s for s in tree.outputs}
 
+        self.is_field = lru_cache(self._is_field)  # for performance
+
+    @cached_property
     def group_input(self):
         for node in self._tree.nodes:
             if node.bl_idname == 'NodeGroupInput':
                 return node
         return None
 
-    def is_field(self, input_socket_identifier):
+    def _is_field(self, input_socket_identifier):
         """Check whether input tree socket expects field (dimond socket)"""
-        if (group := self.group_input()) is None:
+        if (group := self.group_input) is None:
             raise LookupError(f'Group input node is required '
                               f'which is not found in "{self._tree.name}" tree')
         sock = BlSocket.from_identifier(group.outputs, input_socket_identifier)
@@ -425,10 +432,6 @@ class BlSocket:
         if (sv_type := self._sv_types.get(self._sock.type)) is None:
             return 'SvStringsSocket'
         return sv_type
-
-    @property
-    def type(self):
-        return self._sock.type
 
     @property
     def display_shape(self):

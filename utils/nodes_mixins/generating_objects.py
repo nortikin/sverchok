@@ -18,7 +18,7 @@ from mathutils import Matrix
 
 from sverchok.data_structure import updateNode, update_with_kwargs, numpy_full_list, repeat_last
 from sverchok.utils.handle_blender_data import correct_collection_length, delete_data_block
-from sverchok.utils.sv_bmesh_utils import empty_bmesh, add_mesh_to_bmesh, bmesh_from_edit_mesh
+from sverchok.utils.sv_bmesh_utils import add_mesh_to_bmesh, bmesh_from_edit_mesh, EmptyBmesh
 
 
 class SvObjectData(bpy.types.PropertyGroup):
@@ -40,7 +40,8 @@ class SvObjectData(bpy.types.PropertyGroup):
                 self.obj = bpy.data.objects.new(name=name, object_data=data_block)
         else:
             # in case if data block was changed
-            self.obj.data = data_block
+            if self.obj.data != data_block:
+                self.obj.data = data_block  # EXPENSIVE
 
     def select(self):
         """Just select the object"""
@@ -49,31 +50,24 @@ class SvObjectData(bpy.types.PropertyGroup):
 
     def ensure_link_to_collection(self, collection: bpy.types.Collection = None):
         """Links object to scene or given collection, unlink from previous collection"""
-        try:
-            if collection:
-                collection.objects.link(self.obj)
-            else:
-                # default collection
-                bpy.context.scene.collection.objects.link(self.obj)
-        except RuntimeError:
-            # then the object already added, it looks like more faster way to ensure object is in the scene
-            pass
+        if collection is None:
+            collection = bpy.context.scene.collection
 
         if self.collection != collection:
             # new collection was given, object should be removed from previous one
-            if self.collection is None:
-                # it means that it is scene default collection
-                # from other hand if item only was created it also will be None but object is not in any collection yet
-                try:
-                    bpy.context.scene.collection.objects.unlink(self.obj)
-                except RuntimeError:
-                    pass
-            else:
-                try:
-                    self.collection.objects.unlink(self.obj)
-                except RuntimeError:
-                    # collection was already unliked by user or another node
-                    pass
+            try:
+                # previous behaviour was if self.collection is None it means Scene collection
+                col = bpy.context.scene.collection if self.collection is None else self.collection
+                col.objects.unlink(self.obj)
+            except RuntimeError:
+                # collection was already unliked by user or another node
+                pass
+
+            try:
+                collection.objects.link(self.obj)
+            except RuntimeError:
+                # then the object already added
+                pass
 
             self.collection = collection
 
@@ -203,7 +197,7 @@ class SvMeshData(bpy.types.PropertyGroup):
                     if matrix:
                         bm.transform(matrix)
             else:
-                with empty_bmesh(False) as bm:
+                with EmptyBmesh(False) as bm:
                     add_mesh_to_bmesh(bm, verts, edges, faces, update_indexes=False, update_normals=False)
                     if matrix:
                         bm.transform(matrix)

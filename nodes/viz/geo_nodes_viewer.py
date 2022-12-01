@@ -11,7 +11,7 @@ import bpy
 from sverchok.data_structure import fixed_iter
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.utils.handle_blender_data import BlModifier, BlSocket, correct_collection_length
+from sverchok.utils.handle_blender_data import BlModifier, BlSocket, correct_collection_length, BlTree
 from sverchok.utils.nodes_mixins.generating_objects import SvViewerLightNode, SvMeshData, SearchNode
 
 
@@ -145,6 +145,8 @@ class SvGeoNodesViewerNode(
         props = [fixed_iter(sock_data, obj_num, None) for sock_data in props]
         props = zip(*props) if props else fixed_iter([], obj_num, [])
 
+        gn_tree = BlTree(self.modifier) if self.modifier else None
+
         if self.modifier is None:
             for obj in objs:
                 mod = self.get_modifier(obj, create=False)
@@ -155,6 +157,7 @@ class SvGeoNodesViewerNode(
                 mod = self.get_modifier(obj)
                 if mod.node_group != self.modifier:
                     mod.node_group = self.modifier
+                mod.gn_tree = gn_tree
                 for sv_s, gn_s, s_data in zip(self.inputs[3:], self.modifier.inputs[1:], prop):
                     domain = sv_s.domain if hasattr(sv_s, 'domain') else 'POINT'
                     mod.set_tree_data(gn_s.identifier, s_data, domain)
