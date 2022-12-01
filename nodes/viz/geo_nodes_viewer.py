@@ -8,6 +8,7 @@ from itertools import cycle
 from typing import Optional
 
 import bpy
+from bpy.props import StringProperty
 from sverchok.data_structure import fixed_iter
 
 from sverchok.node_tree import SverchCustomTreeNode
@@ -23,6 +24,34 @@ class SvUpdateNodeInterface(SearchNode, bpy.types.Operator):
     def execute(self, context):
         self.node.generate_sockets(context)
         return {'FINISHED'}
+
+
+class SvAddNewGNTree(SearchNode, bpy.types.Operator):
+    """Create and add new Geometry Nodes tree"""
+    bl_idname = 'node.sv_add_new_gn_tree'
+    bl_label = 'Add New GN Tree'
+
+    gn_name: StringProperty()
+
+    def execute(self, context):
+        tree = bpy.data.node_groups.new(self.gn_name, 'GeometryNodeTree')
+        in_ = tree.nodes.new("NodeGroupInput")
+        out = tree.nodes.new("NodeGroupOutput")
+        out.location = (500, 0)
+        in_s = out.inputs.new('NodeSocketGeometry', 'Geometry')
+        tree.links.new(in_s, in_.outputs[0])
+        self.node.modifier = tree
+        return {'FINISHED'}
+
+    def invoke(self, context, event):
+        if hasattr(context, 'node'):
+            self._node = context.node
+        wm = context.window_manager
+        return wm.invoke_props_dialog(self)
+
+    def draw(self, context):
+        layout = self.layout
+        layout.prop(self, 'gn_name', text='Tree name')
 
 
 class SvGeoNodesViewerNode(
@@ -97,7 +126,11 @@ class SvGeoNodesViewerNode(
         self.draw_viewer_properties(layout)
         row = layout.row(align=True)
         row.prop(self, 'modifier', text='')
-        row.operator(SvUpdateNodeInterface.bl_idname, text='', icon='FILE_REFRESH')
+        if self.modifier:
+            row.operator(SvUpdateNodeInterface.bl_idname, text='',
+                         icon='FILE_REFRESH')
+        else:
+            row.operator(SvAddNewGNTree.bl_idname, text='', icon='ADD')
 
     def draw_buttons_fly(self, layout):
         super().draw_buttons_fly(layout)
@@ -179,4 +212,4 @@ class SvGeoNodesViewerNode(
 
 
 register, unregister = bpy.utils.register_classes_factory(
-    [SvGeoNodesViewerNode, SvUpdateNodeInterface])
+    [SvGeoNodesViewerNode, SvUpdateNodeInterface, SvAddNewGNTree])
