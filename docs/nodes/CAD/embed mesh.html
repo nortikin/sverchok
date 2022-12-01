@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Inset Special &mdash; Sverchok 1, 2, 0 documentation</title>
+  <title>Embed Mesh &mdash; Sverchok 1, 2, 0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
@@ -21,8 +21,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Merge Mesh 2d" href="merge_mesh_2d.html" />
-    <link rel="prev" title="Embed Mesh" href="embed%20mesh.html" /> 
+    <link rel="next" title="Inset Special" href="inset_special_mk2.html" />
+    <link rel="prev" title="Edges to Faces 2D" href="edges_to_faces_2d.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -66,15 +66,16 @@
 <li class="toctree-l3"><a class="reference internal" href="crop_mesh_2d.html">Crop Mesh 2D</a></li>
 <li class="toctree-l3"><a class="reference internal" href="edges_intersect_mk3.html">Intersect Edges</a></li>
 <li class="toctree-l3"><a class="reference internal" href="edges_to_faces_2d.html">Edges to Faces 2D</a></li>
-<li class="toctree-l3"><a class="reference internal" href="embed%20mesh.html">Embed Mesh</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">Inset Special</a><ul>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Embed Mesh</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#options">Options</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#outputs">Outputs</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#examples-of-usage">Examples of usage</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#modes">Modes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#n-panel">N panel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#examples">Examples</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="inset_special_mk2.html">Inset Special</a></li>
 <li class="toctree-l3"><a class="reference internal" href="merge_mesh_2d.html">Merge Mesh 2d</a></li>
 <li class="toctree-l3"><a class="reference internal" href="merge_mesh_2d_lite.html">Merge mesh 2D lite</a></li>
 </ul>
@@ -122,9 +123,9 @@
       <li><a href="../../main.html" class="icon icon-home"></a></li>
           <li class="breadcrumb-item"><a href="../../nodes.html">Nodes</a></li>
           <li class="breadcrumb-item"><a href="CAD_index.html">CAD</a></li>
-      <li class="breadcrumb-item active">Inset Special</li>
+      <li class="breadcrumb-item active">Embed Mesh</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../../_sources/nodes/CAD/inset_special_mk2.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../../_sources/nodes/CAD/embed mesh.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -132,82 +133,50 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="inset-special">
-<h1>Inset Special<a class="headerlink" href="#inset-special" title="Permalink to this heading">¶</a></h1>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198552761-a6e9f488-d584-444c-935d-ea15c7ded82f.png"><img alt="https://user-images.githubusercontent.com/14288520/198552761-a6e9f488-d584-444c-935d-ea15c7ded82f.png" src="https://user-images.githubusercontent.com/14288520/198552761-a6e9f488-d584-444c-935d-ea15c7ded82f.png" /></a>
+  <section id="embed-mesh">
+<h1>Embed Mesh<a class="headerlink" href="#embed-mesh" title="Permalink to this heading">¶</a></h1>
+<img alt="https://user-images.githubusercontent.com/74725748/204120088-03599881-59d5-4f6c-b7de-3b90b1f620cc.png" src="https://user-images.githubusercontent.com/74725748/204120088-03599881-59d5-4f6c-b7de-3b90b1f620cc.png" />
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
-<p>Make inset in polygons. Output inner and outer polygons separately.</p>
+<p>Embed mesh B on mesh A into mesh A, and in simple terms, you will get the structure of mesh B on mesh A</p>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
-<p>This node has the following inputs:</p>
-<p>Base Meshes:</p>
 <ul class="simple">
-<li><p><strong>Vertices</strong> - Vertices of objects</p></li>
-<li><p><strong>Polygons</strong> - polygons of objects</p></li>
-</ul>
-<p>Transformation definition. Vectorized for every polygon:</p>
-<ul class="simple">
-<li><p><strong>Inset</strong> - Proportional offset values meaning 0 in the center and 1 in the edges.</p></li>
-<li><p><strong>Distance</strong> - Offset distance along normal.</p></li>
-<li><p><strong>ignore</strong> - mask of affected polygons</p></li>
-<li><p><strong>Make Inner</strong> - Determine if inner face should be created</p></li>
-<li><p><strong>Custom Normals</strong> - custom normals for inset displacement</p></li>
-<li><p><strong>Offset Matrix</strong> - Matrix transformation for inset displacement (only if ‘Offset Mode’ is set to ‘Matrix’)</p></li>
-</ul>
-</section>
-<section id="options">
-<h2>Options<a class="headerlink" href="#options" title="Permalink to this heading">¶</a></h2>
-<ul class="simple">
-<li><p><strong>Offset Mode</strong> - How to interpret inset distance:
-Center: Inset is measured as a proportion between the corners and the center of the polygon
-Sides: Inset is measured as a constant distance to the sides of the polygon
-Matrix: Inset is computed based on a offset Matrix</p></li>
-<li><p><strong>Proportional</strong> - Multiply distance by polygon perimeter (only if ‘Offset Mode’ is set to ‘Sides’)</p></li>
-<li><p><strong>Concave Support</strong> - Try to fix distances in concave polygons.
-Disclaimer: This node is will fail in polygons with the center of the polygon outside
-of itself. For a better concave support use ‘Inset Faces’ node, which is over
-10 times slower than this node but more robust.</p></li>
-<li><p><strong>Zero Mode</strong> - How to handle faces with zero inset (only if ‘Offset Mode’ is set to ‘Center’):
-Skip: Ignore this faces
-Fan: Merge the inset vertices into a single vertex</p></li>
-<li><p><strong>Implementation</strong> - How inset is calculated.
-Numpy: Faster
-Mathutils: Slower (Legacy. Face order may differ with new implementation) ‘Custom normals’ and the last 4 outputs wont work</p></li>
+<li><p><strong>VertsA</strong> - vertices of mesh A</p></li>
+<li><p><strong>EdgesA</strong> - edges of mesh A</p></li>
+<li><p><strong>FacesA</strong> - faces of mesh A</p></li>
+<li><p><strong>VertsB</strong> - vertices of mesh B</p></li>
+<li><p><strong>EdgesB</strong> - edges of mesh B</p></li>
+<li><p><strong>FacesB</strong> - faces of mesh B</p></li>
+<li><p><strong>Index</strong>  - Specifies on which face of mesh A each point of mesh B is on</p></li>
 </ul>
 </section>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
-<p>This node has the following outputs:</p>
 <ul class="simple">
-<li><p><strong>vertices</strong></p></li>
-<li><p><strong>polygons</strong></p></li>
-<li><p><strong>Ignored</strong> - get polygons that have not been affected.</p></li>
-<li><p><strong>Inset</strong> - get inner polygons.</p></li>
-<li><p><strong>Original Vert Idx</strong> - the index of the original vertex. Can be used to pass
-Vertex Data to new vertices. In case of Zero inset in Fan mode the index of the
-new vertex will be the first index of the polygon</p></li>
-<li><p><strong>Original Face Idx</strong> - the index of the original face. Can be used to pass Face Data to new faces</p></li>
-<li><p><strong>Pols Group</strong> - Outputs a list to mask polygons from the modified mesh,
-0 = Original Polygon
-1 = Side polygon
-2 = Inset Polygon.</p></li>
-<li><p><strong>New Verts Mask</strong> - Mask of the new vertices</p></li>
+<li><p><strong>Verts</strong> - vertices of new mesh</p></li>
+<li><p><strong>Edges</strong> - edges of new mesh</p></li>
+<li><p><strong>Faces</strong> - faces of new mesh</p></li>
+<li><p><strong>Index</strong> - Index of the B-edge structure of the mesh on the new mesh</p></li>
 </ul>
 </section>
-<section id="examples-of-usage">
-<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
-<img alt="procedural_Inset_example_blender_sverchok_1.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/CAD/Inset_special/inset_special_example.png" />
-<img alt="procedural_Inset_example_blender_sverchok_2.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/CAD/Inset_special/inset_special_example2.png" />
-<p>Original Face idx and Original Vert Idx</p>
-<img alt="https://user-images.githubusercontent.com/10011941/115357139-9b846200-a1bc-11eb-9c32-529c820a1a36.png" src="https://user-images.githubusercontent.com/10011941/115357139-9b846200-a1bc-11eb-9c32-529c820a1a36.png" />
-<p>Custom Normal Example</p>
-<img alt="https://user-images.githubusercontent.com/10011941/115118493-af08b080-9fa3-11eb-88a2-3252eea02a33.png" src="https://user-images.githubusercontent.com/10011941/115118493-af08b080-9fa3-11eb-88a2-3252eea02a33.png" />
-<p>New verts mask used to bevel only inset vertices</p>
-<img alt="https://user-images.githubusercontent.com/10011941/115415530-46b20d00-a1f7-11eb-8d6f-48bcc941bcfd.png" src="https://user-images.githubusercontent.com/10011941/115415530-46b20d00-a1f7-11eb-8d6f-48bcc941bcfd.png" />
-<p>Pol groups output to filter the output polygons</p>
-<img alt="https://user-images.githubusercontent.com/10011941/115419634-c7263d00-a1fa-11eb-8730-d6ca1dc5511b.png" src="https://user-images.githubusercontent.com/10011941/115419634-c7263d00-a1fa-11eb-8730-d6ca1dc5511b.png" />
+<section id="modes">
+<h2>Modes<a class="headerlink" href="#modes" title="Permalink to this heading">¶</a></h2>
+<p>None</p>
+</section>
+<section id="n-panel">
+<h2>N panel<a class="headerlink" href="#n-panel" title="Permalink to this heading">¶</a></h2>
+<ul class="simple">
+<li><p><strong>Epsilon</strong> - For nearness tests; number of figures after coma</p></li>
+</ul>
+</section>
+<section id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
+<p><strong>knife project(with raycaster node):</strong></p>
+<img alt="https://user-images.githubusercontent.com/74725748/204120874-005aa169-166a-466d-bd07-aa5e8a35ed77.png" src="https://user-images.githubusercontent.com/74725748/204120874-005aa169-166a-466d-bd07-aa5e8a35ed77.png" />
+<p><strong>mesh bool(with Nearest Point on Mesh):</strong></p>
+<img alt="https://user-images.githubusercontent.com/74725748/204191959-202a40ea-e7ab-4994-875f-c7160a4fdf6a.png" src="https://user-images.githubusercontent.com/74725748/204191959-202a40ea-e7ab-4994-875f-c7160a4fdf6a.png" />
 </section>
 </section>
 
@@ -215,8 +184,8 @@ new vertex will be the first index of the polygon</p></li>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="embed%20mesh.html" class="btn btn-neutral float-left" title="Embed Mesh" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="merge_mesh_2d.html" class="btn btn-neutral float-right" title="Merge Mesh 2d" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="edges_to_faces_2d.html" class="btn btn-neutral float-left" title="Edges to Faces 2D" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="inset_special_mk2.html" class="btn btn-neutral float-right" title="Inset Special" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
