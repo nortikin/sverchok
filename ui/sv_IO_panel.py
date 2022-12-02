@@ -109,7 +109,7 @@ class SvNodeTreeExporter(bpy.types.Operator):
 
     filepath: bpy.props.StringProperty(
         name="File Path",
-        description="Filepath used for exporting too",
+        description="Filepath used for exporting to",
         maxlen=1024, default="", subtype='FILE_PATH')
 
     filter_glob: bpy.props.StringProperty(
@@ -147,7 +147,8 @@ class SvNodeTreeExporter(bpy.types.Operator):
             return {'CANCELLED'}
 
         indent = None if self.compact else 2
-        json.dump(layout_dict, open(destination_path, 'w'), indent=indent)  # json_struct doesn't expect sort_keys = True
+        with open(destination_path, 'w') as fpo:
+            json.dump(layout_dict, fpo, indent=indent)  # json_struct doesn't expect sort_keys = True
         msg = 'exported to: ' + destination_path
         self.report({"INFO"}, msg)
         info(msg)
