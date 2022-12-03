@@ -16,4 +16,6 @@ External Blender Add-ons that expand Sverchok Capabilities:
   IFC import/export. `Also here <https://blenderbim.org/download.html>`_ (Alpha State)
 
 - `Topology nodes <https://github.com/wassimj/topologicsverchok>`_: geometry topology generating
-  and analyzing with microsoft library used. (Alpha State)
+  and analyzing with microsoft library used. (Alpha State) 
+
+- `Mega-Polis node system <https://github.com/victorcalixto/mega-polis>`_: Data-Driven Urban Design Toolkit. Urban research and analitic toolset.  
