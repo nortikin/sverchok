@@ -108,7 +108,7 @@ def from_tknots(degree, tknots, include_endpoints=False, n_cpts=None):
         return np.array(result)
     else:
         resampled_tknots = linear_resample(tknots, n_cpts)
-        return from_tknots(degree, resampled_tknots)
+        return from_tknots(degree, resampled_tknots, include_endpoints = include_endpoints)
 
 def normalize(knot_vector):
     """ Normalizes the input knot vector to [0, 1] domain.
