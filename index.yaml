@@ -86,6 +86,7 @@
         - SvExNurbsCurveNode
         - SvApproxNurbsCurveMk2Node
         - SvExInterpolateNurbsCurveNode
+        - SvFilletCurveNode
         - SvDeconstructCurveNode
         - SvNurbsCurveNodesNode
         - ---

@@ -25,6 +25,7 @@ SMOOTH_POSITION = '0'
 SMOOTH_TANGENT = '1'
 SMOOTH_BIARC = '1b'
 SMOOTH_ARC = '1a'
+SMOOTH_QUAD = '1q'
 SMOOTH_NORMAL = '2'
 SMOOTH_CURVATURE = '3'
 
@@ -39,8 +40,8 @@ def calc_single_fillet(smooth, curve1, curve2, bulge_factor = 0.5, biarc_paramet
     if smooth == SMOOTH_POSITION:
         return SvLine.from_two_points(curve1_end, curve2_begin)
     elif smooth == SMOOTH_TANGENT:
-        #tangent1 = tangent1_end / np.linalg.norm(tangent1_end)
-        #tangent2 = tangent2_begin / np.linalg.norm(tangent2_begin)
+        tangent1 = tangent1_end / np.linalg.norm(tangent1_end)
+        tangent2 = tangent2_begin / np.linalg.norm(tangent2_begin)
         tangent1 = bulge_factor * tangent1_end
         tangent2 = bulge_factor * tangent2_begin
         return SvCubicBezierCurve(
@@ -239,11 +240,13 @@ def fillet_polyline_from_curve(curve, radiuses,
 
     if not curve.is_polyline():
         raise Exception("Curve is not a polyline")
-    vertices = curve.get_polyline_vertices()
+    vertices = curve.get_polyline_vertices().tolist()
     cyclic = curve.is_closed()
 
     if isinstance(radiuses, (int,float)):
         radiuses = [radiuses]
+    if cyclic:
+        vertices = vertices[:-1]
     n = len(vertices)
     radiuses = repeat_last_for_length(radiuses, n)
 
@@ -253,6 +256,8 @@ def fillet_polyline_from_curve(curve, radiuses,
         arc_mode = FILLET_BEZIER
     elif smooth == SMOOTH_ARC:
         arc_mode = FILLET_ARC
+    elif smooth == SMOOTH_QUAD:
+        arc_mode = FILLET_BEZIER
     else:
         raise Exception(f"Unsupported smooth level: {smooth}")
 
