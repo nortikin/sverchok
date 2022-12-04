@@ -128,7 +128,9 @@ class SvNurbsCurve(SvCurve):
         w1 = curve1.get_weights()[-1]
         w2 = curve2.get_weights()[0]
         if abs(w1 - w2) > tolerance:
-            raise UnsupportedCurveTypeException(f"Weights at endpoints do not match: {w1} != {w2}")
+            coef = w1 / w2
+            curve2 = curve2.copy(weights = curve2.get_weights() * coef)
+            #raise UnsupportedCurveTypeException(f"Weights at endpoints do not match: {w1} != {w2}")
 
         p1, p2 = curve1.get_degree(), curve2.get_degree()
         if p1 > p2:
