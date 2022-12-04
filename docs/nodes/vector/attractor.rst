@@ -71,8 +71,8 @@ This node has the following parameters:
   - **Inverse exponent**. Falloff law is `exp(- C * R)`, where R is distance from vertex to attractor, and C is value from **Coefficient** input.
   - **Gauss**. Falloff law is `exp(- C * R^2 / 2)`, where R is distance fromcvertex to attractor, and C is value from **Coefficient** input.
 
-.. image:: https://user-images.githubusercontent.com/14288520/200181691-32baefab-07c5-4117-b2b6-72ebc276f62b.png
-  :target: https://user-images.githubusercontent.com/14288520/200181691-32baefab-07c5-4117-b2b6-72ebc276f62b.png
+.. image:: https://user-images.githubusercontent.com/14288520/205487361-bde8ef53-a23a-43dd-9d48-01892b1d3c75.png
+  :target: https://user-images.githubusercontent.com/14288520/205487361-bde8ef53-a23a-43dd-9d48-01892b1d3c75.png
 
 - **Clamp**. Whether to restrict output vector length with distance from vertex
   to attractor. If not checked, then attraction vector length can be very big
