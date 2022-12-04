@@ -24,7 +24,8 @@ class SvGenerateKnotvectorNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvGenerateKnotvectorNode'
     bl_label = 'Generate Knotvector'
     bl_icon = 'CURVE_NCURVE'
-    sv_icon = 'SV_KNOTVECTOR'
+    #sv_icon = 'SV_KNOTVECTOR'
+    sv_icon = 'SV_ALPHA'
 
     degree : IntProperty(
             name = "Degree",
