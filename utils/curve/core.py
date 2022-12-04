@@ -443,6 +443,12 @@ class SvCurve(object):
         begin, end = self.get_end_points()
         return np.linalg.norm(begin - end) < tolerance
 
+    def is_polyline(self):
+        return False
+
+    def get_polyline_vertices(self):
+        raise Exception("Curve is not a polyline")
+
     def get_degree(self):
         """
         Get curve degree, if applicable.

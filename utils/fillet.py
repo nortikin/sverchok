@@ -4,7 +4,7 @@ from math import tan, sin, pi
 
 from mathutils import Vector, Matrix
 
-from sverchok.utils.curve.primitives import SvCircle
+from sverchok.utils.curve.primitives import SvCircle, SvLine
 from sverchok.utils.curve.bezier import SvBezierCurve
 
 class ArcFilletData(object):
@@ -33,6 +33,9 @@ class ArcFilletData(object):
     def get_bezier_arc(self):
         cpts = np.array([self.p1, self.vertex, self.p2])
         return SvBezierCurve(cpts)
+
+    def get_bevel(self):
+        return SvLine.from_two_points(self.p1, self.p2)
 
 def calc_fillet(v1, v2, v3, radius):
     if not isinstance(v1, Vector):
