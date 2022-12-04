@@ -104,3 +104,12 @@ class SvSplineCurve(SvCurve):
     def cut_segment(self, new_t_min, new_t_max, rescale=False):
         return self.to_nurbs().cut_segment(new_t_min, new_t_max, rescale=rescale)
 
+    def is_polyline(self):
+        return self.spline.get_degree() == 1
+
+    def get_polyline_vertices(self):
+        if self.spline.get_degree() == 1:
+            return self.spline.pts
+        else:
+            raise Exception("Curve is not a polyline")
+
