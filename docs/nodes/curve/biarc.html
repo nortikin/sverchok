@@ -198,6 +198,7 @@
              
   <section id="bi-arc">
 <h1>Bi Arc<a class="headerlink" href="#bi-arc" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205462176-6c609aad-9fd8-4796-8b9c-37118a63a52c.png"><img alt="https://user-images.githubusercontent.com/14288520/205462176-6c609aad-9fd8-4796-8b9c-37118a63a52c.png" src="https://user-images.githubusercontent.com/14288520/205462176-6c609aad-9fd8-4796-8b9c-37118a63a52c.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node generates a <a class="reference external" href="https://en.wikipedia.org/wiki/Biarc">BiArc</a> - i.e. a Curve, which is composed of two circular
@@ -208,6 +209,7 @@ selected by specifying the P parameter. Default value of P = 1.0 ensures
 minimum change of curvature at the junction point of two arcs. See
 illustrations in the Wikipedia article for better explanation of this
 parameter.</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205462337-25f75811-864d-4307-9ad2-ce4972b36ac6.png"><img alt="https://user-images.githubusercontent.com/14288520/205462337-25f75811-864d-4307-9ad2-ce4972b36ac6.png" src="https://user-images.githubusercontent.com/14288520/205462337-25f75811-864d-4307-9ad2-ce4972b36ac6.png" /></a>
 <p>This node can generate only planar curves. If specified points and tangent
 vectors do not lie in the same plane, the node will raise an exception (become
 red), and processing will stop.</p>
@@ -226,6 +228,7 @@ vector is not used, only diretion. The default value is <code class="docutils li
 <li><p><strong>Parameter</strong>. The value of P parameter for selecting a biarc curve from a
 family. The default value is 1.0.</p></li>
 </ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205463037-041107d2-47cf-4aa7-8cde-863c0a8bd7bf.png"><img alt="https://user-images.githubusercontent.com/14288520/205463037-041107d2-47cf-4aa7-8cde-863c0a8bd7bf.png" src="https://user-images.githubusercontent.com/14288520/205463037-041107d2-47cf-4aa7-8cde-863c0a8bd7bf.png" /></a>
 </section>
 <section id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
@@ -233,9 +236,15 @@ family. The default value is 1.0.</p></li>
 <ul class="simple">
 <li><p><strong>Show Details</strong>. If checked, several outputs of the node with detailed
 information about generated arcs will be shown. Unchecked by default.</p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205464077-b7407453-378c-4654-bfd2-1c6413a69ca6.png"><img alt="https://user-images.githubusercontent.com/14288520/205464077-b7407453-378c-4654-bfd2-1c6413a69ca6.png" src="https://user-images.githubusercontent.com/14288520/205464077-b7407453-378c-4654-bfd2-1c6413a69ca6.png" /></a>
+<ul class="simple">
 <li><p><strong>Join</strong>. If checked, the node will generate one flat list of curves for all
 lists of input parameters. Otherwise, the node will generate a separate list
 of curves for each list of input parameters. Checked by default.</p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205464318-bcd70012-c52b-4c8d-b5fb-73263ccb88c3.png"><img alt="https://user-images.githubusercontent.com/14288520/205464318-bcd70012-c52b-4c8d-b5fb-73263ccb88c3.png" src="https://user-images.githubusercontent.com/14288520/205464318-bcd70012-c52b-4c8d-b5fb-73263ccb88c3.png" /></a>
+<ul class="simple">
 <li><p><strong>Planar Accuracy</strong>. This parameter is available in the N panel only.
 Tolerance value for checking if provided points and tangent vectors lie in
 the same plane. The bigger the value is, the more precisely this condition
@@ -243,6 +252,7 @@ must be respected. If points and vectors do not lie precisely in the same
 plane, the generated curve can be not passing exactly through the provided
 points and provided tangent vectors. The default value is 6.</p></li>
 </ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205464361-a921a950-2907-44b2-b283-8d326bf6ff3f.png"><img alt="https://user-images.githubusercontent.com/14288520/205464361-a921a950-2907-44b2-b283-8d326bf6ff3f.png" src="https://user-images.githubusercontent.com/14288520/205464361-a921a950-2907-44b2-b283-8d326bf6ff3f.png" /></a>
 </section>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
@@ -266,15 +276,26 @@ checked. The angle of the second arc.</p></li>
 <li><p><strong>Junction</strong>. This output is available only if <strong>Show Details</strong> parameter is
 checked. The junction point of two arcs.</p></li>
 </ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205464670-18bafcd1-29d2-4cdc-b506-471df36b0787.png"><img alt="https://user-images.githubusercontent.com/14288520/205464670-18bafcd1-29d2-4cdc-b506-471df36b0787.png" src="https://user-images.githubusercontent.com/14288520/205464670-18bafcd1-29d2-4cdc-b506-471df36b0787.png" /></a>
 </section>
 <section id="examples-of-usage">
 <h2>Examples of Usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>A simple example:</p>
-<img alt="https://user-images.githubusercontent.com/284644/94367821-63bbad00-00fa-11eb-8ccf-7b9c2ed6d345.png" src="https://user-images.githubusercontent.com/284644/94367821-63bbad00-00fa-11eb-8ccf-7b9c2ed6d345.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205464786-a97e435d-2a3a-4412-a0e5-ced1e4e8d8c2.png"><img alt="https://user-images.githubusercontent.com/14288520/205464786-a97e435d-2a3a-4412-a0e5-ced1e4e8d8c2.png" src="https://user-images.githubusercontent.com/14288520/205464786-a97e435d-2a3a-4412-a0e5-ced1e4e8d8c2.png" /></a>
+<ul class="simple">
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_curve.html"><span class="doc">Viewer Draw Curve</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>A reproduction from Wikipedia illustration: a family of biarc curves with fixed
 start and end points and tangent vectors, but with P parameter ranging from -4
 to 4:</p>
-<img alt="https://user-images.githubusercontent.com/284644/94367816-61f1e980-00fa-11eb-971a-5b9808b36082.png" src="https://user-images.githubusercontent.com/284644/94367816-61f1e980-00fa-11eb-971a-5b9808b36082.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205464989-ae2ee45e-e16f-4236-bebf-8cee19c5af41.png"><img alt="https://user-images.githubusercontent.com/14288520/205464989-ae2ee45e-e16f-4236-bebf-8cee19c5af41.png" src="https://user-images.githubusercontent.com/14288520/205464989-ae2ee45e-e16f-4236-bebf-8cee19c5af41.png" /></a>
+<ul class="simple">
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_polar_in.html"><span class="doc">Vector Polar Input</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_curve.html"><span class="doc">Viewer Draw Curve</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 </section>
 </section>
 

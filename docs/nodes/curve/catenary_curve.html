@@ -199,6 +199,7 @@
              
   <section id="catenary-curve">
 <h1>Catenary Curve<a class="headerlink" href="#catenary-curve" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205445101-09994c2b-6646-475d-999c-571bbe871c9e.png"><img alt="https://user-images.githubusercontent.com/14288520/205445101-09994c2b-6646-475d-999c-571bbe871c9e.png" src="https://user-images.githubusercontent.com/14288520/205445101-09994c2b-6646-475d-999c-571bbe871c9e.png" /></a>
 <section id="dependencies">
 <h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this heading">¶</a></h2>
 <p>This node requires <a class="reference external" href="https://scipy.org/">SciPy</a> library to work.</p>
@@ -206,6 +207,8 @@
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node generates a <a class="reference external" href="https://en.wikipedia.org/wiki/Catenary">catenary</a> curve, given it’s two end points and it’s length.</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205445321-ad399ddf-044b-4adb-9f42-1aa49cca05f7.png"><img alt="https://user-images.githubusercontent.com/14288520/205445321-ad399ddf-044b-4adb-9f42-1aa49cca05f7.png" src="https://user-images.githubusercontent.com/14288520/205445321-ad399ddf-044b-4adb-9f42-1aa49cca05f7.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205445676-b73fffcb-dfea-4334-8390-e33edc272c62.gif"><img alt="https://user-images.githubusercontent.com/14288520/205445676-b73fffcb-dfea-4334-8390-e33edc272c62.gif" src="https://user-images.githubusercontent.com/14288520/205445676-b73fffcb-dfea-4334-8390-e33edc272c62.gif" /></a>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
@@ -219,6 +222,7 @@ meaning. The default value is <code class="docutils literal notranslate"><span c
 <li><p><strong>Length</strong>. The length of the curve between starting and ending point. The
 default value is 3.0.</p></li>
 </ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205446031-26fbf80a-6301-4d04-9304-238cf298834e.png"><img alt="https://user-images.githubusercontent.com/14288520/205446031-26fbf80a-6301-4d04-9304-238cf298834e.png" src="https://user-images.githubusercontent.com/14288520/205446031-26fbf80a-6301-4d04-9304-238cf298834e.png" /></a>
 </section>
 <section id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
@@ -228,6 +232,7 @@ default value is 3.0.</p></li>
 for all input lists of points. Otherwise, the node will output a separate
 list of curves for each list of input points. Checked by default.</p></li>
 </ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205446519-6960e757-2eeb-4790-9202-ec426687218c.png"><img alt="https://user-images.githubusercontent.com/14288520/205446519-6960e757-2eeb-4790-9202-ec426687218c.png" src="https://user-images.githubusercontent.com/14288520/205446519-6960e757-2eeb-4790-9202-ec426687218c.png" /></a>
 </section>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
@@ -238,10 +243,21 @@ list of curves for each list of input points. Checked by default.</p></li>
 </section>
 <section id="examples-of-usage">
 <h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
-<p>Catenary curve hanging down between two points:</p>
-<img alt="https://user-images.githubusercontent.com/284644/86517687-4b622c00-be44-11ea-8265-32d7bba9f8ee.png" src="https://user-images.githubusercontent.com/284644/86517687-4b622c00-be44-11ea-8265-32d7bba9f8ee.png" />
-<p>Catenary arch:</p>
-<img alt="https://user-images.githubusercontent.com/284644/86518000-04c20100-be47-11ea-993f-19808ee3d2a5.png" src="https://user-images.githubusercontent.com/284644/86518000-04c20100-be47-11ea-993f-19808ee3d2a5.png" />
+<p><strong>Catenary curve hanging down between two points</strong>:</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205448797-4c859a2e-880c-4f21-9874-0f2861c91d3d.png"><img alt="https://user-images.githubusercontent.com/14288520/205448797-4c859a2e-880c-4f21-9874-0f2861c91d3d.png" src="https://user-images.githubusercontent.com/14288520/205448797-4c859a2e-880c-4f21-9874-0f2861c91d3d.png" /></a>
+<ul class="simple">
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_curve.html"><span class="doc">Viewer Draw Curve</span></a></p></li>
+</ul>
+<hr class="docutils" />
+<p><strong>Catenary arch</strong>:</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205449286-a68ea04b-3d67-4364-9902-0c883ef04f2f.png"><img alt="https://user-images.githubusercontent.com/14288520/205449286-a68ea04b-3d67-4364-9902-0c883ef04f2f.png" src="https://user-images.githubusercontent.com/14288520/205449286-a68ea04b-3d67-4364-9902-0c883ef04f2f.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>
+<li><p>Curves-&gt;Curve Primitives-&gt; <a class="reference internal" href="polyline.html"><span class="doc">Polyline</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="../surface/extrude_curve.html"><span class="doc">Extrude Curve Along Cirve</span></a></p></li>
+<li><p>Surface-&gt; <a class="reference internal" href="../surface/evaluate_surface.html"><span class="doc">Evaluate Surface</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 </section>
 </section>
 

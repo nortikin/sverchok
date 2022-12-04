@@ -198,12 +198,18 @@
              
   <section id="arc-3pt-curve">
 <h1>Arc 3pt (Curve)<a class="headerlink" href="#arc-3pt-curve" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205433902-77f0b2c1-1ca5-477a-bfda-f11d60e63f2d.png"><img alt="https://user-images.githubusercontent.com/14288520/205433902-77f0b2c1-1ca5-477a-bfda-f11d60e63f2d.png" src="https://user-images.githubusercontent.com/14288520/205433902-77f0b2c1-1ca5-477a-bfda-f11d60e63f2d.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node generates a Curve object, which represent a circular arc, going
 through the three specified points. The node also outputs key properties of
 such an arc: center, radius and angle.</p>
-<p>See also the Circle node, “Arc Start / End / Tangent” node.</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205434811-116e5ae9-3f57-4856-8de0-28c83bb0a865.png"><img alt="https://user-images.githubusercontent.com/14288520/205434811-116e5ae9-3f57-4856-8de0-28c83bb0a865.png" src="https://user-images.githubusercontent.com/14288520/205434811-116e5ae9-3f57-4856-8de0-28c83bb0a865.png" /></a>
+<p>See also:</p>
+<ul class="simple">
+<li><p>Curves-&gt; <a class="reference internal" href="curve_circle.html"><span class="doc">Circle (Curve)</span></a></p></li>
+<li><p>Curves-&gt;Curve Primitives-&gt; <a class="reference internal" href="arc_sed.html"><span class="doc">Arc Start / End / Tangent</span></a></p></li>
+</ul>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
@@ -213,6 +219,7 @@ such an arc: center, radius and angle.</p>
 <li><p><strong>Point2</strong>. The second point to draw an arc through. The default value is <cite>(1, 0, 0)</cite>.</p></li>
 <li><p><strong>Point3</strong>. The third point to draw an arc through. The default value is <cite>(0, 1, 0)</cite>.</p></li>
 </ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205435111-4fd5c2b5-f0ad-46f1-bdae-4a7ce1b68c40.png"><img alt="https://user-images.githubusercontent.com/14288520/205435111-4fd5c2b5-f0ad-46f1-bdae-4a7ce1b68c40.png" src="https://user-images.githubusercontent.com/14288520/205435111-4fd5c2b5-f0ad-46f1-bdae-4a7ce1b68c40.png" /></a>
 </section>
 <section id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
@@ -222,6 +229,10 @@ such an arc: center, radius and angle.</p>
 objects, even if the inputs contain a list of lists of points (level 3 list).
 Otherwise, the node will output list of lists of Curves in such situation.
 Checked by default.</p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205434733-0720f257-c682-46af-8f0e-dd27be44e4dd.png"><img alt="https://user-images.githubusercontent.com/14288520/205434733-0720f257-c682-46af-8f0e-dd27be44e4dd.png" src="https://user-images.githubusercontent.com/14288520/205434733-0720f257-c682-46af-8f0e-dd27be44e4dd.png" /></a>
+<ul class="simple">
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
 </ul>
 </section>
 <section id="outputs">
@@ -234,14 +245,25 @@ Checked by default.</p></li>
 orientation of the arc. The Z axis of this matrix always looks along the
 normal of the arc plane. The X axis of this matrix always looks towards the
 first point of arc (one which is provided in the <strong>Point1</strong> input).</p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205435030-96b1d990-37b7-4adf-a4ef-d118d728ac19.gif"><img alt="https://user-images.githubusercontent.com/14288520/205435030-96b1d990-37b7-4adf-a4ef-d118d728ac19.gif" src="https://user-images.githubusercontent.com/14288520/205435030-96b1d990-37b7-4adf-a4ef-d118d728ac19.gif" /></a>
+<ul class="simple">
 <li><p><strong>Radius</strong>. The radius of the arc.</p></li>
 <li><p><strong>Angle</strong>. The angle of the arc, in radians.</p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205434830-63ff1aa9-4627-4002-b4fc-ff61e328d28f.png"><img alt="https://user-images.githubusercontent.com/14288520/205434830-63ff1aa9-4627-4002-b4fc-ff61e328d28f.png" src="https://user-images.githubusercontent.com/14288520/205434830-63ff1aa9-4627-4002-b4fc-ff61e328d28f.png" /></a>
+<ul class="simple">
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
 </ul>
 </section>
 <section id="example-of-usage">
 <h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>Build an arc via three points, and visualize it’s center matrix:</p>
-<img alt="https://user-images.githubusercontent.com/284644/80307642-c8897900-87e3-11ea-831f-ab4b5ef68c3f.png" src="https://user-images.githubusercontent.com/284644/80307642-c8897900-87e3-11ea-831f-ab4b5ef68c3f.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205435826-18619600-a339-4f93-974f-461ed094f5d6.png"><img alt="https://user-images.githubusercontent.com/14288520/205435826-18619600-a339-4f93-974f-461ed094f5d6.png" src="https://user-images.githubusercontent.com/14288520/205435826-18619600-a339-4f93-974f-461ed094f5d6.png" /></a>
+<ul class="simple">
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_curve.html"><span class="doc">Viewer Draw Curve</span></a></p></li>
+</ul>
 </section>
 </section>
 

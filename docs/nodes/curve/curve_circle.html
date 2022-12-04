@@ -198,14 +198,17 @@
              
   <section id="circle-curve">
 <h1>Circle (Curve)<a class="headerlink" href="#circle-curve" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205152583-01ddf73b-7351-4e20-b4fa-c4550db090ed.png"><img alt="https://user-images.githubusercontent.com/14288520/205152583-01ddf73b-7351-4e20-b4fa-c4550db090ed.png" src="https://user-images.githubusercontent.com/14288520/205152583-01ddf73b-7351-4e20-b4fa-c4550db090ed.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node generates a Curve object, which represents a circle, or an arc of the circle.</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205153334-7169eb01-661e-4a13-80ca-b666d70dbe75.png"><img alt="https://user-images.githubusercontent.com/14288520/205153334-7169eb01-661e-4a13-80ca-b666d70dbe75.png" src="https://user-images.githubusercontent.com/14288520/205153334-7169eb01-661e-4a13-80ca-b666d70dbe75.png" /></a>
 <p>Specifics of curve parametrization: the T parameter is proportional to curve
 length, and equals to the angle along the circle arc.</p>
 <p>Curve domain: defined in node’s inputs, by default from 0 to 2*pi.</p>
 <p>Behavior when trying to evaluate curve outside of it’s boundaries: returns
 corresponding point on the circle.</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205154574-26b91c66-9725-4796-9b87-da02a1df5efe.gif"><img alt="https://user-images.githubusercontent.com/14288520/205154574-26b91c66-9725-4796-9b87-da02a1df5efe.gif" src="https://user-images.githubusercontent.com/14288520/205154574-26b91c66-9725-4796-9b87-da02a1df5efe.gif" /></a>
 <p>Optionally, this node can generate a NURBS Curve object. Note that when NURBS
 mode is enabled, the parametrization of the curve is different from standard
 parametrization of the circle (defined by the angle).</p>
@@ -217,6 +220,11 @@ parametrization of the circle (defined by the angle).</p>
 <li><p><strong>Center</strong>. A matrix defining the location of the circle. This may be used to
 move, scale or rotate the curve. By default, the center of matrix is at the
 origin, and the circle is laying in the XOY plane.</p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205167481-45d0674d-792d-4be3-b4a2-e95f9bb70b3b.png"><img alt="https://user-images.githubusercontent.com/14288520/205167481-45d0674d-792d-4be3-b4a2-e95f9bb70b3b.png" src="https://user-images.githubusercontent.com/14288520/205167481-45d0674d-792d-4be3-b4a2-e95f9bb70b3b.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205164394-6ae6703a-ba01-4794-a987-6426ddda2df6.gif"><img alt="https://user-images.githubusercontent.com/14288520/205164394-6ae6703a-ba01-4794-a987-6426ddda2df6.gif" src="https://user-images.githubusercontent.com/14288520/205164394-6ae6703a-ba01-4794-a987-6426ddda2df6.gif" /></a>
+<p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a>, Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p>
+<ul class="simple">
 <li><p><strong>Radius</strong>. Circle radius. The default value is 1.0.</p></li>
 <li><p><strong>T Min</strong>. Minimum value of the curve parameter. In <strong>Generic</strong> mode, the
 parameter is the angle on the arc. The default value is 0.0.</p></li>
@@ -226,6 +234,7 @@ parameter is the angle on the arc. The default value is 2*pi (radians).</p></li>
 <strong>NURBS</strong>. Defines the number of corners in curve’s control polygon. The
 minimum value is 3. The default value is 4.</p></li>
 </ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205166485-c0de25de-6748-499e-99e2-0ce584477d46.png"><img alt="https://user-images.githubusercontent.com/14288520/205166485-c0de25de-6748-499e-99e2-0ce584477d46.png" src="https://user-images.githubusercontent.com/14288520/205166485-c0de25de-6748-499e-99e2-0ce584477d46.png" /></a>
 </section>
 <section id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
@@ -240,6 +249,9 @@ parametrization.</p></li>
 </ul>
 <p>The default mode is <strong>Generic</strong>.</p>
 </li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205167179-a0a0d98a-2045-4651-a3c3-0822bf7f2c33.png"><img alt="https://user-images.githubusercontent.com/14288520/205167179-a0a0d98a-2045-4651-a3c3-0822bf7f2c33.png" src="https://user-images.githubusercontent.com/14288520/205167179-a0a0d98a-2045-4651-a3c3-0822bf7f2c33.png" /></a>
+<ul>
 <li><p><strong>Angle Units</strong>. The units in which values of <strong>T Min</strong>, <strong>T Max</strong> inputs are
 measured. The available options are:</p>
 <ul class="simple">
@@ -250,6 +262,7 @@ measured. The available options are:</p>
 <p>The default value is <strong>Rad</strong>.</p>
 </li>
 </ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205166877-72ef1527-56d1-436c-9f6e-5e0dbafa827a.png"><img alt="https://user-images.githubusercontent.com/14288520/205166877-72ef1527-56d1-436c-9f6e-5e0dbafa827a.png" src="https://user-images.githubusercontent.com/14288520/205166877-72ef1527-56d1-436c-9f6e-5e0dbafa827a.png" /></a>
 </section>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
@@ -260,12 +273,28 @@ measured. The available options are:</p>
 </section>
 <section id="examples-of-usage">
 <h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
-<p>Simple use:</p>
-<img alt="https://user-images.githubusercontent.com/284644/77347101-27794f80-6d59-11ea-9bcd-182c918222cc.png" src="https://user-images.githubusercontent.com/284644/77347101-27794f80-6d59-11ea-9bcd-182c918222cc.png" />
-<p>Use together with Extrude node to create a surafce:</p>
-<img alt="https://user-images.githubusercontent.com/284644/77347798-344a7300-6d5a-11ea-88c2-e25e12be74b9.png" src="https://user-images.githubusercontent.com/284644/77347798-344a7300-6d5a-11ea-88c2-e25e12be74b9.png" />
-<p>Example of NURBS mode usage:</p>
-<img alt="https://user-images.githubusercontent.com/284644/129481402-e45d1583-426d-4420-b231-e717ca14e081.png" src="https://user-images.githubusercontent.com/284644/129481402-e45d1583-426d-4420-b231-e717ca14e081.png" />
+<p><strong>Simple use</strong>:</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205167957-bc337eba-13b0-41d6-9deb-ce834063fbd7.png"><img alt="https://user-images.githubusercontent.com/14288520/205167957-bc337eba-13b0-41d6-9deb-ce834063fbd7.png" src="https://user-images.githubusercontent.com/14288520/205167957-bc337eba-13b0-41d6-9deb-ce834063fbd7.png" /></a>
+<ul class="simple">
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_curve.html"><span class="doc">Viewer Draw Curve</span></a></p></li>
+</ul>
+<hr class="docutils" />
+<p><strong>Use together with Extrude node to create a surface</strong>:</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205169257-40a7d17f-966a-4a86-aee0-88481e9ba816.png"><img alt="https://user-images.githubusercontent.com/14288520/205169257-40a7d17f-966a-4a86-aee0-88481e9ba816.png" src="https://user-images.githubusercontent.com/14288520/205169257-40a7d17f-966a-4a86-aee0-88481e9ba816.png" /></a>
+<ul class="simple">
+<li><p>Surfaces-&gt; <a class="reference internal" href="../surface/extrude_vector.html"><span class="doc">Extrude Curve Along Vector</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_curve.html"><span class="doc">Viewer Draw Curve</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_surface.html"><span class="doc">Viewer Draw Surface</span></a></p></li>
+</ul>
+<hr class="docutils" />
+<p><strong>Example of NURBS mode usage</strong>:</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205170454-356bc19a-efae-42c8-8c16-c96a4b60c278.png"><img alt="https://user-images.githubusercontent.com/14288520/205170454-356bc19a-efae-42c8-8c16-c96a4b60c278.png" src="https://user-images.githubusercontent.com/14288520/205170454-356bc19a-efae-42c8-8c16-c96a4b60c278.png" /></a>
+<ul class="simple">
+<li><p>Curves-&gt;Curve NURBS-&gt; <a class="reference internal" href="deconstruct_curve.html"><span class="doc">Deconstruct Curve</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_curve.html"><span class="doc">Viewer Draw Curve</span></a></p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205172043-6ac2e137-0777-4091-9443-0591db5e53a5.gif"><img alt="https://user-images.githubusercontent.com/14288520/205172043-6ac2e137-0777-4091-9443-0591db5e53a5.gif" src="https://user-images.githubusercontent.com/14288520/205172043-6ac2e137-0777-4091-9443-0591db5e53a5.gif" /></a>
 </section>
 </section>
 

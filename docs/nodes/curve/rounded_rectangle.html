@@ -198,9 +198,11 @@
              
   <section id="rounded-rectangle">
 <h1>Rounded Rectangle<a class="headerlink" href="#rounded-rectangle" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205291207-1647c626-2621-4a1c-90ca-531dcfd8a623.png"><img alt="https://user-images.githubusercontent.com/14288520/205291207-1647c626-2621-4a1c-90ca-531dcfd8a623.png" src="https://user-images.githubusercontent.com/14288520/205291207-1647c626-2621-4a1c-90ca-531dcfd8a623.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node generates a Curve object, which represents a rectangle with rounded corners.</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205377156-d917f751-58b7-435f-90c9-7ff3df7acc6d.png"><img alt="https://user-images.githubusercontent.com/14288520/205377156-d917f751-58b7-435f-90c9-7ff3df7acc6d.png" src="https://user-images.githubusercontent.com/14288520/205377156-d917f751-58b7-435f-90c9-7ff3df7acc6d.png" /></a>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
@@ -208,6 +210,9 @@
 <ul class="simple">
 <li><p><strong>Size X</strong>. Size of the rectangle along the X axis (rectangle width). The default value is 10.</p></li>
 <li><p><strong>Size Y</strong>. Size of the rectangle along the Y axis (rectangle height). The default value is 10.</p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205292970-0dfff7e9-0676-4514-88e1-f210df5348df.png"><img alt="https://user-images.githubusercontent.com/14288520/205292970-0dfff7e9-0676-4514-88e1-f210df5348df.png" src="https://user-images.githubusercontent.com/14288520/205292970-0dfff7e9-0676-4514-88e1-f210df5348df.png" /></a>
+<ul class="simple">
 <li><p><strong>Radius</strong>. Corner rounding radius. This input can consume lists of nesting
 level 2 or 3. If the input data have nesting level 3, then it is supposed
 that the input defines separate radius for each of 4 corners of each
@@ -215,6 +220,7 @@ rectangle. If the radius is zero, then there will be no rounding arc
 generated at the corresponding corner of the rectangle. The default value is
 1.0.</p></li>
 </ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205384976-69e9522c-f7d2-4a3a-b5b2-b7e3d5fc5502.png"><img alt="https://user-images.githubusercontent.com/14288520/205384976-69e9522c-f7d2-4a3a-b5b2-b7e3d5fc5502.png" src="https://user-images.githubusercontent.com/14288520/205384976-69e9522c-f7d2-4a3a-b5b2-b7e3d5fc5502.png" /></a>
 </section>
 <section id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
@@ -224,10 +230,16 @@ generated at the corresponding corner of the rectangle. The default value is
 world’s origin; in other words, the center of the rectangle will be at <code class="docutils literal notranslate"><span class="pre">(0,</span>
 <span class="pre">0,</span> <span class="pre">0)</span></code>. If not checked, the left-down corner of the rectangle will be at the
 origin. Unchecked by default.</p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205377638-fdaea955-8187-4b8e-b820-e8ee00a5ae2b.png"><img alt="https://user-images.githubusercontent.com/14288520/205377638-fdaea955-8187-4b8e-b820-e8ee00a5ae2b.png" src="https://user-images.githubusercontent.com/14288520/205377638-fdaea955-8187-4b8e-b820-e8ee00a5ae2b.png" /></a>
+<ul class="simple">
 <li><p><strong>Even domains</strong>. If checked, give each segment a domain of length 1.
 Otherwise, each arc will have a domain of length <code class="docutils literal notranslate"><span class="pre">pi/2</span></code>, and each straight
 line segment will have a domain of length equal to the segment’s length.
 Unchecked by default.</p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205484897-1f56658d-72aa-4309-a4b5-7abc296f33e3.png"><img alt="https://user-images.githubusercontent.com/14288520/205484897-1f56658d-72aa-4309-a4b5-7abc296f33e3.png" src="https://user-images.githubusercontent.com/14288520/205484897-1f56658d-72aa-4309-a4b5-7abc296f33e3.png" /></a>
+<ul class="simple">
 <li><p><strong>NURBS output</strong>. This parameter is available in the N panel only. If
 checked, the node will output a NURBS curve. Built-in NURBS maths
 implementation will be used. If not checked, the node will output generic
@@ -237,6 +249,7 @@ to use NURBS-specific API methods with generated curve, or if you want to
 output the result in file format that understands NURBS only. Unchecked by
 default.</p></li>
 </ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205383334-f6104443-98ef-4b20-93c3-97b56882123b.png"><img alt="https://user-images.githubusercontent.com/14288520/205383334-f6104443-98ef-4b20-93c3-97b56882123b.png" src="https://user-images.githubusercontent.com/14288520/205383334-f6104443-98ef-4b20-93c3-97b56882123b.png" /></a>
 </section>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
@@ -245,17 +258,56 @@ default.</p></li>
 <li><p><strong>Curve</strong>. The generated Curve object. The curve always lies in the XOY plane.</p></li>
 <li><p><strong>Centers</strong>. Center points of generated arc segments.</p></li>
 </ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205383758-9bef0d84-e50e-489d-828e-e8bbac59edad.png"><img alt="https://user-images.githubusercontent.com/14288520/205383758-9bef0d84-e50e-489d-828e-e8bbac59edad.png" src="https://user-images.githubusercontent.com/14288520/205383758-9bef0d84-e50e-489d-828e-e8bbac59edad.png" /></a>
+<ul class="simple">
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+</ul>
 </section>
 <section id="examples-of-usage">
 <h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
-<p>Simple example:</p>
-<img alt="https://user-images.githubusercontent.com/284644/81508400-5f465180-931d-11ea-9ce7-95b69c2e4925.png" src="https://user-images.githubusercontent.com/284644/81508400-5f465180-931d-11ea-9ce7-95b69c2e4925.png" />
-<p>Vectorization example 1 - sizes only:</p>
-<img alt="https://user-images.githubusercontent.com/284644/81509449-3d040200-9324-11ea-9b31-504633b880b4.png" src="https://user-images.githubusercontent.com/284644/81509449-3d040200-9324-11ea-9b31-504633b880b4.png" />
-<p>Vectorization example 2 - sizes and radiuses per rectangle:</p>
-<img alt="https://user-images.githubusercontent.com/284644/81509502-9c621200-9324-11ea-92a7-4d3d46f01c7e.png" src="https://user-images.githubusercontent.com/284644/81509502-9c621200-9324-11ea-92a7-4d3d46f01c7e.png" />
-<p>Vectorization example 3 - sizes and radiuses per rectangle corner:</p>
-<img alt="https://user-images.githubusercontent.com/284644/81509473-60c74800-9324-11ea-8c92-48b3d427727d.png" src="https://user-images.githubusercontent.com/284644/81509473-60c74800-9324-11ea-8c92-48b3d427727d.png" />
+<p><strong>Simple example</strong>:</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205385695-b8760181-45fe-4388-a576-4997a1a580d7.png"><img alt="https://user-images.githubusercontent.com/14288520/205385695-b8760181-45fe-4388-a576-4997a1a580d7.png" src="https://user-images.githubusercontent.com/14288520/205385695-b8760181-45fe-4388-a576-4997a1a580d7.png" /></a>
+<ul class="simple">
+<li><p>Curves-&gt; <a class="reference internal" href="eval_curve.html"><span class="doc">Evaluate Curve</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>Matrix Multiply: Matrix-&gt; <a class="reference internal" href="../matrix/matrix_math.html"><span class="doc">Matrix Math</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_idx28.html"><span class="doc">Viewer Index+</span></a></p></li>
+</ul>
+<hr class="docutils" />
+<p><strong>Vectorization example 1 - sizes only</strong>:</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205386294-aaef0166-7301-4838-b223-ed733d884ca3.png"><img alt="https://user-images.githubusercontent.com/14288520/205386294-aaef0166-7301-4838-b223-ed733d884ca3.png" src="https://user-images.githubusercontent.com/14288520/205386294-aaef0166-7301-4838-b223-ed733d884ca3.png" /></a>
+<ul class="simple">
+<li><p>Curves-&gt; <a class="reference internal" href="eval_curve.html"><span class="doc">Evaluate Curve</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/numbers.html"><span class="doc">A Number</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_in.html"><span class="doc">Vector In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
+<p><strong>Vectorization example 2 - sizes and radiuses per rectangle</strong>:</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205387054-5d6b70d0-df27-4b03-959d-1e125bbd2eeb.png"><img alt="https://user-images.githubusercontent.com/14288520/205387054-5d6b70d0-df27-4b03-959d-1e125bbd2eeb.png" src="https://user-images.githubusercontent.com/14288520/205387054-5d6b70d0-df27-4b03-959d-1e125bbd2eeb.png" /></a>
+<ul class="simple">
+<li><p>Curves-&gt; <a class="reference internal" href="eval_curve.html"><span class="doc">Evaluate Curve</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/numbers.html"><span class="doc">A Number</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/list_input.html"><span class="doc">List Input</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_in.html"><span class="doc">Vector In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
+<p><strong>Vectorization example 3 - sizes and radiuses per rectangle corner</strong>:</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205397056-e21a2b41-221f-4f4d-8ded-8e8192c951c8.png"><img alt="https://user-images.githubusercontent.com/14288520/205397056-e21a2b41-221f-4f4d-8ded-8e8192c951c8.png" src="https://user-images.githubusercontent.com/14288520/205397056-e21a2b41-221f-4f4d-8ded-8e8192c951c8.png" /></a>
+<ul class="simple">
+<li><p>Curves-&gt; <a class="reference internal" href="eval_curve.html"><span class="doc">Evaluate Curve</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/numbers.html"><span class="doc">A Number</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/list_input.html"><span class="doc">List Input</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_in.html"><span class="doc">Vector In</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_struct/repeater.html"><span class="doc">List Repeater</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+</ul>
 </section>
 </section>
 
