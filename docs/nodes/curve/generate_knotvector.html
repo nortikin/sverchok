@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Intersect Curve with Plane &mdash; Sverchok 1, 2, 0 documentation</title>
+  <title>Generate Knotvector &mdash; Sverchok 1, 2, 0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
@@ -21,8 +21,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Intersect NURBS Curves" href="intersect_curves.html" />
-    <link rel="prev" title="Interpolate NURBS Curve" href="interpolate_nurbs_curve.html" /> 
+    <link rel="next" title="Insert Knot (NURBS Curve)" href="insert_knot.html" />
+    <link rel="prev" title="Helix (FreeCAD)" href="freecad_helix.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -89,19 +89,17 @@
 <li class="toctree-l3"><a class="reference internal" href="fillet_polyline.html">Fillet Polyline</a></li>
 <li class="toctree-l3"><a class="reference internal" href="flip_curve.html">Flip Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="freecad_helix.html">Helix (FreeCAD)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="generate_knotvector.html">Generate Knotvector</a></li>
-<li class="toctree-l3"><a class="reference internal" href="insert_knot.html">Insert Knot (NURBS Curve)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="interpolate_frame.html">Interpolate Curve Frame</a></li>
-<li class="toctree-l3"><a class="reference internal" href="interpolate_nurbs_curve.html">Interpolate NURBS Curve</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">Intersect Curve with Plane</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#dependencies">Dependencies</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Generate Knotvector</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#outputs">Outputs</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#example-of-usage">Example of usage</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="insert_knot.html">Insert Knot (NURBS Curve)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="interpolate_frame.html">Interpolate Curve Frame</a></li>
+<li class="toctree-l3"><a class="reference internal" href="interpolate_nurbs_curve.html">Interpolate NURBS Curve</a></li>
+<li class="toctree-l3"><a class="reference internal" href="intersect_curve_plane.html">Intersect Curve with Plane</a></li>
 <li class="toctree-l3"><a class="reference internal" href="intersect_curves.html">Intersect NURBS Curves</a></li>
 <li class="toctree-l3"><a class="reference internal" href="iso_uv_curve.html">Iso U/V Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="kinky_curve.html">Kinked Curve</a></li>
@@ -187,9 +185,9 @@
       <li><a href="../../main.html" class="icon icon-home"></a></li>
           <li class="breadcrumb-item"><a href="../../nodes.html">Nodes</a></li>
           <li class="breadcrumb-item"><a href="curve_index.html">Curves</a></li>
-      <li class="breadcrumb-item active">Intersect Curve with Plane</li>
+      <li class="breadcrumb-item active">Generate Knotvector</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../../_sources/nodes/curve/intersect_curve_plane.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../../_sources/nodes/curve/generate_knotvector.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -197,59 +195,81 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="intersect-curve-with-plane">
-<h1>Intersect Curve with Plane<a class="headerlink" href="#intersect-curve-with-plane" title="Permalink to this heading">¶</a></h1>
-<section id="dependencies">
-<h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this heading">¶</a></h2>
-<p>This node requires <a class="reference external" href="https://scipy.org/">SciPy</a> library to work.</p>
-</section>
+  <section id="generate-knotvector">
+<h1>Generate Knotvector<a class="headerlink" href="#generate-knotvector" title="Permalink to this heading">¶</a></h1>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
-<p>This node tries to find all intersections of the specified Curve with a
-specified (infinite) plane. The plane is specified by providing a normal vector
-and a point on the plane.</p>
-<p>To find all intersections, the node splits the curve into several segments and
-then searches for single intersection in each segment.</p>
+<p>This node provides several ways of generating a knotvector for building (or
+interpolation) of NURBS curves and surfaces.</p>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
-<li><p><strong>Curve</strong>. The curve to find intersections with. This input is mandatory.</p></li>
-<li><p><strong>Point</strong>. The point on the plane. The default value is <code class="docutils literal notranslate"><span class="pre">(0,</span> <span class="pre">0,</span> <span class="pre">0)</span></code>.</p></li>
-<li><p><strong>Normal</strong>. The normal vector of the plane. The default value is <code class="docutils literal notranslate"><span class="pre">(0,</span> <span class="pre">0,</span>
-<span class="pre">1)</span></code>. Thus, by default the plane is XOY coordinate plane.</p></li>
+<li><p><strong>Vertices</strong>. Points to be used to calculate distance between them and
+calculate knotvector based on those distances. This input is available and
+mandatory only when <strong>Mode</strong> parameter is set to <strong>From Points</strong>.</p></li>
+<li><p><strong>Knots</strong>. Values of T parameter, which will be used to calculate knotvector.
+This input is available and mandatory only when <strong>Mode</strong> parameter is set to
+<strong>From T values</strong>.</p></li>
+<li><p><strong>Degree</strong>. Degree of the curve (or surface), for which the knotvector is to
+be generated. The default value is 3.</p></li>
+<li><p><strong>ControlPointsCount</strong>. Number of curve (or surface) control points. This
+input is available either when <strong>Mode</strong> parameter is set to <strong>Uniform</strong>, or
+when <strong>Set control points number</strong> is checked. The default value is 4.</p></li>
 </ul>
 </section>
 <section id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following parameters:</p>
 <ul class="simple">
-<li><p><strong>NURBS</strong>. If checked, the node will apply NURBS-specific algorithm for NURBS
-and NURBS-like curves. This algorithm can be about 50% faster comparing to
-generic algorithm. Unchecked by default.</p></li>
-<li><p><strong>Init resolution</strong>. Number of segments to subdivide the curve in. This
-defines the maximum number of intersection this node can potentially find.
-For example, if you set this to 1, but actually the curve intersects the
-plane in two places, then the node will actually find only one of
-intersections. The default value is 10.</p></li>
-<li><p><strong>Accuracy</strong>. This parameter is available in the N panel only. This defines
-the accuracy level - number of exact digits after decimal point. The default
-value is 4.</p></li>
+<li><p><strong>Mode</strong>. This defines how the knotvector will be generated. The available options are:</p>
+<ul>
+<li><p><strong>Uniform</strong>. Generate a uniform knotvector. Such knotvector is defined by
+number of control points and degree. The knotvector can be generated as
+clamped or non-clamped, depending on <strong>Clamped</strong> parameter.</p></li>
+<li><p><strong>From Points</strong>. Calculate distances between some points, and generate a
+non-uniform knotvector based on those distances. This option can be useful
+for some custom interpolation algorithms. The generated knotvector will be
+always clamped.</p></li>
+<li><p><strong>From T Values</strong>. Generate a knotvector based on T values, which
+correspond to some points. This can be useful for some custom interpolation
+algorithms, if no standard metric fits you. The generated knotvector will
+be always clamped.</p></li>
+</ul>
+</li>
+<li><p><strong>Metric</strong>. The metric to be used to calculate distances between points. This
+parameter is only available when <strong>Mode</strong> parameter is set to <strong>From
+Points</strong>. The default option is <strong>Euclidian</strong>.</p></li>
+<li><p><strong>Set control points number</strong>. This parameter is only available when <strong>Mode</strong>
+parameter is set to <strong>From Points</strong> or <strong>From T Values</strong>. If checked, the
+node will allow to specify arbitrary number of curve’s (or surface’s) control
+points, even though usually it should be derived from the number of points or
+T values provided. Unchecked by default.</p></li>
+<li><p><strong>Include endpoints</strong>. This parameter is only available when <strong>Mode</strong>
+parameter is set to <strong>From Points</strong> or <strong>From T Values</strong>. If checked, the
+algorithm of knotvector generation will be changed in such a way, that first
+and last T values (or points positions) will also affect knot values, in the
+beginning and in the end of knotvector, respectively. With usual algorithm,
+they do not. When this parameter is checked, the number of control points
+used to generate the knotvector will be actually increased by 2. This can be
+useful for some custom interpolation algorithms, when you need to add another
+degree of freedom near curve ends - for example, to be able to specify custom
+curve tangents. Unchecked by default.</p></li>
+<li><p><strong>Clamped</strong>. This parameter is available only when <strong>Mode</strong> parameter is set
+to <strong>Uniform</strong>. This defines whether the node will generated a clamped
+knotvector or non-clamped. Checked by default.</p></li>
+<li><p><strong>Numpy output</strong>. This parameter is available in the N panel only. If
+checked, the node will output numbers as NumPy arrays. Unchecked by default.</p></li>
 </ul>
 </section>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following outputs:</p>
 <ul class="simple">
-<li><p><strong>Point</strong>. Intersection points.</p></li>
-<li><p><strong>T</strong>. Curve’s T parameter values corresponding to the intersection points.</p></li>
+<li><p><strong>Knotvector</strong>. Generated knotvector.</p></li>
+<li><p><strong>Knots</strong>. Knot values - all unique values from the knotvector.</p></li>
 </ul>
-</section>
-<section id="example-of-usage">
-<h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
-<p>Find intersections of some NURBS curve with XOY plane:</p>
-<img alt="https://user-images.githubusercontent.com/284644/86529252-b2292900-bec8-11ea-9b85-61d200e8b93d.png" src="https://user-images.githubusercontent.com/284644/86529252-b2292900-bec8-11ea-9b85-61d200e8b93d.png" />
 </section>
 </section>
 
@@ -257,8 +277,8 @@ value is 4.</p></li>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="interpolate_nurbs_curve.html" class="btn btn-neutral float-left" title="Interpolate NURBS Curve" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="intersect_curves.html" class="btn btn-neutral float-right" title="Intersect NURBS Curves" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="freecad_helix.html" class="btn btn-neutral float-left" title="Helix (FreeCAD)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="insert_knot.html" class="btn btn-neutral float-right" title="Insert Knot (NURBS Curve)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
