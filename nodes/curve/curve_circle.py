@@ -23,16 +23,19 @@ class SvCircleCurveMk2Node(SverchCustomTreeNode, bpy.types.Node, SvAngleHelper):
 
     radius : FloatProperty(
         name = "Radius",
+        description = "Circle radius",
         default = 1.0,
         update = updateNode)
 
     t_min : FloatProperty(
         name = "T Min",
+        description = "Minimum value of the curve parameter. In Generic mode, the parameter is the angle on the arc",
         default = 0.0,
         update = SvAngleHelper.update_angle)
 
     t_max : FloatProperty(
         name = "T Max",
+        description = "Maximum value of the curve parameter. In Generic mode, the parameter is the angle on the arc",
         default = 2*pi,
         update = SvAngleHelper.update_angle)
 

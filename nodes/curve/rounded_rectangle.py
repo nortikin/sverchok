@@ -22,11 +22,11 @@ class SvRoundedRectangleNode(SverchCustomTreeNode, bpy.types.Node):
     sv_icon = 'SV_ROUNDED_RECTANGLE'
 
     sizex: FloatProperty(
-        name='Size X', description='Rectangle size along X',
+        name='Size X', description='Size of the rectangle along the X axis (rectangle width)',
         default=10.0, min=0.01, update=updateNode)
 
     sizey: FloatProperty(
-        name='Size Y', description='Rectangle size along Y',
+        name='Size Y', description='Size of the rectangle along the Y axis (rectangle height)',
         default=10.0, min=0.01, update=updateNode)
 
     radius : FloatProperty(
@@ -37,18 +37,18 @@ class SvRoundedRectangleNode(SverchCustomTreeNode, bpy.types.Node):
 
     scale_to_unit : BoolProperty(
         name = "Even domains",
-        description = "Give each segment and each arc equal T parameter domain of [0; 1]",
+        description = "If checked, give each segment a domain of length 1. Otherwise, each arc will have a domain of length pi/2, and each straight line segment will have a domain of length equal to the segment’s length",
         default = False,
         update = updateNode)
 
     make_nurbs : BoolProperty(
         name = "NURBS output",
-        description = "Generate a NURBS curve",
+        description = "If checked, the node will output a NURBS curve. Built-in NURBS maths implementation will be used. If not checked, the node will output generic concatenated curve from several straight segments and circular arcs. In most cases, there will be no difference; you may wish to output NURBS if you want to use NURBS-specific API methods with generated curve, or if you want to output the result in file format that understands NURBS only",
         default = False,
         update = updateNode)
 
     center: BoolProperty(
-        name='Center', description='Center the rectangle around origin',
+        name='Center', description='If checked, then the generated curve will be centered around world’s origin. If not checked, the left-down corner of the rectangle will be at the origin',
         default=False, update=updateNode)
 
     radius_per_corner : BoolProperty(

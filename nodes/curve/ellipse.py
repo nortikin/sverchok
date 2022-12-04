@@ -103,11 +103,11 @@ class SvEllipseCurveNode(SverchCustomTreeNode, bpy.types.Node):
         update=updateNode)
 
     major_radius: FloatProperty(
-        name='Major Radius', description='Ellipse major radius',
+        name='Major Radius', description='Ellipse major radius (semiaxis)',
         default=1.0, min=0.0, update=update_ellipse)
 
     minor_radius: FloatProperty(
-        name='Minor Radius', description='Ellipse minor radius',
+        name='Minor Radius', description='Ellipse minor radius (semiaxis)',
         default=0.8, min=0.0, update=update_ellipse)
 
     eccentricity: FloatProperty(
@@ -115,7 +115,7 @@ class SvEllipseCurveNode(SverchCustomTreeNode, bpy.types.Node):
         default=0.6, min=0.0, max=1.0, update=update_ellipse)
 
     focal_length: FloatProperty(
-        name='Focal Length', description='Ellipse focal length',
+        name='Focal Length', description='Ellipse focal length. Distance from ellipse’s center to it’s focal points',
         default=0.6, min=0.0, update=update_ellipse)
 
     updating: BoolProperty(default=False)  # used for disabling update callback

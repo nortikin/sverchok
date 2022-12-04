@@ -23,22 +23,26 @@ class SvFilletPolylineNode(SverchCustomTreeNode, bpy.types.Node):
 
     radius : FloatProperty(
         name = "Radius",
+        description = "Fillet arc radius",
         min = 0.0,
         default = 0.2,
         update = updateNode)
 
     clamp : BoolProperty(
         name = "Clamp",
+        description = "If checked, fillet will be limited to the maximum radius",
         default = False,
         update = updateNode)
 
     concat : BoolProperty(
         name = "Concatenate",
+        description = "If checked, then all straight and arc segments will be concatenated into a single curve. Otherwise, each segment will be output as a separate curve object",
         default = True,
         update = updateNode)
     
     cyclic : BoolProperty(
         name = "Cyclic",
+        description = "If checked, the node will generate a cyclic (closed) curve",
         default = False,
         update = updateNode)
 

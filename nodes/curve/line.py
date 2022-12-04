@@ -36,17 +36,19 @@ class SvLineCurveNode(SverchCustomTreeNode, bpy.types.Node):
 
     u_min : FloatProperty(
         name = "U Min",
+        description = "Minimum value of curve parameter",
         default = 0.0,
         update = updateNode)
 
     u_max : FloatProperty(
         name = "U Max",
+        description = "Maximum value of curve parameter",
         default = 1.0,
         update = updateNode)
 
     join : BoolProperty(
         name = "Join",
-        description = "If checked, output single flat list of curves for all sets of inputs",
+        description = "If checked, the node will output a single flat list of Curve objects for all sets of input parameters. Otherwise, it will output a separate list of Curve objects for each set of input parameters",
         default = True,
         update = updateNode)
 

@@ -25,11 +25,13 @@ class SvFreeCadHelixNode(SverchCustomTreeNode, bpy.types.Node):
 
     radius : FloatProperty(
         name = "Radius",
+        description = "Helix radius",
         default = 1.0,
         update = updateNode)
 
     height : FloatProperty(
         name = "Height",
+        description = "Helix height",
         default = 4.0,
         update = updateNode)
 

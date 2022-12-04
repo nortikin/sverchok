@@ -22,7 +22,7 @@ class SvArc3ptCurveNode(SverchCustomTreeNode, bpy.types.Node):
 
     join : BoolProperty(
             name = "Join",
-            description = "Output single flat list of curves",
+            description = "If checked, the node will output a flat (level 1) list of Curve objects, even if the inputs contain a list of lists of points (level 3 list). Otherwise, the node will output list of lists of Curves in such situation",
             default = True,
             update = updateNode)
 
