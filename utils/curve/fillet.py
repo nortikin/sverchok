@@ -79,7 +79,10 @@ def cut_ends(curve, cut_offset, cut_start=True, cut_end=True):
     p1, p2 = curve.get_end_points()
     l = np.linalg.norm(p1 - p2)
     dt = u_max - u_min
-    k = dt / l
+    if l < 1e-6:
+        k = 1.0
+    else:
+        k = dt / l
     if cut_start:
         u1 = u_min + cut_offset * k
     else:
@@ -88,6 +91,7 @@ def cut_ends(curve, cut_offset, cut_start=True, cut_end=True):
         u2 = u_max - cut_offset * k
     else:
         u2 = u_max
+    #print(f"cut: {u_min} - {u_max} * cut_offset => {u1} - {u2}")
     return curve.cut_segment(u1, u2)
 
 def limit_filet_radiuses(vertices, radiuses, cyclic=False):
