@@ -19,9 +19,8 @@
 import zipfile
 import os
 import json
-from os.path import basename, dirname
+from pathlib import Path
 from time import localtime, strftime
-from typing import Tuple
 
 import bpy
 
@@ -109,7 +108,7 @@ class SvNodeTreeExporter(bpy.types.Operator):
 
     filepath: bpy.props.StringProperty(
         name="File Path",
-        description="Filepath used for exporting too",
+        description="Filepath used for exporting to",
         maxlen=1024, default="", subtype='FILE_PATH')
 
     filter_glob: bpy.props.StringProperty(
@@ -132,12 +131,15 @@ class SvNodeTreeExporter(bpy.types.Operator):
 
         ng = bpy.data.node_groups[self.id_tree]
 
-        destination_path = self.filepath
-        if not destination_path.lower().endswith('.json'):
-            destination_path += '.json'
+        destination_path = Path(self.filepath)
 
-        # future: should check if filepath is a folder or ends in \
+        if destination_path.is_dir():
+            msg = 'folder was selected instead of file - didn\'t export'
+            self.report({"WARNING"}, msg)
+            warning(msg)
+            return {'CANCELLED'}
 
+        destination_path = destination_path.with_suffix('.json')
         layout_dict = JSONExporter.get_tree_structure(ng, self.selected_only)
 
         if not layout_dict:
@@ -147,27 +149,20 @@ class SvNodeTreeExporter(bpy.types.Operator):
             return {'CANCELLED'}
 
         indent = None if self.compact else 2
-        json.dump(layout_dict, open(destination_path, 'w'), indent=indent)  # json_struct doesn't expect sort_keys = True
-        msg = 'exported to: ' + destination_path
+        with open(destination_path, 'w') as fpo:
+            json.dump(layout_dict, fpo, indent=indent)  # json_struct doesn't expect sort_keys = True
+        msg = 'exported to: ' + str(destination_path)
         self.report({"INFO"}, msg)
         info(msg)
 
         if self.compress:
             comp_mode = zipfile.ZIP_DEFLATED
+            archive_path = destination_path.with_suffix('.zip')
 
-            # destination path = /a../b../c../somename.json
-            base = basename(destination_path)  # somename.json
-            basedir = dirname(destination_path)  # /a../b../c../
-
-            # somename.zip
-            final_archivename = base.replace('.json', '') + '.zip'
-
-            # /a../b../c../somename.zip
-            fullpath = os.path.join(basedir, final_archivename)
-
-            with zipfile.ZipFile(fullpath, 'w', compression=comp_mode) as myzip:
-                myzip.write(destination_path, arcname=base)
-                info('wrote: %s', final_archivename)
+            with zipfile.ZipFile(archive_path, 'w', compression=comp_mode) as myzip:
+                # need to specify arcname otherwise it'll copy the entire path
+                myzip.write(destination_path, arcname=destination_path.name)
+                info('wrote: %s', archive_path.name)
 
         return {'FINISHED'}
 
@@ -413,7 +408,7 @@ class SvBlendToArchive(bpy.types.Operator):
     def invoke(self, context, event):
         wm = context.window_manager
         return wm.invoke_props_dialog(self)
-
+ 
     def draw(self, context):
         try:
             col = self.layout.column(heading="Options")  # new syntax in >= 2.90
