@@ -27,7 +27,7 @@ class SvKinkyCurveNode(SverchCustomTreeNode, bpy.types.Node):
 
     metrics = [
         ('MANHATTAN', 'Manhattan', "Manhattan distance metric", 0),
-        ('DISTANCE', 'Euclidan', "Eudlcian distance metric", 1),
+        ('DISTANCE', 'Euclidean', "Euclidean distance metric", 1),
         ('POINTS', 'Points', "Points based", 2),
         ('CHEBYSHEV', 'Chebyshev', "Chebyshev distance", 3)]
 

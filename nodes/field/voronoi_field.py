@@ -21,7 +21,7 @@ class SvVoronoiFieldNode(SverchCustomTreeNode, bpy.types.Node):
     sv_icon = 'SV_VORONOI'
 
     metrics = [
-            ('DISTANCE', 'Euclidan', "Eudlcian distance metric", 0),
+            ('DISTANCE', 'Euclidean', "Euclidean distance metric", 0),
             ('MANHATTAN', 'Manhattan', "Manhattan distance metric", 1),
             ('CHEBYSHEV', 'Chebyshev', "Chebyshev distance", 2),
             ('CUSTOM', "Custom", "Custom Minkowski metric defined by exponent factor", 3)
