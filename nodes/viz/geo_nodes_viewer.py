@@ -136,7 +136,11 @@ class SvGeoNodesViewerNode(
         super().draw_buttons_fly(layout)
         row = layout.row(align=True)
         row.prop(self, 'modifier', text='')
-        op = row.operator(SvUpdateNodeInterface.bl_idname, text='', icon='FILE_REFRESH')
+        if self.modifier:
+            op = row.operator(SvUpdateNodeInterface.bl_idname, text='',
+                              icon='FILE_REFRESH')
+        else:
+            op = row.operator(SvAddNewGNTree.bl_idname, text='', icon='ADD')
         op.node_name = self.name
         op.tree_name = self.id_data.name
 

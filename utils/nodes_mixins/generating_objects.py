@@ -50,24 +50,31 @@ class SvObjectData(bpy.types.PropertyGroup):
 
     def ensure_link_to_collection(self, collection: bpy.types.Collection = None):
         """Links object to scene or given collection, unlink from previous collection"""
-        if collection is None:
-            collection = bpy.context.scene.collection
+        try:
+            if collection:
+                collection.objects.link(self.obj)
+            else:
+                # default collection
+                bpy.context.scene.collection.objects.link(self.obj)
+        except RuntimeError:
+            # then the object already added, it looks like more faster way to ensure object is in the scene
+            pass
 
         if self.collection != collection:
             # new collection was given, object should be removed from previous one
-            try:
-                # previous behaviour was if self.collection is None it means Scene collection
-                col = bpy.context.scene.collection if self.collection is None else self.collection
-                col.objects.unlink(self.obj)
-            except RuntimeError:
-                # collection was already unliked by user or another node
-                pass
-
-            try:
-                collection.objects.link(self.obj)
-            except RuntimeError:
-                # then the object already added
-                pass
+            if self.collection is None:
+                # it means that it is scene default collection
+                # from other hand if item only was created it also will be None but object is not in any collection yet
+                try:
+                    bpy.context.scene.collection.objects.unlink(self.obj)
+                except RuntimeError:
+                    pass
+            else:
+                try:
+                    self.collection.objects.unlink(self.obj)
+                except RuntimeError:
+                    # collection was already unliked by user or another node
+                    pass
 
             self.collection = collection
 
