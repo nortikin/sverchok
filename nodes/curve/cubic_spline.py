@@ -18,7 +18,7 @@ class SvCubicSplineNode(SverchCustomTreeNode, bpy.types.Node):
     bl_icon = 'CON_SPLINEIK'
 
     is_cyclic : BoolProperty(name = "Cyclic",
-        description = "Whether the spline is cyclic",
+        description = "Whether the spline is cyclic. If checked, the node will generate a cyclic (closed) curve",
         default = False,
         update=updateNode)
 

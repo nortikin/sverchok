@@ -54,11 +54,13 @@ class SvCurveFormulaNode(SverchCustomTreeNode, bpy.types.Node):
 
     t_min : FloatProperty(
         name = "T Min",
+        description = "Minimum value of the curve’s T parameter",
         default = 0,
         update = updateNode)
 
     t_max : FloatProperty(
         name = "T Max",
+        description = "Maximum value of the curve’s T parameter",
         default = 2*math.pi,
         update = updateNode)
 
