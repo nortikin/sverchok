@@ -248,7 +248,11 @@ class SvPolylineViewerNode(SvViewerNode, SverchCustomTreeNode, bpy.types.Node):
                 cu_data.curve.materials.append(self.material)
 
         # regenerate object data blocks
-        self.regenerate_objects([self.base_data_name], [d.curve for d in self.curve_data], [self.collection])
+        self.regenerate_objects([self.base_data_name],
+                                [d.curve for d in self.curve_data],
+                                [self.collection],
+                                to_show=[self.id_data.sv_show and self.show_objects]
+                                )
         [setattr(prop.obj, 'matrix_local', m) for prop, m in zip(self.object_data, repeat_last(obj_matrices))]
         [setattr(prop.obj, 'show_wire', self.show_wire) for prop in self.object_data]
 
