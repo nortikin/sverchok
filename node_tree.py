@@ -46,7 +46,7 @@ from sverchok.utils import get_node_class_reference
 from sverchok.utils.sv_node_utils import recursive_framed_location_finder
 from sverchok.utils.docstring import SvDocstring
 import sverchok.utils.logging
-from sverchok.utils.logging import debug, catch_log_error
+from sverchok.utils.logging import debug, catch_log_error, is_enabled_for
 
 from sverchok.ui import color_def
 from sverchok.ui.nodes_replacement import set_inputs_mapping, set_outputs_mapping
@@ -509,19 +509,24 @@ class NodeUtils:
         return sverchok.utils.logging.getLogger(name)
 
     def debug(self, msg, *args, **kwargs):
-        self.get_logger().debug(msg, *args, **kwargs)
+        if is_enabled_for('DEBUG'):
+            self.get_logger().debug(msg, *args, **kwargs)
 
     def info(self, msg, *args, **kwargs):
-        self.get_logger().info(msg, *args, **kwargs)
+        if is_enabled_for('INFO'):
+            self.get_logger().info(msg, *args, **kwargs)
 
     def warning(self, msg, *args, **kwargs):
-        self.get_logger().warning(msg, *args, **kwargs)
+        if is_enabled_for('WARNING'):
+            self.get_logger().warning(msg, *args, **kwargs)
 
     def error(self, msg, *args, **kwargs):
-        self.get_logger().error(msg, *args, **kwargs)
+        if is_enabled_for('ERROR'):
+            self.get_logger().error(msg, *args, **kwargs)
 
     def exception(self, msg, *args, **kwargs):
-        self.get_logger().exception(msg, *args, **kwargs)
+        if is_enabled_for('EXCEPTION'):
+            self.get_logger().exception(msg, *args, **kwargs)
 
     def wrapper_tracked_ui_draw_op(self, layout_element, operator_idname, **keywords):
         """
