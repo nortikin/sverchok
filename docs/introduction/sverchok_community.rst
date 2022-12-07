@@ -15,6 +15,7 @@ and use search because it's possible that the question was already answered.
 - `Discord chat help <https://discord.gg/r5s3sHFws4>`_
 - `GitHub issues <https://github.com/nortikin/sverchok/issues>`_
 - `Blender stack exchange <https://blender.stackexchange.com/questions/tagged/sverchok>`_
+- `Telegram <https://t.me/sverchok_3d>`_
 
 
 Proposals
@@ -48,3 +49,4 @@ Tutorials
 - `Portnov's channel <https://www.youtube.com/channel/UCYtA-8z7HzZsIFyZ6dA3R0g>`_
 - `Maksim Romanko's channel <https://www.youtube.com/channel/UCuxdcJziJbeMVCw4hkdKEVg>`_ (Ru)
 - `Durman's channel <https://www.youtube.com/channel/UCG0X2w4SETBI745pGK_Zccg>`_
+
