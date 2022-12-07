@@ -34,12 +34,14 @@ class SvExRbfCurveNode(SverchCustomTreeNode, bpy.types.Node):
 
     smooth : FloatProperty(
             name = "Smooth",
+            description = "Smoothness parameter of used RBF function. If this is zero, then the curve will go through all provided points; otherwise, it will be only an approximating curve",
             default = 0.0,
             min = 0.0,
             update = updateNode)
 
     epsilon : FloatProperty(
             name = "Epsilon",
+            description = "Epsilon parameter of used RBF function; it affects the shape of generated curve",
             default = 1.0,
             min = 0.0,
             update = updateNode)

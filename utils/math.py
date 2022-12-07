@@ -65,12 +65,12 @@ TRACK_NORMAL = 'track_normal'
 NORMAL_DIR = 'normal_direction'
 
 rbf_functions = [
-    ('multiquadric', "Multi Quadric", "Multi Quadric", 0),
-    ('inverse', "Inverse", "Inverse", 1),
-    ('gaussian', "Gaussian", "Gaussian", 2),
-    ('cubic', "Cubic", "Cubic", 3),
-    ('quintic', "Quintic", "Qunitic", 4),
-    ('thin_plate', "Thin Plate", "Thin Plate", 5)
+    ('multiquadric', "Multi Quadric", "Multi Quadric [ sqrt( (r/epsilon)^2 + 1) ]", 0),
+    ('inverse', "Inverse", "Inverse [ 1.0 / sqrt( (r / epsilon)^2 + 1) ]", 1),
+    ('gaussian', "Gaussian", "Gaussian [ exp(-(r/epsilon)^2) ]", 2),
+    ('cubic', "Cubic", "Cubic [ r^3 ]", 3),
+    ('quintic', "Quintic", "Qunitic [ r^5 ]", 4),
+    ('thin_plate', "Thin Plate", "Thin Plate [ r^2 * log(r) ]", 5)
 ]
 
 supported_metrics = [

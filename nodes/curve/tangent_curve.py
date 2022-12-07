@@ -26,6 +26,7 @@ class SvTangentsCurveNode(SverchCustomTreeNode, bpy.types.Node):
 
     cyclic : BoolProperty(
         name = "Cyclic",
+        description = "If checked, then the node will generate additional Bezier curve segment to connect the last point with the first one",
         default = False,
         update = updateNode)
 

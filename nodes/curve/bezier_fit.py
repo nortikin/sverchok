@@ -45,6 +45,7 @@ class SvExBezierCurveFitNode(SverchCustomTreeNode, bpy.types.Node):
 
     degree : IntProperty(
             name = "Degree",
+            description = "Degree of the curve to be build",
             min = 2,
             default = 3,
             update = updateNode)

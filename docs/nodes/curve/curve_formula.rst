@@ -1,6 +1,9 @@
 Curve Formula
 =============
 
+.. image:: https://user-images.githubusercontent.com/14288520/205702554-dd853e84-851a-437a-bb2c-7ceb56d234e6.png
+  :target: https://user-images.githubusercontent.com/14288520/205702554-dd853e84-851a-437a-bb2c-7ceb56d234e6.png
+
 Functionality
 -------------
 
@@ -11,6 +14,9 @@ The formula should map the curve's T parameters into one of supported 3D coordin
 It is possible to use additional parameters in the formula, they will become inputs of the node.
 
 Curve domain / parametrization specifics: defined by node settings.
+
+.. image:: https://user-images.githubusercontent.com/14288520/205707613-de8d5100-d872-450a-a999-92c678021aca.png
+  :target: https://user-images.githubusercontent.com/14288520/205707613-de8d5100-d872-450a-a999-92c678021aca.png
 
 Expression syntax
 -----------------
@@ -53,7 +59,8 @@ This node has the following inputs:
 * **TMin**. Minimum value of the curve's T parameter (corresponding to the beginning of the curve). The default value is 0.0.
 * **TMax**. Maximum value of the curve's T parameter (corresponding to the end of the curve). The default value is 2*pi.
 
-Each variable used in formulas, except for `t`, also becomes an additional input.
+.. image:: https://user-images.githubusercontent.com/14288520/205713440-6b3c6170-bfe0-44b9-8268-83eec5a69325.png
+  :target: https://user-images.githubusercontent.com/14288520/205713440-6b3c6170-bfe0-44b9-8268-83eec5a69325.png
 
 Parameters
 ----------
@@ -62,7 +69,17 @@ This node has the following parameters:
 
 * **Formula 1**, **Formula 2**, **Formula 3**. Formulas for 3 components
   defining curve points in the used coordinate system. Default values define
-  simple helix curve in the cartesian coordinates.
+  simple helix curve in the cartesian coordinates. Each variable used in formulas,
+  except for `t`, also becomes an additional input. Example variable 'c':
+
+.. image:: https://user-images.githubusercontent.com/14288520/205709029-bdc14a67-c9e4-4021-81c2-ecb613dbfb34.png
+  :target: https://user-images.githubusercontent.com/14288520/205709029-bdc14a67-c9e4-4021-81c2-ecb613dbfb34.png
+
+.. image:: https://user-images.githubusercontent.com/14288520/205708728-bcad3139-1681-4b7b-b396-e563e88ce442.gif
+  :target: https://user-images.githubusercontent.com/14288520/205708728-bcad3139-1681-4b7b-b396-e563e88ce442.gif
+
+Number-> :doc:`Number Range </nodes/number/number_range>`
+
 * **Output**. This defined the coordinate system being used, and thus it
   defines the exact meaning of formula parameters. The available modes are:
 
@@ -81,6 +98,12 @@ This node has the following parameters:
   calculating some of functions (errors or not good enough precision), you can
   disable this parameter.
 
+.. image:: https://user-images.githubusercontent.com/14288520/205857380-728f7515-bdaa-477e-a70c-72c2d5eae51d.png
+  :target: https://user-images.githubusercontent.com/14288520/205857380-728f7515-bdaa-477e-a70c-72c2d5eae51d.png
+
+.. image:: https://user-images.githubusercontent.com/14288520/205712865-a3274f3b-b488-4686-bec3-0c425991e936.gif
+  :target: https://user-images.githubusercontent.com/14288520/205712865-a3274f3b-b488-4686-bec3-0c425991e936.gif
+
 Outputs
 -------
 
@@ -93,13 +116,28 @@ Examples of usage
 
 The default example - a helix:
 
-.. image:: https://user-images.githubusercontent.com/284644/77849062-473dc700-71e2-11ea-9722-c07fc32fda2c.png
+.. image:: https://user-images.githubusercontent.com/14288520/205733677-585957c5-51f2-41b9-b635-3396797e5659.png
+  :target: https://user-images.githubusercontent.com/14288520/205733677-585957c5-51f2-41b9-b635-3396797e5659.png
+
+* Curves-> :doc:`Evaluate Curve </nodes/curve/eval_curve>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+
+---------
 
 Another example - Viviani's curve (an intersection of a sphere with a cylinder):
 
-.. image:: https://user-images.githubusercontent.com/284644/77351539-bf7a3780-6d5f-11ea-8070-6ff58cdd7143.png
+.. image:: https://user-images.githubusercontent.com/14288520/205734503-8a818e6f-b60c-43d4-a860-4db6c7e78cda.png
+  :target: https://user-images.githubusercontent.com/14288520/205734503-8a818e6f-b60c-43d4-a860-4db6c7e78cda.png
+
+* Curves-> :doc:`Evaluate Curve </nodes/curve/eval_curve>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+
+---------
 
 A spiral in spherical coordinates:
 
-.. image:: https://user-images.githubusercontent.com/284644/77849156-f8446180-71e2-11ea-9b46-fc2a4db63f29.png
+.. image:: https://user-images.githubusercontent.com/14288520/205735619-5edb0b81-d2a0-490e-b4de-e5692b87f0d5.png
+  :target: https://user-images.githubusercontent.com/14288520/205735619-5edb0b81-d2a0-490e-b4de-e5692b87f0d5.png
 
+* Curves-> :doc:`Evaluate Curve </nodes/curve/eval_curve>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
