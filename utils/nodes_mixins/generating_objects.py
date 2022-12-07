@@ -108,6 +108,13 @@ class SvObjectData(bpy.types.PropertyGroup):
             new_obj = bpy.data.objects.new(name=obj_name, object_data=data_block)
         self.obj = new_obj
 
+    def copy(self) -> bpy.types.Object:
+        """Return copy of object which is assigned to a collection"""
+        obj = self.obj.copy()
+        for collection in self.obj.users_collection:
+            collection.objects.link(obj)
+        return obj
+
     def remove_data(self):
         """Should be called before removing item"""
         if self.obj:
@@ -276,6 +283,9 @@ class SvMeshData(bpy.types.PropertyGroup):
         """
         verts = np.array(verts, dtype=np.float32)  # todo will be this fast if it is already array float 32?
         self.mesh.vertices.foreach_set('co', np.ravel(verts))
+
+    def copy(self) -> bpy.types.Mesh:
+        return self.mesh.copy()
 
     def remove_data(self):
         """
@@ -500,6 +510,9 @@ class SvViewerLightNode(BlenderObjects):
         op = row.operator('node.sv_select_objects', text="Select")
         op.node_name = self.name
         op.tree_name = self.id_data.name
+        op = row.operator(SvBakeObjectsOperator.bl_idname, text="Bake")
+        op.node_name = self.name
+        op.tree_name = self.id_data.name
 
     def init_viewer(self):
         """Should be called from descendant class"""
@@ -516,6 +529,13 @@ class SvViewerLightNode(BlenderObjects):
         self.base_data_name = bpy.context.scene.sv_object_names.get_available_name()
         # object and mesh lists should be clear other wise two nodes would have links to the same objects
         self.object_data.clear()
+
+    def sv_free(self):
+        for data in self.object_data:
+            data.remove_data()
+
+    def bake(self):
+        raise NotImplemented
 
     def show_viewport(self, is_show: bool):
         """It should be called by node tree to show/hide objects"""
@@ -648,8 +668,29 @@ class SvCreateMaterial(bpy.types.Operator):
         return hasattr(context.node, 'material')
 
 
-module_classes = [SvObjectData, SvMeshData, SvSelectObjects, SvObjectNames, SvGenerateRandomObjectName, SvLightData,
-                  SvCurveData, SvCreateMaterial, SvShowFlyPanelOpeartor]
+class SvBakeObjectsOperator(SearchNode, bpy.types.Operator):
+    """Create object copies independent of the node"""
+    bl_idname = 'node.sv_bake_objects'
+    bl_label = "Bake objects"
+    bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
+
+    def execute(self, context):
+        self.node.bake()
+        return {'FINISHED'}
+
+
+module_classes = [
+    SvObjectData,
+    SvMeshData,
+    SvSelectObjects,
+    SvObjectNames,
+    SvGenerateRandomObjectName,
+    SvLightData,
+    SvCurveData,
+    SvCreateMaterial,
+    SvShowFlyPanelOpeartor,
+    SvBakeObjectsOperator,
+]
 
 
 def register():

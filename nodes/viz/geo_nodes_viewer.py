@@ -192,6 +192,17 @@ class SvGeoNodesViewerNode(
         super().sv_copy(other)
         self.mesh_data.clear()
 
+    def sv_free(self):
+        for data in self.mesh_data:
+            data.remove_data()
+        super().sv_free()
+
+    def bake(self):
+        for obj_d, me_d in zip(self.object_data, self.mesh_data):
+            obj = obj_d.copy()
+            me = me_d.copy()
+            obj.data = me
+
     def process(self):
         if not self.is_active:
             return
