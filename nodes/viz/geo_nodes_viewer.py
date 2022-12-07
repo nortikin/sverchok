@@ -209,7 +209,11 @@ class SvGeoNodesViewerNode(
             me_data.regenerate_mesh(self.base_data_name, v, e, f, make_changes_test=self.fast_mesh_update)
 
         # regenerate object data blocks
-        self.regenerate_objects([self.base_data_name], [d.mesh for d in self.mesh_data])
+        # tree.sv_show triggers scene update so the tree attribute also should
+        # be taken into account
+        self.regenerate_objects([self.base_data_name],
+                                [d.mesh for d in self.mesh_data],
+                                to_show=[self.id_data.sv_show and self.show_objects])
         objs = [obj_data.obj for obj_data in self.object_data]
         self.outputs[0].sv_set(objs)
 

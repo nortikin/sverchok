@@ -84,6 +84,13 @@ class SvObjectData(bpy.types.PropertyGroup):
         if real_name != name:
             self.obj.name = name
 
+    def check_object_show_state(self, to_show: bool):
+        # hide_viewport is faster than hide_set and hide_viewport is stable
+        # when objects are assigned to a collection
+        hide = not to_show
+        if self.obj.hide_viewport != hide:
+            self.obj.hide_viewport = hide
+
     def recreate_object(self, object_template: bpy.types.Object = None):
         """
         Object will be replaced by new object recreated from scratch or copied from given object_template if given
@@ -141,7 +148,9 @@ class BlenderObjects:
                            object_names: List[str],
                            data_blocks,
                            collections: List[bpy.types.Collection] = None,
-                           object_template: List[bpy.types.Object] = None):
+                           object_template: List[bpy.types.Object] = None,
+                           to_show: list[bool] = None,
+                           ):
         """
         It will generate new or remove old objects, number of generated objects will be equal to given data_blocks
         Object_names list can contain one name. In this case Blender will add suffix to next objects (.001, .002,...)
@@ -150,19 +159,29 @@ class BlenderObjects:
         :param data_blocks: nearly any data blocks - mesh, curves, lights ...
         :param object_names: usually equal to name of data block
         :param data_blocks: for now it is support only be bpy.types.Mesh
+        :param to_show: whether to show objects in viewport.
         """
         if collections is None:
             collections = [None]
         if object_template is None:
             object_template = [None]
+        if to_show is None:
+            to_show = [True]
 
         correct_collection_length(self.object_data, len(data_blocks))
         prop_group: SvObjectData
-        input_data = zip(self.object_data, data_blocks, cycle(object_names), cycle(collections), cycle(object_template))
-        for prop_group, data_block, name, collection, template in input_data:
+        input_data = zip(self.object_data,
+                         data_blocks,
+                         cycle(object_names),
+                         cycle(collections),
+                         cycle(object_template),
+                         cycle(to_show),
+                         )
+        for prop_group, data_block, name, collection, template, show in input_data:
             prop_group.ensure_object(data_block, name, template)
             prop_group.ensure_link_to_collection(collection)
             prop_group.check_object_name(name)
+            prop_group.check_object_show_state(show)
 
     def draw_object_properties(self, layout):
         """Should be used for adding hide, select, render objects properties"""
@@ -439,17 +458,6 @@ class SvViewerLightNode(BlenderObjects):
         default=True,
         update=updateNode,
         description="When enabled this will process incoming data")
-
-    def show_objects_update(self, context, to_show: bool = None):
-        """Hide / show objects. It should be only place to hide objects"""
-        to_show = to_show if to_show is not None else self.show_objects
-        for prop in self.object_data:
-            prop.obj.hide_set(not to_show)
-
-    show_objects: bpy.props.BoolProperty(
-        default=True,
-        description="Show / hide objects in viewport",
-        update=update_with_kwargs(show_objects_update))
 
     base_data_name: bpy.props.StringProperty(
         default='Alpha',
