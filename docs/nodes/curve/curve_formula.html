@@ -199,12 +199,14 @@
              
   <section id="curve-formula">
 <h1>Curve Formula<a class="headerlink" href="#curve-formula" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205702554-dd853e84-851a-437a-bb2c-7ceb56d234e6.png"><img alt="https://user-images.githubusercontent.com/14288520/205702554-dd853e84-851a-437a-bb2c-7ceb56d234e6.png" src="https://user-images.githubusercontent.com/14288520/205702554-dd853e84-851a-437a-bb2c-7ceb56d234e6.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node generates a curve, defined by some user-provided formula.</p>
 <p>The formula should map the curve’s T parameters into one of supported 3D coordinate systems: (X, Y, Z), (Rho, Phi, Z) or (Rho, Phi, Theta).</p>
 <p>It is possible to use additional parameters in the formula, they will become inputs of the node.</p>
 <p>Curve domain / parametrization specifics: defined by node settings.</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205707613-de8d5100-d872-450a-a999-92c678021aca.png"><img alt="https://user-images.githubusercontent.com/14288520/205707613-de8d5100-d872-450a-a999-92c678021aca.png" src="https://user-images.githubusercontent.com/14288520/205707613-de8d5100-d872-450a-a999-92c678021aca.png" /></a>
 </section>
 <section id="expression-syntax">
 <h2>Expression syntax<a class="headerlink" href="#expression-syntax" title="Permalink to this heading">¶</a></h2>
@@ -245,15 +247,21 @@ pow, radians, sin, sinh, sqrt, tan, tanh, trunc;</p></li>
 <li><p><strong>TMin</strong>. Minimum value of the curve’s T parameter (corresponding to the beginning of the curve). The default value is 0.0.</p></li>
 <li><p><strong>TMax</strong>. Maximum value of the curve’s T parameter (corresponding to the end of the curve). The default value is 2*pi.</p></li>
 </ul>
-<p>Each variable used in formulas, except for <cite>t</cite>, also becomes an additional input.</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205713440-6b3c6170-bfe0-44b9-8268-83eec5a69325.png"><img alt="https://user-images.githubusercontent.com/14288520/205713440-6b3c6170-bfe0-44b9-8268-83eec5a69325.png" src="https://user-images.githubusercontent.com/14288520/205713440-6b3c6170-bfe0-44b9-8268-83eec5a69325.png" /></a>
 </section>
 <section id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following parameters:</p>
-<ul>
+<ul class="simple">
 <li><p><strong>Formula 1</strong>, <strong>Formula 2</strong>, <strong>Formula 3</strong>. Formulas for 3 components
 defining curve points in the used coordinate system. Default values define
-simple helix curve in the cartesian coordinates.</p></li>
+simple helix curve in the cartesian coordinates. Each variable used in formulas,
+except for <cite>t</cite>, also becomes an additional input. Example variable ‘c’:</p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205709029-bdc14a67-c9e4-4021-81c2-ecb613dbfb34.png"><img alt="https://user-images.githubusercontent.com/14288520/205709029-bdc14a67-c9e4-4021-81c2-ecb613dbfb34.png" src="https://user-images.githubusercontent.com/14288520/205709029-bdc14a67-c9e4-4021-81c2-ecb613dbfb34.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205708728-bcad3139-1681-4b7b-b396-e563e88ce442.gif"><img alt="https://user-images.githubusercontent.com/14288520/205708728-bcad3139-1681-4b7b-b396-e563e88ce442.gif" src="https://user-images.githubusercontent.com/14288520/205708728-bcad3139-1681-4b7b-b396-e563e88ce442.gif" /></a>
+<p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p>
+<ul>
 <li><p><strong>Output</strong>. This defined the coordinate system being used, and thus it
 defines the exact meaning of formula parameters. The available modes are:</p>
 <blockquote>
@@ -274,6 +282,8 @@ parameter is enabled by default. If you experience some kind of troubles with
 calculating some of functions (errors or not good enough precision), you can
 disable this parameter.</p></li>
 </ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205857380-728f7515-bdaa-477e-a70c-72c2d5eae51d.png"><img alt="https://user-images.githubusercontent.com/14288520/205857380-728f7515-bdaa-477e-a70c-72c2d5eae51d.png" src="https://user-images.githubusercontent.com/14288520/205857380-728f7515-bdaa-477e-a70c-72c2d5eae51d.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205712865-a3274f3b-b488-4686-bec3-0c425991e936.gif"><img alt="https://user-images.githubusercontent.com/14288520/205712865-a3274f3b-b488-4686-bec3-0c425991e936.gif" src="https://user-images.githubusercontent.com/14288520/205712865-a3274f3b-b488-4686-bec3-0c425991e936.gif" /></a>
 </section>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
@@ -285,11 +295,25 @@ disable this parameter.</p></li>
 <section id="examples-of-usage">
 <h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>The default example - a helix:</p>
-<img alt="https://user-images.githubusercontent.com/284644/77849062-473dc700-71e2-11ea-9722-c07fc32fda2c.png" src="https://user-images.githubusercontent.com/284644/77849062-473dc700-71e2-11ea-9722-c07fc32fda2c.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205733677-585957c5-51f2-41b9-b635-3396797e5659.png"><img alt="https://user-images.githubusercontent.com/14288520/205733677-585957c5-51f2-41b9-b635-3396797e5659.png" src="https://user-images.githubusercontent.com/14288520/205733677-585957c5-51f2-41b9-b635-3396797e5659.png" /></a>
+<ul class="simple">
+<li><p>Curves-&gt; <a class="reference internal" href="eval_curve.html"><span class="doc">Evaluate Curve</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>Another example - Viviani’s curve (an intersection of a sphere with a cylinder):</p>
-<img alt="https://user-images.githubusercontent.com/284644/77351539-bf7a3780-6d5f-11ea-8070-6ff58cdd7143.png" src="https://user-images.githubusercontent.com/284644/77351539-bf7a3780-6d5f-11ea-8070-6ff58cdd7143.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205734503-8a818e6f-b60c-43d4-a860-4db6c7e78cda.png"><img alt="https://user-images.githubusercontent.com/14288520/205734503-8a818e6f-b60c-43d4-a860-4db6c7e78cda.png" src="https://user-images.githubusercontent.com/14288520/205734503-8a818e6f-b60c-43d4-a860-4db6c7e78cda.png" /></a>
+<ul class="simple">
+<li><p>Curves-&gt; <a class="reference internal" href="eval_curve.html"><span class="doc">Evaluate Curve</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>A spiral in spherical coordinates:</p>
-<img alt="https://user-images.githubusercontent.com/284644/77849156-f8446180-71e2-11ea-9b46-fc2a4db63f29.png" src="https://user-images.githubusercontent.com/284644/77849156-f8446180-71e2-11ea-9b46-fc2a4db63f29.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205735619-5edb0b81-d2a0-490e-b4de-e5692b87f0d5.png"><img alt="https://user-images.githubusercontent.com/14288520/205735619-5edb0b81-d2a0-490e-b4de-e5692b87f0d5.png" src="https://user-images.githubusercontent.com/14288520/205735619-5edb0b81-d2a0-490e-b4de-e5692b87f0d5.png" /></a>
+<ul class="simple">
+<li><p>Curves-&gt; <a class="reference internal" href="eval_curve.html"><span class="doc">Evaluate Curve</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 </section>
 </section>
 

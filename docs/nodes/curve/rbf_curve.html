@@ -199,15 +199,17 @@
              
   <section id="rbf-curve">
 <h1>RBF Curve<a class="headerlink" href="#rbf-curve" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/206016462-a0f0c4a9-933a-4e98-bd9a-01c0d2a85ef3.png"><img alt="https://user-images.githubusercontent.com/14288520/206016462-a0f0c4a9-933a-4e98-bd9a-01c0d2a85ef3.png" src="https://user-images.githubusercontent.com/14288520/206016462-a0f0c4a9-933a-4e98-bd9a-01c0d2a85ef3.png" /></a>
 <section id="dependencies">
 <h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this heading">¶</a></h2>
 <p>This node requires <a class="reference external" href="https://scipy.org/">SciPy</a> library to work.</p>
 </section>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
-<p>This node generates a Curve, based on provided points, by use of <a class="reference external" href="http://www.scholarpedia.org/article/Radial_basis_function">RBF</a> method.
+<p>This node generates a Curve, based on provided points, by use of <a class="reference external" href="http://www.scholarpedia.org/article/Radial_basis_function">RBF</a> method (<a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.Rbf.html">RBF_SciPy</a>).
 Depending on node parameters, the curve can be either interpolating (go through
 all points) or only approximating.</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/206018837-6e29b86a-3b4d-4d64-ae7d-aeab8582bfe9.png"><img alt="https://user-images.githubusercontent.com/14288520/206018837-6e29b86a-3b4d-4d64-ae7d-aeab8582bfe9.png" src="https://user-images.githubusercontent.com/14288520/206018837-6e29b86a-3b4d-4d64-ae7d-aeab8582bfe9.png" /></a>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
@@ -220,6 +222,7 @@ generated curve. The default value is 1.0.</p></li>
 the curve will go through all provided points; otherwise, it will be only an
 approximating curve. The default value is 1.0.</p></li>
 </ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/206021450-a4760a70-3117-49ca-9a24-172fce3ac072.png"><img alt="https://user-images.githubusercontent.com/14288520/206021450-a4760a70-3117-49ca-9a24-172fce3ac072.png" src="https://user-images.githubusercontent.com/14288520/206021450-a4760a70-3117-49ca-9a24-172fce3ac072.png" /></a>
 </section>
 <section id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
@@ -227,14 +230,14 @@ approximating curve. The default value is 1.0.</p></li>
 <ul>
 <li><p><strong>Function</strong>. The specific function used by the node. The available values are:</p>
 <ul class="simple">
-<li><p>Multi Quadric</p></li>
-<li><p>Inverse</p></li>
-<li><p>Gaussian</p></li>
-<li><p>Cubic</p></li>
-<li><p>Quintic</p></li>
-<li><p>Thin Plate</p></li>
+<li><p><strong>Multi Quadric</strong>. [ sqrt( (r/epsilon)^2 + 1) ]</p></li>
+<li><p><strong>Inverse</strong>. [ 1.0 / sqrt( (r / epsilon)^2 + 1) ]</p></li>
+<li><p><strong>Gaussian</strong>. [ exp(-(r/epsilon)^2) ]</p></li>
+<li><p><strong>Cubic</strong>. [ r^3 ]</p></li>
+<li><p><strong>Quintic</strong>. [ r^5 ]</p></li>
+<li><p><strong>Thin Plate</strong>. [ r^2 * log(r) ]</p></li>
 </ul>
-<p>The default function is Multi Quadric.</p>
+<p>The default function is <strong>Multi Quadric</strong>.</p>
 </li>
 </ul>
 </section>
@@ -247,7 +250,12 @@ approximating curve. The default value is 1.0.</p></li>
 </section>
 <section id="example-of-usage">
 <h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
-<img alt="https://user-images.githubusercontent.com/284644/87217900-a70e4700-c367-11ea-8deb-1a9ebc664632.png" src="https://user-images.githubusercontent.com/284644/87217900-a70e4700-c367-11ea-8deb-1a9ebc664632.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/206022382-948b948b-63b5-49d4-844f-04584e8a2897.png"><img alt="https://user-images.githubusercontent.com/14288520/206022382-948b948b-63b5-49d4-844f-04584e8a2897.png" src="https://user-images.githubusercontent.com/14288520/206022382-948b948b-63b5-49d4-844f-04584e8a2897.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_curve.html"><span class="doc">Viewer Draw Curve</span></a></p></li>
+</ul>
 </section>
 </section>
 

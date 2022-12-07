@@ -199,6 +199,7 @@
              
   <section id="circlify">
 <h1>Circlify<a class="headerlink" href="#circlify" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/206100789-c1b20c86-769f-42b3-8807-cb9c1e4a3607.png"><img alt="https://user-images.githubusercontent.com/14288520/206100789-c1b20c86-769f-42b3-8807-cb9c1e4a3607.png" src="https://user-images.githubusercontent.com/14288520/206100789-c1b20c86-769f-42b3-8807-cb9c1e4a3607.png" /></a>
 <section id="dependencies">
 <h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this heading">¶</a></h2>
 <p>This node requires <a class="reference external" href="https://github.com/elmotec/circlify">Circlify</a> library to work.</p>
@@ -206,6 +207,7 @@
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node draws several circles close to one another, thus packing them into one bigger circle.</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/206101665-f92006f3-1db8-4335-b8a9-260c879e4da3.png"><img alt="https://user-images.githubusercontent.com/14288520/206101665-f92006f3-1db8-4335-b8a9-260c879e4da3.png" src="https://user-images.githubusercontent.com/14288520/206101665-f92006f3-1db8-4335-b8a9-260c879e4da3.png" /></a>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
@@ -214,11 +216,18 @@
 <li><p><strong>Radiuses</strong>. List of circle radiuses. Exact values of these radises are not
 used; only their relations (proportions) are used. Actual sizes of generated
 circles depend on <strong>MajorRadius</strong> input as well. This input is mandatory.</p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/206102402-407499bc-60e2-436d-ab18-7624d06e4f45.png"><img alt="https://user-images.githubusercontent.com/14288520/206102402-407499bc-60e2-436d-ab18-7624d06e4f45.png" src="https://user-images.githubusercontent.com/14288520/206102402-407499bc-60e2-436d-ab18-7624d06e4f45.png" /></a>
+<ul class="simple">
 <li><p><strong>Center</strong>. The origin point of whole generated picture. The default value is
 global origin <code class="docutils literal notranslate"><span class="pre">(0,</span> <span class="pre">0,</span> <span class="pre">0)</span></code>.</p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/206103422-743dbfb1-699c-40bf-bf68-9873a85f9900.png"><img alt="https://user-images.githubusercontent.com/14288520/206103422-743dbfb1-699c-40bf-bf68-9873a85f9900.png" src="https://user-images.githubusercontent.com/14288520/206103422-743dbfb1-699c-40bf-bf68-9873a85f9900.png" /></a>
+<ul class="simple">
 <li><p><strong>MajorRadius</strong>. The radius of the bigger circle, into which all other should
 be packed. The default value is 1.0.</p></li>
 </ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/206106202-6603fc47-01b4-4bfb-9d66-762c103d49b8.png"><img alt="https://user-images.githubusercontent.com/14288520/206106202-6603fc47-01b4-4bfb-9d66-762c103d49b8.png" src="https://user-images.githubusercontent.com/14288520/206106202-6603fc47-01b4-4bfb-9d66-762c103d49b8.png" /></a>
 </section>
 <section id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
@@ -226,9 +235,14 @@ be packed. The default value is 1.0.</p></li>
 <ul class="simple">
 <li><p><strong>Plane</strong>. The coordinate plane in which the circles will be generated. The
 available values are <strong>XY</strong>, <strong>YZ</strong> and <strong>XZ</strong>. The default value is <strong>XY</strong>.</p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/206104804-d7f97bdb-1361-480d-8ced-200a90f10c28.png"><img alt="https://user-images.githubusercontent.com/14288520/206104804-d7f97bdb-1361-480d-8ced-200a90f10c28.png" src="https://user-images.githubusercontent.com/14288520/206104804-d7f97bdb-1361-480d-8ced-200a90f10c28.png" /></a>
+<ul class="simple">
 <li><p><strong>Show enclosure</strong>. Whether to generate the big circle, into which all other
 are inscribed. Checked by default.</p></li>
 </ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/206105294-5576ef76-c48f-4573-bac7-84a47ae5a456.png"><img alt="https://user-images.githubusercontent.com/14288520/206105294-5576ef76-c48f-4573-bac7-84a47ae5a456.png" src="https://user-images.githubusercontent.com/14288520/206105294-5576ef76-c48f-4573-bac7-84a47ae5a456.png" /></a>
+<p>if <strong>Show enclosure</strong> is Off then <strong>MajorRadius</strong> and <strong>Center</strong> are not preset in outputs sockets data (Cicles, Centers and Radiuses)</p>
 </section>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
@@ -238,10 +252,17 @@ are inscribed. Checked by default.</p></li>
 <li><p><strong>Centers</strong>. Central points of generated circles.</p></li>
 <li><p><strong>Radiuses</strong>. Radiuses of generated circles.</p></li>
 </ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/206105677-6b4f1973-7707-45ee-9862-3891235911f2.png"><img alt="https://user-images.githubusercontent.com/14288520/206105677-6b4f1973-7707-45ee-9862-3891235911f2.png" src="https://user-images.githubusercontent.com/14288520/206105677-6b4f1973-7707-45ee-9862-3891235911f2.png" /></a>
 </section>
 <section id="example-of-usage">
 <h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
-<img alt="https://user-images.githubusercontent.com/284644/86526782-9d8d6680-beb1-11ea-8ee2-b98e93c9c09f.png" src="https://user-images.githubusercontent.com/284644/86526782-9d8d6680-beb1-11ea-8ee2-b98e93c9c09f.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/206107780-c71627b1-a22e-406e-8c2f-7ddd4c66a0ee.png"><img alt="https://user-images.githubusercontent.com/14288520/206107780-c71627b1-a22e-406e-8c2f-7ddd4c66a0ee.png" src="https://user-images.githubusercontent.com/14288520/206107780-c71627b1-a22e-406e-8c2f-7ddd4c66a0ee.png" /></a>
+<ul class="simple">
+<li><p>Number-&gt; <a class="reference internal" href="../number/list_input.html"><span class="doc">List Input</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_struct/item.html"><span class="doc">List Item</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_curve.html"><span class="doc">Viewer Draw Curve</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 </section>
 </section>
 
