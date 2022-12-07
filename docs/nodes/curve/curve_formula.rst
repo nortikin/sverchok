@@ -98,6 +98,9 @@ Number-> :doc:`Number Range </nodes/number/number_range>`
   calculating some of functions (errors or not good enough precision), you can
   disable this parameter.
 
+.. image:: https://user-images.githubusercontent.com/14288520/205857380-728f7515-bdaa-477e-a70c-72c2d5eae51d.png
+  :target: https://user-images.githubusercontent.com/14288520/205857380-728f7515-bdaa-477e-a70c-72c2d5eae51d.png
+
 .. image:: https://user-images.githubusercontent.com/14288520/205712865-a3274f3b-b488-4686-bec3-0c425991e936.gif
   :target: https://user-images.githubusercontent.com/14288520/205712865-a3274f3b-b488-4686-bec3-0c425991e936.gif
 
