@@ -96,7 +96,7 @@ class SvGeoNodesViewerNode(
     bl_idname = 'SvGeoNodesViewerNode'
     bl_label = 'Geo Nodes Viewer'
     bl_icon = 'GEOMETRY_NODES' if bpy.app.version >= (3, 3) else 'NODETREE'
-    sv_icon = 'SV_ALPHA'
+    sv_icon = 'SV_BETA'
 
     def generate_sockets(self, context):
         # remove all extra sockets
