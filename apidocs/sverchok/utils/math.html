@@ -93,12 +93,12 @@ TRACK_NORMAL = &#39;track_normal&#39;
 NORMAL_DIR = &#39;normal_direction&#39;
 
 rbf_functions = [
-    (&#39;multiquadric&#39;, &#34;Multi Quadric&#34;, &#34;Multi Quadric&#34;, 0),
-    (&#39;inverse&#39;, &#34;Inverse&#34;, &#34;Inverse&#34;, 1),
-    (&#39;gaussian&#39;, &#34;Gaussian&#34;, &#34;Gaussian&#34;, 2),
-    (&#39;cubic&#39;, &#34;Cubic&#34;, &#34;Cubic&#34;, 3),
-    (&#39;quintic&#39;, &#34;Quintic&#34;, &#34;Qunitic&#34;, 4),
-    (&#39;thin_plate&#39;, &#34;Thin Plate&#34;, &#34;Thin Plate&#34;, 5)
+    (&#39;multiquadric&#39;, &#34;Multi Quadric&#34;, &#34;Multi Quadric [ sqrt( (r/epsilon)^2 + 1) ]&#34;, 0),
+    (&#39;inverse&#39;, &#34;Inverse&#34;, &#34;Inverse [ 1.0 / sqrt( (r / epsilon)^2 + 1) ]&#34;, 1),
+    (&#39;gaussian&#39;, &#34;Gaussian&#34;, &#34;Gaussian [ exp(-(r/epsilon)^2) ]&#34;, 2),
+    (&#39;cubic&#39;, &#34;Cubic&#34;, &#34;Cubic [ r^3 ]&#34;, 3),
+    (&#39;quintic&#39;, &#34;Quintic&#34;, &#34;Qunitic [ r^5 ]&#34;, 4),
+    (&#39;thin_plate&#39;, &#34;Thin Plate&#34;, &#34;Thin Plate [ r^2 * log(r) ]&#34;, 5)
 ]
 
 supported_metrics = [
