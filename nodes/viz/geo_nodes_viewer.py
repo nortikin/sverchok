@@ -218,6 +218,7 @@ class SvGeoNodesViewerNode(
         props = zip(*props) if props else fixed_iter([], obj_num, [])
 
         gn_tree = BlTree(self.gn_tree) if self.gn_tree else None
+        gn_inputs = gn_tree and {s.identifier: s for s in self.gn_tree.inputs[1:]}
 
         if self.gn_tree is None:
             for obj in objs:
@@ -230,7 +231,9 @@ class SvGeoNodesViewerNode(
                 if mod.node_group != self.gn_tree:
                     mod.node_group = self.gn_tree
                 mod.gn_tree = gn_tree
-                for sv_s, gn_s, s_data in zip(self.inputs[3:], self.gn_tree.inputs[1:], prop):
+                for sv_s, s_data in zip(self.inputs[3:], prop):
+                    if not (gn_s := gn_inputs.get(sv_s.identifier)):
+                        continue  # GN API was changed but the node was not updated
                     domain = sv_s.domain if hasattr(sv_s, 'domain') else 'POINT'
                     mod.set_tree_data(gn_s.identifier, s_data, domain)
                 obj.data.update()
