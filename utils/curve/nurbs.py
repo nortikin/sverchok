@@ -851,13 +851,24 @@ class SvNurbsCurve(SvCurve):
         points.append(segments[-1].get_end_points()[1])
         return np.array(points)
 
-    def split_at_fracture_points(self, smooth=1, tangent_tolerance = 1e-6):
+    def split_at_fracture_points(self, order=1, direction_only = True, tangent_tolerance = 1e-6):
+
+        if order not in {1,2,3}:
+            raise Exception(f"Unsupported discontinuity order: {order}")
 
         def is_fracture(segment1, segment2):
-            tangent1 = segment1.get_end_tangent()
-            tangent2 = segment2.get_start_tangent()
-            tangent1 = tangent1 / np.linalg.norm(tangent1)
-            tangent2 = tangent2 / np.linalg.norm(tangent2)
+            if order == 1:
+                tangent1 = segment1.get_end_tangent()
+                tangent2 = segment2.get_start_tangent()
+            else:
+                u1_max = segment1.get_u_bounds()[1]
+                u2_min = segment2.get_u_bounds()[0]
+                tangent1 = segment1.nth_derivative(order, u1_max)
+                tangent2 = segment2.nth_derivative(order, u2_min)
+
+            if direction_only:
+                tangent1 = tangent1 / np.linalg.norm(tangent1)
+                tangent2 = tangent2 / np.linalg.norm(tangent2)
             delta = np.linalg.norm(tangent1 - tangent2)
             return delta >= tangent_tolerance
 
@@ -876,8 +887,8 @@ class SvNurbsCurve(SvCurve):
 
         kv = self.get_knotvector()
         p = self.get_degree()
-        ms = sv_knotvector.to_multiplicity(kv)
-        possible_fracture_ts = [t for t, s in ms if s == p]
+        ms = sv_knotvector.to_multiplicity(kv)[1:-1]
+        possible_fracture_ts = [t for t, s in ms if s >= p-order+1]
         segments = self.split_at_ts(possible_fracture_ts)
         segments = concatenate_non_fractured(segments)
         return segments

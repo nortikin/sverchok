@@ -214,6 +214,19 @@ class SvCurve(object):
 
         return result
 
+    def nth_derivative(self, order, t, tangent_delta=None):
+        h = self.get_tangent_delta(tangent_delta)
+        if order == 0:
+            return self.evaluate(t)
+        elif order == 1:
+            return self.tangent(t, tangent_delta=tangent_delta)
+        elif order == 2:
+            return self.second_derivative(t, tangent_delta=tangent_delta)
+        elif order == 3:
+            return self.third_derivative(t, tangent_delta=tangent_delta)
+        else:
+            raise Exception(f"Unsupported derivative order: {order}")
+
     def main_normal(self, t, normalize=True, tangent_delta=None):
         h = self.get_tangent_delta(tangent_delta)
 
