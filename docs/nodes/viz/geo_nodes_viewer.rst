@@ -6,7 +6,7 @@ Functionality
 
 The node generates object with given mesh and applies given Geometry Nodes
 modifier. The use case of this node is to create efficient viewers with help of
-Geometry Nodes. Currently it can replace more the tens of nodes which generate
+Geometry Nodes. Currently it can replace more than tens of nodes which generate
 mesh, curves or instances (see `Examples`_ section).
 
 .. note::
@@ -22,7 +22,7 @@ When a Geometry Nodes node group is assigned to the node it generates extra
 sockets for each extra input of the node group. If the generated sockets are
 not connected they pass single value otherwise they pass a field of values if
 possible. The domain of field can be selected by a property drawn on a connected
-socket (only for Vertices, Values and Colors). If after assigning a node group
+socket (only for Vertices, Values and Colors). If, after assigning a node group,
 its input sockets were changed the node input sockets can be updated by a button
 drawn near the name of the tree.
 
@@ -89,10 +89,36 @@ Random Name
 Select
   Select generated objects
 
-Update Node Sockets
+Bake
+  When node is deleted it is deleted with generated mesh. Use bake button to
+  save the output of the node. It will generate copy of objects disconnected
+  of the node. The same can be done with Bake All operator.
+
+Add new Geometry Nodes tree (shown when tree is not chosen)
+  It asks name of a tree and create instance of Geometry Nodes tree.
+
+Update Node Sockets (shown if there is GN tree)
   It generates or removes node input sockets according to input sockets of the
   Geometry Nodes node group. Should be called when the node group inputs were
   changed.
+
+  .. note::
+     Update socket is optional step. If node input sockets does not match to
+     GN tree inputs they will be just ignored. So it's possible add extra
+     inputs to GN tree and all nodes which already use the tree will continue
+     to work even if new inputs are not presented in the inputs of the nodes.
+
+Edit Geometry Nodes Tree (shown if there is GN tree)
+  Switches current Sverchok tree editor to Geometry Nodes editor to edit the
+  tree of the node. You can use ``Tab`` button similar to how to edit group
+  nodes.
+
+  .. note::
+     When you finished with editing of Geometry Nodes tree you can return back
+     to Sverchok by pressing dedicated button in right top corner of the tree
+     editor.
+
+     .. image:: https://user-images.githubusercontent.com/28003269/206369211-eee956cb-5300-412f-abe5-2fe311d444b5.png
 
 Outputs
 -------
