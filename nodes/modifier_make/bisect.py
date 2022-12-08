@@ -46,7 +46,7 @@ def bisect_bmesh(bm, pp, pno, outer, inner, fill):
         fres = bmesh.ops.edgenet_prepare(
             bm, edges=[e for e in res['geom_cut'] if isinstance(e, bmesh.types.BMEdge)]
         )
-        bmesh.ops.edgeloop_fill(bm, edges=fres['edges'])
+        bmesh.ops.triangle_fill(bm, edges=fres['edges'], use_beauty=True, use_dissolve=True, normal=pno)
 
     edges = []
     faces = []
