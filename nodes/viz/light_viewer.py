@@ -164,7 +164,11 @@ class SvLightViewerNode(SvViewerNode, SverchCustomTreeNode, bpy.types.Node):
         correct_collection_length(self.light_data, objects_number)
         [props.regenerate_light(self.base_data_name, self.light_type) for props in self.light_data]
 
-        self.regenerate_objects([self.base_data_name], [prop.light for prop in self.light_data], [self.collection])
+        self.regenerate_objects([self.base_data_name],
+                                [prop.light for prop in self.light_data],
+                                [self.collection],
+                                to_show=[self.id_data.sv_show and self.show_objects]
+                                )
         [setattr(prop.obj, 'matrix_local', m) for prop, m in zip(self.object_data, cycle(origins))]
 
         for prop, size, size_x, size_y, strength, color, spot_size, spot_blend in zip(

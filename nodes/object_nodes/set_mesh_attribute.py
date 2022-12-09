@@ -14,6 +14,7 @@ from sverchok.utils.handle_blender_data import correct_collection_length
 
 
 def set_attribute_node(*, obj=None, values=None, attr_name=None, domain='POINT', value_type='FLOAT'):
+    # todo replace with handle_blender_data.BlObject().set_attribute
     if not obj:
         return {'obj': None}
     out = {'obj': obj}

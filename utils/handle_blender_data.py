@@ -9,11 +9,12 @@ from __future__ import annotations
 
 from collections.abc import Iterable
 from enum import Enum
-from functools import singledispatch, wraps
+from functools import singledispatch, wraps, lru_cache, cached_property
 from itertools import chain
-from typing import Any, List, Union, TYPE_CHECKING
+from typing import Any, List, Union, TYPE_CHECKING, Optional
 
 import bpy
+from sverchok.data_structure import fixed_iter
 
 if TYPE_CHECKING:
     from sverchok.core.node_group import SvGroupTree
@@ -108,9 +109,75 @@ def get_sv_trees():
 # In general it's still arbitrary set of functionality (like module which fully consists with functions)
 # But here the functions are combine with data which they handle
 
+
+class BlDomains(Enum):
+    # don't change the order - new items add to the end
+    POINT = 'Point'
+    EDGE = 'Edge'
+    FACE = 'Face'
+    CORNER = 'Face Corner'
+
+    # It does not have sense to include these attributes because there is no API
+    # for generating instances and applying attributes to a curve.
+    # CURVE = 'Spline'
+    # INSTANCE = 'Instance'
+
+
+class BlObject:
+    def __init__(self, obj):
+        self._obj: bpy.types.Object = obj
+
+    def set_attribute(self, values, attr_name, domain='POINT', value_type='FLOAT'):
+        obj = self._obj
+        attr = obj.data.attributes.get(attr_name)
+        if attr is None:
+            attr = obj.data.attributes.new(attr_name, value_type, domain)
+        elif attr.data_type != value_type or attr.domain != domain:
+            obj.data.attributes.remove(attr)
+            attr = obj.data.attributes.new(attr_name, value_type, domain)
+
+        if domain == 'POINT':
+            amount = len(obj.data.vertices)
+        elif domain == 'EDGE':
+            amount = len(obj.data.edges)
+        elif domain == 'CORNER':
+            amount = len(obj.data.loops)
+        elif domain == 'FACE':
+            amount = len(obj.data.polygons)
+        else:
+            raise TypeError(f'Unsupported domain {domain}')
+
+        if value_type in ['FLOAT', 'INT', 'BOOLEAN']:
+            data = list(fixed_iter(values, amount))
+        elif value_type in ['FLOAT_VECTOR', 'FLOAT_COLOR']:
+            data = [co for v in fixed_iter(values, amount) for co in v]
+        elif value_type == 'FLOAT2':
+            data = [co for v in fixed_iter(values, amount) for co in v[:2]]
+        else:
+            raise TypeError(f'Unsupported type {value_type}')
+
+        if value_type in ["FLOAT", "INT", "BOOLEAN"]:
+            attr.data.foreach_set("value", data)
+        elif value_type in ["FLOAT_VECTOR", "FLOAT2"]:
+            attr.data.foreach_set("vector", data)
+        else:
+            attr.data.foreach_set("color", data)
+
+        # attr.data.update()
+
+
 class BlModifier:
     def __init__(self, modifier):
         self._mod: bpy.types.Modifier = modifier
+        self.gn_tree: Optional[BlTree] = None  # cache for performance
+
+    @property
+    def node_group(self):
+        return getattr(self._mod, 'node_group', None)
+
+    @node_group.setter
+    def node_group(self, node_group):
+        self._mod.node_group = node_group
 
     def get_property(self, name):
         return getattr(self._mod, name)
@@ -122,7 +189,49 @@ class BlModifier:
         return self._mod[name]
 
     def set_tree_prop(self, name, value):
+        """Good for coping properties from one modifier to another"""
         self._mod[name] = value
+
+    def set_tree_data(self, name, data, domain='POINT'):
+        """Transfer py data to node modifier tree"""
+
+        # transfer single value
+        if not isinstance(data, (list, tuple)):
+            data = [data]
+        if not self.gn_tree.is_field(name) and len(data) != 1:
+            data = data[:1]
+        if len(data) == 1:
+            value = data[0]
+            self._mod[f"{name}_use_attribute"] = 0
+            if isinstance(value, (list, tuple)):  # list of single vertex
+                # for some reason node modifier can't apply python sequences directly
+                for i, v in enumerate(value):
+                    self._mod[name][i] = v
+            else:
+                sock = self.gn_tree.inputs[name]
+                if sock.type in {'INT', 'BOOLEAN'}:
+                    value = int(value)
+                elif sock.type == 'VALUE':
+                    value = float(value)
+                elif sock.type == 'STRING':
+                    value = str(value)
+                self._mod[name] = value
+
+        # transfer field
+        else:
+            self._mod[f"{name}_use_attribute"] = 1
+            self._mod[f"{name}_attribute_name"] = name
+            obj = BlObject(self._mod.id_data)
+            sock = self.gn_tree.inputs[name]
+            if sock.type in {'INT', 'BOOLEAN'} and not isinstance(data[0], int):
+                data = [int(i) for i in data]
+            bl_sock = BlSocket(sock)
+            obj.set_attribute(data, name, domain, value_type=bl_sock.attribute_type)
+
+    def remove(self):
+        obj = self._mod.id_data
+        obj.modifiers.remove(self._mod)
+        self._mod = None
 
     @property
     def type(self) -> str:
@@ -195,10 +304,25 @@ class BlTrees:
 class BlTree:
     def __init__(self, tree):
         self._tree = tree
+        self.inputs = {s.identifier: s for s in tree.inputs}
+        self.outputs = {s.identifier: s for s in tree.outputs}
 
-    @property
-    def is_group_tree(self) -> bool:
-        return self._tree.bl_idname == BlTrees.GROUP_ID
+        self.is_field = lru_cache(self._is_field)  # for performance
+
+    @cached_property
+    def group_input(self):
+        for node in self._tree.nodes:
+            if node.bl_idname == 'NodeGroupInput':
+                return node
+        return None
+
+    def _is_field(self, input_socket_identifier):
+        """Check whether input tree socket expects field (dimond socket)"""
+        if (group := self.group_input) is None:
+            raise LookupError(f'Group input node is required '
+                              f'which is not found in "{self._tree.name}" tree')
+        sock = BlSocket.from_identifier(group.outputs, input_socket_identifier)
+        return sock.display_shape == 'DIAMOND'
 
 
 class BlNode:
@@ -229,6 +353,89 @@ class BlNode:
         except ValueError:
             return self.data.bl_idname
         return id_name
+
+
+class BlSocket:
+    _attr_types = {
+        'VECTOR': 'FLOAT_VECTOR',
+        'VALUE': 'FLOAT',
+        'RGBA': 'FLOAT_COLOR',
+        'INT': 'INT',
+        'BOOLEAN': 'BOOLEAN',
+    }
+
+    _sv_types = {
+        'VECTOR': 'SvVerticesSocket',
+        'VALUE': 'SvStringsSocket',
+        'RGBA': 'SvColorSocket',
+        'INT': 'SvStringsSocket',
+        'STRING': 'SvTextSocket',
+        'BOOLEAN': 'SvStringsSocket',
+        'OBJECT': 'SvObjectSocket',
+        'COLLECTION': 'SvCollectionSocket',
+        'MATERIAL': 'SvMaterialSocket',
+        'TEXTURE': 'SvTextureSocket',
+        'IMAGE': 'SvImageSocket',
+    }
+
+    def __init__(self, socket):
+        self._sock: bpy.types.NodeSocket = socket
+
+    def copy_properties(self, sv_sock):
+        sv_sock.name = self._sock.name
+
+        if sv_sock.bl_idname == 'SvStringsSocket':
+            if self._sock.type == 'VALUE':
+                sv_sock.default_property_type = 'float'
+            elif self._sock.type in {'INT', 'BOOLEAN'}:
+                sv_sock.default_property_type = 'int'
+            else:
+                return  # There is no default property for such type
+            if sv_sock.default_property == 0:  # was unchanged by user
+                sv_sock.default_property = self._sock.default_value
+                sv_sock.use_prop = True
+
+        elif sv_sock.bl_idname == 'SvVerticesSocket':
+            if sv_sock.default_property[:] == (0, 0, 0):  # was unchanged by user
+                sv_sock.default_property = self._sock.default_value
+                sv_sock.use_prop = True
+
+        elif sv_sock.bl_idname == 'SvObjectSocket':
+            if sv_sock.default_property is None:  # was unchanged by user
+                sv_sock.object_ref_pointer = self._sock.default_value
+                sv_sock.use_prop = True
+
+        elif hasattr(sv_sock, 'default_property'):
+            sv_default = BPYProperty(sv_sock, 'default_property').default_value
+            if isinstance(sv_sock.default_property, bpy.types.bpy_prop_array):
+                current = sv_sock.default_property[:]
+            else:
+                current = sv_sock.default_property
+            if sv_default != current:
+                return  # the value was already changed by user
+            sv_sock.default_property = self._sock.default_value
+            sv_sock.use_prop = True
+
+    @classmethod
+    def from_identifier(cls, sockets, identifier):
+        for s in sockets:
+            if s.identifier == identifier:
+                return cls(s)
+        raise LookupError(f"Socket with {identifier=} was not found")
+
+    @property
+    def attribute_type(self):
+        return self._attr_types[self._sock.type]
+
+    @property
+    def sverchok_type(self):
+        if (sv_type := self._sv_types.get(self._sock.type)) is None:
+            return 'SvStringsSocket'
+        return sv_type
+
+    @property
+    def display_shape(self):
+        return self._sock.display_shape
 
 
 class BPYProperty:

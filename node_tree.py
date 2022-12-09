@@ -726,12 +726,15 @@ class SverchCustomTreeNode(UpdateNodes, NodeUtils, NodeDependencies, NodeDocumen
         generated automatically. To display elements specific to certain nodes
         use `SverchCustomTreeNode.sv_draw_buttons`."""
         if self.id_data.bl_idname == SverchCustomTree.bl_idname:
-            row = layout.row(align=True)
+            row = None  # should be initialized lazily to safe space
             if self.is_animation_dependent:
+                row = row or layout.row(align=True)
                 row.prop(self, 'is_animatable', icon='ANIM', icon_only=True)
             if self.is_scene_dependent:
+                row = row or layout.row(align=True)
                 row.prop(self, 'is_interactive', icon='SCENE_DATA', icon_only=True)
             if self.is_animation_dependent or self.is_scene_dependent:
+                row = row or layout.row(align=True)
                 row.prop(self, 'refresh', icon='FILE_REFRESH')
         self.sv_draw_buttons(context, layout)
 

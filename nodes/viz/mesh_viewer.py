@@ -192,7 +192,11 @@ class SvMeshViewer(Show3DProperties, SvViewerNode, SverchCustomTreeNode, bpy.typ
 
 
         # regenerate object data blocks
-        self.regenerate_objects([self.base_data_name], [d.mesh for d in self.mesh_data], [self.collection])
+        self.regenerate_objects([self.base_data_name],
+                                [d.mesh for d in self.mesh_data],
+                                [self.collection],
+                                to_show=[self.id_data.sv_show and self.show_objects]
+                                )
         [setattr(prop.obj, 'matrix_local', m) for prop, m in zip(self.object_data, cycle(obj_matrices))]
         [setattr(prop.obj, 'show_wire', self.show_wireframe) for prop in self.object_data]
 

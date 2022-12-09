@@ -199,7 +199,10 @@ class SvDupliInstancesMK5(SverchCustomTreeNode, bpy.types.Node, SvViewerNode):
                 faces,
                 None,
                 self.fast_mesh_update)
-            self.regenerate_objects([self.base_data_name], [d.mesh for d in self.mesh_data], [self.collection])
+            self.regenerate_objects([self.base_data_name],
+                                    [d.mesh for d in self.mesh_data],
+                                    [self.collection],
+                                    to_show=[self.id_data.sv_show and self.show_objects])
             ob = self.object_data[0].obj
 
             ob.instance_type = self.mode

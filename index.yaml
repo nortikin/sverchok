@@ -664,6 +664,7 @@
     - SvSurfaceViewerDrawNode
     - ---
     - SvMeshViewer
+    - SvGeoNodesViewerNode
     - SvCurveViewerNodeV28
     - SvPolylineViewerNode
     - SvTypeViewerNodeV28

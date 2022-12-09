@@ -13,11 +13,12 @@ from typing import List, Union
 import numpy as np
 
 import bpy
+from bpy.props import StringProperty
 from mathutils import Matrix
 
 from sverchok.data_structure import updateNode, update_with_kwargs, numpy_full_list, repeat_last
 from sverchok.utils.handle_blender_data import correct_collection_length, delete_data_block
-from sverchok.utils.sv_bmesh_utils import empty_bmesh, add_mesh_to_bmesh, bmesh_from_edit_mesh
+from sverchok.utils.sv_bmesh_utils import add_mesh_to_bmesh, bmesh_from_edit_mesh, EmptyBmesh
 
 
 class SvObjectData(bpy.types.PropertyGroup):
@@ -39,7 +40,8 @@ class SvObjectData(bpy.types.PropertyGroup):
                 self.obj = bpy.data.objects.new(name=name, object_data=data_block)
         else:
             # in case if data block was changed
-            self.obj.data = data_block
+            if self.obj.data != data_block:
+                self.obj.data = data_block  # EXPENSIVE
 
     def select(self):
         """Just select the object"""
@@ -82,6 +84,13 @@ class SvObjectData(bpy.types.PropertyGroup):
         if real_name != name:
             self.obj.name = name
 
+    def check_object_show_state(self, to_show: bool):
+        # hide_viewport is faster than hide_set and hide_viewport is stable
+        # when objects are assigned to a collection
+        hide = not to_show
+        if self.obj.hide_viewport != hide:
+            self.obj.hide_viewport = hide
+
     def recreate_object(self, object_template: bpy.types.Object = None):
         """
         Object will be replaced by new object recreated from scratch or copied from given object_template if given
@@ -98,6 +107,13 @@ class SvObjectData(bpy.types.PropertyGroup):
         else:
             new_obj = bpy.data.objects.new(name=obj_name, object_data=data_block)
         self.obj = new_obj
+
+    def copy(self) -> bpy.types.Object:
+        """Return copy of object which is assigned to a collection"""
+        obj = self.obj.copy()
+        for collection in self.obj.users_collection:
+            collection.objects.link(obj)
+        return obj
 
     def remove_data(self):
         """Should be called before removing item"""
@@ -139,7 +155,9 @@ class BlenderObjects:
                            object_names: List[str],
                            data_blocks,
                            collections: List[bpy.types.Collection] = None,
-                           object_template: List[bpy.types.Object] = None):
+                           object_template: List[bpy.types.Object] = None,
+                           to_show: list[bool] = None,
+                           ):
         """
         It will generate new or remove old objects, number of generated objects will be equal to given data_blocks
         Object_names list can contain one name. In this case Blender will add suffix to next objects (.001, .002,...)
@@ -148,19 +166,29 @@ class BlenderObjects:
         :param data_blocks: nearly any data blocks - mesh, curves, lights ...
         :param object_names: usually equal to name of data block
         :param data_blocks: for now it is support only be bpy.types.Mesh
+        :param to_show: whether to show objects in viewport.
         """
         if collections is None:
             collections = [None]
         if object_template is None:
             object_template = [None]
+        if to_show is None:
+            to_show = [True]
 
         correct_collection_length(self.object_data, len(data_blocks))
         prop_group: SvObjectData
-        input_data = zip(self.object_data, data_blocks, cycle(object_names), cycle(collections), cycle(object_template))
-        for prop_group, data_block, name, collection, template in input_data:
+        input_data = zip(self.object_data,
+                         data_blocks,
+                         cycle(object_names),
+                         cycle(collections),
+                         cycle(object_template),
+                         cycle(to_show),
+                         )
+        for prop_group, data_block, name, collection, template, show in input_data:
             prop_group.ensure_object(data_block, name, template)
             prop_group.ensure_link_to_collection(collection)
             prop_group.check_object_name(name)
+            prop_group.check_object_show_state(show)
 
     def draw_object_properties(self, layout):
         """Should be used for adding hide, select, render objects properties"""
@@ -202,7 +230,7 @@ class SvMeshData(bpy.types.PropertyGroup):
                     if matrix:
                         bm.transform(matrix)
             else:
-                with empty_bmesh(False) as bm:
+                with EmptyBmesh(False) as bm:
                     add_mesh_to_bmesh(bm, verts, edges, faces, update_indexes=False, update_normals=False)
                     if matrix:
                         bm.transform(matrix)
@@ -255,6 +283,9 @@ class SvMeshData(bpy.types.PropertyGroup):
         """
         verts = np.array(verts, dtype=np.float32)  # todo will be this fast if it is already array float 32?
         self.mesh.vertices.foreach_set('co', np.ravel(verts))
+
+    def copy(self) -> bpy.types.Mesh:
+        return self.mesh.copy()
 
     def remove_data(self):
         """
@@ -427,6 +458,100 @@ class SvViewerNode(BlenderObjects):
             return self.bl_label
 
 
+class SvViewerLightNode(BlenderObjects):
+    """
+    Mixin for all nodes which displays any objects in viewport
+    """
+
+    is_active: bpy.props.BoolProperty(
+        name='Live',
+        default=True,
+        update=updateNode,
+        description="When enabled this will process incoming data")
+
+    base_data_name: bpy.props.StringProperty(
+        default='Alpha',
+        description='stores the mesh name found in the object, this mesh is instanced',
+        update=updateNode)
+
+    def draw_viewer_properties(self, layout):
+        col = layout.column(align=True)
+        row = col.row()
+
+        row_show = row.row(align=True)
+        row_show.prop(self, 'is_active', toggle=True)
+        row_show.prop(self, 'show_objects', toggle=True, text='',
+                      icon=f'HIDE_{"OFF" if self.show_objects else "ON"}')
+
+        row.operator(SvShowFlyPanelOpeartor.bl_idname, text="Options")
+
+    def draw_buttons_fly(self, layout):
+        col = layout.column()
+        row = col.row()
+
+        row_show = row.row(align=True)
+
+        row_show.prop(self, 'is_active', toggle=True)
+        row_show.prop(self, 'show_objects', toggle=True, text='',
+                      icon=f'HIDE_{"OFF" if self.show_objects else "ON"}')
+        row = row.row(align=True)
+        row.prop(self, 'selectable_objects', toggle=True, text='',
+                    icon=f"RESTRICT_SELECT_{'OFF' if self.selectable_objects else 'ON'}")
+        row.prop(self, 'render_objects', toggle=True, text='',
+                    icon=f"RESTRICT_RENDER_{'OFF' if self.render_objects else 'ON'}")
+
+        row = col.row(align=True)
+        row.prop(self, "base_data_name", text="", icon='OUTLINER_OB_MESH')
+        op = row.operator(SvGenerateRandomObjectName.bl_idname, text='', icon='FILE_REFRESH')
+        op.node_name = self.name
+        op.tree_name = self.id_data.name
+        row = col.row(align=True)
+        row.scale_y = 2
+        op = row.operator('node.sv_select_objects', text="Select")
+        op.node_name = self.name
+        op.tree_name = self.id_data.name
+        op = row.operator(SvBakeObjectsOperator.bl_idname, text="Bake")
+        op.node_name = self.name
+        op.tree_name = self.id_data.name
+
+    def init_viewer(self):
+        """Should be called from descendant class"""
+        self.base_data_name = bpy.context.scene.sv_object_names.get_available_name()
+        self.use_custom_color = True
+
+        self.outputs.new('SvObjectSocket', "Objects")
+
+    def sv_copy(self, other):
+        """
+        Regenerate object names, and clean data
+        Use super().sv_copy(other) to override this method
+        """
+        self.base_data_name = bpy.context.scene.sv_object_names.get_available_name()
+        # object and mesh lists should be clear other wise two nodes would have links to the same objects
+        self.object_data.clear()
+
+    def sv_free(self):
+        for data in self.object_data:
+            data.remove_data()
+
+    def bake(self):
+        raise NotImplemented
+
+    def show_viewport(self, is_show: bool):
+        """It should be called by node tree to show/hide objects"""
+        if not self.show_objects:
+            # just ignore request
+            pass
+        else:
+            self.show_objects_update(None, is_show)
+
+    def draw_label(self):
+        if self.hide:
+            return f"{self.bl_label[:2]}V {self.base_data_name}"
+        else:
+            return self.bl_label
+
+
 class SvObjectNames(bpy.types.PropertyGroup):
     available_name_number: bpy.props.IntProperty(default=0, min=0, max=24)
     greek_alphabet = [
@@ -453,7 +578,41 @@ class SvObjectNames(bpy.types.PropertyGroup):
         return ''.join(random.sample(set(string.ascii_uppercase), 6))
 
 
-class SvSelectObjects(bpy.types.Operator):
+class SearchNode:
+    node_name: StringProperty()
+    tree_name: StringProperty()
+
+    @property
+    def node(self):
+        if not hasattr(self, '_node'):
+            self._node = bpy.data.node_groups[self.tree_name].nodes[self.node_name]
+        return self._node
+
+    def invoke(self, context, event):
+        if hasattr(context, 'node'):
+            self._node = context.node
+        return self.execute(context)
+
+
+class SvShowFlyPanelOpeartor(bpy.types.Operator):
+    """Shows extra node options"""
+    bl_idname = 'node.sv_show_fly_panel'
+    bl_label = "Node Options"
+    bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
+
+    def execute(self, context):
+        return {'FINISHED'}
+
+    def invoke(self, context, event):
+        self.node = context.node
+        wm = context.window_manager
+        return wm.invoke_popup(self, width=200)
+
+    def draw(self, context):
+        self.node.draw_buttons_fly(self.layout)
+
+
+class SvSelectObjects(SearchNode, bpy.types.Operator):
     """It calls `select` method of every item in `object_data` collection of node"""
     bl_idname = 'node.sv_select_objects'
     bl_label = "Select objects"
@@ -465,16 +624,12 @@ class SvSelectObjects(bpy.types.Operator):
 
     def execute(self, context):
         prop: SvObjectData
-        for prop in context.node.object_data:
+        for prop in self.node.object_data:
             prop.select()
         return {'FINISHED'}
 
-    @classmethod
-    def poll(cls, context):
-        return hasattr(context.node, 'object_data')
 
-
-class SvGenerateRandomObjectName(bpy.types.Operator):
+class SvGenerateRandomObjectName(SearchNode, bpy.types.Operator):
     """
     It calls get_random_name fo sv_object_names property in scene
     and assign it to base_data_name property of node
@@ -488,12 +643,8 @@ class SvGenerateRandomObjectName(bpy.types.Operator):
         return "Generate random name"
 
     def execute(self, context):
-        context.node.base_data_name = bpy.context.scene.sv_object_names.get_random_name()
+        self.node.base_data_name = bpy.context.scene.sv_object_names.get_random_name()
         return {'FINISHED'}
-
-    @classmethod
-    def poll(cls, context):
-        return hasattr(context.node, 'base_data_name')
 
 
 class SvCreateMaterial(bpy.types.Operator):
@@ -517,8 +668,29 @@ class SvCreateMaterial(bpy.types.Operator):
         return hasattr(context.node, 'material')
 
 
-module_classes = [SvObjectData, SvMeshData, SvSelectObjects, SvObjectNames, SvGenerateRandomObjectName, SvLightData,
-                  SvCurveData, SvCreateMaterial]
+class SvBakeObjectsOperator(SearchNode, bpy.types.Operator):
+    """Create object copies independent of the node"""
+    bl_idname = 'node.sv_bake_objects'
+    bl_label = "Bake objects"
+    bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
+
+    def execute(self, context):
+        self.node.bake()
+        return {'FINISHED'}
+
+
+module_classes = [
+    SvObjectData,
+    SvMeshData,
+    SvSelectObjects,
+    SvObjectNames,
+    SvGenerateRandomObjectName,
+    SvLightData,
+    SvCurveData,
+    SvCreateMaterial,
+    SvShowFlyPanelOpeartor,
+    SvBakeObjectsOperator,
+]
 
 
 def register():
