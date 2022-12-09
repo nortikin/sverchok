@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Geo Nodes Viewer &mdash; Sverchok 1, 2, 0 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+    <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Obj instancer" href="instancer.html" />
+    <link rel="prev" title="Empty out" href="empty_out.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../main.html" class="icon icon-home"> Sverchok
+            <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                1, 2, 0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../introduction/introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_interface/user_interface.html">User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tree_evaluation_system.html">Node tree evaluation system</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data_structure/data_structure_index.html">Data structure</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../nodes.html">Nodes</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../generator/generator_index.html">Generators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generators_extended/generators_extended_index.html">Generators Extended</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../curve/curve_index.html">Curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../surface/surface_index.html">Surfaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../field/field_index.html">Fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../solid/solid_index.html">Solids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spatial/spatial_index.html">Spatial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../transforms/transforms_index.html">Transforms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../analyzer/analyzer_index.html">Analyzers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modifier_change/modifier_change_index.html">Modifier Change</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modifier_make/modifier_make_index.html">Modifier Make</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../CAD/CAD_index.html">CAD</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../number/number_index.html">Number</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../vector/vector_index.html">Vector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../matrix/matrix_index.html">Matrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../quaternion/quaternion_index.html">Quaternion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../color/color_index.html">Color</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../logic/logic_index.html">Logic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_main/list_main_index.html">List Main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_struct/list_struct_index.html">List Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_masks/list_masks_index.html">List Masks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_mutators/list_mutators_index.html">List Mutators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../dictionary/dictionary_index.html">Dictionary</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="viz_index.html">Viz</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="console_node.html">Console Node</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dupli_instances_lite.html">Dupli Instancer Lite</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dupli_instances_mk5.html">Dupli Instancer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="empty_out.html">Empty out</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Geo Nodes Viewer</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#category">Category</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#buttons">Buttons</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#outputs">Outputs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#examples">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="instancer.html">Obj instancer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="light_viewer.html">Light viewer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mesh_viewer.html">Mesh Viewer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="polyline_viewer.html">Polyline Viewer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vd_matrix.html">Matrix View</a></li>
+<li class="toctree-l3"><a class="reference internal" href="viewer_2d.html">Viewer 2D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="viewer_bezier_curve.html">Bezier Curve Out</a></li>
+<li class="toctree-l3"><a class="reference internal" href="viewer_curves.html">Curve Viewer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="viewer_draw_curve.html">Viewer Draw Curve</a></li>
+<li class="toctree-l3"><a class="reference internal" href="viewer_draw_mk4.html">Viewer Draw</a></li>
+<li class="toctree-l3"><a class="reference internal" href="viewer_draw_surface.html">Viewer Draw Surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="viewer_gp.html">GreasePencil Viewer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="viewer_idx28.html">Viewer Index+</a></li>
+<li class="toctree-l3"><a class="reference internal" href="viewer_metaball.html">Metaball Out</a></li>
+<li class="toctree-l3"><a class="reference internal" href="viewer_nurbs_curve.html">NURBS Curve Out</a></li>
+<li class="toctree-l3"><a class="reference internal" href="viewer_nurbs_surface.html">NURBS Surface Out</a></li>
+<li class="toctree-l3"><a class="reference internal" href="viewer_skin.html">Skin Mesher</a></li>
+<li class="toctree-l3"><a class="reference internal" href="viewer_texture.html">Texture Viewer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="viewer_texture_lite.html">Texture Viewer Lite</a></li>
+<li class="toctree-l3"><a class="reference internal" href="viewer_typography.html">Typography Viewer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="viewer_waveform_output.html">Viewer Waveform</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../text/text_index.html">Text</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../script/script_index.html">Script</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scene/scene_index.html">Scene</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../object_nodes/object_nodes_index.html">Object</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../layout/layout_index.html">Layout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../network/network_index.html">Network</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pulga_physics/pulga_physics_index.html">Pulga Physics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../exchange/exchange_index.html">Exchange</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../svg/svg_index.html">SVG</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing/contributing_to_sverchok.html">Contributing to sverchok</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../main.html">Sverchok</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../main.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="../../nodes.html">Nodes</a></li>
+          <li class="breadcrumb-item"><a href="viz_index.html">Viz</a></li>
+      <li class="breadcrumb-item active">Geo Nodes Viewer</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/nodes/viz/geo_nodes_viewer.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="geo-nodes-viewer">
+<h1>Geo Nodes Viewer<a class="headerlink" href="#geo-nodes-viewer" title="Permalink to this heading">¶</a></h1>
+<section id="functionality">
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<p>The node generates object with given mesh and applies given Geometry Nodes
+modifier. The use case of this node is to create efficient viewers with help of
+Geometry Nodes. Currently it can replace more than tens of nodes which generate
+mesh, curves or instances (see <a class="reference internal" href="#examples">Examples</a> section).</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Usually add-on developers use Blender Python API to generate different
+types of data blocks. But for the last several years Geometry Nodes became
+much more powerful than Blender API mean while the API remained unchanged.
+So instead of hardcoding and improving existing viewers it’s a logical step
+to delegate this to users. Using this node is much more efficient and
+flexible than existing users except Mesh Viewer because they share the same
+code to generate objects.</p>
+</div>
+<p>When a Geometry Nodes node group is assigned to the node it generates extra
+sockets for each extra input of the node group. If the generated sockets are
+not connected they pass single value otherwise they pass a field of values if
+possible. The domain of field can be selected by a property drawn on a connected
+socket (only for Vertices, Values and Colors). If, after assigning a node group,
+its input sockets were changed the node input sockets can be updated by a button
+drawn near the name of the tree.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Important thing to remember is that only real data is vertices, edges and
+faces. Everything else is just attributes of this elements or single values.
+It means if you want to pass certain amount of data it should be controlled
+by number of vertices, edges or faces. You can’t create an object by the node
+and copy it into certain position because number of passed positions is
+limited either by the number of vertices or edges or faces. See the
+<a class="reference internal" href="#examples">Examples</a> the way of how to achieve this.</p>
+</div>
+<p>The node adds Geometry Nodes modifier to generated geometry. It’s possible to
+add more modifiers to the object. But if the name of modifier will be changed
+the node wont be able to distinguish it and will create a new one.</p>
+</section>
+<section id="category">
+<h2>Category<a class="headerlink" href="#category" title="Permalink to this heading">¶</a></h2>
+<p>Viz -&gt; Geo Nodes Viewer</p>
+</section>
+<section id="inputs">
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>Verts</p></li>
+<li><p>Edges</p></li>
+<li><p>Faces</p></li>
+<li><p>arbitrary inputs</p></li>
+</ul>
+</section>
+<section id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
+<dl class="simple">
+<dt>Live Update</dt><dd><p>The node only works when the option is on.</p>
+</dd>
+<dt>Show Objects</dt><dd><p>Similar to Hide in Viewport option in the Outliner.</p>
+</dd>
+<dt>Select Objects</dt><dd><p>To make objects selectable.</p>
+</dd>
+<dt>Render Objects</dt><dd><p>Similar to Disable in Renders option in th Outliner.</p>
+</dd>
+<dt>Base Data Name</dt><dd><p>Base name for generated objects.</p>
+</dd>
+<dt>Modifier</dt><dd><p>Geometry Nodes modifier to assign to generated objects</p>
+</dd>
+<dt>Fast Mesh Update</dt><dd><p>It tries to update mesh in fast way. It can’t update mesh properly in
+some conner cases. So it should be disabled.</p>
+</dd>
+</dl>
+</section>
+<section id="buttons">
+<h2>Buttons<a class="headerlink" href="#buttons" title="Permalink to this heading">¶</a></h2>
+<dl>
+<dt>Random Name</dt><dd><p>Generate random for Base Data Name property</p>
+</dd>
+<dt>Select</dt><dd><p>Select generated objects</p>
+</dd>
+<dt>Bake</dt><dd><p>When node is deleted it is deleted with generated mesh. Use bake button to
+save the output of the node. It will generate copy of objects disconnected
+of the node. The same can be done with Bake All operator.</p>
+</dd>
+<dt>Add new Geometry Nodes tree (shown when tree is not chosen)</dt><dd><p>It asks name of a tree and create instance of Geometry Nodes tree.</p>
+</dd>
+<dt>Update Node Sockets (shown if there is GN tree)</dt><dd><p>It generates or removes node input sockets according to input sockets of the
+Geometry Nodes node group. Should be called when the node group inputs were
+changed.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Update socket is optional step. If node input sockets does not match to
+GN tree inputs they will be just ignored. So it’s possible add extra
+inputs to GN tree and all nodes which already use the tree will continue
+to work even if new inputs are not presented in the inputs of the nodes.</p>
+</div>
+</dd>
+<dt>Edit Geometry Nodes Tree (shown if there is GN tree)</dt><dd><p>Switches current Sverchok tree editor to Geometry Nodes editor to edit the
+tree of the node. You can use <code class="docutils literal notranslate"><span class="pre">Tab</span></code> button similar to how to edit group
+nodes.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When you finished with editing of Geometry Nodes tree you can return back
+to Sverchok by pressing dedicated button in right top corner of the tree
+editor.</p>
+<img alt="https://user-images.githubusercontent.com/28003269/206369211-eee956cb-5300-412f-abe5-2fe311d444b5.png" src="https://user-images.githubusercontent.com/28003269/206369211-eee956cb-5300-412f-abe5-2fe311d444b5.png" />
+</div>
+</dd>
+</dl>
+</section>
+<section id="outputs">
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>Objects</p></li>
+</ul>
+</section>
+<section id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
+<figure class="align-default" id="id1">
+<a class="reference internal image-reference" href="https://user-images.githubusercontent.com/28003269/193779986-37096119-7ccc-4f1f-9fc2-31e46de38b54.png"><img alt="https://user-images.githubusercontent.com/28003269/193779986-37096119-7ccc-4f1f-9fc2-31e46de38b54.png" src="https://user-images.githubusercontent.com/28003269/193779986-37096119-7ccc-4f1f-9fc2-31e46de38b54.png" style="width: 700px;" /></a>
+<figcaption>
+<p><span class="caption-text">Using the node as a Mesh Viewer</span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+<figure class="align-default" id="id2">
+<a class="reference internal image-reference" href="https://user-images.githubusercontent.com/28003269/193781623-5bce566f-1bf3-4cc7-8830-3eee85099de8.png"><img alt="https://user-images.githubusercontent.com/28003269/193781623-5bce566f-1bf3-4cc7-8830-3eee85099de8.png" src="https://user-images.githubusercontent.com/28003269/193781623-5bce566f-1bf3-4cc7-8830-3eee85099de8.png" style="width: 700px;" /></a>
+<figcaption>
+<p><span class="caption-text">Recreating logic of current Curve Viewer node</span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+<figure class="align-default" id="id3">
+<a class="reference internal image-reference" href="https://user-images.githubusercontent.com/28003269/193784538-eb88831a-2e3e-4957-8fc5-03e94947c480.png"><img alt="https://user-images.githubusercontent.com/28003269/193784538-eb88831a-2e3e-4957-8fc5-03e94947c480.png" src="https://user-images.githubusercontent.com/28003269/193784538-eb88831a-2e3e-4957-8fc5-03e94947c480.png" style="width: 700px;" /></a>
+<figcaption>
+<p><span class="caption-text">Polyline viewer. Extra properties can be added in GN tree optionaly.</span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+<figure class="align-default" id="id4">
+<a class="reference internal image-reference" href="https://user-images.githubusercontent.com/28003269/193793969-0ba2eb45-1587-4d96-9858-ae50ed6ecd92.png"><img alt="https://user-images.githubusercontent.com/28003269/193793969-0ba2eb45-1587-4d96-9858-ae50ed6ecd92.png" src="https://user-images.githubusercontent.com/28003269/193793969-0ba2eb45-1587-4d96-9858-ae50ed6ecd92.png" style="width: 700px;" /></a>
+<figcaption>
+<p><span class="caption-text">Typography Viewer.</span><a class="headerlink" href="#id4" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+<figure class="align-default" id="id5">
+<a class="reference internal image-reference" href="https://user-images.githubusercontent.com/28003269/193798678-df1ba9e9-569a-4a3e-bd69-2911f8b67372.png"><img alt="https://user-images.githubusercontent.com/28003269/193798678-df1ba9e9-569a-4a3e-bd69-2911f8b67372.png" src="https://user-images.githubusercontent.com/28003269/193798678-df1ba9e9-569a-4a3e-bd69-2911f8b67372.png" style="width: 700px;" /></a>
+<figcaption>
+<p><span class="caption-text">Skin Masher Viewer.</span><a class="headerlink" href="#id5" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+<figure class="align-default" id="id6">
+<a class="reference internal image-reference" href="https://user-images.githubusercontent.com/28003269/193799291-010ca655-8faf-4e8c-8ac6-4b33876bf2bd.png"><img alt="https://user-images.githubusercontent.com/28003269/193799291-010ca655-8faf-4e8c-8ac6-4b33876bf2bd.png" src="https://user-images.githubusercontent.com/28003269/193799291-010ca655-8faf-4e8c-8ac6-4b33876bf2bd.png" style="width: 700px;" /></a>
+<figcaption>
+<p><span class="caption-text">The Geometry Node group of Skin Masher Viewer also can be used for generating
+Metaballs. It does not generate exectly metaballs but the result looks close.</span><a class="headerlink" href="#id6" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+<figure class="align-default" id="id7">
+<a class="reference internal image-reference" href="https://user-images.githubusercontent.com/28003269/193802557-d8187b64-9132-41fe-b0ea-8c3b015e4882.png"><img alt="https://user-images.githubusercontent.com/28003269/193802557-d8187b64-9132-41fe-b0ea-8c3b015e4882.png" src="https://user-images.githubusercontent.com/28003269/193802557-d8187b64-9132-41fe-b0ea-8c3b015e4882.png" style="width: 700px;" /></a>
+<figcaption>
+<p><span class="caption-text">Bezier and NURBS Curve Out Viewers.</span><a class="headerlink" href="#id7" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+<figure class="align-default" id="id8">
+<a class="reference internal image-reference" href="https://user-images.githubusercontent.com/28003269/193803850-5ded8fe4-db2c-420e-9b9e-e0fda144bb08.png"><img alt="https://user-images.githubusercontent.com/28003269/193803850-5ded8fe4-db2c-420e-9b9e-e0fda144bb08.png" src="https://user-images.githubusercontent.com/28003269/193803850-5ded8fe4-db2c-420e-9b9e-e0fda144bb08.png" style="width: 700px;" /></a>
+<figcaption>
+<p><span class="caption-text">NURBS Surface Out Viewer.</span><a class="headerlink" href="#id8" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+<figure class="align-default" id="id9">
+<a class="reference internal image-reference" href="https://user-images.githubusercontent.com/28003269/193820713-d664c769-6701-4473-8c71-e5d125f03df7.png"><img alt="https://user-images.githubusercontent.com/28003269/193820713-d664c769-6701-4473-8c71-e5d125f03df7.png" src="https://user-images.githubusercontent.com/28003269/193820713-d664c769-6701-4473-8c71-e5d125f03df7.png" style="width: 700px;" /></a>
+<figcaption>
+<p><span class="caption-text">Object Instancer node. Unlink original node Geo Nodes Viewer does not
+generate extra objects and all meshes are generated in single object. This
+is much more efficient approach.</span><a class="headerlink" href="#id9" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+<figure class="align-default" id="id10">
+<a class="reference internal image-reference" href="https://user-images.githubusercontent.com/28003269/193822290-dcaa388d-7ec0-46f9-b254-3a4f08d3a01b.png"><img alt="https://user-images.githubusercontent.com/28003269/193822290-dcaa388d-7ec0-46f9-b254-3a4f08d3a01b.png" src="https://user-images.githubusercontent.com/28003269/193822290-dcaa388d-7ec0-46f9-b254-3a4f08d3a01b.png" style="width: 700px;" /></a>
+<figcaption>
+<p><span class="caption-text">Dupli Instanser node.</span><a class="headerlink" href="#id10" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="empty_out.html" class="btn btn-neutral float-left" title="Empty out" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="instancer.html" class="btn btn-neutral float-right" title="Obj instancer" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2014...2022, sverchok team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
