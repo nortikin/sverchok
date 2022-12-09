@@ -173,7 +173,10 @@ class SvNurbsCurvePoints(SvNurbsCurveGoal):
 
     def calc_alphas(self, solver, us):
         p = solver.degree
-        alphas = [solver.basis.fraction(k,p, solver.curve_weights)(us) for k in range(solver.n_cpts)]
+        if solver.is_rational():
+            alphas = [solver.basis.fraction(k,p, solver.curve_weights)(us) for k in range(solver.n_cpts)]
+        else:
+            alphas = [solver.basis.function(k,p)(us) for k in range(solver.n_cpts)]
         alphas = np.array(alphas) # (n_cpts, n_points)
         return alphas
 
@@ -638,10 +641,34 @@ class SvNurbsCurveSolver(SvCurve):
             self.degree = degree
         self.ndim = ndim
         self.n_cpts = None
-        self.curve_weights = None
+        self._curve_weights = None
+        self._is_rational = None
         self.knotvector = None
         self.goals = []
         self.A = self.B = None
+
+    @staticmethod
+    def _check_is_rational(weights):
+        w, W = weights.min(), weights.max()
+        return abs(W/w - 1.0) &gt; 1e-6
+
+    @property
+    def curve_weights(self):
+        return self._curve_weights
+    
+    @curve_weights.setter
+    def curve_weights(self, weights):
+        if weights is None:
+            self._is_rational = False
+        else:
+            weights = np.asarray(weights)
+            self._is_rational = SvNurbsCurveSolver._check_is_rational(weights)
+        self._curve_weights = weights
+
+    def is_rational(self):
+        if self._is_rational is None:
+            self._is_rational = SvNurbsCurveSolver._check_is_rational(self._curve_weights)
+        return self._is_rational
 
     def copy(self):
         solver = SvNurbsCurveSolver(degree=self.degree, src_curve=self.src_curve)
@@ -1602,7 +1629,10 @@ specified values of parameter.</p></div>
 
     def calc_alphas(self, solver, us):
         p = solver.degree
-        alphas = [solver.basis.fraction(k,p, solver.curve_weights)(us) for k in range(solver.n_cpts)]
+        if solver.is_rational():
+            alphas = [solver.basis.fraction(k,p, solver.curve_weights)(us) for k in range(solver.n_cpts)]
+        else:
+            alphas = [solver.basis.function(k,p)(us) for k in range(solver.n_cpts)]
         alphas = np.array(alphas) # (n_cpts, n_points)
         return alphas
 
@@ -1715,7 +1745,10 @@ def single(u, point, weight=None, relative=False):
 </summary>
 <pre><code class="python">def calc_alphas(self, solver, us):
     p = solver.degree
-    alphas = [solver.basis.fraction(k,p, solver.curve_weights)(us) for k in range(solver.n_cpts)]
+    if solver.is_rational():
+        alphas = [solver.basis.fraction(k,p, solver.curve_weights)(us) for k in range(solver.n_cpts)]
+    else:
+        alphas = [solver.basis.function(k,p)(us) for k in range(solver.n_cpts)]
     alphas = np.array(alphas) # (n_cpts, n_points)
     return alphas</code></pre>
 </details>
@@ -2186,10 +2219,34 @@ curve = solver.solve()
             self.degree = degree
         self.ndim = ndim
         self.n_cpts = None
-        self.curve_weights = None
+        self._curve_weights = None
+        self._is_rational = None
         self.knotvector = None
         self.goals = []
         self.A = self.B = None
+
+    @staticmethod
+    def _check_is_rational(weights):
+        w, W = weights.min(), weights.max()
+        return abs(W/w - 1.0) &gt; 1e-6
+
+    @property
+    def curve_weights(self):
+        return self._curve_weights
+    
+    @curve_weights.setter
+    def curve_weights(self, weights):
+        if weights is None:
+            self._is_rational = False
+        else:
+            weights = np.asarray(weights)
+            self._is_rational = SvNurbsCurveSolver._check_is_rational(weights)
+        self._curve_weights = weights
+
+    def is_rational(self):
+        if self._is_rational is None:
+            self._is_rational = SvNurbsCurveSolver._check_is_rational(self._curve_weights)
+        return self._is_rational
 
     def copy(self):
         solver = SvNurbsCurveSolver(degree=self.degree, src_curve=self.src_curve)
@@ -2391,6 +2448,21 @@ curve = solver.solve()
 <div class="desc"></div>
 </dd>
 </dl>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.curve_weights"><code class="name">var <span class="ident">curve_weights</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def curve_weights(self):
+    return self._curve_weights</code></pre>
+</details>
+</dd>
+</dl>
 <h3>Methods</h3>
 <dl>
 <dt id="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.add_goal"><code class="name flex">
@@ -2466,6 +2538,21 @@ curve = solver.solve()
 <pre><code class="python">def guess_n_control_points(self):
     n_equations = sum(g.get_n_defined_control_points() for g in self.goals)
     return n_equations</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.is_rational"><code class="name flex">
+<span>def <span class="ident">is_rational</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def is_rational(self):
+    if self._is_rational is None:
+        self._is_rational = SvNurbsCurveSolver._check_is_rational(self._curve_weights)
+    return self._is_rational</code></pre>
 </details>
 </dd>
 <dt id="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.set_curve_params"><code class="name flex">
@@ -2545,7 +2632,7 @@ curve = solver.solve()
 </details>
 </dd>
 <dt id="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.solve_ex"><code class="name flex">
-<span>def <span class="ident">solve_ex</span></span>(<span>self, problem_types={'UNDERDETERMINED', 'OVERDETERMINED', 'WELLDETERMINED'}, implementation='NATIVE', logger=None)</span>
+<span>def <span class="ident">solve_ex</span></span>(<span>self, problem_types={'OVERDETERMINED', 'WELLDETERMINED', 'UNDERDETERMINED'}, implementation='NATIVE', logger=None)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -2904,9 +2991,11 @@ def single(u, tangent, weight=None, relative=False):
 <li><code><a title="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.PROBLEM_WELLDETERMINED" href="#sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.PROBLEM_WELLDETERMINED">PROBLEM_WELLDETERMINED</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.add_goal" href="#sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.add_goal">add_goal</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.copy" href="#sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.copy">copy</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.curve_weights" href="#sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.curve_weights">curve_weights</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.get_knotvector" href="#sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.get_knotvector">get_knotvector</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.guess_curve_params" href="#sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.guess_curve_params">guess_curve_params</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.guess_n_control_points" href="#sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.guess_n_control_points">guess_n_control_points</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.is_rational" href="#sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.is_rational">is_rational</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.set_curve_params" href="#sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.set_curve_params">set_curve_params</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.set_curve_weights" href="#sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.set_curve_weights">set_curve_weights</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.set_goals" href="#sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.set_goals">set_goals</a></code></li>
