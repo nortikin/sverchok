@@ -83,6 +83,11 @@ The parameters of the node are (in this order):
 .. image:: https://user-images.githubusercontent.com/14288520/190176111-16a43da1-2fd4-4b1c-bf74-78712bcd6a3f.png
   :target: https://user-images.githubusercontent.com/14288520/190176111-16a43da1-2fd4-4b1c-bf74-78712bcd6a3f.png
 
+-------------
+
+* **Display Curvature Comb**, **Comb Color**, **Comb Line Width**. Control
+  display of curve's curvature comb. Curvature comb is not shown by default.
+
 Operators
 ---------
 

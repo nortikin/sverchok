@@ -184,7 +184,7 @@ class SvCurveViewerDrawNode(SverchCustomTreeNode, bpy.types.Node):
             update = updateNode)
 
     comb_width : IntProperty(
-            name = "Combb Width",
+            name = "Comb Line Width",
             min = 1, default = 1,
             update = updateNode)
 
