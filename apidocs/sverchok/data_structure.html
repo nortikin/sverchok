@@ -1385,8 +1385,9 @@ def replace_socket(socket, new_type, new_name=None, new_pos=None):
         inputs = socket.node.inputs
         from_socket = socket.links[0].from_socket if socket.is_linked else None
 
+        identifier = socket.identifier  # It&#39;s important for Geo Nodes Viewer
         inputs.remove(socket)
-        new_socket = inputs.new(new_type, socket_name)
+        new_socket = inputs.new(new_type, socket_name, identifier=identifier)
         inputs.move(len(inputs)-1, socket_pos)
 
         if from_socket:
@@ -3460,8 +3461,9 @@ whether it is connected or not - <a href="https://developer.blender.org/T82318">
         inputs = socket.node.inputs
         from_socket = socket.links[0].from_socket if socket.is_linked else None
 
+        identifier = socket.identifier  # It&#39;s important for Geo Nodes Viewer
         inputs.remove(socket)
-        new_socket = inputs.new(new_type, socket_name)
+        new_socket = inputs.new(new_type, socket_name, identifier=identifier)
         inputs.move(len(inputs)-1, socket_pos)
 
         if from_socket:
