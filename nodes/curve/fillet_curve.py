@@ -19,6 +19,7 @@ from sverchok.utils.curve.fillet import (
         SMOOTH_POSITION, SMOOTH_TANGENT, SMOOTH_ARC, SMOOTH_BIARC, SMOOTH_QUAD, SMOOTH_NORMAL, SMOOTH_CURVATURE,
         fillet_polyline_from_curve, fillet_nurbs_curve
     )
+from sverchok.utils.handle_python_data import keep_enum_reference
 
 class SvFilletCurveNode(SverchCustomTreeNode, bpy.types.Node):
     """
@@ -60,6 +61,7 @@ class SvFilletCurveNode(SverchCustomTreeNode, bpy.types.Node):
         default = False,
         update = updateNode)
 
+    @keep_enum_reference
     def get_smooth_modes(self, context):
         items = []
         items.append((SMOOTH_POSITION, "0 - Position", "Connect segments with straight line segment", 0))
