@@ -22,11 +22,21 @@ from sverchok.utils.curve.bakery import CurveData
 from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
 from sverchok.ui.bgl_callback_3dview import callback_disable, callback_enable
 
-def draw_edges(shader, points, edges, line_width, color):
+def draw_edges(shader, points, edges, line_width, color, is_smooth=False):
+    if is_smooth:
+        draw_edges_colored(shader, points, edges, line_width, [color for i in range(len(points))])
+    else:
+        bgl.glLineWidth(line_width)
+        batch = batch_for_shader(shader, 'LINES', {"pos": points}, indices=edges)
+        shader.bind()
+        shader.uniform_float('color', color)
+        batch.draw(shader)
+        bgl.glLineWidth(1)
+
+def draw_edges_colored(shader, points, edges, line_width, colors):
     bgl.glLineWidth(line_width)
-    batch = batch_for_shader(shader, 'LINES', {"pos": points}, indices=edges)
+    batch = batch_for_shader(shader, 'LINES', {"pos": points, "color": colors}, indices=edges)
     shader.bind()
-    shader.uniform_float('color', color)
     batch.draw(shader)
     bgl.glLineWidth(1)
 
@@ -38,18 +48,30 @@ def draw_points(shader, points, size, color):
     batch.draw(shader)
     bgl.glPointSize(1)
 
+def draw_points_colored(shader, points, size, colors):
+    bgl.glPointSize(size)
+    batch = batch_for_shader(shader, 'POINTS', {"pos": points, "color": colors})
+    shader.bind()
+    batch.draw(shader)
+    bgl.glPointSize(1)
+
 def draw_curves(context, args):
     node, draw_inputs, v_shader, e_shader = args
+    is_smooth = node.draw_curvature
 
     bgl.glEnable(bgl.GL_BLEND)
 
     for item in draw_inputs:
 
         if node.draw_line:
-            draw_edges(e_shader, item.points, item.edges, node.line_width, node.line_color)
+            if node.draw_curvature:
+                colors = item.curvature_point_colors.tolist()
+                draw_edges_colored(e_shader, item.points, item.edges, node.line_width, colors)
+            else:
+                draw_edges(e_shader, item.points, item.edges, node.line_width, node.line_color, is_smooth)
 
         if node.draw_control_polygon and item.control_points is not None:
-            draw_edges(e_shader, item.control_points, item.control_polygon_edges, node.control_polygon_line_width, node.control_polygon_color)
+            draw_edges(e_shader, item.control_points, item.control_polygon_edges, node.control_polygon_line_width, node.control_polygon_color, is_smooth)
 
         if node.draw_control_points and item.control_points is not None:
             draw_points(v_shader, item.control_points, node.control_points_size, node.control_points_color)
@@ -58,10 +80,13 @@ def draw_curves(context, args):
             draw_points(v_shader, item.node_points, node.nodes_size, node.nodes_color)
 
         if node.draw_comb and item.comb_edges is not None:
-            draw_edges(e_shader, item.comb_points, item.comb_edges, node.comb_width, node.comb_color)
+            draw_edges(e_shader, item.comb_points, item.comb_edges, node.comb_width, node.comb_color, is_smooth)
 
         if node.draw_verts:
-            draw_points(v_shader, item.points, node.verts_size, node.verts_color)
+            if node.draw_curvature:
+                draw_points_colored(v_shader, item.points, node.verts_size, item.curvature_point_colors)
+            else:
+                draw_points(v_shader, item.points, node.verts_size, node.verts_color)
 
     bgl.glEnable(bgl.GL_BLEND)
 
@@ -193,6 +218,16 @@ class SvCurveViewerDrawNode(SverchCustomTreeNode, bpy.types.Node):
             min = 0.0, default = 1.0,
             update = updateNode)
 
+    draw_curvature: BoolProperty(
+        update=updateNode, name='Indicate Curvature', default=False)
+
+    curvature_color : FloatVectorProperty(
+            name = "Curvature Color",
+            default = (1.0, 0.1, 0.1, 1.0),
+            size = 4, min = 0.0, max = 1.0,
+            subtype = 'COLOR',
+            update = updateNode)
+
     def draw_buttons(self, context, layout):
         layout.prop(self, "activate", icon="HIDE_" + ("OFF" if self.activate else "ON"))
 
@@ -231,6 +266,10 @@ class SvCurveViewerDrawNode(SverchCustomTreeNode, bpy.types.Node):
         if self.draw_comb:
             grid.prop(self, 'comb_scale', text='Scale')
 
+        row = grid.row(align=True)
+        row.prop(self, 'draw_curvature', text="", icon='EVENT_C')
+        row.prop(self, 'curvature_color', text="")
+
         row = layout.row(align=True)
         row.scale_y = 4.0 if self.prefs_over_sized_buttons else 1
         self.wrapper_tracked_ui_draw_op(row, SvBakeCurveOp.bl_idname, icon='OUTLINER_OB_MESH', text="B A K E")
@@ -244,7 +283,10 @@ class SvCurveViewerDrawNode(SverchCustomTreeNode, bpy.types.Node):
     def draw_all(self, draw_inputs):
 
         v_shader = gpu.shader.from_builtin('3D_UNIFORM_COLOR')
-        e_shader = gpu.shader.from_builtin('3D_UNIFORM_COLOR')
+        if self.draw_curvature:
+            e_shader = gpu.shader.from_builtin('3D_SMOOTH_COLOR')
+        else:
+            e_shader = gpu.shader.from_builtin('3D_UNIFORM_COLOR')
 
         draw_data = {
                 'tree_name': self.id_data.name[:],
