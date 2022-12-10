@@ -96,6 +96,7 @@ class SurfaceData(object):
             self.draw_control_polygon = False
             self.draw_control_points = False
             self.draw_nodes = False
+            self.draw_comb = False
 
     def __init__(self, node, surface, resolution_u, resolution_v):
         self.node = node
