@@ -9,7 +9,7 @@ import numpy as np
 
 import bpy
 from mathutils import Matrix, Vector
-from bpy.props import StringProperty, BoolProperty, IntProperty, EnumProperty, FloatVectorProperty
+from bpy.props import StringProperty, BoolProperty, IntProperty, EnumProperty, FloatVectorProperty, FloatProperty
 import bgl
 import gpu
 from gpu_extras.batch import batch_for_shader
@@ -56,6 +56,9 @@ def draw_curves(context, args):
 
         if node.draw_nodes and item.node_points is not None:
             draw_points(v_shader, item.node_points, node.nodes_size, node.nodes_color)
+
+        if node.draw_comb and item.comb_edges is not None:
+            draw_edges(e_shader, item.comb_points, item.comb_edges, node.comb_width, node.comb_color)
 
         if node.draw_verts:
             draw_points(v_shader, item.points, node.verts_size, node.verts_color)
@@ -170,6 +173,26 @@ class SvCurveViewerDrawNode(SverchCustomTreeNode, bpy.types.Node):
             min = 1, default = 3,
             update = updateNode)
 
+    draw_comb: BoolProperty(
+        update=updateNode, name='Display curvature comb', default=False)
+
+    comb_color: FloatVectorProperty(
+            name = "Comb Color",
+            default = (1.0, 0.9, 0.1, 0.5),
+            size = 4, min = 0.0, max = 1.0,
+            subtype = 'COLOR',
+            update = updateNode)
+
+    comb_width : IntProperty(
+            name = "Comb Line Width",
+            min = 1, default = 1,
+            update = updateNode)
+
+    comb_scale : FloatProperty(
+            name = "Comb Scale",
+            min = 0.0, default = 1.0,
+            update = updateNode)
+
     def draw_buttons(self, context, layout):
         layout.prop(self, "activate", icon="HIDE_" + ("OFF" if self.activate else "ON"))
 
@@ -199,6 +222,14 @@ class SvCurveViewerDrawNode(SverchCustomTreeNode, bpy.types.Node):
         row.prop(self, 'draw_nodes', text="", icon='EVENT_N')
         row.prop(self, 'nodes_color', text="")
         row.prop(self, 'nodes_size', text="px")
+
+        row = grid.row(align=True)
+        row.prop(self, 'draw_comb', text="", icon='EVENT_C')
+        row.prop(self, 'comb_color', text="")
+        row.prop(self, 'comb_width', text="px")
+
+        if self.draw_comb:
+            grid.prop(self, 'comb_scale', text='Scale')
 
         row = layout.row(align=True)
         row.scale_y = 4.0 if self.prefs_over_sized_buttons else 1
