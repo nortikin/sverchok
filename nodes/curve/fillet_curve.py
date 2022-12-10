@@ -19,7 +19,7 @@ from sverchok.utils.curve.fillet import (
         SMOOTH_POSITION, SMOOTH_TANGENT, SMOOTH_ARC, SMOOTH_BIARC, SMOOTH_QUAD, SMOOTH_NORMAL, SMOOTH_CURVATURE,
         fillet_polyline_from_curve, fillet_nurbs_curve
     )
-from sverchok.utils.handle_python_data import keep_enum_reference
+from sverchok.utils.handle_blender_data import keep_enum_reference
 
 class SvFilletCurveNode(SverchCustomTreeNode, bpy.types.Node):
     """
@@ -47,7 +47,6 @@ class SvFilletCurveNode(SverchCustomTreeNode, bpy.types.Node):
         name = "Bulge Factor",
         default = 0.5,
         min = 0.0,
-        max = 1.0,
         update = updateNode)
 
     concat : BoolProperty(
@@ -78,7 +77,8 @@ class SvFilletCurveNode(SverchCustomTreeNode, bpy.types.Node):
         self.inputs['Radius'].hide_safe = not self.is_polyline
         self.inputs['CutOffset'].hide_safe = self.is_polyline
         self.inputs['BulgeFactor'].hide_safe = self.is_polyline or self.smooth_mode != SMOOTH_TANGENT
-        self.outputs['Centers'].hide_safe = not self.is_polyline
+        self.outputs['Centers'].hide_safe = not (self.is_polyline and self.smooth_mode == SMOOTH_ARC)
+        self.outputs['Radius'].hide_safe = not (self.is_polyline and self.smooth_mode == SMOOTH_ARC)
         updateNode(self, context)
 
     smooth_mode : EnumProperty(
@@ -108,6 +108,7 @@ class SvFilletCurveNode(SverchCustomTreeNode, bpy.types.Node):
         self.inputs.new('SvStringsSocket', "BulgeFactor").prop_name = 'bulge_factor'
         self.outputs.new('SvCurveSocket', "Curve")
         self.outputs.new('SvMatrixSocket', "Centers")
+        self.outputs.new('SvStringsSocket', "Radius")
         self.update_sockets(context)
 
     def process(self):
@@ -132,20 +133,23 @@ class SvFilletCurveNode(SverchCustomTreeNode, bpy.types.Node):
 
         curves_out = []
         centers_out = []
+        radius_out = []
         for params in zip_long_repeat(curves_s, radius_s, cut_offset_s, bulge_factor_s):
             new_curves = []
             new_centers = []
+            new_radiuses = []
             for curve, radiuses, cut_offset, bulge_factor in zip_long_repeat(*params):
                 curve = SvNurbsCurve.to_nurbs(curve)
                 if curve is None:
                     raise Exception("One of curves is not a NURBS")
                 if self.is_polyline:
-                    curve, centers = fillet_polyline_from_curve(curve, radiuses,
+                    curve, centers, radiuses = fillet_polyline_from_curve(curve, radiuses,
                                 smooth = self.smooth_mode,
                                 concat = self.concat,
                                 scale_to_unit = self.scale_to_unit)
                     new_centers.append(centers)
                     new_curves.append(curve)
+                    new_radiuses.append(radiuses)
                 else:
                     curve = fillet_nurbs_curve(curve,
                                 smooth = self.smooth_mode,
@@ -155,12 +159,15 @@ class SvFilletCurveNode(SverchCustomTreeNode, bpy.types.Node):
             if nested_output:
                 curves_out.append(new_curves)
                 centers_out.append(new_centers)
+                radius_out.append(new_radiuses)
             else:
                 curves_out.extend(new_curves)
                 centers_out.extend(new_centers)
+                radius_out.extend(new_radiuses)
 
         self.outputs['Curve'].sv_set(curves_out)
         self.outputs['Centers'].sv_set(centers_out)
+        self.outputs['Radius'].sv_set(radius_out)
 
 def register():
     bpy.utils.register_class(SvFilletCurveNode)

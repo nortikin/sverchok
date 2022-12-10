@@ -40,10 +40,10 @@ def calc_single_fillet(smooth, curve1, curve2, bulge_factor = 0.5, biarc_paramet
     if smooth == SMOOTH_POSITION:
         return SvLine.from_two_points(curve1_end, curve2_begin)
     elif smooth == SMOOTH_TANGENT:
-        tangent1 = tangent1_end / np.linalg.norm(tangent1_end)
-        tangent2 = tangent2_begin / np.linalg.norm(tangent2_begin)
-        tangent1 = bulge_factor * tangent1_end
-        tangent2 = bulge_factor * tangent2_begin
+        tangent1 = tangent1_end # / np.linalg.norm(tangent1_end)
+        tangent2 = tangent2_begin # / np.linalg.norm(tangent2_begin)
+        tangent1 = bulge_factor * tangent1
+        tangent2 = bulge_factor * tangent2
         return SvCubicBezierCurve(
                     curve1_end,
                     curve1_end + tangent1 / 3.0,
@@ -79,16 +79,12 @@ def cut_ends(curve, cut_offset, cut_start=True, cut_end=True):
     p1, p2 = curve.get_end_points()
     l = np.linalg.norm(p1 - p2)
     dt = u_max - u_min
-    if l < 1e-6:
-        k = 1.0
-    else:
-        k = dt / l
     if cut_start:
-        u1 = u_min + cut_offset * k
+        u1 = u_min + cut_offset*dt
     else:
         u1 = u_min
     if cut_end:
-        u2 = u_max - cut_offset * k
+        u2 = u_max - cut_offset*dt
     else:
         u2 = u_max
     #print(f"cut: {u_min} - {u_max} * cut_offset => {u1} - {u2}")
@@ -231,9 +227,9 @@ def fillet_polyline_from_vertices(vertices, radiuses,
             curves = [curve.to_nurbs() for curve in curves]
     if concat:
         concat = concatenate_curves(curves, scale_to_unit = scale_to_unit)
-        return concat, centers
+        return concat, centers, radiuses
     else:
-        return curves, centers
+        return curves, centers, radiuses
 
 def fillet_polyline_from_curve(curve, radiuses,
             smooth = SMOOTH_ARC,
