@@ -88,7 +88,7 @@ class SvFilletCurveNode(SverchCustomTreeNode, bpy.types.Node):
         update = update_sockets)
 
     is_polyline : BoolProperty(
-        name = "Polylines",
+        name = "Polylines only",
         description = "If checked, the node will work with polylines only, but `Circular Arc' option will be available",
         default = False,
         update = update_sockets)
