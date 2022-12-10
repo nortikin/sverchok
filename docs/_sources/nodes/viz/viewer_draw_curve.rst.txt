@@ -83,6 +83,15 @@ The parameters of the node are (in this order):
 .. image:: https://user-images.githubusercontent.com/14288520/190176111-16a43da1-2fd4-4b1c-bf74-78712bcd6a3f.png
   :target: https://user-images.githubusercontent.com/14288520/190176111-16a43da1-2fd4-4b1c-bf74-78712bcd6a3f.png
 
+-------------
+
+* **Display Curvature Comb**, **Comb Color**, **Comb Line Width**. Control
+  display of curve's curvature comb. Curvature comb is not shown by default.
+* **Scale**. This parameter is available only when **Display Curvature Comb**
+  parameter is enabled. This defines the scaling applied to curve normals used
+  to display the curvature comb. The default value of 1.0 means that normals
+  length will be equal to curve's curvature in corresponding points.
+
 Operators
 ---------
 
@@ -101,6 +110,11 @@ Example of Usage
 
 .. image:: https://user-images.githubusercontent.com/14288520/190133906-61748350-414f-4d3e-8e71-2bd6be30597c.png
   :target: https://user-images.githubusercontent.com/14288520/190133906-61748350-414f-4d3e-8e71-2bd6be30597c.png
+
+Example of curvature comb display:
+
+.. image:: https://user-images.githubusercontent.com/284644/206860681-a70d93af-a72b-4dcb-bf36-3678135b835a.png
+  :target: https://user-images.githubusercontent.com/284644/206860681-a70d93af-a72b-4dcb-bf36-3678135b835a.png
 
 * Generator-> :doc:`Line </nodes/generator/line_mk4>`
 * Transform-> :doc:`Randomize </nodes/transforms/randomize>`
