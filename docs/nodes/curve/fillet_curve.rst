@@ -17,6 +17,7 @@ with the fillet curve are in such case specified in terms of curve's T
 parameter space, instead of fillet radius.
 
 More specifically, what this node does is follows:
+
 * If it is known that the curve is a polyline: replace all corners of the
   polyline with a circular arc of a specified radius.
 * For other types of NURBS curves,
