@@ -98,6 +98,9 @@ class SvFilletCurveNode(SverchCustomTreeNode, bpy.types.Node):
         layout.label(text="Continuity")
         layout.prop(self, 'smooth_mode', text='')
         layout.prop(self, "concat")
+
+    def draw_buttons_ext(self, context, layout):
+        self.draw_buttons(context, layout)
         if self.concat:
             layout.prop(self, "scale_to_unit")
 

@@ -93,9 +93,9 @@ This node has the following parameters:
   initial curve together with generated fillet curves, concatenated into one
   curve.  Otherwise, original curve segments and fillet curves will be output
   as separate Curve objects. Checked by default.
-* **Even domains**. If checked, give each segment a domain of length 1. This
-  parameter is only available if **Concatenate** parameter is checked.
-  Unchecked by default.
+* **Even domains**. This parameter is available in the N panel only. If
+  checked, give each segment a domain of length 1. This parameter is only
+  available if **Concatenate** parameter is checked.  Unchecked by default.
 
 .. _biarc: https://en.wikipedia.org/wiki/Biarc
 
