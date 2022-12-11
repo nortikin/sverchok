@@ -267,7 +267,7 @@ class SvCurveViewerDrawNode(SverchCustomTreeNode, bpy.types.Node):
             grid.prop(self, 'comb_scale', text='Scale')
 
         row = grid.row(align=True)
-        row.prop(self, 'draw_curvature', text="", icon='EVENT_C')
+        row.prop(self, 'draw_curvature', text="", icon='EVENT_G')
         row.prop(self, 'curvature_color', text="")
 
         row = layout.row(align=True)
