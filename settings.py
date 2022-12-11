@@ -119,8 +119,10 @@ class SvExEnsurePip(bpy.types.Operator):
     bl_options = {'REGISTER', 'INTERNAL'}
 
     def execute(self, context):
+        environ_copy = dict(os.environ)
+        environ_copy["PYTHONNOUSERSITE"] = "1"  # is set to disallow pip from checking the user site-packages
         cmd = [PYPATH, '-m', 'ensurepip']
-        ok = subprocess.call(cmd) == 0
+        ok = subprocess.call(cmd, env=environ_copy) == 0
         if ok:
             if 'snap' in sys.executable:
                 msg = 'It seems that your Blender is a snap package. Such' \
