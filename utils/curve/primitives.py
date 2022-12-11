@@ -136,6 +136,15 @@ class SvLine(SvCurve):
         new_point = self.point + self.direction * (t_min - scale * new_t_min)
         return SvLine(new_point, new_direction, u_bounds = (new_t_min, new_t_max))
 
+    def is_polyline(self):
+        return True
+
+    def get_polyline_vertices(self):
+        return np.array(self.get_end_points())
+
+    def is_closed(self, *args):
+        return False
+
 def rotate_radius(radius, normal, thetas):
     """Internal method"""
     ct = np.cos(thetas)[np.newaxis].T

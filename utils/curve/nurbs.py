@@ -128,7 +128,9 @@ class SvNurbsCurve(SvCurve):
         w1 = curve1.get_weights()[-1]
         w2 = curve2.get_weights()[0]
         if abs(w1 - w2) > tolerance:
-            raise UnsupportedCurveTypeException(f"Weights at endpoints do not match: {w1} != {w2}")
+            coef = w1 / w2
+            curve2 = curve2.copy(weights = curve2.get_weights() * coef)
+            #raise UnsupportedCurveTypeException(f"Weights at endpoints do not match: {w1} != {w2}")
 
         p1, p2 = curve1.get_degree(), curve2.get_degree()
         if p1 > p2:
@@ -560,6 +562,15 @@ class SvNurbsCurve(SvCurve):
             curve = curve.reparametrize(0, 1)
         return curve
 
+    def split_at_ts(self, ts):
+        segments = []
+        rest = self
+        for t in ts:
+            s1, rest = rest.split_at(t)
+            segments.append(s1)
+        segments.append(rest)
+        return segments
+
     def get_end_points(self):
         if sv_knotvector.is_clamped(self.get_knotvector(), self.get_degree()):
             cpts = self.get_control_points()
@@ -569,6 +580,14 @@ class SvNurbsCurve(SvCurve):
             begin = self.evaluate(u_min)
             end = self.evaluate(u_max)
             return begin, end
+
+    def get_start_tangent(self):
+        cpts = self.get_control_points()
+        return cpts[1] - cpts[0]
+
+    def get_end_tangent(self):
+        cpts = self.get_control_points()
+        return cpts[-1] - cpts[-2]
 
     def is_line(self, tolerance=0.001):
         """
@@ -818,6 +837,61 @@ class SvNurbsCurve(SvCurve):
         if len(segments) > 1:
             return False
         return segments[0].bezier_has_one_nearest_point(src_point)
+
+    def is_polyline(self, tolerance = 1e-6):
+        if self.get_degree() == 1:
+            return True
+
+        segments = self.split_at_fracture_points()
+        return all(s.is_line(tolerance) for s in segments)
+
+    def get_polyline_vertices(self):
+        segments = self.split_at_fracture_points()
+        points = [s.get_end_points()[0] for s in segments]
+        points.append(segments[-1].get_end_points()[1])
+        return np.array(points)
+
+    def split_at_fracture_points(self, order=1, direction_only = True, tangent_tolerance = 1e-6):
+
+        if order not in {1,2,3}:
+            raise Exception(f"Unsupported discontinuity order: {order}")
+
+        def is_fracture(segment1, segment2):
+            if order == 1:
+                tangent1 = segment1.get_end_tangent()
+                tangent2 = segment2.get_start_tangent()
+            else:
+                u1_max = segment1.get_u_bounds()[1]
+                u2_min = segment2.get_u_bounds()[0]
+                tangent1 = segment1.nth_derivative(order, u1_max)
+                tangent2 = segment2.nth_derivative(order, u2_min)
+
+            if direction_only:
+                tangent1 = tangent1 / np.linalg.norm(tangent1)
+                tangent2 = tangent2 / np.linalg.norm(tangent2)
+            delta = np.linalg.norm(tangent1 - tangent2)
+            return delta >= tangent_tolerance
+
+        def concatenate_non_fractured(segments):
+            prev_segment = segments[0]
+            new_segments = []
+            for segment in segments[1:]:
+                if is_fracture(prev_segment, segment):
+                    new_segments.append(prev_segment)
+                    prev_segment = segment
+                else:
+                    prev_segment = prev_segment.concatenate(segment)
+
+            new_segments.append(prev_segment)
+            return new_segments
+
+        kv = self.get_knotvector()
+        p = self.get_degree()
+        ms = sv_knotvector.to_multiplicity(kv)[1:-1]
+        possible_fracture_ts = [t for t, s in ms if s >= p-order+1]
+        segments = self.split_at_ts(possible_fracture_ts)
+        segments = concatenate_non_fractured(segments)
+        return segments
 
 class SvGeomdlCurve(SvNurbsCurve):
     """

@@ -214,6 +214,19 @@ class SvCurve(object):
 
         return result
 
+    def nth_derivative(self, order, t, tangent_delta=None):
+        h = self.get_tangent_delta(tangent_delta)
+        if order == 0:
+            return self.evaluate(t)
+        elif order == 1:
+            return self.tangent(t, tangent_delta=tangent_delta)
+        elif order == 2:
+            return self.second_derivative(t, tangent_delta=tangent_delta)
+        elif order == 3:
+            return self.third_derivative(t, tangent_delta=tangent_delta)
+        else:
+            raise Exception(f"Unsupported derivative order: {order}")
+
     def main_normal(self, t, normalize=True, tangent_delta=None):
         h = self.get_tangent_delta(tangent_delta)
 
@@ -442,6 +455,12 @@ class SvCurve(object):
     def is_closed(self, tolerance=1e-6):
         begin, end = self.get_end_points()
         return np.linalg.norm(begin - end) < tolerance
+
+    def is_polyline(self):
+        return False
+
+    def get_polyline_vertices(self):
+        raise Exception("Curve is not a polyline")
 
     def get_degree(self):
         """
