@@ -130,7 +130,16 @@ class SvSplineCurve(SvCurve):
         return self.to_nurbs().split_at(t)
 
     def cut_segment(self, new_t_min, new_t_max, rescale=False):
-        return self.to_nurbs().cut_segment(new_t_min, new_t_max, rescale=rescale)</code></pre>
+        return self.to_nurbs().cut_segment(new_t_min, new_t_max, rescale=rescale)
+
+    def is_polyline(self):
+        return self.spline.get_degree() == 1
+
+    def get_polyline_vertices(self):
+        if self.spline.get_degree() == 1:
+            return self.spline.pts
+        else:
+            raise Exception(&#34;Curve is not a polyline&#34;)</code></pre>
 </details>
 </section>
 <section>
@@ -238,7 +247,16 @@ class SvSplineCurve(SvCurve):
         return self.to_nurbs().split_at(t)
 
     def cut_segment(self, new_t_min, new_t_max, rescale=False):
-        return self.to_nurbs().cut_segment(new_t_min, new_t_max, rescale=rescale)</code></pre>
+        return self.to_nurbs().cut_segment(new_t_min, new_t_max, rescale=rescale)
+
+    def is_polyline(self):
+        return self.spline.get_degree() == 1
+
+    def get_polyline_vertices(self):
+        if self.spline.get_degree() == 1:
+            return self.spline.pts
+        else:
+            raise Exception(&#34;Curve is not a polyline&#34;)</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -322,6 +340,35 @@ def from_points(cls, points, metric=None, is_cyclic=False):
 </summary>
 <pre><code class="python">def extrude_to_point(self, point):
     return self.to_nurbs().extrude_to_point(point)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.splines.SvSplineCurve.get_polyline_vertices"><code class="name flex">
+<span>def <span class="ident">get_polyline_vertices</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_polyline_vertices(self):
+    if self.spline.get_degree() == 1:
+        return self.spline.pts
+    else:
+        raise Exception(&#34;Curve is not a polyline&#34;)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.splines.SvSplineCurve.is_polyline"><code class="name flex">
+<span>def <span class="ident">is_polyline</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def is_polyline(self):
+    return self.spline.get_degree() == 1</code></pre>
 </details>
 </dd>
 <dt id="sverchok.utils.curve.splines.SvSplineCurve.lerp_to"><code class="name flex">
@@ -461,6 +508,8 @@ def from_points(cls, points, metric=None, is_cyclic=False):
 <li><code><a title="sverchok.utils.curve.splines.SvSplineCurve.extrude_along_vector" href="#sverchok.utils.curve.splines.SvSplineCurve.extrude_along_vector">extrude_along_vector</a></code></li>
 <li><code><a title="sverchok.utils.curve.splines.SvSplineCurve.extrude_to_point" href="#sverchok.utils.curve.splines.SvSplineCurve.extrude_to_point">extrude_to_point</a></code></li>
 <li><code><a title="sverchok.utils.curve.splines.SvSplineCurve.from_points" href="#sverchok.utils.curve.splines.SvSplineCurve.from_points">from_points</a></code></li>
+<li><code><a title="sverchok.utils.curve.splines.SvSplineCurve.get_polyline_vertices" href="#sverchok.utils.curve.splines.SvSplineCurve.get_polyline_vertices">get_polyline_vertices</a></code></li>
+<li><code><a title="sverchok.utils.curve.splines.SvSplineCurve.is_polyline" href="#sverchok.utils.curve.splines.SvSplineCurve.is_polyline">is_polyline</a></code></li>
 <li><code><a title="sverchok.utils.curve.splines.SvSplineCurve.lerp_to" href="#sverchok.utils.curve.splines.SvSplineCurve.lerp_to">lerp_to</a></code></li>
 <li><code><a title="sverchok.utils.curve.splines.SvSplineCurve.make_revolution_surface" href="#sverchok.utils.curve.splines.SvSplineCurve.make_revolution_surface">make_revolution_surface</a></code></li>
 <li><code><a title="sverchok.utils.curve.splines.SvSplineCurve.make_ruled_surface" href="#sverchok.utils.curve.splines.SvSplineCurve.make_ruled_surface">make_ruled_surface</a></code></li>

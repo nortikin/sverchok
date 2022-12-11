@@ -31,7 +31,7 @@ from math import tan, sin, pi
 
 from mathutils import Vector, Matrix
 
-from sverchok.utils.curve.primitives import SvCircle
+from sverchok.utils.curve.primitives import SvCircle, SvLine
 from sverchok.utils.curve.bezier import SvBezierCurve
 
 class ArcFilletData(object):
@@ -60,6 +60,9 @@ class ArcFilletData(object):
     def get_bezier_arc(self):
         cpts = np.array([self.p1, self.vertex, self.p2])
         return SvBezierCurve(cpts)
+
+    def get_bevel(self):
+        return SvLine.from_two_points(self.p1, self.p2)
 
 def calc_fillet(v1, v2, v3, radius):
     if not isinstance(v1, Vector):
@@ -189,10 +192,26 @@ def calc_fillet(v1, v2, v3, radius):
 
     def get_bezier_arc(self):
         cpts = np.array([self.p1, self.vertex, self.p2])
-        return SvBezierCurve(cpts)</code></pre>
+        return SvBezierCurve(cpts)
+
+    def get_bevel(self):
+        return SvLine.from_two_points(self.p1, self.p2)</code></pre>
 </details>
 <h3>Methods</h3>
 <dl>
+<dt id="sverchok.utils.fillet.ArcFilletData.get_bevel"><code class="name flex">
+<span>def <span class="ident">get_bevel</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_bevel(self):
+    return SvLine.from_two_points(self.p1, self.p2)</code></pre>
+</details>
+</dd>
 <dt id="sverchok.utils.fillet.ArcFilletData.get_bezier_arc"><code class="name flex">
 <span>def <span class="ident">get_bezier_arc</span></span>(<span>self)</span>
 </code></dt>
@@ -255,6 +274,7 @@ def calc_fillet(v1, v2, v3, radius):
 <li>
 <h4><code><a title="sverchok.utils.fillet.ArcFilletData" href="#sverchok.utils.fillet.ArcFilletData">ArcFilletData</a></code></h4>
 <ul class="">
+<li><code><a title="sverchok.utils.fillet.ArcFilletData.get_bevel" href="#sverchok.utils.fillet.ArcFilletData.get_bevel">get_bevel</a></code></li>
 <li><code><a title="sverchok.utils.fillet.ArcFilletData.get_bezier_arc" href="#sverchok.utils.fillet.ArcFilletData.get_bezier_arc">get_bezier_arc</a></code></li>
 <li><code><a title="sverchok.utils.fillet.ArcFilletData.get_circular_arc" href="#sverchok.utils.fillet.ArcFilletData.get_circular_arc">get_circular_arc</a></code></li>
 </ul>

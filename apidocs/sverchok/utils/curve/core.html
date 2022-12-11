@@ -243,6 +243,19 @@ class SvCurve(object):
 
         return result
 
+    def nth_derivative(self, order, t, tangent_delta=None):
+        h = self.get_tangent_delta(tangent_delta)
+        if order == 0:
+            return self.evaluate(t)
+        elif order == 1:
+            return self.tangent(t, tangent_delta=tangent_delta)
+        elif order == 2:
+            return self.second_derivative(t, tangent_delta=tangent_delta)
+        elif order == 3:
+            return self.third_derivative(t, tangent_delta=tangent_delta)
+        else:
+            raise Exception(f&#34;Unsupported derivative order: {order}&#34;)
+
     def main_normal(self, t, normalize=True, tangent_delta=None):
         h = self.get_tangent_delta(tangent_delta)
 
@@ -471,6 +484,12 @@ class SvCurve(object):
     def is_closed(self, tolerance=1e-6):
         begin, end = self.get_end_points()
         return np.linalg.norm(begin - end) &lt; tolerance
+
+    def is_polyline(self):
+        return False
+
+    def get_polyline_vertices(self):
+        raise Exception(&#34;Curve is not a polyline&#34;)
 
     def get_degree(self):
         &#34;&#34;&#34;
@@ -1626,6 +1645,19 @@ R is diagonal matrix.</p>
 
         return result
 
+    def nth_derivative(self, order, t, tangent_delta=None):
+        h = self.get_tangent_delta(tangent_delta)
+        if order == 0:
+            return self.evaluate(t)
+        elif order == 1:
+            return self.tangent(t, tangent_delta=tangent_delta)
+        elif order == 2:
+            return self.second_derivative(t, tangent_delta=tangent_delta)
+        elif order == 3:
+            return self.third_derivative(t, tangent_delta=tangent_delta)
+        else:
+            raise Exception(f&#34;Unsupported derivative order: {order}&#34;)
+
     def main_normal(self, t, normalize=True, tangent_delta=None):
         h = self.get_tangent_delta(tangent_delta)
 
@@ -1854,6 +1886,12 @@ R is diagonal matrix.</p>
     def is_closed(self, tolerance=1e-6):
         begin, end = self.get_end_points()
         return np.linalg.norm(begin - end) &lt; tolerance
+
+    def is_polyline(self):
+        return False
+
+    def get_polyline_vertices(self):
+        raise Exception(&#34;Curve is not a polyline&#34;)
 
     def get_degree(self):
         &#34;&#34;&#34;
@@ -2303,6 +2341,19 @@ algorithm will raise a general LinAlgError exception if it can't calculate the m
     return begin, end</code></pre>
 </details>
 </dd>
+<dt id="sverchok.utils.curve.core.SvCurve.get_polyline_vertices"><code class="name flex">
+<span>def <span class="ident">get_polyline_vertices</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_polyline_vertices(self):
+    raise Exception(&#34;Curve is not a polyline&#34;)</code></pre>
+</details>
+</dd>
 <dt id="sverchok.utils.curve.core.SvCurve.get_tangent_delta"><code class="name flex">
 <span>def <span class="ident">get_tangent_delta</span></span>(<span>self, tangent_delta=None)</span>
 </code></dt>
@@ -2364,6 +2415,19 @@ algorithm will raise a general LinAlgError exception if it can't calculate the m
     return np.linalg.norm(begin - end) &lt; tolerance</code></pre>
 </details>
 </dd>
+<dt id="sverchok.utils.curve.core.SvCurve.is_polyline"><code class="name flex">
+<span>def <span class="ident">is_polyline</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def is_polyline(self):
+    return False</code></pre>
+</details>
+</dd>
 <dt id="sverchok.utils.curve.core.SvCurve.main_normal"><code class="name flex">
 <span>def <span class="ident">main_normal</span></span>(<span>self, t, normalize=True, tangent_delta=None)</span>
 </code></dt>
@@ -2404,6 +2468,29 @@ algorithm will raise a general LinAlgError exception if it can't calculate the m
         nonzero = (norms &gt; 0)[:,0]
         v[nonzero] = v[nonzero] / norms[nonzero][:,0][np.newaxis].T
     return v</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.core.SvCurve.nth_derivative"><code class="name flex">
+<span>def <span class="ident">nth_derivative</span></span>(<span>self, order, t, tangent_delta=None)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def nth_derivative(self, order, t, tangent_delta=None):
+    h = self.get_tangent_delta(tangent_delta)
+    if order == 0:
+        return self.evaluate(t)
+    elif order == 1:
+        return self.tangent(t, tangent_delta=tangent_delta)
+    elif order == 2:
+        return self.second_derivative(t, tangent_delta=tangent_delta)
+    elif order == 3:
+        return self.third_derivative(t, tangent_delta=tangent_delta)
+    else:
+        raise Exception(f&#34;Unsupported derivative order: {order}&#34;)</code></pre>
 </details>
 </dd>
 <dt id="sverchok.utils.curve.core.SvCurve.pre_calc_torsion_integral"><code class="name flex">
@@ -3959,11 +4046,14 @@ def from_coefficients(cls, coefficients):
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_control_points" href="#sverchok.utils.curve.core.SvCurve.get_control_points">get_control_points</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_degree" href="#sverchok.utils.curve.core.SvCurve.get_degree">get_degree</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_end_points" href="#sverchok.utils.curve.core.SvCurve.get_end_points">get_end_points</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_polyline_vertices" href="#sverchok.utils.curve.core.SvCurve.get_polyline_vertices">get_polyline_vertices</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_tangent_delta" href="#sverchok.utils.curve.core.SvCurve.get_tangent_delta">get_tangent_delta</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_u_bounds" href="#sverchok.utils.curve.core.SvCurve.get_u_bounds">get_u_bounds</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.is_closed" href="#sverchok.utils.curve.core.SvCurve.is_closed">is_closed</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.is_polyline" href="#sverchok.utils.curve.core.SvCurve.is_polyline">is_polyline</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.main_normal" href="#sverchok.utils.curve.core.SvCurve.main_normal">main_normal</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.main_normal_array" href="#sverchok.utils.curve.core.SvCurve.main_normal_array">main_normal_array</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.nth_derivative" href="#sverchok.utils.curve.core.SvCurve.nth_derivative">nth_derivative</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.pre_calc_torsion_integral" href="#sverchok.utils.curve.core.SvCurve.pre_calc_torsion_integral">pre_calc_torsion_integral</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.second_derivative" href="#sverchok.utils.curve.core.SvCurve.second_derivative">second_derivative</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.second_derivative_array" href="#sverchok.utils.curve.core.SvCurve.second_derivative_array">second_derivative_array</a></code></li>

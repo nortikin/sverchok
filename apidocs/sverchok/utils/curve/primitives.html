@@ -165,6 +165,15 @@ class SvLine(SvCurve):
         new_point = self.point + self.direction * (t_min - scale * new_t_min)
         return SvLine(new_point, new_direction, u_bounds = (new_t_min, new_t_max))
 
+    def is_polyline(self):
+        return True
+
+    def get_polyline_vertices(self):
+        return np.array(self.get_end_points())
+
+    def is_closed(self, *args):
+        return False
+
 def rotate_radius(radius, normal, thetas):
     &#34;&#34;&#34;Internal method&#34;&#34;&#34;
     ct = np.cos(thetas)[np.newaxis].T
@@ -2466,7 +2475,16 @@ def c(self):
         scale = (t_max - t_min) / (new_t_max - new_t_min)
         new_direction = self.direction * scale
         new_point = self.point + self.direction * (t_min - scale * new_t_min)
-        return SvLine(new_point, new_direction, u_bounds = (new_t_min, new_t_max))</code></pre>
+        return SvLine(new_point, new_direction, u_bounds = (new_t_min, new_t_max))
+
+    def is_polyline(self):
+        return True
+
+    def get_polyline_vertices(self):
+        return np.array(self.get_end_points())
+
+    def is_closed(self, *args):
+        return False</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -2547,6 +2565,45 @@ def from_two_points(cls, point1, point2):
 </summary>
 <pre><code class="python">def extrude_to_point(self, point):
     return self.to_nurbs().extrude_to_point(point)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.primitives.SvLine.get_polyline_vertices"><code class="name flex">
+<span>def <span class="ident">get_polyline_vertices</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_polyline_vertices(self):
+    return np.array(self.get_end_points())</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.primitives.SvLine.is_closed"><code class="name flex">
+<span>def <span class="ident">is_closed</span></span>(<span>self, *args)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def is_closed(self, *args):
+    return False</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.primitives.SvLine.is_polyline"><code class="name flex">
+<span>def <span class="ident">is_polyline</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def is_polyline(self):
+    return True</code></pre>
 </details>
 </dd>
 <dt id="sverchok.utils.curve.primitives.SvLine.lerp_to"><code class="name flex">
@@ -2774,6 +2831,9 @@ def from_two_points(cls, point1, point2):
 <li><code><a title="sverchok.utils.curve.primitives.SvLine.extrude_along_vector" href="#sverchok.utils.curve.primitives.SvLine.extrude_along_vector">extrude_along_vector</a></code></li>
 <li><code><a title="sverchok.utils.curve.primitives.SvLine.extrude_to_point" href="#sverchok.utils.curve.primitives.SvLine.extrude_to_point">extrude_to_point</a></code></li>
 <li><code><a title="sverchok.utils.curve.primitives.SvLine.from_two_points" href="#sverchok.utils.curve.primitives.SvLine.from_two_points">from_two_points</a></code></li>
+<li><code><a title="sverchok.utils.curve.primitives.SvLine.get_polyline_vertices" href="#sverchok.utils.curve.primitives.SvLine.get_polyline_vertices">get_polyline_vertices</a></code></li>
+<li><code><a title="sverchok.utils.curve.primitives.SvLine.is_closed" href="#sverchok.utils.curve.primitives.SvLine.is_closed">is_closed</a></code></li>
+<li><code><a title="sverchok.utils.curve.primitives.SvLine.is_polyline" href="#sverchok.utils.curve.primitives.SvLine.is_polyline">is_polyline</a></code></li>
 <li><code><a title="sverchok.utils.curve.primitives.SvLine.lerp_to" href="#sverchok.utils.curve.primitives.SvLine.lerp_to">lerp_to</a></code></li>
 <li><code><a title="sverchok.utils.curve.primitives.SvLine.make_revolution_surface" href="#sverchok.utils.curve.primitives.SvLine.make_revolution_surface">make_revolution_surface</a></code></li>
 <li><code><a title="sverchok.utils.curve.primitives.SvLine.make_ruled_surface" href="#sverchok.utils.curve.primitives.SvLine.make_ruled_surface">make_ruled_surface</a></code></li>

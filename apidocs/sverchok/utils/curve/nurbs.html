@@ -157,7 +157,9 @@ class SvNurbsCurve(SvCurve):
         w1 = curve1.get_weights()[-1]
         w2 = curve2.get_weights()[0]
         if abs(w1 - w2) &gt; tolerance:
-            raise UnsupportedCurveTypeException(f&#34;Weights at endpoints do not match: {w1} != {w2}&#34;)
+            coef = w1 / w2
+            curve2 = curve2.copy(weights = curve2.get_weights() * coef)
+            #raise UnsupportedCurveTypeException(f&#34;Weights at endpoints do not match: {w1} != {w2}&#34;)
 
         p1, p2 = curve1.get_degree(), curve2.get_degree()
         if p1 &gt; p2:
@@ -589,6 +591,15 @@ class SvNurbsCurve(SvCurve):
             curve = curve.reparametrize(0, 1)
         return curve
 
+    def split_at_ts(self, ts):
+        segments = []
+        rest = self
+        for t in ts:
+            s1, rest = rest.split_at(t)
+            segments.append(s1)
+        segments.append(rest)
+        return segments
+
     def get_end_points(self):
         if sv_knotvector.is_clamped(self.get_knotvector(), self.get_degree()):
             cpts = self.get_control_points()
@@ -598,6 +609,14 @@ class SvNurbsCurve(SvCurve):
             begin = self.evaluate(u_min)
             end = self.evaluate(u_max)
             return begin, end
+
+    def get_start_tangent(self):
+        cpts = self.get_control_points()
+        return cpts[1] - cpts[0]
+
+    def get_end_tangent(self):
+        cpts = self.get_control_points()
+        return cpts[-1] - cpts[-2]
 
     def is_line(self, tolerance=0.001):
         &#34;&#34;&#34;
@@ -847,6 +866,61 @@ class SvNurbsCurve(SvCurve):
         if len(segments) &gt; 1:
             return False
         return segments[0].bezier_has_one_nearest_point(src_point)
+
+    def is_polyline(self, tolerance = 1e-6):
+        if self.get_degree() == 1:
+            return True
+
+        segments = self.split_at_fracture_points()
+        return all(s.is_line(tolerance) for s in segments)
+
+    def get_polyline_vertices(self):
+        segments = self.split_at_fracture_points()
+        points = [s.get_end_points()[0] for s in segments]
+        points.append(segments[-1].get_end_points()[1])
+        return np.array(points)
+
+    def split_at_fracture_points(self, order=1, direction_only = True, tangent_tolerance = 1e-6):
+
+        if order not in {1,2,3}:
+            raise Exception(f&#34;Unsupported discontinuity order: {order}&#34;)
+
+        def is_fracture(segment1, segment2):
+            if order == 1:
+                tangent1 = segment1.get_end_tangent()
+                tangent2 = segment2.get_start_tangent()
+            else:
+                u1_max = segment1.get_u_bounds()[1]
+                u2_min = segment2.get_u_bounds()[0]
+                tangent1 = segment1.nth_derivative(order, u1_max)
+                tangent2 = segment2.nth_derivative(order, u2_min)
+
+            if direction_only:
+                tangent1 = tangent1 / np.linalg.norm(tangent1)
+                tangent2 = tangent2 / np.linalg.norm(tangent2)
+            delta = np.linalg.norm(tangent1 - tangent2)
+            return delta &gt;= tangent_tolerance
+
+        def concatenate_non_fractured(segments):
+            prev_segment = segments[0]
+            new_segments = []
+            for segment in segments[1:]:
+                if is_fracture(prev_segment, segment):
+                    new_segments.append(prev_segment)
+                    prev_segment = segment
+                else:
+                    prev_segment = prev_segment.concatenate(segment)
+
+            new_segments.append(prev_segment)
+            return new_segments
+
+        kv = self.get_knotvector()
+        p = self.get_degree()
+        ms = sv_knotvector.to_multiplicity(kv)[1:-1]
+        possible_fracture_ts = [t for t, s in ms if s &gt;= p-order+1]
+        segments = self.split_at_ts(possible_fracture_ts)
+        segments = concatenate_non_fractured(segments)
+        return segments
 
 class SvGeomdlCurve(SvNurbsCurve):
     &#34;&#34;&#34;
@@ -2881,7 +2955,9 @@ def interpolate(cls, degree, points, metric=&#39;DISTANCE&#39;, tknots=None, cyc
         w1 = curve1.get_weights()[-1]
         w2 = curve2.get_weights()[0]
         if abs(w1 - w2) &gt; tolerance:
-            raise UnsupportedCurveTypeException(f&#34;Weights at endpoints do not match: {w1} != {w2}&#34;)
+            coef = w1 / w2
+            curve2 = curve2.copy(weights = curve2.get_weights() * coef)
+            #raise UnsupportedCurveTypeException(f&#34;Weights at endpoints do not match: {w1} != {w2}&#34;)
 
         p1, p2 = curve1.get_degree(), curve2.get_degree()
         if p1 &gt; p2:
@@ -3313,6 +3389,15 @@ def interpolate(cls, degree, points, metric=&#39;DISTANCE&#39;, tknots=None, cyc
             curve = curve.reparametrize(0, 1)
         return curve
 
+    def split_at_ts(self, ts):
+        segments = []
+        rest = self
+        for t in ts:
+            s1, rest = rest.split_at(t)
+            segments.append(s1)
+        segments.append(rest)
+        return segments
+
     def get_end_points(self):
         if sv_knotvector.is_clamped(self.get_knotvector(), self.get_degree()):
             cpts = self.get_control_points()
@@ -3322,6 +3407,14 @@ def interpolate(cls, degree, points, metric=&#39;DISTANCE&#39;, tknots=None, cyc
             begin = self.evaluate(u_min)
             end = self.evaluate(u_max)
             return begin, end
+
+    def get_start_tangent(self):
+        cpts = self.get_control_points()
+        return cpts[1] - cpts[0]
+
+    def get_end_tangent(self):
+        cpts = self.get_control_points()
+        return cpts[-1] - cpts[-2]
 
     def is_line(self, tolerance=0.001):
         &#34;&#34;&#34;
@@ -3570,7 +3663,62 @@ def interpolate(cls, degree, points, metric=&#39;DISTANCE&#39;, tknots=None, cyc
         segments = self.to_bezier_segments(to_bezier_class=False)
         if len(segments) &gt; 1:
             return False
-        return segments[0].bezier_has_one_nearest_point(src_point)</code></pre>
+        return segments[0].bezier_has_one_nearest_point(src_point)
+
+    def is_polyline(self, tolerance = 1e-6):
+        if self.get_degree() == 1:
+            return True
+
+        segments = self.split_at_fracture_points()
+        return all(s.is_line(tolerance) for s in segments)
+
+    def get_polyline_vertices(self):
+        segments = self.split_at_fracture_points()
+        points = [s.get_end_points()[0] for s in segments]
+        points.append(segments[-1].get_end_points()[1])
+        return np.array(points)
+
+    def split_at_fracture_points(self, order=1, direction_only = True, tangent_tolerance = 1e-6):
+
+        if order not in {1,2,3}:
+            raise Exception(f&#34;Unsupported discontinuity order: {order}&#34;)
+
+        def is_fracture(segment1, segment2):
+            if order == 1:
+                tangent1 = segment1.get_end_tangent()
+                tangent2 = segment2.get_start_tangent()
+            else:
+                u1_max = segment1.get_u_bounds()[1]
+                u2_min = segment2.get_u_bounds()[0]
+                tangent1 = segment1.nth_derivative(order, u1_max)
+                tangent2 = segment2.nth_derivative(order, u2_min)
+
+            if direction_only:
+                tangent1 = tangent1 / np.linalg.norm(tangent1)
+                tangent2 = tangent2 / np.linalg.norm(tangent2)
+            delta = np.linalg.norm(tangent1 - tangent2)
+            return delta &gt;= tangent_tolerance
+
+        def concatenate_non_fractured(segments):
+            prev_segment = segments[0]
+            new_segments = []
+            for segment in segments[1:]:
+                if is_fracture(prev_segment, segment):
+                    new_segments.append(prev_segment)
+                    prev_segment = segment
+                else:
+                    prev_segment = prev_segment.concatenate(segment)
+
+            new_segments.append(prev_segment)
+            return new_segments
+
+        kv = self.get_knotvector()
+        p = self.get_degree()
+        ms = sv_knotvector.to_multiplicity(kv)[1:-1]
+        possible_fracture_ts = [t for t, s in ms if s &gt;= p-order+1]
+        segments = self.split_at_ts(possible_fracture_ts)
+        segments = concatenate_non_fractured(segments)
+        return segments</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -3885,7 +4033,9 @@ such a way that each segment is nearly a straight line segment.</p></div>
     w1 = curve1.get_weights()[-1]
     w2 = curve2.get_weights()[0]
     if abs(w1 - w2) &gt; tolerance:
-        raise UnsupportedCurveTypeException(f&#34;Weights at endpoints do not match: {w1} != {w2}&#34;)
+        coef = w1 / w2
+        curve2 = curve2.copy(weights = curve2.get_weights() * coef)
+        #raise UnsupportedCurveTypeException(f&#34;Weights at endpoints do not match: {w1} != {w2}&#34;)
 
     p1, p2 = curve1.get_degree(), curve2.get_degree()
     if p1 &gt; p2:
@@ -4104,6 +4254,20 @@ such a way that each segment is nearly a straight line segment.</p></div>
         return begin, end</code></pre>
 </details>
 </dd>
+<dt id="sverchok.utils.curve.nurbs.SvNurbsCurve.get_end_tangent"><code class="name flex">
+<span>def <span class="ident">get_end_tangent</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_end_tangent(self):
+    cpts = self.get_control_points()
+    return cpts[-1] - cpts[-2]</code></pre>
+</details>
+</dd>
 <dt id="sverchok.utils.curve.nurbs.SvNurbsCurve.get_homogenous_control_points"><code class="name flex">
 <span>def <span class="ident">get_homogenous_control_points</span></span>(<span>self)</span>
 </code></dt>
@@ -4185,6 +4349,36 @@ such a way that each segment is nearly a straight line segment.</p></div>
 <pre><code class="python">def get_plane(self, tolerance=1e-6):
     cpts = self.get_control_points()
     return get_common_plane(cpts, tolerance)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.nurbs.SvNurbsCurve.get_polyline_vertices"><code class="name flex">
+<span>def <span class="ident">get_polyline_vertices</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_polyline_vertices(self):
+    segments = self.split_at_fracture_points()
+    points = [s.get_end_points()[0] for s in segments]
+    points.append(segments[-1].get_end_points()[1])
+    return np.array(points)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.nurbs.SvNurbsCurve.get_start_tangent"><code class="name flex">
+<span>def <span class="ident">get_start_tangent</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_start_tangent(self):
+    cpts = self.get_control_points()
+    return cpts[1] - cpts[0]</code></pre>
 </details>
 </dd>
 <dt id="sverchok.utils.curve.nurbs.SvNurbsCurve.get_weights"><code class="name flex">
@@ -4322,6 +4516,23 @@ inside the convex hull of it's control points.</p></div>
 <pre><code class="python">def is_planar(self, tolerance=1e-6):
     cpts = self.get_control_points()
     return are_points_coplanar(cpts, tolerance)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.nurbs.SvNurbsCurve.is_polyline"><code class="name flex">
+<span>def <span class="ident">is_polyline</span></span>(<span>self, tolerance=1e-06)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def is_polyline(self, tolerance = 1e-6):
+    if self.get_degree() == 1:
+        return True
+
+    segments = self.split_at_fracture_points()
+    return all(s.is_line(tolerance) for s in segments)</code></pre>
 </details>
 </dd>
 <dt id="sverchok.utils.curve.nurbs.SvNurbsCurve.is_rational"><code class="name flex">
@@ -4644,6 +4855,77 @@ lie inside the sphere, or may not touch it at all.</p></div>
         return curve1, curve2</code></pre>
 </details>
 </dd>
+<dt id="sverchok.utils.curve.nurbs.SvNurbsCurve.split_at_fracture_points"><code class="name flex">
+<span>def <span class="ident">split_at_fracture_points</span></span>(<span>self, order=1, direction_only=True, tangent_tolerance=1e-06)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def split_at_fracture_points(self, order=1, direction_only = True, tangent_tolerance = 1e-6):
+
+    if order not in {1,2,3}:
+        raise Exception(f&#34;Unsupported discontinuity order: {order}&#34;)
+
+    def is_fracture(segment1, segment2):
+        if order == 1:
+            tangent1 = segment1.get_end_tangent()
+            tangent2 = segment2.get_start_tangent()
+        else:
+            u1_max = segment1.get_u_bounds()[1]
+            u2_min = segment2.get_u_bounds()[0]
+            tangent1 = segment1.nth_derivative(order, u1_max)
+            tangent2 = segment2.nth_derivative(order, u2_min)
+
+        if direction_only:
+            tangent1 = tangent1 / np.linalg.norm(tangent1)
+            tangent2 = tangent2 / np.linalg.norm(tangent2)
+        delta = np.linalg.norm(tangent1 - tangent2)
+        return delta &gt;= tangent_tolerance
+
+    def concatenate_non_fractured(segments):
+        prev_segment = segments[0]
+        new_segments = []
+        for segment in segments[1:]:
+            if is_fracture(prev_segment, segment):
+                new_segments.append(prev_segment)
+                prev_segment = segment
+            else:
+                prev_segment = prev_segment.concatenate(segment)
+
+        new_segments.append(prev_segment)
+        return new_segments
+
+    kv = self.get_knotvector()
+    p = self.get_degree()
+    ms = sv_knotvector.to_multiplicity(kv)[1:-1]
+    possible_fracture_ts = [t for t, s in ms if s &gt;= p-order+1]
+    segments = self.split_at_ts(possible_fracture_ts)
+    segments = concatenate_non_fractured(segments)
+    return segments</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.nurbs.SvNurbsCurve.split_at_ts"><code class="name flex">
+<span>def <span class="ident">split_at_ts</span></span>(<span>self, ts)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def split_at_ts(self, ts):
+    segments = []
+    rest = self
+    for t in ts:
+        s1, rest = rest.split_at(t)
+        segments.append(s1)
+    segments.append(rest)
+    return segments</code></pre>
+</details>
+</dd>
 <dt id="sverchok.utils.curve.nurbs.SvNurbsCurve.to_bezier"><code class="name flex">
 <span>def <span class="ident">to_bezier</span></span>(<span>self)</span>
 </code></dt>
@@ -4895,11 +5177,14 @@ lie inside the sphere, or may not touch it at all.</p></div>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.extrude_to_point" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.extrude_to_point">extrude_to_point</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_bounding_box" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.get_bounding_box">get_bounding_box</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_end_points" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.get_end_points">get_end_points</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_end_tangent" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.get_end_tangent">get_end_tangent</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_homogenous_control_points" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.get_homogenous_control_points">get_homogenous_control_points</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_knotvector" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.get_knotvector">get_knotvector</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_min_continuity" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.get_min_continuity">get_min_continuity</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_nurbs_implementation" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.get_nurbs_implementation">get_nurbs_implementation</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_plane" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.get_plane">get_plane</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_polyline_vertices" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.get_polyline_vertices">get_polyline_vertices</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_start_tangent" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.get_start_tangent">get_start_tangent</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_weights" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.get_weights">get_weights</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.has_exactly_one_nearest_point" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.has_exactly_one_nearest_point">has_exactly_one_nearest_point</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.insert_knot" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.insert_knot">insert_knot</a></code></li>
@@ -4907,6 +5192,7 @@ lie inside the sphere, or may not touch it at all.</p></div>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.is_inside_sphere" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.is_inside_sphere">is_inside_sphere</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.is_line" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.is_line">is_line</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.is_planar" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.is_planar">is_planar</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.is_polyline" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.is_polyline">is_polyline</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.is_rational" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.is_rational">is_rational</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.is_strongly_outside_sphere" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.is_strongly_outside_sphere">is_strongly_outside_sphere</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.lerp_to" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.lerp_to">lerp_to</a></code></li>
@@ -4917,6 +5203,8 @@ lie inside the sphere, or may not touch it at all.</p></div>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.reparametrize" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.reparametrize">reparametrize</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.reverse" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.reverse">reverse</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.split_at" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.split_at">split_at</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.split_at_fracture_points" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.split_at_fracture_points">split_at_fracture_points</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.split_at_ts" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.split_at_ts">split_at_ts</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.to_bezier" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.to_bezier">to_bezier</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.to_bezier_segments" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.to_bezier_segments">to_bezier_segments</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.to_knotvector" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.to_knotvector">to_knotvector</a></code></li>
