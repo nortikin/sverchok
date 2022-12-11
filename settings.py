@@ -122,7 +122,13 @@ class SvExEnsurePip(bpy.types.Operator):
         cmd = [PYPATH, '-m', 'ensurepip']
         ok = subprocess.call(cmd) == 0
         if ok:
-            self.report({'INFO'}, "PIP installed successfully. Please restart Blender to see effect.")
+            if 'snap' in sys.executable:
+                msg = 'It seems that your Blender is a snap package. Such' \
+                      'packages does not support writing any files. Reinstall' \
+                      'Blender to be able to use external Python packages'
+                self.report({'WARNING'}, msg)
+            else:
+                self.report({'INFO'}, "PIP installed successfully. Please restart Blender to see effect.")
             return {'FINISHED'}
         else:
             self.report({'ERROR'}, "Cannot install PIP, see console output for details")
