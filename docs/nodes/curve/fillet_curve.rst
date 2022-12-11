@@ -83,19 +83,6 @@ This node has the following parameters:
      will be set to 1.0. Note that this option works only when tangents of the
      curve at points where it is replaced with fillet are coplanar. I.e., this
      will work fine for planar curves, but may fail in other cases.
-   * **2 - Normals**. This option is not available when **Polylines only**
-     parameter is checked. The fillet curves are generated so that 1) tangent
-     vectors of the curves are equal at the meeting points; 2) second
-     derivatives of the curves are also equal at the meeting points. Thus,
-     normal and binormal vectors of the curves are equal at their meeting
-     points. The generated curves are Bezier curves of fifth order.
-   * **3 - Curvature**. This option is not available when **Polylines only**
-     parameter is checked. The fillet curves are generated so that 1) tangent
-     vectors of the curves are equal at the meeting points; 2) second and third
-     derivatives of the curves are also equal at the meeting points. Thus,
-     normal and binormal vectors of the curves, as well as curvatures of the
-     curves, are equal at their meeting points. The generated curves are Bezier
-     curves of order 7.
    * **1 - Circular Arc**. This option is only available when **Polylines
      only** parameter is not checked. Fillet curves are calculated as circular
      arc of radiuses provided in the **Radius** input.

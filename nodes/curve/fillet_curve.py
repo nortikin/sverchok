@@ -67,8 +67,8 @@ class SvFilletCurveNode(SverchCustomTreeNode, bpy.types.Node):
         items.append((SMOOTH_TANGENT, "1 - Tangency", "Connect segments such that their tangents are smoothly joined", 1))
         if not self.is_polyline:
             items.append((SMOOTH_BIARC, "1 - Bi Arc", "Connect segments with Bi Arc, such that tangents are smoothly joined", 2))
-            items.append((SMOOTH_NORMAL, "2 - Normals", "Connect segments such that their normals (second derivatives) are smoothly joined", 3))
-            items.append((SMOOTH_CURVATURE, "3 - Curvature", "Connect segments such that their curvatures (third derivatives) are smoothly joined", 4))
+            #items.append((SMOOTH_NORMAL, "2 - Normals", "Connect segments such that their normals (second derivatives) are smoothly joined", 3))
+            #items.append((SMOOTH_CURVATURE, "3 - Curvature", "Connect segments such that their curvatures (third derivatives) are smoothly joined", 4))
         else:
             items.append((SMOOTH_ARC, "1 - Circular Arc", "Connect segments with circular arcs", 5))
         return items
