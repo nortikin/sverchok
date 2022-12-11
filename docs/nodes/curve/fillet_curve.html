@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Approximate NURBS Curve &mdash; Sverchok 1, 2, 0 documentation</title>
+  <title>Fillet Curve &mdash; Sverchok 1, 2, 0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
@@ -21,8 +21,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Arc 3pt (Curve)" href="arc_3pt.html" />
-    <link rel="prev" title="Apply Field to Curve" href="apply_field_to_curve.html" /> 
+    <link rel="next" title="Fillet Polyline" href="fillet_polyline.html" />
+    <link rel="prev" title="Curve Extremes" href="extremes.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -57,15 +57,7 @@
 <li class="toctree-l3"><a class="reference internal" href="adaptive_plot.html">Adaptive Plot Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="adaptive_plot_nurbs.html">Adaptive Plot NURBS Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="apply_field_to_curve.html">Apply Field to Curve</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">Approximate NURBS Curve</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#dependencies">Dependencies</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#outputs">Outputs</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#example-of-usage">Example of usage</a></li>
-</ul>
-</li>
+<li class="toctree-l3"><a class="reference internal" href="approximate_nurbs_curve.html">Approximate NURBS Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="arc_3pt.html">Arc 3pt (Curve)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="arc_sed.html">Arc Start / End / Tangent</a></li>
 <li class="toctree-l3"><a class="reference internal" href="bezier_fit.html">Approximate Bezier Curve</a></li>
@@ -94,7 +86,14 @@
 <li class="toctree-l3"><a class="reference internal" href="eval_curve.html">Evaluate Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="extend_curve.html">Extend Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="extremes.html">Curve Extremes</a></li>
-<li class="toctree-l3"><a class="reference internal" href="fillet_curve.html">Fillet Curve</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Fillet Curve</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#outputs">Outputs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#examples-of-usage">Examples of Usage</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="fillet_polyline.html">Fillet Polyline</a></li>
 <li class="toctree-l3"><a class="reference internal" href="flip_curve.html">Flip Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="freecad_helix.html">Helix (FreeCAD)</a></li>
@@ -188,9 +187,9 @@
       <li><a href="../../main.html" class="icon icon-home"></a></li>
           <li class="breadcrumb-item"><a href="../../nodes.html">Nodes</a></li>
           <li class="breadcrumb-item"><a href="curve_index.html">Curves</a></li>
-      <li class="breadcrumb-item active">Approximate NURBS Curve</li>
+      <li class="breadcrumb-item active">Fillet Curve</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../../_sources/nodes/curve/approximate_nurbs_curve.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../../_sources/nodes/curve/fillet_curve.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -198,130 +197,123 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="approximate-nurbs-curve">
-<h1>Approximate NURBS Curve<a class="headerlink" href="#approximate-nurbs-curve" title="Permalink to this heading">¶</a></h1>
-<section id="dependencies">
-<h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this heading">¶</a></h2>
-<p>This node requires either <a class="reference external" href="https://onurraufbingol.com/NURBS-Python/">Geomdl</a> or <a class="reference external" href="https://scipy.org/">SciPy</a> library to work.</p>
-</section>
+  <section id="fillet-curve">
+<h1>Fillet Curve<a class="headerlink" href="#fillet-curve" title="Permalink to this heading">¶</a></h1>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
-<p>This node builds a <a class="reference external" href="https://en.wikipedia.org/wiki/Non-uniform_rational_B-spline">NURBS</a> Curve object, which approximates the given set of
-points, i.e. goes as close to them as possible while remaining a smooth curve.</p>
-<p>In fact, the generated curve always will be a non-rational curve, which means
-that all weights will be equal to 1.</p>
-<p>This node supports two implementations of curve approximation algorithm.
-Different implementation give you different ways of controlling them:</p>
-<ul class="simple">
-<li><p><a class="reference external" href="https://onurraufbingol.com/NURBS-Python/">Geomdl</a> implementation can either define the number of control points of
-generated curve automatically, or you can provide it with desired number of
-control points. This implementation supports only two metrics - euclidean and
-centripetal. This implementation can not generate cyclic (closed) curves.</p></li>
-<li><p><a class="reference external" href="https://scipy.org/">SciPy</a> implementation allows you to define “smoothing” parameter, to define
-how smooth you want the curve to be. By default, it selects the smoothing
-factor automatically. If you explicitly set the smoothing factor to zero, the
-curve will go exactly through all provided points, i.e. the node will perform
-interpolation instead of approximation. This implementation supports wider
-selection of metrics. This implementation can make cyclic (closed) curves.
-Additionally, when smoothing factor is not zero, you can provide different
-weights for different points.</p></li>
+<p>This node takes a NURBS (or NURBS-like) Curve object, finds it’s “fracture”
+points (i.e. points where tangent of the curve does not change continuously),
+and makes a smooth fillet in such points.</p>
+<p>For polyline curves, it is possible to make a fillet made of circular arc, and
+it is possible to make the arc of user-provided radius.
+For other types of curves, it is not possible to automatically calculate
+circular fillet based on radius. So, for other types of curves, this node makes
+fillets by use of Bezier curves or biarcs. Points where original curve is glued
+with the fillet curve are in such case specified in terms of curve’s T
+parameter space, instead of fillet radius.</p>
+<p>More specifically, what this node does is follows:</p>
+<ul>
+<li><p>If it is known that the curve is a polyline: replace all corners of the
+polyline with a circular arc of a specified radius.</p></li>
+<li><p>For other types of NURBS curves,</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Find fracture points of the curve.</p></li>
+<li><p>Split the curve into segments at these fracture points.</p></li>
+<li><p>Of each segment, cut a small (or not small) piece at each end, based on
+<strong>CutOffset</strong> input and segment’s T parameter span. For example, if
+CutOffset is 0.05, and segment’s T parameter span is 1.0 - 2.0, then this
+will cut the segment at points 1.05 and 1.95, leaving only span of 1.05 -
+1.95. So at this step, there will be gaps between segments.</p></li>
+<li><p>Place a fillet curve (Bezier curve or BiArc) at each gap.</p></li>
 </ul>
+</div></blockquote>
+</li>
+</ul>
+<p>This node will automatically detect if the input curve is closed, and, if
+necessary, add a fillet at closing point.</p>
+<p>You can also want to take a look at <strong>Blend Curves</strong> node.</p>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
-<li><p><strong>Vertices</strong>. The points to be approximated. This input is mandatory.</p></li>
-<li><p><strong>Weights</strong>. This input is available only when <strong>Implementation</strong> parameter
-is set to <strong>SciPy</strong>. Weights of points to be approximated. Bigger values of
-weight mean that the curve will pass through corresponding point at the
-smaller distance. This does not have sense if <strong>Smoothing</strong> input is set to
-zero. Optional input. If not connected, the node will consider weights of all
-points as equal.</p></li>
-<li><p><strong>Degree</strong>. Degree of the curve to be built. Default value is 3. Most useful values are 3, 5 and 7.</p></li>
-<li><p><strong>PointsCnt</strong>. Number of curve’s control points. This input is available only
-when <strong>Implementation</strong> parameter is set to <strong>Geomdl</strong>, and <strong>Specify points
-count</strong> parameter is checked. Default value is 5.</p></li>
-<li><p><strong>Smoothing</strong>. This input is available only when <strong>Implementation</strong> parameter
-is set to <strong>SciPy</strong>, and <strong>Scpecify smoothing</strong> parameter is checked.
-Smoothing factor. Bigger values will make more smooth curves. Value of 0
-(zero) mean that the curve will exactly pass through all points. The default
-value is 0.1.</p></li>
+<li><p><strong>Curve</strong>. The curve to make fillets for. This input is mandatory.</p></li>
+<li><p><strong>Radius</strong>. This input is only available when <strong>Polylines only</strong> parameter is
+checked. This specifies the fillet radius. It is possible to provide a
+separate fillet radius for each vertex of the polyline curve. The default
+value is 0.2.</p></li>
+<li><p><strong>CutOffset</strong>. This input is only available when <strong>Polylines only</strong> parameter
+is not checked. This specifies the proportion of curve segment T parameter
+span, which will be cut off of each segment in order to make a place for the
+fillet curve. The default value is 0.05.</p></li>
+<li><p><strong>BulgeFactor</strong>. This input is only available when <strong>Polylines only</strong>
+parameter is not checked, and <strong>Continuity</strong> parameter is set to <strong>1 -
+Tangency</strong>. This defines the strength with which the tangent vector of the
+second curve at it’s starting point will affect the generated blending curve.
+The default value is 0.5.</p></li>
 </ul>
 </section>
 <section id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following parameters:</p>
 <ul>
-<li><p><strong>Implementation</strong>. Approximation algorithm implementation to be used. The available values are:</p>
-<ul class="simple">
-<li><p><strong>Geomdl</strong>. Use the implementation from <a class="reference external" href="https://onurraufbingol.com/NURBS-Python/">Geomdl</a> library. This is available only when Geomdl library is installed.</p></li>
-<li><p><strong>SciPy</strong>. Use the implementation from <a class="reference external" href="https://scipy.org/">SciPy</a> library. This is available only when SciPy library is installed.</p></li>
-</ul>
-<p>By default, the first available implementation is used.</p>
-</li>
-<li><p><strong>Centripetal</strong>. This parameter is available only when <strong>Implementation</strong>
-parameter is set to <strong>Geomdl</strong>. This defines whether the node will use
-centripetal metric. If not checked, the node will use euclidean metric.
-Unchecked by default.</p></li>
-<li><p><strong>Specify points count</strong>. This parameter is available only when
-<strong>Implementation</strong> parameter is set to <strong>Geomdl</strong>. If checked, then it will
-be possible to specify the number of curve’s control points in <strong>PointsCnt</strong>
-input. Otherwise, the node will determine required number of control points
-by itself (this number can be too big for many applications).</p></li>
-<li><p><strong>Cyclic</strong>. This parameter is available only when <strong>Implementation</strong>
-parameter is set to <strong>SciPy</strong>. Defines whether the generated curve will be
-cyclic (closed). Unchecked by default.</p></li>
-<li><p><strong>Auto</strong>. This parameter is available only when <strong>Implementation</strong> parameter
-is set to <strong>SciPy</strong>, and <strong>Cyclic</strong> parameter is enabled. If checked, the
-node will automatically decide if the curve should be cyclic (closed), based
-on the distance between the first and last points being approximated: if the
-points are close enough, the curve will be closed. If not checked, the curve
-will be closed regardless of distance between points, just because <strong>Cyclic</strong>
-parameter is checked. Unchecked by default.</p></li>
-<li><p><strong>Cyclic threshold</strong>. This parameter is available only when
-<strong>Implementation</strong> parameter is set to <strong>SciPy</strong>, <strong>Cyclic</strong> parameter is
-enabled, and <strong>Auto</strong> parameter is enabled as well. This defines maximum
-distance between the first and the last points being approximated, for which
-the node will make the curve cyclic. Default value is 0.0, i.e. the points
-must exactly coincide in order for curve to be closed.</p></li>
-<li><p><strong>Metric</strong>. This parameter is available only when <strong>Implementation</strong>
-parameter is set to <strong>SciPy</strong>.Metric to be used for interpolation. The
-available values are:</p>
+<li><p><strong>Polylines only</strong>. If this is checked, the curve will process only
+polylines. If you feed it with any other curve, the node will fail. In this
+mode, it is possible to make fillets in form of circular arc, and provide the
+fillet radius. If this is not checked, the node will process any NURBS or
+NURBS-like curve, but it will not be able to make circular arc fillets based
+on fillet radius.</p></li>
+<li><p><strong>Continuity</strong>. This defines the order of continuity of the resulting curve,
+and the algorithm used to calculate the fillet curves. The available options are:</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>Manhattan</p></li>
-<li><p>Euclidean</p></li>
-<li><p>Points (just number of points from the beginning)</p></li>
-<li><p>Chebyshev</p></li>
-<li><p>Centripetal (square root of Euclidean distance)</p></li>
-<li><p>X, Y, Z axis - use distance along one of coordinate axis, ignore others.</p></li>
+<li><p><strong>0 - Position</strong>. This will connect curve segments with a straight line
+segment. So, effectively, this does a bevel instead of smooth fillet.</p></li>
+<li><p><strong>1 - Tangency</strong>. The fillet curves are generated so that the tangent of
+the curves are equal at points where fillet curves are joined with
+original curve segments. The generated fillet curves are cubic Bezier
+curves.</p></li>
+<li><p><strong>1 - BiArc</strong>. This option is not available when <strong>Polylines only</strong>
+parameter is checked. The fillet curves are generated as <a class="reference external" href="https://en.wikipedia.org/wiki/Biarc">biarc</a> curves,
+i.e.  pairs of circular arcs; they are generated so that the tanent
+vectors of the segments are equal at their meeting points. Biarc parameter
+will be set to 1.0. Note that this option works only when tangents of the
+curve at points where it is replaced with fillet are coplanar. I.e., this
+will work fine for planar curves, but may fail in other cases.</p></li>
+<li><p><strong>1 - Circular Arc</strong>. This option is only available when <strong>Polylines
+only</strong> parameter is not checked. Fillet curves are calculated as circular
+arc of radiuses provided in the <strong>Radius</strong> input.</p></li>
 </ul>
-<p>The default value is Euclidean.</p>
+<p>The default value is <strong>0 - Position</strong>.</p>
 </div></blockquote>
 </li>
-<li><p><strong>Specify smoothing</strong>. This parameter is available only when
-<strong>Implementation</strong> parameter is set to <strong>SciPy</strong>. If checked, the node will
-allow you to specify smoothing factor via <strong>Smoothing</strong> input. If not
-checked, the node will select the smoothing factor automatically. Unchecked
-by default.</p></li>
+<li><p><strong>Concatenate</strong>. If checked, then the node will output all segments of
+initial curve together with generated fillet curves, concatenated into one
+curve.  Otherwise, original curve segments and fillet curves will be output
+as separate Curve objects. Checked by default.</p></li>
+<li><p><strong>Even domains</strong>. This parameter is available in the N panel only. If
+checked, give each segment a domain of length 1. This parameter is only
+available if <strong>Concatenate</strong> parameter is checked.  Unchecked by default.</p></li>
 </ul>
 </section>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following outputs:</p>
 <ul class="simple">
-<li><p><strong>Curve</strong>. The generated NURBS curve object.</p></li>
-<li><p><strong>ControlPoints</strong>. Control points of the generated curve.</p></li>
-<li><p><strong>Knots</strong>. Knot vector of the generated curve.</p></li>
+<li><p><strong>Curve</strong>. Generated Curve objects.</p></li>
+<li><p><strong>Centers</strong>. This output is only available when <strong>Polylines only</strong> parameter
+is checked, and <strong>Continuity</strong> parameter is set to <strong>1 - Circular Arc</strong>.
+Centers of circles used to make fillet arcs. These are matrices, since this
+output provides not only centers, but also orientation of the circles.</p></li>
 </ul>
 </section>
-<section id="example-of-usage">
-<h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
-<p>Take points from Greasepencil drawing and approximate them with a smooth curve:</p>
-<img alt="https://user-images.githubusercontent.com/284644/74363000-7becef00-4deb-11ea-9963-e864dc3a3599.png" src="https://user-images.githubusercontent.com/284644/74363000-7becef00-4deb-11ea-9963-e864dc3a3599.png" />
-<p>Use SciPy implementation to make a closed curve:</p>
-<img alt="https://user-images.githubusercontent.com/284644/101246890-d61ebe00-3737-11eb-942d-c31e02bf3c3d.png" src="https://user-images.githubusercontent.com/284644/101246890-d61ebe00-3737-11eb-942d-c31e02bf3c3d.png" />
+<section id="examples-of-usage">
+<h2>Examples of Usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
+<p>Make fillets on some curve:</p>
+<img alt="https://user-images.githubusercontent.com/284644/205504044-bdaa43c8-f13f-4ff4-92f4-aca8100c989b.png" src="https://user-images.githubusercontent.com/284644/205504044-bdaa43c8-f13f-4ff4-92f4-aca8100c989b.png" />
+<p>Make circular arc fillets on a polyline:</p>
+<img alt="https://user-images.githubusercontent.com/284644/205504045-aab871b9-c851-484c-a908-230cd463e060.png" src="https://user-images.githubusercontent.com/284644/205504045-aab871b9-c851-484c-a908-230cd463e060.png" />
 </section>
 </section>
 
@@ -329,8 +321,8 @@ by default.</p></li>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="apply_field_to_curve.html" class="btn btn-neutral float-left" title="Apply Field to Curve" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="arc_3pt.html" class="btn btn-neutral float-right" title="Arc 3pt (Curve)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="extremes.html" class="btn btn-neutral float-left" title="Curve Extremes" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="fillet_polyline.html" class="btn btn-neutral float-right" title="Fillet Polyline" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
