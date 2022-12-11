@@ -228,6 +228,11 @@ class SvCircle(SvCurve):
         circle.u_bounds = self.u_bounds
         return circle
 
+    def get_mu_matrix(self):
+        m = Matrix(self.matrix).to_4x4()
+        m.translation = Vector(self.center)
+        return m
+
     @staticmethod
     def calc_matrix(normal, vectorx):
         normal = normal / np.linalg.norm(normal)
@@ -918,6 +923,11 @@ class SvEllipse(SvCurve):
         circle.u_bounds = self.u_bounds
         return circle
 
+    def get_mu_matrix(self):
+        m = Matrix(self.matrix).to_4x4()
+        m.translation = Vector(self.center)
+        return m
+
     @staticmethod
     def calc_matrix(normal, vectorx):
         normal = normal / np.linalg.norm(normal)
@@ -1558,6 +1568,21 @@ def from_equation(cls, eq):
     if abs(rx - ry) &gt; tolerance:
         raise UnsupportedCurveTypeException(f&#34;This SvCircle instance is not an exact circle: {rx} != {ry}&#34;)
     return (rx + ry) / 2.0</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.primitives.SvCircle.get_mu_matrix"><code class="name flex">
+<span>def <span class="ident">get_mu_matrix</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_mu_matrix(self):
+    m = Matrix(self.matrix).to_4x4()
+    m.translation = Vector(self.center)
+    return m</code></pre>
 </details>
 </dd>
 <dt id="sverchok.utils.curve.primitives.SvCircle.lerp_to"><code class="name flex">
@@ -2795,6 +2820,7 @@ def from_two_points(cls, point1, point2):
 <li><code><a title="sverchok.utils.curve.primitives.SvCircle.from_arc" href="#sverchok.utils.curve.primitives.SvCircle.from_arc">from_arc</a></code></li>
 <li><code><a title="sverchok.utils.curve.primitives.SvCircle.from_equation" href="#sverchok.utils.curve.primitives.SvCircle.from_equation">from_equation</a></code></li>
 <li><code><a title="sverchok.utils.curve.primitives.SvCircle.get_actual_radius" href="#sverchok.utils.curve.primitives.SvCircle.get_actual_radius">get_actual_radius</a></code></li>
+<li><code><a title="sverchok.utils.curve.primitives.SvCircle.get_mu_matrix" href="#sverchok.utils.curve.primitives.SvCircle.get_mu_matrix">get_mu_matrix</a></code></li>
 <li><code><a title="sverchok.utils.curve.primitives.SvCircle.lerp_to" href="#sverchok.utils.curve.primitives.SvCircle.lerp_to">lerp_to</a></code></li>
 <li><code><a title="sverchok.utils.curve.primitives.SvCircle.make_revolution_surface" href="#sverchok.utils.curve.primitives.SvCircle.make_revolution_surface">make_revolution_surface</a></code></li>
 <li><code><a title="sverchok.utils.curve.primitives.SvCircle.make_ruled_surface" href="#sverchok.utils.curve.primitives.SvCircle.make_ruled_surface">make_ruled_surface</a></code></li>
