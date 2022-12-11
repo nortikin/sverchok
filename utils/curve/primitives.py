@@ -199,6 +199,11 @@ class SvCircle(SvCurve):
         circle.u_bounds = self.u_bounds
         return circle
 
+    def get_mu_matrix(self):
+        m = Matrix(self.matrix).to_4x4()
+        m.translation = Vector(self.center)
+        return m
+
     @staticmethod
     def calc_matrix(normal, vectorx):
         normal = normal / np.linalg.norm(normal)
