@@ -83,14 +83,6 @@ def is_profiling_enabled(section):
     with sv_preferences() as prefs:
         return prefs.profile_mode == section
 
-def is_profiling_enabled_in_settings():
-    &#34;&#34;&#34;
-    Check if profiling is not set to NONE in addon preferences.
-    &#34;&#34;&#34;
-    with sv_preferences() as prefs:
-        if prefs is None:
-            return True
-        return prefs.profile_mode != &#34;NONE&#34;
 
 def profile(function = None, section = &#34;MANUAL&#34;):
     &#34;&#34;&#34;
@@ -196,43 +188,6 @@ def reset_stats():
     global _global_profile
     _global_profile = None
 
-@contextmanager
-def profiling_enabled():
-    if is_profiling_enabled_in_settings():
-        global _profile_nesting
-        profile = None
-        try:
-            profile = get_global_profile()
-            _profile_nesting += 1
-            if _profile_nesting == 1:
-                profile.enable()
-            yield profile
-        finally:
-            _profile_nesting -= 1
-            if _profile_nesting == 0 and profile is not None:
-                profile.disable()
-    else:
-        yield None
-
-@contextmanager
-def profiling_startup():
-    if &#34;--profile-sverchok-startup&#34; in sys.argv:
-        global _profile_nesting
-        profile = None
-        try:
-            profile = get_global_profile()
-            _profile_nesting += 1
-            if _profile_nesting == 1:
-                profile.enable()
-            yield profile
-        finally:
-            _profile_nesting -= 1
-            if _profile_nesting == 0 and profile is not None:
-                profile.disable()
-            dump_stats(file_path=&#34;sverchok_profile.txt&#34;)
-            save_stats(&#34;sverchok_profile.prof&#34;)
-    else:
-        yield None
 
 ########################
 #
@@ -426,25 +381,6 @@ and if it is enabled for specified section.</p></div>
         return prefs.profile_mode == section</code></pre>
 </details>
 </dd>
-<dt id="sverchok.utils.profile.is_profiling_enabled_in_settings"><code class="name flex">
-<span>def <span class="ident">is_profiling_enabled_in_settings</span></span>(<span>)</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Check if profiling is not set to NONE in addon preferences.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def is_profiling_enabled_in_settings():
-    &#34;&#34;&#34;
-    Check if profiling is not set to NONE in addon preferences.
-    &#34;&#34;&#34;
-    with sv_preferences() as prefs:
-        if prefs is None:
-            return True
-        return prefs.profile_mode != &#34;NONE&#34;</code></pre>
-</details>
-</dd>
 <dt id="sverchok.utils.profile.profile"><code class="name flex">
 <span>def <span class="ident">profile</span></span>(<span>function=None, section='MANUAL')</span>
 </code></dt>
@@ -519,64 +455,6 @@ conditions are met:
         return profiling_decorator(function)
     else:
         return profiling_decorator</code></pre>
-</details>
-</dd>
-<dt id="sverchok.utils.profile.profiling_enabled"><code class="name flex">
-<span>def <span class="ident">profiling_enabled</span></span>(<span>)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">@contextmanager
-def profiling_enabled():
-    if is_profiling_enabled_in_settings():
-        global _profile_nesting
-        profile = None
-        try:
-            profile = get_global_profile()
-            _profile_nesting += 1
-            if _profile_nesting == 1:
-                profile.enable()
-            yield profile
-        finally:
-            _profile_nesting -= 1
-            if _profile_nesting == 0 and profile is not None:
-                profile.disable()
-    else:
-        yield None</code></pre>
-</details>
-</dd>
-<dt id="sverchok.utils.profile.profiling_startup"><code class="name flex">
-<span>def <span class="ident">profiling_startup</span></span>(<span>)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">@contextmanager
-def profiling_startup():
-    if &#34;--profile-sverchok-startup&#34; in sys.argv:
-        global _profile_nesting
-        profile = None
-        try:
-            profile = get_global_profile()
-            _profile_nesting += 1
-            if _profile_nesting == 1:
-                profile.enable()
-            yield profile
-        finally:
-            _profile_nesting -= 1
-            if _profile_nesting == 0 and profile is not None:
-                profile.disable()
-            dump_stats(file_path=&#34;sverchok_profile.txt&#34;)
-            save_stats(&#34;sverchok_profile.prof&#34;)
-    else:
-        yield None</code></pre>
 </details>
 </dd>
 <dt id="sverchok.utils.profile.register"><code class="name flex">
@@ -998,10 +876,7 @@ Such file can be parsed, for example, by gprof2dot utility.</p></div>
 <li><code><a title="sverchok.utils.profile.get_global_profile" href="#sverchok.utils.profile.get_global_profile">get_global_profile</a></code></li>
 <li><code><a title="sverchok.utils.profile.have_gathered_stats" href="#sverchok.utils.profile.have_gathered_stats">have_gathered_stats</a></code></li>
 <li><code><a title="sverchok.utils.profile.is_profiling_enabled" href="#sverchok.utils.profile.is_profiling_enabled">is_profiling_enabled</a></code></li>
-<li><code><a title="sverchok.utils.profile.is_profiling_enabled_in_settings" href="#sverchok.utils.profile.is_profiling_enabled_in_settings">is_profiling_enabled_in_settings</a></code></li>
 <li><code><a title="sverchok.utils.profile.profile" href="#sverchok.utils.profile.profile">profile</a></code></li>
-<li><code><a title="sverchok.utils.profile.profiling_enabled" href="#sverchok.utils.profile.profiling_enabled">profiling_enabled</a></code></li>
-<li><code><a title="sverchok.utils.profile.profiling_startup" href="#sverchok.utils.profile.profiling_startup">profiling_startup</a></code></li>
 <li><code><a title="sverchok.utils.profile.register" href="#sverchok.utils.profile.register">register</a></code></li>
 <li><code><a title="sverchok.utils.profile.reset_stats" href="#sverchok.utils.profile.reset_stats">reset_stats</a></code></li>
 <li><code><a title="sverchok.utils.profile.save_stats" href="#sverchok.utils.profile.save_stats">save_stats</a></code></li>
