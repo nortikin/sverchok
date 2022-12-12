@@ -238,7 +238,10 @@ weight mean that the curve will pass through corresponding point at the
 smaller distance. This does not have sense if <strong>Smoothing</strong> input is set to
 zero. Optional input. If not connected, the node will consider weights of all
 points as equal.</p></li>
-<li><p><strong>Degree</strong>. Degree of the curve to be built. Default value is 3. Most useful values are 3, 5 and 7.</p></li>
+<li><p><strong>Degree</strong>. Degree of the curve to be built. Default value is 3. Most useful
+values are 3, 5 and 7. If Scipy implementation is used, then maximum
+supported degree is 5. For Geomdl, there is no hard limit, but curves of very
+high degree can be hard to manipulate with.</p></li>
 <li><p><strong>PointsCnt</strong>. Number of curve’s control points. This input is available only
 when <strong>Implementation</strong> parameter is set to <strong>Geomdl</strong>, and <strong>Specify points
 count</strong> parameter is checked. Default value is 5.</p></li>
