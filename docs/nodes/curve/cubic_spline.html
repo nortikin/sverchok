@@ -205,11 +205,7 @@
 <p>This node generates a cubic spline interpolating curve, i.e. a 3rd degree curve
 which goes through the specified vertices. The curve can be closed or not.</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205741368-e370239f-f1b2-43c4-b95f-27383ed13e76.png"><img alt="https://user-images.githubusercontent.com/14288520/205741368-e370239f-f1b2-43c4-b95f-27383ed13e76.png" src="https://user-images.githubusercontent.com/14288520/205741368-e370239f-f1b2-43c4-b95f-27383ed13e76.png" /></a>
-<p>Curve domain / parameterization specifics: depends on <strong>Metrics</strong> parameter.
-Curve domain will be equal to sum of distanes between the control points (in
-the order they are provided) in the specified metric. For example, if
-<strong>Metric</strong> is set to <strong>Points</strong>, then curve domain will be from 0 to number of
-points.</p>
+<p>Curve domain is always from 0 to 1. The parametrization depends on <strong>Metrics</strong> parameter.</p>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
