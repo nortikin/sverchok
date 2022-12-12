@@ -13,11 +13,7 @@ which goes through the specified vertices. The curve can be closed or not.
 .. image:: https://user-images.githubusercontent.com/14288520/205741368-e370239f-f1b2-43c4-b95f-27383ed13e76.png
   :target: https://user-images.githubusercontent.com/14288520/205741368-e370239f-f1b2-43c4-b95f-27383ed13e76.png
 
-Curve domain / parameterization specifics: depends on **Metrics** parameter.
-Curve domain will be equal to sum of distanes between the control points (in
-the order they are provided) in the specified metric. For example, if
-**Metric** is set to **Points**, then curve domain will be from 0 to number of
-points.
+Curve domain is always from 0 to 1. The parametrization depends on **Metrics** parameter.
 
 Inputs
 ------
