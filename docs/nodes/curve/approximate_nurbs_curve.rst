@@ -48,7 +48,10 @@ This node has the following inputs:
   smaller distance. This does not have sense if **Smoothing** input is set to
   zero. Optional input. If not connected, the node will consider weights of all
   points as equal.
-* **Degree**. Degree of the curve to be built. Default value is 3. Most useful values are 3, 5 and 7.
+* **Degree**. Degree of the curve to be built. Default value is 3. Most useful
+  values are 3, 5 and 7. If Scipy implementation is used, then maximum
+  supported degree is 5. For Geomdl, there is no hard limit, but curves of very
+  high degree can be hard to manipulate with.
 * **PointsCnt**. Number of curve's control points. This input is available only
   when **Implementation** parameter is set to **Geomdl**, and **Specify points
   count** parameter is checked. Default value is 5.
