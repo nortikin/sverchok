@@ -69,13 +69,13 @@ class ShiftNodeMK2(SverchCustomTreeNode, bpy.types.Node):
         number = self.inputs["shift"].sv_get(deepcopy=False)
         output = []
         for d,n in zip(data,number):
-            out = self.new_method(d, n[0])
+            out = self.shift(d, n[0])
             output.append(out)
 
 
         self.outputs['data'].sv_set(output)
 
-    def new_method(self, data, number):
+    def shift(self, data, number):
         if self.selected_mode == 'np':
             dat = np.array(data)
             # levelsOfList replacement:
@@ -111,10 +111,6 @@ class ShiftNodeMK2(SverchCustomTreeNode, bpy.types.Node):
                         sub_output.append(list(d))
                     output.append(sub_output)
         return output
-
-
-
-        self.outputs['data'].sv_set(output)
 
 
 def register():
