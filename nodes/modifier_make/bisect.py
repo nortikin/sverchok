@@ -177,6 +177,7 @@ class SvBisectNode(
         if self.slice_mode:
             bms, cut_mats = params
             for cut_mat, bm in zip(cut_mats, bms):
+                bm.normal_update()
                 pp = cut_mat.to_translation()
                 pno = Vector((0.0, 0.0, 1.0)) @ cut_mat.to_3x3().transposed()
 
@@ -192,6 +193,7 @@ class SvBisectNode(
         else:
             bms, cut_mats_s = params
             for cut_mats, bm in zip(cut_mats_s, bms):
+                bm.normal_update()
                 vs, es, ps = [], [], []
                 for cut_mat in cut_mats:
                     pp = cut_mat.to_translation()
