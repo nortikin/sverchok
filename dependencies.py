@@ -25,10 +25,12 @@ todo: Create dependencies.txt file and import modules from there
 """
 
 import logging
+import sverchok.settings as settings
 
 # Logging setup
 # we have to set up logging here separately, because dependencies.py is loaded before settings.py,
 # so we can't use common settings.
+# todo it's not True any more - can be refactored
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -189,3 +191,9 @@ if good_names:
     info("sv: Dependencies available: %s.", ", ".join(good_names))
 else:
     info("sv: No dependencies are available.")
+
+settings.pip = pip
+settings.sv_dependencies = sv_dependencies
+settings.ensurepip = ensurepip
+settings.draw_message = draw_message
+settings.get_icon = get_icon

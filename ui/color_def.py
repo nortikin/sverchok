@@ -20,17 +20,13 @@
 import bpy
 from bpy.props import StringProperty
 
+import sverchok.settings as settings
 from sverchok.utils.logging import debug
 import sverchok
 from sverchok.utils.handle_blender_data import BlTrees
 from sverchok.ui.nodeview_space_menu import add_node_menu
 
 colors_cache = {}
-
-themes = [("default_theme", "Default", "Default"),
-          ("nipon_blossom", "Nipon Blossom", "Nipon Blossom"),
-          ("grey", "Grey", "Grey"),
-          ("darker", "Darker", "Darker")]
 
 
 default_theme = {
@@ -169,3 +165,8 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SverchokApplyTheme)
+
+
+settings.apply_theme = apply_theme
+settings.rebuild_color_cache = rebuild_color_cache
+settings.color_callback = color_callback

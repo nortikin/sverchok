@@ -12,6 +12,7 @@ from sverchok.ui import bgl_callback_nodeview, bgl_callback_3dview
 from sverchok.utils import app_handler_ops
 from sverchok.utils.handle_blender_data import BlTrees
 from sverchok.utils.logging import catch_log_error, debug
+import sverchok.settings as settings
 
 _state = {'frame': None}
 
@@ -216,9 +217,11 @@ def call_user_functions_on_post_load_event(scene):
         function()
 
 
+settings.set_frame_change = set_frame_change
+
+
 def register():
     app_handler_ops(append=handler_dict)
-    data_structure.setup_init()
 
     update_frame_change_mode()
     bpy.app.handlers.load_post.append(call_user_functions_on_post_load_event)

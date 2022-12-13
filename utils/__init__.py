@@ -1,6 +1,6 @@
 # GPL3
 import bpy
-import sverchok
+import inspect
 
 node_classes = {}
 
@@ -59,17 +59,13 @@ def register_node_classes_factory(node_class_references, ops_class_references=No
 
         return register, unregister
 
-def auto_gather_node_classes(start_module = None):
+
+def auto_gather_node_classes(start_module):
     """
     this produces a dict with mapping from bl_idname to class reference at runtime
     f.ex
           node_classes = {SvBMeshViewerMk2: <class svechok.nodes.viz ......> , .... }
     """
-
-    import inspect
-    if start_module is None:
-        start_module = sverchok.nodes
-
     node_cats = inspect.getmembers(start_module, inspect.ismodule)
     for catname, nodecat in node_cats:
         node_files = inspect.getmembers(nodecat, inspect.ismodule)

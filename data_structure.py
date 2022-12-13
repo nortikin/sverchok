@@ -40,7 +40,6 @@ from sverchok.utils.logging import debug
 import numpy as np
 
 
-DEBUG_MODE = False
 RELOAD_EVENT = False
 
 # this is set correctly later.
@@ -1201,35 +1200,6 @@ def extend_blender_class(cls):
         for key in (key for key in dir(base_cls) if not key.startswith('_')):
             setattr(bl_class, key, getattr(base_cls, key))
     return cls
-
-
-#####################################################
-############### debug settings magic ################
-#####################################################
-
-
-def sverchok_debug(mode):
-    """
-    set debug mode to mode
-    """
-    global DEBUG_MODE
-    DEBUG_MODE = mode
-    return DEBUG_MODE
-
-
-def setup_init():
-    """
-    setup variables needed for sverchok to function
-    """
-    global DEBUG_MODE
-    global SVERCHOK_NAME
-    import sverchok
-    SVERCHOK_NAME = sverchok.__name__
-    addon = bpy.context.preferences.addons.get(SVERCHOK_NAME)
-    if addon:
-        DEBUG_MODE = addon.preferences.show_debug
-    else:
-        print("Setup of preferences failed")
 
 
 #####################################################

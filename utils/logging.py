@@ -11,6 +11,7 @@ from contextlib import contextmanager
 import sverchok
 from sverchok.utils.development import get_version_string
 from sverchok.utils.context_managers import sv_preferences
+import sverchok.settings as settings
 
 # Hardcoded for now
 log_format = "%(asctime)s [%(levelname)s] %(name)s: %(message)s"
@@ -262,6 +263,8 @@ def is_enabled_for(log_level="DEBUG") -> bool:
 consoleHandler = None
 
 logger = logging.getLogger("logging")
+settings.info = info
+settings.setLevel = setLevel
 
 def register():
     global consoleHandler

@@ -118,9 +118,9 @@ imported_modules, node_list = import_sverchok()
 
 @profiling_startup("reg_stats")
 def register():
-    from sverchok.core import sv_registration_utils
+    from sverchok.core import sv_register_modules
     import sverchok
-    sv_registration_utils.register_all(imported_modules + node_list)
+    sv_register_modules(imported_modules + node_list)
     sverchok.core.init_bookkeeping(__name__)
 
     if reload_event:
@@ -130,10 +130,10 @@ def register():
 
 def unregister():
     import sverchok
-    from sverchok.core import sv_registration_utils
+    from sverchok.core import sv_unregister_modules
 
     sverchok.utils.clear_node_classes()
-    sv_registration_utils.unregister_all(imported_modules)
-    sv_registration_utils.unregister_all(node_list)
+    sv_unregister_modules(imported_modules)
+    sv_unregister_modules(node_list)
 
 # EOF
