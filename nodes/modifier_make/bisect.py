@@ -32,7 +32,7 @@ from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
 # but using python bmesh code for driving
 # by Linus Yng / edits+upgrades Dealga McArdle and Victor Doval
 
-def bisect_bmesh(bm, pp, pno, outer, inner, fill, threshold):
+def bisect_bmesh(bm, pp, pno, outer, inner, fill, threshold=0.00001):
 
 
     geom_in = bm.verts[:] + bm.edges[:] + bm.faces[:]
