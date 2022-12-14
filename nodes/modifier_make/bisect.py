@@ -34,7 +34,7 @@ from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
 
 def bisect_bmesh(bm, pp, pno, outer, inner, fill):
 
-
+    bm.normal_update()
     geom_in = bm.verts[:] + bm.edges[:] + bm.faces[:]
     res = bmesh.ops.bisect_plane(
         bm, geom=geom_in, dist=0.00001,
@@ -177,7 +177,6 @@ class SvBisectNode(
         if self.slice_mode:
             bms, cut_mats = params
             for cut_mat, bm in zip(cut_mats, bms):
-                bm.normal_update()
                 pp = cut_mat.to_translation()
                 pno = Vector((0.0, 0.0, 1.0)) @ cut_mat.to_3x3().transposed()
 
@@ -193,7 +192,6 @@ class SvBisectNode(
         else:
             bms, cut_mats_s = params
             for cut_mats, bm in zip(cut_mats_s, bms):
-                bm.normal_update()
                 vs, es, ps = [], [], []
                 for cut_mat in cut_mats:
                     pp = cut_mat.to_translation()
