@@ -24,21 +24,9 @@ instead of actual module, so that one can execute another version of code:
 todo: Create dependencies.txt file and import modules from there
 """
 
-import logging
+from sverchok.utils.logging import info, debug
 import sverchok.settings as settings
 
-# Logging setup
-# we have to set up logging here separately, because dependencies.py is loaded before settings.py,
-# so we can't use common settings.
-# todo it's not True any more - can be refactored
-
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-ch = logging.StreamHandler()
-ch.setLevel(logging.INFO)
-logger.addHandler(ch)
-
-info, debug, error = logger.info, logger.debug, logger.error
 
 class SvDependency():
     """
@@ -103,7 +91,7 @@ try:
     import pip
     pip_d.module = pip
 except ImportError:
-    debug(pip_d.message)
+    print(pip_d.message)
     pip = None
 
 if pip is None:
@@ -111,10 +99,10 @@ if pip is None:
         import ensurepip
     except ImportError:
         ensurepip = None
-        info("Ensurepip module is not available, user will not be able to install PIP automatically")
+        # print("Ensurepip module is not available, user will not be able to install PIP automatically")
 else:
     ensurepip = None
-    debug("PIP is already installed, no need to call ensurepip")
+    # print("PIP is already installed, no need to call ensurepip")
 
 scipy_d = sv_dependencies["scipy"] = SvDependency("scipy", "https://www.scipy.org/")
 scipy_d.pip_installable = True
@@ -186,14 +174,18 @@ try:
 except ImportError:
     pyOpenSubdiv = None 
 
-good_names = [d.package for d in sv_dependencies.values() if d.module is not None and d.package is not None]
-if good_names:
-    info("sv: Dependencies available: %s.", ", ".join(good_names))
-else:
-    info("sv: No dependencies are available.")
 
 settings.pip = pip
 settings.sv_dependencies = sv_dependencies
 settings.ensurepip = ensurepip
 settings.draw_message = draw_message
 settings.get_icon = get_icon
+
+
+def register():
+    good_names = [d.package for d in sv_dependencies.values()
+                  if d.module is not None and d.package is not None]
+    if good_names:
+        info("Dependencies available: %s.", ", ".join(good_names))
+    else:
+        info("No dependencies are available.")

@@ -42,9 +42,6 @@ import numpy as np
 
 RELOAD_EVENT = False
 
-# this is set correctly later.
-SVERCHOK_NAME = "sverchok"
-
 cache_viewer_baker = {}
 
 sentinel = object()
