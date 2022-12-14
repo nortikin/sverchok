@@ -9,7 +9,7 @@ from sverchok.utils.curve import SvCurveLengthSolver, SvCurve
 from sverchok.utils.nodes_mixins.draft_mode import DraftMode
 
 
-class SvCurveLengthParameterNode(DraftMode, SverchCustomTreeNode, bpy.types.Node):
+class SvExCurveLengthParameterNode(DraftMode, SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Curve Length Parameter
     Tooltip: Solve curve length (natural) parameter
@@ -169,8 +169,8 @@ class SvCurveLengthParameterNode(DraftMode, SverchCustomTreeNode, bpy.types.Node
         self.outputs['Vertices'].sv_set(verts_out)
 
 def register():
-    bpy.utils.register_class(SvCurveLengthParameterNode)
+    bpy.utils.register_class(SvExCurveLengthParameterNode)
 
 def unregister():
-    bpy.utils.unregister_class(SvCurveLengthParameterNode)
+    bpy.utils.unregister_class(SvExCurveLengthParameterNode)
 
