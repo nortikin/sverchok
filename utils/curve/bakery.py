@@ -30,7 +30,7 @@ class CurveData(object):
         self.curve = curve
         self.resolution = resolution
 
-        if node.draw_line or node.draw_verts or node.draw_comb:
+        if node.draw_line or node.draw_verts or node.draw_comb or node.draw_curvature:
             t_min, t_max = curve.get_u_bounds()
             ts = np.linspace(t_min, t_max, num=resolution)
             n = len(ts)
@@ -53,10 +53,15 @@ class CurveData(object):
         else:
             self.node_points = None
 
+        if node.draw_comb or node.draw_curvature:
+            self.curvatures = curve.curvature_array(ts)
+        else:
+            self.curvatures = None
+
         if node.draw_comb:
             n = len(self.points)
             normals = curve.main_normal_array(ts, normalize=True)
-            curvatures = curve.curvature_array(ts)[np.newaxis].T
+            curvatures = self.curvatures[np.newaxis].T
             comb_normals = node.comb_scale * curvatures * normals
             comb_points = self.points - comb_normals
             self.comb_points = np.concatenate((self.points, comb_points)).tolist()
@@ -66,6 +71,20 @@ class CurveData(object):
         else:
             self.comb_points = None
             self.comb_edges = None
+
+        if node.draw_curvature:
+            color1 = np.array(node.line_color)
+            color2 = np.array(node.curvature_color)
+            #curvatures = np.tanh(self.curvatures)
+            curvatures = self.curvatures
+            c, C = curvatures.min(), curvatures.max()
+            coefs = (curvatures - c) / (C - c)
+            coefs = coefs[np.newaxis].T
+            self.curvature_point_colors = (1 - coefs) * color1 + coefs * color2
+            self.curvature_edge_colors = 0.5 * (self.curvature_point_colors[1:] + self.curvature_point_colors[:-1])
+        else:
+            self.curvature_point_colors = None
+            self.curvature_edge_colors = None
 
     def bake(self, object_name):
         me = bpy.data.meshes.new(object_name)
