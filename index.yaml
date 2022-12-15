@@ -275,6 +275,7 @@
     - ---
     - SvIsInsideSolidNode
     - SvSolidDistanceNode
+    - SvProjectSolidNode
     - SvSliceSolidNode
     - SvMeshToSolidNode
     - SvSolidToMeshNodeMk2
