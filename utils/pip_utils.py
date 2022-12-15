@@ -10,13 +10,28 @@ import sys
 import os
 import subprocess
 
+def python_version():
+    pv = sys.version_info
+    return 'python' + str(pv.major) + '.' + str(pv.minor)
+
 def install_package(package):
     if not isinstance(package, list):
         package = [package]
-    subprocess.call([os.path.join(sys.prefix, 'bin', 'python.exe'), "-m", "pip", "install", *package])
+    if os.sys.platform == 'windows':
+        subprocess.call([os.path.join(sys.prefix, 'bin', 'python.exe'), "-m", "pip", "install", *package])
+    elif os.sys.platform == 'linux':
+        subprocess.call([os.path.join(sys.prefix, 'bin', python_version()), "-m", "pip", "install", *package])
+    else:
+        print(f'cannot install pip {package}')
+
 
 def install_whl(package_path):
-    subprocess.call([os.path.join(sys.prefix, 'bin', 'python.exe'), "-m", "pip", "install", f"{package_path}"])
+    if os.sys.platform == 'windows':
+        subprocess.call([os.path.join(sys.prefix, 'bin', 'python.exe'), "-m", "pip", "install", f"{package_path}"])
+    elif os.sys.platform == 'linux':
+        subprocess.call([os.path.join(sys.prefix, 'bin', python_version()), "-m", "pip", "install", f"{package_path}"])
+    else:
+        print(f'cannot install pip whl {package_path}')
 
 usage = r"""\
 
