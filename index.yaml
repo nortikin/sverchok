@@ -138,7 +138,7 @@
     - SvExCurveExtremesNode
     - SvExCurveZeroTwistFrameNode
     - SvExSlerpCurveFrameNode
-    - SvExCurveLengthParameterNode
+    - SvCurveLengthParameterMk2Node
     - SvLengthRebuildCurveNode
     - SvExCrossCurvePlaneNode
     - SvExCrossCurveSurfaceNode
