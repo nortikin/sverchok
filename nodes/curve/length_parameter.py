@@ -142,6 +142,13 @@ class SvCurveLengthParameterMk2Node(DraftMode, SverchCustomTreeNode, bpy.types.N
             label = "[D] " + label
         return label
 
+    def migrate_from(self, old_node):
+        if old_node.bl_idname == 'SvExCurveLengthParameterNode':
+            if old_node.eval_mode == 'AUTO':
+                self.eval_mode = 'AUTO'
+            elif old_node.eval_mode == 'MANUAL':
+                self.eval_mode = 'MANUAL'
+
     def prepare_lengths(self, total_length, segment_length):
         if segment_length >= total_length:
             return np.array([0.0, total_length])
