@@ -64,7 +64,7 @@ def draw_curves(context, args):
     for item in draw_inputs:
 
         if node.draw_line:
-            if node.draw_curvature:
+            if node.draw_curvature and item.curvature_point_colors is not None:
                 colors = item.curvature_point_colors.tolist()
                 draw_edges_colored(e_shader, item.points, item.edges, node.line_width, colors)
             else:

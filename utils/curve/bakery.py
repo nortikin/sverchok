@@ -30,7 +30,7 @@ class CurveData(object):
         self.curve = curve
         self.resolution = resolution
 
-        if node.draw_line or node.draw_verts or node.draw_comb:
+        if node.draw_line or node.draw_verts or node.draw_comb or node.draw_curvature:
             t_min, t_max = curve.get_u_bounds()
             ts = np.linspace(t_min, t_max, num=resolution)
             n = len(ts)
