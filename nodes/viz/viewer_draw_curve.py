@@ -67,7 +67,7 @@ def draw_curves(context, args):
             if node.draw_curvature and item.curvature_point_colors is not None:
                 colors = item.curvature_point_colors.tolist()
                 draw_edges_colored(e_shader, item.points, item.edges, node.line_width, colors)
-            else:
+            elif item.edges is not None:
                 draw_edges(e_shader, item.points, item.edges, node.line_width, node.line_color, is_smooth)
 
         if node.draw_control_polygon and item.control_points is not None:
@@ -82,11 +82,8 @@ def draw_curves(context, args):
         if node.draw_comb and item.comb_edges is not None:
             draw_edges(e_shader, item.comb_points, item.comb_edges, node.comb_width, node.comb_color, is_smooth)
 
-        if node.draw_verts:
-            if node.draw_curvature:
-                draw_points_colored(v_shader, item.points, node.verts_size, item.curvature_point_colors)
-            else:
-                draw_points(v_shader, item.points, node.verts_size, node.verts_color)
+        if node.draw_verts and item.points is not None:
+            draw_points(v_shader, item.points, node.verts_size, node.verts_color)
 
     bgl.glEnable(bgl.GL_BLEND)
 

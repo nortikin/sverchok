@@ -35,9 +35,13 @@ class CurveData(object):
             ts = np.linspace(t_min, t_max, num=resolution)
             n = len(ts)
             self.points = curve.evaluate_array(ts).tolist()
+        else:
+            self.points = None
 
-        if node.draw_line:
+        if node.draw_line or node.draw_curvature:
             self.edges = [(i,i+1) for i in range(n-1)]
+        else:
+            self.edges = None
 
         if (node.draw_control_polygon or node.draw_control_points) and hasattr(curve, 'get_control_points'):
             self.control_points = curve.get_control_points().tolist()
@@ -47,6 +51,8 @@ class CurveData(object):
         if node.draw_control_polygon:
             n = len(self.control_points)
             self.control_polygon_edges = [(i,i+1) for i in range(n-1)]
+        else:
+            self.control_polygon_edges = None
 
         if node.draw_nodes and hasattr(curve, 'calc_greville_points'):
             self.node_points = curve.calc_greville_points().tolist()
