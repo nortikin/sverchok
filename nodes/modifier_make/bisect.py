@@ -34,7 +34,7 @@ from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
 
 def bisect_bmesh(bm, pp, pno, outer, inner, fill, threshold=0.00001):
 
-
+    bm.normal_update()
     geom_in = bm.verts[:] + bm.edges[:] + bm.faces[:]
     res = bmesh.ops.bisect_plane(
         bm, geom=geom_in, dist=threshold,
