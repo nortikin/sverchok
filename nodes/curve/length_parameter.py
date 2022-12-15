@@ -117,9 +117,11 @@ class SvCurveLengthParameterMk2Node(DraftMode, SverchCustomTreeNode, bpy.types.N
         self.update_sockets(context)
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, 'eval_mode')
+        layout.label(text = 'Mode:')
+        layout.prop(self, 'eval_mode', text='')
         if self.eval_mode == 'LENGTH':
-            layout.prop(self, 'rounding_mode')
+            layout.label(text='Rounding:')
+            layout.prop(self, 'rounding_mode', text='')
         layout.prop(self, 'specify_accuracy')
         if self.specify_accuracy:
             if self.id_data.sv_draft:
