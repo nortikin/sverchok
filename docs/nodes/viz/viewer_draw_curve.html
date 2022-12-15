@@ -214,19 +214,28 @@ shown by default.</p></li>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190172536-af4307dd-c342-4e73-9936-0e1f58cd68b6.png"><img alt="https://user-images.githubusercontent.com/14288520/190172536-af4307dd-c342-4e73-9936-0e1f58cd68b6.png" src="https://user-images.githubusercontent.com/14288520/190172536-af4307dd-c342-4e73-9936-0e1f58cd68b6.png" /></a>
 <hr class="docutils" />
 <ul class="simple">
-<li><p><strong>Display Node Points</strong>, <strong>Node Points Color</strong>, <strong>Node Points Size</strong>. Control
+<li><p><strong>Display Node Points</strong> (N icon), <strong>Node Points Color</strong>, <strong>Node Points Size</strong>. Control
 display of curve’s node points, for NURBS and NURBS-like curves. Nodes are
 not shown by default.</p></li>
 </ul>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190176111-16a43da1-2fd4-4b1c-bf74-78712bcd6a3f.png"><img alt="https://user-images.githubusercontent.com/14288520/190176111-16a43da1-2fd4-4b1c-bf74-78712bcd6a3f.png" src="https://user-images.githubusercontent.com/14288520/190176111-16a43da1-2fd4-4b1c-bf74-78712bcd6a3f.png" /></a>
 <hr class="docutils" />
 <ul class="simple">
-<li><p><strong>Display Curvature Comb</strong>, <strong>Comb Color</strong>, <strong>Comb Line Width</strong>. Control
+<li><p><strong>Display Curvature Comb</strong> (C icon), <strong>Comb Color</strong>, <strong>Comb Line Width</strong>. Control
 display of curve’s curvature comb. Curvature comb is not shown by default.</p></li>
 <li><p><strong>Scale</strong>. This parameter is available only when <strong>Display Curvature Comb</strong>
 parameter is enabled. This defines the scaling applied to curve normals used
 to display the curvature comb. The default value of 1.0 means that normals
 length will be equal to curve’s curvature in corresponding points.</p></li>
+</ul>
+<hr class="docutils" />
+<ul class="simple">
+<li><p><strong>Indicate Curvature</strong> (G icon), <strong>Curvature Color</strong>. If enabled, curve’s
+curvature is indicated by drawing a curve with a color gradient: the color
+specified in <strong>Curve Line Color</strong> parameter is used to draw the most flat
+curve segments, and the color specified in the <strong>Curvature Color</strong> parameter
+is used to draw the places where curve’s curvature hast the greatest value.
+Disabled by default.</p></li>
 </ul>
 </section>
 <section id="operators">
@@ -246,6 +255,8 @@ length will be equal to curve’s curvature in corresponding points.</p></li>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190133906-61748350-414f-4d3e-8e71-2bd6be30597c.png"><img alt="https://user-images.githubusercontent.com/14288520/190133906-61748350-414f-4d3e-8e71-2bd6be30597c.png" src="https://user-images.githubusercontent.com/14288520/190133906-61748350-414f-4d3e-8e71-2bd6be30597c.png" /></a>
 <p>Example of curvature comb display:</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/206860681-a70d93af-a72b-4dcb-bf36-3678135b835a.png"><img alt="https://user-images.githubusercontent.com/284644/206860681-a70d93af-a72b-4dcb-bf36-3678135b835a.png" src="https://user-images.githubusercontent.com/284644/206860681-a70d93af-a72b-4dcb-bf36-3678135b835a.png" /></a>
+<p>Example of curvature indication by color gradient:</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/206875486-4f018e3e-4b90-4b6d-9df1-28df129e65d2.png"><img alt="https://user-images.githubusercontent.com/284644/206875486-4f018e3e-4b90-4b6d-9df1-28df129e65d2.png" src="https://user-images.githubusercontent.com/284644/206875486-4f018e3e-4b90-4b6d-9df1-28df129e65d2.png" /></a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/line_mk4.html"><span class="doc">Line</span></a></p></li>
 <li><p>Transform-&gt; <a class="reference internal" href="../transforms/randomize.html"><span class="doc">Randomize</span></a></p></li>
