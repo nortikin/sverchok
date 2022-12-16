@@ -24,6 +24,10 @@ from sverchok.utils.sv_shader_sources import dashed_vertex_shader, dashed_fragme
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.utils.modules.geom_utils import obtain_normal3 as normal
 
+from sverchok.dependencies import FreeCAD
+if FreeCAD is not None:
+    from sverchok.utils.sv_obj_baker import SvSolidBake
+
 
 def generate_facet_data(verts, faces, face_color, vector_light):
     out_verts = []
@@ -378,7 +382,7 @@ class SvSolidViewerNode(SverchCustomTreeNode, bpy.types.Node):
                 colors_column.prop(self, "face_color", text='')
 
         row = layout.row(align=True)
-        self.wrapper_tracked_ui_draw_op(row, "node.sverchok_solid_baker_mk3", icon='OUTLINER_OB_MESH', text="B A K E")
+        self.wrapper_tracked_ui_draw_op(row, SvSolidBake.bl_idname, icon='OUTLINER_OB_MESH', text="B A K E")
         # row.separator()
         # self.wrapper_tracked_ui_draw_op(row, "node.view3d_align_from", icon='CURSOR', text='')
 
