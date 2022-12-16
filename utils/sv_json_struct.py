@@ -648,14 +648,16 @@ class NodeStruct(Struct):
         # it will cause replacing of all sockets with wrong identifiers in the group node.
         # clearing and adding sockets of Group input and Group output nodes
         # immediately cause their rebuilding by Blender, so JSON file does not save information about their sockets.
-        if node.bl_idname not in {'NodeGroupInput', 'NodeGroupOutput'}:
-            node.inputs.clear()
+        build_in_id_names = {
+            'NodeGroupInput', 'NodeGroupOutput', 'NodeFrame', 'NodeReroute'}
+        if node.bl_idname not in build_in_id_names:
+                node.inputs.clear()
         for sock_identifier, raw_struct in self._struct.get("inputs", dict()).items():
             with self.logger.add_fail("Add in socket",
                                       f"Tree: {node.id_data.name}, Node {node.name}, Sock: {sock_identifier}"):
                 factories.sock(sock_identifier, self.logger, raw_struct).build(node.inputs, factories, imported_data)
 
-        if node.bl_idname not in {'NodeGroupInput', 'NodeGroupOutput'}:
+        if node.bl_idname not in build_in_id_names:
             node.outputs.clear()
         for sock_identifier, raw_struct in self._struct.get("outputs", dict()).items():
             with self.logger.add_fail("Add out socket",
