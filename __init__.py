@@ -115,16 +115,16 @@ imported_modules, node_modules, core = import_sverchok()
 
 @profiling_startup("reg_stats")
 def register():
+    from sverchok.utils import ascii_print
     core.sv_register_modules(imported_modules)
+    core.sv_register_modules(core.imported_utils_modules())
     core.sv_register_modules(node_modules)
-    core.init_bookkeeping()
+    ascii_print.show_welcome()
 
 
 def unregister():
-    import sverchok
-
-    sverchok.utils.clear_node_classes()
     core.sv_unregister_modules(imported_modules)
+    core.sv_unregister_modules(core.imported_utils_modules())
     core.sv_unregister_modules(node_modules)
 
 # EOF

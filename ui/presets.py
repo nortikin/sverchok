@@ -32,7 +32,6 @@ from bpy.props import StringProperty, BoolProperty, EnumProperty
 from sverchok.utils.logging import debug, info, error, exception
 from sverchok.utils import sv_gist_tools
 from sverchok.utils import sv_IO_panel_tools
-from sverchok.utils import get_node_class_reference
 from sverchok.utils.sv_json_import import JSONImporter
 from sverchok.utils.sv_json_export import JSONExporter
 import sverchok
@@ -82,7 +81,8 @@ def get_category_items(self, context, include_empty=False):
     category_items = [(GENERAL, "General", "Uncategorized presets", 0)]
     node_category_items = []
     for idx, category in enumerate(get_category_names(include_empty=include_empty)):
-        node_class = get_node_class_reference(category)
+        # actually category is mixture of categories and node.bl_idname(s)
+        node_class = bpy.types.Node.bl_rna_get_subclass_py(category)
         if node_class and hasattr(node_class, 'bl_label'):
             title = "/Node/ {}".format(node_class.bl_label)
             node_category_items.append((category, title, category, idx+1))
@@ -925,7 +925,8 @@ class SV_PT_UserPresetsPanel(bpy.types.Panel):
 
         selected_nodes = [node for node in ntree.nodes if node.select]
         can_save_preset = len(selected_nodes) > 0
-        category_node_class = get_node_class_reference(op.category)
+        # op.category is either category or node bl_idname
+        category_node_class = bpy.types.Node.bl_rna_get_subclass_py(op.category)
         if category_node_class is not None:
             if len(selected_nodes) == 1:
                 selected_node = selected_nodes[0]

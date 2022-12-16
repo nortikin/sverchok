@@ -1,4 +1,5 @@
 import importlib
+import sys
 
 
 root_modules = [
@@ -19,6 +20,10 @@ core_modules = [
     "group_update_system",
     "event_system",
 ]
+
+
+def imported_utils_modules():
+    return [m for n, m in sys.modules.items() if 'sverchok.utils' in n]
 
 
 def sv_register_modules(modules):
@@ -62,6 +67,10 @@ def handle_reload_event(imported_modules):
     for module in imported_modules:
         importlib.reload(module)
 
+    # reload util modules
+    for module in imported_utils_modules():
+        importlib.reload(module)
+
     # reload nodes
     for node in node_modules:
         importlib.reload(node)
@@ -81,30 +90,31 @@ def import_all_modules(imported_modules, mods_bases):
 
 
 def init_architecture():
-    from sverchok.utils import utils_modules
-    from sverchok.ui import ui_modules
+    """There is no too much sense to init settings module first. It just useful
+    to make sure that we do not init half of Sverchok via the module.
+    Settings (preferences) are only available when add-on is imported (during
+    registration).
+
+    Import core modules here like Sverchok node tree, sockets, settings,
+    update system, user interface etc.
+    Utils modules are imported only via core modules. If you need your module
+    to be imported you either add import in some core module or convert it into
+    a core module (for example by moving into the ui folder).
+    List of core modules is used for calling their register function.
+    """
+    import sverchok.ui as ui
 
     imported_modules = []
     mods_bases = [
         (root_modules, "sverchok"),
         (core_modules, "sverchok.core"),
-        (utils_modules, "sverchok.utils"),
-        (ui_modules, "sverchok.ui")
+        (ui.module_names(), "sverchok.ui")
     ]
     # print('sv: import settings')
     import_settings(imported_modules)
     # print('sv: import all modules')
     import_all_modules(imported_modules, mods_bases)
     return imported_modules
-
-
-def init_bookkeeping():
-
-    from sverchok.utils import ascii_print, auto_gather_node_classes
-    from sverchok import nodes
-
-    ascii_print.show_welcome()
-    auto_gather_node_classes(nodes)
 
 
 def interupted_activation_detected():
