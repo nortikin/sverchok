@@ -1,12 +1,18 @@
 Ellipse (Curve)
 ===============
 
+.. image:: https://user-images.githubusercontent.com/14288520/205259757-70c83631-6abf-4501-86b0-fa9ad5ba1f76.png
+  :target: https://user-images.githubusercontent.com/14288520/205259757-70c83631-6abf-4501-86b0-fa9ad5ba1f76.png
+
 Functionality
 -------------
 
 This node generates a Curve object representing an ellipse. The ellipse is
 defined by a set of parameters: major/minor radii (a.k.a. major/minor
 semi-axis), eccentricity, focal length.
+
+.. image:: https://user-images.githubusercontent.com/14288520/205485273-bff2586d-69e1-45a8-8310-eb8b3aa27851.png
+  :target: https://user-images.githubusercontent.com/14288520/205485273-bff2586d-69e1-45a8-8310-eb8b3aa27851.png
 
 Inputs
 ------
@@ -26,6 +32,9 @@ This node has the following inputs:
 * **Matrix**. This defines the center and the orientation of the ellipse curve.
   By default, ellipse's origin is placed at the global origin ``(0, 0, 0)``,
   and the ellipse is placed in XOY plane.
+
+.. image:: https://user-images.githubusercontent.com/14288520/205485604-7321fa32-4254-44b3-a18b-b72239bb787f.png
+  :target: https://user-images.githubusercontent.com/14288520/205485604-7321fa32-4254-44b3-a18b-b72239bb787f.png
 
 Parameters
 ----------
@@ -62,9 +71,21 @@ Examples of usage
 
 Default settings:
 
-.. image:: https://user-images.githubusercontent.com/284644/84289369-d6107d80-ab5b-11ea-909f-62a9c9205de2.png
+.. image:: https://user-images.githubusercontent.com/14288520/205485803-12cfb9da-11e9-4238-b490-08249600644b.png
+  :target: https://user-images.githubusercontent.com/14288520/205485803-12cfb9da-11e9-4238-b490-08249600644b.png
+
+* List->List Main-> :doc:`List Join </nodes/list_main/join>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+* Viz-> :doc:`Viewer Draw Curve </nodes/viz/viewer_draw_curve>`
+
+---------
 
 Extrude smaller ellipse along bigger one:
 
-.. image:: https://user-images.githubusercontent.com/284644/84289874-7666a200-ab5c-11ea-8483-c7b885cab805.png
+.. image:: https://user-images.githubusercontent.com/14288520/205486157-dca072ac-8353-4756-8f7b-f9519905afa7.png
+  :target: https://user-images.githubusercontent.com/14288520/205486157-dca072ac-8353-4756-8f7b-f9519905afa7.png
 
+* Surfaces-> :doc:`Extrude Curve Along Curve </nodes/surface/extrude_curve>`
+* Surface-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
+* Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`

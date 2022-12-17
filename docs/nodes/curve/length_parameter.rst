@@ -41,7 +41,12 @@ This node has the following inputs:
 * **Samples**. Number of length parameter values to calculate the curve points
   at. The node will calculate evenly spaced values of the length parameter from
   zero to the full length of the curve. The default value is 50. This input is
-  only available if **Mode** parameter is set to **Auto**.
+  only available if **Mode** parameter is set to **By Count**.
+* **SegmentLength**. This input is available only when **Mode** parameter is
+  set to **By Length**. This allows to specify the length of each segment. Note
+  that since the whole length of the curve is not necessarily an integer
+  multiple of segment length, there can be some sort of rounding applied - see
+  **Rounding** parameter. The default value is 1.0.
 
 Parameters
 ----------
@@ -51,12 +56,37 @@ This node has the following parameters:
 * **Mode**. This defines how the values of length parameter will be provided.
   The available options are:
 
-  * **Auto**. Values of length parameters will be calculated as evenly spaced
+  * **By Count**. Values of length parameters will be calculated as evenly spaced
     values from zero to the full length of the curve. The number of the values
     is controlled by the **Samples** input.
+  * **By Length**. Values of length parameters will be calculated as evenly
+    spaced values from zero to the full length of the curve (or a bit less, see
+    **Rounding** parameter). The length of each segment will be equal to the
+    value of **SegmentLength** input (up to rounding); the number of segment
+    will be calculated based on full curve length and segment length.
   * **Manual**. Values of length parameter will be provided in the **Length** input.
 
-  The default value is **Auto**.
+  The default value is **By Count**.
+
+* **Rounding**. This parameter is available only when **Mode** parameter is set
+  to **By Length**. This defines how actual lengths of curve segments will be
+  calculated. The available options are:
+
+   * **Longer Segments**. The node will calculate the number of segments by
+     dividing full curve length by specified segment length and rounding this
+     value down to nearest smaller integer. So, each segment's length will be a
+     bit more than the value specified in the **SegmentLength** input.
+   * **Shorter Segments**. The node will calculate the number of segments by
+     dividing full curve length by specified segment length and rounding this
+     value up to nearest greater integer. So, each segments' length will be a
+     bit less than the value specified in the **SegmentLength** input.
+   * **Precise (Cut)**. The length of each segment will be set exactly to the
+     value specified in the **SegmentLength** parameter. But then, near the end
+     of curve, the last segment will be shorter than others - it's length will
+     be just what left, i.e. it's length will be equal to remainder from
+     dividing full curve length by segment length.
+
+  The default option is **Longer Segments**.
 
 * **Interpolation mode**. This defines the interpolation method used for
   calculating of points inside the segments in which the curve is split
@@ -81,8 +111,17 @@ Example of usage
 Two exemplars of Archimedean spiral:
 
 .. image:: https://user-images.githubusercontent.com/284644/77854328-14f09180-7203-11ea-9192-028621be3d95.png
+  :target: https://user-images.githubusercontent.com/284644/77854328-14f09180-7203-11ea-9192-028621be3d95.png
 
 The one on the left is drawn with points according to evenly-spaced values of T
 parameter; the one of the right is drawn with points spread with equal length
 of the path between them.
+
+Examples of **By Length** mode usage. For the blue curve, **Longer segments**
+rounding is used; for green curve, **Shorter segments** rounding is used; and
+for orange curve, **Precise (Cut)** rounding option is used.
+
+.. image:: https://user-images.githubusercontent.com/284644/207919660-9e9c364e-cd99-40c0-aca2-dfb47bebdc0c.png
+  :target: https://user-images.githubusercontent.com/284644/207919660-9e9c364e-cd99-40c0-aca2-dfb47bebdc0c.png
+
 

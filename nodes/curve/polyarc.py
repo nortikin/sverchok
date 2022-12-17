@@ -106,7 +106,7 @@ class SvPolyArcNode(SverchCustomTreeNode, bpy.types.Node):
                     curve = SvCircle.from_equation(eq)
                     _, angle = curve.get_u_bounds()
                     tangent = Vector(curve.tangent(angle))
-                    new_centers.append(curve.matrix)
+                    new_centers.append(curve.get_mu_matrix())
                     new_radius.append(curve.radius)
                     new_angles.append(angle)
                 new_curves.append(curve)

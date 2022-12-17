@@ -112,8 +112,8 @@ class SvBezierCurve(SvCurve, SvBezierSplitMixin):
         """
         p1 = p0 + v0 / 5.0
         p4 = p5 - v5 / 5.0
-        p2 = a0/20.0 + 2*p1 - p0
-        p3 = a5/20.0 + 2*p4 - p5
+        p2 = p0 + 0.4*v0 + a0/20.0
+        p3 = p5 - 0.4*v5 + a5/20.0
         return SvBezierCurve([p0, p1, p2, p3, p4, p5])
 
     @classmethod

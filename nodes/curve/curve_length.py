@@ -6,6 +6,7 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
+from sverchok.utils.curve.core import SvCurve
 from sverchok.utils.curve.algorithms import SvCurveLengthSolver
 from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.curve.nurbs_algorithms import SvNurbsCurveLengthSolver
@@ -86,11 +87,12 @@ class SvCurveLengthNode(SverchCustomTreeNode, bpy.types.Node):
         if not any(socket.is_linked for socket in self.outputs):
             return
 
-        curves = self.inputs['Curve'].sv_get()
+        curve_s = self.inputs['Curve'].sv_get()
         t_min_s = self.inputs['TMin'].sv_get()
         t_max_s = self.inputs['TMax'].sv_get()
         resolution_s = self.inputs['Resolution'].sv_get()
 
+        curve_s = ensure_nesting_level(curve_s, 2, data_types=(SvCurve,))
         t_min_s = ensure_nesting_level(t_min_s, 2)
         t_max_s = ensure_nesting_level(t_max_s, 2)
         resolution_s = ensure_nesting_level(resolution_s, 2)
@@ -101,8 +103,9 @@ class SvCurveLengthNode(SverchCustomTreeNode, bpy.types.Node):
             tolerance = None
 
         length_out = []
-        for curve, t_mins, t_maxs, resolutions in zip_long_repeat(curves, t_min_s, t_max_s, resolution_s):
-            for t_min, t_max, resolution in zip_long_repeat(t_mins, t_maxs, resolutions):
+        for params in zip_long_repeat(curve_s, t_min_s, t_max_s, resolution_s):
+            new_lengths = []
+            for curve, t_min, t_max, resolution in zip_long_repeat(*params):
                 if self.mode == 'REL':
                     curve_t_min, curve_t_max = curve.get_u_bounds()
                     curve_t_range = curve_t_max - curve_t_min
@@ -125,7 +128,9 @@ class SvCurveLengthNode(SverchCustomTreeNode, bpy.types.Node):
                     solver.prepare('SPL', resolution, tolerance=tolerance)
                     length = solver.calc_length(t_min, t_max)
 
-                length_out.append([length])
+                new_lengths.append(length)
+
+            length_out.append(new_lengths)
 
         self.outputs['Length'].sv_set(length_out)
 

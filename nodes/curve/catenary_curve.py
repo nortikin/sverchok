@@ -25,6 +25,7 @@ class SvExCatenaryCurveNode(SverchCustomTreeNode, bpy.types.Node):
 
     length : FloatProperty(
         name = "Length",
+        description = "The length of the curve between starting and ending point",
         min = 0.0,
         default = 3.0,
         update = updateNode)

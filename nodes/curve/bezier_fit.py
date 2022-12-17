@@ -45,13 +45,14 @@ class SvExBezierCurveFitNode(SverchCustomTreeNode, bpy.types.Node):
 
     degree : IntProperty(
             name = "Degree",
+            description = "Degree of the curve to be build",
             min = 2,
             default = 3,
             update = updateNode)
 
     metrics = [
         ('MANHATTAN', 'Manhattan', "Manhattan distance metric", 0),
-        ('DISTANCE', 'Euclidan', "Eudlcian distance metric", 1),
+        ('DISTANCE', 'Euclidean', "Euclidean distance metric", 1),
         ('POINTS', 'Points', "Points based", 2),
         ('CHEBYSHEV', 'Chebyshev', "Chebyshev distance", 3)]
 

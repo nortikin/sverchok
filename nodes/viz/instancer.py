@@ -56,7 +56,13 @@ class SvInstancerNodeMK3(SvViewerNode, SverchCustomTreeNode, bpy.types.Node):
 
         objects = [obj for obj, m in zip(cycle(objects), matrices)]
         meshes = [obj.data for obj, m in zip(cycle(objects), matrices)]
-        self.regenerate_objects([self.base_data_name], meshes, [self.collection], objects if self.full_copy else [None])
+        self.regenerate_objects(
+            [self.base_data_name],
+            meshes,
+            [self.collection],
+            objects if self.full_copy else [None],
+            to_show=[self.id_data.sv_show and self.show_objects]
+        )
         [setattr(prop.obj, 'matrix_local', m) for prop, m in zip(self.object_data, matrices)]  # update???
 
         self.outputs['Objects'].sv_set([prop.obj for prop in self.object_data])

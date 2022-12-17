@@ -23,6 +23,7 @@ class SvExCirclifyNode(SverchCustomTreeNode, bpy.types.Node):
 
     major_radius : FloatProperty(
         name = "Major Radius",
+        description = "The radius of the bigger circle, into which all other should be packed",
         default = 1.0,
         update = updateNode)
 
@@ -34,12 +35,14 @@ class SvExCirclifyNode(SverchCustomTreeNode, bpy.types.Node):
 
     plane : EnumProperty(
         name = "Plane",
+        description = "The coordinate plane in which the circles will be generated",
         items = planes,
         default = 'XY',
         update = updateNode)
 
     show_enclosure : BoolProperty(
         name = "Show enclosure",
+        description = "Whether to generate the big circle, into which all other are inscribed",
         default = True,
         update = updateNode)
 

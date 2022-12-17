@@ -32,12 +32,12 @@ from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
 # but using python bmesh code for driving
 # by Linus Yng / edits+upgrades Dealga McArdle and Victor Doval
 
-def bisect_bmesh(bm, pp, pno, outer, inner, fill):
+def bisect_bmesh(bm, pp, pno, outer, inner, fill, threshold=0.00001):
 
-
+    bm.normal_update()
     geom_in = bm.verts[:] + bm.edges[:] + bm.faces[:]
     res = bmesh.ops.bisect_plane(
-        bm, geom=geom_in, dist=0.00001,
+        bm, geom=geom_in, dist=threshold,
         plane_co=pp, plane_no=pno, use_snap_center=False,
         clear_outer=outer, clear_inner=inner)
 
@@ -46,7 +46,7 @@ def bisect_bmesh(bm, pp, pno, outer, inner, fill):
         fres = bmesh.ops.edgenet_prepare(
             bm, edges=[e for e in res['geom_cut'] if isinstance(e, bmesh.types.BMEdge)]
         )
-        bmesh.ops.edgeloop_fill(bm, edges=fres['edges'])
+        bmesh.ops.triangle_fill(bm, edges=fres['edges'], use_beauty=True, use_dissolve=True, normal=pno)
 
     edges = []
     faces = []
@@ -60,7 +60,7 @@ def bisect_bmesh(bm, pp, pno, outer, inner, fill):
 
     return (verts, edges, faces)
 
-def bisect(cut_me_vertices, cut_me_edges, pp, pno, outer, inner, fill):
+def bisect(cut_me_vertices, cut_me_edges, pp, pno, outer, inner, fill, threshold=0.00001):
 
     if not cut_me_edges or not cut_me_vertices:
         return False
@@ -70,7 +70,7 @@ def bisect(cut_me_vertices, cut_me_edges, pp, pno, outer, inner, fill):
     else:
         bm = bmesh_from_pydata(cut_me_vertices, cut_me_edges, [])
 
-    return bisect_bmesh(bm, pp, pno, outer, inner, fill)
+    return bisect_bmesh(bm, pp, pno, outer, inner, fill, threshold)
 
 
 class SvBisectNode(
@@ -118,6 +118,14 @@ class SvBisectNode(
         description="Behavior on different list lengths, object level",
         items=correct_output_modes, default="FLAT",
         update=updateNode)
+    
+    threshold : bpy.props.FloatProperty(
+            name = "Threshold",
+            description = "minimum distance when testing if a vert is exactly on the plane",
+            default = 0.00001,
+            precision = 5,
+            min = 0.0,
+            update = updateNode)
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', 'vertices')
@@ -151,6 +159,7 @@ class SvBisectNode(
         self.draw_buttons(context, layout)
         layout.prop(self, 'correct_output')
         layout.prop(self, 'list_match')
+        layout.prop(self, 'threshold')
 
     def rclick_menu(self, context, layout):
         layout.prop_menu_enum(self, "list_match", text="List Match")
@@ -180,7 +189,7 @@ class SvBisectNode(
                 pp = cut_mat.to_translation()
                 pno = Vector((0.0, 0.0, 1.0)) @ cut_mat.to_3x3().transposed()
 
-                res = bisect_bmesh(bm.copy(), pp, pno, self.outer, self.inner, self.fill)
+                res = bisect_bmesh(bm.copy(), pp, pno, self.outer, self.inner, self.fill, self.threshold)
                 if not res:
                     return
                 if self.remove_empty:
@@ -196,7 +205,7 @@ class SvBisectNode(
                 for cut_mat in cut_mats:
                     pp = cut_mat.to_translation()
                     pno = Vector((0.0, 0.0, 1.0)) @ cut_mat.to_3x3().transposed()
-                    res = bisect_bmesh(bm.copy(), pp, pno, self.outer, self.inner, self.fill)
+                    res = bisect_bmesh(bm.copy(), pp, pno, self.outer, self.inner, self.fill, self.threshold)
                     if not res:
                         return
                     if self.remove_empty:

@@ -119,7 +119,10 @@ class SvNurbsCurvePoints(SvNurbsCurveGoal):
 
     def calc_alphas(self, solver, us):
         p = solver.degree
-        alphas = [solver.basis.fraction(k,p, solver.curve_weights)(us) for k in range(solver.n_cpts)]
+        if solver.is_rational():
+            alphas = [solver.basis.fraction(k,p, solver.curve_weights)(us) for k in range(solver.n_cpts)]
+        else:
+            alphas = [solver.basis.function(k,p)(us) for k in range(solver.n_cpts)]
         alphas = np.array(alphas) # (n_cpts, n_points)
         return alphas
 
@@ -584,10 +587,34 @@ class SvNurbsCurveSolver(SvCurve):
             self.degree = degree
         self.ndim = ndim
         self.n_cpts = None
-        self.curve_weights = None
+        self._curve_weights = None
+        self._is_rational = None
         self.knotvector = None
         self.goals = []
         self.A = self.B = None
+
+    @staticmethod
+    def _check_is_rational(weights):
+        w, W = weights.min(), weights.max()
+        return abs(W/w - 1.0) > 1e-6
+
+    @property
+    def curve_weights(self):
+        return self._curve_weights
+    
+    @curve_weights.setter
+    def curve_weights(self, weights):
+        if weights is None:
+            self._is_rational = False
+        else:
+            weights = np.asarray(weights)
+            self._is_rational = SvNurbsCurveSolver._check_is_rational(weights)
+        self._curve_weights = weights
+
+    def is_rational(self):
+        if self._is_rational is None:
+            self._is_rational = SvNurbsCurveSolver._check_is_rational(self._curve_weights)
+        return self._is_rational
 
     def copy(self):
         solver = SvNurbsCurveSolver(degree=self.degree, src_curve=self.src_curve)

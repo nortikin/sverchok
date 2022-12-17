@@ -1,6 +1,9 @@
 Catenary Curve
 ==============
 
+.. image:: https://user-images.githubusercontent.com/14288520/205445101-09994c2b-6646-475d-999c-571bbe871c9e.png
+  :target: https://user-images.githubusercontent.com/14288520/205445101-09994c2b-6646-475d-999c-571bbe871c9e.png
+
 Dependencies
 ------------
 
@@ -15,6 +18,12 @@ This node generates a catenary_ curve, given it's two end points and it's length
 
 .. _catenary: https://en.wikipedia.org/wiki/Catenary
 
+.. image:: https://user-images.githubusercontent.com/14288520/205445321-ad399ddf-044b-4adb-9f42-1aa49cca05f7.png
+  :target: https://user-images.githubusercontent.com/14288520/205445321-ad399ddf-044b-4adb-9f42-1aa49cca05f7.png
+
+.. image:: https://user-images.githubusercontent.com/14288520/205445676-b73fffcb-dfea-4334-8390-e33edc272c62.gif
+  :target: https://user-images.githubusercontent.com/14288520/205445676-b73fffcb-dfea-4334-8390-e33edc272c62.gif
+
 Inputs
 ------
 
@@ -28,6 +37,9 @@ This node has the following inputs:
 * **Length**. The length of the curve between starting and ending point. The
   default value is 3.0.
 
+.. image:: https://user-images.githubusercontent.com/14288520/205446031-26fbf80a-6301-4d04-9304-238cf298834e.png
+  :target: https://user-images.githubusercontent.com/14288520/205446031-26fbf80a-6301-4d04-9304-238cf298834e.png
+
 Parameters
 ----------
 
@@ -36,6 +48,9 @@ This node has the following parameter:
 * **Join**. If checked, then the node will output single flat list of curves
   for all input lists of points. Otherwise, the node will output a separate
   list of curves for each list of input points. Checked by default.
+
+.. image:: https://user-images.githubusercontent.com/14288520/205446519-6960e757-2eeb-4790-9202-ec426687218c.png
+  :target: https://user-images.githubusercontent.com/14288520/205446519-6960e757-2eeb-4790-9202-ec426687218c.png
 
 Outputs
 -------
@@ -47,11 +62,22 @@ This node has the following output:
 Examples of usage
 -----------------
 
-Catenary curve hanging down between two points:
+**Catenary curve hanging down between two points**:
 
-.. image:: https://user-images.githubusercontent.com/284644/86517687-4b622c00-be44-11ea-8265-32d7bba9f8ee.png
+.. image:: https://user-images.githubusercontent.com/14288520/205448797-4c859a2e-880c-4f21-9874-0f2861c91d3d.png
+  :target: https://user-images.githubusercontent.com/14288520/205448797-4c859a2e-880c-4f21-9874-0f2861c91d3d.png
 
-Catenary arch:
+* Viz-> :doc:`Viewer Draw Curve </nodes/viz/viewer_draw_curve>`
 
-.. image:: https://user-images.githubusercontent.com/284644/86518000-04c20100-be47-11ea-993f-19808ee3d2a5.png
+---------
 
+**Catenary arch**:
+
+.. image:: https://user-images.githubusercontent.com/14288520/205449286-a68ea04b-3d67-4364-9902-0c883ef04f2f.png
+  :target: https://user-images.githubusercontent.com/14288520/205449286-a68ea04b-3d67-4364-9902-0c883ef04f2f.png
+
+* Generator-> :doc:`NGon </nodes/generator/ngon>`
+* Curves->Curve Primitives-> :doc:`Polyline </nodes/curve/polyline>`
+* Surfaces-> :doc:`Extrude Curve Along Curve </nodes/surface/extrude_curve>`
+* Surface-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`

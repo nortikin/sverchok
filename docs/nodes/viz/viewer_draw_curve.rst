@@ -76,12 +76,30 @@ The parameters of the node are (in this order):
 
 -------------
 
-* **Display Node Points**, **Node Points Color**, **Node Points Size**. Control
+* **Display Node Points** (N icon), **Node Points Color**, **Node Points Size**. Control
   display of curve's node points, for NURBS and NURBS-like curves. Nodes are
   not shown by default.
 
 .. image:: https://user-images.githubusercontent.com/14288520/190176111-16a43da1-2fd4-4b1c-bf74-78712bcd6a3f.png
   :target: https://user-images.githubusercontent.com/14288520/190176111-16a43da1-2fd4-4b1c-bf74-78712bcd6a3f.png
+
+-------------
+
+* **Display Curvature Comb** (C icon), **Comb Color**, **Comb Line Width**. Control
+  display of curve's curvature comb. Curvature comb is not shown by default.
+* **Scale**. This parameter is available only when **Display Curvature Comb**
+  parameter is enabled. This defines the scaling applied to curve normals used
+  to display the curvature comb. The default value of 1.0 means that normals
+  length will be equal to curve's curvature in corresponding points.
+
+-------------
+
+* **Indicate Curvature** (G icon), **Curvature Color**. If enabled, curve's
+  curvature is indicated by drawing a curve with a color gradient: the color
+  specified in **Curve Line Color** parameter is used to draw the most flat
+  curve segments, and the color specified in the **Curvature Color** parameter
+  is used to draw the places where curve's curvature hast the greatest value.
+  Disabled by default.
 
 Operators
 ---------
@@ -101,6 +119,16 @@ Example of Usage
 
 .. image:: https://user-images.githubusercontent.com/14288520/190133906-61748350-414f-4d3e-8e71-2bd6be30597c.png
   :target: https://user-images.githubusercontent.com/14288520/190133906-61748350-414f-4d3e-8e71-2bd6be30597c.png
+
+Example of curvature comb display:
+
+.. image:: https://user-images.githubusercontent.com/284644/206860681-a70d93af-a72b-4dcb-bf36-3678135b835a.png
+  :target: https://user-images.githubusercontent.com/284644/206860681-a70d93af-a72b-4dcb-bf36-3678135b835a.png
+
+Example of curvature indication by color gradient:
+
+.. image:: https://user-images.githubusercontent.com/284644/206875486-4f018e3e-4b90-4b6d-9df1-28df129e65d2.png
+  :target: https://user-images.githubusercontent.com/284644/206875486-4f018e3e-4b90-4b6d-9df1-28df129e65d2.png
 
 * Generator-> :doc:`Line </nodes/generator/line_mk4>`
 * Transform-> :doc:`Randomize </nodes/transforms/randomize>`
