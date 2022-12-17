@@ -87,10 +87,31 @@ class BezierTests(SverchokTestCase):
         a0r = curve.second_derivative(0)
         a1r = curve.second_derivative(1)
 
-        self.assert_numpy_arrays_equal(v0r, v0)
-        self.assert_numpy_arrays_equal(v1r, v1)
-        self.assert_numpy_arrays_equal(a0r, a0)
+        self.assert_numpy_arrays_equal(v0r, v0, precision=6)
+        self.assert_numpy_arrays_equal(v1r, v1, precision=6)
+        self.assert_numpy_arrays_equal(a0r, a0, precision=6)
         self.assert_numpy_arrays_equal(a1r, a1, precision=8)
+
+    def test_blend_second_2(self):
+        p0 = np.array([-0.12, -1.75, 0])
+        v0 = np.array([0.69, -0.05, 0])
+        a0 = np.array([-2.75, 42.64, 0])
+        p1 = np.array([0.57, -1.5, 0])
+        v1 = np.array([-0.31, 0.07, 0])
+        a1 = np.array([0.15, 1.05, 0])
+
+        curve = SvBezierCurve.blend_second_derivatives(p0, v0, a0, p1, v1, a1)
+
+        v0r = curve.tangent(0)
+        v1r = curve.tangent(1)
+
+        a0r = curve.second_derivative(0)
+        a1r = curve.second_derivative(1)
+
+        self.assert_numpy_arrays_equal(v0r, v0, precision=6)
+        self.assert_numpy_arrays_equal(v1r, v1, precision=6)
+        self.assert_numpy_arrays_equal(a0r, a0, precision=6)
+        self.assert_numpy_arrays_equal(a1r, a1, precision=6)
 
     def test_blend_third(self):
         p0 = np.array([0, 0, 0])

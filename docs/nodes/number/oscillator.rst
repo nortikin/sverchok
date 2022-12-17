@@ -50,7 +50,7 @@ Advanced Parameters
 In the N-Panel (and on the right-click menu) you can find:
 
 * **Wave Interpolation**: (On Custom mode) Define how the wave should be interpolated (Linear or Cubic)
-* **Wave Knots Mode**: (On Custom mode) Define how the wave knots should be interpolated (Manhattan - Manhattan distance metric, Euclidan - Eudlcian distance metric, Points - Points based, Chebyshev - Chebyshev distance)
+* **Wave Knots Mode**: (On Custom mode) Define how the wave knots should be interpolated (Manhattan - Manhattan distance metric, Euclidean - Euclidean distance metric, Points - Points based, Chebyshev - Chebyshev distance)
 * **Output NumPy**: Get NumPy arrays in stead of regular lists (makes the node faster)
 * **List Match**: Define how list with different lengths should be matched
 

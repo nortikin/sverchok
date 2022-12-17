@@ -2,8 +2,6 @@ import importlib
 import sverchok
 from sverchok.core.socket_data import clear_all_socket_cache
 
-reload_event = False
-
 root_modules = [
     "node_tree", "data_structure", "core",
     "utils", "ui", "nodes", "old_nodes"

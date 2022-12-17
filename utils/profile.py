@@ -55,14 +55,6 @@ def is_profiling_enabled(section):
     with sv_preferences() as prefs:
         return prefs.profile_mode == section
 
-def is_profiling_enabled_in_settings():
-    """
-    Check if profiling is not set to NONE in addon preferences.
-    """
-    with sv_preferences() as prefs:
-        if prefs is None:
-            return True
-        return prefs.profile_mode != "NONE"
 
 def profile(function = None, section = "MANUAL"):
     """
@@ -168,43 +160,6 @@ def reset_stats():
     global _global_profile
     _global_profile = None
 
-@contextmanager
-def profiling_enabled():
-    if is_profiling_enabled_in_settings():
-        global _profile_nesting
-        profile = None
-        try:
-            profile = get_global_profile()
-            _profile_nesting += 1
-            if _profile_nesting == 1:
-                profile.enable()
-            yield profile
-        finally:
-            _profile_nesting -= 1
-            if _profile_nesting == 0 and profile is not None:
-                profile.disable()
-    else:
-        yield None
-
-@contextmanager
-def profiling_startup():
-    if "--profile-sverchok-startup" in sys.argv:
-        global _profile_nesting
-        profile = None
-        try:
-            profile = get_global_profile()
-            _profile_nesting += 1
-            if _profile_nesting == 1:
-                profile.enable()
-            yield profile
-        finally:
-            _profile_nesting -= 1
-            if _profile_nesting == 0 and profile is not None:
-                profile.disable()
-            dump_stats(file_path="sverchok_profile.txt")
-            save_stats("sverchok_profile.prof")
-    else:
-        yield None
 
 ########################
 #

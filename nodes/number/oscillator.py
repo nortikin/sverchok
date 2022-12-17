@@ -104,7 +104,7 @@ class SvOscillatorNode(SverchCustomTreeNode, bpy.types.Node):
         items=wave_interp_modes, update=updateNode)
 
     knot_modes = [('MANHATTAN', 'Manhattan', "Manhattan distance metric", 0),
-                  ('DISTANCE', 'Euclidan', "Eudlcian distance metric", 1),
+                  ('DISTANCE', 'Euclidean', "Euclidean distance metric", 1),
                   ('POINTS', 'Points', "Points based", 2),
                   ('CHEBYSHEV', 'Chebyshev', "Chebyshev distance", 3)]
 

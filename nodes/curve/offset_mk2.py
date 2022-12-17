@@ -132,9 +132,9 @@ class SvOffsetCurveMk2Node(SverchCustomTreeNode, bpy.types.Node):
             for curve, offset, offset_curve, vector, resolution in zip_long_repeat(curves, offsets, offset_curves, vectors, resolutions):
                 if self.algorithm != NORMAL_DIR:
                     if self.mode == 'X':
-                        vector = [offset, 0, 0]
+                        vector = [1, 0, 0]
                     elif self.mode == 'Y':
-                        vector = [0, offset, 0]
+                        vector = [0, 1, 0]
                 if vector is not None:
                     vector = np.array(vector)
 

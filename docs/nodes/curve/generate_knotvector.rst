@@ -45,7 +45,7 @@ This node has the following parameters:
 
 * **Metric**. The metric to be used to calculate distances between points. This
   parameter is only available when **Mode** parameter is set to **From
-  Points**. The default option is **Euclidian**.
+  Points**. The default option is **Euclidean**.
 * **Set control points number**. This parameter is only available when **Mode**
   parameter is set to **From Points** or **From T Values**. If checked, the
   node will allow to specify arbitrary number of curve's (or surface's) control

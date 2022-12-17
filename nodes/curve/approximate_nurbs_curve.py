@@ -35,7 +35,7 @@ class SvApproxNurbsCurveMk2Node(SverchCustomTreeNode, bpy.types.Node):
 
     degree : IntProperty(
             name = "Degree",
-            min = 1, max = 6,
+            min = 1,
             default = 3,
             update = updateNode)
 

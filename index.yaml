@@ -86,6 +86,7 @@
         - SvExNurbsCurveNode
         - SvApproxNurbsCurveMk2Node
         - SvExInterpolateNurbsCurveNode
+        - SvFilletCurveNode
         - SvDeconstructCurveNode
         - SvNurbsCurveNodesNode
         - ---
@@ -137,7 +138,7 @@
     - SvExCurveExtremesNode
     - SvExCurveZeroTwistFrameNode
     - SvExSlerpCurveFrameNode
-    - SvExCurveLengthParameterNode
+    - SvCurveLengthParameterMk2Node
     - SvLengthRebuildCurveNode
     - SvExCrossCurvePlaneNode
     - SvExCrossCurveSurfaceNode
