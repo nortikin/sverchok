@@ -458,13 +458,15 @@
         - SvWireframeNode
         - SvPipeNode
         - SvMatrixTubeNode
-        - ---
-        - SvBManalyzinNode
-        - SvBMObjinputNode
-        - SvBMoutputNode
-        - SvBMtoElementNode
-        - SvBMOpsNodeMK2
-
+- Bmesh:
+    - icon_name: MODIFIER
+    - extra_menu: MeshPartialMenu
+    - SvBMObjinputNode
+    - SvBMoutputNode
+    - SvBMOpsNode
+    - SvBMTypesNode
+    - SvBMUtilsNode
+    - SvBMGeometryNode
 - CAD:
     - icon_name: TOOL_SETTINGS
     - extra_menu: MeshPartialMenu

@@ -21,20 +21,29 @@ import bmesh
 from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
-
+from bpy.props import BoolProperty
 
 class SvBMoutputNode(SverchCustomTreeNode, bpy.types.Node):
     ''' BMesh Out '''
     bl_idname = 'SvBMoutputNode'
     bl_label = 'BMesh Out'
     bl_icon = 'OUTLINER_OB_EMPTY'
-    sv_icon = 'SV_ALPHA'  # 'SV_BMESH_OBJECT_OUT'
+    sv_icon = 'SV_ALPHA'
 
+    free : BoolProperty(
+    name = "Free Bmesh",
+    description="Destroy the bmesh object from memory",
+    default = True,
+    update = updateNode)
+
+    def draw_buttons(self, context, layout):
+        layout.prop(self,'free')
+    
     def sv_init(self, context):
-        self.inputs.new('SvStringsSocket', 'bmesh_list')
-        self.outputs.new('SvVerticesSocket', 'Vert')
-        self.outputs.new('SvStringsSocket', 'Edge')
-        self.outputs.new('SvStringsSocket', 'Poly')
+        self.inputs.new('SvStringsSocket', 'Bmesh')
+        self.outputs.new('SvVerticesSocket', 'Verts')
+        self.outputs.new('SvStringsSocket', 'Edges')
+        self.outputs.new('SvStringsSocket', 'Faces')
 
     def process(self):
         v, e, p = self.outputs
@@ -42,12 +51,15 @@ class SvBMoutputNode(SverchCustomTreeNode, bpy.types.Node):
         elist = []
         plist = []
         if v.is_linked:
-            bml = self.inputs['bmesh_list'].sv_get()
+            bml = self.inputs['Bmesh'].sv_get()
             for i in bml:
                 V,E,P = pydata_from_bmesh(i)
                 vlist.append(V)
                 elist.append(E)
                 plist.append(P)
+            if self.free:
+                for bm in bml:
+                    bm.free()
         v.sv_set(vlist)
         e.sv_set(elist)
         p.sv_set(plist)
