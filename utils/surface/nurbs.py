@@ -11,6 +11,7 @@ from sverchok.utils.nurbs_common import (
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.nurbs_algorithms import unify_curves, nurbs_curve_to_xoy, nurbs_curve_matrix
 from sverchok.utils.curve.algorithms import unify_curves_degree, SvCurveFrameCalculator
+from sverchok.utils.curve.nurbs_solver_applications import interpolate_nurbs_curve_with_tangents
 from sverchok.utils.surface.core import UnsupportedSurfaceTypeException
 from sverchok.utils.surface import SvSurface, SurfaceCurvatureCalculator, SurfaceDerivativesData
 from sverchok.utils.logging import info, getLogger
@@ -1223,6 +1224,65 @@ def simple_loft(curves, degree_v = None, knots_u = 'UNIFY', knotvector_accuracy=
                 control_points, weights)
     surface.u_bounds = curves[0].get_u_bounds()
     return curves, v_curves, surface
+
+def loft_by_binormals(curves, degree_v = 3,
+        binormals_scale = 1.0,
+        metric = 'DISTANCE', tknots=None,
+        knotvector_accuracy = 6,
+        implementation = SvNurbsMaths.NATIVE,
+        logger = None):
+
+    if logger is None:
+        logger = getLogger()
+
+    n_curves = len(curves)
+    curves = unify_curves_degree(curves)
+    curves = unify_curves(curves, accuracy=knotvector_accuracy)
+    degree_u = curves[0].get_degree()
+
+    src_points = [curve.get_homogenous_control_points() for curve in curves]
+    src_points = np.array(src_points)
+    src_points = np.transpose(src_points, axes=(1,0,2))
+    
+    greville_ts = [curve.calc_greville_ts() for curve in curves]
+    
+    binormals = [curve.binormal_array(ts, normalize=True) for curve, ts in zip(curves, greville_ts)]
+    binormals = np.array(binormals)
+    binormals = np.transpose(binormals, axes=(1,0,2))
+    
+    cpts_mean_by_curve = np.mean(src_points, axis=0)
+    cpts_direction = np.mean(cpts_mean_by_curve[1:] - cpts_mean_by_curve[:-1], axis=0)
+    
+    binormals *= binormals_scale
+    n,m,ndim = binormals.shape
+    
+    binormals = np.concatenate((binormals, np.zeros((n,m,1))), axis=2)
+    
+    r = np.sum(binormals * cpts_direction, axis=2)
+    bad = (r < 0)
+    binormals[bad] = - binormals[bad]
+
+    tknots_vs = [Spline.create_knots(src_points[i,:], metric=metric) for i in range(n)]
+    tknots_vs = np.array(tknots_vs)
+    tknots_v = np.mean(tknots_vs, axis=0)
+    
+    v_curves = [interpolate_nurbs_curve_with_tangents(degree_v, points, tangents, tknots=tknots_v, implementation=implementation, logger=logger) for points, tangents in zip(src_points, binormals)]
+    control_points = [curve.get_homogenous_control_points() for curve in v_curves]
+    control_points = np.array(control_points)
+    n,m,ndim = control_points.shape
+    control_points = control_points.reshape((n*m, ndim))
+    control_points, weights = from_homogenous(control_points)
+    control_points = control_points.reshape((n,m,3))
+    weights = weights.reshape((n,m))
+    
+    knotvector_u = curves[0].get_knotvector()
+    knotvector_v = v_curves[0].get_knotvector()
+    
+    surface = SvNurbsSurface.build(SvNurbsSurface.NATIVE,
+                degree_u, degree_v,
+                knotvector_u, knotvector_v,
+                control_points, weights)
+    return surface
 
 def interpolate_nurbs_curves(curves, base_vs, target_vs,
         degree_v = None, knots_u = 'UNIFY',

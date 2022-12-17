@@ -804,6 +804,18 @@ class KnotvectorTests(SverchokTestCase):
         expected = [(0, 3), (0.3, 1), (0.7, 1), (1, 3), (1.5, 1), (1.7, 1)]
         self.assert_sverchok_data_equal(result, expected)
 
+    def test_to_multiplicity_5(self):
+        kv = np.array([0, 0, 0, 0.1, 0.2, 0.201, 0.3, 0.4, 0.401, 0.5], dtype=np.float64)
+        result = sv_knotvector.to_multiplicity(kv, tolerance=0.02)
+        expected = [(0, 3), (0.1, 1), (0.201, 2), (0.3, 1), (0.401, 2), (0.5, 1)]
+        self.assert_sverchok_data_equal(result, expected)
+
+    def test_to_multiplicity_6(self):
+        kv = np.array([0, 0, 0, 0.1, 0.2, 0.201, 0.3, 0.4, 0.401, 0.499, 0.5], dtype=np.float64)
+        result = sv_knotvector.to_multiplicity(kv, tolerance=0.02)
+        expected = [(0, 3), (0.1, 1), (0.201, 2), (0.3, 1), (0.401, 2), (0.5, 2)]
+        self.assert_sverchok_data_equal(result, expected)
+
     def test_from_multiplicity_1(self):
         pairs = [(0, 3), (1, 3)]
         kv = sv_knotvector.from_multiplicity(pairs)

@@ -160,6 +160,54 @@ def interpolate_nurbs_curve(degree, points, metric='DISTANCE', tknots=None, cycl
                                     logger = logger)
     return curve
 
+def knotvector_with_tangents_from_tknots(degree, u):
+    n = len(u)
+    if degree == 2:
+        kv = [u[0], u[0], u[0]]
+        for i in range(1, n-1):
+            kv.append((u[i-1] + u[i]) / 2.0)
+            kv.append(u[i])
+        kv.extend([u[-1], u[-1]])
+        return np.array(kv)
+    elif degree == 3:
+        kv = [u[0], u[0], u[0],u[0]]
+        kv.append(u[1]/2.0)
+        for i in range(1, n-2):
+            u1 = (2*u[i] + u[i+1]) / 3.0
+            kv.append(u1)
+            u2 = (u[i] + 2*u[i+1]) / 3.0
+            kv.append(u2)
+        kv.append((u[-2] + u[-1])/2.0)
+        kv.extend([u[-1], u[-1], u[-1], u[-1]])
+        return np.array(kv)
+    else:
+        raise Exception(f"Degrees other than 2 and 3 are not supported yet")
+
+def interpolate_nurbs_curve_with_tangents(degree, points, tangents,
+            metric='DISTANCE', tknots=None,
+            implementation = SvNurbsMaths.NATIVE,
+            logger = None):
+
+    n_points = len(points)
+    points = np.asarray(points)
+    tangents = np.asarray(tangents)
+    if len(points) != len(tangents):
+        raise Exception(f"Number of points ({len(points)}) must be equal to number of tangent vectors ({len(tangents)})")
+
+    if tknots is None:
+        tknots = Spline.create_knots(points, metric=metric)
+
+    solver = SvNurbsCurveSolver(degree=degree, ndim=4)
+    solver.add_goal(SvNurbsCurvePoints(tknots, points, relative=False))
+    solver.add_goal(SvNurbsCurveTangents(tknots, tangents, relative=False))
+    knotvector = knotvector_with_tangents_from_tknots(degree, tknots)
+    n_cpts = solver.guess_n_control_points()
+    solver.set_curve_params(n_cpts, knotvector)
+    problem_type, residue, curve = solver.solve_ex(problem_types = {SvNurbsCurveSolver.PROBLEM_WELLDETERMINED},
+                                    implementation = implementation,
+                                    logger = logger)
+    return curve
+
 def curve_to_nurbs(degree, curve, samples, logger=None):
     is_cyclic = curve.is_closed()
     t_min, t_max = curve.get_u_bounds()
