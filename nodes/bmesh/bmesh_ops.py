@@ -17,7 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy,bmesh,mathutils
-from bpy.props import EnumProperty, FloatProperty
+from bpy.props import EnumProperty, FloatProperty,BoolProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, enum_item as e, second_as_first_cycle as safc,match_long_repeat)
 
@@ -49,9 +49,15 @@ class SvBMOpsNode(SverchCustomTreeNode, bpy.types.Node):
         default=operators[0][0],
         items=operators,
         update=updata_oper)
-    
+    copy : BoolProperty(
+        name = "Copy Bmesh",
+        description="Copy the input bmesh and apply the function on this basis. Disabling it will save performance, but the operation cannot be rolled back",
+        default = True,
+        update = updateNode)
+
     def draw_buttons(self, context, layout):
         layout.prop(self,'oper',text='')
+        layout.prop(self,'copy')
 
     def sv_init(self, context):
         for i,p in enumerate(dict_bmesh[operators[0][0]][1]):
@@ -62,14 +68,24 @@ class SvBMOpsNode(SverchCustomTreeNode, bpy.types.Node):
     def process(self):
         input = []
         for i,p in enumerate(dict_bmesh[self.oper][1]):
-            if i == 0:
-                default = bmesh.new()
+            if i == 0 and self.copy :
+                value = self.inputs[p].sv_get()
+                value = [bm.copy() for bm in value]
             else:
                 default = dict_bmesh[self.oper][2][i]
-            value = self.inputs[p].sv_get(default=[default])
+                value = self.inputs[p].sv_get(default=[default])
             input.append(value)
         input = match_long_repeat(input)
 
+        if self.inputs['bm'].is_linked :
+            return_= self.ops(input)
+        else:
+            return_ = []
+        
+        self.outputs[0].sv_set(input[0])
+        self.outputs[1].sv_set(return_)
+
+    def ops(self, input):
         return_ = []
         for p in zip(*input):
             bm = p[0]
@@ -86,12 +102,7 @@ class SvBMOpsNode(SverchCustomTreeNode, bpy.types.Node):
                         parameters = parameters + ',' + name_p + '=' + p[i]      
             fun = 'bmesh.ops.' + self.oper + '(' + parameters +')'
             return_.append(eval(fun))
-         
-        if not self.inputs['bm'].is_linked :
-            bm.free()
-        
-        self.outputs[0].sv_set(input[0])
-        self.outputs[1].sv_set(return_)
+        return return_
         
 def register():
     bpy.utils.register_class(SvBMOpsNode)

@@ -68,10 +68,20 @@ class SvBMObjinputNode(SverchCustomTreeNode, bpy.types.Node):
         description="Keep the index order of edges unchanged",
         default = True,
         update = updateNode)
+    max: IntProperty(
+        name= 'Max Number',
+        description="""Maximum number of bmesh objects created,
+        Prevent the creation of too many empty bmesh objects from causing Blender crash""",
+        default= 5,
+        update=updateNode)
+    
     def draw_buttons(self, context, layout):
         layout.prop(self,'mode',text='')
         if self.mode == 'POLYGON':
             layout.prop(self,'unchanged')
+        if self.mode == 'POLYGON' or self.mode == 'OBJECT':
+            layout.prop(self,'max')
+
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', 'Verts')
         self.inputs.new('SvStringsSocket', 'Edges')
@@ -83,14 +93,18 @@ class SvBMObjinputNode(SverchCustomTreeNode, bpy.types.Node):
             verts = self.inputs['Verts'].sv_get(default=[[]])
             edges = self.inputs['Edges'].sv_get(default=[[]])
             faces = self.inputs['Faces'].sv_get(default=[[]])
-            for v,e,f in zip(*match_long_repeat([verts,edges,faces])):
+            for i,(v,e,f) in enumerate(zip(*match_long_repeat([verts,edges,faces]))):
+                if i >= self.max:
+                    break
                 bm = bm_from_pydata(v,e,f,self.unchanged)
                 bmesh_list.append(bm)
         elif self.mode == 'OBJECT':
             objs =  self.inputs['Objects'].sv_get(default=[])
             if not objs: 
                 return
-            for obj in objs:
+            for i,obj in enumerate(objs):
+                if i >= self.max:
+                    break
                 bm = bmesh.new()
                 bm.from_mesh(obj.data)
                 bmesh_list.append(bm)
