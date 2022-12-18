@@ -63,7 +63,6 @@ class SvProjectSolidNode(SverchCustomTreeNode, bpy.types.Node):
         self.update_sockets(context)
 
     def draw_buttons(self, context, layout):
-        layout.label(text='Input:')
         layout.label(text='Projection:')
         layout.prop(self, 'projection_type', text='')
 
