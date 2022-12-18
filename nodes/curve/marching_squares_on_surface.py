@@ -113,8 +113,8 @@ class SvExMSquaresOnSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
 
                 contours = measure.find_contours(field_values, level=value)
 
-                u_size = (u_max - u_min)/samples_u
-                v_size = (v_max - v_min)/samples_v
+                u_size = (u_max - u_min)/(samples_u-1)-0.0000001
+                v_size = (v_max - v_min)/(samples_v-1)-0.0000001
 
                 uv_contours, new_edges, _ = make_contours(samples_u, samples_v, u_min, u_size, v_min, v_size, 0, contours, make_faces=True, connect_bounds = self.connect_bounds)
 

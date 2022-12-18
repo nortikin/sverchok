@@ -28,8 +28,8 @@ def make_contour(samples_x, samples_y, min_x, x_size, min_y, y_size, z, contour,
                 elif i == n-1:
                     vert_n_bound = 'B'
 
-        x = min_x + x_size * x0 + x_size/2.0
-        y = min_y + y_size * y0 + y_size/2.0
+        x = min_x + x_size * x0 #+ x_size/2.0
+        y = min_y + y_size * y0 #+ y_size/2.0
         vertex = (x, y, z)
         verts.append(vertex)
 
