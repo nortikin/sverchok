@@ -1198,7 +1198,14 @@ def simple_loft(curves, degree_v = None, knots_u = 'UNIFY', knotvector_accuracy=
     src_points = np.array(src_points)
     src_points = np.transpose(src_points, axes=(1,0,2))
 
-    v_curves = [SvNurbsMaths.interpolate_curve(implementation, degree_v, points, metric=metric, tknots=tknots, logger=logger) for points in src_points]
+    if tknots is None:
+        tknots_vs = [Spline.create_knots(src_points[i,:], metric=metric) for i in range(src_points.shape[0])]
+        tknots_vs = np.array(tknots_vs)
+        tknots_v = np.mean(tknots_vs, axis=0)
+    else:
+        tknots_v = tknots
+
+    v_curves = [SvNurbsMaths.interpolate_curve(implementation, degree_v, points, metric=metric, tknots=tknots_v, logger=logger) for points in src_points]
     control_points = [curve.get_homogenous_control_points() for curve in v_curves]
     control_points = np.array(control_points)
     #weights = [curve.get_weights() for curve in v_curves]
@@ -1210,7 +1217,7 @@ def simple_loft(curves, degree_v = None, knots_u = 'UNIFY', knotvector_accuracy=
     weights = weights.reshape((n,m))
 
     mean_v_vector = control_points.mean(axis=0)
-    tknots_v = Spline.create_knots(mean_v_vector, metric=metric)
+    #tknots_v = Spline.create_knots(mean_v_vector, metric=metric)
     knotvector_v = sv_knotvector.from_tknots(degree_v, tknots_v)
     if knots_u == 'UNIFY':
         knotvector_u = curves[0].get_knotvector()
@@ -1249,11 +1256,19 @@ def loft_by_binormals(curves, degree_v = 3,
     binormals = [curve.binormal_array(ts, normalize=True) for curve, ts in zip(curves, greville_ts)]
     binormals = np.array(binormals)
     binormals = np.transpose(binormals, axes=(1,0,2))
+
+    greville_pts = [curve.evaluate_array(ts) for curve, ts in zip(curves, greville_ts)]
+    greville_pts = np.array(greville_pts)
+    greville_dpts = greville_pts[1:] - greville_pts[:-1]
+    greville_dpts_mean = np.mean(greville_dpts, axis=0)
+    greville_dpts = np.concatenate((greville_dpts, [greville_dpts_mean]))
+    binormal_lengths = np.linalg.norm(greville_dpts, axis=2, keepdims = True)
+    binormal_lengths = np.transpose(binormal_lengths, axes=(1,0,2))
     
     cpts_mean_by_curve = np.mean(src_points, axis=0)
     cpts_direction = np.mean(cpts_mean_by_curve[1:] - cpts_mean_by_curve[:-1], axis=0)
     
-    binormals *= binormals_scale
+    binormals *= binormal_lengths * binormals_scale / 3.0
     n,m,ndim = binormals.shape
     
     binormals = np.concatenate((binormals, np.zeros((n,m,1))), axis=2)
