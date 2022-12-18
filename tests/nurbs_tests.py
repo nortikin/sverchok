@@ -6,10 +6,11 @@ from mathutils import Matrix
 
 from sverchok.utils.testing import SverchokTestCase, requires
 from sverchok.utils.geom import circle_by_three_points
+from sverchok.utils.nurbs_common import SvNurbsMaths, elevate_bezier_degree, from_homogenous
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.primitives import SvCircle
 from sverchok.utils.curve.nurbs import SvGeomdlCurve, SvNativeNurbsCurve, SvNurbsBasisFunctions, SvNurbsCurve
-from sverchok.utils.nurbs_common import SvNurbsMaths, elevate_bezier_degree, from_homogenous
+from sverchok.utils.curve.nurbs_solver_applications import knotvector_with_tangents_from_tknots
 from sverchok.utils.surface.nurbs import SvGeomdlSurface, SvNativeNurbsSurface
 from sverchok.utils.surface.algorithms import SvCurveLerpSurface
 from sverchok.dependencies import geomdl
@@ -908,6 +909,12 @@ class InterpolateTests(SverchokTestCase):
         weights = curve.get_weights()
         expected_weights = np.array([1, 3, 1])
         self.assert_numpy_arrays_equal(weights, expected_weights, precision=6)
+
+    def test_knotvector_with_tangents_1(self):
+        u = np.array([0.0, 1.0])
+        kv = knotvector_with_tangents_from_tknots(3, u)
+        expected = np.array([0,0,0,0, 1,1,1,1])
+        self.assert_numpy_arrays_equal(kv, expected, precision=4)
 
 class TaylorTests(SverchokTestCase):
     def test_bezier_to_taylor_1(self):
