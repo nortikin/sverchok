@@ -684,11 +684,11 @@ class AddStatistic:
     # this probably can be inside the Node class as an update method
     # using context manager from contextlib has big overhead
     # https://stackoverflow.com/questions/26152934/why-the-staggering-overhead-50x-of-contextlib-and-the-with-statement-in-python
-    def __init__(self, node: 'SvNode', supress=True):
-        """:supress: if True any errors during node execution will be suppressed"""
+    def __init__(self, node: 'SvNode', suppress=True):
+        """:suppress: if True any errors during node execution will be suppressed"""
         self._node = node
         self._start = perf_counter()
-        self._supress = supress
+        self._suppress = suppress
 
     def __enter__(self):
         return None
@@ -703,7 +703,7 @@ class AddStatistic:
             self._node[UPDATE_KEY] = False
             self._node[ERROR_KEY] = repr(exc_val)
 
-        if self._supress and exc_type is not None:
+        if self._suppress and exc_type is not None:
             if issubclass(exc_type, CancelError):
                 return False
             return issubclass(exc_type, Exception)

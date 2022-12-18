@@ -139,13 +139,13 @@ class SvgDimension():
             p_format = "{:10."+str(precision)+"f}"
             text_svg += p_format.format((dim_loc_b - dim_loc_a).length)
         else:
-            feets = (dim_loc_b - dim_loc_a).length//0.3048
-            if feets < 2:
+            feet = (dim_loc_b - dim_loc_a).length//0.3048
+            if feet < 2:
                 inches = ((dim_loc_b - dim_loc_a).length/0.0254)
             else:
                 p_format = "{:10.0f}"
                 inches = (((dim_loc_b - dim_loc_a).length%0.3048)/0.0254)
-                text_svg += p_format.format(feets)
+                text_svg += p_format.format(feet)
                 text_svg += "ft"
             p_format = "{:10."+str(precision)+"f}"
             text_svg += p_format.format(inches)
@@ -217,7 +217,7 @@ class SvSvgDimensionNode(SverchCustomTreeNode, bpy.types.Node):
 
     units_real: EnumProperty(
         name='Units_real',
-        description='Dimentions feets or meters',
+        description='Dimensions feet or meters',
         items=enum_item_4(['Metric', 'Imperialistic']),
         default='Metric',
         update=updateNode)

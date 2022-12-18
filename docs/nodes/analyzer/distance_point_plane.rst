@@ -49,7 +49,7 @@ Outputs
 * **In Plane**: Returns True if point is in the same plane as with input vertices.
 * **Closest Point**: Returns the closest point in the plane
 * **Closest in Triangle**: Returns true if the closest point is in the same plane as with input vertices.
-* **Side**: True if Source Point on Normale side.
+* **Side**: True if Source Point on Normal side.
 
 .. image:: https://user-images.githubusercontent.com/14288520/195653818-3861a5ef-f779-4628-abcf-db26a06df34e.png
   :target: https://user-images.githubusercontent.com/14288520/195653818-3861a5ef-f779-4628-abcf-db26a06df34e.png
