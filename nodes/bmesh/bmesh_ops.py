@@ -65,6 +65,7 @@ class SvBMOpsNode(SverchCustomTreeNode, bpy.types.Node):
             self.inputs.new('SvStringsSocket',p).description = des
         self.outputs.new('SvStringsSocket','Bmesh').description = 'out bmesh'
         self.outputs.new('SvStringsSocket','return').description = 'None'
+
     def process(self):
         input = []
         for i,p in enumerate(dict_bmesh[self.oper][1]):
@@ -106,7 +107,6 @@ class SvBMOpsNode(SverchCustomTreeNode, bpy.types.Node):
         
 def register():
     bpy.utils.register_class(SvBMOpsNode)
-
 
 def unregister():
     bpy.utils.unregister_class(SvBMOpsNode)

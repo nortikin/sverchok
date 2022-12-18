@@ -87,6 +87,7 @@ class SvBMObjinputNode(SverchCustomTreeNode, bpy.types.Node):
         self.inputs.new('SvStringsSocket', 'Edges')
         self.inputs.new('SvStringsSocket', 'Faces')
         self.outputs.new('SvStringsSocket', 'Bmesh')
+        
     def process(self):
         bmesh_list = []
         if self.mode == 'POLYGON':
