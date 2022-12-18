@@ -170,6 +170,9 @@ def knotvector_with_tangents_from_tknots(degree, u):
         kv.extend([u[-1], u[-1]])
         return np.array(kv)
     elif degree == 3:
+        if len(u) == 2:
+            return np.array([u[0], u[0], u[0], u[0],
+                             u[1], u[1], u[1], u[1]])
         kv = [u[0], u[0], u[0],u[0]]
         kv.append(u[1]/2.0)
         for i in range(1, n-2):
@@ -193,11 +196,14 @@ def interpolate_nurbs_curve_with_tangents(degree, points, tangents,
     tangents = np.asarray(tangents)
     if len(points) != len(tangents):
         raise Exception(f"Number of points ({len(points)}) must be equal to number of tangent vectors ({len(tangents)})")
+    ndim = points.shape[-1]
+    if ndim not in {3,4}:
+        raise Exception(f"Points must be 3 or 4 dimensional, not {ndim}")
 
     if tknots is None:
         tknots = Spline.create_knots(points, metric=metric)
 
-    solver = SvNurbsCurveSolver(degree=degree, ndim=4)
+    solver = SvNurbsCurveSolver(degree=degree, ndim=ndim)
     solver.add_goal(SvNurbsCurvePoints(tknots, points, relative=False))
     solver.add_goal(SvNurbsCurveTangents(tknots, tangents, relative=False))
     knotvector = knotvector_with_tangents_from_tknots(degree, tknots)
