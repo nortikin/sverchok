@@ -22,7 +22,6 @@ internal_buffer_initialized = False
 file_initialized = False
 # Whether logging is initialized
 initialized = False
-consoleHandler = None
 
 
 @contextmanager
@@ -135,7 +134,6 @@ def try_initialize():
     global internal_buffer_initialized
     global file_initialized
     global initialized
-    global consoleHandler
 
     if sverchok.reload_event:
         return
@@ -174,23 +172,16 @@ def try_initialize():
 
         if not initialized:
             setLevel(prefs.log_level)
-            level = getattr(logging, prefs.log_level)
-            logging.basicConfig(level=level,
-                                format=log_format,
-                                datefmt='%H:%M:%S')  # should be called before first loggings
-            # Remember the first handler. We may need it in future
-            # to remove from list.
-            consoleHandler = logging.getLogger().handlers[0]
+            console_handler = logging.StreamHandler()
+            console_handler.setFormatter(logging.Formatter(log_format, datefmt='%H:%M:%S'))
+            logging.getLogger().addHandler(console_handler)
             if not prefs.log_to_console:
                 # Remove console output handler.
-                # The trick is we have to remove it *after* other handlers
-                # have been initialized, otherwise it will be re-enabled automatically.
-                if consoleHandler is not None:
-                    logging.debug("Log output to console is disabled. Further messages will be available only in text buffer and file (if configured).")
-                    logging.getLogger().removeHandler(consoleHandler)
+                logging.debug("Log output to console is disabled. Further messages will be available only in text buffer and file (if configured).")
+                logging.getLogger().removeHandler(console_handler)
 
-                    # https://docs.python.org/3/howto/logging.html#configuring-logging-for-a-library
-                    logging.getLogger().addHandler(logging.NullHandler())
+                # https://docs.python.org/3/howto/logging.html#configuring-logging-for-a-library
+                logging.getLogger().addHandler(logging.NullHandler())
 
             logging.info("Initializing Sverchok logging. Blender version %s, Sverchok version %s", bpy.app.version_string, get_version_string())
             logging.debug("Current log level: %s, log to text buffer: %s, log to file: %s, log to console: %s",
