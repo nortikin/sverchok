@@ -21,6 +21,8 @@ from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.curve.bakery import CurveData
 from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
 from sverchok.ui.bgl_callback_3dview import callback_disable, callback_enable
+from sverchok.utils.sv_3dview_tools import Sv3DviewAlign
+
 
 def draw_edges(shader, points, edges, line_width, color, is_smooth=False):
     if is_smooth:
@@ -271,7 +273,7 @@ class SvCurveViewerDrawNode(SverchCustomTreeNode, bpy.types.Node):
         row.scale_y = 4.0 if self.prefs_over_sized_buttons else 1
         self.wrapper_tracked_ui_draw_op(row, SvBakeCurveOp.bl_idname, icon='OUTLINER_OB_MESH', text="B A K E")
         row.separator()
-        self.wrapper_tracked_ui_draw_op(row, "node.view3d_align_from", icon='CURSOR', text='')
+        self.wrapper_tracked_ui_draw_op(row, Sv3DviewAlign.bl_idname, icon='CURSOR', text='')
 
     def sv_init(self, context):
         self.inputs.new('SvCurveSocket', 'Curve')

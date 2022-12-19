@@ -1,12 +1,13 @@
-ui_modules = [
-    "color_def", "sv_IO_panel", "sv_examples_menu", 'sv_3d_panel', 'nodeview_operators',
-    "sv_panels", "nodeview_rclick_menu", "nodeview_space_menu",
-    "sv_icons", "presets", "nodes_replacement", "sv_panel_display_nodes",
-    "sv_temporal_viewers", "sv_vep_connector", "zoom_to_node",
-    # bgl modules
-    "bgl_callback_3dview", "bgl_callback_nodeview",
-    # show git info
-    "development",
-    "nodeview_keymaps",
-    "add_nodes_panel",
-]
+from pathlib import Path
+
+
+def module_names():
+    """Returns module names in the ui folder"""
+    for child in Path(__file__).parent.iterdir():
+        if child.name.startswith('_'):
+            continue
+        if child.stem == 'nodeview_keymaps':
+            continue
+        if child.suffix == '.py':
+            yield child.stem
+    yield 'nodeview_keymaps'  # should be registered last

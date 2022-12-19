@@ -1,10 +1,14 @@
 import importlib
-import sverchok
-from sverchok.core.socket_data import clear_all_socket_cache
+import sys
+
 
 root_modules = [
-    "node_tree", "data_structure", "core",
-    "utils", "ui", "nodes", "old_nodes"
+    "dependencies",
+    "data_structure",
+    "node_tree",
+    "core",  # already imported but should be added to use register function
+    "utils",  # already imported but should be added to use register function
+    "ui", "nodes", "old_nodes"
 ]
 
 core_modules = [
@@ -18,6 +22,10 @@ core_modules = [
 ]
 
 
+def imported_utils_modules():
+    return [m for n, m in sys.modules.items() if 'sverchok.utils' in n]
+
+
 def sv_register_modules(modules):
     for m in modules:
         if hasattr(m, "register"):
@@ -26,7 +34,6 @@ def sv_register_modules(modules):
 
 
 def sv_unregister_modules(modules):
-    clear_all_socket_cache()
     for m in reversed(modules):
         if hasattr(m, "unregister"):
             try:
@@ -36,47 +43,44 @@ def sv_unregister_modules(modules):
                 print(str(e))
 
 
-def sv_registration_utils():
-    """ this is a faux module for syntactic sugar on the imports in __init__ """
-    pass
-
-
-sv_registration_utils.register_all = sv_register_modules
-sv_registration_utils.unregister_all = sv_unregister_modules
-
-
-def reload_all(imported_modules, node_list):
-    # reload base modules
-    _ = [importlib.reload(im) for im in imported_modules]
-
-    # reload nodes
-    _ = [importlib.reload(node) for node in node_list]
-
-
-def make_node_list(nodes):
-    node_list = []
+def import_nodes():
+    from sverchok import nodes
+    node_modules = []
     base_name = "sverchok.nodes"
     for category, names in nodes.nodes_dict.items():
         importlib.import_module('.{}'.format(category), base_name)
-        import_modules(names, '{}.{}'.format(base_name, category), node_list)
-    return node_list
+        import_modules(names, '{}.{}'.format(base_name, category), node_modules)
+    return node_modules
 
 
 def import_modules(modules, base, im_list):
     for m in modules:
+        # print(base, '.{}'.format(m))
         im = importlib.import_module('.{}'.format(m), base)
         im_list.append(im)
 
 
-def handle_reload_event(nodes, imported_modules):
-    node_list = make_node_list(nodes)
-    reload_all(imported_modules, node_list)
-    return node_list
+def handle_reload_event(imported_modules):
+    node_modules = import_nodes()
+
+    # reload base modules
+    for module in imported_modules:
+        importlib.reload(module)
+
+    # reload util modules
+    for module in imported_utils_modules():
+        importlib.reload(module)
+
+    # reload nodes
+    for node in node_modules:
+        importlib.reload(node)
+    return node_modules
 
 
-def import_settings(imported_modules, sv_dir_name):
-    # "settings" treated separately in case the sverchok dir isn't named "sverchok"
-    settings = importlib.import_module(".settings", sv_dir_name)
+def import_settings(imported_modules):
+    """Useful have the function to be sure that we do not import half of
+    Sverchok modules wia settings"""
+    settings = importlib.import_module(".settings", "sverchok")
     imported_modules.append(settings)
 
 
@@ -85,36 +89,39 @@ def import_all_modules(imported_modules, mods_bases):
         import_modules(mods, base, imported_modules)
 
 
-def init_architecture(sv_name, utils_modules, ui_modules):
+def init_architecture():
+    """There is no too much sense to init settings module first. It just useful
+    to make sure that we do not init half of Sverchok via the module.
+    Settings (preferences) are only available when add-on is imported (during
+    registration).
+
+    Import core modules here like Sverchok node tree, sockets, settings,
+    update system, user interface etc.
+    Utils modules are imported only via core modules. If you need your module
+    to be imported you either add import in some core module or convert it into
+    a core module (for example by moving into the ui folder).
+    List of core modules is used for calling their register function.
+    """
+    import sverchok.ui as ui
 
     imported_modules = []
     mods_bases = [
         (root_modules, "sverchok"),
         (core_modules, "sverchok.core"),
-        (utils_modules, "sverchok.utils"),
-        (ui_modules, "sverchok.ui")
+        (ui.module_names(), "sverchok.ui")
     ]
-    print('sv: import settings')
-    import_settings(imported_modules, sv_name)
-    print('sv: import all modules')
+    # print('sv: import settings')
+    import_settings(imported_modules)
+    # print('sv: import all modules')
     import_all_modules(imported_modules, mods_bases)
     return imported_modules
 
 
-def init_bookkeeping(sv_name):
-
-    from sverchok.utils import ascii_print, auto_gather_node_classes
-
-    sverchok.data_structure.SVERCHOK_NAME = sv_name
-    ascii_print.show_welcome()
-    auto_gather_node_classes()
-
-
-activation_message = """\n
-** Sverchok needs a couple of seconds to become activated when you enable it for the first time. **
-** Please restart Blender and enable it by pressing the tick box only once -- be patient!        ** 
-"""
 def interupted_activation_detected():
+    activation_message = """\n
+    ** Sverchok needs a couple of seconds to become activated when you enable it for the first time. **
+    ** Please restart Blender and enable it by pressing the tick box only once -- be patient!        ** 
+    """
     return NameError(activation_message)
 
 

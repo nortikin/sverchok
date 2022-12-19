@@ -113,57 +113,6 @@ class SvGenericCallbackWithParams():
         return {'FINISHED'}
 
 
-
-class SvGenericFileSelector():
-
-    bl_idname = "node.sv_generic_file_selector"
-    bl_label = "sv File Select"
-
-    '''
-
-    #### using SvGenericFileSelector(bpy.types.Operator) #####
-
-    class SomeNode..
-
-        def draw_buttons(self, context, layout):
-            callback = "node.sv_generic_file_selector"
-            my_op = layout.operator(callback, text='pick file').fn_name='some_function'
-
-
-        def some_function(self, operator):
-            print(operator.filepath)   <---- will contain full path to the file selected from the dialogue
-            operator.report({  ...})
-            return {'FINISHED'}
-
-
-    '''    
-
-    fn_name: bpy.props.StringProperty(default='')
-    filepath: bpy.props.StringProperty(
-        name="File Path",
-        description="Filepath used for getting the file path",
-        maxlen=1024, default="", subtype='FILE_PATH')
-
-    def execute(self, context):
-        try:
-            f = getattr(self.node, self.fn_name)(self)
-            return f or {'FINISHED'}
-
-        except Exception as err:
-            print(repr(err))
-            return {'CANCELLED'}
-
-        # return just in case, else let the content of the called function decide the return value
-        return {'FINISHED'}
-
-
-    def invoke(self, context, event):
-        self.node = context.node
-        wm = context.window_manager
-        wm.fileselect_add(self)
-        return {'RUNNING_MODAL'}
-
-
 class SvGenericDirectorySelector():
 
     bl_idname = "node.sv_generic_dir_selector"

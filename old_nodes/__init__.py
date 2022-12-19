@@ -29,8 +29,28 @@ from sverchok.utils.logging import error
 from sverchok.utils.handle_blender_data import BlTrees
 
 
+class LazyDist:
+    def __init__(self):
+        self.__data: dict = None
+
+    @property
+    def _data(self):
+        if self.__data is None:
+            self.__data = get_old_node_bl_idnames(path=os.path.dirname(__file__))
+        return self.__data
+
+    def __contains__(self, item):
+        return item in self._data
+
+    def __getitem__(self, item):
+        return self._data[item]
+
+    def __iter__(self):
+        return iter(self._data)
+
+
 imported_mods = {}
-old_bl_idnames = get_old_node_bl_idnames(path=os.path.dirname(__file__))
+old_bl_idnames = LazyDist()  # to save some time during initialization
 
 
 def is_old(node_info: Union[str, bpy.types.Node]):

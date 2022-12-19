@@ -21,7 +21,6 @@ import os
 import bpy
 from bpy.props import StringProperty
 
-from sverchok.utils import register_multiple_classes, unregister_multiple_classes
 from sverchok.utils.sv_update_utils import sv_get_local_path
 
 sv_path = os.path.dirname(sv_get_local_path()[0])
@@ -77,10 +76,12 @@ classes = submenus + [SvTextSubMenu]
 
 
 def register():
-    register_multiple_classes(classes)
+    for cls in classes:
+        bpy.utils.register_class(cls)
     bpy.types.TEXT_MT_templates.append(menu_draw)
 
 
 def unregister():
     bpy.types.TEXT_MT_templates.remove(menu_draw)
-    unregister_multiple_classes(classes)
+    for cls in classes:
+        bpy.utils.unregister_class(cls)

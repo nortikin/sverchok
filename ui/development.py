@@ -27,7 +27,6 @@ from bpy.props import StringProperty
 # global variables in tools
 import sverchok
 from sverchok.utils.context_managers import sv_preferences
-from sverchok.utils import get_node_class_reference
 from sverchok.utils.development import get_branch
 from sverchok.ui.nodes_replacement import set_inputs_mapping, set_outputs_mapping
 from sverchok.ui.presets import get_presets, SverchPresetReplaceOperator, SvSaveSelected, node_supports_presets
@@ -271,7 +270,7 @@ def idname_draw(self, context):
         box = col.box()
         box.label(text="Replace with:")
         for new_bl_idname, inputs_mapping, outputs_mapping in node.replacement_nodes:
-            node_class = get_node_class_reference(new_bl_idname)
+            node_class = bpy.types.Node.bl_rna_get_subclass_py(new_bl_idname)
             text = node_class.bl_label
             op = box.operator("node.sv_replace_node", text=text)
             op.old_node_name = node.name

@@ -55,8 +55,8 @@ bl_info = {
 
 VERSION = 'v1.2.0-alpha'  # looks like the only way to have custom format for the version
 
-reload_event = "bpy" in locals()
-import bpy  # to detect reload event
+reload_event = "import_sverchok" in locals()  # reloading does not clear previous module names
+
 
 # pylint: disable=E0602
 # pylint: disable=C0413
@@ -95,45 +95,36 @@ def import_sverchok():
     if __name__ != "sverchok":
         sys.modules["sverchok"] = sys.modules[__name__]
 
-    from sverchok.core import init_architecture, make_node_list
-    from sverchok.core import interupted_activation_detected, handle_reload_event
-    from sverchok.utils import utils_modules
-    from sverchok.ui import ui_modules
+    import sverchok.core as core
 
-    imported_modules_ = init_architecture(__name__, utils_modules, ui_modules)
+    imported_modules_ = core.init_architecture()
 
     if "nodes" not in globals():  # magic
-        raise interupted_activation_detected()
+        raise core.interupted_activation_detected()
 
-    if reload_event:
-        node_list_ = handle_reload_event(nodes, imported_modules_)
+    if not reload_event:
+        node_modules_ = core.import_nodes()
     else:
-        node_list_ = make_node_list(nodes)
+        node_modules_ = core.handle_reload_event(imported_modules_)
 
-    return imported_modules_, node_list_
+    return imported_modules_, node_modules_, core
 
 
-imported_modules, node_list = import_sverchok()
+imported_modules, node_modules, core = import_sverchok()
 
 
 @profiling_startup("reg_stats")
 def register():
-    from sverchok.core import sv_registration_utils
-    import sverchok
-    sv_registration_utils.register_all(imported_modules + node_list)
-    sverchok.core.init_bookkeeping(__name__)
-
-    if reload_event:
-        from sverchok import data_structure
-        data_structure.RELOAD_EVENT = True
+    from sverchok.utils import ascii_print
+    core.sv_register_modules(imported_modules)
+    core.sv_register_modules(core.imported_utils_modules())
+    core.sv_register_modules(node_modules)
+    ascii_print.show_welcome()
 
 
 def unregister():
-    import sverchok
-    from sverchok.core import sv_registration_utils
-
-    sverchok.utils.clear_node_classes()
-    sv_registration_utils.unregister_all(imported_modules)
-    sv_registration_utils.unregister_all(node_list)
+    core.sv_unregister_modules(imported_modules)
+    core.sv_unregister_modules(core.imported_utils_modules())
+    core.sv_unregister_modules(node_modules)
 
 # EOF

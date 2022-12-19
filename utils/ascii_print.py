@@ -50,4 +50,4 @@ def logo():
 def show_welcome():
     is_terminal_color_capable()
     logo()
-    print("\nsv: version:", get_version_string())
+    # print("\nsv: version:", get_version_string())

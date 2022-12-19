@@ -15,16 +15,14 @@
 #  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 # ##### END GPL LICENSE BLOCK #####
-import bpy
+
 import os
-import urllib
-import urllib.request
 from zipfile import ZipFile
 import addon_utils
 
 
 import bpy
-import sverchok
+import sverchok.settings as settings
 from sverchok.utils import sv_requests as requests
 
 
@@ -171,6 +169,8 @@ class SverchokDownloadExtraAddon(bpy.types.Operator):
 
         return {'FINISHED'}
 
+
+settings.draw_extra_addons = draw_extra_addons
 
 
 def register():

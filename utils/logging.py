@@ -11,9 +11,10 @@ from contextlib import contextmanager
 import sverchok
 from sverchok.utils.development import get_version_string
 from sverchok.utils.context_managers import sv_preferences
+import sverchok.settings as settings
 
 # Hardcoded for now
-log_format = "%(asctime)s [%(levelname)s] %(name)s: %(message)s"
+log_format = "%(asctime)s.%(msecs)03d [%(levelname)s] %(name)s: %(message)s"
 
 # Whether logging to internal blender's text buffer is initialized
 internal_buffer_initialized = False
@@ -147,7 +148,7 @@ def try_initialize():
                 buffer = get_log_buffer(prefs.log_buffer_name)
                 if buffer is not None:
                     handler = TextBufferHandler(prefs.log_buffer_name)
-                    handler.setFormatter(logging.Formatter(log_format))
+                    handler.setFormatter(logging.Formatter(log_format, datefmt="%Y-%m-%d %H:%M:%S"))
                     logging.getLogger().addHandler(handler)
 
                     for area in bpy.context.screen.areas:
@@ -164,21 +165,23 @@ def try_initialize():
                 handler = logging.handlers.RotatingFileHandler(prefs.log_file_name, 
                             maxBytes = 10*1024*1024,
                             backupCount = 3)
-                handler.setFormatter(logging.Formatter(log_format))
+                handler.setFormatter(logging.Formatter(log_format, datefmt="%Y-%m-%d %H:%M:%S"))
                 logging.getLogger().addHandler(handler)
 
             file_initialized = True
 
-        if internal_buffer_initialized and file_initialized and not initialized:
+        if not initialized:
             setLevel(prefs.log_level)
+            console_handler = logging.StreamHandler()
+            console_handler.setFormatter(logging.Formatter(log_format, datefmt='%H:%M:%S'))
+            logging.getLogger().addHandler(console_handler)
             if not prefs.log_to_console:
                 # Remove console output handler.
-                # The trick is we have to remove it *after* other handlers
-                # have been initialized, otherwise it will be re-enabled automatically.
-                global consoleHandler
-                if consoleHandler is not None:
-                    logging.debug("Log output to console is disabled. Further messages will be available only in text buffer and file (if configured).")
-                    logging.getLogger().removeHandler(consoleHandler)
+                logging.debug("Log output to console is disabled. Further messages will be available only in text buffer and file (if configured).")
+                logging.getLogger().removeHandler(console_handler)
+
+                # https://docs.python.org/3/howto/logging.html#configuring-logging-for-a-library
+                logging.getLogger().addHandler(logging.NullHandler())
 
             logging.info("Initializing Sverchok logging. Blender version %s, Sverchok version %s", bpy.app.version_string, get_version_string())
             logging.debug("Current log level: %s, log to text buffer: %s, log to file: %s, log to console: %s",
@@ -252,30 +255,24 @@ def setLevel(level):
 
 def is_enabled_for(log_level="DEBUG") -> bool:
     """This check should be used for improving performance of calling disabled loggers"""
-    rates = {"DEBUG": 10, "INFO": 20, "WARNING": 30, "ERROR": 40, "EXCEPTION": 50}
     addon = bpy.context.preferences.addons.get(sverchok.__name__)
-    current_level = rates.get(addon.preferences.log_level, 0)
-    given_level = rates.get(log_level, 0)
+    current_level = getattr(logging, addon.preferences.log_level)
+    given_level = getattr(logging, log_level)
     return given_level >= current_level
 
 
-consoleHandler = None
-
 logger = logging.getLogger("logging")
+settings.info = info
+settings.setLevel = setLevel
 
 def register():
     global consoleHandler
 
     with sv_preferences() as prefs:
         level = getattr(logging, prefs.log_level)
-        logging.basicConfig(level=level, format=log_format)
-        # Remember the first handler. We may need it in future
-        # to remove from list.
-        consoleHandler = logging.getLogger().handlers[0]
+        logger.info(f"log level, {level}")
     logging.captureWarnings(True)
-    # info("Registering Sverchok addon. Messages issued during registration will be only available in the console and in file (if configured).")
-    print("sv: enable internal debug logging.")
-    logger.info(f"log level, {level}")
+
 
 def unregister():
     logging.shutdown()
