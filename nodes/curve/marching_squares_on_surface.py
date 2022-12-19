@@ -117,10 +117,10 @@ class SvExMSquaresOnSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
                 v_size = (v_max - v_min)/(samples_v-1)
 
                 # some times [(u_max - u_min)/(samples_u-1)]*(samples_u-1) > (u_max-umin) !!! need compensation:
-                if(u_max < u_size*(samples_u-1)):
-                    u_size -= ((u_max - u_min)/(samples_u-1)*(samples_u-1)-u_max)/(samples_u-1)
-                if(v_max < v_size*(samples_v-1)):
-                    v_size -= ((v_max - v_min)/(samples_v-1)*(samples_v-1)-v_max)/(samples_v-1)
+                if( (u_max - u_min) < u_size*(samples_u-1)):
+                    u_size -= ((u_max - u_min)/(samples_u-1)*(samples_u-1)-(u_max-u_min))/(samples_u-1)
+                if( (v_max - v_min) < v_size*(samples_v-1)):
+                    v_size -= ((v_max - v_min)/(samples_v-1)*(samples_v-1)-(v_max-v_min))/(samples_v-1)
 
                 uv_contours, new_edges, _ = make_contours(samples_u, samples_v, u_min, u_size, v_min, v_size, 0, contours, make_faces=True, connect_bounds = self.connect_bounds)
 
