@@ -99,7 +99,7 @@ class CurveData(object):
             comb_normals = node.comb_scale * curvatures * normals
             comb_points = self.points - comb_normals
             self.comb_points = np.concatenate((self.points, comb_points)).tolist()
-            comb_normal_edges = [(i, i+n) for i in range(n-1)]
+            comb_normal_edges = [(i, i+n) for i in range(n)]
             comb_tangent_edges = [(i, i+1) for i in range(n, 2*n-1)]
             self.comb_edges = comb_normal_edges + comb_tangent_edges
         else:
@@ -232,7 +232,7 @@ class CurveData(object):
             comb_normals = node.comb_scale * curvatures * normals
             comb_points = self.points - comb_normals
             self.comb_points = np.concatenate((self.points, comb_points)).tolist()
-            comb_normal_edges = [(i, i+n) for i in range(n-1)]
+            comb_normal_edges = [(i, i+n) for i in range(n)]
             comb_tangent_edges = [(i, i+1) for i in range(n, 2*n-1)]
             self.comb_edges = comb_normal_edges + comb_tangent_edges
         else:
