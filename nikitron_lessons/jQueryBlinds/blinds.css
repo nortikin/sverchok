@@ -1,0 +1,14 @@
+.change_link {
+	display: block;
+	width: 40px;
+	height: 30px;
+	font-size: 10pt;
+	color: #fff;
+	background-color: #333;
+	float: left;
+	margin-right: 0px;
+	text-align: center;
+	margin-top: 0px;
+	border: 0px solid #522;
+	text-decoration: none;
+}
