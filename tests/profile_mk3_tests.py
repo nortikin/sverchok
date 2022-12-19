@@ -114,7 +114,7 @@ class ExamplesParseTests(SverchokTestCase):
 
             with self.subTest(file=name):
                 with open(path, 'r') as f:
-                    info("Checking profile example: %s", name)
+                    debug("Checking profile example: %s", name)
                     profile_text = f.read()
                     with self.assert_logs_no_errors():
                         parse_profile(profile_text)

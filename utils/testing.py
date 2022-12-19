@@ -24,6 +24,9 @@ from sverchok.utils.context_managers import sv_preferences
 from sverchok.utils.modules_inspection import iter_submodule_names
 from sverchok.utils.sv_json_import import JSONImporter
 
+
+test_logger = logging.getLogger('tests')
+
 try:
     import coverage
     coverage_available = True
@@ -97,7 +100,7 @@ def create_node_tree(name=None, must_not_exist=True):
     if must_not_exist:
         if name in bpy.data.node_groups:
             raise Exception("Will not create tree `{}': it already exists".format(name))
-    debug("Creating tree: %s", name)
+    test_logger.debug("Creating tree: %s", name)
     return bpy.data.node_groups.new(name=name, type="SverchCustomTreeType")
 
 def get_or_create_node_tree(name=None):
@@ -107,7 +110,7 @@ def get_or_create_node_tree(name=None):
     if name is None:
         name = "TestingTree"
     if name in bpy.data.node_groups:
-        debug("Using existing tree: %s", name)
+        test_logger.debug("Using existing tree: %s", name)
         return bpy.data.node_groups[name]
     else:
         return create_node_tree(name)
@@ -119,7 +122,7 @@ def get_node_tree(name=None):
     if name is None:
         name = "TestingTree"
     if name in bpy.data.node_groups:
-        debug("Using existing tree: %s", name)
+        test_logger.debug("Using existing tree: %s", name)
         return bpy.data.node_groups[name]
     else:
         raise Exception("There is no node tree named `{}'".format(name))
@@ -137,7 +140,7 @@ def remove_node_tree(name=None):
         if len(areas):
             space = areas[0].spaces[0]
             space.node_tree = None
-        debug("Removing tree: %s", name)
+        test_logger.debug("Removing tree: %s", name)
         tree = bpy.data.node_groups[name]
         bpy.data.node_groups.remove(tree)
 
@@ -160,7 +163,7 @@ def link_node_tree(reference_blend_path, tree_name=None):
     if tree_name in bpy.data.node_groups:
         raise Exception("Tree named `{}' already exists in current scene".format(tree_name))
     with bpy.data.libraries.load(reference_blend_path, link=True) as (data_src, data_dst):
-        info(f"---- Linked node tree: {basename(reference_blend_path)}")
+        test_logger.debug(f"---- Linked node tree: {basename(reference_blend_path)}")
         data_dst.node_groups = [tree_name]
     # right here the update method of the imported tree will be called
     # sverchok does not have a way of preventing this update
@@ -182,7 +185,7 @@ def create_node(node_type, tree_name=None):
     """
     if tree_name is None:
         tree_name = "TestingTree"
-    debug("Creating node of type %s", node_type)
+    test_logger.debug("Creating node of type %s", node_type)
     return bpy.data.node_groups[tree_name].nodes.new(type=node_type)
 
 def get_node(node_name, tree_name=None):
@@ -203,6 +206,19 @@ def get_tests_path():
     tests_dir = join(dirname(sv_init), "tests")
     return tests_dir
 
+
+@contextmanager
+def logger_level(logger_name: str, level: str):
+    """Set temporary level to given logger"""
+    logger = logging.getLogger(logger_name)
+    initial_level = logger.level
+    logger.setLevel(level)
+    try:
+        yield None
+    finally:
+        logger.setLevel(initial_level)
+
+
 def run_all_tests(pattern=None):
     """
     Run all existing test cases.
@@ -215,42 +231,21 @@ def run_all_tests(pattern=None):
     tests_path = get_tests_path()
     log_handler = logging.FileHandler(join(tests_path, "sverchok_tests.log"), mode='w')
     logging.getLogger().addHandler(log_handler)
-    try:
-        loader = unittest.TestLoader()
-        suite = loader.discover(start_dir = tests_path, pattern = pattern)
-        buffer = StringIO()
-        runner = unittest.TextTestRunner(stream = buffer, verbosity=2)
-        old_nodes.register_all()
-        with coverage_report():
-            result = runner.run(suite)
-            info("Test cases result:\n%s", buffer.getvalue())
-            return result
-    finally:
-        logging.getLogger().removeHandler(log_handler)
-
-
-def run_test_from_file(file_name):
-    """
-    Run test from file given by name. File should be places in tests folder
-    :param file_name: string like avl_tree_tests.py
-    :return: result
-    """
-    tests_path = get_tests_path()
-    log_handler = logging.FileHandler(join(tests_path, "sverchok_tests.log"), mode='w')
-    logging.getLogger().addHandler(log_handler)
     buffer = None
-    try:
-        loader = unittest.TestLoader()
-        suite = loader.discover(start_dir=tests_path, pattern=file_name)
-        buffer = StringIO()
-        runner = unittest.TextTestRunner(stream=buffer, verbosity=2)
-        old_nodes.register_all()
-        result = runner.run(suite)
-        info("Test cases result:\n%s", buffer.getvalue())
-        return result
-    finally:
-        logging.getLogger().removeHandler(log_handler)
-        return buffer.getvalue().split('\n')[-2] if buffer else "Global error"
+    with logger_level('sverchok', 'ERROR'):
+        try:
+            loader = unittest.TestLoader()
+            suite = loader.discover(start_dir = tests_path, pattern = pattern)
+            buffer = StringIO()
+            runner = unittest.TextTestRunner(stream = buffer, verbosity=2)
+            old_nodes.register_all()
+            with coverage_report():
+                result = runner.run(suite)
+                test_logger.info("Test cases result:\n%s", buffer.getvalue())
+                return result
+        finally:
+            logging.getLogger().removeHandler(log_handler)
+            return buffer.getvalue().split('\n')[-2] if buffer else "Global error"
 
 
 """ using:
@@ -269,7 +264,7 @@ class SverchokTestCase(unittest.TestCase):
     """
 
     def setUp(self):
-        debug("Starting test: %s", self.__class__.__name__)
+        test_logger.debug("Starting test: %s", self.__class__.__name__)
 
     @contextmanager
     def temporary_node_tree(self, new_tree_name):
@@ -573,11 +568,11 @@ class SverchokTestCase(unittest.TestCase):
         logging.getLogger().addHandler(handler)
 
         try:
-            debug("=== \/ === [%s] Here should be no errors === \/ ===", self.__class__.__name__)
+            test_logger.debug("=== \/ === [%s] Here should be no errors === \/ ===", self.__class__.__name__)
             yield handler
             self.assertFalse(has_errors, "There were some errors logged")
         finally:
-            debug("=== /\ === [%s] There should be no errors === /\ ===", self.__class__.__name__)
+            test_logger.debug("=== /\ === [%s] There should be no errors === /\ ===", self.__class__.__name__)
             logging.getLogger().handlers.remove(handler)
 
     def subtest_assert_equals(self, value1, value2, message=None):
@@ -835,7 +830,7 @@ class SvRunTests(bpy.types.Operator):
             # making self.report after all tests lead to strange error, so no report for testing all
             run_all_tests()
         else:
-            test_result = run_test_from_file(self.test_module + '.py')
+            test_result = run_all_tests(self.test_module + '.py')
             self.report(type={'ERROR'} if test_result != 'OK' else {'INFO'}, message=test_result)
         return {'FINISHED'}
 

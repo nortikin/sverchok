@@ -74,7 +74,7 @@ class ExamplesImportTest(SverchokTestCase):
 
         for examples_path, category_name in example_categories_names():
 
-            info("Opening Dir named: %s", category_name)
+            debug("Opening Dir named: %s", category_name)
 
             examples_set = examples_path / category_name
             for listed_path in examples_set.iterdir():
@@ -86,7 +86,7 @@ class ExamplesImportTest(SverchokTestCase):
                 name = basename(path)
 
                 if name in UNITTEST_SKIPLIST:
-                    info(f"Skipping test import of: {name} - to permit unit-tests to continue")
+                    info(f"Skipping test import of: {name} - due missing dependency")
                     continue
 
                 with self.subTest(file=name):

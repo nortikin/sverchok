@@ -86,17 +86,22 @@ def mark_all():
 
 def register_old(bl_id):
     """Register old node class"""
-    if bl_id in old_bl_idnames:
-        mod = importlib.import_module(".{}".format(old_bl_idnames[bl_id]), __name__)
-        res = inspect.getmembers(mod)
-        for name, cls in res:
-            if inspect.isclass(cls):
-                if issubclass(cls, bpy.types.Node) and cls.bl_idname == bl_id:
-                    if bl_id not in imported_mods:
-                        mod.register()
-                        imported_mods[bl_id] = mod
-    else:
+    if bl_id in imported_mods:
+        return
+    if bl_id not in old_bl_idnames:
         raise LookupError(f"Cannot find {bl_id} among old nodes")
+    mod = importlib.import_module(".{}".format(old_bl_idnames[bl_id]), __name__)
+    res = inspect.getmembers(mod)
+    module_node_bl_idnames = set()  # there can be multiple of them
+    for name, cls in res:
+        if inspect.isclass(cls):
+            if issubclass(cls, bpy.types.Node):
+                module_node_bl_idnames.add(cls.bl_idname)
+    if bl_id not in module_node_bl_idnames:
+        raise LookupError(f"Old_bl_idnames returns something wrong for {bl_id=}")
+    mod.register()
+    for bl_idname in module_node_bl_idnames:
+        imported_mods[bl_idname] = mod
 
 
 def register_all():
