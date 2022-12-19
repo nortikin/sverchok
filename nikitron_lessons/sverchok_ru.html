@@ -1,0 +1,709 @@
+<!DOCTYPE html> <html lang="ru">
+<head>
+<title>Cверчок дополнение к блендеру</title>
+
+
+
+<!--
+	 -#####- -####-   -######- -#####-  -#    #-   -####-   -#   #-
+	-#-      -#   #-  -#       -#    #- -#    #-  -#    #-  -#  #-
+	-#       -####-   -####-   -#    #- -#    #-  -#    #-  -###-
+	-#       -#   #-  -#       -#   #-   -#   #-  -#    #-  -#  #-
+	-#       -#    #- -#       -####-     -####-  -#    #-  -#   #-
+	-#-      -#    #- -#       -#             #-  -#    #-  -#    #-
+	 -#####- -#####-  -######- -#             #-   -####-   -#    #-
+
+	Приглашаем к разработке  Сверчка _______________________________
+	2014
+-->
+
+
+
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="autor" content="Архитектор, Дизайнер, Человек...">
+<meta name="keywords" content=" архитектура параметрика грасхупер Sverchok b3d Сверчок Блендер Blender 3d">
+<meta name="description" content="Как в грасхупере делать параметрику только в блендере. Сверчок для блендера, параметрика в СПО">
+<link rel="stylesheet" href="file.css" type="text/css" media="screen" />
+<link href='http://fonts.googleapis.com/css?family=Ubuntu&subset=latin,cyrillic-ext,cyrillic' rel='stylesheet' type='text/css'> <!--CSS шрифт-->
+<link rel="icon" type="image/png" href="blender.png" />
+<script src='jquery.min.js'></script>
+<script src='menu.js'></script>
+<!-- Put this script tag to the <head> of your page -->
+<script type="text/javascript" src="//vk.com/js/api/openapi.js?105"></script>
+<!--script src="../javascript/modernizr-2.6.2.touch.js" type="text/javascript"></script-->
+
+
+<!--ширина экрана диктует CSS-->
+<script language="JavaScript">
+var height=0;
+var width=0;
+if (self.screen) {    
+        width = screen.width
+        height = screen.height
+}
+else if (self.java) {  
+      var jkit = java.awt.Toolkit.getDefaultToolkit();
+      var scrsize = jkit.getScreenSize();      
+      width = scrsize.width; 
+      height = scrsize.height; 
+}
+if (width < 1000)
+{
+	document.write("<link rel='stylesheet' type='text/css' href='main_page/small-less-1000.css'>");
+}
+else 
+if(width < 1270)
+{
+	document.write("<link rel='stylesheet' type='text/css' href='main_page/small.css'>");
+}
+else 
+if(width > 1270)
+{
+	document.write("<link rel='stylesheet' type='text/css' href='main_page/big.css'>");
+}
+</script>
+<!--ширина экрана диктует CSS-->
+<!--vk.com виджет диалога-->
+<script src="https://vk.com/js/api/openapi.js?151" type="text/javascript"></script>
+<!--конец виджета диалога-->
+</head>
+
+<body>
+<a name="top"></a>
+
+<!--диалог-->
+<script type="text/javascript" src="//vk.com/js/api/openapi.js?151"></script>
+<!-- VK Widget -->
+<div id="vk_community_messages"></div>
+<script type="text/javascript">
+VK.Widgets.CommunityMessages("vk_community_messages", 35076122, {expandTimeout: "10000",disableExpandChatSound: "1",disableNewMessagesSound: "1",disableButtonTooltip: "1"});
+</script>
+<!--диалог-->
+
+<!--тип вставки для плавающего наверха>
+<div class="elance">
+<p><a  class="admit" data-title="up/вверх" href='#top'><img class='bottom' style='width:75px;' src='sverch/flow3.png' /></a></p>
+</div>
+<!--тип вставки для плавающего наверха-->
+
+<table class="head"><tr><td>
+    <div class="cellsBlock">
+	<div class="cell30" style="background: #c51; height:55px;">
+	<h3><object type="image/svg+xml" data='sverch/1_Title_Big_B.svg' style="width:200px;"></object></h3>
+	<!--h3><a class="mainpage" href="http://nikitron.cc.ua" >главная</a></h3-->
+	</div>
+	<div class="cell60" style="background: #c51;">
+	<!--h3>Система векторного рабочего черчения и объёмного конструирования (СВеРЧОК).</h3-->
+        </div>
+	<div class="cell10" style="background: #c51;">
+	<h3><a href='sverchok_en.html' class="admit" data-title="Don't speak Russian?"><img src='sverch/eng.jpg' style="width:60px" /></a></h3>
+        </div>
+    <!--div class="cell10" style="background: #36a;">
+    </div--></div>
+</td></tr></table>
+
+<table><tr><td>
+    <div class="cellsBlock">
+	<div class="cell100" style="height:30px;background: #18355d;">
+    </div></div>
+</td></tr></table>
+
+
+
+
+<table class="title"><tr><td>
+    <!--div class="cellsBlock"-->
+	<div class="cell100"> <!-- style="background: #36a;"-->
+	<ul class="index-ul2">
+	<li><a class="mainpage2" href="#обоб">Общее</a></li>
+	<li><a class="mainpage2" href="#руководство">Примеры</a></li>
+	<li><a class="mainpage2" href="sverch/html/main.html">Документация</a></li>
+	<li><a class="mainpage2" href="#уроки">Ссылки</a></li>
+	<li><a class="mainpage2" href="#скачать">Скачать</a></li>
+	<li><a class="mainpage2" href="#дискус">Изменения</a></li>
+	<li><a class="mainpage2" href="ob_sebe.html">О себе</a></li>
+	</ul>
+    	</div>
+	<!--div class="cell60"> <!-- style="background-color: #36a;">
+
+
+<table class="common">
+	<tr><td class="td25">
+	<a href="#town" class="admit" data-title="Городок"><img src="sverch/town640.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="town"></a>
+        	<div class="popup">
+		<img src="sverch/town.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	</td><td class="td25">
+	<a href="#pic6" class="admit" data-title="Небоскрёб"><img src="sverch/skyscreapersm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="pic6"></a>
+        	<div class="popup">
+		<img src="sverch/skyscreaper.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	</td><td class="td25">
+	<a href="#umb" class="admit" data-title="Лампа"><img src="sverch/Tesla_lamp/lamp_sverchoksm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="umb"></a>
+        	<div class="popup">
+		<img src="sverch/Tesla_lamp/lamp_sverchok.jpg"/>
+		<p>Лампа изготовлена в сотрудничестве с компанией Тесла. Прототип изготовлен из пластика, порезан по
+		  лекалам из Сверчка</p>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	</td><td class="td25">
+	<a href="#pic9" class="admit" data-title="Ферма"><img src="sverch/trusssm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="pic9"></a>
+        	<div class="popup">
+		<img src="sverch/truss.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+</td></tr></table>
+
+		
+    	</div>
+    </div-->
+</td></tr></table>
+
+
+
+<table><tr><td>
+    <div class="cellsBlock">
+	<div class="cell100" style="height:15px; background: #36a;">
+	<p></p>
+    </div></div>
+</td></tr></table>
+
+
+<table><tr><td>
+    <div class="cellsBlock">
+	<div class="cell100" style="height:30px;background: #18355d;">
+	<p></p>
+    </div></div>
+</td></tr></table>
+
+<table ><tr><td><!--class="right"-->
+    <div class="cellsBlock">
+	<a name="обоб"></a>
+	<div class="cell70" style="background: #36a;">
+
+
+
+	<h2>О Сверчке</h2>
+
+	<p>Система векторного рабочего черчения и объёмного конструирования (СВеРЧОК).</p>
+	<p>Сверчок - это параметрический инструмент архитектора, дизайнера, узловой СПДС инструмент. Создан чтобы помочь моделировать 3Д поверхности узлами, чтобы контролировать математикой геометрию. Идеален для архитектора и дизайнера, но любой, кто владеет высшей математикой и тригонометрией может делать вещи, невозможные в обычном редакторе, даже геометрических узлах. Только если вы не владеете языками программирования.</p>
+	<p>Это дополнение к <a href='http://blender.org' class="admit" data-title="go to blender.org">Блендеру</a>.</p>
+	<p>Кто знаком с Houdini, Rhinoceros3D (Grasshopper), Dynamo или другими модульными системами, почувствует себя как дома с данным адоном. Сверчок не дублирует функционал существующих систем, в том числе Geometry Nodes, но является превосходной площадкой для гибких экспериментов с формой.</p>
+	<p>Сверчок хорош в следующем:</p>
+	<ul class='sample'>
+	<li>Сверчок служит цели генерации и визуализации геометрии (Сетка, NURBS, Твёрдые тела, Кривые, Поверхности, Поля, прочее);</li>
+	<li>Сверчок в основе параметрический, (почти) всё можно регулировать ползунком и 3Д панель подхватит выбранные пользователем ползунки в 3Д окно;</li>
+    <li>Сверчок позволяет быстрое прототипирование алгоритмов через узлы или скриптовые узлы.</li>
+    </ul>
+    <p>Сверчок это не Всё-в-одном.</p>
+    <p>Сверчок имеет дополнения, это адоны: Sverchok extra tools от Ильи Портнова, а также Ladybug, IFC, Openshape адоны. Все они свободно доступны на гитхаб либо на своих сайтах.</p>
+	<p>Сверчок направлени на математику и геометрию. Когда мы начинали делат Сверчка, фокус был не (и до сих пор не) вещах типа материалы, текстуры, свет, частицы, анимация. Сверчок может это контролирвоать, но мы не создаём удобные узлы для данной работы. У нас есть несколько узлов работы с кадром, материалами, текстурами, светом и прочим только для того, чтобы кратко в массе представлять выходящую теометрию и передавать её в дальнейшую обработку.</p>
+	<p>Для продвинутого уровня пользователя нужно учить язык python, но это не обязательно, хотя мы поощряем. Как только вы знаете python, вы сможете использовать scripted node (скриптовый узел). </p>
+	<p><a href='http://nikitron.cc.ua/math.html' class="admit" data-title="Статья и ссылка или наоборот">Чтобы понять что такое параметрическая АРХИТЕКТУРА, кликай тут</a>.</p>
+
+	</div>
+	<div class="cell30" style="background: #18355d;">
+	<table class='head'><tr><td>
+	<h3>Помогите проекту</h3>
+	</td></tr>
+	<tr><td>
+	<!--p>
+	<iframe frameborder="0" allowtransparency="true" scrolling="no" src="https://money.yandex.ru/embed/small.xml?account=410012042083709&quickpay=small&yamoney-payment-type=on&button-text=06&button-size=s&button-color=orange&targets=%D0%A1%D0%B2%D0%B5%D1%80%D1%87%D0%BE%D0%BA&default-sum=300" width="147" height="31"></iframe>
+	</p-->
+	</td></tr>
+	<tr><td align='left'>
+	<p>
+	<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top" style='margin-left: 85px;'>
+	<input type="hidden" name="cmd" value="_s-xclick">
+	<input type="hidden" name="hosted_button_id" value="JZESR6GN9AKNS">
+	<input type="image" src="https://www.paypalobjects.com/en_US/RU/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+	<img alt="" border="0" src="https://www.paypalobjects.com/ru_RU/i/scr/pixel.gif" width="1" height="1"></form>
+	</p>
+	</td></tr>
+	<!--Собрано-->
+	<tr><td>
+	
+	<p><b>Приглашаем в команду математиков, людей владеющих C и тестировщиков.</b></p>
+	<p><b>Возможно <a href=#email> заказывать функционал</a>.</b></p>
+	<!--Сделать-->
+	<p>Хотим выразить огромную благодарность тем, кто нас поддерживает, отдельно благодарим <b>Павла Котелевца</b>, который поверил в нас первым.</p>
+		<script type="text/javascript" src="http://yandex.st/share/share.js"
+		charset="utf-8"></script>
+		<div class="yashare-auto-init" data-yashareL10n="ru"
+		  data-yashareQuickServices="vkontakte,facebook,twitter,odnoklassniki,moimir,gplus" data-yashareTheme="counter">
+		</div> 
+	</p>
+	</td></tr></table>
+	
+
+
+    </div></div>
+</td></tr></table>
+
+<table><tr><td>
+    <div class="cellsBlock">
+	<div class="cell100" style="height:30px;background: #18355d;">
+	<p></p>
+    </div></div>
+</td></tr></table>
+
+<table><tr><td>
+    <div class="cellsBlock">
+	<a name="руководство"></a>
+	<div class="cell50" style="background: #18355d;">
+	<h3>Оффициальный видеоряд:</h3>
+	<table class="common">
+	<tr><td align=center>
+	<iframe  title="От производителя" width="400" height="300" wmode="Opaque" src="//www.youtube-nocookie.com/embed/5iECfOBOhAE?list=PLIKEZ9RntI996BjsohqqL_mI3uamzUEMi" frameborder="0" allowfullscreen></iframe>
+	</tr><tr>
+	<td align=center>
+    <h3>Неофициальный видеоряд:</h3>
+	<iframe  title="С миру по нитке" width="400" height="300" wmode="Opaque" src="//www.youtube-nocookie.com/embed/5iECfOBOhAE?list=PLIKEZ9RntI98CN4L7iqeRd3V-Fwz7Sr8-" frameborder="0" allowfullscreen></iframe>
+	</td></tr><tr>
+	<td>
+	<h3>Факт:</h3>
+	<p>По сверчкам можно определить температуру: для этого нужно подсчитать количество стрекотаний в минуту, разделить на два, затем прибавить девять и снова разделить на два. В результате получится температура в градусах Цельсия.</p>
+	</td>
+	</tr>
+	<tr><td>
+	<h3>Видео по математике, общеобразовательное</h3>
+	<p><a href='http://youtu.be/KdyvizaygyY'>Что такое вектор, общеобразовательный курс.</a></p>
+	<p><a href='http://youtu.be/vQ60rFwh2ig'>Что такое матрица, общеобразовательный курс.</a></p>
+	<!--p><a href='http://youtu.be/QF57VK6yS00'>3D Game Math, Matrix Rotation Transform.</a></p-->
+	<p><a href='http://youtu.be/FRnTWX2jAI8'>Матрицы</a></p>
+	<p><a href='http://youtu.be/KdW9ALJMk7s'>Кватернионы.</a></p>
+	</td></tr>
+	</table></center>
+    </div>
+	<div class="cell50" style="background: #36a;">
+	<h3>Примеры:</h3>
+	<table class="common"><tr><td colspan = 3>
+	<br>
+	</td></tr>
+	<tr>
+	<td align=center>
+	<!--img class='rounded' src='sverch/jaluzi.gif' />
+	</td></tr>
+	<!--tr><td colspan=2 rowspan=2><a href='sverch/Sverchok_basics.blend.7z' class="admit" data-title="Sverchok_basics.blend.7z"><img src='sverch/basics.jpg' class="rounded" style="border:5px solid #040607" /></a></td>
+	<td><a href='sverch/parabola.blend.7z' class="admit" data-title="parabola.blend.7z"><img src='sverch/parabola.jpg' class="rounded" /></a></td>
+	</tr>
+	<tr>
+	<td><a href='sverch/flower.blend.7z' class="admit" data-title="flower.blend.7z"><img src='sverch/flower.jpg' class="rounded" /></a></td>
+	</tr>
+	<tr>
+	<td><a href='sverch/truss.blend.7z' class="admit" data-title="truss.blend.7z"><img src='sverch/truss.gif' class="rounded"  /></a></td>
+	<td><a href='sverch/town.blend.7z' class="admit" data-title="town.blend.7z"><img src='sverch/town400.jpg' class="rounded"  /></a></td>
+	<td><a href='sverch/dom.blend.7z' class="admit" data-title="dom.blend.7z"><img src='sverch/dom.jpg' class="rounded"/></a></td>
+	</tr>
+	<!--tr>
+	<td><a href='sverch/sverchok_event.blend.7z' class="admit" data-title="sverchok_event.blend.7z"><img src='sverch/event.jpg' class="rounded" /></a></td>
+	</tr>
+	<tr>
+	<td><a href='sverch/projection.blend.7z' class="admit" data-title="projection.blend.7z"><img src='sverch/proj.jpg' class="rounded" /></a></td>
+	<td><a href='sverch/jizn.blend.7z' class="admit" data-title="jizn.blend.7z"><img src='sverch/virussm.gif' class="rounded" /></a></td>
+	<!--td><a href='sverch/orientation.blend.7z' class="admit" data-title="orientation.blend.7z"><img src='sverch/orientation.png' class="rounded" /></a></td>
+	<td><a href='sverch/starwars.blend.7z' class="admit" data-title="starwars.blend.7z"><img src='sverch/starwars.gif' class="rounded" /></a></td>
+	</tr>
+	<tr>
+	<td><a href='sverch/rollout.blend.7z' class="admit" data-title="rollout.blend.7z, naming points"><img src='sverch/rollout.jpg' class="rounded" /></a></td>
+	<td><a href='sverch/counter.blend.7z' class="admit" data-title="counter.blend.7z"><img src='sverch/counter.jpg' class="rounded" /></a></td>
+	<td><a href='sverch/skyscreaper.blend.7z' class="admit" data-title="skyscreaper.blend.7z"><img src='sverch/skyscreaperwb.jpg' class="rounded" /></a></td>
+	<!--td><a href='sverch/clock.blend.7z' class="admit" data-title="clock's animation.blend.7z"><img src='sverch/clock.png' class="rounded" /></a-->
+	<a href='https://disk.yandex.ru/d/0Jv-NQjKy400EA?w=1'><img src='sverch/Examples.png' class="rounded" /></a>
+	<p>В Сверчке есть встроенные примеры, они находятся во вкладке Examples.</p>
+	<a class='admit' data-title='Примеры' href='https://drive.google.com/folderview?id=0B6KMvjWAjGiyZHhkSlhZVmFMYWc&usp=sharing' style='color:#248;'><font size=2px>Примеры могут не работать, старые файлы</font></a></td></tr>
+
+</table>
+	<br>
+	<a class='admit' data-title='gallery' href='https://disk.yandex.ru/d/0Jv-NQjKy400EA?w=1' style='color:#248;'>
+	<img src='sverch/Gallery_thumb.jpg' class="rounded" />
+	</a>
+    </div></div>
+</td></tr></table>
+
+<table ><tr><td><!--class="right"-->
+    <div class="cellsBlock">
+	<div class="cell100" style="height:30px;background: #18355d;">
+	<p></p>
+    </div></div>
+</td></tr></table>
+
+<table><tr><td><!--class="left"-->
+    <div class="cellsBlock">
+	<a name="уроки"></a>
+	<div class="cell50" style="background: #36a;">
+	<h3>Серия уроков на Блендерсуши от Джими Гунавана</h3>
+	<p>
+	<ul>
+	<li><a href='https://blendersushi.blogspot.com/search?q=sverchok'>Много уроков по сверчку.</a></li>
+	<!--li><a href='http://blendersushi.blogspot.ru/2014/01/sverchok-get-to-know.html'>Сверчок - начало</a></li>
+	<li><a href='http://blendersushi.blogspot.ru/2014/01/sverchok-connecting-dots.html'>Сверчок - соединение узлов</a></li>
+	<li><a href='http://blendersushi.blogspot.ru/2014/01/sverchok-random-and-mask-list.html'>Сверчок - случайность и маскировка списка</a></li>
+	<li><a href='http://blendersushi.blogspot.ru/2014/01/sverchok-when-python-plays-with-cricket.html'>Сверчок - когда питон играет со сверчком</a></li>
+	<li><a href='http://blendersushi.blogspot.ru/2014/01/sverchok-seeing-matrix.html'>Сверчок - сеем матрицу</a></li>
+	<li><a href='http://blendersushi.blogspot.ru/2014/01/sverchok-procedural-flower-and-leaf.html'>Сверчок - процедурный цветок и листок</a></li>
+	<li><a href='http://blendersushi.blogspot.ru/2014/01/sverchok-revisiting-procedural-stacking.html'>Сверчок - новое посещение процедурного стека</a></li>
+	<li><a href='http://blendersushi.blogspot.ru/2014/01/sverchok-basic-of-procedural-city.html'>Сверчок - основа процедурного города</a></li>
+	<li><a href='http://blendersushi.blogspot.com.au/2014/01/sverchok-in-between-blends.html'>Сверчок - между файлами блендера</a></li>
+	<li><a href='http://blendersushi.blogspot.ru/2014/01/sverchok-sweep-swipe-swoop.html'>Сверчок - пронестись - пролистать - проскочить</a></li>
+	<li><a href='http://blendersushi.blogspot.ru/2014/04/sverchok-embracing-art-of-parametric.html'>Сверчок - Охватывая искусство параметрического творчества в Блендере</a></li>
+	<li><a href='http://blendersushi.blogspot.com/2014/04/sverchok-parametric-snippets-1.html'>Сверчок - параметрические отрывки 1</a></li>
+	<li><a href='http://blendersushi.blogspot.com/2014/04/sverchok-parametric-design-study-of.html'>Сверчок - параметрический дизайн, изучение фуутбольного мяча</a></li>
+	<li><a href='http://blendersushi.blogspot.com/2014/05/sverchok-parametric-snippets-2.html'>Сверчок - параметрические отрывки 2</a></li>
+	<li><a href='http://blendersushi.blogspot.com/2014/05/sverchok-in-between-strands-of-threads.html'>Сверчок - между прядей нитей</a></li>
+	<li><a href='http://blendersushi.blogspot.com/2014/05/sverchok-procedural-city-wip-1.html'>Сверчок - процедурный город - в работе</a></li>
+	<li><a href='http://blendersushi.blogspot.com/2014/05/sverchok-parametric-snippet-3.html'>Сверчок - параметрические отрывки 3</a></li>
+	<li><a href='http://blendersushi.blogspot.com/2014/06/sverchok-parametric-snippets-4.html'>Сверчок - параметрические отрывки 4</a></li>
+	<li><a href='http://blendersushi.blogspot.com/2014/06/sverchok-parametric-snippet-5.html'>Сверчок - параметрические отрывки 5</a></li>
+	<li><a href='http://blendersushi.blogspot.com/2014/06/sverchok-basic-of-semi-procedural.html'>Сверчок - основы полупроцедурности</a></li>
+	<li><a href='http://blendersushi.blogspot.com/2014/06/sverchok-flower-and-snake_474.html'>Сверчок - цветок и змея (+18)</a></li>
+	<li><a href='http://blendersushi.blogspot.com/2014/06/sverchok-parametric-snippet-6.html'>Сверчок - параметрические отрывки 6</a></li>
+	<li><a href='http://blendersushi.blogspot.com/2014/06/sverchok-parametric-snippet-7.html'>Сверчок - параметрические отрывки 7</a></li>
+	<li><a href='http://blendersushi.blogspot.com/2014/07/sverchok-parametric-snippet-8.html'>Сверчок - параметрические отрывки 8</a></li>
+	<li><a href='http://blendersushi.blogspot.com/2014/07/sverchok-case-of-matryoshka-dolls.html'>Сверчок - вариант матрёшки</a></li>
+	<li><a href='http://blendersushi.blogspot.com/2014/07/sverchok-parametric-snippet-9.html'>Сверчок - параметрические отрывки 9</a></li-->
+	</ul>
+	<br>
+	<h3>Луис Чавес. Сверчок+Unreal Engine 4.</h3>
+	<ul>
+	<li><a href='http://timefirevr.com/?s=sverchok'>Из Сверчка в UE4 1...4</a></li>
+	<!--li><a href='http://www.timefirevr.com/2014/10/14/sverchok-unreal-engine-4-part-2/'>Из Сверчка в UE4 2</a></li>
+	<li><a href='http://www.timefirevr.com/2014/10/15/sverchok-unreal-engine-4-part-3/'>Из Сверчка в UE4 3</a></li>
+	<li><a href='http://www.timefirevr.com/2014/10/15/sverchok-unreal-engine-4-part-4/'>Из Сверчка в UE4 4</a></li>
+	<li><a href='http://www.timefirevr.com/2014/10/15/sverchok-unreal-engine-bonus/'>Бонус</a></li-->
+	</ul>
+	<br>
+	<h3>Эльфнор. Работа с матрицами.</h3>
+	<ul>
+	<li><a href='https://elfnor.com/tag/sverchok.html'>Много продвинутых уроков с достаточно глубокой математикой.</a></li>
+	<!--li><a href='http://elfnor.com/simple-sverchok-01-centers-polygons.html'>Матрицы по полигонам 1</a></li>
+	<li><a href='http://elfnor.com/simple-sverchok-02-matrix-deform.html'>Матрицы по полигонам 2</a></li>
+	<li><a href='http://elfnor.com/simple-sverchok-03-slope-dependent-trees.html'>Матрицы по полигонам 3</a></li>
+	<li><a href='http://elfnor.com/simple-sverchok-04-apply-matrix.html'>Матрицы применить 4</a></li>
+	<li><a href='http://elfnor.com/simple-sverchok-05-interpolate-and-iterate-matrix.html'>Матрицы итерация и интерполяция 5</a></li>
+	<li><a href='http://elfnor.com/shaders-for-sverchok-01-object-info-node.html'>Шейдеры для сверчка 1</a></li>
+	<li><a href='http://elfnor.com/shaders-for-sverchok-02-vertex-colors.html'>Шейдеры для сверчка 2</a></li>
+	<li><a href='http://elfnor.com/shaders-for-sverchok-03-image-texture-node.html'>Шейдеры для сверчка 3</a></li>
+	<li><a href='http://elfnor.com/structure-synth-meets-sverchok-generative-art-inside-blender.html'>StructureSynth и Сверчок генеративность</a></li>
+	<li><a href='http://elfnor.com/structure-synth-meets-sverchok-mesh-mode.html'>StructureSynth и Сверчок сетка</a></li>
+	<li><a href='http://elfnor.com/structure-synth-meets-sverchok-animation.html'>StructureSynth и Сверчок анимация</a></li>
+	<li><a href='http://elfnor.com/blender-adventures-with-hyperbolic-planes.html'>Сверчок, гиперболические поверхности</a></li>
+	<li><a href='http://elfnor.com/bloom-spheres-in-sverchok.html'>Сверчок, Сфера имени Орландо Блума.</a></li>
+	<li><a href='http://elfnor.com/generative-art-penrose-tilings.html'>Генеративное искусство, раскладка пятиконечная</a></li>
+	<li><a href='http://elfnor.com/sverchok-tree-generator.html'>Сверчок. Генератор деревьев</a></li>
+	<li><a href='http://elfnor.com/structure-synth-eisenscript-to-xml-translator.html'>StructureSynth переводчик скрипта айзена в XML скрипт</a></li-->
+
+
+
+	</ul>
+	<br>
+	
+	
+
+	<h3>Уроки от разработчиков на родном языке</h3>
+	<ul>
+	<li><a href='Sverchok_man_00.html'>Начните базовое изучение на этом сайте.</a></li>
+	<!--li><a href='Sverchok_man_00.html'>Урок 00. Установка Сверчка.</a></li>
+	<li><a href='Sverchok_man_01.html'>Урок 01. Сверчок и линия. Путь сверчка.</a></li>
+	<li><a href='Sverchok_man_02.html'>Урок 02. Сверчок и матрёшки. Структура данных.</a></li>
+	<li><a href='Sverchok_man_03.html'>Урок 03. Карточки новых узлов.</a></li>
+	<li><a href='Sverchok_man_04.html'>Урок 04. Соединение объектов.</a></li>
+	<li><a href='Sverchok_stadium.html'>Урок 05. Стадион имени В.И. Ленина в Сверчке.</a></li>
+	<li><a href='Sverchok_table.html'>Урок 06. !!! Стол в сверчке. Параметрическая модель.</a></li>
+	<li><a href='Sverchok_man_07.html'>Урок 07. Узел пользовательский. Смогут все.</a></li>
+	<li><a href='Sverchok_man_08.html'>Урок 08. Создание поверхности интерполяцией.</a></li>
+	<li><a href='Sverchok_man_09.html'>Урок 09. Создание пространственной конструкции, фермы.</a></li>
+	<li><a href='Sverchok_man_10_theme.html'>Урок 10. Интерфейс - тема.</a></li>
+	<li><a href="Sverchok_man_11_profile.html">Урок 11. Профиль и addon в Сверчке.</a></li>
+	<li><a href="Sverchok_man_12_timing.html">Урок 12. Отладка.</a></li>
+	<li><a href="Sverchok_man_13_menu.html">Урок 13. Меню.</a></li>
+	<li><a href="Sverchok_man_14_IO.html">Урок 14. Импорт и Экспорт.</a></li>
+	<li><a href="Sverchok_man_15_obj_nodes.html">Урок 15. Узлы сцены</a></li-->
+	</ul>
+	<br>
+	<h3>Уроки из блог(ов) Деальго он же Zeffii</h3>
+	<ul>
+	<li><a href='https://blenderscripting.blogspot.com/search/label/sverchok'>Основы Сверчка, толковый урок</a></li>
+	<li>Остальное творчество на гитхабе, очень много примеров в issues.</li>
+	<br>
+	
+	<!--h3>Местный гуру, дневник.</h3>
+	<p>Простые примеры, не совсем параметрические. Человек имеет свой подход к работе.</p>
+	<ul>
+	<li><a href="http://www.local-guru.net/blog/2014/7/12/sverchok-experiment-1---hilbert-curve" class='admit' data-title='гилберт'>Тыц 1</a>
+	<a href="http://www.local-guru.net/blog/2014/7/13/sverchok-experiment-2---bmesh-animation" class='admit' data-title='анимация'>Тыц 2</a>
+	<a href='http://www.local-guru.net/blog/2014/7/14/sverchok-experiment-3---cloning' class='admit' data-title='клонирование'>Тыц 3</a>
+	<a href='http://www.local-guru.net/blog/2014/7/15/sverchok-experiment-4---sine-wave' class='admit' data-title='синус-волна'>Тыц 4</a>
+	<a href='http://www.local-guru.net/blog/2014/7/16/sverchok-experiment-5---slices'  class='admit' data-title='слои'>Тыц 5</a></li>
+	</ul>
+	<br-->
+	</div>
+	<div class="cell50" style="background: #36a;">
+	<h3>Где в основном живёт Сверчок.</h3>
+	<ul>
+	<li><a href="http://poneill.co/thelab/сверчок/">РЕКОМЕНДУЮ начинающим параметристам, чтобы освоить Сверчка. Маленькая лаборатория</a></li>
+	<li><a href="http://www.blenderartists.org/forum/showthread.php?272679-Addon-WIP-Sverchok-parametric-tool-for-architects/">Тема на Блендерартист</a></li>
+	<li><a href='https://vk.com/club35076122'>Вк</a></li>
+	<li><a href='http://blender.stackexchange.com'>Тут задавайте трудные вопросы ключевое слово sverchok</a></li>
+	<li><a href='http://doraemonarchitecture-blog.tumblr.com/'>Блог Дораемона</a></li>
+	<li><a href='https://twitter.com/hashtag/sverchok'>Твиттер</a></li>
+	<li><a href='https://github.com/nortikin/sverchok/issues'>Github обсуждения</a></li>
+	</ul>
+
+    </div></div>
+</td></tr></table>
+
+
+<table><tr><td>
+    <div class="cellsBlock">
+	<div class="cell100" style="height:30px;background: #18355d; ">
+	<p></p>
+    </div></div>
+</td></tr></table>
+
+
+
+<table><tr><td>
+    <div class="cellsBlock">
+	<a name="скачать"></a>
+	<div class="cell50" style="background: #940;">
+	<h1>Скачать</h1>
+	<h3>Сверчка</h3>
+	<!--p><a href="sverch/sverchok_nodes.zip" class="admit" data-title="download/скачать">Download / Скачать</a></p-->
+	<p><a href="https://github.com/nortikin/sverchok/" class="admit" data-title="CURRENT / ТЕКУЩАЯ">Забрать Сверчка</a></p>
+        <p><a href="https://github.com/portnov/sverchok-extra" class="admit" data-title="EXTRA TOOLS / РАСШИРЕНИЯ">Забрать расширения для Сверчка</a></p>
+
+	<h3>Другие инструменты</h3>
+	<p><A HREF="https://github.com/portnov/sverchok-extra" class="admit" data-title="download/скачать">Сверчок Экстра</A></p>
+	<p><A HREF="https://github.com/vicdoval/sverchok-open3d" class="admit" data-title="download/скачать">Сверчок Open3D</A></p>
+	<p><A HREF="https://github.com/ladybug-tools/ladybug-blender" class="admit" data-title="download/скачать">Сверчок Ladybug tools</A></p>
+	<p><A HREF="https://blenderbim.org/download.html" class="admit" data-title="download/скачать">Сверчок IFC</A></p>
+	<p><A HREF="https://github.com/wassimj/topologicsverchok" class="admit" data-title="download/скачать">Сверчок Topology nodes</A></p>
+	<p><A HREF="https://github.com/nortikin/nikitron_tools" class="admit" data-title="download/скачать">Гитхаб</A></p>
+	
+	
+	<!--p><a href="#nikitro" class="admit" data-title="About tools / О дополнении">...О дополнении</a></p>
+        	<a href="#x" class="overlay" id="nikitro"></a>
+        	<div class="popup" style="background: #36a;">
+		<table><tr><td>
+		<p>Содержание (consists of):</p>
+		<p>Curves to 3D. Кривые в 3Д. Переводит кривые к 3Д режим, а не в 2Д, обнуляет экструдирование и расположение по вертикали. Так все кривые сбрасываются на пол и их можно конвертировать в мэш.</p>
+		<p>Object's names in 3Dtext. Имена объектов. Именует 3М текстом объекты, при этом отсекает дополнительную нумерацию, вместо "monkey.001" он назовёт объект "monkey", что бывает удобно.</p>
+		<p>Vertices numbers in 3Dtext. Номера вершин сеточного объекта. Подписывает вершины объекта по порядку, как они идут в bpy.context.selected_objects.vertices[0,1,2,3,4,5,6...], чтобы было легче отлаживать скрипты и вообще прикольно.</p>
+		<p>Connect two meshes with edges and hooks them. Соединить вершины. Соединяет вершины двух выделеных объектов рёбрами. Соединяются по порядку, 0,1,2,3,4...</p>
+		<p>Materials link to objects. Привязка материалов объекта к данным объекта. Привязывает материал выделенных объектов к объекту или к его данным.</p>
+		<p>Bounding boxes of selected. Габаритный контйнер объекта. Нужно применить масштаб и вращение перед запуском.</p>
+		<p>Spread objects on layout. Распределение объектов по плоскости, учитывая их габаритные размеры. Очень полезен при выведении частей сборнй конструкции в чертежи. Автоматически обнуляет повороты.</p>
+		<p><a href="http://wiki.blender.org/index.php/Extensions:2.6/Py/Scripts/Object/Nikitron_tools">Вики-страница инструментов Никитрон / Wiki page of Nikitron tools.</a></p>
+		<a class="close" title="Прикрыть" href="#close"></a>
+		</td></tr></table>
+        	</div>
+	<p><a href="#nikitro-exampl" class="admit" data-title="Manual / Руководство">...Руководство</a></p>
+        	<a href="#x" class="overlay" id="nikitro-exampl"></a>
+        	<div class="popup" style="background: #36a;">
+		<table><tr><td>
+		<h3>Sverchok (nikitron) toolset manual / Руководство пользователя по Sverchok (nikitron) toolset:</h3>
+			<table class="common"><tr>
+			<td><a href="sverch/1.gif" class="admit" data-title="Nikitron - curves_2_3D + spread_objects + names + vertices_numbers"><img src="sverch/1.gif"/></a>
+			</td>
+			<td><a href="sverch/2.gif" class="admit" data-title="Nikitron - connect_2_meshes + bounding_boxes"><img src="sverch/2.gif"></a>
+			</td>
+			<td><a href="sverch/3.gif" class="admit" data-title="Nikitron - materials"><img src="sverch/3.gif"></a>
+			</td>
+			</tr></table>
+			<p>Установка как для обычного дополнения / Install as addon.</p>
+		<a class="close" title="Прикрыть" href="#close"></a>
+		</td></tr></table>
+        	</div-->
+	
+		
+
+	
+    </div>
+	<div class="cell50" style="background: #18355d;">
+	
+	
+
+	<h3>О Сверчке в СМИ</h3>
+	<p><ul>
+	<li><a href="http://www.blendernation.com/2013/09/05/sverchok-add-on/">Первый пост на блендернации</a></li>
+	<li><a href="http://www.blendernation.com/2013/11/01/sverchok-add-on-new-version-and-hangout-today/">Второй пост на блендернации</a></li>
+
+	<li><a href="http://blendernation.com/2014/03/20/sverchok-modelling-in-the-real-world/">Третий пост на блендернации</a></li>
+	<li><a href="http://www.blendernation.com/2014/03/28/music-rss-feed-in-blender/">Четвёртый пост на блендернации</a></li>
+	<li><a href="http://www.blendernation.com/2014/04/23/embracing-the-art-of-parametric-creation-in-blender-with-sverchok/">Пятый пост на блендернации</a></li>
+	<li><a href="http://www.blendernation.com/2014/10/20/sverchok-demo-reel-2014/">Шестой пост на блендернации</a></li>
+	
+
+	<li><a href="http://www.hiteca.ru/2013/10/sverchok.html">Сверчок на Хитеке 1</a></li>
+	<li><a href="http://www.hiteca.ru/2013/11/sverchok-lessons.html">Сверчок на Хитеке 2</a></li>
+	<li><a href="http://www.hiteca.ru/2014/03/blog-post_19.html">Сверчок на Хитеке 3</a></li>
+	<li><a href="http://www.hiteca.ru/2014/06/sverchok04.html">Сверчок на Хитеке 4</a></li>
+	<li><a href='http://www.hiteca.ru/2014/10/sverchok-amsterdam.html'>Сверчок на Хитеке 5</a></li>
+	<li><a href='http://www.hiteca.ru/2014/11/cgevent-sverchok.html'>Сверчок на Хитеке 6</a></li>
+
+	</ul></p>
+    </div>
+	
+    </div>
+</td></tr></table>
+
+<table><tr><td>
+    <div class="cellsBlock">
+	<div class="cell100" style="height:30px; background: #940;">
+	<p></p>
+    </div></div>
+</td></tr></table>
+
+<table><tr><td>
+    <div class="cellsBlock">
+	<a name="дискус"></a>
+	<div class="cell100" style="background: #051025;">
+	<!--disqus.com start-->
+		    <div id="disqus_thread"></div>
+		    <script type="text/javascript">
+		        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+		        var disqus_shortname = 'architectdesignerhuman'; // required: replace example with your forum shortname
+			var disqus_url = 'http://nikitron.cc.ua/blend_scripts.html';
+		
+		        /* * * DON'T EDIT BELOW THIS LINE * * */
+		        (function() {
+		            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+		            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+		            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+		        })();
+		    </script>
+		    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+		    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+		<!--disqus.com end-->
+    </div></div>
+</td></tr></table>
+
+
+<table ><tr><td><!--class="left"-->
+    <div class="cellsBlock">
+	<div class="cell100" style="height:30px; background: #36a;">
+	<p></p>
+    </div></div>
+</td></tr></table>
+
+
+
+<table><tr><td>
+    <div class="cellsBlock">
+	<div class="cell35" style="background: #940;">
+	<h1><a class="mainpage" href="#top">Наверх</a></h1>
+    </div>
+	<div class="cell35" style="background: #36a;">
+	<ul>
+	<li>Мольбы и предложения сюда</li>
+	<li>E-mail</li>
+	<a name='email'></a>
+	<li>sverchok-b3d@yandex.ru</li>
+	</ul>
+    </div>
+	<div class="cell35" style="background: #940;">
+	<ul class="sample">
+	  <li><b>Архитектор, дизайнер и Человек...</b></li>
+	  <li>Все права защищены (с)
+	    <ul>
+	    <li>Сайт сделан руками путём продолжительного тыкания пальцами в клавиши.</li>
+	    <li>2014 -2020 г.</li>
+	    </ul></li>
+	</ul>
+    </div></div>
+</td></tr></table>
+
+</body>
+<!-- Rating@Mail.ru counter -->
+<script type="text/javascript">//<![CDATA[
+var _tmr = _tmr || [];
+_tmr.push({id: '2383198', type: 'pageView', start: (new Date()).getTime()});
+(function (d, w) {
+   var ts = d.createElement('script'); ts.type = 'text/javascript'; ts.async = true;
+   ts.src = (d.location.protocol == 'https:' ? 'https:' : 'http:') + '//top-fwz1.mail.ru/js/code.js';
+   var f = function () {var s = d.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ts, s);};
+   if (w.opera == "[object Opera]") { d.addEventListener("DOMContentLoaded", f, false); } else { f(); }
+})(document, window);
+//]]></script><noscript><div style="position:absolute;left:-10000px;">
+<img src="//top-fwz1.mail.ru/counter?id=2383198;js=na" style="border:0;" height="1" width="1" alt="Рейтинг@Mail.ru" />
+</div></noscript>
+<!-- //Rating@Mail.ru counter -->
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+(function (d, w, c) {
+    (w[c] = w[c] || []).push(function() {
+        try {
+            w.yaCounter21907006 = new Ya.Metrika({id:21907006,
+                    webvisor:true,
+                    clickmap:true,
+                    trackLinks:true,
+                    accurateTrackBounce:true});
+        } catch(e) { }
+    });
+
+    var n = d.getElementsByTagName("script")[0],
+        s = d.createElement("script"),
+        f = function () { n.parentNode.insertBefore(s, n); };
+    s.type = "text/javascript";
+    s.async = true;
+    s.src = (d.location.protocol == "https:" ? "https:" : "http:") + "//mc.yandex.ru/metrika/watch.js";
+
+    if (w.opera == "[object Opera]") {
+        d.addEventListener("DOMContentLoaded", f, false);
+    } else { f(); }
+})(document, window, "yandex_metrika_callbacks");
+</script>
+
+
+<!-- counter.1Gb.ua -->
+<script language="javascript" type="text/javascript">
+cgb_js="1.0"; cgb_r=""+Math.random()+"&r="+
+escape(document.referrer)+"&pg="+
+escape(window.location.href);
+document.cookie="rqbct=1; path=/"; cgb_r+="&c="+
+(document.cookie?"Y":"N");
+</script><script language="javascript1.1" type="text/javascript">
+cgb_js="1.1";cgb_r+="&j="+
+(navigator.javaEnabled()?"Y":"N")</script>
+<script language="javascript1.2" type="text/javascript">
+cgb_js="1.2"; cgb_r+="&wh="+screen.width+
+'x'+screen.height+"&px="+
+(((navigator.appName.substring(0,3)=="Mic"))?
+screen.colorDepth:screen.pixelDepth)</script>
+<script language="javascript1.3" type="text/javascript">
+cgb_js="1.3"</script>
+<script language="javascript" 
+type="text/javascript">cgb_r+="&js="+cgb_js; 
+document.write("<a href='http://www.1Gb.ua?cnt=14288'>"+
+"<img src='http://counter.1Gb.ua/cnt.aspx?"+
+"u=14288&"+cgb_r+
+"&' border=0 width=88 height=31 "+
+"alt='1Gb.ua counter'><\/a>")</script>
+<noscript><a href='http://www.1Gb.ua?cnt=14288'>
+<img src="http://counter.1Gb.ua/cnt.aspx?u=14288" 
+border=0 width="88" height="31" alt="1Gb.ua counter"></a>
+</noscript>
+<!-- /counter.1Gb.ua -->
+
+
+<noscript><div><img src="//mc.yandex.ru/watch/21907006" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<!-- /Yandex.Metrika counter -->
+<!--google analitics-->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-42732782-1', 'cc.ua');
+  ga('send', 'pageview');
+</script>
+<!--google analitics-->
+</html>

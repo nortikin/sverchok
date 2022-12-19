@@ -1,0 +1,298 @@
+<html>
+<head>
+<title>Сверчок. Узлы некоторые 03 | Архитектор, Дизайнер, Человек...</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="autor" content="Архитектор, Дизайнер, Человек...">
+<meta name="keywords" content="Сверчок руководство пользователя Блендер Blender 3d">
+<meta name="description" content="Сверчок. 3. знакомство с узлами в картинках.">
+<link rel="stylesheet" href="file.css" type="text/css" media="screen" />
+<link href='http://fonts.googleapis.com/css?family=Ubuntu&subset=latin,cyrillic-ext,cyrillic' rel='stylesheet' type='text/css'> <!--CSS шрифт-->
+<link rel="icon" type="image/png" href="blender.png" />
+<script src='jquery.min.js'></script>
+<script src='menu.js'></script>
+<!--ширина экрана диктует CSS-->
+<script language="JavaScript">
+var height=0;
+var width=0;
+if (self.screen) {    
+        width = screen.width
+        height = screen.height
+}
+else if (self.java) {  
+      var jkit = java.awt.Toolkit.getDefaultToolkit();
+      var scrsize = jkit.getScreenSize();      
+      width = scrsize.width; 
+      height = scrsize.height; 
+}
+if (width < 1000)
+{
+	document.write("<link rel='stylesheet' type='text/css' href='main_page/small-less-1000.css'>");
+}
+else 
+if(width < 1270)
+{
+	document.write("<link rel='stylesheet' type='text/css' href='main_page/small.css'>");
+}
+else 
+if(width > 1270)
+{
+	document.write("<link rel='stylesheet' type='text/css' href='main_page/big.css'>");
+}
+</script>
+<!--ширина экрана диктует CSS-->
+</head>
+
+<body>
+<a name="top"></a>
+
+
+
+
+<table class="head"><tr><td>
+    <div class="cellsBlock">
+	<div class="cell10" style="background: #c51;">
+	<h3><a class="mainpage" href="sverchok_ru.html">главная</a></h3>
+	</div>
+	<div class="cell70" style="background: #c51;">
+	<h1><img src='sverch/sverchlogo.png' style="width:200px"></h1>
+    </div>
+    <div class="cell20" style="background: #c51;">
+    <div class="size">
+	<input type="text" name="test" value="Меню сверчка" class="field" readonly="readonly" />
+	<ul class="list">
+	<li><a class="menu" href="sverchok_ru.html">___Сверчок</a></li>
+	<li><a class="menu" href="Sverchok_man_00.html">00_Установка</a></li>
+	<li><a class="menu" href="Sverchok_man_01.html">01_Линия</a></li>
+	<li><a class="menu" href="Sverchok_man_02.html">02_Структура данных</a></li>
+	<li><a class="menu" href="Sverchok_man_03.html">03_Некоторые узлы</a></li>
+	<li><a class="menu" href="Sverchok_man_04.html">04_Соединение объектов</a></li>
+	<li><a class="menu" href="Sverchok_stadium.html">05_Стадион им. Ленина</a></li>
+	<li><a class="menu" href="Sverchok_table.html">06_Столы в Сверчке</a></li>
+	<li><a class="menu" href="Sverchok_man_07.html">07_Свои узлы в песочнице</a></li>
+	<li><a class="menu" href="Sverchok_man_08.html">08_Поверхности</a></li>
+	<li><a class="menu" href="Sverchok_man_09.html">09_Ферма</a></li>
+	<li><a class="menu" href="Sverchok_man_10_theme.html">10_Тема</a></li>
+	<li><a class="menu" href="Sverchok_man_11_profile.html">11_Профиль</a></li>
+	<li><a class="menu" href="Sverchok_man_12_timing.html">12_Отладка</a></li>
+	<li><a class="menu" href="Sverchok_man_13_menu.html">13_Меню</a></li>
+	<li><a class="menu" href="Sverchok_man_14_IO.html">14_Импорт/Экспорт</a></li>
+	<li><a class="menu" href="Sverchok_man_15_obj_nodes.html">15_Узлы сцены</a></li>
+	</ul></ul>
+</div></div></div>
+</td></tr></table>
+
+<table><tr><td>
+    <div class="cellsBlock">
+	<div class="cell100" style="height:30px; background: #247;">
+	</div>
+    </div>
+</td></tr></table>
+
+<table><tr><td><!--class="right"-->
+    <div class="cellsBlock">
+	<div class="cell100" style="height:80px; background: #247;">
+	<h1>03_Некоторые новые узлы.</h1>
+	</div>
+    </div>
+</td></tr></table>
+
+<table><tr><td><!--right class-->
+    <div class="cellsBlock">
+	<div class="cell100" style="background: #36a;">
+	<p>По мере развития сверчка я делаю карточки с новыми узлами и способами их применения. Для детального описания нужно заняться викистраницей, но были проблемы с сайтом и вообще руки пока не дошли. Здесь выкладываю основные карточки, в течение длительного времени существовавшие вконтакте и гугле+.</p>
+<p>Эти карточки - про сечение.</p>
+<center><a href="#01" class="admit" data-title="01."><img src="sverch/man03/sect/sect01sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="01"></a>
+        	<div class="popup">
+		<img src="sverch/man03/sect/sect01.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	<a href="#02" class="admit" data-title="02."><img src="sverch/man03/sect/sect02sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="02"></a>
+        	<div class="popup">
+		<img src="sverch/man03/sect/sect02.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	</center>
+
+<p>Эти карточки - Про сечение и мультипликацию.</p>
+<center><a href="#03" class="admit" data-title="03."><img src="sverch/man03/sect-mult/sect01sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="03"></a>
+        	<div class="popup">
+		<img src="sverch/man03/sect-mult/sect01.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	<a href="#04" class="admit" data-title="04."><img src="sverch/man03/sect-mult/sect02sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="04"></a>
+        	<div class="popup">
+		<img src="sverch/man03/sect-mult/sect02.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	</center>
+
+<p>Эти карточки - Про адаптивное расеивание.</p>
+<center><a href="#05" class="admit" data-title="05."><img src="sverch/man03/adpols/adpols01sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="05"></a>
+        	<div class="popup">
+		<img src="sverch/man03/adpols/adpols01.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	<a href="#06" class="admit" data-title="06."><img src="sverch/man03/adpols/adpols02sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="06"></a>
+        	<div class="popup">
+		<img src="sverch/man03/adpols/adpols02.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	</center>
+
+
+<p>Эти карточки - Про новые узлы которые могут быть интересны.</p>
+<center><a href="#07" class="admit" data-title="07."><img src="sverch/man03/0.2.5/0250sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="07"></a>
+        	<div class="popup">
+		<img src="sverch/man03/0.2.5/0250.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	<a href="#08" class="admit" data-title="08."><img src="sverch/man03/0.2.5/0251sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="08"></a>
+        	<div class="popup">
+		<img src="sverch/man03/0.2.5/0251.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	</center>
+<center><a href="#09" class="admit" data-title="09."><img src="sverch/man03/0.2.5/0252sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="09"></a>
+        	<div class="popup">
+		<img src="sverch/man03/0.2.5/0252.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	<a href="#10" class="admit" data-title="10."><img src="sverch/man03/0.2.5/0253sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="10"></a>
+        	<div class="popup">
+		<img src="sverch/man03/0.2.5/0253.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	</center>
+<center><a href="#11" class="admit" data-title="11."><img src="sverch/man03/0.2.5/0254sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="11"></a>
+        	<div class="popup">
+		<img src="sverch/man03/0.2.5/0254.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	<a href="#12" class="admit" data-title="12."><img src="sverch/man03/0.2.5/0255sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="12"></a>
+        	<div class="popup">
+		<img src="sverch/man03/0.2.5/0255.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	</center>
+<center><a href="#13" class="admit" data-title="13."><img src="sverch/man03/0.2.5/0256sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="13"></a>
+        	<div class="popup">
+		<img src="sverch/man03/0.2.5/0256.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	<a href="#14" class="admit" data-title="14."><img src="sverch/man03/0.2.5/0257sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="14"></a>
+        	<div class="popup">
+		<img src="sverch/man03/0.2.5/0257.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	</center>
+<p>Да пребудет с вами сила Сверчка.</p>
+
+
+	</div>
+    </div>
+</td></tr></table>
+
+<table><tr><td>
+    <div class="cellsBlock">
+	<div class="cell100" style="height:60px; background: #247;">
+	<p></p>
+    </div></div>
+</td></tr></table>
+
+
+
+
+
+
+<table><tr><td>
+    <div class="cellsBlock">
+	<div class="cell35" style="background: #c51;">
+	<h1><a class="mainpage" href="#top">Наверх</a></h1>
+    </div>
+	<div class="cell35" style="background: #247;">
+	<ul>
+	<li>Development!</li>
+	<li>Development!!</li>
+	<li>Development!!!</li>
+	<li>/Steven Anthony Ballmer/</li>
+	</ul>
+    </div>
+	<div class="cell35" style="background: #c51;">
+	<ul class="sample">
+	  <li><b>Архитектор, дизайнер и Человек...</b></li>
+	  <li>Все права защищены (с)
+	    <ul>
+	    <li>Земля</li>
+	    <li>2013 г.</li>
+	    </ul></li>
+	</ul>
+    </div></div>
+</td></tr></table>
+
+</body>
+<!-- Rating@Mail.ru counter -->
+<script type="text/javascript">//<![CDATA[
+var _tmr = _tmr || [];
+_tmr.push({id: '2383198', type: 'pageView', start: (new Date()).getTime()});
+(function (d, w) {
+   var ts = d.createElement('script'); ts.type = 'text/javascript'; ts.async = true;
+   ts.src = (d.location.protocol == 'https:' ? 'https:' : 'http:') + '//top-fwz1.mail.ru/js/code.js';
+   var f = function () {var s = d.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ts, s);};
+   if (w.opera == "[object Opera]") { d.addEventListener("DOMContentLoaded", f, false); } else { f(); }
+})(document, window);
+//]]></script><noscript><div style="position:absolute;left:-10000px;">
+<img src="//top-fwz1.mail.ru/counter?id=2383198;js=na" style="border:0;" height="1" width="1" alt="Рейтинг@Mail.ru" />
+</div></noscript>
+<!-- //Rating@Mail.ru counter -->
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+(function (d, w, c) {
+    (w[c] = w[c] || []).push(function() {
+        try {
+            w.yaCounter21907006 = new Ya.Metrika({id:21907006,
+                    webvisor:true,
+                    clickmap:true,
+                    trackLinks:true,
+                    accurateTrackBounce:true});
+        } catch(e) { }
+    });
+
+    var n = d.getElementsByTagName("script")[0],
+        s = d.createElement("script"),
+        f = function () { n.parentNode.insertBefore(s, n); };
+    s.type = "text/javascript";
+    s.async = true;
+    s.src = (d.location.protocol == "https:" ? "https:" : "http:") + "//mc.yandex.ru/metrika/watch.js";
+
+    if (w.opera == "[object Opera]") {
+        d.addEventListener("DOMContentLoaded", f, false);
+    } else { f(); }
+})(document, window, "yandex_metrika_callbacks");
+</script>
+<noscript><div><img src="//mc.yandex.ru/watch/21907006" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<!-- /Yandex.Metrika counter -->
+<!--google analitics-->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-42732782-1', 'cc.ua');
+  ga('send', 'pageview');
+</script>
+<!--google analitics-->
+</html>

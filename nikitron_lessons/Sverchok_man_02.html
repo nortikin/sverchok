@@ -1,0 +1,235 @@
+<html>
+<head>
+<title>Сверчок. Структура данных 02 | Архитектор, Дизайнер, Человек...</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="autor" content="Архитектор, Дизайнер, Человек...">
+<meta name="keywords" content="Сверчок руководство пользователя Блендер Blender 3d">
+<meta name="description" content="Сверчок. Урок 2. Структура данных.">
+<link rel="stylesheet" href="file.css" type="text/css" media="screen" />
+<link href='http://fonts.googleapis.com/css?family=Ubuntu&subset=latin,cyrillic-ext,cyrillic' rel='stylesheet' type='text/css'> <!--CSS шрифт-->
+<link rel="icon" type="image/png" href="blender.png" />
+<script src='jquery.min.js'></script>
+<script src='menu.js'></script>
+<!--ширина экрана диктует CSS-->
+<script language="JavaScript">
+var height=0;
+var width=0;
+if (self.screen) {    
+        width = screen.width
+        height = screen.height
+}
+else if (self.java) {  
+      var jkit = java.awt.Toolkit.getDefaultToolkit();
+      var scrsize = jkit.getScreenSize();      
+      width = scrsize.width; 
+      height = scrsize.height; 
+}
+if (width < 1000)
+{
+	document.write("<link rel='stylesheet' type='text/css' href='main_page/small-less-1000.css'>");
+}
+else 
+if(width < 1270)
+{
+	document.write("<link rel='stylesheet' type='text/css' href='main_page/small.css'>");
+}
+else 
+if(width > 1270)
+{
+	document.write("<link rel='stylesheet' type='text/css' href='main_page/big.css'>");
+}
+</script>
+<!--ширина экрана диктует CSS-->
+</head>
+
+<body>
+<a name="top"></a>
+
+<div class="elance">
+<p>Данные.</p>
+<img class='rounded' src='sverch/man02/data_structure11+.png' /></div>
+</div>
+
+
+<table class="head"><tr><td>
+    <div class="cellsBlock">
+	<div class="cell10" style="background: #c51;">
+	<h3><a class="mainpage" href="sverchok_ru.html">главная</a></h3>
+	</div>
+	<div class="cell70" style="background: #c51;">
+	<h1><img src='sverch/sverchlogo.png' style="width:200px"></h1>
+    </div>
+    <div class="cell20" style="background: #c51;">
+    <div class="size">
+	<input type="text" name="test" value="Меню сверчка" class="field" readonly="readonly" />
+	<ul class="list">
+	<li><a class="menu" href="sverchok_ru.html">___Сверчок</a></li>
+	<li><a class="menu" href="Sverchok_man_00.html">00_Установка</a></li>
+	<li><a class="menu" href="Sverchok_man_01.html">01_Линия</a></li>
+	<li><a class="menu" href="Sverchok_man_02.html">02_Структура данных</a></li>
+	<li><a class="menu" href="Sverchok_man_03.html">03_Некоторые узлы</a></li>
+	<li><a class="menu" href="Sverchok_man_04.html">04_Соединение объектов</a></li>
+	<li><a class="menu" href="Sverchok_stadium.html">05_Стадион им. Ленина</a></li>
+	<li><a class="menu" href="Sverchok_table.html">06_Столы в Сверчке</a></li>
+	<li><a class="menu" href="Sverchok_man_07.html">07_Свои узлы в песочнице</a></li>
+	<li><a class="menu" href="Sverchok_man_08.html">08_Поверхности</a></li>
+	<li><a class="menu" href="Sverchok_man_09.html">09_Ферма</a></li>
+	<li><a class="menu" href="Sverchok_man_10_theme.html">10_Тема</a></li>
+	<li><a class="menu" href="Sverchok_man_11_profile.html">11_Профиль</a></li>
+	<li><a class="menu" href="Sverchok_man_12_timing.html">12_Отладка</a></li>
+	<li><a class="menu" href="Sverchok_man_13_menu.html">13_Меню</a></li>
+	<li><a class="menu" href="Sverchok_man_14_IO.html">14_Импорт/Экспорт</a></li>
+	<li><a class="menu" href="Sverchok_man_15_obj_nodes.html">15_Узлы сцены</a></li>
+	</ul></ul>
+</div></div></div>
+</td></tr></table>
+
+<table><tr><td>
+    <div class="cellsBlock">
+	<div class="cell100" style="height:30px; background: #247;">
+	</div>
+    </div>
+</td></tr></table>
+
+<table><tr><td><!--class="right"-->
+    <div class="cellsBlock">
+	<div class="cell100" style="height:80px; background: #247;">
+	<h1>02_Структура данных Сверчка.</h1>
+	</div>
+    </div>
+</td></tr></table>
+
+<table><tr><td><!--class="right"-->
+    <div class="cellsBlock">
+	<div class="cell100" style="background: #36a;">
+	<p>В Сверчке есть документация, она находится в папке ~...addons.../sverchok-master/docs. В этой папке мы строим документацию, отдельно в папке 'nodes' начали описывать узлы. Но есть папка 'old', в которой нам нужен файл 'list_join wiki', кстати <a href='https://github.com/nortikin/sverchok/blob/master/docs/old/lists_join%20wiki' target=blank> вот он</a>. Это текстовой файл, в нём схематично описана структура данных, и все преобразования, которые с данными можно делать. Схема разрабатывалась при проектировании узлов, она может быть полезна пользователю пока не переписана в более внятный формат. На рисунке изображена часть описания.</p>
+<center><img class='original' src='sverch/man02/simple_section.blend.png' /></center>
+	<p>Перед тем, как приступить к разбору самой иерархии данных, прошу обратить внимание на три основных сокета. Вектор - это вершина, это три координаты, x,y,z, больше ничего. Рёбра и полигоны - это индексы вершин, если индексы превышают количество вершин, оно не работает. Матрица - это объект. Если предыдущие два сокета - это сетка, mesh, то матрица - это объект в блендере. Вот так просто.</p>
+<center><img class='original' src='sverch/man02/sockets.png' /></center>
+
+	<p>Без понимания структуры передаваемых данных вы вряд ли сможете свободно делать геометрию в сверчке. Давайте разберём что есть что, тем более, это достаточно просто. Для примера возьмём матрёшку. Мы все знаем принцип, по которому она работает, это вложенность.</p>
+<center><img class='original' src='sverch/man02/data_structure.gif' />
+<p>Обычная матрёшка выглядит примерно так, в неё входит не так много "дочек". В данном случае 4 уровня матрёшек, 4 поколения.</p>
+<img class='original' src='sverch/man02/data_structure5.png' />
+<p>Столько же вложений и в данных, передаваемых сверчком между узлами. Создавая серию или передавая векторы, рёбра, грани, матрицы, вы передаёте одинаковую структуру вложений. Но первая матрёшка - это контейнер самих данных, она не несёт в самой себе смысловой нагрузки, и служит только для передачи внутренних частей, её порядковый номер 0. А вот второй уровень нас интересует больше:</p>
+<center><img class='original' src='sverch/man02/data_structure6.png' /></center>
+
+<p>Каждая вложенная матрёшка - список, она соответсвует одному объекту. Если предыдущий список был только контейнером, то это является объектом, грубо говоря. И количество списков внутри контейнера -  это и есть количество объектов. В програмном коде это выглядит как двойная скобка [[]], где внешняя скобка - контейнер, а внутренние скобки - это объект. Порядковый номер уровня - 1. </p>
+<p>Вот так выглядит матрица в узле Viewer Draw:</p>
+<center><img class='original' src='sverch/man02/data_structure13.png' /></center>
+<p>Если мы откроем объект, то увидим группы матрёшек, эти группы представляют собой последний список, группирующий числа, а значит, он представляет собой ни что иное, как вектор или ребро или грань или одну из четырёх строчек матрицы:</p>
+<center><img class='original' src='sverch/man02/data_structure7.png' /></center>
+
+<p>Когда мы пересчитываем этот уровень списков, то количество этих списков будет соответствовать количеству векторов, или количеству рёбер или количеству полигонов, а для матрицы всегда четыре. Порядковый номер этого уровня 2. Важно помнить порядковые номера уровней для пользования инструментами работы со списками.
+
+<center><img class='original' src='sverch/man02/data_structure12.png' /></center>
+<p>Вершины объекта в узле Viewer Draw</p>
+<center><img class='original' src='sverch/man02/data_structure9.png' /></center>
+
+<p>И вот наконец-то мы подошли к самим числам, это целые или дробные числа, для вектора они являют значения X,Y,Z координат. Для ребра их количество всегда равно двум, и представляет собой индексы, для грани число их может быть бесконечно большим, и тоже представляет собой индексы вершин, которые указаны в оранжевом сокете. И если вы не подключили оранжевый сокет с векторами, то списки рёбер бесполезны, они не сформируют вам поверхность. Во вьювере можно увидеть матрицы, можно вершины, но никогда рёбра сами по себе, как и грани. Если у вас в ребре всего одно значение - то вы не построите ребро никогда. И если индекс вершины в ребре или полигоне-грани превышает количество вершин, то не построите геометрию. </p>
+<center><img class='original' src='sverch/man02/data_structure15.png' /></center>
+<p>Но учтите, что индексируются вершины и вообще всё в сверчке от нуля, то есть если у вас три вершины, их индексы будут 0,1,2, если же вы дадите тройку на ребро, то геометрия не построится. Матрицы на этом уровне тоже представляют собой числа, дробные числа, и этих чисел всегда четыре. Все манипуляции с абстрактными числами или списками, не относящимися к вершинам или матрицам следует производить через сокет данных, средний зелёный сокет, который несёт обычно рёбра или грани. Порядковый же номер этого уровня - 3.</p>
+
+<p>Давайте взглнем на нашу структуру со стороны, мы увидим всего 4 уровня:</p>
+<center><img class='original' src='sverch/man02/data_structure10.png' /></center>
+<p>Нулевой - контейнер, первый - объекты, второй - вершины, рёбра, грани и уровни матриц. Третий - числа, целые и дробные.</p>
+<p>Вы можете увеличивать или уменьшать количество уровней через узлы ListLevels, а также ListJoin со включённым wrap, через ListZip узел. Списки можно генерировать через Series, обращать через ListReverse, и смещать с ListShift, в разработке ListItem и другие полезные узлы.</p>
+
+<center><img class='original' src='sverch/man02/data_structure11.png' /></center>
+<p>Здесь же мы видим представленные данные в тексте. Пользуясь узлом ViewerText, мы сохраняем контроль над данными и если что-то идёт не так, причина становится очевидной. В данном случае это куб, импортирован из блендера, у него 8 вершин, 6 полигонов по четыре индекса, одна матрица. На один объект приходится одна матрица, и если бы было две матрицы - было бы два одинаковых объекта с одной сеткой. Так в сверчке можно множить сетку. На снимке видно, что куб сдвинут по оси Y на 3,4071896076202393 единиц, это записано в матрице, но никак не в сетке объекта, которая сохраняет свои точки относительно локального нуля, то есть относительно матрицы. И если матрица несёт в себе информацию о масштабе, вращении, положении, то они никак не влияют на сетку объекта, а лишь представляют сетку в 3Д пространстве. Кроме того, матрица в Сверчке используется для сечения CrossSection сетки объекта. Сечётся объект относительно плоскости, которую матрица задаёт своими XY локальными осями, то есть поворот и положение матрицы играют здесь решающую роль. Призываю вас экспериментировать с узлами просмотра и генерации в Сверчке.</p>
+<center><img class='original' src='sverch/man02/data_structure14.png' /></center>
+<p>Да пребудет с вами сила Сверчка.</p>
+
+
+	</div>
+    </div>
+</td></tr></table>
+
+<table><tr><td>
+    <div class="cellsBlock">
+	<div class="cell100" style="height:60px; background: #247;">
+	<p></p>
+    </div></div>
+</td></tr></table>
+
+
+
+
+<table><tr><td>
+    <div class="cellsBlock">
+	<div class="cell35" style="background: #c51;">
+	<h1><a class="mainpage" href="#top">Наверх</a></h1>
+    </div>
+	<div class="cell35" style="background: #247;">
+	<ul>
+	<li>Development!</li>
+	<li>Development!!</li>
+	<li>Development!!!</li>
+	<li>/Steven Anthony Ballmer/</li>
+	</ul>
+    </div>
+	<div class="cell35" style="background: #c51;">
+	<ul class="sample">
+	  <li><b>Архитектор, дизайнер и Человек...</b></li>
+	  <li>Все права защищены (с)
+	    <ul>
+	    <li>Земля</li>
+	    <li>2013 г.</li>
+	    </ul></li>
+	</ul>
+    </div></div>
+</td></tr></table>
+
+</body>
+<!-- Rating@Mail.ru counter -->
+<script type="text/javascript">//<![CDATA[
+var _tmr = _tmr || [];
+_tmr.push({id: '2383198', type: 'pageView', start: (new Date()).getTime()});
+(function (d, w) {
+   var ts = d.createElement('script'); ts.type = 'text/javascript'; ts.async = true;
+   ts.src = (d.location.protocol == 'https:' ? 'https:' : 'http:') + '//top-fwz1.mail.ru/js/code.js';
+   var f = function () {var s = d.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ts, s);};
+   if (w.opera == "[object Opera]") { d.addEventListener("DOMContentLoaded", f, false); } else { f(); }
+})(document, window);
+//]]></script><noscript><div style="position:absolute;left:-10000px;">
+<img src="//top-fwz1.mail.ru/counter?id=2383198;js=na" style="border:0;" height="1" width="1" alt="Рейтинг@Mail.ru" />
+</div></noscript>
+<!-- //Rating@Mail.ru counter -->
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+(function (d, w, c) {
+    (w[c] = w[c] || []).push(function() {
+        try {
+            w.yaCounter21907006 = new Ya.Metrika({id:21907006,
+                    webvisor:true,
+                    clickmap:true,
+                    trackLinks:true,
+                    accurateTrackBounce:true});
+        } catch(e) { }
+    });
+
+    var n = d.getElementsByTagName("script")[0],
+        s = d.createElement("script"),
+        f = function () { n.parentNode.insertBefore(s, n); };
+    s.type = "text/javascript";
+    s.async = true;
+    s.src = (d.location.protocol == "https:" ? "https:" : "http:") + "//mc.yandex.ru/metrika/watch.js";
+
+    if (w.opera == "[object Opera]") {
+        d.addEventListener("DOMContentLoaded", f, false);
+    } else { f(); }
+})(document, window, "yandex_metrika_callbacks");
+</script>
+<noscript><div><img src="//mc.yandex.ru/watch/21907006" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<!-- /Yandex.Metrika counter -->
+<!--google analitics-->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-42732782-1', 'cc.ua');
+  ga('send', 'pageview');
+</script>
+<!--google analitics-->
+</html>

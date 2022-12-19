@@ -1,0 +1,594 @@
+/* 
+Theme Name: nikitron
+Author: Nikitron	
+Author URI: http://nikitron.cc.ua/
+*/
+
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;vertical-align:top;border:0;}
+
+body{background-color:#051025; background-image:url(sverch/bg.bmp); font:1.0em/1.25em ubuntu, helvetica; color:#FFF;}
+@font-face{font-family:'Antiqua';src:url(TheAntiquaB_D2_Bold.eot);src:url(TheAntiquaB_D2_Bold.woff) format("woff");font-style:normal;}
+
+table{
+	border-width:0px;
+	border-spacing:0px;
+	margin-left:auto;
+	margin-right:auto;
+}
+
+table.left{
+	border-width:0px;
+	border-spacing:0px;
+}
+table.right{
+	border-width:0px;
+	border-spacing:0px;
+}
+table.head{
+	border-width:0px;
+	border-spacing:0px;
+	margin-left:auto;
+	margin-right:auto;
+	width:100%;
+	text-align: right;
+}
+table.common{
+	border-width:0px;
+	border-spacing:0px;
+	margin-left:auto;
+	margin-right:auto;
+	width:100%;
+}
+table.common td.td50{width:50%}
+table.common td.td35{width:33.333333333%}
+table.common td.td25{width:25%}
+
+table.index_top{
+	border-width:0px;
+	border-spacing:0px;
+	margin-left:0px;
+	margin-right:0px;
+}
+table.title{
+    background-image: url(sverch/vicdovaltop.jpeg);
+    background-size: 100%;
+    }
+a{
+	color:#adf;
+	font-style:normal;
+	text-decoration: none;
+	font-weight: bold;
+}
+a:hover {
+	text-decoration: underline;
+}
+a:active {
+	color:red;
+}
+a.menu{
+	color:#ccf;
+}
+a.menu:hover{
+	text-decoration: none;
+}
+a.mainpage{
+	color:#DEF; /*#DEF*/
+}
+a.mainpage:hover{
+	color:#adf;
+	text-decoration: none;
+	text-shadow:0 0 1px #7af;/*#7af*/
+}
+a.mainpage:active {
+	color:#fff;
+	text-shadow:0 0 1px #acf;
+}
+a.mainpage2{
+	color:#355; /*#DEF*/
+}
+a.mainpage2:hover{
+	color:#122;
+	text-decoration: none;
+	text-shadow:0 0 1px #588;/*#7af*/
+}
+a.mainpage2:active {
+	color:#fff;
+	text-shadow:0 0 1px #acf;
+}
+
+/*всплывающие подсказки для ссылок*/
+.admit {
+    display: inline-block; /* Строчно-блочный элемент */
+    position: relative; /* Относительное позиционирование */
+}
+.admit:hover {
+    text-decoration: none;
+}
+.admit:hover::after { 
+    content: attr(data-title); /* Выводим текст */
+    position: absolute; /* Абсолютное позиционирование */
+    left: 2px; right: 2px; bottom: 10px; /* Положение подсказки */
+    z-index: 1; /* Отображаем подсказку поверх других элементов */
+    background: rgba(10,10,10,0.95); /* Полупрозрачный цвет фона */
+    color: #fff; /* Цвет текста */
+    text-align: left; /* Выравнивание текста по центру */
+    font-family: ubuntu, futuris, helvetica; /* Гарнитура шрифта */
+    font-size: 12px; /* Размер текста подсказки */
+    padding: 10px 10px; /* Поля */
+    border: 2px rgba(10,10,10,0.95); /* Параметры рамки */
+    font-weight: normal;
+    min-width:100px;
+    -moz-border-radius:5px; -webkit-border-radius:5px; border-radius:5px;
+    -moz-box-shadow:0 3px 10px #000; -webkit-box-shadow:0 3px 10px #000; box-shadow:0 3px 10px #000;
+}
+
+
+/*Заглавия*/
+/*Н1*/
+h1{
+	position:relative;
+	top:2px;
+	left:10px;
+	/*background:url(http://.png);*/
+	padding:7px 5px; /*распространение (берутся начала строк y/x)*/
+	/*border-radius:14px; /*непонятно что за рамка*/
+	/*width:14px;/*ширина*/
+	/*height:2.0em;/*размер блока*/
+	text-align:center;
+	font:1.65em/1.05em ubuntu, futuris, helvetica; /*размер/отступ между строк */
+	color:#DEF;
+	font-weight: bold;
+	font-variant: small-caps;
+}
+h1:hover { text-shadow:0 0 3px #def;}
+
+/*Н2*/
+h2{
+	position:relative;
+	top:2px;
+	left:10px;
+	padding:7px 5px;
+	text-align:left;
+	font:1.45em/1.05em ubuntu, futuris, helvetica;
+	color:#DEF;
+	font-weight: bold;
+	font-variant: small-caps;
+}
+
+/*Н3*/
+h3{
+	position:relative;
+	top:2px;
+	left:10px;
+	padding:7px 5px;
+	text-align:left;
+	font:1.25em/1.05em ubuntu, futuris, helvetica;
+	color:#DEF;
+	font-weight: bold;
+	font-variant: small-caps;
+}
+
+/*Р*/
+p{
+	position:relative;
+	top:2px;
+	left:2px;
+	padding:0px 40px;
+	text-align:left;
+	font:0.85em/1.05em ubuntu, futuris, helvetica;
+	font-style: normal;
+	line-height: 130%;
+	font-weight: normal;
+	text-indent: 2ex;
+	letter-spacing: 0.15ex;
+	color:#DDF;
+	margin-bottom: 2px;
+}
+p:first-letter{
+	font-size:120%;
+	font-weight:bold;
+}
+p.black{
+	color:black;
+	font:0.85em/1.05em ubuntu, futuris, helvetica;
+}
+p:last-child {
+	margin-bottom: 15px;
+}
+
+
+ul {
+	list-style: square;
+	list-style-position: inside;
+}
+li:last-child {
+	margin-bottom: 15px;
+}
+ol {
+	list-style-type: lower-greek;
+	list-style-position: inside;
+}
+ol ol {
+	list-style-type: decimal;
+	font-style: normal;
+}
+ul li { 
+	position:relative;
+	top:2px;
+	left:2px;
+	padding:0px 40px;
+	text-align:left;
+	font:0.85em/1.05em ubuntu, futuris, helvetica;
+	font-style: normal;
+	line-height: 130%;
+	font-weight: normal;
+	text-indent: 1ex;
+	letter-spacing: 0.1ex;
+	color:#DDF;
+}
+ol li { 
+	position:relative;
+	top:2px;
+	left:2px;
+	padding:0px 40px;
+	text-align:left;
+	font:0.85em/1.05em ubuntu, futuris, helvetica;
+	font-style: normal;
+	line-height: 130%;
+	font-weight: normal;
+	text-indent: 1ex;
+	letter-spacing: 0.1ex;
+	color:#DDF;
+}
+ul.index-ul li {
+	position:relative;
+	top:2px;
+	left:2px;
+	padding:7px 5px;
+	text-align:left;
+	font:1.0em/1.05em ubuntu, futuris, helvetica;
+	font-style: normal;
+	line-height: 130%;
+	font-weight: bold;
+	text-indent: 1ex;
+	letter-spacing: 0.1ex;
+	margin-bottom: 0px;
+	list-style: none;
+}
+ul.index-ul li:hover {
+	left:15px;
+	list-style-image: url("my/arrow.png");
+}
+ul.index-ul2 li {
+	position:relative;
+	top:2px;
+	left:2px;
+	padding:7px 5px;
+	text-align:left;
+	font:1.0em/1.05em ubuntu, futuris, helvetica;
+	font-style: normal;
+	line-height: 130%;
+	font-weight: bold;
+	text-indent: 1ex;
+	letter-spacing: 0.1ex;
+	margin-bottom: 0px;
+	list-style: none;
+}
+ul.index-ul2 li:hover {
+	left:8px;/*15*/
+	/*list-style-image: url("my/arrow.png");*/
+}
+
+img {
+	width:100%;
+}
+img.bottom {
+	vertical-align:bottom;
+	float:bottom;
+	width:auto;
+}
+img.top {
+	vertical-align:top;
+	float:top;
+	width:auto;
+}
+
+.rounded {
+	display: inline-block;
+	border: solid 0px #000;
+	overflow: hidden;
+	margin-left: 10px;
+	margin-top: 10px;
+	margin-bottom: 10px;
+	margin-right: 10px;
+	width: 90%;
+	-webkit-border-radius: 20px;
+	-moz-border-radius: 20px;
+	border-radius: 20px;
+	-webkit-box-shadow: 0 0px 0px rgba(0, 0, 0, .4);
+	-moz-box-shadow: 0 0px 0px rgba(0, 0, 0, .4);
+	box-shadow: 0 0px 0px rgba(0, 0, 0, .4);
+}
+.roundauto {
+	display: inline-block;
+	overflow: hidden;
+	-webkit-border-radius: 10px;
+	-moz-border-radius: 10px;
+	border-radius: 10px;
+	width:auto;
+}
+
+.original {
+	width:auto;
+}
+
+
+
+/*div эскизные визуализации сколково*/
+.index_about {
+	position:relative;
+	top:0px;
+	left:40px;
+}
+
+
+.cellsBlock {
+  width: 100%;
+  display: table;
+  }
+  /*background: #051025;*/
+
+
+
+.cell0, .cell2, .cell5, .cell35, .cell30, .cell65, .cell25, .cell75, .cell50, .cell100, .cell10, .cell12, .cell15, .cell20, .cell90, .cell80, .cell40, .cell60, .cell70 {
+  display: table-cell !important;
+}
+.cell0{
+  width:0%;
+}
+.cell2{
+  width:2%;
+}
+.cell5{
+  width:5%;
+}
+.cell10{
+  width:10%;
+}
+.cell12{
+  width:12.5%;
+}
+.cell15{
+  width:15%;
+}
+.cell20{
+  width:20%;
+}
+.cell25{
+  width:25%;
+}
+.cell30{
+  width:30%;
+}
+.cell35{
+  width:33.33%;
+}
+.cell40{
+  width:40%;
+}
+.cell50{
+  width:50%;
+}
+.cell60{
+  width:60%;
+}
+.cell65{
+  width:66.66%;
+}
+.cell70{
+  width:70%;
+}
+.cell75{
+  width:75%;
+}
+.cell80{
+  width:80%;
+}
+.cell90{
+  width:90%;
+}
+.cell100{
+  width:100%;
+}
+/*велосипедная разметка*/
+hr.dashed {
+height: 0px;
+border: none;
+width: 100%;
+border-top: 4px dashed #fff;
+position: relative;
+top:20px;
+}
+
+
+  /*display: inline;  для IE */
+  /*display:table-row;*/
+/*size определяет выпадающее мену*/
+
+		.size { position:relative }
+		.size .field {
+			width:100%; height:100%; background:rgba(40,40,40,0.5); color:#ccf; padding:5px; border:none; cursor:pointer;
+			font-family: ubuntu, futuris, helvetica; font-size:1.25em; font-weight: bold;
+			border:solid 1px #ccf;
+			-webkit-transition: all .4s ease-in-out;
+			transition: all .4s ease-in-out;
+		}
+		.size .field:hover {
+			border:solid 1px #745;
+			box-shadow:0 0 10px #745;
+			text-shadow:0 0 5px #ADF;
+			font-weight:bold;
+		}
+		.size>ul.list { display:none;
+			position:absolute; left:0px; top:30px; z-index:555;
+			width:220px;
+			margin:0; padding:0px; 
+			list-style:none;
+			background:rgba(40,40,40,0.5);
+			color:#fff;
+			opacity:50%;
+			border:solid 1px #ccf;
+			font-size:0.75em;
+			-moz-border-radius:0px; -webkit-border-radius:0px; border-radius:0px;
+			-moz-box-shadow:0 0 5px #000; -webkit-box-shadow:0 0 5px #000; box-shadow:0 0 5px #000;
+		}
+		.size>ul.list li {
+			color:#ccf;
+			padding:7px;
+			border-bottom: solid 0px #ccf;
+			height:30%;
+			font-weight:normal;
+			font-size:0.75em;
+		}
+		.size>ul.list li:hover {
+			color:#fff;
+			font-size:0.75em;
+
+		}
+		.size>ul.list li:hover a {
+			color:#fff;
+			font-size:1.45em;
+		}
+		.size>ul.list li:last-child { border:none }
+
+
+/* Базовые стили модального окна  */
+/*Всплывающее окно для любого контента*/
+.overlay {
+    background-color: rgba(0, 0, 0, 0.7);
+    bottom: 0;
+    cursor: default;
+    left: 0;
+    opacity: 0;
+    position: fixed;
+    right: 0;
+    top: 0;
+    visibility: hidden;
+    z-index: 100;
+    -webkit-transition: opacity .5s;
+    -moz-transition: opacity .5s;
+    -ms-transition: opacity .5s;
+    -o-transition: opacity .5s;
+    transition: opacity .5s;
+}
+.overlay:target {
+    visibility: visible;
+    opacity: 1;
+}
+.popup img{
+	display: inline;
+	border: none;
+	-webkit-border-radius: 0px;
+	-moz-border-radius: 0px;
+	border-radius: 0px;
+	background: #522;	
+}
+.popup {
+    background-color: #181818;
+    border: 3px solid #fff;
+    display: inline-block;
+    left: 50%;
+    opacity: 0;
+    padding: 10px;
+    position: fixed;
+    text-align: justify;
+    font: 14px ubuntu, futuris, helvetica;
+    top: 40%;
+    visibility: hidden;
+    z-index: 200;
+ 
+    -webkit-transform: translate(-50%, -50%);
+    -moz-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    -o-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+ 
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    -ms-border-radius: 10px;
+    -o-border-radius: 10px;
+    border-radius: 10px;
+ 
+    -webkit-box-shadow: 0 1px 1px 2px rgba(0, 0, 0, 0.4) inset;
+    -moz-box-shadow: 0 1px 1px 2px rgba(0, 0, 0, 0.4) inset;
+    -ms-box-shadow: 0 1px 1px 2px rgba(0, 0, 0, 0.4) inset;
+    -o-box-shadow: 0 1px 1px 2px rgba(0, 0, 0, 0.4) inset;
+    box-shadow: 0 1px 1px 2px rgba(0, 0, 0, 0.4) inset;
+ 
+    -webkit-transition: opacity .5s, top .5s;
+    -moz-transition: opacity .5s, top .5s;
+    -ms-transition: opacity .5s, top .5s;
+    -o-transition: opacity .5s, top .5s;
+    transition: opacity .5s, top .5s;
+}
+.overlay:target+.popup {
+    top: 50%;
+    opacity: 1;
+    visibility: visible;
+}
+/* Кнопка закрытия окна  */
+.close {
+    background-color: rgba(0, 0, 0, 1.0);
+    border: 2px solid #fff;
+    height: 24px;
+    line-height: 24px;
+    position: absolute;
+    right: -13px;
+    font-weight: bold;
+    text-align: center;
+    text-decoration: none;
+    font-style:normal;
+    top: -15px;
+    width: 24px;
+    -webkit-border-radius: 15px;
+    -moz-border-radius: 15px;
+    -ms-border-radius: 15px;
+    -o-border-radius: 15px;
+     border-radius: 15px;
+    -moz-box-shadow: 1px 1px 3px #000;
+    -webkit-box-shadow: 1px 1px 3px #000;
+    box-shadow: 1px 1px 3px #000;
+}
+.close:before {
+    color: rgba(255, 255, 255, 0.9);
+    content: "";
+    font-size: 14px;
+    text-shadow: 0 -1px rgba(0, 0, 0, 0.9);
+}
+.close:hover {
+    background-color: rgba(255, 255, 255, 1.0);
+}
+.popup p, .popup div {
+    margin-bottom: 10px;
+}
+
+/*слайдшоу новое*/
+
+  #slide-container {
+     text-align:left;
+     margin:0px 0px;
+     border: 0px;
+  }
+  #slide-container #slideshow {
+     width:400;
+     height:300;
+     margin:auto;
+     position:relative;
+     border: 0px;
+  }
+  #slide-container #slideshow IMG {
+     position:absolute;
+     top:0;
+     left:0;
+     border: 0px;
+  }

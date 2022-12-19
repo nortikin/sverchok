@@ -1,0 +1,290 @@
+<html>
+<head>
+<title>Сверчок. Соединение объектов в сверчке 04 | Архитектор, Дизайнер, Человек...</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="autor" content="Архитектор, Дизайнер, Человек...">
+<meta name="keywords" content="Сверчок руководство пользователя Блендер Blender 3d">
+<meta name="description" content="Сверчок. Урок 4. Объединение объектов со смещением индекса вершин.">
+<link rel="stylesheet" href="file.css" type="text/css" media="screen" />
+<link href='http://fonts.googleapis.com/css?family=Ubuntu&subset=latin,cyrillic-ext,cyrillic' rel='stylesheet' type='text/css'> <!--CSS шрифт-->
+<link rel="icon" type="image/png" href="blender.png" />
+<script src='jquery.min.js'></script>
+<script src='menu.js'></script>
+<!--ширина экрана диктует CSS-->
+<script language="JavaScript">
+var height=0;
+var width=0;
+if (self.screen) {    
+        width = screen.width
+        height = screen.height
+}
+else if (self.java) {  
+      var jkit = java.awt.Toolkit.getDefaultToolkit();
+      var scrsize = jkit.getScreenSize();      
+      width = scrsize.width; 
+      height = scrsize.height; 
+}
+if (width < 1000)
+{
+	document.write("<link rel='stylesheet' type='text/css' href='main_page/small-less-1000.css'>");
+}
+else 
+if(width < 1270)
+{
+	document.write("<link rel='stylesheet' type='text/css' href='main_page/small.css'>");
+}
+else 
+if(width > 1270)
+{
+	document.write("<link rel='stylesheet' type='text/css' href='main_page/big.css'>");
+}
+</script>
+<!--ширина экрана диктует CSS-->
+</head>
+
+<body>
+<a name="top"></a>
+
+
+
+
+<table class="head"><tr><td>
+    <div class="cellsBlock">
+	<div class="cell10" style="background: #c51;">
+	<h3><a class="mainpage" href="sverchok_ru.html">главная</a></h3>
+	</div>
+	<div class="cell70" style="background: #c51;">
+	<h1><img src='sverch/sverchlogo.png' style="width:200px"></h1>
+    </div>
+    <div class="cell20" style="background: #c51;">
+    <div class="size">
+	<input type="text" name="test" value="Меню сверчка" class="field" readonly="readonly" />
+	<ul class="list">
+	<li><a class="menu" href="sverchok_ru.html">___Сверчок</a></li>
+	<li><a class="menu" href="Sverchok_man_00.html">00_Установка</a></li>
+	<li><a class="menu" href="Sverchok_man_01.html">01_Линия</a></li>
+	<li><a class="menu" href="Sverchok_man_02.html">02_Структура данных</a></li>
+	<li><a class="menu" href="Sverchok_man_03.html">03_Некоторые узлы</a></li>
+	<li><a class="menu" href="Sverchok_man_04.html">04_Соединение объектов</a></li>
+	<li><a class="menu" href="Sverchok_stadium.html">05_Стадион им. Ленина</a></li>
+	<li><a class="menu" href="Sverchok_table.html">06_Столы в Сверчке</a></li>
+	<li><a class="menu" href="Sverchok_man_07.html">07_Свои узлы в песочнице</a></li>
+	<li><a class="menu" href="Sverchok_man_08.html">08_Поверхности</a></li>
+	<li><a class="menu" href="Sverchok_man_09.html">09_Ферма</a></li>
+	<li><a class="menu" href="Sverchok_man_10_theme.html">10_Тема</a></li>
+	<li><a class="menu" href="Sverchok_man_11_profile.html">11_Профиль</a></li>
+	<li><a class="menu" href="Sverchok_man_12_timing.html">12_Отладка</a></li>
+	<li><a class="menu" href="Sverchok_man_13_menu.html">13_Меню</a></li>
+	<li><a class="menu" href="Sverchok_man_14_IO.html">14_Импорт/Экспорт</a></li>
+	<li><a class="menu" href="Sverchok_man_15_obj_nodes.html">15_Узлы сцены</a></li>
+	</ul></ul>
+</div></div></div>
+</td></tr></table>
+
+
+<table><tr><td>
+    <div class="cellsBlock">
+	<div class="cell100" style="height:30px; background: #247;">
+	</div>
+    </div>
+</td></tr></table>
+
+<table><tr><td><!--class="right"-->
+    <div class="cellsBlock">
+	<div class="cell100" style="height:80px; background: #247;">
+	<h1>04_Соединение объектов в Сверчке.</h1>
+	</div>
+    </div>
+</td></tr></table>
+
+<table><tr><td><!--class="right"-->
+    <div class="cellsBlock">
+	<div class="cell100" style="background: #36a;">
+	<p>И снова, внимание! Эти операции можно сделать уже при помощи нескольких новых узлов, Join mesh в модификаторах, и ещё почистить с Delete Loose. <s>И зачем вам это надо?</s> Но потому что следует знать принципы работы сверчка, описание этого процесса может оказаться полезным.</p>
+<center><a href="#john" class="admit" data-title="john."><img src="sverch/man04/join_meshsm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="john"></a>
+        	<div class="popup">
+		<img src="sverch/man04/join_mesh.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	</center>
+	<p>В этот раз речь пойдёт об объединении объектов, что может оказаться необходимым порой. Не смотря на то, что нет ещё инструментов для автоматического совмещения и объединения, для автоматического создания полигонов и рёбер, уже можно изловчиться и сделать как нам надо.</p>
+<p>Вначале мы имеем три объекта, которые как-то двигали, вращали, масштабировали.</p>
+<center><a href="#01" class="admit" data-title="01."><img src="sverch/man04/01sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="01"></a>
+        	<div class="popup">
+		<img src="sverch/man04/01.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	<a href="#02" class="admit" data-title="02."><img src="sverch/man04/02sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="02"></a>
+        	<div class="popup">
+		<img src="sverch/man04/02.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	<a href="#03" class="admit" data-title="03."><img src="sverch/man04/03sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="03"></a>
+        	<div class="popup">
+		<img src="sverch/man04/03.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	</center>
+
+<p>Затем для глаз применяем Vector on Matrix чтобы применить вращение, положение, аналогично ctrl+A. Соединяем модифицированные вершины и вершины головы List Join на втором уровне (jion level lists) - на уровне вершин. И сразу всовываем в выходной сокет. Настоящую геометрию лучше спрятать на всякий случай.</p>
+<center><a href="#07" class="admit" data-title="07."><img src="sverch/man04/07sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="07"></a>
+        	<div class="popup">
+		<img src="sverch/man04/07.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	</center>
+<p>Но получаем только вершины. Для получения полигонов надо сделать ещё пару узлов. Мы соединим списки полигонов через ListJoin также на втором уровне, уровне полигонов, но этого мало, потому что все три объекта индексировали свои вершины с нулевой, то есть у нас будет накладка, и мы не соединим наши глаза полигонами.</p>
+<center><a href="#06" class="admit" data-title="06."><img src="sverch/man04/06sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="06"></a>
+        	<div class="popup">
+		<img src="sverch/man04/06.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	</center>
+<p>Мы должны достать узел ListLength для определения длины списка вершин чтобы на основании этой длины считать индексы глаз, просто прибавляя этот индекс к индексам глаз. Но для определения индексов второго глаза нам нужно прибавить уже две длины списков, первого глаза и головы. В формуле это выглядит как x+n[0] для левого глаза и x+n[0]+n[1] для правого, где n - это входные значения длинн списков. К сожалению, мы вынуждены подкорректировать данные от длины списка, потому что они находятся не на том уровне, мы их опустим на уровень ниже, при помощи узла ListJoin, уровня 2 в галочкой wrap, которая как бы обернёт наши данные ещё в один уровень, подобно большей матрёшке.</p>
+<center><a href="#05" class="admit" data-title="05."><img src="sverch/man04/05sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="05"></a>
+        	<div class="popup">
+		<img src="sverch/man04/05.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	<a href="#10" class="admit" data-title="10."><img src="sverch/man04/10sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="10"></a>
+        	<div class="popup">
+		<img src="sverch/man04/10.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	</center>
+<p>Можно поэкспериментировать в соединении разных списков в разном порядке, посмотреть в каком случае выдаёт ошибку (появятся артефакты в 3Д окне, которые легко убераются, когда войдут адекватные данные).</p>
+<center><a href="#09" class="admit" data-title="09."><img src="sverch/man04/09sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="09"></a>
+        	<div class="popup">
+		<img src="sverch/man04/09.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	<a href="#08" class="admit" data-title="08."><img src="sverch/man04/08sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="08"></a>
+        	<div class="popup">
+		<img src="sverch/man04/08.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	</center>
+<p>Когда мы соединим всё в надлежащем порядке, то и цветовое решение в 3Д окне изменится, жёлтый соответствует более ранним полигонам, в начале списка, а синие полигоны - в конце списка полигонов, так мы соединяя в разном порядке эти полигоны можем менять их цвет. Ниже представлен правильный вариант соединения. Но рекомендую на досуге поэкспериментировать со значениями в формулах, в уровнях данных (в узлах соединения списков list join), с тем, что будет если не применять Vector on Matrix, а соединять без учёта матрицы. Готовую сцену с раскладкой можно скачать <a href='sverch/join_mesh.blend.7z'>здесь</a>.</p>
+<center><a href="#04" class="admit" data-title="04."><img src="sverch/man04/04sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="04"></a>
+        	<div class="popup">
+		<img src="sverch/man04/04.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	
+	</center>
+<p>Ещё один вариант - сначала уменьшить количество уровней, затем увеличить, обернув вторым узлом. Хотя то же самое можно сделать узлом объединения если соединять второй уровень, как показано в уроке.</p>
+<center><a href="#20" class="admit" data-title="20."><img src="sverch/man04/join.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="20"></a>
+        	<div class="popup">
+		<img src="sverch/man04/join.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	
+	</center>
+<p>Да пребудет с вами сила Сверчка.</p>
+
+
+	</div>
+    </div>
+</td></tr></table>
+
+<table><tr><td>
+    <div class="cellsBlock">
+	<div class="cell100" style="height:60px; background: #247;">
+	<p></p>
+    </div></div>
+</td></tr></table>
+
+
+
+
+
+<table><tr><td>
+    <div class="cellsBlock">
+	<div class="cell35" style="background: #c51;">
+	<h1><a class="mainpage" href="#top">Наверх</a></h1>
+    </div>
+	<div class="cell35" style="background: #247;">
+	<ul>
+	<li>Development!</li>
+	<li>Development!!</li>
+	<li>Development!!!</li>
+	<li>/Steven Anthony Ballmer/</li>
+	</ul>
+    </div>
+	<div class="cell35" style="background: #c51;">
+	<ul class="sample">
+	  <li><b>Архитектор, дизайнер и Человек...</b></li>
+	  <li>Все права защищены (с)
+	    <ul>
+	    <li>Земля</li>
+	    <li>2013 г.</li>
+	    </ul></li>
+	</ul>
+    </div></div>
+</td></tr></table>
+
+</body>
+<!-- Rating@Mail.ru counter -->
+<script type="text/javascript">//<![CDATA[
+var _tmr = _tmr || [];
+_tmr.push({id: '2383198', type: 'pageView', start: (new Date()).getTime()});
+(function (d, w) {
+   var ts = d.createElement('script'); ts.type = 'text/javascript'; ts.async = true;
+   ts.src = (d.location.protocol == 'https:' ? 'https:' : 'http:') + '//top-fwz1.mail.ru/js/code.js';
+   var f = function () {var s = d.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ts, s);};
+   if (w.opera == "[object Opera]") { d.addEventListener("DOMContentLoaded", f, false); } else { f(); }
+})(document, window);
+//]]></script><noscript><div style="position:absolute;left:-10000px;">
+<img src="//top-fwz1.mail.ru/counter?id=2383198;js=na" style="border:0;" height="1" width="1" alt="Рейтинг@Mail.ru" />
+</div></noscript>
+<!-- //Rating@Mail.ru counter -->
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+(function (d, w, c) {
+    (w[c] = w[c] || []).push(function() {
+        try {
+            w.yaCounter21907006 = new Ya.Metrika({id:21907006,
+                    webvisor:true,
+                    clickmap:true,
+                    trackLinks:true,
+                    accurateTrackBounce:true});
+        } catch(e) { }
+    });
+
+    var n = d.getElementsByTagName("script")[0],
+        s = d.createElement("script"),
+        f = function () { n.parentNode.insertBefore(s, n); };
+    s.type = "text/javascript";
+    s.async = true;
+    s.src = (d.location.protocol == "https:" ? "https:" : "http:") + "//mc.yandex.ru/metrika/watch.js";
+
+    if (w.opera == "[object Opera]") {
+        d.addEventListener("DOMContentLoaded", f, false);
+    } else { f(); }
+})(document, window, "yandex_metrika_callbacks");
+</script>
+<noscript><div><img src="//mc.yandex.ru/watch/21907006" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<!-- /Yandex.Metrika counter -->
+<!--google analitics-->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-42732782-1', 'cc.ua');
+  ga('send', 'pageview');
+</script>
+<!--google analitics-->
+</html>

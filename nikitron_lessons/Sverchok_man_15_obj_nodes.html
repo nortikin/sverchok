@@ -1,0 +1,291 @@
+<html>
+<head>
+<title>Сверчок. Узлы сцены. Тема 15 | Архитектор, Дизайнер, Человек...</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="autor" content="Архитектор, Дизайнер, Человек...">
+<meta name="keywords" content="Сверчок руководство пользователя Блендер Blender 3d">
+<meta name="description" content="Сверчок. Узлы сцены, тема 15, Get object ID, Set object ID, filter data object, bmesh props vs Mesh Filter, sort object ID, Point on mesh, etc.">
+<link rel="stylesheet" href="file.css" type="text/css" media="screen" />
+<link href='http://fonts.googleapis.com/css?family=Ubuntu&subset=latin,cyrillic-ext,cyrillic' rel='stylesheet' type='text/css'> <!--CSS шрифт-->
+<link rel="icon" type="image/png" href="blender.png" />
+<script src='jquery.min.js'></script>
+<script src='menu.js'></script>
+<!--ширина экрана диктует CSS-->
+<script language="JavaScript">
+var height=0;
+var width=0;
+if (self.screen) {    
+        width = screen.width
+        height = screen.height
+}
+else if (self.java) {  
+      var jkit = java.awt.Toolkit.getDefaultToolkit();
+      var scrsize = jkit.getScreenSize();      
+      width = scrsize.width; 
+      height = scrsize.height; 
+}
+if (width < 1000)
+{
+	document.write("<link rel='stylesheet' type='text/css' href='main_page/small-less-1000.css'>");
+}
+else 
+if(width < 1270)
+{
+	document.write("<link rel='stylesheet' type='text/css' href='main_page/small.css'>");
+}
+else 
+if(width > 1270)
+{
+	document.write("<link rel='stylesheet' type='text/css' href='main_page/big.css'>");
+}
+</script>
+<!--ширина экрана диктует CSS-->
+</head>
+
+<body>
+<a name="top"></a>
+
+
+
+
+<table class="head"><tr><td>
+    <div class="cellsBlock">
+	<div class="cell10" style="background: #c51;">
+	<h3><a class="mainpage" href="sverchok_ru.html">главная</a></h3>
+	</div>
+	<div class="cell70" style="background: #c51;">
+	<h1><img src='sverch/sverchlogo.png' style="width:200px"></h1>
+    </div>
+    <div class="cell20" style="background: #c51;">
+    <div class="size">
+	<input type="text" name="test" value="Меню сверчка" class="field" readonly="readonly" />
+	<ul class="list">
+	<li><a class="menu" href="sverchok_ru.html">___Сверчок</a></li>
+	<li><a class="menu" href="Sverchok_man_00.html">00_Установка</a></li>
+	<li><a class="menu" href="Sverchok_man_01.html">01_Линия</a></li>
+	<li><a class="menu" href="Sverchok_man_02.html">02_Структура данных</a></li>
+	<li><a class="menu" href="Sverchok_man_03.html">03_Некоторые узлы</a></li>
+	<li><a class="menu" href="Sverchok_man_04.html">04_Соединение объектов</a></li>
+	<li><a class="menu" href="Sverchok_stadium.html">05_Стадион им. Ленина</a></li>
+	<li><a class="menu" href="Sverchok_table.html">06_Столы в Сверчке</a></li>
+	<li><a class="menu" href="Sverchok_man_07.html">07_Свои узлы в песочнице</a></li>
+	<li><a class="menu" href="Sverchok_man_08.html">08_Поверхности</a></li>
+	<li><a class="menu" href="Sverchok_man_09.html">09_Ферма</a></li>
+	<li><a class="menu" href="Sverchok_man_10_theme.html">10_Тема</a></li>
+	<li><a class="menu" href="Sverchok_man_11_profile.html">11_Профиль</a></li>
+	<li><a class="menu" href="Sverchok_man_12_timing.html">12_Отладка</a></li>
+	<li><a class="menu" href="Sverchok_man_13_menu.html">13_Меню</a></li>
+	<li><a class="menu" href="Sverchok_man_14_IO.html">14_Импорт/Экспорт</a></li>
+	<li><a class="menu" href="Sverchok_man_15_obj_nodes.html">15_Узлы сцены</a></li>
+	</ul></ul>
+</div></div></div>
+</td></tr></table>
+
+<table><tr><td>
+    <div class="cellsBlock">
+	<div class="cell100" style="height:30px; background: #247;">
+	</div>
+    </div>
+</td></tr></table>
+
+<table><tr><td><!--class="right"-->
+    <div class="cellsBlock">
+	<div class="cell100" style="height:80px; background: #247;">
+	<h1>15_Узлы сцены.</h1>
+	</div>
+    </div>
+</td></tr></table>
+
+<table><tr><td><!--class="right"-->
+    <div class="cellsBlock">
+	<div class="cell100" style="background: #36a;">
+	<h3>Как работать со всеми параметрами всех объектов через интерфейс Сверчка.</h3>
+	<p>Работа со сценой в блендере и работа внутри Сверчка разнятся, хотя сверчковые раскладки тоже внутри сцены. Внутри Сверчка мы имеем дело исключительно с вершинами, полигонами, матрицами и рёбрами, а в сцене блендера мы имеем много других параметров, доступ к которым обычно происходит из интерфейса блендера, это и mark seam и габариты и поворот объектов, текстурирование, поведение частиц. Много всего, но мало кто знает, что из Сверчка можно иметь к этому всему доступ не только из пользовательского узла scripted node, который находится в разделе генераторов, но и через раздел Scene в меню Сверчка (Ctrl+Space), там узлы: Mesh instancer, Object in, Frame info, Empty out, Get|Set property, Vertex group, Scene raycast, Object raycast, Vertex color; а в разделе alpha есть следующие узлы сцены: Skin mesher, Curve viewer, Typography viewer, GetObjectID, SetObjectID, SortObjectID, BMeshProps, Point on mesh, FilterObjectID.</p>
+<br><br>
+
+<h3>`Generation`</h3>
+<p>И так, чтобы ориентироваться я разбил файл на раскладки, в первой мы создадим геометрию, выведем её в сцену, это будет раскладка generation, переключаться будем как всегда с панелью Сверчка в раскладке узлов, см. рис. Чтобы начать - скачайте раскладки <a href='/sverch/man15/obj.7z'>вот отсюда</a>, между раскладками переключаемся кнопками на панели Сверчка, чтобы отображать геометрию нужно активировать `глаз` в этой панели.</p>
+	<center>
+	<a href="#01" class="admit" data-title="01."><img src="sverch/man15/01sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="01"></a>
+        	<div class="popup">
+		<img src="sverch/man15/01.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	</center>
+<p> И так, генерация. Создание геометрии коротко состоит из генерации подразделённой плоскости, небольшого смещения её, применения к матрице в качестве положения, вращения и масштаба, тех же самых векторов, но с изменёнными значениями для каждого сокета матрицы, будь то положение, вращение или масштаб. Формулы могут быть любыми и параметризация формул тоже. А геометрия может также быть любой, ведь пока что мы работаем с объектами, то есть матрицами. Предлагаю поэкспериментировать со значением параметра "делитель" из раскладки.</p>
+
+<h3>`Hide`</h3>
+<p>Следующая раскладка под именем hide. Задача состояла в том, чтобы собрать объекты из сцены, отсеять те, которые не сгенерированы сверчком (по именам), затем спрятать только те, что будут ниже нуля.</p>
+<p>Используем узел get dataobject (GetObjectID из alpha раздела) для того, чтобы собрать все объекты с сеткой в сцене. Сеточные объекты (Mesh) выбираются выпадающим меню на узле. Как мы видим, можно выбрать любой пункт, не только объекты, собственно внедрить любой объект открытого бленд-файла. Filter data object вместе с set data object дают нам отсеять по имени объекты, кем бы они ни были. Затем мы добываем буленовы значения для скрытия объектов, не присваивая ничего, проверяем значения при помощи узла SetObjectID, вставляя значение логической проверки 'location.z < 0', так у нас будет выводится правда на значения положения объектов ниже нуля и затем мы присвоим эту правду сокрытию этих объектов, используя второй узел SetObjectID с параметром hide, что означает скрыть. Если вы перед этим анимировали параметр "делитель" в раскладке генерации, то запустите анимацию, посмотрите как скрываются автоматически объекты.</p>
+
+	<center>
+	<a href="#02" class="admit" data-title="02."><img src="sverch/man15/02sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="02"></a>
+        	<div class="popup">
+		<img src="sverch/man15/02.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	</center>
+
+<h3>Вывод:</h3>
+<p>Зная параметры можно тонко упрвлять сценой из Сверчка, а узнать параметры можно из консоли Блендера, используя автодополнение, Ctrl+Space. Посмотреть же что мы должны вводить в консоль перед автодополнением можно при помощи узла Sthetoscope из вкладки меню 'text' и присоединив к узлу GetObjectID, которым собирали объекты. Он выдаст строчку 'bpy.data.objects['Mu_0']', после неё в консоли ставим точку и автодополняем текст Ctrl+Space, ищем нужный параметр, вписываем, нажимаем ентер и смотрим значение, затем его используем в сверчке в узле SetObjectID.</p>
+
+<h3>`boundary`</h3>
+<p>Берём объект сюзанны из сцены. Узел bmesh properties говорит нам является ли ребро границей. Objects to mesh выдаст нам сетку и мы сможем отсеять рёбра по качеству границы ребра, остаток заполняем при помощи fill holes и чистим геометрию, так получаем аналог модификатора в 3DsMAX под названием caps.</p>
+
+	<center>
+	<a href="#03" class="admit" data-title="03."><img src="sverch/man15/03sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="03"></a>
+        	<div class="popup">
+		<img src="sverch/man15/03.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	</center>
+
+<h3>`closest point`</h3>
+<p>Достаём как и прежде описано при помощи трёх узлов объект Сюзанны. Создаём какой-то объект, в раскладке у нас куб, и тут вступает в работу узел closest point on mesh, который ищет точки близкие к исходной на нашем объекте, будь они на грани или ребре, что само по себе хорошо.</p>
+
+	<center>
+	<a href="#04" class="admit" data-title="04."><img src="sverch/man15/04sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="04"></a>
+        	<div class="popup">
+		<img src="sverch/man15/04.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	</center>
+
+<h3>`raycast`</h3>
+<p>Узлами get_data_object, set_data_object, filter_data_object, objects_to_mesh как и прежде достаём данные объектов с конкретными именами, а также одну пустышку Empty. List match формирует равнодлинные списки положения пустышки и вершин круга под названием `куб`. Затем самое главное - узел raycast проецирует вектор от точек пустышек до точек круга-куба на объект Сюзанны. UVconnect соединяет точки проекции, List Item фильтрует нам по индексам полигоны пересечения вектора и сюзанны. Это можно использовать где угодно </p>
+
+	<center>
+	<a href="#05" class="admit" data-title="05."><img src="sverch/man15/05sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="05"></a>
+        	<div class="popup">
+		<img src="sverch/man15/05.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	</center>
+
+
+
+	<h3>Вопросы задать можно на <a href='http://github.com/nortikin/sverchok/issues'>github</a>, <a href='http://vk.com'>vk.com</a>, <a href='http://plus.google.com'>plus.google.com</a>.</h3><br><br>
+
+<h3>Да пребудет с вами сила Сверчка.</h3>
+
+
+	</div>
+    </div>
+</td></tr></table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><tr><td>
+    <div class="cellsBlock">
+	<div class="cell100" style="height:30px; background: #247;">
+	<p></p>
+    </div></div>
+</td></tr></table>
+
+
+
+
+
+
+<table><tr><td><!--class="l"-->
+    <div class="cellsBlock">
+	<div class="cell100" style="height:30px; background: #247;">
+	<p></p>
+    </div></div>
+</td></tr></table>
+
+<table><tr><td>
+    <div class="cellsBlock">
+	<div class="cell35" style="background: #c51;">
+	<h1><a class="mainpage" href="#top">Наверх</a></h1>
+    </div>
+	<div class="cell35" style="background: #247;">
+	<ul>
+	<li>Development!</li>
+	<li>Development!!</li>
+	<li>Development!!!</li>
+	<li>/Steven Anthony Ballmer/</li>
+	</ul>
+    </div>
+	<div class="cell35" style="background: #c51;">
+	<ul class="sample">
+	  <li><b>Архитектор, дизайнер и Человек...</b></li>
+	  <li>Все права защищены (с)
+	    <ul>
+	    <li>Земля</li>
+	    <li>2014 г.</li>
+	    </ul></li>
+	</ul>
+    </div></div>
+</td></tr></table>
+
+</body>
+<!-- Rating@Mail.ru counter -->
+<script type="text/javascript">//<![CDATA[
+var _tmr = _tmr || [];
+_tmr.push({id: '2383198', type: 'pageView', start: (new Date()).getTime()});
+(function (d, w) {
+   var ts = d.createElement('script'); ts.type = 'text/javascript'; ts.async = true;
+   ts.src = (d.location.protocol == 'https:' ? 'https:' : 'http:') + '//top-fwz1.mail.ru/js/code.js';
+   var f = function () {var s = d.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ts, s);};
+   if (w.opera == "[object Opera]") { d.addEventListener("DOMContentLoaded", f, false); } else { f(); }
+})(document, window);
+//]]></script><noscript><div style="position:absolute;left:-10000px;">
+<img src="//top-fwz1.mail.ru/counter?id=2383198;js=na" style="border:0;" height="1" width="1" alt="Рейтинг@Mail.ru" />
+</div></noscript>
+<!-- //Rating@Mail.ru counter -->
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+(function (d, w, c) {
+    (w[c] = w[c] || []).push(function() {
+        try {
+            w.yaCounter21907006 = new Ya.Metrika({id:21907006,
+                    webvisor:true,
+                    clickmap:true,
+                    trackLinks:true,
+                    accurateTrackBounce:true});
+        } catch(e) { }
+    });
+
+    var n = d.getElementsByTagName("script")[0],
+        s = d.createElement("script"),
+        f = function () { n.parentNode.insertBefore(s, n); };
+    s.type = "text/javascript";
+    s.async = true;
+    s.src = (d.location.protocol == "https:" ? "https:" : "http:") + "//mc.yandex.ru/metrika/watch.js";
+
+    if (w.opera == "[object Opera]") {
+        d.addEventListener("DOMContentLoaded", f, false);
+    } else { f(); }
+})(document, window, "yandex_metrika_callbacks");
+</script>
+<noscript><div><img src="//mc.yandex.ru/watch/21907006" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<!-- /Yandex.Metrika counter -->
+<!--google analitics-->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-42732782-1', 'cc.ua');
+  ga('send', 'pageview');
+</script>
+<!--google analitics-->
+</html>

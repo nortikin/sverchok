@@ -1,0 +1,54 @@
+/* 
+Theme Name: nikitron
+Author: Nikitron	
+Author URI: http://nikitron.cc.ua/
+*/
+
+table {
+	width:80%;
+}
+table.left{
+	margin-left:5%;
+	margin-right:auto;
+}
+table.right{
+	margin-left:auto;
+	margin-right:5%;
+}
+table.index_top{
+	width:90%;
+}
+table.index{
+	border-width:0px;
+	border-spacing:0px;
+	margin-left:auto;
+	margin-right:5%;
+	width:80%;
+}
+div.elance {
+	vertical-align:top;
+	float:top;
+	left:0px;
+	top:105px;
+	position: fixed;
+	margin-bottom: 20px;
+}
+.cellsBlock {
+  width: 100%;
+  display: table;
+  background: #051025;
+
+}
+.index_cell30, .index_cell70 {
+  display: table-cell !important;
+  background: #051025;
+}
+.index_cell30 {
+  width:30%;
+}
+.index_cell70 {
+  width:70%;
+}
+div.too_small_to_show {
+	visibility: visible;
+}

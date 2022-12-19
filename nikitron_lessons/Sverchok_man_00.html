@@ -1,0 +1,240 @@
+<html>
+<head>
+<title>Сверчок. Установка 00 | Архитектор, Дизайнер, Человек...</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="autor" content="Архитектор, Дизайнер, Человек...">
+<meta name="keywords" content="Сверчок руководство пользователя Блендер Blender 3d">
+<meta name="description" content="Сверчок. Установка. Урок 0.">
+<link rel="stylesheet" href="file.css" type="text/css"  media="screen" />
+<link href='http://fonts.googleapis.com/css?family=Ubuntu&subset=latin,cyrillic-ext,cyrillic' rel='stylesheet' type='text/css'> <!--CSS шрифт-->
+<link rel="icon" type="image/png" href="blender.png" />
+<script src='jquery.min.js'></script>
+<script src='menu.js'></script>
+<!--ширина экрана диктует CSS-->
+<script language="JavaScript">
+var height=0;
+var width=0;
+if (self.screen) {    
+        width = screen.width
+        height = screen.height
+}
+else if (self.java) {  
+      var jkit = java.awt.Toolkit.getDefaultToolkit();
+      var scrsize = jkit.getScreenSize();      
+      width = scrsize.width; 
+      height = scrsize.height; 
+}
+if (width < 1000)
+{
+	document.write("<link rel='stylesheet' type='text/css' href='main_page/small-less-1000.css'>");
+}
+else 
+if(width < 1270)
+{
+	document.write("<link rel='stylesheet' type='text/css' href='main_page/small.css'>");
+}
+else 
+if(width > 1270)
+{
+	document.write("<link rel='stylesheet' type='text/css' href='main_page/big.css'>");
+}
+</script>
+<!--ширина экрана диктует CSS-->
+</head>
+
+<body>
+<a name="top"></a>
+
+
+
+
+<table class="head"><tr><td>
+    <div class="cellsBlock">
+	<div class="cell10" style="background: #c51;">
+	<h3><a class="mainpage" href="sverchok_ru.html">главная</a></h3>
+	</div>
+	<div class="cell70" style="background: #c51;">
+	<h1><img src='sverch/sverchlogo.png' style="width:200px"></h1>
+    </div>
+    <div class="cell20" style="background: #c51;">
+    <div class="size">
+	<input type="text" name="test" value="Меню сверчка" class="field" readonly="readonly" />
+	<ul class="list">
+	<li><a class="menu" href="sverchok_ru.html">___Сверчок</a></li>
+	<li><a class="menu" href="Sverchok_man_00.html">00_Установка</a></li>
+	<li><a class="menu" href="Sverchok_man_01.html">01_Линия</a></li>
+	<li><a class="menu" href="Sverchok_man_02.html">02_Структура данных</a></li>
+	<li><a class="menu" href="Sverchok_man_03.html">03_Некоторые узлы</a></li>
+	<li><a class="menu" href="Sverchok_man_04.html">04_Соединение объектов</a></li>
+	<li><a class="menu" href="Sverchok_stadium.html">05_Стадион им. Ленина</a></li>
+	<li><a class="menu" href="Sverchok_table.html">06_Столы в Сверчке</a></li>
+	<li><a class="menu" href="Sverchok_man_07.html">07_Свои узлы в песочнице</a></li>
+	<li><a class="menu" href="Sverchok_man_08.html">08_Поверхности</a></li>
+	<li><a class="menu" href="Sverchok_man_09.html">09_Ферма</a></li>
+	<li><a class="menu" href="Sverchok_man_10_theme.html">10_Тема</a></li>
+	<li><a class="menu" href="Sverchok_man_11_profile.html">11_Профиль</a></li>
+	<li><a class="menu" href="Sverchok_man_12_timing.html">12_Отладка</a></li>
+	<li><a class="menu" href="Sverchok_man_13_menu.html">13_Меню</a></li>
+	<li><a class="menu" href="Sverchok_man_14_IO.html">14_Импорт/Экспорт</a></li>
+	<li><a class="menu" href="Sverchok_man_15_obj_nodes.html">15_Узлы сцены</a></li>
+	</ul></ul>
+</div></div></div>
+</td></tr></table>
+
+<table><tr><td>
+    <div class="cellsBlock">
+	<div class="cell100" style="height:30px; background: #247;">
+	</div>
+    </div>
+</td></tr></table>
+
+<table><tr><td><!--class="right"-->
+    <div class="cellsBlock">
+	<div class="cell100" style="height:80px; background: #247;">
+	<h1>00_Установка Сверчка.</h1>
+	</div>
+    </div>
+</td></tr></table>
+
+<table ><tr><td><!--class="right"-->
+    <div class="cellsBlock">
+	<div class="cell100" style="background: #36a;">
+	<p>Для тех, кто не в курсе, как установить, в картинках.</p>
+<p>Зайдите на сайт <a href='http://blender.org'>блендера</a>, скачайте и установите его.</p>
+<center><a class="admit" data-title="Сайт блендера"><img src="sverch/man00/01.jpg" class="rounded"></a></center>
+<p>Зайдите на <a href='http://nikitron.cc.ua/sverchok.html'>сайт сверчка</a>, нажмите скачать.</p>
+<center><a class="admit" data-title="Скачать блендер"><img src="sverch/man00/02.jpg" class="rounded"></a></center>
+<p>Перейдите на гитхаб, чтобы скачать Сверчка и его расширения.</p>
+<center><a class="admit" data-title="сайт гитхаба"><img src="sverch/man00/03.jpg" class="rounded"></a></center>
+<p>Зайдите на github чтобы скачать текущую версию. Кнопка Download.</p>
+<p>Альтернативно, установите git, клонируйте и линкуйте. В Linux я пользуюсь алиасом для .bashrc, у вас должна быть папка ~/git и команда выглядит как:</p>
+<p>LNaddon https://github.com/nortikin/sverchok.git</p>
+<p>Сам алиас:</p>
+<p>alias LNaddon='{ read -r url&&cd ~/git&&git clone $url&&bn=$(basename $url .git)&&cd $bn&&d=$(pwd)&&us=$(users)&&ln -s $d /home/$us/.config/blender/2.82/scripts/addons/; } <<< '</p>
+<center><a class="admit" data-title="качаем"><img src="sverch/man00/04.jpg" class="rounded"></a></center>
+<p>Из настроек блендера ставим адоны из zip файлов, не распаковывая.</p>
+<center><a class="admit" data-title="install"><img src="sverch/man00/05.jpg" class="rounded"></a></center>
+<p>Не распакованый архив устанавливаем.</p>
+<center><a class="admit" data-title="Ставим"><img src="sverch/man00/06.jpg" class="rounded"></a></center>
+<p>Активируем оба адона и можно ещё node arrange.</p>
+<center><a class="admit" data-title="Активируем"><img src="sverch/man00/07.jpg" class="rounded"></a></center>
+<p>Настраиваем Сверчка. Обязательно активируйте гист (должен быть аккаунт гитхаба), отобразите все иконки (спасибо Виктору Довалю). Выберите тему, размер
+ кнопок и укажите приложения редактирования текста и расположения исходников.</p>
+<center><a class="admit" data-title="Настройка"><img src="sverch/man00/08.jpg" class="rounded"></a></center>
+<p>Настраиваем Сверчка-экстра от Ильи Портнова. Просто нажимаем кнопки по порядку и следуем указаниям.</p>
+<center><a class="admit" data-title="Настройка"><img src="sverch/man00/09.jpg" class="rounded"></a></center>
+<p>Наш раздел node. Дерево узлов Сверчка. Пройдёмся по панелям. Далее панель N несколько картинок. Настройка текущего узла. Его имя, псевдоним, копировать имя, далее секция с справкой в трёх местах - на сайте, на гитхабе и на компьютере. Далее редактировать и обнулить узел. Ну и вкладка со свойствами, в том числе скрытыми свойствами узла.</p>
+<center><a class="admit" data-title="Панели"><img src="sverch/man00/10.jpg" class="rounded"></a></center>
+<p>Панель импорта/экспорта. Если вы настроили гист, то экспортируя в гист у вас скопируется ссылка на него, вы ею делитесь, она уже в буфере обмена, останется вставить, то есть ctrl+v. Но есть и варианты экспорта в json и blend/zip локально. Импорт из гиста и zip автоматический, ссылка берётся из буфера обмена, то есть ctrl+c. Панель Сверчка с обновлением дерева (если вы застряли). Список деревьев со свойствами (Запечь,отображать,анимировать,считать,упрощать,защищать). Вкладка с отображением консоли внутри дерева и способом просчёта. Вкладка с обновлением Сверчка. Можно при желании проверить на обновления, кнопка покраснеет если обновление есть, её можно нажать для обновления и когда закончит, нажать F8.</p>
+<center><a class="admit" data-title="Панели"><img src="sverch/man00/11.jpg" class="rounded"></a></center>
+<p>Адон упорядочивания узлов поможет нам упорядочить узлы. работает со сверчком.</p>
+<center><a class="admit" data-title="Удобства"><img src="sverch/man00/12.jpg" class="rounded"></a></center>
+<p>Shist+A меню узлов. Все эти разделы  содержат массу узлов, они пополняются регулярно. Количество узлов считается и пишется автоматически в терминале при запуске блендера.</p>
+<center><a class="admit" data-title="Добавляем узлы, дерево узлов"><img src="sverch/man00/13.jpg" class="rounded"></a></center>
+<p>В Сверчке есть примеры. Examples находится сверху справа. по категориям, там же индикатор обработки дерева, упрощённый режим обработки также индицируется. И индикатор github, если вы клонировали и линковали как описано выше, можете наблюдать ветку.</p>
+<center><a class="admit" data-title="Примеры"><img src="sverch/man00/14.jpg" class="rounded"></a></center>
+<p>Общий вид примерно такой.</p>
+<center><a class="admit" data-title="В общем"><img src="sverch/man00/15.jpg" class="rounded"></a></center>
+<p>Горячие влавиши:</p>
+<p>** F5: Обновить дерево (Как и кнопка на панели)</p>
+<p>** Ctrl+F5: То же, но работает даже есть "P" не активно. Разово включает Р, обрабатывает и отключает снова.</p>
+<p>** F6: Переключает "P" (обработку) данного дерева узлов.</p>
+<p>** F7: Переключает "D" (упрощение) режим для обработки.</p>
+<p>** V: При выделенных узлах соединяет их сокеты, это может упростить вам жизнь.</p>
+<p>Да пребудет с вами сила Сверчка.</p>
+
+
+	</div>
+    </div>
+</td></tr></table>
+
+<table><tr><td>
+    <div class="cellsBlock">
+	<div class="cell100" style="height:60px; background: #247;">
+	<p></p>
+    </div></div>
+</td></tr></table>
+
+
+
+
+
+
+<table><tr><td>
+    <div class="cellsBlock">
+	<div class="cell35" style="background: #c51;">
+	<h1><a class="mainpage" href="#top">Наверх</a></h1>
+    </div>
+	<div class="cell35" style="background: #247;">
+	<ul>
+	<li>Development!</li>
+	<li>Development!!</li>
+	<li>Development!!!</li>
+	<li>/Steven Anthony Ballmer/</li>
+	</ul>
+    </div>
+	<div class="cell35" style="background: #c51;">
+	<ul class="sample">
+	  <li><b>Архитектор, дизайнер и Человек...</b></li>
+	  <li>Все права защищены (с)
+	    <ul>
+	    <li>Земля</li>
+	    <li>2013 г.</li>
+	    </ul></li>
+	</ul>
+    </div></div>
+</td></tr></table>
+
+</body>
+<!-- Rating@Mail.ru counter -->
+<script type="text/javascript">//<![CDATA[
+var _tmr = _tmr || [];
+_tmr.push({id: '2383198', type: 'pageView', start: (new Date()).getTime()});
+(function (d, w) {
+   var ts = d.createElement('script'); ts.type = 'text/javascript'; ts.async = true;
+   ts.src = (d.location.protocol == 'https:' ? 'https:' : 'http:') + '//top-fwz1.mail.ru/js/code.js';
+   var f = function () {var s = d.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ts, s);};
+   if (w.opera == "[object Opera]") { d.addEventListener("DOMContentLoaded", f, false); } else { f(); }
+})(document, window);
+//]]></script><noscript><div style="position:absolute;left:-10000px;">
+<img src="//top-fwz1.mail.ru/counter?id=2383198;js=na" style="border:0;" height="1" width="1" alt="Рейтинг@Mail.ru" />
+</div></noscript>
+<!-- //Rating@Mail.ru counter -->
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+(function (d, w, c) {
+    (w[c] = w[c] || []).push(function() {
+        try {
+            w.yaCounter21907006 = new Ya.Metrika({id:21907006,
+                    webvisor:true,
+                    clickmap:true,
+                    trackLinks:true,
+                    accurateTrackBounce:true});
+        } catch(e) { }
+    });
+
+    var n = d.getElementsByTagName("script")[0],
+        s = d.createElement("script"),
+        f = function () { n.parentNode.insertBefore(s, n); };
+    s.type = "text/javascript";
+    s.async = true;
+    s.src = (d.location.protocol == "https:" ? "https:" : "http:") + "//mc.yandex.ru/metrika/watch.js";
+
+    if (w.opera == "[object Opera]") {
+        d.addEventListener("DOMContentLoaded", f, false);
+    } else { f(); }
+})(document, window, "yandex_metrika_callbacks");
+</script>
+<noscript><div><img src="//mc.yandex.ru/watch/21907006" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<!-- /Yandex.Metrika counter -->
+<!--google analitics-->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-42732782-1', 'cc.ua');
+  ga('send', 'pageview');
+</script>
+<!--google analitics-->
+</html>

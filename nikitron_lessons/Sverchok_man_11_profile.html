@@ -1,0 +1,390 @@
+<html>
+<head>
+<title>Сверчок. Профильный узел Тема 11 | Архитектор, Дизайнер, Человек...</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="autor" content="Архитектор, Дизайнер, Человек...">
+<meta name="keywords" content="Сверчок руководство пользователя Блендер Blender 3d">
+<meta name="description" content="Сверчок. Профильный узел, тема 11, созидание здания.">
+<link rel="stylesheet" href="file.css" type="text/css" media="screen" />
+<link href='http://fonts.googleapis.com/css?family=Ubuntu&subset=latin,cyrillic-ext,cyrillic' rel='stylesheet' type='text/css'> <!--CSS шрифт-->
+<link rel="icon" type="image/png" href="blender.png" />
+<script src='jquery.min.js'></script>
+<script src='menu.js'></script>
+<!--ширина экрана диктует CSS-->
+<script language="JavaScript">
+var height=0;
+var width=0;
+if (self.screen) {    
+        width = screen.width
+        height = screen.height
+}
+else if (self.java) {  
+      var jkit = java.awt.Toolkit.getDefaultToolkit();
+      var scrsize = jkit.getScreenSize();      
+      width = scrsize.width; 
+      height = scrsize.height; 
+}
+if (width < 1000)
+{
+	document.write("<link rel='stylesheet' type='text/css' href='main_page/small-less-1000.css'>");
+}
+else 
+if(width < 1270)
+{
+	document.write("<link rel='stylesheet' type='text/css' href='main_page/small.css'>");
+}
+else 
+if(width > 1270)
+{
+	document.write("<link rel='stylesheet' type='text/css' href='main_page/big.css'>");
+}
+</script>
+<!--ширина экрана диктует CSS-->
+</head>
+
+<body>
+<a name="top"></a>
+
+
+
+
+<table class="head"><tr><td>
+    <div class="cellsBlock">
+	<div class="cell10" style="background: #c51;">
+	<h3><a class="mainpage" href="sverchok_ru.html">главная</a></h3>
+	</div>
+	<div class="cell70" style="background: #c51;">
+	<h1><img src='sverch/sverchlogo.png' style="width:200px"></h1>
+    </div>
+    <div class="cell20" style="background: #c51;">
+    <div class="size">
+	<input type="text" name="test" value="Меню сверчка" class="field" readonly="readonly" />
+	<ul class="list">
+	<li><a class="menu" href="sverchok_ru.html">___Сверчок</a></li>
+	<li><a class="menu" href="Sverchok_man_00.html">00_Установка</a></li>
+	<li><a class="menu" href="Sverchok_man_01.html">01_Линия</a></li>
+	<li><a class="menu" href="Sverchok_man_02.html">02_Структура данных</a></li>
+	<li><a class="menu" href="Sverchok_man_03.html">03_Некоторые узлы</a></li>
+	<li><a class="menu" href="Sverchok_man_04.html">04_Соединение объектов</a></li>
+	<li><a class="menu" href="Sverchok_stadium.html">05_Стадион им. Ленина</a></li>
+	<li><a class="menu" href="Sverchok_table.html">06_Столы в Сверчке</a></li>
+	<li><a class="menu" href="Sverchok_man_07.html">07_Свои узлы в песочнице</a></li>
+	<li><a class="menu" href="Sverchok_man_08.html">08_Поверхности</a></li>
+	<li><a class="menu" href="Sverchok_man_09.html">09_Ферма</a></li>
+	<li><a class="menu" href="Sverchok_man_10_theme.html">10_Тема</a></li>
+	<li><a class="menu" href="Sverchok_man_11_profile.html">11_Профиль</a></li>
+	<li><a class="menu" href="Sverchok_man_12_timing.html">12_Отладка</a></li>
+	<li><a class="menu" href="Sverchok_man_13_menu.html">13_Меню</a></li>
+	<li><a class="menu" href="Sverchok_man_14_IO.html">14_Импорт/Экспорт</a></li>
+	<li><a class="menu" href="Sverchok_man_15_obj_nodes.html">15_Узлы сцены</a></li>
+	</ul></ul>
+</div></div></div>
+</td></tr></table>
+
+<table><tr><td>
+    <div class="cellsBlock">
+	<div class="cell100" style="height:30px; background: #247;">
+	</div>
+    </div>
+</td></tr></table>
+
+<table><tr><td><!--class="right"-->
+    <div class="cellsBlock">
+	<div class="cell100" style="height:80px; background: #247;">
+	<h1>11_Профильный узел.</h1>
+	</div>
+    </div>
+</td></tr></table>
+
+<table><tr><td><!--class="right"-->
+    <div class="cellsBlock">
+	<div class="cell100" style="background: #36a;">
+	<p>Мы подошли к моменту, когда сверчком можно делать параметрические конструкции и реализовывать их. К моменту, когда можно делать в Сверчке свой Адон, дополнение к Блендеру. К тому моменту, когда в интерфейсе появилась панель в 3М окне, что позволяет реализовать управление раскладкой из 3М окна без открывания раскладки. То есть можно загружать 'Append' в сцену раскладки и даже не смотреть что в них находится, а работать с раскладкой как с другим любым дополнением к блендеру, нажимая кнопки и меняя значения цифер, запекая модель, скрывая предпросмотр.</p>
+	<p>Сейчас мы рассмотрим конкретно узел профилирования, что делает профиль в одной из плоскостей <b>XY XZ YZ</b>, а затем матрицей её тиражируем или делаем что угодно. Узел профиля руководствуется текстовым файлом для построения профиля, значит нам понадобится сам узел и текстовое окно.</p>
+	<p>Итоговый файл с улучшениями и поправками можно найти <a href='sverch/man11/create_addon_in_sverchok1.blend.7z'>ПО ЭТОЙ ССЫЛКЕ</a>, там заменены негативные значения на выражение <b>-a</b>, также удалены дублирующие точки и модифицирована поверхность. Домашним заданием - посмотреть что изменилось в файле относительно урока.</p>
+
+<center><a href="#01" class="admit" data-title="Достаём узел и открываем текстовое окно."><img src="sverch/man11/tut_01sm.png" class="rounded"></a>
+        	<a href="#x" class="overlay" id="01"></a>
+        	<div class="popup">
+		<img src="sverch/man11/tut_01.png"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	<a class="admit" data-title="Итог"><img src="sverch/man11/tut_tit.jpg" class="rounded"></a>
+	</center>
+
+	<p>Теперь нам нужно записать текст, сделаем линию, начнём с <b>L</b> и запишем пары 2-мерных координат в формате <b>x0,y0 x1,y1 x2,y2</b> через пробел. Значения <b>a, b</b> у нас берутся из сокета, куда подключаем дробное число. Поиграемся с параметрами. Кстати, выбрать текст можно в окошке узла профиля.</p>
+
+<center><a href="#02" class="admit" data-title="профиль."><img src="sverch/man11/tut_02sm.png" class="rounded"></a>
+        	<a href="#x" class="overlay" id="02"></a>
+        	<div class="popup">
+		<img src="sverch/man11/tut_02.png"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	<a href="#03" class="admit" data-title="профиль."><img src="sverch/man11/tut_03sm.png" class="rounded"></a>
+        	<a href="#x" class="overlay" id="03"></a>
+        	<div class="popup">
+		<img src="sverch/man11/tut_03.png"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	</center>
+
+	<p>Чтобы завершить линию, замкнуть её, нам не надо указывать первые координаты вконце перечня координат, а надо дописать <b>z</b> в конце строки или <b>X</b> последней строкой, если хотим замкнуть все строки. А у нас в распоряжении есть арки <b>A</b>, кривые <b>C</b>, стартовая точка <b>M</b> (потому что арки и кривые начинаются с последней точки предшественника, мы должны инициировать первую точку для арки и кривой отдельно), прямые <b>L</b>, их функционал есть в <a href='https://github.com/nortikin/sverchok/blob/master/docs/nodes/generator/profile_parametric.rst'>документации к сверчку в разделе "узлы"</a>.</p>
+	<p><i>Подсказка: чтобы обновить раскадку из текстового окна, достаточно нажать <b>Ctrl+Enter</b>, так менять параметры.</i></p>
+	<p>Да, я сделал картинки и сообразил, что значение <b>a,a</b> здесь не нужно, т.к. мы можем замкнуть профиль при помощи X в новой строке, а в моём примере получается двойная точка, так при применении UVconnection мы получим сразу замкнутую поверхность, хотим того или нет... Не надо так.</p>
+
+<center><a href="#04" class="admit" data-title="Замыкаем."><img src="sverch/man11/tut_04sm.png" class="rounded"></a>
+        	<a href="#x" class="overlay" id="04"></a>
+        	<div class="popup">
+		<img src="sverch/man11/tut_04.png"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	</center>
+
+	<p>Теперь рассмотрим арку. </p>
+	<ul><li>Первые значения - это размер радиусов арки по <b>Х, У</b></li>
+	<li> 0 1 0 это:
+		<ol><li><b>{0}</b> вращение по оси Х - число</li>
+		<li><b>{1}</b> большой переключатель арки</li>
+		<li><b>{0}</b> переключатель зеркального отражения. Переключатель - это значение 0 или 1, <b>0</b> означает <b>нет</b>, <b>1</b> означает <b>есть</b> (отражение)</li></ol>
+	</li>
+	<li>В конце идут координаты конечной точки и разрешение, у нас <b>-1,-1 10</b>, что даёт конечную точку поверхности.</li></ul>
+	<p>На изображениях ниже видно, что мы можем менять масштаб - первые координаты, и получим сплюснутую арку. В примере это 1,1 против 1,0.5, прошу обратить внимание, что значения размера арки не относительные, а абсолютные, то есть если точки отстоят друг от друга на 2.5, то значения первых координат будут 1.25,1.25 что даст ровную арку. В большинстве случаев не трогаем 0 1 0, и получаем <b>A a,a 0 1 0 b,c d</b> или что-то вроде того.</p>
+
+<center><a href="#06" class="admit" data-title="Арка."><img src="sverch/man11/tut_06sm.png" class="rounded"></a>
+        	<a href="#x" class="overlay" id="06"></a>
+        	<div class="popup">
+		<img src="sverch/man11/tut_06.png"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	<a href="#07" class="admit" data-title="Арка сплюснутая."><img src="sverch/man11/tut_07sm.png" class="rounded"></a>
+        	<a href="#x" class="overlay" id="07"></a>
+        	<div class="popup">
+		<img src="sverch/man11/tut_07.png"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	</center>
+
+	<p>Вторые координаты можно обнулить (рис 08) или поставить в другой конец квадрата (рис 09) или любую точку, при том масштаб (первые координаты) масштабируют отрогонально.</p>
+
+<center><a href="#08" class="admit" data-title="Арка сдвинутая."><img src="sverch/man11/tut_08sm.png" class="rounded"></a>
+        	<a href="#x" class="overlay" id="08"></a>
+        	<div class="popup">
+		<img src="sverch/man11/tut_08.png"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	<a href="#09" class="admit" data-title="Арка сдвинутая."><img src="sverch/man11/tut_09sm.png" class="rounded"></a>
+        	<a href="#x" class="overlay" id="09"></a>
+        	<div class="popup">
+		<img src="sverch/man11/tut_09.png"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	</center>
+
+	<p>Параметризируем все вводные переменные, для этого range узел, делаем как угодно, чтобы равное количество было значений.</p>
+
+<center><a href="#10" class="admit" data-title="Параметризируем."><img src="sverch/man11/tut_10sm.png" class="rounded"></a>
+        	<a href="#x" class="overlay" id="10"></a>
+        	<div class="popup">
+		<img src="sverch/man11/tut_10.png"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	<a href="#11" class="admit" data-title="Параметризируем."><img src="sverch/man11/tut_11sm.png" class="rounded"></a>
+        	<a href="#x" class="overlay" id="11"></a>
+        	<div class="popup">
+		<img src="sverch/man11/tut_11.png"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	</center>
+
+	<p>Деламем матрицу и присваиваем её всем объектам, матриц столько же, сколько профилей, профилей столько же, сколько значений в range.</p>
+
+<center><a href="#12" class="admit" data-title="Матрицы."><img src="sverch/man11/tut_12sm.png" class="rounded"></a>
+        	<a href="#x" class="overlay" id="12"></a>
+        	<div class="popup">
+		<img src="sverch/man11/tut_12.png"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	<a href="#13" class="admit" data-title="Сдвигаем по высоте."><img src="sverch/man11/tut_13sm.png" class="rounded"></a>
+        	<a href="#x" class="overlay" id="13"></a>
+        	<div class="popup">
+		<img src="sverch/man11/tut_13.png"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	</center>
+
+	<p>Выводим все параметры в узлы Int - целочисленные и Float - дробные. Меняем в панели параметров их параметры, а именно, максимум и минимум, обратите внимание, что галочка <b>to3d</b> нам пригодится, без неё в 3М окне этот параметр будет проигнорирован, впрочем, если мы не хотим например, выводить в 3М окно например, разрешение кривой, оно у нас 10, то можем выключить флажок to3d.</p>
+
+<center><a href="#14" class="admit" data-title="Готовим параметры."><img src="sverch/man11/tut_14sm.png" class="rounded"></a>
+        	<a href="#x" class="overlay" id="14"></a>
+        	<div class="popup">
+		<img src="sverch/man11/tut_14.png"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	<a href="#15" class="admit" data-title="Минимум и максимум."><img src="sverch/man11/tut_15sm.png" class="rounded"></a>
+        	<a href="#x" class="overlay" id="15"></a>
+        	<div class="popup">
+		<img src="sverch/man11/tut_15.png"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	<a class="admit" data-title="Минимум и максимум"><img src="sverch/man11/tut_16.png" class="rounded"></a>
+	
+	</center>
+
+	<p>Чтобы взятьв 3М окне параметры, нужно нажать <b>Scan for props</b> и у нас будет список дробных и целых чисел.</p>
+
+	<center>
+	<a class="admit" data-title="Панель управления в 3М окне. Начало"><img src="sverch/man11/tut_17.png" class="rounded"></a>
+	<a class="admit" data-title="Панель управления в 3М окне. Активировано"><img src="sverch/man11/tut_18.png" class="rounded"></a>
+	</center>
+
+	<p>Давайте добавим волну. Добавим синус в параметр <b>e</b>, впишем его в текст профиля, как на рисунке. Число множитель можно вынести как отдельный параметр для профиля. В панели <b>N</b> узлового редактора есть выпадающее меню <b>Node</b> мы называем узел дробных и целых чисел соответственно их назначению, заполняя пустующее поле <b>Label</b>. У нас это ширина, высота и разбиение и этажность. Можно называть по-русски, что мне кажется очень удобным.</p>
+
+<center><a href="#20" class="admit" data-title="Волна."><img src="sverch/man11/tut_20sm.png" class="rounded"></a>
+        	<a href="#x" class="overlay" id="20"></a>
+        	<div class="popup">
+		<img src="sverch/man11/tut_20.png"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	</center>
+
+	<p>Оформим оболочку. Берём UV connect, соединяем slice polygons, предварительно присвоив матрицу к вершинам. Выдавливаем Solidify. Затем отдельно соединяем оболочку профилями вдоль, линиями так же вдоль. И вот у нас образ здания, который можно дорабатывать дальше. Как мы видим, сверчок может уже многое.</p>
+
+<center><a href="#21" class="admit" data-title="Формируем перекрытия."><img src="sverch/man11/tut_21sm.png" class="rounded"></a>
+        	<a href="#x" class="overlay" id="21"></a>
+        	<div class="popup">
+		<img src="sverch/man11/tut_21.png"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	<a href="#22" class="admit" data-title="Формируем объём."><img src="sverch/man11/tut_22sm.png" class="rounded"></a>
+        	<a href="#x" class="overlay" id="22"></a>
+        	<div class="popup">
+		<img src="sverch/man11/tut_22.png"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	<a href="#25" class="admit" data-title="Общий вид."><img src="sverch/man11/tut_25sm.png" class="rounded"></a>
+        	<a href="#x" class="overlay" id="25"></a>
+        	<div class="popup">
+		<img src="sverch/man11/tut_25.png"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	</center>
+
+
+<p>Да пребудет с вами сила Сверчка.</p>
+
+
+	</div>
+    </div>
+</td></tr></table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><tr><td>
+    <div class="cellsBlock">
+	<div class="cell100" style="height:30px; background: #247;">
+	<p></p>
+    </div></div>
+</td></tr></table>
+
+
+
+
+
+
+<table><tr><td><!--class="l"-->
+    <div class="cellsBlock">
+	<div class="cell100" style="height:30px; background: #247;">
+	<p></p>
+    </div></div>
+</td></tr></table>
+
+<table><tr><td>
+    <div class="cellsBlock">
+	<div class="cell35" style="background: #c51;">
+	<h1><a class="mainpage" href="#top">Наверх</a></h1>
+    </div>
+	<div class="cell35" style="background: #247;">
+	<ul>
+	<li>Development!</li>
+	<li>Development!!</li>
+	<li>Development!!!</li>
+	<li>/Steven Anthony Ballmer/</li>
+	</ul>
+    </div>
+	<div class="cell35" style="background: #c51;">
+	<ul class="sample">
+	  <li><b>Архитектор, дизайнер и Человек...</b></li>
+	  <li>Все права защищены (с)
+	    <ul>
+	    <li>Земля</li>
+	    <li>2013 г.</li>
+	    </ul></li>
+	</ul>
+    </div></div>
+</td></tr></table>
+
+</body>
+<!-- Rating@Mail.ru counter -->
+<script type="text/javascript">//<![CDATA[
+var _tmr = _tmr || [];
+_tmr.push({id: '2383198', type: 'pageView', start: (new Date()).getTime()});
+(function (d, w) {
+   var ts = d.createElement('script'); ts.type = 'text/javascript'; ts.async = true;
+   ts.src = (d.location.protocol == 'https:' ? 'https:' : 'http:') + '//top-fwz1.mail.ru/js/code.js';
+   var f = function () {var s = d.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ts, s);};
+   if (w.opera == "[object Opera]") { d.addEventListener("DOMContentLoaded", f, false); } else { f(); }
+})(document, window);
+//]]></script><noscript><div style="position:absolute;left:-10000px;">
+<img src="//top-fwz1.mail.ru/counter?id=2383198;js=na" style="border:0;" height="1" width="1" alt="Рейтинг@Mail.ru" />
+</div></noscript>
+<!-- //Rating@Mail.ru counter -->
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+(function (d, w, c) {
+    (w[c] = w[c] || []).push(function() {
+        try {
+            w.yaCounter21907006 = new Ya.Metrika({id:21907006,
+                    webvisor:true,
+                    clickmap:true,
+                    trackLinks:true,
+                    accurateTrackBounce:true});
+        } catch(e) { }
+    });
+
+    var n = d.getElementsByTagName("script")[0],
+        s = d.createElement("script"),
+        f = function () { n.parentNode.insertBefore(s, n); };
+    s.type = "text/javascript";
+    s.async = true;
+    s.src = (d.location.protocol == "https:" ? "https:" : "http:") + "//mc.yandex.ru/metrika/watch.js";
+
+    if (w.opera == "[object Opera]") {
+        d.addEventListener("DOMContentLoaded", f, false);
+    } else { f(); }
+})(document, window, "yandex_metrika_callbacks");
+</script>
+<noscript><div><img src="//mc.yandex.ru/watch/21907006" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<!-- /Yandex.Metrika counter -->
+<!--google analitics-->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-42732782-1', 'cc.ua');
+  ga('send', 'pageview');
+</script>
+<!--google analitics-->
+</html>

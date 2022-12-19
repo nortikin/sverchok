@@ -22,6 +22,7 @@
     <td class="sv_elem2">
 	<h3 class='tofu'>Original lessons in Russian</h3>
 	<ul>
+  <li><a href='./nikitron_lessons/index.html'>Old site</a></li>
 	<li><a href='http://nikitron.cc.ua/Sverchok_man_00.html'> 00. Installation.</a></li>
 	<li><a href='http://nikitron.cc.ua/Sverchok_man_01.html'> 01. Sverchok and line. Way of Sverchok.</a></li>
 	<li><a href='http://nikitron.cc.ua/Sverchok_man_02.html'> 02. Data structure.</a></li>
@@ -61,4 +62,3 @@
     </td>
 </tr>
 </table>  
-

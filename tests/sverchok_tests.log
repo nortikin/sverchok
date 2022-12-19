@@ -1,0 +1,454 @@
+Initializing Sverchok logging. Blender version 3.1.0 Alpha, Sverchok version v1.1.0-alpha.2, branch master, commit cf50974b
+Category list_mutators: Tolerating unexistance of the documentation for the following nodes for now:
+vd_attr_node_mk2.py
+Category object_nodes: Tolerating unexistance of the documentation for the following nodes for now:
+color_uv_texture.py
+points_from_uv_to_mesh.py
+filter_blenddata.py
+object_raycast2.py
+vertex_colors_mk3.py
+closest_point_on_mesh2.py
+set_blenddata2.py
+custom_mesh_normals.py
+sculpt_mask.py
+scene_raycast2.py
+sort_blenddata.py
+Category bmesh_nodes: Tolerating unexistance of the documentation for the following nodes for now:
+bmesh_to_element.py
+bmesh_out.py
+bmesh_obj_in.py
+bmesh_analyzer_big.py
+Category scene: Tolerating unexistance of the documentation for the following nodes for now:
+BMOperatorsMK2.py
+obj_edit.py
+uv_texture.py
+Category surface: Tolerating unexistance of the documentation for the following nodes for now:
+quads_to_nurbs.py
+Category list_struct: Tolerating unexistance of the documentation for the following nodes for now:
+numpy_array.py
+Category exchange: Tolerating unexistance of the documentation for the following nodes for now:
+approx_subd_to_nurbs.py
+Category field: Tolerating unexistance of the documentation for the following nodes for now:
+scalar_field_point.py
+Category vector: Tolerating unexistance of the documentation for the following nodes for now:
+interpolation_mk2.py
+Category modifier_change: Tolerating unexistance of the documentation for the following nodes for now:
+mesh_beautify.py
+mesh_separate_mk2.py
+limited_dissolve.py
+limited_dissolve_mk2.py
+---- Linked node tree: intersecting_planes.blend.gz
+save_to_json called with unknown filename
+save_to_json called with unknown filename
+---- Linked node tree: list_join_import.blend.gz
+---- Linked text block: mesh_expr_ref.blend.gz
+---- Linked node tree: mesh_expr_ref.blend.gz
+---- Linked node tree: node_group_test.blend.gz
+---- Linked text block: profile_ref.blend.gz
+---- Linked node tree: profile_ref.blend.gz
+---- Linked node tree: script_uv_ref.blend.gz
+---- Linked node tree: viewer_text_2018_01_20_12_10.gz
+Opening Dir named: Introduction
+Skipping test import of: ABCnaming.json - to permit unit-tests to continue
+Opening Dir named: Design
+Donor.json not found in <bpy_collection[9], BlendDataTexts>, returning None instead
+The currently loaded blend file does contain the following text files {'Plane', 'Cube', 'sverchok.log', 'exec', 'archimedes_spiral.py', 'Mesh Expression', 'Profile.txt'}
+Node is not defined in this context, so will not update the node.
+Node is not defined in this context, so will not update the node.
+Opening Dir named: CNC
+Skipping test import of: CNC_CUTHOLES_RESIZE.json - to permit unit-tests to continue
+Opening Dir named: Fields
+Opening Dir named: Surfaces
+Opening Dir named: Architecture
+Skipping test import of: BIM_truss_joint.json - to permit unit-tests to continue
+Skipping test import of: BIM_FreeCAD_import.json - to permit unit-tests to continue
+Node is not defined in this context, so will not update the node.
+Node is not defined in this context, so will not update the node.
+Skipping test import of: BIM_ArchiCAD24_import.json - to permit unit-tests to continue
+Opening Dir named: Advanced
+Skipping test import of: Genetic_algorythm_scripted_node.json - to permit unit-tests to continue
+Skipping test import of: Open4d_mesh.json - to permit unit-tests to continue
+Opening Dir named: Shapes
+Skipping test import of: SverchokLogo.json - to permit unit-tests to continue
+end execution early because required sockets are not connected ['vertices_in', 'alpha_in']
+Node is not defined in this context, so will not update the node.
+Node is not defined in this context, so will not update the node.
+Opening Dir named: Open3d
+Checking profile example: i-beam.txt
+Checking profile example: quadratic_sample.txt
+Checking profile example: simple_curve.txt
+Checking profile example: rectangle.txt
+Checking profile example: square.txt
+Checking profile example: quadratic_goggles.txt
+Checking profile example: rounded_line.txt
+Checking profile example: complex_rectangle.txt
+Checking profile example: square3.txt
+Checking profile example: arc_fillet.txt
+Checking profile example: smooth_arrow.txt
+Checking profile example: zeffi_2.txt
+Checking profile example: complex_curve.txt
+Checking profile example: smooth_curve.txt
+Checking profile example: symmetric_square.txt
+Checking profile example: quadratic_fillet.txt
+Checking profile example: pawn.txt
+Checking profile example: barrel.txt
+Checking profile example: bevel_line.txt
+Checking profile example: quadratic_bubble.txt
+Checking profile example: zeffi_1.txt
+starting socket conversion tests
+Node is not defined in this context, so will not update the node.
+Node is not defined in this context, so will not update the node.
+---- Linked node tree: TreeCleaningTest.blend
+---- Linked node tree: TreeCleaningTest.blend
+Test cases result:
+test_avl_tree_find_nearest_left (avl_tree_tests.AVLTreeTest) ... ok
+test_avl_tree_search (avl_tree_tests.AVLTreeTest) ... ok
+test_blend_second (bezier_tests.BezierTests) ... ok
+test_blend_tangent (bezier_tests.BezierTests) ... ok
+test_blend_third (bezier_tests.BezierTests) ... ok
+test_cubic_equals_generic (bezier_tests.BezierTests) ... ok
+test_normals_equal (bezier_tests.BezierTests) ... ok
+test_second_derivs_equal (bezier_tests.BezierTests) ... ok
+test_tangents_equal (bezier_tests.BezierTests) ... ok
+test_third_derivs_equal (bezier_tests.BezierTests) ... ok
+test_imports (core_tests.CoreTests)
+Test that all files can be imported. ... ok
+test_control_points_1 (cubic_spline_tests.CubicSplineTests) ... ok
+test_eval (cubic_spline_tests.CubicSplineTests) ... ok
+test_tangent (cubic_spline_tests.CubicSplineTests) ... ok
+test_square_1 (curve_tests.TaylorTests) ... ok
+test_square_2 (curve_tests.TaylorTests) ... ok
+test_to_nurbs_1 (curve_tests.TaylorTests) ... ok
+test_to_nurbs_2 (curve_tests.TaylorTests) ... ok
+test_calc_mask_1 (data_structure_tests.CalcMaskTests) ... ok
+test_calc_mask_2 (data_structure_tests.CalcMaskTests) ... ok
+test_calc_mask_3 (data_structure_tests.CalcMaskTests) ... ok
+test_calc_mask_4 (data_structure_tests.CalcMaskTests) ... ok
+test_calc_mask_5 (data_structure_tests.CalcMaskTests) ... ok
+test_calc_mask_6 (data_structure_tests.CalcMaskTests) ... ok
+test_calc_mask_7 (data_structure_tests.CalcMaskTests) ... ok
+test_adjust_1 (data_structure_tests.DataStructureTests) ... ok
+test_adjust_10 (data_structure_tests.DataStructureTests) ... ok
+test_adjust_2 (data_structure_tests.DataStructureTests) ... ok
+test_adjust_3 (data_structure_tests.DataStructureTests) ... ok
+test_adjust_4 (data_structure_tests.DataStructureTests) ... ok
+test_adjust_5 (data_structure_tests.DataStructureTests) ... ok
+test_adjust_6 (data_structure_tests.DataStructureTests) ... ok
+test_adjust_7 (data_structure_tests.DataStructureTests) ... ok
+test_adjust_8 (data_structure_tests.DataStructureTests) ... ok
+test_adjust_9 (data_structure_tests.DataStructureTests) ... ok
+test_describe_data_shape_1 (data_structure_tests.DataStructureTests) ... ok
+test_describe_data_shape_2 (data_structure_tests.DataStructureTests) ... ok
+test_ensure_nesting_level_1 (data_structure_tests.DataStructureTests) ... ok
+test_ensure_nesting_level_2 (data_structure_tests.DataStructureTests) ... ok
+test_flatten_1 (data_structure_tests.DataStructureTests) ... ok
+test_flatten_2 (data_structure_tests.DataStructureTests) ... ok
+test_flatten_3 (data_structure_tests.DataStructureTests) ... ok
+test_full_list_1 (data_structure_tests.DataStructureTests) ... ok
+test_full_list_2 (data_structure_tests.DataStructureTests) ... ok
+test_full_list_deep_copy (data_structure_tests.DataStructureTests) ... ok
+test_get_data_nesting_level_1 (data_structure_tests.DataStructureTests) ... ok
+test_get_data_nesting_level_2 (data_structure_tests.DataStructureTests) ... ok
+test_graft_1 (data_structure_tests.DataStructureTests) ... ok
+test_graft_2 (data_structure_tests.DataStructureTests) ... ok
+test_graft_3 (data_structure_tests.DataStructureTests) ... ok
+test_graft_4 (data_structure_tests.DataStructureTests) ... ok
+test_match_long_cycle (data_structure_tests.DataStructureTests) ... ok
+test_match_long_repeat (data_structure_tests.DataStructureTests) ... ok
+test_match_long_repeat_2 (data_structure_tests.DataStructureTests) ... ok
+test_repeat_last_for_length_1 (data_structure_tests.DataStructureTests) ... ok
+test_repeat_last_for_length_2 (data_structure_tests.DataStructureTests) ... ok
+test_repeat_last_for_length_3 (data_structure_tests.DataStructureTests) ... ok
+test_repeat_last_for_length_4 (data_structure_tests.DataStructureTests) ... ok
+test_rotate_list_1 (data_structure_tests.DataStructureTests) ... ok
+test_rotate_list_2 (data_structure_tests.DataStructureTests) ... ok
+test_transpose_list (data_structure_tests.DataStructureTests) ... ok
+test_map_1 (data_structure_tests.MapRecursiveTests) ... ok
+test_map_2 (data_structure_tests.MapRecursiveTests) ... ok
+test_map_3 (data_structure_tests.MapRecursiveTests) ... ok
+test_map_at_level_1 (data_structure_tests.MapRecursiveTests)
+Trivial case ... ok
+test_map_at_level_2 (data_structure_tests.MapRecursiveTests) ... ok
+test_map_at_level_3 (data_structure_tests.MapRecursiveTests) ... ok
+test_map_at_level_4 (data_structure_tests.MapRecursiveTests) ... ok
+test_map_at_level_5 (data_structure_tests.MapRecursiveTests) ... ok
+test_map_at_level_6 (data_structure_tests.MapRecursiveTests) ... ok
+test_map_unzip_1 (data_structure_tests.MapRecursiveTests) ... ok
+test_map_unzip_2 (data_structure_tests.MapRecursiveTests) ... ok
+test_unzip_dict_1 (data_structure_tests.MapRecursiveTests)
+Trivial case ... ok
+test_unzip_dict_2 (data_structure_tests.MapRecursiveTests) ... ok
+test_unzip_dict_3 (data_structure_tests.MapRecursiveTests) ... ok
+test_unzip_dict_4 (data_structure_tests.MapRecursiveTests) ... ok
+test_diameter_1 (diameter_tests.DiameterTests) ... ok
+test_diameter_2 (diameter_tests.DiameterTests) ... ok
+test_diameter_3 (diameter_tests.DiameterTests) ... ok
+test_dict_1 (dict_tests.ApproxDictTests) ... ok
+test_repr (dict_tests.ApproxDictTests) ... ok
+test_dict_1 (dict_tests.KnotvectorDictTests) ... ok
+test_dict_2 (dict_tests.KnotvectorDictTests) ... ok
+test_dict_3 (dict_tests.KnotvectorDictTests) ... ok
+test_all_node_docs_in_trees (docs_tests.DocumentationTests)
+Check that each node documentation file is mentioned in corresponding index file. ... ok
+test_node_docs_existance (docs_tests.DocumentationTests) ... ok
+test_node_docs_refs_from_trees (docs_tests.DocumentationTests) ... ok
+test_unused_docs (docs_tests.DocumentationTests) ... ok
+test_empty (formula_interpolate_tests.DocumentationTests) ... ok
+test_one_sharp (formula_interpolate_tests.DocumentationTests) ... ok
+test_single (formula_interpolate_tests.DocumentationTests) ... ok
+test_three (formula_interpolate_tests.DocumentationTests) ... ok
+test_two_mixed_1 (formula_interpolate_tests.DocumentationTests) ... ok
+test_two_mixed_2 (formula_interpolate_tests.DocumentationTests) ... ok
+test_two_sharp (formula_interpolate_tests.DocumentationTests) ... ok
+test_two_sharp_1 (formula_interpolate_tests.DocumentationTests) ... ok
+test_two_sharp_2 (formula_interpolate_tests.DocumentationTests) ... ok
+test_two_smooth (formula_interpolate_tests.DocumentationTests) ... ok
+test_fuse_1 (general_fuse_tests.GeneralFuseTests)
+Input level 1, Merge = On ... ERROR
+test_fuse_2 (general_fuse_tests.GeneralFuseTests)
+Input level 1, Merge = Off ... ERROR
+test_fuse_3 (general_fuse_tests.GeneralFuseTests)
+Input level 2, Merge = On ... ERROR
+test_fuse_4 (general_fuse_tests.GeneralFuseTests)
+Input level 2, Merge = Off ... ERROR
+test_crop_ring_by_squares (geom_2d_tests.CropMesh2DTest) ... ok
+test_crop_voronoi_diagram (geom_2d_tests.CropMesh2DTest) ... ok
+test_dissolve_ngon_faces_inside_grid (geom_2d_tests.DissolveFaces2DTest) ... ok
+test_holes_in_holes (geom_2d_tests.EdgesToFacesTest) ... ok
+test_random_boxes_intersection (geom_2d_tests.EdgesToFacesTest) ... ok
+test_random_edges_intersection (geom_2d_tests.EdgesToFacesTest) ... ok
+test_intersect_edges_in_one_point (geom_2d_tests.IntersectionEdgesTest) ... ok
+test_intersect_overlapping_edges (geom_2d_tests.IntersectionEdgesTest) ... ok
+test_intersect_overlapping_points_with_edges (geom_2d_tests.IntersectionEdgesTest) ... ok
+test_intersect_random_edges (geom_2d_tests.IntersectionEdgesTest) ... ok
+test_random_edges_above_xy (geom_2d_tests.IntersectionEdgesTest) ... ok
+test_random_edges_turned (geom_2d_tests.IntersectionEdgesTest) ... ok
+test_make_monotone_one_face (geom_2d_tests.MakeMonotoneTest) ... ok
+test_merge_random_squares (geom_2d_tests.MergeMesh2DLightTest) ... ok
+test_merge_rings_and_square (geom_2d_tests.MergeMesh2DLightTest) ... ok
+test_merge_rings_and_square_turned (geom_2d_tests.MergeMesh2DLightTest) ... ok
+test_number_overlapping_of_flour (geom_2d_tests.MergeMesh2DLightTest) ... ok
+test_merge_square_ring (geom_2d_tests.MergeMesh2DTest) ... ok
+test_arc_derivative_1 (geom_tests.GeometryTests) ... ok
+test_arc_values_1 (geom_tests.GeometryTests) ... ok
+test_arc_values_2 (geom_tests.GeometryTests) ... ok
+test_arc_values_3 (geom_tests.GeometryTests) ... ok
+test_arc_values_4 (geom_tests.GeometryTests) ... ok
+test_arc_values_5 (geom_tests.GeometryTests) ... ok
+test_center_quad (geom_tests.GeometryTests) ... ok
+test_center_trivial (geom_tests.GeometryTests) ... ok
+test_circle_equal_1 (geom_tests.GeometryTests) ... ok
+test_normal_quad (geom_tests.GeometryTests) ... ok
+test_plane_uv_projection (geom_tests.GeometryTests) ... skipped ''
+test_grouping_nodes (group_tests.GroupingTest) ... skipped 'Blender should be lunched with UI'
+test_core_exists (init_tests.InitTests) ... skipped 'Disabled temporarily'
+test_disable_enable (init_tests.InitTests) ... skipped 'Disabled temporarily'
+test_intersect_edges (intersect_edges_tests.IntersectEdgesTest2) ... ok
+test_export_import_all_nodes_new (json_export_import_simple_tests.ExportImportEachNode) ... ok
+test_list_join_node_import (json_export_import_tests.ListJoinImportTest) ... ok
+test_mesh_expr_export (json_export_import_tests.MeshExprExportTest) ... ok
+test_node_group_export (json_export_import_tests.NodeGroupExportTest) ... ok
+test_profile_export (json_export_import_tests.ProfileExportTest) ... ok
+test_script_uv_export (json_export_import_tests.ScriptUvExportTest) ... ok
+test_textview_expr_export (json_export_import_tests.ViewerTextExportTest) ... ok
+test_box_import (json_import_simple_tests.ImportSingleSimpleNode) ... ok
+test_cylinder_import (json_import_simple_tests.ImportSingleSimpleNode) ... ok
+test_torus_import (json_import_simple_tests.ImportSingleSimpleNode) ... ok
+test_import_examples (json_import_tests.ExamplesImportTest) ... ok
+test_mesh_expr_import (json_import_tests.MeshExprImportTest) ... ok
+test_profile_import (json_import_tests.ProfileImportTest) ... ok
+test_script_uv_import (json_import_tests.ScriptUvImportTest) ... ok
+test_check_no (linear_approximation_tests.LineTests) ... ok
+test_check_yes (linear_approximation_tests.LineTests) ... ok
+test_distance_to_point (linear_approximation_tests.LineTests) ... ok
+test_from_two_points (linear_approximation_tests.LineTests) ... ok
+test_approximate_line_1 (linear_approximation_tests.LinearApproximationTests) ... ok
+test_approximate_line_2 (linear_approximation_tests.LinearApproximationTests) ... ok
+test_approximate_plane (linear_approximation_tests.LinearApproximationTests) ... ok
+test_check_no (linear_approximation_tests.PlaneTests) ... ok
+test_check_yes (linear_approximation_tests.PlaneTests) ... ok
+test_distance_to_point (linear_approximation_tests.PlaneTests) ... ok
+test_distance_to_points (linear_approximation_tests.PlaneTests) ... ok
+test_intersect_with_line (linear_approximation_tests.PlaneTests) ... ok
+test_intersect_with_plane (linear_approximation_tests.PlaneTests) ... ok
+test_nearest_to_origin (linear_approximation_tests.PlaneTests) ... ok
+test_plane_from_three_points (linear_approximation_tests.PlaneTests) ... ok
+test_two_vectors (linear_approximation_tests.PlaneTests) ... ok
+test_control_points (linear_spline_tests.LinearSplineTests) ... ok
+test_eval (linear_spline_tests.LinearSplineTests) ... ok
+test_tangent (linear_spline_tests.LinearSplineTests) ... ok
+test_binom_1 (math_tests.MathTests) ... ok
+test_binom_array (math_tests.MathTests) ... ok
+test_distribute_int_1 (math_tests.MathTests) ... ok
+test_distribute_int_2 (math_tests.MathTests) ... ok
+test_distribute_int_3 (math_tests.MathTests) ... skipped ''
+test_ngon_verts_1 (ngon_tests.NGonTests) ... ok
+test_ngon_verts_2 (ngon_tests.NGonTests) ... ok
+test_using_update_method (nodes_consistency_tests.UsingMethodsTest) ... ok
+test_apply_matrices (nodes_tests.ApplyMatrixNodeTest) ... ok
+test_empty_data (nodes_tests.NodeCommonTest)
+Assume that all node functions should be able to handle cases when one or more of input parameters are None ... ok
+test_interpolate_1 (nurbs_tests.InterpolateTests)
+NURBS interpolation in 3D ... ok
+test_interpolate_2 (nurbs_tests.InterpolateTests)
+NURBS Interpolation in homogenous coordinates ... ok
+test_diff_1 (nurbs_tests.KnotvectorTests) ... ok
+test_diff_2 (nurbs_tests.KnotvectorTests) ... ok
+test_diff_3 (nurbs_tests.KnotvectorTests) ... ok
+test_elevate_knotvector (nurbs_tests.KnotvectorTests) ... ok
+test_from_multiplicity_1 (nurbs_tests.KnotvectorTests) ... ok
+test_from_multiplicity_2 (nurbs_tests.KnotvectorTests) ... ok
+test_from_tknots (nurbs_tests.KnotvectorTests) ... ok
+test_merge_1 (nurbs_tests.KnotvectorTests) ... ok
+test_merge_2 (nurbs_tests.KnotvectorTests) ... ok
+test_to_multiplicity_1 (nurbs_tests.KnotvectorTests) ... ok
+test_to_multiplicity_2 (nurbs_tests.KnotvectorTests) ... ok
+test_to_multiplicity_3 (nurbs_tests.KnotvectorTests) ... ok
+test_to_multiplicity_4 (nurbs_tests.KnotvectorTests) ... ok
+test_basis_derivative (nurbs_tests.NurbsCurveTests)
+Test basis functions derivative ... ok
+test_basis_function (nurbs_tests.NurbsCurveTests)
+Test basis functions values ... ok
+test_basis_function_3436 (nurbs_tests.NurbsCurveTests)
+Test basis functions values outside of bounds ... ok
+test_curve_3436 (nurbs_tests.NurbsCurveTests) ... ok
+test_curve_3436_2 (nurbs_tests.NurbsCurveTests) ... ok
+test_curve_3436_3 (nurbs_tests.NurbsCurveTests) ... skipped 'For now, Native implementation gives different results from Geomdl when evaluating the curve out of bounds'
+test_curve_eval (nurbs_tests.NurbsCurveTests) ... ok
+test_curve_eval_2 (nurbs_tests.NurbsCurveTests) ... ok
+test_curve_second (nurbs_tests.NurbsCurveTests) ... ok
+test_curve_tangent (nurbs_tests.NurbsCurveTests) ... ok
+test_curve_tangent_2 (nurbs_tests.NurbsCurveTests) ... ok
+test_curve_third (nurbs_tests.NurbsCurveTests) ... ok
+test_curve_third_2 (nurbs_tests.NurbsCurveTests) ... ok
+test_eval (nurbs_tests.NurbsSurfaceTests) ... ok
+test_eval_2 (nurbs_tests.NurbsSurfaceTests) ... ok
+test_gauss_curvature (nurbs_tests.NurbsSurfaceTests) ... ok
+test_gauss_curvature_2 (nurbs_tests.NurbsSurfaceTests) ... ok
+test_normal (nurbs_tests.NurbsSurfaceTests) ... ok
+test_arc_1 (nurbs_tests.OtherNurbsTests) ... ok
+test_arc_2 (nurbs_tests.OtherNurbsTests) ... ok
+test_arc_3 (nurbs_tests.OtherNurbsTests) ... ok
+test_circle_1 (nurbs_tests.OtherNurbsTests) ... ok
+test_circle_2 (nurbs_tests.OtherNurbsTests) ... ok
+test_elevate_bezier_degree_1 (nurbs_tests.OtherNurbsTests) ... ok
+test_elevate_bezier_degree_2 (nurbs_tests.OtherNurbsTests) ... ok
+test_from_homogenous (nurbs_tests.OtherNurbsTests) ... ok
+test_insert_1 (nurbs_tests.OtherNurbsTests) ... ok
+test_insert_2 (nurbs_tests.OtherNurbsTests) ... ok
+test_insert_3 (nurbs_tests.OtherNurbsTests) ... ok
+test_remove_1 (nurbs_tests.OtherNurbsTests) ... skipped ''
+test_remove_2 (nurbs_tests.OtherNurbsTests) ... ok
+test_remove_geomdl_1 (nurbs_tests.OtherNurbsTests) ... skipped 'Until https://github.com/orbingol/NURBS-Python/issues/135 is resolved'
+test_ruled_surface_1 (nurbs_tests.OtherNurbsTests)
+Test that ... ok
+test_ruled_surface_2 (nurbs_tests.OtherNurbsTests) ... ok
+test_single_1 (nurbs_tests.OtherNurbsTests) ... ok
+test_split_1 (nurbs_tests.OtherNurbsTests) ... ok
+test_split_2 (nurbs_tests.OtherNurbsTests) ... ok
+test_split_3 (nurbs_tests.OtherNurbsTests) ... ok
+test_split_4 (nurbs_tests.OtherNurbsTests) ... ok
+test_split_5 (nurbs_tests.OtherNurbsTests) ... ok
+test_bezier_to_taylor_1 (nurbs_tests.TaylorTests) ... ok
+test_bezier_to_taylor_2 (nurbs_tests.TaylorTests) ... ok
+test_outside_sphere_1 (nurbs_tests.TaylorTests) ... ok
+test_outside_sphere_2 (nurbs_tests.TaylorTests) ... ok
+test_outside_sphere_3 (nurbs_tests.TaylorTests) ... ok
+test_import_examples (profile_mk3_tests.ExamplesParseTests) ... ok
+test_expr (profile_mk3_tests.SimpleTests) ... ok
+test_identifier (profile_mk3_tests.SimpleTests) ... ok
+test_negated_var (profile_mk3_tests.SimpleTests) ... ok
+test_close_All (profile_mk3_tests.StatementParseTests) ... ok
+test_close_path (profile_mk3_tests.StatementParseTests) ... ok
+test_parse_assign (profile_mk3_tests.StatementParseTests) ... ok
+test_parse_curveto (profile_mk3_tests.StatementParseTests) ... ok
+test_parse_default (profile_mk3_tests.StatementParseTests) ... ok
+test_parse_hor_lineto (profile_mk3_tests.StatementParseTests) ... ok
+test_parse_hor_lineto_n (profile_mk3_tests.StatementParseTests) ... ok
+test_parse_lineto (profile_mk3_tests.StatementParseTests) ... ok
+test_parse_lineto_n (profile_mk3_tests.StatementParseTests) ... ok
+test_parse_moveto (profile_mk3_tests.StatementParseTests) ... ok
+test_parse_vert_lineto (profile_mk3_tests.StatementParseTests) ... ok
+test_parse_vert_lineto_n (profile_mk3_tests.StatementParseTests) ... ok
+test_box (simple_generator_tests.BoxNodeTest) ... ok
+test_ngon (simple_generator_tests.NGonNodeTest) ... ok
+test_text_viewer (simple_viewer_text_tests.TextViewerTest) ... ok
+test_adaptive_sockets (socket_conversion_tests.SocketConversionTests)
+Test for nodes that allow arbitrary data at input. ... ok
+test_vertices_to_matrices (socket_conversion_tests.SocketConversionTests)
+Test that vertices -> matrices conversion work correctly. ... ok
+test_generating_tree_structure (tree_structure_tests.TreeStructureTest) ... ok
+test_bfs_walk (tree_walk_tests.TreeWalkTest) ... ok
+test_dfs_walk (tree_walk_tests.TreeWalkTest) ... ok
+test_input_output_nodes (tree_walk_tests.TreeWalkTest) ... ok
+test_sorted_walk (tree_walk_tests.TreeWalkTest) ... ok
+test_all_nodes_have_icons (ui_tests.UiTests) ... ok
+test_tree_cleaning (update_system_tests.TreeCleaningTest) ... ok
+test_decorator (vectorize_tests.VectorizeTest) ... ok
+test_parameters_matching (vectorize_tests.VectorizeTest) ... ok
+
+======================================================================
+ERROR: test_fuse_1 (general_fuse_tests.GeneralFuseTests)
+Input level 1, Merge = On
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/ololo/.config/blender/3.1/scripts/addons/sverchok/tests/general_fuse_tests.py", line 44, in test_fuse_1
+    self.node.process()
+  File "/home/ololo/.config/blender/3.1/scripts/addons/sverchok/nodes/solid/general_fuse.py", line 195, in process
+    solids_in = self.inputs['Solids'].sv_get()
+  File "/home/ololo/.config/blender/3.1/scripts/addons/sverchok/core/sockets.py", line 421, in sv_get
+    return sv_get_socket(self, deepcopy)
+  File "/home/ololo/.config/blender/3.1/scripts/addons/sverchok/core/socket_data.py", line 188, in sv_get_socket
+    raise SvNoDataError(socket)
+sverchok.core.sv_custom_exceptions.SvNoDataError: No data passed into socket 'Solids'
+
+======================================================================
+ERROR: test_fuse_2 (general_fuse_tests.GeneralFuseTests)
+Input level 1, Merge = Off
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/ololo/.config/blender/3.1/scripts/addons/sverchok/tests/general_fuse_tests.py", line 87, in test_fuse_2
+    self.node.process()
+  File "/home/ololo/.config/blender/3.1/scripts/addons/sverchok/nodes/solid/general_fuse.py", line 195, in process
+    solids_in = self.inputs['Solids'].sv_get()
+  File "/home/ololo/.config/blender/3.1/scripts/addons/sverchok/core/sockets.py", line 421, in sv_get
+    return sv_get_socket(self, deepcopy)
+  File "/home/ololo/.config/blender/3.1/scripts/addons/sverchok/core/socket_data.py", line 188, in sv_get_socket
+    raise SvNoDataError(socket)
+sverchok.core.sv_custom_exceptions.SvNoDataError: No data passed into socket 'Solids'
+
+======================================================================
+ERROR: test_fuse_3 (general_fuse_tests.GeneralFuseTests)
+Input level 2, Merge = On
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/ololo/.config/blender/3.1/scripts/addons/sverchok/tests/general_fuse_tests.py", line 127, in test_fuse_3
+    self.node.process()
+  File "/home/ololo/.config/blender/3.1/scripts/addons/sverchok/nodes/solid/general_fuse.py", line 195, in process
+    solids_in = self.inputs['Solids'].sv_get()
+  File "/home/ololo/.config/blender/3.1/scripts/addons/sverchok/core/sockets.py", line 421, in sv_get
+    return sv_get_socket(self, deepcopy)
+  File "/home/ololo/.config/blender/3.1/scripts/addons/sverchok/core/socket_data.py", line 188, in sv_get_socket
+    raise SvNoDataError(socket)
+sverchok.core.sv_custom_exceptions.SvNoDataError: No data passed into socket 'Solids'
+
+======================================================================
+ERROR: test_fuse_4 (general_fuse_tests.GeneralFuseTests)
+Input level 2, Merge = Off
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/ololo/.config/blender/3.1/scripts/addons/sverchok/tests/general_fuse_tests.py", line 167, in test_fuse_4
+    self.node.process()
+  File "/home/ololo/.config/blender/3.1/scripts/addons/sverchok/nodes/solid/general_fuse.py", line 195, in process
+    solids_in = self.inputs['Solids'].sv_get()
+  File "/home/ololo/.config/blender/3.1/scripts/addons/sverchok/core/sockets.py", line 421, in sv_get
+    return sv_get_socket(self, deepcopy)
+  File "/home/ololo/.config/blender/3.1/scripts/addons/sverchok/core/socket_data.py", line 188, in sv_get_socket
+    raise SvNoDataError(socket)
+sverchok.core.sv_custom_exceptions.SvNoDataError: No data passed into socket 'Solids'
+
+----------------------------------------------------------------------
+Ran 268 tests in 13.211s
+
+FAILED (errors=4, skipped=8)
+

@@ -1,0 +1,308 @@
+<html>
+<head>
+<title>Сверчок. Линия - путь сверчка 01 | Архитектор, Дизайнер, Человек...</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="autor" content="Архитектор, Дизайнер, Человек...">
+<meta name="keywords" content="Сверчок руководство пользователя Блендер Blender 3d">
+<meta name="description" content="Сверчок урок 1. Путь сверчка.">
+<link rel="stylesheet" href="file.css" type="text/css" media="screen" />
+<link href='http://fonts.googleapis.com/css?family=Ubuntu&subset=latin,cyrillic-ext,cyrillic' rel='stylesheet' type='text/css'> <!--CSS шрифт-->
+<link rel="icon" type="image/png" href="blender.png" />
+<script src='jquery.min.js'></script>
+<script src='menu.js'></script>
+<!--ширина экрана диктует CSS-->
+<script language="JavaScript">
+var height=0;
+var width=0;
+if (self.screen) {    
+        width = screen.width
+        height = screen.height
+}
+else if (self.java) {  
+      var jkit = java.awt.Toolkit.getDefaultToolkit();
+      var scrsize = jkit.getScreenSize();      
+      width = scrsize.width; 
+      height = scrsize.height; 
+}
+if (width < 1000)
+{
+	document.write("<link rel='stylesheet' type='text/css' href='main_page/small-less-1000.css'>");
+}
+else 
+if(width < 1270)
+{
+	document.write("<link rel='stylesheet' type='text/css' href='main_page/small.css'>");
+}
+else 
+if(width > 1270)
+{
+	document.write("<link rel='stylesheet' type='text/css' href='main_page/big.css'>");
+}
+</script>
+<!--ширина экрана диктует CSS-->
+</head>
+
+<body>
+<a name="top"></a>
+
+<table class="head"><tr><td>
+    <div class="cellsBlock">
+	<div class="cell10" style="background: #c51;">
+	<h3><a class="mainpage" href="sverchok_ru.html">главная</a></h3>
+	</div>
+	<div class="cell70" style="background: #c51;">
+	<h1><img src='sverch/sverchlogo.png' style="width:200px"></h1>
+    </div>
+    <div class="cell20" style="background: #c51;">
+    <div class="size">
+	<input type="text" name="test" value="Меню сверчка" class="field" readonly="readonly" />
+	<ul class="list">
+	<li><a class="menu" href="sverchok_ru.html">___Сверчок</a></li>
+	<li><a class="menu" href="Sverchok_man_00.html">00_Установка</a></li>
+	<li><a class="menu" href="Sverchok_man_01.html">01_Линия</a></li>
+	<li><a class="menu" href="Sverchok_man_02.html">02_Структура данных</a></li>
+	<li><a class="menu" href="Sverchok_man_03.html">03_Некоторые узлы</a></li>
+	<li><a class="menu" href="Sverchok_man_04.html">04_Соединение объектов</a></li>
+	<li><a class="menu" href="Sverchok_stadium.html">05_Стадион им. Ленина</a></li>
+	<li><a class="menu" href="Sverchok_table.html">06_Столы в Сверчке</a></li>
+	<li><a class="menu" href="Sverchok_man_07.html">07_Свои узлы в песочнице</a></li>
+	<li><a class="menu" href="Sverchok_man_08.html">08_Поверхности</a></li>
+	<li><a class="menu" href="Sverchok_man_09.html">09_Ферма</a></li>
+	<li><a class="menu" href="Sverchok_man_10_theme.html">10_Тема</a></li>
+	<li><a class="menu" href="Sverchok_man_11_profile.html">11_Профиль</a></li>
+	<li><a class="menu" href="Sverchok_man_12_timing.html">12_Отладка</a></li>
+	<li><a class="menu" href="Sverchok_man_13_menu.html">13_Меню</a></li>
+	<li><a class="menu" href="Sverchok_man_14_IO.html">14_Импорт/Экспорт</a></li>
+	<li><a class="menu" href="Sverchok_man_15_obj_nodes.html">15_Узлы сцены</a></li>
+	</ul></ul>
+</div></div></div>
+</td></tr></table>
+
+<table><tr><td>
+    <div class="cellsBlock">
+	<div class="cell100" style="height:30px; background: #247;">
+	</div>
+    </div>
+</td></tr></table>
+
+<table><tr><td><!--class="right"-->
+    <div class="cellsBlock">
+	<div class="cell100" style="height:80px; background: #247;">
+	<h1>01_Линия. Путь Сверчка.</h1>
+	</div>
+    </div>
+</td></tr></table>
+
+<table><tr><td><!--class="right"-->
+    <div class="cellsBlock">
+	<div class="cell100" style="background: #36a;">
+<center><img class='rounded' src='sverch/man01/screen7.png' /></center>
+	<p>Внимание! Всё, что описано ниже можно сделать при помощи одного узла Line в разделе генераторов! <s>Люди, вас обманывают!!!</s> Но для понимания принципа работы сверчка и вообще программирования узлами, надо уметь это всё делать. Меню вызывается <b>Ctrl+Space</b>, вот раздел генераторов:</p><br>
+	<center><img class='roundauto' src='sverch/man01/screen8.png' /></center><br>
+	<p>Есть ещё расширенный раздел генераторов:</p><br>
+	<center><img class='roundauto' src='sverch/man01/screen9.png' /></center><br>
+	<p>В итоге всё, что мы делаем ниже воспроизводится двумя узлами:</p><br>
+	<center><img class='roundauto' src='sverch/man01/screen10.png' /></center><br>
+
+
+	</div>
+    </div>
+</td></tr></table>
+
+<table><tr><td>
+    <div class="cellsBlock">
+	<div class="cell100" style="height:30px; background: #247;">
+	<p></p>
+    </div></div>
+</td></tr></table>
+
+
+
+
+<table><tr><td><!--class="left"-->
+    <div class="cellsBlock">
+	<div class="cell100" style=" background: #36a;">
+
+	<p>Можно попробовать разные генераторы, но давайте исследует механику линии. Попробуем разобраться с базовыми узлами Сверчка и его философией. Чтобы сделать геометрию, необходимо сгенерировать последовательности и соединить элементы определенным образом. Например поставим задачу сделать ряд из 10 вершин и соединить их ребрами.</p>
+
+<p>Создаем последовательность от 0 до 9 (Range). Проставляем эти числа в координаты вершин, в Х-координату например. Тогда вершины будут иметь такие координаты:
+(0.0, 0.0, 0.0), (1.0, 0.0, 0.0), (2.0, 0.0, 0.0), … (9.0, 0.0, 0.0)</p>
+<br>
+<p>Сделаем это с помощью дополнения к блендеру,  «Сверчок».</p>
+
+<p>На рисунке представлен Генератор серий, Range float / Range int из раздела <b>Numbers</b>. Он генерирует последовательности чисел, начиная с Start и заканчивая (10-Stop) c шагом Step.</p>
+<br>
+<center><img class='roundauto' src='sverch/man01/screen1.png' /></center>
+<br>
+
+<p>На этом рисунке мы видим ещё два узла: Генератор векторов (Vector in) и Просмотрщик. Просмотрщик (Viewer draw) должен рисовать объект по заданным вершинам, ребрам и матрицам.</p>
+<center><img class='rounded' src='sverch/man01/screen2.png' /></center>
+<p>Итак, Генератор векторов – делает из набора (последовательности) чисел векторы. Векторы в контексте Сверчка – это координаты в трёхмерном пространстве, то есть вершины.</p>
+<p>Таким образом, мы получили необходимую последовательность вершин:  (0.0, 0.0, 0.0), (1.0, 0.0, 0.0), (2.0, 0.0, 0.0), … (9.0, 0.0, 0.0)</p>
+
+<p>Вершины получили. Теперь надо получить рёбра, соединяющие эти вершины. Что такое ребро в контексте Сверчка? Как он распознает, что во входе в узел именно ребро? Во-первых вход должен быть обозначен зеленой точкой. Если вершины и векторы обозначаются оранжевой точкой, то ребра надо подключать в зеленые точки. Это первое условие, а второе – должен быть определенный формат данных. Ребро содержит информацию об индексах соединяемых вершин. Посмотрите ещё раз на Просмотрщик. Есть вход вершин/векторов и рёбер. Если в вершины мы посылаем координаты, то в рёебра мы посылаем индексы этих вершин. </p>
+<p>Взглянем на нашу последовательность вершин:</p>
+<ul><li>(0.0, 0.0, 0.0) – 0</li>
+<li>(1.0, 0.0, 0.0) – 1</li>
+<li>(2.0, 0.0, 0.0) – 2</li>
+<li>…</li>
+<li>(9.0, 0.0, 0.0) – 9</li></ul>
+
+<p>Если ребро записать так: (0,1), - то оно соединит вершины (0.0, 0.0, 0.0) и  (1.0, 0.0, 0.0).</p>
+<p>Необходимый нам список ребер для генерации прямой, содержащую 10 вершин будет таким:</p>
+<ul><li>(0,1),</li>
+<li>(1,2),</li>
+<li>(2,3),</li>
+<li>(3,4),</li>
+<li>(4,5),</li>
+<li>(5,6),</li>
+<li>(6,7),</li>
+<li>(7,8),</li>
+<li>(8,9)</li></ul>
+
+<p>Сколько ребер насчитали? Я насчитал 9 ребер. 10 вершин и 9 ребер. Это логично.</p>
+<p>Я специально написал последовательность ребер в столбик. Видите закономерность?</p>
+<p>Чтобы получить список ребер,  надо сгенерировать две последовательности: от 0 до 8 и от 1 до 9.</p>
+<p>Проще всего это сделать  двумя генераторами:</p>
+
+<p>Первый генератор:</p>
+<ul><li>Start: 0</li>
+<li>Stop: 9</li>
+<li>Step: 1</li></ul>
+
+<p>Второй генератор:</p>
+<ul><li>Start: 1</li>
+<li>Stop: 10</li>
+<li>Step: 1</li></ul>
+
+
+	</div>
+    </div>
+</td></tr></table>
+
+<table><tr><td>
+    <div class="cellsBlock">
+	<div class="cell100" style="height:30px; background: #247;">
+	<p></p>
+    </div></div>
+</td></tr></table>
+
+
+
+
+<table><tr><td><!--class="left"-->
+    <div class="cellsBlock">
+	<div class="cell100" style=" background: #36a;">
+	<p>Но Сверчок позволяет обойтись одним генератором. </p>
+<center><img class='rounded' src='sverch/man01/screen3.png' /></center>
+<p>Видим новые узлы: узел преобразования дробного в целое число (float2int), узел Смещения (List Shift), узел сшивания (List Zip). Также видим Sthetoscope из раздела <b>Text</b>, в этом разделе находятся узлы, позволяющие разными способами работать с текстом и смотреть что есть в сокетах. Viewer text, Sthetoscope, Debug print позволяют нам по-разному смотреть в сокеты.</p>
+<p>На вход data подается последовательность, а на вход  shift – число сдвига. Может быть положительным или отрицательным числом, но обязательно целым. (А может быть и последовательностью для написания сложных алгоритмов)</p>
+<p>Enclose – закрывать список. Т.е. если на вход подали такую последовательность [0,1,2,3], то на выходе с включенной галочкой и shift=2 получим [2,3,0,1]. Если же галочку не ставить, то получим [2,3].</p>
+
+<p>Если мы сделаем узлы как на картинке, то сможем из генератора взять последовательность [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0], а с узлом смещения [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 0.0].</p>
+<p>Но так как нам не надо совмещать вершины 9 и 0, то галочку снимаем и получаем такую последовательность: [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]. </p>
+
+<p>Узел сшиватель (List Zip). Узел соединяет списки, поэлементно, группируя элементы в список по количеству входящих. </p>
+<p>Рассмотрим пример.</p>
+<p>A=[0,1,2,3]</p>
+<p>B=[22,33,44]</p>
+<p>C = Сшиваем A и B,   получим C = [(0,22), (1,33), (2,44)]. При этом не забудьте активировать unwrap, чтобы не обрамлять список в ещё один список.</p>
+<p>Видим, что список B короче, чем список A. Результат вы видите сами.</p>
+<p>Вот таким образом мы получаем список ребер.</p>
+<p>Но есть одно НО. Индексы вершин в ребрах нельзя задавать дробным числом. Помните, что у нас получилось? Мы соединяли списки в узле Zip-сочленителя: [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0] и [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]</p>
+<p>Давайте избавимся от дробей в индексах при помощи узла float2int, это его единственное предназначение.</p>
+<p>Этот пример на столько сложен,  на сколько и прост. Добавив узлы по работы с формулами, можно получать нечто большее.</p>
+
+	<p>Но у нас в рукаве есть ещё один вариант создания линии. Теперь в модификаторах находится универсальный узел, создающий как рёбра, так и полигоны разными способами. Это раздел Модификаторов создающих <b>Modifiers--Modifier Make</b>, узел называется Connect UV, что в переводе означает соединить по двум направлениям (в нашем случае по одному направлению создаются рёбра).</p>
+<center><img class='rounded' src='sverch/man01/screen4.png' /></center><br>
+    </div></div>
+</td></tr></table>
+
+<table><tr><td><!--class="left"-->
+    <div class="cellsBlock">
+	<div class="cell100" style="height:60px; background: #247;">
+	<p></p>
+    </div></div>
+</td></tr></table>
+
+
+
+
+<table><tr><td>
+    <div class="cellsBlock">
+	<div class="cell35" style="background: #c51;">
+	<h1><a class="mainpage" href="#top">Наверх</a></h1>
+    </div>
+	<div class="cell35" style="background: #247;">
+	<ul>
+	<li>Development!</li>
+	<li>Development!!</li>
+	<li>Development!!!</li>
+	<li>/Steven Anthony Ballmer/</li>
+	</ul>
+    </div>
+	<div class="cell35" style="background: #c51;">
+	<ul class="sample">
+	  <li><b>Архитектор, дизайнер и Человек...</b></li>
+	  <li>Все права защищены (с)
+	    <ul>
+	    <li>Земля</li>
+	    <li>2013 г.</li>
+	    </ul></li>
+	</ul>
+    </div></div>
+</td></tr></table>
+
+</body>
+<!-- Rating@Mail.ru counter -->
+<script type="text/javascript">//<![CDATA[
+var _tmr = _tmr || [];
+_tmr.push({id: '2383198', type: 'pageView', start: (new Date()).getTime()});
+(function (d, w) {
+   var ts = d.createElement('script'); ts.type = 'text/javascript'; ts.async = true;
+   ts.src = (d.location.protocol == 'https:' ? 'https:' : 'http:') + '//top-fwz1.mail.ru/js/code.js';
+   var f = function () {var s = d.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ts, s);};
+   if (w.opera == "[object Opera]") { d.addEventListener("DOMContentLoaded", f, false); } else { f(); }
+})(document, window);
+//]]></script><noscript><div style="position:absolute;left:-10000px;">
+<img src="//top-fwz1.mail.ru/counter?id=2383198;js=na" style="border:0;" height="1" width="1" alt="Рейтинг@Mail.ru" />
+</div></noscript>
+<!-- //Rating@Mail.ru counter -->
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+(function (d, w, c) {
+    (w[c] = w[c] || []).push(function() {
+        try {
+            w.yaCounter21907006 = new Ya.Metrika({id:21907006,
+                    webvisor:true,
+                    clickmap:true,
+                    trackLinks:true,
+                    accurateTrackBounce:true});
+        } catch(e) { }
+    });
+
+    var n = d.getElementsByTagName("script")[0],
+        s = d.createElement("script"),
+        f = function () { n.parentNode.insertBefore(s, n); };
+    s.type = "text/javascript";
+    s.async = true;
+    s.src = (d.location.protocol == "https:" ? "https:" : "http:") + "//mc.yandex.ru/metrika/watch.js";
+
+    if (w.opera == "[object Opera]") {
+        d.addEventListener("DOMContentLoaded", f, false);
+    } else { f(); }
+})(document, window, "yandex_metrika_callbacks");
+</script>
+<noscript><div><img src="//mc.yandex.ru/watch/21907006" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<!-- /Yandex.Metrika counter -->
+<!--google analitics-->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-42732782-1', 'cc.ua');
+  ga('send', 'pageview');
+</script>
+<!--google analitics-->
+</html>

@@ -1,0 +1,390 @@
+<html>
+<head>
+<title>Сверчок. Песочница, пользовательские узлы 07 | Архитектор, Дизайнер, Человек...</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="autor" content="Архитектор, Дизайнер, Человек...">
+<meta name="keywords" content="Сверчок руководство пользователя Блендер Blender 3d">
+<meta name="description" content="Сверчок. Урок 7. Создание собственного узла на питоне в песочнице сверчка. Смогут все.">
+<link rel="stylesheet" href="file.css" type="text/css" media="screen" />
+<link href='http://fonts.googleapis.com/css?family=Ubuntu&subset=latin,cyrillic-ext,cyrillic' rel='stylesheet' type='text/css'> <!--CSS шрифт-->
+<link rel="icon" type="image/png" href="blender.png" />
+<script src='jquery.min.js'></script>
+<script src='menu.js'></script>
+<!--ширина экрана диктует CSS-->
+<script language="JavaScript">
+var height=0;
+var width=0;
+if (self.screen) {    
+        width = screen.width
+        height = screen.height
+}
+else if (self.java) {  
+      var jkit = java.awt.Toolkit.getDefaultToolkit();
+      var scrsize = jkit.getScreenSize();      
+      width = scrsize.width; 
+      height = scrsize.height; 
+}
+if (width < 1000)
+{
+	document.write("<link rel='stylesheet' type='text/css' href='main_page/small-less-1000.css'>");
+}
+else 
+if(width < 1270)
+{
+	document.write("<link rel='stylesheet' type='text/css' href='main_page/small.css'>");
+}
+else 
+if(width > 1270)
+{
+	document.write("<link rel='stylesheet' type='text/css' href='main_page/big.css'>");
+}
+</script>
+<!--ширина экрана диктует CSS-->
+</head>
+
+<body>
+<a name="top"></a>
+
+
+
+
+<table class="head"><tr><td>
+    <div class="cellsBlock">
+	<div class="cell10" style="background: #c51;">
+	<h3><a class="mainpage" href="sverchok_ru.html">главная</a></h3>
+	</div>
+	<div class="cell70" style="background: #c51;">
+	<h1><img src='sverch/sverchlogo.png' style="width:200px"></h1>
+    </div>
+    <div class="cell20" style="background: #c51;">
+    <div class="size">
+	<input type="text" name="test" value="Меню сверчка" class="field" readonly="readonly" />
+	<ul class="list">
+	<li><a class="menu" href="sverchok_ru.html">___Сверчок</a></li>
+	<li><a class="menu" href="Sverchok_man_00.html">00_Установка</a></li>
+	<li><a class="menu" href="Sverchok_man_01.html">01_Линия</a></li>
+	<li><a class="menu" href="Sverchok_man_02.html">02_Структура данных</a></li>
+	<li><a class="menu" href="Sverchok_man_03.html">03_Некоторые узлы</a></li>
+	<li><a class="menu" href="Sverchok_man_04.html">04_Соединение объектов</a></li>
+	<li><a class="menu" href="Sverchok_stadium.html">05_Стадион им. Ленина</a></li>
+	<li><a class="menu" href="Sverchok_table.html">06_Столы в Сверчке</a></li>
+	<li><a class="menu" href="Sverchok_man_07.html">07_Свои узлы в песочнице</a></li>
+	<li><a class="menu" href="Sverchok_man_08.html">08_Поверхности</a></li>
+	<li><a class="menu" href="Sverchok_man_09.html">09_Ферма</a></li>
+	<li><a class="menu" href="Sverchok_man_10_theme.html">10_Тема</a></li>
+	<li><a class="menu" href="Sverchok_man_11_profile.html">11_Профиль</a></li>
+	<li><a class="menu" href="Sverchok_man_12_timing.html">12_Отладка</a></li>
+	<li><a class="menu" href="Sverchok_man_13_menu.html">13_Меню</a></li>
+	<li><a class="menu" href="Sverchok_man_14_IO.html">14_Импорт/Экспорт</a></li>
+	<li><a class="menu" href="Sverchok_man_15_obj_nodes.html">15_Узлы сцены</a></li>
+	</ul></ul>
+</div></div></div>
+</td></tr></table>
+
+<table><tr><td>
+    <div class="cellsBlock">
+	<div class="cell100" style="height:30px; background: #247;">
+	</div>
+    </div>
+</td></tr></table>
+
+<table><tr><td><!--class="right"-->
+    <div class="cellsBlock">
+	<div class="cell100" style="height:80px; background: #247;">
+	<h1>07_Свои узлы в песочнице.</h1>
+	</div>
+    </div>
+</td></tr></table>
+
+<table><tr><td><!--class="right"-->
+    <div class="cellsBlock">
+	<div class="cell100" style="background: #36a;">
+	<p>Чтобы написать свой узел в сверчке не надо иметь семь пядей во лбу, только шесть. откроем для начала сверчок в блендере.</p>
+	<p><a href='http://nikitron.cc.ua/sverch/html/nodes/generator/scripted.html'>Здесь инструкции от создателя узла, zeffii, он всё услужливо расписал.</a> Спасибо ему.</p>
+	<p>Так же есть пара серий экранов <a href='https://plus.google.com/103738725871920806709/posts/YPVN7sy8drn'>про шаблоны и где они находятся</a>, а также <a href='https://plus.google.com/103738725871920806709/posts/Xz5v7TrDHeD'>первая инструкция</a>, и про <a href='https://plus.google.com/103738725871920806709/posts/LcB6Gpd58MH'>шаблоны и как ими пользоваться</a>. Есть примеры <a href='https://plus.google.com/103738725871920806709/posts/A3wckmJFtWy'>тут</a>.</p>
+<center><a href="#00" class="admit" data-title="00."><img src="sverch/man07/00sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="00"></a>
+        	<div class="popup">
+		<img src="sverch/man07/00.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	</center>
+	<p>Достаём узел песочницы, Scripted Node, который находится в генераторах и позволит нам делать операции которые трудно реализовать множеством узлов, также можно объединить функционал нескольких узлов для оперативности просчёта. Писать будем на языке python. Затем достаём шаблон из выпадающего меню, который бы вписывал нам в треугольник круг.</p>
+<center><a href="#01" class="admit" data-title="01."><img src="sverch/man07/01sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="01"></a>
+        	<div class="popup">
+		<img src="sverch/man07/01.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	<a href="#02" class="admit" data-title="02."><img src="sverch/man07/02sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="02"></a>
+        	<div class="popup">
+		<img src="sverch/man07/02.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	<a href="#03" class="admit" data-title="03."><img src="sverch/man07/03sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="03"></a>
+        	<div class="popup">
+		<img src="sverch/man07/03.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	<a href="#04" class="admit" data-title="04."><img src="sverch/man07/04sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="04"></a>
+        	<div class="popup">
+		<img src="sverch/man07/04.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	</center>
+
+<p>на рисунке 5 и 6 мы активируем достатый шаблон, выбирая уже из второго выпадающего меню - это текстовые файлы блендера, среди них может быть сверчковый текстовой просмотрщик.</p>
+<center><a href="#05" class="admit" data-title="05."><img src="sverch/man07/05sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="05"></a>
+        	<div class="popup">
+		<img src="sverch/man07/05.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	<a href="#06" class="admit" data-title="06."><img src="sverch/man07/06sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="06"></a>
+        	<div class="popup">
+		<img src="sverch/man07/06.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	</center>
+<p>Строим треугольник и вставляем его в сверчка, учтите что матрица не присвоена, если объект подвинут - у нас не совпадёт, надо применять узел apply matrix во вкладке векторов.</p>
+<center><a href="#07" class="admit" data-title="07."><img src="sverch/man07/07sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="07"></a>
+        	<div class="popup">
+		<img src="sverch/man07/07.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	<a href="#08" class="admit" data-title="08."><img src="sverch/man07/08sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="08"></a>
+        	<div class="popup">
+		<img src="sverch/man07/08.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	</center>
+<p>Видим, что шабюлонный узел выдаёт нам точку центра окружности и радиус. Нам понадобятся нормаль полигона для задавания матрицы. Matrix in узел берёт точку из шаблонного узла как положение, location, а вращение мы задаём разницей между вектором Z, и вторым вектором - нормалью, который вставляем вместо значения угла вращения матрицы. Это уловка, которая задокументирована и не  сразу очевидна, но в Wiki сверчка есть.</p>
+<center><a href="#09" class="admit" data-title="09."><img src="sverch/man07/09sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="09"></a>
+        	<div class="popup">
+		<img src="sverch/man07/09.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	<a href="#10" class="admit" data-title="10."><img src="sverch/man07/10sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="10"></a>
+        	<div class="popup">
+		<img src="sverch/man07/10.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	</center>
+<p>Двигаем точки и смотрим что получается пр нажатии обновить в сверчке.</p>
+<center><a href="#11" class="admit" data-title="11."><img src="sverch/man07/11sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="11"></a>
+        	<div class="popup">
+		<img src="sverch/man07/11.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	<a href="#12" class="admit" data-title="12."><img src="sverch/man07/12sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="12"></a>
+        	<div class="popup">
+		<img src="sverch/man07/12.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	</center>
+
+<p>Меняем параметры, смотрим и обнуляем чистим свой узел, чтобы создать свой узел. Для начала нам понадобится шаблон, пустой шаблон с которого следует начать, в нём есть подсказки для начинающих.</p>
+<center><a href="#13" class="admit" data-title="13."><img src="sverch/man07/13sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="13"></a>
+        	<div class="popup">
+		<img src="sverch/man07/13.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	<a href="#14" class="admit" data-title="14."><img src="sverch/man07/14sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="14"></a>
+        	<div class="popup">
+		<img src="sverch/man07/14.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	<a href="#15" class="admit" data-title="15."><img src="sverch/man07/15sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="15"></a>
+        	<div class="popup">
+		<img src="sverch/man07/15.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	<a href="#16" class="admit" data-title="16."><img src="sverch/man07/16sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="16"></a>
+        	<div class="popup">
+		<img src="sverch/man07/16.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	</center>
+
+<p>Сделаем окно текста на весь экран и редактируем текст скрипта. Для начала определим входные значения, для этого в дефиниции def sv_main(): вставим строчку number=10, впрочем можно написать count=50, здесь никто вас не ограничивает. Затем нажимаем Ctrl+I, чтобы сформировать автоматически вводные узлы, это список in_sockets.</p>
+<center><a href="#17" class="admit" data-title="17."><img src="sverch/man07/17sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="17"></a>
+        	<div class="popup">
+		<img src="sverch/man07/17.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	<a href="#18" class="admit" data-title="18."><img src="sverch/man07/18sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="18"></a>
+        	<div class="popup">
+		<img src="sverch/man07/18.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+
+<p>Затем нам надо удалить дублирующие вводные, просто их удаляем.</p>
+<center><a href="#19" class="admit" data-title="19."><img src="sverch/man07/19sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="19"></a>
+        	<div class="popup">
+		<img src="sverch/man07/19.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	<a href="#20" class="admit" data-title="20."><img src="sverch/man07/20sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="20"></a>
+        	<div class="popup">
+		<img src="sverch/man07/20.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+
+<p>Вводим наш текст, который представляет собой формирование списка [] из тьюплсов (0,0,i) что представляют собой векторы, x, y, z соответственно. Вписываем переменную нашего списка в выходные сокеты, не забываем указать тип сокета, один из трёх v,s,m, то есть вершины, пеолигоны и матрицы. Возвращаемся в обычный оконный режим и перезагружаем шаблон.</p>
+<center><a href="#21" class="admit" data-title="21."><img src="sverch/man07/21sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="21"></a>
+        	<div class="popup">
+		<img src="sverch/man07/21.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	<a href="#22" class="admit" data-title="22."><img src="sverch/man07/22sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="22"></a>
+        	<div class="popup">
+		<img src="sverch/man07/22.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+
+<p>Теперь нам не надо столько узлов, мы делаем серию точек, а значит нам нужно целое число, integer из вкладки numbers, а также просмотрщик. Мы сразу видим столько точек, сколько мы указали в целом числе.</p>
+<center><a href="#23" class="admit" data-title="23."><img src="sverch/man07/23sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="23"></a>
+        	<div class="popup">
+		<img src="sverch/man07/23.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	<a href="#24" class="admit" data-title="24."><img src="sverch/man07/24sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="24"></a>
+        	<div class="popup">
+		<img src="sverch/man07/24.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+
+<p>Можно поиграться с нашим единственным параметром. Если надо, можно добавить вводные паарметры списков, для этого number=[], а также поменять тип сокета ввода и ввода соответственно v,s,m. Для примеров - смотрите шаблоны, благо их масса. Самый наверное закрученый там мой Box ordered, что значит упорядоченый короб. В чём его преимущество - все полигоны, грани куба упорядочены и идут по рядам и по столбцам, а  затем по граням куба, что прощает вам выборку из его граней. Единственный минус - x,y должны быть одинаковыми, это его отличает от Box, который сделал zeffii, где решено при помощи bmesh инструментария, но тогда грани хаотично распределены. Есть интересные решения по цветочкам и паутинке, в общем, поле деятельности огромное, есть пример работы с частицами блендера, но пока шаблоны не упорядочены и не сведены.</p>
+<p>Дерзайте ныне ободрены уменьем вашим доказать...</p>
+<center><a href="#25" class="admit" data-title="25."><img src="sverch/man07/25sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="25"></a>
+        	<div class="popup">
+		<img src="sverch/man07/25.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	<a href="#26" class="admit" data-title="26."><img src="sverch/man07/26sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="26"></a>
+        	<div class="popup">
+		<img src="sverch/man07/26.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+
+<p>Да пребудет с вами сила Сверчка.</p>
+
+
+	</div>
+    </div>
+</td></tr></table>
+
+<table><tr><td>
+    <div class="cellsBlock">
+	<div class="cell100" style="height:60px; background: #247;">
+	<p></p>
+    </div></div>
+</td></tr></table>
+
+
+
+
+
+
+<table><tr><td>
+    <div class="cellsBlock">
+	<div class="cell35" style="background: #c51;">
+	<h1><a class="mainpage" href="#top">Наверх</a></h1>
+    </div>
+	<div class="cell35" style="background: #247;">
+	<ul>
+	<li>Development!</li>
+	<li>Development!!</li>
+	<li>Development!!!</li>
+	<li>/Steven Anthony Ballmer/</li>
+	</ul>
+    </div>
+	<div class="cell35" style="background: #c51;">
+	<ul class="sample">
+	  <li><b>Архитектор, дизайнер и Человек...</b></li>
+	  <li>Все права защищены (с)
+	    <ul>
+	    <li>Земля</li>
+	    <li>2013 г.</li>
+	    </ul></li>
+	</ul>
+    </div></div>
+</td></tr></table>
+
+</body>
+<!-- Rating@Mail.ru counter -->
+<script type="text/javascript">//<![CDATA[
+var _tmr = _tmr || [];
+_tmr.push({id: '2383198', type: 'pageView', start: (new Date()).getTime()});
+(function (d, w) {
+   var ts = d.createElement('script'); ts.type = 'text/javascript'; ts.async = true;
+   ts.src = (d.location.protocol == 'https:' ? 'https:' : 'http:') + '//top-fwz1.mail.ru/js/code.js';
+   var f = function () {var s = d.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ts, s);};
+   if (w.opera == "[object Opera]") { d.addEventListener("DOMContentLoaded", f, false); } else { f(); }
+})(document, window);
+//]]></script><noscript><div style="position:absolute;left:-10000px;">
+<img src="//top-fwz1.mail.ru/counter?id=2383198;js=na" style="border:0;" height="1" width="1" alt="Рейтинг@Mail.ru" />
+</div></noscript>
+<!-- //Rating@Mail.ru counter -->
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+(function (d, w, c) {
+    (w[c] = w[c] || []).push(function() {
+        try {
+            w.yaCounter21907006 = new Ya.Metrika({id:21907006,
+                    webvisor:true,
+                    clickmap:true,
+                    trackLinks:true,
+                    accurateTrackBounce:true});
+        } catch(e) { }
+    });
+
+    var n = d.getElementsByTagName("script")[0],
+        s = d.createElement("script"),
+        f = function () { n.parentNode.insertBefore(s, n); };
+    s.type = "text/javascript";
+    s.async = true;
+    s.src = (d.location.protocol == "https:" ? "https:" : "http:") + "//mc.yandex.ru/metrika/watch.js";
+
+    if (w.opera == "[object Opera]") {
+        d.addEventListener("DOMContentLoaded", f, false);
+    } else { f(); }
+})(document, window, "yandex_metrika_callbacks");
+</script>
+<noscript><div><img src="//mc.yandex.ru/watch/21907006" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<!-- /Yandex.Metrika counter -->
+<!--google analitics-->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-42732782-1', 'cc.ua');
+  ga('send', 'pageview');
+</script>
+<!--google analitics-->
+</html>

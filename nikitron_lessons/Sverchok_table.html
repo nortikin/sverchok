@@ -1,0 +1,662 @@
+<html>
+<head>
+<title>Сверчок параметрическая математическая модель, стол - действительная модель | Архитектор, Дизайнер, Человек...</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="autor" content="Архитектор, Дизайнер, Человек...">
+<meta name="keywords" content="Сверчок параметрика Блендер Blender 3d">
+<meta name="description" content="Сверчок. Сгенерированная модель стола, резка на фрезерном станке и реализация мебели в параметрическом инстурменте Сверчок. Моделирование и раскрой стола.">
+<link rel="stylesheet" href="file.css" type="text/css" media="screen" />
+<link href='http://fonts.googleapis.com/css?family=Ubuntu&subset=latin,cyrillic-ext,cyrillic' rel='stylesheet' type='text/css'> <!--CSS шрифт-->
+<link rel="icon" type="image/png" href="blender.png" />
+<script src='jquery.min.js'></script>
+<script src='menu.js'></script>
+<!--ширина экрана диктует CSS-->
+<script language="JavaScript">
+var height=0;
+var width=0;
+if (self.screen) {    
+        width = screen.width
+        height = screen.height
+}
+else if (self.java) {  
+      var jkit = java.awt.Toolkit.getDefaultToolkit();
+      var scrsize = jkit.getScreenSize();      
+      width = scrsize.width; 
+      height = scrsize.height; 
+}
+if (width < 1000)
+{
+	document.write("<link rel='stylesheet' type='text/css' href='main_page/small-less-1000.css'>");
+}
+else 
+if(width < 1270)
+{
+	document.write("<link rel='stylesheet' type='text/css' href='main_page/small.css'>");
+}
+else 
+if(width > 1270)
+{
+	document.write("<link rel='stylesheet' type='text/css' href='main_page/big.css'>");
+}
+</script>
+<!--ширина экрана диктует CSS-->
+</head>
+
+<body style="background-color:#040607;">
+<a name="top"></a>
+
+
+
+
+<table class="head"><tr><td>
+    <div class="cellsBlock">
+	<div class="cell10" style="background: #c51;">
+	<h3><a class="mainpage" href="sverchok_ru.html">главная</a></h3>
+	</div>
+	<div class="cell70" style="background: #c51;">
+	<h1><img src='sverch/sverchlogo.png' style="width:200px"></h1>
+    </div>
+    <div class="cell20" style="background: #c51;">
+    <div class="size">
+	<input type="text" name="test" value="Меню сверчка" class="field" readonly="readonly" />
+	<ul class="list">
+	<li><a class="menu" href="sverchok_ru.html">___Сверчок</a></li>
+	<li><a class="menu" href="Sverchok_man_00.html">00_Установка</a></li>
+	<li><a class="menu" href="Sverchok_man_01.html">01_Линия</a></li>
+	<li><a class="menu" href="Sverchok_man_02.html">02_Структура данных</a></li>
+	<li><a class="menu" href="Sverchok_man_03.html">03_Некоторые узлы</a></li>
+	<li><a class="menu" href="Sverchok_man_04.html">04_Соединение объектов</a></li>
+	<li><a class="menu" href="Sverchok_stadium.html">05_Стадион им. Ленина</a></li>
+	<li><a class="menu" href="Sverchok_table.html">06_Столы в Сверчке</a></li>
+	<li><a class="menu" href="Sverchok_man_07.html">07_Свои узлы в песочнице</a></li>
+	<li><a class="menu" href="Sverchok_man_08.html">08_Поверхности</a></li>
+	<li><a class="menu" href="Sverchok_man_09.html">09_Ферма</a></li>
+	<li><a class="menu" href="Sverchok_man_10_theme.html">10_Тема</a></li>
+	<li><a class="menu" href="Sverchok_man_11_profile.html">11_Профиль</a></li>
+	<li><a class="menu" href="Sverchok_man_12_timing.html">12_Отладка</a></li>
+	<li><a class="menu" href="Sverchok_man_13_menu.html">13_Меню</a></li>
+	<li><a class="menu" href="Sverchok_man_14_IO.html">14_Импорт/Экспорт</a></li>
+	<li><a class="menu" href="Sverchok_man_15_obj_nodes.html">15_Узлы сцены</a></li>
+	</ul>
+</div></div></div>
+</td></tr></table>
+
+<table><tr><td>
+    <div class="cellsBlock">
+	<div class="cell100" style="height:30px; background: #247;">
+	</div>
+    </div>
+</td></tr></table>
+
+<table><tr><td><!--class="right"-->
+    <div class="cellsBlock">
+	<div class="cell100" style="height:80px; background: #247;">
+	<h1>06_Стол и его реализация в Сверчке.</h1>
+	</div>
+    </div>
+</td></tr></table>
+
+
+<table><tr><td><!--class="right"-->
+    <div class="cellsBlock">
+	<div class="cell100" style="background: #36a;">
+	<h3>Стол инициации был сделан и теперь можно как минимум повторять технологию, а как максимум - сделать свой вариант.</h3>
+	<p >Благодаря и в сотрудничестве с сетью магазинов <a href='http://n.maps.yandex.ru/?oid=58897101' target=blank>Дух Океана</a>, у нас есть стол смоделированный в сверчке, резаный на фрезерном станке ЧПУ, сборка.</p>
+<p >Практическое применение сверчка в производстве мебели.</p>
+<p >Ещё один пример реализации стола, смоделированного в сверчке находится <a class='admit' data-title='Французский стол в сверчке.' href='http://fablabo.net/wiki/VagueTable'> здесь по ссылке</a>. Осторожно, французский!</p>
+<center><a href="#00" class="admit" data-title="00."><img src="sverch/table/53sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="00"></a>
+        	<div class="popup">
+		<img src="sverch/table/53.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div></center>
+
+
+
+	</div>
+    </div>
+</td></tr></table>
+<table><tr><td><!--class="right"-->
+    <div class="cellsBlock">
+	<div class="cell100" style="background: #247;">
+	<h2>Заготовка.</h2>
+	</div>
+    </div>
+</td></tr></table>
+<table><tr><td><!--class="right"-->
+    <div class="cellsBlock">
+	<div class="cell100" style="background: #36a;">
+	<h3>Делаем болванку.</h3>
+
+
+
+<p >Начнём с моделирования нужного мебельного фасада. Используем NURBS поверхности, т.к. они позволяют делать достаточно витиеватые формы. В массе не должно быть дырок, чтобы проверить на дырки, используйте ctrl+alt+shift+M, в режиме точек или рёбер. Удаляйте дубли, нам они не нужны.</p>
+	<center>
+	<a href="#01" class="admit" data-title="01."><img src="sverch/table/01sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="01"></a>
+        	<div class="popup">
+		<img src="sverch/table/01.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	<a href="#02" class="admit" data-title="02."><img src="sverch/table/04sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="02"></a>
+        	<div class="popup">
+		<img src="sverch/table/04.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	</center>
+
+
+
+	</div>
+    </div>
+</td></tr></table>
+<table><tr><td><!--class="right"-->
+    <div class="cellsBlock">
+	<div class="cell100" style="background: #247;">
+	<h2>Слойка.</h2>
+	</div>
+    </div>
+</td></tr></table>
+<table><tr><td><!--class="right"-->
+    <div class="cellsBlock">
+	<div class="cell100" style="background: #36a;">
+	<h3>Режем болванку.</h3>
+
+
+
+<p >У нас есть раскладка для того, чтобы порезать этот объём</p>
+<center><a href="#03" class="admit" data-title="03."><img src="sverch/table/05sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="03"></a>
+        	<div class="popup">
+		<img src="sverch/table/05.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div></center>
+<p >И вот что имеем после резки - Viewer Draw сверчка отображает как мы режем объём. Обратите мниание, что изначальная модель предусматривает наличие панелей разной длинны. Так же можно предусмотреть пазы для вафельной конструкции, чисто геометрически построив начальную модель.</p>
+	<center>
+	<a href="#04" class="admit" data-title="04."><img src="sverch/table/07sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="04"></a>
+        	<div class="popup">
+		<img src="sverch/table/07.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	<a href="#05" class="admit" data-title="05."><img src="sverch/table/08sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="05"></a>
+        	<div class="popup">
+		<img src="sverch/table/08.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	</center>
+<p >Запекаем геометрию и поворачиваем на 90 градусов, чтобы применить вращение - сделать из них 2-мерные сплайны.</p>
+	<center>
+	<a href="#06" class="admit" data-title="06."><img src="sverch/table/09sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="06"></a>
+        	<div class="popup">
+		<img src="sverch/table/09.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	<a href="#07" class="admit" data-title="07."><img src="sverch/table/10sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="07"></a>
+        	<div class="popup">
+		<img src="sverch/table/10.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	</center>
+<p >вращаем обратно и конвертируем в кривую.</p>
+	<center>
+	<a href="#08" class="admit" data-title="08."><img src="sverch/table/11sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="08"></a>
+        	<div class="popup">
+		<img src="sverch/table/11.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	<a href="#09" class="admit" data-title="09."><img src="sverch/table/12sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="09"></a>
+        	<div class="popup">
+		<img src="sverch/table/12.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	</center>
+<p >Можно добавлять толщину каждой панели отдельно, а можно использовать инструменты nikitron tools, сделать это массово.</p>
+	<center>
+	<a href="#10" class="admit" data-title="10."><img src="sverch/table/13sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="10"></a>
+        	<div class="popup">
+		<img src="sverch/table/13.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	<a href="#11" class="admit" data-title="11."><img src="sverch/table/14sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="11"></a>
+        	<div class="popup">
+		<img src="sverch/table/15.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	</center>
+<p >Вот такой стол в 3Д с разными деталями</p>
+
+	<center>
+	<a href="#12" class="admit" data-title="12."><img src="sverch/table/16sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="12"></a>
+        	<div class="popup">
+		<img src="sverch/table/16.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	<a href="#13" class="admit" data-title="13."><img src="sverch/table/17sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="13"></a>
+        	<div class="popup">
+		<img src="sverch/table/17.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	</center>
+
+
+
+	</div>
+    </div>
+</td></tr></table>
+<table><tr><td><!--class="right"-->
+    <div class="cellsBlock">
+	<div class="cell100" style="background: #247;">
+	<h2>Заземление.</h2>
+	</div>
+    </div>
+</td></tr></table>
+<table><tr><td><!--class="right"-->
+    <div class="cellsBlock">
+	<div class="cell100" style="background: #36a;">
+	<h3>Раскладываем на части для чертежей.</h3>
+
+
+
+<p >Есть ещё другая мебель, для которой мы используем другую раскладку узлов. Цель - сделать чертежи по панелям, которые замоделированы в mesh и повёрнуты на произвольный градус.</p>
+	<center>
+	<a href="#14" class="admit" data-title="14."><img src="sverch/table/19sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="14"></a>
+        	<div class="popup">
+		<img src="sverch/table/19.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	</center>
+<p >Здесь раскладка с матрицей:</p>
+	<center>
+	<a href="#15" class="admit" data-title="15."><img src="sverch/table/20sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="15"></a>
+        	<div class="popup">
+		<img src="sverch/table/20.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	<a href="#16" class="admit" data-title="16."><img src="sverch/table/21sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="16"></a>
+        	<div class="popup">
+		<img src="sverch/table/21.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	</center>
+<p >Здесь раскладка без матрицы:</p>
+	<center>
+	<a href="#17" class="admit" data-title="17."><img src="sverch/table/22sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="17"></a>
+        	<div class="popup">
+		<img src="sverch/table/22.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	<a href="#18" class="admit" data-title="18."><img src="sverch/table/23sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="18"></a>
+        	<div class="popup">
+		<img src="sverch/table/23.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	</center>
+<p >Запекаем, конвертируем в сплайны и выдавливаем с nikitron tools.</p>
+	<center>
+	<a href="#19" class="admit" data-title="19."><img src="sverch/table/25sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="19"></a>
+        	<div class="popup">
+		<img src="sverch/table/25.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	<a href="#20" class="admit" data-title="20."><img src="sverch/table/26sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="20"></a>
+        	<div class="popup">
+		<img src="sverch/table/26.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	</center>
+<p >Теперь нам надо это всё богатство сунуть в чертежи. Обнуляем поворот, и используем nikitron tools SPREAD, чтобы разложить по полу детали.</p>
+	<center>
+	<a href="#21" class="admit" data-title="21."><img src="sverch/table/34sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="21"></a>
+        	<div class="popup">
+		<img src="sverch/table/34.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	<a href="#22" class="admit" data-title="22."><img src="sverch/table/35sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="22"></a>
+        	<div class="popup">
+		<img src="sverch/table/35.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	</center>
+<p >Результат:</p>
+	<center>
+	<a href="#23" class="admit" data-title="23."><img src="sverch/table/36sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="23"></a>
+        	<div class="popup">
+		<img src="sverch/table/36.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	<a href="#24" class="admit" data-title="24."><img src="sverch/table/37sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="24"></a>
+        	<div class="popup">
+		<img src="sverch/table/37.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	</center>
+<p >Экспортируем в DXF.</p>
+	<center>
+	<a href="#25" class="admit" data-title="25."><img src="sverch/table/38sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="25"></a>
+        	<div class="popup">
+		<img src="sverch/table/38.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	<a href="#26" class="admit" data-title="26."><img src="sverch/table/39sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="26"></a>
+        	<div class="popup">
+		<img src="sverch/table/39.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	</center>
+
+
+
+	</div>
+    </div>
+</td></tr></table>
+<table><tr><td><!--class="right"-->
+    <div class="cellsBlock">
+	<div class="cell100" style="background: #247;">
+	<h2>Доводка.</h2>
+	</div>
+    </div>
+</td></tr></table>
+<table><tr><td><!--class="right"-->
+    <div class="cellsBlock">
+	<div class="cell100" style="background: #36a;">
+	<h3>Доводим чертежи для ЧПУ станка и для сборки руками.</h3>
+
+
+
+<p >В чертилке делаем полилинию из отрезков.</p>
+	<center>
+	<a href="#27" class="admit" data-title="27."><img src="sverch/table/40sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="27"></a>
+        	<div class="popup">
+		<img src="sverch/table/40.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	<a href="#28" class="admit" data-title="28."><img src="sverch/table/41sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="28"></a>
+        	<div class="popup">
+		<img src="sverch/table/41.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	</center>
+	<center>
+	<a href="#29" class="admit" data-title="29."><img src="sverch/table/42sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="29"></a>
+        	<div class="popup">
+		<img src="sverch/table/42.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	<a href="#30" class="admit" data-title="30."><img src="sverch/table/43sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="30"></a>
+        	<div class="popup">
+		<img src="sverch/table/43.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	</center>
+<p >Выделяем полилинии и конвертируем их в сплайны, Изменить-преобразовать полилинию.</p>
+	<center>
+	<a href="#31" class="admit" data-title="31."><img src="sverch/table/44sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="31"></a>
+        	<div class="popup">
+		<img src="sverch/table/44.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	<a href="#32" class="admit" data-title="32."><img src="sverch/table/45sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="32"></a>
+        	<div class="popup">
+		<img src="sverch/table/45.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	</center>
+
+
+
+	</div>
+    </div>
+</td></tr></table>
+<table><tr><td><!--class="right"-->
+    <div class="cellsBlock">
+	<div class="cell100" style="background: #247;">
+	<h2>Внешность.</h2>
+	</div>
+    </div>
+</td></tr></table>
+<table><tr><td><!--class="right"-->
+    <div class="cellsBlock">
+	<div class="cell100" style="background: #36a;">
+	<h3>Визуалка.</h3>
+
+
+
+<p >Визуализация.</p>
+	<center>
+	<a href="#33" class="admit" data-title="33."><img src="sverch/table/46sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="33"></a>
+        	<div class="popup">
+		<img src="sverch/table/46.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	</center>
+
+
+
+	</div>
+    </div>
+</td></tr></table>
+<table><tr><td><!--class="right"-->
+    <div class="cellsBlock">
+	<div class="cell100" style="background: #247;">
+	<h2>Изготовление.</h2>
+	</div>
+    </div>
+</td></tr></table>
+<table><tr><td><!--class="right"-->
+    <div class="cellsBlock">
+	<div class="cell100" style="background: #36a;">
+	<h3>Резка материала и сборка.</h3>
+
+
+
+<p >Осталось порезать панели, обработать кромку и сложить всё воедино.</p>
+	<center>
+	<a href="#34" class="admit" data-title="34."><img src="sverch/table/47sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="34"></a>
+        	<div class="popup">
+		<img src="sverch/table/47.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	<a href="#35" class="admit" data-title="35."><img src="sverch/table/48sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="35"></a>
+        	<div class="popup">
+		<img src="sverch/table/48.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	</center>
+<p ></p>
+	<center>
+	<a href="#36" class="admit" data-title="36."><img src="sverch/table/49sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="36"></a>
+        	<div class="popup">
+		<img src="sverch/table/49.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	<a href="#37" class="admit" data-title="37."><img src="sverch/table/50sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="37"></a>
+        	<div class="popup">
+		<img src="sverch/table/50.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	</center>
+<p ></p>
+	<center>
+	<a href="#38" class="admit" data-title="38."><img src="sverch/table/51sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="38"></a>
+        	<div class="popup">
+		<img src="sverch/table/51.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	<a href="#39" class="admit" data-title="39."><img src="sverch/table/52sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="39"></a>
+        	<div class="popup">
+		<img src="sverch/table/52.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	</center>
+<p ></p>
+	<center>
+	<a href="#40" class="admit" data-title="40."><img src="sverch/table/53sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="40"></a>
+        	<div class="popup">
+		<img src="sverch/table/53.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	<a href="#41" class="admit" data-title="41."><img src="sverch/table/54sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="41"></a>
+        	<div class="popup">
+		<img src="sverch/table/54.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	</center>
+<p ></p>
+	<center>
+	<a href="#42" class="admit" data-title="42."><img src="sverch/table/55sm.jpg" class="rounded"></a>
+        	<a href="#x" class="overlay" id="42"></a>
+        	<div class="popup">
+		<img src="sverch/table/55.jpg"/>
+		<a class="close" title="Прикрыть" href="#close"></a>
+        </div>
+	</center>
+<p ></p>
+
+
+
+
+
+
+<p >Да пребудет с вами Сила Сверчка.</p>
+
+
+	</div>
+    </div>
+</td></tr></table>
+
+<table><tr><td>
+    <div class="cellsBlock">
+	<div class="cell100" style="height:30px; background: #124;">
+	<p></p>
+    </div></div>
+</td></tr></table>
+
+
+
+
+
+
+<table><tr><td><!--class='l'-->
+    <div class="cellsBlock">
+	<div class="cell100" style="height:30px; background: #124;">
+	<p></p>
+    </div></div>
+</td></tr></table>
+
+<table><tr><td>
+    <div class="cellsBlock">
+	<div class="cell35" style="background: #c51;">
+	<h1><a class="mainpage" href="#top">Наверх</a></h1>
+    </div>
+	<div class="cell35" style="background: #124;">
+	<ul>
+	<li>Development!</li>
+	<li>Development!!</li>
+	<li>Development!!!</li>
+	<li>/Steven Anthony Ballmer/</li>
+	</ul>
+    </div>
+	<div class="cell35" style="background: #c51;">
+	<ul class="sample">
+	  <li><b>Архитектор, дизайнер и Человек...</b></li>
+	  <li>Все права защищены (с)
+	    <ul>
+	    <li>Земля</li>
+	    <li>2013 г.</li>
+	    </ul></li>
+	</ul>
+    </div></div>
+</td></tr></table>
+
+</body>
+<!-- Rating@Mail.ru counter -->
+<script type="text/javascript">//<![CDATA[
+var _tmr = _tmr || [];
+_tmr.push({id: '2383198', type: 'pageView', start: (new Date()).getTime()});
+(function (d, w) {
+   var ts = d.createElement('script'); ts.type = 'text/javascript'; ts.async = true;
+   ts.src = (d.location.protocol == 'https:' ? 'https:' : 'http:') + '//top-fwz1.mail.ru/js/code.js';
+   var f = function () {var s = d.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ts, s);};
+   if (w.opera == "[object Opera]") { d.addEventListener("DOMContentLoaded", f, false); } else { f(); }
+})(document, window);
+//]]></script><noscript><div style="position:absolute;left:-10000px;">
+<img src="//top-fwz1.mail.ru/counter?id=2383198;js=na" style="border:0;" height="1" width="1" alt="Рейтинг@Mail.ru" />
+</div></noscript>
+<!-- //Rating@Mail.ru counter -->
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+(function (d, w, c) {
+    (w[c] = w[c] || []).push(function() {
+        try {
+            w.yaCounter21907006 = new Ya.Metrika({id:21907006,
+                    webvisor:true,
+                    clickmap:true,
+                    trackLinks:true,
+                    accurateTrackBounce:true});
+        } catch(e) { }
+    });
+
+    var n = d.getElementsByTagName("script")[0],
+        s = d.createElement("script"),
+        f = function () { n.parentNode.insertBefore(s, n); };
+    s.type = "text/javascript";
+    s.async = true;
+    s.src = (d.location.protocol == "https:" ? "https:" : "http:") + "//mc.yandex.ru/metrika/watch.js";
+
+    if (w.opera == "[object Opera]") {
+        d.addEventListener("DOMContentLoaded", f, false);
+    } else { f(); }
+})(document, window, "yandex_metrika_callbacks");
+</script>
+<noscript><div><img src="//mc.yandex.ru/watch/21907006" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<!-- /Yandex.Metrika counter -->
+<!--google analitics-->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-42732782-1', 'cc.ua');
+  ga('send', 'pageview');
+</script>
+<!--google analitics-->
+</html>
