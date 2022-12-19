@@ -116,11 +116,20 @@ class SvExMSquaresOnSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
                 u_size = (u_max - u_min)/(samples_u-1)
                 v_size = (v_max - v_min)/(samples_v-1)
 
-                # some times [(u_max - u_min)/(samples_u-1)]*(samples_u-1) > (u_max-umin) !!! need compensation:
-                if( (u_max - u_min) < u_size*(samples_u-1)):
-                    u_size -= ((u_max - u_min)/(samples_u-1)*(samples_u-1)-(u_max-u_min))/(samples_u-1)
-                if( (v_max - v_min) < v_size*(samples_v-1)):
-                    v_size -= ((v_max - v_min)/(samples_v-1)*(samples_v-1)-(v_max-v_min))/(samples_v-1)
+                # some times u_max < u_min + u_size*(samples_u-1) !!! need compensation:
+                if( u_max < u_min + u_size*(samples_u-1)):
+                    for i in range(10):
+                        _u_size = u_size - i*((u_max - u_min)/(samples_u-1)*(samples_u-1) - u_max+u_min)/(samples_u-1)
+                        if( u_max > u_min + _u_size*(samples_u-1)):
+                            u_size = _u_size
+                            break
+
+                if( v_max < v_min + v_size*(samples_v-1)):
+                    for i in range(10):
+                        _v_size = v_size - i*((v_max - v_min)/(samples_v-1)*(samples_v-1) - v_max+v_min)/(samples_v-1)
+                        if( v_max > v_min + v_size*(samples_v-1)):
+                            v_size = _v_size
+                            break
 
                 uv_contours, new_edges, _ = make_contours(samples_u, samples_v, u_min, u_size, v_min, v_size, 0, contours, make_faces=True, connect_bounds = self.connect_bounds)
 
