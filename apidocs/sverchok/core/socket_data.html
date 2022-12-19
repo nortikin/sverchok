@@ -243,7 +243,11 @@ def clear_all_socket_cache():
     &#34;&#34;&#34;
     Reset socket cache for all node-trees.
     &#34;&#34;&#34;
-    socket_data_cache.clear()</code></pre>
+    socket_data_cache.clear()
+
+
+def unregister():
+    clear_all_socket_cache()</code></pre>
 </details>
 </section>
 <section>
@@ -370,6 +374,19 @@ set to False and increase performance substanstilly</p></div>
 <pre><code class="python">def sv_set_socket(socket, data):
     &#34;&#34;&#34;sets socket data for socket&#34;&#34;&#34;
     socket_data_cache[socket.socket_id] = data</code></pre>
+</details>
+</dd>
+<dt id="sverchok.core.socket_data.unregister"><code class="name flex">
+<span>def <span class="ident">unregister</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def unregister():
+    clear_all_socket_cache()</code></pre>
 </details>
 </dd>
 </dl>
@@ -540,6 +557,7 @@ set to False and increase performance substanstilly</p></div>
 <li><code><a title="sverchok.core.socket_data.sv_forget_socket" href="#sverchok.core.socket_data.sv_forget_socket">sv_forget_socket</a></code></li>
 <li><code><a title="sverchok.core.socket_data.sv_get_socket" href="#sverchok.core.socket_data.sv_get_socket">sv_get_socket</a></code></li>
 <li><code><a title="sverchok.core.socket_data.sv_set_socket" href="#sverchok.core.socket_data.sv_set_socket">sv_set_socket</a></code></li>
+<li><code><a title="sverchok.core.socket_data.unregister" href="#sverchok.core.socket_data.unregister">unregister</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>

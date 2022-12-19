@@ -44,13 +44,16 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-import os
 import webbrowser
+import os
+import urllib
+import urllib.request
+from zipfile import ZipFile
+import tempfile
 
 import bpy
 
 from sverchok.utils.sv_update_utils import sv_get_local_path
-from sverchok.utils.sv_node_utils import nodes_bounding_box
 from sverchok.utils.macros.math_macros import math_macros
 from sverchok.utils.macros.join_macros import join_macros
 from sverchok.utils.macros.switch_macros import switch_macros
@@ -298,6 +301,117 @@ class DefaultMacros():
             bpy.ops.node.blend_to_archive(archive_ext=&#34;zip&#34;)
 
 
+&#34;&#34;&#34;
+to the reader: when we run &#39;bpy.ops.wm.open_mainfile( )&#39; there&#39;s a considerations
+ - the current .blend can be discarded (and up to the user to already save it)
+ - the end of the operator that was executed to call &#39;bpy.ops.wm.open_main_file( )&#39;
+   is never reached, and it is irrelevant whether we return {`FINISHED`}.
+
+&#34;&#34;&#34;
+
+
+def handle_zip(self, wm, to_path, file):
+    try:
+        err = 0
+        with ZipFile(to_path) as zf:
+            inner_files = zf.namelist()
+            if len(inner_files) == 1:
+                blendfile = inner_files[0]
+            else:
+                print(&#39;cancelled, not a github zipped .blend&#39;)
+                return {&#39;CANCELLED&#39;}
+
+        ZipFile(file[0]).extractall(path=self.os_temp_path, members=None, pwd=None)
+
+        wm.progress_update(90)
+        err = 1
+        os.remove(file[0])
+        err = 2
+        wm.progress_update(100)
+        wm.progress_end()
+
+        fp = os.path.join(self.os_temp_path, blendfile)
+        bpy.ops.wm.open_mainfile(filepath=fp)
+        return {&#39;FINISHED&#39;}  # it never reaches here..
+
+    except:
+        self.report({&#39;ERROR&#39;}, &#34;Cannot extract files errno {0}&#34;.format(str(err)))
+        wm.progress_end()
+        os.remove(file[0])
+        return {&#39;CANCELLED&#39;}
+
+
+def handle_gz(self, wm, to_path):
+    wm.progress_update(100)
+    wm.progress_end()
+    bpy.ops.wm.open_mainfile(filepath=to_path)
+    return {&#39;FINISHED&#39;}
+
+
+class SvLoadArchivedBlendURL(bpy.types.Operator):
+    bl_idname = &#34;node.sv_load_archived_blend_url&#34;
+    bl_label = &#34;Load archive URL (.zip .gz of blend)&#34;
+
+    &#34;&#34;&#34;
+    loads links like:
+    https://github.com/nortikin/sverchok/files/647412/blend_name_YYYY_MM_DD_HH_mm.zip
+    https://github.com/nortikin/sverchok/files/647412/blend_name_YYYY_MM_DD_HH_mm.gz
+    &#34;&#34;&#34;
+    download_url: bpy.props.StringProperty()
+    os_temp_path = tempfile.gettempdir()
+
+    def execute(self, context):
+
+        wm = bpy.data.window_managers[0]
+        wm.progress_begin(0, 100)
+        wm.progress_update(20)
+
+        if not self.download_url:
+            clipboard = context.window_manager.clipboard
+            if not clipboard:
+                self.report({&#39;ERROR&#39;}, &#34;Clipboard empty&#34;)
+                return {&#39;CANCELLED&#39;}
+            else:
+                self.download_url = clipboard
+
+        # get the file and obtain the new file&#39;s path on disk
+        try:
+            file_and_ext = os.path.basename(self.download_url)
+            to_path = os.path.join(self.os_temp_path, file_and_ext)
+            file = urllib.request.urlretrieve(self.download_url, to_path)
+            wm.progress_update(50)
+        except Exception as fullerr:
+            print(repr(fullerr))
+            self.report({&#39;ERROR&#39;}, &#34;Cannot get archive from Internet&#34;)
+            wm.progress_end()
+            return {&#39;CANCELLED&#39;}
+
+        if file_and_ext.endswith(&#39;.gz&#39;):
+            return handle_gz(self, wm, to_path)
+        elif file_and_ext.endswith(&#39;.zip&#39;):
+            return handle_zip(self, wm, to_path, file)
+        else:
+            # maybe if the url ends in .blend we could load it anyway.
+            self.report({&#39;ERROR&#39;}, &#34;url is not a .gz or .zip... ending operator&#34;)
+            wm.progress_end()
+            return {&#39;CANCELLED&#39;}
+
+        return {&#39;FINISHED&#39;}
+
+
+classes = [
+    SvLoadArchivedBlendURL,
+]
+
+
+def register():
+    for cls in classes:
+        bpy.utils.register_class(cls)
+
+
+def unregister():
+    for cls in classes[::-1]:
+        bpy.utils.unregister_class(cls)
 # EOF</code></pre>
 </details>
 </section>
@@ -308,6 +422,76 @@ class DefaultMacros():
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
+<dt id="sverchok.utils.sv_default_macros.handle_gz"><code class="name flex">
+<span>def <span class="ident">handle_gz</span></span>(<span>self, wm, to_path)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def handle_gz(self, wm, to_path):
+    wm.progress_update(100)
+    wm.progress_end()
+    bpy.ops.wm.open_mainfile(filepath=to_path)
+    return {&#39;FINISHED&#39;}</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_default_macros.handle_zip"><code class="name flex">
+<span>def <span class="ident">handle_zip</span></span>(<span>self, wm, to_path, file)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def handle_zip(self, wm, to_path, file):
+    try:
+        err = 0
+        with ZipFile(to_path) as zf:
+            inner_files = zf.namelist()
+            if len(inner_files) == 1:
+                blendfile = inner_files[0]
+            else:
+                print(&#39;cancelled, not a github zipped .blend&#39;)
+                return {&#39;CANCELLED&#39;}
+
+        ZipFile(file[0]).extractall(path=self.os_temp_path, members=None, pwd=None)
+
+        wm.progress_update(90)
+        err = 1
+        os.remove(file[0])
+        err = 2
+        wm.progress_update(100)
+        wm.progress_end()
+
+        fp = os.path.join(self.os_temp_path, blendfile)
+        bpy.ops.wm.open_mainfile(filepath=fp)
+        return {&#39;FINISHED&#39;}  # it never reaches here..
+
+    except:
+        self.report({&#39;ERROR&#39;}, &#34;Cannot extract files errno {0}&#34;.format(str(err)))
+        wm.progress_end()
+        os.remove(file[0])
+        return {&#39;CANCELLED&#39;}</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_default_macros.register"><code class="name flex">
+<span>def <span class="ident">register</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def register():
+    for cls in classes:
+        bpy.utils.register_class(cls)</code></pre>
+</details>
+</dd>
 <dt id="sverchok.utils.sv_default_macros.set_node_props"><code class="name flex">
 <span>def <span class="ident">set_node_props</span></span>(<span>node, prop_dict)</span>
 </code></dt>
@@ -355,6 +539,20 @@ class DefaultMacros():
     txt = bpy.data.texts.load(fullpath)
     snlite.script_name = os.path.basename(txt.name)
     snlite.load()</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_default_macros.unregister"><code class="name flex">
+<span>def <span class="ident">unregister</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def unregister():
+    for cls in classes[::-1]:
+        bpy.utils.unregister_class(cls)</code></pre>
 </details>
 </dd>
 </dl>
@@ -766,6 +964,148 @@ def verbose_macro_handler(cls, operator, context, term):
 </dd>
 </dl>
 </dd>
+<dt id="sverchok.utils.sv_default_macros.SvLoadArchivedBlendURL"><code class="flex name class">
+<span>class <span class="ident">SvLoadArchivedBlendURL</span></span>
+<span>(</span><span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvLoadArchivedBlendURL(bpy.types.Operator):
+    bl_idname = &#34;node.sv_load_archived_blend_url&#34;
+    bl_label = &#34;Load archive URL (.zip .gz of blend)&#34;
+
+    &#34;&#34;&#34;
+    loads links like:
+    https://github.com/nortikin/sverchok/files/647412/blend_name_YYYY_MM_DD_HH_mm.zip
+    https://github.com/nortikin/sverchok/files/647412/blend_name_YYYY_MM_DD_HH_mm.gz
+    &#34;&#34;&#34;
+    download_url: bpy.props.StringProperty()
+    os_temp_path = tempfile.gettempdir()
+
+    def execute(self, context):
+
+        wm = bpy.data.window_managers[0]
+        wm.progress_begin(0, 100)
+        wm.progress_update(20)
+
+        if not self.download_url:
+            clipboard = context.window_manager.clipboard
+            if not clipboard:
+                self.report({&#39;ERROR&#39;}, &#34;Clipboard empty&#34;)
+                return {&#39;CANCELLED&#39;}
+            else:
+                self.download_url = clipboard
+
+        # get the file and obtain the new file&#39;s path on disk
+        try:
+            file_and_ext = os.path.basename(self.download_url)
+            to_path = os.path.join(self.os_temp_path, file_and_ext)
+            file = urllib.request.urlretrieve(self.download_url, to_path)
+            wm.progress_update(50)
+        except Exception as fullerr:
+            print(repr(fullerr))
+            self.report({&#39;ERROR&#39;}, &#34;Cannot get archive from Internet&#34;)
+            wm.progress_end()
+            return {&#39;CANCELLED&#39;}
+
+        if file_and_ext.endswith(&#39;.gz&#39;):
+            return handle_gz(self, wm, to_path)
+        elif file_and_ext.endswith(&#39;.zip&#39;):
+            return handle_zip(self, wm, to_path, file)
+        else:
+            # maybe if the url ends in .blend we could load it anyway.
+            self.report({&#39;ERROR&#39;}, &#34;url is not a .gz or .zip... ending operator&#34;)
+            wm.progress_end()
+            return {&#39;CANCELLED&#39;}
+
+        return {&#39;FINISHED&#39;}</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>bpy_types.Operator</li>
+<li>builtins.bpy_struct</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sverchok.utils.sv_default_macros.SvLoadArchivedBlendURL.bl_idname"><code class="name">var <span class="ident">bl_idname</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_default_macros.SvLoadArchivedBlendURL.bl_label"><code class="name">var <span class="ident">bl_label</span></code></dt>
+<dd>
+<div class="desc"><p>loads links like:
+<a href="https://github.com/nortikin/sverchok/files/647412/blend_name_YYYY_MM_DD_HH_mm.zip">https://github.com/nortikin/sverchok/files/647412/blend_name_YYYY_MM_DD_HH_mm.zip</a>
+<a href="https://github.com/nortikin/sverchok/files/647412/blend_name_YYYY_MM_DD_HH_mm.gz">https://github.com/nortikin/sverchok/files/647412/blend_name_YYYY_MM_DD_HH_mm.gz</a></p></div>
+</dd>
+<dt id="sverchok.utils.sv_default_macros.SvLoadArchivedBlendURL.bl_rna"><code class="name">var <span class="ident">bl_rna</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_default_macros.SvLoadArchivedBlendURL.download_url"><code class="name">var <span class="ident">download_url</span> : <_PropertyDeferred, <built-in function StringProperty>, {'attr': 'download_url'}></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_default_macros.SvLoadArchivedBlendURL.os_temp_path"><code class="name">var <span class="ident">os_temp_path</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.sv_default_macros.SvLoadArchivedBlendURL.execute"><code class="name flex">
+<span>def <span class="ident">execute</span></span>(<span>self, context)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def execute(self, context):
+
+    wm = bpy.data.window_managers[0]
+    wm.progress_begin(0, 100)
+    wm.progress_update(20)
+
+    if not self.download_url:
+        clipboard = context.window_manager.clipboard
+        if not clipboard:
+            self.report({&#39;ERROR&#39;}, &#34;Clipboard empty&#34;)
+            return {&#39;CANCELLED&#39;}
+        else:
+            self.download_url = clipboard
+
+    # get the file and obtain the new file&#39;s path on disk
+    try:
+        file_and_ext = os.path.basename(self.download_url)
+        to_path = os.path.join(self.os_temp_path, file_and_ext)
+        file = urllib.request.urlretrieve(self.download_url, to_path)
+        wm.progress_update(50)
+    except Exception as fullerr:
+        print(repr(fullerr))
+        self.report({&#39;ERROR&#39;}, &#34;Cannot get archive from Internet&#34;)
+        wm.progress_end()
+        return {&#39;CANCELLED&#39;}
+
+    if file_and_ext.endswith(&#39;.gz&#39;):
+        return handle_gz(self, wm, to_path)
+    elif file_and_ext.endswith(&#39;.zip&#39;):
+        return handle_zip(self, wm, to_path, file)
+    else:
+        # maybe if the url ends in .blend we could load it anyway.
+        self.report({&#39;ERROR&#39;}, &#34;url is not a .gz or .zip... ending operator&#34;)
+        wm.progress_end()
+        return {&#39;CANCELLED&#39;}
+
+    return {&#39;FINISHED&#39;}</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
 </dl>
 </section>
 </article>
@@ -781,10 +1121,14 @@ def verbose_macro_handler(cls, operator, context, term):
 </ul>
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>
-<ul class="">
+<ul class="two-column">
+<li><code><a title="sverchok.utils.sv_default_macros.handle_gz" href="#sverchok.utils.sv_default_macros.handle_gz">handle_gz</a></code></li>
+<li><code><a title="sverchok.utils.sv_default_macros.handle_zip" href="#sverchok.utils.sv_default_macros.handle_zip">handle_zip</a></code></li>
+<li><code><a title="sverchok.utils.sv_default_macros.register" href="#sverchok.utils.sv_default_macros.register">register</a></code></li>
 <li><code><a title="sverchok.utils.sv_default_macros.set_node_props" href="#sverchok.utils.sv_default_macros.set_node_props">set_node_props</a></code></li>
 <li><code><a title="sverchok.utils.sv_default_macros.simple_macro" href="#sverchok.utils.sv_default_macros.simple_macro">simple_macro</a></code></li>
 <li><code><a title="sverchok.utils.sv_default_macros.sn_loader" href="#sverchok.utils.sv_default_macros.sn_loader">sn_loader</a></code></li>
+<li><code><a title="sverchok.utils.sv_default_macros.unregister" href="#sverchok.utils.sv_default_macros.unregister">unregister</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>
@@ -794,6 +1138,17 @@ def verbose_macro_handler(cls, operator, context, term):
 <ul class="">
 <li><code><a title="sverchok.utils.sv_default_macros.DefaultMacros.ensure_nodetree" href="#sverchok.utils.sv_default_macros.DefaultMacros.ensure_nodetree">ensure_nodetree</a></code></li>
 <li><code><a title="sverchok.utils.sv_default_macros.DefaultMacros.verbose_macro_handler" href="#sverchok.utils.sv_default_macros.DefaultMacros.verbose_macro_handler">verbose_macro_handler</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.sv_default_macros.SvLoadArchivedBlendURL" href="#sverchok.utils.sv_default_macros.SvLoadArchivedBlendURL">SvLoadArchivedBlendURL</a></code></h4>
+<ul class="two-column">
+<li><code><a title="sverchok.utils.sv_default_macros.SvLoadArchivedBlendURL.bl_idname" href="#sverchok.utils.sv_default_macros.SvLoadArchivedBlendURL.bl_idname">bl_idname</a></code></li>
+<li><code><a title="sverchok.utils.sv_default_macros.SvLoadArchivedBlendURL.bl_label" href="#sverchok.utils.sv_default_macros.SvLoadArchivedBlendURL.bl_label">bl_label</a></code></li>
+<li><code><a title="sverchok.utils.sv_default_macros.SvLoadArchivedBlendURL.bl_rna" href="#sverchok.utils.sv_default_macros.SvLoadArchivedBlendURL.bl_rna">bl_rna</a></code></li>
+<li><code><a title="sverchok.utils.sv_default_macros.SvLoadArchivedBlendURL.download_url" href="#sverchok.utils.sv_default_macros.SvLoadArchivedBlendURL.download_url">download_url</a></code></li>
+<li><code><a title="sverchok.utils.sv_default_macros.SvLoadArchivedBlendURL.execute" href="#sverchok.utils.sv_default_macros.SvLoadArchivedBlendURL.execute">execute</a></code></li>
+<li><code><a title="sverchok.utils.sv_default_macros.SvLoadArchivedBlendURL.os_temp_path" href="#sverchok.utils.sv_default_macros.SvLoadArchivedBlendURL.os_temp_path">os_temp_path</a></code></li>
 </ul>
 </li>
 </ul>

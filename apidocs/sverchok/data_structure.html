@@ -68,11 +68,7 @@ from sverchok.utils.logging import debug
 import numpy as np
 
 
-DEBUG_MODE = False
 RELOAD_EVENT = False
-
-# this is set correctly later.
-SVERCHOK_NAME = &#34;sverchok&#34;
 
 cache_viewer_baker = {}
 
@@ -1229,35 +1225,6 @@ def extend_blender_class(cls):
         for key in (key for key in dir(base_cls) if not key.startswith(&#39;_&#39;)):
             setattr(bl_class, key, getattr(base_cls, key))
     return cls
-
-
-#####################################################
-############### debug settings magic ################
-#####################################################
-
-
-def sverchok_debug(mode):
-    &#34;&#34;&#34;
-    set debug mode to mode
-    &#34;&#34;&#34;
-    global DEBUG_MODE
-    DEBUG_MODE = mode
-    return DEBUG_MODE
-
-
-def setup_init():
-    &#34;&#34;&#34;
-    setup variables needed for sverchok to function
-    &#34;&#34;&#34;
-    global DEBUG_MODE
-    global SVERCHOK_NAME
-    import sverchok
-    SVERCHOK_NAME = sverchok.__name__
-    addon = bpy.context.preferences.addons.get(SVERCHOK_NAME)
-    if addon:
-        DEBUG_MODE = addon.preferences.show_debug
-    else:
-        print(&#34;Setup of preferences failed&#34;)
 
 
 #####################################################
@@ -3517,30 +3484,6 @@ rotate_list([1, 2, 3], y=2) = [3, 1, 2]</p></div>
         return S</code></pre>
 </details>
 </dd>
-<dt id="sverchok.data_structure.setup_init"><code class="name flex">
-<span>def <span class="ident">setup_init</span></span>(<span>)</span>
-</code></dt>
-<dd>
-<div class="desc"><p>setup variables needed for sverchok to function</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def setup_init():
-    &#34;&#34;&#34;
-    setup variables needed for sverchok to function
-    &#34;&#34;&#34;
-    global DEBUG_MODE
-    global SVERCHOK_NAME
-    import sverchok
-    SVERCHOK_NAME = sverchok.__name__
-    addon = bpy.context.preferences.addons.get(SVERCHOK_NAME)
-    if addon:
-        DEBUG_MODE = addon.preferences.show_debug
-    else:
-        print(&#34;Setup of preferences failed&#34;)</code></pre>
-</details>
-</dd>
 <dt id="sverchok.data_structure.socket_id"><code class="name flex">
 <span>def <span class="ident">socket_id</span></span>(<span>socket)</span>
 </code></dt>
@@ -3628,24 +3571,6 @@ like standard zip but list instead of tuple</p></div>
                 return
             result.append(elem)
         yield result</code></pre>
-</details>
-</dd>
-<dt id="sverchok.data_structure.sverchok_debug"><code class="name flex">
-<span>def <span class="ident">sverchok_debug</span></span>(<span>mode)</span>
-</code></dt>
-<dd>
-<div class="desc"><p>set debug mode to mode</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def sverchok_debug(mode):
-    &#34;&#34;&#34;
-    set debug mode to mode
-    &#34;&#34;&#34;
-    global DEBUG_MODE
-    DEBUG_MODE = mode
-    return DEBUG_MODE</code></pre>
 </details>
 </dd>
 <dt id="sverchok.data_structure.transpose_list"><code class="name flex">
@@ -3994,12 +3919,10 @@ print(extra_arg)</p>
 <li><code><a title="sverchok.data_structure.replace_socket" href="#sverchok.data_structure.replace_socket">replace_socket</a></code></li>
 <li><code><a title="sverchok.data_structure.rotate_list" href="#sverchok.data_structure.rotate_list">rotate_list</a></code></li>
 <li><code><a title="sverchok.data_structure.second_as_first_cycle" href="#sverchok.data_structure.second_as_first_cycle">second_as_first_cycle</a></code></li>
-<li><code><a title="sverchok.data_structure.setup_init" href="#sverchok.data_structure.setup_init">setup_init</a></code></li>
 <li><code><a title="sverchok.data_structure.socket_id" href="#sverchok.data_structure.socket_id">socket_id</a></code></li>
 <li><code><a title="sverchok.data_structure.split_by_count" href="#sverchok.data_structure.split_by_count">split_by_count</a></code></li>
 <li><code><a title="sverchok.data_structure.sv_lambda" href="#sverchok.data_structure.sv_lambda">sv_lambda</a></code></li>
 <li><code><a title="sverchok.data_structure.sv_zip" href="#sverchok.data_structure.sv_zip">sv_zip</a></code></li>
-<li><code><a title="sverchok.data_structure.sverchok_debug" href="#sverchok.data_structure.sverchok_debug">sverchok_debug</a></code></li>
 <li><code><a title="sverchok.data_structure.transpose_list" href="#sverchok.data_structure.transpose_list">transpose_list</a></code></li>
 <li><code><a title="sverchok.data_structure.unwrap_data" href="#sverchok.data_structure.unwrap_data">unwrap_data</a></code></li>
 <li><code><a title="sverchok.data_structure.unzip_dict_recursive" href="#sverchok.data_structure.unzip_dict_recursive">unzip_dict_recursive</a></code></li>

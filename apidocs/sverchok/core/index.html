@@ -27,12 +27,16 @@
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">import importlib
-import sverchok
-from sverchok.core.socket_data import clear_all_socket_cache
+import sys
+
 
 root_modules = [
-    &#34;node_tree&#34;, &#34;data_structure&#34;, &#34;core&#34;,
-    &#34;utils&#34;, &#34;ui&#34;, &#34;nodes&#34;, &#34;old_nodes&#34;
+    &#34;dependencies&#34;,
+    &#34;data_structure&#34;,
+    &#34;node_tree&#34;,
+    &#34;core&#34;,  # already imported but should be added to use register function
+    &#34;utils&#34;,  # already imported but should be added to use register function
+    &#34;ui&#34;, &#34;nodes&#34;, &#34;old_nodes&#34;
 ]
 
 core_modules = [
@@ -46,6 +50,10 @@ core_modules = [
 ]
 
 
+def imported_utils_modules():
+    return [m for n, m in sys.modules.items() if &#39;sverchok.utils&#39; in n]
+
+
 def sv_register_modules(modules):
     for m in modules:
         if hasattr(m, &#34;register&#34;):
@@ -54,7 +62,6 @@ def sv_register_modules(modules):
 
 
 def sv_unregister_modules(modules):
-    clear_all_socket_cache()
     for m in reversed(modules):
         if hasattr(m, &#34;unregister&#34;):
             try:
@@ -64,47 +71,44 @@ def sv_unregister_modules(modules):
                 print(str(e))
 
 
-def sv_registration_utils():
-    &#34;&#34;&#34; this is a faux module for syntactic sugar on the imports in __init__ &#34;&#34;&#34;
-    pass
-
-
-sv_registration_utils.register_all = sv_register_modules
-sv_registration_utils.unregister_all = sv_unregister_modules
-
-
-def reload_all(imported_modules, node_list):
-    # reload base modules
-    _ = [importlib.reload(im) for im in imported_modules]
-
-    # reload nodes
-    _ = [importlib.reload(node) for node in node_list]
-
-
-def make_node_list(nodes):
-    node_list = []
+def import_nodes():
+    from sverchok import nodes
+    node_modules = []
     base_name = &#34;sverchok.nodes&#34;
     for category, names in nodes.nodes_dict.items():
         importlib.import_module(&#39;.{}&#39;.format(category), base_name)
-        import_modules(names, &#39;{}.{}&#39;.format(base_name, category), node_list)
-    return node_list
+        import_modules(names, &#39;{}.{}&#39;.format(base_name, category), node_modules)
+    return node_modules
 
 
 def import_modules(modules, base, im_list):
     for m in modules:
+        # print(base, &#39;.{}&#39;.format(m))
         im = importlib.import_module(&#39;.{}&#39;.format(m), base)
         im_list.append(im)
 
 
-def handle_reload_event(nodes, imported_modules):
-    node_list = make_node_list(nodes)
-    reload_all(imported_modules, node_list)
-    return node_list
+def handle_reload_event(imported_modules):
+    node_modules = import_nodes()
+
+    # reload base modules
+    for module in imported_modules:
+        importlib.reload(module)
+
+    # reload util modules
+    for module in imported_utils_modules():
+        importlib.reload(module)
+
+    # reload nodes
+    for node in node_modules:
+        importlib.reload(node)
+    return node_modules
 
 
-def import_settings(imported_modules, sv_dir_name):
-    # &#34;settings&#34; treated separately in case the sverchok dir isn&#39;t named &#34;sverchok&#34;
-    settings = importlib.import_module(&#34;.settings&#34;, sv_dir_name)
+def import_settings(imported_modules):
+    &#34;&#34;&#34;Useful have the function to be sure that we do not import half of
+    Sverchok modules wia settings&#34;&#34;&#34;
+    settings = importlib.import_module(&#34;.settings&#34;, &#34;sverchok&#34;)
     imported_modules.append(settings)
 
 
@@ -113,36 +117,39 @@ def import_all_modules(imported_modules, mods_bases):
         import_modules(mods, base, imported_modules)
 
 
-def init_architecture(sv_name, utils_modules, ui_modules):
+def init_architecture():
+    &#34;&#34;&#34;There is no too much sense to init settings module first. It just useful
+    to make sure that we do not init half of Sverchok via the module.
+    Settings (preferences) are only available when add-on is imported (during
+    registration).
+
+    Import core modules here like Sverchok node tree, sockets, settings,
+    update system, user interface etc.
+    Utils modules are imported only via core modules. If you need your module
+    to be imported you either add import in some core module or convert it into
+    a core module (for example by moving into the ui folder).
+    List of core modules is used for calling their register function.
+    &#34;&#34;&#34;
+    import sverchok.ui as ui
 
     imported_modules = []
     mods_bases = [
         (root_modules, &#34;sverchok&#34;),
         (core_modules, &#34;sverchok.core&#34;),
-        (utils_modules, &#34;sverchok.utils&#34;),
-        (ui_modules, &#34;sverchok.ui&#34;)
+        (ui.module_names(), &#34;sverchok.ui&#34;)
     ]
-    print(&#39;sv: import settings&#39;)
-    import_settings(imported_modules, sv_name)
-    print(&#39;sv: import all modules&#39;)
+    # print(&#39;sv: import settings&#39;)
+    import_settings(imported_modules)
+    # print(&#39;sv: import all modules&#39;)
     import_all_modules(imported_modules, mods_bases)
     return imported_modules
 
 
-def init_bookkeeping(sv_name):
-
-    from sverchok.utils import ascii_print, auto_gather_node_classes
-
-    sverchok.data_structure.SVERCHOK_NAME = sv_name
-    ascii_print.show_welcome()
-    auto_gather_node_classes()
-
-
-activation_message = &#34;&#34;&#34;\n
-** Sverchok needs a couple of seconds to become activated when you enable it for the first time. **
-** Please restart Blender and enable it by pressing the tick box only once -- be patient!        ** 
-&#34;&#34;&#34;
 def interupted_activation_detected():
+    activation_message = &#34;&#34;&#34;\n
+    ** Sverchok needs a couple of seconds to become activated when you enable it for the first time. **
+    ** Please restart Blender and enable it by pressing the tick box only once -- be patient!        ** 
+    &#34;&#34;&#34;
     return NameError(activation_message)
 
 
@@ -210,7 +217,7 @@ context</p></div>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
 <dt id="sverchok.core.handle_reload_event"><code class="name flex">
-<span>def <span class="ident">handle_reload_event</span></span>(<span>nodes, imported_modules)</span>
+<span>def <span class="ident">handle_reload_event</span></span>(<span>imported_modules)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -218,10 +225,21 @@ context</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def handle_reload_event(nodes, imported_modules):
-    node_list = make_node_list(nodes)
-    reload_all(imported_modules, node_list)
-    return node_list</code></pre>
+<pre><code class="python">def handle_reload_event(imported_modules):
+    node_modules = import_nodes()
+
+    # reload base modules
+    for module in imported_modules:
+        importlib.reload(module)
+
+    # reload util modules
+    for module in imported_utils_modules():
+        importlib.reload(module)
+
+    # reload nodes
+    for node in node_modules:
+        importlib.reload(node)
+    return node_modules</code></pre>
 </details>
 </dd>
 <dt id="sverchok.core.import_all_modules"><code class="name flex">
@@ -249,12 +267,13 @@ context</p></div>
 </summary>
 <pre><code class="python">def import_modules(modules, base, im_list):
     for m in modules:
+        # print(base, &#39;.{}&#39;.format(m))
         im = importlib.import_module(&#39;.{}&#39;.format(m), base)
         im_list.append(im)</code></pre>
 </details>
 </dd>
-<dt id="sverchok.core.import_settings"><code class="name flex">
-<span>def <span class="ident">import_settings</span></span>(<span>imported_modules, sv_dir_name)</span>
+<dt id="sverchok.core.import_nodes"><code class="name flex">
+<span>def <span class="ident">import_nodes</span></span>(<span>)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -262,14 +281,35 @@ context</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def import_settings(imported_modules, sv_dir_name):
-    # &#34;settings&#34; treated separately in case the sverchok dir isn&#39;t named &#34;sverchok&#34;
-    settings = importlib.import_module(&#34;.settings&#34;, sv_dir_name)
+<pre><code class="python">def import_nodes():
+    from sverchok import nodes
+    node_modules = []
+    base_name = &#34;sverchok.nodes&#34;
+    for category, names in nodes.nodes_dict.items():
+        importlib.import_module(&#39;.{}&#39;.format(category), base_name)
+        import_modules(names, &#39;{}.{}&#39;.format(base_name, category), node_modules)
+    return node_modules</code></pre>
+</details>
+</dd>
+<dt id="sverchok.core.import_settings"><code class="name flex">
+<span>def <span class="ident">import_settings</span></span>(<span>imported_modules)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Useful have the function to be sure that we do not import half of
+Sverchok modules wia settings</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def import_settings(imported_modules):
+    &#34;&#34;&#34;Useful have the function to be sure that we do not import half of
+    Sverchok modules wia settings&#34;&#34;&#34;
+    settings = importlib.import_module(&#34;.settings&#34;, &#34;sverchok&#34;)
     imported_modules.append(settings)</code></pre>
 </details>
 </dd>
-<dt id="sverchok.core.init_architecture"><code class="name flex">
-<span>def <span class="ident">init_architecture</span></span>(<span>sv_name, utils_modules, ui_modules)</span>
+<dt id="sverchok.core.imported_utils_modules"><code class="name flex">
+<span>def <span class="ident">imported_utils_modules</span></span>(<span>)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -277,38 +317,54 @@ context</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def init_architecture(sv_name, utils_modules, ui_modules):
+<pre><code class="python">def imported_utils_modules():
+    return [m for n, m in sys.modules.items() if &#39;sverchok.utils&#39; in n]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.core.init_architecture"><code class="name flex">
+<span>def <span class="ident">init_architecture</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>There is no too much sense to init settings module first. It just useful
+to make sure that we do not init half of Sverchok via the module.
+Settings (preferences) are only available when add-on is imported (during
+registration).</p>
+<p>Import core modules here like Sverchok node tree, sockets, settings,
+update system, user interface etc.
+Utils modules are imported only via core modules. If you need your module
+to be imported you either add import in some core module or convert it into
+a core module (for example by moving into the ui folder).
+List of core modules is used for calling their register function.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def init_architecture():
+    &#34;&#34;&#34;There is no too much sense to init settings module first. It just useful
+    to make sure that we do not init half of Sverchok via the module.
+    Settings (preferences) are only available when add-on is imported (during
+    registration).
+
+    Import core modules here like Sverchok node tree, sockets, settings,
+    update system, user interface etc.
+    Utils modules are imported only via core modules. If you need your module
+    to be imported you either add import in some core module or convert it into
+    a core module (for example by moving into the ui folder).
+    List of core modules is used for calling their register function.
+    &#34;&#34;&#34;
+    import sverchok.ui as ui
 
     imported_modules = []
     mods_bases = [
         (root_modules, &#34;sverchok&#34;),
         (core_modules, &#34;sverchok.core&#34;),
-        (utils_modules, &#34;sverchok.utils&#34;),
-        (ui_modules, &#34;sverchok.ui&#34;)
+        (ui.module_names(), &#34;sverchok.ui&#34;)
     ]
-    print(&#39;sv: import settings&#39;)
-    import_settings(imported_modules, sv_name)
-    print(&#39;sv: import all modules&#39;)
+    # print(&#39;sv: import settings&#39;)
+    import_settings(imported_modules)
+    # print(&#39;sv: import all modules&#39;)
     import_all_modules(imported_modules, mods_bases)
     return imported_modules</code></pre>
-</details>
-</dd>
-<dt id="sverchok.core.init_bookkeeping"><code class="name flex">
-<span>def <span class="ident">init_bookkeeping</span></span>(<span>sv_name)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def init_bookkeeping(sv_name):
-
-    from sverchok.utils import ascii_print, auto_gather_node_classes
-
-    sverchok.data_structure.SVERCHOK_NAME = sv_name
-    ascii_print.show_welcome()
-    auto_gather_node_classes()</code></pre>
 </details>
 </dd>
 <dt id="sverchok.core.interupted_activation_detected"><code class="name flex">
@@ -321,42 +377,11 @@ context</p></div>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def interupted_activation_detected():
+    activation_message = &#34;&#34;&#34;\n
+    ** Sverchok needs a couple of seconds to become activated when you enable it for the first time. **
+    ** Please restart Blender and enable it by pressing the tick box only once -- be patient!        ** 
+    &#34;&#34;&#34;
     return NameError(activation_message)</code></pre>
-</details>
-</dd>
-<dt id="sverchok.core.make_node_list"><code class="name flex">
-<span>def <span class="ident">make_node_list</span></span>(<span>nodes)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def make_node_list(nodes):
-    node_list = []
-    base_name = &#34;sverchok.nodes&#34;
-    for category, names in nodes.nodes_dict.items():
-        importlib.import_module(&#39;.{}&#39;.format(category), base_name)
-        import_modules(names, &#39;{}.{}&#39;.format(base_name, category), node_list)
-    return node_list</code></pre>
-</details>
-</dd>
-<dt id="sverchok.core.reload_all"><code class="name flex">
-<span>def <span class="ident">reload_all</span></span>(<span>imported_modules, node_list)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def reload_all(imported_modules, node_list):
-    # reload base modules
-    _ = [importlib.reload(im) for im in imported_modules]
-
-    # reload nodes
-    _ = [importlib.reload(node) for node in node_list]</code></pre>
 </details>
 </dd>
 <dt id="sverchok.core.sv_register_modules"><code class="name flex">
@@ -375,20 +400,6 @@ context</p></div>
             m.register()</code></pre>
 </details>
 </dd>
-<dt id="sverchok.core.sv_registration_utils"><code class="name flex">
-<span>def <span class="ident">sv_registration_utils</span></span>(<span>)</span>
-</code></dt>
-<dd>
-<div class="desc"><p>this is a faux module for syntactic sugar on the imports in <strong>init</strong></p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def sv_registration_utils():
-    &#34;&#34;&#34; this is a faux module for syntactic sugar on the imports in __init__ &#34;&#34;&#34;
-    pass</code></pre>
-</details>
-</dd>
 <dt id="sverchok.core.sv_unregister_modules"><code class="name flex">
 <span>def <span class="ident">sv_unregister_modules</span></span>(<span>modules)</span>
 </code></dt>
@@ -399,7 +410,6 @@ context</p></div>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def sv_unregister_modules(modules):
-    clear_all_socket_cache()
     for m in reversed(modules):
         if hasattr(m, &#34;unregister&#34;):
             try:
@@ -441,14 +451,12 @@ context</p></div>
 <li><code><a title="sverchok.core.handle_reload_event" href="#sverchok.core.handle_reload_event">handle_reload_event</a></code></li>
 <li><code><a title="sverchok.core.import_all_modules" href="#sverchok.core.import_all_modules">import_all_modules</a></code></li>
 <li><code><a title="sverchok.core.import_modules" href="#sverchok.core.import_modules">import_modules</a></code></li>
+<li><code><a title="sverchok.core.import_nodes" href="#sverchok.core.import_nodes">import_nodes</a></code></li>
 <li><code><a title="sverchok.core.import_settings" href="#sverchok.core.import_settings">import_settings</a></code></li>
+<li><code><a title="sverchok.core.imported_utils_modules" href="#sverchok.core.imported_utils_modules">imported_utils_modules</a></code></li>
 <li><code><a title="sverchok.core.init_architecture" href="#sverchok.core.init_architecture">init_architecture</a></code></li>
-<li><code><a title="sverchok.core.init_bookkeeping" href="#sverchok.core.init_bookkeeping">init_bookkeeping</a></code></li>
 <li><code><a title="sverchok.core.interupted_activation_detected" href="#sverchok.core.interupted_activation_detected">interupted_activation_detected</a></code></li>
-<li><code><a title="sverchok.core.make_node_list" href="#sverchok.core.make_node_list">make_node_list</a></code></li>
-<li><code><a title="sverchok.core.reload_all" href="#sverchok.core.reload_all">reload_all</a></code></li>
 <li><code><a title="sverchok.core.sv_register_modules" href="#sverchok.core.sv_register_modules">sv_register_modules</a></code></li>
-<li><code><a title="sverchok.core.sv_registration_utils" href="#sverchok.core.sv_registration_utils">sv_registration_utils</a></code></li>
 <li><code><a title="sverchok.core.sv_unregister_modules" href="#sverchok.core.sv_unregister_modules">sv_unregister_modules</a></code></li>
 </ul>
 </li>

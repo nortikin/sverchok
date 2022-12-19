@@ -22,166 +22,6 @@
 <h1 class="title">Package <code>sverchok.utils</code></h1>
 </header>
 <section id="section-intro">
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python"># GPL3
-import bpy
-import sverchok
-
-node_classes = {}
-
-
-def register_node_class(class_ref):
-    node_classes[class_ref.bl_idname] = class_ref
-    bpy.utils.register_class(class_ref)
-
-def unregister_node_class(class_ref):
-    del node_classes[class_ref.bl_idname]
-    bpy.utils.unregister_class(class_ref)
-
-
-def register_node_classes_factory(node_class_references, ops_class_references=None):
-    &#34;&#34;&#34;
-
-
-    !!!! Unless you are testing/developing a node, you do not need to use this. ever. !!!!
-
-
-    Utility function to create register and unregister functions
-    which registers and unregisters a sequence of classes
-
-    &#34;node_class_references&#34;:
-        : are tracked by Sverchok, for later lookup by bl_idname.
-    &#34;ops_class_references&#34;:
-        : are registered with the normal bpy.utils.register / unregister
-
-    This factory is implemented verbose for now.
-    &#34;&#34;&#34;
-    if not ops_class_references:
-
-        def register():
-            for cls in node_class_references:
-                register_node_class(cls)
-
-        def unregister():
-            for cls in reversed(node_class_references):
-                unregister_node_class(cls)
-
-        return register, unregister
-
-    else:
-
-        def register():
-            for cls in node_class_references:
-                register_node_class(cls)
-            for cls in ops_class_references:
-                bpy.utils.register_class(cls)
-
-        def unregister():
-            for cls in reversed(ops_class_references):
-                bpy.utils.unregister_class(cls)
-            for cls in reversed(node_class_references):
-                unregister_node_class(cls)
-
-        return register, unregister
-
-def auto_gather_node_classes(start_module = None):
-    &#34;&#34;&#34;
-    this produces a dict with mapping from bl_idname to class reference at runtime
-    f.ex
-          node_classes = {SvBMeshViewerMk2: &lt;class svechok.nodes.viz ......&gt; , .... }
-    &#34;&#34;&#34;
-
-    import inspect
-    if start_module is None:
-        start_module = sverchok.nodes
-
-    node_cats = inspect.getmembers(start_module, inspect.ismodule)
-    for catname, nodecat in node_cats:
-        node_files = inspect.getmembers(nodecat, inspect.ismodule)
-        for filename, fileref in node_files:
-            classes = inspect.getmembers(fileref, inspect.isclass)
-            for clsname, cls in classes:
-                try:
-                    if cls.bl_rna.base.name == &#34;Node&#34;:
-                        node_classes[cls.bl_idname] = cls
-                except:
-                    ...
-
-
-def get_node_class_reference(bl_idname):
-    if bl_idname == &#34;NodeReroute&#34;:
-        return getattr(bpy.types, bl_idname)
-
-    return node_classes.get(bl_idname)
-
-
-def clear_node_classes():
-    node_classes.clear()
-
-
-def register_multiple_classes(classes):
-    _ = [bpy.utils.register_class(cls) for cls in classes]
-
-def unregister_multiple_classes(classes):
-    _ = [bpy.utils.unregister_class(cls) for cls in reversed(classes)]
-
-def app_handler_ops(append=None, remove=None):
-    &#34;&#34;&#34; append or remove multiple items to specific bpy.app.handlers &#34;&#34;&#34;
-
-    (operation, handler_dict) = (&#39;append&#39;, append) if append else (&#39;remove&#39;, remove)
-    for handler_name, handler_function in handler_dict.items():
-        handler = getattr(bpy.app.handlers, handler_name)
-
-        # bpy.app.handlers.&lt;handler&gt;.&lt;append or remove&gt;(function_name)
-        getattr(handler, operation)(handler_function)
-
-    # try:
-    #     names = lambda d: [f&#34;    {k} -&gt; {v.__name__}&#34; for k, v in d.items()]
-    #     listed = &#34;\n&#34;.join(names(handler_dict))
-    # except Exception as err:
-    #     print(&#39;error while listing event handlers&#39;, err)
-    #     listed = &#34;&#34;
-
-    # print(f&#39;sv: {operation} app.handlers&#39;)
-    # print(f&#39;{listed}&#39;)
-
-utils_modules = [
-    # non UI tools
-    &#34;cad_module_class&#34;, &#34;sv_bmesh_utils&#34;, &#34;sv_stethoscope_helper&#34;, &#34;sv_viewer_utils&#34;,
-    &#34;sv_curve_utils&#34;, &#34;voronoi&#34;, &#34;sv_script&#34;, &#34;sv_itertools&#34;, &#34;script_importhelper&#34;, &#34;sv_oldnodes_parser&#34;,
-    &#34;csg_core&#34;, &#34;csg_geom&#34;, &#34;geom&#34;, &#34;sv_easing_functions&#34;, &#34;sv_text_io_common&#34;, &#34;sv_obj_baker&#34;,
-    &#34;snlite_utils&#34;, &#34;snlite_importhelper&#34;, &#34;snlite_script_searcher&#34;,
-    &#34;context_managers&#34;, &#34;sv_node_utils&#34;, &#34;sv_noise_utils&#34;, &#34;pip_utils&#34;,
-    &#34;profile&#34;, &#34;logging&#34;, &#34;testing&#34;, &#34;sv_requests&#34;, &#34;sv_shader_sources&#34;, &#34;tree_structure&#34;,
-    &#34;avl_tree&#34;, &#34;sv_nodeview_draw_helper&#34;, &#34;sv_font_xml_parser&#34;, &#34;modules.edge_utils&#34;, &#34;modules.polygon_utils&#34;,
-    &#34;wfc_algorithm&#34;, &#34;handle_blender_data&#34;, &#34;nodes_mixins.generating_objects&#34;, &#34;decorators_compilation&#34;,
-    &#34;nodes_mixins.show_3d_properties&#34;, &#34;modules_inspection&#34;, &#34;sv_json_export&#34;, &#34;sv_json_import&#34;,
-    &#34;meshes&#34;, &#34;tree_walk&#34;, &#34;mesh_functions&#34;, &#39;mesh.inset_faces&#39;, &#39;mesh.extrude_edges&#39;, &#34;sv_json_struct&#34;,
-    &#34;nodeview_time_graph_drawing&#34;, &#34;modules.shader_utils&#34;, &#34;modules.FreeCAD_utils&#34;,
-    &#34;nodes_mixins.loop_nodes&#34;,
-    # UI text editor ui
-    &#34;text_editor_submenu&#34;, &#34;text_editor_plugins&#34;,
-    # UI operators and tools
-    &#34;sv_IO_pointer_helpers&#34;,
-    &#34;sv_operator_mixins&#34;, &#34;console_print&#34;,
-    &#34;sv_gist_tools&#34;, &#34;sv_IO_panel_tools&#34;, &#34;sv_load_archived_blend&#34;,
-    &#34;sv_default_macros&#34;, &#34;sv_macro_utils&#34;, &#34;sv_extra_search&#34;, &#34;sv_3dview_tools&#34;,
-    &#34;sv_update_utils&#34;, &#34;sv_obj_helper&#34;, &#34;sv_batch_primitives&#34;, &#34;sv_idx_viewer28_draw&#34;,
-    &#34;sv_texture_utils&#34;,
-    # geom 2d tools
-    &#34;geom_2d.lin_alg&#34;, &#34;geom_2d.dcel&#34;, &#34;geom_2d.dissolve_mesh&#34;, &#34;geom_2d.merge_mesh&#34;, &#34;geom_2d.intersections&#34;,
-    &#34;geom_2d.make_monotone&#34;, &#34;geom_2d.sort_mesh&#34;, &#34;geom_2d.dcel_debugger&#34;,
-    &#34;quad_grid&#34;,
-    &#34;catmull_clark&#34;,
-    &#34;curve.nurbs_algorithms&#34;,
-    # extra addons
-    &#34;sv_extra_addons&#34;
-
-]</code></pre>
-</details>
 </section>
 <section>
 <h2 class="section-title" id="header-submodules">Sub-modules</h2>
@@ -493,14 +333,6 @@ Copyright (c) 2011, Auerhaus Development, LLC
 <dd>
 <div class="desc"></div>
 </dd>
-<dt><code class="name"><a title="sverchok.utils.sv_extra_addons" href="sv_extra_addons.html">sverchok.utils.sv_extra_addons</a></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt><code class="name"><a title="sverchok.utils.sv_extra_search" href="sv_extra_search.html">sverchok.utils.sv_extra_search</a></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
 <dt><code class="name"><a title="sverchok.utils.sv_font_xml_parser" href="sv_font_xml_parser.html">sverchok.utils.sv_font_xml_parser</a></code></dt>
 <dd>
 <div class="desc"></div>
@@ -530,14 +362,6 @@ Copyright (c) 2011, Auerhaus Development, LLC
 <div class="desc"></div>
 </dd>
 <dt><code class="name"><a title="sverchok.utils.sv_json_struct" href="sv_json_struct.html">sverchok.utils.sv_json_struct</a></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt><code class="name"><a title="sverchok.utils.sv_load_archived_blend" href="sv_load_archived_blend.html">sverchok.utils.sv_load_archived_blend</a></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt><code class="name"><a title="sverchok.utils.sv_macro_utils" href="sv_macro_utils.html">sverchok.utils.sv_macro_utils</a></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -637,14 +461,6 @@ Copyright (c) 2011, Auerhaus Development, LLC
 <dd>
 <div class="desc"></div>
 </dd>
-<dt><code class="name"><a title="sverchok.utils.text_editor_plugins" href="text_editor_plugins.html">sverchok.utils.text_editor_plugins</a></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt><code class="name"><a title="sverchok.utils.text_editor_submenu" href="text_editor_submenu.html">sverchok.utils.text_editor_submenu</a></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
 <dt><code class="name"><a title="sverchok.utils.topo" href="topo.html">sverchok.utils.topo</a></code></dt>
 <dd>
 <div class="desc"><p>Topological sorting …</p></div>
@@ -688,219 +504,6 @@ library is available in build-in Python source.</p></div>
 <section>
 </section>
 <section>
-<h2 class="section-title" id="header-functions">Functions</h2>
-<dl>
-<dt id="sverchok.utils.app_handler_ops"><code class="name flex">
-<span>def <span class="ident">app_handler_ops</span></span>(<span>append=None, remove=None)</span>
-</code></dt>
-<dd>
-<div class="desc"><p>append or remove multiple items to specific bpy.app.handlers</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def app_handler_ops(append=None, remove=None):
-    &#34;&#34;&#34; append or remove multiple items to specific bpy.app.handlers &#34;&#34;&#34;
-
-    (operation, handler_dict) = (&#39;append&#39;, append) if append else (&#39;remove&#39;, remove)
-    for handler_name, handler_function in handler_dict.items():
-        handler = getattr(bpy.app.handlers, handler_name)
-
-        # bpy.app.handlers.&lt;handler&gt;.&lt;append or remove&gt;(function_name)
-        getattr(handler, operation)(handler_function)
-
-    # try:
-    #     names = lambda d: [f&#34;    {k} -&gt; {v.__name__}&#34; for k, v in d.items()]
-    #     listed = &#34;\n&#34;.join(names(handler_dict))
-    # except Exception as err:
-    #     print(&#39;error while listing event handlers&#39;, err)
-    #     listed = &#34;&#34;
-
-    # print(f&#39;sv: {operation} app.handlers&#39;)
-    # print(f&#39;{listed}&#39;)</code></pre>
-</details>
-</dd>
-<dt id="sverchok.utils.auto_gather_node_classes"><code class="name flex">
-<span>def <span class="ident">auto_gather_node_classes</span></span>(<span>start_module=None)</span>
-</code></dt>
-<dd>
-<div class="desc"><p>this produces a dict with mapping from bl_idname to class reference at runtime
-f.ex
-node_classes = {SvBMeshViewerMk2: <class svechok.nodes.viz ......> , .... }</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def auto_gather_node_classes(start_module = None):
-    &#34;&#34;&#34;
-    this produces a dict with mapping from bl_idname to class reference at runtime
-    f.ex
-          node_classes = {SvBMeshViewerMk2: &lt;class svechok.nodes.viz ......&gt; , .... }
-    &#34;&#34;&#34;
-
-    import inspect
-    if start_module is None:
-        start_module = sverchok.nodes
-
-    node_cats = inspect.getmembers(start_module, inspect.ismodule)
-    for catname, nodecat in node_cats:
-        node_files = inspect.getmembers(nodecat, inspect.ismodule)
-        for filename, fileref in node_files:
-            classes = inspect.getmembers(fileref, inspect.isclass)
-            for clsname, cls in classes:
-                try:
-                    if cls.bl_rna.base.name == &#34;Node&#34;:
-                        node_classes[cls.bl_idname] = cls
-                except:
-                    ...</code></pre>
-</details>
-</dd>
-<dt id="sverchok.utils.clear_node_classes"><code class="name flex">
-<span>def <span class="ident">clear_node_classes</span></span>(<span>)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def clear_node_classes():
-    node_classes.clear()</code></pre>
-</details>
-</dd>
-<dt id="sverchok.utils.get_node_class_reference"><code class="name flex">
-<span>def <span class="ident">get_node_class_reference</span></span>(<span>bl_idname)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def get_node_class_reference(bl_idname):
-    if bl_idname == &#34;NodeReroute&#34;:
-        return getattr(bpy.types, bl_idname)
-
-    return node_classes.get(bl_idname)</code></pre>
-</details>
-</dd>
-<dt id="sverchok.utils.register_multiple_classes"><code class="name flex">
-<span>def <span class="ident">register_multiple_classes</span></span>(<span>classes)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def register_multiple_classes(classes):
-    _ = [bpy.utils.register_class(cls) for cls in classes]</code></pre>
-</details>
-</dd>
-<dt id="sverchok.utils.register_node_class"><code class="name flex">
-<span>def <span class="ident">register_node_class</span></span>(<span>class_ref)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def register_node_class(class_ref):
-    node_classes[class_ref.bl_idname] = class_ref
-    bpy.utils.register_class(class_ref)</code></pre>
-</details>
-</dd>
-<dt id="sverchok.utils.register_node_classes_factory"><code class="name flex">
-<span>def <span class="ident">register_node_classes_factory</span></span>(<span>node_class_references, ops_class_references=None)</span>
-</code></dt>
-<dd>
-<div class="desc"><p>!!!! Unless you are testing/developing a node, you do not need to use this. ever. !!!!</p>
-<p>Utility function to create register and unregister functions
-which registers and unregisters a sequence of classes</p>
-<p>"node_class_references":
-: are tracked by Sverchok, for later lookup by bl_idname.
-"ops_class_references":
-: are registered with the normal bpy.utils.register / unregister</p>
-<p>This factory is implemented verbose for now.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def register_node_classes_factory(node_class_references, ops_class_references=None):
-    &#34;&#34;&#34;
-
-
-    !!!! Unless you are testing/developing a node, you do not need to use this. ever. !!!!
-
-
-    Utility function to create register and unregister functions
-    which registers and unregisters a sequence of classes
-
-    &#34;node_class_references&#34;:
-        : are tracked by Sverchok, for later lookup by bl_idname.
-    &#34;ops_class_references&#34;:
-        : are registered with the normal bpy.utils.register / unregister
-
-    This factory is implemented verbose for now.
-    &#34;&#34;&#34;
-    if not ops_class_references:
-
-        def register():
-            for cls in node_class_references:
-                register_node_class(cls)
-
-        def unregister():
-            for cls in reversed(node_class_references):
-                unregister_node_class(cls)
-
-        return register, unregister
-
-    else:
-
-        def register():
-            for cls in node_class_references:
-                register_node_class(cls)
-            for cls in ops_class_references:
-                bpy.utils.register_class(cls)
-
-        def unregister():
-            for cls in reversed(ops_class_references):
-                bpy.utils.unregister_class(cls)
-            for cls in reversed(node_class_references):
-                unregister_node_class(cls)
-
-        return register, unregister</code></pre>
-</details>
-</dd>
-<dt id="sverchok.utils.unregister_multiple_classes"><code class="name flex">
-<span>def <span class="ident">unregister_multiple_classes</span></span>(<span>classes)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def unregister_multiple_classes(classes):
-    _ = [bpy.utils.unregister_class(cls) for cls in reversed(classes)]</code></pre>
-</details>
-</dd>
-<dt id="sverchok.utils.unregister_node_class"><code class="name flex">
-<span>def <span class="ident">unregister_node_class</span></span>(<span>class_ref)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def unregister_node_class(class_ref):
-    del node_classes[class_ref.bl_idname]
-    bpy.utils.unregister_class(class_ref)</code></pre>
-</details>
-</dd>
-</dl>
 </section>
 <section>
 </section>
@@ -987,8 +590,6 @@ which registers and unregisters a sequence of classes</p>
 <li><code><a title="sverchok.utils.sv_default_macros" href="sv_default_macros.html">sverchok.utils.sv_default_macros</a></code></li>
 <li><code><a title="sverchok.utils.sv_easing_functions" href="sv_easing_functions.html">sverchok.utils.sv_easing_functions</a></code></li>
 <li><code><a title="sverchok.utils.sv_extended_curve_utils" href="sv_extended_curve_utils.html">sverchok.utils.sv_extended_curve_utils</a></code></li>
-<li><code><a title="sverchok.utils.sv_extra_addons" href="sv_extra_addons.html">sverchok.utils.sv_extra_addons</a></code></li>
-<li><code><a title="sverchok.utils.sv_extra_search" href="sv_extra_search.html">sverchok.utils.sv_extra_search</a></code></li>
 <li><code><a title="sverchok.utils.sv_font_xml_parser" href="sv_font_xml_parser.html">sverchok.utils.sv_font_xml_parser</a></code></li>
 <li><code><a title="sverchok.utils.sv_gist_tools" href="sv_gist_tools.html">sverchok.utils.sv_gist_tools</a></code></li>
 <li><code><a title="sverchok.utils.sv_git_connection" href="sv_git_connection.html">sverchok.utils.sv_git_connection</a></code></li>
@@ -997,8 +598,6 @@ which registers and unregisters a sequence of classes</p>
 <li><code><a title="sverchok.utils.sv_json_export" href="sv_json_export.html">sverchok.utils.sv_json_export</a></code></li>
 <li><code><a title="sverchok.utils.sv_json_import" href="sv_json_import.html">sverchok.utils.sv_json_import</a></code></li>
 <li><code><a title="sverchok.utils.sv_json_struct" href="sv_json_struct.html">sverchok.utils.sv_json_struct</a></code></li>
-<li><code><a title="sverchok.utils.sv_load_archived_blend" href="sv_load_archived_blend.html">sverchok.utils.sv_load_archived_blend</a></code></li>
-<li><code><a title="sverchok.utils.sv_macro_utils" href="sv_macro_utils.html">sverchok.utils.sv_macro_utils</a></code></li>
 <li><code><a title="sverchok.utils.sv_manual_curves_utils" href="sv_manual_curves_utils.html">sverchok.utils.sv_manual_curves_utils</a></code></li>
 <li><code><a title="sverchok.utils.sv_mesh_utils" href="sv_mesh_utils.html">sverchok.utils.sv_mesh_utils</a></code></li>
 <li><code><a title="sverchok.utils.sv_node_utils" href="sv_node_utils.html">sverchok.utils.sv_node_utils</a></code></li>
@@ -1023,8 +622,6 @@ which registers and unregisters a sequence of classes</p>
 <li><code><a title="sverchok.utils.sv_viewer_utils" href="sv_viewer_utils.html">sverchok.utils.sv_viewer_utils</a></code></li>
 <li><code><a title="sverchok.utils.svg" href="svg.html">sverchok.utils.svg</a></code></li>
 <li><code><a title="sverchok.utils.testing" href="testing.html">sverchok.utils.testing</a></code></li>
-<li><code><a title="sverchok.utils.text_editor_plugins" href="text_editor_plugins.html">sverchok.utils.text_editor_plugins</a></code></li>
-<li><code><a title="sverchok.utils.text_editor_submenu" href="text_editor_submenu.html">sverchok.utils.text_editor_submenu</a></code></li>
 <li><code><a title="sverchok.utils.topo" href="topo.html">sverchok.utils.topo</a></code></li>
 <li><code><a title="sverchok.utils.tree_structure" href="tree_structure.html">sverchok.utils.tree_structure</a></code></li>
 <li><code><a title="sverchok.utils.tree_walk" href="tree_walk.html">sverchok.utils.tree_walk</a></code></li>
@@ -1034,19 +631,6 @@ which registers and unregisters a sequence of classes</p>
 <li><code><a title="sverchok.utils.voronoi3d" href="voronoi3d.html">sverchok.utils.voronoi3d</a></code></li>
 <li><code><a title="sverchok.utils.wfc_algorithm" href="wfc_algorithm.html">sverchok.utils.wfc_algorithm</a></code></li>
 <li><code><a title="sverchok.utils.yaml_parser" href="yaml_parser.html">sverchok.utils.yaml_parser</a></code></li>
-</ul>
-</li>
-<li><h3><a href="#header-functions">Functions</a></h3>
-<ul class="">
-<li><code><a title="sverchok.utils.app_handler_ops" href="#sverchok.utils.app_handler_ops">app_handler_ops</a></code></li>
-<li><code><a title="sverchok.utils.auto_gather_node_classes" href="#sverchok.utils.auto_gather_node_classes">auto_gather_node_classes</a></code></li>
-<li><code><a title="sverchok.utils.clear_node_classes" href="#sverchok.utils.clear_node_classes">clear_node_classes</a></code></li>
-<li><code><a title="sverchok.utils.get_node_class_reference" href="#sverchok.utils.get_node_class_reference">get_node_class_reference</a></code></li>
-<li><code><a title="sverchok.utils.register_multiple_classes" href="#sverchok.utils.register_multiple_classes">register_multiple_classes</a></code></li>
-<li><code><a title="sverchok.utils.register_node_class" href="#sverchok.utils.register_node_class">register_node_class</a></code></li>
-<li><code><a title="sverchok.utils.register_node_classes_factory" href="#sverchok.utils.register_node_classes_factory">register_node_classes_factory</a></code></li>
-<li><code><a title="sverchok.utils.unregister_multiple_classes" href="#sverchok.utils.unregister_multiple_classes">unregister_multiple_classes</a></code></li>
-<li><code><a title="sverchok.utils.unregister_node_class" href="#sverchok.utils.unregister_node_class">unregister_node_class</a></code></li>
 </ul>
 </li>
 </ul>

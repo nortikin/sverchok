@@ -67,19 +67,9 @@ instead of actual module, so that one can execute another version of code:
 todo: Create dependencies.txt file and import modules from there
 &#34;&#34;&#34;
 
-import logging
+from sverchok.utils.logging import info, debug
+import sverchok.settings as settings
 
-# Logging setup
-# we have to set up logging here separately, because dependencies.py is loaded before settings.py,
-# so we can&#39;t use common settings.
-
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-ch = logging.StreamHandler()
-ch.setLevel(logging.INFO)
-logger.addHandler(ch)
-
-info, debug, error = logger.info, logger.debug, logger.error
 
 class SvDependency():
     &#34;&#34;&#34;
@@ -144,7 +134,7 @@ try:
     import pip
     pip_d.module = pip
 except ImportError:
-    debug(pip_d.message)
+    print(pip_d.message)
     pip = None
 
 if pip is None:
@@ -152,10 +142,10 @@ if pip is None:
         import ensurepip
     except ImportError:
         ensurepip = None
-        info(&#34;Ensurepip module is not available, user will not be able to install PIP automatically&#34;)
+        # print(&#34;Ensurepip module is not available, user will not be able to install PIP automatically&#34;)
 else:
     ensurepip = None
-    debug(&#34;PIP is already installed, no need to call ensurepip&#34;)
+    # print(&#34;PIP is already installed, no need to call ensurepip&#34;)
 
 scipy_d = sv_dependencies[&#34;scipy&#34;] = SvDependency(&#34;scipy&#34;, &#34;https://www.scipy.org/&#34;)
 scipy_d.pip_installable = True
@@ -227,11 +217,21 @@ try:
 except ImportError:
     pyOpenSubdiv = None 
 
-good_names = [d.package for d in sv_dependencies.values() if d.module is not None and d.package is not None]
-if good_names:
-    info(&#34;sv: Dependencies available: %s.&#34;, &#34;, &#34;.join(good_names))
-else:
-    info(&#34;sv: No dependencies are available.&#34;)</code></pre>
+
+settings.pip = pip
+settings.sv_dependencies = sv_dependencies
+settings.ensurepip = ensurepip
+settings.draw_message = draw_message
+settings.get_icon = get_icon
+
+
+def register():
+    good_names = [d.package for d in sv_dependencies.values()
+                  if d.module is not None and d.package is not None]
+    if good_names:
+        info(&#34;Dependencies available: %s.&#34;, &#34;, &#34;.join(good_names))
+    else:
+        info(&#34;No dependencies are available.&#34;)</code></pre>
 </details>
 </section>
 <section>
@@ -297,6 +297,24 @@ whether the dependency is available or not.</p></div>
         return &#39;CANCEL&#39;
     else:
         return &#39;CHECKMARK&#39;</code></pre>
+</details>
+</dd>
+<dt id="sverchok.dependencies.register"><code class="name flex">
+<span>def <span class="ident">register</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def register():
+    good_names = [d.package for d in sv_dependencies.values()
+                  if d.module is not None and d.package is not None]
+    if good_names:
+        info(&#34;Dependencies available: %s.&#34;, &#34;, &#34;.join(good_names))
+    else:
+        info(&#34;No dependencies are available.&#34;)</code></pre>
 </details>
 </dd>
 </dl>
@@ -372,6 +390,7 @@ def message(self):
 <ul class="">
 <li><code><a title="sverchok.dependencies.draw_message" href="#sverchok.dependencies.draw_message">draw_message</a></code></li>
 <li><code><a title="sverchok.dependencies.get_icon" href="#sverchok.dependencies.get_icon">get_icon</a></code></li>
+<li><code><a title="sverchok.dependencies.register" href="#sverchok.dependencies.register">register</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>

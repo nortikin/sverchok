@@ -37,9 +37,9 @@ import sverchok.utils.logging as log
 from sverchok.core.event_system import handle_event
 from sverchok.core.socket_data import clear_all_socket_cache
 from sverchok.ui import bgl_callback_nodeview, bgl_callback_3dview
-from sverchok.utils import app_handler_ops
 from sverchok.utils.handle_blender_data import BlTrees
 from sverchok.utils.logging import catch_log_error, debug
+import sverchok.settings as settings
 
 _state = {&#39;frame&#39;: None}
 
@@ -244,9 +244,19 @@ def call_user_functions_on_post_load_event(scene):
         function()
 
 
+def app_handler_ops(append=None, remove=None):
+    &#34;&#34;&#34; append or remove multiple items to specific bpy.app.handlers &#34;&#34;&#34;
+    (operation, handler_dict) = (&#39;append&#39;, append) if append else (&#39;remove&#39;, remove)
+    for handler_name, handler_function in handler_dict.items():
+        handler = getattr(bpy.app.handlers, handler_name)
+        getattr(handler, operation)(handler_function)
+
+
+settings.set_frame_change = set_frame_change
+
+
 def register():
     app_handler_ops(append=handler_dict)
-    data_structure.setup_init()
 
     update_frame_change_mode()
     bpy.app.handlers.load_post.append(call_user_functions_on_post_load_event)
@@ -265,6 +275,23 @@ def unregister():
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
+<dt id="sverchok.core.handlers.app_handler_ops"><code class="name flex">
+<span>def <span class="ident">app_handler_ops</span></span>(<span>append=None, remove=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>append or remove multiple items to specific bpy.app.handlers</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def app_handler_ops(append=None, remove=None):
+    &#34;&#34;&#34; append or remove multiple items to specific bpy.app.handlers &#34;&#34;&#34;
+    (operation, handler_dict) = (&#39;append&#39;, append) if append else (&#39;remove&#39;, remove)
+    for handler_name, handler_function in handler_dict.items():
+        handler = getattr(bpy.app.handlers, handler_name)
+        getattr(handler, operation)(handler_function)</code></pre>
+</details>
+</dd>
 <dt id="sverchok.core.handlers.call_user_functions_on_post_load_event"><code class="name flex">
 <span>def <span class="ident">call_user_functions_on_post_load_event</span></span>(<span>scene)</span>
 </code></dt>
@@ -306,7 +333,6 @@ def call_user_functions_on_post_load_event(scene):
 </summary>
 <pre><code class="python">def register():
     app_handler_ops(append=handler_dict)
-    data_structure.setup_init()
 
     update_frame_change_mode()
     bpy.app.handlers.load_post.append(call_user_functions_on_post_load_event)</code></pre>
@@ -633,6 +659,7 @@ def sv_update_handler(scene):
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
+<li><code><a title="sverchok.core.handlers.app_handler_ops" href="#sverchok.core.handlers.app_handler_ops">app_handler_ops</a></code></li>
 <li><code><a title="sverchok.core.handlers.call_user_functions_on_post_load_event" href="#sverchok.core.handlers.call_user_functions_on_post_load_event">call_user_functions_on_post_load_event</a></code></li>
 <li><code><a title="sverchok.core.handlers.has_frame_changed" href="#sverchok.core.handlers.has_frame_changed">has_frame_changed</a></code></li>
 <li><code><a title="sverchok.core.handlers.register" href="#sverchok.core.handlers.register">register</a></code></li>
