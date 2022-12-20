@@ -520,6 +520,10 @@ class CallPartialMenu(SverchokContext, bpy.types.Operator):
             for cat in add_node_menu:
                 if getattr(cat, 'extra_menu', '') == self.menu_name:
                     cat.draw(_self.layout)
+                elif isinstance(cat, Category):
+                    for item in cat:
+                        if getattr(item, 'extra_menu', '') == self.menu_name:
+                            item.draw(_self.layout)
 
         context.window_manager.popup_menu(draw, title=self.menu_name, icon='BLANK1')
         return {'FINISHED'}
