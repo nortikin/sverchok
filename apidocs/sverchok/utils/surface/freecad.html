@@ -350,7 +350,10 @@ class SvFreeCadNurbsSurface(SvNurbsSurface):
         for i, (u1, m) in enumerate(ms):
             if u1 == parameter:
                 idx = i
-                M = m - count
+                if count == &#39;ALL&#39;:
+                    M = 0
+                else:
+                    M = m - count
                 break
         if idx is not None:
             if direction == &#39;U&#39;:
@@ -682,7 +685,10 @@ output: SvFreeCadNurbsSurface</p></div>
         for i, (u1, m) in enumerate(ms):
             if u1 == parameter:
                 idx = i
-                M = m - count
+                if count == &#39;ALL&#39;:
+                    M = 0
+                else:
+                    M = m - count
                 break
         if idx is not None:
             if direction == &#39;U&#39;:
@@ -945,7 +951,10 @@ def get_nurbs_implementation(cls):
     for i, (u1, m) in enumerate(ms):
         if u1 == parameter:
             idx = i
-            M = m - count
+            if count == &#39;ALL&#39;:
+                M = 0
+            else:
+                M = m - count
             break
     if idx is not None:
         if direction == &#39;U&#39;:

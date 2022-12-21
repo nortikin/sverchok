@@ -74,6 +74,30 @@ class SvDict(dict):
         return result
 
     @staticmethod
+    def from_dict(d):
+        if isinstance(d, SvDict):
+            return d.copy()
+        sv_dict = SvDict(d)
+        inputs = {}
+        for key, value in d.items():
+            if isinstance(value, SvDict):
+                nested = value.inputs
+                sock_type = &#39;SvDictionarySocket&#39;
+            elif isinstance(value, dict):
+                nested = SvDict.from_dict(value).inputs
+                sock_type = &#39;SvDictionarySocket&#39;
+            else:
+                nested = None
+                sock_type = &#39;SvStringsSocket&#39;
+            inputs[key] = {
+                    &#39;type&#39;: sock_type,
+                    &#39;name&#39;: key,
+                    &#39;nest&#39;: nested
+                }
+        sv_dict.inputs = inputs
+        return sv_dict
+
+    @staticmethod
     def get_inputs(d):
         if isinstance(d, SvDict) and d.inputs:
             return d.inputs
@@ -445,6 +469,30 @@ dict(one=1, two=2)</p></div>
         return result
 
     @staticmethod
+    def from_dict(d):
+        if isinstance(d, SvDict):
+            return d.copy()
+        sv_dict = SvDict(d)
+        inputs = {}
+        for key, value in d.items():
+            if isinstance(value, SvDict):
+                nested = value.inputs
+                sock_type = &#39;SvDictionarySocket&#39;
+            elif isinstance(value, dict):
+                nested = SvDict.from_dict(value).inputs
+                sock_type = &#39;SvDictionarySocket&#39;
+            else:
+                nested = None
+                sock_type = &#39;SvStringsSocket&#39;
+            inputs[key] = {
+                    &#39;type&#39;: sock_type,
+                    &#39;name&#39;: key,
+                    &#39;nest&#39;: nested
+                }
+        sv_dict.inputs = inputs
+        return sv_dict
+
+    @staticmethod
     def get_inputs(d):
         if isinstance(d, SvDict) and d.inputs:
             return d.inputs
@@ -541,6 +589,40 @@ dict(one=1, two=2)</p></div>
 </ul>
 <h3>Static methods</h3>
 <dl>
+<dt id="sverchok.utils.dictionary.SvDict.from_dict"><code class="name flex">
+<span>def <span class="ident">from_dict</span></span>(<span>d)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def from_dict(d):
+    if isinstance(d, SvDict):
+        return d.copy()
+    sv_dict = SvDict(d)
+    inputs = {}
+    for key, value in d.items():
+        if isinstance(value, SvDict):
+            nested = value.inputs
+            sock_type = &#39;SvDictionarySocket&#39;
+        elif isinstance(value, dict):
+            nested = SvDict.from_dict(value).inputs
+            sock_type = &#39;SvDictionarySocket&#39;
+        else:
+            nested = None
+            sock_type = &#39;SvStringsSocket&#39;
+        inputs[key] = {
+                &#39;type&#39;: sock_type,
+                &#39;name&#39;: key,
+                &#39;nest&#39;: nested
+            }
+    sv_dict.inputs = inputs
+    return sv_dict</code></pre>
+</details>
+</dd>
 <dt id="sverchok.utils.dictionary.SvDict.get_inputs"><code class="name flex">
 <span>def <span class="ident">get_inputs</span></span>(<span>d)</span>
 </code></dt>
@@ -740,6 +822,7 @@ def get_inputs(d):
 <h4><code><a title="sverchok.utils.dictionary.SvDict" href="#sverchok.utils.dictionary.SvDict">SvDict</a></code></h4>
 <ul class="">
 <li><code><a title="sverchok.utils.dictionary.SvDict.copy" href="#sverchok.utils.dictionary.SvDict.copy">copy</a></code></li>
+<li><code><a title="sverchok.utils.dictionary.SvDict.from_dict" href="#sverchok.utils.dictionary.SvDict.from_dict">from_dict</a></code></li>
 <li><code><a title="sverchok.utils.dictionary.SvDict.get_all_nested_keys" href="#sverchok.utils.dictionary.SvDict.get_all_nested_keys">get_all_nested_keys</a></code></li>
 <li><code><a title="sverchok.utils.dictionary.SvDict.get_inputs" href="#sverchok.utils.dictionary.SvDict.get_inputs">get_inputs</a></code></li>
 <li><code><a title="sverchok.utils.dictionary.SvDict.get_max_nesting_level" href="#sverchok.utils.dictionary.SvDict.get_max_nesting_level">get_max_nesting_level</a></code></li>
