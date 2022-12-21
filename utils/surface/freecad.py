@@ -322,7 +322,10 @@ class SvFreeCadNurbsSurface(SvNurbsSurface):
         for i, (u1, m) in enumerate(ms):
             if u1 == parameter:
                 idx = i
-                M = m - count
+                if count == 'ALL':
+                    M = 0
+                else:
+                    M = m - count
                 break
         if idx is not None:
             if direction == 'U':
