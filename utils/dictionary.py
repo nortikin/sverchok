@@ -46,6 +46,30 @@ class SvDict(dict):
         return result
 
     @staticmethod
+    def from_dict(d):
+        if isinstance(d, SvDict):
+            return d.copy()
+        sv_dict = SvDict(d)
+        inputs = {}
+        for key, value in d.items():
+            if isinstance(value, SvDict):
+                nested = value.inputs
+                sock_type = 'SvDictionarySocket'
+            elif isinstance(value, dict):
+                nested = SvDict.from_dict(value).inputs
+                sock_type = 'SvDictionarySocket'
+            else:
+                nested = None
+                sock_type = 'SvStringsSocket'
+            inputs[key] = {
+                    'type': sock_type,
+                    'name': key,
+                    'nest': nested
+                }
+        sv_dict.inputs = inputs
+        return sv_dict
+
+    @staticmethod
     def get_inputs(d):
         if isinstance(d, SvDict) and d.inputs:
             return d.inputs
