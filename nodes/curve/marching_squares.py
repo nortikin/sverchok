@@ -111,6 +111,7 @@ class SvExMarchingSquaresNode(SverchCustomTreeNode, bpy.types.Node):
         return points[0], points[1], points[2]
 
     def unapply_matrix(self, matrix, verts_s):
+        matrix = matrix.inverted()
         def unapply(verts):
             m = np.array(matrix.to_3x3())
             t = np.array(matrix.translation)
@@ -172,7 +173,7 @@ class SvExMarchingSquaresNode(SverchCustomTreeNode, bpy.types.Node):
 
                 value_verts, value_edges, value_faces = make_contours(samples, samples, min_x, x_size, min_y, y_size, z_value, contours, make_faces=self.make_faces, connect_bounds = self.connect_bounds)
                 if has_matrix:
-                    new_verts = self.unapply_matrix(matrix, new_verts)
+                    value_verts = self.unapply_matrix(matrix, value_verts)
 
                 if self.join:
                     new_verts.extend(value_verts)
