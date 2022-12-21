@@ -1,5 +1,5 @@
 
-def make_contour(samples_x, samples_y, min_x, x_size, min_y, y_size, z, contour, make_faces=False, connect_bounds=False):
+def make_contour(samples_x, samples_y, min_x, x_size, min_y, y_size, z, contour, make_faces=False, connect_bounds=False, u_max=None, v_max=None):
     n = len(contour)
     verts = []
     vert_0_bound = None
@@ -28,8 +28,21 @@ def make_contour(samples_x, samples_y, min_x, x_size, min_y, y_size, z, contour,
                 elif i == n-1:
                     vert_n_bound = 'B'
 
-        x = min_x + x_size * x0 + x_size/2.0
-        y = min_y + y_size * y0 + y_size/2.0
+        x = min_x + x_size * x0
+        y = min_y + y_size * y0
+
+        #if(i==0 or i==n-1): ?
+        if( u_max is not None):
+            if(x0==samples_x-1): 
+                if(x!=u_max): # for catching situation in debugging
+                    x = u_max
+        if(v_max is not None):
+            if(y0==samples_y-1):
+                if(y!=v_max):
+                    y = v_max
+
+
+
         vertex = (x, y, z)
         verts.append(vertex)
 
@@ -47,12 +60,12 @@ def make_contour(samples_x, samples_y, min_x, x_size, min_y, y_size, z, contour,
         faces = []
     return verts, edges, faces
 
-def make_contours(samples_x, samples_y, min_x, x_size, min_y, y_size, z, contours, make_faces=False, connect_bounds=False):
+def make_contours(samples_x, samples_y, min_x, x_size, min_y, y_size, z, contours, make_faces=False, connect_bounds=False, u_max=None, v_max=None):
     verts = []
     edges = []
     faces = []
     for contour in contours:
-        new_verts, new_edges, new_faces = make_contour(samples_x, samples_y, min_x, x_size, min_y, y_size, z, contour, make_faces=make_faces, connect_bounds=connect_bounds)
+        new_verts, new_edges, new_faces = make_contour(samples_x, samples_y, min_x, x_size, min_y, y_size, z, contour, make_faces=make_faces, connect_bounds=connect_bounds, u_max=u_max, v_max=v_max)
         verts.append(new_verts)
         edges.append(new_edges)
         faces.append(new_faces)
