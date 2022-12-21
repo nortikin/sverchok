@@ -276,16 +276,6 @@ class Category(MenuItem):
             if hasattr(elem, 'walk_categories'):
                 yield from elem.walk_categories()
 
-    def get_submenus_for_extra_menu(self, extra_menu_name):
-        if getattr(self, 'extra_menu', '') == extra_menu_name:
-            yield self
-        for elem in self.menu_cls.draw_data:
-            if hasattr(elem, 'get_submenus_for_extra_menu'):
-                yield from elem.get_submenus_for_extra_menu(extra_menu_name)
-            elif isinstance(elem, CustomMenu):
-                if getattr(elem, 'extra_menu', '') == extra_menu_name:
-                    yield elem
-
     def get_category(self, node_idname) -> Optional['Category']:
         """The search is O(len(sverchok_nodes))"""
         for cat in self.walk_categories():
@@ -527,8 +517,9 @@ class CallPartialMenu(SverchokContext, bpy.types.Operator):
     def execute(self, context):
 
         def draw(_self, context):
-            for cat in add_node_menu.get_submenus_for_extra_menu(self.menu_name):
-                cat.draw(_self.layout)
+            for cat in add_node_menu:
+                if getattr(cat, 'extra_menu', '') == self.menu_name:
+                    cat.draw(_self.layout)
 
         context.window_manager.popup_menu(draw, title=self.menu_name, icon='BLANK1')
         return {'FINISHED'}
