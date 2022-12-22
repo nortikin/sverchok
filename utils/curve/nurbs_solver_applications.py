@@ -214,12 +214,16 @@ def interpolate_nurbs_curve_with_tangents(degree, points, tangents,
                                     logger = logger)
     return curve
 
-def curve_to_nurbs(degree, curve, samples, logger=None):
+def curve_to_nurbs(degree, curve, samples, metric = 'DISTANCE', use_tangents = False, logger=None):
     is_cyclic = curve.is_closed()
     t_min, t_max = curve.get_u_bounds()
     ts = np.linspace(t_min, t_max, num=samples)
     if is_cyclic:
         ts = ts[:-1]
     points = curve.evaluate_array(ts)
-    return interpolate_nurbs_curve(degree, points, cyclic=is_cyclic, logger=logger)
+    if use_tangents:
+        tangents = curve.tangent_array(ts)
+        return interpolate_nurbs_curve_with_tangents(degree, points, tangents, metric=metric, logger=logger)
+    else:
+        return interpolate_nurbs_curve(degree, points, cyclic=is_cyclic, metric=metric, logger=logger)
 

@@ -10,7 +10,7 @@ from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.bezier import SvBezierCurve
 from sverchok.utils.curve.nurbs_algorithms import unify_curves, nurbs_curve_to_xoy, nurbs_curve_matrix
 from sverchok.utils.curve.algorithms import unify_curves_degree, SvCurveFrameCalculator, curve_frame_on_surface_array
-from sverchok.utils.curve.nurbs_solver_applications import curve_to_nurbs
+from sverchok.utils.curve.nurbs_solver_applications import interpolate_nurbs_curve_with_tangents
 from sverchok.utils.surface.core import UnsupportedSurfaceTypeException
 from sverchok.utils.surface import SvSurface, SurfaceCurvatureCalculator, SurfaceDerivativesData
 from sverchok.utils.surface.nurbs import SvNurbsSurface, simple_loft, interpolate_nurbs_surface
@@ -150,30 +150,18 @@ def nurbs_blend_surfaces(surface1, surface2, curve1, curve2, bulge1, bulge2, u_d
     t_min, t_max = curve2.get_u_bounds()
     ts2 = np.linspace(t_min, t_max, num=u_samples)
 
-    _, c1_points, _, _, c1_binormals = curve_frame_on_surface_array(surface1, curve1, ts1)
-    _, c2_points, _, _, c2_binormals = curve_frame_on_surface_array(surface2, curve2, ts2)
-    c1_binormals = bulge1 * c1_binormals
-    c2_binormals = bulge2 * c2_binormals
+    _, c1_points, c1_tangents, _, c1_binormals = curve_frame_on_surface_array(surface1, curve1, ts1, normalize=False)
+    _, c2_points, c2_tangents, _, c2_binormals = curve_frame_on_surface_array(surface2, curve2, ts2, normalize=False)
+    c1_binormals = bulge1 * c1_binormals / np.linalg.norm(c1_binormals, axis=1, keepdims=True)
+    c2_binormals = bulge2 * c2_binormals / np.linalg.norm(c2_binormals, axis=1, keepdims=True)
 
-    c1_cyclic = curve1.is_closed()
-    c2_cyclic = curve2.is_closed()
-
-    if c1_cyclic:
-        c1_points_int = c1_points[:-1]
-    else:
-        c1_points_int = c1_points
-    if c2_cyclic:
-        c2_points_int = c2_points[:-1]
-    else:
-        c2_points_int = c2_points
-
-    curve1 = SvNurbsMaths.interpolate_curve(SvNurbsMaths.NATIVE, u_degree, c1_points_int, cyclic=c1_cyclic, logger=logger)
-    curve2 = SvNurbsMaths.interpolate_curve(SvNurbsMaths.NATIVE, u_degree, c2_points_int, cyclic=c2_cyclic, logger=logger)
+    curve1 = interpolate_nurbs_curve_with_tangents(u_degree, c1_points, c1_tangents, tknots=ts1, logger=logger)
+    curve2 = interpolate_nurbs_curve_with_tangents(u_degree, c2_points, c2_tangents, tknots=ts2, logger=logger)
     u_curves = [curve1, curve2]
 
     v_curves = [SvBezierCurve.from_control_points([p1, p1+t1, p2+t2, p2]) for p1, t1, p2, t2 in zip(c1_points, c1_binormals, c2_points, c2_binormals)]
 
-    intersections = np.asarray([c1_points, c2_points])
+    intersections = np.transpose(np.asarray([c1_points, c2_points]), axes=(1,0,2))
 
-    return gordon_surface(v_curves, u_curves, intersections, logger=logger)[-1]
+    return gordon_surface(u_curves, v_curves, intersections, logger=logger)[-1]
 
