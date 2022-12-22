@@ -248,7 +248,7 @@ class SvStethoscopeNodeMK2(SverchCustomTreeNode, bpy.types.Node, LexMixin, SvNod
                 'content': processed_data,
                 'location': get_xy_for_bgl_drawing,
                 'color': self.text_color[:],
-                'scale' : float(scale),
+                'scale' : float(scale*bpy.context.preferences.system.ui_scale),
                 'mode': self.selected_mode[:],
                 'font_id': int(self.font_id)
             }
