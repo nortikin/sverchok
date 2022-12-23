@@ -88,3 +88,7 @@ circular arc:
 
 .. image:: https://user-images.githubusercontent.com/284644/89387738-5a2a5000-d71c-11ea-9018-4d62f6eb464f.png
 
+An example of NURBS mode:
+
+.. image:: https://user-images.githubusercontent.com/284644/209392203-c9da3a3f-5a5b-469c-8a8b-0afda3f5f176.png
+
