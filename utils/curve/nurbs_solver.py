@@ -221,9 +221,20 @@ class SvNurbsCurveTangents(SvNurbsCurvePoints):
 
     def calc_alphas(self, solver, us):
         p = solver.degree
-        betas = [solver.basis.weighted_derivative(k, p, 1, solver.curve_weights)(us) for k in range(solver.n_cpts)]
-        betas = np.array(betas) # (n_cpts, n_points)
-        return betas
+        ns = [solver.basis.function(k, p)(us) for k in range(solver.n_cpts)]
+        ns = np.array(ns) # (n_cpts, n_pts)
+        derivs = [solver.basis.derivative(k, p, 1)(us) for k in range(solver.n_cpts)]
+        derivs = np.array(derivs) # (n_cpts, n_pts)
+        weights = solver.curve_weights[np.newaxis].T # (n_cpts, 1)
+
+        sum_ns = (ns * weights).sum(axis=0) # (n_pts,)
+        sum_derivs = (derivs * weights).sum(axis=0) # (n_pts,)
+
+        numerator = weights * (derivs * sum_ns - ns * sum_derivs)
+
+        denominator = sum_ns**2
+
+        return numerator / denominator
     
     def get_src_points(self, solver):
         return solver.src_curve.tangent_array(self.us)
