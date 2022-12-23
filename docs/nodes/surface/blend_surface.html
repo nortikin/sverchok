@@ -204,6 +204,10 @@ blending surface must end. This input is available and mandatory only when
 second surface. Bigger values lead to more smooth touch. Negative values will
 mean that the blending surface will touch the surface from another side of
 curve / edge. The default value is 1.0.</p></li>
+<li><p><strong>Samples</strong>. This input is available only when the <strong>NURBS</strong> parameter is
+checked. This defines the number of points used to approximate initial
+(touching) curves with NURBS curves. The default value is 10. Greater values
+mean better approximation, but worse performance.</p></li>
 </ul>
 </section>
 <section id="parameters">
@@ -230,6 +234,11 @@ default value is <strong>Min U</strong>.</p></li>
 <li><p><strong>Flip Curve 2</strong>. If checked, the direction of curve (or edge), where the
 blending surface touches the second surface, will be reversed. Unchecked by
 default.</p></li>
+<li><p><strong>NURBS</strong>. If checked, the node will generate a NURBS surface instead of
+generic surface object. The NURBS surface only approximates the ideal
+blending surface. It is constructed as a Gordon surface, by approximating the
+two initial curves with NURBS curves. The number of points used for
+approximation is controlled by <strong>Samples</strong> input. Unchecked by default.</p></li>
 </ul>
 </section>
 <section id="outputs">
@@ -247,6 +256,8 @@ default.</p></li>
 in it’s U/V space, and make the blending surface touch this plane along that
 circular arc:</p>
 <img alt="https://user-images.githubusercontent.com/284644/89387738-5a2a5000-d71c-11ea-9018-4d62f6eb464f.png" src="https://user-images.githubusercontent.com/284644/89387738-5a2a5000-d71c-11ea-9018-4d62f6eb464f.png" />
+<p>An example of NURBS mode:</p>
+<img alt="https://user-images.githubusercontent.com/284644/209392203-c9da3a3f-5a5b-469c-8a8b-0afda3f5f176.png" src="https://user-images.githubusercontent.com/284644/209392203-c9da3a3f-5a5b-469c-8a8b-0afda3f5f176.png" />
 </section>
 </section>
 
