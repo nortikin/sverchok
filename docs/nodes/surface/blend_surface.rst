@@ -32,6 +32,10 @@ This node has the following inputs:
   second surface. Bigger values lead to more smooth touch. Negative values will
   mean that the blending surface will touch the surface from another side of
   curve / edge. The default value is 1.0.
+* **Samples**. This input is available only when the **NURBS** parameter is
+  checked. This defines the number of points used to approximate initial
+  (touching) curves with NURBS curves. The default value is 10. Greater values
+  mean better approximation, but worse performance.
 
 Parameters
 ----------
@@ -58,6 +62,11 @@ This node has the following parameters:
 * **Flip Curve 2**. If checked, the direction of curve (or edge), where the
   blending surface touches the second surface, will be reversed. Unchecked by
   default.
+* **NURBS**. If checked, the node will generate a NURBS surface instead of
+  generic surface object. The NURBS surface only approximates the ideal
+  blending surface. It is constructed as a Gordon surface, by approximating the
+  two initial curves with NURBS curves. The number of points used for
+  approximation is controlled by **Samples** input. Unchecked by default.
 
 Outputs
 -------
