@@ -185,17 +185,20 @@ def view_3d_geom(context, args):
         bgl.glLineWidth(1)
 
     if config.draw_verts:
-        bgl.glPointSize(config.point_size)
-        if config.uniform_verts:
-            v_batch = batch_for_shader(config.v_shader, 'POINTS', {"pos": geom.v_vertices})
-            config.v_shader.bind()
-            config.v_shader.uniform_float("color", config.vector_color[0][0])
-        else:
-            v_batch = batch_for_shader(config.v_shader, 'POINTS', {"pos": geom.v_vertices, "color": geom.points_color})
-            config.v_shader.bind()
+        if len(geom.v_vertices)>0 and len(geom.v_vertices[0])==3 == False:
+            bgl.glPointSize(config.point_size)
+            if config.uniform_verts:
+                v_batch = batch_for_shader(config.v_shader, 'POINTS', {"pos": geom.v_vertices})
+                config.v_shader.bind()
+                config.v_shader.uniform_float("color", config.vector_color[0][0])
+            else:
+                v_batch = batch_for_shader(config.v_shader, 'POINTS', {"pos": geom.v_vertices, "color": geom.points_color})
+                config.v_shader.bind()
 
-        v_batch.draw(config.v_shader)
-        bgl.glPointSize(1)
+            v_batch.draw(config.v_shader)
+            bgl.glPointSize(1)
+        else:
+            pass
 
     bgl.glEnable(bgl.GL_BLEND)
 
