@@ -770,7 +770,7 @@ class SvLengthRebuiltCurve(SvCurve):
         c_ts = self.solver.solve(ts)
         return self.curve.evaluate_array(c_ts)
 
-def curve_frame_on_surface_array(surface, uv_curve, us, w_axis=2, on_zero_curvature=SvCurve.ASIS):
+def curve_frame_on_surface_array(surface, uv_curve, us, w_axis=2, normalize=True, on_zero_curvature=SvCurve.ASIS):
     &#34;&#34;&#34;
     Curve frame which is lying in the surface.
 
@@ -806,11 +806,13 @@ def curve_frame_on_surface_array(surface, uv_curve, us, w_axis=2, on_zero_curvat
     curve = SvCurveOnSurface(uv_curve, surface, axis=w_axis)
     surf_points = curve.evaluate_array(us)
     tangents = curve.tangent_array(us)
-    tangents = tangents / np.linalg.norm(tangents, axis=1, keepdims=True)
+    if normalize:
+        tangents = tangents / np.linalg.norm(tangents, axis=1, keepdims=True)
 
     us, vs = uv_points[:,U], uv_points[:,V]
     normals = surface.normal_array(us, vs)
-    normals = normals / np.linalg.norm(normals, axis=1, keepdims=True)
+    if normalize:
+        normals = normals / np.linalg.norm(normals, axis=1, keepdims=True)
 
     if on_zero_curvature != SvCurve.ASIS:
         zero_normal = np.linalg.norm(normals, axis=1) &lt; 1e-6
@@ -1168,7 +1170,7 @@ several Nurbs.</p>
 </details>
 </dd>
 <dt id="sverchok.utils.curve.algorithms.curve_frame_on_surface_array"><code class="name flex">
-<span>def <span class="ident">curve_frame_on_surface_array</span></span>(<span>surface, uv_curve, us, w_axis=2, on_zero_curvature='asis')</span>
+<span>def <span class="ident">curve_frame_on_surface_array</span></span>(<span>surface, uv_curve, us, w_axis=2, normalize=True, on_zero_curvature='asis')</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Curve frame which is lying in the surface.</p>
@@ -1199,7 +1201,7 @@ other axes are surface's U and V). Default of 2 means X is U and Y is V.</dd>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def curve_frame_on_surface_array(surface, uv_curve, us, w_axis=2, on_zero_curvature=SvCurve.ASIS):
+<pre><code class="python">def curve_frame_on_surface_array(surface, uv_curve, us, w_axis=2, normalize=True, on_zero_curvature=SvCurve.ASIS):
     &#34;&#34;&#34;
     Curve frame which is lying in the surface.
 
@@ -1235,11 +1237,13 @@ other axes are surface's U and V). Default of 2 means X is U and Y is V.</dd>
     curve = SvCurveOnSurface(uv_curve, surface, axis=w_axis)
     surf_points = curve.evaluate_array(us)
     tangents = curve.tangent_array(us)
-    tangents = tangents / np.linalg.norm(tangents, axis=1, keepdims=True)
+    if normalize:
+        tangents = tangents / np.linalg.norm(tangents, axis=1, keepdims=True)
 
     us, vs = uv_points[:,U], uv_points[:,V]
     normals = surface.normal_array(us, vs)
-    normals = normals / np.linalg.norm(normals, axis=1, keepdims=True)
+    if normalize:
+        normals = normals / np.linalg.norm(normals, axis=1, keepdims=True)
 
     if on_zero_curvature != SvCurve.ASIS:
         zero_normal = np.linalg.norm(normals, axis=1) &lt; 1e-6
