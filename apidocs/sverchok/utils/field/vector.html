@@ -66,6 +66,12 @@ class SvVectorField(object):
     def evaluate_grid(self, xs, ys, zs):
         raise Exception(&#34;not implemented&#34;)
 
+    def evaluate_array(self, points):
+        xs = points[:,0]
+        ys = points[:,1]
+        zs = points[:,2]
+        return self.evaluate_grid(xs, ys, zs)
+
 class SvMatrixVectorField(SvVectorField):
 
     def __init__(self, matrix):
@@ -3307,7 +3313,13 @@ vertices must be np.array of shape (n, 3).</p></div>
         raise Exception(&#34;not implemented&#34;)
 
     def evaluate_grid(self, xs, ys, zs):
-        raise Exception(&#34;not implemented&#34;)</code></pre>
+        raise Exception(&#34;not implemented&#34;)
+
+    def evaluate_array(self, points):
+        xs = points[:,0]
+        ys = points[:,1]
+        zs = points[:,2]
+        return self.evaluate_grid(xs, ys, zs)</code></pre>
 </details>
 <h3>Subclasses</h3>
 <ul class="hlist">
@@ -3358,6 +3370,22 @@ vertices must be np.array of shape (n, 3).</p></div>
 </summary>
 <pre><code class="python">def evaluate(self, point):
     raise Exception(&#34;not implemented&#34;)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.field.vector.SvVectorField.evaluate_array"><code class="name flex">
+<span>def <span class="ident">evaluate_array</span></span>(<span>self, points)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate_array(self, points):
+    xs = points[:,0]
+    ys = points[:,1]
+    zs = points[:,2]
+    return self.evaluate_grid(xs, ys, zs)</code></pre>
 </details>
 </dd>
 <dt id="sverchok.utils.field.vector.SvVectorField.evaluate_grid"><code class="name flex">
@@ -4476,6 +4504,7 @@ vertices must be np.array of shape (n, 3).</p></div>
 <h4><code><a title="sverchok.utils.field.vector.SvVectorField" href="#sverchok.utils.field.vector.SvVectorField">SvVectorField</a></code></h4>
 <ul class="">
 <li><code><a title="sverchok.utils.field.vector.SvVectorField.evaluate" href="#sverchok.utils.field.vector.SvVectorField.evaluate">evaluate</a></code></li>
+<li><code><a title="sverchok.utils.field.vector.SvVectorField.evaluate_array" href="#sverchok.utils.field.vector.SvVectorField.evaluate_array">evaluate_array</a></code></li>
 <li><code><a title="sverchok.utils.field.vector.SvVectorField.evaluate_grid" href="#sverchok.utils.field.vector.SvVectorField.evaluate_grid">evaluate_grid</a></code></li>
 </ul>
 </li>

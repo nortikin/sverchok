@@ -219,6 +219,7 @@ def knotvector_with_tangents_from_tknots(degree, u):
 
 def interpolate_nurbs_curve_with_tangents(degree, points, tangents,
             metric=&#39;DISTANCE&#39;, tknots=None,
+            cyclic = False,
             implementation = SvNurbsMaths.NATIVE,
             logger = None):
 
@@ -230,6 +231,10 @@ def interpolate_nurbs_curve_with_tangents(degree, points, tangents,
     ndim = points.shape[-1]
     if ndim not in {3,4}:
         raise Exception(f&#34;Points must be 3 or 4 dimensional, not {ndim}&#34;)
+
+    if cyclic:
+        points = np.append(points, [points[0]], axis=0)
+        tangents = np.append(tangents, [tangents[0]], axis=0)
 
     if tknots is None:
         tknots = Spline.create_knots(points, metric=metric)
@@ -517,7 +522,7 @@ shape (n,). If None, these values will be calculated based on metric.</dd>
 </details>
 </dd>
 <dt id="sverchok.utils.curve.nurbs_solver_applications.interpolate_nurbs_curve_with_tangents"><code class="name flex">
-<span>def <span class="ident">interpolate_nurbs_curve_with_tangents</span></span>(<span>degree, points, tangents, metric='DISTANCE', tknots=None, implementation='NATIVE', logger=None)</span>
+<span>def <span class="ident">interpolate_nurbs_curve_with_tangents</span></span>(<span>degree, points, tangents, metric='DISTANCE', tknots=None, cyclic=False, implementation='NATIVE', logger=None)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -527,6 +532,7 @@ shape (n,). If None, these values will be calculated based on metric.</dd>
 </summary>
 <pre><code class="python">def interpolate_nurbs_curve_with_tangents(degree, points, tangents,
             metric=&#39;DISTANCE&#39;, tknots=None,
+            cyclic = False,
             implementation = SvNurbsMaths.NATIVE,
             logger = None):
 
@@ -538,6 +544,10 @@ shape (n,). If None, these values will be calculated based on metric.</dd>
     ndim = points.shape[-1]
     if ndim not in {3,4}:
         raise Exception(f&#34;Points must be 3 or 4 dimensional, not {ndim}&#34;)
+
+    if cyclic:
+        points = np.append(points, [points[0]], axis=0)
+        tangents = np.append(tangents, [tangents[0]], axis=0)
 
     if tknots is None:
         tknots = Spline.create_knots(points, metric=metric)
