@@ -188,6 +188,7 @@ def knotvector_with_tangents_from_tknots(degree, u):
 
 def interpolate_nurbs_curve_with_tangents(degree, points, tangents,
             metric='DISTANCE', tknots=None,
+            cyclic = False,
             implementation = SvNurbsMaths.NATIVE,
             logger = None):
 
@@ -199,6 +200,10 @@ def interpolate_nurbs_curve_with_tangents(degree, points, tangents,
     ndim = points.shape[-1]
     if ndim not in {3,4}:
         raise Exception(f"Points must be 3 or 4 dimensional, not {ndim}")
+
+    if cyclic:
+        points = np.append(points, [points[0]], axis=0)
+        tangents = np.append(tangents, [tangents[0]], axis=0)
 
     if tknots is None:
         tknots = Spline.create_knots(points, metric=metric)
