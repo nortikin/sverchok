@@ -22,10 +22,10 @@
     <td class="sv_elem2">
 	<h3 class='tofu'>Original lessons in Russian</h3>
 	<ul>
-        <li><a href='./nikitron_lessons/ob_sebe.html'>Old site</a></li>
-        <li><a href='./nikitron_lessons/sverchok_en.html'>Exact Sverchok</a></li>
-	<li><a href='./nikitron_lessons/Sverchok_man_00.html'>Exact Lessons</a></li>
-	<li><a href='https://disk.yandex.ru/d/HWHeXTm3xjR21w'> PDF lessons on YaDisk.</a></li>
+        <li><a href='./nikitron_lessons/ob_sebe.html'>Sverchok About</a></li>
+        <li><a href='./nikitron_lessons/sverchok_en.html'>Sverchok title page</a></li>
+	<li><a href='./nikitron_lessons/Sverchok_man_00.html'>Sverchok Lessons</a></li>
+	<li><a href='https://disk.yandex.ru/d/HWHeXTm3xjR21w'> Sverchok PDF lessons on YaDisk.</a></li>
 	</ul>
 	<h3 class='tofu'>zeffii blogs and lessons</h3>
 	<ul>
