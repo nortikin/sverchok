@@ -185,7 +185,7 @@ def view_3d_geom(context, args):
         bgl.glLineWidth(1)
 
     if config.draw_verts:
-        if len(geom.v_vertices)>0 and len(geom.v_vertices[0])==3 == False:
+        if len(geom.v_vertices)>0 and (len(geom.v_vertices[0])==3) == True:
             bgl.glPointSize(config.point_size)
             if config.uniform_verts:
                 v_batch = batch_for_shader(config.v_shader, 'POINTS', {"pos": geom.v_vertices})
