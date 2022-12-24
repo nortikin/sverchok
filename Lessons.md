@@ -22,22 +22,9 @@
     <td class="sv_elem2">
 	<h3 class='tofu'>Original lessons in Russian</h3>
 	<ul>
-  <li><a href='./nikitron_lessons/index.html'>Old site</a></li>
-	<li><a href='http://nikitron.cc.ua/Sverchok_man_00.html'> 00. Installation.</a></li>
-	<li><a href='http://nikitron.cc.ua/Sverchok_man_01.html'> 01. Sverchok and line. Way of Sverchok.</a></li>
-	<li><a href='http://nikitron.cc.ua/Sverchok_man_02.html'> 02. Data structure.</a></li>
-	<li><a href='http://nikitron.cc.ua/Sverchok_man_03.html'> 03. Nodes cards.</a></li>
-	<li><a href='http://nikitron.cc.ua/Sverchok_man_04.html'> 04. Joining meshes.</a></li>
-	<li><a href='http://nikitron.cc.ua/Sverchok_stadium.html'> 05. Lenin's stadium.</a></li>
-	<li><a href='http://nikitron.cc.ua/Sverchok_table.html'> 06. !!! Tables in reality.</a></li>
-	<li><a href='http://nikitron.cc.ua/Sverchok_man_07.html'> 07. Scripted node, easy.</a></li>
-	<li><a href='http://nikitron.cc.ua/Sverchok_man_08.html'> 08. Shell - splines interpolation.</a></li>
-	<li><a href='http://nikitron.cc.ua/Sverchok_man_09.html'> 09. Truss construction.</a></li>
-	<li><a href='http://nikitron.cc.ua/Sverchok_man_10_theme.html'> 10. Interface.</a></li>
-	<li><a href="http://nikitron.cc.ua/Sverchok_man_11_profile.html"> 11. Profile node.</a></li>
-	<li><a href="http://nikitron.cc.ua/Sverchok_man_12_timing.html"> 12. Debugging.</a></li>
-	<li><a href="http://nikitron.cc.ua/Sverchok_man_13_menu.html"> 13. Menu.</a></li>
-	<li><a href="http://nikitron.cc.ua/Sverchok_man_14_IO.html"> 14. Import/Export layouts.</a></li>
+        <li><a href='./nikitron_lessons/ob_sebe.html'>Old site</a></li>
+        <li><a href='./nikitron_lessons/sverchok_en.html'>Exact Sverchok</a></li>
+	<li><a href='https://disk.yandex.ru/d/HWHeXTm3xjR21w'> PDF lessons on YaDisk.</a></li>
 	</ul>
 	<h3 class='tofu'>zeffii blogs and lessons</h3>
 	<ul>
