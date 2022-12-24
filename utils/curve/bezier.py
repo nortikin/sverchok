@@ -161,7 +161,7 @@ class SvBezierCurve(SvCurve, SvBezierSplitMixin):
             point2, tangent2 = pair2
             point1, tangent1 = np.array(point1), np.array(tangent1)
             point2, tangent2 = np.array(point2), np.array(tangent2)
-            tangent1, tangent2 = tangent1/2.0, tangent2/2.0
+            tangent1, tangent2 = tangent1/3.0, tangent2/3.0
             curve = SvCubicBezierCurve(
                         point1,
                         point1 + tangent1,
