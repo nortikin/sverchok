@@ -15,7 +15,7 @@ except ImportError:
 import bpy
 from bpy.props import StringProperty
 
-from sverchok.data_structure import numpy_full_list
+from sverchok.data_structure import numpy_full_list, fixed_iter
 from sverchok.node_tree import SverchCustomTreeNode
 
 
@@ -85,13 +85,18 @@ class SvNumExprNode(SverchCustomTreeNode, bpy.types.Node):
             return
         if invalid_names := self.get('invalid_names'):
             raise NameError(f"{invalid_names=}")
-        inp_vars = {s.name: np.asarray(s.sv_get(deepcopy=False)[0])
-                    for s in self.inputs}
-        data_len = max(len(d) for d in inp_vars.values())
-        inp_vars = {n: numpy_full_list(d, data_len) if len(d) > 1 else d
-                    for n, d in inp_vars.items()}
-        result = ne.evaluate(self.expression, local_dict=inp_vars)
-        self.outputs[0].sv_set([result])
+        inp_vars = [s.sv_get(deepcopy=False) for s in self.inputs]
+        names = [s.name for s in self.inputs]
+        inp_len = max(len(d) for d in inp_vars)
+        inp_vars = [fixed_iter(d, inp_len) for d in inp_vars]
+        out = []
+        for obj_vars in zip(*inp_vars):
+            obj_len = max(len(d) for d in obj_vars)
+            obj_vars = {n: numpy_full_list(np.asarray(d), obj_len) if len(d) > 1 else d
+                        for n, d in zip(names, obj_vars)}
+            result = ne.evaluate(self.expression, local_dict=obj_vars)
+            out.append([result])
+        self.outputs[0].sv_set(out)
 
 
-register, unregister = bpy.utils.register_classes_factory(SvNumExprNode)
+register, unregister = bpy.utils.register_classes_factory([SvNumExprNode])
