@@ -38,6 +38,12 @@ class SvVectorField(object):
     def evaluate_grid(self, xs, ys, zs):
         raise Exception("not implemented")
 
+    def evaluate_array(self, points):
+        xs = points[:,0]
+        ys = points[:,1]
+        zs = points[:,2]
+        return self.evaluate_grid(xs, ys, zs)
+
 class SvMatrixVectorField(SvVectorField):
 
     def __init__(self, matrix):
