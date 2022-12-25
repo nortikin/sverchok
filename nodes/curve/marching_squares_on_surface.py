@@ -29,23 +29,27 @@ class SvExMSquaresOnSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
 
     iso_value : FloatProperty(
             name = "Value",
+            description = "The value of scalar field, for which to generate iso-lines",
             default = 1.0,
             update = updateNode)
 
     samples_u : IntProperty(
             name = "Samples U",
+            description = "Number of samples along U and V parameter of the surface, correspondingly. This defines the resolution of curves: the bigger isvalue, the more vertices will the node generate, and the more precise the curves will be",
             default = 50,
             min = 4,
             update = updateNode)
 
     samples_v : IntProperty(
             name = "Samples V",
+            description = "Number of samples along U and V parameter of the surface, correspondingly. This defines the resolution of curves: the bigger isvalue, the more vertices will the node generate, and the more precise the curves will be",
             default = 50,
             min = 4,
             update = updateNode)
 
     connect_bounds : BoolProperty(
             name = "Connect boundary",
+            description = "If checked, the node will connect pieces of the same curve, that was split because it was cut by the boundary of the surface. Otherwise, several separate pieces will be generated in such case. Note that this node can not currently detect if the surface is closed to glue parts of contours at different sides of the surface",
             default = True,
             update = updateNode)
 
