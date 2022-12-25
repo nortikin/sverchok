@@ -13,21 +13,28 @@ the curve must pass, and tangent vectors of the curve at those points.
 .. image:: https://user-images.githubusercontent.com/14288520/205862183-f8eb5c09-2ba5-4315-8a68-1dab9c102fca.png
   :target: https://user-images.githubusercontent.com/14288520/205862183-f8eb5c09-2ba5-4315-8a68-1dab9c102fca.png
 
-The curve is generated as a series of cubic Bezier curves. Control points of
-Bezier curves are defined as follows:
+The node can use one of two algorithms:
 
-* For each segment defined by a pair of input points, one Bezier curve is
-  generated - for example, one curve for first and second point, one curve for
-  second and third point, and so on.
-* For each segment, the first point is the starting point of Bezier curve, and
-  the second point is the end point of Bezier curve.
-* Provided tangent vectors are placed so that the middle point of each vector
-  is at corresponding input point - middle of the first tangent vector at the
-  first input point, and so on. Then end points of these vectors will define
-  additional control points for Bezier curves.
+* Hermite_ spline. The curve is generated as a series of cubic Bezier curves.
+  Control points of Bezier curves are defined as follows:
 
-Generated curves may be optionally concatenated into one Curve object.
+   * For each segment defined by a pair of input points, one Bezier curve is
+     generated - for example, one curve for first and second point, one curve for
+     second and third point, and so on.
+   * For each segment, the first point is the starting point of Bezier curve, and
+     the second point is the end point of Bezier curve.
+   * Provided tangent vectors are placed so that the middle point of each vector
+     is at corresponding input point - middle of the first tangent vector at the
+     first input point, and so on. Then end points of these vectors will define
+     additional control points for Bezier curves.
 
+   Generated curves may be optionally concatenated into one Curve object.
+
+* NURBS curve. The node creates interpolating NURBS curve (of 3rd degree)
+  through the specified points, with additional condition that it should have
+  specified tangents at those points.
+
+.. _Hermite: https://en.wikipedia.org/wiki/Cubic_Hermite_spline
 
 Inputs
 ------
@@ -44,15 +51,23 @@ Parameters
 
 This node has the following parameters:
 
+* **Curve type**. This defines the algorithm to be used by the node, and the
+  type of resulting curve. The available options are:
+
+   * **Hermite**. Use Hermite_ spline algorithm, and generate either a list of
+     Bezier curves, or concatenated NURBS curve.
+   * **NURBS**. Use NURBS interpolation algotithm.
+
 * **Cyclic**. If checked, then the node will generate additional Bezier curve
   segment to connect the last point with the first one. Unchecked by default.
 
 .. image:: https://user-images.githubusercontent.com/14288520/205867628-5f3de9ae-ab0a-435b-9ebb-3dc409ff4e51.png
   :target: https://user-images.githubusercontent.com/14288520/205867628-5f3de9ae-ab0a-435b-9ebb-3dc409ff4e51.png
 
-* **Concatenate**. If checked, then the node will concatenate all generated
-  Bezier curve segments into one Curve object. Otherwise, it will output each
-  segment as a separate Curve object. Checked by default.
+* **Concatenate**. This parameter is available only when **Curve type**
+  parameter is set to **Hermite**. If checked, then the node will concatenate
+  all generated Bezier curve segments into one Curve object. Otherwise, it will
+  output each segment as a separate Curve object. Checked by default.
 
 .. image:: https://user-images.githubusercontent.com/14288520/205943520-e9ec6cd6-54de-483f-8af9-753d4720d27e.png
   :target: https://user-images.githubusercontent.com/14288520/205943520-e9ec6cd6-54de-483f-8af9-753d4720d27e.png
@@ -102,3 +117,11 @@ More complex example: draw a smooth curve so that it would touch three circles i
 * List->List Struct-> :doc:`List Split </nodes/list_struct/split>`
 * Viz-> :doc:`Viewer Draw Curve </nodes/viz/viewer_draw_curve>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+
+---------
+
+Example of NURBS mode usage:
+
+.. image:: https://user-images.githubusercontent.com/284644/209460542-535e4c0a-9c0f-44e4-a127-46fa104cd335.png
+  :target: https://user-images.githubusercontent.com/284644/209460542-535e4c0a-9c0f-44e4-a127-46fa104cd335.png
+
