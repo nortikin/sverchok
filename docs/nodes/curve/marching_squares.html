@@ -199,6 +199,7 @@
              
   <section id="marching-squares">
 <h1>Marching Squares<a class="headerlink" href="#marching-squares" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/209447787-335afcf4-26d8-40d5-bb71-2ea28f067475.png"><img alt="https://user-images.githubusercontent.com/14288520/209447787-335afcf4-26d8-40d5-bb71-2ea28f067475.png" src="https://user-images.githubusercontent.com/14288520/209447787-335afcf4-26d8-40d5-bb71-2ea28f067475.png" /></a>
 <section id="dependencies">
 <h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this heading">¶</a></h2>
 <p>This node requires <a class="reference external" href="https://scikit-image.org/">SkImage</a> library to work.</p>
@@ -209,6 +210,7 @@
 i.e. lines in some plane, for which the scalar field has constant specified
 value. The lines are generated as mesh - vertices and edges. You can use one of
 interpolation nodes to build Curve objects from them.</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/209448129-feb46200-4ee7-4c05-b38b-1d23a44af5b3.png"><img alt="https://user-images.githubusercontent.com/14288520/209448129-feb46200-4ee7-4c05-b38b-1d23a44af5b3.png" src="https://user-images.githubusercontent.com/14288520/209448129-feb46200-4ee7-4c05-b38b-1d23a44af5b3.png" /></a>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
@@ -218,22 +220,39 @@ interpolation nodes to build Curve objects from them.</p>
 list of scalar fields, or a list of lists of scalar fields. Nesting level of
 outputs will correspond to nesting level of data in this input. This input is
 mandatory.</p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/209448345-4b5f4812-b208-47ec-b7b7-fdb255a54838.png"><img alt="https://user-images.githubusercontent.com/14288520/209448345-4b5f4812-b208-47ec-b7b7-fdb255a54838.png" src="https://user-images.githubusercontent.com/14288520/209448345-4b5f4812-b208-47ec-b7b7-fdb255a54838.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/209450533-6adb8f4c-cc72-4572-a4b4-382682dd58ac.png"><img alt="https://user-images.githubusercontent.com/14288520/209450533-6adb8f4c-cc72-4572-a4b4-382682dd58ac.png" src="https://user-images.githubusercontent.com/14288520/209450533-6adb8f4c-cc72-4572-a4b4-382682dd58ac.png" /></a>
+<ul class="simple">
 <li><p><strong>Value</strong>. The value, for which the iso-curves should be built. The default
 value is 1.0.</p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/209451096-b9799be0-a461-4d2d-8d1f-a5fd3d2801cb.png"><img alt="https://user-images.githubusercontent.com/14288520/209451096-b9799be0-a461-4d2d-8d1f-a5fd3d2801cb.png" src="https://user-images.githubusercontent.com/14288520/209451096-b9799be0-a461-4d2d-8d1f-a5fd3d2801cb.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/209451130-a401dd2c-0038-4c72-9d44-7dbb54dab444.png"><img alt="https://user-images.githubusercontent.com/14288520/209451130-a401dd2c-0038-4c72-9d44-7dbb54dab444.png" src="https://user-images.githubusercontent.com/14288520/209451130-a401dd2c-0038-4c72-9d44-7dbb54dab444.png" /></a>
+<ul class="simple">
 <li><p><strong>Samples</strong>. Number of samples along X and Y axes. This defines the
 resolution of curves: the bigger is value, the more vertices will the node
 generate, and the more precise the curves will be. But higher resolution
 requires more computation time. The default value is 50.</p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/209451249-1bb38dc6-4073-457b-abc8-7a0ef3b0f1fd.png"><img alt="https://user-images.githubusercontent.com/14288520/209451249-1bb38dc6-4073-457b-abc8-7a0ef3b0f1fd.png" src="https://user-images.githubusercontent.com/14288520/209451249-1bb38dc6-4073-457b-abc8-7a0ef3b0f1fd.png" /></a>
+<ul class="simple">
 <li><p><strong>MinX</strong>, <strong>MaxX</strong>, <strong>MinY</strong>, <strong>MaxY</strong>. Minimum and maximum values of X and Y
 coordinates to find the iso-curves in. Default values define the square
 <code class="docutils literal notranslate"><span class="pre">[-1;</span> <span class="pre">+1]</span> <span class="pre">x</span> <span class="pre">[-1;</span> <span class="pre">+1]</span></code>.</p></li>
 <li><p><strong>Z</strong>. The value of Z coordinate to generate the curves at. The default value
 is 0. So, by default, the node will use the section of scalar field by XOY
 plane to draw the iso-curves for.</p></li>
+</ul>
+<p><a class="reference external" href="https://gist.github.com/9699442f326876f6af21d8c305a0170c">https://gist.github.com/9699442f326876f6af21d8c305a0170c</a></p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/209451424-705bfb2c-d783-4b59-be22-a9d7d8d59ea7.png"><img alt="https://user-images.githubusercontent.com/14288520/209451424-705bfb2c-d783-4b59-be22-a9d7d8d59ea7.png" src="https://user-images.githubusercontent.com/14288520/209451424-705bfb2c-d783-4b59-be22-a9d7d8d59ea7.png" /></a>
+<ul class="simple">
 <li><p><strong>Matrix</strong>. Reference frame to be used. X, Y and Z axes, which are used to
 section the scalar field, are defined by this matrix. By default, identity
 matrix is used, which means the global axes will be used.</p></li>
 </ul>
+<p><a class="reference external" href="https://gist.github.com/e5951d94d21dcb16193b985eb139b7da">https://gist.github.com/e5951d94d21dcb16193b985eb139b7da</a></p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/209451649-d04a934c-7852-49d2-a8f7-589d3b679048.png"><img alt="https://user-images.githubusercontent.com/14288520/209451649-d04a934c-7852-49d2-a8f7-589d3b679048.png" src="https://user-images.githubusercontent.com/14288520/209451649-d04a934c-7852-49d2-a8f7-589d3b679048.png" /></a>
 </section>
 <section id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
@@ -242,17 +261,57 @@ matrix is used, which means the global axes will be used.</p></li>
 <li><p><strong>Flat output</strong>. If checked, the node will generate a single flat list of
 objects (iso-curves) for all provided iso-values. Otherwise, the node will
 generate a separate list of objects for each iso-value. Checked by default.</p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/209451720-59f100ed-3425-44e5-b824-cee69a6275c9.png"><img alt="https://user-images.githubusercontent.com/14288520/209451720-59f100ed-3425-44e5-b824-cee69a6275c9.png" src="https://user-images.githubusercontent.com/14288520/209451720-59f100ed-3425-44e5-b824-cee69a6275c9.png" /></a>
+<ul class="simple">
 <li><p><strong>Make faces</strong>. If checked, the node will generate Faces for iso-curves that
 are closed within specified X/Y bounds. Unchecked by default.</p></li>
-<li><p><strong>Counnect boundary</strong>. If checked, the node will connect pieces of the same
+</ul>
+<p>Good results on a single value:</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/209451885-ebae5116-def0-4d21-be9f-4d0f0b3aa1b7.png"><img alt="https://user-images.githubusercontent.com/14288520/209451885-ebae5116-def0-4d21-be9f-4d0f0b3aa1b7.png" src="https://user-images.githubusercontent.com/14288520/209451885-ebae5116-def0-4d21-be9f-4d0f0b3aa1b7.png" /></a>
+<p>On several values faces are overlapped:</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/209451930-6cbca798-a9a8-4e95-8152-13f7897c8776.png"><img alt="https://user-images.githubusercontent.com/14288520/209451930-6cbca798-a9a8-4e95-8152-13f7897c8776.png" src="https://user-images.githubusercontent.com/14288520/209451930-6cbca798-a9a8-4e95-8152-13f7897c8776.png" /></a>
+<ul class="simple">
+<li><p><strong>Connect boundary</strong>. If checked, the node will connect pieces of the same
 curve, that was split because it was cut by specified X/Y bounds. Otherwise,
 several separate pieces will be generated in such case. Checked by default.</p></li>
 </ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/209452147-4305cec0-d0f9-46f5-a77f-8ad81c600d29.png"><img alt="https://user-images.githubusercontent.com/14288520/209452147-4305cec0-d0f9-46f5-a77f-8ad81c600d29.png" src="https://user-images.githubusercontent.com/14288520/209452147-4305cec0-d0f9-46f5-a77f-8ad81c600d29.png" /></a>
 </section>
 <section id="example-of-usage">
 <h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>Build five planes parallel to XOY, and draw iso-lines of scalar field for seven different values:</p>
-<img alt="https://user-images.githubusercontent.com/284644/87058898-14b05b00-c222-11ea-9d77-b84c9dc13266.png" src="https://user-images.githubusercontent.com/284644/87058898-14b05b00-c222-11ea-9d77-b84c9dc13266.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/209452338-a5a7579f-9d3a-44d6-9f62-86919f3cf90d.png"><img alt="https://user-images.githubusercontent.com/14288520/209452338-a5a7579f-9d3a-44d6-9f62-86919f3cf90d.png" src="https://user-images.githubusercontent.com/14288520/209452338-a5a7579f-9d3a-44d6-9f62-86919f3cf90d.png" /></a>
+<ul class="simple">
+<li><p>Fields-&gt; <a class="reference internal" href="../field/attractor_field_mk2.html"><span class="doc">Attractor Field</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/list_input.html"><span class="doc">List Input</span></a></p></li>
+<li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/match.html"><span class="doc">List Match</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
+<p>It is hard to colorize values:</p>
+<p><a class="reference external" href="https://gist.github.com/96a7575ff899466965d5158bfe5e7301">https://gist.github.com/96a7575ff899466965d5158bfe5e7301</a></p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/209452397-addd6f24-9294-44b0-868b-83458b67db4a.png"><img alt="https://user-images.githubusercontent.com/14288520/209452397-addd6f24-9294-44b0-868b-83458b67db4a.png" src="https://user-images.githubusercontent.com/14288520/209452397-addd6f24-9294-44b0-868b-83458b67db4a.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
+<li><p>Fields-&gt; <a class="reference internal" href="../field/attractor_field_mk2.html"><span class="doc">Attractor Field</span></a></p></li>
+<li><p>Analyzers-&gt; <a class="reference internal" href="../analyzer/bbox_mk3.html"><span class="doc">Bounding Box</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/apply_and_join.html"><span class="doc">Matrix Apply to Mesh</span></a></p></li>
+<li><p>Color-&gt; <a class="reference internal" href="../color/color_ramp.html"><span class="doc">Color Ramp</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_struct/start_end.html"><span class="doc">List First &amp; Last</span></a></p></li>
+<li><p>List-&gt; <a class="reference internal" href="../list_mutators/filter_empty_lists.html"><span class="doc">Filter Empty Objects</span></a></p></li>
+<li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/length.html"><span class="doc">List Length</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_struct/repeater.html"><span class="doc">List Repeater</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_struct/levels.html"><span class="doc">List Levels</span></a></p></li>
+<li><p>Scene-&gt; <a class="reference internal" href="../scene/frame_info_mk2.html"><span class="doc">Frame Info</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/208299072-ae4c04db-cfe8-4c65-9ed5-495aba74b4df.gif"><img alt="https://user-images.githubusercontent.com/14288520/208299072-ae4c04db-cfe8-4c65-9ed5-495aba74b4df.gif" src="https://user-images.githubusercontent.com/14288520/208299072-ae4c04db-cfe8-4c65-9ed5-495aba74b4df.gif" /></a>
 </section>
 </section>
 
