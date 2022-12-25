@@ -1299,6 +1299,53 @@ def loft_by_binormals(curves, degree_v = 3,
                 control_points, weights)
     return surface
 
+def loft_with_tangents(curves, tangent_fields, degree_v = 3,
+        metric = 'DISTANCE', tknots=None,
+        knotvector_accuracy = 6,
+        implementation = SvNurbsMaths.NATIVE,
+        logger = None):
+
+    if logger is None:
+        logger = getLogger()
+
+    n_curves = len(curves)
+    curves = unify_curves_degree(curves)
+    curves = unify_curves(curves, accuracy=knotvector_accuracy)
+    degree_u = curves[0].get_degree()
+
+    src_points = [curve.get_homogenous_control_points() for curve in curves]
+    src_points = np.array(src_points)
+    src_points = np.transpose(src_points, axes=(1,0,2))
+
+    tangents = [field.evaluate_array(curve.get_control_points()) for curve, field in zip(curves, tangent_fields)]
+    tangents = np.array(tangents)
+    tangents = np.transpose(tangents, axes=(2,0,1))
+
+    n,m,ndim = tangents.shape
+    tangents = np.concatenate((tangents, np.zeros((n,m,1))), axis=2)
+
+    tknots_vs = [Spline.create_knots(src_points[i,:], metric=metric) for i in range(n_curves)]
+    tknots_vs = np.array(tknots_vs)
+    tknots_v = np.mean(tknots_vs, axis=0)
+
+    v_curves = [interpolate_nurbs_curve_with_tangents(degree_v, points, tangents, tknots=tknots_v, implementation=implementation, logger=logger) for points, tangents in zip(src_points, tangents)]
+    control_points = [curve.get_homogenous_control_points() for curve in v_curves]
+    control_points = np.array(control_points)
+    n,m,ndim = control_points.shape
+    control_points = control_points.reshape((n*m, ndim))
+    control_points, weights = from_homogenous(control_points)
+    control_points = control_points.reshape((n,m,3))
+    weights = weights.reshape((n,m))
+    
+    knotvector_u = curves[0].get_knotvector()
+    knotvector_v = v_curves[0].get_knotvector()
+    
+    surface = SvNurbsSurface.build(SvNurbsSurface.NATIVE,
+                degree_u, degree_v,
+                knotvector_u, knotvector_v,
+                control_points, weights)
+    return surface
+
 def interpolate_nurbs_curves(curves, base_vs, target_vs,
         degree_v = None, knots_u = 'UNIFY',
         implementation = SvNurbsSurface.NATIVE):

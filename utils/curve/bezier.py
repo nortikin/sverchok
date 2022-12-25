@@ -134,7 +134,7 @@ class SvBezierCurve(SvCurve, SvBezierSplitMixin):
         return SvBezierCurve([p0, p1, p2, p3, p4, p5, p6, p7])
 
     @classmethod
-    def build_tangent_curve(cls, points, tangents, cyclic=False, concat=False, as_nurbs=False):
+    def build_tangent_curve(cls, points, tangents, hermite=True, cyclic=False, concat=False, as_nurbs=False):
         """
         Build cubic Bezier curve spline, which goes through specified `points',
         having specified `tangents' at these points.
@@ -143,6 +143,8 @@ class SvBezierCurve(SvCurve, SvBezierSplitMixin):
         * points, tangents: lists of 3-tuples
         * cyclic: whether the curve should be closed (cyclic)
         * concat: whether to concatenate all curve segments into single Curve object
+        * hermite: if true, use Hermite spline - divide tangent vector by 3 to
+            obtain middle control points; otherwise, divide by 2.
 
         outputs: tuple:
         * list of curve control points - list of lists of 3-tuples
@@ -155,13 +157,17 @@ class SvBezierCurve(SvCurve, SvBezierSplitMixin):
         segments = list(zip(pairs, pairs[1:]))
         if cyclic:
             segments.append((pairs[-1], pairs[0]))
+        if hermite:
+            d = 3.0
+        else:
+            d = 2.0
 
         for pair1, pair2 in segments:
             point1, tangent1 = pair1
             point2, tangent2 = pair2
             point1, tangent1 = np.array(point1), np.array(tangent1)
             point2, tangent2 = np.array(point2), np.array(tangent2)
-            tangent1, tangent2 = tangent1/3.0, tangent2/3.0
+            tangent1, tangent2 = tangent1/d, tangent2/d
             curve = SvCubicBezierCurve(
                         point1,
                         point1 + tangent1,
