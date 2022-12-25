@@ -28,37 +28,44 @@ class SvExMarchingSquaresNode(SverchCustomTreeNode, bpy.types.Node):
 
     iso_value : FloatProperty(
             name = "Value",
+            description="The value, for which the iso-curves should be built [list of values are allowed]",
             default = 1.0,
             update = updateNode)
 
     sample_size : IntProperty(
             name = "Samples",
+            description = "Number of samples along X and Y axes. This defines the resolution of curves: the bigger is value, the more vertices will the node generate, and the more precise the curves will be",
             default = 50,
             min = 4,
             update = updateNode)
 
     z_value : FloatProperty(
             name = "Z",
+            description = "The value of Z coordinate to generate the curves at [list of values are allowed]. By default the node will use the section of scalar field by XOY plane to draw the iso-curves for",
             default = 0.0,
             update = updateNode)
 
     min_x : FloatProperty(
             name = "Min X",
+            description = "Minimum and maximum values of X and Y coordinates to find the iso-curves in",
             default = -1.0,
             update = updateNode)
 
     max_x : FloatProperty(
             name = "Max X",
+            description = "Minimum and maximum values of X and Y coordinates to find the iso-curves in",
             default = 1.0,
             update = updateNode)
 
     min_y : FloatProperty(
             name = "Min Y",
+            description = "Minimum and maximum values of X and Y coordinates to find the iso-curves in",
             default = -1.0,
             update = updateNode)
 
     max_y : FloatProperty(
             name = "Max Y",
+            description = "Minimum and maximum values of X and Y coordinates to find the iso-curves in",
             default = 1.0,
             update = updateNode)
 
@@ -68,11 +75,13 @@ class SvExMarchingSquaresNode(SverchCustomTreeNode, bpy.types.Node):
 
     make_faces : BoolProperty(
             name = "Make faces",
+            description = "If checked, the node will generate Faces for iso-curves that are closed within specified X/Y bounds",
             default = False,
             update = update_sockets)
 
     connect_bounds : BoolProperty(
             name = "Connect boundary",
+            description = "If checked, the node will connect pieces of the same curve, that was split because it was cut by specified X/Y bounds. Otherwise, several separate pieces will be generated in such case",
             default = True,
             update = updateNode)
 
