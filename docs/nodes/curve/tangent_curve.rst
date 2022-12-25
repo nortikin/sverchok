@@ -117,3 +117,11 @@ More complex example: draw a smooth curve so that it would touch three circles i
 * List->List Struct-> :doc:`List Split </nodes/list_struct/split>`
 * Viz-> :doc:`Viewer Draw Curve </nodes/viz/viewer_draw_curve>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+
+---------
+
+Example of NURBS mode usage:
+
+.. image:: https://user-images.githubusercontent.com/284644/209460542-535e4c0a-9c0f-44e4-a127-46fa104cd335.png
+  :target: https://user-images.githubusercontent.com/284644/209460542-535e4c0a-9c0f-44e4-a127-46fa104cd335.png
+
