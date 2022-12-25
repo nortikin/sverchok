@@ -1326,6 +1326,53 @@ def loft_by_binormals(curves, degree_v = 3,
                 control_points, weights)
     return surface
 
+def loft_with_tangents(curves, tangent_fields, degree_v = 3,
+        metric = &#39;DISTANCE&#39;, tknots=None,
+        knotvector_accuracy = 6,
+        implementation = SvNurbsMaths.NATIVE,
+        logger = None):
+
+    if logger is None:
+        logger = getLogger()
+
+    n_curves = len(curves)
+    curves = unify_curves_degree(curves)
+    curves = unify_curves(curves, accuracy=knotvector_accuracy)
+    degree_u = curves[0].get_degree()
+
+    src_points = [curve.get_homogenous_control_points() for curve in curves]
+    src_points = np.array(src_points)
+    src_points = np.transpose(src_points, axes=(1,0,2))
+
+    tangents = [field.evaluate_array(curve.get_control_points()) for curve, field in zip(curves, tangent_fields)]
+    tangents = np.array(tangents)
+    tangents = np.transpose(tangents, axes=(2,0,1))
+
+    n,m,ndim = tangents.shape
+    tangents = np.concatenate((tangents, np.zeros((n,m,1))), axis=2)
+
+    tknots_vs = [Spline.create_knots(src_points[i,:], metric=metric) for i in range(n_curves)]
+    tknots_vs = np.array(tknots_vs)
+    tknots_v = np.mean(tknots_vs, axis=0)
+
+    v_curves = [interpolate_nurbs_curve_with_tangents(degree_v, points, tangents, tknots=tknots_v, implementation=implementation, logger=logger) for points, tangents in zip(src_points, tangents)]
+    control_points = [curve.get_homogenous_control_points() for curve in v_curves]
+    control_points = np.array(control_points)
+    n,m,ndim = control_points.shape
+    control_points = control_points.reshape((n*m, ndim))
+    control_points, weights = from_homogenous(control_points)
+    control_points = control_points.reshape((n,m,3))
+    weights = weights.reshape((n,m))
+    
+    knotvector_u = curves[0].get_knotvector()
+    knotvector_v = v_curves[0].get_knotvector()
+    
+    surface = SvNurbsSurface.build(SvNurbsSurface.NATIVE,
+                degree_u, degree_v,
+                knotvector_u, knotvector_v,
+                control_points, weights)
+    return surface
+
 def interpolate_nurbs_curves(curves, base_vs, target_vs,
         degree_v = None, knots_u = &#39;UNIFY&#39;,
         implementation = SvNurbsSurface.NATIVE):
@@ -1885,6 +1932,63 @@ Returns: list of SvNurbsCurve of length N.</p></div>
     tknots_v = np.mean(tknots_vs, axis=0)
     
     v_curves = [interpolate_nurbs_curve_with_tangents(degree_v, points, tangents, tknots=tknots_v, implementation=implementation, logger=logger) for points, tangents in zip(src_points, binormals)]
+    control_points = [curve.get_homogenous_control_points() for curve in v_curves]
+    control_points = np.array(control_points)
+    n,m,ndim = control_points.shape
+    control_points = control_points.reshape((n*m, ndim))
+    control_points, weights = from_homogenous(control_points)
+    control_points = control_points.reshape((n,m,3))
+    weights = weights.reshape((n,m))
+    
+    knotvector_u = curves[0].get_knotvector()
+    knotvector_v = v_curves[0].get_knotvector()
+    
+    surface = SvNurbsSurface.build(SvNurbsSurface.NATIVE,
+                degree_u, degree_v,
+                knotvector_u, knotvector_v,
+                control_points, weights)
+    return surface</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.nurbs.loft_with_tangents"><code class="name flex">
+<span>def <span class="ident">loft_with_tangents</span></span>(<span>curves, tangent_fields, degree_v=3, metric='DISTANCE', tknots=None, knotvector_accuracy=6, implementation='NATIVE', logger=None)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def loft_with_tangents(curves, tangent_fields, degree_v = 3,
+        metric = &#39;DISTANCE&#39;, tknots=None,
+        knotvector_accuracy = 6,
+        implementation = SvNurbsMaths.NATIVE,
+        logger = None):
+
+    if logger is None:
+        logger = getLogger()
+
+    n_curves = len(curves)
+    curves = unify_curves_degree(curves)
+    curves = unify_curves(curves, accuracy=knotvector_accuracy)
+    degree_u = curves[0].get_degree()
+
+    src_points = [curve.get_homogenous_control_points() for curve in curves]
+    src_points = np.array(src_points)
+    src_points = np.transpose(src_points, axes=(1,0,2))
+
+    tangents = [field.evaluate_array(curve.get_control_points()) for curve, field in zip(curves, tangent_fields)]
+    tangents = np.array(tangents)
+    tangents = np.transpose(tangents, axes=(2,0,1))
+
+    n,m,ndim = tangents.shape
+    tangents = np.concatenate((tangents, np.zeros((n,m,1))), axis=2)
+
+    tknots_vs = [Spline.create_knots(src_points[i,:], metric=metric) for i in range(n_curves)]
+    tknots_vs = np.array(tknots_vs)
+    tknots_v = np.mean(tknots_vs, axis=0)
+
+    v_curves = [interpolate_nurbs_curve_with_tangents(degree_v, points, tangents, tknots=tknots_v, implementation=implementation, logger=logger) for points, tangents in zip(src_points, tangents)]
     control_points = [curve.get_homogenous_control_points() for curve in v_curves]
     control_points = np.array(control_points)
     n,m,ndim = control_points.shape
@@ -5271,6 +5375,7 @@ def get_nurbs_implementation(cls):
 <li><code><a title="sverchok.utils.surface.nurbs.interpolate_nurbs_curves" href="#sverchok.utils.surface.nurbs.interpolate_nurbs_curves">interpolate_nurbs_curves</a></code></li>
 <li><code><a title="sverchok.utils.surface.nurbs.interpolate_nurbs_surface" href="#sverchok.utils.surface.nurbs.interpolate_nurbs_surface">interpolate_nurbs_surface</a></code></li>
 <li><code><a title="sverchok.utils.surface.nurbs.loft_by_binormals" href="#sverchok.utils.surface.nurbs.loft_by_binormals">loft_by_binormals</a></code></li>
+<li><code><a title="sverchok.utils.surface.nurbs.loft_with_tangents" href="#sverchok.utils.surface.nurbs.loft_with_tangents">loft_with_tangents</a></code></li>
 <li><code><a title="sverchok.utils.surface.nurbs.nurbs_birail" href="#sverchok.utils.surface.nurbs.nurbs_birail">nurbs_birail</a></code></li>
 <li><code><a title="sverchok.utils.surface.nurbs.nurbs_sweep" href="#sverchok.utils.surface.nurbs.nurbs_sweep">nurbs_sweep</a></code></li>
 <li><code><a title="sverchok.utils.surface.nurbs.nurbs_sweep_impl" href="#sverchok.utils.surface.nurbs.nurbs_sweep_impl">nurbs_sweep_impl</a></code></li>
