@@ -571,6 +571,20 @@ class SvNurbsCurve(SvCurve):
         segments.append(rest)
         return segments
 
+    def get_start_point(self):
+        if sv_knotvector.is_clamped(self.get_knotvector(), self.get_degree()):
+            return self.get_control_points()[0]
+        else:
+            u_min = self.get_u_bounds()[0]
+            return self.evaluate(u_min)
+
+    def get_end_point(self):
+        if sv_knotvector.is_clamped(self.get_knotvector(), self.get_degree()):
+            return self.get_control_points()[-1]
+        else:
+            u_max = self.get_u_bounds()[1]
+            return self.evaluate(u_max)
+
     def get_end_points(self):
         if sv_knotvector.is_clamped(self.get_knotvector(), self.get_degree()):
             cpts = self.get_control_points()
@@ -851,7 +865,7 @@ class SvNurbsCurve(SvCurve):
         points.append(segments[-1].get_end_points()[1])
         return np.array(points)
 
-    def split_at_fracture_points(self, order=1, direction_only = True, tangent_tolerance = 1e-6):
+    def split_at_fracture_points(self, order=1, direction_only = True, or_worse = True, tangent_tolerance = 1e-6, return_details = False):
 
         if order not in {1,2,3}:
             raise Exception(f"Unsupported discontinuity order: {order}")
@@ -872,26 +886,41 @@ class SvNurbsCurve(SvCurve):
             delta = np.linalg.norm(tangent1 - tangent2)
             return delta >= tangent_tolerance
 
-        def concatenate_non_fractured(segments):
+        def concatenate_non_fractured(segments, start_ts):
             prev_segment = segments[0]
             new_segments = []
-            for segment in segments[1:]:
+            split_ts = []
+            split_points = []
+            for segment, split_t in zip(segments[1:], start_ts):
                 if is_fracture(prev_segment, segment):
                     new_segments.append(prev_segment)
+                    split_ts.append(split_t)
+                    split_points.append(prev_segment.get_end_point())
                     prev_segment = segment
                 else:
                     prev_segment = prev_segment.concatenate(segment)
 
             new_segments.append(prev_segment)
-            return new_segments
+            return split_ts, split_points, new_segments
+
+        p = self.get_degree()
+
+        if or_worse:
+            def is_possible_fracture(multiplicity):
+                return multiplicity >= p - order + 1
+        else:
+            def is_possible_fracture(multiplicity):
+                return multiplicity == p - order + 1
 
         kv = self.get_knotvector()
-        p = self.get_degree()
         ms = sv_knotvector.to_multiplicity(kv)[1:-1]
-        possible_fracture_ts = [t for t, s in ms if s >= p-order+1]
+        possible_fracture_ts = [t for t, s in ms if is_possible_fracture(s)]
         segments = self.split_at_ts(possible_fracture_ts)
-        segments = concatenate_non_fractured(segments)
-        return segments
+        split_ts, split_points, segments = concatenate_non_fractured(segments, possible_fracture_ts)
+        if return_details:
+            return split_ts, split_points, segments
+        else:
+            return segments
 
 class SvGeomdlCurve(SvNurbsCurve):
     """
