@@ -20,6 +20,7 @@ from abc import ABC, abstractmethod
 from collections import defaultdict
 from pathlib import Path
 from typing import Iterator, Union, TypeVar, Optional
+import shutil
 
 import bl_operators
 import bpy
@@ -466,9 +467,12 @@ class CategoryMenuTemplate(SverchokContext):
             elem.draw(self.layout)
 
 
-menu_file = Path(__file__).parents[1] / 'index.yaml'
+datafiles = Path(bpy.utils.user_resource('DATAFILES', path='sverchok', create=True))
+menu_file = datafiles / 'index.yaml'
+if not menu_file.exists():
+    default_menu_file = Path(__file__).parents[1] / 'index.yaml'
+    shutil.copy(default_menu_file, menu_file)
 add_node_menu = Category.from_config(yaml_parser.load(menu_file), 'All Categories', icon_name='RNA')
-
 
 class AddNodeOp(bl_operators.node.NodeAddOperator):
     extra_description: StringProperty()

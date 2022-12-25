@@ -1,12 +1,15 @@
 import sys
 import os
 import subprocess
+from glob import glob
+import shutil
 
 import bpy
 from bpy.types import AddonPreferences
 from bpy.props import BoolProperty, FloatVectorProperty, EnumProperty, IntProperty, FloatProperty, StringProperty
 
 from sverchok.ui.utils import message_on_layout
+from sverchok.ui.presets import get_sverchok_directory
 
 """Don't import other Sverchok modules here"""
 
@@ -402,10 +405,38 @@ class SverchokPreferences(AddonPreferences):
             description = "Path to FreeCAD Python API library files (FreeCAD.so on Linux and MacOS, FreeCAD.dll on Windows). On Linux the usual location is /usr/lib/freecad/lib, on Windows it can be something like E:\programs\conda-0.18.3\\bin"
         )
 
+    def get_menus_directory(self):
+        return os.path.join(get_sverchok_directory(), 'menus')
+
+    def get_menu_presets(self, context):
+        menus = os.path.join(self.get_menus_directory(), '*.yaml')
+        items = []
+        for path in sorted(glob(menus)):
+            name = os.path.basename(path)
+            items.append((name, name, name))
+        return items
+
+    def on_menu_preset_selected(self, context):
+        preset = self.menu_preset
+        menu_file = os.path.join(self.get_menus_directory(), preset)
+        target_menu_file = os.path.join(self.datafiles, 'index.yaml')
+        print(f"Copy: {menu_file} => {target_menu_file}")
+        shutil.copy(menu_file, target_menu_file)
+
+    menu_preset : EnumProperty(
+            name = "Menu preset",
+            description = "Choose a preset for Sverchok Add Node menu to be used. You can edit your menu later by editing index.yaml file under your datafiles/sverchok directory",
+            items = get_menu_presets,
+            update = on_menu_preset_selected
+        )
+
+
     def general_tab(self, layout):
         col = layout.row().column()
         col_split = col.split(factor=0.5)
         col1 = col_split.column()
+
+        col1.prop(self, 'menu_preset')
 
         col1.prop(self, "external_editor", text="Ext Editor")
         col1.prop(self, "real_sverchok_path", text="Src Directory")
