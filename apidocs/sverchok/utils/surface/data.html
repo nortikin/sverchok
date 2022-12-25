@@ -132,28 +132,63 @@ class SurfaceCurvatureCalculator(object):
         self.nuv = nuv # (fuv, normal), a.k.a m
 
     def mean(self):
-        &#34;&#34;&#34;Calculate mean curvature&#34;&#34;&#34;
+        &#34;&#34;&#34;
+        Calculate mean curvature.
+
+        Note: although mean curvature is defined as (k1 + k2)/2, where k1 and k2 are
+        principal curvature values, it is possible to calculate mean curvature without
+        calculating k1 and k2 first.
+        &#34;&#34;&#34;
         duu, dvv, duv, nuu, nvv, nuv = self.duu, self.dvv, self.duv, self.nuu, self.nvv, self.nuv
         A = duu*dvv - duv*duv
         B = duu*nvv - 2*duv*nuv + dvv*nuu
-        return -B / (2*A)
+        return B / (2*A)
 
     def gauss(self):
-        &#34;&#34;&#34;Calculate Gaussian curvature&#34;&#34;&#34;
+        &#34;&#34;&#34;
+        Calculate Gaussian curvature.
+
+        Note: although Gaussian curvature is defined as k1*k2, where k1 and k2
+        are principal curvature values, it is possible to calculate Gaussian
+        curvature without calculating k1 and k2 first.
+        &#34;&#34;&#34;
         duu, dvv, duv, nuu, nvv, nuv = self.duu, self.dvv, self.duv, self.nuu, self.nvv, self.nuv
         numerator = nuu * nvv - nuv*nuv
         denominator = duu * dvv - duv*duv
+        return numerator / denominator
+
+    def curvature_along_direction(self, v1, v2):
+        &#34;&#34;&#34;
+        Calculate curvature value along specified direction.
+
+        Args:
+            v1, v2: coefficients in the equation v = v1*du + v2*dv, where v is
+                direction in which you want to find the curvature, du is unit
+                vector along df / du derivative, and dv is unit vector along df /
+                dv derivative.
+
+        Note: to calculate curvature along the direction perpendicular to (v1,v2),
+        one can use formula: 2 * calc.mean() - calc.curvature_along_direction(v1, v2).
+        &#34;&#34;&#34;
+        v1s, v2s = v1*v1, v2*v2
+        v12 = v1*v2
+        l, m, n = self.nuu, self.nuv, self.nvv
+        E, F, G = self.duu, self.duv, self.dvv
+        numerator = l*v1s + 2*m*v12 + n*v2s
+        denominator = E*v1s + 2*F*v12 + G*v2s
         return numerator / denominator
 
     def values(self):
         &#34;&#34;&#34;
         Calculate two principal curvature values.
         If &#34;order&#34; parameter is set to True, then it will be guaranteed,
-        that C1 value is always less than C2.
+        that k1 value is always less than k2.
+        
+        Note: by definition, principal curvature values are curvatures along
+        principal curvature directions. But, it is possible to calculate
+        principal curvature values as solutions of quadratic equation, without
+        calculating corresponding principal curvature directions.
         &#34;&#34;&#34;
-        # It is possible to calculate principal curvature values
-        # as solutions of quadratic equation, without calculating
-        # corresponding principal curvature directions.
 
         # lambda^2 (E G - F^2) - lambda (E N - 2 F M + G L) + (L N - M^2) = 0
 
@@ -360,28 +395,63 @@ and calculates any curvature information from them.</p></div>
         self.nuv = nuv # (fuv, normal), a.k.a m
 
     def mean(self):
-        &#34;&#34;&#34;Calculate mean curvature&#34;&#34;&#34;
+        &#34;&#34;&#34;
+        Calculate mean curvature.
+
+        Note: although mean curvature is defined as (k1 + k2)/2, where k1 and k2 are
+        principal curvature values, it is possible to calculate mean curvature without
+        calculating k1 and k2 first.
+        &#34;&#34;&#34;
         duu, dvv, duv, nuu, nvv, nuv = self.duu, self.dvv, self.duv, self.nuu, self.nvv, self.nuv
         A = duu*dvv - duv*duv
         B = duu*nvv - 2*duv*nuv + dvv*nuu
-        return -B / (2*A)
+        return B / (2*A)
 
     def gauss(self):
-        &#34;&#34;&#34;Calculate Gaussian curvature&#34;&#34;&#34;
+        &#34;&#34;&#34;
+        Calculate Gaussian curvature.
+
+        Note: although Gaussian curvature is defined as k1*k2, where k1 and k2
+        are principal curvature values, it is possible to calculate Gaussian
+        curvature without calculating k1 and k2 first.
+        &#34;&#34;&#34;
         duu, dvv, duv, nuu, nvv, nuv = self.duu, self.dvv, self.duv, self.nuu, self.nvv, self.nuv
         numerator = nuu * nvv - nuv*nuv
         denominator = duu * dvv - duv*duv
+        return numerator / denominator
+
+    def curvature_along_direction(self, v1, v2):
+        &#34;&#34;&#34;
+        Calculate curvature value along specified direction.
+
+        Args:
+            v1, v2: coefficients in the equation v = v1*du + v2*dv, where v is
+                direction in which you want to find the curvature, du is unit
+                vector along df / du derivative, and dv is unit vector along df /
+                dv derivative.
+
+        Note: to calculate curvature along the direction perpendicular to (v1,v2),
+        one can use formula: 2 * calc.mean() - calc.curvature_along_direction(v1, v2).
+        &#34;&#34;&#34;
+        v1s, v2s = v1*v1, v2*v2
+        v12 = v1*v2
+        l, m, n = self.nuu, self.nuv, self.nvv
+        E, F, G = self.duu, self.duv, self.dvv
+        numerator = l*v1s + 2*m*v12 + n*v2s
+        denominator = E*v1s + 2*F*v12 + G*v2s
         return numerator / denominator
 
     def values(self):
         &#34;&#34;&#34;
         Calculate two principal curvature values.
         If &#34;order&#34; parameter is set to True, then it will be guaranteed,
-        that C1 value is always less than C2.
+        that k1 value is always less than k2.
+        
+        Note: by definition, principal curvature values are curvatures along
+        principal curvature directions. But, it is possible to calculate
+        principal curvature values as solutions of quadratic equation, without
+        calculating corresponding principal curvature directions.
         &#34;&#34;&#34;
-        # It is possible to calculate principal curvature values
-        # as solutions of quadratic equation, without calculating
-        # corresponding principal curvature directions.
 
         # lambda^2 (E G - F^2) - lambda (E N - 2 F M + G L) + (L N - M^2) = 0
 
@@ -597,17 +667,64 @@ Return value: SurfaceCurvatureData instance.</p></div>
     return data</code></pre>
 </details>
 </dd>
+<dt id="sverchok.utils.surface.data.SurfaceCurvatureCalculator.curvature_along_direction"><code class="name flex">
+<span>def <span class="ident">curvature_along_direction</span></span>(<span>self, v1, v2)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Calculate curvature value along specified direction.</p>
+<h2 id="args">Args</h2>
+<p>v1, v2: coefficients in the equation v = v1<em>du + v2</em>dv, where v is
+direction in which you want to find the curvature, du is unit
+vector along df / du derivative, and dv is unit vector along df /
+dv derivative.
+Note: to calculate curvature along the direction perpendicular to (v1,v2),
+one can use formula: 2 * calc.mean() - calc.curvature_along_direction(v1, v2).</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def curvature_along_direction(self, v1, v2):
+    &#34;&#34;&#34;
+    Calculate curvature value along specified direction.
+
+    Args:
+        v1, v2: coefficients in the equation v = v1*du + v2*dv, where v is
+            direction in which you want to find the curvature, du is unit
+            vector along df / du derivative, and dv is unit vector along df /
+            dv derivative.
+
+    Note: to calculate curvature along the direction perpendicular to (v1,v2),
+    one can use formula: 2 * calc.mean() - calc.curvature_along_direction(v1, v2).
+    &#34;&#34;&#34;
+    v1s, v2s = v1*v1, v2*v2
+    v12 = v1*v2
+    l, m, n = self.nuu, self.nuv, self.nvv
+    E, F, G = self.duu, self.duv, self.dvv
+    numerator = l*v1s + 2*m*v12 + n*v2s
+    denominator = E*v1s + 2*F*v12 + G*v2s
+    return numerator / denominator</code></pre>
+</details>
+</dd>
 <dt id="sverchok.utils.surface.data.SurfaceCurvatureCalculator.gauss"><code class="name flex">
 <span>def <span class="ident">gauss</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Calculate Gaussian curvature</p></div>
+<div class="desc"><p>Calculate Gaussian curvature.</p>
+<p>Note: although Gaussian curvature is defined as k1*k2, where k1 and k2
+are principal curvature values, it is possible to calculate Gaussian
+curvature without calculating k1 and k2 first.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def gauss(self):
-    &#34;&#34;&#34;Calculate Gaussian curvature&#34;&#34;&#34;
+    &#34;&#34;&#34;
+    Calculate Gaussian curvature.
+
+    Note: although Gaussian curvature is defined as k1*k2, where k1 and k2
+    are principal curvature values, it is possible to calculate Gaussian
+    curvature without calculating k1 and k2 first.
+    &#34;&#34;&#34;
     duu, dvv, duv, nuu, nvv, nuv = self.duu, self.dvv, self.duv, self.nuu, self.nvv, self.nuv
     numerator = nuu * nvv - nuv*nuv
     denominator = duu * dvv - duv*duv
@@ -618,17 +735,26 @@ Return value: SurfaceCurvatureData instance.</p></div>
 <span>def <span class="ident">mean</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Calculate mean curvature</p></div>
+<div class="desc"><p>Calculate mean curvature.</p>
+<p>Note: although mean curvature is defined as (k1 + k2)/2, where k1 and k2 are
+principal curvature values, it is possible to calculate mean curvature without
+calculating k1 and k2 first.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def mean(self):
-    &#34;&#34;&#34;Calculate mean curvature&#34;&#34;&#34;
+    &#34;&#34;&#34;
+    Calculate mean curvature.
+
+    Note: although mean curvature is defined as (k1 + k2)/2, where k1 and k2 are
+    principal curvature values, it is possible to calculate mean curvature without
+    calculating k1 and k2 first.
+    &#34;&#34;&#34;
     duu, dvv, duv, nuu, nvv, nuv = self.duu, self.dvv, self.duv, self.nuu, self.nvv, self.nuv
     A = duu*dvv - duv*duv
     B = duu*nvv - 2*duv*nuv + dvv*nuu
-    return -B / (2*A)</code></pre>
+    return B / (2*A)</code></pre>
 </details>
 </dd>
 <dt id="sverchok.utils.surface.data.SurfaceCurvatureCalculator.set"><code class="name flex">
@@ -660,7 +786,11 @@ Return value: SurfaceCurvatureData instance.</p></div>
 <dd>
 <div class="desc"><p>Calculate two principal curvature values.
 If "order" parameter is set to True, then it will be guaranteed,
-that C1 value is always less than C2.</p></div>
+that k1 value is always less than k2.</p>
+<p>Note: by definition, principal curvature values are curvatures along
+principal curvature directions. But, it is possible to calculate
+principal curvature values as solutions of quadratic equation, without
+calculating corresponding principal curvature directions.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -669,11 +799,13 @@ that C1 value is always less than C2.</p></div>
     &#34;&#34;&#34;
     Calculate two principal curvature values.
     If &#34;order&#34; parameter is set to True, then it will be guaranteed,
-    that C1 value is always less than C2.
+    that k1 value is always less than k2.
+    
+    Note: by definition, principal curvature values are curvatures along
+    principal curvature directions. But, it is possible to calculate
+    principal curvature values as solutions of quadratic equation, without
+    calculating corresponding principal curvature directions.
     &#34;&#34;&#34;
-    # It is possible to calculate principal curvature values
-    # as solutions of quadratic equation, without calculating
-    # corresponding principal curvature directions.
 
     # lambda^2 (E G - F^2) - lambda (E N - 2 F M + G L) + (L N - M^2) = 0
 
@@ -1016,6 +1148,7 @@ corresponds to principal_value_2.</p></div>
 <h4><code><a title="sverchok.utils.surface.data.SurfaceCurvatureCalculator" href="#sverchok.utils.surface.data.SurfaceCurvatureCalculator">SurfaceCurvatureCalculator</a></code></h4>
 <ul class="">
 <li><code><a title="sverchok.utils.surface.data.SurfaceCurvatureCalculator.calc" href="#sverchok.utils.surface.data.SurfaceCurvatureCalculator.calc">calc</a></code></li>
+<li><code><a title="sverchok.utils.surface.data.SurfaceCurvatureCalculator.curvature_along_direction" href="#sverchok.utils.surface.data.SurfaceCurvatureCalculator.curvature_along_direction">curvature_along_direction</a></code></li>
 <li><code><a title="sverchok.utils.surface.data.SurfaceCurvatureCalculator.gauss" href="#sverchok.utils.surface.data.SurfaceCurvatureCalculator.gauss">gauss</a></code></li>
 <li><code><a title="sverchok.utils.surface.data.SurfaceCurvatureCalculator.mean" href="#sverchok.utils.surface.data.SurfaceCurvatureCalculator.mean">mean</a></code></li>
 <li><code><a title="sverchok.utils.surface.data.SurfaceCurvatureCalculator.set" href="#sverchok.utils.surface.data.SurfaceCurvatureCalculator.set">set</a></code></li>

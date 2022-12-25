@@ -600,6 +600,20 @@ class SvNurbsCurve(SvCurve):
         segments.append(rest)
         return segments
 
+    def get_start_point(self):
+        if sv_knotvector.is_clamped(self.get_knotvector(), self.get_degree()):
+            return self.get_control_points()[0]
+        else:
+            u_min = self.get_u_bounds()[0]
+            return self.evaluate(u_min)
+
+    def get_end_point(self):
+        if sv_knotvector.is_clamped(self.get_knotvector(), self.get_degree()):
+            return self.get_control_points()[-1]
+        else:
+            u_max = self.get_u_bounds()[1]
+            return self.evaluate(u_max)
+
     def get_end_points(self):
         if sv_knotvector.is_clamped(self.get_knotvector(), self.get_degree()):
             cpts = self.get_control_points()
@@ -880,7 +894,7 @@ class SvNurbsCurve(SvCurve):
         points.append(segments[-1].get_end_points()[1])
         return np.array(points)
 
-    def split_at_fracture_points(self, order=1, direction_only = True, tangent_tolerance = 1e-6):
+    def split_at_fracture_points(self, order=1, direction_only = True, or_worse = True, tangent_tolerance = 1e-6, return_details = False):
 
         if order not in {1,2,3}:
             raise Exception(f&#34;Unsupported discontinuity order: {order}&#34;)
@@ -901,26 +915,41 @@ class SvNurbsCurve(SvCurve):
             delta = np.linalg.norm(tangent1 - tangent2)
             return delta &gt;= tangent_tolerance
 
-        def concatenate_non_fractured(segments):
+        def concatenate_non_fractured(segments, start_ts):
             prev_segment = segments[0]
             new_segments = []
-            for segment in segments[1:]:
+            split_ts = []
+            split_points = []
+            for segment, split_t in zip(segments[1:], start_ts):
                 if is_fracture(prev_segment, segment):
                     new_segments.append(prev_segment)
+                    split_ts.append(split_t)
+                    split_points.append(prev_segment.get_end_point())
                     prev_segment = segment
                 else:
                     prev_segment = prev_segment.concatenate(segment)
 
             new_segments.append(prev_segment)
-            return new_segments
+            return split_ts, split_points, new_segments
+
+        p = self.get_degree()
+
+        if or_worse:
+            def is_possible_fracture(multiplicity):
+                return multiplicity &gt;= p - order + 1
+        else:
+            def is_possible_fracture(multiplicity):
+                return multiplicity == p - order + 1
 
         kv = self.get_knotvector()
-        p = self.get_degree()
         ms = sv_knotvector.to_multiplicity(kv)[1:-1]
-        possible_fracture_ts = [t for t, s in ms if s &gt;= p-order+1]
+        possible_fracture_ts = [t for t, s in ms if is_possible_fracture(s)]
         segments = self.split_at_ts(possible_fracture_ts)
-        segments = concatenate_non_fractured(segments)
-        return segments
+        split_ts, split_points, segments = concatenate_non_fractured(segments, possible_fracture_ts)
+        if return_details:
+            return split_ts, split_points, segments
+        else:
+            return segments
 
 class SvGeomdlCurve(SvNurbsCurve):
     &#34;&#34;&#34;
@@ -3398,6 +3427,20 @@ def interpolate(cls, degree, points, metric=&#39;DISTANCE&#39;, tknots=None, cyc
         segments.append(rest)
         return segments
 
+    def get_start_point(self):
+        if sv_knotvector.is_clamped(self.get_knotvector(), self.get_degree()):
+            return self.get_control_points()[0]
+        else:
+            u_min = self.get_u_bounds()[0]
+            return self.evaluate(u_min)
+
+    def get_end_point(self):
+        if sv_knotvector.is_clamped(self.get_knotvector(), self.get_degree()):
+            return self.get_control_points()[-1]
+        else:
+            u_max = self.get_u_bounds()[1]
+            return self.evaluate(u_max)
+
     def get_end_points(self):
         if sv_knotvector.is_clamped(self.get_knotvector(), self.get_degree()):
             cpts = self.get_control_points()
@@ -3678,7 +3721,7 @@ def interpolate(cls, degree, points, metric=&#39;DISTANCE&#39;, tknots=None, cyc
         points.append(segments[-1].get_end_points()[1])
         return np.array(points)
 
-    def split_at_fracture_points(self, order=1, direction_only = True, tangent_tolerance = 1e-6):
+    def split_at_fracture_points(self, order=1, direction_only = True, or_worse = True, tangent_tolerance = 1e-6, return_details = False):
 
         if order not in {1,2,3}:
             raise Exception(f&#34;Unsupported discontinuity order: {order}&#34;)
@@ -3699,26 +3742,41 @@ def interpolate(cls, degree, points, metric=&#39;DISTANCE&#39;, tknots=None, cyc
             delta = np.linalg.norm(tangent1 - tangent2)
             return delta &gt;= tangent_tolerance
 
-        def concatenate_non_fractured(segments):
+        def concatenate_non_fractured(segments, start_ts):
             prev_segment = segments[0]
             new_segments = []
-            for segment in segments[1:]:
+            split_ts = []
+            split_points = []
+            for segment, split_t in zip(segments[1:], start_ts):
                 if is_fracture(prev_segment, segment):
                     new_segments.append(prev_segment)
+                    split_ts.append(split_t)
+                    split_points.append(prev_segment.get_end_point())
                     prev_segment = segment
                 else:
                     prev_segment = prev_segment.concatenate(segment)
 
             new_segments.append(prev_segment)
-            return new_segments
+            return split_ts, split_points, new_segments
+
+        p = self.get_degree()
+
+        if or_worse:
+            def is_possible_fracture(multiplicity):
+                return multiplicity &gt;= p - order + 1
+        else:
+            def is_possible_fracture(multiplicity):
+                return multiplicity == p - order + 1
 
         kv = self.get_knotvector()
-        p = self.get_degree()
         ms = sv_knotvector.to_multiplicity(kv)[1:-1]
-        possible_fracture_ts = [t for t, s in ms if s &gt;= p-order+1]
+        possible_fracture_ts = [t for t, s in ms if is_possible_fracture(s)]
         segments = self.split_at_ts(possible_fracture_ts)
-        segments = concatenate_non_fractured(segments)
-        return segments</code></pre>
+        split_ts, split_points, segments = concatenate_non_fractured(segments, possible_fracture_ts)
+        if return_details:
+            return split_ts, split_points, segments
+        else:
+            return segments</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -4234,6 +4292,23 @@ such a way that each segment is nearly a straight line segment.</p></div>
     return self._bounding_box</code></pre>
 </details>
 </dd>
+<dt id="sverchok.utils.curve.nurbs.SvNurbsCurve.get_end_point"><code class="name flex">
+<span>def <span class="ident">get_end_point</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_end_point(self):
+    if sv_knotvector.is_clamped(self.get_knotvector(), self.get_degree()):
+        return self.get_control_points()[-1]
+    else:
+        u_max = self.get_u_bounds()[1]
+        return self.evaluate(u_max)</code></pre>
+</details>
+</dd>
 <dt id="sverchok.utils.curve.nurbs.SvNurbsCurve.get_end_points"><code class="name flex">
 <span>def <span class="ident">get_end_points</span></span>(<span>self)</span>
 </code></dt>
@@ -4365,6 +4440,23 @@ such a way that each segment is nearly a straight line segment.</p></div>
     points = [s.get_end_points()[0] for s in segments]
     points.append(segments[-1].get_end_points()[1])
     return np.array(points)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.nurbs.SvNurbsCurve.get_start_point"><code class="name flex">
+<span>def <span class="ident">get_start_point</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_start_point(self):
+    if sv_knotvector.is_clamped(self.get_knotvector(), self.get_degree()):
+        return self.get_control_points()[0]
+    else:
+        u_min = self.get_u_bounds()[0]
+        return self.evaluate(u_min)</code></pre>
 </details>
 </dd>
 <dt id="sverchok.utils.curve.nurbs.SvNurbsCurve.get_start_tangent"><code class="name flex">
@@ -4856,7 +4948,7 @@ lie inside the sphere, or may not touch it at all.</p></div>
 </details>
 </dd>
 <dt id="sverchok.utils.curve.nurbs.SvNurbsCurve.split_at_fracture_points"><code class="name flex">
-<span>def <span class="ident">split_at_fracture_points</span></span>(<span>self, order=1, direction_only=True, tangent_tolerance=1e-06)</span>
+<span>def <span class="ident">split_at_fracture_points</span></span>(<span>self, order=1, direction_only=True, or_worse=True, tangent_tolerance=1e-06, return_details=False)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -4864,7 +4956,7 @@ lie inside the sphere, or may not touch it at all.</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def split_at_fracture_points(self, order=1, direction_only = True, tangent_tolerance = 1e-6):
+<pre><code class="python">def split_at_fracture_points(self, order=1, direction_only = True, or_worse = True, tangent_tolerance = 1e-6, return_details = False):
 
     if order not in {1,2,3}:
         raise Exception(f&#34;Unsupported discontinuity order: {order}&#34;)
@@ -4885,26 +4977,41 @@ lie inside the sphere, or may not touch it at all.</p></div>
         delta = np.linalg.norm(tangent1 - tangent2)
         return delta &gt;= tangent_tolerance
 
-    def concatenate_non_fractured(segments):
+    def concatenate_non_fractured(segments, start_ts):
         prev_segment = segments[0]
         new_segments = []
-        for segment in segments[1:]:
+        split_ts = []
+        split_points = []
+        for segment, split_t in zip(segments[1:], start_ts):
             if is_fracture(prev_segment, segment):
                 new_segments.append(prev_segment)
+                split_ts.append(split_t)
+                split_points.append(prev_segment.get_end_point())
                 prev_segment = segment
             else:
                 prev_segment = prev_segment.concatenate(segment)
 
         new_segments.append(prev_segment)
-        return new_segments
+        return split_ts, split_points, new_segments
+
+    p = self.get_degree()
+
+    if or_worse:
+        def is_possible_fracture(multiplicity):
+            return multiplicity &gt;= p - order + 1
+    else:
+        def is_possible_fracture(multiplicity):
+            return multiplicity == p - order + 1
 
     kv = self.get_knotvector()
-    p = self.get_degree()
     ms = sv_knotvector.to_multiplicity(kv)[1:-1]
-    possible_fracture_ts = [t for t, s in ms if s &gt;= p-order+1]
+    possible_fracture_ts = [t for t, s in ms if is_possible_fracture(s)]
     segments = self.split_at_ts(possible_fracture_ts)
-    segments = concatenate_non_fractured(segments)
-    return segments</code></pre>
+    split_ts, split_points, segments = concatenate_non_fractured(segments, possible_fracture_ts)
+    if return_details:
+        return split_ts, split_points, segments
+    else:
+        return segments</code></pre>
 </details>
 </dd>
 <dt id="sverchok.utils.curve.nurbs.SvNurbsCurve.split_at_ts"><code class="name flex">
@@ -5176,6 +5283,7 @@ lie inside the sphere, or may not touch it at all.</p></div>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.elevate_degree" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.elevate_degree">elevate_degree</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.extrude_to_point" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.extrude_to_point">extrude_to_point</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_bounding_box" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.get_bounding_box">get_bounding_box</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_end_point" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.get_end_point">get_end_point</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_end_points" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.get_end_points">get_end_points</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_end_tangent" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.get_end_tangent">get_end_tangent</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_homogenous_control_points" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.get_homogenous_control_points">get_homogenous_control_points</a></code></li>
@@ -5184,6 +5292,7 @@ lie inside the sphere, or may not touch it at all.</p></div>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_nurbs_implementation" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.get_nurbs_implementation">get_nurbs_implementation</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_plane" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.get_plane">get_plane</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_polyline_vertices" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.get_polyline_vertices">get_polyline_vertices</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_start_point" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.get_start_point">get_start_point</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_start_tangent" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.get_start_tangent">get_start_tangent</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_weights" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.get_weights">get_weights</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.has_exactly_one_nearest_point" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.has_exactly_one_nearest_point">has_exactly_one_nearest_point</a></code></li>
