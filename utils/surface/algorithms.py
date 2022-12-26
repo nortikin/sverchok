@@ -27,7 +27,8 @@ from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.algorithms import (
             SvNormalTrack, curve_frame_on_surface_array,
             MathutilsRotationCalculator, DifferentialRotationCalculator,
-            reparametrize_curve
+            reparametrize_curve,
+            SvCurveOnSurface
         )
 from sverchok.utils.surface.core import SvSurface, UnsupportedSurfaceTypeException
 from sverchok.utils.surface.nurbs import SvNurbsSurface
@@ -1035,14 +1036,35 @@ class SvTaperSweepSurface(SvSurface):
         profile_points = self.profile.evaluate_array(us)
         return profile_points * scale + taper_projections
 
+def calc_curvatures_across_curve(uv_curve, surface, ts):
+    ts = np.asarray(ts)
+    uv_points = uv_curve.evaluate_array(ts)
+    curve = SvCurveOnSurface(uv_curve, surface, axis=2)
+    tangents = curve.tangent_array(ts)
+    tangents /= np.linalg.norm(tangents, axis=1, keepdims=True)
+    calc = surface.curvature_calculator(uv_points[:,0], uv_points[:,1])
+    du = calc.fu / np.linalg.norm(calc.fu, axis=1, keepdims=True)
+    dv = calc.fv / np.linalg.norm(calc.fv, axis=1, keepdims=True)
+    v1 = (tangents * du).sum(axis=1)
+    v2 = (tangents * dv).sum(axis=1)
+    mean = calc.mean()
+    curvatures = calc.curvature_along_direction(v1, v2)
+    curvatures = 2*mean - curvatures
+    return curvatures
+
 class SvBlendSurface(SvSurface):
-    def __init__(self, surface1, surface2, curve1, curve2, bulge1, bulge2):
+    G1 = 'G1'
+    G2 = 'G2'
+
+    def __init__(self, surface1, surface2, curve1, curve2, bulge1, bulge2, absolute_bulge = True, tangency = G1):
         self.surface1 = surface1
         self.surface2 = surface2
         self.curve1 = curve1
         self.curve2 = curve2
         self.bulge1 = bulge1
         self.bulge2 = bulge2
+        self.absolute_bulge = absolute_bulge
+        self.tangency = tangency
         self.u_bounds = (0.0, 1.0)
         self.v_bounds = (0.0, 1.0)
 
@@ -1064,28 +1086,67 @@ class SvBlendSurface(SvSurface):
         c1_us = (c1_max - c1_min) * us + c1_min
         c2_us = (c2_max - c2_min) * us + c2_min
 
-        _, c1_points, _, _, c1_binormals = curve_frame_on_surface_array(self.surface1, self.curve1, c1_us)
-        _, c2_points, _, _, c2_binormals = curve_frame_on_surface_array(self.surface2, self.curve2, c2_us)
-        c1_binormals = self.bulge1 * c1_binormals
-        c2_binormals = self.bulge2 * c2_binormals
+        _, c1_points, c1_tangents, _, c1_binormals = curve_frame_on_surface_array(self.surface1, self.curve1, c1_us, normalize=False)
+        _, c2_points, c2_tangents, _, c2_binormals = curve_frame_on_surface_array(self.surface2, self.curve2, c2_us, normalize=False)
+        t1dir = c1_binormals / np.linalg.norm(c1_binormals, axis=1, keepdims=True)
+        t2dir = c2_binormals / np.linalg.norm(c2_binormals, axis=1, keepdims=True)
 
-        # See also sverchok.utils.curve.bezier.SvCubicBezierCurve.
-        # Here we have re-implementation of the same algorithm
-        # which works with arrays of control points
-        p0s = c1_points                 # (n, 3)
-        p1s = c1_points + c1_binormals
-        p2s = c2_points + c2_binormals
-        p3s = c2_points
+        if self.absolute_bulge:
+            c1_binormals = self.bulge1 * t1dir
+            c2_binormals = self.bulge2 * t2dir
+        else:
+            c1_binormals = self.bulge1 * c1_binormals
+            c2_binormals = self.bulge2 * c2_binormals
 
-        c0 = (1 - vs)**3      # (n,)
-        c1 = 3*vs*(1-vs)**2
-        c2 = 3*vs**2*(1-vs)
-        c3 = vs**3
+        if self.tangency == SvBlendSurface.G2:
+            c1_across = calc_curvatures_across_curve(self.curve1, self.surface1, c1_us)
+            c2_across = calc_curvatures_across_curve(self.curve2, self.surface2, c2_us)
 
-        # (n,1)
-        c0, c1, c2, c3 = c0[:,np.newaxis], c1[:,np.newaxis], c2[:,np.newaxis], c3[:,np.newaxis]
+            A1 = c1_points
+            A2 = c2_points
+            B1 = A1 + c1_binormals / 5
+            B2 = A2 + c2_binormals / 5
 
-        return c0*p0s + c1*p1s + c2*p2s + c3*p3s
+            n1dir = c1_tangents / np.linalg.norm(c1_tangents, axis=1, keepdims=True)
+            n2dir = c2_tangents / np.linalg.norm(c2_tangents, axis=1, keepdims=True)
+
+            r1 = c1_across * np.linalg.norm(c1_binormals, axis=1)**2 / 20
+            r2 = c2_across * np.linalg.norm(c2_binormals, axis=1)**2 / 20
+            r1 = r1[np.newaxis].T
+            r2 = r2[np.newaxis].T
+
+            C1 = B1 + r1 * n1dir
+            C2 = B2 + r2 * n2dir
+
+            # See also sverchok.utils.curve.bezier.SvBezierCurve.
+            c0 = (1 - vs)**5      # (n,)
+            c1 = 5*vs*(1-vs)**4
+            c2 = 10*vs**2*(1-vs)**3
+            c3 = 10*vs**3*(1-vs)**2
+            c4 = 5*vs**4*(1-vs)
+            c5 = vs**5
+
+            # (n,1)
+            c0, c1, c2, c3, c4, c5 = c0[:,np.newaxis], c1[:,np.newaxis], c2[:,np.newaxis], c3[:,np.newaxis], c4[:,np.newaxis], c5[:,np.newaxis]
+
+            return c0*A1 + c1*B1 + c2*C1 + c3*C2 + c4*B2 + c5*A2
+        else: # G1
+            # See also sverchok.utils.curve.bezier.SvCubicBezierCurve.
+            # Here we have re-implementation of the same algorithm
+            # which works with arrays of control points
+            p0s = c1_points                 # (n, 3)
+            p1s = c1_points + c1_binormals
+            p2s = c2_points + c2_binormals
+            p3s = c2_points
+
+            c0 = (1 - vs)**3      # (n,)
+            c1 = 3*vs*(1-vs)**2
+            c2 = 3*vs**2*(1-vs)
+            c3 = vs**3
+
+            c0, c1, c2, c3 = c0[:,np.newaxis], c1[:,np.newaxis], c2[:,np.newaxis], c3[:,np.newaxis]
+            return c0*p0s + c1*p1s + c2*p2s + c3*p3s
+
 
 class SvConcatSurface(SvSurface):
     def __init__(self, direction, surfaces):

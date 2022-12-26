@@ -3,11 +3,15 @@ import numpy as np
 from sverchok.utils.curve.bezier import SvBezierCurve
 from sverchok.utils.curve.nurbs_algorithms import unify_curves
 from sverchok.utils.curve.algorithms import unify_curves_degree, curve_frame_on_surface_array
+from sverchok.utils.curve.nurbs_algorithms import unify_curves, nurbs_curve_to_xoy, nurbs_curve_matrix
+from sverchok.utils.curve.algorithms import unify_curves_degree, SvCurveFrameCalculator, curve_frame_on_surface_array, SvCurveOnSurface
 from sverchok.utils.curve.nurbs_solver_applications import interpolate_nurbs_curve_with_tangents
 from sverchok.utils.surface.nurbs import SvNurbsSurface, simple_loft, interpolate_nurbs_surface
 from sverchok.utils.surface.algorithms import unify_nurbs_surfaces
 from sverchok.utils.sv_logging import get_logger
-
+from sverchok.utils.surface.algorithms import unify_nurbs_surfaces, calc_curvatures_across_curve
+from sverchok.utils.logging import getLogger
+from sverchok.data_structure import repeat_last_for_length
 
 def reparametrize_by_segments(curve, t_values, tolerance=1e-2):
     # Reparametrize given curve so that parameter values from t_values parameter
@@ -134,7 +138,10 @@ def gordon_surface(u_curves, v_curves, intersections, metric='POINTS', u_knots=N
 
     return lofted_u, lofted_v, interpolated, surface
 
-def nurbs_blend_surfaces(surface1, surface2, curve1, curve2, bulge1, bulge2, u_degree, u_samples, logger=None):
+TANGENCY_G1 = 'G1'
+TANGENCY_G2 = 'G2'
+
+def nurbs_blend_surfaces(surface1, surface2, curve1, curve2, bulge1, bulge2, u_degree, u_samples, absolute_bulge = True, tangency = TANGENCY_G1, logger=None):
     t_min, t_max = curve1.get_u_bounds()
     ts1 = np.linspace(t_min, t_max, num=u_samples)
 
@@ -143,14 +150,27 @@ def nurbs_blend_surfaces(surface1, surface2, curve1, curve2, bulge1, bulge2, u_d
 
     _, c1_points, c1_tangents, _, c1_binormals = curve_frame_on_surface_array(surface1, curve1, ts1, normalize=False)
     _, c2_points, c2_tangents, _, c2_binormals = curve_frame_on_surface_array(surface2, curve2, ts2, normalize=False)
-    c1_binormals = bulge1 * c1_binormals / np.linalg.norm(c1_binormals, axis=1, keepdims=True)
-    c2_binormals = bulge2 * c2_binormals / np.linalg.norm(c2_binormals, axis=1, keepdims=True)
+    if absolute_bulge:
+        c1_binormals = bulge1 * c1_binormals / np.linalg.norm(c1_binormals, axis=1, keepdims=True)
+        c2_binormals = bulge2 * c2_binormals / np.linalg.norm(c2_binormals, axis=1, keepdims=True)
+    else:
+        c1_binormals = bulge1 * c1_binormals
+        c2_binormals = bulge2 * c2_binormals
+
+    c1_across = calc_curvatures_across_curve(curve1, surface1, ts1)
+    c2_across = calc_curvatures_across_curve(curve2, surface2, ts2)
 
     curve1 = interpolate_nurbs_curve_with_tangents(u_degree, c1_points, c1_tangents, tknots=ts1, logger=logger)
     curve2 = interpolate_nurbs_curve_with_tangents(u_degree, c2_points, c2_tangents, tknots=ts2, logger=logger)
     u_curves = [curve1, curve2]
 
-    v_curves = [SvBezierCurve.from_control_points([p1, p1+t1, p2+t2, p2]) for p1, t1, p2, t2 in zip(c1_points, c1_binormals, c2_points, c2_binormals)]
+    if tangency == TANGENCY_G1:
+        v_curves = [SvBezierCurve.from_control_points([p1, p1+t1, p2+t2, p2]) for p1, t1, p2, t2 in zip(c1_points, c1_binormals, c2_points, c2_binormals)]
+    else: # G2
+        v_curves = []
+        for p1, p2, t1, t2, n1, n2, c1, c2 in zip(c1_points, c2_points, c1_binormals, c2_binormals, c1_tangents, c2_tangents, c1_across, c2_across):
+            v_curve = SvBezierCurve.from_tangents_normals_curvatures(p1, p2, t1, -t2, n1, n2, c1, c2)
+            v_curves.append(v_curve)
 
     intersections = np.transpose(np.asarray([c1_points, c2_points]), axes=(1,0,2))
 
