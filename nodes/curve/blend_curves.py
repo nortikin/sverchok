@@ -43,8 +43,8 @@ class SvBlendCurvesMk2Node(SverchCustomTreeNode, bpy.types.Node):
         self.inputs['Curve1'].hide_safe = self.mode != 'TWO'
         self.inputs['Curve2'].hide_safe = self.mode != 'TWO'
         self.inputs['Curves'].hide_safe = self.mode != 'N'
-        self.inputs['Factor1'].hide_safe = self.smooth_mode != '1'
-        self.inputs['Factor2'].hide_safe = self.smooth_mode != '1'
+        self.inputs['Factor1'].hide_safe = self.smooth_mode not in ['1', 'G2']
+        self.inputs['Factor2'].hide_safe = self.smooth_mode not in ['1', 'G2']
         self.inputs['Parameter'].hide_safe = self.smooth_mode != '1b'
         updateNode(self, context)
 
@@ -65,6 +65,12 @@ class SvBlendCurvesMk2Node(SverchCustomTreeNode, bpy.types.Node):
             ('1b', "1b - Bi Arc", "Connect curves with Bi Arc, such that tangents are smoothly joined", 2),
             ('2',  "2 - Normals", "Connect curves such that their normals (second derivatives) are smoothly joined", 3),
             ('3',  "3 - Curvature", "Connect curves such that their curvatures (third derivatives) are smoothly joined", 4)
+            ('0', "C0 - Position", "Connect ends of curves with straight line segment", 0),
+            ('1', "G1 - Tangency", "Connect curves such that their tangents are continuosly joined", 1),
+            ('1b', "G1 - Bi Arc", "Connect curves with Bi Arc, such that tangents are continuosly joined", 2),
+            ('2', "C2 - Smooth Normals", "Connect curves such that their second derivatives are continuosly joined", 3),
+            ('3', "C3 - Smooth Curvature", "Connect curves such that their third derivatives are continuosly joined", 4),
+            ('G2', "G2 - Curvature", "Connect curves such that their tangents, normals and curvatures are continuosly joined", 5)
         ]
 
     smooth_mode : EnumProperty(
@@ -182,9 +188,87 @@ class SvBlendCurvesMk2Node(SverchCustomTreeNode, bpy.types.Node):
             new_curves = []
             new_controls = []
             for curve1, curve2, factor1, factor2, parameter in params:
+<<<<<<< HEAD
                 if len(params)==1 and curve1==curve2 and self.cyclic==False:
                     if self.output_src:
                         new_curves.append(curve1)
+=======
+                _, t_max_1 = curve1.get_u_bounds()
+                t_min_2, _ = curve2.get_u_bounds()
+
+                curve1_end = curve1.evaluate(t_max_1)
+                curve2_begin = curve2.evaluate(t_min_2)
+
+                smooth = self.smooth_mode
+
+                if smooth == '0':
+                    new_curve = SvLine.from_two_points(curve1_end, curve2_begin)
+                    controls = [curve1_end, curve2_begin]
+                elif smooth == '1':
+                    tangent_1_end = curve1.tangent(t_max_1)
+                    tangent_2_begin = curve2.tangent(t_min_2)
+
+                    tangent1 = factor1 * tangent_1_end
+                    tangent2 = factor2 * tangent_2_begin
+
+                    new_curve = SvCubicBezierCurve(
+                            curve1_end,
+                            curve1_end + tangent1 / 3.0,
+                            curve2_begin - tangent2 / 3.0,
+                            curve2_begin
+                        )
+                    controls = [new_curve.p0.tolist(), new_curve.p1.tolist(),
+                                    new_curve.p2.tolist(), new_curve.p3.tolist()]
+                elif smooth == '1b':
+                    tangent_1_end = curve1.tangent(t_max_1)
+                    tangent_2_begin = curve2.tangent(t_min_2)
+
+                    new_curve = SvBiArc.calc(
+                            curve1_end, curve2_begin,
+                            tangent_1_end, tangent_2_begin,
+                            parameter,
+                            planar_tolerance = self.planar_tolerance)
+                    
+                    controls = [new_curve.junction.tolist()]
+                elif smooth == '2':
+                    tangent_1_end = curve1.tangent(t_max_1)
+                    tangent_2_begin = curve2.tangent(t_min_2)
+                    second_1_end = curve1.second_derivative(t_max_1)
+                    second_2_begin = curve2.second_derivative(t_min_2)
+
+                    new_curve = SvBezierCurve.blend_second_derivatives(
+                                    curve1_end, tangent_1_end, second_1_end,
+                                    curve2_begin, tangent_2_begin, second_2_begin)
+                    controls = [p.tolist() for p in new_curve.points]
+                elif smooth == '3':
+                    tangent_1_end = curve1.tangent(t_max_1)
+                    tangent_2_begin = curve2.tangent(t_min_2)
+                    second_1_end = curve1.second_derivative(t_max_1)
+                    second_2_begin = curve2.second_derivative(t_min_2)
+                    third_1_end = curve1.third_derivative_array(np.array([t_max_1]))[0]
+                    third_2_begin = curve2.third_derivative_array(np.array([t_min_2]))[0]
+
+                    new_curve = SvBezierCurve.blend_third_derivatives(
+                                    curve1_end, tangent_1_end, second_1_end, third_1_end,
+                                    curve2_begin, tangent_2_begin, second_2_begin, third_2_begin)
+                    controls = [p.tolist() for p in new_curve.points]
+                elif smooth == 'G2':
+                    tangent_1_end = curve1.tangent(t_max_1)
+                    tangent_2_begin = curve2.tangent(t_min_2)
+                    tangent1 = factor1 * tangent_1_end
+                    tangent2 = factor2 * tangent_2_begin
+                    normal_1_end = curve1.main_normal(t_max_1)
+                    normal_2_begin = curve2.main_normal(t_min_2)
+                    curvature_1_end = curve1.curvature(t_max_1)
+                    curvature_2_begin = curve2.curvature(t_min_2)
+                    
+                    new_curve = SvBezierCurve.from_tangents_normals_curvatures(
+                                    curve1_end, curve2_begin,
+                                    tangent1, tangent2,
+                                    normal_1_end, normal_2_begin,
+                                    curvature_1_end, curvature_2_begin)
+                    controls = new_curve.get_control_points().tolist()
+>>>>>>> 7b578d5a3 ("Blend Curves": G2 mode.)
                 else:
                     _, t_max_1 = curve1.get_u_bounds()
                     t_min_2, _ = curve2.get_u_bounds()
