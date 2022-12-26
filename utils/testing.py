@@ -1,4 +1,3 @@
-from itertools import chain
 from pathlib import Path
 from typing import Iterator
 
@@ -19,9 +18,7 @@ from sverchok import old_nodes
 from sverchok.data_structure import get_data_nesting_level
 from sverchok.core.socket_data import get_output_socket_data
 from sverchok.core.sv_custom_exceptions import SvNoDataError
-from sverchok.utils.logging import debug, info, exception
-from sverchok.utils.context_managers import sv_preferences
-from sverchok.utils.modules_inspection import iter_submodule_names
+from sverchok.utils.logging import debug, info
 from sverchok.utils.sv_json_import import JSONImporter
 
 
@@ -806,131 +803,6 @@ def interactive_only(func):
 def requires(module):
     return unittest.skipIf(module is None, "This test requires a module which is not currently available")
 
-######################################################
-# UI operator and panel classes
-######################################################
-
-class SvRunTests(bpy.types.Operator):
-    """
-    Run all tests.
-    """
-
-    bl_idname = "node.sv_testing_run_tests"
-    bl_label = "Run tests"
-    bl_options = {'INTERNAL'}
-
-    test_module: bpy.props.EnumProperty(
-        name="Module to test",
-        description="Pick up which module to test",
-        items=[(i, i, '') for i in 
-               chain(['All'], iter_submodule_names(Path(sverchok.__file__).parent / 'tests', depth=1))])
-
-    def execute(self, context):
-        if self.test_module == 'All':
-            # making self.report after all tests lead to strange error, so no report for testing all
-            run_all_tests()
-        else:
-            test_result = run_all_tests(self.test_module + '.py')
-            self.report(type={'ERROR'} if test_result != 'OK' else {'INFO'}, message=test_result)
-        return {'FINISHED'}
-
-    def invoke(self, context, event):
-        wm = context.window_manager
-        return wm.invoke_props_dialog(self)
-
-
-class SvDumpNodeDef(bpy.types.Operator):
-    """
-    Print definition of selected node to stdout.
-    This works correctly only for simple cases!
-    """
-
-    bl_idname = "node.sv_testing_dump_node_def"
-    bl_label = "Dump node definition"
-    bl_options = {'INTERNAL'}
-
-    @classmethod
-    def poll(cls, context):
-        return bool(context.space_data.edit_tree)
-
-    def execute(self, context):
-        ntree = context.space_data.node_tree
-        selection = list(filter(lambda n: n.select, ntree.nodes)) if ntree else []
-        if len(selection) != 1:
-            self.report({'ERROR'}, "Exactly one node must be selected!")
-            return {'CANCELLED'}
-
-        node = selection[0]
-        print(generate_node_definition(node))
-        self.report({'INFO'}, "See console")
-
-        return {'FINISHED'}
-
-class SvListOldNodes(bpy.types.Operator):
-    """
-    Print names and bl_idnames of all
-    deprecated nodes (old_nodes) in the current
-    node tree.
-    """
-
-    bl_idname = "node.sv_testing_list_old_nodes"
-    bl_label = "List old nodes"
-    bl_options = {'INTERNAL'}
-
-    @classmethod
-    def poll(cls, context):
-        return bool(context.space_data.edit_tree)
-
-    def execute(self, context):
-        ntree = context.space_data.node_tree
-
-        for node in ntree.nodes:
-            if old_nodes.is_old(node):
-                info("Deprecated node: `%s' (%s)", node.name, node.bl_idname)
-
-        self.report({'INFO'}, "See logs")
-        return {'FINISHED'}
-
-class SV_PT_TestingPanel(bpy.types.Panel):
-    bl_idname = "SV_PT_TestingPanel"
-    bl_label = "SV Testing"
-    bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'UI'
-    bl_category = 'Sverchok'
-    bl_order = 8
-    use_pin = True
-
-    @classmethod
-    def poll(cls, context):
-        try:
-            if context.space_data.tree_type != 'SverchCustomTreeType':
-                return False
-            with sv_preferences() as prefs:
-                return prefs.developer_mode
-        except:
-            return False
-
-    def draw(self, context):
-        layout = self.layout
-        layout.operator("node.sv_testing_run_tests")
-        layout.operator("node.sv_testing_list_old_nodes")
-        layout.operator("node.sv_testing_dump_node_def")
-
-classes = [SvRunTests, SvDumpNodeDef, SvListOldNodes, SV_PT_TestingPanel]
-
-def register():
-    for clazz in classes:
-        try:
-            bpy.utils.register_class(clazz)
-        except Exception as e:
-            exception("Can't register class %s: %s", clazz, e)
-
-def unregister():
-    for clazz in reversed(classes):
-        try:
-            bpy.utils.unregister_class(clazz)
-        except Exception as e:
-            exception("Can't unregister class %s: %s", clazz, e)
 
 if __name__ == "__main__":
     import sys

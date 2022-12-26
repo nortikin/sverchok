@@ -105,7 +105,7 @@ class SvFilletPolylineNode(SverchCustomTreeNode, bpy.types.Node):
             if len(vertices) < 3:
                 raise Exception("At least three vertices are required to make a fillet")
             radiuses = repeat_last_for_length(radiuses, len(vertices))
-            curve, centers = fillet_polyline_from_vertices(vertices, radiuses,
+            curve, centers, _ = fillet_polyline_from_vertices(vertices, radiuses,
                                 cyclic = self.cyclic,
                                 concat = self.concat,
                                 clamp = self.clamp,

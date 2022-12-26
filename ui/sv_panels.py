@@ -23,6 +23,7 @@ from sverchok.utils import profile
 from sverchok.ui.development import displaying_sverchok_nodes
 from sverchok.utils.context_managers import sv_preferences
 from sverchok.utils.handle_blender_data import BlTrees
+from sverchok.utils.sv_update_utils import SvPrintCommits, SverchokUpdateAddon, SverchokCheckForUpgradesSHA
 
 
 class SverchokPanels:
@@ -153,14 +154,14 @@ class SV_PT_SverchokUtilsPanel(SverchokPanels, bpy.types.Panel):
 
     def draw(self, context):
         col = self.layout.column()
-        col.operator('node.sv_show_latest_commits')
+        col.operator(SvPrintCommits.bl_idname)
         with sv_preferences() as prefs:
             if prefs.available_new_version:
                 col_alert = self.layout.column()
                 col_alert.alert = True
-                col_alert.operator("node.sverchok_update_addon", text='Upgrade Sverchok addon')
+                col_alert.operator(SverchokUpdateAddon.bl_idname, text='Upgrade Sverchok addon')
             else:
-                col.operator("node.sverchok_check_for_upgrades_wsha", text='Check for updates')
+                col.operator(SverchokCheckForUpgradesSHA.bl_idname, text='Check for updates')
 
         # with sv_preferences() as prefs:
             if prefs.developer_mode:

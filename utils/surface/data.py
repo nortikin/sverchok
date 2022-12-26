@@ -104,28 +104,63 @@ class SurfaceCurvatureCalculator(object):
         self.nuv = nuv # (fuv, normal), a.k.a m
 
     def mean(self):
-        """Calculate mean curvature"""
+        """
+        Calculate mean curvature.
+
+        Note: although mean curvature is defined as (k1 + k2)/2, where k1 and k2 are
+        principal curvature values, it is possible to calculate mean curvature without
+        calculating k1 and k2 first.
+        """
         duu, dvv, duv, nuu, nvv, nuv = self.duu, self.dvv, self.duv, self.nuu, self.nvv, self.nuv
         A = duu*dvv - duv*duv
         B = duu*nvv - 2*duv*nuv + dvv*nuu
-        return -B / (2*A)
+        return B / (2*A)
 
     def gauss(self):
-        """Calculate Gaussian curvature"""
+        """
+        Calculate Gaussian curvature.
+
+        Note: although Gaussian curvature is defined as k1*k2, where k1 and k2
+        are principal curvature values, it is possible to calculate Gaussian
+        curvature without calculating k1 and k2 first.
+        """
         duu, dvv, duv, nuu, nvv, nuv = self.duu, self.dvv, self.duv, self.nuu, self.nvv, self.nuv
         numerator = nuu * nvv - nuv*nuv
         denominator = duu * dvv - duv*duv
+        return numerator / denominator
+
+    def curvature_along_direction(self, v1, v2):
+        """
+        Calculate curvature value along specified direction.
+
+        Args:
+            v1, v2: coefficients in the equation v = v1*du + v2*dv, where v is
+                direction in which you want to find the curvature, du is unit
+                vector along df / du derivative, and dv is unit vector along df /
+                dv derivative.
+
+        Note: to calculate curvature along the direction perpendicular to (v1,v2),
+        one can use formula: 2 * calc.mean() - calc.curvature_along_direction(v1, v2).
+        """
+        v1s, v2s = v1*v1, v2*v2
+        v12 = v1*v2
+        l, m, n = self.nuu, self.nuv, self.nvv
+        E, F, G = self.duu, self.duv, self.dvv
+        numerator = l*v1s + 2*m*v12 + n*v2s
+        denominator = E*v1s + 2*F*v12 + G*v2s
         return numerator / denominator
 
     def values(self):
         """
         Calculate two principal curvature values.
         If "order" parameter is set to True, then it will be guaranteed,
-        that C1 value is always less than C2.
+        that k1 value is always less than k2.
+        
+        Note: by definition, principal curvature values are curvatures along
+        principal curvature directions. But, it is possible to calculate
+        principal curvature values as solutions of quadratic equation, without
+        calculating corresponding principal curvature directions.
         """
-        # It is possible to calculate principal curvature values
-        # as solutions of quadratic equation, without calculating
-        # corresponding principal curvature directions.
 
         # lambda^2 (E G - F^2) - lambda (E N - 2 F M + G L) + (L N - M^2) = 0
 

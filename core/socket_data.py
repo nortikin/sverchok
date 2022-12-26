@@ -215,3 +215,7 @@ def clear_all_socket_cache():
     Reset socket cache for all node-trees.
     """
     socket_data_cache.clear()
+
+
+def unregister():
+    clear_all_socket_cache()

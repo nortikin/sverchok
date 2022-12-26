@@ -27,6 +27,8 @@ from sverchok.utils.geom import multiply_vectors_deep
 from sverchok.utils.modules.polygon_utils import pols_normals
 from sverchok.utils.modules.vertex_utils import np_vertex_normals
 from sverchok.utils.math import np_dot
+from sverchok.utils.sv_3dview_tools import Sv3DviewAlign
+from sverchok.utils.sv_obj_baker import SvObjBakeMK3
 
 socket_dict = {
     'vector_color': ('display_verts', 'UV_VERTEXSEL', 'color_per_point', 'vector_random_colors', 'random_seed'),
@@ -675,9 +677,9 @@ class SvViewerDrawMk4(SverchCustomTreeNode, bpy.types.Node):
 
         row = layout.row(align=True)
         row.scale_y = 4.0 if self.prefs_over_sized_buttons else 1
-        self.wrapper_tracked_ui_draw_op(row, "node.sverchok_mesh_baker_mk3", icon='OUTLINER_OB_MESH', text="B A K E")
+        self.wrapper_tracked_ui_draw_op(row, SvObjBakeMK3.bl_idname, icon='OUTLINER_OB_MESH', text="B A K E")
         row.separator()
-        self.wrapper_tracked_ui_draw_op(row, "node.view3d_align_from", icon='CURSOR', text='')
+        self.wrapper_tracked_ui_draw_op(row, Sv3DviewAlign.bl_idname, icon='CURSOR', text='')
 
 
     def draw_buttons_ext(self, context, layout):

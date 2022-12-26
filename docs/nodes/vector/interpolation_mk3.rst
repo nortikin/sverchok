@@ -38,7 +38,7 @@ Parameters
 Extra Parameters
 ----------------
 
-  - *Knot Mode*: Used for different cubic interpolations. Can be 'Manhattan', 'Euclidan', 'Points' and 'Chebyshev'
+  - *Knot Mode*: Used for different cubic interpolations. Can be 'Manhattan', 'Euclidean', 'Points' and 'Chebyshev'
   - *List Match*: How List should be matched
   - *Output Numpy*: Outputs numpy arrays in stead of regular python lists (makes node faster)
 

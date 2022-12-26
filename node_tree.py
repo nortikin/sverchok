@@ -42,7 +42,6 @@ from sverchok.core.sv_custom_exceptions import SvNoDataError, DependencyError
 import sverchok.core.events as ev
 from sverchok.core.event_system import handle_event
 from sverchok.data_structure import classproperty, post_load_call
-from sverchok.utils import get_node_class_reference
 from sverchok.utils.sv_node_utils import recursive_framed_location_finder
 from sverchok.utils.docstring import SvDocstring
 import sverchok.utils.logging
@@ -844,7 +843,7 @@ class SverchCustomTreeNode(UpdateNodes, NodeUtils, NodeDependencies, NodeDocumen
         """
         if hasattr(self, "replacement_nodes"):
             for bl_idname, inputs_mapping, outputs_mapping in self.replacement_nodes:
-                node_class = get_node_class_reference(bl_idname)
+                node_class = bpy.types.Node.bl_rna_get_subclass_py(bl_idname)
                 if node_class:
                     text = "Replace with {}".format(node_class.bl_label)
                     op = layout.operator("node.sv_replace_node", text=text)

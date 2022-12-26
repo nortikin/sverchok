@@ -127,11 +127,3 @@ def mesh_field(bm, function, smooth, epsilon, scale, use_verts=True, use_edges=F
             mode = '1-D')
 
     return SvRbfScalarField(rbf)
-
-def register():
-    pass
-
-def unregister():
-    pass
-
-

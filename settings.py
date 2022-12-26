@@ -5,20 +5,24 @@ import subprocess
 import bpy
 from bpy.types import AddonPreferences
 from bpy.props import BoolProperty, FloatVectorProperty, EnumProperty, IntProperty, FloatProperty, StringProperty
-from sverchok.dependencies import sv_dependencies, pip, ensurepip, draw_message, get_icon
-from sverchok import data_structure
-from sverchok.core import tasks # don't remove this should fix #4229 (temp solution)
-from sverchok.core import handlers
-from sverchok.utils import logging
-from sverchok.utils.sv_gist_tools import TOKEN_HELP_URL
-from sverchok.utils.sv_extra_addons import draw_extra_addons
-from sverchok.ui import color_def
+
 from sverchok.ui.utils import message_on_layout
+
+"""Don't import other Sverchok modules here"""
 
 if bpy.app.version >= (2, 91, 0):
     PYPATH = sys.executable
 else:
     PYPATH = bpy.app.binary_path_python
+
+
+# names from other modules
+sv_dependencies, pip, ensurepip, draw_message, get_icon = [None] * 5
+set_frame_change = None
+info, setLevel = [None] * 2
+draw_extra_addons = None
+apply_theme, rebuild_color_cache, color_callback = [None] * 3
+
 
 def get_params(prop_names_and_fallbacks, direct=False):
     """
@@ -74,18 +78,17 @@ def get_param(prop_name, fallback):
 
 def apply_theme_if_necessary():
     if get_param("apply_theme_on_open", False):
-        color_def.apply_theme()    
+        apply_theme()
         print("applied theme.")
 
 # getDpiFactor and getDpi are lifted from Animation Nodes :)
 
-def get_dpi_factor():
-    return get_dpi() / 72
+def get_dpi_factor(factor=0.014):
+    system_preferences = bpy.context.preferences.system
+    retina_factor = getattr(system_preferences, "pixel_size", 1)
+    dpi = system_preferences.dpi * retina_factor
+    return dpi * factor
 
-def get_dpi():
-    systemPreferences = bpy.context.preferences.system
-    retinaFactor = getattr(systemPreferences, "pixel_size", 1)
-    return systemPreferences.dpi * retinaFactor
 
 class SvExPipInstall(bpy.types.Operator):
     """Install the package by calling pip install"""
@@ -181,34 +184,25 @@ class SvSetFreeCadPath(bpy.types.Operator):
         return {'FINISHED'}
 
 class SverchokPreferences(AddonPreferences):
-
-    bl_idname = __package__
-
-    def update_debug_mode(self, context):
-        data_structure.DEBUG_MODE = self.show_debug
+    import sverchok
+    bl_idname = sverchok.__name__
 
     def set_frame_change(self, context):
-        handlers.set_frame_change(self.frame_change_mode)
+        set_frame_change(self.frame_change_mode)
 
     def update_theme(self, context):
-        color_def.rebuild_color_cache()
+        rebuild_color_cache()
         if self.auto_apply_theme:
-            color_def.apply_theme()
+            apply_theme()
 
-    tab_modes = data_structure.enum_item_4(["General", "Node Defaults", "Extra Nodes", "Theme"])
+    tab_modes = [(n.replace(' ', '_'), n, '', i) for i, n in
+                 enumerate(["General", "Node Defaults", "Extra Nodes", "Theme"])]
 
     selected_tab: bpy.props.EnumProperty(
         items=tab_modes,
         description="pick viewing mode",
         default="General"
     )
-
-    #  debugish...
-    show_debug: BoolProperty(
-        name="Debug mode",  # todo to remove, there is logging level for this
-        description="Deprecated",
-        default=False, subtype='NONE',
-        update=update_debug_mode)
 
     no_data_color: FloatVectorProperty(
         name="No data", description='When a node can not get data',
@@ -239,12 +233,16 @@ class SverchokPreferences(AddonPreferences):
             default = False)
 
     #  theme settings
+    themes = [("default_theme", "Default", "Default"),
+              ("nipon_blossom", "Nipon Blossom", "Nipon Blossom"),
+              ("grey", "Grey", "Grey"),
+              ("darker", "Darker", "Darker")]
 
     sv_theme: EnumProperty(
-        items=color_def.themes,
+        items=themes,
         name="Theme preset",
         description="Select a theme preset",
-        update=color_def.color_callback,
+        update=color_callback,
         default="default_theme")
 
     auto_apply_theme: BoolProperty(
@@ -360,8 +358,8 @@ class SverchokPreferences(AddonPreferences):
     # Logging settings
 
     def update_log_level(self, context):
-        logging.info("Setting log level to %s", self.log_level)
-        logging.setLevel(self.log_level)
+        info("Setting log level to %s", self.log_level)
+        setLevel(self.log_level)
 
     log_levels = [
             ("DEBUG", "Debug", "Debug output", 0),
@@ -416,7 +414,7 @@ class SverchokPreferences(AddonPreferences):
         box.label(text="Export to Gist")
         box.prop(self, "github_token")
         box.label(text="To export node trees to gists, you have to create a GitHub API access token.")
-        box.label(text="For more information, visit " + TOKEN_HELP_URL)
+        box.label(text="For more information, visit " + "https://github.com/nortikin/sverchok/wiki/Set-up-GitHub-account-for-exporting-node-trees-from-Sverchok")
         box.operator("node.sv_github_api_token_help", text="Visit documentation page")
 
         col2 = col_split.split().column()
@@ -426,7 +424,6 @@ class SverchokPreferences(AddonPreferences):
 
         col2box = col2.box()
         col2box.label(text="Debug:")
-        col2box.prop(self, "show_debug")
         col2box.prop(self, "developer_mode")
 
         log_box = col2.box()

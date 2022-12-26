@@ -94,7 +94,7 @@ class SvAttractorFieldNodeMk2(SverchCustomTreeNode, bpy.types.Node):
             update = updateNode)
 
     metrics = [
-            ('DISTANCE', 'Euclidan', "Eudlcian distance metric", 0),
+            ('DISTANCE', 'Euclidean', "Euclidean distance metric", 0),
             ('MANHATTAN', 'Manhattan', "Manhattan distance metric", 1),
             ('CHEBYSHEV', 'Chebyshev', "Chebyshev distance", 2),
             ('CUSTOM', "Custom", "Custom Minkowski metric defined by exponent factor", 3)

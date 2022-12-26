@@ -36,6 +36,7 @@ from sverchok.utils.console_print import console_print
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 from sverchok.utils.handle_blender_data import keep_enum_reference
+from sverchok.utils.snlite_script_searcher import SvSnliteScriptSearch
 
 FAIL_COLOR = (0.8, 0.1, 0.1)
 READY_COLOR = (0, 0.6, 0.8)
@@ -560,7 +561,7 @@ class SvScriptNodeLite(SverchCustomTreeNode, bpy.types.Node):
             row = col.row()
             row.prop_search(self, 'script_name', bpy.data, 'texts', text='', icon='TEXT')
             row.operator(sn_callback, text='', icon='PLUGIN').fn_name = 'load'
-            self.wrapper_tracked_ui_draw_op(row, "node.sv_snlite_script_search", text="", icon="VIEWZOOM")
+            self.wrapper_tracked_ui_draw_op(row, SvSnliteScriptSearch.bl_idname, text="", icon="VIEWZOOM")
         else:
             col = layout.column(align=True)
             row = col.row()

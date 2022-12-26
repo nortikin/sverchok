@@ -6,10 +6,11 @@ from mathutils import Matrix
 
 from sverchok.utils.testing import SverchokTestCase, requires
 from sverchok.utils.geom import circle_by_three_points
+from sverchok.utils.nurbs_common import SvNurbsMaths, elevate_bezier_degree, from_homogenous
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.primitives import SvCircle
 from sverchok.utils.curve.nurbs import SvGeomdlCurve, SvNativeNurbsCurve, SvNurbsBasisFunctions, SvNurbsCurve
-from sverchok.utils.nurbs_common import SvNurbsMaths, elevate_bezier_degree, from_homogenous
+from sverchok.utils.curve.nurbs_solver_applications import knotvector_with_tangents_from_tknots
 from sverchok.utils.surface.nurbs import SvGeomdlSurface, SvNativeNurbsSurface
 from sverchok.utils.surface.algorithms import SvCurveLerpSurface
 from sverchok.dependencies import geomdl
@@ -804,6 +805,18 @@ class KnotvectorTests(SverchokTestCase):
         expected = [(0, 3), (0.3, 1), (0.7, 1), (1, 3), (1.5, 1), (1.7, 1)]
         self.assert_sverchok_data_equal(result, expected)
 
+    def test_to_multiplicity_5(self):
+        kv = np.array([0, 0, 0, 0.1, 0.2, 0.201, 0.3, 0.4, 0.401, 0.5], dtype=np.float64)
+        result = sv_knotvector.to_multiplicity(kv, tolerance=0.02)
+        expected = [(0, 3), (0.1, 1), (0.201, 2), (0.3, 1), (0.401, 2), (0.5, 1)]
+        self.assert_sverchok_data_equal(result, expected)
+
+    def test_to_multiplicity_6(self):
+        kv = np.array([0, 0, 0, 0.1, 0.2, 0.201, 0.3, 0.4, 0.401, 0.499, 0.5], dtype=np.float64)
+        result = sv_knotvector.to_multiplicity(kv, tolerance=0.02)
+        expected = [(0, 3), (0.1, 1), (0.201, 2), (0.3, 1), (0.401, 2), (0.5, 2)]
+        self.assert_sverchok_data_equal(result, expected)
+
     def test_from_multiplicity_1(self):
         pairs = [(0, 3), (1, 3)]
         kv = sv_knotvector.from_multiplicity(pairs)
@@ -896,6 +909,12 @@ class InterpolateTests(SverchokTestCase):
         weights = curve.get_weights()
         expected_weights = np.array([1, 3, 1])
         self.assert_numpy_arrays_equal(weights, expected_weights, precision=6)
+
+    def test_knotvector_with_tangents_1(self):
+        u = np.array([0.0, 1.0])
+        kv = knotvector_with_tangents_from_tknots(3, u)
+        expected = np.array([0,0,0,0, 1,1,1,1])
+        self.assert_numpy_arrays_equal(kv, expected, precision=4)
 
 class TaylorTests(SverchokTestCase):
     def test_bezier_to_taylor_1(self):

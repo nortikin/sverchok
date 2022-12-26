@@ -9,9 +9,6 @@ import bpy
 from sverchok.utils.logging import getLogger
 from sverchok.settings import get_params
 
-def has_selection(self, text):
-    return not (text.select_end_line == text.current_line and
-                text.current_character == text.select_end_character)
 
 # maybe fuzzy module?
 def fuzzy_compare(named_seeker, named_current):

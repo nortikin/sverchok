@@ -29,23 +29,27 @@ class SvExMSquaresOnSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
 
     iso_value : FloatProperty(
             name = "Value",
+            description = "The value of scalar field, for which to generate iso-lines",
             default = 1.0,
             update = updateNode)
 
     samples_u : IntProperty(
             name = "Samples U",
+            description = "Number of samples along U and V parameter of the surface, correspondingly. This defines the resolution of curves: the bigger isvalue, the more vertices will the node generate, and the more precise the curves will be",
             default = 50,
             min = 4,
             update = updateNode)
 
     samples_v : IntProperty(
             name = "Samples V",
+            description = "Number of samples along U and V parameter of the surface, correspondingly. This defines the resolution of curves: the bigger isvalue, the more vertices will the node generate, and the more precise the curves will be",
             default = 50,
             min = 4,
             update = updateNode)
 
     connect_bounds : BoolProperty(
             name = "Connect boundary",
+            description = "If checked, the node will connect pieces of the same curve, that was split because it was cut by the boundary of the surface. Otherwise, several separate pieces will be generated in such case. Note that this node can not currently detect if the surface is closed to glue parts of contours at different sides of the surface",
             default = True,
             update = updateNode)
 
@@ -113,10 +117,10 @@ class SvExMSquaresOnSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
 
                 contours = measure.find_contours(field_values, level=value)
 
-                u_size = (u_max - u_min)/samples_u
-                v_size = (v_max - v_min)/samples_v
+                u_size = (u_max - u_min)/(samples_u-1)
+                v_size = (v_max - v_min)/(samples_v-1)
 
-                uv_contours, new_edges, _ = make_contours(samples_u, samples_v, u_min, u_size, v_min, v_size, 0, contours, make_faces=True, connect_bounds = self.connect_bounds)
+                uv_contours, new_edges, _ = make_contours(samples_u, samples_v, u_min, u_size, v_min, v_size, 0, contours, make_faces=True, connect_bounds = self.connect_bounds, u_max = u_max, v_max=v_max)
 
                 if uv_contours:
                     for uv_points in uv_contours:

@@ -262,7 +262,7 @@ def np_center_weighted(v_pols):
     return np.sum(v_pols * v_factor[:, :, np.newaxis], axis=1)
 
 def edges_lengths(v_pols):
-    return np.linalg.norm(v_pols-np.roll(v_pols, 1, axis=1), axis=2)
+    return np.linalg.norm(v_pols-np.roll(v_pols, -1, axis=1), axis=2)
 
 def np_tangent_longest_edge(v_pols):
     edges_dir = v_pols-np.roll(v_pols, 1, axis=1)
