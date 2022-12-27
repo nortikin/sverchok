@@ -317,7 +317,7 @@
         - SvExCurveLerpNode
         - SvExSurfaceLerpNode
         - SvCoonsPatchNode
-        - SvBlendSurfaceNode
+        - SvBlendSurfaceNodeMk2
         - ---
         - SvFlipSurfaceNode
         - SvSwapSurfaceNode
