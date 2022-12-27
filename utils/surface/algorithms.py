@@ -1080,6 +1080,9 @@ class SvBlendSurface(SvSurface):
     def get_v_max(self):
         return self.v_bounds[1]
 
+    def evaluate(self, u, v):
+        return self.evaluate_array(np.array([u]), np.array([v]))[0]
+
     def evaluate_array(self, us, vs):
         c1_min, c1_max = self.curve1.get_u_bounds()
         c2_min, c2_max = self.curve2.get_u_bounds()
