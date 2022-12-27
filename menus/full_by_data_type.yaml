@@ -16,12 +16,8 @@
     - Generate Mesh:
         - extra_menu: MeshPartialMenu  # to make the category available in another menu (1,2,3,4,5)
         - icon_name: OBJECT_DATAMODE  # icon name to show
-        - SvLineNodeMK4  # bl_idname of a node
-        - SvSegmentGenerator
         - SvPlaneNodeMk3
-        - SvNGonNode
         - SvBoxNodeMk2
-        - SvCircleNode
         - SvCylinderNodeMK2
         - SphereNode
         - SvIcosphereNode
@@ -29,9 +25,6 @@
         - SvSuzanneNode
         - SvCricketNode
         - ---
-        - BasicSplineNode
-        - SvQuadraticSplineNode
-        - svBasicArcNode
         - RandomVectorNodeMK3
         - ImageNode
         - SvFormulaShapeNode
@@ -39,22 +32,35 @@
         - SvBoxRoundedNode
         - SvBricksNode
         - SvPolygonGridNode
-        - HilbertNode
-        - Hilbert3dNode
         - HilbertImageNode
         - SvImageComponentsNode
         - SvWFCTextureNode
-        - SvTorusKnotNodeMK2
         - SvRingNodeMK2
+        - SvRegularSolid
+        - SvPentagonTilerNode
+
+    - Generate Path:
+        - extra_menu: MeshPartialMenu  # to make the category available in another menu (1,2,3,4,5)
+        - icon_name: SV_POLYLINE
+        - SvLineNodeMK4  # bl_idname of a node
+        - SvSegmentGenerator
+        - SvNGonNode
+        - SvCircleNode
         - SvEllipseNodeMK3
         - SvSuperEllipsoidNode
-        - SvRegularSolid
+        - SvTorusKnotNodeMK2
+        - SvSpiralNodeMK2
         - SvConicSectionNode
         - SvTriangleNode
-        - SvPentagonTilerNode
-        - SvSpiralNodeMK2
+        - ---
+        - BasicSplineNode
+        - SvQuadraticSplineNode
+        - svBasicArcNode
+        - ---
+        - HilbertNode
+        - Hilbert3dNode
 
-    - Transforms:
+    - Transform Mesh:
         - extra_menu: MeshPartialMenu  # to make the category available in another menu (1,2,3,4,5)
         - icon_name: ORIENTATION_LOCAL
         - SvMoveNodeMk3
@@ -227,6 +233,7 @@
     - icon_name: OUTLINER_OB_CURVE
     - extra_menu: AdvancedObjectsPartialMenu
     - Generate Curve:
+        - icon_name: OUTLINER_OB_CURVE
         - SvExLineCurveNode
         - SvCircleCurveMk2Node
         - SvEllipseCurveNode
@@ -276,6 +283,7 @@
         - SvReparametrizeCurveNode
         - SvExSurfaceBoundaryNode
     - Modify NURBS Curve:
+        - icon_name: TOOL_SETTINGS
         - SvFilletCurveNode
         - SvProjectCurveSurfaceNode
         - ---
@@ -309,6 +317,7 @@
         - SvExCrossCurvePlaneNode
         - SvExCrossCurveSurfaceNode
     - Analyze NURBS Curve:
+        - icon_name: VIEWZOOM
         - SvIntersectNurbsCurvesNode
         - SvNurbsCurveNodesNode
         - SvDeconstructCurveNode
@@ -323,6 +332,7 @@
     - icon_name: SURFACE_DATA
     - extra_menu: AdvancedObjectsPartialMenu
     - Generate Surface:
+        - icon_name: SURFACE_DATA
         - SvExPlaneSurfaceNode
         - SvExSphereNode
         - SvExSurfaceFormulaNode
@@ -341,7 +351,7 @@
         - SvExCurveLerpNode
         - SvExSurfaceLerpNode
         - SvCoonsPatchNode
-        - SvBlendSurfaceNode
+        - SvBlendSurfaceNodeMk2
     - Generate NURBS Surface:
         - icon_name: EVENT_N
         - SvExNurbsSurfaceNode
@@ -362,6 +372,7 @@
         - SvSwapSurfaceNode
         - SvReparametrizeSurfaceNode
     - Modify NURBS Surface:
+        - icon_name: TOOL_SETTINGS
         - SvSurfaceInsertKnotNode
         - SvSurfaceRemoveKnotNode
         - SvSurfaceRemoveExcessiveKnotsNode
@@ -391,6 +402,7 @@
     - icon_name: OUTLINER_OB_FORCE_FIELD
     - extra_menu: AdvancedObjectsPartialMenu
     - Generate Field:
+        - icon_name: OUTLINER_OB_FORCE_FIELD
         - SvCoordScalarFieldNode
         - SvExScalarFieldFormulaNode
         - SvExVectorFieldFormulaNode
@@ -418,6 +430,7 @@
         - SvScalarFieldCurvatureNode
         - SvExMergeScalarFieldsNode
     - Apply Field:
+        - icon_name: FORWARD
         - SvExScalarFieldEvaluateNode
         - SvExVectorFieldEvaluateNode
         - SvExVectorFieldApplyNode
@@ -430,6 +443,7 @@
     - icon_name: MESH_CUBE
     - extra_menu: AdvancedObjectsPartialMenu
     - Generate Solid:
+        - icon_name: MESH_CUBE
         - SvBoxSolidNode
         - SvCylinderSolidNode
         - SvConeSolidNode
@@ -444,6 +458,7 @@
         - SvCompoundSolidNode
         - SvMeshToSolidNode
     - Solid Make Face:
+        - icon_name: FACESEL
         - SvSolidPolygonFaceNode
         - SvSolidWireFaceNode
         - SvProjectTrimFaceNode
