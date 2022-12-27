@@ -1,5 +1,6 @@
 import sys
 import os
+from os.path import dirname, basename, join
 import subprocess
 from glob import glob
 import shutil
@@ -9,7 +10,6 @@ from bpy.types import AddonPreferences
 from bpy.props import BoolProperty, FloatVectorProperty, EnumProperty, IntProperty, FloatProperty, StringProperty
 
 from sverchok.ui.utils import message_on_layout
-from sverchok.ui.presets import get_sverchok_directory
 
 """Don't import other Sverchok modules here"""
 
@@ -26,6 +26,16 @@ info, setLevel = [None] * 2
 draw_extra_addons = None
 apply_theme, rebuild_color_cache, color_callback = [None] * 3
 
+MENU_TYPE_SVERCHOK = '__SVERCHOK__'
+MENU_TYPE_USER = '__USER__'
+
+datafiles = join(bpy.utils.user_resource('DATAFILES', path='sverchok', create=True))
+
+def get_sverchok_menu_presets_directory():
+    return join(dirname(__file__), 'menus')
+
+def get_user_menu_presets_directory():
+    return join(datafiles, 'menus')
 
 def get_params(prop_names_and_fallbacks, direct=False):
     """
@@ -179,7 +189,7 @@ class SvSetFreeCadPath(bpy.types.Operator):
                 site_packages = p
                 break
 
-        file_path = open(os.path.join(site_packages, "freecad_path.pth"), "w+")
+        file_path = open(join(site_packages, "freecad_path.pth"), "w+")
         file_path.write(self.FreeCAD_folder)
         file_path.close()
 
@@ -193,12 +203,17 @@ class SvOverwriteMenuFile(bpy.types.Operator):
     bl_options = {'REGISTER', 'INTERNAL'}
 
     preset_path : bpy.props.StringProperty(name = "Preset file path")
-    datafiles : bpy.props.StringProperty(name = "Datafiles directory")
 
     def execute(self, context):
-        target_menu_file = os.path.join(self.datafiles, 'index.yaml')
-        shutil.copy(self.preset_path, target_menu_file)
-        self.report({'INFO'}, f"Menu preset {self.preset_path} saved as {target_menu_file}. Please restart Blender to see effect.")
+        target_menu_file = join(datafiles, 'index.yaml')
+        preset_type, preset_name = self.preset_path.split('/')
+        if preset_type == MENU_TYPE_SVERCHOK:
+            directory = get_sverchok_menu_presets_directory()
+        else:
+            directory = get_user_menu_presets_directory()
+        preset_path = join(directory, preset_name)
+        shutil.copy(preset_path, target_menu_file)
+        self.report({'INFO'}, f"Menu preset {preset_path} saved as {target_menu_file}. Please restart Blender to see effect.")
         return {'FINISHED'}
 
 class SverchokPreferences(AddonPreferences):
@@ -363,9 +378,6 @@ class SverchokPreferences(AddonPreferences):
         self.render_scale = get_dpi_factor()   # this was intended as a general draw scale multiplier, not location but size.
         self.render_location_xy_multiplier = get_dpi_factor()
 
-    ##
-    datafiles = os.path.join(bpy.utils.user_resource('DATAFILES', path='sverchok', create=True))
-
     external_editor: StringProperty(description='which external app to invoke to view sources')
     real_sverchok_path: StringProperty(description='use with symlinked to get correct src->dst')
 
@@ -407,7 +419,7 @@ class SverchokPreferences(AddonPreferences):
             default = True)
 
     log_buffer_name: StringProperty(name = "Buffer name", default = "sverchok.log")
-    log_file_name: StringProperty(name = "File path", default = os.path.join(datafiles, "sverchok.log"))
+    log_file_name: StringProperty(name = "File path", default = join(datafiles, "sverchok.log"))
 
 
     # updating sverchok
@@ -420,15 +432,18 @@ class SverchokPreferences(AddonPreferences):
             description = "Path to FreeCAD Python API library files (FreeCAD.so on Linux and MacOS, FreeCAD.dll on Windows). On Linux the usual location is /usr/lib/freecad/lib, on Windows it can be something like E:\programs\conda-0.18.3\\bin"
         )
 
-    def get_menus_directory(self):
-        return os.path.join(get_sverchok_directory(), 'menus')
-
     def get_menu_presets(self, context):
-        menus = os.path.join(self.get_menus_directory(), '*.yaml')
         items = []
+        menus = join(get_sverchok_menu_presets_directory(), '*.yaml')
         for path in sorted(glob(menus)):
-            name = os.path.basename(path)
-            items.append((name, name, name))
+            name = basename(path)
+            id = join(MENU_TYPE_SVERCHOK, name)
+            items.append((id, name, name + " (built-in)"))
+        menus = join(get_user_menu_presets_directory(), '*.yaml')
+        for path in sorted(glob(menus)):
+            name = basename(path)
+            id = join(MENU_TYPE_USER, name)
+            items.append((id, name, name + " (user-defined)"))
         return items
 
     menu_preset : EnumProperty(
@@ -446,8 +461,7 @@ class SverchokPreferences(AddonPreferences):
         row = col1.row()
         row.prop(self, 'menu_preset')
         op = row.operator(SvOverwriteMenuFile.bl_idname, text="Set")
-        op.preset_path = os.path.join(self.get_menus_directory(), self.menu_preset)
-        op.datafiles = self.datafiles
+        op.preset_path = self.menu_preset
 
         col1.prop(self, "external_editor", text="Ext Editor")
         col1.prop(self, "real_sverchok_path", text="Src Directory")
