@@ -17,7 +17,7 @@ from sverchok.utils.geom import Spline, LineEquation, linear_approximation, inte
 from sverchok.utils.nurbs_common import SvNurbsBasisFunctions, SvNurbsMaths, from_homogenous, CantInsertKnotException
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.algorithms import unify_curves_degree, SvCurveLengthSolver, SvCurveFrameCalculator
-from sverchok.utils.curve.bezier import SvBezierCurve
+from sverchok.utils.curve.bezier import SvBezierCurve, SvCubicBezierCurve
 from sverchok.utils.decorators import deprecated
 from sverchok.utils.logging import getLogger
 from sverchok.utils.math import (
@@ -906,4 +906,24 @@ def wrap_nurbs_curve(curve, t_min, t_max, refinement_samples, function,
     cpts[wrap_idxs] = cpts[wrap_idxs] + wrap_vectors
     curve = curve.copy(control_points = cpts)
     return remove_excessive_knots(curve, tolerance)
+
+def catmull_rom_interpolate(points, concatenate=True, cyclic=False, tension=1.0):
+    points = np.asarray(points)
+    if cyclic:
+        points = np.insert(points, 0, points[-1], axis=0)
+        points = np.append(points, [points[-1]], axis=0)
+    else:
+        p0 = 2*points[0] - points[1]
+        pn = 2*points[-1] - points[-2]
+        points = np.insert(points, 0, p0, axis=0)
+        points = np.append(points, [pn], axis=0)
+    segments = []
+    for i in range(len(points)-3):
+        spline_cpts = points[i:i+4]
+        segment = SvCubicBezierCurve.catmull_rom_segment(spline_cpts, tension)
+        segments.append(segment)
+    if concatenate:
+        return concatenate_nurbs_curves(segments)
+    else:
+        return segments
 

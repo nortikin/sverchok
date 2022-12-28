@@ -507,6 +507,15 @@ class SvCubicBezierCurve(SvCurve, SvBezierSplitMixin):
 
         return SvCubicBezierCurve(v0, p1, p2, v3)
 
+    @classmethod
+    def catmull_rom_segment(cls, cpts, tension = 1.0):
+        v = np.asarray(cpts)
+        p0 = v[1]
+        p1 = v[1] + (v[2] - v[0]) / (6*tension)
+        p2 = v[2] - (v[3] - v[1]) / (6*tension)
+        p3 = v[2]
+        return SvCubicBezierCurve(p0, p1, p2, p3)
+
     def get_u_bounds(self):
         return (0.0, 1.0)
 
