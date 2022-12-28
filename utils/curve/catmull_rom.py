@@ -7,9 +7,9 @@
 
 import numpy as np
 
-from sverchok.utils.geom import Spline, LineEquation
+from sverchok.utils.geom import Spline, LineEquation, bounding_box, are_points_coplanar, get_common_plane
 from sverchok.utils.nurbs_common import SvNurbsMaths
-from sverchok.utils.curve.core import SvCurve
+from sverchok.utils.curve.core import SvCurve, UnsupportedCurveTypeException
 from sverchok.utils.curve.bezier import SvBezierCurve
 from sverchok.utils.curve.nurbs_algorithms import concatenate_nurbs_curves
 
@@ -211,5 +211,50 @@ class SvCatmullRomCurve(SvCurve):
         # As a consequence, the convex hull of control points lie in the
         # same cylinder; and the curve lies in that convex hull.
         return (distances < tolerance).all()
-        
+
+    def reverse(self):
+        points = self.points[::-1]
+        t0 = self.tknots[0]
+        tn = self.tknots[-1]
+        tknots = tn + t0 - self.tknots[::-1]
+        return SvCatmullRomCurve(tknots, points)
+
+    def get_bounding_box(self):
+        return bounding_box(self.points)
+
+    def reparametrize(self, new_t_min, new_t_max):
+        t0 = self.tknots[0]
+        tn = self.tknots[-1]
+        tknots = (new_t_max - new_t_min) * (self.tknots - t0) / (tn - t0) + new_t_min
+        return SvCatmullRomCurve(tknots, self.points)
+
+    def is_rational(self):
+        return False
+
+    def is_planar(self, tolerance=1e-6):
+        return are_points_coplanar(self.points, tolerance)
+
+    def get_plane(self, tolerance=1e-6):
+        return get_common_plane(self.points, tolerance)
+
+    def concatenate(self, curve2, tolerance=None):
+        curve2 = SvNurbsMaths.to_nurbs_curve(curve2)
+        if curve2 is None:
+            raise UnsupportedCurveTypeException("Second curve is not a NURBS")
+        return self.to_nurbs().concatenate(curve2, tolerance=tolerance)
+
+    def make_revolution_surface(self, point, direction, v_min, v_max, global_origin):
+        return self.to_nurbs().make_revolution_surface(point, direction, v_min, v_max, global_origin)
+    
+    def extrude_along_vector(self, vector):
+        return self.to_nurbs().extrude_along_vector(vector)
+
+    def make_ruled_surface(self, curve2, vmin, vmax):
+        return self.to_nurbs().make_ruled_surface(curve2, vmin, vmax)
+
+    def extrude_to_point(self, point):
+        return self.to_nurbs().extrude_to_point(point)
+
+    def lerp_to(self, curve2, coefficient):
+        return self.to_nurbs().lerp_to(curve2, coefficient)
 
