@@ -26,6 +26,7 @@ info, setLevel = [None] * 2
 draw_extra_addons = None
 apply_theme, rebuild_color_cache, color_callback = [None] * 3
 
+MENU_TYPE_DEFAULT = '__DEFAULT__'
 MENU_TYPE_SVERCHOK = '__SVERCHOK__'
 MENU_TYPE_USER = '__USER__'
 
@@ -207,9 +208,11 @@ class SvOverwriteMenuFile(bpy.types.Operator):
     def execute(self, context):
         target_menu_file = join(datafiles, 'index.yaml')
         preset_type, preset_name = self.preset_path.split('/')
-        if preset_type == MENU_TYPE_SVERCHOK:
+        if preset_type == MENU_TYPE_DEFAULT:
+            directory = dirname(__file__)
+        elif preset_type == MENU_TYPE_SVERCHOK:
             directory = get_sverchok_menu_presets_directory()
-        else:
+        else: # MENU_TYPE_USER
             directory = get_user_menu_presets_directory()
         preset_path = join(directory, preset_name)
         shutil.copy(preset_path, target_menu_file)
@@ -434,16 +437,21 @@ class SverchokPreferences(AddonPreferences):
 
     def get_menu_presets(self, context):
         items = []
+        name = 'index.yaml'
+        id = join(MENU_TYPE_DEFAULT, name)
+        items.append((id, f"Default ({name})", "Use default menu"))
         menus = join(get_sverchok_menu_presets_directory(), '*.yaml')
         for path in sorted(glob(menus)):
             name = basename(path)
             id = join(MENU_TYPE_SVERCHOK, name)
-            items.append((id, name, name + " (built-in)"))
+            description = f"{name} (built-in)"
+            items.append((id, description, description))
         menus = join(get_user_menu_presets_directory(), '*.yaml')
         for path in sorted(glob(menus)):
             name = basename(path)
             id = join(MENU_TYPE_USER, name)
-            items.append((id, name, name + " (user-defined)"))
+            description = f"{name} (user-defined)"
+            items.append((id, description, description))
         return items
 
     menu_preset : EnumProperty(
