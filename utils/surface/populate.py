@@ -169,8 +169,8 @@ def populate_surface(surface, field, count, threshold,
                     if random_radius:
                         min_r = random.uniform(0, min_r)
                     if _check_min_radius(candidate, old_points + generated_verts + good_verts, old_radiuses + generated_radiuses + good_radiuses, min_r):
-                        good_verts.append(candidate)
-                        good_uvs.append(candidate_uv)
+                        good_verts.append(tuple(candidate))
+                        good_uvs.append(tuple(candidate_uv))
                         good_radiuses.append(min_r)
             else: # min_r != 0
                 good_verts = []
