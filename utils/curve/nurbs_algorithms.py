@@ -907,7 +907,7 @@ def wrap_nurbs_curve(curve, t_min, t_max, refinement_samples, function,
     curve = curve.copy(control_points = cpts)
     return remove_excessive_knots(curve, tolerance)
 
-def catmull_rom_interpolate(points, concatenate=True, cyclic=False, tension=1.0):
+def catmull_rom_interpolate_uniform(points, concatenate=True, cyclic=False, tension=1.0):
     points = np.asarray(points)
     if cyclic:
         points = np.insert(points, 0, points[-1], axis=0)
