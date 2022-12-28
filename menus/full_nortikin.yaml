@@ -117,6 +117,7 @@
             - SvExQuadsToNurbsNode
     - G FIELDS:
         - icon_name: OUTLINER_OB_FORCE_FIELD
+        - extra_menu: AdvancedObjectsPartialMenu
         - SvCoordScalarFieldNode
         - SvExScalarFieldFormulaNode
         - SvExVectorFieldFormulaNode
@@ -327,7 +328,6 @@
         - SvExRaycastSurfaceNode
         - SvExImplSurfaceRaycastNode
         - SvExMarchingCubesNode
-        - SvExTessellateTrimSurfaceNode
     - M FIELDS:
         - icon_name: OUTLINER_OB_FORCE_FIELD
         - SvExScalarFieldMathNode
@@ -847,6 +847,7 @@
         - SvExEvalCurveNode
     - X SURFACES:
         - icon_name: SURFACE_DATA
+        - SvExTessellateTrimSurfaceNode
         - SvAdaptiveTessellateNode
         - SvExEvalSurfaceNode
     - X FIELDS:
