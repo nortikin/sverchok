@@ -467,8 +467,11 @@ class SverchokPreferences(AddonPreferences):
         col1 = col_split.column()
 
         row = col1.row()
-        row.prop(self, 'menu_preset')
-        op = row.operator(SvOverwriteMenuFile.bl_idname, text="Set")
+        split = row.split(factor=0.85)
+        split_prop = split.column()
+        split_prop.prop(self, 'menu_preset')
+        split_op = split.column()
+        op = split_op.operator(SvOverwriteMenuFile.bl_idname, text="Set")
         op.preset_path = self.menu_preset
 
         col1.prop(self, "external_editor", text="Ext Editor")
