@@ -157,18 +157,6 @@ class SvCatmullRomCurve(SvCurve):
         numer[:,3,2] = -dt30
         numer[:,3,3] = 1.0
         
-#         U = np.zeros((n-3,4,4))
-#         U[:,0,0] = 1.0
-#         U[:,0,1] = t0
-#         U[:,0,2] = t0**2
-#         U[:,0,3] = t0**3
-#         U[:,1,1] = dt30
-#         U[:,1,2] = 2*t0*dt30
-#         U[:,1,3] = 3*t0**2*dt30
-#         U[:,2,2] = dt30**2
-#         U[:,2,3] = 3*t0*dt30**2
-#         U[:,3,3] = dt30**3
-        
         U = np.zeros((n-3,4,4))
         U[:,0,0] = 1.0
         U[:,0,1] = t1
@@ -196,10 +184,6 @@ class SvCatmullRomCurve(SvCurve):
         all_cpts = self.get_bezier_control_points()
         for i, cpts in enumerate(all_cpts):
             bezier = SvBezierCurve.from_control_points(cpts)
-            #ts = self.tknots[i:i+4]
-            #t1 = (ts[1] - ts[0]) / (ts[3] - ts[0])
-            #t2 = (ts[2] - ts[0]) / (ts[3] - ts[0])
-            #segment = bezier.cut_segment(t1, t2)
             segments.append(bezier)
         return segments
 
