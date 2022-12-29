@@ -19,6 +19,30 @@ bezierM[3,:] = 1.0
 bezierM[1,1] = 1.0/3.0
 bezierM[2,1] = 2.0/3.0
 bezierM[2,2] = 1.0/3.0
+
+def prepare_data(tknots, points, cyclic=False):
+    if cyclic:
+        points = np.concatenate(([points[-1]], points), axis=0)
+        points = np.append(points, [points[1], points[2]], axis=0)
+
+        if tknots is not None:
+            dt0 = tknots[1] - tknots[0]
+            dt1 = tknots[-1] - tknots[-2]
+            dt = (dt0 + dt1) * 0.5
+            tknots = np.concatenate(([tknots[0] - dt], tknots), axis=0)
+            tknots = np.append(tknots, [tknots[-1] + dt, tknots[-1] + dt + dt0], axis=0)
+    else:
+        p0 = 2*points[0] - points[1]
+        pn = 2*points[-1] - points[-2]
+        points = np.insert(points, 0, p0, axis=0)
+        points = np.append(points, [pn], axis=0)
+
+        if tknots is not None:
+            t0 = 2*tknots[0] - tknots[1]
+            tn = 2*tknots[-1] - tknots[-2]
+            tknots = np.insert(tknots, 0, t0, axis=0)
+            tknots = np.append(tknots, [tn], axis=0)
+    return tknots, points
         
 class SvCatmullRomCurve(SvCurve):
     """
@@ -37,27 +61,7 @@ class SvCatmullRomCurve(SvCurve):
             tknots = np.asarray(tknots)
         else:
             tknots = Spline.create_knots(points, metric=metric)
-
-        if cyclic:
-            points = np.concatenate(([points[-1]], points), axis=0)
-            points = np.append(points, [points[1], points[2]], axis=0)
-
-            dt0 = tknots[1] - tknots[0]
-            dt1 = tknots[-1] - tknots[-2]
-            dt = (dt0 + dt1) * 0.5
-            tknots = np.concatenate(([tknots[0] - dt], tknots), axis=0)
-            tknots = np.append(tknots, [tknots[-1] + dt, tknots[-1] + dt + dt0], axis=0)
-        else:
-            p0 = 2*points[0] - points[1]
-            pn = 2*points[-1] - points[-2]
-            points = np.insert(points, 0, p0, axis=0)
-            points = np.append(points, [pn], axis=0)
-
-            t0 = 2*tknots[0] - tknots[1]
-            tn = 2*tknots[-1] - tknots[-2]
-            tknots = np.insert(tknots, 0, t0, axis=0)
-            tknots = np.append(tknots, [tn], axis=0)
-
+        tknots, points = prepare_data(tknots, points, cyclic=cyclic)
         return SvCatmullRomCurve(tknots, points)
 
     def get_u_bounds(self):
@@ -264,15 +268,7 @@ def uniform_catmull_rom_segment(points, tension=1.0):
 
 def uniform_catmull_rom_interpolate(points, concatenate=True, cyclic=False, tension=1.0):
     points = np.asarray(points)
-    if cyclic:
-        points = np.insert(points, 0, points[-1], axis=0)
-        points = np.append(points, [points[-1]], axis=0)
-    else:
-        p0 = 2*points[0] - points[1]
-        pn = 2*points[-1] - points[-2]
-        points = np.insert(points, 0, p0, axis=0)
-        points = np.append(points, [pn], axis=0)
-
+    _, points = prepare_data(None, points, cyclic=cyclic)
     if isinstance(tension, (list, np.ndarray)):
         tensions = tension
     else:
