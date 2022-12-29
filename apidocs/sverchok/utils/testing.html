@@ -846,7 +846,10 @@ if __name__ == &#34;__main__&#34;:
     try:
         #register()
         argv = sys.argv
-        argv = argv[argv.index(&#34;--&#34;)+1:]
+        if bpy.app.binary_path:
+            argv = argv[argv.index(&#34;--&#34;)+1:]
+        else:
+            argv = argv[1:]
 
         parser = argparse.ArgumentParser(prog = &#34;testing.py&#34;, description = &#34;Run Sverchok tests&#34;)
         parser.add_argument(&#39;pattern&#39;, metavar=&#39;*.PY&#39;, nargs=&#39;?&#39;, default = &#39;*_tests.py&#39;, help=&#34;Test case files pattern&#34;)
@@ -860,6 +863,9 @@ if __name__ == &#34;__main__&#34;:
 
         args = parser.parse_args(argv)
         #print(args)
+
+        if not bpy.app.binary_path:
+            bpy.ops.wm.read_userpref()
 
         log_level = getattr(args, &#39;log_level&#39;, None)
         result = run_all_tests(pattern = args.pattern,
