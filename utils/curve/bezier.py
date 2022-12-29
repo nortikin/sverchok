@@ -63,7 +63,7 @@ class SvBezierSplitMixin:
         MR1M = M1 @ R1 @ M
 
         new_cpts = MR1M @ cpts
-        return SvBezierCurve(new_cpts)
+        return SvBezierCurve.from_control_points(new_cpts)
 
     def split_at(self, t):
         segment1 = self.cut_segment(0.0, t)
