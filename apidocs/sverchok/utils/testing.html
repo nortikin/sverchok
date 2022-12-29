@@ -46,7 +46,7 @@ from sverchok import old_nodes
 from sverchok.data_structure import get_data_nesting_level
 from sverchok.core.socket_data import get_output_socket_data
 from sverchok.core.sv_custom_exceptions import SvNoDataError
-from sverchok.utils.logging import debug, info
+from sverchok.utils.logging import debug, info, setLevel
 from sverchok.utils.sv_json_import import JSONImporter
 
 try:
@@ -228,7 +228,7 @@ def get_tests_path():
     tests_dir = join(dirname(sv_init), &#34;tests&#34;)
     return tests_dir
 
-def run_all_tests(pattern=None):
+def run_all_tests(pattern=None, log_file = &#39;sverchok_tests.log&#39;, log_level = None, verbosity=2, failfast=False):
     &#34;&#34;&#34;
     Run all existing test cases.
     Test cases are looked up under tests/ directory.
@@ -237,14 +237,17 @@ def run_all_tests(pattern=None):
     if pattern is None:
         pattern = &#34;*_tests.py&#34;
 
+    if log_level is not None:
+        setLevel(log_level)
+
     tests_path = get_tests_path()
-    log_handler = logging.FileHandler(join(tests_path, &#34;sverchok_tests.log&#34;), mode=&#39;w&#39;)
+    log_handler = logging.FileHandler(join(tests_path, log_file), mode=&#39;w&#39;)
     logging.getLogger().addHandler(log_handler)
     try:
         loader = unittest.TestLoader()
         suite = loader.discover(start_dir = tests_path, pattern = pattern)
         buffer = StringIO()
-        runner = unittest.TextTestRunner(stream = buffer, verbosity=2)
+        runner = unittest.TextTestRunner(stream = buffer, verbosity=verbosity, failfast=failfast)
         old_nodes.register_all()
         with coverage_report():
             result = runner.run(suite)
@@ -839,15 +842,31 @@ def requires(module):
 
 if __name__ == &#34;__main__&#34;:
     import sys
+    import argparse
     try:
         #register()
         argv = sys.argv
         argv = argv[argv.index(&#34;--&#34;)+1:]
-        if argv:
-            pattern = argv[0]
-        else:
-            pattern = None
-        result = run_all_tests(pattern=pattern)
+
+        parser = argparse.ArgumentParser(prog = &#34;testing.py&#34;, description = &#34;Run Sverchok tests&#34;)
+        parser.add_argument(&#39;pattern&#39;, metavar=&#39;*.PY&#39;, nargs=&#39;?&#39;, default = &#39;*_tests.py&#39;, help=&#34;Test case files pattern&#34;)
+        #parser.add_argument(&#39;-t&#39;, &#39;--test&#39;, nargs=&#39;+&#39;, default = argparse.SUPPRESS)
+        parser.add_argument(&#39;-o&#39;, &#39;--output&#39;, metavar=&#39;FILE.log&#39;, default=&#39;sverchok_tests.log&#39;, help=&#34;Path to output log file&#34;)
+        parser.add_argument(&#39;-f&#39;, &#39;--fail-fast&#39;, action=&#39;store_true&#39;, help=&#34;Stop after first failing test&#34;)
+        parser.add_argument(&#39;-v&#39;, &#39;--verbose&#39;, action=&#39;count&#39;, default=2, help=&#34;Set the verbosity level&#34;)
+        parser.add_argument(&#39;-q&#39;, &#39;--quiet&#39;, dest=&#39;verbose&#39;, action=&#39;store_const&#39;, const=0, help=&#34;Be quiet&#34;)
+        parser.add_argument(&#39;--debug&#39;, dest=&#39;log_level&#39;, action=&#39;store_const&#39;, const=&#39;DEBUG&#39;, help=&#34;Enable debug logging&#34;)
+        parser.add_argument(&#39;--info&#39;, dest=&#39;log_level&#39;, action=&#39;store_const&#39;, const=&#39;INFO&#39;, help=&#34;Log only information messages&#34;)
+
+        args = parser.parse_args(argv)
+        #print(args)
+
+        log_level = getattr(args, &#39;log_level&#39;, None)
+        result = run_all_tests(pattern = args.pattern,
+                    log_file = args.output,
+                    log_level = log_level,
+                    verbosity = args.verbose,
+                    failfast = args.fail_fast)
         if not result.wasSuccessful():
             # We have to raise an exception for Blender to exit with specified exit code.
             raise Exception(&#34;Some tests failed&#34;)
@@ -1376,7 +1395,7 @@ def test_something(self):
 </details>
 </dd>
 <dt id="sverchok.utils.testing.run_all_tests"><code class="name flex">
-<span>def <span class="ident">run_all_tests</span></span>(<span>pattern=None)</span>
+<span>def <span class="ident">run_all_tests</span></span>(<span>pattern=None, log_file='sverchok_tests.log', log_level=None, verbosity=2, failfast=False)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Run all existing test cases.
@@ -1385,7 +1404,7 @@ Test cases are looked up under tests/ directory.</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def run_all_tests(pattern=None):
+<pre><code class="python">def run_all_tests(pattern=None, log_file = &#39;sverchok_tests.log&#39;, log_level = None, verbosity=2, failfast=False):
     &#34;&#34;&#34;
     Run all existing test cases.
     Test cases are looked up under tests/ directory.
@@ -1394,14 +1413,17 @@ Test cases are looked up under tests/ directory.</p></div>
     if pattern is None:
         pattern = &#34;*_tests.py&#34;
 
+    if log_level is not None:
+        setLevel(log_level)
+
     tests_path = get_tests_path()
-    log_handler = logging.FileHandler(join(tests_path, &#34;sverchok_tests.log&#34;), mode=&#39;w&#39;)
+    log_handler = logging.FileHandler(join(tests_path, log_file), mode=&#39;w&#39;)
     logging.getLogger().addHandler(log_handler)
     try:
         loader = unittest.TestLoader()
         suite = loader.discover(start_dir = tests_path, pattern = pattern)
         buffer = StringIO()
-        runner = unittest.TextTestRunner(stream = buffer, verbosity=2)
+        runner = unittest.TextTestRunner(stream = buffer, verbosity=verbosity, failfast=failfast)
         old_nodes.register_all()
         with coverage_report():
             result = runner.run(suite)
