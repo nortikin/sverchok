@@ -17,10 +17,9 @@
 
 - Generator:  # Name of a node category
     - icon_name: MESH_MONKEY
-    - extra_menu: MeshPartialMenu  # to make the category available in another menu (1,2,3,4,5)
     - G MESH:
         - icon_name: OBJECT_DATAMODE  # icon name to show
-        - extra_menu: AdvancedObjectsPartialMenu
+        - extra_menu: MeshPartialMenu  # to make the category available in another menu (1,2,3,4,5)
         - GM PRIMITIVES:
             - icon_name: MESH_CUBE
             - SvLineNodeMK4  # bl_idname of a node
@@ -153,9 +152,9 @@
 
 - Transforms:
     - icon_name: ORIENTATION_LOCAL
-    - extra_menu: MeshPartialMenu
     - T MESH:
         - icon_name: OBJECT_DATAMODE  # icon name to show
+        - extra_menu: MeshPartialMenu
         - SvMoveNodeMk3
         - SvRotationNodeMk3
         - SvScaleNodeMk3
@@ -177,16 +176,20 @@
         - SvFormulaDeformMK2Node
     - T CURVES:
         - icon_name: OUTLINER_OB_CURVE
+        - extra_menu: AdvancedObjectsPartialMenu
         - SvNurbsCurveMovePointNode
         - SvExApplyFieldToCurveNode
     - T SURFACES:
         - icon_name: SURFACE_DATA
+        - extra_menu: AdvancedObjectsPartialMenu
         - SvExApplyFieldToSurfaceNode
     - T FIELDS:
         - icon_name: OUTLINER_OB_FORCE_FIELD
+        - extra_menu: AdvancedObjectsPartialMenu
         - SvExVectorFieldApplyNode
     - T SOLIDS:
         - icon_name: MESH_CUBE
+        - extra_menu: AdvancedObjectsPartialMenu
         - SvTransformSolidNode
         - SvMirrorSolidNode
 
@@ -196,9 +199,8 @@
 
 - Modifiers:
     - icon_name: MODIFIER
-    - extra_menu: MeshPartialMenu
     - M MESH:
-        - extra_menu: AdvancedObjectsPartialMenu
+        - extra_menu: MeshPartialMenu
         - icon_name: OBJECT_DATAMODE  # icon name to show
         - M CHANGE:
             - SvDeleteLooseNode
@@ -277,6 +279,7 @@
             - SvMatrixTubeNode
     - M CURVES:
         - icon_name: OUTLINER_OB_CURVE
+        - extra_menu: AdvancedObjectsPartialMenu
         - SvExSlerpCurveFrameNode
         - SvLengthRebuildCurveNode
         - SvExCrossCurvePlaneNode
@@ -330,6 +333,7 @@
         - SvExMarchingCubesNode
     - M FIELDS:
         - icon_name: OUTLINER_OB_FORCE_FIELD
+        - extra_menu: AdvancedObjectsPartialMenu
         - SvExScalarFieldMathNode
         - SvExVectorFieldMathNode
         - SvScalarFieldCurveMapNode
@@ -340,6 +344,7 @@
         - SvExBendAlongSurfaceFieldNode
     - M SOLIDS:
         - icon_name: MESH_CUBE
+        - extra_menu: AdvancedObjectsPartialMenu
         - SvSolidFaceExtrudeNode
         - SvSolidFaceSolidifyNode
         - SvSolidFaceRevolveNode
@@ -355,6 +360,7 @@
         - SvRefineSolidNode
     - M BMESH:
         - icon_name: BOLD
+        - extra_menu: AdvancedObjectsPartialMenu
         - SvBMtoElementNode
         - SvBMOpsNodeMK2
 
@@ -400,8 +406,8 @@
 
 - Analyzers:
     - icon_name: VIEWZOOM
-    - extra_menu: MeshPartialMenu
     - A MESH:
+        - extra_menu: MeshPartialMenu
         - icon_name: OBJECT_DATAMODE  # icon name to show
         - SvBBoxNodeMk3
         - SvComponentAnalyzerNode
@@ -445,6 +451,7 @@
         - SvChessSelection
     - A CURVES:
         - icon_name: OUTLINER_OB_CURVE
+        - extra_menu: AdvancedObjectsPartialMenu
         - SvExCurveCurvatureNode
         - SvExCurveTorsionNode
         - SvExCurveExtremesNode
@@ -467,6 +474,7 @@
         - SvGenerateKnotvectorNode
     - A SURFACES:
         - icon_name: SURFACE_DATA
+        - extra_menu: AdvancedObjectsPartialMenu
         - SvDeconstructSurfaceNode
         - ---
         - SvExSurfaceDomainNode
@@ -477,9 +485,11 @@
         - SvExSurfaceExtremesNode
     - A FIELDS:
         - icon_name: OUTLINER_OB_FORCE_FIELD
+        - extra_menu: AdvancedObjectsPartialMenu
         - SvScalarFieldCurvatureNode
     - A SOLIDS:
         - icon_name: MESH_CUBE
+        - extra_menu: AdvancedObjectsPartialMenu
         - SvIsInsideSolidNode
         - SvSolidDistanceNode
         - SvSolidValidateNode
@@ -492,6 +502,7 @@
         - SvSelectSolidNode
     - A BMESH:
         - icon_name: BOLD
+        - extra_menu: AdvancedObjectsPartialMenu
         - SvBManalyzinNode
 
 ################################################################################
@@ -500,9 +511,9 @@
 
 - CAD:
     - icon_name: TOOL_SETTINGS
-    - extra_menu: MeshPartialMenu
     - C MESH:
         - icon_name: OBJECT_DATAMODE  # icon name to show
+        - extra_menu: MeshPartialMenu
         - SvBevelNode
         - SvIntersectEdgesNodeMK3
         - SvOffsetNode
@@ -526,6 +537,7 @@
         - SvWafelNode
     - C CURVES:
         - icon_name: OUTLINER_OB_CURVE
+        - extra_menu: AdvancedObjectsPartialMenu
         - SvIntersectNurbsCurvesNode
         - SvExCastCurveNode
         - SvProjectCurveSurfaceNode
@@ -542,6 +554,7 @@
     #    - extra_menu: AdvancedObjectsPartialMenu
     - C SOLIDS:
         - icon_name: MESH_CUBE
+        - extra_menu: AdvancedObjectsPartialMenu
         - SvChamferSolidNode
         - SvFilletSolidNode
         - SvSolidBooleanNode
@@ -634,7 +647,7 @@
 
 - Script:
     - icon_name: WORDWRAP_ON
-    - extra_menu: AdvancedObjectsPartialMenu
+    - extra_menu: BasicDataPartialMenu
     - SvFormulaNodeMk5
     - SvFormulaInterpolateNode
     - SvExecNodeMod
@@ -776,7 +789,7 @@
 
 - Color:
     - icon_name: COLOR
-    - extra_menu: BasicDataPartialMenu
+    - extra_menu: ConnectionPartialMenu
     - SvColorInputNode
     - SvColorsInNodeMK1
     - SvColorsOutNodeMK1
@@ -839,7 +852,7 @@
 
 - Convert:
     - icon_name: UV_SYNC_SELECT
-    - extra_menu: UiToolsPartialMenu
+    - extra_menu: ConnectionPartialMenu
     - X CURVES:
         - icon_name: OUTLINER_OB_CURVE
         - SvAdaptivePlotNurbsCurveNode
