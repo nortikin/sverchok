@@ -10,7 +10,7 @@ import numpy as np
 from sverchok.utils.geom import Spline, LineEquation, bounding_box, are_points_coplanar, get_common_plane
 from sverchok.utils.nurbs_common import SvNurbsMaths
 from sverchok.utils.curve.core import SvCurve, UnsupportedCurveTypeException
-from sverchok.utils.curve.bezier import SvBezierCurve
+from sverchok.utils.curve.bezier import SvBezierCurve, SvCubicBezierCurve
 from sverchok.utils.curve.nurbs_algorithms import concatenate_nurbs_curves
 
 bezierM = np.zeros((4,4))
@@ -31,7 +31,7 @@ class SvCatmullRomCurve(SvCurve):
         self.__description__ = f"Catmull-Rom[{len(self.points)}]"
 
     @classmethod
-    def build(self, points, tknots=None, metric='DISTANCE', cyclic=False):
+    def build(cls, points, tknots=None, metric='DISTANCE', cyclic=False):
         points = np.asarray(points)
         if tknots is not None:
             tknots = np.asarray(tknots)
@@ -257,4 +257,38 @@ class SvCatmullRomCurve(SvCurve):
 
     def lerp_to(self, curve2, coefficient):
         return self.to_nurbs().lerp_to(curve2, coefficient)
+
+def uniform_catmull_rom_segment(points, tension=1.0):
+    v = np.asarray(points)
+    p0 = v[1]
+    p1 = v[1] + (v[2] - v[0]) / (6*tension)
+    p2 = v[2] - (v[3] - v[1]) / (6*tension)
+    p3 = v[2]
+    return SvCubicBezierCurve(p0, p1, p2, p3)
+
+def uniform_catmull_rom_interpolate(points, concatenate=True, cyclic=False, tension=1.0):
+    points = np.asarray(points)
+    if cyclic:
+        points = np.insert(points, 0, points[-1], axis=0)
+        points = np.append(points, [points[-1]], axis=0)
+    else:
+        p0 = 2*points[0] - points[1]
+        pn = 2*points[-1] - points[-2]
+        points = np.insert(points, 0, p0, axis=0)
+        points = np.append(points, [pn], axis=0)
+
+    if isinstance(tension, (list, np.ndarray)):
+        tensions = tension
+    else:
+        tensions = np.full((len(points)-3), tension)
+
+    segments = []
+    for i in range(len(points)-3):
+        spline_cpts = points[i:i+4]
+        segment = uniform_catmull_rom_segment(spline_cpts, tensions[i])
+        segments.append(segment)
+    if concatenate:
+        return concatenate_nurbs_curves(segments)
+    else:
+        return segments
 
