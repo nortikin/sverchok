@@ -822,7 +822,7 @@ if __name__ == "__main__":
 
         parser = argparse.ArgumentParser(prog = "testing.py", description = "Run Sverchok tests")
         parser.add_argument('pattern', metavar='*.PY', nargs='?', default = '*_tests.py', help="Test case files pattern")
-        parser.add_argument('-t', '--test', nargs='+', default = argparse.SUPPRESS)
+        #parser.add_argument('-t', '--test', nargs='+', default = argparse.SUPPRESS)
         parser.add_argument('-o', '--output', metavar='FILE.log', default='sverchok_tests.log', help="Path to output log file")
         parser.add_argument('-f', '--fail-fast', action='store_true', help="Stop after first failing test")
         parser.add_argument('-v', '--verbose', action='count', default=2, help="Set the verbosity level")
