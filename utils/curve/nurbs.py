@@ -98,33 +98,34 @@ class SvNurbsCurve(SvCurve):
         return self._bounding_box
 
     def concatenate(self, curve2, tolerance=1e-6, remove_knots=False):
-        if tolerance is None:
-            tolerance = 1e-6
 
         curve1 = self
         curve2 = SvNurbsCurve.to_nurbs(curve2)
         if curve2 is None:
             raise UnsupportedCurveTypeException("second curve is not NURBS")
         
-        c1_end = curve1.get_u_bounds()[1]
-        c2_start = curve2.get_u_bounds()[0]
-        if sv_knotvector.is_clamped(curve1.get_knotvector(), curve1.get_degree(), check_start=True, check_end=False):
-            pt1 = curve1.get_control_points()[-1]
-        else:
-            pt1 = curve1.evaluate(c1_end)
-        if sv_knotvector.is_clamped(curve2.get_knotvector(), curve2.get_degree(), check_start=False, check_end=True):
-            pt2 = curve2.get_control_points()[0]
-        else:
-            pt2 = curve2.evaluate(c2_start)
-        dpt = np.linalg.norm(pt1 - pt2)
-        if dpt > tolerance:
-            raise UnsupportedCurveTypeException(f"Curve end points do not match: C1({c1_end}) = {pt1} != C2({c2_start}) = {pt2}, distance={dpt}")
+        if tolerance is not None:
+            c1_end = curve1.get_u_bounds()[1]
+            c2_start = curve2.get_u_bounds()[0]
+            if sv_knotvector.is_clamped(curve1.get_knotvector(), curve1.get_degree(), check_start=True, check_end=False):
+                pt1 = curve1.get_control_points()[-1]
+            else:
+                pt1 = curve1.evaluate(c1_end)
+            if sv_knotvector.is_clamped(curve2.get_knotvector(), curve2.get_degree(), check_start=False, check_end=True):
+                pt2 = curve2.get_control_points()[0]
+            else:
+                pt2 = curve2.evaluate(c2_start)
+            dpt = np.linalg.norm(pt1 - pt2)
+            if dpt > tolerance:
+                raise UnsupportedCurveTypeException(f"Curve end points do not match: C1({c1_end}) = {pt1} != C2({c2_start}) = {pt2}, distance={dpt}")
 
-        cp1 = curve1.get_control_points()[-1]
-        cp2 = curve2.get_control_points()[0]
-        if np.linalg.norm(cp1 - cp2) > tolerance:
-            raise UnsupportedCurveTypeException("End control points do not match")
+            #cp1 = curve1.get_control_points()[-1]
+            #cp2 = curve2.get_control_points()[0]
+            #if np.linalg.norm(cp1 - cp2) > tolerance:
+            #    raise UnsupportedCurveTypeException("End control points do not match")
 
+        if tolerance is None:
+            tolerance = 1e-6
         w1 = curve1.get_weights()[-1]
         w2 = curve2.get_weights()[0]
         if abs(w1 - w2) > tolerance:
