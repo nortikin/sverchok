@@ -9,6 +9,10 @@ import numpy as np
 
 import bpy
 
+from sverchok.utils.curve.core import UnsupportedCurveTypeException
+from sverchok.utils.curve.nurbs import SvNurbsCurve
+from sverchok.utils.logging import getLogger
+
 def curve_to_meshdata(curve, resolution):
     t_min, t_max = curve.get_u_bounds()
     ts = np.linspace(t_min, t_max, num=resolution)
@@ -28,7 +32,10 @@ class CurveData(object):
     def __init__(self, node, curve, resolution):
         self.node = node
         self.curve = curve
+        self._nurbs_curve = None
         self.resolution = resolution
+
+        logger = getLogger("sverchok.utils.curve.bakery")
 
         if node.draw_line or node.draw_verts or node.draw_comb or node.draw_curvature:
             t_min, t_max = curve.get_u_bounds()
@@ -43,21 +50,30 @@ class CurveData(object):
         else:
             self.edges = None
 
-        if (node.draw_control_polygon or node.draw_control_points) and hasattr(curve, 'get_control_points'):
-            self.control_points = curve.get_control_points().tolist()
-        else:
-            self.control_points = None
+        self.control_points = None
+        if (node.draw_control_polygon or node.draw_control_points):
+            try:
+                if hasattr(curve, 'get_control_points'):
+                    cpts = curve.get_control_points().tolist()
+                    if cpts:
+                        self.control_points = cpts
+                if self.control_points is None and self.nurbs_curve is not None:
+                    self.control_points = self.nurbs_curve.get_control_points().tolist()
+            except Exception as e:
+                logger.debug(f"Can't get control points for {curve}: {e}")
 
-        if node.draw_control_polygon:
+        if node.draw_control_polygon and self.control_points is not None:
             n = len(self.control_points)
             self.control_polygon_edges = [(i,i+1) for i in range(n-1)]
         else:
             self.control_polygon_edges = None
 
-        if node.draw_nodes and hasattr(curve, 'calc_greville_points'):
-            self.node_points = curve.calc_greville_points().tolist()
-        else:
-            self.node_points = None
+        self.node_points = None
+        if node.draw_nodes:
+            if hasattr(curve, 'calc_greville_points'):
+                self.node_points = curve.calc_greville_points().tolist()
+            elif self.nurbs_curve is not None:
+                self.node_points = self.nurbs_curve.calc_greville_points().tolist()
 
         if node.draw_comb or node.draw_curvature:
             self.curvatures = curve.curvature_array(ts)
@@ -91,6 +107,12 @@ class CurveData(object):
         else:
             self.curvature_point_colors = None
             self.curvature_edge_colors = None
+
+    @property
+    def nurbs_curve(self):
+        if self._nurbs_curve is None:
+            self._nurbs_curve = SvNurbsCurve.to_nurbs(self.curve)
+        return self._nurbs_curve
 
     def bake(self, object_name):
         me = bpy.data.meshes.new(object_name)
