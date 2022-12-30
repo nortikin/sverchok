@@ -341,8 +341,8 @@ class SvCatmullRomCurve(SvUniformCatmullRomCurve):
 def uniform_catmull_rom_bezier_segment(points, tension=1.0):
     v = np.asarray(points)
     p0 = v[1]
-    p1 = v[1] + (v[2] - v[0]) / (6*tension)
-    p2 = v[2] - (v[3] - v[1]) / (6*tension)
+    p1 = v[1] + tension*(v[2] - v[0]) / 6
+    p2 = v[2] - tension*(v[3] - v[1]) / 6
     p3 = v[2]
     return SvCubicBezierCurve(p0, p1, p2, p3)
 
