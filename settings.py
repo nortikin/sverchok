@@ -207,7 +207,7 @@ class SvOverwriteMenuFile(bpy.types.Operator):
 
     def execute(self, context):
         target_menu_file = join(datafiles, 'index.yaml')
-        preset_type, preset_name = self.preset_path.split('/')
+        preset_type, preset_name = self.preset_path.split(os.sep)
         if preset_type == MENU_TYPE_DEFAULT:
             directory = dirname(__file__)
         elif preset_type == MENU_TYPE_SVERCHOK:
