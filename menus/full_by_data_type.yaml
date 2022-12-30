@@ -251,6 +251,7 @@
         - ---
         - SvExCurveFormulaNode
         - SvExCubicSplineNode
+        - SvCatmullRomSplineNode
         - SvTangentsCurveNode
         - SvExRbfCurveNode
         - SvExCirclifyNode

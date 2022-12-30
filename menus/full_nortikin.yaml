@@ -94,6 +94,7 @@
             - icon_name: PLUGIN
             - SvExCurveFormulaNode
             - SvExCubicSplineNode
+            - SvCatmullRomSplineNode
             - SvTangentsCurveNode
             - SvExRbfCurveNode
             - SvExCirclifyNode
