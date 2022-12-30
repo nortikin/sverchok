@@ -53,17 +53,10 @@ class SvCatmullRomSplineNode(SverchCustomTreeNode, bpy.types.Node):
         default = 1.0,
         update = updateNode)
 
-    concatenate : BoolProperty(name = "Concatenate",
-        description = "Generate a single concatenated curve. If not checked, generate a separate Bezier spline for each segment",
-        default = True,
-        update = updateNode)
-
     def draw_buttons(self, context, layout):
         layout.prop(self, "is_cyclic")
         layout.prop(self, 'spline_mode', text='')
-        if self.spline_mode == 'UNIFORM':
-            layout.prop(self, 'concatenate')
-        else:
+        if self.spline_mode == 'NONUNIFORM':
             layout.prop(self, 'metric')
 
     def sv_init(self, context):
