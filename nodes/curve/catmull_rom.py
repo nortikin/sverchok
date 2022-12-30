@@ -21,6 +21,7 @@ class SvCatmullRomSplineNode(SverchCustomTreeNode, bpy.types.Node):
     bl_idname = 'SvCatmullRomSplineNode'
     bl_label = 'Catmull-Rom Spline'
     bl_icon = 'CON_SPLINEIK'
+    sv_icon = 'SV_CATMULL_ROM'
 
     is_cyclic : BoolProperty(name = "Cyclic",
         description = "Whether the spline is cyclic. If checked, the node will generate a cyclic (closed) curve",
