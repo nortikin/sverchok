@@ -626,13 +626,8 @@ class NodeDependencies:
     def missing_dependency(cls) -> bool:
         """Returns True if any of dependent libraries are not installed"""
         if cls._missing_dependency is None:
-            # node_module = sys.modules[cls.__module__]
-            extension_name, *_ = cls.__module__.partition('.')
-            deps_module = sys.modules.get(f"{extension_name}.dependencies")
-            if deps_module is None:
-                debug(f'Extension "{extension_name}" does node define the dependencies module')
             for dep in cls.sv_dependencies:
-                if getattr(deps_module, dep) is None:
+                if dep not in sys.modules:
                     cls._missing_dependency = True
                     break
             else:
