@@ -649,6 +649,7 @@
     - icon_name: WORDWRAP_ON
     - extra_menu: BasicDataPartialMenu
     - SvFormulaNodeMk5
+    - SvNumExprNode
     - SvFormulaInterpolateNode
     - SvExecNodeMod
     - SvProfileNodeMK3
