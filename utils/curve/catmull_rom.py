@@ -54,8 +54,18 @@ class SvUniformCatmullRomCurve(SvCurve):
     def build(cls, points, cyclic=False, tensions=None):
         points = np.asarray(points)
         if tensions is None:
-            tensions = np.ones((len(points),))
-        tensions, points = prepare_data(tensions, points, cyclic=cyclic)
+            tensions = np.ones((len(points)-3,))
+        _, points = prepare_data(None, points, cyclic=cyclic)
+        if cyclic:
+            t0 = tensions[0]
+            tn = tensions[-1]
+            ts = (t0 + tn)*0.5
+            tensions = np.insert(tensions, 0, ts, axis=0)
+            tensions = np.append(tensions, [ts], axis=0)
+        else:
+            tensions = np.insert(tensions, 0, 1.0, axis=0)
+            tensions = np.append(tensions, [1.0], axis=0)
+
         return SvUniformCatmullRomCurve(points, tensions)
 
     def get_u_bounds(self):
@@ -119,7 +129,8 @@ class SvUniformCatmullRomCurve(SvCurve):
         n = len(self.points)
         for i in range(n-3):
             spline_cpts = self.points[i:i+4]
-            segment = uniform_catmull_rom_bezier_segment(spline_cpts, self.tensions[i])
+            print(f"I {i} => tension {self.tensions[i+1]}")
+            segment = uniform_catmull_rom_bezier_segment(spline_cpts, self.tensions[i+1])
             segments.append(segment)
         return segments
 
@@ -348,11 +359,11 @@ def uniform_catmull_rom_bezier_segment(points, tension=1.0):
 
 def uniform_catmull_rom_bezier_interpolate(points, concatenate=True, cyclic=False, tension=1.0):
     points = np.asarray(points)
-    _, points = prepare_data(None, points, cyclic=cyclic)
     if isinstance(tension, (list, np.ndarray)):
         tensions = tension
     else:
-        tensions = np.full((len(points)-3), tension)
+        tensions = np.full((len(points)-3,), tension)
+    _, points = prepare_data(None, points, cyclic=cyclic)
 
     segments = []
     for i in range(len(points)-3):
