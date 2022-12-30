@@ -5,9 +5,6 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 import re
-
-import numpy as np
-
 try:
     import numexpr as ne
 except ImportError:
@@ -16,9 +13,9 @@ except ImportError:
 import bpy
 from bpy.props import StringProperty, EnumProperty
 
-from sverchok.data_structure import numpy_full_list, fixed_iter
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.ui.sv_icons import custom_icon
+from sverchok.utils.vectorize import match_sockets
 
 
 class SvNumExprNode(SverchCustomTreeNode, bpy.types.Node):
@@ -36,7 +33,7 @@ class SvNumExprNode(SverchCustomTreeNode, bpy.types.Node):
         'sinh', 'cosh', 'tanh', 'arcsinh', 'arccosh', 'arctanh', 'log',
         'log10', 'log1p', 'exp', 'expm1', 'sqrt', 'abs', 'conj', 'real',
         'imag', 'complex', 'contains', 'sum', 'prod', 'min', 'max', 'floor',
-        'ceil'}
+        'ceil', 'axis'}
 
     def expression_update(self, context):
         variables = set()
@@ -155,13 +152,9 @@ class SvNumExprNode(SverchCustomTreeNode, bpy.types.Node):
             raise NameError(f"{invalid_names=}")
         inp_vars = [s.sv_get(deepcopy=False) for s in self.inputs]
         names = [s.name for s in self.inputs]
-        inp_len = max(len(d) for d in inp_vars) if names else 0
-        inp_vars = [fixed_iter(d, inp_len) for d in inp_vars]
         out = []
-        for obj_vars in zip(*inp_vars):
-            obj_len = max(len(d) for d in obj_vars)
-            obj_vars = {n: numpy_full_list(np.asarray(d), obj_len) if len(d) > 1 else d
-                        for n, d in zip(names, obj_vars)}
+        for data in match_sockets(*inp_vars):
+            obj_vars = {n: d for n, d in zip(names, data)}
             result = ne.evaluate(self.expression, local_dict=obj_vars)
             out.append(result)
         self.outputs[0].sv_set(out)
