@@ -33,12 +33,18 @@ class SvCatmullRomSplineNode(SverchCustomTreeNode, bpy.types.Node):
         update=updateNode)
 
     def update_sockets(self, context):
-        self.inputs['Tension'].hide_safe = not self.use_tension
+        self.inputs['Tension'].hide_safe = self.spline_mode != 'UNIFORM'
         updateNode(self, context)
 
-    use_tension : BoolProperty(name = "Specify tension",
-        description = "If checked, the node will generate uniform Catmull-Rom spline, but will allow you to specify tension",
-        default = False,
+    spline_modes = [
+        ('NONUNIFORM', "Non-uniform", "Generate non-uniform spline with parametrization defined by some metric", 0),
+        ('UNIFORM', "Uniform (with tension)", "Generate a uniform spline, allowing the user to specify tension value", 1)
+    ]
+
+    spline_mode : EnumProperty(name = "Spline type",
+        description = "Whether to generate a uniform or non-uniform spline",
+        items = spline_modes,
+        default = 'NONUNIFORM',
         update = update_sockets)
 
     tension : FloatProperty(name = "Tension",
@@ -54,8 +60,8 @@ class SvCatmullRomSplineNode(SverchCustomTreeNode, bpy.types.Node):
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "is_cyclic")
-        layout.prop(self, 'use_tension')
-        if self.use_tension:
+        layout.prop(self, 'spline_mode', text='')
+        if self.spline_mode == 'UNIFORM':
             layout.prop(self, 'concatenate')
         else:
             layout.prop(self, 'metric')
@@ -84,7 +90,7 @@ class SvCatmullRomSplineNode(SverchCustomTreeNode, bpy.types.Node):
         for params in zip_long_repeat(vertices_s, tension_s):
             new_curves = []
             for vertices, tensions in zip_long_repeat(*params):
-                if self.use_tension:
+                if self.spline_mode == 'UNIFORM':
                     tensions = repeat_last_for_length(tensions, len(vertices))
                     curve = uniform_catmull_rom_interpolate(vertices,
                                 concatenate = self.concatenate,
