@@ -184,7 +184,7 @@
     - SvExCurveLerpNode
     - SvExSurfaceLerpNode
     - SvCoonsPatchNode
-    - SvBlendSurfaceNode
+    - SvBlendSurfaceNodeMk2
     - SvExApplyFieldToSurfaceNode
     - ---
     - SvExSurfaceDomainNode

@@ -15,6 +15,7 @@ import numpy as np
 from sverchok.utils.math import falloff_array
 from sverchok.utils.geom import Spline
 from sverchok.utils.curve import knotvector as sv_knotvector
+from sverchok.utils.curve.algorithms import SvCurveOnSurface
 from sverchok.utils.nurbs_common import SvNurbsMaths
 from sverchok.utils.curve.nurbs_algorithms import refine_curve, remove_excessive_knots
 from sverchok.utils.curve.nurbs_solver import SvNurbsCurvePoints, SvNurbsCurveTangents, SvNurbsCurveCotangents, SvNurbsCurveSolver
@@ -188,6 +189,7 @@ def knotvector_with_tangents_from_tknots(degree, u):
 
 def interpolate_nurbs_curve_with_tangents(degree, points, tangents,
             metric='DISTANCE', tknots=None,
+            cyclic = False,
             implementation = SvNurbsMaths.NATIVE,
             logger = None):
 
@@ -199,6 +201,10 @@ def interpolate_nurbs_curve_with_tangents(degree, points, tangents,
     ndim = points.shape[-1]
     if ndim not in {3,4}:
         raise Exception(f"Points must be 3 or 4 dimensional, not {ndim}")
+
+    if cyclic:
+        points = np.append(points, [points[0]], axis=0)
+        tangents = np.append(tangents, [tangents[0]], axis=0)
 
     if tknots is None:
         tknots = Spline.create_knots(points, metric=metric)
@@ -214,12 +220,33 @@ def interpolate_nurbs_curve_with_tangents(degree, points, tangents,
                                     logger = logger)
     return curve
 
-def curve_to_nurbs(degree, curve, samples, logger=None):
+def curve_to_nurbs(degree, curve, samples, metric = 'DISTANCE', use_tangents = False, logger=None):
     is_cyclic = curve.is_closed()
     t_min, t_max = curve.get_u_bounds()
     ts = np.linspace(t_min, t_max, num=samples)
     if is_cyclic:
         ts = ts[:-1]
     points = curve.evaluate_array(ts)
-    return interpolate_nurbs_curve(degree, points, cyclic=is_cyclic, logger=logger)
+    if use_tangents:
+        tangents = curve.tangent_array(ts)
+        return interpolate_nurbs_curve_with_tangents(degree, points, tangents, metric=metric, logger=logger)
+    else:
+        return interpolate_nurbs_curve(degree, points, cyclic=is_cyclic, metric=metric, logger=logger)
+
+def curve_on_surface_to_nurbs(degree, uv_curve, surface, samples, metric = 'DISTANCE', use_tangents = False, logger = None):
+    #is_cyclic = uv_curve.is_closed()
+    is_cyclic = False
+    t_min, t_max = uv_curve.get_u_bounds()
+    ts = np.linspace(t_min, t_max, num=samples)
+    curve = SvCurveOnSurface(uv_curve, surface, axis=2)
+    if is_cyclic:
+        ts = ts[:-1]
+    uv_points = uv_curve.evaluate_array(ts)
+    points = surface.evaluate_array(uv_points[:,0], uv_points[:,1])
+    tknots = Spline.create_knots(points, metric=metric)
+    if use_tangents:
+        tangents = curve.tangent_array(ts)
+        return interpolate_nurbs_curve_with_tangents(degree, points, tangents, tknots = tknots, logger=logger)
+    else:
+        return interpolate_nurbs_curve(degree, points, cyclic=is_cyclic, tknots = tknots, logger=logger)
 

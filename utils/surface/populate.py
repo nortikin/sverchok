@@ -102,6 +102,11 @@ def populate_surface(surface, field, count, threshold,
     generated_radiuses = []
     iterations = 0
 
+    if field is None and avoid_spheres is None and min_r == 0 and min_r_field is None and predicate is None:
+        batch_size = count
+    else:
+        batch_size = BATCH_SIZE
+
     while done < count:
         iterations += 1
         if iterations > MAX_ITERATIONS:
@@ -110,7 +115,7 @@ def populate_surface(surface, field, count, threshold,
         batch_us = []
         batch_vs = []
         left = count - done
-        max_size = min(BATCH_SIZE, left)
+        max_size = min(batch_size, left)
         for i in range(max_size):
             u = random.uniform(u_min, u_max)
             v = random.uniform(v_min, v_max)
@@ -164,8 +169,8 @@ def populate_surface(surface, field, count, threshold,
                     if random_radius:
                         min_r = random.uniform(0, min_r)
                     if _check_min_radius(candidate, old_points + generated_verts + good_verts, old_radiuses + generated_radiuses + good_radiuses, min_r):
-                        good_verts.append(candidate)
-                        good_uvs.append(candidate_uv)
+                        good_verts.append(tuple(candidate))
+                        good_uvs.append(tuple(candidate_uv))
                         good_radiuses.append(min_r)
             else: # min_r != 0
                 good_verts = []

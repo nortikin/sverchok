@@ -7,8 +7,10 @@ from sverchok.utils.nurbs_common import (
         nurbs_divide, from_homogenous
     )
 from sverchok.utils.curve import knotvector as sv_knotvector
+from sverchok.utils.curve.bezier import SvBezierCurve
 from sverchok.utils.curve.nurbs_algorithms import unify_curves, nurbs_curve_to_xoy, nurbs_curve_matrix
-from sverchok.utils.curve.algorithms import unify_curves_degree, SvCurveFrameCalculator
+from sverchok.utils.curve.algorithms import unify_curves_degree, SvCurveFrameCalculator, curve_frame_on_surface_array
+from sverchok.utils.curve.nurbs_solver_applications import interpolate_nurbs_curve_with_tangents
 from sverchok.utils.surface.core import UnsupportedSurfaceTypeException
 from sverchok.utils.surface import SvSurface, SurfaceCurvatureCalculator, SurfaceDerivativesData
 from sverchok.utils.surface.nurbs import SvNurbsSurface, simple_loft, interpolate_nurbs_surface
@@ -140,4 +142,26 @@ def gordon_surface(u_curves, v_curves, intersections, metric='POINTS', u_knots=N
     #print(f"Result: {surface}")
 
     return lofted_u, lofted_v, interpolated, surface
+
+def nurbs_blend_surfaces(surface1, surface2, curve1, curve2, bulge1, bulge2, u_degree, u_samples, logger=None):
+    t_min, t_max = curve1.get_u_bounds()
+    ts1 = np.linspace(t_min, t_max, num=u_samples)
+
+    t_min, t_max = curve2.get_u_bounds()
+    ts2 = np.linspace(t_min, t_max, num=u_samples)
+
+    _, c1_points, c1_tangents, _, c1_binormals = curve_frame_on_surface_array(surface1, curve1, ts1, normalize=False)
+    _, c2_points, c2_tangents, _, c2_binormals = curve_frame_on_surface_array(surface2, curve2, ts2, normalize=False)
+    c1_binormals = bulge1 * c1_binormals / np.linalg.norm(c1_binormals, axis=1, keepdims=True)
+    c2_binormals = bulge2 * c2_binormals / np.linalg.norm(c2_binormals, axis=1, keepdims=True)
+
+    curve1 = interpolate_nurbs_curve_with_tangents(u_degree, c1_points, c1_tangents, tknots=ts1, logger=logger)
+    curve2 = interpolate_nurbs_curve_with_tangents(u_degree, c2_points, c2_tangents, tknots=ts2, logger=logger)
+    u_curves = [curve1, curve2]
+
+    v_curves = [SvBezierCurve.from_control_points([p1, p1+t1, p2+t2, p2]) for p1, t1, p2, t2 in zip(c1_points, c1_binormals, c2_points, c2_binormals)]
+
+    intersections = np.transpose(np.asarray([c1_points, c2_points]), axes=(1,0,2))
+
+    return gordon_surface(u_curves, v_curves, intersections, logger=logger)[-1]
 

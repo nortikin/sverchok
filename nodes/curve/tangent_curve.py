@@ -6,7 +6,9 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level
+from sverchok.utils.math import supported_metrics
 from sverchok.utils.curve import SvCurve, SvBezierCurve, SvConcatCurve, SvCubicBezierCurve
+from sverchok.utils.curve.nurbs_solver_applications import interpolate_nurbs_curve_with_tangents
 
 class SvTangentsCurveNode(SverchCustomTreeNode, bpy.types.Node):
     """
@@ -36,12 +38,34 @@ class SvTangentsCurveNode(SverchCustomTreeNode, bpy.types.Node):
         default = False,
         update = updateNode)
 
+    curve_modes = [
+            ('HERMITE', "Hermite", "Use Bezier curve representation of Hermite spline", 0),
+            ('NURBS', "NURBS", "Use NURBS curve interpolation", 1)
+        ]
+
+    curve_mode : EnumProperty(
+        name = "Curve type",
+        description = "Type of algorithm to be used and type of generated curve",
+        items = curve_modes,
+        default = 'HERMITE',
+        update = updateNode)
+
+    metric: EnumProperty(name='Metric',
+        description = "Knot mode",
+        default="DISTANCE", items=supported_metrics,
+        update=updateNode)
+
     def draw_buttons(self, context, layout):
-        layout.prop(self, 'cyclic', toggle=True)
-        layout.prop(self, 'concat', toggle=True)
+        layout.prop(self, 'curve_mode')
+        layout.prop(self, 'cyclic')
+        if self.curve_mode == 'HERMITE':
+            layout.prop(self, 'concat')
+        elif self.curve_mode == 'NURBS':
+            layout.prop(self, 'metric')
 
     def draw_buttons_ext(self, context, layout):
-        layout.prop(self, 'make_nurbs', toggle=True)
+        if self.curve_mode == 'HERMITE':
+            layout.prop(self, 'make_nurbs', toggle=True)
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', "Points")
@@ -67,9 +91,17 @@ class SvTangentsCurveNode(SverchCustomTreeNode, bpy.types.Node):
             curves_i = []
             controls_i = []
             for points, tangents in zip_long_repeat(*params):
-                new_controls, new_curve = SvBezierCurve.build_tangent_curve(points, tangents,
-                                                cyclic = self.cyclic, concat = self.concat,
-                                                as_nurbs = self.make_nurbs)
+                if self.curve_mode == 'HERMITE':
+                    new_controls, new_curve = SvBezierCurve.build_tangent_curve(points, tangents,
+                                                    cyclic = self.cyclic, concat = self.concat,
+                                                    as_nurbs = self.make_nurbs)
+                else:
+                    new_curve = interpolate_nurbs_curve_with_tangents(3,
+                                    points, tangents,
+                                    metric = self.metric,
+                                    cyclic = self.cyclic,
+                                    logger = self.get_logger())
+                    new_controls = new_curve.get_control_points().tolist()
                 curves_i.append(new_curve)
                 controls_i.append(new_controls)
             if output_nested:

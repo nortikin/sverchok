@@ -19,10 +19,8 @@ class SvProfilingToggle(bpy.types.Operator):
     bl_options = {'INTERNAL'}
 
     def execute(self, context):
-        global is_currently_enabled
-
-        is_currently_enabled = not is_currently_enabled
-        info("Profiling is set to %s", is_currently_enabled)
+        prof.is_currently_enabled = not prof.is_currently_enabled
+        info("Profiling is set to %s", prof.is_currently_enabled)
 
         return {'FINISHED'}
 

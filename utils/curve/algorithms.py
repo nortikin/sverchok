@@ -742,7 +742,7 @@ class SvLengthRebuiltCurve(SvCurve):
         c_ts = self.solver.solve(ts)
         return self.curve.evaluate_array(c_ts)
 
-def curve_frame_on_surface_array(surface, uv_curve, us, w_axis=2, on_zero_curvature=SvCurve.ASIS):
+def curve_frame_on_surface_array(surface, uv_curve, us, w_axis=2, normalize=True, on_zero_curvature=SvCurve.ASIS):
     """
     Curve frame which is lying in the surface.
 
@@ -778,11 +778,13 @@ def curve_frame_on_surface_array(surface, uv_curve, us, w_axis=2, on_zero_curvat
     curve = SvCurveOnSurface(uv_curve, surface, axis=w_axis)
     surf_points = curve.evaluate_array(us)
     tangents = curve.tangent_array(us)
-    tangents = tangents / np.linalg.norm(tangents, axis=1, keepdims=True)
+    if normalize:
+        tangents = tangents / np.linalg.norm(tangents, axis=1, keepdims=True)
 
     us, vs = uv_points[:,U], uv_points[:,V]
     normals = surface.normal_array(us, vs)
-    normals = normals / np.linalg.norm(normals, axis=1, keepdims=True)
+    if normalize:
+        normals = normals / np.linalg.norm(normals, axis=1, keepdims=True)
 
     if on_zero_curvature != SvCurve.ASIS:
         zero_normal = np.linalg.norm(normals, axis=1) < 1e-6

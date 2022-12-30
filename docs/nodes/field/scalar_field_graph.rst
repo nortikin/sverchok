@@ -42,7 +42,7 @@ This node has the following parameters:
 
 * **Make faces**. If checked, the node will generate a face for each closed
   contour. Unchecked by default.
-* **Counnect boundary**. If checked, the node will connect pieces of the same
+* **Connect boundary**. If checked, the node will connect pieces of the same
   curve, that was split because it was cut by specified X/Y bounds. Otherwise,
   several separate pieces will be generated in such case. Unchecked by default.
 * **Join**. If checked, then the node will join all generated contours for each

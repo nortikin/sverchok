@@ -6,6 +6,7 @@
 # License-Filename: LICENSE
 
 import numpy as np
+from math import sqrt
 
 from sverchok.data_structure import zip_long_repeat
 from sverchok.utils.math import binomial
@@ -133,8 +134,61 @@ class SvBezierCurve(SvCurve, SvBezierSplitMixin):
         p4 = -k7/210.0 + 3*p5 - 3*p6 + p7
         return SvBezierCurve([p0, p1, p2, p3, p4, p5, p6, p7])
 
+#     @classmethod
+#     def from_tangents_and_curvatures(cls, point1, point2, tangent1, tangent2, curvature1, curvature2):
+#         A1 = point1
+#         A2 = point2
+#         B1 = point1 + tangent1 / 5
+#         B2 = point2 - tangent2 / 5
+#         t1dir = tangent1 / np.linalg.norm(tangent1)
+#         t2dir = tangent2 / np.linalg.norm(tangent2)
+#         B1B2 = B2 - B1
+#         direction = B1B2 / np.linalg.norm(B1B2)
+#         
+#         r1 = curvature1 * np.linalg.norm(tangent1)**2 / 20
+#         r2 = curvature2 * np.linalg.norm(tangent2)**2 / 20
+#         
+#         dot1 = (direction * t1dir).sum()
+#         sin1 = sqrt(1 - dot1**2)
+#         d1 = r1 / sin1
+#         
+#         dot2 = (-direction * t2dir).sum()
+#         sin2 = sqrt(1 - dot2**2)
+#         d2 = r2 / sin2
+#         
+#         C1 = B1 + d1 * direction
+#         C2 = B2 - d2 * direction
+#         
+#         return SvBezierCurve([A1, B1, C1, C2, B2, A2])
+
     @classmethod
-    def build_tangent_curve(cls, points, tangents, cyclic=False, concat=False, as_nurbs=False):
+    def from_tangents_normals_curvatures(cls, point1, point2, tangent1, tangent2, normal1, normal2, curvature1, curvature2):
+        """
+        Build Bezier curve of 5th degree, which:
+            
+            * starts at point1 and end at point2
+            * at start has tangent1 and normal1, at end has tangent2 and normal2
+            * at start has curvature1, at end has curvature2.
+        """
+        A1 = point1
+        A2 = point2
+        B1 = point1 + tangent1 / 5
+        B2 = point2 - tangent2 / 5
+        t1dir = tangent1 / np.linalg.norm(tangent1)
+        t2dir = tangent2 / np.linalg.norm(tangent2)
+        n1dir = normal1 / np.linalg.norm(normal1)
+        n2dir = normal2 / np.linalg.norm(normal2)
+
+        r1 = curvature1 * np.linalg.norm(tangent1)**2 / 20
+        r2 = curvature2 * np.linalg.norm(tangent2)**2 / 20
+
+        C1 = B1 + r1 * n1dir
+        C2 = B2 + r2 * n2dir
+
+        return SvBezierCurve([A1, B1, C1, C2, B2, A2])
+
+    @classmethod
+    def build_tangent_curve(cls, points, tangents, hermite=True, cyclic=False, concat=False, as_nurbs=False):
         """
         Build cubic Bezier curve spline, which goes through specified `points',
         having specified `tangents' at these points.
@@ -143,6 +197,8 @@ class SvBezierCurve(SvCurve, SvBezierSplitMixin):
         * points, tangents: lists of 3-tuples
         * cyclic: whether the curve should be closed (cyclic)
         * concat: whether to concatenate all curve segments into single Curve object
+        * hermite: if true, use Hermite spline - divide tangent vector by 3 to
+            obtain middle control points; otherwise, divide by 2.
 
         outputs: tuple:
         * list of curve control points - list of lists of 3-tuples
@@ -155,13 +211,17 @@ class SvBezierCurve(SvCurve, SvBezierSplitMixin):
         segments = list(zip(pairs, pairs[1:]))
         if cyclic:
             segments.append((pairs[-1], pairs[0]))
+        if hermite:
+            d = 3.0
+        else:
+            d = 2.0
 
         for pair1, pair2 in segments:
             point1, tangent1 = pair1
             point2, tangent2 = pair2
             point1, tangent1 = np.array(point1), np.array(tangent1)
             point2, tangent2 = np.array(point2), np.array(tangent2)
-            tangent1, tangent2 = tangent1/2.0, tangent2/2.0
+            tangent1, tangent2 = tangent1/d, tangent2/d
             curve = SvCubicBezierCurve(
                         point1,
                         point1 + tangent1,

@@ -3,12 +3,15 @@ from os import walk
 from os.path import basename, splitext, dirname, join, exists
 from glob import glob
 import importlib
-from inspect import getmembers, isclass
+from inspect import getmembers, isclass, getfile
 
 import sverchok
 from sverchok.utils.testing import *
 from sverchok.utils.logging import debug, info, error
+from sverchok.utils import yaml_parser
 from sverchok.node_tree import SverchCustomTreeNode
+
+sverchok_directory = dirname(getfile(sverchok))
 
 class UiTests(SverchokTestCase):
     def test_all_nodes_have_icons(self):
@@ -58,4 +61,50 @@ class UiTests(SverchokTestCase):
                 continue
             with self.subTest(directory=dir_name):
                 check_category(directory)
+
+    def _load_node_names_from_menu(self, menu_path):
+        def search_in_list(data):
+            for item in data:
+                if isinstance(item, str) and item != '---':
+                    yield item
+                elif isinstance(item, dict):
+                    yield from search_in_dict(item)
+
+        def search_in_dict(data):
+            for key, value in data.items():
+                if key in {'icon_name', 'extra_menu', 'operator', 'custom_menu'}:
+                    continue
+                if isinstance(value, list):
+                    yield from search_in_list(value)
+
+        def search_node_names(menu):
+            for item in menu:
+                if isinstance(item, dict):
+                    yield from search_in_dict(item)
+                elif isinstance(item, list):
+                    yield from search_in_list(item)
+
+        menu = yaml_parser.load(menu_path)
+        nodes = set()
+        for name in search_node_names(menu):
+            nodes.add(name)
+        return nodes
+
+    def test_full_menu_presets(self):
+        index_path = join(sverchok_directory, 'index.yaml')
+        index_nodes = self._load_node_names_from_menu(index_path)
+        sv_init = dirname(sverchok.__file__)
+        for path in glob(join(sv_init, 'menus', 'full_*.yaml')):
+            with self.subTest(path = path):
+                preset_nodes = self._load_node_names_from_menu(path)
+                self.assertEqual(preset_nodes, index_nodes)
+
+    def test_partial_menu_presets(self):
+        index_path = join(sverchok_directory, 'index.yaml')
+        index_nodes = self._load_node_names_from_menu(index_path)
+        sv_init = dirname(sverchok.__file__)
+        for path in glob(join(sv_init, 'menus', 'partial_*.yaml')):
+            with self.subTest(path = path):
+                preset_nodes = self._load_node_names_from_menu(path)
+                self.assertTrue(preset_nodes.issubset(index_nodes))
 
