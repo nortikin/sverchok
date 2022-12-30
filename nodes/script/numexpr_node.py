@@ -20,12 +20,12 @@ from sverchok.utils.vectorize import match_sockets
 
 class SvNumExprNode(SverchCustomTreeNode, bpy.types.Node):
     """
-    Triggers:
-    Tooltip:
+    Triggers: math formula script
+    Tooltip: Node supplies routines for the fast evaluation of array expressions elementwise
     """
     bl_idname = 'SvNumExprNode'
     bl_label = 'Num Expression node'
-    bl_icon = 'MOD_BOOLEAN'
+    sv_icon = 'SV_ALPHA'  # 'SV_FORMULA'
     sv_dependencies = ['numexpr']
 
     function_names = {
