@@ -371,7 +371,3 @@ def walk_data(walkers: List[DataWalker], out_list: List[list]) -> Tuple[list, Li
             max_value_len = max(w.next_values_number for w in walkers)
             [w.step_down_matching(max_value_len, match_mode) for w in walkers]
             [t.step_down() for t in result_data]
-
-
-if __name__ == '__main__':
-    print("DONE")
