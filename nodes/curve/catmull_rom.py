@@ -11,7 +11,7 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, get_data_nesting_level, ensure_nesting_level, repeat_last_for_length
 from sverchok.utils.math import supported_metrics, xyz_metrics
-from sverchok.utils.curve.catmull_rom import SvCatmullRomCurve, uniform_catmull_rom_interpolate
+from sverchok.utils.curve.catmull_rom import SvCatmullRomCurve, SvUniformCatmullRomCurve
 
 class SvCatmullRomSplineNode(SverchCustomTreeNode, bpy.types.Node):
     """
@@ -92,10 +92,9 @@ class SvCatmullRomSplineNode(SverchCustomTreeNode, bpy.types.Node):
             for vertices, tensions in zip_long_repeat(*params):
                 if self.spline_mode == 'UNIFORM':
                     tensions = repeat_last_for_length(tensions, len(vertices))
-                    curve = uniform_catmull_rom_interpolate(vertices,
-                                concatenate = self.concatenate,
+                    curve = SvUniformCatmullRomCurve.build(vertices,
                                 cyclic = self.is_cyclic,
-                                tension = tensions)
+                                tensions = tensions)
                 else:
                     curve = SvCatmullRomCurve.build(vertices,
                                 metric = self.metric,

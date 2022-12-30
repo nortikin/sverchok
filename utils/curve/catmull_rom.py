@@ -43,8 +43,151 @@ def prepare_data(tknots, points, cyclic=False):
             tknots = np.insert(tknots, 0, t0, axis=0)
             tknots = np.append(tknots, [tn], axis=0)
     return tknots, points
+
+class SvUniformCatmullRomCurve(SvCurve):
+    def __init__(self, points, tensions):
+        self.points = np.asarray(points)
+        self.tensions = np.asarray(tensions)
+        self.__description__ = f"Uniform Catmull-Rom[{len(self.points)}]"
+
+    @classmethod
+    def build(cls, points, cyclic=False, tensions=None):
+        points = np.asarray(points)
+        if tensions is None:
+            tensions = np.ones((len(points),))
+        tensions, points = prepare_data(tensions, points, cyclic=cyclic)
+        return SvUniformCatmullRomCurve(points, tensions)
+
+    def get_u_bounds(self):
+        n = len(self.points)
+        return (0.0, float(n)-3)
+
+    def get_end_points(self):
+        return self.points[1], self.points[-2]
+
+    def get_degree(self):
+        return 3
+
+    def _make_uniform_tknots(self):
+        n = len(self.points)
+        return np.arange(-1.0, n-1)
+
+    def evaluate(self, t):
+        return self.evaluate_array(np.array([t]))[0]
+
+    def evaluate_array(self, ts):
+        n = len(self.points)
+        tknots = self._make_uniform_tknots()
+        i = tknots.searchsorted(ts, side='right')-1
+        i = np.clip(i, 1, n-3)
+        u = ts - tknots[i]
+        n_points = len(ts)
+
+        tau = self.tensions[i]
+
+        M = np.zeros((n_points,4,4))
+        M[:,0,1] = 2.0
+        M[:,1,0] = -tau
+        M[:,1,2] = tau
+        M[:,2,0] = 2*tau
+        M[:,2,1] = tau - 6
+        M[:,2,2] = -2*(tau-3)
+        M[:,2,3] = -tau
+        M[:,3,0] = -tau
+        M[:,3,1] = 4-tau
+        M[:,3,2] = tau-4
+        M[:,3,3] = tau
+        M *= 0.5
+
+        P = np.empty((n_points,4,3))
+        P[:,0] = self.points[i-1]
+        P[:,1] = self.points[i]
+        P[:,2] = self.points[i+1]
+        P[:,3] = self.points[i+2]
+
+        U = np.ones((n_points,1,4))
+        U[:,0,1] = u
+        U[:,0,2] = u**2
+        U[:,0,3] = u**3
+
+        R = U @ M @ P
+
+        return R[:,0,:]
+
+    def to_bezier_segments(self):
+        segments = []
+        n = len(self.points)
+        for i in range(n-3):
+            spline_cpts = self.points[i:i+4]
+            segment = uniform_catmull_rom_bezier_segment(spline_cpts, self.tensions[i])
+            segments.append(segment)
+        return segments
+
+    def to_nurbs(self, implementation = SvNurbsMaths.NATIVE):
+        return concatenate_nurbs_curves(self.to_bezier_segments(), tolerance=None)
+
+    def get_control_points(self):
+        return self.to_nurbs().get_control_points()
+
+    def is_line(self):
+        pts = self.points
+        begin, end = pts[0], pts[-1]
+        # direction from first to last point of the curve
+        direction = end - begin
+        if np.linalg.norm(direction) < tolerance:
+            return True
+        line = LineEquation.from_direction_and_point(direction, begin)
+        distances = line.distance_to_points(pts[1:-1])
+        # Technically, this means that all control points lie
+        # inside the cylinder, defined as "distance from line < tolerance";
+        # As a consequence, the convex hull of control points lie in the
+        # same cylinder; and the curve lies in that convex hull.
+        return (distances < tolerance).all()
+
+    def get_bounding_box(self):
+        return bounding_box(self.points)
+
+    def reverse(self):
+        return SvUniformCatmullRomCurve(self.points[::-1])
+
+    def reparametrize(self, new_t_min, new_t_max):
+        tknots = self._make_uniform_tknots()
+        t0 = tknots[0]
+        tn = tknots[-1]
+        tknots = (new_t_max - new_t_min) * (self.tknots - t0) / (tn - t0) + new_t_min
+        return SvCatmullRomCurve(tknots, self.points)
+
+    def is_rational(self):
+        return False
+
+    def is_planar(self, tolerance=1e-6):
+        return are_points_coplanar(self.points, tolerance)
+
+    def get_plane(self, tolerance=1e-6):
+        return get_common_plane(self.points, tolerance)
+
+    def concatenate(self, curve2, tolerance=None):
+        curve2 = SvNurbsMaths.to_nurbs_curve(curve2)
+        if curve2 is None:
+            raise UnsupportedCurveTypeException("Second curve is not a NURBS")
+        return self.to_nurbs().concatenate(curve2, tolerance=tolerance)
+
+    def make_revolution_surface(self, point, direction, v_min, v_max, global_origin):
+        return self.to_nurbs().make_revolution_surface(point, direction, v_min, v_max, global_origin)
+    
+    def extrude_along_vector(self, vector):
+        return self.to_nurbs().extrude_along_vector(vector)
+
+    def make_ruled_surface(self, curve2, vmin, vmax):
+        return self.to_nurbs().make_ruled_surface(curve2, vmin, vmax)
+
+    def extrude_to_point(self, point):
+        return self.to_nurbs().extrude_to_point(point)
+
+    def lerp_to(self, curve2, coefficient):
+        return self.to_nurbs().lerp_to(curve2, coefficient)
         
-class SvCatmullRomCurve(SvCurve):
+class SvCatmullRomCurve(SvUniformCatmullRomCurve):
     """
     Non-uniform Catmull-Rom cubic spline.
     See https://en.wikipedia.org/wiki/Centripetal_Catmull%E2%80%93Rom_spline
@@ -66,15 +209,6 @@ class SvCatmullRomCurve(SvCurve):
 
     def get_u_bounds(self):
         return self.tknots[1], self.tknots[-2]
-
-    def get_end_points(self):
-        return self.points[1], self.points[-2]
-
-    def get_degree(self):
-        return 3
-
-    def evaluate(self, t):
-        return self.evaluate_array(np.array([t]))[0]
 
     def evaluate_array(self, ts):
         i = self.tknots.searchsorted(ts, side='right')-1
@@ -191,27 +325,6 @@ class SvCatmullRomCurve(SvCurve):
             segments.append(bezier)
         return segments
 
-    def to_nurbs(self, implementation = SvNurbsMaths.NATIVE):
-        return concatenate_nurbs_curves(self.to_bezier_segments(), tolerance=None)
-
-    def get_control_points(self):
-        return self.to_nurbs().get_control_points()
-
-    def is_line(self):
-        pts = self.points
-        begin, end = pts[0], pts[-1]
-        # direction from first to last point of the curve
-        direction = end - begin
-        if np.linalg.norm(direction) < tolerance:
-            return True
-        line = LineEquation.from_direction_and_point(direction, begin)
-        distances = line.distance_to_points(pts[1:-1])
-        # Technically, this means that all control points lie
-        # inside the cylinder, defined as "distance from line < tolerance";
-        # As a consequence, the convex hull of control points lie in the
-        # same cylinder; and the curve lies in that convex hull.
-        return (distances < tolerance).all()
-
     def reverse(self):
         points = self.points[::-1]
         t0 = self.tknots[0]
@@ -219,46 +332,13 @@ class SvCatmullRomCurve(SvCurve):
         tknots = tn + t0 - self.tknots[::-1]
         return SvCatmullRomCurve(tknots, points)
 
-    def get_bounding_box(self):
-        return bounding_box(self.points)
-
     def reparametrize(self, new_t_min, new_t_max):
         t0 = self.tknots[0]
         tn = self.tknots[-1]
         tknots = (new_t_max - new_t_min) * (self.tknots - t0) / (tn - t0) + new_t_min
         return SvCatmullRomCurve(tknots, self.points)
 
-    def is_rational(self):
-        return False
-
-    def is_planar(self, tolerance=1e-6):
-        return are_points_coplanar(self.points, tolerance)
-
-    def get_plane(self, tolerance=1e-6):
-        return get_common_plane(self.points, tolerance)
-
-    def concatenate(self, curve2, tolerance=None):
-        curve2 = SvNurbsMaths.to_nurbs_curve(curve2)
-        if curve2 is None:
-            raise UnsupportedCurveTypeException("Second curve is not a NURBS")
-        return self.to_nurbs().concatenate(curve2, tolerance=tolerance)
-
-    def make_revolution_surface(self, point, direction, v_min, v_max, global_origin):
-        return self.to_nurbs().make_revolution_surface(point, direction, v_min, v_max, global_origin)
-    
-    def extrude_along_vector(self, vector):
-        return self.to_nurbs().extrude_along_vector(vector)
-
-    def make_ruled_surface(self, curve2, vmin, vmax):
-        return self.to_nurbs().make_ruled_surface(curve2, vmin, vmax)
-
-    def extrude_to_point(self, point):
-        return self.to_nurbs().extrude_to_point(point)
-
-    def lerp_to(self, curve2, coefficient):
-        return self.to_nurbs().lerp_to(curve2, coefficient)
-
-def uniform_catmull_rom_segment(points, tension=1.0):
+def uniform_catmull_rom_bezier_segment(points, tension=1.0):
     v = np.asarray(points)
     p0 = v[1]
     p1 = v[1] + (v[2] - v[0]) / (6*tension)
@@ -266,7 +346,7 @@ def uniform_catmull_rom_segment(points, tension=1.0):
     p3 = v[2]
     return SvCubicBezierCurve(p0, p1, p2, p3)
 
-def uniform_catmull_rom_interpolate(points, concatenate=True, cyclic=False, tension=1.0):
+def uniform_catmull_rom_bezier_interpolate(points, concatenate=True, cyclic=False, tension=1.0):
     points = np.asarray(points)
     _, points = prepare_data(None, points, cyclic=cyclic)
     if isinstance(tension, (list, np.ndarray)):
@@ -277,7 +357,7 @@ def uniform_catmull_rom_interpolate(points, concatenate=True, cyclic=False, tens
     segments = []
     for i in range(len(points)-3):
         spline_cpts = points[i:i+4]
-        segment = uniform_catmull_rom_segment(spline_cpts, tensions[i])
+        segment = uniform_catmull_rom_bezier_segment(spline_cpts, tensions[i])
         segments.append(segment)
     if concatenate:
         return concatenate_nurbs_curves(segments)
