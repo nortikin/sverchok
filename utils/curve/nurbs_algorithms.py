@@ -17,7 +17,7 @@ from sverchok.utils.geom import Spline, LineEquation, linear_approximation, inte
 from sverchok.utils.nurbs_common import SvNurbsBasisFunctions, SvNurbsMaths, from_homogenous, CantInsertKnotException
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.algorithms import unify_curves_degree, SvCurveLengthSolver, SvCurveFrameCalculator
-from sverchok.utils.curve.bezier import SvBezierCurve
+from sverchok.utils.curve.bezier import SvBezierCurve, SvCubicBezierCurve
 from sverchok.utils.decorators import deprecated
 from sverchok.utils.logging import getLogger
 from sverchok.utils.math import (
