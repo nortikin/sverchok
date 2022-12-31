@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Formula Interpolate &mdash; Sverchok 1, 2, 0 documentation</title>
+  <title>Num Expression &mdash; Sverchok 1, 2, 0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
@@ -21,8 +21,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Formula Node Mk4" href="formula_mk5.html" />
-    <link rel="prev" title="Script" href="script_index.html" /> 
+    <link rel="next" title="Profile Parametric Node" href="profile_mk3.html" />
+    <link rel="prev" title="Exec Node Mod" href="multi_exec.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -77,21 +77,19 @@
 <li class="toctree-l2"><a class="reference internal" href="../viz/viz_index.html">Viz</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../text/text_index.html">Text</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="script_index.html">Script</a><ul class="current">
-<li class="toctree-l3 current"><a class="current reference internal" href="#">Formula Interpolate</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#expression-syntax">Expression syntax</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#outputs">Outputs</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#examples-of-usage">Examples of usage</a></li>
-</ul>
-</li>
+<li class="toctree-l3"><a class="reference internal" href="formula_interpolate.html">Formula Interpolate</a></li>
 <li class="toctree-l3"><a class="reference internal" href="formula_mk5.html">Formula Node Mk4</a></li>
 <li class="toctree-l3"><a class="reference internal" href="generative_art.html">Generative Art</a></li>
 <li class="toctree-l3"><a class="reference internal" href="mesh_eval.html">Mesh Expression Node</a></li>
 <li class="toctree-l3"><a class="reference internal" href="multi_exec.html">Exec Node Mod</a></li>
 <li class="toctree-l3"><a class="reference internal" href="multi_exec.html#features">features</a></li>
-<li class="toctree-l3"><a class="reference internal" href="numexpr_node.html">Num Expression</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Num Expression</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#outputs">Outputs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#examples">Examples</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="profile_mk3.html">Profile Parametric Node</a></li>
 <li class="toctree-l3"><a class="reference internal" href="script1_lite.html">Script Node Lite</a></li>
 <li class="toctree-l3"><a class="reference internal" href="sn_functor_b.html">SN Functor B</a></li>
@@ -127,9 +125,9 @@
       <li><a href="../../main.html" class="icon icon-home"></a></li>
           <li class="breadcrumb-item"><a href="../../nodes.html">Nodes</a></li>
           <li class="breadcrumb-item"><a href="script_index.html">Script</a></li>
-      <li class="breadcrumb-item active">Formula Interpolate</li>
+      <li class="breadcrumb-item active">Num Expression</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../../_sources/nodes/script/formula_interpolate.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../../_sources/nodes/script/numexpr_node.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -137,110 +135,99 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="formula-interpolate">
-<h1>Formula Interpolate<a class="headerlink" href="#formula-interpolate" title="Permalink to this heading">¶</a></h1>
+  <section id="num-expression">
+<h1>Num Expression<a class="headerlink" href="#num-expression" title="Permalink to this heading">¶</a></h1>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
-<p>This node is designed to perform interpolation between several control points.</p>
-<p>The user defines control points by specifying expressions for X and Y
-coordinates. Given these control points, the node will take another value of X
-and calculate the corresponding Y by interpolating between the control points.</p>
-<p>The node supports linear and cubic interpolation.</p>
-</section>
-<section id="expression-syntax">
-<h2>Expression syntax<a class="headerlink" href="#expression-syntax" title="Permalink to this heading">¶</a></h2>
-<p>Syntax being used for formulas is standard Python’s syntax for expressions.
-For exact syntax definition, please refer to <a class="reference external" href="https://docs.python.org/3/reference/expressions.html">https://docs.python.org/3/reference/expressions.html</a>.</p>
-<p>In short, you can use usual mathematical operations (<cite>+</cite>, <cite>-</cite>, <cite>*</cite>, <cite>/</cite>, <cite>**</cite> for power), numbers, variables, parenthesis, and function call, such as <cite>sin(T)</cite>.</p>
-<p>One difference with Python’s syntax is that you can call only restricted number of Python’s functions. Allowed are:</p>
-<ul class="simple">
-<li><p>Functions from math module:</p>
-<ul>
-<li><p>acos, acosh, asin, asinh, atan, atan2,
-atanh, ceil, copysign, cos, cosh, degrees,
-erf, erfc, exp, expm1, fabs, factorial, floor,
-fmod, frexp, fsum, gamma, hypot, isfinite, isinf,
-isnan, ldexp, lgamma, log, log10, log1p, log2, modf,
-pow, radians, sin, sinh, sqrt, tan, tanh, trunc;</p></li>
+<p>This node is currently fastest way to evaluate an expression. For best
+performance the node should get NumPy arrays. But vectorization is slow as
+it is for any other node in Sverchok, so make sure that you have all numbers in
+a single object if performance is important.</p>
+<p>The node is based on <a class="reference external" href="https://numexpr.readthedocs.io/projects/NumExpr3/en/latest/user_guide.html">NumExpr library</a>. It supports next operators:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Bitwise operators (and, or, not, xor): <code class="code docutils literal notranslate"><span class="pre">&amp;,</span> <span class="pre">|,</span> <span class="pre">~,</span> <span class="pre">^</span></code></p></li>
+<li><p>Comparison operators: <code class="code docutils literal notranslate"><span class="pre">&lt;,</span> <span class="pre">&lt;=,</span> <span class="pre">==,</span> <span class="pre">!=,</span> <span class="pre">&gt;=,</span> <span class="pre">&gt;</span></code></p></li>
+<li><p>Unary arithmetic operators: <code class="code docutils literal notranslate"><span class="pre">-</span></code></p></li>
+<li><p>Binary arithmetic operators: <code class="code docutils literal notranslate"><span class="pre">+,</span> <span class="pre">-,</span> <span class="pre">*,</span> <span class="pre">/,</span> <span class="pre">**,</span> <span class="pre">%,</span> <span class="pre">&lt;&lt;,</span> <span class="pre">&gt;&gt;</span></code></p></li>
 </ul>
-</li>
-<li><p>Constants from math module: pi, e;</p></li>
-<li><p>Additional functions: abs, sign;</p></li>
-<li><p>From mathutlis module: Vector, Matrix;</p></li>
-<li><p>Python type conversions: tuple, list, dict.</p></li>
+</div></blockquote>
+<p>Supported functions:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="code docutils literal notranslate"><span class="pre">where(bool,</span> <span class="pre">number1,</span> <span class="pre">number2):</span> <span class="pre">number</span></code> – number1 if the bool condition
+is true, number2 otherwise.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">{sin,cos,tan}(float|complex):</span> <span class="pre">float|complex</span></code> – trigonometric sine,
+cosine or tangent.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">{arcsin,arccos,arctan}(float|complex):</span> <span class="pre">float|complex</span></code> – trigonometric
+inverse sine, cosine or tangent.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">arctan2(float1,</span> <span class="pre">float2):</span> <span class="pre">float</span></code> – trigonometric inverse tangent of
+float1/float2.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">{sinh,cosh,tanh}(float|complex):</span> <span class="pre">float|complex</span></code> – hyperbolic sine,
+cosine or tangent.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">{arcsinh,arccosh,arctanh}(float|complex):</span> <span class="pre">float|complex</span></code> – hyperbolic
+inverse sine, cosine or tangent.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">{log,log10,log1p}(float|complex):</span> <span class="pre">float|complex</span></code> – natural, base-10 and
+log(1+x) logarithms.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">{exp,expm1}(float|complex):</span> <span class="pre">float|complex</span></code> – exponential and exponential
+minus one.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">sqrt(float|complex):</span> <span class="pre">float|complex</span></code> – square root.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">abs(float|complex):</span> <span class="pre">float|complex</span></code>  – absolute value.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">conj(complex):</span> <span class="pre">complex</span></code> – conjugate value.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">{real,imag}(complex):</span> <span class="pre">float</span></code> – real or imaginary part of complex.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">complex(float,</span> <span class="pre">float):</span> <span class="pre">complex</span></code> – complex from real and imaginary
+parts.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">contains(np.str,</span> <span class="pre">np.str):</span> <span class="pre">bool</span></code> – returns True for every string in <code class="code docutils literal notranslate"><span class="pre">op1</span></code> that
+contains <code class="code docutils literal notranslate"><span class="pre">op2</span></code>.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">{floor}(float):</span> <span class="pre">float</span></code> – returns the greatest integer less than or
+equal to x.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">{ceil}(float):</span> <span class="pre">float</span></code> – returns the least integer greater than or
+equal to x</p></li>
 </ul>
-<p>This restriction is for security reasons. However, Python’s ecosystem does not
-guarantee that no one can call some unsafe operations by using some sort of
-language-level hacks. So, please be warned that usage of this node with
-definition obtained from unknown or untrusted source can potentially harm your
-system or data.</p>
-<p>Examples of valid expressions are:</p>
-<ul class="simple">
-<li><p>1.0</p></li>
-<li><p>t</p></li>
-<li><p>t+1</p></li>
-<li><p>0.75*X + 0.25*Y</p></li>
-<li><p>R * sin(phi)</p></li>
+</div></blockquote>
+<p>Reduction functions:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="code docutils literal notranslate"><span class="pre">sum(number,</span> <span class="pre">axis=None)</span></code>: Sum of array elements over a given axis.
+Negative axis are not supported.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">prod(number,</span> <span class="pre">axis=None)</span></code>: Product of array elements over a given axis.
+Negative axis are not supported.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">{min,max}(number,</span> <span class="pre">axis=None)</span></code>: Find minimum/maximum value over a given axis.
+Negative axis are not supported.</p></li>
 </ul>
-<p><strong>Note</strong>: This node does not allow to use the variable <cite>x</cite> (small X) in the expressions.</p>
+</div></blockquote>
+<p><em>Note:</em> because of internal limitations, reduction operations must appear the
+last in the stack.  If not, it will be issued an error like:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="s1">&#39;sum(1)*(-1)&#39;</span><span class="p">)</span>
+<span class="go">RuntimeError: invalid program: reduction operations must occur last</span>
+</pre></div>
+</div>
+<p>The node automatically generates sockets for each variable in an input formula.
+The type of sockets can be either float/int or vector. The type of generated
+socket is dependent on the name of the variable. To generate vector type the
+variable should statr with upper <code class="docutils literal notranslate"><span class="pre">V</span></code> letter. Any other variable names will
+generate float/int type. The order of sockets is dependent on variable names.
+They are sorted in alphabetical order. The output type is vector if there is
+at least one input vector type. Variable names should be Pythonic.</p>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
-<p>This node has the following input:</p>
-<ul class="simple">
-<li><p><strong>x</strong>. The value of X variable to calculate the interpolation for. The default value is 0.5.</p></li>
-</ul>
-<p>Each variable used in the formulas will also becaome an additional input.</p>
-</section>
-<section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
-<p>This node has the following parameters:</p>
-<ul>
-<li><p><strong>Control points</strong>. Here the expressions for control points X and Y variables
-are defined. Each row in the list defines one control point. Control points
-are added by using the <cite>[+]</cite> button under the list. It is possible to move
-rows by using the arrow buttons near each row. It is possible to remove the
-rows with <cite>[-]</cite> button at each row. <strong>Note</strong>: when performing the
-interpolation, all control points are automatically sorted so that values of
-X coordinate are in ascending order. So you can specify the control points in
-any order you see comfortable.</p>
-<p>When the <strong>Interpolation mode</strong> parameter is set to <strong>Cubic</strong>, then there is
-a button to toggle the control point type between “smooth” and “sharp”. By
-default, all control points are smooth.</p>
-</li>
-<li><p><strong>Interpolation mode</strong>. This defines the interpolation algorithm. The
-available values are <strong>Linear</strong> and <strong>Cubic</strong>. The default value is
-<strong>Cubic</strong>.</p></li>
-<li><p><strong>Cyclic</strong>. This defines how the Y values are calculated when the provided
-value of X is outside of the range specified by control points. If not
-checked, then the node will just extrapolate using the interpolation spline.
-If checked, then the X value will be taken modulo the range defined by
-control points. Unchecked by default.</p></li>
-</ul>
+<p>Variable number of inputs depending on the input formula.</p>
 </section>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
-<p>This node has the following outputs:</p>
 <ul class="simple">
-<li><p><strong>Result</strong>. The result of interpolation for the specified X value.</p></li>
-<li><p><strong>Curve</strong>. Interpolation Curve object built by the specified control points.
-It will be always lying in the XOY plane along the OX axis.</p></li>
-<li><p><strong>ControlPoints</strong>. The control points, evaluated with respect to the provided
-variable values. Z coordinate of these points will always be zero, so they
-all will be lying in the XOY plane.</p></li>
+<li><p>Result</p></li>
 </ul>
 </section>
-<section id="examples-of-usage">
-<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
-<p>Visualize the interpolation curve defined by three control points:</p>
-<img alt="https://user-images.githubusercontent.com/284644/80276909-082d6380-8705-11ea-9fe9-ba546dadd210.png" src="https://user-images.githubusercontent.com/284644/80276909-082d6380-8705-11ea-9fe9-ba546dadd210.png" />
-<p>Note that here user can move the middle control point along Y axis by adjusting the value in the K input.</p>
-<p>Use interpolation between five points to scale some objects:</p>
-<img alt="https://user-images.githubusercontent.com/284644/80276910-095e9080-8705-11ea-82ca-8744bda64aed.png" src="https://user-images.githubusercontent.com/284644/80276910-095e9080-8705-11ea-82ca-8744bda64aed.png" />
-<p>Similar example with object placed along some curve:</p>
-<img alt="https://user-images.githubusercontent.com/284644/80276912-09f72700-8705-11ea-8096-8252291cd448.png" src="https://user-images.githubusercontent.com/284644/80276912-09f72700-8705-11ea-8096-8252291cd448.png" />
-<p>An example of sharp control points usage:</p>
-<img alt="https://user-images.githubusercontent.com/284644/81311390-c6a29e00-909e-11ea-926c-7ddefc591ea6.png" src="https://user-images.githubusercontent.com/284644/81311390-c6a29e00-909e-11ea-926c-7ddefc591ea6.png" />
+<section id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
+<figure class="align-default" id="id1">
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/28003269/210037965-560e2d6b-3563-4efc-9be3-da35bdf3b049.png"><img alt="https://user-images.githubusercontent.com/28003269/210037965-560e2d6b-3563-4efc-9be3-da35bdf3b049.png" src="https://user-images.githubusercontent.com/28003269/210037965-560e2d6b-3563-4efc-9be3-da35bdf3b049.png" /></a>
+<figcaption>
+<p><span class="caption-text">Round a value according to given step.</span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
 </section>
 </section>
 
@@ -248,8 +235,8 @@ all will be lying in the XOY plane.</p></li>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="script_index.html" class="btn btn-neutral float-left" title="Script" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="formula_mk5.html" class="btn btn-neutral float-right" title="Formula Node Mk4" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="multi_exec.html" class="btn btn-neutral float-left" title="Exec Node Mod" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="profile_mk3.html" class="btn btn-neutral float-right" title="Profile Parametric Node" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
