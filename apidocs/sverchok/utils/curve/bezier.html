@@ -91,7 +91,7 @@ class SvBezierSplitMixin:
         MR1M = M1 @ R1 @ M
 
         new_cpts = MR1M @ cpts
-        return SvBezierCurve(new_cpts)
+        return SvBezierCurve.from_control_points(new_cpts)
 
     def split_at(self, t):
         segment1 = self.cut_segment(0.0, t)
@@ -1936,7 +1936,7 @@ def interpolate(cls, points, metric=&#39;DISTANCE&#39;):
         MR1M = M1 @ R1 @ M
 
         new_cpts = MR1M @ cpts
-        return SvBezierCurve(new_cpts)
+        return SvBezierCurve.from_control_points(new_cpts)
 
     def split_at(self, t):
         segment1 = self.cut_segment(0.0, t)
@@ -1972,7 +1972,7 @@ def interpolate(cls, points, metric=&#39;DISTANCE&#39;):
     MR1M = M1 @ R1 @ M
 
     new_cpts = MR1M @ cpts
-    return SvBezierCurve(new_cpts)</code></pre>
+    return SvBezierCurve.from_control_points(new_cpts)</code></pre>
 </details>
 </dd>
 <dt id="sverchok.utils.curve.bezier.SvBezierSplitMixin.de_casteljau_points"><code class="name flex">
