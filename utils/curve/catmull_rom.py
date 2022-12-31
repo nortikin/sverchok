@@ -21,6 +21,15 @@ bezierM[2,1] = 2.0/3.0
 bezierM[2,2] = 1.0/3.0
 
 def prepare_data(tknots, points, cyclic=False):
+    """
+    Prepare tknots and points for use in Catmull-Rom spline:
+    * For non-cyclic curve, add one point in the beginning, by mirroring
+      the 2nd point around the first, and one point in the end, in a similar
+      way. Similarly, mirror T knot values.
+    * For a cyclic curve, add one point in the beginning, equal to the last
+      of initial points; and add two points in the end, equal to the first
+      and the second of initial points, to make a wrap.
+    """
     if cyclic:
         points = np.concatenate(([points[-1]], points), axis=0)
         points = np.append(points, [points[1], points[2]], axis=0)
@@ -45,6 +54,10 @@ def prepare_data(tknots, points, cyclic=False):
     return tknots, points
 
 class SvUniformCatmullRomCurve(SvCurve):
+    """
+    Uniform Catmull-Rom spline, allowing to specify
+    tension value for each segment.
+    """
     def __init__(self, points, tensions):
         self.points = np.asarray(points)
         self.tensions = np.asarray(tensions)
@@ -86,6 +99,8 @@ class SvUniformCatmullRomCurve(SvCurve):
         return self.evaluate_array(np.array([t]))[0]
 
     def evaluate_array(self, ts):
+        # Calculate non-uniform Catmull-Rom spline
+        # by Barry & Goldman formulas.
         n = len(self.points)
         tknots = self._make_uniform_tknots()
         i = tknots.searchsorted(ts, side='right')-1
@@ -258,6 +273,56 @@ class SvCatmullRomCurve(SvUniformCatmullRomCurve):
         return c
 
     def get_bezier_control_points(self):
+        # The derivation of formulas used in this method is as follows.
+        # 1. Take formulas for non-uniform Catmull-Rom splines.
+        # 2. Write them in matrix form:
+        #
+        # C = [ 1, t, t^2, t^3] * M * column(P0, P1, P2, P3)
+        #
+        # (P0 - P3 are control points for Catmull-Rom spline).
+        # Coefficients of the M (4x4) matrix will be some formulas in terms of
+        # T knot values (t0 - t3).
+        #
+        # 3. Write similar equation for cubic Bezier spline:
+        #
+        # C = [1, t, t^2, t^3] * B * column(B0, B1, B2, B3)
+        # (B0 - B3 are control points for Bezier spline).
+        # Coefficients for B matrix are well known:
+        # 
+        #     / 1   0  0 0 \
+        # B = | -3  3  0 0 |
+        #     |  3 -6  3 0 |
+        #     \ -1  3 -3 1 /
+        #
+        # 4. Equate right-hand sides of these two equations, and note
+        # that the component with T is the same, then remaining must be
+        # the same too:
+        #
+        # M * column(P0, P1, P2, P3) = B * column(B0, B1, B2, B3)
+        #
+        # 5. Then, obviously, we can write
+        #
+        # column(B0, B1, B2, B3) = B^{-1} * M * column(P0, P1, P2, P3)
+        #
+        # 6. Above is the formula for Bezier control points, which is valid when
+        # T is in [t0 .. t3] segment. But usual formulation of Bezier curve
+        # assumes that it's parameter goes from 0 to 1. So, let's introduce
+        # a parameter U as
+        #
+        # u = (t - t0) / (t3 - t0)
+
+        # which goes from 0 to 1 when T goes from t0 to t3. Now if we express
+        # u^2 and u^3 in terms of T, we will have
+        #
+        # [1, u, u^2, u^3] = U * [1, t, t^2, t^3]
+        #
+        # where U is some 4x4 (lower-triangular) matrix, coefficients of which
+        # are some polynomials in terms of t0 and t3.
+        #
+        # 7. Gathering all the above together, we will have that
+        #
+        # column(B0', B1', B2', B3') = B^{-1} * U * M * column(P0, P1, P2, P3)
+        #
         n = len(self.tknots)
         tk = self.tknots
         t0 = tk[0:n-3]
@@ -281,6 +346,12 @@ class SvCatmullRomCurve(SvUniformCatmullRomCurve):
         t013 = t0*t1*t3
         t023 = t0*t2*t3
         t123 = t1*t2*t3
+
+        # Formulas for M matrix coefficients all have rational form:
+        # numerator / denominator,
+        # where numerator and denominator are some polynomial in terms of t0 - t3.
+        # Nice thing is that all formulas in each column of M matrix have the
+        # same denominator.
         
         denom = np.zeros((n-3,4,4))
         denom[:,0,0] = 1.0/(dt10*dt20*dt21)
