@@ -213,7 +213,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         name="Scene update",
         description="Update upon changes in the scene",
         options=set(),
-        default=True)
+        default=False)
     """If enabled together with `SverchCustomTree.sv_process` the tree will be
     reevaluated upon changes in the scene. It will effect only nodes with
     `UpdateNodes.is_interactive` property enabled. The scene changes can be:
