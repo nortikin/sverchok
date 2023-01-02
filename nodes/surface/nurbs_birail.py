@@ -16,6 +16,7 @@ from sverchok.utils.nurbs_common import SvNurbsMaths
 from sverchok.utils.curve.core import SvCurve
 from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.surface.nurbs import nurbs_birail
+from sverchok.utils.surface.gordon import nurbs_birail_by_gordon
 from sverchok.dependencies import geomdl
 from sverchok.dependencies import FreeCAD
 
@@ -113,8 +114,15 @@ class SvNurbsBirailNode(SverchCustomTreeNode, bpy.types.Node):
             default = 'PATHS_AVG',
             update = updateNode)
 
+    use_gordon : BoolProperty(
+            name = "Use Gordon algorithm",
+            description = "Gordon algorithm can give more precise surface, but it is slower",
+            default = False,
+            update = update_sockets)
+
     def draw_buttons(self, context, layout):
         layout.prop(self, 'nurbs_implementation', text='')
+        layout.prop(self, 'use_gordon')
         layout.prop(self, "scale_uniform")
         layout.prop(self, "auto_rotate_profiles")
         layout.label(text="Profile rotation:")
@@ -187,18 +195,34 @@ class SvNurbsBirailNode(SverchCustomTreeNode, bpy.types.Node):
                 else:
                     ts1 = None
                     ts2 = None
-                _, unified_curves, v_curves, surface = nurbs_birail(path1, path2,
-                                    profiles,
-                                    ts1 = ts1, ts2 = ts2,
-                                    min_profiles = profiles_count,
-                                    knots_u = self.u_knots_mode,
-                                    degree_v = degree_v,
-                                    metric = self.metric,
-                                    scale_uniform = self.scale_uniform,
-                                    auto_rotate = self.auto_rotate_profiles,
-                                    use_tangents = self.profile_rotation,
-                                    implementation = self.nurbs_implementation
-                                )
+                if self.use_gordon:
+                    unified_curves = []
+                    v_curves = []
+                    surface = nurbs_birail_by_gordon(path1, path2, profiles,
+                            ts1 = ts1, ts2 = ts2,
+                            min_profiles = profiles_count,
+                            degree_v = degree_v,
+                            metric = self.metric,
+                            scale_uniform = self.scale_uniform,
+                            auto_rotate = self.auto_rotate_profiles,
+                            use_tangents = self.profile_rotation,
+                            implementation = self.nurbs_implementation,
+                            logger = self.get_logger()
+                        )
+                else:
+                    _, unified_curves, v_curves, surface = nurbs_birail(path1, path2,
+                                        profiles,
+                                        ts1 = ts1, ts2 = ts2,
+                                        min_profiles = profiles_count,
+                                        knots_u = self.u_knots_mode,
+                                        degree_v = degree_v,
+                                        metric = self.metric,
+                                        scale_uniform = self.scale_uniform,
+                                        auto_rotate = self.auto_rotate_profiles,
+                                        use_tangents = self.profile_rotation,
+                                        implementation = self.nurbs_implementation,
+                                        logger = self.get_logger()
+                                    )
                 new_surfaces.append(surface)
                 new_curves.extend(unified_curves)
                 new_v_curves.extend(v_curves)
