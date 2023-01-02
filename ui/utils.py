@@ -16,7 +16,12 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+import os
+from os.path import dirname, basename, join
+from pathlib import Path
 import textwrap
+
+import bpy
 
 def message_on_layout(layout, text, width=140, **kwargs):
     box = layout.box()
@@ -29,3 +34,27 @@ def enum_split(layout, node, prop_name, label, factor):
     enum_row = layout.split(factor=factor, align=False)
     enum_row.label(text=label)
     enum_row.prop(node, prop_name, text="")
+
+MENU_TYPE_DEFAULT = '__DEFAULT__'
+MENU_TYPE_SVERCHOK = '__SVERCHOK__'
+MENU_TYPE_USER = '__USER__'
+
+datafiles = join(bpy.utils.user_resource('DATAFILES', path='sverchok', create=True))
+
+def get_sverchok_menu_presets_directory():
+    return Path(__file__).parents[1] / 'menus'
+
+def get_user_menu_presets_directory():
+    return join(datafiles, 'menus')
+
+def get_menu_preset_path(preset_path):
+    preset_type, preset_name = preset_path.split(os.sep)
+    if preset_type == MENU_TYPE_DEFAULT:
+        directory = Path(__file__).parents[1]
+    elif preset_type == MENU_TYPE_SVERCHOK:
+        directory = get_sverchok_menu_presets_directory()
+    else: # MENU_TYPE_USER
+        directory = get_user_menu_presets_directory()
+    preset_path = join(directory, preset_name)
+    return preset_path
+

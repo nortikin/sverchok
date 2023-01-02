@@ -27,7 +27,7 @@ import sverchok
 from sverchok.utils.logging import error
 from sverchok.utils.docstring import SvDocstring
 from sverchok.utils.sv_default_macros import macros, DefaultMacros
-from sverchok.ui.nodeview_space_menu import add_node_menu
+from sverchok.ui.nodeview_space_menu import get_add_node_menu
 
 
 addon_name = sverchok.__name__
@@ -101,7 +101,7 @@ def gather_items(context):
     fx = []
     idx = 0
 
-    for cat in add_node_menu.walk_categories():
+    for cat in get_add_node_menu().walk_categories():
         for item in cat:
             if not hasattr(item, 'bl_idname'):
                 continue

@@ -41,7 +41,7 @@ class AddNodeToolPanel(bpy.types.Panel):
             return
 
         categories = defaultdict(list)
-        for cat in sm.add_node_menu.walk_categories():
+        for cat in sm.get_add_node_menu().walk_categories():
             for add_node in cat:
                 if not isinstance(add_node, sm.AddNode):
                     continue
@@ -52,7 +52,7 @@ class AddNodeToolPanel(bpy.types.Panel):
 
     def select_category_update(self, context):
         cat_name = context.scene.sv_add_node_panel_settings.selected_category
-        for cat in sm.add_node_menu.walk_categories():
+        for cat in sm.get_add_node_menu().walk_categories():
             if cat.menu_cls.__name__ == cat_name:
                 items = [n for n in cat if isinstance(n, (sm.AddNode, sm.Separator))]
                 AddNodeToolPanel._items = items
@@ -121,7 +121,7 @@ class AddNodePanelSettings(bpy.types.PropertyGroup):
     def categories(self, context):
         # this should be a function because new categories can be added
         # by Sverchok's extensions after the registration
-        for i, category in enumerate(sm.add_node_menu.walk_categories()):
+        for i, category in enumerate(sm.get_add_node_menu().walk_categories()):
             if any(isinstance(add_node, sm.AddNode) for add_node in category):
                 identifier = category.menu_cls.__name__
                 yield identifier, category.name, category.name, i
