@@ -174,6 +174,63 @@ class SvLine(SvCurve):
     def is_closed(self, *args):
         return False
 
+    def extrude_along_vector(self, vector):
+        return self.to_nurbs().extrude_along_vector(vector)
+
+    def make_revolution_surface(self, point, direction, v_min, v_max, global_origin):
+        return self.to_nurbs().make_revolution_surface(point, direction, v_min, v_max, global_origin)
+    
+    def make_ruled_surface(self, curve2, vmin, vmax):
+        return self.to_nurbs().make_ruled_surface(curve2, vmin, vmax)
+
+    def extrude_to_point(self, point):
+        return self.to_nurbs().extrude_to_point(point)
+
+    def lerp_to(self, curve2, coefficient):
+        return self.to_nurbs().lerp_to(curve2, coefficient)
+
+class SvPointCurve(SvCurve):
+    __description__ = &#34;Single-Point&#34;
+
+    def __init__(self, point):
+        self.point = np.asarray(point)
+
+    def evaluate(self, t):
+        return self.point
+
+    def evaluate_array(self, ts):
+        points = np.empty((len(ts),3))
+        points[:] = self.point
+        return points
+    
+    def get_u_bounds(self):
+        return (0.0, 1.0)
+
+    def get_degree(self):
+        return 1
+
+    def to_bezier(self):
+        u_min, u_max = self.get_u_bounds()
+        p1 = self.evaluate(u_min)
+        p2 = self.evaluate(u_max)
+        return SvBezierCurve([p1, p2])
+
+    def to_bezier_segments(self):
+        return [self.to_bezier()]
+
+    def is_closed(self, *args):
+        return False
+
+    def concatenate(self, curve2, *args):
+        return curve2
+
+    def to_nurbs(self, implementation = SvNurbsMaths.NATIVE):
+        return self.to_bezier().to_nurbs()
+
+    def reverse(self):
+        return SvPointCurve(self.point)
+
+
 def rotate_radius(radius, normal, thetas):
     &#34;&#34;&#34;Internal method&#34;&#34;&#34;
     ct = np.cos(thetas)[np.newaxis].T
@@ -2509,7 +2566,22 @@ def c(self):
         return np.array(self.get_end_points())
 
     def is_closed(self, *args):
-        return False</code></pre>
+        return False
+
+    def extrude_along_vector(self, vector):
+        return self.to_nurbs().extrude_along_vector(vector)
+
+    def make_revolution_surface(self, point, direction, v_min, v_max, global_origin):
+        return self.to_nurbs().make_revolution_surface(point, direction, v_min, v_max, global_origin)
+    
+    def make_ruled_surface(self, curve2, vmin, vmax):
+        return self.to_nurbs().make_ruled_surface(curve2, vmin, vmax)
+
+    def extrude_to_point(self, point):
+        return self.to_nurbs().extrude_to_point(point)
+
+    def lerp_to(self, curve2, coefficient):
+        return self.to_nurbs().lerp_to(curve2, coefficient)</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -2576,7 +2648,7 @@ def from_two_points(cls, point1, point2):
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def extrude_along_vector(self, vector):
-    return SvPlane(self.point, self.direction, vector)</code></pre>
+    return self.to_nurbs().extrude_along_vector(vector)</code></pre>
 </details>
 </dd>
 <dt id="sverchok.utils.curve.primitives.SvLine.extrude_to_point"><code class="name flex">
@@ -2788,6 +2860,164 @@ def from_two_points(cls, point1, point2):
 </li>
 </ul>
 </dd>
+<dt id="sverchok.utils.curve.primitives.SvPointCurve"><code class="flex name class">
+<span>class <span class="ident">SvPointCurve</span></span>
+<span>(</span><span>point)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvPointCurve(SvCurve):
+    __description__ = &#34;Single-Point&#34;
+
+    def __init__(self, point):
+        self.point = np.asarray(point)
+
+    def evaluate(self, t):
+        return self.point
+
+    def evaluate_array(self, ts):
+        points = np.empty((len(ts),3))
+        points[:] = self.point
+        return points
+    
+    def get_u_bounds(self):
+        return (0.0, 1.0)
+
+    def get_degree(self):
+        return 1
+
+    def to_bezier(self):
+        u_min, u_max = self.get_u_bounds()
+        p1 = self.evaluate(u_min)
+        p2 = self.evaluate(u_max)
+        return SvBezierCurve([p1, p2])
+
+    def to_bezier_segments(self):
+        return [self.to_bezier()]
+
+    def is_closed(self, *args):
+        return False
+
+    def concatenate(self, curve2, *args):
+        return curve2
+
+    def to_nurbs(self, implementation = SvNurbsMaths.NATIVE):
+        return self.to_bezier().to_nurbs()
+
+    def reverse(self):
+        return SvPointCurve(self.point)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.curve.core.SvCurve" href="core.html#sverchok.utils.curve.core.SvCurve">SvCurve</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.curve.primitives.SvPointCurve.concatenate"><code class="name flex">
+<span>def <span class="ident">concatenate</span></span>(<span>self, curve2, *args)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def concatenate(self, curve2, *args):
+    return curve2</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.primitives.SvPointCurve.is_closed"><code class="name flex">
+<span>def <span class="ident">is_closed</span></span>(<span>self, *args)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def is_closed(self, *args):
+    return False</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.primitives.SvPointCurve.reverse"><code class="name flex">
+<span>def <span class="ident">reverse</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def reverse(self):
+    return SvPointCurve(self.point)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.primitives.SvPointCurve.to_bezier"><code class="name flex">
+<span>def <span class="ident">to_bezier</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def to_bezier(self):
+    u_min, u_max = self.get_u_bounds()
+    p1 = self.evaluate(u_min)
+    p2 = self.evaluate(u_max)
+    return SvBezierCurve([p1, p2])</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.primitives.SvPointCurve.to_bezier_segments"><code class="name flex">
+<span>def <span class="ident">to_bezier_segments</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def to_bezier_segments(self):
+    return [self.to_bezier()]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.primitives.SvPointCurve.to_nurbs"><code class="name flex">
+<span>def <span class="ident">to_nurbs</span></span>(<span>self, implementation='NATIVE')</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def to_nurbs(self, implementation = SvNurbsMaths.NATIVE):
+    return self.to_bezier().to_nurbs()</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sverchok.utils.curve.core.SvCurve" href="core.html#sverchok.utils.curve.core.SvCurve">SvCurve</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sverchok.utils.curve.core.SvCurve.calc_length" href="core.html#sverchok.utils.curve.core.SvCurve.calc_length">calc_length</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.evaluate" href="core.html#sverchok.utils.curve.core.SvCurve.evaluate">evaluate</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.evaluate_array" href="core.html#sverchok.utils.curve.core.SvCurve.evaluate_array">evaluate_array</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.frame_array" href="core.html#sverchok.utils.curve.core.SvCurve.frame_array">frame_array</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_control_points" href="core.html#sverchok.utils.curve.core.SvCurve.get_control_points">get_control_points</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_degree" href="core.html#sverchok.utils.curve.core.SvCurve.get_degree">get_degree</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_tangent_delta" href="core.html#sverchok.utils.curve.core.SvCurve.get_tangent_delta">get_tangent_delta</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_u_bounds" href="core.html#sverchok.utils.curve.core.SvCurve.get_u_bounds">get_u_bounds</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.tangent" href="core.html#sverchok.utils.curve.core.SvCurve.tangent">tangent</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.tangent_array" href="core.html#sverchok.utils.curve.core.SvCurve.tangent_array">tangent_array</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.zero_torsion_frame_array" href="core.html#sverchok.utils.curve.core.SvCurve.zero_torsion_frame_array">zero_torsion_frame_array</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
 </dl>
 </section>
 </article>
@@ -2869,6 +3099,17 @@ def from_two_points(cls, point1, point2):
 <li><code><a title="sverchok.utils.curve.primitives.SvLine.to_bezier" href="#sverchok.utils.curve.primitives.SvLine.to_bezier">to_bezier</a></code></li>
 <li><code><a title="sverchok.utils.curve.primitives.SvLine.to_bezier_segments" href="#sverchok.utils.curve.primitives.SvLine.to_bezier_segments">to_bezier_segments</a></code></li>
 <li><code><a title="sverchok.utils.curve.primitives.SvLine.to_nurbs" href="#sverchok.utils.curve.primitives.SvLine.to_nurbs">to_nurbs</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.curve.primitives.SvPointCurve" href="#sverchok.utils.curve.primitives.SvPointCurve">SvPointCurve</a></code></h4>
+<ul class="two-column">
+<li><code><a title="sverchok.utils.curve.primitives.SvPointCurve.concatenate" href="#sverchok.utils.curve.primitives.SvPointCurve.concatenate">concatenate</a></code></li>
+<li><code><a title="sverchok.utils.curve.primitives.SvPointCurve.is_closed" href="#sverchok.utils.curve.primitives.SvPointCurve.is_closed">is_closed</a></code></li>
+<li><code><a title="sverchok.utils.curve.primitives.SvPointCurve.reverse" href="#sverchok.utils.curve.primitives.SvPointCurve.reverse">reverse</a></code></li>
+<li><code><a title="sverchok.utils.curve.primitives.SvPointCurve.to_bezier" href="#sverchok.utils.curve.primitives.SvPointCurve.to_bezier">to_bezier</a></code></li>
+<li><code><a title="sverchok.utils.curve.primitives.SvPointCurve.to_bezier_segments" href="#sverchok.utils.curve.primitives.SvPointCurve.to_bezier_segments">to_bezier_segments</a></code></li>
+<li><code><a title="sverchok.utils.curve.primitives.SvPointCurve.to_nurbs" href="#sverchok.utils.curve.primitives.SvPointCurve.to_nurbs">to_nurbs</a></code></li>
 </ul>
 </li>
 </ul>
