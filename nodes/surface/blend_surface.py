@@ -109,7 +109,6 @@ class SvBlendSurfaceNodeMk2(SverchCustomTreeNode, bpy.types.Node):
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'tangency_mode')
-        layout.prop(self, 'absolute_bulge')
         box = layout.row(align=True)
         box.prop(self, 'curve1_mode', text='')
         box.prop(self, 'flip1', toggle=True, text='Flip')
@@ -117,6 +116,10 @@ class SvBlendSurfaceNodeMk2(SverchCustomTreeNode, bpy.types.Node):
         box.prop(self, 'curve2_mode', text='')
         box.prop(self, 'flip2', toggle=True, text='Flip')
         layout.prop(self, 'use_nurbs')
+
+    def draw_buttons_ext(self, context, layout):
+        self.draw_buttons(context, layout)
+        layout.prop(self, 'absolute_bulge')
 
     def sv_init(self, context):
         self.inputs.new('SvSurfaceSocket', 'Surface1')
