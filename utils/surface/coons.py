@@ -12,7 +12,7 @@ from sverchok.utils.nurbs_common import from_homogenous
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.core import UnsupportedCurveTypeException
 from sverchok.utils.curve.nurbs import SvNurbsCurve
-from sverchok.utils.curve.algorithms import reverse_curve, reparametrize_curve
+from sverchok.utils.curve.algorithms import reverse_curve, reparametrize_curve, unify_curves_degree
 from sverchok.utils.curve.nurbs_algorithms import unify_curves, unify_two_curves
 from sverchok.utils.surface.core import SvSurface
 from sverchok.utils.surface.nurbs import SvNurbsSurface
@@ -83,10 +83,11 @@ def coons_surface(curve1, curve2, curve3, curve4, use_nurbs=NURBS_IF_POSSIBLE):
             return SvCoonsSurface(*curves)
     try:
         nurbs_curves = [c.reparametrize(0,1) for c in nurbs_curves]
-        degrees = [c.get_degree() for c in nurbs_curves]
         implementation = nurbs_curves[0].get_nurbs_implementation()
 
+        nurbs_curves[0], nurbs_curves[2] = unify_curves_degree([nurbs_curves[0], nurbs_curves[2]])
         nurbs_curves[0], nurbs_curves[2] = unify_curves([nurbs_curves[0], nurbs_curves[2]])
+        nurbs_curves[1], nurbs_curves[3] = unify_curves_degree([nurbs_curves[1], nurbs_curves[3]])
         nurbs_curves[1], nurbs_curves[3] = unify_curves([nurbs_curves[1], nurbs_curves[3]])
 
         degree_u = nurbs_curves[0].get_degree()
