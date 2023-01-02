@@ -55,7 +55,7 @@ This node has the following parameters:
 * **Input**. This defines how the curves are provided. The following options are available:
 
   * **List of curves**. All curves are provided in a single input **Curves**.
-  * **4 Curves**. Each curve is provided in separate input **Curve1** - **Curve4**.
+  * **Separate inputs**. Each curve is provided in separate input **Curve1** - **Curve4**.
 
   The default value is **List of Curves**.
 
