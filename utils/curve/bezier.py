@@ -75,7 +75,7 @@ class SvBezierCurve(SvCurve, SvBezierSplitMixin):
     Bezier curve of arbitrary degree.
     """
     def __init__(self, points):
-        self.points = points
+        self.points = np.asarray(points)
         self.tangent_delta = 0.001
         n = self.degree = len(points) - 1
         self.__description__ = "Bezier[{}]".format(n)
