@@ -68,7 +68,7 @@ class SvBlendSurfaceNodeMk2(SverchCustomTreeNode, bpy.types.Node):
     absolute_bulge : BoolProperty(
             name = "Absolute bulge",
             description = "If checked, then bulge values specified are actual required tangent vector lengths; otherwise, bulge values are specified as multipliers of surface's tangent vectors",
-            default = False,
+            default = True,
             update = updateNode)
 
     bulge1 : FloatProperty(
