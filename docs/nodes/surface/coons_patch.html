@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Surface from Four Curves &mdash; Sverchok 1, 2, 0 documentation</title>
+  <title>Surface from Boundary Curves &mdash; Sverchok 1, 2, 0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
@@ -59,7 +59,7 @@
 <li class="toctree-l3"><a class="reference internal" href="apply_field_to_surface.html">Apply Field to Surface</a></li>
 <li class="toctree-l3"><a class="reference internal" href="approximate_nurbs_surface.html">Approximate NURBS Surface</a></li>
 <li class="toctree-l3"><a class="reference internal" href="blend_surface.html">Blend Surfaces</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">Surface from Four Curves</a><ul>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Surface from Boundary Curves</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters</a></li>
@@ -164,7 +164,7 @@
       <li><a href="../../main.html" class="icon icon-home"></a></li>
           <li class="breadcrumb-item"><a href="../../nodes.html">Nodes</a></li>
           <li class="breadcrumb-item"><a href="surface_index.html">Surface</a></li>
-      <li class="breadcrumb-item active">Surface from Four Curves</li>
+      <li class="breadcrumb-item active">Surface from Boundary Curves</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../_sources/nodes/surface/coons_patch.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -174,8 +174,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="surface-from-four-curves">
-<h1>Surface from Four Curves<a class="headerlink" href="#surface-from-four-curves" title="Permalink to this heading">¶</a></h1>
+  <section id="surface-from-boundary-curves">
+<h1>Surface from Boundary Curves<a class="headerlink" href="#surface-from-boundary-curves" title="Permalink to this heading">¶</a></h1>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node generates a Surface object from exactly four Curve object, that
@@ -190,6 +190,10 @@ clockwise or counterclockwise).</p></li>
 <p>That is, the second curve must begin at the point where the first curve ends;
 and the third curve must begin at the point where the second curve ends; and so
 on.</p>
+<p>It is also possible to omit the fourth curve, thus to build a surface from
+three boundary curves. If the third curve does not end in the same point where
+the first curve started, the node will use a straight line segment as fourth
+curve.</p>
 <p>The surface is calculated as a Coons patch, see <a class="reference external" href="https://en.wikipedia.org/wiki/Coons_patch">https://en.wikipedia.org/wiki/Coons_patch</a>.</p>
 <p>When all provided curves are NURBS or NURBS-like, then the node will try to
 output NURBS surface. The sufficient requirement for this is that opposite
@@ -203,12 +207,13 @@ node will create a generic Coons surface.</p>
 <ul class="simple">
 <li><p><strong>Curves</strong>. The list of curves to build a surface form. This input can accept
 data with nesting level of 1 or 2 (list of curves or list of lists of
-curves). Each list of curves must have length of 4. This input is available
+curves). Each list of curves must have length of 3 or 4. This input is available
 and mandatory only if <strong>Input</strong> parameter is set to <strong>List of Curves</strong>.</p></li>
 <li><p><strong>Curve1</strong>, <strong>Curve2</strong>, <strong>Curve3</strong>, <strong>Curve4</strong>. Curves to build surface from.
 These inputs can accept data with nesting level 1 only (list of curves).
-These inputs are available and mandatory only if <strong>Input</strong> parameter is set
-to <strong>4 Curves</strong>.</p></li>
+These inputs are available only if <strong>Input</strong> parameter is set
+to <strong>4 Curves</strong>. Inputs <strong>Curve1</strong>, <strong>Curve2</strong> and <strong>Curve3</strong> are mandatory.
+<strong>Curve4</strong> input is optional.</p></li>
 </ul>
 </section>
 <section id="parameters">
@@ -218,7 +223,7 @@ to <strong>4 Curves</strong>.</p></li>
 <li><p><strong>Input</strong>. This defines how the curves are provided. The following options are available:</p>
 <ul class="simple">
 <li><p><strong>List of curves</strong>. All curves are provided in a single input <strong>Curves</strong>.</p></li>
-<li><p><strong>4 Curves</strong>. Each curve is provided in separate input <strong>Curve1</strong> - <strong>Curve4</strong>.</p></li>
+<li><p><strong>Separate inputs</strong>. Each curve is provided in separate input <strong>Curve1</strong> - <strong>Curve4</strong>.</p></li>
 </ul>
 <p>The default value is <strong>List of Curves</strong>.</p>
 </li>
@@ -267,6 +272,11 @@ another reason, the node will create a generic Surface object.</p></li>
 <img alt="https://user-images.githubusercontent.com/284644/82479764-3fb4e300-9aec-11ea-8ddf-e4fce21f57a2.png" src="https://user-images.githubusercontent.com/284644/82479764-3fb4e300-9aec-11ea-8ddf-e4fce21f57a2.png" />
 <p>It is possible to use the node together with “Split Curve” node to generate a surface from one closed curve:</p>
 <img alt="https://user-images.githubusercontent.com/284644/82479760-3deb1f80-9aec-11ea-8411-22ffd273259f.png" src="https://user-images.githubusercontent.com/284644/82479760-3deb1f80-9aec-11ea-8411-22ffd273259f.png" />
+<p>It is possible to use only three boundary curves:</p>
+<img alt="https://user-images.githubusercontent.com/284644/210209607-113759b7-9992-4e5d-870d-6aa6dafe0c32.png" src="https://user-images.githubusercontent.com/284644/210209607-113759b7-9992-4e5d-870d-6aa6dafe0c32.png" />
+<p>If the third curve end does not coincide with the beginning of the first curve,
+the node will close the cycle with a straight line segment:</p>
+<img alt="https://user-images.githubusercontent.com/284644/210209611-052c63b6-ef39-4c12-a047-d7d369f3469c.png" src="https://user-images.githubusercontent.com/284644/210209611-052c63b6-ef39-4c12-a047-d7d369f3469c.png" />
 </section>
 </section>
 
@@ -281,7 +291,7 @@ another reason, the node will create a generic Surface object.</p></li>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2014...2022, sverchok team.</p>
+    <p>&#169; Copyright 2014...2023, sverchok team.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

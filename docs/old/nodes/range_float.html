@@ -84,7 +84,7 @@
 <p><em>alias: List Range Float</em></p>
 <p>Useful for generating sequences of Float values. The code perhaps describes best what the three modes do:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">frange</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">step</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;Behaves like range but for floats&#39;&#39;&#39;</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;Behaves like range but for floats&#39;&#39;&#39;</span>
     <span class="k">if</span> <span class="n">start</span> <span class="o">==</span> <span class="n">stop</span><span class="p">:</span>
         <span class="n">stop</span> <span class="o">+=</span> <span class="mi">1</span>
     <span class="n">step</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mf">1e-5</span><span class="p">,</span> <span class="nb">abs</span><span class="p">(</span><span class="n">step</span><span class="p">))</span>
@@ -100,7 +100,7 @@
 
 
 <span class="k">def</span> <span class="nf">frange_count</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">count</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; Gives count total values in [start,stop] &#39;&#39;&#39;</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39; Gives count total values in [start,stop] &#39;&#39;&#39;</span>
     <span class="k">if</span> <span class="n">count</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
         <span class="k">yield</span> <span class="n">start</span>
     <span class="k">else</span><span class="p">:</span>
@@ -114,7 +114,7 @@
 
 
 <span class="k">def</span> <span class="nf">frange_step</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">step</span><span class="p">,</span> <span class="n">count</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; Gives count values with step from start&#39;&#39;&#39;</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39; Gives count values with step from start&#39;&#39;&#39;</span>
     <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">step</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-5</span><span class="p">:</span>
         <span class="n">step</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">count</span><span class="p">)):</span>
@@ -217,7 +217,7 @@ sequence will be of descending values.</p></td>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2014...2022, sverchok team.</p>
+    <p>&#169; Copyright 2014...2023, sverchok team.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
