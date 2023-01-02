@@ -1375,13 +1375,8 @@ def interpolate_nurbs_curves(curves, base_vs, target_vs,
     iso_curves = [lofted.iso_curve(fixed_direction='V', param=v) for v in rebased_vs]
     # Calculate iso_curves of the lofted surface, and move them back along Z axis
     back_vectors = []
-    for v, curve in zip(rebased_vs, iso_curves):
-        min_u, max_u = curve.get_u_bounds()
-        start = curve.evaluate(min_u)
-        end = curve.evaluate(max_u)
-        pt = 0.5 * (start + end)
-        dz = pt[2]
-        back_vector = np.array([0, 0, -dz])
+    for v in rebased_vs:
+        back_vector = np.array([0, 0, -v])
         back_vectors.append(back_vector)
 
     return [curve.transform(None, back) for curve, back in zip(iso_curves, back_vectors)]
