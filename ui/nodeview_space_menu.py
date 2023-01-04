@@ -474,22 +474,24 @@ add_node_menu = None
 def setup_add_menu():
     global add_node_menu
     datafiles = Path(bpy.utils.user_resource('DATAFILES', path='sverchok', create=True))
-    menu_file = datafiles / 'index.yaml'
 
-    need_apply_preset = False
     default_menu_file = Path(__file__).parents[1] / 'index.yaml'
 
-    if not menu_file.exists():
-        need_apply_preset = True
-    else:
-        with sv_preferences() as prefs:
-            if prefs.menu_preset_application == 'ALWAYS':
-                need_apply_preset = True
-                default_menu_file = get_menu_preset_path(prefs.menu_preset)
+    with sv_preferences() as prefs:
+        if prefs is None:
+            raise Exception("Internal error: Sverchok preferences are not initialized yet at the moment of loading the menu")
+        if prefs.menu_preset_usage == 'COPY':
+            default_menu_file = get_menu_preset_path(prefs.menu_preset)
+            menu_file = datafiles / 'index.yaml'
+            use_preset_copy = True
+        else:
+            menu_file = get_menu_preset_path(prefs.menu_preset)
+            use_preset_copy = False
 
-    if need_apply_preset:
+    if use_preset_copy and not menu_file.exists():
         info(f"Applying menu preset {default_menu_file} at startup")
         shutil.copy(default_menu_file, menu_file)
+    debug(f"Using menu preset file: {menu_file}")
     add_node_menu = Category.from_config(yaml_parser.load(menu_file), 'All Categories', icon_name='RNA')
 
 def get_add_node_menu():

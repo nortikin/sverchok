@@ -447,16 +447,16 @@ class SverchokPreferences(AddonPreferences):
             items = get_menu_presets,
         )
 
-    menu_application_modes = [
-            ('ALWAYS', "Apply at each startup", "Menu preset will be automatically applied upon each Blender startup", 0),
-            ('MANUAL', "Apply manually", "Menu preset will be applied only explicitly, allowing you to maintain your own version of index.yaml in datafiles", 1)
+    menu_usage_options = [
+            ('SVERCHOK', "Use preset file", "Original menu preset file will be used. So the menu will be updated automatically when the preset is updated within Sverchok distribution", 0),
+            ('COPY', "Use local copy of preset file", "Menu preset file will be copied under your datafiles directory. You may edit it manually without touching the preset file in Sverchok directory. But the responsibility of updating the menu when a node is added into Sverchok is yours", 1)
         ]
 
-    menu_preset_application : EnumProperty(
+    menu_preset_usage : EnumProperty(
             name = "Application mode",
             description = "Menu preset application mode",
-            items = menu_application_modes,
-            default = 'ALWAYS'
+            items = menu_usage_options,
+            default = 'SVERCHOK'
         )
 
     def general_tab(self, layout):
@@ -468,12 +468,15 @@ class SverchokPreferences(AddonPreferences):
         box.label(text = "Menu presets:")
         menu_col = box.column()
         menu_col.prop(self, 'menu_preset', text='Preset')
-        menu_split = menu_col.split(factor=0.8)
-        split_prop = menu_split.column()
-        split_prop.prop(self, 'menu_preset_application', text='')
-        op_split = menu_split.column()
-        op = op_split.operator(SvOverwriteMenuFile.bl_idname, text="Apply")
-        op.preset_path = self.menu_preset
+        if self.menu_preset_usage == 'COPY':
+            menu_split = menu_col.split(factor=0.8)
+            split_prop = menu_split.column()
+            split_prop.prop(self, 'menu_preset_usage', text='')
+            op_split = menu_split.column()
+            op = op_split.operator(SvOverwriteMenuFile.bl_idname, text="Copy")
+            op.preset_path = self.menu_preset
+        else:
+            menu_col.prop(self, 'menu_preset_usage', text='')
 
         col1.prop(self, "external_editor", text="Ext Editor")
         col1.prop(self, "real_sverchok_path", text="Src Directory")
