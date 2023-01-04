@@ -29,8 +29,11 @@ from bpy.props import StringProperty
 from sverchok.ui.sv_icons import node_icon, icon, get_icon_switch
 from sverchok.ui import presets
 from sverchok.ui.presets import apply_default_preset
+from sverchok.ui.utils import get_menu_preset_path
+from sverchok.utils.context_managers import sv_preferences
 from sverchok.utils import yaml_parser
 from sverchok.utils.modules_inspection import iter_classes_from_module
+from sverchok.utils.logging import info, debug
 
 
 """
@@ -466,13 +469,36 @@ class CategoryMenuTemplate(SverchokContext):
         for elem in self.draw_data:
             elem.draw(self.layout)
 
+add_node_menu = None
 
-datafiles = Path(bpy.utils.user_resource('DATAFILES', path='sverchok', create=True))
-menu_file = datafiles / 'index.yaml'
-if not menu_file.exists():
+def setup_add_menu():
+    global add_node_menu
+    datafiles = Path(bpy.utils.user_resource('DATAFILES', path='sverchok', create=True))
+
     default_menu_file = Path(__file__).parents[1] / 'index.yaml'
-    shutil.copy(default_menu_file, menu_file)
-add_node_menu = Category.from_config(yaml_parser.load(menu_file), 'All Categories', icon_name='RNA')
+
+    with sv_preferences() as prefs:
+        if prefs is None:
+            raise Exception("Internal error: Sverchok preferences are not initialized yet at the moment of loading the menu")
+        if prefs.menu_preset_usage == 'COPY':
+            default_menu_file = get_menu_preset_path(prefs.menu_preset)
+            menu_file = datafiles / 'index.yaml'
+            use_preset_copy = True
+        else:
+            menu_file = get_menu_preset_path(prefs.menu_preset)
+            use_preset_copy = False
+
+    if use_preset_copy and not menu_file.exists():
+        info(f"Applying menu preset {default_menu_file} at startup")
+        shutil.copy(default_menu_file, menu_file)
+    debug(f"Using menu preset file: {menu_file}")
+    add_node_menu = Category.from_config(yaml_parser.load(menu_file), 'All Categories', icon_name='RNA')
+
+def get_add_node_menu():
+    global add_node_menu
+    if add_node_menu is None:
+        setup_add_menu()
+    return add_node_menu
 
 class AddNodeOp(bl_operators.node.NodeAddOperator):
     extra_description: StringProperty()
@@ -658,7 +684,7 @@ def register():
     for class_name in classes:
         bpy.utils.register_class(class_name)
     bpy.types.NODE_MT_add.append(sv_draw_menu)
-    add_node_menu.register()
+    get_add_node_menu().register()
 
 
 def unregister():

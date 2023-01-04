@@ -24,7 +24,7 @@ from sverchok.settings import get_dpi_factor
 from sverchok.utils.logging import debug
 from collections import namedtuple
 
-from sverchok.ui.nodeview_space_menu import add_node_menu
+from sverchok.ui.nodeview_space_menu import get_add_node_menu
 
 _node_category_cache = {}  # cache for the node categories
 _spawned_nodes = {}  # cache for the spawned nodes
@@ -115,14 +115,14 @@ def cache_node_categories():
     if _node_category_cache:
         return
 
-    categories = [c.name for c in add_node_menu.walk_categories()]
+    categories = [c.name for c in get_add_node_menu().walk_categories()]
 
     _node_category_cache["categories"] = {}
     _node_category_cache["categories"]["names"] = list(categories)
     _node_category_cache["categories"]["names"].append("All")
     _node_category_cache["categories"]["All"] = {}
     _node_category_cache["categories"]["All"]["nodes"] = []
-    for cat in add_node_menu.walk_categories():
+    for cat in get_add_node_menu().walk_categories():
         nodes = [n.bl_idname for n in cat if hasattr(n, 'bl_idname')]
         nodes = list(filter(lambda node: should_display_node(node), nodes))
         _node_category_cache["categories"][cat.name] = {}
@@ -251,7 +251,10 @@ class SvDisplayNodePanelProperties(bpy.types.PropertyGroup):
     def category_items(self, context):
         ''' Get the items to display in the category enum property '''
         cache_node_categories()
-        return _node_category_cache["categories"]["items"]
+        if _node_category_cache:
+            return _node_category_cache["categories"]["items"]
+        else:
+            return []
 
     def arrange_nodes(self, context):
         ''' Arrange the nodes in current category (using bin-packing) '''

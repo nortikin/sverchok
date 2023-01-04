@@ -9,7 +9,13 @@ import bpy
 from bpy.types import AddonPreferences
 from bpy.props import BoolProperty, FloatVectorProperty, EnumProperty, IntProperty, FloatProperty, StringProperty
 
-from sverchok.ui.utils import message_on_layout
+from sverchok.ui.utils import (
+        MENU_TYPE_DEFAULT, MENU_TYPE_SVERCHOK, MENU_TYPE_USER,
+        get_sverchok_menu_presets_directory, get_user_menu_presets_directory,
+        get_menu_preset_path,
+        datafiles,
+        message_on_layout
+    )
 
 """Don't import other Sverchok modules here"""
 
@@ -25,18 +31,6 @@ set_frame_change = None
 info, setLevel = [None] * 2
 draw_extra_addons = None
 apply_theme, rebuild_color_cache, color_callback = [None] * 3
-
-MENU_TYPE_DEFAULT = '__DEFAULT__'
-MENU_TYPE_SVERCHOK = '__SVERCHOK__'
-MENU_TYPE_USER = '__USER__'
-
-datafiles = join(bpy.utils.user_resource('DATAFILES', path='sverchok', create=True))
-
-def get_sverchok_menu_presets_directory():
-    return join(dirname(__file__), 'menus')
-
-def get_user_menu_presets_directory():
-    return join(datafiles, 'menus')
 
 def get_params(prop_names_and_fallbacks, direct=False):
     """
@@ -207,14 +201,7 @@ class SvOverwriteMenuFile(bpy.types.Operator):
 
     def execute(self, context):
         target_menu_file = join(datafiles, 'index.yaml')
-        preset_type, preset_name = self.preset_path.split(os.sep)
-        if preset_type == MENU_TYPE_DEFAULT:
-            directory = dirname(__file__)
-        elif preset_type == MENU_TYPE_SVERCHOK:
-            directory = get_sverchok_menu_presets_directory()
-        else: # MENU_TYPE_USER
-            directory = get_user_menu_presets_directory()
-        preset_path = join(directory, preset_name)
+        preset_path = get_menu_preset_path(self.preset_path)
         shutil.copy(preset_path, target_menu_file)
         self.report({'INFO'}, f"Menu preset {preset_path} saved as {target_menu_file}. Please restart Blender to see effect.")
         return {'FINISHED'}
@@ -460,19 +447,36 @@ class SverchokPreferences(AddonPreferences):
             items = get_menu_presets,
         )
 
+    menu_usage_options = [
+            ('SVERCHOK', "Use preset file", "Original menu preset file will be used. So the menu will be updated automatically when the preset is updated within Sverchok distribution", 0),
+            ('COPY', "Use local copy of preset file", "Menu preset file will be copied under your datafiles directory. You may edit it manually without touching the preset file in Sverchok directory. But the responsibility of updating the menu when a node is added into Sverchok is yours", 1)
+        ]
+
+    menu_preset_usage : EnumProperty(
+            name = "Application mode",
+            description = "Menu preset application mode",
+            items = menu_usage_options,
+            default = 'SVERCHOK'
+        )
 
     def general_tab(self, layout):
         col = layout.row().column()
         col_split = col.split(factor=0.5)
         col1 = col_split.column()
 
-        row = col1.row()
-        split = row.split(factor=0.85)
-        split_prop = split.column()
-        split_prop.prop(self, 'menu_preset')
-        split_op = split.column()
-        op = split_op.operator(SvOverwriteMenuFile.bl_idname, text="Set")
-        op.preset_path = self.menu_preset
+        box = col1.box()
+        box.label(text = "Menu presets:")
+        menu_col = box.column()
+        menu_col.prop(self, 'menu_preset', text='Preset')
+        if self.menu_preset_usage == 'COPY':
+            menu_split = menu_col.split(factor=0.8)
+            split_prop = menu_split.column()
+            split_prop.prop(self, 'menu_preset_usage', text='')
+            op_split = menu_split.column()
+            op = op_split.operator(SvOverwriteMenuFile.bl_idname, text="Copy")
+            op.preset_path = self.menu_preset
+        else:
+            menu_col.prop(self, 'menu_preset_usage', text='')
 
         col1.prop(self, "external_editor", text="Ext Editor")
         col1.prop(self, "real_sverchok_path", text="Src Directory")
