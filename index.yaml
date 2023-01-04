@@ -74,6 +74,8 @@
         - SvKinkyCurveNode
         - SvBiArcNode
         - SvPolyArcNode
+        - ---
+        - SvPointCurveNode
     - SvExCurveFormulaNode
     - SvExCubicSplineNode
     - SvCatmullRomSplineNode

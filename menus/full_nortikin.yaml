@@ -80,6 +80,8 @@
             - SvKinkyCurveNode
             - SvBiArcNode
             - SvPolyArcNode
+            - ---
+            - SvPointCurveNode
         - GC BEZIER:
             - icon_name: MESH_CUBE
             - SvBezierSplineNode
