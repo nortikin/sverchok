@@ -1088,24 +1088,35 @@ class SvBlendSurface(SvSurface):
             c2_binormals = self.bulge2 * c2_binormals
 
         if self.tangency == SvBlendSurface.G2:
-            c1_across = calc_curvatures_across_curve(self.curve1, self.surface1, c1_us)
-            c2_across = calc_curvatures_across_curve(self.curve2, self.surface2, c2_us)
+            c1_across = calc1.calc_curvatures_across_curve()
+            c2_across = calc2.calc_curvatures_across_curve()
 
             A1 = c1_points
             A2 = c2_points
             B1 = A1 + c1_binormals / 5
             B2 = A2 + c2_binormals / 5
 
-            n1dir = c1_tangents / np.linalg.norm(c1_tangents, axis=1, keepdims=True)
-            n2dir = c2_tangents / np.linalg.norm(c2_tangents, axis=1, keepdims=True)
+            n1dir = c1_normals / np.linalg.norm(c1_normals, axis=1, keepdims=True)
+            n2dir = c2_normals / np.linalg.norm(c2_normals, axis=1, keepdims=True)
 
             r1 = c1_across * np.linalg.norm(c1_binormals, axis=1)**2 / 20
             r2 = c2_across * np.linalg.norm(c2_binormals, axis=1)**2 / 20
             r1 = r1[np.newaxis].T
             r2 = r2[np.newaxis].T
 
-            C1 = B1 + r1 * n1dir
-            C2 = B2 + r2 * n2dir
+            bs = (B2 - B1) / np.linalg.norm(B2 - B1, axis=1, keepdims=True)
+
+            cos_alpha1 = np_dot(t1dir, bs)[np.newaxis].T
+            cos_beta1 = np_dot(n1dir, bs)[np.newaxis].T
+            t12 = (r1 * cos_beta1) / (1 - cos_alpha1**2)
+            t11 = cos_alpha1 * t12
+            C1 = B1 + r1 * n1dir + t11 * t1dir
+
+            cos_alpha2 = np_dot(t2dir, -bs)[np.newaxis].T
+            cos_beta2 = np_dot(n2dir, -bs)[np.newaxis].T
+            t22 = (r2 * cos_beta2) / (1 - cos_alpha2**2)
+            t21 = cos_alpha2 * t22
+            C2 = B2 + r2 * n2dir + t21 * t2dir
 
             # See also sverchok.utils.curve.bezier.SvBezierCurve.
             c0 = (1 - vs)**5      # (n,)

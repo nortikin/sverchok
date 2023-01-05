@@ -182,8 +182,19 @@ class SvBezierCurve(SvCurve, SvBezierSplitMixin):
         r1 = curvature1 * np.linalg.norm(tangent1)**2 / 20
         r2 = curvature2 * np.linalg.norm(tangent2)**2 / 20
 
-        C1 = B1 + r1 * n1dir
-        C2 = B2 + r2 * n2dir
+        b = (B2 - B1) / np.linalg.norm(B2 - B1)
+
+        cos_alpha1 = np.dot(t1dir, b)
+        cos_beta1 = np.dot(n1dir, b)
+        t12 = (r1 * cos_beta1) / (1 - cos_alpha1**2)
+        t11 = cos_alpha1 * t12
+        C1 = B1 + r1 * n1dir + t11 * t1dir
+
+        cos_alpha2 = np.dot(t2dir, -b)
+        cos_beta2 = np.dot(n2dir, -b)
+        t22 = (r2 * cos_beta2) / (1 - cos_alpha2**2)
+        t21 = cos_alpha2 * t22
+        C2 = B2 + r2 * n2dir + t21 * t2dir
 
         return SvBezierCurve([A1, B1, C1, C2, B2, A2])
 
