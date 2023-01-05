@@ -742,6 +742,110 @@ class SvLengthRebuiltCurve(SvCurve):
         c_ts = self.solver.solve(ts)
         return self.curve.evaluate_array(c_ts)
 
+class SvCurveOnSurfaceCurvaturesCalculator(object):
+    def __init__(self, uv_curve, surface, ts, w_axis=2):
+        self.uv_curve = uv_curve
+        self.surface = surface
+        self.ts = np.asarray(ts)
+        self.w_axis = w_axis
+        self.curve = SvCurveOnSurface(self.uv_curve, self.surface, axis=w_axis)
+        self._uv_points = None
+        self._tangents = None
+        self._unit_tangents = None
+        self._surface_calculator = None
+
+    @property
+    def uv_points(self):
+        if self._uv_points is None:
+            self._uv_points = self.uv_curve.evaluate_array(self.ts)
+        return self._uv_points
+
+    @property
+    def surface_calculator(self):
+        if self._surface_calculator is None:
+            if self.w_axis == 2:
+                U, V = 0, 1
+            elif self.w_axis == 1:
+                U, V = 0, 2
+            else:
+                U, V = 1, 2
+            self._surface_calculator = self.surface.curvature_calculator(self.uv_points[:,U], self.uv_points[:,V])
+        return self._surface_calculator
+
+    @property
+    def tangents(self):
+        if self._tangents is None:
+            self._tangents = self.curve.tangent_array(self.ts)
+        return self._tangents
+
+    @property
+    def unit_tangents(self):
+        if self._unit_tangents is None:
+            self._unit_tangents = self.tangents / np.linalg.norm(self.tangents, axis=1, keepdims=True)
+        return self._unit_tangents
+
+    def calc_tangent_cosines(self):
+        du = self.surface_calculator.fu / np.linalg.norm(self.surface_calculator.fu, axis=1, keepdims=True)
+        dv = self.surface_calculator.fv / np.linalg.norm(self.surface_calculator.fv, axis=1, keepdims=True)
+        v1 = (self.unit_tangents * du).sum(axis=1)
+        v2 = (self.unit_tangents * dv).sum(axis=1)
+        return v1, v2
+
+    def calc_curvatures_along_curve(self):
+        v1, v2 = self.calc_tangent_cosines()
+        return self.surface_calculator.curvature_along_direction(v1, v2)
+
+    def calc_curvatures_across_curve(self):
+        v1, v2 = self.calc_tangent_cosines()
+        mean = self.surface_calculator.mean()
+        curvatures = self.surface_calculator.curvature_along_direction(v1, v2)
+        curvatures = 2*mean - curvatures
+        return curvatures
+
+    def curve_frame_on_surface_array(self, normalize=True, on_zero_curvature=SvCurve.ASIS):
+        """
+        Curve frame which is lying in the surface.
+
+        Frame is oriented as follows:
+            * X is pointing along surface normal
+            * Z is pointing along curve tangent
+            * Y is perpendicular to both X and Z.
+
+        Args:
+            normalize: whether the returned vectors should have unit norm
+
+        Returns:
+            tuple:
+                * matrices: np.array of shape (n, 3, 3)
+                * points: np.array of shape (n, 3) - points on the surface
+                * tangents: np.array of shape (n, 3)
+                * normals: np.array of shape (n, 3)
+                * binormals: np.array of shape (n, 3)
+        """
+        surf_points = self.surface_calculator.points
+        if normalize:
+            tangents = self.tangents
+        else:
+            tangents = self.unit_tangents
+
+        normals = self.surface_calculator.normals
+        if normalize:
+            normals = normals / np.linalg.norm(normals, axis=1, keepdims=True)
+
+        if on_zero_curvature != SvCurve.ASIS:
+            zero_normal = np.linalg.norm(normals, axis=1) < 1e-6
+            if zero_normal.any():
+                if on_zero_curvature == SvCurve.FAIL:
+                    raise ZeroCurvatureException(np.unique(ts[zero_normal]), zero_normal)
+                elif on_zero_curvature == SvCurve.RETURN_NONE:
+                    return None
+
+        binormals = - np.cross(normals, tangents)
+        matrices_np = np.dstack((normals, binormals, tangents))
+        matrices_np = np.transpose(matrices_np, axes=(0,2,1))
+        matrices_np = np.linalg.inv(matrices_np)
+        return matrices_np, surf_points, tangents, normals, binormals
+
 def curve_frame_on_surface_array(surface, uv_curve, us, w_axis=2, normalize=True, on_zero_curvature=SvCurve.ASIS):
     """
     Curve frame which is lying in the surface.
@@ -757,6 +861,7 @@ def curve_frame_on_surface_array(surface, uv_curve, us, w_axis=2, normalize=True
         us: values of curve's T parameter; type: np.array of shape (n,)
         w_axis: defines which axis of the curve is surface's normal (two
           other axes are surface's U and V). Default of 2 means X is U and Y is V.
+        normalize: whether the returned vectors should have unit norm
 
     Returns:
         tuple:
@@ -766,39 +871,8 @@ def curve_frame_on_surface_array(surface, uv_curve, us, w_axis=2, normalize=True
             * normals: np.array of shape (n, 3)
             * binormals: np.array of shape (n, 3)
     """
-
-    if w_axis == 2:
-        U, V = 0, 1
-    elif w_axis == 1:
-        U, V = 0, 2
-    else:
-        U, V = 1, 2
-
-    uv_points = uv_curve.evaluate_array(us)
-    curve = SvCurveOnSurface(uv_curve, surface, axis=w_axis)
-    surf_points = curve.evaluate_array(us)
-    tangents = curve.tangent_array(us)
-    if normalize:
-        tangents = tangents / np.linalg.norm(tangents, axis=1, keepdims=True)
-
-    us, vs = uv_points[:,U], uv_points[:,V]
-    normals = surface.normal_array(us, vs)
-    if normalize:
-        normals = normals / np.linalg.norm(normals, axis=1, keepdims=True)
-
-    if on_zero_curvature != SvCurve.ASIS:
-        zero_normal = np.linalg.norm(normals, axis=1) < 1e-6
-        if zero_normal.any():
-            if on_zero_curvature == SvCurve.FAIL:
-                raise ZeroCurvatureException(np.unique(ts[zero_normal]), zero_normal)
-            elif on_zero_curvature == SvCurve.RETURN_NONE:
-                return None
-
-    binormals = - np.cross(normals, tangents)
-    matrices_np = np.dstack((normals, binormals, tangents))
-    matrices_np = np.transpose(matrices_np, axes=(0,2,1))
-    matrices_np = np.linalg.inv(matrices_np)
-    return matrices_np, surf_points, tangents, normals, binormals
+    calc = SvCurveOnSurfaceCurvaturesCalculator(uv_curve, surface, us, w_axis=w_axis)
+    return calc.curve_frame_on_surface_array(normalize = normalize, on_zero_curvature = on_zero_curvature)
 
 def unify_curves_degree(curves):
     """

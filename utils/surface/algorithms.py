@@ -25,7 +25,7 @@ from sverchok.utils.curve.core import UnsupportedCurveTypeException
 from sverchok.utils.curve.primitives import SvCircle
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.algorithms import (
-            SvNormalTrack, curve_frame_on_surface_array,
+            SvNormalTrack, SvCurveOnSurfaceCurvaturesCalculator,
             MathutilsRotationCalculator, DifferentialRotationCalculator,
             reparametrize_curve,
             SvCurveOnSurface
@@ -352,8 +352,8 @@ class SvRevolutionSurface(SvSurface):
         if hasattr(curve, 'make_revolution_surface'):
             try:
                 return curve.make_revolution_surface(point, direction, v_min, v_max, global_origin)
-            except UnsupportedCurveTypeException:
-                pass
+            except UnsupportedCurveTypeException as e:
+                debug(f"Can't build revolution surface from {curve} natively: {e}")
         surface = SvRevolutionSurface(curve, point, direction, global_origin)
         surface.v_bounds = (v_min, v_max)
         return surface
@@ -1036,22 +1036,6 @@ class SvTaperSweepSurface(SvSurface):
         profile_points = self.profile.evaluate_array(us)
         return profile_points * scale + taper_projections
 
-def calc_curvatures_across_curve(uv_curve, surface, ts):
-    ts = np.asarray(ts)
-    uv_points = uv_curve.evaluate_array(ts)
-    curve = SvCurveOnSurface(uv_curve, surface, axis=2)
-    tangents = curve.tangent_array(ts)
-    tangents /= np.linalg.norm(tangents, axis=1, keepdims=True)
-    calc = surface.curvature_calculator(uv_points[:,0], uv_points[:,1])
-    du = calc.fu / np.linalg.norm(calc.fu, axis=1, keepdims=True)
-    dv = calc.fv / np.linalg.norm(calc.fv, axis=1, keepdims=True)
-    v1 = (tangents * du).sum(axis=1)
-    v2 = (tangents * dv).sum(axis=1)
-    mean = calc.mean()
-    curvatures = calc.curvature_along_direction(v1, v2)
-    curvatures = 2*mean - curvatures
-    return curvatures
-
 class SvBlendSurface(SvSurface):
     G1 = 'G1'
     G2 = 'G2'
@@ -1089,8 +1073,10 @@ class SvBlendSurface(SvSurface):
         c1_us = (c1_max - c1_min) * us + c1_min
         c2_us = (c2_max - c2_min) * us + c2_min
 
-        _, c1_points, c1_tangents, _, c1_binormals = curve_frame_on_surface_array(self.surface1, self.curve1, c1_us, normalize=False)
-        _, c2_points, c2_tangents, _, c2_binormals = curve_frame_on_surface_array(self.surface2, self.curve2, c2_us, normalize=False)
+        calc1 = SvCurveOnSurfaceCurvaturesCalculator(self.curve1, self.surface1, c1_us)
+        calc2 = SvCurveOnSurfaceCurvaturesCalculator(self.curve2, self.surface2, c2_us)
+        _, c1_points, c1_tangents, c1_normals, c1_binormals = calc1.curve_frame_on_surface_array(normalize=False)
+        _, c2_points, c2_tangents, c2_normals, c2_binormals = calc2.curve_frame_on_surface_array(normalize=False)
         t1dir = c1_binormals / np.linalg.norm(c1_binormals, axis=1, keepdims=True)
         t2dir = c2_binormals / np.linalg.norm(c2_binormals, axis=1, keepdims=True)
 
