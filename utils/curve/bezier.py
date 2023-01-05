@@ -184,17 +184,19 @@ class SvBezierCurve(SvCurve, SvBezierSplitMixin):
 
         b = (B2 - B1) / np.linalg.norm(B2 - B1)
 
-        cos_alpha1 = np.dot(t1dir, b)
-        cos_beta1 = np.dot(n1dir, b)
-        t12 = (r1 * cos_beta1) / (1 - cos_alpha1**2)
-        t11 = cos_alpha1 * t12
-        C1 = B1 + r1 * n1dir + t11 * t1dir
+#         cos_alpha1 = np.dot(t1dir, b)
+#         cos_beta1 = np.dot(n1dir, b)
+#         t12 = (r1 * cos_beta1) / (1 - cos_alpha1**2)
+#         t11 = cos_alpha1 * t12
+#         C1 = B1 + r1 * n1dir + t11 * t1dir
+        C1 = B1 + r1 * n1dir + (B1 - A1)
 
-        cos_alpha2 = np.dot(t2dir, -b)
-        cos_beta2 = np.dot(n2dir, -b)
-        t22 = (r2 * cos_beta2) / (1 - cos_alpha2**2)
-        t21 = cos_alpha2 * t22
-        C2 = B2 + r2 * n2dir + t21 * t2dir
+#         cos_alpha2 = np.dot(t2dir, -b)
+#         cos_beta2 = np.dot(n2dir, -b)
+#         t22 = (r2 * cos_beta2) / (1 - cos_alpha2**2)
+#         t21 = cos_alpha2 * t22
+#         C2 = B2 + r2 * n2dir + t21 * t2dir
+        C2 = B2 + r2 * n2dir + (B2 - A2)
 
         return SvBezierCurve([A1, B1, C1, C2, B2, A2])
 

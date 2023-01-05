@@ -1106,17 +1106,19 @@ class SvBlendSurface(SvSurface):
 
             bs = (B2 - B1) / np.linalg.norm(B2 - B1, axis=1, keepdims=True)
 
-            cos_alpha1 = np_dot(t1dir, bs)[np.newaxis].T
-            cos_beta1 = np_dot(n1dir, bs)[np.newaxis].T
-            t12 = (r1 * cos_beta1) / (1 - cos_alpha1**2)
-            t11 = cos_alpha1 * t12
-            C1 = B1 + r1 * n1dir + t11 * t1dir
+#             cos_alpha1 = np_dot(t1dir, bs)[np.newaxis].T
+#             cos_beta1 = np_dot(n1dir, bs)[np.newaxis].T
+#             t12 = (r1 * cos_beta1) / (1 - cos_alpha1**2)
+#             t11 = cos_alpha1 * t12
+#             C1 = B1 + r1 * n1dir + t11 * t1dir
+            C1 = B1 + r1 * n1dir + (B1 - A1)
 
-            cos_alpha2 = np_dot(t2dir, -bs)[np.newaxis].T
-            cos_beta2 = np_dot(n2dir, -bs)[np.newaxis].T
-            t22 = (r2 * cos_beta2) / (1 - cos_alpha2**2)
-            t21 = cos_alpha2 * t22
-            C2 = B2 + r2 * n2dir + t21 * t2dir
+#             cos_alpha2 = np_dot(t2dir, -bs)[np.newaxis].T
+#             cos_beta2 = np_dot(n2dir, -bs)[np.newaxis].T
+#             t22 = (r2 * cos_beta2) / (1 - cos_alpha2**2)
+#             t21 = cos_alpha2 * t22
+#             C2 = B2 + r2 * n2dir + t21 * t2dir
+            C2 = B2 + r2 * n2dir + (B2 - A2)
 
             # See also sverchok.utils.curve.bezier.SvBezierCurve.
             c0 = (1 - vs)**5      # (n,)
