@@ -155,6 +155,15 @@ def nurbs_blend_surfaces(surface1, surface2, curve1, curve2, bulge1, bulge2, u_d
 
     c1_across = calc1.calc_curvatures_across_curve()
     c2_across = calc2.calc_curvatures_across_curve()
+    #c1_along = calc1.calc_curvatures_along_curve()
+    #c2_along = calc2.calc_curvatures_along_curve()
+    #print(f"C1: {list(zip(ts1, c1_across, c1_along))}")
+    #print(f"C2: {list(zip(ts2, c2_across, c1_along))}")
+
+    bad1 = (c1_across * c1_along) > 0
+    bad2 = (c2_across * c2_along) > 0
+    c1_normals[bad1] = - c1_normals[bad1]
+    c2_normals[bad2] = - c2_normals[bad2]
 
     #curve1 = interpolate_nurbs_curve_with_tangents(u_degree, c1_points, c1_tangents, tknots=ts1, logger=logger)
     #curve2 = interpolate_nurbs_curve_with_tangents(u_degree, c2_points, c2_tangents, tknots=ts2, logger=logger)
@@ -166,7 +175,8 @@ def nurbs_blend_surfaces(surface1, surface2, curve1, curve2, bulge1, bulge2, u_d
         v_curves = [SvBezierCurve.from_control_points([p1, p1+t1, p2+t2, p2]) for p1, t1, p2, t2 in zip(c1_points, c1_binormals, c2_points, c2_binormals)]
     else: # G2
         v_curves = []
-        for p1, p2, t1, t2, n1, n2, c1, c2 in zip(c1_points, c2_points, c1_binormals, c2_binormals, c1_normals, c2_normals, c1_across, c2_across):
+        for u1, u2, p1, p2, t1, t2, n1, n2, c1, c2 in zip(ts1, ts2, c1_points, c2_points, c1_binormals, c2_binormals, c1_normals, c2_normals, c1_across, c2_across):
+            #print(f"T1 {u1}, T2 {u2}: P1 {p1}, P2 {p2}, T1 {t1}, -T2 {-t2}, n1 {n1}, n2 {n2}, c1 {c1}, c2 {c2}")
             v_curve = SvBezierCurve.from_tangents_normals_curvatures(p1, p2, t1, -t2, n1, n2, c1, c2)
             v_curves.append(v_curve)
 

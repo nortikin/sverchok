@@ -797,9 +797,14 @@ class SvCurveOnSurfaceCurvaturesCalculator(object):
 
     def calc_curvatures_across_curve(self):
         v1, v2 = self.calc_tangent_cosines()
-        mean = self.surface_calculator.mean()
-        curvatures = self.surface_calculator.curvature_along_direction(v1, v2)
-        curvatures = 2*mean - curvatures
+
+        #mean = self.surface_calculator.mean()
+        #curvatures = self.surface_calculator.curvature_along_direction(v1, v2)
+        #curvatures = 2*mean - curvatures
+
+        n1 = -np.sqrt(1 - v1*v1)
+        n2 = np.sqrt(1 - v2*v2)
+        curvatures = self.surface_calculator.curvature_along_direction(n1, n2)
         return curvatures
 
     def curve_frame_on_surface_array(self, normalize=True, on_zero_curvature=SvCurve.ASIS):
@@ -824,9 +829,9 @@ class SvCurveOnSurfaceCurvaturesCalculator(object):
         """
         surf_points = self.surface_calculator.points
         if normalize:
-            tangents = self.tangents
-        else:
             tangents = self.unit_tangents
+        else:
+            tangents = self.tangents
 
         normals = self.surface_calculator.normals
         if normalize:

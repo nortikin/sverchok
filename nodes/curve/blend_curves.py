@@ -262,6 +262,7 @@ class SvBlendCurvesMk2Node(SverchCustomTreeNode, bpy.types.Node):
                     curvature_1_end = curve1.curvature(t_max_1)
                     curvature_2_begin = curve2.curvature(t_min_2)
                     
+                    #print(f"Bz: P1 {curve1_end}, P2 {curve2_begin}, T1 {tangent1}, T2 {tangent2}, n1 {normal_1_end}, n2 {normal_2_begin}, c1 {curvature_1_end}, c2 {curvature_2_begin}")
                     new_curve = SvBezierCurve.from_tangents_normals_curvatures(
                                     curve1_end, curve2_begin,
                                     tangent1, tangent2,
