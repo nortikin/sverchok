@@ -201,6 +201,7 @@
              
   <section id="curve-frame-on-surface">
 <h1>Curve Frame on Surface<a class="headerlink" href="#curve-frame-on-surface" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/210639554-d0a9be1f-e0ef-4c9f-b165-2f17dad71e20.png"><img alt="https://user-images.githubusercontent.com/14288520/210639554-d0a9be1f-e0ef-4c9f-b165-2f17dad71e20.png" src="https://user-images.githubusercontent.com/14288520/210639554-d0a9be1f-e0ef-4c9f-b165-2f17dad71e20.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>Given a surface and a curve in the surface’s U/V space, this node calculates a reference frame of a curve for the given value of curve’s T parameter. The frame is calculated so that:</p>
@@ -211,6 +212,7 @@
 </ul>
 <p>This node allows one to place some object at the curve on the surface, while
 aligning it both with curve’s tangent and surface’s normal.</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/210656324-3e8fdb9f-8654-491b-b305-cf512293a717.png"><img alt="https://user-images.githubusercontent.com/14288520/210656324-3e8fdb9f-8654-491b-b305-cf512293a717.png" src="https://user-images.githubusercontent.com/14288520/210656324-3e8fdb9f-8654-491b-b305-cf512293a717.png" /></a>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
@@ -222,6 +224,7 @@ in XOY plane; X coordinate means U parameter of the surface, and Y coordinate
 means V parameter. This input is mandatory.</p></li>
 <li><p><strong>T</strong>. The value of curve’s T parameter. The default value is 0.5.</p></li>
 </ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/210652754-f1802ae1-4cab-4761-80fc-eab7a03965b2.png"><img alt="https://user-images.githubusercontent.com/14288520/210652754-f1802ae1-4cab-4761-80fc-eab7a03965b2.png" src="https://user-images.githubusercontent.com/14288520/210652754-f1802ae1-4cab-4761-80fc-eab7a03965b2.png" /></a>
 </section>
 <section id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
@@ -231,6 +234,7 @@ means V parameter. This input is mandatory.</p></li>
 matrices for all input curves. Otherwise, it will output separate list of
 matrices per each input curve. Checked by default.</p></li>
 </ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/210657860-01c05782-4475-4d65-b6d0-3a22d2fe1bf3.png"><img alt="https://user-images.githubusercontent.com/14288520/210657860-01c05782-4475-4d65-b6d0-3a22d2fe1bf3.png" src="https://user-images.githubusercontent.com/14288520/210657860-01c05782-4475-4d65-b6d0-3a22d2fe1bf3.png" /></a>
 </section>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
@@ -243,15 +247,51 @@ the curve.</p></li>
 <li><p><strong>Normal</strong>. The direction of curve’s main normal at the specified value of T parameter.</p></li>
 <li><p><strong>Binormal</strong>. The direction of curve’s binormal at the specified value of T parameter.</p></li>
 </ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/210658893-6fb8a1e6-4913-4d04-8a3d-0d49ea85aa60.png"><img alt="https://user-images.githubusercontent.com/14288520/210658893-6fb8a1e6-4913-4d04-8a3d-0d49ea85aa60.png" src="https://user-images.githubusercontent.com/14288520/210658893-6fb8a1e6-4913-4d04-8a3d-0d49ea85aa60.png" /></a>
 </section>
 <section id="examples-of-usage">
 <h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>Let’s generate an ellipse by generating a sine wave in U/V space of cylindrical
 curve. Then we use “Curve Frame” node to place cubes along that ellipse:</p>
-<img alt="https://user-images.githubusercontent.com/284644/89296471-d28d0480-d67b-11ea-9ac0-d6104821ea94.png" src="https://user-images.githubusercontent.com/284644/89296471-d28d0480-d67b-11ea-9ac0-d6104821ea94.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/89296471-d28d0480-d67b-11ea-9ac0-d6104821ea94.png"><img alt="https://user-images.githubusercontent.com/284644/89296471-d28d0480-d67b-11ea-9ac0-d6104821ea94.png" src="https://user-images.githubusercontent.com/284644/89296471-d28d0480-d67b-11ea-9ac0-d6104821ea94.png" /></a>
 <p>As you can see, the cubes are aligned with a plane where the ellipse lies, but
 they are not aligned with the cylinder surface. Now let’s use “Curve frame on surface” node instead:</p>
-<img alt="https://user-images.githubusercontent.com/284644/89296479-d456c800-d67b-11ea-9409-2f83e9db415b.png" src="https://user-images.githubusercontent.com/284644/89296479-d456c800-d67b-11ea-9409-2f83e9db415b.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/89296479-d456c800-d67b-11ea-9409-2f83e9db415b.png"><img alt="https://user-images.githubusercontent.com/284644/89296479-d456c800-d67b-11ea-9409-2f83e9db415b.png" src="https://user-images.githubusercontent.com/284644/89296479-d456c800-d67b-11ea-9409-2f83e9db415b.png" /></a>
+<p><strong>Replay with new nodes</strong>:</p>
+<p><a class="reference external" href="https://gist.github.com/c119546943b4ce703d0f55be00cbedbd">https://gist.github.com/c119546943b4ce703d0f55be00cbedbd</a></p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/210871891-c0228c13-2dc8-472d-ab3d-f806be82aed3.png"><img alt="https://user-images.githubusercontent.com/14288520/210871891-c0228c13-2dc8-472d-ab3d-f806be82aed3.png" src="https://user-images.githubusercontent.com/14288520/210871891-c0228c13-2dc8-472d-ab3d-f806be82aed3.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
+<li><p>Curves-&gt; <a class="reference internal" href="curve_circle.html"><span class="doc">Circle (Curve)</span></a></p></li>
+<li><p>Curves-&gt; <a class="reference internal" href="curve_on_surface.html"><span class="doc">Curve on Surface</span></a></p></li>
+<li><p>Curves-&gt; <a class="reference internal" href="eval_curve.html"><span class="doc">Evaluate Curve</span></a></p></li>
+<li><p>Curves-&gt; <a class="reference internal" href="curve_range.html"><span class="doc">Curve Domain</span></a></p></li>
+<li><p>Curves-&gt; <a class="reference internal" href="curve_frame.html"><span class="doc">Curve Frame</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="curve_formula.html"><span class="doc">Curve Formula</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="../surface/extrude_vector.html"><span class="doc">Extrude Curve Along Vector</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/numbers.html"><span class="doc">A Number</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Script-&gt; <a class="reference internal" href="../script/formula_mk5.html"><span class="doc">Formula</span></a></p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/210870497-8c9108bb-0bfa-41d2-b1b8-fdfad1fc59c3.gif"><img alt="https://user-images.githubusercontent.com/14288520/210870497-8c9108bb-0bfa-41d2-b1b8-fdfad1fc59c3.gif" src="https://user-images.githubusercontent.com/14288520/210870497-8c9108bb-0bfa-41d2-b1b8-fdfad1fc59c3.gif" /></a>
+<hr class="docutils" />
+<p><a class="reference external" href="https://gist.github.com/5fdc5d5e6169a86f9356ff461be321d3">https://gist.github.com/5fdc5d5e6169a86f9356ff461be321d3</a></p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/210880364-869888dd-9ede-4131-8bc5-473f5624e5b0.png"><img alt="https://user-images.githubusercontent.com/14288520/210880364-869888dd-9ede-4131-8bc5-473f5624e5b0.png" src="https://user-images.githubusercontent.com/14288520/210880364-869888dd-9ede-4131-8bc5-473f5624e5b0.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
+<li><p>Curves-&gt; <a class="reference internal" href="cubic_spline.html"><span class="doc">Cubic Spline</span></a></p></li>
+<li><p>Curves-&gt; <a class="reference internal" href="eval_curve.html"><span class="doc">Evaluate Curve</span></a></p></li>
+<li><p>Surface-&gt; <a class="reference internal" href="../surface/evaluate_surface.html"><span class="doc">Evaluate Surface</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="../surface/interpolating_surface.html"><span class="doc">Surface from Curves</span></a></p></li>
+<li><p>Transform-&gt; <a class="reference internal" href="../transforms/move_mk3.html"><span class="doc">Move</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>Mutrix Multiply: Matrix-&gt; <a class="reference internal" href="../matrix/matrix_math.html"><span class="doc">Matrix Math</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Scene-&gt; <a class="reference internal" href="../exchange/bezier_in.html"><span class="doc">Bezier Input</span></a></p></li>
+</ul>
 </section>
 </section>
 
