@@ -693,7 +693,8 @@ class SvReparametrizedCurve(SvCurve):
     @property
     def scale(self):
         u_min, u_max = self.curve.get_u_bounds()
-        return (u_max - u_min) / (self.new_u_max - self.new_u_min)
+        #return (u_max - u_min) / (self.new_u_max - self.new_u_min)
+        return  (self.new_u_max - self.new_u_min) / (u_max - u_min)
 
     def map_u(self, u):
         u_min, u_max = self.curve.get_u_bounds()
@@ -705,26 +706,26 @@ class SvReparametrizedCurve(SvCurve):
     def evaluate_array(self, ts):
         return self.curve.evaluate_array(self.map_u(ts))
 
-    def tangent(self, t, tangent_delta=None):
-        return self.scale * self.curve.tangent(self.map_u(t), tangent_delta=tangent_delta)
+    #def tangent(self, t, tangent_delta=None):
+    #    return self.scale * self.curve.tangent(self.map_u(t), tangent_delta=tangent_delta)
 
-    def tangent_array(self, ts, tangent_delta=None):
-        return self.scale * self.curve.tangent_array(self.map_u(ts), tangent_delta=tangent_delta)
+    #def tangent_array(self, ts, tangent_delta=None):
+    #    return self.scale * self.curve.tangent_array(self.map_u(ts), tangent_delta=tangent_delta)
 
-    def second_derivative_array(self, ts, tangent_delta=None):
-        return self.scale**2 * self.curve.second_derivative_array(self.map_u(ts), tangent_delta=tangent_delta)
+    #def second_derivative_array(self, ts, tangent_delta=None):
+    #    return self.scale**2 * self.curve.second_derivative_array(self.map_u(ts), tangent_delta=tangent_delta)
 
-    def third_derivative_array(self, ts, tangent_delta=None):
-        return self.scale**3 * self.curve.third_derivative_array(self.map_u(ts), tangent_delta=tangent_delta)
+    #def third_derivative_array(self, ts, tangent_delta=None):
+    #    return self.scale**3 * self.curve.third_derivative_array(self.map_u(ts), tangent_delta=tangent_delta)
 
-    def derivatives_array(self, n, ts, tangent_delta=None):
-        derivs = self.curve.derivatives_array(n, ts, tangent_delta=tangent_delta)
-        k = self.scale
-        array = []
-        for deriv in derivs:
-            array.append(k * deriv)
-            k = k * self.scale
-        return array
+#     def derivatives_array(self, n, ts, tangent_delta=None):
+#         derivs = self.curve.derivatives_array(n, ts, tangent_delta=tangent_delta)
+#         k = self.scale
+#         array = []
+#         for deriv in derivs:
+#             array.append(k * deriv)
+#             k = k * self.scale
+#         return array
 
 class SvReparametrizeCurve(SvCurve):
     def __init__(self, curve):
@@ -3292,7 +3293,8 @@ algorithm will raise a general LinAlgError exception if it can't calculate the m
     @property
     def scale(self):
         u_min, u_max = self.curve.get_u_bounds()
-        return (u_max - u_min) / (self.new_u_max - self.new_u_min)
+        #return (u_max - u_min) / (self.new_u_max - self.new_u_min)
+        return  (self.new_u_max - self.new_u_min) / (u_max - u_min)
 
     def map_u(self, u):
         u_min, u_max = self.curve.get_u_bounds()
@@ -3304,26 +3306,17 @@ algorithm will raise a general LinAlgError exception if it can't calculate the m
     def evaluate_array(self, ts):
         return self.curve.evaluate_array(self.map_u(ts))
 
-    def tangent(self, t, tangent_delta=None):
-        return self.scale * self.curve.tangent(self.map_u(t), tangent_delta=tangent_delta)
+    #def tangent(self, t, tangent_delta=None):
+    #    return self.scale * self.curve.tangent(self.map_u(t), tangent_delta=tangent_delta)
 
-    def tangent_array(self, ts, tangent_delta=None):
-        return self.scale * self.curve.tangent_array(self.map_u(ts), tangent_delta=tangent_delta)
+    #def tangent_array(self, ts, tangent_delta=None):
+    #    return self.scale * self.curve.tangent_array(self.map_u(ts), tangent_delta=tangent_delta)
 
-    def second_derivative_array(self, ts, tangent_delta=None):
-        return self.scale**2 * self.curve.second_derivative_array(self.map_u(ts), tangent_delta=tangent_delta)
+    #def second_derivative_array(self, ts, tangent_delta=None):
+    #    return self.scale**2 * self.curve.second_derivative_array(self.map_u(ts), tangent_delta=tangent_delta)
 
-    def third_derivative_array(self, ts, tangent_delta=None):
-        return self.scale**3 * self.curve.third_derivative_array(self.map_u(ts), tangent_delta=tangent_delta)
-
-    def derivatives_array(self, n, ts, tangent_delta=None):
-        derivs = self.curve.derivatives_array(n, ts, tangent_delta=tangent_delta)
-        k = self.scale
-        array = []
-        for deriv in derivs:
-            array.append(k * deriv)
-            k = k * self.scale
-        return array</code></pre>
+    #def third_derivative_array(self, ts, tangent_delta=None):
+    #    return self.scale**3 * self.curve.third_derivative_array(self.map_u(ts), tangent_delta=tangent_delta)</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -3341,31 +3334,13 @@ algorithm will raise a general LinAlgError exception if it can't calculate the m
 <pre><code class="python">@property
 def scale(self):
     u_min, u_max = self.curve.get_u_bounds()
-    return (u_max - u_min) / (self.new_u_max - self.new_u_min)</code></pre>
+    #return (u_max - u_min) / (self.new_u_max - self.new_u_min)
+    return  (self.new_u_max - self.new_u_min) / (u_max - u_min)</code></pre>
 </details>
 </dd>
 </dl>
 <h3>Methods</h3>
 <dl>
-<dt id="sverchok.utils.curve.core.SvReparametrizedCurve.derivatives_array"><code class="name flex">
-<span>def <span class="ident">derivatives_array</span></span>(<span>self, n, ts, tangent_delta=None)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def derivatives_array(self, n, ts, tangent_delta=None):
-    derivs = self.curve.derivatives_array(n, ts, tangent_delta=tangent_delta)
-    k = self.scale
-    array = []
-    for deriv in derivs:
-        array.append(k * deriv)
-        k = k * self.scale
-    return array</code></pre>
-</details>
-</dd>
 <dt id="sverchok.utils.curve.core.SvReparametrizedCurve.map_u"><code class="name flex">
 <span>def <span class="ident">map_u</span></span>(<span>self, u)</span>
 </code></dt>
@@ -3378,32 +3353,6 @@ def scale(self):
 <pre><code class="python">def map_u(self, u):
     u_min, u_max = self.curve.get_u_bounds()
     return (u_max - u_min) * (u - self.new_u_min) / (self.new_u_max - self.new_u_min) + u_min</code></pre>
-</details>
-</dd>
-<dt id="sverchok.utils.curve.core.SvReparametrizedCurve.second_derivative_array"><code class="name flex">
-<span>def <span class="ident">second_derivative_array</span></span>(<span>self, ts, tangent_delta=None)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def second_derivative_array(self, ts, tangent_delta=None):
-    return self.scale**2 * self.curve.second_derivative_array(self.map_u(ts), tangent_delta=tangent_delta)</code></pre>
-</details>
-</dd>
-<dt id="sverchok.utils.curve.core.SvReparametrizedCurve.third_derivative_array"><code class="name flex">
-<span>def <span class="ident">third_derivative_array</span></span>(<span>self, ts, tangent_delta=None)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def third_derivative_array(self, ts, tangent_delta=None):
-    return self.scale**3 * self.curve.third_derivative_array(self.map_u(ts), tangent_delta=tangent_delta)</code></pre>
 </details>
 </dd>
 </dl>
@@ -4099,11 +4048,8 @@ def from_coefficients(cls, coefficients):
 <li>
 <h4><code><a title="sverchok.utils.curve.core.SvReparametrizedCurve" href="#sverchok.utils.curve.core.SvReparametrizedCurve">SvReparametrizedCurve</a></code></h4>
 <ul class="">
-<li><code><a title="sverchok.utils.curve.core.SvReparametrizedCurve.derivatives_array" href="#sverchok.utils.curve.core.SvReparametrizedCurve.derivatives_array">derivatives_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvReparametrizedCurve.map_u" href="#sverchok.utils.curve.core.SvReparametrizedCurve.map_u">map_u</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvReparametrizedCurve.scale" href="#sverchok.utils.curve.core.SvReparametrizedCurve.scale">scale</a></code></li>
-<li><code><a title="sverchok.utils.curve.core.SvReparametrizedCurve.second_derivative_array" href="#sverchok.utils.curve.core.SvReparametrizedCurve.second_derivative_array">second_derivative_array</a></code></li>
-<li><code><a title="sverchok.utils.curve.core.SvReparametrizedCurve.third_derivative_array" href="#sverchok.utils.curve.core.SvReparametrizedCurve.third_derivative_array">third_derivative_array</a></code></li>
 </ul>
 </li>
 <li>
