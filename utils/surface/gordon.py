@@ -155,8 +155,8 @@ def nurbs_blend_surfaces(surface1, surface2, curve1, curve2, bulge1, bulge2, u_d
 
     c1_across = calc1.calc_curvatures_across_curve()
     c2_across = calc2.calc_curvatures_across_curve()
-    #c1_along = calc1.calc_curvatures_along_curve()
-    #c2_along = calc2.calc_curvatures_along_curve()
+    c1_along = calc1.calc_curvatures_along_curve()
+    c2_along = calc2.calc_curvatures_along_curve()
     #print(f"C1: {list(zip(ts1, c1_across, c1_along))}")
     #print(f"C2: {list(zip(ts2, c2_across, c1_along))}")
 
