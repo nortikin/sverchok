@@ -20,6 +20,7 @@ class SvCurveFrameNode(SverchCustomTreeNode, bpy.types.Node):
 
         t_value : FloatProperty(
                 name = "T",
+                description = "The value of curve’s T parameter",
                 default = 0.5,
                 update = updateNode)
 

@@ -24,11 +24,13 @@ class SvCastCurveNode(SverchCustomTreeNode, bpy.types.Node):
 
         coefficient : FloatProperty(
                 name = "Coefficient",
+                description="Casting effect coefficient. 0 means no effect, 1.0 means output the curve on the target form. Use other values for linear interpolation or linear extrapolation",
                 default = 1.0,
                 update=updateNode)
 
         radius : FloatProperty(
                 name = "Radius",
+                description="Radius of the sphere/cylinder",
                 default = 1.0,
                 update=updateNode)
 
@@ -51,7 +53,7 @@ class SvCastCurveNode(SverchCustomTreeNode, bpy.types.Node):
 
         use_nurbs : BoolProperty(
             name = "Use control points",
-            description = "Transform control points of NURBS curves",
+            description = "Transform control points of NURBS curves. If checked, then for NURBS curves the node will project only control points of the curve, instead of projecting each point of the curve. For non-NURBS curves, the node will raise an error (become red), and processing will stop",
             default = False,
             update = updateNode)
 
