@@ -135,7 +135,10 @@ def gordon_surface(u_curves, v_curves, intersections, metric='POINTS', u_knots=N
 TANGENCY_G1 = 'G1'
 TANGENCY_G2 = 'G2'
 
-def nurbs_blend_surfaces(surface1, surface2, curve1, curve2, bulge1, bulge2, u_degree, u_samples, absolute_bulge = True, tangency = TANGENCY_G1, logger=None):
+ORTHO_3D = '3D'
+ORTHO_UV = 'UV'
+
+def nurbs_blend_surfaces(surface1, surface2, curve1, curve2, bulge1, bulge2, u_degree, u_samples, absolute_bulge = True, tangency = TANGENCY_G1, ortho_mode = ORTHO_UV, logger=None):
     t_min, t_max = curve1.get_u_bounds()
     ts1 = np.linspace(t_min, t_max, num=u_samples)
 
@@ -146,6 +149,11 @@ def nurbs_blend_surfaces(surface1, surface2, curve1, curve2, bulge1, bulge2, u_d
     calc2 = SvCurveOnSurfaceCurvaturesCalculator(curve2, surface2, ts2)
     _, c1_points, c1_tangents, c1_normals, c1_binormals = calc1.curve_frame_on_surface_array(normalize=False)
     _, c2_points, c2_tangents, c2_normals, c2_binormals = calc2.curve_frame_on_surface_array(normalize=False)
+
+    if ortho_mode == ORTHO_UV:
+        c1_binormals = calc1.uv_normals_in_3d
+        c2_binormals = calc2.uv_normals_in_3d
+
     if absolute_bulge:
         c1_binormals = bulge1 * c1_binormals / np.linalg.norm(c1_binormals, axis=1, keepdims=True)
         c2_binormals = bulge2 * c2_binormals / np.linalg.norm(c2_binormals, axis=1, keepdims=True)
@@ -155,15 +163,17 @@ def nurbs_blend_surfaces(surface1, surface2, curve1, curve2, bulge1, bulge2, u_d
 
     c1_across = calc1.calc_curvatures_across_curve()
     c2_across = calc2.calc_curvatures_across_curve()
-    c1_along = calc1.calc_curvatures_along_curve()
-    c2_along = calc2.calc_curvatures_along_curve()
+    #c1_along = calc1.calc_curvatures_along_curve()
+    #c2_along = calc2.calc_curvatures_along_curve()
     #print(f"C1: {list(zip(ts1, c1_across, c1_along))}")
     #print(f"C2: {list(zip(ts2, c2_across, c1_along))}")
 
-    bad1 = (c1_across * c1_along) > 0
-    bad2 = (c2_across * c2_along) > 0
-    c1_normals[bad1] = - c1_normals[bad1]
-    c2_normals[bad2] = - c2_normals[bad2]
+    #bad1 = (c1_across * c1_along) < 0
+    #bad2 = (c2_across * c2_along) < 0
+    #print(f"Bad1: {bad1}")
+    #print(f"Bad2: {bad2}")
+    #c1_normals[bad1] = - c1_normals[bad1]
+    #c2_normals[bad2] = - c2_normals[bad2]
 
     #curve1 = interpolate_nurbs_curve_with_tangents(u_degree, c1_points, c1_tangents, tknots=ts1, logger=logger)
     #curve2 = interpolate_nurbs_curve_with_tangents(u_degree, c2_points, c2_tangents, tknots=ts2, logger=logger)

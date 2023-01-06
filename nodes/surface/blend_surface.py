@@ -107,6 +107,17 @@ class SvBlendSurfaceNodeMk2(SverchCustomTreeNode, bpy.types.Node):
             min = 3,
             update = updateNode)
 
+    ortho_modes = [
+            ('3D', "3D space", "Make V isolines of the surface orthogonal to touching curves in 3D space", 0),
+            ('UV', "UV space", "Make V isolines of the surface continue isolines in original surfaces UV space", 1)
+        ]
+
+    ortho_mode : EnumProperty(
+            name = "Ortho mode",
+            items = ortho_modes,
+            default = '3D',
+            update = updateNode)
+
     def draw_buttons(self, context, layout):
         layout.prop(self, 'tangency_mode')
         box = layout.row(align=True)
@@ -115,6 +126,7 @@ class SvBlendSurfaceNodeMk2(SverchCustomTreeNode, bpy.types.Node):
         box = layout.row(align=True)
         box.prop(self, 'curve2_mode', text='')
         box.prop(self, 'flip2', toggle=True, text='Flip')
+        layout.prop(self, 'ortho_mode')
         layout.prop(self, 'use_nurbs')
 
     def draw_buttons_ext(self, context, layout):
@@ -198,11 +210,13 @@ class SvBlendSurfaceNodeMk2(SverchCustomTreeNode, bpy.types.Node):
                     surface = nurbs_blend_surfaces(surface1, surface2, curve1, curve2, bulge1, bulge2, 3, samples,
                                 absolute_bulge = self.absolute_bulge,
                                 tangency = self.tangency_mode,
+                                ortho_mode = self.ortho_mode,
                                 logger = self.get_logger())
                 else:
                     surface = SvBlendSurface(surface1, surface2, curve1, curve2, bulge1, bulge2,
                                 absolute_bulge = self.absolute_bulge,
-                                tangency = self.tangency_mode)
+                                tangency = self.tangency_mode,
+                                ortho_mode = self.ortho_mode)
                 new_surfaces.append(surface)
             surfaces_out.append(new_surfaces)
 

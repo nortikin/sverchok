@@ -750,9 +750,21 @@ class SvCurveOnSurfaceCurvaturesCalculator(object):
         self.w_axis = w_axis
         self.curve = SvCurveOnSurface(self.uv_curve, self.surface, axis=w_axis)
         self._uv_points = None
+        self._uv_tangents = None
+        self._uv_normals = None
+        self._uv_normals_in_3d = None
         self._tangents = None
         self._unit_tangents = None
         self._surface_calculator = None
+
+    def uv_axes(self):
+        if self.w_axis == 2:
+            U, V = 0, 1
+        elif self.w_axis == 1:
+            U, V = 0, 2
+        else:
+            U, V = 1, 2
+        return U, V
 
     @property
     def uv_points(self):
@@ -761,14 +773,32 @@ class SvCurveOnSurfaceCurvaturesCalculator(object):
         return self._uv_points
 
     @property
+    def uv_tangents(self):
+        if self._uv_tangents is None:
+            self._uv_tangents = self.uv_curve.tangent_array(self.ts)
+        return self._uv_tangents
+
+    @property
+    def uv_normals(self):
+        if self._uv_normals is None:
+            U, V = self.uv_axes()
+            tangents = self.uv_tangents
+            normals = np.zeros_like(tangents)
+            normals[:,U] = tangents[:,V]
+            normals[:,V] = -tangents[:,U]
+            self._uv_normals = normals
+        return self._uv_normals
+
+    @property
+    def uv_normals_in_3d(self):
+        if self._uv_normals_in_3d is None:
+            self._uv_normals_in_3d = self.surface_calculator.derivatives_data.tangents_in_direction(self.uv_normals, self.w_axis)
+        return self._uv_normals_in_3d
+
+    @property
     def surface_calculator(self):
         if self._surface_calculator is None:
-            if self.w_axis == 2:
-                U, V = 0, 1
-            elif self.w_axis == 1:
-                U, V = 0, 2
-            else:
-                U, V = 1, 2
+            U, V = self.uv_axes()
             self._surface_calculator = self.surface.curvature_calculator(self.uv_points[:,U], self.uv_points[:,V])
         return self._surface_calculator
 

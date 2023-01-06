@@ -1040,7 +1040,10 @@ class SvBlendSurface(SvSurface):
     G1 = 'G1'
     G2 = 'G2'
 
-    def __init__(self, surface1, surface2, curve1, curve2, bulge1, bulge2, absolute_bulge = True, tangency = G1):
+    ORTHO_3D = '3D'
+    ORTHO_UV = 'UV'
+
+    def __init__(self, surface1, surface2, curve1, curve2, bulge1, bulge2, absolute_bulge = True, tangency = G1, ortho_mode = ORTHO_3D):
         self.surface1 = surface1
         self.surface2 = surface2
         self.curve1 = curve1
@@ -1049,6 +1052,7 @@ class SvBlendSurface(SvSurface):
         self.bulge2 = bulge2
         self.absolute_bulge = absolute_bulge
         self.tangency = tangency
+        self.ortho_mode = ortho_mode
         self.u_bounds = (0.0, 1.0)
         self.v_bounds = (0.0, 1.0)
 
@@ -1079,6 +1083,10 @@ class SvBlendSurface(SvSurface):
         _, c2_points, c2_tangents, c2_normals, c2_binormals = calc2.curve_frame_on_surface_array(normalize=False)
         t1dir = c1_binormals / np.linalg.norm(c1_binormals, axis=1, keepdims=True)
         t2dir = c2_binormals / np.linalg.norm(c2_binormals, axis=1, keepdims=True)
+
+        if self.ortho_mode == SvBlendSurface.ORTHO_UV:
+            c1_binormals = calc1.uv_normals_in_3d
+            c2_binormals = calc2.uv_normals_in_3d
 
         if self.absolute_bulge:
             c1_binormals = self.bulge1 * t1dir
