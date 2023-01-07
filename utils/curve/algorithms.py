@@ -836,7 +836,10 @@ def concatenate_curves(curves, scale_to_unit=False, allow_generic=True):
     """
     if not curves:
         raise Exception("List of curves must be not empty")
-    result = [curves[0]]
+    if scale_to_unit:
+        result = [reparametrize_curve(curves[0])]
+    else:
+        result = [curves[0]]
     some_native = False
     exceptions = []
     for idx, curve in enumerate(curves[1:]):
