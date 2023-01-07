@@ -864,7 +864,10 @@ def concatenate_curves(curves, scale_to_unit=False, allow_generic=True):
     &#34;&#34;&#34;
     if not curves:
         raise Exception(&#34;List of curves must be not empty&#34;)
-    result = [curves[0]]
+    if scale_to_unit:
+        result = [reparametrize_curve(curves[0])]
+    else:
+        result = [curves[0]]
     some_native = False
     exceptions = []
     for idx, curve in enumerate(curves[1:]):
@@ -1124,7 +1127,10 @@ several Nurbs.</p>
     &#34;&#34;&#34;
     if not curves:
         raise Exception(&#34;List of curves must be not empty&#34;)
-    result = [curves[0]]
+    if scale_to_unit:
+        result = [reparametrize_curve(curves[0])]
+    else:
+        result = [curves[0]]
     some_native = False
     exceptions = []
     for idx, curve in enumerate(curves[1:]):
