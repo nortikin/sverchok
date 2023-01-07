@@ -44,7 +44,7 @@ bl_info = {
     "name": "Sverchok",
     "author": "sverchok-b3d@ya.ru various authors see https://github.com/nortikin/sverchok/graphs/contributors",
     "version": (1, 2, 0),
-    "blender": (2, 93, 0),
+    "blender": (3, 5, 0),
     "location": "Node Editor",
     "category": "Node",
     "description": "Parametric node-based geometry programming",

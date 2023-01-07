@@ -838,7 +838,7 @@
     - SvSvgPathNodeMk2
     - SvSvgMeshNode
     - SvSvgTextNode
-    - SvSvgDimensionNode
+    - SvSvgDimensionNodeMK2
     - SvSvgGroupNode
     - SvSvgFillStrokeNodeMk2
     - SvSvgPatternNode
