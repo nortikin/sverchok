@@ -213,6 +213,8 @@ class SvSvgDimensionNodeMK2(SverchCustomTreeNode, bpy.types.Node):
         name='Decimals',
         description='Text Rotation',
         default=2,
+        min=0,
+        max=32,
         update=updateNode)
 
     units: StringProperty(
