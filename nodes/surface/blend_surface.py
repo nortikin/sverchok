@@ -115,7 +115,7 @@ class SvBlendSurfaceNodeMk2(SverchCustomTreeNode, bpy.types.Node):
     ortho_mode : EnumProperty(
             name = "Ortho mode",
             items = ortho_modes,
-            default = '3D',
+            default = '3D', # default for pre-existing nodes
             update = updateNode)
 
     def draw_buttons(self, context, layout):
@@ -126,12 +126,12 @@ class SvBlendSurfaceNodeMk2(SverchCustomTreeNode, bpy.types.Node):
         box = layout.row(align=True)
         box.prop(self, 'curve2_mode', text='')
         box.prop(self, 'flip2', toggle=True, text='Flip')
-        layout.prop(self, 'ortho_mode')
         layout.prop(self, 'use_nurbs')
 
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
-        layout.prop(self, 'absolute_bulge')
+        layout.prop(self, 'ortho_mode')
+        #layout.prop(self, 'absolute_bulge')
 
     def sv_init(self, context):
         self.inputs.new('SvSurfaceSocket', 'Surface1')
@@ -142,6 +142,7 @@ class SvBlendSurfaceNodeMk2(SverchCustomTreeNode, bpy.types.Node):
         self.inputs.new('SvStringsSocket', 'Bulge2').prop_name = 'bulge2'
         self.inputs.new('SvStringsSocket', 'Samples').prop_name = 'samples'
         self.outputs.new('SvSurfaceSocket', 'Surface')
+        self.ortho_mode = 'UV' # default for new nodes
         self.update_sockets(context)
 
     def make_uv_curve(self, surface, mode, flip):
@@ -193,6 +194,8 @@ class SvBlendSurfaceNodeMk2(SverchCustomTreeNode, bpy.types.Node):
         bulge2_s = ensure_nesting_level(bulge2_s, 2)
         samples_s = ensure_nesting_level(samples_s, 2)
 
+        absolute_bulge = (self.tangency_mode == SvBlendSurface.G1)
+
         surfaces_out = []
         for params in zip_long_repeat(surface1_s, uv_curve1_s, bulge1_s, surface2_s, uv_curve2_s, bulge2_s, samples_s):
             new_surfaces = []
@@ -208,13 +211,13 @@ class SvBlendSurfaceNodeMk2(SverchCustomTreeNode, bpy.types.Node):
 
                 if self.use_nurbs:
                     surface = nurbs_blend_surfaces(surface1, surface2, curve1, curve2, bulge1, bulge2, 3, samples,
-                                absolute_bulge = self.absolute_bulge,
+                                absolute_bulge = absolute_bulge,
                                 tangency = self.tangency_mode,
                                 ortho_mode = self.ortho_mode,
                                 logger = self.get_logger())
                 else:
                     surface = SvBlendSurface(surface1, surface2, curve1, curve2, bulge1, bulge2,
-                                absolute_bulge = self.absolute_bulge,
+                                absolute_bulge = absolute_bulge,
                                 tangency = self.tangency_mode,
                                 ortho_mode = self.ortho_mode)
                 new_surfaces.append(surface)
