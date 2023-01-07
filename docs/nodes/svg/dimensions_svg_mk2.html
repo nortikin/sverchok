@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Path SVG &mdash; Sverchok 1, 2, 0 documentation</title>
+  <title>Dimensions SVG &mdash; Sverchok 1, 2, 0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
@@ -21,8 +21,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Pattern SVG" href="pattern_svg.html" />
-    <link rel="prev" title="Mesh SVG" href="mesh_svg.html" /> 
+    <link rel="next" title="Fill / Stroke SVG" href="fill_stroke_mk2.html" />
+    <link rel="prev" title="Circle SVG" href="circle_svg.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -85,20 +85,18 @@
 <li class="toctree-l2"><a class="reference internal" href="../exchange/exchange_index.html">Exchange</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="svg_index.html">SVG</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="circle_svg.html">Circle SVG</a></li>
-<li class="toctree-l3"><a class="reference internal" href="dimensions_svg_mk2.html">Dimensions SVG</a></li>
-<li class="toctree-l3"><a class="reference internal" href="fill_stroke_mk2.html">Fill / Stroke SVG</a></li>
-<li class="toctree-l3"><a class="reference internal" href="group_svg.html">Group SVG</a></li>
-<li class="toctree-l3"><a class="reference internal" href="mesh_svg.html">Mesh SVG</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">Path SVG</a><ul>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Dimensions SVG</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#modes">Modes</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#commands">Commands</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#options">Options</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#outputs">Outputs</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#examples">Examples</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="fill_stroke_mk2.html">Fill / Stroke SVG</a></li>
+<li class="toctree-l3"><a class="reference internal" href="group_svg.html">Group SVG</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mesh_svg.html">Mesh SVG</a></li>
+<li class="toctree-l3"><a class="reference internal" href="path_svg_mk2.html">Path SVG</a></li>
 <li class="toctree-l3"><a class="reference internal" href="pattern_svg.html">Pattern SVG</a></li>
 <li class="toctree-l3"><a class="reference internal" href="svg_document.html">SVG Document</a></li>
 <li class="toctree-l3"><a class="reference internal" href="text_svg.html">Text SVG</a></li>
@@ -126,9 +124,9 @@
       <li><a href="../../main.html" class="icon icon-home"></a></li>
           <li class="breadcrumb-item"><a href="../../nodes.html">Nodes</a></li>
           <li class="breadcrumb-item"><a href="svg_index.html">SVG</a></li>
-      <li class="breadcrumb-item active">Path SVG</li>
+      <li class="breadcrumb-item active">Dimensions SVG</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../../_sources/nodes/svg/path_svg_mk2.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../../_sources/nodes/svg/dimensions_svg_mk2.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -136,47 +134,33 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="path-svg">
-<h1>Path SVG<a class="headerlink" href="#path-svg" title="Permalink to this heading">¶</a></h1>
+  <section id="dimensions-svg">
+<h1>Dimensions SVG<a class="headerlink" href="#dimensions-svg" title="Permalink to this heading">¶</a></h1>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
-<p>Creates SVG paths.</p>
-</section>
-<section id="modes">
-<h2>Modes<a class="headerlink" href="#modes" title="Permalink to this heading">¶</a></h2>
-<ul class="simple">
-<li><p>Linear: Creates a polyline along the input vertices</p></li>
-<li><p>Curve: Creates a path from curve input. It will attempt to output a curved path if it fails due the complexity of the curve it will output a polyline with the defined curve samples</p></li>
-<li><p>User: Creates a complex path using Letter commands to define segments</p></li>
-</ul>
+<p>Creates SVG Dimensions objects.</p>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
-<li><p>Vertices: Base vertices.</p></li>
-<li><p>Curve: Base Curve.</p></li>
-<li><p>Commands: Letters to define how to interpret the vertices data. Only in user mode.</p></li>
-<li><p>Fill / Stroke: Fill and Stroke attributes.</p></li>
+<li><p>Location A: Start point of the measure.</p></li>
+<li><p>Location B: End point of the measure.</p></li>
+<li><p>Dimensions Offset: Distance from the dimension mark to the location points.</p></li>
+<li><p>Text Size: Font size.</p></li>
+<li><p>Text Offset: Distance from the line to text.</p></li>
+<li><p>Text Fill / Stroke: Dimensions Text Fill and Stroke attributes.</p></li>
+<li><p>Line Fill / Stroke: Dimensions Lines Fill and Stroke attributes.</p></li>
+<li><p>Text Multiplyer: Multiplier for dimentions. For example, you need meters or millimeters or decimeters, so multiply 1000 100 10 etc.</p></li>
 </ul>
-</section>
-<section id="commands">
-<h2>Commands<a class="headerlink" href="#commands" title="Permalink to this heading">¶</a></h2>
-<p>One letter per segment, the last command will be repeated to match the verts length</p>
-<ul class="simple">
-<li><p>L = line segment (consumes 1 vertex)</p></li>
-<li><p>C = Bezier Curve (consumes 3 vertex)</p></li>
-<li><p>S = Smooth Bezier (consumes 2 vertex)</p></li>
-<li><p>Q = Quadratic curve (consumes 2 vertex)</p></li>
-<li><p>T = Smooth Quadratic (consumes 1 vertex)</p></li>
-</ul>
-<p>If at the beginning of the command there are not enough vertices to feed the command it will be downgraded from C to S and from Q to T</p>
-<p>If command Letter is not in the list [L, C, S, Q, T] it will be interpreted as L</p>
 </section>
 <section id="options">
 <h2>Options<a class="headerlink" href="#options" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
-<li><p>Cyclic: Join the end and the beginning of the path with a line segment</p></li>
-<li><p>Samples: Curve Resolution used if curved path is not possible. Only in “Curve” mode</p></li>
+<li><p>Line Extension: Lines extensions distance.</p></li>
+<li><p>Decimals: Numerical precision displayed.</p></li>
+<li><p>Units: String to be added to the dimension number (like ‘m’, ‘Km’…)</p></li>
+<li><p>Font Family: Offers ‘serif’, ‘sans-serif’, ‘monospace’, ‘cursive’, ‘fantasy’, ‘user’</p></li>
+<li><p>User Font: User defined font name like “Georgia”, “Impact”..</p></li>
 </ul>
 </section>
 <section id="outputs">
@@ -187,10 +171,7 @@
 </section>
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
-<img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/svg/path_svg/blender_sverchok_path_svg_example_0.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/svg/path_svg/blender_sverchok_path_svg_example_0.png" />
-<img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/svg/path_svg/blender_sverchok_path_svg_example_1.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/svg/path_svg/blender_sverchok_path_svg_example_1.png" />
-<img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/svg/path_svg/blender_sverchok_path_svg_example_2.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/svg/path_svg/blender_sverchok_path_svg_example_2.png" />
-<img alt="https://user-images.githubusercontent.com/10011941/91660167-f7d32e00-ead4-11ea-9aba-f34630b4df0f.png" src="https://user-images.githubusercontent.com/10011941/91660167-f7d32e00-ead4-11ea-9aba-f34630b4df0f.png" />
+<img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/svg/dimensions_svg/blender_sverchok_dimensions_svg_example.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/svg/dimensions_svg/blender_sverchok_dimensions_svg_example.png" />
 </section>
 </section>
 
@@ -198,8 +179,8 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="mesh_svg.html" class="btn btn-neutral float-left" title="Mesh SVG" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="pattern_svg.html" class="btn btn-neutral float-right" title="Pattern SVG" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="circle_svg.html" class="btn btn-neutral float-left" title="Circle SVG" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="fill_stroke_mk2.html" class="btn btn-neutral float-right" title="Fill / Stroke SVG" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
