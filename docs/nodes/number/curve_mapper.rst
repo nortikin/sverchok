@@ -75,3 +75,14 @@ Example of the Curve output usage:
 * Surface-> :doc:`Revolution Surface </nodes/surface/revolution_surface>`
 * Surface-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+
+An example of what the node can do if you disable the "use clipping" option:
+
+.. image:: https://user-images.githubusercontent.com/284644/211205670-277fcbd4-c0fb-4645-a058-c78716156bd5.png
+  :target: https://user-images.githubusercontent.com/284644/211205670-277fcbd4-c0fb-4645-a058-c78716156bd5.png
+
+The same curve with enabled clipping:
+
+.. image:: https://user-images.githubusercontent.com/284644/211205669-998e582e-18f9-4141-bed8-4182f5356d94.png
+  :target: https://user-images.githubusercontent.com/284644/211205669-998e582e-18f9-4141-bed8-4182f5356d94.png
+
