@@ -25,6 +25,7 @@ class SvSortCurvesNode(SverchCustomTreeNode, bpy.types.Node):
 
     allow_flip : BoolProperty(
             name = "Allow Reverse",
+            description = "If checked, then in addition to reordering the list of curves, the node will also try to reverse some of them, in order to find the best concatenation sequence",
             default = False,
             update = updateNode)
 

@@ -1,6 +1,9 @@
 Sort Curves
 ===========
 
+.. image:: https://user-images.githubusercontent.com/14288520/211191173-5dfa0ee3-9daa-4d08-beea-87288b3ace26.png
+  :target: https://user-images.githubusercontent.com/14288520/211191173-5dfa0ee3-9daa-4d08-beea-87288b3ace26.png
+
 Functionality
 -------------
 
@@ -19,6 +22,9 @@ them.
 
 The first curve in the list will remain on it's place in any case, and it's
 direction will not be changed.
+
+.. image:: https://user-images.githubusercontent.com/14288520/211217157-76fd6a0f-eee6-4309-8f76-c5a373855668.png
+  :target: https://user-images.githubusercontent.com/14288520/211217157-76fd6a0f-eee6-4309-8f76-c5a373855668.png
 
 Calculation time is *O(N^2)*, where N is the number of curves, so if you have a
 lot of curves to sort, you may want to consider other options, for example if
@@ -57,6 +63,9 @@ This node has the following outputs:
   find a sequence for precise concatenation of curves, this output will contain
   0.
 
+.. image:: https://user-images.githubusercontent.com/14288520/211217426-bd0ca5e0-5bc5-456a-8fbb-bec85d9a5c6e.png
+  :target: https://user-images.githubusercontent.com/14288520/211217426-bd0ca5e0-5bc5-456a-8fbb-bec85d9a5c6e.png
+
 Example of Usage
 ----------------
 
@@ -65,5 +74,14 @@ directions of these edges are random. Generate a Line curve segment from each
 of these edges. Next we want to concatenate these lines to one Curve object. In
 order to do this, we have to reorder line segments and reverse two of them.
 
-.. image:: https://user-images.githubusercontent.com/284644/94943441-289ded00-04f1-11eb-9486-d6c5a4f8c46b.png
+.. image:: https://user-images.githubusercontent.com/14288520/211217751-7765bc54-526b-4542-a1cc-a87797734738.png
+  :target: https://user-images.githubusercontent.com/14288520/211217751-7765bc54-526b-4542-a1cc-a87797734738.png
 
+https://gist.github.com/f6c0c4b9c1d3075f99ce0d28583c5c5e
+
+* Curves-> :doc:`Curve Endpoints </nodes/curve/endpoints>`
+* Curves-> :doc:`Concatenate Curves </nodes/curve/concat_curves>`
+* List->List Main-> :doc:`List Join </nodes/list_main/join>`
+* Scene-> :doc:`Bezier Input </nodes/exchange/bezier_in>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+* Viz-> :doc:`Viewer Draw Curve </nodes/viz/viewer_draw_curve>`
