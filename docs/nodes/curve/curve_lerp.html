@@ -200,13 +200,16 @@
              
   <section id="curve-lerp">
 <h1>Curve Lerp<a class="headerlink" href="#curve-lerp" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211165837-39a6b37f-d3e0-4c1d-bf6f-6eeaa8805e75.png"><img alt="https://user-images.githubusercontent.com/14288520/211165837-39a6b37f-d3e0-4c1d-bf6f-6eeaa8805e75.png" src="https://user-images.githubusercontent.com/14288520/211165837-39a6b37f-d3e0-4c1d-bf6f-6eeaa8805e75.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node generates a linear interpolation (“lerp”) between two curves. More
 precisely, it generates a curve, each point of which is calculated by linear
 interpolation of two corresponding points on two other curves.</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211166063-a3dc6c4f-6ed2-4321-a88c-169d36f828ee.png"><img alt="https://user-images.githubusercontent.com/14288520/211166063-a3dc6c4f-6ed2-4321-a88c-169d36f828ee.png" src="https://user-images.githubusercontent.com/14288520/211166063-a3dc6c4f-6ed2-4321-a88c-169d36f828ee.png" /></a>
 <p>If the coefficient value provided is outside <cite>[0 .. 1]</cite> range, then the node
 will calculate linear extrapolation instead of interpolation.</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211166242-49779c9d-e6d5-47c5-9090-568f387713d0.png"><img alt="https://user-images.githubusercontent.com/14288520/211166242-49779c9d-e6d5-47c5-9090-568f387713d0.png" src="https://user-images.githubusercontent.com/14288520/211166242-49779c9d-e6d5-47c5-9090-568f387713d0.png" /></a>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
@@ -219,6 +222,7 @@ resulting curve will be the same as <strong>Curve1</strong>. When the coefficien
 the resulting curve will be the same as <strong>Curve2</strong>. The default value is 0.5,
 which is something in the middle.</p></li>
 </ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211166461-2487e5d9-ea83-4d30-9872-2f2f2350c1c5.png"><img alt="https://user-images.githubusercontent.com/14288520/211166461-2487e5d9-ea83-4d30-9872-2f2f2350c1c5.png" src="https://user-images.githubusercontent.com/14288520/211166461-2487e5d9-ea83-4d30-9872-2f2f2350c1c5.png" /></a>
 </section>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
@@ -229,8 +233,21 @@ which is something in the middle.</p></li>
 </section>
 <section id="example-of-usage">
 <h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211166583-a13c966d-efd9-4fdb-9055-ec3a97dbcd7f.png"><img alt="https://user-images.githubusercontent.com/14288520/211166583-a13c966d-efd9-4fdb-9055-ec3a97dbcd7f.png" src="https://user-images.githubusercontent.com/14288520/211166583-a13c966d-efd9-4fdb-9055-ec3a97dbcd7f.png" /></a>
+<ul class="simple">
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_curve.html"><span class="doc">Viewer Draw Curve</span></a></p></li>
+<li><p>Scene-&gt; <a class="reference internal" href="../exchange/bezier_in.html"><span class="doc">Bezier Input</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>Several curves calculated as linear interpolation between half a circle and a straight line segment:</p>
-<img alt="https://user-images.githubusercontent.com/284644/78507545-fdcd1900-7799-11ea-98d4-17bf8109396a.png" src="https://user-images.githubusercontent.com/284644/78507545-fdcd1900-7799-11ea-98d4-17bf8109396a.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211166710-5e0a177e-971e-4ebf-a2e4-35da6b3cbfbb.png"><img alt="https://user-images.githubusercontent.com/14288520/211166710-5e0a177e-971e-4ebf-a2e4-35da6b3cbfbb.png" src="https://user-images.githubusercontent.com/14288520/211166710-5e0a177e-971e-4ebf-a2e4-35da6b3cbfbb.png" /></a>
+<ul class="simple">
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>Curves-&gt;Curve Primitives-&gt; <a class="reference internal" href="line.html"><span class="doc">Line (Curve)</span></a></p></li>
+<li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/join.html"><span class="doc">List Join</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_curve.html"><span class="doc">Viewer Draw Curve</span></a></p></li>
+</ul>
 </section>
 </section>
 

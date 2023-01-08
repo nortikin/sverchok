@@ -201,6 +201,7 @@
              
   <section id="sort-curves">
 <h1>Sort Curves<a class="headerlink" href="#sort-curves" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211191173-5dfa0ee3-9daa-4d08-beea-87288b3ace26.png"><img alt="https://user-images.githubusercontent.com/14288520/211191173-5dfa0ee3-9daa-4d08-beea-87288b3ace26.png" src="https://user-images.githubusercontent.com/14288520/211191173-5dfa0ee3-9daa-4d08-beea-87288b3ace26.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node sorts (reorders) a list of Curve objects so that they could
@@ -216,6 +217,7 @@ incorrect direction, this node will be able to find such curves and reverse
 them.</p>
 <p>The first curve in the list will remain on it’s place in any case, and it’s
 direction will not be changed.</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211217157-76fd6a0f-eee6-4309-8f76-c5a373855668.png"><img alt="https://user-images.githubusercontent.com/14288520/211217157-76fd6a0f-eee6-4309-8f76-c5a373855668.png" src="https://user-images.githubusercontent.com/14288520/211217157-76fd6a0f-eee6-4309-8f76-c5a373855668.png" /></a>
 <p>Calculation time is <em>O(N^2)</em>, where N is the number of curves, so if you have a
 lot of curves to sort, you may want to consider other options, for example if
 you have a way to generate curves in the correct order in the first place.</p>
@@ -252,6 +254,7 @@ for the order of curves which was found the best. So if the node was able to
 find a sequence for precise concatenation of curves, this output will contain
 0.</p></li>
 </ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211217426-bd0ca5e0-5bc5-456a-8fbb-bec85d9a5c6e.png"><img alt="https://user-images.githubusercontent.com/14288520/211217426-bd0ca5e0-5bc5-456a-8fbb-bec85d9a5c6e.png" src="https://user-images.githubusercontent.com/14288520/211217426-bd0ca5e0-5bc5-456a-8fbb-bec85d9a5c6e.png" /></a>
 </section>
 <section id="example-of-usage">
 <h2>Example of Usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
@@ -259,7 +262,16 @@ find a sequence for precise concatenation of curves, this output will contain
 directions of these edges are random. Generate a Line curve segment from each
 of these edges. Next we want to concatenate these lines to one Curve object. In
 order to do this, we have to reorder line segments and reverse two of them.</p>
-<img alt="https://user-images.githubusercontent.com/284644/94943441-289ded00-04f1-11eb-9486-d6c5a4f8c46b.png" src="https://user-images.githubusercontent.com/284644/94943441-289ded00-04f1-11eb-9486-d6c5a4f8c46b.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211217751-7765bc54-526b-4542-a1cc-a87797734738.png"><img alt="https://user-images.githubusercontent.com/14288520/211217751-7765bc54-526b-4542-a1cc-a87797734738.png" src="https://user-images.githubusercontent.com/14288520/211217751-7765bc54-526b-4542-a1cc-a87797734738.png" /></a>
+<p><a class="reference external" href="https://gist.github.com/f6c0c4b9c1d3075f99ce0d28583c5c5e">https://gist.github.com/f6c0c4b9c1d3075f99ce0d28583c5c5e</a></p>
+<ul class="simple">
+<li><p>Curves-&gt; <a class="reference internal" href="endpoints.html"><span class="doc">Curve Endpoints</span></a></p></li>
+<li><p>Curves-&gt; <a class="reference internal" href="concat_curves.html"><span class="doc">Concatenate Curves</span></a></p></li>
+<li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/join.html"><span class="doc">List Join</span></a></p></li>
+<li><p>Scene-&gt; <a class="reference internal" href="../exchange/bezier_in.html"><span class="doc">Bezier Input</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_curve.html"><span class="doc">Viewer Draw Curve</span></a></p></li>
+</ul>
 </section>
 </section>
 
