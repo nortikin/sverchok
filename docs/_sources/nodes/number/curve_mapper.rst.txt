@@ -9,6 +9,14 @@ Functionality
 
 This node map all the incoming values using the curve you define manually through the interface.
 
+Note: the curve defined by the widget may give results in any range, from minus
+infinity to plus infinity. However, by default, the "use clipping" checkbox in
+curve widget's settings is enabled; the node respects that checkbox. It means,
+that if, for example, **Min Y** and **Max Y** parameters in the curve editor
+widget are set to 0.0 and 1.0, then, even if the curve goes beyond that range,
+the node results will be always within 0.0 - 1.0 range. If you do not need such
+clipping, you can disable it in curve widget settings.
+
 Disclaimer
 ----------
 
@@ -67,3 +75,14 @@ Example of the Curve output usage:
 * Surface-> :doc:`Revolution Surface </nodes/surface/revolution_surface>`
 * Surface-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+
+An example of what the node can do if you disable the "use clipping" option:
+
+.. image:: https://user-images.githubusercontent.com/284644/211205670-277fcbd4-c0fb-4645-a058-c78716156bd5.png
+  :target: https://user-images.githubusercontent.com/284644/211205670-277fcbd4-c0fb-4645-a058-c78716156bd5.png
+
+The same curve with enabled clipping:
+
+.. image:: https://user-images.githubusercontent.com/284644/211205669-998e582e-18f9-4141-bed8-4182f5356d94.png
+  :target: https://user-images.githubusercontent.com/284644/211205669-998e582e-18f9-4141-bed8-4182f5356d94.png
+

@@ -147,6 +147,13 @@
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node map all the incoming values using the curve you define manually through the interface.</p>
+<p>Note: the curve defined by the widget may give results in any range, from minus
+infinity to plus infinity. However, by default, the “use clipping” checkbox in
+curve widget’s settings is enabled; the node respects that checkbox. It means,
+that if, for example, <strong>Min Y</strong> and <strong>Max Y</strong> parameters in the curve editor
+widget are set to 0.0 and 1.0, then, even if the curve goes beyond that range,
+the node results will be always within 0.0 - 1.0 range. If you do not need such
+clipping, you can disable it in curve widget settings.</p>
 </section>
 <section id="disclaimer">
 <h2>Disclaimer<a class="headerlink" href="#disclaimer" title="Permalink to this heading">¶</a></h2>
@@ -199,6 +206,10 @@ It can be used as a 2D slider.</p></li>
 <li><p>Surface-&gt; <a class="reference internal" href="../surface/evaluate_surface.html"><span class="doc">Evaluate Surface</span></a></p></li>
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
 </ul>
+<p>An example of what the node can do if you disable the “use clipping” option:</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/211205670-277fcbd4-c0fb-4645-a058-c78716156bd5.png"><img alt="https://user-images.githubusercontent.com/284644/211205670-277fcbd4-c0fb-4645-a058-c78716156bd5.png" src="https://user-images.githubusercontent.com/284644/211205670-277fcbd4-c0fb-4645-a058-c78716156bd5.png" /></a>
+<p>The same curve with enabled clipping:</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/211205669-998e582e-18f9-4141-bed8-4182f5356d94.png"><img alt="https://user-images.githubusercontent.com/284644/211205669-998e582e-18f9-4141-bed8-4182f5356d94.png" src="https://user-images.githubusercontent.com/284644/211205669-998e582e-18f9-4141-bed8-4182f5356d94.png" /></a>
 </section>
 </section>
 
