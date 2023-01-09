@@ -201,12 +201,14 @@
              
   <section id="concatenate-curves">
 <h1>Concatenate Curves<a class="headerlink" href="#concatenate-curves" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211277635-e2739eca-904c-4635-a0ab-14b71ba85a35.png"><img alt="https://user-images.githubusercontent.com/14288520/211277635-e2739eca-904c-4635-a0ab-14b71ba85a35.png" src="https://user-images.githubusercontent.com/14288520/211277635-e2739eca-904c-4635-a0ab-14b71ba85a35.png" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node composes one Curve object from several Curve objects, by “glueing”
 their ends. It assumes that end points of the curves being concatenated are
 already coinciding. You can make the node check this fact additionally.</p>
 <p>Curve domain: summed up from domains of curves being concatenated.</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211287456-bcbb6644-580b-40f5-b387-abdc4f2b94cc.png"><img alt="https://user-images.githubusercontent.com/14288520/211287456-bcbb6644-580b-40f5-b387-abdc4f2b94cc.png" src="https://user-images.githubusercontent.com/14288520/211287456-bcbb6644-580b-40f5-b387-abdc4f2b94cc.png" /></a>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
@@ -236,8 +238,26 @@ convert one of input curves, or join resulting NURBS curves.</p></li>
 </section>
 <section id="example-of-usage">
 <h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211297333-4832ca4c-b0fc-489a-a7c8-91864728e1c7.png"><img alt="https://user-images.githubusercontent.com/14288520/211297333-4832ca4c-b0fc-489a-a7c8-91864728e1c7.png" src="https://user-images.githubusercontent.com/14288520/211297333-4832ca4c-b0fc-489a-a7c8-91864728e1c7.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>
+<li><p>Curves-&gt; <a class="reference internal" href="cubic_spline.html"><span class="doc">Cubic Spline</span></a></p></li>
+<li><p>Curves-&gt; <a class="reference internal" href="bezier_spline.html"><span class="doc">Bezier Spline Segment (Curve)</span></a></p></li>
+<li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/join.html"><span class="doc">List Join</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_struct/start_end.html"><span class="doc">List First &amp; Last</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_curve.html"><span class="doc">Viewer Draw Curve</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>Make single curve from two segments of line and an arc:</p>
-<img alt="https://user-images.githubusercontent.com/284644/77555651-50c0e980-6ed9-11ea-915f-8eb490c5904f.png" src="https://user-images.githubusercontent.com/284644/77555651-50c0e980-6ed9-11ea-915f-8eb490c5904f.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211300273-6fdca411-6fb9-40df-a90b-5a9ebb13eb7a.png"><img alt="https://user-images.githubusercontent.com/14288520/211300273-6fdca411-6fb9-40df-a90b-5a9ebb13eb7a.png" src="https://user-images.githubusercontent.com/14288520/211300273-6fdca411-6fb9-40df-a90b-5a9ebb13eb7a.png" /></a>
+<ul class="simple">
+<li><p>Curves-&gt;Curve Primitives-&gt; <a class="reference internal" href="line.html"><span class="doc">Line (Curve)</span></a></p></li>
+<li><p>Curves-&gt; <a class="reference internal" href="curve_circle.html"><span class="doc">Circle (Curve)</span></a></p></li>
+<li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/join.html"><span class="doc">List Join</span></a></p></li>
+<li><p>Curves-&gt; <a class="reference internal" href="eval_curve.html"><span class="doc">Evaluate Curve</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 </section>
 </section>
 
