@@ -32,7 +32,7 @@ class SvBMOpsNodeMK2(SverchCustomTreeNode, bpy.types.Node):
 
     PV = ['remove_doubles(bm,verts=e,dist=v[0])',
           'collapse(bm,edges=e,uvs=v[0])',
-          'unsubdivide(bm,verts=e,iterations=v[0])',
+          'unsubdivide(bm,verts=e,iterations=int(v[0]))',
           'holes_fill(bm,edges=e,sides=v[0])',
           'dissolve_faces(bm,faces=e,use_verts=v[0])',
           'connect_verts_concave(bm,faces=e)',
@@ -73,6 +73,8 @@ class SvBMOpsNodeMK2(SverchCustomTreeNode, bpy.types.Node):
         layout.prop(self, "oper", text="Get")
         for i in range(self.oper.count("=v[")):
             layout.prop(self, "V"+str(i), text="v"+str(i))
+        for i in range(self.oper.count("=int(v[")):
+            layout.prop(self, "V"+str(i), text="v"+str(i))
 
     def process(self):
         if not self.outputs['bmesh_list'].is_linked:
@@ -82,6 +84,7 @@ class SvBMOpsNodeMK2(SverchCustomTreeNode, bpy.types.Node):
         v = [self.V0,self.V1,self.V2,self.V3,self.V4,self.V5,self.V6,self.V7]
         outp = []
         op = "bmesh.ops."+self.oper
+        print(op)
         if e.is_linked:
             element = e.sv_get()
             for bm, e in zip(obj, element):
@@ -109,3 +112,6 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvBMOpsNodeMK2)
+
+if __name__ == '__main__':
+    register()
