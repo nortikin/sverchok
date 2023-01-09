@@ -24,7 +24,7 @@ charth = [charz] + [[i+k for k in charz] for i in charz]
 charth = reduce(lambda x,y: x+y, charth)
 
 if self.custom_enum == 'Orig':
-    chars = charth[:V_char]
+    chars = charth[:V_char-1]
     for i in range(U_nums):
         num_ = []
         for ch in chars:
