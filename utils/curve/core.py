@@ -403,6 +403,10 @@ class SvCurve(object):
 
         return integral, new_matrices
 
+    def curvature(self, t, tangent_delta=None):
+        h = self.get_tangent_delta(tangent_delta)
+        return self.curvature_array(np.array([t]), tangent_delta=h)[0]
+
     def curvature_array(self, ts, tangent_delta=None):
         h = self.get_tangent_delta(tangent_delta)
         tangents, seconds = self.derivatives_array(2, ts, tangent_delta=h)

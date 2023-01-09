@@ -17,6 +17,7 @@ from sverchok.utils.curve.core import SvCurve
 from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.curve.fillet import (
         SMOOTH_POSITION, SMOOTH_TANGENT, SMOOTH_ARC, SMOOTH_BIARC, SMOOTH_QUAD, SMOOTH_NORMAL, SMOOTH_CURVATURE,
+        SMOOTH_G2,
         fillet_polyline_from_curve, fillet_nurbs_curve
     )
 from sverchok.utils.handle_blender_data import keep_enum_reference
@@ -69,6 +70,7 @@ class SvFilletCurveNode(SverchCustomTreeNode, bpy.types.Node):
             items.append((SMOOTH_BIARC, "1 - Bi Arc", "Connect segments with Bi Arc, such that tangents are smoothly joined", 2))
             #items.append((SMOOTH_NORMAL, "2 - Normals", "Connect segments such that their normals (second derivatives) are smoothly joined", 3))
             #items.append((SMOOTH_CURVATURE, "3 - Curvature", "Connect segments such that their curvatures (third derivatives) are smoothly joined", 4))
+            #items.append((SMOOTH_G2, "G2 - Curvature", "Connect curves such that their tangents, normals and curvatures are continuosly joined", 6))
         else:
             items.append((SMOOTH_ARC, "1 - Circular Arc", "Connect segments with circular arcs", 5))
         return items

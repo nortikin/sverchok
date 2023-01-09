@@ -28,15 +28,15 @@ SMOOTH_ARC = '1a'
 SMOOTH_QUAD = '1q'
 SMOOTH_NORMAL = '2'
 SMOOTH_CURVATURE = '3'
+SMOOTH_G2 = 'G2'
 
-def calc_single_fillet(smooth, curve1, curve2, t_span, bulge_factor = 0.5, biarc_parameter = 1.0, planar_tolerance = 1e-6):
-    #t_span = 1.0
+def calc_single_fillet(smooth, curve1, curve2, k1, k2, bulge_factor = 0.5, biarc_parameter = 1.0, planar_tolerance = 1e-6):
     u1_max = curve1.get_u_bounds()[1]
     u2_min = curve2.get_u_bounds()[0]
     curve1_end = curve1.evaluate(u1_max)
     curve2_begin = curve2.evaluate(u2_min)
-    tangent1_end = t_span * curve1.get_end_tangent()
-    tangent2_begin = t_span * curve2.get_start_tangent()
+    tangent1_end = k1 * curve1.get_end_tangent()
+    tangent2_begin = k2 * curve2.get_start_tangent()
 
     if smooth == SMOOTH_POSITION:
         return SvLine.from_two_points(curve1_end, curve2_begin)
@@ -58,23 +58,31 @@ def calc_single_fillet(smooth, curve1, curve2, t_span, bulge_factor = 0.5, biarc
                 biarc_parameter,
                 planar_tolerance = planar_tolerance)
     elif smooth == SMOOTH_NORMAL:
-        second_1_end = t_span**2 * curve1.second_derivative(u1_max)
-        second_2_begin = t_span**2 * curve2.second_derivative(u2_min)
-        #print(f"T: {t_span**2}")
-        #print(f"E: {curve1_end}, {tangent1_end}, {second_1_end}")
-        #print(f"B: {curve2_begin}, {tangent2_begin}, {second_2_begin}")
+        second_1_end = k1**2 * curve1.second_derivative(u1_max)
+        second_2_begin = k2**2 * curve2.second_derivative(u2_min)
         return SvBezierCurve.blend_second_derivatives(
                         curve1_end, tangent1_end, second_1_end,
                         curve2_begin, tangent2_begin, second_2_begin)
     elif smooth == SMOOTH_CURVATURE:
-        second_1_end = t_span**2 * curve1.second_derivative(u1_max)
-        second_2_begin = t_span**2 * curve2.second_derivative(u2_min)
-        third_1_end = t_span**3 * curve1.third_derivative_array(np.array([u1_max]))[0]
-        third_2_begin = t_span**3 * curve2.third_derivative_array(np.array([u2_min]))[0]
+        second_1_end = k1**2 * curve1.second_derivative(u1_max)
+        second_2_begin = k2**2 * curve2.second_derivative(u2_min)
+        third_1_end = k1**3 * curve1.third_derivative_array(np.array([u1_max]))[0]
+        third_2_begin = k2**3 * curve2.third_derivative_array(np.array([u2_min]))[0]
 
         return SvBezierCurve.blend_third_derivatives(
                         curve1_end, tangent1_end, second_1_end, third_1_end,
                         curve2_begin, tangent2_begin, second_2_begin, third_2_begin)
+    elif smooth == 'G2':
+        normal_1_end = curve1.main_normal(u1_max)
+        normal_2_begin = curve2.main_normal(u2_min)
+        curvature_1_end = curve1.curvature(u1_max)
+        curvature_2_begin = curve2.curvature(u2_min)
+        
+        return SvBezierCurve.from_tangents_normals_curvatures(
+                        curve1_end, curve2_begin,
+                        tangent1_end, tangent2_begin,
+                        normal_1_end, normal_2_begin,
+                        curvature_1_end, curvature_2_begin)
     else:
         raise Exception(f"Unsupported smooth level: {smooth}")
 
@@ -91,8 +99,9 @@ def cut_ends(curve, cut_offset, cut_start=True, cut_end=True):
         u2 = u_max - dt
     else:
         u2 = u_max
+    du = u2 - u1
     #print(f"cut: {u_min} - {u_max} * cut_offset => {u1} - {u2}")
-    return dt, curve.cut_segment(u1, u2)
+    return du, curve.cut_segment(u1, u2)
 
 def limit_filet_radiuses(vertices, radiuses, cyclic=False):
     factor = 0.999
@@ -150,11 +159,11 @@ def fillet_nurbs_curve(curve, smooth, cut_offset,
     segments = curve.split_at_fracture_points(tangent_tolerance = tangent_tolerance)
     n = len(segments)
     cuts = [cut_ends(s, cut_offset, cut_start = (i > 0 or cyclic), cut_end = (i < n-1 or cyclic)) for i, s in enumerate(segments)]
-    fillets = [calc_single_fillet(smooth, s1, s2, dt1+dt2, bulge_factor, biarc_parameter, planar_tolerance) for (dt1,s1), (dt2,s2) in zip(cuts, cuts[1:])]
+    fillets = [calc_single_fillet(smooth, s1, s2, dt1, dt2, bulge_factor, biarc_parameter, planar_tolerance) for (dt1,s1), (dt2,s2) in zip(cuts, cuts[1:])]
     if cyclic:
         dt1, s1 = cuts[-1]
         dt2, s2 = cuts[0]
-        fillet = calc_single_fillet(smooth, s1, s2, dt1+dt2, bulge_factor, biarc_parameter, planar_tolerance)
+        fillet = calc_single_fillet(smooth, s1, s2, dt1, dt2, bulge_factor, biarc_parameter, planar_tolerance)
         fillets.append(fillet)
     segments = [cut[1] for cut in cuts]
     new_segments = [[segment, fillet] for segment, fillet in zip(segments, fillets)]

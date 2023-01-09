@@ -75,6 +75,17 @@ class SurfaceDerivativesData(object):
         else:
             return matrices_np
 
+    def tangents_in_direction(self, uv_directions, w_axis=2):
+        if w_axis == 2:
+            U, V = 0, 1
+        elif w_axis == 1:
+            U, V = 0, 2
+        else:
+            U, V = 1, 2
+        d_u = uv_directions[:,U][np.newaxis].T
+        d_v = uv_directions[:,V][np.newaxis].T
+        return self.du * d_u + self.dv * d_v
+
 class SurfaceCurvatureCalculator(object):
     """
     This class contains pre-calculated first and second surface derivatives,
@@ -89,6 +100,7 @@ class SurfaceCurvatureCalculator(object):
         self.nuu = self.nvv = self.nuv = None
         self.points = None
         self.normals = None
+        self._derivatives_data = None
 
     def set(self, points, normals, fu, fv, duu, dvv, duv, nuu, nvv, nuv):
         """Set derivatives information"""
@@ -102,6 +114,14 @@ class SurfaceCurvatureCalculator(object):
         self.nuu = nuu # (fuu, normal), a.k.a l
         self.nvv = nvv # (fvv, normal), a.k.a n
         self.nuv = nuv # (fuv, normal), a.k.a m
+
+    @property
+    def derivatives_data(self):
+        if self._derivatives_data is None:
+            if self.points is None or self.fu is None or self.fv is None:
+                raise Exception("SurfaceCurvatureCalculator.set() was not called before call to SurfaceCurvatureCalculator.derivatives_data")
+            self._derivatives_data = SurfaceDerivativesData(self.points, self.fu, self.fv)
+        return self._derivatives_data
 
     def mean(self):
         """
