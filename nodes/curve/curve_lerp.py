@@ -20,6 +20,7 @@ class SvCurveLerpCurveNode(SverchCustomTreeNode, bpy.types.Node):
 
     coefficient : FloatProperty(
             name = "Coefficient",
+            description = "The interpolation coefficient. 0 is a curve1, 1 is a curve2",
             default = 0.5,
             update=updateNode)
 

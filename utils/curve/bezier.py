@@ -633,11 +633,11 @@ class SvCubicBezierCurve(SvCurve, SvBezierSplitMixin):
 
     def lerp_to(self, curve2, coefficient):
         if isinstance(curve2, SvCubicBezierCurve):
+            p0 = (1.0 - coefficient) * self.p0 + coefficient * curve2.p0
             p1 = (1.0 - coefficient) * self.p1 + coefficient * curve2.p1
             p2 = (1.0 - coefficient) * self.p2 + coefficient * curve2.p2
             p3 = (1.0 - coefficient) * self.p3 + coefficient * curve2.p3
-            p4 = (1.0 - coefficient) * self.p4 + coefficient * curve2.p4
-            return SvCubicBezierCurve(p1, p2, p3, p4)
+            return SvCubicBezierCurve(p0, p1, p2, p3)
         return self.to_nurbs().lerp_to(curve2, coefficient)
 
     def is_line(self, tolerance=0.001):
