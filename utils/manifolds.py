@@ -115,7 +115,7 @@ def nearest_point_on_curve(src_points, curve, samples=10, precise=True, method='
         nearest_out = []
         for point_from in points_from:
             nearest, normal, i, distance = tree.find_nearest( point_from )
-            us_out.append(us[i])
+            us_out.append( (us[i], us[i+1]) ) # interval to search minimum
             nearest_out.append(tuple(nearest))
 
         return us_out, np.array(nearest_out)
@@ -124,24 +124,16 @@ def nearest_point_on_curve(src_points, curve, samples=10, precise=True, method='
         dv = curve.evaluate(t) - np.array(src_point)
         return np.linalg.norm(dv)
 
-    init_ts, init_points = init_guess(curve, src_points)
+    intervals, init_points = init_guess(curve, src_points)
     result_ts = []
     if precise:
-        for src_point, init_t, init_point in zip(src_points, init_ts, init_points):
-            delta_t = (t_max - t_min) / samples
-            logger.debug("T_min %s, T_max %s, init_t %s, delta_t %s", t_min, t_max, init_t, delta_t)
+        for src_point, interval, init_point in zip(src_points, intervals, init_points):
 
-            if init_t <= t_min:
-                init_t  = t_min + delta_t/2
-                bracket = (t_min, init_t, t_min+delta_t)
-                bounds  = (t_min, t_min+delta_t)
-            elif t_min<init_t and init_t<t_max:
-                bracket = (t_min, init_t, t_max)
-                bounds  = (init_t-delta_t if init_t-delta_t>t_min else t_min, init_t+delta_t if init_t+delta_t<t_max else t_max)
-            elif init_t >= t_max:
-                init_t  = t_max - delta_t/2
-                bracket = (t_max-delta_t, init_t, t_max)
-                bounds  = (init_t-delta_t, t_max)
+            init_t  = (interval[0]+interval[1])/2
+            bracket = (interval[0], init_t, interval[1])
+            bounds  = (interval[0], interval[1])            
+            
+            logger.debug("T_min %s, T_max %s, init_t %s", t_min, t_max, init_t)
 
             result = minimize_scalar(goal,
                         bounds = bounds,
