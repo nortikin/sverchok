@@ -127,7 +127,7 @@ def nearest_point_on_curve(src_points, curve, samples=10, precise=True, method='
                 t01=0
                 raw_t = us[i]
                 nearest_t = points[i]
-            elif dist_nearest_to_p0==1:
+            elif dist_nearest_to_p0==max_dist:
                 t01 = 1
                 raw_t = us[i+1]
                 nearest_t = points[i+1]
