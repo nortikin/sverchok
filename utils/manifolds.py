@@ -166,11 +166,19 @@ def nearest_point_on_curve(src_points, curve, samples=10, precise=True, method='
                 
                 logger.debug("T_min %s, T_max %s, init_t %s", t_min, t_max, raw_t)
 
-                result = minimize_scalar(goal,
-                            bounds = bounds,
-                            bracket = bracket,
-                            method = method
-                        )
+                if method == 'Brent' or method == 'Golden':
+                    bracket = (interval[0], interval[1])
+                    result = minimize_scalar(goal,
+                                #bounds = bounds, - Use of `bounds` is incompatible with 'method=Brent'.
+                                bracket = bracket,
+                                method = method
+                            )
+                else:
+                    result = minimize_scalar(goal,
+                                bounds = bounds,
+                                bracket = bracket,
+                                method = method
+                            )
 
                 if not result.success:
                     if hasattr(result, 'message'):
