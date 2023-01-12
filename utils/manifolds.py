@@ -119,17 +119,9 @@ def nearest_point_on_curve(src_points, curve, samples=10, precise=True, method='
             # find t of arc:
             points_i0 = points[i]
             points_i1 = points[i+1]
-            dist_ix = abs(points_i1[0] - points_i0[0])
-            dist_iy = abs(points_i1[1] - points_i0[1])
-            dist_iz = abs(points_i1[2] - points_i0[2])
-            max_axis = 0
-            max_dist = dist_ix
-            if max_dist < dist_iy:
-                max_dist = dist_iy
-                max_axis = 1
-            if max_dist < dist_iz:
-                max_dist = dist_iz
-                max_axis = 2
+            dist_axis = (abs(points_i1[0] - points_i0[0]), abs(points_i1[1] - points_i0[1]), abs(points_i1[2] - points_i0[2]) )
+            max_axis = np.argmax(dist_axis)
+            max_dist = dist_axis[max_axis]
             dist_nearest_to_p0 = abs(nearest[max_axis]-points_i0[max_axis])
             if dist_nearest_to_p0==0:
                 t01=0
