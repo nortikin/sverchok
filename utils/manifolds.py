@@ -115,22 +115,21 @@ def nearest_point_on_curve(src_points, curve, samples=10, precise=True, method='
         nearest_out = []
         for point_from in points_from:
             nearest, normal, i, distance = tree.find_nearest( point_from )
+            nearest = np.array(nearest)
             
             # find t of arc:
-            points_i0 = points[i]
-            points_i1 = points[i+1]
-            dist_axis = (abs(points_i1[0] - points_i0[0]), abs(points_i1[1] - points_i0[1]), abs(points_i1[2] - points_i0[2]) )
-            max_axis = np.argmax(dist_axis)
-            max_dist = dist_axis[max_axis]
-            dist_nearest_to_p0 = abs(nearest[max_axis]-points_i0[max_axis])
+            p0 = np.array(points[i])
+            p1 = np.array(points[i+1])
+            max_dist = abs(p0-p1).max()
+            dist_nearest_to_p0 = abs(nearest-p0).max()
             if dist_nearest_to_p0==0:
                 t01=0
                 raw_t = us[i]
-                nearest_t = points[i]
+                nearest_t = p0
             elif dist_nearest_to_p0==max_dist:
                 t01 = 1
                 raw_t = us[i+1]
-                nearest_t = points[i+1]
+                nearest_t = p1
             else:
                 t01 = dist_nearest_to_p0/max_dist
                 raw_t = us[i] + t01*(us[i+1]-us[i]) # approximate nearest t by chorda
@@ -139,7 +138,7 @@ def nearest_point_on_curve(src_points, curve, samples=10, precise=True, method='
             # t0    - [0-1] in interval us[i]-us[i+1]
             # raw_t - translate t0 to curve t
             # nearest_t - if t0==0 or 1 then use points, else None and calc later
-            us_out.append( (us[i], us[i+1], t01, raw_t, points[i], nearest_t, points[i+1] ) ) # interval to search minimum
+            us_out.append( (us[i], us[i+1], t01, raw_t, p0, nearest_t, p1 ) ) # interval to search minimum
             nearest_out.append(tuple(nearest))
 
         return us_out, np.array(nearest_out)
@@ -189,14 +188,14 @@ def nearest_point_on_curve(src_points, curve, samples=10, precise=True, method='
         result_ts_none = []
         # get t where points is None value
         for i in range(len(result_points)):
-            if result_points[i]==None:
+            if result_points[i] is None:
                 result_ts_none.append(result_ts[i])
 
         if len(result_ts_none)>0:
             # evaluate that points and save values:
             result_points_none = curve.evaluate_array(np.array(result_ts_none)).tolist()
             for i in range(len(result_points)):
-                if result_points[i]==None:
+                if result_points[i] is None:
                     result_points[i] = result_points_none.pop(0)
 
         return list(zip(result_ts, np.array(result_points) ))
