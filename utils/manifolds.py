@@ -108,16 +108,37 @@ def nearest_point_on_curve(src_points, curve, samples=10, precise=True, method='
         points = curve.evaluate_array(us).tolist()
         #print("P:", points)
 
-        kdt = kdtree.KDTree(len(us))
-        for i, v in enumerate(points):
-            kdt.insert(v, i)
-        kdt.balance()
+        polygons = [(i, i+1, i) for i in range(len(points)-1)]
+        tree = BVHTree.FromPolygons( points, polygons, all_triangles = True )
 
         us_out = []
         nearest_out = []
         for point_from in points_from:
-            nearest, i, distance = kdt.find(point_from)
-            us_out.append(us[i])
+            nearest, normal, i, distance = tree.find_nearest( point_from )
+            nearest = np.array(nearest)
+            
+            # find t of arc:
+            p0 = np.array(points[i])
+            p1 = np.array(points[i+1])
+            max_dist = abs(p0-p1).max()
+            dist_nearest_to_p0 = abs(nearest-p0).max()
+            if dist_nearest_to_p0==0:
+                t01=0
+                raw_t = us[i]
+                nearest_t = p0
+            elif dist_nearest_to_p0==max_dist:
+                t01 = 1
+                raw_t = us[i+1]
+                nearest_t = p1
+            else:
+                t01 = dist_nearest_to_p0/max_dist
+                raw_t = us[i] + t01*(us[i+1]-us[i]) # approximate nearest t by chorda
+                nearest_t = None #curve.evaluate(raw_t).tolist()  # later
+            
+            # t0    - [0-1] in interval us[i]-us[i+1]
+            # raw_t - translate t0 to curve t
+            # nearest_t - if t0==0 or 1 then use points, else None and calc later
+            us_out.append( (us[i], us[i+1], t01, raw_t, p0, nearest_t, p1 ) ) # interval to search minimum
             nearest_out.append(tuple(nearest))
 
         return us_out, np.array(nearest_out)
@@ -126,52 +147,58 @@ def nearest_point_on_curve(src_points, curve, samples=10, precise=True, method='
         dv = curve.evaluate(t) - np.array(src_point)
         return np.linalg.norm(dv)
 
-    init_ts, init_points = init_guess(curve, src_points)
+    intervals, init_points = init_guess(curve, src_points)
     result_ts = []
-    if precise:
-        for src_point, init_t, init_point in zip(src_points, init_ts, init_points):
-            delta_t = (t_max - t_min) / samples
-            logger.debug("T_min %s, T_max %s, init_t %s, delta_t %s", t_min, t_max, init_t, delta_t)
-            if init_t <= t_min:
-                if init_t - delta_t >= t_min:
-                    bracket = (init_t - delta_t, init_t, t_max)
-                else:
-                    bracket = None # (t_min, t_min + delta_t, t_min + 2*delta_t)
-            elif init_t >= t_max:
-                if init_t + delta_t <= t_max:
-                    bracket = (t_min, init_t, init_t + delta_t)
-                else:
-                    bracket = None # (t_max - 2*delta_t, t_max - delta_t, t_max)
+    result_points = []
+    for src_point, interval, init_point in zip(src_points, intervals, init_points):
+
+        t01       = interval[2]
+        res_t     = interval[3]
+        res_point = interval[5]  # remark: may be None. Calc of None later after getting final t.
+
+        if precise==True:
+            if t01==0 or t01==1:
+                pass
             else:
-                bracket = (t_min, init_t, t_max)
-            result = minimize_scalar(goal,
-                        bounds = (t_min, t_max),
-                        bracket = bracket,
-                        method = method
-                    )
+                raw_t  = interval[3]
+                bracket = (interval[0], raw_t, interval[1])
+                bounds  = (interval[0], interval[1])            
+                
+                logger.debug("T_min %s, T_max %s, init_t %s", t_min, t_max, raw_t)
 
-            if not result.success:
-                if hasattr(result, 'message'):
-                    message = result.message
-                else:
-                    message = repr(result)
-                raise Exception("Can't find the nearest point for {}: {}".format(src_point, message))
+                result = minimize_scalar(goal,
+                            bounds = bounds,
+                            bracket = bracket,
+                            method = method
+                        )
 
-            t0 = result.x
-            if t0 < t_min:
-                t0 = t_min
-            elif t0 > t_max:
-                t0 = t_max
-            result_ts.append(t0)
-    else:
-        result_ts = init_ts
+                if not result.success:
+                    if hasattr(result, 'message'):
+                        message = result.message
+                    else:
+                        message = repr(result)
+                    raise Exception("Can't find the nearest point for {}: {}".format(src_point, message))
+
+                res_t = result.x
+
+        result_ts.append(res_t)
+        result_points.append(res_point)
 
     if output_points:
-        if precise:
-            result_points = curve.evaluate_array(np.array(result_ts))
-            return list(zip(result_ts, result_points))
-        else:
-            return list(zip(result_ts, init_points))
+        result_ts_none = []
+        # get t where points is None value
+        for i in range(len(result_points)):
+            if result_points[i] is None:
+                result_ts_none.append(result_ts[i])
+
+        if len(result_ts_none)>0:
+            # evaluate that points and save values:
+            result_points_none = curve.evaluate_array(np.array(result_ts_none)).tolist()
+            for i in range(len(result_points)):
+                if result_points[i] is None:
+                    result_points[i] = result_points_none.pop(0)
+
+        return list(zip(result_ts, np.array(result_points) ))
     else:
         return result_ts
 

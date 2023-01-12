@@ -21,12 +21,14 @@ class SvExNearestPointOnCurveNode(SverchCustomTreeNode, bpy.types.Node):
 
     samples : IntProperty(
         name = "Init Resolution",
+        description = "Initial number of segments to subdivide curve in, for the first step of algorithm. The higher values will lead to more precise initial guess, so the precise algorithm will be faster",
         default = 50,
         min = 3,
         update = updateNode)
 
     precise : BoolProperty(
         name = "Precise",
+        description = "If not checked, then the precise calculation step will not be executed, and the node will just output the nearest point out of points generated at the first step - so it will be “roughly nearest point”",
         default = True,
         update = updateNode)
 
