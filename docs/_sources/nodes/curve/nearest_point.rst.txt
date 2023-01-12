@@ -1,6 +1,9 @@
 Nearest Point on Curve
 ======================
 
+.. image:: https://user-images.githubusercontent.com/14288520/211775155-aaa814c0-b5d1-4a9f-8301-da1e60a9a97c.png
+  :target: https://user-images.githubusercontent.com/14288520/211775155-aaa814c0-b5d1-4a9f-8301-da1e60a9a97c.png
+
 Dependencies
 ------------
 
@@ -28,6 +31,9 @@ algorithm.
 In case there are several points on the curve with equal distance to the
 original point, the node will return one of them (it is not guaranteed which
 one).
+
+.. image:: https://user-images.githubusercontent.com/14288520/211776462-f01c0f6f-d6bd-41f6-9758-fd590ebb0666.png
+  :target: https://user-images.githubusercontent.com/14288520/211776462-f01c0f6f-d6bd-41f6-9758-fd590ebb0666.png
 
 Inputs
 ------
