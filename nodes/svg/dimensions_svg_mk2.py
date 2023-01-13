@@ -98,7 +98,7 @@ class SvgDimension():
             else:
                 deg = degrees(line_dir.angle(Vector((-1, 0, 0))))
             angle = 180 + deg
-            print(f'SVG degresses {deg} angle {angle}')
+            #print(f'SVG degresses {deg} angle {angle}')
             sign = 1 if self.dim_offset > 0 else -1
             sign_b = sign
 
