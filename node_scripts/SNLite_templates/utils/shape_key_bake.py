@@ -62,7 +62,7 @@ def make(self, context):
         sk0 = obj.shape_key_add(name='Basis')
     else:
         # name of new shape from frame number
-        kn = "sverchok %d"%frame
+        kn = f"sverchok {frame}"
     key = bpy.data.shape_keys[obj.data.shape_keys.name]
     key.use_relative = False
 
