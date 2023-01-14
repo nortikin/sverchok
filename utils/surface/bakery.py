@@ -123,30 +123,44 @@ class SurfaceData(object):
                 curvature_values = calc.mean()
             elif node.curvature_type == 'MAX':
                 c1, c2 = calc.values()
-                curvature_values = np.max((abs(c1), abs(c2)), axis=0)
+                #curvature_values = np.max((abs(c1), abs(c2)), axis=0)
+                curvature_values = np.max((c1, c2), axis=0)
             elif node.curvature_type == 'MIN':
                 c1, c2 = calc.values()
-                curvature_values = np.min((abs(c1), abs(c2)), axis=0)
+                #curvature_values = np.min((abs(c1), abs(c2)), axis=0)
+                curvature_values = np.min((c1, c2), axis=0)
             else: # DIFF
                 c1, c2 = calc.values()
-                m = np.min((abs(c1), abs(c2)), axis=0)
-                M = np.max((abs(c1), abs(c2)), axis=0)
+                m = np.min((c1, c2), axis=0)
+                M = np.max((c1, c2), axis=0)
+                #m = np.min((abs(c1), abs(c2)), axis=0)
+                #M = np.max((abs(c1), abs(c2)), axis=0)
                 curvature_values = M - m
 
             curvature_values[np.isnan(curvature_values)] = 0
             min_curvature = curvature_values.min()
             max_curvature = curvature_values.max()
+            surface_colors = np.zeros((resolution_u*resolution_v, 4))
+            surface_colors[:] = main_color
+            max_color = np.array(node.curvature_max_color)
+            min_color = np.array(node.curvature_min_color)
             if (max_curvature - min_curvature) < 1e-4:
-                surface_colors = np.empty((resolution_u*resolution_v, 4))
-                surface_colors[:] = main_color
+                curvature = (max_curvature + min_curvature)*0.5
+                if curvature > 0:
+                    surface_colors[:] = max_color
+                if curvature < 0:
+                    surface_colors[:] = min_color
             else:
-                c = (curvature_values - min_curvature) / (max_curvature - min_curvature)
-                print(f"C: min {min_curvature}, max {max_curvature}, c {c}")
-                c = c[np.newaxis].T
-                max_color = np.array(node.curvature_color)
-                min_color = 2*main_color - max_color
-                #print(f"C: min {min_color}, avg {main_color}, max {max_color}")
-                surface_colors = (1 - c)*min_color + c*max_color
+                if max_curvature > 0:
+                    positive = (curvature_values > 0)
+                    c = curvature_values[positive] / max_curvature
+                    c = c[np.newaxis].T
+                    surface_colors[positive] = (1 - c)*main_color + c*max_color
+                if min_curvature < 0:
+                    negative = (curvature_values < 0)
+                    c = (min_curvature - curvature_values[negative]) / min_curvature
+                    c = c[np.newaxis].T
+                    surface_colors[negative] = (1 - c)*min_color + c*main_color
         else:
             surface_colors = np.empty((resolution_u*resolution_v, 4))
             surface_colors[:] = main_color

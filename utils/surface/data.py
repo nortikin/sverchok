@@ -132,9 +132,6 @@ class SurfaceCurvatureCalculator(object):
         curvature = np.zeros_like(numerator)
         good = (denominator != 0)
         curvature[good] = numerator[good] / denominator[good]
-        print(f"G: num {numerator}")
-        print(f"G: den {denominator}")
-        print(f"G: c {curvature}")
         return curvature
 
     def curvature_along_direction(self, v1, v2):
