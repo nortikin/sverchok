@@ -193,11 +193,19 @@ def nearest_point_on_curve(src_points, curve, samples=10, precise=True, method=&
                 
                 logger.debug(&#34;T_min %s, T_max %s, init_t %s&#34;, t_min, t_max, raw_t)
 
-                result = minimize_scalar(goal,
-                            bounds = bounds,
-                            bracket = bracket,
-                            method = method
-                        )
+                if method == &#39;Brent&#39; or method == &#39;Golden&#39;:
+                    bracket = (interval[0], interval[1])
+                    result = minimize_scalar(goal,
+                                #bounds = bounds, - Use of `bounds` is incompatible with &#39;method=Brent&#39;.
+                                bracket = bracket,
+                                method = method
+                            )
+                else:
+                    result = minimize_scalar(goal,
+                                bounds = bounds,
+                                bracket = bracket,
+                                method = method
+                            )
 
                 if not result.success:
                     if hasattr(result, &#39;message&#39;):
@@ -1611,11 +1619,19 @@ dependencies: scipy</p></div>
                 
                 logger.debug(&#34;T_min %s, T_max %s, init_t %s&#34;, t_min, t_max, raw_t)
 
-                result = minimize_scalar(goal,
-                            bounds = bounds,
-                            bracket = bracket,
-                            method = method
-                        )
+                if method == &#39;Brent&#39; or method == &#39;Golden&#39;:
+                    bracket = (interval[0], interval[1])
+                    result = minimize_scalar(goal,
+                                #bounds = bounds, - Use of `bounds` is incompatible with &#39;method=Brent&#39;.
+                                bracket = bracket,
+                                method = method
+                            )
+                else:
+                    result = minimize_scalar(goal,
+                                bounds = bounds,
+                                bracket = bracket,
+                                method = method
+                            )
 
                 if not result.success:
                     if hasattr(result, &#39;message&#39;):
