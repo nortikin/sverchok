@@ -77,14 +77,13 @@ def make_tris(n_u, n_v):
 def vert_light_factor(vecs, polygons, light):
     return (np_dot(np_vertex_normals(vecs, polygons, output_numpy=True), light)*0.5+0.5).tolist()
 
-def calc_surface_data(light_vector, surface_color, n_u, n_v, points):
+def calc_surface_data(light_vector, surface_colors, n_u, n_v, points):
     #points = points.reshape((n_u*n_v, 3))
     tris = make_tris(n_u, n_v)
     n_tris = len(tris)
     light_factor = vert_light_factor(points, tris, light_vector)
     colors = []
-    col = surface_color
-    for l_factor in light_factor:
+    for col, l_factor in zip(surface_colors, light_factor):
         colors.append([col[0]*l_factor, col[1]*l_factor, col[2]*l_factor, col[3]])
     return tris, colors
 
@@ -115,6 +114,43 @@ class SurfaceData(object):
         self.points = surface.evaluate_array(us, vs)#.tolist()
         self.points_list = self.points.reshape((resolution_u*resolution_v, 3)).tolist()
 
+        main_color = np.array(node.surface_color)
+        if node.draw_curvature:
+            calc = surface.curvature_calculator(us, vs, order=False)
+            if node.curvature_type == 'GAUSS':
+                curvature_values = calc.gauss()
+            elif node.curvature_type == 'MEAN':
+                curvature_values = calc.mean()
+            elif node.curvature_type == 'MAX':
+                c1, c2 = calc.values()
+                curvature_values = np.max((abs(c1), abs(c2)), axis=0)
+            elif node.curvature_type == 'MIN':
+                c1, c2 = calc.values()
+                curvature_values = np.min((abs(c1), abs(c2)), axis=0)
+            else: # DIFF
+                c1, c2 = calc.values()
+                m = np.min((abs(c1), abs(c2)), axis=0)
+                M = np.max((abs(c1), abs(c2)), axis=0)
+                curvature_values = M - m
+
+            curvature_values[np.isnan(curvature_values)] = 0
+            min_curvature = curvature_values.min()
+            max_curvature = curvature_values.max()
+            if (max_curvature - min_curvature) < 1e-4:
+                surface_colors = np.empty((resolution_u*resolution_v, 4))
+                surface_colors[:] = main_color
+            else:
+                c = (curvature_values - min_curvature) / (max_curvature - min_curvature)
+                print(f"C: min {min_curvature}, max {max_curvature}, c {c}")
+                c = c[np.newaxis].T
+                max_color = np.array(node.curvature_color)
+                min_color = 2*main_color - max_color
+                #print(f"C: min {min_color}, avg {main_color}, max {max_color}")
+                surface_colors = (1 - c)*min_color + c*max_color
+        else:
+            surface_colors = np.empty((resolution_u*resolution_v, 4))
+            surface_colors[:] = main_color
+
         if hasattr(surface, 'get_control_points'):
             self.cpts = surface.get_control_points()
             n_v, n_u, _ = self.cpts.shape
@@ -135,7 +171,7 @@ class SurfaceData(object):
             self.node_u_isoline_data = node_v_isoline_data = None
 
         self.edges = make_quad_edges(resolution_u, resolution_v)
-        self.tris, self.tri_colors = calc_surface_data(node.light_vector, node.surface_color, resolution_u, resolution_v, self.points)
+        self.tris, self.tri_colors = calc_surface_data(node.light_vector, surface_colors, resolution_u, resolution_v, self.points)
     
     def bake(self, object_name):
         me = bpy.data.meshes.new(object_name)
