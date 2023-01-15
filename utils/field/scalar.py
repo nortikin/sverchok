@@ -22,6 +22,9 @@ from sverchok.utils.kdtree import SvKdTree
 #                #
 ##################
 
+class UnsupportedFieldType(TypeError):
+    pass
+
 class SvScalarField(object):
 
     def __repr__(self):
@@ -134,6 +137,56 @@ class SvScalarFieldLambda(SvScalarField):
         else:
             V = self.in_field.evaluate(x, y, z)
         return self.function(x, y, z, V)
+
+class SvDistanceFromManyPointsScalarField(SvScalarField):
+    def __init__(self, mode, centers, metric='EUCLIDEAN', falloff=None, power=2):
+        self.mode = mode
+        self.centers = centers
+        self.falloff = falloff
+        self.metric = metric
+        self.power = power
+        self.__description__ = f"Distance from {len(centers)} points, {mode}"
+
+    def evaluate(self, x, y, z):
+        return self.evaluate_grid(np.array([x]), np.array([y]), np.array([z]))[0]
+
+    def evaluate_grid(self, xs, ys, zs):
+        n_centers = len(self.centers)
+        n_pts = len(xs)
+        vectors = np.empty((3, n_centers, n_pts))
+        points = np.stack((xs, ys, zs)).T
+        for i in range(n_centers):
+            vectors[:,i,:] = (points - self.centers[i])[:].T
+        if self.metric == 'EUCLIDEAN':
+            norms = np.linalg.norm(vectors, axis=0)
+        elif self.metric == 'CHEBYSHEV':
+            norms = np.max(np.abs(vectors), axis=0)
+        elif self.metric == 'MANHATTAN':
+            norms = np.sum(np.abs(vectors), axis=0)
+        elif self.metric == 'CUSTOM':
+            norms = np.linalg.norm(vectors, axis=0, ord=self.power)
+        else:
+            raise Exception("Unsupported metric")
+        #print(f"Pts: {points.shape}, vectors {vectors.shape}, Norms: {norms.shape}")
+        if self.falloff is not None:
+            norms = norms.reshape((n_centers*n_pts,))
+            norms = self.falloff(norms)
+            norms = norms.reshape((n_centers, n_pts))
+            #print(f"Res.norms: {norms.shape}")
+        if self.mode == 'MIN':
+            norms = np.min(norms, axis=0)
+        elif self.mode == 'MAX':
+            norms = np.max(norms, axis=0)
+        elif self.mode == 'SUM':
+            norms = np.sum(norms, axis=0)
+        elif self.mode == 'AVG':
+            norms = np.mean(norms, axis=0)
+        elif self.mode == 'MINDIFF':
+            v1, v2 = np.partition(norms, 1, axis=0)[0:2]
+            norms = abs(v1 - v2)
+        else:
+            raise Exception("Unsupported mode")
+        return norms
 
 class SvScalarFieldPointDistance(SvScalarField):
     def __init__(self, center, metric='EUCLIDEAN', falloff=None, power=2):
@@ -314,6 +367,17 @@ class SvMergedScalarField(SvScalarField):
         self.mode = mode
         self.fields = fields
         self.__description__ = "{}{}".format(mode, fields)
+
+    @classmethod
+    def build(cls, mode, fields):
+        field_cls = type(fields[0])
+        if all(isinstance(f, field_cls) for f in fields[1:]):
+            if hasattr(field_cls, 'merge'):
+                try:
+                    return field_cls.merge(mode, fields)
+                except UnsupportedFieldType:
+                    pass
+        return SvMergedScalarField(mode, fields)
 
     def _minimal_diff(self, array, **kwargs):
         v1,v2 = np.partition(array, 1, **kwargs)[0:2]

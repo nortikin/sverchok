@@ -9,6 +9,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat
 
 from sverchok.utils.field.scalar import (SvScalarFieldPointDistance,
+            SvDistanceFromManyPointsScalarField,
             SvMergedScalarField, SvKdtScalarField,
             SvLineAttractorScalarField, SvPlaneAttractorScalarField, 
             SvCircleAttractorScalarField,
@@ -165,8 +166,7 @@ class SvAttractorFieldNodeMk2(SverchCustomTreeNode, bpy.types.Node):
             sfield = SvScalarFieldPointDistance(centers[0], falloff=falloff, metric=metric_single, power=self.get_power())
             vfield = SvVectorFieldPointDistance(centers[0], falloff=falloff, metric=metric_single, power=self.get_power())
         elif self.merge_mode == 'AVG':
-            sfields = [SvScalarFieldPointDistance(center, falloff=falloff, metric=metric_single, power=self.get_power()) for center in centers]
-            sfield = SvMergedScalarField('AVG', sfields)
+            sfield = SvDistanceFromManyPointsScalarField('AVG', np.array(centers), metric=metric_single, power=self.get_power(), falloff=falloff)
             vfields = [SvVectorFieldPointDistance(center, falloff=falloff, metric=metric_single, power=self.get_power()) for center in centers]
             vfield = SvAverageVectorField(vfields)
         elif self.merge_mode == 'MIN':
@@ -182,11 +182,11 @@ class SvAttractorFieldNodeMk2(SverchCustomTreeNode, bpy.types.Node):
         if len(sfields) == 1:
             return vfields[0], sfields[0]
         elif self.merge_mode == 'AVG':
-            sfield = SvMergedScalarField('AVG', sfields)
+            sfield = SvMergedScalarField.build('AVG', sfields)
             vfield = SvAverageVectorField(vfields)
             return vfield, sfield
         elif self.merge_mode == 'MIN':
-            sfield = SvMergedScalarField('MIN', sfields)
+            sfield = SvMergedScalarField.build('MIN', sfields)
             if self.falloff_type == 'NONE':
                 vfield = SvSelectVectorField(vfields, 'MIN')
             else:
