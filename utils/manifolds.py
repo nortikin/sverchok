@@ -414,7 +414,7 @@ def nearest_point_on_curve(src_points, curve, samples=10, precise=True, method='
                                 )
                         if not result.success:
                             break
-                        print(f'result.x={result.x}')
+                        #print(f'result.x={result.x}')
                         if I<=len(t_segments)-2:
                             # если результат находится на границе следующего сегмента (не в начале, а именно на одном из концов,
                             # т.к. направление поиска внутри сегментов неизвестно). Именно тут используется третье число,
