@@ -470,7 +470,7 @@ class SvCircleAttractorScalarField(SvScalarField):
             return distances
 
 class SvBvhAttractorScalarField(SvScalarField):
-    __description__ = "BVH Attractor"
+    __description__ = "BVH Attractor (faces)"
 
     def __init__(self, bvh=None, verts=None, faces=None, falloff=None, signed=False):
         self.falloff = falloff
@@ -489,7 +489,11 @@ class SvBvhAttractorScalarField(SvScalarField):
             sign = copysign(1, sign)
         else:
             sign = 1
-        return sign * distance
+        value = sign * distance
+        if self.falloff is None:
+            return value
+        else:
+            return self.falloff(np.array([value]))[0]
 
     def evaluate_grid(self, xs, ys, zs):
         def find(v):
@@ -502,6 +506,39 @@ class SvBvhAttractorScalarField(SvScalarField):
             else:
                 sign = 1
             return sign * distance
+
+        points = np.stack((xs, ys, zs)).T
+        norms = np.vectorize(find, signature='(3)->()')(points)
+        if self.falloff is not None:
+            result = self.falloff(norms)
+            return result
+        else:
+            return norms
+
+class SvBvhEdgesAttractorScalarField(SvScalarField):
+    __description__ = "BVH Attractor (edges)"
+
+    def __init__(self, verts, edges, falloff=None):
+        self.verts = verts
+        self.edges = edges
+        self.falloff = falloff
+        self.bvh = self._make_bvh(verts, edges)
+
+    def _make_bvh(self, verts, edges):
+        faces = [(i1, i2, i1) for i1, i2 in edges]
+        return bvhtree.BVHTree.FromPolygons(verts, faces)
+
+    def evaluate(self, x, y, z):
+        nearest, normal, idx, distance = self.bvh.find_nearest((x,y,z))
+        if self.falloff is None:
+            return distance
+        else:
+            return self.falloff(np.array([distance]))[0]
+
+    def evaluate_grid(self, xs, ys, zs):
+        def find(v):
+            nearest, normal, idx, distance = self.bvh.find_nearest(v)
+            return distance
 
         points = np.stack((xs, ys, zs)).T
         norms = np.vectorize(find, signature='(3)->()')(points)
