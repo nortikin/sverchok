@@ -222,7 +222,7 @@ def nearest_point_on_curve(src_points, curve, samples=10, precise=True, method='
                     # https://user-images.githubusercontent.com/14288520/212556932-f5e801e5-8fe0-4e96-845b-ecf237e72f14.png
                     pass
                 elif segment_i==samples-2 and is_closed==False and (nearest==p2).all():
-                    # Если последняя точка на кривой является ближайшей к point_from, то это и будет ближайшей
+                    # Если последняя точка на кривой является ближайшей к point_from, то
                     # найденную точку nearest в tree.find_nearest можно считать результатом расчёта.
                     # https://user-images.githubusercontent.com/14288520/212556890-d721095d-1a38-4920-aa2a-b3aea804b3a4.png
                     pass
