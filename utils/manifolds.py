@@ -10,6 +10,9 @@ from sverchok.utils.logging import debug, info, getLogger
 from sverchok.utils.geom import PlaneEquation, LineEquation, locate_linear
 from sverchok.dependencies import scipy
 
+from mathutils import Vector
+from mathutils.geometry import intersect_plane_plane, intersect_line_plane, normal as face_normal
+
 if scipy is not None:
     from scipy.optimize import root_scalar, root, minimize_scalar, minimize
 
@@ -102,44 +105,249 @@ def nearest_point_on_curve(src_points, curve, samples=10, precise=True, method='
 
     t_min, t_max = curve.get_u_bounds()
 
+
     def init_guess(curve, points_from):
         us = np.linspace(t_min, t_max, num=samples)
 
         points = curve.evaluate_array(us).tolist()
-        #print("P:", points)
 
         polygons = [(i, i+1, i) for i in range(len(points)-1)]
-        tree = BVHTree.FromPolygons( points, polygons, all_triangles = True )
+        tree = BVHTree.FromPolygons( points, polygons, all_triangles = True ) # trick to search nearest points to edges
 
         us_out = []
         nearest_out = []
+        is_closed = curve.is_closed()
         for point_from in points_from:
-            nearest, normal, i, distance = tree.find_nearest( point_from )
+            nearest, normal, segment_i, distance = tree.find_nearest( point_from )
             nearest = np.array(nearest)
             
-            # find t of arc:
-            p0 = np.array(points[i])
-            p1 = np.array(points[i+1])
-            max_dist = abs(p0-p1).max()
-            dist_nearest_to_p0 = abs(nearest-p0).max()
-            if dist_nearest_to_p0==0:
-                t01=0
-                raw_t = us[i]
-                nearest_t = p0
-            elif dist_nearest_to_p0==max_dist:
-                t01 = 1
-                raw_t = us[i+1]
-                nearest_t = p1
-            else:
-                t01 = dist_nearest_to_p0/max_dist
-                raw_t = us[i] + t01*(us[i+1]-us[i]) # approximate nearest t by chorda
-                nearest_t = None #curve.evaluate(raw_t).tolist()  # later
+            # read this algorithm with image:
+            # 1. General description: https://user-images.githubusercontent.com/14288520/212554689-b210fae1-d61a-47d2-90c8-33d32bd84490.png
+            # 2. Examples: https://user-images.githubusercontent.com/14288520/212501468-69d43635-c7e5-4e7e-819c-d4e5bb34de0a.png
             
-            # t0    - [0-1] in interval us[i]-us[i+1]
-            # raw_t - translate t0 to curve t
-            # nearest_t - if t0==0 or 1 then use points, else None and calc later
-            us_out.append( (us[i], us[i+1], t01, raw_t, p0, nearest_t, p1 ) ) # interval to search minimum
-            nearest_out.append(tuple(nearest))
+            # На случай зацикленности, когда исходные точки находятся очень близко к секторам сегмента, то иногда
+            # происходит переключение с одного сектора на другой и обратно из-за погрешности расчётов.
+            log_t01 = []
+            # На первом цикле определить точку пересечения с сегментом.
+            # Если во время расчётов выяснилось, что точка пересечения не соответветствует своему сегменту,
+            # выбранного через функцию tree.find_insert, то выбрать другой сегмент по соседству.
+            # Если это не поможет, то выдать исключение и разбираться дальше, почему не помогло (видимо что-то ещё не доделал)
+            # 6 - пока эмпирическое число, на третьем цикле обычно всё и решается.
+            # Цикл может проверить до 5 раз переключение на разные стороны от плоскости norm_1 или norm_2.
+            for iter_over_segment in range(6):
+                if iter_over_segment>=5:
+                    raise TypeError( f'Ошибка определения начальной точки для точки № {points_from.index(point_from)} на сегменте {segment_i}, {point_from}. Ошибка разработки. Превышен лимит итераций по сегментам при поиске примерной начальной точки.' )
+
+                # расчёт через сегмент дуги
+
+                # поиск плоскости в начале сегмента.
+                if segment_i==0 and is_closed==False:
+                    # Если текущий сегмент является началом незамкнутой кривой, то искомая плоскость будет перпендикулярна текущему сегменту, 
+                    # а нормаль этой плоскости будет совпадать с вектором сегмента.
+                    # https://user-images.githubusercontent.com/14288520/212556100-841744af-2f89-4787-8471-6fb8f173f7d9.png
+                    p1 = np.array(points[segment_i+0])
+                    p2 = np.array(points[segment_i+1])
+                    norm_1 = Vector(p2-p1).normalized()
+                else:
+                    if segment_i==0 and is_closed==True:
+                        # В закрытой кривой первая и последняя точки совпадают, поэтому надо учитывать этот момент и
+                        # при выборе предыдущих точек надо пропускать совпадающие точки и брать предыдущую
+                        # https://user-images.githubusercontent.com/14288520/212501785-fa7590bc-3acd-40bd-b4c6-65e31fc0b32b.png
+                        p0 = np.array(points[-2])
+                        p1 = np.array(points[0])
+                        p2 = np.array(points[1])
+                    else:
+                        # для остальных точек, независимо от того, замкнутая кривая или нет, надо взять предыдущую, текущую и следующую точки.
+                        # https://user-images.githubusercontent.com/14288520/212501870-46b5dc10-6840-4047-b2cf-b9db13777a8e.png 
+                        p0 = np.array(points[segment_i-1])
+                        p1 = np.array(points[segment_i])
+                        p2 = np.array(points[segment_i+1])
+
+                    # Определить биссектрису в начале сегмента:
+                    # https://user-images.githubusercontent.com/14288520/212501932-2b26b943-7fdd-42a7-a171-6f644c360661.png 
+                    vec01 = Vector(p1-p0)
+                    vec01_norm = vec01.normalized()
+                    vec12 = Vector(p2-p1)
+                    vec12_norm = vec12.normalized()
+
+                    # Биссектриса является нормалью искомой плоскости, перпендикулярной началу сегмента:
+                    norm_1 = (vec01_norm + vec12_norm).normalized()
+
+                
+                # Поиск плоскости в конце сегмента:
+                if segment_i==samples-2 and is_closed==False:
+                    # Если текущий сегмент конечный и кривая не замкнутая, то искомая плоскость будет перпендикулярна текущему сегменту,
+                    # а его нормаль будет совпадать с вектором сегмента.
+                    # https://user-images.githubusercontent.com/14288520/212530354-e4c94cde-e444-41a5-8a1a-96174aef462b.png
+                    p1 = np.array(points[segment_i+0])
+                    p2 = np.array(points[segment_i+1])
+                    norm_2 = Vector( p2-p1 ).normalized()
+                else:
+                    if segment_i==samples-2 and is_closed==True:
+                        # В закрытой кривой первая и последняя точки совпадают, поэтому надо учитывать этот момент и
+                        # при выборе последующих точек надо пропустить одну из совпадающих точек
+                        # и брать следующую (пропускаю начальную 0, т.к. она совпадает с последней segment_i+1)
+                        # https://user-images.githubusercontent.com/14288520/212530745-1bfcf416-fdca-464e-9791-56ac7a07161f.png
+                        p1 = np.array( points[segment_i+0] )
+                        p2 = np.array( points[segment_i+1] )
+                        p3 = np.array( points[  1] )
+                    else:
+                        # для остальных точек, независимо от того, замкнутая кривая или нет, надо взять текущую, следующую и следующую точки.
+                        # https://user-images.githubusercontent.com/14288520/212531194-9b8f1a07-f155-4bed-95ae-68a3479ad00b.png
+                        p1 = np.array(points[ segment_i ])
+                        p2 = np.array(points[ segment_i+1 ])
+                        p3 = np.array(points[ segment_i+2 ])
+                        
+                    # Определить биссектрису в конце сегмента
+                    vec12 = Vector(p2-p1)
+                    vec12_norm = vec12.normalized()
+                    vec23 = Vector(p3-p2)
+                    vec23_norm = vec23.normalized()
+
+                    # Биссектриса является нормалью искомой плоскости, перпендикулярной концу сегмента:
+                    # https://user-images.githubusercontent.com/14288520/212531391-cf60e6c5-408c-4f8f-bdeb-91acf7b0c582.png
+                    norm_2 = (vec12_norm + vec23_norm).normalized()
+                
+                # Сейчас есть две нормали и нужно найти линию их пересечения:
+                # https://user-images.githubusercontent.com/14288520/212531588-d1b7385b-4146-4f4f-a546-dd56bfacd14e.png
+                line_point, line_vec = intersect_plane_plane(p1, norm_1, p2, norm_2)
+
+                if line_point is None or line_vec is None:
+                    # Плоскости не пересекаются в случае, если они параллельны.
+                    # Найденную точку nearest в tree.find_nearest можно считать результатом расчёта.
+                    pass
+                elif segment_i==0 and is_closed==False and (nearest==p1).all():
+                    # Если первая точка на кривой является ближайшей к point_from, то
+                    # найденную точку nearest в tree.find_nearest можно считать результатом расчёта.
+                    # https://user-images.githubusercontent.com/14288520/212556932-f5e801e5-8fe0-4e96-845b-ecf237e72f14.png
+                    pass
+                elif segment_i==samples-2 and is_closed==False and (nearest==p2).all():
+                    # Если последняя точка на кривой является ближайшей к point_from, то это и будет ближайшей
+                    # найденную точку nearest в tree.find_nearest можно считать результатом расчёта.
+                    # https://user-images.githubusercontent.com/14288520/212556890-d721095d-1a38-4920-aa2a-b3aea804b3a4.png
+                    pass
+                else:
+                    # Построить плоскость по линии пересечения (norm_1-norm_2) и точки (point_from),
+                    # чтобы найти пересечение с сегментом segment_i. Эта точка и будет грубым приближением для
+                    # дуги (точка деления хорды принимается за точку деления дуги. Т.к. дуга не является круглой, то
+                    # точка не будет точно соответствовать кривой. Поэтому это и является грубым приближением, но лучше, чем просто перпендикуляр.
+                    # Основной принцип работы этого алгоритма.) 
+                    face_p0, face_p1, face_p2 = line_point, line_point+line_vec, point_from
+                    face_norm = face_normal(face_p0, face_p1, face_p2)
+                    point_intersect = intersect_line_plane(p1, p2, point_from, face_norm)
+                    #print(f"segment_i={segment_i}, line_point={line_point.xyz}, point_intersect={point_intersect}")
+                    # Заменить nearest на точку пересечения face_norm с segment_i
+                    # https://user-images.githubusercontent.com/14288520/212532084-a758d899-e7f9-474e-8a56-8c996b8e380c.png
+                    nearest = np.array(point_intersect)
+
+                # найти приближенную raw_t на сегменте:
+
+                segment_p0 = np.array(points[segment_i])
+                segment_p1 = np.array(points[segment_i+1])
+
+                segment_p10 = segment_p1 - segment_p0
+                max_dist = segment_p10[abs( segment_p10 ).argmax()]
+                
+                nearest_p0 = nearest - segment_p0
+                dist_nearest_to_p0 = nearest_p0[abs(nearest_p0).argmax()] # расстояние по максимальной оси от nearest до p0: https://user-images.githubusercontent.com/14288520/212532480-89b93d9d-7019-4f58-95a7-76ef537a2001.png
+
+                nearest_point = None
+                us0 = us[segment_i]
+                us1 = us[segment_i+1] # Никогда не будет превышать массив samples, т.к. количество сегментов всегда меньше количества точек.
+                
+                t01 = dist_nearest_to_p0/max_dist
+                # если t вышло из своего диапазона [0-1], то выбрать соответствующий этому выходу сегмент (предыдущий или следующий)
+                # Иногда исходные точки находятся очень близко к границам секторов плоскостей сегмента и тогда погрешности в расчёте float
+                # могут перекидывать расчёты из одного сегмента в другой бесконечно, хотя различия начинаются в 5 знаке после запятой.
+                # https://user-images.githubusercontent.com/14288520/212533422-8cd0b4eb-6013-47b3-a80a-607cc55e5daa.png
+                
+                # Но сначала убедиться, что переключения действительно циклические:
+                if t01 in log_t01:
+                    # Не буду мелочиться, т.к. считаю, что значение и так около плоскости сегмента. Бывало, что точности 0.00001
+                    # было недостаточно, но изменить ситуацию всё равно невозможно, а расчёт в данный момент примерный,
+                    # поэтому нормально, что черновое значение указывается вручную.
+                    if t01<0: #if abs(t01)<0.00001:
+                        t01 = 0
+                    elif t01>1: #if abs(t01-1)<0.00001:
+                        t01 = 1
+                    else:
+                        pass # пока не знаю, что делать, если значение [0-1] тут оказалось, хотя не должно было.
+                else:
+                    # Запомнить t01 для последующего сравнения при появлении цикличности:
+                    log_t01.append( t01 )
+
+                if t01<0 and segment_i==0 and is_closed==False:
+                    # Если t01 оказалась левее левой точки при не замкнутой кривой, то оставить эту точку как ближайшую.
+                    # https://user-images.githubusercontent.com/14288520/212534357-1170f94c-d0c4-4dee-b6b6-ef0e420341b2.png
+                    t01=0
+                    raw_t = us[segment_i]
+                    nearest_point = segment_p0
+                elif t01<0 and segment_i==0 and is_closed==True:
+                    # Если t01 оказался левее левой точки на кривой при замкнутой кривой, то
+                    # перейти к последнему сегменту в конце кривой и пересчитать точку nearest.
+                    # https://user-images.githubusercontent.com/14288520/212535108-b1f552ee-5ddd-487b-8482-14b977a417a6.png
+                    segment_i = samples-2
+                    continue
+                elif t01<0:
+                    # Если t01 оказался левее рассматриваемого сегмента в середине кривой (текущий сегмент не граничит с концами),
+                    # то то взять предыдущий сегмент и пересчитать точку nearest
+                    #  https://user-images.githubusercontent.com/14288520/212535214-ad2ceaf9-7014-43a4-865d-0305a54a4797.png
+                    segment_i = segment_i-1
+                    continue
+                elif t01>1 and segment_i==samples-2 and is_closed==False:
+                    # Если t01 оказалось правее правой точки кривой при не замкнутой кривой, то оставить эту точку как ближайшую.
+                    # https://user-images.githubusercontent.com/14288520/212535765-6eb06d65-4bb0-4404-8578-11c86697e95e.png
+                    t01 = 1
+                    raw_t = us[segment_i+1]
+                    nearest_point = segment_p1
+                elif t01>1 and segment_i==samples-2 and is_closed==True:
+                    # Если t01 оказался правее правой точки кривой при замкнутой кривой,
+                    # то перейти к первому сегменту в начале кривой и пересчитать точку nearest
+                    # https://user-images.githubusercontent.com/14288520/212535966-88fa3d52-5118-4560-ad9c-bc6e9d1bfa69.png
+                    segment_i = 0
+                    continue
+                elif t01>1:
+                    # Если t01 оказался правее рассматриваемого сегмента в середине кривой (текущий сегмент не граничит с концами),
+                    # то взять следующий сегмент и пересчитать точку nearest
+                    # https://user-images.githubusercontent.com/14288520/212536223-956a7166-e58c-4e39-b7bf-7c43f0db5dc5.png
+                    segment_i = segment_i+1
+                    continue
+                else:
+                    # Если t01 находится внутри сегмента, то вычислить его проекцию в домене кривой.
+                    # этот расчёт не зависит от замкнутости кривой.
+                    # https://user-images.githubusercontent.com/14288520/212536439-776b4881-d746-44ea-b6b7-2fca8d9bd5ca.png
+                    raw_t = us[segment_i] + t01*(us[segment_i+1]-us[segment_i])
+                
+                # расширить диапазон поисков на соседние интервалы, т.к. при точном поиске реальная
+                # ближайшая точка может выйти за интервал одного сегмента. Учесть, что
+                # кривая может быть замкнута и тогда нужно разбить расширенный интервал
+                # на две части: перед концом и после начала.
+                # https://user-images.githubusercontent.com/14288520/212537114-6d644998-5892-4fcf-b0ad-d5dc1bdbe0fd.png
+                arr_intervals = [ [ us0, us1 ], ] 
+                if segment_i==0:
+                    us0 = us[segment_i]
+                    # третье число - это переход к началу кривой. Используется в расчётном цикле precise для определения необходимости перехода к следующему диапазону.
+                    arr_intervals.append( [ us[segment_i-2], us[segment_i-1], us[0] ] )
+                else:
+                    us0 = us[segment_i-1]
+                    arr_intervals[0][0] = us0
+
+                if segment_i==samples-2:
+                    us1 = us[segment_i+1]
+                    # третье число - это переход к концу кривой. Используется в расчётном цикле precise для определения необходимости перехода к следующему диапазону.
+                    arr_intervals.append( [ us[0], us[1], us[samples-1] ] )
+                else:
+                    us1 = us[segment_i+2]
+                    arr_intervals[0][1] = us1
+                        
+                
+                # t0    - [0-1] in interval us[segment_i]-us[segment_i+1]
+                # raw_t - translate t0 to curve t
+                # nearest_t - if t0==0 or 1 then use points, else None and calc later
+                us_out.append( ( arr_intervals, t01, raw_t, segment_p0, nearest_point, segment_p1 ) ) # interval to search minimum
+                nearest_out.append(tuple(nearest))
+
+                break # for iter_over_segment in range(6):
 
         return us_out, np.array(nearest_out)
 
@@ -152,33 +360,63 @@ def nearest_point_on_curve(src_points, curve, samples=10, precise=True, method='
     result_points = []
     for src_point, interval, init_point in zip(src_points, intervals, init_points):
 
-        t01       = interval[2]
-        res_t     = interval[3]
-        res_point = interval[5]  # remark: may be None. Calc of None later after getting final t.
+        t01       = interval[1]
+        res_t     = interval[2]
+        res_point = interval[4]  # remark: may be None. Calc of None will be later after getting final t.
 
         if precise==True:
             if t01==0 or t01==1:
                 pass
             else:
-                raw_t  = interval[3]
-                bracket = (interval[0], raw_t, interval[1])
-                bounds  = (interval[0], interval[1])            
+                raw_t  = interval[2]
+                bracket = (interval[0][0][0], raw_t, interval[0][0][1])
+                bounds  = (interval[0][0][0], interval[0][0][1])
                 
                 logger.debug("T_min %s, T_max %s, init_t %s", t_min, t_max, raw_t)
 
                 if method == 'Brent' or method == 'Golden':
-                    bracket = (interval[0], interval[1])
-                    result = minimize_scalar(goal,
-                                #bounds = bounds, - Use of `bounds` is incompatible with 'method=Brent'.
-                                bracket = bracket,
-                                method = method
-                            )
+                    t_segments = interval[0]
+                    # Функция поиска точной минимальной точки может запускаться несколько раз для одной точки,
+                    # т.к. диапозонов может быть 2. Определяется алгоритмом init_guess.
+                    for I in range( len(t_segments) ):
+                        t_segments_I = t_segments[I]
+                        bracket = (t_segments_I[0], t_segments_I[1])
+                        result = minimize_scalar(goal,
+                                    #bounds = bounds, - Use of `bounds` is incompatible with 'method=Brent/Golden'.
+                                    bracket = bracket,
+                                    method = method
+                                )
+                        if not result.success:
+                            break
+                        if I<=len(t_segments)-2:
+                            # если результат находится на границе следующего сегмента (не в начале, а именно на одном из концов,
+                            # т.к. направление поиска внутри сегментов неизвестно). Именно тут используется третье число.
+                            if ( result.x in t_segments[I+1] ) == False:
+                                break
                 else:
-                    result = minimize_scalar(goal,
-                                bounds = bounds,
-                                bracket = bracket,
-                                method = method
-                            )
+                    raw_t  = interval[2]
+                    t_segments = interval[0]
+                    # Функция поиска точной минимальной точки может запускаться несколько раз для одной точки,
+                    # т.к. диапозонов может быть 2. Определяется алгоритмом init_guess.
+                    for I in range( len(t_segments) ):
+                        t_segments_I = t_segments[I]
+                        bracket = (t_segments_I[0], raw_t, t_segments_I[1])
+                        bounds  = (t_segments_I[0], t_segments_I[1])
+                        result = minimize_scalar(goal,
+                                    bounds = bounds,
+                                    bracket = bracket,
+                                    method = method
+                                )
+                        if not result.success:
+                            break
+                        print(f'result.x={result.x}')
+                        if I<=len(t_segments)-2:
+                            # если результат находится на границе следующего сегмента (не в начале, а именно на одном из концов,
+                            # т.к. направление поиска внутри сегментов неизвестно). Именно тут используется третье число.
+                            if ( any( abs(result.x-x)<0.00001 for x in t_segments[I+1] ) ) == False:
+                                break
+                            else:
+                                raw_t = result.x
 
                 if not result.success:
                     if hasattr(result, 'message'):
