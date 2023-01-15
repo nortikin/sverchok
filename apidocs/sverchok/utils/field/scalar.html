@@ -498,7 +498,7 @@ class SvCircleAttractorScalarField(SvScalarField):
             return distances
 
 class SvBvhAttractorScalarField(SvScalarField):
-    __description__ = &#34;BVH Attractor&#34;
+    __description__ = &#34;BVH Attractor (faces)&#34;
 
     def __init__(self, bvh=None, verts=None, faces=None, falloff=None, signed=False):
         self.falloff = falloff
@@ -517,7 +517,11 @@ class SvBvhAttractorScalarField(SvScalarField):
             sign = copysign(1, sign)
         else:
             sign = 1
-        return sign * distance
+        value = sign * distance
+        if self.falloff is None:
+            return value
+        else:
+            return self.falloff(np.array([value]))[0]
 
     def evaluate_grid(self, xs, ys, zs):
         def find(v):
@@ -530,6 +534,39 @@ class SvBvhAttractorScalarField(SvScalarField):
             else:
                 sign = 1
             return sign * distance
+
+        points = np.stack((xs, ys, zs)).T
+        norms = np.vectorize(find, signature=&#39;(3)-&gt;()&#39;)(points)
+        if self.falloff is not None:
+            result = self.falloff(norms)
+            return result
+        else:
+            return norms
+
+class SvBvhEdgesAttractorScalarField(SvScalarField):
+    __description__ = &#34;BVH Attractor (edges)&#34;
+
+    def __init__(self, verts, edges, falloff=None):
+        self.verts = verts
+        self.edges = edges
+        self.falloff = falloff
+        self.bvh = self._make_bvh(verts, edges)
+
+    def _make_bvh(self, verts, edges):
+        faces = [(i1, i2, i1) for i1, i2 in edges]
+        return bvhtree.BVHTree.FromPolygons(verts, faces)
+
+    def evaluate(self, x, y, z):
+        nearest, normal, idx, distance = self.bvh.find_nearest((x,y,z))
+        if self.falloff is None:
+            return distance
+        else:
+            return self.falloff(np.array([distance]))[0]
+
+    def evaluate_grid(self, xs, ys, zs):
+        def find(v):
+            nearest, normal, idx, distance = self.bvh.find_nearest(v)
+            return distance
 
         points = np.stack((xs, ys, zs)).T
         norms = np.vectorize(find, signature=&#39;(3)-&gt;()&#39;)(points)
@@ -1176,7 +1213,7 @@ class SvVoronoiScalarField(SvScalarField):
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class SvBvhAttractorScalarField(SvScalarField):
-    __description__ = &#34;BVH Attractor&#34;
+    __description__ = &#34;BVH Attractor (faces)&#34;
 
     def __init__(self, bvh=None, verts=None, faces=None, falloff=None, signed=False):
         self.falloff = falloff
@@ -1195,7 +1232,11 @@ class SvVoronoiScalarField(SvScalarField):
             sign = copysign(1, sign)
         else:
             sign = 1
-        return sign * distance
+        value = sign * distance
+        if self.falloff is None:
+            return value
+        else:
+            return self.falloff(np.array([value]))[0]
 
     def evaluate_grid(self, xs, ys, zs):
         def find(v):
@@ -1239,7 +1280,11 @@ class SvVoronoiScalarField(SvScalarField):
         sign = copysign(1, sign)
     else:
         sign = 1
-    return sign * distance</code></pre>
+    value = sign * distance
+    if self.falloff is None:
+        return value
+    else:
+        return self.falloff(np.array([value]))[0]</code></pre>
 </details>
 </dd>
 <dt id="sverchok.utils.field.scalar.SvBvhAttractorScalarField.evaluate_grid"><code class="name flex">
@@ -1262,6 +1307,97 @@ class SvVoronoiScalarField(SvScalarField):
         else:
             sign = 1
         return sign * distance
+
+    points = np.stack((xs, ys, zs)).T
+    norms = np.vectorize(find, signature=&#39;(3)-&gt;()&#39;)(points)
+    if self.falloff is not None:
+        result = self.falloff(norms)
+        return result
+    else:
+        return norms</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.field.scalar.SvBvhEdgesAttractorScalarField"><code class="flex name class">
+<span>class <span class="ident">SvBvhEdgesAttractorScalarField</span></span>
+<span>(</span><span>verts, edges, falloff=None)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvBvhEdgesAttractorScalarField(SvScalarField):
+    __description__ = &#34;BVH Attractor (edges)&#34;
+
+    def __init__(self, verts, edges, falloff=None):
+        self.verts = verts
+        self.edges = edges
+        self.falloff = falloff
+        self.bvh = self._make_bvh(verts, edges)
+
+    def _make_bvh(self, verts, edges):
+        faces = [(i1, i2, i1) for i1, i2 in edges]
+        return bvhtree.BVHTree.FromPolygons(verts, faces)
+
+    def evaluate(self, x, y, z):
+        nearest, normal, idx, distance = self.bvh.find_nearest((x,y,z))
+        if self.falloff is None:
+            return distance
+        else:
+            return self.falloff(np.array([distance]))[0]
+
+    def evaluate_grid(self, xs, ys, zs):
+        def find(v):
+            nearest, normal, idx, distance = self.bvh.find_nearest(v)
+            return distance
+
+        points = np.stack((xs, ys, zs)).T
+        norms = np.vectorize(find, signature=&#39;(3)-&gt;()&#39;)(points)
+        if self.falloff is not None:
+            result = self.falloff(norms)
+            return result
+        else:
+            return norms</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.field.scalar.SvScalarField" href="#sverchok.utils.field.scalar.SvScalarField">SvScalarField</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.field.scalar.SvBvhEdgesAttractorScalarField.evaluate"><code class="name flex">
+<span>def <span class="ident">evaluate</span></span>(<span>self, x, y, z)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate(self, x, y, z):
+    nearest, normal, idx, distance = self.bvh.find_nearest((x,y,z))
+    if self.falloff is None:
+        return distance
+    else:
+        return self.falloff(np.array([distance]))[0]</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.field.scalar.SvBvhEdgesAttractorScalarField.evaluate_grid"><code class="name flex">
+<span>def <span class="ident">evaluate_grid</span></span>(<span>self, xs, ys, zs)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate_grid(self, xs, ys, zs):
+    def find(v):
+        nearest, normal, idx, distance = self.bvh.find_nearest(v)
+        return distance
 
     points = np.stack((xs, ys, zs)).T
     norms = np.vectorize(find, signature=&#39;(3)-&gt;()&#39;)(points)
@@ -2181,6 +2317,7 @@ class SvVoronoiScalarField(SvScalarField):
 <li><a title="sverchok.utils.field.rbf.SvRbfScalarField" href="rbf.html#sverchok.utils.field.rbf.SvRbfScalarField">SvRbfScalarField</a></li>
 <li><a title="sverchok.utils.field.scalar.SvAbsScalarField" href="#sverchok.utils.field.scalar.SvAbsScalarField">SvAbsScalarField</a></li>
 <li><a title="sverchok.utils.field.scalar.SvBvhAttractorScalarField" href="#sverchok.utils.field.scalar.SvBvhAttractorScalarField">SvBvhAttractorScalarField</a></li>
+<li><a title="sverchok.utils.field.scalar.SvBvhEdgesAttractorScalarField" href="#sverchok.utils.field.scalar.SvBvhEdgesAttractorScalarField">SvBvhEdgesAttractorScalarField</a></li>
 <li><a title="sverchok.utils.field.scalar.SvCircleAttractorScalarField" href="#sverchok.utils.field.scalar.SvCircleAttractorScalarField">SvCircleAttractorScalarField</a></li>
 <li><a title="sverchok.utils.field.scalar.SvConstantScalarField" href="#sverchok.utils.field.scalar.SvConstantScalarField">SvConstantScalarField</a></li>
 <li><a title="sverchok.utils.field.scalar.SvCoordinateScalarField" href="#sverchok.utils.field.scalar.SvCoordinateScalarField">SvCoordinateScalarField</a></li>
@@ -3374,6 +3511,13 @@ class SvVoronoiScalarField(SvScalarField):
 <ul class="">
 <li><code><a title="sverchok.utils.field.scalar.SvBvhAttractorScalarField.evaluate" href="#sverchok.utils.field.scalar.SvBvhAttractorScalarField.evaluate">evaluate</a></code></li>
 <li><code><a title="sverchok.utils.field.scalar.SvBvhAttractorScalarField.evaluate_grid" href="#sverchok.utils.field.scalar.SvBvhAttractorScalarField.evaluate_grid">evaluate_grid</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.field.scalar.SvBvhEdgesAttractorScalarField" href="#sverchok.utils.field.scalar.SvBvhEdgesAttractorScalarField">SvBvhEdgesAttractorScalarField</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.field.scalar.SvBvhEdgesAttractorScalarField.evaluate" href="#sverchok.utils.field.scalar.SvBvhEdgesAttractorScalarField.evaluate">evaluate</a></code></li>
+<li><code><a title="sverchok.utils.field.scalar.SvBvhEdgesAttractorScalarField.evaluate_grid" href="#sverchok.utils.field.scalar.SvBvhEdgesAttractorScalarField.evaluate_grid">evaluate_grid</a></code></li>
 </ul>
 </li>
 <li>
