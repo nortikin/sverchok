@@ -377,7 +377,8 @@ def nearest_point_on_curve(src_points, curve, samples=10, precise=True, method='
                 if method == 'Brent' or method == 'Golden':
                     t_segments = interval[0]
                     # Функция поиска точной минимальной точки может запускаться несколько раз для одной точки,
-                    # т.к. диапозонов может быть 2. Определяется алгоритмом init_guess.
+                    # т.к. диапозонов может быть 2. Определяется алгоритмом init_guess. Наличие минимума возможно
+                    # и в первом цикле, поэтому не всегда расчёт минимума запускается на втором интервале.
                     for I in range( len(t_segments) ):
                         t_segments_I = t_segments[I]
                         bracket = (t_segments_I[0], t_segments_I[1])
@@ -402,7 +403,8 @@ def nearest_point_on_curve(src_points, curve, samples=10, precise=True, method='
                     raw_t  = interval[2]
                     t_segments = interval[0]
                     # Функция поиска точной минимальной точки может запускаться несколько раз для одной точки,
-                    # т.к. диапозонов может быть 2. Определяется алгоритмом init_guess.
+                    # т.к. диапозонов может быть 2. Определяется алгоритмом init_guess. Наличие минимума возможно
+                    # и в первом цикле, поэтому не всегда расчёт минимума запускается на втором интервале.
                     for I in range( len(t_segments) ):
                         t_segments_I = t_segments[I]
                         bracket = (t_segments_I[0], raw_t, t_segments_I[1])
@@ -426,7 +428,7 @@ def nearest_point_on_curve(src_points, curve, samples=10, precise=True, method='
                             if ( any( abs(result.x-x)<0.00001 for x in t_segments[I+1] ) ) == False:
                                 break
                             else:
-                                raw_t = result.x
+                                raw_t = result.x # Надо запомнить, т.к. новое значение этого параметра пойдёт на второй цикл поиска минимума (если второй цикл будет).
 
                 if not result.success:
                     if hasattr(result, 'message'):
