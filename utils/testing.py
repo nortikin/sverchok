@@ -296,6 +296,15 @@ class SverchokTestCase(unittest.TestCase):
         finally:
             remove_node_tree(tree_name)
 
+    def getLogger(self):
+        return logging.getLogger(self.__class__.__name__)
+
+    def debug(self, *args):
+        self.getLogger().debug(*args)
+
+    def info(self, *args):
+        self.getLogger().info(*args)
+
     def serialize_json(self, data):
         """
         Serialize JSON object in standard format.
