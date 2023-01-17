@@ -591,8 +591,8 @@ class SvEdgeAttractorScalarField(SvScalarField):
         dv1 = vs - v1
         dv2 = vs - v2
         edge = v2 - v1
-        dot1 = np_dot(dv1, edge)
-        dot2 = np_dot(dv2, -edge)
+        dot1 = (dv1 * edge).sum(axis=1)
+        dot2 = -(dv2 * edge).sum(axis=1)
         v1_is_nearest = (dot1 < 0)
         v2_is_nearest = (dot2 < 0)
         at_edge = np.logical_not(np.logical_or(v1_is_nearest, v2_is_nearest))

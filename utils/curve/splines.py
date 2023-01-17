@@ -25,7 +25,7 @@ class SvSplineCurve(SvCurve):
 
     @classmethod
     def from_points(cls, points, metric=None, is_cyclic=False):
-        if not points or len(points) < 2:
+        if points is None or len(points) < 2:
             raise Exception("At least two points are required")
         if len(points) < 3:
             return SvLine.from_two_points(points[0], points[1])

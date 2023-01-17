@@ -44,7 +44,7 @@ from sverchok.utils.modules.geom_primitives import (
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh
 from sverchok.data_structure import match_long_repeat, describe_data_shape
-from sverchok.utils.math import np_mixed_product
+from sverchok.utils.math import np_mixed_product, np_dot
 from sverchok.utils.logging import debug, info
 
 # njit is a light-wrapper around numba.njit, if found
@@ -1338,9 +1338,14 @@ class LineEquation(object):
         input: np.array of shape (n, 3)
         output: np.array of shape (n,)
         """
-        # TODO: there should be more effective way to do this
-        projection = self.projection_of_points(points)
-        return np.linalg.norm(points - projection, axis=1)
+        direction = np.array(self.direction)
+        point = np.array(self.point)
+        dv1 = point - points
+        dv1sq = (dv1 * dv1).sum(axis=1)
+        numerator = (dv1 * direction).sum(axis=1)**2
+        denominator = np.dot(direction, direction)
+        result = np.sqrt(dv1sq - numerator / denominator)
+        return result
 
     def projection_of_point(self, point):
         """
