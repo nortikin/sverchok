@@ -561,6 +561,7 @@
         - SvChamferSolidNode
         - SvFilletSolidNode
         - SvSolidBooleanNode
+        - SvSolidSectionNode
         - SvSolidGeneralFuseNode
 
 - ---
