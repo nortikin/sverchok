@@ -324,6 +324,15 @@ class SverchokTestCase(unittest.TestCase):
         finally:
             remove_node_tree(tree_name)
 
+    def getLogger(self):
+        return logging.getLogger(self.__class__.__name__)
+
+    def debug(self, *args):
+        self.getLogger().debug(*args)
+
+    def info(self, *args):
+        self.getLogger().info(*args)
+
     def serialize_json(self, data):
         &#34;&#34;&#34;
         Serialize JSON object in standard format.
@@ -1566,6 +1575,7 @@ not have a method with the specified name.</p></div>
 <li><code><a title="sverchok.utils.testing.SverchokTestCase.assert_numpy_arrays_equal" href="#sverchok.utils.testing.SverchokTestCase.assert_numpy_arrays_equal">assert_numpy_arrays_equal</a></code></li>
 <li><code><a title="sverchok.utils.testing.SverchokTestCase.assert_prints_stdout" href="#sverchok.utils.testing.SverchokTestCase.assert_prints_stdout">assert_prints_stdout</a></code></li>
 <li><code><a title="sverchok.utils.testing.SverchokTestCase.assert_sverchok_data_equal" href="#sverchok.utils.testing.SverchokTestCase.assert_sverchok_data_equal">assert_sverchok_data_equal</a></code></li>
+<li><code><a title="sverchok.utils.testing.SverchokTestCase.debug" href="#sverchok.utils.testing.SverchokTestCase.debug">debug</a></code></li>
 <li><code><a title="sverchok.utils.testing.SverchokTestCase.load_reference_sverchok_data" href="#sverchok.utils.testing.SverchokTestCase.load_reference_sverchok_data">load_reference_sverchok_data</a></code></li>
 <li><code><a title="sverchok.utils.testing.SverchokTestCase.serialize_json" href="#sverchok.utils.testing.SverchokTestCase.serialize_json">serialize_json</a></code></li>
 <li><code><a title="sverchok.utils.testing.SverchokTestCase.setUp" href="#sverchok.utils.testing.SverchokTestCase.setUp">setUp</a></code></li>
@@ -1767,6 +1777,7 @@ Returns None if it hasn't written any data.</p></div>
 <li><code><a title="sverchok.utils.testing.EmptyTreeTestCase.assert_numpy_arrays_equal" href="#sverchok.utils.testing.SverchokTestCase.assert_numpy_arrays_equal">assert_numpy_arrays_equal</a></code></li>
 <li><code><a title="sverchok.utils.testing.EmptyTreeTestCase.assert_prints_stdout" href="#sverchok.utils.testing.SverchokTestCase.assert_prints_stdout">assert_prints_stdout</a></code></li>
 <li><code><a title="sverchok.utils.testing.EmptyTreeTestCase.assert_sverchok_data_equal" href="#sverchok.utils.testing.SverchokTestCase.assert_sverchok_data_equal">assert_sverchok_data_equal</a></code></li>
+<li><code><a title="sverchok.utils.testing.EmptyTreeTestCase.debug" href="#sverchok.utils.testing.SverchokTestCase.debug">debug</a></code></li>
 <li><code><a title="sverchok.utils.testing.EmptyTreeTestCase.load_reference_sverchok_data" href="#sverchok.utils.testing.SverchokTestCase.load_reference_sverchok_data">load_reference_sverchok_data</a></code></li>
 <li><code><a title="sverchok.utils.testing.EmptyTreeTestCase.serialize_json" href="#sverchok.utils.testing.SverchokTestCase.serialize_json">serialize_json</a></code></li>
 <li><code><a title="sverchok.utils.testing.EmptyTreeTestCase.setUp" href="#sverchok.utils.testing.SverchokTestCase.setUp">setUp</a></code></li>
@@ -1938,6 +1949,7 @@ not have a method with the specified name.</p></div>
 <li><code><a title="sverchok.utils.testing.SverchokTestCase.assert_numpy_arrays_equal" href="#sverchok.utils.testing.SverchokTestCase.assert_numpy_arrays_equal">assert_numpy_arrays_equal</a></code></li>
 <li><code><a title="sverchok.utils.testing.SverchokTestCase.assert_prints_stdout" href="#sverchok.utils.testing.SverchokTestCase.assert_prints_stdout">assert_prints_stdout</a></code></li>
 <li><code><a title="sverchok.utils.testing.SverchokTestCase.assert_sverchok_data_equal" href="#sverchok.utils.testing.SverchokTestCase.assert_sverchok_data_equal">assert_sverchok_data_equal</a></code></li>
+<li><code><a title="sverchok.utils.testing.SverchokTestCase.debug" href="#sverchok.utils.testing.SverchokTestCase.debug">debug</a></code></li>
 <li><code><a title="sverchok.utils.testing.SverchokTestCase.load_reference_sverchok_data" href="#sverchok.utils.testing.SverchokTestCase.load_reference_sverchok_data">load_reference_sverchok_data</a></code></li>
 <li><code><a title="sverchok.utils.testing.SverchokTestCase.serialize_json" href="#sverchok.utils.testing.SverchokTestCase.serialize_json">serialize_json</a></code></li>
 <li><code><a title="sverchok.utils.testing.SverchokTestCase.setUp" href="#sverchok.utils.testing.SverchokTestCase.setUp">setUp</a></code></li>
@@ -1994,6 +2006,15 @@ not have a method with the specified name.</p></div>
             yield get_node_tree(tree_name)
         finally:
             remove_node_tree(tree_name)
+
+    def getLogger(self):
+        return logging.getLogger(self.__class__.__name__)
+
+    def debug(self, *args):
+        self.getLogger().debug(*args)
+
+    def info(self, *args):
+        self.getLogger().info(*args)
 
     def serialize_json(self, data):
         &#34;&#34;&#34;
@@ -2704,6 +2725,32 @@ Floating-point numbers are compared with specified precision.</p></div>
     #self.assertEquals(data, expected_data)</code></pre>
 </details>
 </dd>
+<dt id="sverchok.utils.testing.SverchokTestCase.debug"><code class="name flex">
+<span>def <span class="ident">debug</span></span>(<span>self, *args)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Run the test without collecting errors in a TestResult</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def debug(self, *args):
+    self.getLogger().debug(*args)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.testing.SverchokTestCase.getLogger"><code class="name flex">
+<span>def <span class="ident">getLogger</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def getLogger(self):
+    return logging.getLogger(self.__class__.__name__)</code></pre>
+</details>
+</dd>
 <dt id="sverchok.utils.testing.SverchokTestCase.get_reference_file_path"><code class="name flex">
 <span>def <span class="ident">get_reference_file_path</span></span>(<span>self, file_name)</span>
 </code></dt>
@@ -2715,6 +2762,19 @@ Floating-point numbers are compared with specified precision.</p></div>
 </summary>
 <pre><code class="python">def get_reference_file_path(self, file_name):
     return join(get_tests_path(), &#34;references&#34;, file_name)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.testing.SverchokTestCase.info"><code class="name flex">
+<span>def <span class="ident">info</span></span>(<span>self, *args)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def info(self, *args):
+    self.getLogger().info(*args)</code></pre>
 </details>
 </dd>
 <dt id="sverchok.utils.testing.SverchokTestCase.load_reference_sverchok_data"><code class="name flex">
@@ -2971,7 +3031,10 @@ def tree_from_file(self, file_name: str, tree_name: str) -&gt; Iterator[NodeTree
 <li><code><a title="sverchok.utils.testing.SverchokTestCase.assert_prints_stdout" href="#sverchok.utils.testing.SverchokTestCase.assert_prints_stdout">assert_prints_stdout</a></code></li>
 <li><code><a title="sverchok.utils.testing.SverchokTestCase.assert_sverchok_data_equal" href="#sverchok.utils.testing.SverchokTestCase.assert_sverchok_data_equal">assert_sverchok_data_equal</a></code></li>
 <li><code><a title="sverchok.utils.testing.SverchokTestCase.assert_sverchok_data_equals_file" href="#sverchok.utils.testing.SverchokTestCase.assert_sverchok_data_equals_file">assert_sverchok_data_equals_file</a></code></li>
+<li><code><a title="sverchok.utils.testing.SverchokTestCase.debug" href="#sverchok.utils.testing.SverchokTestCase.debug">debug</a></code></li>
+<li><code><a title="sverchok.utils.testing.SverchokTestCase.getLogger" href="#sverchok.utils.testing.SverchokTestCase.getLogger">getLogger</a></code></li>
 <li><code><a title="sverchok.utils.testing.SverchokTestCase.get_reference_file_path" href="#sverchok.utils.testing.SverchokTestCase.get_reference_file_path">get_reference_file_path</a></code></li>
+<li><code><a title="sverchok.utils.testing.SverchokTestCase.info" href="#sverchok.utils.testing.SverchokTestCase.info">info</a></code></li>
 <li><code><a title="sverchok.utils.testing.SverchokTestCase.load_reference_sverchok_data" href="#sverchok.utils.testing.SverchokTestCase.load_reference_sverchok_data">load_reference_sverchok_data</a></code></li>
 <li><code><a title="sverchok.utils.testing.SverchokTestCase.serialize_json" href="#sverchok.utils.testing.SverchokTestCase.serialize_json">serialize_json</a></code></li>
 <li><code><a title="sverchok.utils.testing.SverchokTestCase.setUp" href="#sverchok.utils.testing.SverchokTestCase.setUp">setUp</a></code></li>

@@ -81,17 +81,13 @@ def lloyd_relax(vertices, faces, iterations, mask=None, method=NORMAL, skip_boun
     supported shape preservation methods: NONE, NORMAL, LINEAR, BVH
     &#34;&#34;&#34;
 
-    def do_iteration(bvh, bm):
+    def do_iteration(bvh, bm, n_verts, n_link_faces, max_link_faces, linked_face_idxs, linked_face_counts):
         verts_out = []
         face_centers = np.array([face.calc_center_median() for face in bm.faces])
-        n_verts = len(bm.verts)
-        n_link_faces = np.array([len(v.link_faces) for v in bm.verts])
-        max_link_faces = n_link_faces.max()
-        n_link_faces = n_link_faces[np.newaxis].T
         face_centers_by_vert = np.zeros((n_verts, max_link_faces, 3))
         for bm_vert in bm.verts:
-            face_idxs = np.array([face.index for face in bm_vert.link_faces])
-            n = len(face_idxs)
+            face_idxs = linked_face_idxs[bm_vert.index]
+            n = linked_face_counts[bm_vert.index]
             face_centers_by_vert[bm_vert.index, :n] = face_centers[face_idxs]
         face_center_sums = face_centers_by_vert.sum(axis=1)
         face_center_means = face_center_sums / n_link_faces
@@ -136,8 +132,21 @@ def lloyd_relax(vertices, faces, iterations, mask=None, method=NORMAL, skip_boun
         bvh = None
     recalc_normals = (method == NORMAL)
     bm = bmesh_from_pydata(vertices, [], faces, normal_update=recalc_normals)
+
+    n_verts = len(bm.verts)
+    n_link_faces = np.array([len(v.link_faces) for v in bm.verts])
+    max_link_faces = n_link_faces.max()
+    n_link_faces = n_link_faces[np.newaxis].T
+
+    linked_face_idxs = dict()
+    linked_face_counts = dict()
+    for bm_vert in bm.verts:
+        face_idxs = np.array([face.index for face in bm_vert.link_faces])
+        linked_face_idxs[bm_vert.index] = face_idxs
+        linked_face_counts[bm_vert.index] = len(face_idxs)
+
     for i in range(iterations):
-        vertices = do_iteration(bvh, bm)
+        vertices = do_iteration(bvh, bm, n_verts, n_link_faces, max_link_faces, linked_face_idxs, linked_face_counts)
         for bm_vert, v in zip(bm.verts, vertices):
             bm_vert.co = mathutils.Vector(v)
         if recalc_normals:
@@ -504,17 +513,13 @@ def faces_relax(vertices, edges, faces, iterations, k, mask=None, method=NONE, t
     supported shape preservation methods: NONE, NORMAL, LINEAR, BVH
     &#34;&#34;&#34;
 
-    def do_iteration(bvh, bm):
+    def do_iteration(bvh, bm, n_verts, n_link_faces, max_link_faces, linked_face_idxs, linked_face_counts):
         verts_out = []
         face_centers = np.array([face.calc_center_median() for face in bm.faces])
-        n_verts = len(bm.verts)
-        n_link_faces = np.array([len(v.link_faces) for v in bm.verts])
-        max_link_faces = n_link_faces.max()
-        n_link_faces = n_link_faces[np.newaxis].T
         face_centers_by_vert = np.zeros((n_verts, max_link_faces, 3))
         for bm_vert in bm.verts:
-            face_idxs = np.array([face.index for face in bm_vert.link_faces])
-            n = len(face_idxs)
+            face_idxs = linked_face_idxs[bm_vert.index]
+            n = linked_face_counts[bm_vert.index]
             face_centers_by_vert[bm_vert.index, :n] = face_centers[face_idxs]
         face_center_sums = face_centers_by_vert.sum(axis=1)
         face_center_means = face_center_sums / n_link_faces
@@ -559,8 +564,21 @@ def faces_relax(vertices, edges, faces, iterations, k, mask=None, method=NONE, t
         bvh = None
     recalc_normals = (method == NORMAL)
     bm = bmesh_from_pydata(vertices, [], faces, normal_update=recalc_normals)
+
+    n_verts = len(bm.verts)
+    n_link_faces = np.array([len(v.link_faces) for v in bm.verts])
+    max_link_faces = n_link_faces.max()
+    n_link_faces = n_link_faces[np.newaxis].T
+
+    linked_face_idxs = dict()
+    linked_face_counts = dict()
+    for bm_vert in bm.verts:
+        face_idxs = np.array([face.index for face in bm_vert.link_faces])
+        linked_face_idxs[bm_vert.index] = face_idxs
+        linked_face_counts[bm_vert.index] = len(face_idxs)
+
     for i in range(iterations):
-        vertices = do_iteration(bvh, bm)
+        vertices = do_iteration(bvh, bm, n_verts, n_link_faces, max_link_faces, linked_face_idxs, linked_face_counts)
         for bm_vert, v in zip(bm.verts, vertices):
             bm_vert.co = mathutils.Vector(v)
         if recalc_normals:
