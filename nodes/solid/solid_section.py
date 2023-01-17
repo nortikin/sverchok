@@ -6,7 +6,7 @@
 # License-Filename: LICENSE
 
 import bpy
-from bpy.props import BoolProperty, EnumProperty
+from bpy.props import BoolProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, map_recursive, zip_long_repeat,
@@ -15,7 +15,6 @@ from sverchok.utils.curve.freecad import SvSolidEdgeCurve
 from sverchok.dependencies import FreeCAD
 
 if FreeCAD is not None:
-    from sverchok.utils.solid import SvBoolResult
     import Part
 
 class SvSolidSectionNode(SverchCustomTreeNode, bpy.types.Node):
@@ -48,10 +47,6 @@ class SvSolidSectionNode(SverchCustomTreeNode, bpy.types.Node):
         self.outputs.new('SvCurveSocket', "Curves")
 
     def make_solid(self, solids):
-        solid = self.make_solid_simple(solids)
-        return SvBoolResult(solid)
-
-    def make_solid_simple(self, solids):
         base = solids[0].copy()
         rest = solids[1:]
         solid = base.section(rest)
@@ -75,7 +70,7 @@ class SvSolidSectionNode(SverchCustomTreeNode, bpy.types.Node):
             new_solids = []
             for solid_a, solid_b in zip_long_repeat(*params):
                 result = self.make_solid([solid_a, solid_b])
-                new_solids.append(result.solid)
+                new_solids.append(result)
             solids_out.extend(new_solids)
 
         def get_verts(solid):
