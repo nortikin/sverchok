@@ -41,47 +41,48 @@ class SvSolidSectionNode(SverchCustomTreeNode, bpy.types.Node):
 
     def sv_init(self, context):
         self.inputs.new('SvSolidSocket', "Shape A")
+        #"Shape" is a generic term covering all different topological types defined by Open CASCADE Technology (OCCT)
         self.inputs.new('SvSolidSocket', "Shape B")
         
         self.outputs.new('SvVerticesSocket', "Vertices")
         self.outputs.new('SvCurveSocket', "Curves")
 
-    def make_solid(self, solids):
-        base = solids[0].copy()
-        rest = solids[1:]
-        solid = base.section(rest)
-        return solid
+    def make_section(self, shapes):
+        base = shapes[0].copy()
+        rest = shapes[1:]
+        section = base.section(rest)
+        return section
 
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
             return
 
-        solids_out = []
+        sections_out = []
 
-        solids_a_in = self.inputs['Shape A'].sv_get()
-        solids_b_in = self.inputs['Shape B'].sv_get()
-        level_a = get_data_nesting_level(solids_a_in, data_types=(Part.Shape,))
-        level_b = get_data_nesting_level(solids_b_in, data_types=(Part.Shape,))
-        solids_a_in = ensure_nesting_level(solids_a_in, 2, data_types=(Part.Shape,))
-        solids_b_in = ensure_nesting_level(solids_b_in, 2, data_types=(Part.Shape,))
+        shapes_a_in = self.inputs['Shape A'].sv_get()
+        shapes_b_in = self.inputs['Shape B'].sv_get()
+        level_a = get_data_nesting_level(shapes_a_in, data_types=(Part.Shape,))
+        level_b = get_data_nesting_level(shapes_b_in, data_types=(Part.Shape,))
+        shapes_a_in = ensure_nesting_level(shapes_a_in, 2, data_types=(Part.Shape,))
+        shapes_b_in = ensure_nesting_level(shapes_b_in, 2, data_types=(Part.Shape,))
         level = max(level_a, level_b)
 
-        for params in zip_long_repeat(solids_a_in, solids_b_in):
-            new_solids = []
-            for solid_a, solid_b in zip_long_repeat(*params):
-                result = self.make_solid([solid_a, solid_b])
-                new_solids.append(result)
-            solids_out.extend(new_solids)
+        for params in zip_long_repeat(shapes_a_in, shapes_b_in):
+            new_sections = []
+            for shape_a, shape_b in zip_long_repeat(*params):
+                result = self.make_section([shape_a, shape_b])
+                new_sections.append(result)
+            sections_out.extend(new_sections)
 
-        def get_verts(solid):
+        def get_verts(section):
             verts = []
-            for v in solid.Vertexes:
+            for v in section.Vertexes:
                 verts.append(v.Point[:])
             return verts
 
-        def get_edges(solid):
+        def get_edges(section):
             edges_curves = []
-            for e in solid.Edges:
+            for e in section.Edges:
                 try:
                     curve = SvSolidEdgeCurve(e)
                     if self.nurbs_output:
@@ -91,8 +92,8 @@ class SvSolidSectionNode(SverchCustomTreeNode, bpy.types.Node):
                     pass
             return edges_curves
 
-        verts_out = map_recursive(get_verts, solids_out, data_types=(Part.Shape,))
-        edges_out = map_recursive(get_edges, solids_out, data_types=(Part.Shape,))
+        verts_out = map_recursive(get_verts, sections_out, data_types=(Part.Shape,))
+        edges_out = map_recursive(get_edges, sections_out, data_types=(Part.Shape,))
 
         self.outputs['Vertices'].sv_set(verts_out)
         self.outputs['Curves'].sv_set(edges_out)
