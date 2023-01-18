@@ -12,6 +12,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, get_data_nesting_level, ensure_nesting_level, repeat_last_for_length
 from sverchok.utils.math import supported_metrics, xyz_metrics
 from sverchok.utils.curve.catmull_rom import SvCatmullRomCurve, SvUniformCatmullRomCurve
+from sverchok.utils.curve.primitives import SvPointCurve
 
 class SvCatmullRomSplineNode(SverchCustomTreeNode, bpy.types.Node):
     """
@@ -70,7 +71,7 @@ class SvCatmullRomSplineNode(SverchCustomTreeNode, bpy.types.Node):
         if not any(o.is_linked for o in self.outputs):
             return
 
-        vertices_s = self.inputs['Vertices'].sv_get()
+        vertices_s = self.inputs['Vertices'].sv_get( default=[[]])
         tension_s = self.inputs['Tension'].sv_get()
         in_level = get_data_nesting_level(vertices_s)
         if in_level < 2 or in_level > 4:
@@ -84,16 +85,22 @@ class SvCatmullRomSplineNode(SverchCustomTreeNode, bpy.types.Node):
         for params in zip_long_repeat(vertices_s, tension_s):
             new_curves = []
             for vertices, tensions in zip_long_repeat(*params):
-                if self.spline_mode == 'UNIFORM':
-                    tensions = repeat_last_for_length(tensions, len(vertices))
-                    curve = SvUniformCatmullRomCurve.build(vertices,
-                                cyclic = self.is_cyclic,
-                                tensions = tensions)
+                if len(vertices)>1:
+                    if self.spline_mode == 'UNIFORM':
+                        tensions = repeat_last_for_length(tensions, len(vertices))
+                        curve = SvUniformCatmullRomCurve.build(vertices,
+                                    cyclic = self.is_cyclic,
+                                    tensions = tensions)
+                    else:
+                        curve = SvCatmullRomCurve.build(vertices,
+                                    metric = self.metric,
+                                    cyclic = self.is_cyclic)
+                    new_curves.append(curve)
+                elif len(vertices)==1:
+                    new_curves.append(SvPointCurve(vertices[0]))
                 else:
-                    curve = SvCatmullRomCurve.build(vertices,
-                                metric = self.metric,
-                                cyclic = self.is_cyclic)
-                new_curves.append(curve)
+                    raise TypeError(f"Cannot create curve of zero points")
+
             if nested_out:
                 curve_out.append(new_curves)
             else:
