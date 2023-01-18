@@ -170,6 +170,7 @@ def intersect_edges_3d(verts_in, edges_in, s_epsilon):
     add_back = bmesh_intersect_edges_3d(bm, s_epsilon)
 
     verts_out = [v.co.to_tuple() for v in bm.verts]
+    bm.verts.index_update()
     edges_out = [[j.index for j in i.verts] for i in bm.edges]
     # optional correction, remove originals, add back those that are not intersecting.
     edges_out = edges_out[trim_indices:]

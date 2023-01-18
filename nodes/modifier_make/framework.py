@@ -330,6 +330,7 @@ class SvFrameworkNode(EdgeGeneratorNode, SverchCustomTreeNode, bpy.types.Node):
             bm.free()
 
             verts_new, edges_new = intersect_edges_3d(verts_new, edges_new, 1e-3)
+            #edges_new = [[i,j] for i,j in edges_new if i != j]
             verts_new, edges_new, _ = remove_doubles(verts_new, edges_new, [], 1e-3)
 
             if self.outputs['Faces'].is_linked:
