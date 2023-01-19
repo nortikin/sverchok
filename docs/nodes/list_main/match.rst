@@ -17,13 +17,13 @@ Inputs
 Parameters
 ----------
 
-Next you choose case of matching:
+        Next you choose case of matching:
 
 * **Level** level of data
 
-next two lines are:
-        recursive - recursive case of matching (not working now)
-        final - usual job on defined level
+        Next two lines are:
+        **recursive** - recursive case of matching (not working now)
+        **final** - usual job on defined level
 
 * **Short**: cut all to minimal length of lists         
 * **Cycle**: extend all to maximal length of lists by cyclingly repeating               
@@ -41,13 +41,18 @@ Outputs
 Examples
 --------
 
-initial:                
+*initial:                
 [0, 1] & [0, 1, 2, 3, 4]                
-short:          
+
+*short:          
 [0, 1] & [0, 1]         
-Cycle:          
+
+*Cycle:          
 [0, 1, 0, 1, 0] & [0, 1, 2, 3, 4]               
-Repeat:         
+
+*Repeat:         
 [0, 1, 1, 1, 1] & [0, 1, 2, 3, 4]               
-X-Ref:          
+
+*X-Ref:          
 [0, 1, 0, 1, 0, 1, 0, 1, 0, 1] & [0, 0, 1, 1, 2, 2, 3, 3, 4, 4]         
+
