@@ -19,9 +19,11 @@ Parameters
 
 * **Level** level of data
 
-        Next you choose case of matching, two lines are:
-        **recursive** - recursive case of matching (not working now)
-        **final** - usual job on defined level
+        Next you choose case of matching, two lines are:        
+        
+        **recursive** - recursive case of matching (not working now)    
+        
+        **final** - usual job on defined level  
 
 * **Short**: cut all to minimal length of lists         
 * **Cycle**: extend all to maximal length of lists by cyclingly repeating               
