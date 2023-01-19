@@ -29,7 +29,7 @@ Parameters
 * **Cycle**: extend all to maximal length of lists by cyclingly repeating               
 * **Repeat** extend all to maximal length of lists by last item repeating               
 * **X-Ref** extend all to maximal length of lists by multiply lengthes,         
-        i.e. [0,1] and [4,5,6] will give [0,0,0,1,1,1,] and [4,4,5,5,6,6] in output             
+        i.e. [0,1] and [4,5,6] will give [0,1,0,1,0,1] and [4,4,5,5,6,6] in output             
 
 
 Outputs
