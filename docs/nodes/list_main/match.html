@@ -77,7 +77,14 @@
 <li class="toctree-l3"><a class="reference internal" href="index.html">List Index</a></li>
 <li class="toctree-l3"><a class="reference internal" href="join.html">List Join</a></li>
 <li class="toctree-l3"><a class="reference internal" href="length.html">List Length</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">List Match</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">List Match</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#outputs">Outputs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#examples">Examples</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="statistics.html">List Statistics</a></li>
 <li class="toctree-l3"><a class="reference internal" href="sum_mk2.html">List Summa</a></li>
 <li class="toctree-l3"><a class="reference internal" href="zip.html">List Zip</a></li>
@@ -131,6 +138,58 @@
              
   <section id="list-match">
 <h1>List Match<a class="headerlink" href="#list-match" title="Permalink to this heading">¶</a></h1>
+<p>Great node to cut and extend lists to maximal or minimal length for one of them.</p>
+<section id="functionality">
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<p>Getting multiple inputs node get length for all lists and define maximal/minimal of them.</p>
+</section>
+<section id="inputs">
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
+<ul class="simple">
+<li><p><strong>data</strong> multisocket</p></li>
+</ul>
+</section>
+<section id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
+<p>Next you choose case of matching:</p>
+<ul class="simple">
+<li><p><strong>Level</strong> level of data</p></li>
+</ul>
+<dl class="simple">
+<dt>next two lines are:</dt><dd><p>recursive - recursive case of matching (not working now)
+final - usual job on defined level</p>
+</dd>
+</dl>
+<ul class="simple">
+<li><p><strong>Short</strong>: cut all to minimal length of lists</p></li>
+<li><p><strong>Cycle</strong>: extend all to maximal length of lists by cyclingly repeating</p></li>
+<li><p><strong>Repeat</strong> extend all to maximal length of lists by last item repeating</p></li>
+<li><dl class="simple">
+<dt><strong>X-Ref</strong> extend all to maximal length of lists by multiply lengthes,</dt><dd><p>i.e. [0,1] and [4,5,6] will give [0,0,0,1,1,1,] and [4,4,5,5,6,6] in output</p>
+</dd>
+</dl>
+</li>
+</ul>
+</section>
+<section id="outputs">
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
+<ul class="simple">
+<li><p><strong>data</strong> adaptable socket</p></li>
+</ul>
+</section>
+<section id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
+<p>initial:
+[0, 1] &amp; [0, 1, 2, 3, 4]
+short:
+[0, 1] &amp; [0, 1]
+Cycle:
+[0, 1, 0, 1, 0] &amp; [0, 1, 2, 3, 4]
+Repeat:
+[0, 1, 1, 1, 1] &amp; [0, 1, 2, 3, 4]
+X-Ref:
+[0, 1, 0, 1, 0, 1, 0, 1, 0, 1] &amp; [0, 0, 1, 1, 2, 2, 3, 3, 4, 4]</p>
+</section>
 </section>
 
 
