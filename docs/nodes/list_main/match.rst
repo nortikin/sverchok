@@ -17,6 +17,7 @@ Inputs
 Parameters
 ----------
 
+
         Next you choose case of matching:
 
 * **Level** level of data
@@ -41,18 +42,18 @@ Outputs
 Examples
 --------
 
-*initial:                
+* initial:                
 [0, 1] & [0, 1, 2, 3, 4]                
 
-*short:          
+* short:          
 [0, 1] & [0, 1]         
 
-*Cycle:          
+* Cycle:          
 [0, 1, 0, 1, 0] & [0, 1, 2, 3, 4]               
 
-*Repeat:         
+* Repeat:         
 [0, 1, 1, 1, 1] & [0, 1, 2, 3, 4]               
 
-*X-Ref:          
+* X-Ref:          
 [0, 1, 0, 1, 0, 1, 0, 1, 0, 1] & [0, 0, 1, 1, 2, 2, 3, 3, 4, 4]         
 
