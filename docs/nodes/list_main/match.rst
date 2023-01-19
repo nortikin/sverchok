@@ -17,12 +17,9 @@ Inputs
 Parameters
 ----------
 
-
-        Next you choose case of matching:
-
 * **Level** level of data
 
-        Next two lines are:
+        Next you choose case of matching, two lines are:
         **recursive** - recursive case of matching (not working now)
         **final** - usual job on defined level
 
