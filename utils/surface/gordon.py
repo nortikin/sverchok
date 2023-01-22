@@ -13,7 +13,7 @@ from sverchok.utils.curve.algorithms import unify_curves_degree, SvCurveFrameCal
 from sverchok.utils.curve.nurbs_solver_applications import interpolate_nurbs_curve_with_tangents
 from sverchok.utils.surface.core import UnsupportedSurfaceTypeException
 from sverchok.utils.surface import SvSurface, SurfaceCurvatureCalculator, SurfaceDerivativesData
-from sverchok.utils.surface.nurbs import SvNurbsSurface, simple_loft, interpolate_nurbs_surface
+from sverchok.utils.surface.nurbs import SvNurbsSurface, simple_loft, interpolate_nurbs_surface, prepare_nurbs_birail
 from sverchok.utils.surface.algorithms import unify_nurbs_surfaces
 from sverchok.utils.logging import getLogger
 from sverchok.data_structure import repeat_last_for_length
@@ -57,7 +57,13 @@ def reparametrize_by_segments(curve, t_values, tolerance=1e-2):
     
     return result
 
-def gordon_surface(u_curves, v_curves, intersections, metric='POINTS', u_knots=None, v_knots=None, knotvector_accuracy=6, reparametrize_tolerance=1e-2, logger=None):
+def gordon_surface(u_curves, v_curves, intersections,
+        metric='POINTS',
+        u_knots=None, v_knots=None,
+        knotvector_accuracy=6,
+        reparametrize_tolerance=1e-2,
+        implementation = SvNurbsSurface.NATIVE,
+        logger=None):
     """
     Generate a NURBS surface from a net of NURBS curves, by use of Gordon's algorithm.
 
@@ -164,4 +170,27 @@ def nurbs_blend_surfaces(surface1, surface2, curve1, curve2, bulge1, bulge2, u_d
     intersections = np.transpose(np.asarray([c1_points, c2_points]), axes=(1,0,2))
 
     return gordon_surface(u_curves, v_curves, intersections, logger=logger)[-1]
+
+def nurbs_birail_by_gordon(path1, path2, profiles,
+        ts1 = None, ts2 = None,
+        min_profiles = 2,
+        degree_v = None,
+        metric = 'POINTS',
+        scale_uniform = True,
+        auto_rotate = False,
+        use_tangents = 'PATHS_AVG',
+        implementation = SvNurbsSurface.NATIVE,
+        logger = None):
+
+    u_curves = prepare_nurbs_birail(path1, path2, profiles,
+                ts1 = ts1, ts2 = ts2,
+                min_profiles = min_profiles,
+                degree_v = degree_v,
+                scale_uniform = scale_uniform,
+                auto_rotate = auto_rotate,
+                use_tangents = use_tangents)
+    v_curves = [path1, path2]
+    intersections = np.array([u_curve.get_end_points() for u_curve in u_curves])
+    intersections = np.transpose(intersections, axes=(1,0,2))
+    return gordon_surface(u_curves, v_curves, intersections, metric=metric, implementation = implementation, logger=logger)[-1]
 
