@@ -264,7 +264,7 @@
     - Generate NURBS Curve:
         - icon_name: EVENT_N
         - SvExNurbsCurveNode
-        - SvApproxNurbsCurveMk2Node
+        - SvApproxNurbsCurveMk3Node
         - SvExInterpolateNurbsCurveNode
         - ---
         - SvGenerateKnotvectorNode
