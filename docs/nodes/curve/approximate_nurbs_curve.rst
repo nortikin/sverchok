@@ -39,25 +39,25 @@ Every single implementation offers different ways of control:
   One can specify the interval of desired degree of the built curve. The final degree 
   cannot be specified but is a result of all the constraints applyed. 
   
-  A global precision of the approximation can be specified as a Tolerance value.
-  Lower values means that the approximation curve will pass closely to the input Vertices.
+  A global precision of the approximation can be specified as a Tolerance value. 
+  Lower values means that the approximation curve will pass closely to the input Vertices. 
   
   The "Parameterization" approximation method allows lots of inner continuity options 
-  and offers three metrics ('Uniform','Centripetal' or 'ChordLength') for the parametrization.
+  and offers three metrics ('Uniform','Centripetal' or 'ChordLength') for the parametrization. 
   
   The "Variational Smoothing" method uses three additional parameters - "Length Weight", 
   "Curvature Weight" and "Torsion Weight". If one of these arguments is not null, 
   the functions approximates the points using variational smoothing algorithm, 
-  which tries to minimize additional criterium:
+  which tries to minimize additional criterium: 
   
-  LengthWeight*CurveLength + CurvatureWeight*Curvature + TorsionWeight*Torsion
+  LengthWeight*CurveLength + CurvatureWeight*Curvature + TorsionWeight*Torsion 
   
   where Continuity must be C0, C1(with "Maximal Degree" >= 3) or 
-  C2(with "Maximal Degree" >= 5).
+  C2(with "Maximal Degree" >= 5). 
   
   The Continuity parameter defines how smooth will be the curve internally. 
-  The values it can take depend on the approximation method used. It defaults to C2.
-  However, it may not be applied if it conflicts with other parameters ( especially Maximal Degree ).
+  The values it can take depend on the approximation method used. It defaults to C2. 
+  However, it may not be applied if it conflicts with other parameters ( especially Maximal Degree ). 
 
 .. _NURBS: https://en.wikipedia.org/wiki/Non-uniform_rational_B-spline
 
