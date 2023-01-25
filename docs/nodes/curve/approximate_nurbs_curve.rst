@@ -35,7 +35,7 @@ Every single implementation offers different ways of control:
   Additionally, when smoothing factor is not zero, you can provide different
   weights for different points.
 * FreeCAD_ implementation supports two main methods and a wide variety of options.
-
+  
   One can specify the interval of desired degree of the built curve. The final degree 
   cannot be specified but is a result of all the constraints applyed. 
   
