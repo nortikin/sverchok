@@ -41,7 +41,7 @@ Every single implementation offers different ways of control:
   
   A global precision of the approximation can be specified as a Tolerance value.
   Lower values means that the approximation curve will pass closely to the input Vertices.
-
+  
   The "Parameterization" approximation method allows lots of inner continuity options 
   and offers three metrics ('Uniform','Centripetal' or 'ChordLength') for the parametrization.
   
