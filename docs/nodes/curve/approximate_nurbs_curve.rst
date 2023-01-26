@@ -169,6 +169,7 @@ This node has the following parameters:
 
   * **Parametrization**.
   * **Variational smoothing**.
+  * **Explicit Knots**.
 
 * **Continuity**. Available only for the FreeCAD_ implementation. Desired internal smoothness of the result curve. The available values are:
 
