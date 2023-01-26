@@ -34,31 +34,34 @@ Every single implementation offers different ways of control:
   selection of metrics. This implementation can make cyclic (closed) curves.
   Additionally, when smoothing factor is not zero, you can provide different
   weights for different points.
-* FreeCAD_ implementation supports two main methods and a wide variety of options:
+* FreeCAD_ implementation supports three approximation methods and a wide variety of options:
    
-   One can specify the interval of desired degree of the built curve. The final degree
-   cannot be specified but is a result of all the constraints applyed.
+   An exact curve degree cannot be specified. An interval ( Minimal Degree, Maximal Degree ) is used instead.
+   The final curve degree is a result of all the constraints applyed and will be in the specified inverval.
    
-   A global precision of the approximation can be specified as a Tolerance value.
-   Lower values means that the approximation curve will pass closely to the input Vertices.
+   A global precision of the approximation can be specified as a **Tolerance** value.
+   Lower values mean that the approximation curve will pass closely to the input Vertices.
    
-   The "Parameterization" approximation method allows lots of inner continuity options   
-   and offers three metrics ('Uniform','Centripetal' or 'ChordLength') for the parametrization.
+   The **"Parameterization"** approximation method allows lots of inner continuity options   
+   and offers three metrics ( **'Uniform' , 'Centripetal' or 'ChordLength'** ) for the parametrization.
    
-   The "Variational Smoothing" method uses three additional parameters - "Length Weight",
-   "Curvature Weight" and "Torsion Weight". If one of these arguments is not null,
-   the functions approximates the points using variational smoothing algorithm,
-   which tries to minimize additional criterium:
+   The **"Variational Smoothing"** method uses three additional parameters - "Length Weight",
+   "Curvature Weight" and "Torsion Weight". The functions approximates the points using variational
+   smoothing algorithm, which tries to minimize additional criterium:
    **LengthWeight*CurveLength + CurvatureWeight*Curvature + TorsionWeight*Torsion**
-   where Continuity must be C0, C1(with "Maximal Degree" >= 3) or
-   C2(with "Maximal Degree" >= 5).
+   where Continuity must be **C0, C1** ( with "Maximal Degree" >= 3 ) or
+   **C2** ( with "Maximal Degree" >= 5 ).
    
-   The Continuity parameter defines how smooth will be the curve internally.
+   With the **"Explicit Knots"** method a custom knot sequence can be specified. The knot sequence can be
+   also provided with the use of the `Generate Knotvector <https://nortikin.github.io/sverchok/docs/nodes/curve/generate_knotvector.html>`_ node based on the metrics from it.
+   
+   The **"Continuity"** parameter defines how smooth will be the curve internally.
    The values it can take depend on the approximation method used. It defaults to C2.
-   However, it may not be applied if it conflicts with other parameters ( especially Maximal Degree ).
+   However, it may not be applied if it conflicts with other parameters ( especially "Maximal Degree" ).
 
 
 .. _NURBS: https://en.wikipedia.org/wiki/Non-uniform_rational_B-spline
+.. _"Generate Knotvector": https://nortikin.github.io/sverchok/docs/nodes/curve/generate_knotvector.html
 
 Inputs
 ------
@@ -87,6 +90,9 @@ This node has the following inputs:
 
 FreeCAD implementation specific inputs:
 
+* **Knots**. The knot sequence. Available only if the "Explicit Knots" method is used.
+  Must contain unique floats in an ascending order. When not connected, the curve will be
+  calculated using Euclidean metric.
 * **Minimal Degree**. Minimal possible degree of the curve to be built. 
   Default value is 3.
 * **Maximal Degree**. Maximal possible degree of the curve to be built. 
@@ -166,13 +172,13 @@ This node has the following parameters:
 
 * **Continuity**. Available only for the FreeCAD_ implementation. Desired internal smoothness of the result curve. The available values are:
 
-  * **C0**. Only positional continuity.
-  * **G1**. Geometric tangent continuity. Available only for the "Parametrization" method.
-  * **C1**. Continuity of the first derivative all along the Curve.
-  * **G2**. Geometric curvature continuity. Available only for the "Parametrization" method.
-  * **C2**. Continuity of the second derivative all along the Curve
-  * **C3**. Continuity of the third derivative all along the Curve. Available only for the "Parametrization" method.
-  * **CN**. Infinite order of continuity. Available only for Parametrization method.
+  * **C0** : Only positional continuity.
+  * **G1** : Geometric tangent continuity. Available only for the "Parametrization" method.
+  * **C1** : Continuity of the first derivative all along the Curve.
+  * **G2** : Geometric curvature continuity. Available only for the "Parametrization" method.
+  * **C2** : Continuity of the second derivative all along the Curve
+  * **C3** : Continuity of the third derivative all along the Curve. Available only for the "Parametrization" method.
+  * **CN** : Infinite order of continuity. Available only for Parametrization method.
   
 * **Type**. The way how the parametrization is calculated. Available only for the FreeCAD_ implementation and when the "Parametrization" method is used. The available values are:
 
@@ -206,4 +212,8 @@ Use SciPy implementation to make a closed curve:
 Example of the FreeCAD implementation usage. Chord Length Parametrization:
 
 .. image:: https://user-images.githubusercontent.com/66558924/214577636-6d91c682-1225-45cd-85ba-350fa110755f.jpg
+
+Example of the FreeCAD implementation using the Explicit Knots method and utilizing the "Generate Knotvector" node:
+
+.. image:: https://user-images.githubusercontent.com/66558924/214834736-5aecc4e0-902b-4c76-9135-9d9dbbac6d1c.jpg
 
