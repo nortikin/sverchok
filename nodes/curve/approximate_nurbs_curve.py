@@ -62,6 +62,7 @@ class SvApproxNurbsCurveMk3Node(SverchCustomTreeNode, bpy.types.Node):
         self.inputs['Smoothing'].hide_safe = not (self.implementation == 'SCIPY' and self.has_smoothing)
         self.inputs['Weights'].hide_safe = not (self.implementation == 'SCIPY')
 
+        self.inputs['Knots'].hide_safe = not (self.implementation == 'FREECAD' and self.method == 'explicit_knots')
         self.inputs['DegreeMin'].hide_safe = not (self.implementation == 'FREECAD')
         self.inputs['DegreeMax'].hide_safe = not (self.implementation == 'FREECAD')
         self.inputs['Tolerance'].hide_safe = not (self.implementation == 'FREECAD')
@@ -146,7 +147,8 @@ class SvApproxNurbsCurveMk3Node(SverchCustomTreeNode, bpy.types.Node):
             description = "Approximation Method",
             default = "parametrization",
             items = [("parametrization", "Parametrization", "Parametrize the init points using certain metric"),
-                     ("vari_smoothing", "Variational Smoothing", "Smoothing algorithm, which tries to minimize an additional criterium")
+                     ("vari_smoothing", "Variational Smoothing", "Smoothing algorithm, which tries to minimize an additional criterium"),
+                     ("explicit_knots", "Explicit Knots", "Explicitly specify the knots")
                     ],
         update = update_sockets)
 
@@ -246,8 +248,10 @@ class SvApproxNurbsCurveMk3Node(SverchCustomTreeNode, bpy.types.Node):
             if self.method == 'parametrization':
                 layout.prop(self, 'continuity_p')
                 layout.prop(self, 'param_type')
-            else:
+            elif self.method == 'vari_smoothing':
                 layout.prop(self, 'continuity_s')
+            else: # "Explicit Knots":
+                layout.prop(self, 'continuity_p')
 
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
@@ -260,6 +264,7 @@ class SvApproxNurbsCurveMk3Node(SverchCustomTreeNode, bpy.types.Node):
         self.inputs.new('SvStringsSocket', "LengthWeight").prop_name = 'length_weight'
         self.inputs.new('SvStringsSocket', "CurvatureWeight").prop_name = 'curvature_weight'
         self.inputs.new('SvStringsSocket', "TorsionWeight").prop_name = 'torsion_weight'
+        self.inputs.new('SvStringsSocket', "Knots")
         
         self.inputs.new('SvVerticesSocket', "Vertices")
         self.inputs.new('SvStringsSocket', "Weights")
@@ -286,6 +291,7 @@ class SvApproxNurbsCurveMk3Node(SverchCustomTreeNode, bpy.types.Node):
         points_cnt_s = self.inputs['PointsCnt'].sv_get()
         smoothing_s = self.inputs['Smoothing'].sv_get()
 
+        knots_s = self.inputs['Knots'].sv_get(default=[[[None]]])
         degree_min_s = self.inputs['DegreeMin'].sv_get()
         degree_max_s = self.inputs['DegreeMax'].sv_get()
         tolerance_s = self.inputs['Tolerance'].sv_get()
@@ -310,16 +316,20 @@ class SvApproxNurbsCurveMk3Node(SverchCustomTreeNode, bpy.types.Node):
         if has_weights:
             weights_s = ensure_nesting_level(weights_s, 3)
 
+        has_knots = self.inputs['Knots'].is_linked
+        if has_knots:
+            knots_s = ensure_nesting_level(knots_s, 3)
+
         nested_output = input_level > 3
 
         curves_out = []
         points_out = []
         knots_out = []
-        for params in zip_long_repeat(vertices_s, weights_s, degree_s, points_cnt_s, smoothing_s, degree_min_s, degree_max_s, tolerance_s, length_weight_s, curvature_weight_s, torsion_weight_s):
+        for params in zip_long_repeat(vertices_s, weights_s, knots_s, degree_s, points_cnt_s, smoothing_s, degree_min_s, degree_max_s, tolerance_s, length_weight_s, curvature_weight_s, torsion_weight_s):
             new_curves = []
             new_points = []
             new_knots = []
-            for vertices, weights, degree, points_cnt, smoothing, degree_min, degree_max, tolerance, length_weight, curvature_weight, torsion_weight in zip_long_repeat(*params):
+            for vertices, weights, knots, degree, points_cnt, smoothing, degree_min, degree_max, tolerance, length_weight, curvature_weight, torsion_weight in zip_long_repeat(*params):
 
                 if self.implementation == 'GEOMDL':
                     kwargs = dict(centripetal = self.centripetal)
@@ -371,6 +381,23 @@ class SvApproxNurbsCurveMk3Node(SverchCustomTreeNode, bpy.types.Node):
                                             Continuity = self.continuity_p,
                                             ParamType = self.param_type
                                             )
+                    elif self.method == 'explicit_knots':
+                        if has_knots:
+                            bspline.approximate(Points = vertices,
+                                                Parameters = knots,
+                                                DegMin = degree_min,
+                                                DegMax = degree_max,
+                                                Tolerance = tolerance,
+                                                Continuity = self.continuity_p
+                                                )
+                        else:
+                            bspline.approximate(Points = vertices,
+                                                DegMin = degree_min,
+                                                DegMax = degree_max,
+                                                Tolerance = tolerance,
+                                                Continuity = self.continuity_p
+                                                )
+
                     else: # Variable Smoothing:
                         bspline.approximate(Points = vertices,
                                             DegMin = degree_min,
