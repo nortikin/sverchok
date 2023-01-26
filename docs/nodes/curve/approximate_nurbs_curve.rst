@@ -4,7 +4,7 @@ Approximate NURBS Curve
 Dependencies
 ------------
 
-This node requires either Geomdl_, SciPy_ and FreeCAD_ library to work.
+This node requires either Geomdl_, SciPy_ or FreeCAD_ library to work.
 
 .. _Geomdl: https://onurraufbingol.com/NURBS-Python/
 .. _SciPy: https://scipy.org/
@@ -177,17 +177,15 @@ This node has the following parameters:
   * **G1** : Geometric tangent continuity. Available only for the "Parametrization" method.
   * **C1** : Continuity of the first derivative all along the Curve.
   * **G2** : Geometric curvature continuity. Available only for the "Parametrization" method.
-  * **C2** : Continuity of the second derivative all along the Curve
+  * **C2** : Continuity of the second derivative all along the Curve.
   * **C3** : Continuity of the third derivative all along the Curve. Available only for the "Parametrization" method.
   * **CN** : Infinite order of continuity. Available only for Parametrization method.
   
 * **Type**. The way how the parametrization is calculated. Available only for the FreeCAD_ implementation and when the "Parametrization" method is used. The available values are:
 
-  * **Chord Length**. Parameters of points are proportionate to distances between them
+  * **Chord Length**. Parameters of points are proportionate to distances between them.
   * **Centripetal**. Parameters of points are proportionate to square roots of distances between them.
-  * **Uniform**. Parameters of points are distributed uniformly
-    
-
+  * **Uniform**. Parameters of points are distributed uniformly.
 
 
 Outputs
