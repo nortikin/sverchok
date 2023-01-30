@@ -35,29 +35,31 @@ Every single implementation offers different ways of control:
   Additionally, when smoothing factor is not zero, you can provide different
   weights for different points.
 * FreeCAD_ implementation supports three approximation methods and a wide variety of options:
-   
-   An exact curve degree cannot be specified. An interval ( Minimal Degree, Maximal Degree ) is used instead.
-   The final curve degree is a result of all the constraints applyed and will be in the specified inverval.
-   
-   A global precision of the approximation can be specified as a **Tolerance** value.
-   Lower values mean that the approximation curve will pass closely to the input Vertices.
-   
-   The **"Parameterization"** approximation method allows lots of inner continuity options   
-   and offers three metrics ( **'Uniform' , 'Centripetal' or 'ChordLength'** ) for the parametrization.
-   
-   The **"Variational Smoothing"** method uses three additional parameters - "Length Weight",
-   "Curvature Weight" and "Torsion Weight". The functions approximates the points using variational
-   smoothing algorithm, which tries to minimize additional criterium:
-   **LengthWeight*CurveLength + CurvatureWeight*Curvature + TorsionWeight*Torsion**
-   where Continuity must be **C0, C1** ( with "Maximal Degree" >= 3 ) or
-   **C2** ( with "Maximal Degree" >= 5 ).
-   
-   With the **"Explicit Knots"** method a custom knot sequence can be specified. The knot sequence can be
-   also provided with the use of the `Generate Knotvector <https://nortikin.github.io/sverchok/docs/nodes/curve/generate_knotvector.html>`_ node based on the metrics from it.
-   
-   The **"Continuity"** parameter defines how smooth will be the curve internally.
-   The values it can take depend on the approximation method used. It defaults to C2.
-   However, it may not be applied if it conflicts with other parameters ( especially "Maximal Degree" ).
+
+  An exact curve degree cannot be specified. An interval ( Minimal Degree, Maximal Degree ) is used instead.
+  The final curve degree is a result of all the constraints applyed and will be in the specified inverval.
+  
+  A global precision of the approximation can be specified as a **Tolerance** value.
+  Lower values mean that the approximation curve will pass closely to the input Vertices.
+  
+  The **"Parameterization"** approximation method allows lots of inner continuity options   
+  and offers three metrics ( **'Uniform' , 'Centripetal' or 'ChordLength'** ) for the parametrization.
+  
+  The **"Variational Smoothing"** method uses three additional parameters - "Length Weight",
+  "Curvature Weight" and "Torsion Weight". The functions approximates the points using variational
+  smoothing algorithm, which tries to minimize additional criterium:
+  
+  **LengthWeight*CurveLength + CurvatureWeight*Curvature + TorsionWeight*Torsion**
+  
+  where Continuity must be **C0, C1** ( with "Maximal Degree" >= 3 ) or
+  **C2** ( with "Maximal Degree" >= 5 ).
+  
+  With the **"Explicit Knots"** method a custom knot sequence can be specified. The knot sequence can be
+  also provided with the use of the `Generate Knotvector <https://nortikin.github.io/sverchok/docs/nodes/curve/generate_knotvector.html>`_ node based on the metrics from it.
+  
+  The **"Continuity"** parameter defines how smooth will be the curve internally.
+  The values it can take depend on the approximation method used. It defaults to C2.
+  However, it may not be applied if it conflicts with other parameters ( especially "Maximal Degree" ).
 
 
 .. _NURBS: https://en.wikipedia.org/wiki/Non-uniform_rational_B-spline
@@ -150,14 +152,14 @@ This node has the following parameters:
   parameter is set to **SciPy**.Metric to be used for interpolation. The
   available values are:
 
-   * Manhattan
-   * Euclidean
-   * Points (just number of points from the beginning)
-   * Chebyshev
-   * Centripetal (square root of Euclidean distance)
-   * X, Y, Z axis - use distance along one of coordinate axis, ignore others.
+  * **Manhattan**
+  * **Euclidean**
+  * **Points** (just number of points from the beginning)
+  * **Chebyshev**
+  * **Centripetal** (square root of Euclidean distance)
+  * **X, Y, Z axis** - use distance along one of coordinate axis, ignore others.
 
-   The default value is Euclidean.
+  The default value is Euclidean.
 
 * **Specify smoothing**. This parameter is available only when
   **Implementation** parameter is set to **SciPy**. If checked, the node will
