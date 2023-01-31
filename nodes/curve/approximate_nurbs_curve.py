@@ -14,6 +14,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, get_data_nesting_level, ensure_nesting_level,\
     repeat_last_for_length
 from sverchok.utils.math import supported_metrics, xyz_metrics
+from sverchok.utils.geom import Spline
 from sverchok.utils.curve.nurbs import SvGeomdlCurve
 from sverchok.utils.curve.splprep import scipy_nurbs_approximate
 from sverchok.utils.curve.freecad import SvSolidEdgeCurve
@@ -220,13 +221,18 @@ class SvApproxNurbsCurveMk3Node(SverchCustomTreeNode, bpy.types.Node):
             min = 0.0,
             update = updateNode)
 
-    param_type: EnumProperty(name='Type',
-        description = "Parametrization Type",
+    param_type: EnumProperty(name='Metric',
+        description = "Parametrization Metric",
         default = "ChordLength",
-        items = [("ChordLength", "Chord Length", "Parameters of points are proportionate to distances between them"),
-                 ("Centripetal", "Centripetal", "Parameters of points are proportionate to square roots of distances between them"),
-                 ("Uniform", "Uniform", "Parameters of points are distributed uniformly")
-                ],
+        items = [('MANHATTAN', 'Manhattan', "Manhattan distance metric", 0),
+                 ('ChordLength', 'Euclidean', "Also known as Chord-Length or Distance. Parameters of points are proportionate to distances between them", 1),
+                 ('Uniform', 'Points', "Also known as Uniform. Parameters of points are distributed uniformly", 2),
+                 ('CHEBYSHEV', 'Chebyshev', "Chebyshev distance metric", 3),
+                 ('Centripetal', 'Centripetal', "Parameters of points are proportionate to square roots of distances between them", 4),
+                 ('X', "X Axis", "Distance along X axis", 5),
+                 ('Y', "Y Axis", "Distance along Y axis", 6),
+                 ('Z', "Z Axis", "Distance along Z axis", 7)
+                 ],
         update = updateNode)
 
     def draw_buttons(self, context, layout):
@@ -374,13 +380,24 @@ class SvApproxNurbsCurveMk3Node(SverchCustomTreeNode, bpy.types.Node):
                 else: # FREECAD:
                     bspline = Part.BSplineCurve()
                     if self.method == 'parametrization':
-                        bspline.approximate(Points = vertices,
-                                            DegMin = degree_min,
-                                            DegMax = degree_max,
-                                            Tolerance = tolerance,
-                                            Continuity = self.continuity_p,
-                                            ParamType = self.param_type
-                                            )
+                        if self.param_type == "ChordLength" or self.param_type == "Uniform" or self.param_type == "Centripetal": # use OCCT for metric calculations
+                            bspline.approximate(Points = vertices,
+                                                DegMin = degree_min,
+                                                DegMax = degree_max,
+                                                Tolerance = tolerance,
+                                                Continuity = self.continuity_p,
+                                                ParamType = self.param_type
+                                                )
+                        else: # Manhattan, Chebishev and XYZ metrics:
+                            verts = np.array(vertices)
+                            tknots = Spline.create_knots(verts, metric = self.param_type)
+                            bspline.approximate(Points = vertices,
+                                                DegMin = degree_min,
+                                                DegMax = degree_max,
+                                                Tolerance = tolerance,
+                                                Continuity = self.continuity_p,
+                                                Parameters = tknots
+                                                )
                     elif self.method == 'explicit_knots':
                         if has_knots:
                             bspline.approximate(Points = vertices,
