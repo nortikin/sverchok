@@ -193,7 +193,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
     sv_show_socket_menus: BoolProperty(
         name = "Show socket menus",
         description = "Display socket dropdown menu buttons. NOTE: options that are enabled in those menus will be effective regardless of this checkbox!",
-        default = False,
+        default = True,
         options=set())
     """Display socket dropdown menu buttons (only for output).
     Read more in [user documentation](http://nortikin.github.io/sverchok/docs/user_interface/input_menus.html).
