@@ -43,7 +43,7 @@ Every single implementation offers different ways of control:
   Lower values mean that the approximation curve will pass closely to the input Vertices.
   
   The **"Parameterization"** approximation method allows lots of inner continuity options   
-  and offers three metrics ( **'Uniform' , 'Centripetal' or 'ChordLength'** ) for the parametrization.
+  and offers a list of metrics for the parametrization.
   
   The **"Variational Smoothing"** method uses three additional parameters - "Length Weight",
   "Curvature Weight" and "Torsion Weight". The functions approximates the points using variational
@@ -148,16 +148,16 @@ This node has the following parameters:
   distance between the first and the last points being approximated, for which
   the node will make the curve cyclic. Default value is 0.0, i.e. the points
   must exactly coincide in order for curve to be closed.
-* **Metric**. This parameter is available only when **Implementation**
-  parameter is set to **SciPy**.Metric to be used for interpolation. The
-  available values are:
+* **Metric**. This parameter is available when **Implementation**
+  parameter is set to **SciPy** and **FreeCAD/Parametrization**. It's the metric (the specific knot values) to be used for interpolation. The
+  available options are:
 
-  * **Manhattan**
-  * **Euclidean**
-  * **Points** (just number of points from the beginning)
-  * **Chebyshev**
-  * **Centripetal** (square root of Euclidean distance)
-  * **X, Y, Z axis** - use distance along one of coordinate axis, ignore others.
+  * **Manhattan** metric is also known as Taxicab metric or rectilinear distance.
+  * **Euclidean** also known as Chord-Length or Distance metric. The parameters of the points are proportionate to the distances between them.
+  * **Points** also known as Uniform metric. The parameters of the points are distributed uniformly. Just the number of the points from the beginning.
+  * **Chebyshev** metric is also known as Chessboard distance.
+  * **Centripetal** The parameters of the points are proportionate to square roots of distances between them.
+  * **X, Y, Z axis** Use distance along one of coordinate axis, ignore others.
 
   The default value is Euclidean.
 
@@ -182,12 +182,6 @@ This node has the following parameters:
   * **C2** : Continuity of the second derivative all along the Curve.
   * **C3** : Continuity of the third derivative all along the Curve. Available only for the "Parametrization" method.
   * **CN** : Infinite order of continuity. Available only for Parametrization method.
-  
-* **Type**. The way how the parametrization is calculated. Available only for the FreeCAD_ implementation and when the "Parametrization" method is used. The available values are:
-
-  * **Chord Length**. Parameters of points are proportionate to distances between them.
-  * **Centripetal**. Parameters of points are proportionate to square roots of distances between them.
-  * **Uniform**. Parameters of points are distributed uniformly.
 
 
 Outputs
