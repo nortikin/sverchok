@@ -161,7 +161,7 @@
     - Surface NURBS:
         - SvExNurbsSurfaceNode
         - SvExApproxNurbsSurfaceNode
-        - SvExInterpolateNurbsSurfaceNode
+        - SvExInterpolateNurbsSurfaceNodeMK2
         - SvNurbsLoftNode
         - SvNurbsSweepNode
         - SvNurbsBirailNode
