@@ -204,7 +204,7 @@
 <h1>Approximate NURBS Curve<a class="headerlink" href="#approximate-nurbs-curve" title="Permalink to this heading">¶</a></h1>
 <section id="dependencies">
 <h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this heading">¶</a></h2>
-<p>This node requires either <a class="reference external" href="https://onurraufbingol.com/NURBS-Python/">Geomdl</a> or <a class="reference external" href="https://scipy.org/">SciPy</a> library to work.</p>
+<p>This node requires either <a class="reference external" href="https://onurraufbingol.com/NURBS-Python/">Geomdl</a>, <a class="reference external" href="https://scipy.org/">SciPy</a> or <a class="reference external" href="https://www.freecad.org/">FreeCAD</a> library to work.</p>
 </section>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
@@ -212,9 +212,9 @@
 points, i.e. goes as close to them as possible while remaining a smooth curve.</p>
 <p>In fact, the generated curve always will be a non-rational curve, which means
 that all weights will be equal to 1.</p>
-<p>This node supports two implementations of curve approximation algorithm.
-Different implementation give you different ways of controlling them:</p>
-<ul class="simple">
+<p>This node supports three different implementations for curve approximation.
+Every single implementation offers different ways of control:</p>
+<ul>
 <li><p><a class="reference external" href="https://onurraufbingol.com/NURBS-Python/">Geomdl</a> implementation can either define the number of control points of
 generated curve automatically, or you can provide it with desired number of
 control points. This implementation supports only two metrics - euclidean and
@@ -227,6 +227,25 @@ interpolation instead of approximation. This implementation supports wider
 selection of metrics. This implementation can make cyclic (closed) curves.
 Additionally, when smoothing factor is not zero, you can provide different
 weights for different points.</p></li>
+<li><p><a class="reference external" href="https://www.freecad.org/">FreeCAD</a> implementation supports three approximation methods and a wide variety of options:</p>
+<p>An exact curve degree cannot be specified. An interval ( Minimal Degree, Maximal Degree ) is used instead.
+The final curve degree is a result of all the constraints applyed and will be in the specified inverval.</p>
+<p>A global precision of the approximation can be specified as a <strong>Tolerance</strong> value.
+Lower values mean that the approximation curve will pass closely to the input Vertices.</p>
+<p>The <strong>“Parameterization”</strong> approximation method allows lots of inner continuity options
+and offers a list of metrics for the parametrization.</p>
+<p>The <strong>“Variational Smoothing”</strong> method uses three additional parameters - “Length Weight”,
+“Curvature Weight” and “Torsion Weight”. The functions approximates the points using variational
+smoothing algorithm, which tries to minimize additional criterium:</p>
+<p><strong>LengthWeight*CurveLength + CurvatureWeight*Curvature + TorsionWeight*Torsion</strong></p>
+<p>where Continuity must be <strong>C0, C1</strong> ( with “Maximal Degree” &gt;= 3 ) or
+<strong>C2</strong> ( with “Maximal Degree” &gt;= 5 ).</p>
+<p>With the <strong>“Explicit Knots”</strong> method a custom knot sequence can be specified. The knot sequence can be
+also provided with the use of the <a class="reference external" href="https://nortikin.github.io/sverchok/docs/nodes/curve/generate_knotvector.html">Generate Knotvector</a> node based on the metrics from it.</p>
+<p>The <strong>“Continuity”</strong> parameter defines how smooth will be the curve internally.
+The values it can take depend on the approximation method used. It defaults to C2.
+However, it may not be applied if it conflicts with other parameters ( especially “Maximal Degree” ).</p>
+</li>
 </ul>
 </section>
 <section id="inputs">
@@ -240,10 +259,10 @@ weight mean that the curve will pass through corresponding point at the
 smaller distance. This does not have sense if <strong>Smoothing</strong> input is set to
 zero. Optional input. If not connected, the node will consider weights of all
 points as equal.</p></li>
-<li><p><strong>Degree</strong>. Degree of the curve to be built. Default value is 3. Most useful
-values are 3, 5 and 7. If Scipy implementation is used, then maximum
-supported degree is 5. For Geomdl, there is no hard limit, but curves of very
-high degree can be hard to manipulate with.</p></li>
+<li><p><strong>Degree</strong>. Available for <strong>Geomdl</strong> and <strong>SciPy</strong> only. Degree of the curve to be built.
+Default value is 3. Most useful values are 3, 5 and 7.
+If Scipy implementation is used, then maximum supported degree is 5.
+For Geomdl, there is no hard limit, but curves of very high degree can be hard to manipulate with.</p></li>
 <li><p><strong>PointsCnt</strong>. Number of curve’s control points. This input is available only
 when <strong>Implementation</strong> parameter is set to <strong>Geomdl</strong>, and <strong>Specify points
 count</strong> parameter is checked. Default value is 5.</p></li>
@@ -252,6 +271,24 @@ is set to <strong>SciPy</strong>, and <strong>Scpecify smoothing</strong> parame
 Smoothing factor. Bigger values will make more smooth curves. Value of 0
 (zero) mean that the curve will exactly pass through all points. The default
 value is 0.1.</p></li>
+</ul>
+<p>FreeCAD implementation specific inputs:</p>
+<ul class="simple">
+<li><p><strong>Knots</strong>. The knot sequence. Available only if the “Explicit Knots” method is used.
+Must contain unique floats in an ascending order. When not connected, the curve will be
+calculated using Euclidean metric.</p></li>
+<li><p><strong>Minimal Degree</strong>. Minimal possible degree of the curve to be built.
+Default value is 3.</p></li>
+<li><p><strong>Maximal Degree</strong>. Maximal possible degree of the curve to be built.
+Default value is 5.</p></li>
+<li><p><strong>Tolerance</strong>. Maximal distance of the built curve from the init Vertices.
+Default value is 0.0001.</p></li>
+<li><p><strong>Length Weight</strong>. Available only for the “Variational Smoothing” method.
+Default value is 1.0.</p></li>
+<li><p><strong>Curvature Weight</strong>. Available only for the “Variational Smoothing” method.
+Default value is 1.0.</p></li>
+<li><p><strong>Torsion Weight</strong>. Available only for the “Variational Smoothing” method.
+Default value is 1.0.</p></li>
 </ul>
 </section>
 <section id="parameters">
@@ -262,6 +299,7 @@ value is 0.1.</p></li>
 <ul class="simple">
 <li><p><strong>Geomdl</strong>. Use the implementation from <a class="reference external" href="https://onurraufbingol.com/NURBS-Python/">Geomdl</a> library. This is available only when Geomdl library is installed.</p></li>
 <li><p><strong>SciPy</strong>. Use the implementation from <a class="reference external" href="https://scipy.org/">SciPy</a> library. This is available only when SciPy library is installed.</p></li>
+<li><p><strong>FreeCAD</strong>. Use the implementation from <a class="reference external" href="https://www.freecad.org/">FreeCAD</a> library. This is available only when FreeCAD library is installed.</p></li>
 </ul>
 <p>By default, the first available implementation is used.</p>
 </li>
@@ -290,26 +328,42 @@ enabled, and <strong>Auto</strong> parameter is enabled as well. This defines ma
 distance between the first and the last points being approximated, for which
 the node will make the curve cyclic. Default value is 0.0, i.e. the points
 must exactly coincide in order for curve to be closed.</p></li>
-<li><p><strong>Metric</strong>. This parameter is available only when <strong>Implementation</strong>
-parameter is set to <strong>SciPy</strong>.Metric to be used for interpolation. The
-available values are:</p>
-<blockquote>
-<div><ul class="simple">
-<li><p>Manhattan</p></li>
-<li><p>Euclidean</p></li>
-<li><p>Points (just number of points from the beginning)</p></li>
-<li><p>Chebyshev</p></li>
-<li><p>Centripetal (square root of Euclidean distance)</p></li>
-<li><p>X, Y, Z axis - use distance along one of coordinate axis, ignore others.</p></li>
+<li><p><strong>Metric</strong>. This parameter is available when <strong>Implementation</strong>
+parameter is set to <strong>SciPy</strong> and <strong>FreeCAD/Parametrization</strong>. It’s the metric (the specific knot values) to be used for interpolation. The
+available options are:</p>
+<ul class="simple">
+<li><p><strong>Manhattan</strong> metric is also known as Taxicab metric or rectilinear distance.</p></li>
+<li><p><strong>Euclidean</strong> also known as Chord-Length or Distance metric. The parameters of the points are proportionate to the distances between them.</p></li>
+<li><p><strong>Points</strong> also known as Uniform metric. The parameters of the points are distributed uniformly. Just the number of the points from the beginning.</p></li>
+<li><p><strong>Chebyshev</strong> metric is also known as Chessboard distance.</p></li>
+<li><p><strong>Centripetal</strong> The parameters of the points are proportionate to square roots of distances between them.</p></li>
+<li><p><strong>X, Y, Z axis</strong> Use distance along one of coordinate axis, ignore others.</p></li>
 </ul>
 <p>The default value is Euclidean.</p>
-</div></blockquote>
 </li>
 <li><p><strong>Specify smoothing</strong>. This parameter is available only when
 <strong>Implementation</strong> parameter is set to <strong>SciPy</strong>. If checked, the node will
 allow you to specify smoothing factor via <strong>Smoothing</strong> input. If not
 checked, the node will select the smoothing factor automatically. Unchecked
 by default.</p></li>
+<li><p><strong>Method</strong>. Available only for the <a class="reference external" href="https://www.freecad.org/">FreeCAD</a> implementation. Approximation algorithm implementation to be used. The available values are:</p>
+<ul class="simple">
+<li><p><strong>Parametrization</strong>.</p></li>
+<li><p><strong>Variational smoothing</strong>.</p></li>
+<li><p><strong>Explicit Knots</strong>.</p></li>
+</ul>
+</li>
+<li><p><strong>Continuity</strong>. Available only for the <a class="reference external" href="https://www.freecad.org/">FreeCAD</a> implementation. Desired internal smoothness of the result curve. The available values are:</p>
+<ul class="simple">
+<li><p><strong>C0</strong> : Only positional continuity.</p></li>
+<li><p><strong>G1</strong> : Geometric tangent continuity. Available only for the “Parametrization” method.</p></li>
+<li><p><strong>C1</strong> : Continuity of the first derivative all along the Curve.</p></li>
+<li><p><strong>G2</strong> : Geometric curvature continuity. Available only for the “Parametrization” method.</p></li>
+<li><p><strong>C2</strong> : Continuity of the second derivative all along the Curve.</p></li>
+<li><p><strong>C3</strong> : Continuity of the third derivative all along the Curve. Available only for the “Parametrization” method.</p></li>
+<li><p><strong>CN</strong> : Infinite order of continuity. Available only for Parametrization method.</p></li>
+</ul>
+</li>
 </ul>
 </section>
 <section id="outputs">
@@ -327,6 +381,10 @@ by default.</p></li>
 <img alt="https://user-images.githubusercontent.com/284644/74363000-7becef00-4deb-11ea-9963-e864dc3a3599.png" src="https://user-images.githubusercontent.com/284644/74363000-7becef00-4deb-11ea-9963-e864dc3a3599.png" />
 <p>Use SciPy implementation to make a closed curve:</p>
 <img alt="https://user-images.githubusercontent.com/284644/101246890-d61ebe00-3737-11eb-942d-c31e02bf3c3d.png" src="https://user-images.githubusercontent.com/284644/101246890-d61ebe00-3737-11eb-942d-c31e02bf3c3d.png" />
+<p>Example of the FreeCAD implementation usage. Chord Length Parametrization:</p>
+<img alt="https://user-images.githubusercontent.com/66558924/214577636-6d91c682-1225-45cd-85ba-350fa110755f.jpg" src="https://user-images.githubusercontent.com/66558924/214577636-6d91c682-1225-45cd-85ba-350fa110755f.jpg" />
+<p>Example of the FreeCAD implementation using the Explicit Knots method and utilizing the “Generate Knotvector” node:</p>
+<img alt="https://user-images.githubusercontent.com/66558924/214834736-5aecc4e0-902b-4c76-9135-9d9dbbac6d1c.jpg" src="https://user-images.githubusercontent.com/66558924/214834736-5aecc4e0-902b-4c76-9135-9d9dbbac6d1c.jpg" />
 </section>
 </section>
 
