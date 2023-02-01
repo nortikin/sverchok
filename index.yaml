@@ -87,7 +87,7 @@
         - SvExBezierCurveFitNode
     - Curve NURBS:
         - SvExNurbsCurveNode
-        - SvApproxNurbsCurveMk2Node
+        - SvApproxNurbsCurveMk3Node
         - SvExInterpolateNurbsCurveNode
         - SvFilletCurveNode
         - SvDeconstructCurveNode
