@@ -359,7 +359,7 @@
         - icon_name: EVENT_N
         - SvExNurbsSurfaceNode
         - SvExApproxNurbsSurfaceNode
-        - SvExInterpolateNurbsSurfaceNode
+        - SvExInterpolateNurbsSurfaceNodeMK2
         - SvNurbsLoftNode
         - SvNurbsSweepNode
         - SvNurbsBirailNode

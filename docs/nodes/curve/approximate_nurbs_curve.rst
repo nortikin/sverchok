@@ -204,11 +204,11 @@ Use SciPy implementation to make a closed curve:
 
 .. image:: https://user-images.githubusercontent.com/284644/101246890-d61ebe00-3737-11eb-942d-c31e02bf3c3d.png
 
-Example of the FreeCAD implementation usage. Chord Length Parametrization:
+Example of the FreeCAD implementation usage. Euclidean parametrization:
 
-.. image:: https://user-images.githubusercontent.com/66558924/214577636-6d91c682-1225-45cd-85ba-350fa110755f.jpg
+.. image:: https://user-images.githubusercontent.com/66558924/216157300-8480c5a9-29e4-4110-8f46-3ba15f25b3d6.jpg
 
 Example of the FreeCAD implementation using the Explicit Knots method and utilizing the "Generate Knotvector" node:
 
-.. image:: https://user-images.githubusercontent.com/66558924/214834736-5aecc4e0-902b-4c76-9135-9d9dbbac6d1c.jpg
+.. image:: https://user-images.githubusercontent.com/66558924/216157176-288d70c4-040d-4e4e-bf90-e110b32c4d20.jpg
 
