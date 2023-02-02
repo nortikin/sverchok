@@ -28,7 +28,6 @@ class SvExInterpolateNurbsSurfaceNodeMK2(SverchCustomTreeNode, bpy.types.Node):
     bl_idname = 'SvExInterpolateNurbsSurfaceNodeMK2'
     bl_label = 'Interpolate NURBS Surface'
     bl_icon = 'SURFACE_NSURFACE'
-    sv_dependencies = {'geomdl', 'FreeCAD'}
 
     input_modes = [
             ('1D', "Single list", "List of all control points (concatenated)", 1),
