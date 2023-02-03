@@ -110,7 +110,7 @@
         - SvExMinSurfaceFromCurveNode
         - GS NURBS:
             - SvExNurbsSurfaceNode
-            - SvExApproxNurbsSurfaceNode
+            - SvExApproxNurbsSurfaceNodeMK2
             - SvExInterpolateNurbsSurfaceNodeMK2
             - SvNurbsLoftNode
             - SvNurbsSweepNode
