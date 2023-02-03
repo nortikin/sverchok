@@ -358,7 +358,7 @@
     - Generate NURBS Surface:
         - icon_name: EVENT_N
         - SvExNurbsSurfaceNode
-        - SvExApproxNurbsSurfaceNode
+        - SvExApproxNurbsSurfaceNodeMK2
         - SvExInterpolateNurbsSurfaceNodeMK2
         - SvNurbsLoftNode
         - SvNurbsSweepNode
