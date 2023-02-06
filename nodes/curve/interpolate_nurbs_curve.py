@@ -53,12 +53,6 @@ class SvExInterpolateNurbsCurveNodeMK2(SverchCustomTreeNode, bpy.types.Node):
             default = False,
             update = updateNode)
 
-    clamp : BoolProperty(
-            name = "Clamp",
-            description = "Periodic to clamped",
-            default = True,
-            update = updateNode)
-
     def update_sockets(self, context):
         self.inputs['Degree'].hide_safe = not (self.implementation == 'GEOMDL' or self.implementation == 'NATIVE')
         self.inputs['Knots'].hide_safe = not (self.implementation == 'FREECAD' and self.method == 'explicit_knots')
