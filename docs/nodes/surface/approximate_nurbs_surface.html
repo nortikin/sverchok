@@ -179,7 +179,7 @@
 <h1>Approximate NURBS Surface<a class="headerlink" href="#approximate-nurbs-surface" title="Permalink to this heading">¶</a></h1>
 <section id="dependencies">
 <h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this heading">¶</a></h2>
-<p>This node requires <a class="reference external" href="https://onurraufbingol.com/NURBS-Python/">Geomdl</a> library to work.</p>
+<p>This node requires <a class="reference external" href="https://onurraufbingol.com/NURBS-Python/">Geomdl</a> and <a class="reference external" href="https://www.freecad.org/">FreeCAD</a> library to work.</p>
 </section>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
@@ -203,36 +203,77 @@ subdivide it into sublists of N points each.</p></li>
 parameter, it expects either list of lists of control points per surface, or
 a flat list of control points per surface. This input is mandatory.</p></li>
 <li><p><strong>USize</strong>. This input is only available when <strong>Input mode</strong> parameter is set
-to <strong>Single list</strong>. The number of control points in a row. The default value
-is 5.</p></li>
-<li><p><strong>Degree U</strong>, <strong>Degree V</strong>. Degree of the surface along U and V directions,
-correspondingly. The default value is 3.</p></li>
-<li><p><strong>PointsCntU</strong>, <strong>PointsCntV</strong>. Number of control points to be used along U
-and V directions, correspondingly. These inputs are available only when
-<strong>Specify points count</strong> parameter is checked. Otherwise, the node will
-generate as many control points as it needs (which may be too many). The
-default value for these inputs (when they are available) is 5.</p></li>
+to <strong>Single list</strong>.
+The number of control points in a row. The default value is 5.</p></li>
+</ul>
+<p><a class="reference external" href="https://onurraufbingol.com/NURBS-Python/">Geomdl</a> implementation specific inputs:</p>
+<ul class="simple">
+<li><p><strong>Degree U</strong>, <strong>Degree V</strong>. Degree of the surface along U and V directions, correspondingly. The default value is 3.</p></li>
+<li><p><strong>PointsCntU</strong>, <strong>PointsCntV</strong>. Number of control points to be used along U and V directions, correspondingly.
+These inputs are available only when <strong>Specify points count</strong> parameter is checked.
+Otherwise, the node will generate as many control points as it needs (which may be too many).
+The default value for these inputs (when they are available) is 5.</p></li>
+</ul>
+<p><a class="reference external" href="https://www.freecad.org/">FreeCAD</a> implementation specific inputs:</p>
+<ul class="simple">
+<li><p><strong>Minimal Degree</strong>. Minimal possible degree of the surface to be built.
+Default value is 3.</p></li>
+<li><p><strong>Maximal Degree</strong>. Maximal possible degree of the surface to be built.
+Default value is 5.</p></li>
+<li><p><strong>Tolerance</strong>. Maximal distance of the built surface from the init Vertices.
+Default value is 0.0001.</p></li>
+<li><p><strong>Length Weight</strong>. Available only for the “Variational Smoothing” method.
+Default value is 1.0.</p></li>
+<li><p><strong>Curvature Weight</strong>. Available only for the “Variational Smoothing” method.
+Default value is 1.0.</p></li>
+<li><p><strong>Torsion Weight</strong>. Available only for the “Variational Smoothing” method.
+Default value is 1.0.</p></li>
 </ul>
 </section>
 <section id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following parameters:</p>
 <ul>
-<li><p><strong>Centripetal</strong>. This defines whether the node will use centripetal
+<li><p><strong>Implementation</strong>. Approximation algorithm implementation to be used. The available values are:</p>
+<ul class="simple">
+<li><p><strong>Geomdl</strong>. Use the implementation from <a class="reference external" href="https://onurraufbingol.com/NURBS-Python/">Geomdl</a> library. This is available only when Geomdl library is installed.</p></li>
+<li><p><strong>FreeCAD</strong>. Use the implementation from <a class="reference external" href="https://www.freecad.org/">FreeCAD</a> library. This is available only when FreeCAD library is installed.</p></li>
+</ul>
+<p>By default, the first available implementation is used.</p>
+</li>
+<li><p><strong>Centripetal</strong>. Available only for <a class="reference external" href="https://onurraufbingol.com/NURBS-Python/">Geomdl</a> implementation. This defines whether the node will use centripetal
 approximation method. Unchecked by default.</p></li>
 <li><p><strong>Input mode</strong>. The available values are:</p>
-<blockquote>
-<div><ul class="simple">
-<li><p><strong>Single list</strong>. The node expects a flat list of points for each surface.
-It will be subdivided into rows according to <strong>USize</strong> input value.</p></li>
-<li><p><strong>Separate Lists</strong>. The node expects a list of lists of points for each
-surface.</p></li>
+<ul class="simple">
+<li><p><strong>Single list</strong>. The node expects a flat list of points for each surface. It will be subdivided into rows according to <strong>USize</strong> input value.</p></li>
+<li><p><strong>Separate Lists</strong>. The node expects a list of lists of points for each surface.</p></li>
 </ul>
-</div></blockquote>
 </li>
-<li><p><strong>Specify points count</strong>. If checked, then the node allows you to specify the
-number of control points to generate in <strong>PointsCntU</strong>, <strong>PointsCntV</strong>
-inputs. Unchecked by default.</p></li>
+<li><p><strong>Specify points count</strong>. Available only for Greomdl implementation. If checked, then the node allows you to specify the
+number of control points to generate in <strong>PointsCntU</strong>, <strong>PointsCntV</strong> inputs. Unchecked by default.</p></li>
+<li><p><strong>Continuity</strong>. Available only for the <a class="reference external" href="https://www.freecad.org/">FreeCAD</a> implementation. Desired internal smoothness of the result surface. The available values are:</p>
+<ul class="simple">
+<li><p><strong>C0</strong> : Only positional continuity.</p></li>
+<li><p><strong>C1</strong> : Continuity of the first derivative.</p></li>
+<li><p><strong>C2</strong> : Continuity of the second derivative.</p></li>
+</ul>
+</li>
+<li><p><strong>Method</strong>. Available only for the <a class="reference external" href="https://www.freecad.org/">FreeCAD</a> implementation. Approximation algorithm implementation to be used. The available values are:</p>
+<ul class="simple">
+<li><p><strong>Parametrization</strong>. This method offers a list of metrics for the parametrization.</p></li>
+<li><p><strong>Variational smoothing</strong>. This method uses three additional parameters - “Length Weight”, “Curvature Weight” and “Torsion Weight”.
+(with this smoothing algorithm, continuity C1 requires “Maximal Degree” &gt;= 3 and C2 requires “Maximal Degree” &gt;=5)</p></li>
+</ul>
+</li>
+<li><p><strong>Metric</strong>. This parameter is available when <strong>Implementation</strong> parameter is set to <strong>FreeCAD/Parametrization</strong>.
+It’s the metric (the specific knot values) to be used for interpolation. The available options are:</p>
+<ul class="simple">
+<li><p><strong>Euclidean</strong> also known as Chord-Length or Distance metric. The parameters of the points are proportionate to the distances between them.</p></li>
+<li><p><strong>Centripetal</strong> The parameters of the points are proportionate to square roots of distances between them.</p></li>
+<li><p><strong>Points</strong> also known as Uniform metric. The parameters of the points are distributed uniformly. Just the number of the points from the beginning.</p></li>
+</ul>
+<p>The default value is Euclidean.</p>
+</li>
 </ul>
 </section>
 <section id="outputs">
@@ -247,6 +288,8 @@ inputs. Unchecked by default.</p></li>
 <section id="example-of-usage">
 <h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
 <img alt="https://user-images.githubusercontent.com/284644/87575638-a3711c00-c6e9-11ea-86ed-9c49d80b0763.png" src="https://user-images.githubusercontent.com/284644/87575638-a3711c00-c6e9-11ea-86ed-9c49d80b0763.png" />
+<p>Example of the FreeCAD implementation using the Variational Smoothing method:</p>
+<img alt="https://user-images.githubusercontent.com/66558924/216582148-39b1f8c5-addf-4be9-aa2b-c3f04f7e3b96.jpg" src="https://user-images.githubusercontent.com/66558924/216582148-39b1f8c5-addf-4be9-aa2b-c3f04f7e3b96.jpg" />
 </section>
 </section>
 
