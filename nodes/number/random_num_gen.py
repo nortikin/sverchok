@@ -227,7 +227,7 @@ class SvRndNumGen(SverchCustomTreeNode, bpy.types.Node):
         seed = max(seed, 0)
         np.random.seed(seed)
         low, high = sorted([low, high])
-        population = range(low, high + 1)
+        population = np.arange(low, high + 1)
 
         if self.weighted and len(weights) > 0:
             population_len = len(population)
