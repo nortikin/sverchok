@@ -90,7 +90,7 @@
             - icon_name: MESH_CUBE
             - SvExNurbsCurveNode
             - SvApproxNurbsCurveMk3Node
-            - SvExInterpolateNurbsCurveNode
+            - SvExInterpolateNurbsCurveNodeMK2
         - GC SCRIPTED:
             - icon_name: PLUGIN
             - SvExCurveFormulaNode
