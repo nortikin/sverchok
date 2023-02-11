@@ -18,6 +18,7 @@ from sverchok.dependencies import geomdl, FreeCAD
 if FreeCAD is not None:
     import Part
     from Part import BSplineCurve
+    from FreeCAD import Vector
 
 class SvExInterpolateNurbsCurveNodeMK2(SverchCustomTreeNode, bpy.types.Node):
     """
@@ -49,26 +50,35 @@ class SvExInterpolateNurbsCurveNodeMK2(SverchCustomTreeNode, bpy.types.Node):
 
     cyclic : BoolProperty(
             name = "Cyclic",
-            description = "Auto close the curve. \nIf used with Explicit Knots an additional knot \nmust be appended to Knots list",
+            description = "Auto close the curve. \nIf used with Explicit Knots, an additional knot \nmust be appended to Knots list",
             default = False,
             update = updateNode)
 
     def update_sockets(self, context):
         self.inputs['Degree'].hide_safe = not (self.implementation == 'GEOMDL' or self.implementation == 'NATIVE')
         self.inputs['Knots'].hide_safe = not (self.implementation == 'FREECAD' and self.method == 'explicit_knots')
-        self.inputs['Tangents'].hide_safe = not (self.implementation == 'FREECAD')
+        self.inputs['Tangents'].hide_safe = not (self.implementation == 'FREECAD' and self.use_constraints == True and self.constraints_mode == 'AllTangents')
+        self.inputs['TangentsMask'].hide_safe = not (self.implementation == 'FREECAD' and self.use_constraints == True and self.constraints_mode == 'AllTangents')
+        self.inputs['InitialTangent'].hide_safe = not (self.implementation == 'FREECAD' and self.use_constraints == True and self.constraints_mode == 'EndpointTangents')
+        self.inputs['FinalTangent'].hide_safe = not (self.implementation == 'FREECAD' and self.use_constraints == True and self.constraints_mode == 'EndpointTangents')
         self.inputs['Tolerance'].hide_safe = not (self.implementation == 'FREECAD')
         updateNode(self, context)
 
     has_knots : BoolProperty(
             name = "Explicit Knots",
-            description = "If disabled, chord-length parametrization is used",
+            description = "If disabled, Euclidean(Chord-Length) parametrization is used",
             default = False,
             update = update_sockets)
 
     has_tangents : BoolProperty(
             name = "Custom Tangents",
             description = "Define tangent vectors per point",
+            default = False,
+            update = update_sockets)
+
+    has_tangents_mask : BoolProperty(
+            name = "Custom Tangents Flags",
+            description = "Activates or deactivates the corresponding tangent constraints",
             default = False,
             update = update_sockets)
 
@@ -81,16 +91,25 @@ class SvExInterpolateNurbsCurveNodeMK2(SverchCustomTreeNode, bpy.types.Node):
 
     implementation : EnumProperty(
             name = "Implementation",
-            description = "Approximation algorithm implementation",
+            description = "Interpolation algorithm implementation",
             items = implementations,
             update = update_sockets)
 
     method: EnumProperty(
             name = 'Method',
-            description = "Approximation Method",
+            description = "Methods for calculating the knots",
             default = "parametrization",
             items = [("parametrization", "Parametrization", "Parametrize the init points using certain metric"),
                      ("explicit_knots", "Explicit Knots", "Explicitly specify the knots")
+                    ],
+            update = update_sockets)
+
+    constraints_mode: EnumProperty(
+            name = 'Mode',
+            description = "Constraints Mode",
+            default = "EndpointTangents",
+            items = [("EndpointTangents", "Endpoint Tangents", "Set the tangents at the beginning and the end of the curve", 0),
+                     ("AllTangents", "All Tangents", "Set a tangent vector for every single interpolation point", 1)
                     ],
             update = update_sockets)
 
@@ -103,6 +122,18 @@ class SvExInterpolateNurbsCurveNodeMK2(SverchCustomTreeNode, bpy.types.Node):
             precision = 3,
             update = updateNode)
 
+    scale : BoolProperty(
+            name = "Autoscale Tangents",
+            description = "Automatic scale of all active tangents",
+            default = False,
+            update = updateNode)
+
+    use_constraints : BoolProperty(
+            name = "Tangent Constraints",
+            description = "Use tangent constraints",
+            default = True,
+            update = update_sockets)
+
     def draw_buttons(self, context, layout):
         layout.prop(self, 'implementation', text='')
         if self.implementation == 'GEOMDL':
@@ -111,18 +142,27 @@ class SvExInterpolateNurbsCurveNodeMK2(SverchCustomTreeNode, bpy.types.Node):
             layout.prop(self, 'cyclic')
             layout.prop(self, 'metric')
         else: # FREECAD:
+            layout.prop(self, 'cyclic')
             layout.prop(self, 'method')
             if self.method == 'parametrization':
                 layout.prop(self, 'metric')
             else: # "Explicit Knots":
                 pass
-            layout.prop(self, 'cyclic')
+            row = layout.row(align = True)
+            row.prop(self, 'use_constraints')
+            if self.use_constraints:
+                layout.prop(self, 'constraints_mode')            
+                layout.prop(self, 'scale')
+                
 
     def sv_init(self, context):
-        self.inputs.new('SvVerticesSocket', "Vertices")
         self.inputs.new('SvStringsSocket', "Degree").prop_name = 'degree'
+        self.inputs.new('SvVerticesSocket', "Tangents")
+        self.inputs.new('SvStringsSocket', "TangentsMask")
+        self.inputs.new('SvVerticesSocket', "InitialTangent")
+        self.inputs.new('SvVerticesSocket', "FinalTangent")
         self.inputs.new('SvStringsSocket', "Knots")
-        self.inputs.new('SvStringsSocket', "Tangents")
+        self.inputs.new('SvVerticesSocket', "Vertices")
         self.inputs.new('SvStringsSocket', "Tolerance").prop_name = 'tolerance'
 
         self.outputs.new('SvCurveSocket', "Curve")
@@ -138,13 +178,25 @@ class SvExInterpolateNurbsCurveNodeMK2(SverchCustomTreeNode, bpy.types.Node):
         degree_s = self.inputs['Degree'].sv_get()
         knots_s = self.inputs['Knots'].sv_get(default=[[[None]]])
         tangents_s = self.inputs['Tangents'].sv_get(default=[[[None]]])
+        tangents_mask_s = self.inputs['TangentsMask'].sv_get(default=[[[None]]])
+        start_tangent_s = self.inputs['InitialTangent'].sv_get(default=[[[None]]])
+        end_tangent_s = self.inputs['FinalTangent'].sv_get(default=[[[None]]])
         tolerance_s = self.inputs['Tolerance'].sv_get()
-        
+
         tolerance_s = ensure_nesting_level(tolerance_s, 2)
 
         has_tangents = self.inputs['Tangents'].is_linked
         if has_tangents:
             tangents_s = ensure_nesting_level(tangents_s, 3)
+
+        has_tangents_mask = self.inputs['TangentsMask'].is_linked
+        if has_tangents_mask:
+            tangents_mask_s = ensure_nesting_level(tangents_mask_s, 2)
+
+        has_endpoint_tangents = (self.inputs['InitialTangent'].is_linked and self.inputs['FinalTangent'].is_linked)
+        if has_endpoint_tangents:
+            start_tangent = ensure_nesting_level(start_tangent_s, 3)
+            end_tangent = ensure_nesting_level(end_tangent_s, 3)
 
         has_knots = self.inputs['Knots'].is_linked
         if has_knots:
@@ -153,11 +205,15 @@ class SvExInterpolateNurbsCurveNodeMK2(SverchCustomTreeNode, bpy.types.Node):
         curves_out = []
         points_out = []
         knots_out = []
-        for vertices, degree, knots, tangents, tolerance in zip_long_repeat(vertices_s, degree_s, knots_s, tangents_s, tolerance_s):
+        for vertices, degree, knots, tangents, tangents_mask, start_tangent, end_tangent, tolerance in zip_long_repeat(vertices_s, degree_s, knots_s, tangents_s, tangents_mask_s, start_tangent_s, end_tangent_s, tolerance_s):
             if isinstance(degree, (tuple, list)):
                 degree = degree[0]
             if isinstance(tolerance, (tuple, list)):
                 tolerance = tolerance[0]
+            if isinstance(start_tangent, (tuple, list)):
+                start_tangent = start_tangent[0]
+            if isinstance(end_tangent, (tuple, list)):
+                end_tangent = end_tangent[0]
 
             vertices = np.array(vertices)
             if self.implementation == 'GEOMDL':
@@ -165,62 +221,146 @@ class SvExInterpolateNurbsCurveNodeMK2(SverchCustomTreeNode, bpy.types.Node):
                 metric = 'CENTRIPETAL' if self.centripetal else 'DISTANCE'
                 curve = SvNurbsMaths.interpolate_curve(implementation, degree, vertices, metric=metric, cyclic=self.cyclic, logger=self.get_logger())
             elif self.implementation == 'FREECAD':
-                num_verts = len(vertices)
-                flags = [] # tangent flags
-                for i in range(num_verts):
-                    flags.append(True)
+                if has_tangents == True: # create tangents flags
+                    if has_tangents_mask == False: # generate auto mask
+                        num_verts = len(vertices)
+                        flags = [] # tangent flags
+                        for i in range(num_verts):
+                            if tangents[i] == (0.0, 0.0, 0.0): # handle zero-lenght tangents
+                                flags.append(False)
+                            else:
+                                flags.append(True)
+                    else:
+                        flags = tangents_mask
+                else:
+                    pass
                 bspline = Part.BSplineCurve()
                 if self.method == 'parametrization':
-                    if self.cyclic == True:
+                    num_verts = len(vertices)
+                    distances = np.linalg.norm(vertices[:-1] - vertices[1:], axis=1) # point to point distances
+                    sum_distances = sum(distances)
+                    if self.cyclic == True: # we need one more knot
                         verts_ext = [] #verts extended list
                         for i in range(num_verts):
                             verts_ext.append(vertices[i])
                         verts_ext.append(vertices[0]) # add the first vertex at the end
                         verts = np.array(verts_ext)
                         tknots = Spline.create_knots(verts, metric = self.metric) # extended knots list
+                        tknots = np.multiply(tknots, sum_distances) # scale knots to match OCCT
                     else: # Cyclic disabled:
                         tknots = Spline.create_knots(vertices, metric = self.metric)
-                    if has_tangents:
+                        tknots = np.multiply(tknots, sum_distances) # scale knots to match OCCT
+                    if self.use_constraints == True and self.constraints_mode == 'AllTangents':
+                        if has_tangents:
+                            bspline.interpolate(Points = vertices,
+                                                PeriodicFlag = self.cyclic,
+                                                Tolerance = tolerance,
+                                                Parameters = tknots,
+                                                Tangents = tangents,
+                                                TangentFlags = flags,
+                                                Scale = self.scale
+                                                )
+                        else: # no tangents:
+                            bspline.interpolate(Points = vertices,
+                                                PeriodicFlag = self.cyclic,
+                                                Tolerance = tolerance,
+                                                Parameters = tknots
+                                                )
+                    elif self.use_constraints == True and self.constraints_mode == 'EndpointTangents':
+                        if has_endpoint_tangents: # needs both the start and the end tangent
+                            bspline.interpolate(Points = vertices,
+                                                PeriodicFlag = self.cyclic,
+                                                Tolerance = tolerance,
+                                                Parameters = tknots,
+                                                InitialTangent = Vector(start_tangent[0], start_tangent[1], start_tangent[2]),
+                                                FinalTangent = Vector(end_tangent[0], end_tangent[1], end_tangent[2]),
+                                                Scale = self.scale
+                                                )
+                        else: # one or both tangents not present:
+                            bspline.interpolate(Points = vertices,
+                                                PeriodicFlag = self.cyclic,
+                                                Tolerance = tolerance,
+                                                Parameters = tknots
+                                                )
+                    else: # self.use_constraints == False:
                         bspline.interpolate(Points = vertices,
                                             PeriodicFlag = self.cyclic,
                                             Tolerance = tolerance,
-                                            Parameters = tknots,
-                                            Tangents = tangents,
-                                            TangentFlags = flags
+                                            Parameters = tknots
                                             )
-                    else: # no tangents:
-                        bspline.interpolate(Points = vertices,
-                                        PeriodicFlag = self.cyclic,
-                                        Tolerance = tolerance,
-                                        Parameters = tknots
-                                        )
                 else: # Explicit Knots:
-                    if has_knots and has_tangents:
-                        bspline.interpolate(Points = vertices,
-                                            PeriodicFlag = self.cyclic,
-                                            Tolerance = tolerance,
-                                            Parameters = knots,
-                                            Tangents = tangents,
-                                            TangentFlags = flags
-                                            )
-                    elif has_tangents and not (has_knots):
-                        bspline.interpolate(Points = vertices,
-                                            PeriodicFlag = self.cyclic,
-                                            Tolerance = tolerance,
-                                            Tangents = tangents,
-                                            TangentFlags = flags
-                                            )
-                    elif has_knots and not (has_tangents):
-                        bspline.interpolate(Points = vertices,
-                                            PeriodicFlag = self.cyclic,
-                                            Tolerance = tolerance,
-                                            Parameters = knots
-                                            )
-                    else: # no tangents and no knots:
-                        bspline.interpolate(Points = vertices,
-                                            PeriodicFlag = self.cyclic,
-                                            Tolerance = tolerance
-                                            )
+                    if self.use_constraints == True and self.constraints_mode == 'AllTangents':
+                        if has_knots and has_tangents:
+                            bspline.interpolate(Points = vertices,
+                                                PeriodicFlag = self.cyclic,
+                                                Tolerance = tolerance,
+                                                Parameters = knots,
+                                                Tangents = tangents,
+                                                TangentFlags = flags,
+                                                Scale = self.scale
+                                                )
+                        elif has_tangents and not (has_knots):
+                            bspline.interpolate(Points = vertices,
+                                                PeriodicFlag = self.cyclic,
+                                                Tolerance = tolerance,
+                                                Tangents = tangents,
+                                                TangentFlags = flags,
+                                                Scale = self.scale
+                                                )
+                        elif has_knots and not (has_tangents):
+                            bspline.interpolate(Points = vertices,
+                                                PeriodicFlag = self.cyclic,
+                                                Tolerance = tolerance,
+                                                Parameters = knots
+                                                )
+                        else: # no tangents and no knots:
+                            bspline.interpolate(Points = vertices,
+                                                PeriodicFlag = self.cyclic,
+                                                Tolerance = tolerance
+                                                )
+                    elif self.use_constraints == True and self.constraints_mode == 'EndpointTangents':
+                        if has_endpoint_tangents: # needs both the start and the end tangent
+                            if has_knots == True:
+                                bspline.interpolate(Points = vertices,
+                                                    PeriodicFlag = self.cyclic,
+                                                    Tolerance = tolerance,
+                                                    Parameters = knots,
+                                                    InitialTangent = Vector(start_tangent[0], start_tangent[1], start_tangent[2]),
+                                                    FinalTangent = Vector(end_tangent[0], end_tangent[1], end_tangent[2]),
+                                                    Scale = self.scale
+                                                    )
+                            else: # no linked knots:
+                                bspline.interpolate(Points = vertices,
+                                                    PeriodicFlag = self.cyclic,
+                                                    Tolerance = tolerance,
+                                                    InitialTangent = Vector(start_tangent[0], start_tangent[1], start_tangent[2]),
+                                                    FinalTangent = Vector(end_tangent[0], end_tangent[1], end_tangent[2]),
+                                                    Scale = self.scale
+                                                    )
+                        else: # one or both tangents not present:
+                            if has_knots == True:
+                                bspline.interpolate(Points = vertices,
+                                                    PeriodicFlag = self.cyclic,
+                                                    Tolerance = tolerance,
+                                                    Parameters = knots
+                                                    )
+                            else: # no linked knots:
+                                bspline.interpolate(Points = vertices,
+                                                    PeriodicFlag = self.cyclic,
+                                                    Tolerance = tolerance
+                                                    )
+                    else: # self.use_constraints == False:
+                        if has_knots == True:
+                             bspline.interpolate(Points = vertices,
+                                                 PeriodicFlag = self.cyclic,
+                                                 Parameters = knots,
+                                                 Tolerance = tolerance
+                                                )
+                        else: # no linked knots:
+                            bspline.interpolate(Points = vertices,
+                                                PeriodicFlag = self.cyclic,
+                                                Tolerance = tolerance   
+                                                )
                 if self.cyclic == True: # rebuild OCCT Periodic B-Spline as compatible NURBS
                     cpoints = bspline.getPoles()
                     cpoints_ext = [] # control points extended list
