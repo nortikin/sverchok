@@ -7,7 +7,7 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 from sverchok.utils.logging import info, exception
-from sverchok.utils.curve.nurbs import SvNurbsCurve, SvNativeNurbsCurve, SvGeomdlCurve
+from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.nurbs_common import SvNurbsMaths
 from sverchok.utils.curve.algorithms import curve_segment
 from sverchok.utils.geom import Spline
@@ -151,9 +151,8 @@ class SvExInterpolateNurbsCurveNodeMK2(SverchCustomTreeNode, bpy.types.Node):
             row = layout.row(align = True)
             row.prop(self, 'use_constraints')
             if self.use_constraints:
-                layout.prop(self, 'constraints_mode')            
+                layout.prop(self, 'constraints_mode')
                 layout.prop(self, 'scale')
-                
 
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', "Degree").prop_name = 'degree'
