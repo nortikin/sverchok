@@ -19,7 +19,10 @@ def add_relative_path_factory(name, *args, **kwargs):
     record = old_factory(name, *args, **kwargs)
     if name.startswith('sverchok'):
         path = Path(record.pathname)
-        record.relative_path = path.relative_to(sverchok.__path__[0])
+        if path.is_relative_to(sverchok.__path__[0]):
+            record.relative_path = path.relative_to(sverchok.__path__[0])
+        else:  # it can if there is several instances of sverchok (as add-on and a separate folder)
+            record.relative_path = path
     return record
 
 
