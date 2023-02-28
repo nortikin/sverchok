@@ -2,8 +2,6 @@ import numpy as np
 import unittest
 
 from sverchok.utils.testing import SverchokTestCase, requires
-from sverchok.utils.curve import knotvector as sv_knotvector
-from sverchok.utils.curve.nurbs import SvGeomdlCurve, SvNativeNurbsCurve, SvNurbsBasisFunctions, SvNurbsCurve
 from sverchok.utils.nurbs_common import SvNurbsBasisFunctions
 from sverchok.dependencies import geomdl
 

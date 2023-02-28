@@ -1,8 +1,6 @@
-
-import unittest
-
 from sverchok.utils.testing import *
 from sverchok.utils.math import *
+
 
 class MathTests(SverchokTestCase):
     def test_distribute_int_1(self):

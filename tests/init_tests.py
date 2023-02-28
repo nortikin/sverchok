@@ -2,7 +2,7 @@
 import addon_utils
 
 from sverchok.utils.testing import *
-from sverchok.utils.sv_logging import sv_logger
+
 
 @unittest.skip("Disabled temporarily")
 class InitTests(SverchokTestCase):

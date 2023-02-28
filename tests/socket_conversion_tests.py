@@ -1,7 +1,6 @@
 from sverchok.core.update_system import prepare_input_data
 from sverchok.core.sv_custom_exceptions import ImplicitConversionProhibited
 from sverchok.utils.testing import *
-from sverchok.utils.sv_logging import sv_logger
 
 
 class SocketConversionTests(EmptyTreeTestCase):
@@ -89,7 +88,7 @@ class SocketConversionTests(EmptyTreeTestCase):
                 'SvFormulaNodeMk5': ["x", "y"],
                 'SvSetDataObjectNodeMK2': ["Objects"]
             }
-        sv_logger.info("starting socket conversion tests")
+
         for bl_idname in tested_nodes.keys():
             with self.subTest(bl_idname = bl_idname):
 

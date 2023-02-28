@@ -18,8 +18,27 @@ from sverchok import old_nodes
 from sverchok.data_structure import get_data_nesting_level
 from sverchok.core.socket_data import get_output_socket_data
 from sverchok.core.sv_custom_exceptions import SvNoDataError
-from sverchok.utils.sv_logging import sv_logger
 from sverchok.utils.sv_json_import import JSONImporter
+
+
+sv_logger = logging.getLogger('sverchok.testing')
+
+
+@contextmanager
+def only_test_logs():
+    def filter_test_logs(record: logging.LogRecord):
+        """Turnoff all other than test logs"""
+        return record.name.startswith('sverchok.testing')
+
+    root_loger = logging.getLogger('sverchok')
+    for handler in root_loger.handlers:
+        handler.addFilter(filter_test_logs)
+    try:
+        yield
+    finally:
+        for handler in root_loger.handlers:
+            handler.removeFilter(filter_test_logs)
+
 
 try:
     import coverage
@@ -95,7 +114,9 @@ def create_node_tree(name=None, must_not_exist=True):
         if name in bpy.data.node_groups:
             raise Exception("Will not create tree `{}': it already exists".format(name))
     sv_logger.debug("Creating tree: %s", name)
-    return bpy.data.node_groups.new(name=name, type="SverchCustomTreeType")
+    tree = bpy.data.node_groups.new(name=name, type="SverchCustomTreeType")
+    tree.sv_process = False  # turn off auto processing tree by default
+    return tree
 
 def get_or_create_node_tree(name=None):
     """
@@ -157,7 +178,7 @@ def link_node_tree(reference_blend_path, tree_name=None):
     if tree_name in bpy.data.node_groups:
         raise Exception("Tree named `{}' already exists in current scene".format(tree_name))
     with bpy.data.libraries.load(reference_blend_path, link=True) as (data_src, data_dst):
-        sv_logger.info(f"---- Linked node tree: {basename(reference_blend_path)}")
+        sv_logger.debug(f"---- Linked node tree: {basename(reference_blend_path)}")
         data_dst.node_groups = [tree_name]
     # right here the update method of the imported tree will be called
     # sverchok does not have a way of preventing this update
@@ -170,7 +191,7 @@ def link_text_block(reference_blend_path, block_name):
     """
 
     with bpy.data.libraries.load(reference_blend_path, link=True) as (data_src, data_dst):
-        sv_logger.info(f"---- Linked text block: {basename(reference_blend_path)}")
+        sv_logger.debug(f"---- Linked text block: {basename(reference_blend_path)}")
         data_dst.texts = [block_name]
 
 def create_node(node_type, tree_name=None):
@@ -221,10 +242,9 @@ def run_all_tests(pattern=None, log_file = 'sverchok_tests.log', log_level = Non
         buffer = StringIO()
         runner = unittest.TextTestRunner(stream = buffer, verbosity=verbosity, failfast=failfast)
         old_nodes.register_all()
-        with coverage_report():
+        with coverage_report(), only_test_logs():
             result = runner.run(suite)
-            sv_logger.info("Test cases result:\n")
-            print(buffer.getvalue())
+            sv_logger.info("Test cases result:\n%s", buffer.getvalue())
             return result
     finally:
         logging.getLogger().removeHandler(log_handler)
@@ -270,7 +290,7 @@ class SverchokTestCase(unittest.TestCase):
     """
 
     def setUp(self):
-        sv_logger.debug("Starting test: %s", self.__class__.__name__)
+        sv_logger.debug("Starting test: %s", self.id())
 
     @contextmanager
     def temporary_node_tree(self, new_tree_name):

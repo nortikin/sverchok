@@ -1,8 +1,6 @@
-import numpy as np
-import unittest
-
-from sverchok.utils.testing import SverchokTestCase, requires
+from sverchok.utils.testing import SverchokTestCase
 from sverchok.utils.curve.core import *
+
 
 class TaylorTests(SverchokTestCase):
     def test_square_1(self):

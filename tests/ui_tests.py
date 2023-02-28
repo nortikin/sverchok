@@ -6,7 +6,6 @@ import importlib
 from inspect import getmembers, isclass, getfile
 
 from sverchok.utils.testing import *
-from sverchok.utils.sv_logging import sv_logger
 from sverchok.utils import yaml_parser
 
 
