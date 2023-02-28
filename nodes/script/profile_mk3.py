@@ -27,7 +27,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.sv_node_utils import sync_pointer_and_stored_name
 from sverchok.core.sv_custom_exceptions import SvNoDataError
 from sverchok.data_structure import updateNode, match_long_repeat
-from sverchok.utils.logging import sv_logger
+from sverchok.utils.sv_logging import sv_logger
 from sverchok.utils.curve.algorithms import concatenate_curves, unify_curves_degree
 from sverchok.utils.sv_update_utils import sv_get_local_path
 

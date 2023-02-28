@@ -25,7 +25,7 @@ from sverchok.data_structure import updateNode, describe_data_shape_by_level, li
 from sverchok.utils.curve.core import SvCurve
 from sverchok.utils.surface.core import SvSurface
 from sverchok.dependencies import FreeCAD
-from sverchok.utils.logging import sv_logger
+from sverchok.utils.sv_logging import sv_logger
 
 ALL_TYPES = SIMPLE_DATA_TYPES + (SvCurve, SvSurface)
 if FreeCAD is not None:

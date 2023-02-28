@@ -28,7 +28,7 @@ import bgl
 from bpy.types import SpaceNodeEditor
 
 from sverchok.utils.sv_stethoscope_helper import draw_text_data, draw_graphical_data
-from sverchok.utils.logging import sv_logger
+from sverchok.utils.sv_logging import sv_logger
 
 callback_dict = {}
 point_dict = {}

@@ -14,7 +14,7 @@ try:
 except ImportError:
     delaunay_2d_cdt = None
 
-from sverchok.utils.logging import sv_logger
+from sverchok.utils.sv_logging import sv_logger
 from sverchok.utils.geom_2d.merge_mesh import crop_mesh_delaunay
 from sverchok.utils.voronoi import computeDelaunayTriangulation, Site
 

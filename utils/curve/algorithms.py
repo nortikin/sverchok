@@ -22,7 +22,7 @@ from sverchok.utils.math import (
     ZERO, FRENET, HOUSEHOLDER, TRACK, DIFF, TRACK_NORMAL,
     NORMAL_DIR, NONE
 )
-from sverchok.utils.logging import sv_logger
+from sverchok.utils.sv_logging import sv_logger
 
 def make_euclidean_ts(pts):
     tmp = np.linalg.norm(pts[:-1] - pts[1:], axis=1)

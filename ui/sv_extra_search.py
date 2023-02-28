@@ -24,7 +24,7 @@ import bpy
 from bpy.props import StringProperty
 
 import sverchok
-from sverchok.utils.logging import sv_logger
+from sverchok.utils.sv_logging import sv_logger
 from sverchok.utils.docstring import SvDocstring
 from sverchok.utils.sv_default_macros import macros, DefaultMacros
 from sverchok.ui.nodeview_space_menu import get_add_node_menu

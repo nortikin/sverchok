@@ -1,7 +1,7 @@
 from sverchok.core.update_system import prepare_input_data
 from sverchok.core.sv_custom_exceptions import ImplicitConversionProhibited
 from sverchok.utils.testing import *
-from sverchok.utils.logging import sv_logger
+from sverchok.utils.sv_logging import sv_logger
 
 
 class SocketConversionTests(EmptyTreeTestCase):

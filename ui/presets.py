@@ -29,7 +29,7 @@ import hashlib
 import bpy
 from bpy.props import StringProperty, BoolProperty, EnumProperty
 
-from sverchok.utils.logging import sv_logger
+from sverchok.utils.sv_logging import sv_logger
 from sverchok.utils import sv_gist_tools
 from sverchok.utils import sv_IO_panel_tools
 from sverchok.utils.sv_json_import import JSONImporter

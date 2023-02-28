@@ -7,7 +7,7 @@
 
 import numpy as np
 
-from sverchok.utils.logging import sv_logger
+from sverchok.utils.sv_logging import sv_logger
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.core import UnsupportedCurveTypeException
 from sverchok.utils.curve.nurbs import SvNurbsCurve

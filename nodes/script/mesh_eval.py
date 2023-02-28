@@ -21,7 +21,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.sv_node_utils import sync_pointer_and_stored_name
 from sverchok.data_structure import updateNode, match_long_repeat
 from sverchok.utils.script_importhelper import safe_names
-from sverchok.utils.logging import sv_logger
+from sverchok.utils.sv_logging import sv_logger
 
 """
 JSON format:

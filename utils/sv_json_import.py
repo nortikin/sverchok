@@ -16,7 +16,7 @@ from typing import TYPE_CHECKING, Union, Generator, ContextManager
 import bpy
 from sverchok import old_nodes
 from sverchok.utils.sv_IO_panel_tools import get_file_obj_from_zip
-from sverchok.utils.logging import sv_logger, get_logger, logging
+from sverchok.utils.sv_logging import sv_logger, get_logger, logging
 from sverchok.utils.handle_blender_data import BPYProperty, BlNode
 from sverchok.utils.sv_json_struct import FileStruct, NodePresetFileStruct
 

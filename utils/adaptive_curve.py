@@ -9,7 +9,7 @@ import numpy as np
 import numpy.random
 from math import ceil, floor, isnan
 
-from sverchok.utils.logging import sv_logger
+from sverchok.utils.sv_logging import sv_logger
 from sverchok.utils.math import distribute_int
 from sverchok.utils.curve import SvCurveLengthSolver
 

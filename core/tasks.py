@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Optional, Generator
 import bpy
 from sverchok.data_structure import post_load_call
 from sverchok.core.sv_custom_exceptions import CancelError
-from sverchok.utils.logging import catch_log_error, sv_logger
+from sverchok.utils.sv_logging import catch_log_error, sv_logger
 from sverchok.utils.profile import profile
 from sverchok.utils.handle_blender_data import BlTrees
 

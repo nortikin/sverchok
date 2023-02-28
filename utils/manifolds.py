@@ -6,7 +6,7 @@ from mathutils.bvhtree import BVHTree
 
 from sverchok.utils.curve import SvIsoUvCurve
 from sverchok.utils.curve.nurbs import SvNurbsCurve
-from sverchok.utils.logging import sv_logger, get_logger
+from sverchok.utils.sv_logging import sv_logger, get_logger
 from sverchok.utils.geom import PlaneEquation, LineEquation, locate_linear
 from sverchok.dependencies import scipy
 

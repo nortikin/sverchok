@@ -19,7 +19,7 @@
 import ast
 
 from sverchok.utils.script_importhelper import safe_names
-from sverchok.utils import logging
+from sverchok.utils import sv_logging
 
 class VariableCollector(ast.NodeVisitor):
     """
@@ -133,7 +133,7 @@ def safe_eval_compiled(compiled, variables, allowed_names = None):
         env["__builtins__"] = {}
         return eval(compiled, env)
     except SyntaxError as e:
-        logging.exception(e)
+        sv_logging.exception(e)
         raise Exception("Invalid expression syntax: " + str(e))
 
 # It could be safer...

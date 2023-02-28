@@ -29,7 +29,7 @@ from sverchok.utils.nurbs_common import (
 from sverchok.utils.surface.nurbs import SvNativeNurbsSurface, SvGeomdlSurface
 from sverchok.utils.surface.algorithms import nurbs_revolution_surface
 from sverchok.utils.geom import bounding_box, LineEquation, are_points_coplanar, get_common_plane
-from sverchok.utils.logging import get_logger, sv_logger
+from sverchok.utils.sv_logging import get_logger, sv_logger
 from sverchok.dependencies import geomdl
 
 if geomdl is not None:

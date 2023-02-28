@@ -32,7 +32,7 @@ from sverchok.utils.surface.core import SvSurface, UnsupportedSurfaceTypeExcepti
 from sverchok.utils.surface.nurbs import SvNurbsSurface
 from sverchok.utils.surface.data import *
 from sverchok.utils.nurbs_common import SvNurbsBasisFunctions, SvNurbsMaths
-from sverchok.utils.logging import sv_logger
+from sverchok.utils.sv_logging import sv_logger
 
 
 class SvInterpolatingSurface(SvSurface):

@@ -21,7 +21,7 @@ import bpy
 from bpy.props import StringProperty
 
 import sverchok.settings as settings
-from sverchok.utils.logging import sv_logger
+from sverchok.utils.sv_logging import sv_logger
 import sverchok
 from sverchok.utils.handle_blender_data import BlTrees
 from sverchok.ui.nodeview_space_menu import get_add_node_menu

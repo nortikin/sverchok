@@ -25,7 +25,7 @@ from typing import Union
 import bpy
 
 from sverchok.utils.sv_oldnodes_parser import get_old_node_bl_idnames
-from sverchok.utils.logging import sv_logger
+from sverchok.utils.sv_logging import sv_logger
 from sverchok.utils.handle_blender_data import BlTrees
 
 

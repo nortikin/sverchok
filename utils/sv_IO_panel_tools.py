@@ -22,7 +22,7 @@ import zipfile
 import json
 import urllib
 
-from sverchok.utils.logging import sv_logger
+from sverchok.utils.sv_logging import sv_logger
 from sverchok.utils.sv_requests import urlopen
 
 # pylint: disable=w0621

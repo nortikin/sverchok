@@ -1,5 +1,5 @@
 
-from sverchok.utils.logging import sv_logger
+from sverchok.utils.sv_logging import sv_logger
 from sverchok.utils.testing import *
 from sverchok.data_structure import *
 

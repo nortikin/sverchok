@@ -19,7 +19,7 @@
 
 import bpy
 
-from sverchok.utils.logging import sv_logger
+from sverchok.utils.sv_logging import sv_logger
 
 
 class SvSocketReplacement(bpy.types.PropertyGroup):

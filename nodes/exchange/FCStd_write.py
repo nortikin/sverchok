@@ -3,7 +3,7 @@ from bpy.props import StringProperty, BoolProperty,EnumProperty
 
 from sverchok.node_tree import SverchCustomTreeNode # OLD throttled
 from sverchok.data_structure import updateNode, match_long_repeat # NEW throttle_and_update_node
-from sverchok.utils.logging import sv_logger
+from sverchok.utils.sv_logging import sv_logger
 from sverchok.dependencies import FreeCAD
 from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
 

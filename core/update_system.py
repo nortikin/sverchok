@@ -12,7 +12,7 @@ import sverchok.core.tasks as ts
 from sverchok.core.sv_custom_exceptions import CancelError, SvNoDataError
 from sverchok.core.socket_conversions import conversions
 from sverchok.utils.profile import profile
-from sverchok.utils.logging import node_error_logger
+from sverchok.utils.sv_logging import node_error_logger
 from sverchok.utils.tree_walk import bfs_walk
 
 if TYPE_CHECKING:

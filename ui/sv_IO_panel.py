@@ -25,7 +25,7 @@ from time import localtime, strftime
 import bpy
 
 import sverchok
-from sverchok.utils.logging import sv_logger
+from sverchok.utils.sv_logging import sv_logger
 from sverchok.utils.sv_update_utils import version_and_sha
 from sverchok.utils import sv_gist_tools
 from sverchok.utils.sv_gist_tools import show_token_help, TOKEN_HELP_URL

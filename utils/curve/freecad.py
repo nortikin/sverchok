@@ -15,7 +15,7 @@ from sverchok.utils.curve.nurbs_solver_applications import interpolate_nurbs_cur
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.primitives import SvLine, SvCircle
 from sverchok.utils.curve.biarc import SvBiArc
-from sverchok.utils.logging import sv_logger
+from sverchok.utils.sv_logging import sv_logger
 
 from sverchok.dependencies import FreeCAD
 if FreeCAD is not None:

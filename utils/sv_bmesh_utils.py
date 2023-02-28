@@ -29,7 +29,7 @@ from bmesh.types import BMVert, BMEdge, BMFace
 import mathutils
 
 from sverchok.data_structure import zip_long_repeat, has_element
-from sverchok.utils.logging import sv_logger
+from sverchok.utils.sv_logging import sv_logger
 
 @contextmanager
 def empty_bmesh(use_operators=True):

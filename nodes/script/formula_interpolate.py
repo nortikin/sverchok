@@ -23,7 +23,7 @@ from bpy.props import StringProperty, IntProperty, CollectionProperty, FloatProp
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, match_long_repeat
-from sverchok.utils.logging import sv_logger
+from sverchok.utils.sv_logging import sv_logger
 from sverchok.utils.modules.eval_formula import get_variables, safe_eval
 from sverchok.utils.geom import CubicSpline, LinearSpline
 from sverchok.utils.curve import SvSplineCurve

@@ -14,7 +14,7 @@ from sverchok.utils.curve.algorithms import unify_curves_degree, SvCurveFrameCal
 from sverchok.utils.curve.nurbs_solver_applications import interpolate_nurbs_curve_with_tangents
 from sverchok.utils.surface.core import UnsupportedSurfaceTypeException
 from sverchok.utils.surface import SvSurface, SurfaceCurvatureCalculator, SurfaceDerivativesData
-from sverchok.utils.logging import sv_logger, get_logger
+from sverchok.utils.sv_logging import sv_logger, get_logger
 from sverchok.data_structure import repeat_last_for_length
 from sverchok.dependencies import geomdl
 

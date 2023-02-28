@@ -39,7 +39,7 @@ from sverchok.utils.modules.geom_primitives import (
 
 from sverchok.data_structure import match_long_repeat
 from sverchok.utils.math import np_mixed_product
-from sverchok.utils.logging import sv_logger
+from sverchok.utils.sv_logging import sv_logger
 
 # njit is a light-wrapper around numba.njit, if found
 from sverchok.dependencies import numba  # not strictly needed i think...

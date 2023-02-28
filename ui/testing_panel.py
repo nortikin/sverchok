@@ -13,7 +13,7 @@ import sverchok
 from sverchok import old_nodes
 from sverchok.utils.context_managers import sv_preferences
 from sverchok.utils.modules_inspection import iter_submodule_names
-from sverchok.utils.logging import sv_logger
+from sverchok.utils.sv_logging import sv_logger
 
 
 class SvRunTests(bpy.types.Operator):

@@ -11,7 +11,7 @@ from bpy.props import StringProperty, EnumProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import flatten_data
 from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
-from sverchok.utils.logging import sv_logger
+from sverchok.utils.sv_logging import sv_logger
 from sverchok.dependencies import FreeCAD
 
 if FreeCAD is not None:

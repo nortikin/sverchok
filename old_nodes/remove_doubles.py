@@ -22,7 +22,7 @@ import bmesh
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, Vector_generate, zip_long_repeat
-from sverchok.utils.logging import sv_logger
+from sverchok.utils.sv_logging import sv_logger
 
 #
 # Remove Doubles

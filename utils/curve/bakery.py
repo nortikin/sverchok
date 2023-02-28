@@ -10,7 +10,7 @@ import numpy as np
 import bpy
 
 from sverchok.utils.curve.nurbs import SvNurbsCurve
-from sverchok.utils.logging import get_logger
+from sverchok.utils.sv_logging import get_logger
 
 
 def curve_to_meshdata(curve, resolution):

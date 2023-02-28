@@ -8,7 +8,7 @@
 import bpy
 from bpy.props import EnumProperty, BoolProperty
 
-from sverchok.utils.logging import sv_logger
+from sverchok.utils.sv_logging import sv_logger
 import sverchok.utils.profile as prof
 
 

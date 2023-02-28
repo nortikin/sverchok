@@ -10,7 +10,7 @@ from sverchok.core.event_system import handle_event
 from sverchok.core.socket_data import clear_all_socket_cache
 from sverchok.ui import bgl_callback_nodeview, bgl_callback_3dview
 from sverchok.utils.handle_blender_data import BlTrees
-from sverchok.utils.logging import catch_log_error, TextBufferHandler, sv_logger
+from sverchok.utils.sv_logging import catch_log_error, TextBufferHandler, sv_logger
 import sverchok.settings as settings
 
 _state = {'frame': None}

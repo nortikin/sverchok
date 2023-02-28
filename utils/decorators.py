@@ -20,7 +20,7 @@ import time
 import functools
 import inspect
 import warnings
-from sverchok.utils.logging import sv_logger
+from sverchok.utils.sv_logging import sv_logger
 from sverchok.utils.ascii_print import str_color
 
 string_types = (type(b''), type(u''))

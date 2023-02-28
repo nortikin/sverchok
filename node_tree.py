@@ -44,7 +44,7 @@ from sverchok.core.event_system import handle_event
 from sverchok.data_structure import classproperty, post_load_call
 from sverchok.utils.sv_node_utils import recursive_framed_location_finder
 from sverchok.utils.docstring import SvDocstring
-from sverchok.utils.logging import catch_log_error, sv_logger
+from sverchok.utils.sv_logging import catch_log_error, sv_logger
 
 from sverchok.ui import color_def
 from sverchok.ui.nodes_replacement import set_inputs_mapping, set_outputs_mapping

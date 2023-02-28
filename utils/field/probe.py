@@ -8,7 +8,7 @@
 import random
 import numpy as np
 
-from sverchok.utils.logging import sv_logger
+from sverchok.utils.sv_logging import sv_logger
 from sverchok.utils.kdtree import SvKdTree
 
 BATCH_SIZE = 50

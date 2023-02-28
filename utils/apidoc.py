@@ -16,7 +16,7 @@ provides command-line interface to generate documentation. Please run it with
 from os.path import join, dirname
 from os import makedirs
 
-from sverchok.utils.logging import get_logger
+from sverchok.utils.sv_logging import get_logger
 
 try:
     import pdoc

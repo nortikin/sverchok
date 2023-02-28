@@ -21,7 +21,7 @@ from bpy.props import IntProperty, EnumProperty, PointerProperty
 
 from sverchok.utils.context_managers import sv_preferences
 from sverchok.settings import get_dpi_factor
-from sverchok.utils.logging import sv_logger
+from sverchok.utils.sv_logging import sv_logger
 from collections import namedtuple
 
 from sverchok.ui.nodeview_space_menu import get_add_node_menu

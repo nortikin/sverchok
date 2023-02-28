@@ -14,7 +14,7 @@ import numpy as np
 from mathutils import Vector, Matrix
 
 from sverchok.utils.integrate import TrapezoidIntegral
-from sverchok.utils.logging import sv_logger
+from sverchok.utils.sv_logging import sv_logger
 from sverchok.utils.math import binomial_array
 from sverchok.utils.nurbs_common import SvNurbsMaths, from_homogenous
 from sverchok.utils.curve import knotvector as sv_knotvector

@@ -23,7 +23,7 @@ import numpy as np
 from mathutils.geometry import interpolate_bezier
 from mathutils import Vector, Matrix
 
-from sverchok.utils.logging import sv_logger
+from sverchok.utils.sv_logging import sv_logger
 from sverchok.utils.geom import interpolate_quadratic_bezier
 from sverchok.utils.sv_curve_utils import Arc
 from sverchok.utils.nurbs_common import SvNurbsMaths

@@ -20,7 +20,7 @@ import cProfile
 import pstats
 from io import StringIO
 
-from sverchok.utils.logging import sv_logger
+from sverchok.utils.sv_logging import sv_logger
 from sverchok.utils.context_managers import sv_preferences
 
 # Global cProfile.Profile singleton

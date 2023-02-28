@@ -10,7 +10,7 @@ import random
 
 from mathutils.kdtree import KDTree
 
-from sverchok.utils.logging import sv_logger
+from sverchok.utils.sv_logging import sv_logger
 
 
 def random_point(min_x, max_x, min_y, max_y):

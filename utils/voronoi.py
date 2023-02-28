@@ -113,7 +113,7 @@ from mathutils.geometry import intersect_line_line_2d
 from mathutils.bvhtree import BVHTree
 from mathutils.kdtree import KDTree
 
-from sverchok.utils.logging import sv_logger
+from sverchok.utils.sv_logging import sv_logger
 from sverchok.utils.geom import center, LineEquation2D, CircleEquation2D
 from sverchok.utils.math import weighted_center
 from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh, bmesh_from_pydata

@@ -18,7 +18,7 @@
 
 from collections import defaultdict
 
-from sverchok.utils.logging import sv_logger
+from sverchok.utils.sv_logging import sv_logger
 
 
 class Turtle(object):

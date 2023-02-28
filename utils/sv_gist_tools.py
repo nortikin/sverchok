@@ -23,7 +23,7 @@ from urllib.request import Request
 import webbrowser
 
 import bpy
-from sverchok.utils.logging import sv_logger
+from sverchok.utils.sv_logging import sv_logger
 from sverchok.utils.context_managers import sv_preferences
 from sverchok.utils.sv_requests import urlopen
 

@@ -22,7 +22,7 @@ from bpy.props import StringProperty, IntProperty, CollectionProperty, PointerPr
 from sverchok.node_tree import SverchCustomTreeNode
 
 from sverchok.data_structure import updateNode
-from sverchok.utils.logging import sv_logger
+from sverchok.utils.sv_logging import sv_logger
 
 
 class SvMaterialEntry(bpy.types.PropertyGroup):

@@ -6,7 +6,7 @@
 # License-Filename: LICENSE
 
 import bpy
-from sverchok.utils.logging import get_logger
+from sverchok.utils.sv_logging import get_logger
 from sverchok.settings import get_params
 
 

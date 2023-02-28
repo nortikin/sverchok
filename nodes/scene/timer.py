@@ -22,7 +22,7 @@ from bpy.props import IntProperty, FloatProperty, BoolProperty, StringProperty, 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat
 from sverchok.utils.modules.statistics_functions import *
-from sverchok.utils.logging import sv_logger
+from sverchok.utils.sv_logging import sv_logger
 
 TIMER_STATUS_STOPPED = "STOPPED"
 TIMER_STATUS_STARTED = "STARTED"

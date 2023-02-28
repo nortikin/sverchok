@@ -4,7 +4,7 @@ import sys
 import sverchok
 import bpy
 from sverchok.utils.development import get_version_string
-from sverchok.utils.logging import add_file_handler, remove_console_handler
+from sverchok.utils.sv_logging import add_file_handler, remove_console_handler
 
 root_modules = [
     "dependencies",
@@ -90,7 +90,7 @@ def import_settings(imported_modules):
 
 def import_logging(imported_modules):
     """Should be registered second after add-on settings"""
-    module = importlib.import_module(".logging", "sverchok.utils")
+    module = importlib.import_module(".sv_logging", "sverchok.utils")
     imported_modules.append(module)
 
 

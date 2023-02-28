@@ -19,7 +19,7 @@ from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.algorithms import unify_curves_degree, SvCurveLengthSolver, SvCurveFrameCalculator
 from sverchok.utils.curve.bezier import SvBezierCurve, SvCubicBezierCurve
 from sverchok.utils.decorators import deprecated
-from sverchok.utils.logging import get_logger
+from sverchok.utils.sv_logging import get_logger
 from sverchok.utils.math import (
     ZERO, FRENET, HOUSEHOLDER, TRACK, DIFF, TRACK_NORMAL,
     NORMAL_DIR, NONE

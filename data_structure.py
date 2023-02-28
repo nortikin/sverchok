@@ -36,7 +36,7 @@ from numpy import (
     tile as np_tile,
     float64,
     int32, int64)
-from sverchok.utils.logging import sv_logger
+from sverchok.utils.sv_logging import sv_logger
 import numpy as np
 
 
