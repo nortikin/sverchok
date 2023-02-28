@@ -243,6 +243,8 @@ def run_all_tests(pattern=None, log_file = 'sverchok_tests.log', log_level = Non
         runner = unittest.TextTestRunner(stream = buffer, verbosity=verbosity, failfast=failfast)
         old_nodes.register_all()
         with coverage_report(), only_test_logs():
+            sv_logger.warning("Run all tests with log level=[%s]",
+                              logging.getLevelName(sv_logger.getEffectiveLevel()))
             result = runner.run(suite)
             sv_logger.info("Test cases result:\n%s", buffer.getvalue())
             return result
@@ -880,6 +882,6 @@ if __name__ == "__main__":
             raise Exception("Some tests failed")
         sys.exit(0)
     except Exception as e:
-        print(e)
+        sv_logger.exception(e)
         sys.exit(1)
 
