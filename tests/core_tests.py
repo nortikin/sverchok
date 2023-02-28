@@ -1,9 +1,9 @@
 
-from pathlib import Path
 import importlib
 
 from sverchok.utils.testing import *
-from sverchok.utils.logging import debug, info, exception
+from sverchok.utils.logging import sv_logger
+
 
 class CoreTests(SverchokTestCase):
     
@@ -25,7 +25,7 @@ class CoreTests(SverchokTestCase):
                     try:
                         module = importlib.import_module(module_name)
                     except Exception as e:
-                        exception(e)
+                        sv_logger.exception(e)
                         self.fail(str(e))
                     self.assertIsNotNone(module)
 

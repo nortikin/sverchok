@@ -17,7 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 """For internal usage of the sockets module"""
-
+import logging
 from collections import UserDict
 from itertools import chain
 from traceback import format_list, extract_stack
@@ -25,11 +25,11 @@ from typing import NewType, Optional, Literal
 
 from bpy.types import NodeSocket
 from sverchok.core.sv_custom_exceptions import SvNoDataError
-from sverchok.utils.logging import debug
 from sverchok.utils.handle_blender_data import BlTrees
 
 
 SockId = NewType('SockId', str)
+sv_logger = logging.getLogger('sverchok')
 
 
 class DebugMemory(UserDict):
@@ -112,7 +112,7 @@ class DebugMemory(UserDict):
                         continue
                     if sock.socket_id in self._id_sock:
                         ds = self._id_sock[sock.socket_id]
-                        debug(f"SOCKET ID DUPLICATION: "
+                        sv_logger.debug(f"SOCKET ID DUPLICATION: "
                               f"1 - {ds.id_data.name} {ds.node.name=} {ds.name=}"
                               f"2 - {sock.id_data.name} {node.name=} {sock.name=}")
                     self._id_sock[sock.socket_id] = sock

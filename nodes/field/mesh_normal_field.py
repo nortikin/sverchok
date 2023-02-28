@@ -12,10 +12,8 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 from mathutils import bvhtree
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, match_long_repeat
-from sverchok.utils.logging import info, exception
+from sverchok.data_structure import updateNode, zip_long_repeat
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
-from sverchok.utils.logging import info, exception
 from sverchok.utils.field.vector import SvBvhAttractorVectorField
 from sverchok.utils.field.rbf import SvBvhRbfNormalVectorField
 from sverchok.dependencies import scipy
@@ -23,6 +21,7 @@ from sverchok.utils.math import rbf_functions
 
 if scipy is not None:
     from scipy.interpolate import Rbf
+
 
 class SvExMeshNormalFieldNode(SverchCustomTreeNode, bpy.types.Node):
     """

@@ -21,7 +21,7 @@ from bpy.props import IntProperty, FloatProperty, BoolProperty, StringProperty, 
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat
-from sverchok.utils.logging import debug
+
 
 MODE_INSIDE_ON = "INSIDE ON"
 MODE_INSIDE_OFF = "INSIDE OFF"
@@ -200,12 +200,12 @@ class SvRangeSwitchNode(SverchCustomTreeNode, bpy.types.Node):
         if old_switch_count != new_switch_count:
             if new_switch_count > old_switch_count:  # add new switches
                 for n in range(old_switch_count, new_switch_count):
-                    debug("creating new switch")
+                    self.debug("creating new switch")
                     switch = self.switches.add()
             else:  # remove old switches
                 while len(self.switches) > new_switch_count:
                     n = len(self.switches) - 1
-                    debug("removing old switch")
+                    self.debug("removing old switch")
                     self.switches.remove(n)
 
         # update switches

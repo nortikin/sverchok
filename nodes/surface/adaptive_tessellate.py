@@ -1,18 +1,15 @@
 
-import numpy as np
 
 import bpy
 from bpy.props import EnumProperty, IntProperty, BoolProperty, FloatProperty
 
-import sverchok
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level
-from sverchok.utils.logging import info, exception
-from sverchok.utils.geom_2d.merge_mesh import crop_mesh_delaunay
+from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 
 from sverchok.utils.curve import SvCurve
 from sverchok.utils.surface import SvSurface
 from sverchok.utils.adaptive_surface import adaptive_subdivide, MAXIMUM, GAUSS, MEAN
+
 
 class SvAdaptiveTessellateNode(SverchCustomTreeNode, bpy.types.Node):
     """

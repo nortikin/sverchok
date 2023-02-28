@@ -3,7 +3,7 @@ from bpy.props import StringProperty, BoolProperty, EnumProperty, FloatProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
-from sverchok.utils.logging import info
+from sverchok.utils.logging import sv_logger
 from sverchok.dependencies import FreeCAD
 from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
 
@@ -56,7 +56,7 @@ def LabelReader(operator):
                 if obj.Module in module_filter or obj.TypeId in module_filter:
                     labels.append( (obj.Label, obj.Label, obj.Label) )
         except:
-            info('FCStd label read error')
+            sv_logger.info('FCStd label read error')
         finally:
             #del doc
             F.closeDocument(doc.Name)
@@ -312,7 +312,7 @@ def LoadSolid(
                 solids.add(( obj.Shape, obj_info ))
 
     except Exception as err:
-        info(f"FCStd read error {err}")
+        sv_logger.info(f"FCStd read error {err}")
 
     finally:
         #del doc

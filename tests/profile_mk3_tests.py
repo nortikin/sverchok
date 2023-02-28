@@ -1,13 +1,8 @@
 
-from pathlib import Path
-from os.path import basename
-
-from sverchok.utils.logging import error
 from sverchok.utils.testing import *
-from sverchok.utils.parsec import parse
-from sverchok.utils.modules.profile_mk3.interpreter import *
 from sverchok.utils.modules.profile_mk3.parser import *
 from sverchok.nodes.script.profile_mk3 import profile_template_path
+
 
 class SimpleTests(SverchokTestCase):
     def test_identifier(self):
@@ -114,7 +109,7 @@ class ExamplesParseTests(SverchokTestCase):
 
             with self.subTest(file=name):
                 with open(path, 'r') as f:
-                    info("Checking profile example: %s", name)
+                    sv_logger.info("Checking profile example: %s", name)
                     profile_text = f.read()
                     with self.assert_logs_no_errors():
                         parse_profile(profile_text)

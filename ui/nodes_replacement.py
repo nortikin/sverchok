@@ -19,7 +19,8 @@
 
 import bpy
 
-from sverchok.utils.logging import debug, info
+from sverchok.utils.logging import sv_logger
+
 
 class SvSocketReplacement(bpy.types.PropertyGroup):
     """
@@ -120,7 +121,7 @@ class SvReplaceNode(bpy.types.Operator):
         msg = "Node `{}' ({}) has been replaced with new node `{}' ({})".format(
             old_node.name, old_node.bl_idname,
             new_node.name, new_node.bl_idname)
-        info(msg)
+        sv_logger.info(msg)
         self.report({'INFO'}, msg)
 
 

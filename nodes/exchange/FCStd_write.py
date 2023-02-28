@@ -3,7 +3,7 @@ from bpy.props import StringProperty, BoolProperty,EnumProperty
 
 from sverchok.node_tree import SverchCustomTreeNode # OLD throttled
 from sverchok.data_structure import updateNode, match_long_repeat # NEW throttle_and_update_node
-from sverchok.utils.logging import info
+from sverchok.utils.logging import sv_logger
 from sverchok.dependencies import FreeCAD
 from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
 
@@ -149,7 +149,7 @@ def fc_write_parts(fc_file, verts, faces, part_name, solid, mod):
         F.open(fc_file)
 
     except Exception as err:
-        info(f'FCStd open error, {err}')
+        sv_logger.info(f'FCStd open error, {err}')
         return
 
     F.setActiveDocument(Fname)

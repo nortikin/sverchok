@@ -23,9 +23,12 @@ instead of actual module, so that one can execute another version of code:
 
 todo: Create dependencies.txt file and import modules from there
 """
+import logging
 
-from sverchok.utils.logging import info, debug
 import sverchok.settings as settings
+
+
+logger = logging.getLogger('sverchok')
 
 
 class SvDependency():
@@ -186,6 +189,6 @@ def register():
     good_names = [d.package for d in sv_dependencies.values()
                   if d.module is not None and d.package is not None]
     if good_names:
-        info("Dependencies available: %s.", ", ".join(good_names))
+        logger.info("Dependencies available: %s.", ", ".join(good_names))
     else:
-        info("No dependencies are available.")
+        logger.info("No dependencies are available.")

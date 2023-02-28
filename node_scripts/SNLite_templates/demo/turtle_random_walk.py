@@ -9,13 +9,14 @@ in   in_seed s
 out  out_face_mask   s
 out  out_face_data s
 """
-
+import logging
 import random
 
 from sverchok.data_structure import zip_long_repeat
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
-from sverchok.utils.logging import debug, info
 from sverchok.utils.turtle import Turtle
+
+logger = logging.getLogger('sverchok')
 
 if in_select_mask is None:
     in_select_mask = [[]]
@@ -27,7 +28,7 @@ out_face_data = []
 objects = zip_long_repeat(in_verts, in_faces, in_start_face_idx, in_steps,
             in_select_mask, in_paint_mask, in_seed)
 for verts, faces, start_face, steps, select_mask, paint_mask, seed in objects:
-    info(seed)
+    logger.info(seed)
     if isinstance(seed, (list, tuple)):
         seed = seed[0]
     random.seed(seed)

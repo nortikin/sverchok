@@ -1,4 +1,5 @@
-from typing import Type, Dict
+from pathlib import Path
+from typing import Type, Dict, Optional
 
 import bpy
 
@@ -9,19 +10,85 @@ import logging.handlers
 from contextlib import contextmanager
 
 import sverchok
-from sverchok.utils.development import get_version_string
-from sverchok.utils.context_managers import sv_preferences
-import sverchok.settings as settings
 
-# Hardcoded for now
-log_format = "%(asctime)s.%(msecs)03d [%(levelname)s] %(name)s: %(message)s"
 
-# Whether logging to internal blender's text buffer is initialized
-internal_buffer_initialized = False
-# Whether logging to external text file is initialized
-file_initialized = False
-# Whether logging is initialized
-initialized = False
+old_factory = logging.getLogRecordFactory()
+
+
+def add_relative_path_factory(name, *args, **kwargs):
+    record = old_factory(name, *args, **kwargs)
+    if name.startswith('sverchok'):
+        path = Path(record.pathname)
+        record.relative_path = path.relative_to(sverchok.__path__[0])
+    return record
+
+
+logging.setLogRecordFactory(add_relative_path_factory)
+
+log_format = "%(asctime)s.%(msecs)03d [%(levelname)-5s] %(name)s %(relative_path)s:%(lineno)d - %(message)s"
+sv_logger = logging.getLogger('sverchok')  # root loger
+
+# set any level whatever you desire,
+# it will be overridden by the add-on settings after the last one will be registered
+sv_logger.setLevel(logging.ERROR)
+
+console_handler = logging.StreamHandler()
+
+
+class ColorFormatter(logging.Formatter):
+    START_COLOR = '\033[{}m'
+    RESET_COLOR = '\033[0m'
+    COLORS = {
+        'DEBUG': '1;30',  # grey
+        'INFO': 32,  # green
+        'WARNING': 33,  # yellow
+        'ERROR': 31,  # red
+        'CRITICAL': 41,  # white on red bg
+    }
+
+    def format(self, record):
+        color = self.START_COLOR.format(self.COLORS[record.levelname])
+        color_format = color + self._fmt + self.RESET_COLOR
+        formatter = logging.Formatter(color_format, datefmt=self.datefmt)
+        return formatter.format(record)
+
+
+# console_handler.setFormatter(logging.Formatter(log_format, datefmt='%H:%M:%S'))
+console_handler.setFormatter(ColorFormatter(log_format, datefmt='%H:%M:%S'))
+sv_logger.addHandler(console_handler)
+
+
+def add_node_error_location(record: logging.LogRecord):
+    # https://docs.python.org/3/howto/logging-cookbook.html#using-filters-to-impart-contextual-information
+    # should be called with logger.error(msg, exc_info=True)
+    frame_info = inspect.getinnerframes(record.exc_info[-1])[-1]
+    record.relative_path = Path(frame_info.filename).name
+    record.lineno = frame_info.lineno
+    if not is_enabled_for('DEBUG'):  # show traceback only in DEBUG mode
+        record.exc_info = None
+    return True
+
+
+node_error_logger = logging.getLogger('sverchok.node_error')
+node_error_logger.addFilter(add_node_error_location)
+
+
+def add_file_handler(file_path):
+    sv_logger.debug(f'Logging to file="{file_path}"')
+    handler = logging.handlers.RotatingFileHandler(file_path,
+                                                   maxBytes=10 * 1024 * 1024,
+                                                   backupCount=3)
+    handler.setFormatter(logging.Formatter(log_format, datefmt="%Y-%m-%d %H:%M:%S"))
+    sv_logger.addHandler(handler)
+
+
+def remove_console_handler():
+    # Remove console output handler.
+    logging.debug("Log output to console is disabled. Further messages will"
+                  " be available only in text buffer and file (if configured).")
+    sv_logger.removeHandler(console_handler)
+    # https://docs.python.org/3/howto/logging.html#configuring-logging-for-a-library
+    sv_logger.addHandler(logging.NullHandler())
 
 
 @contextmanager
@@ -33,27 +100,10 @@ def catch_log_error():
         frame, _, line, *_ = inspect.trace()[-1]
         module = inspect.getmodule(frame)
         name = module.__name__ or "<Unknown Module>"
-        try_initialize()
         _logger = logging.getLogger(f'{name} {line}')
         _logger.error(e)
         if _logger.isEnabledFor(logging.DEBUG):
             traceback.print_exc()
-
-
-def log_error(err):
-    """Should be used in except statement"""
-    for frame, _, line, *_ in inspect.trace()[::-1]:
-        module = inspect.getmodule(frame)
-        if module is None:  # looks like frame points into non Python module
-            continue  # try to find the module before
-        else:
-            name = module.__name__ or "<Unknown Module>"
-            try_initialize()
-            _logger = logging.getLogger(f'{name}:{line} ')
-            _logger.error(err)
-            if _logger.isEnabledFor(logging.DEBUG):
-                traceback.print_exc()
-            break
 
 
 @contextmanager
@@ -66,19 +116,6 @@ def fix_error_msg(msgs: Dict[Type[Exception], str]):
             e.args = (msgs[err_class], )
         raise
 
-
-def get_log_buffer(log_buffer_name):
-    """
-    Get internal blender text buffer for logging.
-    """
-    try:
-        if log_buffer_name in bpy.data.texts:
-            return bpy.data.texts[log_buffer_name]
-        else:
-            return bpy.data.texts.new(name=log_buffer_name)
-    except AttributeError as e:
-        #logging.debug("Can't initialize logging to internal buffer: get_log_buffer is called too early: {}".format(e))
-        return None
 
 class TextBufferHandler(logging.Handler):
     """
@@ -94,6 +131,9 @@ class TextBufferHandler(logging.Handler):
         """
         super().__init__()
         self.buffer_name = name
+        if self.buffer is None:
+            raise RuntimeError("Can't create TextBufferHandler, "
+                               "most likely because Blender is not fully loaded")
 
     def emit(self, record):
         """
@@ -107,150 +147,57 @@ class TextBufferHandler(logging.Handler):
         """
         try:
             msg = self.format(record)
-            stream = get_log_buffer(self.buffer_name)
-            if not stream:
-                print("Can't obtain buffer")
-                return
-            stream.write(msg)
-            stream.write(self.terminator)
+            self.buffer.write(msg)
+            self.buffer.write(self.terminator)
             self.flush()
         except Exception:
             self.handleError(record)
 
+    def clear(self):
+        """Clear all records"""
+        self.buffer.clear()
+        sv_logger.debug("Internal text buffer cleared")
+
+    @property
+    def buffer(self) -> Optional:
+        """
+        Get internal blender text buffer for logging.
+        """
+        try:
+            return bpy.data.texts.get(self.buffer_name) \
+                   or bpy.data.texts.new(name=self.buffer_name)
+        except AttributeError as e:
+            # logging.debug("Can't initialize logging to internal buffer: get_log_buffer is called too early: {}".format(e))
+            return None
+
+    @classmethod
+    def add_to_main_logger(cls):
+        """This handler can work only after Blender is fully loaded"""
+        addon = bpy.context.preferences.addons.get(sverchok.__name__)
+        prefs = addon.preferences
+        if prefs.log_to_buffer:
+            sv_logger.debug(f'Logging to Blender text editor="{prefs.log_buffer_name}"')
+            handler = cls(prefs.log_buffer_name)
+            handler.setFormatter(logging.Formatter(log_format, datefmt="%Y-%m-%d %H:%M:%S"))
+            sv_logger.addHandler(handler)
+
     def __repr__(self):
-        level = getLevelName(self.level)
-        name = getattr(self.stream, 'name', '')
+        level = logging.getLevelName(self.level)
+        name = getattr(self.buffer, 'name', '')
         if name:
             name += ' '
         return '<%s %s(%s)>' % (self.__class__.__name__, name, level)
 
 
-def try_initialize():
-    """
-    Try to initialize logging subsystem.
-    Does nothing if everything is already initialized.
-    Prints an error if it is called too early.
-    """
-    global internal_buffer_initialized
-    global file_initialized
-    global initialized
-
-    if sverchok.reload_event:
-        return
-
-    with sv_preferences() as prefs:
-        if not prefs:
-            logging.error("Can't obtain logging preferences, it's too early. Stack:\n%s", "".join(traceback.format_stack()))
-            return
-
-        if not internal_buffer_initialized:
-            if prefs.log_to_buffer:
-                buffer = get_log_buffer(prefs.log_buffer_name)
-                if buffer is not None:
-                    handler = TextBufferHandler(prefs.log_buffer_name)
-                    handler.setFormatter(logging.Formatter(log_format, datefmt="%Y-%m-%d %H:%M:%S"))
-                    logging.getLogger().addHandler(handler)
-
-                    for area in bpy.context.screen.areas:
-                        if area.type == 'TEXT_EDITOR':
-                            if area.spaces[0].text is None:
-                                area.spaces[0].text = buffer
-                                break
-                    internal_buffer_initialized = True
-            else:
-                internal_buffer_initialized = True
-
-        if not file_initialized:
-            if prefs.log_to_file:
-                handler = logging.handlers.RotatingFileHandler(prefs.log_file_name, 
-                            maxBytes = 10*1024*1024,
-                            backupCount = 3)
-                handler.setFormatter(logging.Formatter(log_format, datefmt="%Y-%m-%d %H:%M:%S"))
-                logging.getLogger().addHandler(handler)
-
-            file_initialized = True
-
-        if not initialized:
-            setLevel(prefs.log_level)
-            console_handler = logging.StreamHandler()
-            console_handler.setFormatter(logging.Formatter(log_format, datefmt='%H:%M:%S'))
-            logging.getLogger().addHandler(console_handler)
-            if not prefs.log_to_console:
-                # Remove console output handler.
-                logging.debug("Log output to console is disabled. Further messages will be available only in text buffer and file (if configured).")
-                logging.getLogger().removeHandler(console_handler)
-
-                # https://docs.python.org/3/howto/logging.html#configuring-logging-for-a-library
-                logging.getLogger().addHandler(logging.NullHandler())
-
-            logging.info("Initializing Sverchok logging. Blender version %s, Sverchok version %s", bpy.app.version_string, get_version_string())
-            logging.debug("Current log level: %s, log to text buffer: %s, log to file: %s, log to console: %s",
-                    prefs.log_level,
-                    ("no" if not prefs.log_to_buffer else prefs.log_buffer_name),
-                    ("no" if not prefs.log_to_file else prefs.log_file_name),
-                    ("yes" if prefs.log_to_console else "no"))
-            initialized = True
-
-
-def clear_internal_buffer():
-    """It clears only BLender text editor"""
-    with sv_preferences() as prefs:
-        if prefs.log_to_buffer_clean:
-            get_log_buffer(prefs.log_buffer_name).clear()
-            logging.debug("Internal text buffer cleared")
-
-
 # Convenience functions
 
-def with_module_logger(method_name):
-    """
-    Returns a method of Logger class instance.
-    Logger name is obtained from caller module name.
-    """
-    def wrapper(*args, **kwargs):
-        if not is_enabled_for(method_name.upper()):
-            return
-        frame, _, line, *_ = inspect.stack()[1]
-        module = inspect.getmodule(frame)
-        name = module.__name__ or "<Unknown Module>"
-        try_initialize()
-        logger = logging.getLogger(f'{name} {line}')
-        method = getattr(logger, method_name)
-        return method(*args, **kwargs)
 
-    wrapper.__name__ = method_name
-    wrapper.__doc__ = "Call `{}' method on a Logger. Logger name is obtained from caller module name.".format(method_name)
-
-    return wrapper
-
-debug = with_module_logger("debug")
-info = with_module_logger("info")
-warning = with_module_logger("warning")
-error = with_module_logger("error")
-exception = with_module_logger("exception")
-
-def getLogger(name=None):
-    """
-    Get Logger instance.
-    If name is None, then logger name is obtained from caller module name.
-    """
-    if name is None:
-        frame, _, line, *_ = inspect.stack()[1]
-        module = inspect.getmodule(frame)
-        name = f'{module.__name__} {line}'
-    try_initialize()
+def get_logger():
+    """Get Logger instance. Logger name is obtained from caller module name."""
+    frame, *_ = inspect.stack()[1]
+    module = inspect.getmodule(frame)
+    name = module.__name__
     return logging.getLogger(name)
-
-def setLevel(level):
-    """
-    Set logging level for all handlers.
-    """
-    if type(level) != int:
-        level = getattr(logging, level)
-
-    logging.getLogger().setLevel(level)
-    for handler in logging.getLogger().handlers:
-        handler.setLevel(level)
 
 
 def is_enabled_for(log_level="DEBUG") -> bool:
@@ -259,21 +206,3 @@ def is_enabled_for(log_level="DEBUG") -> bool:
     current_level = getattr(logging, addon.preferences.log_level)
     given_level = getattr(logging, log_level)
     return given_level >= current_level
-
-
-logger = logging.getLogger("logging")
-settings.info = info
-settings.setLevel = setLevel
-
-def register():
-    global consoleHandler
-
-    with sv_preferences() as prefs:
-        level = getattr(logging, prefs.log_level)
-        logger.info(f"log level, {level}")
-    logging.captureWarnings(True)
-
-
-def unregister():
-    logging.shutdown()
-
