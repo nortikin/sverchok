@@ -11,31 +11,39 @@ from contextlib import contextmanager
 
 import sverchok
 
-
-old_factory = logging.getLogRecordFactory()
+if not sverchok.reload_event:  # otherwise it leeds to infinite recursion
+    old_factory = logging.getLogRecordFactory()
 
 
 def add_relative_path_factory(name, *args, **kwargs):
     record = old_factory(name, *args, **kwargs)
     if name.startswith('sverchok'):
         path = Path(record.pathname)
-        if path.is_relative_to(sverchok.__path__[0]):
-            record.relative_path = path.relative_to(sverchok.__path__[0])
+
+        # search root path of the add-on
+        for root in path.parents:
+            if root.parent.name == 'addons':  # add-ons are not always in the folder
+                break
+        else:
+            root = None
+
+        if root is not None:
+            record.relative_path = path.relative_to(root)
         else:  # it can if there is several instances of sverchok (as add-on and a separate folder)
             record.relative_path = path
     return record
 
 
-logging.setLogRecordFactory(add_relative_path_factory)
+if not sverchok.reload_event:  # otherwise it leeds to infinite recursion
+    logging.setLogRecordFactory(add_relative_path_factory)
 
 log_format = "%(asctime)s.%(msecs)03d [%(levelname)-5s] %(name)s %(relative_path)s:%(lineno)d - %(message)s"
 sv_logger = logging.getLogger('sverchok')  # root loger
 
 # set any level whatever you desire,
 # it will be overridden by the add-on settings after the last one will be registered
-sv_logger.setLevel(logging.ERROR)
-
-console_handler = logging.StreamHandler()
+if not sverchok.reload_event:
+    sv_logger.setLevel(logging.ERROR)
 
 
 class ColorFormatter(logging.Formatter):
@@ -56,7 +64,7 @@ class ColorFormatter(logging.Formatter):
         return formatter.format(record)
 
 
-# console_handler.setFormatter(logging.Formatter(log_format, datefmt='%H:%M:%S'))
+console_handler = logging.StreamHandler()
 console_handler.setFormatter(ColorFormatter(log_format, datefmt='%H:%M:%S'))
 sv_logger.addHandler(console_handler)
 
@@ -148,6 +156,12 @@ class TextBufferHandler(logging.Handler):
         has an 'encoding' attribute, it is used to determine how to do the
         output to the stream.
         """
+        # wen user enables a Sverchok extension it seems disables all Blender
+        # collections until the extension will be registered
+        # for now ignore such cases
+        if self.buffer is None:
+            return
+
         try:
             msg = self.format(record)
             self.buffer.write(msg)

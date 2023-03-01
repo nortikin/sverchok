@@ -91,7 +91,8 @@ def import_settings(imported_modules):
 def import_logging(imported_modules):
     """Should be registered second after add-on settings"""
     module = importlib.import_module(".sv_logging", "sverchok.utils")
-    imported_modules.append(module)
+    # the module will be in imported_utils_modules - move sv_logging to core?
+    # imported_modules.append(module)
 
 
 def import_all_modules(imported_modules, mods_bases):
