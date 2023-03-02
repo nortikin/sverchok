@@ -38,9 +38,8 @@ import random
 
 from mathutils.kdtree import KDTree
 
-from sverchok.utils.surface import SvSurface
-from sverchok.utils.field.scalar import SvScalarField
-from sverchok.utils.logging import error
+from sverchok.utils.sv_logging import sv_logger
+
 
 def random_point(min_x, max_x, min_y, max_y):
     x = random.uniform(min_x, max_x)
@@ -138,7 +137,7 @@ def populate_surface(surface, field, count, threshold,
     while done &lt; count:
         iterations += 1
         if iterations &gt; MAX_ITERATIONS:
-            error(&#34;Maximum number of iterations (%s) reached, stop.&#34;, MAX_ITERATIONS)
+            sv_logger.error(&#34;Maximum number of iterations (%s) reached, stop.&#34;, MAX_ITERATIONS)
             break
         batch_us = []
         batch_vs = []
@@ -322,7 +321,7 @@ Optional.</p>
     while done &lt; count:
         iterations += 1
         if iterations &gt; MAX_ITERATIONS:
-            error(&#34;Maximum number of iterations (%s) reached, stop.&#34;, MAX_ITERATIONS)
+            sv_logger.error(&#34;Maximum number of iterations (%s) reached, stop.&#34;, MAX_ITERATIONS)
             break
         batch_us = []
         batch_vs = []

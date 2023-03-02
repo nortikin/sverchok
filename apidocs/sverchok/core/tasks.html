@@ -34,7 +34,7 @@ from typing import TYPE_CHECKING, Optional, Generator
 import bpy
 from sverchok.data_structure import post_load_call
 from sverchok.core.sv_custom_exceptions import CancelError
-from sverchok.utils.logging import catch_log_error, debug
+from sverchok.utils.sv_logging import catch_log_error, sv_logger
 from sverchok.utils.profile import profile
 from sverchok.utils.handle_blender_data import BlTrees
 
@@ -147,7 +147,7 @@ class Tasks:
             t[&#39;SKIP_UPDATE&#39;] = True
 
         gc.enable()
-        debug(f&#39;Global update - {int((time() - self._start_time) * 1000)}ms&#39;)
+        sv_logger.debug(f&#39;Global update - {int((time() - self._start_time) * 1000)}ms&#39;)
         del self._start_time
 
     @cached_property
@@ -171,7 +171,7 @@ class Tasks:
                         return area
                 except ReferenceError:
                     # probably all reports should be cleaned through search
-                    debug(f&#34;Unable report a nodes updating progress&#34;)
+                    sv_logger.debug(f&#34;Unable report a nodes updating progress&#34;)
 
     def _report_progress(self, text: str = None):
         &#34;&#34;&#34;Show text in the tree editor header. If text is none the header
@@ -560,7 +560,7 @@ the error to current node and abort the execution</p></div>
             t[&#39;SKIP_UPDATE&#39;] = True
 
         gc.enable()
-        debug(f&#39;Global update - {int((time() - self._start_time) * 1000)}ms&#39;)
+        sv_logger.debug(f&#39;Global update - {int((time() - self._start_time) * 1000)}ms&#39;)
         del self._start_time
 
     @cached_property
@@ -584,7 +584,7 @@ the error to current node and abort the execution</p></div>
                         return area
                 except ReferenceError:
                     # probably all reports should be cleaned through search
-                    debug(f&#34;Unable report a nodes updating progress&#34;)
+                    sv_logger.debug(f&#34;Unable report a nodes updating progress&#34;)
 
     def _report_progress(self, text: str = None):
         &#34;&#34;&#34;Show text in the tree editor header. If text is none the header

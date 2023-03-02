@@ -46,7 +46,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 &#34;&#34;&#34;For internal usage of the sockets module&#34;&#34;&#34;
-
+import logging
 from collections import UserDict
 from itertools import chain
 from traceback import format_list, extract_stack
@@ -54,11 +54,11 @@ from typing import NewType, Optional, Literal
 
 from bpy.types import NodeSocket
 from sverchok.core.sv_custom_exceptions import SvNoDataError
-from sverchok.utils.logging import debug
 from sverchok.utils.handle_blender_data import BlTrees
 
 
 SockId = NewType(&#39;SockId&#39;, str)
+sv_logger = logging.getLogger(&#39;sverchok&#39;)
 
 
 class DebugMemory(UserDict):
@@ -141,7 +141,7 @@ class DebugMemory(UserDict):
                         continue
                     if sock.socket_id in self._id_sock:
                         ds = self._id_sock[sock.socket_id]
-                        debug(f&#34;SOCKET ID DUPLICATION: &#34;
+                        sv_logger.debug(f&#34;SOCKET ID DUPLICATION: &#34;
                               f&#34;1 - {ds.id_data.name} {ds.node.name=} {ds.name=}&#34;
                               f&#34;2 - {sock.id_data.name} {node.name=} {sock.name=}&#34;)
                     self._id_sock[sock.socket_id] = sock
@@ -484,7 +484,7 @@ set to False and increase performance substanstilly</p></div>
                         continue
                     if sock.socket_id in self._id_sock:
                         ds = self._id_sock[sock.socket_id]
-                        debug(f&#34;SOCKET ID DUPLICATION: &#34;
+                        sv_logger.debug(f&#34;SOCKET ID DUPLICATION: &#34;
                               f&#34;1 - {ds.id_data.name} {ds.node.name=} {ds.name=}&#34;
                               f&#34;2 - {sock.id_data.name} {node.name=} {sock.name=}&#34;)
                     self._id_sock[sock.socket_id] = sock

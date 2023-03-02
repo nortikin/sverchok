@@ -46,13 +46,12 @@
 
 import os
 import json
-import base64
 from time import gmtime, strftime
 from urllib.request import Request
 import webbrowser
 
 import bpy
-from sverchok.utils.logging import info, debug, error
+from sverchok.utils.sv_logging import sv_logger
 from sverchok.utils.context_managers import sv_preferences
 from sverchok.utils.sv_requests import urlopen
 
@@ -89,17 +88,17 @@ def main_upload_function(gist_filename, gist_description, gist_body, show_browse
         with sv_preferences() as prefs:
             token = prefs.github_token
             if not token:
-                info(&#34;GitHub API access token is not specified&#34;)
+                sv_logger.info(&#34;GitHub API access token is not specified&#34;)
                 show_token_help()
                 return
 
-            info(&#34;Uploading: %s&#34;, gist_filename)
+            sv_logger.info(&#34;Uploading: %s&#34;, gist_filename)
             headers = {&#34;Authorization&#34;: &#34;token &#34; + token}
         
             req = Request(API_URL, data=json_post_data, headers=headers)
             json_to_parse = urlopen(req, data=json_post_data)
             
-            info(&#39;Received response from server&#39;)
+            sv_logger.info(&#39;Received response from server&#39;)
             found_json = json_to_parse.read().decode()
             return get_gist_url(found_json)
 
@@ -180,17 +179,17 @@ def write_or_append_datafiles(gist_url, layout_name):
         with sv_preferences() as prefs:
             token = prefs.github_token
             if not token:
-                info(&#34;GitHub API access token is not specified&#34;)
+                sv_logger.info(&#34;GitHub API access token is not specified&#34;)
                 show_token_help()
                 return
 
-            info(&#34;Uploading: %s&#34;, gist_filename)
+            sv_logger.info(&#34;Uploading: %s&#34;, gist_filename)
             headers = {&#34;Authorization&#34;: &#34;token &#34; + token}
         
             req = Request(API_URL, data=json_post_data, headers=headers)
             json_to_parse = urlopen(req, data=json_post_data)
             
-            info(&#39;Received response from server&#39;)
+            sv_logger.info(&#39;Received response from server&#39;)
             found_json = json_to_parse.read().decode()
             return get_gist_url(found_json)
 

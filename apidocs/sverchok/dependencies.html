@@ -66,9 +66,12 @@ instead of actual module, so that one can execute another version of code:
 
 todo: Create dependencies.txt file and import modules from there
 &#34;&#34;&#34;
+import logging
 
-from sverchok.utils.logging import info, debug
 import sverchok.settings as settings
+
+
+logger = logging.getLogger(&#39;sverchok&#39;)
 
 
 class SvDependency():
@@ -229,9 +232,9 @@ def register():
     good_names = [d.package for d in sv_dependencies.values()
                   if d.module is not None and d.package is not None]
     if good_names:
-        info(&#34;Dependencies available: %s.&#34;, &#34;, &#34;.join(good_names))
+        logger.info(&#34;Dependencies available: %s.&#34;, &#34;, &#34;.join(good_names))
     else:
-        info(&#34;No dependencies are available.&#34;)</code></pre>
+        logger.info(&#34;No dependencies are available.&#34;)</code></pre>
 </details>
 </section>
 <section>
@@ -312,9 +315,9 @@ whether the dependency is available or not.</p></div>
     good_names = [d.package for d in sv_dependencies.values()
                   if d.module is not None and d.package is not None]
     if good_names:
-        info(&#34;Dependencies available: %s.&#34;, &#34;, &#34;.join(good_names))
+        logger.info(&#34;Dependencies available: %s.&#34;, &#34;, &#34;.join(good_names))
     else:
-        info(&#34;No dependencies are available.&#34;)</code></pre>
+        logger.info(&#34;No dependencies are available.&#34;)</code></pre>
 </details>
 </dd>
 </dl>

@@ -33,7 +33,6 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
-import numpy as np
 from math import pi, cos, sin
 from collections import defaultdict
 
@@ -49,7 +48,7 @@ from sverchok.utils.geom import (
         autorotate_householder, autorotate_track, autorotate_diff,
         center, linear_approximation
     )
-from sverchok.utils.curve.core import SvFlipCurve, UnsupportedCurveTypeException
+from sverchok.utils.curve.core import UnsupportedCurveTypeException
 from sverchok.utils.curve.primitives import SvCircle
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.algorithms import (
@@ -61,7 +60,8 @@ from sverchok.utils.surface.core import SvSurface, UnsupportedSurfaceTypeExcepti
 from sverchok.utils.surface.nurbs import SvNurbsSurface
 from sverchok.utils.surface.data import *
 from sverchok.utils.nurbs_common import SvNurbsBasisFunctions, SvNurbsMaths
-from sverchok.utils.logging import info, debug
+from sverchok.utils.sv_logging import sv_logger
+
 
 class SvInterpolatingSurface(SvSurface):
     __description__ = &#34;Interpolating&#34;
@@ -883,7 +883,7 @@ class SvCurveLerpSurface(SvSurface):
                 # make_ruled_surface method can raise TypeError in case
                 # it can&#39;t work with given curve2.
                 # In this case we must use generic method.
-                debug(&#34;Can&#39;t make a native ruled surface: %s&#34;, e)
+                sv_logger.debug(&#34;Can&#39;t make a native ruled surface: %s&#34;, e)
                 pass
 
         # generic method
@@ -1192,7 +1192,7 @@ def concatenate_surfaces(direction, surfaces):
                 result = result.concatenate(direction, s)
             return result
         except UnsupportedSurfaceTypeException as e:
-            debug(&#34;Can&#39;t concatenate surfaces natively: %s&#34;, e)
+            sv_logger.debug(&#34;Can&#39;t concatenate surfaces natively: %s&#34;, e)
     
     return SvConcatSurface(direction, surfaces)
 
@@ -1660,7 +1660,7 @@ half a circle.</p></div>
                 result = result.concatenate(direction, s)
             return result
         except UnsupportedSurfaceTypeException as e:
-            debug(&#34;Can&#39;t concatenate surfaces natively: %s&#34;, e)
+            sv_logger.debug(&#34;Can&#39;t concatenate surfaces natively: %s&#34;, e)
     
     return SvConcatSurface(direction, surfaces)</code></pre>
 </details>
@@ -2809,7 +2809,7 @@ np.array of shape (n, 3).</p></div>
                 # make_ruled_surface method can raise TypeError in case
                 # it can&#39;t work with given curve2.
                 # In this case we must use generic method.
-                debug(&#34;Can&#39;t make a native ruled surface: %s&#34;, e)
+                sv_logger.debug(&#34;Can&#39;t make a native ruled surface: %s&#34;, e)
                 pass
 
         # generic method
@@ -2873,7 +2873,7 @@ def build(cls, curve1, curve2, vmin=0.0, vmax=1.0):
             # make_ruled_surface method can raise TypeError in case
             # it can&#39;t work with given curve2.
             # In this case we must use generic method.
-            debug(&#34;Can&#39;t make a native ruled surface: %s&#34;, e)
+            sv_logger.debug(&#34;Can&#39;t make a native ruled surface: %s&#34;, e)
             pass
 
     # generic method

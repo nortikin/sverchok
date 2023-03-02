@@ -50,7 +50,7 @@ import zipfile
 import json
 import urllib
 
-from sverchok.utils.logging import debug, info, warning, error, exception
+from sverchok.utils.sv_logging import sv_logger
 from sverchok.utils.sv_requests import urlopen
 
 # pylint: disable=w0621
@@ -71,10 +71,10 @@ def get_file_obj_from_zip(fullpath):
                 break
 
         if not exported_name:
-            error(&#39;zip contains no files ending with .json&#39;)
+            sv_logger.error(&#39;zip contains no files ending with .json&#39;)
             return
 
-        debug(exported_name + &#39; &lt;&#39;)
+        sv_logger.debug(exported_name + &#39; &lt;&#39;)
         fp = jfile.open(exported_name, &#39;r&#39;)
         m = fp.read().decode()
         return json.loads(m)
@@ -98,16 +98,16 @@ def load_json_from_gist(gist_id, operator=None):
         except urllib.error.HTTPError as err:
             if err.code == 404:
                 message = &#39;url: &#39; + str(url) + &#39; doesn\&#39;t appear to be a valid url, copy it again from your source&#39;
-                error(message)
+                sv_logger.error(message)
                 if operator:
                     operator.report({&#39;ERROR&#39;}, message)
             else:
                 message = &#39;url error:&#39; + str(err.code)
-                error(message)
+                sv_logger.error(message)
                 if operator:
                     operator.report({&#39;ERROR&#39;}, message)
         except Exception as err:
-            exception(err)
+            sv_logger.exception(err)
             if operator:
                 operator.report({&#39;ERROR&#39;}, &#39;unspecified error, check your internet connection&#39;)
 
@@ -177,10 +177,10 @@ print(nodes_json['export_version'])</p></div>
                 break
 
         if not exported_name:
-            error(&#39;zip contains no files ending with .json&#39;)
+            sv_logger.error(&#39;zip contains no files ending with .json&#39;)
             return
 
-        debug(exported_name + &#39; &lt;&#39;)
+        sv_logger.debug(exported_name + &#39; &lt;&#39;)
         fp = jfile.open(exported_name, &#39;r&#39;)
         m = fp.read().decode()
         return json.loads(m)</code></pre>
@@ -216,16 +216,16 @@ operator: optional instance of bpy.types.Operator. Used for errors reporting.</p
         except urllib.error.HTTPError as err:
             if err.code == 404:
                 message = &#39;url: &#39; + str(url) + &#39; doesn\&#39;t appear to be a valid url, copy it again from your source&#39;
-                error(message)
+                sv_logger.error(message)
                 if operator:
                     operator.report({&#39;ERROR&#39;}, message)
             else:
                 message = &#39;url error:&#39; + str(err.code)
-                error(message)
+                sv_logger.error(message)
                 if operator:
                     operator.report({&#39;ERROR&#39;}, message)
         except Exception as err:
-            exception(err)
+            sv_logger.exception(err)
             if operator:
                 operator.report({&#39;ERROR&#39;}, &#39;unspecified error, check your internet connection&#39;)
 

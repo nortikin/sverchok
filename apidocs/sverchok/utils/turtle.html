@@ -45,10 +45,9 @@
 # ##### END GPL LICENSE BLOCK #####
 
 from collections import defaultdict
-import bmesh
-import mathutils
 
-from sverchok.utils.logging import debug
+from sverchok.utils.sv_logging import sv_logger
+
 
 class Turtle(object):
     &#34;&#34;&#34;
@@ -217,7 +216,7 @@ class Turtle(object):
         self.current_loop = next_loop
         self.current_face = next_loop.face
 
-        debug(&#34;Current face # := %s&#34;, self.current_face.index)
+        sv_logger.debug(&#34;Current face # := %s&#34;, self.current_face.index)
 
         if self.selection_mode == self.MASK:
             if not self.selection_mask:
@@ -249,7 +248,7 @@ class Turtle(object):
                 self.painting_index[painting_layer.name] = (self.painting_index[painting_layer.name] + 1) % n
                 value = painting_mask[self.painting_index[painting_layer.name]]
                 self.current_face[painting_layer] = value
-                debug(&#34;Paint face #%s, layer `%s&#39; with value `%s&#39;&#34;, self.current_face.index, painting_layer.name, value)
+                sv_logger.debug(&#34;Paint face #%s, layer `%s&#39; with value `%s&#39;&#34;, self.current_face.index, painting_layer.name, value)
 
     def get_opposite_loop(self, loop, bias=None):
         &#34;&#34;&#34;
@@ -515,21 +514,21 @@ class Turtle(object):
         Mark the current face as selected.
         &#34;&#34;&#34;
         self.current_face.select = True
-        debug(&#34;Selecting face #%s&#34;, self.current_face.index)
+        sv_logger.debug(&#34;Selecting face #%s&#34;, self.current_face.index)
 
     def unselect(self):
         &#34;&#34;&#34;
         Mark the current face as not selected.
         &#34;&#34;&#34;
         self.current_face.select = False
-        debug(&#34;Unselecting face #%s&#34;, self.current_face.index)
+        sv_logger.debug(&#34;Unselecting face #%s&#34;, self.current_face.index)
 
     def toggle(self):
         &#34;&#34;&#34;
         Toggle the selection state of the current face.
         &#34;&#34;&#34;
         self.current_face.select = not self.current_face.select
-        debug(&#34;Set face #%s selection := %s&#34;, self.current_face.index, self.current_face.select)
+        sv_logger.debug(&#34;Set face #%s selection := %s&#34;, self.current_face.index, self.current_face.select)
 
     def start_selecting(self, mode = None, mask=None):
         &#34;&#34;&#34;
@@ -963,7 +962,7 @@ is already at obstacle with turtle.is_at_obstacle.</p></div>
         self.current_loop = next_loop
         self.current_face = next_loop.face
 
-        debug(&#34;Current face # := %s&#34;, self.current_face.index)
+        sv_logger.debug(&#34;Current face # := %s&#34;, self.current_face.index)
 
         if self.selection_mode == self.MASK:
             if not self.selection_mask:
@@ -995,7 +994,7 @@ is already at obstacle with turtle.is_at_obstacle.</p></div>
                 self.painting_index[painting_layer.name] = (self.painting_index[painting_layer.name] + 1) % n
                 value = painting_mask[self.painting_index[painting_layer.name]]
                 self.current_face[painting_layer] = value
-                debug(&#34;Paint face #%s, layer `%s&#39; with value `%s&#39;&#34;, self.current_face.index, painting_layer.name, value)
+                sv_logger.debug(&#34;Paint face #%s, layer `%s&#39; with value `%s&#39;&#34;, self.current_face.index, painting_layer.name, value)
 
     def get_opposite_loop(self, loop, bias=None):
         &#34;&#34;&#34;
@@ -1261,21 +1260,21 @@ is already at obstacle with turtle.is_at_obstacle.</p></div>
         Mark the current face as selected.
         &#34;&#34;&#34;
         self.current_face.select = True
-        debug(&#34;Selecting face #%s&#34;, self.current_face.index)
+        sv_logger.debug(&#34;Selecting face #%s&#34;, self.current_face.index)
 
     def unselect(self):
         &#34;&#34;&#34;
         Mark the current face as not selected.
         &#34;&#34;&#34;
         self.current_face.select = False
-        debug(&#34;Unselecting face #%s&#34;, self.current_face.index)
+        sv_logger.debug(&#34;Unselecting face #%s&#34;, self.current_face.index)
 
     def toggle(self):
         &#34;&#34;&#34;
         Toggle the selection state of the current face.
         &#34;&#34;&#34;
         self.current_face.select = not self.current_face.select
-        debug(&#34;Set face #%s selection := %s&#34;, self.current_face.index, self.current_face.select)
+        sv_logger.debug(&#34;Set face #%s selection := %s&#34;, self.current_face.index, self.current_face.select)
 
     def start_selecting(self, mode = None, mask=None):
         &#34;&#34;&#34;
@@ -1651,7 +1650,7 @@ if it is in "start_painting()" mode, according to painting masks.</p></div>
     self.current_loop = next_loop
     self.current_face = next_loop.face
 
-    debug(&#34;Current face # := %s&#34;, self.current_face.index)
+    sv_logger.debug(&#34;Current face # := %s&#34;, self.current_face.index)
 
     if self.selection_mode == self.MASK:
         if not self.selection_mask:
@@ -1683,7 +1682,7 @@ if it is in "start_painting()" mode, according to painting masks.</p></div>
             self.painting_index[painting_layer.name] = (self.painting_index[painting_layer.name] + 1) % n
             value = painting_mask[self.painting_index[painting_layer.name]]
             self.current_face[painting_layer] = value
-            debug(&#34;Paint face #%s, layer `%s&#39; with value `%s&#39;&#34;, self.current_face.index, painting_layer.name, value)</code></pre>
+            sv_logger.debug(&#34;Paint face #%s, layer `%s&#39; with value `%s&#39;&#34;, self.current_face.index, painting_layer.name, value)</code></pre>
 </details>
 </dd>
 <dt id="sverchok.utils.turtle.Turtle.declare_painting_layer"><code class="name flex">
@@ -2153,7 +2152,7 @@ one painting layer, named Turtle.PAINT.</p></div>
     Mark the current face as selected.
     &#34;&#34;&#34;
     self.current_face.select = True
-    debug(&#34;Selecting face #%s&#34;, self.current_face.index)</code></pre>
+    sv_logger.debug(&#34;Selecting face #%s&#34;, self.current_face.index)</code></pre>
 </details>
 </dd>
 <dt id="sverchok.utils.turtle.Turtle.set_is_obstacle"><code class="name flex">
@@ -2513,7 +2512,7 @@ number of times.</p></div>
     Toggle the selection state of the current face.
     &#34;&#34;&#34;
     self.current_face.select = not self.current_face.select
-    debug(&#34;Set face #%s selection := %s&#34;, self.current_face.index, self.current_face.select)</code></pre>
+    sv_logger.debug(&#34;Set face #%s selection := %s&#34;, self.current_face.index, self.current_face.select)</code></pre>
 </details>
 </dd>
 <dt id="sverchok.utils.turtle.Turtle.turn_next"><code class="name flex">
@@ -2671,7 +2670,7 @@ number of times.</p></div>
     Mark the current face as not selected.
     &#34;&#34;&#34;
     self.current_face.select = False
-    debug(&#34;Unselecting face #%s&#34;, self.current_face.index)</code></pre>
+    sv_logger.debug(&#34;Unselecting face #%s&#34;, self.current_face.index)</code></pre>
 </details>
 </dd>
 <dt id="sverchok.utils.turtle.Turtle.was_at_face"><code class="name flex">

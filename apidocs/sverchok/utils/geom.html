@@ -64,10 +64,6 @@ from math import sin, cos, sqrt, acos, pi, atan
 import numpy as np
 from numpy import linalg
 from functools import wraps
-import time
-
-import bpy
-import bmesh
 import mathutils
 from mathutils import Matrix, Vector
 from mathutils.geometry import interpolate_bezier, intersect_line_line, intersect_point_line
@@ -75,11 +71,9 @@ from mathutils.geometry import interpolate_bezier, intersect_line_line, intersec
 from sverchok.utils.modules.geom_primitives import (
     circle, arc, quad, arc_slice, rect, grid, line)
 
-from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
-from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh
-from sverchok.data_structure import match_long_repeat, describe_data_shape
-from sverchok.utils.math import np_mixed_product, np_dot
-from sverchok.utils.logging import debug, info
+from sverchok.data_structure import match_long_repeat
+from sverchok.utils.math import np_mixed_product
+from sverchok.utils.sv_logging import sv_logger
 
 # njit is a light-wrapper around numba.njit, if found
 from sverchok.dependencies import numba  # not strictly needed i think...
@@ -586,7 +580,7 @@ class Spline2D(object):
             norm = np.linalg.norm(n)
             if norm != 0:
                 n = n / norm
-            #debug(&#34;DU: {}, DV: {}, N: {}&#34;.format(du, dv, n))
+            # sv_logger.debug(&#34;DU: {}, DV: {}, N: {}&#34;.format(du, dv, n))
             result = tuple(n)
             self._normal_cache[(u,v)] = result
             return result
@@ -606,7 +600,7 @@ class GenerateLookup():
         self.acquire_lookup_table()
         self.get_buckets()
         # for idx, (k, v) in enumerate(sorted(self.lookup.items())):
-        #     debug(k, v)
+        #     sv_logger.debug(k, v)
 
     def find_bucket(self, factor):
         for bucket_min, bucket_max in zip(self.buckets[:-1], self.buckets[1:]):
@@ -1211,7 +1205,7 @@ class PlaneEquation(object):
         output: LineEquation or None, in case two planes are parallel.
         &#34;&#34;&#34;
         if self.is_parallel(plane2):
-            debug(&#34;{} is parallel to {}&#34;.format(self, plane2))
+            sv_logger.debug(&#34;{} is parallel to {}&#34;.format(self, plane2))
             return None
 
         direction = self.normal.cross(plane2.normal)
@@ -5781,7 +5775,7 @@ def f2(self):
         self.acquire_lookup_table()
         self.get_buckets()
         # for idx, (k, v) in enumerate(sorted(self.lookup.items())):
-        #     debug(k, v)
+        #     sv_logger.debug(k, v)
 
     def find_bucket(self, factor):
         for bucket_min, bucket_max in zip(self.buckets[:-1], self.buckets[1:]):
@@ -7544,7 +7538,7 @@ plane:</p>
         output: LineEquation or None, in case two planes are parallel.
         &#34;&#34;&#34;
         if self.is_parallel(plane2):
-            debug(&#34;{} is parallel to {}&#34;.format(self, plane2))
+            sv_logger.debug(&#34;{} is parallel to {}&#34;.format(self, plane2))
             return None
 
         direction = self.normal.cross(plane2.normal)
@@ -7977,7 +7971,7 @@ output: LineEquation or None, in case two planes are parallel.</p></div>
     output: LineEquation or None, in case two planes are parallel.
     &#34;&#34;&#34;
     if self.is_parallel(plane2):
-        debug(&#34;{} is parallel to {}&#34;.format(self, plane2))
+        sv_logger.debug(&#34;{} is parallel to {}&#34;.format(self, plane2))
         return None
 
     direction = self.normal.cross(plane2.normal)
@@ -8829,7 +8823,7 @@ metric: string, one of "DISTANCE", "MANHATTAN", "POINTS", "CHEBYSHEV".</p></div>
             norm = np.linalg.norm(n)
             if norm != 0:
                 n = n / norm
-            #debug(&#34;DU: {}, DV: {}, N: {}&#34;.format(du, dv, n))
+            # sv_logger.debug(&#34;DU: {}, DV: {}, N: {}&#34;.format(du, dv, n))
             result = tuple(n)
             self._normal_cache[(u,v)] = result
             return result</code></pre>
@@ -8920,7 +8914,7 @@ Returns 3-tuple of floats.</p>
         norm = np.linalg.norm(n)
         if norm != 0:
             n = n / norm
-        #debug(&#34;DU: {}, DV: {}, N: {}&#34;.format(du, dv, n))
+        # sv_logger.debug(&#34;DU: {}, DV: {}, N: {}&#34;.format(du, dv, n))
         result = tuple(n)
         self._normal_cache[(u,v)] = result
         return result</code></pre>

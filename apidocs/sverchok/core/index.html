@@ -27,8 +27,12 @@
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">import importlib
+import logging
 import sys
-
+import sverchok
+import bpy
+from sverchok.utils.development import get_version_string
+from sverchok.utils.sv_logging import add_file_handler, remove_console_handler
 
 root_modules = [
     &#34;dependencies&#34;,
@@ -112,6 +116,13 @@ def import_settings(imported_modules):
     imported_modules.append(settings)
 
 
+def import_logging(imported_modules):
+    &#34;&#34;&#34;Should be registered second after add-on settings&#34;&#34;&#34;
+    module = importlib.import_module(&#34;.sv_logging&#34;, &#34;sverchok.utils&#34;)
+    # the module will be in imported_utils_modules - move sv_logging to core?
+    # imported_modules.append(module)
+
+
 def import_all_modules(imported_modules, mods_bases):
     for mods, base in mods_bases:
         import_modules(mods, base, imported_modules)
@@ -141,8 +152,39 @@ def init_architecture():
     # print(&#39;sv: import settings&#39;)
     import_settings(imported_modules)
     # print(&#39;sv: import all modules&#39;)
+    import_logging(imported_modules)
     import_all_modules(imported_modules, mods_bases)
     return imported_modules
+
+
+def enable_logging():
+    &#34;&#34;&#34;Should be called after registration the add-on settings.
+    Adds additional handlers according the add-on settings and set logging level&#34;&#34;&#34;
+    if sverchok.reload_event:
+        return
+
+    addon = bpy.context.preferences.addons.get(sverchok.__name__)
+    prefs = addon.preferences
+
+    sv_logger = logging.getLogger(&#39;sverchok&#39;)
+    level = getattr(logging, prefs.log_level)
+    sv_logger.setLevel(level)
+    if prefs.log_to_file:
+        add_file_handler(prefs.log_file_name)
+    if not prefs.log_to_console:
+        remove_console_handler()
+
+    logging.captureWarnings(True)
+    sv_logger.info(f&#39;Initializing Sverchok logging (level={prefs.log_level}). &#39;
+                   f&#39;Blender version={bpy.app.version_string},&#39;
+                   f&#39; Sverchok version={get_version_string()}&#39;)
+
+
+def disable_logging():
+    sv_logger = logging.getLogger(&#39;sverchok&#39;)
+    for handler in sv_logger.handlers[:]:
+        handler.close()
+        sv_logger.removeHandler(handler)
 
 
 def interupted_activation_detected():
@@ -216,6 +258,55 @@ context</p></div>
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
+<dt id="sverchok.core.disable_logging"><code class="name flex">
+<span>def <span class="ident">disable_logging</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def disable_logging():
+    sv_logger = logging.getLogger(&#39;sverchok&#39;)
+    for handler in sv_logger.handlers[:]:
+        handler.close()
+        sv_logger.removeHandler(handler)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.core.enable_logging"><code class="name flex">
+<span>def <span class="ident">enable_logging</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Should be called after registration the add-on settings.
+Adds additional handlers according the add-on settings and set logging level</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def enable_logging():
+    &#34;&#34;&#34;Should be called after registration the add-on settings.
+    Adds additional handlers according the add-on settings and set logging level&#34;&#34;&#34;
+    if sverchok.reload_event:
+        return
+
+    addon = bpy.context.preferences.addons.get(sverchok.__name__)
+    prefs = addon.preferences
+
+    sv_logger = logging.getLogger(&#39;sverchok&#39;)
+    level = getattr(logging, prefs.log_level)
+    sv_logger.setLevel(level)
+    if prefs.log_to_file:
+        add_file_handler(prefs.log_file_name)
+    if not prefs.log_to_console:
+        remove_console_handler()
+
+    logging.captureWarnings(True)
+    sv_logger.info(f&#39;Initializing Sverchok logging (level={prefs.log_level}). &#39;
+                   f&#39;Blender version={bpy.app.version_string},&#39;
+                   f&#39; Sverchok version={get_version_string()}&#39;)</code></pre>
+</details>
+</dd>
 <dt id="sverchok.core.handle_reload_event"><code class="name flex">
 <span>def <span class="ident">handle_reload_event</span></span>(<span>imported_modules)</span>
 </code></dt>
@@ -254,6 +345,22 @@ context</p></div>
 <pre><code class="python">def import_all_modules(imported_modules, mods_bases):
     for mods, base in mods_bases:
         import_modules(mods, base, imported_modules)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.core.import_logging"><code class="name flex">
+<span>def <span class="ident">import_logging</span></span>(<span>imported_modules)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Should be registered second after add-on settings</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def import_logging(imported_modules):
+    &#34;&#34;&#34;Should be registered second after add-on settings&#34;&#34;&#34;
+    module = importlib.import_module(&#34;.sv_logging&#34;, &#34;sverchok.utils&#34;)
+    # the module will be in imported_utils_modules - move sv_logging to core?
+    # imported_modules.append(module)</code></pre>
 </details>
 </dd>
 <dt id="sverchok.core.import_modules"><code class="name flex">
@@ -363,6 +470,7 @@ List of core modules is used for calling their register function.</p></div>
     # print(&#39;sv: import settings&#39;)
     import_settings(imported_modules)
     # print(&#39;sv: import all modules&#39;)
+    import_logging(imported_modules)
     import_all_modules(imported_modules, mods_bases)
     return imported_modules</code></pre>
 </details>
@@ -448,8 +556,11 @@ List of core modules is used for calling their register function.</p></div>
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
+<li><code><a title="sverchok.core.disable_logging" href="#sverchok.core.disable_logging">disable_logging</a></code></li>
+<li><code><a title="sverchok.core.enable_logging" href="#sverchok.core.enable_logging">enable_logging</a></code></li>
 <li><code><a title="sverchok.core.handle_reload_event" href="#sverchok.core.handle_reload_event">handle_reload_event</a></code></li>
 <li><code><a title="sverchok.core.import_all_modules" href="#sverchok.core.import_all_modules">import_all_modules</a></code></li>
+<li><code><a title="sverchok.core.import_logging" href="#sverchok.core.import_logging">import_logging</a></code></li>
 <li><code><a title="sverchok.core.import_modules" href="#sverchok.core.import_modules">import_modules</a></code></li>
 <li><code><a title="sverchok.core.import_nodes" href="#sverchok.core.import_nodes">import_nodes</a></code></li>
 <li><code><a title="sverchok.core.import_settings" href="#sverchok.core.import_settings">import_settings</a></code></li>

@@ -39,14 +39,12 @@ General definition of Sverchok curve classes and basic utilities.
 &#34;&#34;&#34;
 
 import numpy as np
-from math import sin, cos, pi, radians, sqrt
 
 from mathutils import Vector, Matrix
 
-from sverchok.utils.geom import LineEquation, CubicSpline
 from sverchok.utils.integrate import TrapezoidIntegral
-from sverchok.utils.logging import info, error
-from sverchok.utils.math import binomial, binomial_array
+from sverchok.utils.sv_logging import sv_logger
+from sverchok.utils.math import binomial_array
 from sverchok.utils.nurbs_common import SvNurbsMaths, from_homogenous
 from sverchok.utils.curve import knotvector as sv_knotvector
 
@@ -397,10 +395,10 @@ class SvCurve(object):
             matrices_np = np.linalg.inv(matrices_np)
             return matrices_np, normals, binormals
         except np.linalg.LinAlgError as e:
-            error(&#34;Some of matrices are singular:&#34;)
+            sv_logger.error(&#34;Some of matrices are singular:&#34;)
             for i, m in enumerate(matrices_np):
                 if abs(np.linalg.det(m) &lt; 1e-5):
-                    error(&#34;M[%s] (t = %s):\n%s&#34;, i, ts[i], m)
+                    sv_logger.error(&#34;M[%s] (t = %s):\n%s&#34;, i, ts[i], m)
             raise e
 
     def zero_torsion_frame_array(self, ts, tangent_delta=None):
@@ -1800,10 +1798,10 @@ R is diagonal matrix.</p>
             matrices_np = np.linalg.inv(matrices_np)
             return matrices_np, normals, binormals
         except np.linalg.LinAlgError as e:
-            error(&#34;Some of matrices are singular:&#34;)
+            sv_logger.error(&#34;Some of matrices are singular:&#34;)
             for i, m in enumerate(matrices_np):
                 if abs(np.linalg.det(m) &lt; 1e-5):
-                    error(&#34;M[%s] (t = %s):\n%s&#34;, i, ts[i], m)
+                    sv_logger.error(&#34;M[%s] (t = %s):\n%s&#34;, i, ts[i], m)
             raise e
 
     def zero_torsion_frame_array(self, ts, tangent_delta=None):
@@ -2258,10 +2256,10 @@ algorithm will raise a general LinAlgError exception if it can't calculate the m
         matrices_np = np.linalg.inv(matrices_np)
         return matrices_np, normals, binormals
     except np.linalg.LinAlgError as e:
-        error(&#34;Some of matrices are singular:&#34;)
+        sv_logger.error(&#34;Some of matrices are singular:&#34;)
         for i, m in enumerate(matrices_np):
             if abs(np.linalg.det(m) &lt; 1e-5):
-                error(&#34;M[%s] (t = %s):\n%s&#34;, i, ts[i], m)
+                sv_logger.error(&#34;M[%s] (t = %s):\n%s&#34;, i, ts[i], m)
         raise e</code></pre>
 </details>
 </dd>

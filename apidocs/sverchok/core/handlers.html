@@ -29,16 +29,16 @@
 <pre><code class="python">import bpy
 from bpy.app.handlers import persistent
 
+import sverchok
 from sverchok import old_nodes
 from sverchok import data_structure
 import sverchok.core.events as ev
 import sverchok.core.tasks as ts
-import sverchok.utils.logging as log
 from sverchok.core.event_system import handle_event
 from sverchok.core.socket_data import clear_all_socket_cache
 from sverchok.ui import bgl_callback_nodeview, bgl_callback_3dview
 from sverchok.utils.handle_blender_data import BlTrees
-from sverchok.utils.logging import catch_log_error, debug
+from sverchok.utils.sv_logging import catch_log_error, TextBufferHandler, sv_logger
 import sverchok.settings as settings
 
 _state = {&#39;frame&#39;: None}
@@ -87,7 +87,7 @@ def sv_handler_undo_post(scene):
         num_to_test_against += len(ng.nodes)
 
     if undo_handler_node_count[&#39;sv_groups&#39;] != num_to_test_against:
-        debug(&#39;looks like a node was removed, cleaning&#39;)
+        sv_logger.debug(&#39;looks like a node was removed, cleaning&#39;)
         sv_clean(scene)
 
     undo_handler_node_count[&#39;sv_groups&#39;] = 0
@@ -182,6 +182,7 @@ def sv_post_load(scene):
     post_load handler is also called when Blender is first ran
     The method should initialize Sverchok parts which are required by loaded tree
     &#34;&#34;&#34;
+    TextBufferHandler.add_to_main_logger()
     from sverchok import node_tree, settings
 
     # ensure current nodeview view scale / location parameters reflect users&#39; system settings
@@ -225,7 +226,12 @@ def update_frame_change_mode():
 
 @persistent
 def save_pre_handler(scene):
-    log.clear_internal_buffer()
+    addon = bpy.context.preferences.addons.get(sverchok.__name__)
+    prefs = addon.preferences
+    if prefs.log_to_buffer_clean:
+        for handler in sv_logger.handlers:
+            if hasattr(handler, &#39;clear&#39;):
+                handler.clear()
 
 
 handler_dict = {
@@ -349,7 +355,12 @@ def call_user_functions_on_post_load_event(scene):
 </summary>
 <pre><code class="python">@persistent
 def save_pre_handler(scene):
-    log.clear_internal_buffer()</code></pre>
+    addon = bpy.context.preferences.addons.get(sverchok.__name__)
+    prefs = addon.preferences
+    if prefs.log_to_buffer_clean:
+        for handler in sv_logger.handlers:
+            if hasattr(handler, &#39;clear&#39;):
+                handler.clear()</code></pre>
 </details>
 </dd>
 <dt id="sverchok.core.handlers.set_frame_change"><code class="name flex">
@@ -421,7 +432,7 @@ def sv_handler_undo_post(scene):
         num_to_test_against += len(ng.nodes)
 
     if undo_handler_node_count[&#39;sv_groups&#39;] != num_to_test_against:
-        debug(&#39;looks like a node was removed, cleaning&#39;)
+        sv_logger.debug(&#39;looks like a node was removed, cleaning&#39;)
         sv_clean(scene)
 
     undo_handler_node_count[&#39;sv_groups&#39;] = 0
@@ -474,6 +485,7 @@ def sv_post_load(scene):
     post_load handler is also called when Blender is first ran
     The method should initialize Sverchok parts which are required by loaded tree
     &#34;&#34;&#34;
+    TextBufferHandler.add_to_main_logger()
     from sverchok import node_tree, settings
 
     # ensure current nodeview view scale / location parameters reflect users&#39; system settings

@@ -48,7 +48,7 @@ import cProfile
 import pstats
 from io import StringIO
 
-from sverchok.utils.logging import info
+from sverchok.utils.sv_logging import sv_logger
 from sverchok.utils.context_managers import sv_preferences
 
 # Global cProfile.Profile singleton
@@ -136,7 +136,7 @@ def dump_stats(sort = &#34;tottime&#34;, strip_dirs = False, file_path=None):
     &#34;&#34;&#34;
     profile = get_global_profile()
     if not profile.getstats():
-        info(&#34;There are no profiling results yet&#34;)
+        sv_logger.info(&#34;There are no profiling results yet&#34;)
         return
 
     if file_path is None:
@@ -146,8 +146,8 @@ def dump_stats(sort = &#34;tottime&#34;, strip_dirs = False, file_path=None):
             stats.strip_dirs()
         stats = stats.sort_stats(sort)
         stats.print_stats()
-        info(&#34;Profiling results:\n&#34; + stream.getvalue())
-        info(&#34;---------------------------&#34;)
+        sv_logger.info(&#34;Profiling results:\n&#34; + stream.getvalue())
+        sv_logger.info(&#34;---------------------------&#34;)
     else:
         with open(file_path, &#39;w&#39;) as stream:
             stats = pstats.Stats(profile, stream=stream)
@@ -155,7 +155,7 @@ def dump_stats(sort = &#34;tottime&#34;, strip_dirs = False, file_path=None):
                 stats.strip_dirs()
             stats = stats.sort_stats(sort)
             stats.print_stats()
-            info(&#34;Profiling results are written to %s&#34;, file_path)
+            sv_logger.info(&#34;Profiling results are written to %s&#34;, file_path)
 
 def save_stats(path):
     &#34;&#34;&#34;
@@ -164,11 +164,11 @@ def save_stats(path):
     &#34;&#34;&#34;
     profile = get_global_profile()
     if not profile.getstats():
-        info(&#34;There are no profiling results yet&#34;)
+        sv_logger.info(&#34;There are no profiling results yet&#34;)
         return
     stats = pstats.Stats(profile)
     stats.dump_stats(path)
-    info(&#34;Profiling statistics saved to %s.&#34;, path)
+    sv_logger.info(&#34;Profiling statistics saved to %s.&#34;, path)
 
 def have_gathered_stats():
     global _global_profile
@@ -206,7 +206,7 @@ def reset_stats():
     &#34;&#34;&#34;
     profile = get_global_profile()
     if not profile.getstats():
-        info(&#34;There are no profiling results yet&#34;)
+        sv_logger.info(&#34;There are no profiling results yet&#34;)
         return
 
     if file_path is None:
@@ -216,8 +216,8 @@ def reset_stats():
             stats.strip_dirs()
         stats = stats.sort_stats(sort)
         stats.print_stats()
-        info(&#34;Profiling results:\n&#34; + stream.getvalue())
-        info(&#34;---------------------------&#34;)
+        sv_logger.info(&#34;Profiling results:\n&#34; + stream.getvalue())
+        sv_logger.info(&#34;---------------------------&#34;)
     else:
         with open(file_path, &#39;w&#39;) as stream:
             stats = pstats.Stats(profile, stream=stream)
@@ -225,7 +225,7 @@ def reset_stats():
                 stats.strip_dirs()
             stats = stats.sort_stats(sort)
             stats.print_stats()
-            info(&#34;Profiling results are written to %s&#34;, file_path)</code></pre>
+            sv_logger.info(&#34;Profiling results are written to %s&#34;, file_path)</code></pre>
 </details>
 </dd>
 <dt id="sverchok.utils.profile.get_global_profile"><code class="name flex">
@@ -395,11 +395,11 @@ Such file can be parsed, for example, by gprof2dot utility.</p></div>
     &#34;&#34;&#34;
     profile = get_global_profile()
     if not profile.getstats():
-        info(&#34;There are no profiling results yet&#34;)
+        sv_logger.info(&#34;There are no profiling results yet&#34;)
         return
     stats = pstats.Stats(profile)
     stats.dump_stats(path)
-    info(&#34;Profiling statistics saved to %s.&#34;, path)</code></pre>
+    sv_logger.info(&#34;Profiling statistics saved to %s.&#34;, path)</code></pre>
 </details>
 </dd>
 </dl>

@@ -65,7 +65,7 @@ a file (or probably even between files =).
 &#34;&#34;&#34;
 
 
-import inspect
+import logging
 import sys
 import time
 from contextlib import contextmanager
@@ -84,8 +84,7 @@ from sverchok.core.event_system import handle_event
 from sverchok.data_structure import classproperty, post_load_call
 from sverchok.utils.sv_node_utils import recursive_framed_location_finder
 from sverchok.utils.docstring import SvDocstring
-import sverchok.utils.logging
-from sverchok.utils.logging import debug, catch_log_error, is_enabled_for
+from sverchok.utils.sv_logging import catch_log_error, sv_logger
 
 from sverchok.ui import color_def
 from sverchok.ui.nodes_replacement import set_inputs_mapping, set_outputs_mapping
@@ -125,13 +124,13 @@ class SvNodeTreeCommon:
         this is instead of calling `get_dpi_factor` on every redraw.
         &#34;&#34;&#34;
 
-        debug(f&#34;update_gl_scale_info called from {origin or self.name}&#34;)
+        sv_logger.debug(f&#34;update_gl_scale_info called from {origin or self.name}&#34;)
         try:
             from sverchok.utils.context_managers import sv_preferences
             with sv_preferences() as prefs:
                 prefs.set_nodeview_render_params(None)
         except Exception as err:
-            debug(&#39;failed to get gl scale info&#39;, err)
+            sv_logger.debug(&#39;failed to get gl scale info&#39;, err)
 
     @contextmanager
     def init_tree(self):
@@ -530,42 +529,30 @@ class NodeUtils:
     Most of them have nothing related with nodes and using as aliases of some functionality.
     The class can be surely ignored during creating of new nodes.
     &#34;&#34;&#34;
-    def get_logger(self):
-        if hasattr(self, &#34;draw_label&#34;):
-            name = self.draw_label()
-        else:
-            name = self.label
-        if not name:
-            name = self.bl_label
-        if not name:
-            name = self.__class__.__name__
+    @property
+    def sv_logger(self):
+        # todo inject node label into records?
+        return logging.getLogger(&#39;sverchok.nodes&#39;)
 
-        # add information about the module location
-        frame, _, line, *_ = inspect.stack()[2]
-        module = inspect.getmodule(frame)
-        module_name = module.__name__ if module is not None else &#39;&#39;
-        name = f&#39;{module_name} {line} ({name})&#39;
-        return sverchok.utils.logging.getLogger(name)
+    @property
+    def debug(self):
+        return self.sv_logger.debug
 
-    def debug(self, msg, *args, **kwargs):
-        if is_enabled_for(&#39;DEBUG&#39;):
-            self.get_logger().debug(msg, *args, **kwargs)
+    @property
+    def info(self):
+        return self.sv_logger.info
 
-    def info(self, msg, *args, **kwargs):
-        if is_enabled_for(&#39;INFO&#39;):
-            self.get_logger().info(msg, *args, **kwargs)
+    @property
+    def warning(self):
+        return self.sv_logger.warning
 
-    def warning(self, msg, *args, **kwargs):
-        if is_enabled_for(&#39;WARNING&#39;):
-            self.get_logger().warning(msg, *args, **kwargs)
+    @property
+    def error(self):
+        return self.sv_logger.error
 
-    def error(self, msg, *args, **kwargs):
-        if is_enabled_for(&#39;ERROR&#39;):
-            self.get_logger().error(msg, *args, **kwargs)
-
-    def exception(self, msg, *args, **kwargs):
-        if is_enabled_for(&#39;EXCEPTION&#39;):
-            self.get_logger().exception(msg, *args, **kwargs)
+    @property
+    def exception(self):
+        return self.sv_logger.exception
 
     def wrapper_tracked_ui_draw_op(self, layout_element, operator_idname, **keywords):
         &#34;&#34;&#34;
@@ -1242,42 +1229,30 @@ The class can be surely ignored during creating of new nodes.</p></div>
     Most of them have nothing related with nodes and using as aliases of some functionality.
     The class can be surely ignored during creating of new nodes.
     &#34;&#34;&#34;
-    def get_logger(self):
-        if hasattr(self, &#34;draw_label&#34;):
-            name = self.draw_label()
-        else:
-            name = self.label
-        if not name:
-            name = self.bl_label
-        if not name:
-            name = self.__class__.__name__
+    @property
+    def sv_logger(self):
+        # todo inject node label into records?
+        return logging.getLogger(&#39;sverchok.nodes&#39;)
 
-        # add information about the module location
-        frame, _, line, *_ = inspect.stack()[2]
-        module = inspect.getmodule(frame)
-        module_name = module.__name__ if module is not None else &#39;&#39;
-        name = f&#39;{module_name} {line} ({name})&#39;
-        return sverchok.utils.logging.getLogger(name)
+    @property
+    def debug(self):
+        return self.sv_logger.debug
 
-    def debug(self, msg, *args, **kwargs):
-        if is_enabled_for(&#39;DEBUG&#39;):
-            self.get_logger().debug(msg, *args, **kwargs)
+    @property
+    def info(self):
+        return self.sv_logger.info
 
-    def info(self, msg, *args, **kwargs):
-        if is_enabled_for(&#39;INFO&#39;):
-            self.get_logger().info(msg, *args, **kwargs)
+    @property
+    def warning(self):
+        return self.sv_logger.warning
 
-    def warning(self, msg, *args, **kwargs):
-        if is_enabled_for(&#39;WARNING&#39;):
-            self.get_logger().warning(msg, *args, **kwargs)
+    @property
+    def error(self):
+        return self.sv_logger.error
 
-    def error(self, msg, *args, **kwargs):
-        if is_enabled_for(&#39;ERROR&#39;):
-            self.get_logger().error(msg, *args, **kwargs)
-
-    def exception(self, msg, *args, **kwargs):
-        if is_enabled_for(&#39;EXCEPTION&#39;):
-            self.get_logger().exception(msg, *args, **kwargs)
+    @property
+    def exception(self):
+        return self.sv_logger.exception
 
     def wrapper_tracked_ui_draw_op(self, layout_element, operator_idname, **keywords):
         &#34;&#34;&#34;
@@ -1353,50 +1328,84 @@ The class can be surely ignored during creating of new nodes.</p></div>
 <ul class="hlist">
 <li><a title="sverchok.node_tree.SverchCustomTreeNode" href="#sverchok.node_tree.SverchCustomTreeNode">SverchCustomTreeNode</a></li>
 </ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sverchok.node_tree.NodeUtils.debug"><code class="name">var <span class="ident">debug</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def debug(self):
+    return self.sv_logger.debug</code></pre>
+</details>
+</dd>
+<dt id="sverchok.node_tree.NodeUtils.error"><code class="name">var <span class="ident">error</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def error(self):
+    return self.sv_logger.error</code></pre>
+</details>
+</dd>
+<dt id="sverchok.node_tree.NodeUtils.exception"><code class="name">var <span class="ident">exception</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def exception(self):
+    return self.sv_logger.exception</code></pre>
+</details>
+</dd>
+<dt id="sverchok.node_tree.NodeUtils.info"><code class="name">var <span class="ident">info</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def info(self):
+    return self.sv_logger.info</code></pre>
+</details>
+</dd>
+<dt id="sverchok.node_tree.NodeUtils.sv_logger"><code class="name">var <span class="ident">sv_logger</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def sv_logger(self):
+    # todo inject node label into records?
+    return logging.getLogger(&#39;sverchok.nodes&#39;)</code></pre>
+</details>
+</dd>
+<dt id="sverchok.node_tree.NodeUtils.warning"><code class="name">var <span class="ident">warning</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def warning(self):
+    return self.sv_logger.warning</code></pre>
+</details>
+</dd>
+</dl>
 <h3>Methods</h3>
 <dl>
-<dt id="sverchok.node_tree.NodeUtils.debug"><code class="name flex">
-<span>def <span class="ident">debug</span></span>(<span>self, msg, *args, **kwargs)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def debug(self, msg, *args, **kwargs):
-    if is_enabled_for(&#39;DEBUG&#39;):
-        self.get_logger().debug(msg, *args, **kwargs)</code></pre>
-</details>
-</dd>
-<dt id="sverchok.node_tree.NodeUtils.error"><code class="name flex">
-<span>def <span class="ident">error</span></span>(<span>self, msg, *args, **kwargs)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def error(self, msg, *args, **kwargs):
-    if is_enabled_for(&#39;ERROR&#39;):
-        self.get_logger().error(msg, *args, **kwargs)</code></pre>
-</details>
-</dd>
-<dt id="sverchok.node_tree.NodeUtils.exception"><code class="name flex">
-<span>def <span class="ident">exception</span></span>(<span>self, msg, *args, **kwargs)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def exception(self, msg, *args, **kwargs):
-    if is_enabled_for(&#39;EXCEPTION&#39;):
-        self.get_logger().exception(msg, *args, **kwargs)</code></pre>
-</details>
-</dd>
 <dt id="sverchok.node_tree.NodeUtils.get_bpy_data_from_name"><code class="name flex">
 <span>def <span class="ident">get_bpy_data_from_name</span></span>(<span>self, identifier, bpy_data_kind)</span>
 </code></dt>
@@ -1463,47 +1472,6 @@ regarding the need to trim the first 3 chars of a stored StringProperty, best le
     return None</code></pre>
 </details>
 </dd>
-<dt id="sverchok.node_tree.NodeUtils.get_logger"><code class="name flex">
-<span>def <span class="ident">get_logger</span></span>(<span>self)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def get_logger(self):
-    if hasattr(self, &#34;draw_label&#34;):
-        name = self.draw_label()
-    else:
-        name = self.label
-    if not name:
-        name = self.bl_label
-    if not name:
-        name = self.__class__.__name__
-
-    # add information about the module location
-    frame, _, line, *_ = inspect.stack()[2]
-    module = inspect.getmodule(frame)
-    module_name = module.__name__ if module is not None else &#39;&#39;
-    name = f&#39;{module_name} {line} ({name})&#39;
-    return sverchok.utils.logging.getLogger(name)</code></pre>
-</details>
-</dd>
-<dt id="sverchok.node_tree.NodeUtils.info"><code class="name flex">
-<span>def <span class="ident">info</span></span>(<span>self, msg, *args, **kwargs)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def info(self, msg, *args, **kwargs):
-    if is_enabled_for(&#39;INFO&#39;):
-        self.get_logger().info(msg, *args, **kwargs)</code></pre>
-</details>
-</dd>
 <dt id="sverchok.node_tree.NodeUtils.safe_socket_remove"><code class="name flex">
 <span>def <span class="ident">safe_socket_remove</span></span>(<span>self, kind, key, failure_message=None)</span>
 </code></dt>
@@ -1520,20 +1488,6 @@ regarding the need to trim the first 3 chars of a stored StringProperty, best le
     else:
         canned_msg = f&#34;{self.name}.{kind} has no socket named {key} - did not remove&#34;
         self.debug(failure_message or canned_msg)</code></pre>
-</details>
-</dd>
-<dt id="sverchok.node_tree.NodeUtils.warning"><code class="name flex">
-<span>def <span class="ident">warning</span></span>(<span>self, msg, *args, **kwargs)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def warning(self, msg, *args, **kwargs):
-    if is_enabled_for(&#39;WARNING&#39;):
-        self.get_logger().warning(msg, *args, **kwargs)</code></pre>
 </details>
 </dd>
 <dt id="sverchok.node_tree.NodeUtils.wrapper_tracked_ui_draw_op"><code class="name flex">
@@ -1611,13 +1565,13 @@ self.wrapper_tracked_ui_draw_op(row, "node.view3d_align_from", icon='CURSOR', te
         this is instead of calling `get_dpi_factor` on every redraw.
         &#34;&#34;&#34;
 
-        debug(f&#34;update_gl_scale_info called from {origin or self.name}&#34;)
+        sv_logger.debug(f&#34;update_gl_scale_info called from {origin or self.name}&#34;)
         try:
             from sverchok.utils.context_managers import sv_preferences
             with sv_preferences() as prefs:
                 prefs.set_nodeview_render_params(None)
         except Exception as err:
-            debug(&#39;failed to get gl scale info&#39;, err)
+            sv_logger.debug(&#39;failed to get gl scale info&#39;, err)
 
     @contextmanager
     def init_tree(self):
@@ -1653,11 +1607,11 @@ self.wrapper_tracked_ui_draw_op(row, "node.view3d_align_from", icon='CURSOR', te
 </ul>
 <h3>Class variables</h3>
 <dl>
-<dt id="sverchok.node_tree.SvNodeTreeCommon.show_time_mode"><code class="name">var <span class="ident">show_time_mode</span> : <_PropertyDeferred, <built-in function EnumProperty>, {'items': [('Per node', 'Per node', ''), ('Cumulative', 'Cumulative', '')], 'options': set(), 'update': <function <a title="sverchok.node_tree.SvNodeTreeCommon" href="#sverchok.node_tree.SvNodeTreeCommon">SvNodeTreeCommon</a>.<lambda> at 0x7fb6584ee160>, 'description': 'Mode of showing node update timings', 'attr': 'show_time_mode'}></code></dt>
+<dt id="sverchok.node_tree.SvNodeTreeCommon.show_time_mode"><code class="name">var <span class="ident">show_time_mode</span> : <_PropertyDeferred, <built-in function EnumProperty>, {'items': [('Per node', 'Per node', ''), ('Cumulative', 'Cumulative', '')], 'options': set(), 'update': <function <a title="sverchok.node_tree.SvNodeTreeCommon" href="#sverchok.node_tree.SvNodeTreeCommon">SvNodeTreeCommon</a>.<lambda> at 0x7fd7fd1bb8b0>, 'description': 'Mode of showing node update timings', 'attr': 'show_time_mode'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.node_tree.SvNodeTreeCommon.sv_show_time_nodes"><code class="name">var <span class="ident">sv_show_time_nodes</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Node times', 'default': False, 'options': set(), 'update': <function <a title="sverchok.node_tree.SvNodeTreeCommon" href="#sverchok.node_tree.SvNodeTreeCommon">SvNodeTreeCommon</a>.<lambda> at 0x7fb6584ee0d0>, 'attr': 'sv_show_time_nodes'}></code></dt>
+<dt id="sverchok.node_tree.SvNodeTreeCommon.sv_show_time_nodes"><code class="name">var <span class="ident">sv_show_time_nodes</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Node times', 'default': False, 'options': set(), 'update': <function <a title="sverchok.node_tree.SvNodeTreeCommon" href="#sverchok.node_tree.SvNodeTreeCommon">SvNodeTreeCommon</a>.<lambda> at 0x7fd7fd1bb820>, 'attr': 'sv_show_time_nodes'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -1737,13 +1691,13 @@ x,y and dpi scale info.</p>
     this is instead of calling `get_dpi_factor` on every redraw.
     &#34;&#34;&#34;
 
-    debug(f&#34;update_gl_scale_info called from {origin or self.name}&#34;)
+    sv_logger.debug(f&#34;update_gl_scale_info called from {origin or self.name}&#34;)
     try:
         from sverchok.utils.context_managers import sv_preferences
         with sv_preferences() as prefs:
             prefs.set_nodeview_render_params(None)
     except Exception as err:
-        debug(&#39;failed to get gl scale info&#39;, err)</code></pre>
+        sv_logger.debug(&#39;failed to get gl scale info&#39;, err)</code></pre>
 </details>
 </dd>
 <dt id="sverchok.node_tree.SvNodeTreeCommon.update_ui"><code class="name flex">
@@ -1941,11 +1895,11 @@ even if the tree is not in the Live update mode</p></div>
 effect not all nodes but only those which have property
 <code><a title="sverchok.node_tree.UpdateNodes.is_animatable" href="#sverchok.node_tree.UpdateNodes.is_animatable">UpdateNodes.is_animatable</a></code> enabled.</p></div>
 </dd>
-<dt id="sverchok.node_tree.SverchCustomTree.sv_draft"><code class="name">var <span class="ident">sv_draft</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Draft', 'description': 'Draft (simplified processing) mode', 'default': False, 'update': <function <a title="sverchok.node_tree.SverchCustomTree.on_draft_mode_changed" href="#sverchok.node_tree.SverchCustomTree.on_draft_mode_changed">SverchCustomTree.on_draft_mode_changed()</a> at 0x7fb6584ee550>, 'options': set(), 'attr': 'sv_draft'}></code></dt>
+<dt id="sverchok.node_tree.SverchCustomTree.sv_draft"><code class="name">var <span class="ident">sv_draft</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Draft', 'description': 'Draft (simplified processing) mode', 'default': False, 'update': <function <a title="sverchok.node_tree.SverchCustomTree.on_draft_mode_changed" href="#sverchok.node_tree.SverchCustomTree.on_draft_mode_changed">SverchCustomTree.on_draft_mode_changed()</a> at 0x7fd7fd1bbca0>, 'options': set(), 'attr': 'sv_draft'}></code></dt>
 <dd>
 <div class="desc"><p>Draft mode replaces selected properties of certain nodes with smaller values to lighten cpu load.</p></div>
 </dd>
-<dt id="sverchok.node_tree.SverchCustomTree.sv_process"><code class="name">var <span class="ident">sv_process</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Process', 'default': True, 'description': 'Update upon tree and node property changes', 'update': <function <a title="sverchok.node_tree.SverchCustomTree" href="#sverchok.node_tree.SverchCustomTree">SverchCustomTree</a>.<lambda> at 0x7fb6584ee5e0>, 'options': set(), 'attr': 'sv_process'}></code></dt>
+<dt id="sverchok.node_tree.SverchCustomTree.sv_process"><code class="name">var <span class="ident">sv_process</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Process', 'default': True, 'description': 'Update upon tree and node property changes', 'update': <function <a title="sverchok.node_tree.SverchCustomTree" href="#sverchok.node_tree.SverchCustomTree">SverchCustomTree</a>.<lambda> at 0x7fd7fd1bbd30>, 'options': set(), 'attr': 'sv_process'}></code></dt>
 <dd>
 <div class="desc"><p>If enabled it means that the tree will be evaluated upon changes in its
 topology, changes in node properties or scene changes made by user.
@@ -1966,7 +1920,7 @@ reevaluated upon changes in the scene. It will effect only nodes with
 <li>etc.</li>
 </ul></div>
 </dd>
-<dt id="sverchok.node_tree.SverchCustomTree.sv_show"><code class="name">var <span class="ident">sv_show</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Show', 'default': True, 'description': 'Show this layout', 'update': <function <a title="sverchok.node_tree.SverchCustomTree.turn_off_ng" href="#sverchok.node_tree.SverchCustomTree.turn_off_ng">SverchCustomTree.turn_off_ng()</a> at 0x7fb6584ee4c0>, 'options': set(), 'attr': 'sv_show'}></code></dt>
+<dt id="sverchok.node_tree.SverchCustomTree.sv_show"><code class="name">var <span class="ident">sv_show</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Show', 'default': True, 'description': 'Show this layout', 'update': <function <a title="sverchok.node_tree.SverchCustomTree.turn_off_ng" href="#sverchok.node_tree.SverchCustomTree.turn_off_ng">SverchCustomTree.turn_off_ng()</a> at 0x7fd7fd1bbc10>, 'options': set(), 'attr': 'sv_show'}></code></dt>
 <dd>
 <div class="desc"><p>See `SverchCustomTree.turn_off_ng</p></div>
 </dd>
@@ -2422,7 +2376,7 @@ until new release.</p>
 <li>sverchok.nodes.curve.adaptive_plot.SvAdaptivePlotCurveNode</li>
 <li>sverchok.nodes.curve.adaptive_plot_nurbs.SvAdaptivePlotNurbsCurveNode</li>
 <li>sverchok.nodes.curve.apply_field_to_curve.SvApplyFieldToCurveNode</li>
-<li>sverchok.nodes.curve.approximate_nurbs_curve.SvApproxNurbsCurveMk2Node</li>
+<li>sverchok.nodes.curve.approximate_nurbs_curve.SvApproxNurbsCurveMk3Node</li>
 <li>sverchok.nodes.curve.arc_3pt.SvArc3ptCurveNode</li>
 <li>sverchok.nodes.curve.arc_sed.SvArcSedCurveNode</li>
 <li>sverchok.nodes.curve.bezier_fit.SvExBezierCurveFitNode</li>
@@ -2869,7 +2823,7 @@ until new release.</p>
 <li>sverchok.nodes.spatial.voronoi_sphere.SvExVoronoiSphereNode</li>
 <li>sverchok.nodes.surface.adaptive_tessellate.SvAdaptiveTessellateNode</li>
 <li>sverchok.nodes.surface.apply_field_to_surface.SvApplyFieldToSurfaceNode</li>
-<li>sverchok.nodes.surface.approximate_nurbs_surface.SvExApproxNurbsSurfaceNode</li>
+<li>sverchok.nodes.surface.approximate_nurbs_surface.SvExApproxNurbsSurfaceNodeMK2</li>
 <li>sverchok.nodes.surface.blend_surface.SvBlendSurfaceNodeMk2</li>
 <li>sverchok.nodes.surface.coons_patch.SvCoonsPatchNode</li>
 <li>sverchok.nodes.surface.curvatures.SvSurfaceCurvaturesNode</li>
@@ -2882,7 +2836,7 @@ until new release.</p>
 <li>sverchok.nodes.surface.gauss_curvature.SvSurfaceGaussCurvatureNode</li>
 <li>sverchok.nodes.surface.gordon_surface.SvGordonSurfaceNode</li>
 <li>sverchok.nodes.surface.implicit_surface_raycast.SvExImplSurfaceRaycastNode</li>
-<li>sverchok.nodes.surface.interpolate_nurbs_surface.SvExInterpolateNurbsSurfaceNode</li>
+<li>sverchok.nodes.surface.interpolate_nurbs_surface.SvExInterpolateNurbsSurfaceNodeMK2</li>
 <li>sverchok.nodes.surface.interpolating_surface.SvInterpolatingSurfaceNode</li>
 <li>sverchok.nodes.surface.intersect_curve_surface.SvExCrossCurveSurfaceNode</li>
 <li>sverchok.nodes.surface.marching_cubes.SvExMarchingCubesNode</li>
@@ -3679,7 +3633,7 @@ This UI is displayed on a property panel of the tree editor.</p></div>
 </ul>
 <h3>Class variables</h3>
 <dl>
-<dt id="sverchok.node_tree.UpdateNodes.is_animatable"><code class="name">var <span class="ident">is_animatable</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Animate Node', 'description': 'Update Node on frame change', 'default': True, 'update': <function <a title="sverchok.node_tree.UpdateNodes" href="#sverchok.node_tree.UpdateNodes">UpdateNodes</a>.<lambda> at 0x7fb6584eeaf0>, 'attr': 'is_animatable'}></code></dt>
+<dt id="sverchok.node_tree.UpdateNodes.is_animatable"><code class="name">var <span class="ident">is_animatable</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Animate Node', 'description': 'Update Node on frame change', 'default': True, 'update': <function <a title="sverchok.node_tree.UpdateNodes" href="#sverchok.node_tree.UpdateNodes">UpdateNodes</a>.<lambda> at 0x7fd7fd1cc280>, 'attr': 'is_animatable'}></code></dt>
 <dd>
 <div class="desc"><p>A switch for user to make a node to update on frame changes in a scene.
 Use <code><a title="sverchok.node_tree.UpdateNodes.is_animation_dependent" href="#sverchok.node_tree.UpdateNodes.is_animation_dependent">UpdateNodes.is_animation_dependent</a></code> to display the option in node UI.</p></div>
@@ -3690,7 +3644,7 @@ Use <code><a title="sverchok.node_tree.UpdateNodes.is_animation_dependent" href=
 Also the node should use <code><a title="sverchok.node_tree.SverchCustomTreeNode.sv_draw_buttons" href="#sverchok.node_tree.SverchCustomTreeNode.sv_draw_buttons">SverchCustomTreeNode.sv_draw_buttons()</a></code>.</p>
 <p><img alt="image" src="https://user-images.githubusercontent.com/28003269/193507101-60a28c3f-50a1-4117-a66f-25b0b4e07e13.png"></p></div>
 </dd>
-<dt id="sverchok.node_tree.UpdateNodes.is_interactive"><code class="name">var <span class="ident">is_interactive</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'default': True, 'description': 'Update node upon changes in the scene', 'update': <function <a title="sverchok.node_tree.UpdateNodes.update_interactive_mode" href="#sverchok.node_tree.UpdateNodes.update_interactive_mode">UpdateNodes.update_interactive_mode()</a> at 0x7fb6584ee9d0>, 'name': 'Interactive', 'attr': 'is_interactive'}></code></dt>
+<dt id="sverchok.node_tree.UpdateNodes.is_interactive"><code class="name">var <span class="ident">is_interactive</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'default': True, 'description': 'Update node upon changes in the scene', 'update': <function <a title="sverchok.node_tree.UpdateNodes.update_interactive_mode" href="#sverchok.node_tree.UpdateNodes.update_interactive_mode">UpdateNodes.update_interactive_mode()</a> at 0x7fd7fd1cc160>, 'name': 'Interactive', 'attr': 'is_interactive'}></code></dt>
 <dd>
 <div class="desc"><p>When this option is on arbitrary changes in scene will update this node.
 Those changes can be:
@@ -3720,7 +3674,7 @@ should be used instead.</p>
 <pre><code class="language-text">⚠️ There is no sense to override this property
 </code></pre></div>
 </dd>
-<dt id="sverchok.node_tree.UpdateNodes.refresh"><code class="name">var <span class="ident">refresh</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Update Node', 'description': 'Update Node', 'update': <function <a title="sverchok.node_tree.UpdateNodes.refresh_node" href="#sverchok.node_tree.UpdateNodes.refresh_node">UpdateNodes.refresh_node()</a> at 0x7fb6584eea60>, 'attr': 'refresh'}></code></dt>
+<dt id="sverchok.node_tree.UpdateNodes.refresh"><code class="name">var <span class="ident">refresh</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Update Node', 'description': 'Update Node', 'update': <function <a title="sverchok.node_tree.UpdateNodes.refresh_node" href="#sverchok.node_tree.UpdateNodes.refresh_node">UpdateNodes.refresh_node()</a> at 0x7fd7fd1cc1f0>, 'attr': 'refresh'}></code></dt>
 <dd>
 <div class="desc"><p>See <code><a title="sverchok.node_tree.UpdateNodes.refresh_node" href="#sverchok.node_tree.UpdateNodes.refresh_node">UpdateNodes.refresh_node()</a></code>.</p>
 <p><img alt="image" src="https://user-images.githubusercontent.com/28003269/193505561-395ca65c-3354-4e23-b5f7-765b2d830e4b.png"></p>
@@ -4129,9 +4083,9 @@ in the tree editors space and to show execution time</p></div>
 <li><code><a title="sverchok.node_tree.NodeUtils.error" href="#sverchok.node_tree.NodeUtils.error">error</a></code></li>
 <li><code><a title="sverchok.node_tree.NodeUtils.exception" href="#sverchok.node_tree.NodeUtils.exception">exception</a></code></li>
 <li><code><a title="sverchok.node_tree.NodeUtils.get_bpy_data_from_name" href="#sverchok.node_tree.NodeUtils.get_bpy_data_from_name">get_bpy_data_from_name</a></code></li>
-<li><code><a title="sverchok.node_tree.NodeUtils.get_logger" href="#sverchok.node_tree.NodeUtils.get_logger">get_logger</a></code></li>
 <li><code><a title="sverchok.node_tree.NodeUtils.info" href="#sverchok.node_tree.NodeUtils.info">info</a></code></li>
 <li><code><a title="sverchok.node_tree.NodeUtils.safe_socket_remove" href="#sverchok.node_tree.NodeUtils.safe_socket_remove">safe_socket_remove</a></code></li>
+<li><code><a title="sverchok.node_tree.NodeUtils.sv_logger" href="#sverchok.node_tree.NodeUtils.sv_logger">sv_logger</a></code></li>
 <li><code><a title="sverchok.node_tree.NodeUtils.warning" href="#sverchok.node_tree.NodeUtils.warning">warning</a></code></li>
 <li><code><a title="sverchok.node_tree.NodeUtils.wrapper_tracked_ui_draw_op" href="#sverchok.node_tree.NodeUtils.wrapper_tracked_ui_draw_op">wrapper_tracked_ui_draw_op</a></code></li>
 </ul>
