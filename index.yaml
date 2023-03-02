@@ -74,8 +74,11 @@
         - SvKinkyCurveNode
         - SvBiArcNode
         - SvPolyArcNode
+        - ---
+        - SvPointCurveNode
     - SvExCurveFormulaNode
     - SvExCubicSplineNode
+    - SvCatmullRomSplineNode
     - SvTangentsCurveNode
     - SvExRbfCurveNode
     - SvExCirclifyNode
@@ -84,7 +87,7 @@
         - SvExBezierCurveFitNode
     - Curve NURBS:
         - SvExNurbsCurveNode
-        - SvApproxNurbsCurveMk2Node
+        - SvApproxNurbsCurveMk3Node
         - SvExInterpolateNurbsCurveNode
         - SvFilletCurveNode
         - SvDeconstructCurveNode
@@ -157,8 +160,8 @@
     - SvExMinSurfaceFromCurveNode
     - Surface NURBS:
         - SvExNurbsSurfaceNode
-        - SvExApproxNurbsSurfaceNode
-        - SvExInterpolateNurbsSurfaceNode
+        - SvExApproxNurbsSurfaceNodeMK2
+        - SvExInterpolateNurbsSurfaceNodeMK2
         - SvNurbsLoftNode
         - SvNurbsSweepNode
         - SvNurbsBirailNode
@@ -267,6 +270,7 @@
     - SvChamferSolidNode
     - SvFilletSolidNode
     - SvSolidBooleanNode
+    - SvSolidSectionNode
     - SvSolidGeneralFuseNode
     - SvMirrorSolidNode
     - SvOffsetSolidNode
@@ -786,6 +790,7 @@
     - icon_name: WORDWRAP_ON
     - extra_menu: AdvancedObjectsPartialMenu
     - SvFormulaNodeMk5
+    - SvNumExprNode
     - SvFormulaInterpolateNode
     - SvExecNodeMod
     - SvProfileNodeMK3
@@ -834,7 +839,7 @@
     - SvSvgPathNodeMk2
     - SvSvgMeshNode
     - SvSvgTextNode
-    - SvSvgDimensionNode
+    - SvSvgDimensionNodeMK2
     - SvSvgGroupNode
     - SvSvgFillStrokeNodeMk2
     - SvSvgPatternNode

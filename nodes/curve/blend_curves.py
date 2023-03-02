@@ -60,11 +60,11 @@ class SvBlendCurvesMk2Node(SverchCustomTreeNode, bpy.types.Node):
         update = update_sockets)
 
     smooth_modes = [
-            ('0', "0 - Position", "Connect ends of curves with straight line segment", 0),
-            ('1', "1 - Tangency", "Connect curves such that their tangents are smoothly joined", 1),
-            ('1b', "1 - Bi Arc", "Connect curves with Bi Arc, such that tangents are smoothly joined", 2),
-            ('2', "2 - Normals", "Connect curves such that their normals (second derivatives) are smoothly joined", 3),
-            ('3', "3 - Curvature", "Connect curves such that their curvatures (third derivatives) are smoothly joined", 4)
+            ('0',  "0 - Position", "Connect ends of curves with straight line segment", 0),
+            ('1',  "1 - Tangency", "Connect curves such that their tangents are smoothly joined", 1),
+            ('1b', "1b - Bi Arc", "Connect curves with Bi Arc, such that tangents are smoothly joined", 2),
+            ('2',  "2 - Normals", "Connect curves such that their normals (second derivatives) are smoothly joined", 3),
+            ('3',  "3 - Curvature", "Connect curves such that their curvatures (third derivatives) are smoothly joined", 4)
         ]
 
     smooth_mode : EnumProperty(
@@ -76,6 +76,7 @@ class SvBlendCurvesMk2Node(SverchCustomTreeNode, bpy.types.Node):
 
     cyclic : BoolProperty(
         name = "Cyclic",
+        description = "If checked, then the node will connect the end of last curve to the beginning of the first curve",
         default = False,
         update = updateNode)
 

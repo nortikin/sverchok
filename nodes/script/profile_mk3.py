@@ -27,7 +27,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.sv_node_utils import sync_pointer_and_stored_name
 from sverchok.core.sv_custom_exceptions import SvNoDataError
 from sverchok.data_structure import updateNode, match_long_repeat
-from sverchok.utils.logging import info, debug, warning
+from sverchok.utils.sv_logging import sv_logger
 from sverchok.utils.curve.algorithms import concatenate_curves, unify_curves_degree
 from sverchok.utils.sv_update_utils import sv_get_local_path
 
@@ -162,11 +162,11 @@ class SvPrifilizerMk3(bpy.types.Operator):
         precision = node.precision
         subdivisions = node.curve_points_count
         if not bpy.context.selected_objects:
-            warning('Pofiler: Select curve!')
+            sv_logger.warning('Pofiler: Select curve!')
             self.report({'INFO'}, 'Select CURVE first')
             return {'CANCELLED'}
         if not bpy.context.selected_objects[0].type == 'CURVE':
-            warning('Pofiler: NOT a curve selected')
+            sv_logger.warning('Pofiler: NOT a curve selected')
             self.report({'INFO'}, 'It is not a curve selected for profiler')
             return {'CANCELLED'}
 
@@ -177,7 +177,7 @@ class SvPrifilizerMk3(bpy.types.Operator):
         spline_type = objs[0].data.splines[0].type
         if spline_type in {'POLY', 'NURBS'}:
             msg = 'Pofiler: does not support {0} curve type yet'.format(spline_type)
-            warning(msg)
+            sv_logger.warning(msg)
             self.report({'INFO'}, msg)
             return {'CANCELLED'}
 

@@ -5,13 +5,9 @@ import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty, StringProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, match_long_repeat
-from sverchok.utils.modules.eval_formula import get_variables, sv_compile, safe_eval_compiled
-from sverchok.utils.logging import info, exception
-from sverchok.utils.math import from_cylindrical, from_spherical, to_cylindrical, to_spherical
-
-from sverchok.utils.math import coordinate_modes
+from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 from sverchok.utils.field.scalar import SvScalarField
+
 
 class SvScalarFieldEvaluateNode(SverchCustomTreeNode, bpy.types.Node):
     """

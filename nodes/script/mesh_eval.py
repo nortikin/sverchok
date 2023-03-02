@@ -19,9 +19,9 @@ import io
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.sv_node_utils import sync_pointer_and_stored_name
-from sverchok.data_structure import updateNode, dataCorrect, match_long_repeat
+from sverchok.data_structure import updateNode, match_long_repeat
 from sverchok.utils.script_importhelper import safe_names
-from sverchok.utils.logging import exception, info
+from sverchok.utils.sv_logging import sv_logger
 
 """
 JSON format:
@@ -76,7 +76,7 @@ def evaluate(json, variables):
                     val = safe_eval(c, variables)
                     #self.debug("EVAL: {} with {} => {}".format(c, variables, val))
                 except NameError as e:
-                    exception(e)
+                    sv_logger.exception(e)
                     val = 0.0
             else:
                 val = c

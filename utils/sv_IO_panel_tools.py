@@ -22,7 +22,7 @@ import zipfile
 import json
 import urllib
 
-from sverchok.utils.logging import debug, info, warning, error, exception
+from sverchok.utils.sv_logging import sv_logger
 from sverchok.utils.sv_requests import urlopen
 
 # pylint: disable=w0621
@@ -43,10 +43,10 @@ def get_file_obj_from_zip(fullpath):
                 break
 
         if not exported_name:
-            error('zip contains no files ending with .json')
+            sv_logger.error('zip contains no files ending with .json')
             return
 
-        debug(exported_name + ' <')
+        sv_logger.debug(exported_name + ' <')
         fp = jfile.open(exported_name, 'r')
         m = fp.read().decode()
         return json.loads(m)
@@ -70,16 +70,16 @@ def load_json_from_gist(gist_id, operator=None):
         except urllib.error.HTTPError as err:
             if err.code == 404:
                 message = 'url: ' + str(url) + ' doesn\'t appear to be a valid url, copy it again from your source'
-                error(message)
+                sv_logger.error(message)
                 if operator:
                     operator.report({'ERROR'}, message)
             else:
                 message = 'url error:' + str(err.code)
-                error(message)
+                sv_logger.error(message)
                 if operator:
                     operator.report({'ERROR'}, message)
         except Exception as err:
-            exception(err)
+            sv_logger.exception(err)
             if operator:
                 operator.report({'ERROR'}, 'unspecified error, check your internet connection')
 

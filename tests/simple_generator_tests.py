@@ -1,12 +1,12 @@
 
 from sverchok.utils.testing import *
-from sverchok.utils.logging import debug, info
 
 # Some "smoke tests" for simple generator nodes.
 # These test cases exist mostly in demonstration purposes,
 # I hardly think anyone is going to break them "just that easy".
 # Failure of these tests can also indicate that something
 # is badly broken in general node processing mechanism.
+
 
 class BoxNodeTest(NodeProcessTestCase):
     node_bl_idname = "SvBoxNodeMk2"

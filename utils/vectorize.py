@@ -5,12 +5,36 @@ import numpy as np
 
 from mathutils import Matrix
 
-from sverchok.data_structure import levels_of_list_or_np
-
+from sverchok.data_structure import fixed_iter, levels_of_list_or_np, numpy_full_list
 
 SvVerts = List[Tuple[float, float, float]]
 SvEdges = List[Tuple[int, int]]
 SvPolys = List[List[int]]
+
+
+def match_sockets(*sockets_data):
+    """
+    data1 = [[1,2,3]]
+    data2 = [[4,5], [6,7]]
+    data3 = [[8]]
+    for d1, d2, d3 in match_sockets(data1, data2, data3):
+        print(f"{d1=}, {d2=}, {d3=}")
+    # print(1) d1=[1,2,3], d2=[4,5,5], d3=[8]
+    # print(2) d2=[1,2,3], d2=[6,7,7], d3=[8]
+    """
+    obj_len = max(len(data) for data in sockets_data) if sockets_data else 0
+    sockets_data = [fixed_iter(d, obj_len) for d in sockets_data]
+    for objects in zip(*sockets_data):
+        data_len = max(len(d) for d in objects)
+        layer_data = []
+        for data in objects:
+            if len(data) != data_len and len(data) > 1:
+                if isinstance(data, np.ndarray):
+                    data = numpy_full_list(data, data_len)
+                else:  # Python list?
+                    data = list(fixed_iter(data, data_len))
+            layer_data.append(data)
+        yield layer_data
 
 
 def vectorize(func=None, *, match_mode="REPEAT"):

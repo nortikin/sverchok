@@ -4,10 +4,8 @@ import numpy as np
 import bpy
 from bpy.props import EnumProperty, IntProperty
 
-import sverchok
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level
-from sverchok.utils.logging import info, exception
+from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 from sverchok.utils.geom_2d.merge_mesh import crop_mesh_delaunay
 from sverchok.utils.sv_mesh_utils import mesh_join
 
@@ -17,6 +15,7 @@ from sverchok.utils.surface import SvSurface
 # This node requires delaunay_cdt function, which is available
 # since Blender 2.81 only. So the node will not be available in
 # Blender 2.80.
+
 
 class SvExTessellateTrimSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
     """

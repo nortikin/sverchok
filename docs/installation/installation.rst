@@ -6,9 +6,11 @@ Installation
     :width: 250
     :align: right
 
-There are two options from where to install Sverchok. If you want to get most stable version than it's recommended
-to download zip archive from the `last stable release page <https://github.com/nortikin/sverchok/releases/latest>`_.
-Also you can download zip archive with latest changes from `main GitHub page <https://github.com/nortikin/sverchok>`_.
+There are two options from where to install Sverchok. There are outdated releases, used as cut of development
+process, you can get zip archive from the `last release page <https://github.com/nortikin/sverchok/releases/latest>`_.
+But when you update addon with button inside nodes N panel it takes from main branch. Because active development
+accure inside master `you can download zip archive with latest changes from main GitHub page <https://github.com/nortikin/sverchok/archive/refs/heads/master.zip>`_.
+Also watchout on `main page in branches <https://github.com/nortikin/sverchok>`_.
 
 After the Sverchok archive is downloaded open property window in Blender (:kbd:`Ctrl+Alt+U`):
 

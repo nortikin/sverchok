@@ -1,11 +1,8 @@
 
-import bpy
 import addon_utils
 
-import unittest
-
 from sverchok.utils.testing import *
-from sverchok.utils.logging import debug, info
+
 
 @unittest.skip("Disabled temporarily")
 class InitTests(SverchokTestCase):
@@ -17,8 +14,8 @@ class InitTests(SverchokTestCase):
 
     def test_disable_enable(self):
         with self.assert_logs_no_errors():
-            info("Disabling Sverchok")
+            sv_logger.info("Disabling Sverchok")
             addon_utils.disable("sverchok")
-            info("Enabling Sverchok")
+            sv_logger.info("Enabling Sverchok")
             addon_utils.enable("sverchok")
 

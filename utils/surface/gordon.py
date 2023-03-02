@@ -1,22 +1,13 @@
 import numpy as np
-from collections import defaultdict
 
-from sverchok.utils.geom import Spline
-from sverchok.utils.nurbs_common import (
-        SvNurbsMaths, SvNurbsBasisFunctions,
-        nurbs_divide, from_homogenous
-    )
-from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.bezier import SvBezierCurve
-from sverchok.utils.curve.nurbs_algorithms import unify_curves, nurbs_curve_to_xoy, nurbs_curve_matrix
-from sverchok.utils.curve.algorithms import unify_curves_degree, SvCurveFrameCalculator, curve_frame_on_surface_array
+from sverchok.utils.curve.nurbs_algorithms import unify_curves
+from sverchok.utils.curve.algorithms import unify_curves_degree, curve_frame_on_surface_array
 from sverchok.utils.curve.nurbs_solver_applications import interpolate_nurbs_curve_with_tangents
-from sverchok.utils.surface.core import UnsupportedSurfaceTypeException
-from sverchok.utils.surface import SvSurface, SurfaceCurvatureCalculator, SurfaceDerivativesData
 from sverchok.utils.surface.nurbs import SvNurbsSurface, simple_loft, interpolate_nurbs_surface
 from sverchok.utils.surface.algorithms import unify_nurbs_surfaces
-from sverchok.utils.logging import getLogger
-from sverchok.data_structure import repeat_last_for_length
+from sverchok.utils.sv_logging import get_logger
+
 
 def reparametrize_by_segments(curve, t_values, tolerance=1e-2):
     # Reparametrize given curve so that parameter values from t_values parameter
@@ -86,7 +77,7 @@ def gordon_surface(u_curves, v_curves, intersections, metric='POINTS', u_knots=N
         raise Exception("Some of V-curves are rational. Rational curves are not supported for Gordon surface.")
 
     if logger is None:
-        logger = getLogger()
+        logger = get_logger()
 
     intersections = np.array(intersections)
 

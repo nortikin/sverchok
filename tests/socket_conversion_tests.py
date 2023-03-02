@@ -1,8 +1,7 @@
 from sverchok.core.update_system import prepare_input_data
-from mathutils import Matrix
 from sverchok.core.sv_custom_exceptions import ImplicitConversionProhibited
 from sverchok.utils.testing import *
-from sverchok.utils.logging import debug, info, error
+
 
 class SocketConversionTests(EmptyTreeTestCase):
 
@@ -89,11 +88,11 @@ class SocketConversionTests(EmptyTreeTestCase):
                 'SvFormulaNodeMk5': ["x", "y"],
                 'SvSetDataObjectNodeMK2': ["Objects"]
             }
-        info("starting socket conversion tests")
+
         for bl_idname in tested_nodes.keys():
             with self.subTest(bl_idname = bl_idname):
 
-                # info(f"creating SvNGonNode and {bl_idname}")
+                # sv_logger.info(f"creating SvNGonNode and {bl_idname}")
                 ngon = create_node("SvNGonNode")
                 node = create_node(bl_idname)
 
@@ -101,7 +100,7 @@ class SocketConversionTests(EmptyTreeTestCase):
                     node.formula = "__str__()"
 
                 for input_name in tested_nodes[bl_idname]:
-                    # info(f"Linking {ngon.name}'s vertex output ----> ({bl_idname}).inputs[{input_name}]")
+                    # sv_logger.info(f"Linking {ngon.name}'s vertex output ----> ({bl_idname}).inputs[{input_name}]")
                     self.tree.links.new(ngon.outputs["Vertices"], node.inputs[input_name])
 
                 # Trigger processing of the NGon node,
@@ -120,7 +119,7 @@ class SocketConversionTests(EmptyTreeTestCase):
                 except ImplicitConversionProhibited as e:
                     raise e
                 except Exception as e:
-                    info(e)
+                    sv_logger.info(e)
                 finally:
                     self.tree.nodes.remove(node)
                     self.tree.nodes.remove(ngon)

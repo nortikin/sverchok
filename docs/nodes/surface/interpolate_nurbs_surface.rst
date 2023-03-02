@@ -4,9 +4,10 @@ Interpolate NURBS Surface
 Dependencies
 ------------
 
-This node can optionally use Geomdl_ library to work.
+This node can optionally use Geomdl_ and FreeCAD_ library to work.
 
 .. _Geomdl: https://onurraufbingol.com/NURBS-Python/
+.. _FreeCAD: https://www.freecad.org/
 
 Functionality
 -------------
@@ -37,8 +38,9 @@ This node has the following inputs:
 * **USize**. This input is only available when **Input mode** parameter is set
   to **Single list**. The number of control points in a row. The default value
   is 5.
-* **Degree U**, **Degree V**. Degree of the surface along U and V directions,
-  correspondingly. The default value is 3.
+* **Degree U**, **Degree V**. Available only when Geomdl_ or built-in Sverchok implementations used.
+
+  Degree of the surface along U and V directions, correspondingly. The default value is 3.
 
 Parameters
 ----------
@@ -51,6 +53,9 @@ This node has the following parameters:
   * **Geomdl**. Use Geomdl_ library. This option is available only when Geomdl
     package is installed.
   * **Sverchok**. Use built-in Sverchok implementation.
+  * **FreeCAD**. Use FreeCAD_ library. This option is available only when FreeCAD
+    package is installed. The resulting surface is of degree 3 and continuity C2 
+    (except we use 2x2 or 2xN grid of Vertices) .
   
   In general (with large number of control points), built-in implementation
   should be faster; but Geomdl implementation is better tested.
@@ -64,21 +69,21 @@ This node has the following parameters:
   parameter is set to **Sverchok**. This defines the metric used to calculate
   surface's U, V parameter values corresponding to specified points. The
   available values are:
+  
+  * Manhattan
+  * Euclidean
+  * Points (just number of points from the beginning)
+  * Chebyshev
+  * Centripetal (square root of Euclidean distance).
 
-   * Manhattan
-   * Euclidean
-   * Points (just number of points from the beginning)
-   * Chebyshev
-   * Centripetal (square root of Euclidean distance).
-
-   The default value is Euclidean.
+  The default value is Euclidean.
 
 * **Input mode**. The available values are:
-
-   * **Single list**. The node expects a flat list of points for each surface.
-     It will be subdivided into rows according to **USize** input value.
-   * **Separate Lists**. The node expects a list of lists of points for each
-     surface.
+  
+  * **Single list**. The node expects a flat list of points for each surface.
+    It will be subdivided into rows according to **USize** input value.
+  
+  * **Separate Lists**. The node expects a list of lists of points for each surface.
  
 Outputs
 -------

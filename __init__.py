@@ -44,7 +44,7 @@ bl_info = {
     "name": "Sverchok",
     "author": "sverchok-b3d@ya.ru various authors see https://github.com/nortikin/sverchok/graphs/contributors",
     "version": (1, 2, 0),
-    "blender": (2, 93, 0),
+    "blender": (3, 5, 0),
     "location": "Node Editor",
     "category": "Node",
     "description": "Parametric node-based geometry programming",
@@ -117,6 +117,7 @@ imported_modules, node_modules, core = import_sverchok()
 def register():
     from sverchok.utils import ascii_print
     core.sv_register_modules(imported_modules)
+    core.enable_logging()
     core.sv_register_modules(core.imported_utils_modules())
     core.sv_register_modules(node_modules)
     ascii_print.show_welcome()
@@ -126,5 +127,6 @@ def unregister():
     core.sv_unregister_modules(imported_modules)
     core.sv_unregister_modules(core.imported_utils_modules())
     core.sv_unregister_modules(node_modules)
+    core.disable_logging()
 
 # EOF

@@ -5,7 +5,7 @@ from bpy.props import StringProperty, IntProperty, BoolProperty, EnumProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
-from sverchok.utils.logging import info
+from sverchok.utils.sv_logging import sv_logger
 from sverchok.dependencies import FreeCAD
 from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
 
@@ -149,7 +149,7 @@ class SvShowFcstdSketchNamesOp(bpy.types.Operator):
                 F.closeDocument(Fname)
 
         except:
-            info('FCStd read error')
+            sv_logger.info('FCStd read error')
 
         return labels
 
@@ -188,7 +188,7 @@ def LoadSketch(fc_file, sketch_filter, max_points, inv_filter, read_mode):
         F.setActiveDocument(Fname)
 
     except:
-        info('FCStd read error')
+        sv_logger.info('FCStd read error')
         return (Verts,Edges,Curves)
     
     #___________________SEARCH FOR SKETCHES

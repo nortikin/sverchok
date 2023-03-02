@@ -16,7 +16,7 @@ from typing import TYPE_CHECKING, Union, Generator, ContextManager
 import bpy
 from sverchok import old_nodes
 from sverchok.utils.sv_IO_panel_tools import get_file_obj_from_zip
-from sverchok.utils.logging import info, warning, getLogger, logging
+from sverchok.utils.sv_logging import sv_logger, get_logger, logging
 from sverchok.utils.handle_blender_data import BPYProperty, BlNode
 from sverchok.utils.sv_json_struct import FileStruct, NodePresetFileStruct
 
@@ -43,7 +43,7 @@ class JSONImporter:
                 structure = json.load(fp)
                 return cls(structure)
         else:
-            warning(f'File should have .zip or .json extension, got ".{path.rsplit(".")[-1]}" instead')
+            sv_logger.warning(f'File should have .zip or .json extension, got ".{path.rsplit(".")[-1]}" instead')
 
     def import_into_tree(self, tree: SverchCustomTree, print_log: bool = True):
         """Import json structure into given tree and update it"""
@@ -296,7 +296,7 @@ class FailsLog:
             yield
         except Exception as e:
             self._log[fail_name] += 1
-            logger = getLogger()
+            logger = get_logger()
             if logger.isEnabledFor(logging.DEBUG):
                 logger.debug(f'FAIL: "{fail_name}", {"SOURCE: " if source else ""}{source or ""}, {e}')
                 traceback.print_exc()
@@ -309,10 +309,10 @@ class FailsLog:
     def report_log_result(self):
         """Prints fails if their was or that they did not happen"""
         if self.has_fails:
-            warning(f'During import next fails has happened:')
+            sv_logger.warning(f'During import next fails has happened:')
             print(self.fail_message)
         else:
-            info(f'Import done with no fails')
+            sv_logger.info(f'Import done with no fails')
 
     @property
     def fail_message(self) -> str:

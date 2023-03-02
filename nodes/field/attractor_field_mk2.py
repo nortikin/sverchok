@@ -13,7 +13,9 @@ from sverchok.utils.field.scalar import (SvScalarFieldPointDistance,
             SvLineAttractorScalarField, SvPlaneAttractorScalarField, 
             SvCircleAttractorScalarField,
             SvEdgeAttractorScalarField,
-            SvBvhAttractorScalarField)
+            SvBvhAttractorScalarField,
+            SvBvhEdgesAttractorScalarField
+        )
 from sverchok.utils.field.vector import (SvVectorFieldPointDistance,
             SvAverageVectorField, SvKdtVectorField, 
             SvLineAttractorVectorField, SvPlaneAttractorVectorField,

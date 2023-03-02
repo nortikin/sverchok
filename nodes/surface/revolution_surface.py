@@ -7,9 +7,9 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
-from sverchok.utils.logging import info, exception
 from sverchok.utils.curve import SvCurve
 from sverchok.utils.surface.algorithms import SvRevolutionSurface
+
 
 class SvRevolutionSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
     """

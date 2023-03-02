@@ -1,13 +1,10 @@
-
-import numpy as np
-
 import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
-from sverchok.utils.logging import info, exception
 from sverchok.utils.curve import SvCurve, SvCurveLerpCurve
+
 
 class SvCurveLerpCurveNode(SverchCustomTreeNode, bpy.types.Node):
     """
@@ -20,6 +17,7 @@ class SvCurveLerpCurveNode(SverchCustomTreeNode, bpy.types.Node):
 
     coefficient : FloatProperty(
             name = "Coefficient",
+            description = "The interpolation coefficient. 0 is a curve1, 1 is a curve2",
             default = 0.5,
             update=updateNode)
 

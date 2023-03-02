@@ -30,10 +30,6 @@ from math import sin, cos, sqrt, acos, pi, atan
 import numpy as np
 from numpy import linalg
 from functools import wraps
-import time
-
-import bpy
-import bmesh
 import mathutils
 from mathutils import Matrix, Vector
 from mathutils.geometry import interpolate_bezier, intersect_line_line, intersect_point_line
@@ -41,11 +37,9 @@ from mathutils.geometry import interpolate_bezier, intersect_line_line, intersec
 from sverchok.utils.modules.geom_primitives import (
     circle, arc, quad, arc_slice, rect, grid, line)
 
-from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
-from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh
-from sverchok.data_structure import match_long_repeat, describe_data_shape
+from sverchok.data_structure import match_long_repeat
 from sverchok.utils.math import np_mixed_product
-from sverchok.utils.logging import debug, info
+from sverchok.utils.sv_logging import sv_logger
 
 # njit is a light-wrapper around numba.njit, if found
 from sverchok.dependencies import numba  # not strictly needed i think...
@@ -552,7 +546,7 @@ class Spline2D(object):
             norm = np.linalg.norm(n)
             if norm != 0:
                 n = n / norm
-            #debug("DU: {}, DV: {}, N: {}".format(du, dv, n))
+            # sv_logger.debug("DU: {}, DV: {}, N: {}".format(du, dv, n))
             result = tuple(n)
             self._normal_cache[(u,v)] = result
             return result
@@ -572,7 +566,7 @@ class GenerateLookup():
         self.acquire_lookup_table()
         self.get_buckets()
         # for idx, (k, v) in enumerate(sorted(self.lookup.items())):
-        #     debug(k, v)
+        #     sv_logger.debug(k, v)
 
     def find_bucket(self, factor):
         for bucket_min, bucket_max in zip(self.buckets[:-1], self.buckets[1:]):
@@ -1177,7 +1171,7 @@ class PlaneEquation(object):
         output: LineEquation or None, in case two planes are parallel.
         """
         if self.is_parallel(plane2):
-            debug("{} is parallel to {}".format(self, plane2))
+            sv_logger.debug("{} is parallel to {}".format(self, plane2))
             return None
 
         direction = self.normal.cross(plane2.normal)
@@ -1338,9 +1332,14 @@ class LineEquation(object):
         input: np.array of shape (n, 3)
         output: np.array of shape (n,)
         """
-        # TODO: there should be more effective way to do this
-        projection = self.projection_of_points(points)
-        return np.linalg.norm(points - projection, axis=1)
+        direction = np.array(self.direction)
+        point = np.array(self.point)
+        dv1 = point - points
+        dv1sq = (dv1 * dv1).sum(axis=1)
+        numerator = (dv1 * direction).sum(axis=1)**2
+        denominator = np.dot(direction, direction)
+        result = np.sqrt(dv1sq - numerator / denominator)
+        return result
 
     def projection_of_point(self, point):
         """

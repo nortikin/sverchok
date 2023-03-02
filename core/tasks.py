@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Optional, Generator
 import bpy
 from sverchok.data_structure import post_load_call
 from sverchok.core.sv_custom_exceptions import CancelError
-from sverchok.utils.logging import catch_log_error, debug
+from sverchok.utils.sv_logging import catch_log_error, sv_logger
 from sverchok.utils.profile import profile
 from sverchok.utils.handle_blender_data import BlTrees
 
@@ -119,7 +119,7 @@ class Tasks:
             t['SKIP_UPDATE'] = True
 
         gc.enable()
-        debug(f'Global update - {int((time() - self._start_time) * 1000)}ms')
+        sv_logger.debug(f'Global update - {int((time() - self._start_time) * 1000)}ms')
         del self._start_time
 
     @cached_property
@@ -143,7 +143,7 @@ class Tasks:
                         return area
                 except ReferenceError:
                     # probably all reports should be cleaned through search
-                    debug(f"Unable report a nodes updating progress")
+                    sv_logger.debug(f"Unable report a nodes updating progress")
 
     def _report_progress(self, text: str = None):
         """Show text in the tree editor header. If text is none the header

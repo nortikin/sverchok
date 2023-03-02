@@ -1,15 +1,8 @@
-
-from sverchok.utils.logging import info, exception
-
-import numpy as np
-from math import sqrt
-
 import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
-from sverchok.utils.geom import diameter
+from sverchok.data_structure import updateNode, zip_long_repeat
 
 from sverchok.utils.field.vector import SvBendAlongSurfaceField
 

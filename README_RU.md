@@ -61,7 +61,7 @@
 Установите как обычный адон к блендеру.  
   
 -  _Установка из пользовательских настроек_  
-   Скачать Сверчка с github  
+   [Скачать Сверчка с github](https://github.com/nortikin/sverchok/archive/refs/heads/master.zip)   
    User Preferences > Addons > install from file >   выбрать zip-архив > активировать Сверчка  
    Подтвердите выбор в файле startup.blend используя `Ctrl + U` и `Save User Settings`в меню Addons.  
 

@@ -10,14 +10,12 @@ General definition of Sverchok curve classes and basic utilities.
 """
 
 import numpy as np
-from math import sin, cos, pi, radians, sqrt
 
 from mathutils import Vector, Matrix
 
-from sverchok.utils.geom import LineEquation, CubicSpline
 from sverchok.utils.integrate import TrapezoidIntegral
-from sverchok.utils.logging import info, error
-from sverchok.utils.math import binomial, binomial_array
+from sverchok.utils.sv_logging import sv_logger
+from sverchok.utils.math import binomial_array
 from sverchok.utils.nurbs_common import SvNurbsMaths, from_homogenous
 from sverchok.utils.curve import knotvector as sv_knotvector
 
@@ -368,10 +366,10 @@ class SvCurve(object):
             matrices_np = np.linalg.inv(matrices_np)
             return matrices_np, normals, binormals
         except np.linalg.LinAlgError as e:
-            error("Some of matrices are singular:")
+            sv_logger.error("Some of matrices are singular:")
             for i, m in enumerate(matrices_np):
                 if abs(np.linalg.det(m) < 1e-5):
-                    error("M[%s] (t = %s):\n%s", i, ts[i], m)
+                    sv_logger.error("M[%s] (t = %s):\n%s", i, ts[i], m)
             raise e
 
     def zero_torsion_frame_array(self, ts, tangent_delta=None):
@@ -664,7 +662,8 @@ class SvReparametrizedCurve(SvCurve):
     @property
     def scale(self):
         u_min, u_max = self.curve.get_u_bounds()
-        return (u_max - u_min) / (self.new_u_max - self.new_u_min)
+        #return (u_max - u_min) / (self.new_u_max - self.new_u_min)
+        return  (self.new_u_max - self.new_u_min) / (u_max - u_min)
 
     def map_u(self, u):
         u_min, u_max = self.curve.get_u_bounds()
@@ -676,26 +675,26 @@ class SvReparametrizedCurve(SvCurve):
     def evaluate_array(self, ts):
         return self.curve.evaluate_array(self.map_u(ts))
 
-    def tangent(self, t, tangent_delta=None):
-        return self.scale * self.curve.tangent(self.map_u(t), tangent_delta=tangent_delta)
+    #def tangent(self, t, tangent_delta=None):
+    #    return self.scale * self.curve.tangent(self.map_u(t), tangent_delta=tangent_delta)
 
-    def tangent_array(self, ts, tangent_delta=None):
-        return self.scale * self.curve.tangent_array(self.map_u(ts), tangent_delta=tangent_delta)
+    #def tangent_array(self, ts, tangent_delta=None):
+    #    return self.scale * self.curve.tangent_array(self.map_u(ts), tangent_delta=tangent_delta)
 
-    def second_derivative_array(self, ts, tangent_delta=None):
-        return self.scale**2 * self.curve.second_derivative_array(self.map_u(ts), tangent_delta=tangent_delta)
+    #def second_derivative_array(self, ts, tangent_delta=None):
+    #    return self.scale**2 * self.curve.second_derivative_array(self.map_u(ts), tangent_delta=tangent_delta)
 
-    def third_derivative_array(self, ts, tangent_delta=None):
-        return self.scale**3 * self.curve.third_derivative_array(self.map_u(ts), tangent_delta=tangent_delta)
+    #def third_derivative_array(self, ts, tangent_delta=None):
+    #    return self.scale**3 * self.curve.third_derivative_array(self.map_u(ts), tangent_delta=tangent_delta)
 
-    def derivatives_array(self, n, ts, tangent_delta=None):
-        derivs = self.curve.derivatives_array(n, ts, tangent_delta=tangent_delta)
-        k = self.scale
-        array = []
-        for deriv in derivs:
-            array.append(k * deriv)
-            k = k * self.scale
-        return array
+#     def derivatives_array(self, n, ts, tangent_delta=None):
+#         derivs = self.curve.derivatives_array(n, ts, tangent_delta=tangent_delta)
+#         k = self.scale
+#         array = []
+#         for deriv in derivs:
+#             array.append(k * deriv)
+#             k = k * self.scale
+#         return array
 
 class SvReparametrizeCurve(SvCurve):
     def __init__(self, curve):

@@ -11,10 +11,8 @@ Definition of Sverchok NURBS curve abstract class and some implementations.
 
 from copy import deepcopy
 import numpy as np
-from math import pi, sqrt
-import traceback
+from math import pi
 
-from sverchok.utils.logging import info
 from sverchok.utils.curve.core import SvCurve, SvTaylorCurve, UnsupportedCurveTypeException, calc_taylor_nurbs_matrices
 from sverchok.utils.curve.bezier import SvBezierCurve
 from sverchok.utils.curve import knotvector as sv_knotvector
@@ -30,9 +28,8 @@ from sverchok.utils.nurbs_common import (
     )
 from sverchok.utils.surface.nurbs import SvNativeNurbsSurface, SvGeomdlSurface
 from sverchok.utils.surface.algorithms import nurbs_revolution_surface
-from sverchok.utils.math import binomial_array, cmp
 from sverchok.utils.geom import bounding_box, LineEquation, are_points_coplanar, get_common_plane
-from sverchok.utils.logging import getLogger
+from sverchok.utils.sv_logging import get_logger, sv_logger
 from sverchok.dependencies import geomdl
 
 if geomdl is not None:
@@ -73,7 +70,7 @@ class SvNurbsCurve(SvCurve):
             try:
                 return curve.to_nurbs(implementation = implementation)
             except UnsupportedCurveTypeException as e:
-                info("Can't convert %s to NURBS curve: %s", curve, e)
+                sv_logger.info("Can't convert %s to NURBS curve: %s", curve, e)
                 pass
         return None
 
@@ -98,33 +95,34 @@ class SvNurbsCurve(SvCurve):
         return self._bounding_box
 
     def concatenate(self, curve2, tolerance=1e-6, remove_knots=False):
-        if tolerance is None:
-            tolerance = 1e-6
 
         curve1 = self
         curve2 = SvNurbsCurve.to_nurbs(curve2)
         if curve2 is None:
             raise UnsupportedCurveTypeException("second curve is not NURBS")
         
-        c1_end = curve1.get_u_bounds()[1]
-        c2_start = curve2.get_u_bounds()[0]
-        if sv_knotvector.is_clamped(curve1.get_knotvector(), curve1.get_degree(), check_start=True, check_end=False):
-            pt1 = curve1.get_control_points()[-1]
-        else:
-            pt1 = curve1.evaluate(c1_end)
-        if sv_knotvector.is_clamped(curve2.get_knotvector(), curve2.get_degree(), check_start=False, check_end=True):
-            pt2 = curve2.get_control_points()[0]
-        else:
-            pt2 = curve2.evaluate(c2_start)
-        dpt = np.linalg.norm(pt1 - pt2)
-        if dpt > tolerance:
-            raise UnsupportedCurveTypeException(f"Curve end points do not match: C1({c1_end}) = {pt1} != C2({c2_start}) = {pt2}, distance={dpt}")
+        if tolerance is not None:
+            c1_end = curve1.get_u_bounds()[1]
+            c2_start = curve2.get_u_bounds()[0]
+            if sv_knotvector.is_clamped(curve1.get_knotvector(), curve1.get_degree(), check_start=True, check_end=False):
+                pt1 = curve1.get_control_points()[-1]
+            else:
+                pt1 = curve1.evaluate(c1_end)
+            if sv_knotvector.is_clamped(curve2.get_knotvector(), curve2.get_degree(), check_start=False, check_end=True):
+                pt2 = curve2.get_control_points()[0]
+            else:
+                pt2 = curve2.evaluate(c2_start)
+            dpt = np.linalg.norm(pt1 - pt2)
+            if dpt > tolerance:
+                raise UnsupportedCurveTypeException(f"Curve end points do not match: C1({c1_end}) = {pt1} != C2({c2_start}) = {pt2}, distance={dpt}")
 
-        cp1 = curve1.get_control_points()[-1]
-        cp2 = curve2.get_control_points()[0]
-        if np.linalg.norm(cp1 - cp2) > tolerance:
-            raise UnsupportedCurveTypeException("End control points do not match")
+            #cp1 = curve1.get_control_points()[-1]
+            #cp2 = curve2.get_control_points()[0]
+            #if np.linalg.norm(cp1 - cp2) > tolerance:
+            #    raise UnsupportedCurveTypeException("End control points do not match")
 
+        if tolerance is None:
+            tolerance = 1e-6
         w1 = curve1.get_weights()[-1]
         w2 = curve2.get_weights()[0]
         if abs(w1 - w2) > tolerance:
@@ -368,7 +366,7 @@ class SvNurbsCurve(SvCurve):
             return self
 
         if logger is None:
-            logger = getLogger()
+            logger = get_logger()
 
         def reduce_degree_once(curve, tolerance):
             if curve.is_bezier():

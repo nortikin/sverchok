@@ -8,8 +8,7 @@
 import random
 import numpy as np
 
-from sverchok.utils.field.scalar import SvScalarField
-from sverchok.utils.logging import error
+from sverchok.utils.sv_logging import sv_logger
 from sverchok.utils.kdtree import SvKdTree
 
 BATCH_SIZE = 50
@@ -83,7 +82,7 @@ def field_random_probe(field, bbox, count,
     while done < count:
         iterations += 1
         if iterations > MAX_ITERATIONS:
-            error("Maximum number of iterations (%s) reached, stop.", MAX_ITERATIONS)
+            sv_logger.error("Maximum number of iterations (%s) reached, stop.", MAX_ITERATIONS)
             break
         batch_xs = []
         batch_ys = []

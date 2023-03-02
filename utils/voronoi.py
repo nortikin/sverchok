@@ -102,8 +102,6 @@ Algorithmica 2, 153-174.
 #
 #############################################################################
 import math
-import sys
-import getopt
 import numpy as np
 
 from math import sqrt, atan2
@@ -115,7 +113,7 @@ from mathutils.geometry import intersect_line_line_2d
 from mathutils.bvhtree import BVHTree
 from mathutils.kdtree import KDTree
 
-from sverchok.utils.logging import debug, info, error
+from sverchok.utils.sv_logging import sv_logger
 from sverchok.utils.geom import center, LineEquation2D, CircleEquation2D
 from sverchok.utils.math import weighted_center
 from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh, bmesh_from_pydata
@@ -1227,7 +1225,7 @@ def voronoi_bounded(sites, bound_mode='BOX', clip=True, draw_bounds=True, draw_h
                 new_vert_idx = bm.new_vert(tuple(v))
                 bounding_verts.append(new_vert_idx)
             else:
-                error("unexpected number of intersections of infinite line %s with area bounds %s: %s", eqn, bounds, intersections)
+                sv_logger.error("unexpected number of intersections of infinite line %s with area bounds %s: %s", eqn, bounds, intersections)
 
         # TODO: there could be (finite) edges, which have both ends
         # outside of the bounding line. We could detect such edges and

@@ -46,7 +46,6 @@ from sverchok.utils.curve import SvCurve
 from sverchok.utils.curve.algorithms import reparametrize_curve
 from sverchok.utils.surface import SvSurface
 
-from sverchok.utils.logging import warning
 from sverchok.dependencies import FreeCAD
 
 STANDARD_TYPES = SIMPLE_DATA_TYPES + (SvCurve, SvSurface)

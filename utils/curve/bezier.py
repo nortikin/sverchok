@@ -6,6 +6,7 @@
 # License-Filename: LICENSE
 
 import numpy as np
+from math import sqrt
 
 from sverchok.data_structure import zip_long_repeat
 from sverchok.utils.math import binomial
@@ -62,7 +63,7 @@ class SvBezierSplitMixin:
         MR1M = M1 @ R1 @ M
 
         new_cpts = MR1M @ cpts
-        return SvBezierCurve(new_cpts)
+        return SvBezierCurve.from_control_points(new_cpts)
 
     def split_at(self, t):
         segment1 = self.cut_segment(0.0, t)
@@ -74,7 +75,7 @@ class SvBezierCurve(SvCurve, SvBezierSplitMixin):
     Bezier curve of arbitrary degree.
     """
     def __init__(self, points):
-        self.points = points
+        self.points = np.asarray(points)
         self.tangent_delta = 0.001
         n = self.degree = len(points) - 1
         self.__description__ = "Bezier[{}]".format(n)
@@ -132,6 +133,59 @@ class SvBezierCurve(SvCurve, SvBezierSplitMixin):
         p3 = k0/210.0 + 3*p2 - 3*p1 + p0
         p4 = -k7/210.0 + 3*p5 - 3*p6 + p7
         return SvBezierCurve([p0, p1, p2, p3, p4, p5, p6, p7])
+
+#     @classmethod
+#     def from_tangents_and_curvatures(cls, point1, point2, tangent1, tangent2, curvature1, curvature2):
+#         A1 = point1
+#         A2 = point2
+#         B1 = point1 + tangent1 / 5
+#         B2 = point2 - tangent2 / 5
+#         t1dir = tangent1 / np.linalg.norm(tangent1)
+#         t2dir = tangent2 / np.linalg.norm(tangent2)
+#         B1B2 = B2 - B1
+#         direction = B1B2 / np.linalg.norm(B1B2)
+#         
+#         r1 = curvature1 * np.linalg.norm(tangent1)**2 / 20
+#         r2 = curvature2 * np.linalg.norm(tangent2)**2 / 20
+#         
+#         dot1 = (direction * t1dir).sum()
+#         sin1 = sqrt(1 - dot1**2)
+#         d1 = r1 / sin1
+#         
+#         dot2 = (-direction * t2dir).sum()
+#         sin2 = sqrt(1 - dot2**2)
+#         d2 = r2 / sin2
+#         
+#         C1 = B1 + d1 * direction
+#         C2 = B2 - d2 * direction
+#         
+#         return SvBezierCurve([A1, B1, C1, C2, B2, A2])
+
+    @classmethod
+    def from_tangents_normals_curvatures(cls, point1, point2, tangent1, tangent2, normal1, normal2, curvature1, curvature2):
+        """
+        Build Bezier curve of 5th degree, which:
+            
+            * starts at point1 and end at point2
+            * at start has tangent1 and normal1, at end has tangent2 and normal2
+            * at start has curvature1, at end has curvature2.
+        """
+        A1 = point1
+        A2 = point2
+        B1 = point1 + tangent1 / 5
+        B2 = point2 - tangent2 / 5
+        t1dir = tangent1 / np.linalg.norm(tangent1)
+        t2dir = tangent2 / np.linalg.norm(tangent2)
+        n1dir = normal1 / np.linalg.norm(normal1)
+        n2dir = normal2 / np.linalg.norm(normal2)
+
+        r1 = curvature1 * np.linalg.norm(tangent1)**2 / 20
+        r2 = curvature2 * np.linalg.norm(tangent2)**2 / 20
+
+        C1 = B1 + r1 * n1dir
+        C2 = B2 + r2 * n2dir
+
+        return SvBezierCurve([A1, B1, C1, C2, B2, A2])
 
     @classmethod
     def build_tangent_curve(cls, points, tangents, hermite=True, cyclic=False, concat=False, as_nurbs=False):
@@ -579,11 +633,11 @@ class SvCubicBezierCurve(SvCurve, SvBezierSplitMixin):
 
     def lerp_to(self, curve2, coefficient):
         if isinstance(curve2, SvCubicBezierCurve):
+            p0 = (1.0 - coefficient) * self.p0 + coefficient * curve2.p0
             p1 = (1.0 - coefficient) * self.p1 + coefficient * curve2.p1
             p2 = (1.0 - coefficient) * self.p2 + coefficient * curve2.p2
             p3 = (1.0 - coefficient) * self.p3 + coefficient * curve2.p3
-            p4 = (1.0 - coefficient) * self.p4 + coefficient * curve2.p4
-            return SvCubicBezierCurve(p1, p2, p3, p4)
+            return SvCubicBezierCurve(p0, p1, p2, p3)
         return self.to_nurbs().lerp_to(curve2, coefficient)
 
     def is_line(self, tolerance=0.001):

@@ -1,5 +1,5 @@
-Surface from Four Curves
-========================
+Surface from Boundary Curves
+============================
 
 Functionality
 -------------
@@ -18,6 +18,11 @@ That is, the second curve must begin at the point where the first curve ends;
 and the third curve must begin at the point where the second curve ends; and so
 on.
 
+It is also possible to omit the fourth curve, thus to build a surface from
+three boundary curves. If the third curve does not end in the same point where
+the first curve started, the node will use a straight line segment as fourth
+curve.
+
 The surface is calculated as a Coons patch, see https://en.wikipedia.org/wiki/Coons_patch.
 
 When all provided curves are NURBS or NURBS-like, then the node will try to
@@ -34,12 +39,13 @@ This node has the following inputs:
 
 * **Curves**. The list of curves to build a surface form. This input can accept
   data with nesting level of 1 or 2 (list of curves or list of lists of
-  curves). Each list of curves must have length of 4. This input is available
+  curves). Each list of curves must have length of 3 or 4. This input is available
   and mandatory only if **Input** parameter is set to **List of Curves**.
 * **Curve1**, **Curve2**, **Curve3**, **Curve4**. Curves to build surface from.
   These inputs can accept data with nesting level 1 only (list of curves).
-  These inputs are available and mandatory only if **Input** parameter is set
-  to **4 Curves**.
+  These inputs are available only if **Input** parameter is set
+  to **4 Curves**. Inputs **Curve1**, **Curve2** and **Curve3** are mandatory.
+  **Curve4** input is optional.
 
 Parameters
 ----------
@@ -49,7 +55,7 @@ This node has the following parameters:
 * **Input**. This defines how the curves are provided. The following options are available:
 
   * **List of curves**. All curves are provided in a single input **Curves**.
-  * **4 Curves**. Each curve is provided in separate input **Curve1** - **Curve4**.
+  * **Separate inputs**. Each curve is provided in separate input **Curve1** - **Curve4**.
 
   The default value is **List of Curves**.
 
@@ -102,4 +108,13 @@ One may use such surface to generate another topology:
 It is possible to use the node together with "Split Curve" node to generate a surface from one closed curve:
 
 .. image:: https://user-images.githubusercontent.com/284644/82479760-3deb1f80-9aec-11ea-8411-22ffd273259f.png
+
+It is possible to use only three boundary curves:
+
+.. image:: https://user-images.githubusercontent.com/284644/210209607-113759b7-9992-4e5d-870d-6aa6dafe0c32.png
+
+If the third curve end does not coincide with the beginning of the first curve,
+the node will close the cycle with a straight line segment:
+
+.. image:: https://user-images.githubusercontent.com/284644/210209611-052c63b6-ef39-4c12-a047-d7d369f3469c.png
 

@@ -12,7 +12,7 @@ from mathutils import Matrix, Vector
 from mathutils import kdtree
 from mathutils import bvhtree
 
-from sverchok.utils.math import from_cylindrical, from_spherical, to_cylindrical, to_spherical
+from sverchok.utils.math import from_cylindrical, from_spherical, to_cylindrical, to_spherical, np_dot
 from sverchok.utils.geom import LineEquation, CircleEquation3D
 from sverchok.utils.kdtree import SvKdTree
 
@@ -470,7 +470,7 @@ class SvCircleAttractorScalarField(SvScalarField):
             return distances
 
 class SvBvhAttractorScalarField(SvScalarField):
-    __description__ = "BVH Attractor"
+    __description__ = "BVH Attractor (faces)"
 
     def __init__(self, bvh=None, verts=None, faces=None, falloff=None, signed=False):
         self.falloff = falloff
@@ -489,7 +489,11 @@ class SvBvhAttractorScalarField(SvScalarField):
             sign = copysign(1, sign)
         else:
             sign = 1
-        return sign * distance
+        value = sign * distance
+        if self.falloff is None:
+            return value
+        else:
+            return self.falloff(np.array([value]))[0]
 
     def evaluate_grid(self, xs, ys, zs):
         def find(v):
@@ -502,6 +506,39 @@ class SvBvhAttractorScalarField(SvScalarField):
             else:
                 sign = 1
             return sign * distance
+
+        points = np.stack((xs, ys, zs)).T
+        norms = np.vectorize(find, signature='(3)->()')(points)
+        if self.falloff is not None:
+            result = self.falloff(norms)
+            return result
+        else:
+            return norms
+
+class SvBvhEdgesAttractorScalarField(SvScalarField):
+    __description__ = "BVH Attractor (edges)"
+
+    def __init__(self, verts, edges, falloff=None):
+        self.verts = verts
+        self.edges = edges
+        self.falloff = falloff
+        self.bvh = self._make_bvh(verts, edges)
+
+    def _make_bvh(self, verts, edges):
+        faces = [(i1, i2, i1) for i1, i2 in edges]
+        return bvhtree.BVHTree.FromPolygons(verts, faces)
+
+    def evaluate(self, x, y, z):
+        nearest, normal, idx, distance = self.bvh.find_nearest((x,y,z))
+        if self.falloff is None:
+            return distance
+        else:
+            return self.falloff(np.array([distance]))[0]
+
+    def evaluate_grid(self, xs, ys, zs):
+        def find(v):
+            nearest, normal, idx, distance = self.bvh.find_nearest(v)
+            return distance
 
         points = np.stack((xs, ys, zs)).T
         norms = np.vectorize(find, signature='(3)->()')(points)
@@ -551,31 +588,20 @@ class SvEdgeAttractorScalarField(SvScalarField):
         vs = np.stack((xs, ys, zs)).T
         v1 = np.array(self.v1)
         v2 = np.array(self.v2)    
-        dv1s = np.linalg.norm(vs - v1, axis=1)
-        dv2s = np.linalg.norm(vs - v2, axis=1)
-        v1_is_nearest = (dv1s < dv2s)
-        v2_is_nearest = np.logical_not(v1_is_nearest)
-        nearest_verts = np.empty_like(vs)
-        other_verts = np.empty_like(vs)
-        nearest_verts[v1_is_nearest] = v1
-        nearest_verts[v2_is_nearest] = v2
-        other_verts[v1_is_nearest] = v2
-        other_verts[v2_is_nearest] = v1
-        
-        to_nearest = vs - nearest_verts
-        
-        edges = other_verts - nearest_verts
-        dot = (to_nearest * edges).sum(axis=1)
-        at_edge = (dot > 0)
-        at_vertex = np.logical_not(at_edge)
-        at_v1 = np.logical_and(at_vertex, v1_is_nearest)
-        at_v2 = np.logical_and(at_vertex, v2_is_nearest)
-        
+        dv1 = vs - v1
+        dv2 = vs - v2
+        edge = v2 - v1
+        dot1 = (dv1 * edge).sum(axis=1)
+        dot2 = -(dv2 * edge).sum(axis=1)
+        v1_is_nearest = (dot1 < 0)
+        v2_is_nearest = (dot2 < 0)
+        at_edge = np.logical_not(np.logical_or(v1_is_nearest, v2_is_nearest))
+
         distances = np.empty((n,))
+        distances[v1_is_nearest] = np.linalg.norm(dv1[v1_is_nearest], axis=1)
+        distances[v2_is_nearest] = np.linalg.norm(dv2[v2_is_nearest], axis=1)
         distances[at_edge] = LineEquation.from_two_points(self.v1, self.v2).distance_to_points(vs[at_edge])
-        distances[at_v1] = dv1s[at_v1]
-        distances[at_v2] = dv2s[at_v2]
-        
+
         if self.falloff is not None:
             distances = self.falloff(distances)
             return distances

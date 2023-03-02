@@ -6,16 +6,17 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
-from sverchok.utils.curve import SvCurve
+from sverchok.utils.curve.core import SvCurve
+from sverchok.utils.curve.primitives import SvLine, SvPointCurve
 from sverchok.utils.surface.coons import coons_surface, GENERIC, NURBS_ONLY, NURBS_IF_POSSIBLE
 
 class SvCoonsPatchNode(SverchCustomTreeNode, bpy.types.Node):
     """
-    Triggers: Coons Patch / Surface form four curves
-    Tooltip: Generate a surface (Coons Patch) from four boundary curves
+    Triggers: Coons Patch / Surface form three or four boundary curves
+    Tooltip: Generate a surface (Coons Patch) from three or four boundary curves
     """
     bl_idname = 'SvCoonsPatchNode'
-    bl_label = 'Surface from Four Curves'
+    bl_label = 'Surface from Boundary Curves'
     bl_icon = 'SURFACE_DATA'
     sv_icon = 'SV_COONS_PATCH'
 
@@ -53,8 +54,8 @@ class SvCoonsPatchNode(SverchCustomTreeNode, bpy.types.Node):
         updateNode(self, context)
 
     modes = [
-            ('LIST', "List of curves", "Input is provided as a list of curves, which must have 4 items", 0),
-            ('FOUR', "4 curves", "Four separate Curve inputs are provided", 1)
+            ('LIST', "List of curves", "Input is provided as a list of curves, which must have 3 or 4 items", 0),
+            ('FOUR', "Separate inputs", "Three or four separate Curve inputs are provided", 1)
         ]
     
     input_mode : EnumProperty(
@@ -83,6 +84,8 @@ class SvCoonsPatchNode(SverchCustomTreeNode, bpy.types.Node):
         pairs = list(zip(curves, curves[1:]))
         pairs.append((curves[-1], curves[0]))
         for idx, (curve1, curve2) in enumerate(pairs):
+            if curve1 is None or curve2 is None:
+                    continue
             _, t_max_1 = curve1.get_u_bounds()
             t_min_2, _ = curve2.get_u_bounds()
             end1 = curve1.evaluate(t_max_1)
@@ -91,11 +94,22 @@ class SvCoonsPatchNode(SverchCustomTreeNode, bpy.types.Node):
             if distance > self.max_rho:
                 raise Exception("Distance between the end of {}'th curve and the start of {}'th curve is {} - too much".format(idx, idx+1, distance))
 
+    def make_closing_curve(self, first_curve, last_curve):
+        pt1 = last_curve.get_end_points()[1]
+        pt2 = first_curve.get_end_points()[0]
+        if np.linalg.norm(pt1 - pt2) < 1e-6:
+            return SvPointCurve(pt1)
+        else:
+            return SvLine.from_two_points(pt1, pt2)
+
     def get_input(self):
         if self.input_mode == 'LIST':
             curve_list_s = self.inputs['Curves'].sv_get()
             curve_list_s = ensure_nesting_level(curve_list_s, 2, data_types=(SvCurve,))
             for curves in curve_list_s:
+                if len(curves) == 3:
+                    curve4 = None
+                    curves.append(curve4)
                 if len(curves) != 4:
                     raise Exception("List of curves must contain exactly 4 curve objects!")
                 yield curves
@@ -103,12 +117,16 @@ class SvCoonsPatchNode(SverchCustomTreeNode, bpy.types.Node):
             curve1_s = self.inputs['Curve1'].sv_get()
             curve2_s = self.inputs['Curve2'].sv_get()
             curve3_s = self.inputs['Curve3'].sv_get()
-            curve4_s = self.inputs['Curve4'].sv_get()
 
             curve1_s = ensure_nesting_level(curve1_s, 1, data_types=(SvCurve,))
             curve2_s = ensure_nesting_level(curve2_s, 1, data_types=(SvCurve,))
             curve3_s = ensure_nesting_level(curve3_s, 1, data_types=(SvCurve,))
-            curve4_s = ensure_nesting_level(curve4_s, 1, data_types=(SvCurve,))
+
+            if self.inputs['Curve4'].is_linked:
+                curve4_s = self.inputs['Curve4'].sv_get()
+                curve4_s = ensure_nesting_level(curve4_s, 1, data_types=(SvCurve,))
+            else:
+                curve4_s = [None]
 
             for curve1, curve2, curve3, curve4 in zip_long_repeat(curve1_s, curve2_s, curve3_s, curve4_s):
                 yield [curve1, curve2, curve3, curve4]
@@ -121,6 +139,8 @@ class SvCoonsPatchNode(SverchCustomTreeNode, bpy.types.Node):
         for curves in self.get_input():
             if self.check:
                 self.run_check(curves)
+            if curves[3] is None:
+                curves[3] = self.make_closing_curve(curves[0], curves[2])
             surface = coons_surface(*curves, use_nurbs=self.use_nurbs)
             surface_out.append(surface)
 

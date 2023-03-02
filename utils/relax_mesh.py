@@ -53,33 +53,38 @@ def lloyd_relax(vertices, faces, iterations, mask=None, method=NORMAL, skip_boun
     supported shape preservation methods: NONE, NORMAL, LINEAR, BVH
     """
 
-    def do_iteration(bvh, bm):
+    def do_iteration(bvh, bm, n_verts, n_link_faces, max_link_faces, linked_face_idxs, linked_face_counts):
         verts_out = []
         face_centers = np.array([face.calc_center_median() for face in bm.faces])
+        face_centers_by_vert = np.zeros((n_verts, max_link_faces, 3))
+        for bm_vert in bm.verts:
+            face_idxs = linked_face_idxs[bm_vert.index]
+            n = linked_face_counts[bm_vert.index]
+            face_centers_by_vert[bm_vert.index, :n] = face_centers[face_idxs]
+        face_center_sums = face_centers_by_vert.sum(axis=1)
+        face_center_means = face_center_sums / n_link_faces
         for bm_vert in bm.verts:
             co = bm_vert.co
             if (skip_boundary and bm_vert.is_boundary) or (mask is not None and not mask[bm_vert.index]):
                 new_vert = tuple(co)
             else:    
-                normal = bm_vert.normal
-                cs = np.array([face_centers[face.index] for face in bm_vert.link_faces])
-                
                 if method == NONE:
-                    new_vert = cs.mean(axis=0)
+                    new_vert = face_center_means[bm_vert.index]
                 elif method == NORMAL:
-                    median = mathutils.Vector(cs.mean(axis=0))
+                    median = mathutils.Vector(face_center_means[bm_vert.index])
                     dv = median - co
-                    dv = dv - dv.project(normal)
+                    dv = dv - dv.project(bm_vert.normal)
                     new_vert = co + dv
                 elif method == LINEAR:
+                    cs = np.array([face_centers[face.index] for face in bm_vert.link_faces])
                     approx = linear_approximation(cs)
                     median = mathutils.Vector(approx.center)
                     plane = approx.most_similar_plane()
                     dist = plane.distance_to_point(bm_vert.co)
                     new_vert = median + plane.normal.normalized() * dist
                 elif method == BVH:
-                    median = mathutils.Vector(cs.mean(axis=0))
-                    new_vert, normal, idx, dist = bvh.find_nearest(median)
+                    median = mathutils.Vector(face_center_means[bm_vert.index])
+                    new_vert, _normal, idx, dist = bvh.find_nearest(median)
                 else:
                     raise Exception("Unsupported volume preservation method")
                 
@@ -93,11 +98,32 @@ def lloyd_relax(vertices, faces, iterations, mask=None, method=NORMAL, skip_boun
     if mask is not None:
         mask = repeat_last_for_length(mask, len(vertices))
 
-    bvh = BVHTree.FromPolygons(vertices, faces)
+    if method == BVH:
+        bvh = BVHTree.FromPolygons(vertices, faces)
+    else:
+        bvh = None
+    recalc_normals = (method == NORMAL)
+    bm = bmesh_from_pydata(vertices, [], faces, normal_update=recalc_normals)
+
+    n_verts = len(bm.verts)
+    n_link_faces = np.array([len(v.link_faces) for v in bm.verts])
+    max_link_faces = n_link_faces.max()
+    n_link_faces = n_link_faces[np.newaxis].T
+
+    linked_face_idxs = dict()
+    linked_face_counts = dict()
+    for bm_vert in bm.verts:
+        face_idxs = np.array([face.index for face in bm_vert.link_faces])
+        linked_face_idxs[bm_vert.index] = face_idxs
+        linked_face_counts[bm_vert.index] = len(face_idxs)
+
     for i in range(iterations):
-        bm = bmesh_from_pydata(vertices, [], faces, normal_update=True)
-        vertices = do_iteration(bvh, bm)
-        bm.free()
+        vertices = do_iteration(bvh, bm, n_verts, n_link_faces, max_link_faces, linked_face_idxs, linked_face_counts)
+        for bm_vert, v in zip(bm.verts, vertices):
+            bm_vert.co = mathutils.Vector(v)
+        if recalc_normals:
+            bm.normal_update()
+    bm.free()
 
     return vertices
 

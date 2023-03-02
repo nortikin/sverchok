@@ -31,25 +31,47 @@ class SvBMOpsNodeMK2(SverchCustomTreeNode, bpy.types.Node):
     sv_icon = 'SV_ALPHA'  # 'SV_BMESH_OPS'
 
     PV = ['remove_doubles(bm,verts=e,dist=v[0])',
-          'collapse(bm,edges=e,uvs=v[0])',
-          'unsubdivide(bm,verts=e,iterations=v[0])',
-          'holes_fill(bm,edges=e,sides=v[0])',
-          'dissolve_faces(bm,faces=e,use_verts=v[0])',
+                #'remove_doubles distance'],
+          'collapse(bm,edges=e,uvs=bool(int(v[0])))',
+                #'collapse uvs'],
+          'unsubdivide(bm,verts=e,iterations=int(v[0]))',
+                #'unsubdivide iterations'],
+          'holes_fill(bm,edges=e,sides=int(v[0]))',
+                #'joles_fill sides'],
+          'dissolve_faces(bm,faces=e,use_verts=bool(int(v[0])))',
+                #'dissolve_faces use_verts'],
+          'dissolve_edges(bm,edges=e,use_verts=bool(int(v[0])),use_face_split=bool(int(v[1])))',
+                #'dissolve_edges use_verts, use_fill_split'],
+          'dissolve_verts(bm,verts=e,use_face_split=bool(int(v[0])),use_boundary_tear=bool(int(v[1])))',
+                #'dissolve_verts face_split, boundary_tear'],
           'connect_verts_concave(bm,faces=e)',
+                #'connect_verts_concave'],
           'recalc_face_normals(bm,faces=e)',
-          'rotate_edges(bm,edges=e,use_ccw=v[0])',
+                #'recals_face_normals'],
+          'rotate_edges(bm,edges=e,use_ccw=bool(int(v[0])))',
+                #'rotate_edges use_ccv'],
           'connect_verts_nonplanar(bm,angle_limit=v[0],faces=e)',
-          'triangulate(bm,faces=e,quad_method=v[0],ngon_method=v[1])',
-          'dissolve_edges(bm,edges=e,use_verts=v[0],use_face_split=v[1])',
-          'dissolve_verts(bm,verts=e,use_face_split=v[0],use_boundary_tear=v[1])',
-          'grid_fill(bm,edges=e,mat_nr=v[0],use_smooth=v[1],use_interp_simple=v[2])',
-          'poke(bm,faces=e,offset=v[0],center_mode=v[1],use_relative_offset=v[2])',
-          'bridge_loops(bm,edges=e,use_pairs=v[0],use_cyclic=v[1],use_merge=v[2],merge_factor=v[3],twist_offset=v[4])',
-          'smooth_vert(bm,verts=e,factor=v[0],mirror_clip_x=v[1],mirror_clip_y=v[2],mirror_clip_z=v[3],clip_dist=v[4],use_axis_x=v[5],use_axis_y=v[6],use_axis_z=v[7])',
-          'join_triangles(bm,faces=e,cmp_seam=v[0],cmp_sharp=v[1],cmp_uvs=v[2],cmp_vcols=v[3],cmp_materials=v[4],angle_face_threshold=v[5],angle_shape_threshold=v[6])',
-          'subdivide_edgering(bm,edges=e,interp_mode=v[0],smooth=v[1],cuts=v[2],profile_shape=v[3],profile_shape_factor=v[4])',
-          'inset_individual(bm,faces=e,thickness=v[0],depth=v[1],use_even_offset=v[2],use_interpolate=v[3],use_relative_offset=v[4])',
-          'inset_region(bm,faces=e,use_boundary=v[0],use_even_offset=v[1],use_interpolate=v[2],use_relative_offset=v[3],use_edge_rail=v[4],thickness=v[5],depth=v[6],use_outset=v[7])',
+                #'connect_verts_nonplanar angle_limit'],
+          'triangulate(bm,faces=e,quad_method=int(v[0]),ngon_method=int(v[1]))',
+                #'triangulate quad_method, ngon_method'],
+          'grid_fill(bm,edges=e,mat_nr=int(v[0]),use_smooth=bool(int(v[1])),use_interp_simple=bool(int(v[2])))',
+                #'grid_fill material, use_smooth, use_smooth'],
+          'poke(bm,faces=e,offset=v[0],center_mode=int(v[1]),use_relative_offset=bool(int(v[2])))',
+                #'poke offset, mode, relative'],
+          'bridge_loops(bm,edges=e,use_pairs=bool(int(v[0])),use_cyclic=bool(int(v[1])),use_merge=bool(int(v[2])),merge_factor=v[3],twist_offset=v[4])',
+                #'bridge_loops use_pairs, use_cyclic, use_merge, merge_factor, twist_offset'],
+          'beautify_fill(bm,faces=e,edges=[],use_restrict_tag=bool(int(v[0])),method=int(v[1]))',
+                #'beautify_fill use_restrict, method'],
+          'smooth_vert(bm,verts=e,factor=v[0],mirror_clip_x=bool(int(v[1])),mirror_clip_y=bool(int(v[2])),mirror_clip_z=bool(int(v[3])),clip_dist=v[4],use_axis_x=bool(int(v[5])),use_axis_y=bool(int(v[6])),use_axis_z=bool(int(v[7])))',
+                #'smooth_verts,factor,clipx,clipy,clipz,clipdist,useX,useY,useZ'],
+          'join_triangles(bm,faces=e,cmp_seam=bool(int(v[0])),cmp_sharp=bool(int(v[1])),cmp_uvs=bool(int(v[2])),cmp_vcols=bool(int(v[3])),cmp_materials=bool(int(v[4])),angle_face_threshold=v[5],angle_shape_threshold=v[6])',
+                #'join_triangles seam, sharp, uvs, vcols, mats, angleface, anglethreshold'],
+          'subdivide_edgering(bm,edges=e,interp_mode=int(v[0]),smooth=v[1],cuts=int(v[2]),profile_shape=int(v[3]),profile_shape_factor=v[4])',
+                #'subdiv_edgering mode, smooth, cuts, shape, factor'],
+          'inset_individual(bm,faces=e,thickness=v[0],depth=v[1],use_even_offset=bool(int(v[2])),use_interpolate=bool(int(v[3])),use_relative_offset=bool(int(v[4])))',
+                #'inset_individual, thkns,depth,use_offset, use_inerpol,use_relative'],
+          'inset_region(bm,faces=e,use_boundary=bool(int(v[0])),use_even_offset=bool(int(v[1])),use_interpolate=bool(int(v[2])),use_relative_offset=bool(int(v[3])),use_edge_rail=bool(int(v[4])),thickness=v[5],depth=v[6],use_outset=bool(int(v[7])))',
+                #'inset_region, use_bondary, use_even_offset, use_interpolate, use_rel_offset, use_edge_rail, thickns, depth, use_outset'],
           ]
 
     oper: EnumProperty(name="BMop", default=PV[0], items=e(PV), update=updateNode)
@@ -73,6 +95,8 @@ class SvBMOpsNodeMK2(SverchCustomTreeNode, bpy.types.Node):
         layout.prop(self, "oper", text="Get")
         for i in range(self.oper.count("=v[")):
             layout.prop(self, "V"+str(i), text="v"+str(i))
+        for i in range(self.oper.count("=int(v[")):
+            layout.prop(self, "V"+str(i), text="v"+str(i))
 
     def process(self):
         if not self.outputs['bmesh_list'].is_linked:
@@ -82,6 +106,7 @@ class SvBMOpsNodeMK2(SverchCustomTreeNode, bpy.types.Node):
         v = [self.V0,self.V1,self.V2,self.V3,self.V4,self.V5,self.V6,self.V7]
         outp = []
         op = "bmesh.ops."+self.oper
+        print(op)
         if e.is_linked:
             element = e.sv_get()
             for bm, e in zip(obj, element):
@@ -109,3 +134,6 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvBMOpsNodeMK2)
+
+if __name__ == '__main__':
+    register()

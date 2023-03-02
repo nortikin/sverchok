@@ -1,20 +1,13 @@
 import numpy as np
-import unittest
-from math import pi
 
-from mathutils import Matrix
-
-from sverchok.utils.testing import SverchokTestCase, requires
-from sverchok.utils.geom import circle_by_three_points
+from sverchok.utils.testing import SverchokTestCase
 from sverchok.utils.curve import knotvector as sv_knotvector
-from sverchok.utils.curve.primitives import SvCircle
 from sverchok.utils.curve.algorithms import concatenate_curves
-from sverchok.utils.curve.nurbs import SvGeomdlCurve, SvNativeNurbsCurve, SvNurbsBasisFunctions, SvNurbsCurve
+from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.curve.nurbs_algorithms import concatenate_nurbs_curves
-from sverchok.utils.nurbs_common import SvNurbsMaths, elevate_bezier_degree, from_homogenous
-from sverchok.utils.surface.nurbs import SvGeomdlSurface, SvNativeNurbsSurface
-from sverchok.utils.surface.algorithms import SvCurveLerpSurface
+from sverchok.utils.nurbs_common import SvNurbsMaths
 from sverchok.dependencies import geomdl, FreeCAD
+
 
 class ConcatenateTests(SverchokTestCase):
     def test_concat_4757(self):

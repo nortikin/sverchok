@@ -24,7 +24,7 @@ from bpy.props import BoolProperty, StringProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat, zip_long_repeat
-from sverchok.utils import logging
+from sverchok.utils import sv_logging
 from sverchok.utils.modules.eval_formula import get_variables, safe_eval
 
 class SvFormulaNodeMk3(SverchCustomTreeNode, bpy.types.Node):

@@ -1,6 +1,9 @@
 Nearest Point on Curve
 ======================
 
+.. image:: https://user-images.githubusercontent.com/14288520/211775155-aaa814c0-b5d1-4a9f-8301-da1e60a9a97c.png
+  :target: https://user-images.githubusercontent.com/14288520/211775155-aaa814c0-b5d1-4a9f-8301-da1e60a9a97c.png
+
 Dependencies
 ------------
 
@@ -29,6 +32,9 @@ In case there are several points on the curve with equal distance to the
 original point, the node will return one of them (it is not guaranteed which
 one).
 
+.. image:: https://user-images.githubusercontent.com/14288520/211776462-f01c0f6f-d6bd-41f6-9758-fd590ebb0666.png
+  :target: https://user-images.githubusercontent.com/14288520/211776462-f01c0f6f-d6bd-41f6-9758-fd590ebb0666.png
+
 Inputs
 ------
 
@@ -47,11 +53,19 @@ This node has the following parameters:
   initial guess, so the precise algorithm will be faster; but that can require
   more evaluations at the first stage. The default value is 50. In many cases,
   you do not have to change this value.
+
+  .. image:: https://user-images.githubusercontent.com/14288520/212115819-a1b732f4-b294-45e6-a360-24718dce1518.png
+    :target: https://user-images.githubusercontent.com/14288520/212115819-a1b732f4-b294-45e6-a360-24718dce1518.png
+
 * **Precise**. If not checked, then the precise calculation step will not be
   executed, and the node will just output the nearest point out of points
   generated at the first step - so it will be "roughly nearest point". So, if
   this parameter is not checked, higher values of **Init resolution** parameter
   will lead to more precise output. Checked by default.
+
+  .. image:: https://user-images.githubusercontent.com/14288520/212117620-5ab3eb5f-bfb2-4cbb-95e3-a77d29a60c72.gif
+    :target: https://user-images.githubusercontent.com/14288520/212117620-5ab3eb5f-bfb2-4cbb-95e3-a77d29a60c72.gif
+
 * **Method**. This parameter is available in the N panel only. This defines the
   algorithm to be used. In simple cases, all algorithms will give the same
   result; in more complex cases, you will have to try all and select the one
@@ -64,6 +78,9 @@ This node has the following parameters:
    * Golden. Uses the golden section search technique. It uses analog of the
      bisection method to decrease the bracketed interval. It is usually
      preferable to use the Brent method.
+
+.. image:: https://user-images.githubusercontent.com/14288520/212128791-d00c63bd-be86-4dc0-979e-0eb51361862b.png
+  :target: https://user-images.githubusercontent.com/14288520/212128791-d00c63bd-be86-4dc0-979e-0eb51361862b.png
 
 Outputs
 -------

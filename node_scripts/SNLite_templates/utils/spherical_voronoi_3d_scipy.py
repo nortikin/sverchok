@@ -5,19 +5,21 @@ in in_radius s
 out out_verts v
 out out_faces s
 """
+import logging
 
 import numpy as np
 import sys
 
-from sverchok.utils.logging import exception, info
 from sverchok.data_structure import zip_long_repeat
 from sverchok.utils.math import to_spherical, from_spherical
+
+logger = logging.getLogger('sverchok')
 
 try:
     import scipy
     from scipy.spatial import SphericalVoronoi
 except ImportError as e:
-    info("SciPy module is not available. Please refer to https://github.com/nortikin/sverchok/wiki/Non-standard-Python-modules-installation for how to install it.")
+    logger.info("SciPy module is not available. Please refer to https://github.com/nortikin/sverchok/wiki/Non-standard-Python-modules-installation for how to install it.")
     raise e
 
 def to_radius(r, v, c):
@@ -36,7 +38,7 @@ for points, center, radius in zip_long_repeat(in_points, in_center, in_radius):
     if isinstance(radius, (list, tuple)):
         radius = radius[0]
     center = center[0]
-    #info("Center: %s, radius: %s", center, radius)
+    # logger.info("Center: %s, radius: %s", center, radius)
     points = np.array([to_radius(radius, v, center) for v in points])
 
     vor = SphericalVoronoi(points, radius=radius, center=np.array(center))

@@ -21,8 +21,8 @@ from bpy.props import FloatProperty
 import bmesh
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, Vector_generate, repeat_last, zip_long_repeat
-from sverchok.utils.logging import info, debug
+from sverchok.data_structure import updateNode, Vector_generate, zip_long_repeat
+from sverchok.utils.sv_logging import sv_logger
 
 #
 # Remove Doubles
@@ -75,7 +75,7 @@ def remove_doubles(vertices, faces, d, face_data=None, find_doubles=False):
             if 0 <= initial_face_index < len(face_data):
                 face_data_o = face_data[initial_face_index]
             else:
-                info("No face data for face #%s", initial_face_index)
+                sv_logger.info("No face data for face #%s", initial_face_index)
                 face_data_o = None
             face_data_out.append(face_data_o)
 

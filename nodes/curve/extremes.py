@@ -87,7 +87,7 @@ class SvExCurveExtremesNode(SverchCustomTreeNode, bpy.types.Node):
             new_t = []
             new_points = []
             for curve, field, samples in zip_long_repeat(curves, fields, samples_i):
-                ts = curve_extremes(curve, field, samples, self.direction, self.on_fail, self.get_logger())
+                ts = curve_extremes(curve, field, samples, self.direction, self.on_fail, self.sv_logger)
                 ps = curve.evaluate_array(np.array(ts)).tolist()
                 new_t.extend(ts)
                 new_points.extend(ps)

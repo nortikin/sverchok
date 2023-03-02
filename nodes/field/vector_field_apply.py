@@ -5,9 +5,9 @@ import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty, StringProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, repeat_last_for_length, match_long_repeat, ensure_nesting_level
-from sverchok.utils.logging import info, exception
+from sverchok.data_structure import updateNode, zip_long_repeat, repeat_last_for_length, ensure_nesting_level
 from sverchok.utils.field.vector import SvVectorField
+
 
 class SvVectorFieldApplyNode(SverchCustomTreeNode, bpy.types.Node):
     """

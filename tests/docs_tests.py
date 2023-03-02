@@ -1,4 +1,3 @@
-import sverchok
 from sverchok.utils.testing import *
 
 

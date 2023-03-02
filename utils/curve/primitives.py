@@ -145,6 +145,63 @@ class SvLine(SvCurve):
     def is_closed(self, *args):
         return False
 
+    def extrude_along_vector(self, vector):
+        return self.to_nurbs().extrude_along_vector(vector)
+
+    def make_revolution_surface(self, point, direction, v_min, v_max, global_origin):
+        return self.to_nurbs().make_revolution_surface(point, direction, v_min, v_max, global_origin)
+    
+    def make_ruled_surface(self, curve2, vmin, vmax):
+        return self.to_nurbs().make_ruled_surface(curve2, vmin, vmax)
+
+    def extrude_to_point(self, point):
+        return self.to_nurbs().extrude_to_point(point)
+
+    def lerp_to(self, curve2, coefficient):
+        return self.to_nurbs().lerp_to(curve2, coefficient)
+
+class SvPointCurve(SvCurve):
+    __description__ = "Single-Point"
+
+    def __init__(self, point):
+        self.point = np.asarray(point)
+
+    def evaluate(self, t):
+        return self.point
+
+    def evaluate_array(self, ts):
+        points = np.empty((len(ts),3))
+        points[:] = self.point
+        return points
+    
+    def get_u_bounds(self):
+        return (0.0, 1.0)
+
+    def get_degree(self):
+        return 1
+
+    def to_bezier(self):
+        u_min, u_max = self.get_u_bounds()
+        p1 = self.evaluate(u_min)
+        p2 = self.evaluate(u_max)
+        return SvBezierCurve([p1, p2])
+
+    def to_bezier_segments(self):
+        return [self.to_bezier()]
+
+    def is_closed(self, *args):
+        return False
+
+    def concatenate(self, curve2, *args):
+        return curve2
+
+    def to_nurbs(self, implementation = SvNurbsMaths.NATIVE):
+        return self.to_bezier().to_nurbs()
+
+    def reverse(self):
+        return SvPointCurve(self.point)
+
+
 def rotate_radius(radius, normal, thetas):
     """Internal method"""
     ct = np.cos(thetas)[np.newaxis].T

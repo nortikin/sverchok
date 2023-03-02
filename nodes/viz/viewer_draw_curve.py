@@ -304,9 +304,7 @@ class SvCurveViewerDrawNode(SverchCustomTreeNode, bpy.types.Node):
         draw_inputs = []
         for params in zip_long_repeat(curves_s, resolution_s):
             for curve, resolution in zip_long_repeat(*params):
-                t_curve = SvNurbsCurve.to_nurbs(curve)
-                if t_curve is None:
-                    t_curve = curve
+                t_curve = curve
                 draw_inputs.append(CurveData(self, t_curve, resolution))
         return draw_inputs
 

@@ -3,7 +3,7 @@ from bpy.props import StringProperty, BoolProperty, EnumProperty, FloatProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
-from sverchok.utils.logging import info
+from sverchok.utils.sv_logging import sv_logger
 from sverchok.dependencies import FreeCAD
 from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
 
@@ -133,7 +133,7 @@ class SvShowFcstdSpreadsheetsOp(bpy.types.Operator, SvGenericNodeLocator):
                         labels.append( (obj.Label, obj.Label, obj.Label) )
 
         except:
-            info('LabelReader Spreadsheet error')
+            sv_logger.info('LabelReader Spreadsheet error')
         finally:
             F.closeDocument(Fname)
 
@@ -190,7 +190,7 @@ class SvShowFcstdParNamesOp(bpy.types.Operator, SvGenericNodeLocator):
                                 labels.append( (label, label, label) )
 
         except:
-            info('Label reader read cell error')
+            sv_logger.info('Label reader read cell error')
 
         finally:
             F.closeDocument(Fname)
@@ -245,7 +245,7 @@ def WriteParameter(fc_file,spreadsheet,alias,par_write,write):
                     break
     
     except:
-        info('WriteParameter error')
+        sv_logger.info('WriteParameter error')
 
     finally:
         F.closeDocument(Fname)

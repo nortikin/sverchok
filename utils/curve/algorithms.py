@@ -22,7 +22,7 @@ from sverchok.utils.math import (
     ZERO, FRENET, HOUSEHOLDER, TRACK, DIFF, TRACK_NORMAL,
     NORMAL_DIR, NONE
 )
-from sverchok.utils.logging import info
+from sverchok.utils.sv_logging import sv_logger
 
 def make_euclidean_ts(pts):
     tmp = np.linalg.norm(pts[:-1] - pts[1:], axis=1)
@@ -836,7 +836,10 @@ def concatenate_curves(curves, scale_to_unit=False, allow_generic=True):
     """
     if not curves:
         raise Exception("List of curves must be not empty")
-    result = [curves[0]]
+    if scale_to_unit:
+        result = [reparametrize_curve(curves[0])]
+    else:
+        result = [curves[0]]
     some_native = False
     exceptions = []
     for idx, curve in enumerate(curves[1:]):
@@ -854,7 +857,7 @@ def concatenate_curves(curves, scale_to_unit=False, allow_generic=True):
             except UnsupportedCurveTypeException as e:
                 exceptions.append(e)
                 # "concatenate" method can't work with this type of curve
-                info("Can't natively join curve #%s (%s), will use generic method: %s", idx+1, curve, e)
+                sv_logger.info("Can't natively join curve #%s (%s), will use generic method: %s", idx+1, curve, e)
                 # P.2: if some curves were already joined natively,
                 # then we have to rescale each of other curves separately
                 if some_native and scale_to_unit:

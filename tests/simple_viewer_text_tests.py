@@ -1,7 +1,6 @@
 
-import bpy
 from sverchok.utils.testing import *
-from sverchok.utils.logging import debug, info
+
 
 class TextViewerTest(EmptyTreeTestCase):
 

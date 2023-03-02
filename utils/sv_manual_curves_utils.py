@@ -88,7 +88,14 @@ def get_valid_evaluate_function(group_name, node_name):
     try:  node.mapping.evaluate(curve, 0.0)
     except: node.mapping.initialize()
 
-    evaluate = lambda val: node.mapping.evaluate(curve, val)
+    def evaluate(val):
+        res = node.mapping.evaluate(curve, val)
+        if node.mapping.use_clip:
+            if res < node.mapping.clip_min_y:
+                res = node.mapping.clip_min_y
+            if res > node.mapping.clip_max_y:
+                res = node.mapping.clip_max_y
+        return res
     return evaluate
 
 def get_rgb_curve(group_name, node_name):

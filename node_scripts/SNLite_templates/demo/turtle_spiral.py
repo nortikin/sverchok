@@ -8,18 +8,20 @@ in   in_paint_mask s
 out  out_face_mask s
 out  out_face_data s
 """
+import logging
 
 from sverchok.data_structure import zip_long_repeat
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
-from sverchok.utils.logging import info, debug
 from sverchok.utils.turtle import Turtle
+
+logger = logging.getLogger('sverchok')
 
 if in_select_mask is None:
     in_select_mask = [[]]
 if in_paint_mask is None:
     in_paint_mask = [[]]
 
-info(in_start_face_idx)
+logger.info(in_start_face_idx)
 
 out_face_mask = []
 out_face_data = []
@@ -54,7 +56,7 @@ for verts, faces, start_face, turns, select_mask, paint_mask in objects:
     
     for i in range(turns * 2):
         steps = (i+1)*2
-        debug("Steps := %s", steps)
+        logger.debug("Steps := %s", steps)
         turtle.step(steps)
         turtle.turn_prev()
         turtle.step(steps)

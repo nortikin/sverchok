@@ -8,22 +8,26 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, split_by_count
 from sverchok.utils.nurbs_common import SvNurbsMaths
 from sverchok.utils.surface.nurbs import SvGeomdlSurface, interpolate_nurbs_surface
+from sverchok.utils.surface.freecad import SvSolidFaceSurface
 from sverchok.utils.math import supported_metrics
-from sverchok.dependencies import geomdl
+from sverchok.dependencies import geomdl, FreeCAD
 
 if geomdl is not None:
     from geomdl import fitting
 
+if FreeCAD is not None:
+    import Part
+    from Part import BSplineSurface
 
-class SvExInterpolateNurbsSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
+
+class SvExInterpolateNurbsSurfaceNodeMK2(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: NURBS Surface Interpolate
     Tooltip: Interpolate NURBS Surface
     """
-    bl_idname = 'SvExInterpolateNurbsSurfaceNode'
+    bl_idname = 'SvExInterpolateNurbsSurfaceNodeMK2'
     bl_label = 'Interpolate NURBS Surface'
     bl_icon = 'SURFACE_NSURFACE'
-    sv_dependencies = {'geomdl'}
 
     input_modes = [
             ('1D', "Single list", "List of all control points (concatenated)", 1),
@@ -32,6 +36,8 @@ class SvExInterpolateNurbsSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
 
     def update_sockets(self, context):
         self.inputs['USize'].hide_safe = self.input_mode == '2D'
+        self.inputs['DegreeU'].hide_safe = (self.nurbs_implementation == SvNurbsMaths.FREECAD) and ((self.input_mode == '1D') or (self.input_mode == '2D'))
+        self.inputs['DegreeV'].hide_safe = (self.nurbs_implementation == SvNurbsMaths.FREECAD) and ((self.input_mode == '1D') or (self.input_mode == '2D'))
         updateNode(self, context)
 
     input_mode : EnumProperty(
@@ -76,11 +82,13 @@ class SvExInterpolateNurbsSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
             (SvNurbsMaths.GEOMDL, "Geomdl", "Geomdl (NURBS-Python) package implementation", 0))
     implementations.append(
         (SvNurbsMaths.NATIVE, "Sverchok", "Sverchok built-in implementation", 1))
+    if FreeCAD is not None:
+        implementations.append((SvNurbsMaths.FREECAD, "FreeCAD", "FreeCAD package implementation", 2))
 
     nurbs_implementation : EnumProperty(
             name = "Implementation",
             items=implementations,
-            update = updateNode)
+            update = update_sockets)
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', "Vertices")
@@ -97,11 +105,16 @@ class SvExInterpolateNurbsSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
         layout.prop(self, 'nurbs_implementation', text='')
         if self.nurbs_implementation == SvNurbsMaths.GEOMDL:
             layout.prop(self, 'centripetal')
-        else:
+        elif self.nurbs_implementation == SvNurbsMaths.NATIVE:
             layout.prop(self, 'metric')
+        else:
+            pass
         layout.prop(self, "input_mode")
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+
         vertices_s = self.inputs['Vertices'].sv_get()
         u_size_s = self.inputs['USize'].sv_get()
         degree_u_s = self.inputs['DegreeU'].sv_get()
@@ -138,7 +151,12 @@ class SvExInterpolateNurbsSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
             if geomdl is not None and self.nurbs_implementation == SvNurbsMaths.GEOMDL:
                 surf = fitting.interpolate_surface(vertices, n_u, n_v, degree_u, degree_v, centripetal=self.centripetal)
                 surf = SvGeomdlSurface(surf)
-            else:
+            elif FreeCAD is not None and self.nurbs_implementation == SvNurbsMaths.FREECAD:
+                vertices_np = np.array(split_by_count(vertices, n_v))
+                surf = Part.BSplineSurface()
+                surf.interpolate(vertices_np)
+                surf = SvSolidFaceSurface(surf.toShape()).to_nurbs()
+            else: # NATIVE Implementation:
                 vertices_np = np.array(split_by_count(vertices, n_v))
                 vertices_np = np.transpose(vertices_np, axes=(1,0,2))
                 surf = interpolate_nurbs_surface(degree_u, degree_v, vertices_np, metric=self.metric)
@@ -155,8 +173,8 @@ class SvExInterpolateNurbsSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
 
 
 def register():
-    bpy.utils.register_class(SvExInterpolateNurbsSurfaceNode)
+    bpy.utils.register_class(SvExInterpolateNurbsSurfaceNodeMK2)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvExInterpolateNurbsSurfaceNode)
+    bpy.utils.unregister_class(SvExInterpolateNurbsSurfaceNodeMK2)

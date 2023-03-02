@@ -24,10 +24,10 @@ import bpy
 from bpy.props import StringProperty
 
 import sverchok
-from sverchok.utils.logging import error
+from sverchok.utils.sv_logging import sv_logger
 from sverchok.utils.docstring import SvDocstring
 from sverchok.utils.sv_default_macros import macros, DefaultMacros
-from sverchok.ui.nodeview_space_menu import add_node_menu
+from sverchok.ui.nodeview_space_menu import get_add_node_menu
 
 
 addon_name = sverchok.__name__
@@ -63,7 +63,7 @@ def ensure_valid_show_string(nodetype):
         description = nodetype.bl_rna.docstring.get_shorthand()
         return nodetype.bl_label + ensure_short_description(description)
     except Exception as err:
-        error(f'Nodetype "{nodetype}": ensure_valid_show_string() threw an exception:\n {err}')
+        sv_logger.error(f'Nodetype "{nodetype}": ensure_valid_show_string() threw an exception:\n {err}')
 
 
 def function_iterator(module_file):
@@ -101,7 +101,7 @@ def gather_items(context):
     fx = []
     idx = 0
 
-    for cat in add_node_menu.walk_categories():
+    for cat in get_add_node_menu().walk_categories():
         for item in cat:
             if not hasattr(item, 'bl_idname'):
                 continue

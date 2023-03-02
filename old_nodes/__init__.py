@@ -25,7 +25,7 @@ from typing import Union
 import bpy
 
 from sverchok.utils.sv_oldnodes_parser import get_old_node_bl_idnames
-from sverchok.utils.logging import error
+from sverchok.utils.sv_logging import sv_logger
 from sverchok.utils.handle_blender_data import BlTrees
 
 
@@ -133,7 +133,7 @@ def register_all():
             # when a code of an old node is copied to old folder
             # it can be copied with other classes (property groups)
             # which does not change it version to MK2, so we have the error
-            error(e)
+            sv_logger.error(e)
 
 
 def register():
@@ -150,4 +150,4 @@ def unregister():
         try:
             mod.unregister()
         except Exception as e:
-            error(e)
+            sv_logger.error(e)

@@ -6,11 +6,11 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat
-from sverchok.utils.logging import info, exception
-from sverchok.utils.curve.nurbs import SvNurbsCurve, SvNativeNurbsCurve, SvGeomdlCurve
+from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.nurbs_common import SvNurbsMaths
 from sverchok.utils.math import supported_metrics
 from sverchok.dependencies import geomdl
+
 
 class SvExInterpolateNurbsCurveNode(SverchCustomTreeNode, bpy.types.Node):
     """
@@ -90,7 +90,7 @@ class SvExInterpolateNurbsCurveNode(SverchCustomTreeNode, bpy.types.Node):
                 implementation = SvNurbsCurve.NATIVE
                 metric = self.metric
 
-            curve = SvNurbsMaths.interpolate_curve(implementation, degree, vertices, metric=metric, cyclic=self.cyclic, logger=self.get_logger())
+            curve = SvNurbsMaths.interpolate_curve(implementation, degree, vertices, metric=metric, cyclic=self.cyclic, logger=self.sv_logger)
 
             points_out.append(curve.get_control_points().tolist())
             knots_out.append(curve.get_knotvector().tolist())

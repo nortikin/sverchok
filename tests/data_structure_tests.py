@@ -1,9 +1,6 @@
-
-import unittest
-
-from sverchok.utils.logging import error
 from sverchok.utils.testing import *
 from sverchok.data_structure import *
+
 
 class DataStructureTests(SverchokTestCase):
     def test_match_long_repeat(self):
@@ -80,7 +77,7 @@ class DataStructureTests(SverchokTestCase):
         with self.assertRaises(TypeError):
             data = [[[17]]]
             result = ensure_nesting_level(data, 1)
-            error("ensure_nesting_level() returned %s", result)
+            sv_logger.error("ensure_nesting_level() returned %s", result)
 
     def test_transpose_list(self):
         self.subtest_assert_equals(transpose_list([[1,2], [3,4]]), [[1,3], [2, 4]])

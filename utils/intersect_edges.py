@@ -45,9 +45,17 @@ def remove_permutations_that_share_a_vertex(cm, bm, permutations):
     ''' Get useful Permutations '''
 
     final_permutations = []
+    #all_edges = np.array([[e.verts[0].index, e.verts[1].index] for e in bm.edges])
     for edges in permutations:
-        raw_vert_indices = cm.vertex_indices_from_edges_tuple(bm, edges)
-        if cm.duplicates(raw_vert_indices):
+        edge_idx_i, edge_idx_j = edges
+        edge_i, edge_j = bm.edges[edge_idx_i], bm.edges[edge_idx_j]
+        if edge_i.verts[0] == edge_j.verts[0]:
+            continue
+        if edge_i.verts[0] == edge_j.verts[1]:
+            continue
+        if edge_i.verts[1] == edge_j.verts[0]:
+            continue
+        if edge_i.verts[1] == edge_j.verts[1]:
             continue
 
         # reaches this point if they do not share.
@@ -56,9 +64,18 @@ def remove_permutations_that_share_a_vertex(cm, bm, permutations):
     return final_permutations
 
 def get_valid_permutations(cm, bm, edge_indices):
-    raw_permutations = itertools.permutations(edge_indices, 2)
-    permutations = [r for r in raw_permutations if r[0] < r[1]]
-    return remove_permutations_that_share_a_vertex(cm, bm, permutations)
+    permutations = []
+    for e1 in edge_indices:
+        v1, v2 = bm.edges[e1].verts
+        for e2 in edge_indices:
+            if e1 < e2:
+                v3, v4 = bm.edges[e2].verts
+                if v1 == v3 or v2 == v4:
+                    continue
+                if v1 == v4 or v2 == v3:
+                    continue
+                permutations.append([e1, e2])
+    return permutations
 
 def can_skip(cm, closest_points, vert_vectors):
     '''this checks if the intersection lies on both edges, returns True
@@ -170,6 +187,7 @@ def intersect_edges_3d(verts_in, edges_in, s_epsilon):
     add_back = bmesh_intersect_edges_3d(bm, s_epsilon)
 
     verts_out = [v.co.to_tuple() for v in bm.verts]
+    bm.verts.index_update()
     edges_out = [[j.index for j in i.verts] for i in bm.edges]
     # optional correction, remove originals, add back those that are not intersecting.
     edges_out = edges_out[trim_indices:]

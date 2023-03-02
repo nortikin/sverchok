@@ -62,7 +62,7 @@ Comes with more than 600 nodes to help create and manipulate geometry. Combining
 Install Sverchok as you would any blender addon.  
   
 -  _Installation from Preferences_  
-   Download Sverchok [archive (zip) from github](https://github.com/nortikin/sverchok/archive/master.zip)
+   Download Sverchok [archive (zip) from github](https://github.com/nortikin/sverchok/archive/refs/heads/master.zip)
    -  Do not unpack it after downloading, Blender will take care of that later.
        - Mac OS users can [recompress the folder](https://support.apple.com/guide/mac-help/zip-and-unzip-files-and-folders-on-mac-mchlp2528/mac) if Safari has automatically extracted it and deleted the `.zip`  
    -  Edit > Preferences > Add-ons > 

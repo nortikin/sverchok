@@ -4,9 +4,9 @@ import numpy as np
 from mathutils import kdtree
 from mathutils.bvhtree import BVHTree
 
-from sverchok.utils.curve import SvCurve, SvIsoUvCurve
+from sverchok.utils.curve import SvIsoUvCurve
 from sverchok.utils.curve.nurbs import SvNurbsCurve
-from sverchok.utils.logging import debug, info, getLogger
+from sverchok.utils.sv_logging import sv_logger, get_logger
 from sverchok.utils.geom import PlaneEquation, LineEquation, locate_linear
 from sverchok.dependencies import scipy
 
@@ -98,7 +98,7 @@ def nearest_point_on_curve(src_points, curve, samples=10, precise=True, method='
     Find nearest point on any curve.
     """
     if logger is None:
-        logger = getLogger()
+        logger = get_logger()
 
     t_min, t_max = curve.get_u_bounds()
 
@@ -108,16 +108,37 @@ def nearest_point_on_curve(src_points, curve, samples=10, precise=True, method='
         points = curve.evaluate_array(us).tolist()
         #print("P:", points)
 
-        kdt = kdtree.KDTree(len(us))
-        for i, v in enumerate(points):
-            kdt.insert(v, i)
-        kdt.balance()
+        polygons = [(i, i+1, i) for i in range(len(points)-1)]
+        tree = BVHTree.FromPolygons( points, polygons, all_triangles = True )
 
         us_out = []
         nearest_out = []
         for point_from in points_from:
-            nearest, i, distance = kdt.find(point_from)
-            us_out.append(us[i])
+            nearest, normal, i, distance = tree.find_nearest( point_from )
+            nearest = np.array(nearest)
+            
+            # find t of arc:
+            p0 = np.array(points[i])
+            p1 = np.array(points[i+1])
+            max_dist = abs(p0-p1).max()
+            dist_nearest_to_p0 = abs(nearest-p0).max()
+            if dist_nearest_to_p0==0:
+                t01=0
+                raw_t = us[i]
+                nearest_t = p0
+            elif dist_nearest_to_p0==max_dist:
+                t01 = 1
+                raw_t = us[i+1]
+                nearest_t = p1
+            else:
+                t01 = dist_nearest_to_p0/max_dist
+                raw_t = us[i] + t01*(us[i+1]-us[i]) # approximate nearest t by chorda
+                nearest_t = None #curve.evaluate(raw_t).tolist()  # later
+            
+            # t0    - [0-1] in interval us[i]-us[i+1]
+            # raw_t - translate t0 to curve t
+            # nearest_t - if t0==0 or 1 then use points, else None and calc later
+            us_out.append( (us[i], us[i+1], t01, raw_t, p0, nearest_t, p1 ) ) # interval to search minimum
             nearest_out.append(tuple(nearest))
 
         return us_out, np.array(nearest_out)
@@ -126,52 +147,66 @@ def nearest_point_on_curve(src_points, curve, samples=10, precise=True, method='
         dv = curve.evaluate(t) - np.array(src_point)
         return np.linalg.norm(dv)
 
-    init_ts, init_points = init_guess(curve, src_points)
+    intervals, init_points = init_guess(curve, src_points)
     result_ts = []
-    if precise:
-        for src_point, init_t, init_point in zip(src_points, init_ts, init_points):
-            delta_t = (t_max - t_min) / samples
-            logger.debug("T_min %s, T_max %s, init_t %s, delta_t %s", t_min, t_max, init_t, delta_t)
-            if init_t <= t_min:
-                if init_t - delta_t >= t_min:
-                    bracket = (init_t - delta_t, init_t, t_max)
-                else:
-                    bracket = None # (t_min, t_min + delta_t, t_min + 2*delta_t)
-            elif init_t >= t_max:
-                if init_t + delta_t <= t_max:
-                    bracket = (t_min, init_t, init_t + delta_t)
-                else:
-                    bracket = None # (t_max - 2*delta_t, t_max - delta_t, t_max)
+    result_points = []
+    for src_point, interval, init_point in zip(src_points, intervals, init_points):
+
+        t01       = interval[2]
+        res_t     = interval[3]
+        res_point = interval[5]  # remark: may be None. Calc of None later after getting final t.
+
+        if precise==True:
+            if t01==0 or t01==1:
+                pass
             else:
-                bracket = (t_min, init_t, t_max)
-            result = minimize_scalar(goal,
-                        bounds = (t_min, t_max),
-                        bracket = bracket,
-                        method = method
-                    )
+                raw_t  = interval[3]
+                bracket = (interval[0], raw_t, interval[1])
+                bounds  = (interval[0], interval[1])            
+                
+                logger.debug("T_min %s, T_max %s, init_t %s", t_min, t_max, raw_t)
 
-            if not result.success:
-                if hasattr(result, 'message'):
-                    message = result.message
+                if method == 'Brent' or method == 'Golden':
+                    bracket = (interval[0], interval[1])
+                    result = minimize_scalar(goal,
+                                #bounds = bounds, - Use of `bounds` is incompatible with 'method=Brent'.
+                                bracket = bracket,
+                                method = method
+                            )
                 else:
-                    message = repr(result)
-                raise Exception("Can't find the nearest point for {}: {}".format(src_point, message))
+                    result = minimize_scalar(goal,
+                                bounds = bounds,
+                                bracket = bracket,
+                                method = method
+                            )
 
-            t0 = result.x
-            if t0 < t_min:
-                t0 = t_min
-            elif t0 > t_max:
-                t0 = t_max
-            result_ts.append(t0)
-    else:
-        result_ts = init_ts
+                if not result.success:
+                    if hasattr(result, 'message'):
+                        message = result.message
+                    else:
+                        message = repr(result)
+                    raise Exception("Can't find the nearest point for {}: {}".format(src_point, message))
+
+                res_t = result.x
+
+        result_ts.append(res_t)
+        result_points.append(res_point)
 
     if output_points:
-        if precise:
-            result_points = curve.evaluate_array(np.array(result_ts))
-            return list(zip(result_ts, result_points))
-        else:
-            return list(zip(result_ts, init_points))
+        result_ts_none = []
+        # get t where points is None value
+        for i in range(len(result_points)):
+            if result_points[i] is None:
+                result_ts_none.append(result_ts[i])
+
+        if len(result_ts_none)>0:
+            # evaluate that points and save values:
+            result_points_none = curve.evaluate_array(np.array(result_ts_none)).tolist()
+            for i in range(len(result_points)):
+                if result_points[i] is None:
+                    result_points[i] = result_points_none.pop(0)
+
+        return list(zip(result_ts, np.array(result_points) ))
     else:
         return result_ts
 
@@ -628,7 +663,7 @@ def intersect_curve_surface(curve, surface, init_samples=10, raycast_samples=10,
                 break
             step = np.linalg.norm(point - prev_point)
             if step < tolerance and i > 1:
-                debug("After ortho: Point {}, prev {}, iter {}".format(point, prev_point, i))
+                sv_logger.debug("After ortho: Point {}, prev {}, iter {}".format(point, prev_point, i))
                 point_found = True
                 break
 
@@ -784,7 +819,7 @@ def intersect_curve_plane_ortho(curve, plane, init_samples=10, ortho_samples=10,
             point = ortho.nearest
             step = np.linalg.norm(point - prev_point)
             if step < tolerance:
-                debug("After ortho: Point {}, prev {}, iter {}".format(point, prev_point, i))
+                sv_logger.debug("After ortho: Point {}, prev {}, iter {}".format(point, prev_point, i))
                 break
 
             prev_point = point
@@ -798,7 +833,7 @@ def intersect_curve_plane_ortho(curve, plane, init_samples=10, ortho_samples=10,
             point = np.array(point)
             step = np.linalg.norm(point - prev_point)
             if step < tolerance:
-                debug("After raycast: Point {}, prev {}, iter {}".format(point, prev_point, i))
+                sv_logger.debug("After raycast: Point {}, prev {}, iter {}".format(point, prev_point, i))
                 break
 
             prev_prev_point = prev_point
@@ -955,7 +990,7 @@ def intersect_curve_plane(curve, plane, method = EQUATION, **kwargs):
 
 def curve_extremes(curve, field, samples=10, direction = 'MAX', on_fail = 'FAIL', logger=None):
     if logger is None:
-        logger = getLogger()
+        logger = get_logger()
 
     def goal(t):
         p = curve.evaluate(t)

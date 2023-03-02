@@ -23,11 +23,13 @@ class SvConcatCurvesNode(SverchCustomTreeNode, bpy.types.Node):
 
         check : BoolProperty(
             name = "Check coincidence",
+            description = "If enabled, then the node will check that the end points of curves being concatenated do actually coincide (within threshold). If they do not, the node will give an error (become red), and the processing will stop",
             default = False,
             update = updateNode)
 
         max_rho : FloatProperty(
             name = "Max. distance",
+            description = "Maximum distance between end points of the curves, which is allowable to decide that they actually coincide",
             min = 0.0,
             default = 0.001,
             precision = 4,

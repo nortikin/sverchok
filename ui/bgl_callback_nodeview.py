@@ -28,7 +28,7 @@ import bgl
 from bpy.types import SpaceNodeEditor
 
 from sverchok.utils.sv_stethoscope_helper import draw_text_data, draw_graphical_data
-from sverchok.utils.logging import debug
+from sverchok.utils.sv_logging import sv_logger
 
 callback_dict = {}
 point_dict = {}
@@ -214,7 +214,7 @@ def _draw_text_handler(tree_id, node_id, text: str, color=(1, 1, 1, 1), scale=1.
     # this is less efficient because it requires search of the node each redraw call
     if not text_coordinates:
         if not any(n for n in editor.edit_tree.nodes if n.node_id == node_id):
-            debug(f'Some node looks like was removed without removing bgl drawing, text: {text}')
+            sv_logger.debug(f'Some node looks like was removed without removing bgl drawing, text: {text}')
             return
 
         # find node location
@@ -267,7 +267,7 @@ def _get_text_location(node, align='RIGHT') -> tuple[int, int]:
     elif align == "DOWN":
         x, y = int(x), int(y - dy - gap)
     else:
-        debug(f'Some node drawing text with unsupported align: {align}')
+        sv_logger.debug(f'Some node drawing text with unsupported align: {align}')
     return x, y
 
 

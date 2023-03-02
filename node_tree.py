@@ -25,7 +25,7 @@ a file (or probably even between files =).
 """
 
 
-import inspect
+import logging
 import sys
 import time
 from contextlib import contextmanager
@@ -44,8 +44,7 @@ from sverchok.core.event_system import handle_event
 from sverchok.data_structure import classproperty, post_load_call
 from sverchok.utils.sv_node_utils import recursive_framed_location_finder
 from sverchok.utils.docstring import SvDocstring
-import sverchok.utils.logging
-from sverchok.utils.logging import debug, catch_log_error, is_enabled_for
+from sverchok.utils.sv_logging import catch_log_error, sv_logger
 
 from sverchok.ui import color_def
 from sverchok.ui.nodes_replacement import set_inputs_mapping, set_outputs_mapping
@@ -85,13 +84,13 @@ class SvNodeTreeCommon:
         this is instead of calling `get_dpi_factor` on every redraw.
         """
 
-        debug(f"update_gl_scale_info called from {origin or self.name}")
+        sv_logger.debug(f"update_gl_scale_info called from {origin or self.name}")
         try:
             from sverchok.utils.context_managers import sv_preferences
             with sv_preferences() as prefs:
                 prefs.set_nodeview_render_params(None)
         except Exception as err:
-            debug('failed to get gl scale info', err)
+            sv_logger.debug('failed to get gl scale info', err)
 
     @contextmanager
     def init_tree(self):
@@ -193,7 +192,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
     sv_show_socket_menus: BoolProperty(
         name = "Show socket menus",
         description = "Display socket dropdown menu buttons. NOTE: options that are enabled in those menus will be effective regardless of this checkbox!",
-        default = False,
+        default = True,
         options=set())
     """Display socket dropdown menu buttons (only for output).
     Read more in [user documentation](http://nortikin.github.io/sverchok/docs/user_interface/input_menus.html).
@@ -490,42 +489,30 @@ class NodeUtils:
     Most of them have nothing related with nodes and using as aliases of some functionality.
     The class can be surely ignored during creating of new nodes.
     """
-    def get_logger(self):
-        if hasattr(self, "draw_label"):
-            name = self.draw_label()
-        else:
-            name = self.label
-        if not name:
-            name = self.bl_label
-        if not name:
-            name = self.__class__.__name__
+    @property
+    def sv_logger(self):
+        # todo inject node label into records?
+        return logging.getLogger('sverchok.nodes')
 
-        # add information about the module location
-        frame, _, line, *_ = inspect.stack()[2]
-        module = inspect.getmodule(frame)
-        module_name = module.__name__ if module is not None else ''
-        name = f'{module_name} {line} ({name})'
-        return sverchok.utils.logging.getLogger(name)
+    @property
+    def debug(self):
+        return self.sv_logger.debug
 
-    def debug(self, msg, *args, **kwargs):
-        if is_enabled_for('DEBUG'):
-            self.get_logger().debug(msg, *args, **kwargs)
+    @property
+    def info(self):
+        return self.sv_logger.info
 
-    def info(self, msg, *args, **kwargs):
-        if is_enabled_for('INFO'):
-            self.get_logger().info(msg, *args, **kwargs)
+    @property
+    def warning(self):
+        return self.sv_logger.warning
 
-    def warning(self, msg, *args, **kwargs):
-        if is_enabled_for('WARNING'):
-            self.get_logger().warning(msg, *args, **kwargs)
+    @property
+    def error(self):
+        return self.sv_logger.error
 
-    def error(self, msg, *args, **kwargs):
-        if is_enabled_for('ERROR'):
-            self.get_logger().error(msg, *args, **kwargs)
-
-    def exception(self, msg, *args, **kwargs):
-        if is_enabled_for('EXCEPTION'):
-            self.get_logger().exception(msg, *args, **kwargs)
+    @property
+    def exception(self):
+        return self.sv_logger.exception
 
     def wrapper_tracked_ui_draw_op(self, layout_element, operator_idname, **keywords):
         """
@@ -626,13 +613,8 @@ class NodeDependencies:
     def missing_dependency(cls) -> bool:
         """Returns True if any of dependent libraries are not installed"""
         if cls._missing_dependency is None:
-            # node_module = sys.modules[cls.__module__]
-            extension_name, *_ = cls.__module__.partition('.')
-            deps_module = sys.modules.get(f"{extension_name}.dependencies")
-            if deps_module is None:
-                debug(f'Extension "{extension_name}" does node define the dependencies module')
             for dep in cls.sv_dependencies:
-                if getattr(deps_module, dep) is None:
+                if dep not in sys.modules:
                     cls._missing_dependency = True
                     break
             else:

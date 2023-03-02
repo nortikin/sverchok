@@ -4,10 +4,11 @@ Approximate NURBS Curve
 Dependencies
 ------------
 
-This node requires either Geomdl_ or SciPy_ library to work.
+This node requires either Geomdl_, SciPy_ or FreeCAD_ library to work.
 
 .. _Geomdl: https://onurraufbingol.com/NURBS-Python/
 .. _SciPy: https://scipy.org/
+.. _FreeCAD: https://www.freecad.org/
 
 Functionality
 -------------
@@ -18,8 +19,8 @@ points, i.e. goes as close to them as possible while remaining a smooth curve.
 In fact, the generated curve always will be a non-rational curve, which means
 that all weights will be equal to 1.
 
-This node supports two implementations of curve approximation algorithm.
-Different implementation give you different ways of controlling them:
+This node supports three different implementations for curve approximation.
+Every single implementation offers different ways of control:
 
 * Geomdl_ implementation can either define the number of control points of
   generated curve automatically, or you can provide it with desired number of
@@ -33,8 +34,36 @@ Different implementation give you different ways of controlling them:
   selection of metrics. This implementation can make cyclic (closed) curves.
   Additionally, when smoothing factor is not zero, you can provide different
   weights for different points.
+* FreeCAD_ implementation supports three approximation methods and a wide variety of options:
+
+  An exact curve degree cannot be specified. An interval ( Minimal Degree, Maximal Degree ) is used instead.
+  The final curve degree is a result of all the constraints applyed and will be in the specified inverval.
+  
+  A global precision of the approximation can be specified as a **Tolerance** value.
+  Lower values mean that the approximation curve will pass closely to the input Vertices.
+  
+  The **"Parameterization"** approximation method allows lots of inner continuity options   
+  and offers a list of metrics for the parametrization.
+  
+  The **"Variational Smoothing"** method uses three additional parameters - "Length Weight",
+  "Curvature Weight" and "Torsion Weight". The functions approximates the points using variational
+  smoothing algorithm, which tries to minimize additional criterium:
+  
+  **LengthWeight*CurveLength + CurvatureWeight*Curvature + TorsionWeight*Torsion**
+  
+  where Continuity must be **C0, C1** ( with "Maximal Degree" >= 3 ) or
+  **C2** ( with "Maximal Degree" >= 5 ).
+  
+  With the **"Explicit Knots"** method a custom knot sequence can be specified. The knot sequence can be
+  also provided with the use of the `Generate Knotvector <https://nortikin.github.io/sverchok/docs/nodes/curve/generate_knotvector.html>`_ node based on the metrics from it.
+  
+  The **"Continuity"** parameter defines how smooth will be the curve internally.
+  The values it can take depend on the approximation method used. It defaults to C2.
+  However, it may not be applied if it conflicts with other parameters ( especially "Maximal Degree" ).
+
 
 .. _NURBS: https://en.wikipedia.org/wiki/Non-uniform_rational_B-spline
+.. _"Generate Knotvector": https://nortikin.github.io/sverchok/docs/nodes/curve/generate_knotvector.html
 
 Inputs
 ------
@@ -48,10 +77,10 @@ This node has the following inputs:
   smaller distance. This does not have sense if **Smoothing** input is set to
   zero. Optional input. If not connected, the node will consider weights of all
   points as equal.
-* **Degree**. Degree of the curve to be built. Default value is 3. Most useful
-  values are 3, 5 and 7. If Scipy implementation is used, then maximum
-  supported degree is 5. For Geomdl, there is no hard limit, but curves of very
-  high degree can be hard to manipulate with.
+* **Degree**. Available for **Geomdl** and **SciPy** only. Degree of the curve to be built. 
+  Default value is 3. Most useful values are 3, 5 and 7. 
+  If Scipy implementation is used, then maximum supported degree is 5. 
+  For Geomdl, there is no hard limit, but curves of very high degree can be hard to manipulate with.
 * **PointsCnt**. Number of curve's control points. This input is available only
   when **Implementation** parameter is set to **Geomdl**, and **Specify points
   count** parameter is checked. Default value is 5.
@@ -60,6 +89,26 @@ This node has the following inputs:
   Smoothing factor. Bigger values will make more smooth curves. Value of 0
   (zero) mean that the curve will exactly pass through all points. The default
   value is 0.1.
+
+FreeCAD implementation specific inputs:
+
+* **Knots**. The knot sequence. Available only if the "Explicit Knots" method is used.
+  Must contain unique floats in an ascending order. When not connected, the curve will be
+  calculated using Euclidean metric.
+* **Minimal Degree**. Minimal possible degree of the curve to be built. 
+  Default value is 3.
+* **Maximal Degree**. Maximal possible degree of the curve to be built. 
+  Default value is 5.
+* **Tolerance**. Maximal distance of the built curve from the init Vertices.
+  Default value is 0.0001.
+  
+* **Length Weight**. Available only for the "Variational Smoothing" method. 
+  Default value is 1.0.
+* **Curvature Weight**. Available only for the "Variational Smoothing" method. 
+  Default value is 1.0.
+* **Torsion Weight**. Available only for the "Variational Smoothing" method. 
+  Default value is 1.0.
+
 
 Parameters
 ----------
@@ -70,6 +119,7 @@ This node has the following parameters:
 
   * **Geomdl**. Use the implementation from Geomdl_ library. This is available only when Geomdl library is installed.
   * **SciPy**. Use the implementation from SciPy_ library. This is available only when SciPy library is installed.
+  * **FreeCAD**. Use the implementation from FreeCAD_ library. This is available only when FreeCAD library is installed.
 
   By default, the first available implementation is used.
 
@@ -98,24 +148,41 @@ This node has the following parameters:
   distance between the first and the last points being approximated, for which
   the node will make the curve cyclic. Default value is 0.0, i.e. the points
   must exactly coincide in order for curve to be closed.
-* **Metric**. This parameter is available only when **Implementation**
-  parameter is set to **SciPy**.Metric to be used for interpolation. The
-  available values are:
+* **Metric**. This parameter is available when **Implementation**
+  parameter is set to **SciPy** and **FreeCAD/Parametrization**. It's the metric (the specific knot values) to be used for interpolation. The
+  available options are:
 
-   * Manhattan
-   * Euclidean
-   * Points (just number of points from the beginning)
-   * Chebyshev
-   * Centripetal (square root of Euclidean distance)
-   * X, Y, Z axis - use distance along one of coordinate axis, ignore others.
+  * **Manhattan** metric is also known as Taxicab metric or rectilinear distance.
+  * **Euclidean** also known as Chord-Length or Distance metric. The parameters of the points are proportionate to the distances between them.
+  * **Points** also known as Uniform metric. The parameters of the points are distributed uniformly. Just the number of the points from the beginning.
+  * **Chebyshev** metric is also known as Chessboard distance.
+  * **Centripetal** The parameters of the points are proportionate to square roots of distances between them.
+  * **X, Y, Z axis** Use distance along one of coordinate axis, ignore others.
 
-   The default value is Euclidean.
+  The default value is Euclidean.
 
 * **Specify smoothing**. This parameter is available only when
   **Implementation** parameter is set to **SciPy**. If checked, the node will
   allow you to specify smoothing factor via **Smoothing** input. If not
   checked, the node will select the smoothing factor automatically. Unchecked
   by default.
+  
+* **Method**. Available only for the FreeCAD_ implementation. Approximation algorithm implementation to be used. The available values are:
+
+  * **Parametrization**.
+  * **Variational smoothing**.
+  * **Explicit Knots**.
+
+* **Continuity**. Available only for the FreeCAD_ implementation. Desired internal smoothness of the result curve. The available values are:
+
+  * **C0** : Only positional continuity.
+  * **G1** : Geometric tangent continuity. Available only for the "Parametrization" method.
+  * **C1** : Continuity of the first derivative all along the Curve.
+  * **G2** : Geometric curvature continuity. Available only for the "Parametrization" method.
+  * **C2** : Continuity of the second derivative all along the Curve.
+  * **C3** : Continuity of the third derivative all along the Curve. Available only for the "Parametrization" method.
+  * **CN** : Infinite order of continuity. Available only for Parametrization method.
+
 
 Outputs
 -------
@@ -136,4 +203,12 @@ Take points from Greasepencil drawing and approximate them with a smooth curve:
 Use SciPy implementation to make a closed curve:
 
 .. image:: https://user-images.githubusercontent.com/284644/101246890-d61ebe00-3737-11eb-942d-c31e02bf3c3d.png
+
+Example of the FreeCAD implementation usage. Euclidean parametrization:
+
+.. image:: https://user-images.githubusercontent.com/66558924/216157300-8480c5a9-29e4-4110-8f46-3ba15f25b3d6.jpg
+
+Example of the FreeCAD implementation using the Explicit Knots method and utilizing the "Generate Knotvector" node:
+
+.. image:: https://user-images.githubusercontent.com/66558924/216157176-288d70c4-040d-4e4e-bf90-e110b32c4d20.jpg
 

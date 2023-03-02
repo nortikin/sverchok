@@ -29,7 +29,7 @@ import hashlib
 import bpy
 from bpy.props import StringProperty, BoolProperty, EnumProperty
 
-from sverchok.utils.logging import debug, info, error, exception
+from sverchok.utils.sv_logging import sv_logger
 from sverchok.utils import sv_gist_tools
 from sverchok.utils import sv_IO_panel_tools
 from sverchok.utils.sv_json_import import JSONImporter
@@ -234,14 +234,14 @@ class SvPreset(object):
 
     def save(self):
         if self._data is None:
-            debug("Preset `%s': no data was loaded, nothing to save.", self.name)
+            sv_logger.debug("Preset `%s': no data was loaded, nothing to save.", self.name)
             return
 
         data = json.dumps(self.data, sort_keys=True, indent=2).encode('utf8')
         with open(self.path, 'wb') as jsonfile:
             jsonfile.write(data)
 
-        info("Saved preset `%s'", self.name)
+        sv_logger.info("Saved preset `%s'", self.name)
 
     @staticmethod
     def get_target_location(node_tree):
@@ -251,7 +251,7 @@ class SvPreset(object):
         """
         selection = [node for node in node_tree.nodes if node.select]
         if not len(selection):
-            debug("No selection, using all nodes")
+            sv_logger.debug("No selection, using all nodes")
             selection = node_tree.nodes[:]
         n = len(selection)
         if not n:
@@ -321,7 +321,7 @@ class SvPreset(object):
 
             preset_add_operators[(self.category, self.name)] = SverchPresetAddOperator
             bpy.utils.register_class(SverchPresetAddOperator)
-            #debug("Registered: %s",
+            # sv_logger.debug("Registered: %s",
             #    "node.sv_preset_" + get_preset_idname_for_operator(self.name, self.category))
 
     def draw_operator(self, layout, id_tree, category=None):
@@ -420,13 +420,13 @@ class SvSaveSelected(bpy.types.Operator):
     def execute(self, context):
         if not self.id_tree:
             msg = "Node tree is not specified"
-            error(msg)
+            sv_logger.error(msg)
             self.report({'ERROR'}, msg)
             return {'CANCELLED'}
 
         if not self.preset_name:
             msg = "Preset name is not specified"
-            error(msg)
+            sv_logger.error(msg)
             self.report({'ERROR'}, msg)
             return {'CANCELLED'}
 
@@ -435,7 +435,7 @@ class SvSaveSelected(bpy.types.Operator):
         nodes = list(filter(lambda n: n.select, ng.nodes))
         if not len(nodes):
             msg = "There are no selected nodes to export"
-            error(msg)
+            sv_logger.error(msg)
             self.report({'ERROR'}, msg)
             return {'CANCELLED'}
 
@@ -451,7 +451,7 @@ class SvSaveSelected(bpy.types.Operator):
         json.dump(layout_dict, open(destination_path, 'w'), indent=2)  # sort keys is not expected by the exporter
         msg = 'exported to: ' + destination_path
         self.report({"INFO"}, msg)
-        info(msg)
+        sv_logger.info(msg)
 
         return {'FINISHED'}
 
@@ -501,13 +501,13 @@ class SvPresetProps(bpy.types.Operator):
     def execute(self, context):
         if not self.old_name:
             msg = "Old preset name is not specified"
-            error(msg)
+            sv_logger.error(msg)
             self.report({'ERROR'}, msg)
             return {'CANCELLED'}
 
         if not self.new_name:
             msg = "New preset name is not specified"
-            error(msg)
+            sv_logger.error(msg)
             self.report({'ERROR'}, msg)
             return {'CANCELLED'}
 
@@ -525,14 +525,14 @@ class SvPresetProps(bpy.types.Operator):
 
             if os.path.exists(new_path):
                 msg = "Preset named `{}' already exists. Refusing to rewrite existing preset.".format(self.new_name)
-                error(msg)
+                sv_logger.error(msg)
                 self.report({'ERROR'}, msg)
                 return {'CANCELLED'}
             
             os.rename(old_path, new_path)
             preset.name = self.new_name
             preset.category = self.new_category
-            info("Renamed `%s' to `%s'", old_path, new_path)
+            sv_logger.info("Renamed `%s' to `%s'", old_path, new_path)
             self.report({'INFO'}, "Renamed `{}' to `{}'".format(self.old_name, self.new_name))
 
         bpy.utils.unregister_class(preset_add_operators[(self.old_category, self.old_name)])
@@ -566,14 +566,14 @@ class SvDeletePreset(bpy.types.Operator):
     def execute(self, context):
         if not self.preset_name:
             msg = "Preset name is not specified"
-            error(msg)
+            sv_logger.error(msg)
             self.report({'ERROR'}, msg)
             return {'CANCELLED'}
 
         path = get_preset_path(self.preset_name, category=self.category)
 
         os.remove(path)
-        info("Removed `%s'", path)
+        sv_logger.info("Removed `%s'", path)
         self.report({'INFO'}, "Removed `{} / {}'".format(self.category, self.preset_name))
 
         return {'FINISHED'}
@@ -597,7 +597,7 @@ class SvPresetToGist(bpy.types.Operator):
     def execute(self, context):
         if not self.preset_name:
             msg = "Preset name is not specified"
-            error(msg)
+            sv_logger.error(msg)
             self.report({'ERROR'}, msg)
             return {'CANCELLED'}
 
@@ -611,11 +611,11 @@ class SvPresetToGist(bpy.types.Operator):
         try:
             gist_url = sv_gist_tools.main_upload_function(gist_filename, gist_description, gist_body, show_browser=False)
             context.window_manager.clipboard = gist_url   # full destination url
-            info(gist_url)
+            sv_logger.info(gist_url)
             self.report({'WARNING'}, "Copied gist URL to clipboard")
             sv_gist_tools.write_or_append_datafiles(gist_url, gist_filename)
         except Exception as err:
-            exception(err)
+            sv_logger.exception(err)
             self.report({'ERROR'}, "Error 222: net connection or github login failed!")
             return {'CANCELLED'}
             
@@ -644,20 +644,20 @@ class SvPresetToFile(bpy.types.Operator):
     def execute(self, context):
         if not self.preset_name:
             msg = "Preset name is not specified"
-            error(msg)
+            sv_logger.error(msg)
             self.report({'ERROR'}, msg)
             return {'CANCELLED'}
 
         if not self.filepath:
             msg = "Target file path is not specified"
-            error(msg)
+            sv_logger.error(msg)
             self.report({'ERROR'}, msg)
             return {'CANCELLED'}
 
         existing_path = get_preset_path(self.preset_name, category=self.category)
         shutil.copy(existing_path, self.filepath)
         msg = "Saved `{} / {}' as `{}'".format(self.category, self.preset_name, self.filepath)
-        info(msg)
+        sv_logger.info(msg)
         self.report({'INFO'}, msg)
 
         return {'FINISHED'}
@@ -689,20 +689,20 @@ class SvPresetFromFile(bpy.types.Operator):
     def execute(self, context):
         if not self.preset_name:
             msg = "Preset name is not specified"
-            error(msg)
+            sv_logger.error(msg)
             self.report({'ERROR'}, msg)
             return {'CANCELLED'}
 
         if not self.filepath:
             msg = "Source file path is not specified"
-            error(msg)
+            sv_logger.error(msg)
             self.report({'ERROR'}, msg)
             return {'CANCELLED'}
 
         target_path = get_preset_path(self.preset_name, category=self.category)
         shutil.copy(self.filepath, target_path)
         msg = "Imported `{}' as `{} / {}'".format(self.filepath, self.category, self.preset_name)
-        info(msg)
+        sv_logger.info(msg)
         self.report({'INFO'}, msg)
 
         return {'FINISHED'}
@@ -734,13 +734,13 @@ class SvPresetFromGist(bpy.types.Operator):
     def execute(self, context):
         if not self.preset_name:
             msg = "Preset name is not specified"
-            error(msg)
+            sv_logger.error(msg)
             self.report({'ERROR'}, msg)
             return {'CANCELLED'}
 
         if not self.gist_id:
             msg = "Gist ID is not specified"
-            error(msg)
+            sv_logger.error(msg)
             self.report({'ERROR'}, msg)
             return {'CANCELLED'}
 
@@ -748,7 +748,7 @@ class SvPresetFromGist(bpy.types.Operator):
         target_path = get_preset_path(self.preset_name, category=self.category)
         if os.path.exists(target_path):
             msg = "Preset named `{}' already exists. Refusing to rewrite existing preset.".format(self.preset_name)
-            error(msg)
+            sv_logger.error(msg)
             self.report({'ERROR'}, msg)
             return {'CANCELLED'}
         
@@ -760,7 +760,7 @@ class SvPresetFromGist(bpy.types.Operator):
         preset.make_add_operator()
 
         msg = "Imported `{}' as `{}'".format(self.gist_id, self.preset_name)
-        info(msg)
+        sv_logger.info(msg)
         self.report({'INFO'}, msg)
 
         return {'FINISHED'}
@@ -787,17 +787,17 @@ class SvPresetCategoryNew(bpy.types.Operator):
     def execute(self, context):
         if not self.category:
             msg = "Category name is not specified"
-            error(msg)
+            sv_logger.error(msg)
             self.report({'ERROR'}, msg)
             return {'CANCELLED'}
         if self.category == GENERAL or self.category in get_category_names():
             msg = "Category named `{}' already exists; refusing to overwrite existing category"
-            error(msg)
+            sv_logger.error(msg)
             self.report({'ERROR'}, msg)
             return {'CANCELLED'}
 
         path = get_presets_directory(category = self.category, mkdir=True)
-        info("Created new category `%s' at %s", self.category, path)
+        sv_logger.info("Created new category `%s' at %s", self.category, path)
         self.report({'INFO'}, "Created new category {}".format(self.category))
         return {'FINISHED'}
 
@@ -818,12 +818,12 @@ class SvPresetCategoryDelete(bpy.types.Operator):
     def execute(self, context):
         if not self.category:
             msg = "Preset name is not specified"
-            error(msg)
+            sv_logger.error(msg)
             self.report({'ERROR'}, msg)
             return {'CANCELLED'}
         if self.category == GENERAL:
             msg = "General category can not be deleted"
-            error(msg)
+            sv_logger.error(msg)
             self.report({'ERROR'}, msg)
             return {'CANCELLED'}
 
@@ -831,7 +831,7 @@ class SvPresetCategoryDelete(bpy.types.Operator):
         files = glob(join(path, "*"))
         if files:
             msg = "Category `{}' is not empty; refusing to delete non-empty category.".format(self.category)
-            error(msg)
+            sv_logger.error(msg)
             self.report({'ERROR'}, msg)
             return {'CANCELLED'}
         os.rmdir(path)
