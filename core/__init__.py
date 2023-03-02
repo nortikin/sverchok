@@ -1,6 +1,10 @@
 import importlib
+import logging
 import sys
-
+import sverchok
+import bpy
+from sverchok.utils.development import get_version_string
+from sverchok.utils.sv_logging import add_file_handler, remove_console_handler
 
 root_modules = [
     "dependencies",
@@ -84,6 +88,13 @@ def import_settings(imported_modules):
     imported_modules.append(settings)
 
 
+def import_logging(imported_modules):
+    """Should be registered second after add-on settings"""
+    module = importlib.import_module(".sv_logging", "sverchok.utils")
+    # the module will be in imported_utils_modules - move sv_logging to core?
+    # imported_modules.append(module)
+
+
 def import_all_modules(imported_modules, mods_bases):
     for mods, base in mods_bases:
         import_modules(mods, base, imported_modules)
@@ -113,8 +124,39 @@ def init_architecture():
     # print('sv: import settings')
     import_settings(imported_modules)
     # print('sv: import all modules')
+    import_logging(imported_modules)
     import_all_modules(imported_modules, mods_bases)
     return imported_modules
+
+
+def enable_logging():
+    """Should be called after registration the add-on settings.
+    Adds additional handlers according the add-on settings and set logging level"""
+    if sverchok.reload_event:
+        return
+
+    addon = bpy.context.preferences.addons.get(sverchok.__name__)
+    prefs = addon.preferences
+
+    sv_logger = logging.getLogger('sverchok')
+    level = getattr(logging, prefs.log_level)
+    sv_logger.setLevel(level)
+    if prefs.log_to_file:
+        add_file_handler(prefs.log_file_name)
+    if not prefs.log_to_console:
+        remove_console_handler()
+
+    logging.captureWarnings(True)
+    sv_logger.info(f'Initializing Sverchok logging (level={prefs.log_level}). '
+                   f'Blender version={bpy.app.version_string},'
+                   f' Sverchok version={get_version_string()}')
+
+
+def disable_logging():
+    sv_logger = logging.getLogger('sverchok')
+    for handler in sv_logger.handlers[:]:
+        handler.close()
+        sv_logger.removeHandler(handler)
 
 
 def interupted_activation_detected():

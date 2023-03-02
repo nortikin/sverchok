@@ -16,6 +16,7 @@
 #  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 # ##### END GPL LICENSE BLOCK #####
+import logging
 from abc import ABC, abstractmethod
 from collections import defaultdict
 from pathlib import Path
@@ -33,7 +34,6 @@ from sverchok.ui.utils import get_menu_preset_path
 from sverchok.utils.context_managers import sv_preferences
 from sverchok.utils import yaml_parser
 from sverchok.utils.modules_inspection import iter_classes_from_module
-from sverchok.utils.logging import info, debug
 
 
 """
@@ -67,7 +67,7 @@ menu names:
 - UiToolsPartialMenu
 """
 
-
+logger = logging.getLogger('sverchok')
 CutSelf = TypeVar("CutSelf", bound="Category")
 sv_tree_types = {'SverchCustomTreeType', }
 
@@ -489,9 +489,9 @@ def setup_add_menu():
             use_preset_copy = False
 
     if use_preset_copy and not menu_file.exists():
-        info(f"Applying menu preset {default_menu_file} at startup")
+        logger.info(f"Applying menu preset {default_menu_file} at startup")
         shutil.copy(default_menu_file, menu_file)
-    debug(f"Using menu preset file: {menu_file}")
+    logger.debug(f"Using menu preset file: {menu_file}")
     add_node_menu = Category.from_config(yaml_parser.load(menu_file), 'All Categories', icon_name='RNA')
 
 def get_add_node_menu():

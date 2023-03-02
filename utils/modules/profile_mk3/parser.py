@@ -19,7 +19,7 @@
 import re
 
 from sverchok.utils.parsec import *
-from sverchok.utils.logging import info, debug, warning
+from sverchok.utils.sv_logging import sv_logger
 from sverchok.utils.modules.profile_mk3.interpreter import *
 
 #########################################
@@ -261,6 +261,6 @@ def parse_profile(src):
         cleaned = cleaned + " " + line
     
     profile = parse(parse_definition, cleaned)
-    debug(profile)
+    sv_logger.debug(profile)
     return profile
 

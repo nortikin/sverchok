@@ -21,7 +21,7 @@ import bpy
 from bpy.props import StringProperty
 
 import sverchok.settings as settings
-from sverchok.utils.logging import debug
+from sverchok.utils.sv_logging import sv_logger
 import sverchok
 from sverchok.utils.handle_blender_data import BlTrees
 from sverchok.ui.nodeview_space_menu import get_add_node_menu
@@ -119,7 +119,7 @@ def get_color(bl_id):
     Get color for bl_id
     """
     if not colors_cache:
-        debug("building color cache")
+        sv_logger.debug("building color cache")
         rebuild_color_cache()
     return colors_cache.get(bl_id)
 

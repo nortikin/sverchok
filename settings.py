@@ -1,6 +1,7 @@
+import logging
 import sys
 import os
-from os.path import dirname, basename, join
+from os.path import basename, join
 import subprocess
 from glob import glob
 import shutil
@@ -28,7 +29,6 @@ else:
 # names from other modules
 sv_dependencies, pip, ensurepip, draw_message, get_icon = [None] * 5
 set_frame_change = None
-info, setLevel = [None] * 2
 draw_extra_addons = None
 apply_theme, rebuild_color_cache, color_callback = [None] * 3
 
@@ -378,8 +378,9 @@ class SverchokPreferences(AddonPreferences):
     # Logging settings
 
     def update_log_level(self, context):
-        info("Setting log level to %s", self.log_level)
-        setLevel(self.log_level)
+        sv_logger = logging.getLogger('sverchok')
+        sv_logger.info("Setting log level to %s", self.log_level)
+        sv_logger.setLevel(self.log_level)
 
     log_levels = [
             ("DEBUG", "Debug", "Debug output", 0),

@@ -15,7 +15,7 @@ from sverchok.utils.curve.nurbs_solver_applications import interpolate_nurbs_cur
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.primitives import SvLine, SvCircle
 from sverchok.utils.curve.biarc import SvBiArc
-from sverchok.utils.logging import info
+from sverchok.utils.sv_logging import sv_logger
 
 from sverchok.dependencies import FreeCAD
 if FreeCAD is not None:
@@ -403,7 +403,7 @@ def curve_to_freecad(sv_curve):
                 result.append(sv_curve)
             return result
         except UnsupportedCurveTypeException as e:
-            info(f"Can't convert {sv_curve} to native FreeCAD curve: {e}")
+            sv_logger.info(f"Can't convert {sv_curve} to native FreeCAD curve: {e}")
             pass
     return [curve_to_freecad_nurbs(sv_curve)]
 

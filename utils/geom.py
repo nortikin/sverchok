@@ -30,10 +30,6 @@ from math import sin, cos, sqrt, acos, pi, atan
 import numpy as np
 from numpy import linalg
 from functools import wraps
-import time
-
-import bpy
-import bmesh
 import mathutils
 from mathutils import Matrix, Vector
 from mathutils.geometry import interpolate_bezier, intersect_line_line, intersect_point_line
@@ -41,11 +37,9 @@ from mathutils.geometry import interpolate_bezier, intersect_line_line, intersec
 from sverchok.utils.modules.geom_primitives import (
     circle, arc, quad, arc_slice, rect, grid, line)
 
-from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
-from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh
-from sverchok.data_structure import match_long_repeat, describe_data_shape
-from sverchok.utils.math import np_mixed_product, np_dot
-from sverchok.utils.logging import debug, info
+from sverchok.data_structure import match_long_repeat
+from sverchok.utils.math import np_mixed_product
+from sverchok.utils.sv_logging import sv_logger
 
 # njit is a light-wrapper around numba.njit, if found
 from sverchok.dependencies import numba  # not strictly needed i think...
@@ -552,7 +546,7 @@ class Spline2D(object):
             norm = np.linalg.norm(n)
             if norm != 0:
                 n = n / norm
-            #debug("DU: {}, DV: {}, N: {}".format(du, dv, n))
+            # sv_logger.debug("DU: {}, DV: {}, N: {}".format(du, dv, n))
             result = tuple(n)
             self._normal_cache[(u,v)] = result
             return result
@@ -572,7 +566,7 @@ class GenerateLookup():
         self.acquire_lookup_table()
         self.get_buckets()
         # for idx, (k, v) in enumerate(sorted(self.lookup.items())):
-        #     debug(k, v)
+        #     sv_logger.debug(k, v)
 
     def find_bucket(self, factor):
         for bucket_min, bucket_max in zip(self.buckets[:-1], self.buckets[1:]):
@@ -1177,7 +1171,7 @@ class PlaneEquation(object):
         output: LineEquation or None, in case two planes are parallel.
         """
         if self.is_parallel(plane2):
-            debug("{} is parallel to {}".format(self, plane2))
+            sv_logger.debug("{} is parallel to {}".format(self, plane2))
             return None
 
         direction = self.normal.cross(plane2.normal)

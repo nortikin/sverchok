@@ -11,7 +11,7 @@ from bpy.props import StringProperty, EnumProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import flatten_data
 from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
-from sverchok.utils.logging import debug
+from sverchok.utils.sv_logging import sv_logger
 from sverchok.dependencies import FreeCAD
 
 if FreeCAD is not None:
@@ -47,11 +47,11 @@ class SvExportSolidOperator(bpy.types.Operator, SvGenericNodeLocator):
             base_name = "sv_solid"
         for i, shape in enumerate(objects):
             #shape = map_recursive(to_solid, object, data_types=(PartModule.Shape, SvCurve, SvSurface))
-            debug("Exporting", shape)
+            sv_logger.debug("Exporting", shape)
             if isinstance(shape, (list, tuple)):
                 shape = flatten_data(shape, data_types=(PartModule.Shape,))
             if isinstance(shape, (list,tuple)):
-                debug("Make compound:", shape)
+                sv_logger.debug("Make compound:", shape)
                 shape = PartModule.Compound(shape)
             file_path = folder_path + base_name + "_"  + "%05d" % i
 

@@ -98,7 +98,7 @@ class SvCurveReduceDegreeNode(SverchCustomTreeNode, bpy.types.Node):
                     kwargs = dict(target = degree)
                 curve = curve.reduce_degree(tolerance=tolerance,
                             if_possible = self.if_possible,
-                            logger = self.get_logger(),
+                            logger = self.sv_logger,
                             **kwargs)
                 new_curves.append(curve)
             if flat_output:

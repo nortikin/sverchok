@@ -79,7 +79,7 @@ class SvExNearestPointOnCurveNode(SverchCustomTreeNode, bpy.types.Node):
                             samples=self.samples, precise=self.precise,
                             output_points = need_points,
                             method = self.method,
-                            logger = self.get_logger())
+                            logger = self.sv_logger)
                 if need_points:
                     new_t = [r[0] for r in results]
                     new_points = [r[1].tolist() for r in results]

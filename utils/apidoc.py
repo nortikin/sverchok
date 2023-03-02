@@ -16,7 +16,7 @@ provides command-line interface to generate documentation. Please run it with
 from os.path import join, dirname
 from os import makedirs
 
-from sverchok.utils.logging import getLogger
+from sverchok.utils.sv_logging import get_logger
 
 try:
     import pdoc
@@ -53,7 +53,7 @@ def generate_api_documentation(root_directory, root_modules=None, logger=None):
     if pdoc is None:
         raise Exception("pdoc3 package is required in order to generate documentation")
     if logger is None:
-        logger = getLogger()
+        logger = get_logger()
     if not root_modules:
         root_modules = DEFAULT_MODULES
     logger.info(f"Start generating API documentation in {root_directory}")

@@ -1,18 +1,15 @@
 
-import numpy as np
-
 import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty, StringProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, match_long_repeat
-from sverchok.utils.modules.eval_formula import get_variables, safe_eval
-from sverchok.utils.logging import info, exception
+from sverchok.data_structure import updateNode
 from sverchok.utils.sv_noise_utils import noise_options, PERLIN_ORIGINAL
 
 from sverchok.utils.field.vector import SvNoiseVectorField
 
 avail_noise = [(t[0], t[0].title(), t[0].title(), '', t[1]) for t in noise_options]
+
 
 class SvNoiseVectorFieldNode(SverchCustomTreeNode, bpy.types.Node):
     """

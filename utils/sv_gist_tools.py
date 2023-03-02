@@ -18,13 +18,12 @@
 
 import os
 import json
-import base64
 from time import gmtime, strftime
 from urllib.request import Request
 import webbrowser
 
 import bpy
-from sverchok.utils.logging import info, debug, error
+from sverchok.utils.sv_logging import sv_logger
 from sverchok.utils.context_managers import sv_preferences
 from sverchok.utils.sv_requests import urlopen
 
@@ -61,17 +60,17 @@ def main_upload_function(gist_filename, gist_description, gist_body, show_browse
         with sv_preferences() as prefs:
             token = prefs.github_token
             if not token:
-                info("GitHub API access token is not specified")
+                sv_logger.info("GitHub API access token is not specified")
                 show_token_help()
                 return
 
-            info("Uploading: %s", gist_filename)
+            sv_logger.info("Uploading: %s", gist_filename)
             headers = {"Authorization": "token " + token}
         
             req = Request(API_URL, data=json_post_data, headers=headers)
             json_to_parse = urlopen(req, data=json_post_data)
             
-            info('Received response from server')
+            sv_logger.info('Received response from server')
             found_json = json_to_parse.read().decode()
             return get_gist_url(found_json)
 

@@ -4,9 +4,9 @@ import numpy as np
 from mathutils import kdtree
 from mathutils.bvhtree import BVHTree
 
-from sverchok.utils.curve import SvCurve, SvIsoUvCurve
+from sverchok.utils.curve import SvIsoUvCurve
 from sverchok.utils.curve.nurbs import SvNurbsCurve
-from sverchok.utils.logging import debug, info, getLogger
+from sverchok.utils.sv_logging import sv_logger, get_logger
 from sverchok.utils.geom import PlaneEquation, LineEquation, locate_linear
 from sverchok.dependencies import scipy
 
@@ -98,7 +98,7 @@ def nearest_point_on_curve(src_points, curve, samples=10, precise=True, method='
     Find nearest point on any curve.
     """
     if logger is None:
-        logger = getLogger()
+        logger = get_logger()
 
     t_min, t_max = curve.get_u_bounds()
 
@@ -663,7 +663,7 @@ def intersect_curve_surface(curve, surface, init_samples=10, raycast_samples=10,
                 break
             step = np.linalg.norm(point - prev_point)
             if step < tolerance and i > 1:
-                debug("After ortho: Point {}, prev {}, iter {}".format(point, prev_point, i))
+                sv_logger.debug("After ortho: Point {}, prev {}, iter {}".format(point, prev_point, i))
                 point_found = True
                 break
 
@@ -819,7 +819,7 @@ def intersect_curve_plane_ortho(curve, plane, init_samples=10, ortho_samples=10,
             point = ortho.nearest
             step = np.linalg.norm(point - prev_point)
             if step < tolerance:
-                debug("After ortho: Point {}, prev {}, iter {}".format(point, prev_point, i))
+                sv_logger.debug("After ortho: Point {}, prev {}, iter {}".format(point, prev_point, i))
                 break
 
             prev_point = point
@@ -833,7 +833,7 @@ def intersect_curve_plane_ortho(curve, plane, init_samples=10, ortho_samples=10,
             point = np.array(point)
             step = np.linalg.norm(point - prev_point)
             if step < tolerance:
-                debug("After raycast: Point {}, prev {}, iter {}".format(point, prev_point, i))
+                sv_logger.debug("After raycast: Point {}, prev {}, iter {}".format(point, prev_point, i))
                 break
 
             prev_prev_point = prev_point
@@ -990,7 +990,7 @@ def intersect_curve_plane(curve, plane, method = EQUATION, **kwargs):
 
 def curve_extremes(curve, field, samples=10, direction = 'MAX', on_fail = 'FAIL', logger=None):
     if logger is None:
-        logger = getLogger()
+        logger = get_logger()
 
     def goal(t):
         p = curve.evaluate(t)

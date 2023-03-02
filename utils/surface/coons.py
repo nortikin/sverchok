@@ -7,8 +7,7 @@
 
 import numpy as np
 
-from sverchok.utils.logging import info, debug
-from sverchok.utils.nurbs_common import from_homogenous
+from sverchok.utils.sv_logging import sv_logger
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.core import UnsupportedCurveTypeException
 from sverchok.utils.curve.nurbs import SvNurbsCurve
@@ -137,6 +136,6 @@ def coons_surface(curve1, curve2, curve3, curve4, use_nurbs=NURBS_IF_POSSIBLE):
         if use_nurbs == NURBS_ONLY:
             raise
         else:
-            info("Can't create a native Coons surface from curves %s: %s", curves, e)
+            sv_logger.info("Can't create a native Coons surface from curves %s: %s", curves, e)
             return SvCoonsSurface(*curves)
 

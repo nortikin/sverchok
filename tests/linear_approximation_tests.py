@@ -1,7 +1,6 @@
 
 import numpy as np
 from sverchok.utils.testing import *
-from sverchok.utils.logging import debug, info
 from sverchok.utils.geom import PlaneEquation, LineEquation, linear_approximation
 
 class PlaneTests(SverchokTestCase):

@@ -14,7 +14,7 @@ from sverchok.utils.curve.algorithms import unify_curves_degree, SvCurveFrameCal
 from sverchok.utils.curve.nurbs_solver_applications import interpolate_nurbs_curve_with_tangents
 from sverchok.utils.surface.core import UnsupportedSurfaceTypeException
 from sverchok.utils.surface import SvSurface, SurfaceCurvatureCalculator, SurfaceDerivativesData
-from sverchok.utils.logging import info, getLogger
+from sverchok.utils.sv_logging import sv_logger, get_logger
 from sverchok.data_structure import repeat_last_for_length
 from sverchok.dependencies import geomdl
 
@@ -54,7 +54,7 @@ class SvNurbsSurface(SvSurface):
             try:
                 return surface.to_nurbs(implementation=implementation)
             except UnsupportedSurfaceTypeException as e:
-                info("Can't convert %s to NURBS: %s", surface, e)
+                sv_logger.info("Can't convert %s to NURBS: %s", surface, e)
         return None
 
     @classmethod
@@ -284,7 +284,7 @@ class SvNurbsSurface(SvSurface):
             return self
 
         if logger is None:
-            logger = getLogger()
+            logger = get_logger()
 
         implementation = self.get_nurbs_implementation()
 
@@ -1170,7 +1170,7 @@ def simple_loft(curves, degree_v = None, knots_u = 'UNIFY', knotvector_accuracy=
     if knots_u not in {'UNIFY', 'AVERAGE'}:
         raise Exception(f"Unsupported knots_u option: {knots_u}")
     if logger is None:
-        logger = getLogger()
+        logger = get_logger()
     curves = unify_curves_degree(curves)
     if knots_u == 'UNIFY':
         curves = unify_curves(curves, accuracy=knotvector_accuracy)
@@ -1240,7 +1240,7 @@ def loft_by_binormals(curves, degree_v = 3,
         logger = None):
 
     if logger is None:
-        logger = getLogger()
+        logger = get_logger()
 
     n_curves = len(curves)
     curves = unify_curves_degree(curves)
@@ -1306,7 +1306,7 @@ def loft_with_tangents(curves, tangent_fields, degree_v = 3,
         logger = None):
 
     if logger is None:
-        logger = getLogger()
+        logger = get_logger()
 
     n_curves = len(curves)
     curves = unify_curves_degree(curves)
@@ -1390,7 +1390,7 @@ def interpolate_nurbs_surface(degree_u, degree_v, points, metric='DISTANCE', ukn
         raise Exception("uknots and vknots must be either both provided or both omitted")
 
     if logger is None:
-        logger = getLogger()
+        logger = get_logger()
 
     if uknots is None:
         knots = np.array([Spline.create_knots(points[i,:], metric=metric) for i in range(n)])

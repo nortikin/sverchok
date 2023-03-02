@@ -100,7 +100,7 @@ class SvTangentsCurveNode(SverchCustomTreeNode, bpy.types.Node):
                                     points, tangents,
                                     metric = self.metric,
                                     cyclic = self.cyclic,
-                                    logger = self.get_logger())
+                                    logger = self.sv_logger)
                     new_controls = new_curve.get_control_points().tolist()
                 curves_i.append(new_curve)
                 controls_i.append(new_controls)

@@ -1,7 +1,5 @@
 
-from sverchok.data_structure import get_data_nesting_level
 from sverchok.utils.testing import *
-from sverchok.utils.logging import debug, info
 from sverchok.dependencies import FreeCAD
 
 if FreeCAD is not None:

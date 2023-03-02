@@ -526,7 +526,7 @@ class OtherNurbsTests(SverchokTestCase):
         inserted_kv = inserted.get_knotvector()
         k =  np.searchsorted(inserted_kv, knot, side='right')-1
         s = sv_knotvector.find_multiplicity(inserted_kv, knot)
-        print("K:", k, "S:", s)
+        # print("K:", k, "S:", s)
         removed = inserted.remove_knot(knot, 1)
         self.assert_numpy_arrays_equal(removed.get_knotvector(), kv, precision=8)
 

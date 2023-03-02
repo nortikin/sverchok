@@ -22,7 +22,7 @@ from bpy.props import IntProperty, FloatProperty, BoolProperty, StringProperty, 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat
 from sverchok.utils.modules.statistics_functions import *
-from sverchok.utils.logging import debug
+from sverchok.utils.sv_logging import sv_logger
 
 TIMER_STATUS_STOPPED = "STOPPED"
 TIMER_STATUS_STARTED = "STARTED"
@@ -120,16 +120,16 @@ class SvTimerPropertyGroup(bpy.types.PropertyGroup):
         return self.timer_loop_count
 
     def stop(self):
-        debug("* Timer {0}: STOP".format(self.timer_id))
+        sv_logger.debug("* Timer {0}: STOP".format(self.timer_id))
         self.timer_time = 0
         self.timer_loop_count = 0
         self.timer_status = TIMER_STATUS_STOPPED
         self.last_timer_status = TIMER_STATUS_STOPPED
 
     def start(self):
-        debug("* Timer {0}: START".format(self.timer_id))
+        sv_logger.debug("* Timer {0}: START".format(self.timer_id))
         if self.timer_status in [TIMER_STATUS_STOPPED, TIMER_STATUS_EXPIRED]:
-            debug("starting from zero")
+            sv_logger.debug("starting from zero")
             self.timer_time = 0
             self.timer_start_frame = bpy.context.scene.frame_current
             self.timer_loop_count = 0
@@ -137,24 +137,24 @@ class SvTimerPropertyGroup(bpy.types.PropertyGroup):
         self.last_timer_status = TIMER_STATUS_STARTED
 
     def pause(self):
-        debug("* Timer {0}: PAUSE".format(self.timer_id))
+        sv_logger.debug("* Timer {0}: PAUSE".format(self.timer_id))
         if self.timer_status == TIMER_STATUS_STARTED:
             self.timer_status = TIMER_STATUS_PAUSED
 
     def reset(self):
-        debug("* Timer {0}: RESET".format(self.timer_id))
+        sv_logger.debug("* Timer {0}: RESET".format(self.timer_id))
         self.timer_status = TIMER_STATUS_STOPPED
         self.timer_time = 0
         self.timer_loop_count = 0
 
     def expire(self):
-        debug("* Timer {0}: EXPIRE".format(self.timer_id))
+        sv_logger.debug("* Timer {0}: EXPIRE".format(self.timer_id))
         self.timer_status = TIMER_STATUS_EXPIRED
         self.timer_time = self.timer_duration
         self.timer_loop_count = self.timer_loops
 
     def loop_backward(self):
-        debug("* Timer {0}: LOOP BACKWARD".format(self.timer_id))
+        sv_logger.debug("* Timer {0}: LOOP BACKWARD".format(self.timer_id))
         if self.timer_loop_count == 0:  # first loop ?
             self.last_timer_status = self.timer_status
             self.timer_status = TIMER_STATUS_STOPPED
@@ -170,7 +170,7 @@ class SvTimerPropertyGroup(bpy.types.PropertyGroup):
                 self.timer_loop_count -= 1
 
     def loop_forward(self):
-        debug("* Timer {0}: LOOP FORWARD".format(self.timer_id))
+        sv_logger.debug("* Timer {0}: LOOP FORWARD".format(self.timer_id))
         if self.timer_loop_count == self.timer_loops:  # last loop ?
             self.last_timer_status = self.timer_status
             self.timer_status = TIMER_STATUS_EXPIRED
@@ -211,7 +211,7 @@ class SvTimerPropertyGroup(bpy.types.PropertyGroup):
                 self.loop_forward()
 
     def scrub_time(self, time):  # used externally to set time by slider scrubbing
-        debug("scrub_time: {0}".format(time))
+        sv_logger.debug("scrub_time: {0}".format(time))
         if time == 0:
             self.loop_backward()
 
@@ -229,7 +229,7 @@ class SvTimerPropertyGroup(bpy.types.PropertyGroup):
 
     def update_time(self, loops, speed, duration, operation, absolute, sticky):
         ''' Update timer's time (called from the node's update loop) '''
-        # debug("Timer {0}: UPDATE with loops = {1}, speed = {2}, duration = {3}, operation = {4}".format(self.timer_id, loops, speed, duration, operation))
+        # sv_logger.debug("Timer {0}: UPDATE with loops = {1}, speed = {2}, duration = {3}, operation = {4}".format(self.timer_id, loops, speed, duration, operation))
 
         self.timer_loops = loops
         self.timer_speed = speed
@@ -251,25 +251,25 @@ class SvTimerPropertyGroup(bpy.types.PropertyGroup):
 
             else:  # update based on RELATIVE frame difference
                 delta_time = (new_frame - old_frame) / fps * self.timer_speed
-                # debug("timer time = {0}".format(self.timer_time))
-                # debug("timer delta = {0}".format(delta_time))
+                # sv_logger.debug("timer time = {0}".format(self.timer_time))
+                # sv_logger.debug("timer delta = {0}".format(delta_time))
                 self.timer_time += delta_time
 
             # time is out of range at either ends ? => check for looping
             if self.timer_time < 0:
                 if self.timer_loops:  # looping ?
                     if self.timer_loop_count == 0:  # at the first loop => stop
-                        # debug("start < looping = 0")
+                        # sv_logger.debug("start < looping = 0")
                         self.timer_time = 0
                         self.timer_status = TIMER_STATUS_STOPPED
                         self.last_timer_status = TIMER_STATUS_STARTED
                     else:  # not at the first loop => wrap around to previous loop
-                        # debug("start < looping > 0")
+                        # sv_logger.debug("start < looping > 0")
                         self.timer_time = self.timer_time % self.timer_duration
                         self.timer_loop_count -= 1
 
                 else:  # not looping => stop ?
-                    # debug("start < NO looping")
+                    # sv_logger.debug("start < NO looping")
                     self.timer_time = 0
                     self.timer_status = TIMER_STATUS_STOPPED
                     self.last_timer_status = TIMER_STATUS_STARTED
@@ -277,18 +277,18 @@ class SvTimerPropertyGroup(bpy.types.PropertyGroup):
             elif self.timer_time > self.timer_duration:
                 if self.timer_loops:  # looping ?
                     if self.timer_loop_count == self.timer_loops:  # at the last loop => expire
-                        # debug("start >= looping = N")
+                        # sv_logger.debug("start >= looping = N")
                         self.timer_time = self.timer_duration
                         self.timer_status = TIMER_STATUS_EXPIRED
                         self.last_timer_status = TIMER_STATUS_STARTED
 
                     else:  # not at the last loop => wrap around to next loop
-                        # debug("start >= looping < N")
+                        # sv_logger.debug("start >= looping < N")
                         self.timer_time = self.timer_time % self.timer_duration
                         self.timer_loop_count += 1
 
                 else:  # not looping => expire ?
-                    # debug("start >= NO looping")
+                    # sv_logger.debug("start >= NO looping")
                     self.timer_time = self.timer_duration
                     self.timer_status = TIMER_STATUS_EXPIRED
                     self.last_timer_status = TIMER_STATUS_STARTED
@@ -306,7 +306,7 @@ class SvTimerPropertyGroup(bpy.types.PropertyGroup):
         # keep the time within range
         self.timer_time = max(0, min(self.timer_time, self.timer_duration))
 
-        # debug("Timer {0}: Status = {1}, Elapsed Time = {2}, Remaining Time = {3}, Expired = {4}".format(self.id(), self.status(), self.elapsed_time(), self.remaining_time(), self.expired()))
+        # sv_logger.debug("Timer {0}: Status = {1}, Elapsed Time = {2}, Remaining Time = {3}, Expired = {4}".format(self.id(), self.status(), self.elapsed_time(), self.remaining_time(), self.expired()))
 
 
 class SvTimerOperatorCallback(bpy.types.Operator):
@@ -438,47 +438,47 @@ class SvTimerNode(SverchCustomTreeNode, bpy.types.Node):
         layout.prop(self, "sticky")
 
     def start_timer(self, context):
-        debug("* Timer: start_timer")
+        self.debug("* Timer: start_timer")
         for timer in self.timers:
             timer.start()
         updateNode(self, context)
 
     def stop_timer(self, context):
-        debug("* Timer: stop_timer")
+        self.debug("* Timer: stop_timer")
         for timer in self.timers:
             timer.stop()
         self.sync_time_slider(0)
         updateNode(self, context)
 
     def pause_timer(self, context):
-        debug("* Timer: pause_timer")
+        self.debug("* Timer: pause_timer")
         for timer in self.timers:
             timer.pause()
         updateNode(self, context)
 
     def reset_timer(self, context):
-        debug("* Timer: reset_timer")
+        self.debug("* Timer: reset_timer")
         for timer in self.timers:
             timer.reset()
         self.sync_time_slider(0)
         updateNode(self, context)
 
     def expire_timer(self, context):
-        debug("* Timer: expire_timer")
+        self.debug("* Timer: expire_timer")
         for timer in self.timers:
             timer.expire()
         self.sync_time_slider(1)
         updateNode(self, context)
 
     def loop_backward_timer(self, context):
-        debug("* Timer: loop_backward_timer")
+        self.debug("* Timer: loop_backward_timer")
         for timer in self.timers:
             timer.loop_backward()
         self.sync_time_slider(0)
         updateNode(self, context)
 
     def loop_forward_timer(self, context):
-        debug("* Timer: loop_forward_timer")
+        self.debug("* Timer: loop_forward_timer")
         for timer in self.timers:
             timer.loop_forward()
         self.sync_time_slider(1)
@@ -517,21 +517,21 @@ class SvTimerNode(SverchCustomTreeNode, bpy.types.Node):
 
         old_timer_count = len(self.timers)
         new_timer_count = len(parameters[0])
-        # debug("we need {0} timers".format(new_timer_count))
-        # debug("old_timer_count = {0}".format(old_timer_count))
-        # debug("new_timer_count = {0}".format(new_timer_count))
+        # self.debug("we need {0} timers".format(new_timer_count))
+        # self.debug("old_timer_count = {0}".format(old_timer_count))
+        # self.debug("new_timer_count = {0}".format(new_timer_count))
 
         # did the number of timers change ? => add or remove timers
         if old_timer_count != new_timer_count:
             if new_timer_count > old_timer_count:  # add new timers
                 for n in range(old_timer_count, new_timer_count):
-                    # debug("creating new timer: {0}".format(n))
+                    # self.debug("creating new timer: {0}".format(n))
                     timer = self.timers.add()
                     timer.timer_id = n
             else:  # remove old timers
                 while len(self.timers) > new_timer_count:
                     n = len(self.timers) - 1
-                    # debug("removing old timer: {0}".format(self.timers[n].timer_id))
+                    # self.debug("removing old timer: {0}".format(self.timers[n].timer_id))
                     self.timers.remove(n)
 
         # process timers

@@ -12,7 +12,7 @@ import sverchok.core.tasks as ts
 from sverchok.core.sv_custom_exceptions import CancelError, SvNoDataError
 from sverchok.core.socket_conversions import conversions
 from sverchok.utils.profile import profile
-from sverchok.utils.logging import log_error
+from sverchok.utils.sv_logging import node_error_logger
 from sverchok.utils.tree_walk import bfs_walk
 
 if TYPE_CHECKING:
@@ -699,7 +699,7 @@ class AddStatistic:
             self._node[ERROR_KEY] = None
             self._node[TIME_KEY] = perf_counter() - self._start
         else:
-            log_error(exc_val)
+            node_error_logger.error(exc_val, exc_info=True)
             self._node[UPDATE_KEY] = False
             self._node[ERROR_KEY] = repr(exc_val)
 

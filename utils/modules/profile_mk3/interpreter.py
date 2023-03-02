@@ -23,13 +23,12 @@ import numpy as np
 from mathutils.geometry import interpolate_bezier
 from mathutils import Vector, Matrix
 
-from sverchok.utils.logging import info, debug, warning
+from sverchok.utils.sv_logging import sv_logger
 from sverchok.utils.geom import interpolate_quadratic_bezier
 from sverchok.utils.sv_curve_utils import Arc
 from sverchok.utils.nurbs_common import SvNurbsMaths
 from sverchok.utils.curve import SvCircle, SvLine, SvBezierCurve, SvCubicBezierCurve
 import sverchok.utils.curve.knotvector as sv_knotvector
-from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.curve.nurbs_solver import SvNurbsCurveControlPoints
 from sverchok.utils.curve.nurbs_solver_applications import prepare_solver_for_interpolation
 
@@ -339,7 +338,7 @@ class HorizontalLineTo(Statement):
             v1 = (x, y0)
             interpreter.position = v1
             verts = self._interpolate(v0, v1, num_segments)
-            #debug("V0 %s, v1 %s, N %s => %s", v0, v1, num_segments, verts)
+            # sv_logger.debug("V0 %s, v1 %s, N %s => %s", v0, v1, num_segments, verts)
             for vertex in verts[1:]:
                 v_index = interpreter.new_vertex(*vertex)
                 interpreter.new_edge(prev_index, v_index)
@@ -1030,7 +1029,7 @@ class CloseAll(Statement):
     def interpret(self, interpreter, variables):
         interpreter.assert_not_closed()
         if not interpreter.has_last_vertex:
-            info("X statement: no current point, do nothing")
+            sv_logger.info("X statement: no current point, do nothing")
             return
 
         v0 = interpreter.vertices[0]
@@ -1064,7 +1063,7 @@ class ClosePath(Statement):
     def interpret(self, interpreter, variables):
         interpreter.assert_not_closed()
         if not interpreter.has_last_vertex:
-            info("X statement: no current point, do nothing")
+            sv_logger.info("X statement: no current point, do nothing")
             return
 
         v0 = interpreter.vertices[interpreter.close_first_index]
@@ -1263,6 +1262,6 @@ class Interpreter(object):
         if not profile:
             return
         for statement in profile:
-            debug("Interpret: %s", statement)
+            sv_logger.debug("Interpret: %s", statement)
             statement.interpret(self, variables)
 

@@ -16,15 +16,14 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-import numpy as np
-
 import bpy
 from bpy.props import StringProperty, IntProperty, CollectionProperty, PointerProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 
-from sverchok.data_structure import updateNode, match_long_repeat
-from sverchok.utils.logging import info, debug
+from sverchok.data_structure import updateNode
+from sverchok.utils.sv_logging import sv_logger
+
 
 class SvMaterialEntry(bpy.types.PropertyGroup):
 
@@ -32,7 +31,7 @@ class SvMaterialEntry(bpy.types.PropertyGroup):
         if hasattr(context, 'node'):
             updateNode(context.node, context)
         else:
-            info("Node is not defined in this context, so will not update the node.")
+            sv_logger.info("Node is not defined in this context, so will not update the node.")
 
     material : PointerProperty(type = bpy.types.Material, update=update_material)
 

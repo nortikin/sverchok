@@ -23,7 +23,7 @@ from bpy.props import StringProperty, IntProperty, CollectionProperty, FloatProp
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, match_long_repeat
-from sverchok.utils.logging import debug
+from sverchok.utils.sv_logging import sv_logger
 from sverchok.utils.modules.eval_formula import get_variables, safe_eval
 from sverchok.utils.geom import CubicSpline, LinearSpline
 from sverchok.utils.curve import SvSplineCurve
@@ -61,7 +61,7 @@ class SvPointEntry(bpy.types.PropertyGroup):
         if hasattr(context, 'node') and hasattr(context.node, 'on_update'):
             context.node.on_update(context)
         else:
-            debug("Node is not defined in this context, so will not update the node.")
+            sv_logger.debug("Node is not defined in this context, so will not update the node.")
 
     x : StringProperty(name = "X", update=update_point)
     y : StringProperty(name = "Y", update=update_point)

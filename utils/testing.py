@@ -18,14 +18,33 @@ from sverchok import old_nodes
 from sverchok.data_structure import get_data_nesting_level
 from sverchok.core.socket_data import get_output_socket_data
 from sverchok.core.sv_custom_exceptions import SvNoDataError
-from sverchok.utils.logging import debug, info, setLevel
 from sverchok.utils.sv_json_import import JSONImporter
+
+
+sv_logger = logging.getLogger('sverchok.testing')
+
+
+@contextmanager
+def only_test_logs():
+    def filter_test_logs(record: logging.LogRecord):
+        """Turnoff all other than test logs"""
+        return record.name.startswith('sverchok.testing')
+
+    root_loger = logging.getLogger('sverchok')
+    for handler in root_loger.handlers:
+        handler.addFilter(filter_test_logs)
+    try:
+        yield
+    finally:
+        for handler in root_loger.handlers:
+            handler.removeFilter(filter_test_logs)
+
 
 try:
     import coverage
     coverage_available = True
 except ImportError:
-    #info("Coverage module is not installed")
+    # sv_logger.info("Coverage module is not installed")
     coverage_available = False
 
 ##########################################
@@ -94,8 +113,10 @@ def create_node_tree(name=None, must_not_exist=True):
     if must_not_exist:
         if name in bpy.data.node_groups:
             raise Exception("Will not create tree `{}': it already exists".format(name))
-    debug("Creating tree: %s", name)
-    return bpy.data.node_groups.new(name=name, type="SverchCustomTreeType")
+    sv_logger.debug("Creating tree: %s", name)
+    tree = bpy.data.node_groups.new(name=name, type="SverchCustomTreeType")
+    tree.sv_process = False  # turn off auto processing tree by default
+    return tree
 
 def get_or_create_node_tree(name=None):
     """
@@ -104,7 +125,7 @@ def get_or_create_node_tree(name=None):
     if name is None:
         name = "TestingTree"
     if name in bpy.data.node_groups:
-        debug("Using existing tree: %s", name)
+        sv_logger.debug("Using existing tree: %s", name)
         return bpy.data.node_groups[name]
     else:
         return create_node_tree(name)
@@ -116,7 +137,7 @@ def get_node_tree(name=None):
     if name is None:
         name = "TestingTree"
     if name in bpy.data.node_groups:
-        debug("Using existing tree: %s", name)
+        sv_logger.debug("Using existing tree: %s", name)
         return bpy.data.node_groups[name]
     else:
         raise Exception("There is no node tree named `{}'".format(name))
@@ -134,7 +155,7 @@ def remove_node_tree(name=None):
         if len(areas):
             space = areas[0].spaces[0]
             space.node_tree = None
-        debug("Removing tree: %s", name)
+        sv_logger.debug("Removing tree: %s", name)
         tree = bpy.data.node_groups[name]
         bpy.data.node_groups.remove(tree)
 
@@ -157,7 +178,7 @@ def link_node_tree(reference_blend_path, tree_name=None):
     if tree_name in bpy.data.node_groups:
         raise Exception("Tree named `{}' already exists in current scene".format(tree_name))
     with bpy.data.libraries.load(reference_blend_path, link=True) as (data_src, data_dst):
-        info(f"---- Linked node tree: {basename(reference_blend_path)}")
+        sv_logger.debug(f"---- Linked node tree: {basename(reference_blend_path)}")
         data_dst.node_groups = [tree_name]
     # right here the update method of the imported tree will be called
     # sverchok does not have a way of preventing this update
@@ -170,7 +191,7 @@ def link_text_block(reference_blend_path, block_name):
     """
 
     with bpy.data.libraries.load(reference_blend_path, link=True) as (data_src, data_dst):
-        info(f"---- Linked text block: {basename(reference_blend_path)}")
+        sv_logger.debug(f"---- Linked text block: {basename(reference_blend_path)}")
         data_dst.texts = [block_name]
 
 def create_node(node_type, tree_name=None):
@@ -179,7 +200,7 @@ def create_node(node_type, tree_name=None):
     """
     if tree_name is None:
         tree_name = "TestingTree"
-    debug("Creating node of type %s", node_type)
+    sv_logger.debug("Creating node of type %s", node_type)
     return bpy.data.node_groups[tree_name].nodes.new(type=node_type)
 
 def get_node(node_name, tree_name=None):
@@ -210,7 +231,7 @@ def run_all_tests(pattern=None, log_file = 'sverchok_tests.log', log_level = Non
         pattern = "*_tests.py"
 
     if log_level is not None:
-        setLevel(log_level)
+        sv_logger.setLevel(log_level)
 
     tests_path = get_tests_path()
     log_handler = logging.FileHandler(join(tests_path, log_file), mode='w')
@@ -221,9 +242,11 @@ def run_all_tests(pattern=None, log_file = 'sverchok_tests.log', log_level = Non
         buffer = StringIO()
         runner = unittest.TextTestRunner(stream = buffer, verbosity=verbosity, failfast=failfast)
         old_nodes.register_all()
-        with coverage_report():
+        with coverage_report(), only_test_logs():
+            sv_logger.warning("Run all tests with log level=[%s]",
+                              logging.getLevelName(sv_logger.getEffectiveLevel()))
             result = runner.run(suite)
-            info("Test cases result:\n%s", buffer.getvalue())
+            sv_logger.info("Test cases result:\n%s", buffer.getvalue())
             return result
     finally:
         logging.getLogger().removeHandler(log_handler)
@@ -246,7 +269,7 @@ def run_test_from_file(file_name):
         runner = unittest.TextTestRunner(stream=buffer, verbosity=2)
         old_nodes.register_all()
         result = runner.run(suite)
-        info("Test cases result:\n%s", buffer.getvalue())
+        sv_logger.info("Test cases result:\n%s", buffer.getvalue())
         return result
     finally:
         logging.getLogger().removeHandler(log_handler)
@@ -269,7 +292,7 @@ class SverchokTestCase(unittest.TestCase):
     """
 
     def setUp(self):
-        debug("Starting test: %s", self.__class__.__name__)
+        sv_logger.debug("Starting test: %s", self.id())
 
     @contextmanager
     def temporary_node_tree(self, new_tree_name):
@@ -515,8 +538,8 @@ class SverchokTestCase(unittest.TestCase):
 
     def assert_sverchok_data_equals_file(self, data, expected_data_file_name, precision=None):
         expected_data = self.load_reference_sverchok_data(expected_data_file_name)
-        #info("Data: %s", data)
-        #info("Expected data: %s", expected_data)
+        # sv_logger.info("Data: %s", data)
+        # sv_logger.info("Expected data: %s", expected_data)
         self.assert_sverchok_data_equal(data, expected_data, precision=precision)
         #self.assertEquals(data, expected_data)
     
@@ -566,7 +589,7 @@ class SverchokTestCase(unittest.TestCase):
         Usage:
 
             with self.assert_logs_no_errors():
-                info("this is just an information, not error")
+                sv_logger.info("this is just an information, not error")
 
         """
 
@@ -582,11 +605,11 @@ class SverchokTestCase(unittest.TestCase):
         logging.getLogger().addHandler(handler)
 
         try:
-            debug("=== \/ === [%s] Here should be no errors === \/ ===", self.__class__.__name__)
+            sv_logger.debug("=== \/ === [%s] Here should be no errors === \/ ===", self.__class__.__name__)
             yield handler
             self.assertFalse(has_errors, "There were some errors logged")
         finally:
-            debug("=== /\ === [%s] There should be no errors === /\ ===", self.__class__.__name__)
+            sv_logger.debug("=== /\ === [%s] There should be no errors === /\ ===", self.__class__.__name__)
             logging.getLogger().handlers.remove(handler)
 
     def subtest_assert_equals(self, value1, value2, message=None):
@@ -859,6 +882,6 @@ if __name__ == "__main__":
             raise Exception("Some tests failed")
         sys.exit(0)
     except Exception as e:
-        print(e)
+        sv_logger.exception(e)
         sys.exit(1)
 

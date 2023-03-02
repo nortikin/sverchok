@@ -9,9 +9,9 @@ import numpy as np
 
 import bpy
 
-from sverchok.utils.curve.core import UnsupportedCurveTypeException
 from sverchok.utils.curve.nurbs import SvNurbsCurve
-from sverchok.utils.logging import getLogger
+from sverchok.utils.sv_logging import get_logger
+
 
 def curve_to_meshdata(curve, resolution):
     t_min, t_max = curve.get_u_bounds()
@@ -35,7 +35,7 @@ class CurveData(object):
         self._nurbs_curve = None
         self.resolution = resolution
 
-        logger = getLogger("sverchok.utils.curve.bakery")
+        logger = get_logger()
 
         if node.draw_line or node.draw_verts or node.draw_comb or node.draw_curvature:
             t_min, t_max = curve.get_u_bounds()

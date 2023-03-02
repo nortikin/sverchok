@@ -17,10 +17,9 @@
 # ##### END GPL LICENSE BLOCK #####
 
 from collections import defaultdict
-import bmesh
-import mathutils
 
-from sverchok.utils.logging import debug
+from sverchok.utils.sv_logging import sv_logger
+
 
 class Turtle(object):
     """
@@ -189,7 +188,7 @@ class Turtle(object):
         self.current_loop = next_loop
         self.current_face = next_loop.face
 
-        debug("Current face # := %s", self.current_face.index)
+        sv_logger.debug("Current face # := %s", self.current_face.index)
 
         if self.selection_mode == self.MASK:
             if not self.selection_mask:
@@ -221,7 +220,7 @@ class Turtle(object):
                 self.painting_index[painting_layer.name] = (self.painting_index[painting_layer.name] + 1) % n
                 value = painting_mask[self.painting_index[painting_layer.name]]
                 self.current_face[painting_layer] = value
-                debug("Paint face #%s, layer `%s' with value `%s'", self.current_face.index, painting_layer.name, value)
+                sv_logger.debug("Paint face #%s, layer `%s' with value `%s'", self.current_face.index, painting_layer.name, value)
 
     def get_opposite_loop(self, loop, bias=None):
         """
@@ -487,21 +486,21 @@ class Turtle(object):
         Mark the current face as selected.
         """
         self.current_face.select = True
-        debug("Selecting face #%s", self.current_face.index)
+        sv_logger.debug("Selecting face #%s", self.current_face.index)
 
     def unselect(self):
         """
         Mark the current face as not selected.
         """
         self.current_face.select = False
-        debug("Unselecting face #%s", self.current_face.index)
+        sv_logger.debug("Unselecting face #%s", self.current_face.index)
 
     def toggle(self):
         """
         Toggle the selection state of the current face.
         """
         self.current_face.select = not self.current_face.select
-        debug("Set face #%s selection := %s", self.current_face.index, self.current_face.select)
+        sv_logger.debug("Set face #%s selection := %s", self.current_face.index, self.current_face.select)
 
     def start_selecting(self, mode = None, mask=None):
         """

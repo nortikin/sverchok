@@ -13,7 +13,7 @@ import sverchok
 from sverchok import old_nodes
 from sverchok.utils.context_managers import sv_preferences
 from sverchok.utils.modules_inspection import iter_submodule_names
-from sverchok.utils.logging import info
+from sverchok.utils.sv_logging import sv_logger
 
 
 class SvRunTests(bpy.types.Operator):
@@ -95,7 +95,7 @@ class SvListOldNodes(bpy.types.Operator):
 
         for node in ntree.nodes:
             if old_nodes.is_old(node):
-                info("Deprecated node: `%s' (%s)", node.name, node.bl_idname)
+                sv_logger.info("Deprecated node: `%s' (%s)", node.name, node.bl_idname)
 
         self.report({'INFO'}, "See logs")
         return {'FINISHED'}

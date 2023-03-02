@@ -20,7 +20,7 @@ import time
 import functools
 import inspect
 import warnings
-from sverchok.utils.logging import info
+from sverchok.utils.sv_logging import sv_logger
 from sverchok.utils.ascii_print import str_color
 
 string_types = (type(b''), type(u''))
@@ -119,7 +119,7 @@ def duration(func):
         
         msg = f"\n{func_name}: {duration}" # + display_args + display_kwargs
         try:
-            info(msg)
+            sv_logger.info(msg)
         except:
             print(msg)
 

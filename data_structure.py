@@ -36,7 +36,7 @@ from numpy import (
     tile as np_tile,
     float64,
     int32, int64)
-from sverchok.utils.logging import debug
+from sverchok.utils.sv_logging import sv_logger
 import numpy as np
 
 
@@ -1255,7 +1255,7 @@ def changable_sockets(node, inputsocketname, outputsocketname):
     if not inputsocketname in node.inputs:
         # - node not initialized in sv_init yet,
         # - or socketname incorrect
-        debug(f"changable_socket was called on {node.name} with a socket named {inputsocketname}, this socket does not exist")
+        sv_logger.debug(f"changable_socket was called on {node.name} with a socket named {inputsocketname}, this socket does not exist")
         return
 
     in_socket = node.inputs[inputsocketname]

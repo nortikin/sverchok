@@ -17,7 +17,6 @@ from sverchok.utils.nodes_mixins.show_3d_properties import Show3DProperties
 from sverchok.utils.blender_mesh import (
     read_verts, read_edges, read_verts_normal,
     read_face_normal, read_face_center, read_face_area, read_materials_idx)
-from sverchok.utils.logging import debug
 
 
 class SvOB3BDataCollection(bpy.types.PropertyGroup):
@@ -360,7 +359,7 @@ class SvGetObjectsData(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
             except Exception as err:
                 # it's not clear which cases this try catch should handle
                 # probably it should skip wrong object types
-                debug('failure in process between frozen area', self.name, err)
+                self.debug('failure in process between frozen area', self.name, err)
 
             if o_ms:
                 ms.append(mtrx)

@@ -14,8 +14,7 @@ try:
 except ImportError:
     delaunay_2d_cdt = None
 
-from sverchok.utils.logging import info, exception
-from sverchok.utils.surface import SvSurface
+from sverchok.utils.sv_logging import sv_logger
 from sverchok.utils.geom_2d.merge_mesh import crop_mesh_delaunay
 from sverchok.utils.voronoi import computeDelaunayTriangulation, Site
 
@@ -82,7 +81,7 @@ def populate_surface_uv(surface, samples_u, samples_v, by_curvature=True, curvat
         max_curvature = max_curvatures.max()
         min_curvature = max_curvatures.min()
         curvatures_range = max_curvature - min_curvature
-        info("Curvature range: %s - %s", min_curvature, max_curvature)
+        sv_logger.info("Curvature range: %s - %s", min_curvature, max_curvature)
         if curvatures_range == 0:
             max_curvatures = np.zeros((samples_u-1, samples_v-1))
         else:
@@ -110,7 +109,7 @@ def populate_surface_uv(surface, samples_u, samples_v, by_curvature=True, curvat
         min_area = areas.min()
         max_area = areas.max()
         areas_range = max_area - min_area
-        info("Areas range: %s - %s", min_area, max_area)
+        sv_logger.info("Areas range: %s - %s", min_area, max_area)
         if areas_range == 0:
             areas = np.zeros((samples_u-1, samples_v-1))
         else:
@@ -127,9 +126,9 @@ def populate_surface_uv(surface, samples_u, samples_v, by_curvature=True, curvat
     max_factor = factors.max()
     if max_factor != 0:
         factors = factors / max_factor
-    #info("Factors: %s - %s (%s)", factors.min(), factors.max(), factor_range)
-    #info("Areas: %s - %s", areas.min(), areas.max())
-    #info("Curvatures: %s - %s", max_curvatures.min(), max_curvatures.max())
+    # sv_logger.info("Factors: %s - %s (%s)", factors.min(), factors.max(), factor_range)
+    # sv_logger.info("Areas: %s - %s", areas.min(), areas.max())
+    # sv_logger.info("Curvatures: %s - %s", max_curvatures.min(), max_curvatures.max())
 
     ppf_range = max_ppf - min_ppf
 
@@ -152,8 +151,8 @@ def populate_surface_uv(surface, samples_u, samples_v, by_curvature=True, curvat
             #ppf = int(round(ppf))
             ppf = ceil(ppf)
 #             if ppf > 1:
-#                 info("I %s, J %s, factor %s, PPF %s", i, j, factor, ppf)
-#                 info("U %s - %s, V %s - %s", u1, u2, v1, v2)
+#                 sv_logger.info("I %s, J %s, factor %s, PPF %s", i, j, factor, ppf)
+#                 sv_logger.info("U %s - %s, V %s - %s", u1, u2, v1, v2)
             u_r = numpy.random.uniform(u1, u2, size=ppf).tolist()
             v_r = numpy.random.uniform(v1, v2, size=ppf).tolist()
             new_u.extend(u_r)

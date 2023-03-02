@@ -1,13 +1,7 @@
 
-import unittest
-from os.path import basename, splitext, dirname, join, exists
-from os import walk
-from glob import glob
-
-import sverchok
 from sverchok.utils.testing import *
-from sverchok.utils.logging import debug, info, error
 from sverchok.nodes.script.formula_interpolate import ControlPoint, split_points
+
 
 class DocumentationTests(SverchokTestCase):
     def test_empty(self):

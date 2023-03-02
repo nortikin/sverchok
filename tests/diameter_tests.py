@@ -1,10 +1,9 @@
 
 from math import sqrt
-from mathutils import Vector
 
-from sverchok.utils.logging import error
 from sverchok.utils.testing import *
 from sverchok.utils.geom import diameter
+
 
 class DiameterTests(SverchokTestCase):
     def test_diameter_1(self):

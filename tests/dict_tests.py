@@ -1,10 +1,8 @@
 
-import unittest
-
-from sverchok.utils.logging import error
 from sverchok.utils.testing import *
 from sverchok.utils.dictionary import SvApproxDict
 from sverchok.utils.curve.nurbs_algorithms import KnotvectorDict
+
 
 class ApproxDictTests(SverchokTestCase):
     

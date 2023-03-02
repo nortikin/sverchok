@@ -21,7 +21,7 @@ from bpy.props import IntProperty, EnumProperty, PointerProperty
 
 from sverchok.utils.context_managers import sv_preferences
 from sverchok.settings import get_dpi_factor
-from sverchok.utils.logging import debug
+from sverchok.utils.sv_logging import sv_logger
 from collections import namedtuple
 
 from sverchok.ui.nodeview_space_menu import get_add_node_menu
@@ -63,12 +63,12 @@ class Bin(object):
 def binpack(nodes, max_bin_height, spacing=0):
     ''' Add nodes to the bins of given max bin height and spacing '''
     if nodes:
-        debug("There are %d nodes to bin pack" % (len(nodes)))
+        sv_logger.debug("There are %d nodes to bin pack" % (len(nodes)))
         for node in nodes:
             if node == None:
-                debug("WARNING: a None node in the spawned nodes???")
+                sv_logger.debug("WARNING: a None node in the spawned nodes???")
     else:
-        debug("WARNING: there are no nodes to bin pack!!!")
+        sv_logger.debug("WARNING: there are no nodes to bin pack!!!")
         return []
 
     scale = 1.0 / get_dpi_factor()  # dpi adjustment scale
@@ -81,11 +81,11 @@ def binpack(nodes, max_bin_height, spacing=0):
         for n, bin in enumerate(bins):  # check all the bins created so far
             if bin.height + len(bin.items) * spacing + item.height <= max_bin_height:
                 # bin not full ? => add item
-                debug("ADDING node <%s> to bin #%d" % (item.name, n))
+                sv_logger.debug("ADDING node <%s> to bin #%d" % (item.name, n))
                 bin.append(item)
                 break  # proceed to the next item
         else:  # item didn't fit into any bin ? => add it to a new bin
-            debug('ADDING node <%s> to new bin' % (item.name))
+            sv_logger.debug('ADDING node <%s> to new bin' % (item.name))
             bin = Bin()
             bin.append(item)
             bins.append(bin)
@@ -161,7 +161,7 @@ def add_spawned_node(context, name):
     if not _spawned_nodes:
         _spawned_nodes["main"] = []
 
-    debug("ADDING spawned node: %s" % name)
+    sv_logger.debug("ADDING spawned node: %s" % name)
 
     tree = context.space_data.edit_tree
 
@@ -182,14 +182,14 @@ def remove_spawned_nodes(context):
 
     tree = context.space_data.edit_tree
 
-    debug("There are %d previously spawned nodes to remove" % N)
+    sv_logger.debug("There are %d previously spawned nodes to remove" % N)
 
     for i, node in enumerate(nodes):
         try:
             if node != None:
-                debug("REMOVING spawned node %d of %d : %s" % (i+1, N, node.bl_idname))
+                sv_logger.debug("REMOVING spawned node %d of %d : %s" % (i+1, N, node.bl_idname))
             else:
-                debug("REMOVING spawned node %d of %d : None" % (i+1, N))
+                sv_logger.debug("REMOVING spawned node %d of %d : None" % (i+1, N))
 
         except:
             print("EXCEPTION: failed to remove spaned node (debug bad access)")
@@ -236,7 +236,7 @@ class SvDisplayNodePanelProperties(bpy.types.PropertyGroup):
 
     def navigate_category(self, direction):
         ''' Navigate to PREV or NEXT category '''
-        debug("Navigate to PREV or NEXT category")
+        sv_logger.debug("Navigate to PREV or NEXT category")
 
         categories = get_category_names()
 
@@ -261,7 +261,7 @@ class SvDisplayNodePanelProperties(bpy.types.PropertyGroup):
         try:
             nodes = get_spawned_nodes()
 
-            debug("ARRANGING %d nodes constrained by %s" % (len(nodes), self.constrain_layout))
+            sv_logger.debug("ARRANGING %d nodes constrained by %s" % (len(nodes), self.constrain_layout))
 
             scale = 1.0 / get_dpi_factor()  # dpi adjustment scale
 
@@ -290,12 +290,12 @@ class SvDisplayNodePanelProperties(bpy.types.PropertyGroup):
                     # add the spacing between bins
                     totalWidth = totalWidth + self.grid_x_space * (len(bins)-1)
 
-                    debug("{0} : min_h = {1:.2f} : max_h = {2:.2f}".format(num_steps, min_h, max_h))
-                    debug("For bin height = %d total width = %d (%d bins)" % (bin_height, totalWidth, len(bins)))
+                    sv_logger.debug("{0} : min_h = {1:.2f} : max_h = {2:.2f}".format(num_steps, min_h, max_h))
+                    sv_logger.debug("For bin height = %d total width = %d (%d bins)" % (bin_height, totalWidth, len(bins)))
 
                     delta = abs((self.grid_width - totalWidth)/self.grid_width)
 
-                    debug("{0} : target = {1:.2f} : current = {2:.2f} : delta % = {3:.2f}".format(
+                    sv_logger.debug("{0} : target = {1:.2f} : current = {2:.2f} : delta % = {3:.2f}".format(
                         num_steps,  self.grid_width, totalWidth,  delta))
 
                     if delta < 0.1:  # converged ?
@@ -307,8 +307,8 @@ class SvDisplayNodePanelProperties(bpy.types.PropertyGroup):
                         else:  # W > w (make h smaller)
                             max_h = bin_height
 
-                debug("*** FOUND solution in %d steps" % num_steps)
-                debug("* {} bins of height {} : width {} : space {} ".format(len(bins),
+                sv_logger.debug("*** FOUND solution in %d steps" % num_steps)
+                sv_logger.debug("* {} bins of height {} : width {} : space {} ".format(len(bins),
                                                                              int(bin_height),
                                                                              int(totalWidth),
                                                                              (len(bins)-1)*self.grid_x_space
@@ -335,14 +335,14 @@ class SvDisplayNodePanelProperties(bpy.types.PropertyGroup):
                     # add the spacing between bins
                     totalWidth = totalWidth + self.grid_x_space * (len(bins)-1)
 
-                    debug("{0} : min_h = {1:.2f} : max_h = {2:.2f}".format(num_steps, min_h, max_h))
-                    debug("For bin height = %d total width = %d" % (bin_height, totalWidth))
+                    sv_logger.debug("{0} : min_h = {1:.2f} : max_h = {2:.2f}".format(num_steps, min_h, max_h))
+                    sv_logger.debug("For bin height = %d total width = %d" % (bin_height, totalWidth))
 
                     current_aspect = totalWidth / bin_height
 
                     delta_aspect = abs(current_aspect - target_aspect)
 
-                    debug("{0} : target = {1:.2f} : current = {2:.2f} : delta = {3:.2f}".format(
+                    sv_logger.debug("{0} : target = {1:.2f} : current = {2:.2f} : delta = {3:.2f}".format(
                         num_steps, target_aspect, current_aspect, delta_aspect))
 
                     if delta_aspect < 0.1:  # converged ?
@@ -354,8 +354,8 @@ class SvDisplayNodePanelProperties(bpy.types.PropertyGroup):
                         else:  # W/H > w/h (make h smaller)
                             max_h = bin_height
 
-                debug("*** FOUND solution in %d steps" % num_steps)
-                debug("* {} bins of height {} : width {} : space {} ".format(len(bins),
+                sv_logger.debug("*** FOUND solution in %d steps" % num_steps)
+                sv_logger.debug("* {} bins of height {} : width {} : space {} ".format(len(bins),
                                                                              int(bin_height),
                                                                              int(totalWidth),
                                                                              (len(bins)-1)*self.grid_x_space
@@ -380,7 +380,7 @@ class SvDisplayNodePanelProperties(bpy.types.PropertyGroup):
                         node.location[0] = x + 0.5 * (bin.width - node_width)
                     node.location[1] = y
 
-                    debug("node = {0:>{x}} : W, H ({1:.1f}, {2:.1f})  &  X, Y ({3:.1f}, {4:.1f})".format(
+                    sv_logger.debug("node = {0:>{x}} : W, H ({1:.1f}, {2:.1f})  &  X, Y ({3:.1f}, {4:.1f})".format(
                         node_name,
                         node.dimensions.x * scale, node.dimensions.y * scale,
                         node.location.x, node.location.y,
@@ -399,12 +399,12 @@ class SvDisplayNodePanelProperties(bpy.types.PropertyGroup):
         node_names = get_nodes_in_category(self.category)
         node_names.sort(reverse=False)
 
-        debug("* current category : %s" % self.category)
-        debug("* nodes in category : %s" % node_names)
+        sv_logger.debug("* current category : %s" % self.category)
+        sv_logger.debug("* nodes in category : %s" % node_names)
 
         N = len(node_names)
 
-        debug('There are <%d> nodes in category <%s>' % (N, self.category))
+        sv_logger.debug('There are <%d> nodes in category <%s>' % (N, self.category))
 
         if N == 0:
             return
@@ -412,19 +412,19 @@ class SvDisplayNodePanelProperties(bpy.types.PropertyGroup):
         for i, name in enumerate(node_names):
             cls = bpy.types.Node.bl_rna_get_subclass_py(name)
             if cls is None:
-                debug(f'Class of the "{name}" node was not found')
+                sv_logger.debug(f'Class of the "{name}" node was not found')
                 continue
             if name == "separator":
-                debug("SKIPPING separator node")
+                sv_logger.debug("SKIPPING separator node")
                 continue
             if cls.missing_dependency:
-                debug("SKIPPING dependent node %d of %d : %s" % (i+1, N, name))
+                sv_logger.debug("SKIPPING dependent node %d of %d : %s" % (i+1, N, name))
                 continue
             if '@' in name:
-                debug("SKIPPING subcategory node: %s" % name)
+                sv_logger.debug("SKIPPING subcategory node: %s" % name)
                 continue
 
-            debug("SPAWNING node %d of %d : %s" % (i+1, N, name))
+            sv_logger.debug("SPAWNING node %d of %d : %s" % (i+1, N, name))
 
             add_spawned_node(context, name)
 
