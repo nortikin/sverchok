@@ -217,7 +217,7 @@ class SvExInterpolateNurbsCurveNodeMK2(SverchCustomTreeNode, bpy.types.Node):
             if self.implementation == 'GEOMDL':
                 implementation = SvNurbsCurve.GEOMDL
                 metric = 'CENTRIPETAL' if self.centripetal else 'DISTANCE'
-                curve = SvNurbsMaths.interpolate_curve(implementation, degree, vertices, metric=metric, cyclic=self.cyclic, logger=self.get_logger())
+                curve = SvNurbsMaths.interpolate_curve(implementation, degree, vertices, metric=metric, cyclic=self.cyclic, logger=self.sv_logger)
             elif self.implementation == 'FREECAD':
                 if has_tangents == True: # create tangents flags
                     if has_tangents_mask == False: # generate auto mask
