@@ -29,7 +29,7 @@ from bmesh.types import BMVert, BMEdge, BMFace
 import mathutils
 
 from sverchok.data_structure import zip_long_repeat, has_element
-from sverchok.utils.logging import debug
+from sverchok.utils.sv_logging import sv_logger
 
 @contextmanager
 def empty_bmesh(use_operators=True):
@@ -254,7 +254,7 @@ def face_data_from_bmesh_faces(bm, face_data):
     for face in bm.faces:
         idx = face[initial_index]
         if idx < 0 or idx >= n_face_data:
-            debug("Unexisting face_data[%s] [0 - %s]", idx, n_face_data)
+            sv_logger.debug("Unexisting face_data[%s] [0 - %s]", idx, n_face_data)
             face_data_out.append(None)
         else:
             face_data_out.append(face_data[idx])
@@ -269,7 +269,7 @@ def edge_data_from_bmesh_edges(bm, edge_data):
     for edge in bm.edges:
         idx = edge[initial_index]
         if idx < 0 or idx >= n_edge_data:
-            debug("Unexisting edge_data[%s] [0 - %s]", idx, n_edge_data)
+            sv_logger.debug("Unexisting edge_data[%s] [0 - %s]", idx, n_edge_data)
             edge_data_out.append(None)
         else:
             edge_data_out.append(edge_data[idx])
@@ -284,7 +284,7 @@ def vert_data_from_bmesh_verts(bm, vert_data):
     for vert in bm.verts:
         idx = vert[initial_index]
         if idx < 0 or idx >= n_vert_data:
-            debug("Unexisting vert_data[%s] [0 - %s]", idx, n_vert_data)
+            sv_logger.debug("Unexisting vert_data[%s] [0 - %s]", idx, n_vert_data)
             vert_data_out.append(None)
         else:
             vert_data_out.append(vert_data[idx])
@@ -299,7 +299,7 @@ def bmesh_edges_from_edge_mask(bm, edge_mask):
     for bm_edge in bm.edges:
         idx = bm_edge[initial_index]
         if idx < 0 or idx >= n_edge_mask:
-            debug("Unexisting edge_mask[%s] [0 - %s]", idx, n_edge_mask)
+            sv_logger.debug("Unexisting edge_mask[%s] [0 - %s]", idx, n_edge_mask)
         else:
             mask = edge_mask[idx]
             if mask:
@@ -762,7 +762,7 @@ def wave_markup_faces(bm, init_face_mask, neighbour_by_vert = True, find_shortes
                             other_face[path_distance] = new_distance
                             other_face[path_prev_index] = face.index
                             other_face[init_index] = face[init_index]
-        #debug("Front #%s: %s", step, len(new_wave_front))
+        # sv_logger.debug("Front #%s: %s", step, len(new_wave_front))
         done.update(wave_front)
         wave_front = new_wave_front
 
@@ -835,7 +835,7 @@ def wave_markup_verts(bm, init_vert_mask, neighbour_by_edge = True, find_shortes
                             other_vert[path_distance] = new_distance
                             other_vert[path_prev_index] = vert.index
                             other_vert[init_index] = vert[init_index]
-        #debug("Front #%s: %s", step, len(new_wave_front))
+        # sv_logger.debug("Front #%s: %s", step, len(new_wave_front))
         done.update(wave_front)
         wave_front = new_wave_front
 

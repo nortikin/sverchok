@@ -5,9 +5,6 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
-import bmesh
-
-from sverchok.utils.logging import debug, info
 
 class SvQuadGridParser(object):
     """

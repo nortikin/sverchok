@@ -1,10 +1,9 @@
 
 import numpy as np 
 from sverchok.utils.testing import *
-from sverchok.utils.logging import debug, info
 from sverchok.utils.geom import CubicSpline
 from sverchok.utils.curve.bezier import SvBezierCurve
-from sverchok.utils.curve.algorithms import concatenate_curves, reparametrize_curve
+
 
 class CubicSplineTests(SverchokTestCase):
     def setUp(self):

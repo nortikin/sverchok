@@ -39,7 +39,7 @@ There can be the following situations:
 import numpy as np
 from collections import defaultdict
 
-from sverchok.utils.logging import getLogger
+from sverchok.utils.sv_logging import get_logger
 from sverchok.utils.curve.core import SvCurve
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.nurbs_common import SvNurbsBasisFunctions, SvNurbsMaths, from_homogenous
@@ -751,7 +751,7 @@ class SvNurbsCurveSolver(SvCurve):
         self._init()
 
         if logger is None:
-            logger = getLogger()
+            logger = get_logger()
 
         residue = 0.0
         ndim = self.ndim

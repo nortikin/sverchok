@@ -1,9 +1,9 @@
 
 import numpy as np
 
-from sverchok.utils.logging import error
 from sverchok.utils.testing import *
 from sverchok.utils.curve import SvCubicBezierCurve, SvBezierCurve
+
 
 def cubic_control_points():
     return [

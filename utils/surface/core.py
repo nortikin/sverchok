@@ -5,12 +5,8 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
-import numpy as np
-from math import pi, cos, sin, atan, sqrt
-from collections import defaultdict
-
-from sverchok.utils.logging import info, exception
 from sverchok.utils.surface.data import *
+
 
 class UnsupportedSurfaceTypeException(TypeError):
     pass

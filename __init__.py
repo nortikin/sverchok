@@ -117,6 +117,7 @@ imported_modules, node_modules, core = import_sverchok()
 def register():
     from sverchok.utils import ascii_print
     core.sv_register_modules(imported_modules)
+    core.enable_logging()
     core.sv_register_modules(core.imported_utils_modules())
     core.sv_register_modules(node_modules)
     ascii_print.show_welcome()
@@ -126,5 +127,6 @@ def unregister():
     core.sv_unregister_modules(imported_modules)
     core.sv_unregister_modules(core.imported_utils_modules())
     core.sv_unregister_modules(node_modules)
+    core.disable_logging()
 
 # EOF

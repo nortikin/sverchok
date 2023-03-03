@@ -5,7 +5,6 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
-import numpy as np
 from math import pi, cos, sin
 from collections import defaultdict
 
@@ -21,7 +20,7 @@ from sverchok.utils.geom import (
         autorotate_householder, autorotate_track, autorotate_diff,
         center, linear_approximation
     )
-from sverchok.utils.curve.core import SvFlipCurve, UnsupportedCurveTypeException
+from sverchok.utils.curve.core import UnsupportedCurveTypeException
 from sverchok.utils.curve.primitives import SvCircle
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.algorithms import (
@@ -33,7 +32,8 @@ from sverchok.utils.surface.core import SvSurface, UnsupportedSurfaceTypeExcepti
 from sverchok.utils.surface.nurbs import SvNurbsSurface
 from sverchok.utils.surface.data import *
 from sverchok.utils.nurbs_common import SvNurbsBasisFunctions, SvNurbsMaths
-from sverchok.utils.logging import info, debug
+from sverchok.utils.sv_logging import sv_logger
+
 
 class SvInterpolatingSurface(SvSurface):
     __description__ = "Interpolating"
@@ -855,7 +855,7 @@ class SvCurveLerpSurface(SvSurface):
                 # make_ruled_surface method can raise TypeError in case
                 # it can't work with given curve2.
                 # In this case we must use generic method.
-                debug("Can't make a native ruled surface: %s", e)
+                sv_logger.debug("Can't make a native ruled surface: %s", e)
                 pass
 
         # generic method
@@ -1164,7 +1164,7 @@ def concatenate_surfaces(direction, surfaces):
                 result = result.concatenate(direction, s)
             return result
         except UnsupportedSurfaceTypeException as e:
-            debug("Can't concatenate surfaces natively: %s", e)
+            sv_logger.debug("Can't concatenate surfaces natively: %s", e)
     
     return SvConcatSurface(direction, surfaces)
 

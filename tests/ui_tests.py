@@ -1,15 +1,13 @@
 
 from os import walk
-from os.path import basename, splitext, dirname, join, exists
+from os.path import splitext
 from glob import glob
 import importlib
 from inspect import getmembers, isclass, getfile
 
-import sverchok
 from sverchok.utils.testing import *
-from sverchok.utils.logging import debug, info, error
 from sverchok.utils import yaml_parser
-from sverchok.node_tree import SverchCustomTreeNode
+
 
 sverchok_directory = dirname(getfile(sverchok))
 
@@ -18,7 +16,7 @@ class UiTests(SverchokTestCase):
         def has_icon(node_class):
             has_sv_icon = hasattr(node_class, "sv_icon") 
             has_bl_icon = hasattr(node_class, "bl_icon") and node_class.bl_icon and node_class.bl_icon != 'OUTLINER_OB_EMPTY'
-            #debug("Icon: %s: BL %s, SV %s", node_class.__name__, getattr(node_class, 'bl_icon', None), getattr(node_class, 'sv_icon', None))
+            # sv_logger.debug("Icon: %s: BL %s, SV %s", node_class.__name__, getattr(node_class, 'bl_icon', None), getattr(node_class, 'sv_icon', None))
             return has_sv_icon or has_bl_icon
 
         ignore_list = [
@@ -49,7 +47,7 @@ class UiTests(SverchokTestCase):
                         continue
                     if node_class_name in ignore_list:
                         continue
-                    debug("Check: %s: %s: %s", node_class, node_class.__bases__, SverchCustomTreeNode in node_class.__bases__)
+                    sv_logger.debug("Check: %s: %s: %s", node_class, node_class.__bases__, SverchCustomTreeNode in node_class.__bases__)
                     if SverchCustomTreeNode in node_class.mro():
                         with self.subTest(node = node_class_name):
                             if not has_icon(node_class):

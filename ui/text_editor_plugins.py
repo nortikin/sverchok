@@ -6,7 +6,7 @@
 # License-Filename: LICENSE
 
 import bpy
-from sverchok.utils.logging import getLogger
+from sverchok.utils.sv_logging import get_logger
 from sverchok.settings import get_params
 
 
@@ -218,7 +218,7 @@ def register():
     global logger
     bpy.utils.register_class(SvSNLiteAddFromTextEditor)
     bpy.utils.register_class(SvNodeRefreshFromTextEditor)
-    logger = getLogger("text_editor_plugins")
+    logger = get_logger()
     add_keymap()
 
 def unregister():

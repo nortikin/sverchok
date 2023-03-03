@@ -25,7 +25,7 @@ from sverchok.data_structure import (updateNode, describe_data_shape_by_level, l
 from sverchok.utils.curve.core import SvCurve
 from sverchok.utils.surface.core import SvSurface
 from sverchok.dependencies import FreeCAD
-from sverchok.utils.logging import debug
+from sverchok.utils.sv_logging import sv_logger
 from sverchok.utils.handle_blender_data import correct_collection_length
 
 ALL_TYPES = SIMPLE_DATA_TYPES + (SvCurve, SvSurface)
@@ -39,7 +39,7 @@ class SvNestingLevelEntryMK2(bpy.types.PropertyGroup):
         if hasattr(context, 'node'):
             updateNode(context.node, context)
         else:
-            debug("Node is not defined in this context, so will not update the node.")
+            sv_logger.debug("Node is not defined in this context, so will not update the node.")
 
     description : StringProperty(options = {'SKIP_SAVE'}, default="?")
     flatten : BoolProperty(

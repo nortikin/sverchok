@@ -3,7 +3,7 @@ from bpy.props import StringProperty, BoolProperty, EnumProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
-from sverchok.utils.logging import info
+from sverchok.utils.sv_logging import sv_logger
 from sverchok.dependencies import FreeCAD
 from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
 
@@ -161,8 +161,8 @@ class SvShowFcstdNamesOp(bpy.types.Operator, SvGenericNodeLocator):
                         labels.append( (obj.Label, obj.Label, obj.Label) )
 
             except Exception as err:
-                info(f'FCStd label read error: {Fname=}')
-                info(err)
+                sv_logger.info(f'FCStd label read error: {Fname=}')
+                sv_logger.info(err)
             finally:
                 # del doc
                 F.closeDocument(doc.Name)
@@ -223,7 +223,7 @@ def LoadSolid(fc_file, part_filter, obj_mask, tool_parts, inv_filter):
                     solids.add((obj.Shape, (obj.FullName, obj.Name, obj.Label)))
 
     except:
-        info('FCStd read error')
+        sv_logger.info('FCStd read error')
     finally:
         # del doc
         F.closeDocument(doc.Name)

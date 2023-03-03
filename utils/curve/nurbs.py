@@ -11,10 +11,8 @@ Definition of Sverchok NURBS curve abstract class and some implementations.
 
 from copy import deepcopy
 import numpy as np
-from math import pi, sqrt
-import traceback
+from math import pi
 
-from sverchok.utils.logging import info
 from sverchok.utils.curve.core import SvCurve, SvTaylorCurve, UnsupportedCurveTypeException, calc_taylor_nurbs_matrices
 from sverchok.utils.curve.bezier import SvBezierCurve
 from sverchok.utils.curve import knotvector as sv_knotvector
@@ -30,9 +28,8 @@ from sverchok.utils.nurbs_common import (
     )
 from sverchok.utils.surface.nurbs import SvNativeNurbsSurface, SvGeomdlSurface
 from sverchok.utils.surface.algorithms import nurbs_revolution_surface
-from sverchok.utils.math import binomial_array, cmp
 from sverchok.utils.geom import bounding_box, LineEquation, are_points_coplanar, get_common_plane
-from sverchok.utils.logging import getLogger
+from sverchok.utils.sv_logging import get_logger, sv_logger
 from sverchok.dependencies import geomdl
 
 if geomdl is not None:
@@ -73,7 +70,7 @@ class SvNurbsCurve(SvCurve):
             try:
                 return curve.to_nurbs(implementation = implementation)
             except UnsupportedCurveTypeException as e:
-                info("Can't convert %s to NURBS curve: %s", curve, e)
+                sv_logger.info("Can't convert %s to NURBS curve: %s", curve, e)
                 pass
         return None
 
@@ -369,7 +366,7 @@ class SvNurbsCurve(SvCurve):
             return self
 
         if logger is None:
-            logger = getLogger()
+            logger = get_logger()
 
         def reduce_degree_once(curve, tolerance):
             if curve.is_bezier():

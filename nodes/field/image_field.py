@@ -1,16 +1,12 @@
 
-import numpy as np
-
 import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty, StringProperty
-from mathutils import kdtree
-from mathutils import bvhtree
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat
-from sverchok.utils.logging import info, exception
+from sverchok.data_structure import updateNode
 
 from sverchok.utils.field.image import load_image, SvImageScalarField, SvImageVectorField
+
 
 class SvImageFieldNode(SverchCustomTreeNode, bpy.types.Node):
     """

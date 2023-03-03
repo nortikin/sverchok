@@ -25,7 +25,7 @@ from time import localtime, strftime
 import bpy
 
 import sverchok
-from sverchok.utils.logging import debug, info, warning, error, exception
+from sverchok.utils.sv_logging import sv_logger
 from sverchok.utils.sv_update_utils import version_and_sha
 from sverchok.utils import sv_gist_tools
 from sverchok.utils.sv_gist_tools import show_token_help, TOKEN_HELP_URL
@@ -136,7 +136,7 @@ class SvNodeTreeExporter(bpy.types.Operator):
         if destination_path.is_dir():
             msg = 'folder was selected instead of file - didn\'t export'
             self.report({"WARNING"}, msg)
-            warning(msg)
+            sv_logger.warning(msg)
             return {'CANCELLED'}
 
         destination_path = destination_path.with_suffix('.json')
@@ -145,7 +145,7 @@ class SvNodeTreeExporter(bpy.types.Operator):
         if not layout_dict:
             msg = 'no update list found - didn\'t export'
             self.report({"WARNING"}, msg)
-            warning(msg)
+            sv_logger.warning(msg)
             return {'CANCELLED'}
 
         indent = None if self.compact else 2
@@ -153,7 +153,7 @@ class SvNodeTreeExporter(bpy.types.Operator):
             json.dump(layout_dict, fpo, indent=indent)  # json_struct doesn't expect sort_keys = True
         msg = 'exported to: ' + str(destination_path)
         self.report({"INFO"}, msg)
-        info(msg)
+        sv_logger.info(msg)
 
         if self.compress:
             comp_mode = zipfile.ZIP_DEFLATED
@@ -162,7 +162,7 @@ class SvNodeTreeExporter(bpy.types.Operator):
             with zipfile.ZipFile(archive_path, 'w', compression=comp_mode) as myzip:
                 # need to specify arcname otherwise it'll copy the entire path
                 myzip.write(destination_path, arcname=destination_path.name)
-                info('wrote: %s', archive_path.name)
+                sv_logger.info('wrote: %s', archive_path.name)
 
         return {'FINISHED'}
 
@@ -304,8 +304,8 @@ class SvNodeTreeExportToGist(bpy.types.Operator):
             gist_body = json.dumps(layout_dict, indent=2)  # json_struct does not expect sort_keys = True
         except Exception as err:
             if 'not JSON serializable' in repr(err):
-                error(layout_dict)
-            exception(err)
+                sv_logger.error(layout_dict)
+            sv_logger.exception(err)
             self.report({'WARNING'}, "See terminal/Command prompt for printout of error")
             return {'CANCELLED'}
 
@@ -320,13 +320,13 @@ class SvNodeTreeExportToGist(bpy.types.Operator):
                 return {'CANCELLED'}
 
             context.window_manager.clipboard = gist_url  # full destination url
-            info(gist_url)
+            sv_logger.info(gist_url)
             self.report({'WARNING'}, "Copied gist URL to clipboard")
 
             sv_gist_tools.write_or_append_datafiles(gist_url, gist_filename)
             return {'FINISHED'}
         except Exception as err:
-            exception(err)
+            sv_logger.exception(err)
             self.report({'ERROR'}, "Error 222: net connection or github login failed!")
 
         return {'CANCELLED'}
@@ -370,7 +370,7 @@ class SvBlendToArchive(bpy.types.Operator):
     def complete_msg(self, blend_archive_path):
         msg = 'saved current .blend as archive at ' + blend_archive_path
         self.report({'INFO'}, msg)
-        info(msg)
+        sv_logger.info(msg)
 
     def execute(self, context):
 

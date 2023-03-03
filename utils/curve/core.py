@@ -10,14 +10,12 @@ General definition of Sverchok curve classes and basic utilities.
 """
 
 import numpy as np
-from math import sin, cos, pi, radians, sqrt
 
 from mathutils import Vector, Matrix
 
-from sverchok.utils.geom import LineEquation, CubicSpline
 from sverchok.utils.integrate import TrapezoidIntegral
-from sverchok.utils.logging import info, error
-from sverchok.utils.math import binomial, binomial_array
+from sverchok.utils.sv_logging import sv_logger
+from sverchok.utils.math import binomial_array
 from sverchok.utils.nurbs_common import SvNurbsMaths, from_homogenous
 from sverchok.utils.curve import knotvector as sv_knotvector
 
@@ -368,10 +366,10 @@ class SvCurve(object):
             matrices_np = np.linalg.inv(matrices_np)
             return matrices_np, normals, binormals
         except np.linalg.LinAlgError as e:
-            error("Some of matrices are singular:")
+            sv_logger.error("Some of matrices are singular:")
             for i, m in enumerate(matrices_np):
                 if abs(np.linalg.det(m) < 1e-5):
-                    error("M[%s] (t = %s):\n%s", i, ts[i], m)
+                    sv_logger.error("M[%s] (t = %s):\n%s", i, ts[i], m)
             raise e
 
     def zero_torsion_frame_array(self, ts, tangent_delta=None):

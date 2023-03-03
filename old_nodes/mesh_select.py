@@ -24,10 +24,9 @@ import bpy
 from bpy.props import IntProperty, FloatProperty, BoolProperty, EnumProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, match_long_repeat, describe_data_shape
-from sverchok.utils.logging import info, debug
-from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
+from sverchok.data_structure import updateNode, match_long_repeat
 from sverchok.utils.sv_mesh_utils import calc_mesh_normals_bmesh as calc_mesh_normals
+
 
 class SvMeshSelectNode(SverchCustomTreeNode, bpy.types.Node):
     '''Select vertices, edges, faces by geometric criteria'''
@@ -309,7 +308,7 @@ class SvMeshSelectNode(SverchCustomTreeNode, bpy.types.Node):
         out_faces = []
 
         for vertices, edges, faces in zip(*meshes):
-            #debug("Level 2, shape: %s", describe_data_shape(vertices))
+            # self.debug("Level 2, shape: %s", describe_data_shape(vertices))
             if self.mode == 'BySide':
                 vs, es, fs = self.by_side(vertices, edges, faces)
             elif self.mode == 'ByNormal':
@@ -344,12 +343,12 @@ class SvMeshSelectNode(SverchCustomTreeNode, bpy.types.Node):
             out_faces = []
 
             for vertices_s, edges_s, faces_s in zip(*meshes):
-                #debug("Level: %s, shape: %s", level, describe_data_shape(vertices_s))
+                # self.debug("Level: %s, shape: %s", level, describe_data_shape(vertices_s))
                 if not edges_s:
                     edges_s = [[]]
                 if not faces_s:
                     faces_s = [[]]
-                debug("Level: %s, edges: %s", level, edges_s)
+                self.debug("Level: %s, edges: %s", level, edges_s)
                 sub_meshes = match_long_repeat([vertices_s, edges_s, faces_s])
                 vs, es, fs = self._process_recursive(level-1, sub_meshes)
                 out_vertices.append(vs)

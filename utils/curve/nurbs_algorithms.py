@@ -19,7 +19,7 @@ from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.algorithms import unify_curves_degree, SvCurveLengthSolver, SvCurveFrameCalculator
 from sverchok.utils.curve.bezier import SvBezierCurve, SvCubicBezierCurve
 from sverchok.utils.decorators import deprecated
-from sverchok.utils.logging import getLogger
+from sverchok.utils.sv_logging import get_logger
 from sverchok.utils.math import (
     ZERO, FRENET, HOUSEHOLDER, TRACK, DIFF, TRACK_NORMAL,
     NORMAL_DIR, NONE
@@ -239,7 +239,7 @@ def intersect_segment_segment_mu(v1, v2, v3, v4, tolerance=1e-3):
 
 def _intersect_curves_line(curve1, curve2, precision=0.001, logger=None):
     if logger is None:
-        logger = getLogger()
+        logger = get_logger()
 
     t1_min, t1_max = curve1.get_u_bounds()
     t2_min, t2_max = curve2.get_u_bounds()
@@ -260,7 +260,7 @@ def _intersect_curves_line(curve1, curve2, precision=0.001, logger=None):
 
 def _intersect_curves_equation(curve1, curve2, method='SLSQP', precision=0.001, logger=None):
     if logger is None:
-        logger = getLogger()
+        logger = get_logger()
 
     t1_min, t1_max = curve1.get_u_bounds()
     t2_min, t2_max = curve2.get_u_bounds()
@@ -328,7 +328,7 @@ def _intersect_endpoints(segment1, segment2, tolerance=0.001):
 
 def intersect_nurbs_curves(curve1, curve2, method='SLSQP', numeric_precision=0.001, logger=None):
     if logger is None:
-        logger = getLogger()
+        logger = get_logger()
 
     u1_min, u1_max = curve1.get_u_bounds()
     u2_min, u2_max = curve2.get_u_bounds()

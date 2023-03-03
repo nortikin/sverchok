@@ -8,7 +8,7 @@
 import bpy
 from bpy.props import EnumProperty, BoolProperty
 
-from sverchok.utils.logging import info
+from sverchok.utils.sv_logging import sv_logger
 import sverchok.utils.profile as prof
 
 
@@ -20,7 +20,7 @@ class SvProfilingToggle(bpy.types.Operator):
 
     def execute(self, context):
         prof.is_currently_enabled = not prof.is_currently_enabled
-        info("Profiling is set to %s", prof.is_currently_enabled)
+        sv_logger.info("Profiling is set to %s", prof.is_currently_enabled)
 
         return {'FINISHED'}
 
@@ -81,7 +81,7 @@ class SvProfileReset(bpy.types.Operator):
 
     def execute(self, context):
         prof.reset_stats()
-        info("Profiling statistics data cleared.")
+        sv_logger.info("Profiling statistics data cleared.")
         return {'FINISHED'}
 
 

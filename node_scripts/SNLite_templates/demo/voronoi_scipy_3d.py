@@ -3,18 +3,15 @@ in in_points v
 out out_verts v
 out out_faces s
 """
+import logging
 
-import numpy as np
-import sys
-
-from sverchok.utils.logging import exception, info
-from sverchok.data_structure import zip_long_repeat
+logger = logging.getLogger('sverchok')
 
 try:
     import scipy
     from scipy.spatial import Voronoi
 except ImportError as e:
-    info("SciPy module is not available. Please refer to https://github.com/nortikin/sverchok/wiki/Non-standard-Python-modules-installation for how to install it.")
+    logger.info("SciPy module is not available. Please refer to https://github.com/nortikin/sverchok/wiki/Non-standard-Python-modules-installation for how to install it.")
     raise e
 
 out_verts = []

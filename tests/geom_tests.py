@@ -1,14 +1,10 @@
 
-import unittest
-import numpy as np
-import math
-
 from mathutils import Vector, Matrix
 
-from sverchok.utils.logging import error
 from sverchok.utils.testing import *
 from sverchok.utils.geom import *
 from sverchok.utils.curve.primitives import SvCircle
+
 
 class GeometryTests(SverchokTestCase):
 

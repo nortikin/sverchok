@@ -8,11 +8,11 @@
 import numpy as np
 import numpy.random
 from math import ceil, floor, isnan
-import random
 
-from sverchok.utils.logging import debug, info, exception
+from sverchok.utils.sv_logging import sv_logger
 from sverchok.utils.math import distribute_int
-from sverchok.utils.curve import SvCurve, SvCurveLengthSolver
+from sverchok.utils.curve import SvCurveLengthSolver
+
 
 class CurvePopulationController(object):
     def set_factors(self, factor_range, factors):
@@ -104,7 +104,7 @@ def populate_curve(curve, samples_t, by_length = False, by_curvature = True, pop
         min_length = lengths.min()
         max_length = lengths.max()
         length_range = max_length - min_length
-        debug("Lengths range: %s - %s", min_length, max_length)
+        sv_logger.debug("Lengths range: %s - %s", min_length, max_length)
         if length_range == 0:
             lengths = np.zeros(samples_t - 1)
         else:
@@ -123,7 +123,7 @@ def populate_curve(curve, samples_t, by_length = False, by_curvature = True, pop
         min_curvature = curvatures.min()
         max_curvature = curvatures.max()
         curvatures_range = max_curvature - min_curvature
-        debug("Curvatures range: %s - %s", min_curvature, max_curvature)
+        sv_logger.debug("Curvatures range: %s - %s", min_curvature, max_curvature)
         if curvatures_range == 0:
             curvatures = np.zeros(samples_t - 1)
         else:
@@ -163,7 +163,7 @@ def populate_curve(curve, samples_t, by_length = False, by_curvature = True, pop
                     t_r.append(t2)
             else:
                 space = np.linspace(t1, t2, num=ppe, endpoint=True)
-                #debug("Space: %s - %s (%s): %s", t1, t2, ppe, space)
+                # sv_logger.debug("Space: %s - %s (%s): %s", t1, t2, ppe, space)
                 t_r = space[1:].tolist()
             new_t.extend(t_r)
 
