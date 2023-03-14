@@ -55,7 +55,7 @@ class SvNodeTreeCommon:
     """Common class for all Sverchok trees (regular trees and group ones)"""
 
     #: Identifier of the tree, should be used via `SvNodeTreeCommon.tree_id` property.
-    tree_id_memory: StringProperty(default="")
+    tree_id_memory: StringProperty(default="", options={'SKIP_SAVE'})
 
     sv_show_time_nodes: BoolProperty(
         name="Node times",
