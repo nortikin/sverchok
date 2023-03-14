@@ -265,7 +265,7 @@
         - icon_name: EVENT_N
         - SvExNurbsCurveNode
         - SvApproxNurbsCurveMk3Node
-        - SvExInterpolateNurbsCurveNode
+        - SvExInterpolateNurbsCurveNodeMK2
         - ---
         - SvGenerateKnotvectorNode
     - Modify Curve:
