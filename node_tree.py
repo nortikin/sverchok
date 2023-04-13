@@ -140,7 +140,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
     def on_draft_mode_changed(self, context):
         """
         This is triggered when `SverchCustomTree.sv_draft` mode of the tree is toggled.
-        It switches properties of some nodes from normal to draft and vise versa,
+        It switches properties of some nodes from normal to draft and vice versa,
         and update the nodes.
         """
         draft_nodes = []

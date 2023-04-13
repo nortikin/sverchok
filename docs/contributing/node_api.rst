@@ -303,7 +303,7 @@ of them:
   2. Socket is shown if other socket is connected.
   3. Socket is shown if node has appropriate input data.
 
-There are many ways to show / hide sockets. First of all it's possible ot use
+There are many ways to show / hide sockets. First of all it's possible to use
 Blender standard API for adding and removing sockets. Most resent nodes use
 ``hide_safe`` attribute of sockets. Disadvantage of this method is that sockets
 are not really deleted and can be shown with `Ctrl+h` by user. The proper

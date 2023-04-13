@@ -39,8 +39,8 @@ list_match_Items = [
     ("Long_Cycle", "Long Cycle", "Cycle through the shorter lists until match the longest list", 1)]
 
 intersec_mode_items = [
-    ("Circular", "Circular", "Intersecction based on distance (Slower)", 0),
-    ("Poligonal", "Poligonal", "Intersecction dependent from num. of vertices (Faster)", 1)]
+    ("Circular", "Circular", "Intersection based on distance (Slower)", 0),
+    ("Poligonal", "Poligonal", "Intersection dependent on num. of vertices (Faster)", 1)]
 
 
 def check_dist_to_verts(v, or_verts, or_radius, net, poli_ang_list, poly_ang_cos_list, mask_t):
@@ -437,7 +437,7 @@ class SvContourNode(ModifierLiteNode, SverchCustomTreeNode, bpy.types.Node):
 
     list_match: EnumProperty(
         name="list match",
-        description="Behaviour on diffent list lengths",
+        description="Behaviour on different list lengths",
         items=list_match_Items, default="Long_Repeat",
         update=updateNode)
 
@@ -503,7 +503,7 @@ class SvContourNode(ModifierLiteNode, SverchCustomTreeNode, bpy.types.Node):
 
 
     def build_net(self, verts_in, edges_in, v_len, radius, poligonal_inter):
-        '''calculate radial intersections and connexion angles and orientations'''
+        '''calculate radial intersections and connection angles and orientations'''
         net2 = []
         for j in range(v_len):
             connect2 = [[], [], [], []]

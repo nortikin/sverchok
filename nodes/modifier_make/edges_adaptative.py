@@ -26,7 +26,7 @@ from sverchok.utils.nodes_mixins.sockets_config import ModifierLiteNode
 
 
 class SvAdaptiveEdgeNode(ModifierLiteNode, SverchCustomTreeNode, bpy.types.Node):
-    '''Map edge object to recipent edges'''
+    '''Map edge object to recipient edges'''
     bl_idname = 'SvAdaptiveEdgeNode'
     bl_label = 'Adaptive Edges'
     bl_icon = 'OUTLINER_OB_EMPTY'

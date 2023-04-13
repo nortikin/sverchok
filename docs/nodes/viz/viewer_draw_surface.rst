@@ -37,7 +37,7 @@ This node has one main parameter:
 .. image:: https://user-images.githubusercontent.com/14288520/190235190-86138e03-8423-4b86-9d35-4337b25513f3.png
   :target: https://user-images.githubusercontent.com/14288520/190235190-86138e03-8423-4b86-9d35-4337b25513f3.png
 
-Most of arameters of this node are groupped in rows; for each type of
+Most parameters of this node are grouped in rows; for each type of
 information this node can display, there are three parameters: whether to
 display it, the color to be used, and point size / line width to be used.
 

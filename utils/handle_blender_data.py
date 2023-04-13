@@ -317,7 +317,7 @@ class BlTree:
         return None
 
     def _is_field(self, input_socket_identifier):
-        """Check whether input tree socket expects field (dimond socket)"""
+        """Check whether input tree socket expects field (diamond socket)"""
         if (group := self.group_input) is None:
             raise LookupError(f'Group input node is required '
                               f'which is not found in "{self._tree.name}" tree')

@@ -893,7 +893,7 @@ class InterpolateTests(SverchokTestCase):
         self.assert_numpy_arrays_equal(ctrlpts, expected_ctrlpts, precision=6)
 
     def test_interpolate_4d(self):
-        "NURBS Interpolation in homogenous coordinates"
+        "NURBS Interpolation in homogeneous coordinates"
         points = np.array([[0,0,0,1], [1,0,0,2], [1,1,0,1]], dtype=np.float64)
         degree = 2
         curve = SvNurbsMaths.interpolate_curve(SvNurbsMaths.NATIVE, degree, points)
