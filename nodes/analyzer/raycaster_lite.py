@@ -45,10 +45,18 @@ class SvRaycasterLiteNode(SverchCustomTreeNode, bpy.types.Node):
         name='Safe Check',
         description='When disabled polygon indices referring to unexisting points will crash Blender but makes node faster',
         default=True)
+    epsilon: bpy.props.FloatProperty(
+        name="epsilon",
+        description="Float threshold for cut weak results",
+        default=0.0,
+        min=0.0,
+        max=10.0,
+        update=updateNode)
 
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, 'all_triangles')
         layout.prop(self, 'safe_check')
+        layout.prop(self, "epsilon")
     def sv_init(self, context):
         si = self.inputs.new
         so = self.outputs.new
@@ -65,9 +73,9 @@ class SvRaycasterLiteNode(SverchCustomTreeNode, bpy.types.Node):
         so('SvStringsSocket', 'Success')
 
     @staticmethod
-    def svmesh_to_bvh_lists(v, f, all_tris, safe_check):
+    def svmesh_to_bvh_lists(v, f, all_tris, epsilon, safe_check):
         for vertices, polygons in zip(*C([v, f])):
-            yield bvh_tree_from_polygons(vertices, polygons, all_triangles=all_tris, epsilon=0.0, safe_check=safe_check)
+            yield bvh_tree_from_polygons(vertices, polygons, all_triangles=all_tris, epsilon=epsilon, safe_check=safe_check)
 
     def process(self):
         L, N, I, D, S = self.outputs
@@ -76,7 +84,7 @@ class SvRaycasterLiteNode(SverchCustomTreeNode, bpy.types.Node):
             return
         vert_in, face_in, start_in, direction_in = C([sock.sv_get(deepcopy=False) for sock in self.inputs])
 
-        for bvh, st, di in zip(*[self.svmesh_to_bvh_lists(vert_in, face_in, self.all_triangles, self.safe_check), start_in, direction_in]):
+        for bvh, st, di in zip(*[self.svmesh_to_bvh_lists(vert_in, face_in, self.all_triangles, self.epsilon, self.safe_check), start_in, direction_in]):
             st, di = C([st, di])
             RL.append([bvh.ray_cast(i, i2) for i, i2 in zip(st, di)])
 
