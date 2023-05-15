@@ -500,8 +500,13 @@ def get_add_node_menu():
         setup_add_menu()
     return add_node_menu
 
+
 class AddNodeOp(bl_operators.node.NodeAddOperator):
     extra_description: StringProperty()
+
+    # this option was moved from NodeAddOperator to NODE_OT_add_node
+    if bpy.app.version >= (3, 6):
+        type: StringProperty(name="Node Type", description="Node type")
 
     @classmethod
     def description(cls, _context, properties):
@@ -525,7 +530,11 @@ class SvNodeAddOperator(AddNodeOp, bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
 
     def execute(self, context):
-        node = self.create_node(context)
+        # it seems some logic from create_node was moved to new deselect_node method
+        if bpy.app.version >= (3, 6):
+            self.deselect_nodes(context)
+
+        node = self.create_node(context, self.type)
         apply_default_preset(node)
         return {'FINISHED'}
 
