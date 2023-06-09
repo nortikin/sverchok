@@ -83,7 +83,6 @@ quads_to_nurbs.py
 location.py
 sun_position.py
 flip_surface.py
-ruled_surface.py
 """.split("\n")
 
         for module_name in self.node_file_names:
