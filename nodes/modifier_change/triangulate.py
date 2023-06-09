@@ -104,7 +104,7 @@ class SvTriangulateNode(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
             if face_data:
                 face_data_matched = repeat_last_for_length(face_data, len(faces))
 
-            bm = bmesh_from_pydata(vertices, edges, faces, markup_face_data=True)
+            bm = bmesh_from_pydata(vertices, edges, faces, markup_face_data=True, normal_update=True)
             mask_matched = repeat_last_for_length(mask, len(faces))
 
             b_faces = []
