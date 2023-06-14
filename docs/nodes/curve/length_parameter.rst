@@ -1,6 +1,9 @@
 Curve Length Parameter
 ======================
 
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/ba10a009-ea67-492b-a493-1693edf148ce
+  :target: https://github.com/nortikin/sverchok/assets/14288520/ba10a009-ea67-492b-a493-1693edf148ce
+
 Functionality
 -------------
 
@@ -25,6 +28,15 @@ straight segments and summing their lengths. The more segments you subdivide
 the curve in, the more precise the length will be, but the more time it will
 take to calculate. So the node gives you control on the number of subdivisions.
 
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/38407639-d579-44cb-9e09-2404e118e14d
+  :target: https://github.com/nortikin/sverchok/assets/14288520/38407639-d579-44cb-9e09-2404e118e14d
+
+* Round-N: Number-> :doc:`Scalar Math </nodes/number/scalar_mk4>`
+* Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`
+* Viz-> :doc:`Viewer Index+ </nodes/viz/viewer_idx28>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+* Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
+* Scene-> :doc:`Bezier Input </nodes/exchange/bezier_in>`
 
 Inputs
 ------
@@ -113,6 +125,13 @@ Two exemplars of Archimedean spiral:
 .. image:: https://user-images.githubusercontent.com/284644/77854328-14f09180-7203-11ea-9192-028621be3d95.png
   :target: https://user-images.githubusercontent.com/284644/77854328-14f09180-7203-11ea-9192-028621be3d95.png
 
+* Curves-> :doc:`Curve Formula </nodes/curve/curve_formula>`
+* Modifiers->Modifier Make-> :doc:`UV Connection </nodes/modifier_make/uv_connect>`
+* Curves-> :doc:`Evaluate Curve </nodes/curve/eval_curve>`
+* Transform-> :doc:`Move </nodes/transforms/move_mk3>`
+* Number-> :doc:`A Number </nodes/number/numbers>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+
 The one on the left is drawn with points according to evenly-spaced values of T
 parameter; the one of the right is drawn with points spread with equal length
 of the path between them.
@@ -124,4 +143,9 @@ for orange curve, **Precise (Cut)** rounding option is used.
 .. image:: https://user-images.githubusercontent.com/284644/207919660-9e9c364e-cd99-40c0-aca2-dfb47bebdc0c.png
   :target: https://user-images.githubusercontent.com/284644/207919660-9e9c364e-cd99-40c0-aca2-dfb47bebdc0c.png
 
-
+* Generator-> :doc:`Line </nodes/generator/line_mk4>`
+* Curves-> :doc:`Interpolate NURBS Curve </nodes/curve/interpolate_nurbs_curve>`
+* Transform-> :doc:`Randomize </nodes/transforms/randomize>`
+* Transform-> :doc:`Move </nodes/transforms/move_mk3>`
+* Viz-> :doc:`Viewer Draw Curve </nodes/viz/viewer_draw_curve>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`

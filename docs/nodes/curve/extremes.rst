@@ -1,6 +1,9 @@
 Curve Extremes
 ==============
 
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/bad8c870-51b7-4373-8094-7d8ac68c73d0
+  :target: https://github.com/nortikin/sverchok/assets/14288520/bad8c870-51b7-4373-8094-7d8ac68c73d0
+
 Dependencies
 ------------
 
@@ -22,6 +25,15 @@ analytically (by writing down all formulas for your field and your curve), it
 will be much faster to calculate points by formulas. This node, in turn, is
 most useful when you do not know exact formulas for the curve and / or for the
 scalar field - for example, if they were defined by approximation.
+
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/0066bb85-784f-40d3-a670-14283253b33b
+  :target: https://github.com/nortikin/sverchok/assets/14288520/0066bb85-784f-40d3-a670-14283253b33b
+
+* Fields-> :doc:`Coordinate Scalar Field </nodes/field/coordinate_scalar_field>`
+* List->List Main-> :doc:`List Join </nodes/list_main/join>`
+* Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+* Scene-> :doc:`Bezier Input </nodes/exchange/bezier_in>`
 
 Inputs
 ------
@@ -67,4 +79,12 @@ Example of usage
 Find the point on a curve which has the maximum value of Y coordinate:
 
 .. image:: https://user-images.githubusercontent.com/284644/86952365-5383d980-c16c-11ea-84d3-75830c0dbc75.png
+  :target: https://user-images.githubusercontent.com/284644/86952365-5383d980-c16c-11ea-84d3-75830c0dbc75.png
 
+* Curves-> :doc:`Build NURBS Curve </nodes/curve/nurbs_curve>`
+* Curves-> :doc:`Evaluate Curve </nodes/curve/eval_curve>`
+* Fields-> :doc:`Coordinate Scalar Field </nodes/field/coordinate_scalar_field>`
+* Number-> :doc:`List Input </nodes/number/list_input>`
+* Vector-> :doc:`Vector sort </nodes/vector/vertices_sort>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+* Scene-> :doc:`Objects In Lite </nodes/scene/objects_in_lite>`

@@ -1,6 +1,9 @@
 Adaptive Plot Curve
 ===================
 
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/b353ce32-325f-4db7-9fb8-2570d9dc8802
+  :target: https://github.com/nortikin/sverchok/assets/14288520/b353ce32-325f-4db7-9fb8-2570d9dc8802
+
 Functionality
 -------------
 
@@ -26,6 +29,14 @@ The following algorithm is used:
 * Then all resulting points are connected to make a curve-like mesh object.
 
 For NURBS and NURBS-like curves, consider use of "Adaptive Plot NURBS Curve" node.
+
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/165d83b8-6fbf-47f1-95eb-432917ef6961
+  :target: https://github.com/nortikin/sverchok/assets/14288520/165d83b8-6fbf-47f1-95eb-432917ef6961
+
+* Generator-> :doc:`Random Vector </nodes/generator/random_vector_mk3>`
+* Curves-> :doc:`Cubic Spline </nodes/curve/cubic_spline>`
+* Viz-> :doc:`Viewer Draw Curve </nodes/viz/viewer_draw_curve>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 
 Inputs
 ------
@@ -59,19 +70,30 @@ This node has the following parameters:
 * **By Curvature**. Use curve curvature value to distribute additional points
   on the curve: places with greater curvature value will receive more points.
   Checked by default.
-* ** By Length**. Use segment lengths to distribute additional points on the
+* **By Length**. Use segment lengths to distribute additional points on the
   curve: segments with greater length will receive more points. Unchecked by
   default.
+
+    .. image:: https://github.com/nortikin/sverchok/assets/14288520/96b290d1-2154-48be-a874-d90443a33ec7
+      :target: https://github.com/nortikin/sverchok/assets/14288520/96b290d1-2154-48be-a874-d90443a33ec7
+
 * **Points Count**. This defines how number of points to be generated will be
   defined. Possible options are:
 
    * **Total Count**. Total number of points to be generated will be provided
      in the **Count** input.
+
+      .. image:: https://github.com/nortikin/sverchok/assets/14288520/3e76982f-974e-4d28-9891-ede1463a2355
+        :target: https://github.com/nortikin/sverchok/assets/14288520/3e76982f-974e-4d28-9891-ede1463a2355
+
    * **Per Segment**. Minimum and maximum number of points per initial
      subdivision segment will be provided in **Min per segment**, **Max per
      segment** inputs, correspondingly.
 
    The default option is **Total Count**.
+
+      .. image:: https://github.com/nortikin/sverchok/assets/14288520/e5091c8d-0778-48e2-8d26-6bcdbdc03963
+        :target: https://github.com/nortikin/sverchok/assets/14288520/e5091c8d-0778-48e2-8d26-6bcdbdc03963
 
 * **Random**. If checked, then additional points will be distributed randomly.
   Otherwise, additional points will be distributed evenly inside each segment
@@ -84,6 +106,9 @@ This node has the following parameters:
   additional points to such places. The default value is 100. Usually you do
   not have to change this value. Set the parameter to 0 (zero) to disable this
   part of the algorithm.
+
+    .. image:: https://github.com/nortikin/sverchok/assets/14288520/92083c39-f8f5-46d1-8f9d-1b2e27ccd9e0
+      :target: https://github.com/nortikin/sverchok/assets/14288520/92083c39-f8f5-46d1-8f9d-1b2e27ccd9e0
 
 Outputs
 -------

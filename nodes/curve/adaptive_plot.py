@@ -17,6 +17,7 @@ class SvAdaptivePlotCurveNode(SverchCustomTreeNode, bpy.types.Node):
 
     sample_size : IntProperty(
             name = "Segments",
+            description = "Number of initial subdivisions",
             default = 50,
             min = 3,
             update = updateNode)
@@ -71,11 +72,13 @@ class SvAdaptivePlotCurveNode(SverchCustomTreeNode, bpy.types.Node):
 
     by_curvature : BoolProperty(
             name = "By Curvature",
+            description = "Use curve curvature value to distribute additional points on the curve: places with greater curvature value will receive more points",
             default = True,
             update = updateNode)
 
     by_length : BoolProperty(
             name = "By Length",
+            description = "Use segment lengths to distribute additional points on the curve: segments with greater length will receive more points",
             default = False,
             update = updateNode)
 

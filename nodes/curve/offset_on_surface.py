@@ -19,6 +19,7 @@ class SvCurveOffsetOnSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
 
     offset : FloatProperty(
             name = "Offset",
+            description = "The offset amount",
             default = 0.1,
             update = updateNode)
 
@@ -73,6 +74,7 @@ class SvCurveOffsetOnSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
 
     len_resolution : IntProperty(
         name = "Length resolution",
+        description = "This defines the resolution for curve length calculation. The bigger the value, the more precise the calculation will be, but the slower",
         default = 50,
         min = 3,
         update = updateNode)

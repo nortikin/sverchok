@@ -19,8 +19,8 @@ polygon), or some number of vertices can be skipped, to produce star-like
 polygons. In the last case, you most probably will want to pass output of this
 node to Intersect Edges node.
 
-.. image:: https://user-images.githubusercontent.com/14288520/191228034-f2f0d435-f3ad-42d4-bc3b-b9f2871bb416.png
-  :target: https://user-images.githubusercontent.com/14288520/191228034-f2f0d435-f3ad-42d4-bc3b-b9f2871bb416.png
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/50207c0e-d4e4-4bc1-9bfb-41b224516eb7
+  :target: https://github.com/nortikin/sverchok/assets/14288520/50207c0e-d4e4-4bc1-9bfb-41b224516eb7
 
 Inputs
 ------

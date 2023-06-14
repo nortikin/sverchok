@@ -1,6 +1,9 @@
 Naturally Parametrized Curve
 ============================
 
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/f5cdafd7-aef1-46bb-8912-5a60a8484c24
+  :target: https://github.com/nortikin/sverchok/assets/14288520/f5cdafd7-aef1-46bb-8912-5a60a8484c24
+
 Functionality
 -------------
 
@@ -27,6 +30,16 @@ straight segments and summing their lengths. The more segments you subdivide
 the curve in, the more precise the length will be, but the more time it will
 take to calculate. So the node gives you control on the number of subdivisions.
 
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/0c168562-e894-4b43-bb81-5769fb1f0f05
+  :target: https://github.com/nortikin/sverchok/assets/14288520/0c168562-e894-4b43-bb81-5769fb1f0f05
+
+* Generator-> :doc:`Random Vector </nodes/generator/random_vector_mk3>`
+* Curves-> :doc:`Cubic Spline </nodes/curve/cubic_spline>`
+* Curves-> :doc:`Curve Domain </nodes/curve/curve_range>`
+* List->List Main-> :doc:`List Join </nodes/list_main/join>`
+* Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
+* Viz-> :doc:`Viewer Draw Curve </nodes/viz/viewer_draw_curve>`
+
 Inputs
 ------
 
@@ -49,6 +62,9 @@ This node has the following parameter:
   calculations. The default value is **Cubic**. This parameter is available in
   the N panel only.
 
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/5f4c2d9c-c1df-4439-ad83-b1432ac67813
+  :target: https://github.com/nortikin/sverchok/assets/14288520/5f4c2d9c-c1df-4439-ad83-b1432ac67813
+
 Outputs
 -------
 
@@ -66,8 +82,21 @@ steps along the curve. This you can see at the left. At the right there is the
 same spiral with natural parametrization:
 
 .. image:: https://user-images.githubusercontent.com/284644/79695949-29202f80-8293-11ea-8623-1df67c3a68ef.png
+  :target: https://user-images.githubusercontent.com/284644/79695949-29202f80-8293-11ea-8623-1df67c3a68ef.png
+
+* Curves-> :doc:`Curve Formula </nodes/curve/curve_formula>`
+* Curves-> :doc:`Evaluate Curve </nodes/curve/eval_curve>`
+* Transform-> :doc:`Move </nodes/transforms/move_mk3>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 
 Similar example with some cubic spline:
 
 .. image:: https://user-images.githubusercontent.com/284644/79693501-75b03e80-8284-11ea-841b-9b5911bf91e7.png
+  :target: https://user-images.githubusercontent.com/284644/79693501-75b03e80-8284-11ea-841b-9b5911bf91e7.png
 
+* Curves-> :doc:`Cubic Spline </nodes/curve/cubic_spline>`
+* Curves-> :doc:`Evaluate Curve </nodes/curve/eval_curve>`
+* Transform-> :doc:`Move </nodes/transforms/move_mk3>`
+* Vector-> :doc:`Vector sort </nodes/vector/vertices_sort>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+* Scene-> :doc:`Objects In Lite </nodes/scene/objects_in_lite>`

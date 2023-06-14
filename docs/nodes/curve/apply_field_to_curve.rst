@@ -1,6 +1,9 @@
 Apply Field to Curve
 ====================
 
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/50fc1d2e-0da6-41d9-add9-82905240a4a4
+  :target: https://github.com/nortikin/sverchok/assets/14288520/50fc1d2e-0da6-41d9-add9-82905240a4a4
+
 Functionality
 -------------
 
@@ -72,12 +75,28 @@ Example of usage
 Several Line curves modified by Noise vector field:
 
 .. image:: https://user-images.githubusercontent.com/284644/77443601-fd816500-6e0c-11ea-9ed2-0516eba95951.png
+  :target: https://user-images.githubusercontent.com/284644/77443601-fd816500-6e0c-11ea-9ed2-0516eba95951.png
+
+* Generator-> :doc:`NGon </nodes/generator/ngon>`
+* Curves->Curve Primitives-> :doc:`Line (Curve) </nodes/curve/line>`
+* Curves-> :doc:`Evaluate Curve </nodes/curve/eval_curve>`
+* Fields-> :doc:`Noise Vector Field </nodes/field/noise_vfield>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 
 Apply Attractor field to control points of a NURBS curve. Control polygon of a resulting curve is indicated with red:
 
 .. image:: https://user-images.githubusercontent.com/284644/90950162-8c4fe780-e468-11ea-9fa2-8d133fa07c58.png
+  :target: https://user-images.githubusercontent.com/284644/90950162-8c4fe780-e468-11ea-9fa2-8d133fa07c58.png
+
+* Curves-> :doc:`Interpolate NURBS Curve </nodes/curve/interpolate_nurbs_curve>`
+* Curves-> :doc:`Evaluate Curve </nodes/curve/eval_curve>`
+* Curves->Curve NURBS-> :doc:`Deconstruct Curve </nodes/curve/deconstruct_curve>`
+* Fields-> :doc:`Attractor Field </nodes/field/attractor_field_mk2>`
+* Vector-> :doc:`Vector sort </nodes/vector/vertices_sort>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+* Scene-> :doc:`Objects In Lite </nodes/scene/objects_in_lite>`
 
 If we apply the same curve to all points of curve (disable "Use control points" mode), we will have different curve:
 
 .. image:: https://user-images.githubusercontent.com/284644/90950165-9245c880-e468-11ea-8439-0b450ae58010.png
-
+  :target: https://user-images.githubusercontent.com/284644/90950165-9245c880-e468-11ea-8439-0b450ae58010.png

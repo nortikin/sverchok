@@ -35,10 +35,10 @@ class SvExtendCurveNode(SverchCustomTreeNode, bpy.types.Node):
         update = updateNode)
 
     modes = [
-        ('LINE', "1 - Line", "Straight line segment", 0),
-        ('ARC', "1 - Arc", "Circular arc", 1),
-        ('QUAD', "2 - Smooth - Normal", "Smooth curve", 2),
-        ('CUBIC', "3 - Smooth - Curvature", "Smooth curve", 3)
+        ('LINE', "1 - Line", "Extend the curve with straight line segments. The direction of lines is calculated accordingly to curve’s tangent directions at starting and ending point. Thus, it is guaranteed that the resulting curve will have continuous first derivative at the point where original curve is glued with it’s extension", 0),
+        ('ARC', "1 - Arc", "Extend the curve with circular arcs. Extension direction and arc radius is calculated from curve’s tangents. The plane where the arc will lie is calculated based on curve’s second derivatives at ending points. Thus, it is guaranteed that the resulting curve will have continuous first derivative at the point where original curve is glued with it’s extension", 1),
+        ('QUAD', "2 - Smooth - Normal", "Extend the curve with segments of second order (quadratic) curves. The coefficients of curves are calculated based on original curve’s tangent and second derivatives directions at the ending points. Thus, it is guaraneed that the resulting curve will have continuous first and second derivatives at the point where original curve is glued with it’s extension", 2),
+        ('CUBIC', "3 - Smooth - Curvature", "Extend the curve with segments of third order (cubic) curves. The coefficients of curves are calculated based on original curve’s tangent, second and third derivatives directions at the ending points. Thus, it is guaraneed that the resulting curve will have continuous first, second and third derivatives at the point where original curve is glued with it’s extension", 3)
     ]
 
     mode : EnumProperty(
@@ -48,8 +48,8 @@ class SvExtendCurveNode(SverchCustomTreeNode, bpy.types.Node):
         update = updateNode)
 
     len_modes = [
-        ('T', "Curve parameter", "Specify curve parameter extension", 0),
-        ('L', "Curve length", "Specify curve length extension", 1)
+        ('T', "Curve parameter", "Specify curve parameter extension. Inputs define the range of curve’s T parameter. Since coefficients of the generated extension curves are calculated automatically, the length of extension curves can be hard to predict from the input values. On the other hand, this option is the faster one", 0),
+        ('L', "Curve length", "Specify curve length extension. Inputs define the length of extension curves. Required ranges of curve’s T parameter is calculated numerically, so this option is slower", 1)
     ]
 
     len_mode : EnumProperty(
@@ -60,6 +60,7 @@ class SvExtendCurveNode(SverchCustomTreeNode, bpy.types.Node):
 
     len_resolution : IntProperty(
         name = "Length resolution",
+        description = "Defines the resolution value for curve length calculation. The higher the value is, the more precisely extension curves length will be equal to the specified inputs, but the slower the computation will be",
         default = 50,
         min = 3,
         update = updateNode)
