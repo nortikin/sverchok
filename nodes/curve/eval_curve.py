@@ -35,12 +35,14 @@ class SvEvalCurveNode(SverchCustomTreeNode, bpy.types.Node):
 
         sample_size : IntProperty(
                 name = "Samples",
+                description = "Number of curve parameter values to calculate the curve points for",
                 default = 50,
                 min = 4,
                 update = updateNode)
 
         t_value : FloatProperty(
             name = "T",
+            description = "The value of curve parameter to calculate the point on the curve for",
             default = 0.5,
             update = updateNode)
 

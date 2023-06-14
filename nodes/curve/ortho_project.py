@@ -29,7 +29,7 @@ class SvExOrthoProjectCurveNode(SverchCustomTreeNode, bpy.types.Node):
 
     nearest : BoolProperty(
         name = "Nearest",
-        description = "To find the nearest orthogonal projection or all of them",
+        description = "To find the nearest orthogonal projection (on) or all of them (off)",
         default = True,
         update = updateNode)
 

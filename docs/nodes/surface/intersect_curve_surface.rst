@@ -1,6 +1,9 @@
 Intersect Curve with Surface
 ============================
 
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/43c12004-59df-4853-ab75-968e2fc1e931
+  :target: https://github.com/nortikin/sverchok/assets/14288520/43c12004-59df-4853-ab75-968e2fc1e931
+
 Dependencies
 ------------
 
@@ -24,12 +27,21 @@ For the initial guess, at the first step the node generates a rough
 approximation of the surface with a mesh by evaluating the surface in points of
 cartesian grid.
 
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/77ee2f22-93c9-4463-b213-893b95323c34
+  :target: https://github.com/nortikin/sverchok/assets/14288520/77ee2f22-93c9-4463-b213-893b95323c34
+
+* Generator-> :doc:`Random Vector </nodes/generator/random_vector_mk3>`
+* Curves-> :doc:`Cubic Spline </nodes/curve/cubic_spline>`
+* Surfaces-> :doc:`Sphere (Surface) </nodes/surface/surface_sphere>`
+* Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+
 Inputs
 ------
 
 This node has the following inputs:
 
-* **Curve***. The curve to search intersections with. This input is mandatory.
+* **Curve**. The curve to search intersections with. This input is mandatory.
 * **Surface**. The surface to search intersections with. This input is mandatory.
 
 Parameters
@@ -79,4 +91,11 @@ Example of usage
 ----------------
 
 .. image:: https://user-images.githubusercontent.com/284644/87244933-8c68ca80-c45a-11ea-955e-e41800b9ca50.png
+  :target: https://user-images.githubusercontent.com/284644/87244933-8c68ca80-c45a-11ea-955e-e41800b9ca50.png
 
+* Curves-> :doc:`Cubic Spline </nodes/curve/cubic_spline>`
+* Curves-> :doc:`Evaluate Curve </nodes/curve/eval_curve>`
+* Surfaces-> :doc:`Minimal Surface </nodes/surface/minimal_surface>`
+* Surface-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+* Scene-> :doc:`Objects In Lite </nodes/scene/objects_in_lite>`

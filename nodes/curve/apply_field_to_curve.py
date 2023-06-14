@@ -24,11 +24,13 @@ class SvApplyFieldToCurveNode(SverchCustomTreeNode, bpy.types.Node):
 
         coefficient : FloatProperty(
                 name = "Coefficient",
+                description = "Vector field application coefficient (0 means vector field will have no effect)",
                 default = 1.0,
                 update=updateNode)
 
         use_control_points : BoolProperty(
                 name = "Use Control Points",
+                description = "If checked, then the vector field will be applied to control points of a NURBS curve, instead of applying it to all points of the curve. This node will fail (become red) if this mode is enabled, but input curve is not a NURBS and can not be presented as a NURBS. If not checked, then the node will apply the vector fields to all points of the curve; in such a case, it can process any type of curve",
                 default = False,
                 update=updateNode)
 

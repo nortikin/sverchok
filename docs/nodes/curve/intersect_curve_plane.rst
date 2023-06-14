@@ -1,6 +1,9 @@
 Intersect Curve with Plane
 ==========================
 
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/cd2a24f5-52d5-450a-bcc4-a90f8ff98125
+  :target: https://github.com/nortikin/sverchok/assets/14288520/cd2a24f5-52d5-450a-bcc4-a90f8ff98125
+
 Dependencies
 ------------
 
@@ -17,6 +20,15 @@ and a point on the plane.
 
 To find all intersections, the node splits the curve into several segments and
 then searches for single intersection in each segment.
+
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/b231613e-fd3a-46c4-9fd3-cdd0b586f092
+  :target: https://github.com/nortikin/sverchok/assets/14288520/b231613e-fd3a-46c4-9fd3-cdd0b586f092
+
+* Vector-> :doc:`Vector In </nodes/vector/vector_in>`
+* Matrix-> :doc:`Matrix Normal </nodes/matrix/matrix_normal>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+* Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
+* Scene-> :doc:`Bezier Input </nodes/exchange/bezier_in>`
 
 Inputs
 ------
@@ -59,4 +71,10 @@ Example of usage
 Find intersections of some NURBS curve with XOY plane:
 
 .. image:: https://user-images.githubusercontent.com/284644/86529252-b2292900-bec8-11ea-9b85-61d200e8b93d.png
+  :target: https://user-images.githubusercontent.com/284644/86529252-b2292900-bec8-11ea-9b85-61d200e8b93d.png
 
+* Vector-> :doc:`Vector sort </nodes/vector/vertices_sort>`
+* Curves-> :doc:`Interpolate NURBS Curve </nodes/curve/interpolate_nurbs_curve>`
+* Curves-> :doc:`Evaluate Curve </nodes/curve/eval_curve>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+* Scene-> :doc:`Objects In Lite </nodes/scene/objects_in_lite>`

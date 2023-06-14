@@ -1,6 +1,9 @@
 Offset Curve on Surface
 =======================
 
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/e884f6e8-d640-40b3-9ff0-f75f0aefc8a7
+  :target: https://github.com/nortikin/sverchok/assets/14288520/e884f6e8-d640-40b3-9ff0-f75f0aefc8a7
+
 Functionality
 -------------
 
@@ -26,6 +29,7 @@ Inputs
 
 This node has the following inputs:
 
+
 * **Curve**. The curve (in surface's UV space) to be offsetted. The curve is
   supposed to lie in XOY, XOZ or YOZ coordinate plane, depending on **Curve
   Plane** parameter. This input is mandatory.
@@ -40,6 +44,9 @@ This node has the following inputs:
   curve, or it's length share, depending on **Offset curve type** parameter.
   This input is available and mandatory only if **Offset type** parameter is
   set to **Variable**.
+
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/163ec6cb-3a92-4665-83bd-77ff636fa747
+  :target: https://github.com/nortikin/sverchok/assets/14288520/163ec6cb-3a92-4665-83bd-77ff636fa747
 
 Parameters
 ----------
@@ -66,6 +73,9 @@ This node has the following parameters:
   parameter when calculating offset amount for each point of original curve.
   The available values are:
 
+  .. image:: https://github.com/nortikin/sverchok/assets/14288520/e5785039-52e5-481e-aea7-b3becee9d4f4
+    :target: https://github.com/nortikin/sverchok/assets/14288520/e5785039-52e5-481e-aea7-b3becee9d4f4
+
   * **Curve parameter**. T parameter of the original curve will be used. Note
     that in some cases this will distort the "offset curve" (compress it in one
     places and stretch in other places), as curve length is not required to be
@@ -82,6 +92,9 @@ This node has the following parameters:
   calculation. The bigger the value, the more precise the calculation will be,
   but the slower. The default value is 50.
 
+  .. image:: https://github.com/nortikin/sverchok/assets/14288520/56e9511a-bd1a-4899-bd85-734a3a69429a
+    :target: https://github.com/nortikin/sverchok/assets/14288520/56e9511a-bd1a-4899-bd85-734a3a69429a
+
 Outputs
 -------
 
@@ -97,8 +110,30 @@ Examples of usage
 Constant offset of a curve on a surface:
 
 .. image:: https://user-images.githubusercontent.com/284644/85555664-922f7500-b63f-11ea-8479-9ee8db89ee11.png
+  :target: https://user-images.githubusercontent.com/284644/85555664-922f7500-b63f-11ea-8479-9ee8db89ee11.png
+
+* Vector-> :doc:`Vector sort </nodes/vector/vertices_sort>`
+* Curves-> :doc:`Cubic Spline </nodes/curve/cubic_spline>`
+* Curves-> :doc:`Evaluate Curve </nodes/curve/eval_curve>`
+* Curves-> :doc:`Curve on Surface </nodes/curve/curve_on_surface>`
+* Surfaces-> :doc:`Extrude Curve Along Curve </nodes/surface/extrude_curve>`
+* Surfaces-> :doc:`Reparametrize Surface </nodes/surface/surface_reparametrize>`
+* Surface-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+* Scene-> :doc:`Objects In Lite </nodes/scene/objects_in_lite>`
 
 Similar setup, but with variable offset amount, controlled by a curve from "Curve mapper" node:
 
 .. image:: https://user-images.githubusercontent.com/284644/85555750-a8d5cc00-b63f-11ea-8f28-3565e3a8d1e4.png
+  :target: https://user-images.githubusercontent.com/284644/85555750-a8d5cc00-b63f-11ea-8f28-3565e3a8d1e4.png
 
+* Vector-> :doc:`Vector sort </nodes/vector/vertices_sort>`
+* Curves-> :doc:`Cubic Spline </nodes/curve/cubic_spline>`
+* Curves-> :doc:`Evaluate Curve </nodes/curve/eval_curve>`
+* Curves-> :doc:`Curve on Surface </nodes/curve/curve_on_surface>`
+* Surfaces-> :doc:`Extrude Curve Along Curve </nodes/surface/extrude_curve>`
+* Surfaces-> :doc:`Reparametrize Surface </nodes/surface/surface_reparametrize>`
+* Surface-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
+* Number-> :doc:`Curve Mapper </nodes/number/curve_mapper>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+* Scene-> :doc:`Objects In Lite </nodes/scene/objects_in_lite>`

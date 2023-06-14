@@ -21,16 +21,19 @@ class SvCurveSegmentNode(SverchCustomTreeNode, bpy.types.Node):
 
     t_min : FloatProperty(
         name = "T Min",
+        description = "The value of curve’s T parameter, at which the new curve should start",
         default = 0.2,
         update = updateNode)
 
     t_max : FloatProperty(
         name = "T Max",
+        description = "The value of curve’s T parameter, at which the new curve should end",
         default = 0.8,
         update = updateNode)
 
     rescale : BoolProperty(
         name = "Rescale to 0..1",
+        description = "If checked, then the generated curve will have the domain (allowed range of T parameter values) of [0.0 .. 1.0]. Otherwise, the domain of generated curve will be defined by node’s inputs, i.e. [TMin .. TMax]",
         default = False,
         update = updateNode)
 
@@ -42,7 +45,7 @@ class SvCurveSegmentNode(SverchCustomTreeNode, bpy.types.Node):
 
     join : BoolProperty(
             name = "Join",
-            description = "Output single flat list of curves",
+            description = "If checked, output single flat list of curves",
             default = True,
             update = updateNode)
 
