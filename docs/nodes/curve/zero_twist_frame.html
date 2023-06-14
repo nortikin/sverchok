@@ -202,6 +202,7 @@
              
   <section id="curve-zero-twist-frame">
 <h1>Curve Zero-Twist Frame<a class="headerlink" href="#curve-zero-twist-frame" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/ceb19d9c-8873-4bda-a391-92b1d78b8089"><img alt="https://github.com/nortikin/sverchok/assets/14288520/ceb19d9c-8873-4bda-a391-92b1d78b8089" src="https://github.com/nortikin/sverchok/assets/14288520/ceb19d9c-8873-4bda-a391-92b1d78b8089" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node calculates a reference frame along the curve, which has minimal
@@ -219,11 +220,18 @@ to specify the number of curve subdivisions to be used.</p>
 at the point where it has zero curvature (or at a straight segment of the
 curve), and, therefore, the calculation by the first algorithm can also fail in
 such cases.</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/9ccc28e7-f6fa-4b8b-a3bb-29f38ec80370"><img alt="https://github.com/nortikin/sverchok/assets/14288520/9ccc28e7-f6fa-4b8b-a3bb-29f38ec80370" src="https://github.com/nortikin/sverchok/assets/14288520/9ccc28e7-f6fa-4b8b-a3bb-29f38ec80370" /></a>
 <p>The second algorithm is to take the normal direction at the starting point to
 curve and to “track” it along the curve, by projecting previous normal
 direction on the plane that is perpendicular to curve’s tangent at the next
 “knot” point. The frame at arbitrary point is then calculated by quaternion
 linear interpolation. The second algorithm is supposed to work with any curves.</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/3ffc57c5-1442-4b52-b81a-cebddcdcd369"><img alt="https://github.com/nortikin/sverchok/assets/14288520/3ffc57c5-1442-4b52-b81a-cebddcdcd369" src="https://github.com/nortikin/sverchok/assets/14288520/3ffc57c5-1442-4b52-b81a-cebddcdcd369" /></a>
+<ul class="simple">
+<li><p>Scene-&gt; <a class="reference internal" href="../exchange/bezier_in.html"><span class="doc">Bezier Input</span></a></p></li>
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
@@ -269,9 +277,34 @@ matrix points along curve’s tangent.</p></li>
 <section id="example-of-usage">
 <h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>Use zero-twist frames to put cubes along the curve:</p>
-<img alt="https://user-images.githubusercontent.com/284644/78504364-20edcd80-7786-11ea-831e-80db9be81e2b.png" src="https://user-images.githubusercontent.com/284644/78504364-20edcd80-7786-11ea-831e-80db9be81e2b.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/78504364-20edcd80-7786-11ea-831e-80db9be81e2b.png"><img alt="https://user-images.githubusercontent.com/284644/78504364-20edcd80-7786-11ea-831e-80db9be81e2b.png" src="https://user-images.githubusercontent.com/284644/78504364-20edcd80-7786-11ea-831e-80db9be81e2b.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/random_vector_mk3.html"><span class="doc">Random Vector</span></a></p></li>
+<li><p>Curves-&gt; <a class="reference internal" href="cubic_spline.html"><span class="doc">Cubic Spline</span></a></p></li>
+<li><p>Curves-&gt; <a class="reference internal" href="curve_range.html"><span class="doc">Curve Domain</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 <p>Compare that to the use of curve’s Frenet frames:</p>
-<img alt="https://user-images.githubusercontent.com/284644/78504337-ed12a800-7785-11ea-9a6c-1427ced45d55.png" src="https://user-images.githubusercontent.com/284644/78504337-ed12a800-7785-11ea-9a6c-1427ced45d55.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/78504337-ed12a800-7785-11ea-9a6c-1427ced45d55.png"><img alt="https://user-images.githubusercontent.com/284644/78504337-ed12a800-7785-11ea-9a6c-1427ced45d55.png" src="https://user-images.githubusercontent.com/284644/78504337-ed12a800-7785-11ea-9a6c-1427ced45d55.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/random_vector_mk3.html"><span class="doc">Random Vector</span></a></p></li>
+<li><p>Curves-&gt; <a class="reference internal" href="cubic_spline.html"><span class="doc">Cubic Spline</span></a></p></li>
+<li><p>Curves-&gt; <a class="reference internal" href="curve_range.html"><span class="doc">Curve Domain</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/c414cff5-b51d-48c3-ba47-122fbd2b8249"><img alt="https://github.com/nortikin/sverchok/assets/14288520/c414cff5-b51d-48c3-ba47-122fbd2b8249" src="https://github.com/nortikin/sverchok/assets/14288520/c414cff5-b51d-48c3-ba47-122fbd2b8249" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/random_vector_mk3.html"><span class="doc">Random Vector</span></a></p></li>
+<li><p>Curves-&gt; <a class="reference internal" href="cubic_spline.html"><span class="doc">Cubic Spline</span></a></p></li>
+<li><p>Curves-&gt; <a class="reference internal" href="curve_range.html"><span class="doc">Curve Domain</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 </section>
 </section>
 

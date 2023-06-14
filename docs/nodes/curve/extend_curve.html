@@ -202,18 +202,23 @@
              
   <section id="extend-curve">
 <h1>Extend Curve<a class="headerlink" href="#extend-curve" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/bc848d08-3c37-49a6-8aca-bf61cd984bb5"><img alt="https://github.com/nortikin/sverchok/assets/14288520/bc848d08-3c37-49a6-8aca-bf61cd984bb5" src="https://github.com/nortikin/sverchok/assets/14288520/bc848d08-3c37-49a6-8aca-bf61cd984bb5" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node generates a continuation of given Curve beyond it’s end points in a
 smooth manner. It can be used if you for some reason have just a segment of a
 curve, and want to continue it, for example, until it meets some plane or
 surface.</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/5974da75-a142-4f25-83fb-1af361e6936b"><img alt="https://github.com/nortikin/sverchok/assets/14288520/5974da75-a142-4f25-83fb-1af361e6936b" src="https://github.com/nortikin/sverchok/assets/14288520/5974da75-a142-4f25-83fb-1af361e6936b" /></a>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
 <li><p><strong>Curve</strong>. The curve to be extended. This input is mandatory.</p></li>
+</ul>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/f2868357-5132-4e55-bb75-e136f1ba9e29"><img alt="https://github.com/nortikin/sverchok/assets/14288520/f2868357-5132-4e55-bb75-e136f1ba9e29" src="https://github.com/nortikin/sverchok/assets/14288520/f2868357-5132-4e55-bb75-e136f1ba9e29" /></a>
+<ul class="simple">
 <li><p><strong>StartExt</strong>. This defines how far the curve should be extended beyond it’s
 starting point. Depending on <strong>Extend by</strong> parameter, this is measured either
 in terms of curve’s T parameter, or in terms of curve length. Default value
@@ -231,42 +236,62 @@ beyond curve’s ending point.</p></li>
 <p>This node has the following parameters:</p>
 <ul>
 <li><p><strong>Type</strong>. Extending curves type. The available options are:</p>
-<ul class="simple">
+<ul>
 <li><p><strong>1 - Line</strong>. Extend the curve with straight line segments. The direction of
 lines is calculated accordingly to curve’s tangent directions at starting
 and ending point. Thus, it is guaranteed that the resulting curve will have
 continuous first derivative at the point where original curve is glued with
-it’s extension.</p></li>
+it’s extension.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/296b9895-c5cb-4acb-848f-a804c12513c5"><img alt="https://github.com/nortikin/sverchok/assets/14288520/296b9895-c5cb-4acb-848f-a804c12513c5" src="https://github.com/nortikin/sverchok/assets/14288520/296b9895-c5cb-4acb-848f-a804c12513c5" /></a>
+</div></blockquote>
+</li>
 <li><p><strong>1 - Arc</strong>. Extend the curve with circular arcs. Extension direction and arc
 radius is calculated from curve’s tangents. The plane where the arc will
 lie is calculated based on curve’s second derivatives at ending points.
 Thus, it is guaranteed that the resulting curve will have continuous first
-derivative at the point where original curve is glued with it’s extension.</p></li>
+derivative at the point where original curve is glued with it’s extension.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/8d6812be-a400-41cb-b569-74c4eaf0ba98"><img alt="https://github.com/nortikin/sverchok/assets/14288520/8d6812be-a400-41cb-b569-74c4eaf0ba98" src="https://github.com/nortikin/sverchok/assets/14288520/8d6812be-a400-41cb-b569-74c4eaf0ba98" /></a>
+</div></blockquote>
+</li>
 <li><p><strong>2 - Smooth - Normal</strong>. Extend the curve with segments of second order
 (quadratic) curves. The coefficients of curves are calculated based on
 original curve’s tangent and second derivatives directions at the ending
 points. Thus, it is guaraneed that the resulting curve will have continuous
 first and second derivatives at the point where original curve is glued
-with it’s extension.</p></li>
+with it’s extension.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/a804f9d9-e274-408c-8051-d8a52db2b8ca"><img alt="https://github.com/nortikin/sverchok/assets/14288520/a804f9d9-e274-408c-8051-d8a52db2b8ca" src="https://github.com/nortikin/sverchok/assets/14288520/a804f9d9-e274-408c-8051-d8a52db2b8ca" /></a>
+</div></blockquote>
+</li>
 <li><p><strong>3 - Smooth - Curvature</strong>. Extend the curve with segments of third order
 (cubic) curves. The coefficients of curves are calculated based on
 original curve’s tangent, second and third derivatives directions at the ending
 points. Thus, it is guaraneed that the resulting curve will have continuous
 first, second and third derivatives at the point where original curve is glued
-with it’s extension.</p></li>
+with it’s extension.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/7fc31678-10eb-4ba0-a03b-f72d83283300"><img alt="https://github.com/nortikin/sverchok/assets/14288520/7fc31678-10eb-4ba0-a03b-f72d83283300" src="https://github.com/nortikin/sverchok/assets/14288520/7fc31678-10eb-4ba0-a03b-f72d83283300" /></a>
+</div></blockquote>
+</li>
 </ul>
 <p>The default option is <strong>1 - Line</strong>.</p>
 </li>
 <li><p><strong>Extend by</strong>. This defines the units in which values of <strong>StartExt</strong>,
 <strong>EndExt</strong> inputs is measured. The available options are:</p>
-<ul class="simple">
+<ul>
 <li><p><strong>Curve parameter</strong>. Inputs define the range of curve’s T parameter. Since
 coefficients of the generated extension curves are calculated
 automatically, the length of extension curves can be hard to predict from
 the input values. On the other hand, this option is the faster one.</p></li>
 <li><p><strong>Curve length</strong>. Inputs define the length of extension curves. Required
 ranges of curve’s T parameter is calculated numerically, so this option is
-slower.</p></li>
+slower.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/3994636b-4fac-4c28-bb43-eefd584c6bd9"><img alt="https://github.com/nortikin/sverchok/assets/14288520/3994636b-4fac-4c28-bb43-eefd584c6bd9" src="https://github.com/nortikin/sverchok/assets/14288520/3994636b-4fac-4c28-bb43-eefd584c6bd9" /></a>
+</div></blockquote>
+</li>
 </ul>
 <p>The default option is <strong>Curve parameter</strong>.</p>
 </li>
@@ -280,18 +305,37 @@ but the slower the computation will be. The default value is 50.</p></li>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following outputs:</p>
-<ul class="simple">
+<ul>
 <li><p><strong>ExtendedCurve</strong>. The original curve extended by one extension curve at the
-beginning and another curve at the end.</p></li>
-<li><p><strong>StartExtent</strong>. Extension curve generated at the beginning of the original curve.</p></li>
-<li><p><strong>EndExtent</strong>. Extension curve generated at the end of the original curve.</p></li>
+beginning and another curve at the end.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/e49b567e-90cc-4a83-a781-3b62ad13d4c6"><img alt="https://github.com/nortikin/sverchok/assets/14288520/e49b567e-90cc-4a83-a781-3b62ad13d4c6" src="https://github.com/nortikin/sverchok/assets/14288520/e49b567e-90cc-4a83-a781-3b62ad13d4c6" /></a>
+</div></blockquote>
+</li>
+<li><p><strong>StartExtent</strong>. Extension curve generated at the beginning of the original curve.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/faa2c57c-4813-4a9c-8c91-958bdc8183bc"><img alt="https://github.com/nortikin/sverchok/assets/14288520/faa2c57c-4813-4a9c-8c91-958bdc8183bc" src="https://github.com/nortikin/sverchok/assets/14288520/faa2c57c-4813-4a9c-8c91-958bdc8183bc" /></a>
+</div></blockquote>
+</li>
+<li><p><strong>EndExtent</strong>. Extension curve generated at the end of the original curve.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/7b697ee7-7ebc-4cad-90c4-4249d503f1e2"><img alt="https://github.com/nortikin/sverchok/assets/14288520/7b697ee7-7ebc-4cad-90c4-4249d503f1e2" src="https://github.com/nortikin/sverchok/assets/14288520/7b697ee7-7ebc-4cad-90c4-4249d503f1e2" /></a>
+</div></blockquote>
+</li>
 </ul>
 </section>
 <section id="example-of-usage">
 <h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>Build part of curve from points, and then extend it to additional length of 1
 at the beginning and to additional length of 2 at the end:</p>
-<img alt="https://user-images.githubusercontent.com/284644/84564568-07679400-ad7c-11ea-8370-c4a8008a8c74.png" src="https://user-images.githubusercontent.com/284644/84564568-07679400-ad7c-11ea-8370-c4a8008a8c74.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/84564568-07679400-ad7c-11ea-8370-c4a8008a8c74.png"><img alt="https://user-images.githubusercontent.com/284644/84564568-07679400-ad7c-11ea-8370-c4a8008a8c74.png" src="https://user-images.githubusercontent.com/284644/84564568-07679400-ad7c-11ea-8370-c4a8008a8c74.png" /></a>
+<ul class="simple">
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vertices_sort.html"><span class="doc">Vector sort</span></a></p></li>
+<li><p>Curves-&gt; <a class="reference internal" href="cubic_spline.html"><span class="doc">Cubic Spline</span></a></p></li>
+<li><p>Curves-&gt; <a class="reference internal" href="eval_curve.html"><span class="doc">Evaluate Curve</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Scene-&gt; <a class="reference internal" href="../scene/objects_in_lite.html"><span class="doc">Objects In Lite</span></a></p></li>
+</ul>
 </section>
 </section>
 

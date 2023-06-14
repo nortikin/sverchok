@@ -178,6 +178,7 @@
              
   <section id="intersect-curve-with-surface">
 <h1>Intersect Curve with Surface<a class="headerlink" href="#intersect-curve-with-surface" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/43c12004-59df-4853-ab75-968e2fc1e931"><img alt="https://github.com/nortikin/sverchok/assets/14288520/43c12004-59df-4853-ab75-968e2fc1e931" src="https://github.com/nortikin/sverchok/assets/14288520/43c12004-59df-4853-ab75-968e2fc1e931" /></a>
 <section id="dependencies">
 <h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this heading">¶</a></h2>
 <p>This node requires <a class="reference external" href="https://scipy.org/">SciPy</a> library to work.</p>
@@ -193,12 +194,20 @@ then searches for sinle intersection in each segment.</p>
 <p>For the initial guess, at the first step the node generates a rough
 approximation of the surface with a mesh by evaluating the surface in points of
 cartesian grid.</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/77ee2f22-93c9-4463-b213-893b95323c34"><img alt="https://github.com/nortikin/sverchok/assets/14288520/77ee2f22-93c9-4463-b213-893b95323c34" src="https://github.com/nortikin/sverchok/assets/14288520/77ee2f22-93c9-4463-b213-893b95323c34" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/random_vector_mk3.html"><span class="doc">Random Vector</span></a></p></li>
+<li><p>Curves-&gt; <a class="reference internal" href="../curve/cubic_spline.html"><span class="doc">Cubic Spline</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="surface_sphere.html"><span class="doc">Sphere (Surface)</span></a></p></li>
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
-<li><p><strong>Curve*</strong>. The curve to search intersections with. This input is mandatory.</p></li>
+<li><p><strong>Curve</strong>. The curve to search intersections with. This input is mandatory.</p></li>
 <li><p><strong>Surface</strong>. The surface to search intersections with. This input is mandatory.</p></li>
 </ul>
 </section>
@@ -249,7 +258,15 @@ is 4.</p></li>
 </section>
 <section id="example-of-usage">
 <h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
-<img alt="https://user-images.githubusercontent.com/284644/87244933-8c68ca80-c45a-11ea-955e-e41800b9ca50.png" src="https://user-images.githubusercontent.com/284644/87244933-8c68ca80-c45a-11ea-955e-e41800b9ca50.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/87244933-8c68ca80-c45a-11ea-955e-e41800b9ca50.png"><img alt="https://user-images.githubusercontent.com/284644/87244933-8c68ca80-c45a-11ea-955e-e41800b9ca50.png" src="https://user-images.githubusercontent.com/284644/87244933-8c68ca80-c45a-11ea-955e-e41800b9ca50.png" /></a>
+<ul class="simple">
+<li><p>Curves-&gt; <a class="reference internal" href="../curve/cubic_spline.html"><span class="doc">Cubic Spline</span></a></p></li>
+<li><p>Curves-&gt; <a class="reference internal" href="../curve/eval_curve.html"><span class="doc">Evaluate Curve</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="minimal_surface.html"><span class="doc">Minimal Surface</span></a></p></li>
+<li><p>Surface-&gt; <a class="reference internal" href="evaluate_surface.html"><span class="doc">Evaluate Surface</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Scene-&gt; <a class="reference internal" href="../scene/objects_in_lite.html"><span class="doc">Objects In Lite</span></a></p></li>
+</ul>
 </section>
 </section>
 

@@ -203,6 +203,7 @@
              
   <section id="intersect-curve-with-plane">
 <h1>Intersect Curve with Plane<a class="headerlink" href="#intersect-curve-with-plane" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/cd2a24f5-52d5-450a-bcc4-a90f8ff98125"><img alt="https://github.com/nortikin/sverchok/assets/14288520/cd2a24f5-52d5-450a-bcc4-a90f8ff98125" src="https://github.com/nortikin/sverchok/assets/14288520/cd2a24f5-52d5-450a-bcc4-a90f8ff98125" /></a>
 <section id="dependencies">
 <h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this heading">¶</a></h2>
 <p>This node requires <a class="reference external" href="https://scipy.org/">SciPy</a> library to work.</p>
@@ -214,6 +215,14 @@ specified (infinite) plane. The plane is specified by providing a normal vector
 and a point on the plane.</p>
 <p>To find all intersections, the node splits the curve into several segments and
 then searches for single intersection in each segment.</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/b231613e-fd3a-46c4-9fd3-cdd0b586f092"><img alt="https://github.com/nortikin/sverchok/assets/14288520/b231613e-fd3a-46c4-9fd3-cdd0b586f092" src="https://github.com/nortikin/sverchok/assets/14288520/b231613e-fd3a-46c4-9fd3-cdd0b586f092" /></a>
+<ul class="simple">
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_in.html"><span class="doc">Vector In</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_normal.html"><span class="doc">Matrix Normal</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+<li><p>Scene-&gt; <a class="reference internal" href="../exchange/bezier_in.html"><span class="doc">Bezier Input</span></a></p></li>
+</ul>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
@@ -253,7 +262,14 @@ value is 4.</p></li>
 <section id="example-of-usage">
 <h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>Find intersections of some NURBS curve with XOY plane:</p>
-<img alt="https://user-images.githubusercontent.com/284644/86529252-b2292900-bec8-11ea-9b85-61d200e8b93d.png" src="https://user-images.githubusercontent.com/284644/86529252-b2292900-bec8-11ea-9b85-61d200e8b93d.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/86529252-b2292900-bec8-11ea-9b85-61d200e8b93d.png"><img alt="https://user-images.githubusercontent.com/284644/86529252-b2292900-bec8-11ea-9b85-61d200e8b93d.png" src="https://user-images.githubusercontent.com/284644/86529252-b2292900-bec8-11ea-9b85-61d200e8b93d.png" /></a>
+<ul class="simple">
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vertices_sort.html"><span class="doc">Vector sort</span></a></p></li>
+<li><p>Curves-&gt; <a class="reference internal" href="interpolate_nurbs_curve.html"><span class="doc">Interpolate NURBS Curve</span></a></p></li>
+<li><p>Curves-&gt; <a class="reference internal" href="eval_curve.html"><span class="doc">Evaluate Curve</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Scene-&gt; <a class="reference internal" href="../scene/objects_in_lite.html"><span class="doc">Objects In Lite</span></a></p></li>
+</ul>
 </section>
 </section>
 

@@ -202,6 +202,7 @@
              
   <section id="naturally-parametrized-curve">
 <h1>Naturally Parametrized Curve<a class="headerlink" href="#naturally-parametrized-curve" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/f5cdafd7-aef1-46bb-8912-5a60a8484c24"><img alt="https://github.com/nortikin/sverchok/assets/14288520/f5cdafd7-aef1-46bb-8912-5a60a8484c24" src="https://github.com/nortikin/sverchok/assets/14288520/f5cdafd7-aef1-46bb-8912-5a60a8484c24" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>It worth reminding that a Curve object is defined as a function from some set
@@ -223,6 +224,15 @@ require a Curve as input.</p>
 straight segments and summing their lengths. The more segments you subdivide
 the curve in, the more precise the length will be, but the more time it will
 take to calculate. So the node gives you control on the number of subdivisions.</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/0c168562-e894-4b43-bb81-5769fb1f0f05"><img alt="https://github.com/nortikin/sverchok/assets/14288520/0c168562-e894-4b43-bb81-5769fb1f0f05" src="https://github.com/nortikin/sverchok/assets/14288520/0c168562-e894-4b43-bb81-5769fb1f0f05" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/random_vector_mk3.html"><span class="doc">Random Vector</span></a></p></li>
+<li><p>Curves-&gt; <a class="reference internal" href="cubic_spline.html"><span class="doc">Cubic Spline</span></a></p></li>
+<li><p>Curves-&gt; <a class="reference internal" href="curve_range.html"><span class="doc">Curve Domain</span></a></p></li>
+<li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/join.html"><span class="doc">List Join</span></a></p></li>
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_curve.html"><span class="doc">Viewer Draw Curve</span></a></p></li>
+</ul>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
@@ -245,6 +255,7 @@ and <strong>Linear</strong>. Cubic methods gives more precision, but takes more 
 calculations. The default value is <strong>Cubic</strong>. This parameter is available in
 the N panel only.</p></li>
 </ul>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/5f4c2d9c-c1df-4439-ad83-b1432ac67813"><img alt="https://github.com/nortikin/sverchok/assets/14288520/5f4c2d9c-c1df-4439-ad83-b1432ac67813" src="https://github.com/nortikin/sverchok/assets/14288520/5f4c2d9c-c1df-4439-ad83-b1432ac67813" /></a>
 </section>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
@@ -260,9 +271,23 @@ small changes of T give very small change of the position of the point on the
 curve, while farther from the center, the same changes of T give a lot bigger
 steps along the curve. This you can see at the left. At the right there is the
 same spiral with natural parametrization:</p>
-<img alt="https://user-images.githubusercontent.com/284644/79695949-29202f80-8293-11ea-8623-1df67c3a68ef.png" src="https://user-images.githubusercontent.com/284644/79695949-29202f80-8293-11ea-8623-1df67c3a68ef.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/79695949-29202f80-8293-11ea-8623-1df67c3a68ef.png"><img alt="https://user-images.githubusercontent.com/284644/79695949-29202f80-8293-11ea-8623-1df67c3a68ef.png" src="https://user-images.githubusercontent.com/284644/79695949-29202f80-8293-11ea-8623-1df67c3a68ef.png" /></a>
+<ul class="simple">
+<li><p>Curves-&gt; <a class="reference internal" href="curve_formula.html"><span class="doc">Curve Formula</span></a></p></li>
+<li><p>Curves-&gt; <a class="reference internal" href="eval_curve.html"><span class="doc">Evaluate Curve</span></a></p></li>
+<li><p>Transform-&gt; <a class="reference internal" href="../transforms/move_mk3.html"><span class="doc">Move</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 <p>Similar example with some cubic spline:</p>
-<img alt="https://user-images.githubusercontent.com/284644/79693501-75b03e80-8284-11ea-841b-9b5911bf91e7.png" src="https://user-images.githubusercontent.com/284644/79693501-75b03e80-8284-11ea-841b-9b5911bf91e7.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/79693501-75b03e80-8284-11ea-841b-9b5911bf91e7.png"><img alt="https://user-images.githubusercontent.com/284644/79693501-75b03e80-8284-11ea-841b-9b5911bf91e7.png" src="https://user-images.githubusercontent.com/284644/79693501-75b03e80-8284-11ea-841b-9b5911bf91e7.png" /></a>
+<ul class="simple">
+<li><p>Curves-&gt; <a class="reference internal" href="cubic_spline.html"><span class="doc">Cubic Spline</span></a></p></li>
+<li><p>Curves-&gt; <a class="reference internal" href="eval_curve.html"><span class="doc">Evaluate Curve</span></a></p></li>
+<li><p>Transform-&gt; <a class="reference internal" href="../transforms/move_mk3.html"><span class="doc">Move</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vertices_sort.html"><span class="doc">Vector sort</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Scene-&gt; <a class="reference internal" href="../scene/objects_in_lite.html"><span class="doc">Objects In Lite</span></a></p></li>
+</ul>
 </section>
 </section>
 

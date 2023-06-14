@@ -202,6 +202,7 @@
              
   <section id="curve-length">
 <h1>Curve Length<a class="headerlink" href="#curve-length" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/e3daf084-d9ee-43ac-9d99-c66d55fa6018"><img alt="https://github.com/nortikin/sverchok/assets/14288520/e3daf084-d9ee-43ac-9d99-c66d55fa6018" src="https://github.com/nortikin/sverchok/assets/14288520/e3daf084-d9ee-43ac-9d99-c66d55fa6018" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node calculates the length of the curve. It also can calculate the length
@@ -210,6 +211,13 @@ of certain segment of the curve within specified range of curve’s T parameter.
 straight segments and summing their lengths. The more segments you subdivide
 the curve in, the more precise the length will be, but the more time it will
 take to calculate. So the node gives you control on the number of subdivisions.</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/829ea5a2-39bf-452c-abe4-c855bbd65672"><img alt="https://github.com/nortikin/sverchok/assets/14288520/829ea5a2-39bf-452c-abe4-c855bbd65672" src="https://github.com/nortikin/sverchok/assets/14288520/829ea5a2-39bf-452c-abe4-c855bbd65672" /></a>
+<ul class="simple">
+<li><p>Curves-&gt; <a class="reference internal" href="extend_curve.html"><span class="doc">Extend Curve</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_curve.html"><span class="doc">Viewer Draw Curve</span></a></p></li>
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+<li><p>Scene-&gt; <a class="reference internal" href="../exchange/bezier_in.html"><span class="doc">Bezier Input</span></a></p></li>
+</ul>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
@@ -255,11 +263,35 @@ the whole curve.</p></li>
 <section id="examples-of-usage">
 <h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>The length of a unit circle is 2*pi:</p>
-<img alt="https://user-images.githubusercontent.com/284644/77850952-6b53d500-71ef-11ea-80fe-07815a5c7e1d.png" src="https://user-images.githubusercontent.com/284644/77850952-6b53d500-71ef-11ea-80fe-07815a5c7e1d.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/77850952-6b53d500-71ef-11ea-80fe-07815a5c7e1d.png"><img alt="https://user-images.githubusercontent.com/284644/77850952-6b53d500-71ef-11ea-80fe-07815a5c7e1d.png" src="https://user-images.githubusercontent.com/284644/77850952-6b53d500-71ef-11ea-80fe-07815a5c7e1d.png" /></a>
+<ul class="simple">
+<li><p>Curves-&gt; <a class="reference internal" href="curve_circle.html"><span class="doc">Circle (Curve)</span></a></p></li>
+<li><p>Curves-&gt; <a class="reference internal" href="eval_curve.html"><span class="doc">Evaluate Curve</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+</ul>
 <p>Calculate length of some smooth curve:</p>
-<img alt="https://user-images.githubusercontent.com/284644/77849699-01cfc880-71e7-11ea-97b2-9229e0f9c630.png" src="https://user-images.githubusercontent.com/284644/77849699-01cfc880-71e7-11ea-97b2-9229e0f9c630.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/77849699-01cfc880-71e7-11ea-97b2-9229e0f9c630.png"><img alt="https://user-images.githubusercontent.com/284644/77849699-01cfc880-71e7-11ea-97b2-9229e0f9c630.png" src="https://user-images.githubusercontent.com/284644/77849699-01cfc880-71e7-11ea-97b2-9229e0f9c630.png" /></a>
+<ul class="simple">
+<li><p>Curves-&gt; <a class="reference internal" href="cubic_spline.html"><span class="doc">Cubic Spline</span></a></p></li>
+<li><p>Curves-&gt; <a class="reference internal" href="eval_curve.html"><span class="doc">Evaluate Curve</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vertices_sort.html"><span class="doc">Vector sort</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+<li><p>Scene-&gt; <a class="reference internal" href="../scene/objects_in_lite.html"><span class="doc">Objects In Lite</span></a></p></li>
+</ul>
 <p>Take some points on the curve (with even steps in T) and calculate length from the beginning of the curve to each point:</p>
-<img alt="https://user-images.githubusercontent.com/284644/77849701-0300f580-71e7-11ea-89a7-197f7778da71.png" src="https://user-images.githubusercontent.com/284644/77849701-0300f580-71e7-11ea-89a7-197f7778da71.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/77849701-0300f580-71e7-11ea-89a7-197f7778da71.png"><img alt="https://user-images.githubusercontent.com/284644/77849701-0300f580-71e7-11ea-89a7-197f7778da71.png" src="https://user-images.githubusercontent.com/284644/77849701-0300f580-71e7-11ea-89a7-197f7778da71.png" /></a>
+<ul class="simple">
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vertices_sort.html"><span class="doc">Vector sort</span></a></p></li>
+<li><p>Curves-&gt; <a class="reference internal" href="cubic_spline.html"><span class="doc">Cubic Spline</span></a></p></li>
+<li><p>Curves-&gt; <a class="reference internal" href="curve_range.html"><span class="doc">Curve Domain</span></a></p></li>
+<li><p>Curves-&gt; <a class="reference internal" href="eval_curve.html"><span class="doc">Evaluate Curve</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_idx28.html"><span class="doc">Viewer Index+</span></a></p></li>
+<li><p>Scene-&gt; <a class="reference internal" href="../scene/objects_in_lite.html"><span class="doc">Objects In Lite</span></a></p></li>
+</ul>
 </section>
 </section>
 

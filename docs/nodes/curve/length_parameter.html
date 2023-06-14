@@ -202,6 +202,7 @@
              
   <section id="curve-length-parameter">
 <h1>Curve Length Parameter<a class="headerlink" href="#curve-length-parameter" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/ba10a009-ea67-492b-a493-1693edf148ce"><img alt="https://github.com/nortikin/sverchok/assets/14288520/ba10a009-ea67-492b-a493-1693edf148ce" src="https://github.com/nortikin/sverchok/assets/14288520/ba10a009-ea67-492b-a493-1693edf148ce" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>It worth reminding that a Curve object is defined as a function from some set
@@ -221,6 +222,15 @@ segments.</p>
 straight segments and summing their lengths. The more segments you subdivide
 the curve in, the more precise the length will be, but the more time it will
 take to calculate. So the node gives you control on the number of subdivisions.</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/38407639-d579-44cb-9e09-2404e118e14d"><img alt="https://github.com/nortikin/sverchok/assets/14288520/38407639-d579-44cb-9e09-2404e118e14d" src="https://github.com/nortikin/sverchok/assets/14288520/38407639-d579-44cb-9e09-2404e118e14d" /></a>
+<ul class="simple">
+<li><p>Round-N: Number-&gt; <a class="reference internal" href="../number/scalar_mk4.html"><span class="doc">Scalar Math</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_idx28.html"><span class="doc">Viewer Index+</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+<li><p>Scene-&gt; <a class="reference internal" href="../exchange/bezier_in.html"><span class="doc">Bezier Input</span></a></p></li>
+</ul>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
@@ -307,6 +317,14 @@ specified values of length parameter.</p></li>
 <h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>Two exemplars of Archimedean spiral:</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/77854328-14f09180-7203-11ea-9192-028621be3d95.png"><img alt="https://user-images.githubusercontent.com/284644/77854328-14f09180-7203-11ea-9192-028621be3d95.png" src="https://user-images.githubusercontent.com/284644/77854328-14f09180-7203-11ea-9192-028621be3d95.png" /></a>
+<ul class="simple">
+<li><p>Curves-&gt; <a class="reference internal" href="curve_formula.html"><span class="doc">Curve Formula</span></a></p></li>
+<li><p>Modifiers-&gt;Modifier Make-&gt; <a class="reference internal" href="../modifier_make/uv_connect.html"><span class="doc">UV Connection</span></a></p></li>
+<li><p>Curves-&gt; <a class="reference internal" href="eval_curve.html"><span class="doc">Evaluate Curve</span></a></p></li>
+<li><p>Transform-&gt; <a class="reference internal" href="../transforms/move_mk3.html"><span class="doc">Move</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/numbers.html"><span class="doc">A Number</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 <p>The one on the left is drawn with points according to evenly-spaced values of T
 parameter; the one of the right is drawn with points spread with equal length
 of the path between them.</p>
@@ -314,6 +332,14 @@ of the path between them.</p>
 rounding is used; for green curve, <strong>Shorter segments</strong> rounding is used; and
 for orange curve, <strong>Precise (Cut)</strong> rounding option is used.</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/207919660-9e9c364e-cd99-40c0-aca2-dfb47bebdc0c.png"><img alt="https://user-images.githubusercontent.com/284644/207919660-9e9c364e-cd99-40c0-aca2-dfb47bebdc0c.png" src="https://user-images.githubusercontent.com/284644/207919660-9e9c364e-cd99-40c0-aca2-dfb47bebdc0c.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/line_mk4.html"><span class="doc">Line</span></a></p></li>
+<li><p>Curves-&gt; <a class="reference internal" href="interpolate_nurbs_curve.html"><span class="doc">Interpolate NURBS Curve</span></a></p></li>
+<li><p>Transform-&gt; <a class="reference internal" href="../transforms/randomize.html"><span class="doc">Randomize</span></a></p></li>
+<li><p>Transform-&gt; <a class="reference internal" href="../transforms/move_mk3.html"><span class="doc">Move</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_curve.html"><span class="doc">Viewer Draw Curve</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 </section>
 </section>
 

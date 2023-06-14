@@ -203,6 +203,7 @@
              
   <section id="curve-extremes">
 <h1>Curve Extremes<a class="headerlink" href="#curve-extremes" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/bad8c870-51b7-4373-8094-7d8ac68c73d0"><img alt="https://github.com/nortikin/sverchok/assets/14288520/bad8c870-51b7-4373-8094-7d8ac68c73d0" src="https://github.com/nortikin/sverchok/assets/14288520/bad8c870-51b7-4373-8094-7d8ac68c73d0" /></a>
 <section id="dependencies">
 <h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this heading">¶</a></h2>
 <p>This node requires <a class="reference external" href="https://scipy.org/">SciPy</a> library to work.</p>
@@ -219,6 +220,14 @@ analytically (by writing down all formulas for your field and your curve), it
 will be much faster to calculate points by formulas. This node, in turn, is
 most useful when you do not know exact formulas for the curve and / or for the
 scalar field - for example, if they were defined by approximation.</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/0066bb85-784f-40d3-a670-14283253b33b"><img alt="https://github.com/nortikin/sverchok/assets/14288520/0066bb85-784f-40d3-a670-14283253b33b" src="https://github.com/nortikin/sverchok/assets/14288520/0066bb85-784f-40d3-a670-14283253b33b" /></a>
+<ul class="simple">
+<li><p>Fields-&gt; <a class="reference internal" href="../field/coordinate_scalar_field.html"><span class="doc">Coordinate Scalar Field</span></a></p></li>
+<li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/join.html"><span class="doc">List Join</span></a></p></li>
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Scene-&gt; <a class="reference internal" href="../exchange/bezier_in.html"><span class="doc">Bezier Input</span></a></p></li>
+</ul>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
@@ -264,7 +273,16 @@ other curves in the input list (if there are more than one curve).</p></li>
 <section id="example-of-usage">
 <h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>Find the point on a curve which has the maximum value of Y coordinate:</p>
-<img alt="https://user-images.githubusercontent.com/284644/86952365-5383d980-c16c-11ea-84d3-75830c0dbc75.png" src="https://user-images.githubusercontent.com/284644/86952365-5383d980-c16c-11ea-84d3-75830c0dbc75.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/86952365-5383d980-c16c-11ea-84d3-75830c0dbc75.png"><img alt="https://user-images.githubusercontent.com/284644/86952365-5383d980-c16c-11ea-84d3-75830c0dbc75.png" src="https://user-images.githubusercontent.com/284644/86952365-5383d980-c16c-11ea-84d3-75830c0dbc75.png" /></a>
+<ul class="simple">
+<li><p>Curves-&gt; <a class="reference internal" href="nurbs_curve.html"><span class="doc">Build NURBS Curve</span></a></p></li>
+<li><p>Curves-&gt; <a class="reference internal" href="eval_curve.html"><span class="doc">Evaluate Curve</span></a></p></li>
+<li><p>Fields-&gt; <a class="reference internal" href="../field/coordinate_scalar_field.html"><span class="doc">Coordinate Scalar Field</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/list_input.html"><span class="doc">List Input</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vertices_sort.html"><span class="doc">Vector sort</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Scene-&gt; <a class="reference internal" href="../scene/objects_in_lite.html"><span class="doc">Objects In Lite</span></a></p></li>
+</ul>
 </section>
 </section>
 

@@ -202,6 +202,7 @@
              
   <section id="catmull-rom-spline">
 <h1>Catmull-Rom Spline<a class="headerlink" href="#catmull-rom-spline" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/90d6160e-18f2-4d97-a2d5-be0b0f8e0ee5"><img alt="https://github.com/nortikin/sverchok/assets/14288520/90d6160e-18f2-4d97-a2d5-be0b0f8e0ee5" src="https://github.com/nortikin/sverchok/assets/14288520/90d6160e-18f2-4d97-a2d5-be0b0f8e0ee5" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node generates a curve defined as Catmull-Rom spline through the specified
@@ -224,26 +225,44 @@ be useful in some applications, when you want the spline to go almost by
 straight lines, just rounding the corners a bit.</p></li>
 </ul>
 <p>This node supports two variants of Catmull-Rom spline:</p>
-<ul class="simple">
+<ul>
 <li><p>Non-uniform spline (refer to <a class="reference external" href="https://en.wikipedia.org/wiki/Centripetal_Catmull%E2%80%93Rom_spline">Wikipedia</a>). In this implementation, each spline
 segment (between two successive points) is assigned with different span of T
 parameter, which is calculated based on distance between points (several
 metrics are supported). This has the effect of the curve being more “curvy”
 in places where control points are far from one another, and more flat where
 control points are near. This usually gives the feeling of curve being more
-“natural”.</p></li>
+“natural”.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/7d0bb73b-9e8e-4518-be7a-0f7e830a4141"><img alt="https://github.com/nortikin/sverchok/assets/14288520/7d0bb73b-9e8e-4518-be7a-0f7e830a4141" src="https://github.com/nortikin/sverchok/assets/14288520/7d0bb73b-9e8e-4518-be7a-0f7e830a4141" /></a>
+<ul class="simple">
+<li><p>Generator-&gt;Generatots Extended-&gt; <a class="reference internal" href="../generators_extended/spiral_mk2.html"><span class="doc">Spiral</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_curve.html"><span class="doc">Viewer Draw Curve</span></a></p></li>
+</ul>
+</div></blockquote>
+</li>
 <li><p>Uniform spline. In this implementation, each spline segment is assigned with
 equal span of T parameter. As effect, it is possible that the curve will be
 unexpectedly more “curvy” when successive control points are near one
 another. But this implementation has an option to control the degree of curve
 “smoothness” by additional “tension” parameter. It is also possible to
-specify tension value for each curve segment.</p></li>
+specify tension value for each curve segment.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/75f64eec-b2dd-4742-aa06-abac69d27243"><img alt="https://github.com/nortikin/sverchok/assets/14288520/75f64eec-b2dd-4742-aa06-abac69d27243" src="https://github.com/nortikin/sverchok/assets/14288520/75f64eec-b2dd-4742-aa06-abac69d27243" /></a>
+<ul class="simple">
+<li><p>Generator-&gt;Generatots Extended-&gt; <a class="reference internal" href="../generators_extended/spiral_mk2.html"><span class="doc">Spiral</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_curve.html"><span class="doc">Viewer Draw Curve</span></a></p></li>
+</ul>
+</div></blockquote>
+</li>
 </ul>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
-<ul class="simple">
+<ul>
 <li><p><strong>Vertices</strong>. The points throug which the curve should go. This input is
 mandatory. At least two points are required to build the spline.</p></li>
 <li><p><strong>Tension</strong>. This input is available only when <strong>Spline Type</strong> parameter is
@@ -251,7 +270,9 @@ set to <strong>Uniform (with tension)</strong>. Specifies the tension value of t
 Lesser values of tension mean that the curve will go segments of straight
 lines between points. It is possible to provide a separate value for each
 segment of the curve (i.e. for each pair of successive points). The default
-value is 1.0.</p></li>
+value is 1.0.</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/d338ff7b-f65a-46e2-8fb8-5646ab1b98eb"><img alt="https://github.com/nortikin/sverchok/assets/14288520/d338ff7b-f65a-46e2-8fb8-5646ab1b98eb" src="https://github.com/nortikin/sverchok/assets/14288520/d338ff7b-f65a-46e2-8fb8-5646ab1b98eb" /></a>
+</li>
 </ul>
 </section>
 <section id="parameters">
@@ -261,7 +282,11 @@ value is 1.0.</p></li>
 <li><p><strong>Cyclic</strong>. Defines whether the curve should be cyclic (closed). Unchecked by default.</p></li>
 <li><p><strong>Spline Type</strong>. Allows to select one of Catmull-Rom spline implementations
 (see descriptions above). The available options are <strong>Non-uniform</strong> and
-<strong>Uniform (with tension)</strong>. The default option is <strong>Non-uniform</strong>.</p></li>
+<strong>Uniform (with tension)</strong>. The default option is <strong>Non-uniform</strong>.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/d338ff7b-f65a-46e2-8fb8-5646ab1b98eb"><img alt="https://github.com/nortikin/sverchok/assets/14288520/d338ff7b-f65a-46e2-8fb8-5646ab1b98eb" src="https://github.com/nortikin/sverchok/assets/14288520/d338ff7b-f65a-46e2-8fb8-5646ab1b98eb" /></a>
+</div></blockquote>
+</li>
 <li><p><strong>Metric</strong>. This parameter is available only if <strong>Spline Type</strong> is set to
 <strong>Non-uniform</strong>. Defines the metric used to assign T parameter spans to each
 segment of the curve. The available values are:</p>
@@ -278,6 +303,9 @@ segment of the curve. The available values are:</p>
 Catmull-Rom spline), Centripetal (centripetal Catmull-Rom spline), and
 Points (this makes a uniform spline with tension set to 1). The default
 option is Euclidean.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/06f36f4f-31e8-4c70-8de6-29839e869edd"><img alt="https://github.com/nortikin/sverchok/assets/14288520/06f36f4f-31e8-4c70-8de6-29839e869edd" src="https://github.com/nortikin/sverchok/assets/14288520/06f36f4f-31e8-4c70-8de6-29839e869edd" /></a>
+</div></blockquote>
 </div></blockquote>
 </li>
 </ul>
@@ -293,17 +321,50 @@ option is Euclidean.</p>
 <h2>Examples of Usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>Simplest example:</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/210108720-cb3ef5df-1745-4c19-8625-73f74a445c3d.png"><img alt="https://user-images.githubusercontent.com/284644/210108720-cb3ef5df-1745-4c19-8625-73f74a445c3d.png" src="https://user-images.githubusercontent.com/284644/210108720-cb3ef5df-1745-4c19-8625-73f74a445c3d.png" /></a>
+<ul class="simple">
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_curve.html"><span class="doc">Viewer Draw Curve</span></a></p></li>
+<li><p>Scene-&gt; <a class="reference internal" href="../scene/get_objects_data.html"><span class="doc">Get Objects Data</span></a></p></li>
+</ul>
 <p>Uniform (yellow) vs non-uniform (green) spline:</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/210095223-04cb8658-522e-4458-8668-280a810d5b56.png"><img alt="https://user-images.githubusercontent.com/284644/210095223-04cb8658-522e-4458-8668-280a810d5b56.png" src="https://user-images.githubusercontent.com/284644/210095223-04cb8658-522e-4458-8668-280a810d5b56.png" /></a>
+<ul class="simple">
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_curve.html"><span class="doc">Viewer Draw Curve</span></a></p></li>
+<li><p>Scene-&gt; <a class="reference internal" href="../scene/get_objects_data.html"><span class="doc">Get Objects Data</span></a></p></li>
+</ul>
 <p>Non-uniform splines with Euclidean metric (yellow) and with centripetal metric (green):</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/210095289-11843fed-a915-4030-8391-b81735f1375b.png"><img alt="https://user-images.githubusercontent.com/284644/210095289-11843fed-a915-4030-8391-b81735f1375b.png" src="https://user-images.githubusercontent.com/284644/210095289-11843fed-a915-4030-8391-b81735f1375b.png" /></a>
+<ul class="simple">
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_curve.html"><span class="doc">Viewer Draw Curve</span></a></p></li>
+<li><p>Scene-&gt; <a class="reference internal" href="../scene/get_objects_data.html"><span class="doc">Get Objects Data</span></a></p></li>
+</ul>
 <p>Non-uniform (Euclidean) Catmull-Rom spline (yellow) vs Cubic spline (blue):</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/210095458-840ee62f-36bc-41ec-8f25-728392fdaedf.png"><img alt="https://user-images.githubusercontent.com/284644/210095458-840ee62f-36bc-41ec-8f25-728392fdaedf.png" src="https://user-images.githubusercontent.com/284644/210095458-840ee62f-36bc-41ec-8f25-728392fdaedf.png" /></a>
+<ul class="simple">
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_curve.html"><span class="doc">Viewer Draw Curve</span></a></p></li>
+<li><p>Scene-&gt; <a class="reference internal" href="../scene/get_objects_data.html"><span class="doc">Get Objects Data</span></a></p></li>
+</ul>
 <p>Uniform splines with different tension values: from 0.2 (almost black lines) to 2.0 (white line):</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/210087921-a8cebbca-2235-4d82-9e11-f08794d8227c.png"><img alt="https://user-images.githubusercontent.com/284644/210087921-a8cebbca-2235-4d82-9e11-f08794d8227c.png" src="https://user-images.githubusercontent.com/284644/210087921-a8cebbca-2235-4d82-9e11-f08794d8227c.png" /></a>
+<ul class="simple">
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/range_map.html"><span class="doc">Map Range</span></a></p></li>
+<li><p>Curves-&gt; <a class="reference internal" href="eval_curve.html"><span class="doc">Evaluate Curve</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_struct/levels.html"><span class="doc">List Levels</span></a></p></li>
+<li><p>Color-&gt; <a class="reference internal" href="../color/color_in_mk1.html"><span class="doc">Color In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Scene-&gt; <a class="reference internal" href="../scene/get_objects_data.html"><span class="doc">Get Objects Data</span></a></p></li>
+</ul>
 <p>Here the curvature comb is used to illustrate that the curvature of Catmull-Rom
 splines can change very fast and sudden:</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/210087923-fc329968-375a-440e-b661-ee107a85e326.png"><img alt="https://user-images.githubusercontent.com/284644/210087923-fc329968-375a-440e-b661-ee107a85e326.png" src="https://user-images.githubusercontent.com/284644/210087923-fc329968-375a-440e-b661-ee107a85e326.png" /></a>
+<ul class="simple">
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_curve.html"><span class="doc">Viewer Draw Curve</span></a></p></li>
+<li><p>Scene-&gt; <a class="reference internal" href="../scene/get_objects_data.html"><span class="doc">Get Objects Data</span></a></p></li>
+</ul>
 </section>
 </section>
 

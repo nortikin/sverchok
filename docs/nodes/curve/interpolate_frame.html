@@ -203,6 +203,7 @@
              
   <section id="interpolate-curve-frame">
 <h1>Interpolate Curve Frame<a class="headerlink" href="#interpolate-curve-frame" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/57f036cb-6c19-4270-99a2-0b711d50468d"><img alt="https://github.com/nortikin/sverchok/assets/14288520/57f036cb-6c19-4270-99a2-0b711d50468d" src="https://github.com/nortikin/sverchok/assets/14288520/57f036cb-6c19-4270-99a2-0b711d50468d" /></a>
 <section id="dependencies">
 <h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this heading">¶</a></h2>
 <p>This node requires <a class="reference external" href="https://scipy.org/">SciPy</a> library to work.</p>
@@ -216,6 +217,18 @@ frames along the curve.</p>
 matrices will be moved to the curve along their local XOY planes (or another,
 depending on the <strong>Orientation</strong> parameter).</p>
 <p>Interpolation is calculated by quaternion spherical interpolation (“slerp”).</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/4c0ec664-7bda-4605-b685-e79894e28d63"><img alt="https://github.com/nortikin/sverchok/assets/14288520/4c0ec664-7bda-4605-b685-e79894e28d63" src="https://github.com/nortikin/sverchok/assets/14288520/4c0ec664-7bda-4605-b685-e79894e28d63" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/59cb4662-e32e-4386-89b6-a8fc725e680b"><img alt="https://github.com/nortikin/sverchok/assets/14288520/59cb4662-e32e-4386-89b6-a8fc725e680b" src="https://github.com/nortikin/sverchok/assets/14288520/59cb4662-e32e-4386-89b6-a8fc725e680b" /></a>
+<p>Animated:</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/49a9fbdb-8062-42cf-af6b-44a89cc3cc54"><img alt="https://github.com/nortikin/sverchok/assets/14288520/49a9fbdb-8062-42cf-af6b-44a89cc3cc54" src="https://github.com/nortikin/sverchok/assets/14288520/49a9fbdb-8062-42cf-af6b-44a89cc3cc54" /></a>
+<ul class="simple">
+<li><p>Curves-&gt; <a class="reference internal" href="zero_twist_frame.html"><span class="doc">Curve Zero-Twist Frame</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>Matrix Multiply: Matrix-&gt; <a class="reference internal" href="../matrix/matrix_math.html"><span class="doc">Matrix Math</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Scene-&gt; <a class="reference internal" href="../exchange/bezier_in.html"><span class="doc">Bezier Input</span></a></p></li>
+</ul>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
@@ -260,13 +273,49 @@ lying on the curve.</p></li>
 <section id="examples-of-usage">
 <h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>Interpolate rotation along the curve to place Suzannes:</p>
-<img alt="https://user-images.githubusercontent.com/284644/87054349-7077e580-c21c-11ea-9b65-0936da624e5d.png" src="https://user-images.githubusercontent.com/284644/87054349-7077e580-c21c-11ea-9b65-0936da624e5d.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/87054349-7077e580-c21c-11ea-9b65-0936da624e5d.png"><img alt="https://user-images.githubusercontent.com/284644/87054349-7077e580-c21c-11ea-9b65-0936da624e5d.png" src="https://user-images.githubusercontent.com/284644/87054349-7077e580-c21c-11ea-9b65-0936da624e5d.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/suzanne.html"><span class="doc">Suzanne</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vertices_sort.html"><span class="doc">Vector sort</span></a></p></li>
+<li><p>Curves-&gt; <a class="reference internal" href="nurbs_curve.html"><span class="doc">Build NURBS Curve</span></a></p></li>
+<li><p>Curves-&gt; <a class="reference internal" href="eval_curve.html"><span class="doc">Evaluate Curve</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Scene-&gt; <a class="reference internal" href="../scene/objects_in_lite.html"><span class="doc">Objects In Lite</span></a></p></li>
+</ul>
 <p>Similar, but with rotation around Suzanne’s X axis:</p>
-<img alt="https://user-images.githubusercontent.com/284644/87055074-4d9a0100-c21d-11ea-83d1-f543cc873086.png" src="https://user-images.githubusercontent.com/284644/87055074-4d9a0100-c21d-11ea-83d1-f543cc873086.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/87055074-4d9a0100-c21d-11ea-83d1-f543cc873086.png"><img alt="https://user-images.githubusercontent.com/284644/87055074-4d9a0100-c21d-11ea-83d1-f543cc873086.png" src="https://user-images.githubusercontent.com/284644/87055074-4d9a0100-c21d-11ea-83d1-f543cc873086.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/suzanne.html"><span class="doc">Suzanne</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vertices_sort.html"><span class="doc">Vector sort</span></a></p></li>
+<li><p>Curves-&gt; <a class="reference internal" href="nurbs_curve.html"><span class="doc">Build NURBS Curve</span></a></p></li>
+<li><p>Curves-&gt; <a class="reference internal" href="eval_curve.html"><span class="doc">Evaluate Curve</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Scene-&gt; <a class="reference internal" href="../scene/objects_in_lite.html"><span class="doc">Objects In Lite</span></a></p></li>
+</ul>
 <p>Similar example to build arbitrarily twisted surface:</p>
-<img alt="https://user-images.githubusercontent.com/284644/86527479-7e460780-beb8-11ea-9567-d8649b6adeaf.png" src="https://user-images.githubusercontent.com/284644/86527479-7e460780-beb8-11ea-9567-d8649b6adeaf.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/86527479-7e460780-beb8-11ea-9567-d8649b6adeaf.png"><img alt="https://user-images.githubusercontent.com/284644/86527479-7e460780-beb8-11ea-9567-d8649b6adeaf.png" src="https://user-images.githubusercontent.com/284644/86527479-7e460780-beb8-11ea-9567-d8649b6adeaf.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vertices_sort.html"><span class="doc">Vector sort</span></a></p></li>
+<li><p>Curves-&gt; <a class="reference internal" href="nurbs_curve.html"><span class="doc">Build NURBS Curve</span></a></p></li>
+<li><p>Curves-&gt; <a class="reference internal" href="eval_curve.html"><span class="doc">Evaluate Curve</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/apply_and_join.html"><span class="doc">Matrix Apply to Mesh</span></a></p></li>
+<li><p>Modifiers-&gt;Modifier Make-&gt; <a class="reference internal" href="../modifier_make/uv_connect.html"><span class="doc">UV Connection</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Scene-&gt; <a class="reference internal" href="../scene/objects_in_lite.html"><span class="doc">Objects In Lite</span></a></p></li>
+</ul>
 <p>Interpolate matrices along the curve:</p>
-<img alt="https://user-images.githubusercontent.com/284644/86527477-7d14da80-beb8-11ea-8ed2-5f3e58f4d130.png" src="https://user-images.githubusercontent.com/284644/86527477-7d14da80-beb8-11ea-8ed2-5f3e58f4d130.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/86527477-7d14da80-beb8-11ea-8ed2-5f3e58f4d130.png"><img alt="https://user-images.githubusercontent.com/284644/86527477-7d14da80-beb8-11ea-8ed2-5f3e58f4d130.png" src="https://user-images.githubusercontent.com/284644/86527477-7d14da80-beb8-11ea-8ed2-5f3e58f4d130.png" /></a>
+<ul class="simple">
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vertices_sort.html"><span class="doc">Vector sort</span></a></p></li>
+<li><p>Curves-&gt; <a class="reference internal" href="cubic_spline.html"><span class="doc">Cubic Spline</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Scene-&gt; <a class="reference internal" href="../scene/objects_in_lite.html"><span class="doc">Objects In Lite</span></a></p></li>
+</ul>
 </section>
 </section>
 

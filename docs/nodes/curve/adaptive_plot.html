@@ -201,6 +201,7 @@
              
   <section id="adaptive-plot-curve">
 <h1>Adaptive Plot Curve<a class="headerlink" href="#adaptive-plot-curve" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/b353ce32-325f-4db7-9fb8-2570d9dc8802"><img alt="https://github.com/nortikin/sverchok/assets/14288520/b353ce32-325f-4db7-9fb8-2570d9dc8802" src="https://github.com/nortikin/sverchok/assets/14288520/b353ce32-325f-4db7-9fb8-2570d9dc8802" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>Given a Curve object, this node generates a mesh representing the curve. This
@@ -226,6 +227,13 @@ curve’s T parameter), or randomly.</p>
 <li><p>Then all resulting points are connected to make a curve-like mesh object.</p></li>
 </ul>
 <p>For NURBS and NURBS-like curves, consider use of “Adaptive Plot NURBS Curve” node.</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/165d83b8-6fbf-47f1-95eb-432917ef6961"><img alt="https://github.com/nortikin/sverchok/assets/14288520/165d83b8-6fbf-47f1-95eb-432917ef6961" src="https://github.com/nortikin/sverchok/assets/14288520/165d83b8-6fbf-47f1-95eb-432917ef6961" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/random_vector_mk3.html"><span class="doc">Random Vector</span></a></p></li>
+<li><p>Curves-&gt; <a class="reference internal" href="cubic_spline.html"><span class="doc">Cubic Spline</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_curve.html"><span class="doc">Viewer Draw Curve</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
@@ -258,20 +266,31 @@ parameter is enabled. The default value is 0.</p></li>
 <li><p><strong>By Curvature</strong>. Use curve curvature value to distribute additional points
 on the curve: places with greater curvature value will receive more points.
 Checked by default.</p></li>
-<li><p>** By Length**. Use segment lengths to distribute additional points on the
+<li><p><strong>By Length</strong>. Use segment lengths to distribute additional points on the
 curve: segments with greater length will receive more points. Unchecked by
-default.</p></li>
+default.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/96b290d1-2154-48be-a874-d90443a33ec7"><img alt="https://github.com/nortikin/sverchok/assets/14288520/96b290d1-2154-48be-a874-d90443a33ec7" src="https://github.com/nortikin/sverchok/assets/14288520/96b290d1-2154-48be-a874-d90443a33ec7" /></a>
+</div></blockquote>
+</li>
 <li><p><strong>Points Count</strong>. This defines how number of points to be generated will be
 defined. Possible options are:</p>
 <blockquote>
-<div><ul class="simple">
+<div><ul>
 <li><p><strong>Total Count</strong>. Total number of points to be generated will be provided
-in the <strong>Count</strong> input.</p></li>
+in the <strong>Count</strong> input.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/3e76982f-974e-4d28-9891-ede1463a2355"><img alt="https://github.com/nortikin/sverchok/assets/14288520/3e76982f-974e-4d28-9891-ede1463a2355" src="https://github.com/nortikin/sverchok/assets/14288520/3e76982f-974e-4d28-9891-ede1463a2355" /></a>
+</div></blockquote>
+</li>
 <li><p><strong>Per Segment</strong>. Minimum and maximum number of points per initial
 subdivision segment will be provided in <strong>Min per segment</strong>, <strong>Max per
 segment</strong> inputs, correspondingly.</p></li>
 </ul>
 <p>The default option is <strong>Total Count</strong>.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/e5091c8d-0778-48e2-8d26-6bcdbdc03963"><img alt="https://github.com/nortikin/sverchok/assets/14288520/e5091c8d-0778-48e2-8d26-6bcdbdc03963" src="https://github.com/nortikin/sverchok/assets/14288520/e5091c8d-0778-48e2-8d26-6bcdbdc03963" /></a>
+</div></blockquote>
 </div></blockquote>
 </li>
 <li><p><strong>Random</strong>. If checked, then additional points will be distributed randomly.
@@ -284,7 +303,11 @@ This is used to ignore places on the curve where it has too high values of
 curvature (sharp points) - otherwise the algorithm would be placing all the
 additional points to such places. The default value is 100. Usually you do
 not have to change this value. Set the parameter to 0 (zero) to disable this
-part of the algorithm.</p></li>
+part of the algorithm.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/92083c39-f8f5-46d1-8f9d-1b2e27ccd9e0"><img alt="https://github.com/nortikin/sverchok/assets/14288520/92083c39-f8f5-46d1-8f9d-1b2e27ccd9e0" src="https://github.com/nortikin/sverchok/assets/14288520/92083c39-f8f5-46d1-8f9d-1b2e27ccd9e0" /></a>
+</div></blockquote>
+</li>
 </ul>
 </section>
 <section id="outputs">

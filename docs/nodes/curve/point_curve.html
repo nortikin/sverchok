@@ -202,12 +202,19 @@
              
   <section id="single-point-curve">
 <h1>Single-Point Curve<a class="headerlink" href="#single-point-curve" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/d5612c79-047f-462f-9aac-cd758a47114d"><img alt="https://github.com/nortikin/sverchok/assets/14288520/d5612c79-047f-462f-9aac-cd758a47114d" src="https://github.com/nortikin/sverchok/assets/14288520/d5612c79-047f-462f-9aac-cd758a47114d" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node generates a trivial curve, which consists of only one point in 3D
 space. Such a curve is not useful by itself, but it can be useful in
 combination with nodes which use curves to make some more complex construction.
 For example, it is possible to do a loft with a single-point curve.</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/a95e129c-81bf-490d-b722-d58bf1cf100f"><img alt="https://github.com/nortikin/sverchok/assets/14288520/a95e129c-81bf-490d-b722-d58bf1cf100f" src="https://github.com/nortikin/sverchok/assets/14288520/a95e129c-81bf-490d-b722-d58bf1cf100f" /></a>
+<ul class="simple">
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_in.html"><span class="doc">Vector In</span></a></p></li>
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_curve.html"><span class="doc">Viewer Draw Curve</span></a></p></li>
+</ul>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
@@ -231,8 +238,19 @@ For example, it is possible to do a loft with a single-point curve.</p>
 <h2>Examples of Usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>Use with “Blend Curves” node to construct a smooth continuation of given curve, which ends in a specific point:</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/210247639-1352bd93-10a4-4145-97de-2f770afa368a.png"><img alt="https://user-images.githubusercontent.com/284644/210247639-1352bd93-10a4-4145-97de-2f770afa368a.png" src="https://user-images.githubusercontent.com/284644/210247639-1352bd93-10a4-4145-97de-2f770afa368a.png" /></a>
+<ul class="simple">
+<li><p>Curves-&gt; <a class="reference internal" href="blend_curves.html"><span class="doc">Blend Curves</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_curve.html"><span class="doc">Viewer Draw Curve</span></a></p></li>
+<li><p>Scene-&gt; <a class="reference internal" href="../exchange/bezier_in.html"><span class="doc">Bezier Input</span></a></p></li>
+</ul>
 <p>Use with “NURBS Loft” node, to construct a surface which has “poles”:</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/210247716-70957dc2-6495-4067-ae1f-6ae0f0c3e9b9.png"><img alt="https://user-images.githubusercontent.com/284644/210247716-70957dc2-6495-4067-ae1f-6ae0f0c3e9b9.png" src="https://user-images.githubusercontent.com/284644/210247716-70957dc2-6495-4067-ae1f-6ae0f0c3e9b9.png" /></a>
+<ul class="simple">
+<li><p>Curves-&gt; <a class="reference internal" href="bezier_spline.html"><span class="doc">Bezier Spline Segment (Curve)</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="../surface/nurbs_loft.html"><span class="doc">NURBS Loft</span></a></p></li>
+<li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/join.html"><span class="doc">List Join</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_surface.html"><span class="doc">Viewer Draw Surface</span></a></p></li>
+</ul>
 </section>
 </section>
 

@@ -202,28 +202,51 @@
              
   <section id="split-curve">
 <h1>Split Curve<a class="headerlink" href="#split-curve" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/5e36b51e-038d-445c-aec8-10dec10c89b4"><img alt="https://github.com/nortikin/sverchok/assets/14288520/5e36b51e-038d-445c-aec8-10dec10c89b4" src="https://github.com/nortikin/sverchok/assets/14288520/5e36b51e-038d-445c-aec8-10dec10c89b4" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node splits one Curve object into several Curves, by dividing it at some
 values of curve’s T parameter. The values of T parameter, at which the split
 should be made, can be either specified manually or calculated automatically by
 the provided number of cuts.</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/82e7bb2f-e506-410e-9920-7dec012f12f2"><img alt="https://github.com/nortikin/sverchok/assets/14288520/82e7bb2f-e506-410e-9920-7dec012f12f2" src="https://github.com/nortikin/sverchok/assets/14288520/82e7bb2f-e506-410e-9920-7dec012f12f2" /></a>
+<ul class="simple">
+<li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/decompose.html"><span class="doc">List Decompose</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_curve.html"><span class="doc">Viewer Draw Curve</span></a></p></li>
+<li><p>Scene-&gt; <a class="reference internal" href="../exchange/bezier_in.html"><span class="doc">Bezier Input</span></a></p></li>
+</ul>
 <p>Note that equal ranges of T parameter do not necessarily mean equal parts of
 curve length. To split a curve into parts of equal length, you can use “Curve
 Length Parameter” node to calculate corresponding values of the T parameter.</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/5482cd05-1032-400d-bc0c-e2a2073d8a57"><img alt="https://github.com/nortikin/sverchok/assets/14288520/5482cd05-1032-400d-bc0c-e2a2073d8a57" src="https://github.com/nortikin/sverchok/assets/14288520/5482cd05-1032-400d-bc0c-e2a2073d8a57" /></a>
+<ul class="simple">
+<li><p>Curves-&gt; <a class="reference internal" href="length_parameter.html"><span class="doc">Curve Length Parameter</span></a></p></li>
+<li><p>Curves-&gt; <a class="reference internal" href="curve_length.html"><span class="doc">Curve Length Parameter</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_struct/item.html"><span class="doc">List Item</span></a></p></li>
+<li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/decompose.html"><span class="doc">List Decompose</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_curve.html"><span class="doc">Viewer Draw Curve</span></a></p></li>
+<li><p>Scene-&gt; <a class="reference internal" href="../exchange/bezier_in.html"><span class="doc">Bezier Input</span></a></p></li>
+</ul>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
-<ul class="simple">
+<ul>
 <li><p><strong>Curve</strong>. The curve to be split. This input is mandatory.</p></li>
 <li><p><strong>Segments</strong>. Number of pieces the curve is to be split into. This input is
-available only if <strong>Mode</strong> parameter is set to <strong>Even</strong>. The default value is
-10.</p></li>
+available only if <strong>Mode</strong> parameter is set to <strong>Even</strong>. The default value is</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/0cff5691-d921-4d41-a152-34beac4ab24e"><img alt="https://github.com/nortikin/sverchok/assets/14288520/0cff5691-d921-4d41-a152-34beac4ab24e" src="https://github.com/nortikin/sverchok/assets/14288520/0cff5691-d921-4d41-a152-34beac4ab24e" /></a>
+</div></blockquote>
+</li>
 <li><p><strong>Split</strong>. The value of curve’s T parameter, at which the curve is to be
 split. This input is only available when <strong>Mode</strong> parameter is set to
 <strong>Explicit</strong>. This input can consume several values per each curve. The
-default value is 0.5.</p></li>
+default value is 0.5.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/f3cdf824-c6ef-4cae-b704-f6aae8aadf43"><img alt="https://github.com/nortikin/sverchok/assets/14288520/f3cdf824-c6ef-4cae-b704-f6aae8aadf43" src="https://github.com/nortikin/sverchok/assets/14288520/f3cdf824-c6ef-4cae-b704-f6aae8aadf43" /></a>
+</div></blockquote>
+</li>
 </ul>
 </section>
 <section id="parameters">
@@ -260,9 +283,17 @@ separate list of pieces for each provided Curve object. Unchecked by default.</p
 <section id="examples-of-usage">
 <h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>Split a Circle (which has domain <code class="docutils literal notranslate"><span class="pre">[0;</span> <span class="pre">2*pi]</span></code>) at point T = 0.5:</p>
-<img alt="https://user-images.githubusercontent.com/284644/82467377-09bb3300-9adb-11ea-9590-64b332443621.png" src="https://user-images.githubusercontent.com/284644/82467377-09bb3300-9adb-11ea-9590-64b332443621.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/82467377-09bb3300-9adb-11ea-9590-64b332443621.png"><img alt="https://user-images.githubusercontent.com/284644/82467377-09bb3300-9adb-11ea-9590-64b332443621.png" src="https://user-images.githubusercontent.com/284644/82467377-09bb3300-9adb-11ea-9590-64b332443621.png" /></a>
+<ul class="simple">
+<li><p>Curves-&gt; <a class="reference internal" href="curve_circle.html"><span class="doc">Circle (Curve)</span></a></p></li>
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+</ul>
 <p>Split a Circle into 5 pieces:</p>
-<img alt="https://user-images.githubusercontent.com/284644/82467383-0aec6000-9adb-11ea-9024-2f2b749198d7.png" src="https://user-images.githubusercontent.com/284644/82467383-0aec6000-9adb-11ea-9024-2f2b749198d7.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/82467383-0aec6000-9adb-11ea-9024-2f2b749198d7.png"><img alt="https://user-images.githubusercontent.com/284644/82467383-0aec6000-9adb-11ea-9024-2f2b749198d7.png" src="https://user-images.githubusercontent.com/284644/82467383-0aec6000-9adb-11ea-9024-2f2b749198d7.png" /></a>
+<ul class="simple">
+<li><p>Curves-&gt; <a class="reference internal" href="curve_circle.html"><span class="doc">Circle (Curve)</span></a></p></li>
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+</ul>
 </section>
 </section>
 

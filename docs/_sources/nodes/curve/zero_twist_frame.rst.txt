@@ -1,6 +1,9 @@
 Curve Zero-Twist Frame
 ======================
 
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/ceb19d9c-8873-4bda-a391-92b1d78b8089
+  :target: https://github.com/nortikin/sverchok/assets/14288520/ceb19d9c-8873-4bda-a391-92b1d78b8089
+
 Functionality
 -------------
 
@@ -24,6 +27,9 @@ at the point where it has zero curvature (or at a straight segment of the
 curve), and, therefore, the calculation by the first algorithm can also fail in
 such cases.
 
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/9ccc28e7-f6fa-4b8b-a3bb-29f38ec80370
+  :target: https://github.com/nortikin/sverchok/assets/14288520/9ccc28e7-f6fa-4b8b-a3bb-29f38ec80370
+
 The second algorithm is to take the normal direction at the starting point to
 curve and to "track" it along the curve, by projecting previous normal
 direction on the plane that is perpendicular to curve's tangent at the next
@@ -32,6 +38,13 @@ linear interpolation. The second algorithm is supposed to work with any curves.
 
 .. _Frenet: https://en.wikipedia.org/wiki/Frenet%E2%80%93Serret_formulas
 .. _torsion: https://en.wikipedia.org/wiki/Torsion_of_a_curve
+
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/3ffc57c5-1442-4b52-b81a-cebddcdcd369
+  :target: https://github.com/nortikin/sverchok/assets/14288520/3ffc57c5-1442-4b52-b81a-cebddcdcd369
+
+* Scene-> :doc:`Bezier Input </nodes/exchange/bezier_in>`
+* Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 
 Inputs
 ------
@@ -80,8 +93,33 @@ Example of usage
 Use zero-twist frames to put cubes along the curve:
 
 .. image:: https://user-images.githubusercontent.com/284644/78504364-20edcd80-7786-11ea-831e-80db9be81e2b.png
+  :target: https://user-images.githubusercontent.com/284644/78504364-20edcd80-7786-11ea-831e-80db9be81e2b.png
+  
+* Generator-> :doc:`Box </nodes/generator/box_mk2>`
+* Generator-> :doc:`Random Vector </nodes/generator/random_vector_mk3>`
+* Curves-> :doc:`Cubic Spline </nodes/curve/cubic_spline>`
+* Curves-> :doc:`Curve Domain </nodes/curve/curve_range>`
+* Number-> :doc:`Number Range </nodes/number/number_range>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 
 Compare that to the use of curve's Frenet frames:
 
 .. image:: https://user-images.githubusercontent.com/284644/78504337-ed12a800-7785-11ea-9a6c-1427ced45d55.png
+  :target: https://user-images.githubusercontent.com/284644/78504337-ed12a800-7785-11ea-9a6c-1427ced45d55.png
 
+* Generator-> :doc:`Box </nodes/generator/box_mk2>`
+* Generator-> :doc:`Random Vector </nodes/generator/random_vector_mk3>`
+* Curves-> :doc:`Cubic Spline </nodes/curve/cubic_spline>`
+* Curves-> :doc:`Curve Domain </nodes/curve/curve_range>`
+* Number-> :doc:`Number Range </nodes/number/number_range>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/c414cff5-b51d-48c3-ba47-122fbd2b8249
+  :target: https://github.com/nortikin/sverchok/assets/14288520/c414cff5-b51d-48c3-ba47-122fbd2b8249
+  
+* Generator-> :doc:`Box </nodes/generator/box_mk2>`
+* Generator-> :doc:`Random Vector </nodes/generator/random_vector_mk3>`
+* Curves-> :doc:`Cubic Spline </nodes/curve/cubic_spline>`
+* Curves-> :doc:`Curve Domain </nodes/curve/curve_range>`
+* Number-> :doc:`Number Range </nodes/number/number_range>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`

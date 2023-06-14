@@ -202,6 +202,7 @@
              
   <section id="apply-field-to-curve">
 <h1>Apply Field to Curve<a class="headerlink" href="#apply-field-to-curve" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/50fc1d2e-0da6-41d9-add9-82905240a4a4"><img alt="https://github.com/nortikin/sverchok/assets/14288520/50fc1d2e-0da6-41d9-add9-82905240a4a4" src="https://github.com/nortikin/sverchok/assets/14288520/50fc1d2e-0da6-41d9-add9-82905240a4a4" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node generates a Curve object by taking another Curve and “bending” it
@@ -265,11 +266,27 @@ such a case, it can process any type of curve. Disabled by default.</p></li>
 <section id="example-of-usage">
 <h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>Several Line curves modified by Noise vector field:</p>
-<img alt="https://user-images.githubusercontent.com/284644/77443601-fd816500-6e0c-11ea-9ed2-0516eba95951.png" src="https://user-images.githubusercontent.com/284644/77443601-fd816500-6e0c-11ea-9ed2-0516eba95951.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/77443601-fd816500-6e0c-11ea-9ed2-0516eba95951.png"><img alt="https://user-images.githubusercontent.com/284644/77443601-fd816500-6e0c-11ea-9ed2-0516eba95951.png" src="https://user-images.githubusercontent.com/284644/77443601-fd816500-6e0c-11ea-9ed2-0516eba95951.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>
+<li><p>Curves-&gt;Curve Primitives-&gt; <a class="reference internal" href="line.html"><span class="doc">Line (Curve)</span></a></p></li>
+<li><p>Curves-&gt; <a class="reference internal" href="eval_curve.html"><span class="doc">Evaluate Curve</span></a></p></li>
+<li><p>Fields-&gt; <a class="reference internal" href="../field/noise_vfield.html"><span class="doc">Noise Vector Field</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 <p>Apply Attractor field to control points of a NURBS curve. Control polygon of a resulting curve is indicated with red:</p>
-<img alt="https://user-images.githubusercontent.com/284644/90950162-8c4fe780-e468-11ea-9fa2-8d133fa07c58.png" src="https://user-images.githubusercontent.com/284644/90950162-8c4fe780-e468-11ea-9fa2-8d133fa07c58.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/90950162-8c4fe780-e468-11ea-9fa2-8d133fa07c58.png"><img alt="https://user-images.githubusercontent.com/284644/90950162-8c4fe780-e468-11ea-9fa2-8d133fa07c58.png" src="https://user-images.githubusercontent.com/284644/90950162-8c4fe780-e468-11ea-9fa2-8d133fa07c58.png" /></a>
+<ul class="simple">
+<li><p>Curves-&gt; <a class="reference internal" href="interpolate_nurbs_curve.html"><span class="doc">Interpolate NURBS Curve</span></a></p></li>
+<li><p>Curves-&gt; <a class="reference internal" href="eval_curve.html"><span class="doc">Evaluate Curve</span></a></p></li>
+<li><p>Curves-&gt;Curve NURBS-&gt; <a class="reference internal" href="deconstruct_curve.html"><span class="doc">Deconstruct Curve</span></a></p></li>
+<li><p>Fields-&gt; <a class="reference internal" href="../field/attractor_field_mk2.html"><span class="doc">Attractor Field</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vertices_sort.html"><span class="doc">Vector sort</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Scene-&gt; <a class="reference internal" href="../scene/objects_in_lite.html"><span class="doc">Objects In Lite</span></a></p></li>
+</ul>
 <p>If we apply the same curve to all points of curve (disable “Use control points” mode), we will have different curve:</p>
-<img alt="https://user-images.githubusercontent.com/284644/90950165-9245c880-e468-11ea-8439-0b450ae58010.png" src="https://user-images.githubusercontent.com/284644/90950165-9245c880-e468-11ea-8439-0b450ae58010.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/90950165-9245c880-e468-11ea-8439-0b450ae58010.png"><img alt="https://user-images.githubusercontent.com/284644/90950165-9245c880-e468-11ea-8439-0b450ae58010.png" src="https://user-images.githubusercontent.com/284644/90950165-9245c880-e468-11ea-8439-0b450ae58010.png" /></a>
 </section>
 </section>
 

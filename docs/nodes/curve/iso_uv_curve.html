@@ -202,12 +202,18 @@
              
   <section id="iso-u-v-curve">
 <h1>Iso U/V Curve<a class="headerlink" href="#iso-u-v-curve" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/92c4575f-f2bd-4632-8843-576f62485bfa"><img alt="https://github.com/nortikin/sverchok/assets/14288520/92c4575f-f2bd-4632-8843-576f62485bfa" src="https://github.com/nortikin/sverchok/assets/14288520/92c4575f-f2bd-4632-8843-576f62485bfa" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node generates a curve on the surface, which is defined by setting either
 U or V surface parameter to some fixed value and letting the other parameter
 slide along it’s domain.</p>
 <p>If input surface is a NURBS surface, then the node will try to output NURBS curves.</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/f97c1527-e99c-49e1-a2c8-e1c7d0fde3c7"><img alt="https://github.com/nortikin/sverchok/assets/14288520/f97c1527-e99c-49e1-a2c8-e1c7d0fde3c7" src="https://github.com/nortikin/sverchok/assets/14288520/f97c1527-e99c-49e1-a2c8-e1c7d0fde3c7" /></a>
+<ul class="simple">
+<li><p>Surfaces-&gt; <a class="reference internal" href="../surface/surface_sphere.html"><span class="doc">Sphere (Surface)</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_curve.html"><span class="doc">Viewer Draw Curve</span></a></p></li>
+</ul>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
@@ -242,7 +248,20 @@ along surface’s U direction.</p></li>
 <section id="example-of-usage">
 <h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>Generate some surface and then draw curves along it’s V direction:</p>
-<img alt="https://user-images.githubusercontent.com/284644/78507210-3a981080-7798-11ea-84b8-d4e6e7d66803.png" src="https://user-images.githubusercontent.com/284644/78507210-3a981080-7798-11ea-84b8-d4e6e7d66803.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/78507210-3a981080-7798-11ea-84b8-d4e6e7d66803.png"><img alt="https://user-images.githubusercontent.com/284644/78507210-3a981080-7798-11ea-84b8-d4e6e7d66803.png" src="https://user-images.githubusercontent.com/284644/78507210-3a981080-7798-11ea-84b8-d4e6e7d66803.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/segment.html"><span class="doc">Segment</span></a></p></li>
+<li><p>Curves-&gt;Curve Primitives-&gt; <a class="reference internal" href="polyline.html"><span class="doc">Polyline</span></a></p></li>
+<li><p>Curves-&gt; <a class="reference internal" href="eval_curve.html"><span class="doc">Evaluate Curve</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="../surface/interpolating_surface.html"><span class="doc">Surface from Curves</span></a></p></li>
+<li><p>Surface-&gt; <a class="reference internal" href="../surface/evaluate_surface.html"><span class="doc">Evaluate Surface</span></a></p></li>
+<li><p>Transform-&gt; <a class="reference internal" href="../transforms/rotate_mk3.html"><span class="doc">Rotate</span></a></p></li>
+<li><p>Transform-&gt; <a class="reference internal" href="../transforms/apply.html"><span class="doc">Matrix Apply (verts)</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/random_num_gen.html"><span class="doc">Random Num Gen</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_struct/split.html"><span class="doc">List Split</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 </section>
 </section>
 
