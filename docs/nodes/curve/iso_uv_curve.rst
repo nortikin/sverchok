@@ -63,7 +63,7 @@ Generate some surface and then draw curves along it's V direction:
 * Curves->Curve Primitives-> :doc:`Polyline </nodes/curve/polyline>`
 * Curves-> :doc:`Evaluate Curve </nodes/curve/eval_curve>`
 * Surfaces-> :doc:`Surface from Curves </nodes/surface/interpolating_surface>`
-* Surface-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
+* Surfaces-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
 * Transform-> :doc:`Rotate </nodes/transforms/rotate_mk3>`
 * Transform-> :doc:`Matrix Apply (verts) </nodes/transforms/apply>`
 * Number-> :doc:`Random Num Gen </nodes/number/random_num_gen>`

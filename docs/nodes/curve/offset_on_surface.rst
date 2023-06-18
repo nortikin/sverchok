@@ -118,7 +118,7 @@ Constant offset of a curve on a surface:
 * Curves-> :doc:`Curve on Surface </nodes/curve/curve_on_surface>`
 * Surfaces-> :doc:`Extrude Curve Along Curve </nodes/surface/extrude_curve>`
 * Surfaces-> :doc:`Reparametrize Surface </nodes/surface/surface_reparametrize>`
-* Surface-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
+* Surfaces-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 * Scene-> :doc:`Objects In Lite </nodes/scene/objects_in_lite>`
 
@@ -133,7 +133,7 @@ Similar setup, but with variable offset amount, controlled by a curve from "Curv
 * Curves-> :doc:`Curve on Surface </nodes/curve/curve_on_surface>`
 * Surfaces-> :doc:`Extrude Curve Along Curve </nodes/surface/extrude_curve>`
 * Surfaces-> :doc:`Reparametrize Surface </nodes/surface/surface_reparametrize>`
-* Surface-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
+* Surfaces-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
 * Number-> :doc:`Curve Mapper </nodes/number/curve_mapper>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 * Scene-> :doc:`Objects In Lite </nodes/scene/objects_in_lite>`

@@ -1,6 +1,9 @@
 Sphere (Surface)
 ================
 
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/42b9eb53-0b91-4d62-9ac4-be044b74a717
+  :target: https://github.com/nortikin/sverchok/assets/14288520/42b9eb53-0b91-4d62-9ac4-be044b74a717
+
 Functionality
 -------------
 
@@ -11,6 +14,9 @@ This node generates a spherical Surface object. Several parametrizations are ava
 * Lambert
 * Gall Stereographic
 * NURBS Sphere
+
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/9bf84f33-7961-4ba1-9249-3254896f1505
+  :target: https://github.com/nortikin/sverchok/assets/14288520/9bf84f33-7961-4ba1-9249-3254896f1505
 
 For formulas, please refer to Wikipedia: https://en.wikipedia.org/wiki/List_of_map_projections
 
@@ -43,4 +49,7 @@ Example of usage
 The default parametrization:
 
 .. image:: https://user-images.githubusercontent.com/284644/79351826-93169d00-7f52-11ea-99ad-bb904f62ce6c.png
+  :target: https://user-images.githubusercontent.com/284644/79351826-93169d00-7f52-11ea-99ad-bb904f62ce6c.png
 
+* Surfaces-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`

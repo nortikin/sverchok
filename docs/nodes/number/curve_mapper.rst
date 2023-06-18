@@ -72,8 +72,8 @@ Example of the Curve output usage:
   :target: https://user-images.githubusercontent.com/284644/80520701-4051d200-89a3-11ea-92fd-2f2f2004e4e7.png
 
 * Curves-> :doc:`Naturally Parametrized Curve </nodes/curve/length_rebuild>`
-* Surface-> :doc:`Revolution Surface </nodes/surface/revolution_surface>`
-* Surface-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
+* Surfaces-> :doc:`Revolution Surface </nodes/surface/revolution_surface>`
+* Surfaces-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 
 An example of what the node can do if you disable the "use clipping" option:

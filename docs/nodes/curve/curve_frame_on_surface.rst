@@ -109,7 +109,7 @@ https://gist.github.com/5fdc5d5e6169a86f9356ff461be321d3
 * Generator-> :doc:`Box </nodes/generator/box_mk2>`
 * Curves-> :doc:`Cubic Spline </nodes/curve/cubic_spline>`
 * Curves-> :doc:`Evaluate Curve </nodes/curve/eval_curve>`
-* Surface-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
+* Surfaces-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
 * Surfaces-> :doc:`Surface from Curves </nodes/surface/interpolating_surface>`
 * Transform-> :doc:`Move </nodes/transforms/move_mk3>`
 * Number-> :doc:`Number Range </nodes/number/number_range>`
