@@ -92,7 +92,7 @@ Selects vertices that are located at one side of mesh. The side is specified by 
 * Generator->Generators Extended :doc:`Torus Knot </nodes/generators_extended/torus_knot_mk2>`
 * Curves-> :doc:`Cubic Spline </nodes/curve/cubic_spline>`
 * Surfaces-> :doc:`Pipe Surface Along Curve </nodes/surface/pipe>`
-* Surface-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
+* Surfaces-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
 * Vector-> :doc:`Vector Polar Input </nodes/vector/vector_polar_in>`
 * List-> :doc:`List Mask (Out) </nodes/list_masks/mask>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`

@@ -96,6 +96,6 @@ Example of usage
 * Curves-> :doc:`Cubic Spline </nodes/curve/cubic_spline>`
 * Curves-> :doc:`Evaluate Curve </nodes/curve/eval_curve>`
 * Surfaces-> :doc:`Minimal Surface </nodes/surface/minimal_surface>`
-* Surface-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
+* Surfaces-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 * Scene-> :doc:`Objects In Lite </nodes/scene/objects_in_lite>`

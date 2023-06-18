@@ -91,7 +91,7 @@ Examples of usage
 
 * Generator-> :doc:`NGon </nodes/generator/ngon>`
 * Surfaces-> :doc:`Plane (Surface) </nodes/surface/plane>`
-* Surface-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
+* Surfaces-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
 * Fields-> :doc:`Attractor Field </nodes/field/attractor_field_mk2>`
 * Transform-> :doc:`Noise Displace </nodes/transforms/noise_displace>`
 * Number-> :doc:`Number Range </nodes/number/number_range>`
@@ -118,7 +118,7 @@ https://gist.github.com/10ddbe4d04655dc8a1553c9b7fb68ee8
 * Generator-> :doc:`Box </nodes/generator/box_mk2>`
 * Curves-> :doc:`Circle (Curve) </nodes/curve/curve_circle>`
 * Surfaces-> :doc:`Extrude Curve Along Vector </nodes/surface/extrude_vector>`
-* Surface-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
+* Surfaces-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
 * Fields-> :doc:`Attractor Field </nodes/field/attractor_field_mk2>`
 * Modifiers->Modifier Change-> :doc:`Merge by Distance </nodes/modifier_change/merge_by_distance>`
 * Transform-> :doc:`Noise Displace </nodes/transforms/noise_displace>`
@@ -151,7 +151,7 @@ https://gist.github.com/f177b018f8871cad33dab532cbcd9ac3
 * Curves-> :doc:`Evaluate Curve </nodes/curve/eval_curve>`
 * Curves-> :doc:`Cubic Spline </nodes/curve/cubic_spline>`
 * Surfaces-> :doc:`Extrude Curve Along Vector </nodes/surface/extrude_vector>`
-* Surfaces-> :doc:`Tessalate & Trim Surface </nodes/surface/tessellate_trim>`
+* Surfaces-> :doc:`Tesselate & Trim Surface </nodes/surface/tessellate_trim>`
 * Fields-> :doc:`Attractor Field </nodes/field/attractor_field_mk2>`
 * Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`

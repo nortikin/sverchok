@@ -81,7 +81,7 @@ Use together with "Build NURBS Surface" node:
 .. image:: https://user-images.githubusercontent.com/284644/93013197-9eccc500-f5bf-11ea-905b-4e929f1ee2bb.png
   :target: https://user-images.githubusercontent.com/284644/93013197-9eccc500-f5bf-11ea-905b-4e929f1ee2bb.png
 
-* Surface-> :doc:`Build Nurbs Surface </nodes/surface/nurbs_surface>`
-* Surface-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
+* Surfaces-> :doc:`Build Nurbs Surface </nodes/surface/nurbs_surface>`
+* Surfaces-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 * Scene-> :doc:`Objects In Lite </nodes/scene/objects_in_lite>`

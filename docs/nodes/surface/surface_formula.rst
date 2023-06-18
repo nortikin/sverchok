@@ -1,6 +1,9 @@
 Surface Formula
 ===============
 
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/36abea60-6920-4850-9ca9-8ee9a4592e7a
+  :target: https://github.com/nortikin/sverchok/assets/14288520/36abea60-6920-4850-9ca9-8ee9a4592e7a
+
 Functionality
 -------------
 
@@ -11,6 +14,9 @@ The formula should map the curve's U and V parameters into one of supported 3D c
 It is possible to use additional parameters in the formula, they will become inputs of the node.
 
 Surface domain / parametrization specifics: defined by node settings.
+
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/d666e5e8-624a-411b-981d-7cd3ef81ed43
+  :target: https://github.com/nortikin/sverchok/assets/14288520/d666e5e8-624a-411b-981d-7cd3ef81ed43
 
 Expression syntax
 -----------------
@@ -68,7 +74,14 @@ This node has the following parameters:
 
    * **Cartesian**. Three formulas will define correspondingly X, Y and Z coordinates.
    * **Cylindrical**. Three formulas will define correspondingly Rho, Phi and Z coordinates.
+
+    .. image:: https://github.com/nortikin/sverchok/assets/14288520/993aed22-60d9-404f-b757-107dfdd94ed3
+      :target: https://github.com/nortikin/sverchok/assets/14288520/993aed22-60d9-404f-b757-107dfdd94ed3
+
    * **Spherical**. Three formulas will define correspondingly Rho, Phi and Theta coordinates.
+
+    .. image:: https://github.com/nortikin/sverchok/assets/14288520/9fe5db6f-6909-4235-bce8-418aaee8c5c8
+      :target: https://github.com/nortikin/sverchok/assets/14288520/9fe5db6f-6909-4235-bce8-418aaee8c5c8
 
    The default mode is **Cartesian**.
 
@@ -86,7 +99,7 @@ Outputs
 
 This node has the following output:
 
-* **Curve**. The generated curve.
+* **Surface**. The generated surface.
 
 Examples of usage
 -----------------
@@ -94,8 +107,25 @@ Examples of usage
 The default parameters - a torus:
 
 .. image:: https://user-images.githubusercontent.com/284644/79387280-d558d200-7f84-11ea-9a28-68b5299ce8ec.png
+  :target: https://user-images.githubusercontent.com/284644/79387280-d558d200-7f84-11ea-9a28-68b5299ce8ec.png
+
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+* Surfaces-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
 
 An example of cylindrical coordinates usage:
 
 .. image:: https://user-images.githubusercontent.com/284644/79387284-d689ff00-7f84-11ea-922f-bf28efcd7e53.png
+  :target: https://user-images.githubusercontent.com/284644/79387284-d689ff00-7f84-11ea-922f-bf28efcd7e53.png
 
+* Number-> :doc:`A Number </nodes/number/numbers>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+* Surfaces-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
+
+An example with parameters:
+
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/f71d05b9-35c4-47b6-83c6-623c4d52eb31
+  :target: https://github.com/nortikin/sverchok/assets/14288520/f71d05b9-35c4-47b6-83c6-623c4d52eb31
+
+* Number-> :doc:`List Input </nodes/number/list_input>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+* Surfaces-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`

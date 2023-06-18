@@ -94,6 +94,6 @@ Visualize the boundary of cylinder-like surface:
 * Curves-> :doc:`Circle (Curve) </nodes/curve/curve_circle>`
 * Curves-> :doc:`Evaluate Curve </nodes/curve/eval_curve>`
 * Surfaces-> :doc:`Extrude Curve Along Vector </nodes/surface/extrude_vector>`
-* Surface-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
+* Surfaces-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 * Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`

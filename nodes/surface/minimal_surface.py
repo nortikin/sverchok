@@ -44,12 +44,12 @@ class SvExMinimalSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
         update = update_sockets)
 
     functions = [
-        ('multiquadric', "Multi Quadric", "Multi Quadric", 0),
-        ('inverse', "Inverse", "Inverse", 1),
-        ('gaussian', "Gaussian", "Gaussian", 2),
-        ('cubic', "Cubic", "Cubic", 3),
-        ('quintic', "Quintic", "Qunitic", 4),
-        ('thin_plate', "Thin Plate", "Thin Plate", 5)
+        ('multiquadric', "Multi Quadric", "Multi Quadric: sqrt((r/self.epsilon)**2 + 1)", 0),
+        ('inverse', "Inverse", "Inverse: 1.0/sqrt((r/self.epsilon)**2 + 1)", 1),
+        ('gaussian', "Gaussian", "Gaussian: exp(-(r/self.epsilon)**2)", 2),
+        ('cubic', "Cubic", "Cubic: r**3", 3),
+        ('quintic', "Quintic", "Qunitic: r**5", 4),
+        ('thin_plate', "Thin Plate", "Thin Plate: r**2 * log(r)", 5)
     ]
 
     function : EnumProperty(
@@ -72,6 +72,7 @@ class SvExMinimalSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
 
     epsilon : FloatProperty(
             name = "Epsilon",
+            description = "Epsilon parameter of used RBF function; it affects the shape of generated surface",
             default = 1.0,
             min = 0.0,
             update = updateNode)

@@ -59,7 +59,7 @@ Generate some surface and draw a circle on it:
 * Curves-> :doc:`Circle (Curve) </nodes/curve/curve_circle>`
 * Curves-> :doc:`Evaluate Curve </nodes/curve/eval_curve>`
 * Surfaces-> :doc:`Extrude Curve Along Vector </nodes/surface/extrude_vector>`
-* Surface-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
+* Surfaces-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
 * Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 
@@ -74,7 +74,7 @@ It is possible to use such a curve, for example, to place cubes along it:
 * Curves-> :doc:`Cubic Spline </nodes/curve/cubic_spline>`
 * Curves-> :doc:`Curve Zero-Twist Frame </nodes/curve/zero_twist_frame>`
 * Surfaces-> :doc:`Extrude Curve Along Vector </nodes/surface/extrude_vector>`
-* Surface-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
+* Surfaces-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
 * Number-> :doc:`Number Range </nodes/number/number_range>`
 * Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`

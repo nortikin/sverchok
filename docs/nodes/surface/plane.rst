@@ -1,6 +1,9 @@
 Plane (Surface)
 ===============
 
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/5e68195f-9b2b-4ac5-abb7-3c9a2ba892fe
+  :target: https://github.com/nortikin/sverchok/assets/14288520/5e68195f-9b2b-4ac5-abb7-3c9a2ba892fe
+
 Functionality
 -------------
 
@@ -9,6 +12,17 @@ This node generate a Surface object, which represents a rectangular segment of p
 Surface domain: defined by node parameters.
 
 Surface parametrization: Point = P0 + u*V1 + v*V1
+
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/dd23c606-d6c0-4f7e-92e7-84c9f3f09a8b
+  :target: https://github.com/nortikin/sverchok/assets/14288520/dd23c606-d6c0-4f7e-92e7-84c9f3f09a8b
+
+* Generator-> :doc:`Segment </nodes/generator/segment>`
+* Surfaces-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
+* Vector-> :doc:`Vector Polar Input </nodes/vector/vector_polar_in>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/2edde6f8-9bfb-4e35-8bc2-d5fc2ef209ad
+  :target: https://github.com/nortikin/sverchok/assets/14288520/2edde6f8-9bfb-4e35-8bc2-d5fc2ef209ad
 
 Inputs
 ------
@@ -53,8 +67,15 @@ Examples of usage
 Default settings:
 
 .. image:: https://user-images.githubusercontent.com/284644/78699409-4b25c380-791d-11ea-8671-2b304e108ed1.png
+  :target: https://user-images.githubusercontent.com/284644/78699409-4b25c380-791d-11ea-8671-2b304e108ed1.png
+
+* Surfaces-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 
 It is possible to generate a plane with non-rectangular parametrization, if three points provided do not make a right angle:
 
 .. image:: https://user-images.githubusercontent.com/284644/78699412-4bbe5a00-791d-11ea-87c9-78c7bbe4ed78.png
+  :target: https://user-images.githubusercontent.com/284644/78699412-4bbe5a00-791d-11ea-87c9-78c7bbe4ed78.png
 
+* Surfaces-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
