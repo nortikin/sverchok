@@ -178,6 +178,7 @@
              
   <section id="surface-from-curves">
 <h1>Surface from Curves<a class="headerlink" href="#surface-from-curves" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/58e5090a-77b1-46fc-b42d-4b86453f4dc1"><img alt="https://github.com/nortikin/sverchok/assets/14288520/58e5090a-77b1-46fc-b42d-4b86453f4dc1" src="https://github.com/nortikin/sverchok/assets/14288520/58e5090a-77b1-46fc-b42d-4b86453f4dc1" /></a>
 <section id="dependencies">
 <h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this heading">¶</a></h2>
 <p>This node can optionally use <a class="reference external" href="https://onurraufbingol.com/NURBS-Python/">Geomdl</a> and / or <a class="reference external" href="https://scipy.org/">SciPy</a> libraries.</p>
@@ -186,8 +187,20 @@
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node generates a Surface object by interpolating several Curves. This
 operation is also known as “Loft”. Several interpolation modes are supported.</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/fd83f175-9523-45ca-8bce-9678ef44cd35"><img alt="https://github.com/nortikin/sverchok/assets/14288520/fd83f175-9523-45ca-8bce-9678ef44cd35" src="https://github.com/nortikin/sverchok/assets/14288520/fd83f175-9523-45ca-8bce-9678ef44cd35" /></a>
+<ul class="simple">
+<li><p>Scene-&gt; <a class="reference internal" href="../exchange/bezier_in.html"><span class="doc">Bezier Input</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="evaluate_surface.html"><span class="doc">Evaluate Surface</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 <p>See also “NURBS Loft” node.</p>
 <p>Surface domain: from 0 to 1 in both directions.</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/2591dc7c-6150-4451-b0a4-3e0742093894"><img alt="https://github.com/nortikin/sverchok/assets/14288520/2591dc7c-6150-4451-b0a4-3e0742093894" src="https://github.com/nortikin/sverchok/assets/14288520/2591dc7c-6150-4451-b0a4-3e0742093894" /></a>
+<ul class="simple">
+<li><p>Surfaces-&gt; <a class="reference internal" href="surface_domain.html"><span class="doc">Surface Domain</span></a></p></li>
+<li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/join.html"><span class="doc">List Join</span></a></p></li>
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+</ul>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
@@ -252,11 +265,36 @@ default.</p></li>
 <section id="examples-of-usage">
 <h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>Linear interpolation between several polylines:</p>
-<img alt="https://user-images.githubusercontent.com/284644/79368209-771df600-7f68-11ea-9d65-90257d257bd0.png" src="https://user-images.githubusercontent.com/284644/79368209-771df600-7f68-11ea-9d65-90257d257bd0.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/79368209-771df600-7f68-11ea-9d65-90257d257bd0.png"><img alt="https://user-images.githubusercontent.com/284644/79368209-771df600-7f68-11ea-9d65-90257d257bd0.png" src="https://user-images.githubusercontent.com/284644/79368209-771df600-7f68-11ea-9d65-90257d257bd0.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/segment.html"><span class="doc">Segment</span></a></p></li>
+<li><p>Curves-&gt;Curve Primitives-&gt; <a class="reference internal" href="../curve/polyline.html"><span class="doc">Polyline</span></a></p></li>
+<li><p>Transform-&gt; <a class="reference internal" href="../transforms/apply.html"><span class="doc">Matrix Apply (verts)</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/random_num_gen.html"><span class="doc">Random Num Gen</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="evaluate_surface.html"><span class="doc">Evaluate Surface</span></a></p></li>
+</ul>
 <p>The same but with Cubic interpolation:</p>
-<img alt="https://user-images.githubusercontent.com/284644/79368213-784f2300-7f68-11ea-80c0-059469ba14d9.png" src="https://user-images.githubusercontent.com/284644/79368213-784f2300-7f68-11ea-80c0-059469ba14d9.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/79368213-784f2300-7f68-11ea-80c0-059469ba14d9.png"><img alt="https://user-images.githubusercontent.com/284644/79368213-784f2300-7f68-11ea-80c0-059469ba14d9.png" src="https://user-images.githubusercontent.com/284644/79368213-784f2300-7f68-11ea-80c0-059469ba14d9.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/segment.html"><span class="doc">Segment</span></a></p></li>
+<li><p>Curves-&gt;Curve Primitives-&gt; <a class="reference internal" href="../curve/polyline.html"><span class="doc">Polyline</span></a></p></li>
+<li><p>Transform-&gt; <a class="reference internal" href="../transforms/apply.html"><span class="doc">Matrix Apply (verts)</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/random_num_gen.html"><span class="doc">Random Num Gen</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="evaluate_surface.html"><span class="doc">Evaluate Surface</span></a></p></li>
+</ul>
 <p>Cubic interpolation between several curves (generated by trigonometric formula):</p>
-<img alt="https://user-images.githubusercontent.com/284644/79369070-d0d2f000-7f69-11ea-97f6-b71d33f49b97.png" src="https://user-images.githubusercontent.com/284644/79369070-d0d2f000-7f69-11ea-97f6-b71d33f49b97.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/79369070-d0d2f000-7f69-11ea-97f6-b71d33f49b97.png"><img alt="https://user-images.githubusercontent.com/284644/79369070-d0d2f000-7f69-11ea-97f6-b71d33f49b97.png" src="https://user-images.githubusercontent.com/284644/79369070-d0d2f000-7f69-11ea-97f6-b71d33f49b97.png" /></a>
+<ul class="simple">
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/random_num_gen.html"><span class="doc">Random Num Gen</span></a></p></li>
+<li><p>Curves-&gt; <a class="reference internal" href="../curve/curve_formula.html"><span class="doc">Curve Formula</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="evaluate_surface.html"><span class="doc">Evaluate Surface</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 </section>
 </section>
 

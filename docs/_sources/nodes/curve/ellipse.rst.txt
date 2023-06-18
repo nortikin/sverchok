@@ -86,6 +86,6 @@ Extrude smaller ellipse along bigger one:
   :target: https://user-images.githubusercontent.com/14288520/205486157-dca072ac-8353-4756-8f7b-f9519905afa7.png
 
 * Surfaces-> :doc:`Extrude Curve Along Curve </nodes/surface/extrude_curve>`
-* Surface-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
+* Surfaces-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
 * Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`

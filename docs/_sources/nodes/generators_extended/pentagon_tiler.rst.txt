@@ -79,7 +79,7 @@ Example of usage
 
 * Transform-> :doc:`Bend Object Along Surface </nodes/transforms/bend_along_surface>`
 * Number-> :doc:`A Number </nodes/number/numbers>`
-* Surface-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
+* Surfaces-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
 * List->List Struct-> :doc:`List Split </nodes/list_struct/split>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 * Scene-> :doc:`Bezier Input </nodes/exchange/bezier_in>`
@@ -97,10 +97,9 @@ Example of usage
   :target: https://user-images.githubusercontent.com/14288520/191077924-72f3e9f1-aa0b-4c76-be35-5e2edd487218.png
 
 * Surfaces-> :doc:`Surface from Curves </nodes/surface/interpolating_surface>`
-* Surface-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
+* Surfaces-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
 * Transform-> :doc:`Bend Object Along Surface </nodes/transforms/bend_along_surface>`
 * Number-> :doc:`A Number </nodes/number/numbers>`
-* Surface-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
 * List->List Struct-> :doc:`List Split </nodes/list_struct/split>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 * Scene-> :doc:`Bezier Input </nodes/exchange/bezier_in>`

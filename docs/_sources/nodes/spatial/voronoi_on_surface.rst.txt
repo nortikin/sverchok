@@ -166,7 +166,7 @@ Examples of Usage
 * Transform-> :doc:`Randomize </nodes/transforms/randomize>`
 * Surfaces-> :doc:`Build NURBS Surface </nodes/surface/nurbs_surface>`
 * Spatial-> :doc:`Populate Surface </nodes/spatial/populate_surface>`
-* Surface-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
+* Surfaces-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 
 ---------

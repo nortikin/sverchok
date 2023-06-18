@@ -86,7 +86,7 @@ Replay with new nodes:
 * Curves-> :doc:`Circle (Curve) </nodes/curve/curve_circle>`
 * Curves-> :doc:`Evaluate Curve </nodes/curve/eval_curve>`
 * Surfaces-> :doc:`NURBS Loft </nodes/surface/nurbs_loft>`
-* Surface-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
+* Surfaces-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
 * Number-> :doc:`Number Range </nodes/number/number_range>`
 * Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`
 * Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`

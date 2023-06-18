@@ -79,5 +79,5 @@ Examples of usage
 * Generator-> :doc:`NGon </nodes/generator/ngon>`
 * Curves->Curve Primitives-> :doc:`Polyline </nodes/curve/polyline>`
 * Surfaces-> :doc:`Extrude Curve Along Curve </nodes/surface/extrude_curve>`
-* Surface-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
+* Surfaces-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`

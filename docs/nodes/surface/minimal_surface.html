@@ -178,6 +178,7 @@
              
   <section id="minimal-surface">
 <h1>Minimal Surface<a class="headerlink" href="#minimal-surface" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/c3e19248-a6e2-4da9-8472-a64586053d15"><img alt="https://github.com/nortikin/sverchok/assets/14288520/c3e19248-a6e2-4da9-8472-a64586053d15" src="https://github.com/nortikin/sverchok/assets/14288520/c3e19248-a6e2-4da9-8472-a64586053d15" /></a>
 <section id="dependencies">
 <h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this heading">¶</a></h2>
 <p>This node requires <a class="reference external" href="https://scipy.org/">SciPy</a> library to work.</p>
@@ -195,24 +196,96 @@ list of points, and tell the node to use their X and Y coordinates as U and V.
 So, the node will actually only have to find a function which maps (X, Y) to Z.
 In other cases, you will want to provide a set of (X, Y, Z) points and a set of
 corresponding (U, V) coordinate pairs.</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/ce5e1ccd-b6cc-40aa-991e-1a65b047871c"><img alt="https://github.com/nortikin/sverchok/assets/14288520/ce5e1ccd-b6cc-40aa-991e-1a65b047871c" src="https://github.com/nortikin/sverchok/assets/14288520/ce5e1ccd-b6cc-40aa-991e-1a65b047871c" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/0525d736-bf3a-4a86-8bb0-696ca2853a90"><img alt="https://github.com/nortikin/sverchok/assets/14288520/0525d736-bf3a-4a86-8bb0-696ca2853a90" src="https://github.com/nortikin/sverchok/assets/14288520/0525d736-bf3a-4a86-8bb0-696ca2853a90" /></a>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
-<ul class="simple">
+<ul>
 <li><p><strong>Vertices</strong>. The points to build minimal surface for. This input is mandatory.</p></li>
 <li><p><strong>Epsilon</strong>. Epsilon parameter of used RBF function; it affects the shape of
-generated surface. The default value is 1.0.</p></li>
+generated surface. The default value is 1.0.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/28246c31-b9cf-4852-9cef-7d45e138f4b6"><img alt="https://github.com/nortikin/sverchok/assets/14288520/28246c31-b9cf-4852-9cef-7d45e138f4b6" src="https://github.com/nortikin/sverchok/assets/14288520/28246c31-b9cf-4852-9cef-7d45e138f4b6" /></a>
+</div></blockquote>
+</li>
 <li><p><strong>Smooth</strong>. Smoothness parameter of used RBF function. If this is zero, then
 the surface will go through all provided points; otherwise, it will be only an
-approximating surface. The default value is 0.0.</p></li>
+approximating surface. The default value is 0.0.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/bd911e6a-9e61-479c-95fe-80c28fce7f90"><img alt="https://github.com/nortikin/sverchok/assets/14288520/bd911e6a-9e61-479c-95fe-80c28fce7f90" src="https://github.com/nortikin/sverchok/assets/14288520/bd911e6a-9e61-479c-95fe-80c28fce7f90" /></a>
+</div></blockquote>
+</li>
 <li><p><strong>SrcU</strong>, <strong>SrcV</strong>. U and V coordinates for the points specified in the
 <strong>Vertices</strong> input. These inputs are available and mandatory if the <strong>Surface
 type</strong> is set to <strong>UV -&gt; XYZ</strong>, and <strong>Explicit source UV</strong> parameter is
-checked.</p></li>
+checked.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/3eaac98b-a660-47c9-b464-1a40628e3365"><img alt="https://github.com/nortikin/sverchok/assets/14288520/3eaac98b-a660-47c9-b464-1a40628e3365" src="https://github.com/nortikin/sverchok/assets/14288520/3eaac98b-a660-47c9-b464-1a40628e3365" /></a>
+<ul>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/noise_mk3.html"><span class="doc">Vector Noise</span></a></p></li>
+<li><p>A*SCALAR:  Number-&gt; <a class="reference internal" href="../number/scalar_mk4.html"><span class="doc">Scalar Math</span></a></p></li>
+<li><p>Add: Vector-&gt; <a class="reference internal" href="../vector/math_mk3.html"><span class="doc">Vector Math</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_out.html"><span class="doc">Vector Out</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="evaluate_surface.html"><span class="doc">Evaluate Surface</span></a></p>
+<p><strong>SrcU, SrcV: XY-&gt;Z</strong></p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/9cf71434-ce52-4efb-8139-d61880d817b8"><img alt="https://github.com/nortikin/sverchok/assets/14288520/9cf71434-ce52-4efb-8139-d61880d817b8" src="https://github.com/nortikin/sverchok/assets/14288520/9cf71434-ce52-4efb-8139-d61880d817b8" /></a>
+<p><strong>SrcU, SrcV: YZ-&gt;X</strong></p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/beb8986c-3ae4-4113-aaa8-4313899610a3"><img alt="https://github.com/nortikin/sverchok/assets/14288520/beb8986c-3ae4-4113-aaa8-4313899610a3" src="https://github.com/nortikin/sverchok/assets/14288520/beb8986c-3ae4-4113-aaa8-4313899610a3" /></a>
+<p><strong>SrcU, SrcV: ZX-&gt;Y</strong></p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/d44d064d-f370-493d-864d-2b0afe5737c3"><img alt="https://github.com/nortikin/sverchok/assets/14288520/d44d064d-f370-493d-864d-2b0afe5737c3" src="https://github.com/nortikin/sverchok/assets/14288520/d44d064d-f370-493d-864d-2b0afe5737c3" /></a>
+<p><strong>SrcU, SrcV: PHI,Z-&gt;XYZ</strong></p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/a96a8631-8f98-4f67-8adc-073ab5c7c707"><img alt="https://github.com/nortikin/sverchok/assets/14288520/a96a8631-8f98-4f67-8adc-073ab5c7c707" src="https://github.com/nortikin/sverchok/assets/14288520/a96a8631-8f98-4f67-8adc-073ab5c7c707" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/cylinder_mk2.html"><span class="doc">Cylinder</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_polar_in.html"><span class="doc">Vector Polar Input</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_polar_out.html"><span class="doc">Vector Polar Output</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/noise_mk3.html"><span class="doc">Vector Noise</span></a></p></li>
+<li><p>A*SCALAR, ADD: Vector-&gt; <a class="reference internal" href="../vector/math_mk3.html"><span class="doc">Vector Math</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="evaluate_surface.html"><span class="doc">Evaluate Surface</span></a></p></li>
+</ul>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/cd2cef71-486f-4bc4-a445-086e250393c6"><img alt="https://github.com/nortikin/sverchok/assets/14288520/cd2cef71-486f-4bc4-a445-086e250393c6" src="https://github.com/nortikin/sverchok/assets/14288520/cd2cef71-486f-4bc4-a445-086e250393c6" /></a>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
 <li><p><strong>Matrix</strong>. Matrix used to extract U and V coordinates out of XYZ points.
 This input is available only if the <strong>Surface type</strong> is set to <strong>XY -&gt; Z</strong>.
-The default is identity matrix.</p></li>
+The default is identity matrix.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/6407d876-665f-4c75-b7ec-2f04a2db36f8"><img alt="https://github.com/nortikin/sverchok/assets/14288520/6407d876-665f-4c75-b7ec-2f04a2db36f8" src="https://github.com/nortikin/sverchok/assets/14288520/6407d876-665f-4c75-b7ec-2f04a2db36f8" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/noise_mk3.html"><span class="doc">Vector Noise</span></a></p></li>
+<li><p>A*SCALAR, ADD: Vector-&gt; <a class="reference internal" href="../vector/math_mk3.html"><span class="doc">Vector Math</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="evaluate_surface.html"><span class="doc">Evaluate Surface</span></a></p></li>
+</ul>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/f78de07c-7973-4344-aaa7-59cc84807761"><img alt="https://github.com/nortikin/sverchok/assets/14288520/f78de07c-7973-4344-aaa7-59cc84807761" src="https://github.com/nortikin/sverchok/assets/14288520/f78de07c-7973-4344-aaa7-59cc84807761" /></a>
+</div></blockquote>
+<p>Align surface with object:</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/45eedf83-25a0-4f74-abdd-863dfcc7a6c9"><img alt="https://github.com/nortikin/sverchok/assets/14288520/45eedf83-25a0-4f74-abdd-863dfcc7a6c9" src="https://github.com/nortikin/sverchok/assets/14288520/45eedf83-25a0-4f74-abdd-863dfcc7a6c9" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/noise_mk3.html"><span class="doc">Vector Noise</span></a></p></li>
+<li><p>A*SCALAR, ADD: Vector-&gt; <a class="reference internal" href="../vector/math_mk3.html"><span class="doc">Vector Math</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="evaluate_surface.html"><span class="doc">Evaluate Surface</span></a></p></li>
+</ul>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/7afc5d0e-862d-4dd4-abdc-f2acacca1f22"><img alt="https://github.com/nortikin/sverchok/assets/14288520/7afc5d0e-862d-4dd4-abdc-f2acacca1f22" src="https://github.com/nortikin/sverchok/assets/14288520/7afc5d0e-862d-4dd4-abdc-f2acacca1f22" /></a>
+</div></blockquote>
+</li>
 </ul>
 </section>
 <section id="parameters">
@@ -252,7 +325,8 @@ automatically. Checked by default.</p></li>
 <li><p>Quintic</p></li>
 <li><p>Thin Plate</p></li>
 </ul>
-<p>The default function is Multi Quadric.</p>
+<p>The default function is Multi Quadric. <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.Rbf.html">Scipy RBF Functions</a></p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/1de5c5e8-4dba-455c-b268-8f5d9ac787f9"><img alt="https://github.com/nortikin/sverchok/assets/14288520/1de5c5e8-4dba-455c-b268-8f5d9ac787f9" src="https://github.com/nortikin/sverchok/assets/14288520/1de5c5e8-4dba-455c-b268-8f5d9ac787f9" /></a>
 </li>
 </ul>
 </section>
@@ -266,11 +340,31 @@ automatically. Checked by default.</p></li>
 <section id="examples-of-usage">
 <h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>Simple example of <strong>XY -&gt; Z</strong> mode usage:</p>
-<img alt="https://user-images.githubusercontent.com/284644/87230237-0734d580-c3c8-11ea-90c3-730bb21170c4.png" src="https://user-images.githubusercontent.com/284644/87230237-0734d580-c3c8-11ea-90c3-730bb21170c4.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/87230237-0734d580-c3c8-11ea-90c3-730bb21170c4.png"><img alt="https://user-images.githubusercontent.com/284644/87230237-0734d580-c3c8-11ea-90c3-730bb21170c4.png" src="https://user-images.githubusercontent.com/284644/87230237-0734d580-c3c8-11ea-90c3-730bb21170c4.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="evaluate_surface.html"><span class="doc">Evaluate Surface</span></a></p></li>
+<li><p>Transform-&gt; <a class="reference internal" href="../transforms/randomize.html"><span class="doc">Randomize</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 <p>An example of Matrix input usage; rotated and deformed plane is used as input:</p>
-<img alt="https://user-images.githubusercontent.com/284644/87230628-ba9ec980-c3ca-11ea-8551-6fc3e8ab532f.png" src="https://user-images.githubusercontent.com/284644/87230628-ba9ec980-c3ca-11ea-8551-6fc3e8ab532f.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/87230628-ba9ec980-c3ca-11ea-8551-6fc3e8ab532f.png"><img alt="https://user-images.githubusercontent.com/284644/87230628-ba9ec980-c3ca-11ea-8551-6fc3e8ab532f.png" src="https://user-images.githubusercontent.com/284644/87230628-ba9ec980-c3ca-11ea-8551-6fc3e8ab532f.png" /></a>
+<ul class="simple">
+<li><p>Surfaces-&gt; <a class="reference internal" href="evaluate_surface.html"><span class="doc">Evaluate Surface</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_normal.html"><span class="doc">Matrix Normal</span></a></p></li>
+<li><p>Analyzers-&gt; <a class="reference internal" href="../analyzer/linear_approx.html"><span class="doc">Linear Approximation</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Scene-&gt; <a class="reference internal" href="../scene/objects_in_lite.html"><span class="doc">Objects In Lite</span></a></p></li>
+</ul>
 <p>An example where <strong>UV -&gt; XYZ</strong> mode is required to build a proper surface:</p>
-<img alt="https://user-images.githubusercontent.com/284644/87230238-08660280-c3c8-11ea-97d0-87dd31029abe.png" src="https://user-images.githubusercontent.com/284644/87230238-08660280-c3c8-11ea-97d0-87dd31029abe.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/87230238-08660280-c3c8-11ea-97d0-87dd31029abe.png"><img alt="https://user-images.githubusercontent.com/284644/87230238-08660280-c3c8-11ea-97d0-87dd31029abe.png" src="https://user-images.githubusercontent.com/284644/87230238-08660280-c3c8-11ea-97d0-87dd31029abe.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/cylinder_mk2.html"><span class="doc">Cylinder</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="evaluate_surface.html"><span class="doc">Evaluate Surface</span></a></p></li>
+<li><p>Transform-&gt; <a class="reference internal" href="../transforms/randomize.html"><span class="doc">Randomize</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_polar_out.html"><span class="doc">Vector Polar Output</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 </section>
 </section>
 
