@@ -177,11 +177,18 @@
              
   <section id="revolution-surface">
 <h1>Revolution Surface<a class="headerlink" href="#revolution-surface" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/49bc8bfc-cfbc-4ee9-8edc-1bc6511a1ed0"><img alt="https://github.com/nortikin/sverchok/assets/14288520/49bc8bfc-cfbc-4ee9-8edc-1bc6511a1ed0" src="https://github.com/nortikin/sverchok/assets/14288520/49bc8bfc-cfbc-4ee9-8edc-1bc6511a1ed0" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>Given a curve, this node generates a surface which is made by revolving
 (rotating) this curve along some axis vector. Many surfaces of revolution, such
 as spheres, cylinders, cones may be made with this node.</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/d9d1317b-8927-4fd3-acf8-56cfcd883683"><img alt="https://github.com/nortikin/sverchok/assets/14288520/d9d1317b-8927-4fd3-acf8-56cfcd883683" src="https://github.com/nortikin/sverchok/assets/14288520/d9d1317b-8927-4fd3-acf8-56cfcd883683" /></a>
+<ul class="simple">
+<li><p>Surfaces-&gt; <a class="reference internal" href="evaluate_surface.html"><span class="doc">Evaluate Surface</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Scene-&gt; <a class="reference internal" href="../exchange/bezier_in.html"><span class="doc">Bezier Input</span></a></p></li>
+</ul>
 <p>Note that the profile curve does not have to be planar (flat).</p>
 <p>Surface domain: in U direction - the same as profile curve; in V direction - defined by node inputs.
 Zero (0) value of V corresponds to initial position of the profile curve.</p>
@@ -200,6 +207,7 @@ i.e. the surface’s V parameter minimal value. The default value is 0.0.</p></l
 the surface’s V parameter maximum value. The default value is 2*pi (full
 circle).</p></li>
 </ul>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/3b346209-4232-4317-9679-b6193fd568f9"><img alt="https://github.com/nortikin/sverchok/assets/14288520/3b346209-4232-4317-9679-b6193fd568f9" src="https://github.com/nortikin/sverchok/assets/14288520/3b346209-4232-4317-9679-b6193fd568f9" /></a>
 </section>
 <section id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
@@ -221,6 +229,7 @@ input.</p></li>
 <p>The default value is <strong>Revolution axis</strong>.</p>
 </li>
 </ul>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/b582fd3f-65ed-4d39-b2a6-87d9d2ba4de6"><img alt="https://github.com/nortikin/sverchok/assets/14288520/b582fd3f-65ed-4d39-b2a6-87d9d2ba4de6" src="https://github.com/nortikin/sverchok/assets/14288520/b582fd3f-65ed-4d39-b2a6-87d9d2ba4de6" /></a>
 </section>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
@@ -232,9 +241,21 @@ input.</p></li>
 <section id="examples-of-usage">
 <h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>Rotate a line segment around Z axis to make a conical surface:</p>
-<img alt="https://user-images.githubusercontent.com/284644/78705373-cdff4c00-7926-11ea-943a-42eaa6ba8241.png" src="https://user-images.githubusercontent.com/284644/78705373-cdff4c00-7926-11ea-943a-42eaa6ba8241.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/78705373-cdff4c00-7926-11ea-943a-42eaa6ba8241.png"><img alt="https://user-images.githubusercontent.com/284644/78705373-cdff4c00-7926-11ea-943a-42eaa6ba8241.png" src="https://user-images.githubusercontent.com/284644/78705373-cdff4c00-7926-11ea-943a-42eaa6ba8241.png" /></a>
+<ul class="simple">
+<li><p>Curves-&gt;Curve Primitives-&gt; <a class="reference internal" href="../curve/line.html"><span class="doc">Line (Curve)</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="evaluate_surface.html"><span class="doc">Evaluate Surface</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 <p>Rotate some cubic spline around X axis:</p>
-<img alt="https://user-images.githubusercontent.com/284644/78705377-cf307900-7926-11ea-8d30-9fd707c42ab6.png" src="https://user-images.githubusercontent.com/284644/78705377-cf307900-7926-11ea-8d30-9fd707c42ab6.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/78705377-cf307900-7926-11ea-8d30-9fd707c42ab6.png"><img alt="https://user-images.githubusercontent.com/284644/78705377-cf307900-7926-11ea-8d30-9fd707c42ab6.png" src="https://user-images.githubusercontent.com/284644/78705377-cf307900-7926-11ea-8d30-9fd707c42ab6.png" /></a>
+<ul class="simple">
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vertices_sort.html"><span class="doc">Vector sort</span></a></p></li>
+<li><p>Curves-&gt; <a class="reference internal" href="../curve/cubic_spline.html"><span class="doc">Cubic Spline</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="evaluate_surface.html"><span class="doc">Evaluate Surface</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Scene-&gt; <a class="reference internal" href="../scene/objects_in_lite.html"><span class="doc">Objects In Lite</span></a></p></li>
+</ul>
 </section>
 </section>
 

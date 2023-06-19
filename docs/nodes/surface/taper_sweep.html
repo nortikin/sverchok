@@ -177,6 +177,7 @@
              
   <section id="taper-sweep-surface">
 <h1>Taper Sweep Surface<a class="headerlink" href="#taper-sweep-surface" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/5a8f14b8-0153-4e0f-82f1-695a260fbda8"><img alt="https://github.com/nortikin/sverchok/assets/14288520/5a8f14b8-0153-4e0f-82f1-695a260fbda8" src="https://github.com/nortikin/sverchok/assets/14288520/5a8f14b8-0153-4e0f-82f1-695a260fbda8" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node generates a surface by sweeping a curve (called “profile”) along an
@@ -185,6 +186,12 @@ axis. While the curve is moved, it is scaled according to another curve (called
 <p>This node is a generalization of “revolution surface” node: when the “profile”
 curve is a circle, this node will generate a revolution surface from “taper”
 curve.</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/73e940f8-905e-4895-8381-ee68c8cadf21"><img alt="https://github.com/nortikin/sverchok/assets/14288520/73e940f8-905e-4895-8381-ee68c8cadf21" src="https://github.com/nortikin/sverchok/assets/14288520/73e940f8-905e-4895-8381-ee68c8cadf21" /></a>
+<ul class="simple">
+<li><p>Surfaces-&gt; <a class="reference internal" href="evaluate_surface.html"><span class="doc">Evaluate Surface</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Scene-&gt; <a class="reference internal" href="../exchange/bezier_in.html"><span class="doc">Bezier Input</span></a></p></li>
+</ul>
 <p>Domain / parametrization specifics: Domain along U parameter is the same as
 domain of the “profile” curve. Domain along V parameter is the same as the
 domain of the “taper” curve.</p>
@@ -192,11 +199,24 @@ domain of the “taper” curve.</p>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
-<ul class="simple">
-<li><p><strong>Profile</strong>. The profile curve. This input is mandatory.</p></li>
-<li><p><strong>Taper</strong>. The taper curve. This input is mandatory.</p></li>
+<ul>
+<li><p><strong>Profile</strong>. The profile curve. This input is mandatory.</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/15cf3458-dab7-40ab-922d-55d2f073a6dc"><img alt="https://github.com/nortikin/sverchok/assets/14288520/15cf3458-dab7-40ab-922d-55d2f073a6dc" src="https://github.com/nortikin/sverchok/assets/14288520/15cf3458-dab7-40ab-922d-55d2f073a6dc" /></a>
+</li>
+<li><p><strong>Taper</strong>. The taper curve. This input is mandatory.</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/553c9b30-be0a-4502-afba-d8c85e5703cb"><img alt="https://github.com/nortikin/sverchok/assets/14288520/553c9b30-be0a-4502-afba-d8c85e5703cb" src="https://github.com/nortikin/sverchok/assets/14288520/553c9b30-be0a-4502-afba-d8c85e5703cb" /></a>
+</li>
 <li><p><strong>Point</strong>. The point on the taper axis line. The default value is <cite>(0, 0, 0)</cite>.</p></li>
-<li><p><strong>Direction</strong>. The directing vector of the taper axis line. The default value is <cite>(0, 0, 1)</cite> (Z axis).</p></li>
+</ul>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/30f336a7-a713-4565-9239-e240869cb302"><img alt="https://github.com/nortikin/sverchok/assets/14288520/30f336a7-a713-4565-9239-e240869cb302" src="https://github.com/nortikin/sverchok/assets/14288520/30f336a7-a713-4565-9239-e240869cb302" /></a>
+<ul>
+<li><p><strong>Direction</strong>. The directing vector of the taper axis line. The default value is <cite>(0, 0, 1)</cite> (Z axis).</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/432bb030-5e6e-4dad-adc8-d72de150423d"><img alt="https://github.com/nortikin/sverchok/assets/14288520/432bb030-5e6e-4dad-adc8-d72de150423d" src="https://github.com/nortikin/sverchok/assets/14288520/432bb030-5e6e-4dad-adc8-d72de150423d" /></a>
+<ul class="simple">
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_polar_in.html"><span class="doc">Vector Polar Input</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/line_mk4.html"><span class="doc">Line</span></a></p></li>
+</ul>
+</li>
 </ul>
 </section>
 <section id="parameters">
@@ -209,10 +229,14 @@ curves, and will output a generic Surface object. Unchecked by default.</p></li>
 <li><p><strong>Scale</strong>. This defines the scale of resulting surface in the plane
 perpendicular to taper axis. The available options are:</p>
 <blockquote>
-<div><ul class="simple">
+<div><ul>
 <li><p><strong>Unit</strong>.</p></li>
 <li><p><strong>Profile</strong>. The surface will be scaled in order to match the profile curve.</p></li>
-<li><p><strong>Taper</strong>. The surface will be scaled in order to match the taper curve.</p></li>
+<li><p><strong>Taper</strong>. The surface will be scaled in order to match the taper curve.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/81d460d6-8f67-4f9b-b5bb-ddc569625c79"><img alt="https://github.com/nortikin/sverchok/assets/14288520/81d460d6-8f67-4f9b-b5bb-ddc569625c79" src="https://github.com/nortikin/sverchok/assets/14288520/81d460d6-8f67-4f9b-b5bb-ddc569625c79" /></a>
+</div></blockquote>
+</li>
 </ul>
 </div></blockquote>
 </li>
@@ -228,9 +252,24 @@ perpendicular to taper axis. The available options are:</p>
 <section id="example-of-usage">
 <h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>The taper curve is generated by “filleting” some line; the profile curve is filleted square:</p>
-<img alt="https://user-images.githubusercontent.com/284644/79348542-8ee88080-7f4e-11ea-972b-50b9d6909734.png" src="https://user-images.githubusercontent.com/284644/79348542-8ee88080-7f4e-11ea-972b-50b9d6909734.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/79348542-8ee88080-7f4e-11ea-972b-50b9d6909734.png"><img alt="https://user-images.githubusercontent.com/284644/79348542-8ee88080-7f4e-11ea-972b-50b9d6909734.png" src="https://user-images.githubusercontent.com/284644/79348542-8ee88080-7f4e-11ea-972b-50b9d6909734.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>
+<li><p>Curves-&gt;Curve Primitives-&gt; <a class="reference internal" href="../curve/fillet_polyline.html"><span class="doc">Fillet Polyline</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="evaluate_surface.html"><span class="doc">Evaluate Surface</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vertices_sort.html"><span class="doc">Vector sort</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Scene-&gt; <a class="reference internal" href="../scene/objects_in_lite.html"><span class="doc">Objects In Lite</span></a></p></li>
+</ul>
 <p>Example of NURBS mode:</p>
-<img alt="https://user-images.githubusercontent.com/284644/128603194-ae5b6c3f-a4f8-43ae-89f9-00bb0ac05953.png" src="https://user-images.githubusercontent.com/284644/128603194-ae5b6c3f-a4f8-43ae-89f9-00bb0ac05953.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/128603194-ae5b6c3f-a4f8-43ae-89f9-00bb0ac05953.png"><img alt="https://user-images.githubusercontent.com/284644/128603194-ae5b6c3f-a4f8-43ae-89f9-00bb0ac05953.png" src="https://user-images.githubusercontent.com/284644/128603194-ae5b6c3f-a4f8-43ae-89f9-00bb0ac05953.png" /></a>
+<ul class="simple">
+<li><p>Surfaces-&gt;Surface NURBS-&gt; <a class="reference internal" href="surface_remove_excessive_knots.html"><span class="doc">Remove Excessive Knots (NURBS Surface)</span></a></p></li>
+<li><p>Surfaces-&gt;Surface NURBS-&gt; <a class="reference internal" href="deconstruct_surface.html"><span class="doc">Deconstruct Surface</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="evaluate_surface.html"><span class="doc">Evaluate Surface</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Scene-&gt; <a class="reference internal" href="../exchange/bezier_in.html"><span class="doc">Bezier Input</span></a></p></li>
+</ul>
 </section>
 </section>
 
