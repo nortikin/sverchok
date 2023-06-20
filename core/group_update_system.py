@@ -1,5 +1,6 @@
+import logging
 from collections import defaultdict
-from typing import TYPE_CHECKING, overload, Iterator, Callable
+from typing import TYPE_CHECKING, Iterator, Callable, Optional
 
 from bpy.types import NodeTree, Node, NodeSocket
 import sverchok.core.update_system as us
@@ -15,6 +16,9 @@ if TYPE_CHECKING:
         SvGroupTreeNode as GrNode
 
 
+sv_logger = logging.getLogger('sverchok')
+
+
 def control_center(event):
     """
     1. Update tree model lazily
@@ -26,25 +30,15 @@ def control_center(event):
     if type(event) is ev.GroupPropertyEvent:
         gr_tree = GroupUpdateTree.get(event.tree)
         gr_tree.add_outdated(event.updated_nodes)
-        gr_tree.update_path = event.update_path
-        for main_tree in trees_graph[event.tree]:
-            us.UpdateTree.get(main_tree).add_outdated(trees_graph[main_tree, event.tree])
-            if main_tree.sv_process:
-                ts.tasks.add(ts.Task(main_tree,
-                                     us.UpdateTree.main_update(main_tree),
-                                     is_scene_update=False))
+        GroupUpdateTree.set_update_path(event.update_path)
+        GroupUpdateTree.mark_outdated_groups(event.tree)
 
     # topology of a group tree was changed
     elif type(event) is ev.GroupTreeEvent:
         gr_tree = GroupUpdateTree.get(event.tree)
         gr_tree.is_updated = False
-        gr_tree.update_path = event.update_path
-        for main_tree in trees_graph[event.tree]:
-            us.UpdateTree.get(main_tree).add_outdated(trees_graph[main_tree, event.tree])
-            if main_tree.sv_process:
-                ts.tasks.add(ts.Task(main_tree,
-                                     us.UpdateTree.main_update(main_tree),
-                                     is_scene_update=False))
+        GroupUpdateTree.set_update_path(event.update_path)  # in case it was called by pressing tab
+        GroupUpdateTree.mark_outdated_groups(event.tree)
 
     # Connections between trees were changed
     elif type(event) is ev.TreesGraphEvent:
@@ -79,12 +73,12 @@ class GroupUpdateTree(us.UpdateTree):
         try:
             is_opened_tree = self.update_path == self._exec_path
             if not is_opened_tree:
-                self._viewer_nodes = {node.active_output()}
+                self._viewer_nodes = set(self.__viewer_nodes())
 
             walker = self._walk()
             # walker = self._debug_color(walker)
             for node, prev_socks in walker:
-                with us.AddStatistic(node):
+                with us.AddStatistic(node, self):
                     us.prepare_input_data(prev_socks, node.inputs)
                     if error := node.dependency_error:
                         raise error
@@ -102,6 +96,32 @@ class GroupUpdateTree(us.UpdateTree):
         finally:
             self._exec_path.pop()
 
+    @classmethod
+    def set_update_path(cls, update_path: list['GrNode']):
+        """It should be called when update_path is changed (enter/exit group
+        trees). All group update trees should have actual information about
+        update_path to update properly.
+        Currently, only one tree editor can be used for editing node groups so
+        all trees will share the same path between all of them."""
+        for tree in cls._tree_catch.values():
+            if hasattr(tree, 'update_path'):
+                tree.update_path = update_path
+
+    @classmethod
+    def mark_outdated_groups(cls, gr_tree: 'GrTree'):
+        """It searches upstream node groups till main trees which should be
+        updated to update given group tree"""
+        nodes_to_update = defaultdict(set)
+        for gr_node in trees_graph.walk(gr_tree):
+            nodes_to_update[gr_node.id_data].add(gr_node)
+
+        for tree, nodes in nodes_to_update.items():
+            us.UpdateTree.get(tree).add_outdated(nodes)
+            if tree.bl_idname == BlTrees.MAIN_TREE_ID and tree.sv_process:
+                ts.tasks.add(ts.Task(tree,
+                                     us.UpdateTree.main_update(tree),
+                                     is_scene_update=False))
+
     def __init__(self, tree):
         """Should node be used directly but wia the get class method
         :update_path: list of group nodes via which update trigger was executed
@@ -113,13 +133,15 @@ class GroupUpdateTree(us.UpdateTree):
         super().__init__(tree)
         # update UI for the tree opened under the given path
         self.update_path: list['GrNode'] = []
+        self.input_connected_nodes: set[Node] = self._get_input_connected()
 
         self._exec_path: list['GrNode'] = []
 
         # if not presented all output nodes will be updated
         self._viewer_nodes: set[Node] = set()  # not presented in main trees yet
 
-        self._copy_attrs.extend(['_exec_path', 'update_path', '_viewer_nodes'])
+        self._copy_attrs.extend([
+            '_exec_path', 'update_path', '_viewer_nodes', 'input_connected_nodes'])
 
     def _walk(self) -> tuple[Node, list[NodeSocket]]:
         """Yields nodes in order of their proper execution. It starts yielding
@@ -149,11 +171,32 @@ class GroupUpdateTree(us.UpdateTree):
             else:
                 node[us.UPDATE_KEY] = False
 
+    def _get_input_connected(self):
+        if not (group_input := self._active_input()):
+            return set()
+        return self.nodes_from([group_input])
+
+    def _active_input(self) -> Optional[Node]:
+        for node in reversed(self._from_nodes.keys()):
+            if node.bl_idname == 'NodeGroupInput':
+                return node
+
+    def __viewer_nodes(self) -> list['SvNode']:
+        active_output = None
+        viewers = []
+        for node in reversed(self._from_nodes.keys()):
+            if node.bl_idname == 'NodeGroupOutput' and active_output is None:
+                active_output = node
+            elif node.bl_idname == 'SvStethoscopeNodeMK2':
+                viewers.append(node)
+        if active_output:
+            viewers.append(active_output)
+        return viewers
+
 
 class TreesGraph:
     """It keeps relationships between main trees and group trees."""
-    _group_main: dict['GrTree', set['SvTree']]
-    _entry_nodes: dict['SvTree', dict['GrTree', set['SvNode']]]
+    _group_nodes: dict['GrTree', set['GrNode']]
 
     def __init__(self):
         """:is_updated: the graph can be marked as outdated in this case it will
@@ -164,37 +207,47 @@ class TreesGraph:
         tree should be called to update a group tree"""
         self.is_updated = False
 
-        self._group_main = defaultdict(set)
-        self._entry_nodes = defaultdict(lambda: defaultdict(set))
+        self._group_nodes = defaultdict(set)
 
-    @overload
-    def __getitem__(self, item: 'GrTree') -> set['SvTree']: ...
-    @overload
-    def __getitem__(self, item: tuple['SvTree', 'GrTree']) -> set['SvNode']: ...
-
-    def __getitem__(self, item):
+    def __getitem__(self, gr_tree: 'GrTree') -> set['GrNode']:
         """It either returns related to given group tree Main tree or collection
         of group nodes to update given group tree"""
         if not self.is_updated:
             self._update()
-        if isinstance(item, tuple):
-            sv_tree, gr_tree = item
-            return self._entry_nodes[sv_tree][gr_tree]
+        return self._group_nodes[gr_tree]
+
+    def walk(self, gr_tree: 'GrTree') -> Iterator['GrNode']:
+        """It expects a grop tree which was changed and returns iterator of
+        all group nodes which should be updated"""
+        if not self.is_updated:
+            self._update()
+        visited = set()
+        to_visit = set(self._group_nodes[gr_tree])
+        for _ in range(1000):
+            if not to_visit:
+                break
+            next_node = to_visit.pop()
+            if next_node in visited:
+                continue
+            yield next_node
+            visited.add(next_node)
+
+            # scan group nodes which also should be updated in trees above
+            if (under_tree := next_node.id_data) in self._group_nodes:  # if not it is a main tree
+                to_visit.update(self._group_nodes[under_tree])
         else:
-            return self._group_main[item]
+            sv_logger.debug('Infinite walk detected')
 
     def _update(self):
         """Calculate relationships between group trees and main trees"""
-        self._group_main.clear()
-        self._entry_nodes.clear()
+        self._group_nodes.clear()
         for tree in BlTrees().sv_main_trees:
             for gr_tree, gr_node in self._walk(tree):
-                self._group_main[gr_tree].add(tree)
-                self._entry_nodes[tree][gr_tree].add(gr_node)
+                self._group_nodes[gr_tree].add(gr_node)
         self.is_updated = True
 
     @staticmethod
-    def _walk(from_: NodeTree) -> Iterator[tuple[NodeTree, 'SvNode']]:
+    def _walk(from_: NodeTree) -> Iterator[tuple[NodeTree, 'GrNode']]:
         """Iterate over all nested node trees"""
         current_entry_node = None
 
@@ -202,8 +255,7 @@ class TreesGraph:
             nonlocal current_entry_node
             for node in _tree.nodes:
                 if node.bl_idname == 'SvGroupTreeNode' and node.node_tree:
-                    if _tree.bl_idname == 'SverchCustomTreeType':
-                        current_entry_node = node
+                    current_entry_node = node
                     yield node.node_tree
 
         walker = recursion_dfs_walk([from_], next_)
@@ -212,26 +264,16 @@ class TreesGraph:
             yield tree, current_entry_node
 
     def __repr__(self):
-        def group_main_str():
-            for gr_tree, trees in self._group_main.items():
+        def group_nodes_str():
+            for gr_tree, gr_nodes in self._group_nodes.items():
                 yield f"   {gr_tree.name}:"
-                for tree in trees:
-                    yield f"      {tree.name}"
+                for gr_node in gr_nodes:
+                    yield f"      {gr_node.name}"
 
-        def entry_nodes_str():
-            for tree, groups in self._entry_nodes.items():
-                yield f"   {tree.name}:"
-                for group, nodes in groups.items():
-                    yield f"      {group.name}:"
-                    for node in nodes:
-                        yield f"         {node.name}"
-
-        gm = "\n".join(group_main_str())
-        en = "\n".join(entry_nodes_str())
-        str_ = f"<TreesGraph trees:\n" \
-               f"{gm}\n" \
-               f"entry nodes:\n" \
-               f"{en}>"
+        gn = "\n".join(group_nodes_str())
+        str_ = f"<TreesGraph:\n" \
+               f"{gn}\n" \
+               ">"
         return str_
 
 
