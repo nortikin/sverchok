@@ -667,7 +667,7 @@ def diameter(vertices, axis):
     if axis is None:
         distances = [(mathutils.Vector(v1) - mathutils.Vector(v2)).length for v1 in vertices for v2 in vertices]
         return max(distances)
-    elif isinstance(axis, tuple) or isinstance(axis, Vector):
+    elif isinstance(axis, tuple) or isinstance(axis, Vector) or isinstance(axis, list):
         axis = mathutils.Vector(axis).normalized()
         ds = [mathutils.Vector(vertex).dot(axis) for vertex in vertices]
         M = max(ds)
