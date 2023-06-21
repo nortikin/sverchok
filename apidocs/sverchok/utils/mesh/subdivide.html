@@ -329,7 +329,7 @@ def subdiv_mesh_to_quads_inner(
         if do_smooth_f:
             verts_out = smooth_verts(verts_out, new_edges, actual_smooth_f)
     else:
-        new_edges = []
+        new_edges = np.array([], np.int32) #[]
 
     if it &lt; 2:
         return verts_out, new_edges, pols_out, vert_map_out, vert_data_out, face_data_out
@@ -663,7 +663,7 @@ def subdiv_mesh_to_quads_inner(
         if do_smooth_f:
             verts_out = smooth_verts(verts_out, new_edges, actual_smooth_f)
     else:
-        new_edges = []
+        new_edges = np.array([], np.int32) #[]
 
     if it &lt; 2:
         return verts_out, new_edges, pols_out, vert_map_out, vert_data_out, face_data_out
