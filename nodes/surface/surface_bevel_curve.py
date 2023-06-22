@@ -29,12 +29,12 @@ class SvBendCurveSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
     bl_icon = 'MOD_CURVE'
 
     algorithms = [
-            (SvBendAlongCurveField.HOUSEHOLDER, "Householder", "Use Householder reflection matrix", 1),
-            (SvBendAlongCurveField.TRACK, "Tracking", "Use quaternion-based tracking", 2),
-            (SvBendAlongCurveField.DIFF, "Rotation difference", "Use rotational difference calculation", 3),
-            (SvBendAlongCurveField.FRENET, "Frenet", "Use Frenet frames", 4),
-            (SvBendAlongCurveField.ZERO, "Zero-Twist", "Use zero-twist frames", 5),
-            (SvBendAlongCurveField.TRACK_NORMAL, "Track Normal", "Track normal", 6)
+            (SvBendAlongCurveField.HOUSEHOLDER, "Householder", "Use Householder reflection matrix.\n“Householder”, “Tracking” and “Rotation difference” algorithms are “curve-agnostic”, they work independently of curve by itself, depending only on tangent direction. They give “good enough” result (at least, without errors or sudden flips) for all extrusion curves, but may make twisted surfaces in some special cases", 1),
+            (SvBendAlongCurveField.TRACK, "Tracking", "Use quaternion-based tracking.\n“Householder”, “Tracking” and “Rotation difference” algorithms are “curve-agnostic”, they work independently of curve by itself, depending only on tangent direction. They give “good enough” result (at least, without errors or sudden flips) for all extrusion curves, but may make twisted surfaces in some special cases", 2),
+            (SvBendAlongCurveField.DIFF, "Rotation difference", "Use rotational difference calculation.\n“Householder”, “Tracking” and “Rotation difference” algorithms are “curve-agnostic”, they work independently of curve by itself, depending only on tangent direction. They give “good enough” result (at least, without errors or sudden flips) for all extrusion curves, but may make twisted surfaces in some special cases", 3),
+            (SvBendAlongCurveField.FRENET, "Frenet", "Use Frenet frames.\n“Frenet” or “Zero-Twist” algorithms give very good results in case when extrusion curve has non-zero curvature in all points. If the extrusion curve has zero curvature points, or, even worse, it has straight segments, these algorithms will either make “flipping” surface, or give an error", 4),
+            (SvBendAlongCurveField.ZERO, "Zero-Twist", "Use zero-twist frames.\n“Frenet” or “Zero-Twist” algorithms give very good results in case when extrusion curve has non-zero curvature in all points. If the extrusion curve has zero curvature points, or, even worse, it has straight segments, these algorithms will either make “flipping” surface, or give an error", 5),
+            (SvBendAlongCurveField.TRACK_NORMAL, "Track Normal", "Track normal\n“Track normal” algorithm is supposed to give good results without twisting for all extrusion curves. It will give better results with higher values of “resolution” parameter, but that may be slow", 6)
         ]
 
     def update_sockets(self, context):

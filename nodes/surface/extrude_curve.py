@@ -26,12 +26,12 @@ class SvExtrudeCurveCurveSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
 
     modes = [
         ('NONE', "None", "No rotation", 0),
-        (FRENET, "Frenet", "Frenet / native rotation", 1),
-        (ZERO, "Zero-twist", "Zero-twist rotation", 2),
-        (HOUSEHOLDER, "Householder", "Use Householder reflection matrix", 3),
-        (TRACK, "Tracking", "Use quaternion-based tracking", 4),
-        (DIFF, "Rotation difference", "Use rotational difference calculation", 5),
-        ('NORMALTRACK', "Track normal", "Try to maintain constant normal direction by tracking along curve", 6),
+        (FRENET, "Frenet", "Frenet / native rotation.\nRotate the profile curve according to Frenet frame of the extrusion curve. \n“Frenet” or “Zero-Twist” algorithms give very good results in case when extrusion curve has non-zero curvature in all points. If the extrusion curve has zero curvature points, or, even worse, it has straight segments, these algorithms will either make “flipping” surface, or give an error", 1),
+        (ZERO, "Zero-twist", "Zero-twist rotation.\nRotate the profile curve according to “zero-twist” frame of the extrusion curve.\n“Frenet” or “Zero-Twist” algorithms give very good results in case when extrusion curve has non-zero curvature in all points. If the extrusion curve has zero curvature points, or, even worse, it has straight segments, these algorithms will either make “flipping” surface, or give an error", 2),
+        (HOUSEHOLDER, "Householder", "Use Householder reflection matrix.\ncalculate rotation by using Householder’s reflection matrix.“Householder”, “Tracking” and “Rotation difference” algorithms are “curve-agnostic”, they work independently of curve by itself, depending only on tangent direction. They give “good enough” result (at least, without errors or sudden flips) for all extrusion curves, but may make twisted surfaces in some special cases", 3),
+        (TRACK, "Tracking", "Use quaternion-based tracking.\nUse the same algorithm as in Blender’s “TrackTo” kinematic constraint. This node currently always uses X as the Up axis.\n“Householder”, “Tracking” and “Rotation difference” algorithms are “curve-agnostic”, they work independently of curve by itself, depending only on tangent direction. They give “good enough” result (at least, without errors or sudden flips) for all extrusion curves, but may make twisted surfaces in some special cases", 4),
+        (DIFF, "Rotation difference", "Use rotational difference calculation.\n“Householder”, “Tracking” and “Rotation difference” algorithms are “curve-agnostic”, they work independently of curve by itself, depending only on tangent direction. They give “good enough” result (at least, without errors or sudden flips) for all extrusion curves, but may make twisted surfaces in some special cases", 5),
+        ('NORMALTRACK', "Track normal", "Try to maintain constant normal direction by tracking along curve.\ncalculate rotation as rotation difference between two vectors.\n“Track normal” algorithm is supposed to give good results without twisting for all extrusion curves. It will give better results with higher values of “resolution” parameter, but that may be slow.", 6),
         (NORMAL_DIR, "Specified plane", "Use plane defined by normal vector in Normal input; i.e., offset in direction perpendicular to Normal input", 7)
     ]
 
