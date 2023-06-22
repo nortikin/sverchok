@@ -23,7 +23,7 @@ import sverchok.core.group_update_system as gus
 from sverchok.core.update_system import ERROR_KEY
 from sverchok.utils.tree_structure import Tree
 from sverchok.utils.sv_node_utils import recursive_framed_location_finder
-from sverchok.utils.handle_blender_data import BlTrees
+from sverchok.utils.handle_blender_data import BlTrees, BlSockets
 from sverchok.node_tree import SvNodeTreeCommon, SverchCustomTreeNode
 
 
@@ -439,6 +439,17 @@ class SvGroupTreeNode(SverchCustomTreeNode, bpy.types.NodeCustomGroup):
                 return node
 
     def sv_update(self):
+        """This method is also called when interface of the subtree is changed"""
+        def copy_socket_names(from_sockets, to_sockets):
+            for from_s, to_s in zip(from_sockets, to_sockets):
+                to_s.name = from_s.name
+
+        if bpy.app.version >= (3, 5):  # sockets should be generated manually
+            BlSockets(self.inputs).copy_sockets(self.node_tree.inputs)
+            copy_socket_names(self.node_tree.inputs, self.inputs)
+            BlSockets(self.outputs).copy_sockets(self.node_tree.outputs)
+            copy_socket_names(self.node_tree.outputs, self.outputs)
+
         # this code should work only first time a socket was added
         if self.node_tree:
             for n_in_s, t_in_s in zip(self.inputs, self.node_tree.inputs):
