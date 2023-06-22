@@ -177,6 +177,7 @@
              
   <section id="surface-from-boundary-curves">
 <h1>Surface from Boundary Curves<a class="headerlink" href="#surface-from-boundary-curves" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/6cc29a29-f4bb-41e2-b507-90a55e08ae21"><img alt="https://github.com/nortikin/sverchok/assets/14288520/6cc29a29-f4bb-41e2-b507-90a55e08ae21" src="https://github.com/nortikin/sverchok/assets/14288520/6cc29a29-f4bb-41e2-b507-90a55e08ae21" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node generates a Surface object from exactly four Curve object, that
@@ -188,33 +189,46 @@ from four edges of that square.</p>
 <li><p>Their directions are orgainized so that the four curves build a cycle (either
 clockwise or counterclockwise).</p></li>
 </ul>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/57833c0e-4bad-47dc-87b7-4d8c78de1220"><img alt="https://github.com/nortikin/sverchok/assets/14288520/57833c0e-4bad-47dc-87b7-4d8c78de1220" src="https://github.com/nortikin/sverchok/assets/14288520/57833c0e-4bad-47dc-87b7-4d8c78de1220" /></a>
 <p>That is, the second curve must begin at the point where the first curve ends;
 and the third curve must begin at the point where the second curve ends; and so
 on.</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/b7c01c67-6639-4a14-8810-51a0ed6aec76"><img alt="https://github.com/nortikin/sverchok/assets/14288520/b7c01c67-6639-4a14-8810-51a0ed6aec76" src="https://github.com/nortikin/sverchok/assets/14288520/b7c01c67-6639-4a14-8810-51a0ed6aec76" /></a>
 <p>It is also possible to omit the fourth curve, thus to build a surface from
 three boundary curves. If the third curve does not end in the same point where
 the first curve started, the node will use a straight line segment as fourth
 curve.</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/b042b7ff-04eb-4aba-a1d9-72d52b1a8c88"><img alt="https://github.com/nortikin/sverchok/assets/14288520/b042b7ff-04eb-4aba-a1d9-72d52b1a8c88" src="https://github.com/nortikin/sverchok/assets/14288520/b042b7ff-04eb-4aba-a1d9-72d52b1a8c88" /></a>
 <p>The surface is calculated as a Coons patch, see <a class="reference external" href="https://en.wikipedia.org/wiki/Coons_patch">https://en.wikipedia.org/wiki/Coons_patch</a>.</p>
 <p>When all provided curves are NURBS or NURBS-like, then the node will try to
 output NURBS surface. The sufficient requirement for this is that opposite
 curves have equal degree. If it is not possible to make a NURBS surface, the
 node will create a generic Coons surface.</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/e85b9590-a592-4cdc-b0d7-7be857be2ded"><img alt="https://github.com/nortikin/sverchok/assets/14288520/e85b9590-a592-4cdc-b0d7-7be857be2ded" src="https://github.com/nortikin/sverchok/assets/14288520/e85b9590-a592-4cdc-b0d7-7be857be2ded" /></a>
 <p>Surface domain: from 0 to 1 in both directions.</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/f2bf30dd-ca83-485a-bdc1-3521e1426d9b"><img alt="https://github.com/nortikin/sverchok/assets/14288520/f2bf30dd-ca83-485a-bdc1-3521e1426d9b" src="https://github.com/nortikin/sverchok/assets/14288520/f2bf30dd-ca83-485a-bdc1-3521e1426d9b" /></a>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
-<ul class="simple">
+<ul>
 <li><p><strong>Curves</strong>. The list of curves to build a surface form. This input can accept
 data with nesting level of 1 or 2 (list of curves or list of lists of
 curves). Each list of curves must have length of 3 or 4. This input is available
-and mandatory only if <strong>Input</strong> parameter is set to <strong>List of Curves</strong>.</p></li>
+and mandatory only if <strong>Input</strong> parameter is set to <strong>List of Curves</strong>.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/c610ba43-0628-48da-b1d1-f84831fb1509"><img alt="https://github.com/nortikin/sverchok/assets/14288520/c610ba43-0628-48da-b1d1-f84831fb1509" src="https://github.com/nortikin/sverchok/assets/14288520/c610ba43-0628-48da-b1d1-f84831fb1509" /></a>
+</div></blockquote>
+</li>
 <li><p><strong>Curve1</strong>, <strong>Curve2</strong>, <strong>Curve3</strong>, <strong>Curve4</strong>. Curves to build surface from.
 These inputs can accept data with nesting level 1 only (list of curves).
 These inputs are available only if <strong>Input</strong> parameter is set
 to <strong>4 Curves</strong>. Inputs <strong>Curve1</strong>, <strong>Curve2</strong> and <strong>Curve3</strong> are mandatory.
-<strong>Curve4</strong> input is optional.</p></li>
+<strong>Curve4</strong> input is optional.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/318f24d4-03eb-4fb7-a3a6-496066b2d648"><img alt="https://github.com/nortikin/sverchok/assets/14288520/318f24d4-03eb-4fb7-a3a6-496066b2d648" src="https://github.com/nortikin/sverchok/assets/14288520/318f24d4-03eb-4fb7-a3a6-496066b2d648" /></a>
+</div></blockquote>
+</li>
 </ul>
 </section>
 <section id="parameters">
@@ -227,6 +241,9 @@ to <strong>4 Curves</strong>. Inputs <strong>Curve1</strong>, <strong>Curve2</st
 <li><p><strong>Separate inputs</strong>. Each curve is provided in separate input <strong>Curve1</strong> - <strong>Curve4</strong>.</p></li>
 </ul>
 <p>The default value is <strong>List of Curves</strong>.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/468bf917-6305-4af5-a855-05cc3be60c55"><img alt="https://github.com/nortikin/sverchok/assets/14288520/468bf917-6305-4af5-a855-05cc3be60c55" src="https://github.com/nortikin/sverchok/assets/14288520/468bf917-6305-4af5-a855-05cc3be60c55" /></a>
+</div></blockquote>
 </li>
 <li><p><strong>Check coincidence</strong>. If enabled, then the node will check that the end
 points of curves being used do actually coincide (within threshold).
@@ -238,7 +255,11 @@ ends of curves do not coincide, the generated surface may be weird.</p></li>
 <li><p><strong>Max distance</strong>. Maximum distance between end points of the curves, which is
 allowable to decide that they actually coincide. The default value is 0.001.
 This parameter is only available if <strong>Check coincidence</strong> parameter is
-enabled.</p></li>
+enabled.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/ff3a1087-669e-4435-bcdb-f8ef603ee6d2"><img alt="https://github.com/nortikin/sverchok/assets/14288520/ff3a1087-669e-4435-bcdb-f8ef603ee6d2" src="https://github.com/nortikin/sverchok/assets/14288520/ff3a1087-669e-4435-bcdb-f8ef603ee6d2" /></a>
+</div></blockquote>
+</li>
 <li><p><strong>NURBS option</strong>. This defines whether the node will generate a NURBS surface
 or a generic Surface object. The available options are:</p>
 <blockquote>
@@ -252,6 +273,9 @@ NURBS-like, or if it is not possible to generate a NURBS surface for some
 another reason, the node will create a generic Surface object.</p></li>
 </ul>
 <p>The default option is <strong>NURBS if possible</strong>.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/555a570e-eb2a-40e9-8eac-b625b28e840e"><img alt="https://github.com/nortikin/sverchok/assets/14288520/555a570e-eb2a-40e9-8eac-b625b28e840e" src="https://github.com/nortikin/sverchok/assets/14288520/555a570e-eb2a-40e9-8eac-b625b28e840e" /></a>
+</div></blockquote>
 </div></blockquote>
 </li>
 </ul>
@@ -266,18 +290,55 @@ another reason, the node will create a generic Surface object.</p></li>
 <section id="examples-of-usage">
 <h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>Build four curves and generate a Coons patch from them:</p>
-<img alt="https://user-images.githubusercontent.com/284644/82479763-3f1c4c80-9aec-11ea-9a60-f01f0f9e1fa5.png" src="https://user-images.githubusercontent.com/284644/82479763-3f1c4c80-9aec-11ea-9a60-f01f0f9e1fa5.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/82479763-3f1c4c80-9aec-11ea-9a60-f01f0f9e1fa5.png"><img alt="https://user-images.githubusercontent.com/284644/82479763-3f1c4c80-9aec-11ea-9a60-f01f0f9e1fa5.png" src="https://user-images.githubusercontent.com/284644/82479763-3f1c4c80-9aec-11ea-9a60-f01f0f9e1fa5.png" /></a>
+<ul class="simple">
+<li><p>Curves-&gt; <a class="reference internal" href="../curve/cubic_spline.html"><span class="doc">Cubic Spline</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="evaluate_surface.html"><span class="doc">Evaluate Surface</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Scene-&gt; <a class="reference internal" href="../scene/objects_in_lite.html"><span class="doc">Objects In Lite</span></a></p></li>
+</ul>
 <p>Similar example with “filleted polylines” as curves instead of cubic splines:</p>
-<img alt="https://user-images.githubusercontent.com/284644/82479766-404d7980-9aec-11ea-919b-50616556b5d6.png" src="https://user-images.githubusercontent.com/284644/82479766-404d7980-9aec-11ea-919b-50616556b5d6.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/82479766-404d7980-9aec-11ea-919b-50616556b5d6.png"><img alt="https://user-images.githubusercontent.com/284644/82479766-404d7980-9aec-11ea-919b-50616556b5d6.png" src="https://user-images.githubusercontent.com/284644/82479766-404d7980-9aec-11ea-919b-50616556b5d6.png" /></a>
+<ul class="simple">
+<li><p>Curves-&gt;Curve Primitives-&gt; <a class="reference internal" href="../curve/fillet_polyline.html"><span class="doc">Fillet Polyline</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="evaluate_surface.html"><span class="doc">Evaluate Surface</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Scene-&gt; <a class="reference internal" href="../scene/objects_in_lite.html"><span class="doc">Objects In Lite</span></a></p></li>
+</ul>
 <p>One may use such surface to generate another topology:</p>
-<img alt="https://user-images.githubusercontent.com/284644/82479764-3fb4e300-9aec-11ea-8ddf-e4fce21f57a2.png" src="https://user-images.githubusercontent.com/284644/82479764-3fb4e300-9aec-11ea-8ddf-e4fce21f57a2.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/82479764-3fb4e300-9aec-11ea-8ddf-e4fce21f57a2.png"><img alt="https://user-images.githubusercontent.com/284644/82479764-3fb4e300-9aec-11ea-8ddf-e4fce21f57a2.png" src="https://user-images.githubusercontent.com/284644/82479764-3fb4e300-9aec-11ea-8ddf-e4fce21f57a2.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generators_extended/ring_mk2.html"><span class="doc">Ring</span></a></p></li>
+<li><p>Curves-&gt; <a class="reference internal" href="../curve/cubic_spline.html"><span class="doc">Cubic Spline</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="evaluate_surface.html"><span class="doc">Evaluate Surface</span></a></p></li>
+<li><p>Transform-&gt; <a class="reference internal" href="../transforms/move_mk3.html"><span class="doc">Move</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Scene-&gt; <a class="reference internal" href="../scene/objects_in_lite.html"><span class="doc">Objects In Lite</span></a></p></li>
+</ul>
 <p>It is possible to use the node together with “Split Curve” node to generate a surface from one closed curve:</p>
-<img alt="https://user-images.githubusercontent.com/284644/82479760-3deb1f80-9aec-11ea-8411-22ffd273259f.png" src="https://user-images.githubusercontent.com/284644/82479760-3deb1f80-9aec-11ea-8411-22ffd273259f.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/82479760-3deb1f80-9aec-11ea-8411-22ffd273259f.png"><img alt="https://user-images.githubusercontent.com/284644/82479760-3deb1f80-9aec-11ea-8411-22ffd273259f.png" src="https://user-images.githubusercontent.com/284644/82479760-3deb1f80-9aec-11ea-8411-22ffd273259f.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>
+<li><p>Curves-&gt; <a class="reference internal" href="../curve/split_curve.html"><span class="doc">Split Curve</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="evaluate_surface.html"><span class="doc">Evaluate Surface</span></a></p></li>
+<li><p>Transform-&gt; <a class="reference internal" href="../transforms/noise_displace.html"><span class="doc">Noise Displace</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 <p>It is possible to use only three boundary curves:</p>
-<img alt="https://user-images.githubusercontent.com/284644/210209607-113759b7-9992-4e5d-870d-6aa6dafe0c32.png" src="https://user-images.githubusercontent.com/284644/210209607-113759b7-9992-4e5d-870d-6aa6dafe0c32.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/210209607-113759b7-9992-4e5d-870d-6aa6dafe0c32.png"><img alt="https://user-images.githubusercontent.com/284644/210209607-113759b7-9992-4e5d-870d-6aa6dafe0c32.png" src="https://user-images.githubusercontent.com/284644/210209607-113759b7-9992-4e5d-870d-6aa6dafe0c32.png" /></a>
+<ul class="simple">
+<li><p>Curves-&gt; <a class="reference internal" href="../curve/bezier_spline.html"><span class="doc">Bezier Spline Segment (Curve)</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_in.html"><span class="doc">Vector In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_surface.html"><span class="doc">Viewer Draw Surface</span></a></p></li>
+</ul>
 <p>If the third curve end does not coincide with the beginning of the first curve,
 the node will close the cycle with a straight line segment:</p>
-<img alt="https://user-images.githubusercontent.com/284644/210209611-052c63b6-ef39-4c12-a047-d7d369f3469c.png" src="https://user-images.githubusercontent.com/284644/210209611-052c63b6-ef39-4c12-a047-d7d369f3469c.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/210209611-052c63b6-ef39-4c12-a047-d7d369f3469c.png"><img alt="https://user-images.githubusercontent.com/284644/210209611-052c63b6-ef39-4c12-a047-d7d369f3469c.png" src="https://user-images.githubusercontent.com/284644/210209611-052c63b6-ef39-4c12-a047-d7d369f3469c.png" /></a>
+<ul class="simple">
+<li><p>Curves-&gt; <a class="reference internal" href="../curve/bezier_spline.html"><span class="doc">Bezier Spline Segment (Curve)</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_in.html"><span class="doc">Vector In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_surface.html"><span class="doc">Viewer Draw Surface</span></a></p></li>
+</ul>
 </section>
 </section>
 

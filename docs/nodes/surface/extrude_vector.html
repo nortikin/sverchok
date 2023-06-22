@@ -176,12 +176,21 @@
              
   <section id="extrude-curve-along-vector">
 <h1>Extrude Curve Along Vector<a class="headerlink" href="#extrude-curve-along-vector" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/22dcccc0-24d3-4e74-997f-fc5e5b2bcdef"><img alt="https://github.com/nortikin/sverchok/assets/14288520/22dcccc0-24d3-4e74-997f-fc5e5b2bcdef" src="https://github.com/nortikin/sverchok/assets/14288520/22dcccc0-24d3-4e74-997f-fc5e5b2bcdef" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node generates a Surface by extruding a Curve (called “profile”) along some vector.</p>
 <p>Surface domain: along U direction - the same as of profile curve; along V
 direction - from 0 to 1. V = 0 corresponds to the initial position of profile
 curve.</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/89208607-97fd-4391-849e-6a1e3ae8c543"><img alt="https://github.com/nortikin/sverchok/assets/14288520/89208607-97fd-4391-849e-6a1e3ae8c543" src="https://github.com/nortikin/sverchok/assets/14288520/89208607-97fd-4391-849e-6a1e3ae8c543" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>
+<li><p>Curves-&gt;Curve Primitives-&gt; <a class="reference internal" href="../curve/fillet_polyline.html"><span class="doc">Fillet Polyline</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_polar_in.html"><span class="doc">Vector Polar Input</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="evaluate_surface.html"><span class="doc">Evaluate Surface</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
@@ -201,7 +210,13 @@ curve.</p>
 <section id="example-of-usage">
 <h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>Extrude some cubic spline along a vector:</p>
-<img alt="https://user-images.githubusercontent.com/284644/79358827-2ce24800-7f5b-11ea-91ec-a5df4762e610.png" src="https://user-images.githubusercontent.com/284644/79358827-2ce24800-7f5b-11ea-91ec-a5df4762e610.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/79358827-2ce24800-7f5b-11ea-91ec-a5df4762e610.png"><img alt="https://user-images.githubusercontent.com/284644/79358827-2ce24800-7f5b-11ea-91ec-a5df4762e610.png" src="https://user-images.githubusercontent.com/284644/79358827-2ce24800-7f5b-11ea-91ec-a5df4762e610.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>
+<li><p>Curves-&gt; <a class="reference internal" href="../curve/cubic_spline.html"><span class="doc">Cubic Spline</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="evaluate_surface.html"><span class="doc">Evaluate Surface</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 </section>
 </section>
 

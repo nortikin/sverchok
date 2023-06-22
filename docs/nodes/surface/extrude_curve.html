@@ -177,12 +177,14 @@
              
   <section id="extrude-curve-along-curve">
 <h1>Extrude Curve Along Curve<a class="headerlink" href="#extrude-curve-along-curve" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/ed067f3d-ab41-472f-9091-55ff974151ae"><img alt="https://github.com/nortikin/sverchok/assets/14288520/ed067f3d-ab41-472f-9091-55ff974151ae" src="https://github.com/nortikin/sverchok/assets/14288520/ed067f3d-ab41-472f-9091-55ff974151ae" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node generates a Surface object by extruding one Curve (called “profile”)
 along another Curve (called “Extrusion”).</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/cfe0ca7a-6f3b-4ea1-9600-64eb1e4e1ae2"><img alt="https://github.com/nortikin/sverchok/assets/14288520/cfe0ca7a-6f3b-4ea1-9600-64eb1e4e1ae2" src="https://github.com/nortikin/sverchok/assets/14288520/cfe0ca7a-6f3b-4ea1-9600-64eb1e4e1ae2" /></a>
 <p>In case your Profile curve is just a circle with center at global origin, you
-may wish to use simpler “Pipe (Surface)” node.</p>
+may wish to use simpler “Pipe (Surface)” node. <strong>Surfaces</strong>-&gt; <a class="reference internal" href="pipe.html"><span class="doc">Pipe Surface Along Curve</span></a></p>
 <p>It is supposed that the profile curve is positioned so that it’s “logical
 center” (i.e., the point, which is to be moved along the extrusion curve) is
 located at the global origin <cite>(0, 0, 0)</cite>.</p>
@@ -192,19 +194,31 @@ look more naturally.</p>
 simplest cases, all of them will give very similar results. In more complex
 cases, results will be very different. Different algorithms give best results
 in different cases:</p>
-<ul class="simple">
+<ul>
 <li><p>“Frenet” or “Zero-Twist” algorithms give very good results in case when
 extrusion curve has non-zero curvature in all points. If the extrusion curve
 has zero curvature points, or, even worse, it has straight segments, these
-algorithms will either make “flipping” surface, or give an error.</p></li>
+algorithms will either make “flipping” surface, or give an error.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/d8f864f9-bbf2-45c7-8aab-093fca67a319"><img alt="https://github.com/nortikin/sverchok/assets/14288520/d8f864f9-bbf2-45c7-8aab-093fca67a319" src="https://github.com/nortikin/sverchok/assets/14288520/d8f864f9-bbf2-45c7-8aab-093fca67a319" /></a>
+</div></blockquote>
+</li>
 <li><p>“Householder”, “Tracking” and “Rotation difference” algorithms are
 “curve-agnostic”, they work independently of curve by itself, depending only
 on tangent direction. They give “good enough” result (at least, without
 errors or sudden flips) for all extrusion curves, but may make twisted
-surfaces in some special cases.</p></li>
+surfaces in some special cases.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/bd70222a-02a6-4313-a56c-261a16246091"><img alt="https://github.com/nortikin/sverchok/assets/14288520/bd70222a-02a6-4313-a56c-261a16246091" src="https://github.com/nortikin/sverchok/assets/14288520/bd70222a-02a6-4313-a56c-261a16246091" /></a>
+</div></blockquote>
+</li>
 <li><p>“Track normal” algorithm is supposed to give good results without twisting
 for all extrusion curves. It will give better results with higher values of
-“resolution” parameter, but that may be slow.</p></li>
+“resolution” parameter, but that may be slow.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/402eec26-871c-4ad1-8242-4fc7001c04ea"><img alt="https://github.com/nortikin/sverchok/assets/14288520/402eec26-871c-4ad1-8242-4fc7001c04ea" src="https://github.com/nortikin/sverchok/assets/14288520/402eec26-871c-4ad1-8242-4fc7001c04ea" /></a>
+</div></blockquote>
+</li>
 </ul>
 <p>Surface domain: Along U direction - the same as of “profile” curve; along V
 direction - the same as of “extrusion” curve.</p>
@@ -228,17 +242,35 @@ normal</strong>.</p></li>
 <p>This node has the following parameters:</p>
 <ul>
 <li><p><strong>Algorithm</strong>. Profile curve rotation calculation algorithm. The available options are:</p>
-<ul class="simple">
-<li><p><strong>None</strong>. Do not rotate the profile curve, just extrude it as it is. This mode is the default one.</p></li>
-<li><p><strong>Frenet</strong>. Rotate the profile curve according to Frenet frame of the extrusion curve.</p></li>
-<li><p><strong>Zero-Twist</strong>. Rotate the profile curve according to “zero-twist” frame of the extrusion curve.</p></li>
+<ul>
+<li><p><strong>None</strong>. Do not rotate the profile curve, just extrude it as it is. This mode is the default one.</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/1763bade-f569-4727-9c9c-033757411ada"><img alt="https://github.com/nortikin/sverchok/assets/14288520/1763bade-f569-4727-9c9c-033757411ada" src="https://github.com/nortikin/sverchok/assets/14288520/1763bade-f569-4727-9c9c-033757411ada" /></a>
+</li>
+<li><p><strong>Frenet</strong>. Rotate the profile curve according to Frenet frame of the extrusion curve.</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/81a0de4a-168a-49d5-a32a-5ca4e45baeee"><img alt="https://github.com/nortikin/sverchok/assets/14288520/81a0de4a-168a-49d5-a32a-5ca4e45baeee" src="https://github.com/nortikin/sverchok/assets/14288520/81a0de4a-168a-49d5-a32a-5ca4e45baeee" /></a>
+</li>
+<li><p><strong>Zero-Twist</strong>. Rotate the profile curve according to “zero-twist” frame of the extrusion curve.</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/3447e45a-f174-45cb-a540-b7d1875ffb19"><img alt="https://github.com/nortikin/sverchok/assets/14288520/3447e45a-f174-45cb-a540-b7d1875ffb19" src="https://github.com/nortikin/sverchok/assets/14288520/3447e45a-f174-45cb-a540-b7d1875ffb19" /></a>
+</li>
 <li><p><strong>Householder</strong>: calculate rotation by using Householder’s reflection matrix
-(see <a class="reference external" href="https://en.wikipedia.org/wiki/QR_decomposition#Using_Householder_reflections">Wikipedia</a> article).</p></li>
+(see <a class="reference external" href="https://en.wikipedia.org/wiki/QR_decomposition#Using_Householder_reflections">Wikipedia</a> article).</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/02784b8f-0f16-4d62-8ecd-9f0c496c4f91"><img alt="https://github.com/nortikin/sverchok/assets/14288520/02784b8f-0f16-4d62-8ecd-9f0c496c4f91" src="https://github.com/nortikin/sverchok/assets/14288520/02784b8f-0f16-4d62-8ecd-9f0c496c4f91" /></a>
+</li>
 <li><p><strong>Tracking</strong>: use the same algorithm as in Blender’s “TrackTo” kinematic
-constraint. This node currently always uses X as the Up axis.</p></li>
+constraint. This node currently always uses X as the Up axis.</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/91f7faa4-7219-4beb-8387-80af68f0360e"><img alt="https://github.com/nortikin/sverchok/assets/14288520/91f7faa4-7219-4beb-8387-80af68f0360e" src="https://github.com/nortikin/sverchok/assets/14288520/91f7faa4-7219-4beb-8387-80af68f0360e" /></a>
+</li>
 <li><p><strong>Rotation difference</strong>: calculate rotation as rotation difference between two
-vectors.</p></li>
-<li><p><strong>Track normal</strong>: try to maintain constant normal direction by tracking it along the curve.</p></li>
+vectors.</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/e2fcd8f4-775a-43b3-9372-ea363a203bd7"><img alt="https://github.com/nortikin/sverchok/assets/14288520/e2fcd8f4-775a-43b3-9372-ea363a203bd7" src="https://github.com/nortikin/sverchok/assets/14288520/e2fcd8f4-775a-43b3-9372-ea363a203bd7" /></a>
+</li>
+<li><p><strong>Track normal</strong>: try to maintain constant normal direction by tracking it along the curve.</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/b651eae4-23e8-41cb-a1c2-5c8f0dc77595"><img alt="https://github.com/nortikin/sverchok/assets/14288520/b651eae4-23e8-41cb-a1c2-5c8f0dc77595" src="https://github.com/nortikin/sverchok/assets/14288520/b651eae4-23e8-41cb-a1c2-5c8f0dc77595" /></a>
+</li>
+<li><p><strong>Specified plane</strong>: Use plane defined by normal vector in Normal input; i.e., offset in direction
+perpendicular to Normal input</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/7c651b14-65f7-4549-859b-0bb168122271"><img alt="https://github.com/nortikin/sverchok/assets/14288520/7c651b14-65f7-4549-859b-0bb168122271" src="https://github.com/nortikin/sverchok/assets/14288520/7c651b14-65f7-4549-859b-0bb168122271" /></a>
+</li>
 </ul>
 </li>
 <li><p><strong>Origin</strong>. This parameter defines the position of the resulting surface with
@@ -248,8 +280,16 @@ global origin <cite>(0, 0, 0)</cite>. The available options are:</p>
 <blockquote>
 <div><ul class="simple">
 <li><p><strong>Global origin</strong>. The beginning of the surface will be placed at global origin.</p></li>
+</ul>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/7b616060-5c58-4070-b124-9e78697d0769"><img alt="https://github.com/nortikin/sverchok/assets/14288520/7b616060-5c58-4070-b124-9e78697d0769" src="https://github.com/nortikin/sverchok/assets/14288520/7b616060-5c58-4070-b124-9e78697d0769" /></a>
+</div></blockquote>
+<ul class="simple">
 <li><p><strong>Extrusion origin</strong>. The beginning of the surface will be placed at the beginning of the extrusion curve.</p></li>
 </ul>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/baef4ac2-7e3e-4d95-80e8-71257556238f"><img alt="https://github.com/nortikin/sverchok/assets/14288520/baef4ac2-7e3e-4d95-80e8-71257556238f" src="https://github.com/nortikin/sverchok/assets/14288520/baef4ac2-7e3e-4d95-80e8-71257556238f" /></a>
+</div></blockquote>
 </div></blockquote>
 <p>The default option is <strong>Extrusion origin</strong>.</p>
 </li>
@@ -265,13 +305,46 @@ global origin <cite>(0, 0, 0)</cite>. The available options are:</p>
 <section id="examples-of-usage">
 <h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>“None” algorithm works fine in many simple cases:</p>
-<img alt="https://user-images.githubusercontent.com/284644/79357796-eb04d200-7f59-11ea-8ef1-cb35ebb0083e.png" src="https://user-images.githubusercontent.com/284644/79357796-eb04d200-7f59-11ea-8ef1-cb35ebb0083e.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/79357796-eb04d200-7f59-11ea-8ef1-cb35ebb0083e.png"><img alt="https://user-images.githubusercontent.com/284644/79357796-eb04d200-7f59-11ea-8ef1-cb35ebb0083e.png" src="https://user-images.githubusercontent.com/284644/79357796-eb04d200-7f59-11ea-8ef1-cb35ebb0083e.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/segment.html"><span class="doc">Segment</span></a></p></li>
+<li><p>Curves-&gt;Curve Primitives-&gt; <a class="reference internal" href="../curve/polyline.html"><span class="doc">Polyline</span></a></p></li>
+<li><p>Curves-&gt;Curve Primitives-&gt; <a class="reference internal" href="../curve/fillet_polyline.html"><span class="doc">Fillet Polyline</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="evaluate_surface.html"><span class="doc">Evaluate Surface</span></a></p></li>
+<li><p>Transform-&gt; <a class="reference internal" href="../transforms/randomize.html"><span class="doc">Randomize</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 <p>It becomes not so good if the extrusion curve has some rotations:</p>
-<img alt="https://user-images.githubusercontent.com/284644/79357777-e5a78780-7f59-11ea-8f08-ba309965b67c.png" src="https://user-images.githubusercontent.com/284644/79357777-e5a78780-7f59-11ea-8f08-ba309965b67c.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/79357777-e5a78780-7f59-11ea-8f08-ba309965b67c.png"><img alt="https://user-images.githubusercontent.com/284644/79357777-e5a78780-7f59-11ea-8f08-ba309965b67c.png" src="https://user-images.githubusercontent.com/284644/79357777-e5a78780-7f59-11ea-8f08-ba309965b67c.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/random_vector_mk3.html"><span class="doc">Random Vector</span></a></p></li>
+<li><p>Curves-&gt;Curve Primitives-&gt; <a class="reference internal" href="../curve/polyline.html"><span class="doc">Polyline</span></a></p></li>
+<li><p>Curves-&gt; <a class="reference internal" href="../curve/cubic_spline.html"><span class="doc">Cubic Spline</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="evaluate_surface.html"><span class="doc">Evaluate Surface</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 <p>Similar case with “Frenet” algorithm:</p>
-<img alt="https://user-images.githubusercontent.com/284644/79357785-e809e180-7f59-11ea-976a-a2bc32388ee0.png" src="https://user-images.githubusercontent.com/284644/79357785-e809e180-7f59-11ea-976a-a2bc32388ee0.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/79357785-e809e180-7f59-11ea-976a-a2bc32388ee0.png"><img alt="https://user-images.githubusercontent.com/284644/79357785-e809e180-7f59-11ea-976a-a2bc32388ee0.png" src="https://user-images.githubusercontent.com/284644/79357785-e809e180-7f59-11ea-976a-a2bc32388ee0.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/random_vector_mk3.html"><span class="doc">Random Vector</span></a></p></li>
+<li><p>Curves-&gt;Curve Primitives-&gt; <a class="reference internal" href="../curve/polyline.html"><span class="doc">Polyline</span></a></p></li>
+<li><p>Curves-&gt; <a class="reference internal" href="../curve/cubic_spline.html"><span class="doc">Cubic Spline</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="evaluate_surface.html"><span class="doc">Evaluate Surface</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 <p>The same with “Zero-Twist” algorithm:</p>
-<img alt="https://user-images.githubusercontent.com/284644/79357791-e93b0e80-7f59-11ea-9f8f-e74e1eead4cb.png" src="https://user-images.githubusercontent.com/284644/79357791-e93b0e80-7f59-11ea-9f8f-e74e1eead4cb.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/79357791-e93b0e80-7f59-11ea-9f8f-e74e1eead4cb.png"><img alt="https://user-images.githubusercontent.com/284644/79357791-e93b0e80-7f59-11ea-9f8f-e74e1eead4cb.png" src="https://user-images.githubusercontent.com/284644/79357791-e93b0e80-7f59-11ea-9f8f-e74e1eead4cb.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/random_vector_mk3.html"><span class="doc">Random Vector</span></a></p></li>
+<li><p>Curves-&gt;Curve Primitives-&gt; <a class="reference internal" href="../curve/polyline.html"><span class="doc">Polyline</span></a></p></li>
+<li><p>Curves-&gt; <a class="reference internal" href="../curve/cubic_spline.html"><span class="doc">Cubic Spline</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="evaluate_surface.html"><span class="doc">Evaluate Surface</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 </section>
 </section>
 

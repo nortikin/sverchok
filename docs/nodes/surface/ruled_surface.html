@@ -177,10 +177,12 @@
              
   <section id="ruled-surface">
 <h1>Ruled Surface<a class="headerlink" href="#ruled-surface" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/bd6cfae6-1cdd-4e7f-a756-007da90b9d2d"><img alt="https://github.com/nortikin/sverchok/assets/14288520/bd6cfae6-1cdd-4e7f-a756-007da90b9d2d" src="https://github.com/nortikin/sverchok/assets/14288520/bd6cfae6-1cdd-4e7f-a756-007da90b9d2d" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node generates a Surface as a linear interpolation of two Curve objects.
 Such surface is widely known as a ruled surface, or a linear surface.</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/36c2a604-b6ac-4150-8c2f-114d09769df4"><img alt="https://github.com/nortikin/sverchok/assets/14288520/36c2a604-b6ac-4150-8c2f-114d09769df4" src="https://github.com/nortikin/sverchok/assets/14288520/36c2a604-b6ac-4150-8c2f-114d09769df4" /></a>
 <p>Along U parameter, such surface forms a curve calculated as a linear interpolation of two curves.
 Along V parameter, such surface is always a straight line.</p>
 <p>Surface domain: In U direction - from 0 to 1. In V direction - defined by node inputs, by default from 0 to 1. V = 0 corresponds to the first curve; V = 1 corresponds to the second curve.</p>
@@ -188,17 +190,21 @@ Along V parameter, such surface is always a straight line.</p>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
-<ul class="simple">
+<ul>
 <li><p><strong>Curve1</strong>. The first curve to interpolate. This input is mandatory.</p></li>
 <li><p><strong>Curve2</strong>. The second curve to interpolate. This input is mandatory.</p></li>
 <li><p><strong>VMin</strong>. The minimum value of curve V parameter. The default value is 0.</p></li>
-<li><p><strong>VMax</strong>. The maximum value of curve V parameter. The default value is 1.</p></li>
+<li><p><strong>VMax</strong>. The maximum value of curve V parameter. The default value is 1.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/7727a740-a299-4a11-a8bd-ca504c4fedce"><img alt="https://github.com/nortikin/sverchok/assets/14288520/7727a740-a299-4a11-a8bd-ca504c4fedce" src="https://github.com/nortikin/sverchok/assets/14288520/7727a740-a299-4a11-a8bd-ca504c4fedce" /></a>
+</div></blockquote>
+</li>
 </ul>
 </section>
 <section id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following parameter:</p>
-<ul class="simple">
+<ul>
 <li><p><strong>Native</strong>. This parameter is available in the N panel only. If checked, then
 the node will try to use specific implementation of the ruled surface for
 cases when it is available. For example, if two curves provided are NURBS
@@ -208,7 +214,11 @@ generic algorithm will be used In most cases, the only visible difference is
 that the resulting surface can have different parametrization depending on
 this parameter. Also this parameter can be important if you wish to save the
 resulting surface into some file format that understands NURBS, or for Python
-API usage. Checked by default.</p></li>
+API usage. Checked by default.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/407888a3-296a-4ec0-9e4b-86e7cfe4f59e"><img alt="https://github.com/nortikin/sverchok/assets/14288520/407888a3-296a-4ec0-9e4b-86e7cfe4f59e" src="https://github.com/nortikin/sverchok/assets/14288520/407888a3-296a-4ec0-9e4b-86e7cfe4f59e" /></a>
+</div></blockquote>
+</li>
 </ul>
 </section>
 <section id="outputs">
@@ -221,9 +231,23 @@ API usage. Checked by default.</p></li>
 <section id="examples-of-usage">
 <h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>Generate a linear surface between a triangle and a hexagon:</p>
-<img alt="https://user-images.githubusercontent.com/284644/79353388-6e232980-7f54-11ea-87a8-b08d78ea34ff.png" src="https://user-images.githubusercontent.com/284644/79353388-6e232980-7f54-11ea-87a8-b08d78ea34ff.png" />
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/b3bb010e-617d-4fa6-97b5-dc690bc0f4d3"><img alt="https://github.com/nortikin/sverchok/assets/14288520/b3bb010e-617d-4fa6-97b5-dc690bc0f4d3" src="https://github.com/nortikin/sverchok/assets/14288520/b3bb010e-617d-4fa6-97b5-dc690bc0f4d3" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>
+<li><p>Curves-&gt;Curve Primitives-&gt; <a class="reference internal" href="../curve/polyline.html"><span class="doc">Polyline</span></a></p></li>
+<li><p>Transform-&gt; <a class="reference internal" href="../transforms/move_mk3.html"><span class="doc">Move</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="evaluate_surface.html"><span class="doc">Evaluate Surface</span></a></p></li>
+</ul>
 <p>Generate a linear surface between two cubic splines:</p>
-<img alt="https://user-images.githubusercontent.com/284644/79353383-6cf1fc80-7f54-11ea-855b-ec782edf2c5f.png" src="https://user-images.githubusercontent.com/284644/79353383-6cf1fc80-7f54-11ea-855b-ec782edf2c5f.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/79353383-6cf1fc80-7f54-11ea-855b-ec782edf2c5f.png"><img alt="https://user-images.githubusercontent.com/284644/79353383-6cf1fc80-7f54-11ea-855b-ec782edf2c5f.png" src="https://user-images.githubusercontent.com/284644/79353383-6cf1fc80-7f54-11ea-855b-ec782edf2c5f.png" /></a>
+<ul class="simple">
+<li><p>Curves-&gt; <a class="reference internal" href="../curve/cubic_spline.html"><span class="doc">Cubic Spline</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="evaluate_surface.html"><span class="doc">Evaluate Surface</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vertices_sort.html"><span class="doc">Vector sort</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Scene-&gt; <a class="reference internal" href="../scene/objects_in_lite.html"><span class="doc">Objects In Lite</span></a></p></li>
+</ul>
 </section>
 </section>
 

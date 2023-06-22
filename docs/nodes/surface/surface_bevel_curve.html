@@ -177,12 +177,15 @@
              
   <section id="bevel-a-curve-surface">
 <h1>Bevel a Curve (Surface)<a class="headerlink" href="#bevel-a-curve-surface" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/4b72744d-1cb5-469d-8b67-065004137158"><img alt="https://github.com/nortikin/sverchok/assets/14288520/4b72744d-1cb5-469d-8b67-065004137158" src="https://github.com/nortikin/sverchok/assets/14288520/4b72744d-1cb5-469d-8b67-065004137158" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node provides functionality similar to Blender’s standard “bevel curve”
 <a class="reference external" href="https://docs.blender.org/manual/en/latest/modeling/curves/properties/geometry.html">feature</a>. More precisely, it extrudes one flat curve (called “profile curve”)
 along another curve (path). Scale of “profile curve” may vary along the curve,
 as it is controlled by third curve (called “taper curve”).</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/291ccad3-2815-4d30-86bf-569313a444b0"><img alt="https://github.com/nortikin/sverchok/assets/14288520/291ccad3-2815-4d30-86bf-569313a444b0" src="https://github.com/nortikin/sverchok/assets/14288520/291ccad3-2815-4d30-86bf-569313a444b0" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/077e4f88-c752-437c-9369-0359b1097d51"><img alt="https://github.com/nortikin/sverchok/assets/14288520/077e4f88-c752-437c-9369-0359b1097d51" src="https://github.com/nortikin/sverchok/assets/14288520/077e4f88-c752-437c-9369-0359b1097d51" /></a>
 <p>It is in general not a trivial task to rotate a 3D object along a vector,
 because there are always 2 other axes of object and it is not clear where
 should they be directed to. So, this node supports 3 different algorithms of
@@ -190,19 +193,31 @@ object rotation calculation. In many simple cases, all these algorithms will
 give exactly the same result. But in more complex setups, or in some corner
 cases, results can be very different. So, just try all algorithms and see which
 one fits you better.</p>
-<ul class="simple">
+<ul>
 <li><p>“Frenet” or “Zero-Twist” algorithms give very good results in case when
 extrusion curve has non-zero curvature in all points. If the extrusion curve
 has zero curvature points, or, even worse, it has straight segments, these
-algorithms will either make “flipping” surface, or give an error.</p></li>
+algorithms will either make “flipping” surface, or give an error.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/fcc4873a-88b8-4b93-a42a-b2f08af9b411"><img alt="https://github.com/nortikin/sverchok/assets/14288520/fcc4873a-88b8-4b93-a42a-b2f08af9b411" src="https://github.com/nortikin/sverchok/assets/14288520/fcc4873a-88b8-4b93-a42a-b2f08af9b411" /></a>
+</div></blockquote>
+</li>
 <li><p>“Householder”, “Tracking” and “Rotation difference” algorithms are
 “curve-agnostic”, they work independently of curve by itself, depending only
 on tangent direction. They give “good enough” result (at least, without
 errors or sudden flips) for all extrusion curves, but may make twisted
-surfaces in some special cases.</p></li>
+surfaces in some special cases.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/a8f2555a-27d0-48e7-a25b-299761f3c28d"><img alt="https://github.com/nortikin/sverchok/assets/14288520/a8f2555a-27d0-48e7-a25b-299761f3c28d" src="https://github.com/nortikin/sverchok/assets/14288520/a8f2555a-27d0-48e7-a25b-299761f3c28d" /></a>
+</div></blockquote>
+</li>
 <li><p>“Track normal” algorithm is supposed to give good results without twisting
 for all extrusion curves. It will give better results with higher values of
-“resolution” parameter, but that may be slow.</p></li>
+“resolution” parameter, but that may be slow.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/e6e1746c-c0c3-42e2-94ba-8ce6c858fa25"><img alt="https://github.com/nortikin/sverchok/assets/14288520/e6e1746c-c0c3-42e2-94ba-8ce6c858fa25" src="https://github.com/nortikin/sverchok/assets/14288520/e6e1746c-c0c3-42e2-94ba-8ce6c858fa25" /></a>
+</div></blockquote>
+</li>
 </ul>
 <p><strong>Note 1</strong>: Taper is supposed to be an open Curve, elongated along one of
 coordinate axes (X, Y or Z). That must be the orientation axis, i.e. the axis
@@ -212,18 +227,30 @@ orientation axis will be Z.</p>
 <p>This node can function in several modes:</p>
 <ul>
 <li><p>Generic surface. In this mode, the node can process arbitrary Curve objects,
-and will generate a generic Surface object.</p></li>
+and will generate a generic Surface object.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/654d69cb-84cb-4acf-abba-14ad0c481198"><img alt="https://github.com/nortikin/sverchok/assets/14288520/654d69cb-84cb-4acf-abba-14ad0c481198" src="https://github.com/nortikin/sverchok/assets/14288520/654d69cb-84cb-4acf-abba-14ad0c481198" /></a>
+</div></blockquote>
+</li>
 <li><p>NURBS surface by simple algorithm. In this mode, the node can process only
 NURBS or NURBS-like curves, and will generate a NURBS surface. This algorithm
 generates a minimal amount of control points; so, the generated surface may
 follow the path curve only approximately. On the other hand, this is the
-fastest of NURBS modes of this node.</p></li>
+fastest of NURBS modes of this node.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/5d9c9f79-12e3-4f16-8bba-6df7dc850e7d"><img alt="https://github.com/nortikin/sverchok/assets/14288520/5d9c9f79-12e3-4f16-8bba-6df7dc850e7d" src="https://github.com/nortikin/sverchok/assets/14288520/5d9c9f79-12e3-4f16-8bba-6df7dc850e7d" /></a>
+</div></blockquote>
+</li>
 <li><p>NURBS surface with refinement. In this mode, the node can process only
 NURBS or NURBS-like curves, and will generate a NURBS surface. This algorithm
 first refines taper curve (i.e., adds some number of additional knots in it),
 and then applies the “simple” algorithm. This algorithm produces more control
 points, and that allows it to generate a surface which follows the path and
-taper curves more precisely.</p></li>
+taper curves more precisely.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/92ae010e-e96e-4b3d-b696-53a0d08e4163"><img alt="https://github.com/nortikin/sverchok/assets/14288520/92ae010e-e96e-4b3d-b696-53a0d08e4163" src="https://github.com/nortikin/sverchok/assets/14288520/92ae010e-e96e-4b3d-b696-53a0d08e4163" /></a>
+</div></blockquote>
+</li>
 <li><p>NURBS Gordon surface:</p>
 <blockquote>
 <div><ul class="simple">
@@ -237,11 +264,25 @@ algorithm.</p></li>
 </ul>
 <p>For smooth curves, Gordon algorithm is supposed to be the most precise of
 NURBS modes of this node; but it is also the slowest one.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/ba59f580-e4f3-4bc6-965b-0a840f871c0f"><img alt="https://github.com/nortikin/sverchok/assets/14288520/ba59f580-e4f3-4bc6-965b-0a840f871c0f" src="https://github.com/nortikin/sverchok/assets/14288520/ba59f580-e4f3-4bc6-965b-0a840f871c0f" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>
+<li><p>Curves-&gt; <a class="reference internal" href="../curve/cubic_spline.html"><span class="doc">Cubic Spline</span></a></p></li>
+</ul>
+</div></blockquote>
 <p><strong>Note 2</strong>: Gordon algorithm does not support use of rational curves as either
 profile or taper.</p>
 <p><strong>Note 3</strong>: Gordon algorithm can not produce surfaces with hard edges. If
 you provide it with profile curve which has hard turns (discontinuities of
 curve’s derivative), the output will look weird.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/cd695c32-32d3-4107-b641-78174a5196a6"><img alt="https://github.com/nortikin/sverchok/assets/14288520/cd695c32-32d3-4107-b641-78174a5196a6" src="https://github.com/nortikin/sverchok/assets/14288520/cd695c32-32d3-4107-b641-78174a5196a6" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>
+<li><p>Curves-&gt;Curve Primitives-&gt; <a class="reference internal" href="../curve/polyline.html"><span class="doc">Polyline</span></a></p></li>
+</ul>
+</div></blockquote>
 </div></blockquote>
 </li>
 </ul>
@@ -252,14 +293,18 @@ the surface.</p>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
-<ul class="simple">
+<ul>
 <li><p><strong>Path</strong>. Path curve. This input is mandatory.</p></li>
 <li><p><strong>Profile</strong>. Profile curve. This input is mandatory.</p></li>
 <li><p><strong>Taper</strong>. Taper curve. If this input is not connected, constant taper will
 be used.</p></li>
 <li><p><strong>Resolution</strong>. Path length calculation resolution. This input is available
 only when <strong>Samples distribution</strong> parameter is set to <strong>Curve length</strong>. The
-default value is 50.</p></li>
+default value is 50.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/e67af704-ceb2-4fc7-a243-854e362a0ca8"><img alt="https://github.com/nortikin/sverchok/assets/14288520/e67af704-ceb2-4fc7-a243-854e362a0ca8" src="https://github.com/nortikin/sverchok/assets/14288520/e67af704-ceb2-4fc7-a243-854e362a0ca8" /></a>
+</div></blockquote>
+</li>
 <li><p><strong>ProfileCopies</strong>. This input is available only when <strong>Mode</strong> parameter is
 set to <strong>NURBS</strong>, and <strong>Precision</strong> parameter is set to <strong>Gordon</strong>. Number of
 copies of profile curve to be generated and distributed along the path curve,
@@ -271,7 +316,11 @@ default value is 20.</p></li>
 <li><p><strong>TaperCopies</strong>. This input is available only when <strong>Mode</strong> parameter is
 set to <strong>NURBS</strong>, and <strong>Precision</strong> parameter is set to <strong>Gordon</strong>. Number of
 copies of the taper curve to be rotated and bent along the path curve, in
-order to build a Gordon surface. The default value is 10.</p></li>
+order to build a Gordon surface. The default value is 10.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/7cbbfb25-80e7-458d-ab9a-363116fc3b3d"><img alt="https://github.com/nortikin/sverchok/assets/14288520/7cbbfb25-80e7-458d-ab9a-363116fc3b3d" src="https://github.com/nortikin/sverchok/assets/14288520/7cbbfb25-80e7-458d-ab9a-363116fc3b3d" /></a>
+</div></blockquote>
+</li>
 </ul>
 </section>
 <section id="parameters">
@@ -335,10 +384,37 @@ usually gives more natural results, but takes more time to compute.</p></li>
 <section id="examples-of-usage">
 <h2>Examples of Usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>Example 1:</p>
-<img alt="https://user-images.githubusercontent.com/284644/128608455-8bcf578f-6de4-4f28-a7aa-c5c0737d998e.png" src="https://user-images.githubusercontent.com/284644/128608455-8bcf578f-6de4-4f28-a7aa-c5c0737d998e.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/128608455-8bcf578f-6de4-4f28-a7aa-c5c0737d998e.png"><img alt="https://user-images.githubusercontent.com/284644/128608455-8bcf578f-6de4-4f28-a7aa-c5c0737d998e.png" src="https://user-images.githubusercontent.com/284644/128608455-8bcf578f-6de4-4f28-a7aa-c5c0737d998e.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>
+<li><p>Curves-&gt;Curve Primitives-&gt; <a class="reference internal" href="../curve/polyline.html"><span class="doc">Polyline</span></a></p></li>
+<li><p>Surfaces-&gt;Surface NURBS-&gt; <a class="reference internal" href="surface_remove_excessive_knots.html"><span class="doc">Remove Excessive Knots (NURBS Surface)</span></a></p></li>
+<li><p>Surfaces-&gt;Surface NURBS-&gt; <a class="reference internal" href="deconstruct_surface.html"><span class="doc">Deconstruct Surface</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="evaluate_surface.html"><span class="doc">Evaluate Surface</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/mesh_viewer.html"><span class="doc">Mesh Viewer</span></a></p></li>
+<li><p>Scene-&gt; <a class="reference internal" href="../exchange/bezier_in.html"><span class="doc">Bezier Input</span></a></p></li>
+</ul>
 <p>Example 2:</p>
-<img alt="https://user-images.githubusercontent.com/284644/128609193-25240b31-1e4f-49d3-81f0-0df70863ccec.png" src="https://user-images.githubusercontent.com/284644/128609193-25240b31-1e4f-49d3-81f0-0df70863ccec.png" />
-<img alt="https://user-images.githubusercontent.com/284644/128609192-06d65d48-7875-4dce-a084-c4e4c700be04.png" src="https://user-images.githubusercontent.com/284644/128609192-06d65d48-7875-4dce-a084-c4e4c700be04.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/128609193-25240b31-1e4f-49d3-81f0-0df70863ccec.png"><img alt="https://user-images.githubusercontent.com/284644/128609193-25240b31-1e4f-49d3-81f0-0df70863ccec.png" src="https://user-images.githubusercontent.com/284644/128609193-25240b31-1e4f-49d3-81f0-0df70863ccec.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/line_mk4.html"><span class="doc">Line</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>
+<li><p>Curves-&gt;Curve Primitives-&gt; <a class="reference internal" href="../curve/polyline.html"><span class="doc">Polyline</span></a></p></li>
+<li><p>Curves-&gt;Curve Primitives-&gt; <a class="reference internal" href="../curve/kinky_curve.html"><span class="doc">Kinked Curve</span></a></p></li>
+<li><p>Curves-&gt; <a class="reference internal" href="../curve/curve_segment.html"><span class="doc">Curve Segment</span></a></p></li>
+<li><p>Curves-&gt; <a class="reference internal" href="../curve/blend_curves.html"><span class="doc">Blend Curves</span></a></p></li>
+<li><p>Surfaces-&gt;Surface NURBS-&gt; <a class="reference internal" href="surface_remove_excessive_knots.html"><span class="doc">Remove Excessive Knots (NURBS Surface)</span></a></p></li>
+<li><p>Surfaces-&gt;Surface NURBS-&gt; <a class="reference internal" href="deconstruct_surface.html"><span class="doc">Deconstruct Surface</span></a></p></li>
+<li><p>Transform-&gt; <a class="reference internal" href="../transforms/move_mk3.html"><span class="doc">Move</span></a></p></li>
+<li><p>Transform-&gt; <a class="reference internal" href="../transforms/randomize.html"><span class="doc">Randomize</span></a></p></li>
+<li><p>Radius: Number-&gt; <a class="reference internal" href="../number/numbers.html"><span class="doc">A Number</span></a></p></li>
+<li><p>MUL X,Y: Number-&gt; <a class="reference internal" href="../number/scalar_mk4.html"><span class="doc">Scalar Math</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/mesh_viewer.html"><span class="doc">Mesh Viewer</span></a></p></li>
+<li><p>Scene-&gt; <a class="reference internal" href="../exchange/bezier_in.html"><span class="doc">Bezier Input</span></a></p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/128609192-06d65d48-7875-4dce-a084-c4e4c700be04.png"><img alt="https://user-images.githubusercontent.com/284644/128609192-06d65d48-7875-4dce-a084-c4e4c700be04.png" src="https://user-images.githubusercontent.com/284644/128609192-06d65d48-7875-4dce-a084-c4e4c700be04.png" /></a>
 </section>
 </section>
 

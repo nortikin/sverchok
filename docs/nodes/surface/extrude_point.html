@@ -176,11 +176,20 @@
              
   <section id="extrude-to-point">
 <h1>Extrude to Point<a class="headerlink" href="#extrude-to-point" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/bfb24dd5-ed31-4da7-98ef-944da2a8662d"><img alt="https://github.com/nortikin/sverchok/assets/14288520/bfb24dd5-ed31-4da7-98ef-944da2a8662d" src="https://github.com/nortikin/sverchok/assets/14288520/bfb24dd5-ed31-4da7-98ef-944da2a8662d" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node generates a Surface by extruding some Curve (called “profile”)
 towards one point (also called “tip”). So the resulting surface is, generally
 speaking, a conical surface.</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/aeaaac4b-7871-4378-ab70-cb89c1a6ac5b"><img alt="https://github.com/nortikin/sverchok/assets/14288520/aeaaac4b-7871-4378-ab70-cb89c1a6ac5b" src="https://github.com/nortikin/sverchok/assets/14288520/aeaaac4b-7871-4378-ab70-cb89c1a6ac5b" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>
+<li><p>Curves-&gt;Curve Primitives-&gt; <a class="reference internal" href="../curve/fillet_polyline.html"><span class="doc">Fillet Polyline</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="evaluate_surface.html"><span class="doc">Evaluate Surface</span></a></p></li>
+<li><p>Transform-&gt; <a class="reference internal" href="../transforms/randomize.html"><span class="doc">Randomize</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 <p>Surface domain: along U direction - the same as of “profile” curve; along V
 direction - from 0 to 1. V = 0 corresponds to the initial position of profile
 curve; V = 1 corresponds to the tip point.</p>
@@ -203,9 +212,21 @@ curve; V = 1 corresponds to the tip point.</p>
 <section id="examples-of-usage">
 <h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>Extrude a pentagonal polyline towards one point, to make a pyramid:</p>
-<img alt="https://user-images.githubusercontent.com/284644/77252629-d133e000-6c76-11ea-9a04-f760827bf659.png" src="https://user-images.githubusercontent.com/284644/77252629-d133e000-6c76-11ea-9a04-f760827bf659.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/77252629-d133e000-6c76-11ea-9a04-f760827bf659.png"><img alt="https://user-images.githubusercontent.com/284644/77252629-d133e000-6c76-11ea-9a04-f760827bf659.png" src="https://user-images.githubusercontent.com/284644/77252629-d133e000-6c76-11ea-9a04-f760827bf659.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>
+<li><p>Curves-&gt;Curve Primitives-&gt; <a class="reference internal" href="../curve/polyline.html"><span class="doc">Polyline</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="evaluate_surface.html"><span class="doc">Evaluate Surface</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 <p>It is possible to use this node to fill planar (or semi-planar) curves with some grid:</p>
-<img alt="https://user-images.githubusercontent.com/284644/79359647-4c2da500-7f5c-11ea-8903-26beb236bbac.png" src="https://user-images.githubusercontent.com/284644/79359647-4c2da500-7f5c-11ea-8903-26beb236bbac.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/79359647-4c2da500-7f5c-11ea-8903-26beb236bbac.png"><img alt="https://user-images.githubusercontent.com/284644/79359647-4c2da500-7f5c-11ea-8903-26beb236bbac.png" src="https://user-images.githubusercontent.com/284644/79359647-4c2da500-7f5c-11ea-8903-26beb236bbac.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>
+<li><p>Curves-&gt; <a class="reference internal" href="../curve/cubic_spline.html"><span class="doc">Cubic Spline</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="evaluate_surface.html"><span class="doc">Evaluate Surface</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 </section>
 </section>
 
