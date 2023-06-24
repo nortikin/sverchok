@@ -1,6 +1,9 @@
 Surface Subdomain
 =================
 
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/7cbb5797-05a6-4dbf-ab07-cb6c637fa010
+  :target: https://github.com/nortikin/sverchok/assets/14288520/7cbb5797-05a6-4dbf-ab07-cb6c637fa010
+
 Functionality
 -------------
 
@@ -12,6 +15,9 @@ of U and V values allowed.
 Output surface domain: defined by node inputs.
 
 Output surface parametrization: the same as of input surface.
+
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/a5ee6cc5-6c23-4659-8680-2b1b6f7095e4
+  :target: https://github.com/nortikin/sverchok/assets/14288520/a5ee6cc5-6c23-4659-8680-2b1b6f7095e4
 
 Inputs
 ------
@@ -35,4 +41,8 @@ Example of usage
 The formula-generated surface (green) and a subdomain of it (red one):
 
 .. image:: https://user-images.githubusercontent.com/284644/79385737-83af4800-7f82-11ea-96e4-f4fb779646db.png
+  :target: https://user-images.githubusercontent.com/284644/79385737-83af4800-7f82-11ea-96e4-f4fb779646db.png
 
+* Surfaces-> :doc:`Surface Formula </nodes/surface/surface_formula>`
+* Surfaces-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`

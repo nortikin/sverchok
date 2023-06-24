@@ -1,6 +1,9 @@
 Reparametrize Surface
 =====================
 
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/e7393f95-adf8-40c9-b815-5187240ac6a5
+  :target: https://github.com/nortikin/sverchok/assets/14288520/e7393f95-adf8-40c9-b815-5187240ac6a5
+
 Functionality
 -------------
 
@@ -11,6 +14,9 @@ intervals.
 
 This node may be useful, for example, if you have a surface with domain ``[0;
 2] x [0; 2*pi]``, but another node expects a surface with domain ``[0; 1] x [0; 1]``.
+
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/ea1f7a22-17bb-4438-adb6-c70482417613
+  :target: https://github.com/nortikin/sverchok/assets/14288520/ea1f7a22-17bb-4438-adb6-c70482417613
 
 Inputs
 ------

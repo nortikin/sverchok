@@ -1,6 +1,9 @@
 Surface Curvatures
 ==================
 
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/3d63a2a7-cf93-4f7d-8775-bb3dc8cba37b
+  :target: https://github.com/nortikin/sverchok/assets/14288520/3d63a2a7-cf93-4f7d-8775-bb3dc8cba37b
+
 Functionality
 -------------
 
@@ -12,9 +15,9 @@ This node calculates several types of information about surface curvature:
 * Mean curvature
 * Matrix based on principal curvature directions and surface normal.
 
-You can refer to Wkikpedia_ for more detailed information about these terms.
+You can refer to Wikipedia_ for more detailed information about these terms.
 
-.. _Wkikpedia: https://en.wikipedia.org/wiki/Differential_geometry_of_surfaces
+.. _Wikipedia: https://en.wikipedia.org/wiki/Differential_geometry_of_surfaces
 
 If you need only Gaussian curvature value, you can as well use simpler "Surface Gauss Curvature" node.
 
@@ -106,22 +109,70 @@ Examples of usage
 Use first principal curvature value for vertex colors:
 
 .. image:: https://user-images.githubusercontent.com/284644/80917635-d9089900-8d79-11ea-982e-ccde3742ffc6.png
+  :target: https://user-images.githubusercontent.com/284644/80917635-d9089900-8d79-11ea-982e-ccde3742ffc6.png
+
+* Generator-> :doc:`Plane </nodes/generator/plane_mk3>`
+* Surfaces-> :doc:`Surface Formula </nodes/surface/surface_formula>`
+* Surfaces-> :doc:`Surface Domain </nodes/surface/surface_domain>`
+* Surfaces-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
+* Number-> :doc:`Map Range </nodes/number/range_map>`
+* Vector-> :doc:`Vector In </nodes/vector/vector_in>`
+* Color-> :doc:`Color In </nodes/color/color_in_mk1>`
+* BV Alpha: Viz-> :doc:`Mesh Viewer </nodes/viz/mesh_viewer>`
+* BPY Data->Vertex color mk3
 
 The same with second principal curvature value:
 
 .. image:: https://user-images.githubusercontent.com/284644/80917636-d9a12f80-8d79-11ea-9563-a77c3447abf5.png
+  :target: https://user-images.githubusercontent.com/284644/80917636-d9a12f80-8d79-11ea-9563-a77c3447abf5.png
+
+* Generator-> :doc:`Plane </nodes/generator/plane_mk3>`
+* Surfaces-> :doc:`Surface Formula </nodes/surface/surface_formula>`
+* Surfaces-> :doc:`Surface Domain </nodes/surface/surface_domain>`
+* Surfaces-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
+* Number-> :doc:`Map Range </nodes/number/range_map>`
+* Vector-> :doc:`Vector In </nodes/vector/vector_in>`
+* Color-> :doc:`Color In </nodes/color/color_in_mk1>`
+* BV Alpha: Viz-> :doc:`Mesh Viewer </nodes/viz/mesh_viewer>`
+* BPY Data->Vertex color mk3
 
 Gaussian curvature:
 
 .. image:: https://user-images.githubusercontent.com/284644/80917638-da39c600-8d79-11ea-8243-d74ab1f7b7b5.png
+  :target: https://user-images.githubusercontent.com/284644/80917638-da39c600-8d79-11ea-8243-d74ab1f7b7b5.png
+
+* Generator-> :doc:`Plane </nodes/generator/plane_mk3>`
+* Surfaces-> :doc:`Surface Formula </nodes/surface/surface_formula>`
+* Surfaces-> :doc:`Surface Domain </nodes/surface/surface_domain>`
+* Surfaces-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
+* Number-> :doc:`Map Range </nodes/number/range_map>`
+* Vector-> :doc:`Vector In </nodes/vector/vector_in>`
+* Color-> :doc:`Color In </nodes/color/color_in_mk1>`
+* BV Alpha: Viz-> :doc:`Mesh Viewer </nodes/viz/mesh_viewer>`
+* BPY Data->Vertex color mk3
 
 Use Matrix output to place Suzannes on the surface:
 
 .. image:: https://user-images.githubusercontent.com/284644/80917634-d8700280-8d79-11ea-99e3-0d4d065d639a.png
+  :target: https://user-images.githubusercontent.com/284644/80917634-d8700280-8d79-11ea-99e3-0d4d065d639a.png
+
+* Generator-> :doc:`Suzanne </nodes/generator/suzanne>`
+* Transform-> :doc:`Scale </nodes/transforms/scale_mk3>`
+* Surfaces-> :doc:`Surface Formula </nodes/surface/surface_formula>`
+* Surfaces-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
+* Number-> :doc:`Number Range </nodes/number/number_range>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 
 Here Suzannes are looking along the second principal curvature direction.
 
 Use Matrix output to place cubes on the surface:
 
 .. image:: https://user-images.githubusercontent.com/284644/80917640-da39c600-8d79-11ea-8e5e-2cfd3e7a0806.png
+  :target: https://user-images.githubusercontent.com/284644/80917640-da39c600-8d79-11ea-8e5e-2cfd3e7a0806.png
 
+* Generator-> :doc:`Box </nodes/generator/box_mk2>`
+* Generator-> :doc:`Plane </nodes/generator/plane_mk3>`
+* Surfaces-> :doc:`Surface Formula </nodes/surface/surface_formula>`
+* Surfaces-> :doc:`Surface Domain </nodes/surface/surface_domain>`
+* Vector-> :doc:`Vector In </nodes/vector/vector_in>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`

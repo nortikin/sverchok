@@ -38,8 +38,8 @@ class SvExRaycastSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
         updateNode(self, context)
 
     modes = [
-        ('PARALLEL', "Along Direction", "Project points along specified direction", 0),
-        ('CONIC', "From Source", "Project points along the direction from the source point", 1)
+        ('PARALLEL', "Along Direction", "Project points along specified direction (PARALLEL)", 0),
+        ('CONIC', "From Source", "Project points along the direction from the source point (CONIC)", 1)
     ]
 
     project_mode : EnumProperty(
