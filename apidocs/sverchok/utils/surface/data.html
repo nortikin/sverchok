@@ -93,8 +93,6 @@ class SurfaceDerivativesData(object):
         normals = self.unit_normals()
         du, dv = self.unit_tangents()
         matrices_np = np.dstack((du, dv, normals))
-        matrices_np = np.transpose(matrices_np, axes=(0,2,1))
-        matrices_np = np.linalg.inv(matrices_np)
         if as_mathutils:
             matrices = [Matrix(m.tolist()).to_4x4() for m in matrices_np]
             for m, p in zip(matrices, self.points):
@@ -1009,8 +1007,6 @@ corresponds to principal_value_2.</p></div>
         normals = self.unit_normals()
         du, dv = self.unit_tangents()
         matrices_np = np.dstack((du, dv, normals))
-        matrices_np = np.transpose(matrices_np, axes=(0,2,1))
-        matrices_np = np.linalg.inv(matrices_np)
         if as_mathutils:
             matrices = [Matrix(m.tolist()).to_4x4() for m in matrices_np]
             for m, p in zip(matrices, self.points):
@@ -1034,8 +1030,6 @@ corresponds to principal_value_2.</p></div>
     normals = self.unit_normals()
     du, dv = self.unit_tangents()
     matrices_np = np.dstack((du, dv, normals))
-    matrices_np = np.transpose(matrices_np, axes=(0,2,1))
-    matrices_np = np.linalg.inv(matrices_np)
     if as_mathutils:
         matrices = [Matrix(m.tolist()).to_4x4() for m in matrices_np]
         for m, p in zip(matrices, self.points):
