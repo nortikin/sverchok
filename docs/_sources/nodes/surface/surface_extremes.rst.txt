@@ -1,6 +1,9 @@
 Surface Extremes
 ================
 
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/12aeab25-d73c-4655-b077-14921590141e
+  :target: https://github.com/nortikin/sverchok/assets/14288520/12aeab25-d73c-4655-b077-14921590141e
+
 Dependencies
 ------------
 
@@ -79,4 +82,9 @@ Example of usage
 ----------------
 
 .. image:: https://user-images.githubusercontent.com/284644/87250867-4d9a3b00-c481-11ea-9726-041087fb8941.png
+  :target: https://user-images.githubusercontent.com/284644/87250867-4d9a3b00-c481-11ea-9726-041087fb8941.png
 
+* Surfaces-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
+* Fields-> :doc:`Coordinate Scalar Field </nodes/field/coordinate_scalar_field>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+* Scene-> :doc:`Objects In Lite </nodes/scene/objects_in_lite>`

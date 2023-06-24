@@ -177,6 +177,7 @@
              
   <section id="surface-curvatures">
 <h1>Surface Curvatures<a class="headerlink" href="#surface-curvatures" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/3d63a2a7-cf93-4f7d-8775-bb3dc8cba37b"><img alt="https://github.com/nortikin/sverchok/assets/14288520/3d63a2a7-cf93-4f7d-8775-bb3dc8cba37b" src="https://github.com/nortikin/sverchok/assets/14288520/3d63a2a7-cf93-4f7d-8775-bb3dc8cba37b" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node calculates several types of information about surface curvature:</p>
@@ -187,7 +188,7 @@
 <li><p>Mean curvature</p></li>
 <li><p>Matrix based on principal curvature directions and surface normal.</p></li>
 </ul>
-<p>You can refer to <a class="reference external" href="https://en.wikipedia.org/wiki/Differential_geometry_of_surfaces">Wkikpedia</a> for more detailed information about these terms.</p>
+<p>You can refer to <a class="reference external" href="https://en.wikipedia.org/wiki/Differential_geometry_of_surfaces">Wikipedia</a> for more detailed information about these terms.</p>
 <p>If you need only Gaussian curvature value, you can as well use simpler “Surface Gauss Curvature” node.</p>
 </section>
 <section id="inputs">
@@ -279,16 +280,65 @@ is looking along the surface’s normal.</p></li>
 <section id="examples-of-usage">
 <h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>Use first principal curvature value for vertex colors:</p>
-<img alt="https://user-images.githubusercontent.com/284644/80917635-d9089900-8d79-11ea-982e-ccde3742ffc6.png" src="https://user-images.githubusercontent.com/284644/80917635-d9089900-8d79-11ea-982e-ccde3742ffc6.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/80917635-d9089900-8d79-11ea-982e-ccde3742ffc6.png"><img alt="https://user-images.githubusercontent.com/284644/80917635-d9089900-8d79-11ea-982e-ccde3742ffc6.png" src="https://user-images.githubusercontent.com/284644/80917635-d9089900-8d79-11ea-982e-ccde3742ffc6.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="surface_formula.html"><span class="doc">Surface Formula</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="surface_domain.html"><span class="doc">Surface Domain</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="evaluate_surface.html"><span class="doc">Evaluate Surface</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/range_map.html"><span class="doc">Map Range</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_in.html"><span class="doc">Vector In</span></a></p></li>
+<li><p>Color-&gt; <a class="reference internal" href="../color/color_in_mk1.html"><span class="doc">Color In</span></a></p></li>
+<li><p>BV Alpha: Viz-&gt; <a class="reference internal" href="../viz/mesh_viewer.html"><span class="doc">Mesh Viewer</span></a></p></li>
+<li><p>BPY Data-&gt;Vertex color mk3</p></li>
+</ul>
 <p>The same with second principal curvature value:</p>
-<img alt="https://user-images.githubusercontent.com/284644/80917636-d9a12f80-8d79-11ea-9563-a77c3447abf5.png" src="https://user-images.githubusercontent.com/284644/80917636-d9a12f80-8d79-11ea-9563-a77c3447abf5.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/80917636-d9a12f80-8d79-11ea-9563-a77c3447abf5.png"><img alt="https://user-images.githubusercontent.com/284644/80917636-d9a12f80-8d79-11ea-9563-a77c3447abf5.png" src="https://user-images.githubusercontent.com/284644/80917636-d9a12f80-8d79-11ea-9563-a77c3447abf5.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="surface_formula.html"><span class="doc">Surface Formula</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="surface_domain.html"><span class="doc">Surface Domain</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="evaluate_surface.html"><span class="doc">Evaluate Surface</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/range_map.html"><span class="doc">Map Range</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_in.html"><span class="doc">Vector In</span></a></p></li>
+<li><p>Color-&gt; <a class="reference internal" href="../color/color_in_mk1.html"><span class="doc">Color In</span></a></p></li>
+<li><p>BV Alpha: Viz-&gt; <a class="reference internal" href="../viz/mesh_viewer.html"><span class="doc">Mesh Viewer</span></a></p></li>
+<li><p>BPY Data-&gt;Vertex color mk3</p></li>
+</ul>
 <p>Gaussian curvature:</p>
-<img alt="https://user-images.githubusercontent.com/284644/80917638-da39c600-8d79-11ea-8243-d74ab1f7b7b5.png" src="https://user-images.githubusercontent.com/284644/80917638-da39c600-8d79-11ea-8243-d74ab1f7b7b5.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/80917638-da39c600-8d79-11ea-8243-d74ab1f7b7b5.png"><img alt="https://user-images.githubusercontent.com/284644/80917638-da39c600-8d79-11ea-8243-d74ab1f7b7b5.png" src="https://user-images.githubusercontent.com/284644/80917638-da39c600-8d79-11ea-8243-d74ab1f7b7b5.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="surface_formula.html"><span class="doc">Surface Formula</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="surface_domain.html"><span class="doc">Surface Domain</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="evaluate_surface.html"><span class="doc">Evaluate Surface</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/range_map.html"><span class="doc">Map Range</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_in.html"><span class="doc">Vector In</span></a></p></li>
+<li><p>Color-&gt; <a class="reference internal" href="../color/color_in_mk1.html"><span class="doc">Color In</span></a></p></li>
+<li><p>BV Alpha: Viz-&gt; <a class="reference internal" href="../viz/mesh_viewer.html"><span class="doc">Mesh Viewer</span></a></p></li>
+<li><p>BPY Data-&gt;Vertex color mk3</p></li>
+</ul>
 <p>Use Matrix output to place Suzannes on the surface:</p>
-<img alt="https://user-images.githubusercontent.com/284644/80917634-d8700280-8d79-11ea-99e3-0d4d065d639a.png" src="https://user-images.githubusercontent.com/284644/80917634-d8700280-8d79-11ea-99e3-0d4d065d639a.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/80917634-d8700280-8d79-11ea-99e3-0d4d065d639a.png"><img alt="https://user-images.githubusercontent.com/284644/80917634-d8700280-8d79-11ea-99e3-0d4d065d639a.png" src="https://user-images.githubusercontent.com/284644/80917634-d8700280-8d79-11ea-99e3-0d4d065d639a.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/suzanne.html"><span class="doc">Suzanne</span></a></p></li>
+<li><p>Transform-&gt; <a class="reference internal" href="../transforms/scale_mk3.html"><span class="doc">Scale</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="surface_formula.html"><span class="doc">Surface Formula</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="evaluate_surface.html"><span class="doc">Evaluate Surface</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 <p>Here Suzannes are looking along the second principal curvature direction.</p>
 <p>Use Matrix output to place cubes on the surface:</p>
-<img alt="https://user-images.githubusercontent.com/284644/80917640-da39c600-8d79-11ea-8e5e-2cfd3e7a0806.png" src="https://user-images.githubusercontent.com/284644/80917640-da39c600-8d79-11ea-8e5e-2cfd3e7a0806.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/80917640-da39c600-8d79-11ea-8e5e-2cfd3e7a0806.png"><img alt="https://user-images.githubusercontent.com/284644/80917640-da39c600-8d79-11ea-8e5e-2cfd3e7a0806.png" src="https://user-images.githubusercontent.com/284644/80917640-da39c600-8d79-11ea-8e5e-2cfd3e7a0806.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="surface_formula.html"><span class="doc">Surface Formula</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="surface_domain.html"><span class="doc">Surface Domain</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_in.html"><span class="doc">Vector In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 </section>
 </section>
 

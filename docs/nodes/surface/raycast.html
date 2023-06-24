@@ -178,6 +178,7 @@
              
   <section id="raycast-on-surface">
 <h1>Raycast on Surface<a class="headerlink" href="#raycast-on-surface" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/fa62c6eb-b7a2-49ef-bbb4-48c6b890ca29"><img alt="https://github.com/nortikin/sverchok/assets/14288520/fa62c6eb-b7a2-49ef-bbb4-48c6b890ca29" src="https://github.com/nortikin/sverchok/assets/14288520/fa62c6eb-b7a2-49ef-bbb4-48c6b890ca29" /></a>
 <section id="dependencies">
 <h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this heading">¶</a></h2>
 <p>This node requires <a class="reference external" href="https://scipy.org/">SciPy</a> library to work.</p>
@@ -190,17 +191,22 @@ this ray intersects the given surface first time.</p>
 <p>This node uses a numerical method to find the intersection point, so it may be
 not very fast. If you happen to know how to find the intersection point for
 your specific surface by some formula, that will be faster and more precise.</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/d586f26e-d0d2-4811-965a-8c0f329bfd61"><img alt="https://github.com/nortikin/sverchok/assets/14288520/d586f26e-d0d2-4811-965a-8c0f329bfd61" src="https://github.com/nortikin/sverchok/assets/14288520/d586f26e-d0d2-4811-965a-8c0f329bfd61" /></a>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
-<ul class="simple">
+<ul>
 <li><p><strong>Surface</strong>. The surface to find intersection with. This input is mandatory.</p></li>
 <li><p><strong>Source</strong>. Source point of the ray. The default value is <code class="docutils literal notranslate"><span class="pre">(0,</span> <span class="pre">0,</span> <span class="pre">1)</span></code>.</p></li>
 <li><p><strong>Point</strong>. The second point through which the ray goes. This input is
 available only when <strong>Project</strong> parameter is set to <strong>From Source</strong>.</p></li>
 <li><p><strong>Direction</strong>. Ray direction. The default value is <code class="docutils literal notranslate"><span class="pre">(0,</span> <span class="pre">0,</span> <span class="pre">-1)</span></code>. This input
-is available only when <strong>Project</strong> parameter is set to <strong>Along Direction</strong>.</p></li>
+is available only when <strong>Project</strong> parameter is set to <strong>Along Direction</strong>.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/7c958109-abca-4570-a8ac-be9ee9445892"><img alt="https://github.com/nortikin/sverchok/assets/14288520/7c958109-abca-4570-a8ac-be9ee9445892" src="https://github.com/nortikin/sverchok/assets/14288520/7c958109-abca-4570-a8ac-be9ee9445892" /></a>
+</div></blockquote>
+</li>
 </ul>
 </section>
 <section id="parameters">
@@ -208,11 +214,19 @@ is available only when <strong>Project</strong> parameter is set to <strong>Alon
 <p>This node has the following parameters:</p>
 <ul>
 <li><p><strong>Project</strong>. This defines how the direction of the ray is specified. The available options are:</p>
-<ul class="simple">
+<ul>
 <li><p><strong>Along Direction</strong>. Ray is specified by defining it’s source point in
-<strong>Source</strong> input, and it’s direction vector in <strong>Direction</strong> input.</p></li>
+<strong>Source</strong> input, and it’s direction vector in <strong>Direction</strong> input.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/04c75833-06f6-497a-9e99-9de8ca5416ac"><img alt="https://github.com/nortikin/sverchok/assets/14288520/04c75833-06f6-497a-9e99-9de8ca5416ac" src="https://github.com/nortikin/sverchok/assets/14288520/04c75833-06f6-497a-9e99-9de8ca5416ac" /></a>
+</div></blockquote>
+</li>
 <li><p><strong>From Source</strong>. Ray is specified by defining it’s source point in
-<strong>Source</strong> input, and a second point on the same ray in <strong>Point</strong> input.</p></li>
+<strong>Source</strong> input, and a second point on the same ray in <strong>Point</strong> input.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/97719a38-f5c9-4979-b87d-ec579d1471b7"><img alt="https://github.com/nortikin/sverchok/assets/14288520/97719a38-f5c9-4979-b87d-ec579d1471b7" src="https://github.com/nortikin/sverchok/assets/14288520/97719a38-f5c9-4979-b87d-ec579d1471b7" /></a>
+</div></blockquote>
+</li>
 </ul>
 <p>The default option is <strong>Along Direction</strong>.</p>
 </li>
@@ -228,7 +242,11 @@ Blender’s “BVH raycast” method. This input defines the number of samples f
 this first step. The higher this number is, the more precise the initial
 guess is, so the less work for numeric method; but the more time will this
 first step take. In most cases, you do not have to change this parameter. The
-default value is 10.</p></li>
+default value is 10.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/7f1f5ee9-2390-43a8-a061-e364b1f86cf4"><img alt="https://github.com/nortikin/sverchok/assets/14288520/7f1f5ee9-2390-43a8-a061-e364b1f86cf4" src="https://github.com/nortikin/sverchok/assets/14288520/7f1f5ee9-2390-43a8-a061-e364b1f86cf4" /></a>
+</div></blockquote>
+</li>
 <li><p><strong>Method</strong>. This parameter is available in the N panel only. Type of numeric
 method to be used. The available options are:</p>
 <blockquote>
@@ -258,7 +276,46 @@ all of them and decide which one fits you better.</p>
 </section>
 <section id="example-of-usage">
 <h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
-<img alt="https://user-images.githubusercontent.com/284644/87579479-69a31400-c6ef-11ea-9996-2675af3f6106.png" src="https://user-images.githubusercontent.com/284644/87579479-69a31400-c6ef-11ea-9996-2675af3f6106.png" />
+<p>Along Direction (Parallel):</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/a5223515-5df5-449f-8d72-62e30cb340f5"><img alt="https://github.com/nortikin/sverchok/assets/14288520/a5223515-5df5-449f-8d72-62e30cb340f5" src="https://github.com/nortikin/sverchok/assets/14288520/a5223515-5df5-449f-8d72-62e30cb340f5" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/line_mk4.html"><span class="doc">Line</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/segment.html"><span class="doc">Segment</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="minimal_surface.html"><span class="doc">Minimal Surface</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="evaluate_surface.html"><span class="doc">Evaluate Surface</span></a></p></li>
+<li><p>Transform-&gt; <a class="reference internal" href="../transforms/noise_displace.html"><span class="doc">Noise Displace</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_polar_in.html"><span class="doc">Vector Polar Input</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/9be76fe3-d9a0-4b1f-ae42-0b73b0a67174"><img alt="https://github.com/nortikin/sverchok/assets/14288520/9be76fe3-d9a0-4b1f-ae42-0b73b0a67174" src="https://github.com/nortikin/sverchok/assets/14288520/9be76fe3-d9a0-4b1f-ae42-0b73b0a67174" /></a>
+<hr class="docutils" />
+<p>From Source (Conic):</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/c22f6d04-501a-4bd8-a5c5-32677826fa43"><img alt="https://github.com/nortikin/sverchok/assets/14288520/c22f6d04-501a-4bd8-a5c5-32677826fa43" src="https://github.com/nortikin/sverchok/assets/14288520/c22f6d04-501a-4bd8-a5c5-32677826fa43" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/segment.html"><span class="doc">Segment</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="minimal_surface.html"><span class="doc">Minimal Surface</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="evaluate_surface.html"><span class="doc">Evaluate Surface</span></a></p></li>
+<li><p>Transform-&gt; <a class="reference internal" href="../transforms/noise_displace.html"><span class="doc">Noise Displace</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_polar_in.html"><span class="doc">Vector Polar Input</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/67cf4338-8a9a-4853-9a81-8b1bec1b77df"><img alt="https://github.com/nortikin/sverchok/assets/14288520/67cf4338-8a9a-4853-9a81-8b1bec1b77df" src="https://github.com/nortikin/sverchok/assets/14288520/67cf4338-8a9a-4853-9a81-8b1bec1b77df" /></a>
+<hr class="docutils" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/87579479-69a31400-c6ef-11ea-9996-2675af3f6106.png"><img alt="https://user-images.githubusercontent.com/284644/87579479-69a31400-c6ef-11ea-9996-2675af3f6106.png" src="https://user-images.githubusercontent.com/284644/87579479-69a31400-c6ef-11ea-9996-2675af3f6106.png" /></a>
+<ul class="simple">
+<li><p>Curves-&gt; <a class="reference internal" href="../curve/rounded_rectangle.html"><span class="doc">Rounded Rectangle</span></a></p></li>
+<li><p>Curves-&gt;Curve Primitives-&gt; <a class="reference internal" href="../curve/ellipse.html"><span class="doc">Ellipse (Curve)</span></a></p></li>
+<li><p>Curves-&gt; <a class="reference internal" href="../curve/eval_curve.html"><span class="doc">Evaluate Curve</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="extrude_vector.html"><span class="doc">Extrude Curve Along Vector</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="evaluate_surface.html"><span class="doc">Evaluate Surface</span></a></p></li>
+<li><p>Modifiers-&gt;Modifier Make-&gt; <a class="reference internal" href="../modifier_make/uv_connect.html"><span class="doc">UV Connection</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 <p>Note that in this case we set <strong>Method</strong> parameter to <strong>Krylov</strong>.</p>
 </section>
 </section>

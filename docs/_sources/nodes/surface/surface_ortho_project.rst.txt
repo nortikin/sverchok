@@ -1,6 +1,9 @@
 Orthogonal Project on Surface
 =============================
 
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/83c1004d-c510-4195-bdf2-898c77e2804d
+  :target: https://github.com/nortikin/sverchok/assets/14288520/83c1004d-c510-4195-bdf2-898c77e2804d
+
 Dependencies
 ------------
 
@@ -22,6 +25,9 @@ of them. If there are several nearest points, the node will return any of them
 The node uses a numerical method to find such point, so it may be not very
 fast. If you happen to know how to find such point for your specific surface by
 formulas, that way will be faster and more precise.
+
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/b1d205cf-9adf-4d3a-b8b9-166744c8ae13
+  :target: https://github.com/nortikin/sverchok/assets/14288520/b1d205cf-9adf-4d3a-b8b9-166744c8ae13
 
 Inputs
 ------
@@ -54,3 +60,21 @@ This node has the following outputs:
   orthogonal projection point. Z coordinate of this output is always zero. X
   and Y correspond to U and V.
 
+Examples
+--------
+
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/1bb7f46d-9577-40ad-9607-b605156c492b
+  :target: https://github.com/nortikin/sverchok/assets/14288520/1bb7f46d-9577-40ad-9607-b605156c492b
+
+* Generator-> :doc:`Segment </nodes/generator/segment>`
+* Generator-> :doc:`Plane </nodes/generator/plane_mk3>`
+* Surfaces-> :doc:`Minimal Surface </nodes/surface/minimal_surface>`
+* Surfaces-> :doc:`Surface Frame </nodes/surface/normals>`
+* Surfaces-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
+* Transform-> :doc:`Noise Displace </nodes/transforms/noise_displace>`
+* Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`
+* Matrix Multiply: Matrix-> :doc:`Matrix Math </nodes/matrix/matrix_math>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/aeab6797-b6ba-4ce4-be12-3ab23370f3cd
+  :target: https://github.com/nortikin/sverchok/assets/14288520/aeab6797-b6ba-4ce4-be12-3ab23370f3cd

@@ -102,6 +102,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#outputs">Outputs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#examples">Examples</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="surface_reduce_degree.html">Reduce Degree (NURBS Surface)</a></li>
@@ -177,6 +178,7 @@
              
   <section id="orthogonal-project-on-surface">
 <h1>Orthogonal Project on Surface<a class="headerlink" href="#orthogonal-project-on-surface" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/83c1004d-c510-4195-bdf2-898c77e2804d"><img alt="https://github.com/nortikin/sverchok/assets/14288520/83c1004d-c510-4195-bdf2-898c77e2804d" src="https://github.com/nortikin/sverchok/assets/14288520/83c1004d-c510-4195-bdf2-898c77e2804d" /></a>
 <section id="dependencies">
 <h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this heading">¶</a></h2>
 <p>This node requires <a class="reference external" href="https://scipy.org/">SciPy</a> library to work.</p>
@@ -192,6 +194,7 @@ of them. If there are several nearest points, the node will return any of them
 <p>The node uses a numerical method to find such point, so it may be not very
 fast. If you happen to know how to find such point for your specific surface by
 formulas, that way will be faster and more precise.</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/b1d205cf-9adf-4d3a-b8b9-166744c8ae13"><img alt="https://github.com/nortikin/sverchok/assets/14288520/b1d205cf-9adf-4d3a-b8b9-166744c8ae13" src="https://github.com/nortikin/sverchok/assets/14288520/b1d205cf-9adf-4d3a-b8b9-166744c8ae13" /></a>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
@@ -223,6 +226,22 @@ do not have to change this parameter. The default value is 5.</p></li>
 orthogonal projection point. Z coordinate of this output is always zero. X
 and Y correspond to U and V.</p></li>
 </ul>
+</section>
+<section id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/1bb7f46d-9577-40ad-9607-b605156c492b"><img alt="https://github.com/nortikin/sverchok/assets/14288520/1bb7f46d-9577-40ad-9607-b605156c492b" src="https://github.com/nortikin/sverchok/assets/14288520/1bb7f46d-9577-40ad-9607-b605156c492b" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/segment.html"><span class="doc">Segment</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="minimal_surface.html"><span class="doc">Minimal Surface</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="normals.html"><span class="doc">Surface Frame</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="evaluate_surface.html"><span class="doc">Evaluate Surface</span></a></p></li>
+<li><p>Transform-&gt; <a class="reference internal" href="../transforms/noise_displace.html"><span class="doc">Noise Displace</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>Matrix Multiply: Matrix-&gt; <a class="reference internal" href="../matrix/matrix_math.html"><span class="doc">Matrix Math</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/aeab6797-b6ba-4ce4-be12-3ab23370f3cd"><img alt="https://github.com/nortikin/sverchok/assets/14288520/aeab6797-b6ba-4ce4-be12-3ab23370f3cd" src="https://github.com/nortikin/sverchok/assets/14288520/aeab6797-b6ba-4ce4-be12-3ab23370f3cd" /></a>
 </section>
 </section>
 
