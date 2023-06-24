@@ -1,6 +1,9 @@
 Nearest Point on Surface
 ========================
 
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/aeb96cdd-91d3-4ade-aaef-d0b76e61ae46
+  :target: https://github.com/nortikin/sverchok/assets/14288520/aeb96cdd-91d3-4ade-aaef-d0b76e61ae46
+
 Dependencies
 ------------
 
@@ -28,6 +31,9 @@ In case there are several points on the surface with equal distance to the
 original point, the node will return one of them (it is not guaranteed which
 one).
 
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/668eebba-dcbb-456b-9bdd-f825bd686af3
+  :target: https://github.com/nortikin/sverchok/assets/14288520/668eebba-dcbb-456b-9bdd-f825bd686af3
+
 Inputs
 ------
 
@@ -49,6 +55,10 @@ This node has the following parameters:
   location of the nearest point. Otherwise, the node will return the initial
   guess. So if this parameter is not checked, the **Init Resolution** parameter
   will define the precision of the node. Checked by default.
+
+    .. image:: https://github.com/nortikin/sverchok/assets/14288520/010a3bea-e988-4a69-9aee-567e07bd2a7a
+      :target: https://github.com/nortikin/sverchok/assets/14288520/010a3bea-e988-4a69-9aee-567e07bd2a7a
+
 * **Method**. This parameter is available in the N panel only. The algorithm
   used to find the nearest point. The available algorithms are:
 
@@ -60,6 +70,10 @@ This node has the following parameters:
    The default option is L-BFGS-B. In simple cases, you do not have to change
    this parameter. In more complex cases, you will have to try all algorithms
    and select the one which fits you the best.
+
+    .. image:: https://github.com/nortikin/sverchok/assets/14288520/3c69245a-9e78-405f-a0b6-0784f690c99f
+      :target: https://github.com/nortikin/sverchok/assets/14288520/3c69245a-9e78-405f-a0b6-0784f690c99f
+
 * **Sequential**. This parameter is available in the N panel only, and only
   when **Precise** parameter is checked. When checked, the node will use result
   of finding the nearest point from one source point as an initial guess for
@@ -67,6 +81,9 @@ This node has the following parameters:
   better results or better performance in case you are, for example, finding
   nearest points for a series of points generated from one curve. Unchecked by
   default.
+
+    .. image:: https://github.com/nortikin/sverchok/assets/14288520/8de6fe38-943e-4d3d-a503-6ac86d852a4b
+      :target: https://github.com/nortikin/sverchok/assets/14288520/8de6fe38-943e-4d3d-a503-6ac86d852a4b
 
 Outputs
 -------
@@ -81,5 +98,29 @@ This node has the following outputs:
 Example of usage
 ----------------
 
-.. image:: https://user-images.githubusercontent.com/284644/87247996-782fc800-c470-11ea-8ccc-e15021b59591.png
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/377c8839-91d0-4348-863e-0338310618d4
+  :target: https://github.com/nortikin/sverchok/assets/14288520/377c8839-91d0-4348-863e-0338310618d4
 
+* Generator-> :doc:`Segment </nodes/generator/segment>`
+* Generator-> :doc:`Plane </nodes/generator/plane_mk3>`
+* Surfaces-> :doc:`Minimal Surface </nodes/surface/minimal_surface>`
+* Surfaces-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
+* Transform-> :doc:`Randomize </nodes/transforms/randomize>`
+* Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/e5e6c83f-7c34-4bff-b2fa-97dcaed59e57
+  :target: https://github.com/nortikin/sverchok/assets/14288520/e5e6c83f-7c34-4bff-b2fa-97dcaed59e57
+
+---------
+
+.. image:: https://user-images.githubusercontent.com/284644/87247996-782fc800-c470-11ea-8ccc-e15021b59591.png
+  :target: https://user-images.githubusercontent.com/284644/87247996-782fc800-c470-11ea-8ccc-e15021b59591.png
+
+* Curves-> :doc:`Cubic Spline </nodes/curve/cubic_spline>`
+* Surfaces-> :doc:`Minimal Surface </nodes/surface/minimal_surface>`
+* Surfaces-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
+* Modifiers->Modifier Make-> :doc:`UV Connection </nodes/modifier_make/uv_connect>`
+* Vector-> :doc:`Vector sort </nodes/vector/vertices_sort>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+* Scene-> :doc:`Objects In Lite </nodes/scene/objects_in_lite>`

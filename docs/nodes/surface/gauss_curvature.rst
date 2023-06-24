@@ -1,6 +1,9 @@
 Surface Gauss Curvature
 =======================
 
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/d52917f6-b86e-46ae-9a3c-8b2ac8b4e727
+  :target: https://github.com/nortikin/sverchok/assets/14288520/d52917f6-b86e-46ae-9a3c-8b2ac8b4e727
+
 Functionality
 -------------
 
@@ -89,16 +92,44 @@ Examples of usage
 Gaussian curvature of plane is zero at any point:
 
 .. image:: https://user-images.githubusercontent.com/284644/80866465-3e8c5500-8ca8-11ea-88de-01b281f3b608.png
+  :target: https://user-images.githubusercontent.com/284644/80866465-3e8c5500-8ca8-11ea-88de-01b281f3b608.png
+
+* Surfaces-> :doc:`Plane (Surface) </nodes/surface/plane>`
+* Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
 
 Gaussian curvature of sphere of the radius R is `1/R^2` at any point:
 
 .. image:: https://user-images.githubusercontent.com/284644/80866466-3fbd8200-8ca8-11ea-94ff-627e0215cdd8.png
+  :target: https://user-images.githubusercontent.com/284644/80866466-3fbd8200-8ca8-11ea-94ff-627e0215cdd8.png
+
+* Surfaces-> :doc:`Plane (Surface) </nodes/surface/plane>`
+* Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
 
 Use Gaussian curvature to color vertices of toroidal surface (yellowish for positive curvature, black for negative):
 
 .. image:: https://user-images.githubusercontent.com/284644/80866468-40561880-8ca8-11ea-8504-752c07f19879.png
+  :target: https://user-images.githubusercontent.com/284644/80866468-40561880-8ca8-11ea-8504-752c07f19879.png
+
+* Generator-> :doc:`Plane </nodes/generator/plane_mk3>`
+* Surfaces-> :doc:`Surface Formula </nodes/surface/surface_formula>`
+* Surfaces-> :doc:`Surface Domain </nodes/surface/surface_domain>`
+* Surfaces-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
+* Vector-> :doc:`Vector In </nodes/vector/vector_in>`
+* Color-> :doc:`Color In </nodes/color/color_in_mk1>`
+* Viz-> :doc:`Mesh Viewer </nodes/viz/mesh_viewer>`
+* BPY Date-> Vertex Color MK3
 
 Similar for another formula-defined surface (purple for positive curvature, yellow for negative, cyan for nearly zero):
 
 .. image:: https://user-images.githubusercontent.com/284644/80866603-03d6ec80-8ca9-11ea-8d00-60e48e4a1f85.png
+  :target: https://user-images.githubusercontent.com/284644/80866603-03d6ec80-8ca9-11ea-8d00-60e48e4a1f85.png
 
+* Surfaces-> :doc:`Surface Formula </nodes/surface/surface_formula>`
+* Surfaces-> :doc:`Surface Domain </nodes/surface/surface_domain>`
+* Vector-> :doc:`Vector In </nodes/vector/vector_in>`
+* Generator-> :doc:`Plane </nodes/generator/plane_mk3>`
+* Surfaces-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
+* BV Alpha: Viz-> :doc:`Mesh Viewer </nodes/viz/mesh_viewer>`
+* Number-> :doc:`Map Range </nodes/number/range_map>`
+* Color-> :doc:`Color In </nodes/color/color_in_mk1>`
+* BPY Data->Vertex color mk3
