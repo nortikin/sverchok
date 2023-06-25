@@ -177,11 +177,13 @@
              
   <section id="tessellate-trim-surface">
 <h1>Tessellate &amp; Trim Surface<a class="headerlink" href="#tessellate-trim-surface" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/db74eb59-dd2d-4473-a93d-f80523e604de"><img alt="https://github.com/nortikin/sverchok/assets/14288520/db74eb59-dd2d-4473-a93d-f80523e604de" src="https://github.com/nortikin/sverchok/assets/14288520/db74eb59-dd2d-4473-a93d-f80523e604de" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node “visualizes” the Surface object (turns it into a mesh), by drawing a cartesian (rectangular) grid on it and then cutting (trimming) that grid with the specified Curve object.</p>
 <p>The provided trimming curve is supposed to be planar (flat), and be defined in the surface’s U/V coordinates frame.</p>
 <p>Note that this node is supported since Blender 2.81 only. It will not work in Blender 2.80.</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/aa35b243-a3e2-48be-a3bc-a44c7b53ff85"><img alt="https://github.com/nortikin/sverchok/assets/14288520/aa35b243-a3e2-48be-a3bc-a44c7b53ff85" src="https://github.com/nortikin/sverchok/assets/14288520/aa35b243-a3e2-48be-a3bc-a44c7b53ff85" /></a>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
@@ -189,9 +191,20 @@
 <ul class="simple">
 <li><p><strong>Surface</strong>. The surface to tessellate. This input is mandatory.</p></li>
 <li><p><strong>TrimCurve</strong>. The curve used to trim the surface. This input is mandatory.</p></li>
+</ul>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/804204ed-6de0-4008-81d7-5b542fdbde9b"><img alt="https://github.com/nortikin/sverchok/assets/14288520/804204ed-6de0-4008-81d7-5b542fdbde9b" src="https://github.com/nortikin/sverchok/assets/14288520/804204ed-6de0-4008-81d7-5b542fdbde9b" /></a>
+<ul>
 <li><p><strong>SamplesU</strong>. The number of tessellation samples along the surface’s U direction. The default value is 25.</p></li>
-<li><p><strong>SamplesV</strong>. The number of tessellation samples along the surface’s V direction. The default value is 25.</p></li>
-<li><p><strong>SamplesT</strong>. The number of points to evaluate the trimming curve at. The default value is 100.</p></li>
+<li><p><strong>SamplesV</strong>. The number of tessellation samples along the surface’s V direction. The default value is 25.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/42f920e9-8e07-44ed-989b-d38cf4af0bb6"><img alt="https://github.com/nortikin/sverchok/assets/14288520/42f920e9-8e07-44ed-989b-d38cf4af0bb6" src="https://github.com/nortikin/sverchok/assets/14288520/42f920e9-8e07-44ed-989b-d38cf4af0bb6" /></a>
+</div></blockquote>
+</li>
+<li><p><strong>SamplesT</strong>. The number of points to evaluate the trimming curve at. The default value is 100.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/fcde6bdf-96c9-4cba-ba7d-ec25f066a688"><img alt="https://github.com/nortikin/sverchok/assets/14288520/fcde6bdf-96c9-4cba-ba7d-ec25f066a688" src="https://github.com/nortikin/sverchok/assets/14288520/fcde6bdf-96c9-4cba-ba7d-ec25f066a688" /></a>
+</div></blockquote>
+</li>
 </ul>
 </section>
 <section id="parameters">
@@ -212,9 +225,14 @@ XY.</p></li>
 trimming curve (make a surface with a hole in it).</p></li>
 </ul>
 <p>The default option is Inner.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/80801816-0f57-482c-a44e-dc3a1e8b1508"><img alt="https://github.com/nortikin/sverchok/assets/14288520/80801816-0f57-482c-a44e-dc3a1e8b1508" src="https://github.com/nortikin/sverchok/assets/14288520/80801816-0f57-482c-a44e-dc3a1e8b1508" /></a>
+</div></blockquote>
 </div></blockquote>
 </li>
-<li><p><strong>Accuracy</strong>. This parameter is available in the node’s N panel only. This defines the precision of the calculation. The default value is 5. Usually you do not have to change this value.</p></li>
+<li><p><strong>Accuracy</strong>. This parameter is available in the node’s N panel only. This defines the precision of the calculation. The default value is 5. Usually you do not have to change this value.</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/13c3f826-b51a-4b85-a5a4-a01614a3815a"><img alt="https://github.com/nortikin/sverchok/assets/14288520/13c3f826-b51a-4b85-a5a4-a01614a3815a" src="https://github.com/nortikin/sverchok/assets/14288520/13c3f826-b51a-4b85-a5a4-a01614a3815a" /></a>
+</li>
 </ul>
 </section>
 <section id="outputs">
@@ -227,10 +245,35 @@ trimming curve (make a surface with a hole in it).</p></li>
 </section>
 <section id="examples-of-usage">
 <h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/4a8750b8-5e79-4058-ab1d-05c017d04dd0"><img alt="https://github.com/nortikin/sverchok/assets/14288520/4a8750b8-5e79-4058-ab1d-05c017d04dd0" src="https://github.com/nortikin/sverchok/assets/14288520/4a8750b8-5e79-4058-ab1d-05c017d04dd0" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="minimal_surface.html"><span class="doc">Minimal Surface</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="evaluate_surface.html"><span class="doc">Evaluate Surface</span></a></p></li>
+<li><p>Transform-&gt; <a class="reference internal" href="../transforms/noise_displace.html"><span class="doc">Noise Displace</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Scene-&gt; <a class="reference internal" href="../exchange/bezier_in.html"><span class="doc">Bezier Input</span></a></p></li>
+</ul>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/4b9025e8-3ded-44f0-806f-6a62c360fb8f"><img alt="https://github.com/nortikin/sverchok/assets/14288520/4b9025e8-3ded-44f0-806f-6a62c360fb8f" src="https://github.com/nortikin/sverchok/assets/14288520/4b9025e8-3ded-44f0-806f-6a62c360fb8f" /></a>
+<hr class="docutils" />
 <p>Trim some (formula-generated) surface with a circle:</p>
-<img alt="https://user-images.githubusercontent.com/284644/79388812-72b50580-7f87-11ea-9eab-2fd205b632d8.png" src="https://user-images.githubusercontent.com/284644/79388812-72b50580-7f87-11ea-9eab-2fd205b632d8.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/79388812-72b50580-7f87-11ea-9eab-2fd205b632d8.png"><img alt="https://user-images.githubusercontent.com/284644/79388812-72b50580-7f87-11ea-9eab-2fd205b632d8.png" src="https://user-images.githubusercontent.com/284644/79388812-72b50580-7f87-11ea-9eab-2fd205b632d8.png" /></a>
+<ul class="simple">
+<li><p>Curves-&gt; <a class="reference internal" href="../curve/curve_circle.html"><span class="doc">Circle (Curve)</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="surface_formula.html"><span class="doc">Surface Formula</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/numbers.html"><span class="doc">A Number</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>Cut a circular hole in the surface:</p>
-<img alt="https://user-images.githubusercontent.com/284644/79388815-73e63280-7f87-11ea-9bc9-de200fce3c59.png" src="https://user-images.githubusercontent.com/284644/79388815-73e63280-7f87-11ea-9bc9-de200fce3c59.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/79388815-73e63280-7f87-11ea-9bc9-de200fce3c59.png"><img alt="https://user-images.githubusercontent.com/284644/79388815-73e63280-7f87-11ea-9bc9-de200fce3c59.png" src="https://user-images.githubusercontent.com/284644/79388815-73e63280-7f87-11ea-9bc9-de200fce3c59.png" /></a>
+<ul class="simple">
+<li><p>Curves-&gt; <a class="reference internal" href="../curve/curve_circle.html"><span class="doc">Circle (Curve)</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="surface_formula.html"><span class="doc">Surface Formula</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/numbers.html"><span class="doc">A Number</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 </section>
 </section>
 
