@@ -1,6 +1,9 @@
 Adaptive Tessellate Surface
 ===========================
 
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/caf1b655-26d2-44ec-8d58-600bc9be0832
+  :target: https://github.com/nortikin/sverchok/assets/14288520/caf1b655-26d2-44ec-8d58-600bc9be0832
+
 Functionality
 -------------
 
@@ -162,7 +165,8 @@ right: the same surface with adaptive tessellation. Each of these meshes has
 (nearly) the same count of triangles - 41K.
 
 .. image:: https://user-images.githubusercontent.com/284644/80983371-eb500900-8e45-11ea-93ad-50ccee371bb3.png
-
+  :target: https://user-images.githubusercontent.com/284644/80983371-eb500900-8e45-11ea-93ad-50ccee371bb3.png
+  
 Notice how much smoother the bumps are on the right mesh. Also notice the sharp
 edges around the bumps - they are made by explicitly defining the points where
 they should be (by use of **AddUVPoints** input).
@@ -170,6 +174,7 @@ they should be (by use of **AddUVPoints** input).
 The same pictue with wireframe display enabled:
 
 .. image:: https://user-images.githubusercontent.com/284644/80921813-14af5d00-8d92-11ea-9038-b504a176b7fe.png
+  :target: https://user-images.githubusercontent.com/284644/80921813-14af5d00-8d92-11ea-9038-b504a176b7fe.png
 
 Notice that on the left, the mesh has a lot of subdivisions in the flat part,
 where they are not at all necessary. The right mesh has much less subdivisions
@@ -178,24 +183,29 @@ in flat parts, and much more on the bumps.
 A simpler example, with one bump and no additional points used:
 
 .. image:: https://user-images.githubusercontent.com/284644/80983350-e68b5500-8e45-11ea-8c91-50f56adbc0fe.png
+  :target: https://user-images.githubusercontent.com/284644/80983350-e68b5500-8e45-11ea-8c91-50f56adbc0fe.png
 
 Use of the node with formula-defined surface, with only **By Curvature**
 parameter enabled. Notice that there are more subdivisions in the places where
 the surface is bent:
 
 .. image:: https://user-images.githubusercontent.com/284644/80983355-e7bc8200-8e45-11ea-8007-d3b6469d4f61.png
+  :target: https://user-images.githubusercontent.com/284644/80983355-e7bc8200-8e45-11ea-8007-d3b6469d4f61.png
 
 The same surface with only **By Area** parameter enabled. Here there are more
 subdivisions in places where the surface is stretched (but it is almost flat at
 these places):
 
 .. image:: https://user-images.githubusercontent.com/284644/80983357-e8551880-8e45-11ea-8f2c-881beebe8d39.png
+  :target: https://user-images.githubusercontent.com/284644/80983357-e8551880-8e45-11ea-8f2c-881beebe8d39.png
 
 And with both parameters enabled at the same time:
 
 .. image:: https://user-images.githubusercontent.com/284644/80983360-e8edaf00-8e45-11ea-8af5-8f86334ef066.png
+  :target: https://user-images.githubusercontent.com/284644/80983360-e8edaf00-8e45-11ea-8af5-8f86334ef066.png
 
 An example of the **TrimCurve** input usage:
 
 .. image:: https://user-images.githubusercontent.com/284644/80983363-e9864580-8e45-11ea-8dc9-f656108177a4.png
+  :target: https://user-images.githubusercontent.com/284644/80983363-e9864580-8e45-11ea-8dc9-f656108177a4.png
 
