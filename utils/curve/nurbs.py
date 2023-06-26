@@ -269,7 +269,7 @@ class SvNurbsCurve(SvCurve):
 
     def get_homogenous_control_points(self):
         """
-        Get NURBS curve control points and weights, unified in homogenous coordinates.
+        Get NURBS curve control points and weights, unified in homogeneous coordinates.
 
         Returns:
             np.array of shape (k, 4)

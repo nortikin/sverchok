@@ -538,7 +538,7 @@ class SvNodeAddOperator(AddNodeOp, bpy.types.Operator):
         apply_default_preset(node)
         return {'FINISHED'}
 
-    # if node is not available the operator is noe used - there is no need in poll
+    # if node is not available the operator is now used - there is no need in poll
 
 
 class ShowMissingDependsOperator(AddNodeOp, bpy.types.Operator):

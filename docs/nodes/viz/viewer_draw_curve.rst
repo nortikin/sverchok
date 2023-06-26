@@ -33,7 +33,7 @@ This node has one main parameter:
 
 * **Show**. The node displays something only when this parameter is enabled.
 
-Most of parameters of this node are groupped in rows; for each type of
+Most of parameters of this node are grouped in rows; for each type of
 information this node can display, there are three parameters: whether to
 display it, the color to be used, and point size / line width to be used.
 

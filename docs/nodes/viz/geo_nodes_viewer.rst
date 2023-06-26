@@ -141,7 +141,7 @@ Examples
 .. figure:: https://user-images.githubusercontent.com/28003269/193784538-eb88831a-2e3e-4957-8fc5-03e94947c480.png
    :width: 700px
 
-   Polyline viewer. Extra properties can be added in GN tree optionaly.
+   Polyline viewer. Extra properties can be added in GN tree optionally.
 
 .. figure:: https://user-images.githubusercontent.com/28003269/193793969-0ba2eb45-1587-4d96-9858-ae50ed6ecd92.png
    :width: 700px

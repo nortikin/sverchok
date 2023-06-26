@@ -98,7 +98,7 @@ Examples of usage
 
 ---------
 
-Filter vertices and edges if some faces hided:
+Filter vertices and edges if some faces hidden:
 
 .. image:: https://user-images.githubusercontent.com/14288520/188969070-a084e68a-a657-4106-b9bf-a538f218a16c.png
   :target: https://user-images.githubusercontent.com/14288520/188969070-a084e68a-a657-4106-b9bf-a538f218a16c.png

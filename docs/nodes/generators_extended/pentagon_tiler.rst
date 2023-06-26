@@ -44,7 +44,7 @@ In the N-Panel (and on the right-click menu) you can find:
 
 **Angle Units**: Choose if the input angles will be interpreted as Degrees or Radians
 
-**Flat output**: Flatten output by list-joining level 1 and unwraping it (default set to True)
+**Flat output**: Flatten output by list-joining level 1 and unwrapping it (default set to True)
 
 **Match List Global**: Define how list with different lengths should be matched. Refers to the matching of groups (level 1)
 

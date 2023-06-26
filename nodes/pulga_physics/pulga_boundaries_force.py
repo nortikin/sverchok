@@ -32,7 +32,7 @@ from sverchok.dependencies import FreeCAD
 
 class SvPulgaBoundingBoxForceNode(SverchCustomTreeNode, bpy.types.Node):
     """
-    Triggers: Spacial Ambit
+    Triggers: Spatial Ambit
     Tooltip: Define simulation Limits by Volume or Surface
     """
     bl_idname = 'SvPulgaBoundingBoxForceNode'
