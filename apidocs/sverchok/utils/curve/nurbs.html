@@ -298,7 +298,7 @@ class SvNurbsCurve(SvCurve):
 
     def get_homogenous_control_points(self):
         &#34;&#34;&#34;
-        Get NURBS curve control points and weights, unified in homogenous coordinates.
+        Get NURBS curve control points and weights, unified in homogeneous coordinates.
 
         Returns:
             np.array of shape (k, 4)
@@ -3126,7 +3126,7 @@ def interpolate(cls, degree, points, metric=&#39;DISTANCE&#39;, tknots=None, cyc
 
     def get_homogenous_control_points(self):
         &#34;&#34;&#34;
-        Get NURBS curve control points and weights, unified in homogenous coordinates.
+        Get NURBS curve control points and weights, unified in homogeneous coordinates.
 
         Returns:
             np.array of shape (k, 4)
@@ -4347,7 +4347,7 @@ such a way that each segment is nearly a straight line segment.</p></div>
 <span>def <span class="ident">get_homogenous_control_points</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Get NURBS curve control points and weights, unified in homogenous coordinates.</p>
+<div class="desc"><p>Get NURBS curve control points and weights, unified in homogeneous coordinates.</p>
 <h2 id="returns">Returns</h2>
 <p>np.array of shape (k, 4)</p></div>
 <details class="source">
@@ -4356,7 +4356,7 @@ such a way that each segment is nearly a straight line segment.</p></div>
 </summary>
 <pre><code class="python">def get_homogenous_control_points(self):
     &#34;&#34;&#34;
-    Get NURBS curve control points and weights, unified in homogenous coordinates.
+    Get NURBS curve control points and weights, unified in homogeneous coordinates.
 
     Returns:
         np.array of shape (k, 4)

@@ -82,9 +82,9 @@ def empty_bmesh(use_operators=True):
 
 class EmptyBmesh:
     &#34;&#34;&#34;It&#39;s a bit faster than empty_bmesh because there is need to generate
-    new manger class each call&#34;&#34;&#34;
+    new manager class each call&#34;&#34;&#34;
     def __init__(self, use_operators=True):
-        &#34;&#34;&#34;:supress: if True any errors during node execution will be suppressed&#34;&#34;&#34;
+        &#34;&#34;&#34;:suppress: if True any errors during node execution will be suppressed&#34;&#34;&#34;
         self._use_operators = use_operators
         self._bm = bmesh.new(use_operators=use_operators)
 
@@ -2123,17 +2123,17 @@ return pydata_from_bmesh(bm), other_results</p></div>
 </code></dt>
 <dd>
 <div class="desc"><p>It's a bit faster than empty_bmesh because there is need to generate
-new manger class each call</p>
-<p>:supress: if True any errors during node execution will be suppressed</p></div>
+new manager class each call</p>
+<p>:suppress: if True any errors during node execution will be suppressed</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class EmptyBmesh:
     &#34;&#34;&#34;It&#39;s a bit faster than empty_bmesh because there is need to generate
-    new manger class each call&#34;&#34;&#34;
+    new manager class each call&#34;&#34;&#34;
     def __init__(self, use_operators=True):
-        &#34;&#34;&#34;:supress: if True any errors during node execution will be suppressed&#34;&#34;&#34;
+        &#34;&#34;&#34;:suppress: if True any errors during node execution will be suppressed&#34;&#34;&#34;
         self._use_operators = use_operators
         self._bm = bmesh.new(use_operators=use_operators)
 
