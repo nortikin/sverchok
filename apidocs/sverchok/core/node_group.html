@@ -35,7 +35,7 @@
 
 # from __future__ import annotations &lt;- Don&#39;t use it here, `group node` will loose its `group tree` attribute
 import time
-from collections import namedtuple
+from collections import namedtuple, defaultdict
 from functools import reduce
 from typing import Tuple, List, Set, Dict, Iterator, Optional
 
@@ -51,7 +51,7 @@ import sverchok.core.group_update_system as gus
 from sverchok.core.update_system import ERROR_KEY
 from sverchok.utils.tree_structure import Tree
 from sverchok.utils.sv_node_utils import recursive_framed_location_finder
-from sverchok.utils.handle_blender_data import BlTrees
+from sverchok.utils.handle_blender_data import BlTrees, BlSockets
 from sverchok.node_tree import SvNodeTreeCommon, SverchCustomTreeNode
 
 
@@ -467,6 +467,17 @@ class SvGroupTreeNode(SverchCustomTreeNode, bpy.types.NodeCustomGroup):
                 return node
 
     def sv_update(self):
+        &#34;&#34;&#34;This method is also called when interface of the subtree is changed&#34;&#34;&#34;
+        def copy_socket_names(from_sockets, to_sockets):
+            for from_s, to_s in zip(from_sockets, to_sockets):
+                to_s.name = from_s.name
+
+        if bpy.app.version &gt;= (3, 5):  # sockets should be generated manually
+            BlSockets(self.inputs).copy_sockets(self.node_tree.inputs)
+            copy_socket_names(self.node_tree.inputs, self.inputs)
+            BlSockets(self.outputs).copy_sockets(self.node_tree.outputs)
+            copy_socket_names(self.node_tree.outputs, self.outputs)
+
         # this code should work only first time a socket was added
         if self.node_tree:
             for n_in_s, t_in_s in zip(self.inputs, self.node_tree.inputs):
@@ -664,33 +675,40 @@ class AddGroupTreeFromSelected(bpy.types.Operator):
             group_node.location = center
             sub_tree.group_node_name = group_node.name
 
-            # linking, linking should be ordered from first socket to last (in case like `join list` nodes)
+            # generate new sockets
             py_base_tree = Tree(base_tree)
             [setattr(py_base_tree.nodes[n.name], &#39;select&#39;, n.select) for n in base_tree.nodes]
-            input_node[&#39;connected_sockets&#39;] = dict()  # Dict[node.name + socket.identifier, socket index of input node]
-            for py_node in py_base_tree.nodes:  # is selected
+            from_sockets, to_sockets = defaultdict(set), defaultdict(set)
+            for py_node in py_base_tree.nodes:
                 if not py_node.select:
                     continue
                 for in_s in py_node.inputs:
                     for out_s in in_s.linked_sockets:  # only one link always
-                        if out_s.node.select:
-                            continue
-                        out_s_key = out_s.node.name + out_s.identifier
-                        if out_s_key in input_node[&#39;connected_sockets&#39;]:  # protect from creating extra input sockets
-                            input_out_s_index = input_node[&#39;connected_sockets&#39;][out_s_key]
-                            sub_tree.links.new(in_s.get_bl_socket(sub_tree), input_node.outputs[input_out_s_index])
-                        else:
-                            input_out_s_index = len(input_node.outputs) - 1
-                            input_node[&#39;connected_sockets&#39;][out_s_key] = input_out_s_index
-                            sub_tree.links.new(in_s.get_bl_socket(sub_tree), input_node.outputs[input_out_s_index])
-                            base_tree.links.new(group_node.inputs[-1], out_s.get_bl_socket(base_tree))
-
+                        if not out_s.node.select:
+                            from_sockets[out_s.bl_tween].add(in_s.get_bl_socket(sub_tree))
                 for out_py_socket in py_node.outputs:
-                    if any(not s.node.select for s in out_py_socket.linked_sockets):
-                        sub_tree.links.new(output_node.inputs[-1], out_py_socket.get_bl_socket(sub_tree))
                     for in_py_socket in out_py_socket.linked_sockets:
                         if not in_py_socket.node.select:
-                            base_tree.links.new(in_py_socket.get_bl_socket(base_tree), group_node.outputs[-1])
+                            to_sockets[in_py_socket.bl_tween].add(out_py_socket.get_bl_socket(sub_tree))
+            for fs in from_sockets.keys():
+                sub_tree.inputs.new(fs.bl_idname, fs.name)
+            for ts in to_sockets.keys():
+                sub_tree.outputs.new(ts.bl_idname, ts.name)
+            if bpy.app.version &gt;= (3, 5):  # generate also sockets of group nodes
+                for fs in sub_tree.inputs:
+                    group_node.inputs.new(fs.bl_socket_idname, fs.name, identifier=fs.identifier)
+                for ts in sub_tree.outputs:
+                    group_node.outputs.new(ts.bl_socket_idname, ts.name, identifier=ts.identifier)
+
+            # linking, linking should be ordered from first socket to last (in case like `join list` nodes)
+            for i, (from_s, first_ss) in enumerate(from_sockets.items()):
+                base_tree.links.new(group_node.inputs[i], from_s)
+                for first_s in first_ss:
+                    sub_tree.links.new(first_s, input_node.outputs[i])
+            for i, (to_s, last_ss) in enumerate(to_sockets.items()):
+                base_tree.links.new(to_s, group_node.outputs[i])
+                for last_s in last_ss:
+                    sub_tree.links.new(output_node.inputs[i], last_s)
 
             # delete selected nodes and copied frames without children
             [base_tree.nodes.remove(n) for n in self.filter_selected_nodes(base_tree)]
@@ -1266,33 +1284,40 @@ def poll(cls, context):
             group_node.location = center
             sub_tree.group_node_name = group_node.name
 
-            # linking, linking should be ordered from first socket to last (in case like `join list` nodes)
+            # generate new sockets
             py_base_tree = Tree(base_tree)
             [setattr(py_base_tree.nodes[n.name], &#39;select&#39;, n.select) for n in base_tree.nodes]
-            input_node[&#39;connected_sockets&#39;] = dict()  # Dict[node.name + socket.identifier, socket index of input node]
-            for py_node in py_base_tree.nodes:  # is selected
+            from_sockets, to_sockets = defaultdict(set), defaultdict(set)
+            for py_node in py_base_tree.nodes:
                 if not py_node.select:
                     continue
                 for in_s in py_node.inputs:
                     for out_s in in_s.linked_sockets:  # only one link always
-                        if out_s.node.select:
-                            continue
-                        out_s_key = out_s.node.name + out_s.identifier
-                        if out_s_key in input_node[&#39;connected_sockets&#39;]:  # protect from creating extra input sockets
-                            input_out_s_index = input_node[&#39;connected_sockets&#39;][out_s_key]
-                            sub_tree.links.new(in_s.get_bl_socket(sub_tree), input_node.outputs[input_out_s_index])
-                        else:
-                            input_out_s_index = len(input_node.outputs) - 1
-                            input_node[&#39;connected_sockets&#39;][out_s_key] = input_out_s_index
-                            sub_tree.links.new(in_s.get_bl_socket(sub_tree), input_node.outputs[input_out_s_index])
-                            base_tree.links.new(group_node.inputs[-1], out_s.get_bl_socket(base_tree))
-
+                        if not out_s.node.select:
+                            from_sockets[out_s.bl_tween].add(in_s.get_bl_socket(sub_tree))
                 for out_py_socket in py_node.outputs:
-                    if any(not s.node.select for s in out_py_socket.linked_sockets):
-                        sub_tree.links.new(output_node.inputs[-1], out_py_socket.get_bl_socket(sub_tree))
                     for in_py_socket in out_py_socket.linked_sockets:
                         if not in_py_socket.node.select:
-                            base_tree.links.new(in_py_socket.get_bl_socket(base_tree), group_node.outputs[-1])
+                            to_sockets[in_py_socket.bl_tween].add(out_py_socket.get_bl_socket(sub_tree))
+            for fs in from_sockets.keys():
+                sub_tree.inputs.new(fs.bl_idname, fs.name)
+            for ts in to_sockets.keys():
+                sub_tree.outputs.new(ts.bl_idname, ts.name)
+            if bpy.app.version &gt;= (3, 5):  # generate also sockets of group nodes
+                for fs in sub_tree.inputs:
+                    group_node.inputs.new(fs.bl_socket_idname, fs.name, identifier=fs.identifier)
+                for ts in sub_tree.outputs:
+                    group_node.outputs.new(ts.bl_socket_idname, ts.name, identifier=ts.identifier)
+
+            # linking, linking should be ordered from first socket to last (in case like `join list` nodes)
+            for i, (from_s, first_ss) in enumerate(from_sockets.items()):
+                base_tree.links.new(group_node.inputs[i], from_s)
+                for first_s in first_ss:
+                    sub_tree.links.new(first_s, input_node.outputs[i])
+            for i, (to_s, last_ss) in enumerate(to_sockets.items()):
+                base_tree.links.new(to_s, group_node.outputs[i])
+                for last_s in last_ss:
+                    sub_tree.links.new(output_node.inputs[i], last_s)
 
             # delete selected nodes and copied frames without children
             [base_tree.nodes.remove(n) for n in self.filter_selected_nodes(base_tree)]
@@ -1558,33 +1583,40 @@ def recreate_frames(from_tree: bpy.types.NodeTree,
         group_node.location = center
         sub_tree.group_node_name = group_node.name
 
-        # linking, linking should be ordered from first socket to last (in case like `join list` nodes)
+        # generate new sockets
         py_base_tree = Tree(base_tree)
         [setattr(py_base_tree.nodes[n.name], &#39;select&#39;, n.select) for n in base_tree.nodes]
-        input_node[&#39;connected_sockets&#39;] = dict()  # Dict[node.name + socket.identifier, socket index of input node]
-        for py_node in py_base_tree.nodes:  # is selected
+        from_sockets, to_sockets = defaultdict(set), defaultdict(set)
+        for py_node in py_base_tree.nodes:
             if not py_node.select:
                 continue
             for in_s in py_node.inputs:
                 for out_s in in_s.linked_sockets:  # only one link always
-                    if out_s.node.select:
-                        continue
-                    out_s_key = out_s.node.name + out_s.identifier
-                    if out_s_key in input_node[&#39;connected_sockets&#39;]:  # protect from creating extra input sockets
-                        input_out_s_index = input_node[&#39;connected_sockets&#39;][out_s_key]
-                        sub_tree.links.new(in_s.get_bl_socket(sub_tree), input_node.outputs[input_out_s_index])
-                    else:
-                        input_out_s_index = len(input_node.outputs) - 1
-                        input_node[&#39;connected_sockets&#39;][out_s_key] = input_out_s_index
-                        sub_tree.links.new(in_s.get_bl_socket(sub_tree), input_node.outputs[input_out_s_index])
-                        base_tree.links.new(group_node.inputs[-1], out_s.get_bl_socket(base_tree))
-
+                    if not out_s.node.select:
+                        from_sockets[out_s.bl_tween].add(in_s.get_bl_socket(sub_tree))
             for out_py_socket in py_node.outputs:
-                if any(not s.node.select for s in out_py_socket.linked_sockets):
-                    sub_tree.links.new(output_node.inputs[-1], out_py_socket.get_bl_socket(sub_tree))
                 for in_py_socket in out_py_socket.linked_sockets:
                     if not in_py_socket.node.select:
-                        base_tree.links.new(in_py_socket.get_bl_socket(base_tree), group_node.outputs[-1])
+                        to_sockets[in_py_socket.bl_tween].add(out_py_socket.get_bl_socket(sub_tree))
+        for fs in from_sockets.keys():
+            sub_tree.inputs.new(fs.bl_idname, fs.name)
+        for ts in to_sockets.keys():
+            sub_tree.outputs.new(ts.bl_idname, ts.name)
+        if bpy.app.version &gt;= (3, 5):  # generate also sockets of group nodes
+            for fs in sub_tree.inputs:
+                group_node.inputs.new(fs.bl_socket_idname, fs.name, identifier=fs.identifier)
+            for ts in sub_tree.outputs:
+                group_node.outputs.new(ts.bl_socket_idname, ts.name, identifier=ts.identifier)
+
+        # linking, linking should be ordered from first socket to last (in case like `join list` nodes)
+        for i, (from_s, first_ss) in enumerate(from_sockets.items()):
+            base_tree.links.new(group_node.inputs[i], from_s)
+            for first_s in first_ss:
+                sub_tree.links.new(first_s, input_node.outputs[i])
+        for i, (to_s, last_ss) in enumerate(to_sockets.items()):
+            base_tree.links.new(to_s, group_node.outputs[i])
+            for last_s in last_ss:
+                sub_tree.links.new(output_node.inputs[i], last_s)
 
         # delete selected nodes and copied frames without children
         [base_tree.nodes.remove(n) for n in self.filter_selected_nodes(base_tree)]
@@ -2451,7 +2483,7 @@ def store_mouse_cursor(context, event):
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.core.node_group.SearchGroupTree.tree_name"><code class="name">var <span class="ident">tree_name</span> : <_PropertyDeferred, <built-in function EnumProperty>, {'items': <function <a title="sverchok.core.node_group.SearchGroupTree.available_trees" href="#sverchok.core.node_group.SearchGroupTree.available_trees">SearchGroupTree.available_trees()</a> at 0x7fbf829fd790>, 'attr': 'tree_name'}></code></dt>
+<dt id="sverchok.core.node_group.SearchGroupTree.tree_name"><code class="name">var <span class="ident">tree_name</span> : <_PropertyDeferred, <built-in function EnumProperty>, {'items': <function <a title="sverchok.core.node_group.SearchGroupTree.available_trees" href="#sverchok.core.node_group.SearchGroupTree.available_trees">SearchGroupTree.available_trees()</a> at 0x7f109cc9b8b0>, 'attr': 'tree_name'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -3307,6 +3339,17 @@ The method can help to predict if linking new sub tree can lead to cyclic linkin
                 return node
 
     def sv_update(self):
+        &#34;&#34;&#34;This method is also called when interface of the subtree is changed&#34;&#34;&#34;
+        def copy_socket_names(from_sockets, to_sockets):
+            for from_s, to_s in zip(from_sockets, to_sockets):
+                to_s.name = from_s.name
+
+        if bpy.app.version &gt;= (3, 5):  # sockets should be generated manually
+            BlSockets(self.inputs).copy_sockets(self.node_tree.inputs)
+            copy_socket_names(self.node_tree.inputs, self.inputs)
+            BlSockets(self.outputs).copy_sockets(self.node_tree.outputs)
+            copy_socket_names(self.node_tree.outputs, self.outputs)
+
         # this code should work only first time a socket was added
         if self.node_tree:
             for n_in_s, t_in_s in zip(self.inputs, self.node_tree.inputs):
@@ -3347,11 +3390,11 @@ The method can help to predict if linking new sub tree can lead to cyclic linkin
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.core.node_group.SvGroupTreeNode.group_tree"><code class="name">var <span class="ident">group_tree</span> : <_PropertyDeferred, <built-in function PointerProperty>, {'type': <class '<a title="sverchok.core.node_group.SvGroupTree" href="#sverchok.core.node_group.SvGroupTree">SvGroupTree</a>'>, 'poll': <function <a title="sverchok.core.node_group.SvGroupTreeNode.nested_tree_filter" href="#sverchok.core.node_group.SvGroupTreeNode.nested_tree_filter">SvGroupTreeNode.nested_tree_filter()</a> at 0x7fbf8292f3a0>, 'update': <function <a title="sverchok.core.node_group.SvGroupTreeNode.update_group_tree" href="#sverchok.core.node_group.SvGroupTreeNode.update_group_tree">SvGroupTreeNode.update_group_tree()</a> at 0x7fbf8292f430>, 'attr': 'group_tree'}></code></dt>
+<dt id="sverchok.core.node_group.SvGroupTreeNode.group_tree"><code class="name">var <span class="ident">group_tree</span> : <_PropertyDeferred, <built-in function PointerProperty>, {'type': <class '<a title="sverchok.core.node_group.SvGroupTree" href="#sverchok.core.node_group.SvGroupTree">SvGroupTree</a>'>, 'poll': <function <a title="sverchok.core.node_group.SvGroupTreeNode.nested_tree_filter" href="#sverchok.core.node_group.SvGroupTreeNode.nested_tree_filter">SvGroupTreeNode.nested_tree_filter()</a> at 0x7f109cc824c0>, 'update': <function <a title="sverchok.core.node_group.SvGroupTreeNode.update_group_tree" href="#sverchok.core.node_group.SvGroupTreeNode.update_group_tree">SvGroupTreeNode.update_group_tree()</a> at 0x7f109cc82550>, 'attr': 'group_tree'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.core.node_group.SvGroupTreeNode.is_active"><code class="name">var <span class="ident">is_active</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Live', 'description': 'Update realtime if active', 'default': True, 'update': <function <a title="sverchok.core.node_group.SvGroupTreeNode" href="#sverchok.core.node_group.SvGroupTreeNode">SvGroupTreeNode</a>.<lambda> at 0x7fbf8292f550>, 'attr': 'is_active'}></code></dt>
+<dt id="sverchok.core.node_group.SvGroupTreeNode.is_active"><code class="name">var <span class="ident">is_active</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Live', 'description': 'Update realtime if active', 'default': True, 'update': <function <a title="sverchok.core.node_group.SvGroupTreeNode" href="#sverchok.core.node_group.SvGroupTreeNode">SvGroupTreeNode</a>.<lambda> at 0x7f109cc82670>, 'attr': 'is_active'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -3359,7 +3402,7 @@ The method can help to predict if linking new sub tree can lead to cyclic linkin
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.core.node_group.SvGroupTreeNode.show"><code class="name">var <span class="ident">show</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'default': True, 'description': 'On/off viewer nodes inside', 'update': <function <a title="sverchok.core.node_group.SvGroupTreeNode.switch_viewers" href="#sverchok.core.node_group.SvGroupTreeNode.switch_viewers">SvGroupTreeNode.switch_viewers()</a> at 0x7fbf8292f5e0>, 'attr': 'show'}></code></dt>
+<dt id="sverchok.core.node_group.SvGroupTreeNode.show"><code class="name">var <span class="ident">show</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'default': True, 'description': 'On/off viewer nodes inside', 'update': <function <a title="sverchok.core.node_group.SvGroupTreeNode.switch_viewers" href="#sverchok.core.node_group.SvGroupTreeNode.switch_viewers">SvGroupTreeNode.switch_viewers()</a> at 0x7f109cc82700>, 'attr': 'show'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -3471,6 +3514,37 @@ Calling this method means that input group node should fetch data from group nod
             out_s.sv_set(in_s.sv_get(deepcopy=False))</code></pre>
 </details>
 </dd>
+<dt id="sverchok.core.node_group.SvGroupTreeNode.sv_update"><code class="name flex">
+<span>def <span class="ident">sv_update</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>This method is also called when interface of the subtree is changed</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def sv_update(self):
+    &#34;&#34;&#34;This method is also called when interface of the subtree is changed&#34;&#34;&#34;
+    def copy_socket_names(from_sockets, to_sockets):
+        for from_s, to_s in zip(from_sockets, to_sockets):
+            to_s.name = from_s.name
+
+    if bpy.app.version &gt;= (3, 5):  # sockets should be generated manually
+        BlSockets(self.inputs).copy_sockets(self.node_tree.inputs)
+        copy_socket_names(self.node_tree.inputs, self.inputs)
+        BlSockets(self.outputs).copy_sockets(self.node_tree.outputs)
+        copy_socket_names(self.node_tree.outputs, self.outputs)
+
+    # this code should work only first time a socket was added
+    if self.node_tree:
+        for n_in_s, t_in_s in zip(self.inputs, self.node_tree.inputs):
+            # also before getting data from socket `socket.use_prop` property should be set
+            if hasattr(n_in_s, &#39;default_property&#39;):
+                n_in_s.use_prop = not t_in_s.hide_value
+            if hasattr(t_in_s, &#39;default_type&#39;):
+                n_in_s.default_property_type = t_in_s.default_type</code></pre>
+</details>
+</dd>
 <dt id="sverchok.core.node_group.SvGroupTreeNode.switch_viewers"><code class="name flex">
 <span>def <span class="ident">switch_viewers</span></span>(<span>self, context)</span>
 </code></dt>
@@ -3575,7 +3649,6 @@ By this attribute Blender is aware of linking between the node and nested tree.<
 <li><code><a title="sverchok.node_tree.SverchCustomTreeNode.sv_init" href="../node_tree.html#sverchok.node_tree.UpdateNodes.sv_init">sv_init</a></code></li>
 <li><code><a title="sverchok.node_tree.SverchCustomTreeNode.sv_internal_links" href="../node_tree.html#sverchok.node_tree.SverchCustomTreeNode.sv_internal_links">sv_internal_links</a></code></li>
 <li><code><a title="sverchok.node_tree.SverchCustomTreeNode.sv_new_input" href="../node_tree.html#sverchok.node_tree.UpdateNodes.sv_new_input">sv_new_input</a></code></li>
-<li><code><a title="sverchok.node_tree.SverchCustomTreeNode.sv_update" href="../node_tree.html#sverchok.node_tree.UpdateNodes.sv_update">sv_update</a></code></li>
 <li><code><a title="sverchok.node_tree.SverchCustomTreeNode.update" href="../node_tree.html#sverchok.node_tree.UpdateNodes.update">update</a></code></li>
 <li><code><a title="sverchok.node_tree.SverchCustomTreeNode.update_interactive_mode" href="../node_tree.html#sverchok.node_tree.UpdateNodes.update_interactive_mode">update_interactive_mode</a></code></li>
 <li><code><a title="sverchok.node_tree.SverchCustomTreeNode.update_ui" href="../node_tree.html#sverchok.node_tree.UpdateNodes.update_ui">update_ui</a></code></li>
@@ -4037,6 +4110,7 @@ def poll(cls, context):
 <li><code><a title="sverchok.core.node_group.SvGroupTreeNode.nested_tree_filter" href="#sverchok.core.node_group.SvGroupTreeNode.nested_tree_filter">nested_tree_filter</a></code></li>
 <li><code><a title="sverchok.core.node_group.SvGroupTreeNode.process" href="#sverchok.core.node_group.SvGroupTreeNode.process">process</a></code></li>
 <li><code><a title="sverchok.core.node_group.SvGroupTreeNode.show" href="#sverchok.core.node_group.SvGroupTreeNode.show">show</a></code></li>
+<li><code><a title="sverchok.core.node_group.SvGroupTreeNode.sv_update" href="#sverchok.core.node_group.SvGroupTreeNode.sv_update">sv_update</a></code></li>
 <li><code><a title="sverchok.core.node_group.SvGroupTreeNode.switch_viewers" href="#sverchok.core.node_group.SvGroupTreeNode.switch_viewers">switch_viewers</a></code></li>
 <li><code><a title="sverchok.core.node_group.SvGroupTreeNode.toggle_active" href="#sverchok.core.node_group.SvGroupTreeNode.toggle_active">toggle_active</a></code></li>
 <li><code><a title="sverchok.core.node_group.SvGroupTreeNode.update_group_tree" href="#sverchok.core.node_group.SvGroupTreeNode.update_group_tree">update_group_tree</a></code></li>

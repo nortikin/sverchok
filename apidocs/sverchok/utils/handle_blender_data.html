@@ -42,6 +42,8 @@ from itertools import chain
 from typing import Any, List, Union, TYPE_CHECKING, Optional
 
 import bpy
+from bpy.types import NodeInputs, NodeOutputs, NodeSocket
+
 from sverchok.data_structure import fixed_iter
 
 if TYPE_CHECKING:
@@ -381,6 +383,50 @@ class BlNode:
         except ValueError:
             return self.data.bl_idname
         return id_name
+
+
+class BlSockets:
+    def __init__(self, sockets: Union[NodeInputs, NodeOutputs]):
+        self._sockets = sockets
+
+    def copy_sockets(self, sockets_from: Iterable):
+        &#34;&#34;&#34;Copy sockets from one collection to another. Also, it can be used
+        to refresh `to` collection to be equal to `from` collection and in this
+        case only new socket will be added and old one removed.
+        It can copy properties:
+        sv socket -&gt; sv socket
+        sv interface socket -&gt; sv socket
+        &#34;&#34;&#34;
+        sockets_to = self._sockets
+        # remove sockets which are not presented in from collection
+        identifiers_from = {s.identifier for s in sockets_from}
+        for s_to in sockets_to:
+            if s_to.identifier not in identifiers_from:
+                sockets_to.remove(s_to)
+
+        # add new sockets
+        sock_indexes_to = {s.identifier: i for i, s in enumerate(sockets_to)}
+        for s_from in sockets_from:
+            if s_from.identifier in sock_indexes_to:
+                continue
+            id_name = getattr(s_from, &#39;bl_socket_idname&#39;, s_from.bl_idname)
+            s_to = sockets_to.new(id_name, s_from.name, identifier=s_from.identifier)
+            sock_indexes_to[s_to.identifier] = len(sockets_to) - 1
+
+        # fix existing sockets
+        for s_from in sockets_from:
+            s_to = sockets_to[sock_indexes_to[s_from.identifier]]
+            id_name = getattr(s_from, &#39;bl_socket_idname&#39;, s_from.bl_idname)
+            if id_name != s_to.bl_idname:
+                s_to = s_to.replace_socket(id_name)
+
+        # fix socket positions
+        for new_pos, s_from in enumerate(sockets_from):
+            current_pos = sock_indexes_to[s_from.identifier]
+            if current_pos != new_pos:
+                sockets_to.move(current_pos, new_pos)
+                sock_indexes_to = {
+                    s.identifier: i for i, s in enumerate(sockets_to)}
 
 
 class BlSocket:
@@ -2270,6 +2316,117 @@ def sverchok_type(self):
 </dd>
 </dl>
 </dd>
+<dt id="sverchok.utils.handle_blender_data.BlSockets"><code class="flex name class">
+<span>class <span class="ident">BlSockets</span></span>
+<span>(</span><span>sockets: Union[NodeInputs, NodeOutputs])</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class BlSockets:
+    def __init__(self, sockets: Union[NodeInputs, NodeOutputs]):
+        self._sockets = sockets
+
+    def copy_sockets(self, sockets_from: Iterable):
+        &#34;&#34;&#34;Copy sockets from one collection to another. Also, it can be used
+        to refresh `to` collection to be equal to `from` collection and in this
+        case only new socket will be added and old one removed.
+        It can copy properties:
+        sv socket -&gt; sv socket
+        sv interface socket -&gt; sv socket
+        &#34;&#34;&#34;
+        sockets_to = self._sockets
+        # remove sockets which are not presented in from collection
+        identifiers_from = {s.identifier for s in sockets_from}
+        for s_to in sockets_to:
+            if s_to.identifier not in identifiers_from:
+                sockets_to.remove(s_to)
+
+        # add new sockets
+        sock_indexes_to = {s.identifier: i for i, s in enumerate(sockets_to)}
+        for s_from in sockets_from:
+            if s_from.identifier in sock_indexes_to:
+                continue
+            id_name = getattr(s_from, &#39;bl_socket_idname&#39;, s_from.bl_idname)
+            s_to = sockets_to.new(id_name, s_from.name, identifier=s_from.identifier)
+            sock_indexes_to[s_to.identifier] = len(sockets_to) - 1
+
+        # fix existing sockets
+        for s_from in sockets_from:
+            s_to = sockets_to[sock_indexes_to[s_from.identifier]]
+            id_name = getattr(s_from, &#39;bl_socket_idname&#39;, s_from.bl_idname)
+            if id_name != s_to.bl_idname:
+                s_to = s_to.replace_socket(id_name)
+
+        # fix socket positions
+        for new_pos, s_from in enumerate(sockets_from):
+            current_pos = sock_indexes_to[s_from.identifier]
+            if current_pos != new_pos:
+                sockets_to.move(current_pos, new_pos)
+                sock_indexes_to = {
+                    s.identifier: i for i, s in enumerate(sockets_to)}</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.handle_blender_data.BlSockets.copy_sockets"><code class="name flex">
+<span>def <span class="ident">copy_sockets</span></span>(<span>self, sockets_from: Iterable)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Copy sockets from one collection to another. Also, it can be used
+to refresh <code>to</code> collection to be equal to <code>from</code> collection and in this
+case only new socket will be added and old one removed.
+It can copy properties:
+sv socket -&gt; sv socket
+sv interface socket -&gt; sv socket</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def copy_sockets(self, sockets_from: Iterable):
+    &#34;&#34;&#34;Copy sockets from one collection to another. Also, it can be used
+    to refresh `to` collection to be equal to `from` collection and in this
+    case only new socket will be added and old one removed.
+    It can copy properties:
+    sv socket -&gt; sv socket
+    sv interface socket -&gt; sv socket
+    &#34;&#34;&#34;
+    sockets_to = self._sockets
+    # remove sockets which are not presented in from collection
+    identifiers_from = {s.identifier for s in sockets_from}
+    for s_to in sockets_to:
+        if s_to.identifier not in identifiers_from:
+            sockets_to.remove(s_to)
+
+    # add new sockets
+    sock_indexes_to = {s.identifier: i for i, s in enumerate(sockets_to)}
+    for s_from in sockets_from:
+        if s_from.identifier in sock_indexes_to:
+            continue
+        id_name = getattr(s_from, &#39;bl_socket_idname&#39;, s_from.bl_idname)
+        s_to = sockets_to.new(id_name, s_from.name, identifier=s_from.identifier)
+        sock_indexes_to[s_to.identifier] = len(sockets_to) - 1
+
+    # fix existing sockets
+    for s_from in sockets_from:
+        s_to = sockets_to[sock_indexes_to[s_from.identifier]]
+        id_name = getattr(s_from, &#39;bl_socket_idname&#39;, s_from.bl_idname)
+        if id_name != s_to.bl_idname:
+            s_to = s_to.replace_socket(id_name)
+
+    # fix socket positions
+    for new_pos, s_from in enumerate(sockets_from):
+        current_pos = sock_indexes_to[s_from.identifier]
+        if current_pos != new_pos:
+            sockets_to.move(current_pos, new_pos)
+            sock_indexes_to = {
+                s.identifier: i for i, s in enumerate(sockets_to)}</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
 <dt id="sverchok.utils.handle_blender_data.BlTree"><code class="flex name class">
 <span>class <span class="ident">BlTree</span></span>
 <span>(</span><span>tree)</span>
@@ -2554,6 +2711,12 @@ def sv_trees(self) -&gt; Iterable[Union[SverchCustomTree, SvGroupTree]]:
 <li><code><a title="sverchok.utils.handle_blender_data.BlSocket.display_shape" href="#sverchok.utils.handle_blender_data.BlSocket.display_shape">display_shape</a></code></li>
 <li><code><a title="sverchok.utils.handle_blender_data.BlSocket.from_identifier" href="#sverchok.utils.handle_blender_data.BlSocket.from_identifier">from_identifier</a></code></li>
 <li><code><a title="sverchok.utils.handle_blender_data.BlSocket.sverchok_type" href="#sverchok.utils.handle_blender_data.BlSocket.sverchok_type">sverchok_type</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.handle_blender_data.BlSockets" href="#sverchok.utils.handle_blender_data.BlSockets">BlSockets</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.handle_blender_data.BlSockets.copy_sockets" href="#sverchok.utils.handle_blender_data.BlSockets.copy_sockets">copy_sockets</a></code></li>
 </ul>
 </li>
 <li>
