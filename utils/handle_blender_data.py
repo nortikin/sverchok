@@ -14,6 +14,8 @@ from itertools import chain
 from typing import Any, List, Union, TYPE_CHECKING, Optional
 
 import bpy
+from bpy.types import NodeInputs, NodeOutputs, NodeSocket
+
 from sverchok.data_structure import fixed_iter
 
 if TYPE_CHECKING:
@@ -353,6 +355,50 @@ class BlNode:
         except ValueError:
             return self.data.bl_idname
         return id_name
+
+
+class BlSockets:
+    def __init__(self, sockets: Union[NodeInputs, NodeOutputs]):
+        self._sockets = sockets
+
+    def copy_sockets(self, sockets_from: Iterable):
+        """Copy sockets from one collection to another. Also, it can be used
+        to refresh `to` collection to be equal to `from` collection and in this
+        case only new socket will be added and old one removed.
+        It can copy properties:
+        sv socket -> sv socket
+        sv interface socket -> sv socket
+        """
+        sockets_to = self._sockets
+        # remove sockets which are not presented in from collection
+        identifiers_from = {s.identifier for s in sockets_from}
+        for s_to in sockets_to:
+            if s_to.identifier not in identifiers_from:
+                sockets_to.remove(s_to)
+
+        # add new sockets
+        sock_indexes_to = {s.identifier: i for i, s in enumerate(sockets_to)}
+        for s_from in sockets_from:
+            if s_from.identifier in sock_indexes_to:
+                continue
+            id_name = getattr(s_from, 'bl_socket_idname', s_from.bl_idname)
+            s_to = sockets_to.new(id_name, s_from.name, identifier=s_from.identifier)
+            sock_indexes_to[s_to.identifier] = len(sockets_to) - 1
+
+        # fix existing sockets
+        for s_from in sockets_from:
+            s_to = sockets_to[sock_indexes_to[s_from.identifier]]
+            id_name = getattr(s_from, 'bl_socket_idname', s_from.bl_idname)
+            if id_name != s_to.bl_idname:
+                s_to = s_to.replace_socket(id_name)
+
+        # fix socket positions
+        for new_pos, s_from in enumerate(sockets_from):
+            current_pos = sock_indexes_to[s_from.identifier]
+            if current_pos != new_pos:
+                sockets_to.move(current_pos, new_pos)
+                sock_indexes_to = {
+                    s.identifier: i for i, s in enumerate(sockets_to)}
 
 
 class BlSocket:
