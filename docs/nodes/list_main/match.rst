@@ -34,7 +34,7 @@ Parameters
 * **Short**: cut all to minimal length of lists
 * **Cycle**: extend all to maximal length of lists by cyclingly repeating
 * **Repeat**: extend all to maximal length of lists by last item repeating
-* **X-Ref**: extend all to maximal length of lists by multiply lengthes,
+* **X-Ref**: extend all to maximal length of lists by multiplying lengths,
 
   i.e. [0,1] and [4,5,6] will give [0,1,0,1,0,1] and [4,4,5,5,6,6] in output
 

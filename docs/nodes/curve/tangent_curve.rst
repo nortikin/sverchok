@@ -56,7 +56,7 @@ This node has the following parameters:
 
    * **Hermite**. Use Hermite_ spline algorithm, and generate either a list of
      Bezier curves, or concatenated NURBS curve.
-   * **NURBS**. Use NURBS interpolation algotithm.
+   * **NURBS**. Use NURBS interpolation algorithm.
 
 * **Cyclic**. If checked, then the node will generate additional Bezier curve
   segment to connect the last point with the first one. Unchecked by default.

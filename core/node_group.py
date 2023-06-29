@@ -7,7 +7,7 @@
 
 # from __future__ import annotations <- Don't use it here, `group node` will loose its `group tree` attribute
 import time
-from collections import namedtuple
+from collections import namedtuple, defaultdict
 from functools import reduce
 from typing import Tuple, List, Set, Dict, Iterator, Optional
 
@@ -23,7 +23,7 @@ import sverchok.core.group_update_system as gus
 from sverchok.core.update_system import ERROR_KEY
 from sverchok.utils.tree_structure import Tree
 from sverchok.utils.sv_node_utils import recursive_framed_location_finder
-from sverchok.utils.handle_blender_data import BlTrees
+from sverchok.utils.handle_blender_data import BlTrees, BlSockets
 from sverchok.node_tree import SvNodeTreeCommon, SverchCustomTreeNode
 
 
@@ -439,6 +439,17 @@ class SvGroupTreeNode(SverchCustomTreeNode, bpy.types.NodeCustomGroup):
                 return node
 
     def sv_update(self):
+        """This method is also called when interface of the subtree is changed"""
+        def copy_socket_names(from_sockets, to_sockets):
+            for from_s, to_s in zip(from_sockets, to_sockets):
+                to_s.name = from_s.name
+
+        if bpy.app.version >= (3, 5):  # sockets should be generated manually
+            BlSockets(self.inputs).copy_sockets(self.node_tree.inputs)
+            copy_socket_names(self.node_tree.inputs, self.inputs)
+            BlSockets(self.outputs).copy_sockets(self.node_tree.outputs)
+            copy_socket_names(self.node_tree.outputs, self.outputs)
+
         # this code should work only first time a socket was added
         if self.node_tree:
             for n_in_s, t_in_s in zip(self.inputs, self.node_tree.inputs):
@@ -636,33 +647,40 @@ class AddGroupTreeFromSelected(bpy.types.Operator):
             group_node.location = center
             sub_tree.group_node_name = group_node.name
 
-            # linking, linking should be ordered from first socket to last (in case like `join list` nodes)
+            # generate new sockets
             py_base_tree = Tree(base_tree)
             [setattr(py_base_tree.nodes[n.name], 'select', n.select) for n in base_tree.nodes]
-            input_node['connected_sockets'] = dict()  # Dict[node.name + socket.identifier, socket index of input node]
-            for py_node in py_base_tree.nodes:  # is selected
+            from_sockets, to_sockets = defaultdict(set), defaultdict(set)
+            for py_node in py_base_tree.nodes:
                 if not py_node.select:
                     continue
                 for in_s in py_node.inputs:
                     for out_s in in_s.linked_sockets:  # only one link always
-                        if out_s.node.select:
-                            continue
-                        out_s_key = out_s.node.name + out_s.identifier
-                        if out_s_key in input_node['connected_sockets']:  # protect from creating extra input sockets
-                            input_out_s_index = input_node['connected_sockets'][out_s_key]
-                            sub_tree.links.new(in_s.get_bl_socket(sub_tree), input_node.outputs[input_out_s_index])
-                        else:
-                            input_out_s_index = len(input_node.outputs) - 1
-                            input_node['connected_sockets'][out_s_key] = input_out_s_index
-                            sub_tree.links.new(in_s.get_bl_socket(sub_tree), input_node.outputs[input_out_s_index])
-                            base_tree.links.new(group_node.inputs[-1], out_s.get_bl_socket(base_tree))
-
+                        if not out_s.node.select:
+                            from_sockets[out_s.bl_tween].add(in_s.get_bl_socket(sub_tree))
                 for out_py_socket in py_node.outputs:
-                    if any(not s.node.select for s in out_py_socket.linked_sockets):
-                        sub_tree.links.new(output_node.inputs[-1], out_py_socket.get_bl_socket(sub_tree))
                     for in_py_socket in out_py_socket.linked_sockets:
                         if not in_py_socket.node.select:
-                            base_tree.links.new(in_py_socket.get_bl_socket(base_tree), group_node.outputs[-1])
+                            to_sockets[in_py_socket.bl_tween].add(out_py_socket.get_bl_socket(sub_tree))
+            for fs in from_sockets.keys():
+                sub_tree.inputs.new(fs.bl_idname, fs.name)
+            for ts in to_sockets.keys():
+                sub_tree.outputs.new(ts.bl_idname, ts.name)
+            if bpy.app.version >= (3, 5):  # generate also sockets of group nodes
+                for fs in sub_tree.inputs:
+                    group_node.inputs.new(fs.bl_socket_idname, fs.name, identifier=fs.identifier)
+                for ts in sub_tree.outputs:
+                    group_node.outputs.new(ts.bl_socket_idname, ts.name, identifier=ts.identifier)
+
+            # linking, linking should be ordered from first socket to last (in case like `join list` nodes)
+            for i, (from_s, first_ss) in enumerate(from_sockets.items()):
+                base_tree.links.new(group_node.inputs[i], from_s)
+                for first_s in first_ss:
+                    sub_tree.links.new(first_s, input_node.outputs[i])
+            for i, (to_s, last_ss) in enumerate(to_sockets.items()):
+                base_tree.links.new(to_s, group_node.outputs[i])
+                for last_s in last_ss:
+                    sub_tree.links.new(output_node.inputs[i], last_s)
 
             # delete selected nodes and copied frames without children
             [base_tree.nodes.remove(n) for n in self.filter_selected_nodes(base_tree)]

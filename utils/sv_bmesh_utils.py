@@ -54,9 +54,9 @@ def empty_bmesh(use_operators=True):
 
 class EmptyBmesh:
     """It's a bit faster than empty_bmesh because there is need to generate
-    new manger class each call"""
+    new manager class each call"""
     def __init__(self, use_operators=True):
-        """:supress: if True any errors during node execution will be suppressed"""
+        """:suppress: if True any errors during node execution will be suppressed"""
         self._use_operators = use_operators
         self._bm = bmesh.new(use_operators=use_operators)
 

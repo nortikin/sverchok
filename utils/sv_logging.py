@@ -38,7 +38,7 @@ if not sverchok.reload_event:  # otherwise it leeds to infinite recursion
     logging.setLogRecordFactory(add_relative_path_factory)
 
 log_format = "%(asctime)s.%(msecs)03d [%(levelname)-5s] %(name)s %(relative_path)s:%(lineno)d - %(message)s"
-sv_logger = logging.getLogger('sverchok')  # root loger
+sv_logger = logging.getLogger('sverchok')  # root logger
 
 # set any level whatever you desire,
 # it will be overridden by the add-on settings after the last one will be registered

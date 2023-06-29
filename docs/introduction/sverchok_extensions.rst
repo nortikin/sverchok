@@ -18,6 +18,6 @@ External Blender Add-ons that expand Sverchok Capabilities:
 - `Topology nodes <https://github.com/wassimj/topologicsverchok>`_: geometry topology generating
   and analyzing with microsoft library used. (Alpha State) 
 
-- `Mega-Polis node system <https://github.com/victorcalixto/mega-polis>`_: Data-Driven Urban Design Toolkit. Urban research and analitic toolset.  
+- `Mega-Polis node system <https://github.com/victorcalixto/mega-polis>`_: Data-Driven Urban Design Toolkit. Urban research and analytic toolset.  
 
 - `Sverchok-Bmesh <https://github.com/vkter/Sverchok-Bmesh>`_: Bmesh nodes separated to addon for sverchok.   

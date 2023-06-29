@@ -171,7 +171,7 @@ class ViewerNodeTextMK3(SverchCustomTreeNode, bpy.types.Node):
     frame: BoolProperty(name='frame', default=True)
     lines: IntProperty(name='lines', description='lines count to show', default=1000, min=1, max=2000)
 
-    # multi sockets veriables
+    # multi sockets variables
     newsock: BoolProperty(name='newsock', default=False)
     base_name = 'data'
     multi_socket_type = 'SvStringsSocket'

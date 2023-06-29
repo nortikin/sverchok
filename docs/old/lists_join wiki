@@ -5,7 +5,7 @@ ListLevels manual
    [[(x0,y0,z0),(x1,y1,z1),(x2,y2,z2)][...     ]...]  that is how it looks ABCD
  0 [                                               ]  parameter from socket
  1  [object 0                        ][object 1]...   objects, matrixes
-                                                      here can be added levels for making poligons or smth
+                                                      here can be added levels for making polygons or smth
  2   (vert 0  ),(vert 1  ),(vert 2  )  (...   )       vertices, edges, polygons, tuples
  3    x0,y0,z0   x1,y1,z1   x2,y2,z2                  coordinates, vert_indexes, matrix floats
  ... in future will be flaxiable levels

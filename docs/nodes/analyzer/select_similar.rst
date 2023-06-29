@@ -8,7 +8,7 @@ Functionality
 -------------
 
 This node allows to select mesh elements (vertices, edges and faces), which are similar to elements already selected in some aspect.
-This is the implementation of Blender's own "Select Similar" (Shift+G) feature. So fo additional information, please refer to the Blender's `documentation <https://docs.blender.org/manual/en/latest/modeling/meshes/selecting/similar.html>`_ on this feature.
+This is the implementation of Blender's own "Select Similar" (Shift+G) feature. For additional information, please refer to the Blender's `documentation <https://docs.blender.org/manual/en/latest/modeling/meshes/selecting/similar.html>`_ on this feature.
 
 Inputs
 ------

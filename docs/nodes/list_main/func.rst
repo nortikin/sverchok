@@ -32,7 +32,7 @@ Logical OR          Return True if any value in the list is logical True
 Logical AND         Return True if all values in the list are logical True
 =================== ======================================
 
-**Wrap:** Adds one level of wraping (output becomes [output])
+**Wrap:** Adds one level of wrapping (output becomes [output])
 
 Outputs
 -------
