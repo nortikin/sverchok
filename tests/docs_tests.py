@@ -78,7 +78,6 @@ limited_dissolve_mk2.py
 mesh_separate_mk2.py
 approx_subd_to_nurbs.py
 vd_attr_node_mk2.py
-scalar_field_point.py
 quads_to_nurbs.py
 location.py
 sun_position.py
