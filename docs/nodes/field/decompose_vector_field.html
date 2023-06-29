@@ -74,6 +74,7 @@
 <li class="toctree-l3"><a class="reference internal" href="image_field.html">Image Field</a></li>
 <li class="toctree-l3"><a class="reference internal" href="merge_scalar_fields.html">Join Scalar Fields</a></li>
 <li class="toctree-l3"><a class="reference internal" href="mesh_normal_field.html">Mesh Nearest Normal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mesh_normal_field.html#examples">Examples</a></li>
 <li class="toctree-l3"><a class="reference internal" href="mesh_surface_field.html">Mesh Smoothed Surface Field</a></li>
 <li class="toctree-l3"><a class="reference internal" href="minimal_sfield.html">RBF Scalar Field</a></li>
 <li class="toctree-l3"><a class="reference internal" href="minimal_vfield.html">RBF Vector Field</a></li>
@@ -85,6 +86,7 @@
 <li class="toctree-l3"><a class="reference internal" href="scalar_field_formula.html">Scalar Field Formula</a></li>
 <li class="toctree-l3"><a class="reference internal" href="scalar_field_graph.html">Scalar Field Graph</a></li>
 <li class="toctree-l3"><a class="reference internal" href="scalar_field_math.html">Scalar Field Math</a></li>
+<li class="toctree-l3"><a class="reference internal" href="scalar_field_point.html">Distance From a Point</a></li>
 <li class="toctree-l3"><a class="reference internal" href="vector_field_apply.html">Apply Vector Field</a></li>
 <li class="toctree-l3"><a class="reference internal" href="vector_field_eval.html">Evaluate Vector Field</a></li>
 <li class="toctree-l3"><a class="reference internal" href="vector_field_formula.html">Vector Field Formula</a></li>
@@ -156,6 +158,7 @@
              
   <section id="decompose-vector-field">
 <h1>Decompose Vector Field<a class="headerlink" href="#decompose-vector-field" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/90c65c97-8446-4401-b451-63f8e2bec00a"><img alt="https://github.com/nortikin/sverchok/assets/14288520/90c65c97-8446-4401-b451-63f8e2bec00a" src="https://github.com/nortikin/sverchok/assets/14288520/90c65c97-8446-4401-b451-63f8e2bec00a" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node generates three Scalar Fields by decomposing a Vector Field into it’s coordinates.</p>
@@ -178,6 +181,9 @@
 <li><p><strong>Spherical</strong>. The vector field is decomposed into Rho, Phi and Theta fields.</p></li>
 </ul>
 <p>The default mode is <strong>Cartesian</strong>.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/3c46726b-7bec-4ff6-8129-db98fe31c097"><img alt="https://github.com/nortikin/sverchok/assets/14288520/3c46726b-7bec-4ff6-8129-db98fe31c097" src="https://github.com/nortikin/sverchok/assets/14288520/3c46726b-7bec-4ff6-8129-db98fe31c097" /></a>
+</div></blockquote>
 </li>
 </ul>
 </section>
@@ -192,8 +198,29 @@
 </section>
 <section id="example-of-usage">
 <h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/031274cb-f44e-41ff-bc8d-ee84bcc581b2"><img alt="https://github.com/nortikin/sverchok/assets/14288520/031274cb-f44e-41ff-bc8d-ee84bcc581b2" src="https://github.com/nortikin/sverchok/assets/14288520/031274cb-f44e-41ff-bc8d-ee84bcc581b2" /></a>
+<ul class="simple">
+<li><p>Generator-&gt;Generatots Extended-&gt; <a class="reference internal" href="../generators_extended/spiral_mk2.html"><span class="doc">Spiral</span></a></p></li>
+<li><p>Fields-&gt; <a class="reference internal" href="vector_field_formula.html"><span class="doc">Vector Field Formula</span></a></p></li>
+<li><p>Fields-&gt; <a class="reference internal" href="scalar_field_eval.html"><span class="doc">Evaluate Scalar Field</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/numbers.html"><span class="doc">A Number</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/range_map.html"><span class="doc">Map Range</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_metaball.html"><span class="doc">Metaball Out</span></a></p></li>
+</ul>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/ae879c61-3759-48e5-82dc-74e34bcb5ff9"><img alt="https://github.com/nortikin/sverchok/assets/14288520/ae879c61-3759-48e5-82dc-74e34bcb5ff9" src="https://github.com/nortikin/sverchok/assets/14288520/ae879c61-3759-48e5-82dc-74e34bcb5ff9" /></a>
+<hr class="docutils" />
 <p>Use only one component of some attraction vector field to scale the cubes:</p>
-<img alt="https://user-images.githubusercontent.com/284644/79474322-ae9ba980-801f-11ea-9cb0-0d6d5085e22a.png" src="https://user-images.githubusercontent.com/284644/79474322-ae9ba980-801f-11ea-9cb0-0d6d5085e22a.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/79474322-ae9ba980-801f-11ea-9cb0-0d6d5085e22a.png"><img alt="https://user-images.githubusercontent.com/284644/79474322-ae9ba980-801f-11ea-9cb0-0d6d5085e22a.png" src="https://user-images.githubusercontent.com/284644/79474322-ae9ba980-801f-11ea-9cb0-0d6d5085e22a.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
+<li><p>Fields-&gt; <a class="reference internal" href="attractor_field_mk2.html"><span class="doc">Attractor Field</span></a></p></li>
+<li><p>Fields-&gt; <a class="reference internal" href="scalar_field_eval.html"><span class="doc">Evaluate Scalar Field</span></a></p></li>
+<li><p>Spacial-&gt; <a class="reference internal" href="../spatial/homogenous_vector_field.html"><span class="doc">Vector P Field</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_in.html"><span class="doc">Vector In</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 </section>
 </section>
 

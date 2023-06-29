@@ -37,7 +37,7 @@ Every single implementation offers different ways of control:
 * FreeCAD_ implementation supports three approximation methods and a wide variety of options:
 
   An exact curve degree cannot be specified. An interval ( Minimal Degree, Maximal Degree ) is used instead.
-  The final curve degree is a result of all the constraints applyed and will be in the specified inverval.
+  The final curve degree is a result of all the constraints applied and will be in the specified interval.
   
   A global precision of the approximation can be specified as a **Tolerance** value.
   Lower values mean that the approximation curve will pass closely to the input Vertices.

@@ -65,7 +65,7 @@ Inputs
 
 This node has the following inputs:
 
-* **Vertices**. The points throug which the curve should go. This input is
+* **Vertices**. The points through which the curve should go. This input is
   mandatory. At least two points are required to build the spline.
 * **Tension**. This input is available only when **Spline Type** parameter is
   set to **Uniform (with tension)**. Specifies the tension value of the spline.

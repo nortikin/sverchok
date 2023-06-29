@@ -74,6 +74,7 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="merge_scalar_fields.html">Join Scalar Fields</a></li>
 <li class="toctree-l3"><a class="reference internal" href="mesh_normal_field.html">Mesh Nearest Normal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mesh_normal_field.html#examples">Examples</a></li>
 <li class="toctree-l3"><a class="reference internal" href="mesh_surface_field.html">Mesh Smoothed Surface Field</a></li>
 <li class="toctree-l3"><a class="reference internal" href="minimal_sfield.html">RBF Scalar Field</a></li>
 <li class="toctree-l3"><a class="reference internal" href="minimal_vfield.html">RBF Vector Field</a></li>
@@ -85,6 +86,7 @@
 <li class="toctree-l3"><a class="reference internal" href="scalar_field_formula.html">Scalar Field Formula</a></li>
 <li class="toctree-l3"><a class="reference internal" href="scalar_field_graph.html">Scalar Field Graph</a></li>
 <li class="toctree-l3"><a class="reference internal" href="scalar_field_math.html">Scalar Field Math</a></li>
+<li class="toctree-l3"><a class="reference internal" href="scalar_field_point.html">Distance From a Point</a></li>
 <li class="toctree-l3"><a class="reference internal" href="vector_field_apply.html">Apply Vector Field</a></li>
 <li class="toctree-l3"><a class="reference internal" href="vector_field_eval.html">Evaluate Vector Field</a></li>
 <li class="toctree-l3"><a class="reference internal" href="vector_field_formula.html">Vector Field Formula</a></li>
@@ -156,6 +158,7 @@
              
   <section id="image-field">
 <h1>Image Field<a class="headerlink" href="#image-field" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/0a0215eb-dd9e-4a85-808c-834d4d052c52"><img alt="https://github.com/nortikin/sverchok/assets/14288520/0a0215eb-dd9e-4a85-808c-834d4d052c52" src="https://github.com/nortikin/sverchok/assets/14288520/0a0215eb-dd9e-4a85-808c-834d4d052c52" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node generates Vector Fields and Scalar Fields based on different representations of colors in the Blender’s Image object.</p>
@@ -193,7 +196,14 @@ placed. The available values are XY, YZ and XZ. The default value is XY.</p></li
 <section id="example-of-usage">
 <h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>Simple example:</p>
-<img alt="https://user-images.githubusercontent.com/284644/79607518-c309a000-810c-11ea-86fa-be7c16043b32.png" src="https://user-images.githubusercontent.com/284644/79607518-c309a000-810c-11ea-86fa-be7c16043b32.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/79607518-c309a000-810c-11ea-86fa-be7c16043b32.png"><img alt="https://user-images.githubusercontent.com/284644/79607518-c309a000-810c-11ea-86fa-be7c16043b32.png" src="https://user-images.githubusercontent.com/284644/79607518-c309a000-810c-11ea-86fa-be7c16043b32.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
+<li><p>Fields-&gt; <a class="reference internal" href="vector_field_math.html"><span class="doc">Vector Field Math</span></a></p></li>
+<li><p>Fields-&gt; <a class="reference internal" href="vector_field_graph.html"><span class="doc">Vector Field Graph</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 </section>
 </section>
 

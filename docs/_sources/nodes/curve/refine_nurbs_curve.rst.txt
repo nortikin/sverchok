@@ -9,7 +9,7 @@ number of knots in order to make it easier to manipulate with curve's shape.
 Each knot can be inserted once or multiple times. Knots are distributed
 according to one of algorithms, in order to make knots distribution more even.
 
-After some modifications to refined curve shape were done, unneded knots can be
+After some modifications to refined curve shape were done, unneeded knots can be
 removed by use of "Remove excessive knots (Curve)" node.
 
 Inputs
@@ -65,7 +65,7 @@ This node has the following parameters:
   * **As possible**. Each knot is inserted as many times as possible; that is,
     `p-1` times, where `p` is the degree of the curve - if the new knot does
     not coincide with any of existing knots; or smaller number of times, if the
-    new knot hapens to coincide with previously existing knot. This option is
+    new knot happens to coincide with previously existing knot. This option is
     the default.
 
 * **Specify Segment**. If checked, the node allows you to specify the range of

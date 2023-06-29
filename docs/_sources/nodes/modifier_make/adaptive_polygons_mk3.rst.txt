@@ -80,7 +80,7 @@ This node has the following inputs:
   transform the donor objects. Available values are:
 
   - **Map**. Interpolation between recipient object's vertex normals will be
-    used to deform the donor object. While this procuces smoother results, this
+    used to deform the donor object. While this produces smoother results, this
     gives more deformation of donor object.
   - **Face**. Recipient object's face normal will be used to orient the donor
     object. While this gives less deformation of donor object, it can give gaps
@@ -98,7 +98,7 @@ Parameters
 
 This node has some number of parameters, and most of them are accessible only in the N panel:
 
-- **Join**. If checked, then all procuced copies of donor object will be merged
+- **Join**. If checked, then all produced copies of donor object will be merged
   into one mesh. Unchecked by default.
 - **Remove doubles**. If checked, then "remove doubles" / "merge by distance"
   function will be applied to the resulting mesh; i.e., vertices that have

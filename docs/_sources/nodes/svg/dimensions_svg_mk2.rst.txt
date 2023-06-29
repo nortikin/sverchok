@@ -16,7 +16,7 @@ Inputs
 - Text Offset: Distance from the line to text.
 - Text Fill / Stroke: Dimensions Text Fill and Stroke attributes.
 - Line Fill / Stroke: Dimensions Lines Fill and Stroke attributes.
-- Text Multiplyer: Multiplier for dimentions. For example, you need meters or millimeters or decimeters, so multiply 1000 100 10 etc.   
+- Text Multiplyer: Multiplier for dimensions. For example, you need meters or millimeters or decimeters, so multiply 1000 100 10 etc.   
 
 Options
 -------

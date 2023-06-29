@@ -67,6 +67,7 @@
 <li class="toctree-l3"><a class="reference internal" href="image_field.html">Image Field</a></li>
 <li class="toctree-l3"><a class="reference internal" href="merge_scalar_fields.html">Join Scalar Fields</a></li>
 <li class="toctree-l3"><a class="reference internal" href="mesh_normal_field.html">Mesh Nearest Normal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mesh_normal_field.html#examples">Examples</a></li>
 <li class="toctree-l3"><a class="reference internal" href="mesh_surface_field.html">Mesh Smoothed Surface Field</a></li>
 <li class="toctree-l3"><a class="reference internal" href="minimal_sfield.html">RBF Scalar Field</a></li>
 <li class="toctree-l3"><a class="reference internal" href="minimal_vfield.html">RBF Vector Field</a></li>
@@ -85,6 +86,7 @@
 <li class="toctree-l3"><a class="reference internal" href="scalar_field_formula.html">Scalar Field Formula</a></li>
 <li class="toctree-l3"><a class="reference internal" href="scalar_field_graph.html">Scalar Field Graph</a></li>
 <li class="toctree-l3"><a class="reference internal" href="scalar_field_math.html">Scalar Field Math</a></li>
+<li class="toctree-l3"><a class="reference internal" href="scalar_field_point.html">Distance From a Point</a></li>
 <li class="toctree-l3"><a class="reference internal" href="vector_field_apply.html">Apply Vector Field</a></li>
 <li class="toctree-l3"><a class="reference internal" href="vector_field_eval.html">Evaluate Vector Field</a></li>
 <li class="toctree-l3"><a class="reference internal" href="vector_field_formula.html">Vector Field Formula</a></li>
@@ -156,33 +158,59 @@
              
   <section id="rotation-field">
 <h1>Rotation Field<a class="headerlink" href="#rotation-field" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/024400d8-69ae-4482-9ab7-f22e67df09c0"><img alt="https://github.com/nortikin/sverchok/assets/14288520/024400d8-69ae-4482-9ab7-f22e67df09c0" src="https://github.com/nortikin/sverchok/assets/14288520/024400d8-69ae-4482-9ab7-f22e67df09c0" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node generates a Vector Field which is calculated as
 force rotating points around some axis. Several physics-like falloff laws are supported.
 Falloffs similar to standard proportional editing mode are supported too (they
 are marked with <cite>(P)</cite> in the name).</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/5ef50da8-6d61-4266-8e31-8db6d66262fe"><img alt="https://github.com/nortikin/sverchok/assets/14288520/5ef50da8-6d61-4266-8e31-8db6d66262fe" src="https://github.com/nortikin/sverchok/assets/14288520/5ef50da8-6d61-4266-8e31-8db6d66262fe" /></a>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul>
 <li><p><strong>Location</strong>. Point on the rotating axis</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/bee32d7c-da5b-4e6f-9250-817e92c032fd"><img alt="https://github.com/nortikin/sverchok/assets/14288520/bee32d7c-da5b-4e6f-9250-817e92c032fd" src="https://github.com/nortikin/sverchok/assets/14288520/bee32d7c-da5b-4e6f-9250-817e92c032fd" /></a>
+</div></blockquote>
 <p>It is possible to provide several location points. The default value is <cite>(0, 0, 0)</cite> (origin).</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/f75c6563-c894-41d4-bade-b4fbb30b0597"><img alt="https://github.com/nortikin/sverchok/assets/14288520/f75c6563-c894-41d4-bade-b4fbb30b0597" src="https://github.com/nortikin/sverchok/assets/14288520/f75c6563-c894-41d4-bade-b4fbb30b0597" /></a>
+</div></blockquote>
 </li>
 <li><p><strong>Direction</strong>. Direction of the rotation axis.  The default value is <cite>(0, 0, 1)</cite> (Z axis).</p></li>
-<li><p><strong>Amplitude</strong>. The attracting force amplitude. The default value is 0.5.</p></li>
+</ul>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/25cdcca7-0347-4cbe-801c-6d003a3226f5"><img alt="https://github.com/nortikin/sverchok/assets/14288520/25cdcca7-0347-4cbe-801c-6d003a3226f5" src="https://github.com/nortikin/sverchok/assets/14288520/25cdcca7-0347-4cbe-801c-6d003a3226f5" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/356a88c5-aa31-41d1-9d27-dba7c75acc3e"><img alt="https://github.com/nortikin/sverchok/assets/14288520/356a88c5-aa31-41d1-9d27-dba7c75acc3e" src="https://github.com/nortikin/sverchok/assets/14288520/356a88c5-aa31-41d1-9d27-dba7c75acc3e" /></a>
+<ul>
+<li><p><strong>Amplitude</strong>. The attracting force amplitude. The default value is 0.5.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/bd77d08b-d5eb-4eb0-9506-31501db70d2c"><img alt="https://github.com/nortikin/sverchok/assets/14288520/bd77d08b-d5eb-4eb0-9506-31501db70d2c" src="https://github.com/nortikin/sverchok/assets/14288520/bd77d08b-d5eb-4eb0-9506-31501db70d2c" /></a>
+</div></blockquote>
+</li>
 <li><p><strong>Coefficient</strong>. The coefficient used in the attracting force falloff
 calculation formula. The exact meaning of this input depends on fallof type:</p>
 <blockquote>
-<div><ul class="simple">
+<div><ul>
 <li><p>If <strong>Falloff type</strong> is set to <strong>Inverse exponent</strong> or <strong>Gauss</strong>, then this
 is the coefficient K in the corresponding formula: <code class="docutils literal notranslate"><span class="pre">exp(-K*R)</span></code> or
-<code class="docutils literal notranslate"><span class="pre">exp(-K*x^2/2)</span></code>.</p></li>
+<code class="docutils literal notranslate"><span class="pre">exp(-K*x^2/2)</span></code>.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/12681a87-6547-4574-86f2-e81c923362ff"><img alt="https://github.com/nortikin/sverchok/assets/14288520/12681a87-6547-4574-86f2-e81c923362ff" src="https://github.com/nortikin/sverchok/assets/14288520/12681a87-6547-4574-86f2-e81c923362ff" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/42e354b8-baaa-4de5-a7b7-c7e291de4f44"><img alt="https://github.com/nortikin/sverchok/assets/14288520/42e354b8-baaa-4de5-a7b7-c7e291de4f44" src="https://github.com/nortikin/sverchok/assets/14288520/42e354b8-baaa-4de5-a7b7-c7e291de4f44" /></a>
+</div></blockquote>
+</li>
 <li><p>If <strong>Falloff type</strong> is set to one of proportional editing modes (one
 starting with <code class="docutils literal notranslate"><span class="pre">(P)</span></code> prefix), this is the radius of proportional editing
-falloff.</p></li>
-<li><p>For other falloff types, this input is not available.</p></li>
+falloff.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/475f6396-80b6-437b-8570-1f52420891b6"><img alt="https://github.com/nortikin/sverchok/assets/14288520/475f6396-80b6-437b-8570-1f52420891b6" src="https://github.com/nortikin/sverchok/assets/14288520/475f6396-80b6-437b-8570-1f52420891b6" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/d7ea8b5e-6cdc-40e7-a2fd-5541197a359d"><img alt="https://github.com/nortikin/sverchok/assets/14288520/d7ea8b5e-6cdc-40e7-a2fd-5541197a359d" src="https://github.com/nortikin/sverchok/assets/14288520/d7ea8b5e-6cdc-40e7-a2fd-5541197a359d" /></a>
+</div></blockquote>
+</li>
+<li><p>For <strong>other</strong> falloff types, this input is not available.</p></li>
 </ul>
 <p>The default value is 0.5.</p>
 </div></blockquote>
@@ -218,7 +246,27 @@ restricted with the distance to attractor object. Unchecked by default.</p></li>
 </section>
 <section id="examples-of-usage">
 <h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
-<img alt="https://user-images.githubusercontent.com/10011941/107337942-45f45080-6abb-11eb-8245-74afc5fab5df.png" src="https://user-images.githubusercontent.com/10011941/107337942-45f45080-6abb-11eb-8245-74afc5fab5df.png" />
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/ebd38346-a271-456f-a8c1-22c5d9dfd2fb"><img alt="https://github.com/nortikin/sverchok/assets/14288520/ebd38346-a271-456f-a8c1-22c5d9dfd2fb" src="https://github.com/nortikin/sverchok/assets/14288520/ebd38346-a271-456f-a8c1-22c5d9dfd2fb" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/line_mk4.html"><span class="doc">Line</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/segment.html"><span class="doc">Segment</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Fields-&gt; <a class="reference internal" href="vector_field_apply.html"><span class="doc">Apply Vector Field</span></a></p></li>
+<li><p>Fields-&gt; <a class="reference internal" href="vector_field_eval.html"><span class="doc">Evaluate Vector Field</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/numbers.html"><span class="doc">A Number</span></a></p></li>
+<li><p>MUL X,Y: Number-&gt; <a class="reference internal" href="../number/scalar_mk4.html"><span class="doc">Scalar Math</span></a></p></li>
+<li><p>LEN: Vector-&gt; <a class="reference internal" href="../vector/math_mk3.html"><span class="doc">Vector Math</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_in.html"><span class="doc">Vector In</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/10011941/107337942-45f45080-6abb-11eb-8245-74afc5fab5df.png"><img alt="https://user-images.githubusercontent.com/10011941/107337942-45f45080-6abb-11eb-8245-74afc5fab5df.png" src="https://user-images.githubusercontent.com/10011941/107337942-45f45080-6abb-11eb-8245-74afc5fab5df.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Fields-&gt; <a class="reference internal" href="vector_field_apply.html"><span class="doc">Apply Vector Field</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 </section>
 </section>
 

@@ -216,7 +216,7 @@ console editor) or disable Sverchok.
     
     #. Change ``bl_idname`` of a node
     #. Remove or rename sockets (use labels for socket renaming)
-    #. Adding new socket inbetween existing sockets. We prefer that you add sockets behind the last
+    #. Adding new socket in between existing sockets. We prefer that you add sockets behind the last
        existing socket for either ``self.inputs`` or ``self.outputs``. This is the rule only if access
        to sockets is made by their indexes.
     #. There are other reserved property names see the bpy.types.Node baseclass in Blender docs and

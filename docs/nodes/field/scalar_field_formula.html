@@ -67,6 +67,7 @@
 <li class="toctree-l3"><a class="reference internal" href="image_field.html">Image Field</a></li>
 <li class="toctree-l3"><a class="reference internal" href="merge_scalar_fields.html">Join Scalar Fields</a></li>
 <li class="toctree-l3"><a class="reference internal" href="mesh_normal_field.html">Mesh Nearest Normal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mesh_normal_field.html#examples">Examples</a></li>
 <li class="toctree-l3"><a class="reference internal" href="mesh_surface_field.html">Mesh Smoothed Surface Field</a></li>
 <li class="toctree-l3"><a class="reference internal" href="minimal_sfield.html">RBF Scalar Field</a></li>
 <li class="toctree-l3"><a class="reference internal" href="minimal_vfield.html">RBF Vector Field</a></li>
@@ -86,6 +87,7 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="scalar_field_graph.html">Scalar Field Graph</a></li>
 <li class="toctree-l3"><a class="reference internal" href="scalar_field_math.html">Scalar Field Math</a></li>
+<li class="toctree-l3"><a class="reference internal" href="scalar_field_point.html">Distance From a Point</a></li>
 <li class="toctree-l3"><a class="reference internal" href="vector_field_apply.html">Apply Vector Field</a></li>
 <li class="toctree-l3"><a class="reference internal" href="vector_field_eval.html">Evaluate Vector Field</a></li>
 <li class="toctree-l3"><a class="reference internal" href="vector_field_formula.html">Vector Field Formula</a></li>
@@ -157,12 +159,14 @@
              
   <section id="scalar-field-formula">
 <h1>Scalar Field Formula<a class="headerlink" href="#scalar-field-formula" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/fa9a8540-ba21-47e8-bf16-c70a1492d824"><img alt="https://github.com/nortikin/sverchok/assets/14288520/fa9a8540-ba21-47e8-bf16-c70a1492d824" src="https://github.com/nortikin/sverchok/assets/14288520/fa9a8540-ba21-47e8-bf16-c70a1492d824" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node generates a Scalar Field, defined by some user-provided formula.</p>
 <p>The formula should map the coordinates of the point in 3D space (in one of supported coordinate systems) into some number.</p>
 <p>It is possible to use additional parameters in the formula, they will become inputs of the node.</p>
 <p>It is also possible to use the value of some other Scalar Field in the same point in the formula.</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/47b24ebf-8ac2-4c71-abc6-f15bc0eca0ce"><img alt="https://github.com/nortikin/sverchok/assets/14288520/47b24ebf-8ac2-4c71-abc6-f15bc0eca0ce" src="https://github.com/nortikin/sverchok/assets/14288520/47b24ebf-8ac2-4c71-abc6-f15bc0eca0ce" /></a>
 </section>
 <section id="expression-syntax">
 <h2>Expression syntax<a class="headerlink" href="#expression-syntax" title="Permalink to this heading">¶</a></h2>
@@ -204,16 +208,24 @@ pow, radians, sin, sinh, sqrt, tan, tanh, trunc;</p></li>
 </ul>
 <p>Each variable used in the formula, except for <cite>V</cite> and the coordinate variables, also becomes additional input.</p>
 <p>The following variables are considered to be point coordinates:</p>
-<ul class="simple">
-<li><p>For Cartesian mode: <cite>x</cite>, <cite>y</cite> and <cite>z</cite>;</p></li>
-<li><p>For Cylindrical mode: <cite>rho</cite>, <cite>phi</cite> and <cite>z</cite>;</p></li>
-<li><p>For Spherical mode: <cite>rho</cite>, <cite>phi</cite> and <cite>theta</cite>.</p></li>
+<ul>
+<li><p>For Cartesian mode: <cite>x</cite>, <cite>y</cite> and <cite>z</cite>;</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/6c52c301-ba79-4ba2-a25f-5eb83ffdcd07"><img alt="https://github.com/nortikin/sverchok/assets/14288520/6c52c301-ba79-4ba2-a25f-5eb83ffdcd07" src="https://github.com/nortikin/sverchok/assets/14288520/6c52c301-ba79-4ba2-a25f-5eb83ffdcd07" /></a>
+</div></blockquote>
+</li>
+<li><p>For Cylindrical mode: <cite>rho</cite>, <cite>phi</cite> and <cite>z</cite>;</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/80bc6c87-c0d6-4874-9d50-6de24e6ec391"><img alt="https://github.com/nortikin/sverchok/assets/14288520/80bc6c87-c0d6-4874-9d50-6de24e6ec391" src="https://github.com/nortikin/sverchok/assets/14288520/80bc6c87-c0d6-4874-9d50-6de24e6ec391" /></a>
+</li>
+<li><p>For Spherical mode: <cite>rho</cite>, <cite>phi</cite> and <cite>theta</cite>.</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/950c0b55-450b-4b14-91fa-439df014c053"><img alt="https://github.com/nortikin/sverchok/assets/14288520/950c0b55-450b-4b14-91fa-439df014c053" src="https://github.com/nortikin/sverchok/assets/14288520/950c0b55-450b-4b14-91fa-439df014c053" /></a>
+</li>
 </ul>
 </section>
 <section id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following parameters:</p>
-<ul class="simple">
+<ul>
 <li><p><strong>Input</strong>. This defines the coordinate system being used. The available
 values are <strong>Carhtesian</strong>, <strong>Cylindrical</strong> and <strong>Spherical</strong>. The default
 value is <strong>Cartesian</strong>.</p></li>
@@ -226,7 +238,11 @@ formulas will be evaluated separately for each input value. The use of
 vectorization usually makes computations a lot faster (2x to 100x). The
 parameter is enabled by default. If you experience some kind of troubles with
 calculating some of functions (errors or not good enough precision), you can
-disable this parameter.</p></li>
+disable this parameter.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/f8f4382d-247f-4403-a63b-56f996176ec9"><img alt="https://github.com/nortikin/sverchok/assets/14288520/f8f4382d-247f-4403-a63b-56f996176ec9" src="https://github.com/nortikin/sverchok/assets/14288520/f8f4382d-247f-4403-a63b-56f996176ec9" /></a>
+</div></blockquote>
+</li>
 </ul>
 </section>
 <section id="outputs">
@@ -238,12 +254,43 @@ disable this parameter.</p></li>
 </section>
 <section id="examples-of-usage">
 <h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/498ba2e7-08b2-4ecc-8151-05241fa7d9a1"><img alt="https://github.com/nortikin/sverchok/assets/14288520/498ba2e7-08b2-4ecc-8151-05241fa7d9a1" src="https://github.com/nortikin/sverchok/assets/14288520/498ba2e7-08b2-4ecc-8151-05241fa7d9a1" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="../surface/marching_cubes.html"><span class="doc">Marching Cubes</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/numbers.html"><span class="doc">A Number</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>Use the scalar field, defined by formula in in cylindrical coordinates, to scale some spheres:</p>
-<img alt="https://user-images.githubusercontent.com/284644/79490204-ef9eb880-8035-11ea-810d-59f9a98ebd5f.png" src="https://user-images.githubusercontent.com/284644/79490204-ef9eb880-8035-11ea-810d-59f9a98ebd5f.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/79490204-ef9eb880-8035-11ea-810d-59f9a98ebd5f.png"><img alt="https://user-images.githubusercontent.com/284644/79490204-ef9eb880-8035-11ea-810d-59f9a98ebd5f.png" src="https://user-images.githubusercontent.com/284644/79490204-ef9eb880-8035-11ea-810d-59f9a98ebd5f.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/icosphere.html"><span class="doc">IcoSphere</span></a></p></li>
+<li><p>Fields-&gt; <a class="reference internal" href="scalar_field_eval.html"><span class="doc">Evaluate Scalar Field</span></a></p></li>
+<li><p>Spacial-&gt; <a class="reference internal" href="../spatial/homogenous_vector_field.html"><span class="doc">Vector P Field</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/numbers.html"><span class="doc">A Number</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>The same formula in spherical coordinates:</p>
-<img alt="https://user-images.githubusercontent.com/284644/79490196-ee6d8b80-8035-11ea-874a-1d126b5c46b1.png" src="https://user-images.githubusercontent.com/284644/79490196-ee6d8b80-8035-11ea-874a-1d126b5c46b1.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/79490196-ee6d8b80-8035-11ea-874a-1d126b5c46b1.png"><img alt="https://user-images.githubusercontent.com/284644/79490196-ee6d8b80-8035-11ea-874a-1d126b5c46b1.png" src="https://user-images.githubusercontent.com/284644/79490196-ee6d8b80-8035-11ea-874a-1d126b5c46b1.png" /></a>
+<ul class="simple">
+<li><p>Number-&gt; <a class="reference internal" href="../number/numbers.html"><span class="doc">A Number</span></a></p></li>
+<li><p>Spacial-&gt; <a class="reference internal" href="../spatial/homogenous_vector_field.html"><span class="doc">Vector P Field</span></a></p></li>
+<li><p>Fields-&gt; <a class="reference internal" href="scalar_field_eval.html"><span class="doc">Evaluate Scalar Field</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/icosphere.html"><span class="doc">IcoSphere</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>Using the Field input with V:</p>
-<img alt="https://user-images.githubusercontent.com/284644/137736317-e1296d38-6e9a-412f-8bbf-531998dae0f8.png" src="https://user-images.githubusercontent.com/284644/137736317-e1296d38-6e9a-412f-8bbf-531998dae0f8.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/137736317-e1296d38-6e9a-412f-8bbf-531998dae0f8.png"><img alt="https://user-images.githubusercontent.com/284644/137736317-e1296d38-6e9a-412f-8bbf-531998dae0f8.png" src="https://user-images.githubusercontent.com/284644/137736317-e1296d38-6e9a-412f-8bbf-531998dae0f8.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Fields-&gt; <a class="reference internal" href="attractor_field_mk2.html"><span class="doc">Attractor Field</span></a></p></li>
+<li><p>Fields-&gt; <a class="reference internal" href="vector_field_apply.html"><span class="doc">Apply Vector Field</span></a></p></li>
+<li><p>X: Number-&gt; <a class="reference internal" href="../number/numbers.html"><span class="doc">A Number</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 </section>
 </section>
 

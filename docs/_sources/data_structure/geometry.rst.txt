@@ -177,7 +177,7 @@ A chain of Vertex indices defines a polygon and each polygon has edges that make
 
 **example 1**  
 
-If we take the above polygons list as example and look at the first polygon (index=0), it reads ``(0, 1, 2, 3)``. That polygon therefor defines the following edges ``(0,1),(1,2),(2,3),(3,0)``. The last edge ``(3,0)`` is the edge that closes the polygon. 
+If we take the above polygons list as example and look at the first polygon (index=0), it reads ``(0, 1, 2, 3)``. That polygon therefore defines the following edges ``(0,1),(1,2),(2,3),(3,0)``. The last edge ``(3,0)`` is the edge that closes the polygon. 
 
 **example 2**  
 

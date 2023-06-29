@@ -55,11 +55,11 @@ Options & Inputs
 Examples
 --------
 
-Preforming simulation in the surface of a torus:
+Performing simulation in the surface of a torus:
 
 .. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/pulga_physics/pulga_boundaries_force/blender_sverchok_pulga_boundaries_force_example_01.png
 
 
-Preforming simulation in the surface of a plane and inside a bounding box:
+Performing simulation in the surface of a plane and inside a bounding box:
 
 .. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/pulga_physics/pulga_boundaries_force/blender_sverchok_pulga_boundaries_force_example_02.png
