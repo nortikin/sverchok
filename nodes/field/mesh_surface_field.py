@@ -32,33 +32,39 @@ class SvMeshSurfaceFieldNode(SverchCustomTreeNode, bpy.types.Node):
 
     epsilon : FloatProperty(
             name = "Epsilon",
+            description = "Epsilon parameter of used RBF function; it affects the shape of generated field",
             default = 1.0,
             min = 0.0,
             update = updateNode)
     
     scale : FloatProperty(
             name = "Scale",
+            description = "This defines the distance along the normals of the mesh, at which the field should have the value of 1",
             default = 1.0,
             update = updateNode)
     
     smooth : FloatProperty(
             name = "Smooth",
+            description = "Smoothness parameter of used RBF function. If this is zero, then the field will have exactly the specified values in all provided points; otherwise, it will be only an approximating field",
             default = 0.0,
             min = 0.0,
             update = updateNode)
 
     use_verts : BoolProperty(
             name = "Use Vertices",
+            description = "The vertices of the source mesh",
             default = True,
             update = updateNode)
 
     use_edges : BoolProperty(
             name = "Use Edges",
+            description = "The edges of the source mesh",
             default = False,
             update = updateNode)
 
     use_faces : BoolProperty(
             name = "Use Faces",
+            description = "The faces of the source mesh",
             default = False,
             update = updateNode)
 
