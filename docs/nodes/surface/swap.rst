@@ -1,6 +1,9 @@
 Swap Surface U/V
 ================
 
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/fb6fb6f2-b9f2-4079-810e-90e9d32e7a49
+  :target: https://github.com/nortikin/sverchok/assets/14288520/fb6fb6f2-b9f2-4079-810e-90e9d32e7a49
+
 Functionality
 -------------
 
@@ -37,4 +40,10 @@ samples in V direction. Then we can see that directions are swapped by this
 node:
 
 .. image:: https://user-images.githubusercontent.com/284644/80011794-c8d4fc00-84e5-11ea-9030-266c178e1aee.png
+  :target: https://user-images.githubusercontent.com/284644/80011794-c8d4fc00-84e5-11ea-9030-266c178e1aee.png
 
+* Curves-> :doc:`Circle (Curve) </nodes/curve/curve_circle>`
+* Surfaces-> :doc:`Extrude Curve Along Vector </nodes/surface/extrude_vector>`
+* Surfaces-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
+* Transform-> :doc:`Move </nodes/transforms/move_mk3>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`

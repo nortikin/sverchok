@@ -42,8 +42,8 @@ class SvExMinimalVectorFieldNode(SverchCustomTreeNode, bpy.types.Node):
             update = updateNode)
 
     types = [
-                ('R', "Relative", "Field value in the point means the vector of force applied to this point", 0),
-                ('A', "Absolute", "Field value in the point means the new point where this point should be moved to", 1)
+                ('R', "Relative", "Field value in the point means the vector of force applied to this point.\nit will be supposed to work with 'Apply vector field' node", 0),
+                ('A', "Absolute", "Field value in the point means the new point where this point should be moved to.\nit will be supposed to work with 'Evaluate vector field' node", 1)
             ]
 
     field_type : EnumProperty(
