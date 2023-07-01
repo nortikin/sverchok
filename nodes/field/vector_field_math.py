@@ -32,25 +32,25 @@ V_FIELD_C, S_FIELD_C, V_FIELD_D = sockets_handler.register_outputs(
     )
 
 operations = [
-    ('ADD', "Add", lambda x,y : x+y, [("VFieldA", "A"), ("VFieldB", "B")], [("VFieldC", "Sum")]),
-    ('SUB', "Sub", lambda x, y : x-y, [("VFieldA", "A"), ('VFieldB', "B")], [("VFieldC", "Difference")]),
-    ('AVG', "Average", lambda x, y : (x+y)/2, [("VFieldA", "A"), ("VFieldB", "B")], [("VFieldC", "Average")]),
-    ('DOT', "Scalar Product", None, [("VFieldA", "A"), ("VFieldB", "B")], [("SFieldC", "Product")]),
-    ('CROSS', "Vector Product", None, [("VFieldA", "A"), ("VFieldB","B")], [("VFieldC", "Product")]),
-    ('MUL', "Multiply Scalar", None, [("VFieldA", "VField"), ("SFieldB", "Scalar")], [("VFieldC", "Product")]),
-    ('TANG', "Projection decomposition", None, [("VFieldA", "VField"), ("VFieldB","Basis")], [("VFieldC", "Projection"), ("VFieldD", "Coprojection")]),
-    ('COMPOSE', "Composition VB(VA(x))", None, [("VFieldA", "VA"), ("VFieldB", "VB")], [("VFieldC", "VC")]),
-    ('COMPOSES', "Composition SB(VA(x))", None, [("VFieldA", "VA"), ("SFieldB", "SB")], [("SFieldC", "SC")]),
-    ('NORM', "Norm", None, [("VFieldA", "VField")], [("SFieldC", "Norm")]),
-    ('LERP', "Lerp A -> B", None, [("VFieldA", "A"), ("VFieldB", "B"), ("SFieldB", "Coefficient")], [("VFieldC", "VField")]),
-    ('ABS', "Relative -> Absolute", None, [("VFieldA", "Relative")], [("VFieldC", "Absolute")]),
-    ('REL', "Absolute -> Relative", None, [("VFieldA", "Absolute")], [("VFieldC", "Relative")]),
+    ('ADD', "Add", lambda x,y : x+y, [("VFieldA", "A"), ("VFieldB", "B")], [("VFieldC", "Sum")], "Calculate vector (coordinate-wise) sum of two vector fields - VFieldA + VFieldB" ),
+    ('SUB', "Sub", lambda x, y : x-y, [("VFieldA", "A"), ('VFieldB', "B")], [("VFieldC", "Difference")], "Calculate vector (coordinate-wise) difference between two vector fields - VFieldA - VFieldB" ),
+    ('AVG', "Average", lambda x, y : (x+y)/2, [("VFieldA", "A"), ("VFieldB", "B")], [("VFieldC", "Average")], "Calculate the average between two vector fields - (VFieldA + VFieldB) / 2" ),
+    ('DOT', "Scalar Product", None, [("VFieldA", "A"), ("VFieldB", "B")], [("SFieldC", "Product")], "Calculate scalar (dot) product of two vector fields" ),
+    ('CROSS', "Vector Product", None, [("VFieldA", "A"), ("VFieldB","B")], [("VFieldC", "Product")], "Calculate vector (cross) product of two vector fields" ),
+    ('MUL', "Multiply Scalar", None, [("VFieldA", "VField"), ("SFieldB", "Scalar")], [("VFieldC", "Product")], "Multiply the vectors of vector field by scalar values of scalar field" ),
+    ('TANG', "Projection decomposition", None, [("VFieldA", "VField"), ("VFieldB","Basis")], [("VFieldC", "Projection"), ("VFieldD", "Coprojection")], "Project the vectors of the first vector field to the vectors of the second vector field ('basis');\nOutput the component of the first vector field which is colinear to the basis ('Projection') and the residual component ('Coprojection')" ),
+    ('COMPOSE', "Composition VB(VA(x))", None, [("VFieldA", "VA"), ("VFieldB", "VB")], [("VFieldC", "VC")], "Functional composition of two vector fields;\nThe resulting vector is calculated by evaluating the first vector field, and then evaluating the second vector field at the resulting point of the first evaluation" ),
+    ('COMPOSES', "Composition SB(VA(x))", None, [("VFieldA", "VA"), ("SFieldB", "SB")], [("SFieldC", "SC")], "Functional composition of vector field and a scalar field. The resulting scalar is calculated by first evaluating the vector field at original point, and then evaluating the scalar field at the resulting point.\nThe result is a scalar field" ),
+    ('NORM', "Norm", None, [("VFieldA", "VField")], [("SFieldC", "Norm")], "Calculate the norm (length) of vector field vectors. The result is a scalar field" ),
+    ('LERP', "Lerp A -> B", None, [("VFieldA", "A"), ("VFieldB", "B"), ("SFieldB", "Coefficient")], [("VFieldC", "VField")], "Linear interpolation between two vector fields. The interpolation coefficient is defined by a scalar field. The result is a vector field" ),
+    ('ABS', "Relative -> Absolute", None, [("VFieldA", "Relative")], [("VFieldC", "Absolute")], "Given the vector field VF, return the vector field which maps point X to X + VF(X)" ),
+    ('REL', "Absolute -> Relative", None, [("VFieldA", "Absolute")], [("VFieldC", "Relative")], "Given the vector field VF, return the vector field which maps point X to VF(X) - X" ),
 ]
 
-operation_modes = [ (id, name, name, i) for i, (id, name, fn, _, _) in enumerate(operations) ]
+operation_modes = [ (id, name, description, i) for i, (id, name, fn, _, _, description) in enumerate(operations) ]
 
 def get_operation(op_id):
-    for id, _, function, _, _ in operations:
+    for id, _, function, _, _, _ in operations:
         if id == op_id:
             return function
     raise Exception("Unsupported operation: " + op_id)
@@ -58,7 +58,7 @@ def get_operation(op_id):
 def get_sockets(op_id):
     actual_inputs = None
     actual_outputs = None
-    for id, _, _, inputs, outputs in operations:
+    for id, _, _, inputs, outputs, _ in operations:
         if id == op_id:
             return inputs, outputs
     raise Exception("unsupported operation")

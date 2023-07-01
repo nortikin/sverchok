@@ -27,6 +27,7 @@ class SvScalarFieldCurvatureNode(SverchCustomTreeNode, bpy.types.Node):
 
     step : FloatProperty(
             name = "Step",
+            description = "Grid step for numericall differentiation. Bigger values give more smooth fields",
             default = 0.001,
             precision = 4,
             update = updateNode)

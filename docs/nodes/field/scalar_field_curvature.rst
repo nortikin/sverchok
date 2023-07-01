@@ -1,6 +1,9 @@
 Scalar Field Curvature
 ======================
 
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/5f91a473-ad6f-439d-94b4-1156af06002e
+  :target: https://github.com/nortikin/sverchok/assets/14288520/5f91a473-ad6f-439d-94b4-1156af06002e
+
 Functionality
 -------------
 
@@ -64,10 +67,32 @@ Build some scalar field by "Attractor Field" node, measure it's mean curvature
 and use that curvature values to color the vertices of a plane:
 
 .. image:: https://user-images.githubusercontent.com/284644/81438971-0e9cf000-9187-11ea-9d67-703b3550faf1.png
+  :target: https://user-images.githubusercontent.com/284644/81438971-0e9cf000-9187-11ea-9d67-703b3550faf1.png
+
+* Generator-> :doc:`NGon </nodes/generator/ngon>`
+* Surfaces-> :doc:`Plane (Surface) </nodes/surface/plane>`
+* Surfaces-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
+* Fields-> :doc:`Attractor Field </nodes/field/attractor_field_mk2>`
+* Fields-> :doc:`Evaluate Scalar Field </nodes/field/scalar_field_eval>`
+* Number-> :doc:`Map Range </nodes/number/range_map>`
+* Color-> :doc:`Color In </nodes/color/color_in_mk1>`
+* BV Alpha: Viz-> :doc:`Mesh Viewer </nodes/viz/mesh_viewer>`
+* BPY Data->Vertex color mk3
+
+---------
 
 Generate an iso-surface of the same scalar field, and use it's mean curvature
 values for coloring. Note: this example requires Sverchok-Extra addon for
 "Marching Cubes" node.
 
 .. image:: https://user-images.githubusercontent.com/284644/81438974-0fce1d00-9187-11ea-9583-1e8f4c6f8573.png
+  :target: https://user-images.githubusercontent.com/284644/81438974-0fce1d00-9187-11ea-9583-1e8f4c6f8573.png
 
+* Generator-> :doc:`Box </nodes/generator/box_mk2>`
+* Generator-> :doc:`NGon </nodes/generator/ngon>`
+* Surfaces-> :doc:`Marching Cubes </nodes/surface/marching_cubes>`
+* Fields-> :doc:`Evaluate Scalar Field </nodes/field/scalar_field_eval>`
+* Number-> :doc:`Map Range </nodes/number/range_map>`
+* Color-> :doc:`Color Input </nodes/color/color_input>`
+* BV Alpha: Viz-> :doc:`Mesh Viewer </nodes/viz/mesh_viewer>`
+* BPY Data->Vertex color mk3
