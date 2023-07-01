@@ -157,16 +157,22 @@
              
   <section id="scalar-field-math">
 <h1>Scalar Field Math<a class="headerlink" href="#scalar-field-math" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/631deb22-c5ee-4a3c-b726-5ac2280d2a8c"><img alt="https://github.com/nortikin/sverchok/assets/14288520/631deb22-c5ee-4a3c-b726-5ac2280d2a8c" src="https://github.com/nortikin/sverchok/assets/14288520/631deb22-c5ee-4a3c-b726-5ac2280d2a8c" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node generates a Scalar Field by executing one of supported mathematical operations on the Scalar Fields provided as inputs.</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/07c858a3-55f5-4b03-9f2f-ec9a0802ffae"><img alt="https://github.com/nortikin/sverchok/assets/14288520/07c858a3-55f5-4b03-9f2f-ec9a0802ffae" src="https://github.com/nortikin/sverchok/assets/14288520/07c858a3-55f5-4b03-9f2f-ec9a0802ffae" /></a>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
-<ul class="simple">
+<ul>
 <li><p><strong>FieldA</strong>. The first scalar field. The input is mandatory when available.</p></li>
-<li><p><strong>FieldB</strong>. The second scalar field. The input is mandatory when available.</p></li>
+<li><p><strong>FieldB</strong>. The second scalar field. The input is mandatory when available.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/c3d5d5f9-64ca-401f-a79d-e999cfc67d06"><img alt="https://github.com/nortikin/sverchok/assets/14288520/c3d5d5f9-64ca-401f-a79d-e999cfc67d06" src="https://github.com/nortikin/sverchok/assets/14288520/c3d5d5f9-64ca-401f-a79d-e999cfc67d06" /></a>
+</div></blockquote>
+</li>
 </ul>
 </section>
 <section id="parameters">
@@ -197,10 +203,39 @@ maximal of values of two scalar fields at the same point.</p></li>
 </section>
 <section id="examples-of-usage">
 <h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/6cc7ad1d-89d7-4601-888d-e992f02dc546"><img alt="https://github.com/nortikin/sverchok/assets/14288520/6cc7ad1d-89d7-4601-888d-e992f02dc546" src="https://github.com/nortikin/sverchok/assets/14288520/6cc7ad1d-89d7-4601-888d-e992f02dc546" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/segment.html"><span class="doc">Segment</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="../surface/marching_cubes.html"><span class="doc">Marching Cubes</span></a></p></li>
+<li><p>Fields-&gt; <a class="reference internal" href="voronoi_field.html"><span class="doc">Voronoi Field</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/numbers.html"><span class="doc">A Number</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/6d7e940b-5be8-4779-b125-7bd2cce14125"><img alt="https://github.com/nortikin/sverchok/assets/14288520/6d7e940b-5be8-4779-b125-7bd2cce14125" src="https://github.com/nortikin/sverchok/assets/14288520/6d7e940b-5be8-4779-b125-7bd2cce14125" /></a>
+<hr class="docutils" />
 <p>Example #1:</p>
-<img alt="https://user-images.githubusercontent.com/284644/79497591-60979d80-8041-11ea-9c23-1e0d6be96708.png" src="https://user-images.githubusercontent.com/284644/79497591-60979d80-8041-11ea-9c23-1e0d6be96708.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/79497591-60979d80-8041-11ea-9c23-1e0d6be96708.png"><img alt="https://user-images.githubusercontent.com/284644/79497591-60979d80-8041-11ea-9c23-1e0d6be96708.png" src="https://user-images.githubusercontent.com/284644/79497591-60979d80-8041-11ea-9c23-1e0d6be96708.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/icosphere.html"><span class="doc">IcoSphere</span></a></p></li>
+<li><p>Fields-&gt; <a class="reference internal" href="attractor_field_mk2.html"><span class="doc">Attractor Field</span></a></p></li>
+<li><p>Fields-&gt; <a class="reference internal" href="scalar_field_eval.html"><span class="doc">Evaluate Scalar Field</span></a></p></li>
+<li><p>Spacial-&gt; <a class="reference internal" href="../spatial/homogenous_vector_field.html"><span class="doc">Vector P Field</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>Example #2:</p>
-<img alt="https://user-images.githubusercontent.com/284644/79497828-cbe16f80-8041-11ea-957f-54c011afe3a3.png" src="https://user-images.githubusercontent.com/284644/79497828-cbe16f80-8041-11ea-957f-54c011afe3a3.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/79497828-cbe16f80-8041-11ea-957f-54c011afe3a3.png"><img alt="https://user-images.githubusercontent.com/284644/79497828-cbe16f80-8041-11ea-957f-54c011afe3a3.png" src="https://user-images.githubusercontent.com/284644/79497828-cbe16f80-8041-11ea-957f-54c011afe3a3.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/icosphere.html"><span class="doc">IcoSphere</span></a></p></li>
+<li><p>Fields-&gt; <a class="reference internal" href="attractor_field_mk2.html"><span class="doc">Attractor Field</span></a></p></li>
+<li><p>Fields-&gt; <a class="reference internal" href="noise_vfield.html"><span class="doc">Noise Vector Field</span></a></p></li>
+<li><p>Fields-&gt; <a class="reference internal" href="vector_field_math.html"><span class="doc">Vector Field Math</span></a></p></li>
+<li><p>Fields-&gt; <a class="reference internal" href="scalar_field_eval.html"><span class="doc">Evaluate Scalar Field</span></a></p></li>
+<li><p>Spacial-&gt; <a class="reference internal" href="../spatial/homogenous_vector_field.html"><span class="doc">Vector P Field</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/numbers.html"><span class="doc">A Number</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 </section>
 </section>
 

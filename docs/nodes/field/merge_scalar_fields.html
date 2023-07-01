@@ -157,10 +157,18 @@
              
   <section id="join-scalar-fields">
 <h1>Join Scalar Fields<a class="headerlink" href="#join-scalar-fields" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/88f88ac5-2e29-4fa5-9a4b-21fc6e4a1695"><img alt="https://github.com/nortikin/sverchok/assets/14288520/88f88ac5-2e29-4fa5-9a4b-21fc6e4a1695" src="https://github.com/nortikin/sverchok/assets/14288520/88f88ac5-2e29-4fa5-9a4b-21fc6e4a1695" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node joins (merges) a list of Scalar Field objects by one of supported
 mathematical operations, to generate a new Scalar Field.</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/eba7af06-e8e7-41d0-83d6-6e6c5aaf912a"><img alt="https://github.com/nortikin/sverchok/assets/14288520/eba7af06-e8e7-41d0-83d6-6e6c5aaf912a" src="https://github.com/nortikin/sverchok/assets/14288520/eba7af06-e8e7-41d0-83d6-6e6c5aaf912a" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/5de66c30-c2b0-4d27-a8b2-f402d8861469"><img alt="https://github.com/nortikin/sverchok/assets/14288520/5de66c30-c2b0-4d27-a8b2-f402d8861469" src="https://github.com/nortikin/sverchok/assets/14288520/5de66c30-c2b0-4d27-a8b2-f402d8861469" /></a>
+<ul class="simple">
+<li><p>Fields-&gt; <a class="reference internal" href="scalar_field_formula.html"><span class="doc">Scalar Field Formula</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/numbers.html"><span class="doc">A Number</span></a></p></li>
+<li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/join.html"><span class="doc">List Join</span></a></p></li>
+</ul>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
@@ -172,14 +180,18 @@ mathematical operations, to generate a new Scalar Field.</p>
 <section id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following parameter:</p>
-<ul class="simple">
+<ul>
 <li><p><strong>Mode</strong>. This defines the operation used to calculate the new field. The supported operations are:</p>
 <ul>
 <li><p><strong>Minimum</strong>. Take the minimal value of all fields: MIN(S1(X), S2(X), …).</p></li>
 <li><p><strong>Maximum</strong>. Take the maximum value of all fields: MAX(S1(X), S2(X), …)</p></li>
 <li><p><strong>Average</strong>. Take the average (mean) value of all fields: (S1(X) + S2(X) + …) / N.</p></li>
 <li><p><strong>Sum</strong>. Take the sum of all fields: S1(X) + S2(X) + …</p></li>
-<li><p><strong>Voronoi</strong>. Take the difference between two smallest field values: ABS(S1(X) - S2(X)).</p></li>
+<li><p><strong>Voronoi</strong>. Take the difference between two smallest field values: ABS(S1(X) - S2(X)).</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/f744a4c3-7794-43ca-bb7e-f6b344f7c0fa"><img alt="https://github.com/nortikin/sverchok/assets/14288520/f744a4c3-7794-43ca-bb7e-f6b344f7c0fa" src="https://github.com/nortikin/sverchok/assets/14288520/f744a4c3-7794-43ca-bb7e-f6b344f7c0fa" /></a>
+</div></blockquote>
+</li>
 </ul>
 </li>
 </ul>
@@ -193,10 +205,43 @@ mathematical operations, to generate a new Scalar Field.</p>
 </section>
 <section id="examples-of-usage">
 <h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
+<p><em>Example of descriptions</em>:</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/81b3c49e-f664-42f7-9909-50736ded6a37"><img alt="https://github.com/nortikin/sverchok/assets/14288520/81b3c49e-f664-42f7-9909-50736ded6a37" src="https://github.com/nortikin/sverchok/assets/14288520/81b3c49e-f664-42f7-9909-50736ded6a37" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="../surface/marching_cubes.html"><span class="doc">Marching Cubes</span></a></p></li>
+<li><p>Fields-&gt; <a class="reference internal" href="scalar_field_formula.html"><span class="doc">Scalar Field Formula</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/numbers.html"><span class="doc">A Number</span></a></p></li>
+<li><p>ADD: Number-&gt; <a class="reference internal" href="../number/scalar_mk4.html"><span class="doc">Scalar Math</span></a></p></li>
+<li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/join.html"><span class="doc">List Join</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>Take the minimum of several attraction fields:</p>
-<img alt="https://user-images.githubusercontent.com/284644/79610315-bdfb1f80-8111-11ea-886d-030538a50e5d.png" src="https://user-images.githubusercontent.com/284644/79610315-bdfb1f80-8111-11ea-886d-030538a50e5d.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/79610315-bdfb1f80-8111-11ea-886d-030538a50e5d.png"><img alt="https://user-images.githubusercontent.com/284644/79610315-bdfb1f80-8111-11ea-886d-030538a50e5d.png" src="https://user-images.githubusercontent.com/284644/79610315-bdfb1f80-8111-11ea-886d-030538a50e5d.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/icosphere.html"><span class="doc">IcoSphere</span></a></p></li>
+<li><p>Fields-&gt; <a class="reference internal" href="scalar_field_point.html"><span class="doc">Distance From a Point</span></a></p></li>
+<li><p>Fields-&gt; <a class="reference internal" href="scalar_field_math.html"><span class="doc">Scalar Field Math</span></a></p></li>
+<li><p>Fields-&gt; <a class="reference internal" href="scalar_field_eval.html"><span class="doc">Evaluate Scalar Field</span></a></p></li>
+<li><p>Spacial-&gt; <a class="reference internal" href="../spatial/homogenous_vector_field.html"><span class="doc">Vector P Field</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/numbers.html"><span class="doc">A Number</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>The same with Voronoi mode:</p>
-<img alt="https://user-images.githubusercontent.com/284644/79610367-d834fd80-8111-11ea-9d3b-95b671256904.png" src="https://user-images.githubusercontent.com/284644/79610367-d834fd80-8111-11ea-9d3b-95b671256904.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/79610367-d834fd80-8111-11ea-9d3b-95b671256904.png"><img alt="https://user-images.githubusercontent.com/284644/79610367-d834fd80-8111-11ea-9d3b-95b671256904.png" src="https://user-images.githubusercontent.com/284644/79610367-d834fd80-8111-11ea-9d3b-95b671256904.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/icosphere.html"><span class="doc">IcoSphere</span></a></p></li>
+<li><p>Fields-&gt; <a class="reference internal" href="scalar_field_point.html"><span class="doc">Distance From a Point</span></a></p></li>
+<li><p>Fields-&gt; <a class="reference internal" href="scalar_field_math.html"><span class="doc">Scalar Field Math</span></a></p></li>
+<li><p>Fields-&gt; <a class="reference internal" href="scalar_field_eval.html"><span class="doc">Evaluate Scalar Field</span></a></p></li>
+<li><p>Spacial-&gt; <a class="reference internal" href="../spatial/homogenous_vector_field.html"><span class="doc">Vector P Field</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/numbers.html"><span class="doc">A Number</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 </section>
 </section>
 

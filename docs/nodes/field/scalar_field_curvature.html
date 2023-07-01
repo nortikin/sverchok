@@ -157,6 +157,7 @@
              
   <section id="scalar-field-curvature">
 <h1>Scalar Field Curvature<a class="headerlink" href="#scalar-field-curvature" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/5f91a473-ad6f-439d-94b4-1156af06002e"><img alt="https://github.com/nortikin/sverchok/assets/14288520/5f91a473-ad6f-439d-94b4-1156af06002e" src="https://github.com/nortikin/sverchok/assets/14288520/5f91a473-ad6f-439d-94b4-1156af06002e" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node calculates several types of information about implicitly defined surface curvature:</p>
@@ -211,11 +212,33 @@ values of iso-surfaces of the input scalar field.</p></li>
 <h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>Build some scalar field by “Attractor Field” node, measure it’s mean curvature
 and use that curvature values to color the vertices of a plane:</p>
-<img alt="https://user-images.githubusercontent.com/284644/81438971-0e9cf000-9187-11ea-9d67-703b3550faf1.png" src="https://user-images.githubusercontent.com/284644/81438971-0e9cf000-9187-11ea-9d67-703b3550faf1.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/81438971-0e9cf000-9187-11ea-9d67-703b3550faf1.png"><img alt="https://user-images.githubusercontent.com/284644/81438971-0e9cf000-9187-11ea-9d67-703b3550faf1.png" src="https://user-images.githubusercontent.com/284644/81438971-0e9cf000-9187-11ea-9d67-703b3550faf1.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="../surface/plane.html"><span class="doc">Plane (Surface)</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="../surface/evaluate_surface.html"><span class="doc">Evaluate Surface</span></a></p></li>
+<li><p>Fields-&gt; <a class="reference internal" href="attractor_field_mk2.html"><span class="doc">Attractor Field</span></a></p></li>
+<li><p>Fields-&gt; <a class="reference internal" href="scalar_field_eval.html"><span class="doc">Evaluate Scalar Field</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/range_map.html"><span class="doc">Map Range</span></a></p></li>
+<li><p>Color-&gt; <a class="reference internal" href="../color/color_in_mk1.html"><span class="doc">Color In</span></a></p></li>
+<li><p>BV Alpha: Viz-&gt; <a class="reference internal" href="../viz/mesh_viewer.html"><span class="doc">Mesh Viewer</span></a></p></li>
+<li><p>BPY Data-&gt;Vertex color mk3</p></li>
+</ul>
+<hr class="docutils" />
 <p>Generate an iso-surface of the same scalar field, and use it’s mean curvature
 values for coloring. Note: this example requires Sverchok-Extra addon for
 “Marching Cubes” node.</p>
-<img alt="https://user-images.githubusercontent.com/284644/81438974-0fce1d00-9187-11ea-9583-1e8f4c6f8573.png" src="https://user-images.githubusercontent.com/284644/81438974-0fce1d00-9187-11ea-9583-1e8f4c6f8573.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/81438974-0fce1d00-9187-11ea-9583-1e8f4c6f8573.png"><img alt="https://user-images.githubusercontent.com/284644/81438974-0fce1d00-9187-11ea-9583-1e8f4c6f8573.png" src="https://user-images.githubusercontent.com/284644/81438974-0fce1d00-9187-11ea-9583-1e8f4c6f8573.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="../surface/marching_cubes.html"><span class="doc">Marching Cubes</span></a></p></li>
+<li><p>Fields-&gt; <a class="reference internal" href="scalar_field_eval.html"><span class="doc">Evaluate Scalar Field</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/range_map.html"><span class="doc">Map Range</span></a></p></li>
+<li><p>Color-&gt; <a class="reference internal" href="../color/color_input.html"><span class="doc">Color Input</span></a></p></li>
+<li><p>BV Alpha: Viz-&gt; <a class="reference internal" href="../viz/mesh_viewer.html"><span class="doc">Mesh Viewer</span></a></p></li>
+<li><p>BPY Data-&gt;Vertex color mk3</p></li>
+</ul>
 </section>
 </section>
 

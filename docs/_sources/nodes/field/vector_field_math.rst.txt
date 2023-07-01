@@ -1,12 +1,18 @@
 Vector Field Math
 =================
 
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/9f9cd508-8e02-423b-b8bf-9679b0577360
+  :target: https://github.com/nortikin/sverchok/assets/14288520/9f9cd508-8e02-423b-b8bf-9679b0577360
+
 Functionality
 -------------
 
 This node generates a Vector Field and/or Scalar Field by executing one of
 supported mathematical operations between the provided Vector and / or Scalar
 fields.
+
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/f634b376-d969-4c2a-a0c4-9c3e32558c28
+  :target: https://github.com/nortikin/sverchok/assets/14288520/f634b376-d969-4c2a-a0c4-9c3e32558c28
 
 Inputs
 ------
@@ -26,6 +32,9 @@ Parameters
 This node has the following parameter:
 
 * **Operation**. This defines the mathematical operation to execute. The following operations are available:
+
+    .. image:: https://github.com/nortikin/sverchok/assets/14288520/e26ddaff-6305-4f08-9047-62af4df7ef67
+      :target: https://github.com/nortikin/sverchok/assets/14288520/e26ddaff-6305-4f08-9047-62af4df7ef67
 
   * **Add**. Calculate vector (coordinate-wise) sum of two vector fields - VFieldA + VFieldB.
   * **Sub**. Calculate vector (coordinate-wise) difference between two vector fields - VFieldA - VFieldB.
@@ -67,15 +76,52 @@ used. Output names are adjusted corresponding to the selected operation.
 Examples of usage
 -----------------
 
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/bc10d442-348f-4d22-9bfa-8b4030bfefcb
+  :target: https://github.com/nortikin/sverchok/assets/14288520/bc10d442-348f-4d22-9bfa-8b4030bfefcb
+
+* Fields-> :doc:`Attractor Field </nodes/field/attractor_field_mk2>`
+* Fields-> :doc:`Vector Field Lines </nodes/field/vector_field_lines>`
+* Spacial-> :doc:`Vector P Field </nodes/spatial/homogenous_vector_field>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/a15cdc61-a0a6-4c92-9651-a44ee2c3fe45
+  :target: https://github.com/nortikin/sverchok/assets/14288520/a15cdc61-a0a6-4c92-9651-a44ee2c3fe45
+
+---------
+
 Make a vector field as difference of two attraction fields:
 
 .. image:: https://user-images.githubusercontent.com/284644/79495842-a56e0500-803e-11ea-91ed-611abf181ec2.png
+  :target: https://user-images.githubusercontent.com/284644/79495842-a56e0500-803e-11ea-91ed-611abf181ec2.png
+
+* Fields-> :doc:`Attractor Field </nodes/field/attractor_field_mk2>`
+* Fields-> :doc:`Vector Field Lines </nodes/field/vector_field_lines>`
+* Spacial-> :doc:`Vector P Field </nodes/spatial/homogenous_vector_field>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+
+---------
 
 Make a vector field as a vector product of noise field and an attraction field:
 
 .. image:: https://user-images.githubusercontent.com/284644/79495812-9be49d00-803e-11ea-8ea0-9f9cfd7dc01e.png
+  :target: https://user-images.githubusercontent.com/284644/79495812-9be49d00-803e-11ea-8ea0-9f9cfd7dc01e.png
+
+* Fields-> :doc:`Attractor Field </nodes/field/attractor_field_mk2>`
+* Fields-> :doc:`Noise Vector Field </nodes/field/noise_vfield>`
+* Spacial-> :doc:`Vector P Field </nodes/spatial/homogenous_vector_field>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+
+---------
 
 Apply such a field to a plane:
 
 .. image:: https://user-images.githubusercontent.com/284644/79495805-9ab37000-803e-11ea-9fb4-4eff7839cd23.png
+  :target: https://user-images.githubusercontent.com/284644/79495805-9ab37000-803e-11ea-9fb4-4eff7839cd23.png
 
+* Fields-> :doc:`Attractor Field </nodes/field/attractor_field_mk2>`
+* Fields-> :doc:`Noise Vector Field </nodes/field/noise_vfield>`
+* Surfaces-> :doc:`Plane (Surface) </nodes/surface/plane>`
+* Surfaces-> :doc:`Apply Field to Surface </nodes/surface/apply_field_to_surface>`
+* Surfaces-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`

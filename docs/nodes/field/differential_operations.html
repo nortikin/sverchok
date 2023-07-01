@@ -157,6 +157,7 @@
              
   <section id="field-differential-operations">
 <h1>Field Differential Operations<a class="headerlink" href="#field-differential-operations" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/095ac40e-048e-46a2-8b54-f3bf2c38bcc9"><img alt="https://github.com/nortikin/sverchok/assets/14288520/095ac40e-048e-46a2-8b54-f3bf2c38bcc9" src="https://github.com/nortikin/sverchok/assets/14288520/095ac40e-048e-46a2-8b54-f3bf2c38bcc9" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node calculates Vector or Scalar Field by performing one of supported
@@ -164,6 +165,11 @@ differential operations on the fields provided as inputs.</p>
 <p>Note that the differentiation is done numerically, and so there is always some
 calculation error. The error can be minimizing by adjusting the “step”
 parameter.</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/88159366-b4ab-4b72-a5e4-3cb0d8d89b6d"><img alt="https://github.com/nortikin/sverchok/assets/14288520/88159366-b4ab-4b72-a5e4-3cb0d8d89b6d" src="https://github.com/nortikin/sverchok/assets/14288520/88159366-b4ab-4b72-a5e4-3cb0d8d89b6d" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/2694d9e3-f0c7-4117-a50d-02772ead70dd"><img alt="https://github.com/nortikin/sverchok/assets/14288520/2694d9e3-f0c7-4117-a50d-02772ead70dd" src="https://github.com/nortikin/sverchok/assets/14288520/2694d9e3-f0c7-4117-a50d-02772ead70dd" /></a>
+<ul class="simple">
+<li><p>Fields-&gt; <a class="reference internal" href="attractor_field_mk2.html"><span class="doc">Attractor Field</span></a></p></li>
+</ul>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
@@ -200,7 +206,29 @@ parameter.</p>
 <section id="examples-of-usage">
 <h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>Generate a scalar field, calculate it’s gradient, and apply that to a cube:</p>
-<img alt="https://user-images.githubusercontent.com/284644/79501054-deaa7300-8046-11ea-8cf6-d01471cb1eea.png" src="https://user-images.githubusercontent.com/284644/79501054-deaa7300-8046-11ea-8cf6-d01471cb1eea.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/79501054-deaa7300-8046-11ea-8cf6-d01471cb1eea.png"><img alt="https://user-images.githubusercontent.com/284644/79501054-deaa7300-8046-11ea-8cf6-d01471cb1eea.png" src="https://user-images.githubusercontent.com/284644/79501054-deaa7300-8046-11ea-8cf6-d01471cb1eea.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
+<li><p>Fields-&gt; <a class="reference internal" href="scalar_field_formula.html"><span class="doc">Scalar Field Formula</span></a></p></li>
+<li><p>Fields-&gt; <a class="reference internal" href="vector_field_apply.html"><span class="doc">Apply Vector Field</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/numbers.html"><span class="doc">A Number</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/a0b8f975-3266-4c7a-be3e-68a6c11f72b3"><img alt="https://github.com/nortikin/sverchok/assets/14288520/a0b8f975-3266-4c7a-be3e-68a6c11f72b3" src="https://github.com/nortikin/sverchok/assets/14288520/a0b8f975-3266-4c7a-be3e-68a6c11f72b3" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>
+<li><p>Fields-&gt; <a class="reference internal" href="attractor_field_mk2.html"><span class="doc">Attractor Field</span></a></p></li>
+<li><p>Fields-&gt; <a class="reference internal" href="vector_field_lines.html"><span class="doc">Vector Field Lines</span></a></p></li>
+<li><p>Transform-&gt; <a class="reference internal" href="../transforms/noise_displace.html"><span class="doc">Noise Displace</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/numbers.html"><span class="doc">A Number</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>Color-&gt; <a class="reference internal" href="../color/color_in_mk1.html"><span class="doc">Color In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Scene-&gt; <a class="reference internal" href="../scene/frame_info_mk2.html"><span class="doc">Frame Info</span></a></p></li>
+</ul>
 </section>
 </section>
 
