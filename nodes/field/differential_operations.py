@@ -22,18 +22,18 @@ S_FIELD_B, V_FIELD_B = sockets_handler.register_outputs(
     )
 
 operations = [
-    ('GRAD', "Gradient", [("SFieldA", "SField")], [("VFieldB", "Gradient")]),
-    ('DIV', "Divergence", [("VFieldA", "VField")], [("SFieldB", "Divergence")]),
-    ('LAPLACE', "Laplacian", [("SFieldA", "SField")], [("SFieldB", "Laplacian")]),
-    ('ROTOR', "Rotor", [("VFieldA", "VField")], [("VFieldB", "Rotor")])
+    ('GRAD', "Gradient", [("SFieldA", "SField")], [("VFieldB", "Gradient")], "Calculate the gradient of the scalar field. The result is a vector field"),
+    ('DIV', "Divergence", [("VFieldA", "VField")], [("SFieldB", "Divergence")], "Calculate the divergence of the vector field. The result is a scalar field"),
+    ('LAPLACE', "Laplacian", [("SFieldA", "SField")], [("SFieldB", "Laplacian")], "Calculate the Laplace operator on the scalar field. The result is a scalar field"),
+    ('ROTOR', "Rotor", [("VFieldA", "VField")], [("VFieldB", "Rotor")], "Calculate the rotor operator on the vector field. The result is a vector field")
 ]
 
-operation_modes = [ (id, name, name, i) for i, (id, name, _, _) in enumerate(operations) ]
+operation_modes = [ (id, name, description, i) for i, (id, name, _, _, description) in enumerate(operations) ]
 
 def get_sockets(op_id):
     actual_inputs = None
     actual_outputs = None
-    for id, _, inputs, outputs in operations:
+    for id, _, inputs, outputs, _ in operations:
         if id == op_id:
             return inputs, outputs
     raise Exception("unsupported operation")
@@ -50,6 +50,7 @@ class SvFieldDiffOpsNode(SverchCustomTreeNode, bpy.types.Node):
 
     step : FloatProperty(
             name = "Step",
+            description = "Derivatives calculation step. Bigger values give smoother fields",
             default = 0.001,
             precision = 4,
             update = updateNode)

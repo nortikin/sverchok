@@ -1,6 +1,9 @@
 Map Scalar Field by Curve
 =========================
 
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/d894ad21-6ad0-4077-9509-8ffa7ac34c97
+  :target: https://github.com/nortikin/sverchok/assets/14288520/d894ad21-6ad0-4077-9509-8ffa7ac34c97
+
 Functionality
 -------------
 
@@ -54,4 +57,13 @@ Example of usage
 ----------------
 
 .. image:: https://user-images.githubusercontent.com/284644/100201823-55371980-2f22-11eb-95de-faf66f46e4a8.png
+  :target: https://user-images.githubusercontent.com/284644/100201823-55371980-2f22-11eb-95de-faf66f46e4a8.png
 
+* Generator-> :doc:`IcoSphere </nodes/generator/icosphere>`
+* Fields-> :doc:`Coordinate Scalar Field </nodes/field/coordinate_scalar_field>`
+* Fields-> :doc:`Decompose Vector Field </nodes/field/decompose_vector_field>`
+* Fields-> :doc:`Vector Field Math </nodes/field/vector_field_math>`
+* Fields-> :doc:`Apply Vector Field </nodes/field/vector_field_apply>`
+* Number-> :doc:`Curve Mapper </nodes/number/curve_mapper>`
+* VField: Vector-> :doc:`Vector In </nodes/vector/vector_in>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
