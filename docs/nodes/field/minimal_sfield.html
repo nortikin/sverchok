@@ -67,7 +67,6 @@
 <li class="toctree-l3"><a class="reference internal" href="image_field.html">Image Field</a></li>
 <li class="toctree-l3"><a class="reference internal" href="merge_scalar_fields.html">Join Scalar Fields</a></li>
 <li class="toctree-l3"><a class="reference internal" href="mesh_normal_field.html">Mesh Nearest Normal</a></li>
-<li class="toctree-l3"><a class="reference internal" href="mesh_normal_field.html#examples">Examples</a></li>
 <li class="toctree-l3"><a class="reference internal" href="mesh_surface_field.html">Mesh Smoothed Surface Field</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">RBF Scalar Field</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#dependencies">Dependencies</a></li>
@@ -159,6 +158,7 @@
              
   <section id="rbf-scalar-field">
 <h1>RBF Scalar Field<a class="headerlink" href="#rbf-scalar-field" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/7b7cc987-f48d-40b5-886b-4f716f3b916b"><img alt="https://github.com/nortikin/sverchok/assets/14288520/7b7cc987-f48d-40b5-886b-4f716f3b916b" src="https://github.com/nortikin/sverchok/assets/14288520/7b7cc987-f48d-40b5-886b-4f716f3b916b" /></a>
 <section id="dependencies">
 <h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this heading">¶</a></h2>
 <p>This node optionally uses <a class="reference external" href="https://scipy.org/">SciPy</a> library to work.</p>
@@ -169,6 +169,7 @@
 corresponding scalar field values, by use of <a class="reference external" href="http://www.scholarpedia.org/article/Radial_basis_function">RBF</a> method. Depending on node
 parameters, the field can be interpolating, i.e. have exactly the provided
 values in the provided points, or only approximating.</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/05f3c475-dd46-43db-8e48-f1ef383f8dc9"><img alt="https://github.com/nortikin/sverchok/assets/14288520/05f3c475-dd46-43db-8e48-f1ef383f8dc9" src="https://github.com/nortikin/sverchok/assets/14288520/05f3c475-dd46-43db-8e48-f1ef383f8dc9" /></a>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
@@ -178,6 +179,9 @@ values in the provided points, or only approximating.</p>
 This input is mandatory.</p></li>
 <li><p><strong>Values</strong>. Values of the scalar field in the specified points. This input is
 mandatory.</p></li>
+</ul>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/51175cf8-c62b-4d49-a73d-cbe9a36dd67e"><img alt="https://github.com/nortikin/sverchok/assets/14288520/51175cf8-c62b-4d49-a73d-cbe9a36dd67e" src="https://github.com/nortikin/sverchok/assets/14288520/51175cf8-c62b-4d49-a73d-cbe9a36dd67e" /></a>
+<ul class="simple">
 <li><p><strong>Epsilon</strong>. Epsilon parameter of used RBF function; it affects the shape of
 generated field. The default value is 1.0.</p></li>
 <li><p><strong>Smooth</strong>. Smoothness parameter of used RBF function. If this is zero, then
@@ -190,13 +194,17 @@ otherwise, it will be only an approximating field. The default value is 0.0.</p>
 <p>This node has the following parameter:</p>
 <ul>
 <li><p><strong>Function</strong>. The specific function used by the node. The available values are:</p>
-<ul class="simple">
+<ul>
 <li><p>Multi Quadric</p></li>
 <li><p>Inverse</p></li>
 <li><p>Gaussian</p></li>
 <li><p>Cubic</p></li>
 <li><p>Quintic</p></li>
-<li><p>Thin Plate</p></li>
+<li><p>Thin Plate</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/515076c7-0f6c-4ffe-a29a-6019aa6960b4"><img alt="https://github.com/nortikin/sverchok/assets/14288520/515076c7-0f6c-4ffe-a29a-6019aa6960b4" src="https://github.com/nortikin/sverchok/assets/14288520/515076c7-0f6c-4ffe-a29a-6019aa6960b4" /></a>
+</div></blockquote>
+</li>
 </ul>
 <p>The default function is Multi Quadric.</p>
 </li>
@@ -217,9 +225,46 @@ otherwise, it will be only an approximating field. The default value is 0.0.</p>
 <li><p>In eight vertices of 2x2x2 cube, it has the value of 2;</p></li>
 <li><p>In the vertices of 4x4x4 cube, it has the value of 4.</p></li>
 </ul>
-<img alt="https://user-images.githubusercontent.com/284644/87240833-7f39e480-c436-11ea-9706-d7e55849c136.png" src="https://user-images.githubusercontent.com/284644/87240833-7f39e480-c436-11ea-9706-d7e55849c136.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/87240833-7f39e480-c436-11ea-9706-d7e55849c136.png"><img alt="https://user-images.githubusercontent.com/284644/87240833-7f39e480-c436-11ea-9706-d7e55849c136.png" src="https://user-images.githubusercontent.com/284644/87240833-7f39e480-c436-11ea-9706-d7e55849c136.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
+<li><p>Fields-&gt; <a class="reference internal" href="scalar_field_graph.html"><span class="doc">Scalar Field Graph</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/list_input.html"><span class="doc">List Input</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_in.html"><span class="doc">Vector In</span></a></p></li>
+<li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/join.html"><span class="doc">List Join</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>Let’s move the smaller cube slightly and generate an iso-surface instead of iso-curves:</p>
-<img alt="https://user-images.githubusercontent.com/284644/87240927-4ea67a80-c437-11ea-9b36-04b56a6ae696.png" src="https://user-images.githubusercontent.com/284644/87240927-4ea67a80-c437-11ea-9b36-04b56a6ae696.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/87240927-4ea67a80-c437-11ea-9b36-04b56a6ae696.png"><img alt="https://user-images.githubusercontent.com/284644/87240927-4ea67a80-c437-11ea-9b36-04b56a6ae696.png" src="https://user-images.githubusercontent.com/284644/87240927-4ea67a80-c437-11ea-9b36-04b56a6ae696.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="../surface/marching_cubes.html"><span class="doc">Marching Cubes</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/list_input.html"><span class="doc">List Input</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_in.html"><span class="doc">Vector In</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/join.html"><span class="doc">List Join</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/055dc1d2-6c59-4568-b095-52b74ac27d52"><img alt="https://github.com/nortikin/sverchok/assets/14288520/055dc1d2-6c59-4568-b095-52b74ac27d52" src="https://github.com/nortikin/sverchok/assets/14288520/055dc1d2-6c59-4568-b095-52b74ac27d52" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/segment.html"><span class="doc">Segment</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
+<li><p>Generator-&gt;Generators Extended <a class="reference internal" href="../generators_extended/torus_knot_mk2.html"><span class="doc">Torus Knot</span></a></p></li>
+<li><p>Generator-&gt;Generatots Extended-&gt; <a class="reference internal" href="../generators_extended/spiral_mk2.html"><span class="doc">Spiral</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="../surface/marching_cubes.html"><span class="doc">Marching Cubes</span></a></p></li>
+<li><p>Transform-&gt; <a class="reference internal" href="../transforms/noise_displace.html"><span class="doc">Noise Displace</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/numbers.html"><span class="doc">A Number</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/length.html"><span class="doc">List Length</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_struct/repeater.html"><span class="doc">List Repeater</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_struct/item_insert.html"><span class="doc">List Item Insert</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+</ul>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/9d961a3f-3962-431e-a1d2-408d6664190f"><img alt="https://github.com/nortikin/sverchok/assets/14288520/9d961a3f-3962-431e-a1d2-408d6664190f" src="https://github.com/nortikin/sverchok/assets/14288520/9d961a3f-3962-431e-a1d2-408d6664190f" /></a>
 </section>
 </section>
 
