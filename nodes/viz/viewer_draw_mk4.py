@@ -13,7 +13,7 @@ from mathutils.geometry import tessellate_polygon as tessellate
 from mathutils.noise import random, seed_set
 import bpy
 from bpy.props import StringProperty, FloatProperty, IntProperty, EnumProperty, BoolProperty, FloatVectorProperty
-import bgl
+
 import gpu
 from gpu_extras.batch import batch_for_shader
 
@@ -125,7 +125,8 @@ def view_3d_geom(context, args):
 
     geom, config = args
 
-    bgl.glEnable(bgl.GL_BLEND)
+    # bgl.glEnable(bgl.GL_BLEND)
+    gpu.state.blend_set("ALPHA")
 
     if config.draw_polys:
         if config.draw_gl_wireframe:
@@ -158,7 +159,8 @@ def view_3d_geom(context, args):
 
 
     if config.draw_edges:
-        bgl.glLineWidth(config.line_width)
+        # bgl.glLineWidth(config.line_width)
+        gpu.state.line_width_set(config.line_width)
 
         if config.draw_dashed:
             shader = config.dashed_shader
@@ -182,10 +184,13 @@ def view_3d_geom(context, args):
                 config.e_shader.bind()
                 e_batch.draw(config.e_shader)
 
-        bgl.glLineWidth(1)
+        # bgl.glLineWidth(1)
+        gpu.state.line_width_set(1)
 
     if config.draw_verts:
-        bgl.glPointSize(config.point_size)
+        # bgl.glPointSize(config.point_size)
+        gpu.state.point_size_set(config.point_size)
+
         if config.uniform_verts:
             v_batch = batch_for_shader(config.v_shader, 'POINTS', {"pos": geom.v_vertices})
             config.v_shader.bind()
@@ -195,9 +200,12 @@ def view_3d_geom(context, args):
             config.v_shader.bind()
 
         v_batch.draw(config.v_shader)
-        bgl.glPointSize(1)
+        # bgl.glPointSize(1)
+        gpu.state.point_size_set(1)
 
-    bgl.glEnable(bgl.GL_BLEND)
+    # bgl.glEnable(bgl.GL_BLEND)   # <-- enable again?
+    gpu.state.blend_set("ALPHA")
+
 
 
 def splitted_polygons_geom(polygon_indices, original_idx, v_path, cols, idx_offset):
