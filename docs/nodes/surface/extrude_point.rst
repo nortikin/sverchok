@@ -11,8 +11,8 @@ This node generates a Surface by extruding some Curve (called "profile")
 towards one point (also called "tip"). So the resulting surface is, generally
 speaking, a conical surface.
 
-.. image:: https://github.com/nortikin/sverchok/assets/14288520/aeaaac4b-7871-4378-ab70-cb89c1a6ac5b
-  :target: https://github.com/nortikin/sverchok/assets/14288520/aeaaac4b-7871-4378-ab70-cb89c1a6ac5b
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/b0cf3fb1-6119-432f-907b-325bd6ff159e
+  :target: https://github.com/nortikin/sverchok/assets/14288520/b0cf3fb1-6119-432f-907b-325bd6ff159e
 
 * Generator-> :doc:`NGon </nodes/generator/ngon>`
 * Curves->Curve Primitives-> :doc:`Fillet Polyline </nodes/curve/fillet_polyline>`
