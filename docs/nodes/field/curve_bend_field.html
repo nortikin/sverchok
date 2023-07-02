@@ -157,6 +157,7 @@
              
   <section id="bend-along-curve-field">
 <h1>Bend Along Curve Field<a class="headerlink" href="#bend-along-curve-field" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/24e3fe93-4eb7-4cea-9d80-1b97e32802ab"><img alt="https://github.com/nortikin/sverchok/assets/14288520/24e3fe93-4eb7-4cea-9d80-1b97e32802ab" src="https://github.com/nortikin/sverchok/assets/14288520/24e3fe93-4eb7-4cea-9d80-1b97e32802ab" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node generates a Vector Field, which bends some part of 3D space along the
@@ -259,9 +260,27 @@ usually gives more natural results, but takes more time to compute.</p></li>
 <section id="examples-of-usage">
 <h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>Bend a cube along some closed curve:</p>
-<img alt="https://user-images.githubusercontent.com/284644/79593221-93e73480-80f4-11ea-8c14-7f1511b1bd7b.png" src="https://user-images.githubusercontent.com/284644/79593221-93e73480-80f4-11ea-8c14-7f1511b1bd7b.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/79593221-93e73480-80f4-11ea-8c14-7f1511b1bd7b.png"><img alt="https://user-images.githubusercontent.com/284644/79593221-93e73480-80f4-11ea-8c14-7f1511b1bd7b.png" src="https://user-images.githubusercontent.com/284644/79593221-93e73480-80f4-11ea-8c14-7f1511b1bd7b.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
+<li><p>Curves-&gt; <a class="reference internal" href="../curve/cubic_spline.html"><span class="doc">Cubic Spline</span></a></p></li>
+<li><p>Fields-&gt; <a class="reference internal" href="vector_field_apply.html"><span class="doc">Apply Vector Field</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vertices_sort.html"><span class="doc">Vector sort</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Scene-&gt; <a class="reference internal" href="../scene/objects_in_lite.html"><span class="doc">Objects In Lite</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>It is possible to use one field to bend several objects:</p>
-<img alt="https://user-images.githubusercontent.com/284644/79593228-95186180-80f4-11ea-930f-59f3f124da63.png" src="https://user-images.githubusercontent.com/284644/79593228-95186180-80f4-11ea-930f-59f3f124da63.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/79593228-95186180-80f4-11ea-930f-59f3f124da63.png"><img alt="https://user-images.githubusercontent.com/284644/79593228-95186180-80f4-11ea-930f-59f3f124da63.png" src="https://user-images.githubusercontent.com/284644/79593228-95186180-80f4-11ea-930f-59f3f124da63.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
+<li><p>Curves-&gt; <a class="reference internal" href="../curve/cubic_spline.html"><span class="doc">Cubic Spline</span></a></p></li>
+<li><p>Fields-&gt; <a class="reference internal" href="vector_field_apply.html"><span class="doc">Apply Vector Field</span></a></p></li>
+<li><p>Transform-&gt; <a class="reference internal" href="../transforms/move_mk3.html"><span class="doc">Move</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vertices_sort.html"><span class="doc">Vector sort</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Scene-&gt; <a class="reference internal" href="../scene/objects_in_lite.html"><span class="doc">Objects In Lite</span></a></p></li>
+</ul>
 </section>
 </section>
 

@@ -158,11 +158,14 @@
              
   <section id="evaluate-vector-field">
 <h1>Evaluate Vector Field<a class="headerlink" href="#evaluate-vector-field" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/11055b4a-b9c1-406d-9c56-c7c7054b6d9b"><img alt="https://github.com/nortikin/sverchok/assets/14288520/11055b4a-b9c1-406d-9c56-c7c7054b6d9b" src="https://github.com/nortikin/sverchok/assets/14288520/11055b4a-b9c1-406d-9c56-c7c7054b6d9b" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node calculates the values of the provided Vector Field at the given
 points. More precisely, given the field VF (which is a function from vectors to
 vectors), and point X, it calculates the vector VF(X).</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/3b015573-a8c3-4724-8c32-396169b70eb8"><img alt="https://github.com/nortikin/sverchok/assets/14288520/3b015573-a8c3-4724-8c32-396169b70eb8" src="https://github.com/nortikin/sverchok/assets/14288520/3b015573-a8c3-4724-8c32-396169b70eb8" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/5b6ebc53-29a8-46d2-9698-03c15bc98cd0"><img alt="https://github.com/nortikin/sverchok/assets/14288520/5b6ebc53-29a8-46d2-9698-03c15bc98cd0" src="https://github.com/nortikin/sverchok/assets/14288520/5b6ebc53-29a8-46d2-9698-03c15bc98cd0" /></a>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
@@ -174,8 +177,15 @@ vectors), and point X, it calculates the vector VF(X).</p>
 </section>
 <section id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
+<ul>
+<li><p><strong>Output NumPy</strong>. Outputs NumPy arrays in stead of regular python lists. Improves performance</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/84b5166d-092f-4ff3-8802-a2da38f4b25d"><img alt="https://github.com/nortikin/sverchok/assets/14288520/84b5166d-092f-4ff3-8802-a2da38f4b25d" src="https://github.com/nortikin/sverchok/assets/14288520/84b5166d-092f-4ff3-8802-a2da38f4b25d" /></a>
 <ul class="simple">
-<li><p><strong>Output NumPy</strong>. Outputs NumPy arrays in stead of regular python lists. Improves performance</p></li>
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+</ul>
+</div></blockquote>
+</li>
 </ul>
 </section>
 <section id="outputs">
@@ -191,10 +201,40 @@ vectors), and point X, it calculates the vector VF(X).</p>
 </section>
 <section id="examples-of-usage">
 <h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
+<p>Example of description:</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/ba8e4458-cc1a-444b-b1ef-413ea28b89a7"><img alt="https://github.com/nortikin/sverchok/assets/14288520/ba8e4458-cc1a-444b-b1ef-413ea28b89a7" src="https://github.com/nortikin/sverchok/assets/14288520/ba8e4458-cc1a-444b-b1ef-413ea28b89a7" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/line_mk4.html"><span class="doc">Line</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/icosphere.html"><span class="doc">IcoSphere</span></a></p></li>
+<li><p>Fields-&gt; <a class="reference internal" href="attractor_field_mk2.html"><span class="doc">Attractor Field</span></a></p></li>
+<li><p>Fields-&gt; <a class="reference internal" href="vector_field_math.html"><span class="doc">Vector Field Math</span></a></p></li>
+<li><p>Fields-&gt; <a class="reference internal" href="vector_field_lines.html"><span class="doc">Vector Field Lines</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/numbers.html"><span class="doc">A Number</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_polar_in.html"><span class="doc">Vector Polar Input</span></a></p></li>
+<li><p>SUB: Vector-&gt; <a class="reference internal" href="../vector/math_mk3.html"><span class="doc">Vector Math</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/apply_and_join.html"><span class="doc">Matrix Apply to Mesh</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>Replace each point of straight line segment with the result of noise vector field evaluation at that point:</p>
-<img alt="https://user-images.githubusercontent.com/284644/79476391-5c0fbc80-8022-11ea-9457-1babe56f4388.png" src="https://user-images.githubusercontent.com/284644/79476391-5c0fbc80-8022-11ea-9457-1babe56f4388.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/79476391-5c0fbc80-8022-11ea-9457-1babe56f4388.png"><img alt="https://user-images.githubusercontent.com/284644/79476391-5c0fbc80-8022-11ea-9457-1babe56f4388.png" src="https://user-images.githubusercontent.com/284644/79476391-5c0fbc80-8022-11ea-9457-1babe56f4388.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/segment.html"><span class="doc">Segment</span></a></p></li>
+<li><p>Fields-&gt; <a class="reference internal" href="noise_vfield.html"><span class="doc">Noise Vector Field</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>Visualize vector field vectors by connecting original points of the line segment and the points obtained by moving the original points by the results of vector field evaluation:</p>
-<img alt="https://user-images.githubusercontent.com/284644/79476395-5d40e980-8022-11ea-846b-68da09ed2e41.png" src="https://user-images.githubusercontent.com/284644/79476395-5d40e980-8022-11ea-846b-68da09ed2e41.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/79476395-5d40e980-8022-11ea-846b-68da09ed2e41.png"><img alt="https://user-images.githubusercontent.com/284644/79476395-5d40e980-8022-11ea-846b-68da09ed2e41.png" src="https://user-images.githubusercontent.com/284644/79476395-5d40e980-8022-11ea-846b-68da09ed2e41.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/segment.html"><span class="doc">Segment</span></a></p></li>
+<li><p>Fields-&gt; <a class="reference internal" href="noise_vfield.html"><span class="doc">Noise Vector Field</span></a></p></li>
+<li><p>Transform-&gt; <a class="reference internal" href="../transforms/move_mk3.html"><span class="doc">Move</span></a></p></li>
+<li><p>Modifiers-&gt;Modifier Make-&gt; <a class="reference internal" href="../modifier_make/uv_connect.html"><span class="doc">UV Connection</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 </section>
 </section>
 
