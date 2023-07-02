@@ -1,6 +1,9 @@
 Bend Along Surface Field
 ========================
 
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/e953f1d5-2071-4113-8b14-18dc46ee3645
+  :target: https://github.com/nortikin/sverchok/assets/14288520/e953f1d5-2071-4113-8b14-18dc46ee3645
+
 Functionality
 -------------
 
@@ -59,3 +62,12 @@ Example of usage
 Generate a rectangular grid of cubes, and bend it along formula-specified surface:
 
 .. image:: https://user-images.githubusercontent.com/284644/79602628-42df3c80-8104-11ea-80c3-09be659d54f8.png
+  :target: https://user-images.githubusercontent.com/284644/79602628-42df3c80-8104-11ea-80c3-09be659d54f8.png
+
+* Generator-> :doc:`Plane </nodes/generator/plane_mk3>`
+* Generator-> :doc:`Box </nodes/generator/box_mk2>`
+* Surfaces-> :doc:`Surface Formula </nodes/surface/surface_formula>`
+* Surfaces-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
+* Fields-> :doc:`Apply Vector Field </nodes/field/vector_field_apply>`
+* Matrix Apply: Matrix-> :doc:`Matrix Apply to Mesh </nodes/matrix/apply_and_join>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
