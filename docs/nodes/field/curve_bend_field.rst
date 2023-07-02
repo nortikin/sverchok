@@ -1,6 +1,9 @@
 Bend Along Curve Field
 ======================
 
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/24e3fe93-4eb7-4cea-9d80-1b97e32802ab
+  :target: https://github.com/nortikin/sverchok/assets/14288520/24e3fe93-4eb7-4cea-9d80-1b97e32802ab
+
 Functionality
 -------------
 
@@ -107,8 +110,27 @@ Examples of usage
 Bend a cube along some closed curve:
 
 .. image:: https://user-images.githubusercontent.com/284644/79593221-93e73480-80f4-11ea-8c14-7f1511b1bd7b.png
+  :target: https://user-images.githubusercontent.com/284644/79593221-93e73480-80f4-11ea-8c14-7f1511b1bd7b.png
+
+* Generator-> :doc:`Box </nodes/generator/box_mk2>`
+* Curves-> :doc:`Cubic Spline </nodes/curve/cubic_spline>`
+* Fields-> :doc:`Apply Vector Field </nodes/field/vector_field_apply>`
+* Vector-> :doc:`Vector sort </nodes/vector/vertices_sort>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+* Scene-> :doc:`Objects In Lite </nodes/scene/objects_in_lite>`
+
+---------
 
 It is possible to use one field to bend several objects:
 
 .. image:: https://user-images.githubusercontent.com/284644/79593228-95186180-80f4-11ea-930f-59f3f124da63.png
+  :target: https://user-images.githubusercontent.com/284644/79593228-95186180-80f4-11ea-930f-59f3f124da63.png
+
+* Generator-> :doc:`Box </nodes/generator/box_mk2>`
+* Curves-> :doc:`Cubic Spline </nodes/curve/cubic_spline>`
+* Fields-> :doc:`Apply Vector Field </nodes/field/vector_field_apply>`
+* Transform-> :doc:`Move </nodes/transforms/move_mk3>`
+* Vector-> :doc:`Vector sort </nodes/vector/vertices_sort>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+* Scene-> :doc:`Objects In Lite </nodes/scene/objects_in_lite>`
 
