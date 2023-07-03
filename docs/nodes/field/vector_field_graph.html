@@ -157,6 +157,7 @@
              
   <section id="vector-field-graph">
 <h1>Vector Field Graph<a class="headerlink" href="#vector-field-graph" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/25cf4c3e-1bd0-4d81-94f4-ede174133db5"><img alt="https://github.com/nortikin/sverchok/assets/14288520/25cf4c3e-1bd0-4d81-94f4-ede174133db5" src="https://github.com/nortikin/sverchok/assets/14288520/25cf4c3e-1bd0-4d81-94f4-ede174133db5" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node visualizes a Vector Field object by generating arrows (which
@@ -164,17 +165,30 @@ represent vectors) from points of original space to the results of vector field
 application to those original points.</p>
 <p>The original points are generated as cartesian grid in 3D space.</p>
 <p>This node is mainly intended for visualization.</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/9a50d9d4-b02e-4b28-9412-c32c4a0c9325"><img alt="https://github.com/nortikin/sverchok/assets/14288520/9a50d9d4-b02e-4b28-9412-c32c4a0c9325" src="https://github.com/nortikin/sverchok/assets/14288520/9a50d9d4-b02e-4b28-9412-c32c4a0c9325" /></a>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
-<ul class="simple">
+<ul>
 <li><p><strong>Field</strong>. The vector field to be visualized. This input is mandatory.</p></li>
 <li><p><strong>Bounds</strong>. The list of points which define the area of space, in which the
-field is to be visualized. Only the bounding box of these points is used.</p></li>
-<li><p><strong>Scale</strong>. The scale of arrows to be generated. The default value is 1.0.</p></li>
+field is to be visualized. Only the bounding box of these points is used.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/7f70ce5f-9863-4ea9-a951-e4d662904ff0"><img alt="https://github.com/nortikin/sverchok/assets/14288520/7f70ce5f-9863-4ea9-a951-e4d662904ff0" src="https://github.com/nortikin/sverchok/assets/14288520/7f70ce5f-9863-4ea9-a951-e4d662904ff0" /></a>
+</div></blockquote>
+</li>
+<li><p><strong>Scale</strong>. The scale of arrows to be generated. The default value is 1.0.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/a22b74c7-1d2d-4ca9-89a7-6f90a02e72a1"><img alt="https://github.com/nortikin/sverchok/assets/14288520/a22b74c7-1d2d-4ca9-89a7-6f90a02e72a1" src="https://github.com/nortikin/sverchok/assets/14288520/a22b74c7-1d2d-4ca9-89a7-6f90a02e72a1" /></a>
+</div></blockquote>
+</li>
 <li><p><strong>SamplesX</strong>, <strong>SamplesY</strong>, <strong>SamplesZ</strong>. The number of samples of cartesian
-grid, from which the arrows are to be generated. The default value is 10.</p></li>
+grid, from which the arrows are to be generated. The default value is 10.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/c87e10e5-9746-4246-8542-ee7f73231aa8"><img alt="https://github.com/nortikin/sverchok/assets/14288520/c87e10e5-9746-4246-8542-ee7f73231aa8" src="https://github.com/nortikin/sverchok/assets/14288520/c87e10e5-9746-4246-8542-ee7f73231aa8" /></a>
+</div></blockquote>
+</li>
 </ul>
 </section>
 <section id="parameters">
@@ -191,6 +205,16 @@ default.</p></li>
 </section>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
+<p>Example of description:</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/18376fca-ba21-4d46-8c44-f7f019da86a7"><img alt="https://github.com/nortikin/sverchok/assets/14288520/18376fca-ba21-4d46-8c44-f7f019da86a7" src="https://github.com/nortikin/sverchok/assets/14288520/18376fca-ba21-4d46-8c44-f7f019da86a7" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>
+<li><p>Fields-&gt; <a class="reference internal" href="voronoi_field.html"><span class="doc">Voronoi Field</span></a></p></li>
+<li><p>Spacial-&gt; <a class="reference internal" href="../spatial/homogenous_vector_field.html"><span class="doc">Vector P Field</span></a></p></li>
+<li><p>Transform-&gt; <a class="reference internal" href="../transforms/noise_displace.html"><span class="doc">Noise Displace</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>This node has the following outputs:</p>
 <ul class="simple">
 <li><p><strong>Vertices</strong>. The vertices of the arrows.</p></li>
@@ -200,7 +224,12 @@ default.</p></li>
 <section id="example-of-usage">
 <h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>Visualize some vector field:</p>
-<img alt="https://user-images.githubusercontent.com/284644/79471192-b8bba900-801b-11ea-829e-2b003d9000da.png" src="https://user-images.githubusercontent.com/284644/79471192-b8bba900-801b-11ea-829e-2b003d9000da.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/79471192-b8bba900-801b-11ea-829e-2b003d9000da.png"><img alt="https://user-images.githubusercontent.com/284644/79471192-b8bba900-801b-11ea-829e-2b003d9000da.png" src="https://user-images.githubusercontent.com/284644/79471192-b8bba900-801b-11ea-829e-2b003d9000da.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
+<li><p>Fields-&gt; <a class="reference internal" href="attractor_field_mk2.html"><span class="doc">Attractor Field</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 </section>
 </section>
 

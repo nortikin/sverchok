@@ -24,6 +24,11 @@ interpolation nodes to build Curve objects from them.
 .. image:: https://user-images.githubusercontent.com/14288520/209448129-feb46200-4ee7-4c05-b38b-1d23a44af5b3.png
   :target: https://user-images.githubusercontent.com/14288520/209448129-feb46200-4ee7-4c05-b38b-1d23a44af5b3.png
 
+See also
+--------
+
+* Fields-> :doc:`Scalar Field Graph </nodes/field/scalar_field_graph>`
+
 Inputs
 ------
 
