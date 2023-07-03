@@ -20,9 +20,8 @@ if bpy.app.background:
 
 else:
 
-    uniform_shader = gpu.shader.from_builtin('3D_UNIFORM_COLOR')
-    smooth_shader = gpu.shader.from_builtin('3D_SMOOTH_COLOR')
-
+    uniform_shader = gpu.shader.from_builtin('UNIFORM_COLOR') # '3D_UNIFORM_COLOR'
+    smooth_shader = gpu.shader.from_builtin('SMOOTH_COLOR')   # '3D_SMOOTH_COLOR'
 
     class MatrixDraw28(object):
 

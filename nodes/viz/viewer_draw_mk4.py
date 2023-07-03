@@ -127,13 +127,14 @@ def view_3d_geom(context, args):
 
     # bgl.glEnable(bgl.GL_BLEND)
     gpu.state.blend_set("ALPHA")
+    gpu.state.face_culling_set("FRONT")  # redundant?
 
     if config.draw_polys:
-        if config.draw_gl_wireframe:
-            bgl.glPolygonMode(bgl.GL_FRONT_AND_BACK, bgl.GL_LINE)
-        if config.draw_gl_polygonoffset:
-            bgl.glEnable(bgl.GL_POLYGON_OFFSET_FILL)
-            bgl.glPolygonOffset(1.0, 1.0)
+        # if config.draw_gl_wireframe:
+        #     bgl.glPolygonMode(bgl.GL_FRONT_AND_BACK, bgl.GL_LINE)
+        # if config.draw_gl_polygonoffset:
+        #     bgl.glEnable(bgl.GL_POLYGON_OFFSET_FILL)
+        #     bgl.glPolygonOffset(1.0, 1.0)
 
         if config.shade_mode == 'fragment':
             p_batch = batch_for_shader(config.p_shader, 'TRIS', {"position": geom.p_vertices}, indices=geom.p_indices)
@@ -152,10 +153,10 @@ def view_3d_geom(context, args):
 
         p_batch.draw(config.p_shader)
 
-        if config.draw_gl_polygonoffset:
-            bgl.glDisable(bgl.GL_POLYGON_OFFSET_FILL)
-        if config.draw_gl_wireframe:
-            bgl.glPolygonMode(bgl.GL_FRONT_AND_BACK, bgl.GL_FILL)
+        # if config.draw_gl_polygonoffset:
+        #     bgl.glDisable(bgl.GL_POLYGON_OFFSET_FILL)
+        # if config.draw_gl_wireframe:
+        #     bgl.glPolygonMode(bgl.GL_FRONT_AND_BACK, bgl.GL_FILL)
 
 
     if config.draw_edges:

@@ -31,7 +31,7 @@ from sverchok.data_structure import node_id, updateNode
 from sverchok.node_tree import SverchCustomTreeNode
 
 if not bpy.app.background:
-    smooth_2d_shader = gpu.shader.from_builtin('2D_SMOOTH_COLOR')
+    smooth_2d_shader = gpu.shader.from_builtin('SMOOTH_COLOR') # '2D_SMOOTH_COLOR'
 else:
     smooth_2d_shader = None
 
