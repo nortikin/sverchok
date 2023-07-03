@@ -83,9 +83,11 @@ def generate_normals_data(verts, faces):
 
 def draw_uniform(GL_KIND, coords, indices, color, width=1, dashed_data=None):
     if GL_KIND == 'LINES':
-        bgl.glLineWidth(width)
+        # bgl.glLineWidth(width)
+        gpu.state.line_width_set(width)
     elif GL_KIND == 'POINTS':
-        bgl.glPointSize(width)
+        # bgl.glPointSize(width)
+        gpu.state.point_size_set(width)
 
     params = dict(indices=indices) if indices else {}
 
@@ -111,9 +113,11 @@ def draw_uniform(GL_KIND, coords, indices, color, width=1, dashed_data=None):
         batch.draw(shader)
 
     if GL_KIND == 'LINES':
-        bgl.glLineWidth(1)
+        # bgl.glLineWidth(1)
+        gpu.state.line_width_set(1)
     elif GL_KIND == 'POINTS':
-        bgl.glPointSize(1)
+        # bgl.glPointSize(1)
+        gpu.state.point_size_set(1)
 
 
 def draw_smooth(coords, vcols, indices=None):

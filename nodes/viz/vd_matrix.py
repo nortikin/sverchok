@@ -17,7 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 
-import bgl
+# import bgl
 import bpy
 import gpu
 from gpu_extras.batch import batch_for_shader
@@ -76,9 +76,11 @@ def screen_v3d_batch_matrix_overlay(context, args):
         indices=indices_shifted)
 
     # smooth_2d_shader.bind()
-    bgl.glEnable( bgl.GL_BLEND )
+    # bgl.glEnable( bgl.GL_BLEND )
+    gpu.state.blend_set("ALPHA")
     batch.draw(smooth_2d_shader)
-    bgl.glDisable( bgl.GL_BLEND )
+    # bgl.glDisable( bgl.GL_BLEND )
+    gpu.state.blend_set("NONE")
 
 
 def match_color_to_matrix(node):
