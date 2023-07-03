@@ -7,7 +7,7 @@
 from math import pi
 import numpy as np
 
-import bgl
+# import bgl
 import bpy
 import gpu
 from gpu_extras.batch import batch_for_shader
@@ -185,11 +185,13 @@ def draw_faces_uniform(context, args):
     geom, config = args
     # print(geom.f_faces, config.shade)
     if config.draw_gl_wireframe:
-        bgl.glPolygonMode(bgl.GL_FRONT_AND_BACK, bgl.GL_LINE)
+        # bgl.glPolygonMode(bgl.GL_FRONT_AND_BACK, bgl.GL_LINE)
+        pass
 
     if config.draw_gl_polygonoffset:
-        bgl.glEnable(bgl.GL_POLYGON_OFFSET_FILL)
-        bgl.glPolygonOffset(1.0, 1.0)
+        # bgl.glEnable(bgl.GL_POLYGON_OFFSET_FILL)
+        # bgl.glPolygonOffset(1.0, 1.0)
+        pass
 
     if config.shade == "flat":
         draw_uniform('TRIS', geom.f_verts, geom.f_faces, config.face4f)
@@ -201,8 +203,8 @@ def draw_faces_uniform(context, args):
         draw_smooth(geom.f_verts, geom.smooth_vnorms, indices=geom.f_faces)
 
     if config.draw_gl_wireframe:
-        bgl.glPolygonMode(bgl.GL_FRONT_AND_BACK, bgl.GL_FILL)
-
+        # bgl.glPolygonMode(bgl.GL_FRONT_AND_BACK, bgl.GL_FILL)
+        pass
 
 def edges_geom(geom, config):
     solids = geom.solids
@@ -233,10 +235,12 @@ def edges_geom(geom, config):
 def draw_complex(context, args):
     geom, config = args
     if config.draw_gl_polygonoffset:
-        bgl.glDisable(bgl.GL_POLYGON_OFFSET_FILL)
+        # bgl.glDisable(bgl.GL_POLYGON_OFFSET_FILL)
+        pass
 
     if config.shade != 'normals':
-        bgl.glEnable(bgl.GL_BLEND)
+        # bgl.glEnable(bgl.GL_BLEND)
+        gpu.state.blend_set("ALPHA")
 
     if config.display_edges:
         draw_lines_uniform(context, config, geom.e_vertices, geom.e_edges, config.line4f, config.line_width)
@@ -245,11 +249,12 @@ def draw_complex(context, args):
     if config.display_verts:
         draw_uniform('POINTS', geom.verts, None, config.vcol, config.point_size)
     if config.shade != 'normals':
-        bgl.glDisable(bgl.GL_BLEND)
+        # bgl.glDisable(bgl.GL_BLEND)
+        gpu.state.blend_set("NONE")
     if config.draw_gl_polygonoffset:
         # or restore to the state found when entering this function. TODO!
-        bgl.glDisable(bgl.GL_POLYGON_OFFSET_FILL)
-
+        # bgl.glDisable(bgl.GL_POLYGON_OFFSET_FILL)
+        pass
 
 class SvSolidViewerNode(SverchCustomTreeNode, bpy.types.Node):
     """
