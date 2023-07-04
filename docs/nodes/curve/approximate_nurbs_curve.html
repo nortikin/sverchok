@@ -203,6 +203,7 @@
              
   <section id="approximate-nurbs-curve">
 <h1>Approximate NURBS Curve<a class="headerlink" href="#approximate-nurbs-curve" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/206873352-c1fafa58-1779-4324-b536-d019e27b1ec9.png"><img alt="https://user-images.githubusercontent.com/14288520/206873352-c1fafa58-1779-4324-b536-d019e27b1ec9.png" src="https://user-images.githubusercontent.com/14288520/206873352-c1fafa58-1779-4324-b536-d019e27b1ec9.png" /></a>
 <section id="dependencies">
 <h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this heading">¶</a></h2>
 <p>This node requires either <a class="reference external" href="https://onurraufbingol.com/NURBS-Python/">Geomdl</a>, <a class="reference external" href="https://scipy.org/">SciPy</a> or <a class="reference external" href="https://www.freecad.org/">FreeCAD</a> library to work.</p>
@@ -379,13 +380,39 @@ by default.</p></li>
 <section id="example-of-usage">
 <h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
 <p>Take points from Greasepencil drawing and approximate them with a smooth curve:</p>
-<img alt="https://user-images.githubusercontent.com/284644/74363000-7becef00-4deb-11ea-9963-e864dc3a3599.png" src="https://user-images.githubusercontent.com/284644/74363000-7becef00-4deb-11ea-9963-e864dc3a3599.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/74363000-7becef00-4deb-11ea-9963-e864dc3a3599.png"><img alt="https://user-images.githubusercontent.com/284644/74363000-7becef00-4deb-11ea-9963-e864dc3a3599.png" src="https://user-images.githubusercontent.com/284644/74363000-7becef00-4deb-11ea-9963-e864dc3a3599.png" /></a>
+<ul class="simple">
+<li><p>Curves-&gt; <a class="reference internal" href="eval_curve.html"><span class="doc">Evaluate Curve</span></a></p></li>
+<li><p>Modifiers-&gt;Modifier Make-&gt; <a class="reference internal" href="../modifier_make/uv_connect.html"><span class="doc">UV Connection</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>BPY Data-&gt; <a class="reference internal" href="../object_nodes/get_asset_properties_mk2.html"><span class="doc">Object ID Selector+</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>Use SciPy implementation to make a closed curve:</p>
-<img alt="https://user-images.githubusercontent.com/284644/101246890-d61ebe00-3737-11eb-942d-c31e02bf3c3d.png" src="https://user-images.githubusercontent.com/284644/101246890-d61ebe00-3737-11eb-942d-c31e02bf3c3d.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/101246890-d61ebe00-3737-11eb-942d-c31e02bf3c3d.png"><img alt="https://user-images.githubusercontent.com/284644/101246890-d61ebe00-3737-11eb-942d-c31e02bf3c3d.png" src="https://user-images.githubusercontent.com/284644/101246890-d61ebe00-3737-11eb-942d-c31e02bf3c3d.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>
+<li><p>Curves-&gt; <a class="reference internal" href="eval_curve.html"><span class="doc">Evaluate Curve</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>Example of the FreeCAD implementation usage. Euclidean parametrization:</p>
-<img alt="https://user-images.githubusercontent.com/66558924/216157300-8480c5a9-29e4-4110-8f46-3ba15f25b3d6.jpg" src="https://user-images.githubusercontent.com/66558924/216157300-8480c5a9-29e4-4110-8f46-3ba15f25b3d6.jpg" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/66558924/216157300-8480c5a9-29e4-4110-8f46-3ba15f25b3d6.jpg"><img alt="https://user-images.githubusercontent.com/66558924/216157300-8480c5a9-29e4-4110-8f46-3ba15f25b3d6.jpg" src="https://user-images.githubusercontent.com/66558924/216157300-8480c5a9-29e4-4110-8f46-3ba15f25b3d6.jpg" /></a>
+<ul class="simple">
+<li><p>Scene-&gt; <a class="reference internal" href="../scene/get_objects_data.html"><span class="doc">Get Objects Data</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_curve.html"><span class="doc">Viewer Draw Curve</span></a></p></li>
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>Example of the FreeCAD implementation using the Explicit Knots method and utilizing the “Generate Knotvector” node:</p>
-<img alt="https://user-images.githubusercontent.com/66558924/216157176-288d70c4-040d-4e4e-bf90-e110b32c4d20.jpg" src="https://user-images.githubusercontent.com/66558924/216157176-288d70c4-040d-4e4e-bf90-e110b32c4d20.jpg" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/66558924/216157176-288d70c4-040d-4e4e-bf90-e110b32c4d20.jpg"><img alt="https://user-images.githubusercontent.com/66558924/216157176-288d70c4-040d-4e4e-bf90-e110b32c4d20.jpg" src="https://user-images.githubusercontent.com/66558924/216157176-288d70c4-040d-4e4e-bf90-e110b32c4d20.jpg" /></a>
+<ul class="simple">
+<li><p>Curves-&gt; <a class="reference internal" href="generate_knotvector.html"><span class="doc">Generate Knotvector</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/list_input.html"><span class="doc">List Input</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_curve.html"><span class="doc">Viewer Draw Curve</span></a></p></li>
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+</ul>
 </section>
 </section>
 
