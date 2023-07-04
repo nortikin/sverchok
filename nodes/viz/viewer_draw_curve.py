@@ -10,7 +10,7 @@ import numpy as np
 import bpy
 from mathutils import Matrix, Vector
 from bpy.props import StringProperty, BoolProperty, IntProperty, EnumProperty, FloatVectorProperty, FloatProperty
-import bgl
+# import bgl
 import gpu
 from gpu_extras.batch import batch_for_shader
 
@@ -28,40 +28,49 @@ def draw_edges(shader, points, edges, line_width, color, is_smooth=False):
     if is_smooth:
         draw_edges_colored(shader, points, edges, line_width, [color for i in range(len(points))])
     else:
-        bgl.glLineWidth(line_width)
+        #bgl.glLineWidth(line_width)
+        gpu.state.line_width_set(line_width)
         batch = batch_for_shader(shader, 'LINES', {"pos": points}, indices=edges)
         shader.bind()
         shader.uniform_float('color', color)
         batch.draw(shader)
-        bgl.glLineWidth(1)
+        #bgl.glLineWidth(1)
+        gpu.state.line_width_set(1)
 
 def draw_edges_colored(shader, points, edges, line_width, colors):
-    bgl.glLineWidth(line_width)
+    # bgl.glLineWidth(line_width)
+    gpu.state.line_width_set(line_width)
     batch = batch_for_shader(shader, 'LINES', {"pos": points, "color": colors}, indices=edges)
     shader.bind()
     batch.draw(shader)
-    bgl.glLineWidth(1)
+    # bgl.glLineWidth(1)
+    gpu.state.line_width_set(1)
 
 def draw_points(shader, points, size, color):
-    bgl.glPointSize(size)
+    #bgl.glPointSize(size)
+    gpu.state.point_size_set(size)
     batch = batch_for_shader(shader, 'POINTS', {"pos": points})
     shader.bind()
     shader.uniform_float('color', color)
     batch.draw(shader)
-    bgl.glPointSize(1)
+    #bgl.glPointSize(1)
+    gpu.state.point_size_set(1)
 
 def draw_points_colored(shader, points, size, colors):
-    bgl.glPointSize(size)
+    #bgl.glPointSize(size)
+    gpu.state.point_size_set(size)
     batch = batch_for_shader(shader, 'POINTS', {"pos": points, "color": colors})
     shader.bind()
     batch.draw(shader)
-    bgl.glPointSize(1)
+    #bgl.glPointSize(1)
+    gpu.state.point_size_set(1)
 
 def draw_curves(context, args):
     node, draw_inputs, v_shader, e_shader = args
     is_smooth = node.draw_curvature
 
-    bgl.glEnable(bgl.GL_BLEND)
+    # bgl.glEnable(bgl.GL_BLEND)
+    gpu.state.blend_set("ALPHA")
 
     for item in draw_inputs:
 
@@ -87,7 +96,8 @@ def draw_curves(context, args):
         if node.draw_verts and item.points is not None:
             draw_points(v_shader, item.points, node.verts_size, node.verts_color)
 
-    bgl.glEnable(bgl.GL_BLEND)
+    # bgl.glEnable(bgl.GL_BLEND)
+    gpu.state.blend_set("ALPHA")
 
 class SvBakeCurveOp(bpy.types.Operator, SvGenericNodeLocator):
     """B A K E CURVES"""
