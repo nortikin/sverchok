@@ -1,6 +1,9 @@
 Approximate NURBS Curve
 =======================
 
+.. image:: https://user-images.githubusercontent.com/14288520/206873352-c1fafa58-1779-4324-b536-d019e27b1ec9.png
+  :target: https://user-images.githubusercontent.com/14288520/206873352-c1fafa58-1779-4324-b536-d019e27b1ec9.png
+
 Dependencies
 ------------
 
@@ -199,16 +202,44 @@ Example of usage
 Take points from Greasepencil drawing and approximate them with a smooth curve:
 
 .. image:: https://user-images.githubusercontent.com/284644/74363000-7becef00-4deb-11ea-9963-e864dc3a3599.png
+  :target: https://user-images.githubusercontent.com/284644/74363000-7becef00-4deb-11ea-9963-e864dc3a3599.png
+
+* Curves-> :doc:`Evaluate Curve </nodes/curve/eval_curve>`
+* Modifiers->Modifier Make-> :doc:`UV Connection </nodes/modifier_make/uv_connect>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+* BPY Data-> :doc:`Object ID Selector+ </nodes/object_nodes/get_asset_properties_mk2>`
+
+---------
 
 Use SciPy implementation to make a closed curve:
 
 .. image:: https://user-images.githubusercontent.com/284644/101246890-d61ebe00-3737-11eb-942d-c31e02bf3c3d.png
+  :target: https://user-images.githubusercontent.com/284644/101246890-d61ebe00-3737-11eb-942d-c31e02bf3c3d.png
+
+* Generator-> :doc:`NGon </nodes/generator/ngon>`
+* Curves-> :doc:`Evaluate Curve </nodes/curve/eval_curve>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+
+---------
 
 Example of the FreeCAD implementation usage. Euclidean parametrization:
 
 .. image:: https://user-images.githubusercontent.com/66558924/216157300-8480c5a9-29e4-4110-8f46-3ba15f25b3d6.jpg
+  :target: https://user-images.githubusercontent.com/66558924/216157300-8480c5a9-29e4-4110-8f46-3ba15f25b3d6.jpg
+
+* Scene-> :doc:`Get Objects Data </nodes/scene/get_objects_data>`
+* Viz-> :doc:`Viewer Draw Curve </nodes/viz/viewer_draw_curve>`
+* Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
+
+---------
 
 Example of the FreeCAD implementation using the Explicit Knots method and utilizing the "Generate Knotvector" node:
 
 .. image:: https://user-images.githubusercontent.com/66558924/216157176-288d70c4-040d-4e4e-bf90-e110b32c4d20.jpg
+  :target: https://user-images.githubusercontent.com/66558924/216157176-288d70c4-040d-4e4e-bf90-e110b32c4d20.jpg
 
+* Curves-> :doc:`Generate Knotvector </nodes/curve/generate_knotvector>`
+* Number-> :doc:`List Input </nodes/number/list_input>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+* Viz-> :doc:`Viewer Draw Curve </nodes/viz/viewer_draw_curve>`
+* Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
