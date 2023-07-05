@@ -23,6 +23,7 @@ if bpy.app.version >= (3, 5, 0):
     glLineWidth = gpu.state.line_width_set 
     glPointSize = gpu.state.point_size_set
 
+
     def glEnable(param):
         if param == "GL_POLYGON_OFFSET_FILL":
             pass
@@ -31,12 +32,13 @@ if bpy.app.version >= (3, 5, 0):
         else:
             print(f"glEnable unhandled {param=}")
 
-
+    def glDisable(param): pass
     def glPolygonOffset(*params): pass
     def glPolygonMode(*params): pass
 
 else:
     # we use only a finite subset of the module
     import bgl
-    from bgl import glPolygonMode, glEnable, glPolygonOffset
-    from bgl import GL_BLEND, GL_FRONT_AND_BACK, GL_LINE, GL_POLYGON_OFFSET_FILL
+    from bgl import glPolygonMode, glEnable, glDisable, glPolygonOffset
+    from bgl import GL_BLEND, GL_FRONT_AND_BACK, GL_LINE, GL_POLYGON_OFFSET_FILL, GL_FLOAT, GL_INT
+    from bgl import Buffer

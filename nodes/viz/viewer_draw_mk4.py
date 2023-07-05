@@ -16,6 +16,7 @@ from bpy.props import StringProperty, FloatProperty, IntProperty, EnumProperty, 
 
 import gpu
 from gpu_extras.batch import batch_for_shader
+from sverchok.utils.modules import bgl_wrapper as bgl
 
 from sverchok.utils.sv_mesh_utils import polygons_to_edges_np
 from sverchok.data_structure import updateNode, node_id, match_long_repeat, enum_item_5
@@ -125,16 +126,16 @@ def view_3d_geom(context, args):
 
     geom, config = args
 
-    # bgl.glEnable(bgl.GL_BLEND)
-    gpu.state.blend_set("ALPHA")
+    bgl.glEnable(bgl.GL_BLEND)
+    # gpu.state.blend_set("ALPHA")
     gpu.state.face_culling_set("FRONT")  # redundant?
 
     if config.draw_polys:
-        # if config.draw_gl_wireframe:
-        #     bgl.glPolygonMode(bgl.GL_FRONT_AND_BACK, bgl.GL_LINE)
-        # if config.draw_gl_polygonoffset:
-        #     bgl.glEnable(bgl.GL_POLYGON_OFFSET_FILL)
-        #     bgl.glPolygonOffset(1.0, 1.0)
+        if config.draw_gl_wireframe:
+            bgl.glPolygonMode(bgl.GL_FRONT_AND_BACK, bgl.GL_LINE)
+        if config.draw_gl_polygonoffset:
+            bgl.glEnable(bgl.GL_POLYGON_OFFSET_FILL)
+            bgl.glPolygonOffset(1.0, 1.0)
 
         if config.shade_mode == 'fragment':
             p_batch = batch_for_shader(config.p_shader, 'TRIS', {"position": geom.p_vertices}, indices=geom.p_indices)
@@ -153,15 +154,14 @@ def view_3d_geom(context, args):
 
         p_batch.draw(config.p_shader)
 
-        # if config.draw_gl_polygonoffset:
-        #     bgl.glDisable(bgl.GL_POLYGON_OFFSET_FILL)
-        # if config.draw_gl_wireframe:
-        #     bgl.glPolygonMode(bgl.GL_FRONT_AND_BACK, bgl.GL_FILL)
+        if config.draw_gl_polygonoffset:
+            bgl.glDisable(bgl.GL_POLYGON_OFFSET_FILL)
+        if config.draw_gl_wireframe:
+            bgl.glPolygonMode(bgl.GL_FRONT_AND_BACK, bgl.GL_FILL)
 
 
     if config.draw_edges:
-        # bgl.glLineWidth(config.line_width)
-        gpu.state.line_width_set(config.line_width)
+        bgl.glLineWidth(config.line_width)
 
         if config.draw_dashed:
             shader = config.dashed_shader
@@ -185,12 +185,10 @@ def view_3d_geom(context, args):
                 config.e_shader.bind()
                 e_batch.draw(config.e_shader)
 
-        # bgl.glLineWidth(1)
-        gpu.state.line_width_set(1)
+        bgl.glLineWidth(1)
 
     if config.draw_verts:
-        # bgl.glPointSize(config.point_size)
-        gpu.state.point_size_set(config.point_size)
+        bgl.glPointSize(config.point_size)
 
         if config.uniform_verts:
             v_batch = batch_for_shader(config.v_shader, 'POINTS', {"pos": geom.v_vertices})
@@ -201,12 +199,9 @@ def view_3d_geom(context, args):
             config.v_shader.bind()
 
         v_batch.draw(config.v_shader)
-        # bgl.glPointSize(1)
-        gpu.state.point_size_set(1)
+        bgl.glPointSize(1)
 
-    # bgl.glEnable(bgl.GL_BLEND)   # <-- enable again?
-    gpu.state.blend_set("ALPHA")
-
+    bgl.glEnable(bgl.GL_BLEND)   # <-- enable again?
 
 
 def splitted_polygons_geom(polygon_indices, original_idx, v_path, cols, idx_offset):
