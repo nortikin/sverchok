@@ -189,7 +189,6 @@ def view_3d_geom(context, args):
 
     if config.draw_verts:
         bgl.glPointSize(config.point_size)
-
         if config.uniform_verts:
             v_batch = batch_for_shader(config.v_shader, 'POINTS', {"pos": geom.v_vertices})
             config.v_shader.bind()
