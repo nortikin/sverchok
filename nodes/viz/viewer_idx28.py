@@ -77,6 +77,11 @@ class SvIDXViewer28(SverchCustomTreeNode, bpy.types.Node):
         name="Edges", description="Display edge indices", update=updateNode)
     display_face_index: BoolProperty(
         name="Faces", description="Display face indices", update=updateNode)
+    
+    
+    text_scale: FloatProperty(
+        name='text_scale', description='', min=0.1,
+        default=1.0, update=updateNode)
 
     bg_edges_col: make_color_prop("bg_edges", (.2, .2, .2, 1.0))
     bg_faces_col: make_color_prop("bg_faces", (.2, .2, .2, 1.0))
@@ -161,6 +166,7 @@ class SvIDXViewer28(SverchCustomTreeNode, bpy.types.Node):
                 colx.prop(self, colprop, text="")
 
         layout.row().prop(self, 'draw_obj_idx', text="Draw Object Index", toggle=True)
+        layout.row().prop(self, 'text_scale', text="Text Scale")
 
 
     def get_face_extras(self, geom):
@@ -305,6 +311,7 @@ class SvIDXViewer28(SverchCustomTreeNode, bpy.types.Node):
             return
 
         config = self.get_settings_dict()
+        config["scale"] = config["scale"] * self.text_scale
         geom = self.get_geometry()
 
         draw_data = {
