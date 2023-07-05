@@ -7,10 +7,10 @@
 from math import pi
 import numpy as np
 
-# import bgl
 import bpy
 import gpu
 from gpu_extras.batch import batch_for_shader
+from sverchok.utils.modules import bgl_wrapper as bgl
 
 from bpy.props import (
     BoolProperty, FloatVectorProperty, EnumProperty, FloatProperty, IntProperty)
@@ -83,11 +83,9 @@ def generate_normals_data(verts, faces):
 
 def draw_uniform(GL_KIND, coords, indices, color, width=1, dashed_data=None):
     if GL_KIND == 'LINES':
-        # bgl.glLineWidth(width)
-        gpu.state.line_width_set(width)
+        bgl.glLineWidth(width)
     elif GL_KIND == 'POINTS':
-        # bgl.glPointSize(width)
-        gpu.state.point_size_set(width)
+        bgl.glPointSize(width)
 
     params = dict(indices=indices) if indices else {}
 
@@ -113,11 +111,9 @@ def draw_uniform(GL_KIND, coords, indices, color, width=1, dashed_data=None):
         batch.draw(shader)
 
     if GL_KIND == 'LINES':
-        # bgl.glLineWidth(1)
-        gpu.state.line_width_set(1)
+        bgl.glLineWidth(1)
     elif GL_KIND == 'POINTS':
-        # bgl.glPointSize(1)
-        gpu.state.point_size_set(1)
+        bgl.glPointSize(1)
 
 
 def draw_smooth(coords, vcols, indices=None):
