@@ -17,7 +17,7 @@ from bpy.props import StringProperty, FloatProperty, IntProperty, EnumProperty, 
 import gpu
 from gpu_extras.batch import batch_for_shader
 from sverchok.utils.modules import bgl_wrapper as bgl
-from sverchok.utils.shader_features import UNIFORM_COLOR, SMOOTH_COLOR
+from sverchok.utils.modules.shader_features import UNIFORM_COLOR, SMOOTH_COLOR
 
 from sverchok.utils.sv_mesh_utils import polygons_to_edges_np
 from sverchok.data_structure import updateNode, node_id, match_long_repeat, enum_item_5

@@ -16,7 +16,7 @@ if bpy.app.version >= (3, 5, 0):
 
     import gpu
 
-    BLEND = "ALPHA"
+    GL_BLEND = "ALPHA"
     GL_FRONT_AND_BACK = None
     GL_LINE = None
     GL_POLYGON_OFFSET_FILL = "GL_POLYGON_OFFSET_FILL"

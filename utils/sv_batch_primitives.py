@@ -10,7 +10,7 @@ import gpu
 from gpu_extras.batch import batch_for_shader
 from mathutils import Matrix, Vector
 from sverchok.utils.sv_logging import sv_logger
-from sverchok.utils.shader_features import UNIFORM_COLOR, SMOOTH_COLOR
+from sverchok.utils.modules.shader_features import UNIFORM_COLOR, SMOOTH_COLOR
 
 if bpy.app.background:
     print("Will not initialize shaders in the background mode")
