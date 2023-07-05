@@ -27,12 +27,17 @@ if bpy.app.version >= (3, 5, 0):
     def glEnable(param):
         if param == "GL_POLYGON_OFFSET_FILL":
             pass
-        elif param == "ALPHA":
-            return gpu.state.blend_set(param)
+        elif param == GL_BLEND:
+            gpu.state.blend_set(param)
         else:
             print(f"glEnable unhandled {param=}")
 
-    def glDisable(param): pass
+    def glDisable(param):
+        if param == GL_BLEND:
+            gpu.state.blend_set("NONE")
+        else:
+            print(f"glDisable unhandled {param=}")
+
     def glPolygonOffset(*params): pass
     def glPolygonMode(*params): pass
 

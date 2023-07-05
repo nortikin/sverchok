@@ -11,6 +11,8 @@ import bpy
 import gpu
 from gpu_extras.batch import batch_for_shader
 from sverchok.utils.modules import bgl_wrapper as bgl
+from sverchok.utils.modules.shader_features import UNIFORM_COLOR, SMOOTH_COLOR
+
 
 from bpy.props import (
     BoolProperty, FloatVectorProperty, EnumProperty, FloatProperty, IntProperty)
@@ -103,7 +105,7 @@ def draw_uniform(GL_KIND, coords, indices, color, width=1, dashed_data=None):
 
     else:
         # print(GL_KIND,coords)
-        shader = gpu.shader.from_builtin('3D_UNIFORM_COLOR')
+        shader = gpu.shader.from_builtin(UNIFORM_COLOR)
         batch = batch_for_shader(shader, GL_KIND, {"pos" : coords}, **params)
         shader.bind()
         shader.uniform_float("color", color)
@@ -117,7 +119,7 @@ def draw_uniform(GL_KIND, coords, indices, color, width=1, dashed_data=None):
 
 
 def draw_smooth(coords, vcols, indices=None):
-    shader = gpu.shader.from_builtin('3D_SMOOTH_COLOR')
+    shader = gpu.shader.from_builtin(SMOOTH_COLOR)
     params = dict(indices=indices) if indices else {}
     batch = batch_for_shader(shader, 'TRIS', {"pos" : coords, "color": vcols}, **params)
     batch.draw(shader)
@@ -181,13 +183,11 @@ def draw_faces_uniform(context, args):
     geom, config = args
     # print(geom.f_faces, config.shade)
     if config.draw_gl_wireframe:
-        # bgl.glPolygonMode(bgl.GL_FRONT_AND_BACK, bgl.GL_LINE)
-        pass
+        bgl.glPolygonMode(bgl.GL_FRONT_AND_BACK, bgl.GL_LINE)
 
     if config.draw_gl_polygonoffset:
-        # bgl.glEnable(bgl.GL_POLYGON_OFFSET_FILL)
-        # bgl.glPolygonOffset(1.0, 1.0)
-        pass
+        bgl.glEnable(bgl.GL_POLYGON_OFFSET_FILL)
+        bgl.glPolygonOffset(1.0, 1.0)
 
     if config.shade == "flat":
         draw_uniform('TRIS', geom.f_verts, geom.f_faces, config.face4f)
@@ -199,8 +199,8 @@ def draw_faces_uniform(context, args):
         draw_smooth(geom.f_verts, geom.smooth_vnorms, indices=geom.f_faces)
 
     if config.draw_gl_wireframe:
-        # bgl.glPolygonMode(bgl.GL_FRONT_AND_BACK, bgl.GL_FILL)
-        pass
+        bgl.glPolygonMode(bgl.GL_FRONT_AND_BACK, bgl.GL_FILL)
+
 
 def edges_geom(geom, config):
     solids = geom.solids
@@ -231,12 +231,10 @@ def edges_geom(geom, config):
 def draw_complex(context, args):
     geom, config = args
     if config.draw_gl_polygonoffset:
-        # bgl.glDisable(bgl.GL_POLYGON_OFFSET_FILL)
-        pass
+        bgl.glDisable(bgl.GL_POLYGON_OFFSET_FILL)
 
     if config.shade != 'normals':
-        # bgl.glEnable(bgl.GL_BLEND)
-        gpu.state.blend_set("ALPHA")
+        bgl.glEnable(bgl.GL_BLEND)
 
     if config.display_edges:
         draw_lines_uniform(context, config, geom.e_vertices, geom.e_edges, config.line4f, config.line_width)
@@ -245,8 +243,7 @@ def draw_complex(context, args):
     if config.display_verts:
         draw_uniform('POINTS', geom.verts, None, config.vcol, config.point_size)
     if config.shade != 'normals':
-        # bgl.glDisable(bgl.GL_BLEND)
-        gpu.state.blend_set("NONE")
+        bgl.glDisable(bgl.GL_BLEND)
     if config.draw_gl_polygonoffset:
         # or restore to the state found when entering this function. TODO!
         # bgl.glDisable(bgl.GL_POLYGON_OFFSET_FILL)
