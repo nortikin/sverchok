@@ -10,9 +10,11 @@ import numpy as np
 import bpy
 from mathutils import Matrix, Vector
 from bpy.props import StringProperty, BoolProperty, IntProperty, EnumProperty, FloatVectorProperty
-# import bgl
+
 import gpu
 from gpu_extras.batch import batch_for_shader
+from sverchok.utils.modules import bgl_wrapper as bgl
+from sverchok.utils.modules.shader_features import UNIFORM_COLOR, SMOOTH_COLOR
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, get_data_nesting_level, ensure_nesting_level, zip_long_repeat, node_id
@@ -25,24 +27,20 @@ from sverchok.utils.sv_3dview_tools import Sv3DviewAlign
 
 
 def draw_edges(shader, points, edges, line_width, color):
-    # bgl.glLineWidth(line_width)
-    gpu.state.line_width_set(line_width)
+    bgl.glLineWidth(line_width)
     batch = batch_for_shader(shader, 'LINES', {"pos": points}, indices=edges)
     shader.bind()
     shader.uniform_float('color', color)
     batch.draw(shader)
-    # bgl.glLineWidth(1)
-    gpu.state.line_width_set(1)
+    bgl.glLineWidth(1)
 
 def draw_points(shader, points, size, color):
-    # bgl.glPointSize(size)
-    gpu.state.point_size_set(size)
+    bgl.glPointSize(size)
     batch = batch_for_shader(shader, 'POINTS', {"pos": points})
     shader.bind()
     shader.uniform_float('color', color)
     batch.draw(shader)
-    #bgl.glPointSize(1)
-    gpu.state.point_size_set(1)
+    bgl.glPointSize(1)
 
 def draw_polygons(shader, points, tris, vertex_colors):
     batch = batch_for_shader(shader, 'TRIS', {"pos": points, 'color': vertex_colors}, indices=tris)
@@ -52,8 +50,7 @@ def draw_polygons(shader, points, tris, vertex_colors):
 def draw_surfaces(context, args):
     node, draw_inputs, v_shader, e_shader, p_shader = args
 
-    # bgl.glEnable(bgl.GL_BLEND)
-    gpu.state.blend_set("ALPHA")
+    bgl.glEnable(bgl.GL_BLEND)
 
     for item in draw_inputs:
 
@@ -78,8 +75,7 @@ def draw_surfaces(context, args):
         if node.draw_verts:
             draw_points(v_shader, item.points_list, node.verts_size, node.verts_color)
 
-    # bgl.glEnable(bgl.GL_BLEND)
-    gpu.state.blend_set("ALPHA")
+    bgl.glEnable(bgl.GL_BLEND)
 
 class SvBakeSurfaceOp(bpy.types.Operator, SvGenericNodeLocator):
     """B A K E SURFACES"""
@@ -268,9 +264,9 @@ class SvSurfaceViewerDrawNode(SverchCustomTreeNode, bpy.types.Node):
 
     def draw_all(self, draw_inputs):
 
-        v_shader = gpu.shader.from_builtin('3D_UNIFORM_COLOR')
-        e_shader = gpu.shader.from_builtin('3D_UNIFORM_COLOR')
-        p_shader = gpu.shader.from_builtin('3D_SMOOTH_COLOR')
+        v_shader = gpu.shader.from_builtin(UNIFORM_COLOR)
+        e_shader = gpu.shader.from_builtin(UNIFORM_COLOR)
+        p_shader = gpu.shader.from_builtin(SMOOTH_COLOR)
 
         draw_data = {
                 'tree_name': self.id_data.name[:],
