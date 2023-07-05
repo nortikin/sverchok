@@ -24,7 +24,7 @@ from inspect import isfunction
 
 import bpy
 import blf
-import bgl
+from sverchok.utils.modules import bgl_wrapper as bgl
 from bpy.types import SpaceNodeEditor
 
 from sverchok.utils.sv_stethoscope_helper import draw_text_data, draw_graphical_data
@@ -100,7 +100,6 @@ def callback_disable_filtered(pattern):
 def restore_opengl_defaults():
     bgl.glLineWidth(1)
     bgl.glDisable(bgl.GL_BLEND)
-    # bgl.glColor4f(0.0, 0.0, 0.0, 1.0)     # doesn't exist anymore ..    
 
 
 def get_xy_from_data(data):
@@ -235,7 +234,11 @@ def _draw_text_handler(tree_id, node_id, text: str, color=(1, 1, 1, 1), scale=1.
     font_id = 0
     dpi = 72
 
-    blf.size(font_id, text_height) # , dpi)
+    if bpy.app.version >= (3, 5, 0):
+        blf.size(font_id, text_height) # , dpi)
+    else:
+        blf.size(font_id, text_height, dpi)
+
     blf.color(font_id, *color)
 
     for line in text.split('\n'):
