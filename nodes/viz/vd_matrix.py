@@ -17,7 +17,6 @@
 # ##### END GPL LICENSE BLOCK #####
 
 
-# import bgl
 import bpy
 import gpu
 from gpu_extras.batch import batch_for_shader
@@ -30,8 +29,12 @@ from sverchok.utils.sv_batch_primitives import MatrixDraw28
 from sverchok.data_structure import node_id, updateNode
 from sverchok.node_tree import SverchCustomTreeNode
 
+from sverchok.utils.modules import bgl_wrapper as bgl
+from sverchok.utils.modules.shader_features import SMOOTH_COLOR
+
+
 if not bpy.app.background:
-    smooth_2d_shader = gpu.shader.from_builtin('SMOOTH_COLOR') # '2D_SMOOTH_COLOR'
+    smooth_2d_shader = gpu.shader.from_builtin(SMOOTH_COLOR)
 else:
     smooth_2d_shader = None
 
@@ -76,11 +79,9 @@ def screen_v3d_batch_matrix_overlay(context, args):
         indices=indices_shifted)
 
     # smooth_2d_shader.bind()
-    # bgl.glEnable( bgl.GL_BLEND )
-    gpu.state.blend_set("ALPHA")
+    bgl.glEnable( bgl.GL_BLEND )
     batch.draw(smooth_2d_shader)
-    # bgl.glDisable( bgl.GL_BLEND )
-    gpu.state.blend_set("NONE")
+    bgl.glDisable( bgl.GL_BLEND )
 
 
 def match_color_to_matrix(node):
