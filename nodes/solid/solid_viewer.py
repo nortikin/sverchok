@@ -246,8 +246,7 @@ def draw_complex(context, args):
         bgl.glDisable(bgl.GL_BLEND)
     if config.draw_gl_polygonoffset:
         # or restore to the state found when entering this function. TODO!
-        # bgl.glDisable(bgl.GL_POLYGON_OFFSET_FILL)
-        pass
+        bgl.glDisable(bgl.GL_POLYGON_OFFSET_FILL)
 
 class SvSolidViewerNode(SverchCustomTreeNode, bpy.types.Node):
     """
