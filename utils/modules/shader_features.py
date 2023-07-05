@@ -1,0 +1,8 @@
+import bpy
+
+if bpy.app.version >= (3, 5, 0):
+    UNIFORM_COLOR = "UNIFORM_COLOR"
+    SMOOTH_COLOR = "SMOOTH_COLOR"
+else:
+    UNIFORM_COLOR = "3D_UNIFORM_COLOR"
+    SMOOTH_COLOR = "3D_SMOOTH_COLOR"

@@ -17,6 +17,7 @@ from bpy.props import StringProperty, FloatProperty, IntProperty, EnumProperty, 
 import gpu
 from gpu_extras.batch import batch_for_shader
 from sverchok.utils.modules import bgl_wrapper as bgl
+from sverchok.utils.shader_features import UNIFORM_COLOR, SMOOTH_COLOR
 
 from sverchok.utils.sv_mesh_utils import polygons_to_edges_np
 from sverchok.data_structure import updateNode, node_id, match_long_repeat, enum_item_5
@@ -30,6 +31,7 @@ from sverchok.utils.modules.vertex_utils import np_vertex_normals
 from sverchok.utils.math import np_dot
 from sverchok.utils.sv_3dview_tools import Sv3DviewAlign
 from sverchok.utils.sv_obj_baker import SvObjBakeMK3
+
 
 socket_dict = {
     'vector_color': ('display_verts', 'UV_VERTEXSEL', 'color_per_point', 'vector_random_colors', 'random_seed'),
@@ -127,8 +129,8 @@ def view_3d_geom(context, args):
     geom, config = args
 
     bgl.glEnable(bgl.GL_BLEND)
-    # gpu.state.blend_set("ALPHA")
-    gpu.state.face_culling_set("FRONT")  # redundant?
+    if bpy.app.version >= (3, 5, 0):
+        gpu.state.face_culling_set("FRONT")  # redundant?
 
     if config.draw_polys:
         if config.draw_gl_wireframe:
@@ -457,28 +459,28 @@ def generate_mesh_geom(config, vecs_in):
 
     if config.draw_verts:
         if config.uniform_verts:
-            config.v_shader = gpu.shader.from_builtin('UNIFORM_COLOR') # '3D_UNIFORM_COLOR'
+            config.v_shader = gpu.shader.from_builtin(UNIFORM_COLOR)
         else:
-            config.v_shader = gpu.shader.from_builtin('SMOOTH_COLOR')  # '3D_SMOOTH_COLOR'
+            config.v_shader = gpu.shader.from_builtin(SMOOTH_COLOR)
         geom.v_vertices, geom.points_color = v_vertices, points_color
 
     if config.draw_edges:
         if config.edges_use_vertex_color and e_vertices:
             e_vertex_colors = points_color
         if config.uniform_edges:
-            config.e_shader = gpu.shader.from_builtin('UNIFORM_COLOR') # '3D_UNIFORM_COLOR'
+            config.e_shader = gpu.shader.from_builtin(UNIFORM_COLOR)
         else:
-            config.e_shader = gpu.shader.from_builtin('SMOOTH_COLOR')  # '3D_SMOOTH_COLOR'
+            config.e_shader = gpu.shader.from_builtin(SMOOTH_COLOR)
         geom.e_vertices, geom.e_vertex_colors, geom.e_indices = e_vertices, e_vertex_colors, e_indices
 
 
     if config.draw_polys and config.shade_mode != 'fragment':
         if config.uniform_pols:
-            config.p_shader = gpu.shader.from_builtin('UNIFORM_COLOR') # '3D_UNIFORM_COLOR'
+            config.p_shader = gpu.shader.from_builtin(UNIFORM_COLOR)
         else:
             if config.polygon_use_vertex_color and config.shade_mode not in ['facet', 'smooth']:
                 p_vertex_colors = points_color
-            config.p_shader = gpu.shader.from_builtin('SMOOTH_COLOR')  # '3D_SMOOTH_COLOR'
+            config.p_shader = gpu.shader.from_builtin(SMOOTH_COLOR)
         geom.p_vertices, geom.p_vertex_colors, geom.p_indices = p_vertices, p_vertex_colors, p_indices
 
     elif config.shade_mode == 'fragment' and config.draw_polys:
