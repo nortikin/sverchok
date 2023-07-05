@@ -35,6 +35,8 @@ if bpy.app.version >= (3, 5, 0):
     def glDisable(param):
         if param == GL_BLEND:
             gpu.state.blend_set("NONE")
+        if param == "GL_POLYGON_OFFSET_FILL":
+            pass
         else:
             print(f"glDisable unhandled {param=}")
 
