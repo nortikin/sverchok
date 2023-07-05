@@ -39,4 +39,4 @@ else:
     # we use only a finite subset of the module
     import bgl
     from bgl import glPolygonMode, glEnable, glPolygonOffset
-    from bgl import BLEND, GL_FRONT_AND_BACK, GL_LINE, GL_POLYGON_OFFSET_FILL
+    from bgl import GL_BLEND, GL_FRONT_AND_BACK, GL_LINE, GL_POLYGON_OFFSET_FILL
