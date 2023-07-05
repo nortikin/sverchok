@@ -311,13 +311,13 @@ class SvIDXViewer28(SverchCustomTreeNode, bpy.types.Node):
             return
 
         config = self.get_settings_dict()
+        config["scale"] = config["scale"] * self.text_scale
         geom = self.get_geometry()
 
         draw_data = {
             'tree_name': self.id_data.name[:],
             'custom_function': draw_indices_2D_wbg if self.draw_bg else draw_indices_2D,
             'args': (geom, config)}
-        draw_data["args"][1]["scale"] = draw_data["args"][1]["scale"] * self.text_scale
 
         callback_enable(n_id, draw_data, overlay='POST_PIXEL')
 
