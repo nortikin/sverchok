@@ -197,8 +197,6 @@ def view_3d_geom(context, args):
 
             v_batch.draw(config.v_shader)
             bgl.glPointSize(1)
-        else:
-            pass
 
     bgl.glEnable(bgl.GL_BLEND)
 
