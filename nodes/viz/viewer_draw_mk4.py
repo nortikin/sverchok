@@ -198,7 +198,7 @@ def view_3d_geom(context, args):
             v_batch.draw(config.v_shader)
             bgl.glPointSize(1)
 
-    bgl.glEnable(bgl.GL_BLEND)
+    bgl.glDisable( bgl.GL_BLEND )
 
 
 def splitted_polygons_geom(polygon_indices, original_idx, v_path, cols, idx_offset):
