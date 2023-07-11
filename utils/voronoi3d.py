@@ -238,15 +238,22 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, fill=T
 
     def get_ridges_per_site(voronoi):
         result = defaultdict(list)
+        sites_list = []
         for ridge_idx in range(len(voronoi.ridge_points)):
             site1_idx, site2_idx = tuple(voronoi.ridge_points[ridge_idx])
+            if (voronoi.points.shape[0]-1)<site1_idx:
+                continue
+            if (voronoi.points.shape[0]-1)<site2_idx:
+                continue
             site1 = voronoi.points[site1_idx]
             site2 = voronoi.points[site2_idx]
             middle = (site1 + site2) * 0.5
             normal = site2 - site1
             plane = PlaneEquation.from_normal_and_point(normal, middle)
+            sites_list.append( (ridge_idx, (site1_idx, site2_idx), (list(site1), list(site2) ), plane, ) )
             result[site1_idx].append(plane)
             result[site2_idx].append(plane)
+        print("sites_list:", len(sites_list))
         return result
 
     def cut_cell(verts, faces, planes, site, spacing):
@@ -296,13 +303,14 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, fill=T
     edges_out = []
     faces_out = []
 
-    voronoi = Voronoi(np.array(sites))
+    voronoi = Voronoi(np.array(sites, dtype=np.float64), qhull_options='TR1 QJ1e-6 Qz')#, qhull_options='TR10 QJ1e-6 QbB') #, qhull_options='QJ1e-06') #, qhull_options='Qs Qc QJ')
     ridges_per_site = get_ridges_per_site(voronoi)
     if isinstance(spacing, list):
         spacing = repeat_last_for_length(spacing, len(sites))
     else:
         spacing = [spacing for i in range(len(sites))]
     for site_idx in range(len(sites)):
+    #for site_idx in range(n_orig_sites):
         cell = cut_cell(verts, faces, ridges_per_site[site_idx], sites[site_idx], spacing[site_idx])
         if cell is not None:
             new_verts, new_edges, new_faces = cell
@@ -344,16 +352,20 @@ def voronoi_on_mesh(verts, faces, sites, thickness,
                 clipping = clipping)
 
     else: # VOLUME, SURFACE
-        all_points = sites[:]
+        all_points = [] #sites[:]
+        fill = (mode == 'VOLUME')
         if do_clip:
             clipping = float(clipping)
             for site in sites:
-                loc, normal, index, distance = bvh.find_nearest(site)
-                if loc is not None:
-                    p1 = loc + clipping * normal
-                    all_points.append(p1)
+                if fill:
+                    all_points.append( site )
+                else:
+                    loc, normal, index, distance = bvh.find_nearest(site)
+                    if loc is not None:
+                        p1 = loc #+ clipping * normal
+                        all_points.append(p1)
         verts, edges, faces = voronoi_on_mesh_bmesh(verts, faces, len(sites), all_points,
-                spacing = spacing, fill = (mode == 'VOLUME'),
+                spacing = spacing, fill = fill, # (mode == 'VOLUME'),
                 precision = precision)
         return verts, edges, faces, all_points
 
