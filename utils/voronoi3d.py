@@ -33,7 +33,7 @@ from sverchok.utils.math import project_to_sphere, weighted_center
 from sverchok.dependencies import scipy, FreeCAD
 
 if scipy is not None:
-    from scipy.spatial import Voronoi, SphericalVoronoi
+    from scipy.spatial import Voronoi, SphericalVoronoi, Delaunay
 
 if FreeCAD is not None:
     from FreeCAD import Base
@@ -256,6 +256,32 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, fill=T
         print("sites_list:", len(sites_list))
         return result
 
+    def get_ridges_per_site_delaune(delaunay):
+        result = defaultdict(list)
+        ringes = []
+        for simplex in delaunay.simplices:
+            site1_idx, site2_idx, site3_idx, site4_idx = tuple( sorted( [i for i in simplex] ) )
+            ringes+= [tuple( [site1_idx, site2_idx] ),
+                      tuple( [site1_idx, site3_idx] ),
+                      tuple( [site1_idx, site4_idx] ),
+                      tuple( [site2_idx, site3_idx] ),
+                      tuple( [site2_idx, site4_idx] ),
+                      tuple( [site3_idx, site4_idx] )]
+
+        ringes = list(set( ringes ))
+
+        for ridge_idx in range(len(ringes)):
+            site1_idx, site2_idx = tuple(ringes[ridge_idx])
+            site1 = delaunay.points[site1_idx]
+            site2 = delaunay.points[site2_idx]
+            middle = (site1 + site2) * 0.5
+            normal = site2 - site1
+            plane = PlaneEquation.from_normal_and_point(normal, middle)
+            result[site1_idx].append(plane)
+            result[site2_idx].append(plane)
+
+        return result
+
     def cut_cell(verts, faces, planes, site, spacing):
         src_mesh = bmesh_from_pydata(verts, [], faces, normal_update=True)
         n_cuts = 0
@@ -303,7 +329,11 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, fill=T
     edges_out = []
     faces_out = []
 
-    voronoi = Voronoi(np.array(sites, dtype=np.float64), qhull_options='TR1 QJ1e-6 Qz')#, qhull_options='TR10 QJ1e-6 QbB') #, qhull_options='QJ1e-06') #, qhull_options='Qs Qc QJ')
+    delaunay = Delaunay(np.array(sites, dtype=np.float32))
+    ridges_per_site_delaune = get_ridges_per_site_delaune(delaunay)
+
+    # C0 C-0 - http://www.qhull.org/html/qh-optc.htm
+    voronoi = Voronoi(np.array(sites, dtype=np.float32), qhull_options='TR5 QJ1e-6 Qz Qs Qc Q5 Q0 Qa W1e-13')#, qhull_options='TR1 QJ1e-6 Qz Qb2:0B2:0')#, qhull_options='TR10 QJ1e-6 QbB') #, qhull_options='QJ1e-06') #, qhull_options='Qs Qc QJ')
     ridges_per_site = get_ridges_per_site(voronoi)
     if isinstance(spacing, list):
         spacing = repeat_last_for_length(spacing, len(sites))
@@ -311,7 +341,7 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, fill=T
         spacing = [spacing for i in range(len(sites))]
     for site_idx in range(len(sites)):
     #for site_idx in range(n_orig_sites):
-        cell = cut_cell(verts, faces, ridges_per_site[site_idx], sites[site_idx], spacing[site_idx])
+        cell = cut_cell(verts, faces, ridges_per_site_delaune[site_idx], sites[site_idx], spacing[site_idx])
         if cell is not None:
             new_verts, new_edges, new_faces = cell
             if new_verts:
@@ -352,18 +382,18 @@ def voronoi_on_mesh(verts, faces, sites, thickness,
                 clipping = clipping)
 
     else: # VOLUME, SURFACE
-        all_points = [] #sites[:]
+        all_points = sites[:]
         fill = (mode == 'VOLUME')
-        if do_clip:
-            clipping = float(clipping)
-            for site in sites:
-                if fill:
-                    all_points.append( site )
-                else:
-                    loc, normal, index, distance = bvh.find_nearest(site)
-                    if loc is not None:
-                        p1 = loc #+ clipping * normal
-                        all_points.append(p1)
+        # if do_clip:
+        #     clipping = float(clipping)
+        #     for site in sites:
+        #         if fill:
+        #             all_points.append( site )
+        #         else:
+        #             loc, normal, index, distance = bvh.find_nearest(site)
+        #             if loc is not None:
+        #                 p1 = loc #+ clipping * normal
+        #                 all_points.append(p1)
         verts, edges, faces = voronoi_on_mesh_bmesh(verts, faces, len(sites), all_points,
                 spacing = spacing, fill = fill, # (mode == 'VOLUME'),
                 precision = precision)
