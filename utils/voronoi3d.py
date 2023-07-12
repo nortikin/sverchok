@@ -275,27 +275,23 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, fill=T
             site1 = delaunay.points[site1_idx]
             site2 = delaunay.points[site2_idx]
             middle = (site1 + site2) * 0.5
-            normal = site2 - site1
-            plane = PlaneEquation.from_normal_and_point(normal, middle)
-            result[site1_idx].append(plane)
-            result[site2_idx].append(plane)
+            normal =  Vector(site1 - site2).normalized() # normal to site1
+            plane1 = PlaneEquation.from_normal_and_point(-normal, middle)
+            plane2 = PlaneEquation.from_normal_and_point( normal, middle)
+            # result[site1_idx].append(plane)
+            # result[site2_idx].append(plane)
+            result[site1_idx].append( (middle, -normal, plane1) )
+            result[site2_idx].append( (middle,  normal, plane2) )
 
         return result
 
     def cut_cell(verts, faces, planes, site, spacing):
         src_mesh = bmesh_from_pydata(verts, [], faces, normal_update=True)
         n_cuts = 0
-        for plane in planes:
+        for (plane_co, plane_no, plane) in planes:
             if len(src_mesh.verts) == 0:
                 break
-            geom_in = src_mesh.verts[:] + src_mesh.edges[:] + src_mesh.faces[:]
-
-            plane_co = plane.projection_of_point(site)
-            plane_no = plane.normal.normalized()
-            if plane.side_of_point(site) > 0:
-                plane_no = - plane_no
-
-            plane_co = plane_co - 0.5 * spacing * plane_no
+            plane_co -= 0.5 * spacing * plane_no
 
             current_verts = np.array([tuple(v.co) for v in src_mesh.verts])
             signs = PlaneEquation.from_normal_and_point(plane_no, plane_co).side_of_points(current_verts)
@@ -303,6 +299,7 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, fill=T
             if (signs <= 0).all():# or (signs <= 0).all():
                 continue
 
+            geom_in = src_mesh.verts[:] + src_mesh.edges[:] + src_mesh.faces[:]
             res = bmesh.ops.bisect_plane(
                     src_mesh, geom=geom_in, dist=precision,
                     plane_co = plane_co,
@@ -318,7 +315,12 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, fill=T
                 if surround:
                     fres = bmesh.ops.edgenet_prepare(src_mesh, edges=surround)
                     if fres['edges']:
-                        bmesh.ops.edgeloop_fill(src_mesh, edges=fres['edges'])
+                        #bmesh.ops.edgeloop_fill(src_mesh, edges=fres['edges']) # has glitches
+                        bmesh.ops.triangle_fill(src_mesh, use_beauty=True, use_dissolve=True, edges=fres['edges'])
+                    else:
+                        pass
+                else:
+                    pass
 
         if n_cuts == 0:
             return None
@@ -333,8 +335,8 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, fill=T
     ridges_per_site_delaune = get_ridges_per_site_delaune(delaunay)
 
     # C0 C-0 - http://www.qhull.org/html/qh-optc.htm
-    voronoi = Voronoi(np.array(sites, dtype=np.float32), qhull_options='TR5 QJ1e-6 Qz Qs Qc Q5 Q0 Qa W1e-13')#, qhull_options='TR1 QJ1e-6 Qz Qb2:0B2:0')#, qhull_options='TR10 QJ1e-6 QbB') #, qhull_options='QJ1e-06') #, qhull_options='Qs Qc QJ')
-    ridges_per_site = get_ridges_per_site(voronoi)
+    #voronoi = Voronoi(np.array(sites, dtype=np.float32), qhull_options='TR5 QJ1e-6 Qz Qs Qc Q5 Q0 Qa W1e-13')#, qhull_options='TR1 QJ1e-6 Qz Qb2:0B2:0')#, qhull_options='TR10 QJ1e-6 QbB') #, qhull_options='QJ1e-06') #, qhull_options='Qs Qc QJ')
+    #ridges_per_site = get_ridges_per_site(voronoi)
     if isinstance(spacing, list):
         spacing = repeat_last_for_length(spacing, len(sites))
     else:
