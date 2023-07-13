@@ -19,6 +19,7 @@
 import numpy as np
 from collections import defaultdict
 import itertools
+import datetime
 
 import bpy
 import bmesh
@@ -256,9 +257,10 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, fill=T
         print("sites_list:", len(sites_list))
         return result
 
-    def get_ridges_per_site_delaune(delaunay):
+    def get_sites_delaunay_params(delaunay):
         result = defaultdict(list)
         ringes = []
+        sites_pair = dict()
         for simplex in delaunay.simplices:
             site1_idx, site2_idx, site3_idx, site4_idx = tuple( sorted( [i for i in simplex] ) )
             ringes+= [tuple( [site1_idx, site2_idx] ),
@@ -269,6 +271,9 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, fill=T
                       tuple( [site3_idx, site4_idx] )]
 
         ringes = list(set( ringes ))
+        ringes.sort()
+        # for key in sites_pair.keys():
+        #     sites_pair[key] = set(sites_pair[key])
 
         for ridge_idx in range(len(ringes)):
             site1_idx, site2_idx = tuple(ringes[ridge_idx])
@@ -280,25 +285,36 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, fill=T
             plane2 = PlaneEquation.from_normal_and_point( normal, middle)
             # result[site1_idx].append(plane)
             # result[site2_idx].append(plane)
-            result[site1_idx].append( (middle, -normal, plane1) )
-            result[site2_idx].append( (middle,  normal, plane2) )
+            result[site1_idx].append( (site2_idx, site1, site2, middle,  -normal, plane1) )
+            result[site2_idx].append( (site1_idx, site2, site1, middle,   normal, plane2) )
 
         return result
 
-    def cut_cell(verts, faces, planes, site, spacing):
+    summ_delta_time1 = datetime.datetime.now()-datetime.datetime.now()
+    summ_delta_time2 = datetime.datetime.now()-datetime.datetime.now()
+    summ_delta_time3 = datetime.datetime.now()-datetime.datetime.now()
+    #sites_pair_to_remove = []
+    def cut_cell(verts, faces, sites_delaunay_params, site_idx, sites, spacing):
+        site_params = sites_delaunay_params[site_idx]
+        nonlocal summ_delta_time1, summ_delta_time2, summ_delta_time3  #, sites_pair_to_remove
+
         src_mesh = bmesh_from_pydata(verts, [], faces, normal_update=True)
         n_cuts = 0
-        for (plane_co, plane_no, plane) in planes:
+        is_geometry_changed = False
+        for (site_pair_idx, site_vert, site_pair_vert, plane_co_src, plane_no, plane) in site_params:
             if len(src_mesh.verts) == 0:
                 break
-            plane_co -= 0.5 * spacing * plane_no
+            plane_co = plane_co_src - 0.5 * spacing * plane_no
 
-            current_verts = np.array([tuple(v.co) for v in src_mesh.verts])
-            signs = PlaneEquation.from_normal_and_point(plane_no, plane_co).side_of_points(current_verts)
-            #print(f"Plane co {plane_co}, no {plane_no}, signs {signs}")
-            if (signs <= 0).all():# or (signs <= 0).all():
-                continue
+            # time = datetime.datetime.now()
+            # current_verts = np.array([tuple(v.co) for v in src_mesh.verts])
+            # signs = PlaneEquation.from_normal_and_point(plane_no, plane_co).side_of_points(current_verts)
+            # summ_delta_time1+=(datetime.datetime.now() - time )
+            # #print(f"Plane co {plane_co}, no {plane_no}, signs {signs}")
+            # if (signs <= 0).all():# or (signs <= 0).all():
+            #     continue
 
+            time = datetime.datetime.now()
             geom_in = src_mesh.verts[:] + src_mesh.edges[:] + src_mesh.faces[:]
             res = bmesh.ops.bisect_plane(
                     src_mesh, geom=geom_in, dist=precision,
@@ -308,19 +324,104 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, fill=T
                     clear_outer = True,
                     clear_inner = False
                 )
-            n_cuts += 1
+            summ_delta_time2+=(datetime.datetime.now() - time )
 
-            if fill:
-                surround = [e for e in res['geom_cut'] if isinstance(e, bmesh.types.BMEdge)]
-                if surround:
-                    fres = bmesh.ops.edgenet_prepare(src_mesh, edges=surround)
-                    if fres['edges']:
-                        #bmesh.ops.edgeloop_fill(src_mesh, edges=fres['edges']) # has glitches
-                        bmesh.ops.triangle_fill(src_mesh, use_beauty=True, use_dissolve=True, edges=fres['edges'])
+            if len(res['geom_cut'])>0:
+                is_geometry_changed = True 
+                n_cuts += 1
+                if fill:
+                    time = datetime.datetime.now()
+                    surround = [e for e in res['geom_cut'] if isinstance(e, bmesh.types.BMEdge)]
+                    if surround:
+                        fres = bmesh.ops.edgenet_prepare(src_mesh, edges=surround)
+                        if fres['edges']:
+                            #bmesh.ops.edgeloop_fill(src_mesh, edges=fres['edges']) # has glitches
+                            bmesh.ops.triangle_fill(src_mesh, use_beauty=True, use_dissolve=True, edges=fres['edges'])
+                        else:
+                            pass
+                    else:
+                        pass
+                    summ_delta_time3+=(datetime.datetime.now() - time )
+            else:
+                if len( src_mesh.verts )>0:
+                    # if this geometry of src_mesh has not changed after bisect and nothing removed then
+                    if is_geometry_changed==False:
+                        # if source mesh has not changed for a while then
+                        # erase pair of ridge and do not bisect this pair in the future
+
+                        # erase pair is they out of this plain too:
+                        if sites[site_pair_idx]:
+                            site_pairs_params = sites_delaunay_params[site_pair_idx]
+                            if site_pairs_params is not None:
+                                for p in site_pairs_params:
+                                    pair_of_pair_idx = p[0]
+                                    if pair_of_pair_idx not in [site_idx, site_pair_idx]: # do not remove info if found this indexes
+                                        pair_of_pair_params = sites_delaunay_params[pair_of_pair_idx]
+                                        if pair_of_pair_params is not None:
+                                            for i, p in enumerate(pair_of_pair_params):
+                                                if p[0]==site_pair_idx:
+                                                    # ask pairs of pair to forget about site_pair_idx
+                                                    #pair_of_pair_params.pop(i)
+                                                    break
+                                            pass
+                                        else:
+                                            pass
+                                    else:
+                                        pass
+                            else:
+                                pass
+
+
+                        # site_pairs_params = [tuple([p[0], p[2]]) for p in sites_delaunay_params[site_pair1_idx] if p is not None]
+                        # signs = PlaneEquation.from_normal_and_point(plane_no, plane_co).side_of_points(np.array([v[1] for v in site_pairs_params]))
+                        # for i, s in enumerate(signs):
+                        #     if s<0:
+                        #         site_pair_of_pair_idx = site_pairs_params[i][0]
+
+                        #         if sites[site_pair_of_pair_idx]:
+                        #             site_pair_of_pair_params = sites_delaunay_params[site_pair_of_pair_idx]
+                        #             if site_pair_of_pair_params is not None:
+                        #                 for p in site_pair_of_pair_params:
+                        #                     site_pair_of_pair_idx = p[0]
+                        #                     if site_pair_of_pair_idx not in [site_idx, site_pair1_idx]: # do not remove info if found this indexes
+                        #                         pair_of_pair_params = sites_delaunay_params[site_pair_of_pair_idx]
+                        #                         if pair_of_pair_params is not None:
+                        #                             for i, p in enumerate(pair_of_pair_params):
+                        #                                 if p[0]==site_pair1_idx:
+                        #                                     # ask pairs of pair to forget about site_pair1_idx
+                        #                                     pair_of_pair_params.pop(i)
+                        #                                     break
+                        #                             pass
+                        #                         else:
+                        #                             pass
+                        #                     else:
+                        #                         pass
+                        #             else:
+                        #                 pass
+
+                            # if some points is on other side of the bisect plane than geometry then remove them out of bisect
+                            # site_pairs_params = [tuple([p[0], p[2]]) for p in sites_delaunay_params[site_pair1_idx] if p is not None]
+                            # signs = PlaneEquation.from_normal_and_point(plane_no, plane_co).side_of_points(np.array([v[1] for v in site_pairs_params]))
+                            # for i, s in enumerate(signs):
+                            #     if s<0:
+                            #         pair_of_pair_idx = site_pairs_params[i][0]
+                            #         sites_delaunay_params[pair_of_pair_idx] = None
+                            #         sites[pair_of_pair_idx] = None
+                            # pass
+                        else:
+                            pass
+
+                        # sites_delaunay_params[ site_pair_idx ] = None
+                        # sites[site_pair_idx] = None
+                        #sites_pair_to_remove.append([site_pair1_idx, site_idx])
+                        pass
                     else:
                         pass
                 else:
-                    pass
+                    # if no geometry after bisect then return
+                    return None
+
+                pass
 
         if n_cuts == 0:
             return None
@@ -332,7 +433,7 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, fill=T
     faces_out = []
 
     delaunay = Delaunay(np.array(sites, dtype=np.float32))
-    ridges_per_site_delaune = get_ridges_per_site_delaune(delaunay)
+    sites_delaunay_params = get_sites_delaunay_params(delaunay)
 
     # C0 C-0 - http://www.qhull.org/html/qh-optc.htm
     #voronoi = Voronoi(np.array(sites, dtype=np.float32), qhull_options='TR5 QJ1e-6 Qz Qs Qc Q5 Q0 Qa W1e-13')#, qhull_options='TR1 QJ1e-6 Qz Qb2:0B2:0')#, qhull_options='TR10 QJ1e-6 QbB') #, qhull_options='QJ1e-06') #, qhull_options='Qs Qc QJ')
@@ -342,15 +443,16 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, fill=T
     else:
         spacing = [spacing for i in range(len(sites))]
     for site_idx in range(len(sites)):
-    #for site_idx in range(n_orig_sites):
-        cell = cut_cell(verts, faces, ridges_per_site_delaune[site_idx], sites[site_idx], spacing[site_idx])
-        if cell is not None:
-            new_verts, new_edges, new_faces = cell
-            if new_verts:
-                verts_out.append(new_verts)
-                edges_out.append(new_edges)
-                faces_out.append(new_faces)
+        if sites[site_idx]:
+            cell = cut_cell(verts, faces, sites_delaunay_params, site_idx, sites, spacing[site_idx])
+            if cell is not None:
+                new_verts, new_edges, new_faces = cell
+                if new_verts:
+                    verts_out.append(new_verts)
+                    edges_out.append(new_edges)
+                    faces_out.append(new_faces)
 
+    print( f"t1 = {summ_delta_time1}, t2 = {summ_delta_time2}, t1+t2={summ_delta_time1+summ_delta_time2} t3 = {summ_delta_time3}, erassed sites={len([s for s in sites if s is None])}/{len(sites)}") #: {[(i,s) for i, s in enumerate(sites) if s is None]}") #: {sites_pair_to_remove}")
     return verts_out, edges_out, faces_out
 
 def voronoi_on_mesh(verts, faces, sites, thickness,
