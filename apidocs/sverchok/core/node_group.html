@@ -717,7 +717,7 @@ class AddGroupTreeFromSelected(bpy.types.Operator):
              if n.name in frame_names and n.name not in with_children_frames]
 
         # todo one ui update (useless) will be done by the operator and another with update system of main handler
-        bpy.ops.node.edit_group_tree({&#39;node&#39;: group_node})
+        bpy.ops.node.edit_group_tree({&#39;node&#39;: group_node}, is_new_group=True)
 
         return {&#39;FINISHED&#39;}
 
@@ -878,12 +878,19 @@ class EditGroupTree(bpy.types.Operator):
     bl_idname = &#39;node.edit_group_tree&#39;
     bl_label = &#39;Edit group tree&#39;
 
+    is_new_group: BoolProperty(
+        description=&#34;True when group to edit was just created by Ctrl + G&#34;)
+
     def execute(self, context):
         group_node = context.node
         sub_tree: SvGroupTree = context.node.node_tree
         context.space_data.path.append(sub_tree, node=group_node)
         sub_tree.group_node_name = group_node.name
-        event = ev.GroupTreeEvent(sub_tree, sub_tree.get_update_path())
+        if self.is_new_group:
+            event = ev.NewGroupTreeEvent(
+                sub_tree, sub_tree.get_update_path(), group_node.id_data)
+        else:
+            event = ev.GroupTreeEvent(sub_tree, sub_tree.get_update_path())
         handle_event(event)
         # todo make protection from editing the same trees in more then one area
         # todo add the same logic to exit from tree operator
@@ -1326,7 +1333,7 @@ def poll(cls, context):
              if n.name in frame_names and n.name not in with_children_frames]
 
         # todo one ui update (useless) will be done by the operator and another with update system of main handler
-        bpy.ops.node.edit_group_tree({&#39;node&#39;: group_node})
+        bpy.ops.node.edit_group_tree({&#39;node&#39;: group_node}, is_new_group=True)
 
         return {&#39;FINISHED&#39;}
 
@@ -1625,7 +1632,7 @@ def recreate_frames(from_tree: bpy.types.NodeTree,
          if n.name in frame_names and n.name not in with_children_frames]
 
     # todo one ui update (useless) will be done by the operator and another with update system of main handler
-    bpy.ops.node.edit_group_tree({&#39;node&#39;: group_node})
+    bpy.ops.node.edit_group_tree({&#39;node&#39;: group_node}, is_new_group=True)
 
     return {&#39;FINISHED&#39;}</code></pre>
 </details>
@@ -2082,12 +2089,19 @@ if given color is None it tries to return its initial color or do nothing</p></d
     bl_idname = &#39;node.edit_group_tree&#39;
     bl_label = &#39;Edit group tree&#39;
 
+    is_new_group: BoolProperty(
+        description=&#34;True when group to edit was just created by Ctrl + G&#34;)
+
     def execute(self, context):
         group_node = context.node
         sub_tree: SvGroupTree = context.node.node_tree
         context.space_data.path.append(sub_tree, node=group_node)
         sub_tree.group_node_name = group_node.name
-        event = ev.GroupTreeEvent(sub_tree, sub_tree.get_update_path())
+        if self.is_new_group:
+            event = ev.NewGroupTreeEvent(
+                sub_tree, sub_tree.get_update_path(), group_node.id_data)
+        else:
+            event = ev.GroupTreeEvent(sub_tree, sub_tree.get_update_path())
         handle_event(event)
         # todo make protection from editing the same trees in more then one area
         # todo add the same logic to exit from tree operator
@@ -2112,6 +2126,10 @@ if given color is None it tries to return its initial color or do nothing</p></d
 <dd>
 <div class="desc"></div>
 </dd>
+<dt id="sverchok.core.node_group.EditGroupTree.is_new_group"><code class="name">var <span class="ident">is_new_group</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'description': 'True when group to edit was just created by Ctrl + G', 'attr': 'is_new_group'}></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
 </dl>
 <h3>Methods</h3>
 <dl>
@@ -2129,7 +2147,11 @@ if given color is None it tries to return its initial color or do nothing</p></d
     sub_tree: SvGroupTree = context.node.node_tree
     context.space_data.path.append(sub_tree, node=group_node)
     sub_tree.group_node_name = group_node.name
-    event = ev.GroupTreeEvent(sub_tree, sub_tree.get_update_path())
+    if self.is_new_group:
+        event = ev.NewGroupTreeEvent(
+            sub_tree, sub_tree.get_update_path(), group_node.id_data)
+    else:
+        event = ev.GroupTreeEvent(sub_tree, sub_tree.get_update_path())
     handle_event(event)
     # todo make protection from editing the same trees in more then one area
     # todo add the same logic to exit from tree operator
@@ -2483,7 +2505,7 @@ def store_mouse_cursor(context, event):
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.core.node_group.SearchGroupTree.tree_name"><code class="name">var <span class="ident">tree_name</span> : <_PropertyDeferred, <built-in function EnumProperty>, {'items': <function <a title="sverchok.core.node_group.SearchGroupTree.available_trees" href="#sverchok.core.node_group.SearchGroupTree.available_trees">SearchGroupTree.available_trees()</a> at 0x7f109cc9b8b0>, 'attr': 'tree_name'}></code></dt>
+<dt id="sverchok.core.node_group.SearchGroupTree.tree_name"><code class="name">var <span class="ident">tree_name</span> : <_PropertyDeferred, <built-in function EnumProperty>, {'items': <function <a title="sverchok.core.node_group.SearchGroupTree.available_trees" href="#sverchok.core.node_group.SearchGroupTree.available_trees">SearchGroupTree.available_trees()</a> at 0x7ff562db1160>, 'attr': 'tree_name'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -3390,11 +3412,11 @@ The method can help to predict if linking new sub tree can lead to cyclic linkin
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.core.node_group.SvGroupTreeNode.group_tree"><code class="name">var <span class="ident">group_tree</span> : <_PropertyDeferred, <built-in function PointerProperty>, {'type': <class '<a title="sverchok.core.node_group.SvGroupTree" href="#sverchok.core.node_group.SvGroupTree">SvGroupTree</a>'>, 'poll': <function <a title="sverchok.core.node_group.SvGroupTreeNode.nested_tree_filter" href="#sverchok.core.node_group.SvGroupTreeNode.nested_tree_filter">SvGroupTreeNode.nested_tree_filter()</a> at 0x7f109cc824c0>, 'update': <function <a title="sverchok.core.node_group.SvGroupTreeNode.update_group_tree" href="#sverchok.core.node_group.SvGroupTreeNode.update_group_tree">SvGroupTreeNode.update_group_tree()</a> at 0x7f109cc82550>, 'attr': 'group_tree'}></code></dt>
+<dt id="sverchok.core.node_group.SvGroupTreeNode.group_tree"><code class="name">var <span class="ident">group_tree</span> : <_PropertyDeferred, <built-in function PointerProperty>, {'type': <class '<a title="sverchok.core.node_group.SvGroupTree" href="#sverchok.core.node_group.SvGroupTree">SvGroupTree</a>'>, 'poll': <function <a title="sverchok.core.node_group.SvGroupTreeNode.nested_tree_filter" href="#sverchok.core.node_group.SvGroupTreeNode.nested_tree_filter">SvGroupTreeNode.nested_tree_filter()</a> at 0x7ff562da2d30>, 'update': <function <a title="sverchok.core.node_group.SvGroupTreeNode.update_group_tree" href="#sverchok.core.node_group.SvGroupTreeNode.update_group_tree">SvGroupTreeNode.update_group_tree()</a> at 0x7ff562da2dc0>, 'attr': 'group_tree'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.core.node_group.SvGroupTreeNode.is_active"><code class="name">var <span class="ident">is_active</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Live', 'description': 'Update realtime if active', 'default': True, 'update': <function <a title="sverchok.core.node_group.SvGroupTreeNode" href="#sverchok.core.node_group.SvGroupTreeNode">SvGroupTreeNode</a>.<lambda> at 0x7f109cc82670>, 'attr': 'is_active'}></code></dt>
+<dt id="sverchok.core.node_group.SvGroupTreeNode.is_active"><code class="name">var <span class="ident">is_active</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Live', 'description': 'Update realtime if active', 'default': True, 'update': <function <a title="sverchok.core.node_group.SvGroupTreeNode" href="#sverchok.core.node_group.SvGroupTreeNode">SvGroupTreeNode</a>.<lambda> at 0x7ff562da2ee0>, 'attr': 'is_active'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -3402,7 +3424,7 @@ The method can help to predict if linking new sub tree can lead to cyclic linkin
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.core.node_group.SvGroupTreeNode.show"><code class="name">var <span class="ident">show</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'default': True, 'description': 'On/off viewer nodes inside', 'update': <function <a title="sverchok.core.node_group.SvGroupTreeNode.switch_viewers" href="#sverchok.core.node_group.SvGroupTreeNode.switch_viewers">SvGroupTreeNode.switch_viewers()</a> at 0x7f109cc82700>, 'attr': 'show'}></code></dt>
+<dt id="sverchok.core.node_group.SvGroupTreeNode.show"><code class="name">var <span class="ident">show</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'default': True, 'description': 'On/off viewer nodes inside', 'update': <function <a title="sverchok.core.node_group.SvGroupTreeNode.switch_viewers" href="#sverchok.core.node_group.SvGroupTreeNode.switch_viewers">SvGroupTreeNode.switch_viewers()</a> at 0x7ff562da2f70>, 'attr': 'show'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -4020,6 +4042,7 @@ def poll(cls, context):
 <li><code><a title="sverchok.core.node_group.EditGroupTree.bl_label" href="#sverchok.core.node_group.EditGroupTree.bl_label">bl_label</a></code></li>
 <li><code><a title="sverchok.core.node_group.EditGroupTree.bl_rna" href="#sverchok.core.node_group.EditGroupTree.bl_rna">bl_rna</a></code></li>
 <li><code><a title="sverchok.core.node_group.EditGroupTree.execute" href="#sverchok.core.node_group.EditGroupTree.execute">execute</a></code></li>
+<li><code><a title="sverchok.core.node_group.EditGroupTree.is_new_group" href="#sverchok.core.node_group.EditGroupTree.is_new_group">is_new_group</a></code></li>
 </ul>
 </li>
 <li>

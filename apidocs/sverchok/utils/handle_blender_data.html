@@ -312,6 +312,10 @@ class BlTrees:
     def __init__(self, node_groups=None):
         self._trees = node_groups
 
+    @classmethod
+    def is_main_tree(cls, tree):
+        return tree.bl_idname == cls.MAIN_TREE_ID
+
     @property
     def sv_trees(self) -&gt; Iterable[Union[SverchCustomTree, SvGroupTree]]:
         &#34;&#34;&#34;All Sverchok trees in a file or in given set of trees&#34;&#34;&#34;
@@ -2528,6 +2532,10 @@ All this is True and about Blender class itself</p></div>
     def __init__(self, node_groups=None):
         self._trees = node_groups
 
+    @classmethod
+    def is_main_tree(cls, tree):
+        return tree.bl_idname == cls.MAIN_TREE_ID
+
     @property
     def sv_trees(self) -&gt; Iterable[Union[SverchCustomTree, SvGroupTree]]:
         &#34;&#34;&#34;All Sverchok trees in a file or in given set of trees&#34;&#34;&#34;
@@ -2555,6 +2563,23 @@ All this is True and about Blender class itself</p></div>
 <dt id="sverchok.utils.handle_blender_data.BlTrees.MAIN_TREE_ID"><code class="name">var <span class="ident">MAIN_TREE_ID</span></code></dt>
 <dd>
 <div class="desc"></div>
+</dd>
+</dl>
+<h3>Static methods</h3>
+<dl>
+<dt id="sverchok.utils.handle_blender_data.BlTrees.is_main_tree"><code class="name flex">
+<span>def <span class="ident">is_main_tree</span></span>(<span>tree)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def is_main_tree(cls, tree):
+    return tree.bl_idname == cls.MAIN_TREE_ID</code></pre>
+</details>
 </dd>
 </dl>
 <h3>Instance variables</h3>
@@ -2727,9 +2752,10 @@ def sv_trees(self) -&gt; Iterable[Union[SverchCustomTree, SvGroupTree]]:
 </li>
 <li>
 <h4><code><a title="sverchok.utils.handle_blender_data.BlTrees" href="#sverchok.utils.handle_blender_data.BlTrees">BlTrees</a></code></h4>
-<ul class="">
+<ul class="two-column">
 <li><code><a title="sverchok.utils.handle_blender_data.BlTrees.GROUP_ID" href="#sverchok.utils.handle_blender_data.BlTrees.GROUP_ID">GROUP_ID</a></code></li>
 <li><code><a title="sverchok.utils.handle_blender_data.BlTrees.MAIN_TREE_ID" href="#sverchok.utils.handle_blender_data.BlTrees.MAIN_TREE_ID">MAIN_TREE_ID</a></code></li>
+<li><code><a title="sverchok.utils.handle_blender_data.BlTrees.is_main_tree" href="#sverchok.utils.handle_blender_data.BlTrees.is_main_tree">is_main_tree</a></code></li>
 <li><code><a title="sverchok.utils.handle_blender_data.BlTrees.sv_group_trees" href="#sverchok.utils.handle_blender_data.BlTrees.sv_group_trees">sv_group_trees</a></code></li>
 <li><code><a title="sverchok.utils.handle_blender_data.BlTrees.sv_main_trees" href="#sverchok.utils.handle_blender_data.BlTrees.sv_main_trees">sv_main_trees</a></code></li>
 <li><code><a title="sverchok.utils.handle_blender_data.BlTrees.sv_trees" href="#sverchok.utils.handle_blender_data.BlTrees.sv_trees">sv_trees</a></code></li>

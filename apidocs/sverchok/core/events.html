@@ -107,6 +107,17 @@ class GroupTreeEvent(TreeEvent):
         self.update_path = update_path
 
 
+class NewGroupTreeEvent(GroupTreeEvent):
+    &#34;&#34;&#34;It should be called when to update newly created group tree
+    because when it was created parent tree also was changed
+    and should be refreshed&#34;&#34;&#34;
+    parent_tree: Union[SvTree, GrTree]
+
+    def __init__(self, tree, update_path, parent_tree):
+        super().__init__(tree, update_path)
+        self.parent_tree = parent_tree
+
+
 class GroupPropertyEvent(GroupTreeEvent):
     &#34;&#34;&#34;Property of a node(s) inside a group tree was changed&#34;&#34;&#34;
     updated_nodes: Iterable[SvNode]
@@ -273,6 +284,7 @@ class TreesGraphEvent:
 <h3>Subclasses</h3>
 <ul class="hlist">
 <li><a title="sverchok.core.events.GroupPropertyEvent" href="#sverchok.core.events.GroupPropertyEvent">GroupPropertyEvent</a></li>
+<li><a title="sverchok.core.events.NewGroupTreeEvent" href="#sverchok.core.events.NewGroupTreeEvent">NewGroupTreeEvent</a></li>
 </ul>
 <h3>Class variables</h3>
 <dl>
@@ -281,6 +293,41 @@ class TreesGraphEvent:
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.events.GroupTreeEvent.update_path"><code class="name">var <span class="ident">update_path</span> : list[GrNode]</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.core.events.NewGroupTreeEvent"><code class="flex name class">
+<span>class <span class="ident">NewGroupTreeEvent</span></span>
+<span>(</span><span>tree, update_path, parent_tree)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>It should be called when to update newly created group tree
+because when it was created parent tree also was changed
+and should be refreshed</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class NewGroupTreeEvent(GroupTreeEvent):
+    &#34;&#34;&#34;It should be called when to update newly created group tree
+    because when it was created parent tree also was changed
+    and should be refreshed&#34;&#34;&#34;
+    parent_tree: Union[SvTree, GrTree]
+
+    def __init__(self, tree, update_path, parent_tree):
+        super().__init__(tree, update_path)
+        self.parent_tree = parent_tree</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.core.events.GroupTreeEvent" href="#sverchok.core.events.GroupTreeEvent">GroupTreeEvent</a></li>
+<li><a title="sverchok.core.events.TreeEvent" href="#sverchok.core.events.TreeEvent">TreeEvent</a></li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sverchok.core.events.NewGroupTreeEvent.parent_tree"><code class="name">var <span class="ident">parent_tree</span> : Union[SvTree, GrTree]</code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -451,6 +498,12 @@ group nodes</p></div>
 <ul class="">
 <li><code><a title="sverchok.core.events.GroupTreeEvent.tree" href="#sverchok.core.events.GroupTreeEvent.tree">tree</a></code></li>
 <li><code><a title="sverchok.core.events.GroupTreeEvent.update_path" href="#sverchok.core.events.GroupTreeEvent.update_path">update_path</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.core.events.NewGroupTreeEvent" href="#sverchok.core.events.NewGroupTreeEvent">NewGroupTreeEvent</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.core.events.NewGroupTreeEvent.parent_tree" href="#sverchok.core.events.NewGroupTreeEvent.parent_tree">parent_tree</a></code></li>
 </ul>
 </li>
 <li>
