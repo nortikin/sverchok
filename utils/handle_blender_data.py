@@ -284,6 +284,10 @@ class BlTrees:
     def __init__(self, node_groups=None):
         self._trees = node_groups
 
+    @classmethod
+    def is_main_tree(cls, tree):
+        return tree.bl_idname == cls.MAIN_TREE_ID
+
     @property
     def sv_trees(self) -> Iterable[Union[SverchCustomTree, SvGroupTree]]:
         """All Sverchok trees in a file or in given set of trees"""

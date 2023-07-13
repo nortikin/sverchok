@@ -76,6 +76,17 @@ class GroupTreeEvent(TreeEvent):
         self.update_path = update_path
 
 
+class NewGroupTreeEvent(GroupTreeEvent):
+    """It should be called when to update newly created group tree
+    because when it was created parent tree also was changed
+    and should be refreshed"""
+    parent_tree: Union[SvTree, GrTree]
+
+    def __init__(self, tree, update_path, parent_tree):
+        super().__init__(tree, update_path)
+        self.parent_tree = parent_tree
+
+
 class GroupPropertyEvent(GroupTreeEvent):
     """Property of a node(s) inside a group tree was changed"""
     updated_nodes: Iterable[SvNode]

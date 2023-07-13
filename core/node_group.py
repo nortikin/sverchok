@@ -689,7 +689,7 @@ class AddGroupTreeFromSelected(bpy.types.Operator):
              if n.name in frame_names and n.name not in with_children_frames]
 
         # todo one ui update (useless) will be done by the operator and another with update system of main handler
-        bpy.ops.node.edit_group_tree({'node': group_node})
+        bpy.ops.node.edit_group_tree({'node': group_node}, is_new_group=True)
 
         return {'FINISHED'}
 
@@ -850,12 +850,19 @@ class EditGroupTree(bpy.types.Operator):
     bl_idname = 'node.edit_group_tree'
     bl_label = 'Edit group tree'
 
+    is_new_group: BoolProperty(
+        description="True when group to edit was just created by Ctrl + G")
+
     def execute(self, context):
         group_node = context.node
         sub_tree: SvGroupTree = context.node.node_tree
         context.space_data.path.append(sub_tree, node=group_node)
         sub_tree.group_node_name = group_node.name
-        event = ev.GroupTreeEvent(sub_tree, sub_tree.get_update_path())
+        if self.is_new_group:
+            event = ev.NewGroupTreeEvent(
+                sub_tree, sub_tree.get_update_path(), group_node.id_data)
+        else:
+            event = ev.GroupTreeEvent(sub_tree, sub_tree.get_update_path())
         handle_event(event)
         # todo make protection from editing the same trees in more then one area
         # todo add the same logic to exit from tree operator

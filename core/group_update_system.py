@@ -40,6 +40,18 @@ def control_center(event):
         GroupUpdateTree.set_update_path(event.update_path)  # in case it was called by pressing tab
         GroupUpdateTree.mark_outdated_groups(event.tree)
 
+    # when group was created by pressing Ctrl + G
+    elif type(event) is ev.NewGroupTreeEvent:
+        gr_tree = GroupUpdateTree.get(event.tree)
+        gr_tree.is_updated = False
+        if BlTrees.is_main_tree(event.parent_tree):
+            parent = us.UpdateTree.get(event.parent_tree)
+        else:
+            parent = GroupUpdateTree.get(event.parent_tree)
+        parent.is_updated = False
+        GroupUpdateTree.set_update_path(event.update_path)
+        GroupUpdateTree.mark_outdated_groups(event.tree)
+
     # Connections between trees were changed
     elif type(event) is ev.TreesGraphEvent:
         trees_graph.is_updated = False
@@ -141,7 +153,7 @@ class GroupUpdateTree(us.UpdateTree):
         self._viewer_nodes: set[Node] = set()  # not presented in main trees yet
 
         self._copy_attrs.extend([
-            '_exec_path', 'update_path', '_viewer_nodes', 'input_connected_nodes'])
+            '_exec_path', 'update_path', '_viewer_nodes'])
 
     def _walk(self) -> tuple[Node, list[NodeSocket]]:
         """Yields nodes in order of their proper execution. It starts yielding
