@@ -28,7 +28,7 @@ from mathutils.bvhtree import BVHTree
 from sverchok.data_structure import repeat_last_for_length
 from sverchok.utils.sv_mesh_utils import mask_vertices, polygons_to_edges, point_inside_mesh
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh, bmesh_clip
-from sverchok.utils.geom import calc_bounds, bounding_sphere, PlaneEquation
+from sverchok.utils.geom import calc_bounds, bounding_sphere, PlaneEquation, linear_approximation
 from sverchok.utils.math import project_to_sphere, weighted_center
 from sverchok.dependencies import scipy, FreeCAD
 
@@ -236,44 +236,37 @@ def calc_bvh_projections(bvh, sites):
 
 def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, fill=True, precision=1e-8):
 
-    def get_ridges_per_site(voronoi):
-        result = defaultdict(list)
-        sites_list = []
-        for ridge_idx in range(len(voronoi.ridge_points)):
-            site1_idx, site2_idx = tuple(voronoi.ridge_points[ridge_idx])
-            if (voronoi.points.shape[0]-1)<site1_idx:
-                continue
-            if (voronoi.points.shape[0]-1)<site2_idx:
-                continue
-            site1 = voronoi.points[site1_idx]
-            site2 = voronoi.points[site2_idx]
-            middle = (site1 + site2) * 0.5
-            normal = site2 - site1
-            plane = PlaneEquation.from_normal_and_point(normal, middle)
-            sites_list.append( (ridge_idx, (site1_idx, site2_idx), (list(site1), list(site2) ), plane, ) )
-            result[site1_idx].append(plane)
-            result[site2_idx].append(plane)
-        print("sites_list:", len(sites_list))
-        return result
+    def detect_is_flat(sites):
+        approx = linear_approximation(sites)
+        plane = approx.most_similar_plane()
+        distances = plane.distance_to_points(sites)
+        if (distances < precision).all():
+            matrix = plane.get_matrix().to_4x4()
+            matrix.translation = approx.center
+            return True, matrix
+        else:
+            return False, None
 
-    def get_ridges_per_site_delaune(delaunay):
+    def to_xoy(matrix, sites):
+        np_matrix = np.asarray(matrix.to_3x3())
+        center = np.asarray(matrix.translation)
+        inv_matrix = np.linalg.inv(np_matrix)
+        sites = (inv_matrix @ (np.asarray(sites) - center).T).T
+        return sites[:,0:2]
+
+    def get_ridges_per_site_delaune(delaunay, points):
         result = defaultdict(list)
         ringes = []
         for simplex in delaunay.simplices:
-            site1_idx, site2_idx, site3_idx, site4_idx = tuple( sorted( [i for i in simplex] ) )
-            ringes+= [tuple( [site1_idx, site2_idx] ),
-                      tuple( [site1_idx, site3_idx] ),
-                      tuple( [site1_idx, site4_idx] ),
-                      tuple( [site2_idx, site3_idx] ),
-                      tuple( [site2_idx, site4_idx] ),
-                      tuple( [site3_idx, site4_idx] )]
+            site_idxs = tuple( sorted( [i for i in simplex] ) )
+            ringes += list(itertools.combinations(site_idxs, 2))
 
         ringes = list(set( ringes ))
 
         for ridge_idx in range(len(ringes)):
             site1_idx, site2_idx = tuple(ringes[ridge_idx])
-            site1 = delaunay.points[site1_idx]
-            site2 = delaunay.points[site2_idx]
+            site1 = points[site1_idx]
+            site2 = points[site2_idx]
             middle = (site1 + site2) * 0.5
             normal =  Vector(site1 - site2).normalized() # normal to site1
             plane1 = PlaneEquation.from_normal_and_point(-normal, middle)
@@ -331,12 +324,22 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, fill=T
     edges_out = []
     faces_out = []
 
-    delaunay = Delaunay(np.array(sites, dtype=np.float32))
-    ridges_per_site_delaune = get_ridges_per_site_delaune(delaunay)
+    is_flat, orientation_matrix = detect_is_flat(sites)
 
     # C0 C-0 - http://www.qhull.org/html/qh-optc.htm
-    #voronoi = Voronoi(np.array(sites, dtype=np.float32), qhull_options='TR5 QJ1e-6 Qz Qs Qc Q5 Q0 Qa W1e-13')#, qhull_options='TR1 QJ1e-6 Qz Qb2:0B2:0')#, qhull_options='TR10 QJ1e-6 QbB') #, qhull_options='QJ1e-06') #, qhull_options='Qs Qc QJ')
-    #ridges_per_site = get_ridges_per_site(voronoi)
+    qhull = 'TR5 QJ1e-6 Qz Qs Qc Q5 Q0 Qa W1e-13'
+    sites_transformed = sites
+    if is_flat:
+        qhull = None
+        sites_transformed = to_xoy(orientation_matrix, sites)
+    delaunay = Delaunay(np.array(sites_transformed, dtype=np.float32), qhull_options = qhull)
+    if is_flat:
+        delaunay_points = np.array(sites, dtype=np.float32)
+    else:
+        delaunay_points = delaunay.points
+
+    ridges_per_site_delaune = get_ridges_per_site_delaune(delaunay, delaunay_points)
+
     if isinstance(spacing, list):
         spacing = repeat_last_for_length(spacing, len(sites))
     else:
