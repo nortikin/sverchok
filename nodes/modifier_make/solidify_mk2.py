@@ -173,7 +173,7 @@ class SvSolidifyNodeMk2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
     implementation: EnumProperty(
         name='Implementation', items=enum_item_4(['Sverchok', 'Blender']),
         description='Mantain Thinkness by adjusting sharp corners',
-        default='Sverchok', update=update_sockets)
+        default='Blender', update=update_sockets)
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', 'Vertices')
