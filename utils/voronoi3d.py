@@ -236,6 +236,7 @@ def calc_bvh_projections(bvh, sites):
             projections.append(loc)
     return np.array(projections)
 
+# see additional info https://github.com/nortikin/sverchok/pull/4948
 def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, fill=True, precision=1e-8):
 
     def bounding_box_aligned(verts):
