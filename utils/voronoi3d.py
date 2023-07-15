@@ -239,8 +239,7 @@ def calc_bvh_projections(bvh, sites):
 def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, fill=True, precision=1e-8):
 
     def bounding_box_aligned(verts):
-        # 3D Oriented bounding boxes:
-        # https://logicatcore.github.io/scratchpad/lidar/sensor-fusion/jupyter/2021/04/20/3D-Oriented-Bounding-Box.html
+        # based on "3D Oriented bounding boxes": https://logicatcore.github.io/scratchpad/lidar/sensor-fusion/jupyter/2021/04/20/3D-Oriented-Bounding-Box.html
         data = np.vstack(np.array(verts).transpose())
         means = np.mean(data, axis=1)
 
@@ -262,26 +261,6 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, fill=T
         rrc += means[:, np.newaxis]
         rrc = rrc.transpose()
         return rrc
-
-    def get_ridges_per_site(voronoi):
-        result = defaultdict(list)
-        sites_list = []
-        for ridge_idx in range(len(voronoi.ridge_points)):
-            site1_idx, site2_idx = tuple(voronoi.ridge_points[ridge_idx])
-            if (voronoi.points.shape[0]-1)<site1_idx:
-                continue
-            if (voronoi.points.shape[0]-1)<site2_idx:
-                continue
-            site1 = voronoi.points[site1_idx]
-            site2 = voronoi.points[site2_idx]
-            middle = (site1 + site2) * 0.5
-            normal = site2 - site1
-            plane = PlaneEquation.from_normal_and_point(normal, middle)
-            sites_list.append( (ridge_idx, (site1_idx, site2_idx), (list(site1), list(site2) ), plane, ) )
-            result[site1_idx].append(plane)
-            result[site2_idx].append(plane)
-        print("sites_list:", len(sites_list))
-        return result
 
     def get_sites_delaunay_params(delaunay):
         result = defaultdict(list)
@@ -306,18 +285,13 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, fill=T
 
         return result
 
-    summ_delta_time1 = datetime.timedelta()
-    summ_delta_time2 = datetime.timedelta()
-    summ_delta_time3 = datetime.timedelta()
-    sites_pair_to_remove = []
+    # some statistics:
     num_bisect = 0 # general count of bisect for full cutting process
     num_unpredicted_erased = 0 # if optimisation can not find a skip bisect case (with using bounding box) then counter incremented
-    time_bmesh_from_pydata = datetime.timedelta()
-    time_pydata_from_bmesh = datetime.timedelta()
 
     def cut_cell(start_mesh, sites_delaunay_params, site_idx, spacing, center_of_mass, bbox_aligned):
+        nonlocal num_bisect, num_unpredicted_erased
         site_params = sites_delaunay_params[site_idx]
-        nonlocal summ_delta_time1, summ_delta_time2, summ_delta_time3, sites_pair_to_remove, num_bisect, num_unpredicted_erased, time_bmesh_from_pydata, time_pydata_from_bmesh
 
         if len(start_mesh.verts) > 0:
             lst_ridges_to_bisect = []
@@ -369,34 +343,16 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, fill=T
                 pass
 
             if out_of_bbox==False:
-                time = datetime.datetime.now()
-                #src_mesh = bmesh_from_pydata(verts, [], faces, normal_update=False) 
                 src_mesh = start_mesh.copy() # do not need create src_mesh until here.
-                time_bmesh_from_pydata += (datetime.datetime.now() - time )
 
                 # (2)
                 lst_dist_p.sort(reverse=True)
                 lst_dist_m.sort() #reverse=True)
                 lst_ridges_to_bisect = lst_dist_m + lst_dist_p # bisect planes with negative normals first may cutoff more geometry from beginning of process (but not always)
-                # A main bisection process
+
+                # A main bisection process of site_idx
                 for i, (dist_center_of_mass_to_plane, site_pair_idx, site_vert, site_pair_vert, middle, plane_no, plane) in enumerate(lst_ridges_to_bisect):
                     plane_co = middle - 0.5 * spacing * plane_no
-
-                    ## For many vertices spended time near spended time of bisect_plane.
-                    ## So it is better to bisect any time without this check.
-                    ##
-                    # time = datetime.datetime.now()
-                    # current_verts = np.array([tuple(v.co) for v in src_mesh.verts])
-                    # signs = PlaneEquation.from_normal_and_point(plane_no, plane_co).side_of_points(current_verts)
-                    # summ_delta_time1+=(datetime.datetime.now() - time )
-                    # #print(f"Plane co {plane_co}, no {plane_no}, signs {signs}")
-                    # if (signs <= 0).all():# or (signs <= 0).all():
-                    #     continue
-                    # signs = PlaneEquation.from_normal_and_point(plane_no, plane_co).side_of_points(bboxa)
-                    # if (signs <= 0).all():# or (signs <= 0).all():
-                    #     break
-
-                    time = datetime.datetime.now()
                     geom_in = src_mesh.verts[:] + src_mesh.edges[:] + src_mesh.faces[:]
                     res_bisect = bmesh.ops.bisect_plane(
                             src_mesh, geom=geom_in, dist=precision,
@@ -406,13 +362,11 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, fill=T
                             clear_outer = True,
                             clear_inner = False
                         )
-                    summ_delta_time2+=(datetime.datetime.now() - time )
                     num_bisect+=1
 
                     if len(res_bisect['geom_cut'])>0:
                         is_geometry_changed = True 
                         if fill:
-                            time = datetime.datetime.now()
                             surround = [e for e in res_bisect['geom_cut'] if isinstance(e, bmesh.types.BMEdge)]
                             if surround:
                                 fres = bmesh.ops.edgenet_prepare(src_mesh, edges=surround)
@@ -423,7 +377,6 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, fill=T
                                     pass
                             else:
                                 pass
-                            summ_delta_time3+=(datetime.datetime.now() - time )
                     else:
                         # if no geometry after bisect then break
                         # Geometry get clear in two cases:
@@ -434,7 +387,7 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, fill=T
                             break
                         pass
             else:
-                # skip if out_of_bbox==True
+                # func come here if out_of_bbox==True
                 pass
 
         # if out_of_bbox==True then bisect process jump here
@@ -446,9 +399,7 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, fill=T
             return None
 
         # if src_mesh has vertices then return mesh data
-        time = datetime.datetime.now()
         pydata = pydata_from_bmesh(src_mesh)
-        time_pydata_from_bmesh += (datetime.datetime.now() - time )
         return pydata
 
     verts_out = []
@@ -456,13 +407,11 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, fill=T
     faces_out = []
 
     # http://www.qhull.org/html/qdelaun.htm
+    # http://www.qhull.org/html/qh-optc.htm
     # https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.Delaunay.html
     delaunay = Delaunay(np.array(sites, dtype=np.float32))
     sites_delaunay_params = get_sites_delaunay_params(delaunay)
 
-    # C0 C-0 - http://www.qhull.org/html/qh-optc.htm
-    #voronoi = Voronoi(np.array(sites, dtype=np.float32), qhull_options='TR5 QJ1e-6 Qz Qs Qc Q5 Q0 Qa W1e-13')#, qhull_options='TR1 QJ1e-6 Qz Qb2:0B2:0')#, qhull_options='TR10 QJ1e-6 QbB') #, qhull_options='QJ1e-06') #, qhull_options='Qs Qc QJ')
-    #ridges_per_site = get_ridges_per_site(voronoi)
     if isinstance(spacing, list):
         spacing = repeat_last_for_length(spacing, len(sites))
     else:
@@ -474,11 +423,8 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, fill=T
     bbox_aligned = bounding_box_aligned(verts)
 
     start_mesh = bmesh_from_pydata(verts, [], faces, normal_update=False)
-    time_cut_cells = datetime.datetime.now()-datetime.datetime.now()
     for site_idx in range(len(sites)):
-        time_cut_cell = datetime.datetime.now()
         cell = cut_cell(start_mesh, sites_delaunay_params, site_idx, spacing[site_idx], center_of_mass, bbox_aligned)
-        time_cut_cells += (datetime.datetime.now() - time_cut_cell)
         if cell is not None:
             new_verts, new_edges, new_faces = cell
             if new_verts:
@@ -492,11 +438,8 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, fill=T
     # statistics:
     # bisects - count of bisects in cut_cell
     # unb - unpredicted erased mesh (bbox_aligned cannot make predicted results)
-    # t_bba - time_bounding_box check outside some plane - very quikly
-    # t2 - time for bisects in cut_cell
-    # t3 - time fo fill holes
     # sites - count of sites in process
-    print( f"bisects: {num_bisect: 4d}, unb={num_unpredicted_erased: 4d}, t_bsct={summ_delta_time2.total_seconds():.5f}, t_fill={summ_delta_time3.total_seconds():.5f}, t_cuts={time_cut_cells.total_seconds():.5f}, t_bmesh={time_bmesh_from_pydata.total_seconds():.5f}, t_pydata={time_pydata_from_bmesh.total_seconds():.5f}, sites={len(sites)}")
+    # print( f"bisects: {num_bisect: 4d}, unb={num_unpredicted_erased: 4d}, sites={len(sites)}")
     return verts_out, edges_out, faces_out
 
 def voronoi_on_mesh(verts, faces, sites, thickness,
