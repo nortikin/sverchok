@@ -285,22 +285,16 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, fill=T
 
     def get_sites_delaunay_params(delaunay):
         result = defaultdict(list)
-        ringes = []
+        ridges = []
         sites_pair = dict()
         for simplex in delaunay.simplices:
-            site1_idx, site2_idx, site3_idx, site4_idx = tuple( sorted( [i for i in simplex] ) )
-            ringes+= [tuple( [site1_idx, site2_idx] ),
-                      tuple( [site1_idx, site3_idx] ),
-                      tuple( [site1_idx, site4_idx] ),
-                      tuple( [site2_idx, site3_idx] ),
-                      tuple( [site2_idx, site4_idx] ),
-                      tuple( [site3_idx, site4_idx] )]
+            ridges += itertools.combinations(tuple( sorted( simplex ) ), 2)
 
-        ringes = list(set( ringes ))
-        ringes.sort()
+        ridges = list(set( ridges )) # remove duplicates of ridges
+        ridges.sort() # for nice view in debugger
 
-        for ridge_idx in range(len(ringes)):
-            site1_idx, site2_idx = tuple(ringes[ridge_idx])
+        for ridge_idx in range(len(ridges)):
+            site1_idx, site2_idx = tuple(ridges[ridge_idx])
             site1 = delaunay.points[site1_idx]
             site2 = delaunay.points[site2_idx]
             middle = (site1 + site2) * 0.5
@@ -312,21 +306,21 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, fill=T
 
         return result
 
-    summ_delta_time1 = datetime.datetime.now()-datetime.datetime.now()
-    summ_delta_time2 = datetime.datetime.now()-datetime.datetime.now()
-    summ_delta_time3 = datetime.datetime.now()-datetime.datetime.now()
+    summ_delta_time1 = datetime.timedelta()
+    summ_delta_time2 = datetime.timedelta()
+    summ_delta_time3 = datetime.timedelta()
     sites_pair_to_remove = []
     num_bisect = 0 # general count of bisect for full cutting process
     num_unpredicted_erased = 0 # if optimisation can not find a skip bisect case (with using bounding box) then counter incremented
-    time_bmesh_from_pydata = datetime.datetime.now()-datetime.datetime.now()
-    time_pydata_from_bmesh = datetime.datetime.now()-datetime.datetime.now()
+    time_bmesh_from_pydata = datetime.timedelta()
+    time_pydata_from_bmesh = datetime.timedelta()
 
     def cut_cell(start_mesh, sites_delaunay_params, site_idx, spacing, center_of_mass, bbox_aligned):
         site_params = sites_delaunay_params[site_idx]
         nonlocal summ_delta_time1, summ_delta_time2, summ_delta_time3, sites_pair_to_remove, num_bisect, num_unpredicted_erased, time_bmesh_from_pydata, time_pydata_from_bmesh
 
         if len(start_mesh.verts) > 0:
-            lst_ringes_to_bisect = []
+            lst_ridges_to_bisect = []
             lst_dist_p = []
             lst_dist_m = []
             arr_dist_site_middle = np.empty(0)
@@ -383,9 +377,9 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, fill=T
                 # (2)
                 lst_dist_p.sort(reverse=True)
                 lst_dist_m.sort() #reverse=True)
-                lst_ringes_to_bisect = lst_dist_m + lst_dist_p # bisect planes with negative normals first may cutoff more geometry from beginning of process (but not always)
+                lst_ridges_to_bisect = lst_dist_m + lst_dist_p # bisect planes with negative normals first may cutoff more geometry from beginning of process (but not always)
                 # A main bisection process
-                for i, (dist_center_of_mass_to_plane, site_pair_idx, site_vert, site_pair_vert, middle, plane_no, plane) in enumerate(lst_ringes_to_bisect):
+                for i, (dist_center_of_mass_to_plane, site_pair_idx, site_vert, site_pair_vert, middle, plane_no, plane) in enumerate(lst_ridges_to_bisect):
                     plane_co = middle - 0.5 * spacing * plane_no
 
                     ## For many vertices spended time near spended time of bisect_plane.
