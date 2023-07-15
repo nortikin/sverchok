@@ -329,6 +329,7 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, fill=T
             lst_ringes_to_bisect = []
             lst_dist_p = []
             lst_dist_m = []
+            arr_dist_site_middle = np.empty(0)
 
             out_of_bbox = False
             src_mesh = None
@@ -359,8 +360,18 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, fill=T
                     else:
                         lst_dist_m.append( [dist*sings, site_pair_idx, site_vert, site_pair_vert, middle, plane_no, plane, ] )
                 
+                # [3]. for test if all (site, middle) dist are less 0.5 spacing?
+                #    if spacing to big and eat all area [all (site-middle).lenght <= spacing/2]
+                arr_dist_site_middle = np.append(arr_dist_site_middle, np.linalg.norm(site_vert-middle) )
+
                 # here is the place to extend optimization variants to exclude bisect from process.
                 # To the future: one cannot optimize process of bisection. Only count of bisects can be optimized.
+                pass
+
+            # (3).
+            # out_of_bbox may realized before all site pairs observed so arr_dist_site_middle may contain not all dists
+            if out_of_bbox==False and (arr_dist_site_middle<=0.5 * spacing).all():
+                out_of_bbox = True
                 pass
 
             if out_of_bbox==False:
