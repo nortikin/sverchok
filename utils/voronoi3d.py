@@ -29,9 +29,8 @@ from mathutils.bvhtree import BVHTree
 from sverchok.data_structure import repeat_last_for_length
 from sverchok.utils.sv_mesh_utils import mask_vertices, polygons_to_edges, point_inside_mesh
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh, bmesh_clip
-from sverchok.utils.geom import calc_bounds, bounding_sphere, PlaneEquation
+from sverchok.utils.geom import calc_bounds, bounding_sphere, PlaneEquation, bounding_box_aligned
 from sverchok.utils.math import project_to_sphere, weighted_center
-from sverchok.utils.geom import linear_approximation
 from sverchok.dependencies import scipy, FreeCAD
 
 if scipy is not None:
@@ -237,31 +236,7 @@ def calc_bvh_projections(bvh, sites):
     return np.array(projections)
 
 # see additional info https://github.com/nortikin/sverchok/pull/4948
-def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, fill=True, precision=1e-8):
-
-    def bounding_box_aligned(verts):
-        # based on "3D Oriented bounding boxes": https://logicatcore.github.io/scratchpad/lidar/sensor-fusion/jupyter/2021/04/20/3D-Oriented-Bounding-Box.html
-        data = np.vstack(np.array(verts).transpose())
-        means = np.mean(data, axis=1)
-
-        cov = np.cov(data)
-        eval, evec = np.linalg.eig(cov)
-        centered_data = data - means[:,np.newaxis]
-        xmin, xmax, ymin, ymax, zmin, zmax = np.min(centered_data[0, :]), np.max(centered_data[0, :]), np.min(centered_data[1, :]), np.max(centered_data[1, :]), np.min(centered_data[2, :]), np.max(centered_data[2, :])
-        aligned_coords = np.matmul(evec.T, centered_data)
-        xmin, xmax, ymin, ymax, zmin, zmax = np.min(aligned_coords[0, :]), np.max(aligned_coords[0, :]), np.min(aligned_coords[1, :]), np.max(aligned_coords[1, :]), np.min(aligned_coords[2, :]), np.max(aligned_coords[2, :])
-
-        rectCoords = lambda x1, y1, z1, x2, y2, z2: np.array([[x1, x1, x2, x2, x1, x1, x2, x2],
-                                                            [y1, y2, y2, y1, y1, y2, y2, y1],
-                                                            [z1, z1, z1, z1, z2, z2, z2, z2]])
-
-        realigned_coords = np.matmul(evec, aligned_coords)
-        realigned_coords += means[:, np.newaxis]
-
-        rrc = np.matmul(evec, rectCoords(xmin, ymin, zmin, xmax, ymax, zmax))
-        rrc += means[:, np.newaxis]
-        rrc = rrc.transpose()
-        return rrc
+def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, mode='VOLUME', precision=1e-8):
 
     def get_sites_delaunay_params(delaunay):
         result = defaultdict(list)
@@ -279,10 +254,10 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, fill=T
             site2 = delaunay.points[site2_idx]
             middle = (site1 + site2) * 0.5
             normal =  Vector(site1 - site2).normalized() # normal to site1
-            plane1 = PlaneEquation.from_normal_and_point(-normal, middle)
-            plane2 = PlaneEquation.from_normal_and_point( normal, middle)
-            result[site1_idx].append( (site2_idx, site1, site2, middle,  -normal, plane1) )
-            result[site2_idx].append( (site1_idx, site2, site1, middle,   normal, plane2) )
+            plane1 = PlaneEquation.from_normal_and_point( normal, middle)
+            plane2 = PlaneEquation.from_normal_and_point(-normal, middle)
+            result[site1_idx].append( (site2_idx, site1, site2, middle,  normal, plane1) )
+            result[site2_idx].append( (site1_idx, site2, site1, middle, -normal, plane2) )
 
         return result
 
@@ -296,8 +271,6 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, fill=T
 
         if len(start_mesh.verts) > 0:
             lst_ridges_to_bisect = []
-            lst_dist_p = []
-            lst_dist_m = []
             arr_dist_site_middle = np.empty(0)
 
             out_of_bbox = False
@@ -305,29 +278,26 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, fill=T
 
             # Sorting for optiomal bisections and search what can be skipped:
             for i, (site_pair_idx, site_vert, site_pair_vert, middle, plane_no, plane) in enumerate(site_params):
-                # Move bisect plane on size of half of spacing
-                plane_co = middle - 0.5 * spacing * plane_no
+                # Move bisect plane on size of half of spacing (normal point to the site_idx from site_pair_idx)
+                plane_co = middle + 0.5 * spacing * plane_no
                 # [1]. Test if bbox_aligned outside a site_pair plane?
-                signs_verts_bbox_aligned = PlaneEquation.from_normal_and_point(-plane_no, plane_co).side_of_points(bbox_aligned)
+                signs_verts_bbox_aligned = PlaneEquation.from_normal_and_point( plane_no, plane_co ).side_of_points(bbox_aligned)
                 # if all vertexes of bbox_aligned out of plane with negation normal then object will be erased anyway.
                 # So one can skeep bisect operation
                 if (signs_verts_bbox_aligned <= 0).all():
                     out_of_bbox = True
                     break
-                # if all vertexes of bbox_aligned is in a positive side of a plane then bisect cannot produce any sections.
+                # if all vertexes of bbox_aligned is on a positive side of a plane then bisect cannot produce any sections.
                 # So one can skip operation of bisection and stay object unchanged (do not add ringe to bisection list)
                 if (signs_verts_bbox_aligned > 0).all():
                     pass
                 else:
                     # [2]. calc middle planes for optimal bisects sequence (sort later)
                     plane_spacing = PlaneEquation.from_normal_and_point(plane_no, plane_co)
-                    sings = plane_spacing.side_of_points(center_of_mass)
-                    dist  = plane_spacing.distance_to_point(center_of_mass)
+                    sign = plane_spacing.side_of_points(center_of_mass)
+                    dist = plane_spacing.distance_to_point(center_of_mass)
                
-                    if dist*sings>0:
-                        lst_dist_p.append( [dist*sings, site_pair_idx, site_vert, site_pair_vert, middle, plane_no, plane, ] )
-                    else:
-                        lst_dist_m.append( [dist*sings, site_pair_idx, site_vert, site_pair_vert, middle, plane_no, plane, ] )
+                    lst_ridges_to_bisect.append( [dist*sign, site_pair_idx, site_vert, site_pair_vert, middle, plane_co, plane_no, plane, ] )
                 
                 # [3]. for test if all (site, middle) dist are less 0.5 spacing?
                 #    if spacing to big and eat all area [all (site-middle).lenght <= spacing/2]
@@ -344,36 +314,33 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, fill=T
                 pass
 
             if out_of_bbox==False:
+                # (2)
+                lst_ridges_to_bisect.sort()  # less dist gets more points to cut off (with negative dists to. Negative dist is a negative side of bisect plane)
+
                 src_mesh = start_mesh.copy() # do not need create src_mesh until here.
 
-                # (2)
-                lst_dist_p.sort(reverse=True)
-                lst_dist_m.sort() #reverse=True)
-                lst_ridges_to_bisect = lst_dist_m + lst_dist_p # bisect planes with negative normals first may cutoff more geometry from beginning of process (but not always)
-
                 # A main bisection process of site_idx
-                for i, (dist_center_of_mass_to_plane, site_pair_idx, site_vert, site_pair_vert, middle, plane_no, plane) in enumerate(lst_ridges_to_bisect):
-                    plane_co = middle - 0.5 * spacing * plane_no
+                for i in range(len(lst_ridges_to_bisect)):
+                    dist_center_of_mass_to_plane, site_pair_idx, site_vert, site_pair_vert, middle, plane_co, plane_no, plane = lst_ridges_to_bisect[i]
                     geom_in = src_mesh.verts[:] + src_mesh.edges[:] + src_mesh.faces[:]
                     res_bisect = bmesh.ops.bisect_plane(
                             src_mesh, geom=geom_in, dist=precision,
                             plane_co = plane_co,
                             plane_no = plane_no,
                             use_snap_center = False,
-                            clear_outer = True,
-                            clear_inner = False
+                            clear_outer = False,
+                            clear_inner = True
                         )
-                    num_bisect+=1
+                    num_bisect+=1 # for statistics
 
                     if len(res_bisect['geom_cut'])>0:
-                        is_geometry_changed = True 
-                        if fill:
+                        if mode=='VOLUME': # fill faces after bisect
                             surround = [e for e in res_bisect['geom_cut'] if isinstance(e, bmesh.types.BMEdge)]
                             if surround:
                                 fres = bmesh.ops.edgenet_prepare(src_mesh, edges=surround)
                                 if fres['edges']:
                                     #bmesh.ops.edgeloop_fill(src_mesh, edges=fres['edges']) # has glitches
-                                    bmesh.ops.triangle_fill(src_mesh, use_beauty=True, use_dissolve=True, edges=fres['edges'])
+                                    mfilled = bmesh.ops.triangle_fill(src_mesh, use_beauty=True, use_dissolve=True, edges=fres['edges'])
                                 else:
                                     pass
                             else:
@@ -384,7 +351,7 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, fill=T
                         # 1. Optimisation fail and not realized that this process has no result
                         # 2. Big spacing eat geometry inside mesh
                         if len( res_bisect['geom'] )==0:
-                            num_unpredicted_erased+=1
+                            num_unpredicted_erased+=1 # for statistics
                             break
                         pass
             else:
@@ -395,7 +362,7 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, fill=T
         # if no verts then return noting
         if src_mesh is None or len( src_mesh.verts ) == 0:
             if src_mesh is not None:
-                src_mesh.clear()
+                src_mesh.clear() #remember to clear empty geometry
                 src_mesh.free()
             return None
 
@@ -421,7 +388,7 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, fill=T
     # calc center of mass. Using for sort of bisect planes for sites.
     center_of_mass = np.average( verts, axis=0 )
     # using for precalc unneeded bisects
-    bbox_aligned = bounding_box_aligned(verts)
+    bbox_aligned = bounding_box_aligned(verts)[0]
 
     start_mesh = bmesh_from_pydata(verts, [], faces, normal_update=False)
     for site_idx in range(len(sites)):
@@ -432,11 +399,11 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, fill=T
                 verts_out.append(new_verts)
                 edges_out.append(new_edges)
                 faces_out.append(new_faces)
-    start_mesh.clear()
+    start_mesh.clear() # remember to clear empty geometry
     start_mesh.free()
     
 
-    # statistics:
+    # show statistics:
     # bisects - count of bisects in cut_cell
     # unb - unpredicted erased mesh (bbox_aligned cannot make predicted results)
     # sites - count of sites in process
@@ -476,7 +443,7 @@ def voronoi_on_mesh(verts, faces, sites, thickness,
     else: # VOLUME, SURFACE
         all_points = sites[:]
         verts, edges, faces = voronoi_on_mesh_bmesh(verts, faces, len(sites), all_points,
-                spacing = spacing, fill = (mode == 'VOLUME'),
+                spacing = spacing, mode = mode,
                 precision = precision)
         return verts, edges, faces, all_points
 
