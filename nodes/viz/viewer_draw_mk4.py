@@ -185,7 +185,7 @@ def view_3d_geom(context, args):
         bgl.glLineWidth(1)
 
     if config.draw_verts:
-        if len(geom.v_vertices)>0 and (len(geom.v_vertices[0])==3):
+        if geom.v_vertices and (len(geom.v_vertices[0])==3):
             bgl.glPointSize(config.point_size)
             if config.uniform_verts:
                 v_batch = batch_for_shader(config.v_shader, 'POINTS', {"pos": geom.v_vertices})
@@ -198,7 +198,7 @@ def view_3d_geom(context, args):
             v_batch.draw(config.v_shader)
             bgl.glPointSize(1)
 
-    bgl.glDisable( bgl.GL_BLEND )
+    bgl.glDisable(bgl.GL_BLEND)
 
 
 def splitted_polygons_geom(polygon_indices, original_idx, v_path, cols, idx_offset):
