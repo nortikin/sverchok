@@ -51,7 +51,6 @@ class DocumentationTests(SverchokTestCase):
 
     def test_node_docs_existance(self):
         known_problems = """
-obj_edit.py
 BMOperatorsMK2.py
 uv_texture.py
 vertex_colors_mk3.py

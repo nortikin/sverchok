@@ -781,7 +781,6 @@
         - SvGreasePencilStrokes
         - SvEmptyOutNode
     - V Misc:
-        - Sv3DviewPropsNode
         - SvTextureViewerNode
         - SvTextureViewerNodeLite
         - SvWaveformViewer
@@ -843,7 +842,6 @@
     - SvParticlesMK2Node
     - ---
     - SvSelectionGrabberLite
-    - SvObjEdit
     - ---
     - SvFrameInfoNodeMK2
     - SvTimerNode

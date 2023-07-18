@@ -659,8 +659,6 @@
 - Viz:
     - icon_name: RESTRICT_VIEW_OFF
     - extra_menu: ConnectionPartialMenu
-    - Sv3DviewPropsNode
-    - ---
     - SvViewerDrawMk4
     - SvMatrixViewer28
     - SvIDXViewer28
@@ -723,7 +721,6 @@
     - SvParticlesMK2Node
     - ---
     - SvSelectionGrabberLite
-    - SvObjEdit
     - ---
     - SvFrameInfoNodeMK2
     - SvTimerNode
