@@ -168,6 +168,10 @@ class CrossSectionNode(ModifierLiteNode, SverchCustomTreeNode, bpy.types.Node):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_CUT'
 
+    replacement_nodes = [
+        ('SvBisectNode', None, None)
+    ]
+
     fill_check: BoolProperty(
         name='fill', description='to fill section',
         default=False, update=updateNode)

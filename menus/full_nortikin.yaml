@@ -259,7 +259,6 @@
             - ---
             - SvOpenSubdivisionNode
             - SvSubdivideNodeMK2
-            - SvSubdivideLiteNode
             - SvSubdivideToQuadsNode
             - SvUnsubdivideNode
             - SvOffsetLineNode
@@ -361,11 +360,6 @@
         - SvHollowSolidNode
         - SvCompoundSolidNode
         - SvRefineSolidNode
-    - M BMESH:
-        - icon_name: BOLD
-        - extra_menu: AdvancedObjectsPartialMenu
-        - SvBMtoElementNode
-        - SvBMOpsNodeMK2
 
 
 ################################################################################
@@ -503,10 +497,6 @@
         - SvSolidVolumeNode
         - SvSolidBoundBoxNode
         - SvSelectSolidNode
-    - A BMESH:
-        - icon_name: BOLD
-        - extra_menu: AdvancedObjectsPartialMenu
-        - SvBManalyzinNode
 
 ################################################################################
 #################################### CADs ######################################
@@ -527,7 +517,6 @@
         - SvRelaxMeshNode
         - SvSmoothLines
         - ---
-        - CrossSectionNode
         - SvBisectNode
         - SvCutObjBySurfaceNode
         - SvEdgesToFaces2D
@@ -880,10 +869,6 @@
         - SvSolidFacesNode
         - SvSolidToMeshNodeMk2
         - SvMeshToSolidNode
-    - X BMESH:
-        - icon_name: BOLD
-        - SvBMObjinputNode
-        - SvBMoutputNode
 
 
 ################################################################################

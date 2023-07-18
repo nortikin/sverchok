@@ -443,7 +443,6 @@
         - ---
         - SvOpenSubdivisionNode
         - SvSubdivideNodeMK2
-        - SvSubdivideLiteNode
         - SvSubdivideToQuadsNode
         - SvUnsubdivideNode
         - SvOffsetLineNode
@@ -464,12 +463,6 @@
         - SvWireframeNode
         - SvPipeNode
         - SvMatrixTubeNode
-        - ---
-        - SvBManalyzinNode
-        - SvBMObjinputNode
-        - SvBMoutputNode
-        - SvBMtoElementNode
-        - SvBMOpsNodeMK2
 
 - CAD:
     - icon_name: TOOL_SETTINGS
@@ -484,7 +477,6 @@
     - SvRelaxMeshNode
     - SvSmoothLines
     - ---
-    - CrossSectionNode
     - SvBisectNode
     - SvCutObjBySurfaceNode
     - SvEdgesToFaces2D

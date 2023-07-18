@@ -51,7 +51,6 @@ class DocumentationTests(SverchokTestCase):
 
     def test_node_docs_existance(self):
         known_problems = """
-BMOperatorsMK2.py
 uv_texture.py
 vertex_colors_mk3.py
 sort_blenddata.py
@@ -66,10 +65,6 @@ color_uv_texture.py
 filter_blenddata.py
 interpolation_mk2.py
 numpy_array.py
-bmesh_obj_in.py
-bmesh_out.py
-bmesh_to_element.py
-bmesh_analyzer_big.py
 mesh_beautify.py
 pulga_physics.py
 limited_dissolve.py

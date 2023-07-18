@@ -132,7 +132,6 @@
         - ---
         - SvOpenSubdivisionNode
         - SvSubdivideNodeMK2
-        - SvSubdivideLiteNode
         - SvSubdivideToQuadsNode
         - SvUnsubdivideNode
         - SvOffsetLineNode
@@ -153,12 +152,6 @@
         - SvWireframeNode
         - SvPipeNode
         - SvMatrixTubeNode
-        - ---
-        - SvBManalyzinNode
-        - SvBMObjinputNode
-        - SvBMoutputNode
-        - SvBMtoElementNode
-        - SvBMOpsNodeMK2
 
     - Mesh CAD:
         - extra_menu: MeshPartialMenu  # to make the category available in another menu (1,2,3,4,5)
@@ -173,7 +166,6 @@
         - SvRelaxMeshNode
         - SvSmoothLines
         - ---
-        - CrossSectionNode
         - SvBisectNode
         - SvCutObjBySurfaceNode
         - SvEdgesToFaces2D
