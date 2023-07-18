@@ -45,6 +45,29 @@ from sverchok.utils.sv_logging import sv_logger
 from sverchok.dependencies import numba  # not strictly needed i think...
 from sverchok.utils.decorators_compilation import njit
 
+def bounding_box_aligned(verts):
+    # based on "3D Oriented bounding boxes": https://logicatcore.github.io/scratchpad/lidar/sensor-fusion/jupyter/2021/04/20/3D-Oriented-Bounding-Box.html
+    data = np.vstack(np.array(verts).transpose())
+    means = np.mean(data, axis=1)
+
+    cov = np.cov(data)
+    eval, evec = np.linalg.eig(cov)
+    centered_data = data - means[:,np.newaxis]
+    xmin, xmax, ymin, ymax, zmin, zmax = np.min(centered_data[0, :]), np.max(centered_data[0, :]), np.min(centered_data[1, :]), np.max(centered_data[1, :]), np.min(centered_data[2, :]), np.max(centered_data[2, :])
+    aligned_coords = np.matmul(evec.T, centered_data)
+    xmin, xmax, ymin, ymax, zmin, zmax = np.min(aligned_coords[0, :]), np.max(aligned_coords[0, :]), np.min(aligned_coords[1, :]), np.max(aligned_coords[1, :]), np.min(aligned_coords[2, :]), np.max(aligned_coords[2, :])
+
+    rectCoords = lambda x1, y1, z1, x2, y2, z2: np.array([[x1, x1, x2, x2, x1, x1, x2, x2],
+                                                        [y1, y2, y2, y1, y1, y2, y2, y1],
+                                                        [z1, z1, z1, z1, z2, z2, z2, z2]])
+
+    realigned_coords = np.matmul(evec, aligned_coords)
+    realigned_coords += means[:, np.newaxis]
+
+    rrc = np.matmul(evec, rectCoords(xmin, ymin, zmin, xmax, ymax, zmax))
+    rrc += means[:, np.newaxis]
+    rrc = rrc.transpose()
+    return tuple([rrc])
 
 identity_matrix = Matrix()
 
