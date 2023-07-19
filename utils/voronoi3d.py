@@ -238,7 +238,7 @@ def calc_bvh_projections(bvh, sites):
 # see additional info https://github.com/nortikin/sverchok/pull/4948
 def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, mode='VOLUME', precision=1e-8):
 
-    def get_sites_delaunay_params(delaunay):
+    def get_sites_delaunay_params(delaunay, n_orig_sites):
         result = defaultdict(list)
         ridges = []
         sites_pair = dict()
@@ -250,8 +250,14 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, mode='
 
         for ridge_idx in range(len(ridges)):
             site1_idx, site2_idx = tuple(ridges[ridge_idx])
+            # Remove 4D simplex ridges:
+            if n_orig_sites<=site1_idx or n_orig_sites<=site2_idx:
+                continue
+            # Convert source sites to the 3D
             site1 = delaunay.points[site1_idx]
+            site1 = Vector([site1[0], site1[1], site1[2], ])
             site2 = delaunay.points[site2_idx]
+            site2 = Vector([site2[0], site2[1], site2[2], ])
             middle = (site1 + site2) * 0.5
             normal =  Vector(site1 - site2).normalized() # normal to site1
             plane1 = PlaneEquation.from_normal_and_point( normal, middle)
@@ -267,96 +273,103 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, mode='
 
     def cut_cell(start_mesh, sites_delaunay_params, site_idx, spacing, center_of_mass, bbox_aligned):
         nonlocal num_bisect, num_unpredicted_erased
-        site_params = sites_delaunay_params[site_idx]
+        src_mesh = None
+        # Check ridges for sites before bisect. If no ridges then no bisect and no mesh in result
+        if site_idx in sites_delaunay_params:
+            site_params = sites_delaunay_params[site_idx]
 
-        if len(start_mesh.verts) > 0:
-            lst_ridges_to_bisect = []
-            arr_dist_site_middle = np.empty(0)
+            if len(start_mesh.verts) > 0:
+                lst_ridges_to_bisect = []
+                #arr_dist_site_middle = np.empty(0)
 
-            out_of_bbox = False
-            src_mesh = None
+                out_of_bbox = False
 
-            # Sorting for optiomal bisections and search what can be skipped:
-            for i, (site_pair_idx, site_vert, site_pair_vert, middle, plane_no, plane) in enumerate(site_params):
-                # Move bisect plane on size of half of spacing (normal point to the site_idx from site_pair_idx)
-                plane_co = middle + 0.5 * spacing * plane_no
-                # [1]. Test if bbox_aligned outside a site_pair plane?
-                signs_verts_bbox_aligned = PlaneEquation.from_normal_and_point( plane_no, plane_co ).side_of_points(bbox_aligned)
-                # if all vertexes of bbox_aligned out of plane with negation normal then object will be erased anyway.
-                # So one can skeep bisect operation
-                if (signs_verts_bbox_aligned <= 0).all():
-                    out_of_bbox = True
-                    break
-                # if all vertexes of bbox_aligned is on a positive side of a plane then bisect cannot produce any sections.
-                # So one can skip operation of bisection and stay object unchanged (do not add ringe to bisection list)
-                if (signs_verts_bbox_aligned > 0).all():
-                    pass
-                else:
-                    # [2]. calc middle planes for optimal bisects sequence (sort later)
-                    plane_spacing = PlaneEquation.from_normal_and_point(plane_no, plane_co)
-                    sign = plane_spacing.side_of_points(center_of_mass)
-                    dist = plane_spacing.distance_to_point(center_of_mass)
-               
-                    lst_ridges_to_bisect.append( [dist*sign, site_pair_idx, site_vert, site_pair_vert, middle, plane_co, plane_no, plane, ] )
+                # Sorting for optiomal bisections and search what can be skipped:
+                for i, (site_pair_idx, site_vert, site_pair_vert, middle, plane_no, plane) in enumerate(site_params):
+                    # Move bisect plane on size of half of spacing (normal point to the site_idx from site_pair_idx)
+                    plane_co = middle + 0.5 * spacing * plane_no
+                    # [1]. Test if bbox_aligned outside a site_pair plane?
+                    signs_verts_bbox_aligned = PlaneEquation.from_normal_and_point( plane_no, plane_co ).side_of_points(bbox_aligned)
+                    # if all vertexes of bbox_aligned out of plane with negation normal then object will be erased anyway.
+                    # So one can skeep bisect operation
+                    if (signs_verts_bbox_aligned <= 0).all():
+                        out_of_bbox = True
+                        break
+                    # if all vertexes of bbox_aligned is on a positive side of a plane then bisect cannot produce any sections.
+                    # So one can skip operation of bisection and stay object unchanged (do not add ringe to bisection list)
+                    if (signs_verts_bbox_aligned > 0).all():
+                        pass
+                    else:
+                        # [2]. calc middle planes for optimal bisects sequence (sort later)
+                        plane_spacing = PlaneEquation.from_normal_and_point(plane_no, plane_co)
+                        sign = plane_spacing.side_of_points(center_of_mass)
+                        dist = plane_spacing.distance_to_point(center_of_mass)
                 
-                # [3]. for test if all (site, middle) dist are less 0.5 spacing?
-                #    if spacing to big and eat all area [all (site-middle).lenght <= spacing/2]
-                arr_dist_site_middle = np.append(arr_dist_site_middle, np.linalg.norm(site_vert-middle) )
+                        lst_ridges_to_bisect.append( [dist*sign, site_pair_idx, site_vert, site_pair_vert, middle, plane_co, plane_no, plane, ] )
+                    
+                    # [3]. for test if all (site, middle) dist are less 0.5 spacing?
+                    #    if spacing to big and eat all area [all (site-middle).lenght <= spacing/2]
+                    # arr_dist_site_middle = np.append(arr_dist_site_middle, np.linalg.norm(site_vert-middle) )
 
-                # here is the place to extend optimization variants to exclude bisect from process.
-                # To the future: one cannot optimize process of bisection. Only count of bisects can be optimized.
-                pass
+                    # here is the place to extend optimization variants to exclude bisect from process.
+                    # To the future: one cannot optimize process of bisection. Only count of bisects can be optimized.
+                    pass
 
-            # (3).
-            # out_of_bbox may realized before all site pairs observed so arr_dist_site_middle may contain not all dists
-            if out_of_bbox==False and (arr_dist_site_middle<=0.5 * spacing).all():
-                out_of_bbox = True
-                pass
+                # (3).
+                # out_of_bbox may realized before all site pairs observed so arr_dist_site_middle may contain not all dists
+                # if out_of_bbox==False and (arr_dist_site_middle<=0.5 * spacing).all():
+                #     #out_of_bbox = True # If site has open side then its bisect cannot be skipped. So this rule are disabled.
+                #     pass
 
-            if out_of_bbox==False:
-                # (2)
-                lst_ridges_to_bisect.sort()  # less dist gets more points to cut off (with negative dists to. Negative dist is a negative side of bisect plane)
+                if out_of_bbox==False:
+                    # (2)
+                    lst_ridges_to_bisect.sort()  # less dist gets more points to cut off (with negative dists to. Negative dist is a negative side of bisect plane)
 
-                src_mesh = start_mesh.copy() # do not need create src_mesh until here.
+                    src_mesh = start_mesh.copy() # do not need create src_mesh until here.
 
-                # A main bisection process of site_idx
-                for i in range(len(lst_ridges_to_bisect)):
-                    dist_center_of_mass_to_plane, site_pair_idx, site_vert, site_pair_vert, middle, plane_co, plane_no, plane = lst_ridges_to_bisect[i]
-                    geom_in = src_mesh.verts[:] + src_mesh.edges[:] + src_mesh.faces[:]
-                    res_bisect = bmesh.ops.bisect_plane(
-                            src_mesh, geom=geom_in, dist=precision,
-                            plane_co = plane_co,
-                            plane_no = plane_no,
-                            use_snap_center = False,
-                            clear_outer = False,
-                            clear_inner = True
-                        )
-                    num_bisect+=1 # for statistics
+                    # A main bisection process of site_idx
+                    for i in range(len(lst_ridges_to_bisect)):
+                        dist_center_of_mass_to_plane, site_pair_idx, site_vert, site_pair_vert, middle, plane_co, plane_no, plane = lst_ridges_to_bisect[i]
+                        geom_in = src_mesh.verts[:] + src_mesh.edges[:] + src_mesh.faces[:]
+                        res_bisect = bmesh.ops.bisect_plane(
+                                src_mesh, geom=geom_in, dist=precision,
+                                plane_co = plane_co,
+                                plane_no = plane_no,
+                                use_snap_center = False,
+                                clear_outer = False,
+                                clear_inner = True
+                            )
+                        num_bisect+=1 # for statistics
 
-                    if len(res_bisect['geom_cut'])>0:
-                        if mode=='VOLUME': # fill faces after bisect
-                            surround = [e for e in res_bisect['geom_cut'] if isinstance(e, bmesh.types.BMEdge)]
-                            if surround:
-                                fres = bmesh.ops.edgenet_prepare(src_mesh, edges=surround)
-                                if fres['edges']:
-                                    #bmesh.ops.edgeloop_fill(src_mesh, edges=fres['edges']) # has glitches
-                                    mfilled = bmesh.ops.triangle_fill(src_mesh, use_beauty=True, use_dissolve=True, edges=fres['edges'])
+                        if len(res_bisect['geom_cut'])>0:
+                            if mode=='VOLUME': # fill faces after bisect
+                                surround = [e for e in res_bisect['geom_cut'] if isinstance(e, bmesh.types.BMEdge)]
+                                if surround:
+                                    fres = bmesh.ops.edgenet_prepare(src_mesh, edges=surround)
+                                    if fres['edges']:
+                                        #bmesh.ops.edgeloop_fill(src_mesh, edges=fres['edges']) # has glitches
+                                        mfilled = bmesh.ops.triangle_fill(src_mesh, use_beauty=True, use_dissolve=True, edges=fres['edges'])
+                                    else:
+                                        pass
                                 else:
                                     pass
-                            else:
-                                pass
-                    else:
-                        # if no geometry after bisect then break
-                        # Geometry get clear in two cases:
-                        # 1. Optimisation fail and not realized that this process has no result
-                        # 2. Big spacing eat geometry inside mesh
-                        if len( res_bisect['geom'] )==0:
-                            num_unpredicted_erased+=1 # for statistics
-                            break
-                        pass
+                        else:
+                            # if no geometry after bisect then break
+                            # Geometry get clear in two cases:
+                            # 1. Optimisation fail and not realized that this process has no result
+                            # 2. Big spacing eat geometry inside mesh
+                            if len( res_bisect['geom'] )==0:
+                                num_unpredicted_erased+=1 # for statistics
+                                break
+                            pass
+                else:
+                    # func come here if out_of_bbox==True
+                    pass
             else:
-                # func come here if out_of_bbox==True
                 pass
+        else:
+            pass
+
 
         # if out_of_bbox==True then bisect process jump here
         # if no verts then return noting
@@ -374,11 +387,21 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, mode='
     edges_out = []
     faces_out = []
 
+    # https://github.com/nortikin/sverchok/pull/4952
     # http://www.qhull.org/html/qdelaun.htm
     # http://www.qhull.org/html/qh-optc.htm
     # https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.Delaunay.html
-    delaunay = Delaunay(np.array(sites, dtype=np.float32))
-    sites_delaunay_params = get_sites_delaunay_params(delaunay)
+    # Convert sites to 4D
+    np_sites = np.array([(s[0], s[1], s[2], 0) for s in sites], dtype=np.float32)
+    # Add 3D tetraedre to the 4D with W=1
+    np_sites = np.append(np_sites, [[0.0, 0.0, 0.0, 1],
+                                    [1.0, 0.0, 0.0, 1],
+                                    [0.0, 1.0, 0.0, 1],
+                                    [0.0, 0.0, 1.0, 1],
+                                    ], axis=0)
+
+    delaunay = Delaunay(np.array(np_sites, dtype=np.float32))
+    sites_delaunay_params = get_sites_delaunay_params(delaunay, n_orig_sites)
 
     if isinstance(spacing, list):
         spacing = repeat_last_for_length(spacing, len(sites))
