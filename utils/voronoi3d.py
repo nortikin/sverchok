@@ -381,6 +381,8 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, mode='
 
         # if src_mesh has vertices then return mesh data
         pydata = pydata_from_bmesh(src_mesh)
+        src_mesh.clear() #remember to clear geometry before return
+        src_mesh.free()
         return pydata
 
     verts_out = []
