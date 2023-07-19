@@ -187,7 +187,6 @@ class SvEmbedMesh(SverchCustomTreeNode,bpy.types.Node):
     bl_idname = 'SvEmbedMesh'
     bl_label = 'Embed Mesh'
     bl_icon = "AUTOMERGE_ON"
-    sv_icon = 'SV_ALPHA'
 
     accuracy: bpy.props.IntProperty(name='Accuracy',
     description='The overall accuracy of the algorithm, which controls multiple key places',

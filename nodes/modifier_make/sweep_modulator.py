@@ -29,7 +29,6 @@ class SvSweepModulator(SverchCustomTreeNode, bpy.types.Node):
     bl_idname = 'SvSweepModulator'
     bl_label = 'Sweep Modulator'
     bl_icon = 'GP_MULTIFRAME_EDITING'
-    sv_icon = 'SV_BETA'
     is_scene_dependent = True
     is_animation_dependent = True
 

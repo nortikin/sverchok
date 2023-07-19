@@ -25,7 +25,7 @@ class SvNumExprNode(SverchCustomTreeNode, bpy.types.Node):
     """
     bl_idname = 'SvNumExprNode'
     bl_label = 'Num Expression node'
-    sv_icon = 'SV_ALPHA'  # 'SV_FORMULA'
+    sv_icon = 'SV_FORMULA'
     sv_dependencies = ['numexpr']
 
     function_names = {

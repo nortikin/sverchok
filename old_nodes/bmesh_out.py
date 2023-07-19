@@ -28,7 +28,7 @@ class SvBMoutputNode(SverchCustomTreeNode, bpy.types.Node):
     bl_idname = 'SvBMoutputNode'
     bl_label = 'BMesh Out'
     bl_icon = 'OUTLINER_OB_EMPTY'
-    sv_icon = 'SV_ALPHA'  # 'SV_BMESH_OBJECT_OUT'
+    sv_icon = 'SV_BMESH_OBJECT_OUT'
 
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', 'bmesh_list')
