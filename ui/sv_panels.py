@@ -360,3 +360,6 @@ def unregister():
     del bpy.types.Scene.ui_list_selected_tree
 
     bpy.types.NODE_HT_header.remove(node_show_tree_mode)
+
+    for class_name in sv_tools_classes:
+        bpy.utils.unregister_class(class_name)
