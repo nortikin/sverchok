@@ -236,7 +236,7 @@ def calc_bvh_projections(bvh, sites):
     return np.array(projections)
 
 # see additional info https://github.com/nortikin/sverchok/pull/4948
-def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, mode='VOLUME', precision=1e-8):
+def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, mode='VOLUME', normal_update = False, precision=1e-8):
 
     def get_sites_delaunay_params(delaunay, n_orig_sites):
         result = defaultdict(list)
@@ -380,6 +380,8 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, mode='
             return None
 
         # if src_mesh has vertices then return mesh data
+        if mode=='VOLUME' and normal_update==True:
+            src_mesh.normal_update()
         pydata = pydata_from_bmesh(src_mesh)
         src_mesh.clear() #remember to clear geometry before return
         src_mesh.free()
@@ -438,7 +440,7 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, mode='
 def voronoi_on_mesh(verts, faces, sites, thickness,
     spacing = 0.0,
     clip_inner=True, clip_outer=True, do_clip=True,
-    clipping=1.0, mode = 'REGIONS',
+    clipping=1.0, mode = 'REGIONS', normal_update=False,
     precision = 1e-8):
     bvh = BVHTree.FromPolygons(verts, faces)
     npoints = len(sites)
@@ -468,7 +470,7 @@ def voronoi_on_mesh(verts, faces, sites, thickness,
     else: # VOLUME, SURFACE
         all_points = sites[:]
         verts, edges, faces = voronoi_on_mesh_bmesh(verts, faces, len(sites), all_points,
-                spacing = spacing, mode = mode,
+                spacing = spacing, mode = mode, normal_update = normal_update,
                 precision = precision)
         return verts, edges, faces, all_points
 
