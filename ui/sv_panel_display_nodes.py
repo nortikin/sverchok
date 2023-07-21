@@ -562,7 +562,7 @@ def register():
 def unregister():
     del bpy.types.NodeTree.displayNodesProps
 
-    for cls in classes:
+    for cls in reversed(classes):
         bpy.utils.unregister_class(cls)
 
 

@@ -244,5 +244,5 @@ def register():
 
 
 def unregister():
-    for class_name in classes:
+    for class_name in reversed(classes):
         bpy.utils.unregister_class(class_name)

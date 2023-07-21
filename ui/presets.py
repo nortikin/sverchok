@@ -1033,6 +1033,8 @@ def unregister():
     for clazz in reversed(classes):
         bpy.utils.unregister_class(clazz)
 
-    for category, name in preset_add_operators:
+    for category, name in reversed(preset_add_operators):
         bpy.utils.unregister_class(preset_add_operators[(category, name)])
 
+    # call of unregister not only on close Blender. So it is important to clear:
+    preset_add_operators.clear()

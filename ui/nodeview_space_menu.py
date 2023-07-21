@@ -698,9 +698,11 @@ def register():
 
 def unregister():
     add_node_menu.unregister()
-    for class_name in classes:
+    for class_name in reversed(classes):
         bpy.utils.unregister_class(class_name)
-    for category in presets.get_category_names():
+    for category in reversed(presets.get_category_names()):
         if category in preset_category_menus:
             bpy.utils.unregister_class(preset_category_menus[category])
+            # call of unregister not only on close Blender. So it is important to remove this category:
+            del preset_category_menus[category]
     bpy.types.NODE_MT_add.remove(sv_draw_menu)
