@@ -262,6 +262,6 @@ def register():
     bpy.utils.register_class(SvPrintCommits)
 
 def unregister():
-    bpy.utils.unregister_class(SverchokCheckForUpgradesSHA)
-    bpy.utils.unregister_class(SverchokUpdateAddon)
     bpy.utils.unregister_class(SvPrintCommits)
+    bpy.utils.unregister_class(SverchokUpdateAddon)
+    bpy.utils.unregister_class(SverchokCheckForUpgradesSHA)

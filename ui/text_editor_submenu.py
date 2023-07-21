@@ -83,5 +83,5 @@ def register():
 
 def unregister():
     bpy.types.TEXT_MT_templates.remove(menu_draw)
-    for cls in classes:
+    for cls in reversed(classes):
         bpy.utils.unregister_class(cls)
