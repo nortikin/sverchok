@@ -54,6 +54,10 @@ def torus_verts(R, r, N1, N2, rPhase, sPhase, rExponent, sExponent, sTwist, Sepa
         theta = a1 + rPhase  # revolution angle
         sin_theta = sin(theta)  # cached for performance
         cos_theta = cos(theta)  # cached for performance
+        pow_cos_theta = pow(abs(cos_theta), rExponent) * sign(cos_theta)
+        pow_sin_theta = pow(abs(sin_theta), rExponent) * sign(sin_theta)
+        cx = R * cos_theta  # torus tube center
+        cy = R * sin_theta  # torus tube center
 
         twist_angle = da2 * n1 / N1 * sTwist
 
@@ -67,8 +71,6 @@ def torus_verts(R, r, N1, N2, rPhase, sPhase, rExponent, sExponent, sTwist, Sepa
 
             pow_cos_phi = pow(abs(cos_phi), sExponent) * sign(cos_phi)
             pow_sin_phi = pow(abs(sin_phi), sExponent) * sign(sin_phi)
-            pow_cos_theta = pow(abs(cos_theta), rExponent) * sign(cos_theta)
-            pow_sin_theta = pow(abs(sin_theta), rExponent) * sign(sin_theta)
 
             x = (R + r * pow_cos_phi) * pow_cos_theta
             y = (R + r * pow_cos_phi) * pow_sin_theta
@@ -78,8 +80,6 @@ def torus_verts(R, r, N1, N2, rPhase, sPhase, rExponent, sExponent, sTwist, Sepa
             add_vert([x, y, z])
 
             # append normal
-            cx = R * cos_theta  # torus tube center
-            cy = R * sin_theta  # torus tube center
             norm = [x - cx, y - cy, z]
             list_norms.append(norm)
 
