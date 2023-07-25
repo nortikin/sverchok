@@ -54,8 +54,16 @@ def torus_verts(R, r, N1, N2, rPhase, sPhase, rExponent, sExponent, sTwist, Sepa
         theta = a1 + rPhase  # revolution angle
         sin_theta = sin(theta)  # cached for performance
         cos_theta = cos(theta)  # cached for performance
-        pow_cos_theta = pow(abs(cos_theta), rExponent) * sign(cos_theta)
-        pow_sin_theta = pow(abs(sin_theta), rExponent) * sign(sin_theta)
+        # 1, 0, any. 1 is a default value of rExponent so go first
+        if rExponent==1:
+            pow_cos_theta = cos_theta
+            pow_sin_theta = sin_theta
+        elif rExponent==0:
+            pow_cos_theta = 1 if cos_theta >= 0 else -1 # sign(cos_theta)
+            pow_sin_theta = 1 if sin_theta >= 0 else -1 # sign(sin_theta)
+        else:
+            pow_cos_theta = pow(abs(cos_theta), rExponent) * (1 if cos_theta >= 0 else -1) # sign(cos_theta)
+            pow_sin_theta = pow(abs(sin_theta), rExponent) * (1 if sin_theta >= 0 else -1) # sign(sin_theta)
         cx = R * cos_theta  # torus tube center
         cy = R * sin_theta  # torus tube center
 
@@ -69,8 +77,15 @@ def torus_verts(R, r, N1, N2, rPhase, sPhase, rExponent, sExponent, sTwist, Sepa
             sin_phi = sin(phi)  # cached for performance
             cos_phi = cos(phi)  # cached for performance
 
-            pow_cos_phi = pow(abs(cos_phi), sExponent) * sign(cos_phi)
-            pow_sin_phi = pow(abs(sin_phi), sExponent) * sign(sin_phi)
+            if sExponent==1:
+                pow_cos_phi = cos_phi
+                pow_sin_phi = sin_phi
+            elif sExponent==0:
+                pow_cos_phi = 1 if cos_phi >= 0 else -1 # sign(cos_phi)
+                pow_sin_phi = 1 if sin_phi >= 0 else -1 # sign(sin_phi)
+            else:
+                pow_cos_phi = pow(abs(cos_phi), sExponent) * (1 if cos_phi >= 0 else -1) # sign(cos_phi)
+                pow_sin_phi = pow(abs(sin_phi), sExponent) * (1 if sin_phi >= 0 else -1) # sign(sin_phi)
 
             x = (R + r * pow_cos_phi) * pow_cos_theta
             y = (R + r * pow_cos_phi) * pow_sin_theta
