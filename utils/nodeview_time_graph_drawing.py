@@ -268,7 +268,8 @@ def start_time_graph(ng):
     ng.update_gl_scale_info(origin=f"configure_time_graph, tree: {ng.name}")
 
     named_tree = ng.name
-    shader = gpu.shader.from_builtin('2D_SMOOTH_COLOR')
+    shader_name = f'{"2D_" if bpy.app.version < (3, 4) else ""}SMOOTH_COLOR'
+    shader = gpu.shader.from_builtin(shader_name)
     data_overlay = (None, shader, named_tree)
 
     config_graph_overlay = {

@@ -20,7 +20,8 @@ def screen_v3dBGL(context, args):
 
     points = args[0]
     colors = args[1]  # expects 4-tuple r g b a
-    shader = gpu.shader.from_builtin('3D_SMOOTH_COLOR')
+    shader_name = f'{"3D_" if bpy.app.version < (3, 4) else ""}SMOOTH_COLOR'
+    shader = gpu.shader.from_builtin(shader_name)
     batch = batch_for_shader(shader, 'POINTS', {"pos": points, "color": colors})
     batch.draw(shader)
 

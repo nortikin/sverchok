@@ -261,10 +261,12 @@ class SvSurfaceViewerDrawNode(SverchCustomTreeNode, bpy.types.Node):
         self.draw_buttons(context, layout)
 
     def draw_all(self, draw_inputs):
-
-        v_shader = gpu.shader.from_builtin('3D_UNIFORM_COLOR')
-        e_shader = gpu.shader.from_builtin('3D_UNIFORM_COLOR')
-        p_shader = gpu.shader.from_builtin('3D_SMOOTH_COLOR')
+        shader_name = f'{"3D_" if bpy.app.version < (3, 4) else ""}UNIFORM_COLOR'
+        v_shader = gpu.shader.from_builtin(shader_name)
+        shader_name = f'{"3D_" if bpy.app.version < (3, 4) else ""}UNIFORM_COLOR'
+        e_shader = gpu.shader.from_builtin(shader_name)
+        shader_name = f'{"3D_" if bpy.app.version < (3, 4) else ""}SMOOTH_COLOR'
+        p_shader = gpu.shader.from_builtin(shader_name)
 
         draw_data = {
                 'tree_name': self.id_data.name[:],

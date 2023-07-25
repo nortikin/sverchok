@@ -103,7 +103,8 @@ def draw_uniform(GL_KIND, coords, indices, color, width=1, dashed_data=None):
 
     else:
         # print(GL_KIND,coords)
-        shader = gpu.shader.from_builtin('3D_UNIFORM_COLOR')
+        shader_name = f'{"3D_" if bpy.app.version < (3, 4) else ""}UNIFORM_COLOR'
+        shader = gpu.shader.from_builtin(shader_name)
         batch = batch_for_shader(shader, GL_KIND, {"pos" : coords}, **params)
         shader.bind()
         shader.uniform_float("color", color)
@@ -117,7 +118,8 @@ def draw_uniform(GL_KIND, coords, indices, color, width=1, dashed_data=None):
 
 
 def draw_smooth(coords, vcols, indices=None):
-    shader = gpu.shader.from_builtin('3D_SMOOTH_COLOR')
+    shader_name = f'{"3D_" if bpy.app.version < (3, 4) else ""}SMOOTH_COLOR'
+    shader = gpu.shader.from_builtin(shader_name)
     params = dict(indices=indices) if indices else {}
     batch = batch_for_shader(shader, 'TRIS', {"pos" : coords, "color": vcols}, **params)
     batch.draw(shader)

@@ -280,12 +280,14 @@ class SvCurveViewerDrawNode(SverchCustomTreeNode, bpy.types.Node):
         self.inputs.new('SvStringsSocket', 'Resolution').prop_name = 'resolution'
 
     def draw_all(self, draw_inputs):
-
-        v_shader = gpu.shader.from_builtin('3D_UNIFORM_COLOR')
+        shader_name = f'{"3D_" if bpy.app.version < (3, 4) else ""}UNIFORM_COLOR'
+        v_shader = gpu.shader.from_builtin(shader_name)
         if self.draw_curvature:
-            e_shader = gpu.shader.from_builtin('3D_SMOOTH_COLOR')
+            shader_name = f'{"3D_" if bpy.app.version < (3, 4) else ""}SMOOTH_COLOR'
+            e_shader = gpu.shader.from_builtin(shader_name)
         else:
-            e_shader = gpu.shader.from_builtin('3D_UNIFORM_COLOR')
+            shader_name = f'{"3D_" if bpy.app.version < (3, 4) else ""}UNIFORM_COLOR'
+            e_shader = gpu.shader.from_builtin(shader_name)
 
         draw_data = {
                 'tree_name': self.id_data.name[:],
