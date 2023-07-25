@@ -47,9 +47,10 @@ if bpy.app.background:
             sv_logger.info(&#34;draw_matrix: do nothing in background mode&#34;)
 
 else:
-
-    uniform_shader = gpu.shader.from_builtin(&#39;3D_UNIFORM_COLOR&#39;)
-    smooth_shader = gpu.shader.from_builtin(&#39;3D_SMOOTH_COLOR&#39;)
+    shader_name = f&#39;{&#34;3D_&#34; if bpy.app.version &lt; (3, 4) else &#34;&#34;}UNIFORM_COLOR&#39;
+    uniform_shader = gpu.shader.from_builtin(shader_name)
+    shader_name = f&#39;{&#34;3D_&#34; if bpy.app.version &lt; (3, 4) else &#34;&#34;}SMOOTH_COLOR&#39;
+    smooth_shader = gpu.shader.from_builtin(shader_name)
 
 
     class MatrixDraw28(object):

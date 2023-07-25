@@ -302,7 +302,8 @@ def draw_indices_2D_wbg(context, args):
             add_vcol((col,) * 6)
 
         # draw background
-        shader = gpu.shader.from_builtin(&#39;2D_SMOOTH_COLOR&#39;)
+        shader_name = f&#39;{&#34;2D_&#34; if bpy.app.version &lt; (3, 4) else &#34;&#34;}SMOOTH_COLOR&#39;
+        shader = gpu.shader.from_builtin(shader_name)
         batch = batch_for_shader(shader, &#39;TRIS&#39;, {&#34;pos&#34;: full_bg_Verts, &#34;color&#34;: full_bg_colors})
         batch.draw(shader)
 
@@ -690,7 +691,8 @@ def draw_indices_2D_wbg(context, args):
             add_vcol((col,) * 6)
 
         # draw background
-        shader = gpu.shader.from_builtin(&#39;2D_SMOOTH_COLOR&#39;)
+        shader_name = f&#39;{&#34;2D_&#34; if bpy.app.version &lt; (3, 4) else &#34;&#34;}SMOOTH_COLOR&#39;
+        shader = gpu.shader.from_builtin(shader_name)
         batch = batch_for_shader(shader, &#39;TRIS&#39;, {&#34;pos&#34;: full_bg_Verts, &#34;color&#34;: full_bg_colors})
         batch.draw(shader)
 
