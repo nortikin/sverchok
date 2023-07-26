@@ -148,9 +148,8 @@ class SvVoronoiOnMeshNode(SverchCustomTreeNode, bpy.types.Node):
                             #clip_inner = self.clip_inner, clip_outer = self.clip_outer,
                             do_clip=True, clipping=None,
                             mode = self.mode,
+                            normal_update = self.normals,
                             precision = precision)
-                if self.mode == 'VOLUME' and self.normals:
-                    verts, edges, faces = recalc_normals(verts, edges, faces, loop=True)
 
                 if self.join_mode == 'FLAT':
                     new_verts.extend(verts)
