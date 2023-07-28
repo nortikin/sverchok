@@ -364,25 +364,40 @@ class SvTorusNodeMK2(SverchCustomTreeNode, bpy.types.Node, SvAngleHelper):
         if self.outputs['Vertices'].is_linked or self.outputs['Normals'].is_linked:
             verts_list = []
             norms_list = []
+            verts_cache = dict()
             for R, r, n1, n2, rP, sP, rE, sE, sT in zip(*parameters):
-                verts, norms = torus_verts(R, r, n1, n2, rP * au, sP * au, rE, sE, sT, self.Separate)
+                if (R, r, n1, n2, rP, sP, rE, sE, sT) in verts_cache:
+                    verts, norms = verts_cache[(R, r, n1, n2, rP, sP, rE, sE, sT)]
+                else:
+                    verts, norms = verts_cache[(R, r, n1, n2, rP, sP, rE, sE, sT)] = torus_verts(R, r, n1, n2, rP * au, sP * au, rE, sE, sT, self.Separate)
                 verts_list.append(verts)
                 norms_list.append(norms)
+            verts_cache.clear()
             self.outputs['Vertices'].sv_set(verts_list)
             self.outputs['Normals'].sv_set(norms_list)
 
         if self.outputs['Edges'].is_linked:
             edges_list = []
+            edges_cache = dict()
             for _, _, n1, n2, _, _, _, _, sT in zip(*parameters):
-                edges = torus_edges(n1, n2, sT)
+                if (n1, n2, sT) in edges_cache:
+                    edges = edges_cache[(n1, n2, sT)]
+                else:
+                    edges = edges_cache[(n1, n2, sT)] = torus_edges(n1, n2, sT)
                 edges_list.append(edges)
+            edges_cache.clear()
             self.outputs['Edges'].sv_set(edges_list)
 
         if self.outputs['Polygons'].is_linked:
             polys_list = []
+            polys_cache = dict()
             for _, _, n1, n2, _, _, _, _, sT in zip(*parameters):
-                polys = torus_polygons(n1, n2, sT)
+                if (n1, n2, sT) in polys_cache:
+                    polys = polys_cache[(n1, n2, sT)]
+                else:
+                    polys = polys_cache[(n1, n2, sT)] = torus_polygons(n1, n2, sT)
                 polys_list.append(polys)
+            polys_cache.clear()
             self.outputs['Polygons'].sv_set(polys_list)
 
 
