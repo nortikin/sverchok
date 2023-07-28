@@ -7,6 +7,7 @@
 
 
 from itertools import cycle
+import numpy as np
 
 from mathutils import Vector, Matrix
 from mathutils.geometry import tessellate_polygon as tessellate
@@ -362,7 +363,8 @@ def polygons_geom(config, vecs, polygons, p_vertices, p_vertex_colors, p_indices
             if not config.uniform_pols:
                 p_vertex_colors.extend([p_cols for v in v_path])
         if idx_p_offset[0]:
-            p_indices.extend([[c + idx_p_offset[0] for c in p] for p in polygon_indices])
+            #p_indices.extend([[c + idx_p_offset[0] for c in p] for p in polygon_indices])
+            p_indices.extend( (np.array( polygon_indices )+idx_p_offset[0]).tolist() )
         else:
             p_indices.extend(polygon_indices)
         total_p_verts = len(vecs)
@@ -385,7 +387,8 @@ def edges_geom(config, edges, e_col, v_path, e_vertices, e_vertex_colors, e_indi
             e_vertex_colors.extend([e_col for v in v_path])
         if idx_e_offset[0]:
             offset = idx_e_offset[0]
-            e_indices.extend([[c + offset for c in e] for e in edges])
+            #e_indices.extend([[c + offset for c in e] for e in edges])
+            e_indices.extend( (np.array(edges)+offset).tolist() )
         else:
             e_indices.extend(edges)
 
