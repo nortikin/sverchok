@@ -144,23 +144,75 @@
              
   <section id="pulga-obstacle-force">
 <h1>Pulga Obstacle Force<a class="headerlink" href="#pulga-obstacle-force" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/d60e18cd-99b0-458c-a06c-9aa3c0580864"><img alt="https://github.com/nortikin/sverchok/assets/14288520/d60e18cd-99b0-458c-a06c-9aa3c0580864" src="https://github.com/nortikin/sverchok/assets/14288520/d60e18cd-99b0-458c-a06c-9aa3c0580864" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/359e71c7-205f-4a71-9a8b-51288765fb38"><img alt="https://github.com/nortikin/sverchok/assets/14288520/359e71c7-205f-4a71-9a8b-51288765fb38" src="https://github.com/nortikin/sverchok/assets/14288520/359e71c7-205f-4a71-9a8b-51288765fb38" /></a>
 <p>This node creates a force to be applied with the Pulga Physics Solver node.</p>
 <p>Obstacles (meshes) that will collide with the system particles (vertices)</p>
 </section>
 <section id="input">
 <h2>Input<a class="headerlink" href="#input" title="Permalink to this heading">¶</a></h2>
-<p><strong>Vertices</strong>: Vertices of the obstacles.</p>
-<p><strong>Polygons</strong>: Polygons of the obstacles.</p>
-<p><strong>Absorption</strong>: Amount of energy that will be absorbed by the obstacle (reducing speed and acceleration). 0 means no absorption and 1 full absorption</p>
+<ul>
+<li><p><strong>Vertices</strong>: Vertices of the obstacles.</p></li>
+<li><p><strong>Polygons</strong>: Polygons of the obstacles.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/58982fee-8fc5-4d1c-9f59-d74a0ce804ce"><img alt="https://github.com/nortikin/sverchok/assets/14288520/58982fee-8fc5-4d1c-9f59-d74a0ce804ce" src="https://github.com/nortikin/sverchok/assets/14288520/58982fee-8fc5-4d1c-9f59-d74a0ce804ce" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>Absorption</strong>: Amount of energy that will be absorbed by the obstacle (reducing speed and acceleration). 0 means no absorption and 1 full absorption</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/6e1dad7e-d2e5-480e-b452-2f279835ee7a"><img alt="https://github.com/nortikin/sverchok/assets/14288520/6e1dad7e-d2e5-480e-b452-2f279835ee7a" src="https://github.com/nortikin/sverchok/assets/14288520/6e1dad7e-d2e5-480e-b452-2f279835ee7a" /></a>
+<ul class="simple">
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_in.html"><span class="doc">Vector In</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_physics_solver.html"><span class="doc">Pulga Physics Solver</span></a></p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
 </section>
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
+<p>Grid of vertices colliding with a soft Cylindrical mesh:</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/e1c0bcac-5b33-40c7-bea6-9c25c1b5b647"><img alt="https://github.com/nortikin/sverchok/assets/14288520/e1c0bcac-5b33-40c7-bea6-9c25c1b5b647" src="https://github.com/nortikin/sverchok/assets/14288520/e1c0bcac-5b33-40c7-bea6-9c25c1b5b647" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/cylinder_mk2.html"><span class="doc">Cylinder</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_physics_solver.html"><span class="doc">Pulga Physics Solver</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>Grid of vertices colliding with a soft spherical mesh:</p>
-<img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/pulga_physics/pulga_obstacle_force/blender_sverchok_pulga_obstacle_force_example_01.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/pulga_physics/pulga_obstacle_force/blender_sverchok_pulga_obstacle_force_example_01.png" />
+<a class="reference external image-reference" href="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/pulga_physics/pulga_obstacle_force/blender_sverchok_pulga_obstacle_force_example_01.png"><img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/pulga_physics/pulga_obstacle_force/blender_sverchok_pulga_obstacle_force_example_01.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/pulga_physics/pulga_obstacle_force/blender_sverchok_pulga_obstacle_force_example_01.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/sphere.html"><span class="doc">Sphere</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_physics_solver.html"><span class="doc">Pulga Physics Solver</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>Trajectories of vertices colliding with a hard spherical mesh.</p>
-<img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/pulga_physics/pulga_obstacle_force/blender_sverchok_pulga_obstacle_force_example_02.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/pulga_physics/pulga_obstacle_force/blender_sverchok_pulga_obstacle_force_example_02.png" />
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/da62baed-63c5-4a67-98b3-41f57f54f8f0"><img alt="https://github.com/nortikin/sverchok/assets/14288520/da62baed-63c5-4a67-98b3-41f57f54f8f0" src="https://github.com/nortikin/sverchok/assets/14288520/da62baed-63c5-4a67-98b3-41f57f54f8f0" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/line_mk4.html"><span class="doc">Line</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/sphere.html"><span class="doc">Sphere</span></a></p></li>
+<li><p>Modifiers-&gt;Modifier Change-&gt; <a class="reference internal" href="../modifier_change/mesh_join_mk2.html"><span class="doc">Mesh Join</span></a></p></li>
+<li><p>Transform-&gt; <a class="reference internal" href="../transforms/move_mk3.html"><span class="doc">Move</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/join.html"><span class="doc">List Join</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_physics_solver.html"><span class="doc">Pulga Physics Solver</span></a></p></li>
+</ul>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/e4e95fa6-9b2d-4c6e-8ccc-0e8754cfbac4"><img alt="https://github.com/nortikin/sverchok/assets/14288520/e4e95fa6-9b2d-4c6e-8ccc-0e8754cfbac4" src="https://github.com/nortikin/sverchok/assets/14288520/e4e95fa6-9b2d-4c6e-8ccc-0e8754cfbac4" /></a>
 </section>
 </section>
 

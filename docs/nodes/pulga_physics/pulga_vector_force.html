@@ -145,28 +145,110 @@
              
   <section id="pulga-vector-force">
 <h1>Pulga Vector Force<a class="headerlink" href="#pulga-vector-force" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/ad3d3efd-64e7-400b-89cc-337a5bb1eee0"><img alt="https://github.com/nortikin/sverchok/assets/14288520/ad3d3efd-64e7-400b-89cc-337a5bb1eee0" src="https://github.com/nortikin/sverchok/assets/14288520/ad3d3efd-64e7-400b-89cc-337a5bb1eee0" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
-<p>This node creates a force to be applied with the Pulga Physics Solver node.
-The force applies the inputted vector as a force to each vertex.
-The force direction will be the same as the inputted vertex.
-The force magnitude will be:  Inputted Vector Magnitude * Force Strength</p>
+<p>This node creates a force to be applied with the <a class="reference internal" href="pulga_physics_solver.html"><span class="doc">Pulga Physics-&gt;Pulga Physics Solver</span></a> node.</p>
+<ul class="simple">
+<li><p>The force applies the inputted vector as a force to each vertex.</p></li>
+<li><p>The force direction will be the same as the inputted vertex.</p></li>
+<li><p>The force magnitude will be:  Inputted Vector Magnitude * Force Strength</p></li>
+</ul>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/a3be3b5b-00a0-42f0-86ef-8337f9e5e28f"><img alt="https://github.com/nortikin/sverchok/assets/14288520/a3be3b5b-00a0-42f0-86ef-8337f9e5e28f" src="https://github.com/nortikin/sverchok/assets/14288520/a3be3b5b-00a0-42f0-86ef-8337f9e5e28f" /></a>
 </section>
 <section id="input">
 <h2>Input<a class="headerlink" href="#input" title="Permalink to this heading">¶</a></h2>
-<p><strong>Force</strong>: Force as vector value. It will also accept a vector Field as input, if multiple values are given the will be use as force per particle.</p>
-<p><strong>Strength</strong>: Multiplier of the force, if multiple values are given the will be use as strength per particle.</p>
+<ul>
+<li><p><strong>Force</strong>: Force as vector value. It will also accept a vector Field as input, if multiple values are given the will be use as force per particle.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/6fb198c4-1cbf-4ed9-8e06-abf32ee373f0"><img alt="https://github.com/nortikin/sverchok/assets/14288520/6fb198c4-1cbf-4ed9-8e06-abf32ee373f0" src="https://github.com/nortikin/sverchok/assets/14288520/6fb198c4-1cbf-4ed9-8e06-abf32ee373f0" /></a>
+<ul class="simple">
+<li><p>Fields-&gt; <a class="reference internal" href="../field/vector_field_formula.html"><span class="doc">Vector Field Formula</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_physics_solver.html"><span class="doc">Pulga Physics Solver</span></a></p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+<hr class="docutils" />
+<blockquote>
+<div><p>Connect <a class="reference internal" href="../field/rotation_field.html"><span class="doc">Fields-&gt;Rotation Field</span></a> into “Force” socket:</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/b89393aa-bce4-462d-b20b-ccf72d2579fe"><img alt="https://github.com/nortikin/sverchok/assets/14288520/b89393aa-bce4-462d-b20b-ccf72d2579fe" src="https://github.com/nortikin/sverchok/assets/14288520/b89393aa-bce4-462d-b20b-ccf72d2579fe" /></a>
+<ul class="simple">
+<li><p>Number-&gt; <a class="reference internal" href="../number/list_input.html"><span class="doc">List Input</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>Fields-&gt; <a class="reference internal" href="../field/rotation_field.html"><span class="doc">Rotation Field</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_physics_solver.html"><span class="doc">Pulga Physics Solver</span></a></p></li>
+</ul>
+</div></blockquote>
+<ul>
+<li><p><strong>Strength</strong>: Multiplier of the force, if multiple values are given the will be use as strength per particle.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/5a44434c-a46f-4113-96ae-9a8540dcc1e4"><img alt="https://github.com/nortikin/sverchok/assets/14288520/5a44434c-a46f-4113-96ae-9a8540dcc1e4" src="https://github.com/nortikin/sverchok/assets/14288520/5a44434c-a46f-4113-96ae-9a8540dcc1e4" /></a>
+</div></blockquote>
+</li>
+</ul>
+<hr class="docutils" />
+<blockquote>
+<div><p>Set <strong>strength</strong> per particle:</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/b12295a5-9f94-4b2f-8d72-f80655c435a2"><img alt="https://github.com/nortikin/sverchok/assets/14288520/b12295a5-9f94-4b2f-8d72-f80655c435a2" src="https://github.com/nortikin/sverchok/assets/14288520/b12295a5-9f94-4b2f-8d72-f80655c435a2" /></a>
+<ul class="simple">
+<li><p>Number-&gt; <a class="reference internal" href="../number/list_input.html"><span class="doc">List Input</span></a></p></li>
+<li><p>Fields-&gt; <a class="reference internal" href="../field/rotation_field.html"><span class="doc">Rotation Field</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/list_input.html"><span class="doc">List Input</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_physics_solver.html"><span class="doc">Pulga Physics Solver</span></a></p></li>
+</ul>
+</div></blockquote>
 </section>
 <section id="options">
 <h2>Options<a class="headerlink" href="#options" title="Permalink to this heading">¶</a></h2>
 <p><strong>Proportional to Mass</strong>: multiply the Vector Force by the mass of the particle.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/c4fd300e-20df-4569-82ea-3375abf358c9"><img alt="https://github.com/nortikin/sverchok/assets/14288520/c4fd300e-20df-4569-82ea-3375abf358c9" src="https://github.com/nortikin/sverchok/assets/14288520/c4fd300e-20df-4569-82ea-3375abf358c9" /></a>
+</div></blockquote>
 </section>
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
+<p>Description Example (Influence of some parameters):</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/767aec31-e800-44ad-b017-2bd2d7c20f11"><img alt="https://github.com/nortikin/sverchok/assets/14288520/767aec31-e800-44ad-b017-2bd2d7c20f11" src="https://github.com/nortikin/sverchok/assets/14288520/767aec31-e800-44ad-b017-2bd2d7c20f11" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/circle.html"><span class="doc">Circle</span></a></p></li>
+<li><p>Fields-&gt; <a class="reference internal" href="../field/rotation_field.html"><span class="doc">Rotation Field</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/numbers.html"><span class="doc">A Number</span></a></p></li>
+<li><p>ADD: Number-&gt; <a class="reference internal" href="../number/scalar_mk4.html"><span class="doc">Scalar Math</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/list_input.html"><span class="doc">List Input</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>Modifiers-&gt;Modifier Make-&gt; <a class="reference internal" href="../modifier_make/uv_connect.html"><span class="doc">UV Connection</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_polar_out.html"><span class="doc">Vector Polar Output</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_polar_in.html"><span class="doc">Vector Polar Input</span></a></p></li>
+<li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/join.html"><span class="doc">List Join</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_struct/flip.html"><span class="doc">List Flip</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_idx28.html"><span class="doc">Viewer Index+</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_physics_solver.html"><span class="doc">Pulga Physics Solver</span></a></p></li>
+</ul>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/606e9352-d2ac-4615-bf06-81b69d3d7bab"><img alt="https://github.com/nortikin/sverchok/assets/14288520/606e9352-d2ac-4615-bf06-81b69d3d7bab" src="https://github.com/nortikin/sverchok/assets/14288520/606e9352-d2ac-4615-bf06-81b69d3d7bab" /></a>
+<hr class="docutils" />
 <p>Constant vector force:</p>
-<img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/pulga_physics/pulga_vector_force/blender_sverchok_pulga_vector_force_example_01.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/pulga_physics/pulga_vector_force/blender_sverchok_pulga_vector_force_example_01.png" />
+<a class="reference external image-reference" href="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/pulga_physics/pulga_vector_force/blender_sverchok_pulga_vector_force_example_01.png"><img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/pulga_physics/pulga_vector_force/blender_sverchok_pulga_vector_force_example_01.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/pulga_physics/pulga_vector_force/blender_sverchok_pulga_vector_force_example_01.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_physics_solver.html"><span class="doc">Pulga Physics Solver</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<hr class="docutils" />
 <p>Noise Vector Field as vector force:</p>
-<img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/pulga_physics/pulga_vector_force/blender_sverchok_pulga_vector_force_example_02.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/pulga_physics/pulga_vector_force/blender_sverchok_pulga_vector_force_example_02.png" />
+<a class="reference external image-reference" href="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/pulga_physics/pulga_vector_force/blender_sverchok_pulga_vector_force_example_02.png"><img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/pulga_physics/pulga_vector_force/blender_sverchok_pulga_vector_force_example_02.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/pulga_physics/pulga_vector_force/blender_sverchok_pulga_vector_force_example_02.png" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Fields-&gt; <a class="reference internal" href="../field/noise_vfield.html"><span class="doc">Noise Vector Field</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_physics_solver.html"><span class="doc">Pulga Physics Solver</span></a></p></li>
+<li><p>Modifiers-&gt;Modifier Make-&gt; <a class="reference internal" href="../modifier_make/uv_connect.html"><span class="doc">UV Connection</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 </section>
 </section>
 

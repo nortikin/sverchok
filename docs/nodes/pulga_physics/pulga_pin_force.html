@@ -144,21 +144,75 @@
              
   <section id="pulga-pin-force">
 <h1>Pulga Pin Force<a class="headerlink" href="#pulga-pin-force" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/c38bf44e-b9f5-47cf-81dc-6028c38b9ecf"><img alt="https://github.com/nortikin/sverchok/assets/14288520/c38bf44e-b9f5-47cf-81dc-6028c38b9ecf" src="https://github.com/nortikin/sverchok/assets/14288520/c38bf44e-b9f5-47cf-81dc-6028c38b9ecf" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node creates a force to be applied with the Pulga Physics Solver node.</p>
 <p>The force restricts the movement of the pinned verts</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/9335ef65-affc-485e-89ed-fe9d709ce18a"><img alt="https://github.com/nortikin/sverchok/assets/14288520/9335ef65-affc-485e-89ed-fe9d709ce18a" src="https://github.com/nortikin/sverchok/assets/14288520/9335ef65-affc-485e-89ed-fe9d709ce18a" /></a>
 </section>
 <section id="input">
 <h2>Input<a class="headerlink" href="#input" title="Permalink to this heading">¶</a></h2>
-<p><strong>Pins</strong>: It will accept a Boolean list as a mask list or a Integer list as the index of the vertex to pin</p>
-<p><strong>Axis</strong>: Axis to restrict. It can be defined with the drop-down menu or a list from a list from 0 to 6 to define the axis restriction per pin. (0 = XYZ, 1 = XY, 2 = XZ, 3 = YZ, 4 = X, 5 = Y, 6 = Z )</p>
-<p><strong>Pins Goal</strong>: End position of the pinned vertices.</p>
+<ul>
+<li><p><strong>Pins</strong>: It will accept a Boolean list as a mask list or a Integer list as the index of the vertex to pin</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/08c46707-59ab-440c-bd9c-0904f939d107"><img alt="https://github.com/nortikin/sverchok/assets/14288520/08c46707-59ab-440c-bd9c-0904f939d107" src="https://github.com/nortikin/sverchok/assets/14288520/08c46707-59ab-440c-bd9c-0904f939d107" /></a>
+</li>
+<li><p><strong>Axis</strong>: Axis to restrict. It can be defined with the drop-down menu or a list from a list from 0 to 6 to define the axis restriction per pin. (0 = XYZ, 1 = XY, 2 = XZ, 3 = YZ, 4 = X, 5 = Y, 6 = Z )</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/fd1b527d-03b9-4df4-b904-bf58ff6a09dd"><img alt="https://github.com/nortikin/sverchok/assets/14288520/fd1b527d-03b9-4df4-b904-bf58ff6a09dd" src="https://github.com/nortikin/sverchok/assets/14288520/fd1b527d-03b9-4df4-b904-bf58ff6a09dd" /></a>
+</li>
+<li><p><strong>Pins Goal</strong>: End position of the pinned vertices.</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/b79858f9-f878-46ee-b7ee-2e4326051b41"><img alt="https://github.com/nortikin/sverchok/assets/14288520/b79858f9-f878-46ee-b7ee-2e4326051b41" src="https://github.com/nortikin/sverchok/assets/14288520/b79858f9-f878-46ee-b7ee-2e4326051b41" /></a>
+</li>
+</ul>
 </section>
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
-<img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/pulga_physics/pulga_pin_force/blender_sverchok_pulga_pin_force_example_01.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/pulga_physics/pulga_pin_force/blender_sverchok_pulga_pin_force_example_01.png" />
-<img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/pulga_physics/pulga_pin_force/blender_sverchok_pulga_pin_force_example_02.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/pulga_physics/pulga_pin_force/blender_sverchok_pulga_pin_force_example_02.png" />
+<p>Description example:</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/09eca1c8-ad58-4d83-9618-59a286f6babf"><img alt="https://github.com/nortikin/sverchok/assets/14288520/09eca1c8-ad58-4d83-9618-59a286f6babf" src="https://github.com/nortikin/sverchok/assets/14288520/09eca1c8-ad58-4d83-9618-59a286f6babf" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/segment.html"><span class="doc">Segment</span></a></p></li>
+<li><p>Generator-&gt;Generator Extended-&gt; <a class="reference internal" href="../generators_extended/polygon_grid.html"><span class="doc">Polygon Grid</span></a></p></li>
+<li><p>Analyzers-&gt;Component Analyzer: <a class="reference internal" href="../analyzer/component_analyzer.html#vertices-adjacent-faces-num"><span class="std std-ref">Adjacent faces num</span></a></p></li>
+<li><p>MUL, SINCOS, MUL X: Number-&gt; <a class="reference internal" href="../number/scalar_mk4.html"><span class="doc">Scalar Math</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_polar_out.html"><span class="doc">Vector Polar Output</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_polar_in.html"><span class="doc">Vector Polar Input</span></a></p></li>
+<li><p>List-&gt; <a class="reference internal" href="../list_masks/mask.html"><span class="doc">List Mask (Out)</span></a></p></li>
+<li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/join.html"><span class="doc">List Join</span></a></p></li>
+<li><p>LESS EQ: Logic-&gt; <a class="reference internal" href="../logic/logic_node.html"><span class="doc">Logic Functions</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_physics_solver.html"><span class="doc">Pulga Physics Solver</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_vector_force.html"><span class="doc">Pulga Vector Force</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_springs_force.html"><span class="doc">Pulga Springs Force</span></a></p></li>
+</ul>
+<hr class="docutils" />
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/fe532189-7aca-41b4-91eb-3ab2594295f2"><img alt="https://github.com/nortikin/sverchok/assets/14288520/fe532189-7aca-41b4-91eb-3ab2594295f2" src="https://github.com/nortikin/sverchok/assets/14288520/fe532189-7aca-41b4-91eb-3ab2594295f2" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/segment.html"><span class="doc">Segment</span></a></p></li>
+<li><p>Generator-&gt;Generator Extended-&gt; <a class="reference internal" href="../generators_extended/polygon_grid.html"><span class="doc">Polygon Grid</span></a></p></li>
+<li><p>Analyzers-&gt;Component Analyzer: <a class="reference internal" href="../analyzer/component_analyzer.html#vertices-adjacent-faces-num"><span class="std std-ref">Adjacent faces num</span></a></p></li>
+<li><p>List-&gt; <a class="reference internal" href="../list_masks/mask.html"><span class="doc">List Mask (Out)</span></a></p></li>
+<li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/join.html"><span class="doc">List Join</span></a></p></li>
+<li><p>LESS EQ: Logic-&gt; <a class="reference internal" href="../logic/logic_node.html"><span class="doc">Logic Functions</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_physics_solver.html"><span class="doc">Pulga Physics Solver</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_vector_force.html"><span class="doc">Pulga Vector Force</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_springs_force.html"><span class="doc">Pulga Springs Force</span></a></p></li>
+</ul>
+<hr class="docutils" />
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/4ec10d8b-b78e-45fd-b325-855e3e0deb9b"><img alt="https://github.com/nortikin/sverchok/assets/14288520/4ec10d8b-b78e-45fd-b325-855e3e0deb9b" src="https://github.com/nortikin/sverchok/assets/14288520/4ec10d8b-b78e-45fd-b325-855e3e0deb9b" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Analyzers-&gt;Component Analyzer: <a class="reference internal" href="../analyzer/component_analyzer.html#vertices-adjacent-faces-num"><span class="std std-ref">Adjacent faces num</span></a></p></li>
+<li><p>List-&gt; <a class="reference internal" href="../list_masks/mask.html"><span class="doc">List Mask (Out)</span></a></p></li>
+<li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/join.html"><span class="doc">List Join</span></a></p></li>
+<li><p>LESS EQ: Logic-&gt; <a class="reference internal" href="../logic/logic_node.html"><span class="doc">Logic Functions</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_physics_solver.html"><span class="doc">Pulga Physics Solver</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_vector_force.html"><span class="doc">Pulga Vector Force</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_springs_force.html"><span class="doc">Pulga Springs Force</span></a></p></li>
+</ul>
+<hr class="docutils" />
+<a class="reference external image-reference" href="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/pulga_physics/pulga_pin_force/blender_sverchok_pulga_pin_force_example_02.png"><img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/pulga_physics/pulga_pin_force/blender_sverchok_pulga_pin_force_example_02.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/pulga_physics/pulga_pin_force/blender_sverchok_pulga_pin_force_example_02.png" /></a>
 </section>
 </section>
 

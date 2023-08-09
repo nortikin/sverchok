@@ -145,6 +145,7 @@
              
   <section id="pulga-physics-solver">
 <h1>Pulga Physics Solver<a class="headerlink" href="#pulga-physics-solver" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/2dc0b37e-3267-48c0-b022-0b197c8e90d5"><img alt="https://github.com/nortikin/sverchok/assets/14288520/2dc0b37e-3267-48c0-b022-0b197c8e90d5" src="https://github.com/nortikin/sverchok/assets/14288520/2dc0b37e-3267-48c0-b022-0b197c8e90d5" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node creates simulations from input parameters, it is meant to be used in form-finding purposes.
@@ -231,19 +232,139 @@ calculate intersections, mass and surface</p></td>
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
 <p>Arranging circles with attraction and collision.</p>
-<img alt="circle_fitting_pulga_physics_procedural_design.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/pulga_physics/pulga_fit_force/blender_sverchok_pulga_fit_force_example_02.png" />
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/f03b8e4e-a78e-4f50-9986-c3aa3a7067e7"><img alt="https://github.com/nortikin/sverchok/assets/14288520/f03b8e4e-a78e-4f50-9986-c3aa3a7067e7" src="https://github.com/nortikin/sverchok/assets/14288520/f03b8e4e-a78e-4f50-9986-c3aa3a7067e7" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Transform-&gt; <a class="reference internal" href="../transforms/randomize.html"><span class="doc">Randomize</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/random_num_gen.html"><span class="doc">Random Num Gen</span></a></p></li>
+<li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/join.html"><span class="doc">List Join</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/circle.html"><span class="doc">Circle</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_drag_force.html"><span class="doc">Pulga Drag Force</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_collision_force.html"><span class="doc">Pulga Collision Force</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_attraction_force.html"><span class="doc">Pulga Attraction Force</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_fit_force.html"><span class="doc">Pulga Fit Force</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_boundaries_force.html"><span class="doc">Pulga Boundaries Force</span></a></p></li>
+</ul>
+<p>Getting result in animation:</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/7a1022a6-c1b2-40be-a3f9-ab84a6b6bc21"><img alt="https://github.com/nortikin/sverchok/assets/14288520/7a1022a6-c1b2-40be-a3f9-ab84a6b6bc21" src="https://github.com/nortikin/sverchok/assets/14288520/7a1022a6-c1b2-40be-a3f9-ab84a6b6bc21" /></a>
+<hr class="docutils" />
 <p>Inflating a cube simulating a pillow.</p>
-<img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/pulga_physics/pulga_inflate_force/blender_sverchok_pulga_inflate_force_example_02.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/pulga_physics/pulga_inflate_force/blender_sverchok_pulga_inflate_force_example_02.png" />
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/4c51f66c-bc37-4391-aeff-f41d43f5c48b"><img alt="https://github.com/nortikin/sverchok/assets/14288520/4c51f66c-bc37-4391-aeff-f41d43f5c48b" src="https://github.com/nortikin/sverchok/assets/14288520/4c51f66c-bc37-4391-aeff-f41d43f5c48b" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_springs_force.html"><span class="doc">Pulga Springs Force</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_drag_force.html"><span class="doc">Pulga Drag Force</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_inflate_force.html"><span class="doc">Pulga Inflate Force</span></a></p></li>
+</ul>
+<p>Animated:</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/99dffb12-6355-472a-965f-f56c55c6de9f"><img alt="https://github.com/nortikin/sverchok/assets/14288520/99dffb12-6355-472a-965f-f56c55c6de9f" src="https://github.com/nortikin/sverchok/assets/14288520/99dffb12-6355-472a-965f-f56c55c6de9f" /></a>
+<hr class="docutils" />
 <p>Tensile structures can be studied with pinned points.</p>
-<img alt="textile_structures_pulga_physics_procedural_design.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/pulga_physics/pulga_physics_solver/blender_sverchok_pulga_physics_solver_example_01.png" />
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/b0a35c32-9daa-4047-9df8-3ceb9e20ab2b"><img alt="https://github.com/nortikin/sverchok/assets/14288520/b0a35c32-9daa-4047-9df8-3ceb9e20ab2b" src="https://github.com/nortikin/sverchok/assets/14288520/b0a35c32-9daa-4047-9df8-3ceb9e20ab2b" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/line_mk4.html"><span class="doc">Line</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/basic_3pt_arc.html"><span class="doc">3pt Arc</span></a></p></li>
+<li><p>Generator-&gt;Generator Extended-&gt; <a class="reference internal" href="../generators_extended/polygon_grid.html"><span class="doc">Polygon Grid</span></a></p></li>
+<li><p>Analyzers-&gt; <a class="reference internal" href="../analyzer/path_length_2.html"><span class="doc">Path Length</span></a></p></li>
+<li><p>Transform-&gt; <a class="reference internal" href="../transforms/transform_select.html"><span class="doc">Transform Select</span></a></p></li>
+<li><p>Modifiers-&gt;Modifier Make-&gt; <a class="reference internal" href="../modifier_change/subdivide_mk2.html"><span class="doc">Subdivide</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/list_input.html"><span class="doc">List Input</span></a></p></li>
+<li><p>MUL X, SIN, DIV: Number-&gt; <a class="reference internal" href="../number/scalar_mk4.html"><span class="doc">Scalar Math</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_out.html"><span class="doc">Vector Out</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_rewire.html"><span class="doc">Vector Rewire</span></a></p></li>
+<li><p>ANGLE RAD: Vector-&gt; <a class="reference internal" href="../vector/math_mk3.html"><span class="doc">Vector Math</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>List-&gt; <a class="reference internal" href="../list_masks/mask.html"><span class="doc">List Mask (Out)</span></a></p></li>
+<li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/join.html"><span class="doc">List Join</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_struct/item.html"><span class="doc">List Item</span></a></p></li>
+<li><p>Modifiers-&gt;Modifier Make-&gt; <a class="reference internal" href="../modifier_make/uv_connect.html"><span class="doc">UV Connection</span></a></p></li>
+<li><p>Modifiers-&gt;Modifier Make-&gt; <a class="reference internal" href="../modifier_make/solidify_mk2.html"><span class="doc">Solidify</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_springs_force.html"><span class="doc">Pulga Springs Force</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_drag_force.html"><span class="doc">Pulga Drag Force</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_pin_force.html"><span class="doc">Pulga Pin Force</span></a></p></li>
+</ul>
+<p>Animated:</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/fd2b45f9-60e4-4499-a001-83775f265469"><img alt="https://github.com/nortikin/sverchok/assets/14288520/fd2b45f9-60e4-4499-a001-83775f265469" src="https://github.com/nortikin/sverchok/assets/14288520/fd2b45f9-60e4-4499-a001-83775f265469" /></a>
+<hr class="docutils" />
 <p>Using the caternary as a structural modeling tool:</p>
-<img alt="catenary_cover_pulga_physics_procedural_design.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/pulga_physics/pulga_physics_solver/blender_sverchok_pulga_physics_solver_example_02.png" />
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/279c74b2-8303-4d54-98b5-0cf1b5285b3f"><img alt="https://github.com/nortikin/sverchok/assets/14288520/279c74b2-8303-4d54-98b5-0cf1b5285b3f" src="https://github.com/nortikin/sverchok/assets/14288520/279c74b2-8303-4d54-98b5-0cf1b5285b3f" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/line_mk4.html"><span class="doc">Line</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/circle.html"><span class="doc">Circle</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/numbers.html"><span class="doc">A Number</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/scalar_mk4.html"><span class="doc">Scalar Math</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/float_to_int.html"><span class="doc">Float to Integer</span></a></p></li>
+<li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/join.html"><span class="doc">List Join</span></a></p></li>
+<li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/join.html"><span class="doc">List Join</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_struct/item.html"><span class="doc">List Item</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/polyline_viewer.html"><span class="doc">Polyline Viewer</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_vector_force.html"><span class="doc">Pulga Vector Force</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_springs_force.html"><span class="doc">Pulga Springs Force</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_drag_force.html"><span class="doc">Pulga Drag Force</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_pin_force.html"><span class="doc">Pulga Pin Force</span></a></p></li>
+</ul>
+<p>Animated:</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/7b64dea0-6699-4e9b-9a55-9a9bfc0d4e2a"><img alt="https://github.com/nortikin/sverchok/assets/14288520/7b64dea0-6699-4e9b-9a55-9a9bfc0d4e2a" src="https://github.com/nortikin/sverchok/assets/14288520/7b64dea0-6699-4e9b-9a55-9a9bfc0d4e2a" /></a>
+<hr class="docutils" />
 <p>Variable spring stiffness can be used to simulate sewing springs inflatable structures.</p>
-<img alt="inflateble_structures_pulga_physics_procedural_design.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/pulga_physics/pulga_physics_solver/blender_sverchok_pulga_physics_solver_example_03.png" />
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/2a68b551-4d9e-49ad-b279-4b8050f219d2"><img alt="https://github.com/nortikin/sverchok/assets/14288520/2a68b551-4d9e-49ad-b279-4b8050f219d2" src="https://github.com/nortikin/sverchok/assets/14288520/2a68b551-4d9e-49ad-b279-4b8050f219d2" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/circle.html"><span class="doc">Circle</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/torus_mk2.html"><span class="doc">Torus</span></a></p></li>
+<li><p>Analyzers-&gt; <a class="reference internal" href="../analyzer/points_inside_mesh.html"><span class="doc">Points Inside Mesh</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/list_input.html"><span class="doc">List Input</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/apply_and_join.html"><span class="doc">Matrix Apply to Mesh</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_normal.html"><span class="doc">Matrix Normal</span></a></p></li>
+<li><p>List-&gt; <a class="reference internal" href="../list_masks/mask_convert.html"><span class="doc">Mask Converter</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_struct/item.html"><span class="doc">List Item</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_springs_force.html"><span class="doc">Pulga Springs Force</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_inflate_force.html"><span class="doc">Pulga Inflate Force</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_drag_force.html"><span class="doc">Pulga Drag Force</span></a></p></li>
+<li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/join.html"><span class="doc">List Join</span></a></p></li>
+</ul>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/54853304-19cd-48f7-b88f-d403f2c0fc87"><img alt="https://github.com/nortikin/sverchok/assets/14288520/54853304-19cd-48f7-b88f-d403f2c0fc87" src="https://github.com/nortikin/sverchok/assets/14288520/54853304-19cd-48f7-b88f-d403f2c0fc87" /></a>
+<hr class="docutils" />
 <p>Shooting particles to a attractors field.</p>
-<img alt="shooting partcles_pulga_physics_procedural_design.PNG" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/pulga_physics/pulga_physics_solver/blender_sverchok_pulga_physics_solver_example_04.png" />
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/5286a603-f72a-44dc-950d-2b8e404b11e9"><img alt="https://github.com/nortikin/sverchok/assets/14288520/5286a603-f72a-44dc-950d-2b8e404b11e9" src="https://github.com/nortikin/sverchok/assets/14288520/5286a603-f72a-44dc-950d-2b8e404b11e9" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/circle.html"><span class="doc">Circle</span></a></p></li>
+<li><p>Generator-&gt;Generator Extended-&gt; <a class="reference internal" href="../generators_extended/polygon_grid.html"><span class="doc">Polygon Grid</span></a></p></li>
+<li><p>Modifiers-&gt;Modifier Make-&gt; <a class="reference internal" href="../modifier_make/uv_connect.html"><span class="doc">UV Connection</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/numbers.html"><span class="doc">A Number</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/random_num_gen.html"><span class="doc">Random Num Gen</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_in.html"><span class="doc">Vector In</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_polar_in.html"><span class="doc">Vector Polar Input</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_struct/repeater.html"><span class="doc">List Repeater</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_attractors_force_mk2.html"><span class="doc">Pulga Attractors Force</span></a></p></li>
+</ul>
+<p>Animated:</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/6b9003a6-939b-4ad6-b760-58ce9d6023b0"><img alt="https://github.com/nortikin/sverchok/assets/14288520/6b9003a6-939b-4ad6-b760-58ce9d6023b0" src="https://github.com/nortikin/sverchok/assets/14288520/6b9003a6-939b-4ad6-b760-58ce9d6023b0" /></a>
+<hr class="docutils" />
 <p>The “Pins Reactions” output supply the resultant force on the pins. It can be use to model auxiliary structures.</p>
-<img alt="pin_reactions_pulga_physics_procedural_design.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/pulga_physics/pulga_physics_solver/blender_sverchok_pulga_physics_solver_example_05.png" />
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/6cd54f5d-4ec9-4964-82a1-cc7b42be3f8e"><img alt="https://github.com/nortikin/sverchok/assets/14288520/6cd54f5d-4ec9-4964-82a1-cc7b42be3f8e" src="https://github.com/nortikin/sverchok/assets/14288520/6cd54f5d-4ec9-4964-82a1-cc7b42be3f8e" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/line_mk4.html"><span class="doc">Line</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Analyzers-&gt;Component Analyzer <strong>Adjacent Edges</strong>: <a class="reference internal" href="../analyzer/component_analyzer.html#vertices-adjacent-edges"><span class="std std-ref">Adjacent edges</span></a></p></li>
+<li><p>EQUAL: Logic-&gt; <a class="reference internal" href="../logic/logic_node.html"><span class="doc">Logic Functions</span></a></p></li>
+<li><p>List-&gt; <a class="reference internal" href="../list_masks/mask_to_index.html"><span class="doc">Mask To Index</span></a></p></li>
+<li><p>List-&gt; <a class="reference internal" href="../list_masks/mask.html"><span class="doc">List Mask (Out)</span></a></p></li>
+<li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/join.html"><span class="doc">List Join</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_vector_force.html"><span class="doc">Pulga Vector Force</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_springs_force.html"><span class="doc">Pulga Springs Force</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_pin_force.html"><span class="doc">Pulga Pin Force</span></a></p></li>
+</ul>
+<p>Animated</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/ef3685f0-fae4-4eb7-83d8-caf6b4ce8451"><img alt="https://github.com/nortikin/sverchok/assets/14288520/ef3685f0-fae4-4eb7-83d8-caf6b4ce8451" src="https://github.com/nortikin/sverchok/assets/14288520/ef3685f0-fae4-4eb7-83d8-caf6b4ce8451" /></a>
 </section>
 </section>
 

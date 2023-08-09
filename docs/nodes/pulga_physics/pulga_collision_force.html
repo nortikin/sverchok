@@ -145,12 +145,14 @@
              
   <section id="pulga-collision-force">
 <h1>Pulga Collision Force<a class="headerlink" href="#pulga-collision-force" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/211c68f3-e0b1-4de8-93f5-45bf09367729"><img alt="https://github.com/nortikin/sverchok/assets/14288520/211c68f3-e0b1-4de8-93f5-45bf09367729" src="https://github.com/nortikin/sverchok/assets/14288520/211c68f3-e0b1-4de8-93f5-45bf09367729" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node creates a force to be applied with the Pulga Physics Solver node.</p>
 <p>The force will be applied when de particles (vertices) are nearer than the sum of particle radius.</p>
 <p>The force direction will be the difference of the verts location</p>
 <p>The force magnitude will be:  (Distance - Radius Sum) * Force Strength</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/0d6e942b-c487-4746-aac2-632f389fcaaf"><img alt="https://github.com/nortikin/sverchok/assets/14288520/0d6e942b-c487-4746-aac2-632f389fcaaf" src="https://github.com/nortikin/sverchok/assets/14288520/0d6e942b-c487-4746-aac2-632f389fcaaf" /></a>
 </section>
 <section id="input">
 <h2>Input<a class="headerlink" href="#input" title="Permalink to this heading">¶</a></h2>
@@ -158,15 +160,30 @@
 </section>
 <section id="options">
 <h2>Options<a class="headerlink" href="#options" title="Permalink to this heading">¶</a></h2>
-<p><strong>Mode</strong>: Algorithm used to calculate collisions. Offers ‘Brute Force’ and ‘Kd-tree’</p>
-<ul class="simple">
-<li><p>Kd-tree: this is the fastest mode but in order to work it needs ‘Scipy’ and ‘Cython’ dependencies to be installed.</p></li>
-<li><p>Brute-Force: This mode is much slower but does not need any dependencies to work.</p></li>
+<p><strong>Mode</strong>: Algorithm used to calculate collisions. Offers ‘<strong>Brute Force</strong>’ and ‘<strong>Kd-tree</strong>’</p>
+<ul>
+<li><p><strong>Kd-tree</strong>: this is the fastest mode but in order to work it needs ‘Scipy’ and ‘Cython’ dependencies to be installed.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/b87f2ad1-e8e3-4937-adab-6baa99c3bbc6"><img alt="https://github.com/nortikin/sverchok/assets/14288520/b87f2ad1-e8e3-4937-adab-6baa99c3bbc6" src="https://github.com/nortikin/sverchok/assets/14288520/b87f2ad1-e8e3-4937-adab-6baa99c3bbc6" /></a>
+</div></blockquote>
+</li>
+<li><p><strong>Brute-Force</strong>: This mode is much slower but does not need any dependencies to work.</p></li>
 </ul>
 </section>
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
-<img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/pulga_physics/pulga_collision_force/blender_sverchok_pulga_collision_force_example_01.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/pulga_physics/pulga_collision_force/blender_sverchok_pulga_collision_force_example_01.png" />
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/07394e3c-c5bc-4280-98ab-9c0e5349b839"><img alt="https://github.com/nortikin/sverchok/assets/14288520/07394e3c-c5bc-4280-98ab-9c0e5349b839" src="https://github.com/nortikin/sverchok/assets/14288520/07394e3c-c5bc-4280-98ab-9c0e5349b839" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/icosphere.html"><span class="doc">IcoSphere</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/random_num_gen.html"><span class="doc">Random Num Gen</span></a></p></li>
+<li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/length.html"><span class="doc">List Length</span></a></p></li>
+<li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/join.html"><span class="doc">List Join</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_physics_solver.html"><span class="doc">Pulga Physics Solver</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_drag_force.html"><span class="doc">Pulga Drag Force</span></a></p></li>
+</ul>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/e9d04904-58a5-4e8f-b8c1-61fd51c545a5"><img alt="https://github.com/nortikin/sverchok/assets/14288520/e9d04904-58a5-4e8f-b8c1-61fd51c545a5" src="https://github.com/nortikin/sverchok/assets/14288520/e9d04904-58a5-4e8f-b8c1-61fd51c545a5" /></a>
 </section>
 </section>
 

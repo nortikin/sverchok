@@ -144,24 +144,57 @@
              
   <section id="pulga-vortex-force">
 <h1>Pulga Vortex Force<a class="headerlink" href="#pulga-vortex-force" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/c36e5cee-8557-4e55-ab04-0804c4b7c863"><img alt="https://github.com/nortikin/sverchok/assets/14288520/c36e5cee-8557-4e55-ab04-0804c4b7c863" src="https://github.com/nortikin/sverchok/assets/14288520/c36e5cee-8557-4e55-ab04-0804c4b7c863" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/f92cc57b-295e-486a-b745-d6fb549781a0"><img alt="https://github.com/nortikin/sverchok/assets/14288520/f92cc57b-295e-486a-b745-d6fb549781a0" src="https://github.com/nortikin/sverchok/assets/14288520/f92cc57b-295e-486a-b745-d6fb549781a0" /></a>
 <p>This node creates a force to be applied with the Pulga Physics Solver node.
 The vortex force is defined with a “Line” with Location and Direction.
 It has three components, rotation around the line, attraction towards the line (Inflow) and a movement in the line direction (Forward).</p>
 </section>
 <section id="input">
 <h2>Input<a class="headerlink" href="#input" title="Permalink to this heading">¶</a></h2>
-<p><strong>Location</strong>: A point of the line.</p>
-<p><strong>Direction</strong>: Direction of the line.</p>
-<p><strong>Rotation Strength</strong>: Multiplier of the rotation force.</p>
-<p><strong>Inflow Strength</strong>: Multiplier of the inflow force (towards the line).</p>
-<p><strong>Forward Strength</strong>: Multiplier of the forward force (in the direction of the line).</p>
-<p><strong>Max. Distance</strong>: Distance under the force will be applied.</p>
-<p><strong>Decay</strong>: How the force will decay with distance. 0= no decay, 1= linear, 2= cubic, 4= quadratic…</p>
+<ul>
+<li><p><strong>Location</strong>: A point of the line.</p></li>
+<li><p><strong>Direction</strong>: Direction of the line.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/c683f977-27a0-4b4a-86ed-cd0b09b8f087"><img alt="https://github.com/nortikin/sverchok/assets/14288520/c683f977-27a0-4b4a-86ed-cd0b09b8f087" src="https://github.com/nortikin/sverchok/assets/14288520/c683f977-27a0-4b4a-86ed-cd0b09b8f087" /></a>
+</div></blockquote>
+</li>
+<li><p><strong>Rotation Strength</strong>: Multiplier of the rotation force.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/9194caaf-bb91-45f8-93ed-017d7794f2a7"><img alt="https://github.com/nortikin/sverchok/assets/14288520/9194caaf-bb91-45f8-93ed-017d7794f2a7" src="https://github.com/nortikin/sverchok/assets/14288520/9194caaf-bb91-45f8-93ed-017d7794f2a7" /></a>
+</div></blockquote>
+</li>
+<li><p><strong>Inflow Strength</strong>: Multiplier of the inflow force (towards the line).</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/29a764ce-e612-422c-afc8-71959886d8ff"><img alt="https://github.com/nortikin/sverchok/assets/14288520/29a764ce-e612-422c-afc8-71959886d8ff" src="https://github.com/nortikin/sverchok/assets/14288520/29a764ce-e612-422c-afc8-71959886d8ff" /></a>
+</div></blockquote>
+</li>
+<li><p><strong>Forward Strength</strong>: Multiplier of the forward force (in the direction of the line).</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/52674c95-dc42-4f9b-b985-706cd8d5ad3c"><img alt="https://github.com/nortikin/sverchok/assets/14288520/52674c95-dc42-4f9b-b985-706cd8d5ad3c" src="https://github.com/nortikin/sverchok/assets/14288520/52674c95-dc42-4f9b-b985-706cd8d5ad3c" /></a>
+</div></blockquote>
+</li>
+<li><p><strong>Max. Distance</strong>: Distance under the force will be applied.</p></li>
+<li><p><strong>Decay</strong>: How the force will decay with distance. 0= no decay, 1= linear, 2= cubic, 4= quadratic…</p></li>
+</ul>
+<p>Animated params overview:</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/1882814d-93da-418d-af2e-788f7aa4781f"><img alt="https://github.com/nortikin/sverchok/assets/14288520/1882814d-93da-418d-af2e-788f7aa4781f" src="https://github.com/nortikin/sverchok/assets/14288520/1882814d-93da-418d-af2e-788f7aa4781f" /></a>
 </section>
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/bc15cfdd-207c-4f50-8b80-b30c6b12127b"><img alt="https://github.com/nortikin/sverchok/assets/14288520/bc15cfdd-207c-4f50-8b80-b30c6b12127b" src="https://github.com/nortikin/sverchok/assets/14288520/bc15cfdd-207c-4f50-8b80-b30c6b12127b" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/line_mk4.html"><span class="doc">Line</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/numbers.html"><span class="doc">A Number</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_physics_solver.html"><span class="doc">Pulga Physics Solver</span></a></p></li>
+</ul>
+<hr class="docutils" />
+<p>TODO:</p>
 <p>Constant vector force:</p>
 <img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/pulga_physics/pulga_vortex_force/blender_sverchok_pulga_vortex_force_example_01.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/pulga_physics/pulga_vortex_force/blender_sverchok_pulga_vortex_force_example_01.png" />
 <p>Noise Vector Field as vector force:</p>

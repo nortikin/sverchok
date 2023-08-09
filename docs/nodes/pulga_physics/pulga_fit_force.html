@@ -145,37 +145,86 @@
              
   <section id="pulga-fit-force">
 <h1>Pulga Fit Force<a class="headerlink" href="#pulga-fit-force" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/d9cd470f-710c-47d1-9050-2b184bcc0426"><img alt="https://github.com/nortikin/sverchok/assets/14288520/d9cd470f-710c-47d1-9050-2b184bcc0426" src="https://github.com/nortikin/sverchok/assets/14288520/d9cd470f-710c-47d1-9050-2b184bcc0426" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/40199133-8b1c-490d-abb9-318c127a2916"><img alt="https://github.com/nortikin/sverchok/assets/14288520/40199133-8b1c-490d-abb9-318c127a2916" src="https://github.com/nortikin/sverchok/assets/14288520/40199133-8b1c-490d-abb9-318c127a2916" /></a>
 <p>This node creates a force to be applied with the Pulga Physics Solver node.</p>
 <p>The force will make the particles (vertices) radius to shrink when the collide or grow if the do not.</p>
 </section>
 <section id="input">
 <h2>Input<a class="headerlink" href="#input" title="Permalink to this heading">¶</a></h2>
-<p><strong>Magnitude</strong>: Amount to grow/shrink every iteration.</p>
-<p><strong>Min. Radius</strong>: Minimum radius particles can have.</p>
-<p><strong>Max. Radius</strong>: Maximum radius particles can have.</p>
+<ul>
+<li><p><strong>Magnitude</strong>: Amount to grow/shrink every iteration.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/54bbf038-937a-4990-80fe-defddb0102a3"><img alt="https://github.com/nortikin/sverchok/assets/14288520/54bbf038-937a-4990-80fe-defddb0102a3" src="https://github.com/nortikin/sverchok/assets/14288520/54bbf038-937a-4990-80fe-defddb0102a3" /></a>
+<ul class="simple">
+<li><p>Transform-&gt; <a class="reference internal" href="../transforms/randomize.html"><span class="doc">Randomize</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_physics_solver.html"><span class="doc">Pulga Physics Solver</span></a></p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>Min. Radius</strong>: Minimum radius particles can have.</p></li>
+<li><p><strong>Max. Radius</strong>: Maximum radius particles can have.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/14209c8f-1a42-4b9d-9f76-251afffd3736"><img alt="https://github.com/nortikin/sverchok/assets/14288520/14209c8f-1a42-4b9d-9f76-251afffd3736" src="https://github.com/nortikin/sverchok/assets/14288520/14209c8f-1a42-4b9d-9f76-251afffd3736" /></a>
+</div></blockquote>
+</li>
+</ul>
 </section>
 <section id="options">
 <h2>Options<a class="headerlink" href="#options" title="Permalink to this heading">¶</a></h2>
-<p><strong>Algorithm</strong>: Algorithm used to calculate collisions. Offers ‘Brute Force’ and ‘Kd-tree’</p>
-<ul class="simple">
-<li><p>Kd-tree: this is the fastest mode but in order to work it needs ‘Scipy’ and ‘Cython’ dependencies to be installed. In this mode the attraction continues even if the vertices are colliding</p></li>
-<li><p>Brute-Force: This mode is much slower but does not need any dependencies to work.</p></li>
+<p><strong>Algorithm</strong>: Algorithm used to calculate collisions. Offers ‘<strong>Brute Force</strong>’ and ‘<strong>Kd-tree</strong>’</p>
+<ul>
+<li><p><strong>Kd-tree</strong>: this is the fastest mode but in order to work it needs ‘<strong>Scipy</strong>’ and ‘<strong>Cython</strong>’ dependencies to be installed. In this mode the attraction continues even if the vertices are colliding</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/b87f2ad1-e8e3-4937-adab-6baa99c3bbc6"><img alt="https://github.com/nortikin/sverchok/assets/14288520/b87f2ad1-e8e3-4937-adab-6baa99c3bbc6" src="https://github.com/nortikin/sverchok/assets/14288520/b87f2ad1-e8e3-4937-adab-6baa99c3bbc6" /></a>
+</div></blockquote>
+</li>
+<li><p><strong>Brute-Force</strong>: This mode is much slower but does not need any dependencies to work.</p></li>
 </ul>
-<p><strong>Mode</strong>: How the magnitude is interpreted. Offers ‘Absolute’, ‘Relative’ and ‘Percent’.</p>
+<p><strong>Mode</strong>: How the magnitude is interpreted. Offers ‘<strong>Absolute</strong>’, ‘<strong>Relative</strong>’ and ‘<strong>Percent</strong>’.</p>
 <ul class="simple">
-<li><p>Absolute: The magnitude will be added or subtracted as defined.</p></li>
-<li><p>Relative: The magnitude will be multiplied by the particle radius.</p></li>
-<li><p>Percent: The magnitude will be interpreted as a percent of the particle radius.</p></li>
+<li><p><strong>Absolute</strong>: The magnitude will be added or subtracted as defined.</p></li>
+<li><p><strong>Relative</strong>: The magnitude will be multiplied by the particle radius.</p></li>
+<li><p><strong>Percent</strong>: The magnitude will be interpreted as a percent of the particle radius.</p></li>
 </ul>
 </section>
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
 <p>Maximum radius for a set of points.</p>
-<img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/pulga_physics/pulga_fit_force/blender_sverchok_pulga_fit_force_example_01.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/pulga_physics/pulga_fit_force/blender_sverchok_pulga_fit_force_example_01.png" />
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/bb29cc04-f13a-4ee6-bace-774d05d852be"><img alt="https://github.com/nortikin/sverchok/assets/14288520/bb29cc04-f13a-4ee6-bace-774d05d852be" src="https://github.com/nortikin/sverchok/assets/14288520/bb29cc04-f13a-4ee6-bace-774d05d852be" /></a>
+<ul>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/circle.html"><span class="doc">Circle</span></a></p></li>
+<li><p>Transform-&gt; <a class="reference internal" href="../transforms/randomize.html"><span class="doc">Randomize</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_physics_solver.html"><span class="doc">Pulga Physics Solver</span></a></p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/b235c925-25e9-4bb9-bf66-96916caff1a5"><img alt="https://github.com/nortikin/sverchok/assets/14288520/b235c925-25e9-4bb9-bf66-96916caff1a5" src="https://github.com/nortikin/sverchok/assets/14288520/b235c925-25e9-4bb9-bf66-96916caff1a5" /></a>
+</div></blockquote>
+<ul class="simple">
+<li><p>Transform-&gt; <a class="reference internal" href="../transforms/randomize.html"><span class="doc">Randomize</span></a></p></li>
+</ul>
+</li>
+</ul>
+<hr class="docutils" />
 <p>Arranging circles with attraction and collision.</p>
-<img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/pulga_physics/pulga_fit_force/blender_sverchok_pulga_fit_force_example_02.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/pulga_physics/pulga_fit_force/blender_sverchok_pulga_fit_force_example_02.png" />
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/aefc9540-e9f6-4bbf-94c6-58dc77f26362"><img alt="https://github.com/nortikin/sverchok/assets/14288520/aefc9540-e9f6-4bbf-94c6-58dc77f26362" src="https://github.com/nortikin/sverchok/assets/14288520/aefc9540-e9f6-4bbf-94c6-58dc77f26362" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/circle.html"><span class="doc">Circle</span></a></p></li>
+<li><p>Transform-&gt; <a class="reference internal" href="../transforms/randomize.html"><span class="doc">Randomize</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/numbers.html"><span class="doc">A Number</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/random_num_gen.html"><span class="doc">Random Num Gen</span></a></p></li>
+<li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/join.html"><span class="doc">List Join</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_physics_solver.html"><span class="doc">Pulga Physics Solver</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_attractors_force_mk2.html"><span class="doc">Pulga Attractors Force</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_collision_force.html"><span class="doc">Pulga Collision Force</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_drag_force.html"><span class="doc">Pulga Drag Force</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_boundaries_force.html"><span class="doc">Pulga Boundaries Force</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
 </section>
 </section>
 

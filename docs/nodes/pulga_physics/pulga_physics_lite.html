@@ -146,6 +146,7 @@
              
   <section id="pulga-physics-lite">
 <h1>Pulga Physics Lite<a class="headerlink" href="#pulga-physics-lite" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/5ba4d876-c6f2-4940-811e-58fda918f8a7"><img alt="https://github.com/nortikin/sverchok/assets/14288520/5ba4d876-c6f2-4940-811e-58fda918f8a7" src="https://github.com/nortikin/sverchok/assets/14288520/5ba4d876-c6f2-4940-811e-58fda918f8a7" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node creates simulations from input parameters, it is meant to be used in form-finding purposes.
@@ -313,29 +314,31 @@ bounding box of the given vectors (min. two)</p></td>
 <h2>Accumulative:<a class="headerlink" href="#accumulative" title="Permalink to this heading">¶</a></h2>
 <p>When activated every nodeTree update will use the previous update as the starting point. The update can be triggered by the Update button or by any other event that triggers regular updates (like playing animation or changing any value).</p>
 <p>It offers some options:</p>
-<p><strong>Reset</strong>: Takes back the system to the initial state.</p>
-<p><strong>Update</strong>: Runs one Node-Tree update.</p>
-<p><strong>Pause</strong>: Pauses nodes calculations and ignores ui changes.</p>
+<ul class="simple">
+<li><p><strong>Reset</strong>: Takes back the system to the initial state.</p></li>
+<li><p><strong>Update</strong>: Runs one Node-Tree update.</p></li>
+<li><p><strong>Pause</strong>: Pauses nodes calculations and ignores ui changes.</p></li>
+</ul>
 </section>
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
 <p>Arranging circles with attraction and collision.</p>
-<img alt="circle_fitting_pulga_physics_procedural_design.png" src="https://user-images.githubusercontent.com/10011941/55254066-3d902500-5257-11e9-9a28-46d3deffcf0b.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/10011941/55254066-3d902500-5257-11e9-9a28-46d3deffcf0b.png"><img alt="https://user-images.githubusercontent.com/10011941/55254066-3d902500-5257-11e9-9a28-46d3deffcf0b.png" src="https://user-images.githubusercontent.com/10011941/55254066-3d902500-5257-11e9-9a28-46d3deffcf0b.png" /></a>
 <p>Tensile structures can be studied with collisions and pinned points.</p>
-<img alt="textile_structures_pulga_physics_procedural_design.png" src="https://user-images.githubusercontent.com/10011941/55254067-3e28bb80-5257-11e9-8988-7e19e8a2462b.png" />
-<img alt="textile_cover_pulga_physics_procedural_design.png" src="https://user-images.githubusercontent.com/10011941/56082937-23da0a80-5e1f-11e9-9b50-611629574cef.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/10011941/55254067-3e28bb80-5257-11e9-8988-7e19e8a2462b.png"><img alt="https://user-images.githubusercontent.com/10011941/55254067-3e28bb80-5257-11e9-8988-7e19e8a2462b.png" src="https://user-images.githubusercontent.com/10011941/55254067-3e28bb80-5257-11e9-8988-7e19e8a2462b.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/10011941/56082937-23da0a80-5e1f-11e9-9b50-611629574cef.png"><img alt="https://user-images.githubusercontent.com/10011941/56082937-23da0a80-5e1f-11e9-9b50-611629574cef.png" src="https://user-images.githubusercontent.com/10011941/56082937-23da0a80-5e1f-11e9-9b50-611629574cef.png" /></a>
 <p>Traction structures can be converted to compression structures with inverted gravity.</p>
-<img alt="compression_structures_pulga_physics_procedural_design.png" src="https://user-images.githubusercontent.com/10011941/55254068-3e28bb80-5257-11e9-86b3-2243b4e7ac4e.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/10011941/55254068-3e28bb80-5257-11e9-86b3-2243b4e7ac4e.png"><img alt="https://user-images.githubusercontent.com/10011941/55254068-3e28bb80-5257-11e9-86b3-2243b4e7ac4e.png" src="https://user-images.githubusercontent.com/10011941/55254068-3e28bb80-5257-11e9-86b3-2243b4e7ac4e.png" /></a>
 <p>Using the caternary  as a structural modeling tool:</p>
-<img alt="catenary_cover_pulga_physics_procedural_design.png" src="https://user-images.githubusercontent.com/10011941/56082943-305e6300-5e1f-11e9-811b-c20df2a7a4d2.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/10011941/56082943-305e6300-5e1f-11e9-811b-c20df2a7a4d2.png"><img alt="https://user-images.githubusercontent.com/10011941/56082943-305e6300-5e1f-11e9-811b-c20df2a7a4d2.png" src="https://user-images.githubusercontent.com/10011941/56082943-305e6300-5e1f-11e9-811b-c20df2a7a4d2.png" /></a>
 <p>Variable spring stiffness can be used to simulate sewing springs inflatable structures.</p>
-<img alt="inflateble_structures_pulga_physics_procedural_design.png" src="https://user-images.githubusercontent.com/10011941/55256836-69fb6f80-525e-11e9-9a1b-21a6eafd0a4e.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/10011941/55256836-69fb6f80-525e-11e9-9a1b-21a6eafd0a4e.png"><img alt="https://user-images.githubusercontent.com/10011941/55256836-69fb6f80-525e-11e9-9a1b-21a6eafd0a4e.png" src="https://user-images.githubusercontent.com/10011941/55256836-69fb6f80-525e-11e9-9a1b-21a6eafd0a4e.png" /></a>
 <p>Trajectories can be traced by supplying the desired iterations as a list.</p>
-<img alt="physics_modeling_pulga_physics_procedural_design.png" src="https://user-images.githubusercontent.com/10011941/55313009-14de7a00-5467-11e9-887e-781d7b4dc025.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/10011941/55313009-14de7a00-5467-11e9-887e-781d7b4dc025.png"><img alt="https://user-images.githubusercontent.com/10011941/55313009-14de7a00-5467-11e9-887e-781d7b4dc025.png" src="https://user-images.githubusercontent.com/10011941/55313009-14de7a00-5467-11e9-887e-781d7b4dc025.png" /></a>
 <p>Shooting particles to a attractors field.</p>
-<img alt="shooting partcles_pulga_physics_procedural_design.PNG" src="https://user-images.githubusercontent.com/10011941/56082940-2b011880-5e1f-11e9-8124-90da02ab7cf5.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/10011941/56082940-2b011880-5e1f-11e9-8124-90da02ab7cf5.png"><img alt="https://user-images.githubusercontent.com/10011941/56082940-2b011880-5e1f-11e9-8124-90da02ab7cf5.png" src="https://user-images.githubusercontent.com/10011941/56082940-2b011880-5e1f-11e9-8124-90da02ab7cf5.png" /></a>
 <p>The “Pins Reactions” output supply the resultant force on the pins. It can be use to model auxiliary structures.</p>
-<img alt="pin_reactions_pulga_physics_procedural_design.png" src="https://user-images.githubusercontent.com/10011941/56082950-479d5080-5e1f-11e9-87ed-19b9247c07b5.png" />
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/10011941/56082950-479d5080-5e1f-11e9-87ed-19b9247c07b5.png"><img alt="https://user-images.githubusercontent.com/10011941/56082950-479d5080-5e1f-11e9-87ed-19b9247c07b5.png" src="https://user-images.githubusercontent.com/10011941/56082950-479d5080-5e1f-11e9-87ed-19b9247c07b5.png" /></a>
 </section>
 <section id="notes">
 <h2>Notes<a class="headerlink" href="#notes" title="Permalink to this heading">¶</a></h2>

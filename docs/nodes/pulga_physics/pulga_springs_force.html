@@ -144,23 +144,87 @@
              
   <section id="pulga-springs-force">
 <h1>Pulga Springs Force<a class="headerlink" href="#pulga-springs-force" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/f26739ab-e00d-4f19-8f59-c050f68a9e6b"><img alt="https://github.com/nortikin/sverchok/assets/14288520/f26739ab-e00d-4f19-8f59-c050f68a9e6b" src="https://github.com/nortikin/sverchok/assets/14288520/f26739ab-e00d-4f19-8f59-c050f68a9e6b" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
-<p>This node creates a force to be applied with the Pulga Physics Solver node.</p>
+<p>This node creates a force to be applied with the [<a class="reference internal" href="pulga_physics_solver.html"><span class="doc">Pulga Physics-&gt;Pulga Physics Solver</span></a>] node.</p>
 <p>The springs are defined as edges indices.</p>
 <p>The force direction the direction of the edge.</p>
 <p>The force magnitude will be:  (Spring Length - Spring Rest Length) * Stiffness</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/27685dc7-d85c-4101-a4b8-4d26f3285ebc"><img alt="https://github.com/nortikin/sverchok/assets/14288520/27685dc7-d85c-4101-a4b8-4d26f3285ebc" src="https://github.com/nortikin/sverchok/assets/14288520/27685dc7-d85c-4101-a4b8-4d26f3285ebc" /></a>
 </section>
 <section id="input">
 <h2>Input<a class="headerlink" href="#input" title="Permalink to this heading">¶</a></h2>
-<p><strong>Springs</strong>: Edges Indices referring to the particle system vertices.</p>
-<p><strong>Stiffness</strong>: Stiffness of the springs, if multiple values are given the will be use as stiffness per spring.</p>
-<p><strong>Rest Length</strong>: Springs rest length, if set to 0 the rest length will be calculated from the initial position.</p>
-<p><strong>Clamp</strong>: Constrain maximum difference each iteration. If set to 0 no clap will be applied</p>
+<ul>
+<li><p><strong>Springs</strong>: Edges Indices referring to the particle system vertices.</p></li>
+<li><p><strong>Stiffness</strong>: Stiffness of the springs, if multiple values are given the will be use as stiffness per spring.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/353b8c64-0a3c-4dde-aa99-2ee2bafd1f17"><img alt="https://github.com/nortikin/sverchok/assets/14288520/353b8c64-0a3c-4dde-aa99-2ee2bafd1f17" src="https://github.com/nortikin/sverchok/assets/14288520/353b8c64-0a3c-4dde-aa99-2ee2bafd1f17" /></a>
+</div></blockquote>
+</li>
+<li><p><strong>Rest Length</strong>: Springs rest length, if set to 0 the rest length will be calculated from the initial position.</p></li>
+<li><p><strong>Clamp</strong>: Constrain maximum difference each iteration. If set to 0 no clap will be applied</p></li>
+</ul>
 </section>
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
-<img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/pulga_physics/pulga_springs_force/blender_sverchok_pulga_springs_force_example_01.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/pulga_physics/pulga_springs_force/blender_sverchok_pulga_springs_force_example_01.png" />
+<p>Example in description:</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/e8c76f03-518a-458d-a2d5-3f7edf8ffb77"><img alt="https://github.com/nortikin/sverchok/assets/14288520/e8c76f03-518a-458d-a2d5-3f7edf8ffb77" src="https://github.com/nortikin/sverchok/assets/14288520/e8c76f03-518a-458d-a2d5-3f7edf8ffb77" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/cylinder_mk2.html"><span class="doc">Cylinder</span></a></p></li>
+<li><p>Spatial-&gt; <a class="reference internal" href="../spatial/random_points_on_mesh.html"><span class="doc">Populate Mesh</span></a></p></li>
+<li><p>Spatial-&gt; <a class="reference internal" href="../spatial/voronoi_on_mesh.html"><span class="doc">Voronoi on Mesh</span></a></p></li>
+<li><p>Modifiers-&gt;Modifier Change-&gt; <a class="reference internal" href="../modifier_change/mesh_join_mk2.html"><span class="doc">Mesh Join</span></a></p></li>
+<li><p>Modifiers-&gt;Modifier Change-&gt; <a class="reference internal" href="../modifier_change/merge_by_distance.html"><span class="doc">Merge by Distance</span></a></p></li>
+<li><p>Analyzers-&gt;Component Analyzer <strong>Vertices-&gt;Sharpness</strong>: <a class="reference internal" href="../analyzer/component_analyzer.html#vertices-sharpness"><span class="std std-ref">Vertices Sharpness</span></a></p></li>
+<li><p>Analyzers-&gt;Component Analyzer <strong>Vertices-&gt;Is Boundary</strong>: <a class="reference internal" href="../analyzer/component_analyzer.html#vertices-is-boundary"><span class="std std-ref">Vertices Is Boundary</span></a></p></li>
+<li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/zip.html"><span class="doc">List Zip</span></a></p></li>
+<li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/func.html"><span class="doc">List Math</span></a></p></li>
+<li><p>List-&gt; <a class="reference internal" href="../list_masks/mask.html"><span class="doc">List Mask (Out)</span></a></p></li>
+<li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/length.html"><span class="doc">List Length</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_struct/repeater.html"><span class="doc">List Repeater</span></a></p></li>
+<li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/zip.html"><span class="doc">List Zip</span></a></p></li>
+<li><p>BIG_EQ: Logic-&gt; <a class="reference internal" href="../logic/logic_node.html"><span class="doc">Logic Functions</span></a></p></li>
+<li><p>Logic-&gt; <a class="reference internal" href="../logic/switch_MK2.html"><span class="doc">Switch</span></a></p></li>
+<li><p>Color-&gt; <a class="reference internal" href="../color/color_input.html"><span class="doc">Color Input</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_physics_solver.html"><span class="doc">Pulga Physics Solver</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_pin_force.html"><span class="doc">Pulga Pin Force</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_drag_force.html"><span class="doc">Pulga Drag Force</span></a></p></li>
+</ul>
+<p>Example with Cylinder:</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/3f80e648-2000-40ee-b87b-f064f476ba56"><img alt="https://github.com/nortikin/sverchok/assets/14288520/3f80e648-2000-40ee-b87b-f064f476ba56" src="https://github.com/nortikin/sverchok/assets/14288520/3f80e648-2000-40ee-b87b-f064f476ba56" /></a>
+<p>Example with Torus:</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/5c5f48fd-f612-4f8f-924a-85f0d0c9ada2"><img alt="https://github.com/nortikin/sverchok/assets/14288520/5c5f48fd-f612-4f8f-924a-85f0d0c9ada2" src="https://github.com/nortikin/sverchok/assets/14288520/5c5f48fd-f612-4f8f-924a-85f0d0c9ada2" /></a>
+<hr class="docutils" />
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/ca855c7e-d4c1-4ebb-b7bf-e087d5da2e30"><img alt="https://github.com/nortikin/sverchok/assets/14288520/ca855c7e-d4c1-4ebb-b7bf-e087d5da2e30" src="https://github.com/nortikin/sverchok/assets/14288520/ca855c7e-d4c1-4ebb-b7bf-e087d5da2e30" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Analyzers-&gt;Component Analyzer: <a class="reference internal" href="../analyzer/component_analyzer.html#vertices-adjacent-edges-num"><span class="std std-ref">Adjacent Edges num</span></a></p></li>
+<li><p>Logic-&gt; <a class="reference internal" href="../logic/logic_node.html"><span class="doc">Logic Functions</span></a></p></li>
+<li><p>List-&gt; <a class="reference internal" href="../list_masks/mask_to_index.html"><span class="doc">Mask To Index</span></a></p></li>
+<li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/join.html"><span class="doc">List Join</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_physics_solver.html"><span class="doc">Pulga Physics Solver</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_vector_force.html"><span class="doc">Pulga Vector Force</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_pin_force.html"><span class="doc">Pulga Pin Force</span></a></p></li>
+</ul>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/fa53b414-91e1-49b3-bfca-c46c49c72f83"><img alt="https://github.com/nortikin/sverchok/assets/14288520/fa53b414-91e1-49b3-bfca-c46c49c72f83" src="https://github.com/nortikin/sverchok/assets/14288520/fa53b414-91e1-49b3-bfca-c46c49c72f83" /></a>
+<hr class="docutils" />
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/b6725122-effc-4338-ba2e-9937b9396ff9"><img alt="https://github.com/nortikin/sverchok/assets/14288520/b6725122-effc-4338-ba2e-9937b9396ff9" src="https://github.com/nortikin/sverchok/assets/14288520/b6725122-effc-4338-ba2e-9937b9396ff9" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
+<li><p>Analyzers-&gt;Component Analyzer <strong>Vertices-&gt;Sharpness</strong>: <a class="reference internal" href="../analyzer/component_analyzer.html#vertices-sharpness"><span class="std std-ref">Vertices Sharpness</span></a></p></li>
+<li><p>Fields-&gt; <a class="reference internal" href="../field/attractor_field_mk2.html"><span class="doc">Attractor Field</span></a></p></li>
+<li><p>List-&gt; <a class="reference internal" href="../list_masks/mask_to_index.html"><span class="doc">Mask To Index</span></a></p></li>
+<li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/join.html"><span class="doc">List Join</span></a></p></li>
+<li><p>Logic-&gt; <a class="reference internal" href="../logic/logic_node.html"><span class="doc">Logic Functions</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_physics_solver.html"><span class="doc">Pulga Physics Solver</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_vector_force.html"><span class="doc">Pulga Vector Force</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_pin_force.html"><span class="doc">Pulga Pin Force</span></a></p></li>
+</ul>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/16dd65d0-b235-4a76-aa14-69cc6aff0273"><img alt="https://github.com/nortikin/sverchok/assets/14288520/16dd65d0-b235-4a76-aa14-69cc6aff0273" src="https://github.com/nortikin/sverchok/assets/14288520/16dd65d0-b235-4a76-aa14-69cc6aff0273" /></a>
 </section>
 </section>
 

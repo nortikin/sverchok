@@ -144,6 +144,7 @@
              
   <section id="pulga-boundaries-force">
 <h1>Pulga Boundaries Force<a class="headerlink" href="#pulga-boundaries-force" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/952405a8-ad93-4310-84a9-a90913080d2f"><img alt="https://github.com/nortikin/sverchok/assets/14288520/952405a8-ad93-4310-84a9-a90913080d2f" src="https://github.com/nortikin/sverchok/assets/14288520/952405a8-ad93-4310-84a9-a90913080d2f" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node creates a force to be applied with the Pulga Physics Solver node.</p>
@@ -151,43 +152,162 @@
 </section>
 <section id="options-inputs">
 <h2>Options &amp; Inputs<a class="headerlink" href="#options-inputs" title="Permalink to this heading">¶</a></h2>
+<p>Scheme for options:</p>
 <p><strong>Mode</strong>: Defines how boundaries are defined.</p>
 <ul>
-<li><p>Box: Given a list of vertices it will calculate their bounding box and use it as limit of the simulation</p>
+<li><p><strong>Box</strong>: Given a list of vertices it will calculate their bounding box and use it as limit of the simulation</p>
 <p>Inputs: Vertices (Bounding Box)</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/1d611b74-e8e4-4f54-878c-06991d3fe955"><img alt="https://github.com/nortikin/sverchok/assets/14288520/1d611b74-e8e4-4f54-878c-06991d3fe955" src="https://github.com/nortikin/sverchok/assets/14288520/1d611b74-e8e4-4f54-878c-06991d3fe955" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/random_vector_mk3.html"><span class="doc">Random Vector</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/icosphere.html"><span class="doc">IcoSphere</span></a></p></li>
+<li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/join.html"><span class="doc">List Join</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_physics_solver.html"><span class="doc">Pulga Physics Solver</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_collision_force.html"><span class="doc">Pulga Collision Force</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_drag_force.html"><span class="doc">Pulga Drag Force</span></a></p></li>
+</ul>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/fd7bf5e5-0fc9-48c9-8492-ff64b6ac4c61"><img alt="https://github.com/nortikin/sverchok/assets/14288520/fd7bf5e5-0fc9-48c9-8492-ff64b6ac4c61" src="https://github.com/nortikin/sverchok/assets/14288520/fd7bf5e5-0fc9-48c9-8492-ff64b6ac4c61" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/ae5e14ba-5f32-4c0f-8b3f-96d4cc39f04d"><img alt="https://github.com/nortikin/sverchok/assets/14288520/ae5e14ba-5f32-4c0f-8b3f-96d4cc39f04d" src="https://github.com/nortikin/sverchok/assets/14288520/ae5e14ba-5f32-4c0f-8b3f-96d4cc39f04d" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/ef2353c4-d7c8-4bb4-9b95-fff64fad2e28"><img alt="https://github.com/nortikin/sverchok/assets/14288520/ef2353c4-d7c8-4bb4-9b95-fff64fad2e28" src="https://github.com/nortikin/sverchok/assets/14288520/ef2353c4-d7c8-4bb4-9b95-fff64fad2e28" /></a>
+</div></blockquote>
 </li>
-<li><p>Sphere: Run the simulation into a spherical space.</p>
+<li><p><strong>Sphere</strong>: Run the simulation into a spherical space.</p>
 <p>Inputs: Center and radius</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/410adf33-3c7b-47d0-943e-2af24a93615c"><img alt="https://github.com/nortikin/sverchok/assets/14288520/410adf33-3c7b-47d0-943e-2af24a93615c" src="https://github.com/nortikin/sverchok/assets/14288520/410adf33-3c7b-47d0-943e-2af24a93615c" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/icosphere.html"><span class="doc">IcoSphere</span></a></p></li>
+<li><p>Transform-&gt; <a class="reference internal" href="../transforms/randomize.html"><span class="doc">Randomize</span></a></p></li>
+<li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/join.html"><span class="doc">List Join</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_physics_solver.html"><span class="doc">Pulga Physics Solver</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_collision_force.html"><span class="doc">Pulga Collision Force</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_drag_force.html"><span class="doc">Pulga Drag Force</span></a></p></li>
+</ul>
+</div></blockquote>
+<p>if source points inside sphere then result spread over volume of sphere:</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/2a1c7f8d-b9af-43c0-adeb-fd91455b2b29"><img alt="https://github.com/nortikin/sverchok/assets/14288520/2a1c7f8d-b9af-43c0-adeb-fd91455b2b29" src="https://github.com/nortikin/sverchok/assets/14288520/2a1c7f8d-b9af-43c0-adeb-fd91455b2b29" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/854a3a7c-8c11-4655-ac05-c8ddb989dcc5"><img alt="https://github.com/nortikin/sverchok/assets/14288520/854a3a7c-8c11-4655-ac05-c8ddb989dcc5" src="https://github.com/nortikin/sverchok/assets/14288520/854a3a7c-8c11-4655-ac05-c8ddb989dcc5" /></a>
+</div></blockquote>
+<p>Points out of a boundary sphere try occupy nearest surface. Points inside boundary sphere try occupy volume of boundary sphere:</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/c2653d81-85e6-4e89-9b99-af982017e987"><img alt="https://github.com/nortikin/sverchok/assets/14288520/c2653d81-85e6-4e89-9b99-af982017e987" src="https://github.com/nortikin/sverchok/assets/14288520/c2653d81-85e6-4e89-9b99-af982017e987" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/icosphere.html"><span class="doc">IcoSphere</span></a></p></li>
+<li><p>Transform-&gt; <a class="reference internal" href="../transforms/randomize.html"><span class="doc">Randomize</span></a></p></li>
+<li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/join.html"><span class="doc">List Join</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_physics_solver.html"><span class="doc">Pulga Physics Solver</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_collision_force.html"><span class="doc">Pulga Collision Force</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_drag_force.html"><span class="doc">Pulga Drag Force</span></a></p></li>
+</ul>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/2d01169c-91c2-47e9-b59b-7f56232df131"><img alt="https://github.com/nortikin/sverchok/assets/14288520/2d01169c-91c2-47e9-b59b-7f56232df131" src="https://github.com/nortikin/sverchok/assets/14288520/2d01169c-91c2-47e9-b59b-7f56232df131" /></a>
+</div></blockquote>
 </li>
-<li><p>Sphere (Surface): Run the simulation into a spherical surface</p>
+<li><p><strong>Sphere (Surface)</strong>: Run the simulation into a spherical surface</p>
 <p>Inputs: Center and radius</p>
+<p>Like boundary <strong>Sphere</strong> but spread only on surface of boundary sphere:</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/31ff3637-d9b8-49a0-b771-ece6b266efd5"><img alt="https://github.com/nortikin/sverchok/assets/14288520/31ff3637-d9b8-49a0-b771-ece6b266efd5" src="https://github.com/nortikin/sverchok/assets/14288520/31ff3637-d9b8-49a0-b771-ece6b266efd5" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/icosphere.html"><span class="doc">IcoSphere</span></a></p></li>
+<li><p>Transform-&gt; <a class="reference internal" href="../transforms/randomize.html"><span class="doc">Randomize</span></a></p></li>
+<li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/join.html"><span class="doc">List Join</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_physics_solver.html"><span class="doc">Pulga Physics Solver</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_collision_force.html"><span class="doc">Pulga Collision Force</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_drag_force.html"><span class="doc">Pulga Drag Force</span></a></p></li>
+</ul>
+</div></blockquote>
 </li>
-<li><p>Plane: Run the simulation into a defined plane</p>
+<li><p><strong>Plane</strong>: Run the simulation into a defined plane</p>
 <p>Inputs: Center and Normal</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/14e61808-7c30-4a77-bb0f-f1fbd0005073"><img alt="https://github.com/nortikin/sverchok/assets/14288520/14e61808-7c30-4a77-bb0f-f1fbd0005073" src="https://github.com/nortikin/sverchok/assets/14288520/14e61808-7c30-4a77-bb0f-f1fbd0005073" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/icosphere.html"><span class="doc">IcoSphere</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/random_vector_mk3.html"><span class="doc">Random Vector</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/join.html"><span class="doc">List Join</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_physics_solver.html"><span class="doc">Pulga Physics Solver</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_collision_force.html"><span class="doc">Pulga Collision Force</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_drag_force.html"><span class="doc">Pulga Drag Force</span></a></p></li>
+</ul>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/679a2d88-e659-4281-946f-3d2651f31e5e"><img alt="https://github.com/nortikin/sverchok/assets/14288520/679a2d88-e659-4281-946f-3d2651f31e5e" src="https://github.com/nortikin/sverchok/assets/14288520/679a2d88-e659-4281-946f-3d2651f31e5e" /></a>
+</div></blockquote>
 </li>
-<li><p>Mesh (Surface): Run simulation in the surface of a mesh</p>
+<li><p><strong>Mesh</strong> (Surface): Run simulation in the surface of a mesh</p>
 <p>Inputs: Vertices and Polygons</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/8f2019ac-d819-467b-8fdc-3587373473c9"><img alt="https://github.com/nortikin/sverchok/assets/14288520/8f2019ac-d819-467b-8fdc-3587373473c9" src="https://github.com/nortikin/sverchok/assets/14288520/8f2019ac-d819-467b-8fdc-3587373473c9" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/torus_mk2.html"><span class="doc">Torus</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/random_vector_mk3.html"><span class="doc">Random Vector</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/join.html"><span class="doc">List Join</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_physics_solver.html"><span class="doc">Pulga Physics Solver</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_collision_force.html"><span class="doc">Pulga Collision Force</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_drag_force.html"><span class="doc">Pulga Drag Force</span></a></p></li>
+</ul>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/28f12c4a-cfa6-42d8-92f3-a76f19c53b55"><img alt="https://github.com/nortikin/sverchok/assets/14288520/28f12c4a-cfa6-42d8-92f3-a76f19c53b55" src="https://github.com/nortikin/sverchok/assets/14288520/28f12c4a-cfa6-42d8-92f3-a76f19c53b55" /></a>
+</div></blockquote>
 </li>
-<li><p>Mesh (Volume): Run the simulation inside a mesh</p>
+<li><p><strong>Mesh (Volume)</strong>: Run the simulation inside a mesh</p>
 <p>Inputs: Vertices and Polygons</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/4925a438-e77c-4721-8299-b25ea3cc54f0"><img alt="https://github.com/nortikin/sverchok/assets/14288520/4925a438-e77c-4721-8299-b25ea3cc54f0" src="https://github.com/nortikin/sverchok/assets/14288520/4925a438-e77c-4721-8299-b25ea3cc54f0" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/torus_mk2.html"><span class="doc">Torus</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/random_vector_mk3.html"><span class="doc">Random Vector</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/join.html"><span class="doc">List Join</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_physics_solver.html"><span class="doc">Pulga Physics Solver</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_collision_force.html"><span class="doc">Pulga Collision Force</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_drag_force.html"><span class="doc">Pulga Drag Force</span></a></p></li>
+</ul>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/0f0a0ddb-688e-4c17-a108-9a7572713f04"><img alt="https://github.com/nortikin/sverchok/assets/14288520/0f0a0ddb-688e-4c17-a108-9a7572713f04" src="https://github.com/nortikin/sverchok/assets/14288520/0f0a0ddb-688e-4c17-a108-9a7572713f04" /></a>
+</div></blockquote>
 </li>
-<li><p>Solid (Surface): Run simulation in the surface of a solid (requires _FreeCAD)</p>
+<li><p><strong>Solid (Surface)</strong>: Run simulation in the surface of a solid (requires _FreeCAD)</p>
 <p>Inputs: Solid</p>
 </li>
-<li><p>Solid (Volume): Run the simulation inside a solid (requires _FreeCAD)</p>
+<li><p><strong>Solid (Volume)</strong>: Run the simulation inside a solid (requires _FreeCAD)</p>
 <p>Inputs: Solid</p>
 </li>
-<li><p>Solid Face: Run the simulation the surface of a solid face (requires _FreeCAD)</p>
+<li><p><strong>Solid Face</strong>: Run the simulation the surface of a solid face (requires _FreeCAD)</p>
 <p>Inputs: Solid Face</p>
 </li>
 </ul>
 </section>
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
-<p>Performing simulation in the surface of a torus:</p>
-<img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/pulga_physics/pulga_boundaries_force/blender_sverchok_pulga_boundaries_force_example_01.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/pulga_physics/pulga_boundaries_force/blender_sverchok_pulga_boundaries_force_example_01.png" />
-<p>Performing simulation in the surface of a plane and inside a bounding box:</p>
-<img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/pulga_physics/pulga_boundaries_force/blender_sverchok_pulga_boundaries_force_example_02.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/pulga_physics/pulga_boundaries_force/blender_sverchok_pulga_boundaries_force_example_02.png" />
+<p>Performing simulation in the surface of a plane and inside a mesh:</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/d0e52c78-8d4b-4514-ae67-0f9e2f4c6dc0"><img alt="https://github.com/nortikin/sverchok/assets/14288520/d0e52c78-8d4b-4514-ae67-0f9e2f4c6dc0" src="https://github.com/nortikin/sverchok/assets/14288520/d0e52c78-8d4b-4514-ae67-0f9e2f4c6dc0" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/icosphere.html"><span class="doc">IcoSphere</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/random_vector_mk3.html"><span class="doc">Random Vector</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="../surface/plane.html"><span class="doc">Plane (Surface)</span></a></p></li>
+<li><p>Surfaces-&gt; <a class="reference internal" href="../surface/evaluate_surface.html"><span class="doc">Evaluate Surface</span></a></p></li>
+<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_in.html"><span class="doc">Vector In</span></a></p></li>
+<li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/join.html"><span class="doc">List Join</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_physics_solver.html"><span class="doc">Pulga Physics Solver</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_collision_force.html"><span class="doc">Pulga Collision Force</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_drag_force.html"><span class="doc">Pulga Drag Force</span></a></p></li>
+</ul>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/52bc7f13-5ac3-4426-baa4-5851a1d6e322"><img alt="https://github.com/nortikin/sverchok/assets/14288520/52bc7f13-5ac3-4426-baa4-5851a1d6e322" src="https://github.com/nortikin/sverchok/assets/14288520/52bc7f13-5ac3-4426-baa4-5851a1d6e322" /></a>
 </section>
 </section>
 

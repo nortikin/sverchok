@@ -144,21 +144,51 @@
              
   <section id="pulga-timed-force">
 <h1>Pulga Timed Force<a class="headerlink" href="#pulga-timed-force" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/9805d1e5-4d87-446a-aba1-4e01fde2f4bd"><img alt="https://github.com/nortikin/sverchok/assets/14288520/9805d1e5-4d87-446a-aba1-4e01fde2f4bd" src="https://github.com/nortikin/sverchok/assets/14288520/9805d1e5-4d87-446a-aba1-4e01fde2f4bd" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
 <p>This node creates a force to be applied with the Pulga Physics Solver node.
 The inputted force will only be applied between the defined iterations range.</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/abd5e0f4-aa64-4031-9b69-52297e705eff"><img alt="https://github.com/nortikin/sverchok/assets/14288520/abd5e0f4-aa64-4031-9b69-52297e705eff" src="https://github.com/nortikin/sverchok/assets/14288520/abd5e0f4-aa64-4031-9b69-52297e705eff" /></a>
 </section>
 <section id="input">
 <h2>Input<a class="headerlink" href="#input" title="Permalink to this heading">¶</a></h2>
-<p><strong>Force</strong>: Force to apply the time restriction to.</p>
-<p><strong>Start</strong>: Start iteration when the force will be applied.</p>
-<p><strong>End</strong>: End iteration when the force will stop being applied.</p>
+<ul class="simple">
+<li><p><strong>Force</strong>: Force to apply the time restriction to.</p></li>
+<li><p><strong>Start</strong>: Start iteration when the force will be applied.</p></li>
+<li><p><strong>End</strong>: End iteration when the force will stop being applied.</p></li>
+</ul>
 </section>
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
-<p>In the following example a Random force will be applied on the first 50 iterations, after a Fit force will be applied.</p>
-<img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/pulga_physics/pulga_timed_force/blender_sverchok_pulga_timed_force_example.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/pulga_physics/pulga_timed_force/blender_sverchok_pulga_timed_force_example.png" />
+<p>Example of description:</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/4e729e08-2c52-44da-85fe-87c0081a858b"><img alt="https://github.com/nortikin/sverchok/assets/14288520/4e729e08-2c52-44da-85fe-87c0081a858b" src="https://github.com/nortikin/sverchok/assets/14288520/4e729e08-2c52-44da-85fe-87c0081a858b" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/segment.html"><span class="doc">Segment</span></a></p></li>
+<li><p>Fields-&gt; <a class="reference internal" href="../field/rotation_field.html"><span class="doc">Rotation Field</span></a></p></li>
+<li><p>Modifiers-&gt;Modifier Make-&gt; <a class="reference internal" href="../modifier_make/uv_connect.html"><span class="doc">UV Connection</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
+<li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/join.html"><span class="doc">List Join</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Scene-&gt; <a class="reference internal" href="../scene/frame_info_mk2.html"><span class="doc">Frame Info</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_physics_solver.html"><span class="doc">Pulga Physics Solver</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_vector_force.html"><span class="doc">Pulga Vector Force</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_random_force.html"><span class="doc">Pulga Random Force</span></a></p></li>
+</ul>
+<hr class="docutils" />
+<p>In the following example a <a class="reference internal" href="pulga_random_force.html"><span class="doc">Random Force</span></a> will be applied on the first 50 iterations, after a <a class="reference internal" href="pulga_fit_force.html"><span class="doc">Fit Force</span></a> will be applied.</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/0ec9a10d-59e9-4dde-a52e-d4e885913db5"><img alt="https://github.com/nortikin/sverchok/assets/14288520/0ec9a10d-59e9-4dde-a52e-d4e885913db5" src="https://github.com/nortikin/sverchok/assets/14288520/0ec9a10d-59e9-4dde-a52e-d4e885913db5" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/icosphere.html"><span class="doc">IcoSphere</span></a></p></li>
+<li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/join.html"><span class="doc">List Join</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Scene-&gt; <a class="reference internal" href="../scene/frame_info_mk2.html"><span class="doc">Frame Info</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_physics_solver.html"><span class="doc">Pulga Physics Solver</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_random_force.html"><span class="doc">Pulga Random Force</span></a></p></li>
+<li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_fit_force.html"><span class="doc">Pulga Fit Force</span></a></p></li>
+</ul>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/f9d0587b-42bc-4afe-bbc4-11300a9bda03"><img alt="https://github.com/nortikin/sverchok/assets/14288520/f9d0587b-42bc-4afe-bbc4-11300a9bda03" src="https://github.com/nortikin/sverchok/assets/14288520/f9d0587b-42bc-4afe-bbc4-11300a9bda03" /></a>
 </section>
 </section>
 
