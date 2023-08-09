@@ -39,7 +39,7 @@ class SvPulgaDragForceNode(SverchCustomTreeNode, bpy.types.Node):
         name='Magnitude', description='Drag Force Constant',
         default=0.5, precision=3, update=updateNode)
 
-    exponent: FloatProperty(name='Exponent', description='Velocity exponent (2 = accurate)', default=1.0, update=updateNode)
+    exponent: FloatProperty(name='Exponent', description='Velocity exponent (2 = accurate, Liquid)', default=1.0, update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', "Magnitude").prop_name = 'magnitude'

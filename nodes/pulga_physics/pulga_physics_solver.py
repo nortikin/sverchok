@@ -36,7 +36,7 @@ class SvPulgaPhysicsSolverNode(SverchCustomTreeNode, bpy.types.Node):
     is_animation_dependent = True
 
     iterations: IntProperty(
-        name='Iterations', description='Number of Iterations',
+        name='Iterations', description='Number of iterations of the process',
         default=1, min=1, update=updateNode)
 
     rads_in: FloatProperty(
@@ -44,7 +44,7 @@ class SvPulgaPhysicsSolverNode(SverchCustomTreeNode, bpy.types.Node):
         default=1.0, update=updateNode)
 
     initial_vel: FloatVectorProperty(
-        name='Initial Velocity', description='Initial Velocity',
+        name='Initial Velocity', description='Initial vertices velocity',
         size=3, default=(0., 0., 0.),
         precision=3, update=updateNode)
 
@@ -54,7 +54,7 @@ class SvPulgaPhysicsSolverNode(SverchCustomTreeNode, bpy.types.Node):
 
 
     density: FloatProperty(
-        name='Density', description='Density',
+        name='Density', description='Particles Density',
         default=1, update=updateNode)
 
 
