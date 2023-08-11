@@ -164,7 +164,7 @@ class SvVoronoiOnSolidNode(SverchCustomTreeNode, bpy.types.Node):
                     src = solid
 
                 if need_inner:
-                    inner = [src.common(fragment) for fragment in fragments]
+                    inner = [src.common(fragments)]
                     if self.flat_output:
                         new_inner_fragments.extend(inner)
                     else:
