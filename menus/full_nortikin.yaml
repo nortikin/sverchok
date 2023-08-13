@@ -384,7 +384,7 @@
     - SvExVoronoiSphereNode
     - SvVoronoiOnSurfaceNode
     - SvVoronoiOnMeshNode
-    - SvVoronoiOnSolidNode
+    - SvVoronoiOnSolidNodeMK2
     - ---
     - SvLloyd2dNode
     - SvLloyd3dNode
