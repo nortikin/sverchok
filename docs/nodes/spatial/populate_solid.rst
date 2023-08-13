@@ -231,5 +231,5 @@ Example of "Radius Field" mode usage:
 * Generator-> :doc:`IcoSphere </nodes/generator/icosphere>`
 * Fields-> :doc:`Scalar Field Formula </nodes/field/scalar_field_formula>`
 * Solids-> :doc:`Cylinder (Solid) </nodes/solid/cylinder_solid>`
-* Solids-> :doc:`Voronoi on Solid </nodes/spatial/voronoi_on_solid>`
+* Solids-> :doc:`Voronoi on Solid </nodes/spatial/voronoi_on_solid_mk2>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
