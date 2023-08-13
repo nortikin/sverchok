@@ -102,6 +102,48 @@ This node has the following outputs:
 * **Edges**. Edges of generated mesh.
 * **Faces**. Faces of generated mesh.
 
+Addition info
+-------------
+
+From version of sverchok 1.3.0-alpha sites can be any configurations: Line, Plane, Circle, Sphere
+
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/20df452e-be1e-47b2-acda-f2b7a1a8553e
+  :target: https://github.com/nortikin/sverchok/assets/14288520/20df452e-be1e-47b2-acda-f2b7a1a8553e
+
+* Generator-> :doc:`Plane </nodes/generator/plane_mk3>`
+* Generator-> :doc:`Line </nodes/generator/line_mk4>`
+* Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+
+--------
+
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/22ab225c-a8b5-4596-bee1-85a6412c8bb1
+  :target: https://github.com/nortikin/sverchok/assets/14288520/22ab225c-a8b5-4596-bee1-85a6412c8bb1
+
+* Generator-> :doc:`Plane </nodes/generator/plane_mk3>`
+* Generator-> :doc:`Cylinder </nodes/generator/cylinder_mk2>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+
+--------
+
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/8fa05903-0244-441a-87a3-aa42415e6b30
+  :target: https://github.com/nortikin/sverchok/assets/14288520/8fa05903-0244-441a-87a3-aa42415e6b30
+
+* Generator-> :doc:`NGon </nodes/generator/ngon>`
+* Generator-> :doc:`Cylinder </nodes/generator/cylinder_mk2>`
+* Transform-> :doc:`Rotate </nodes/transforms/rotate_mk3>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+
+--------
+
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/27e4c0a4-e56d-4f4f-9db5-04a92c0c7180
+  :target: https://github.com/nortikin/sverchok/assets/14288520/27e4c0a4-e56d-4f4f-9db5-04a92c0c7180
+
+* Generator-> :doc:`Cylinder </nodes/generator/cylinder_mk2>`
+* Generator-> :doc:`IcoSphere </nodes/generator/icosphere>`
+* Transform-> :doc:`Rotate </nodes/transforms/rotate_mk3>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+
 Example of usage
 ----------------
 
@@ -114,3 +156,8 @@ Example of usage
 * Modifiers->Modifier Make-> :doc:`Subdivide </nodes/modifier_change/subdivide_mk2>`
 * Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+
+See also example
+----------------
+
+* Pulga Physics-> :ref:`Pulga Springs Force <PULGA_SPRINGS_FORCE_EXAMPLES>`
