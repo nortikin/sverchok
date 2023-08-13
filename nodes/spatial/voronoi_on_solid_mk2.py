@@ -24,7 +24,6 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level,\
     ensure_min_nesting, repeat_last_for_length
 from sverchok.utils.voronoi3d import voronoi_on_mesh_bmesh
-from sverchok.utils.geom import scale_relative, center, diameter
 from sverchok.utils.solid import BMESH, svmesh_to_solid
 from sverchok.dependencies import FreeCAD
 
@@ -67,18 +66,6 @@ class SvVoronoiOnSolidNodeMK2(SverchCustomTreeNode, bpy.types.Node):
         description="Distance to leave between generated Voronoi regions",
         update = updateNode)
 
-    scale_types = [
-            ('SITE', "Site", "Scale each region relative to corresponding site location", 0),
-            ('MEAN', "Barycenter", "Scale each region relative to it's barycenter, i.e. average location of it's vertices", 1)
-        ]
-
-    scale_center : EnumProperty(
-            name = "Scale around",
-            description = "Defines the center, along which the regions of Voronoi diagram are to be scaled in order to make inset",
-            items = scale_types,
-            default = 'SITE',
-            update = updateNode)
-
     flat_output : BoolProperty(
         name = "Flat output",
         description = "If checked, output single flat list of fragments for all input solids; otherwise, output a separate list of fragments for each solid.",
@@ -98,25 +85,7 @@ class SvVoronoiOnSolidNodeMK2(SverchCustomTreeNode, bpy.types.Node):
 
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
-        layout.prop(self, 'scale_center')
         layout.prop(self, 'accuracy')
-
-    def scale_cells(self, verts, sites, insets, precision):
-        if all(i == 0.0 for i in insets):
-            return verts
-        verts_out = []
-        for vs, site, inset in zip(verts, sites, insets):
-            if inset >= 1.0:
-                continue
-            if self.scale_center == 'SITE':
-                c = site
-            else:
-                c = center(vs)
-            vs1 = scale_relative(vs, c, 1.0 - inset)
-            if diameter(vs1, axis=None) <= precision:
-                continue
-            verts_out.append(vs1)
-        return verts_out
 
     def process(self):
 
@@ -144,7 +113,6 @@ class SvVoronoiOnSolidNodeMK2(SverchCustomTreeNode, bpy.types.Node):
             new_inner_fragments = []
             new_outer_fragments = []
             for solid, sites, inset in zip_long_repeat(*params):
-                #verts, edges, faces = voronoi_on_solid(solid, sites, do_clip=True, clipping=None)
                 # see more info: https://github.com/nortikin/sverchok/pull/4977
                 box = solid.BoundBox
                 clipping = 1
@@ -152,13 +120,13 @@ class SvVoronoiOnSolidNodeMK2(SverchCustomTreeNode, bpy.types.Node):
                 y_min, y_max = box.YMin - clipping, box.YMax + clipping
                 z_min, z_max = box.ZMin - clipping, box.ZMax + clipping
                 bounds = list(itertools.product([x_min,x_max], [y_min, y_max], [z_min, z_max]))
-                verts, edges, faces = voronoi_on_mesh_bmesh(bounds, [ [0,1,3,2], [2,3,7,6], [6,7,5,4], [4,5,1,0], [2,6,4,0], [7,3,1,5] ], len(sites), sites, spacing=inset, mode='VOLUME' )
+                bounds_box_faces = [ [0,1,3,2], [2,3,7,6], [6,7,5,4], [4,5,1,0], [2,6,4,0], [7,3,1,5] ]  # cube's faces
+                verts, edges, faces = voronoi_on_mesh_bmesh(bounds, bounds_box_faces, len(sites), sites, spacing=inset, mode='VOLUME' )
 
                 if isinstance(inset, list):
                     inset = repeat_last_for_length(inset, len(sites))
                 else:
                     inset = [inset for i in range(len(sites))]
-                #verts = self.scale_cells(verts, sites, inset, precision)
                 fragments = [svmesh_to_solid(vs, fs, precision, method=BMESH, remove_splitter=False) for vs, fs in zip(verts, faces)]
 
                 if self.mode == 'SURFACE':
@@ -171,14 +139,18 @@ class SvVoronoiOnSolidNodeMK2(SverchCustomTreeNode, bpy.types.Node):
                     src = solid
 
                 if need_inner:
-                    inner = [src.common(fragments)]
+                    inner = [src]
+                    if fragments:
+                        inner = [src.common(fragments)]
                     if self.flat_output:
                         new_inner_fragments.extend(inner)
                     else:
                         new_inner_fragments.append(inner)
 
                 if need_outer:
-                    outer = [src.cut(fragments)]
+                    outer = [src]
+                    if fragments:
+                        outer = [src.cut(fragments)]
                     if self.flat_output:
                         new_outer_fragments.extend(outer)
                     else:
