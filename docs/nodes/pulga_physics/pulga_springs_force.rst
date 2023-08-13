@@ -30,6 +30,8 @@ Input
 * **Rest Length**: Springs rest length, if set to 0 the rest length will be calculated from the initial position.
 * **Clamp**: Constrain maximum difference each iteration. If set to 0 no clap will be applied
 
+.. _PULGA_SPRINGS_FORCE_EXAMPLES:
+
 Examples
 --------
 
