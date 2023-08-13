@@ -145,6 +145,7 @@ class SvVoronoiOnSolidNodeMK2(SverchCustomTreeNode, bpy.types.Node):
             new_outer_fragments = []
             for solid, sites, inset in zip_long_repeat(*params):
                 #verts, edges, faces = voronoi_on_solid(solid, sites, do_clip=True, clipping=None)
+                # see more info: https://github.com/nortikin/sverchok/pull/4977
                 box = solid.BoundBox
                 clipping = 1
                 x_min, x_max = box.XMin - clipping, box.XMax + clipping
