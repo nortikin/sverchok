@@ -418,7 +418,7 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, mode='
     bbox_aligned = bounding_box_aligned(verts)[0]
 
     start_mesh = bmesh_from_pydata(verts, [], faces, normal_update=False)
-    used_sites = []
+    used_sites_idx = []
     for site_idx in range(len(sites)):
         cell = cut_cell(start_mesh, sites_delaunay_params, site_idx, spacing[site_idx], center_of_mass, bbox_aligned)
         if cell is not None:
@@ -427,7 +427,7 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, mode='
                 verts_out.append(new_verts)
                 edges_out.append(new_edges)
                 faces_out.append(new_faces)
-                used_sites.append( sites[site_idx] )
+                used_sites_idx.append( site_idx )
     start_mesh.clear() # remember to clear empty geometry
     start_mesh.free()
     
@@ -437,7 +437,7 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, mode='
     # unb - unpredicted erased mesh (bbox_aligned cannot make predicted results)
     # sites - count of sites in process
     # print( f"bisects: {num_bisect: 4d}, unb={num_unpredicted_erased: 4d}, sites={len(sites)}")
-    return verts_out, edges_out, faces_out, used_sites
+    return verts_out, edges_out, faces_out, used_sites_idx
 
 def voronoi_on_mesh(verts, faces, sites, thickness,
     spacing = 0.0,
@@ -471,10 +471,10 @@ def voronoi_on_mesh(verts, faces, sites, thickness,
 
     else: # VOLUME, SURFACE
         all_points = sites[:]
-        verts, edges, faces, used_sites = voronoi_on_mesh_bmesh(verts, faces, len(sites), all_points,
+        verts, edges, faces, used_sites_idx = voronoi_on_mesh_bmesh(verts, faces, len(sites), all_points,
                 spacing = spacing, mode = mode, normal_update = normal_update,
                 precision = precision)
-        return verts, edges, faces, used_sites
+        return verts, edges, faces, used_sites_idx
 
 def project_solid_normals(shell, pts, thickness, add_plus=True, add_minus=True, predicate_plus=None, predicate_minus=None):
     k = 0.5*thickness
