@@ -23,6 +23,8 @@ if bpy.app.version >= (3, 5, 0):
     drawing.set_polygon_offset_amounts = pass
     drawing.enable_blendmode = pass 
     drawing.disable_blendmode = pass
+    drawing.new_buffer_texture = pass
+    drawing.bind_texture_2d = pass
 else:
     import bgl
     drawing.set_wireframe_line = lambda: bgl.glPolygonMode(bgl.GL_FRONT_AND_BACK, bgl.GL_LINE)
@@ -36,3 +38,22 @@ else:
     drawing.set_polygon_offset_amounts = lambda: bgl.glPolygonOffset(1.0, 1.0)
     drawing.enable_blendmode = lambda: bgl.glEnable(bgl.GL_BLEND)
     drawing.disable_blendmode = lambda: bgl.glDisable(bgl.GL_BLEND)
+    drawing.new_buffer_texture = lambda: bgl.Buffer(bgl.GL_INT, 1)
+    drawing.new_buffer_texture_sized = lambda size, data: bgl.Buffer(bgl.GL_FLOAT, size, data)
+    drawing.bind_texture_2d = lambda texture: bgl.glBindTexture(bgl.GL_TEXTURE_2D, texture)
+
+    def initialize_complex_texture(width, height, texname, texture, data, format):
+        if format == 'RGBA':
+            format = bgl.GL_RGBA
+        texture = drawing.new_buffer_texture_sized(bgl.GL_FLOAT, data.size, data.tolist())
+        bgl.glPixelStorei(bgl.GL_UNPACK_ALIGNMENT, 1)
+        bgl.glEnable(bgl.GL_TEXTURE_2D)
+        bgl.glBindTexture(bgl.GL_TEXTURE_2D, texname)
+        bgl.glActiveTexture(bgl.GL_TEXTURE0)
+        bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_WRAP_S, bgl.GL_CLAMP_TO_EDGE)
+        bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_WRAP_T, bgl.GL_CLAMP_TO_EDGE)
+        bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MAG_FILTER, bgl.GL_LINEAR)
+        bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MIN_FILTER, bgl.GL_LINEAR)
+        bgl.glTexImage2D(bgl.GL_TEXTURE_2D, 0, format, width, height, 0, format, bgl.GL_FLOAT, texture)        
+
+    drawing.init_complex_texture = initialize_complex_texture
