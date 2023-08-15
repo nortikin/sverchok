@@ -17,7 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-import bgl
+from sverchok.utils.modules.drawing_abstractions import drawing 
 
 
 SpaceView3D = bpy.types.SpaceView3D
@@ -62,9 +62,9 @@ def callback_disable_all():
 
 
 def restore_opengl_defaults():
-    bgl.glLineWidth(1)
-    bgl.glDisable(bgl.GL_BLEND)
-    bgl.glDisable(bgl.GL_DEPTH_TEST)
+    drawing.reset_line_width()
+    drawing.disable_blendmode()
+    drawing.disable_depth_test()
 
     # glIsEnabled with argument 
     # GL_POLYGON_OFFSET_FILL, 
@@ -80,7 +80,7 @@ def draw_callback_px(n_id, data):
     context = bpy.context
     drawing_func = data.get('custom_function')   # must accept 'context' first
     args = data.get('args', (None,))             # args does not need to be a tuple.
-    bgl.glEnable(bgl.GL_DEPTH_TEST)
+    drawing.enable_depth_test()
     drawing_func(context, args)
     restore_opengl_defaults()
 
