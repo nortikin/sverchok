@@ -1,8 +1,8 @@
 Voronoi on Solid
 ================
 
-.. image:: https://user-images.githubusercontent.com/14288520/202746548-02f2525f-f34b-44cf-9054-fd5ce9697ca6.png
-  :target: https://user-images.githubusercontent.com/14288520/202746548-02f2525f-f34b-44cf-9054-fd5ce9697ca6.png
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/d9691d7f-2d19-4ed5-a64b-b89ce488bbae
+  :target: https://github.com/nortikin/sverchok/assets/14288520/d9691d7f-2d19-4ed5-a64b-b89ce488bbae
 
 Dependencies
 ------------

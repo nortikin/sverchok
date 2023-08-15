@@ -153,7 +153,7 @@
              
   <section id="voronoi-on-mesh">
 <h1>Voronoi on Mesh<a class="headerlink" href="#voronoi-on-mesh" title="Permalink to this heading">¶</a></h1>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202569749-761acf3f-2cd4-46e2-9dd5-8ac5fa9c588c.png"><img alt="https://user-images.githubusercontent.com/14288520/202569749-761acf3f-2cd4-46e2-9dd5-8ac5fa9c588c.png" src="https://user-images.githubusercontent.com/14288520/202569749-761acf3f-2cd4-46e2-9dd5-8ac5fa9c588c.png" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/3782710e-2a14-4bea-a835-37ac6ff715b4"><img alt="https://github.com/nortikin/sverchok/assets/14288520/3782710e-2a14-4bea-a835-37ac6ff715b4" src="https://github.com/nortikin/sverchok/assets/14288520/3782710e-2a14-4bea-a835-37ac6ff715b4" /></a>
 <section id="dependencies">
 <h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this heading">¶</a></h2>
 <p>This node requires <a class="reference external" href="https://scipy.org/">SciPy</a> library to work.</p>
@@ -234,10 +234,18 @@ default value is 6.</p></li>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
 <p>This node has the following outputs:</p>
-<ul class="simple">
+<ul>
 <li><p><strong>Vertices</strong>. Vertices of generated mesh.</p></li>
 <li><p><strong>Edges</strong>. Edges of generated mesh.</p></li>
 <li><p><strong>Faces</strong>. Faces of generated mesh.</p></li>
+<li><p><strong>Sites_idx</strong>. Indices of sources sites for further using. (from sverchok 1.3-alpha-master)</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/4d60e90e-19af-4600-88dc-92b67896967a"><img alt="https://github.com/nortikin/sverchok/assets/14288520/4d60e90e-19af-4600-88dc-92b67896967a" src="https://github.com/nortikin/sverchok/assets/14288520/4d60e90e-19af-4600-88dc-92b67896967a" /></a>
+<ul class="simple">
+<li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+</ul>
+</div></blockquote>
+</li>
 </ul>
 </section>
 <section id="addition-info">
@@ -285,6 +293,41 @@ default value is 6.</p></li>
 <li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
 </ul>
+<hr class="docutils" />
+<p>Inspired by <a class="reference external" href="https://www.youtube.com/watch?v=Ip6JI6Qiiwg">https://www.youtube.com/watch?v=Ip6JI6Qiiwg</a></p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/5d01e61f-9743-4a07-a2c8-2866a7191e73"><img alt="https://github.com/nortikin/sverchok/assets/14288520/5d01e61f-9743-4a07-a2c8-2866a7191e73" src="https://github.com/nortikin/sverchok/assets/14288520/5d01e61f-9743-4a07-a2c8-2866a7191e73" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Modifiers-&gt;Modifier Change-&gt; <a class="reference internal" href="../modifier_change/inset_faces.html"><span class="doc">Inset Faces</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/curve_mapper.html"><span class="doc">Curve Mapper</span></a></p></li>
+<li><p>LEN, DIV, MUL: Number-&gt; <a class="reference internal" href="../number/scalar_mk4.html"><span class="doc">Scalar Math</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_struct/item.html"><span class="doc">List Item</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Scene-&gt; <a class="reference internal" href="../scene/particles_MK2.html"><span class="doc">Particles MK2</span></a></p></li>
+</ul>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/c4153ae0-ca18-4f29-968c-ede4d2197008"><img alt="https://github.com/nortikin/sverchok/assets/14288520/c4153ae0-ca18-4f29-968c-ede4d2197008" src="https://github.com/nortikin/sverchok/assets/14288520/c4153ae0-ca18-4f29-968c-ede4d2197008" /></a>
+<hr class="docutils" />
+<p>Like the previous example but node “Particle System” replaced by node “Spiral”:</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/b5704476-fbc4-4c0a-a116-d7a1738567fe"><img alt="https://github.com/nortikin/sverchok/assets/14288520/b5704476-fbc4-4c0a-a116-d7a1738567fe" src="https://github.com/nortikin/sverchok/assets/14288520/b5704476-fbc4-4c0a-a116-d7a1738567fe" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
+<li><p>Generator-&gt;Generatots Extended-&gt; <a class="reference internal" href="../generators_extended/spiral_mk2.html"><span class="doc">Spiral</span></a></p></li>
+<li><p>Curves-&gt; <a class="reference internal" href="../curve/cubic_spline.html"><span class="doc">Cubic Spline</span></a></p></li>
+<li><p>Curves-&gt; <a class="reference internal" href="../curve/reparametrize.html"><span class="doc">Reparametrize Curve</span></a></p></li>
+<li><p>Curves-&gt; <a class="reference internal" href="../curve/eval_curve.html"><span class="doc">Evaluate Curve</span></a></p></li>
+<li><p>Modifiers-&gt;Modifier Change-&gt; <a class="reference internal" href="../modifier_change/inset_faces.html"><span class="doc">Inset Faces</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/numbers.html"><span class="doc">A Number</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/mix_inputs.html"><span class="doc">A Number</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/range_map.html"><span class="doc">Map Range</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/curve_mapper.html"><span class="doc">Curve Mapper</span></a></p></li>
+<li><p>LEN, DIV, MUL: Number-&gt; <a class="reference internal" href="../number/scalar_mk4.html"><span class="doc">Scalar Math</span></a></p></li>
+<li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_struct/item.html"><span class="doc">List Item</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Scene-&gt; <a class="reference internal" href="../scene/frame_info_mk2.html"><span class="doc">Frame Info</span></a></p></li>
+</ul>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/2ad77100-6630-4a27-aa36-a88a7b2d7f5b"><img alt="https://github.com/nortikin/sverchok/assets/14288520/2ad77100-6630-4a27-aa36-a88a7b2d7f5b" src="https://github.com/nortikin/sverchok/assets/14288520/2ad77100-6630-4a27-aa36-a88a7b2d7f5b" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/4e963254-251d-441d-808f-f30c9af55d62"><img alt="https://github.com/nortikin/sverchok/assets/14288520/4e963254-251d-441d-808f-f30c9af55d62" src="https://github.com/nortikin/sverchok/assets/14288520/4e963254-251d-441d-808f-f30c9af55d62" /></a>
+<p>blend file: <a class="reference external" href="https://github.com/nortikin/sverchok/files/12342712/Voronoi.Tower.006.blend.zip">https://github.com/nortikin/sverchok/files/12342712/Voronoi.Tower.006.blend.zip</a></p>
 </section>
 <section id="see-also-example">
 <h2>See also example<a class="headerlink" href="#see-also-example" title="Permalink to this heading">¶</a></h2>
