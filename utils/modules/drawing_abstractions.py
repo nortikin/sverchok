@@ -1,11 +1,13 @@
 import bpy
 
-if bpy.app.version >= (3, 5, 0):
-    UNIFORM_COLOR = "UNIFORM_COLOR"
-    SMOOTH_COLOR = "SMOOTH_COLOR"
+shading_3d = lambda: None
+
+if bpy.app.version <= (3, 4):
+    shading_3d.UNIFORM_COLOR = "3D_UNIFORM_COLOR"
+    shading_3d.SMOOTH_COLOR = "3D_SMOOTH_COLOR"
 else:
-    UNIFORM_COLOR = "3D_UNIFORM_COLOR"
-    SMOOTH_COLOR = "3D_SMOOTH_COLOR"
+    shading_3d.UNIFORM_COLOR = "UNIFORM_COLOR"
+    shading_3d.SMOOTH_COLOR = "SMOOTH_COLOR"
 
 
 drawing = lambda: None

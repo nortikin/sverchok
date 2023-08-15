@@ -13,7 +13,7 @@ from mathutils.geometry import tessellate_polygon as tessellate
 from mathutils.noise import random, seed_set
 import bpy
 from bpy.props import StringProperty, FloatProperty, IntProperty, EnumProperty, BoolProperty, FloatVectorProperty
-import bgl
+
 import gpu
 from gpu_extras.batch import batch_for_shader
 
@@ -23,6 +23,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.ui.bgl_callback_3dview import callback_disable, callback_enable
 from sverchok.utils.sv_batch_primitives import MatrixDraw28
 from sverchok.utils.sv_shader_sources import dashed_vertex_shader, dashed_fragment_shader
+from sverchok.utils.modules.drawing_abstractions import drawing, shading_3d 
 from sverchok.utils.geom import multiply_vectors_deep
 from sverchok.utils.modules.polygon_utils import pols_normals
 from sverchok.utils.modules.vertex_utils import np_vertex_normals
@@ -125,14 +126,14 @@ def view_3d_geom(context, args):
 
     geom, config = args
 
-    bgl.glEnable(bgl.GL_BLEND)
+    drawing.enable_blendmode() # bgl.glEnable(bgl.GL_BLEND)
 
     if config.draw_polys:
         if config.draw_gl_wireframe:
-            bgl.glPolygonMode(bgl.GL_FRONT_AND_BACK, bgl.GL_LINE)
+            drawing.set_wireframe_line()
         if config.draw_gl_polygonoffset:
-            bgl.glEnable(bgl.GL_POLYGON_OFFSET_FILL)
-            bgl.glPolygonOffset(1.0, 1.0)
+            drawing.enable_polygon_offset_fill() # bgl.glEnable(bgl.GL_POLYGON_OFFSET_FILL)
+            drawing.set_polygon_offset_amounts() #bgl.glPolygonOffset(1.0, 1.0)
 
         if config.shade_mode == 'fragment':
             p_batch = batch_for_shader(config.p_shader, 'TRIS', {"position": geom.p_vertices}, indices=geom.p_indices)
@@ -152,13 +153,13 @@ def view_3d_geom(context, args):
         p_batch.draw(config.p_shader)
 
         if config.draw_gl_polygonoffset:
-            bgl.glDisable(bgl.GL_POLYGON_OFFSET_FILL)
+            drawing.disable_polygon_offset_fill() # bgl.glDisable(bgl.GL_POLYGON_OFFSET_FILL)
         if config.draw_gl_wireframe:
-            bgl.glPolygonMode(bgl.GL_FRONT_AND_BACK, bgl.GL_FILL)
+            drawing.set_wireframe_fill() # bgl.glPolygonMode(bgl.GL_FRONT_AND_BACK, bgl.GL_FILL)
 
 
     if config.draw_edges:
-        bgl.glLineWidth(config.line_width)
+        drawing.set_line_width(config.line_width)
 
         if config.draw_dashed:
             shader = config.dashed_shader
@@ -182,11 +183,11 @@ def view_3d_geom(context, args):
                 config.e_shader.bind()
                 e_batch.draw(config.e_shader)
 
-        bgl.glLineWidth(1)
+        drawing.reset_line_width()
 
     if config.draw_verts:
         if geom.v_vertices and (len(geom.v_vertices[0])==3):
-            bgl.glPointSize(config.point_size)
+            drawing.set_point_size(config.point_size)
             if config.uniform_verts:
                 v_batch = batch_for_shader(config.v_shader, 'POINTS', {"pos": geom.v_vertices})
                 config.v_shader.bind()
@@ -196,9 +197,9 @@ def view_3d_geom(context, args):
                 config.v_shader.bind()
 
             v_batch.draw(config.v_shader)
-            bgl.glPointSize(1)
+            drawing.reset_point_size(1)
 
-    bgl.glDisable(bgl.GL_BLEND)
+    drawing.disable_blendmode()
 
 
 def splitted_polygons_geom(polygon_indices, original_idx, v_path, cols, idx_offset):
@@ -455,34 +456,28 @@ def generate_mesh_geom(config, vecs_in):
 
     if config.draw_verts:
         if config.uniform_verts:
-            shader_name = f'{"3D_" if bpy.app.version < (3, 4) else ""}UNIFORM_COLOR'
-            config.v_shader = gpu.shader.from_builtin(shader_name)
+            config.v_shader = gpu.shader.from_builtin(shading_3d.UNIFORM_COLOR)
         else:
-            shader_name = f'{"3D_" if bpy.app.version < (3, 4) else ""}SMOOTH_COLOR'
-            config.v_shader = gpu.shader.from_builtin(shader_name)
+            config.v_shader = gpu.shader.from_builtin(shading_3d.SMOOTH_COLOR)
         geom.v_vertices, geom.points_color = v_vertices, points_color
 
     if config.draw_edges:
         if config.edges_use_vertex_color and e_vertices:
             e_vertex_colors = points_color
         if config.uniform_edges:
-            shader_name = f'{"3D_" if bpy.app.version < (3, 4) else ""}UNIFORM_COLOR'
-            config.e_shader = gpu.shader.from_builtin(shader_name)
+            config.e_shader = gpu.shader.from_builtin(shading_3d.UNIFORM_COLOR)
         else:
-            shader_name = f'{"3D_" if bpy.app.version < (3, 4) else ""}SMOOTH_COLOR'
-            config.e_shader = gpu.shader.from_builtin(shader_name)
+            config.e_shader = gpu.shader.from_builtin(shading_3d.SMOOTH_COLOR)
         geom.e_vertices, geom.e_vertex_colors, geom.e_indices = e_vertices, e_vertex_colors, e_indices
 
 
     if config.draw_polys and config.shade_mode != 'fragment':
         if config.uniform_pols:
-            shader_name = f'{"3D_" if bpy.app.version < (3, 4) else ""}UNIFORM_COLOR'
-            config.p_shader = gpu.shader.from_builtin(shader_name)
+            config.p_shader = gpu.shader.from_builtin(shading_3d.UNIFORM_COLOR)
         else:
             if config.polygon_use_vertex_color and config.shade_mode not in ['facet', 'smooth']:
                 p_vertex_colors = points_color
-            shader_name = f'{"3D_" if bpy.app.version < (3, 4) else ""}SMOOTH_COLOR'
-            config.p_shader = gpu.shader.from_builtin(shader_name)
+            config.p_shader = gpu.shader.from_builtin(shading_3d.SMOOTH_COLOR)
         geom.p_vertices, geom.p_vertex_colors, geom.p_indices = p_vertices, p_vertex_colors, p_indices
 
     elif config.shade_mode == 'fragment' and config.draw_polys:
