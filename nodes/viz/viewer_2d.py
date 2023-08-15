@@ -24,10 +24,10 @@ from numpy import float64 as np_float64, linspace as np_linspace
 import bpy
 from bpy.props import FloatProperty, IntProperty, EnumProperty, BoolProperty, FloatVectorProperty, IntVectorProperty
 
-import bgl
 import gpu
 from gpu_extras.batch import batch_for_shader
 
+from sverchok.utils.modules.drawing_abstractions import drawing 
 from sverchok.data_structure import updateNode, node_id
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.ui import bgl_callback_nodeview as nvBGL
@@ -186,24 +186,24 @@ def view_2d_geom(x, y, args):
         config.p_batch.draw(config.p_shader)
 
     if config.draw_edges:
-        bgl.glLineWidth(config.edge_width)
+        drawing.set_line_width(config.edge_width) # bgl.glLineWidth(config.edge_width)
         config.e_batch = batch_for_shader(config.e_shader, 'LINES', {"pos": geom.e_vertices, "color": geom.e_vertex_colors}, indices=geom.e_indices)
         config.e_shader.bind()
         config.e_shader.uniform_float("x_offset", x)
         config.e_shader.uniform_float("y_offset", y)
         config.e_shader.uniform_float("viewProjectionMatrix", matrix)
         config.e_batch.draw(config.e_shader)
-        bgl.glLineWidth(1)
+        drawing.reset_line_width()
 
     if config.draw_verts:
-        bgl.glPointSize(config.point_size)
+        drawing.set_point_size(config.point_size)
         config.v_batch = batch_for_shader(config.v_shader, 'POINTS', {"pos": geom.v_vertices, "color": geom.points_color})
         config.v_shader.bind()
         config.v_shader.uniform_float("x_offset", x)
         config.v_shader.uniform_float("y_offset", y)
         config.v_shader.uniform_float("viewProjectionMatrix", matrix)
         config.v_batch.draw(config.v_shader)
-        bgl.glPointSize(1)
+        drawing.reset_point_size()
 
 
 def path_from_nums(nums, x, y, num_width, num_height, maxmin, sys_scale):

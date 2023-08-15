@@ -29,6 +29,7 @@ if bpy.app.version >= (3, 5, 0):
     drawing.generate_textures = pass
 
 else:
+    # from sverchok.utils.modules.drawing_abstractions import drawing 
 
     import bgl
     drawing.set_wireframe_line = lambda: bgl.glPolygonMode(bgl.GL_FRONT_AND_BACK, bgl.GL_LINE)
@@ -61,4 +62,5 @@ else:
         bgl.glTexImage2D(bgl.GL_TEXTURE_2D, 0, format, width, height, 0, format, bgl.GL_FLOAT, texture)        
 
     drawing.init_complex_texture = initialize_complex_texture
-    drawing.generate_textures = lambda name: bgl.glGenTextures(1, name)
+    drawing.generate_textures = lambda name: bgl.glGenTextures(1, name)  # returns an indexable item
+
