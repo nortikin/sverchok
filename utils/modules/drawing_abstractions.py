@@ -26,10 +26,11 @@ if bpy.app.version >= (3, 5, 0):
     drawing.enable_blendmode = pass 
     drawing.disable_blendmode = pass
     drawing.new_buffer_texture = pass
+    drawing.get_buffer = pass
     drawing.bind_texture_2d = pass
     drawing.init_complex_texture = pass
     drawing.generate_textures = pass
-
+    drawing.delete_texture = pass
 else:
     # from sverchok.utils.modules.drawing_abstractions import drawing 
 
@@ -46,8 +47,10 @@ else:
     drawing.enable_blendmode = lambda: bgl.glEnable(bgl.GL_BLEND)
     drawing.disable_blendmode = lambda: bgl.glDisable(bgl.GL_BLEND)
     drawing.new_buffer_texture = lambda: bgl.Buffer(bgl.GL_INT, 1)
+    drawing.get_buffer = lambda indexed_buffer: bgl.Buffer(bgl.GL_INT, 1, indexed_buffer)
     drawing.new_buffer_texture_sized = lambda size, data: bgl.Buffer(bgl.GL_FLOAT, size, data)
     drawing.bind_texture_2d = lambda texture: bgl.glBindTexture(bgl.GL_TEXTURE_2D, texture)
+    drawing.delete_texture = lambda texture: bgl.glDeleteTextures(1, texture)
 
     def initialize_complex_texture(width, height, texname, texture, data, format):
         if format == 'RGBA':
