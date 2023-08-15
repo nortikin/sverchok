@@ -48,7 +48,7 @@ tx_fragment_shader = '''
     }
 '''
 
-def init_texture(width, height, texname, texture, clr):
+def init_texture(width, height, texname, texture, clr):  # good luck with this one
     # function to init the texture
     bgl.glPixelStorei(bgl.GL_UNPACK_ALIGNMENT, 1)
 

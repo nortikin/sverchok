@@ -6,7 +6,7 @@
 # License-Filename: LICENSE
 
 
-import bgl
+# import bgl
 import blf
 import bpy
 from mathutils import Vector
