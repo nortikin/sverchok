@@ -12,7 +12,6 @@ import numpy as np
 import itertools
 
 import bpy
-import bgl
 import gpu
 from gpu_extras.batch import batch_for_shader
 
@@ -391,8 +390,8 @@ def terminal_text_to_uv(lines):
 
 def simple_console_xy(context, args, loc):
     texture, config = args
-    act_tex = bgl.Buffer(bgl.GL_INT, 1)
-    bgl.glBindTexture(bgl.GL_TEXTURE_2D, texture.texture_dict['texture'])
+    act_tex = drawing.new_buffer_texture()
+    drawing.bind_texture_2d(texture.texture_dict['texture'])
     config.shader.bind()
     
     # if not config.syntax_mode == "None":
@@ -543,23 +542,12 @@ class SvConsoleNode(SverchCustomTreeNode, bpy.types.Node, SvNodeViewDrawMixin):
         for color_name in lexed_colors:
             row = col.row()
             row.prop(self, color_name)
-
     
     def init_texture(self, width, height):
-        clr = bgl.GL_RGBA
         texname = self.texture_dict['texture']
         data = self.texture_dict['texture_data']
+        initialize_complex_texture(width, height, texname, texture, data, 'RGBA')
 
-        texture = bgl.Buffer(bgl.GL_FLOAT, data.size, data.tolist())
-        bgl.glPixelStorei(bgl.GL_UNPACK_ALIGNMENT, 1)
-        bgl.glEnable(bgl.GL_TEXTURE_2D)
-        bgl.glBindTexture(bgl.GL_TEXTURE_2D, texname)
-        bgl.glActiveTexture(bgl.GL_TEXTURE0)
-        bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_WRAP_S, bgl.GL_CLAMP_TO_EDGE)
-        bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_WRAP_T, bgl.GL_CLAMP_TO_EDGE)
-        bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MAG_FILTER, bgl.GL_LINEAR)
-        bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MIN_FILTER, bgl.GL_LINEAR)
-        bgl.glTexImage2D(bgl.GL_TEXTURE_2D, 0, clr, width, height, 0, clr, bgl.GL_FLOAT, texture)
 
     def set_node_props(self, socket_data):
         multiline, (chars_x, chars_y) = text_decompose('\n'.join(socket_data), self.last_n_lines)
