@@ -25,7 +25,11 @@ if bpy.app.version >= (3, 5, 0):
     drawing.disable_blendmode = pass
     drawing.new_buffer_texture = pass
     drawing.bind_texture_2d = pass
+    drawing.init_complex_texture = pass
+    drawing.generate_textures = pass
+
 else:
+
     import bgl
     drawing.set_wireframe_line = lambda: bgl.glPolygonMode(bgl.GL_FRONT_AND_BACK, bgl.GL_LINE)
     drawing.set_wireframe_fill = lambda: bgl.glPolygonMode(bgl.GL_FRONT_AND_BACK, bgl.GL_FILL)
@@ -57,3 +61,4 @@ else:
         bgl.glTexImage2D(bgl.GL_TEXTURE_2D, 0, format, width, height, 0, format, bgl.GL_FLOAT, texture)        
 
     drawing.init_complex_texture = initialize_complex_texture
+    drawing.generate_textures = lambda name: bgl.glGenTextures(1, name)
