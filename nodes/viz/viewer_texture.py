@@ -264,7 +264,7 @@ class SvTextureViewerNode(SverchCustomTreeNode, bpy.types.Node):
     def delete_texture(self):
         n_id = node_id(self)
         if n_id in self.texture:
-            names = drawing.get_buffer(self.texture[n_id])
+            names = drawing.get_buffer([self.texture[n_id]])
             drawing.delete_texture(names)
 
     def process(self):
