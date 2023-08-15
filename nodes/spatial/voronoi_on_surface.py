@@ -217,7 +217,7 @@ class SvVoronoiOnSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
                     uvverts, verts, edges, faces = self.voronoi_uv(surface, uvpoints, maxsides)
                     new_uvverts.append(uvverts)
                 else:
-                    verts, edges, faces = voronoi_on_surface(surface, uvpoints, thickness, self.do_clip, clipping, self.mode == 'REGIONS')
+                    verts, edges, faces, used_sites = voronoi_on_surface(surface, uvpoints, thickness, self.do_clip, clipping, self.mode == 'REGIONS')
 
                 if (self.mode in {'RIDGES', 'REGIONS'} or self.make_faces) and self.normals:
                     verts, edges, faces = recalc_normals(verts, edges, faces, loop = (self.mode in {'REGIONS', 'RIDGES'}))

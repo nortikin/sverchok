@@ -27,12 +27,12 @@ from sverchok.utils.sv_mesh_utils import mesh_join
 from sverchok.utils.voronoi3d import voronoi_on_mesh
 
 
-class SvVoronoiOnMeshNode(SverchCustomTreeNode, bpy.types.Node):
+class SvVoronoiOnMeshNodeMK2(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Voronoi Mesh
     Tooltip: Generate Voronoi diagram on the surface of a mesh object
     """
-    bl_idname = 'SvVoronoiOnMeshNode'
+    bl_idname = 'SvVoronoiOnMeshNodeMK2'
     bl_label = 'Voronoi on Mesh'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_VORONOI'
@@ -96,7 +96,7 @@ class SvVoronoiOnMeshNode(SverchCustomTreeNode, bpy.types.Node):
         self.outputs.new('SvVerticesSocket', "Vertices")
         self.outputs.new('SvStringsSocket', "Edges")
         self.outputs.new('SvStringsSocket', "Faces")
-        #self.outputs.new('SvVerticesSocket', "AllSites")
+        self.outputs.new('SvStringsSocket', "Sites_idx")
         self.update_sockets(context)
 
     def draw_buttons(self, context, layout):
@@ -136,14 +136,14 @@ class SvVoronoiOnMeshNode(SverchCustomTreeNode, bpy.types.Node):
         verts_out = []
         edges_out = []
         faces_out = []
-        sites_out = []
+        sites_idx_out = []
         for params in zip_long_repeat(verts_in, faces_in, sites_in, spacing_in):
             new_verts = []
             new_edges = []
             new_faces = []
             new_sites = []
             for verts, faces, sites, spacing in zip_long_repeat(*params):
-                verts, edges, faces, sites = voronoi_on_mesh(verts, faces, sites, thickness=0,
+                verts, edges, faces, used_sites_idx = voronoi_on_mesh(verts, faces, sites, thickness=0,
                             spacing = spacing,
                             #clip_inner = self.clip_inner, clip_outer = self.clip_outer,
                             do_clip=True, clipping=None,
@@ -155,39 +155,39 @@ class SvVoronoiOnMeshNode(SverchCustomTreeNode, bpy.types.Node):
                     new_verts.extend(verts)
                     new_edges.extend(edges)
                     new_faces.extend(faces)
-                    new_sites.extend(sites)
+                    new_sites.extend([[idx] for idx in used_sites_idx])
                 elif self.join_mode == 'SEPARATE':
                     new_verts.append(verts)
                     new_edges.append(edges)
                     new_faces.append(faces)
-                    new_sites.append(sites)
+                    new_sites.append(used_sites_idx)
                 else: # JOIN
                     verts, edges, faces = mesh_join(verts, edges, faces)
                     new_verts.append(verts)
                     new_edges.append(edges)
                     new_faces.append(faces)
-                    new_sites.append(sites)
+                    new_sites.append(used_sites_idx)
 
             if nested_output:
                 verts_out.append(new_verts)
                 edges_out.append(new_edges)
                 faces_out.append(new_faces)
-                sites_out.append(new_sites)
+                sites_idx_out.append(new_sites)
             else:
                 verts_out.extend(new_verts)
                 edges_out.extend(new_edges)
                 faces_out.extend(new_faces)
-                sites_out.extend(new_sites)
+                sites_idx_out.extend(new_sites)
 
         self.outputs['Vertices'].sv_set(verts_out)
         self.outputs['Edges'].sv_set(edges_out)
         self.outputs['Faces'].sv_set(faces_out)
-        #self.outputs['AllSites'].sv_set(sites_out)
+        self.outputs['Sites_idx'].sv_set(sites_idx_out)
 
 
 def register():
-    bpy.utils.register_class(SvVoronoiOnMeshNode)
+    bpy.utils.register_class(SvVoronoiOnMeshNodeMK2)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvVoronoiOnMeshNode)
+    bpy.utils.unregister_class(SvVoronoiOnMeshNodeMK2)
