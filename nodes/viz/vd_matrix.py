@@ -1,23 +1,12 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
-#
-#  This program is free software; you can redistribute it and/or
-#  modify it under the terms of the GNU General Public License
-#  as published by the Free Software Foundation; either version 2
-#  of the License, or (at your option) any later version.
-#
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with this program; if not, write to the Free Software Foundation,
-#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-#
-# ##### END GPL LICENSE BLOCK #####
+# This file is part of project Sverchok. It's copyrighted by the contributors
+# recorded in the version control history of the file, available from
+# its original location https://github.com/nortikin/sverchok/commit/master
+#  
+# SPDX-License-Identifier: GPL3
+# License-Filename: LICENSE
 
 
-import bgl
+
 import bpy
 import gpu
 from gpu_extras.batch import batch_for_shader
@@ -29,6 +18,7 @@ from sverchok.ui.bgl_callback_3dview import callback_disable, callback_enable
 from sverchok.utils.sv_batch_primitives import MatrixDraw28
 from sverchok.data_structure import node_id, updateNode
 from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.utils.modules.drawing_abstractions import drawing
 
 if not bpy.app.background:
     shader_name = f'{"2D_" if bpy.app.version < (3, 4) else ""}SMOOTH_COLOR'
@@ -77,9 +67,9 @@ def screen_v3d_batch_matrix_overlay(context, args):
         indices=indices_shifted)
 
     # smooth_2d_shader.bind()
-    bgl.glEnable( bgl.GL_BLEND )
+    drawing.enable_blendmode()
     batch.draw(smooth_2d_shader)
-    bgl.glDisable( bgl.GL_BLEND )
+    drawing.disable_blendmode()
 
 
 def match_color_to_matrix(node):
