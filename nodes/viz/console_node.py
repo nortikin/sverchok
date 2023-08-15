@@ -513,13 +513,13 @@ class SvConsoleNode(SverchCustomTreeNode, bpy.types.Node, SvNodeViewDrawMixin):
             dsize = data.size
             data = data.repeat(3).reshape(-1, 3)
             data = np.concatenate((data, np.ones(dsize)[:,None]),axis=1).flatten()
-            name = bgl.Buffer(bgl.GL_INT, 1)
-            bgl.glGenTextures(1, name)
-            self.texture_dict['texture'] = name[0]
-            self.texture_dict['texture_data'] = data # bgl.Buffer(bgl.GL_FLOAT, data.size, data.tolist())
-           
-        # return self.texture_dict.get('texture')
+            name = drawing.new_buffer_texture()
+            drawing.generate_textures(name)
 
+            self.texture_dict['texture'] = name[0]
+            self.texture_dict['texture_data'] = data
+           
+  
     def sv_init(self, context):
         self.inputs.new("SvStringsSocket", "text")
         self.id_data.update_gl_scale_info()
@@ -547,7 +547,7 @@ class SvConsoleNode(SverchCustomTreeNode, bpy.types.Node, SvNodeViewDrawMixin):
     def init_texture(self, width, height):
         texname = self.texture_dict['texture']
         data = self.texture_dict['texture_data']
-        initialize_complex_texture(width, height, texname, texture, data, 'RGBA')
+        drawing.init_complex_texture(width, height, texname, texture, data, 'RGBA')
 
 
     def set_node_props(self, socket_data):
