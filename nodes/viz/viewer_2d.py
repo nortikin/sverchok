@@ -186,7 +186,7 @@ def view_2d_geom(x, y, args):
         config.p_batch.draw(config.p_shader)
 
     if config.draw_edges:
-        drawing.set_line_width(config.edge_width) # bgl.glLineWidth(config.edge_width)
+        drawing.set_line_width(config.edge_width)
         config.e_batch = batch_for_shader(config.e_shader, 'LINES', {"pos": geom.e_vertices, "color": geom.e_vertex_colors}, indices=geom.e_indices)
         config.e_shader.bind()
         config.e_shader.uniform_float("x_offset", x)
