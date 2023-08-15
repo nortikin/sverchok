@@ -20,8 +20,6 @@ from mathutils import Vector
 import bpy
 from bpy.props import FloatProperty, EnumProperty, StringProperty, BoolProperty
 
-import blf
-import bgl
 import gpu
 from gpu_extras.batch import batch_for_shader
 
