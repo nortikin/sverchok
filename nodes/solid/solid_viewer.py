@@ -7,7 +7,6 @@
 from math import pi
 import numpy as np
 
-import bgl
 import bpy
 import gpu
 from gpu_extras.batch import batch_for_shader
@@ -23,6 +22,7 @@ from sverchok.ui.bgl_callback_3dview import callback_disable, callback_enable
 from sverchok.utils.sv_shader_sources import dashed_vertex_shader, dashed_fragment_shader
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.utils.modules.geom_utils import obtain_normal3 as normal
+from sverchok.utils.modules.drawing_abstractions import drawing
 
 from sverchok.dependencies import FreeCAD
 if FreeCAD is not None:
@@ -83,9 +83,9 @@ def generate_normals_data(verts, faces):
 
 def draw_uniform(GL_KIND, coords, indices, color, width=1, dashed_data=None):
     if GL_KIND == 'LINES':
-        bgl.glLineWidth(width)
+        drawing.set_line_width(width)
     elif GL_KIND == 'POINTS':
-        bgl.glPointSize(width)
+        drawing.set_point_size(width)
 
     params = dict(indices=indices) if indices else {}
 
@@ -112,9 +112,9 @@ def draw_uniform(GL_KIND, coords, indices, color, width=1, dashed_data=None):
         batch.draw(shader)
 
     if GL_KIND == 'LINES':
-        bgl.glLineWidth(1)
+        drawing.reset_line_width()
     elif GL_KIND == 'POINTS':
-        bgl.glPointSize(1)
+        drawing.reset_point_size()
 
 
 def draw_smooth(coords, vcols, indices=None):
@@ -183,11 +183,11 @@ def draw_faces_uniform(context, args):
     geom, config = args
     # print(geom.f_faces, config.shade)
     if config.draw_gl_wireframe:
-        bgl.glPolygonMode(bgl.GL_FRONT_AND_BACK, bgl.GL_LINE)
+        drawing.set_wireframe_line()
 
     if config.draw_gl_polygonoffset:
-        bgl.glEnable(bgl.GL_POLYGON_OFFSET_FILL)
-        bgl.glPolygonOffset(1.0, 1.0)
+        drawing.enable_polygon_offset_fill()
+        drawing.set_polygon_offset_amounts()
 
     if config.shade == "flat":
         draw_uniform('TRIS', geom.f_verts, geom.f_faces, config.face4f)
@@ -199,7 +199,7 @@ def draw_faces_uniform(context, args):
         draw_smooth(geom.f_verts, geom.smooth_vnorms, indices=geom.f_faces)
 
     if config.draw_gl_wireframe:
-        bgl.glPolygonMode(bgl.GL_FRONT_AND_BACK, bgl.GL_FILL)
+        drawing.set_wireframe_fill()
 
 
 def edges_geom(geom, config):
@@ -231,10 +231,10 @@ def edges_geom(geom, config):
 def draw_complex(context, args):
     geom, config = args
     if config.draw_gl_polygonoffset:
-        bgl.glDisable(bgl.GL_POLYGON_OFFSET_FILL)
+        drawing.disable_polygon_offset_fill()
 
     if config.shade != 'normals':
-        bgl.glEnable(bgl.GL_BLEND)
+        drawing.enable_blendmode()
 
     if config.display_edges:
         draw_lines_uniform(context, config, geom.e_vertices, geom.e_edges, config.line4f, config.line_width)
@@ -243,10 +243,10 @@ def draw_complex(context, args):
     if config.display_verts:
         draw_uniform('POINTS', geom.verts, None, config.vcol, config.point_size)
     if config.shade != 'normals':
-        bgl.glDisable(bgl.GL_BLEND)
+        drawing.disable_blendmode()
     if config.draw_gl_polygonoffset:
         # or restore to the state found when entering this function. TODO!
-        bgl.glDisable(bgl.GL_POLYGON_OFFSET_FILL)
+        drawing.disable_polygon_offset_fill()
 
 
 class SvSolidViewerNode(SverchCustomTreeNode, bpy.types.Node):
