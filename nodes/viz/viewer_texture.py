@@ -14,7 +14,6 @@ import numpy as np
 
 import bpy
 import gpu
-import bgl
 
 from bpy.props import (
     FloatProperty, EnumProperty, StringProperty, BoolProperty, IntProperty
@@ -25,6 +24,7 @@ from sverchok.data_structure import updateNode, node_id
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.ui import bgl_callback_nodeview as nvBGL2
 from sverchok.ui import sv_image as svIMG
+from sverchok.utils.modules.drawing_abstractions import drawing 
 
 # shared stuff between implementations
 from sverchok.utils.sv_texture_utils import generate_batch_shader
@@ -264,8 +264,8 @@ class SvTextureViewerNode(SverchCustomTreeNode, bpy.types.Node):
     def delete_texture(self):
         n_id = node_id(self)
         if n_id in self.texture:
-            names = bgl.Buffer(bgl.GL_INT, 1, [self.texture[n_id]])
-            bgl.glDeleteTextures(1, names)
+            names = drawing.get_buffer(self.texture[n_id])
+            drawing.delete_texture(names)
 
     def process(self):
         if not self.inputs['Float'].is_linked:
@@ -295,12 +295,10 @@ class SvTextureViewerNode(SverchCustomTreeNode, bpy.types.Node):
         if self.activate:
             texture = self.get_buffer()
             width, height = self.texture_width_height
-            # x, y = self.xy_offset
             gl_color_constant = gl_color_dict.get(self.color_mode)
 
-
-            name = bgl.Buffer(bgl.GL_INT, 1)
-            bgl.glGenTextures(1, name)
+            name = drawing.new_buffer_texture()
+            drawing.generate_textures(name) 
             self.texture[n_id] = name[0]
             init_texture(width, height, name[0], texture, gl_color_constant)
 
