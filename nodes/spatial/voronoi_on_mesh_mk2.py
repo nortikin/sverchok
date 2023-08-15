@@ -96,7 +96,7 @@ class SvVoronoiOnMeshNodeMK2(SverchCustomTreeNode, bpy.types.Node):
         self.outputs.new('SvVerticesSocket', "Vertices")
         self.outputs.new('SvStringsSocket', "Edges")
         self.outputs.new('SvStringsSocket', "Faces")
-        self.outputs.new('SvVerticesSocket', "Sites_idx")
+        self.outputs.new('SvStringsSocket', "Sites_idx")
         self.update_sockets(context)
 
     def draw_buttons(self, context, layout):
