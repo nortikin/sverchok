@@ -1,8 +1,8 @@
 Voronoi on Mesh
 ===============
 
-.. image:: https://user-images.githubusercontent.com/14288520/202569749-761acf3f-2cd4-46e2-9dd5-8ac5fa9c588c.png
-  :target: https://user-images.githubusercontent.com/14288520/202569749-761acf3f-2cd4-46e2-9dd5-8ac5fa9c588c.png
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/3782710e-2a14-4bea-a835-37ac6ff715b4
+  :target: https://github.com/nortikin/sverchok/assets/14288520/3782710e-2a14-4bea-a835-37ac6ff715b4
 
 Dependencies
 ------------
@@ -101,6 +101,12 @@ This node has the following outputs:
 * **Vertices**. Vertices of generated mesh.
 * **Edges**. Edges of generated mesh.
 * **Faces**. Faces of generated mesh.
+* **Sites_idx**. Indices of sources sites for further using. (from sverchok 1.3-alpha-master)
+
+    .. image:: https://github.com/nortikin/sverchok/assets/14288520/4d60e90e-19af-4600-88dc-92b67896967a
+      :target: https://github.com/nortikin/sverchok/assets/14288520/4d60e90e-19af-4600-88dc-92b67896967a
+
+    * Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
 
 Addition info
 -------------
@@ -156,6 +162,54 @@ Example of usage
 * Modifiers->Modifier Make-> :doc:`Subdivide </nodes/modifier_change/subdivide_mk2>`
 * Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+
+--------
+
+Inspired by https://www.youtube.com/watch?v=Ip6JI6Qiiwg
+
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/5d01e61f-9743-4a07-a2c8-2866a7191e73
+  :target: https://github.com/nortikin/sverchok/assets/14288520/5d01e61f-9743-4a07-a2c8-2866a7191e73
+
+* Generator-> :doc:`Plane </nodes/generator/plane_mk3>`
+* Modifiers->Modifier Change-> :doc:`Inset Faces </nodes/modifier_change/inset_faces>`
+* Number-> :doc:`Curve Mapper </nodes/number/curve_mapper>`
+* LEN, DIV, MUL: Number-> :doc:`Scalar Math </nodes/number/scalar_mk4>`
+* List->List Struct-> :doc:`List Item </nodes/list_struct/item>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+* Scene-> :doc:`Particles MK2 </nodes/scene/particles_MK2>`
+
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/c4153ae0-ca18-4f29-968c-ede4d2197008
+  :target: https://github.com/nortikin/sverchok/assets/14288520/c4153ae0-ca18-4f29-968c-ede4d2197008
+
+--------
+
+Like the previous example but node "Particle System" replaced by node "Spiral":
+
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/b5704476-fbc4-4c0a-a116-d7a1738567fe
+  :target: https://github.com/nortikin/sverchok/assets/14288520/b5704476-fbc4-4c0a-a116-d7a1738567fe
+
+* Generator-> :doc:`Plane </nodes/generator/plane_mk3>`
+* Generator->Generatots Extended-> :doc:`Spiral </nodes/generators_extended/spiral_mk2>`
+* Curves-> :doc:`Cubic Spline </nodes/curve/cubic_spline>`
+* Curves-> :doc:`Reparametrize Curve </nodes/curve/reparametrize>`
+* Curves-> :doc:`Evaluate Curve </nodes/curve/eval_curve>`
+* Modifiers->Modifier Change-> :doc:`Inset Faces </nodes/modifier_change/inset_faces>`
+* Number-> :doc:`A Number </nodes/number/numbers>`
+* Number-> :doc:`A Number </nodes/number/mix_inputs>`
+* Number-> :doc:`Map Range </nodes/number/range_map>`
+* Number-> :doc:`Curve Mapper </nodes/number/curve_mapper>`
+* LEN, DIV, MUL: Number-> :doc:`Scalar Math </nodes/number/scalar_mk4>`
+* List->List Struct-> :doc:`List Item </nodes/list_struct/item>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+* Scene-> :doc:`Frame Info </nodes/scene/frame_info_mk2>`
+
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/2ad77100-6630-4a27-aa36-a88a7b2d7f5b
+  :target: https://github.com/nortikin/sverchok/assets/14288520/2ad77100-6630-4a27-aa36-a88a7b2d7f5b
+
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/4e963254-251d-441d-808f-f30c9af55d62
+  :target: https://github.com/nortikin/sverchok/assets/14288520/4e963254-251d-441d-808f-f30c9af55d62
+
+blend file: https://github.com/nortikin/sverchok/files/12342712/Voronoi.Tower.006.blend.zip
 
 See also example
 ----------------
