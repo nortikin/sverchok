@@ -8,7 +8,6 @@
 
 import os
 import numpy as np
-import bgl
 import gpu
 import bpy
 from bpy.props import EnumProperty, StringProperty, IntProperty, PointerProperty, FloatProperty
@@ -21,6 +20,7 @@ from sverchok.ui import bgl_callback_nodeview as nvBGL2
 from sverchok.utils.sv_texture_utils import generate_batch_shader
 from sverchok.utils.sv_texture_utils import simple_screen, init_texture, get_drawing_location
 from sverchok.utils.sv_texture_utils import gl_color_list, gl_color_dict, factor_buffer_dict
+from sverchok.utils.modules.drawing_abstractions import drawing
 
 
 out_modes = [
@@ -94,8 +94,8 @@ class SvTextureViewerNodeLite(SverchCustomTreeNode, bpy.types.Node):
     def delete_texture(self):
         n_id = node_id(self)
         if n_id in self.texture:
-            names = bgl.Buffer(bgl.GL_INT, 1, [self.texture[n_id]])
-            bgl.glDeleteTextures(1, names)
+            names = drawing.get_buffer([self.texture[n_id]])
+            drawing.delete_texture(names)
 
     def process(self):
 
@@ -120,10 +120,10 @@ class SvTextureViewerNodeLite(SverchCustomTreeNode, bpy.types.Node):
             # x, y = self.xy_offset
             width, height, colm = self.width_custom_tex, self.height_custom_tex, self.color_mode
             total_size = width * height * factor_buffer_dict.get(colm)
-            texture = bgl.Buffer(bgl.GL_FLOAT, total_size, np.resize(self.inputs[0].sv_get(), total_size).tolist())
+            texture = drawing.new_buffer_texture_sized(total_size, np.resize(self.inputs[0].sv_get(), total_size).tolist())
 
-            name = bgl.Buffer(bgl.GL_INT, 1)
-            bgl.glGenTextures(1, name)
+            name = drawing.new_buffer_texture()
+            drawing.generate_textures(name)
             self.texture[n_id] = name[0]
             init_texture(width, height, name[0], texture, gl_color_constant)
 
