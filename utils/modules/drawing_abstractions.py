@@ -91,9 +91,11 @@ class OldDrawing:
     delete_texture = lambda texture: bgl.glDeleteTextures(1, texture)
 
     def init_complex_texture(self, width, height, texname, texture, data, format):
-        if format == 'RGBA':
-            format = bgl.GL_RGBA
+
+        format = {'BW': bgl.GL_RED, 'RGB': bgl.GL_RGB, 'RGBA': bgl.GL_RGBA}.get(format)
+
         texture = self.new_buffer_texture_sized(bgl.GL_FLOAT, data.size, data.tolist())
+
         bgl.glPixelStorei(bgl.GL_UNPACK_ALIGNMENT, 1)
         bgl.glEnable(bgl.GL_TEXTURE_2D)
         bgl.glBindTexture(bgl.GL_TEXTURE_2D, texname)
