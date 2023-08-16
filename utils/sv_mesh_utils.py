@@ -376,16 +376,21 @@ def non_redundant_faces_indices_np(faces):
 def point_inside_mesh(bvh, point):
     point = Vector(point)
     axis = Vector((1, 0, 0))
-    outside = False
-    count = 0
-    while True:
-        location, normal, index, distance = bvh.ray_cast(point, axis)
-        if index is None:
-            break
-        count += 1
-        point = location + axis * 0.00001
-    if count % 2 == 0:
-        outside = True
+    outside = True
+    #count = 0
+    location, normal, index, distance = bvh.ray_cast(point, axis)
+    if index is not None:
+        if normal.dot(point-location)<0:
+            outside = False
+
+    # while True:
+    #     location, normal, index, distance = bvh.ray_cast(point, axis)
+    #     if index is None:
+    #         break
+    #     count += 1
+    #     point.x = location.x + axis.x * 0.00001
+    # if count % 2 == 0:
+    #     outside = True
     return not outside
 
 ################

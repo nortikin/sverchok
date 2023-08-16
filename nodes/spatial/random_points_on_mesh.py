@@ -351,7 +351,7 @@ class SvRandomPointsOnMesh(SverchCustomTreeNode, bpy.types.Node):
         updateNode(self, context)
 
     modes = [('SURFACE', "Surface", "Surface", 0),
-             ('VOLUME', "Volume", "Volume", 1),
+             ('VOLUME', "Volume", "Volume. Recomend use 'Recalculate Normals'", 1),
              ('EDGES', "Edges", "Edges", 2),
             ]
 
