@@ -49,7 +49,6 @@ tx_fragment_shader = '''
 '''
 
 def init_texture(width, height, texname, texture, clr):  # good luck with this one
-    # function to init the texture
     bgl.glPixelStorei(bgl.GL_UNPACK_ALIGNMENT, 1)
 
     bgl.glEnable(bgl.GL_TEXTURE_2D)
@@ -61,11 +60,7 @@ def init_texture(width, height, texname, texture, clr):  # good luck with this o
     bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MAG_FILTER, bgl.GL_LINEAR)
     bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MIN_FILTER, bgl.GL_LINEAR)
 
-    bgl.glTexImage2D(
-        bgl.GL_TEXTURE_2D,
-        0, clr, width, height,
-        0, clr, bgl.GL_FLOAT, texture
-    )
+    bgl.glTexImage2D(bgl.GL_TEXTURE_2D, 0, clr, width, height, 0, clr, bgl.GL_FLOAT, texture)
 
 
 def simple_screen(context, args, xy):
