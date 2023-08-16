@@ -21,6 +21,25 @@ class shading_3d(NamedTuple):
         UNIFORM_COLOR = "UNIFORM_COLOR"
         SMOOTH_COLOR = "SMOOTH_COLOR"
 
+class shading_2d(NamedTuple):
+    if bpy.app.version <= (3, 4):
+        UNIFORM_COLOR = "2D_UNIFORM_COLOR"
+        SMOOTH_COLOR = "2D_SMOOTH_COLOR"
+    else:
+        UNIFORM_COLOR = "UNIFORM_COLOR"
+        SMOOTH_COLOR = "SMOOTH_COLOR"
+
+
+"""
+These classes encapsulate any and all sets of bgl instructions that Sverchok used prior to
+the deprecation of the bgl module. It's not clear yet if the gpu module will achieve parity,
+some Nodes might need considerable revision - here we attempt to make at least some viz nodes
+draw in a useful way in B3.5 and up. Certain nodes that use elaborate buffer and texture 
+configurations will need additional attention and might even not reach parity for some time, 
+or indeed at all. Replacement techniques will be investigated. 
+
+"""
+
 class Drawing:
 
     set_wireframe_line = pass
