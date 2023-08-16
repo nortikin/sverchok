@@ -214,7 +214,7 @@ def voronoi3d_layer(n_src_sites, all_sites, make_regions, do_clip, clipping, ski
             faces_n.append(faces_i)
         verts, edges, faces = verts_n, edges_n, faces_n
 
-    return verts, edges, faces
+    return verts, edges, faces, all_sites
 
 def voronoi_on_surface(surface, uvpoints, thickness, do_clip, clipping, make_regions):
     u_min, u_max, v_min, v_max = surface.get_domain()
@@ -446,6 +446,7 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, mode=&
     bbox_aligned = bounding_box_aligned(verts)[0]
 
     start_mesh = bmesh_from_pydata(verts, [], faces, normal_update=False)
+    used_sites_idx = []
     for site_idx in range(len(sites)):
         cell = cut_cell(start_mesh, sites_delaunay_params, site_idx, spacing[site_idx], center_of_mass, bbox_aligned)
         if cell is not None:
@@ -454,6 +455,7 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, mode=&
                 verts_out.append(new_verts)
                 edges_out.append(new_edges)
                 faces_out.append(new_faces)
+                used_sites_idx.append( site_idx )
     start_mesh.clear() # remember to clear empty geometry
     start_mesh.free()
     
@@ -463,7 +465,7 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, mode=&
     # unb - unpredicted erased mesh (bbox_aligned cannot make predicted results)
     # sites - count of sites in process
     # print( f&#34;bisects: {num_bisect: 4d}, unb={num_unpredicted_erased: 4d}, sites={len(sites)}&#34;)
-    return verts_out, edges_out, faces_out
+    return verts_out, edges_out, faces_out, used_sites_idx
 
 def voronoi_on_mesh(verts, faces, sites, thickness,
     spacing = 0.0,
@@ -497,10 +499,10 @@ def voronoi_on_mesh(verts, faces, sites, thickness,
 
     else: # VOLUME, SURFACE
         all_points = sites[:]
-        verts, edges, faces = voronoi_on_mesh_bmesh(verts, faces, len(sites), all_points,
+        verts, edges, faces, used_sites_idx = voronoi_on_mesh_bmesh(verts, faces, len(sites), all_points,
                 spacing = spacing, mode = mode, normal_update = normal_update,
                 precision = precision)
-        return verts, edges, faces, all_points
+        return verts, edges, faces, used_sites_idx
 
 def project_solid_normals(shell, pts, thickness, add_plus=True, add_minus=True, predicate_plus=None, predicate_minus=None):
     k = 0.5*thickness
@@ -1455,7 +1457,7 @@ def lloyd3d_bounded(bounds, sites, n_iterations, weight_field=None):
             faces_n.append(faces_i)
         verts, edges, faces = verts_n, edges_n, faces_n
 
-    return verts, edges, faces</code></pre>
+    return verts, edges, faces, all_sites</code></pre>
 </details>
 </dd>
 <dt id="sverchok.utils.voronoi3d.voronoi3d_regions"><code class="name flex">
@@ -1582,10 +1584,10 @@ def lloyd3d_bounded(bounds, sites, n_iterations, weight_field=None):
 
     else: # VOLUME, SURFACE
         all_points = sites[:]
-        verts, edges, faces = voronoi_on_mesh_bmesh(verts, faces, len(sites), all_points,
+        verts, edges, faces, used_sites_idx = voronoi_on_mesh_bmesh(verts, faces, len(sites), all_points,
                 spacing = spacing, mode = mode, normal_update = normal_update,
                 precision = precision)
-        return verts, edges, faces, all_points</code></pre>
+        return verts, edges, faces, used_sites_idx</code></pre>
 </details>
 </dd>
 <dt id="sverchok.utils.voronoi3d.voronoi_on_mesh_bmesh"><code class="name flex">
@@ -1779,6 +1781,7 @@ def lloyd3d_bounded(bounds, sites, n_iterations, weight_field=None):
     bbox_aligned = bounding_box_aligned(verts)[0]
 
     start_mesh = bmesh_from_pydata(verts, [], faces, normal_update=False)
+    used_sites_idx = []
     for site_idx in range(len(sites)):
         cell = cut_cell(start_mesh, sites_delaunay_params, site_idx, spacing[site_idx], center_of_mass, bbox_aligned)
         if cell is not None:
@@ -1787,6 +1790,7 @@ def lloyd3d_bounded(bounds, sites, n_iterations, weight_field=None):
                 verts_out.append(new_verts)
                 edges_out.append(new_edges)
                 faces_out.append(new_faces)
+                used_sites_idx.append( site_idx )
     start_mesh.clear() # remember to clear empty geometry
     start_mesh.free()
     
@@ -1796,7 +1800,7 @@ def lloyd3d_bounded(bounds, sites, n_iterations, weight_field=None):
     # unb - unpredicted erased mesh (bbox_aligned cannot make predicted results)
     # sites - count of sites in process
     # print( f&#34;bisects: {num_bisect: 4d}, unb={num_unpredicted_erased: 4d}, sites={len(sites)}&#34;)
-    return verts_out, edges_out, faces_out</code></pre>
+    return verts_out, edges_out, faces_out, used_sites_idx</code></pre>
 </details>
 </dd>
 <dt id="sverchok.utils.voronoi3d.voronoi_on_solid"><code class="name flex">
