@@ -39,7 +39,8 @@ This node has the following parameters:
 
   * **Surface**. Generate points on the surface of the mesh.
   * **Volume**. Generate points inside the volume of the mesh. The mesh is
-    expected to represent a closed volume in this case.
+    expected to represent a closed volume in this case. Recomend use 
+    [Modifiers->Modifier Change-> :doc:`Recalculate Normals </nodes/modifier_change/recalc_normals>`] before node.
   * **Edges**.  Generate points on the edges of the mesh.
 
   The default option is **Surface**.
