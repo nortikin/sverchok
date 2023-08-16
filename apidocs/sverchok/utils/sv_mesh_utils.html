@@ -405,20 +405,11 @@ def point_inside_mesh(bvh, point):
     point = Vector(point)
     axis = Vector((1, 0, 0))
     outside = True
-    #count = 0
     location, normal, index, distance = bvh.ray_cast(point, axis)
     if index is not None:
         if normal.dot(point-location)&lt;0:
             outside = False
 
-    # while True:
-    #     location, normal, index, distance = bvh.ray_cast(point, axis)
-    #     if index is None:
-    #         break
-    #     count += 1
-    #     point.x = location.x + axis.x * 0.00001
-    # if count % 2 == 0:
-    #     outside = True
     return not outside
 
 ################
@@ -1198,20 +1189,11 @@ Boolean List with preserved items marked as True - List[bool])</p></div>
     point = Vector(point)
     axis = Vector((1, 0, 0))
     outside = True
-    #count = 0
     location, normal, index, distance = bvh.ray_cast(point, axis)
     if index is not None:
         if normal.dot(point-location)&lt;0:
             outside = False
 
-    # while True:
-    #     location, normal, index, distance = bvh.ray_cast(point, axis)
-    #     if index is None:
-    #         break
-    #     count += 1
-    #     point.x = location.x + axis.x * 0.00001
-    # if count % 2 == 0:
-    #     outside = True
     return not outside</code></pre>
 </details>
 </dd>
