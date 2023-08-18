@@ -197,7 +197,7 @@ def view_3d_geom(context, args):
                 config.v_shader.bind()
 
             v_batch.draw(config.v_shader)
-            drawing.reset_point_size(1)
+            drawing.reset_point_size()
 
     drawing.disable_blendmode()
 

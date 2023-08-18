@@ -40,30 +40,32 @@ configurations will need additional attention and might even not reach parity fo
 or indeed at all. Replacement techniques will be investigated. 
 
 """
+def placeholder_function(*params):
+    return
 
 class Drawing:
 
-    set_wireframe_line = pass
-    set_wireframe_fill = pass
+    set_wireframe_line = placeholder_function
+    set_wireframe_fill = placeholder_function
     set_line_width = gpu.state.line_width_set
     reset_line_width = lambda: gpu.state.line_width_set(1)
     set_point_size = gpu.state.point_size_set
     reset_point_size = lambda: gpu.state.point_size_set(1)
-    enable_polygon_offset_fill = pass
-    disable_polygon_offset_fill = pass
-    set_polygon_offset_amounts = pass
+    enable_polygon_offset_fill = placeholder_function
+    disable_polygon_offset_fill = placeholder_function
+    set_polygon_offset_amounts = placeholder_function
 
-    enable_blendmode = pass
-    disable_blendmode = pass
-    enable_depth_test = pass
-    disable_depth_test = pass
+    enable_blendmode = placeholder_function
+    disable_blendmode = placeholder_function
+    enable_depth_test = placeholder_function
+    disable_depth_test = placeholder_function
 
-    new_buffer_texture = pass
-    get_buffer = pass
-    bind_texture_2d = pass
-    init_complex_texture = pass
-    generate_textures = pass
-    delete_texture = pass
+    new_buffer_texture = placeholder_function
+    get_buffer = placeholder_function
+    bind_texture_2d = placeholder_function
+    init_complex_texture = placeholder_function
+    generate_textures = placeholder_function
+    delete_texture = placeholder_function
 
     blf_size = lambda font_id, height, dpi: blf.size(font_id, height)
 
