@@ -83,6 +83,7 @@ class OldDrawing:
     disable_blendmode = lambda: bgl.glDisable(bgl.GL_BLEND)
     enable_depth_test = lambda: bgl.glEnable(bgl.GL_DEPTH_TEST)
     disable_depth_test = lambda: bgl.glDisable(bgl.GL_DEPTH_TEST)
+    disable_texture_2d = lambda: bgl.glDisable(bgl.GL_TEXTURE_2D)
 
     new_buffer_texture = lambda: bgl.Buffer(bgl.GL_INT, 1)
     get_buffer = lambda indexed_buffer: bgl.Buffer(bgl.GL_INT, 1, indexed_buffer)
@@ -102,7 +103,6 @@ class OldDrawing:
         bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_WRAP_T, bgl.GL_CLAMP_TO_EDGE)
         bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MAG_FILTER, bgl.GL_LINEAR)
         bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MIN_FILTER, bgl.GL_LINEAR)
-
         bgl.glTexImage2D(bgl.GL_TEXTURE_2D, 0, format, width, height, 0, format, bgl.GL_FLOAT, texture)
 
     def init_complex_texture(self, width, height, texname, texture, data, format):
