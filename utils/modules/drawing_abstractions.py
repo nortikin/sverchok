@@ -51,20 +51,20 @@ if bpy.app.version >= (3, 5, 0):
         set_wireframe_line = placeholder_function
 
         def set_wireframe_fill(self):
-            gpu.state.face_culling_set("FRONT")
-            # gpu.state.front_facing_set(False)
+            gpu.state.face_culling_set("BACK")
+            gpu.state.front_facing_set(False)
 
         set_line_width = gpu.state.line_width_set
         reset_line_width = lambda self: gpu.state.line_width_set(1)
         set_point_size = gpu.state.point_size_set
         reset_point_size = lambda self: gpu.state.point_size_set(1)
-        enable_polygon_offset_fill = lambda self: gpu.state.face_culling_set("FRONT")
+        enable_polygon_offset_fill = lambda self: gpu.state.face_culling_set("BACK")
         disable_polygon_offset_fill = placeholder_function
         set_polygon_offset_amounts = placeholder_function
 
         enable_blendmode = lambda self: gpu.state.blend_set("ALPHA")
         disable_blendmode = lambda self: gpu.state.blend_set("NONE")
-        enable_depth_test = lambda self: gpu.state.depth_test_set("ALWAYS")
+        enable_depth_test = lambda self: gpu.state.depth_test_set("LESS_EQUAL")
         disable_depth_test = lambda self: gpu.state.depth_test_set("NONE")
 
         new_buffer_texture = placeholder_function
