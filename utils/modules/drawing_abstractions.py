@@ -40,83 +40,89 @@ configurations will need additional attention and might even not reach parity fo
 or indeed at all. Replacement techniques will be investigated. 
 
 """
-def placeholder_function(*params):
-    return
 
-class Drawing:
+if bpy.app.version >= (3, 5, 0):
 
-    set_wireframe_line = placeholder_function
-    set_wireframe_fill = placeholder_function
-    set_line_width = gpu.state.line_width_set
-    reset_line_width = lambda: gpu.state.line_width_set(1)
-    set_point_size = gpu.state.point_size_set
-    reset_point_size = lambda: gpu.state.point_size_set(1)
-    enable_polygon_offset_fill = placeholder_function
-    disable_polygon_offset_fill = placeholder_function
-    set_polygon_offset_amounts = placeholder_function
+    def placeholder_function(*params):
+        return
 
-    enable_blendmode = placeholder_function
-    disable_blendmode = placeholder_function
-    enable_depth_test = placeholder_function
-    disable_depth_test = placeholder_function
+    class Drawing:
 
-    new_buffer_texture = placeholder_function
-    get_buffer = placeholder_function
-    bind_texture_2d = placeholder_function
-    init_complex_texture = placeholder_function
-    generate_textures = placeholder_function
-    delete_texture = placeholder_function
+        set_wireframe_line = placeholder_function
+        set_wireframe_fill = placeholder_function
+        set_line_width = gpu.state.line_width_set
+        reset_line_width = lambda self: gpu.state.line_width_set(1)
+        set_point_size = gpu.state.point_size_set
+        reset_point_size = lambda self: gpu.state.point_size_set(1)
+        enable_polygon_offset_fill = placeholder_function
+        disable_polygon_offset_fill = placeholder_function
+        set_polygon_offset_amounts = placeholder_function
 
-    blf_size = lambda font_id, height, dpi: blf.size(font_id, height)
+        enable_blendmode = placeholder_function
+        disable_blendmode = placeholder_function
+        enable_depth_test = placeholder_function
+        disable_depth_test = placeholder_function
+
+        new_buffer_texture = placeholder_function
+        get_buffer = placeholder_function
+        bind_texture_2d = placeholder_function
+        init_complex_texture = placeholder_function
+        generate_textures = placeholder_function
+        delete_texture = placeholder_function
+
+        blf_size = lambda self, font_id, height, dpi: blf.size(font_id, height)
 
 
-class OldDrawing:
-
-    blf_size = blf.size
+else:
 
     import bgl
-    set_wireframe_line = lambda: bgl.glPolygonMode(bgl.GL_FRONT_AND_BACK, bgl.GL_LINE)
-    set_wireframe_fill = lambda: bgl.glPolygonMode(bgl.GL_FRONT_AND_BACK, bgl.GL_FILL)
-    set_line_width = bgl.glLineWidth
-    reset_line_width = lambda: bgl.glLineWidth(1)
-    set_point_size = bgl.glPointSize
-    reset_point_size = lambda: bgl.glPointSize(1)
-    enable_polygon_offset_fill = lambda: bgl.glEnable(bgl.GL_POLYGON_OFFSET_FILL)
-    disable_polygon_offset_fill = lambda: bgl.glDisable(bgl.GL_POLYGON_OFFSET_FILL)
-    set_polygon_offset_amounts = lambda: bgl.glPolygonOffset(1.0, 1.0)
-    
-    enable_blendmode = lambda: bgl.glEnable(bgl.GL_BLEND)
-    disable_blendmode = lambda: bgl.glDisable(bgl.GL_BLEND)
-    enable_depth_test = lambda: bgl.glEnable(bgl.GL_DEPTH_TEST)
-    disable_depth_test = lambda: bgl.glDisable(bgl.GL_DEPTH_TEST)
-    disable_texture_2d = lambda: bgl.glDisable(bgl.GL_TEXTURE_2D)
 
-    new_buffer_texture = lambda: bgl.Buffer(bgl.GL_INT, 1)
-    get_buffer = lambda indexed_buffer: bgl.Buffer(bgl.GL_INT, 1, indexed_buffer)
-    new_buffer_texture_sized = lambda size, data: bgl.Buffer(bgl.GL_FLOAT, size, data)
-    bind_texture_2d = lambda texture: bgl.glBindTexture(bgl.GL_TEXTURE_2D, texture)
-    delete_texture = lambda texture: bgl.glDeleteTextures(1, texture)
+    class Drawing:
 
-    def init_image_from_texture(self, width, height, texname, texture, format):
+        blf_size = blf.size
 
-        format = {'BW': bgl.GL_RED, 'RGB': bgl.GL_RGB, 'RGBA': bgl.GL_RGBA}.get(format)
-
-        bgl.glPixelStorei(bgl.GL_UNPACK_ALIGNMENT, 1)
-        bgl.glEnable(bgl.GL_TEXTURE_2D)
-        bgl.glBindTexture(bgl.GL_TEXTURE_2D, texname)
-        bgl.glActiveTexture(bgl.GL_TEXTURE0)
-        bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_WRAP_S, bgl.GL_CLAMP_TO_EDGE)
-        bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_WRAP_T, bgl.GL_CLAMP_TO_EDGE)
-        bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MAG_FILTER, bgl.GL_LINEAR)
-        bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MIN_FILTER, bgl.GL_LINEAR)
-        bgl.glTexImage2D(bgl.GL_TEXTURE_2D, 0, format, width, height, 0, format, bgl.GL_FLOAT, texture)
-
-    def init_complex_texture(self, width, height, texname, data, format):
-        texture = self.new_buffer_texture_sized(bgl.GL_FLOAT, data.size, data.tolist())
-        self.init_image_from_texture(width, height, texname, texture, format)
+        set_wireframe_line = lambda self: bgl.glPolygonMode(bgl.GL_FRONT_AND_BACK, bgl.GL_LINE)
+        set_wireframe_fill = lambda self: bgl.glPolygonMode(bgl.GL_FRONT_AND_BACK, bgl.GL_FILL)
+        set_line_width = bgl.glLineWidth
+        reset_line_width = lambda self: bgl.glLineWidth(1)
+        set_point_size = bgl.glPointSize
+        reset_point_size = lambda self: bgl.glPointSize(1)
+        enable_polygon_offset_fill = lambda self: bgl.glEnable(bgl.GL_POLYGON_OFFSET_FILL)
+        disable_polygon_offset_fill = lambda self: bgl.glDisable(bgl.GL_POLYGON_OFFSET_FILL)
+        set_polygon_offset_amounts = lambda self: bgl.glPolygonOffset(1.0, 1.0)
         
+        enable_blendmode = lambda self: bgl.glEnable(bgl.GL_BLEND)
+        disable_blendmode = lambda self: bgl.glDisable(bgl.GL_BLEND)
+        enable_depth_test = lambda self: bgl.glEnable(bgl.GL_DEPTH_TEST)
+        disable_depth_test = lambda self: bgl.glDisable(bgl.GL_DEPTH_TEST)
+        disable_texture_2d = lambda self: bgl.glDisable(bgl.GL_TEXTURE_2D)
 
-    generate_textures = lambda name: bgl.glGenTextures(1, name)  # returns an indexable item
+        new_buffer_texture = lambda self: bgl.Buffer(bgl.GL_INT, 1)
+        get_buffer = lambda self, indexed_buffer: bgl.Buffer(bgl.GL_INT, 1, indexed_buffer)
+        new_buffer_texture_sized = lambda self, size, data: bgl.Buffer(bgl.GL_FLOAT, size, data)
+        bind_texture_2d = lambda self, texture: bgl.glBindTexture(bgl.GL_TEXTURE_2D, texture)
+        delete_texture = lambda self, texture: bgl.glDeleteTextures(1, texture)
+
+        def init_image_from_texture(self, width, height, texname, texture, format):
+
+            format = {'BW': bgl.GL_RED, 'RGB': bgl.GL_RGB, 'RGBA': bgl.GL_RGBA}.get(format)
+
+            bgl.glPixelStorei(bgl.GL_UNPACK_ALIGNMENT, 1)
+            bgl.glEnable(bgl.GL_TEXTURE_2D)
+            bgl.glBindTexture(bgl.GL_TEXTURE_2D, texname)
+            bgl.glActiveTexture(bgl.GL_TEXTURE0)
+            bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_WRAP_S, bgl.GL_CLAMP_TO_EDGE)
+            bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_WRAP_T, bgl.GL_CLAMP_TO_EDGE)
+            bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MAG_FILTER, bgl.GL_LINEAR)
+            bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MIN_FILTER, bgl.GL_LINEAR)
+            bgl.glTexImage2D(bgl.GL_TEXTURE_2D, 0, format, width, height, 0, format, bgl.GL_FLOAT, texture)
+
+        def init_complex_texture(self, width, height, texname, data, format):
+            texture = self.new_buffer_texture_sized(bgl.GL_FLOAT, data.size, data.tolist())
+            self.init_image_from_texture(width, height, texname, texture, format)
+            
+
+        generate_textures = lambda self, name: bgl.glGenTextures(1, name)  # returns an indexable item
 
 
-drawing = Drawing() if bpy.app.version >= (3, 5, 0) else OldDrawing()
+drawing = Drawing()
