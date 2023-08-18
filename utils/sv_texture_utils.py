@@ -8,7 +8,7 @@
 import bgl
 import gpu
 from gpu_extras.batch import batch_for_shader
-
+from sverchok.utils.modules.drawing_abstractions import drawing 
 
 tx_vertex_shader = '''
     uniform mat4 viewProjectionMatrix;
@@ -48,19 +48,8 @@ tx_fragment_shader = '''
     }
 '''
 
-def init_texture(width, height, texname, texture, clr):  # good luck with this one
-    bgl.glPixelStorei(bgl.GL_UNPACK_ALIGNMENT, 1)
-
-    bgl.glEnable(bgl.GL_TEXTURE_2D)
-    bgl.glBindTexture(bgl.GL_TEXTURE_2D, texname)
-    bgl.glActiveTexture(bgl.GL_TEXTURE0)
-
-    bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_WRAP_S, bgl.GL_CLAMP_TO_EDGE)
-    bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_WRAP_T, bgl.GL_CLAMP_TO_EDGE)
-    bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MAG_FILTER, bgl.GL_LINEAR)
-    bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MIN_FILTER, bgl.GL_LINEAR)
-
-    bgl.glTexImage2D(bgl.GL_TEXTURE_2D, 0, clr, width, height, 0, clr, bgl.GL_FLOAT, texture)
+def init_texture(width, height, texname, texture, clr):
+    drawing.init_image_from_texture(width, height, texname, texture, clr)
 
 
 def simple_screen(context, args, xy):

@@ -90,11 +90,9 @@ class OldDrawing:
     bind_texture_2d = lambda texture: bgl.glBindTexture(bgl.GL_TEXTURE_2D, texture)
     delete_texture = lambda texture: bgl.glDeleteTextures(1, texture)
 
-    def init_complex_texture(self, width, height, texname, texture, data, format):
+    def init_image_from_texture(self, width, height, texname, texture, format):
 
         format = {'BW': bgl.GL_RED, 'RGB': bgl.GL_RGB, 'RGBA': bgl.GL_RGBA}.get(format)
-
-        texture = self.new_buffer_texture_sized(bgl.GL_FLOAT, data.size, data.tolist())
 
         bgl.glPixelStorei(bgl.GL_UNPACK_ALIGNMENT, 1)
         bgl.glEnable(bgl.GL_TEXTURE_2D)
@@ -104,7 +102,13 @@ class OldDrawing:
         bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_WRAP_T, bgl.GL_CLAMP_TO_EDGE)
         bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MAG_FILTER, bgl.GL_LINEAR)
         bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MIN_FILTER, bgl.GL_LINEAR)
-        bgl.glTexImage2D(bgl.GL_TEXTURE_2D, 0, format, width, height, 0, format, bgl.GL_FLOAT, texture)        
+
+        bgl.glTexImage2D(bgl.GL_TEXTURE_2D, 0, format, width, height, 0, format, bgl.GL_FLOAT, texture)
+
+    def init_complex_texture(self, width, height, texname, texture, data, format):
+        texture = self.new_buffer_texture_sized(bgl.GL_FLOAT, data.size, data.tolist())
+        self.init_image_from_texture(width, height, texname, texture, format)
+        
 
     generate_textures = lambda name: bgl.glGenTextures(1, name)  # returns an indexable item
 
