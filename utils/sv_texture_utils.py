@@ -5,7 +5,6 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
-import bgl
 import gpu
 from gpu_extras.batch import batch_for_shader
 from sverchok.utils.modules.drawing_abstractions import drawing 
@@ -63,10 +62,9 @@ def simple_screen(context, args, xy):
         # function to draw a texture
         matrix = gpu.matrix.get_projection_matrix()
 
-        bgl.glDisable(bgl.GL_DEPTH_TEST)
-
-        act_tex = bgl.Buffer(bgl.GL_INT, 1)
-        bgl.glBindTexture(bgl.GL_TEXTURE_2D, texname)
+        drawing.disable_depth_test()
+        act_tex = drawing.new_buffer_texture()
+        drawing.bind_texture_2d(texname)
 
         shader.bind()
         shader.uniform_int("image", act_tex)
@@ -77,8 +75,8 @@ def simple_screen(context, args, xy):
         batch.draw(shader)
 
         # restoring settings
-        bgl.glBindTexture(bgl.GL_TEXTURE_2D, act_tex[0])
-        bgl.glDisable(bgl.GL_TEXTURE_2D)
+        drawing.bind_texture_2d(act_tex[0])
+        drawing.disable_texture_2d()
 
     draw_texture(x=x, y=y, w=width, h=height, texname=texname, c=cMod)
 
