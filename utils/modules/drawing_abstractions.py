@@ -109,7 +109,10 @@ else:
 
         def init_image_from_texture(self, width, height, texname, texture, format):
 
-            format = {'BW': bgl.GL_RED, 'RGB': bgl.GL_RGB, 'RGBA': bgl.GL_RGBA}.get(format)
+            if format in {bgl.GL_RGBA, bgl.GL_RGB, bgl.GL_RED}:
+                ...
+            else:
+                format = {'BW': bgl.GL_RED, 'RGB': bgl.GL_RGB, 'RGBA': bgl.GL_RGBA}.get(format)
 
             bgl.glPixelStorei(bgl.GL_UNPACK_ALIGNMENT, 1)
             bgl.glEnable(bgl.GL_TEXTURE_2D)
