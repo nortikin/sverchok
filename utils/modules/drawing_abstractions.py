@@ -52,7 +52,7 @@ if bpy.app.version >= (3, 5, 0):
 
         def set_wireframe_fill(self):
             gpu.state.face_culling_set("FRONT")
-            gpu.state.front_facing_set(False)
+            # gpu.state.front_facing_set(False)
 
         set_line_width = gpu.state.line_width_set
         reset_line_width = lambda self: gpu.state.line_width_set(1)
