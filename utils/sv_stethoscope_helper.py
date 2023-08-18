@@ -62,7 +62,7 @@ def draw_graphical_data(data):
 
     def draw_text(color, xpos, ypos, line):
         r, g, b = color
-        blf.color(font_id, r, g, b, 1.0) # bgl.glColor3f(*color)
+        blf.color(font_id, r, g, b, 1.0)
         blf.position(0, xpos, ypos, 0)
         blf.draw(font_id, line)
         return blf.dimensions(font_id, line)

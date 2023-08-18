@@ -105,7 +105,7 @@ class OldDrawing:
         bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MIN_FILTER, bgl.GL_LINEAR)
         bgl.glTexImage2D(bgl.GL_TEXTURE_2D, 0, format, width, height, 0, format, bgl.GL_FLOAT, texture)
 
-    def init_complex_texture(self, width, height, texname, texture, data, format):
+    def init_complex_texture(self, width, height, texname, data, format):
         texture = self.new_buffer_texture_sized(bgl.GL_FLOAT, data.size, data.tolist())
         self.init_image_from_texture(width, height, texname, texture, format)
         

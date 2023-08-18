@@ -11,7 +11,6 @@ import traceback
 
 import bpy
 import blf
-import bgl
 import gpu
 from gpu_extras.batch import batch_for_shader
 

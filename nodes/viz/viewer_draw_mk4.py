@@ -126,14 +126,14 @@ def view_3d_geom(context, args):
 
     geom, config = args
 
-    drawing.enable_blendmode() # bgl.glEnable(bgl.GL_BLEND)
+    drawing.enable_blendmode()
 
     if config.draw_polys:
         if config.draw_gl_wireframe:
             drawing.set_wireframe_line()
         if config.draw_gl_polygonoffset:
-            drawing.enable_polygon_offset_fill() # bgl.glEnable(bgl.GL_POLYGON_OFFSET_FILL)
-            drawing.set_polygon_offset_amounts() #bgl.glPolygonOffset(1.0, 1.0)
+            drawing.enable_polygon_offset_fill()
+            drawing.set_polygon_offset_amounts()
 
         if config.shade_mode == 'fragment':
             p_batch = batch_for_shader(config.p_shader, 'TRIS', {"position": geom.p_vertices}, indices=geom.p_indices)
@@ -153,9 +153,9 @@ def view_3d_geom(context, args):
         p_batch.draw(config.p_shader)
 
         if config.draw_gl_polygonoffset:
-            drawing.disable_polygon_offset_fill() # bgl.glDisable(bgl.GL_POLYGON_OFFSET_FILL)
+            drawing.disable_polygon_offset_fill()
         if config.draw_gl_wireframe:
-            drawing.set_wireframe_fill() # bgl.glPolygonMode(bgl.GL_FRONT_AND_BACK, bgl.GL_FILL)
+            drawing.set_wireframe_fill()
 
 
     if config.draw_edges:
@@ -949,7 +949,6 @@ class SvViewerDrawMk4(SverchCustomTreeNode, bpy.types.Node):
                 self.process()
             else:
                 callback_disable(node_id(self))
-
 
 
 classes = [SvViewerDrawMk4,]
