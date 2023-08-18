@@ -13,7 +13,7 @@ import gpu
 from gpu_extras.batch import batch_for_shader
 
 from sverchok.utils.sv_nodeview_draw_helper import get_console_grid, get_xy_for_bgl_drawing 
-
+from sverchok.utils.modules.drawing_abstractions import drawing 
 from sverchok.nodes.viz.console_node import (
     simple_console_xy, 
     terminal_text_to_uv, 
