@@ -10,6 +10,7 @@
 
 import bpy
 import gpu
+import blf
 from typing import NamedTuple
 
 
@@ -64,9 +65,12 @@ class Drawing:
     generate_textures = pass
     delete_texture = pass
 
+    blf_size = lambda font_id, height, dpi: blf.size(font_id, height)
 
 
 class OldDrawing:
+
+    blf_size = blf.size
 
     import bgl
     set_wireframe_line = lambda: bgl.glPolygonMode(bgl.GL_FRONT_AND_BACK, bgl.GL_LINE)

@@ -19,6 +19,8 @@ from mathutils import Vector
 from mathutils.bvhtree import BVHTree
 
 from sverchok.data_structure import Vector_generate
+from sverchok.utils.modules.drawing_abstractions import drawing 
+
 
 SpaceView3D = bpy.types.SpaceView3D
 callback_dict = {}
@@ -84,7 +86,7 @@ def draw_indices_2D(context, args):
 
     font_id = 0
     text_height = int(13.0 * scale)
-    blf.size(font_id, text_height, 72)  # should check prefs.dpi
+    drawing.blf_size(font_id, text_height, 72)  # should check prefs.dpi
 
     region_mid_width = region.width / 2.0
     region_mid_height = region.height / 2.0
@@ -248,7 +250,7 @@ def draw_indices_2D_wbg(context, args):
 
     font_id = 0
     text_height = int(13.0 * scale)
-    blf.size(font_id, text_height, 72)  # should check prefs.dpi
+    drawing.blf_size(font_id, text_height, 72)  # should check prefs.dpi
 
     region_mid_width = region.width / 2.0
     region_mid_height = region.height / 2.0

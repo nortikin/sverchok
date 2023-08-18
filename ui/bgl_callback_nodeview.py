@@ -232,7 +232,7 @@ def _draw_text_handler(tree_id, node_id, text: str, color=(1, 1, 1, 1), scale=1.
     font_id = 0
     dpi = 72
 
-    blf.size(font_id, text_height, dpi)
+    drawing.blf_size(font_id, text_height, dpi)
     blf.color(font_id, *color)
 
     for line in text.split('\n'):
