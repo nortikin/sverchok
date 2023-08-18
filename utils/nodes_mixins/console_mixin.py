@@ -9,7 +9,7 @@ import re
 
 import bpy
 import numpy as np
-import bgl, gpu
+import gpu
 from gpu_extras.batch import batch_for_shader
 
 from sverchok.utils.sv_nodeview_draw_helper import get_console_grid, get_xy_for_bgl_drawing 
@@ -122,26 +122,17 @@ class LexMixin():
     def init_texture(self, width, height):
         texname = self.texture_dict['texture']
         data = self.texture_dict['texture_data']
-        clr = bgl.GL_RGBA
 
         if not 'texture_buffer' in self.texture_dict:
             #print('initializing texture longform')
-            texture = bgl.Buffer(bgl.GL_FLOAT, data.size, data.tolist())
+            texture = new_buffer_texture_sized(data.size, data.tolist())
             self.texture_dict['texture_buffer'] = texture
         else:
             #print("reusing")
             texture = self.texture_dict['texture_buffer'] 
 
-        bgl.glPixelStorei(bgl.GL_UNPACK_ALIGNMENT, 1)
-        bgl.glEnable(bgl.GL_TEXTURE_2D)
-        
-        bgl.glBindTexture(bgl.GL_TEXTURE_2D, texname)
-        bgl.glActiveTexture(bgl.GL_TEXTURE0)
-        bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_WRAP_S, bgl.GL_CLAMP_TO_EDGE)
-        bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_WRAP_T, bgl.GL_CLAMP_TO_EDGE)
-        bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MAG_FILTER, bgl.GL_LINEAR)
-        bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MIN_FILTER, bgl.GL_LINEAR)
-        bgl.glTexImage2D(bgl.GL_TEXTURE_2D, 0, clr, width, height, 0, clr, bgl.GL_FLOAT, texture)
+        drawing.init_image_from_texture(self, width, height, texname, texture, 'RGBA')
+
 
     def get_font_texture(self):
         if not self.texture_dict:
@@ -153,10 +144,11 @@ class LexMixin():
             dsize = data.size
             data = data.repeat(3).reshape(-1, 3)
             data = np.concatenate((data, np.ones(dsize)[:,None]),axis=1).flatten()
-            name = bgl.Buffer(bgl.GL_INT, 1)
-            bgl.glGenTextures(1, name)
+            name = bgl.new_buffer_texture()
+            drawing.generate_textures(name)
+
             self.texture_dict['texture'] = name[0]
-            self.texture_dict['texture_data'] = data # bgl.Buffer(bgl.GL_FLOAT, data.size, data.tolist())        
+            self.texture_dict['texture_data'] = data        
 
     def get_lexed_colors(self):
         return [(lex_name, getattr(self, lex_name)[:]) for lex_name in lexed_colors]

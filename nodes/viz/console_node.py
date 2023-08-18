@@ -547,7 +547,7 @@ class SvConsoleNode(SverchCustomTreeNode, bpy.types.Node, SvNodeViewDrawMixin):
     def init_texture(self, width, height):
         texname = self.texture_dict['texture']
         data = self.texture_dict['texture_data']
-        drawing.init_complex_texture(width, height, texname, texture, data, 'RGBA')
+        drawing.init_complex_texture(width, height, texname, data, 'RGBA')
 
 
     def set_node_props(self, socket_data):
