@@ -155,6 +155,7 @@ def view_3d_geom(context, args):
         if config.draw_gl_polygonoffset:
             drawing.disable_polygon_offset_fill()
         if config.draw_gl_wireframe:
+            # this is to reset the state of drawing to fill
             drawing.set_polygonmode_fill()
 
 
