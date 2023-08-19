@@ -16,6 +16,7 @@ from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh
 from sverchok.utils.nodes_mixins.show_3d_properties import Show3DProperties
 
 class SvOB3BDataCollection(bpy.types.PropertyGroup):
+    bl_idname = "SvOB3BDataCollection"
     name: bpy.props.StringProperty()
     icon: bpy.props.StringProperty(default="BLANK1")
 
@@ -41,6 +42,7 @@ class SvOB3BItemOperator(bpy.types.Operator, SvGenericNodeLocator):
 
     bl_idname = "node.sv_ob3b_collection_operator"
     bl_label = "generic bladibla"
+    #bl_options = {'INTERNAL'}
 
     fn_name: StringProperty(default='')
     idx: IntProperty()
@@ -309,4 +311,12 @@ class SvObjectsNodeMK3(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
 
 
 classes = [SvOB3BItemOperator, SvOB3BDataCollection, SVOB3B_UL_NamesList, SvOB3Callback, SvObjectsNodeMK3]
-register, unregister = bpy.utils.register_classes_factory(classes)
+#register, unregister = bpy.utils.register_classes_factory(classes)
+def register():
+    for cls in classes:
+        bpy.utils.register_class(cls)
+
+def unregister():
+    for cls in reversed(classes):
+        bpy.utils.unregister_class(cls)
+

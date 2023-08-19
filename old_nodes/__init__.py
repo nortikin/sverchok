@@ -128,7 +128,7 @@ def register_all():
             # when a code of an old node is copied to old folder
             # it can be copied with other classes (property groups)
             # which does not change it version to MK2, so we have the error
-            sv_logger.error(e)
+            sv_logger.error( (bl_id, e) )
 
 
 def register():
@@ -141,8 +141,8 @@ def register():
 
 
 def unregister():
-    for mod in imported_mods.values():
+    for i, mod in enumerate(imported_mods.values()):
         try:
             mod.unregister()
         except Exception as e:
-            sv_logger.error(e)
+            sv_logger.error( (mod, e) )
