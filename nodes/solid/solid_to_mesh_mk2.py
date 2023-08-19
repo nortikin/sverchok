@@ -71,7 +71,7 @@ class SvSolidToMeshNodeMk2(SverchCustomTreeNode, bpy.types.Node):
             self.inputs['Angle Deviation'].hide_safe = True
             self.inputs['Max Edge Length'].hide_safe = False
 
-        elif self.mode == 'Trivial':
+        elif self.mode in {'Trivial', 'Lenient'}:    
             self.inputs['Precision'].hide_safe = True
             self.inputs['Surface Deviation'].hide_safe = True
             self.inputs['Angle Deviation'].hide_safe = True
