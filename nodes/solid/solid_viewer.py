@@ -198,6 +198,7 @@ def draw_faces_uniform(context, args):
         draw_smooth(geom.f_verts, geom.smooth_vnorms, indices=geom.f_faces)
 
     if config.draw_gl_wireframe:
+        # this is to reset the state of drawing to fill
         drawing.set_polygonmode_fill()
 
 
