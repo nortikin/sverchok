@@ -208,10 +208,8 @@ class SvGetPropNode(SverchCustomTreeNode, bpy.types.Node):
         self.outputs[0].sv_set(wrap_output_data(self.obj))
 
 def register():
-#    bpy.utils.register_class(SvSetPropNode)
     bpy.utils.register_class(SvGetPropNode)
 
 
 def unregister():
-#    bpy.utils.unregister_class(SvSetPropNode)
     bpy.utils.unregister_class(SvGetPropNode)

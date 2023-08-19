@@ -42,7 +42,6 @@ class SvOB3BItemOperator(bpy.types.Operator, SvGenericNodeLocator):
 
     bl_idname = "node.sv_ob3b_collection_operator"
     bl_label = "generic bladibla"
-    #bl_options = {'INTERNAL'}
 
     fn_name: StringProperty(default='')
     idx: IntProperty()
@@ -311,12 +310,4 @@ class SvObjectsNodeMK3(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
 
 
 classes = [SvOB3BItemOperator, SvOB3BDataCollection, SVOB3B_UL_NamesList, SvOB3Callback, SvObjectsNodeMK3]
-#register, unregister = bpy.utils.register_classes_factory(classes)
-def register():
-    for cls in classes:
-        bpy.utils.register_class(cls)
-
-def unregister():
-    for cls in reversed(classes):
-        bpy.utils.unregister_class(cls)
-
+register, unregister = bpy.utils.register_classes_factory(classes)

@@ -26,10 +26,8 @@ import mathutils
 from mathutils import Matrix, Vector, Euler, Quaternion, Color
 
 from sverchok.node_tree import SverchCustomTreeNode
-
 from sverchok.data_structure import Matrix_generate, updateNode, node_id
-
-from sverchok.old_nodes.getprop import assign_data
+from sverchok.old_nodes.getprop import assign_data, get_object, apply_alias, parse_to_path, secondary_type_assesment, types
 
 class SvSetPropNode(SverchCustomTreeNode, bpy.types.Node):
     ''' Set Property '''
