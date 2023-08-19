@@ -181,9 +181,8 @@ def face_geom(geom, config):
 
 def draw_faces_uniform(context, args):
     geom, config = args
-    # print(geom.f_faces, config.shade)
     if config.draw_gl_wireframe:
-        drawing.set_wireframe_line()
+        drawing.set_polygonmode_line()
 
     if config.draw_gl_polygonoffset:
         drawing.enable_polygon_offset_fill()
@@ -199,7 +198,7 @@ def draw_faces_uniform(context, args):
         draw_smooth(geom.f_verts, geom.smooth_vnorms, indices=geom.f_faces)
 
     if config.draw_gl_wireframe:
-        drawing.set_wireframe_fill()
+        drawing.set_polygonmode_fill()
 
 
 def edges_geom(geom, config):

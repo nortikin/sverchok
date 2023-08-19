@@ -130,7 +130,7 @@ def view_3d_geom(context, args):
 
     if config.draw_polys:
         if config.draw_gl_wireframe:
-            drawing.set_wireframe_line()
+            drawing.set_polygonmode_line()
         if config.draw_gl_polygonoffset:
             drawing.enable_polygon_offset_fill()
             drawing.set_polygon_offset_amounts()
@@ -155,7 +155,7 @@ def view_3d_geom(context, args):
         if config.draw_gl_polygonoffset:
             drawing.disable_polygon_offset_fill()
         if config.draw_gl_wireframe:
-            drawing.set_wireframe_fill()
+            drawing.set_polygonmode_fill()
 
 
     if config.draw_edges:
