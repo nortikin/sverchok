@@ -29,27 +29,16 @@ class SvEllipseCurveNodeMK2(SverchCustomTreeNode, bpy.types.Node):
 
     def update_sockets(self, context):
         all_sockets_name = ["Minor Radius", "Eccentricity", "Focal Length", ]
-        #self.inputs["Minor Radius"].hide = True
-        #self.inputs["Eccentricity"].hide = True
-        #self.inputs["Focal Length"].hide = True
 
         list_links_remove = None
         if self.mode == "AB":
             list_links_remove = ["Eccentricity", "Focal Length",]
-            #self.inputs["Minor Radius"].hide = False
-            #socket2 = self.inputs[1]
-            #socket2.replace_socket("SvStringsSocket", "Minor Radius").prop_name = "minor_radius"
         elif self.mode == "AE":
             list_links_remove = ["Minor Radius", "Focal Length",]
-            #self.inputs["Eccentricity"].hide = False
-            #socket2 = self.inputs[1]
-            #socket2.replace_socket("SvStringsSocket", "Eccentricity").prop_name = "eccentricity"
         else:  # AC
             list_links_remove = ["Minor Radius", "Eccentricity",]
-            #self.inputs["Focal Length"].hide = False
-            #socket2 = self.inputs[1]
-            #socket2.replace_socket("SvStringsSocket", "Focal Length").prop_name = "focal_length"
 
+        # remove existing link if sockets are switched:
         for socket_name in list_links_remove:
             all_sockets_name.remove(socket_name)
             for l in self.inputs[socket_name].links:
@@ -139,8 +128,6 @@ class SvEllipseCurveNodeMK2(SverchCustomTreeNode, bpy.types.Node):
                     minor_radius = input2
                 elif self.mode == 'AE':
                     e = input2
-                    # if e<0 or 1<e:
-                    #     raise Exception(f"Eccentricity {e} has to be in range [0;1].")
                     minor_radius = major_radius * sqrt(1 - e*e)
                 else: # AC
                     c = input2
