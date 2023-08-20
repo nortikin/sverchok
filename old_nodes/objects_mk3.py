@@ -16,6 +16,7 @@ from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh
 from sverchok.utils.nodes_mixins.show_3d_properties import Show3DProperties
 
 class SvOB3BDataCollection(bpy.types.PropertyGroup):
+    bl_idname = "SvOB3BDataCollection"
     name: bpy.props.StringProperty()
     icon: bpy.props.StringProperty(default="BLANK1")
 

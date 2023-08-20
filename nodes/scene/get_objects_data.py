@@ -19,7 +19,7 @@ from sverchok.utils.blender_mesh import (
     read_face_normal, read_face_center, read_face_area, read_materials_idx)
 
 
-class SvOB3BDataCollection(bpy.types.PropertyGroup):
+class SvOB3BDataCollectionMK2(bpy.types.PropertyGroup):
     name: bpy.props.StringProperty()
     icon: bpy.props.StringProperty(default="BLANK1")
 
@@ -28,7 +28,7 @@ class ReadingObjectDataError(Exception):
     pass
 
 
-class SVOB3B_UL_NamesList(bpy.types.UIList):
+class SVOB3B_UL_NamesListMK2(bpy.types.UIList):
 
     def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
 
@@ -40,14 +40,14 @@ class SVOB3B_UL_NamesList(bpy.types.UIList):
                 item_icon = ""
 
         layout.label(text=item.name, icon=item_icon)
-        action = data.wrapper_tracked_ui_draw_op(layout, "node.sv_ob3b_collection_operator", icon='X', text='')
+        action = data.wrapper_tracked_ui_draw_op(layout, "node.sv_ob3b_collection_operator_mk2", icon='X', text='')
         action.fn_name = 'REMOVE'
         action.idx = index
 
 
-class SvOB3BItemOperator(bpy.types.Operator, SvGenericNodeLocator):
+class SvOB3BItemOperatorMK2(bpy.types.Operator, SvGenericNodeLocator):
 
-    bl_idname = "node.sv_ob3b_collection_operator"
+    bl_idname = "node.sv_ob3b_collection_operator_mk2"
     bl_label = "generic bladibla"
 
     fn_name: StringProperty(default='')
@@ -59,9 +59,9 @@ class SvOB3BItemOperator(bpy.types.Operator, SvGenericNodeLocator):
         node.process_node(None)
 
 
-class SvOB3Callback(bpy.types.Operator, SvGenericNodeLocator):
+class SvOB3CallbackMK2(bpy.types.Operator, SvGenericNodeLocator):
 
-    bl_idname = "node.ob3_callback"
+    bl_idname = "node.ob3_callback_mk2"
     bl_label = "Object In mk3 callback"
     bl_options = {'INTERNAL'}
 
@@ -126,7 +126,7 @@ class SvGetObjectsData(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
         description='sorting inserted objects by names',
         default=True, update=updateNode)
 
-    object_names: bpy.props.CollectionProperty(type=SvOB3BDataCollection)
+    object_names: bpy.props.CollectionProperty(type=SvOB3BDataCollectionMK2)
 
     active_obj_index: bpy.props.IntProperty()
 
@@ -189,7 +189,7 @@ class SvGetObjectsData(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
 
     def draw_obj_names(self, layout):
         if self.object_names:
-            layout.template_list("SVOB3B_UL_NamesList", "", self, "object_names", self, "active_obj_index")
+            layout.template_list("SVOB3B_UL_NamesListMK2", "", self, "object_names", self, "active_obj_index")
         else:
             layout.label(text='--None--')
 
@@ -204,7 +204,7 @@ class SvGetObjectsData(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
             row = col.row()
 
             op_text = "Get selection"  # fallback
-            callback = 'node.ob3_callback'
+            callback = 'node.ob3_callback_mk2'
 
             if self.prefs_over_sized_buttons:
                 row.scale_y = 4.0
@@ -242,7 +242,7 @@ class SvGetObjectsData(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
 
     def draw_buttons_3dpanel(self, layout):
         if not self.by_input:
-            callback = 'node.ob3_callback'
+            callback = 'node.ob3_callback_mk2'
             row = layout.row(align=True)
             row.label(text=self.label if self.label else self.name)
             colo = row.row(align=True)
@@ -379,5 +379,5 @@ class SvGetObjectsData(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
                 outputs['Object'].sv_set([data_objects.get(o.name) for o in self.object_names])
 
 
-classes = [SvOB3BItemOperator, SvOB3BDataCollection, SVOB3B_UL_NamesList, SvOB3Callback, SvGetObjectsData]
+classes = [SvOB3BItemOperatorMK2, SvOB3BDataCollectionMK2, SVOB3B_UL_NamesListMK2, SvOB3CallbackMK2, SvGetObjectsData]
 register, unregister = bpy.utils.register_classes_factory(classes)

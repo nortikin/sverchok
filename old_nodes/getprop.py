@@ -207,99 +207,9 @@ class SvGetPropNode(SverchCustomTreeNode, bpy.types.Node):
         # print(">> Get process is called")
         self.outputs[0].sv_set(wrap_output_data(self.obj))
 
-
-class SvSetPropNode(SverchCustomTreeNode, bpy.types.Node):
-    ''' Set Property '''
-    bl_idname = 'SvSetPropNode'
-    bl_label = 'Set Property'
-    bl_icon = 'FORCE_VORTEX'
-    sv_icon = 'SV_PROP_SET'
-
-    ok_prop: BoolProperty(default=False)
-    bad_prop: BoolProperty(default=False)
-
-
-    @property
-    def obj(self):
-        eval_str = apply_alias(self.prop_name)
-        ast_path = ast.parse(eval_str)
-        path = parse_to_path(ast_path.body[0].value)
-        return get_object(path)
-        
-    def verify_prop(self, context):
-
-        # test first 
-        try:
-            obj = self.obj
-        except:
-            traceback.print_exc()
-            self.bad_prop = True
-            return
-
-        # execute second
-        self.bad_prop = False
-
-        s_type = types.get(type(self.obj))
-        if not s_type:
-            s_type = secondary_type_assesment(self.obj)
-
-        p_name = {
-            float: "float_prop", 
-            int: "int_prop",
-            bpy_prop_array: "color_prop"
-        }.get(type(self.obj),"")
-        
-        inputs = self.inputs
-
-        if inputs and s_type: 
-            socket = inputs[0].replace_socket(s_type)
-            socket.prop_name = p_name
-        elif s_type:
-            inputs.new(s_type, "Data").prop_name = p_name
-        if s_type == "SvVerticesSocket":
-            inputs[0].use_prop = True
-
-        updateNode(self, context)
-
-    def local_updateNode(self, context):
-        # no further interaction with the nodetree is required.
-        self.process()
-        
-    prop_name: StringProperty(name='', update=verify_prop)
-    float_prop: FloatProperty(update=updateNode, name="x")
-    int_prop: IntProperty(update=updateNode, name="x")
-    color_prop: FloatVectorProperty(
-        name="Color", description="Color", size=4,
-        min=0.0, max=1.0, subtype='COLOR', update=local_updateNode)
-
-    def draw_buttons(self, context, layout):
-        layout.alert = self.bad_prop
-        layout.prop(self, "prop_name", text="")
-
-    def process(self):
-        # print("<< Set process is called")
-        data = self.inputs[0].sv_get()
-        eval_str = apply_alias(self.prop_name)
-        ast_path = ast.parse(eval_str)
-        path = parse_to_path(ast_path.body[0].value)
-        obj = get_object(path)
-
-        if isinstance(obj, (int, float, bpy_prop_array)):
-            obj = get_object(path[:-1])
-            p_type, value = path[-1]
-            if p_type == "attr":
-                setattr(obj, value, data[0][0])
-            else: 
-                obj[value] = data[0][0]
-        else:
-            assign_data(obj, data)
-
-
 def register():
-    bpy.utils.register_class(SvSetPropNode)
     bpy.utils.register_class(SvGetPropNode)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvSetPropNode)
     bpy.utils.unregister_class(SvGetPropNode)
