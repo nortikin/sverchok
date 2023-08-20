@@ -228,7 +228,7 @@
         - icon_name: OUTLINER_OB_CURVE
         - SvExLineCurveNode
         - SvCircleCurveMk2Node
-        - SvEllipseCurveNode
+        - SvEllipseCurveNodeMK2
         - SvRoundedRectangleNode
         - SvArc3ptCurveNode
         - SvArcSedCurveNode

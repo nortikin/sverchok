@@ -62,7 +62,7 @@
     - Curve Primitives:
         - SvExLineCurveNode
         - SvCircleCurveMk2Node
-        - SvEllipseCurveNode
+        - SvEllipseCurveNodeMK2
         - SvRoundedRectangleNode
         - SvArc3ptCurveNode
         - SvArcSedCurveNode
