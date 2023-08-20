@@ -149,7 +149,7 @@ From Source (Conic):
   :target: https://user-images.githubusercontent.com/284644/87579479-69a31400-c6ef-11ea-9996-2675af3f6106.png
 
 * Curves-> :doc:`Rounded Rectangle </nodes/curve/rounded_rectangle>`
-* Curves->Curve Primitives-> :doc:`Ellipse (Curve) </nodes/curve/ellipse>`
+* Curves->Curve Primitives-> :doc:`Ellipse (Curve) </nodes/curve/ellipse_curve>`
 * Curves-> :doc:`Evaluate Curve </nodes/curve/eval_curve>`
 * Surfaces-> :doc:`Extrude Curve Along Vector </nodes/surface/extrude_vector>`
 * Surfaces-> :doc:`Evaluate Surface </nodes/surface/evaluate_surface>`
