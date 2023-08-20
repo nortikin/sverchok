@@ -144,7 +144,7 @@ class LexMixin():
             dsize = data.size
             data = data.repeat(3).reshape(-1, 3)
             data = np.concatenate((data, np.ones(dsize)[:,None]),axis=1).flatten()
-            name = bgl.new_buffer_texture()
+            name = drawing.new_buffer_texture()
             drawing.generate_textures(name)
 
             self.texture_dict['texture'] = name[0]
