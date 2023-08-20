@@ -789,10 +789,10 @@ class SvEllipse(SvCurve):
             return self.center
         elif self.center_type == SvEllipse.F1:
             df = self.matrix @ np.array([self.c, 0, 0])
-            return self.center + df
+            return self.center - df
         else: # F2
             df = self.matrix @ np.array([self.c, 0, 0])
-            return self.center - df
+            return self.center + df
 
     def get_degree(self):
         return 2
