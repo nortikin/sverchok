@@ -22,7 +22,7 @@ from sverchok.ui.bgl_callback_3dview import callback_disable, callback_enable
 from sverchok.utils.sv_shader_sources import dashed_vertex_shader, dashed_fragment_shader
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.utils.modules.geom_utils import obtain_normal3 as normal
-from sverchok.utils.modules.drawing_abstractions import drawing
+from sverchok.utils.modules.drawing_abstractions import drawing, shading_3d
 
 from sverchok.dependencies import FreeCAD
 if FreeCAD is not None:
@@ -102,9 +102,7 @@ def draw_uniform(GL_KIND, coords, indices, color, width=1, dashed_data=None):
         batch.draw(shader)
 
     else:
-        # print(GL_KIND,coords)
-        shader_name = f'{"3D_" if bpy.app.version < (3, 4) else ""}UNIFORM_COLOR'
-        shader = gpu.shader.from_builtin(shader_name)
+        shader = gpu.shader.from_builtin(shading_3d.UNIFORM_COLOR)
         batch = batch_for_shader(shader, GL_KIND, {"pos" : coords}, **params)
         shader.bind()
         shader.uniform_float("color", color)
@@ -118,8 +116,7 @@ def draw_uniform(GL_KIND, coords, indices, color, width=1, dashed_data=None):
 
 
 def draw_smooth(coords, vcols, indices=None):
-    shader_name = f'{"3D_" if bpy.app.version < (3, 4) else ""}SMOOTH_COLOR'
-    shader = gpu.shader.from_builtin(shader_name)
+    shader = gpu.shader.from_builtin(shading_3d.SMOOTH_COLOR)
     params = dict(indices=indices) if indices else {}
     batch = batch_for_shader(shader, 'TRIS', {"pos" : coords, "color": vcols}, **params)
     batch.draw(shader)
