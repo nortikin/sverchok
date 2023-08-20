@@ -18,11 +18,10 @@ from sverchok.ui.bgl_callback_3dview import callback_disable, callback_enable
 from sverchok.utils.sv_batch_primitives import MatrixDraw28
 from sverchok.data_structure import node_id, updateNode
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.utils.modules.drawing_abstractions import drawing
+from sverchok.utils.modules.drawing_abstractions import drawing, shading_2d
 
 if not bpy.app.background:
-    shader_name = f'{"2D_" if bpy.app.version < (3, 4) else ""}SMOOTH_COLOR'
-    smooth_2d_shader = gpu.shader.from_builtin(shader_name)
+    smooth_2d_shader = gpu.shader.from_builtin(shading_2d.SMOOTH_COLOR)
 else:
     smooth_2d_shader = None
 
