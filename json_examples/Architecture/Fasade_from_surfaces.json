@@ -1576,7 +1576,7 @@
             "name": "F2"
           }
         },
-        "bl_idname": "SvEllipseCurveNode"
+        "bl_idname": "SvEllipseCurveNodeMK2"
       },
       "Viewer Draw Curve.002": {
         "attributes": {
