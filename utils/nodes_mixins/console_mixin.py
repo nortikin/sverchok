@@ -125,7 +125,7 @@ class LexMixin():
 
         if not 'texture_buffer' in self.texture_dict:
             #print('initializing texture longform')
-            texture = new_buffer_texture_sized(data.size, data.tolist())
+            texture = drawing.new_buffer_texture_sized(data.size, data.tolist())
             self.texture_dict['texture_buffer'] = texture
         else:
             #print("reusing")
