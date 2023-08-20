@@ -10,6 +10,8 @@ import gpu
 from gpu_extras.batch import batch_for_shader
 from mathutils import Matrix, Vector
 from sverchok.utils.sv_logging import sv_logger
+from sverchok.utils.modules.drawing_abstractions import shading_3d
+
 
 if bpy.app.background:
     print("Will not initialize shaders in the background mode")
@@ -19,10 +21,8 @@ if bpy.app.background:
             sv_logger.info("draw_matrix: do nothing in background mode")
 
 else:
-    shader_name = f'{"3D_" if bpy.app.version < (3, 4) else ""}UNIFORM_COLOR'
-    uniform_shader = gpu.shader.from_builtin(shader_name)
-    shader_name = f'{"3D_" if bpy.app.version < (3, 4) else ""}SMOOTH_COLOR'
-    smooth_shader = gpu.shader.from_builtin(shader_name)
+    uniform_shader = gpu.shader.from_builtin(shading_3d.UNIFORM_COLOR)
+    smooth_shader = gpu.shader.from_builtin(shading_3d.SMOOTH_COLOR)
 
 
     class MatrixDraw28(object):

@@ -22,7 +22,7 @@ from sverchok.utils.curve.bakery import CurveData
 from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
 from sverchok.ui.bgl_callback_3dview import callback_disable, callback_enable
 from sverchok.utils.sv_3dview_tools import Sv3DviewAlign
-from sverchok.utils.modules.drawing_abstractions import drawing
+from sverchok.utils.modules.drawing_abstractions import drawing, shading_3d
 
 
 def draw_edges(shader, points, edges, line_width, color, is_smooth=False):
@@ -281,14 +281,11 @@ class SvCurveViewerDrawNode(SverchCustomTreeNode, bpy.types.Node):
         self.inputs.new('SvStringsSocket', 'Resolution').prop_name = 'resolution'
 
     def draw_all(self, draw_inputs):
-        shader_name = f'{"3D_" if bpy.app.version < (3, 4) else ""}UNIFORM_COLOR'
-        v_shader = gpu.shader.from_builtin(shader_name)
+        v_shader = gpu.shader.from_builtin(shading_3d.UNIFORM_COLOR)
         if self.draw_curvature:
-            shader_name = f'{"3D_" if bpy.app.version < (3, 4) else ""}SMOOTH_COLOR'
-            e_shader = gpu.shader.from_builtin(shader_name)
+            e_shader = gpu.shader.from_builtin(shading_3d.SMOOTH_COLOR)
         else:
-            shader_name = f'{"3D_" if bpy.app.version < (3, 4) else ""}UNIFORM_COLOR'
-            e_shader = gpu.shader.from_builtin(shader_name)
+            e_shader = gpu.shader.from_builtin(shading_3d.UNIFORM_COLOR)
 
         draw_data = {
                 'tree_name': self.id_data.name[:],
