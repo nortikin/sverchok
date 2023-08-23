@@ -12,9 +12,9 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/documentation_options.js?v=773c2105"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -138,7 +138,7 @@
            <div itemprop="articleBody">
              
   <section id="evolver">
-<h1>Evolver<a class="headerlink" href="#evolver" title="Permalink to this heading">¶</a></h1>
+<h1>Evolver<a class="headerlink" href="#evolver" title="Link to this heading">¶</a></h1>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189763466-4ab9972b-505c-4a79-a8e4-11c5a5c69181.png"><img alt="https://user-images.githubusercontent.com/14288520/189763466-4ab9972b-505c-4a79-a8e4-11c5a5c69181.png" src="https://user-images.githubusercontent.com/14288520/189763466-4ab9972b-505c-4a79-a8e4-11c5a5c69181.png" /></a>
 <p>This node implements a Genetics Algorithm system inspired in Galapagos (the Grasshopper plugin) and the 9th chapter of “The Nature of Code” by Daniel Shiffman <a class="reference external" href="https://natureofcode.com/book/chapter-9-the-evolution-of-code/">https://natureofcode.com/book/chapter-9-the-evolution-of-code/</a></p>
 <p>The system creates a starting population, evaluates the fitness of each “agent” and creates a new population bases on the crossover of the fitter agents and a mutation chance. The new population is evaluated and mixed every iteration rising the global fitness of the population by generating fitter agents.</p>
@@ -150,7 +150,7 @@
 <p>The fitness of every member of the population will be evaluated by running the node-tree with the genes of that member and recording the value that is inputted in the “Fitness” socket.</p>
 <p>During the process the progress will be outputted to the Blender Console.</p>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
 <p><strong>Genotype</strong>: dropdown menu to chose to use as genes either all “A number”, “List Input”  and “Genes Holder” nodes or only the ones inside a ‘Frame’ Node</p>
 <p><strong>Mode</strong>:  “Maximum” and “Minimum” with the maximum selected a higher fitness value is considered better with the minimum a lower fitness will be considered as more fit.</p>
 <p><strong>Population amount</strong>: Number of members of the population.</p>
@@ -163,27 +163,27 @@
 <p><strong>Fitness Goal</strong>: Value that will stop the process if achieved or improved.</p>
 </section>
 <section id="operators">
-<h2>Operators<a class="headerlink" href="#operators" title="Permalink to this heading">¶</a></h2>
+<h2>Operators<a class="headerlink" href="#operators" title="Link to this heading">¶</a></h2>
 <p><strong>Run</strong>: Triggers the system</p>
 <p><strong>Set Fittest</strong>: Will place the best evaluated values on the genes nodes</p>
 </section>
 <section id="options">
-<h2>Options<a class="headerlink" href="#options" title="Permalink to this heading">¶</a></h2>
+<h2>Options<a class="headerlink" href="#options" title="Link to this heading">¶</a></h2>
 <p><strong>Re-use population</strong>: When enabled the first generation will be the last generation of the previous analysis.</p>
 <p><strong>Output all generations</strong>: When enabled the node will output all the members of all the generations. When disabled it will only return the last generation of members</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
 <p><strong>Fitness</strong>: Input to get the fitness of each member (has to be a single positive number)</p>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
 <p><strong>Genes</strong>: Outputs the genes of the system</p>
 <p><strong>Population</strong>: Outputs the population. It can be only the last generation or all generations.</p>
 <p><strong>Fitness</strong>: Outputs the fitness of the population. It can be only the last generation or all generations.</p>
 </section>
 <section id="examples">
-<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
+<h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">¶</a></h2>
 <p>Solved problem: Which is the smallest box (as the sum of faces area) in which I can fit Suzanne mesh?</p>
 <a class="reference external image-reference" href="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/logic/evolver/evolver_genetics_algorithm_sverchok_blender_example_01.png"><img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/logic/evolver/evolver_genetics_algorithm_sverchok_blender_example_01.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/logic/evolver/evolver_genetics_algorithm_sverchok_blender_example_01.png" /></a>
 <ul class="simple">

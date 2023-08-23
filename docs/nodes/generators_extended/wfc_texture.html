@@ -12,9 +12,9 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/documentation_options.js?v=773c2105"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -145,10 +145,10 @@
            <div itemprop="articleBody">
              
   <section id="wfc-texture">
-<h1>WFC Texture<a class="headerlink" href="#wfc-texture" title="Permalink to this heading">¶</a></h1>
+<h1>WFC Texture<a class="headerlink" href="#wfc-texture" title="Link to this heading">¶</a></h1>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/28003269/84559527-5f86a200-ad4c-11ea-94e1-e8b7091a6085.png"><img alt="https://user-images.githubusercontent.com/28003269/84559527-5f86a200-ad4c-11ea-94e1-e8b7091a6085.png" src="https://user-images.githubusercontent.com/28003269/84559527-5f86a200-ad4c-11ea-94e1-e8b7091a6085.png" /></a>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node get sample image and generate new texture of custom size.
 Be warning it can take time to calculate new texture so you have to try with low resolution.
 It is limited by default 100x100 pixels.</p>
@@ -168,23 +168,23 @@ if expecting result will be getting independent items (cat heads) most likely th
 Such errors does not consider as a bug. You can increase robustness by increasing <cite>number of tries</cite> parameter.</p>
 </section>
 <section id="category">
-<h2>Category<a class="headerlink" href="#category" title="Permalink to this heading">¶</a></h2>
+<h2>Category<a class="headerlink" href="#category" title="Link to this heading">¶</a></h2>
 <p>generators extended -&gt; WFC texture</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p><strong>Sample image</strong> - image from which to create patterns</p></li>
 </ul>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p><strong>image</strong> - row of pixels in such format: [row1[p1, p2, … ,pn], row2[…], …, row n] where number of rows is height and number of pixel in a row is width</p></li>
 </ul>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p><strong>height</strong> - resolution of output image</p></li>
 <li><p><strong>width</strong> - resolution of output image</p></li>
@@ -196,13 +196,13 @@ Such errors does not consider as a bug. You can increase robustness by increasin
 </ul>
 </section>
 <section id="n-panel">
-<h2>N panel<a class="headerlink" href="#n-panel" title="Permalink to this heading">¶</a></h2>
+<h2>N panel<a class="headerlink" href="#n-panel" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p><strong>tries number</strong> - maximum number of fails until the node will give up</p></li>
 </ul>
 </section>
 <section id="examples">
-<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
+<h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">¶</a></h2>
 <img alt="https://user-images.githubusercontent.com/28003269/84426844-f2ccb400-ac34-11ea-8801-476dde8921d2.gif" src="https://user-images.githubusercontent.com/28003269/84426844-f2ccb400-ac34-11ea-8801-476dde8921d2.gif" />
 <img alt="https://user-images.githubusercontent.com/28003269/84426850-f4967780-ac34-11ea-8d20-155b5cbe26ad.gif" src="https://user-images.githubusercontent.com/28003269/84426850-f4967780-ac34-11ea-8d20-155b5cbe26ad.gif" />
 <img alt="https://user-images.githubusercontent.com/28003269/84426853-f6603b00-ac34-11ea-8bf1-7fe89bf92845.gif" src="https://user-images.githubusercontent.com/28003269/84426853-f6603b00-ac34-11ea-8bf1-7fe89bf92845.gif" />

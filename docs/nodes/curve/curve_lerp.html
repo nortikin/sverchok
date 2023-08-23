@@ -12,9 +12,9 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/documentation_options.js?v=773c2105"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -89,7 +89,7 @@
 <li class="toctree-l3"><a class="reference internal" href="curve_segment.html">Curve Segment</a></li>
 <li class="toctree-l3"><a class="reference internal" href="deconstruct_curve.html">Deconstruct Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="elevate_degree.html">Elevate Degree (NURBS Curve)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="ellipse.html">Ellipse (Curve)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ellipse_curve.html">Ellipse (Curve)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="endpoints.html">Curve Endpoints</a></li>
 <li class="toctree-l3"><a class="reference internal" href="eval_curve.html">Evaluate Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="extend_curve.html">Extend Curve</a></li>
@@ -200,10 +200,10 @@
            <div itemprop="articleBody">
              
   <section id="curve-lerp">
-<h1>Curve Lerp<a class="headerlink" href="#curve-lerp" title="Permalink to this heading">¶</a></h1>
+<h1>Curve Lerp<a class="headerlink" href="#curve-lerp" title="Link to this heading">¶</a></h1>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211165837-39a6b37f-d3e0-4c1d-bf6f-6eeaa8805e75.png"><img alt="https://user-images.githubusercontent.com/14288520/211165837-39a6b37f-d3e0-4c1d-bf6f-6eeaa8805e75.png" src="https://user-images.githubusercontent.com/14288520/211165837-39a6b37f-d3e0-4c1d-bf6f-6eeaa8805e75.png" /></a>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node generates a linear interpolation (“lerp”) between two curves. More
 precisely, it generates a curve, each point of which is calculated by linear
 interpolation of two corresponding points on two other curves.</p>
@@ -213,7 +213,7 @@ will calculate linear extrapolation instead of interpolation.</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211166242-49779c9d-e6d5-47c5-9090-568f387713d0.png"><img alt="https://user-images.githubusercontent.com/14288520/211166242-49779c9d-e6d5-47c5-9090-568f387713d0.png" src="https://user-images.githubusercontent.com/14288520/211166242-49779c9d-e6d5-47c5-9090-568f387713d0.png" /></a>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
 <li><p><strong>Curve1</strong>. The first curve. This input is mandatory.</p></li>
@@ -226,14 +226,14 @@ which is something in the middle.</p></li>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211166461-2487e5d9-ea83-4d30-9872-2f2f2350c1c5.png"><img alt="https://user-images.githubusercontent.com/14288520/211166461-2487e5d9-ea83-4d30-9872-2f2f2350c1c5.png" src="https://user-images.githubusercontent.com/14288520/211166461-2487e5d9-ea83-4d30-9872-2f2f2350c1c5.png" /></a>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following output:</p>
 <ul class="simple">
 <li><p><strong>Curve</strong>. The interpolated curve.</p></li>
 </ul>
 </section>
 <section id="example-of-usage">
-<h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
+<h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Link to this heading">¶</a></h2>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211166583-a13c966d-efd9-4fdb-9055-ec3a97dbcd7f.png"><img alt="https://user-images.githubusercontent.com/14288520/211166583-a13c966d-efd9-4fdb-9055-ec3a97dbcd7f.png" src="https://user-images.githubusercontent.com/14288520/211166583-a13c966d-efd9-4fdb-9055-ec3a97dbcd7f.png" /></a>
 <ul class="simple">
 <li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>

@@ -12,9 +12,9 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/documentation_options.js?v=773c2105"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -90,7 +90,7 @@
 <li class="toctree-l3"><a class="reference internal" href="curve_segment.html">Curve Segment</a></li>
 <li class="toctree-l3"><a class="reference internal" href="deconstruct_curve.html">Deconstruct Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="elevate_degree.html">Elevate Degree (NURBS Curve)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="ellipse.html">Ellipse (Curve)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ellipse_curve.html">Ellipse (Curve)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="endpoints.html">Curve Endpoints</a></li>
 <li class="toctree-l3"><a class="reference internal" href="eval_curve.html">Evaluate Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="extend_curve.html">Extend Curve</a></li>
@@ -201,10 +201,10 @@
            <div itemprop="articleBody">
              
   <section id="bezier-spline-segment-curve">
-<h1>Bezier Spline Segment (Curve)<a class="headerlink" href="#bezier-spline-segment-curve" title="Permalink to this heading">¶</a></h1>
+<h1>Bezier Spline Segment (Curve)<a class="headerlink" href="#bezier-spline-segment-curve" title="Link to this heading">¶</a></h1>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/206110543-cd184387-be30-462b-8839-73b7babc703a.png"><img alt="https://user-images.githubusercontent.com/14288520/206110543-cd184387-be30-462b-8839-73b7babc703a.png" src="https://user-images.githubusercontent.com/14288520/206110543-cd184387-be30-462b-8839-73b7babc703a.png" /></a>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node generates a <a class="reference external" href="https://en.wikipedia.org/wiki/B%C3%A9zier_curve">Bezier</a> Curve object. It is possible to generate curves
 of second order (quadratic), third order (cubic), or arbitrary order (generic).
 For cubic curves, there are several ways to define the control points.</p>
@@ -212,7 +212,7 @@ For cubic curves, there are several ways to define the control points.</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/206113591-da604efc-e8ae-49ce-8425-3bf0fa222654.png"><img alt="https://user-images.githubusercontent.com/14288520/206113591-da604efc-e8ae-49ce-8425-3bf0fa222654.png" src="https://user-images.githubusercontent.com/14288520/206113591-da604efc-e8ae-49ce-8425-3bf0fa222654.png" /></a>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
 <li><p><strong>Start</strong>. Starting point of the curve. This node is not available if
@@ -258,7 +258,7 @@ it in general does not pass through all other control points.</p></li>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/206128059-cd82f52b-4b17-465d-89bb-41e67420e384.png"><img alt="https://user-images.githubusercontent.com/14288520/206128059-cd82f52b-4b17-465d-89bb-41e67420e384.png" src="https://user-images.githubusercontent.com/14288520/206128059-cd82f52b-4b17-465d-89bb-41e67420e384.png" /></a>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
 <p>This node has the following parameters:</p>
 <ul>
 <li><p><strong>Mode</strong>. This defines how the control points will be provided, as well as
@@ -298,7 +298,7 @@ point.</p></li>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/206131593-838cf098-8e12-4aef-acfc-8161bc772da2.png"><img alt="https://user-images.githubusercontent.com/14288520/206131593-838cf098-8e12-4aef-acfc-8161bc772da2.png" src="https://user-images.githubusercontent.com/14288520/206131593-838cf098-8e12-4aef-acfc-8161bc772da2.png" /></a>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following outputs:</p>
 <ul class="simple">
 <li><p><strong>Curve</strong>. Generated Bezier curve.</p></li>
@@ -307,7 +307,7 @@ point.</p></li>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/206131793-894ac9c0-956c-47c2-a67d-bb3b89448ea4.png"><img alt="https://user-images.githubusercontent.com/14288520/206131793-894ac9c0-956c-47c2-a67d-bb3b89448ea4.png" src="https://user-images.githubusercontent.com/14288520/206131793-894ac9c0-956c-47c2-a67d-bb3b89448ea4.png" /></a>
 </section>
 <section id="examples-of-usage">
-<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
+<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Link to this heading">¶</a></h2>
 <p>Cubic Bezier curve by four control points:</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/206133629-27790d5e-e81d-457b-9109-a4a237aa5084.png"><img alt="https://user-images.githubusercontent.com/14288520/206133629-27790d5e-e81d-457b-9109-a4a237aa5084.png" src="https://user-images.githubusercontent.com/14288520/206133629-27790d5e-e81d-457b-9109-a4a237aa5084.png" /></a>
 <ul class="simple">

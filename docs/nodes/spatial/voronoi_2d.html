@@ -12,9 +12,9 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/documentation_options.js?v=773c2105"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -149,10 +149,10 @@
            <div itemprop="articleBody">
              
   <section id="voronoi-2d-node">
-<h1>Voronoi 2D Node<a class="headerlink" href="#voronoi-2d-node" title="Permalink to this heading">¶</a></h1>
+<h1>Voronoi 2D Node<a class="headerlink" href="#voronoi-2d-node" title="Link to this heading">¶</a></h1>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202251049-aea22f20-4e85-4f60-acff-9f2107f41a35.png"><img alt="https://user-images.githubusercontent.com/14288520/202251049-aea22f20-4e85-4f60-acff-9f2107f41a35.png" src="https://user-images.githubusercontent.com/14288520/202251049-aea22f20-4e85-4f60-acff-9f2107f41a35.png" /></a>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node generates <a class="reference external" href="https://en.wikipedia.org/wiki/Voronoi_diagram">Voronoi</a> diagram for the provided set of vertices in 2D space (in XOY plane).</p>
 <p>In general, Voronoi diagram is infinite construction that covers the whole XOY
 plane. We cannot deal with such endless thing, so we have to clip that with
@@ -163,7 +163,7 @@ the bounding line splits the polygon from original diagram in two parts) or
 clipped lines (because some lines in original Voronoi diagram are endless).</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
 <p>The node has the following inputs:</p>
 <ul class="simple">
 <li><p><strong>Vertices</strong>. Set of input vertices (sites) to build Voronoi diagram for.</p></li>
@@ -174,7 +174,7 @@ checked. The value can also be provided as a parameter.</p></li>
 </ul>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
 <p>This node has the following parameters:</p>
 <ul class="simple">
 <li><p><strong>Bounds Mode</strong>. The mode of diagram bounds definition. Possible values are
@@ -212,7 +212,7 @@ same as order of initial points.</p></li>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202300322-bfa83fa1-2f19-46cc-a462-f47cc21a4d08.gif"><img alt="https://user-images.githubusercontent.com/14288520/202300322-bfa83fa1-2f19-46cc-a462-f47cc21a4d08.gif" src="https://user-images.githubusercontent.com/14288520/202300322-bfa83fa1-2f19-46cc-a462-f47cc21a4d08.gif" /></a>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following outputs:</p>
 <ul class="simple">
 <li><p><strong>Vertices</strong></p></li>
@@ -221,7 +221,7 @@ same as order of initial points.</p></li>
 </ul>
 </section>
 <section id="examples-of-usage">
-<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
+<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Link to this heading">¶</a></h2>
 <p>Simple example:</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202290645-5c54af82-7ecc-4bc9-bd6d-c2d06d7d875d.png"><img alt="https://user-images.githubusercontent.com/14288520/202290645-5c54af82-7ecc-4bc9-bd6d-c2d06d7d875d.png" src="https://user-images.githubusercontent.com/14288520/202290645-5c54af82-7ecc-4bc9-bd6d-c2d06d7d875d.png" /></a>
 <p>Circular clipping:</p>

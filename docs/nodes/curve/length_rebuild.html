@@ -12,9 +12,9 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/documentation_options.js?v=773c2105"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -83,7 +83,7 @@
 <li class="toctree-l3"><a class="reference internal" href="curve_segment.html">Curve Segment</a></li>
 <li class="toctree-l3"><a class="reference internal" href="deconstruct_curve.html">Deconstruct Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="elevate_degree.html">Elevate Degree (NURBS Curve)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="ellipse.html">Ellipse (Curve)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ellipse_curve.html">Ellipse (Curve)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="endpoints.html">Curve Endpoints</a></li>
 <li class="toctree-l3"><a class="reference internal" href="eval_curve.html">Evaluate Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="extend_curve.html">Extend Curve</a></li>
@@ -201,10 +201,10 @@
            <div itemprop="articleBody">
              
   <section id="naturally-parametrized-curve">
-<h1>Naturally Parametrized Curve<a class="headerlink" href="#naturally-parametrized-curve" title="Permalink to this heading">¶</a></h1>
+<h1>Naturally Parametrized Curve<a class="headerlink" href="#naturally-parametrized-curve" title="Link to this heading">¶</a></h1>
 <a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/f5cdafd7-aef1-46bb-8912-5a60a8484c24"><img alt="https://github.com/nortikin/sverchok/assets/14288520/f5cdafd7-aef1-46bb-8912-5a60a8484c24" src="https://github.com/nortikin/sverchok/assets/14288520/f5cdafd7-aef1-46bb-8912-5a60a8484c24" /></a>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>It worth reminding that a Curve object is defined as a function from some set
 of T values into some points in 3D space; and, since the function is more or
 less arbitrary, the change of T parameter is not always proportional to length
@@ -235,7 +235,7 @@ take to calculate. So the node gives you control on the number of subdivisions.<
 </ul>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
 <li><p><strong>Curve</strong>. The curve to be re-parametrized. This input is mandatory.</p></li>
@@ -245,7 +245,7 @@ but the more time it will take. The default value is 50.</p></li>
 </ul>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
 <p>This node has the following parameter:</p>
 <ul class="simple">
 <li><p><strong>Interpolation mode</strong>. This defines the interpolation method used for
@@ -258,14 +258,14 @@ the N panel only.</p></li>
 <a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/5f4c2d9c-c1df-4439-ad83-b1432ac67813"><img alt="https://github.com/nortikin/sverchok/assets/14288520/5f4c2d9c-c1df-4439-ad83-b1432ac67813" src="https://github.com/nortikin/sverchok/assets/14288520/5f4c2d9c-c1df-4439-ad83-b1432ac67813" /></a>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following output:</p>
 <ul class="simple">
 <li><p><strong>Curve</strong>. The newly generated curve.</p></li>
 </ul>
 </section>
 <section id="examples-of-usage">
-<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
+<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Link to this heading">¶</a></h2>
 <p>Take an Archimedean spiral with a well-known parametrization; in the center,
 small changes of T give very small change of the position of the point on the
 curve, while farther from the center, the same changes of T give a lot bigger

@@ -12,9 +12,9 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/documentation_options.js?v=773c2105"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -156,10 +156,10 @@
            <div itemprop="articleBody">
              
   <section id="scalar-field-curvature">
-<h1>Scalar Field Curvature<a class="headerlink" href="#scalar-field-curvature" title="Permalink to this heading">¶</a></h1>
+<h1>Scalar Field Curvature<a class="headerlink" href="#scalar-field-curvature" title="Link to this heading">¶</a></h1>
 <a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/5f91a473-ad6f-439d-94b4-1156af06002e"><img alt="https://github.com/nortikin/sverchok/assets/14288520/5f91a473-ad6f-439d-94b4-1156af06002e" src="https://github.com/nortikin/sverchok/assets/14288520/5f91a473-ad6f-439d-94b4-1156af06002e" /></a>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node calculates several types of information about implicitly defined surface curvature:</p>
 <ul class="simple">
 <li><p>Principal curvature values</p></li>
@@ -180,14 +180,14 @@ from Sverchok-Extra addon, but may give interesting effects by itself.</p>
 <p>Note that the calculation is done by numerical differentiation, so it may be not very precise in some cases.</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following input:</p>
 <ul class="simple">
 <li><p><strong>Field</strong>. The scalar field, for which the curvature is to be calculated. This input is mandatory.</p></li>
 </ul>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
 <p>This node has the following parameter:</p>
 <ul class="simple">
 <li><p><strong>Step</strong>. Grid step for numericall differentiation. Bigger values give more
@@ -195,7 +195,7 @@ smooth fields. The default value is <cite>0.001</cite>.</p></li>
 </ul>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following outputs:</p>
 <ul class="simple">
 <li><p><strong>Gauss</strong>. Scalar field, values of which are Gaussian curvature values of
@@ -209,7 +209,7 @@ values of iso-surfaces of the input scalar field.</p></li>
 </ul>
 </section>
 <section id="examples-of-usage">
-<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
+<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Link to this heading">¶</a></h2>
 <p>Build some scalar field by “Attractor Field” node, measure it’s mean curvature
 and use that curvature values to color the vertices of a plane:</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/81438971-0e9cf000-9187-11ea-9d67-703b3550faf1.png"><img alt="https://user-images.githubusercontent.com/284644/81438971-0e9cf000-9187-11ea-9d67-703b3550faf1.png" src="https://user-images.githubusercontent.com/284644/81438971-0e9cf000-9187-11ea-9d67-703b3550faf1.png" /></a>

@@ -12,9 +12,9 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/documentation_options.js?v=773c2105"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -129,7 +129,7 @@
            <div itemprop="articleBody">
              
   <section id="quaternion-math">
-<h1>Quaternion Math<a class="headerlink" href="#quaternion-math" title="Permalink to this heading">¶</a></h1>
+<h1>Quaternion Math<a class="headerlink" href="#quaternion-math" title="Link to this heading">¶</a></h1>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189339482-fd0e824f-6492-4784-bf5f-f3bd61061084.png"><img alt="https://user-images.githubusercontent.com/14288520/189339482-fd0e824f-6492-4784-bf5f-f3bd61061084.png" src="https://user-images.githubusercontent.com/14288520/189339482-fd0e824f-6492-4784-bf5f-f3bd61061084.png" /></a>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189339509-d6785f03-a8a9-4ce7-8c82-40f7fdf05be1.png"><img alt="https://user-images.githubusercontent.com/14288520/189339509-d6785f03-a8a9-4ce7-8c82-40f7fdf05be1.png" src="https://user-images.githubusercontent.com/14288520/189339509-d6785f03-a8a9-4ce7-8c82-40f7fdf05be1.png" /></a>
 <p>The Quaternion Math node performs various artithmetic operations on quaternions.</p>
@@ -221,12 +221,12 @@
 <li><p>POST = B op A</p></li>
 </ul>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
 <p>The input to the node are lists of quaternions as well as control parameters (like scale etc). For certain operations the node takes arbitrary number of quaternion input lists, for others it takes only two quaternion input lists and for some only one quaternion input list.</p>
 <p>The inputs accept single value quaternions or a list of quaternions. The node is vectorized so it will extend the quaternion lists to match the longest input.</p>
 </section>
 <section id="operations">
-<h2>Operations<a class="headerlink" href="#operations" title="Permalink to this heading">¶</a></h2>
+<h2>Operations<a class="headerlink" href="#operations" title="Link to this heading">¶</a></h2>
 <ul>
 <li><p><strong>ADD</strong> : adds the components of two or more quaternions</p>
 <p>q1 = (w1, x1, y1, z1)</p>
@@ -324,7 +324,7 @@ q2 = (w2, x2, y2, z2)</p>
 </ul>
 </section>
 <section id="output">
-<h2>Output<a class="headerlink" href="#output" title="Permalink to this heading">¶</a></h2>
+<h2>Output<a class="headerlink" href="#output" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p><strong>Quaternions</strong> or <strong>Values</strong> Depending on the operation the output to the node is either a quaternion list or scalar value list.</p></li>
 </ul>

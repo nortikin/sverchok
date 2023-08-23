@@ -12,9 +12,9 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/documentation_options.js?v=773c2105"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -156,10 +156,10 @@
            <div itemprop="articleBody">
              
   <section id="map-scalar-field-by-curve">
-<h1>Map Scalar Field by Curve<a class="headerlink" href="#map-scalar-field-by-curve" title="Permalink to this heading">¶</a></h1>
+<h1>Map Scalar Field by Curve<a class="headerlink" href="#map-scalar-field-by-curve" title="Link to this heading">¶</a></h1>
 <a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/d894ad21-6ad0-4077-9509-8ffa7ac34c97"><img alt="https://github.com/nortikin/sverchok/assets/14288520/d894ad21-6ad0-4077-9509-8ffa7ac34c97" src="https://github.com/nortikin/sverchok/assets/14288520/d894ad21-6ad0-4077-9509-8ffa7ac34c97" /></a>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node generates a Vector Field object by applying a Curve object to Scalar Field object.</p>
 <p>A Scalar Field is a function, which returns a number for each point in 3D
 space, i.e. <code class="docutils literal notranslate"><span class="pre">S(v)</span> <span class="pre">:</span> <span class="pre">R^3</span> <span class="pre">-&gt;</span> <span class="pre">R</span></code>. A Curve is a function, which returns a point
@@ -175,7 +175,7 @@ functions to compose them with a Scalar Field as well.</p>
 from a simple scalar field and some curve.</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
 <li><p><strong>Field</strong>. A Scalar Field to be used. This input is mandatory.</p></li>
@@ -183,7 +183,7 @@ from a simple scalar field and some curve.</p>
 </ul>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
 <p>This node has the following parameter:</p>
 <ul>
 <li><p><strong>Curve usage</strong>. This defines what function of a curve will be used. The available options are:</p>
@@ -197,7 +197,7 @@ from a simple scalar field and some curve.</p>
 </ul>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following output:</p>
 <ul class="simple">
 <li><p><strong>Field</strong>. The generated Vector Field object. You can use <strong>Decompose Vector
@@ -205,7 +205,7 @@ Field</strong> node to deconstruct it into three scalar fields.</p></li>
 </ul>
 </section>
 <section id="example-of-usage">
-<h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
+<h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Link to this heading">¶</a></h2>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/100201823-55371980-2f22-11eb-95de-faf66f46e4a8.png"><img alt="https://user-images.githubusercontent.com/284644/100201823-55371980-2f22-11eb-95de-faf66f46e4a8.png" src="https://user-images.githubusercontent.com/284644/100201823-55371980-2f22-11eb-95de-faf66f46e4a8.png" /></a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/icosphere.html"><span class="doc">IcoSphere</span></a></p></li>

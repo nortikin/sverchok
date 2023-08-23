@@ -12,9 +12,9 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/documentation_options.js?v=773c2105"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -83,7 +83,7 @@
 <li class="toctree-l3"><a class="reference internal" href="curve_segment.html">Curve Segment</a></li>
 <li class="toctree-l3"><a class="reference internal" href="deconstruct_curve.html">Deconstruct Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="elevate_degree.html">Elevate Degree (NURBS Curve)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="ellipse.html">Ellipse (Curve)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ellipse_curve.html">Ellipse (Curve)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="endpoints.html">Curve Endpoints</a></li>
 <li class="toctree-l3"><a class="reference internal" href="eval_curve.html">Evaluate Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="extend_curve.html">Extend Curve</a></li>
@@ -201,10 +201,10 @@
            <div itemprop="articleBody">
              
   <section id="iso-u-v-curve">
-<h1>Iso U/V Curve<a class="headerlink" href="#iso-u-v-curve" title="Permalink to this heading">¶</a></h1>
+<h1>Iso U/V Curve<a class="headerlink" href="#iso-u-v-curve" title="Link to this heading">¶</a></h1>
 <a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/92c4575f-f2bd-4632-8843-576f62485bfa"><img alt="https://github.com/nortikin/sverchok/assets/14288520/92c4575f-f2bd-4632-8843-576f62485bfa" src="https://github.com/nortikin/sverchok/assets/14288520/92c4575f-f2bd-4632-8843-576f62485bfa" /></a>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node generates a curve on the surface, which is defined by setting either
 U or V surface parameter to some fixed value and letting the other parameter
 slide along it’s domain.</p>
@@ -216,7 +216,7 @@ slide along it’s domain.</p>
 </ul>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
 <li><p><strong>Surface</strong>. The surface to generate curves on. This input is mandatory.</p></li>
@@ -224,7 +224,7 @@ slide along it’s domain.</p>
 </ul>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
 <p>This node has the following parameter:</p>
 <ul class="simple">
 <li><p><strong>Join</strong>. If checked, the node will output a single flat list of Curve
@@ -234,7 +234,7 @@ default.</p></li>
 </ul>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following outputs:</p>
 <ul class="simple">
 <li><p><strong>UCurve</strong>. The curve obtained by setting the U parameter of the surface to
@@ -246,7 +246,7 @@ along surface’s U direction.</p></li>
 </ul>
 </section>
 <section id="example-of-usage">
-<h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
+<h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Link to this heading">¶</a></h2>
 <p>Generate some surface and then draw curves along it’s V direction:</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/78507210-3a981080-7798-11ea-84b8-d4e6e7d66803.png"><img alt="https://user-images.githubusercontent.com/284644/78507210-3a981080-7798-11ea-84b8-d4e6e7d66803.png" src="https://user-images.githubusercontent.com/284644/78507210-3a981080-7798-11ea-84b8-d4e6e7d66803.png" /></a>
 <ul class="simple">

@@ -12,9 +12,9 @@
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-        <script src="../_static/doctools.js"></script>
-        <script src="../_static/sphinx_highlight.js"></script>
+        <script src="../_static/documentation_options.js?v=773c2105"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -108,9 +108,9 @@
            <div itemprop="articleBody">
              
   <section id="introduction-to-geometry">
-<h1>Introduction to geometry<a class="headerlink" href="#introduction-to-geometry" title="Permalink to this heading">¶</a></h1>
+<h1>Introduction to geometry<a class="headerlink" href="#introduction-to-geometry" title="Link to this heading">¶</a></h1>
 <section id="basics">
-<h2>Basics<a class="headerlink" href="#basics" title="Permalink to this heading">¶</a></h2>
+<h2>Basics<a class="headerlink" href="#basics" title="Link to this heading">¶</a></h2>
 <p>If you’ve ever created a mesh and geometry programmatically then you can skip this section.
 If you are uncertain what any of the following terms mean then use it as a reference for
 further study:</p>
@@ -126,19 +126,19 @@ further study:</p>
 </ul>
 <p>Although the terms by theirselve are of common use and most probably you know them, there are some things we have to discuss about them in Sverchok context. They will be discussed in corresponding paragraphs below.</p>
 <section id="list">
-<h3>List<a class="headerlink" href="#list" title="Permalink to this heading">¶</a></h3>
+<h3>List<a class="headerlink" href="#list" title="Link to this heading">¶</a></h3>
 <p>As a visual programming language Sverchok borrows many terms from text-based programming languages, specifically from <code class="docutils literal notranslate"><span class="pre">Python</span></code>. Sverchok uses <em>Lists</em> to store geometry, <em>Lists</em> offer fast and ordered storage. The items stored in Lists are called <em>Elements</em>. Each element of a List is assigned a unique sequential index.</p>
 </section>
 <section id="index">
-<h3>Index<a class="headerlink" href="#index" title="Permalink to this heading">¶</a></h3>
+<h3>Index<a class="headerlink" href="#index" title="Link to this heading">¶</a></h3>
 <p><em>plural: Indices</em></p>
 <p>Indices allow us to quickly reference a specific element of a List. The index of the first element is 0 and the index of the last element is equal to the number of total elements minus 1.</p>
 </section>
 </section>
 <section id="d-geometry">
-<h2>3D Geometry<a class="headerlink" href="#d-geometry" title="Permalink to this heading">¶</a></h2>
+<h2>3D Geometry<a class="headerlink" href="#d-geometry" title="Link to this heading">¶</a></h2>
 <section id="vector">
-<h3>Vector<a class="headerlink" href="#vector" title="Permalink to this heading">¶</a></h3>
+<h3>Vector<a class="headerlink" href="#vector" title="Link to this heading">¶</a></h3>
 <p>The most fundamental element you need to know about is the <em>Vector</em>. Think of Vectors as things that have a multitude of properties (also called components). For example <em>House prices</em> are calculated depending on maybe 20 or more different properties: floor space, neighbourhood, age, any renovations, rooms, bathrooms, garage… The point is, a house can be seen as a Vector datapoint:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">House_one</span> <span class="o">=</span> <span class="n">Vector</span><span class="p">((</span><span class="n">floor_space</span><span class="p">,</span> <span class="n">neighbourhood</span><span class="p">,</span> <span class="n">age</span><span class="p">,</span> <span class="n">renovations</span><span class="p">,</span> <span class="n">rooms</span><span class="p">,</span> <span class="o">...</span><span class="p">))</span>
 
@@ -151,7 +151,7 @@ further study:</p>
 <p>The various ways in which Vectors can be manipulated will be covered in subsequent parts. If you want to do cool stuff with Sverchok spend time getting to understand Vector based math, it will be time well spent.</p>
 </section>
 <section id="vertex">
-<h3>Vertex<a class="headerlink" href="#vertex" title="Permalink to this heading">¶</a></h3>
+<h3>Vertex<a class="headerlink" href="#vertex" title="Link to this heading">¶</a></h3>
 <p><em>plural: Vertices</em></p>
 <p>A vertex is a point in 3d space described by 3 or 4 values which represent its X, Y and Z location. Optionally a 4th value can represent a property of the vertex, usually <em>influence</em> or <em>weight</em> and is denoted by <strong>W</strong>.</p>
 <p>A quick Python example should clarify this. The following would make 3 vertices.
@@ -173,7 +173,7 @@ a list with 3 vertices might look like:</p>
 </div>
 </section>
 <section id="edges">
-<h3>Edges<a class="headerlink" href="#edges" title="Permalink to this heading">¶</a></h3>
+<h3>Edges<a class="headerlink" href="#edges" title="Link to this heading">¶</a></h3>
 <p><em>Edges</em> form a bond between 2 vertices. Edges are also stored in a list associated
 with the mesh object. For example the following sets up an empty list to hold the edges:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">edges</span> <span class="o">=</span> <span class="p">[]</span>
@@ -187,7 +187,7 @@ how 3 edges are created:</p>
 <p>Here you see we are using lists inside lists to help separate the edges. This is called <em>Nesting</em></p>
 </section>
 <section id="polygons">
-<h3>Polygons<a class="headerlink" href="#polygons" title="Permalink to this heading">¶</a></h3>
+<h3>Polygons<a class="headerlink" href="#polygons" title="Link to this heading">¶</a></h3>
 <p><em>also called Faces or Polys</em></p>
 <p>Polygons are built using the same convention as Edges. The main difference is that polygons include at least 3 unique vertex indices. For the purposes of this introduction we’ll only cover polygons made from 3 or 4 vertices, these are called <em>Tris and Quads</em> respectively.</p>
 <p>Now imagine we have a total of 6 vertices, the last vertex index is 5. If we want
@@ -259,7 +259,7 @@ but for Sverchok geometry you’ll find it more convenient to create separate li
 </div>
 </section>
 <section id="side-effect-of-defining-polygons">
-<h3>Side Effect of Defining Polygons<a class="headerlink" href="#side-effect-of-defining-polygons" title="Permalink to this heading">¶</a></h3>
+<h3>Side Effect of Defining Polygons<a class="headerlink" href="#side-effect-of-defining-polygons" title="Link to this heading">¶</a></h3>
 <p>A chain of Vertex indices defines a polygon and each polygon has edges that make up its boundary. If a polygon has 4 vertices, then it also has 4 edges (or sides..if you prefer).</p>
 <p><strong>example 1</strong></p>
 <p>If we take the above polygons list as example and look at the first polygon (index=0), it reads <code class="docutils literal notranslate"><span class="pre">(0,</span> <span class="pre">1,</span> <span class="pre">2,</span> <span class="pre">3)</span></code>. That polygon therefore defines the following edges <code class="docutils literal notranslate"><span class="pre">(0,1),(1,2),(2,3),(3,0)</span></code>. The last edge <code class="docutils literal notranslate"><span class="pre">(3,0)</span></code> is the edge that closes the polygon.</p>
@@ -267,7 +267,7 @@ but for Sverchok geometry you’ll find it more convenient to create separate li
 <p>The polygon with index 3 reads <code class="docutils literal notranslate"><span class="pre">(1,</span> <span class="pre">5,</span> <span class="pre">6,</span> <span class="pre">2)</span></code>, it implies the following edges <code class="docutils literal notranslate"><span class="pre">(1,5)</span> <span class="pre">(5,6)</span> <span class="pre">(6,2)</span> <span class="pre">(2,1)</span></code>.</p>
 </section>
 <section id="ready">
-<h3>Ready?<a class="headerlink" href="#ready" title="Permalink to this heading">¶</a></h3>
+<h3>Ready?<a class="headerlink" href="#ready" title="Link to this heading">¶</a></h3>
 <p>I think this broadly covers the things you should be
 comfortable with before Sverchok will make sense.</p>
 </section>

@@ -12,9 +12,9 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/documentation_options.js?v=773c2105"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -140,34 +140,34 @@
            <div itemprop="articleBody">
              
   <section id="list-sort">
-<h1>List Sort<a class="headerlink" href="#list-sort" title="Permalink to this heading">¶</a></h1>
+<h1>List Sort<a class="headerlink" href="#list-sort" title="Link to this heading">¶</a></h1>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/187995646-ed8c3c53-3fad-4882-9175-6cf9bd037bf3.png"><img alt="https://user-images.githubusercontent.com/14288520/187995646-ed8c3c53-3fad-4882-9175-6cf9bd037bf3.png" src="https://user-images.githubusercontent.com/14288520/187995646-ed8c3c53-3fad-4882-9175-6cf9bd037bf3.png" /></a>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>Sort items from list. It should accept any type of data from Sverchok: Vertices, Strings (Edges, Polygons), Matrix, Curves, Surfaces, Fields or Blender data.</p>
 <p>The node will sort the data based on the keys list. I not keys list is supplied the node will sort the data based in the data itself, note that this is only possible with numeric data.</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p><strong>Data</strong>: Any kind of data.</p></li>
 <li><p><strong>Keys</strong>: List with the  desired order of the data (new positions)</p></li>
 </ul>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p><strong>Level:</strong> Set the level at which to observe the List. Level 1 is top level (totally zoomed out), higher levels get more granular (zooming in) until no higher level is found (atomic). The node will just sort the data at the level selected.</p></li>
 </ul>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p><strong>Data</strong>: Sorted data. Depends on incoming data and can be nested.</p></li>
 </ul>
 </section>
 <section id="examples">
-<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
+<h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">¶</a></h2>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/188199920-cae91075-e413-4804-b4f7-4759986d9242.png"><img alt="https://user-images.githubusercontent.com/14288520/188199920-cae91075-e413-4804-b4f7-4759986d9242.png" src="https://user-images.githubusercontent.com/14288520/188199920-cae91075-e413-4804-b4f7-4759986d9242.png" /></a>
 <ul class="simple">
 <li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="shuffle.html"><span class="doc">List Shuffle</span></a></p></li>

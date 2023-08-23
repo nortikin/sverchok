@@ -12,9 +12,9 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/documentation_options.js?v=773c2105"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -157,14 +157,14 @@
            <div itemprop="articleBody">
              
   <section id="mesh-smoothed-surface-field">
-<h1>Mesh Smoothed Surface Field<a class="headerlink" href="#mesh-smoothed-surface-field" title="Permalink to this heading">¶</a></h1>
+<h1>Mesh Smoothed Surface Field<a class="headerlink" href="#mesh-smoothed-surface-field" title="Link to this heading">¶</a></h1>
 <a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/b85cd338-7f80-4e59-9d3f-40dbd422b628"><img alt="https://github.com/nortikin/sverchok/assets/14288520/b85cd338-7f80-4e59-9d3f-40dbd422b628" src="https://github.com/nortikin/sverchok/assets/14288520/b85cd338-7f80-4e59-9d3f-40dbd422b628" /></a>
 <section id="dependencies">
-<h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this heading">¶</a></h2>
+<h2>Dependencies<a class="headerlink" href="#dependencies" title="Link to this heading">¶</a></h2>
 <p>This node requires <a class="reference external" href="https://scipy.org/">SciPy</a> library to work.</p>
 </section>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node generates a Scalar Field, which has value of zero at some “key”
 points of a given mesh, and value of 1 at the ends of normals of the mesh at
 these points. Points to be considered as “key” can be mesh’s vertices, middle
@@ -186,7 +186,7 @@ general shape of the source mesh, but smoothed.</p>
 </ul>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
 <a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/e14e3caf-6dca-4b45-adc8-f2bb7eea7c1e"><img alt="https://github.com/nortikin/sverchok/assets/14288520/e14e3caf-6dca-4b45-adc8-f2bb7eea7c1e" src="https://github.com/nortikin/sverchok/assets/14288520/e14e3caf-6dca-4b45-adc8-f2bb7eea7c1e" /></a>
 <ul>
@@ -215,7 +215,7 @@ the field should have the value of 1. The default value is 1.0.</p>
 </ul>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
 <p>This node has the following parameters:</p>
 <ul>
 <li><p><strong>Function</strong>. The specific function used by the node. The available values are:</p>
@@ -262,14 +262,14 @@ zero at centers of mesh’s faces. Unchecked by default.</p>
 </ul>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following output:</p>
 <ul class="simple">
 <li><p><strong>Field</strong>. The generated scalar field.</p></li>
 </ul>
 </section>
 <section id="example-of-usage">
-<h2>Example of Usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
+<h2>Example of Usage<a class="headerlink" href="#example-of-usage" title="Link to this heading">¶</a></h2>
 <a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/7821c460-8521-4b1a-8633-0b352fa434e8"><img alt="https://github.com/nortikin/sverchok/assets/14288520/7821c460-8521-4b1a-8633-0b352fa434e8" src="https://github.com/nortikin/sverchok/assets/14288520/7821c460-8521-4b1a-8633-0b352fa434e8" /></a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>

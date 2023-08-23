@@ -12,9 +12,9 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/documentation_options.js?v=773c2105"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -83,7 +83,7 @@
 <li class="toctree-l3"><a class="reference internal" href="curve_segment.html">Curve Segment</a></li>
 <li class="toctree-l3"><a class="reference internal" href="deconstruct_curve.html">Deconstruct Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="elevate_degree.html">Elevate Degree (NURBS Curve)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="ellipse.html">Ellipse (Curve)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ellipse_curve.html">Ellipse (Curve)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="endpoints.html">Curve Endpoints</a></li>
 <li class="toctree-l3"><a class="reference internal" href="eval_curve.html">Evaluate Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="extend_curve.html">Extend Curve</a></li>
@@ -201,10 +201,10 @@
            <div itemprop="articleBody">
              
   <section id="offset-curve-on-surface">
-<h1>Offset Curve on Surface<a class="headerlink" href="#offset-curve-on-surface" title="Permalink to this heading">¶</a></h1>
+<h1>Offset Curve on Surface<a class="headerlink" href="#offset-curve-on-surface" title="Link to this heading">¶</a></h1>
 <a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/e884f6e8-d640-40b3-9ff0-f75f0aefc8a7"><img alt="https://github.com/nortikin/sverchok/assets/14288520/e884f6e8-d640-40b3-9ff0-f75f0aefc8a7" src="https://github.com/nortikin/sverchok/assets/14288520/e884f6e8-d640-40b3-9ff0-f75f0aefc8a7" /></a>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node does the following:</p>
 <ul class="simple">
 <li><p>Takes a Surface and a Curve, which is supposed to be in UV space of the surface;</p></li>
@@ -222,7 +222,7 @@ amount with good precision.</p>
 <p>Curve domain and parametrization: the same as of original curve.</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
 <li><p><strong>Curve</strong>. The curve (in surface’s UV space) to be offsetted. The curve is
@@ -243,7 +243,7 @@ set to <strong>Variable</strong>.</p></li>
 <a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/163ec6cb-3a92-4665-83bd-77ff636fa747"><img alt="https://github.com/nortikin/sverchok/assets/14288520/163ec6cb-3a92-4665-83bd-77ff636fa747" src="https://github.com/nortikin/sverchok/assets/14288520/163ec6cb-3a92-4665-83bd-77ff636fa747" /></a>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
 <p>This node has the following parameters:</p>
 <ul>
 <li><p><strong>Curve plane</strong>. The coordinate plane where original curve is supposed to
@@ -289,7 +289,7 @@ but the slower. The default value is 50.</p>
 </ul>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following outputs:</p>
 <ul class="simple">
 <li><p><strong>Curve</strong>. The offsetted curve (in 3D space).</p></li>
@@ -298,7 +298,7 @@ YOZ or XOZ coordinate plane, depending on <strong>Curve plane</strong> parameter
 </ul>
 </section>
 <section id="examples-of-usage">
-<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
+<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Link to this heading">¶</a></h2>
 <p>Constant offset of a curve on a surface:</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/85555664-922f7500-b63f-11ea-8479-9ee8db89ee11.png"><img alt="https://user-images.githubusercontent.com/284644/85555664-922f7500-b63f-11ea-8479-9ee8db89ee11.png" src="https://user-images.githubusercontent.com/284644/85555664-922f7500-b63f-11ea-8479-9ee8db89ee11.png" /></a>
 <ul class="simple">

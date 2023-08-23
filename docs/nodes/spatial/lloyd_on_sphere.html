@@ -12,9 +12,9 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/documentation_options.js?v=773c2105"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -149,14 +149,14 @@
            <div itemprop="articleBody">
              
   <section id="lloyd-on-sphere">
-<h1>Lloyd on Sphere<a class="headerlink" href="#lloyd-on-sphere" title="Permalink to this heading">¶</a></h1>
+<h1>Lloyd on Sphere<a class="headerlink" href="#lloyd-on-sphere" title="Link to this heading">¶</a></h1>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202800864-8c2b7767-d748-46cc-9817-0c23e80dc699.png"><img alt="https://user-images.githubusercontent.com/14288520/202800864-8c2b7767-d748-46cc-9817-0c23e80dc699.png" src="https://user-images.githubusercontent.com/14288520/202800864-8c2b7767-d748-46cc-9817-0c23e80dc699.png" /></a>
 <section id="dependencies">
-<h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this heading">¶</a></h2>
+<h2>Dependencies<a class="headerlink" href="#dependencies" title="Link to this heading">¶</a></h2>
 <p>This node requires <a class="reference external" href="https://scipy.org/">SciPy</a> library to work.</p>
 </section>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node uses <a class="reference external" href="https://en.wikipedia.org/wiki/Lloyd%27s_algorithm">Lloyd</a> algorithm to redistribute a set of points on a sphereical
 surface uniformly. If provided vertices are not lying on a sphere, they will be
 projected to the sphere first.</p>
@@ -164,7 +164,7 @@ projected to the sphere first.</p>
 places to which higher weight is assigned.</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
 <li><p><strong>Sites</strong>. The points to be redistributed. This input is mandatory.</p></li>
@@ -180,14 +180,14 @@ algorithm will be used.</p></li>
 </ul>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following output:</p>
 <ul class="simple">
 <li><p><strong>Sites</strong>. Redistributed points on the sphere.</p></li>
 </ul>
 </section>
 <section id="example-of-usage">
-<h2>Example of Usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
+<h2>Example of Usage<a class="headerlink" href="#example-of-usage" title="Link to this heading">¶</a></h2>
 <p>Let’s start with boxes distributed randomly on a sphere:</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202802127-3ae8c392-6f8f-4122-9e1b-a5eaded79f03.png"><img alt="https://user-images.githubusercontent.com/14288520/202802127-3ae8c392-6f8f-4122-9e1b-a5eaded79f03.png" src="https://user-images.githubusercontent.com/14288520/202802127-3ae8c392-6f8f-4122-9e1b-a5eaded79f03.png" /></a>
 <ul class="simple">

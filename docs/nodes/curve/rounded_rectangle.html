@@ -12,9 +12,9 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/documentation_options.js?v=773c2105"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -83,7 +83,7 @@
 <li class="toctree-l3"><a class="reference internal" href="curve_segment.html">Curve Segment</a></li>
 <li class="toctree-l3"><a class="reference internal" href="deconstruct_curve.html">Deconstruct Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="elevate_degree.html">Elevate Degree (NURBS Curve)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="ellipse.html">Ellipse (Curve)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ellipse_curve.html">Ellipse (Curve)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="endpoints.html">Curve Endpoints</a></li>
 <li class="toctree-l3"><a class="reference internal" href="eval_curve.html">Evaluate Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="extend_curve.html">Extend Curve</a></li>
@@ -201,15 +201,15 @@
            <div itemprop="articleBody">
              
   <section id="rounded-rectangle">
-<h1>Rounded Rectangle<a class="headerlink" href="#rounded-rectangle" title="Permalink to this heading">¶</a></h1>
+<h1>Rounded Rectangle<a class="headerlink" href="#rounded-rectangle" title="Link to this heading">¶</a></h1>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205291207-1647c626-2621-4a1c-90ca-531dcfd8a623.png"><img alt="https://user-images.githubusercontent.com/14288520/205291207-1647c626-2621-4a1c-90ca-531dcfd8a623.png" src="https://user-images.githubusercontent.com/14288520/205291207-1647c626-2621-4a1c-90ca-531dcfd8a623.png" /></a>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node generates a Curve object, which represents a rectangle with rounded corners.</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205377156-d917f751-58b7-435f-90c9-7ff3df7acc6d.png"><img alt="https://user-images.githubusercontent.com/14288520/205377156-d917f751-58b7-435f-90c9-7ff3df7acc6d.png" src="https://user-images.githubusercontent.com/14288520/205377156-d917f751-58b7-435f-90c9-7ff3df7acc6d.png" /></a>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
 <li><p><strong>Size X</strong>. Size of the rectangle along the X axis (rectangle width). The default value is 10.</p></li>
@@ -227,7 +227,7 @@ generated at the corresponding corner of the rectangle. The default value is
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205384976-69e9522c-f7d2-4a3a-b5b2-b7e3d5fc5502.png"><img alt="https://user-images.githubusercontent.com/14288520/205384976-69e9522c-f7d2-4a3a-b5b2-b7e3d5fc5502.png" src="https://user-images.githubusercontent.com/14288520/205384976-69e9522c-f7d2-4a3a-b5b2-b7e3d5fc5502.png" /></a>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
 <p>This node has the following parameters:</p>
 <ul class="simple">
 <li><p><strong>Center</strong>. If checked, then the generated curve will be centered around
@@ -256,7 +256,7 @@ default.</p></li>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205383334-f6104443-98ef-4b20-93c3-97b56882123b.png"><img alt="https://user-images.githubusercontent.com/14288520/205383334-f6104443-98ef-4b20-93c3-97b56882123b.png" src="https://user-images.githubusercontent.com/14288520/205383334-f6104443-98ef-4b20-93c3-97b56882123b.png" /></a>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following outputs:</p>
 <ul class="simple">
 <li><p><strong>Curve</strong>. The generated Curve object. The curve always lies in the XOY plane.</p></li>
@@ -268,7 +268,7 @@ default.</p></li>
 </ul>
 </section>
 <section id="examples-of-usage">
-<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
+<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Link to this heading">¶</a></h2>
 <p><strong>Simple example</strong>:</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205385695-b8760181-45fe-4388-a576-4997a1a580d7.png"><img alt="https://user-images.githubusercontent.com/14288520/205385695-b8760181-45fe-4388-a576-4997a1a580d7.png" src="https://user-images.githubusercontent.com/14288520/205385695-b8760181-45fe-4388-a576-4997a1a580d7.png" /></a>
 <ul class="simple">

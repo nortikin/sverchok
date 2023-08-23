@@ -12,9 +12,9 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/documentation_options.js?v=773c2105"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -166,10 +166,10 @@
            <div itemprop="articleBody">
              
   <section id="wave-painter">
-<h1>Wave Painter<a class="headerlink" href="#wave-painter" title="Permalink to this heading">¶</a></h1>
+<h1>Wave Painter<a class="headerlink" href="#wave-painter" title="Link to this heading">¶</a></h1>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197003680-9e86c41c-cbce-4bca-970d-8e9808a164e3.png"><img alt="https://user-images.githubusercontent.com/14288520/197003680-9e86c41c-cbce-4bca-970d-8e9808a164e3.png" src="https://user-images.githubusercontent.com/14288520/197003680-9e86c41c-cbce-4bca-970d-8e9808a164e3.png" /></a>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node “paints” a wave pattern on either faces or vertices of the given mesh.</p>
 <p>The pattern is drawn by the following algorithm (see <a class="reference external" href="https://en.wikipedia.org/wiki/Lee_algorithm">Wikipedia</a>):</p>
 <ul class="simple">
@@ -181,7 +181,7 @@
 <p>Some faces (vertices) of the mesh can be marked as obstacles, so that the wave can not pass through them.</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
 <li><p><strong>Vertices</strong>. Mesh vertices. Mandatory input.</p></li>
@@ -196,7 +196,7 @@ passable.</p></li>
 </ul>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
 <p>This node has the following parameters:</p>
 <ul>
 <li><p><strong>Mode</strong>. Painting mode. The following modes are available:</p>
@@ -225,7 +225,7 @@ passable.</p></li>
 </ul>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following outputs:</p>
 <ul class="simple">
 <li><p><strong>WaveFront</strong>. For each face (or vertex) of the mesh, this contains the
@@ -249,7 +249,7 @@ face / vertex, in terms of the shortest path described above.</p></li>
 </ul>
 </section>
 <section id="examples-of-usage">
-<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
+<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Link to this heading">¶</a></h2>
 <p>Start a wave from some small area on the hexagonal grid; mark some vertices as obstacles. Note how the wave can not pass through the obstacle and has to go the long way around:</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197005643-c639ff50-1da5-4df9-8fd7-f71c47a2a084.png"><img alt="https://user-images.githubusercontent.com/14288520/197005643-c639ff50-1da5-4df9-8fd7-f71c47a2a084.png" src="https://user-images.githubusercontent.com/14288520/197005643-c639ff50-1da5-4df9-8fd7-f71c47a2a084.png" /></a>
 <ul class="simple">

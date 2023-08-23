@@ -12,9 +12,9 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/documentation_options.js?v=773c2105"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -130,12 +130,12 @@
            <div itemprop="articleBody">
              
   <section id="quaternion-in">
-<h1>Quaternion In<a class="headerlink" href="#quaternion-in" title="Permalink to this heading">¶</a></h1>
+<h1>Quaternion In<a class="headerlink" href="#quaternion-in" title="Link to this heading">¶</a></h1>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189332169-940a18db-95be-4ae0-af1d-71f19c3d124c.png"><img alt="https://user-images.githubusercontent.com/14288520/189332169-940a18db-95be-4ae0-af1d-71f19c3d124c.png" src="https://user-images.githubusercontent.com/14288520/189332169-940a18db-95be-4ae0-af1d-71f19c3d124c.png" /></a>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189331381-c950ec95-8760-4bd3-90db-5717d315890d.png"><img alt="https://user-images.githubusercontent.com/14288520/189331381-c950ec95-8760-4bd3-90db-5717d315890d.png" src="https://user-images.githubusercontent.com/14288520/189331381-c950ec95-8760-4bd3-90db-5717d315890d.png" /></a>
 <p>“Quaternion In” node constructs quaternions based on various input components provided for a selected mode.</p>
 <section id="modes">
-<h2>Modes<a class="headerlink" href="#modes" title="Permalink to this heading">¶</a></h2>
+<h2>Modes<a class="headerlink" href="#modes" title="Link to this heading">¶</a></h2>
 <p>The available <strong>Modes</strong> are: WXYZ, SCALAR-VECTOR, EULER, AXIS-ANGLE &amp; MATRIX.</p>
 <table class="docutils align-default">
 <thead>
@@ -183,7 +183,7 @@ into a quaternion. <strong>[2,3]</strong></p></td>
 <p>The modes WXYZ and SCALAR-VECTOR are the same except the WXYZ provides 4 floats (W, X, Y and Z) to generate the quaternion, while SCALAR-VECTOR provides a scalar (W) and a vector (X, Y, Z).</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
 <p>The node takes a list of various components, based on the selected mode, and it
 constructs the corresponding quaternions. The node is vectorized so the inputs take
 a value or a list of values. When multiple lists are connected the node will
@@ -220,7 +220,7 @@ extend the length of the connected input lists to match the longest one before c
 </ul>
 </section>
 <section id="extra-parameters">
-<h2>Extra Parameters<a class="headerlink" href="#extra-parameters" title="Permalink to this heading">¶</a></h2>
+<h2>Extra Parameters<a class="headerlink" href="#extra-parameters" title="Link to this heading">¶</a></h2>
 <p>A set of extra parameters are available on the property panel.
 These parameters do not receive external input.</p>
 <table class="docutils align-default">
@@ -254,7 +254,7 @@ These parameters do not receive external input.</p>
 </table>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
 <p><strong>Quaternions</strong></p>
 <p>The node outputs a list of one or more quaternions based on the given input.</p>
 <p>The node only generates the quaternions when the output socket is connected.</p>

@@ -12,9 +12,9 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/documentation_options.js?v=773c2105"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -83,7 +83,7 @@
 <li class="toctree-l3"><a class="reference internal" href="curve_segment.html">Curve Segment</a></li>
 <li class="toctree-l3"><a class="reference internal" href="deconstruct_curve.html">Deconstruct Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="elevate_degree.html">Elevate Degree (NURBS Curve)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="ellipse.html">Ellipse (Curve)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ellipse_curve.html">Ellipse (Curve)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="endpoints.html">Curve Endpoints</a></li>
 <li class="toctree-l3"><a class="reference internal" href="eval_curve.html">Evaluate Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="extend_curve.html">Extend Curve</a></li>
@@ -201,9 +201,9 @@
            <div itemprop="articleBody">
              
   <section id="fillet-curve">
-<h1>Fillet Curve<a class="headerlink" href="#fillet-curve" title="Permalink to this heading">¶</a></h1>
+<h1>Fillet Curve<a class="headerlink" href="#fillet-curve" title="Link to this heading">¶</a></h1>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node takes a NURBS (or NURBS-like) Curve object, finds it’s “fracture”
 points (i.e. points where tangent of the curve does not change continuously),
 and makes a smooth fillet in such points.</p>
@@ -238,7 +238,7 @@ necessary, add a fillet at closing point.</p>
 <p>You can also want to take a look at <strong>Blend Curves</strong> node.</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
 <li><p><strong>Curve</strong>. The curve to make fillets for. This input is mandatory.</p></li>
@@ -258,7 +258,7 @@ The default value is 0.5.</p></li>
 </ul>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
 <p>This node has the following parameters:</p>
 <ul>
 <li><p><strong>Polylines only</strong>. If this is checked, the curve will process only
@@ -301,7 +301,7 @@ available if <strong>Concatenate</strong> parameter is checked.  Unchecked by de
 </ul>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following outputs:</p>
 <ul class="simple">
 <li><p><strong>Curve</strong>. Generated Curve objects.</p></li>
@@ -312,7 +312,7 @@ output provides not only centers, but also orientation of the circles.</p></li>
 </ul>
 </section>
 <section id="examples-of-usage">
-<h2>Examples of Usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
+<h2>Examples of Usage<a class="headerlink" href="#examples-of-usage" title="Link to this heading">¶</a></h2>
 <p>Make fillets on some curve:</p>
 <img alt="https://user-images.githubusercontent.com/284644/205504044-bdaa43c8-f13f-4ff4-92f4-aca8100c989b.png" src="https://user-images.githubusercontent.com/284644/205504044-bdaa43c8-f13f-4ff4-92f4-aca8100c989b.png" />
 <p>Make circular arc fillets on a polyline:</p>

@@ -12,9 +12,9 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/documentation_options.js?v=773c2105"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -90,7 +90,7 @@
 <li class="toctree-l3"><a class="reference internal" href="curve_segment.html">Curve Segment</a></li>
 <li class="toctree-l3"><a class="reference internal" href="deconstruct_curve.html">Deconstruct Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="elevate_degree.html">Elevate Degree (NURBS Curve)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="ellipse.html">Ellipse (Curve)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ellipse_curve.html">Ellipse (Curve)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="endpoints.html">Curve Endpoints</a></li>
 <li class="toctree-l3"><a class="reference internal" href="eval_curve.html">Evaluate Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="extend_curve.html">Extend Curve</a></li>
@@ -201,10 +201,10 @@
            <div itemprop="articleBody">
              
   <section id="catmull-rom-spline">
-<h1>Catmull-Rom Spline<a class="headerlink" href="#catmull-rom-spline" title="Permalink to this heading">¶</a></h1>
+<h1>Catmull-Rom Spline<a class="headerlink" href="#catmull-rom-spline" title="Link to this heading">¶</a></h1>
 <a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/90d6160e-18f2-4d97-a2d5-be0b0f8e0ee5"><img alt="https://github.com/nortikin/sverchok/assets/14288520/90d6160e-18f2-4d97-a2d5-be0b0f8e0ee5" src="https://github.com/nortikin/sverchok/assets/14288520/90d6160e-18f2-4d97-a2d5-be0b0f8e0ee5" /></a>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node generates a curve defined as Catmull-Rom spline through the specified
 set of points. This is a 3rd degree curve. The curve can be closed or not.</p>
 <p>Catmull-Rom splines have the following advantages:</p>
@@ -260,7 +260,7 @@ specify tension value for each curve segment.</p>
 </ul>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul>
 <li><p><strong>Vertices</strong>. The points through which the curve should go. This input is
@@ -276,7 +276,7 @@ value is 1.0.</p>
 </ul>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
 <p>This node has the following parameters:</p>
 <ul>
 <li><p><strong>Cyclic</strong>. Defines whether the curve should be cyclic (closed). Unchecked by default.</p></li>
@@ -311,14 +311,14 @@ option is Euclidean.</p>
 </ul>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following output:</p>
 <ul class="simple">
 <li><p><strong>Curve</strong>. The generated curve object.</p></li>
 </ul>
 </section>
 <section id="examples-of-usage">
-<h2>Examples of Usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
+<h2>Examples of Usage<a class="headerlink" href="#examples-of-usage" title="Link to this heading">¶</a></h2>
 <p>Simplest example:</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/210108720-cb3ef5df-1745-4c19-8625-73f74a445c3d.png"><img alt="https://user-images.githubusercontent.com/284644/210108720-cb3ef5df-1745-4c19-8625-73f74a445c3d.png" src="https://user-images.githubusercontent.com/284644/210108720-cb3ef5df-1745-4c19-8625-73f74a445c3d.png" /></a>
 <ul class="simple">

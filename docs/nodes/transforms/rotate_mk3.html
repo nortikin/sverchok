@@ -12,9 +12,9 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/documentation_options.js?v=773c2105"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -145,10 +145,10 @@
            <div itemprop="articleBody">
              
   <section id="rotate">
-<h1>Rotate<a class="headerlink" href="#rotate" title="Permalink to this heading">¶</a></h1>
+<h1>Rotate<a class="headerlink" href="#rotate" title="Link to this heading">¶</a></h1>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/191327226-e148b848-dd01-4678-9d25-6a9b0d32b26b.png"><img alt="https://user-images.githubusercontent.com/14288520/191327226-e148b848-dd01-4678-9d25-6a9b0d32b26b.png" src="https://user-images.githubusercontent.com/14288520/191327226-e148b848-dd01-4678-9d25-6a9b0d32b26b.png" /></a>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node is used to make general rotation over geometry. It works directly over vertices, not with matrixes. Just like Blender, it offers 3 different types of rotation:</p>
 <table class="docutils align-default">
 <tbody>
@@ -178,10 +178,10 @@
 <p>If you want to learn deeply about all this types of rotation, visit this link: <a class="reference external" href="http://wiki.blender.org/index.php/User:Pepribal/Ref/Appendices/Rotation">http://wiki.blender.org/index.php/User:Pepribal/Ref/Appendices/Rotation</a></p>
 </section>
 <section id="axis-rotation">
-<h2>Axis Rotation<a class="headerlink" href="#axis-rotation" title="Permalink to this heading">¶</a></h2>
+<h2>Axis Rotation<a class="headerlink" href="#axis-rotation" title="Link to this heading">¶</a></h2>
 <p>This mode let us define an axis (X, y, Z), a center point and a rotation angle (W), in degrees, around the defined axis.</p>
 <section id="inputs">
-<h3>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h3>
+<h3>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h3>
 <p>All inputs are vectorized and they will accept single or multiple values.
 There is four inputs:</p>
 <ul class="simple">
@@ -192,7 +192,7 @@ There is four inputs:</p>
 </ul>
 </section>
 <section id="parameters">
-<h3>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h3>
+<h3>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h3>
 <p>All parameters except <strong>Vertices</strong> has a default value. <strong>Angle</strong> can be given by the node or an external input.</p>
 <table class="docutils align-default">
 <thead>
@@ -227,11 +227,11 @@ There is four inputs:</p>
 </table>
 </section>
 <section id="outputs">
-<h3>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h3>
+<h3>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h3>
 <p><strong>Vertices</strong>.</p>
 </section>
 <section id="example-of-usage">
-<h3>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h3>
+<h3>Example of usage<a class="headerlink" href="#example-of-usage" title="Link to this heading">¶</a></h3>
 <a class="reference external image-reference" href="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/rotate/rotate_vectors_blender_sverchok_example_1.png"><img alt="AxisRotationDemo1.PNG" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/rotate/rotate_vectors_blender_sverchok_example_1.png" /></a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/torus_mk2.html"><span class="doc">Torus</span></a></p></li>
@@ -241,10 +241,10 @@ There is four inputs:</p>
 </section>
 </section>
 <section id="euler-rotation">
-<h2>Euler Rotation<a class="headerlink" href="#euler-rotation" title="Permalink to this heading">¶</a></h2>
+<h2>Euler Rotation<a class="headerlink" href="#euler-rotation" title="Link to this heading">¶</a></h2>
 <p>This mode is used to perform Euler rotations, referred to an Eular gimbal. A gimbal is a set of 3 axis that have a hierarchical relationship between them.</p>
 <section id="id1">
-<h3>Inputs<a class="headerlink" href="#id1" title="Permalink to this heading">¶</a></h3>
+<h3>Inputs<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h3>
 <p>All inputs are vectorized and they will accept single or multiple values.
 There is four inputs:</p>
 <ul class="simple">
@@ -255,7 +255,7 @@ There is four inputs:</p>
 </ul>
 </section>
 <section id="id2">
-<h3>Parameters<a class="headerlink" href="#id2" title="Permalink to this heading">¶</a></h3>
+<h3>Parameters<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h3>
 <p>All parameters except <strong>Vertices</strong> has a default value. <strong>X</strong>, <strong>Y</strong> and <strong>Z</strong> can be given by the node or an external input.</p>
 <table class="docutils align-default">
 <thead>
@@ -295,11 +295,11 @@ There is four inputs:</p>
 </table>
 </section>
 <section id="id3">
-<h3>Outputs<a class="headerlink" href="#id3" title="Permalink to this heading">¶</a></h3>
+<h3>Outputs<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h3>
 <p><strong>Vertices</strong></p>
 </section>
 <section id="id4">
-<h3>Example of usage<a class="headerlink" href="#id4" title="Permalink to this heading">¶</a></h3>
+<h3>Example of usage<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h3>
 <a class="reference external image-reference" href="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/rotate/rotate_vectors_blender_sverchok_example_2.png"><img alt="EulerRotationDemo1.PNG" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/rotate/rotate_vectors_blender_sverchok_example_2.png" /></a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/line_mk4.html"><span class="doc">Line</span></a></p></li>
@@ -320,11 +320,11 @@ The second is more complex, with multiple inputs in Y and Z to create a complex 
 </section>
 </section>
 <section id="quaternion-rotation">
-<h2>Quaternion Rotation<a class="headerlink" href="#quaternion-rotation" title="Permalink to this heading">¶</a></h2>
+<h2>Quaternion Rotation<a class="headerlink" href="#quaternion-rotation" title="Link to this heading">¶</a></h2>
 <p>In this mode rotation is defined by 4 values (X, Y, Z, W), but it works in a different way than Axis Rotation. The important thing is the relation between all four values. For example, X value rotate the object around X axis up to 180 degrees. The effect of W is to avoid that rotation and leave the element with zero rotation.
 The final rotation is a combination of all four values.</p>
 <section id="id5">
-<h3>Inputs<a class="headerlink" href="#id5" title="Permalink to this heading">¶</a></h3>
+<h3>Inputs<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h3>
 <p>All inputs are vectorized and they will accept single or multiple values.
 There is five inputs:</p>
 <ul class="simple">
@@ -336,7 +336,7 @@ There is five inputs:</p>
 </ul>
 </section>
 <section id="id6">
-<h3>Parameters<a class="headerlink" href="#id6" title="Permalink to this heading">¶</a></h3>
+<h3>Parameters<a class="headerlink" href="#id6" title="Link to this heading">¶</a></h3>
 <p>All parameters except <strong>Vertices</strong> has a default value. <strong>X</strong>, <strong>Y</strong>, <strong>Z</strong> and <strong>W</strong> can be given by the node or an external input.</p>
 <table class="docutils align-default">
 <thead>
@@ -376,11 +376,11 @@ There is five inputs:</p>
 </table>
 </section>
 <section id="id7">
-<h3>Outputs<a class="headerlink" href="#id7" title="Permalink to this heading">¶</a></h3>
+<h3>Outputs<a class="headerlink" href="#id7" title="Link to this heading">¶</a></h3>
 <p><strong>Vertices</strong>.</p>
 </section>
 <section id="id8">
-<h3>Example of usage<a class="headerlink" href="#id8" title="Permalink to this heading">¶</a></h3>
+<h3>Example of usage<a class="headerlink" href="#id8" title="Link to this heading">¶</a></h3>
 <a class="reference external image-reference" href="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/rotate/rotate_vectors_blender_sverchok_example_4.png"><img alt="QuatRotationDemo1.PNG" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/rotate/rotate_vectors_blender_sverchok_example_4.png" /></a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
@@ -392,7 +392,7 @@ There is five inputs:</p>
 </section>
 </section>
 <section id="advanced-parameters">
-<h2>Advanced Parameters<a class="headerlink" href="#advanced-parameters" title="Permalink to this heading">¶</a></h2>
+<h2>Advanced Parameters<a class="headerlink" href="#advanced-parameters" title="Link to this heading">¶</a></h2>
 <p>In the N-Panel (and on the right-click menu) you can find:</p>
 <ul class="simple">
 <li><p><strong>Output NumPy</strong>: Output NumPy arrays in stead of regular lists (makes the node faster when you input one rotation value for each set of vertices)</p></li>

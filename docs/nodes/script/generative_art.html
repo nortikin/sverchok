@@ -12,9 +12,9 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/documentation_options.js?v=773c2105"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -138,15 +138,15 @@
            <div itemprop="articleBody">
              
   <section id="generative-art">
-<h1>Generative Art<a class="headerlink" href="#generative-art" title="Permalink to this heading">¶</a></h1>
+<h1>Generative Art<a class="headerlink" href="#generative-art" title="Link to this heading">¶</a></h1>
 <p><em>destination after Beta: Generators</em></p>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node can be used to produce recursive three dimensional structures following a design specified in a separate xml file. These structures are similar to fractals or lsystems.</p>
 <p>The xml file defines a set of transformation rules and instructions to place objects. A simple set of rules can often generate surprising and complex structures.</p>
 </section>
 <section id="inputs-parameters">
-<h2>Inputs &amp; Parameters<a class="headerlink" href="#inputs-parameters" title="Permalink to this heading">¶</a></h2>
+<h2>Inputs &amp; Parameters<a class="headerlink" href="#inputs-parameters" title="Link to this heading">¶</a></h2>
 <p>This node has the following parameters:</p>
 <ul class="simple">
 <li><p><strong>xml file</strong> - Required. This specifies the LSystem design and should be a linked text block in the .blend file.</p></li>
@@ -160,14 +160,14 @@
 </ul>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p><strong>Vertices, Edges and Faces</strong> - If the Vertices input is connected, these outputs will define the mesh of a tube that skins the structure defined in the xml file.</p></li>
 <li><p><strong>Shapes Matrices</strong> - For each <em>shape</em> attribute defined in the xml file a named output will be generated. This output is a list  list of matrices that define the structure.</p></li>
 </ul>
 </section>
 <section id="examples-of-usage">
-<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
+<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Link to this heading">¶</a></h2>
 <p>A simplified description of the algorithm for the evaluation of a design.</p>
 <p>The xml file (see below for examples and descriptions) consist of a set of rules, each rule has a list of instructions, each instruction defines a transform and either a call to a rule or an instruction to place an instance.</p>
 <p>The system is implemented by a stack where each item in the stack consists of the next rule to call, the current depth of the system  and the current state of the system. At each iteration of the processor the last item is removed from the stack and processed.</p>
@@ -204,7 +204,7 @@ For example: <code class="docutils literal notranslate"><span class="pre">t</spa
 <p>The count attribute specifies how many times that instruction is repeated.  if count is omitted it defaults to 1. For example the instruction <code class="docutils literal notranslate"><span class="pre">&lt;call</span> <span class="pre">count=&quot;3&quot;</span> <span class="pre">transforms=&quot;rz</span> <span class="pre">120&quot;</span> <span class="pre">rule=&quot;R1&quot;/&gt;</span></code> calls rule <code class="docutils literal notranslate"><span class="pre">R1</span></code> applying a 120 degree rotation about <code class="docutils literal notranslate"><span class="pre">z</span></code> in between each call.</p>
 <p>An instance instruction tells the processor to add a matrix to the output list defining the state of the system at that point. The names used in the shape attribute are used as the names for the node’s output sockets. If there is more than one type of shape each will have its own output socket.</p>
 <section id="multiple-rule-definition-example">
-<h3>Multiple Rule Definition Example<a class="headerlink" href="#multiple-rule-definition-example" title="Permalink to this heading">¶</a></h3>
+<h3>Multiple Rule Definition Example<a class="headerlink" href="#multiple-rule-definition-example" title="Link to this heading">¶</a></h3>
 <p>There can be multiple definitions of the same rule in an xml file.</p>
 <p>For example</p>
 <p>Tree</p>
@@ -237,7 +237,7 @@ For example: <code class="docutils literal notranslate"><span class="pre">t</spa
 <p>If the weight attribute is omitted each version will have equal weight. Changing the value of <code class="docutils literal notranslate"><span class="pre">r</span> <span class="pre">seed</span></code> in the node interface will change the generated structure for xml files with multiple rule definitions. This example had rseed = 1.</p>
 </section>
 <section id="successor-rule-example">
-<h3>Successor Rule Example<a class="headerlink" href="#successor-rule-example" title="Permalink to this heading">¶</a></h3>
+<h3>Successor Rule Example<a class="headerlink" href="#successor-rule-example" title="Link to this heading">¶</a></h3>
 <p>Normally when the <code class="docutils literal notranslate"><span class="pre">max_depth</span></code> for a rule is reached that ‘arm’ of the structure is finished. If a rule defines a successor rule then this rule will be called when the <code class="docutils literal notranslate"><span class="pre">max_depth</span></code> is reached. In the following example when the <code class="docutils literal notranslate"><span class="pre">y180</span></code> rule gets called it will be called  90 times in succession and produce a 180 degree turn about the y axis. When it finishes the successor rule <code class="docutils literal notranslate"><span class="pre">r</span></code> will be called and either produce a 180 degree turn about the <code class="docutils literal notranslate"><span class="pre">y</span></code> axis or the <code class="docutils literal notranslate"><span class="pre">z</span></code> axis.</p>
 <p>Nouveau variation</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">rules</span> <span class="n">max_depth</span><span class="o">=</span><span class="s2">&quot;1000&quot;</span><span class="o">&gt;</span>
@@ -264,7 +264,7 @@ For example: <code class="docutils literal notranslate"><span class="pre">t</spa
 <p>This example needs “max matrices” set to 5000 to get the above result.</p>
 </section>
 <section id="mesh-mode-example">
-<h3>Mesh Mode Example<a class="headerlink" href="#mesh-mode-example" title="Permalink to this heading">¶</a></h3>
+<h3>Mesh Mode Example<a class="headerlink" href="#mesh-mode-example" title="Link to this heading">¶</a></h3>
 <p>Using the matrices output allows a separate object to be placed at each location. The vertices input and the mesh (vertices, edges, faces) output “skins” the mesh into a much smaller number of objects. The vertices input should be a list of vertices such as that generated by the “Circle” node or “NGon” node. It could also be a circle type object taking from the scene using the “Objects In” node. The list of vertices should be in order so they can be made into a ring with the last vertex joined to the first. That ring doesn’t have to be planar.</p>
 <img alt="node and result picture for 6 spiral in mesh mode" src="https://cloud.githubusercontent.com/assets/7930130/13376232/d20249ce-de1b-11e5-968d-727f0038305e.png" />
 <p>The output will not always be one mesh. If the rule set ends one ‘arm’ and goes back to start another ‘arm’ these two sub-parts will be separate meshes. Sometimes the mesh does not turn out how you would like. This can often be fixed by changing the rule set.</p>
@@ -321,7 +321,7 @@ For example: <code class="docutils literal notranslate"><span class="pre">t</spa
 <p>Again these were both done with max mats set to 5000.</p>
 </section>
 <section id="constants-and-variables-example">
-<h3>Constants and Variables Example<a class="headerlink" href="#constants-and-variables-example" title="Permalink to this heading">¶</a></h3>
+<h3>Constants and Variables Example<a class="headerlink" href="#constants-and-variables-example" title="Link to this heading">¶</a></h3>
 <p>Constants and variables can be included in the xml file by replacing a numerical value with a pair of braces.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">transforms</span> <span class="o">=</span> <span class="s2">&quot;tx 0.5 rx 20 sa 0.9&quot;</span>
 </pre></div>
@@ -386,7 +386,7 @@ For example: <code class="docutils literal notranslate"><span class="pre">t</spa
 </section>
 </section>
 <section id="references">
-<h2>References<a class="headerlink" href="#references" title="Permalink to this heading">¶</a></h2>
+<h2>References<a class="headerlink" href="#references" title="Link to this heading">¶</a></h2>
 <p>This node is closely based on <a class="reference external" href="http://structuresynth.sourceforge.net/">Structure Synth</a> but the xml design format and most of the code comes from <a class="reference external" href="http://prideout.net/">Philip Rideout’s</a> <a class="reference external" href="https://github.com/prideout/lsystem">lsystem</a> repository on github.</p>
 </section>
 </section>

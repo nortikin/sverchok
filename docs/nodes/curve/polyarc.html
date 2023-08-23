@@ -12,9 +12,9 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/documentation_options.js?v=773c2105"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -83,7 +83,7 @@
 <li class="toctree-l3"><a class="reference internal" href="curve_segment.html">Curve Segment</a></li>
 <li class="toctree-l3"><a class="reference internal" href="deconstruct_curve.html">Deconstruct Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="elevate_degree.html">Elevate Degree (NURBS Curve)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="ellipse.html">Ellipse (Curve)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ellipse_curve.html">Ellipse (Curve)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="endpoints.html">Curve Endpoints</a></li>
 <li class="toctree-l3"><a class="reference internal" href="eval_curve.html">Evaluate Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="extend_curve.html">Extend Curve</a></li>
@@ -201,10 +201,10 @@
            <div itemprop="articleBody">
              
   <section id="poly-arc">
-<h1>Poly Arc<a class="headerlink" href="#poly-arc" title="Permalink to this heading">¶</a></h1>
+<h1>Poly Arc<a class="headerlink" href="#poly-arc" title="Link to this heading">¶</a></h1>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205465202-a89e0877-a7e3-4528-bce0-d69302bfd21b.png"><img alt="https://user-images.githubusercontent.com/14288520/205465202-a89e0877-a7e3-4528-bce0-d69302bfd21b.png" src="https://user-images.githubusercontent.com/14288520/205465202-a89e0877-a7e3-4528-bce0-d69302bfd21b.png" /></a>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node generates a Curve, which goes through the specified points, made of
 series of circular arcs and straight line segments. Arcs are created so that
 they touch smoothly in their meeting points. User can specify the tangent
@@ -213,7 +213,7 @@ specified, the node will calculate it automatically by some algorithm.</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205465625-aa629471-e74d-445f-8dd4-24f692b53b3e.png"><img alt="https://user-images.githubusercontent.com/14288520/205465625-aa629471-e74d-445f-8dd4-24f692b53b3e.png" src="https://user-images.githubusercontent.com/14288520/205465625-aa629471-e74d-445f-8dd4-24f692b53b3e.png" /></a>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
 <li><p><strong>Vertices</strong>. List of points to build a curve through. This input is mandatory.</p></li>
@@ -223,7 +223,7 @@ is optional. If not connected, the node will calculate it on it’s own.</p></li
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205465780-d781149b-192b-44c9-9a92-0097b3e6b3fd.png"><img alt="https://user-images.githubusercontent.com/14288520/205465780-d781149b-192b-44c9-9a92-0097b3e6b3fd.png" src="https://user-images.githubusercontent.com/14288520/205465780-d781149b-192b-44c9-9a92-0097b3e6b3fd.png" /></a>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
 <p>This node has the following parameters:</p>
 <ul class="simple">
 <li><p><strong>Concatenate</strong>. If checked, the node will concatenate all arcs into one
@@ -250,7 +250,7 @@ default.</p></li>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205466224-98d5b3bb-f7a6-4fa6-829b-8d19bade3da0.png"><img alt="https://user-images.githubusercontent.com/14288520/205466224-98d5b3bb-f7a6-4fa6-829b-8d19bade3da0.png" src="https://user-images.githubusercontent.com/14288520/205466224-98d5b3bb-f7a6-4fa6-829b-8d19bade3da0.png" /></a>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following outputs:</p>
 <ul class="simple">
 <li><p><strong>Curve</strong>. Generated Curve object.</p></li>
@@ -261,7 +261,7 @@ default.</p></li>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205466946-b95685e8-d714-44cc-a270-eefbc56e0dac.png"><img alt="https://user-images.githubusercontent.com/14288520/205466946-b95685e8-d714-44cc-a270-eefbc56e0dac.png" src="https://user-images.githubusercontent.com/14288520/205466946-b95685e8-d714-44cc-a270-eefbc56e0dac.png" /></a>
 </section>
 <section id="examples-of-usage">
-<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
+<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Link to this heading">¶</a></h2>
 <p>A simple example with specified starting tangent vector:</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205482369-0e1d819d-738f-477d-9708-d326c4c1753b.png"><img alt="https://user-images.githubusercontent.com/14288520/205482369-0e1d819d-738f-477d-9708-d326c4c1753b.png" src="https://user-images.githubusercontent.com/14288520/205482369-0e1d819d-738f-477d-9708-d326c4c1753b.png" /></a>
 <ul class="simple">

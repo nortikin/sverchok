@@ -12,9 +12,9 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/documentation_options.js?v=773c2105"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -90,7 +90,7 @@
 <li class="toctree-l3"><a class="reference internal" href="curve_segment.html">Curve Segment</a></li>
 <li class="toctree-l3"><a class="reference internal" href="deconstruct_curve.html">Deconstruct Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="elevate_degree.html">Elevate Degree (NURBS Curve)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="ellipse.html">Ellipse (Curve)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ellipse_curve.html">Ellipse (Curve)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="endpoints.html">Curve Endpoints</a></li>
 <li class="toctree-l3"><a class="reference internal" href="eval_curve.html">Evaluate Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="extend_curve.html">Extend Curve</a></li>
@@ -201,10 +201,10 @@
            <div itemprop="articleBody">
              
   <section id="blend-curves">
-<h1>Blend Curves<a class="headerlink" href="#blend-curves" title="Permalink to this heading">¶</a></h1>
+<h1>Blend Curves<a class="headerlink" href="#blend-curves" title="Link to this heading">¶</a></h1>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211316021-6e449b78-4c6a-41a6-b0c5-39130a994131.png"><img alt="https://user-images.githubusercontent.com/14288520/211316021-6e449b78-4c6a-41a6-b0c5-39130a994131.png" src="https://user-images.githubusercontent.com/14288520/211316021-6e449b78-4c6a-41a6-b0c5-39130a994131.png" /></a>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node takes two or more Curve objects, and connects them by adding new
 curve(s) in the middle, to generate a smooth blending. For example, the end of
 the first curve is connected to the beginning of the second curve. Generated
@@ -213,7 +213,7 @@ connection between initial curves and blending curve(s) should be.</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211318302-3d60c8a6-7ea0-40e0-b499-103434be8ddb.png"><img alt="https://user-images.githubusercontent.com/14288520/211318302-3d60c8a6-7ea0-40e0-b499-103434be8ddb.png" src="https://user-images.githubusercontent.com/14288520/211318302-3d60c8a6-7ea0-40e0-b499-103434be8ddb.png" /></a>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
 <li><p><strong>Curve1</strong>. First curve to be blended. This input is available and mandatory
@@ -248,7 +248,7 @@ set to <strong>BiArc</strong>. This defines the value of P parameter of the fami
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211330393-602e757b-5897-49a2-8d33-3fa24adbd545.png"><img alt="https://user-images.githubusercontent.com/14288520/211330393-602e757b-5897-49a2-8d33-3fa24adbd545.png" src="https://user-images.githubusercontent.com/14288520/211330393-602e757b-5897-49a2-8d33-3fa24adbd545.png" /></a>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
 <p>This node has the following parameters:</p>
 <ul>
 <li><p><strong>Continuity</strong>. This defines how smooth the connection between initial curves
@@ -321,7 +321,7 @@ curves only. Checked by default.</p></li>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211358649-4e10c9f6-b70f-4004-af47-2a5b62cdaf16.png"><img alt="https://user-images.githubusercontent.com/14288520/211358649-4e10c9f6-b70f-4004-af47-2a5b62cdaf16.png" src="https://user-images.githubusercontent.com/14288520/211358649-4e10c9f6-b70f-4004-af47-2a5b62cdaf16.png" /></a>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following outputs:</p>
 <ul class="simple">
 <li><p><strong>Curve</strong>. The generated curve (or list of curves).</p></li>
@@ -330,7 +330,7 @@ curves only. Checked by default.</p></li>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211362482-670f165a-da6b-46bd-b7fc-266b1e918018.png"><img alt="https://user-images.githubusercontent.com/14288520/211362482-670f165a-da6b-46bd-b7fc-266b1e918018.png" src="https://user-images.githubusercontent.com/14288520/211362482-670f165a-da6b-46bd-b7fc-266b1e918018.png" /></a>
 </section>
 <section id="example-of-usage">
-<h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
+<h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Link to this heading">¶</a></h2>
 <p>Generate two cubic curves from mesh objects (one of them is white - selected,
 another is black - unselected); and blend them together with a smooth curve:</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211370981-6db2f1b3-666d-422d-a5f9-84479dcb5042.png"><img alt="https://user-images.githubusercontent.com/14288520/211370981-6db2f1b3-666d-422d-a5f9-84479dcb5042.png" src="https://user-images.githubusercontent.com/14288520/211370981-6db2f1b3-666d-422d-a5f9-84479dcb5042.png" /></a>

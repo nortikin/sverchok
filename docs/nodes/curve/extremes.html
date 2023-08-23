@@ -12,9 +12,9 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/documentation_options.js?v=773c2105"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -83,7 +83,7 @@
 <li class="toctree-l3"><a class="reference internal" href="curve_segment.html">Curve Segment</a></li>
 <li class="toctree-l3"><a class="reference internal" href="deconstruct_curve.html">Deconstruct Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="elevate_degree.html">Elevate Degree (NURBS Curve)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="ellipse.html">Ellipse (Curve)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ellipse_curve.html">Ellipse (Curve)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="endpoints.html">Curve Endpoints</a></li>
 <li class="toctree-l3"><a class="reference internal" href="eval_curve.html">Evaluate Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="extend_curve.html">Extend Curve</a></li>
@@ -202,14 +202,14 @@
            <div itemprop="articleBody">
              
   <section id="curve-extremes">
-<h1>Curve Extremes<a class="headerlink" href="#curve-extremes" title="Permalink to this heading">¶</a></h1>
+<h1>Curve Extremes<a class="headerlink" href="#curve-extremes" title="Link to this heading">¶</a></h1>
 <a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/bad8c870-51b7-4373-8094-7d8ac68c73d0"><img alt="https://github.com/nortikin/sverchok/assets/14288520/bad8c870-51b7-4373-8094-7d8ac68c73d0" src="https://github.com/nortikin/sverchok/assets/14288520/bad8c870-51b7-4373-8094-7d8ac68c73d0" /></a>
 <section id="dependencies">
-<h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this heading">¶</a></h2>
+<h2>Dependencies<a class="headerlink" href="#dependencies" title="Link to this heading">¶</a></h2>
 <p>This node requires <a class="reference external" href="https://scipy.org/">SciPy</a> library to work.</p>
 </section>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node searches for points on the curve, where the specified scalar field
 reaches it’s minimal or maximum value. Most often this node is used with the
 “Coordinate scalar field” node, to find, for example, points of the curve with
@@ -230,7 +230,7 @@ scalar field - for example, if they were defined by approximation.</p>
 </ul>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
 <li><p><strong>Curve</strong>. The curve to find extremes on. This input is mandatory.</p></li>
@@ -244,7 +244,7 @@ value is 1.</p></li>
 </ul>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
 <p>This node has the following parameters:</p>
 <ul>
 <li><p><strong>Direction</strong>. This defines what kind of extreme points it is required to
@@ -263,7 +263,7 @@ other curves in the input list (if there are more than one curve).</p></li>
 </ul>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following outputs:</p>
 <ul class="simple">
 <li><p><strong>Point</strong>. Extreme point in 3D space.</p></li>
@@ -271,7 +271,7 @@ other curves in the input list (if there are more than one curve).</p></li>
 </ul>
 </section>
 <section id="example-of-usage">
-<h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
+<h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Link to this heading">¶</a></h2>
 <p>Find the point on a curve which has the maximum value of Y coordinate:</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/86952365-5383d980-c16c-11ea-84d3-75830c0dbc75.png"><img alt="https://user-images.githubusercontent.com/284644/86952365-5383d980-c16c-11ea-84d3-75830c0dbc75.png" src="https://user-images.githubusercontent.com/284644/86952365-5383d980-c16c-11ea-84d3-75830c0dbc75.png" /></a>
 <ul class="simple">

@@ -12,9 +12,9 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/documentation_options.js?v=773c2105"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -143,16 +143,16 @@
            <div itemprop="articleBody">
              
   <section id="mix-inputs">
-<h1>Mix Inputs<a class="headerlink" href="#mix-inputs" title="Permalink to this heading">¶</a></h1>
+<h1>Mix Inputs<a class="headerlink" href="#mix-inputs" title="Link to this heading">¶</a></h1>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189177899-dbf1a0da-dd51-428f-8c5c-4d8715706563.png"><img alt="https://user-images.githubusercontent.com/14288520/189177899-dbf1a0da-dd51-428f-8c5c-4d8715706563.png" src="https://user-images.githubusercontent.com/14288520/189177899-dbf1a0da-dd51-428f-8c5c-4d8715706563.png" /></a>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node mixes two values of different types using a given factor, a selected interpolation and easing function.</p>
 <p>For a factor of 0.0 it outputs the first value, for the factor of 1.0 it outputs the last value and for any other factor in between 0-1 it outputs an interpolated value between the first and second input value. An exception to this are the “Back” and “Elastic” interpolations which generate output values that are not strictly confined to the first-second value interval, but they will output values that start at first and end at second value.</p>
 <p>Extended version of <a class="reference internal" href="mix_numbers.html"><span class="doc">Number-&gt;Mix Numbers</span></a>.</p>
 </section>
 <section id="inputs-parameters">
-<h2>Inputs &amp; Parameters<a class="headerlink" href="#inputs-parameters" title="Permalink to this heading">¶</a></h2>
+<h2>Inputs &amp; Parameters<a class="headerlink" href="#inputs-parameters" title="Link to this heading">¶</a></h2>
 <p>All parameters except for <strong>Mode</strong>, <strong>Interpolation</strong>, <strong>Easing</strong>, <strong>Mirror</strong> and <strong>Swap</strong> can be given by the node or an external input.</p>
 <p>Based on the selected <strong>Mode</strong> the node changes the input and output socket types to match the corresponding type.</p>
 <p>The node is vectorized so the inputs values (A/B) take either a single or a list of values. The node will extend the shortest list to match the longest list before mixing the values in the two lists.</p>
@@ -259,7 +259,7 @@
 </table>
 </section>
 <section id="extra-parameters">
-<h2>Extra Parameters<a class="headerlink" href="#extra-parameters" title="Permalink to this heading">¶</a></h2>
+<h2>Extra Parameters<a class="headerlink" href="#extra-parameters" title="Link to this heading">¶</a></h2>
 <p>For certain interpolation types the node provides extra parameters on the Property Panel.</p>
 <ul class="simple">
 <li><p><strong>Exponential</strong>
@@ -273,11 +273,11 @@ Extra parameters to adjust the base and the exponent of the damping oscillation 
 </ul>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
 <p>Based on the selected <strong>Mode</strong> the node outputs the corresponding type value.</p>
 </section>
 <section id="see-also">
-<h2>See also<a class="headerlink" href="#see-also" title="Permalink to this heading">¶</a></h2>
+<h2>See also<a class="headerlink" href="#see-also" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Vector-&gt; <a class="reference internal" href="../vector/interpolation_mk3.html"><span class="doc">Vector Interpolation</span></a></p></li>
 <li><p>Vector-&gt; <a class="reference internal" href="../vector/lerp.html"><span class="doc">Vector Lerp</span></a></p></li>

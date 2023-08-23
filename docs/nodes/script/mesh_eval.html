@@ -12,9 +12,9 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/documentation_options.js?v=773c2105"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -142,9 +142,9 @@
            <div itemprop="articleBody">
              
   <section id="mesh-expression-node">
-<h1>Mesh Expression Node<a class="headerlink" href="#mesh-expression-node" title="Permalink to this heading">¶</a></h1>
+<h1>Mesh Expression Node<a class="headerlink" href="#mesh-expression-node" title="Link to this heading">¶</a></h1>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node generates mesh from description in JSON format. Variables and
 mathematical expressions are allowed in definitions of vertex coordinates, so
 exact shape of mesh can be parametrized. All variables used in JSON definition
@@ -152,7 +152,7 @@ become inputs of node.
 It is also possible to generate JSON description from existing mesh.</p>
 </section>
 <section id="usual-workflow">
-<h2>Usual workflow<a class="headerlink" href="#usual-workflow" title="Permalink to this heading">¶</a></h2>
+<h2>Usual workflow<a class="headerlink" href="#usual-workflow" title="Link to this heading">¶</a></h2>
 <ol class="arabic simple">
 <li><p>Create some mesh object by using usual Blender’s modelling techniques. Select that mesh.</p></li>
 <li><p>Press “from selection” button in Mesh Expression node. New text buffer will appear in Blender.</p></li>
@@ -165,7 +165,7 @@ below.</p></li>
 </ol>
 </section>
 <section id="json-syntax">
-<h2>JSON syntax<a class="headerlink" href="#json-syntax" title="Permalink to this heading">¶</a></h2>
+<h2>JSON syntax<a class="headerlink" href="#json-syntax" title="Link to this heading">¶</a></h2>
 <p>For generic description of JSON, please refer to <a class="reference external" href="https://en.wikipedia.org/wiki/JSON">https://en.wikipedia.org/wiki/JSON</a>.</p>
 <p>Mesh Expression node uses JSON, which should be a dictionary with following keys:</p>
 <ul>
@@ -215,7 +215,7 @@ So, you can express “Y” in terms of “X”, but not vice versa.</p></li>
 <p>See also JSON examples below.</p>
 </section>
 <section id="expression-syntax">
-<h2>Expression syntax<a class="headerlink" href="#expression-syntax" title="Permalink to this heading">¶</a></h2>
+<h2>Expression syntax<a class="headerlink" href="#expression-syntax" title="Link to this heading">¶</a></h2>
 <p>Expressions used in place of vertex coordinates are usual Python’s expressions.</p>
 <p>For exact syntax definition, please refer to <a class="reference external" href="https://docs.python.org/3/reference/expressions.html">https://docs.python.org/3/reference/expressions.html</a>.</p>
 <p>In short, you can use usual mathematical operations (<cite>+</cite>, <cite>-</cite>, <cite>*</cite>, <cite>/</cite>, <cite>**</cite>
@@ -253,13 +253,13 @@ system or data.</p>
 </ul>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
 <p>Set of inputs for this node depends on used JSON definition. Each variable used
 in JSON becomes one input. If there are no variables used in JSON, then this
 node will have no inputs.</p>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
 <p>This node has the following parameters:</p>
 <ul class="simple">
 <li><p><strong>File name</strong>. Its value should be the name of existing Blender’s text buffer.</p></li>
@@ -273,7 +273,7 @@ only available in the N panel.</p></li>
 </ul>
 </section>
 <section id="operators">
-<h2>Operators<a class="headerlink" href="#operators" title="Permalink to this heading">¶</a></h2>
+<h2>Operators<a class="headerlink" href="#operators" title="Link to this heading">¶</a></h2>
 <p>This node has one button: <strong>from selection</strong>. This button takes currently
 selected Blender’s mesh object and puts it’s JSON description into newly
 created text buffer. Name of created buffer is assigned to <strong>File name</strong>
@@ -292,7 +292,7 @@ layer name to RGBA color.</p>
 default, all faces of the mesh have material index of zero.</p>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
 <p>This node always has the following outputs:</p>
 <ul class="simple">
 <li><p><strong>Vertices</strong></p></li>
@@ -307,7 +307,7 @@ contain a mask for <strong>Vertices</strong>, which selects vertices from corres
 group.</p>
 </section>
 <section id="examples-of-usage">
-<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
+<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Link to this heading">¶</a></h2>
 <p>Almost trivial, a plane with adjusable size:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
   <span class="s2">&quot;faces&quot;</span><span class="p">:</span> <span class="p">[</span>

@@ -12,9 +12,9 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/documentation_options.js?v=773c2105"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -83,7 +83,7 @@
 <li class="toctree-l3"><a class="reference internal" href="curve_segment.html">Curve Segment</a></li>
 <li class="toctree-l3"><a class="reference internal" href="deconstruct_curve.html">Deconstruct Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="elevate_degree.html">Elevate Degree (NURBS Curve)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="ellipse.html">Ellipse (Curve)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ellipse_curve.html">Ellipse (Curve)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="endpoints.html">Curve Endpoints</a></li>
 <li class="toctree-l3"><a class="reference internal" href="eval_curve.html">Evaluate Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="extend_curve.html">Extend Curve</a></li>
@@ -202,21 +202,21 @@
            <div itemprop="articleBody">
              
   <section id="helix-freecad">
-<h1>Helix (FreeCAD)<a class="headerlink" href="#helix-freecad" title="Permalink to this heading">¶</a></h1>
+<h1>Helix (FreeCAD)<a class="headerlink" href="#helix-freecad" title="Link to this heading">¶</a></h1>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205449851-57e0b8d9-0cd0-4dd8-86a2-44eb8391694a.png"><img alt="https://user-images.githubusercontent.com/14288520/205449851-57e0b8d9-0cd0-4dd8-86a2-44eb8391694a.png" src="https://user-images.githubusercontent.com/14288520/205449851-57e0b8d9-0cd0-4dd8-86a2-44eb8391694a.png" /></a>
 <section id="dependencies">
-<h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this heading">¶</a></h2>
+<h2>Dependencies<a class="headerlink" href="#dependencies" title="Link to this heading">¶</a></h2>
 <p>This node requires <a class="reference external" href="https://www.freecadweb.org/">FreeCAD</a> libraries installed to work.</p>
 </section>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node generates a helix Curve. The helix can be either cylyndrical (by default) or conical.</p>
 <p>The produced Curve object is NURBS-like, i.e. will be automatically converted
 to NURBS by nodes which require NURBS curves.</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205449936-94831101-2ca4-486a-addc-6b9a29f1e332.png"><img alt="https://user-images.githubusercontent.com/14288520/205449936-94831101-2ca4-486a-addc-6b9a29f1e332.png" src="https://user-images.githubusercontent.com/14288520/205449936-94831101-2ca4-486a-addc-6b9a29f1e332.png" /></a>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
 <li><p><strong>Radius</strong>. Helix radius. The default value is 1.0.</p></li>
@@ -238,7 +238,7 @@ set to 0 (by default), the node will generate a cylindrical helix. (0 is minimum
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205450833-915fa8bb-170b-46e3-9ee4-c6a126fe7166.png"><img alt="https://user-images.githubusercontent.com/14288520/205450833-915fa8bb-170b-46e3-9ee4-c6a126fe7166.png" src="https://user-images.githubusercontent.com/14288520/205450833-915fa8bb-170b-46e3-9ee4-c6a126fe7166.png" /></a>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
 <p>This node has the following parameter:</p>
 <ul class="simple">
 <li><p><strong>Join</strong>. When checked, the node will generate one flat list of Curves for
@@ -251,14 +251,14 @@ list of Curves for each list of input parameters. Unchecked by default.</p></li>
 </ul>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following output:</p>
 <ul class="simple">
 <li><p><strong>Curve</strong>. The generated helix Curve object.</p></li>
 </ul>
 </section>
 <section id="example-of-usage">
-<h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
+<h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Link to this heading">¶</a></h2>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205451285-6605bff1-e52f-470f-8d29-85d30a2f2f73.png"><img alt="https://user-images.githubusercontent.com/14288520/205451285-6605bff1-e52f-470f-8d29-85d30a2f2f73.png" src="https://user-images.githubusercontent.com/14288520/205451285-6605bff1-e52f-470f-8d29-85d30a2f2f73.png" /></a>
 <ul class="simple">
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_curve.html"><span class="doc">Viewer Draw Curve</span></a></p></li>

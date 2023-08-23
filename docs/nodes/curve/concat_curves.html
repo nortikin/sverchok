@@ -12,9 +12,9 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/documentation_options.js?v=773c2105"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -90,7 +90,7 @@
 <li class="toctree-l3"><a class="reference internal" href="curve_segment.html">Curve Segment</a></li>
 <li class="toctree-l3"><a class="reference internal" href="deconstruct_curve.html">Deconstruct Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="elevate_degree.html">Elevate Degree (NURBS Curve)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="ellipse.html">Ellipse (Curve)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ellipse_curve.html">Ellipse (Curve)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="endpoints.html">Curve Endpoints</a></li>
 <li class="toctree-l3"><a class="reference internal" href="eval_curve.html">Evaluate Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="extend_curve.html">Extend Curve</a></li>
@@ -201,10 +201,10 @@
            <div itemprop="articleBody">
              
   <section id="concatenate-curves">
-<h1>Concatenate Curves<a class="headerlink" href="#concatenate-curves" title="Permalink to this heading">¶</a></h1>
+<h1>Concatenate Curves<a class="headerlink" href="#concatenate-curves" title="Link to this heading">¶</a></h1>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211277635-e2739eca-904c-4635-a0ab-14b71ba85a35.png"><img alt="https://user-images.githubusercontent.com/14288520/211277635-e2739eca-904c-4635-a0ab-14b71ba85a35.png" src="https://user-images.githubusercontent.com/14288520/211277635-e2739eca-904c-4635-a0ab-14b71ba85a35.png" /></a>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node composes one Curve object from several Curve objects, by “glueing”
 their ends. It assumes that end points of the curves being concatenated are
 already coinciding. You can make the node check this fact additionally.</p>
@@ -212,14 +212,14 @@ already coinciding. You can make the node check this fact additionally.</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211287456-bcbb6644-580b-40f5-b387-abdc4f2b94cc.png"><img alt="https://user-images.githubusercontent.com/14288520/211287456-bcbb6644-580b-40f5-b387-abdc4f2b94cc.png" src="https://user-images.githubusercontent.com/14288520/211287456-bcbb6644-580b-40f5-b387-abdc4f2b94cc.png" /></a>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following input:</p>
 <ul class="simple">
 <li><p><strong>Curves</strong>. A list of curves to be concatenated. This input is mandatory.</p></li>
 </ul>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
 <p>This node has the following parameters:</p>
 <ul class="simple">
 <li><p><strong>Check coincidence</strong>. If enabled, then the node will check that the end points of curves being concatenated do actually coincide (within threshold). If they do not, the node will give an error (become red), and the processing will stop.</p></li>
@@ -231,14 +231,14 @@ convert one of input curves, or join resulting NURBS curves.</p></li>
 </ul>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following output:</p>
 <ul class="simple">
 <li><p><strong>Curve</strong>. The resulting concatenated curve.</p></li>
 </ul>
 </section>
 <section id="example-of-usage">
-<h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
+<h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Link to this heading">¶</a></h2>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211297333-4832ca4c-b0fc-489a-a7c8-91864728e1c7.png"><img alt="https://user-images.githubusercontent.com/14288520/211297333-4832ca4c-b0fc-489a-a7c8-91864728e1c7.png" src="https://user-images.githubusercontent.com/14288520/211297333-4832ca4c-b0fc-489a-a7c8-91864728e1c7.png" /></a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>

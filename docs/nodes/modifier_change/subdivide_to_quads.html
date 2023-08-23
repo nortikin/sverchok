@@ -12,9 +12,9 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/documentation_options.js?v=773c2105"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -168,15 +168,15 @@
            <div itemprop="articleBody">
              
   <section id="subdivide-to-quads">
-<h1>Subdivide to Quads<a class="headerlink" href="#subdivide-to-quads" title="Permalink to this heading">¶</a></h1>
+<h1>Subdivide to Quads<a class="headerlink" href="#subdivide-to-quads" title="Link to this heading">¶</a></h1>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200833247-ddbf8af4-f07c-4875-b83b-213a39039cb1.png"><img alt="https://user-images.githubusercontent.com/14288520/200833247-ddbf8af4-f07c-4875-b83b-213a39039cb1.png" src="https://user-images.githubusercontent.com/14288520/200833247-ddbf8af4-f07c-4875-b83b-213a39039cb1.png" /></a>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>Subdivide polygon faces to quads, similar to subdivision surface modifier.</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200833257-e495d5c0-d487-4576-a8a9-85c36a35b273.png"><img alt="https://user-images.githubusercontent.com/14288520/200833257-e495d5c0-d487-4576-a8a9-85c36a35b273.png" src="https://user-images.githubusercontent.com/14288520/200833257-e495d5c0-d487-4576-a8a9-85c36a35b273.png" /></a>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
 <li><p><strong>Vertices</strong></p></li>
@@ -194,12 +194,12 @@ The resultant values will be a copy of the base values.</p></li>
 </ul>
 </section>
 <section id="advanced-parameters">
-<h2>Advanced parameters<a class="headerlink" href="#advanced-parameters" title="Permalink to this heading">¶</a></h2>
+<h2>Advanced parameters<a class="headerlink" href="#advanced-parameters" title="Link to this heading">¶</a></h2>
 <p>In the N-Panel (and on the right-click menu) you can find:</p>
 <p><strong>Output NumPy</strong>: Get NumPy arrays in stead of regular lists (makes the node faster). Available for Vertices, Edges and Pols and Vert Map</p>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following outputs:</p>
 <ul class="simple">
 <li><p><strong>Vertices</strong>. All vertices of resulting mesh.</p></li>
@@ -212,12 +212,12 @@ contains one item for each output mesh face.</p></li>
 </ul>
 </section>
 <section id="performance-note">
-<h2>Performance Note<a class="headerlink" href="#performance-note" title="Permalink to this heading">¶</a></h2>
+<h2>Performance Note<a class="headerlink" href="#performance-note" title="Link to this heading">¶</a></h2>
 <p>The algorithm under this node is fully written in NumPy and the node will perform faster
 if the input values (verts, polygons, vert and face attributes..) are NumPy arrays</p>
 </section>
 <section id="examples-of-usage">
-<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
+<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Link to this heading">¶</a></h2>
 <p>Use of Vert Map output:</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200837135-49f33107-a43b-4f22-9e65-e1c0006853e1.png"><img alt="https://user-images.githubusercontent.com/14288520/200837135-49f33107-a43b-4f22-9e65-e1c0006853e1.png" src="https://user-images.githubusercontent.com/14288520/200837135-49f33107-a43b-4f22-9e65-e1c0006853e1.png" /></a>
 <ul class="simple">

@@ -12,9 +12,9 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/documentation_options.js?v=773c2105"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -151,10 +151,10 @@
            <div itemprop="articleBody">
              
   <section id="bevel-a-curve-mesh">
-<h1>Bevel a Curve (Mesh)<a class="headerlink" href="#bevel-a-curve-mesh" title="Permalink to this heading">¶</a></h1>
+<h1>Bevel a Curve (Mesh)<a class="headerlink" href="#bevel-a-curve-mesh" title="Link to this heading">¶</a></h1>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201133942-b9452f69-db06-4b11-bbd3-d71a092d64b5.png"><img alt="https://user-images.githubusercontent.com/14288520/201133942-b9452f69-db06-4b11-bbd3-d71a092d64b5.png" src="https://user-images.githubusercontent.com/14288520/201133942-b9452f69-db06-4b11-bbd3-d71a092d64b5.png" /></a>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node provides functionality similar to Blender’s standard “bevel curve”
 <a class="reference external" href="https://docs.blender.org/manual/en/latest/modeling/curves/properties/geometry.html">feature</a>. More precisely, it extrudes one flat curve (called “bevel object”)
 along another curve (path). Scale of “bevel object” may vary along the curve,
@@ -181,7 +181,7 @@ perpendicular to the plane of bevel object.</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201141743-1e1d5d68-8e2a-4cb5-b564-bc0e82eb1b0f.png"><img alt="https://user-images.githubusercontent.com/14288520/201141743-1e1d5d68-8e2a-4cb5-b564-bc0e82eb1b0f.png" src="https://user-images.githubusercontent.com/14288520/201141743-1e1d5d68-8e2a-4cb5-b564-bc0e82eb1b0f.png" /></a>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
 <li><p><strong>Curve</strong>. List of vertices, which define the curve, along which the bevel
@@ -229,7 +229,7 @@ evaluated. Default value is 10.</p></li>
 </ul>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
 <p>This node has the following parameters:</p>
 <ul class="simple">
 <li><p><strong>Orientation</strong>. The axis of “bevel object”, which should be oriented along
@@ -330,7 +330,7 @@ have to change the default value. This parameter is available only in the N pane
 </ul>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following outputs:</p>
 <ul class="simple">
 <li><p><strong>Vertices</strong>. Output object vertices.</p></li>
@@ -339,13 +339,13 @@ have to change the default value. This parameter is available only in the N pane
 </ul>
 </section>
 <section id="advice">
-<h2>Advice<a class="headerlink" href="#advice" title="Permalink to this heading">¶</a></h2>
+<h2>Advice<a class="headerlink" href="#advice" title="Link to this heading">¶</a></h2>
 <p>To better practice you should orient start direction of curve and taper as axis in Bevel node:</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201178116-cd3bed6b-fef2-43c5-9604-c5198d3db244.png"><img alt="https://user-images.githubusercontent.com/14288520/201178116-cd3bed6b-fef2-43c5-9604-c5198d3db244.png" src="https://user-images.githubusercontent.com/14288520/201178116-cd3bed6b-fef2-43c5-9604-c5198d3db244.png" /></a>
 <p>A behavior in other directions is not obvious.</p>
 </section>
 <section id="examples-of-usage">
-<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
+<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Link to this heading">¶</a></h2>
 <p>Simplest example:</p>
 <img alt="https://user-images.githubusercontent.com/284644/59158004-62add900-8acd-11e9-95be-b99908457243.png" src="https://user-images.githubusercontent.com/284644/59158004-62add900-8acd-11e9-95be-b99908457243.png" />
 <p>Example with cyclic curve:</p>

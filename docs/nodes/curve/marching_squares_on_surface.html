@@ -12,9 +12,9 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/documentation_options.js?v=773c2105"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -83,7 +83,7 @@
 <li class="toctree-l3"><a class="reference internal" href="curve_segment.html">Curve Segment</a></li>
 <li class="toctree-l3"><a class="reference internal" href="deconstruct_curve.html">Deconstruct Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="elevate_degree.html">Elevate Degree (NURBS Curve)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="ellipse.html">Ellipse (Curve)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ellipse_curve.html">Ellipse (Curve)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="endpoints.html">Curve Endpoints</a></li>
 <li class="toctree-l3"><a class="reference internal" href="eval_curve.html">Evaluate Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="extend_curve.html">Extend Curve</a></li>
@@ -202,14 +202,14 @@
            <div itemprop="articleBody">
              
   <section id="marching-squares-on-surface">
-<h1>Marching Squares on Surface<a class="headerlink" href="#marching-squares-on-surface" title="Permalink to this heading">¶</a></h1>
+<h1>Marching Squares on Surface<a class="headerlink" href="#marching-squares-on-surface" title="Link to this heading">¶</a></h1>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/209465511-338c7076-3c26-4106-bdca-36bc5a8db283.png"><img alt="https://user-images.githubusercontent.com/14288520/209465511-338c7076-3c26-4106-bdca-36bc5a8db283.png" src="https://user-images.githubusercontent.com/14288520/209465511-338c7076-3c26-4106-bdca-36bc5a8db283.png" /></a>
 <section id="dependencies">
-<h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this heading">¶</a></h2>
+<h2>Dependencies<a class="headerlink" href="#dependencies" title="Link to this heading">¶</a></h2>
 <p>This node requires <a class="reference external" href="https://scikit-image.org/">SkImage</a> library to work.</p>
 </section>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node uses Marching <a class="reference external" href="https://en.wikipedia.org/wiki/Marching_squares">Squares</a> algorithm to find iso-lines of a scalar field
 on an arbitrary surface, i.e. lines for which the value of scalar field equals
 to the given value at each point. The lines are generated as mesh - vertices
@@ -218,7 +218,7 @@ them.</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/209466874-7456e36b-9b90-44ae-994a-f8216ac87345.png"><img alt="https://user-images.githubusercontent.com/14288520/209466874-7456e36b-9b90-44ae-994a-f8216ac87345.png" src="https://user-images.githubusercontent.com/14288520/209466874-7456e36b-9b90-44ae-994a-f8216ac87345.png" /></a>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
 <li><p><strong>Field</strong>. Scalar field to generate iso-lines for. This input is mandatory.</p></li>
@@ -243,7 +243,7 @@ default value is 50 for both inputs.</p></li>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/209472279-1d451e4d-ae49-4286-bb8d-ef28462af018.png"><img alt="https://user-images.githubusercontent.com/14288520/209472279-1d451e4d-ae49-4286-bb8d-ef28462af018.png" src="https://user-images.githubusercontent.com/14288520/209472279-1d451e4d-ae49-4286-bb8d-ef28462af018.png" /></a>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
 <p>This node has the following parameters:</p>
 <ul class="simple">
 <li><p><strong>Join by surface</strong>. If checked, then mesh objects generated for each
@@ -259,7 +259,7 @@ contours at different sides of the surface. Checked by default.</p></li>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/209476502-77ebe3aa-bba9-4742-a9eb-6b1c70699b32.png"><img alt="https://user-images.githubusercontent.com/14288520/209476502-77ebe3aa-bba9-4742-a9eb-6b1c70699b32.png" src="https://user-images.githubusercontent.com/14288520/209476502-77ebe3aa-bba9-4742-a9eb-6b1c70699b32.png" /></a>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following outputs:</p>
 <ul class="simple">
 <li><p><strong>Vertices</strong>. Generated iso-curves vertices in 3D space.</p></li>
@@ -269,7 +269,7 @@ iso-curve vertices.</p></li>
 </ul>
 </section>
 <section id="examples-of-usage">
-<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
+<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Link to this heading">¶</a></h2>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/209476926-ad0c2122-376d-4b67-b7c5-4867407f96bd.png"><img alt="https://user-images.githubusercontent.com/14288520/209476926-ad0c2122-376d-4b67-b7c5-4867407f96bd.png" src="https://user-images.githubusercontent.com/14288520/209476926-ad0c2122-376d-4b67-b7c5-4867407f96bd.png" /></a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>

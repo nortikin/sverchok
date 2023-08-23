@@ -12,9 +12,9 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/documentation_options.js?v=773c2105"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -145,10 +145,10 @@
            <div itemprop="articleBody">
              
   <section id="vector-rewire">
-<h1>Vector Rewire<a class="headerlink" href="#vector-rewire" title="Permalink to this heading">¶</a></h1>
+<h1>Vector Rewire<a class="headerlink" href="#vector-rewire" title="Link to this heading">¶</a></h1>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189385948-68ae2146-49f1-41e3-acd7-d75b874d2042.png"><img alt="https://user-images.githubusercontent.com/14288520/189385948-68ae2146-49f1-41e3-acd7-d75b874d2042.png" src="https://user-images.githubusercontent.com/14288520/189385948-68ae2146-49f1-41e3-acd7-d75b874d2042.png" /></a>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>Use this node to swap Vector components, for instance pass X to Y (and Y to X ). Or completely filter out a component by switching to the Scalar option. it will default to <em>0.0</em> when the Scalar socket is unconnected, when connected it will replace the component with the values from the socket. If the content of the Scalar input lists don’t match the length of the Vectors list, the node will repeat the last value in the list or sublist (expected Sverchok behaviour).</p>
 <a class="reference external image-reference" href="https://cloud.githubusercontent.com/assets/619340/22211977/3bb60a64-e18f-11e6-82ca-5afac681b195.png"><img alt="with vector rewire" src="https://cloud.githubusercontent.com/assets/619340/22211977/3bb60a64-e18f-11e6-82ca-5afac681b195.png" /></a>
 <ul class="simple">
@@ -158,20 +158,20 @@
 </ul>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p><strong>Vectors</strong> - Any list of Vector/Vertex lists</p></li>
 <li><p><strong>Scalar</strong> - value or series of values, will auto repeat last valid value to match Vector count.</p></li>
 </ul>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p><strong>Vector</strong> - Vertex or series of vertices</p></li>
 </ul>
 </section>
 <section id="examples">
-<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
+<h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">¶</a></h2>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189385973-5431c3a0-fc22-4893-9f75-86a97dd15f6d.png"><img alt="https://user-images.githubusercontent.com/14288520/189385973-5431c3a0-fc22-4893-9f75-86a97dd15f6d.png" src="https://user-images.githubusercontent.com/14288520/189385973-5431c3a0-fc22-4893-9f75-86a97dd15f6d.png" /></a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>

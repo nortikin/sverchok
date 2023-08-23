@@ -12,9 +12,9 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/documentation_options.js?v=773c2105"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -151,10 +151,10 @@
            <div itemprop="articleBody">
              
   <section id="cut-object-by-surface">
-<h1>Cut Object by Surface<a class="headerlink" href="#cut-object-by-surface" title="Permalink to this heading">¶</a></h1>
+<h1>Cut Object by Surface<a class="headerlink" href="#cut-object-by-surface" title="Link to this heading">¶</a></h1>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198824817-a8729120-16f4-4c9c-baa5-6dec7dd049a7.png"><img alt="https://user-images.githubusercontent.com/14288520/198824817-a8729120-16f4-4c9c-baa5-6dec7dd049a7.png" src="https://user-images.githubusercontent.com/14288520/198824817-a8729120-16f4-4c9c-baa5-6dec7dd049a7.png" /></a>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node cuts <strong>edges</strong> of one mesh (“object”) by intersecting them with faces
 of another mesh (“surface”). It can connect the new vertices by creating new
 faces, to produce a cut surface. It can also output the pieces of the object,
@@ -182,7 +182,7 @@ split into pieces). If you need these pieces in separate, you can pass the
 output of this node through the <strong>Separate Loose Parts</strong> node.</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
 <li><p><strong>ObjVertices</strong>. Vertices of the “object” mesh (the mesh which is to be cut).</p></li>
@@ -198,7 +198,7 @@ value is 12.</p></li>
 </ul>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
 <p>This node has the following parameters:</p>
 <ul class="simple">
 <li><p><strong>Make cut faces</strong>. If checked, the node will fill the holes made by cut
@@ -212,7 +212,7 @@ and the “surface”. Unchecked by default.</p></li>
 </ul>
 </section>
 <section id="advanced-parameters">
-<h2>Advanced Parameters<a class="headerlink" href="#advanced-parameters" title="Permalink to this heading">¶</a></h2>
+<h2>Advanced Parameters<a class="headerlink" href="#advanced-parameters" title="Link to this heading">¶</a></h2>
 <p>In the N-Panel (and on the right-click menu) you can find:</p>
 <ul class="simple">
 <li><p><strong>All triangles</strong>. Boolean to work with triangularized surface mesh (makes the node faster).</p></li>
@@ -221,7 +221,7 @@ two intersections by face are found</p></li>
 </ul>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following outputs:</p>
 <ul class="simple">
 <li><p><strong>CutVertices</strong>. The vertices of “cut surface” mesh - the area of the
@@ -242,7 +242,7 @@ output is only available if the <strong>Make cut pieces</strong> parameter is ch
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198872895-229c30cb-3e5b-4f3a-b456-b16b27fcf96a.png"><img alt="https://user-images.githubusercontent.com/14288520/198872895-229c30cb-3e5b-4f3a-b456-b16b27fcf96a.png" src="https://user-images.githubusercontent.com/14288520/198872895-229c30cb-3e5b-4f3a-b456-b16b27fcf96a.png" /></a>
 </section>
 <section id="examples-of-usage">
-<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
+<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Link to this heading">¶</a></h2>
 <p>Sphere cut by the box. Here we intersect edges of the sphere with the box, and
 connect resulting vertices. Note that in this case the number of box’s
 subdivisions does not have any meaning, because the places of intersections of

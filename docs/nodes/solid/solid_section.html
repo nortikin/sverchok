@@ -12,9 +12,9 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/documentation_options.js?v=773c2105"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -173,19 +173,19 @@
            <div itemprop="articleBody">
              
   <section id="solid-section">
-<h1>Solid Section<a class="headerlink" href="#solid-section" title="Permalink to this heading">¶</a></h1>
+<h1>Solid Section<a class="headerlink" href="#solid-section" title="Link to this heading">¶</a></h1>
 <img alt="https://user-images.githubusercontent.com/66558924/212058287-c0426edb-7f56-425d-8e7c-cc99ff8700c7.jpg" src="https://user-images.githubusercontent.com/66558924/212058287-c0426edb-7f56-425d-8e7c-cc99ff8700c7.jpg" />
 <section id="dependencies">
-<h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this heading">¶</a></h2>
+<h2>Dependencies<a class="headerlink" href="#dependencies" title="Link to this heading">¶</a></h2>
 <p>This node requires <a class="reference external" href="https://nortikin.github.io/sverchok/docs/data_structure/solids.html">FreeCAD library</a> to work.</p>
 </section>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node generates the intersection Curves and Points between different Shapes including Solids, Solid Faces, Solid Edges, NURBS Surfaces and NURBS Curves.</p>
 <p>The node can operate on pair of objects (“Shape A” intersects “Shape B”) or on pair of lists of objects.</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul>
 <li><p><strong>Shape A</strong>. The first object to perform operation on. This input is
@@ -200,7 +200,7 @@ or [&lt;NURBS_Surface1&gt;, &lt;Solid&gt;, &lt;NURBS_Surface2&gt;] etc.</p>
 </ul>
 </section>
 <section id="options">
-<h2>Options<a class="headerlink" href="#options" title="Permalink to this heading">¶</a></h2>
+<h2>Options<a class="headerlink" href="#options" title="Link to this heading">¶</a></h2>
 <p>This node has the following parameters:</p>
 <ul class="simple">
 <li><p><strong>NURBS Output</strong>. This parameter is available in the N panel only. If
@@ -209,7 +209,7 @@ will generate standard FreeCAD curves (Solid Edge curves). Unchecked by default.
 </ul>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following outputs:</p>
 <ul class="simple">
 <li><p><strong>Vertices</strong>. The resulting intersection (puncture) Points or endpoints of the intersection Curves.</p></li>
@@ -227,7 +227,7 @@ will generate standard FreeCAD curves (Solid Edge curves). Unchecked by default.
 <p>If no intersections are found the node will output empty lists.</p>
 </section>
 <section id="examples">
-<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
+<h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">¶</a></h2>
 <p><strong>Curve</strong> × <strong>Curve</strong> → <strong>Points</strong>:</p>
 <img alt="https://user-images.githubusercontent.com/66558924/212648237-1f4f052f-1a61-496c-a0db-27eebb8c9524.jpg" src="https://user-images.githubusercontent.com/66558924/212648237-1f4f052f-1a61-496c-a0db-27eebb8c9524.jpg" />
 <p><strong>Curves</strong> × <strong>Surface</strong> → <strong>Points and Curve</strong>:</p>

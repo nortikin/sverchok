@@ -12,9 +12,9 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/documentation_options.js?v=773c2105"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -139,16 +139,16 @@
            <div itemprop="articleBody">
              
   <section id="formula-node-mk4">
-<h1>Formula Node Mk4<a class="headerlink" href="#formula-node-mk4" title="Permalink to this heading">¶</a></h1>
+<h1>Formula Node Mk4<a class="headerlink" href="#formula-node-mk4" title="Link to this heading">¶</a></h1>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>Formula+ (this is very similar to mk3 with a few notable exceptions)</p>
 <p>This node allows one to evaluate (almost) arbitrary Python expressions, using inputs as variables.
 It is possible to calculate numeric values, construct lists, tuples, vertices and matrices.</p>
 <p>The node allows to evaluate up to 4 formulas for each set of input values.</p>
 </section>
 <section id="expression-syntax">
-<h2>Expression syntax<a class="headerlink" href="#expression-syntax" title="Permalink to this heading">¶</a></h2>
+<h2>Expression syntax<a class="headerlink" href="#expression-syntax" title="Link to this heading">¶</a></h2>
 <p>Syntax being used for formulas is standard Python’s syntax for expressions.
 For exact syntax definition, please refer to <a class="reference external" href="https://docs.python.org/3/reference/expressions.html">https://docs.python.org/3/reference/expressions.html</a>.</p>
 <p>In short, you can use usual mathematical operations (<cite>+</cite>, <cite>-</cite>, <cite>*</cite>, <cite>/</cite>, <cite>**</cite> for power), numbers, variables, parenthesis, and function call, such as <cite>sin(x)</cite>.</p>
@@ -188,7 +188,7 @@ pow, radians, sin, sinh, sqrt, tan, tanh, trunc;</p></li>
 </ul>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
 <ul>
 <li><p>Set of inputs for this node depends on used formulas. Each variable used in formula becomes one input. If there are no variables used in formula, then this node will have no inputs.</p></li>
 <li><dl class="simple">
@@ -214,7 +214,7 @@ pow, radians, sin, sinh, sqrt, tan, tanh, trunc;</p></li>
 </ul>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
 <p>This node has the following parameters:</p>
 <ul class="simple">
 <li><p><strong>Dimensions</strong>. This parameter is available in the N panel only. It defines how many formulas the node will allow to specify and evaluate. Default value is 1. Maximum value is 4.</p></li>
@@ -246,11 +246,11 @@ pow, radians, sin, sinh, sqrt, tan, tanh, trunc;</p></li>
 <p>Then the following combinations of flags are possible:</p>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
 <p><strong>Result</strong> - what we got as result.</p>
 </section>
 <section id="usage-examples">
-<h2>Usage examples<a class="headerlink" href="#usage-examples" title="Permalink to this heading">¶</a></h2>
+<h2>Usage examples<a class="headerlink" href="#usage-examples" title="Link to this heading">¶</a></h2>
 <p>Emulating the Compute mask node:</p>
 <img alt="https://user-images.githubusercontent.com/10011941/106862493-802eae00-66c7-11eb-9dee-6f1ff92e98be.png" src="https://user-images.githubusercontent.com/10011941/106862493-802eae00-66c7-11eb-9dee-6f1ff92e98be.png" />
 <p>Using Vectors</p>

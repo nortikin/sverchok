@@ -12,9 +12,9 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/documentation_options.js?v=773c2105"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -146,14 +146,14 @@
            <div itemprop="articleBody">
              
   <section id="point-arc">
-<h1>3 Point Arc<a class="headerlink" href="#point-arc" title="Permalink to this heading">¶</a></h1>
+<h1>3 Point Arc<a class="headerlink" href="#point-arc" title="Link to this heading">¶</a></h1>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/188749371-6bc34034-b781-46f7-a407-a1a36a3d69fe.png"><img alt="https://user-images.githubusercontent.com/14288520/188749371-6bc34034-b781-46f7-a407-a1a36a3d69fe.png" src="https://user-images.githubusercontent.com/14288520/188749371-6bc34034-b781-46f7-a407-a1a36a3d69fe.png" /></a>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>Given a <em>start coordinate</em>, a <em>through coordinate</em>, and an <em>end coordinate</em> this Node will find the Arc that passes through those points.</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
 <ul>
 <li><p>arc_pts input is <cite>[begin, mid, end, begin, mid, end, begin, mid, end….. ]</cite></p>
 <blockquote>
@@ -174,14 +174,14 @@
 </ul>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
 <p>The UI is quite minimal.</p>
 <ul class="simple">
 <li><p><strong>Num Verts</strong> can be changed via Slider input on the UI or as described above, it can be fed multiple values through the input sockets.</p></li>
 </ul>
 </section>
 <section id="output">
-<h2>Output<a class="headerlink" href="#output" title="Permalink to this heading">¶</a></h2>
+<h2>Output<a class="headerlink" href="#output" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>(verts, edges) : A set of each of these that correspond with a packet of commands like ‘start, through, end, num_verts’</p></li>
 <li><p>verts needs to be connected to get output</p></li>
@@ -189,7 +189,7 @@
 </ul>
 </section>
 <section id="examples">
-<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
+<h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">¶</a></h2>
 <a class="reference external image-reference" href="https://cloud.githubusercontent.com/assets/619340/3375992/3bbc0c86-fbd0-11e3-9456-353c77fd0d17.gif"><img alt="https://cloud.githubusercontent.com/assets/619340/3375992/3bbc0c86-fbd0-11e3-9456-353c77fd0d17.gif" src="https://cloud.githubusercontent.com/assets/619340/3375992/3bbc0c86-fbd0-11e3-9456-353c77fd0d17.gif" /></a>
 <p>See the progress of how this node came to life <a class="reference external" href="https://github.com/nortikin/sverchok/issues/254">here</a> (gifs, screenshots)</p>
 <p>Basic example:</p>

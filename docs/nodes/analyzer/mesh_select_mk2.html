@@ -12,9 +12,9 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/documentation_options.js?v=773c2105"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -173,15 +173,15 @@
            <div itemprop="articleBody">
              
   <section id="select-mesh-elements">
-<h1>Select Mesh Elements<a class="headerlink" href="#select-mesh-elements" title="Permalink to this heading">¶</a></h1>
+<h1>Select Mesh Elements<a class="headerlink" href="#select-mesh-elements" title="Link to this heading">¶</a></h1>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197348551-a2d5c2ae-f213-47e6-becc-7a02bc563e50.png"><img alt="https://user-images.githubusercontent.com/14288520/197348551-a2d5c2ae-f213-47e6-becc-7a02bc563e50.png" src="https://user-images.githubusercontent.com/14288520/197348551-a2d5c2ae-f213-47e6-becc-7a02bc563e50.png" /></a>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node allows to select mesh elements (vertices, edges and faces) by their geometrical location, by one of supported criteria.</p>
 <p>You can combine different criteria by applying several instances of this node and combining masks with Logic node.</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
 <li><p><strong>Vertices</strong></p></li>
@@ -194,7 +194,7 @@
 </ul>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
 <p>This node has the following parameters:</p>
 <ul class="simple">
 <li><p><strong>Mode</strong>. Criteria type to apply. Supported criteria are:</p>
@@ -227,7 +227,7 @@ lists of booleans; and so on.</p></li>
 </ul>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following outputs:</p>
 <ul class="simple">
 <li><p><strong>VerticesMask</strong>. Mask for selected vertices.</p></li>
@@ -236,7 +236,7 @@ lists of booleans; and so on.</p></li>
 </ul>
 </section>
 <section id="mode-by-side">
-<span id="id1"></span><h2>Mode - By Side<a class="headerlink" href="#mode-by-side" title="Permalink to this heading">¶</a></h2>
+<span id="id1"></span><h2>Mode - By Side<a class="headerlink" href="#mode-by-side" title="Link to this heading">¶</a></h2>
 <p>Selects vertices that are located at one side of mesh. The side is specified by <strong>Direction</strong> input. So you can select “rightmost” vertices by passing (0, 0, 1) as Direction. Number of vertices to select is controlled by <strong>Percent</strong> input: 1% means select only “most rightmost” vertices, 99% means select “all but most leftmost”. More exactly, this mode selects vertex V if <cite>(Direction, V) &gt;= max - Percent * (max - min)</cite>, where <cite>max</cite> and <cite>min</cite> are maximum and minimum values of that scalar product amongst all vertices.</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197350451-1c209494-153e-4f82-9758-f4f22983fddc.png"><img alt="https://user-images.githubusercontent.com/14288520/197350451-1c209494-153e-4f82-9758-f4f22983fddc.png" src="https://user-images.githubusercontent.com/14288520/197350451-1c209494-153e-4f82-9758-f4f22983fddc.png" /></a>
 <ul class="simple">
@@ -263,7 +263,7 @@ lists of booleans; and so on.</p></li>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197351814-c5cc0ae0-b56e-4c19-ba36-197443bb0acb.gif"><img alt="https://user-images.githubusercontent.com/14288520/197351814-c5cc0ae0-b56e-4c19-ba36-197443bb0acb.gif" src="https://user-images.githubusercontent.com/14288520/197351814-c5cc0ae0-b56e-4c19-ba36-197443bb0acb.gif" /></a>
 </section>
 <section id="mode-by-normal-direction">
-<span id="id2"></span><h2>Mode - By Normal Direction<a class="headerlink" href="#mode-by-normal-direction" title="Permalink to this heading">¶</a></h2>
+<span id="id2"></span><h2>Mode - By Normal Direction<a class="headerlink" href="#mode-by-normal-direction" title="Link to this heading">¶</a></h2>
 <p>Selects faces, that have normal vectors pointing in specified <strong>Direction</strong>. So you can select “faces looking to right”. Number of faces to select is controlled by <strong>Percent</strong> input, similar to <strong>By side</strong> mode. More exactly, this mode selects face F if <cite>(Direction, Normal(F)) &gt;= max - Percent * (max - min)</cite>, where <cite>max</cite> and <cite>min</cite> are maximum and minimum values of that scalar product amongst all vertices.</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197353517-6383bd19-151c-4ab9-9601-e385bbd92e60.png"><img alt="https://user-images.githubusercontent.com/14288520/197353517-6383bd19-151c-4ab9-9601-e385bbd92e60.png" src="https://user-images.githubusercontent.com/14288520/197353517-6383bd19-151c-4ab9-9601-e385bbd92e60.png" /></a>
 <ul class="simple">
@@ -288,7 +288,7 @@ lists of booleans; and so on.</p></li>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197354299-304aefc1-9374-4c83-ac3b-8de4b8f0a747.gif"><img alt="https://user-images.githubusercontent.com/14288520/197354299-304aefc1-9374-4c83-ac3b-8de4b8f0a747.gif" src="https://user-images.githubusercontent.com/14288520/197354299-304aefc1-9374-4c83-ac3b-8de4b8f0a747.gif" /></a>
 </section>
 <section id="mode-by-center-and-radius">
-<span id="id3"></span><h2>Mode - By Center and Radius<a class="headerlink" href="#mode-by-center-and-radius" title="Permalink to this heading">¶</a></h2>
+<span id="id3"></span><h2>Mode - By Center and Radius<a class="headerlink" href="#mode-by-center-and-radius" title="Link to this heading">¶</a></h2>
 <p>Selects vertices, which are within Radius from specified <strong>Center</strong>; in other words, it selects vertices that are located inside given sphere. More exactly, this mode selects vertex V if <cite>Distance(V, Center) &lt;= Radius</cite>. This mode also supports passing many points to <strong>Center</strong> input; in this case, “Distance” is distance from vertex to the nearest “Center”.</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197355447-89fc4aac-8178-4175-ba5a-150d53ff5bc4.png"><img alt="https://user-images.githubusercontent.com/14288520/197355447-89fc4aac-8178-4175-ba5a-150d53ff5bc4.png" src="https://user-images.githubusercontent.com/14288520/197355447-89fc4aac-8178-4175-ba5a-150d53ff5bc4.png" /></a>
 <ul class="simple">
@@ -302,7 +302,7 @@ lists of booleans; and so on.</p></li>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197355253-a631e319-ddd9-4b08-b8d5-f160cc80eafa.gif"><img alt="https://user-images.githubusercontent.com/14288520/197355253-a631e319-ddd9-4b08-b8d5-f160cc80eafa.gif" src="https://user-images.githubusercontent.com/14288520/197355253-a631e319-ddd9-4b08-b8d5-f160cc80eafa.gif" /></a>
 </section>
 <section id="mode-by-plane">
-<span id="id4"></span><h2>Mode - By Plane<a class="headerlink" href="#mode-by-plane" title="Permalink to this heading">¶</a></h2>
+<span id="id4"></span><h2>Mode - By Plane<a class="headerlink" href="#mode-by-plane" title="Link to this heading">¶</a></h2>
 <p>Selects vertices, which are within <strong>Radius</strong> from specified plane. Plane is specified by providing normal vector (<strong>Direction</strong> input) and a point, belonging to that plane (<strong>Center</strong> input). For example, if you specify Direction = (0, 0, 1) and Center = (0, 0, 0), the plane will by OXY. More exactly, this mode selects vertex V if <cite>Distance(V, Plane) &lt;= Radius</cite>.</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197356952-2ecd3971-f8ef-4014-8b1f-483e3d219a68.png"><img alt="https://user-images.githubusercontent.com/14288520/197356952-2ecd3971-f8ef-4014-8b1f-483e3d219a68.png" src="https://user-images.githubusercontent.com/14288520/197356952-2ecd3971-f8ef-4014-8b1f-483e3d219a68.png" /></a>
 <ul class="simple">
@@ -317,7 +317,7 @@ lists of booleans; and so on.</p></li>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197357111-a954f4e4-c227-4046-874a-079a5db99b7f.gif"><img alt="https://user-images.githubusercontent.com/14288520/197357111-a954f4e4-c227-4046-874a-079a5db99b7f.gif" src="https://user-images.githubusercontent.com/14288520/197357111-a954f4e4-c227-4046-874a-079a5db99b7f.gif" /></a>
 </section>
 <section id="mode-by-cylinder">
-<span id="id5"></span><h2>Mode - By Cylinder<a class="headerlink" href="#mode-by-cylinder" title="Permalink to this heading">¶</a></h2>
+<span id="id5"></span><h2>Mode - By Cylinder<a class="headerlink" href="#mode-by-cylinder" title="Link to this heading">¶</a></h2>
 <p>Selects vertices, which are within <strong>Radius</strong> from specified straight line. Line is specified by providing directing vector (<strong>Direction</strong> input) and a point, belonging to that line (<strong>Center</strong> input). For example, if you specify Direction = (0, 0, 1) and Center = (0, 0, 0), the line will by Z axis. More exactly, this mode selects vertex V if <cite>Distance(V, Line) &lt;= Radius</cite>.</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197360789-4dc49b05-0015-48e0-a6e8-4f7d6bab110a.png"><img alt="https://user-images.githubusercontent.com/14288520/197360789-4dc49b05-0015-48e0-a6e8-4f7d6bab110a.png" src="https://user-images.githubusercontent.com/14288520/197360789-4dc49b05-0015-48e0-a6e8-4f7d6bab110a.png" /></a>
 <ul class="simple">
@@ -334,7 +334,7 @@ lists of booleans; and so on.</p></li>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197360940-336f925f-f0f3-42f4-9a56-197f7d5b68d4.gif"><img alt="https://user-images.githubusercontent.com/14288520/197360940-336f925f-f0f3-42f4-9a56-197f7d5b68d4.gif" src="https://user-images.githubusercontent.com/14288520/197360940-336f925f-f0f3-42f4-9a56-197f7d5b68d4.gif" /></a>
 </section>
 <section id="mode-by-edge-direction">
-<span id="id6"></span><h2>Mode - By Edge Direction<a class="headerlink" href="#mode-by-edge-direction" title="Permalink to this heading">¶</a></h2>
+<span id="id6"></span><h2>Mode - By Edge Direction<a class="headerlink" href="#mode-by-edge-direction" title="Link to this heading">¶</a></h2>
 <p>Selects edges, which are nearly parallel to specified <strong>Direction</strong> vector. Note that this mode considers edges as non-directed; as a result, you can change sign of all coordinates of <strong>Direction</strong> and it will not affect output. More exactly, this mode selects edge E if <cite>Abs(Cos(Angle(E, Direction))) &gt;= max - Percent * (max - min)</cite>, where max and min are maximum and minimum values of that cosine.</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197361794-ad1c0708-6689-4af0-b7fd-495aaff7f5c2.png"><img alt="https://user-images.githubusercontent.com/14288520/197361794-ad1c0708-6689-4af0-b7fd-495aaff7f5c2.png" src="https://user-images.githubusercontent.com/14288520/197361794-ad1c0708-6689-4af0-b7fd-495aaff7f5c2.png" /></a>
 <ul class="simple">
@@ -347,7 +347,7 @@ lists of booleans; and so on.</p></li>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197361869-193cf2fb-8d56-4975-84bc-679f5e9a2b1c.gif"><img alt="https://user-images.githubusercontent.com/14288520/197361869-193cf2fb-8d56-4975-84bc-679f5e9a2b1c.gif" src="https://user-images.githubusercontent.com/14288520/197361869-193cf2fb-8d56-4975-84bc-679f5e9a2b1c.gif" /></a>
 </section>
 <section id="mode-by-bounding-box">
-<span id="id7"></span><h2>Mode - By Bounding Box<a class="headerlink" href="#mode-by-bounding-box" title="Permalink to this heading">¶</a></h2>
+<span id="id7"></span><h2>Mode - By Bounding Box<a class="headerlink" href="#mode-by-bounding-box" title="Link to this heading">¶</a></h2>
 <p>Selects vertices, that are within bounding box defined by points passed into <strong>Center</strong> input. <strong>Radius</strong> is interpreted as tolerance limit.</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197362690-52d369de-29e4-42d6-950e-db25b75edca8.png"><img alt="https://user-images.githubusercontent.com/14288520/197362690-52d369de-29e4-42d6-950e-db25b75edca8.png" src="https://user-images.githubusercontent.com/14288520/197362690-52d369de-29e4-42d6-950e-db25b75edca8.png" /></a>
 <ul class="simple">
@@ -362,7 +362,7 @@ lists of booleans; and so on.</p></li>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197362774-5ec0b49a-66bc-49dd-a795-1c72022e4cbe.gif"><img alt="https://user-images.githubusercontent.com/14288520/197362774-5ec0b49a-66bc-49dd-a795-1c72022e4cbe.gif" src="https://user-images.githubusercontent.com/14288520/197362774-5ec0b49a-66bc-49dd-a795-1c72022e4cbe.gif" /></a>
 </section>
 <section id="examples-of-usage">
-<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
+<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Link to this heading">¶</a></h2>
 <p>Select rightmost vertices:</p>
 <a class="reference external image-reference" href="https://cloud.githubusercontent.com/assets/284644/23761326/aa0cacf6-051c-11e7-8dae-1848bc0e81cd.png"><img alt="https://cloud.githubusercontent.com/assets/284644/23761326/aa0cacf6-051c-11e7-8dae-1848bc0e81cd.png" src="https://cloud.githubusercontent.com/assets/284644/23761326/aa0cacf6-051c-11e7-8dae-1848bc0e81cd.png" /></a>
 <p>Select faces looking to right:</p>

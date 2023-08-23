@@ -12,9 +12,9 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/documentation_options.js?v=773c2105"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -145,15 +145,15 @@
            <div itemprop="articleBody">
              
   <section id="barycentric-transform">
-<h1>Barycentric Transform<a class="headerlink" href="#barycentric-transform" title="Permalink to this heading">¶</a></h1>
+<h1>Barycentric Transform<a class="headerlink" href="#barycentric-transform" title="Link to this heading">¶</a></h1>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/191480063-8fa7e15d-1638-4c88-be8c-fcf9e5018e35.png"><img alt="https://user-images.githubusercontent.com/14288520/191480063-8fa7e15d-1638-4c88-be8c-fcf9e5018e35.png" src="https://user-images.githubusercontent.com/14288520/191480063-8fa7e15d-1638-4c88-be8c-fcf9e5018e35.png" /></a>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>The node is coded to perform the transformation of one or many vertices according to the relation of two triangles</p>
 <p>Eaxh triangle is defined by three vectors.</p>
 </section>
 <section id="inputs-parameters">
-<h2>Inputs / Parameters<a class="headerlink" href="#inputs-parameters" title="Permalink to this heading">¶</a></h2>
+<h2>Inputs / Parameters<a class="headerlink" href="#inputs-parameters" title="Link to this heading">¶</a></h2>
 <table class="docutils align-default">
 <thead>
 <tr class="row-odd"><th class="head"><p>Param</p></th>
@@ -182,19 +182,19 @@
 </table>
 </section>
 <section id="advanced-parameters">
-<h2>Advanced Parameters<a class="headerlink" href="#advanced-parameters" title="Permalink to this heading">¶</a></h2>
+<h2>Advanced Parameters<a class="headerlink" href="#advanced-parameters" title="Link to this heading">¶</a></h2>
 <p>In the N-Panel (and on the right-click menu) you can find:</p>
 <p><strong>Implementation</strong>: Choose between MathUtils (Faster transforming light meshes) and NumPy (Faster transforming heavy meshes)</p>
 <p><strong>Output NumPy</strong>: to get NumPy arrays in stead of regular lists (makes the node faster). Only in the NumPy implementation.</p>
 <p><strong>Match List</strong>: Define how list with different lengths should be matched. Refers to the matching of groups (one tris couple per group)</p>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
 <p><strong>Vertices</strong>: Transformed vectors.</p>
 <p><strong>Edg_Pol</strong>: A matched copy of the input Edg_Pol data.</p>
 </section>
 <section id="example-of-usage">
-<h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
+<h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Link to this heading">¶</a></h2>
 <p>The node can be used to place geometry over triangular faces.</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/191495780-406666a4-bc4d-4621-9620-fdff0ea1c574.png"><img alt="https://user-images.githubusercontent.com/14288520/191495780-406666a4-bc4d-4621-9620-fdff0ea1c574.png" src="https://user-images.githubusercontent.com/14288520/191495780-406666a4-bc4d-4621-9620-fdff0ea1c574.png" /></a>
 <ul class="simple">

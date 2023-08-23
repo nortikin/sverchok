@@ -12,9 +12,9 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/documentation_options.js?v=773c2105"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -90,7 +90,7 @@
 <li class="toctree-l3"><a class="reference internal" href="curve_segment.html">Curve Segment</a></li>
 <li class="toctree-l3"><a class="reference internal" href="deconstruct_curve.html">Deconstruct Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="elevate_degree.html">Elevate Degree (NURBS Curve)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="ellipse.html">Ellipse (Curve)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ellipse_curve.html">Ellipse (Curve)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="endpoints.html">Curve Endpoints</a></li>
 <li class="toctree-l3"><a class="reference internal" href="eval_curve.html">Evaluate Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="extend_curve.html">Extend Curve</a></li>
@@ -201,10 +201,10 @@
            <div itemprop="articleBody">
              
   <section id="bi-arc">
-<h1>Bi Arc<a class="headerlink" href="#bi-arc" title="Permalink to this heading">¶</a></h1>
+<h1>Bi Arc<a class="headerlink" href="#bi-arc" title="Link to this heading">¶</a></h1>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205462176-6c609aad-9fd8-4796-8b9c-37118a63a52c.png"><img alt="https://user-images.githubusercontent.com/14288520/205462176-6c609aad-9fd8-4796-8b9c-37118a63a52c.png" src="https://user-images.githubusercontent.com/14288520/205462176-6c609aad-9fd8-4796-8b9c-37118a63a52c.png" /></a>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node generates a <a class="reference external" href="https://en.wikipedia.org/wiki/Biarc">BiArc</a> - i.e. a Curve, which is composed of two circular
 arcs. Two arcs are joined so that their tangent vectors have the same direction
 at the meeting point. A family of biarc curves is defined by start and end points
@@ -219,7 +219,7 @@ vectors do not lie in the same plane, the node will raise an exception (become
 red), and processing will stop.</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
 <li><p><strong>Point1</strong>. Start point of the curve. The default value is <code class="docutils literal notranslate"><span class="pre">(0,</span> <span class="pre">0,</span> <span class="pre">0)</span></code>
@@ -235,7 +235,7 @@ family. The default value is 1.0.</p></li>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205463037-041107d2-47cf-4aa7-8cde-863c0a8bd7bf.png"><img alt="https://user-images.githubusercontent.com/14288520/205463037-041107d2-47cf-4aa7-8cde-863c0a8bd7bf.png" src="https://user-images.githubusercontent.com/14288520/205463037-041107d2-47cf-4aa7-8cde-863c0a8bd7bf.png" /></a>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
 <p>This node has the following parameters:</p>
 <ul class="simple">
 <li><p><strong>Show Details</strong>. If checked, several outputs of the node with detailed
@@ -259,7 +259,7 @@ points and provided tangent vectors. The default value is 6.</p></li>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205464361-a921a950-2907-44b2-b283-8d326bf6ff3f.png"><img alt="https://user-images.githubusercontent.com/14288520/205464361-a921a950-2907-44b2-b283-8d326bf6ff3f.png" src="https://user-images.githubusercontent.com/14288520/205464361-a921a950-2907-44b2-b283-8d326bf6ff3f.png" /></a>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following outputs:</p>
 <ul class="simple">
 <li><p><strong>Curve</strong>. The generated biarc curve.</p></li>
@@ -283,7 +283,7 @@ checked. The junction point of two arcs.</p></li>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205464670-18bafcd1-29d2-4cdc-b506-471df36b0787.png"><img alt="https://user-images.githubusercontent.com/14288520/205464670-18bafcd1-29d2-4cdc-b506-471df36b0787.png" src="https://user-images.githubusercontent.com/14288520/205464670-18bafcd1-29d2-4cdc-b506-471df36b0787.png" /></a>
 </section>
 <section id="examples-of-usage">
-<h2>Examples of Usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
+<h2>Examples of Usage<a class="headerlink" href="#examples-of-usage" title="Link to this heading">¶</a></h2>
 <p>A simple example:</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205464786-a97e435d-2a3a-4412-a0e5-ced1e4e8d8c2.png"><img alt="https://user-images.githubusercontent.com/14288520/205464786-a97e435d-2a3a-4412-a0e5-ced1e4e8d8c2.png" src="https://user-images.githubusercontent.com/14288520/205464786-a97e435d-2a3a-4412-a0e5-ced1e4e8d8c2.png" /></a>
 <ul class="simple">

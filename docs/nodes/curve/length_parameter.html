@@ -12,9 +12,9 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/documentation_options.js?v=773c2105"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -83,7 +83,7 @@
 <li class="toctree-l3"><a class="reference internal" href="curve_segment.html">Curve Segment</a></li>
 <li class="toctree-l3"><a class="reference internal" href="deconstruct_curve.html">Deconstruct Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="elevate_degree.html">Elevate Degree (NURBS Curve)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="ellipse.html">Ellipse (Curve)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ellipse_curve.html">Ellipse (Curve)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="endpoints.html">Curve Endpoints</a></li>
 <li class="toctree-l3"><a class="reference internal" href="eval_curve.html">Evaluate Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="extend_curve.html">Extend Curve</a></li>
@@ -201,10 +201,10 @@
            <div itemprop="articleBody">
              
   <section id="curve-length-parameter">
-<h1>Curve Length Parameter<a class="headerlink" href="#curve-length-parameter" title="Permalink to this heading">¶</a></h1>
+<h1>Curve Length Parameter<a class="headerlink" href="#curve-length-parameter" title="Link to this heading">¶</a></h1>
 <a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/ba10a009-ea67-492b-a493-1693edf148ce"><img alt="https://github.com/nortikin/sverchok/assets/14288520/ba10a009-ea67-492b-a493-1693edf148ce" src="https://github.com/nortikin/sverchok/assets/14288520/ba10a009-ea67-492b-a493-1693edf148ce" /></a>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>It worth reminding that a Curve object is defined as a function from some set
 of T values into some points in 3D space; and, since the function is more or
 less arbitrary, the change of T parameter is not always proportional to length
@@ -233,7 +233,7 @@ take to calculate. So the node gives you control on the number of subdivisions.<
 </ul>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
 <li><p><strong>Curve</strong>. The curve being measured. This input is mandatory.</p></li>
@@ -255,7 +255,7 @@ multiple of segment length, there can be some sort of rounding applied - see
 </ul>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
 <p>This node has the following parameters:</p>
 <ul>
 <li><p><strong>Mode</strong>. This defines how the values of length parameter will be provided.
@@ -304,7 +304,7 @@ the N panel only.</p></li>
 </ul>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following outputs:</p>
 <ul class="simple">
 <li><p><strong>T</strong>. Values of curve’s T parameter which correspond to the specified values
@@ -314,7 +314,7 @@ specified values of length parameter.</p></li>
 </ul>
 </section>
 <section id="example-of-usage">
-<h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
+<h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Link to this heading">¶</a></h2>
 <p>Two exemplars of Archimedean spiral:</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/77854328-14f09180-7203-11ea-9192-028621be3d95.png"><img alt="https://user-images.githubusercontent.com/284644/77854328-14f09180-7203-11ea-9192-028621be3d95.png" src="https://user-images.githubusercontent.com/284644/77854328-14f09180-7203-11ea-9192-028621be3d95.png" /></a>
 <ul class="simple">

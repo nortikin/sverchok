@@ -12,9 +12,9 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/documentation_options.js?v=773c2105"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -140,9 +140,9 @@
            <div itemprop="articleBody">
              
   <section id="script-node-lite">
-<h1>Script Node Lite<a class="headerlink" href="#script-node-lite" title="Permalink to this heading">¶</a></h1>
+<h1>Script Node Lite<a class="headerlink" href="#script-node-lite" title="Link to this heading">¶</a></h1>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node allows the user to write arbitrary node logic in Python. It is useful
 when there is no standard node in Sverchok for your particular purpose; you may
 want to use this if you want some complex piece of logic to be used in a couple
@@ -151,12 +151,12 @@ Sverchok itself.</p>
 <p>The script node implementation is intended for quick, non serious, experimentation.</p>
 </section>
 <section id="keyboard-shortcuts">
-<h2>Keyboard Shortcuts<a class="headerlink" href="#keyboard-shortcuts" title="Permalink to this heading">¶</a></h2>
+<h2>Keyboard Shortcuts<a class="headerlink" href="#keyboard-shortcuts" title="Link to this heading">¶</a></h2>
 <p>When a script is loaded in the SNLite node you can keep editing the script from the TextEditor.
 Instead of pressing the reload button the Node’s UI you can press “Ctrl+Enter” while inside the TextEditor.</p>
 </section>
 <section id="features">
-<h2>Features<a class="headerlink" href="#features" title="Permalink to this heading">¶</a></h2>
+<h2>Features<a class="headerlink" href="#features" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>A small amount of boilerplate (called a directive) at the top of your scripts used to define what sockets and ui elements you want. More about this in the Syntax segment below.</p></li>
 <li><p>We provide example scripts to get you up an running quickly. These come in the form of templates and they can be imported directly into the node from the N panel. They can be imported directly into <strong>node</strong>, or to a <strong>text block</strong>.</p></li>
@@ -270,7 +270,7 @@ Instead of pressing the reload button the Node’s UI you can press “Ctrl+Ente
 </ul>
 </section>
 <section id="syntax">
-<h2>Syntax<a class="headerlink" href="#syntax" title="Permalink to this heading">¶</a></h2>
+<h2>Syntax<a class="headerlink" href="#syntax" title="Link to this heading">¶</a></h2>
 <p>To initialize a scriptnode you must provide a “directive”, it’s where you define sockets and other scriptnode specific properties. The directive is rigidly wrapped with
 a pair of triple quote marks: <strong>“””</strong>, never single quotes like <strong>‘’’</strong>.</p>
 <p>The syntax looks like this:</p>
@@ -394,11 +394,11 @@ against this, but I find it useful to be notified quickly if the input is
 unexpected, the node will gracefully fail.</p>
 </section>
 <section id="inputs-outputs">
-<h2>Inputs / Outputs<a class="headerlink" href="#inputs-outputs" title="Permalink to this heading">¶</a></h2>
+<h2>Inputs / Outputs<a class="headerlink" href="#inputs-outputs" title="Link to this heading">¶</a></h2>
 <p>All inputs and outputs of this node are defined in the script.</p>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
 <p>This node has two states:</p>
 <ol class="arabic">
 <li><p>When no script is loaded, it shows:</p>
@@ -419,7 +419,7 @@ unexpected, the node will gracefully fail.</p>
 </ol>
 </section>
 <section id="examples-of-usage">
-<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
+<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Link to this heading">¶</a></h2>
 <p>Please refer to the initial thread: <a class="reference external" href="https://github.com/nortikin/sverchok/issues/942">https://github.com/nortikin/sverchok/issues/942</a>.</p>
 <p>In the N panel of the node there is a drop-down menu allowing you to select one
 of example scripts which are distributed with Sverchok.</p>

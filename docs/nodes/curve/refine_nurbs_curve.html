@@ -12,9 +12,9 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/documentation_options.js?v=773c2105"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -83,7 +83,7 @@
 <li class="toctree-l3"><a class="reference internal" href="curve_segment.html">Curve Segment</a></li>
 <li class="toctree-l3"><a class="reference internal" href="deconstruct_curve.html">Deconstruct Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="elevate_degree.html">Elevate Degree (NURBS Curve)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="ellipse.html">Ellipse (Curve)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ellipse_curve.html">Ellipse (Curve)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="endpoints.html">Curve Endpoints</a></li>
 <li class="toctree-l3"><a class="reference internal" href="eval_curve.html">Evaluate Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="extend_curve.html">Extend Curve</a></li>
@@ -201,9 +201,9 @@
            <div itemprop="articleBody">
              
   <section id="refine-nurbs-curve">
-<h1>Refine NURBS Curve<a class="headerlink" href="#refine-nurbs-curve" title="Permalink to this heading">¶</a></h1>
+<h1>Refine NURBS Curve<a class="headerlink" href="#refine-nurbs-curve" title="Link to this heading">¶</a></h1>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node performs “refinement” procedure on a NURBS curve, i.e. inserts a
 number of knots in order to make it easier to manipulate with curve’s shape.
 Each knot can be inserted once or multiple times. Knots are distributed
@@ -212,7 +212,7 @@ according to one of algorithms, in order to make knots distribution more even.</
 removed by use of “Remove excessive knots (Curve)” node.</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
 <li><p><strong>Curve</strong>. The NURBS Curve object to be refined. This input is mandatory.</p></li>
@@ -229,7 +229,7 @@ are 0.0 and 1.0, correspondingly.</p></li>
 </ul>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
 <p>This node has the following parameters:</p>
 <ul class="simple">
 <li><p><strong>Distribution</strong>. The algorithm used to distribute curve’s knots evenly. The available options are:</p>
@@ -275,7 +275,7 @@ new knots will be inserted along the whole curve. Unchecked by default.</p></li>
 </ul>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following outputs:</p>
 <ul class="simple">
 <li><p><strong>Curve</strong>. The resulting NURBS Curve object.</p></li>
@@ -283,7 +283,7 @@ new knots will be inserted along the whole curve. Unchecked by default.</p></li>
 </ul>
 </section>
 <section id="example-of-usage">
-<h2>Example of Usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
+<h2>Example of Usage<a class="headerlink" href="#example-of-usage" title="Link to this heading">¶</a></h2>
 <p>Black curve is the original one. Cyan / blue is the control polygon of the original curve. Dark blue points on the curve indicate the knot values of original curve.</p>
 <p>Red lines with orange dots indicate the control polygon of the resulting curve. Green dots indicate the newly inserted knots.</p>
 <p>As you can see, inserting 10 knots creates a lot of control points.</p>

@@ -12,9 +12,9 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/documentation_options.js?v=773c2105"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -176,17 +176,17 @@
            <div itemprop="articleBody">
              
   <section id="tessellate-trim-surface">
-<h1>Tessellate &amp; Trim Surface<a class="headerlink" href="#tessellate-trim-surface" title="Permalink to this heading">¶</a></h1>
+<h1>Tessellate &amp; Trim Surface<a class="headerlink" href="#tessellate-trim-surface" title="Link to this heading">¶</a></h1>
 <a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/db74eb59-dd2d-4473-a93d-f80523e604de"><img alt="https://github.com/nortikin/sverchok/assets/14288520/db74eb59-dd2d-4473-a93d-f80523e604de" src="https://github.com/nortikin/sverchok/assets/14288520/db74eb59-dd2d-4473-a93d-f80523e604de" /></a>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node “visualizes” the Surface object (turns it into a mesh), by drawing a cartesian (rectangular) grid on it and then cutting (trimming) that grid with the specified Curve object.</p>
 <p>The provided trimming curve is supposed to be planar (flat), and be defined in the surface’s U/V coordinates frame.</p>
 <p>Note that this node is supported since Blender 2.81 only. It will not work in Blender 2.80.</p>
 <a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/aa35b243-a3e2-48be-a3bc-a44c7b53ff85"><img alt="https://github.com/nortikin/sverchok/assets/14288520/aa35b243-a3e2-48be-a3bc-a44c7b53ff85" src="https://github.com/nortikin/sverchok/assets/14288520/aa35b243-a3e2-48be-a3bc-a44c7b53ff85" /></a>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
 <li><p><strong>Surface</strong>. The surface to tessellate. This input is mandatory.</p></li>
@@ -208,7 +208,7 @@
 </ul>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
 <p>This node has the following parameters:</p>
 <ul>
 <li><p><strong>Curve plane</strong>. The coordinate plane in which the trimming curve is lying.
@@ -236,7 +236,7 @@ trimming curve (make a surface with a hole in it).</p></li>
 </ul>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following outputs:</p>
 <ul class="simple">
 <li><p><strong>Vertices</strong>. The vertices of the tessellated surface.</p></li>
@@ -244,7 +244,7 @@ trimming curve (make a surface with a hole in it).</p></li>
 </ul>
 </section>
 <section id="examples-of-usage">
-<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
+<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Link to this heading">¶</a></h2>
 <a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/4a8750b8-5e79-4058-ab1d-05c017d04dd0"><img alt="https://github.com/nortikin/sverchok/assets/14288520/4a8750b8-5e79-4058-ab1d-05c017d04dd0" src="https://github.com/nortikin/sverchok/assets/14288520/4a8750b8-5e79-4058-ab1d-05c017d04dd0" /></a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>

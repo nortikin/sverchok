@@ -12,9 +12,9 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/documentation_options.js?v=773c2105"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -157,14 +157,14 @@
            <div itemprop="articleBody">
              
   <section id="rbf-vector-field">
-<h1>RBF Vector Field<a class="headerlink" href="#rbf-vector-field" title="Permalink to this heading">¶</a></h1>
+<h1>RBF Vector Field<a class="headerlink" href="#rbf-vector-field" title="Link to this heading">¶</a></h1>
 <a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/91843f6d-fe55-4a20-b48b-f062ce73b28f"><img alt="https://github.com/nortikin/sverchok/assets/14288520/91843f6d-fe55-4a20-b48b-f062ce73b28f" src="https://github.com/nortikin/sverchok/assets/14288520/91843f6d-fe55-4a20-b48b-f062ce73b28f" /></a>
 <section id="dependencies">
-<h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this heading">¶</a></h2>
+<h2>Dependencies<a class="headerlink" href="#dependencies" title="Link to this heading">¶</a></h2>
 <p>This node optionally uses <a class="reference external" href="https://scipy.org/">SciPy</a> library to work.</p>
 </section>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node generates a Vector Field for given set of points in 3D space and
 corresponding vector field values (vectors), by use of <a class="reference external" href="http://www.scholarpedia.org/article/Radial_basis_function">RBF</a> method. Depending
 on node parameters, the field can be interpolating, i.e. have exactly the
@@ -172,7 +172,7 @@ provided values in the provided points, or only approximating.</p>
 <a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/f329b42f-367c-43cf-93f4-afce5f944492"><img alt="https://github.com/nortikin/sverchok/assets/14288520/f329b42f-367c-43cf-93f4-afce5f944492" src="https://github.com/nortikin/sverchok/assets/14288520/f329b42f-367c-43cf-93f4-afce5f944492" /></a>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul>
 <li><p><strong>VerticesFrom</strong>. The set of points where the values of the vector field are
@@ -195,7 +195,7 @@ otherwise, it will be only an approximating field. The default value is 0.0.</p>
 </ul>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
 <p>This node has the following parameters:</p>
 <ul>
 <li><p><strong>Field type</strong>. The available options are:</p>
@@ -230,14 +230,14 @@ be supposed to work with <a class="reference internal" href="vector_field_eval.h
 </ul>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following output:</p>
 <ul class="simple">
 <li><p><strong>Field</strong>. The generated vector field.</p></li>
 </ul>
 </section>
 <section id="example-of-usage">
-<h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
+<h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Link to this heading">¶</a></h2>
 <p>Define eight “force” vectors for each of eight vertices of a cube. Build an interpolating vector field for such vectors. Then apply it to better subdivided cube:</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/87243779-19f3ec80-c452-11ea-8570-b95db6e11efb.png"><img alt="https://user-images.githubusercontent.com/284644/87243779-19f3ec80-c452-11ea-8570-b95db6e11efb.png" src="https://user-images.githubusercontent.com/284644/87243779-19f3ec80-c452-11ea-8570-b95db6e11efb.png" /></a>
 <ul class="simple">

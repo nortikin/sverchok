@@ -12,9 +12,9 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/documentation_options.js?v=773c2105"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -91,7 +91,7 @@
 <li class="toctree-l3"><a class="reference internal" href="curve_segment.html">Curve Segment</a></li>
 <li class="toctree-l3"><a class="reference internal" href="deconstruct_curve.html">Deconstruct Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="elevate_degree.html">Elevate Degree (NURBS Curve)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="ellipse.html">Ellipse (Curve)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ellipse_curve.html">Ellipse (Curve)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="endpoints.html">Curve Endpoints</a></li>
 <li class="toctree-l3"><a class="reference internal" href="eval_curve.html">Evaluate Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="extend_curve.html">Extend Curve</a></li>
@@ -202,20 +202,20 @@
            <div itemprop="articleBody">
              
   <section id="catenary-curve">
-<h1>Catenary Curve<a class="headerlink" href="#catenary-curve" title="Permalink to this heading">¶</a></h1>
+<h1>Catenary Curve<a class="headerlink" href="#catenary-curve" title="Link to this heading">¶</a></h1>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205445101-09994c2b-6646-475d-999c-571bbe871c9e.png"><img alt="https://user-images.githubusercontent.com/14288520/205445101-09994c2b-6646-475d-999c-571bbe871c9e.png" src="https://user-images.githubusercontent.com/14288520/205445101-09994c2b-6646-475d-999c-571bbe871c9e.png" /></a>
 <section id="dependencies">
-<h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this heading">¶</a></h2>
+<h2>Dependencies<a class="headerlink" href="#dependencies" title="Link to this heading">¶</a></h2>
 <p>This node requires <a class="reference external" href="https://scipy.org/">SciPy</a> library to work.</p>
 </section>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node generates a <a class="reference external" href="https://en.wikipedia.org/wiki/Catenary">catenary</a> curve, given it’s two end points and it’s length.</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205445321-ad399ddf-044b-4adb-9f42-1aa49cca05f7.png"><img alt="https://user-images.githubusercontent.com/14288520/205445321-ad399ddf-044b-4adb-9f42-1aa49cca05f7.png" src="https://user-images.githubusercontent.com/14288520/205445321-ad399ddf-044b-4adb-9f42-1aa49cca05f7.png" /></a>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205445676-b73fffcb-dfea-4334-8390-e33edc272c62.gif"><img alt="https://user-images.githubusercontent.com/14288520/205445676-b73fffcb-dfea-4334-8390-e33edc272c62.gif" src="https://user-images.githubusercontent.com/14288520/205445676-b73fffcb-dfea-4334-8390-e33edc272c62.gif" /></a>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
 <li><p><strong>Point1</strong>. Starting point of the curve. The default value is <code class="docutils literal notranslate"><span class="pre">(-1,</span> <span class="pre">0,</span> <span class="pre">0)</span></code>.</p></li>
@@ -229,7 +229,7 @@ default value is 3.0.</p></li>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205446031-26fbf80a-6301-4d04-9304-238cf298834e.png"><img alt="https://user-images.githubusercontent.com/14288520/205446031-26fbf80a-6301-4d04-9304-238cf298834e.png" src="https://user-images.githubusercontent.com/14288520/205446031-26fbf80a-6301-4d04-9304-238cf298834e.png" /></a>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
 <p>This node has the following parameter:</p>
 <ul class="simple">
 <li><p><strong>Join</strong>. If checked, then the node will output single flat list of curves
@@ -239,14 +239,14 @@ list of curves for each list of input points. Checked by default.</p></li>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205446519-6960e757-2eeb-4790-9202-ec426687218c.png"><img alt="https://user-images.githubusercontent.com/14288520/205446519-6960e757-2eeb-4790-9202-ec426687218c.png" src="https://user-images.githubusercontent.com/14288520/205446519-6960e757-2eeb-4790-9202-ec426687218c.png" /></a>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following output:</p>
 <ul class="simple">
 <li><p><strong>Curve</strong>. The generated catenary curve object.</p></li>
 </ul>
 </section>
 <section id="examples-of-usage">
-<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
+<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Link to this heading">¶</a></h2>
 <p><strong>Catenary curve hanging down between two points</strong>:</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205448797-4c859a2e-880c-4f21-9874-0f2861c91d3d.png"><img alt="https://user-images.githubusercontent.com/14288520/205448797-4c859a2e-880c-4f21-9874-0f2861c91d3d.png" src="https://user-images.githubusercontent.com/14288520/205448797-4c859a2e-880c-4f21-9874-0f2861c91d3d.png" /></a>
 <ul class="simple">

@@ -12,9 +12,9 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/documentation_options.js?v=773c2105"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -144,17 +144,17 @@
            <div itemprop="articleBody">
              
   <section id="pulga-physics-solver">
-<h1>Pulga Physics Solver<a class="headerlink" href="#pulga-physics-solver" title="Permalink to this heading">¶</a></h1>
+<h1>Pulga Physics Solver<a class="headerlink" href="#pulga-physics-solver" title="Link to this heading">¶</a></h1>
 <a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/2dc0b37e-3267-48c0-b022-0b197c8e90d5"><img alt="https://github.com/nortikin/sverchok/assets/14288520/2dc0b37e-3267-48c0-b022-0b197c8e90d5" src="https://github.com/nortikin/sverchok/assets/14288520/2dc0b37e-3267-48c0-b022-0b197c8e90d5" /></a>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node creates simulations from input parameters, it is meant to be used in form-finding purposes.
 It creates the simulation using the inputted vertices as spherical particles that react to applied forces.</p>
 <p>The node is a basic NumPy implementation of basic physics system heavily inspired in “The Nature of Code” by Daniel Shiffman
 and the Kangoroo Plug-in for Grasshopper. Due the nature of the algorithm it can get very intensive, handle with responsibility</p>
 </section>
 <section id="input-output">
-<h2>Input &amp; Output<a class="headerlink" href="#input-output" title="Permalink to this heading">¶</a></h2>
+<h2>Input &amp; Output<a class="headerlink" href="#input-output" title="Link to this heading">¶</a></h2>
 <table class="docutils align-default">
 <thead>
 <tr class="row-odd"><th class="head"><p>Input</p></th>
@@ -222,7 +222,7 @@ calculate intersections, mass and surface</p></td>
 </table>
 </section>
 <section id="accumulative">
-<h2>Accumulative:<a class="headerlink" href="#accumulative" title="Permalink to this heading">¶</a></h2>
+<h2>Accumulative:<a class="headerlink" href="#accumulative" title="Link to this heading">¶</a></h2>
 <p>When activated every nodeTree update will use the previous update as the starting point. The update can be triggered by the Update button or by any other event that triggers regular updates (like playing animation or changing any value).</p>
 <p>It offers some options:</p>
 <p><strong>Reset</strong>: Takes back the system to the initial state.</p>
@@ -230,7 +230,7 @@ calculate intersections, mass and surface</p></td>
 <p><strong>Pause</strong>: Pauses nodes calculations and ignores ui changes.</p>
 </section>
 <section id="examples">
-<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
+<h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">¶</a></h2>
 <p>Arranging circles with attraction and collision.</p>
 <a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/f03b8e4e-a78e-4f50-9986-c3aa3a7067e7"><img alt="https://github.com/nortikin/sverchok/assets/14288520/f03b8e4e-a78e-4f50-9986-c3aa3a7067e7" src="https://github.com/nortikin/sverchok/assets/14288520/f03b8e4e-a78e-4f50-9986-c3aa3a7067e7" /></a>
 <ul class="simple">

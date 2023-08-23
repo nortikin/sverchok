@@ -12,9 +12,9 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/documentation_options.js?v=773c2105"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -150,10 +150,10 @@
            <div itemprop="articleBody">
              
   <section id="fractal-curve">
-<h1>Fractal Curve<a class="headerlink" href="#fractal-curve" title="Permalink to this heading">¶</a></h1>
+<h1>Fractal Curve<a class="headerlink" href="#fractal-curve" title="Link to this heading">¶</a></h1>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201398869-b97cd996-708d-45c5-8bc7-a0b712244774.png"><img alt="https://user-images.githubusercontent.com/14288520/201398869-b97cd996-708d-45c5-8bc7-a0b712244774.png" src="https://user-images.githubusercontent.com/14288520/201398869-b97cd996-708d-45c5-8bc7-a0b712244774.png" /></a>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node generates a fractal curve, by replacing each edge of input curve with a copy of that curve, several times.</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201400256-9234b87a-312d-4859-b95e-c8695f73126f.png"><img alt="https://user-images.githubusercontent.com/14288520/201400256-9234b87a-312d-4859-b95e-c8695f73126f.png" src="https://user-images.githubusercontent.com/14288520/201400256-9234b87a-312d-4859-b95e-c8695f73126f.png" /></a>
 <p>NB 1: Number of vertices in the output curve grows exponentially with number of iterations.</p>
@@ -165,7 +165,7 @@ last. Otherwise, the output curve can grow very large.</p>
 <p>NB 3: Usually you will want to use curves, edges of which have nearly the same length.</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
 <li><p><strong>Iterations</strong> - number of iterations.</p></li>
@@ -174,7 +174,7 @@ last. Otherwise, the output curve can grow very large.</p>
 </ul>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
 <p>This node has the following parameters:</p>
 <ul class="simple">
 <li><p><strong>Iterations</strong>. Number of iterations. If zero, then output curve will be
@@ -190,13 +190,13 @@ digits). Default value is 8. This parameter is available only in the <strong>N</
 </ul>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
 <p>This node has one output: <strong>Vertices</strong> - vertices of the output curve. Vertices
 go in the order in which they appear in the curve. You may want to use <strong>UV
 Connector</strong> node to draw edges between these vertices.</p>
 </section>
 <section id="examples-of-usage">
-<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
+<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Link to this heading">¶</a></h2>
 <p>Classical example:</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201405917-6ea4f7cd-3b0d-4fc7-a20b-82164649e0d3.png"><img alt="https://user-images.githubusercontent.com/14288520/201405917-6ea4f7cd-3b0d-4fc7-a20b-82164649e0d3.png" src="https://user-images.githubusercontent.com/14288520/201405917-6ea4f7cd-3b0d-4fc7-a20b-82164649e0d3.png" /></a>
 <ul class="simple">

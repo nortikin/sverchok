@@ -12,9 +12,9 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/documentation_options.js?v=773c2105"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -134,10 +134,10 @@
            <div itemprop="articleBody">
              
   <section id="list-mask-join-in">
-<h1>List Mask Join (In)<a class="headerlink" href="#list-mask-join-in" title="Permalink to this heading">¶</a></h1>
+<h1>List Mask Join (In)<a class="headerlink" href="#list-mask-join-in" title="Link to this heading">¶</a></h1>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189611716-899bd122-6af1-4025-bc6f-62b2ccff5ade.png"><img alt="https://user-images.githubusercontent.com/14288520/189611716-899bd122-6af1-4025-bc6f-62b2ccff5ade.png" src="https://user-images.githubusercontent.com/14288520/189611716-899bd122-6af1-4025-bc6f-62b2ccff5ade.png" /></a>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node use the mask list i.e. 1,0,0,0 as switch to mix two data list together.</p>
 <p><strong>0</strong> means false, an item from the <strong>Data False</strong> will be appended to the output data;</p>
 <p><strong>1</strong> will be considered as true (actually any value that evaluate as true in python), an item from the <strong>Data True</strong> will be appended to the output data. If the mask list, the <strong>Data True</strong>, and the <strong>Data False</strong> are not of the same length, how to match the inputs can be determined via the list match mode in the N panel.</p>
@@ -145,7 +145,7 @@
 <p>The main design reason behind this node is to be able to conditionally apply operations to one a masked list, for example select vertices based on location and move them or as shown below, select numbers and negate them.</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p><strong>Mask:</strong> Input socket for mask list.</p></li>
 <li><p><strong>Data True:</strong> Input socket for True Data list.</p></li>
@@ -153,25 +153,25 @@
 </ul>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p><strong>Level:</strong> Set the level at which the items to be masked.</p></li>
 <li><p><strong>Choice:</strong> When true, use the mask to choose between elements of the lists, otherwise, use the mask to mix the lists while keeping all their elements.</p></li>
 </ul>
 </section>
 <section id="advanced-parameters">
-<h2>Advanced Parameters<a class="headerlink" href="#advanced-parameters" title="Permalink to this heading">¶</a></h2>
+<h2>Advanced Parameters<a class="headerlink" href="#advanced-parameters" title="Link to this heading">¶</a></h2>
 <p>In the N-Panel (and on the right-click menu) you can find:</p>
 <p><strong>Match List Global:</strong> Define how list with different lengths should be matched. <strong>Data True</strong> and <strong>Data False</strong> are matched together at each level, and also matched with <strong>Mask</strong> on the two last levels (depending on <strong>Level</strong>).</p>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p><strong>Data:</strong> Mixed data of the incoming data, the length of Outputs depends on the  <strong>Data True</strong>, <strong>Data False</strong> and <strong>Mask</strong> list lengths.</p></li>
 </ul>
 </section>
 <section id="example">
-<h2>Example<a class="headerlink" href="#example" title="Permalink to this heading">¶</a></h2>
+<h2>Example<a class="headerlink" href="#example" title="Link to this heading">¶</a></h2>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/188215041-1bc98399-0ce8-4381-917b-89c01ebc94f9.png"><img alt="https://user-images.githubusercontent.com/14288520/188215041-1bc98399-0ce8-4381-917b-89c01ebc94f9.png" src="https://user-images.githubusercontent.com/14288520/188215041-1bc98399-0ce8-4381-917b-89c01ebc94f9.png" /></a>
 <ul class="simple">
 <li><p>Number-&gt; <a class="reference internal" href="../number/list_input.html"><span class="doc">List Input</span></a></p></li>

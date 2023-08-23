@@ -12,9 +12,9 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/documentation_options.js?v=773c2105"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -157,14 +157,14 @@
            <div itemprop="articleBody">
              
   <section id="mesh-nearest-normal">
-<h1>Mesh Nearest Normal<a class="headerlink" href="#mesh-nearest-normal" title="Permalink to this heading">¶</a></h1>
+<h1>Mesh Nearest Normal<a class="headerlink" href="#mesh-nearest-normal" title="Link to this heading">¶</a></h1>
 <a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/33796495-8674-47b6-a227-f4b4231c69db"><img alt="https://github.com/nortikin/sverchok/assets/14288520/33796495-8674-47b6-a227-f4b4231c69db" src="https://github.com/nortikin/sverchok/assets/14288520/33796495-8674-47b6-a227-f4b4231c69db" /></a>
 <section id="dependencies">
-<h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this heading">¶</a></h2>
+<h2>Dependencies<a class="headerlink" href="#dependencies" title="Link to this heading">¶</a></h2>
 <p>This node optionally uses <a class="reference external" href="https://scipy.org/">SciPy</a> library to work.</p>
 </section>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node generates a Vector Field, that, for each point in space, returns a
 normal vector of the nearest face of the given mesh. Optionally, the node can
 interpolate between these face normals, so that the field will be smooth.
@@ -172,7 +172,7 @@ Interpolation is done with <a class="reference external" href="http://www.schola
 <a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/6567015b-3981-4332-a5d1-cc8f1f18b2a6"><img alt="https://github.com/nortikin/sverchok/assets/14288520/6567015b-3981-4332-a5d1-cc8f1f18b2a6" src="https://github.com/nortikin/sverchok/assets/14288520/6567015b-3981-4332-a5d1-cc8f1f18b2a6" /></a>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
 <li><p><strong>Vertices</strong>. Vertices of the mesh. This input is mandatory.</p></li>
@@ -180,7 +180,7 @@ Interpolation is done with <a class="reference external" href="http://www.schola
 </ul>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
 <p>This node has the following parameters:</p>
 <ul>
 <li><p><strong>Interpolate</strong>. This parameter is available only when the SciPy library is
@@ -212,14 +212,14 @@ get opposite normals of mesh:</p></li>
 <a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/c3292e20-b407-4c0c-a31f-50c28fd8f4af"><img alt="https://github.com/nortikin/sverchok/assets/14288520/c3292e20-b407-4c0c-a31f-50c28fd8f4af" src="https://github.com/nortikin/sverchok/assets/14288520/c3292e20-b407-4c0c-a31f-50c28fd8f4af" /></a>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following output:</p>
 <ul class="simple">
 <li><p><strong>Field</strong>. The generated vector field.</p></li>
 </ul>
 </section>
 <section id="examples">
-<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
+<h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">¶</a></h2>
 <a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/b57dbe15-3bb1-4ede-9d66-c7b2ceba0d13"><img alt="https://github.com/nortikin/sverchok/assets/14288520/b57dbe15-3bb1-4ede-9d66-c7b2ceba0d13" src="https://github.com/nortikin/sverchok/assets/14288520/b57dbe15-3bb1-4ede-9d66-c7b2ceba0d13" /></a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/icosphere.html"><span class="doc">IcoSphere</span></a></p></li>

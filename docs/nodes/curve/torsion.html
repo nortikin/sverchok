@@ -12,9 +12,9 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/documentation_options.js?v=773c2105"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -83,7 +83,7 @@
 <li class="toctree-l3"><a class="reference internal" href="curve_segment.html">Curve Segment</a></li>
 <li class="toctree-l3"><a class="reference internal" href="deconstruct_curve.html">Deconstruct Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="elevate_degree.html">Elevate Degree (NURBS Curve)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="ellipse.html">Ellipse (Curve)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ellipse_curve.html">Ellipse (Curve)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="endpoints.html">Curve Endpoints</a></li>
 <li class="toctree-l3"><a class="reference internal" href="eval_curve.html">Evaluate Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="extend_curve.html">Extend Curve</a></li>
@@ -201,10 +201,10 @@
            <div itemprop="articleBody">
              
   <section id="curve-torsion">
-<h1>Curve Torsion<a class="headerlink" href="#curve-torsion" title="Permalink to this heading">¶</a></h1>
+<h1>Curve Torsion<a class="headerlink" href="#curve-torsion" title="Link to this heading">¶</a></h1>
 <a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/2d949b9f-af05-46c8-ab24-36375a98ff33"><img alt="https://github.com/nortikin/sverchok/assets/14288520/2d949b9f-af05-46c8-ab24-36375a98ff33" src="https://github.com/nortikin/sverchok/assets/14288520/2d949b9f-af05-46c8-ab24-36375a98ff33" /></a>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node calculates the <a class="reference external" href="https://en.wikipedia.org/wiki/Torsion_of_a_curve">torsion</a> value of a curve at the certain value of curve’s T parameter.</p>
 <a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/6d9053f3-d98e-4d4a-985b-3066e1d0748d"><img alt="https://github.com/nortikin/sverchok/assets/14288520/6d9053f3-d98e-4d4a-985b-3066e1d0748d" src="https://github.com/nortikin/sverchok/assets/14288520/6d9053f3-d98e-4d4a-985b-3066e1d0748d" /></a>
 <ul class="simple">
@@ -216,7 +216,7 @@
 </ul>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
 <li><p><strong>Curve</strong>. The curve to measure torsion for. This input is mandatory.</p></li>
@@ -224,18 +224,18 @@
 </ul>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
 <p>This node does not have parameters.</p>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following output:</p>
 <ul class="simple">
 <li><p><strong>Torsion</strong>. The torsion value.</p></li>
 </ul>
 </section>
 <section id="example-of-usage">
-<h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
+<h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Link to this heading">¶</a></h2>
 <p>Calculate torsion value at several points of some random curve:</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/78502538-12e67f80-777b-11ea-8ba6-d4d1d6360ce2.png"><img alt="https://user-images.githubusercontent.com/284644/78502538-12e67f80-777b-11ea-8ba6-d4d1d6360ce2.png" src="https://user-images.githubusercontent.com/284644/78502538-12e67f80-777b-11ea-8ba6-d4d1d6360ce2.png" /></a>
 <ul class="simple">

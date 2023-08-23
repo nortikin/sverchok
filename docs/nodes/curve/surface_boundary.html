@@ -12,9 +12,9 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/documentation_options.js?v=773c2105"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -83,7 +83,7 @@
 <li class="toctree-l3"><a class="reference internal" href="curve_segment.html">Curve Segment</a></li>
 <li class="toctree-l3"><a class="reference internal" href="deconstruct_curve.html">Deconstruct Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="elevate_degree.html">Elevate Degree (NURBS Curve)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="ellipse.html">Ellipse (Curve)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ellipse_curve.html">Ellipse (Curve)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="endpoints.html">Curve Endpoints</a></li>
 <li class="toctree-l3"><a class="reference internal" href="eval_curve.html">Evaluate Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="extend_curve.html">Extend Curve</a></li>
@@ -201,10 +201,10 @@
            <div itemprop="articleBody">
              
   <section id="surface-s-boundary">
-<h1>Surface’s Boundary<a class="headerlink" href="#surface-s-boundary" title="Permalink to this heading">¶</a></h1>
+<h1>Surface’s Boundary<a class="headerlink" href="#surface-s-boundary" title="Link to this heading">¶</a></h1>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211388504-d688ddff-0ba8-41ec-a674-74ad7dc45040.png"><img alt="https://user-images.githubusercontent.com/14288520/211388504-d688ddff-0ba8-41ec-a674-74ad7dc45040.png" src="https://user-images.githubusercontent.com/14288520/211388504-d688ddff-0ba8-41ec-a674-74ad7dc45040.png" /></a>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node outputs the curve (or curves) which represent the boundaries of some surface. The supported types of surfaces are:</p>
 <ul class="simple">
 <li><p>Plain (plane-like); for such surfaces, the boundary is one closed curve (in
@@ -216,14 +216,14 @@ is represented by two closed curves at two open sides of the surface.</p></li>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211390865-1e54510c-969a-4545-800a-0231b55fa8dd.png"><img alt="https://user-images.githubusercontent.com/14288520/211390865-1e54510c-969a-4545-800a-0231b55fa8dd.png" src="https://user-images.githubusercontent.com/14288520/211390865-1e54510c-969a-4545-800a-0231b55fa8dd.png" /></a>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following input:</p>
 <ul class="simple">
 <li><p><strong>Surface</strong>. The surface to calculate boundary for. This input is mandatory.</p></li>
 </ul>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
 <p>This node has the following parameters:</p>
 <ul>
 <li><p><strong>Cyclic</strong>. This defines whether the surface is closed in some directions. The available options are:</p>
@@ -248,14 +248,14 @@ separate Curve objects. Checked by default.</p></li>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211396496-ff819f75-6254-48d7-86a5-15d310062ebd.png"><img alt="https://user-images.githubusercontent.com/14288520/211396496-ff819f75-6254-48d7-86a5-15d310062ebd.png" src="https://user-images.githubusercontent.com/14288520/211396496-ff819f75-6254-48d7-86a5-15d310062ebd.png" /></a>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following output:</p>
 <ul class="simple">
 <li><p><strong>Boundary</strong>. Curve or curves representing surface’s boundary.</p></li>
 </ul>
 </section>
 <section id="examples-of-usage">
-<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
+<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Link to this heading">¶</a></h2>
 <p>Visualize the boundary of some random plane-like surface:</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/78506070-b8581e00-7790-11ea-9af1-2c3c84264dc8.png"><img alt="https://user-images.githubusercontent.com/284644/78506070-b8581e00-7790-11ea-9af1-2c3c84264dc8.png" src="https://user-images.githubusercontent.com/284644/78506070-b8581e00-7790-11ea-9af1-2c3c84264dc8.png" /></a>
 <p>replay with new nodes:</p>

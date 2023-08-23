@@ -12,9 +12,9 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/documentation_options.js?v=773c2105"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -156,20 +156,20 @@
            <div itemprop="articleBody">
              
   <section id="texture-viewer">
-<h1>Texture Viewer<a class="headerlink" href="#texture-viewer" title="Permalink to this heading">¶</a></h1>
+<h1>Texture Viewer<a class="headerlink" href="#texture-viewer" title="Link to this heading">¶</a></h1>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190494305-9156f4fe-924d-4f25-93f8-5b4d387b9d84.png"><img alt="https://user-images.githubusercontent.com/14288520/190494305-9156f4fe-924d-4f25-93f8-5b4d387b9d84.png" src="https://user-images.githubusercontent.com/14288520/190494305-9156f4fe-924d-4f25-93f8-5b4d387b9d84.png" /></a>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node allows viewing a list of scalar values and Vectors as a texture, very useful
 to display data from fractal, noise nodes and others, before outputting to a viewer_draw_mk2.</p>
 <p>Uses OpenGl calls to display the data.</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
 <p>Floats and Vectors input</p>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
 <table class="docutils align-default">
 <thead>
 <tr class="row-odd"><th class="head"><p>Feature</p></th>
@@ -216,19 +216,19 @@ mode</p></td>
 </table>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
 <p>Directly into node tree view in a blue bordered square or if you choose the <code class="docutils literal notranslate"><span class="pre">Pass</span></code> option the texture
 may be transferred to the internal image viewer/editor.</p>
 </section>
 <section id="properties-panel">
-<h2>Properties panel<a class="headerlink" href="#properties-panel" title="Permalink to this heading">¶</a></h2>
+<h2>Properties panel<a class="headerlink" href="#properties-panel" title="Link to this heading">¶</a></h2>
 <p>You can save the texture in the desired folder. You can choose the format:</p>
 <p>##### jpeg, jp2, bmp, tiff, tga, tga(raw), exr, exr(multilayer), png</p>
 <p>Save the texture clicking on the button <code class="docutils literal notranslate"><span class="pre">SAVE</span></code>. You can save also passing the image to the blender image
 editor with option <code class="docutils literal notranslate"><span class="pre">Pass</span></code>. This is much preferred because there are more saving options.</p>
 </section>
 <section id="examples">
-<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
+<h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">¶</a></h2>
 <p>Basic usage:</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190496185-ab2d0c5b-85a5-4ede-b110-94762d988a3e.png"><img alt="https://user-images.githubusercontent.com/14288520/190496185-ab2d0c5b-85a5-4ede-b110-94762d988a3e.png" src="https://user-images.githubusercontent.com/14288520/190496185-ab2d0c5b-85a5-4ede-b110-94762d988a3e.png" /></a>
 <ul class="simple">
@@ -238,7 +238,7 @@ editor with option <code class="docutils literal notranslate"><span class="pre">
 </ul>
 </section>
 <section id="important-notes">
-<h2>Important notes<a class="headerlink" href="#important-notes" title="Permalink to this heading">¶</a></h2>
+<h2>Important notes<a class="headerlink" href="#important-notes" title="Link to this heading">¶</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">Texture</span> <span class="pre">viewer</span> <span class="pre">node</span></code> need adequate data size, this mean that number of input pixels
 should be equal to the output. If not you will receive an error. See the image below for an RGBA example:</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190494320-9177d7e1-281f-4b0c-a7f4-cd94651d54ad.png"><img alt="https://user-images.githubusercontent.com/14288520/190494320-9177d7e1-281f-4b0c-a7f4-cd94651d54ad.png" src="https://user-images.githubusercontent.com/14288520/190494320-9177d7e1-281f-4b0c-a7f4-cd94651d54ad.png" /></a>
@@ -251,7 +251,7 @@ should be equal to the output. If not you will receive an error. See the image b
 </ul>
 </section>
 <section id="links">
-<h2>Links<a class="headerlink" href="#links" title="Permalink to this heading">¶</a></h2>
+<h2>Links<a class="headerlink" href="#links" title="Link to this heading">¶</a></h2>
 <p>dev. thread: <a class="reference external" href="https://github.com/nortikin/sverchok/pull/1255">https://github.com/nortikin/sverchok/pull/1255</a>
 texture viewer proposal: <a class="reference external" href="https://github.com/nortikin/sverchok/issues/1248">https://github.com/nortikin/sverchok/issues/1248</a>
 Texture script by &#64;ly29: <a class="reference external" href="https://github.com/Sverchok/Sverchok/issues/56">https://github.com/Sverchok/Sverchok/issues/56</a></p>

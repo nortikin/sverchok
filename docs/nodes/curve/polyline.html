@@ -12,9 +12,9 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/documentation_options.js?v=773c2105"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -83,7 +83,7 @@
 <li class="toctree-l3"><a class="reference internal" href="curve_segment.html">Curve Segment</a></li>
 <li class="toctree-l3"><a class="reference internal" href="deconstruct_curve.html">Deconstruct Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="elevate_degree.html">Elevate Degree (NURBS Curve)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="ellipse.html">Ellipse (Curve)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ellipse_curve.html">Ellipse (Curve)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="endpoints.html">Curve Endpoints</a></li>
 <li class="toctree-l3"><a class="reference internal" href="eval_curve.html">Evaluate Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="extend_curve.html">Extend Curve</a></li>
@@ -201,10 +201,10 @@
            <div itemprop="articleBody">
              
   <section id="polyline">
-<h1>Polyline<a class="headerlink" href="#polyline" title="Permalink to this heading">¶</a></h1>
+<h1>Polyline<a class="headerlink" href="#polyline" title="Link to this heading">¶</a></h1>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205451607-4a09d62e-15e8-412f-9a4c-14d652981457.png"><img alt="https://user-images.githubusercontent.com/14288520/205451607-4a09d62e-15e8-412f-9a4c-14d652981457.png" src="https://user-images.githubusercontent.com/14288520/205451607-4a09d62e-15e8-412f-9a4c-14d652981457.png" /></a>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node generates a polyline (polygonal chain), i.e. a curve consisting of
 segments of straight lines between the specified points. The polyline may be
 closed or not.</p>
@@ -216,7 +216,7 @@ the order they are provided) in the specified metric. For example, if
 points.</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following input:</p>
 <ul class="simple">
 <li><p><strong>Vertices</strong>. The points through which it is required to plot the curve. This input is mandatory.</p></li>
@@ -224,7 +224,7 @@ points.</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205452363-1875511b-302b-4c97-8fbe-9cbfbd4bc202.png"><img alt="https://user-images.githubusercontent.com/14288520/205452363-1875511b-302b-4c97-8fbe-9cbfbd4bc202.png" src="https://user-images.githubusercontent.com/14288520/205452363-1875511b-302b-4c97-8fbe-9cbfbd4bc202.png" /></a>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
 <p>This node has the following parameters:</p>
 <ul class="simple">
 <li><p><strong>Cyclic</strong>. If checked, the node will generate a cyclic (closed) curve. Unchecked by default.</p></li>
@@ -253,14 +253,14 @@ specified curve points. The available values are:</p>
 <p>The default value is Euclidean.</p>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following output:</p>
 <ul class="simple">
 <li><p><strong>Curve</strong>. The generated curve.</p></li>
 </ul>
 </section>
 <section id="examples-of-usage">
-<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
+<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Link to this heading">¶</a></h2>
 <p>Polyline through some random points:</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205453940-22304865-7d62-443f-8dca-e118c5306b82.png"><img alt="https://user-images.githubusercontent.com/14288520/205453940-22304865-7d62-443f-8dca-e118c5306b82.png" src="https://user-images.githubusercontent.com/14288520/205453940-22304865-7d62-443f-8dca-e118c5306b82.png" /></a>
 <ul class="simple">

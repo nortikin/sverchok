@@ -12,9 +12,9 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/documentation_options.js?v=773c2105"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -172,13 +172,13 @@
            <div itemprop="articleBody">
              
   <section id="validate-fix-solid">
-<h1>Validate &amp; Fix Solid<a class="headerlink" href="#validate-fix-solid" title="Permalink to this heading">¶</a></h1>
+<h1>Validate &amp; Fix Solid<a class="headerlink" href="#validate-fix-solid" title="Link to this heading">¶</a></h1>
 <section id="dependencies">
-<h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this heading">¶</a></h2>
+<h2>Dependencies<a class="headerlink" href="#dependencies" title="Link to this heading">¶</a></h2>
 <p>This node requires <a class="reference external" href="../../solids.rst">FreeCAD</a> library to work.</p>
 </section>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node checks if the passed Solid object is “valid” in terms of FreeCAD’s
 OCCT kernel: all faces have coinciding edges, all normals are pointing outside,
 and so on. If it finds that the object is not valid, then, if <strong>FixedSolid</strong>
@@ -195,14 +195,14 @@ cause crashes. So if you are working with objects which are not valid, please
 make sure you know what you are doing.</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following input:</p>
 <ul class="simple">
 <li><p><strong>Solid</strong>. The Solid object to be analyzed. This input is mandatory.</p></li>
 </ul>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
 <p>This node has the following parameter:</p>
 <ul class="simple">
 <li><p><strong>Precision</strong>. The precision for automatic fix procedure (applied if the
@@ -210,7 +210,7 @@ object is not valid in the input). The default value is 0.001.</p></li>
 </ul>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following outputs:</p>
 <ul class="simple">
 <li><p><strong>FixedSolid</strong>. Fixed Solid object (or the same object as in the input, if it

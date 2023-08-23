@@ -12,9 +12,9 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/documentation_options.js?v=773c2105"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -147,19 +147,19 @@
            <div itemprop="articleBody">
              
   <section id="vector-lerp">
-<h1>Vector Lerp<a class="headerlink" href="#vector-lerp" title="Permalink to this heading">¶</a></h1>
+<h1>Vector Lerp<a class="headerlink" href="#vector-lerp" title="Link to this heading">¶</a></h1>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189449776-d0c7d727-c373-4103-89e0-2bbf890a0483.png"><img alt="https://user-images.githubusercontent.com/14288520/189449776-d0c7d727-c373-4103-89e0-2bbf890a0483.png" src="https://user-images.githubusercontent.com/14288520/189449776-d0c7d727-c373-4103-89e0-2bbf890a0483.png" /></a>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node’s primary function is to perform the linear interpolation between two Vectors, or streams of Vectors.
 If we have two Vectors A and B, and a factor 0.5, then the output of the node will be a Vector exactly half way on the imaginary finite-line between A and B. Values beyond 1.0 or lower than 0.0 will be extrapolated to beyond the line A-B.</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
 <p>Vector Evaluate needs two Vertex stream inputs (each containing 1 or more vertices). If one list is shorter than the other then the shortest stream is extended to match the length of the longer stream by repeating the last valid vector found in the shorter stream.</p>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
 <table class="docutils align-default">
 <thead>
 <tr class="row-odd"><th class="head"><p>Param</p></th>
@@ -205,11 +205,11 @@ If we have two Vectors A and B, and a factor 0.5, then the output of the node wi
 </table>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
 <p>The content of <strong>EvPoint</strong> depends on the current mode of the node, but it will always be a list (or multiple lists) of Vectors.</p>
 </section>
 <section id="example-of-usage">
-<h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
+<h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Link to this heading">¶</a></h2>
 <p><strong>0.5</strong></p>
 <a class="reference external image-reference" href="https://cloud.githubusercontent.com/assets/619340/22403445/b6ffef46-e617-11e6-8d84-f47295be5230.png"><img alt="https://cloud.githubusercontent.com/assets/619340/22403445/b6ffef46-e617-11e6-8d84-f47295be5230.png" src="https://cloud.githubusercontent.com/assets/619340/22403445/b6ffef46-e617-11e6-8d84-f47295be5230.png" /></a>
 <ul class="simple">
@@ -258,7 +258,7 @@ If we have two Vectors A and B, and a factor 0.5, then the output of the node wi
 <p>The development thread also has examples: <a class="reference external" href="https://github.com/nortikin/sverchok/issues/1098">https://github.com/nortikin/sverchok/issues/1098</a></p>
 </section>
 <section id="see-also">
-<h2>See also<a class="headerlink" href="#see-also" title="Permalink to this heading">¶</a></h2>
+<h2>See also<a class="headerlink" href="#see-also" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Number-&gt; <a class="reference internal" href="../number/mix_inputs.html"><span class="doc">Mix Inputs</span></a></p></li>
 <li><p>Vector-&gt; <a class="reference internal" href="interpolation_mk3.html"><span class="doc">Vector Interpolation</span></a></p></li>

@@ -12,9 +12,9 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/documentation_options.js?v=773c2105"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -83,7 +83,7 @@
 <li class="toctree-l3"><a class="reference internal" href="curve_segment.html">Curve Segment</a></li>
 <li class="toctree-l3"><a class="reference internal" href="deconstruct_curve.html">Deconstruct Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="elevate_degree.html">Elevate Degree (NURBS Curve)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="ellipse.html">Ellipse (Curve)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ellipse_curve.html">Ellipse (Curve)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="endpoints.html">Curve Endpoints</a></li>
 <li class="toctree-l3"><a class="reference internal" href="eval_curve.html">Evaluate Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="extend_curve.html">Extend Curve</a></li>
@@ -201,9 +201,9 @@
            <div itemprop="articleBody">
              
   <section id="reduce-degree-nurbs-curve">
-<h1>Reduce Degree (NURBS Curve)<a class="headerlink" href="#reduce-degree-nurbs-curve" title="Permalink to this heading">¶</a></h1>
+<h1>Reduce Degree (NURBS Curve)<a class="headerlink" href="#reduce-degree-nurbs-curve" title="Link to this heading">¶</a></h1>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node reduces (decreases) the degree of a NURBS curve.</p>
 <p>The action of this node is the opposite to the action of “Elevate Degree (NURBS Curve)” node.</p>
 <p>Degree reduction is the process which can not be always performed exactly. Some
@@ -212,7 +212,7 @@ For other, degree reduction produces only small error.</p>
 <p>This node can work only with NURBS and NURBS-like curves.</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
 <li><p><strong>Curve</strong>. The curve object to perform operation on. This input is mandatory.</p></li>
@@ -228,7 +228,7 @@ default value is <code class="docutils literal notranslate"><span class="pre">0.
 </ul>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
 <p>This node has the following parameters:</p>
 <ul class="simple">
 <li><p><strong>Mode</strong>. This defines how the new degree of the curve is specified:</p>
@@ -248,14 +248,14 @@ Unchecked by default.</p></li>
 </ul>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following output:</p>
 <ul class="simple">
 <li><p><strong>Curve</strong>. The resulting curve.</p></li>
 </ul>
 </section>
 <section id="example-of-usage">
-<h2>Example of Usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
+<h2>Example of Usage<a class="headerlink" href="#example-of-usage" title="Link to this heading">¶</a></h2>
 <p>Here, the initial curve of 3rd degree is reduced to degree of 2. Orange is the
 original curve, blue is it’s control polygon; green is the resulting curve, and
 red is it’s control polygon. As you can see, in this case the operation could

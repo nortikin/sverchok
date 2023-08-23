@@ -12,9 +12,9 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/documentation_options.js?v=773c2105"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -177,13 +177,13 @@
            <div itemprop="articleBody">
              
   <section id="approximate-nurbs-surface">
-<h1>Approximate NURBS Surface<a class="headerlink" href="#approximate-nurbs-surface" title="Permalink to this heading">¶</a></h1>
+<h1>Approximate NURBS Surface<a class="headerlink" href="#approximate-nurbs-surface" title="Link to this heading">¶</a></h1>
 <section id="dependencies">
-<h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this heading">¶</a></h2>
+<h2>Dependencies<a class="headerlink" href="#dependencies" title="Link to this heading">¶</a></h2>
 <p>This node requires <a class="reference external" href="https://onurraufbingol.com/NURBS-Python/">Geomdl</a> and <a class="reference external" href="https://www.freecad.org/">FreeCAD</a> library to work.</p>
 </section>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node builds a <a class="reference external" href="https://en.wikipedia.org/wiki/Non-uniform_rational_B-spline">NURBS</a> Surface object, which approximates the given set of
 points, i.e. goes as close to them as possible while remaining a smooth surface.</p>
 <p>In fact, the generated surface always will be a non-rational surface, which means
@@ -197,7 +197,7 @@ subdivide it into sublists of N points each.</p></li>
 </ul>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
 <li><p><strong>Vertices</strong>. Points to be approximated. Depending on <strong>Input mode</strong>
@@ -232,7 +232,7 @@ Default value is 1.0.</p></li>
 </ul>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
 <p>This node has the following parameters:</p>
 <ul>
 <li><p><strong>Implementation</strong>. Approximation algorithm implementation to be used. The available values are:</p>
@@ -278,7 +278,7 @@ It’s the metric (the specific knot values) to be used for interpolation. The a
 </ul>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following outputs:</p>
 <ul class="simple">
 <li><p><strong>Surface</strong>. The generated NURBS surface.</p></li>
@@ -287,7 +287,7 @@ It’s the metric (the specific knot values) to be used for interpolation. The a
 </ul>
 </section>
 <section id="example-of-usage">
-<h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
+<h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Link to this heading">¶</a></h2>
 <img alt="https://user-images.githubusercontent.com/284644/87575638-a3711c00-c6e9-11ea-86ed-9c49d80b0763.png" src="https://user-images.githubusercontent.com/284644/87575638-a3711c00-c6e9-11ea-86ed-9c49d80b0763.png" />
 <p>Example of the FreeCAD implementation using the Variational Smoothing method:</p>
 <img alt="https://user-images.githubusercontent.com/66558924/216582148-39b1f8c5-addf-4be9-aa2b-c3f04f7e3b96.jpg" src="https://user-images.githubusercontent.com/66558924/216582148-39b1f8c5-addf-4be9-aa2b-c3f04f7e3b96.jpg" />

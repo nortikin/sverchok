@@ -12,9 +12,9 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/documentation_options.js?v=773c2105"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -83,7 +83,7 @@
 <li class="toctree-l3"><a class="reference internal" href="curve_segment.html">Curve Segment</a></li>
 <li class="toctree-l3"><a class="reference internal" href="deconstruct_curve.html">Deconstruct Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="elevate_degree.html">Elevate Degree (NURBS Curve)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="ellipse.html">Ellipse (Curve)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ellipse_curve.html">Ellipse (Curve)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="endpoints.html">Curve Endpoints</a></li>
 <li class="toctree-l3"><a class="reference internal" href="eval_curve.html">Evaluate Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="extend_curve.html">Extend Curve</a></li>
@@ -201,10 +201,10 @@
            <div itemprop="articleBody">
              
   <section id="kinked-curve">
-<h1>Kinked Curve<a class="headerlink" href="#kinked-curve" title="Permalink to this heading">¶</a></h1>
+<h1>Kinked Curve<a class="headerlink" href="#kinked-curve" title="Link to this heading">¶</a></h1>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205459954-6d595c27-0b4d-4bd8-813f-4544d1b081ec.png"><img alt="https://user-images.githubusercontent.com/14288520/205459954-6d595c27-0b4d-4bd8-813f-4544d1b081ec.png" src="https://user-images.githubusercontent.com/14288520/205459954-6d595c27-0b4d-4bd8-813f-4544d1b081ec.png" /></a>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node generates a “kinky” curve, i.e. a curve that is smooth in some places
 and sharp in others. The node allows the ability to control a specific angle
 threshold where the curve will transition from a kinked line to a smooth
@@ -218,7 +218,7 @@ smooth.</p>
 these segments can be optionally concatenated into one Curve object.</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
 <li><p><strong>Vertices</strong>. The vertices to interpolate between. This input is mandatory.</p></li>
@@ -229,7 +229,7 @@ radians. The default value is <code class="docutils literal notranslate"><span c
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205460666-76feff7d-5cea-4a3b-8b92-556c788f90e7.png"><img alt="https://user-images.githubusercontent.com/14288520/205460666-76feff7d-5cea-4a3b-8b92-556c788f90e7.png" src="https://user-images.githubusercontent.com/14288520/205460666-76feff7d-5cea-4a3b-8b92-556c788f90e7.png" /></a>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
 <p>This node has the following parameters:</p>
 <ul class="simple">
 <li><p><strong>Concatenate</strong>. If checked, the node will output single Curve object for
@@ -271,14 +271,14 @@ specified curve points. The available values are:</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205461520-05d351b9-6dc2-41d7-803b-b5f5bffb8e64.gif"><img alt="https://user-images.githubusercontent.com/14288520/205461520-05d351b9-6dc2-41d7-803b-b5f5bffb8e64.gif" src="https://user-images.githubusercontent.com/14288520/205461520-05d351b9-6dc2-41d7-803b-b5f5bffb8e64.gif" /></a>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following output:</p>
 <ul class="simple">
 <li><p><strong>Curve</strong>. Generated curve object(s).</p></li>
 </ul>
 </section>
 <section id="examples-of-usage">
-<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
+<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Link to this heading">¶</a></h2>
 <p>A simple example:</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205461748-b2bdfd6e-2d96-4b17-a60f-22c6f650a279.png"><img alt="https://user-images.githubusercontent.com/14288520/205461748-b2bdfd6e-2d96-4b17-a60f-22c6f650a279.png" src="https://user-images.githubusercontent.com/14288520/205461748-b2bdfd6e-2d96-4b17-a60f-22c6f650a279.png" /></a>
 <ul class="simple">

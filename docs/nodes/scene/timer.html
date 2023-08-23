@@ -12,9 +12,9 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/documentation_options.js?v=773c2105"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -142,9 +142,9 @@
            <div itemprop="articleBody">
              
   <section id="timer">
-<h1>Timer<a class="headerlink" href="#timer" title="Permalink to this heading">¶</a></h1>
+<h1>Timer<a class="headerlink" href="#timer" title="Link to this heading">¶</a></h1>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node helps with managing time, particularly useful for animations.
 It provides a set of (internal/external) operations that allow to control timing.
 The supported operations are: Stop, Start, Pause, Reset, Expire, Loop Backward and Loop Forward.</p>
@@ -152,7 +152,7 @@ The supported operations are: Stop, Start, Pause, Reset, Expire, Loop Backward a
 <p>Note: The timer node does not record negative times. Going backward in time (either via backward playback or scrubbing the timeline backwards) will decrease the measured time down to zero and the timer will stop.</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
 <p>All inputs accept single or multiple values. When any of the node’s inputs take multiple values the node creates multiple timers with different settings, which can be controlled collectively via the node’s IU (internal operations) or they can be controlled individually via the external operations.</p>
 <ul class="simple">
 <li><p><strong>Duration</strong></p></li>
@@ -164,7 +164,7 @@ The supported operations are: Stop, Start, Pause, Reset, Expire, Loop Backward a
 [1] : The operation is a value between 0-6, used to control the timer externally by other nodes.</p>
 </section>
 <section id="operations">
-<h2>Operations<a class="headerlink" href="#operations" title="Permalink to this heading">¶</a></h2>
+<h2>Operations<a class="headerlink" href="#operations" title="Link to this heading">¶</a></h2>
 <p>Same set of operations are supported internally (via node’s UI) or externally via <strong>Operations</strong> input socket.</p>
 <p>Supported operations:
 +—————–+—————–+
@@ -187,11 +187,11 @@ The supported operations are: Stop, Start, Pause, Reset, Expire, Loop Backward a
 <p>Note: when an operation is given externally it is only executed if different than the previously executed external operation. This way, during playback if the nodes gets the same value (e.g. 1 = START) every frame, the (START) operation is only executed once.</p>
 </section>
 <section id="the-time-slider">
-<h2>The Time Slider<a class="headerlink" href="#the-time-slider" title="Permalink to this heading">¶</a></h2>
+<h2>The Time Slider<a class="headerlink" href="#the-time-slider" title="Link to this heading">¶</a></h2>
 <p>The node has a time slider that can be used to set the timers current time (as a percentage of the timer’s duration). This allows the timer to go back and forth in time without playing back the Blender’s timeline and it can be useful to set a particular starting time or to test the output of the timer, hence the animationt the timer controls. (the speed option is in this case ignored, since the user controls the speed of time flow via scrubbing the time slider).</p>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
 <table class="docutils align-default">
 <thead>
 <tr class="row-odd"><th class="head"><p>Param</p></th>
@@ -227,7 +227,7 @@ percentage of the timer duration [0-1]</p></td>
 </table>
 </section>
 <section id="extra-parameters">
-<h2>Extra Parameters<a class="headerlink" href="#extra-parameters" title="Permalink to this heading">¶</a></h2>
+<h2>Extra Parameters<a class="headerlink" href="#extra-parameters" title="Link to this heading">¶</a></h2>
 <p>Property Panel has some extra parameters to adjust the timer node behavior for all of its timers.</p>
 <table class="docutils align-default">
 <thead>
@@ -258,7 +258,7 @@ unexpire as the timeline is scrubbed</p></td>
 </table>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
 <p>All outputs will be generated when connected.</p>
 <p><strong>Status</strong>
 The current status of the timer.</p>
@@ -280,7 +280,7 @@ This outputs True if the timer expired, otherwise False.</p>
 This outputs how many times the timer has looped since it started (a value in between 0 and <strong>Loops</strong> number).</p>
 </section>
 <section id="example-of-usage">
-<h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
+<h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Link to this heading">¶</a></h2>
 </section>
 </section>
 

@@ -12,9 +12,9 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/documentation_options.js?v=773c2105"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -144,10 +144,10 @@
            <div itemprop="articleBody">
              
   <section id="pulga-attraction-force">
-<h1>Pulga Attraction Force<a class="headerlink" href="#pulga-attraction-force" title="Permalink to this heading">¶</a></h1>
+<h1>Pulga Attraction Force<a class="headerlink" href="#pulga-attraction-force" title="Link to this heading">¶</a></h1>
 <a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/021f3670-9c2c-4380-8f18-8da7847c541b"><img alt="https://github.com/nortikin/sverchok/assets/14288520/021f3670-9c2c-4380-8f18-8da7847c541b" src="https://github.com/nortikin/sverchok/assets/14288520/021f3670-9c2c-4380-8f18-8da7847c541b" /></a>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <blockquote>
 <div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/625ed986-40aa-4f10-95b3-545c06bfc890"><img alt="https://github.com/nortikin/sverchok/assets/14288520/625ed986-40aa-4f10-95b3-545c06bfc890" src="https://github.com/nortikin/sverchok/assets/14288520/625ed986-40aa-4f10-95b3-545c06bfc890" /></a>
 <ul class="simple">
@@ -161,7 +161,7 @@
 <p>The force magnitude will be:  1/(Distance to the power of Decay) * Masses product * Force Strength</p>
 </section>
 <section id="input">
-<h2>Input<a class="headerlink" href="#input" title="Permalink to this heading">¶</a></h2>
+<h2>Input<a class="headerlink" href="#input" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p><strong>Strength</strong>: Multiplier of the force, if multiple values are given the will be use as strength per particle.</p></li>
 <li><p><strong>Decay</strong>: How the force decays with distance (regular gravity will have a decay value of 2)</p></li>
@@ -169,7 +169,7 @@
 </ul>
 </section>
 <section id="options">
-<h2>Options<a class="headerlink" href="#options" title="Permalink to this heading">¶</a></h2>
+<h2>Options<a class="headerlink" href="#options" title="Link to this heading">¶</a></h2>
 <p><strong>Mode</strong>: Algorithm used to calculate attractions. Offers ‘<strong>Brute Force</strong>’ and ‘<strong>Kd-tree</strong>’</p>
 <ul>
 <li><p><strong>Kd-tree</strong>: this is the fastest mode but in order to work it needs ‘<strong>Scipy</strong>’ and ‘<strong>Cython</strong>’ dependencies to be installed. In this mode the attraction continues even if the vertices are colliding</p>
@@ -182,7 +182,7 @@
 <p><strong>Stop on Collision</strong>: When enabled the attraction force will be disabled when particles are colliding, preventing overlapping.</p>
 </section>
 <section id="example">
-<h2>Example<a class="headerlink" href="#example" title="Permalink to this heading">¶</a></h2>
+<h2>Example<a class="headerlink" href="#example" title="Link to this heading">¶</a></h2>
 <a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/22362156-9033-437d-aed0-b67457ba1cff"><img alt="https://github.com/nortikin/sverchok/assets/14288520/22362156-9033-437d-aed0-b67457ba1cff" src="https://github.com/nortikin/sverchok/assets/14288520/22362156-9033-437d-aed0-b67457ba1cff" /></a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>

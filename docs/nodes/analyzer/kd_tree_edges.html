@@ -12,9 +12,9 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/documentation_options.js?v=773c2105"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -168,25 +168,25 @@
            <div itemprop="articleBody">
              
   <section id="kdt-closest-edges">
-<h1>KDT Closest Edges<a class="headerlink" href="#kdt-closest-edges" title="Permalink to this heading">¶</a></h1>
+<h1>KDT Closest Edges<a class="headerlink" href="#kdt-closest-edges" title="Link to this heading">¶</a></h1>
 <p><em>Alias: KDTree Edges</em></p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196486631-373996a4-c49a-48f8-a03b-71919988efd8.png"><img alt="https://user-images.githubusercontent.com/14288520/196486631-373996a4-c49a-48f8-a03b-71919988efd8.png" src="https://user-images.githubusercontent.com/14288520/196486631-373996a4-c49a-48f8-a03b-71919988efd8.png" /></a>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196487746-16ac4469-f108-4e28-b8e8-3e65ea7005fe.png"><img alt="https://user-images.githubusercontent.com/14288520/196487746-16ac4469-f108-4e28-b8e8-3e65ea7005fe.png" src="https://user-images.githubusercontent.com/14288520/196487746-16ac4469-f108-4e28-b8e8-3e65ea7005fe.png" /></a>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196505056-fd750650-f7ba-4f94-9a7e-1225e9a165c6.png"><img alt="https://user-images.githubusercontent.com/14288520/196505056-fd750650-f7ba-4f94-9a7e-1225e9a165c6.png" src="https://user-images.githubusercontent.com/14288520/196505056-fd750650-f7ba-4f94-9a7e-1225e9a165c6.png" /></a>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>On each update it takes an incoming pool of Vertices and places them in a K-dimensional Tree.
 It will return the Edges it can make between those vertices pairs that satisfy the constraints
 imposed by the 4 parameters.</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Verts, a pool of vertices to iterate through</p></li>
 </ul>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
 <table class="docutils align-default">
 <thead>
 <tr class="row-odd"><th class="head"><p>Parameter</p></th>
@@ -215,7 +215,7 @@ imposed by the 4 parameters.</p>
 </table>
 </section>
 <section id="fast-mode">
-<h2>Fast Mode<a class="headerlink" href="#fast-mode" title="Permalink to this heading">¶</a></h2>
+<h2>Fast Mode<a class="headerlink" href="#fast-mode" title="Link to this heading">¶</a></h2>
 <p>This mode requires Scipy dependency. It can be from 3 to 10 times faster but lacks of ‘maxNum’ and ‘Skip’ properties</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196498573-c789eeb7-6ddc-4aad-9fae-c6c7b9fd137f.png"><img alt="https://user-images.githubusercontent.com/14288520/196498573-c789eeb7-6ddc-4aad-9fae-c6c7b9fd137f.png" src="https://user-images.githubusercontent.com/14288520/196498573-c789eeb7-6ddc-4aad-9fae-c6c7b9fd137f.png" /></a>
 <ul class="simple">
@@ -240,7 +240,7 @@ imposed by the 4 parameters.</p>
 </section>
 <hr class="docutils" />
 <section id="max-queries-mode">
-<h2>Max Queries Mode<a class="headerlink" href="#max-queries-mode" title="Permalink to this heading">¶</a></h2>
+<h2>Max Queries Mode<a class="headerlink" href="#max-queries-mode" title="Link to this heading">¶</a></h2>
 <p>This mode requires Scipy dependency. In this mode the maxNum property is used to determine how many points will be verified so it will produce less connections that the complete mode</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196501322-5df056cf-653b-46d2-899c-a1ba1b098f7e.png"><img alt="https://user-images.githubusercontent.com/14288520/196501322-5df056cf-653b-46d2-899c-a1ba1b098f7e.png" src="https://user-images.githubusercontent.com/14288520/196501322-5df056cf-653b-46d2-899c-a1ba1b098f7e.png" /></a>
 <ul class="simple">
@@ -253,7 +253,7 @@ imposed by the 4 parameters.</p>
 </section>
 <hr class="docutils" />
 <section id="no-skip-mode">
-<h2>No Skip Mode<a class="headerlink" href="#no-skip-mode" title="Permalink to this heading">¶</a></h2>
+<h2>No Skip Mode<a class="headerlink" href="#no-skip-mode" title="Link to this heading">¶</a></h2>
 <p>This mode requires Scipy dependency. This is similar to the existing mode but the way the maximum connections is coded produces different results sorting the filter by minimum vertex index</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196502262-6ad08724-44e2-4210-895b-1b41721386a7.png"><img alt="https://user-images.githubusercontent.com/14288520/196502262-6ad08724-44e2-4210-895b-1b41721386a7.png" src="https://user-images.githubusercontent.com/14288520/196502262-6ad08724-44e2-4210-895b-1b41721386a7.png" /></a>
 <ul class="simple">
@@ -264,7 +264,7 @@ imposed by the 4 parameters.</p>
 </ul>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Edges, which can connect the pool of incoming Verts to each other.</p></li>
 </ul>

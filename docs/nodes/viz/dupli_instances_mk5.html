@@ -12,9 +12,9 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/documentation_options.js?v=773c2105"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -153,11 +153,11 @@
            <div itemprop="articleBody">
              
   <section id="dupli-instancer">
-<h1>Dupli Instancer<a class="headerlink" href="#dupli-instancer" title="Permalink to this heading">¶</a></h1>
+<h1>Dupli Instancer<a class="headerlink" href="#dupli-instancer" title="Link to this heading">¶</a></h1>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190466323-fce556fd-e18a-4f95-83c0-ddeea53359e2.png"><img alt="https://user-images.githubusercontent.com/14288520/190466323-fce556fd-e18a-4f95-83c0-ddeea53359e2.png" src="https://user-images.githubusercontent.com/14288520/190466323-fce556fd-e18a-4f95-83c0-ddeea53359e2.png" /></a>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190466189-5ec9a354-069c-428a-9685-c9dacf071928.png"><img alt="https://user-images.githubusercontent.com/14288520/190466189-5ec9a354-069c-428a-9685-c9dacf071928.png" src="https://user-images.githubusercontent.com/14288520/190466189-5ec9a354-069c-428a-9685-c9dacf071928.png" /></a>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node exposes the Blender functionality of Instancing on object Vertices or Faces
 to the Sverchok node tree being able to display many copies of the same object with a very
 low memory impact.</p>
@@ -171,7 +171,7 @@ being able to rotate and scale the instances.</p></li>
 </dl>
 </section>
 <section id="parameters-features">
-<h2>Parameters &amp; Features<a class="headerlink" href="#parameters-features" title="Permalink to this heading">¶</a></h2>
+<h2>Parameters &amp; Features<a class="headerlink" href="#parameters-features" title="Link to this heading">¶</a></h2>
 <table class="docutils align-default">
 <thead>
 <tr class="row-odd"><th class="head"><p>Param</p></th>
@@ -234,17 +234,17 @@ in viewport</p></td>
 </table>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
 <p><strong>Child</strong>: Object(s) to instance.</p>
 <p><strong>Vertices</strong>: Location of instances.</p>
 <p><strong>Matrices</strong>: Matrices of the instances. (but scale is converted to uniform)</p>
 </section>
 <section id="limitations">
-<h2>Limitations<a class="headerlink" href="#limitations" title="Permalink to this heading">¶</a></h2>
+<h2>Limitations<a class="headerlink" href="#limitations" title="Link to this heading">¶</a></h2>
 <p>It’s worth mentioning that because the faces duplication relies on the area of the triangle to determine the scale, that the scale is a scalar, and therefore uniform (x,y,z are scaled equally).</p>
 </section>
 <section id="examples">
-<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
+<h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">¶</a></h2>
 <p>Setting 1.000.000 icospheres (whole node-tree update 0.069 secs)</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190861942-91bf400b-3db9-4966-bd04-654efa69c5d6.png"><img alt="https://user-images.githubusercontent.com/14288520/190861942-91bf400b-3db9-4966-bd04-654efa69c5d6.png" src="https://user-images.githubusercontent.com/14288520/190861942-91bf400b-3db9-4966-bd04-654efa69c5d6.png" /></a>
 <ul class="simple">

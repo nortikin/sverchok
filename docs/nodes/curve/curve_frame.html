@@ -12,9 +12,9 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/documentation_options.js?v=773c2105"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -90,7 +90,7 @@
 <li class="toctree-l3"><a class="reference internal" href="curve_segment.html">Curve Segment</a></li>
 <li class="toctree-l3"><a class="reference internal" href="deconstruct_curve.html">Deconstruct Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="elevate_degree.html">Elevate Degree (NURBS Curve)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="ellipse.html">Ellipse (Curve)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ellipse_curve.html">Ellipse (Curve)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="endpoints.html">Curve Endpoints</a></li>
 <li class="toctree-l3"><a class="reference internal" href="eval_curve.html">Evaluate Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="extend_curve.html">Extend Curve</a></li>
@@ -201,10 +201,10 @@
            <div itemprop="articleBody">
              
   <section id="curve-frame">
-<h1>Curve Frame<a class="headerlink" href="#curve-frame" title="Permalink to this heading">¶</a></h1>
+<h1>Curve Frame<a class="headerlink" href="#curve-frame" title="Link to this heading">¶</a></h1>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/210581705-55a64f81-6a4d-40b3-81bd-03179b7cbd16.png"><img alt="https://user-images.githubusercontent.com/14288520/210581705-55a64f81-6a4d-40b3-81bd-03179b7cbd16.png" src="https://user-images.githubusercontent.com/14288520/210581705-55a64f81-6a4d-40b3-81bd-03179b7cbd16.png" /></a>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node calculates a reference frame of a curve (also known as <a class="reference external" href="https://en.wikipedia.org/wiki/Frenet%E2%80%93Serret_formulas">Frenet</a> frame)
 for the given value of curve’s T parameter. Basically, the node allows one to
 place some object at the curve, by aligning the object with curve’s “natural”
@@ -221,7 +221,7 @@ The node will give an error or produce invalid output in such cases.</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/210587935-40dd1b37-ba5c-412c-b88c-277aeb5f782f.png"><img alt="https://user-images.githubusercontent.com/14288520/210587935-40dd1b37-ba5c-412c-b88c-277aeb5f782f.png" src="https://user-images.githubusercontent.com/14288520/210587935-40dd1b37-ba5c-412c-b88c-277aeb5f782f.png" /></a>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
 <li><p><strong>Curve</strong>. The curve to calculate frame for. This input is mandatory.</p></li>
@@ -230,7 +230,7 @@ The node will give an error or produce invalid output in such cases.</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/210601868-cb2097f6-8736-435e-9284-9efd4a4afca0.png"><img alt="https://user-images.githubusercontent.com/14288520/210601868-cb2097f6-8736-435e-9284-9efd4a4afca0.png" src="https://user-images.githubusercontent.com/14288520/210601868-cb2097f6-8736-435e-9284-9efd4a4afca0.png" /></a>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
 <p>This node has the following parameters:</p>
 <ul class="simple">
 <li><p><strong>Join</strong>. If checked, the node will output the single list of matrices,
@@ -257,7 +257,7 @@ other axes will be chosen arbitrarily).</p></li>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/210600874-0b03994e-c1fb-4203-9de8-9ce8c8fda0a4.png"><img alt="https://user-images.githubusercontent.com/14288520/210600874-0b03994e-c1fb-4203-9de8-9ce8c8fda0a4.png" src="https://user-images.githubusercontent.com/14288520/210600874-0b03994e-c1fb-4203-9de8-9ce8c8fda0a4.png" /></a>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following outputs:</p>
 <ul class="simple">
 <li><p><strong>Matrix</strong>. The matrix defining the Frenet frame for the curve at the
@@ -269,7 +269,7 @@ point of the curve. Z axis of the matrix points along curve’s tangent.</p></li
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/210584549-8a57a141-95a3-4ae2-8afb-be674cb7b1c0.png"><img alt="https://user-images.githubusercontent.com/14288520/210584549-8a57a141-95a3-4ae2-8afb-be674cb7b1c0.png" src="https://user-images.githubusercontent.com/14288520/210584549-8a57a141-95a3-4ae2-8afb-be674cb7b1c0.png" /></a>
 </section>
 <section id="examples-of-usage">
-<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
+<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Link to this heading">¶</a></h2>
 <p>Visualize curve’s frame at some points:</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/210607852-abd7b756-69cb-4a29-a2fa-684df1020529.png"><img alt="https://user-images.githubusercontent.com/14288520/210607852-abd7b756-69cb-4a29-a2fa-684df1020529.png" src="https://user-images.githubusercontent.com/14288520/210607852-abd7b756-69cb-4a29-a2fa-684df1020529.png" /></a>
 <ul class="simple">

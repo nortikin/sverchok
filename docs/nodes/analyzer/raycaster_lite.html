@@ -12,9 +12,9 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/documentation_options.js?v=773c2105"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -166,10 +166,10 @@
            <div itemprop="articleBody">
              
   <section id="raycaster">
-<h1>Raycaster<a class="headerlink" href="#raycaster" title="Permalink to this heading">¶</a></h1>
+<h1>Raycaster<a class="headerlink" href="#raycaster" title="Link to this heading">¶</a></h1>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197017155-eeab3d4b-618b-49cf-8443-868f13ca18c7.png"><img alt="https://user-images.githubusercontent.com/14288520/197017155-eeab3d4b-618b-49cf-8443-868f13ca18c7.png" src="https://user-images.githubusercontent.com/14288520/197017155-eeab3d4b-618b-49cf-8443-868f13ca18c7.png" /></a>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>Functionality is almost completely analogous to the two built-in blender operators
 <code class="docutils literal notranslate"><span class="pre">bpy.context.scene.ray_cast</span></code> and <code class="docutils literal notranslate"><span class="pre">object.ray_cast</span></code>.
 Ray is casted from “start” vector to “end” vector and can hit polygons of input objects.</p>
@@ -178,7 +178,7 @@ Ray is casted from “start” vector to “end” vector and can hit polygons o
 <a class="reference external" href="http://www.blender.org/documentation/blender_python_api_2_71_0/bpy.types.Scene.html#bpy.types.Scene.ray_cast">bpy.types.Scene.ray_cast</a></p>
 </section>
 <section id="input-sockets">
-<h2>Input sockets<a class="headerlink" href="#input-sockets" title="Permalink to this heading">¶</a></h2>
+<h2>Input sockets<a class="headerlink" href="#input-sockets" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p><strong>Verts</strong> - Vectors of objects receiving rays</p></li>
 <li><p><strong>Faces</strong> - Faces of objects receiving rays</p></li>
@@ -188,7 +188,7 @@ Ray is casted from “start” vector to “end” vector and can hit polygons o
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197019680-4183c4b0-cec0-4e81-80d9-10e0696a08ec.png"><img alt="https://user-images.githubusercontent.com/14288520/197019680-4183c4b0-cec0-4e81-80d9-10e0696a08ec.png" src="https://user-images.githubusercontent.com/14288520/197019680-4183c4b0-cec0-4e81-80d9-10e0696a08ec.png" /></a>
 </section>
 <section id="output-sockets">
-<h2>Output sockets<a class="headerlink" href="#output-sockets" title="Permalink to this heading">¶</a></h2>
+<h2>Output sockets<a class="headerlink" href="#output-sockets" title="Link to this heading">¶</a></h2>
 <table class="docutils align-default">
 <thead>
 <tr class="row-odd"><th class="head"><p>socket name</p></th>
@@ -216,14 +216,14 @@ Ray is casted from “start” vector to “end” vector and can hit polygons o
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197022372-b39810a8-aae8-40fd-83ef-6b8dddaab9d6.png"><img alt="https://user-images.githubusercontent.com/14288520/197022372-b39810a8-aae8-40fd-83ef-6b8dddaab9d6.png" src="https://user-images.githubusercontent.com/14288520/197022372-b39810a8-aae8-40fd-83ef-6b8dddaab9d6.png" /></a>
 </section>
 <section id="advanced-parameters-n-panel">
-<h2>Advanced parameters (N-Panel)<a class="headerlink" href="#advanced-parameters-n-panel" title="Permalink to this heading">¶</a></h2>
+<h2>Advanced parameters (N-Panel)<a class="headerlink" href="#advanced-parameters-n-panel" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p><strong>All Triangles</strong>: Enable if all the incoming faces are triangles to improve the performance of the algorithm</p></li>
 <li><p><strong>Safe Check</strong>: Checks the mesh for unreferenced polygons (slows the node but prevents some Blender crashes)</p></li>
 </ul>
 </section>
 <section id="usage">
-<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this heading">¶</a></h2>
+<h2>Usage<a class="headerlink" href="#usage" title="Link to this heading">¶</a></h2>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197025123-e1c7f09d-3338-4164-937e-ceae59966a0a.png"><img alt="https://user-images.githubusercontent.com/14288520/197025123-e1c7f09d-3338-4164-937e-ceae59966a0a.png" src="https://user-images.githubusercontent.com/14288520/197025123-e1c7f09d-3338-4164-937e-ceae59966a0a.png" /></a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/sphere.html"><span class="doc">Sphere</span></a></p></li>

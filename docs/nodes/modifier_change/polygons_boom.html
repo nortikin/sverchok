@@ -12,9 +12,9 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/documentation_options.js?v=773c2105"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -165,19 +165,19 @@
            <div itemprop="articleBody">
              
   <section id="polygon-boom">
-<h1>Polygon Boom<a class="headerlink" href="#polygon-boom" title="Permalink to this heading">¶</a></h1>
+<h1>Polygon Boom<a class="headerlink" href="#polygon-boom" title="Link to this heading">¶</a></h1>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/199933464-1a02da12-0610-410a-bedd-6f9858910fd4.png"><img alt="https://user-images.githubusercontent.com/14288520/199933464-1a02da12-0610-410a-bedd-6f9858910fd4.png" src="https://user-images.githubusercontent.com/14288520/199933464-1a02da12-0610-410a-bedd-6f9858910fd4.png" /></a>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>The vertices of each polygon will be placed into separate lists. If polygons share vertices then the coordinates are duplicates into new vertices. The end result will be a nested list of polygons with each their own unique vertices. This facilitates rotation of a polygon around an arbitrary points without affecting the vertices of other polygons in the list.</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/199933485-f6739a95-4291-4038-9f23-a3354934e061.png"><img alt="https://user-images.githubusercontent.com/14288520/199933485-f6739a95-4291-4038-9f23-a3354934e061.png" src="https://user-images.githubusercontent.com/14288520/199933485-f6739a95-4291-4038-9f23-a3354934e061.png" /></a>
 </section>
 <section id="inputs-outputs">
-<h2>Inputs &amp; Outputs<a class="headerlink" href="#inputs-outputs" title="Permalink to this heading">¶</a></h2>
+<h2>Inputs &amp; Outputs<a class="headerlink" href="#inputs-outputs" title="Link to this heading">¶</a></h2>
 <p>Lists of Vertices and Edge/Polygon lists. The type of data in the <em>edg_pol</em> output socket content depends on the what kind of input is passed to <em>edge_pol</em> input socket. If you input edges only, that’s what the output will be.</p>
 </section>
 <section id="examples">
-<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">¶</a></h2>
+<h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">¶</a></h2>
 <p>The Box on default settings is a Cube with 6 polygons and each vertex is shared by three polygons. Polygon Boom separates the polygons into separate coordinate lists (vertices).</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/199938143-589364ca-5128-4657-969a-69c10803920d.png"><img alt="https://user-images.githubusercontent.com/14288520/199938143-589364ca-5128-4657-969a-69c10803920d.png" src="https://user-images.githubusercontent.com/14288520/199938143-589364ca-5128-4657-969a-69c10803920d.png" /></a>
 <ul class="simple">

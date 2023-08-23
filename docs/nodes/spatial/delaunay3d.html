@@ -12,9 +12,9 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/documentation_options.js?v=773c2105"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -150,14 +150,14 @@
            <div itemprop="articleBody">
              
   <section id="delaunay-3d">
-<h1>Delaunay 3D<a class="headerlink" href="#delaunay-3d" title="Permalink to this heading">¶</a></h1>
+<h1>Delaunay 3D<a class="headerlink" href="#delaunay-3d" title="Link to this heading">¶</a></h1>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202203897-2d69a159-b90b-4150-ac8b-d63d63971d6d.png"><img alt="https://user-images.githubusercontent.com/14288520/202203897-2d69a159-b90b-4150-ac8b-d63d63971d6d.png" src="https://user-images.githubusercontent.com/14288520/202203897-2d69a159-b90b-4150-ac8b-d63d63971d6d.png" /></a>
 <section id="dependencies">
-<h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this heading">¶</a></h2>
+<h2>Dependencies<a class="headerlink" href="#dependencies" title="Link to this heading">¶</a></h2>
 <p>This node requires <a class="reference external" href="https://scipy.org/">SciPy</a> library to work.</p>
 </section>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node generaets a <a class="reference external" href="https://en.wikipedia.org/wiki/Delaunay_triangulation">Delaunay</a> triangulation for a set of points in 3D space.</p>
 <p>In many cases, Delaunay triangulation in 3D tends to generate almost flat
 tetrahedrons on the boundary. This node can automatically skip generation of
@@ -166,7 +166,7 @@ such tetrahedrons.</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202203843-cbb301f8-0bb3-431b-a52d-3caa50e97a4c.gif"><img alt="https://user-images.githubusercontent.com/14288520/202203843-cbb301f8-0bb3-431b-a52d-3caa50e97a4c.gif" src="https://user-images.githubusercontent.com/14288520/202203843-cbb301f8-0bb3-431b-a52d-3caa50e97a4c.gif" /></a>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
 <li><p><strong>Vertices</strong>. The vertices to generate Delaunay triangulation for. This input is mandatory.</p></li>
@@ -182,7 +182,7 @@ filtering step and allow to generate any tetrahedrons. The default value is 0
 </ul>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
 <p>This node has the following parameter:</p>
 <ul class="simple">
 <li><p><strong>Join</strong>. If checked, then the node will generate one mesh object, composed
@@ -192,7 +192,7 @@ tetrahedron. Unchecked by default.</p></li>
 </ul>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following outputs:</p>
 <ul class="simple">
 <li><p><strong>Vertices</strong>. Vertices of the Delaunay triangulation.</p></li>
@@ -201,7 +201,7 @@ tetrahedron. Unchecked by default.</p></li>
 </ul>
 </section>
 <section id="example-of-usage">
-<h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
+<h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Link to this heading">¶</a></h2>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202234630-06b8cca7-31c7-424d-a27b-38232645b0c8.png"><img alt="https://user-images.githubusercontent.com/14288520/202234630-06b8cca7-31c7-424d-a27b-38232645b0c8.png" src="https://user-images.githubusercontent.com/14288520/202234630-06b8cca7-31c7-424d-a27b-38232645b0c8.png" /></a>
 <ul class="simple">
 <li><p>Spacial-&gt; <a class="reference internal" href="homogenous_vector_field.html"><span class="doc">Vector P Field</span></a></p></li>

@@ -12,9 +12,9 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/documentation_options.js?v=773c2105"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -150,14 +150,14 @@
            <div itemprop="articleBody">
              
   <section id="concave-hull">
-<h1>Concave Hull<a class="headerlink" href="#concave-hull" title="Permalink to this heading">¶</a></h1>
+<h1>Concave Hull<a class="headerlink" href="#concave-hull" title="Link to this heading">¶</a></h1>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202859436-2ad37262-2fb8-4331-877d-745e51da8780.png"><img alt="https://user-images.githubusercontent.com/14288520/202859436-2ad37262-2fb8-4331-877d-745e51da8780.png" src="https://user-images.githubusercontent.com/14288520/202859436-2ad37262-2fb8-4331-877d-745e51da8780.png" /></a>
 <section id="dependencies">
-<h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this heading">¶</a></h2>
+<h2>Dependencies<a class="headerlink" href="#dependencies" title="Link to this heading">¶</a></h2>
 <p>This node requires <a class="reference external" href="https://scipy.org/">SciPy</a> library to work.</p>
 </section>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node generates a “Concave Hull” mesh of given set of points, by use of
 <a class="reference external" href="https://en.wikipedia.org/wiki/Alpha_shape">AlphaShape</a> algorithm. Alpha Shape algorithm uses <a class="reference external" href="https://en.wikipedia.org/wiki/Delaunay_triangulation">Delaunay</a> triangulation to
 work.</p>
@@ -166,7 +166,7 @@ tetrahedrons on the boundary. This node can automatically skip generation of
 such tetrahedrons.</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
 <li><p><strong>Vertices</strong>. The vertices to generate concave hull for. This input is mandatory.</p></li>
@@ -177,7 +177,7 @@ the mesh can be non-manifold (have holes in it). The default value is 2.0.</p></
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202859726-c3613e05-f9c5-4628-9b39-3988c4a21a3d.gif"><img alt="https://user-images.githubusercontent.com/14288520/202859726-c3613e05-f9c5-4628-9b39-3988c4a21a3d.gif" src="https://user-images.githubusercontent.com/14288520/202859726-c3613e05-f9c5-4628-9b39-3988c4a21a3d.gif" /></a>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
 <p>This node has the following parameter:</p>
 <ul class="simple">
 <li><p><strong>Correct normals</strong>. If checked, the node will recalculate the normals of
@@ -188,7 +188,7 @@ faces is not guaranteed. Checked by default.</p></li>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202864721-39e8a7c0-cd9d-4f26-b48f-b6979ec779a3.png"><img alt="https://user-images.githubusercontent.com/14288520/202864721-39e8a7c0-cd9d-4f26-b48f-b6979ec779a3.png" src="https://user-images.githubusercontent.com/14288520/202864721-39e8a7c0-cd9d-4f26-b48f-b6979ec779a3.png" /></a>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following outputs:</p>
 <ul class="simple">
 <li><p><strong>Vertices</strong>. Vertices of generated mesh.</p></li>
@@ -197,7 +197,7 @@ faces is not guaranteed. Checked by default.</p></li>
 </ul>
 </section>
 <section id="examples-of-usage">
-<h2>Examples of Usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
+<h2>Examples of Usage<a class="headerlink" href="#examples-of-usage" title="Link to this heading">¶</a></h2>
 <ol class="arabic simple">
 <li><p>Generate points on Suzanne mesh, and generate concave hull for them:</p></li>
 </ol>

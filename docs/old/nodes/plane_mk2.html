@@ -12,9 +12,9 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/documentation_options.js?v=773c2105"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -79,13 +79,13 @@
            <div itemprop="articleBody">
              
   <section id="plane-mk2">
-<h1>Plane MK2<a class="headerlink" href="#plane-mk2" title="Permalink to this heading">¶</a></h1>
+<h1>Plane MK2<a class="headerlink" href="#plane-mk2" title="Link to this heading">¶</a></h1>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>Plane generator creates a grid in the plane XY/YZ or ZX, based on the number of vertices and the length between them in X and Y directions. It works in a similar way than Line, but creating a grid instead of a line.</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
 <p>Just like in Line Node, all inputs are vectorized and they will accept single or multiple values.
 There is two basic inputs <strong>N Verts</strong> and <strong>Step</strong>, but referenced to both X and Y directions, so it results in 4 inputs:</p>
 <ul class="simple">
@@ -102,7 +102,7 @@ There is two basic inputs <strong>N Verts</strong> and <strong>Step</strong>, bu
 </div>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
 <p>All parameters except <strong>Separate</strong>, <strong>Direction</strong>, <strong>Center</strong>, <strong>Normalize</strong>, <strong>Size X</strong> and <strong>Size Y</strong> can be given by the node or an external input.</p>
 <table class="docutils align-default">
 <thead>
@@ -169,13 +169,13 @@ There is two basic inputs <strong>N Verts</strong> and <strong>Step</strong>, bu
 [1] - the <strong>Size X</strong> / <strong>Size Y</strong> parameters are only available when the <strong>Normalize</strong> is on.</p>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
 <p><strong>Vertices</strong>, <strong>Edges</strong> and <strong>Polygons</strong>.
 All outputs will be generated. Depending on the type of the inputs, the node will generate only one or multiples independent grids.</p>
 <p>If <strong>Separate</strong> is True, the output is totally different. The grid disappear (no more <strong>polygons</strong> are generated) and instead it generates a series of lines repeated along Y axis. See examples below to a better understanding.</p>
 </section>
 <section id="example-of-usage">
-<h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
+<h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Link to this heading">¶</a></h2>
 <img alt="https://user-images.githubusercontent.com/22656834/36344518-6e3f47ca-143d-11e8-8473-f070872db91b.png" src="https://user-images.githubusercontent.com/22656834/36344518-6e3f47ca-143d-11e8-8473-f070872db91b.png" />
 </section>
 </section>

@@ -12,9 +12,9 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/documentation_options.js?v=773c2105"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -134,15 +134,15 @@
            <div itemprop="articleBody">
              
   <section id="mask-converter">
-<h1>Mask Converter<a class="headerlink" href="#mask-converter" title="Permalink to this heading">¶</a></h1>
+<h1>Mask Converter<a class="headerlink" href="#mask-converter" title="Link to this heading">¶</a></h1>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/188221908-30557dfb-9fb6-434a-ac7e-fce30ab8658a.png"><img alt="https://user-images.githubusercontent.com/14288520/188221908-30557dfb-9fb6-434a-ac7e-fce30ab8658a.png" src="https://user-images.githubusercontent.com/14288520/188221908-30557dfb-9fb6-434a-ac7e-fce30ab8658a.png" /></a>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node allows to convert masks that are to be applied to different types of mesh elements. For example, it can convert mask on vertices to mask for faces, or mask for edges to mask for vertices, and so on.</p>
 <p>Type of mask which is provided at input is defined by <strong>From</strong> parameter. Masks of all other types are available as outputs.</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
 <li><p><strong>Vertices</strong>. This input is available and required only when parameter <strong>From</strong> is set to <strong>Edges</strong> or <strong>Faces</strong>.</p></li>
@@ -152,7 +152,7 @@
 </ul>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
 <p>This node has the following parameters:</p>
 <ul class="simple">
 <li><p><strong>From</strong>. This parameter determines what type of mask you have as input. The following values are supported:</p>
@@ -172,7 +172,7 @@
 </ul>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following outputs:</p>
 <ul class="simple">
 <li><p><strong>VerticesMask</strong>. Mask for vertices. This output is not available if parameter <strong>From</strong> is set to <strong>Vertices</strong>.</p></li>
@@ -181,13 +181,13 @@
 </ul>
 </section>
 <section id="see-also">
-<h2>See also<a class="headerlink" href="#see-also" title="Permalink to this heading">¶</a></h2>
+<h2>See also<a class="headerlink" href="#see-also" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Transform-&gt; <a class="reference internal" href="../transforms/transform_select.html"><span class="doc">Transform Select</span></a></p></li>
 </ul>
 </section>
 <section id="examples-of-usage">
-<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this heading">¶</a></h2>
+<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Link to this heading">¶</a></h2>
 <p><strong>Show part of cube with vertex selected by edges:</strong></p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/188229456-1fe95a77-f3be-42dd-9a7f-943cb2ede6c9.png"><img alt="https://user-images.githubusercontent.com/14288520/188229456-1fe95a77-f3be-42dd-9a7f-943cb2ede6c9.png" src="https://user-images.githubusercontent.com/14288520/188229456-1fe95a77-f3be-42dd-9a7f-943cb2ede6c9.png" /></a>
 <ul class="simple">

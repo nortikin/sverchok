@@ -12,9 +12,9 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/documentation_options.js?v=773c2105"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -83,7 +83,7 @@
 <li class="toctree-l3"><a class="reference internal" href="curve_segment.html">Curve Segment</a></li>
 <li class="toctree-l3"><a class="reference internal" href="deconstruct_curve.html">Deconstruct Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="elevate_degree.html">Elevate Degree (NURBS Curve)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="ellipse.html">Ellipse (Curve)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ellipse_curve.html">Ellipse (Curve)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="endpoints.html">Curve Endpoints</a></li>
 <li class="toctree-l3"><a class="reference internal" href="eval_curve.html">Evaluate Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="extend_curve.html">Extend Curve</a></li>
@@ -201,10 +201,10 @@
            <div itemprop="articleBody">
              
   <section id="sort-curves">
-<h1>Sort Curves<a class="headerlink" href="#sort-curves" title="Permalink to this heading">¶</a></h1>
+<h1>Sort Curves<a class="headerlink" href="#sort-curves" title="Link to this heading">¶</a></h1>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211191173-5dfa0ee3-9daa-4d08-beea-87288b3ace26.png"><img alt="https://user-images.githubusercontent.com/14288520/211191173-5dfa0ee3-9daa-4d08-beea-87288b3ace26.png" src="https://user-images.githubusercontent.com/14288520/211191173-5dfa0ee3-9daa-4d08-beea-87288b3ace26.png" /></a>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">¶</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node sorts (reorders) a list of Curve objects so that they could
 potentially be concatenated together, i.e. so that the end point of each curve
 would be near the beginning of the following curve. <strong>NOTE</strong>: this node does
@@ -224,14 +224,14 @@ lot of curves to sort, you may want to consider other options, for example if
 you have a way to generate curves in the correct order in the first place.</p>
 </section>
 <section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this heading">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following input:</p>
 <ul class="simple">
 <li><p><strong>Curves</strong>. The list of curves to be sorted. This input is mandatory.</p></li>
 </ul>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
 <p>This node has the following parameter:</p>
 <ul class="simple">
 <li><p><strong>Allow Reverse</strong>. If checked, then in addition to reordering the list of
@@ -241,7 +241,7 @@ Unchecked by default.</p></li>
 </ul>
 </section>
 <section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this heading">¶</a></h2>
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following outputs:</p>
 <ul class="simple">
 <li><p><strong>Curves</strong>. Reordered list of curves. If <strong>Allow Reverse</strong> parameter is
@@ -258,7 +258,7 @@ find a sequence for precise concatenation of curves, this output will contain
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211217426-bd0ca5e0-5bc5-456a-8fbb-bec85d9a5c6e.png"><img alt="https://user-images.githubusercontent.com/14288520/211217426-bd0ca5e0-5bc5-456a-8fbb-bec85d9a5c6e.png" src="https://user-images.githubusercontent.com/14288520/211217426-bd0ca5e0-5bc5-456a-8fbb-bec85d9a5c6e.png" /></a>
 </section>
 <section id="example-of-usage">
-<h2>Example of Usage<a class="headerlink" href="#example-of-usage" title="Permalink to this heading">¶</a></h2>
+<h2>Example of Usage<a class="headerlink" href="#example-of-usage" title="Link to this heading">¶</a></h2>
 <p>Take a simple object (plane) from scene. It’s edges are unordered, and
 directions of these edges are random. Generate a Line curve segment from each
 of these edges. Next we want to concatenate these lines to one Curve object. In
