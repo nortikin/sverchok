@@ -28,24 +28,10 @@ class SvEllipseCurveNodeMK2(SverchCustomTreeNode, bpy.types.Node):
                        (SvEllipse.F2, "F2", "Ellipse focal point 2", 3)]
 
     def update_sockets(self, context):
-        all_sockets_name = ["Minor Radius", "Eccentricity", "Focal Length", ]
+        self.inputs['Minor Radius'].enabled = (self.mode == "AB")
+        self.inputs['Eccentricity'].enabled = (self.mode == "AE")
+        self.inputs['Focal Length'].enabled = (self.mode == "AC")
 
-        list_links_remove = None
-        if self.mode == "AB":
-            list_links_remove = ["Eccentricity", "Focal Length",]
-        elif self.mode == "AE":
-            list_links_remove = ["Minor Radius", "Focal Length",]
-        else:  # AC
-            list_links_remove = ["Minor Radius", "Eccentricity",]
-
-        # remove existing link if sockets are switched:
-        for socket_name in list_links_remove:
-            all_sockets_name.remove(socket_name)
-            for l in self.inputs[socket_name].links:
-                self.id_data.links.remove(l)
-            self.inputs[socket_name].hide = True
-        self.inputs[ all_sockets_name[0] ].hide = False
-            
         updateNode(self, context)
 
     mode: EnumProperty(
@@ -102,13 +88,13 @@ class SvEllipseCurveNodeMK2(SverchCustomTreeNode, bpy.types.Node):
         if not any(s.is_linked for s in outputs):
             return
 
-        major_radius_s = self.inputs['Major Radius'].sv_get()
+        major_radius_s = self.inputs['Major Radius'].sv_get(deepcopy=False)
         if self.mode == 'AB':
-            input2_s = self.inputs["Minor Radius"].sv_get()
+            input2_s = self.inputs["Minor Radius"].sv_get(deepcopy=False)
         elif self.mode == 'AE':
-            input2_s = self.inputs["Eccentricity"].sv_get()
+            input2_s = self.inputs["Eccentricity"].sv_get(deepcopy=False)
         else:
-            input2_s = self.inputs["Focal Length"].sv_get()
+            input2_s = self.inputs["Focal Length"].sv_get(deepcopy=False)
 
         matrices_s = self.inputs['Matrix'].sv_get(default = [[Matrix()]])
 
