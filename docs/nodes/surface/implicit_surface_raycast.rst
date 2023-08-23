@@ -74,7 +74,7 @@ Example of usage
   :target: https://user-images.githubusercontent.com/284644/87581701-d075fc80-c6f2-11ea-9eb6-ab02ba69ef2a.png
 
 * Generator-> :doc:`Box </nodes/generator/box_mk2>`
-* Curves->Curve Primitives-> :doc:`Ellipse (Curve) </nodes/curve/ellipse>`
+* Curves->Curve Primitives-> :doc:`Ellipse (Curve) </nodes/curve/ellipse_curve>`
 * Curves-> :doc:`Evaluate Curve </nodes/curve/eval_curve>`
 * Surfaces-> :doc:`Marching Cubes </nodes/surface/marching_cubes>`
 * Modifiers->Modifier Make-> :doc:`UV Connection </nodes/modifier_make/uv_connect>`
