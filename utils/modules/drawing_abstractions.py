@@ -69,6 +69,7 @@ if bpy.app.version >= (3, 5, 0):
 
         new_buffer_texture = placeholder_function
         get_buffer = placeholder_function
+        new_buffer_texture_sized = lambda self, size, data: gpu.types.Buffer("FLOAT", size, data)
         bind_texture_2d = placeholder_function
         init_complex_texture = placeholder_function
         generate_textures = placeholder_function
