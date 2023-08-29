@@ -1,7 +1,7 @@
 SN Functor B
 ============
 
-"ScriptNode Functor Version B" is an implementation of a script node, which is better described by the examples in the thread where this node was developed. This node is not used generally, because it is not entirely a completed project and i want to potentially radically change the way the node is syntactically controlled.
+"ScriptNode Functor Version B" is an implementation of a script node, which is better described by the examples in the thread where this node was developed. This node is not used generally, because it is not entirely a completed project with respect to how it is syntactically controlled.
 
 The rational behind this node is that the code that implements the node "behind the scenes" is relatively simple, has little error checking, and relatively easy to maintain and augment. The downside is that it, unlike SNLite nodes, has a more verbose initialization syntax. See the code below.
 
