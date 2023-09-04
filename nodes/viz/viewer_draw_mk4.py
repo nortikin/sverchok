@@ -62,6 +62,34 @@ default_fragment_shader = '''
     }
 '''
 
+default_geometry_shader = '''
+
+    uniform mat4 viewProjectionMatrix;
+
+    layout(triangles) in;
+    layout(triangle_strip, max_vertices = 3) out;
+
+    void main()
+    {
+        vec3 ab = gl_in[1].gl_Position.xyz - gl_in[0].gl_Position.xyz;
+        vec3 ac = gl_in[2].gl_Position.xyz - gl_in[0].gl_Position.xyz;
+        vec3 normal3 = normalize(cross(ab, ac));
+        vec4 rescale = vec4(0.0003, 0.0003, 0.0003, 1.0);
+        vec4 normal4 = vec4(normal3, 1.0);
+
+        int i = 0;
+        for (i = 0; i < gl_in.length(); i++)
+        {
+            gl_Position = gl_in[i].gl_Position + (normal4 * rescale);
+            EmitVertex();
+        }
+
+        EndPrimitive();        
+
+    }
+
+'''
+
 def ensure_triangles(coords, indices, handle_concave_quads):
     """
     this fully tesselates the incoming topology into tris,
@@ -496,7 +524,7 @@ def generate_mesh_geom(config, vecs_in):
             config.draw_fragment_function = ND.get('draw_fragment')
             config.p_shader = gpu.types.GPUShader(config.node.custom_vertex_shader, config.node.custom_fragment_shader)
         else:
-            config.p_shader = gpu.types.GPUShader(default_vertex_shader, default_fragment_shader)
+            config.p_shader = gpu.types.GPUShader(default_vertex_shader, default_fragment_shader, geocode=default_geometry_shader)
         geom.p_vertices, geom.p_vertex_colors, geom.p_indices = p_vertices, p_vertex_colors, p_indices
 
     return geom
