@@ -50,37 +50,29 @@ default_vertex_shader = '''
     }
 '''
 
-default_fragment_shader = '''
-    uniform float brightness;
-
-    in vec3 pos;
-    out vec4 FragColor;
-
-    void main()
-    {
-        FragColor = vec4(pos * brightness, 1.0);
-    }
-'''
-
 default_geometry_shader = '''
 
     uniform mat4 viewProjectionMatrix;
+
+    in vec3 pos[];
+    //in vec4 FragColor[];
 
     layout(triangles) in;
     layout(triangle_strip, max_vertices = 3) out;
 
     void main()
     {
-        vec3 ab = gl_in[1].gl_Position.xyz - gl_in[0].gl_Position.xyz;
-        vec3 ac = gl_in[2].gl_Position.xyz - gl_in[0].gl_Position.xyz;
-        vec3 normal3 = normalize(cross(ab, ac));
-        vec4 rescale = vec4(0.0003, 0.0003, 0.0003, 1.0);
-        vec4 normal4 = vec4(normal3, 1.0);
+        //vec3 ab = gl_in[1].gl_Position.xyz - gl_in[0].gl_Position.xyz;
+        //vec3 ac = gl_in[2].gl_Position.xyz - gl_in[0].gl_Position.xyz;
+        //vec3 normal3 = normalize(cross(ab, ac));
+        //vec4 normal4 = vec4(normal3, 1.0);
+        //vec4 rescale = vec4(0.000003, 0.000003, 0.000003, 1.0);
+        //vec4 offset = vec4(normal4 * rescale);
+        vec4 offset = vec4(0.0, 0.0, 0.00003, 1.0);
 
-        int i = 0;
-        for (i = 0; i < gl_in.length(); i++)
+        for (int i = 0; i < gl_in.length(); i++)
         {
-            gl_Position = gl_in[i].gl_Position + (normal4 * rescale);
+            gl_Position = gl_in[i].gl_Position + offset;
             EmitVertex();
         }
 
@@ -89,6 +81,22 @@ default_geometry_shader = '''
     }
 
 '''
+
+default_fragment_shader = '''
+    uniform float brightness;
+
+    in vec3 pos[];
+    out vec4 FragColor;
+
+    void main()
+    {
+        //FragColor = vec4(pos[0] * brightness, 1.0);
+        //FragColor = vec4(1.0, 1.0, 0.5*brightness, 1.0); //pos[0] * brightness, 1.0);
+        FragColor = vec4(pos[0][0] * brightness, pos[0][1] * brightness, pos[0][2] * brightness, 1.0);
+    }
+'''
+
+
 
 def ensure_triangles(coords, indices, handle_concave_quads):
     """
@@ -168,7 +176,10 @@ def view_3d_geom(context, args):
             config.p_shader.bind()
             matrix = context.region_data.perspective_matrix
             config.p_shader.uniform_float("viewProjectionMatrix", matrix)
-            config.p_shader.uniform_float("brightness", 0.5)
+            if hasattr(config, "brightness"):
+                config.p_shader.uniform_float("brightness", config.brightness)
+            else:
+                config.p_shader.uniform_float("brightness", 0.5)
         else:
             if config.uniform_pols:
                 p_batch = batch_for_shader(config.p_shader, 'TRIS', {"pos": geom.p_vertices}, indices=geom.p_indices)
@@ -579,6 +590,8 @@ class SvViewerDrawMk4(SverchCustomTreeNode, bpy.types.Node):
         name="Draw gl wireframe",
         default=False, update=updateNode)
 
+    brightness: FloatProperty(min=0.0, max=1.0)
+
     vector_light: FloatVectorProperty(
         name='vector light', subtype='DIRECTION', min=0, max=1, size=3,
         default=(0.2, 0.6, 0.4), update=updateNode)
@@ -675,7 +688,6 @@ class SvViewerDrawMk4(SverchCustomTreeNode, bpy.types.Node):
 
             except Exception as err:
                 print(err)
-
 
                 # reset custom shader
                 self.custom_vertex_shader = ''
@@ -842,10 +854,9 @@ class SvViewerDrawMk4(SverchCustomTreeNode, bpy.types.Node):
         config.u_dash_size = self.u_dash_size
         config.u_gap_size = self.u_gap_size
         config.u_resolution = self.u_resolution[:]
+        config.brightness = self.brightness  # this is only to test the passthrough of the geometry shader.
 
         config.node = self
-
-
         return config
 
 
