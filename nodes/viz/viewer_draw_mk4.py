@@ -55,6 +55,7 @@ default_geometry_shader = '''
     uniform mat4 viewProjectionMatrix;
 
     in vec3 pos[];
+    out vec3 face_normal;
 
     layout(triangles) in;
     layout(triangle_strip, max_vertices = 3) out;
@@ -65,6 +66,7 @@ default_geometry_shader = '''
         vec3 ac = gl_in[2].gl_Position.xyz - gl_in[0].gl_Position.xyz;
         vec3 normal3 = normalize(cross(ab, ac));
         vec4 normal4 = vec4(normal3, 1.0);
+        face_normal = normal3;
         vec4 rescale = vec4(0.00003, 0.00003, 0.00003, 0.0);
         vec4 offset = vec4(normal4 * rescale);
 
@@ -80,14 +82,15 @@ default_geometry_shader = '''
 '''
 
 default_fragment_shader = '''
-    uniform float brightness;
+    //uniform float brightness;
 
     in vec3 pos[];
-    out vec4 FragColor;
+    in vec3 face_normal[];
+    out vec4 gl_FragColor;
 
     void main()
     {
-        FragColor = vec4(0.1, 0.5*brightness, 0.8, 1.0);
+        gl_FragColor = vec4(face_normal[0].x, 0.7, 0.7, 0.7);
     }
 '''
 
@@ -171,10 +174,10 @@ def view_3d_geom(context, args):
             config.p_shader.bind()
             matrix = context.region_data.perspective_matrix
             config.p_shader.uniform_float("viewProjectionMatrix", matrix)
-            if hasattr(config, "brightness"):
-                config.p_shader.uniform_float("brightness", config.brightness)
-            else:
-                config.p_shader.uniform_float("brightness", 0.5)
+            #if hasattr(config, "brightness"):
+            #    config.p_shader.uniform_float("brightness", config.brightness)
+            #else:
+            #    config.p_shader.uniform_float("brightness", 0.5)
         else:
             if config.uniform_pols:
                 p_batch = batch_for_shader(config.p_shader, 'TRIS', {"pos": geom.p_vertices}, indices=geom.p_indices)
@@ -585,7 +588,7 @@ class SvViewerDrawMk4(SverchCustomTreeNode, bpy.types.Node):
         name="Draw gl wireframe",
         default=False, update=updateNode)
 
-    brightness: FloatProperty(min=0.0, max=1.0)
+    brightness: FloatProperty(min=0.0, max=1.0, default=0.8)
 
     vector_light: FloatVectorProperty(
         name='vector light', subtype='DIRECTION', min=0, max=1, size=3,
@@ -849,7 +852,7 @@ class SvViewerDrawMk4(SverchCustomTreeNode, bpy.types.Node):
         config.u_dash_size = self.u_dash_size
         config.u_gap_size = self.u_gap_size
         config.u_resolution = self.u_resolution[:]
-        config.brightness = self.brightness  # this is only to test the passthrough of the geometry shader.
+        # config.brightness = self.brightness  # this is only to test the passthrough of the geometry shader.
 
         config.node = self
         return config
