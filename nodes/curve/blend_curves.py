@@ -245,10 +245,10 @@ class SvBlendCurvesMk2Node(SverchCustomTreeNode, bpy.types.Node):
                 else:
                     raise Exception("Unsupported smooth level")
 
-                if self.mode == 'N' and not self.cyclic and output_src and is_first:
+                if not self.cyclic and output_src and is_first:
                     new_curves.append(curve1)
                 new_curves.append(new_curve)
-                if self.mode == 'N' and output_src:
+                if output_src:
                     new_curves.append(curve2)
                 new_controls.append(controls)
 
