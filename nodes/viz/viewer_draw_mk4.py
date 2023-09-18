@@ -90,7 +90,7 @@ default_fragment_shader = '''
 
     void main()
     {
-        gl_FragColor = vec4(face_normal[0].x, 0.7, 0.7, 0.7);
+        gl_FragColor = vec4(face_normal[0].r, 0.7, 0.7, 0.7);
     }
 '''
 
