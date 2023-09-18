@@ -55,29 +55,26 @@ default_geometry_shader = '''
     uniform mat4 viewProjectionMatrix;
 
     in vec3 pos[];
-    //in vec4 FragColor[];
 
     layout(triangles) in;
     layout(triangle_strip, max_vertices = 3) out;
 
     void main()
     {
-        //vec3 ab = gl_in[1].gl_Position.xyz - gl_in[0].gl_Position.xyz;
-        //vec3 ac = gl_in[2].gl_Position.xyz - gl_in[0].gl_Position.xyz;
-        //vec3 normal3 = normalize(cross(ab, ac));
-        //vec4 normal4 = vec4(normal3, 1.0);
-        //vec4 rescale = vec4(0.000003, 0.000003, 0.000003, 1.0);
-        //vec4 offset = vec4(normal4 * rescale);
-        vec4 offset = vec4(0.0, 0.0, 0.00003, 1.0);
+        vec3 ab = gl_in[1].gl_Position.xyz - gl_in[0].gl_Position.xyz;
+        vec3 ac = gl_in[2].gl_Position.xyz - gl_in[0].gl_Position.xyz;
+        vec3 normal3 = normalize(cross(ab, ac));
+        vec4 normal4 = vec4(normal3, 1.0);
+        vec4 rescale = vec4(0.00003, 0.00003, 0.00003, 0.0);
+        vec4 offset = vec4(normal4 * rescale);
 
         for (int i = 0; i < gl_in.length(); i++)
         {
-            gl_Position = gl_in[i].gl_Position + offset;
+            gl_Position = gl_in[i].gl_Position + offset; // + vec4(1.0, 0.0, 0.0, );
             EmitVertex();
         }
 
         EndPrimitive();        
-
     }
 
 '''
@@ -90,9 +87,7 @@ default_fragment_shader = '''
 
     void main()
     {
-        //FragColor = vec4(pos[0] * brightness, 1.0);
-        //FragColor = vec4(1.0, 1.0, 0.5*brightness, 1.0); //pos[0] * brightness, 1.0);
-        FragColor = vec4(pos[0][0] * brightness, pos[0][1] * brightness, pos[0][2] * brightness, 1.0);
+        FragColor = vec4(pos[0].x * brightness, pos[0].y * brightness, pos[0].z * brightness, 1.0);
     }
 '''
 
