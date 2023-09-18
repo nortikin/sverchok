@@ -399,9 +399,20 @@ class SvComponentAnalyzerNode(SverchCustomTreeNode, bpy.types.Node, SvRecursiveN
         return [self.post_process(l, unwrap) for l in zip(*result_vals)]
 
 
+prefix = "https://nortikin.github.io/sverchok/docs/nodes/"
+sverchok_analyzers_mapping =(
+    ("bpy.types.SvComponentAnalyzerNode".lower(), "analyzer/component_analyzer.html"),
+    ("SvComponentAnalyzerNode.split", "analyzer/component_analyzer.html#vertives"),
+)
+
+def sverchok_analyzers_map():
+    return prefix, sverchok_analyzers_mapping
+
 def register():
     bpy.utils.register_class(SvComponentAnalyzerNode)
+    bpy.utils.register_manual_map(sverchok_analyzers_map)
 
 
 def unregister():
     bpy.utils.unregister_class(SvComponentAnalyzerNode)
+    bpy.utils.unregister_manual_map(sverchok_analyzers_map)
