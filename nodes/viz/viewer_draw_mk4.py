@@ -70,7 +70,7 @@ default_geometry_shader = '''
 
         for (int i = 0; i < gl_in.length(); i++)
         {
-            gl_Position = gl_in[i].gl_Position + offset; // + vec4(1.0, 0.0, 0.0, );
+            gl_Position = gl_in[i].gl_Position + offset;
             EmitVertex();
         }
 
@@ -87,7 +87,7 @@ default_fragment_shader = '''
 
     void main()
     {
-        FragColor = vec4(pos[0].x * brightness, pos[0].y * brightness, pos[0].z * brightness, 1.0);
+        FragColor = vec4(0.1, 0.5*brightness, 0.8, 1.0);
     }
 '''
 
