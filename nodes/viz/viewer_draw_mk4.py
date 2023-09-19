@@ -55,7 +55,13 @@ default_geometry_shader = '''
     uniform mat4 viewProjectionMatrix;
 
     in vec3 pos[];
-    out vec3 face_normal;
+    //out vec3 face_normal;
+
+    out VS_OUT
+    {
+        vec3 FaceNormal;
+    } vs_out;
+
 
     layout(triangles) in;
     layout(triangle_strip, max_vertices = 3) out;
@@ -66,7 +72,7 @@ default_geometry_shader = '''
         vec3 ac = gl_in[2].gl_Position.xyz - gl_in[0].gl_Position.xyz;
         vec3 normal3 = normalize(cross(ab, ac));
         vec4 normal4 = vec4(normal3, 1.0);
-        face_normal = normal3;
+        vs_out.FaceNormal = normal3;
         vec4 rescale = vec4(0.00003, 0.00003, 0.00003, 0.0);
         vec4 offset = vec4(normal4 * rescale);
 
@@ -84,13 +90,18 @@ default_geometry_shader = '''
 default_fragment_shader = '''
     //uniform float brightness;
 
-    in vec3 pos[];
-    in vec3 face_normal[];
+    in vec4 pos[];
+    // in vec3 face_normal[];
+    in VS_OUT
+    {
+        vec3 FaceNormal;
+    } fs_in;
+
     out vec4 gl_FragColor;
 
     void main()
     {
-        gl_FragColor = vec4(face_normal[0].r, 0.7, 0.7, 0.7);
+        gl_FragColor = vec4(fs_in.FaceNormal.xyz, 0.7);
     }
 '''
 
