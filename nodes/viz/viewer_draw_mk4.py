@@ -49,9 +49,7 @@ default_vertex_shader = '''
 '''
 
 default_geometry_shader = '''
-
     uniform mat4 viewProjectionMatrix;
-    in vec3 pos[];
 
     out VS_OUT
     {
@@ -85,7 +83,6 @@ default_geometry_shader = '''
 
 default_fragment_shader = '''
 
-    in vec4 pos[];
     in VS_OUT
     {
         vec3 FaceNormal;
