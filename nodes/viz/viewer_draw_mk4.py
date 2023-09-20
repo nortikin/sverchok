@@ -41,11 +41,9 @@ default_vertex_shader = '''
     uniform mat4 viewProjectionMatrix;
 
     in vec3 position;
-    out vec3 pos;
 
     void main()
     {
-        pos = position;
         gl_Position = viewProjectionMatrix * vec4(position, 1.0f);
     }
 '''
@@ -53,9 +51,7 @@ default_vertex_shader = '''
 default_geometry_shader = '''
 
     uniform mat4 viewProjectionMatrix;
-
     in vec3 pos[];
-    //out vec3 face_normal;
 
     out VS_OUT
     {
@@ -88,10 +84,8 @@ default_geometry_shader = '''
 '''
 
 default_fragment_shader = '''
-    //uniform float brightness;
 
     in vec4 pos[];
-    // in vec3 face_normal[];
     in VS_OUT
     {
         vec3 FaceNormal;
