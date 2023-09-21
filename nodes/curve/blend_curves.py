@@ -109,11 +109,12 @@ class SvBlendCurvesMk2Node(SverchCustomTreeNode, bpy.types.Node):
         layout.prop(self, 'smooth_mode', text='')
         layout.prop(self, "mode", text='')
         layout.prop(self, 'join')
-        layout.prop(self, 'concat')
-        if self.mode == 'N':
-            layout.prop(self, 'cyclic')
-            if not self.concat:
-                layout.prop(self, 'output_src')
+        layout.prop(self, 'cyclic')
+        layout.prop(self, 'output_src')
+        row = layout.row()
+        row.prop(self, 'concat')
+        if self.output_src==False:
+            row.enabled = False
 
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
@@ -139,130 +140,161 @@ class SvBlendCurvesMk2Node(SverchCustomTreeNode, bpy.types.Node):
         factor2_s = ensure_nesting_level(factor2_s, 2)
         params_s = ensure_nesting_level(params_s, 2)
 
+        curves_s = []
+        # unify curves's data for any self.mode
         if self.mode == 'TWO':
             curve1_s = self.inputs['Curve1'].sv_get()
             curve2_s = self.inputs['Curve2'].sv_get()
             curve1_s = ensure_nesting_level(curve1_s, 2, data_types=(SvCurve,))
             curve2_s = ensure_nesting_level(curve2_s, 2, data_types=(SvCurve,))
 
-            results = []
-            for inputs in zip_long_repeat(curve1_s, curve2_s, factor1_s, factor2_s, params_s):
-                results.append(zip_long_repeat(*inputs))
-
-            return results
-
+            for inputs in zip_long_repeat(curve1_s, curve2_s):
+                curves_s.append( list( *zip_long_repeat(*inputs) ) )
         else:
             curves_s = self.inputs['Curves'].sv_get()
-            curves_s = ensure_nesting_level(curves_s, 2, data_types=(SvCurve,))
 
-            results = []
-            for curves, factor1s, factor2s, params in zip_long_repeat(curves_s, factor1_s, factor2_s, params_s):
-                factor1s = repeat_last_for_length(factor1s, len(curves))
-                factor2s = repeat_last_for_length(factor2s, len(curves))
-                params = repeat_last_for_length(params, len(curves))
+        curves_s = ensure_nesting_level(curves_s, 2, data_types=(SvCurve,))
+        results = []
+        for curves, factor1s, factor2s, params in zip_long_repeat(curves_s, factor1_s, factor2_s, params_s):
+            factor1s = repeat_last_for_length(factor1s, len(curves))
+            factor2s = repeat_last_for_length(factor2s, len(curves))
+            params = repeat_last_for_length(params, len(curves))
 
+            if len(curves)==1:
+                item = list(zip(curves, curves, factor1s, factor2s, params))
+            else:
                 item = list(zip(curves, curves[1:], factor1s, factor2s, params))
                 if self.cyclic:
                     item.append((curves[-1], curves[0], factor1s[-1], factor2s[-1], params[-1]))
 
-                results.append(item)
+            results.append(item)
 
-            return results
+        return results
 
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
             return
 
-        output_src = self.output_src or self.concat
-
         curves_out = []
         controls_out = []
-        is_first = True
 
         for params in self.get_inputs():
             new_curves = []
             new_controls = []
             for curve1, curve2, factor1, factor2, parameter in params:
-                _, t_max_1 = curve1.get_u_bounds()
-                t_min_2, _ = curve2.get_u_bounds()
-
-                curve1_end = curve1.evaluate(t_max_1)
-                curve2_begin = curve2.evaluate(t_min_2)
-
-                smooth = self.smooth_mode
-
-                if smooth == '0':
-                    new_curve = SvLine.from_two_points(curve1_end, curve2_begin)
-                    controls = [curve1_end, curve2_begin]
-                elif smooth == '1':
-                    tangent_1_end = curve1.tangent(t_max_1)
-                    tangent_2_begin = curve2.tangent(t_min_2)
-
-                    tangent1 = factor1 * tangent_1_end
-                    tangent2 = factor2 * tangent_2_begin
-
-                    new_curve = SvCubicBezierCurve(
-                            curve1_end,
-                            curve1_end + tangent1 / 3.0,
-                            curve2_begin - tangent2 / 3.0,
-                            curve2_begin
-                        )
-                    controls = [new_curve.p0.tolist(), new_curve.p1.tolist(),
-                                    new_curve.p2.tolist(), new_curve.p3.tolist()]
-                elif smooth == '1b':
-                    tangent_1_end = curve1.tangent(t_max_1)
-                    tangent_2_begin = curve2.tangent(t_min_2)
-
-                    new_curve = SvBiArc.calc(
-                            curve1_end, curve2_begin,
-                            tangent_1_end, tangent_2_begin,
-                            parameter,
-                            planar_tolerance = self.planar_tolerance)
-                    
-                    controls = [new_curve.junction.tolist()]
-                elif smooth == '2':
-                    tangent_1_end = curve1.tangent(t_max_1)
-                    tangent_2_begin = curve2.tangent(t_min_2)
-                    second_1_end = curve1.second_derivative(t_max_1)
-                    second_2_begin = curve2.second_derivative(t_min_2)
-
-                    new_curve = SvBezierCurve.blend_second_derivatives(
-                                    curve1_end, tangent_1_end, second_1_end,
-                                    curve2_begin, tangent_2_begin, second_2_begin)
-                    controls = [p.tolist() for p in new_curve.points]
-                elif smooth == '3':
-                    tangent_1_end = curve1.tangent(t_max_1)
-                    tangent_2_begin = curve2.tangent(t_min_2)
-                    second_1_end = curve1.second_derivative(t_max_1)
-                    second_2_begin = curve2.second_derivative(t_min_2)
-                    third_1_end = curve1.third_derivative_array(np.array([t_max_1]))[0]
-                    third_2_begin = curve2.third_derivative_array(np.array([t_min_2]))[0]
-
-                    new_curve = SvBezierCurve.blend_third_derivatives(
-                                    curve1_end, tangent_1_end, second_1_end, third_1_end,
-                                    curve2_begin, tangent_2_begin, second_2_begin, third_2_begin)
-                    controls = [p.tolist() for p in new_curve.points]
+                if len(params)==1 and curve1==curve2 and self.cyclic==False:
+                    if self.output_src:
+                        new_curves.append(curve1)
                 else:
-                    raise Exception("Unsupported smooth level")
+                    _, t_max_1 = curve1.get_u_bounds()
+                    t_min_2, _ = curve2.get_u_bounds()
 
-                if self.mode == 'N' and not self.cyclic and output_src and is_first:
-                    new_curves.append(curve1)
-                new_curves.append(new_curve)
-                if self.mode == 'N' and output_src:
-                    new_curves.append(curve2)
-                new_controls.append(controls)
+                    curve1_end = curve1.evaluate(t_max_1)
+                    curve2_begin = curve2.evaluate(t_min_2)
 
-                is_first = False
+                    smooth = self.smooth_mode
 
-                if self.concat:
-                    new_curves = [concatenate_curves(new_curves)]
+                    if smooth == '0':
+                        new_curve = SvLine.from_two_points(curve1_end, curve2_begin)
+                        controls = [curve1_end, curve2_begin]
+                    elif smooth == '1':
+                        tangent_1_end = curve1.tangent(t_max_1)
+                        tangent_2_begin = curve2.tangent(t_min_2)
 
-            if self.join:
-                curves_out.extend(new_curves)
-                controls_out.extend(new_controls)
-            else:
-                curves_out.append(new_curves)
-                controls_out.append(new_controls)
+                        tangent1 = factor1 * tangent_1_end
+                        tangent2 = factor2 * tangent_2_begin
+
+                        new_curve = SvCubicBezierCurve(
+                                curve1_end,
+                                curve1_end + tangent1 / 3.0,
+                                curve2_begin - tangent2 / 3.0,
+                                curve2_begin
+                            )
+                        controls = [new_curve.p0.tolist(), new_curve.p1.tolist(),
+                                        new_curve.p2.tolist(), new_curve.p3.tolist()]
+                    elif smooth == '1b':
+                        tangent_1_end = curve1.tangent(t_max_1)
+                        tangent_2_begin = curve2.tangent(t_min_2)
+
+                        new_curve = SvBiArc.calc(
+                                curve1_end, curve2_begin,
+                                tangent_1_end, tangent_2_begin,
+                                parameter,
+                                planar_tolerance = self.planar_tolerance)
+                        
+                        controls = [new_curve.junction.tolist()]
+                    elif smooth == '2':
+                        tangent_1_end = curve1.tangent(t_max_1)
+                        tangent_2_begin = curve2.tangent(t_min_2)
+                        second_1_end = curve1.second_derivative(t_max_1)
+                        second_2_begin = curve2.second_derivative(t_min_2)
+
+                        new_curve = SvBezierCurve.blend_second_derivatives(
+                                        curve1_end, tangent_1_end, second_1_end,
+                                        curve2_begin, tangent_2_begin, second_2_begin)
+                        controls = [p.tolist() for p in new_curve.points]
+                    elif smooth == '3':
+                        tangent_1_end = curve1.tangent(t_max_1)
+                        tangent_2_begin = curve2.tangent(t_min_2)
+                        second_1_end = curve1.second_derivative(t_max_1)
+                        second_2_begin = curve2.second_derivative(t_min_2)
+                        third_1_end = curve1.third_derivative_array(np.array([t_max_1]))[0]
+                        third_2_begin = curve2.third_derivative_array(np.array([t_min_2]))[0]
+
+                        new_curve = SvBezierCurve.blend_third_derivatives(
+                                        curve1_end, tangent_1_end, second_1_end, third_1_end,
+                                        curve2_begin, tangent_2_begin, second_2_begin, third_2_begin)
+                        controls = [p.tolist() for p in new_curve.points]
+                    else:
+                        raise Exception("Unsupported smooth level")
+
+                    # There is two templates of result:
+                    # 1. curve1 new_curve1 curve2 new_curve2 curve3 [new_curve3 curve4]/cyclic->curve1
+                    # 2. curve1 cyclic->curve1
+                    # 
+                    #  I : cyclic==False and output_src==False then:
+                    #    1. new_curve1 new_curve2
+                    #    2. empty
+                    # II : cyclic==False and output_src==True then:
+                    #    1. curve1 new_curve1 curve2 new_curve2 curve3
+                    #    2. curve1
+                    # III: cyclic==True and output_src==True then:
+                    #    1. curve1 new_curve1 curve2 new_curve2 curve3 cyclic
+                    #    2. curve1 cyclic->curve1
+                    # IV : cyclic==True and output_src==False then:
+                    #    1. new_curve1 new_curve2 cyclic
+                    #    2. cyclic
+
+                    if self.cyclic==True:
+                        # if self.cyclic==True then append a curve1 and a new curve
+                        if self.output_src:
+                            new_curves.append(curve1)
+                        new_curves.append(new_curve)
+                    else:
+                        # if self.cyclic==False then append curve1 on first for iteration then
+                        # append new_curve and curve2 on next iterations
+                        if not new_curves and self.output_src:
+                            new_curves.append(curve1)
+                        new_curves.append(new_curve)
+                        if curve1!=curve2 and self.output_src:
+                            new_curves.append(curve2)
+                    
+                    new_controls.append(controls)
+
+                pass # for params
+
+            # One cannot concat of curves if no output_src (gaps)
+            if self.output_src and self.concat:
+                new_curves = [concatenate_curves(new_curves)]
+
+            # With some params no new_curves (ex.: One curve with uncheck Cyclic)
+            if new_curves:
+                if self.join:
+                    curves_out.extend(new_curves)
+                    controls_out.extend(new_controls)
+                else:
+                    curves_out.append(new_curves)
+                    controls_out.append(new_controls)
 
         self.outputs['Curve'].sv_set(curves_out)
         self.outputs['ControlPoints'].sv_set(controls_out)
