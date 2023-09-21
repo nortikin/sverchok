@@ -116,7 +116,15 @@ class SvKinkyCurveNode(SverchCustomTreeNode, bpy.types.Node):
                         else:
                             segments = [first_segment]
 
-                new_curves = [SvSplineCurve.from_points(segment, metric=self.metric) for segment in segments]
+                if len(segments)==1:
+                    # if len(segments)==1 then result curve is monosegment and smooth and is_cyclic has to be as is params 
+                    new_curves = [SvSplineCurve.from_points(segment, metric=self.metric, is_cyclic=self.is_cyclic ) for segment in segments]
+                elif len(segments)>1:
+                    # if len(segments)>1 then result curve is multisegment and not smooth and is_cyclic has to be False
+                    new_curves = [SvSplineCurve.from_points(segment, metric=self.metric, is_cyclic=False)           for segment in segments]
+                else:
+                    raise Exception("Count of segments has to be not 0")
+
                 if self.make_nurbs:
                     if self.concat:
                         new_curves = [curve.to_nurbs().elevate_degree(target=3) for curve in new_curves]
