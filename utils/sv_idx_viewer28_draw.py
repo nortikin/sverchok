@@ -273,11 +273,12 @@ def draw_indices_2D_wbg(context, args):
             add_vert_list(pts)
             add_vcol((col,) * 6)
 
-        # draw background
-        shader_name = f'{"2D_" if bpy.app.version < (3, 4) else ""}SMOOTH_COLOR'
-        shader = gpu.shader.from_builtin(shader_name)
-        batch = batch_for_shader(shader, 'TRIS', {"pos": full_bg_Verts, "color": full_bg_colors})
-        batch.draw(shader)
+        if draw_bg:
+            # draw background
+            shader_name = f'{"2D_" if bpy.app.version < (3, 4) else ""}SMOOTH_COLOR'
+            shader = gpu.shader.from_builtin(shader_name)
+            batch = batch_for_shader(shader, 'TRIS', {"pos": full_bg_Verts, "color": full_bg_colors})
+            batch.draw(shader)
 
         # draw text 
         for counter, (index_str, pos_x, pos_y, txt_width, txt_height, type_draw, pts) in final_draw_data.items():
@@ -313,24 +314,24 @@ def draw_indices_2D_wbg(context, args):
 
         # blf.color(font_id, *vert_idx_color)
         if geom.vert_data and geom.text_data:
-            for text_item, (idx, location) in zip(geom.text_data, geom.vert_data):
-                gather_index(text_item, location, 'verts')
+            for (idx, location, obj_index, elem_index) in geom.vert_data:
+                gather_index(geom.text_data[obj_index][elem_index], location, 'verts')
         else:
             for vidx in geom.vert_data:
                 gather_index(vidx[0], vidx[1], 'verts')
     
         # blf.color(font_id, *edge_idx_color)
         if geom.text_data:
-            for text_item, eidx in zip(geom.text_data, geom.edge_data):
-                gather_index(text_item, eidx[1], 'edges')
+            for i, (idx, location, obj_index, edge_indices, edge_index) in enumerate(geom.edge_data):
+                gather_index(geom.text_data[obj_index][edge_index], location, 'edges')
         else:
-            for eidx in geom.edge_data:
-                gather_index(eidx[0], eidx[1], 'edges')
+            for idx, location, obj_index, edge_indices, edge_index in geom.edge_data:
+                gather_index(idx, location, 'edges')
 
         # blf.color(font_id, *face_idx_color)
         if geom.text_data:
-            for text_item, fidx in zip(geom.text_data, geom.face_data):
-                gather_index(text_item, fidx[1], 'faces')
+            for (idx, location, obj_index, elem_index) in geom.face_data:
+                gather_index(geom.text_data[obj_index][elem_index], location, 'faces')
         else:
             for fidx in geom.face_data:
                 gather_index(fidx[0], fidx[1], 'faces')
@@ -354,6 +355,7 @@ def draw_indices_2D_wbg(context, args):
 
             cache_vert_indices = set()
             cache_edge_indices = set()
+            cache_face_indices = set()
 
             # blf.color(font_id, *face_idx_color)
             for idx, polygon in enumerate(polygons):
@@ -380,8 +382,7 @@ def draw_indices_2D_wbg(context, args):
                 if hit:
                     if hit[2] == idx:
                         if display_face_index:
-                            text = geom.text_data[idx] if geom.text_data else idx
-                            gather_index(text, world_coordinate, 'faces')
+                            cache_face_indices.add(idx)
                         
                         if display_vert_index:
                             for j in polygon:
@@ -393,20 +394,38 @@ def draw_indices_2D_wbg(context, args):
                                 cache_edge_indices.add(tuple(sorted([polygon[j], polygon[j+1]])))
                             cache_edge_indices.add(tuple(sorted([polygon[-1], polygon[0]])))
 
-            # blf.color(font_id, *vert_idx_color)
-            for idx in cache_vert_indices:
-                text = geom.text_data[idx] if geom.text_data else idx
-                gather_index(text, vertices[idx], 'verts')
+            # vertices
+            if geom.vert_data and geom.text_data:
+                for idx, location, obj_elem_index, elem_index in geom.vert_data:
+                    if obj_elem_index==obj_index and elem_index in cache_vert_indices:
+                        gather_index(geom.text_data[obj_index][elem_index], location, 'verts')
+            else:
+                for idx, location, obj_elem_index, elem_index in geom.vert_data:
+                    if obj_elem_index==obj_index and elem_index in cache_vert_indices:
+                        gather_index(idx, location, 'verts')
 
-            # blf.color(font_id, *edge_idx_color)
-            for idx, edge in enumerate(edges):
-                sorted_edge = tuple(sorted(edge))
-                if sorted_edge in cache_edge_indices:
-                    idx1, idx2 = sorted_edge
-                    loc = vertices[idx1].lerp(vertices[idx2], 0.5)
-                    text = geom.text_data[idx] if geom.text_data else idx
-                    gather_index(text, loc, 'edges')
-                    cache_edge_indices.remove(sorted_edge)
+            # edges
+            if geom.text_data:
+                edge_index = 0
+                for i, (idx, location, obj_elem_index, edge_indices, _) in enumerate(geom.edge_data):
+                    if obj_elem_index==obj_index:
+                        if edge_indices in cache_edge_indices:
+                            gather_index(geom.text_data[obj_index][edge_index], location, 'edges')
+                        edge_index+=1
+            else:
+                for idx, location, obj_elem_index, edge_indices, edge_index in geom.edge_data:
+                    if obj_elem_index==obj_index and edge_indices in cache_edge_indices:
+                        gather_index(idx, location, 'edges')
+
+            # faces
+            if geom.text_data:
+                for (idx, location, obj_elem_index, elem_index) in geom.face_data:
+                    if obj_elem_index==obj_index and elem_index in cache_face_indices:
+                        gather_index(geom.text_data[obj_index][elem_index], location, 'faces')
+            else:
+                for idx, location, obj_elem_index, elem_index in geom.face_data:
+                    if obj_elem_index==obj_index and elem_index in cache_face_indices:
+                        gather_index(idx, location, 'faces')
 
         draw_all_text_at_once(final_draw_data)
 
