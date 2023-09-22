@@ -313,12 +313,13 @@ def draw_indices_2D_wbg(context, args):
     if draw_bface:
 
         # blf.color(font_id, *vert_idx_color)
-        if geom.vert_data and geom.text_data:
-            for (idx, location, obj_index, elem_index) in geom.vert_data:
-                gather_index(geom.text_data[obj_index][elem_index], location, 'verts')
-        else:
-            for vidx in geom.vert_data:
-                gather_index(vidx[0], vidx[1], 'verts')
+        if display_vert_index:
+            if geom.vert_data and geom.text_data:
+                for (idx, location, obj_index, elem_index) in geom.vert_data:
+                    gather_index(geom.text_data[obj_index][elem_index], location, 'verts')
+            else:
+                for vidx in geom.vert_data:
+                    gather_index(vidx[0], vidx[1], 'verts')
     
         # blf.color(font_id, *edge_idx_color)
         if geom.text_data:
@@ -395,14 +396,15 @@ def draw_indices_2D_wbg(context, args):
                             cache_edge_indices.add(tuple(sorted([polygon[-1], polygon[0]])))
 
             # vertices
-            if geom.vert_data and geom.text_data:
-                for idx, location, obj_elem_index, elem_index in geom.vert_data:
-                    if obj_elem_index==obj_index and elem_index in cache_vert_indices:
-                        gather_index(geom.text_data[obj_index][elem_index], location, 'verts')
-            else:
-                for idx, location, obj_elem_index, elem_index in geom.vert_data:
-                    if obj_elem_index==obj_index and elem_index in cache_vert_indices:
-                        gather_index(idx, location, 'verts')
+            if display_vert_index:
+                if geom.vert_data and geom.text_data:
+                    for idx, location, obj_elem_index, elem_index in geom.vert_data:
+                        if obj_elem_index==obj_index and elem_index in cache_vert_indices:
+                            gather_index(geom.text_data[obj_index][elem_index], location, 'verts')
+                else:
+                    for idx, location, obj_elem_index, elem_index in geom.vert_data:
+                        if obj_elem_index==obj_index and elem_index in cache_vert_indices:
+                            gather_index(idx, location, 'verts')
 
             # edges
             if geom.text_data:
