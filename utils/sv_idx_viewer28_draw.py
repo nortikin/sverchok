@@ -310,7 +310,7 @@ def draw_indices_2D_wbg(context, args):
 
     # THIS SECTION IS ONLY EXECUTED IF BOTH FORWARD AND BACKFACING ARE DRAWN
 
-    if draw_bface:
+    if draw_bface or not draw_bface and len(geom.faces)==0:
 
         # blf.color(font_id, *vert_idx_color)
         if display_vert_index:
