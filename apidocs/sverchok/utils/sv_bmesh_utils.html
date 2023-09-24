@@ -181,8 +181,19 @@ def add_mesh_to_bmesh(bm, verts, edges=None, faces=None, sv_index_name=None, upd
     new_edge = bm.edges.new
     new_face = bm.faces.new
     bm_verts = [new_vert(co) for co in verts]
-    [new_edge((bm_verts[i1], bm_verts[i2])) for i1, i2 in edges or []]
-    [new_face([bm_verts[i] for i in face]) for face in faces or []]
+
+    #[new_edge((bm_verts[i1], bm_verts[i2])) for i1, i2 in edges or []] # не надо так делать
+    if edges is not None:
+        for i1, i2 in edges:
+            new_edge((bm_verts[i1], bm_verts[i2]))
+    else:
+        new_edges = []
+    #[new_face([bm_verts[i] for i in face]) for face in faces or []] # не надо так делать
+    if faces is not None:
+        for face in faces:
+            new_face([bm_verts[i] for i in face])
+    else:
+        new_face = []
 
     if update_normals:
         bm.normal_update()
@@ -947,8 +958,19 @@ def recalc_normals(verts, edges, faces, loop=False):
     new_edge = bm.edges.new
     new_face = bm.faces.new
     bm_verts = [new_vert(co) for co in verts]
-    [new_edge((bm_verts[i1], bm_verts[i2])) for i1, i2 in edges or []]
-    [new_face([bm_verts[i] for i in face]) for face in faces or []]
+
+    #[new_edge((bm_verts[i1], bm_verts[i2])) for i1, i2 in edges or []] # не надо так делать
+    if edges is not None:
+        for i1, i2 in edges:
+            new_edge((bm_verts[i1], bm_verts[i2]))
+    else:
+        new_edges = []
+    #[new_face([bm_verts[i] for i in face]) for face in faces or []] # не надо так делать
+    if faces is not None:
+        for face in faces:
+            new_face([bm_verts[i] for i in face])
+    else:
+        new_face = []
 
     if update_normals:
         bm.normal_update()
