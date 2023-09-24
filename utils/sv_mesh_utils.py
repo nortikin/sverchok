@@ -65,7 +65,7 @@ def polygons_to_edges(obj, unique_edges=False):
 
 
 def pols_to_edges_irregular_mesh(pols, unique_edges):
-    np_pols = np.array(pols)
+    np_pols = np.array(pols,dtype=object)
     np_len = np.vectorize(len)
     lens = np_len(np_pols)
     pol_types = np.unique(lens)

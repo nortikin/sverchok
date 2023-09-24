@@ -289,7 +289,7 @@ def np_process_polygons(verts, faces, func=None, dims=3, output_numpy=False):
     if isinstance(faces, np.ndarray):
         np_faces = faces
     else:
-        np_faces = np.array(faces)
+        np_faces = np.array(faces,dtype=object)
 
     if np_faces.dtype == object:
         np_len = np.vectorize(len)
