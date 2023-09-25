@@ -60,7 +60,7 @@ def inset_special_np(vertices, faces, inset_rates, distances, ignores, make_inne
         use_custom_normals = False
 
     if offset_mode == 'CENTER':
-        zero_inset = np_inset_rate == 0
+        zero_inset = np.logical_and( np_inset_rate == 0, np_faces_mask==True)
         if zero_mode == 'SKIP':
             np_faces_mask[zero_inset] = False
             invert_face_mask[zero_inset] = True

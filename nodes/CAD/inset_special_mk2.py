@@ -43,8 +43,8 @@ class SvInsetSpecialMk2(
     sv_icon = 'SV_INSET'
 
     implentation_items = [
-        ('mathutils', 'Mathutils', 'Slower (Legacy. Face order may differ with new implementation)', 0),
-        ('numpy', 'Numpy', 'Faster', 1)]
+        ('mathutils', 'Mathutils (Legacy)', 'Slower (Legacy. Face order may differ with new implementation)', 0),
+        ('numpy', 'Numpy', 'Faster (Face order may differ of Mathutils mode implementation)', 1)]
     implementation: bpy.props.EnumProperty(
         name='Implementation',
         items=implentation_items,
