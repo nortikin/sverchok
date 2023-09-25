@@ -25,6 +25,15 @@ from sverchok.data_structure import zip_long_repeat
 from sverchok.utils.nodes_mixins.sockets_config import ModifierLiteNode
 
 def separate_loose_mesh(verts_in, poly_edge_in):
+        ''' separate a mesh by loose parts.
+        input:
+          1. list of verts
+          2. list of edges/polygons
+        output: list of
+          1. separated list of verts
+          2. separated list of edges/polygons with new indices of separated elements
+          3. separated list of edges/polygons (like 2) with old indices
+        '''
         verts_out = []
         poly_edge_out = []
         poly_edge_old_indexes_out = []  # faces with old indices 

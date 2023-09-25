@@ -219,6 +219,7 @@ class SvExtrudeRegionNode(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
             if face_data:
                 face_data_matched = repeat_last_for_length(face_data, len(faces))
 
+            # see: https://github.com/nortikin/sverchok/pull/4999#issuecomment-1734256435
             need_fake_face = True
             loops = [[faces]]
             if need_fake_face:
@@ -307,6 +308,7 @@ class SvExtrudeRegionNode(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
 
                 extrude_geom = new_geom
 
+            # see: https://github.com/nortikin/sverchok/pull/4999#issuecomment-1734256435
             if need_fake_face:
                 for loop in loops:
                     bm.verts.ensure_lookup_table()
