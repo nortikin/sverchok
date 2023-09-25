@@ -23,6 +23,7 @@ import bpy
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import zip_long_repeat
 from sverchok.utils.nodes_mixins.sockets_config import ModifierLiteNode
+from sverchok.utils.mesh.separate_loose_mesh import separate_loose_mesh
 
 
 class SvSeparateMeshNode(ModifierLiteNode, SverchCustomTreeNode, bpy.types.Node):
@@ -47,49 +48,10 @@ class SvSeparateMeshNode(ModifierLiteNode, SverchCustomTreeNode, bpy.types.Node)
         verts_out = []
         poly_edge_out = []
         for ve, pe in zip_long_repeat(verts, poly):
-            # build links
-            node_links = {}
-            for edge_face in pe:
-                for i in edge_face:
-                    if i not in node_links:
-                        node_links[i] = set()
-                    node_links[i].update(edge_face)
-
-            nodes = set(node_links.keys())
-            n = nodes.pop()
-            node_set_list = [set([n])]
-            node_stack = collections.deque()
-            node_stack_append = node_stack.append
-            node_stack_pop = node_stack.pop
-            node_set = node_set_list[-1]
-            # find separate sets
-            while nodes:
-                for node in node_links[n]:
-                    if node not in node_set:
-                        node_stack_append(node)
-                if not node_stack:  # new mesh part
-                    n = nodes.pop()
-                    node_set_list.append(set([n]))
-                    node_set = node_set_list[-1]
-                else:
-                    while node_stack and n in node_set:
-                        n = node_stack_pop()
-                    nodes.discard(n)
-                    node_set.add(n)
-            # create new meshes from sets, new_pe is the slow line.
-            if len(node_set_list) > 1:
-                for node_set in node_set_list:
-                    mesh_index = sorted(node_set)
-                    vert_dict = {j: i for i, j in enumerate(mesh_index)}
-                    new_vert = [ve[i] for i in mesh_index]
-                    new_pe = [[vert_dict[n] for n in fe]
-                              for fe in pe
-                              if fe[0] in node_set]
-                    verts_out.append(new_vert)
-                    poly_edge_out.append(new_pe)
-            elif node_set_list:  # no reprocessing needed
-                verts_out.append(ve)
-                poly_edge_out.append(pe)
+            vo, po, _ = separate_loose_mesh(ve, pe)
+            verts_out.extend(vo)
+            poly_edge_out.extend(po)
+            
 
         self.outputs['Vertices'].sv_set(verts_out)
         self.outputs['Poly Egde'].sv_set(poly_edge_out)

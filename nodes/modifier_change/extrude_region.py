@@ -27,6 +27,8 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat, repeat_last_for_length
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
+from sverchok.utils.mesh.separate_loose_mesh import separate_loose_mesh
+import numpy as np
 
 is_290 = bpy.app.version >= (2, 90, 0)
 
@@ -217,6 +219,17 @@ class SvExtrudeRegionNode(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
             if face_data:
                 face_data_matched = repeat_last_for_length(face_data, len(faces))
 
+            # see: https://github.com/nortikin/sverchok/pull/4999#issuecomment-1734256435
+            need_fake_face = True
+            loops = [[faces]]
+            if need_fake_face:
+                _, _, loops = separate_loose_mesh(vertices, faces)
+
+                for loop in loops:
+                    vertices.append( vertices[loop[0][0]] )
+                    faces.append( [loop[0][0], loop[0][1], len(vertices)-1] ) # face area is zero but this is not important. It will not extrude.
+                    mask_matched.append(False)
+
             bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True, markup_face_data=True)
             mask_layer = bm.faces.layers.int.new('mask')
             bm.faces.ensure_lookup_table()
@@ -294,6 +307,21 @@ class SvExtrudeRegionNode(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
                 extruded_faces_last = [[v.index for v in face.verts] for face in extruded_faces]
 
                 extrude_geom = new_geom
+
+            # see: https://github.com/nortikin/sverchok/pull/4999#issuecomment-1734256435
+            if need_fake_face:
+                for loop in loops:
+                    bm.verts.ensure_lookup_table()
+                    bm.verts.remove(bm.verts[len(vertices)-1])
+                    vertices.pop()
+                    faces.pop()
+                    mask_matched.pop()
+
+                bm.verts.index_update()
+                bm.edges.index_update()
+                bm.faces.index_update()
+                bm.verts.ensure_lookup_table()
+                bm.faces.ensure_lookup_table()
 
             if face_data:
                 new_vertices, new_edges, new_faces, new_face_data = pydata_from_bmesh(bm, face_data_matched)
