@@ -54,6 +54,10 @@ if FreeCAD is not None:
     STANDARD_TYPES = STANDARD_TYPES + (Part.Shape,)
 
 
+InterfaceSocket = bpy.types.NodeTreeInterfaceSocket if bpy.app.version >= (4, 0) \
+             else bpy.types.NodeSocketInterface
+
+
 def process_from_socket(self, context):
     """Update function of exposed properties in Sockets"""
     if self.node is not None:  # https://developer.blender.org/T88587
@@ -745,7 +749,8 @@ class SvVerticesSocket(SocketDomain, NodeSocket, SvSocketCommon):
             return False
         return self.name not in {'Vertices', 'Verts'}
 
-class SvVerticesSocketInterface(bpy.types.NodeSocketInterface):
+
+class SvVerticesSocketInterface(InterfaceSocket):
     """
     This socket will be created in tree.inputs to tree.outputs collection
     when normal socket will be connected to input or output group nodes
@@ -1043,7 +1048,7 @@ class SvStringsSocket(SocketDomain, NodeSocket, SvSocketCommon):
             layout.label(text=text)
 
 
-class SvStringsSocketInterface(bpy.types.NodeSocketInterface):
+class SvStringsSocketInterface(InterfaceSocket):
     """
     This socket will be created in tree.inputs to tree.outputs collection
     when normal socket will be connected to input or output group nodes
@@ -1583,7 +1588,7 @@ def socket_interface_classes():
 
         socket_interface_attributes['draw'] = draw
         yield type(
-            f'{socket_cls.__name__}Interface', (bpy.types.NodeSocketInterface,), socket_interface_attributes)
+            f'{socket_cls.__name__}Interface', (InterfaceSocket,), socket_interface_attributes)
 
 
 register, unregister = bpy.utils.register_classes_factory(classes + list(socket_interface_classes()))

@@ -62,7 +62,6 @@ def get_submenu_names():
 class SvTextSubMenu(bpy.types.Menu):
     bl_idname = f'{menu_prefix}_menu'
     bl_label = "Sv NodeScripts"
-    bl_options = {'REGISTER', 'UNDO'}
 
     def draw(self, context):
         for menu_bl_label, menu_bl_idname in get_submenu_names():
