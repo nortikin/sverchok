@@ -59,7 +59,7 @@
       "width": 140.0
     },
     "Bend Along Surface Field": {
-      "bl_idname": "SvExBendAlongSurfaceFieldNode",
+      "bl_idname": "SvExBendAlongSurfaceFieldNodeMK2",
       "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
