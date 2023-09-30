@@ -18,7 +18,7 @@ class SvExBendAlongSurfaceFieldNode(SverchCustomTreeNode, bpy.types.Node):
 
     @property
     def replacement_nodes(self):
-        return [('SvExBendAlongSurfaceFieldNodeMK2', None, None)]
+        return [('SvBendAlongSurfaceFieldMk2Node', None, None)]
 
     axes = [
             ("X", "X", "X axis", 1),

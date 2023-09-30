@@ -343,7 +343,7 @@
         - SvExMergeScalarFieldsNode
         - ---
         - SvExBendAlongCurveFieldNode
-        - SvExBendAlongSurfaceFieldNodeMK2
+        - SvBendAlongSurfaceFieldMk2Node
     - M SOLIDS:
         - icon_name: MESH_CUBE
         - extra_menu: AdvancedObjectsPartialMenu
