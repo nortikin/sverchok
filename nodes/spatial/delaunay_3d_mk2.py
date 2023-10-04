@@ -17,7 +17,6 @@ from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_
 from sverchok.utils.geom import PlaneEquation
 from sverchok.dependencies import scipy
 from mathutils import Vector
-import random
 
 if scipy is not None:
     from scipy.spatial import Delaunay
@@ -64,6 +63,11 @@ def is_length_0(verts, idxs, threshold):
 
 def get_sites_delaunay_params(np_sites, n_orig_sites, threshold=0):
     '''Calculate Delaunay with sites. '''
+    # For more info see: https://github.com/nortikin/sverchok/pull/4952
+    # http://www.qhull.org/html/qdelaun.htm
+    # http://www.qhull.org/html/qh-optc.htm
+    # https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.Delaunay.html
+
     delaunay = Delaunay(np_sites)
     dimension_size_1 = -1 # simplex size on start 
     dimension_size_2 = -1 # simplex size of finish
@@ -142,6 +146,7 @@ def get_delaunay_simplices(vertices, threshold):
             #print(f"Found solution for dim={dim2-1} with {i} attempt")
             break
         else:
+            # Get bbox size. TODO: think about oriented BBOX
             oX_size = np.max(np.array(vertices, dtype=np.float16)[:,0]) - np.min(np.array(vertices, dtype=np.float16)[:,0])
             oY_size = np.max(np.array(vertices, dtype=np.float16)[:,1]) - np.min(np.array(vertices, dtype=np.float16)[:,1])
             oZ_size = np.max(np.array(vertices, dtype=np.float16)[:,2]) - np.min(np.array(vertices, dtype=np.float16)[:,2])
@@ -257,32 +262,13 @@ class SvDelaunay3dMk2Node(SverchCustomTreeNode, bpy.types.Node):
             edges_item = []
             faces_item = []
             for vertices, volume_threshold, edge_threshold in zip_long_repeat(*params):
-
-                # https://github.com/nortikin/sverchok/pull/4952
-                # http://www.qhull.org/html/qdelaun.htm
-                # http://www.qhull.org/html/qh-optc.htm
-                # https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.Delaunay.html
-                # Convert sites to 4D
-                #np_sites = np.array(vertices, dtype=np.float32)
-
-                # Think about oriented BBox:
-                # oX_size = np.max(np.array(vertices, dtype=np.float16)[:,0]) - np.min(np.array(vertices, dtype=np.float16)[:,0])
-                # oY_size = np.max(np.array(vertices, dtype=np.float16)[:,1]) - np.min(np.array(vertices, dtype=np.float16)[:,1])
-                # oZ_size = np.max(np.array(vertices, dtype=np.float16)[:,2]) - np.min(np.array(vertices, dtype=np.float16)[:,2])
-                # axis = np.argsort([oX_size, oY_size, oZ_size])
-                # plane_axis_X = axis[0]
-                # plane_axis_Y = axis[1]
-                # plane_axis_Z = axis[2]
-                # np_sites = np.array([(v[plane_axis_X], v[plane_axis_Y], v[plane_axis_Z], 0) for v in vertices], dtype=np.float32)
-
                 simplices = get_delaunay_simplices(vertices, self.volume_threshold)
-
-                #tri = Delaunay(np.array(vertices))
-                #simplices = tri.simplices
                 if self.join:
+
                     verts_new = vertices
                     edges_new = set()
                     faces_new = set()
+
                     for simplex_idx, simplex in enumerate(simplices):
                         # unknown simplex. skip. Incredible. get_sites_delaunay_params work with size==5 so need test.
                         if simplex.size>4:
@@ -358,13 +344,9 @@ class SvDelaunay3dMk2Node(SverchCustomTreeNode, bpy.types.Node):
                             faces_new.append([])
                             pass
 
-                        #edges_simplex = self.make_edges([0, 1, 2, 3])
-                        #faces_simplex = self.make_faces([0, 1, 2, 3])
-
-                        # if some geometry get visible then geometry need verts:
+                        # if some geometry is visible then geometry need verts:
                         verts_simplex = self.get_verts(vertices, simplex)
-                        verts_new.append(verts_simplex)
-                        
+                        verts_new.append(verts_simplex)                        
 
                     verts_item.extend(verts_new)
                     edges_item.extend(edges_new)
