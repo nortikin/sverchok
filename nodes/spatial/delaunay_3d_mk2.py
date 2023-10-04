@@ -14,7 +14,7 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level
-from sverchok.utils.geom import PlaneEquation
+from sverchok.utils.geom import PlaneEquation, bounding_box_aligned
 from sverchok.dependencies import scipy
 from mathutils import Vector
 
@@ -26,37 +26,53 @@ def is_volume_0(verts, idxs, threshold):
     '''Is volume size of 4 verts less threshold (True/False) '''
     if threshold == 0:
         return False
-    a, b, c, d = [verts[i] for i in idxs]
-    a, b, c, d = np.array(a), np.array(b), np.array(c), np.array(d)
-    v1 = b - a
-    v2 = c - a
-    v3 = d - a
-    v1 = v1 / np.linalg.norm(v1)
-    v2 = v2 / np.linalg.norm(v2)
-    v3 = v3 / np.linalg.norm(v3)
-    volume = np.cross(v1, v2).dot(v3) / 6
-    return abs(volume) < threshold
+    # a, b, c, d = [verts[i] for i in idxs]
+    # a, b, c, d = np.array(a), np.array(b), np.array(c), np.array(d)
+    # v1 = b - a
+    # v2 = c - a
+    # v3 = d - a
+    # v1 = v1 / np.linalg.norm(v1)
+    # v2 = v2 / np.linalg.norm(v2)
+    # v3 = v3 / np.linalg.norm(v3)
+    # volume = np.cross(v1, v2).dot(v3) / 6
+
+    vects = verts[ list(idxs) ] # convert set to list #np.array([verts[i] for i in idxs], dtype=np.float64)
+    vects = vects-vects[0]
+    vects_norm = vects[1:4]/np.linalg.norm(vects[1:4], axis=1, keepdims=True)
+    v1_ = vects_norm[0]
+    v2_ = vects_norm[1]
+    v3_ = vects_norm[2]
+    volume_ = np.cross(v1_, v2_).dot(v3_) / 6
+    return abs(volume_) < threshold
 
 
 def is_area_0(verts, idxs, threshold):
     '''Is area size of 3 verts less threshold (True/False) '''
     if threshold == 0:
         return False
-    a, b, c = [verts[i] for i in idxs]
-    a, b, c = np.array(a), np.array(b), np.array(c)
-    v1 = b - a
-    v2 = c - a
-    v1 = v1 / np.linalg.norm(v1)
-    v2 = v2 / np.linalg.norm(v2)
-    area = np.linalg.norm(np.cross(v1, v2)) / 2
-    return abs(area) < threshold
+    # a, b, c = [verts[i] for i in idxs]
+    # a, b, c = np.array(a), np.array(b), np.array(c)
+    # v1 = b - a
+    # v2 = c - a
+    # v1 = v1 / np.linalg.norm(v1)
+    # v2 = v2 / np.linalg.norm(v2)
+    # area = np.linalg.norm(np.cross(v1, v2)) / 2
+
+    vects = verts[ list(idxs) ] # convert set to list #np.array([verts[i] for i in idxs], dtype=np.float64)
+    vects = vects-vects[0]
+    vects_norm = vects[1:3]/np.linalg.norm(vects[1:3], axis=1, keepdims=True)
+    v1_ = vects_norm[0]
+    v2_ = vects_norm[1]
+    area_ = np.linalg.norm(np.cross(v1_, v2_)) / 2
+
+    return abs(area_) < threshold
 
 def is_length_0(verts, idxs, threshold):
     '''Is length size of 2 verts less threshold (True/False) '''
     if threshold == 0:
         return False
     a, b = [verts[i] for i in idxs]
-    a, b = np.array(a), np.array(b)
+    #a, b = np.array(a), np.array(b) # verts is numpy
     v1 = b - a
     len = np.linalg.norm(v1)
     return abs(len) < threshold
@@ -75,6 +91,10 @@ def get_sites_delaunay_params(np_sites, n_orig_sites, threshold=0):
     dict_source_dsimplex = dict()
     for i, simplex in enumerate(delaunay.simplices):
         dsimplex = tuple(simplex[simplex<n_orig_sites])
+        if len(dsimplex)>4:
+            # TODO: some time rise. Need attention.
+            #print(f"Very strange situation. size of simplex({simplex})=={simplex_size}. Skipped. Need attention")
+            continue
         sort_dsimplex = tuple(sorted(dsimplex))
         dict_source_dsimplex[sort_dsimplex] = dsimplex
         simplices.append( sort_dsimplex )
@@ -84,47 +104,56 @@ def get_sites_delaunay_params(np_sites, n_orig_sites, threshold=0):
     dimension_size_1 = len(simplices[0])
 
     if threshold>0:
-        # test simplex size for threshold. Remove simplexes that do not allowed in their dimensions. (plane is disallowed in a volume, line in disallowed in a plane).
-        # TODO: need more accuracy solution
+        # test simplex size for threshold. Remove simplexes that do not allowed in their dimensions.
+        # (plane are disallowed in volumes, line are disallowed in planes).
         arr = []
-        vertices = np.array([delaunay.points[i,:3] for i,e in enumerate(delaunay.points)]) # point come with 4d vector coordinates
-        for sim in simplices:
-            simplex_size = len(sim)
-            # simplex is line. If line has size(length)==0 then do not use this simplex
-            if simplex_size==2 and is_length_0(vertices, sim, threshold):
-                continue
-            # simplex is plane. If plane has size(area)==0 then do not use this simplex
-            if simplex_size==3 and is_area_0(vertices, sim, threshold):
-                continue
-            # simplex is volumetric. If volume has size(volume)==0 then do not use this simplex
-            if simplex_size==4 and is_volume_0(vertices, sim, threshold):
-                continue
-            if simplex_size>4:
-                print(f"Very strange situation. size of simplex({simplex})=={simplex_size}. Skipped. Need attension")
-                continue
-            arr.append(sim)
+        vertices = np.array([delaunay.points[i,:3] for i,e in enumerate(delaunay.points)]) # point come with 4d vector coordinates so need extract only first 3 [XYZ]
+        
+        if len(arr)==0 and len(simplices[0])>=4: # if no elems in arr and first elem in simplices array is more-eq than volume
+            for sim in simplices:
+                simplex_size = len(sim)
+                # simplex is a volumetric. If volume has size(volume)==0 then do not use this simplex
+                if simplex_size==4:
+                    if is_volume_0(vertices, sim, threshold):
+                        continue
+                    arr.append(sim)
+                elif simplex_size<4:
+                    # skip to lower dimenstion. simplices ordered by lower to the end.
+                    break
+
+        if len(arr)==0 and len(simplices[0])>=3: # if no elems in arr and first elem in simplices array is more-eq than plane
+            for sim in simplices:
+                simplex_size = len(sim)
+                # simplex is a plane. If plane has size(area)==0 then do not use this simplex
+                if simplex_size==3:
+                    if is_area_0(vertices, sim, threshold):
+                        continue
+                    arr.append(sim)
+                elif simplex_size<3:
+                    # skip to lower dimenstion. simplices ordered by lower to the end.
+                    break
+                        
+        if len(arr)==0 and len(simplices[0])>=2: # if no elems in arr and first elem in simplices array is more-eq than line
+            for sim in simplices:
+                simplex_size = len(sim)
+                # simplex is a line. If line has size(length)==0 then do not use this simplex
+                if simplex_size==2:
+                    if is_length_0(vertices, sim, threshold):
+                        continue
+                    arr.append(sim)
+                elif simplex_size<2:
+                    # skip to lower dimenstion. simplices ordered by lower to the end.
+                    break
+
+        # TODO: what todo if len(arr)==0 ?
         pass
     else:
         arr = simplices
 
-    # get length of first elem and select only elems with that len.
-    # this is a filter of allowed dimension of simplices. Top elem is a first elem of allowed dimensions.
-    arr_len = []
-    len_0 = len(arr[0])
-    dimension_size_2 = len_0
-    for sim in arr:
-        if len(sim)==len_0:
-            arr_len.append(sim)
-        else:
-            break
-    list_removed_inner_simplices = arr_len
-
     list_restored_orders = []
-    for key in list_removed_inner_simplices:
+    for key in arr:
         list_restored_orders.append( dict_source_dsimplex[tuple(key)] )
-    #res = np.array(res.tolist(), dtype=np.int32)
-    res = np.array(list_restored_orders, dtype=np.int32)
-    return res, dimension_size_1, dimension_size_2
+    return list_restored_orders, dimension_size_1, dimension_size_2
 
 def get_delaunay_simplices(vertices, threshold):
     '''Get simplices for vertices. Verices can be any shape: volume, planes, edges. This function
@@ -134,7 +163,7 @@ def get_delaunay_simplices(vertices, threshold):
     '''
     np_sites = np.array([(*v, 0.0 ) for v in vertices], dtype=np.float32)
     for i in range(10): # 2 is max, but for insurance
-        # Add 3D tetraedre to the 4D with W=1 (proxy shape). This trick do not mix vertices source shape and proxy shape:
+        # Add 3D tetraedre to the 4D with W=1 (proxy shape). This trick for do not mixing vertices of a source shape and a proxy shape:
         np_sites = np.append(np_sites, [[0.0, 0.0, 0.0, 1.0],
                                         [1.0, 0.0, 0.0, 1.0],
                                         [0.0, 1.0, 0.0, 1.0],
@@ -142,6 +171,7 @@ def get_delaunay_simplices(vertices, threshold):
                                         ], axis=0)
 
         simplices, dim1, dim2 = get_sites_delaunay_params( np_sites, len(vertices), threshold )
+        #bbox = bounding_box_aligned(vertices)
         if dim1==dim2: # 4 - volume, 3 - planes, 2 - edges, 1 - dots
             #print(f"Found solution for dim={dim2-1} with {i} attempt")
             break
@@ -156,15 +186,15 @@ def get_delaunay_simplices(vertices, threshold):
             plane_axis_Y = axis[1]
             plane_axis_Z = axis[2]
             if dim2==3: # plane. (faces and edges)
-                # Find max plane axises of Bounding Box get it to XY plane
+                # Select max plane axises of Bounding Box get it to XY plane
                 # convert vertices to plane oXY. get two first elems. Is is plane max area
                 np_sites = np.array([(v[plane_axis_X], v[plane_axis_Y], 0, 0) for v in vertices], dtype=np.float32)
                 continue
             elif dim2==2: # line (only edges)
-                # Find max side axis of Bounding Box get it to oX plane
+                # Select max side axis of Bounding Box get it to oX plane
                 np_sites = np.array([(v[plane_axis_X], 0, 0, 0) for v in vertices], dtype=np.float32)
                 continue
-            elif dim2==2: # dot. no edges
+            elif dim2==1: # dot. no edges
                 break
             else:
                 # unknown dim2. insurence
@@ -262,6 +292,7 @@ class SvDelaunay3dMk2Node(SverchCustomTreeNode, bpy.types.Node):
             edges_item = []
             faces_item = []
             for vertices, volume_threshold, edge_threshold in zip_long_repeat(*params):
+                vertices = np.array(vertices, dtype=np.float64)
                 simplices = get_delaunay_simplices(vertices, self.volume_threshold)
                 if self.join:
 
@@ -270,38 +301,28 @@ class SvDelaunay3dMk2Node(SverchCustomTreeNode, bpy.types.Node):
                     faces_new = set()
 
                     for simplex_idx, simplex in enumerate(simplices):
+                        simplex_length = len(simplex)
+                        
                         # unknown simplex. skip. Incredible. get_sites_delaunay_params work with size==5 so need test.
-                        if simplex.size>4:
+                        if simplex_length>4:
                             continue
 
                         if self.is_too_long(vertices, simplex, edge_threshold):
                              continue
 
-                        # simplex is line. If line has size(length)==0 then do not use this simplex
-                        if simplex.size==2 and is_length_0(vertices, simplex, volume_threshold):
-                             continue
-                        # simplex is plane. If plane has size(area)==0 then do not use this simplex
-                        if simplex.size==3 and is_area_0(vertices, simplex, volume_threshold):
-                             continue
-                        # simplex is volumetric. If volume has size(volume)==0 then do not use this simplex
-                        if simplex.size==4 and is_volume_0(vertices, simplex, volume_threshold):
-                             continue
+                        # no need test for threshold now. All elements now is more than threshold.
                         
-                        # if simplex.size>=2 (2,3,4) then create edges
-                        if simplex.size>=2:
+                        # if simplex_length>=2 (2,3,4) then create edges
+                        if simplex_length>=2:
                             edges_simplex = self.make_edges(simplex)
                             edges_new.update(edges_simplex)
                             pass
 
-                        # if simplex.size>=3 (3,4) then create faces
-                        if simplex.size>=3:
+                        # if simplex_length>=3 (3,4) then create faces
+                        if simplex_length>=3:
                             faces_simplex = self.make_faces(simplex)
                             faces_new.update(faces_simplex)
                             pass
-
-                        # if some geometry get visible then geometery need verts:
-                        #verts_simplex = self.get_verts(vertices, simplex)
-                        #verts_new.extend(verts_simplex)
 
                     verts_item.append(verts_new)
                     edges_item.append(list(edges_new))
@@ -311,34 +332,28 @@ class SvDelaunay3dMk2Node(SverchCustomTreeNode, bpy.types.Node):
                     edges_new = []
                     faces_new = []
                     for simplex in simplices:
+                        simplex_length = len(simplex)
+
                         # unknown simplex. skip. Incredible. get_sites_delaunay_params work with size==5 so need test.
-                        if simplex.size>4:
+                        if simplex_length>4:
                             continue
 
                         if self.is_too_long(vertices, simplex, edge_threshold):
                              continue
-
-                        # simplex is line. If line has size(length)==0 then do not use this simplex
-                        if simplex.size==2 and is_length_0(vertices, simplex, volume_threshold):
-                             continue
-                        # simplex is plane. If plane has size(area)==0 then do not use this simplex
-                        if simplex.size==3 and is_area_0(vertices, simplex, volume_threshold):
-                             continue
-                        # simplex is volumetric. If volume has size(volume)==0 then do not use this simplex
-                        if simplex.size==4 and is_volume_0(vertices, simplex, volume_threshold):
-                             continue
+                        
+                        # no need test for threshold here. All elements now is more than threshold.
 
                         # if simplex.size>=2 (2,3,4) then create edges
-                        if simplex.size>=2:
-                            edges_simplex = self.make_edges(list(range(simplex.size)))
+                        if simplex_length>=2:
+                            edges_simplex = self.make_edges(list(range(simplex_length)))
                             edges_new.append(edges_simplex)
                         else:
                             edges_new.append([])
                             pass
 
                         # if simplex.size>=3 (3,4) then create faces
-                        if simplex.size>=3:
-                            faces_simplex = self.make_faces(list(range(simplex.size)))
+                        if simplex_length>=3:
+                            faces_simplex = self.make_faces(list(range(simplex_length)))
                             faces_new.append(faces_simplex)
                         else:
                             faces_new.append([])
