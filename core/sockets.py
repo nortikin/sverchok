@@ -545,7 +545,7 @@ class SvSocketCommon(SvSocketProcessing):
 
             elif node.bl_idname == 'SvGroupTreeNode' and hasattr(self, 'draw_group_property'):  # group node
                 if node.node_tree:  # when tree is removed from node sockets still exist
-                    interface_socket = node.node_tree.inputs[self.index]
+                    interface_socket = list(node.node_tree.sockets('INPUT'))[self.index]
                     self.draw_group_property(layout, text, interface_socket)
 
             elif node.bl_idname == 'NodeGroupOutput' and hasattr(self, 'draw_group_property'):  # group out node
@@ -568,9 +568,14 @@ class SvSocketCommon(SvSocketProcessing):
         if self.has_menu(context):
             self.draw_menu_button(context, layout, node, text)
 
-
-    def draw_color(self, context, node):
-        return self.color
+    # https://wiki.blender.org/wiki/Reference/Release_Notes/4.0/Python_API#Node_Groups
+    if bpy.app.version >= (4, 0):
+        @classmethod
+        def draw_color_simple(cls):
+            return cls.color
+    else:
+        def draw_color(self, context, node):
+            return self.color
 
 
 class SvObjectSocket(NodeSocket, SvSocketCommon):
