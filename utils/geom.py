@@ -46,6 +46,7 @@ from sverchok.dependencies import numba  # not strictly needed i think...
 from sverchok.utils.decorators_compilation import njit
 
 def bounding_box_aligned(verts):
+    '''res=[[0,0,0], [0,1,0], [1,1,0], [1,0,0], [0,0,1], [0,1,1], [1,1,1], [1,0,1],]; 1-used axis'''
     # based on "3D Oriented bounding boxes": https://logicatcore.github.io/scratchpad/lidar/sensor-fusion/jupyter/2021/04/20/3D-Oriented-Bounding-Box.html
     data = np.vstack(np.array(verts).transpose())
     means = np.mean(data, axis=1)
@@ -67,7 +68,7 @@ def bounding_box_aligned(verts):
     rrc = np.matmul(evec, rectCoords(xmin, ymin, zmin, xmax, ymax, zmax))
     rrc += means[:, np.newaxis]
     rrc = rrc.transpose()
-    return tuple([rrc])
+    return tuple(rrc)
 
 identity_matrix = Matrix()
 
