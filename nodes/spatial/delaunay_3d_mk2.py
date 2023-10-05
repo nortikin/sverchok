@@ -15,8 +15,9 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level
 from sverchok.utils.geom import PlaneEquation, bounding_box_aligned
+from sverchok.utils.modules.matrix_utils import matrix_apply_np
 from sverchok.dependencies import scipy
-from mathutils import Vector
+from mathutils import Vector, Matrix
 
 if scipy is not None:
     from scipy.spatial import Delaunay
@@ -36,13 +37,22 @@ def is_volume_0(verts, idxs, threshold):
     # v3 = v3 / np.linalg.norm(v3)
     # volume = np.cross(v1, v2).dot(v3) / 6
 
-    vects = verts[ list(idxs) ] # convert set to list #np.array([verts[i] for i in idxs], dtype=np.float64)
-    vects = vects-vects[0]
-    vects_norm = vects[1:4]/np.linalg.norm(vects[1:4], axis=1, keepdims=True)
-    v1_ = vects_norm[0]
-    v2_ = vects_norm[1]
-    v3_ = vects_norm[2]
-    volume_ = np.cross(v1_, v2_).dot(v3_) / 6
+    # vects = verts[ list(idxs) ] # convert set to list #np.array([verts[i] for i in idxs], dtype=np.float64)
+    # vects = vects-vects[0]
+    # vects_norm = vects[1:4]/np.linalg.norm(vects[1:4], axis=1, keepdims=True)
+    # v1_ = vects_norm[0]
+    # v2_ = vects_norm[1]
+    # v3_ = vects_norm[2]
+    # volume_ = np.cross(v1_, v2_).dot(v3_) / 6
+
+    a, b, c, d = [Vector(verts[i]) for i in idxs]
+
+    v1 = b-a
+    v2 = c-a
+    v3 = d-a
+
+    volume_ = abs(v1.cross(v2).dot(v3))/6
+
     return abs(volume_) < threshold
 
 
@@ -58,12 +68,20 @@ def is_area_0(verts, idxs, threshold):
     # v2 = v2 / np.linalg.norm(v2)
     # area = np.linalg.norm(np.cross(v1, v2)) / 2
 
-    vects = verts[ list(idxs) ] # convert set to list #np.array([verts[i] for i in idxs], dtype=np.float64)
-    vects = vects-vects[0]
-    vects_norm = vects[1:3]/np.linalg.norm(vects[1:3], axis=1, keepdims=True)
-    v1_ = vects_norm[0]
-    v2_ = vects_norm[1]
-    area_ = np.linalg.norm(np.cross(v1_, v2_)) / 2
+    # vects = verts[ list(idxs) ] # convert set to list #np.array([verts[i] for i in idxs], dtype=np.float64)
+    # vects = vects-vects[0]
+    # vects_norm = vects[1:3]/np.linalg.norm(vects[1:3], axis=1, keepdims=True)
+    # v1_ = vects_norm[0]
+    # v2_ = vects_norm[1]
+    # area_ = np.linalg.norm(np.cross(v1_, v2_)) / 2
+
+
+    a, b, c = [Vector(verts[i]) for i in idxs]
+
+    v1 = b-a
+    v2 = c-a
+
+    area_ = v1.cross(v2).length/2
 
     return abs(area_) < threshold
 
@@ -71,11 +89,16 @@ def is_length_0(verts, idxs, threshold):
     '''Is length size of 2 verts less threshold (True/False) '''
     if threshold == 0:
         return False
-    a, b = [verts[i] for i in idxs]
-    #a, b = np.array(a), np.array(b) # verts is numpy
-    v1 = b - a
-    len = np.linalg.norm(v1)
-    return abs(len) < threshold
+    # a, b = [verts[i] for i in idxs]
+    # #a, b = np.array(a), np.array(b) # verts is numpy
+    # v1 = b - a
+    # len = np.linalg.norm(v1)
+
+    a, b = [Vector(verts[i]) for i in idxs]
+    v1 = b-a
+    len_ = v1.length
+
+    return abs(len_) < threshold
 
 def get_sites_delaunay_params(np_sites, n_orig_sites, threshold=0):
     '''Calculate Delaunay with sites. '''
@@ -209,14 +232,20 @@ def get_delaunay_simplices(vertices, threshold):
 def get_delaunay_simplices_02(vertices, threshold):
 
     # get shape dimension (dim):
-    bbox = bounding_box_aligned(vertices)
-    oX = bbox[1]-bbox[0]
-    oX_size = abs(np.linalg.norm(oX))
-    oY = bbox[3]-bbox[0]
-    oY_size = abs(np.linalg.norm(oY))
-    oZ = bbox[4]-bbox[0]
-    oZ_size = abs(np.linalg.norm(oZ))
-    axis_sizes = list(reversed(sorted([oX_size, oY_size, oZ_size]))) # axis's sizes aligned from big to low.
+    abbox = bounding_box_aligned(vertices)
+    oX_abb_vec = abbox[1]-abbox[0]
+    oX_abb_size = abs(np.linalg.norm(oX_abb_vec))
+    oY_abb_vec = abbox[3]-abbox[0]
+    oY_abb_size = abs(np.linalg.norm(oY_abb_vec))
+    oZ_abb_vec = abbox[4]-abbox[0]
+    oZ_abb_size = abs(np.linalg.norm(oZ_abb_vec))
+    axis_sizes = list(reversed(sorted([oX_abb_size, oY_abb_size, oZ_abb_size]))) # axis's sizes aligned from big to low.
+    axis_abb_order = list(np.argsort([oX_abb_size, oY_abb_size, oZ_abb_size]))
+    axis_abb_order.reverse()
+    plane_axis_X = axis_abb_order[0].tolist()
+    plane_axis_Y = axis_abb_order[1].tolist()
+    plane_axis_Z = axis_abb_order[2].tolist()
+
     dim = 3 # default dimension as volume
     if axis_sizes[0]<threshold:
         # if first size<threshold then shape is dot:
@@ -229,30 +258,45 @@ def get_delaunay_simplices_02(vertices, threshold):
         dim=2
     
     # get real bbox and calc real max projection for shape:
-    oX_size = np.max(np.array(vertices, dtype=np.float16)[:,0]) - np.min(np.array(vertices, dtype=np.float16)[:,0])
-    oY_size = np.max(np.array(vertices, dtype=np.float16)[:,1]) - np.min(np.array(vertices, dtype=np.float16)[:,1])
-    oZ_size = np.max(np.array(vertices, dtype=np.float16)[:,2]) - np.min(np.array(vertices, dtype=np.float16)[:,2])
-    axis = list(np.argsort([oX_size, oY_size, oZ_size]))
-    axis.reverse()
-    plane_axis_X = axis[0]
-    plane_axis_Y = axis[1]
-    plane_axis_Z = axis[2]
+    oX_bb_size = np.max(np.array(vertices, dtype=np.float16)[:,0]) - np.min(np.array(vertices, dtype=np.float16)[:,0])
+    oY_bb_size = np.max(np.array(vertices, dtype=np.float16)[:,1]) - np.min(np.array(vertices, dtype=np.float16)[:,1])
+    oZ_bb_size = np.max(np.array(vertices, dtype=np.float16)[:,2]) - np.min(np.array(vertices, dtype=np.float16)[:,2])
+    axis_bb_order = list(np.argsort([oX_bb_size, oY_bb_size, oZ_bb_size]))
+    axis_bb_order.reverse()
+    plane_axis_bb_X = axis_bb_order[0].tolist()
+    plane_axis_bb_Y = axis_bb_order[1].tolist()
+    plane_axis_bb_Z = axis_bb_order[2].tolist()
 
     # to minimise approximation error orient max size of bbox to predifined dimensions
     if dim==3: # volume. (faces and edges)
         np_sites = vertices # no projection
     elif dim==2: # plane. (faces and edges)
-        # Select max plane axises of real Bounding Box get it to XY plane
-        # convert vertices to plane oXY. get two first elems. Is is plane max area
-        np_sites = np.array([(v[plane_axis_X], v[plane_axis_Y],) for v in vertices], dtype=np.float32)
+        np_sites = vertices
+        # calc matrix to rotate oXY:
+        align_bbox_axis = [oX_abb_vec, oY_abb_vec, oZ_abb_vec]
+        X = np.array(align_bbox_axis[plane_axis_X], dtype=np.float64)
+        Y = np.array(align_bbox_axis[plane_axis_Y], dtype=np.float64)
+        Z = np.cross(X,Y)
+        Y = np.cross(Z,X)
+        X = X/np.linalg.norm(X)
+        Y = Y/np.linalg.norm(Y)
+        Z = Z/np.linalg.norm(Z)
+
+        m = np.matrix(
+            [[X[0], Y[0], Z[0], 0.0],
+             [X[1], Y[1], Z[1], 0.0],
+             [X[2], Y[2], Z[2], 0.0],
+             [0, 0, 0, 1]] )
+        np_sites = matrix_apply_np(np_sites, np.linalg.inv(m) )
+        np_sites = np.delete(np_sites, 2, 1) #remove virtual Z axis
     elif dim==1: # line (only edges)
         # Select max side axis of real Bounding Box get it to oX plane
-        np_sites = np.array([(v[plane_axis_X], 0) for v in vertices], dtype=np.float32)
-        np_sites = np.append(np_sites, [[0, 1]], axis=0) # to calc delaunay in 2D. Remove this later
+        np_sites = np.array([(v[plane_axis_bb_X], 0.0) for v in vertices], dtype=np.float32)
+        np_sites = np.append(np_sites, [[0.0, 1.0]], axis=0) # to calc delaunay in virtual 2D.
     elif dim==0: # dot. no edges
         np_sites = vertices # no projection
 
-    simplices = [] #np.array([], dtype=np.float64) # no simpleces for dot dimension
+    simplices = [] # no simplices for dot dimension
     if dim>0:
         delaunay = Delaunay(np_sites)
         simplices = delaunay.simplices
@@ -267,6 +311,8 @@ def get_delaunay_simplices_02(vertices, threshold):
 
         simplices = np.unique(simplices, axis=0)
         simplices = simplices.tolist()
+    else:
+        simplices = list([[i] for i in range(len(vertices))])
 
     return simplices
 
@@ -350,11 +396,11 @@ class SvDelaunay3dMk2Node(SverchCustomTreeNode, bpy.types.Node):
         nested_output = input_level > 3
 
         edges_new_2 = [ (0, 1) ]
-        edges_new_3 = [ (0, 1), (1, 2), (2, 0), ]
-        edges_new_4 = [ (0, 1), (0, 2), (0, 3), (1, 2), (1, 3), (2, 3) ]
+        edges_new_3 = self.make_edges([0, 1, 2])     # [ (0, 1), (1, 2), (2, 0), ]
+        edges_new_4 = self.make_edges([0, 1, 2, 3])  # [ (0, 1), (0, 2), (0, 3), (1, 2), (1, 3), (2, 3) ]
         faces_new_2 = []
-        faces_new_3 = [ (0, 1, 2) ]
-        faces_new_4 = [ (0, 1, 2), (0, 1, 3), (0, 2, 3), (1, 2, 3) ]
+        faces_new_3 = self.make_faces([0, 1, 2])     # [ (0, 1, 2) ]
+        faces_new_4 = self.make_faces([0, 1, 2, 3])  # [ (0, 1, 2), (0, 1, 3), (0, 2, 3), (1, 2, 3) ]
         verts_out = []
         edges_out = []
         faces_out = []
@@ -384,20 +430,29 @@ class SvDelaunay3dMk2Node(SverchCustomTreeNode, bpy.types.Node):
 
                         # for get_delaunay_simplices_02 no test for threshold dimension.
                         # for get_delaunay_simplices: no need test for threshold now. All elements now is more than threshold.
-                        
+
+                        if simplex_length==1:
+                            continue
+
                         # if simplex.size>=2 (2,3,4) then create edges
                         if simplex_length==2:
+                            if is_length_0(vertices, simplex, self.volume_threshold):
+                                continue
                             edges_new.update( [ ( simplex[0], simplex[1] ) ] )
                             continue
 
                         # if simplex.size>=3 (3,4) then create faces
                         if simplex_length>=3:
                             if simplex_length==3:
+                                if is_area_0(vertices, simplex, self.volume_threshold):
+                                    continue
                                 edges_simplex = [ (simplex[0], simplex[1]),
                                                   (simplex[1], simplex[2]),
                                                   (simplex[2], simplex[0]), ]
                                 faces_simplex = [ (simplex[0], simplex[1], simplex[2]) ]
                             else:
+                                if is_volume_0(vertices, simplex, self.volume_threshold):
+                                    continue
                                 edges_simplex = [ (simplex[0], simplex[1]),
                                                   (simplex[0], simplex[2]),
                                                   (simplex[0], simplex[3]),
@@ -408,8 +463,6 @@ class SvDelaunay3dMk2Node(SverchCustomTreeNode, bpy.types.Node):
                                                   (simplex[0], simplex[1], simplex[3]),
                                                   (simplex[0], simplex[2], simplex[3]),
                                                   (simplex[1], simplex[2], simplex[3]) ]
-                            #edges_simplex = self.make_edges(list( range(simplex_length) ))
-                            #faces_simplex = self.make_faces(list( range(simplex_length) ))
                             edges_new.update( edges_simplex )
                             faces_new.update( faces_simplex )
 
@@ -430,28 +483,56 @@ class SvDelaunay3dMk2Node(SverchCustomTreeNode, bpy.types.Node):
                         if self.is_too_long(vertices, simplex, edge_threshold):
                              continue
 
-                        # if some geometry is visible then geometry need verts:
-                        verts_simplex = self.get_verts(vertices, simplex)
-                        verts_new.append(verts_simplex)                        
+                        if simplex_length==1:
+                            edges_new.append( [] )
+                            faces_new.append( [] )
+
+                            # if some geometry is visible then geometry need verts:
+                            verts_simplex = self.get_verts(vertices, simplex)
+                            verts_new.append(verts_simplex)                        
+                            continue
+
+                        if simplex_length==2:
+                            if is_length_0(vertices, simplex, self.volume_threshold):
+                                continue
+                            edges_new.append( edges_new_2 )
+                            faces_new.append( faces_new_2 )
+
+                            # if some geometry is visible then geometry need verts:
+                            verts_simplex = self.get_verts(vertices, simplex)
+                            verts_new.append(verts_simplex)                        
+                            continue
 
                         # if simplex.size>=2 (2,3,4) then create edges
                         if simplex_length==2:
+                            if is_length_0(vertices, simplex, self.volume_threshold):
+                                continue
                             edges_new.append( edges_new_2 )
                             faces_new.append( faces_new_2 )
+
+                            # if some geometry is visible then geometry need verts:
+                            verts_simplex = self.get_verts(vertices, simplex)
+                            verts_new.append(verts_simplex)                        
                             continue
 
                         # if simplex.size>=3 (3,4) then create faces
                         if simplex_length>=3:
                             if simplex_length==3:
+                                if is_area_0(vertices, simplex, self.volume_threshold):
+                                    continue
                                 edges_simplex = edges_new_3
                                 faces_simplex = faces_new_3
                             else:
+                                if is_volume_0(vertices, simplex, self.volume_threshold):
+                                    continue
                                 edges_simplex = edges_new_4
                                 faces_simplex = faces_new_4
-                            #edges_simplex = self.make_edges(list( range(simplex_length) ))
-                            #faces_simplex = self.make_faces(list( range(simplex_length) ))
                             edges_new.append( edges_simplex )
                             faces_new.append( faces_simplex )
+
+                            # if some geometry is visible then geometry need verts:
+                            verts_simplex = self.get_verts(vertices, simplex)
+                            verts_new.append(verts_simplex)                        
 
                     verts_item.extend(verts_new)
                     edges_item.extend(edges_new)
@@ -464,7 +545,6 @@ class SvDelaunay3dMk2Node(SverchCustomTreeNode, bpy.types.Node):
                 else:
                     verts_out.extend(verts_item)
                     edges_out.extend(edges_item)
-                    #if faces_item:
                     faces_out.extend(faces_item)
 
         self.outputs['Vertices'].sv_set(verts_out)
