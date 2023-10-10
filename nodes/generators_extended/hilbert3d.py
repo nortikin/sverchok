@@ -87,7 +87,11 @@ class Hilbert3dNode(SverchCustomTreeNode, bpy.types.Node):
             if edges_socket.is_linked:
                 listEdg = []
                 for ve in verts:
-                    listEdg.append([(i, i+1) for i in range(len(ve) - 1)])
+                    len_ve = len(ve)
+                    _n = np.arange(len_ve, dtype=np.int32)
+                    _edges = np.column_stack( (_n[:-1], _n[1:]) )
+                    listEdg.append(_edges.tolist())                    
+
                 edges_socket.sv_set(listEdg)
 
 

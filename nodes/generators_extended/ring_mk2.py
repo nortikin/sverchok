@@ -19,12 +19,12 @@
 import bpy
 from bpy.props import IntProperty, FloatProperty, BoolProperty, EnumProperty
 
-from math import sin, cos, pi, radians
+from math import sin, cos, pi, radians, tau
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat
 from sverchok.utils.sv_transform_helper import AngleUnits, SvAngleHelper
-
+import numpy as np
 
 def ring_verts(separate, u, r1, r2, N1, N2, a1, a2, p):
     """
@@ -38,7 +38,6 @@ def ring_verts(separate, u, r1, r2, N1, N2, a1, a2, p):
     a2 : ending angle
     p  : radial section phase
     """
-
     # use an extra section if the ring is open (start & end angles differ)
     i = open_ring = abs((a2-a1) % (2*pi)) > 1e-5
 
@@ -47,30 +46,26 @@ def ring_verts(separate, u, r1, r2, N1, N2, a1, a2, p):
 
     s2 = 2 / (N2 - 1)  # caching outside the loop
 
-    list_verts = []
 
-    for n1 in range(N1*(1+u) + i):  # for each RADIAL section around the center
-        theta = a1 + n1 * da + p  # RADIAL section angle
-        sin_theta = sin(theta)    # caching
-        cos_theta = cos(theta)    # caching
+    N1_gen = (N1*(1+u) + i)  # N1 after apply params
+    #_verts_indexes  = np.arange( N1_gen * N2, dtype=np.int32 ).reshape(N2, N1_gen)  # Circular, Radial
+    _n1  = np.repeat( [np.arange(N1_gen, dtype=np.int32)], N2, axis = 0)   # Circular
+    _n2  = np.repeat( [np.arange(N2    , dtype=np.int32)], N1_gen, axis = 0).T # Radial
+    _theta = a1 + _n1 * da + p     # RADIAL section angle
+    _sin_theta = np.sin(_theta)    # caching
+    _cos_theta = np.cos(_theta)    # caching
 
-        verts = []
-        for n2 in range(N2):  # for each CIRCULAR section away from center
-            t = n2*s2 - 1  # interpolation factor : [-1, +1]
-            r = r1 + t*r2  # radius range : [r1-r2, r1+r2]
-            x = r * cos_theta
-            y = r * sin_theta
+    _t2 = _n2*s2 - 1   # interpolation factor : [-1, +1]
+    _r  = r1 + _t2*r2  # radius range : [r1-r2, r1+r2]
+    _x = _r * _cos_theta
+    _y = _r * _sin_theta
+    #_verts = np.dstack((_x, _y, np.zeros_like(_x) )).reshape(-1, 3)
+    _verts = np.dstack((_x.T, _y.T, np.zeros_like(_x).T )).reshape(-1,3)
+    if separate:
+        _verts = _verts.reshape(-1,N2,3)
 
-            # append vertex at this (radial, circular) index to the list
-            verts.append([x, y, 0.0])
-
-        if separate:
-            list_verts.append(verts)
-        else:
-            list_verts.extend(verts)
-
-    return list_verts
-
+    _list_verts = _verts.tolist()
+    return _list_verts
 
 def ring_edges(N1, N2, a1, a2, u):
     """
@@ -81,28 +76,38 @@ def ring_edges(N1, N2, a1, a2, u):
     u  : circular section subdivisions
     """
 
-    # use an extra section if the ring is open (start & end angles differ)
-    i = open_ring = abs((a2-a1) % (2*pi)) > 1e-5
+    closed_ring = abs((a2-a1) % tau) < 1e-5
+    #closed_ring = abs((a2 - a1)%tau) < 1e-5 # or abs((a2%tau - a1%tau)%tau-tau)<1e-5
 
-    list_edges = []
+    if closed_ring:
+        #arr_verts  = np.arange( N1*(u+1)*N2, dtype=np.int32 ).reshape(N2, N1*(u+1))
+        arr_verts  = np.arange( N1*(u+1)*N2, dtype=np.int32 ).T.reshape(N1*(u+1), N2).T
+        arr_verts  = np.hstack( (arr_verts, np.array([arr_verts[:,0]]).T ) ) # append first row to bottom to horizontal circle
+        # horizintal edges are cicled
+        _arr_h_edges = np.zeros((N2, N1*(u+1), 2), 'i' )
+        _arr_h_edges[:, :, 0] = arr_verts[ : ,  :-1 ]  # hor_edges
+        _arr_h_edges[:, :, 1] = arr_verts[ : , 1:   ]  # hor_edges
 
-    # radial EDGES (away from center)
-    for n1 in range(N1 + i):  # for each RADIAL section around the center
-        for n2 in range(N2 - 1):  # for each CIRCULAR section away from center
-            list_edges.append([N2 * n1*(1+u) + n2, N2 * n1*(1+u) + n2 + 1])
+        _arr_v_edges = np.zeros((N2-1, N1*(u+1), 2), 'i' )  # -1: vert edges except bottom points
+        _arr_v_edges[:, :, 0] = arr_verts[ :-1,  :-1]
+        _arr_v_edges[:, :, 1] = arr_verts[1:  ,  :-1]
+    else:
+        arr_verts  = np.arange( (N1*(u+1)+1)*N2, dtype=np.int32 ).T.reshape(N1*(u+1)+1, N2).T
+        _arr_h_edges = np.zeros((N2, N1*(u+1), 2), 'i' )
+        _arr_h_edges[:, :, 0] = arr_verts[ : ,  :-1 ]  # hor_edges
+        _arr_h_edges[:, :, 1] = arr_verts[ : , 1:   ]  # hor_edges
 
-    # circular EDGES (around the center) : edges are ordered radially
-    for n1 in range(N1*(1+u) - 1 + i):  # for each RADIAL section around the center
-        for n2 in range(N2):  # for each CIRCULAR section away from center
-            list_edges.append([N2 * n1 + n2, N2 * (n1 + 1) + n2])
+        _arr_v_edges = np.zeros((N2-1, N1*(u+1)+1, 2), 'i' )  # -1: vert edges except bottom points
+        _arr_v_edges[:, :, 0] = arr_verts[ :-1,  :  ]
+        _arr_v_edges[:, :, 1] = arr_verts[1:  ,  :  ]
 
-    # close the ring ? => use the start vertices to close the last edges in the ring
-    if not open_ring:
-        for n2 in range(N2):
-            list_edges.append([N2 * (N1*(1+u) - 1) + n2, n2])
 
-    return list_edges
+    _arr_h_edges = _arr_h_edges.reshape(-1,2)
+    _arr_v_edges = _arr_v_edges.reshape(-1,2)
 
+    _edges = np.concatenate( ( _arr_h_edges, _arr_v_edges, ) )
+    _list_edges = _edges.tolist()
+    return _list_edges
 
 def ring_polygons(N1, N2, a1, a2, u):
     """
@@ -115,28 +120,29 @@ def ring_polygons(N1, N2, a1, a2, u):
     Note: the vertex order is consistent with face normal along positive Z
     """
 
-    # use an extra section if the ring is open (start & end angles differ)
-    i = open_ring = abs((a2-a1) % (2*pi)) > 1e-5
+    closed_ring = abs((a2-a1) % tau) < 1e-5
 
-    list_polys = []
+    if closed_ring:
+        arr_verts  = np.arange( N1*(u+1)*N2, dtype=np.int32 ).T.reshape(N1*(u+1), N2).T
+        arr_verts  = np.hstack( (arr_verts, np.array([arr_verts[:,0]]).T ) ) # append first row to bottom to horizontal circle
+        # faces are cicled horizintally
+        _arr_faces = np.zeros((N2-1, N1*(u+1), 4), 'i' )
+        _arr_faces[:, :, 0] = arr_verts[1:  ,  :-1 ]
+        _arr_faces[:, :, 1] = arr_verts[1:  , 1:   ]
+        _arr_faces[:, :, 2] = arr_verts[ :-1, 1:   ]
+        _arr_faces[:, :, 3] = arr_verts[ :-1,  :-1 ]
+    else:
+        arr_verts  = np.arange( (N1*(u+1)+1)*N2, dtype=np.int32 ).T.reshape(N1*(u+1)+1, N2).T
+        _arr_faces = np.zeros((N2-1, N1*(u+1), 4), 'i' )
+        _arr_faces[:, :, 0] = arr_verts[1:  ,  :-1 ]
+        _arr_faces[:, :, 1] = arr_verts[1:  , 1:   ]
+        _arr_faces[:, :, 2] = arr_verts[ :-1, 1:   ]
+        _arr_faces[:, :, 3] = arr_verts[ :-1,  :-1 ]
 
-    for n1 in range(N1 - 1 + i):  # RADIAL (around the center)
-        for n2 in range(N2 - 1):  # CIRCULAR (away from center)
-            arc1 = [N2*(n1*(1+u) + iu) + n2 for iu in reversed(range(2+u))]
-            arc2 = [N2*(n1*(1+u) + iu) + n2 + 1 for iu in range(2+u)]
-            face = arc2 + arc1
-            list_polys.append(face)
+    _arr_faces = _arr_faces.reshape(-1,4)
 
-    # close the ring ? => use the start vertices to close the last faces in the ring
-    if not open_ring:
-        for n2 in range(N2 - 1):  # CIRCULAR (away from center)
-            arc1 = [N2*((N1-1)*(1+u) + iu) + n2 for iu in reversed(range(1+u))]
-            arc2 = [N2*((N1-1)*(1+u) + iu) + n2 + 1 for iu in range(1+u)]
-            face = arc2 + [n2+1, n2] + arc1
-            list_polys.append(face)
-
-    return list_polys
-
+    _list_faces = _arr_faces.tolist()
+    return _list_faces
 
 class SvRingNodeMK2(SverchCustomTreeNode, bpy.types.Node, SvAngleHelper):
     """

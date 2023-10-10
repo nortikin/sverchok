@@ -24,7 +24,6 @@ from bpy.props import BoolProperty, IntProperty, FloatProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (fullList, match_long_repeat, updateNode)
 import numpy as np
-from datetime import datetime
 
 
 class SvCircleNode(SverchCustomTreeNode, bpy.types.Node):
@@ -62,8 +61,8 @@ class SvCircleNode(SverchCustomTreeNode, bpy.types.Node):
         else:
             theta = Angle/Vertices
 
-        steps = np.arange(Vertices, dtype=np.int32)
-        _theta = steps*theta
+        _n1 = np.arange(Vertices, dtype=np.int32)
+        _theta = _n1*theta
         _x = Radius * np.cos(np.radians(_theta))
         _y = Radius * np.sin(np.radians(_theta))
 
@@ -82,19 +81,19 @@ class SvCircleNode(SverchCustomTreeNode, bpy.types.Node):
 
     def make_edges(self, Angle, Vertices):
 
-        steps = np.arange(Vertices, dtype=np.int32)
-        arr_edges = np.zeros((Vertices-1, 2), 'i' )
-        arr_edges[:,0] = steps[:-1]
-        arr_edges[:,1] = steps[1:]
+        _n = np.arange(Vertices, dtype=np.int32)
+        _edges = np.column_stack( (_n[:-1], _n[1:]) )
 
         if Angle < 360 and self.mode_ == 1:
-            arr_edges = np.vstack( (arr_edges, (Vertices-1, Vertices)) )
-            arr_edges = np.vstack( (arr_edges, (Vertices, 0 )) )
+            # Close circle like Packman (throw center of circle)
+            _edges = np.vstack( (_edges, (Vertices-1, Vertices) ))
+            _edges = np.vstack( (_edges, (Vertices  , 0) ))
         else:
-            arr_edges = np.vstack( (arr_edges, (Vertices-1, 0)) )
+            # Close circle from last point to first point
+            _edges = np.vstack( (_edges, (Vertices-1, 0)))
         
-        _listEdg = arr_edges.tolist()
-        return _listEdg
+        _list_edges = _edges.tolist()
+        return _list_edges
 
     def make_faces(self, Angle, Vertices):
 
