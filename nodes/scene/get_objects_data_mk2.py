@@ -424,31 +424,33 @@ class SvGetObjectsDataMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
             # vs, es, ps, vn, mi, pa, pc, pn, ms
             offset = 0
             _vs = []
-            _es, _ps, _vn, _mi, _pa, _pc, _pn, _ms = [], [], [], [], [], [], [], []
+            _es, _ps, _vn, _pa, _pc, _pn, _vg = [], [], [], [], [], [], []
             for idx, vertices in enumerate(vs):
                 _vs.extend(vertices)
                 if es:
-                    _es.extend( [tuple(i + offset for i in o) for o in es[idx] ] ) # edges
+                    _es.extend( [[i + offset for i in o] for o in es[idx] ] ) # edges
                 if ps:
-                    _ps.extend( [tuple(i + offset for i in o) for o in ps[idx] ] ) # polygons
+                    _ps.extend( [[i + offset for i in o] for o in ps[idx] ] ) # polygons
                 #_vn.extend( [tuple(i + offset for i in o) for o in ps[idx] ] ) # vers_out_grouped
                 if vn:
                     _vn.extend( vn[idx] ) # vertex normals
-                # _mi - materia index. I dont know what to do for a while
-                if mi and len(mi)>idx:
-                    _mi.extend( mi[idx] )
+                # _mi - materia index. Do not change
+                # if mi and len(mi)>idx:
+                #     _mi.extend( mi[idx] )
                 if pa:
                     _pa.extend( pa[idx] ) # polygon area
                 if pc:
                     _pc.extend( pc[idx] ) # polygon center
                 if pn:
                     _pn.extend( pn[idx] ) # polygon normal
-                if ms:
-                    _ms.append( ms[idx] ) # matrices
+                # if ms: Do not change
+                #     _ms.append( ms[idx] ) # matrices
+                if vers_out_grouped:
+                    _vg.extend( [ i + offset for i in vers_out_grouped[idx] ] ) # vertex groups
                 
                 offset += len(vertices)
             
-            vs, es, ps, vn, mi, pa, pc, pn, ms = [_vs], [_es], [_ps], [_vn], [_mi], [_pa], [_pc], [_pn], [_ms]
+            vs, es, ps, vn, pa, pc, pn, vers_out_grouped = [_vs], [_es], [_ps], [_vn], [_pa], [_pc], [_pn], [_vg]
 
         for i, i2 in zip(self.outputs, [vs, es, ps, vn, mi, pa, pc, pn, ms]):
             if i.is_linked:
