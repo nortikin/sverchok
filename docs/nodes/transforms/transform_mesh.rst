@@ -161,5 +161,5 @@ Examples
 
 * Generator-> :doc:`Suzanne </nodes/generator/suzanne>`
 * Matrix-> :doc:`Matrix Out </nodes/matrix/matrix_out_mk2>`
-* Scene-> :doc:`Get Objects Data </nodes/scene/get_objects_data>`
+* Scene-> :doc:`Get Objects Data </nodes/scene/get_objects_data_mk2>`
 * Analyzers-> :doc:`Select Mesh Elements </nodes/analyzer/mesh_select_mk2>`

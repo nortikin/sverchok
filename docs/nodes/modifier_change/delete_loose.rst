@@ -32,6 +32,6 @@ Simple:
 .. image:: https://user-images.githubusercontent.com/14288520/199108536-900db4f5-4347-48fe-8ccc-5dbb748c188b.png
   :target: https://user-images.githubusercontent.com/14288520/199108536-900db4f5-4347-48fe-8ccc-5dbb748c188b.png
 
-* Scene-> :doc:`Get Objects Data </nodes/scene/get_objects_data>`
+* Scene-> :doc:`Get Objects Data </nodes/scene/get_objects_data_mk2>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 * Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`

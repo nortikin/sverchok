@@ -171,7 +171,7 @@ another is black - unselected); and blend them together with a smooth curve:
 * Vector-> :doc:`Vector sort </nodes/vector/vertices_sort>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 * Viz-> :doc:`Viewer Draw Curve </nodes/viz/viewer_draw_curve>`
-* Scene-> :doc:`Get Objects Data </nodes/scene/get_objects_data>`
+* Scene-> :doc:`Get Objects Data </nodes/scene/get_objects_data_mk2>`
 
 ---------
 

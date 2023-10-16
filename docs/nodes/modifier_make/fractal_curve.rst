@@ -102,5 +102,5 @@ Vectorization example:
 * Number-> :doc:`List Input </nodes/number/list_input>`
 * Modifiers->Modifier Make-> :doc:`UV Connection </nodes/modifier_make/uv_connect>`
 * Vector-> :doc:`Vector sort </nodes/vector/vertices_sort>`
-* Scene-> :doc:`Get Objects Data </nodes/scene/get_objects_data>`
+* Scene-> :doc:`Get Objects Data </nodes/scene/get_objects_data_mk2>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`

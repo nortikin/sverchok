@@ -227,7 +227,7 @@ Example of the FreeCAD implementation usage. Euclidean parametrization:
 .. image:: https://user-images.githubusercontent.com/66558924/216157300-8480c5a9-29e4-4110-8f46-3ba15f25b3d6.jpg
   :target: https://user-images.githubusercontent.com/66558924/216157300-8480c5a9-29e4-4110-8f46-3ba15f25b3d6.jpg
 
-* Scene-> :doc:`Get Objects Data </nodes/scene/get_objects_data>`
+* Scene-> :doc:`Get Objects Data </nodes/scene/get_objects_data_mk2>`
 * Viz-> :doc:`Viewer Draw Curve </nodes/viz/viewer_draw_curve>`
 * Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
 

@@ -235,7 +235,7 @@ Offset one curve with several different offset amounts:
 * Number-> :doc:`Number Range </nodes/number/number_range>`
 * Vector-> :doc:`Vector sort </nodes/vector/vertices_sort>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
-* Scene-> :doc:`Get Objects Data </nodes/scene/get_objects_data>`
+* Scene-> :doc:`Get Objects Data </nodes/scene/get_objects_data_mk2>`
 
 ---------
 
@@ -249,7 +249,7 @@ Example of **Custom (N/B/T)** mode usage:
 * Number-> :doc:`Number Range </nodes/number/number_range>`
 * Vector-> :doc:`Vector sort </nodes/vector/vertices_sort>`
 * Vector-> :doc:`Vector Polar Input </nodes/vector/vector_polar_in>`
-* Scene-> :doc:`Get Objects Data </nodes/scene/get_objects_data>`
+* Scene-> :doc:`Get Objects Data </nodes/scene/get_objects_data_mk2>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 
 ---------
@@ -272,7 +272,7 @@ the tangent of original curve is perpendicular to offset operation plane.
 * Number-> :doc:`A Number </nodes/number/numbers>`
 * Vector-> :doc:`Vector sort </nodes/vector/vertices_sort>`
 * List->List Struct-> :doc:`List Item </nodes/list_struct/item>`
-* Scene-> :doc:`Get Objects Data </nodes/scene/get_objects_data>`
+* Scene-> :doc:`Get Objects Data </nodes/scene/get_objects_data_mk2>`
 * Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 
@@ -293,7 +293,7 @@ Example of **Variable** offset mode usage:
 * Number-> :doc:`A Number </nodes/number/numbers>`
 * Vector-> :doc:`Vector sort </nodes/vector/vertices_sort>`
 * List->List Struct-> :doc:`List Item </nodes/list_struct/item>`
-* Scene-> :doc:`Get Objects Data </nodes/scene/get_objects_data>`
+* Scene-> :doc:`Get Objects Data </nodes/scene/get_objects_data_mk2>`
 * Text-> :doc:`Stethoscope </nodes/text/stethoscope_v28>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 

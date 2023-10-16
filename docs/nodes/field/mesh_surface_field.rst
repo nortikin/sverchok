@@ -41,7 +41,7 @@ With real mesh you can get very funny results:
 * Surfaces-> :doc:`Marching Cubes </nodes/surface/marching_cubes>`
 * Matrix-> :doc:`Matrix Apply to Mesh </nodes/matrix/apply_and_join>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
-* Scene-> :doc:`Get Objects Data </nodes/scene/get_objects_data>`
+* Scene-> :doc:`Get Objects Data </nodes/scene/get_objects_data_mk2>`
 
 Inputs
 ------

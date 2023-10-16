@@ -92,4 +92,4 @@ Take points on a straight line and project them to some curve:
 * Transform-> :doc:`Matrix Apply (verts) </nodes/transforms/apply>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 * Scene-> :doc:`Bezier Input </nodes/exchange/bezier_in>`
-* Scene-> :doc:`Get Objects Data </nodes/scene/get_objects_data>`
+* Scene-> :doc:`Get Objects Data </nodes/scene/get_objects_data_mk2>`

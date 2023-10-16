@@ -61,4 +61,4 @@ Examples of usage
 .. image:: https://user-images.githubusercontent.com/14288520/190427453-6d1dcb65-e0ce-4194-9860-d1faf4df478b.png
   :target: https://user-images.githubusercontent.com/14288520/190427453-6d1dcb65-e0ce-4194-9860-d1faf4df478b.png
 
-* Scene-> :doc:`Get Objects Data </nodes/scene/get_objects_data>`
+* Scene-> :doc:`Get Objects Data </nodes/scene/get_objects_data_mk2>`

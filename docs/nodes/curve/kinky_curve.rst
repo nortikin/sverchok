@@ -101,7 +101,7 @@ A simple example:
 * Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`
 * Viz-> :doc:`Viewer Draw Curve </nodes/viz/viewer_draw_curve>`
 * Viz-> :doc:`Viewer Index+ </nodes/viz/viewer_idx28>`
-* Scene-> :doc:`Get Objects Data </nodes/scene/get_objects_data>`
+* Scene-> :doc:`Get Objects Data </nodes/scene/get_objects_data_mk2>`
 
 ---------
 

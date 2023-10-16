@@ -105,6 +105,6 @@ Using of Z coordinate:
 .. image:: https://user-images.githubusercontent.com/14288520/200909050-34199e42-54aa-41cf-9efb-abef230afdf7.png
   :target: https://user-images.githubusercontent.com/14288520/200909050-34199e42-54aa-41cf-9efb-abef230afdf7.png
 
-* Scene-> :doc:`Get Objects Data </nodes/scene/get_objects_data>`
+* Scene-> :doc:`Get Objects Data </nodes/scene/get_objects_data_mk2>`
 * Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
