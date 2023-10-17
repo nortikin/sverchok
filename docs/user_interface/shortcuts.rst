@@ -67,4 +67,8 @@ This is a collection of shortcuts useful in the Sverchok node tree, some are Ble
 
 **Right Click** - Access to Sverchok Right Click Menu
 
-**Shift + P** on a node in Node Editor - open Load / Save Preset menu for this node.
+**Shift + P** - on a node in Node Editor - open Load / Save Preset menu for this node
+
+**Ctrl+Z** - Zoom to selected node and vice versa
+
+**Ctrl+Shift+H** - Show/Hide Toggle for selected Viewer Draw node
