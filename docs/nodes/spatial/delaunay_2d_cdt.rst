@@ -84,7 +84,7 @@ Examples
 .. image:: https://user-images.githubusercontent.com/14288520/202170634-f26119f8-bf1c-41a6-881e-cf1d4fdf3739.png
   :target: https://user-images.githubusercontent.com/14288520/202170634-f26119f8-bf1c-41a6-881e-cf1d4fdf3739.png
 
-* Scene-> :doc:`Get Objects Data </nodes/scene/get_objects_data_mk2>`
+* Scene-> :doc:`Get Objects Data </nodes/scene/get_objects_data>`
 * Spatial-> :doc:`Populate Mesh </nodes/spatial/random_points_on_mesh>`
 * List->List Main-> :doc:`List Join </nodes/list_main/join>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`

@@ -125,7 +125,7 @@ Simplest example:
   :target: https://user-images.githubusercontent.com/284644/210108720-cb3ef5df-1745-4c19-8625-73f74a445c3d.png
 
 * Viz-> :doc:`Viewer Draw Curve </nodes/viz/viewer_draw_curve>`
-* Scene-> :doc:`Get Objects Data </nodes/scene/get_objects_data_mk2>`
+* Scene-> :doc:`Get Objects Data </nodes/scene/get_objects_data>`
 
 Uniform (yellow) vs non-uniform (green) spline:
 
@@ -134,7 +134,7 @@ Uniform (yellow) vs non-uniform (green) spline:
 
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 * Viz-> :doc:`Viewer Draw Curve </nodes/viz/viewer_draw_curve>`
-* Scene-> :doc:`Get Objects Data </nodes/scene/get_objects_data_mk2>`
+* Scene-> :doc:`Get Objects Data </nodes/scene/get_objects_data>`
 
 Non-uniform splines with Euclidean metric (yellow) and with centripetal metric (green):
 
@@ -143,7 +143,7 @@ Non-uniform splines with Euclidean metric (yellow) and with centripetal metric (
 
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 * Viz-> :doc:`Viewer Draw Curve </nodes/viz/viewer_draw_curve>`
-* Scene-> :doc:`Get Objects Data </nodes/scene/get_objects_data_mk2>`
+* Scene-> :doc:`Get Objects Data </nodes/scene/get_objects_data>`
 
 Non-uniform (Euclidean) Catmull-Rom spline (yellow) vs Cubic spline (blue):
 
@@ -152,7 +152,7 @@ Non-uniform (Euclidean) Catmull-Rom spline (yellow) vs Cubic spline (blue):
 
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 * Viz-> :doc:`Viewer Draw Curve </nodes/viz/viewer_draw_curve>`
-* Scene-> :doc:`Get Objects Data </nodes/scene/get_objects_data_mk2>`
+* Scene-> :doc:`Get Objects Data </nodes/scene/get_objects_data>`
 
 Uniform splines with different tension values: from 0.2 (almost black lines) to 2.0 (white line):
 
@@ -165,7 +165,7 @@ Uniform splines with different tension values: from 0.2 (almost black lines) to 
 * List->List Struct-> :doc:`List Levels </nodes/list_struct/levels>`
 * Color-> :doc:`Color In </nodes/color/color_in_mk1>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
-* Scene-> :doc:`Get Objects Data </nodes/scene/get_objects_data_mk2>`
+* Scene-> :doc:`Get Objects Data </nodes/scene/get_objects_data>`
 
 Here the curvature comb is used to illustrate that the curvature of Catmull-Rom
 splines can change very fast and sudden:
@@ -175,5 +175,5 @@ splines can change very fast and sudden:
 
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 * Viz-> :doc:`Viewer Draw Curve </nodes/viz/viewer_draw_curve>`
-* Scene-> :doc:`Get Objects Data </nodes/scene/get_objects_data_mk2>`
+* Scene-> :doc:`Get Objects Data </nodes/scene/get_objects_data>`
 

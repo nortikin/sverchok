@@ -97,5 +97,5 @@ Usage
 
 
 * Scene-> :doc:`Objects In Lite </nodes/scene/objects_in_lite>`
-* Scene-> :doc:`Get Objects Data </nodes/scene/get_objects_data_mk2>`
+* Scene-> :doc:`Get Objects Data </nodes/scene/get_objects_data>`
 
