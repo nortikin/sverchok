@@ -19,6 +19,7 @@ from sverchok.utils.nodes_mixins.show_3d_properties import Show3DProperties
 from sverchok.utils.blender_mesh import (
     read_verts, read_edges, read_verts_normal,
     read_face_normal, read_face_center, read_face_area, read_materials_idx)
+import numpy as np
 
 
 class SvOB3BDataCollectionMK2(bpy.types.PropertyGroup):
@@ -316,37 +317,24 @@ class SvGetObjectsDataMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
                     # from 3dview while in edit mode when using obj.to_mesh.
                     me = obj.data
                     bm = bmesh.from_edit_mesh(me)
-                    verts, edgs, pols = pydata_from_bmesh(bm)
+                    # verts, edgs, pols = pydata_from_bmesh(bm)
 
                     if o_vs:
-                        if self.apply_matrix:
-                            verts = [tuple(mtrx @ Vector(v) ) for v in verts]
-                        vs.append(verts)
+                        verts = [ Vector(v.co) for v in bm.verts]  # v.co is a Vector()
                     if o_es:
-                        es.append(edgs)
+                        edgs = [[e.verts[0].index, e.verts[1].index] for e in bm.edges]
                     if o_ps:
-                        ps.append(pols)
+                        pols = [[i.index for i in p.verts] for p in bm.faces]
                     if o_vn:
-                        if self.apply_matrix:
-                            T, R, S = mtrx.decompose()
-                            vn.append([ tuple( R @ Vector(v.normal[:]) ) for v in bm.verts])
-                        else:
-                            vn.append([v.normal[:] for v in bm.verts])
+                        vertex_normals = [ Vector(v.normal) for v in bm.verts] # v.normal is a Vector()
                     if o_mi:
-                        mi.append(self.get_materials_from_bmesh(bm))
+                        material_indexes = self.get_materials_from_bmesh(bm)
                     if o_pa:
-                        pa.append([p.calc_area() for p in bm.faces])
+                        polygons_areas = [ p.calc_area() for p in bm.faces ]
                     if o_pc:
-                        if self.apply_matrix:
-                            pc.append([tuple(mtrx @ Vector(p.calc_center_median()[:])) for p in bm.faces])
-                        else:
-                            pc.append([p.calc_center_median()[:] for p in bm.faces])
+                        polygon_centers = [ Vector(p.calc_center_median()) for p in bm.faces ]
                     if o_pn:
-                        if self.apply_matrix:
-                            T, R, S = mtrx.decompose()
-                            pn.append([tuple(R @ Vector(p.normal[:]) ) for p in bm.faces])
-                        else:
-                            pn.append([p.normal[:] for p in bm.faces])
+                        polygon_normals = [ Vector(p.normal) for p in bm.faces ]
 
                     del bm
                 else:
@@ -361,54 +349,55 @@ class SvGetObjectsDataMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
                         obj_data = obj.to_mesh()
 
                     if o_vs:
-                        verts = read_verts(obj_data, out_np[0])
-                        if self.apply_matrix:
-                            verts = [tuple(mtrx @ Vector(v) ) for v in verts]
-                        vs.append( verts )
+                        verts            = [ Vector(v.co) for v in obj_data.vertices]  # v.co is a Vector()
                     if o_es:
-                        es.append(read_edges(obj_data, out_np[1]))
+                        edgs             = [[ e.vertices[0], e.vertices[1] ] for e in obj_data.edges]
                     if o_ps:
-                        ps.append([list(p.vertices) for p in obj_data.polygons])
+                        pols             = [list(p.vertices) for p in obj_data.polygons]
                     if self.vergroups:
-                        vert_groups = get_vertgroups(obj_data)
-                        vers_out_grouped.append(vert_groups)
+                        vert_groups      = get_vertgroups(obj_data)
                     if o_vn:
-                        vertex_normals = read_verts_normal(obj_data, out_np[2])
-                        if self.apply_matrix:
-                            T, R, S = mtrx.decompose()
-                            vertex_normals = [tuple(R @ Vector(v) ) for v in vertex_normals]
-                        vn.append(vertex_normals)
+                        vertex_normals   = [ Vector(v.normal) for v in obj_data.vertices ] # v.normal is a Vector(). Update. Blender 3.6.3 crash in no wrap Vector(v.normal). I think this is after line "obj.to_mesh_clear()"
                     if o_mi:
-                        mi.append(read_materials_idx(obj_data, out_np[3]))
+                        material_indexes = read_materials_idx(obj_data, out_np[3])
                     if o_pa:
-                        pa.append(read_face_area(obj_data, out_np[4]))
+                        polygons_areas   = [ polygon.area for polygon in obj_data.polygons]
                     if o_pc:
-                        if out_np[5]:
-                            if self.apply_matrix:
-                                pc.append( [tuple(mtrx @ Vector(v) ) for v in read_face_center(obj_data, output_numpy=True)] )
-                            else:
-                                pc.append(read_face_center(obj_data, output_numpy=True))
-                        else:
-                            if self.apply_matrix:
-                                pc.append([ tuple( mtrx @ Vector(p.center[:]) ) for p in obj_data.polygons])
-                            else:
-                                pc.append([p.center[:] for p in obj_data.polygons])
+                        polygon_centers  = [ Vector(polygon.center) for polygon in obj_data.polygons]
                     if o_pn:
-                        if out_np[6]:
-                            polygon_normals = read_face_normal(obj_data, True)
-                            if self.apply_matrix:
-                                T, R, S = mtrx.decompose()
-                                polygon_normals = [tuple(R @ Vector(v) ) for v in polygon_normals]
-                            pn.append( polygon_normals)
-                        else:
-                            T, R, S = mtrx.decompose()
-                            if self.apply_matrix:
-                                pn.append([tuple(R @ Vector(p.normal[:]) ) for p in obj_data.polygons])
-                                #polygon_normals = [tuple(R @ Vector(v) ) for v in polygon_normals]
-                            else:
-                                pn.append([p.normal[:] for p in obj_data.polygons])
+                        polygon_normals  = [ Vector(polygon.normal) for polygon in obj_data.polygons ]
 
-                    obj.to_mesh_clear()
+                obj.to_mesh_clear()
+
+                if self.apply_matrix:
+                    if o_vs:
+                        verts           = [ tuple(mtrx @ v ) for v in verts ]
+                    T, R, S = mtrx.decompose()
+                    if o_vn:
+                        vertex_normals  = [ tuple(    R @ vertex_normal ) for  vertex_normal in  vertex_normals ]
+                    if o_pc:
+                        polygon_centers = [ tuple( mtrx @ polygon_center) for polygon_center in polygon_centers ]
+                    if o_pn:
+                        polygon_normals = [ tuple(    R @ polygon_normal) for polygon_normal in polygon_normals ]
+                
+                if o_vs:
+                    vs.append( verts )
+                if o_es:
+                    es.append( edgs )
+                if o_ps:
+                    ps.append( pols )
+                if self.vergroups:
+                    vers_out_grouped.append( vert_groups )
+                if o_vn:
+                    vn.append( vertex_normals )
+                if o_mi:
+                    mi.append( material_indexes )
+                if o_pa:
+                    pa.append( polygons_areas )
+                if o_pc:
+                    pc.append( polygon_centers )
+                if o_pn:
+                    pn.append( polygon_normals )
 
             except ReadingObjectDataError:
                 raise
@@ -451,6 +440,25 @@ class SvGetObjectsDataMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
                 offset += len(vertices)
             
             vs, es, ps, vn, pa, pc, pn, vers_out_grouped = [_vs], [_es], [_ps], [_vn], [_pa], [_pc], [_pn], [_vg]
+
+        if o_vs and (out_np[0]):
+            vs = [np.array(vert) for vert in vs]
+        if o_es and (out_np[1]):
+            es = [np.array(edge) for edge in es]
+        # if o_ps and (out_np[2]):
+        #     ps = [np.array(pol)  for pol  in ps]
+        # if self.vergroups:
+        #     vers_out_grouped = [np.array(group)  for group  in vers_out_grouped]
+        if o_vn and (out_np[2]):
+            vn = [np.array(vert_normal)     for vert_normal     in vn]
+        if o_mi and (out_np[3]):
+            mi = [np.array(material_index)  for material_index  in mi]
+        if o_pa and (out_np[4]):
+            pa = [np.array(polygon_areas)   for polygon_areas   in pa]
+        if o_pc and (out_np[5]):
+            pc = [np.array(polygon_centers) for polygon_centers in pc]
+        if o_pn and (out_np[6]):
+            pn = [np.array(polygon_normals) for polygon_normals in pn]
 
         for i, i2 in zip(self.outputs, [vs, es, ps, vn, mi, pa, pc, pn, ms]):
             if i.is_linked:
