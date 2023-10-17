@@ -1,6 +1,9 @@
 Bezier Input
 ============
 
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/eef11720-c215-4c30-a45e-28088a3fd695
+  :target: https://github.com/nortikin/sverchok/assets/14288520/eef11720-c215-4c30-a45e-28088a3fd695
+
 Functionality
 -------------
 
