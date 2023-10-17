@@ -1,6 +1,9 @@
 Particles MK2
 =============
 
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/00c55135-b569-4e4f-adab-5adb8e98d8ac
+  :target: https://github.com/nortikin/sverchok/assets/14288520/00c55135-b569-4e4f-adab-5adb8e98d8ac
+
 This node has Object socket input, from which to obtain the particle system.
 
 The other inputs (Velocity, Location, Size) are for setting the particles found in that system.

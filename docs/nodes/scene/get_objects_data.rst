@@ -1,6 +1,9 @@
 Get Objects Data
 ================
 
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/866c67a1-c6ea-4db5-be8e-e5981c7c5aad
+  :target: https://github.com/nortikin/sverchok/assets/14288520/866c67a1-c6ea-4db5-be8e-e5981c7c5aad
+
 Functionality
 -------------
 Get objects from the Blender ``Scene`` and output them into Sverchok's node tree. This node supports most object types. All are converted to a Sverchok representation of ``Mesh`` where possible. 
