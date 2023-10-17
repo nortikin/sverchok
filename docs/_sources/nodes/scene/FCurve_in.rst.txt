@@ -1,6 +1,9 @@
 FCurve Input
 ============
 
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/00a149e1-d2c4-449a-9846-992aa18ceba3
+  :target: https://github.com/nortikin/sverchok/assets/14288520/00a149e1-d2c4-449a-9846-992aa18ceba3
+
 This node give you access to the FCurves bound to scene objects. 
 
 Because this is an early version of the node, the UI is a bit rough. The Blender API is a little rough in this area too - don't expect huge future improvements. There doesn't appear to be a way to introspect the individual names of

@@ -143,6 +143,7 @@
              
   <section id="timer">
 <h1>Timer<a class="headerlink" href="#timer" title="Link to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/c7b504de-a10a-48ef-8514-408cc6eb9b29"><img alt="https://github.com/nortikin/sverchok/assets/14288520/c7b504de-a10a-48ef-8514-408cc6eb9b29" src="https://github.com/nortikin/sverchok/assets/14288520/c7b504de-a10a-48ef-8514-408cc6eb9b29" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node helps with managing time, particularly useful for animations.
@@ -166,24 +167,37 @@ The supported operations are: Stop, Start, Pause, Reset, Expire, Loop Backward a
 <section id="operations">
 <h2>Operations<a class="headerlink" href="#operations" title="Link to this heading">¶</a></h2>
 <p>Same set of operations are supported internally (via node’s UI) or externally via <strong>Operations</strong> input socket.</p>
-<p>Supported operations:
-+—————–+—————–+
-| Operation       |  External Value |
-+=================+=================+
-| STOP            |  0              |
-+—————–+—————–+
-| START           |  1              |
-+—————–+—————–+
-| PAUSE           |  2              |
-+—————–+—————–+
-| RESET           |  3              |
-+—————–+—————–+
-| EXPIRE          |  4              |
-+—————–+—————–+
-| LOOP BACKWARD   |  5              |
-+—————–+—————–+
-| LOOP FORWARD    |  6              |
-+—————–+—————–+</p>
+<p>Supported operations:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Operation</p></th>
+<th class="head"><p>External Value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>STOP</p></td>
+<td><p>0</p></td>
+</tr>
+<tr class="row-odd"><td><p>START</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-even"><td><p>PAUSE</p></td>
+<td><p>2</p></td>
+</tr>
+<tr class="row-odd"><td><p>RESET</p></td>
+<td><p>3</p></td>
+</tr>
+<tr class="row-even"><td><p>EXPIRE</p></td>
+<td><p>4</p></td>
+</tr>
+<tr class="row-odd"><td><p>LOOP BACKWARD</p></td>
+<td><p>5</p></td>
+</tr>
+<tr class="row-even"><td><p>LOOP FORWARD</p></td>
+<td><p>6</p></td>
+</tr>
+</tbody>
+</table>
 <p>Note: when an operation is given externally it is only executed if different than the previously executed external operation. This way, during playback if the nodes gets the same value (e.g. 1 = START) every frame, the (START) operation is only executed once.</p>
 </section>
 <section id="the-time-slider">

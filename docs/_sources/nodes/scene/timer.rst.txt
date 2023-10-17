@@ -1,6 +1,9 @@
 Timer
 =====
 
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/c7b504de-a10a-48ef-8514-408cc6eb9b29
+  :target: https://github.com/nortikin/sverchok/assets/14288520/c7b504de-a10a-48ef-8514-408cc6eb9b29
+
 Functionality
 -------------
 
@@ -32,6 +35,7 @@ Operations
 Same set of operations are supported internally (via node's UI) or externally via **Operations** input socket.
 
 Supported operations:
+
 +-----------------+-----------------+
 | Operation       |  External Value |
 +=================+=================+
