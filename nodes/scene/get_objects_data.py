@@ -347,9 +347,11 @@ class SvGetObjectsDataMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
                         obj_data = obj.to_mesh(preserve_all_data_layers=True, depsgraph=sv_depsgraph)
                     else:
                         obj_data = obj.to_mesh()
+                    
+                    T, R, S = mtrx.decompose()
 
                     if o_vs:
-                        verts            = [ Vector(v.co) for v in obj_data.vertices]  # v.co is a Vector()
+                        verts            = [ ((mtrx @ v.co) if self.apply_matrix else v.co)[:] for v in obj_data.vertices]  # v.co is a Vector()
                     if o_es:
                         edgs             = [[ e.vertices[0], e.vertices[1] ] for e in obj_data.edges]
                     if o_ps:
@@ -357,28 +359,17 @@ class SvGetObjectsDataMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
                     if self.vergroups:
                         vert_groups      = get_vertgroups(obj_data)
                     if o_vn:
-                        vertex_normals   = [ Vector(v.normal) for v in obj_data.vertices ] # v.normal is a Vector(). Update. Blender 3.6.3 crash in no wrap Vector(v.normal). I think this is after line "obj.to_mesh_clear()"
+                        vertex_normals   = [ ((   R @ v.co) if self.apply_matrix else v.normal)[:] for v in obj_data.vertices ] # v.normal is a Vector(). Update. Blender 3.6.3 crash in no wrap Vector(v.normal). I think this is after line "obj.to_mesh_clear()"
                     if o_mi:
                         material_indexes = read_materials_idx(obj_data, out_np[3])
                     if o_pa:
                         polygons_areas   = [ polygon.area for polygon in obj_data.polygons]
                     if o_pc:
-                        polygon_centers  = [ Vector(polygon.center) for polygon in obj_data.polygons]
+                        polygon_centers  = [ ((mtrx @ polygon.center) if self.apply_matrix else polygon.center)[:] for polygon in obj_data.polygons]
                     if o_pn:
-                        polygon_normals  = [ Vector(polygon.normal) for polygon in obj_data.polygons ]
+                        polygon_normals  = [ ((   R @ polygon.normal) if self.apply_matrix else polygon.normal)[:] for polygon in obj_data.polygons]
 
                 obj.to_mesh_clear()
-
-                if self.apply_matrix:
-                    if o_vs:
-                        verts           = [ tuple(mtrx @ v ) for v in verts ]
-                    T, R, S = mtrx.decompose()
-                    if o_vn:
-                        vertex_normals  = [ tuple(    R @ vertex_normal ) for  vertex_normal in  vertex_normals ]
-                    if o_pc:
-                        polygon_centers = [ tuple( mtrx @ polygon_center) for polygon_center in polygon_centers ]
-                    if o_pn:
-                        polygon_normals = [ tuple(    R @ polygon_normal) for polygon_normal in polygon_normals ]
                 
                 if o_vs:
                     vs.append( verts )
@@ -420,12 +411,12 @@ class SvGetObjectsDataMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
                     _es.extend( [[i + offset for i in o] for o in es[idx] ] ) # edges
                 if ps:
                     _ps.extend( [[i + offset for i in o] for o in ps[idx] ] ) # polygons
-                #_vn.extend( [tuple(i + offset for i in o) for o in ps[idx] ] ) # vers_out_grouped
+                #_vn.extend( [tuple(i + offset for i in o) for o in ps[idx] ] ) # vers_out_grouped. Skip in mesh_join
                 if vn:
                     _vn.extend( vn[idx] ) # vertex normals
                 # _mi - materia index. Do not change
                 # if mi and len(mi)>idx:
-                #     _mi.extend( mi[idx] )
+                #     _mi.extend( mi[idx] ) # Skip in mesh_join
                 if pa:
                     _pa.extend( pa[idx] ) # polygon area
                 if pc:
@@ -433,7 +424,7 @@ class SvGetObjectsDataMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
                 if pn:
                     _pn.extend( pn[idx] ) # polygon normal
                 # if ms: Do not change
-                #     _ms.append( ms[idx] ) # matrices
+                #     _ms.append( ms[idx] ) # matrices. Skip in mesh_join
                 if vers_out_grouped:
                     _vg.extend( [ i + offset for i in vers_out_grouped[idx] ] ) # vertex groups
                 
