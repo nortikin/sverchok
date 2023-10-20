@@ -18,6 +18,7 @@
 
 import bpy
 from bpy.props import IntProperty, FloatProperty, BoolProperty, EnumProperty
+import numpy as np
 
 from math import sin, cos, pi, sqrt, exp, atan, log
 import re
@@ -81,7 +82,7 @@ def make_archimedean_spiral(settings):
         phase    : phase the spiral around its center
         flip     : flip the spiral direction (default is CLOCKWISE)
     '''
-
+    
     eR, iR, exponent, turns, N, scale, height, phase, flip = settings
 
     sign = -1 if flip else 1  # flip direction ?
@@ -95,22 +96,19 @@ def make_archimedean_spiral(settings):
 
     N = N * turns  # total number of points in the spiral
 
-    verts = []
-    norms = []
-    add_vert = verts.append
-    add_norm = norms.append
-    for n in range(N + 1):
-        t = n / N  # t : [0, 1]
-        phi = max_phi * t + phase
-        r = (iR + dR * (t + epsilon) ** ex) * scale  # essentially: r = a * t ^ (1/b)
-        x = r * cos(phi)
-        y = r * sin(phi)
-        z = height * t
-        add_vert([x, y, z])
+    _n = np.arange(N, dtype=np.int32)
+    _verts = np.empty((N,3), dtype=np.float32)
+    _t = _n/N
+    _phi = max_phi*_t+phase
+    _r = (iR + dR * np.power(_t + epsilon, ex)) * scale  # essentially: r = a * t ^ (1/b)
+    _verts[:,0] = _r*np.cos(_phi)
+    _verts[:,1] = _r*np.sin(_phi)
+    _verts[:,2] = height * _t
+    _edges = np.zeros((N-1,2), dtype=np.int32)
+    _edges[:,0] = _n[ :-1]
+    _edges[:,1] = _n[1:  ]
 
-    edges = get_edge_list(N)
-
-    return verts, edges, norms
+    return _verts, _edges, []
 
 
 def make_logarithmic_spiral(settings):
@@ -134,24 +132,19 @@ def make_logarithmic_spiral(settings):
 
     N = N * turns  # total number of points in the spiral
 
-    verts = []
-    norms = []
-    add_vert = verts.append
-    add_norm = norms.append
-    for n in range(N + 1):
-        t = n / N  # t : [0, 1]
-        phi = max_phi * t
-        r = eR * exp(exponent * phi) * scale  # essentially: r = a * e ^ (b*t)
-        pho = phi * sign + phase  # final angle : cached for performance
-        x = r * sin(pho)
-        y = r * cos(pho)
-        z = height * t
-        add_vert([x, y, z])
 
-    edges = get_edge_list(N)
-
-    return verts, edges, norms
-
+    _n = np.arange(N, dtype=np.int32)
+    _verts = np.empty((N,3), dtype=np.float32)
+    _t = _n/N
+    _phi = max_phi*_t
+    _r = eR * scale * np.exp(exponent * _phi)
+    _verts[:,0] = _r*np.sin(_phi*sign+phase)
+    _verts[:,1] = _r*np.cos(_phi*sign+phase)
+    _verts[:,2] = height * _t
+    _edges = np.zeros((N-1,2), dtype=np.int32)
+    _edges[:,0] = _n[ :-1]
+    _edges[:,1] = _n[1:  ]
+    return _verts, _edges, []
 
 def make_spherical_spiral(settings):
     '''
@@ -176,28 +169,26 @@ def make_spherical_spiral(settings):
     max_phi = 2 * pi * turns * sign
 
     N = N * turns  # total number of points in the spiral
-
     es = prepareExponentialSettings(2, exponent + 1e-5)  # used for easing
+    b, e, m, s = es
 
-    verts = []
-    norms = []
-    add_vert = verts.append
-    add_norm = norms.append
-    for n in range(N + 1):
-        t = n / N  # t : [0, 1]
-        phi = max_phi * t + phase
-        a = ExponentialEaseInOut(t, es)  # ease theta variation
-        theta = -pi / 2 + pi * a
-        RxCosTheta = (iR + eR * cos(theta)) * scale  # cached for performance
-        x = cos(phi) * RxCosTheta
-        y = sin(phi) * RxCosTheta
-        z = eR * sin(theta)
-        add_vert([x, y, z])
+    _n = np.arange(N+1, dtype=np.int32)
+    _verts = np.empty((N+1,3), dtype=np.float32)
+    _t = _n/N
+    _phi = max_phi*_t + phase
+    _a = np.where(_t<0.5,                                                           # ExponentialEaseInOut
+                      0.5 *      (np.power(b, e *      (2*_t - 1)   ) - m) * s,     # ExponentialEaseIn
+                0.5 + 0.5 * (1 - (np.power(b, e * (1 - (2*_t - 1)-1)) - m) * s ) )  # ExponentialEaseOut
+    _theta = -pi / 2 + pi * _a
+    _RxCosTheta = (iR + eR * np.cos(_theta)) * scale 
+    _verts[:,0] = np.cos(_phi) * _RxCosTheta
+    _verts[:,1] = np.sin(_phi) * _RxCosTheta
+    _verts[:,2] = eR * np.sin(_theta)
 
-    edges = get_edge_list(N)
-
-    return verts, edges, norms
-
+    _edges = np.zeros((N,2), dtype=np.int32)
+    _edges[:,0] = _n[ :-1]
+    _edges[:,1] = _n[1:  ]
+    return _verts, _edges, []
 
 def make_ovoidal_spiral(settings):
     '''
@@ -228,26 +219,27 @@ def make_ovoidal_spiral(settings):
 
     es = prepareExponentialSettings(2, exponent + 1e-5)  # used for easing
 
-    verts = []
-    norms = []
-    add_vert = verts.append
-    add_norm = norms.append
-    for n in range(N + 1):
-        t = n / N  # t : [0, 1]
-        phi = max_phi * t + phase
-        a = ExponentialEaseInOut(t, es)  # ease theta variation
-        theta = -pi / 2 + pi * a
-        h = 0.5 * height * sin(theta)  # [-H/2, +H/2]
-        r = sqrt(eR2 - h * h) - dR  # [0 -> iR -> 0]
-        x = r * cos(phi) * scale
-        y = r * sin(phi) * scale
-        z = h * scale
-        add_vert([x, y, z])
+    b, e, m, s = es
 
-    edges = get_edge_list(N)
+    _n = np.arange(N+1, dtype=np.int32)
+    _verts = np.empty((N+1,3), dtype=np.float32)
+    _t = _n/N
+    _phi = max_phi*_t + phase
 
-    return verts, edges, norms
+    _a = np.where(_t<0.5,                                                           # ExponentialEaseInOut
+                      0.5 *      (np.power(b, e *      (2*_t - 1)   ) - m) * s,     # ExponentialEaseIn
+                0.5 + 0.5 * (1 - (np.power(b, e * (1 - (2*_t - 1)-1)) - m) * s ) )  # ExponentialEaseOut
+    _theta = -pi / 2 + pi * _a
+    _h = 0.5 * height * np.sin(_theta) # [-H/2, +H/2]
+    _r = np.sqrt(eR2 - _h * _h) - dR   # [0 -> iR -> 0]
+    _verts[:,0] = _r * np.cos(_phi) * scale
+    _verts[:,1] = _r * np.sin(_phi) * scale
+    _verts[:,2] = _h * scale
 
+    _edges = np.zeros((N,2), dtype=np.int32)
+    _edges[:,0] = _n[ :-1]
+    _edges[:,1] = _n[1:  ]
+    return _verts, _edges, []
 
 def make_cornu_spiral(settings):
     '''
@@ -261,7 +253,7 @@ def make_cornu_spiral(settings):
 
         TODO : refine the math (smoother curve, adaptive res, faster computation)
     '''
-
+    
     eR, iR, exponent, turns, N, scale, height, phase, flip = settings
 
     sign = -1 if flip else 1  # flip direction ?
@@ -270,59 +262,64 @@ def make_cornu_spiral(settings):
     L = iR * turns  # length
     S = eR * scale  # overall scale
 
-    es = prepareExponentialSettings(2, exponent + 1e-5)  # used for easing
+    cos_phase = cos(phase)
+    sin_phase = sin(phase)
 
-    verts1 = []  # positive spiral verts
-    verts2 = []  # negative spiral verts
-    norms = []
-    add_vert1 = verts1.append
-    add_vert2 = verts2.append
-    add_norm = norms.append
-    l1 = 0
-    x = 0
-    y = 0
-    for n in range(N + 1):
-        t = n / N  # t = [0,1]
+    _n     = np.arange(N+1, dtype=np.int32)
+    _verts = np.empty((N+1,3), dtype=np.float32)
+    _t     = _n/N
+    _a     = _t * (2 - _t)                          # a = ExponentialEaseOut(t, es)
+    _M     = 100 + (100*_a).astype(dtype=np.int32)  # integral steps (pricise of integral calculation)
+    _l     = L * _a                                 # l = [0, +L]
+    _l1    = np.roll(_l, 1)
+    _l1[0] = 0
+    _du    = (_l - _l1) / _M
+    
+    # # integral from l1 to l2
+    # It is just ariphmetic progression. Can be numpify with vectorize
+    # u = l1
+    # du = (l - l1) / M
+    # for m in range(M + 1):
+    #     u = u + du  # u = [l1, l2]
+    #     phi = u * u * pi / 2
+    #     x = x + cos(phi) * du
+    #     y = y + sin(phi) * du
 
-        a = QuadraticEaseOut(t)
-        # a = ExponentialEaseOut(t, es)
+    def integral_l12(M, u, du0):
+        pi_2 = pi/2
+        _arr_n = np.arange(M+1, dtype=np.float32)
+        _arr_u = _arr_n*du0+u
+        _arr_phi = _arr_u*_arr_u * pi_2
+        _cos_phi = np.cos(_arr_phi)*du0
+        _sin_phi = np.sin(_arr_phi)*du0
+        sum_cos = np.sum(_cos_phi)
+        sum_sin = np.sum(_sin_phi)
 
-        l = L * a  # l = [0, +L]
+        return sum_cos, sum_sin
+    
+    integral_l12_vect = np.vectorize(integral_l12)
+    _dx, _dy = integral_l12_vect(_M, _l1, _du)
+    _cumsum_x = np.cumsum(_dx)
+    _cumsum_y = np.cumsum(_dy)
+    
+    # scale and flip
+    _xx = _cumsum_x * S
+    _yy = _cumsum_y * S * sign
 
-        r = x * x + y * y
-        # print("r=", r)
-        # M = 100 + int(300 * pow(r, exponent)) # integral steps
-        M = 100 + int(100 * a)  # integral steps
-        l2 = l
+    # rotate by phase amount
+    _px = _xx * cos_phase - _yy * sin_phase
+    _py = _xx * sin_phase + _yy * cos_phase
+    _pz = height * _t
 
-        # integral from l1 to l2
-        u = l1
-        du = (l2 - l1) / M
-        for m in range(M + 1):
-            u = u + du  # u = [l1, l2]
-            phi = u * u * pi / 2
-            x = x + cos(phi) * du
-            y = y + sin(phi) * du
-        l1 = l2
+    _p1 = np.dstack( (_px, _py, _pz) ).reshape(-1, 3) # positive spiral verts
+    _verts = np.concatenate( (np.flip(-_p1, axis=0), _p1))
+    _verts = _verts.reshape(-1,3)
 
-        # scale and flip
-        xx = x * S
-        yy = y * S * sign
+    _edges = np.zeros((N,2), dtype=np.int32)
+    _edges[:,0] = _n[ :-1]
+    _edges[:,1] = _n[1:  ]
 
-        # rotate by phase amount
-        px = xx * cos(phase) - yy * sin(phase)
-        py = xx * sin(phase) + yy * cos(phase)
-        pz = height * t
-
-        add_vert1([px, py, pz])  # positive spiral verts
-        add_vert2([-px, -py, -pz])  # netative spiral verts
-
-    verts = verts2[::-1] + verts1
-
-    edges = get_edge_list(N)
-
-    return verts, edges, norms
-
+    return _verts, _edges, []
 
 def make_exo_spiral(settings):
     '''
@@ -349,23 +346,24 @@ def make_exo_spiral(settings):
 
     es = prepareExponentialSettings(11, exponent + 1e-5)  # used for easing
 
-    verts = []
-    norms = []
-    add_vert = verts.append
-    add_norm = norms.append
-    for n in range(N + 1):
-        t = n / N  # t : [0, 1]
-        a = ExponentialEaseInOut(t, es)  # ease radius variation (SIGMOID)
-        r = (iR + (eR - iR) * a) * scale
-        phi = max_phi * t + phase
-        x = r * cos(phi)
-        y = r * sin(phi)
-        z = height * t
-        add_vert([x, y, z])
+    b, e, m, s = es
 
-    edges = get_edge_list(N)
+    _n = np.arange(N+1, dtype=np.int32)
+    _verts = np.empty((N+1,3), dtype=np.float32)
+    _t = _n/N
+    _a = np.where(_t<0.5,                                                           # ExponentialEaseInOut
+                      0.5 *      (np.power(b, e *      (2*_t - 1)   ) - m) * s,     # ExponentialEaseIn
+                0.5 + 0.5 * (1 - (np.power(b, e * (1 - (2*_t - 1)-1)) - m) * s ) )  # ExponentialEaseOut
+    _r = (iR + (eR - iR) * _a) * scale
+    _phi = max_phi*_t + phase
+    _verts[:,0] = _r * np.cos(_phi)
+    _verts[:,1] = _r * np.sin(_phi)
+    _verts[:,2] = height * _t
 
-    return verts, edges, norms
+    _edges = np.zeros((N,2), dtype=np.int32)
+    _edges[:,0] = _n[ :-1]
+    _edges[:,1] = _n[1:  ]
+    return _verts, _edges, []
 
 
 def make_spirangle_spiral(settings):
@@ -380,6 +378,7 @@ def make_spirangle_spiral(settings):
         phase    : phase the spiral around its center
         flip     : flip the spiral direction (default is CLOCKWISE)
     '''
+    # TODO: numpify
 
     eR, iR, exponent, turns, N, scale, height, phase, flip = settings
 
@@ -418,6 +417,7 @@ def normalize_spiral(verts, normalize_eR, eR, iR, scale):
     '''
         Normalize the spiral (XY) to either exterior or interior radius
     '''
+    _verts = np.array(verts, dtype = np.float64)
     if normalize_eR:  # normalize to exterior radius (ending radius)
         psx = verts[-1][0] # x coordinate of the last point in the spiral
         psy = verts[-1][1] # y coordinate of the last point in the spiral
@@ -429,12 +429,8 @@ def normalize_spiral(verts, normalize_eR, eR, iR, scale):
         r = sqrt(psx * psx + psy * psy)
         ss = iR / r * scale if iR != 0 else 1
 
-    for n in range(len(verts)):
-        verts[n][0] *= ss
-        verts[n][1] *= ss
-
-    return verts
-
+    _verts = _verts * ss
+    return _verts
 
 class SvSpiralNodeMK2(SverchCustomTreeNode, bpy.types.Node, SvAngleHelper):
     """
@@ -621,8 +617,12 @@ class SvSpiralNodeMK2(SverchCustomTreeNode, bpy.types.Node, SvAngleHelper):
         edges_list = []
         for R, r, e, t, n, s, h, p, a in zip(*parameters):
             p = p * au
-            arm_verts = []
-            arm_edges = []
+            if self.separate:
+                _arm_verts = np.empty((0,0,3), dtype=np.int32)
+                _arm_edges = np.empty((0,0,2), dtype=np.int32)
+            else:
+                _arm_verts = np.empty((0,3), dtype=np.int32)
+                _arm_edges = np.empty((0,2), dtype=np.int32)
             for i in range(a):  # generate each arm
                 pa = p + 2 * pi / a * i
                 settings = [R, r, e, t, n, s, h, pa, f]  # spiral settings
@@ -633,16 +633,20 @@ class SvSpiralNodeMK2(SverchCustomTreeNode, bpy.types.Node, SvAngleHelper):
                     normalize_spiral(verts, self.normalize == "ER", R, r, s)
 
                 if self.separate:
-                    arm_verts.append(verts)
-                    arm_edges.append(edges)
+                    # unvisibled (4 levels. Visible is 3 levels)
+                    _arm_verts = np.concatenate( (_arm_verts, verts[np.newaxis, :,:] ) ) if _arm_verts.size else verts[np.newaxis, :,:]
+                    _arm_edges = np.concatenate( (_arm_edges, edges[np.newaxis, :,:] ) ) if _arm_edges.size else edges[np.newaxis, :,:]
                 else:  # join the arms
-                    o = len(arm_verts)
-                    edges = [[i1 + o, i2 + o] for (i1, i2) in edges]
-                    arm_verts.extend(verts)
-                    arm_edges.extend(edges)
+                    o = len(_arm_verts)
+                    edges = np.array(edges)
+                    edges = edges+o
+                    _arm_verts = np.vstack((_arm_verts, verts))
+                    _arm_edges = np.vstack((_arm_edges, edges))
 
-            verts_list.append(arm_verts)
-            edges_list.append(arm_edges)
+            _list_arm_verts = _arm_verts.tolist()
+            _list_arm_edges = _arm_edges.tolist()
+            verts_list.append(_list_arm_verts)
+            edges_list.append(_list_arm_edges)
 
         self.outputs['Vertices'].sv_set(verts_list)
         self.outputs['Edges'].sv_set(edges_list)

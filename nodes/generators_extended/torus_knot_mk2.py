@@ -27,7 +27,7 @@ import time
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat, get_edge_loop
 from sverchok.utils.sv_transform_helper import AngleUnits, SvAngleHelper
-
+import numpy as np
 
 def make_torus_knot(flags, settings, link_index=0):
     '''
@@ -94,73 +94,66 @@ def make_torus_knot(flags, settings, link_index=0):
     r_phase += 2 * pi * p * shift
     s_phase += 2 * pi * q * shift
 
-    # create the list of verts, edges, normals and tangents for the current link
-    verts = []
-    edges = []
-    norms = []
-    tangs = []
+    _n     = np.arange(N, dtype=np.int32)
+    _t     = _n*da
+    _theta = p * _t + r_phase  # revolution angle
+    _phi   = q * _t + s_phase  # spin angle
+    _sin_theta = np.sin(_theta)
+    _cos_theta = np.cos(_theta)
+    _sin_phi = np.sin(_phi)
+    _cos_phi = np.cos(_phi)
 
-    for n in range(N):
-        # t = 2*pi / links * n/N with: da = 2*pi/links/N => t = n * da
-        t = n * da
-        theta = p * t + r_phase  # revolution angle
-        phi = q * t + s_phase  # spin angle
+    # compute vertex coordinates
+    _x = (R + r * _cos_phi) * _cos_theta
+    _y = (R + r * _cos_phi) * _sin_theta
+    _z = r * _sin_phi * h
 
-        # cache values to improve performance
-        sin_theta = sin(theta)
-        cos_theta = cos(theta)
-        sin_phi = sin(phi)
-        cos_phi = cos(phi)
+    _verts = np.dstack((_x, _y, _z)).reshape(-1, 3)
 
-        # compute vertex coordinates
-        x = (R + r * cos_phi) * cos_theta
-        y = (R + r * cos_phi) * sin_theta
-        z = r * sin_phi * h
+    _list_norm = []
+    # append NORMAL
+    if compute_normals:
+        _nx = _x - R * _cos_theta
+        _ny = _y - R * _sin_theta
+        _nz = _z
+        if normalize_normals:
+            _nn     = np.sqrt  (  _nx*_nx + _ny*_ny + _nz*_nz)
+            _norm_x = np.where (   _nn==0, _nx, _nx/_nn )
+            _norm_y = np.where (   _nn==0, _ny, _ny/_nn )
+            _norm_z = np.where (   _nn==0, _nz, _nz/_nn )
+            _norm   = np.dstack( (_norm_x, _norm_y, _norm_z)).reshape(-1,3)
+        else:
+            _norm = np.dstack((_nx, _ny, _nz)).reshape(-1, 3)
+        _list_norm = _norm.tolist()
 
-        # append VERTEX
-        verts.append([x, y, z])
+    _list_tange = []
+    # append TANGENT
+    if compute_tangents:
+        qxr, pxr, pxR = [q * r, p * r, p * R]  # cached for performance
+        _tx = a * ( - qxr * _sin_phi * _cos_theta
+                    - pxr * _cos_phi * _sin_theta
+                    - pxR * _sin_theta)
+        _ty = a * ( - qxr * _sin_phi * _sin_theta
+                    + pxr * _cos_phi * _cos_theta
+                    + pxR * _cos_theta)
+        _tz = a * qxr * h * _cos_phi
+        if normalize_tangents:
+            _tn     = np.sqrt  (_tx*_tx + _ty*_ty + _tz*_tz)
+            _tang_x = np.where ( _tn==0, _tx, _tx/_tn ) # normalize the tangent
+            _tang_y = np.where ( _tn==0, _ty, _ty/_tn ) # normalize the tangent
+            _tang_z = np.where ( _tn==0, _tz, _tz/_tn ) # normalize the tangent
+            _tang   = np.dstack((_tang_x, _tang_y, _tang_z)).reshape(-1, 3)
+        else:
+            _tang = np.dstack((_tx, _ty, _tz)).reshape(-1, 3)
+        _list_tange = _tang.tolist()
 
-        # append NORMAL
-        if compute_normals:
-            nx = x - R * cos_theta
-            ny = y - R * sin_theta
-            nz = z
-            if normalize_normals:
-                nn = sqrt(nx * nx + ny * ny + nz * nz)
-                if nn == 0:
-                    norm = [nx, ny, nz]
-                else:
-                    norm = [nx / nn, ny / nn, nz / nn]  # normalize the normal
-            else:
-                norm = [nx, ny, nz]
+    _verts_indexes = np.arange(N, dtype=np.int32)
+    _edges = np.column_stack( (_verts_indexes, np.roll(_verts_indexes, -1)) )
 
-            norms.append(norm)
-
-        # append TANGENT
-        if compute_tangents:
-            qxr, pxr, pxR = [q * r, p * r, p * R]  # cached for performance
-            tx = a * (- qxr * sin_phi * cos_theta
-                      - pxr * cos_phi * sin_theta
-                      - pxR * sin_theta)
-            ty = a * (- qxr * sin_phi * sin_theta
-                      + pxr * cos_phi * cos_theta
-                      + pxR * cos_theta)
-            tz = a * qxr * h * cos_phi
-            if normalize_tangents:
-                tn = sqrt(tx * tx + ty * ty + tz * tz)
-                if tn == 0:
-                    tang = [tx, ty, tz]
-                else:
-                    tang = [tx / tn, ty / tn, tz / tn]  # normalize the tangent
-            else:
-                tang = [tx, ty, tz]
-
-            tangs.append(tang)
-
-    # generate the EDGEs
-    edges = get_edge_loop(N)
-
-    return verts, edges, norms, tangs
+    _list_verts = _verts.tolist()
+    _list_edges = _edges.tolist()
+    
+    return _list_verts, _list_edges, _list_norm, _list_tange
 
 
 class SvTorusKnotNodeMK2(SverchCustomTreeNode, bpy.types.Node, SvAngleHelper):

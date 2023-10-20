@@ -23,6 +23,7 @@ from bpy.props import BoolProperty, IntProperty, FloatProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (fullList, match_long_repeat, updateNode)
+import numpy as np
 
 
 class SvCircleNode(SverchCustomTreeNode, bpy.types.Node):
@@ -54,43 +55,54 @@ class SvCircleNode(SverchCustomTreeNode, bpy.types.Node):
         layout.prop(self, "mode_", text="Mode")
 
     def make_verts(self, Angle, Vertices, Radius):
+        
         if Angle < 360:
             theta = Angle/(Vertices-1)
         else:
             theta = Angle/Vertices
-        listVertX = []
-        listVertY = []
-        for i in range(Vertices):
-            listVertX.append(Radius*cos(radians(theta*i)))
-            listVertY.append(Radius*sin(radians(theta*i)))
+
+        _n1 = np.arange(Vertices, dtype=np.int32)
+        _theta = _n1*theta
+        _x = Radius * np.cos(np.radians(_theta))
+        _y = Radius * np.sin(np.radians(_theta))
 
         if Angle < 360 and self.mode_ == 0:
             sigma = radians(Angle)
-            listVertX[-1] = Radius*cos(sigma)
-            listVertY[-1] = Radius*sin(sigma)
+            _x[-1] = Radius*cos(sigma)
+            _y[-1] = Radius*sin(sigma)
         elif Angle < 360 and self.mode_ == 1:
-            listVertX.append(0.0)
-            listVertY.append(0.0)
+            _x = np.hstack( (_x, [0.0]) )
+            _y = np.hstack( (_y, [0.0]) )
+        _points = np.column_stack((_x, _y))
+        _points = np.insert(_points, 2, [0], axis=1)
+        _list_points = _points.tolist()
 
-        points = list((x,y,0) for x,y in zip(listVertX, listVertY) )
-        return points
+        return _list_points
 
     def make_edges(self, Angle, Vertices):
-        listEdg = [(i, i+1) for i in range(Vertices-1)]
+
+        _n = np.arange(Vertices, dtype=np.int32)
+        _edges = np.column_stack( (_n[:-1], _n[1:]) )
 
         if Angle < 360 and self.mode_ == 1:
-            listEdg.append((0, Vertices))
-            listEdg.append((Vertices-1, Vertices))
+            # Close circle like Packman (throw center of circle)
+            _edges = np.vstack( (_edges, (Vertices-1, Vertices) ))
+            _edges = np.vstack( (_edges, (Vertices  , 0) ))
         else:
-            listEdg.append((Vertices-1, 0))
-        return listEdg
+            # Close circle from last point to first point
+            _edges = np.vstack( (_edges, (Vertices-1, 0)))
+        
+        _list_edges = _edges.tolist()
+        return _list_edges
 
     def make_faces(self, Angle, Vertices):
-        listPlg = list(range(Vertices))
 
+        _arr_indexes = np.arange(Vertices, dtype=np.int32)
         if Angle < 360 and self.mode_ == 1:
-            listPlg.insert(0, Vertices)
-        return [listPlg]
+            _arr_indexes = np.hstack( (Vertices, _arr_indexes) )
+        _list_indexes = _arr_indexes.tolist()
+
+        return [_list_indexes]
 
     def process(self):
         
