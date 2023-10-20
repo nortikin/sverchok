@@ -8,18 +8,17 @@
 import bpy
 from bpy.props import BoolProperty, StringProperty, IntProperty
 import bmesh
-from mathutils import Vector, Matrix
+
+#from sverchok.nodes.scene.get_objects_data_mk2 import SvOB3BDataCollectionMK2, SVOB3B_UL_NamesListMK2, SvOB3BItemOperatorMK2, SvOB3CallbackMK2
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
 from sverchok.data_structure import updateNode
 from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh
-from sverchok.utils.sv_mesh_utils import mesh_join
 from sverchok.utils.nodes_mixins.show_3d_properties import Show3DProperties
 from sverchok.utils.blender_mesh import (
     read_verts, read_edges, read_verts_normal,
     read_face_normal, read_face_center, read_face_area, read_materials_idx)
-import numpy as np
 
 
 class SvOB3BDataCollectionMK2(bpy.types.PropertyGroup):
@@ -84,13 +83,13 @@ def get_vertgroups(mesh):
 numpy_socket_names = ['Vertices', 'Edges', 'Vertex Normals', 'Material Idx', 'Polygon Areas', 'Polygon Centers', 'Polygon Normals']
 
 
-class SvGetObjectsDataMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
+class SvGetObjectsData(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Object Info
     Tooltip: Get Scene Objects into Sverchok Tree
     """
 
-    bl_idname = 'SvGetObjectsDataMK2'
+    bl_idname = 'SvGetObjectsData'
     bl_label = 'Get Objects Data'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_OBJECTS_IN'
@@ -98,12 +97,12 @@ class SvGetObjectsDataMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
     @property
     def is_scene_dependent(self):
         return (not self.inputs['Objects'].is_linked) and (self.inputs['Objects'].object_ref_pointer
-                                                           or self.object_names)
+                                                           or hasattr(self, 'objects_names') and self.object_names)
 
     @property
     def is_animation_dependent(self):
         return (not self.inputs['Objects'].is_linked) and (self.inputs['Objects'].object_ref_pointer
-                                                           or self.object_names)
+                                                           or hasattr(self, 'objects_names') and self.object_names)
 
     def hide_show_versgroups(self, context):
         outs = self.outputs
@@ -141,23 +140,10 @@ class SvGetObjectsDataMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
         name='Output all numpy',
         description='Output numpy arrays if possible',
         default=False, update=updateNode)
-    
-
-    apply_matrix: BoolProperty(
-        name = "Apply matrices",
-        description = "Apply objects matrices",
-        default = True,
-        update = updateNode)
-    
-    mesh_join : BoolProperty(
-        name = "merge",
-        description = "If checked, join mesh elements into one object",
-        default = False,
-        update = updateNode)
 
     def sv_init(self, context):
         new = self.outputs.new
-        self.width = 170
+        self.width = 150
         self.inputs.new('SvObjectSocket', "Objects")
         new('SvVerticesSocket', "Vertices")
         new('SvStringsSocket', "Edges")
@@ -228,11 +214,6 @@ class SvGetObjectsDataMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
 
             self.wrapper_tracked_ui_draw_op(row, callback, text=op_text).fn_name = 'get_objects_from_scene'
 
-        col = layout.column(align=True)
-        row = col.row(align=True)
-        row.prop(self, "apply_matrix", text="Apply matrix", toggle=True)
-        row.prop(self, "mesh_join", text="merge", toggle=True)
-        
         col = layout.column(align=True)
         row = col.row(align=True)
         if not by_input:
@@ -317,24 +298,24 @@ class SvGetObjectsDataMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
                     # from 3dview while in edit mode when using obj.to_mesh.
                     me = obj.data
                     bm = bmesh.from_edit_mesh(me)
-                    # verts, edgs, pols = pydata_from_bmesh(bm)
+                    vers, edgs, pols = pydata_from_bmesh(bm)
 
                     if o_vs:
-                        verts = [ Vector(v.co) for v in bm.verts]  # v.co is a Vector()
+                        vs.append(vers)
                     if o_es:
-                        edgs = [[e.verts[0].index, e.verts[1].index] for e in bm.edges]
+                        es.append(edgs)
                     if o_ps:
-                        pols = [[i.index for i in p.verts] for p in bm.faces]
+                        ps.append(pols)
                     if o_vn:
-                        vertex_normals = [ Vector(v.normal) for v in bm.verts] # v.normal is a Vector()
+                        vn.append([v.normal[:] for v in bm.verts])
                     if o_mi:
-                        material_indexes = self.get_materials_from_bmesh(bm)
+                        mi.append(self.get_materials_from_bmesh(bm))
                     if o_pa:
-                        polygons_areas = [ p.calc_area() for p in bm.faces ]
+                        pa.append([p.calc_area() for p in bm.faces])
                     if o_pc:
-                        polygon_centers = [ Vector(p.calc_center_median()) for p in bm.faces ]
+                        pc.append([p.calc_center_median()[:] for p in bm.faces])
                     if o_pn:
-                        polygon_normals = [ Vector(p.normal) for p in bm.faces ]
+                        pn.append([p.normal[:] for p in bm.faces])
 
                     del bm
                 else:
@@ -347,48 +328,33 @@ class SvGetObjectsDataMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
                         obj_data = obj.to_mesh(preserve_all_data_layers=True, depsgraph=sv_depsgraph)
                     else:
                         obj_data = obj.to_mesh()
-                    
-                    T, R, S = mtrx.decompose()
 
                     if o_vs:
-                        verts            = [ ((mtrx @ v.co) if self.apply_matrix else v.co)[:] for v in obj_data.vertices]  # v.co is a Vector()
+                        vs.append(read_verts(obj_data, out_np[0]))
                     if o_es:
-                        edgs             = [[ e.vertices[0], e.vertices[1] ] for e in obj_data.edges]
+                        es.append(read_edges(obj_data, out_np[1]))
                     if o_ps:
-                        pols             = [list(p.vertices) for p in obj_data.polygons]
+                        ps.append([list(p.vertices) for p in obj_data.polygons])
                     if self.vergroups:
-                        vert_groups      = get_vertgroups(obj_data)
+                        vers_out_grouped.append(get_vertgroups(obj_data))
                     if o_vn:
-                        vertex_normals   = [ ((   R @ v.co) if self.apply_matrix else v.normal)[:] for v in obj_data.vertices ] # v.normal is a Vector(). Update. Blender 3.6.3 crash in no wrap Vector(v.normal). I think this is after line "obj.to_mesh_clear()"
+                        vn.append(read_verts_normal(obj_data, out_np[2]))
                     if o_mi:
-                        material_indexes = read_materials_idx(obj_data, out_np[3])
+                        mi.append(read_materials_idx(obj_data, out_np[3]))
                     if o_pa:
-                        polygons_areas   = [ polygon.area for polygon in obj_data.polygons]
+                        pa.append(read_face_area(obj_data, out_np[4]))
                     if o_pc:
-                        polygon_centers  = [ ((mtrx @ polygon.center) if self.apply_matrix else polygon.center)[:] for polygon in obj_data.polygons]
+                        if out_np[5]:
+                            pc.append(read_face_center(obj_data, output_numpy=True))
+                        else:
+                            pc.append([p.center[:] for p in obj_data.polygons])
                     if o_pn:
-                        polygon_normals  = [ ((   R @ polygon.normal) if self.apply_matrix else polygon.normal)[:] for polygon in obj_data.polygons]
+                        if out_np[6]:
+                            pn.append(read_face_normal(obj_data, True))
+                        else:
+                            pn.append([p.normal[:] for p in obj_data.polygons])
 
-                obj.to_mesh_clear()
-                
-                if o_vs:
-                    vs.append( verts )
-                if o_es:
-                    es.append( edgs )
-                if o_ps:
-                    ps.append( pols )
-                if self.vergroups:
-                    vers_out_grouped.append( vert_groups )
-                if o_vn:
-                    vn.append( vertex_normals )
-                if o_mi:
-                    mi.append( material_indexes )
-                if o_pa:
-                    pa.append( polygons_areas )
-                if o_pc:
-                    pc.append( polygon_centers )
-                if o_pn:
-                    pn.append( polygon_normals )
+                    obj.to_mesh_clear()
 
             except ReadingObjectDataError:
                 raise
@@ -400,56 +366,6 @@ class SvGetObjectsDataMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
             if o_ms:
                 ms.append(mtrx)
 
-        if self.mesh_join:
-            # vs, es, ps, vn, mi, pa, pc, pn, ms
-            offset = 0
-            _vs = []
-            _es, _ps, _vn, _pa, _pc, _pn, _vg = [], [], [], [], [], [], []
-            for idx, vertices in enumerate(vs):
-                _vs.extend(vertices)
-                if es:
-                    _es.extend( [[i + offset for i in o] for o in es[idx] ] ) # edges
-                if ps:
-                    _ps.extend( [[i + offset for i in o] for o in ps[idx] ] ) # polygons
-                #_vn.extend( [tuple(i + offset for i in o) for o in ps[idx] ] ) # vers_out_grouped. Skip in mesh_join
-                if vn:
-                    _vn.extend( vn[idx] ) # vertex normals
-                # _mi - materia index. Do not change
-                # if mi and len(mi)>idx:
-                #     _mi.extend( mi[idx] ) # Skip in mesh_join
-                if pa:
-                    _pa.extend( pa[idx] ) # polygon area
-                if pc:
-                    _pc.extend( pc[idx] ) # polygon center
-                if pn:
-                    _pn.extend( pn[idx] ) # polygon normal
-                # if ms: Do not change
-                #     _ms.append( ms[idx] ) # matrices. Skip in mesh_join
-                if vers_out_grouped:
-                    _vg.extend( [ i + offset for i in vers_out_grouped[idx] ] ) # vertex groups
-                
-                offset += len(vertices)
-            
-            vs, es, ps, vn, pa, pc, pn, vers_out_grouped = [_vs], [_es], [_ps], [_vn], [_pa], [_pc], [_pn], [_vg]
-
-        if o_vs and (out_np[0]):
-            vs = [np.array(vert) for vert in vs]
-        if o_es and (out_np[1]):
-            es = [np.array(edge) for edge in es]
-        # if o_ps and (out_np[2]):
-        #     ps = [np.array(pol)  for pol  in ps]
-        # if self.vergroups:
-        #     vers_out_grouped = [np.array(group)  for group  in vers_out_grouped]
-        if o_vn and (out_np[2]):
-            vn = [np.array(vert_normal)     for vert_normal     in vn]
-        if o_mi and (out_np[3]):
-            mi = [np.array(material_index)  for material_index  in mi]
-        if o_pa and (out_np[4]):
-            pa = [np.array(polygon_areas)   for polygon_areas   in pa]
-        if o_pc and (out_np[5]):
-            pc = [np.array(polygon_centers) for polygon_centers in pc]
-        if o_pn and (out_np[6]):
-            pn = [np.array(polygon_normals) for polygon_normals in pn]
 
         for i, i2 in zip(self.outputs, [vs, es, ps, vn, mi, pa, pc, pn, ms]):
             if i.is_linked:
@@ -465,5 +381,6 @@ class SvGetObjectsDataMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
                 outputs['Object'].sv_set([data_objects.get(o.name) for o in self.object_names])
 
 
-classes = [SvOB3BItemOperatorMK2, SvOB3BDataCollectionMK2, SVOB3B_UL_NamesListMK2, SvOB3CallbackMK2, SvGetObjectsDataMK2]
+classes = [SvOB3BItemOperatorMK2, SvOB3BDataCollectionMK2, SVOB3B_UL_NamesListMK2, SvOB3CallbackMK2, SvGetObjectsData]
+#classes = [SvGetObjectsData]
 register, unregister = bpy.utils.register_classes_factory(classes)
