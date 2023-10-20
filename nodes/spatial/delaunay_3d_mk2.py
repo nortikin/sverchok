@@ -27,23 +27,6 @@ def is_volume_0(verts, idxs, threshold):
     '''Is volume size of 4 verts less threshold (True/False) '''
     if threshold == 0:
         return False
-    # a, b, c, d = [verts[i] for i in idxs]
-    # a, b, c, d = np.array(a), np.array(b), np.array(c), np.array(d)
-    # v1 = b - a
-    # v2 = c - a
-    # v3 = d - a
-    # v1 = v1 / np.linalg.norm(v1)
-    # v2 = v2 / np.linalg.norm(v2)
-    # v3 = v3 / np.linalg.norm(v3)
-    # volume = np.cross(v1, v2).dot(v3) / 6
-
-    # vects = verts[ list(idxs) ] # convert set to list #np.array([verts[i] for i in idxs], dtype=np.float64)
-    # vects = vects-vects[0]
-    # vects_norm = vects[1:4]/np.linalg.norm(vects[1:4], axis=1, keepdims=True)
-    # v1_ = vects_norm[0]
-    # v2_ = vects_norm[1]
-    # v3_ = vects_norm[2]
-    # volume_ = np.cross(v1_, v2_).dot(v3_) / 6
 
     a, b, c, d = [Vector(verts[i]) for i in idxs]
 
@@ -60,21 +43,6 @@ def is_area_0(verts, idxs, threshold):
     '''Is area size of 3 verts less threshold (True/False) '''
     if threshold == 0:
         return False
-    # a, b, c = [verts[i] for i in idxs]
-    # a, b, c = np.array(a), np.array(b), np.array(c)
-    # v1 = b - a
-    # v2 = c - a
-    # v1 = v1 / np.linalg.norm(v1)
-    # v2 = v2 / np.linalg.norm(v2)
-    # area = np.linalg.norm(np.cross(v1, v2)) / 2
-
-    # vects = verts[ list(idxs) ] # convert set to list #np.array([verts[i] for i in idxs], dtype=np.float64)
-    # vects = vects-vects[0]
-    # vects_norm = vects[1:3]/np.linalg.norm(vects[1:3], axis=1, keepdims=True)
-    # v1_ = vects_norm[0]
-    # v2_ = vects_norm[1]
-    # area_ = np.linalg.norm(np.cross(v1_, v2_)) / 2
-
 
     a, b, c = [Vector(verts[i]) for i in idxs]
 
@@ -89,10 +57,6 @@ def is_length_0(verts, idxs, threshold):
     '''Is length size of 2 verts less threshold (True/False) '''
     if threshold == 0:
         return False
-    # a, b = [verts[i] for i in idxs]
-    # #a, b = np.array(a), np.array(b) # verts is numpy
-    # v1 = b - a
-    # len = np.linalg.norm(v1)
 
     a, b = [Vector(verts[i]) for i in idxs]
     v1 = b-a
@@ -184,52 +148,6 @@ def get_delaunay_simplices(vertices, threshold):
     that simplixes will be removed. If no volume will exists then planes mode will be selected and recalc rise.
     So this will be for planes to lines.
     '''
-    np_sites = np.array([(*v, 0.0 ) for v in vertices], dtype=np.float32)
-    for i in range(10): # 2 is max, but for insurance
-        # Add 3D tetraedre to the 4D with W=1 (proxy shape). This trick for do not mixing vertices of a source shape and a proxy shape:
-        np_sites = np.append(np_sites, [[0.0, 0.0, 0.0, 1.0],
-                                        [1.0, 0.0, 0.0, 1.0],
-                                        [0.0, 1.0, 0.0, 1.0],
-                                        [0.0, 0.0, 1.0, 1.0],
-                                        ], axis=0)
-
-        simplices, dim1, dim2 = get_sites_delaunay_params( np_sites, len(vertices), threshold )
-        #bbox = bounding_box_aligned(vertices)
-        if dim1==dim2: # 4 - volume, 3 - planes, 2 - edges, 1 - dots
-            #print(f"Found solution for dim={dim2-1} with {i} attempt")
-            break
-        else:
-            # Get bbox size. TODO: think about oriented BBOX
-            oX_size = np.max(np.array(vertices, dtype=np.float16)[:,0]) - np.min(np.array(vertices, dtype=np.float16)[:,0])
-            oY_size = np.max(np.array(vertices, dtype=np.float16)[:,1]) - np.min(np.array(vertices, dtype=np.float16)[:,1])
-            oZ_size = np.max(np.array(vertices, dtype=np.float16)[:,2]) - np.min(np.array(vertices, dtype=np.float16)[:,2])
-            axis = list(np.argsort([oX_size, oY_size, oZ_size]))
-            axis.reverse()
-            plane_axis_X = axis[0]
-            plane_axis_Y = axis[1]
-            plane_axis_Z = axis[2]
-            if dim2==3: # plane. (faces and edges)
-                # Select max plane axises of Bounding Box get it to XY plane
-                # convert vertices to plane oXY. get two first elems. Is is plane max area
-                np_sites = np.array([(v[plane_axis_X], v[plane_axis_Y], 0, 0) for v in vertices], dtype=np.float32)
-                continue
-            elif dim2==2: # line (only edges)
-                # Select max side axis of Bounding Box get it to oX plane
-                np_sites = np.array([(v[plane_axis_X], 0, 0, 0) for v in vertices], dtype=np.float32)
-                continue
-            elif dim2==1: # dot. no edges
-                break
-            else:
-                # unknown dim2. insurence
-                break
-    else:
-        #print("delaunay_3d_mk2. Solution not found")  # incredibly 
-        pass
-
-    #simplices = get_delaunay_simplices_02(vertices, threshold)
-    return simplices
-
-def get_delaunay_simplices_02(vertices, threshold):
 
     # get shape dimension (dim):
     abbox = bounding_box_aligned(vertices)
@@ -410,8 +328,7 @@ class SvDelaunay3dMk2Node(SverchCustomTreeNode, bpy.types.Node):
             faces_item = []
             for vertices, volume_threshold, edge_threshold in zip_long_repeat(*params):
                 vertices = np.array(vertices, dtype=np.float64)
-                #simplices = get_delaunay_simplices(vertices, self.volume_threshold)
-                simplices = get_delaunay_simplices_02(vertices, self.volume_threshold)
+                simplices = get_delaunay_simplices(vertices, self.volume_threshold)
                 if self.join:
 
                     verts_new = vertices
@@ -427,9 +344,6 @@ class SvDelaunay3dMk2Node(SverchCustomTreeNode, bpy.types.Node):
 
                         if self.is_too_long(vertices, simplex, edge_threshold):
                              continue
-
-                        # for get_delaunay_simplices_02 no test for threshold dimension.
-                        # for get_delaunay_simplices: no need test for threshold now. All elements now is more than threshold.
 
                         if simplex_length==1:
                             continue
