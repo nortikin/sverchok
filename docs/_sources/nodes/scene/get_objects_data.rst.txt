@@ -1,8 +1,8 @@
 Get Objects Data
 ================
 
-.. image:: https://github.com/nortikin/sverchok/assets/14288520/866c67a1-c6ea-4db5-be8e-e5981c7c5aad
-  :target: https://github.com/nortikin/sverchok/assets/14288520/866c67a1-c6ea-4db5-be8e-e5981c7c5aad
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/b24e7fbc-3383-49ca-bc96-ae5ff823fee3
+  :target: https://github.com/nortikin/sverchok/assets/14288520/b24e7fbc-3383-49ca-bc96-ae5ff823fee3
 
 Functionality
 -------------

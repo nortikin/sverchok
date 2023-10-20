@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Get Objects Data &mdash; Sverchok 1, 2, 0 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+    <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/documentation_options.js?v=773c2105"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../main.html" class="icon icon-home">
+            Sverchok
+              <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                1, 2, 0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction/introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_interface/user_interface.html">User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tree_evaluation_system.html">Node tree evaluation system</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data_structure/data_structure_index.html">Data structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../nodes.html">Nodes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing/contributing_to_sverchok.html">Contributing to sverchok</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../main.html">Sverchok</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../main.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Get Objects Data</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/old/nodes/get_objects_data.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="get-objects-data">
+<h1>Get Objects Data<a class="headerlink" href="#get-objects-data" title="Link to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/b24e7fbc-3383-49ca-bc96-ae5ff823fee3"><img alt="https://github.com/nortikin/sverchok/assets/14288520/b24e7fbc-3383-49ca-bc96-ae5ff823fee3" src="https://github.com/nortikin/sverchok/assets/14288520/b24e7fbc-3383-49ca-bc96-ae5ff823fee3" /></a>
+<section id="functionality">
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
+<p>Get objects from the Blender <code class="docutils literal notranslate"><span class="pre">Scene</span></code> and output them into Sverchok’s node tree. This node supports most object types. All are converted to a Sverchok representation of <code class="docutils literal notranslate"><span class="pre">Mesh</span></code> where possible.</p>
+<p>A few points worth stating explicitly.</p>
+<ul class="simple">
+<li><p>Empties, Cameras, and Lamps produce only matrix data.</p></li>
+<li><p>The order of the selected Objects can be sorted by name.</p></li>
+<li><p>It supports Object collections.</p></li>
+<li><p>It understands also <code class="docutils literal notranslate"><span class="pre">vertex</span> <span class="pre">groups</span></code>, when activated, showing additional socket representing indices, that you can use for further processing. All groups are cached in one list _without_weights_.</p></li>
+<li><p>When you <code class="docutils literal notranslate"><span class="pre">Get</span></code> objects from the Scene that have modifiers on them, you can import the final mesh by enabling the <code class="docutils literal notranslate"><span class="pre">Post</span></code> button.</p></li>
+<li><p>Importing Objects with a lot of geometry will decrease Sverchok tree update speed, be careful with any modifiers that produce a lot of extra geometry (like subdivision modifier)</p></li>
+<li><p>The Matrix socket lets you ignore or acquire the Object’s <code class="docutils literal notranslate"><span class="pre">World</span> <span class="pre">Matrix</span></code>, by default the Object data is untransformed. Use a matrix-apply node if you want to explicitly transform the vertex data.</p></li>
+</ul>
+<p>limitations:</p>
+<ul class="simple">
+<li><p>When you use the <code class="docutils literal notranslate"><span class="pre">Post</span></code> mode Sverchok/Blender expect Objects to be visible. If you want to “hide” the original Objects in the scene to avoid visual clutter, you can place them into a Collection and hide the collection. This is a current Blender API limitation.</p></li>
+<li><p>We have Bezier-in and NURBS-in nodes if you want to get Curve data from Scene objects, instead of Mesh.</p></li>
+</ul>
+</section>
+<section id="inputs">
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
+<p>Objects Socket</p>
+</section>
+<section id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Param</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>G E T</strong></p></td>
+<td><p>Button</p></td>
+<td><p>Button to get selected objects from scene.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>sorting</strong></p></td>
+<td><p>Bool, toggle</p></td>
+<td><p>Sorting inserted objects by name</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>post</strong></p></td>
+<td><p>Bool, toggle</p></td>
+<td><p>Postprocessing, if activated, modifiers applied to mesh before importing</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>vert groups</strong></p></td>
+<td><p>Bool, toggle</p></td>
+<td><p>Import all vertex groups that in object’s data. just import indexes</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="d-panel">
+<h2>3D panel<a class="headerlink" href="#d-panel" title="Link to this heading">¶</a></h2>
+<p>The node can show its properties on 3D panel.
+For this parameter <cite>to 3d</cite> should be enabled, output should be linked.
+After that you can press <cite>scan for props</cite> button on 3D panel for showing the node properties on 3D panel.</p>
+</section>
+<section id="outputs">
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Output</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Vertices</p></td>
+<td><p>Vertices of objects</p></td>
+</tr>
+<tr class="row-odd"><td><p>Edges</p></td>
+<td><p>Edges of objects</p></td>
+</tr>
+<tr class="row-even"><td><p>Polygons</p></td>
+<td><p>Polygons of objects</p></td>
+</tr>
+<tr class="row-odd"><td><p>Vertex Normals</p></td>
+<td><p>Vertex Normals</p></td>
+</tr>
+<tr class="row-even"><td><p>Material Idx</p></td>
+<td><p>Material indexes per object face.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Polygons Areas</p></td>
+<td><p>Polygons of objects.</p></td>
+</tr>
+<tr class="row-even"><td><p>Polygons Centers</p></td>
+<td><p>Polygons Center of objects.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Polygons Normal</p></td>
+<td><p>Polygons Normal of objects.</p></td>
+</tr>
+<tr class="row-even"><td><p>Matrix</p></td>
+<td><p>Matrices of objects</p></td>
+</tr>
+<tr class="row-odd"><td><p>Vers grouped</p></td>
+<td><p>Vertex groups’ indices from all vertex groups</p></td>
+</tr>
+</tbody>
+</table>
+<p>It can output Numpy arrays of vertices and edges if enabled on N-panel properties (makes node faster)</p>
+</section>
+<section id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">¶</a></h2>
+<img alt="https://user-images.githubusercontent.com/619340/126961901-4c300e39-6cbe-456f-a132-104f7b3827ca.png" src="https://user-images.githubusercontent.com/619340/126961901-4c300e39-6cbe-456f-a132-104f7b3827ca.png" />
+<p>Importing an object with two array modifiers applied and showing indices.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2014...2023, sverchok team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
