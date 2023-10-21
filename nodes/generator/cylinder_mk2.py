@@ -73,7 +73,7 @@ def make_verts(rt, rb, npar, nmer, h, t, ph, s, profile_p, profile_m, flags):
     if len(profile_p) < 2:  # no profile given (make profile all ones)
         resampled_profile_p = [1] * nmer
     else: # resample PARALLELS profile to nm parallel points [0-1]
-        samples = [m / nmer for m in range(nmer + 1)]
+        samples = [m / nmer for m in range(nmer)]
         resampled_profile_p = resample_1D_array(profile_p, samples, cyclic)
 
     if len(profile_m) < 2:  # no profile given (make profile all ones)
@@ -90,7 +90,7 @@ def make_verts(rt, rb, npar, nmer, h, t, ph, s, profile_p, profile_m, flags):
     _p = np.arange(npar)
     _f = _p / (npar - 1)  # interpolation factor between rb and rt
     _r = rb + (rt-rb)*_f  # interpolated radius between bottom and top radii
-    _res_par, _res_mer = np.meshgrid( resampled_profile_p[:-1], resampled_profile_m, indexing='xy') # get matrix resampled profiles parallels x meridian
+    _res_par, _res_mer = np.meshgrid( resampled_profile_p, resampled_profile_m, indexing='xy') # get matrix resampled profiles parallels x meridian
     _rpm               = np.meshgrid(np.arange(nmer), _r)[1] * _res_par*_res_mer                    # get r for any point
     _nmer, _npar       = np.meshgrid( np.arange(nmer), np.arange(npar), indexing='xy')              # get indices for meridian and parallels
     _phase             = ph + dT * _npar
@@ -159,18 +159,18 @@ def make_edges_and_faces(P, M, cap_bottom, cap_top, flags, get_edges, get_faces)
                 _arr_verts = np.hstack( (_arr_verts, np.array([_arr_verts[:,0]]).T ) ) # append first column to the left to horizontal circle
 
             _arr_faces = np.empty((N2-1, N1, 4), 'i' ) if cyclic else np.empty((N2-1, N1-1, 4), 'i' )
-            _arr_faces[:, :, 0] = _arr_verts[ 1:  ,  :-1 ]
-            _arr_faces[:, :, 1] = _arr_verts[ 1:  , 1:   ]
-            _arr_faces[:, :, 2] = _arr_verts[  :-1, 1:   ]
-            _arr_faces[:, :, 3] = _arr_verts[  :-1,  :-1 ]
+            _arr_faces[:, :, 0] = _arr_verts[  :-1,  :-1 ]
+            _arr_faces[:, :, 1] = _arr_verts[  :-1, 1:   ]
+            _arr_faces[:, :, 2] = _arr_verts[ 1:  , 1:   ]
+            _arr_faces[:, :, 3] = _arr_verts[ 1:  ,  :-1 ]
             _arr_faces_res = _arr_faces.reshape(-1,4)
             _list_faces = _arr_faces_res.tolist()
             if cap_top:
-                l_top = [_arr_verts[-1].tolist()]  # cyclic do not apply on the top and the bottom
+                l_top = [_arr_verts[-1][:-1].tolist()]  # cyclic do not apply on the top and the bottom
                 _list_faces.extend(l_top)
 
             if cap_bottom:
-                l_bottom = [_arr_verts[0].tolist()]
+                l_bottom = [_arr_verts[0][:-1].tolist()]
                 l_bottom.extend(_list_faces)
                 _list_faces = l_bottom
 

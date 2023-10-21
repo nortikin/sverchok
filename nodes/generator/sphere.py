@@ -124,6 +124,7 @@ def sphere_faces(U, V):
         )
     )
     _arr_faces_top_bottom = _arr_faces_top_bottom.reshape(-1,3)
+    _arr_faces_top_bottom = _arr_faces_top_bottom.tolist()
     _list_faces = _arr_middle_faces.tolist()
     _list_faces.extend( _arr_faces_top_bottom )
     return _list_faces

@@ -133,10 +133,10 @@ def torus_polygons(N1, N2, t):
     arr_verts = np.vstack( (arr_verts, np.roll(arr_verts[:1], -t) ) ) # append first row to bottom to vertically circle
     arr_verts = np.hstack( (arr_verts, np.array([arr_verts[:,0]]).T ) ) # append first column to right to horizontal circle
     
-    arr_faces[:, :, 0] = arr_verts[ :-1, 1:  ]
-    arr_faces[:, :, 1] = arr_verts[1:  , 1:  ]
-    arr_faces[:, :, 2] = arr_verts[1:  ,  :-1]
-    arr_faces[:, :, 3] = arr_verts[ :-1,  :-1]
+    arr_faces[:, :, 0] = arr_verts[ :-1,  :-1]
+    arr_faces[:, :, 1] = arr_verts[1:  ,  :-1]
+    arr_faces[:, :, 2] = arr_verts[1:  , 1:  ]
+    arr_faces[:, :, 3] = arr_verts[ :-1, 1:  ]
     hs_faces = arr_faces.reshape(-1,4) # remove exis
     hs_edges_list = hs_faces.tolist()
 
