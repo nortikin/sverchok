@@ -122,10 +122,12 @@ def make_edges_polys(is_edges, is_polys, P, M, cap_bottom, cap_top):
         list_polys         = hs_faces.tolist()
         if cap_bottom:
             cap_b = np.flip( np.arange(M) )
+            cap_b = cap_b.tolist()
             list_polys.append(cap_b)
 
         if cap_top:
             cap_t = np.arange(M)+(N1-1)*N2
+            cap_t = cap_t.tolist()
             list_polys.append(cap_t)
 
     return list_edges, list_polys
