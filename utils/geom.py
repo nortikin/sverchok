@@ -68,7 +68,7 @@ def bounding_box_aligned(verts):
     rrc = np.matmul(evec, rectCoords(xmin, ymin, zmin, xmax, ymax, zmax))
     rrc += means[:, np.newaxis]
     rrc = rrc.transpose()
-    return tuple(rrc)
+    return tuple([rrc])
 
 identity_matrix = Matrix()
 

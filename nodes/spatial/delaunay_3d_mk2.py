@@ -150,7 +150,7 @@ def get_delaunay_simplices(vertices, threshold):
     '''
 
     # get shape dimension (dim):
-    abbox = bounding_box_aligned(vertices)
+    abbox = bounding_box_aligned(vertices)[0]
     oX_abb_vec = abbox[1]-abbox[0]
     oX_abb_size = abs(np.linalg.norm(oX_abb_vec))
     oY_abb_vec = abbox[3]-abbox[0]
