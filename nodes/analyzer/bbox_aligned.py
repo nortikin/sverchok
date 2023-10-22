@@ -26,7 +26,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.nodes_mixins.recursive_nodes import SvRecursiveNode
 
 from sverchok.data_structure import dataCorrect, updateNode
-from sverchok.utils.geom import bounding_box_aligned, bounding_box_aligned_01
+from sverchok.utils.geom import bounding_box_aligned
 
 EDGES = [
     (0, 1), (1, 3), (3, 2), (2, 0),  # bottom edges

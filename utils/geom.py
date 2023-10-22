@@ -48,22 +48,37 @@ from sverchok.utils.decorators_compilation import njit
 def bounding_box_aligned(verts):
     '''res=[[0,0,0], [0,1,0], [1,1,0], [1,0,0], [0,0,1], [0,1,1], [1,1,1], [1,0,1],]; 1-used axis'''
     # based on "3D Oriented bounding boxes": https://logicatcore.github.io/scratchpad/lidar/sensor-fusion/jupyter/2021/04/20/3D-Oriented-Bounding-Box.html
-    data = np.vstack(np.array(verts).transpose())
+    data = np.vstack(np.array(verts, dtype=np.float64).transpose())
     means = np.mean(data, axis=1)
 
     cov = np.cov(data)
-    eval, evec = np.linalg.eig(cov)
+    eval, evec = np.linalg.eig(cov) # some times evec vectors are not perpendicular each other. What to do for this?
+
+    # make evecs orthogonals each other:
+    vecs = [[0,1], [1,2], [2,0]]
+    evec_dots = [abs(np.dot( evec.T[ivect[0]], evec.T[ivect[1]] )) for ivect in vecs]  # get dots product vectors each other
+    evec_dots_sort = np.argsort(evec_dots)
+    l012 = [0,1,2]
+    [l012.remove(i) for i in vecs[evec_dots_sort[0]]]
+    v0 = evec.T[ vecs[evec_dots_sort[0]][0] ]  # main vector
+    v1 = evec.T[ vecs[evec_dots_sort[0]][1] ]  # closest by dot product
+    v2 = evec.T[ l012[0] ] # get last vector
+    v0_v1_cross = np.cross( v0, v1 )
+    v1 = np.cross( v0, v0_v1_cross ) # orthogonal v1 to v0 from v1 source position
+    if np.dot(v0_v1_cross, v2)<0:  # build last vector as orthogonal to v0 and v1
+        v2 = - v0_v1_cross
+    else:
+        v2 =   v0_v1_cross
+    evec = np.dstack( (v0, v1, v2) )[0]
+
+
     centered_data = data - means[:,np.newaxis]
-    xmin, xmax, ymin, ymax, zmin, zmax = np.min(centered_data[0, :]), np.max(centered_data[0, :]), np.min(centered_data[1, :]), np.max(centered_data[1, :]), np.min(centered_data[2, :]), np.max(centered_data[2, :])
     aligned_coords = np.matmul(evec.T, centered_data)
     xmin, xmax, ymin, ymax, zmin, zmax = np.min(aligned_coords[0, :]), np.max(aligned_coords[0, :]), np.min(aligned_coords[1, :]), np.max(aligned_coords[1, :]), np.min(aligned_coords[2, :]), np.max(aligned_coords[2, :])
 
     rectCoords = lambda x1, y1, z1, x2, y2, z2: np.array([[x1, x1, x2, x2, x1, x1, x2, x2],
-                                                        [y1, y2, y2, y1, y1, y2, y2, y1],
-                                                        [z1, z1, z1, z1, z2, z2, z2, z2]])
-
-    realigned_coords = np.matmul(evec, aligned_coords)
-    realigned_coords += means[:, np.newaxis]
+                                                          [y1, y2, y2, y1, y1, y2, y2, y1],
+                                                          [z1, z1, z1, z1, z2, z2, z2, z2]])
 
     rrc = np.matmul(evec, rectCoords(xmin, ymin, zmin, xmax, ymax, zmax))
     rrc += means[:, np.newaxis]
