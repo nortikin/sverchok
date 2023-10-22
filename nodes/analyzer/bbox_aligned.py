@@ -191,7 +191,7 @@ class SvAlignedBBoxNode(SverchCustomTreeNode, bpy.types.Node, SvRecursiveNode):
 
     def sv_init(self, context):
         son = self.outputs.new
-        self.inputs.new('SvVerticesSocket', 'Vertices').is_mandatory = True
+        #self.inputs.new('SvVerticesSocket', 'Vertices').is_mandatory = True
 
         son('SvVerticesSocket', 'Vertices')
         son('SvStringsSocket', 'Edges')
