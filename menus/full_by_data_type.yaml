@@ -181,6 +181,7 @@
         - extra_menu: MeshPartialMenu  # to make the category available in another menu (1,2,3,4,5)
         - icon_name: VIEWZOOM
         - SvBBoxNodeMk3
+        - SvAlignedBBoxNode
         - SvComponentAnalyzerNode
         - SvDiameterNode
         - SvVolumeNodeMK2

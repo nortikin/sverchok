@@ -355,6 +355,7 @@
     - icon_name: VIEWZOOM
     - extra_menu: MeshPartialMenu
     - SvBBoxNodeMk3
+    - SvAlignedBBoxNode
     - SvComponentAnalyzerNode
     - SvDiameterNode
     - SvVolumeNodeMK2
