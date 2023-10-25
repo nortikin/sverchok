@@ -106,7 +106,7 @@ class SvInterpolatingSurface(SvSurface):
 #         return np.array(normals)
 
     def evaluate_array(self, us, vs):
-        result = np.empty(( min( len(us), len(vs) ), 3))
+        result = np.empty((len(us), 3))
         v_to_u = defaultdict(list)
         v_to_i = defaultdict(list)
         for i, (u, v) in enumerate(zip(us, vs)):

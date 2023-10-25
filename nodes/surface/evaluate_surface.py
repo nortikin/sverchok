@@ -268,9 +268,15 @@ class SvEvalSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
                     new_edges, new_faces = self.make_edges_and_faces(samples_u, samples_v, self.outputs['Edges'].is_linked, self.outputs['Faces'].is_linked)
                 else:
                     if self.input_mode == 'VERTICES':
-                        target_us, target_vs = self.parse_input(target_verts)
+                        target_us, target_vs = self.parse_input(target_verts) # this mode take aligned target_us, target_vs
                     else:
                         target_us, target_vs = np.array(target_us), np.array(target_vs)
+                        # Align target_us, target_vs
+                        if target_us.size<target_vs.size:
+                            target_us = np.append( target_us, np.repeat(target_us[-1], target_vs.size-target_us.size ))
+                        elif  target_vs.size<target_us.size:
+                            target_vs = np.append( target_vs, np.repeat(target_vs[-1], target_us.size-target_vs.size ))
+
                     if self.clamp_mode == 'CLAMP':
                         target_us, target_vs = self._clamp(surface, target_us, target_vs)
                     elif self.clamp_mode == 'WRAP':
