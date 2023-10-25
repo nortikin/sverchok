@@ -170,7 +170,7 @@ def make_edges_and_faces(P, M, cap_bottom, cap_top, flags, get_edges, get_faces)
                 _list_faces.extend(l_top)
 
             if cap_bottom:
-                l_bottom = [_arr_verts[0][:-1].tolist()]
+                l_bottom = [np.flip(_arr_verts[0][:-1]).tolist()]
                 l_bottom.extend(_list_faces)
                 _list_faces = l_bottom
 
