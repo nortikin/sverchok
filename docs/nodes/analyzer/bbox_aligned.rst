@@ -17,7 +17,7 @@ Inputs
 
 - **Vertices** - or a nested list of vertices that represent separate objects.
 - **Matrix** - Matrix to align bounding box to (Rotation only. Scale and translation are not used).
-- **Factor** - Interpolation between calculated aligned bounding box and bounding box position than set by **Matrix**.
+- **Factor** - Interpolation between calculated aligned bounding box and a bounding box position that set by **Matrix**.
 
 .. image:: https://github.com/nortikin/sverchok/assets/14288520/f5fea1b7-3f48-4065-8f73-e24b516b5f02
   :target: https://github.com/nortikin/sverchok/assets/14288520/f5fea1b7-3f48-4065-8f73-e24b516b5f02
@@ -25,7 +25,7 @@ Inputs
 Parameters
 ----------
 
-- **marge** - If bbox calculated for several meshes then its merge into one mesh. Output sockets for Matrix, Length, Width and Height has unmerged params.
+- **merge** - If bbox calculated for several meshes then its merge into one mesh. Output sockets for Matrix, Length, Width and Height has unmerged params.
 
 Output
 ------
