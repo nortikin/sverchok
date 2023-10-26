@@ -36,7 +36,7 @@ class SvAlignedBBoxNode(SverchCustomTreeNode, bpy.types.Node, SvRecursiveNode):
     Tooltip: Get vertices bounding box (vertices, sizes, center)
     """
     bl_idname = 'SvAlignedBBoxNode'
-    bl_label = 'Aligned Bounding Box'
+    bl_label = 'Aligned Bounding Box (Alpha)'
     bl_icon = 'SHADING_BBOX'
     sv_icon = 'SV_BOUNDING_BOX'
 

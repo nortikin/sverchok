@@ -36,6 +36,7 @@ See also
 --------
 
 * Analyzers-> :doc:`Bounding Box </nodes/analyzer/bbox_mk3>`
+* Analyzers-> :doc:`Aligned Bounding Box </nodes/analyzer/bbox_aligned>`
 
 Examples of usage
 -----------------
