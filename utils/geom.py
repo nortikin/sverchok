@@ -46,7 +46,16 @@ from sverchok.dependencies import numba  # not strictly needed i think...
 from sverchok.utils.decorators_compilation import njit
 
 def bounding_box_aligned(verts, evec_external=None, factor=1.0):
-    '''res=[[0,0,0], [0,1,0], [1,1,0], [1,0,0], [0,0,1], [0,1,1], [1,1,1], [1,0,1],]; 1-used axis'''
+    ''' Build bounding box around vectors. If evec_external is not none then it can be used with factor.
+    if evec_external is none then factor is not using.
+    Function calc bounding box around vertexes. If evec_external is not none then function calc
+    bounding box aligned with evec_external. If factor==0 then used exec. If factor==1 then used
+    evec_external. Else used factor as interpolation beetwing evec and evec_external.
+    res=[[0,0,0], [0,1,0], [1,1,0], [1,0,0], [0,0,1], [0,1,1], [1,1,1], [1,0,1],]; 1-used axis
+    rrc - vertices of aligned bounding box
+    max - matrix of transformation of box with size 1,1,1 to evec_target
+    abbox_size - is a vector of sizes by axis (an order of XYZ can be differ of source verts)
+    '''
 
     def realign_evec(evec):
         # make evecs orthogonals each other:
@@ -87,25 +96,6 @@ def bounding_box_aligned(verts, evec_external=None, factor=1.0):
     else:
         cov = np.cov(data)
         evalue, evec = np.linalg.eig(cov) # some times evec vectors are not perpendicular each other. What to do for this?
-
-        # # make evecs orthogonals each other:
-        # vecs = [[0,1,2], [1,2,0], [2,0,1]]
-        # evec_dots = np.array( [abs(np.dot( evec.T[ivect[0]], evec.T[ivect[1]] )) for ivect in vecs] )  # get dots product vectors each other
-        # if np.all(evec_dots<1e-8):  # if all vectors are very close to orthonormals each other. May be replased by a future algorithm
-        #     evec_dots_sort = [0]
-        # else:
-        #     evec_dots_sort = np.argsort(evec_dots)
-        # #print(f'sort: {vecs[evec_dots_sort[0]]}')
-        # v0 = evec.T[ vecs[evec_dots_sort[0]][0] ]  # main vector
-        # v1 = evec.T[ vecs[evec_dots_sort[0]][1] ]  # closest by dot product
-        # v2 = evec.T[ vecs[evec_dots_sort[0]][2] ]  # get last vector
-        # v0_v1_cross = np.cross( v0, v1 )
-        # v1 = np.cross( v0, v0_v1_cross ) # orthogonal v1 to v0 from v1 source position
-        # if np.dot(v0_v1_cross, v2)<0:  # build last vector as orthogonal to v0 and v1
-        #     v2 = - v0_v1_cross
-        # else:
-        #     v2 =   v0_v1_cross
-        # evec_target = np.dstack( (v0, v1, v2) )[0]
         evec_target = realign_evec(evec)
 
     centered_data = data - means[:,np.newaxis]
@@ -122,8 +112,6 @@ def bounding_box_aligned(verts, evec_external=None, factor=1.0):
     rrc += means[:, np.newaxis]
     rrc = rrc.transpose()
     abbox_center = np.mean( rrc, axis=0 )
-    #mat = mathutils.Matrix.LocRotScale( [ abbox_center[i] for i in vecs[evec_dots_sort[0]] ], Matrix(evec_new).to_euler(), [ abbox_size[i] for i in vecs[evec_dots_sort[0]] ] )
-    # mat = mathutils.Matrix.LocRotScale( [ abbox_center[i] for i in vecs[evec_dots_sort[0]] ], Matrix(evec_new).to_euler([ 'XYZ'[i] for i in vecs[evec_dots_sort[0]] ]), [ abbox_size[i] for i in vecs[evec_dots_sort[0]] ] )
     mat_scale = Matrix()
     mat_scale[0][0], mat_scale[1][1], mat_scale[2][2] = abbox_size
     mat = mathutils.Matrix.Translation(abbox_center) @ Matrix(evec_target).to_euler().to_matrix().to_4x4() @ mat_scale
