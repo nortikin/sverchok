@@ -1,0 +1,185 @@
+{
+  "export_version": "1.0",
+  "main_tree": {
+    "nodes": {
+      "Get Objects Data": {
+        "attributes": {
+          "location": [
+            -440.0,
+            200.0
+          ],
+          "width": 150.0,
+          "color": [
+            0.35577794909477234,
+            0.5,
+            0.3646477460861206
+          ],
+          "use_custom_color": true
+        },
+        "properties": {
+          "object_names": [
+            {
+              "name": "Circle",
+              "icon": "OUTLINER_OB_MESH"
+            }
+          ]
+        },
+        "inputs": {
+          "Objects": {
+            "bl_idname": "SvObjectSocket",
+            "name": "Objects"
+          }
+        },
+        "outputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices"
+          },
+          "Edges": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Edges"
+          },
+          "Polygons": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Polygons"
+          },
+          "Vertex Normals": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertex Normals"
+          },
+          "Material Idx": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Material Idx"
+          },
+          "Polygon Areas": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Polygon Areas"
+          },
+          "Polygon Centers": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Polygon Centers"
+          },
+          "Polygon Normals": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Polygon Normals"
+          },
+          "Matrix": {
+            "bl_idname": "SvMatrixSocket",
+            "name": "Matrix"
+          },
+          "Object": {
+            "bl_idname": "SvObjectSocket",
+            "name": "Object"
+          }
+        },
+        "bl_idname": "SvGetObjectsData"
+      },
+      "Polyline": {
+        "attributes": {
+          "location": [
+            -60.0,
+            200.0
+          ]
+        },
+        "inputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices"
+          }
+        },
+        "outputs": {
+          "Curve": {
+            "bl_idname": "SvCurveSocket",
+            "name": "Curve"
+          }
+        },
+        "bl_idname": "SvExPolylineNode"
+      },
+      "Vector Sort": {
+        "attributes": {
+          "location": [
+            -240.0,
+            200.0
+          ]
+        },
+        "properties": {
+          "mode": "CONNEX",
+          "limit_mode": true
+        },
+        "inputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices"
+          },
+          "PolyEdge": {
+            "bl_idname": "SvStringsSocket",
+            "name": "PolyEdge"
+          }
+        },
+        "outputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices"
+          },
+          "PolyEdge": {
+            "bl_idname": "SvStringsSocket",
+            "name": "PolyEdge"
+          },
+          "Item order": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Item order"
+          }
+        },
+        "bl_idname": "SvVertSortNode"
+      },
+      "Viewer Draw Curve": {
+        "attributes": {
+          "location": [
+            120.0,
+            200.0
+          ]
+        },
+        "inputs": {
+          "Curve": {
+            "bl_idname": "SvCurveSocket",
+            "name": "Curve"
+          },
+          "Resolution": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Resolution",
+            "properties": {
+              "prop_name": "resolution"
+            }
+          }
+        },
+        "bl_idname": "SvCurveViewerDrawNode"
+      }
+    },
+    "links": [
+      {
+        "from_node": "Vector Sort",
+        "from_socket": "Vertices",
+        "to_node": "Polyline",
+        "to_socket": "Vertices"
+      },
+      {
+        "from_node": "Get Objects Data",
+        "from_socket": "Vertices",
+        "to_node": "Vector Sort",
+        "to_socket": "Vertices"
+      },
+      {
+        "from_node": "Get Objects Data",
+        "from_socket": "Edges",
+        "to_node": "Vector Sort",
+        "to_socket": "PolyEdge"
+      },
+      {
+        "from_node": "Polyline",
+        "from_socket": "Curve",
+        "to_node": "Viewer Draw Curve",
+        "to_socket": "Curve"
+      }
+    ]
+  }
+}
