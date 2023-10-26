@@ -407,6 +407,7 @@
         - extra_menu: MeshPartialMenu
         - icon_name: OBJECT_DATAMODE  # icon name to show
         - SvBBoxNodeMk3
+        - SvAlignedBBoxNode
         - SvComponentAnalyzerNode
         - SvDiameterNode
         - SvVolumeNodeMK2
