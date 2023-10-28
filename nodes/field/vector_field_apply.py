@@ -3,6 +3,7 @@ import numpy as np
 
 import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty, StringProperty
+from datetime import datetime
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, repeat_last_for_length, ensure_nesting_level
@@ -54,6 +55,8 @@ class SvVectorFieldApplyNode(SverchCustomTreeNode, bpy.types.Node):
         if not any(socket.is_linked for socket in self.outputs):
             return
 
+        t0 = datetime.now()-datetime.now()
+        dt0 = datetime.now()
         vertices_s = self.inputs['Vertices'].sv_get()
         coeffs_s = self.inputs['Coefficient'].sv_get()
         fields_s = self.inputs['Field'].sv_get()
@@ -62,6 +65,8 @@ class SvVectorFieldApplyNode(SverchCustomTreeNode, bpy.types.Node):
         vertices_s = ensure_nesting_level(vertices_s, 4)
         coeffs_s = ensure_nesting_level(coeffs_s, 3)
         fields_s = ensure_nesting_level(fields_s, 2, data_types=(SvVectorField,))
+        dt0 = datetime.now()-dt0
+        t0 = t0+dt0
 
         verts_out = []
         for fields, vertices_l, coeffs_l, iterations_l in zip_long_repeat(fields_s, vertices_s, coeffs_s, iterations_s):
@@ -82,9 +87,15 @@ class SvVectorFieldApplyNode(SverchCustomTreeNode, bpy.types.Node):
                         vertex = (np.array(vertex) + coeff * vector).tolist()
                     new_verts = [vertex]
                 else:
+                    t0 = datetime.now()-datetime.now()
+                    dt0 = datetime.now()
                     coeffs = repeat_last_for_length(coeffs, len(vertices))
                     vertices = np.array(vertices)
+                    dt0 = datetime.now()-dt0
+                    t0 = t0+dt0
+
                     for i in range(iterations):
+                        dt0 = datetime.now()
                         xs = vertices[:,0]
                         ys = vertices[:,1]
                         zs = vertices[:,2]
@@ -92,7 +103,10 @@ class SvVectorFieldApplyNode(SverchCustomTreeNode, bpy.types.Node):
                         new_vectors = np.dstack((new_xs[:], new_ys[:], new_zs[:]))
                         new_vectors = np.array(coeffs)[np.newaxis].T * new_vectors[0]
                         vertices = vertices + new_vectors
+                        dt0 = datetime.now()-dt0
+                        t0 = t0+dt0
                     new_verts = vertices if self.output_numpy else vertices.tolist()
+                    print(f'process t0={t0}')
 
                 verts_out.append(new_verts)
 

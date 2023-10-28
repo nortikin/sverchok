@@ -1152,6 +1152,9 @@ class SvNativeNurbsCurve(SvNurbsCurve):
             return np.array([0,0,0])
         else:
             return numerator / denominator
+        # numerator, denominator = self.fraction_single_v01(0, t)
+        # res = np.where( denominator.reshape(-1,1)==0.0, np.repeat( np.array( [[0,0,0]] ), denominator.size, axis=0), numerator/denominator[:,np.newaxis] )
+        # return res
 
     def fraction(self, deriv_order, ts):
         n = len(ts)
@@ -1165,6 +1168,18 @@ class SvNativeNurbsCurve(SvNurbsCurve):
         denominator = coeffs.sum(axis=0) # (n,)
 
         return numerator, denominator[np.newaxis].T
+
+    # def fraction_single_v01(self, deriv_order, t):
+    #     p = self.degree
+    #     k = len(self.control_points)
+    #     ts = np.array([t]) if not hasattr(t, '__len__') else np.array(t)
+    #     ns = np.array([self.basis.derivative(i, p, deriv_order)(ts) for i in range(k)]) # (k,)
+    #     coeffs = ns * self.weights[np.newaxis].T # (k, )
+    #     coeffs_t = coeffs.T
+    #     numerator = np.transpose((np.expand_dims(coeffs, axis=2) * np.expand_dims(self.control_points, axis=1)), (1,0,2) ) # (k, n, 3)
+    #     numerator = numerator.sum(axis=1) # (3,n)
+    #     denominator = coeffs.sum(axis=0) # ()
+    #     return numerator, denominator
 
     def fraction_single(self, deriv_order, t):
         p = self.degree
@@ -1190,6 +1205,17 @@ class SvNativeNurbsCurve(SvNurbsCurve):
 #         if (denominator == 0).any():
 #             print("Num:", numerator)
 #             print("Denom:", denominator)
+
+        # deriv_order = 0
+        # p = self.degree
+        # k = len(self.control_points)
+        # ts = np.array(ts)
+        # ns = np.array([self.basis.derivative(i, p, deriv_order)(ts) for i in range(k)]) # (k,)
+        # coeffs = ns * self.weights[np.newaxis].T # (k, )
+        # numerator = np.transpose((np.expand_dims(coeffs, axis=2) * np.expand_dims(self.control_points, axis=1)), (1,0,2) ) # (k, n, 3)
+        # numerator = numerator.sum(axis=1) # (3,n)
+        # denominator = coeffs.sum(axis=0) # ()
+
         return nurbs_divide(numerator, denominator)
 
     def tangent(self, t, tangent_delta=None):
