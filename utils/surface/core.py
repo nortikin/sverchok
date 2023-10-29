@@ -42,9 +42,13 @@ class SvSurface(object):
         return normal
 
     def normal_vertices_array(self, us, vs):
+        if hasattr(self, 'normal_delta'):
+            h = self.normal_delta
+        else:
+            h = 0.001
         surf_vertices = self.evaluate_array(us, vs)
-        u_plus = self.evaluate_array(us + self.normal_delta, vs)
-        v_plus = self.evaluate_array(us, vs + self.normal_delta)
+        u_plus = self.evaluate_array(us + h, vs)
+        v_plus = self.evaluate_array(us, vs + h)
         du = u_plus - surf_vertices
         dv = v_plus - surf_vertices
         #self.info("Du: %s", du)
