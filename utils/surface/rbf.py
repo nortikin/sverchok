@@ -69,7 +69,7 @@ class SvRbfSurface(SvSurface):
     def normal(self, u, v):
         return self.normal_array(np.array([u]), np.array([v]))[0]
 
-    def normal_array(self, us, vs):
+    def normal_vertices_array(self, us, vs):
         surf_vertices = self.evaluate_array(us, vs)
         u_plus = self.evaluate_array(us + self.normal_delta, vs)
         v_plus = self.evaluate_array(us, vs + self.normal_delta)
@@ -82,5 +82,5 @@ class SvRbfSurface(SvSurface):
         #if norm != 0:
         normal = normal / norm
         #self.info("Normals: %s", normal)
-        return normal
+        return normal, surf_vertices
 

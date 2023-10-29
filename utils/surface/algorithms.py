@@ -10,6 +10,7 @@ from collections import defaultdict
 
 from mathutils import Matrix, Vector
 
+
 from sverchok.utils.math import (
         ZERO, FRENET, HOUSEHOLDER, TRACK, DIFF, TRACK_NORMAL,
         np_dot
@@ -158,60 +159,75 @@ class SvInterpolatingSurface(SvSurface):
 #         normals = [self._normal(u, v) for u,v in zip(us, vs)]
 #         return np.array(normals)
 
-    def normal_array(self, us, vs):
+    def normal_vertices_array(self, us, vs):
         h = 0.001
-        result = np.empty((len(us), 3))
+        _points         = np.empty( (0, 3), dtype=np.float64)
+        _points_u_h     = np.empty( (0, 3), dtype=np.float64)
+        _points_v_h     = np.empty( (0, 3), dtype=np.float64)
         v_to_u = defaultdict(list)
         v_to_i = defaultdict(list)
         for i, (u, v) in enumerate(zip(us, vs)):
             v_to_u[v].append(u)
             v_to_i[v].append(i)
-        for v, us_by_v in v_to_u.items():
-            us_by_v = np.array(us_by_v)
-            is_by_v = v_to_i[v]
+        v_to_i_flatten = np.hstack(np.array( list(v_to_i.values())).flatten())
+
+        list_spline_v = []
+        list_spline_h = []
+        _v = np.array( list(v_to_u.keys()), dtype=np.float64 )
+        for i_spline, v_spline in enumerate(self.v_splines):
+            v_min, v_max = v_spline.get_u_bounds()
+            _vx = (v_max-v_min)*_v+v_min
+            _list_v_i = np.where( _vx+h<v_max, _vx  , _vx-h)
+            _list_h_i = np.where( _vx+h<v_max, _vx+h, _vx  )
+            list_spline_v.append( _list_v_i )
+            list_spline_h.append( _list_h_i )
+
+        r_v = []
+        r_h = []
+        for i, v_spline in enumerate(self.v_splines):
+            _r_v, _r_h = v_spline.evaluate_array( np.concatenate( (list_spline_v[i], list_spline_h[i]) )).reshape(2,-1,3) # to increase performance for one call
+            r_v.append( _r_v )
+            r_h.append( _r_h )
+
+        u_min, u_max = 0.0, 1.0
+        
+        for i_on_spline, (v, _us_by_v) in enumerate(v_to_u.items()):
+            us_by_v = np.array(_us_by_v)
+            #i_by_v = v_to_i[v]
             spline_vertices = []
             spline_vertices_h = []
-            for v_spline in self.v_splines:
-                v_min, v_max = v_spline.get_u_bounds()
-                vx = (v_max - v_min) * v + v_min
-                if vx +h <= v_max:
-                    point = v_spline.evaluate(vx)
-                    point_h = v_spline.evaluate(vx + h)
-                else:
-                    point = v_spline.evaluate(vx - h)
-                    point_h = v_spline.evaluate(vx)
-                spline_vertices.append(point)
+
+            for i_spline, v_spline in enumerate(self.v_splines):
+                point_v = r_v[i_spline][i_on_spline]
+                point_h = r_h[i_spline][i_on_spline]
+                spline_vertices.append(point_v)
                 spline_vertices_h.append(point_h)
+
             if v+h <= v_max:
-                u_spline = self.get_u_spline(v, spline_vertices)
+                u_spline   = self.get_u_spline(v  , spline_vertices  )
                 u_spline_h = self.get_u_spline(v+h, spline_vertices_h)
             else:
-                u_spline = self.get_u_spline(v-h, spline_vertices)
-                u_spline_h = self.get_u_spline(v, spline_vertices_h)
-            u_min, u_max = 0.0, 1.0
+                u_spline   = self.get_u_spline(v-h, spline_vertices  )
+                u_spline_h = self.get_u_spline(v  , spline_vertices_h)
 
             good_us = us_by_v + h < u_max
-            bad_us = np.logical_not(good_us)
+            us_v_gb = np.where( good_us, us_by_v  , us_by_v-h )
+            us_h_gb = np.where( good_us, us_by_v+h, us_by_v   )
 
-            good_points = np.broadcast_to(good_us[np.newaxis].T, (len(us_by_v), 3)).flatten()
-            bad_points = np.logical_not(good_points)
-            points = np.empty((len(us_by_v), 3))
-            points[good_us] = u_spline.evaluate_array(us_by_v[good_us])
-            points[bad_us] = u_spline.evaluate_array(us_by_v[bad_us] - h)
-            points_u_h = np.empty((len(us_by_v), 3))
-            points_u_h[good_us] = u_spline.evaluate_array(us_by_v[good_us] + h)
-            points_u_h[bad_us] = u_spline.evaluate_array(us_by_v[bad_us])
+            points, points_u_h = u_spline.evaluate_array( np.concatenate( (us_v_gb, us_h_gb) ) ).reshape(2,-1,3) # to increase performance for one call
             points_v_h = u_spline_h.evaluate_array(us_by_v)
+            _points     = np.concatenate( (_points, points) )
+            _points_u_h = np.concatenate( (_points_u_h, points_u_h) )
+            _points_v_h = np.concatenate( (_points_v_h, points_v_h) )
 
-            dvs = (points_v_h - points) / h
-            dus = (points_u_h - points) / h
-            normals = np.cross(dus, dvs)
-            norms = np.linalg.norm(normals, axis=1, keepdims=True)
-            normals = normals / norms
-
-            idxs = np.array(is_by_v)[np.newaxis].T
-            np.put_along_axis(result, idxs, normals, axis=0)
-        return result
+        _dvs = (_points_v_h - _points)/h
+        _dus = (_points_u_h - _points)/h
+        _normals = np.cross(_dus, _dvs)
+        _norms = np.linalg.norm(_normals, axis=1, keepdims=True)
+        _normals = _normals / _norms
+        _result_normals = _normals[np.argsort(v_to_i_flatten)]
+        _result_point = _points[np.argsort(v_to_i_flatten)]
+        return _result_normals, _result_point
 
 PROJECT = 'project'
 COPROJECT = 'coproject'
@@ -296,7 +312,7 @@ class SvDeformedByFieldSurface(SvSurface):
         normal = normal / n
         return normal
 
-    def normal_array(self, us, vs):
+    def normal_vertices_array(self, us, vs):
         surf_vertices = self.evaluate_array(us, vs)
         u_plus = self.evaluate_array(us + self.normal_delta, vs)
         v_plus = self.evaluate_array(us, vs + self.normal_delta)
@@ -309,7 +325,7 @@ class SvDeformedByFieldSurface(SvSurface):
         #if norm != 0:
         normal = normal / norm
         #self.info("Normals: %s", normal)
-        return normal
+        return normal, surf_vertices
 
 class SvRevolutionSurface(SvSurface):
     __description__ = "Revolution"

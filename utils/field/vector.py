@@ -1044,8 +1044,7 @@ class SvBendAlongSurfaceField(SvVectorField):
         if self.only_2D:
             return self.surface.evaluate_array(us, vs)
 
-        surf_vertices = self.surface.evaluate_array(us, vs)
-        spline_normals = self.surface.normal_array(us, vs)
+        spline_normals, surf_vertices = self.surface.normal_vertices_array(us, vs)
         zs = vertices[:,self.orient_axis].flatten()
         zs = zs[np.newaxis].T
         v1 = zs * spline_normals
