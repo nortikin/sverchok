@@ -174,11 +174,15 @@ class SvInterpolatingSurface(SvSurface):
         list_spline_v = []
         list_spline_h = []
         _v = np.array( list(v_to_u.keys()), dtype=np.float64 )
+        # A remark about a reverse. Algorithm cannot calc vectors out of a surface.
+        # So calc that vectors in a reverse direction into the surface then reverse that vectors.
+        # TODO: need attention for case - may be do %uv_bounds if uv coords are circled?
+        # Here is no params about this for a while. So use reverse.
         for i_spline, v_spline in enumerate(self.v_splines):
             v_min, v_max = v_spline.get_u_bounds()
             _vx = (v_max-v_min)*_v+v_min
-            _list_v_i = np.where( _vx+h<v_max, _vx  , _vx-h)
-            _list_h_i = np.where( _vx+h<v_max, _vx+h, _vx  )
+            _list_v_i = _vx
+            _list_h_i = np.where( _vx+h<=v_max, _vx+h, _vx-h ) # if need point out of surface then do step in reverse direction
             list_spline_v.append( _list_v_i )
             list_spline_h.append( _list_h_i )
 
@@ -193,7 +197,6 @@ class SvInterpolatingSurface(SvSurface):
         
         for i_on_spline, (v, _us_by_v) in enumerate(v_to_u.items()):
             us_by_v = np.array(_us_by_v)
-            #i_by_v = v_to_i[v]
             spline_vertices = []
             spline_vertices_h = []
 
@@ -203,22 +206,27 @@ class SvInterpolatingSurface(SvSurface):
                 spline_vertices.append(point_v)
                 spline_vertices_h.append(point_h)
 
+            u_spline   = self.get_u_spline(v  , spline_vertices  )
             if v+h <= v_max:
-                u_spline   = self.get_u_spline(v  , spline_vertices  )
                 u_spline_h = self.get_u_spline(v+h, spline_vertices_h)
             else:
-                u_spline   = self.get_u_spline(v-h, spline_vertices  )
-                u_spline_h = self.get_u_spline(v  , spline_vertices_h)
+                # curve for reversed vertices
+                u_spline_h = self.get_u_spline(v-h, spline_vertices_h)
 
-            good_us = us_by_v + h < u_max
-            us_v_gb = np.where( good_us, us_by_v  , us_by_v-h )
-            us_h_gb = np.where( good_us, us_by_v+h, us_by_v   )
+            us_v = us_by_v
+            not_reversed_us = us_by_v + h < u_max
+            us_h_gb = np.where( not_reversed_us, us_by_v+h, us_by_v-h )
 
-            points, points_u_h = u_spline.evaluate_array( np.concatenate( (us_v_gb, us_h_gb) ) ).reshape(2,-1,3) # to increase performance for one call
+            points, points_u_h = u_spline.evaluate_array( np.concatenate( (us_v, us_h_gb) ) ).reshape(2,-1,3) # to increase performance for one call
+            points_u_h = np.where( not_reversed_us.T[:,np.newaxis], points_u_h, -(points_u_h-points)+points) # reverse some vectors in u direction
             points_v_h = u_spline_h.evaluate_array(us_by_v)
             _points     = np.concatenate( (_points, points) )
             _points_u_h = np.concatenate( (_points_u_h, points_u_h) )
-            _points_v_h = np.concatenate( (_points_v_h, points_v_h) )
+            if v+h < v_max:
+                _points_v_h = np.concatenate( (_points_v_h, points_v_h) )
+            else:
+                # reverse points if curve is reversed
+                _points_v_h = np.concatenate( (_points_v_h, -(points_v_h-points)+points) ) # reverse some vectors in v direction
 
         _dvs = (_points_v_h - _points)/h
         _dus = (_points_u_h - _points)/h
