@@ -66,6 +66,10 @@ class SvSurface(object):
         return normal
 
     def normal_array(self, us, vs):
+        normal, *_ = self.normal_vertices_array(us, vs)
+        return normal
+
+    def normal_vertices_array(self, us, vs):
         surf_vertices = self.evaluate_array(us, vs)
         u_plus = self.evaluate_array(us + self.normal_delta, vs)
         v_plus = self.evaluate_array(us, vs + self.normal_delta)
@@ -78,7 +82,7 @@ class SvSurface(object):
         #if norm != 0:
         normal = normal / norm
         #self.info(&#34;Normals: %s&#34;, normal)
-        return normal
+        return normal, surf_vertices
 
     def derivatives_data_array(self, us, vs):
         if hasattr(self, &#39;normal_delta&#39;):
@@ -431,7 +435,7 @@ class SvLambdaSurface(SvSurface):
     def normal(self, u, v):
         return self.normal_array(np.array([u]), np.array([v]))[0]
 
-    def normal_array(self, us, vs):
+    def normal_vertices_array(self, us, vs):
         surf_vertices = self.evaluate_array(us, vs)
         u_plus = self.evaluate_array(us + self.normal_delta, vs)
         v_plus = self.evaluate_array(us, vs + self.normal_delta)
@@ -444,7 +448,7 @@ class SvLambdaSurface(SvSurface):
         #if norm != 0:
         normal = normal / norm
         #self.info(&#34;Normals: %s&#34;, normal)
-        return normal</code></pre>
+        return normal, surf_vertices</code></pre>
 </details>
 </section>
 <section>
@@ -703,7 +707,7 @@ class SvLambdaSurface(SvSurface):
     def normal(self, u, v):
         return self.normal_array(np.array([u]), np.array([v]))[0]
 
-    def normal_array(self, us, vs):
+    def normal_vertices_array(self, us, vs):
         surf_vertices = self.evaluate_array(us, vs)
         u_plus = self.evaluate_array(us + self.normal_delta, vs)
         v_plus = self.evaluate_array(us, vs + self.normal_delta)
@@ -716,7 +720,7 @@ class SvLambdaSurface(SvSurface):
         #if norm != 0:
         normal = normal / norm
         #self.info(&#34;Normals: %s&#34;, normal)
-        return normal</code></pre>
+        return normal, surf_vertices</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -845,8 +849,8 @@ def v_size(self):
     return self.normal_array(np.array([u]), np.array([v]))[0]</code></pre>
 </details>
 </dd>
-<dt id="sverchok.utils.surface.core.SvLambdaSurface.normal_array"><code class="name flex">
-<span>def <span class="ident">normal_array</span></span>(<span>self, us, vs)</span>
+<dt id="sverchok.utils.surface.core.SvLambdaSurface.normal_vertices_array"><code class="name flex">
+<span>def <span class="ident">normal_vertices_array</span></span>(<span>self, us, vs)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -854,7 +858,7 @@ def v_size(self):
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def normal_array(self, us, vs):
+<pre><code class="python">def normal_vertices_array(self, us, vs):
     surf_vertices = self.evaluate_array(us, vs)
     u_plus = self.evaluate_array(us + self.normal_delta, vs)
     v_plus = self.evaluate_array(us, vs + self.normal_delta)
@@ -867,7 +871,7 @@ def v_size(self):
     #if norm != 0:
     normal = normal / norm
     #self.info(&#34;Normals: %s&#34;, normal)
-    return normal</code></pre>
+    return normal, surf_vertices</code></pre>
 </details>
 </dd>
 </dl>
@@ -1199,6 +1203,10 @@ def build(cls, surface, new_u_min, new_u_max, new_v_min, new_v_max):
         return normal
 
     def normal_array(self, us, vs):
+        normal, *_ = self.normal_vertices_array(us, vs)
+        return normal
+
+    def normal_vertices_array(self, us, vs):
         surf_vertices = self.evaluate_array(us, vs)
         u_plus = self.evaluate_array(us + self.normal_delta, vs)
         v_plus = self.evaluate_array(us, vs + self.normal_delta)
@@ -1211,7 +1219,7 @@ def build(cls, surface, new_u_min, new_u_max, new_v_min, new_v_max):
         #if norm != 0:
         normal = normal / norm
         #self.info(&#34;Normals: %s&#34;, normal)
-        return normal
+        return normal, surf_vertices
 
     def derivatives_data_array(self, us, vs):
         if hasattr(self, &#39;normal_delta&#39;):
@@ -1684,6 +1692,20 @@ def v_size(self):
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def normal_array(self, us, vs):
+    normal, *_ = self.normal_vertices_array(us, vs)
+    return normal</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.surface.core.SvSurface.normal_vertices_array"><code class="name flex">
+<span>def <span class="ident">normal_vertices_array</span></span>(<span>self, us, vs)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def normal_vertices_array(self, us, vs):
     surf_vertices = self.evaluate_array(us, vs)
     u_plus = self.evaluate_array(us + self.normal_delta, vs)
     v_plus = self.evaluate_array(us, vs + self.normal_delta)
@@ -1696,7 +1718,7 @@ def v_size(self):
     #if norm != 0:
     normal = normal / norm
     #self.info(&#34;Normals: %s&#34;, normal)
-    return normal</code></pre>
+    return normal, surf_vertices</code></pre>
 </details>
 </dd>
 <dt id="sverchok.utils.surface.core.SvSurface.principal_curvature_values_array"><code class="name flex">
@@ -2118,7 +2140,7 @@ def build(surface):
 </li>
 <li>
 <h4><code><a title="sverchok.utils.surface.core.SvLambdaSurface" href="#sverchok.utils.surface.core.SvLambdaSurface">SvLambdaSurface</a></code></h4>
-<ul class="two-column">
+<ul class="">
 <li><code><a title="sverchok.utils.surface.core.SvLambdaSurface.evaluate" href="#sverchok.utils.surface.core.SvLambdaSurface.evaluate">evaluate</a></code></li>
 <li><code><a title="sverchok.utils.surface.core.SvLambdaSurface.evaluate_array" href="#sverchok.utils.surface.core.SvLambdaSurface.evaluate_array">evaluate_array</a></code></li>
 <li><code><a title="sverchok.utils.surface.core.SvLambdaSurface.get_u_max" href="#sverchok.utils.surface.core.SvLambdaSurface.get_u_max">get_u_max</a></code></li>
@@ -2126,7 +2148,7 @@ def build(surface):
 <li><code><a title="sverchok.utils.surface.core.SvLambdaSurface.get_v_max" href="#sverchok.utils.surface.core.SvLambdaSurface.get_v_max">get_v_max</a></code></li>
 <li><code><a title="sverchok.utils.surface.core.SvLambdaSurface.get_v_min" href="#sverchok.utils.surface.core.SvLambdaSurface.get_v_min">get_v_min</a></code></li>
 <li><code><a title="sverchok.utils.surface.core.SvLambdaSurface.normal" href="#sverchok.utils.surface.core.SvLambdaSurface.normal">normal</a></code></li>
-<li><code><a title="sverchok.utils.surface.core.SvLambdaSurface.normal_array" href="#sverchok.utils.surface.core.SvLambdaSurface.normal_array">normal_array</a></code></li>
+<li><code><a title="sverchok.utils.surface.core.SvLambdaSurface.normal_vertices_array" href="#sverchok.utils.surface.core.SvLambdaSurface.normal_vertices_array">normal_vertices_array</a></code></li>
 <li><code><a title="sverchok.utils.surface.core.SvLambdaSurface.u_size" href="#sverchok.utils.surface.core.SvLambdaSurface.u_size">u_size</a></code></li>
 <li><code><a title="sverchok.utils.surface.core.SvLambdaSurface.v_size" href="#sverchok.utils.surface.core.SvLambdaSurface.v_size">v_size</a></code></li>
 </ul>
@@ -2171,6 +2193,7 @@ def build(surface):
 <li><code><a title="sverchok.utils.surface.core.SvSurface.mean_curvature_array" href="#sverchok.utils.surface.core.SvSurface.mean_curvature_array">mean_curvature_array</a></code></li>
 <li><code><a title="sverchok.utils.surface.core.SvSurface.normal" href="#sverchok.utils.surface.core.SvSurface.normal">normal</a></code></li>
 <li><code><a title="sverchok.utils.surface.core.SvSurface.normal_array" href="#sverchok.utils.surface.core.SvSurface.normal_array">normal_array</a></code></li>
+<li><code><a title="sverchok.utils.surface.core.SvSurface.normal_vertices_array" href="#sverchok.utils.surface.core.SvSurface.normal_vertices_array">normal_vertices_array</a></code></li>
 <li><code><a title="sverchok.utils.surface.core.SvSurface.principal_curvature_values_array" href="#sverchok.utils.surface.core.SvSurface.principal_curvature_values_array">principal_curvature_values_array</a></code></li>
 <li><code><a title="sverchok.utils.surface.core.SvSurface.principal_curvatures_array" href="#sverchok.utils.surface.core.SvSurface.principal_curvatures_array">principal_curvatures_array</a></code></li>
 <li><code><a title="sverchok.utils.surface.core.SvSurface.u_size" href="#sverchok.utils.surface.core.SvSurface.u_size">u_size</a></code></li>

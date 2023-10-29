@@ -96,7 +96,7 @@ class SvRbfSurface(SvSurface):
     def normal(self, u, v):
         return self.normal_array(np.array([u]), np.array([v]))[0]
 
-    def normal_array(self, us, vs):
+    def normal_vertices_array(self, us, vs):
         surf_vertices = self.evaluate_array(us, vs)
         u_plus = self.evaluate_array(us + self.normal_delta, vs)
         v_plus = self.evaluate_array(us, vs + self.normal_delta)
@@ -109,7 +109,7 @@ class SvRbfSurface(SvSurface):
         #if norm != 0:
         normal = normal / norm
         #self.info(&#34;Normals: %s&#34;, normal)
-        return normal</code></pre>
+        return normal, surf_vertices</code></pre>
 </details>
 </section>
 <section>
@@ -189,7 +189,7 @@ class SvRbfSurface(SvSurface):
     def normal(self, u, v):
         return self.normal_array(np.array([u]), np.array([v]))[0]
 
-    def normal_array(self, us, vs):
+    def normal_vertices_array(self, us, vs):
         surf_vertices = self.evaluate_array(us, vs)
         u_plus = self.evaluate_array(us + self.normal_delta, vs)
         v_plus = self.evaluate_array(us, vs + self.normal_delta)
@@ -202,7 +202,7 @@ class SvRbfSurface(SvSurface):
         #if norm != 0:
         normal = normal / norm
         #self.info(&#34;Normals: %s&#34;, normal)
-        return normal</code></pre>
+        return normal, surf_vertices</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -385,8 +385,8 @@ def v_size(self):
     return self.normal_array(np.array([u]), np.array([v]))[0]</code></pre>
 </details>
 </dd>
-<dt id="sverchok.utils.surface.rbf.SvRbfSurface.normal_array"><code class="name flex">
-<span>def <span class="ident">normal_array</span></span>(<span>self, us, vs)</span>
+<dt id="sverchok.utils.surface.rbf.SvRbfSurface.normal_vertices_array"><code class="name flex">
+<span>def <span class="ident">normal_vertices_array</span></span>(<span>self, us, vs)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -394,7 +394,7 @@ def v_size(self):
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def normal_array(self, us, vs):
+<pre><code class="python">def normal_vertices_array(self, us, vs):
     surf_vertices = self.evaluate_array(us, vs)
     u_plus = self.evaluate_array(us + self.normal_delta, vs)
     v_plus = self.evaluate_array(us, vs + self.normal_delta)
@@ -407,7 +407,7 @@ def v_size(self):
     #if norm != 0:
     normal = normal / norm
     #self.info(&#34;Normals: %s&#34;, normal)
-    return normal</code></pre>
+    return normal, surf_vertices</code></pre>
 </details>
 </dd>
 </dl>
@@ -442,7 +442,7 @@ def v_size(self):
 <li><code><a title="sverchok.utils.surface.rbf.SvRbfSurface.get_v_min" href="#sverchok.utils.surface.rbf.SvRbfSurface.get_v_min">get_v_min</a></code></li>
 <li><code><a title="sverchok.utils.surface.rbf.SvRbfSurface.has_input_matrix" href="#sverchok.utils.surface.rbf.SvRbfSurface.has_input_matrix">has_input_matrix</a></code></li>
 <li><code><a title="sverchok.utils.surface.rbf.SvRbfSurface.normal" href="#sverchok.utils.surface.rbf.SvRbfSurface.normal">normal</a></code></li>
-<li><code><a title="sverchok.utils.surface.rbf.SvRbfSurface.normal_array" href="#sverchok.utils.surface.rbf.SvRbfSurface.normal_array">normal_array</a></code></li>
+<li><code><a title="sverchok.utils.surface.rbf.SvRbfSurface.normal_vertices_array" href="#sverchok.utils.surface.rbf.SvRbfSurface.normal_vertices_array">normal_vertices_array</a></code></li>
 <li><code><a title="sverchok.utils.surface.rbf.SvRbfSurface.u_size" href="#sverchok.utils.surface.rbf.SvRbfSurface.u_size">u_size</a></code></li>
 <li><code><a title="sverchok.utils.surface.rbf.SvRbfSurface.v_size" href="#sverchok.utils.surface.rbf.SvRbfSurface.v_size">v_size</a></code></li>
 </ul>
