@@ -159,11 +159,7 @@ class SvInterpolatingSurface(SvSurface):
 #         normals = [self._normal(u, v) for u,v in zip(us, vs)]
 #         return np.array(normals)
 
-    def normal_array(self, us, vs):
-        result_normals, *_ = self.normal_array_with_source_vertices(us, vs)
-        return result_normals
-
-    def normal_array_with_source_vertices(self, us, vs):
+    def normal_vertices_array(self, us, vs):
         h = 0.001
         _points         = np.empty( (0, 3), dtype=np.float64)
         _points_u_h     = np.empty( (0, 3), dtype=np.float64)
@@ -316,7 +312,7 @@ class SvDeformedByFieldSurface(SvSurface):
         normal = normal / n
         return normal
 
-    def normal_array(self, us, vs):
+    def normal_vertices_array(self, us, vs):
         surf_vertices = self.evaluate_array(us, vs)
         u_plus = self.evaluate_array(us + self.normal_delta, vs)
         v_plus = self.evaluate_array(us, vs + self.normal_delta)
@@ -329,7 +325,7 @@ class SvDeformedByFieldSurface(SvSurface):
         #if norm != 0:
         normal = normal / norm
         #self.info("Normals: %s", normal)
-        return normal
+        return normal, surf_vertices
 
 class SvRevolutionSurface(SvSurface):
     __description__ = "Revolution"
