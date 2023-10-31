@@ -218,7 +218,7 @@ class SvFlipSurface(SvSurface):
         if hasattr(surface, "normal_delta"):
             self.normal_delta = surface.normal_delta
         else:
-            self.normal_delta = 0.001
+            self.normal_delta = 0.0001
         self.__description__ = "Flipped {}".format(surface)
 
     def get_u_min(self):
@@ -265,7 +265,7 @@ class SvSwapSurface(SvSurface):
         if hasattr(surface, "normal_delta"):
             self.normal_delta = surface.normal_delta
         else:
-            self.normal_delta = 0.001
+            self.normal_delta = 0.0001
         self.__description__ = "Swapped {}".format(surface)
 
     @staticmethod
@@ -308,7 +308,7 @@ class SvReparametrizedSurface(SvSurface):
         if hasattr(surface, "normal_delta"):
             self.normal_delta = surface.normal_delta
         else:
-            self.normal_delta = 0.001
+            self.normal_delta = 0.0001
 
     @classmethod
     def build(cls, surface, new_u_min, new_u_max, new_v_min, new_v_max):
@@ -383,7 +383,7 @@ class SvLambdaSurface(SvSurface):
         self.function_numpy = function_numpy
         self.u_bounds = (0.0, 1.0)
         self.v_bounds = (0.0, 1.0)
-        self.normal_delta = 0.001
+        self.normal_delta = 0.0001
 
     def get_u_min(self):
         return self.u_bounds[0]
