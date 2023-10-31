@@ -42,11 +42,21 @@ class SvSurface(object):
         return normal
 
     def normal_vertices_array(self, us, vs):
+        if hasattr(self, 'normal_delta'):
+            h = self.normal_delta
+        else:
+            h = 0.0001
         surf_vertices = self.evaluate_array(us, vs)
-        u_plus = self.evaluate_array(us + self.normal_delta, vs)
-        v_plus = self.evaluate_array(us, vs + self.normal_delta)
-        du = u_plus - surf_vertices
-        dv = v_plus - surf_vertices
+        u_bounds = self.get_u_bounds()
+        v_bounds = self.get_v_bounds()
+        us_not_reversed = us + h<u_bounds[1]
+        vs_not_reversed = vs + h<v_bounds[1]
+        us_delta = np.where( us_not_reversed, us + h, us - h)
+        vs_delta = np.where( vs_not_reversed, vs + h, vs - h)
+        u_plus = self.evaluate_array(us_delta, vs)
+        v_plus = self.evaluate_array(us, vs_delta)
+        du = np.where( us_not_reversed.T[:,np.newaxis], u_plus - surf_vertices, -(u_plus - surf_vertices) )
+        dv = np.where( vs_not_reversed.T[:,np.newaxis], v_plus - surf_vertices, -(v_plus - surf_vertices) )
         #self.info("Du: %s", du)
         #self.info("Dv: %s", dv)
         normal = np.cross(du, dv)
