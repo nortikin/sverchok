@@ -47,44 +47,47 @@ def separate_loose_mesh(verts_in, poly_edge_in):
                 node_links[i].update(edge_face)
 
         nodes = set(node_links.keys())
-        n = nodes.pop()
-        node_set_list = [set([n])]
-        node_stack = collections.deque()
-        node_stack_append = node_stack.append
-        node_stack_pop = node_stack.pop
-        node_set = node_set_list[-1]
-        # find separate sets
-        while nodes:
-            for node in node_links[n]:
-                if node not in node_set:
-                    node_stack_append(node)
-            if not node_stack:  # new mesh part
-                n = nodes.pop()
-                node_set_list.append(set([n]))
-                node_set = node_set_list[-1]
-            else:
-                while node_stack and n in node_set:
-                    n = node_stack_pop()
-                nodes.discard(n)
-                node_set.add(n)
-        # create new meshes from sets, new_pe is the slow line.
-        if len(node_set_list) > 1:
-            for node_set in node_set_list:
-                mesh_index = sorted(node_set)
-                vert_dict = {j: i for i, j in enumerate(mesh_index)}
-                new_vert = [verts_in[i] for i in mesh_index]
-                new_pe = [[vert_dict[n] for n in fe]
-                            for fe in poly_edge_in
-                            if fe[0] in node_set]
-                old_pe = [fe for fe in poly_edge_in
-                             if fe[0] in node_set]
-                verts_out.append(new_vert)
-                poly_edge_out.append(new_pe)
-                poly_edge_old_indexes_out.append(old_pe)
-        elif node_set_list:  # no reprocessing needed
-            verts_out.append(verts_in)
-            poly_edge_out.append(poly_edge_in)
-            poly_edge_old_indexes_out.append(poly_edge_in)
+        if nodes:
+            n = nodes.pop()
+            node_set_list = [set([n])]
+            node_stack = collections.deque()
+            node_stack_append = node_stack.append
+            node_stack_pop = node_stack.pop
+            node_set = node_set_list[-1]
+            # find separate sets
+            while nodes:
+                for node in node_links[n]:
+                    if node not in node_set:
+                        node_stack_append(node)
+                if not node_stack:  # new mesh part
+                    n = nodes.pop()
+                    node_set_list.append(set([n]))
+                    node_set = node_set_list[-1]
+                else:
+                    while node_stack and n in node_set:
+                        n = node_stack_pop()
+                    nodes.discard(n)
+                    node_set.add(n)
+            # create new meshes from sets, new_pe is the slow line.
+            if len(node_set_list) > 1:
+                for node_set in node_set_list:
+                    mesh_index = sorted(node_set)
+                    vert_dict = {j: i for i, j in enumerate(mesh_index)}
+                    new_vert = [verts_in[i] for i in mesh_index]
+                    new_pe = [[vert_dict[n] for n in fe]
+                                for fe in poly_edge_in
+                                if fe[0] in node_set]
+                    old_pe = [fe for fe in poly_edge_in
+                                if fe[0] in node_set]
+                    verts_out.append(new_vert)
+                    poly_edge_out.append(new_pe)
+                    poly_edge_old_indexes_out.append(old_pe)
+            elif node_set_list:  # no reprocessing needed
+                verts_out.append(verts_in)
+                poly_edge_out.append(poly_edge_in)
+                poly_edge_old_indexes_out.append(poly_edge_in)
+        else:
+            verts_out, poly_edge_out, poly_edge_old_indexes_out = [[v] for v in verts_in], [[]]*len(verts_in), [[]]*len(verts_in)
 
         return verts_out, poly_edge_out, poly_edge_old_indexes_out
                 
