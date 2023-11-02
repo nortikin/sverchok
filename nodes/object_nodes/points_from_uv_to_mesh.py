@@ -32,21 +32,23 @@ def UV(self, object):
     bm = bmesh.new()
     bm.from_mesh(object.data)
     uv_layer = bm.loops.layers.uv[0]
-    nFaces = len(bm.faces)
     bm.verts.ensure_lookup_table()
     bm.faces.ensure_lookup_table()
     vertices_dict = {}
     polygons_new = []
-    for fi in range(nFaces):
+    polygons_new_append = polygons_new.append
+    for fi in bm.faces:
         polygons_new_pol = []
-        for loop in bm.faces[fi].loops:
+        polygons_new_pol_append = polygons_new_pol.append
+        for loop in fi.loops:
             li = loop.index
-            polygons_new_pol.append(li)
-            vertices_dict[li] = list(loop[uv_layer].uv[:])+[0]
-        polygons_new.append(polygons_new_pol)
-    vertices_new = [i for i in vertices_dict.values()]
-    np_ver = np.array(vertices_new)
-    vertices_new = np_ver.tolist()
+            polygons_new_pol_append(li)
+            uv = loop[uv_layer].uv
+            vertices_dict[li] = [ uv.x, uv.y, 0.0]
+
+        polygons_new_append(polygons_new_pol)
+
+    vertices_new = list( vertices_dict.values() )
     bm.clear()
     return [vertices_new, polygons_new]
 
