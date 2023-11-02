@@ -44,7 +44,7 @@ def UV(self, object):
             polygons_new_pol.append(li)
             vertices_dict[li] = list(loop[uv_layer].uv[:])+[0]
         polygons_new.append(polygons_new_pol)
-        vertices_new = [i for i in vertices_dict.values()]
+    vertices_new = [i for i in vertices_dict.values()]
     np_ver = np.array(vertices_new)
     vertices_new = np_ver.tolist()
     bm.clear()
