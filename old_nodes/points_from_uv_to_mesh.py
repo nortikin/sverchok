@@ -21,43 +21,17 @@ import bmesh
 from mathutils.bvhtree import BVHTree
 from mathutils.geometry import barycentric_transform
 import numpy as np
-from bpy.props import BoolProperty, StringProperty, FloatVectorProperty, EnumProperty
+from bpy.props import BoolProperty, StringProperty, FloatVectorProperty
 from sverchok.node_tree import SverchCustomTreeNode
 
 from sverchok.data_structure import (updateNode)
 
 
-def UV(self, object, uv_select_mode, apply_modifiers):
+def UV(self, object):
     # makes UV from layout texture area to sverchok vertices and polygons.
-    uv_layer_active = object.data.uv_layers.active #.name
-    uv_layer_active_render_name = object.data.uv_layers[0].name
-    for uv in object.data.uv_layers:
-        if uv.active_render==True:
-            uv_layer_active_render_name = uv.name
-            break
-
     bm = bmesh.new()
-    if apply_modifiers:
-        sv_depsgraph = bpy.context.evaluated_depsgraph_get()
-        scene_object = sv_depsgraph.objects[ object.name ]
-        object_to_mesh = scene_object.to_mesh(preserve_all_data_layers=True, depsgraph=sv_depsgraph)
-        bm.from_mesh(object_to_mesh)
-        scene_object.to_mesh_clear()
-    else:
-        bm.from_mesh(object.data)
-
-    uv_layer_active = bm.loops.layers.uv.active #.name
-    uv_layer_active_render = object.data.uv_layers[0] #.name
-    for uv in bm.loops.layers.uv:
-        if uv.name==uv_layer_active_render_name:
-            uv_layer_active_render = uv
-            break
-
-    if uv_select_mode=='active_item':
-        uv_layer = uv_layer_active
-    elif uv_select_mode=='active_render':
-        uv_layer = uv_layer_active_render
-
+    bm.from_mesh(object.data)
+    uv_layer = bm.loops.layers.uv[0]
     bm.verts.ensure_lookup_table()
     bm.faces.ensure_lookup_table()
     vertices_dict = {}
@@ -79,45 +53,15 @@ def UV(self, object, uv_select_mode, apply_modifiers):
     return [vertices_new, polygons_new]
 
 
-class SvUVPointonMeshNodeMK2(SverchCustomTreeNode, bpy.types.Node):
+class SvUVPointonMeshNode(SverchCustomTreeNode, bpy.types.Node):
     ''' Transform vectors from UV space to Object space '''
-    bl_idname = 'SvUVPointonMeshNodeMK2'
+    bl_idname = 'SvUVPointonMeshNode'
     bl_label = 'Find UV Coord on Surface'
     bl_icon = 'GROUP_UVS'
     is_scene_dependent = True
     is_animation_dependent = True
 
     object_ref: StringProperty(default='', update=updateNode)
-
-    apply_midifiers: BoolProperty(
-        name="Apply Modifiers", description="Off: use original object from scene\nOn: Apply modifiers before select UV Map",
-        default=False, update=updateNode)
-
-    uv_select_modes = [
-            #('None', "No Apply", "Modifiers are not applied", 0),
-            ('active_item', "Active Selected", "Node select UV Map actived in the list of UV Maps of object", 0),
-            ('active_render', "Active Render", "UV Map selected for render (actived photo icon)", 1)
-        ]
-
-    uv_select_mode : EnumProperty(
-            name = "U Knots",
-            description = "What UV Map select",
-            items = uv_select_modes,
-            default = 'active_item',
-            update = updateNode)
-
-    def sv_draw_buttons(self, context, layout):
-        row = layout.row()
-        col = row.column()
-        col.label(text='Apply midifiers:')
-        col = row.column()
-        col.alignment = 'LEFT'
-        col.prop(self, 'apply_midifiers', expand=True, text='')
-        row = layout.row()
-        row.column().label(text="Select UV Map by:")
-        row.column().prop(self, 'uv_select_mode', expand=True ) #, text='')
-
-
 
     def sv_init(self, context):
         si, so = self.inputs.new, self.outputs.new
@@ -131,9 +75,7 @@ class SvUVPointonMeshNodeMK2(SverchCustomTreeNode, bpy.types.Node):
         Object, PointsUV = self.inputs
         Pom, uvV, uvP = self.outputs
         obj = Object.sv_get()[0]  # triangulate faces
-        if not obj.data.uv_layers:
-            raise Exception(f"Object '{obj.data.name}' has no UV Maps. Open Properties->Data->UV Maps and check list of UV Maps.")
-        UVMAPV, UVMAPP = UV(self, obj, self.uv_select_mode, self.apply_midifiers)
+        UVMAPV, UVMAPP = UV(self,obj)
         if Pom.is_linked:
             pointuv = PointsUV.sv_get()[0]
             bvh = BVHTree.FromPolygons(UVMAPV, UVMAPP, all_triangles=False, epsilon=0.0)
@@ -156,8 +98,8 @@ class SvUVPointonMeshNodeMK2(SverchCustomTreeNode, bpy.types.Node):
 
 
 def register():
-    bpy.utils.register_class(SvUVPointonMeshNodeMK2)
+    bpy.utils.register_class(SvUVPointonMeshNode)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvUVPointonMeshNodeMK2)
+    bpy.utils.unregister_class(SvUVPointonMeshNode)
