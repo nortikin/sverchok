@@ -37,7 +37,7 @@ class DocumentationTests(SverchokTestCase):
                 continue
             with self.subTest(node_module=f"{file_name}.py"):
                 if file_name in modules:
-                    self.fail(f'There are tow modules with the same name "{file_name}" \n'
+                    self.fail(f'There are two modules with the same name "{file_name}" \n'
                               f'File 1: {Path(modules[file_name]).relative_to(sv_root)} \n'
                               f'file 2: {Path(path).relative_to(sv_root)}')
                 else:
@@ -59,7 +59,6 @@ closest_point_on_mesh2.py
 scene_raycast2.py
 sculpt_mask.py
 set_blenddata2.py
-points_from_uv_to_mesh.py
 custom_mesh_normals.py
 color_uv_texture.py
 filter_blenddata.py
