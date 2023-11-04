@@ -1,8 +1,8 @@
 Revolution Surface
 ==================
 
-.. image:: https://github.com/nortikin/sverchok/assets/14288520/49bc8bfc-cfbc-4ee9-8edc-1bc6511a1ed0
-  :target: https://github.com/nortikin/sverchok/assets/14288520/49bc8bfc-cfbc-4ee9-8edc-1bc6511a1ed0
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/3a410340-d935-4569-8ca5-c6ab77cf4fa9
+  :target: https://github.com/nortikin/sverchok/assets/14288520/3a410340-d935-4569-8ca5-c6ab77cf4fa9
 
 Functionality
 -------------
@@ -63,8 +63,20 @@ This node has the following parameter:
 
   The default value is **Revolution axis**.
 
-.. image:: https://github.com/nortikin/sverchok/assets/14288520/b582fd3f-65ed-4d39-b2a6-87d9d2ba4de6
-  :target: https://github.com/nortikin/sverchok/assets/14288520/b582fd3f-65ed-4d39-b2a6-87d9d2ba4de6
+  .. image:: https://github.com/nortikin/sverchok/assets/14288520/b582fd3f-65ed-4d39-b2a6-87d9d2ba4de6
+    :target: https://github.com/nortikin/sverchok/assets/14288520/b582fd3f-65ed-4d39-b2a6-87d9d2ba4de6
+
+* **Angle Units**. The units in which values of **T Min**, **T Max** inputs are
+  measured. The available options are:
+
+  * **Rad**. Radians (2*pi is full circle).
+  * **Deg**. Degrees (360 is full circle).
+  * **Uni**. Unit circles (1.0 is full circle).
+
+  The default value is **Rad**.
+
+    .. image:: https://github.com/nortikin/sverchok/assets/14288520/008a1043-33c4-4635-8757-a6efb4a4134f
+      :target: https://github.com/nortikin/sverchok/assets/14288520/008a1043-33c4-4635-8757-a6efb4a4134f
 
 Outputs
 -------

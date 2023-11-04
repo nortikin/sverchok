@@ -6,13 +6,12 @@ import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.utils.sv_transform_helper import AngleUnits, SvAngleHelper
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 from sverchok.utils.curve import SvCurve
 from sverchok.utils.surface.algorithms import SvRevolutionSurface
 
 
-class SvRevolutionSurfaceNodeMK2(SverchCustomTreeNode, bpy.types.Node, SvAngleHelper):
+class SvRevolutionSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Revolution Surface
     Tooltip: Generate a surface of revolution (similar to Spin / Lathe modifier)
@@ -25,24 +24,13 @@ class SvRevolutionSurfaceNodeMK2(SverchCustomTreeNode, bpy.types.Node, SvAngleHe
         name = "Angle From",
         description = "Minimal value of V surface parameter",
         default = 0.0,
-        update = SvAngleHelper.update_angle)
+        update = updateNode)
 
     v_max : FloatProperty(
         name = "Angle To",
         description = "Minimal value of V surface parameter",
         default = 2*pi,
-        update = SvAngleHelper.update_angle)
-    
-    # Override properties from SvAngleHelper to set radians as default
-    angle_units: EnumProperty(
-        name="Angle Units", description="Angle units (Radians/Degrees/Unities)",
-        default=AngleUnits.RADIANS, items=AngleUnits.get_blender_enum(),
-        update=SvAngleHelper.update_angle_units)
-
-    def update_angles(self, context, au):
-        ''' Update all the angles to preserve their values in the new units '''
-        self.v_min = self.v_min * au
-        self.v_max = self.v_max * au
+        update = updateNode)
 
     origins = [
         ('GLOBAL', "Global origin", "Global origin", 0),
@@ -71,7 +59,6 @@ class SvRevolutionSurfaceNodeMK2(SverchCustomTreeNode, bpy.types.Node, SvAngleHe
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "origin")
-        self.draw_angle_units_buttons(context, layout)
 
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
@@ -93,8 +80,6 @@ class SvRevolutionSurfaceNodeMK2(SverchCustomTreeNode, bpy.types.Node, SvAngleHe
         surface_out = []
         for curves, points, directions, v_mins, v_maxs in zip_long_repeat(curve_s, point_s, direction_s, v_min_s, v_max_s):
             for curve, point, direction, v_min, v_max in zip_long_repeat(curves, points, directions, v_mins, v_maxs):
-                au = self.radians_conversion_factor()
-                v_min, v_max = v_min*au, v_max*au
                 origin = self.origin == 'GLOBAL'
                 surface = SvRevolutionSurface.build(curve,
                                 np.array(point), np.array(direction),
@@ -105,8 +90,8 @@ class SvRevolutionSurfaceNodeMK2(SverchCustomTreeNode, bpy.types.Node, SvAngleHe
         self.outputs['Surface'].sv_set(surface_out)
 
 def register():
-    bpy.utils.register_class(SvRevolutionSurfaceNodeMK2)
+    bpy.utils.register_class(SvRevolutionSurfaceNode)
 
 def unregister():
-    bpy.utils.unregister_class(SvRevolutionSurfaceNodeMK2)
+    bpy.utils.unregister_class(SvRevolutionSurfaceNode)
 
