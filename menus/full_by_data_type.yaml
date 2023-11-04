@@ -337,7 +337,7 @@
         - SvExMinimalSurfaceNode
         - SvExMinSurfaceFromCurveNode
         - ---
-        - SvExRevolutionSurfaceNode
+        - SvRevolutionSurfaceNodeMK2
         - SvExTaperSweepSurfaceNode
         - SvBendCurveSurfaceNode
         - SvExExtrudeCurveVectorNode
