@@ -94,14 +94,13 @@ class SvUVPointonMeshNodeMK2(SverchCustomTreeNode, bpy.types.Node):
         default=False, update=updateNode)
 
     uv_select_modes = [
-            #('None', "No Apply", "Modifiers are not applied", 0),
-            ('active_item', "Active Selected", "Node select UV Map actived in the list of UV Maps of object", 0),
-            ('active_render', "Active Render", "UV Map selected for render (actived photo icon)", 1)
+            ('active_item', "Active Selected", "UV Map selected by an active elem in the list of UV Maps of object data", 0),
+            ('active_render', "Active Render", "UV Map selected by property active_render in the list of UV Maps of object data (actived photo icon)", 1)
         ]
 
     uv_select_mode : EnumProperty(
-            name = "U Knots",
-            description = "What UV Map select",
+            name = "Select UV Map by",
+            description = "UV Map select from object data property by",
             items = uv_select_modes,
             default = 'active_item',
             update = updateNode)
