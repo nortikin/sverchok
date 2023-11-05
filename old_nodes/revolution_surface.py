@@ -11,7 +11,7 @@ from sverchok.utils.curve import SvCurve
 from sverchok.utils.surface.algorithms import SvRevolutionSurface
 
 
-class SvRevolutionSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
+class SvExRevolutionSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Revolution Surface
     Tooltip: Generate a surface of revolution (similar to Spin / Lathe modifier)
@@ -90,8 +90,8 @@ class SvRevolutionSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
         self.outputs['Surface'].sv_set(surface_out)
 
 def register():
-    bpy.utils.register_class(SvRevolutionSurfaceNode)
+    bpy.utils.register_class(SvExRevolutionSurfaceNode)
 
 def unregister():
-    bpy.utils.unregister_class(SvRevolutionSurfaceNode)
+    bpy.utils.unregister_class(SvExRevolutionSurfaceNode)
 
