@@ -29,37 +29,6 @@ from sverchok.data_structure import (updateNode)
 
 def UV(self, bm, uv_layer):
     # makes UV from layout texture area to sverchok vertices and polygons.
-    # uv_layer_active = obj.data.uv_layers.active #.name
-    # uv_layer_active_render_name = obj.data.uv_layers[0].name
-    # for uv in obj.data.uv_layers:
-    #     if uv.active_render==True:
-    #         uv_layer_active_render_name = uv.name
-    #         break
-
-    # bm = bmesh.new()
-    # if self.apply_modifiers:
-    #     sv_depsgraph = bpy.context.evaluated_depsgraph_get()
-    #     scene_object = sv_depsgraph.objects[ obj.name ]
-    #     object_to_mesh = scene_object.to_mesh(preserve_all_data_layers=True, depsgraph=sv_depsgraph)
-    #     bm.from_mesh(object_to_mesh)
-    #     scene_object.to_mesh_clear()
-    # else:
-    #     bm.from_mesh(obj.data)
-
-    # uv_layer_active = bm.loops.layers.uv.active #.name
-    # uv_layer_active_render = obj.data.uv_layers[0] #.name
-    # for uv in bm.loops.layers.uv:
-    #     if uv.name==uv_layer_active_render_name:
-    #         uv_layer_active_render = uv
-    #         break
-
-    # if self.uv_select_mode=='active_item':
-    #     uv_layer = uv_layer_active
-    # elif self.uv_select_mode=='active_render':
-    #     uv_layer = uv_layer_active_render
-
-    # bm.verts.ensure_lookup_table()
-    # bm.faces.ensure_lookup_table()
     vertices_dict = {}
     polygons_new = []
     polygons_new_append = polygons_new.append
@@ -75,7 +44,6 @@ def UV(self, bm, uv_layer):
         polygons_new_append(polygons_new_pol)
 
     vertices_new = list( vertices_dict.values() )
-    #bm.clear()
     return [vertices_new, polygons_new]
 
 
@@ -171,7 +139,7 @@ class SvUVPointonMeshNodeMK2(SverchCustomTreeNode, bpy.types.Node):
             # resore UV to 3D
             pointuv = PointsUV.sv_get()[0]
             bvh = BVHTree.FromPolygons(UVMAPV, UVMAPP, all_triangles=False, epsilon=0.0)
-            out = [] # res in 3D
+            out = [] # result in 3D
             for Puv in pointuv:
                 loc, norm, ind, dist = bvh.find_nearest(Puv)
                 _found_poly = bm.faces[ind]
