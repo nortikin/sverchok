@@ -32,7 +32,8 @@ def viewerdraw_showhide(operator, context):
         return  {'CANCELLED'}
 
     for node in selected_nodes:
-        if 'SvViewerDraw' in node.bl_idname:
+        res = any([i in node.bl_idname for i in ['Viewer Draw Curve', 'SvViewerDraw', 'Viewer Draw Surface', 'Matrix View','Viewer Index', 'Solid Viewer', 'Viewer 2D', 'Stethoscope']])
+        if  res:
             node.activate = not node.activate
 
 
