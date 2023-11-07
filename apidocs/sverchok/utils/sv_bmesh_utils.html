@@ -190,7 +190,12 @@ def add_mesh_to_bmesh(bm, verts, edges=None, faces=None, sv_index_name=None, upd
         new_edges = []
     #[new_face([bm_verts[i] for i in face]) for face in faces or []] # не надо так делать
     if faces is not None:
-        for face in faces:
+        # remove double faces. Some times get faces with same verts but with another order: [62,103,102] and [102,103,62].
+        # this is not compatible with mesh and only one of that faces can be used. So convert this faces indices into dictionary.
+        # this remove faces with the same vertices but same or different orders. This may happens on some of Voronoi if
+        # it slice self intersected mesh.
+        dict_faces = { tuple(sorted(f)): f for f in list(faces) }
+        for face in dict_faces.values():
             new_face([bm_verts[i] for i in face])
     else:
         new_face = []
@@ -967,7 +972,12 @@ def recalc_normals(verts, edges, faces, loop=False):
         new_edges = []
     #[new_face([bm_verts[i] for i in face]) for face in faces or []] # не надо так делать
     if faces is not None:
-        for face in faces:
+        # remove double faces. Some times get faces with same verts but with another order: [62,103,102] and [102,103,62].
+        # this is not compatible with mesh and only one of that faces can be used. So convert this faces indices into dictionary.
+        # this remove faces with the same vertices but same or different orders. This may happens on some of Voronoi if
+        # it slice self intersected mesh.
+        dict_faces = { tuple(sorted(f)): f for f in list(faces) }
+        for face in dict_faces.values():
             new_face([bm_verts[i] for i in face])
     else:
         new_face = []
