@@ -913,7 +913,7 @@
     - SvSetCustomUVMap
     - SvUVtextureNode
     - SvMeshUVColorNode
-    - SvUVPointonMeshNodeMK2
+    - SvUVPointonMeshNodeMK3
     - SvSampleUVColorNode
     - SvArmaturePropsNode
     - SvLatticePropsNode
