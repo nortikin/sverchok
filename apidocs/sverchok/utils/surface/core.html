@@ -73,12 +73,18 @@ class SvSurface(object):
         if hasattr(self, &#39;normal_delta&#39;):
             h = self.normal_delta
         else:
-            h = 0.001
+            h = 0.0001
         surf_vertices = self.evaluate_array(us, vs)
-        u_plus = self.evaluate_array(us + h, vs)
-        v_plus = self.evaluate_array(us, vs + h)
-        du = u_plus - surf_vertices
-        dv = v_plus - surf_vertices
+        u_bounds = self.get_u_bounds()
+        v_bounds = self.get_v_bounds()
+        us_not_reversed = us + h&lt;u_bounds[1]
+        vs_not_reversed = vs + h&lt;v_bounds[1]
+        us_delta = np.where( us_not_reversed, us + h, us - h)
+        vs_delta = np.where( vs_not_reversed, vs + h, vs - h)
+        u_plus = self.evaluate_array(us_delta, vs)
+        v_plus = self.evaluate_array(us, vs_delta)
+        du = np.where( us_not_reversed.T[:,np.newaxis], u_plus - surf_vertices, -(u_plus - surf_vertices) )
+        dv = np.where( vs_not_reversed.T[:,np.newaxis], v_plus - surf_vertices, -(v_plus - surf_vertices) )
         #self.info(&#34;Du: %s&#34;, du)
         #self.info(&#34;Dv: %s&#34;, dv)
         normal = np.cross(du, dv)
@@ -240,7 +246,7 @@ class SvFlipSurface(SvSurface):
         if hasattr(surface, &#34;normal_delta&#34;):
             self.normal_delta = surface.normal_delta
         else:
-            self.normal_delta = 0.001
+            self.normal_delta = 0.0001
         self.__description__ = &#34;Flipped {}&#34;.format(surface)
 
     def get_u_min(self):
@@ -287,7 +293,7 @@ class SvSwapSurface(SvSurface):
         if hasattr(surface, &#34;normal_delta&#34;):
             self.normal_delta = surface.normal_delta
         else:
-            self.normal_delta = 0.001
+            self.normal_delta = 0.0001
         self.__description__ = &#34;Swapped {}&#34;.format(surface)
 
     @staticmethod
@@ -330,7 +336,7 @@ class SvReparametrizedSurface(SvSurface):
         if hasattr(surface, &#34;normal_delta&#34;):
             self.normal_delta = surface.normal_delta
         else:
-            self.normal_delta = 0.001
+            self.normal_delta = 0.0001
 
     @classmethod
     def build(cls, surface, new_u_min, new_u_max, new_v_min, new_v_max):
@@ -405,7 +411,7 @@ class SvLambdaSurface(SvSurface):
         self.function_numpy = function_numpy
         self.u_bounds = (0.0, 1.0)
         self.v_bounds = (0.0, 1.0)
-        self.normal_delta = 0.001
+        self.normal_delta = 0.0001
 
     def get_u_min(self):
         return self.u_bounds[0]
@@ -482,7 +488,7 @@ class SvLambdaSurface(SvSurface):
         if hasattr(surface, &#34;normal_delta&#34;):
             self.normal_delta = surface.normal_delta
         else:
-            self.normal_delta = 0.001
+            self.normal_delta = 0.0001
         self.__description__ = &#34;Flipped {}&#34;.format(surface)
 
     def get_u_min(self):
@@ -677,7 +683,7 @@ class SvLambdaSurface(SvSurface):
         self.function_numpy = function_numpy
         self.u_bounds = (0.0, 1.0)
         self.v_bounds = (0.0, 1.0)
-        self.normal_delta = 0.001
+        self.normal_delta = 0.0001
 
     def get_u_min(self):
         return self.u_bounds[0]
@@ -900,7 +906,7 @@ def v_size(self):
         if hasattr(surface, &#34;normal_delta&#34;):
             self.normal_delta = surface.normal_delta
         else:
-            self.normal_delta = 0.001
+            self.normal_delta = 0.0001
 
     @classmethod
     def build(cls, surface, new_u_min, new_u_max, new_v_min, new_v_max):
@@ -1214,12 +1220,18 @@ def build(cls, surface, new_u_min, new_u_max, new_v_min, new_v_max):
         if hasattr(self, &#39;normal_delta&#39;):
             h = self.normal_delta
         else:
-            h = 0.001
+            h = 0.0001
         surf_vertices = self.evaluate_array(us, vs)
-        u_plus = self.evaluate_array(us + h, vs)
-        v_plus = self.evaluate_array(us, vs + h)
-        du = u_plus - surf_vertices
-        dv = v_plus - surf_vertices
+        u_bounds = self.get_u_bounds()
+        v_bounds = self.get_v_bounds()
+        us_not_reversed = us + h&lt;u_bounds[1]
+        vs_not_reversed = vs + h&lt;v_bounds[1]
+        us_delta = np.where( us_not_reversed, us + h, us - h)
+        vs_delta = np.where( vs_not_reversed, vs + h, vs - h)
+        u_plus = self.evaluate_array(us_delta, vs)
+        v_plus = self.evaluate_array(us, vs_delta)
+        du = np.where( us_not_reversed.T[:,np.newaxis], u_plus - surf_vertices, -(u_plus - surf_vertices) )
+        dv = np.where( vs_not_reversed.T[:,np.newaxis], v_plus - surf_vertices, -(v_plus - surf_vertices) )
         #self.info(&#34;Du: %s&#34;, du)
         #self.info(&#34;Dv: %s&#34;, dv)
         normal = np.cross(du, dv)
@@ -1717,12 +1729,18 @@ def v_size(self):
     if hasattr(self, &#39;normal_delta&#39;):
         h = self.normal_delta
     else:
-        h = 0.001
+        h = 0.0001
     surf_vertices = self.evaluate_array(us, vs)
-    u_plus = self.evaluate_array(us + h, vs)
-    v_plus = self.evaluate_array(us, vs + h)
-    du = u_plus - surf_vertices
-    dv = v_plus - surf_vertices
+    u_bounds = self.get_u_bounds()
+    v_bounds = self.get_v_bounds()
+    us_not_reversed = us + h&lt;u_bounds[1]
+    vs_not_reversed = vs + h&lt;v_bounds[1]
+    us_delta = np.where( us_not_reversed, us + h, us - h)
+    vs_delta = np.where( vs_not_reversed, vs + h, vs - h)
+    u_plus = self.evaluate_array(us_delta, vs)
+    v_plus = self.evaluate_array(us, vs_delta)
+    du = np.where( us_not_reversed.T[:,np.newaxis], u_plus - surf_vertices, -(u_plus - surf_vertices) )
+    dv = np.where( vs_not_reversed.T[:,np.newaxis], v_plus - surf_vertices, -(v_plus - surf_vertices) )
     #self.info(&#34;Du: %s&#34;, du)
     #self.info(&#34;Dv: %s&#34;, dv)
     normal = np.cross(du, dv)
@@ -1936,7 +1954,7 @@ def v_size(self):
         if hasattr(surface, &#34;normal_delta&#34;):
             self.normal_delta = surface.normal_delta
         else:
-            self.normal_delta = 0.001
+            self.normal_delta = 0.0001
         self.__description__ = &#34;Swapped {}&#34;.format(surface)
 
     @staticmethod
