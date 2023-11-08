@@ -267,9 +267,6 @@ class SvGroupTree(SvNodeTreeCommon, bpy.types.NodeTree):
     if bpy.app.version >= (3, 2):  # in 3.1 this can lead to a crash
         @classmethod
         def valid_socket_type(cls, socket_type: str):
-            # todo https://projects.blender.org/blender/blender/issues/113134
-            if bpy.app.version >= (4, 0) and socket_type == 'NodeSocketFloat':
-                return True
             # https://docs.blender.org/api/master/bpy.types.NodeTree.html#bpy.types.NodeTree.valid_socket_type
             return socket_type in socket_type_names()
 
