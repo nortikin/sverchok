@@ -228,6 +228,13 @@ try:
 except ImportError:
     numexpr = None 
 
+ezdxf_d = sv_dependencies[&#34;ezdxf&#34;] = SvDependency(&#34;ezdxf&#34;,&#34;https://github.com/mozman/ezdxf&#34;)
+ezdxf_d.pip_installable = True
+try:
+    import ezdxf
+    ezdxf_d.module = ezdxf
+except ImportError:
+    ezdxf = None 
 
 settings.pip = pip
 settings.sv_dependencies = sv_dependencies
