@@ -620,6 +620,7 @@ dependencies, or install only some of them.""")
         draw_message(box, "numba")
         draw_message(box, "pyOpenSubdiv")
         draw_message(box, "numexpr")
+        draw_message(box, "ezdxf")
 
         draw_freecad_ops()
 
