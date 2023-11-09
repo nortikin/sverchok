@@ -6,12 +6,12 @@ from sverchok.data_structure import updateNode, zip_long_repeat
 
 from sverchok.utils.field.vector import SvBendAlongSurfaceField
 
-class SvBendAlongSurfaceFieldNode(SverchCustomTreeNode, bpy.types.Node):
+class SvBendAlongSurfaceFieldMk2Node(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Bend surface
     Tooltip: Generate a vector field which bends the space along the given surface.
     """
-    bl_idname = 'SvExBendAlongSurfaceFieldNode'
+    bl_idname = 'SvBendAlongSurfaceFieldMk2Node'
     bl_label = 'Bend Along Surface Field'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_BEND_SURFACE_FIELD'
@@ -117,7 +117,7 @@ class SvBendAlongSurfaceFieldNode(SverchCustomTreeNode, bpy.types.Node):
         self.outputs['Field'].sv_set(fields_out)
 
 def register():
-    bpy.utils.register_class(SvBendAlongSurfaceFieldNode)
+    bpy.utils.register_class(SvBendAlongSurfaceFieldMk2Node)
 
 def unregister():
-    bpy.utils.unregister_class(SvBendAlongSurfaceFieldNode)
+    bpy.utils.unregister_class(SvBendAlongSurfaceFieldMk2Node)

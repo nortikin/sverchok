@@ -177,7 +177,7 @@
         - SvSurfaceElevateDegreeNode
         - SvSurfaceReduceDegreeNode
     - ---
-    - SvExRevolutionSurfaceNode
+    - SvRevolutionSurfaceNodeMK2
     - SvExTaperSweepSurfaceNode
     - SvBendCurveSurfaceNode
     - SvExExtrudeCurveVectorNode
@@ -237,7 +237,7 @@
     - SvExMergeScalarFieldsNode
     - ---
     - SvExBendAlongCurveFieldNode
-    - SvExBendAlongSurfaceFieldNode
+    - SvBendAlongSurfaceFieldMk2Node
     - ---
     - SvExScalarFieldEvaluateNode
     - SvExVectorFieldEvaluateNode
@@ -355,6 +355,7 @@
     - icon_name: VIEWZOOM
     - extra_menu: MeshPartialMenu
     - SvBBoxNodeMk3
+    - SvAlignedBBoxNode
     - SvComponentAnalyzerNode
     - SvDiameterNode
     - SvVolumeNodeMK2
@@ -703,7 +704,7 @@
 - Scene:
     - icon_name: SCENE_DATA
     - extra_menu: ConnectionPartialMenu
-    - SvGetObjectsData
+    - SvGetObjectsDataMK2
     - SvObjInLite
     - SvCurveInputNode
     - SvFCurveInNodeMK1
@@ -766,7 +767,7 @@
     - SvSetCustomUVMap
     - SvUVtextureNode
     - SvMeshUVColorNode
-    - SvUVPointonMeshNode
+    - SvUVPointonMeshNodeMK2
     - SvSampleUVColorNode
     - SvArmaturePropsNode
     - SvLatticePropsNode

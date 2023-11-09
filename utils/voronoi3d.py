@@ -415,7 +415,7 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, mode='
     # calc center of mass. Using for sort of bisect planes for sites.
     center_of_mass = np.average( verts, axis=0 )
     # using for precalc unneeded bisects
-    bbox_aligned = bounding_box_aligned(verts)[0]
+    bbox_aligned, *_ = bounding_box_aligned(verts)
 
     start_mesh = bmesh_from_pydata(verts, [], faces, normal_update=False)
     used_sites_idx = []

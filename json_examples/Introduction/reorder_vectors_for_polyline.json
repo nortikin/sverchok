@@ -1,0 +1,157 @@
+{
+  "export_version": "1.0",
+  "main_tree": {
+    "nodes": {
+      "Polyline": {
+        "attributes": {
+          "location": [
+            -60.0,
+            200.0
+          ]
+        },
+        "inputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices"
+          }
+        },
+        "outputs": {
+          "Curve": {
+            "bl_idname": "SvCurveSocket",
+            "name": "Curve"
+          }
+        },
+        "bl_idname": "SvExPolylineNode"
+      },
+      "Vector Sort": {
+        "attributes": {
+          "location": [
+            -240.0,
+            200.0
+          ]
+        },
+        "properties": {
+          "mode": "CONNEX",
+          "limit_mode": true
+        },
+        "inputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices"
+          },
+          "PolyEdge": {
+            "bl_idname": "SvStringsSocket",
+            "name": "PolyEdge"
+          }
+        },
+        "outputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices"
+          },
+          "PolyEdge": {
+            "bl_idname": "SvStringsSocket",
+            "name": "PolyEdge"
+          },
+          "Item order": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Item order"
+          }
+        },
+        "bl_idname": "SvVertSortNode"
+      },
+      "Viewer Draw Curve": {
+        "attributes": {
+          "location": [
+            120.0,
+            200.0
+          ]
+        },
+        "inputs": {
+          "Curve": {
+            "bl_idname": "SvCurveSocket",
+            "name": "Curve"
+          },
+          "Resolution": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Resolution",
+            "properties": {
+              "prop_name": "resolution"
+            }
+          }
+        },
+        "bl_idname": "SvCurveViewerDrawNode"
+      },
+      "Objects in Lite": {
+        "attributes": {
+          "location": [
+            -440.0,
+            200.0
+          ],
+          "color": [
+            0.35577794909477234,
+            0.5,
+            0.3646477460861206
+          ],
+          "use_custom_color": true
+        },
+        "properties": {
+          "obj_name": "Circle",
+          "currently_storing": true
+        },
+        "advanced_properties": {
+          "geom": "{\"Vertices\": [0.0, 1.0, 0.0, -0.19509032368659973, 0.9807852506637573, 0.0, -0.3826834559440613, 0.9238795042037964, 0.0, -0.5555702447891235, 0.8314695954322815, 0.0, -0.7071067690849304, 0.7071067690849304, 0.0, -0.8314695954322815, 0.5555702447891235, 0.0, -0.9238795042037964, 0.3826834559440613, 0.0, -0.9807852506637573, 0.19509032368659973, 0.0, -1.0, 0.0, 0.0, -0.9807852506637573, -0.19509032368659973, 0.0, -0.9238795042037964, -0.3826834559440613, 0.0, -0.8314695954322815, -0.5555702447891235, 0.0, -0.7071067690849304, -0.7071067690849304, 0.0, -0.5555702447891235, -0.8314695954322815, 0.0, 0.5555702447891235, -0.8314695954322815, 0.0, 0.7071067690849304, -0.7071067690849304, 0.0, 0.8314695954322815, -0.5555702447891235, 0.0, 0.9238795042037964, -0.3826834559440613, 0.0, 0.9807852506637573, -0.19509032368659973, 0.0, 1.0, 0.0, 0.0, 0.9807852506637573, 0.19509032368659973, 0.0, 0.9238795042037964, 0.3826834559440613, 0.0, 0.8314695954322815, 0.5555702447891235, 0.0, 0.7071067690849304, 0.7071067690849304, 0.0, 0.5555702447891235, 0.8314695954322815, 0.0, 0.3826834559440613, 0.9238795042037964, 0.0, 0.19509032368659973, 0.9807852506637573, 0.0], \"Edges\": [0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 14, 15, 15, 16, 16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 0, 26], \"Polygons\": [], \"MaterialIdx\": [], \"Matrix\": [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0]}"
+        },
+        "outputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices"
+          },
+          "Edges": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Edges"
+          },
+          "Polygons": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Polygons"
+          },
+          "MaterialIdx": {
+            "bl_idname": "SvStringsSocket",
+            "name": "MaterialIdx"
+          },
+          "Matrix": {
+            "bl_idname": "SvMatrixSocket",
+            "name": "Matrix"
+          }
+        },
+        "bl_idname": "SvObjInLite"
+      }
+    },
+    "links": [
+      {
+        "from_node": "Vector Sort",
+        "from_socket": "Vertices",
+        "to_node": "Polyline",
+        "to_socket": "Vertices"
+      },
+      {
+        "from_node": "Objects in Lite",
+        "from_socket": "Vertices",
+        "to_node": "Vector Sort",
+        "to_socket": "Vertices"
+      },
+      {
+        "from_node": "Objects in Lite",
+        "from_socket": "Edges",
+        "to_node": "Vector Sort",
+        "to_socket": "PolyEdge"
+      },
+      {
+        "from_node": "Polyline",
+        "from_socket": "Curve",
+        "to_node": "Viewer Draw Curve",
+        "to_socket": "Curve"
+      }
+    ]
+  }
+}

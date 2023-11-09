@@ -133,7 +133,8 @@ Authors:
 -  Ivan Prytov,   
 -  Victor Doval,  
 -  Dion Moult,  
--  Alessandro Zomparelli   
+-  Alessandro Zomparelli
+-  Alex (aka Satabol)   
 
 Email: sverchok-b3d@yandex.ru  
 

@@ -25,12 +25,11 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, list_match_modes, list_match_func
 from sverchok.utils.sv_transform_helper import AngleUnits, SvAngleHelper
 
-def sign(x): return 1 if x >= 0 else -1
+import numpy as np
 
 epsilon = 1e-10  # used to avoid division by zero
 
-
-def torus_verts(R, r, N1, N2, rPhase, sPhase, rExponent, sExponent, sTwist, Separate):
+def torus_verts(R, r, N1, N2, rPhase, sPhase, rExponent, sExponent, sTwist, Separate, normals_is_linked):
     '''
         R         : major radius
         r         : minor radius
@@ -42,68 +41,63 @@ def torus_verts(R, r, N1, N2, rPhase, sPhase, rExponent, sExponent, sTwist, Sepa
         sExponent : spin exponent
         sTwist    : spin twist
     '''
-    list_verts = []
-    list_norms = []
-
     # angle increments (cached outside of the loop for performance)
     da1 = 2 * pi / N1
     da2 = 2 * pi / N2
 
-    for n1 in range(N1):
-        a1 = n1 * da1
-        theta = a1 + rPhase  # revolution angle
-        sin_theta = sin(theta)  # cached for performance
-        cos_theta = cos(theta)  # cached for performance
-        # 1, 0, any. 1 is a default value of rExponent so go first
-        if rExponent==1:
-            pow_cos_theta = cos_theta
-            pow_sin_theta = sin_theta
-        elif rExponent==0:
-            pow_cos_theta = 1 if cos_theta >= 0 else -1 # sign(cos_theta)
-            pow_sin_theta = 1 if sin_theta >= 0 else -1 # sign(sin_theta)
-        else:
-            pow_cos_theta = pow(abs(cos_theta), rExponent) * (1 if cos_theta >= 0 else -1) # sign(cos_theta)
-            pow_sin_theta = pow(abs(sin_theta), rExponent) * (1 if sin_theta >= 0 else -1) # sign(sin_theta)
-        cx = R * cos_theta  # torus tube center
-        cy = R * sin_theta  # torus tube center
+    n1_i = np.arange(N1, dtype=np.int16)
+    _n1 = np.repeat( [np.array(n1_i)], N2, axis = 0).T        # index n1
+    n2_i = np.arange(N2, dtype=np.int16)
+    _n2          = np.repeat( [np.array(n2_i)], N1, axis = 0) # index n2
+    # revolution angle
+    _theta       = _n1 * da1 + rPhase
+    _sin_theta   = np.sin(_theta)
+    _cos_theta   = np.cos(_theta)
+    _twist_angle = da2 * _n1 / N1 * sTwist
+    _phi         = da2 * _n2 + sPhase + _twist_angle
+    _sin_phi     = np.sin(_phi)
+    _cos_phi     = np.cos(_phi)
+    if rExponent==1:
+        _pow_sin_theta = _sin_theta
+        _pow_cos_theta = _cos_theta
+    elif rExponent==0:
+        _pow_sin_theta = np.where(_sin_theta>=0, 1, -1)
+        _pow_cos_theta = np.where(_cos_theta>=0, 1, -1)
+    else:
+        _pow_sin_theta = np.power(np.abs(_sin_theta), rExponent) * np.where(_sin_theta>=0, 1, -1)
+        _pow_cos_theta = np.power(np.abs(_cos_theta), rExponent) * np.where(_cos_theta>=0, 1, -1)
+    
+    _cx = R * _cos_theta  # torus tube center
+    _cy = R * _sin_theta  # torus tube center
+    
+    if sExponent==1:
+        _pow_sin_phi = _sin_phi
+        _pow_cos_phi = _cos_phi
+    elif sExponent==0:
+        _pow_sin_phi = np.where(_sin_phi>=0, 1, -1)
+        _pow_cos_phi = np.where(_cos_phi>=0, 1, -1)
+    else:
+        _pow_sin_phi = np.power(np.abs(_sin_phi), sExponent) * np.where(_sin_phi>=0, 1, -1)
+        _pow_cos_phi = np.power(np.abs(_cos_phi), sExponent) * np.where(_cos_phi>=0, 1, -1)
 
-        twist_angle = da2 * n1 / N1 * sTwist
+    # verices coordinates
+    _x = (R + r * _pow_cos_phi) * _pow_cos_theta
+    _y = (R + r * _pow_cos_phi) * _pow_sin_theta
+    _z = r * _pow_sin_phi
 
-        loop_verts = []
-        add_vert = loop_verts.append
-        for n2 in range(N2):
-            a2 = n2 * da2
-            phi = a2 + sPhase + twist_angle  # spin angle + twist
-            sin_phi = sin(phi)  # cached for performance
-            cos_phi = cos(phi)  # cached for performance
+    _verts = np.dstack( (_x, _y, _z) )
+    _verts = _verts.reshape(-1,3)
+    if Separate:
+        # TODO: property do not work. Noting visible
+        _verts = np.array(np.split(_verts, N1))
+    _list_verts = _verts.tolist()
 
-            if sExponent==1:
-                pow_cos_phi = cos_phi
-                pow_sin_phi = sin_phi
-            elif sExponent==0:
-                pow_cos_phi = 1 if cos_phi >= 0 else -1 # sign(cos_phi)
-                pow_sin_phi = 1 if sin_phi >= 0 else -1 # sign(sin_phi)
-            else:
-                pow_cos_phi = pow(abs(cos_phi), sExponent) * (1 if cos_phi >= 0 else -1) # sign(cos_phi)
-                pow_sin_phi = pow(abs(sin_phi), sExponent) * (1 if sin_phi >= 0 else -1) # sign(sin_phi)
+    _list_norms = []
+    if normals_is_linked:
+        _norm = np.dstack( (_x - _cx, _y - _cy, _z) )
+        _list_norms = _norm.reshape(-1,3).tolist()
 
-            x = (R + r * pow_cos_phi) * pow_cos_theta
-            y = (R + r * pow_cos_phi) * pow_sin_theta
-            z = r * pow_sin_phi
-
-            # append vertex to loop
-            add_vert([x, y, z])
-
-            # append normal
-            norm = [x - cx, y - cy, z]
-            list_norms.append(norm)
-
-        if Separate:
-            list_verts.append(loop_verts)
-        else:
-            list_verts.extend(loop_verts)
-
-    return list_verts, list_norms
+    return _list_verts, _list_norms
 
 
 def torus_edges(N1, N2, t):
@@ -112,23 +106,19 @@ def torus_edges(N1, N2, t):
         N2 : minor sections - number of spin sections around the torus tube
         t  : spin twist - number of twists (start-end vertex shift)
     '''
-    list_edges = []
-    add_edge = list_edges.append
-    # spin loop EDGES : around the torus tube
-    for n1 in range(N1):
-        for n2 in range(N2 - 1):
-            add_edge([N2 * n1 + n2, N2 * n1 + n2 + 1])
-        add_edge([N2 * n1 + N2 - 1, N2 * n1 + 0])
 
-    # revolution loop EDGES : around the torus center
-    for n1 in range(N1 - 1):
-        for n2 in range(N2):
-            add_edge([N2 * n1 + n2, N2 * (n1 + 1) + n2])
-    for n2 in range(N2):
-        add_edge([N2 * (N1 - 1) + n2, N2 * 0 + (n2 + t) % N2])
+    steps = np.arange(0, N1*N2)
+    arr_verts = np.array(np.split(steps, N1))
 
-    return list_edges
+    arr_verts   = np.vstack( (arr_verts, np.roll(arr_verts[:1], -t) ) ) # append first row to bottom to vertically circle with twist
+    arr_verts   = np.hstack( (arr_verts, np.array([arr_verts[:,0]]).T ) ) # append first row to bottom to horizontal circle
+    hspin_edges = np.dstack( (arr_verts[:N1,:N2], arr_verts[ :N1  ,1:N2+1] ))
+    vspin_edges = np.dstack( (arr_verts[:N1,:N2], arr_verts[1:N1+1, :N2] ))
+    hs_edges = np.concatenate( (hspin_edges,  vspin_edges ))
+    hs_edges = np.concatenate( np.concatenate( (hspin_edges,  vspin_edges ), axis=0), axis=0) # remove exis
 
+    hs_edges_list = hs_edges.tolist()
+    return hs_edges_list
 
 def torus_polygons(N1, N2, t):
     '''
@@ -136,17 +126,22 @@ def torus_polygons(N1, N2, t):
         N2 : minor sections - number of spin sections around the torus tube
         t  : spin twist - number of twists (start-end vertex shift)
     '''
-    list_polys = []
-    add_poly = list_polys.append
-    for n1 in range(N1 - 1):
-        for n2 in range(N2 - 1):
-            add_poly([N2 * n1 + n2, N2 * (n1 + 1) + n2, N2 * (n1 + 1) + n2 + 1, N2 * n1 + n2 + 1])
-        add_poly([N2 * n1 + N2 - 1, N2 * (n1 + 1) + N2 - 1, N2 * (n1 + 1) + 0, N2 * n1 + 0])
-    for n2 in range(N2 - 1):
-        add_poly([N2 * (N1 - 1) + n2, N2 * 0 + (n2 + t) % N2, N2 * 0 + (n2 + 1 + t) % N2, N2 * (N1 - 1) + n2 + 1])
-    add_poly([N2 * (N1 - 1) + N2 - 1, N2 * 0 + (N2 - 1 + t) % N2, N2 * 0 + (0 + t) % N2, N2 * (N1 - 1) + 0])
+    arr_faces = np.zeros((N1, N2, 4), 'i' )
 
-    return list_polys
+    steps = np.arange(0, N1*N2)
+    arr_verts = np.array(np.split(steps, N1))
+    arr_verts = np.vstack( (arr_verts, np.roll(arr_verts[:1], -t) ) ) # append first row to bottom to vertically circle
+    arr_verts = np.hstack( (arr_verts, np.array([arr_verts[:,0]]).T ) ) # append first column to right to horizontal circle
+    
+    arr_faces[:, :, 0] = arr_verts[ :-1,  :-1]
+    arr_faces[:, :, 1] = arr_verts[1:  ,  :-1]
+    arr_faces[:, :, 2] = arr_verts[1:  , 1:  ]
+    arr_faces[:, :, 3] = arr_verts[ :-1, 1:  ]
+    hs_faces = arr_faces.reshape(-1,4) # remove exis
+    hs_edges_list = hs_faces.tolist()
+
+    return hs_edges_list
+
 
 
 class SvTorusNodeMK2(SverchCustomTreeNode, bpy.types.Node, SvAngleHelper):
@@ -365,16 +360,19 @@ class SvTorusNodeMK2(SverchCustomTreeNode, bpy.types.Node, SvAngleHelper):
             verts_list = []
             norms_list = []
             verts_cache = dict()
+            normals_is_linked = self.outputs['Normals'].is_linked
             for R, r, n1, n2, rP, sP, rE, sE, sT in zip(*parameters):
                 if (R, r, n1, n2, rP, sP, rE, sE, sT) in verts_cache:
                     verts, norms = verts_cache[(R, r, n1, n2, rP, sP, rE, sE, sT)]
                 else:
-                    verts, norms = verts_cache[(R, r, n1, n2, rP, sP, rE, sE, sT)] = torus_verts(R, r, n1, n2, rP * au, sP * au, rE, sE, sT, self.Separate)
+                    verts, norms = verts_cache[(R, r, n1, n2, rP, sP, rE, sE, sT)] = torus_verts(R, r, n1, n2, rP * au, sP * au, rE, sE, sT, self.Separate, normals_is_linked)
                 verts_list.append(verts)
-                norms_list.append(norms)
+                if normals_is_linked:
+                    norms_list.append(norms)
             verts_cache.clear()
             self.outputs['Vertices'].sv_set(verts_list)
-            self.outputs['Normals'].sv_set(norms_list)
+            if normals_is_linked:
+                self.outputs['Normals'].sv_set(norms_list)
 
         if self.outputs['Edges'].is_linked:
             edges_list = []

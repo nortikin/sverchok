@@ -181,6 +181,7 @@
         - extra_menu: MeshPartialMenu  # to make the category available in another menu (1,2,3,4,5)
         - icon_name: VIEWZOOM
         - SvBBoxNodeMk3
+        - SvAlignedBBoxNode
         - SvComponentAnalyzerNode
         - SvDiameterNode
         - SvVolumeNodeMK2
@@ -336,7 +337,7 @@
         - SvExMinimalSurfaceNode
         - SvExMinSurfaceFromCurveNode
         - ---
-        - SvExRevolutionSurfaceNode
+        - SvRevolutionSurfaceNodeMK2
         - SvExTaperSweepSurfaceNode
         - SvBendCurveSurfaceNode
         - SvExExtrudeCurveVectorNode
@@ -415,7 +416,7 @@
         - SvExNoiseVectorFieldNode
         - ---
         - SvExBendAlongCurveFieldNode
-        - SvExBendAlongSurfaceFieldNode
+        - SvBendAlongSurfaceFieldMk2Node
     - Field Operations:
         - icon_name: TOOL_SETTINGS
         - SvExScalarFieldMathNode
@@ -732,7 +733,7 @@
 - Scene:
     - icon_name: SCENE_DATA
     - extra_menu: ConnectionPartialMenu
-    - SvGetObjectsData
+    - SvGetObjectsDataMK2
     - SvObjInLite
     - SvCurveInputNode
     - SvFCurveInNodeMK1
@@ -795,7 +796,7 @@
     - SvSetCustomUVMap
     - SvUVtextureNode
     - SvMeshUVColorNode
-    - SvUVPointonMeshNode
+    - SvUVPointonMeshNodeMK2
     - SvSampleUVColorNode
     - SvArmaturePropsNode
     - SvLatticePropsNode

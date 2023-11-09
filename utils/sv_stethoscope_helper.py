@@ -73,15 +73,18 @@ def draw_graphical_data(data):
         y_pos = y - (idx*lineheight)
         gfx_x = x
 
-        num_items = str(len(line))
+        num_items = str(len(line)) if hasattr(line, '__len__') else '1'
         kind_of_item = type(line).__name__
 
         tx, _ = draw_text(color, gfx_x, y_pos, f"{kind_of_item} of {num_items} items")
         gfx_x += (tx + 5)
 
         content_dict = defaultdict(int)
-        for item in line:
-            content_dict[type(item).__name__] += 1
+        if hasattr(line, '__iter__'):
+            for item in line:
+                content_dict[type(item).__name__] += 1
+        else:
+            content_dict[type(line).__name__] += 1
 
         tx, _ = draw_text(color, gfx_x, y_pos, str(dict(content_dict)))
         gfx_x += (tx + 5)

@@ -21,6 +21,7 @@ import random
 
 import bpy
 from bpy.props import BoolProperty, IntProperty, FloatProperty, EnumProperty
+import numpy as np
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, rotate_list, list_match_modes, list_match_func)
@@ -28,55 +29,62 @@ from sverchok.data_structure import (updateNode, rotate_list, list_match_modes, 
 def make_verts(nsides, radius, rand_r, rand_phi, rand_seed, divs):
     if rand_r or rand_phi:
         random.seed(rand_seed)
-
-    vertices = []
     dphi = (2*pi)/nsides
-    prev_vertex = None
-    first_vertex = None
-    for i in range(nsides):
-        phi = dphi * i
-        # randomize radius if necessary
-        if not rand_r:
-            rr = radius
-        else:
-            rr = random.uniform(radius - rand_r, radius + rand_r)
-        # randomize angle if necessary
-        if rand_phi:
-            phi = random.uniform(phi - rand_phi, phi + rand_phi)
-        x = rr*cos(phi)
-        y = rr*sin(phi)
-        next_vertex = (x, y, 0)
-        if prev_vertex is not None and divs > 1:
-            prev_x, prev_y, prev_z = prev_vertex
-            alphas = [float(i)/divs for i in range(1, divs)]
-            mid_vertices = [((1-alpha)*prev_x + alpha*x, (1-alpha)*prev_y + alpha*y, 0) for alpha in alphas]
-            vertices.extend(mid_vertices)
-        vertices.append(next_vertex)
-        prev_vertex = next_vertex
-        if first_vertex is None:
-            first_vertex = next_vertex
 
-    if divs > 1 and first_vertex is not None and prev_vertex is not None:
-        x, y, z = first_vertex
-        prev_x, prev_y, prev_z = prev_vertex
-        alphas = [float(i)/divs for i in range(1, divs)]
-        mid_vertices = [((1-alpha)*prev_x + alpha*x, (1-alpha)*prev_y + alpha*y, 0) for alpha in alphas]
-        vertices.extend(mid_vertices)
-    return vertices
+    _phi = np.arange(nsides)*dphi
+    if rand_phi:
+        np.random.seed( int(rand_seed*1000) )
+        _phi = _phi + np.array( np.random.uniform(-rand_phi, +rand_phi, nsides) )
+
+    _rr = np.ones( nsides )*radius
+    if rand_r:
+        np.random.seed( int(rand_seed*1000) )
+        _rr = _rr + np.array( np.random.uniform(-rand_r, +rand_r, nsides) )
+
+    _x     = _rr*np.cos(_phi)
+    _y     = _rr*np.sin(_phi)
+
+    if divs>1:
+        # divs stright lines, not arcs
+        _x0 = _x
+        _y0 = _y
+        _x1 = np.roll(_x0, -1)
+        _y1 = np.roll(_y0, -1)
+        _dx = (_x1-_x0)/divs
+        _dy = (_y1-_y0)/divs
+        _x_divs = np.repeat( _x0, divs)
+        _y_divs = np.repeat( _y0, divs)
+        _dx     = np.repeat( _dx, divs)
+        _dy     = np.repeat( _dy, divs)
+        _id = np.meshgrid( np.arange(divs), np.arange(nsides), indexing = 'xy')[0].flatten()
+        _xd = _x_divs+_id*_dx
+        _yd = _y_divs+_id*_dy
+        _verts = np.column_stack( (_xd, _yd, np.zeros_like(_xd) ) )
+        pass
+    else:
+        _verts = np.column_stack( (_x, _y, np.zeros_like(_x) ))
+    
+    _list_verts = _verts.tolist()
+    return _list_verts
 
 def make_edges(nsides, shift, divs):
-    vs = range(nsides*divs)
-    edges = list( zip( vs, rotate_list(vs, shift+1) ) )
-    return edges
 
-def make_faces(nsides, shift, divs):
+    _n = np.arange(nsides*divs)
+    _edges = np.column_stack( (_n, np.roll(_n, -1-shift )) )
+    _list_edges  = _edges.tolist()
+    return _list_edges
+
+def make_faces(nsides, shift, divs, r, dr, dphi):
     # for now, do not return faces if star factor
     # is not zero - the face obviously would be degraded.
+    # This actual for random phi too and some cases of random r
+    # to the future version of node
+    #   if not shift or dphi or dr and (r-dr)<0:
     if shift:
         return []
-    vs = range(nsides*divs)
-    face = list(vs)
-    return [face]
+    _faces = np.arange(nsides*divs)
+    _list_faces = _faces.tolist()
+    return [_list_faces]
 
 class SvNGonNode(SverchCustomTreeNode, bpy.types.Node):
     ''' NGon. [default]
@@ -99,7 +107,7 @@ class SvNGonNode(SverchCustomTreeNode, bpy.types.Node):
     sides_: IntProperty(name='N Sides', description='Number of polygon sides',
                         default=5, min=3,
                         update=updateNode)
-    divisions : IntProperty(name='Divisions', description = "Number of divisions to divide each side to",
+    divisions : IntProperty(name='Divisions', description = "Number of divisions to divide each side to (lines not arcs)",
                         default=1, min=1,
                         update=updateNode)
     rand_seed_: FloatProperty(name='Seed', description='Random seed',
@@ -167,7 +175,7 @@ class SvNGonNode(SverchCustomTreeNode, bpy.types.Node):
             self.outputs['Edges'].sv_set(edges)
 
         if self.outputs['Polygons'].is_linked:
-            faces = [make_faces(n, shift, divs) for r, n, s, dr, dphi, shift, divs in zip(*parameters)]
+            faces = [make_faces(n, shift, divs, r, dr, dphi) for r, n, s, dr, dphi, shift, divs in zip(*parameters)]
             self.outputs['Polygons'].sv_set(faces)
 
 

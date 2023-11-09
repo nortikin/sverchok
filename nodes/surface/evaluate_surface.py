@@ -195,24 +195,44 @@ class SvEvalSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
         vs = vs.flatten()
         return us, vs
 
-    def make_edges_xy(self, samples_u, samples_v):
-        edges = []
-        for row in range(samples_v):
-            e_row = [(i + samples_u * row, (i+1) + samples_u * row) for i in range(samples_u-1)]
-            edges.extend(e_row)
-            if row < samples_v - 1:
-                e_col = [(i + samples_u * row, i + samples_u * (row+1)) for i in range(samples_u)]
-                edges.extend(e_col)
-        return edges
+    def make_edges_and_faces(self, samples_u, samples_v, get_edges, get_faces):
 
-    def make_faces_xy(self, samples_u, samples_v):
-        faces = []
-        for row in range(samples_v - 1):
-            for col in range(samples_u - 1):
-                i = row * samples_u + col
-                face = (i, i+samples_u, i+samples_u+1, i+1)
-                faces.append(face)
-        return faces
+        _list_edges = []
+        _list_faces = []
+        
+        N1 = samples_u # X
+        N2 = samples_v # Y
+        
+        if get_edges or get_faces:
+            steps = np.arange( N1*N2 )
+            _arr_verts = np.array ( np.split(steps, N2 ) )  # split array by rows (V)
+
+        if get_edges:
+            _arr_h_edges = np.empty((N2, N1-1, 2), 'i' )
+            _arr_h_edges[:, :, 0] = _arr_verts[ : ,  :-1 ]  # hor_edges
+            _arr_h_edges[:, :, 1] = _arr_verts[ : , 1:   ]  # hor_edges
+            _arr_h_edges = _arr_h_edges.reshape(-1,2)
+
+            _arr_v_edges = np.empty( (N2-1, N1, 2), 'i' )
+            _arr_v_edges[:, :, 0] = _arr_verts[ :-1, :]  # vert_edges
+            _arr_v_edges[:, :, 1] = _arr_verts[1:  , :]  # vert_edges
+            _arr_v_edges = _arr_v_edges.reshape(-1,2)
+
+            _edges = np.concatenate( ( _arr_h_edges, _arr_v_edges, ) )
+            _list_edges = _edges.tolist()
+
+        # gen faces
+        if get_faces:
+            _arr_faces = np.empty((N2-1, N1-1, 4), 'i' )
+            _arr_faces[:, :, 0] = _arr_verts[ 1:  ,  :-1 ]
+            _arr_faces[:, :, 1] = _arr_verts[ 1:  , 1:   ]
+            _arr_faces[:, :, 2] = _arr_verts[  :-1, 1:   ]
+            _arr_faces[:, :, 3] = _arr_verts[  :-1,  :-1 ]
+            _arr_faces_res = _arr_faces.reshape(-1,4)
+
+            _list_faces = _arr_faces_res.tolist()
+        
+        return _list_edges, _list_faces
 
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
@@ -245,13 +265,18 @@ class SvEvalSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
 
                 if self.eval_mode == 'GRID':
                     target_us, target_vs = self.make_grid_input(surface, samples_u, samples_v)
-                    new_edges = self.make_edges_xy(samples_u, samples_v)
-                    new_faces = self.make_faces_xy(samples_u, samples_v)
+                    new_edges, new_faces = self.make_edges_and_faces(samples_u, samples_v, self.outputs['Edges'].is_linked, self.outputs['Faces'].is_linked)
                 else:
                     if self.input_mode == 'VERTICES':
-                        target_us, target_vs = self.parse_input(target_verts)
+                        target_us, target_vs = self.parse_input(target_verts) # this mode take aligned target_us, target_vs
                     else:
                         target_us, target_vs = np.array(target_us), np.array(target_vs)
+                        # Align target_us, target_vs
+                        if target_us.size<target_vs.size:
+                            target_us = np.append( target_us, np.repeat(target_us[-1], target_vs.size-target_us.size ))
+                        elif  target_vs.size<target_us.size:
+                            target_vs = np.append( target_vs, np.repeat(target_vs[-1], target_us.size-target_vs.size ))
+
                     if self.clamp_mode == 'CLAMP':
                         target_us, target_vs = self._clamp(surface, target_us, target_vs)
                     elif self.clamp_mode == 'WRAP':

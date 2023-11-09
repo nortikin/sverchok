@@ -21,6 +21,7 @@ from bpy.props import BoolProperty, IntProperty, FloatProperty, EnumProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (match_long_repeat, updateNode)
+import numpy as np
 
 from math import sin, cos, pi
 
@@ -48,7 +49,7 @@ super_presets = {
 }
 
 
-def make_verts(sx, sy, sz, xp, xm, np, nm):
+def make_verts(sx, sy, sz, xp, xm, npar, nm):
     """
     Generate the super-ellipsoid vertices for the given parameters
         sx : scale along x
@@ -59,27 +60,77 @@ def make_verts(sx, sy, sz, xp, xm, np, nm):
         np : number of parallels (= number of points in a meridian)
         nm : number of meridians (= number of points in a parallel)
     """
-    verts = []
-    for p in range(np):
-        a = (pi / 2 - epsilon) * (2 * p / (np - 1) - 1)
-        cos_a = cos(a)
-        sin_a = sin(a)
-        pow_ca = pow(abs(cos_a), xm) * sign(cos_a)
-        pow_sa = pow(abs(sin_a), xm) * sign(sin_a)
-        for m in range(nm):
-            b = pi * (2 * m / nm - 1)
-            cos_b = cos(b)
-            sin_b = sin(b)
-            pow_cb = pow(abs(cos_b), xp) * sign(cos_b)
-            pow_sb = pow(abs(sin_b), xp) * sign(sin_b)
+    
+    n1_i  = np.arange(npar, dtype=np.int16)
+    _p = np.repeat( [np.array(n1_i)], nm, axis = 0).T        # index n1
+    n2_i  = np.arange(nm, dtype=np.int16)
+    _m    = np.repeat( [np.array(n2_i)], npar, axis = 0) # index n2
+    _a = (pi / 2 - epsilon) * (2 * _p / (npar - 1) - 1)
+    _cos_a = np.cos(_a)
+    _sin_a = np.sin(_a)
+    _pow_ca = np.power(np.abs(_cos_a), xm) * np.where(_cos_a>=0, 1, -1)
+    _pow_sa = np.power(np.abs(_sin_a), xm) * np.where(_sin_a>=0, 1, -1)
 
-            x = sx * pow_ca * pow_cb
-            y = sy * pow_ca * pow_sb
-            z = sz * pow_sa
-            verts.append([x, y, z])
+    _b = pi * (2 * _m / nm - 1)
+    _cos_b = np.cos(_b)
+    _sin_b = np.sin(_b)
+    _pow_cb = np.power(np.abs(_cos_b), xp) * np.where(_cos_b>=0, 1, -1)
+    _pow_sb = np.power(np.abs(_sin_b), xp) * np.where(_sin_b>=0, 1, -1)
+    _x = sx * _pow_ca * _pow_cb
+    _y = sy * _pow_ca * _pow_sb
+    _z = sz * _pow_sa
+    _verts = np.dstack( (_x, _y, _z) )
+    _verts = _verts.reshape(-1,3)
+    _list_verts = _verts.tolist()
 
-    return verts
+    return _list_verts
 
+def make_edges_polys(is_edges, is_polys, P, M, cap_bottom, cap_top):
+    """
+    Generate the super-ellipsoid edges and polygons for the given parameters
+        is_edges: generate edges
+        is_polys: generate polys
+        P : number of parallels (= number of points in a meridian)
+        M : number of meridians (= number of points in a parallel)
+        cap_bottom : turn on/off the bottom cap generation
+        cap_top    : turn on/off the top cap generation
+    """
+    list_edges = None
+    list_polys = None
+
+    N1 = P
+    N2 = M
+
+    steps       = np.arange(0, N1*N2)  # generate array of indices
+    arr_verts   = np.array(np.split(steps, N1))  # split array of indices by parallels
+    arr_verts   = np.hstack( (arr_verts, np.array([arr_verts[:,0]]).T ) ) # append first column to the left to horizontal circle of edges and faces
+
+    if is_edges:
+        hspin_edges = np.dstack( (arr_verts[:N1  ,:N2], arr_verts[ :N1,1:N2+1] ))
+        vspin_edges = np.dstack( (arr_verts[:N1-1,:N2], arr_verts[1:N1, :N2] ))
+        hs_edges    = np.concatenate( (hspin_edges,  vspin_edges ), axis=0)  # combine horisontal end vertical edges
+        hs_edges    = hs_edges.reshape(-1,2)
+        list_edges  = hs_edges.tolist()
+
+    if is_polys:
+        arr_faces          = np.zeros((N1-1, N2, 4), 'i' )
+        arr_faces[:, :, 0] = arr_verts[ :-1, 1:  ]
+        arr_faces[:, :, 1] = arr_verts[1:  , 1:  ]
+        arr_faces[:, :, 2] = arr_verts[1:  ,  :-1]
+        arr_faces[:, :, 3] = arr_verts[ :-1,  :-1]
+        hs_faces           = arr_faces.reshape(-1,4) # remove exis
+        list_polys         = hs_faces.tolist()
+        if cap_bottom:
+            cap_b = np.flip( np.arange(M) )
+            cap_b = cap_b.tolist()
+            list_polys.append(cap_b)
+
+        if cap_top:
+            cap_t = np.arange(M)+(N1-1)*N2
+            cap_t = cap_t.tolist()
+            list_polys.append(cap_t)
+
+    return list_edges, list_polys
 
 def make_edges(P, M):
     """
@@ -87,21 +138,22 @@ def make_edges(P, M):
         P : number of parallels (= number of points in a meridian)
         M : number of meridians (= number of points in a parallel)
     """
-    edge_list = []
 
-    # generate PARALLELS edges (close paths)
-    for i in range(P):  # for every point on a meridian
-        for j in range(M - 1):  # for every point on a parallel (minus last)
-            edge_list.append([i * M + j, i * M + j + 1])
-        edge_list.append([(i + 1) * M - 1, i * M])  # close the path
+    N1 = P
+    N2 = M
+    steps = np.arange(0, N1*N2)
+    arr_verts = np.array(np.split(steps, N1))
 
-    # generate MERIDIANS edges (open paths)
-    for j in range(M):  # for every point on a parallel
-        for i in range(P - 1):  # for every point on a meridian (minus last)
-            edge_list.append([i * M + j, (i + 1) * M + j])
+    #arr_verts   = np.vstack( (arr_verts, np.roll(arr_verts[:1], -t) ) ) # append first row to bottom to vertically circle with twist
+    arr_verts   = np.hstack( (arr_verts, np.array([arr_verts[:,0]]).T ) ) # append first column to the left to horizontal circle
+    hspin_edges = np.dstack( (arr_verts[:N1  ,:N2], arr_verts[ :N1,1:N2+1] ))
+    vspin_edges = np.dstack( (arr_verts[:N1-1,:N2], arr_verts[1:N1, :N2] ))
+    hs_edges = np.concatenate( (hspin_edges,  vspin_edges ))
+    hs_edges = np.concatenate( np.concatenate( (hspin_edges,  vspin_edges ), axis=0), axis=0) # remove exis
 
-    return edge_list
-
+    hs_edges_list = hs_edges.tolist()
+    
+    return hs_edges_list
 
 def make_polys(P, M, cap_bottom, cap_top):
     """
@@ -111,23 +163,31 @@ def make_polys(P, M, cap_bottom, cap_top):
         cap_bottom : turn on/off the bottom cap generation
         cap_top    : turn on/off the top cap generation
     """
-    poly_list = []
 
-    for i in range(P - 1):
-        for j in range(M - 1):
-            poly_list.append([i * M + j, i * M + j + 1, (i + 1) * M + j + 1, (i + 1) * M + j])
-        poly_list.append([(i + 1) * M - 1, i * M, (i + 1) * M, (i + 2) * M - 1])
+    N1 = P
+    N2 = M
+    
+    arr_faces = np.zeros((N1-1, N2, 4), 'i' )
 
+    steps = np.arange(0, N1*N2)
+    arr_verts = np.array(np.split(steps, N1))
+    arr_verts = np.hstack( (arr_verts, np.array([arr_verts[:,0]]).T ) ) # append first column to the left to horizontal circle
+    
+    arr_faces[:, :, 0] = arr_verts[ :-1, 1:  ]
+    arr_faces[:, :, 1] = arr_verts[1:  , 1:  ]
+    arr_faces[:, :, 2] = arr_verts[1:  ,  :-1]
+    arr_faces[:, :, 3] = arr_verts[ :-1,  :-1]
+    hs_faces = arr_faces.reshape(-1,4) # remove exis
+    hs_faces_list = hs_faces.tolist()
     if cap_bottom:
-        cap = [j for j in reversed(range(M))]
-        poly_list.append(cap)
+        cap_b = np.flip( np.arange(M) )
+        hs_faces_list.append(cap_b)
 
     if cap_top:
-        cap = [(P - 1) * M + j for j in range(M)]
-        poly_list.append(cap)
+        cap_t = np.arange(M)+(N1-1)*N2
+        hs_faces_list.append(cap_t)
 
-    return poly_list
-
+    return hs_faces_list
 
 class SvSuperEllipsoidNode(SverchCustomTreeNode, bpy.types.Node):
     """
@@ -272,12 +332,14 @@ class SvSuperEllipsoidNode(SverchCustomTreeNode, bpy.types.Node):
             if verts_output_linked:
                 verts = make_verts(sx, sy, sz, xp, xm, np, nm)
                 verts_list.append(verts)
-            if edges_output_linked:
-                edges = make_edges(np, nm)
-                edges_list.append(edges)
-            if polys_output_linked:
-                polys = make_polys(np, nm, self.cap_bottom, self.cap_top)
-                polys_list.append(polys)
+            
+            if edges_output_linked or polys_output_linked:
+                edges, polys = make_edges_polys(edges_output_linked, polys_output_linked, np, nm, self.cap_bottom, self.cap_top)
+
+                if edges_output_linked:
+                    edges_list.append(edges)
+                if polys_output_linked:
+                    polys_list.append(polys)
 
         # outputs
         if verts_output_linked:

@@ -10,6 +10,7 @@ from collections import defaultdict
 
 from mathutils import Matrix, Vector
 
+
 from sverchok.utils.math import (
         ZERO, FRENET, HOUSEHOLDER, TRACK, DIFF, TRACK_NORMAL,
         np_dot
@@ -158,60 +159,83 @@ class SvInterpolatingSurface(SvSurface):
 #         normals = [self._normal(u, v) for u,v in zip(us, vs)]
 #         return np.array(normals)
 
-    def normal_array(self, us, vs):
-        h = 0.001
-        result = np.empty((len(us), 3))
+    def normal_vertices_array(self, us, vs):
+        h = 1e-4 # (np.array([1], dtype=np.float64)/100000000)[0] # 0.0001 One can use float64 of numpy. Blender float relax now. ))) 1e-8 is a diameter of hydrogen atom.
+        _points         = np.empty( (0, 3), dtype=np.float64)
+        _points_u_h     = np.empty( (0, 3), dtype=np.float64)
+        _points_v_h     = np.empty( (0, 3), dtype=np.float64)
         v_to_u = defaultdict(list)
         v_to_i = defaultdict(list)
         for i, (u, v) in enumerate(zip(us, vs)):
             v_to_u[v].append(u)
             v_to_i[v].append(i)
-        for v, us_by_v in v_to_u.items():
-            us_by_v = np.array(us_by_v)
-            is_by_v = v_to_i[v]
+        v_to_i_flatten = np.hstack(np.array( list(v_to_i.values())).flatten())
+
+        list_spline_v = []
+        list_spline_h = []
+        _v = np.array( list(v_to_u.keys()), dtype=np.float64 )
+        # A remark about a reverse. Algorithm cannot calc vectors out of a surface.
+        # So calc that vectors in a reverse direction into the surface then reverse that vectors.
+        # TODO: need attention for case - may be do %uv_bounds if uv coords are circled?
+        # Here is no params about this for a while. So use reverse.
+        for i_spline, v_spline in enumerate(self.v_splines):
+            v_min, v_max = v_spline.get_u_bounds()
+            _vx = (v_max-v_min)*_v+v_min
+            _list_v_i = _vx
+            _list_h_i = np.where( _vx+h<=v_max, _vx+h, _vx-h ) # if need point out of surface then do step in reverse direction
+            list_spline_v.append( _list_v_i )
+            list_spline_h.append( _list_h_i )
+
+        r_v = []
+        r_h = []
+        for i, v_spline in enumerate(self.v_splines):
+            _r_v, _r_h = v_spline.evaluate_array( np.concatenate( (list_spline_v[i], list_spline_h[i]) )).reshape(2,-1,3) # to increase performance for one call
+            r_v.append( _r_v )
+            r_h.append( _r_h )
+
+        u_min, u_max = 0.0, 1.0
+        
+        for i_on_spline, (v, _us_by_v) in enumerate(v_to_u.items()):
+            us_by_v = np.array(_us_by_v)
             spline_vertices = []
             spline_vertices_h = []
-            for v_spline in self.v_splines:
-                v_min, v_max = v_spline.get_u_bounds()
-                vx = (v_max - v_min) * v + v_min
-                if vx +h <= v_max:
-                    point = v_spline.evaluate(vx)
-                    point_h = v_spline.evaluate(vx + h)
-                else:
-                    point = v_spline.evaluate(vx - h)
-                    point_h = v_spline.evaluate(vx)
-                spline_vertices.append(point)
+
+            for i_spline, v_spline in enumerate(self.v_splines):
+                point_v = r_v[i_spline][i_on_spline]
+                point_h = r_h[i_spline][i_on_spline]
+                spline_vertices.append(point_v)
                 spline_vertices_h.append(point_h)
+
+            u_spline   = self.get_u_spline(v  , spline_vertices  )
             if v+h <= v_max:
-                u_spline = self.get_u_spline(v, spline_vertices)
                 u_spline_h = self.get_u_spline(v+h, spline_vertices_h)
             else:
-                u_spline = self.get_u_spline(v-h, spline_vertices)
-                u_spline_h = self.get_u_spline(v, spline_vertices_h)
-            u_min, u_max = 0.0, 1.0
+                # curve for reversed vertices
+                u_spline_h = self.get_u_spline(v-h, spline_vertices_h)
 
-            good_us = us_by_v + h < u_max
-            bad_us = np.logical_not(good_us)
+            us_v = us_by_v
+            not_reversed_us = us_by_v + h <= u_max
+            us_h_gb = np.where( not_reversed_us, us_by_v+h, us_by_v-h )
 
-            good_points = np.broadcast_to(good_us[np.newaxis].T, (len(us_by_v), 3)).flatten()
-            bad_points = np.logical_not(good_points)
-            points = np.empty((len(us_by_v), 3))
-            points[good_us] = u_spline.evaluate_array(us_by_v[good_us])
-            points[bad_us] = u_spline.evaluate_array(us_by_v[bad_us] - h)
-            points_u_h = np.empty((len(us_by_v), 3))
-            points_u_h[good_us] = u_spline.evaluate_array(us_by_v[good_us] + h)
-            points_u_h[bad_us] = u_spline.evaluate_array(us_by_v[bad_us])
+            points, points_u_h = u_spline.evaluate_array( np.concatenate( (us_v, us_h_gb) ) ).reshape(2,-1,3) # to increase performance for one call
+            points_u_h = np.where( not_reversed_us.T[:,np.newaxis], points_u_h, -(points_u_h-points)+points) # reverse some vectors in u direction
             points_v_h = u_spline_h.evaluate_array(us_by_v)
+            _points     = np.concatenate( (_points, points) )
+            _points_u_h = np.concatenate( (_points_u_h, points_u_h) )
+            if v+h <= v_max:
+                _points_v_h = np.concatenate( (_points_v_h, points_v_h) )
+            else:
+                # reverse points if curve is reversed
+                _points_v_h = np.concatenate( (_points_v_h, -(points_v_h-points)+points) ) # reverse some vectors in v direction
 
-            dvs = (points_v_h - points) / h
-            dus = (points_u_h - points) / h
-            normals = np.cross(dus, dvs)
-            norms = np.linalg.norm(normals, axis=1, keepdims=True)
-            normals = normals / norms
-
-            idxs = np.array(is_by_v)[np.newaxis].T
-            np.put_along_axis(result, idxs, normals, axis=0)
-        return result
+        _dvs = (_points_v_h - _points)/h
+        _dus = (_points_u_h - _points)/h
+        _normals = np.cross(_dus, _dvs)
+        _norms = np.linalg.norm(_normals, axis=1, keepdims=True)
+        _normals = _normals / _norms
+        _result_normals = _normals[np.argsort(v_to_i_flatten)]
+        _result_point = _points[np.argsort(v_to_i_flatten)]
+        return _result_normals, _result_point
 
 PROJECT = 'project'
 COPROJECT = 'coproject'
@@ -225,7 +249,7 @@ class SvDeformedByFieldSurface(SvSurface):
         self.field = field
         self.coefficient = coefficient
         self.by_normal = by_normal
-        self.normal_delta = 0.001
+        self.normal_delta = 0.0001
         self.__description__ = "{}({})".format(field, surface)
 
     def get_coord_mode(self):
@@ -296,20 +320,20 @@ class SvDeformedByFieldSurface(SvSurface):
         normal = normal / n
         return normal
 
-    def normal_array(self, us, vs):
-        surf_vertices = self.evaluate_array(us, vs)
-        u_plus = self.evaluate_array(us + self.normal_delta, vs)
-        v_plus = self.evaluate_array(us, vs + self.normal_delta)
-        du = u_plus - surf_vertices
-        dv = v_plus - surf_vertices
-        #self.info("Du: %s", du)
-        #self.info("Dv: %s", dv)
-        normal = np.cross(du, dv)
-        norm = np.linalg.norm(normal, axis=1)[np.newaxis].T
-        #if norm != 0:
-        normal = normal / norm
-        #self.info("Normals: %s", normal)
-        return normal
+    # def normal_vertices_array(self, us, vs):
+    #     surf_vertices = self.evaluate_array(us, vs)
+    #     u_plus = self.evaluate_array(us + self.normal_delta, vs)
+    #     v_plus = self.evaluate_array(us, vs + self.normal_delta)
+    #     du = u_plus - surf_vertices
+    #     dv = v_plus - surf_vertices
+    #     #self.info("Du: %s", du)
+    #     #self.info("Dv: %s", dv)
+    #     normal = np.cross(du, dv)
+    #     norm = np.linalg.norm(normal, axis=1)[np.newaxis].T
+    #     #if norm != 0:
+    #     normal = normal / norm
+    #     #self.info("Normals: %s", normal)
+    #     return normal, surf_vertices
 
 class SvRevolutionSurface(SvSurface):
     __description__ = "Revolution"
@@ -319,7 +343,7 @@ class SvRevolutionSurface(SvSurface):
         self.point = point
         self.direction = direction
         self.global_origin = global_origin
-        self.normal_delta = 0.001
+        self.normal_delta = 0.0001
         self.v_bounds = (0.0, 2*pi)
 
     @classmethod
@@ -365,7 +389,7 @@ class SvExtrudeCurveVectorSurface(SvSurface):
     def __init__(self, curve, vector):
         self.curve = curve
         self.vector = np.array(vector)
-        self.normal_delta = 0.001
+        self.normal_delta = 0.0001
         self.__description__ = "Extrusion of {}".format(curve)
 
     @classmethod
@@ -410,7 +434,7 @@ class SvExtrudeCurvePointSurface(SvSurface):
     def __init__(self, curve, point):
         self.curve = curve
         self.point = point
-        self.normal_delta = 0.001
+        self.normal_delta = 0.0001
         self.__description__ = "Extrusion of {}".format(curve)
 
     @staticmethod
@@ -460,7 +484,7 @@ class SvExtrudeCurveCurveSurface(SvSurface):
         self.u_curve = u_curve
         self.v_curve = v_curve
         self.origin = origin
-        self.normal_delta = 0.001
+        self.normal_delta = 0.0001
         self.__description__ = "Extrusion of {}".format(u_curve)
 
     def evaluate(self, u, v):
@@ -514,7 +538,7 @@ class SvExtrudeCurveFrenetSurface(SvSurface):
         self.profile = profile
         self.extrusion = extrusion
         self.origin = origin
-        self.normal_delta = 0.001
+        self.normal_delta = 0.0001
         self.__description__ = "Extrusion of {}".format(profile)
 
     def evaluate(self, u, v):
@@ -563,7 +587,7 @@ class SvExtrudeCurveZeroTwistSurface(SvSurface):
         self.profile = profile
         self.extrusion = extrusion
         self.origin = origin
-        self.normal_delta = 0.001
+        self.normal_delta = 0.0001
         self.extrusion.pre_calc_torsion_integral(resolution)
         self.__description__ = "Extrusion of {}".format(profile)
 
@@ -614,7 +638,7 @@ class SvExtrudeCurveTrackNormalSurface(SvSurface):
         self.profile = profile
         self.extrusion = extrusion
         self.origin = origin
-        self.normal_delta = 0.001
+        self.normal_delta = 0.0001
         self.tracker = SvNormalTrack(extrusion, resolution)
         self.__description__ = "Extrusion of {}".format(profile)
 
@@ -657,7 +681,7 @@ class SvExtrudeCurveMathutilsSurface(SvSurface):
         self.orient_axis = orient_axis
         self.up_axis = up_axis
         self.origin = origin
-        self.normal_delta = 0.001
+        self.normal_delta = 0.0001
         self.__description__ = "Extrusion of {}".format(profile)
 
     def evaluate(self, u, v):
@@ -730,7 +754,7 @@ class SvExtrudeCurveNormalDirSurface(SvSurface):
         self.extrusion = extrusion
         self.origin = origin
         self.plane_normal = np.array(plane_normal)
-        self.normal_delta = 0.001
+        self.normal_delta = 0.0001
         self.__description__ = "Extrusion of {}".format(profile)
 
     def evaluate(self, u, v):
@@ -782,7 +806,7 @@ class SvConstPipeSurface(SvSurface):
         self.radius = radius
         self.circle = SvCircle(Matrix(), radius)
         self.algorithm = algorithm
-        self.normal_delta = 0.001
+        self.normal_delta = 0.00001
         self.u_bounds = self.circle.get_u_bounds()
         if algorithm in {FRENET, ZERO, TRACK_NORMAL}:
             self.calculator = DifferentialRotationCalculator(curve, algorithm, resolution)
@@ -840,7 +864,7 @@ class SvCurveLerpSurface(SvSurface):
     def __init__(self, curve1, curve2):
         self.curve1 = curve1
         self.curve2 = curve2
-        self.normal_delta = 0.001
+        self.normal_delta = 0.0001
         self.v_bounds = (0.0, 1.0)
         self.u_bounds = (0.0, 1.0)
         self.c1_min, self.c1_max = curve1.get_u_bounds()
@@ -902,7 +926,7 @@ class SvSurfaceLerpSurface(SvSurface):
         self.surface1 = surface1
         self.surface2 = surface2
         self.coefficient = coefficient
-        self.normal_delta = 0.001
+        self.normal_delta = 0.0001
         self.v_bounds = (0.0, 1.0)
         self.u_bounds = (0.0, 1.0)
         self.s1_u_min, self.s1_u_max = surface1.get_u_min(), surface1.get_u_max()
@@ -958,7 +982,7 @@ class SvTaperSweepSurface(SvSurface):
         self.point = point
         self.line = LineEquation.from_direction_and_point(direction, point)
         self.scale_base = scale_base
-        self.normal_delta = 0.001
+        self.normal_delta = 0.0001
 
     def get_u_min(self):
         return self.profile.get_u_bounds()[0]

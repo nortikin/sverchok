@@ -65,15 +65,15 @@ def readFORviewer_sockets_data(data, dept, le, num_lines):
     output = ''
     deptl = dept - 1
     if le:
-        cache += ('(' + str(le) + ') object(s)')
+        cache += (' '*16 + '(' + str(le) + ') object(s)')
         del(le)
     if deptl > 1:
         for i, object in enumerate(data):
-            cache += ('\n' + '=' + str(i) + '=   (' + str(len(object)) + ')')
+            cache += ('\n' + ' '*(deptl-1)*4 + '=' + str(i) + '=   (' + str(len(object)) + ')')
             cache += str(readFORviewer_sockets_data(object, deptl, False, num_lines))
     else:
         for k, val in enumerate(data):
-            output += ('\n' + str(val))
+            output += ('\n' + ' '*(deptl-1) + str(val))
             if k >= num_lines-1: break
     return cache + output
 
@@ -82,15 +82,15 @@ def readFORviewer_sockets_data_small(data, dept, le, num_lines):
     output = ''
     deptl = dept - 1
     if le:
-        cache += ('(' + str(le) + ') object(s)')
+        cache += (' '*16 + '(' + str(le) + ') object(s)')
         del(le)
     if deptl > 0:
         for i, object in enumerate(data):
-            cache += ('\n' + '=' + str(i) + '=   (' + str(len(object)) + ')')
+            cache += ('\n' + ' '*(deptl-1)*4 + '=' + str(i) + '=   (' + str(len(object)) + ')')
             cache += str(readFORviewer_sockets_data_small(object, deptl, False, num_lines))
     else:
         for k, val in enumerate(data):
-            output += ('\n' + str(val))
+            output += ('\n' +  ' '*(deptl-1) + str(val))
             if k >= num_lines-1: break
     return cache + output
 
@@ -121,7 +121,7 @@ def prep_text(node, num_lines):
             
             name = socket.name.upper()
             data_type = socket_types.get(socket.other.bl_idname, "DATA")    
-            itype = f'\n\nSocket {name}{label}; type {data_type}: \n'
+            itype = f'\n\n                Socket {name}{label}; type {data_type}: \n'
 
             eva = socket.sv_get()
             deptl = levelsOflist(eva)
@@ -168,7 +168,7 @@ class ViewerNodeTextMK3(SverchCustomTreeNode, bpy.types.Node):
     bl_icon = 'FILE_TEXT'
 
     autoupdate: BoolProperty(name='update', default=False)
-    frame: BoolProperty(name='frame', default=True)
+    frame: BoolProperty(name='frame', default=False)
     lines: IntProperty(name='lines', description='lines count to show', default=1000, min=1, max=2000)
 
     # multi sockets variables

@@ -38,11 +38,25 @@ class SvSurface(object):
         return normal
 
     def normal_array(self, us, vs):
+        normal, *_ = self.normal_vertices_array(us, vs)
+        return normal
+
+    def normal_vertices_array(self, us, vs):
+        if hasattr(self, 'normal_delta'):
+            h = self.normal_delta
+        else:
+            h = 0.0001
         surf_vertices = self.evaluate_array(us, vs)
-        u_plus = self.evaluate_array(us + self.normal_delta, vs)
-        v_plus = self.evaluate_array(us, vs + self.normal_delta)
-        du = u_plus - surf_vertices
-        dv = v_plus - surf_vertices
+        u_bounds = self.get_u_bounds()
+        v_bounds = self.get_v_bounds()
+        us_not_reversed = us + h<u_bounds[1]
+        vs_not_reversed = vs + h<v_bounds[1]
+        us_delta = np.where( us_not_reversed, us + h, us - h)
+        vs_delta = np.where( vs_not_reversed, vs + h, vs - h)
+        u_plus = self.evaluate_array(us_delta, vs)
+        v_plus = self.evaluate_array(us, vs_delta)
+        du = np.where( us_not_reversed.T[:,np.newaxis], u_plus - surf_vertices, -(u_plus - surf_vertices) )
+        dv = np.where( vs_not_reversed.T[:,np.newaxis], v_plus - surf_vertices, -(v_plus - surf_vertices) )
         #self.info("Du: %s", du)
         #self.info("Dv: %s", dv)
         normal = np.cross(du, dv)
@@ -50,7 +64,7 @@ class SvSurface(object):
         #if norm != 0:
         normal = normal / norm
         #self.info("Normals: %s", normal)
-        return normal
+        return normal, surf_vertices
 
     def derivatives_data_array(self, us, vs):
         if hasattr(self, 'normal_delta'):
@@ -204,7 +218,7 @@ class SvFlipSurface(SvSurface):
         if hasattr(surface, "normal_delta"):
             self.normal_delta = surface.normal_delta
         else:
-            self.normal_delta = 0.001
+            self.normal_delta = 0.0001
         self.__description__ = "Flipped {}".format(surface)
 
     def get_u_min(self):
@@ -251,7 +265,7 @@ class SvSwapSurface(SvSurface):
         if hasattr(surface, "normal_delta"):
             self.normal_delta = surface.normal_delta
         else:
-            self.normal_delta = 0.001
+            self.normal_delta = 0.0001
         self.__description__ = "Swapped {}".format(surface)
 
     @staticmethod
@@ -294,7 +308,7 @@ class SvReparametrizedSurface(SvSurface):
         if hasattr(surface, "normal_delta"):
             self.normal_delta = surface.normal_delta
         else:
-            self.normal_delta = 0.001
+            self.normal_delta = 0.0001
 
     @classmethod
     def build(cls, surface, new_u_min, new_u_max, new_v_min, new_v_max):
@@ -369,7 +383,7 @@ class SvLambdaSurface(SvSurface):
         self.function_numpy = function_numpy
         self.u_bounds = (0.0, 1.0)
         self.v_bounds = (0.0, 1.0)
-        self.normal_delta = 0.001
+        self.normal_delta = 0.0001
 
     def get_u_min(self):
         return self.u_bounds[0]
@@ -403,7 +417,7 @@ class SvLambdaSurface(SvSurface):
     def normal(self, u, v):
         return self.normal_array(np.array([u]), np.array([v]))[0]
 
-    def normal_array(self, us, vs):
+    def normal_vertices_array(self, us, vs):
         surf_vertices = self.evaluate_array(us, vs)
         u_plus = self.evaluate_array(us + self.normal_delta, vs)
         v_plus = self.evaluate_array(us, vs + self.normal_delta)
@@ -416,5 +430,5 @@ class SvLambdaSurface(SvSurface):
         #if norm != 0:
         normal = normal / norm
         #self.info("Normals: %s", normal)
-        return normal
+        return normal, surf_vertices
 

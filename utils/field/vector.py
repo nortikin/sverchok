@@ -977,7 +977,7 @@ class SvBendAlongCurveField(SvVectorField):
         return R[0], R[1], R[2]
 
 class SvBendAlongSurfaceField(SvVectorField):
-    def __init__(self, surface, axis, autoscale=False, flip=False, only_2D=False):
+    def __init__(self, surface, axis, autoscale=False, flip=False, only_2D=False, legacy_version=0):
         self.surface = surface
         self.orient_axis = axis
         self.autoscale = autoscale
@@ -986,6 +986,7 @@ class SvBendAlongSurfaceField(SvVectorField):
         self.v_bounds = (0, 1)
         self.only_2D = only_2D
         self.__description__ = "Bend along {}".format(surface)
+        self.legacy_version = legacy_version
 
     def get_other_axes(self):
         # Select U and V to be two axes except orient_axis
@@ -994,7 +995,10 @@ class SvBendAlongSurfaceField(SvVectorField):
         elif self.orient_axis == 1:
             u_index, v_index = 2,0
         else:
-            u_index, v_index = 1,0
+            if self.legacy_version==1:
+                u_index, v_index = 1,0
+            else:
+                u_index, v_index = 0,1
         return u_index, v_index
 
     def get_uv(self, vertices):
@@ -1040,8 +1044,7 @@ class SvBendAlongSurfaceField(SvVectorField):
         if self.only_2D:
             return self.surface.evaluate_array(us, vs)
 
-        surf_vertices = self.surface.evaluate_array(us, vs)
-        spline_normals = self.surface.normal_array(us, vs)
+        spline_normals, surf_vertices = self.surface.normal_vertices_array(us, vs)
         zs = vertices[:,self.orient_axis].flatten()
         zs = zs[np.newaxis].T
         v1 = zs * spline_normals

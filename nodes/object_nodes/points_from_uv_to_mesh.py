@@ -21,45 +21,70 @@ import bmesh
 from mathutils.bvhtree import BVHTree
 from mathutils.geometry import barycentric_transform
 import numpy as np
-from bpy.props import BoolProperty, StringProperty, FloatVectorProperty
+from bpy.props import BoolProperty, StringProperty, FloatVectorProperty, EnumProperty
 from sverchok.node_tree import SverchCustomTreeNode
 
 from sverchok.data_structure import (updateNode)
 
 
-def UV(self, object):
+def UV(self, bm, uv_layer):
     # makes UV from layout texture area to sverchok vertices and polygons.
-    bm = bmesh.new()
-    bm.from_mesh(object.data)
-    uv_layer = bm.loops.layers.uv[0]
-    nFaces = len(bm.faces)
-    bm.verts.ensure_lookup_table()
-    bm.faces.ensure_lookup_table()
     vertices_dict = {}
     polygons_new = []
-    for fi in range(nFaces):
+    polygons_new_append = polygons_new.append
+    for fi in bm.faces:
         polygons_new_pol = []
-        for loop in bm.faces[fi].loops:
+        polygons_new_pol_append = polygons_new_pol.append
+        for loop in fi.loops:
             li = loop.index
-            polygons_new_pol.append(li)
-            vertices_dict[li] = list(loop[uv_layer].uv[:])+[0]
-        polygons_new.append(polygons_new_pol)
-        vertices_new = [i for i in vertices_dict.values()]
-    np_ver = np.array(vertices_new)
-    vertices_new = np_ver.tolist()
-    bm.clear()
+            polygons_new_pol_append(li)
+            uv = loop[uv_layer].uv
+            vertices_dict[li] = [ uv.x, uv.y, 0.0]
+
+        polygons_new_append(polygons_new_pol)
+
+    vertices_new = list( vertices_dict.values() )
     return [vertices_new, polygons_new]
 
 
-class SvUVPointonMeshNode(SverchCustomTreeNode, bpy.types.Node):
+class SvUVPointonMeshNodeMK2(SverchCustomTreeNode, bpy.types.Node):
     ''' Transform vectors from UV space to Object space '''
-    bl_idname = 'SvUVPointonMeshNode'
+    bl_idname = 'SvUVPointonMeshNodeMK2'
     bl_label = 'Find UV Coord on Surface'
     bl_icon = 'GROUP_UVS'
     is_scene_dependent = True
     is_animation_dependent = True
 
     object_ref: StringProperty(default='', update=updateNode)
+
+    apply_modifiers: BoolProperty(
+        name="Apply Modifiers", description="Off: use original object from scene\nOn: Apply modifiers before select UV Map",
+        default=False, update=updateNode)
+
+    uv_select_modes = [
+            ('active_item', "Active Selected", "UV Map selected by an active elem in the list of UV Maps of object data", 0),
+            ('active_render', "Active Render", "UV Map selected by property active_render in the list of UV Maps of object data (actived photo icon)", 1)
+        ]
+
+    uv_select_mode : EnumProperty(
+            name = "Select UV Map by",
+            description = "UV Map select from object data property by",
+            items = uv_select_modes,
+            default = 'active_item',
+            update = updateNode)
+
+    def sv_draw_buttons(self, context, layout):
+        row = layout.row()
+        col = row.column()
+        col.label(text='Apply midifiers:')
+        col = row.column()
+        col.alignment = 'LEFT'
+        col.prop(self, 'apply_modifiers', expand=True, text='')
+        row = layout.row()
+        row.column().label(text="Select UV Map by:")
+        row.column().prop(self, 'uv_select_mode', expand=True ) #, text='')
+
+
 
     def sv_init(self, context):
         si, so = self.inputs.new, self.outputs.new
@@ -73,31 +98,67 @@ class SvUVPointonMeshNode(SverchCustomTreeNode, bpy.types.Node):
         Object, PointsUV = self.inputs
         Pom, uvV, uvP = self.outputs
         obj = Object.sv_get()[0]  # triangulate faces
-        UVMAPV, UVMAPP = UV(self,obj)
+        if not obj.data.uv_layers:
+            raise Exception(f"Object '{obj.data.name}' has no UV Maps. Open Properties->Data->UV Maps and check list of UV Maps.")
+        
+        # get all UV Maps name in object UV Maps list
+        uv_layer_active_render_name = obj.data.uv_layers[0].name
+        for uv in obj.data.uv_layers:
+            if uv.active_render==True:
+                uv_layer_active_render_name = uv.name  # get UV Map name active render (photo mark)
+                break
+
+        bm = bmesh.new()
+        if self.apply_modifiers:
+            # apply modifiers and build mesh after it
+            sv_depsgraph = bpy.context.evaluated_depsgraph_get()
+            scene_object = sv_depsgraph.objects[ obj.name ]
+            object_to_mesh = scene_object.to_mesh(preserve_all_data_layers=True, depsgraph=sv_depsgraph)
+            bm.from_mesh(object_to_mesh)
+            scene_object.to_mesh_clear()
+        else:
+            # get mesh of original object from scene
+            bm.from_mesh(obj.data)
+
+        uv_layer_active = bm.loops.layers.uv.active
+        uv_layer_active_render = obj.data.uv_layers[0]
+        for uv in bm.loops.layers.uv:
+            if uv.name==uv_layer_active_render_name:
+                uv_layer_active_render = uv
+                break
+
+        if self.uv_select_mode=='active_item':
+            uv_layer = uv_layer_active
+        else: #if self.uv_select_mode=='active_render':
+            uv_layer = uv_layer_active_render
+
+        bm.verts.ensure_lookup_table()
+        bm.faces.ensure_lookup_table()
+        UVMAPV, UVMAPP = UV(self, bm, uv_layer)
         if Pom.is_linked:
+            # resore UV to 3D
             pointuv = PointsUV.sv_get()[0]
             bvh = BVHTree.FromPolygons(UVMAPV, UVMAPP, all_triangles=False, epsilon=0.0)
-            ran = range(3)
-            out = []
-            uvMap = obj.data.uv_layers[0].data
+            out = [] # result in 3D
             for Puv in pointuv:
                 loc, norm, ind, dist = bvh.find_nearest(Puv)
-                found_poly = obj.data.polygons[ind]
-                verticesIndices = found_poly.vertices
-                p1, p2, p3 = [obj.data.vertices[verticesIndices[i]].co for i in ran]
-                uvMapIndices = found_poly.loop_indices
-                uv1, uv2, uv3 = [uvMap[uvMapIndices[i]].uv.to_3d() for i in ran]
-                V = barycentric_transform(Puv, uv1, uv2, uv3, p1, p2, p3)
-                out.append(V[:])
+                _found_poly = bm.faces[ind]
+                _p1, _p2, _p3 = [v.co for v in bm.faces[ind].verts[0:3] ]
+                _uv1, _uv2, _uv3 = [l[uv_layer].uv.to_3d() for l in _found_poly.loops[0:3] ]
+                _V = barycentric_transform(Puv, _uv1, _uv2, _uv3, _p1, _p2, _p3)
+                out.append(_V[:])
+            
             Pom.sv_set([out])
+        bm.clear()
+
         if uvV.is_linked:
             uvV.sv_set([UVMAPV])
             uvP.sv_set([UVMAPP])
 
 
 def register():
-    bpy.utils.register_class(SvUVPointonMeshNode)
+    bpy.utils.register_class(SvUVPointonMeshNodeMK2)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvUVPointonMeshNode)
+    bpy.utils.unregister_class(SvUVPointonMeshNodeMK2)

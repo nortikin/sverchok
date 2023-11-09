@@ -228,9 +228,13 @@ def add_keymap():
         kmi = km.keymap_items.new('node.sv_node_connector', 'V', 'PRESS')
         nodeview_keymaps.append((km, kmi))
 
+        # Ctrl+Z  | Zoom to node and vice versa
         kmi = km.keymap_items.new('node.zoom_to_node', 'Z', 'PRESS', alt=True)
         nodeview_keymaps.append((km, kmi))
 
+        # Ctrl+Shift+H  | Hide and show Viewer Draw node
+        kmi = km.keymap_items.new('node.sv_node_vd_toggle', 'H', 'PRESS', shift=True, ctrl=True)
+        nodeview_keymaps.append((km, kmi))
 
 def remove_keymap():
 

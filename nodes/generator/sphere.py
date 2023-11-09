@@ -14,31 +14,37 @@ from bpy.props import IntProperty, FloatProperty, BoolProperty, EnumProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, list_match_modes, list_match_func
 from sverchok.utils.decorators_compilation import jit, njit
+import numpy as np
 
 # from numba.typed import List
 # @njit(cache=True)
 def make_sphere_verts_combined(U, V, Radius):
+
+    N1 = U # X
+    N2 = V # Y
+    n1_i = np.arange(N1, dtype=np.int16)
+    _n1  = np.repeat( [np.array(n1_i)], N2-2, axis = 0)        # index n1
+    n2_i = np.arange(1, N2-1, dtype=np.int16)
+    _n2  = np.repeat( [np.array(n2_i)], N1, axis = 0).T # index n2
+
     theta = radians(360 / U)
     phi = radians(180 / (V-1))
 
-    pts = []
-    pts = [[0, 0, Radius]]
-    for i in range(1, V-1):
-        pts_u = []
-        sin_phi_i = sin(phi * i)
-        for j in range(U):
-            X = Radius * cos(theta * j) * sin_phi_i
-            Y = Radius * sin(theta * j) * sin_phi_i
-            Z = Radius * cos(phi * i)
-            pts_u.append([X, Y, Z])
-        pts.extend(pts_u)
-
-    pts.append([0, 0, -Radius])
-    return pts
+    _theta = theta*_n1
+    _phi = phi*_n2
+    _X = Radius * np.cos(_theta) * np.sin(_phi)
+    _Y = Radius * np.sin(_theta) * np.sin(_phi)
+    _Z = Radius * np.cos(_phi)
+    _verts = np.dstack((_X, _Y, _Z))
+    _verts = _verts.reshape(-1, 3)
+    list_verts = [[0,0,Radius]]
+    list_verts.extend(_verts.tolist())
+    list_verts.append([0,0,-Radius])
+    return list_verts
 
 def make_sphere_verts_separate(U, V, Radius):
-    theta = radians(360/U)
-    phi = radians(180/(V-1))
+    theta = radians(360 / U)
+    phi = radians(180 / (V-1))
 
     pts = []
     pts = [[[0, 0, Radius] for i in range(U)]]
@@ -66,32 +72,62 @@ def sphere_verts(U, V, Radius, Separate):
 
 # @njit(cache=True)
 def sphere_edges(U, V):
-    nr_pts = U*V-(U-1)*2
-    listEdg = []
-    for i in range(V-2):
-        listEdg.extend([[j+1+U*i, j+2+U*i] for j in range(U-1)])
-        listEdg.append([U*(i+1), U*(i+1)-U+1])
-    listEdg.extend([[i+1, i+1+U] for i in range(U*(V-3))])
-    listEdg.extend([[0, i+1] for i in range(U)])
-    listEdg.extend([[nr_pts-1, i+nr_pts-U-1] for i in range(U)])
-    listEdg.reverse()
-    return listEdg
+
+    N1 = U # X
+    N2 = V # Y
+    steps = np.arange(N1*(N2-2) ) + 1  # skip first verts at [0,0,Radius] and finish before [0,0,-Radius]
+    
+
+    arr_verts = np.array ( np.split(steps, (N2-2) ) )  # split array vertically
+    arr_verts = np.hstack( (arr_verts, np.array([arr_verts[:,0]]).T ) ) # append first row to bottom to horizontal circle
+
+    _arr_h_edges = np.zeros((N2-2, N1, 2), 'i' )
+    _arr_h_edges[:, :, 0] = arr_verts[ : ,  :-1 ]  # hor_edges
+    _arr_h_edges[:, :, 1] = arr_verts[ : , 1:   ]  # hor_edges
+    _arr_h_edges = _arr_h_edges.reshape(-1,2)
+
+    _arr_v_edges = np.zeros((N2-2-1, N1, 2), 'i' )  # -1: vert edges except top and bottom point and less than 1 than exists vertcal points
+    _arr_v_edges[:, :, 0] = arr_verts[ :-1, :-1]  # hor_edges
+    _arr_v_edges[:, :, 1] = arr_verts[1:  , :-1]  # hor_edges
+    _arr_v_edges = _arr_v_edges.reshape(-1,2)
+
+    _edges = np.concatenate( 
+        (
+         _arr_h_edges,
+         _arr_v_edges,
+         np.dstack( ( arr_verts[0:1, :-1]-arr_verts[0:1, :-1]              , arr_verts[ 0: 1, :-1]) ).reshape(-1,2), # self subtract to get  array of 0 appropriate length
+         np.dstack( ( arr_verts[0:1, :-1]-arr_verts[0:1, :-1] + N1*(N2-2)+1, arr_verts[-1:  , :-1]) ).reshape(-1,2),
+        ) )
+    _list_edges = _edges.tolist()
+    return _list_edges
 
 # @njit(cache=True)
 def sphere_faces(U, V):
-    nr_pts = U*V-(U-1)*2
-    listPln = []
-    for i in range(V-3):
-        listPln.append([U*i+2*U, 1+U*i+U, 1+U*i,  U*i+U])
-        listPln.extend([[1+U*i+j+U, 2+U*i+j+U, 2+U*i+j, 1+U*i+j] for j in range(U-1)])
 
-    for i in range(U-1):
-        listPln.append([1+i, 2+i, 0])
-        listPln.append([i+nr_pts-U, i+nr_pts-1-U, nr_pts-1])
-    listPln.append([U, 1, 0])
-    listPln.append([nr_pts-1-U, nr_pts-2, nr_pts-1])
-    return listPln
+    N1 = U # X
+    N2 = V # Y
+    steps     = np.arange(N1*(N2-2) ) + 1  # skip first verts at [0,0,Radius] and finish before [0,0,-Radius]
+    _arr_middle_verts = np.array ( np.split(steps, (N2-2) ) )  # split array vertically
+    _arr_middle_verts = np.hstack( (_arr_middle_verts, np.array([_arr_middle_verts[:,0]]).T ) ) # append first row to bottom to horizontal circle
 
+    _arr_middle_faces          = np.zeros((N2-3, N1, 4), 'i' )
+    _arr_middle_faces[:, :, 0] = _arr_middle_verts[1:  ,  :-1 ]
+    _arr_middle_faces[:, :, 1] = _arr_middle_verts[1:  , 1:   ]
+    _arr_middle_faces[:, :, 2] = _arr_middle_verts[ :-1, 1:   ]
+    _arr_middle_faces[:, :, 3] = _arr_middle_verts[ :-1,  :-1 ]
+    _arr_middle_faces          = _arr_middle_faces.reshape(-1,4)
+
+    _arr_faces_top_bottom = np.concatenate(
+        (
+            np.dstack( (                                                          _arr_middle_verts[  0:1, :-1], _arr_middle_verts[  :1, 1:  ], np.zeros_like(_arr_middle_verts[0,:-1]) + 0) ).reshape(-1,3),  # top triangled faces
+            np.dstack( (  np.zeros_like(_arr_middle_verts[-1,:-1]) + N1*(N2-2)+1, _arr_middle_verts[ -1: ,1:  ], _arr_middle_verts[ -1:,  :-1]) ).reshape(-1,3), # bottom triangled faces
+        )
+    )
+    _arr_faces_top_bottom = _arr_faces_top_bottom.reshape(-1,3)
+    _arr_faces_top_bottom = _arr_faces_top_bottom.tolist()
+    _list_faces = _arr_middle_faces.tolist()
+    _list_faces.extend( _arr_faces_top_bottom )
+    return _list_faces
 
 class SphereNode(SverchCustomTreeNode, bpy.types.Node):
     '''UV Sphere. [default]

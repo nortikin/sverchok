@@ -35,6 +35,7 @@
 #     Walter Perdan (aka kalwalt)
 #     Marius Giurgi (aka DolphinDream)
 #     Victor Doval (aka vicdoval)
+#     Alex (aka Satabol)
 #
 #  ***** END GPL LICENSE BLOCK *****
 #

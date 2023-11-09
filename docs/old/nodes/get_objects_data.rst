@@ -1,3 +1,5 @@
+:orphan:
+
 Get Objects Data
 ================
 

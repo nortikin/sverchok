@@ -24,6 +24,7 @@ from sverchok.data_structure import (match_long_repeat, updateNode, get_edge_loo
 from sverchok.utils.sv_transform_helper import AngleUnits, SvAngleHelper
 
 from math import sin, cos, pi, sqrt
+import numpy as np
 
 centering_items = [("F1", "F1", "Ellipse focal point 1", 1),
                    ("C", "C", "Ellipse center point", 2),
@@ -312,22 +313,25 @@ class SvEllipseNodeMK3(SverchCustomTreeNode, bpy.types.Node, SvAngleHelper):
         exx = 2.0 / (ex + epsilon)
         eyy = 2.0 / (ey + epsilon)
 
-        add_vert = verts.append
-        for n in range(N):
-            theta = delta * n + phase
-            cost = cos(theta)
-            sint = sin(theta)
-            x = -cx + a * pow(abs(cost), exx) * sign(cost)
-            y = -cy + b * pow(abs(sint), eyy) * sign(sint)
-            # apply in-plane rotation
-            xx = x * coss - y * sins
-            yy = x * sins + y * coss
-            add_vert((xx, yy, 0))
+        _arr_indexes = np.arange(N, dtype=np.int32)
+        _theta = _arr_indexes * delta + phase
+        _cos_theta = np.cos(_theta)
+        _sin_theta = np.sin(_theta)
+        _x = -cx + a*np.power(np.abs(_cos_theta), exx) * np.where(_cos_theta>=0, 1, -1)
+        _y = -cy + b*np.power(np.abs(_sin_theta), eyy) * np.where(_sin_theta>=0, 1, -1)
+        # apply in-plane rotation
+        xx = _x*coss - _y*sins
+        yy = _x*sins + _y*coss
+        
+        _verts = np.column_stack((xx, yy))
+        _verts = np.insert(_verts, 2, [0], axis=1)
+        list_verts = _verts.tolist()
 
         edges = get_edge_loop(N)
-        polys = [list(range(N))]
-
-        return verts, edges, polys, f1, f2
+        _arr_indexes = np.arange(N, dtype=np.int32)
+        polys = [_arr_indexes.tolist()]
+        
+        return list_verts, edges, polys, f1, f2
 
     def process(self):
         outputs = self.outputs

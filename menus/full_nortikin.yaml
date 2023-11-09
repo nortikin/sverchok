@@ -313,7 +313,7 @@
             - ---
             - SvSurfaceElevateDegreeNode
             - SvSurfaceReduceDegreeNode
-        - SvExRevolutionSurfaceNode
+        - SvRevolutionSurfaceNodeMK2
         - SvExTaperSweepSurfaceNode
         - SvBendCurveSurfaceNode
         - SvExExtrudeCurveVectorNode
@@ -343,7 +343,7 @@
         - SvExMergeScalarFieldsNode
         - ---
         - SvExBendAlongCurveFieldNode
-        - SvExBendAlongSurfaceFieldNode
+        - SvBendAlongSurfaceFieldMk2Node
     - M SOLIDS:
         - icon_name: MESH_CUBE
         - extra_menu: AdvancedObjectsPartialMenu
@@ -407,6 +407,7 @@
         - extra_menu: MeshPartialMenu
         - icon_name: OBJECT_DATAMODE  # icon name to show
         - SvBBoxNodeMk3
+        - SvAlignedBBoxNode
         - SvComponentAnalyzerNode
         - SvDiameterNode
         - SvVolumeNodeMK2
@@ -821,7 +822,7 @@
 - Scene:
     - icon_name: SCENE_DATA
     - extra_menu: ConnectionPartialMenu
-    - SvGetObjectsData
+    - SvGetObjectsDataMK2
     - SvObjInLite
     - SvCurveInputNode
     - SvFCurveInNodeMK1
@@ -912,7 +913,7 @@
     - SvSetCustomUVMap
     - SvUVtextureNode
     - SvMeshUVColorNode
-    - SvUVPointonMeshNode
+    - SvUVPointonMeshNodeMK2
     - SvSampleUVColorNode
     - SvArmaturePropsNode
     - SvLatticePropsNode

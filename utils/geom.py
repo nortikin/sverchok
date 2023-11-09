@@ -45,29 +45,77 @@ from sverchok.utils.sv_logging import sv_logger
 from sverchok.dependencies import numba  # not strictly needed i think...
 from sverchok.utils.decorators_compilation import njit
 
-def bounding_box_aligned(verts):
+def bounding_box_aligned(verts, evec_external=None, factor=1.0):
+    ''' Build bounding box around vectors. If evec_external is not none then it can be used with factor.
+    if evec_external is none then factor is not using.
+    Function calc bounding box around vertexes. If evec_external is not none then function calc
+    bounding box aligned with evec_external. If factor==0 then used exec. If factor==1 then used
+    evec_external. Else used factor as interpolation beetwing evec and evec_external.
+    res=[[0,0,0], [0,1,0], [1,1,0], [1,0,0], [0,0,1], [0,1,1], [1,1,1], [1,0,1],]; 1-used axis
+    rrc - vertices of aligned bounding box
+    max - matrix of transformation of box with size 1,1,1 to evec_target
+    abbox_size - is a vector of sizes by axis (an order of XYZ can be differ of source verts)
+    '''
+
+    def realign_evec(evec):
+        # make evecs orthogonals each other:
+        vecs = [[0,1,2], [1,2,0], [2,0,1]]
+        evec_dots = np.array( [abs(np.dot( evec.T[ivect[0]], evec.T[ivect[1]] )) for ivect in vecs] )  # get dots product vectors each other
+        if np.all(evec_dots<1e-8):  # if all vectors are very close to orthonormals each other. May be replased by a future algorithm
+            evec_dots_sort = [0]
+        else:
+            evec_dots_sort = np.argsort(evec_dots)
+        #print(f'sort: {vecs[evec_dots_sort[0]]}')
+        v0 = evec.T[ vecs[evec_dots_sort[0]][0] ]  # main vector
+        v1 = evec.T[ vecs[evec_dots_sort[0]][1] ]  # closest by dot product
+        v2 = evec.T[ vecs[evec_dots_sort[0]][2] ]  # get last vector
+        v0_v1_cross = np.cross( v0, v1 )
+        v1 = np.cross( v0, v0_v1_cross ) # orthogonal v1 to v0 from v1 source position
+        if np.dot(v0_v1_cross, v2)<0:  # build last vector as orthogonal to v0 and v1
+            v2 = - v0_v1_cross
+        else:
+            v2 =   v0_v1_cross
+        res = np.dstack( (v0, v1, v2) )[0]
+        return res
+
     # based on "3D Oriented bounding boxes": https://logicatcore.github.io/scratchpad/lidar/sensor-fusion/jupyter/2021/04/20/3D-Oriented-Bounding-Box.html
-    data = np.vstack(np.array(verts).transpose())
+    data = np.vstack(np.array(verts, dtype=np.float64).transpose())
     means = np.mean(data, axis=1)
 
-    cov = np.cov(data)
-    eval, evec = np.linalg.eig(cov)
+    if evec_external is not None:
+        T, R, S = evec_external.decompose()
+        if factor==1.0:
+            evec_target = np.array(R.to_matrix())
+            pass
+        else:
+            cov = np.cov(data)
+            evalue, evec = np.linalg.eig(cov) # some times evec vectors are not perpendicular each other. What to do for this?
+            evec = realign_evec(evec)
+            evec = Matrix(evec).lerp( R.to_matrix(), factor)
+            evec_target = np.array(evec)
+    else:
+        cov = np.cov(data)
+        evalue, evec = np.linalg.eig(cov) # some times evec vectors are not perpendicular each other. What to do for this?
+        evec_target = realign_evec(evec)
+
     centered_data = data - means[:,np.newaxis]
-    xmin, xmax, ymin, ymax, zmin, zmax = np.min(centered_data[0, :]), np.max(centered_data[0, :]), np.min(centered_data[1, :]), np.max(centered_data[1, :]), np.min(centered_data[2, :]), np.max(centered_data[2, :])
-    aligned_coords = np.matmul(evec.T, centered_data)
+    aligned_coords = np.matmul(evec_target.T, centered_data)
     xmin, xmax, ymin, ymax, zmin, zmax = np.min(aligned_coords[0, :]), np.max(aligned_coords[0, :]), np.min(aligned_coords[1, :]), np.max(aligned_coords[1, :]), np.min(aligned_coords[2, :]), np.max(aligned_coords[2, :])
+    abbox_size = [ xmax-xmin, ymax-ymin, zmax-zmin]
+    abbox_center = [ (xmax+xmin)/2, (ymax+ymin)/2, (zmax+zmin)/2 ]
 
     rectCoords = lambda x1, y1, z1, x2, y2, z2: np.array([[x1, x1, x2, x2, x1, x1, x2, x2],
-                                                        [y1, y2, y2, y1, y1, y2, y2, y1],
-                                                        [z1, z1, z1, z1, z2, z2, z2, z2]])
+                                                          [y1, y2, y2, y1, y1, y2, y2, y1],
+                                                          [z1, z1, z1, z1, z2, z2, z2, z2]])
 
-    realigned_coords = np.matmul(evec, aligned_coords)
-    realigned_coords += means[:, np.newaxis]
-
-    rrc = np.matmul(evec, rectCoords(xmin, ymin, zmin, xmax, ymax, zmax))
+    rrc = np.matmul(evec_target, rectCoords(xmin, ymin, zmin, xmax, ymax, zmax))
     rrc += means[:, np.newaxis]
     rrc = rrc.transpose()
-    return tuple([rrc])
+    abbox_center = np.mean( rrc, axis=0 )
+    mat_scale = Matrix()
+    mat_scale[0][0], mat_scale[1][1], mat_scale[2][2] = abbox_size
+    mat = mathutils.Matrix.Translation(abbox_center) @ Matrix(evec_target).to_euler().to_matrix().to_4x4() @ mat_scale
+    return rrc, mat, abbox_size  # verts, matrix (not use for a while)
 
 identity_matrix = Matrix()
 
