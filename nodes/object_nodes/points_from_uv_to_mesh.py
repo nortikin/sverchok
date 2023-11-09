@@ -25,7 +25,7 @@ import numpy as np
 from bpy.props import BoolProperty, StringProperty, FloatVectorProperty, EnumProperty
 from sverchok.node_tree import SverchCustomTreeNode
 
-from sverchok.data_structure import updateNode, zip_long_repeat
+from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 
 
 def UV(self, bm, uv_layer):
@@ -48,9 +48,9 @@ def UV(self, bm, uv_layer):
     return [vertices_new, polygons_new]
 
 
-class SvUVPointonMeshNodeMK3(SverchCustomTreeNode, bpy.types.Node):
+class SvUVPointonMeshNodeMK2(SverchCustomTreeNode, bpy.types.Node):
     ''' Transform vectors from UV space to Object space '''
-    bl_idname = 'SvUVPointonMeshNodeMK3'
+    bl_idname = 'SvUVPointonMeshNodeMK2'
     bl_label = 'Find UV Coord on Surface'
     bl_icon = 'GROUP_UVS'
     is_scene_dependent = True
@@ -86,8 +86,8 @@ class SvUVPointonMeshNodeMK3(SverchCustomTreeNode, bpy.types.Node):
         row.column().prop(self, 'uv_select_mode', expand=True ) #, text='')
 
 
-
     def sv_init(self, context):
+        self.width = 250
         si, so = self.inputs.new, self.outputs.new
         si('SvMatrixSocket', 'Object Matrix')
         si('SvObjectSocket', 'Object Mesh')
@@ -97,13 +97,26 @@ class SvUVPointonMeshNodeMK3(SverchCustomTreeNode, bpy.types.Node):
         so('SvStringsSocket', 'UVMapPoly')
 
     def process(self):
-        ObjectMatrixes, Object, PointsUV = self.inputs
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        
+        iObjectMatrixes, iObjects, iPointsUV = self.inputs
+        Matrixes = iObjectMatrixes.sv_get(default = [Matrix()])
+        Objects = iObjects.sv_get(default=[])
+        if len(Objects)==0:
+            raise Exception(f'socket "Object Mesh" has to be connected or object has to be selected')
         Pom, uvV, uvP = self.outputs
-        objs = Object.sv_get()
-        PointsUV = PointsUV.sv_get()
-        Matrixes = ObjectMatrixes.sv_get(default = [Matrix()])
+        PointsUV = iPointsUV.sv_get(default=[])
+
+        Matrixes = ensure_nesting_level(Matrixes, 1)
+        Objects = ensure_nesting_level(Objects, 1)
+        if iPointsUV.is_linked:
+            PointsUV = ensure_nesting_level(PointsUV, 3)
+        else:
+            PointsUV = [[]]        
+
         POMs, UVMAPPs, UVMAPVs = [], [], []
-        for i, (obj, PointUV, obj_matrix) in enumerate(zip_long_repeat(objs,PointsUV, Matrixes) ):
+        for i, (obj_matrix, obj, PointUV) in enumerate(zip_long_repeat(Matrixes, Objects,PointsUV) ):
             if not obj.data.uv_layers:
                 raise Exception(f"Object '{obj.data.name}'[{i}] has no UV Maps. Open Properties->Data->UV Maps and check list of UV Maps.")
             
@@ -167,8 +180,8 @@ class SvUVPointonMeshNodeMK3(SverchCustomTreeNode, bpy.types.Node):
 
 
 def register():
-    bpy.utils.register_class(SvUVPointonMeshNodeMK3)
+    bpy.utils.register_class(SvUVPointonMeshNodeMK2)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvUVPointonMeshNodeMK3)
+    bpy.utils.unregister_class(SvUVPointonMeshNodeMK2)
