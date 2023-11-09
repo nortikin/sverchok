@@ -6,7 +6,7 @@
 # License-Filename: LICENSE
 
 import bpy
-from bpy.props import BoolProperty, StringProperty, IntProperty
+from bpy.props import BoolProperty, StringProperty, IntProperty, EnumProperty
 import bmesh
 from mathutils import Vector, Matrix
 
@@ -16,6 +16,7 @@ from sverchok.data_structure import updateNode
 from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh
 from sverchok.utils.sv_mesh_utils import mesh_join
 from sverchok.utils.nodes_mixins.show_3d_properties import Show3DProperties
+from sverchok.ui.sv_icons import custom_icon
 from sverchok.utils.blender_mesh import (
     read_verts, read_edges, read_verts_normal,
     read_face_normal, read_face_center, read_face_area, read_materials_idx)
@@ -77,7 +78,6 @@ class SvOB3CallbackMK2(bpy.types.Operator, SvGenericNodeLocator):
         """
         getattr(node, self.fn_name)(self)
 
-
 def get_vertgroups(mesh):
     return [k for k,v in enumerate(mesh.vertices) if v.groups.values()]
 
@@ -137,12 +137,12 @@ class SvGetObjectsDataMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
         name="Output Numpy",
         description="Output NumPy arrays (makes node faster)",
         size=7, update=updateNode)
+
     output_np_all: BoolProperty(
         name='Output all numpy',
         description='Output numpy arrays if possible',
         default=False, update=updateNode)
     
-
     apply_matrix: BoolProperty(
         name = "Apply matrices",
         description = "Apply objects matrices",
@@ -154,6 +154,41 @@ class SvGetObjectsDataMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
         description = "If checked, join mesh elements into one object",
         default = False,
         update = updateNode)
+
+    display_types = [
+            ('BOUNDS', "", "BOUNDS: Display the bounds of the object", "MATPLANE", 0),
+            ('WIRE', "", "WIRE: Display the object as a wireframe", "MESH_CUBE", 1),
+            ('SOLID', "", "SOLID: Display the object as a solid (if solid drawing is enabled in the viewport)", custom_icon("SV_MAKE_SOLID"), 2),
+            ('TEXTURED', "", "TEXTURED: Display the object with textures (if textures are enabled in the viewport)", "TEXTURE",  3),
+        ]
+    
+    def update_display_type(self, context):
+        for obj in self.object_names:
+            bpy.data.objects[obj.name].display_type=self.display_type
+        return
+    
+    display_type : EnumProperty(
+        name = "Display Types",
+        items = display_types,
+        default = 'WIRE',
+        update = update_display_type)
+    
+    hide_render_types = [
+            ('RESTRICT_RENDER_ON', "", "Render objects", "RESTRICT_RENDER_ON", 0),
+            ('RESTRICT_RENDER_OFF', "", "Do not render objects", "RESTRICT_RENDER_OFF", 1),
+        ]
+    
+    def update_render_type(self, context):
+        for obj in self.object_names:
+            bpy.data.objects[obj.name].hide_render = True if self.hide_render_type=='RESTRICT_RENDER_ON' else False
+        return
+    
+    hide_render_type : EnumProperty(
+        name = "Render Types",
+        items = hide_render_types,
+        default = 'RESTRICT_RENDER_OFF',
+        update = update_render_type)
+
 
     def sv_init(self, context):
         new = self.outputs.new
@@ -193,7 +228,6 @@ class SvGetObjectsDataMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
 
         self.process_node(None)
 
-
     def select_objs(self, ops):
         """select all objects referenced by node"""
         for item in self.object_names:
@@ -227,6 +261,12 @@ class SvGetObjectsDataMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
                 op_text = "G E T"
 
             self.wrapper_tracked_ui_draw_op(row, callback, text=op_text).fn_name = 'get_objects_from_scene'
+
+        row = col.row()
+        col = row.column()
+        col.row().prop(self, 'display_type', expand=True)
+        col = row.column()
+        col.row().prop(self, 'hide_render_type', expand=True)
 
         col = layout.column(align=True)
         row = col.row(align=True)
