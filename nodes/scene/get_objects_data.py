@@ -188,6 +188,56 @@ class SvGetObjectsDataMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
         items = hide_render_types,
         default = 'RESTRICT_RENDER_OFF',
         update = update_render_type)
+    
+    align_3dview_types = [
+            ('ISOLATE_CURRENT', "", "Toggle local view with only current selected object in the list\nPress again to restore view", "PIVOT_CURSOR", 0),
+            ('ISOLATE_ALL', "", "Toggle local view with all objects in the list\nPress again to restore view", "PIVOT_INDIVIDUAL", 1),
+        ]
+    
+    def update_align_3dview(self, context):
+        obj_in_list = self.object_names[self.active_obj_index]
+        if obj_in_list:
+            # reset all selections
+            for obj in bpy.context.selected_objects:
+                obj.select_set(False)
+            
+            # select all objects in list of this node
+            if self.align_3dview_type=='ISOLATE_ALL':
+                for obj in self.object_names:
+                    if obj.name in bpy.data.objects:
+                        bpy.data.objects[obj.name].select_set(True)
+
+            if obj_in_list.name in bpy.data.objects:
+                obj_in_scene = bpy.data.objects[obj_in_list.name]
+                obj_in_scene.select_set(True)
+                bpy.context.view_layer.objects.active = obj_in_scene
+
+            for area in bpy.context.screen.areas:
+                if area.type == 'VIEW_3D':
+                    ctx = bpy.context.copy()
+                    ctx['area'] = area
+                    ctx['region'] = area.regions[-1]
+                    # test if current mode is local view: https://blender.stackexchange.com/questions/290669/checking-for-object-being-in-local-view
+                    if self.align_3dview_type_previous_value!=self.align_3dview_type and area.spaces.active.local_view:
+                        bpy.ops.view3d.localview(ctx, frame_selected=False)
+                    self.align_3dview_type_previous_value = self.align_3dview_type
+                    bpy.ops.view3d.localview(ctx, frame_selected=False)
+                    #bpy.ops.view3d.view_selected(ctx)
+                    break
+
+            pass
+        return
+    
+    align_3dview_type : EnumProperty(
+        name = "Local View",
+        items = align_3dview_types,
+        default = 'ISOLATE_CURRENT',
+        update = update_align_3dview)
+    
+    align_3dview_type_previous_value : EnumProperty(
+        name = "Local View",
+        items = align_3dview_types,
+        default = 'ISOLATE_CURRENT')
 
 
     def sv_init(self, context):
@@ -267,6 +317,8 @@ class SvGetObjectsDataMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
         col.row().prop(self, 'display_type', expand=True)
         col = row.column()
         col.row().prop(self, 'hide_render_type', expand=True)
+        col = row.column()
+        col.row().prop(self, 'align_3dview_type', expand=True)
 
         col = layout.column(align=True)
         row = col.row(align=True)

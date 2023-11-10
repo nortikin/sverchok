@@ -1,8 +1,8 @@
 Get Objects Data
 ================
 
-.. image:: https://github.com/nortikin/sverchok/assets/14288520/3794a700-0b9e-4b05-8d54-d3b330ddf112
-  :target: https://github.com/nortikin/sverchok/assets/14288520/3794a700-0b9e-4b05-8d54-d3b330ddf112
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/d7662f9f-d398-4b73-8337-d0d228f104bc
+  :target: https://github.com/nortikin/sverchok/assets/14288520/d7662f9f-d398-4b73-8337-d0d228f104bc
 
 Functionality
 -------------
@@ -23,8 +23,8 @@ limitations:
 - When you use the ``Post`` mode Sverchok/Blender expect Objects to be visible. If you want to "hide" the original Objects in the scene to avoid visual clutter, you can place them into a Collection and hide the collection. This is a current Blender API limitation.
 - Another method to work with objects - select wireframe mode and hide objects in Render by buttons:
 
-  .. image:: https://github.com/nortikin/sverchok/assets/14288520/0ef92cf2-d512-49f8-b803-da9af748e829
-    :target: https://github.com/nortikin/sverchok/assets/14288520/0ef92cf2-d512-49f8-b803-da9af748e829
+  .. image:: https://github.com/nortikin/sverchok/assets/14288520/30158800-3cd8-483d-a162-2d13ddfdc289
+    :target: https://github.com/nortikin/sverchok/assets/14288520/30158800-3cd8-483d-a162-2d13ddfdc289
 
 .. raw:: html
 
