@@ -21,6 +21,7 @@ in scal    s d=1.0 n=2
 
 import bpy
 
+
 self.make_operator('make')
 
     
@@ -29,20 +30,32 @@ def ui(self, context, layout):
     layout.operator(cb_str, text='B A K E').cb_name='make'
 
 
+
 def make(self, context):
+    def triangl(vertices,edges,faces):
+        from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
+        import bmesh
+        bm = bmesh_from_pydata(vertices, edges, faces, markup_face_data=True, normal_update=True)
+        res = bmesh.ops.triangulate(bm, faces=bm.faces, quad_method="BEAUTY", ngon_method="BEAUTY")
+        new_vertices, new_edges, new_faces = pydata_from_bmesh(res)
+        bm.free()
+        return  new_vertices, new_edges, new_faces
+
     # export main definition
     def export(v,e,p,tv,tt,fp,d1,d2,info,dim1,dim2,scal):
         import ezdxf
         from ezdxf import colors
         from ezdxf.enums import TextEntityAlignment
+        from ezdxf import units
+        from ezdxf.tools.standards import setup_dimstyle
         from sverchok.data_structure import match_long_repeat as mlr
         from mathutils import Vector
-        from ezdxf.tools.standards import setup_dimstyle
 
         
         DIM_TEXT_STYLE = ezdxf.options.default_dimension_text_style
         # Create a new DXF document.
         doc = ezdxf.new(dxfversion="R2010",setup=True)
+        doc.units = units.MM
         #create a new dimstyle
         glo = scal*0.025
         hai = scal/glo
@@ -89,14 +102,25 @@ def make(self, context):
         elif p and d1:
             mlr([p,d1])
             for obp,obv,d in zip(p,v,d1):
-                for po,data in zip(obp,d):
+                #obv,q,obp = triangl(obv,[],obp)
+                for po in obp:
                     points = []
                     for ver in po:
                         if type(obv[ver]) == Vector: vr = (scal*obv[ver]).to_tuple()
-                        else: vr = [i*scal for i in obv[ver]]
+                        else: vr = tuple([i*scal for i in obv[ver]])
                         points.append(vr)
-                    pl = msp.add_polyline3d(points, dxfattribs={"layer": lpols},close=True)
-                    pl.set_xdata(APPID, [(1000, str(d2[0][0])),(1000, str(data))])
+                    #pl = msp.add_polyline3d(points, dxfattribs={"layer": lpols},close=True)
+                    #pl.set_xdata(APPID, [(1000, str(d2[0][0])),(1000, str(data))])
+                    pf = msp.add_polyface()
+                    #pf.append_vertices(points, dxfattribs={"layer": lpols})
+                    pf.append_face(points, dxfattribs={"layer": lpols})
+                    pf.set_xdata(APPID, [(1000, str(d2[0][0])),(1000, str(d[0]))])
+                    ent = ezdxf.entities.Mesh()
+                    for p in points:
+                        ent.vertices.append(p)
+                    ppm = msp.add_entity(ent)
+                    #ppm.append_vertices(points, dxfattribs={"layer": lpols})
+                    #ppm.set_xdata(APPID, [(1000, str(d2[0][0])),(1000, str(data))])
         elif p:
             for obp,obv in zip(p,v):
                 for po in obp:
