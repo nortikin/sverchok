@@ -195,6 +195,8 @@ class SvGetObjectsDataMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
         ]
     
     def update_align_3dview(self, context):
+        if len(self.object_names)==0:
+            return
         obj_in_list = self.object_names[self.active_obj_index]
         if obj_in_list:
             # reset all selections
