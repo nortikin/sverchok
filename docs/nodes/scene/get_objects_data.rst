@@ -1,8 +1,8 @@
 Get Objects Data
 ================
 
-.. image:: https://github.com/nortikin/sverchok/assets/14288520/b24e7fbc-3383-49ca-bc96-ae5ff823fee3
-  :target: https://github.com/nortikin/sverchok/assets/14288520/b24e7fbc-3383-49ca-bc96-ae5ff823fee3
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/3794a700-0b9e-4b05-8d54-d3b330ddf112
+  :target: https://github.com/nortikin/sverchok/assets/14288520/3794a700-0b9e-4b05-8d54-d3b330ddf112
 
 Functionality
 -------------
@@ -21,6 +21,18 @@ A few points worth stating explicitly.
 limitations:
 
 - When you use the ``Post`` mode Sverchok/Blender expect Objects to be visible. If you want to "hide" the original Objects in the scene to avoid visual clutter, you can place them into a Collection and hide the collection. This is a current Blender API limitation.
+- Another method to work with objects - select wireframe mode and hide objects in Render by buttons:
+
+  .. image:: https://github.com/nortikin/sverchok/assets/14288520/0ef92cf2-d512-49f8-b803-da9af748e829
+    :target: https://github.com/nortikin/sverchok/assets/14288520/0ef92cf2-d512-49f8-b803-da9af748e829
+
+.. raw:: html
+
+   <video width="700" controls>
+     <source src="https://github.com/nortikin/sverchok/assets/14288520/7a158c33-814a-43be-9a9c-929096495354" type="video/mp4">
+    Your browser does not support the video tag.
+   </video>
+
 - We have Bezier-in and NURBS-in nodes if you want to get Curve data from Scene objects, instead of Mesh. 
 
 Inputs
@@ -32,17 +44,22 @@ Objects Socket
 Parameters
 ----------
 
-+-----------------+---------------+--------------------------------------------------------------------------+
-| Param           | Type          | Description                                                              |
-+=================+===============+==========================================================================+
-| **G E T**       | Button        | Button to get selected objects from scene.                               |
-+-----------------+---------------+--------------------------------------------------------------------------+
-| **sorting**     | Bool, toggle  | Sorting inserted objects by name                                         |
-+-----------------+---------------+--------------------------------------------------------------------------+
-| **post**        | Bool, toggle  | Postprocessing, if activated, modifiers applied to mesh before importing |
-+-----------------+---------------+--------------------------------------------------------------------------+
-| **vert groups** | Bool, toggle  | Import all vertex groups that in object's data. just import indexes      |
-+-----------------+---------------+--------------------------------------------------------------------------+
++----------------------+---------------+--------------------------------------------------------------------------+
+| Param                | Type          | Description                                                              |
++======================+===============+==========================================================================+
+| **G E T**            | Button        | Button to get selected objects from scene.                               |
++----------------------+---------------+--------------------------------------------------------------------------+
+| **Apply_Matrix**     | Bool,toggle   | Apply object Matrix to output sockets (Vertices, Vertex Normals,         |
+|                      |               | Poligon Centers, Polygon Normals). Has no infuence for Matrix and Object |
++----------------------+---------------+--------------------------------------------------------------------------+
+| **Merge**            | Bool,toggle   | Merge Meshes into one mesh                                               |
++----------------------+---------------+--------------------------------------------------------------------------+
+| **sorting**          | Bool,toggle   | Sorting inserted objects by name                                         |
++----------------------+---------------+--------------------------------------------------------------------------+
+| **post**             | Bool,toggle   | Postprocessing, if activated, modifiers applied to mesh before importing |
++----------------------+---------------+--------------------------------------------------------------------------+
+| **vert groups**      | Bool,toggle   | Import all vertex groups that in object's data. just import indexes      |
++----------------------+---------------+--------------------------------------------------------------------------+
 
 3D panel
 --------

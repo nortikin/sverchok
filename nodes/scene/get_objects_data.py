@@ -158,7 +158,7 @@ class SvGetObjectsDataMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
     display_types = [
             ('BOUNDS', "", "BOUNDS: Display the bounds of the object", "MATPLANE", 0),
             ('WIRE', "", "WIRE: Display the object as a wireframe", "MESH_CUBE", 1),
-            ('SOLID', "", "SOLID: Display the object as a solid (if solid drawing is enabled in the viewport)", custom_icon("SV_MAKE_SOLID"), 2),
+            ('SOLID', "", "SOLID: Display the object as a solid (if solid drawing is enabled in the viewport)", "SNAP_VOLUME", 2),  #custom_icon("SV_MAKE_SOLID")
             ('TEXTURED', "", "TEXTURED: Display the object with textures (if textures are enabled in the viewport)", "TEXTURE",  3),
         ]
     
