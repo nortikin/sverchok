@@ -141,7 +141,7 @@
              
   <section id="get-objects-data">
 <h1>Get Objects Data<a class="headerlink" href="#get-objects-data" title="Link to this heading">¶</a></h1>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/b24e7fbc-3383-49ca-bc96-ae5ff823fee3"><img alt="https://github.com/nortikin/sverchok/assets/14288520/b24e7fbc-3383-49ca-bc96-ae5ff823fee3" src="https://github.com/nortikin/sverchok/assets/14288520/b24e7fbc-3383-49ca-bc96-ae5ff823fee3" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/d7662f9f-d398-4b73-8337-d0d228f104bc"><img alt="https://github.com/nortikin/sverchok/assets/14288520/d7662f9f-d398-4b73-8337-d0d228f104bc" src="https://github.com/nortikin/sverchok/assets/14288520/d7662f9f-d398-4b73-8337-d0d228f104bc" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>Get objects from the Blender <code class="docutils literal notranslate"><span class="pre">Scene</span></code> and output them into Sverchok’s node tree. This node supports most object types. All are converted to a Sverchok representation of <code class="docutils literal notranslate"><span class="pre">Mesh</span></code> where possible.</p>
@@ -156,8 +156,16 @@
 <li><p>The Matrix socket lets you ignore or acquire the Object’s <code class="docutils literal notranslate"><span class="pre">World</span> <span class="pre">Matrix</span></code>, by default the Object data is untransformed. Use a matrix-apply node if you want to explicitly transform the vertex data.</p></li>
 </ul>
 <p>limitations:</p>
-<ul class="simple">
+<ul>
 <li><p>When you use the <code class="docutils literal notranslate"><span class="pre">Post</span></code> mode Sverchok/Blender expect Objects to be visible. If you want to “hide” the original Objects in the scene to avoid visual clutter, you can place them into a Collection and hide the collection. This is a current Blender API limitation.</p></li>
+<li><p>Another method to work with objects - select wireframe mode and hide objects in Render by buttons:</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/30158800-3cd8-483d-a162-2d13ddfdc289"><img alt="https://github.com/nortikin/sverchok/assets/14288520/30158800-3cd8-483d-a162-2d13ddfdc289" src="https://github.com/nortikin/sverchok/assets/14288520/30158800-3cd8-483d-a162-2d13ddfdc289" /></a>
+</li>
+</ul>
+<video width="700" controls>
+  <source src="https://github.com/nortikin/sverchok/assets/14288520/7a158c33-814a-43be-9a9c-929096495354" type="video/mp4">
+ Your browser does not support the video tag.
+</video><ul class="simple">
 <li><p>We have Bezier-in and NURBS-in nodes if you want to get Curve data from Scene objects, instead of Mesh.</p></li>
 </ul>
 </section>
@@ -179,16 +187,25 @@
 <td><p>Button</p></td>
 <td><p>Button to get selected objects from scene.</p></td>
 </tr>
+<tr class="row-odd"><td><p><strong>Apply_Matrix</strong></p></td>
+<td><p>Bool,toggle</p></td>
+<td><p>Apply object Matrix to output sockets (Vertices, Vertex Normals,
+Poligon Centers, Polygon Normals). Has no infuence for Matrix and Object</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Merge</strong></p></td>
+<td><p>Bool,toggle</p></td>
+<td><p>Merge Meshes into one mesh</p></td>
+</tr>
 <tr class="row-odd"><td><p><strong>sorting</strong></p></td>
-<td><p>Bool, toggle</p></td>
+<td><p>Bool,toggle</p></td>
 <td><p>Sorting inserted objects by name</p></td>
 </tr>
 <tr class="row-even"><td><p><strong>post</strong></p></td>
-<td><p>Bool, toggle</p></td>
+<td><p>Bool,toggle</p></td>
 <td><p>Postprocessing, if activated, modifiers applied to mesh before importing</p></td>
 </tr>
 <tr class="row-odd"><td><p><strong>vert groups</strong></p></td>
-<td><p>Bool, toggle</p></td>
+<td><p>Bool,toggle</p></td>
 <td><p>Import all vertex groups that in object’s data. just import indexes</p></td>
 </tr>
 </tbody>
