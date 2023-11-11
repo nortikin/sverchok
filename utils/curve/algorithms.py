@@ -17,9 +17,9 @@ from sverchok.utils.curve.core import (
     )
 from sverchok.utils.surface.core import UnsupportedSurfaceTypeException
 from sverchok.utils.geom import PlaneEquation, LineEquation, Spline, LinearSpline, CubicSpline
-from sverchok.utils.geom import autorotate_householder, autorotate_track, autorotate_diff
+from sverchok.utils.geom import autorotate_householder, autorotate_track, autorotate_diff, householder_np
 from sverchok.utils.math import (
-    ZERO, FRENET, HOUSEHOLDER, TRACK, DIFF, TRACK_NORMAL,
+    ZERO, FRENET, HOUSEHOLDER, HOUSEHOLDER_I, TRACK, DIFF, TRACK_NORMAL,
     NORMAL_DIR, NONE
 )
 from sverchok.utils.sv_logging import sv_logger
@@ -111,30 +111,20 @@ class SvCurveLengthSolver(object):
         spline_verts = self._reverse_spline.eval(input_lengths)
         return spline_verts[:,1]
 
-class SvNormalTrack(object):
+class SvNormalInterpolation(object):
     def __init__(self, curve, resolution):
         self.curve = curve
         self.resolution = resolution
-        self._pre_calc()
+        self.calc_quat_steps()
 
-    def _make_quats(self, points, tangents, normals, binormals):
+    def basis_to_quats(self, points, tangents, normals, binormals):
         matrices = np.dstack((normals, binormals, tangents))
         matrices = np.transpose(matrices, axes=(0,2,1))
         matrices = np.linalg.inv(matrices)
         return [Matrix(m).to_quaternion() for m in matrices]
 
-    def _pre_calc(self):
-        curve = self.curve
-        t_min, t_max = curve.get_u_bounds()
-        ts = np.linspace(t_min, t_max, num=self.resolution)
-
-        points = curve.evaluate_array(ts)
-        tangents, normals, binormals = curve.tangent_normal_binormal_array(ts)
-        tangents /= np.linalg.norm(tangents, axis=1, keepdims=True)
-
-        normal = normals[0]
+    def adjust_start_basis(self, tangent, normal, binormal):
         if np.linalg.norm(normal) > 1e-4:
-            binormal = binormals[0]
             binormal /= np.linalg.norm(binormal)
         else:
             tangent = tangents[0]
@@ -142,21 +132,7 @@ class SvNormalTrack(object):
             normal = np.array(normal)
             binormal = np.cross(tangent, normal)
             binormal /= np.linalg.norm(binormal)
-
-        out_normals = [normal]
-        out_binormals = [binormal]
-
-        for point, tangent in zip(points[1:], tangents[1:]):
-            plane = PlaneEquation.from_normal_and_point(Vector(tangent), Vector(point))
-            normal = plane.projection_of_vector(Vector(point), Vector(point + normal))
-            normal = np.array(normal.normalized())
-            binormal = np.cross(tangent, normal)
-            binormal /= np.linalg.norm(binormal)
-            out_normals.append(normal)
-            out_binormals.append(binormal)
-
-        self.quats = self._make_quats(points, tangents, np.array(out_normals), np.array(out_binormals))
-        self.tknots = ts
+        return tangent, normal, binormal
 
     def evaluate_array(self, ts):
         """
@@ -189,6 +165,69 @@ class SvNormalTrack(object):
             matrix = np.array(q.to_matrix())
             matrix_out.append(matrix)
         return np.array(matrix_out)
+
+class SvNormalTrack(SvNormalInterpolation):
+    def calc_quat_steps(self):
+        curve = self.curve
+        t_min, t_max = curve.get_u_bounds()
+        ts = np.linspace(t_min, t_max, num=self.resolution)
+
+        points = curve.evaluate_array(ts)
+        tangents, normals, binormals = curve.tangent_normal_binormal_array(ts)
+        tangents /= np.linalg.norm(tangents, axis=1, keepdims=True)
+
+        normal = normals[0]
+        tangent = tangents[0]
+        binormal = binormals[0]
+        tangent, normal, binormal = self.adjust_start_basis(tangent, normal, binormal)
+
+        out_normals = [normal]
+        out_binormals = [binormal]
+
+        for point, tangent in zip(points[1:], tangents[1:]):
+            plane = PlaneEquation.from_normal_and_point(Vector(tangent), Vector(point))
+            normal = plane.projection_of_vector(Vector(point), Vector(point + normal))
+            normal = np.array(normal.normalized())
+            binormal = np.cross(tangent, normal)
+            binormal /= np.linalg.norm(binormal)
+            out_normals.append(normal)
+            out_binormals.append(binormal)
+
+        self.quats = self.basis_to_quats(points, tangents, np.array(out_normals), np.array(out_binormals))
+        self.tknots = ts
+
+class SvHouseholderInterpolation(SvNormalInterpolation):
+    def calc_quat_steps(self):
+        curve = self.curve
+        t_min, t_max = curve.get_u_bounds()
+        ts = np.linspace(t_min, t_max, num=self.resolution)
+
+        points = curve.evaluate_array(ts)
+        tangents, normals, binormals = curve.tangent_normal_binormal_array(ts)
+        tangents /= np.linalg.norm(tangents, axis=1, keepdims=True)
+
+        normal = normals[0]
+        tangent = tangents[0]
+        binormal = binormals[0]
+        tangent, normal, binormal = self.adjust_start_basis(tangent, normal, binormal)
+
+        out_normals = [normal]
+        out_binormals = [binormal]
+
+        for x0, t0, x1, t1 in zip(points[:-1], tangents[:-1], points[1:], tangents[1:]):
+            v1 = x1 - t1
+            R1 = householder_np(v1)
+            t0L = R1 @ t0
+            v2 = t1 - t0L
+            R2 = householder_np(v2)
+            normal = R2 @ R1 @ normal
+            binormal = np.cross(t1, normal)
+            out_normals.append(normal)
+            out_binormals.append(binormal)
+
+        print("N", np.array(out_binormals).shape)
+        self.quats = self.basis_to_quats(points, tangents, np.array(out_normals), np.array(out_binormals))
+        self.tknots = ts
 
 class MathutilsRotationCalculator(object):
 
@@ -248,6 +287,8 @@ class DifferentialRotationCalculator(object):
             self.normal_tracker = SvNormalTrack(curve, resolution)
         elif algorithm == ZERO:
             self.curve.pre_calc_torsion_integral(resolution)
+        elif algorithm == HOUSEHOLDER_I:
+            self.normal_tracker = SvHouseholderInterpolation(curve, resolution)
 
     def get_matrices(self, ts):
         n = len(ts)
@@ -267,6 +308,9 @@ class DifferentialRotationCalculator(object):
         elif self.algorithm == TRACK_NORMAL:
             matrices = self.normal_tracker.evaluate_array(ts)
             return matrices
+        elif self.algorithm == HOUSEHOLDER_I:
+            matrices = self.normal_tracker.evaluate_array(ts)
+            return matrices
         else:
             raise Exception("Unsupported algorithm")
 
@@ -276,7 +320,7 @@ class SvCurveFrameCalculator(object):
         self.z_axis = z_axis
         self.curve = curve
         self.normal = normal
-        if algorithm in {FRENET, ZERO, TRACK_NORMAL}:
+        if algorithm in {FRENET, ZERO, TRACK_NORMAL, HOUSEHOLDER_I}:
             self.calculator = DifferentialRotationCalculator(curve, algorithm, resolution)
 
     def get_matrix(self, tangent):
@@ -293,7 +337,7 @@ class SvCurveFrameCalculator(object):
         elif self.algorithm == NORMAL_DIR:
             matrices, _, _ = self.curve.frame_by_plane_array(ts, self.normal)
             return matrices
-        elif self.algorithm in {FRENET, ZERO, TRACK_NORMAL}:
+        elif self.algorithm in {FRENET, ZERO, TRACK_NORMAL, HOUSEHOLDER_I}:
             return self.calculator.get_matrices(ts)
         elif self.algorithm in {HOUSEHOLDER, TRACK, DIFF}:
             tangents = self.curve.tangent_array(ts)

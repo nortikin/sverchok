@@ -6,7 +6,7 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
-from sverchok.utils.curve import SvCurve, SvNormalTrack
+from sverchok.utils.curve import SvCurve, SvNormalTrack, SvHouseholderInterpolation
 
 class SvCurveZeroTwistFrameNode(SverchCustomTreeNode, bpy.types.Node):
         """
@@ -40,7 +40,8 @@ class SvCurveZeroTwistFrameNode(SverchCustomTreeNode, bpy.types.Node):
 
         algorithms = [
                 ('FRENET', "Integrate torsion", "Subtract torsion integral from Frenet matrices", 0),
-                ('TRACK', "Track normal", "Try to maintain constant normal direction by tracking it along the curve", 1)
+                ('TRACK', "Track normal", "Try to maintain constant normal direction by tracking it along the curve", 1),
+                ('householder_i', "Double reflection", "Double reflection method with interpolation", 2)
             ]
 
         algorithm : EnumProperty(
@@ -82,8 +83,18 @@ class SvCurveZeroTwistFrameNode(SverchCustomTreeNode, bpy.types.Node):
                         curve.pre_calc_torsion_integral(resolution)
                         new_torsion, new_matrices = curve.zero_torsion_frame_array(ts)
                         new_torsion = new_torsion.tolist()
-                    else: # TRACK
+                    elif self.algorithm == 'TRACK':
                         tracker = SvNormalTrack(curve, resolution)
+                        matrices_np = tracker.evaluate_array(ts)
+                        points = curve.evaluate_array(ts)
+                        new_matrices = []
+                        for m, point in zip(matrices_np, points):
+                            matrix = Matrix(m.tolist()).to_4x4()
+                            matrix.translation = Vector(point)
+                            new_matrices.append(matrix)
+                        new_torsion = []
+                    else: # householder_i:
+                        tracker = SvHouseholderInterpolation(curve, resolution)
                         matrices_np = tracker.evaluate_array(ts)
                         points = curve.evaluate_array(ts)
                         new_matrices = []

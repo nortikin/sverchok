@@ -683,6 +683,11 @@ def householder(u):
     h = Matrix() - 2*m
     return h
 
+def householder_np(v):
+    v1 = v[np.newaxis]
+    m = (v1.T @ v1) / (v1 @ v1.T)
+    return np.eye(3) - 2*m
+
 def autorotate_householder(e1, xx):
     '''
     A matrix of transformation which will transform xx vector into e1,
