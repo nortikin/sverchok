@@ -652,8 +652,8 @@ dependencies, or install only some of them.""")
         col.label(text="Links:")
         row1 = col.row(align=True)
         row1.scale_y = 2.0
-        row1.operator('wm.url_open', text='Sverchok home page').url = 'http://nikitron.cc.ua/blend_scripts.html'
-        row1.operator('wm.url_open', text='Documentation').url = 'http://nikitron.cc.ua/sverch/html/main.html'
+        row1.operator('wm.url_open', text='Sverchok home page').url = 'https://nortikin.github.io/sverchok/'
+        row1.operator('wm.url_open', text='Documentation').url = 'https://nortikin.github.io/sverchok/docs/main.html'
 
         if self.available_new_version:
             row1.operator('node.sverchok_update_addon', text='Upgrade Sverchok addon')
