@@ -6,7 +6,7 @@
 # License-Filename: LICENSE
 
 import bpy
-from bpy.props import BoolProperty, StringProperty, IntProperty
+from bpy.props import BoolProperty, StringProperty, IntProperty, EnumProperty
 import bmesh
 from mathutils import Vector, Matrix
 
@@ -16,6 +16,7 @@ from sverchok.data_structure import updateNode
 from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh
 from sverchok.utils.sv_mesh_utils import mesh_join
 from sverchok.utils.nodes_mixins.show_3d_properties import Show3DProperties
+from sverchok.ui.sv_icons import custom_icon
 from sverchok.utils.blender_mesh import (
     read_verts, read_edges, read_verts_normal,
     read_face_normal, read_face_center, read_face_area, read_materials_idx)
@@ -77,7 +78,6 @@ class SvOB3CallbackMK2(bpy.types.Operator, SvGenericNodeLocator):
         """
         getattr(node, self.fn_name)(self)
 
-
 def get_vertgroups(mesh):
     return [k for k,v in enumerate(mesh.vertices) if v.groups.values()]
 
@@ -137,12 +137,12 @@ class SvGetObjectsDataMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
         name="Output Numpy",
         description="Output NumPy arrays (makes node faster)",
         size=7, update=updateNode)
+
     output_np_all: BoolProperty(
         name='Output all numpy',
         description='Output numpy arrays if possible',
         default=False, update=updateNode)
     
-
     apply_matrix: BoolProperty(
         name = "Apply matrices",
         description = "Apply objects matrices",
@@ -154,6 +154,93 @@ class SvGetObjectsDataMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
         description = "If checked, join mesh elements into one object",
         default = False,
         update = updateNode)
+
+    display_types = [
+            ('BOUNDS', "", "BOUNDS: Display the bounds of the object", "MATPLANE", 0),
+            ('WIRE', "", "WIRE: Display the object as a wireframe", "MESH_CUBE", 1),
+            ('SOLID', "", "SOLID: Display the object as a solid (if solid drawing is enabled in the viewport)", "SNAP_VOLUME", 2),  #custom_icon("SV_MAKE_SOLID")
+            ('TEXTURED', "", "TEXTURED: Display the object with textures (if textures are enabled in the viewport)", "TEXTURE",  3),
+        ]
+    
+    def update_display_type(self, context):
+        for obj in self.object_names:
+            bpy.data.objects[obj.name].display_type=self.display_type
+        return
+    
+    display_type : EnumProperty(
+        name = "Display Types",
+        items = display_types,
+        default = 'WIRE',
+        update = update_display_type)
+    
+    hide_render_types = [
+            ('RESTRICT_RENDER_ON', "", "Render objects", "RESTRICT_RENDER_ON", 0),
+            ('RESTRICT_RENDER_OFF', "", "Do not render objects", "RESTRICT_RENDER_OFF", 1),
+        ]
+    
+    def update_render_type(self, context):
+        for obj in self.object_names:
+            bpy.data.objects[obj.name].hide_render = True if self.hide_render_type=='RESTRICT_RENDER_ON' else False
+        return
+    
+    hide_render_type : EnumProperty(
+        name = "Render Types",
+        items = hide_render_types,
+        default = 'RESTRICT_RENDER_OFF',
+        update = update_render_type)
+    
+    align_3dview_types = [
+            ('ISOLATE_CURRENT', "", "Toggle local view with only current selected object in the list\nPress again to restore view", "PIVOT_CURSOR", 0),
+            ('ISOLATE_ALL', "", "Toggle local view with all objects in the list\nPress again to restore view", "PIVOT_INDIVIDUAL", 1),
+        ]
+    
+    def update_align_3dview(self, context):
+        if len(self.object_names)==0:
+            return
+        obj_in_list = self.object_names[self.active_obj_index]
+        if obj_in_list:
+            # reset all selections
+            for obj in bpy.context.selected_objects:
+                obj.select_set(False)
+            
+            # select all objects in list of this node
+            if self.align_3dview_type=='ISOLATE_ALL':
+                for obj in self.object_names:
+                    if obj.name in bpy.data.objects:
+                        bpy.data.objects[obj.name].select_set(True)
+
+            if obj_in_list.name in bpy.data.objects:
+                obj_in_scene = bpy.data.objects[obj_in_list.name]
+                obj_in_scene.select_set(True)
+                bpy.context.view_layer.objects.active = obj_in_scene
+
+            for area in bpy.context.screen.areas:
+                if area.type == 'VIEW_3D':
+                    ctx = bpy.context.copy()
+                    ctx['area'] = area
+                    ctx['region'] = area.regions[-1]
+                    # test if current mode is local view: https://blender.stackexchange.com/questions/290669/checking-for-object-being-in-local-view
+                    if self.align_3dview_type_previous_value!=self.align_3dview_type and area.spaces.active.local_view:
+                        bpy.ops.view3d.localview(ctx, frame_selected=False)
+                    self.align_3dview_type_previous_value = self.align_3dview_type
+                    bpy.ops.view3d.localview(ctx, frame_selected=False)
+                    #bpy.ops.view3d.view_selected(ctx)
+                    break
+
+            pass
+        return
+    
+    align_3dview_type : EnumProperty(
+        name = "Local View",
+        items = align_3dview_types,
+        default = 'ISOLATE_CURRENT',
+        update = update_align_3dview)
+    
+    align_3dview_type_previous_value : EnumProperty(
+        name = "Local View",
+        items = align_3dview_types,
+        default = 'ISOLATE_CURRENT')
+
 
     def sv_init(self, context):
         new = self.outputs.new
@@ -193,7 +280,6 @@ class SvGetObjectsDataMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
 
         self.process_node(None)
 
-
     def select_objs(self, ops):
         """select all objects referenced by node"""
         for item in self.object_names:
@@ -227,6 +313,14 @@ class SvGetObjectsDataMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
                 op_text = "G E T"
 
             self.wrapper_tracked_ui_draw_op(row, callback, text=op_text).fn_name = 'get_objects_from_scene'
+
+        row = col.row()
+        col = row.column()
+        col.row().prop(self, 'display_type', expand=True)
+        col = row.column()
+        col.row().prop(self, 'hide_render_type', expand=True)
+        col = row.column()
+        col.row().prop(self, 'align_3dview_type', expand=True)
 
         col = layout.column(align=True)
         row = col.row(align=True)
