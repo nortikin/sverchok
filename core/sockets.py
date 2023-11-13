@@ -476,9 +476,9 @@ class SvSocketCommon(SvSocketProcessing):
         If prop_origin is None then the default socket property should be shown
         """
         if prop_origin is None and hasattr(self, prop_name):
-            layout.prop(self, 'default_property')
+            layout.prop(self, 'default_property', text=self.label or None)
         else:
-            layout.prop(prop_origin, prop_name)
+            layout.prop(prop_origin, prop_name, text=self.label or None)
 
     def draw_quick_link(self, context, layout, node):
         """
@@ -624,9 +624,9 @@ class SvObjectSocket(NodeSocket, SvSocketCommon):
 
     def draw_property(self, layout, prop_origin=None, prop_name='default_property'):
         if prop_origin:
-            layout.prop(prop_origin, prop_name)  # need for consistency, probably will never be used
+            layout.prop(prop_origin, prop_name, text=self.label or None)  # need for consistency, probably will never be used
         else:
-            layout.prop_search(self, 'object_ref_pointer', bpy.data, 'objects', text=self.name)
+            layout.prop_search(self, 'object_ref_pointer', bpy.data, 'objects', text=self.label or self.name)
 
 
 class SvFormulaSocket(NodeSocket, SvSocketCommon):
@@ -737,7 +737,7 @@ class SvVerticesSocket(SocketDomain, NodeSocket, SvSocketCommon):
         else:
             c1.prop(self, "expanded", icon='TRIA_DOWN', text="")
             row = c2.row(align=True)
-            row.template_component_menu(prop_origin, prop_name, name=self.name)
+            row.template_component_menu(prop_origin, prop_name, name=self.label or self.name)
 
     def do_graft(self, data):
         return graft_data(data, item_level=1)
@@ -803,7 +803,7 @@ class SvQuaternionSocket(NodeSocket, SvSocketCommon):
         else:
             c1.prop(self, "expanded", icon='TRIA_DOWN', text="")
             row = c2.row(align=True)
-            row.template_component_menu(prop_origin, prop_name, name=self.name)
+            row.template_component_menu(prop_origin, prop_name, name=self.label or self.name)
 
     def do_flatten(self, data):
         return flatten_data(data, 1, data_types=(Quaternion,))
@@ -844,7 +844,7 @@ class SvColorSocket(SocketDomain, NodeSocket, SvSocketCommon):
         else:
             c1.prop(self, "expanded", icon='TRIA_DOWN', text="")
             row = c2.row(align=True)
-            row.prop(prop_origin, prop_name)
+            row.prop(prop_origin, prop_name, text=self.label or None)
 
     def draw_group_property(self, layout, text, interface_socket):
         if not interface_socket.hide_value:
@@ -962,13 +962,13 @@ class SvStringsSocket(SocketDomain, NodeSocket, SvSocketCommon):
 
     def draw_property(self, layout, prop_origin=None, prop_name=None):
         if prop_origin and prop_name:
-            layout.prop(prop_origin, prop_name)
+            layout.prop(prop_origin, prop_name, text=self.label or None)
         elif self.use_prop:
             row = layout.row(align=True)
             if self.default_property_type == 'float':
-                row.prop(self, 'default_float_property', text=self.name)
+                row.prop(self, 'default_float_property', text=self.label or self.name)
             elif self.default_property_type == 'int':
-                row.prop(self, 'default_int_property', text=self.name)
+                row.prop(self, 'default_int_property', text=self.label or self.name)
             if self.show_property_type:
                 icon = 'IPO_LINEAR' if self.default_property_type == 'float' else 'IPO_CONSTANT'
                 row.operator(SvSwitchDefaultOp.bl_idname, icon=icon, text='')
