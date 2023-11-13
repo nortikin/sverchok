@@ -14,6 +14,7 @@ from bpy.types import Operator
 
 import sverchok
 from sverchok.utils.sv_json_import import JSONImporter
+from sverchok.ui.sv_icons import icon
 
 
 def node_examples_pulldown(self, context):
@@ -21,7 +22,9 @@ def node_examples_pulldown(self, context):
         layout = self.layout
         row = layout.row(align=True)
         row.scale_x = 1.3
+        #row.alert = True
         row.menu("SV_MT_layouts_examples", icon="RNA")
+
 
 def node_settings_pulldown(self, context):
     if context.space_data.tree_type == 'SverchCustomTreeType':
@@ -45,7 +48,7 @@ class SV_MT_LayoutsExamples(bpy.types.Menu):
     """Node tree examples"""
     bl_idname = 'SV_MT_layouts_examples'
     bl_space_type = 'NODE_EDITOR'
-    bl_label = "Examples"
+    bl_label = "E X A M P L E S"
     bl_description = "List of Sverchok Examples"
 
     @classmethod

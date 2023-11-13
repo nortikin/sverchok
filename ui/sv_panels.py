@@ -156,16 +156,15 @@ class SV_PT_SverchokUtilsPanel(SverchokPanels, bpy.types.Panel):
         col = self.layout.column()
         col.operator(SvPrintCommits.bl_idname)
         with sv_preferences() as prefs:
+            if prefs.developer_mode:
+                col.operator("node.sv_run_pydoc")
             if prefs.available_new_version:
                 col_alert = self.layout.column()
                 col_alert.alert = True
                 col_alert.operator(SverchokUpdateAddon.bl_idname, text='Upgrade Sverchok addon')
             else:
-                col.operator(SverchokCheckForUpgradesSHA.bl_idname, text='Check for updates')
+                col.operator(SverchokCheckForUpgradesSHA.bl_idname, text='Check for upgrades')
 
-        # with sv_preferences() as prefs:
-            if prefs.developer_mode:
-                col.operator("node.sv_run_pydoc")
 
 class SV_UL_TreePropertyList(bpy.types.UIList):
     """Show in node tree editor"""
