@@ -140,14 +140,15 @@ def make(self, context):
                 msp.add_text(
                 ttext, height=scal*0.25,#0.05,
                 dxfattribs={
-                    "layer": ltext
+                    "layer": ltext,
+                    "style": "OpenSans"
                 }).set_placement(tver, align=TextEntityAlignment.CENTER)
 
     def dimensions_draw(dim1,dim2,scal,ldims,msp):
         print('LINEAR DIMS!!')
         for obd1,obd2 in zip(dim1,dim2):
             for d1,d2 in zip(obd1,obd2):
-                dim = msp.add_aligned_dim(p1=[i*scal for i in d1[:2]], p2=[i*scal for i in d2[:2]],distance=0.2*scal, dimstyle='EZDXF1',dxfattribs={"layer": ldims})
+                dim = msp.add_aligned_dim(p1=[i*scal for i in d1[:2]], p2=[i*scal for i in d2[:2]],distance=0.5*scal, dimstyle='EZDXF1',dxfattribs={"layer": ldims})
                 dim.render()
 
     def angular_dimensions_draw(ang,scal,ldims,msp):
@@ -167,19 +168,22 @@ def make(self, context):
         return data
 
     def leader_draw(leader,vleader,scal,llidr,msp):
-        from ezdxf.entities import mleader
+        from ezdxf.math import Vec2
+        #from ezdxf.entities import mleader
         print('LEADERS!!')
         for lvo1,lvo2,leadobj in zip(vleader[0],vleader[1],leader):
             data = get_values(leadobj)
             for lt,lv1,lv2 in zip(data,lvo1,lvo2):
-                print(lt,lv1,lv2)
+                #msp.add_leader([lv1,lv2], dimstyle='EZDXF1', dxfattribs={"layer": llidr})
+                
+                #print(lt,lv1,lv2)
                 ml_builder = msp.add_multileader_mtext("EZDXF1")
                 ml_builder.quick_leader(
                     lt,
-                    target=lv1,
-                    segment1=lv2,
-                    connection_type=mleader.VerticalConnection.center_overline,
-                ).render()
+                    target=Vec2(lv1),
+                    segment1=Vec2(lv2)-Vec2(lv1)
+                #    connection_type=mleader.VerticalConnection.center_overline,
+                )#.render()
                 #ml_builder.text_attachment_point = 2
                 #Vec2.from_deg_angle(angle, 14),
                 #dxfattribs={"layer": llidr}
@@ -226,7 +230,7 @@ def make(self, context):
         # multyleader
         mleaderstyle = doc.mleader_styles.duplicate_entry("Standard", "EZDXF1")
         mleaderstyle.set_mtext_style("OpenSans")
-        mleaderstyle.dxf.char_height = 2.0*scal  # set the default char height of MTEXT
+        mleaderstyle.dxf.char_height = 0.3*scal  # set the default char height of MTEXT
         # Create new table entries (layers, linetypes, text styles, ...).
         ltext = "SVERCHOK_TEXT"
         lvers = "SVERCHOK_VERS"
