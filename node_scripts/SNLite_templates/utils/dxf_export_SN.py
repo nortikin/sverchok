@@ -12,6 +12,8 @@ in dim1    v d=[[]] n=0
 in dim2    v d=[[]] n=0
 in adim  v d=[[]] n=0
 in scal    s d=1.0 n=2
+in leader  s d=[[]] n=0
+in vleader v d=[[]] n=0
 '''
 
 '''
@@ -147,7 +149,7 @@ def make(self, context):
             for d1,d2 in zip(obd1,obd2):
                 dim = msp.add_aligned_dim(p1=[i*scal for i in d1[:2]], p2=[i*scal for i in d2[:2]],distance=0.2*scal, dimstyle='EZDXF1',dxfattribs={"layer": ldims})
                 dim.render()
-    
+
     def angular_dimensions_draw(ang,scal,ldims,msp):
         from mathutils import Vector
         print('ANGULAR DIMS!!')
@@ -156,6 +158,32 @@ def make(self, context):
                 bas = (Vector(ang1)+((Vector(ang3)-Vector(ang1))/2)).to_tuple()
                 dim = msp.add_angular_dim_3p(base=bas, center=ang2,p1=ang1, p2=ang3, override={"dimtad": 1}, dimstyle='EZDXF1',dxfattribs={"layer": ldims})
                 dim.render()
+
+    def get_values(diction):
+        data = []
+        for d in diction.values():
+            for i in d.values():
+                data.append(i)
+        return data
+
+    def leader_draw(leader,vleader,scal,llidr,msp):
+        from ezdxf.entities import mleader
+        print('LEADERS!!')
+        for lvo1,lvo2,leadobj in zip(vleader[0],vleader[1],leader):
+            data = get_values(leadobj)
+            for lt,lv1,lv2 in zip(data,lvo1,lvo2):
+                print(lt,lv1,lv2)
+                ml_builder = msp.add_multileader_mtext("EZDXF1")
+                ml_builder.quick_leader(
+                    lt,
+                    target=lv1,
+                    segment1=lv2,
+                    connection_type=mleader.VerticalConnection.center_overline,
+                ).render()
+                #ml_builder.text_attachment_point = 2
+                #Vec2.from_deg_angle(angle, 14),
+                #dxfattribs={"layer": llidr}
+
     '''
     def angl(d1,d2):
         from math import sqrt, acos, degrees
@@ -168,7 +196,7 @@ def make(self, context):
     '''
 
     # export main definition
-    def export(v,e,p,tv,tt,fp,d1,d2,info,dim1,dim2,angular,scal):
+    def export(v,e,p,tv,tt,fp,d1,d2,info,dim1,dim2,angular,scal,vl,ll):
         import ezdxf
         from ezdxf import colors
         from ezdxf import units
@@ -195,17 +223,23 @@ def make(self, context):
         dimstyle = doc.dimstyles.get('EZDXF1')
         #keep dim line with text        
         dimstyle.dxf.dimtmove=0
+        # multyleader
+        mleaderstyle = doc.mleader_styles.duplicate_entry("Standard", "EZDXF1")
+        mleaderstyle.set_mtext_style("OpenSans")
+        mleaderstyle.dxf.char_height = 2.0*scal  # set the default char height of MTEXT
         # Create new table entries (layers, linetypes, text styles, ...).
         ltext = "SVERCHOK_TEXT"
         lvers = "SVERCHOK_VERS"
         ledgs = "SVERCHOK_EDGES"
         lpols = "SVERCHOK_POLYGONS"
         ldims = "SVERCHOK_DIMENTIONS"
+        llidr = "SVERCHOK_LEADERS"
         doc.layers.add(ltext, color=colors.MAGENTA)
         doc.layers.add(lvers, color=colors.CYAN)
         doc.layers.add(ledgs, color=colors.YELLOW)
         doc.layers.add(lpols, color=colors.WHITE)
-        doc.layers.add(ldims, color=colors.GREEN)#CYAN)
+        doc.layers.add(ldims, color=colors.GREEN)
+        doc.layers.add(llidr, color=colors.CYAN)
 
         # DXF entities (LINE, TEXT, ...) reside in a layout (modelspace, 
         # paperspace layout or block definition).  
@@ -233,6 +267,8 @@ def make(self, context):
             dimensions_draw(dim1,dim2,scal,ldims,msp)
         if angular:
             angular_dimensions_draw(angular,scal,ldims,msp)
+        if vl and ll:
+            leader_draw(ll,vl,scal,llidr,msp)
         # Save the DXF document.
         doc.saveas(fp[0][0])
 
@@ -241,6 +277,7 @@ def make(self, context):
     
     vers_, edges_, pols_, Tvers_, Ttext_, fpath_ = [],[],[],[],[],[]
     d1_, d2_, info, dim1_, dim2_,adim1_ = [],[],[],[],[],[]
+    leader_, vleader_ = [],[]
 
     if self.inputs['vers'].is_linked:
         vers_ = self.inputs['vers'].sv_get()
@@ -268,8 +305,12 @@ def make(self, context):
         dim2_ = self.inputs['dim2'].sv_get()
     if self.inputs['adim'].is_linked:
         adim1_ = self.inputs['adim'].sv_get()
+    if self.inputs['leader'].is_linked:
+        leader_ = self.inputs['leader'].sv_get()
+    if self.inputs['vleader'].is_linked:
+        vleader_ = self.inputs['vleader'].sv_get()
 
     scal_ = self.inputs['scal'].sv_get()[0][0]
-    export(vers_,edges_,pols_,Tvers_,Ttext_,fpath_,d1_,d2_,info,dim1_,dim2_,adim1_,scal_)
+    export(vers_,edges_,pols_,Tvers_,Ttext_,fpath_,d1_,d2_,info,dim1_,dim2_,adim1_,scal_,vleader_,leader_)
     
     return {'FINISHED'}
