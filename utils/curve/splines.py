@@ -83,6 +83,9 @@ class SvSplineCurve(SvCurve):
         else:
             return self.to_nurbs().concatenate(curve2, tolerance=tolerance, remove_knots=remove_knots)
 
+    def reverse(self):
+        return self.to_nurbs().reverse()
+
     def make_revolution_surface(self, point, direction, v_min, v_max, global_origin):
         return self.to_nurbs().make_revolution_surface(point, direction, v_min, v_max, global_origin)
 
