@@ -165,10 +165,11 @@ class SvMatrixInNodeMK3(SverchCustomTreeNode, bpy.types.Node):
 
     def migrate_from(self, old_node):
         ''' Migration from MK2 (attributes mapping) '''
-        self.location_ = old_node.l_
-        self.scale = old_node.s_
-        self.axis = old_node.r_
-        self.angle = old_node.a_
+        if old_node.bl_idname == "SvMatrixGenNodeMK2":
+            self.location_ = old_node.l_
+            self.scale = old_node.s_
+            self.axis = old_node.r_
+            self.angle = old_node.a_
 
     def sv_init(self, context):
 

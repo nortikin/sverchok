@@ -184,7 +184,7 @@ class SvMatrixInNodeMK4(SverchCustomTreeNode, bpy.types.Node, SvAngleHelper):
             self.angle_units = AngleUnits.DEGREES
             self.last_angle_units = AngleUnits.DEGREES
 
-        elif old_node.bl_idname == "SvMatrixInNodeMK4":
+        elif old_node.bl_idname == "SvMatrixInNodeMK3":
             self.rotation_mode = old_node.mode
 
     def sv_init(self, context):
