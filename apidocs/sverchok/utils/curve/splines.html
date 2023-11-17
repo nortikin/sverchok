@@ -111,6 +111,9 @@ class SvSplineCurve(SvCurve):
         else:
             return self.to_nurbs().concatenate(curve2, tolerance=tolerance, remove_knots=remove_knots)
 
+    def reverse(self):
+        return self.to_nurbs().reverse()
+
     def make_revolution_surface(self, point, direction, v_min, v_max, global_origin):
         return self.to_nurbs().make_revolution_surface(point, direction, v_min, v_max, global_origin)
 
@@ -227,6 +230,9 @@ class SvSplineCurve(SvCurve):
             raise UnsupportedCurveTypeException(&#34;second curve is not NURBS&#34;)
         else:
             return self.to_nurbs().concatenate(curve2, tolerance=tolerance, remove_knots=remove_knots)
+
+    def reverse(self):
+        return self.to_nurbs().reverse()
 
     def make_revolution_surface(self, point, direction, v_min, v_max, global_origin):
         return self.to_nurbs().make_revolution_surface(point, direction, v_min, v_max, global_origin)
@@ -410,6 +416,19 @@ def from_points(cls, points, metric=None, is_cyclic=False):
     return self.to_nurbs().make_ruled_surface(curve2, vmin, vmax)</code></pre>
 </details>
 </dd>
+<dt id="sverchok.utils.curve.splines.SvSplineCurve.reverse"><code class="name flex">
+<span>def <span class="ident">reverse</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def reverse(self):
+    return self.to_nurbs().reverse()</code></pre>
+</details>
+</dd>
 <dt id="sverchok.utils.curve.splines.SvSplineCurve.split_at"><code class="name flex">
 <span>def <span class="ident">split_at</span></span>(<span>self, t)</span>
 </code></dt>
@@ -513,6 +532,7 @@ def from_points(cls, points, metric=None, is_cyclic=False):
 <li><code><a title="sverchok.utils.curve.splines.SvSplineCurve.lerp_to" href="#sverchok.utils.curve.splines.SvSplineCurve.lerp_to">lerp_to</a></code></li>
 <li><code><a title="sverchok.utils.curve.splines.SvSplineCurve.make_revolution_surface" href="#sverchok.utils.curve.splines.SvSplineCurve.make_revolution_surface">make_revolution_surface</a></code></li>
 <li><code><a title="sverchok.utils.curve.splines.SvSplineCurve.make_ruled_surface" href="#sverchok.utils.curve.splines.SvSplineCurve.make_ruled_surface">make_ruled_surface</a></code></li>
+<li><code><a title="sverchok.utils.curve.splines.SvSplineCurve.reverse" href="#sverchok.utils.curve.splines.SvSplineCurve.reverse">reverse</a></code></li>
 <li><code><a title="sverchok.utils.curve.splines.SvSplineCurve.split_at" href="#sverchok.utils.curve.splines.SvSplineCurve.split_at">split_at</a></code></li>
 <li><code><a title="sverchok.utils.curve.splines.SvSplineCurve.to_bezier_segments" href="#sverchok.utils.curve.splines.SvSplineCurve.to_bezier_segments">to_bezier_segments</a></code></li>
 <li><code><a title="sverchok.utils.curve.splines.SvSplineCurve.to_nurbs" href="#sverchok.utils.curve.splines.SvSplineCurve.to_nurbs">to_nurbs</a></code></li>
