@@ -130,6 +130,7 @@ class SvReplaceNode(bpy.types.Operator):
                 new_node.parent = old_node.parent.parent
             tree.nodes.remove(old_node.parent)
         tree.nodes.remove(old_node)
+        context.area.spaces.active.node_tree.nodes.active = new_node
 
         return {'FINISHED'}
 
