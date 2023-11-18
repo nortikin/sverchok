@@ -157,16 +157,17 @@ class SvUVPointonMeshNodeMK2(SverchCustomTreeNode, bpy.types.Node):
             if Pom.is_linked:
                 # resore UV to 3D
                 bvh = BVHTree.FromPolygons(UVMAPV, UVMAPP, all_triangles=False, epsilon=0.0)
-                pom = [] # result in 3D
+                lpom = [] # result in 3D
                 for Puv in PointUV:
                     loc, norm, ind, dist = bvh.find_nearest(Puv)
                     _found_poly = bm.faces[ind]
                     _p1, _p2, _p3 = [v.co for v in bm.faces[ind].verts[0:3] ]
                     _uv1, _uv2, _uv3 = [l[uv_layer].uv.to_3d() for l in _found_poly.loops[0:3] ]
                     _V = barycentric_transform(Puv, _uv1, _uv2, _uv3, _p1, _p2, _p3)
-                    pom.append( obj_matrix @ Vector(_V[:]))
+                    pom = obj_matrix @ Vector(_V[:])
+                    lpom.append( list( pom ) )
                 
-                POMs.append(pom)
+                POMs.append(lpom)
             bm.clear()
             UVMAPVs.append(UVMAPV)
             UVMAPPs.append(UVMAPP)
