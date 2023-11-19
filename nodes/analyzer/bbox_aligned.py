@@ -89,7 +89,7 @@ class SvAlignedBBoxNode(SverchCustomTreeNode, bpy.types.Node, SvRecursiveNode):
         Factors  = inputs["Factor"].sv_get()
 
         outputs = self.outputs
-        if not outputs['Vertices'].is_linked or not all([Vertices,]):
+        if not any( [o.is_linked for o in outputs]):
             return
         
         lst_bba_vertices = []
