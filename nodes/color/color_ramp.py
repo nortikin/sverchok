@@ -130,6 +130,22 @@ class SvColorRampNode(SverchCustomTreeNode, bpy.types.Node):
         node_data['color_ramp_data'] = data_json_str
 
 
+    def sv_copy(self, other):  # like curve mapper
+        '''
+        self: is the new node, other: is the old node
+        by the time this function is called the new node has a new empty n_id
+        a new n_id will be generated as a side effect of _get_curve_node_name
+        '''
+        color_ramp_node_name = self._get_color_ramp_node_name()
+        _ = get_evaluator(node_group_name, color_ramp_node_name)
+
+        old_color_node_name = other._get_color_ramp_node_name()
+        data = get_color_ramp(node_group_name, old_color_node_name)
+        set_color_ramp(data, color_ramp_node_name)
+
+        self.refresh_node(None)
+
+
 
 def register():
     bpy.utils.register_class(SvColorRampNode)
