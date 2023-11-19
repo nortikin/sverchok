@@ -11,9 +11,10 @@ in INFO    s d=[[]] n=0
 in dim1    v d=[[]] n=0
 in dim2    v d=[[]] n=0
 in adim  v d=[[]] n=0
-in scal    s d=1.0 n=2
+in scal    s d=1 n=2
 in leader  s d=[[]] n=0
 in vleader v d=[[]] n=0
+in t_scal    s d=0.25 n=2
 '''
 
 '''
@@ -130,7 +131,7 @@ def make(self, context):
                 msp.add_line([i*scal for i in obv[ed[0]]],[i*scal for i in obv[ed[1]]], dxfattribs={"layer": ledgs}) 
                 #dxfattribs={"color": colors.YELLOW})
 
-    def text_draw(tv,tt,scal,ltext,msp):
+    def text_draw(tv,tt,scal,ltext,msp,t_scal):
         ''' draw text '''
         from ezdxf.enums import TextEntityAlignment
         print('TEXT!!')
@@ -138,27 +139,40 @@ def make(self, context):
             for tver, ttext in zip(obtv,obtt):
                 tver = [i*scal for i in tver]
                 msp.add_text(
-                ttext, height=scal*0.25,#0.05,
+                ttext, height=scal*t_scal,#0.05,
                 dxfattribs={
                     "layer": ltext,
                     "style": "OpenSans"
                 }).set_placement(tver, align=TextEntityAlignment.CENTER)
 
-    def dimensions_draw(dim1,dim2,scal,ldims,msp):
+    def dimensions_draw(dim1,dim2,scal,ldims,msp,t_scal):
         print('LINEAR DIMS!!')
         for obd1,obd2 in zip(dim1,dim2):
             for d1,d2 in zip(obd1,obd2):
-                dim = msp.add_aligned_dim(p1=[i*scal for i in d1[:2]], p2=[i*scal for i in d2[:2]],distance=0.5*scal, dimstyle='EZDXF1',dxfattribs={"layer": ldims})
-                dim.render()
+                dim = msp.add_aligned_dim(p1=[i*scal for i in d1[:2]], p2=[i*scal for i in d2[:2]],\
+                                distance=0.5*scal, dimstyle='EZDXF1',dxfattribs={"layer": ldims},\
+                                override={"dimtxt": t_scal})
+                #dim.render()
 
-    def angular_dimensions_draw(ang,scal,ldims,msp):
+    def angular_dimensions_draw(ang,scal,ldims,msp,t_scal):
         from mathutils import Vector
         print('ANGULAR DIMS!!')
         for a1,a2,a3 in zip(*ang):
             for ang1,ang2,ang3 in zip(a1,a2,a3):
-                bas = (Vector(ang1)+((Vector(ang3)-Vector(ang1))/2)).to_tuple()
-                dim = msp.add_angular_dim_3p(base=bas, center=ang2,p1=ang1, p2=ang3, override={"dimtad": 1}, dimstyle='EZDXF1',dxfattribs={"layer": ldims})
-                dim.render()
+                if scal != 1.0:
+                    bas = list(Vector(ang1)*scal+((Vector(ang3)*scal-Vector(ang1)*scal)/2))
+                    ang1_ = [i*scal for i in ang1]
+                    ang2_ = [i*scal for i in ang2]
+                    ang3_ = [i*scal for i in ang3]
+                    dim = msp.add_angular_dim_3p(base=bas, center=ang2_, p1=ang1_, p2=ang3_, \
+                                override={"dimtad": 1,"dimtxt": t_scal}, \
+                                dimstyle='EZDXF1',dxfattribs={"layer": ldims})
+                else:
+                    bas = list(Vector(ang1)+((Vector(ang3)-Vector(ang1))/2))
+                    dim = msp.add_angular_dim_3p(base=bas, center=ang2, p1=ang1, p2=ang3, \
+                                override={"dimtad": 1,"dimtxt": t_scal}, \
+                                dimstyle='EZDXF1',dxfattribs={"layer": ldims})
+                #dim.render()
 
     def get_values(diction):
         data = []
@@ -175,13 +189,12 @@ def make(self, context):
             data = get_values(leadobj)
             for lt,lv1,lv2 in zip(data,lvo1,lvo2):
                 #msp.add_leader([lv1,lv2], dimstyle='EZDXF1', dxfattribs={"layer": llidr})
-                
                 #print(lt,lv1,lv2)
-                ml_builder = msp.add_multileader_mtext("EZDXF1")
+                ml_builder = msp.add_multileader_mtext("EZDXF2")
                 ml_builder.quick_leader(
                     lt,
-                    target=Vec2(lv1),
-                    segment1=Vec2(lv2)-Vec2(lv1)
+                    target=Vec2(lv1)*scal,
+                    segment1=Vec2(lv2)*scal-Vec2(lv1)*scal
                 #    connection_type=mleader.VerticalConnection.center_overline,
                 )#.render()
                 #ml_builder.text_attachment_point = 2
@@ -200,7 +213,7 @@ def make(self, context):
     '''
 
     # export main definition
-    def export(v,e,p,tv,tt,fp,d1,d2,info,dim1,dim2,angular,scal,vl,ll):
+    def export(v,e,p,tv,tt,fp,d1,d2,info,dim1,dim2,angular,scal,vl,ll,t_scal):
         import ezdxf
         from ezdxf import colors
         from ezdxf import units
@@ -214,9 +227,17 @@ def make(self, context):
         # 25 строка
         doc.header['$INSUNITS'] = units.M
         #create a new dimstyle
-        glo = scal*0.025
-        hai = scal/glo
-        formt = f'EZ_MM_{glo}_H{hai}_MM'
+        glo = scal  #scal*t_scal
+        hai = t_scal   #scal/glo
+        formt = f'EZ_M_{glo}_H{hai}_MM'
+        '''
+        Example: `fmt` = 'EZ_M_100_H25_CM'
+        1. '<EZ>_M_100_H25_CM': arbitrary prefix
+        2. 'EZ_<M>_100_H25_CM': defines the drawing unit, valid values are 'M', 'DM', 'CM', 'MM'
+        3. 'EZ_M_<100>_H25_CM': defines the scale of the drawing, '100' is for 1:100
+        4. 'EZ_M_100_<H25>_CM': defines the text height in mm in paper space times 10, 'H25' is 2.5mm
+        5. 'EZ_M_100_H25_<CM>': defines the units for the measurement text, valid values are 'M', 'DM', 'CM', 'MM'
+        '''
         setup_dimstyle(doc,
                        name='EZDXF1',
                        fmt=formt,
@@ -226,11 +247,11 @@ def make(self, context):
 
         dimstyle = doc.dimstyles.get('EZDXF1')
         #keep dim line with text        
-        dimstyle.dxf.dimtmove=0
+        #dimstyle.dxf.dimtmove=0
         # multyleader
-        mleaderstyle = doc.mleader_styles.duplicate_entry("Standard", "EZDXF1")
+        mleaderstyle = doc.mleader_styles.new("EZDXF2") #duplicate_entry("Standard","EZDXF2")
         mleaderstyle.set_mtext_style("OpenSans")
-        mleaderstyle.dxf.char_height = 0.3*scal  # set the default char height of MTEXT
+        mleaderstyle.dxf.char_height = t_scal*scal  # set the default char height of MTEXT
         # Create new table entries (layers, linetypes, text styles, ...).
         ltext = "SVERCHOK_TEXT"
         lvers = "SVERCHOK_VERS"
@@ -266,11 +287,11 @@ def make(self, context):
         elif v:
             vertices_draw(v,scal,lvers,msp)
         if tv and tt:
-            text_draw(tv,tt,scal,ltext,msp)
+            text_draw(tv,tt,scal,ltext,msp,t_scal)
         if dim1 and dim2:
-            dimensions_draw(dim1,dim2,scal,ldims,msp)
+            dimensions_draw(dim1,dim2,scal,ldims,msp,t_scal)
         if angular:
-            angular_dimensions_draw(angular,scal,ldims,msp)
+            angular_dimensions_draw(angular,scal,ldims,msp,t_scal)
         if vl and ll:
             leader_draw(ll,vl,scal,llidr,msp)
         # Save the DXF document.
@@ -315,6 +336,7 @@ def make(self, context):
         vleader_ = self.inputs['vleader'].sv_get()
 
     scal_ = self.inputs['scal'].sv_get()[0][0]
-    export(vers_,edges_,pols_,Tvers_,Ttext_,fpath_,d1_,d2_,info,dim1_,dim2_,adim1_,scal_,vleader_,leader_)
+    t_scal_ = self.inputs['t_scal'].sv_get()[0][0]
+    export(vers_,edges_,pols_,Tvers_,Ttext_,fpath_,d1_,d2_,info,dim1_,dim2_,adim1_,scal_,vleader_,leader_,t_scal_)
     
     return {'FINISHED'}

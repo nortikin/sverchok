@@ -11,7 +11,7 @@ from math import pi
 
 from mathutils import Matrix
 from sverchok.data_structure import zip_long_repeat
-from sverchok.utils.curve.core import SvCircle
+from sverchok.utils.curve.primitives import SvCircle
 from sverchok.utils.curve.bezier import SvBezierCurve
 
 def interweave(a, b):
