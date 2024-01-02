@@ -144,8 +144,10 @@ def assign_data(obj, data):
         else: #isinstance(obj, Matrix)
             obj[:] = mat
     else: # super optimistic guess
-        obj[:] = type(obj)(data[0][0])
-
+        if isinstance(obj, str):
+            obj = type(obj)(data[0][0])
+        else:
+            obj[:] = type(obj)(data[0][0])
 
 aliases = {
     "c": "bpy.context",
