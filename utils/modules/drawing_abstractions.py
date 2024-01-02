@@ -128,7 +128,6 @@ else:
         def init_complex_texture(self, width, height, texname, data, format):
             texture = self.new_buffer_texture_sized(bgl.GL_FLOAT, data.size, data.tolist())
             self.init_image_from_texture(width, height, texname, texture, format)
-            
 
         generate_textures = lambda self, name: bgl.glGenTextures(1, name)  # returns an indexable item
 
