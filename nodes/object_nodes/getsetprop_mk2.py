@@ -312,7 +312,6 @@ class SvSetPropNodeMK2(SverchCustomTreeNode, bpy.types.Node, SvPropNodeMixin):
                 else: 
                     obj[value] = data[0][0]
             else:
-                print(path)
                 assign_data(obj, data)
 
         except Exception as err:
