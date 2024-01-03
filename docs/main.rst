@@ -23,4 +23,5 @@ It's available on `the GitHub page <https://github.com/nortikin/sverchok>`_.
    data_structure/data_structure_index
    nodes
    tutorials/tutorials
+   tutorials/celling
    contributing/contributing_to_sverchok
