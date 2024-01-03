@@ -146,7 +146,6 @@ def assign_data(obj, data):
     else: # super optimistic guess
         obj[:] = type(obj)(data[0][0])
 
-
 aliases = {
     "c": "bpy.context",
     "C" : "bpy.context",
@@ -304,7 +303,7 @@ class SvSetPropNodeMK2(SverchCustomTreeNode, bpy.types.Node, SvPropNodeMixin):
         obj = get_object(path)
 
         try:
-            if isinstance(obj, (int, float, bpy_prop_array)):
+            if isinstance(obj, (int, float, str, bpy_prop_array)):
 
                 obj = get_object(path[:-1])
                 p_type, value = path[-1]
