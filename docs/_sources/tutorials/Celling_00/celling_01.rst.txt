@@ -55,8 +55,7 @@ Inputs
 
    *  **Wireframe** - Projecting pattern to shape:
 
-     - Dissolve node with SNL node gererate and get list of indices
-     for edges. There is manual job nevertheless for indices ordering
+     - Dissolve node with SNL node gererate and get list of indices for edges. There is manual job nevertheless for indices ordering
 
      |image8|
 
