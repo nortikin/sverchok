@@ -60,15 +60,3 @@ Examples
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 * Pulga Physics-> :doc:`Pulga Physics Solver </nodes/pulga_physics/pulga_physics_solver>`
 
---------
-
-TODO:
-
-Constant vector force:
-
-.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/pulga_physics/pulga_vortex_force/blender_sverchok_pulga_vortex_force_example_01.png
-
-
-Noise Vector Field as vector force:
-
-.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/pulga_physics/pulga_vortex_force/blender_sverchok_pulga_vortex_force_example_02.png
