@@ -15,7 +15,12 @@ from glob import fnmatch
 from logging import info, error
 import logging
 
-URL_RE = re.compile(r"https://.*\.png", re.IGNORECASE)
+# example:
+# 124717678-6c0d0800-df16-11eb-83fa-b9f6d21c417a.png
+URL_RE_PNG = re.compile(r"https://.*\.png", re.IGNORECASE)
+URL_RE_JPG = re.compile(r"https://.*\.jpg", re.IGNORECASE)
+URL_RE_GIF = re.compile(r"https://.*\.gif", re.IGNORECASE)
+URL_RE_NUM = re.compile(r'https://.*[\da-z]*-[\da-z]*-[\da-z]*-[\da-z]*-[\da-z]*', re.IGNORECASE)
 
 logging.basicConfig(level = logging.INFO)
 
@@ -33,23 +38,35 @@ def download_image(url):
             error("Can't download %s: %s", url, e)
             return url
 
-def process_rst(path):
+def process_rst(path,pas):
     info("Processing: %s", path)
     output = ""
     with open(path, 'r') as rst:
         for line in rst:
-            urls = URL_RE.findall(line)
-            for url in urls:
-                dst = download_image(url)
-                line = line.replace(url, relpath(dst, dirname(path)))
+            if pas == 1:
+                urlsP = URL_RE_PNG.findall(line)
+                urlsJ = URL_RE_JPG.findall(line)
+                urlsG = URL_RE_GIF.findall(line)
+                for url in (*urlsP,*urlsJ,*urlsG):
+                    dst = download_image(url)
+                    line = line.replace(url, relpath(dst, dirname(path)))
+            elif pas == 2:
+                urlsN = URL_RE_NUM.findall(line)
+                for url in urlsN:
+                    dst = download_image(url)
+                    line = line.replace(url, relpath(dst, dirname(path)))
             output = output + line
 
     with open(path, 'w') as rst:
         rst.write(output)
 
-if __name__ == '__main__':
+def passing(pas=1):
     for directory, subdirs, fnames in walk("."):
         for fname in fnames:
             if fnmatch.fnmatch(fname, "*.rst"):
-                process_rst(join(directory, fname))
+                process_rst(join(directory, fname), pas)
 
+
+if __name__ == '__main__':
+    passing(1)
+    passing(2)
