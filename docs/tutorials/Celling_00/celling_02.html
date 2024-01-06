@@ -101,12 +101,12 @@
 <p>Importing initial shape (railing lines) for celling, checking of consistency</p>
 <section id="workflow">
 <h3>Workflow<a class="headerlink" href="#workflow" title="Link to this heading">¶</a></h3>
-<p><img alt="image1" src="_build/html/_static/images/10a4fcef-1eb9-421a-8863-f5057b5e4f84" /></p>
+<p><img alt="image1" src="https://github.com/nortikin/sverchok/assets/5783432/10a4fcef-1eb9-421a-8863-f5057b5e4f84" /></p>
 <ol class="arabic">
 <li><p><strong>Importing DXF</strong>:</p>
 <blockquote>
 <div><p>First of all we import DXF. Last 15 years using Blender I did not checked correctness of geometry. Reason for that was usage of blender, mostly for vizualisation. But now checked for production we found that Blender’ DXF importer works as shit in circles case. Deviation can achive 200 mm, that is not suits any needs of production ever in the world. So, only way to avoid such dissapointments was to write short importer by myself for only circles to replace original bezier. On vertical it have deviations because of different rails levels. It required  little triangulation, that not calculated, but manually esteblished and checked on viewer index node.</p>
-<p><img alt="image2" src="_build/html/_static/images/696ec148-69b8-4436-b506-c6eff419e582" /></p>
+<p><img alt="image2" src="https://github.com/nortikin/sverchok/assets/5783432/696ec148-69b8-4436-b506-c6eff419e582" /></p>
 <div class="literal-block-wrapper docutils container" id="id1">
 <div class="code-block-caption"><span class="caption-text">Код узла DXF импорта кругов.</span><a class="headerlink" href="#id1" title="Link to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="hll"><span class="w">     </span><span class="sd">&#39;&#39;&#39;</span>
@@ -182,21 +182,21 @@
 <li><p><strong>Surface</strong>:</p>
 <blockquote>
 <div><p>Surface created from two lines with ordered vertices. I naturally reparametrized them only for better view, that is eye-checked quality. Separately created flat part of surface, it is the same as curved.</p>
-<p><img alt="image3" src="_build/html/_static/images/4ee4f3e7-9cef-4eaa-9aec-13f9d442b579" /></p>
+<p><img alt="image3" src="https://github.com/nortikin/sverchok/assets/5783432/4ee4f3e7-9cef-4eaa-9aec-13f9d442b579" /></p>
 </div></blockquote>
 </li>
 <li><p><strong>Raycasting on surface</strong>:</p>
 <blockquote>
 <div><p>Raycasting pattern on surface. For cropping pattern i used other countour - offseted from shape-definition curves. dimensions are defined by farthere offset for plates. So, offset for plates is half of 14 mm, 7 mm. That means, i needed to offset other 7 mm here.</p>
-<p><img alt="image4" src="_build/html/_static/images/e625e033-cece-4166-8a1d-1789bf4b343f" /></p>
+<p><img alt="image4" src="https://github.com/nortikin/sverchok/assets/5783432/e625e033-cece-4166-8a1d-1789bf4b343f" /></p>
 </div></blockquote>
 </li>
 <li><p><strong>Dissolve</strong>:</p>
 <blockquote>
 <div><p>Dissolve accures with list of edges. Manually iterate all 2500 edges. So, i created edges generator, that choose edges by plate area threshold and boundary analising. Output is flat list in texts, that i need to edit manually. So, need to finish at some stage and not return back for autogenerate list. That means, shape boundary and pattern need to be fixed by design. In practic it was several times changed. After that, i get text with text in node and dissolve it. Than check border elevations (heights) to manually esteblish correct surface shape.</p>
-<p><img alt="image5" src="_build/html/_static/images/4dfe924a-fca8-4dc8-be28-0f749257a06d" /></p>
-<p><img alt="image6" src="_build/html/_static/images/289bc089-ec0e-4f56-b0fe-8e9a9445c988" /></p>
-<p><img alt="image7" src="_build/html/_static/images/a7aeca59-f8dc-4308-98d1-da1a6068af29" /></p>
+<p><img alt="image5" src="https://github.com/nortikin/sverchok/assets/5783432/4dfe924a-fca8-4dc8-be28-0f749257a06d" /></p>
+<p><img alt="image6" src="https://github.com/nortikin/sverchok/assets/5783432/289bc089-ec0e-4f56-b0fe-8e9a9445c988" /></p>
+<p><img alt="image7" src="https://github.com/nortikin/sverchok/assets/5783432/a7aeca59-f8dc-4308-98d1-da1a6068af29" /></p>
 <div class="literal-block-wrapper docutils container" id="id2">
 <div class="code-block-caption"><span class="caption-text">Код узла нахождения лишних рёбер.</span><a class="headerlink" href="#id2" title="Link to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="hll"><span class="w">     </span><span class="sd">&#39;&#39;&#39;</span>
@@ -307,8 +307,8 @@
 <li><p><strong>Separate corner plates</strong>:</p>
 <blockquote>
 <div><p>To avoid jumping plates’ corners, happening far from original surface, i created part of triangulated plates. Defined by lines, snapped to projected pattern corners, i filtered plates by lines location, later that lines helped me to define left and right side of plates’ triangles, because, farthere offset happened only to two sides. Here I need to say, that all plates are completely flat. So, flattaning happens here in step forward. To flatten triangulated plate I separated triangles, flatted and joined pairs after.</p>
-<p><img alt="image8" src="_build/html/_static/images/5e7bea86-a6a6-48a9-9294-24df20655781" /></p>
-<p><img alt="image9" src="_build/html/_static/images/2b4fde10-8bcf-458f-9683-64959ed12083" /></p>
+<p><img alt="image8" src="https://github.com/nortikin/sverchok/assets/5783432/5e7bea86-a6a6-48a9-9294-24df20655781" /></p>
+<p><img alt="image9" src="https://github.com/nortikin/sverchok/assets/5783432/2b4fde10-8bcf-458f-9683-64959ed12083" /></p>
 </div></blockquote>
 </li>
 </ol>

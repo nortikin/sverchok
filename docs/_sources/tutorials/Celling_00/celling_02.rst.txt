@@ -229,12 +229,12 @@ Workflow
     |image9|
 
 
-.. |image1| image:: ../../_build/html/_static/images/10a4fcef-1eb9-421a-8863-f5057b5e4f84
-.. |image2| image:: ../../_build/html/_static/images/696ec148-69b8-4436-b506-c6eff419e582
-.. |image3| image:: ../../_build/html/_static/images/4ee4f3e7-9cef-4eaa-9aec-13f9d442b579
-.. |image4| image:: ../../_build/html/_static/images/e625e033-cece-4166-8a1d-1789bf4b343f
-.. |image5| image:: ../../_build/html/_static/images/4dfe924a-fca8-4dc8-be28-0f749257a06d
-.. |image6| image:: ../../_build/html/_static/images/289bc089-ec0e-4f56-b0fe-8e9a9445c988
-.. |image7| image:: ../../_build/html/_static/images/a7aeca59-f8dc-4308-98d1-da1a6068af29
-.. |image8| image:: ../../_build/html/_static/images/5e7bea86-a6a6-48a9-9294-24df20655781
-.. |image9| image:: ../../_build/html/_static/images/2b4fde10-8bcf-458f-9683-64959ed12083
+.. |image1| image:: https://github.com/nortikin/sverchok/assets/5783432/10a4fcef-1eb9-421a-8863-f5057b5e4f84
+.. |image2| image:: https://github.com/nortikin/sverchok/assets/5783432/696ec148-69b8-4436-b506-c6eff419e582
+.. |image3| image:: https://github.com/nortikin/sverchok/assets/5783432/4ee4f3e7-9cef-4eaa-9aec-13f9d442b579
+.. |image4| image:: https://github.com/nortikin/sverchok/assets/5783432/e625e033-cece-4166-8a1d-1789bf4b343f
+.. |image5| image:: https://github.com/nortikin/sverchok/assets/5783432/4dfe924a-fca8-4dc8-be28-0f749257a06d
+.. |image6| image:: https://github.com/nortikin/sverchok/assets/5783432/289bc089-ec0e-4f56-b0fe-8e9a9445c988
+.. |image7| image:: https://github.com/nortikin/sverchok/assets/5783432/a7aeca59-f8dc-4308-98d1-da1a6068af29
+.. |image8| image:: https://github.com/nortikin/sverchok/assets/5783432/5e7bea86-a6a6-48a9-9294-24df20655781
+.. |image9| image:: https://github.com/nortikin/sverchok/assets/5783432/2b4fde10-8bcf-458f-9683-64959ed12083
