@@ -18,76 +18,74 @@ Workflow
 
     |image2|
 
-    <details>
-    <summary>Код узла DXF импорта кругов.</summary>
-    ```
-    '''
-    in resol    s d=128 n=2
-    in path    FP d=[[]] n=0
-    out vers    v d=[[]] n=0
-    out edges   s d=[[]] n=0
-    '''
+    |code1|
+    .. code-block:: code1
+       :caption: Код узла DXF импорта кругов.
+            '''
+            in resol    s d=128 n=2
+            in path    FP d=[[]] n=0
+            out vers    v d=[[]] n=0
+            out edges   s d=[[]] n=0
+            '''
 
-    '''
-    Принцип работы - 
-        брать данные и в dxf
-    '''
-
-
-    import bpy
+            '''
+            Принцип работы - 
+                брать данные и в dxf
+            '''
 
 
-
-    def make():
-        ''' ЗАГОТОВКА ДЛЯ БУДУЩИХ ОТДЕЛЬНЫХ УЗЛОВ
-            DXF ИМПОРТА.'''
-
-        def import_dxf(fp,resolution):
-            import ezdxf
-            from ezdxf import colors
-            from ezdxf import units
-            from ezdxf.tools.standards import setup_dimstyle
-            from mathutils import Vector
-
-            dxf = ezdxf.readfile(fp)
-            lifehack = 50
-            ran = [i/lifehack for i in range(0,lifehack*360,int((lifehack*360)/resolution))]
-            #print(ran)
-            vers = []
-            edges = []
-            for a in dxf.query('Arc'):
-            #a = dxf.query('Arc')[1]
-                #arc = sverchok.utils.curve.primitives.SvCircle
-                #arc.to_nurbs()
-                vers_ = []
-                for i in  a.vertices(ran): # line 43 is 35 in make 24 in import
-                    cen = a.dxf.center.xyz
-                    vers_.append([j/1000 for j,k in zip(i,cen)])
-                vers.append(vers_)
-                edges.append([[i,i+1] for i in range(len(vers_)-1)])
-                edges[-1].append([len(vers_)-1,0])
-            return [vers], [edges]
+            import bpy
 
 
 
-        # MAKE DEFINITION BODY HERE #
+            def make():
+                ''' ЗАГОТОВКА ДЛЯ БУДУЩИХ ОТДЕЛЬНЫХ УЗЛОВ
+                    DXF ИМПОРТА.'''
+
+                def import_dxf(fp,resolution):
+                    import ezdxf
+                    from ezdxf import colors
+                    from ezdxf import units
+                    from ezdxf.tools.standards import setup_dimstyle
+                    from mathutils import Vector
+
+                    dxf = ezdxf.readfile(fp)
+                    lifehack = 50
+                    ran = [i/lifehack for i in range(0,lifehack*360,int((lifehack*360)/resolution))]
+                    #print(ran)
+                    vers = []
+                    edges = []
+                    for a in dxf.query('Arc'):
+                    #a = dxf.query('Arc')[1]
+                        #arc = sverchok.utils.curve.primitives.SvCircle
+                        #arc.to_nurbs()
+                        vers_ = []
+                        for i in  a.vertices(ran): # line 43 is 35 in make 24 in import
+                            cen = a.dxf.center.xyz
+                            vers_.append([j/1000 for j,k in zip(i,cen)])
+                        vers.append(vers_)
+                        edges.append([[i,i+1] for i in range(len(vers_)-1)])
+                        edges[-1].append([len(vers_)-1,0])
+                    return [vers], [edges]
 
 
 
-        if self.inputs['path'].is_linked:
-            fpath_ = self.inputs['path'].sv_get()[0][0]
-        resol_ = self.inputs['resol'].sv_get()[0][0]
+                # MAKE DEFINITION BODY HERE #
 
-        verts_, edges_ = import_dxf(fpath_,resol_)
 
-        if self.outputs['vers'].is_linked:
-            self.outputs['vers'].sv_set(verts_)
-        if self.outputs['edges'].is_linked:
-            self.outputs['edges'].sv_set(edges_)
 
-    make()
-    ```
-    </details>
+                if self.inputs['path'].is_linked:
+                    fpath_ = self.inputs['path'].sv_get()[0][0]
+                resol_ = self.inputs['resol'].sv_get()[0][0]
+
+                verts_, edges_ = import_dxf(fpath_,resol_)
+
+                if self.outputs['vers'].is_linked:
+                    self.outputs['vers'].sv_set(verts_)
+                if self.outputs['edges'].is_linked:
+                    self.outputs['edges'].sv_set(edges_)
+
+            make()
 
 2. **Surface**:
 
@@ -112,7 +110,8 @@ Workflow
     
     |image7|
 
-    .. code-block::
+    |code2|
+    .. code-block:: code2
        :caption: Код узла нахождения лишних рёбер.
             '''
             in vers    v d=[[]] n=0
@@ -209,9 +208,9 @@ Workflow
                 
                 return {'FINISHED'}
 
-    .. code-block::
+    |code3|
+    .. code-block:: code3
        :caption: Результат полуавтоматического списка индексов рёбер.
-
             [[3, 7, 14, 21, 24, 30, 33, 37, 41, 43, 45, 48, 54, 57, 60, 63, 66, 70, 78, 82, 88, 95, 104, 106,108, 112, 115, 119, 126, 130, 134, 145, 149, 152, 156, 160, 164, 168, 172, 176, 180, 184, 188, 192, 196, 200, 204, 208, 212, 216, 220, 224, 228, 232, 236, 240, 244, 248, 252, 256, 260, 264, 268, 272, 276, 280, 284, 288, 292, 296, 301, 306, 310, 315, 321, 330, 333, 337, 341, 347, 351, 391, 400, 405, 415, 417, 423, 427, 529, 591, 599, 661, 684, 708, 710, 728, 730, 732, 752, 762, 765, 767, 771, 777, 788, 793, 795, 797, 799, 802,805, 808, 810, 814, 816, 818, 822, 826, 830, 834, 838, 842, 846, 850, 854, 858, 862, 866, 870, 874, 878, 882, 886, 890, 894, 898, 902, 906, 910, 914, 918, 922, 926, 930, 934, 938, 942, 946, 950, 957, 965, 969, 975, 981, 987, 996, 999, 1003, 1007, 1013, 1017, 1278, 1298, 1300, 1313, 1315, 1317, 1325, 1337, 1340, 1965, 1966]]
 
 
