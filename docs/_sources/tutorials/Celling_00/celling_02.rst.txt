@@ -112,112 +112,108 @@ Workflow
     
     |image7|
 
-    <details>
-    <summary>Код узла нахождения лишних рёбер.</summary>
-    ```
-    '''
-    in vers    v d=[[]] n=0
-    in edges   s d=[[]] n=0
-    in pols    s d=[[]] n=0
-    in areas   s d=[[]] n=0
-    in border  s d=[[]] n=0
-    in cutarea s d=0.1  n=2
-    '''
+    .. code-block::
+       :caption: Код узла нахождения лишних рёбер.
+            '''
+            in vers    v d=[[]] n=0
+            in edges   s d=[[]] n=0
+            in pols    s d=[[]] n=0
+            in areas   s d=[[]] n=0
+            in border  s d=[[]] n=0
+            in cutarea s d=0.1  n=2
+            '''
 
-    '''
-    Принцип работы - 
-        снаружи:
-            определить площади
-            определить границы
-        снутри:
-            определить граничащие полигоны
-            определить граничащие рёбра
-        далее:
-            вывод индексов рёбер
-    '''
+            '''
+            Принцип работы - 
+                снаружи:
+                    определить площади
+                    определить границы
+                снутри:
+                    определить граничащие полигоны
+                    определить граничащие рёбра
+                далее:
+                    вывод индексов рёбер
+            '''
 
 
-    import bpy
+            import bpy
 
-    self.make_operator('make')
+            self.make_operator('make')
 
-        
-    def ui(self, context, layout):
-        cb_str = 'node.scriptlite_custom_callback'
-        layout.operator(cb_str, text='B A K E').cb_name='make'
+                
+            def ui(self, context, layout):
+                cb_str = 'node.scriptlite_custom_callback'
+                layout.operator(cb_str, text='B A K E').cb_name='make'
 
-    def make(self, context):
-        from mathutils import Vector as V
-        def do_text(out_string):
-            if not self.name in bpy.data.texts:
-                bpy.data.texts.new(self.name)
-            datablock = bpy.data.texts[self.name]
-            datablock.clear()
-            datablock.from_string(out_string)
+            def make(self, context):
+                from mathutils import Vector as V
+                def do_text(out_string):
+                    if not self.name in bpy.data.texts:
+                        bpy.data.texts.new(self.name)
+                    datablock = bpy.data.texts[self.name]
+                    datablock.clear()
+                    datablock.from_string(out_string)
 
-        def main_border(vers,edges,pols,areas,border,cutarea):
-            j = 0 # номер полигона короткого
-            found = []
-            used = []
-            for pol,bor,ar in zip(pols,border,areas):
-                if ar < cutarea and bor:
-                    fou = [i for i,po in enumerate(pols) if any([e in po for e in pol]) and po != pol]
-                    # i номер полигона большого
-                    for i in fou:
-                    #i = fou[0]
-                        if i not in used:
-                            used.append(i)
-                            # v это искомые индексы вершин, нужны индексы рёбер
-                            v = list(set(pols[i]) & set(pol))
-                            if len(v) < 2: continue
-                            # записать индексы рёбер, в которых совпало два индекса вершин
-                            eds_ = [i for i,e in enumerate(edges) if len(set(v) & set(e))==2]
-                            a = lambda x: (V(vers[edges[x][0]])-V(vers[edges[x][1]])).length
-                            eds = sorted(eds_,key=a)
-                            #print(v,eds_)
-                            found.extend(eds)
-                j += 1
-            foundout = sorted(list(set(found)))
-            #print(foundout[:5],len(foundout))
-            #edges_out = []
-            #for i,e in enumerate(edges):
-            #    if i in foundout: edges_out.extend([True])
-            #    else: edges_out.extend([False])
-            #print([edges_out])
-            return [foundout]
+                def main_border(vers,edges,pols,areas,border,cutarea):
+                    j = 0 # номер полигона короткого
+                    found = []
+                    used = []
+                    for pol,bor,ar in zip(pols,border,areas):
+                        if ar < cutarea and bor:
+                            fou = [i for i,po in enumerate(pols) if any([e in po for e in pol]) and po != pol]
+                            # i номер полигона большого
+                            for i in fou:
+                            #i = fou[0]
+                                if i not in used:
+                                    used.append(i)
+                                    # v это искомые индексы вершин, нужны индексы рёбер
+                                    v = list(set(pols[i]) & set(pol))
+                                    if len(v) < 2: continue
+                                    # записать индексы рёбер, в которых совпало два индекса вершин
+                                    eds_ = [i for i,e in enumerate(edges) if len(set(v) & set(e))==2]
+                                    a = lambda x: (V(vers[edges[x][0]])-V(vers[edges[x][1]])).length
+                                    eds = sorted(eds_,key=a)
+                                    #print(v,eds_)
+                                    found.extend(eds)
+                        j += 1
+                    foundout = sorted(list(set(found)))
+                    #print(foundout[:5],len(foundout))
+                    #edges_out = []
+                    #for i,e in enumerate(edges):
+                    #    if i in foundout: edges_out.extend([True])
+                    #    else: edges_out.extend([False])
+                    #print([edges_out])
+                    return [foundout]
 
-        if self.inputs['vers'].is_linked:
-            vers = self.inputs['vers'].sv_get()
-        else: return {'FINISHED'}
-        if self.inputs['pols'].is_linked:
-            pols = self.inputs['pols'].sv_get()
-        else: return {'FINISHED'}
-        if self.inputs['edges'].is_linked:
-            edges = self.inputs['edges'].sv_get()
-        else: return {'FINISHED'}
-        if self.inputs['areas'].is_linked:
-            areas = self.inputs['areas'].sv_get()
-        else: return {'FINISHED'}
-        if self.inputs['border'].is_linked:
-            border = self.inputs['border'].sv_get()
-        else: return {'FINISHED'}
-        cutarea = self.inputs['cutarea'].sv_get()
-        if type(cutarea[0][0]) == int:
-            cutarea = cutarea[0]
-        #print('\n'.join([str(i) for i in (vers[0][:5],edges[0][:5],pols[0][:5],areas[0][:5],border[0][:5],cutarea[0][0])]))
-        edges_out = main_border(vers[0],edges[0],pols[0],areas[0],border[0],cutarea[0][0])
-        do_text(str(edges_out))
-        
-        return {'FINISHED'}
-    ```
-    </details>
+                if self.inputs['vers'].is_linked:
+                    vers = self.inputs['vers'].sv_get()
+                else: return {'FINISHED'}
+                if self.inputs['pols'].is_linked:
+                    pols = self.inputs['pols'].sv_get()
+                else: return {'FINISHED'}
+                if self.inputs['edges'].is_linked:
+                    edges = self.inputs['edges'].sv_get()
+                else: return {'FINISHED'}
+                if self.inputs['areas'].is_linked:
+                    areas = self.inputs['areas'].sv_get()
+                else: return {'FINISHED'}
+                if self.inputs['border'].is_linked:
+                    border = self.inputs['border'].sv_get()
+                else: return {'FINISHED'}
+                cutarea = self.inputs['cutarea'].sv_get()
+                if type(cutarea[0][0]) == int:
+                    cutarea = cutarea[0]
+                #print('\n'.join([str(i) for i in (vers[0][:5],edges[0][:5],pols[0][:5],areas[0][:5],border[0][:5],cutarea[0][0])]))
+                edges_out = main_border(vers[0],edges[0],pols[0],areas[0],border[0],cutarea[0][0])
+                do_text(str(edges_out))
+                
+                return {'FINISHED'}
 
-    <details>
-    <summary>Результат полуавтоматического списка индексов рёбер.</summary>
-    ```
-    [[3, 7, 14, 21, 24, 30, 33, 37, 41, 43, 45, 48, 54, 57, 60, 63, 66, 70, 78, 82, 88, 95, 104, 106,108, 112, 115, 119, 126, 130, 134, 145, 149, 152, 156, 160, 164, 168, 172, 176, 180, 184, 188, 192, 196, 200, 204, 208, 212, 216, 220, 224, 228, 232, 236, 240, 244, 248, 252, 256, 260, 264, 268, 272, 276, 280, 284, 288, 292, 296, 301, 306, 310, 315, 321, 330, 333, 337, 341, 347, 351, 391, 400, 405, 415, 417, 423, 427, 529, 591, 599, 661, 684, 708, 710, 728, 730, 732, 752, 762, 765, 767, 771, 777, 788, 793, 795, 797, 799, 802,805, 808, 810, 814, 816, 818, 822, 826, 830, 834, 838, 842, 846, 850, 854, 858, 862, 866, 870, 874, 878, 882, 886, 890, 894, 898, 902, 906, 910, 914, 918, 922, 926, 930, 934, 938, 942, 946, 950, 957, 965, 969, 975, 981, 987, 996, 999, 1003, 1007, 1013, 1017, 1278, 1298, 1300, 1313, 1315, 1317, 1325, 1337, 1340, 1965, 1966]]
-    ```
-    </details>
+    .. code-block::
+       :caption: Результат полуавтоматического списка индексов рёбер.
+
+            [[3, 7, 14, 21, 24, 30, 33, 37, 41, 43, 45, 48, 54, 57, 60, 63, 66, 70, 78, 82, 88, 95, 104, 106,108, 112, 115, 119, 126, 130, 134, 145, 149, 152, 156, 160, 164, 168, 172, 176, 180, 184, 188, 192, 196, 200, 204, 208, 212, 216, 220, 224, 228, 232, 236, 240, 244, 248, 252, 256, 260, 264, 268, 272, 276, 280, 284, 288, 292, 296, 301, 306, 310, 315, 321, 330, 333, 337, 341, 347, 351, 391, 400, 405, 415, 417, 423, 427, 529, 591, 599, 661, 684, 708, 710, 728, 730, 732, 752, 762, 765, 767, 771, 777, 788, 793, 795, 797, 799, 802,805, 808, 810, 814, 816, 818, 822, 826, 830, 834, 838, 842, 846, 850, 854, 858, 862, 866, 870, 874, 878, 882, 886, 890, 894, 898, 902, 906, 910, 914, 918, 922, 926, 930, 934, 938, 942, 946, 950, 957, 965, 969, 975, 981, 987, 996, 999, 1003, 1007, 1013, 1017, 1278, 1298, 1300, 1313, 1315, 1317, 1325, 1337, 1340, 1965, 1966]]
+
 
 5. **Separate corner plates**:
 
