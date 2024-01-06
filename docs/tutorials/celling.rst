@@ -18,3 +18,4 @@ So, plus-minus optimal way of recreation invented here.
    :maxdepth: 1
 
    Lesson 01 - Overview for product design <Celling_00/celling_01>
+   Lesson 02 - Geometry preparation <Celling_00/celling_02>

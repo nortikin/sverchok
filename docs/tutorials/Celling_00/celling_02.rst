@@ -18,9 +18,10 @@ Workflow
 
     |image2|
 
-    |code1|
+    
     .. code-block:: code1
        :caption: Код узла DXF импорта кругов.
+       
             '''
             in resol    s d=128 n=2
             in path    FP d=[[]] n=0
@@ -110,9 +111,10 @@ Workflow
     
     |image7|
 
-    |code2|
+    
     .. code-block:: code2
        :caption: Код узла нахождения лишних рёбер.
+       
             '''
             in vers    v d=[[]] n=0
             in edges   s d=[[]] n=0
@@ -208,9 +210,10 @@ Workflow
                 
                 return {'FINISHED'}
 
-    |code3|
+    
     .. code-block:: code3
        :caption: Результат полуавтоматического списка индексов рёбер.
+       
             [[3, 7, 14, 21, 24, 30, 33, 37, 41, 43, 45, 48, 54, 57, 60, 63, 66, 70, 78, 82, 88, 95, 104, 106,108, 112, 115, 119, 126, 130, 134, 145, 149, 152, 156, 160, 164, 168, 172, 176, 180, 184, 188, 192, 196, 200, 204, 208, 212, 216, 220, 224, 228, 232, 236, 240, 244, 248, 252, 256, 260, 264, 268, 272, 276, 280, 284, 288, 292, 296, 301, 306, 310, 315, 321, 330, 333, 337, 341, 347, 351, 391, 400, 405, 415, 417, 423, 427, 529, 591, 599, 661, 684, 708, 710, 728, 730, 732, 752, 762, 765, 767, 771, 777, 788, 793, 795, 797, 799, 802,805, 808, 810, 814, 816, 818, 822, 826, 830, 834, 838, 842, 846, 850, 854, 858, 862, 866, 870, 874, 878, 882, 886, 890, 894, 898, 902, 906, 910, 914, 918, 922, 926, 930, 934, 938, 942, 946, 950, 957, 965, 969, 975, 981, 987, 996, 999, 1003, 1007, 1013, 1017, 1278, 1298, 1300, 1313, 1315, 1317, 1325, 1337, 1340, 1965, 1966]]
 
 
@@ -223,12 +226,12 @@ Workflow
     |image9|
 
 
-.. |image1| image:: https://github.com/nortikin/sverchok/assets/5783432/10a4fcef-1eb9-421a-8863-f5057b5e4f84
-.. |image2| image:: https://github.com/nortikin/sverchok/assets/5783432/696ec148-69b8-4436-b506-c6eff419e582
-.. |image3| image:: https://github.com/nortikin/sverchok/assets/5783432/4ee4f3e7-9cef-4eaa-9aec-13f9d442b579
-.. |image4| image:: https://github.com/nortikin/sverchok/assets/5783432/e625e033-cece-4166-8a1d-1789bf4b343f
-.. |image5| image:: https://github.com/nortikin/sverchok/assets/5783432/4dfe924a-fca8-4dc8-be28-0f749257a06d
-.. |image6| image:: https://github.com/nortikin/sverchok/assets/5783432/289bc089-ec0e-4f56-b0fe-8e9a9445c988
-.. |image7| image:: https://github.com/nortikin/sverchok/assets/5783432/a7aeca59-f8dc-4308-98d1-da1a6068af29
-.. |image8| image:: https://github.com/nortikin/sverchok/assets/5783432/5e7bea86-a6a6-48a9-9294-24df20655781
-.. |image9| image:: https://github.com/nortikin/sverchok/assets/5783432/2b4fde10-8bcf-458f-9683-64959ed12083
+.. |image1| image:: ../../_build/html/_static/images/10a4fcef-1eb9-421a-8863-f5057b5e4f84
+.. |image2| image:: ../../_build/html/_static/images/696ec148-69b8-4436-b506-c6eff419e582
+.. |image3| image:: ../../_build/html/_static/images/4ee4f3e7-9cef-4eaa-9aec-13f9d442b579
+.. |image4| image:: ../../_build/html/_static/images/e625e033-cece-4166-8a1d-1789bf4b343f
+.. |image5| image:: ../../_build/html/_static/images/4dfe924a-fca8-4dc8-be28-0f749257a06d
+.. |image6| image:: ../../_build/html/_static/images/289bc089-ec0e-4f56-b0fe-8e9a9445c988
+.. |image7| image:: ../../_build/html/_static/images/a7aeca59-f8dc-4308-98d1-da1a6068af29
+.. |image8| image:: ../../_build/html/_static/images/5e7bea86-a6a6-48a9-9294-24df20655781
+.. |image9| image:: ../../_build/html/_static/images/2b4fde10-8bcf-458f-9683-64959ed12083
