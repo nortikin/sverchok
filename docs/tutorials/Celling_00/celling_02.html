@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Celling 02. Preparing geometry for work &mdash; Sverchok 1, 2, 0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+
+  
+    <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/documentation_options.js?v=773c2105"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../main.html" class="icon icon-home">
+            Sverchok
+              <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                1, 2, 0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction/introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_interface/user_interface.html">User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tree_evaluation_system.html">Node tree evaluation system</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data_structure/data_structure_index.html">Data structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../nodes.html">Nodes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../celling.html">Celling design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing/contributing_to_sverchok.html">Contributing to sverchok</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../main.html">Sverchok</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../main.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Celling 02. Preparing geometry for work</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/tutorials/Celling_00/celling_02.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="celling-02-preparing-geometry-for-work">
+<h1>Celling 02. Preparing geometry for work<a class="headerlink" href="#celling-02-preparing-geometry-for-work" title="Link to this heading">¶</a></h1>
+<section id="subject">
+<h2>Subject<a class="headerlink" href="#subject" title="Link to this heading">¶</a></h2>
+<p>Importing initial shape (railing lines) for celling, checking of consistency</p>
+<section id="workflow">
+<h3>Workflow<a class="headerlink" href="#workflow" title="Link to this heading">¶</a></h3>
+<p><img alt="image1" src="https://github.com/nortikin/sverchok/assets/5783432/10a4fcef-1eb9-421a-8863-f5057b5e4f84" /></p>
+<ol class="arabic">
+<li><p><strong>Importing DXF</strong>:</p>
+<blockquote>
+<div><p>First of all we import DXF. Last 15 years using Blender I did not checked correctness of geometry. Reason for that was usage of blender, mostly for vizualisation. But now checked for production we found that Blender’ DXF importer works as shit in circles case. Deviation can achive 200 mm, that is not suits any needs of production ever in the world. So, only way to avoid such dissapointments was to write short importer by myself for only circles to replace original bezier. On vertical it have deviations because of different rails levels. It required  little triangulation, that not calculated, but manually esteblished and checked on viewer index node.</p>
+<p><img alt="image2" src="https://github.com/nortikin/sverchok/assets/5783432/696ec148-69b8-4436-b506-c6eff419e582" /></p>
+<p>&lt;details&gt;
+&lt;summary&gt;Код узла DXF импорта кругов.&lt;/summary&gt;
+<a href="#id1"><span class="problematic" id="id2">``</span></a>`
+‘’’
+in resol    s d=128 n=2
+in path    FP d=[[]] n=0
+out vers    v d=[[]] n=0
+out edges   s d=[[]] n=0
+‘’’</p>
+<p>‘’’
+Принцип работы -</p>
+<blockquote>
+<div><p>брать данные и в dxf</p>
+</div></blockquote>
+<p>‘’’</p>
+<p>import bpy</p>
+<dl>
+<dt>def make():</dt><dd><dl>
+<dt>‘’’ ЗАГОТОВКА ДЛЯ БУДУЩИХ ОТДЕЛЬНЫХ УЗЛОВ</dt><dd><p>DXF ИМПОРТА.’’’</p>
+</dd>
+<dt>def import_dxf(fp,resolution):</dt><dd><p>import ezdxf
+from ezdxf import colors
+from ezdxf import units
+from ezdxf.tools.standards import setup_dimstyle
+from mathutils import Vector</p>
+<p>dxf = ezdxf.readfile(fp)
+lifehack = 50
+ran = [i/lifehack for i in range(0,lifehack*360,int((lifehack*360)/resolution))]
+#print(ran)
+vers = []
+edges = []
+for a in dxf.query(‘Arc’):
+#a = dxf.query(‘Arc’)[1]</p>
+<blockquote>
+<div><p>#arc = sverchok.utils.curve.primitives.SvCircle
+#arc.to_nurbs()
+<a href="#id9"><span class="problematic" id="id10">vers_</span></a> = []
+for i in  a.vertices(ran): # line 43 is 35 in make 24 in import</p>
+<blockquote>
+<div><p>cen = a.dxf.center.xyz
+<a href="#id11"><span class="problematic" id="id12">vers_</span></a>.append([j/1000 for j,k in zip(i,cen)])</p>
+</div></blockquote>
+<p>vers.append(<a href="#id13"><span class="problematic" id="id14">vers_</span></a>)
+edges.append([[i,i+1] for i in range(len(<a href="#id15"><span class="problematic" id="id16">vers_</span></a>)-1)])
+edges[-1].append([len(<a href="#id17"><span class="problematic" id="id18">vers_</span></a>)-1,0])</p>
+</div></blockquote>
+<p>return [vers], [edges]</p>
+</dd>
+</dl>
+<p># MAKE DEFINITION BODY HERE #</p>
+<dl class="simple">
+<dt>if self.inputs[‘path’].is_linked:</dt><dd><p><a href="#id19"><span class="problematic" id="id20">fpath_</span></a> = self.inputs[‘path’].sv_get()[0][0]</p>
+</dd>
+</dl>
+<p><a href="#id21"><span class="problematic" id="id22">resol_</span></a> = self.inputs[‘resol’].sv_get()[0][0]</p>
+<p><a href="#id23"><span class="problematic" id="id24">verts_</span></a>, <a href="#id25"><span class="problematic" id="id26">edges_</span></a> = import_dxf(<a href="#id27"><span class="problematic" id="id28">fpath_</span></a>,resol_)</p>
+<dl class="simple">
+<dt>if self.outputs[‘vers’].is_linked:</dt><dd><p>self.outputs[‘vers’].sv_set(<a href="#id29"><span class="problematic" id="id30">verts_</span></a>)</p>
+</dd>
+<dt>if self.outputs[‘edges’].is_linked:</dt><dd><p>self.outputs[‘edges’].sv_set(<a href="#id31"><span class="problematic" id="id32">edges_</span></a>)</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p>make()
+<a href="#id3"><span class="problematic" id="id4">``</span></a>`
+&lt;/details&gt;</p>
+</div></blockquote>
+</li>
+<li><p><strong>Surface</strong>:</p>
+<blockquote>
+<div><p>Surface created from two lines with ordered vertices. I naturally reparametrized them only for better view, that is eye-checked quality. Separately created flat part of surface, it is the same as curved.</p>
+<p><img alt="image3" src="https://github.com/nortikin/sverchok/assets/5783432/4ee4f3e7-9cef-4eaa-9aec-13f9d442b579" /></p>
+</div></blockquote>
+</li>
+<li><p><strong>Raycasting on surface</strong>:</p>
+<blockquote>
+<div><p>Raycasting pattern on surface. For cropping pattern i used other countour - offseted from shape-definition curves. dimensions are defined by farthere offset for plates. So, offset for plates is half of 14 mm, 7 mm. That means, i needed to offset other 7 mm here.</p>
+<p><img alt="image4" src="https://github.com/nortikin/sverchok/assets/5783432/e625e033-cece-4166-8a1d-1789bf4b343f" /></p>
+</div></blockquote>
+</li>
+<li><p><strong>Dissolve</strong>:</p>
+<blockquote>
+<div><p>Dissolve accures with list of edges. Manually iterate all 2500 edges. So, i created edges generator, that choose edges by plate area threshold and boundary analising. Output is flat list in texts, that i need to edit manually. So, need to finish at some stage and not return back for autogenerate list. That means, shape boundary and pattern need to be fixed by design. In practic it was several times changed. After that, i get text with text in node and dissolve it. Than check border elevations (heights) to manually esteblish correct surface shape.</p>
+<p><img alt="image5" src="https://github.com/nortikin/sverchok/assets/5783432/4dfe924a-fca8-4dc8-be28-0f749257a06d" /></p>
+<p><img alt="image6" src="https://github.com/nortikin/sverchok/assets/5783432/289bc089-ec0e-4f56-b0fe-8e9a9445c988" /></p>
+<p><img alt="image7" src="https://github.com/nortikin/sverchok/assets/5783432/a7aeca59-f8dc-4308-98d1-da1a6068af29" /></p>
+<p>&lt;details&gt;
+&lt;summary&gt;Код узла нахождения лишних рёбер.&lt;/summary&gt;
+<a href="#id5"><span class="problematic" id="id6">``</span></a>`
+‘’’
+in vers    v d=[[]] n=0
+in edges   s d=[[]] n=0
+in pols    s d=[[]] n=0
+in areas   s d=[[]] n=0
+in border  s d=[[]] n=0
+in cutarea s d=0.1  n=2
+‘’’</p>
+<p>‘’’
+Принцип работы -</p>
+<blockquote>
+<div><dl class="simple">
+<dt>снаружи:</dt><dd><p>определить площади
+определить границы</p>
+</dd>
+<dt>снутри:</dt><dd><p>определить граничащие полигоны
+определить граничащие рёбра</p>
+</dd>
+<dt>далее:</dt><dd><p>вывод индексов рёбер</p>
+</dd>
+</dl>
+</div></blockquote>
+<p>‘’’</p>
+<p>import bpy</p>
+<p>self.make_operator(‘make’)</p>
+<dl>
+<dt>def ui(self, context, layout):</dt><dd><p>cb_str = ‘node.scriptlite_custom_callback’
+layout.operator(cb_str, text=’B A K E’).cb_name=’make’</p>
+</dd>
+<dt>def make(self, context):</dt><dd><p>from mathutils import Vector as V
+def do_text(out_string):</p>
+<blockquote>
+<div><dl class="simple">
+<dt>if not self.name in bpy.data.texts:</dt><dd><p>bpy.data.texts.new(self.name)</p>
+</dd>
+</dl>
+<p>datablock = bpy.data.texts[self.name]
+datablock.clear()
+datablock.from_string(out_string)</p>
+</div></blockquote>
+<dl>
+<dt>def main_border(vers,edges,pols,areas,border,cutarea):</dt><dd><p>j = 0 # номер полигона короткого
+found = []
+used = []
+for pol,bor,ar in zip(pols,border,areas):</p>
+<blockquote>
+<div><dl>
+<dt>if ar &lt; cutarea and bor:</dt><dd><p>fou = [i for i,po in enumerate(pols) if any([e in po for e in pol]) and po != pol]
+# i номер полигона большого
+for i in fou:
+#i = fou[0]</p>
+<blockquote>
+<div><dl class="simple">
+<dt>if i not in used:</dt><dd><p>used.append(i)
+# v это искомые индексы вершин, нужны индексы рёбер
+v = list(set(pols[i]) &amp; set(pol))
+if len(v) &lt; 2: continue
+# записать индексы рёбер, в которых совпало два индекса вершин
+<a href="#id33"><span class="problematic" id="id34">eds_</span></a> = [i for i,e in enumerate(edges) if len(set(v) &amp; set(e))==2]
+a = lambda x: (V(vers[edges[x][0]])-V(vers[edges[x][1]])).length
+eds = sorted(<a href="#id35"><span class="problematic" id="id36">eds_</span></a>,key=a)
+#print(v,eds_)
+found.extend(eds)</p>
+</dd>
+</dl>
+</div></blockquote>
+</dd>
+</dl>
+<p>j += 1</p>
+</div></blockquote>
+<p>foundout = sorted(list(set(found)))
+#print(foundout[:5],len(foundout))
+#edges_out = []
+#for i,e in enumerate(edges):
+#    if i in foundout: edges_out.extend([True])
+#    else: edges_out.extend([False])
+#print([edges_out])
+return [foundout]</p>
+</dd>
+<dt>if self.inputs[‘vers’].is_linked:</dt><dd><p>vers = self.inputs[‘vers’].sv_get()</p>
+</dd>
+</dl>
+<p>else: return {‘FINISHED’}
+if self.inputs[‘pols’].is_linked:</p>
+<blockquote>
+<div><p>pols = self.inputs[‘pols’].sv_get()</p>
+</div></blockquote>
+<p>else: return {‘FINISHED’}
+if self.inputs[‘edges’].is_linked:</p>
+<blockquote>
+<div><p>edges = self.inputs[‘edges’].sv_get()</p>
+</div></blockquote>
+<p>else: return {‘FINISHED’}
+if self.inputs[‘areas’].is_linked:</p>
+<blockquote>
+<div><p>areas = self.inputs[‘areas’].sv_get()</p>
+</div></blockquote>
+<p>else: return {‘FINISHED’}
+if self.inputs[‘border’].is_linked:</p>
+<blockquote>
+<div><p>border = self.inputs[‘border’].sv_get()</p>
+</div></blockquote>
+<p>else: return {‘FINISHED’}
+cutarea = self.inputs[‘cutarea’].sv_get()
+if type(cutarea[0][0]) == int:</p>
+<blockquote>
+<div><p>cutarea = cutarea[0]</p>
+</div></blockquote>
+<p>#print(’n’.join([str(i) for i in (vers[0][:5],edges[0][:5],pols[0][:5],areas[0][:5],border[0][:5],cutarea[0][0])]))
+edges_out = main_border(vers[0],edges[0],pols[0],areas[0],border[0],cutarea[0][0])
+do_text(str(edges_out))</p>
+<p>return {‘FINISHED’}</p>
+</dd>
+</dl>
+<p><a href="#id7"><span class="problematic" id="id8">``</span></a>`
+&lt;/details&gt;</p>
+<p>&lt;details&gt;
+&lt;summary&gt;Результат полуавтоматического списка индексов рёбер.&lt;/summary&gt;
+<code class="docutils literal notranslate"><span class="pre">`</span>
+<span class="pre">[[3,</span> <span class="pre">7,</span> <span class="pre">14,</span> <span class="pre">21,</span> <span class="pre">24,</span> <span class="pre">30,</span> <span class="pre">33,</span> <span class="pre">37,</span> <span class="pre">41,</span> <span class="pre">43,</span> <span class="pre">45,</span> <span class="pre">48,</span> <span class="pre">54,</span> <span class="pre">57,</span> <span class="pre">60,</span> <span class="pre">63,</span> <span class="pre">66,</span> <span class="pre">70,</span> <span class="pre">78,</span> <span class="pre">82,</span> <span class="pre">88,</span> <span class="pre">95,</span> <span class="pre">104,</span> <span class="pre">106,108,</span> <span class="pre">112,</span> <span class="pre">115,</span> <span class="pre">119,</span> <span class="pre">126,</span> <span class="pre">130,</span> <span class="pre">134,</span> <span class="pre">145,</span> <span class="pre">149,</span> <span class="pre">152,</span> <span class="pre">156,</span> <span class="pre">160,</span> <span class="pre">164,</span> <span class="pre">168,</span> <span class="pre">172,</span> <span class="pre">176,</span> <span class="pre">180,</span> <span class="pre">184,</span> <span class="pre">188,</span> <span class="pre">192,</span> <span class="pre">196,</span> <span class="pre">200,</span> <span class="pre">204,</span> <span class="pre">208,</span> <span class="pre">212,</span> <span class="pre">216,</span> <span class="pre">220,</span> <span class="pre">224,</span> <span class="pre">228,</span> <span class="pre">232,</span> <span class="pre">236,</span> <span class="pre">240,</span> <span class="pre">244,</span> <span class="pre">248,</span> <span class="pre">252,</span> <span class="pre">256,</span> <span class="pre">260,</span> <span class="pre">264,</span> <span class="pre">268,</span> <span class="pre">272,</span> <span class="pre">276,</span> <span class="pre">280,</span> <span class="pre">284,</span> <span class="pre">288,</span> <span class="pre">292,</span> <span class="pre">296,</span> <span class="pre">301,</span> <span class="pre">306,</span> <span class="pre">310,</span> <span class="pre">315,</span> <span class="pre">321,</span> <span class="pre">330,</span> <span class="pre">333,</span> <span class="pre">337,</span> <span class="pre">341,</span> <span class="pre">347,</span> <span class="pre">351,</span> <span class="pre">391,</span> <span class="pre">400,</span> <span class="pre">405,</span> <span class="pre">415,</span> <span class="pre">417,</span> <span class="pre">423,</span> <span class="pre">427,</span> <span class="pre">529,</span> <span class="pre">591,</span> <span class="pre">599,</span> <span class="pre">661,</span> <span class="pre">684,</span> <span class="pre">708,</span> <span class="pre">710,</span> <span class="pre">728,</span> <span class="pre">730,</span> <span class="pre">732,</span> <span class="pre">752,</span> <span class="pre">762,</span> <span class="pre">765,</span> <span class="pre">767,</span> <span class="pre">771,</span> <span class="pre">777,</span> <span class="pre">788,</span> <span class="pre">793,</span> <span class="pre">795,</span> <span class="pre">797,</span> <span class="pre">799,</span> <span class="pre">802,805,</span> <span class="pre">808,</span> <span class="pre">810,</span> <span class="pre">814,</span> <span class="pre">816,</span> <span class="pre">818,</span> <span class="pre">822,</span> <span class="pre">826,</span> <span class="pre">830,</span> <span class="pre">834,</span> <span class="pre">838,</span> <span class="pre">842,</span> <span class="pre">846,</span> <span class="pre">850,</span> <span class="pre">854,</span> <span class="pre">858,</span> <span class="pre">862,</span> <span class="pre">866,</span> <span class="pre">870,</span> <span class="pre">874,</span> <span class="pre">878,</span> <span class="pre">882,</span> <span class="pre">886,</span> <span class="pre">890,</span> <span class="pre">894,</span> <span class="pre">898,</span> <span class="pre">902,</span> <span class="pre">906,</span> <span class="pre">910,</span> <span class="pre">914,</span> <span class="pre">918,</span> <span class="pre">922,</span> <span class="pre">926,</span> <span class="pre">930,</span> <span class="pre">934,</span> <span class="pre">938,</span> <span class="pre">942,</span> <span class="pre">946,</span> <span class="pre">950,</span> <span class="pre">957,</span> <span class="pre">965,</span> <span class="pre">969,</span> <span class="pre">975,</span> <span class="pre">981,</span> <span class="pre">987,</span> <span class="pre">996,</span> <span class="pre">999,</span> <span class="pre">1003,</span> <span class="pre">1007,</span> <span class="pre">1013,</span> <span class="pre">1017,</span> <span class="pre">1278,</span> <span class="pre">1298,</span> <span class="pre">1300,</span> <span class="pre">1313,</span> <span class="pre">1315,</span> <span class="pre">1317,</span> <span class="pre">1325,</span> <span class="pre">1337,</span> <span class="pre">1340,</span> <span class="pre">1965,</span> <span class="pre">1966]]</span>
+<span class="pre">`</span></code>
+&lt;/details&gt;</p>
+</div></blockquote>
+</li>
+<li><p><strong>Separate corner plates</strong>:</p>
+<blockquote>
+<div><p>To avoid jumping plates’ corners, happening far from original surface, i created part of triangulated plates. Defined by lines, snapped to projected pattern corners, i filtered plates by lines location, later that lines helped me to define left and right side of plates’ triangles, because, farthere offset happened only to two sides. Here I need to say, that all plates are completely flat. So, flattaning happens here in step forward. To flatten triangulated plate I separated triangles, flatted and joined pairs after.</p>
+<p><img alt="image8" src="https://github.com/nortikin/sverchok/assets/5783432/5e7bea86-a6a6-48a9-9294-24df20655781" /></p>
+<p><img alt="image9" src="https://github.com/nortikin/sverchok/assets/5783432/2b4fde10-8bcf-458f-9683-64959ed12083" /></p>
+</div></blockquote>
+</li>
+</ol>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2014...2024, sverchok team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
