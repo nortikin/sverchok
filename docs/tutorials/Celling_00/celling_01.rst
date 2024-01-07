@@ -7,6 +7,16 @@ Aim
 
 On my job there was order to make complicated celling design, that avoids beams and columns, also turns around corner and going to zero width at the end. So, the shape of celling was predefined as the second-order curve. But from beginning it was pattern that needed to fit design. Pattern of rhomb with fixed dimensions. Also as target was defined gap between plates. And for sure, all peaces needed to be planes without curvature. As fish scales or snake scales more.
 
+Requirements
+------------
+
+You will need to install:
+    **Blender3.6** (for **Blender4.0+** you need git branch ```bgl_replacement```)
+    **Sverchok** with dependencies (not *opensubdiv*, no *Freecad* and no *mcubes* needed)
+    **Sverchok-extra** with mostly *xmlx* deps (no *pygalmesh* and no *SDF* needed)
+    ```pip install latex``` for SVG export
+    
+    
 Inputs
 ------
 
