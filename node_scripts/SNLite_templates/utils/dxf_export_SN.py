@@ -125,11 +125,18 @@ def make(self, context):
     def edges_draw(e,v,scal,ledgs,msp):
         ''' edges as simple lines '''
         print('EDGES!!')
-        for obe,obv in zip(e,v):
-            edgs = []
-            for ed in obe:
-                msp.add_line([i*scal for i in obv[ed[0]]],[i*scal for i in obv[ed[1]]], dxfattribs={"layer": ledgs}) 
-                #dxfattribs={"color": colors.YELLOW})
+        if get_data_nesting_level(e) > 3:
+            lays = [ledg1,ledg3,ledg6]
+            for ik in range(len(e)):
+                for obe,obv in zip(e[ik],v):
+                    edgs = []
+                    for ed in obe:
+                        msp.add_line([i*scal for i in obv[ed[0]]],[i*scal for i in obv[ed[1]]], dxfattribs={"layer": lays[ik], "lineweight": -1})
+        else:
+            for obe,obv in zip(e,v):
+                edgs = []
+                for ed in obe:
+                    msp.add_line([i*scal for i in obv[ed[0]]],[i*scal for i in obv[ed[1]]], dxfattribs={"layer": ledgs})
 
     def text_draw(tv,tt,scal,ltext,msp,t_scal):
         ''' draw text '''
@@ -219,6 +226,7 @@ def make(self, context):
         from ezdxf import units
         from ezdxf.tools.standards import setup_dimstyle
         from mathutils import Vector
+        from sverchok.data_structure import get_data_nesting_level
 
         DIM_TEXT_STYLE = ezdxf.options.default_dimension_text_style
         # Create a new DXF document.
@@ -256,12 +264,18 @@ def make(self, context):
         ltext = "SVERCHOK_TEXT"
         lvers = "SVERCHOK_VERS"
         ledgs = "SVERCHOK_EDGES"
+        ledg1 = "SVERCHOK_EDGES0.1"
+        ledg3 = "SVERCHOK_EDGES0.3"
+        ledg6 = "SVERCHOK_EDGES0.6"
         lpols = "SVERCHOK_POLYGONS"
         ldims = "SVERCHOK_DIMENTIONS"
         llidr = "SVERCHOK_LEADERS"
         doc.layers.add(ltext, color=colors.MAGENTA)
         doc.layers.add(lvers, color=colors.CYAN)
         doc.layers.add(ledgs, color=colors.YELLOW)
+        doc.layers.add(ledg1, color=colors.BLUE, lineweight=9)
+        doc.layers.add(ledg3, color=colors.GRAY, lineweight=30)
+        doc.layers.add(ledg6, color=colors.LIGHT_GRAY, lineweight=60)
         doc.layers.add(lpols, color=colors.WHITE)
         doc.layers.add(ldims, color=colors.GREEN)
         doc.layers.add(llidr, color=colors.CYAN)
@@ -279,7 +293,7 @@ def make(self, context):
         # Add entities to a layout by factory methods: layout.add_...() 
 
         if e:
-            edges_draw(e,v,scal,ledgs,msp)
+            edges_draw(e,v,scal,ledgs,msp,ledg1,ledg3,ledg6)
         elif p and d1:
             polygondance_draw(p,v,d1,d2,scal,lpols,msp,APPID)
         elif p:
