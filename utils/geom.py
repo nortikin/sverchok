@@ -662,7 +662,7 @@ class GenerateLookup():
         add_to_sumlist = self.summed_lengths.append
         current_length = 0.0
         for idx in range(len(vlist)-1):
-            v = vlist[idx][0]-vlist[idx+1][0], vlist[idx][1]-vlist[idx+1][1], vlist[idx][2]-vlist[idx+1][2]
+            v = vlist[idx+1][0]-vlist[idx][0], vlist[idx+1][1]-vlist[idx][1], vlist[idx+1][2]-vlist[idx][2]
             length = math.sqrt((v[0]*v[0]) + (v[1]*v[1]) + (v[2]*v[2]))
             add_normal(v)
             add_len(length)

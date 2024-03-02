@@ -29,12 +29,12 @@ class LinearSplineTests(SverchokTestCase):
         result = self.spline.tangent(t_in)
         #info(result)
         expected_result = np.array(
-                [[-1, -1,  0],
-                 [-1, -1,  0],
-                 [-1, -2,  0],
-                 [-1, -2,  0],
-                 [-1, -2,  0],
-                 [-1, -1,  0]])
+                [[ 1,  1,  0],
+                 [ 1,  1,  0],
+                 [ 1,  2,  0],
+                 [ 1,  2,  0],
+                 [ 1,  2,  0],
+                 [ 1,  1,  0]])
         self.assert_numpy_arrays_equal(result, expected_result)
 
     def test_control_points(self):
