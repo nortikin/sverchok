@@ -396,7 +396,9 @@ class Category(MenuItem):
                         if isinstance(prop_value, list):  # some sub menu
                             continue
                         props.update(prop)
-
+                elif isinstance(value, str):
+                    extra_props.update(elem) # to use for properties of root element in addons (like {'icon_name': 'MESH_CUBE'}). Non root element work good. Without this "elif" root menu icon of sverchok addons cannot be created.
+                    continue
                 elif value is None:  # empty category
                     value = []
                 else:  # menu property
