@@ -217,9 +217,11 @@ class SvIDXViewer28(SverchCustomTreeNode, bpy.types.Node):
         fixed_text = []
         if geom.text:
             for obj_index, final_verts in enumerate(geom.verts):
+                fixed_text_elem = []
                 text_size = max(len(final_verts),
                                 len(geom.edges[obj_index] if geom.edges else []),
                                 len(geom.faces[obj_index] if geom.faces else []))
+
                 text_items = self.get_text_of_correct_length(obj_index, geom, text_size)
                 for text_item in text_items:
 
@@ -234,47 +236,44 @@ class SvIDXViewer28(SverchCustomTreeNode, bpy.types.Node):
                         # in case it receives [0, 0, 0] or (0, 0, 0).. etc
                         chars = prefix_if_needed(obj_index, text_item)
 
-                    fixed_text.append(chars)
+                    fixed_text_elem.append(chars)
+                
+                fixed_text.append(fixed_text_elem)
 
-        if not self.draw_bface:
-            geom.face_medians, geom.face_normals = self.get_face_extras(geom)
-            geom.text_data = fixed_text
-            return geom
+        display_topology = lambda: None
+        display_topology = geom
+        display_topology.vert_data = []
+        display_topology.edge_data = []
+        display_topology.face_data = []
+        display_topology.text_data = fixed_text
+        display_topology.face_medians, display_topology.face_normals = self.get_face_extras(geom)
 
-        else:
-            # pass only data onto the draw callback that you intend to show.
-            display_topology = lambda: None
-            display_topology.vert_data = []
-            display_topology.edge_data = []
-            display_topology.face_data = []
-            display_topology.text_data = fixed_text
+        concat_vert = display_topology.vert_data.append
+        concat_edge = display_topology.edge_data.append
+        concat_face = display_topology.face_data.append
 
-            concat_vert = display_topology.vert_data.append
-            concat_edge = display_topology.edge_data.append
-            concat_face = display_topology.face_data.append
+        for obj_index, final_verts in enumerate(geom.verts):
 
-            for obj_index, final_verts in enumerate(geom.verts):
+            # can't display vert idx and text simultaneously - ...
+            if True or self.display_vert_index:
+                for idx, vpos in enumerate(final_verts):
+                    chars = prefix_if_needed(obj_index, idx)
+                    concat_vert((chars, vpos, obj_index, idx))
 
-                # can't display vert idx and text simultaneously - ...
-                if self.display_vert_index:
-                    for idx, vpos in enumerate(final_verts):
-                        chars = prefix_if_needed(obj_index, idx)
-                        concat_vert((chars, vpos))
+            if self.display_edge_index and obj_index < len(geom.edges):
+                for edge_index, (idx1, idx2) in enumerate(geom.edges[obj_index]):
+                    loc = final_verts[idx1].lerp(final_verts[idx2], 0.5)
+                    chars = prefix_if_needed(obj_index, edge_index)
+                    concat_edge((chars, loc, obj_index, tuple(sorted( [idx1, idx2] )), edge_index ))
 
-                if self.display_edge_index and obj_index < len(geom.edges):
-                    for edge_index, (idx1, idx2) in enumerate(geom.edges[obj_index]):
-                        loc = final_verts[idx1].lerp(final_verts[idx2], 0.5)
-                        chars = prefix_if_needed(obj_index, edge_index)
-                        concat_edge((chars, loc))
+            if self.display_face_index and obj_index < len(geom.faces):
+                for face_index, f in enumerate(geom.faces[obj_index]):
+                    poly_verts = [final_verts[idx] for idx in f]
+                    median = calc_median(poly_verts)
+                    chars = prefix_if_needed(obj_index, face_index)
+                    concat_face((chars, median, obj_index, face_index))
 
-                if self.display_face_index and obj_index < len(geom.faces):
-                    for face_index, f in enumerate(geom.faces[obj_index]):
-                        poly_verts = [final_verts[idx] for idx in f]
-                        median = calc_median(poly_verts)
-                        chars = prefix_if_needed(obj_index, face_index)
-                        concat_face((chars, median))
-
-            return display_topology
+        return display_topology
 
     def get_text_of_correct_length(self, obj_index, geom, num_elements_to_fill):
         """ get text elements, and extend if needed"""
@@ -316,7 +315,7 @@ class SvIDXViewer28(SverchCustomTreeNode, bpy.types.Node):
 
         draw_data = {
             'tree_name': self.id_data.name[:],
-            'custom_function': draw_indices_2D_wbg if self.draw_bg else draw_indices_2D,
+            'custom_function': draw_indices_2D_wbg,
             'args': (geom, config)}
 
         callback_enable(n_id, draw_data, overlay='POST_PIXEL')
