@@ -110,9 +110,13 @@ class SurfaceCurvatureCalculator(object):
         calculating k1 and k2 first.
         """
         duu, dvv, duv, nuu, nvv, nuv = self.duu, self.dvv, self.duv, self.nuu, self.nvv, self.nuv
-        A = duu*dvv - duv*duv
-        B = duu*nvv - 2*duv*nuv + dvv*nuu
-        return B / (2*A)
+        numerator = duu*nvv - 2*duv*nuv + dvv*nuu
+        denominator = 2*(duu*dvv - duv*duv)
+
+        curvature = np.zeros_like(numerator)
+        good = (denominator != 0)
+        curvature[good] = numerator[good] / denominator[good]
+        return curvature
 
     def gauss(self):
         """
@@ -125,7 +129,10 @@ class SurfaceCurvatureCalculator(object):
         duu, dvv, duv, nuu, nvv, nuv = self.duu, self.dvv, self.duv, self.nuu, self.nvv, self.nuv
         numerator = nuu * nvv - nuv*nuv
         denominator = duu * dvv - duv*duv
-        return numerator / denominator
+        curvature = np.zeros_like(numerator)
+        good = (denominator != 0)
+        curvature[good] = numerator[good] / denominator[good]
+        return curvature
 
     def curvature_along_direction(self, v1, v2):
         """
@@ -173,13 +180,14 @@ class SurfaceCurvatureCalculator(object):
         c1[np.isnan(c1)] = 0
         c2[np.isnan(c2)] = 0
 
-        c1mask = (c1 < c2)
-        c2mask = np.logical_not(c1mask)
-
-        c1_r = np.where(c1mask, c1, c2)
-        c2_r = np.where(c2mask, c1, c2)
-
-        return c1_r, c2_r
+        if self.order:
+            c1mask = (c1 < c2)
+            c2mask = np.logical_not(c1mask)
+            c1_r = np.where(c1mask, c1, c2)
+            c2_r = np.where(c2mask, c1, c2)
+            return c1_r, c2_r
+        else:
+            return c1, c2
 
     def values_and_directions(self):
         """
