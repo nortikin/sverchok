@@ -42,7 +42,7 @@ In the N-Panel (and on the right-click menu) you can find:
 Outputs
 -------
 
-* **Data:** Mixed data of the incoming data, the length of Outputs depends on the  **Data True**, **Data False** and **Mask** list lengths.
+* **Data:** Mixed data of the incoming data, the length of Outputs depends on the  **Data True**, **Data False** and **Mask** list lengths. If, at the choice level, the node encounters true and false input lists simultaneously empty, the corresponding output is an empty list. If only one of the two is empty, then values chosen from the other by the mask are replaced by None.
 
 Example
 -------
