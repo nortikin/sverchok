@@ -29,10 +29,10 @@ from sverchok.data_structure import updateNode, match_long_repeat, repeat_last_f
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 from sverchok.utils.nodes_mixins.recursive_nodes import SvRecursiveNode
 from sverchok.utils.sv_mesh_utils import mesh_join
+from sverchok.utils.sv_bmesh_utils import calc_center_mass_bmesh
 from sverchok.utils.modules.matrix_utils import matrix_apply_np
 
 from sverchok.data_structure import dataCorrect, updateNode, zip_long_repeat, match_long_repeat
-from sverchok.utils.math import np_dot
 
 class SvWeightedVectorSumNode(SverchCustomTreeNode, bpy.types.Node, SvRecursiveNode):
     """
@@ -220,16 +220,16 @@ class SvWeightedVectorSumNode(SverchCustomTreeNode, bpy.types.Node, SvRecursiveN
         input_density_s     = self.inputs['input_density'].sv_get(default=[[1]], deepcopy=False)
         input_density_s_2   = ensure_nesting_level(input_density_s, 2)
 
-        result_vertices = []
-        result_edges = []
-        result_polygons = []
+        result_vertices_list = []
+        result_edges_list = []
+        result_polygons_list = []
 
 
         center_mass_mesh_list_out = []
         result_masses = []
-        result_mask = [] # what object has result
+        result_mask_list = [] # what object has result
 
-        center_mass_mesh_list = []
+        result_center_mass_mesh_list = []
         mass_mesh_list = []
         size_mesh_list = []
 
@@ -254,192 +254,64 @@ class SvWeightedVectorSumNode(SverchCustomTreeNode, bpy.types.Node, SvRecursiveN
 
         center_mode = self.center_mode
         for vertices_I, edges_I, faces_I, mass_of_vertices_I, density_I in zip(*meshes):
-            if len(vertices_I)==0:
-                # skip if no vertices at all:
-                result_mask.append(False)
 
-            if center_mode=='VERTICES':
-
-                if len(vertices_I)==0:
-                    result_mask.append(False)
-                else:
-                    result_mask.append(True)
-                    result_vertices.append(vertices_I)
-                    result_edges.append(edges_I)
-                    result_polygons.append(faces_I)
-
-                    # shrink or extend mass if list of mass is not equals list of verts:
-                    mass_of_vertices_I_shrinked = mass_of_vertices_I[:len(vertices_I)]
-                    mass_of_vertices_I_np1 = np.append( mass_of_vertices_I_shrinked, np.full( (len(vertices_I)-len(mass_of_vertices_I_shrinked)), mass_of_vertices_I_shrinked[-1]) )
-                    vertices_I_np = np.array(vertices_I)
-                    mass_of_vertices_I_np2  = np.array([mass_of_vertices_I_np1])
-                    mass_I = mass_of_vertices_I_np2.sum()
-                    center_mass_mesh_I = (vertices_I_np * mass_of_vertices_I_np2.T).sum(axis=0) / mass_I
-
-                    center_mass_mesh_list.append( center_mass_mesh_I.tolist() )
-                    mass_mesh_list.append(mass_I)
-                    size_mesh_list.append(vertices_I_np.shape[0])  # Count of vertices
-
-            elif center_mode=='EDGES':
-                    
-                old_edges = np.array(edges_I)
-                if old_edges.size==0:
-                    # skip if no edges at all:
-                    result_mask.append(False)
-                else:
-                    result_mask.append(True)
-                    verts_I = np.array(vertices_I)
-
-                    # Do not triangulate mesh for 'EDGE' mode
-                    result_vertices.append(vertices_I)
-                    result_edges.append(edges_I)
-                    result_polygons.append(faces_I)
-                    
-                    segment_I = verts_I[old_edges]
-                    distances_I = np.linalg.norm(segment_I[:,1]-segment_I[:,0], axis=1)
-                    length_I = distances_I.sum()
-                    segment_center_I = segment_I.sum(axis=1) / 2.0
-                    center_mass_mesh_I = (segment_center_I * distances_I[np.newaxis].T).sum(axis=0) / length_I
-                    mass_I             = length_I * density_I[0]
-
-                    center_mass_mesh_list.append( center_mass_mesh_I.tolist() )
-                    mass_mesh_list.append(mass_I)
-                    size_mesh_list.append(length_I)
-
-            elif center_mode=='FACES':
-                    
-                faces_I_np = np.array(faces_I)
-                if faces_I_np.size==0:
-                    # skip if no faces at all:
-                    result_mask.append(False)
-                else:
-                    result_mask.append(True)
-
-                    # test if some polygons are not tris:
-                    if max(map(len, faces_I_np))>3:
-                        # triangulate mesh for 'FACES' mode
-                        bm_I = bmesh_from_pydata(vertices_I, edges_I, faces_I, markup_face_data=True, normal_update=True)
-                        b_faces = []
-                        for face in bm_I.faces:
-                            b_faces.append(face)
-                        res = bmesh.ops.triangulate(
-                            bm_I, faces=b_faces, quad_method=self.quad_mode, ngon_method=self.ngon_mode
-                        )
-                        new_vertices_I, new_edges_I, new_faces_I = pydata_from_bmesh(bm_I)
-                        bm_I.free()
-                    else:
-                        new_vertices_I,new_edges_I,new_faces_I = vertices_I, edges_I, faces_I
-
-                    result_vertices.append(new_vertices_I)
-                    result_edges.append(new_edges_I)
-                    result_polygons.append(new_faces_I)
-                    
-                    verts_I_np         = np.array(new_vertices_I)
-                    faces_I_np         = np.array(new_faces_I)
-                    tris_I_np          = verts_I_np[faces_I_np]
-                    areases_I          = np.linalg.norm(np.cross(tris_I_np[:,1]-tris_I_np[:,0], tris_I_np[:,2]-tris_I_np[:,0]) / 2.0, axis=1)
-                    area_I             = areases_I.sum()
-                    tris_centers_I     = tris_I_np.sum(axis=1) / 3.0
-                    center_mass_mesh_I = (tris_centers_I * areases_I[np.newaxis].T).sum(axis=0) / area_I
-                    mass_I             = area_I * density_I[0]
-
-                    center_mass_mesh_list.append( center_mass_mesh_I.tolist() )
-                    mass_mesh_list.append(mass_I)
-                    size_mesh_list.append(area_I)
-
-            elif center_mode=='VOLUMES':
-                    
-                faces_I_np = np.array(faces_I)
-                if faces_I_np.size==0:
-                    # skip if no faces at all:
-                    result_mask.append(False)
-                else:
-                    do_calc = False
-                    if max(map(len, faces_I_np))==3 and self.skip_test_volume_are_closed==True:
-                        new_vertices_I, new_edges_I, new_faces_I = vertices_I, edges_I, faces_I
-                        do_calc = True
-                    else:
-                        # triangulate mesh
-                        bm_I = bmesh_from_pydata(vertices_I, edges_I, faces_I, markup_face_data=True, normal_update=True)
-                        # test if all edges are contiguous (https://docs.blender.org/api/current/bmesh.types.html#bmesh.types.BMEdge.is_contiguous)
-                        # then volume is closed:
-                        for edge in bm_I.edges:
-                            if edge.is_contiguous==False:
-                                do_calc = False
-                                break
-                        else:
-                            do_calc = True
-                            # test if some polygons are not tris:
-                            if max(map(len, faces_I_np))>3:
-                                b_faces = []
-                                for face in bm_I.faces:
-                                    b_faces.append(face)
-
-                                res = bmesh.ops.triangulate(
-                                    bm_I, faces=b_faces, quad_method=self.quad_mode, ngon_method=self.ngon_mode
-                                )
-                                new_vertices_I, new_edges_I, new_faces_I = pydata_from_bmesh(bm_I)
-                            else:
-                                new_vertices_I, new_edges_I, new_faces_I = vertices_I, edges_I, faces_I
-                        bm_I.free()
-
-                    if do_calc==False:
-                        result_mask.append(False)
-                    else:
-                        result_mask.append(True)
-                        result_vertices.append(new_vertices_I)
-                        result_edges   .append(new_edges_I)
-                        result_polygons.append(new_faces_I)
-                        
-                        verts_I = np.array(new_vertices_I)
-                        faces_I = np.array(new_faces_I)
-                        tris_I = verts_I[faces_I]
-                        # to precise calc move all mesh to median point
-                        tris_I_median = np.median(tris_I, axis=(0,1))
-                        tris_I_delta = tris_I-tris_I_median
-                        signed_volumes_I   = np_dot(tris_I_delta[:,0], np.cross(tris_I_delta[:,1], tris_I_delta[:,2]))
-                        volume_I           = signed_volumes_I.sum()
-                        tetra_centers_I    = tris_I_delta.sum(axis=1) / 4.0
-                        center_mass_mesh_I = (tetra_centers_I * signed_volumes_I[np.newaxis].T).sum(axis=0) / volume_I + tris_I_median
-                        mass_I             = volume_I * density_I[0]
-
-                        center_mass_mesh_list.append( center_mass_mesh_I.tolist() )
-                        mass_mesh_list.append(mass_I)
-                        size_mesh_list.append(volume_I)
+            result_mask, \
+            result_vertices_I,\
+            result_edges_I,\
+            result_polygons_I, \
+            result_center_mass_mesh_I, \
+            result_mass_mesh_I, \
+            result_size_mesh_I = calc_center_mass_bmesh(center_mode,
+                                                        vertices_I,
+                                                        edges_I,
+                                                        faces_I,
+                                                        mass_of_vertices_I,
+                                                        density_I,
+                                                        self.skip_test_volume_are_closed,
+                                                        self.quad_mode,
+                                                        self.ngon_mode)
+            result_mask_list.append(result_mask)
+            if result_mask==True:
+                result_vertices_list.append(result_vertices_I)
+                result_edges_list.append(result_edges_I)
+                result_polygons_list.append(result_polygons_I)
+                result_center_mass_mesh_list.append(result_center_mass_mesh_I)
+                mass_mesh_list.append(result_mass_mesh_I)
+                size_mesh_list.append(result_size_mesh_I)
 
         # calc center of mass of all meshes if any mesh has center:
-        if center_mass_mesh_list:
-            center_mass_mesh_list_np = np.array(center_mass_mesh_list)
-            mass_mesh_list_np = np.array([mass_mesh_list])
-            mass_center_general_np = (center_mass_mesh_list_np*mass_mesh_list_np.T).sum(axis=0) / mass_mesh_list_np.sum()
-            mass_center_general = [[ mass_center_general_np.tolist() ]]
-            center_mass_mesh_list_out  = [ [v] for v in center_mass_mesh_list ]
-            result_masses = [ [m] for m in mass_mesh_list ]
-            result_mass = mass_mesh_list_np.sum()
-            result_sizes = [ [s] for s in size_mesh_list ]
-            result_size = np.array(size_mesh_list).sum()
+        if result_center_mass_mesh_list:
+            result_center_mass_mesh_list_np   = np.array(result_center_mass_mesh_list)
+            mass_mesh_list_np                 = np.array([mass_mesh_list])
+            mass_center_general_np            = (result_center_mass_mesh_list_np*mass_mesh_list_np.T).sum(axis=0) / mass_mesh_list_np.sum()
+            mass_center_general_out           = [[ mass_center_general_np.tolist() ]]
+            result_center_mass_mesh_list_out  = [ [v] for v in result_center_mass_mesh_list ]
+            result_masses_list_out            = [ [m] for m in mass_mesh_list ]
+            result_mass_list_out              = [[mass_mesh_list_np.sum()]]
+            result_sizes_out                  = [ [s] for s in size_mesh_list ]
+            result_size_out                   = [[np.array(size_mesh_list).sum()]]
         else:
             # if there is no any centers of mass
-            mass_center_general = [ [] ]
-            center_mass_mesh_list_out  = [ [] ]
-            result_masses = [ [] ]
-            result_mass = 0
-            result_sizes = [ [] ]
-            result_size = 0
+            mass_center_general_out           = [ [] ]
+            result_center_mass_mesh_list_out  = [ [] ]
+            result_masses_list_out            = [ [] ]
+            result_mass_list_out              = [ [0]]
+            result_sizes_out                  = [ [] ]
+            result_size_out                   = [ [0]]
 
-        self.outputs['output_vertices'].sv_set(result_vertices)
-        self.outputs['output_edges'].sv_set(result_edges)
-        self.outputs['output_polygons'].sv_set(result_polygons)
+        self.outputs['output_vertices'].sv_set(result_vertices_list)
+        self.outputs['output_edges'].sv_set(result_edges_list)
+        self.outputs['output_polygons'].sv_set(result_polygons_list)
 
-        self.outputs['output_centers_of_mass'].sv_set(center_mass_mesh_list_out)
-        self.outputs['output_total_center'].sv_set(mass_center_general)
-        self.outputs['output_sizes'].sv_set(result_sizes)
-        self.outputs['output_size'].sv_set([[result_size]])
-        self.outputs['output_masses'].sv_set(result_masses)
-        self.outputs['output_mass'].sv_set([[result_mass]])
-        self.outputs['output_mask'].sv_set(result_mask)
+        self.outputs['output_centers_of_mass'].sv_set(result_center_mass_mesh_list_out)
+        self.outputs['output_total_center'].sv_set(mass_center_general_out)
+        self.outputs['output_sizes'].sv_set(result_sizes_out)
+        self.outputs['output_size'].sv_set(result_size_out)
+        self.outputs['output_masses'].sv_set(result_masses_list_out)
+        self.outputs['output_mass'].sv_set(result_mass_list_out)
+        self.outputs['output_mask'].sv_set(result_mask_list)
 
-        unmanifold_centers_indices = [i for i, x in enumerate(result_mask) if not(x)]
+        unmanifold_centers_indices = [i for i, x in enumerate(result_mask_list) if not(x)]
         if self.skip_unmanifold_centers==False:
             if unmanifold_centers_indices:
                 str_error = f"Unmanifold centers are: [{','.join( map(str,unmanifold_centers_indices))}]"
