@@ -234,11 +234,32 @@ class SvWeightedVectorSumNode(SverchCustomTreeNode, bpy.types.Node, SvRecursiveN
         size_mesh_list = []
 
         mass_center_general = None
-        if self.center_mode=='VERTICES':
-            _, _input_mass_vert_s_2, _input_density_s_2 = match_long_repeat( [input_vertices_s_3, input_mass_vert_s_2[:len(input_vertices_s_3)], input_density_s_2[:len(input_vertices_s_3)] ])
-            meshes = match_long_repeat([input_vertices_s_3, input_edges_s_3, input_polygons_s_3, _input_mass_vert_s_2, _input_density_s_2])
 
-            for vertices_I, edges_I, faces_I, mass_of_vertices_I, density_I in zip(*meshes):
+        # If density is one level list and objects are many then
+        # spead list of density for every mesh. ex.: [[mesh1],[mesh2],[mesh3]], [density:d1,d2,d3] ] => [[mesh1],[mesh2],[mesh3]], [density:[d1],[d2],[d3]] ]
+        if len(input_density_s_2)==1 and len(input_vertices_s_3)>1:
+            input_density_s_2 = [[d] for d in input_density_s_2[0]]
+
+        # if lists of edges or faces is less vertices then append at the end of edges and faces empty list to extend it later with empty items.
+        # verts=[[v1,v2,v3],[v4,v5,v6]]
+        # edges=[[[0,1],[1,2]]]=>[[[0,1], [1,2]],[]]
+        # faces=[[[0,1,2]]]=>[[[0,1,2]]],[]]
+        # this allow skip unmanifold centers
+        if len(input_edges_s_3)<len(input_vertices_s_3):
+            input_edges_s_3.append([[]]) # like default
+        if len(input_polygons_s_3)<len(input_vertices_s_3):
+            input_polygons_s_3.append([[]]) # like default
+
+        meshes = match_long_repeat( [input_vertices_s_3, input_edges_s_3[:len(input_vertices_s_3)], input_polygons_s_3[:len(input_vertices_s_3)], input_mass_vert_s_2[:len(input_vertices_s_3)], input_density_s_2[:len(input_vertices_s_3)] ])
+
+        center_mode = self.center_mode
+        for vertices_I, edges_I, faces_I, mass_of_vertices_I, density_I in zip(*meshes):
+            if len(vertices_I)==0:
+                # skip if no vertices at all:
+                result_mask.append(False)
+
+            if center_mode=='VERTICES':
+
                 if len(vertices_I)==0:
                     result_mask.append(False)
                 else:
@@ -250,7 +271,6 @@ class SvWeightedVectorSumNode(SverchCustomTreeNode, bpy.types.Node, SvRecursiveN
                     # shrink or extend mass if list of mass is not equals list of verts:
                     mass_of_vertices_I_shrinked = mass_of_vertices_I[:len(vertices_I)]
                     mass_of_vertices_I_np1 = np.append( mass_of_vertices_I_shrinked, np.full( (len(vertices_I)-len(mass_of_vertices_I_shrinked)), mass_of_vertices_I_shrinked[-1]) )
-                    #v, m = match_long_repeat( [vertices_I, mass_of_vertices_I_shrinked[:len(vertices_I)] ])
                     vertices_I_np = np.array(vertices_I)
                     mass_of_vertices_I_np2  = np.array([mass_of_vertices_I_np1])
                     mass_I = mass_of_vertices_I_np2.sum()
@@ -260,28 +280,11 @@ class SvWeightedVectorSumNode(SverchCustomTreeNode, bpy.types.Node, SvRecursiveN
                     mass_mesh_list.append(mass_I)
                     size_mesh_list.append(vertices_I_np.shape[0])  # Count of vertices
 
-        elif self.center_mode=='EDGES':
-            # If density is one list and objects are many then
-            # spead list of density for every mesh. ex.: [[mesh1],[mesh2],[mesh3]], [density:d1,d2,d3] ] => [[mesh1],[mesh2],[mesh3]], [density:[d1],[d2],[d3]] ]
-            if len(input_density_s_2)==1 and len(input_vertices_s_3)>1:
-                input_density_s_2 = [[d] for d in input_density_s_2[0]]
-
-            # if lists of edges or faces is less vertices then append at the end of edges and faces empty list to extend it later with empty items.
-            # verts=[[v1,v2,v3],[v4,v5,v6]]
-            # edges=[[[0,1],[1,2]]]=>[[[0,1], [1,2]],[]]
-            # faces=[[[0,1,2]]]=>[[[0,1,2]]],[]]
-            # this allow skip unmanifold centers
-            if len(input_edges_s_3)<len(input_vertices_s_3):
-                input_edges_s_3.append([[]]) # like default
-            if len(input_polygons_s_3)<len(input_vertices_s_3):
-                input_polygons_s_3.append([[]]) # like default
-
-            _, _input_edges_s_3, _input_polygons_s_3, _input_mass_vert_s_2, _input_density_s_2 = match_long_repeat( [input_vertices_s_3, input_edges_s_3[:len(input_vertices_s_3)], input_polygons_s_3[:len(input_vertices_s_3)], input_mass_vert_s_2[:len(input_vertices_s_3)], input_density_s_2[:len(input_vertices_s_3)] ])
-            meshes = match_long_repeat([input_vertices_s_3, _input_edges_s_3, _input_polygons_s_3, _input_mass_vert_s_2, _input_density_s_2])
-
-            for vertices_I, edges_I, faces_I, mass_of_vertices_I, density_I in zip(*meshes):
+            elif center_mode=='EDGES':
+                    
                 old_edges = np.array(edges_I)
-                if len(vertices_I)==0 or old_edges.size==0:
+                if old_edges.size==0:
+                    # skip if no edges at all:
                     result_mask.append(False)
                 else:
                     result_mask.append(True)
@@ -303,27 +306,11 @@ class SvWeightedVectorSumNode(SverchCustomTreeNode, bpy.types.Node, SvRecursiveN
                     mass_mesh_list.append(mass_I)
                     size_mesh_list.append(length_I)
 
-        elif self.center_mode=='FACES':
-            # If density is one list and objects are many then
-            # spead list of density for every mesh. ex.: [[mesh1],[mesh2],[mesh3]], [density:d1,d2,d3] ] => [[mesh1],[mesh2],[mesh3]], [density:[d1],[d2],[d3]] ]
-            if len(input_density_s_2)==1 and len(input_vertices_s_3)>1:
-                input_density_s_2 = [[d] for d in input_density_s_2[0]]
-
-            # if lists of edges or faces is less vertices then append at the end of edges and faces empty list to extend it later with empty items.
-            # verts=[[v1,v2,v3],[v4,v5,v6]]
-            # edges=[[[0,1],[1,2]]]=>[[[0,1], [1,2]],[]]
-            # faces=[[[0,1,2]]]=>[[[0,1,2]]],[]]
-            # this allow skip unmanifold centers
-            if len(input_edges_s_3)<len(input_vertices_s_3):
-                input_edges_s_3.append([[]]) # like default
-            if len(input_polygons_s_3)<len(input_vertices_s_3):
-                input_polygons_s_3.append([[]]) # like default
-
-            meshes = match_long_repeat( [input_vertices_s_3, input_edges_s_3[:len(input_vertices_s_3)], input_polygons_s_3[:len(input_vertices_s_3)], input_mass_vert_s_2[:len(input_vertices_s_3)], input_density_s_2[:len(input_vertices_s_3)] ])
-
-            for vertices_I, edges_I, faces_I, mass_of_vertices_I, density_I in zip(*meshes):
+            elif center_mode=='FACES':
+                    
                 faces_I_np = np.array(faces_I)
                 if faces_I_np.size==0:
+                    # skip if no faces at all:
                     result_mask.append(False)
                 else:
                     result_mask.append(True)
@@ -360,19 +347,11 @@ class SvWeightedVectorSumNode(SverchCustomTreeNode, bpy.types.Node, SvRecursiveN
                     mass_mesh_list.append(mass_I)
                     size_mesh_list.append(area_I)
 
-        elif self.center_mode=='VOLUMES':
-            # If density is one list and objects are many then
-            # spead list of density for every mesh. ex.: [[mesh1],[mesh2],[mesh3]], [density:d1,d2,d3] ] => [[mesh1],[mesh2],[mesh3]], [density:[d1],[d2],[d3]] ]
-            if len(input_density_s_2)==1 and len(input_vertices_s_3)>1:
-                input_density_s_2 = [[d] for d in input_density_s_2[0]]
-
-            _, _input_mass_vert_s_2, _input_density_s_2 = match_long_repeat( [input_vertices_s_3, input_mass_vert_s_2[:len(input_vertices_s_3)], input_density_s_2[:len(input_vertices_s_3)]])
-            meshes = match_long_repeat([input_vertices_s_3, input_edges_s_3, input_polygons_s_3, _input_mass_vert_s_2, _input_density_s_2])
-
-            for vertices_I, edges_I, faces_I, mass_of_vertices_I, density_I in zip(*meshes):
+            elif center_mode=='VOLUMES':
+                    
                 faces_I_np = np.array(faces_I)
                 if faces_I_np.size==0:
-                    # if no faces at all:
+                    # skip if no faces at all:
                     result_mask.append(False)
                 else:
                     do_calc = False
