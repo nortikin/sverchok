@@ -1,5 +1,5 @@
-Weighted Vector Sum (Alpha)
-===========================
+Center of Mass (Mesh) (Alpha)
+=============================
 
 .. image:: https://github.com/nortikin/sverchok/assets/14288520/d4ea8073-e205-4a93-867e-55c77ac81f4d
   :target: https://github.com/nortikin/sverchok/assets/14288520/d4ea8073-e205-4a93-867e-55c77ac81f4d

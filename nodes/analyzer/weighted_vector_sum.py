@@ -22,6 +22,7 @@ import bpy
 from bpy.props import BoolVectorProperty, EnumProperty, BoolProperty, FloatProperty
 import bmesh.ops
 from mathutils import Matrix
+from datetime import datetime
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat, repeat_last_for_length, ensure_nesting_level
@@ -35,11 +36,11 @@ from sverchok.utils.math import np_dot
 
 class SvWeightedVectorSumNode(SverchCustomTreeNode, bpy.types.Node, SvRecursiveNode):
     """
-    Triggers: Bbox 2D or 3D
-    Tooltip: Get vertices bounding box (vertices, sizes, center)
+    Triggers: Center of mass (Mesh)
+    Tooltip: Calculate center of mass (barycenter) of mesh per vertices, edges, faces or volume. (Volume is only for closed mesh)
     """
     bl_idname = 'SvWeightedVectorSumNode'
-    bl_label = 'Weighted Vector Sum (Alpha)'
+    bl_label = 'Center of mass (Mesh) (Alpha)'
     bl_icon = 'SNAP_FACE_CENTER'
     sv_icon = 'SV_CENTROID'
 
@@ -62,26 +63,32 @@ class SvWeightedVectorSumNode(SverchCustomTreeNode, bpy.types.Node, SvRecursiveN
 
     center_modes = [
         ("VERTICES", "Vertices", "Calc center of mass by vertices and ignore edges, faces and volumes", 0),
-        ("EDGES", "Edges", "Calc center of mass by length of edges and ignore vertices, faces and volumes", 1),
-        ("FACES", "Faces", "Calc center of mass by surfaces of objects and ignore vertices, edges and volumes", 2),
-        ("VOLUMES", "Volumes", "Calc center of mass by volume of objects and ignore vertices, edges and faces", 3)
+        (   "EDGES",    "Edges", "Calc center of mass by length of edges and ignore vertices, faces and volumes", 1),
+        (   "FACES",    "Faces", "Calc center of mass by surfaces of objects and ignore vertices, edges and volumes", 2),
+        ( "VOLUMES",  "Volumes", "Calc center of mass by volume of objects and ignore vertices, edges and faces", 3)
     ]
 
     quad_modes = [
-        ("BEAUTY", "Beauty", "Split the quads in nice triangles, slower method", 1),
-        ("FIXED", "Fixed", "Split the quads on the 1st and 3rd vertices", 2),
-        ("ALTERNATE", "Fixed Alternate", "Split the quads on the 2nd and 4th vertices", 3),
+        (    "BEAUTY",            "Beauty", "Split the quads in nice triangles, slower method", 1),
+        (     "FIXED",             "Fixed", "Split the quads on the 1st and 3rd vertices", 2),
+        ( "ALTERNATE",   "Fixed Alternate", "Split the quads on the 2nd and 4th vertices", 3),
         ("SHORT_EDGE", "Shortest Diagonal", "Split the quads based on the distance between the vertices", 4)
     ]
 
     ngon_modes = [
-        ("BEAUTY", "Beauty", "Arrange the new triangles nicely, slower method", 1),
-        ("EAR_CLIP", "Clip", "Split the ngons using a scanfill algorithm", 2)
+        (  "BEAUTY", "Beauty", "Arrange the new triangles nicely, slower method", 1),
+        ("EAR_CLIP",   "Clip", "Split the ngons using a scanfill algorithm", 2)
     ]
 
     skip_unmanifold_centers: BoolProperty(
         name='Skip unmanifold centers',
         description='If True then skip unmanifold centers else show Exception\n\nExample:\n   True: if object has only vertices and \'Center mode\'=\'Volumes\', \'Faces\' or \'Edges\' then skip this object without exception',
+        default=True,
+        update=updateNode) # type: ignore
+
+    skip_test_volume_are_closed: BoolProperty(
+        name='Skip test meshes for holes',
+        description='If True then skip test meshes for holes. (Only for \'Volumes\' mode)',
         default=True,
         update=updateNode) # type: ignore
 
@@ -114,13 +121,17 @@ class SvWeightedVectorSumNode(SverchCustomTreeNode, bpy.types.Node, SvRecursiveN
 
         row = col.row()
         row.prop(self, 'skip_unmanifold_centers')
+        
+        row = col.row()
+        row.active = False
+        row.prop(self, 'skip_test_volume_are_closed')
+        if self.center_mode in ['VOLUMES']:
+            row.active = True
 
         row = col.row()
         split = row.split(factor=0.4)
-        c1 = split.column()
-        c1.label(text="Center mode:")
-        c2 = split.column().row(align=True)
-        c2.prop(self, "center_mode", text='')
+        split.column().label(text="Center mode:")
+        split.column().row(align=True).prop(self, "center_mode", text='')
 
         row = col.row()
         row.active = False
@@ -131,25 +142,19 @@ class SvWeightedVectorSumNode(SverchCustomTreeNode, bpy.types.Node, SvRecursiveN
         row = col.row()
         row.active = False
         split = row.split(factor=0.4)
-        c1 = split.column()
-        c1.label(text="Quads mode:")
-        c2 = split.column().row(align=True)
-        c2.prop(self, "quad_mode", text='')
+        split.column().label(text="Quads mode:")
+        split.column().row(align=True).prop(self, "quad_mode", text='')
         if self.center_mode in ['FACES', 'VOLUMES']:
             row.active = True
 
         row = col.row()
         row.active = False
         split = row.split(factor=0.5)
-        c1 = split.column()
-        c1.label(text="Polygons mode:")
-        c2 = split.column().row(align=True)
-        c2.prop(self, "ngon_mode", text='')
+        split.column().label(text="Polygons mode:")
+        split.column().row(align=True).prop(self, "ngon_mode", text='')
         if self.center_mode in ['FACES', 'VOLUMES']:
             row.active = True
 
-        # layout.prop(self, "quad_mode")
-        # layout.prop(self, "ngon_mode")
         pass
 
     def sv_init(self, context):
@@ -182,7 +187,7 @@ class SvWeightedVectorSumNode(SverchCustomTreeNode, bpy.types.Node, SvRecursiveN
         self.outputs['output_vertices'] .label = 'Vertices'
         self.outputs['output_edges'] .label = 'Edges'
         self.outputs['output_polygons'] .label = 'Polygons'
-        self.outputs['output_centers_of_mass'].label = 'Centers mass of objects'
+        self.outputs['output_centers_of_mass'].label = 'Centers of mass of objects'
         self.outputs['output_total_center'].label = 'Total center'
         self.outputs['output_sizes'].label = ''
         self.outputs['output_size'] .label = ''
@@ -243,15 +248,17 @@ class SvWeightedVectorSumNode(SverchCustomTreeNode, bpy.types.Node, SvRecursiveN
                     result_polygons.append(faces_I)
 
                     # shrink or extend mass if list of mass is not equals list of verts:
-                    v, m = match_long_repeat( [vertices_I, mass_of_vertices_I[:len(vertices_I)] ])
-                    np_verts = np.array(v)
-                    np_mass  = np.array([m])
-                    mass_I = np_mass.sum()
-                    center_mass_mesh_I = (np_verts * np_mass.T).sum(axis=0) / mass_I
+                    mass_of_vertices_I_shrinked = mass_of_vertices_I[:len(vertices_I)]
+                    mass_of_vertices_I_np1 = np.append( mass_of_vertices_I_shrinked, np.full( (len(vertices_I)-len(mass_of_vertices_I_shrinked)), mass_of_vertices_I_shrinked[-1]) )
+                    #v, m = match_long_repeat( [vertices_I, mass_of_vertices_I_shrinked[:len(vertices_I)] ])
+                    vertices_I_np = np.array(vertices_I)
+                    mass_of_vertices_I_np2  = np.array([mass_of_vertices_I_np1])
+                    mass_I = mass_of_vertices_I_np2.sum()
+                    center_mass_mesh_I = (vertices_I_np * mass_of_vertices_I_np2.T).sum(axis=0) / mass_I
 
                     center_mass_mesh_list.append( center_mass_mesh_I.tolist() )
                     mass_mesh_list.append(mass_I)
-                    size_mesh_list.append(np_verts.shape[0])  # Count of vertices
+                    size_mesh_list.append(vertices_I_np.shape[0])  # Count of vertices
 
         elif self.center_mode=='EDGES':
             # If density is one list and objects are many then
@@ -312,8 +319,7 @@ class SvWeightedVectorSumNode(SverchCustomTreeNode, bpy.types.Node, SvRecursiveN
             if len(input_polygons_s_3)<len(input_vertices_s_3):
                 input_polygons_s_3.append([[]]) # like default
 
-            _, _input_edges_s_3, _input_polygons_s_3, _input_mass_vert_s_2, _input_density_s_2 = match_long_repeat( [input_vertices_s_3, input_edges_s_3[:len(input_vertices_s_3)], input_polygons_s_3[:len(input_vertices_s_3)], input_mass_vert_s_2[:len(input_vertices_s_3)], input_density_s_2[:len(input_vertices_s_3)] ])
-            meshes = match_long_repeat([input_vertices_s_3, _input_edges_s_3, _input_polygons_s_3, _input_mass_vert_s_2, _input_density_s_2])
+            meshes = match_long_repeat( [input_vertices_s_3, input_edges_s_3[:len(input_vertices_s_3)], input_polygons_s_3[:len(input_vertices_s_3)], input_mass_vert_s_2[:len(input_vertices_s_3)], input_density_s_2[:len(input_vertices_s_3)] ])
 
             for vertices_I, edges_I, faces_I, mass_of_vertices_I, density_I in zip(*meshes):
                 faces_I_np = np.array(faces_I)
@@ -322,27 +328,31 @@ class SvWeightedVectorSumNode(SverchCustomTreeNode, bpy.types.Node, SvRecursiveN
                 else:
                     result_mask.append(True)
 
-                    # triangulate mesh for 'FACES' mode
-                    bm_I = bmesh_from_pydata(vertices_I, edges_I, faces_I, markup_face_data=True, normal_update=True)
-                    b_faces = []
-                    for face in bm_I.faces:
-                        b_faces.append(face)
-                    res = bmesh.ops.triangulate(
-                        bm_I, faces=b_faces, quad_method=self.quad_mode, ngon_method=self.ngon_mode
-                    )
-                    new_vertices_I, new_edges_I, new_faces_I = pydata_from_bmesh(bm_I)
-                    bm_I.free()
+                    # test if some polygons are not tris:
+                    if max(map(len, faces_I_np))>3:
+                        # triangulate mesh for 'FACES' mode
+                        bm_I = bmesh_from_pydata(vertices_I, edges_I, faces_I, markup_face_data=True, normal_update=True)
+                        b_faces = []
+                        for face in bm_I.faces:
+                            b_faces.append(face)
+                        res = bmesh.ops.triangulate(
+                            bm_I, faces=b_faces, quad_method=self.quad_mode, ngon_method=self.ngon_mode
+                        )
+                        new_vertices_I, new_edges_I, new_faces_I = pydata_from_bmesh(bm_I)
+                        bm_I.free()
+                    else:
+                        new_vertices_I,new_edges_I,new_faces_I = vertices_I, edges_I, faces_I
 
                     result_vertices.append(new_vertices_I)
                     result_edges.append(new_edges_I)
                     result_polygons.append(new_faces_I)
                     
-                    verts_I            = np.array(new_vertices_I)
-                    faces_I            = np.array(new_faces_I)
-                    tris_I             = verts_I[faces_I]
-                    areases_I          = np.linalg.norm(np.cross(tris_I[:,1]-tris_I[:,0], tris_I[:,2]-tris_I[:,0]) / 2.0, axis=1)
+                    verts_I_np         = np.array(new_vertices_I)
+                    faces_I_np         = np.array(new_faces_I)
+                    tris_I_np          = verts_I_np[faces_I_np]
+                    areases_I          = np.linalg.norm(np.cross(tris_I_np[:,1]-tris_I_np[:,0], tris_I_np[:,2]-tris_I_np[:,0]) / 2.0, axis=1)
                     area_I             = areases_I.sum()
-                    tris_centers_I     = tris_I.sum(axis=1) / 3.0
+                    tris_centers_I     = tris_I_np.sum(axis=1) / 3.0
                     center_mass_mesh_I = (tris_centers_I * areases_I[np.newaxis].T).sum(axis=0) / area_I
                     mass_I             = area_I * density_I[0]
 
@@ -365,39 +375,53 @@ class SvWeightedVectorSumNode(SverchCustomTreeNode, bpy.types.Node, SvRecursiveN
                     # if no faces at all:
                     result_mask.append(False)
                 else:
-
-                    # triangulate mesh
-                    bm_I = bmesh_from_pydata(vertices_I, edges_I, faces_I, markup_face_data=True, normal_update=True)
-                    # test if all edges are contiguous (https://docs.blender.org/api/current/bmesh.types.html#bmesh.types.BMEdge.is_contiguous)
-                    # then volume is closed:
-                    for edge in bm_I.edges:
-                        if edge.is_contiguous==False:
-                            result_mask.append(False)
-                            bm_I.free()
-                            break
+                    do_calc = False
+                    if max(map(len, faces_I_np))==3 and self.skip_test_volume_are_closed==True:
+                        new_vertices_I, new_edges_I, new_faces_I = vertices_I, edges_I, faces_I
+                        do_calc = True
                     else:
-                        result_mask.append(True)
-                        b_faces = []
-                        for face in bm_I.faces:
-                            b_faces.append(face)
+                        # triangulate mesh
+                        bm_I = bmesh_from_pydata(vertices_I, edges_I, faces_I, markup_face_data=True, normal_update=True)
+                        # test if all edges are contiguous (https://docs.blender.org/api/current/bmesh.types.html#bmesh.types.BMEdge.is_contiguous)
+                        # then volume is closed:
+                        for edge in bm_I.edges:
+                            if edge.is_contiguous==False:
+                                do_calc = False
+                                break
+                        else:
+                            do_calc = True
+                            # test if some polygons are not tris:
+                            if max(map(len, faces_I_np))>3:
+                                b_faces = []
+                                for face in bm_I.faces:
+                                    b_faces.append(face)
 
-                        res = bmesh.ops.triangulate(
-                            bm_I, faces=b_faces, quad_method=self.quad_mode, ngon_method=self.ngon_mode
-                        )
-                        new_vertices_I, new_edges_I, new_faces_I = pydata_from_bmesh(bm_I)
+                                res = bmesh.ops.triangulate(
+                                    bm_I, faces=b_faces, quad_method=self.quad_mode, ngon_method=self.ngon_mode
+                                )
+                                new_vertices_I, new_edges_I, new_faces_I = pydata_from_bmesh(bm_I)
+                            else:
+                                new_vertices_I, new_edges_I, new_faces_I = vertices_I, edges_I, faces_I
                         bm_I.free()
 
+                    if do_calc==False:
+                        result_mask.append(False)
+                    else:
+                        result_mask.append(True)
                         result_vertices.append(new_vertices_I)
-                        result_edges.append(new_edges_I)
+                        result_edges   .append(new_edges_I)
                         result_polygons.append(new_faces_I)
                         
                         verts_I = np.array(new_vertices_I)
                         faces_I = np.array(new_faces_I)
                         tris_I = verts_I[faces_I]
-                        signed_volumes_I   = np_dot(tris_I[:,0], np.cross(tris_I[:,1], tris_I[:,2]))
+                        # to precise calc move all mesh to median point
+                        tris_I_median = np.median(tris_I, axis=(0,1))
+                        tris_I_delta = tris_I-tris_I_median
+                        signed_volumes_I   = np_dot(tris_I_delta[:,0], np.cross(tris_I_delta[:,1], tris_I_delta[:,2]))
                         volume_I           = signed_volumes_I.sum()
-                        tetra_centers_I    = tris_I.sum(axis=1) / 4.0
-                        center_mass_mesh_I = (tetra_centers_I * signed_volumes_I[np.newaxis].T).sum(axis=0) / volume_I
+                        tetra_centers_I    = tris_I_delta.sum(axis=1) / 4.0
+                        center_mass_mesh_I = (tetra_centers_I * signed_volumes_I[np.newaxis].T).sum(axis=0) / volume_I + tris_I_median
                         mass_I             = volume_I * density_I[0]
 
                         center_mass_mesh_list.append( center_mass_mesh_I.tolist() )
