@@ -106,15 +106,19 @@ class SvListInputNode(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
             col = layout.column(align=False)
             for i in range(self.v_int):
                 row = col.row(align=True)
+                split = row.split(factor=0.08)
+                row1 = split.column().row(align=True)
+                row1.alignment = 'RIGHT'
+                row1.label(text=f"{i}.")
+                row2 = split.column().row(align=True)
                 for j in range(3):
-                    row.prop(self, 'vector_list', index=i*3+j, text='XYZ'[j])
+                    row2.prop(self, 'vector_list', index=i*3+j, text='XYZ'[j])
         elif self.mode == 'int_list':
             col = layout.column(align=True)
             listinput_drawI(self,col)
         else:
             col = layout.column(align=True)
             listinput_drawF(self,col)
-
     def draw_buttons_3dpanel(self, layout, in_menu=None):
         if not in_menu:
             menu = layout.row(align=True).operator('node.popup_3d_menu', text=f'Show: "{self.label or self.name}"')
