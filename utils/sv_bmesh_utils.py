@@ -914,33 +914,35 @@ def recalc_normals(verts, edges, faces, loop=False):
         bm.free()
         return verts, edges, faces
 
-def calc_center_mass_bmesh(center_mode, vertices_I, edges_I, faces_I, mass_of_vertices_I=None, density_I=None, skip_test_volume_are_closed=False, quad_mode="BEAUTY", ngon_mode="BEAUTY"):
+def calc_center_mass_bmesh(center_mode, mesh_vertices, mesh_edges, mesh_faces, mass_of_vertices=None, object_density=None, skip_test_volume_are_closed=False, quad_mode="BEAUTY", ngon_mode="BEAUTY"):
     '''
     Calculate center of mass for single mesh.
 
     Input:
         - center_mode=['VERTICES', 'EDGES', 'FACES', 'VOLUMES']
-        - vertices_I = [[x1,y1,z1],[x2,y2,z2],...] (float) - vertices of mesh
-        - edges_I = [[0,1],[1,2],[2,3],...] (int) - indixes of verts (edges)
-        - faces_I = [[0,1,2],[1,2,3,4,...], ...] - indixes of verts (faces)
-        - mass_of_vertices_I = [ [ 1.1, 1.0, 5.2, 0.2,...] ] - mass of every vert in mesh. Extrapolate a last value to the all vertices
-        - density_I = [1.2] - density of volume. If center_mode is EDGES or FACES then mass of objects are proportional to length or area.
+        - mesh_vertices = [[x1,y1,z1],[x2,y2,z2],...] (float) - vertices of mesh
+        - mesh_edges = [[0,1],[1,2],[2,3],...] (int) - indixes of verts (edges)
+        - mesh_faces = [[0,1,2],[1,2,3,4,...], ...] - indixes of verts (faces)
+        - mass_of_vertices = [ [ 1.1, 1.0, 5.2, 0.2,...] ] - mass of every vert in mesh. Extrapolate a last value to the all vertices
+        - object_density = [1.2] - density of volume. If center_mode is EDGES or FACES then mass of objects are proportional to length or area.
         - skip_test_volume_are_closed - (only for volume node) If you know that volume are close then you can speed up performance if you set this parameter to True. False - force test mesh are closed.
         - quad_mode [BEAUTY, FIXED, ALTERNATE, SHORT_EDGE], ngon_mode [BEAUTY, EAR_CLIP] - modes for triangulation if mesh has faces with 4 and more vertices (for center_mode FACES of VOLUMES only)
 
     Output:
 
         - result_mask - True/False. If False then another output params are None
-        - result_vertices_I, result_edges_I, result_polygons_I - result mesh (source mesh or triangulated mesh)
-        - result_center_mass_mesh_I - center of mass of mesh
-        - result_mass_mesh_I - mass of mesh
-        - result_size_mesh_I - for VERTICES - count vertices, for EDGES - length of edges, for FACES - area of mesh, for VOLUMES - volume of mesh
+        - result_vertices, result_edges, result_polygons - result mesh (source mesh or triangulated mesh)
+        - result_center_mass_mesh - center of mass of mesh
+        - result_mass_mesh - mass of mesh
+        - result_size_mesh - for VERTICES - count vertices, for EDGES - length of edges, for FACES - area of mesh, for VOLUMES - volume of mesh
 
     Example:
         https://github.com/nortikin/sverchok/assets/14288520/e432b5c0-35e5-432b-8c9f-798f58b71f13
     '''
     result_mask = result_vertices_I = result_edges_I = result_polygons_I = result_center_mass_mesh_I = result_mass_mesh_I = result_size_mesh_I = None
-    
+
+    vertices_I, edges_I, faces_I, mass_of_vertices_I, density_I = mesh_vertices, mesh_edges, mesh_faces, mass_of_vertices, object_density
+
     if mass_of_vertices_I is None:
         mass_of_vertices_I=[1]
     if density_I is None:

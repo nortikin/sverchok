@@ -47,17 +47,17 @@ class SvWeightedVectorSumNode(SverchCustomTreeNode, bpy.types.Node, SvRecursiveN
 
     def updateSizeSocket(self, context):
         if self.center_mode == 'VERTICES':
-            self.outputs['output_sizes'].label = 'Count of verts'
-            self.outputs['output_size' ].label = 'Total Verts'
+            self.outputs['output_sizes'].label = 'Count of Verts of Every Object'
+            self.outputs['output_size' ].label = 'Sum Verts of All Objects'
         elif self.center_mode == 'EDGES':
-            self.outputs['output_sizes'].label = 'Lengths'
-            self.outputs['output_size' ].label = 'Total Length'
+            self.outputs['output_sizes'].label = 'Lengths of Edges of Every Object'
+            self.outputs['output_size' ].label = 'Summ Length of All Objects'
         elif self.center_mode == 'FACES':
-            self.outputs['output_sizes'].label = 'Areas'
-            self.outputs['output_size' ].label = 'Total Area'
+            self.outputs['output_sizes'].label = 'Areas of Surfaces of Every Object'
+            self.outputs['output_size' ].label = 'Sum Area of All Objects'
         elif self.center_mode == 'VOLUMES':
-            self.outputs['output_sizes'].label = 'Volumes'
-            self.outputs['output_size' ].label = 'Total Volume'
+            self.outputs['output_sizes'].label = 'Volumes of Every Object'
+            self.outputs['output_size' ].label = 'Sum Volume of All Objects'
         
         updateNode(self, context)
 
@@ -187,13 +187,13 @@ class SvWeightedVectorSumNode(SverchCustomTreeNode, bpy.types.Node, SvRecursiveN
         self.outputs['output_vertices'] .label = 'Vertices'
         self.outputs['output_edges'] .label = 'Edges'
         self.outputs['output_polygons'] .label = 'Polygons'
-        self.outputs['output_centers_of_mass'].label = 'Centers of mass of objects'
-        self.outputs['output_total_center'].label = 'Total center'
+        self.outputs['output_centers_of_mass'].label = 'Center mass of Every objects'
+        self.outputs['output_total_center'].label = 'Center mass of All objects'
         self.outputs['output_sizes'].label = ''
         self.outputs['output_size'] .label = ''
-        self.outputs['output_masses'] .label = 'Masses'
-        self.outputs['output_mass'] .label = 'Mass'
-        self.outputs['output_mask'] .label = 'Mask'
+        self.outputs['output_masses'] .label = 'Masses of Every Object'
+        self.outputs['output_mass'] .label = 'Mass of All Object'
+        self.outputs['output_mask'] .label = 'Mask Validity Every Object'
 
         self.updateSizeSocket(context)
         self.update_sockets(context)
