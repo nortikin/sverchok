@@ -914,7 +914,7 @@ def recalc_normals(verts, edges, faces, loop=False):
         bm.free()
         return verts, edges, faces
 
-def calc_center_mass_bmesh(center_mode, vertices_I, edges_I, faces_I, mass_of_vertices_I=[1], density_I=[1], skip_test_volume_are_closed=False, quad_mode="BEAUTY", ngon_mode="BEAUTY"):
+def calc_center_mass_bmesh(center_mode, vertices_I, edges_I, faces_I, mass_of_vertices_I=None, density_I=None, skip_test_volume_are_closed=False, quad_mode="BEAUTY", ngon_mode="BEAUTY"):
     '''
     Calculate center of mass for single mesh.
 
@@ -940,6 +940,12 @@ def calc_center_mass_bmesh(center_mode, vertices_I, edges_I, faces_I, mass_of_ve
         https://github.com/nortikin/sverchok/assets/14288520/e432b5c0-35e5-432b-8c9f-798f58b71f13
     '''
     result_mask = result_vertices_I = result_edges_I = result_polygons_I = result_center_mass_mesh_I = result_mass_mesh_I = result_size_mesh_I = None
+    
+    if mass_of_vertices_I is None:
+        mass_of_vertices_I=[1]
+    if density_I is None:
+        density_I=[1]
+
     if len(vertices_I)==0:
         # skip mesh if no vertices at all:
         result_mask = False
