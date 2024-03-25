@@ -17,11 +17,11 @@ if FreeCAD is not None:
 
 class SvSolidCenterOfMassNode(SverchCustomTreeNode, bpy.types.Node):
     """
-    Triggers: Center of Mass
+    Triggers: Center of Mass (Solid)
     Tooltip: Calculate center of mass (barycenter) of a Solid object
     """
     bl_idname = 'SvSolidCenterOfMassNode'
-    bl_label = 'Center of Mass'
+    bl_label = 'Center of Mass (Solid)'
     sv_category = "Solid Operators"
     sv_dependencies = {'FreeCAD'}
 

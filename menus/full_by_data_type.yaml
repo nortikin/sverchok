@@ -187,6 +187,7 @@
         - SvVolumeNodeMK2
         - SvAreaNode
         - DistancePPNode
+        - SvWeightedVectorSumNode
         - SvDistancePointLineNode
         - SvDistancePointPlaneNode
         - SvDistancetLineLineNode
