@@ -10,7 +10,6 @@ import numpy as np
 import bpy
 from mathutils import Matrix, Vector
 from bpy.props import StringProperty, BoolProperty, IntProperty, EnumProperty, FloatVectorProperty
-import bgl
 import gpu
 from gpu_extras.batch import batch_for_shader
 
@@ -22,23 +21,24 @@ from sverchok.utils.surface.bakery import SurfaceData
 from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
 from sverchok.ui.bgl_callback_3dview import callback_disable, callback_enable
 from sverchok.utils.sv_3dview_tools import Sv3DviewAlign
+from sverchok.utils.modules.drawing_abstractions import drawing, shading_3d
 
 
 def draw_edges(shader, points, edges, line_width, color):
-    bgl.glLineWidth(line_width)
+    drawing.set_line_width(line_width)
     batch = batch_for_shader(shader, 'LINES', {"pos": points}, indices=edges)
     shader.bind()
     shader.uniform_float('color', color)
     batch.draw(shader)
-    bgl.glLineWidth(1)
+    drawing.reset_line_width()
 
 def draw_points(shader, points, size, color):
-    bgl.glPointSize(size)
+    drawing.set_point_size(size)
     batch = batch_for_shader(shader, 'POINTS', {"pos": points})
     shader.bind()
     shader.uniform_float('color', color)
     batch.draw(shader)
-    bgl.glPointSize(1)
+    drawing.reset_point_size()
 
 def draw_polygons(shader, points, tris, vertex_colors):
     batch = batch_for_shader(shader, 'TRIS', {"pos": points, 'color': vertex_colors}, indices=tris)
@@ -48,7 +48,7 @@ def draw_polygons(shader, points, tris, vertex_colors):
 def draw_surfaces(context, args):
     node, draw_inputs, v_shader, e_shader, p_shader = args
 
-    bgl.glEnable(bgl.GL_BLEND)
+    drawing.enable_blendmode()
 
     for item in draw_inputs:
 
@@ -73,7 +73,7 @@ def draw_surfaces(context, args):
         if node.draw_verts:
             draw_points(v_shader, item.points_list, node.verts_size, node.verts_color)
 
-    bgl.glEnable(bgl.GL_BLEND)
+    drawing.disable_blendmode()
 
 class SvBakeSurfaceOp(bpy.types.Operator, SvGenericNodeLocator):
     """B A K E SURFACES"""
@@ -261,12 +261,9 @@ class SvSurfaceViewerDrawNode(SverchCustomTreeNode, bpy.types.Node):
         self.draw_buttons(context, layout)
 
     def draw_all(self, draw_inputs):
-        shader_name = f'{"3D_" if bpy.app.version < (3, 4) else ""}UNIFORM_COLOR'
-        v_shader = gpu.shader.from_builtin(shader_name)
-        shader_name = f'{"3D_" if bpy.app.version < (3, 4) else ""}UNIFORM_COLOR'
-        e_shader = gpu.shader.from_builtin(shader_name)
-        shader_name = f'{"3D_" if bpy.app.version < (3, 4) else ""}SMOOTH_COLOR'
-        p_shader = gpu.shader.from_builtin(shader_name)
+        v_shader = gpu.shader.from_builtin(shading_3d.UNIFORM_COLOR)
+        e_shader = gpu.shader.from_builtin(shading_3d.UNIFORM_COLOR)
+        p_shader = gpu.shader.from_builtin(shading_3d.SMOOTH_COLOR)
 
         draw_data = {
                 'tree_name': self.id_data.name[:],

@@ -12,7 +12,6 @@ import numpy as np
 import itertools
 
 import bpy
-import bgl
 import gpu
 from gpu_extras.batch import batch_for_shader
 
@@ -23,6 +22,7 @@ from sverchok.ui import bgl_callback_nodeview as nvBGL2
 from sverchok.utils.sv_update_utils import sv_get_local_path
 from sverchok.utils.sv_font_xml_parser import get_lookup_dict, letters_to_uv
 from sverchok.utils.sv_nodeview_draw_helper import SvNodeViewDrawMixin, get_console_grid
+from sverchok.utils.modules.drawing_abstractions import drawing
 #from sverchok.utils.decorators_compilation import njit
 
 def get_desired_xy(node):
@@ -391,8 +391,8 @@ def terminal_text_to_uv(lines):
 
 def simple_console_xy(context, args, loc):
     texture, config = args
-    act_tex = bgl.Buffer(bgl.GL_INT, 1)
-    bgl.glBindTexture(bgl.GL_TEXTURE_2D, texture.texture_dict['texture'])
+    act_tex = drawing.new_buffer_texture()
+    drawing.bind_texture_2d(texture.texture_dict['texture'])
     config.shader.bind()
     
     # if not config.syntax_mode == "None":
@@ -513,13 +513,13 @@ class SvConsoleNode(SverchCustomTreeNode, bpy.types.Node, SvNodeViewDrawMixin):
             dsize = data.size
             data = data.repeat(3).reshape(-1, 3)
             data = np.concatenate((data, np.ones(dsize)[:,None]),axis=1).flatten()
-            name = bgl.Buffer(bgl.GL_INT, 1)
-            bgl.glGenTextures(1, name)
-            self.texture_dict['texture'] = name[0]
-            self.texture_dict['texture_data'] = data # bgl.Buffer(bgl.GL_FLOAT, data.size, data.tolist())
-           
-        # return self.texture_dict.get('texture')
+            name = drawing.new_buffer_texture()
+            drawing.generate_textures(name)
 
+            self.texture_dict['texture'] = name[0]
+            self.texture_dict['texture_data'] = data
+           
+  
     def sv_init(self, context):
         self.inputs.new("SvStringsSocket", "text")
         self.id_data.update_gl_scale_info()
@@ -543,23 +543,12 @@ class SvConsoleNode(SverchCustomTreeNode, bpy.types.Node, SvNodeViewDrawMixin):
         for color_name in lexed_colors:
             row = col.row()
             row.prop(self, color_name)
-
     
     def init_texture(self, width, height):
-        clr = bgl.GL_RGBA
         texname = self.texture_dict['texture']
         data = self.texture_dict['texture_data']
+        drawing.init_complex_texture(width, height, texname, data, 'RGBA')
 
-        texture = bgl.Buffer(bgl.GL_FLOAT, data.size, data.tolist())
-        bgl.glPixelStorei(bgl.GL_UNPACK_ALIGNMENT, 1)
-        bgl.glEnable(bgl.GL_TEXTURE_2D)
-        bgl.glBindTexture(bgl.GL_TEXTURE_2D, texname)
-        bgl.glActiveTexture(bgl.GL_TEXTURE0)
-        bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_WRAP_S, bgl.GL_CLAMP_TO_EDGE)
-        bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_WRAP_T, bgl.GL_CLAMP_TO_EDGE)
-        bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MAG_FILTER, bgl.GL_LINEAR)
-        bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MIN_FILTER, bgl.GL_LINEAR)
-        bgl.glTexImage2D(bgl.GL_TEXTURE_2D, 0, clr, width, height, 0, clr, bgl.GL_FLOAT, texture)
 
     def set_node_props(self, socket_data):
         multiline, (chars_x, chars_y) = text_decompose('\n'.join(socket_data), self.last_n_lines)

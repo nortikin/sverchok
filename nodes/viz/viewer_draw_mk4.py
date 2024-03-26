@@ -13,7 +13,7 @@ from mathutils.geometry import tessellate_polygon as tessellate
 from mathutils.noise import random, seed_set
 import bpy
 from bpy.props import StringProperty, FloatProperty, IntProperty, EnumProperty, BoolProperty, FloatVectorProperty
-import bgl
+
 import gpu
 from gpu_extras.batch import batch_for_shader
 
@@ -23,6 +23,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.ui.bgl_callback_3dview import callback_disable, callback_enable
 from sverchok.utils.sv_batch_primitives import MatrixDraw28
 from sverchok.utils.sv_shader_sources import dashed_vertex_shader, dashed_fragment_shader
+from sverchok.utils.modules.drawing_abstractions import drawing, shading_3d 
 from sverchok.utils.geom import multiply_vectors_deep
 from sverchok.utils.modules.polygon_utils import pols_normals
 from sverchok.utils.modules.vertex_utils import np_vertex_normals
@@ -40,26 +41,62 @@ default_vertex_shader = '''
     uniform mat4 viewProjectionMatrix;
 
     in vec3 position;
-    out vec3 pos;
 
     void main()
     {
-        pos = position;
         gl_Position = viewProjectionMatrix * vec4(position, 1.0f);
     }
 '''
 
-default_fragment_shader = '''
-    uniform float brightness;
+default_geometry_shader = '''
+    uniform mat4 viewProjectionMatrix;
 
-    in vec3 pos;
-    out vec4 FragColor;
+    out VS_OUT
+    {
+        vec3 FaceNormal;
+    } vs_out;
+
+
+    layout(triangles) in;
+    layout(triangle_strip, max_vertices = 3) out;
 
     void main()
     {
-        FragColor = vec4(pos * brightness, 1.0);
+        vec3 ab = gl_in[1].gl_Position.xyz - gl_in[0].gl_Position.xyz;
+        vec3 ac = gl_in[2].gl_Position.xyz - gl_in[0].gl_Position.xyz;
+        vec3 normal3 = normalize(cross(ab, ac));
+        vec4 normal4 = vec4(normal3, 1.0);
+        vs_out.FaceNormal = normal3;
+        vec4 rescale = vec4(0.00003, 0.00003, 0.00003, 0.0);
+        vec4 offset = vec4(normal4 * rescale);
+
+        for (int i = 0; i < gl_in.length(); i++)
+        {
+            gl_Position = gl_in[i].gl_Position + offset;
+            EmitVertex();
+        }
+
+        EndPrimitive();        
+    }
+
+'''
+
+default_fragment_shader = '''
+
+    in VS_OUT
+    {
+        vec3 FaceNormal;
+    } fs_in;
+
+    out vec4 gl_FragColor;
+
+    void main()
+    {
+        gl_FragColor = vec4(fs_in.FaceNormal.xyz, 0.7);
     }
 '''
+
+
 
 def ensure_triangles(coords, indices, handle_concave_quads):
     """
@@ -125,21 +162,24 @@ def view_3d_geom(context, args):
 
     geom, config = args
 
-    bgl.glEnable(bgl.GL_BLEND)
+    drawing.enable_blendmode()
 
     if config.draw_polys:
         if config.draw_gl_wireframe:
-            bgl.glPolygonMode(bgl.GL_FRONT_AND_BACK, bgl.GL_LINE)
+            drawing.set_polygonmode_line()
         if config.draw_gl_polygonoffset:
-            bgl.glEnable(bgl.GL_POLYGON_OFFSET_FILL)
-            bgl.glPolygonOffset(1.0, 1.0)
+            drawing.enable_polygon_offset_fill()
+            drawing.set_polygon_offset_amounts()
 
         if config.shade_mode == 'fragment':
             p_batch = batch_for_shader(config.p_shader, 'TRIS', {"position": geom.p_vertices}, indices=geom.p_indices)
             config.p_shader.bind()
             matrix = context.region_data.perspective_matrix
             config.p_shader.uniform_float("viewProjectionMatrix", matrix)
-            config.p_shader.uniform_float("brightness", 0.5)
+            #if hasattr(config, "brightness"):
+            #    config.p_shader.uniform_float("brightness", config.brightness)
+            #else:
+            #    config.p_shader.uniform_float("brightness", 0.5)
         else:
             if config.uniform_pols:
                 p_batch = batch_for_shader(config.p_shader, 'TRIS', {"pos": geom.p_vertices}, indices=geom.p_indices)
@@ -152,13 +192,14 @@ def view_3d_geom(context, args):
         p_batch.draw(config.p_shader)
 
         if config.draw_gl_polygonoffset:
-            bgl.glDisable(bgl.GL_POLYGON_OFFSET_FILL)
+            drawing.disable_polygon_offset_fill()
         if config.draw_gl_wireframe:
-            bgl.glPolygonMode(bgl.GL_FRONT_AND_BACK, bgl.GL_FILL)
+            # this is to reset the state of drawing to fill
+            drawing.set_polygonmode_fill()
 
 
     if config.draw_edges:
-        bgl.glLineWidth(config.line_width)
+        drawing.set_line_width(config.line_width)
 
         if config.draw_dashed:
             shader = config.dashed_shader
@@ -182,11 +223,11 @@ def view_3d_geom(context, args):
                 config.e_shader.bind()
                 e_batch.draw(config.e_shader)
 
-        bgl.glLineWidth(1)
+        drawing.reset_line_width()
 
     if config.draw_verts:
         if geom.v_vertices and (len(geom.v_vertices[0])==3):
-            bgl.glPointSize(config.point_size)
+            drawing.set_point_size(config.point_size)
             if config.uniform_verts:
                 v_batch = batch_for_shader(config.v_shader, 'POINTS', {"pos": geom.v_vertices})
                 config.v_shader.bind()
@@ -196,9 +237,9 @@ def view_3d_geom(context, args):
                 config.v_shader.bind()
 
             v_batch.draw(config.v_shader)
-            bgl.glPointSize(1)
+            drawing.reset_point_size()
 
-    bgl.glDisable(bgl.GL_BLEND)
+    drawing.disable_blendmode()
 
 
 def splitted_polygons_geom(polygon_indices, original_idx, v_path, cols, idx_offset):
@@ -455,34 +496,28 @@ def generate_mesh_geom(config, vecs_in):
 
     if config.draw_verts:
         if config.uniform_verts:
-            shader_name = f'{"3D_" if bpy.app.version < (3, 4) else ""}UNIFORM_COLOR'
-            config.v_shader = gpu.shader.from_builtin(shader_name)
+            config.v_shader = gpu.shader.from_builtin(shading_3d.UNIFORM_COLOR)
         else:
-            shader_name = f'{"3D_" if bpy.app.version < (3, 4) else ""}SMOOTH_COLOR'
-            config.v_shader = gpu.shader.from_builtin(shader_name)
+            config.v_shader = gpu.shader.from_builtin(shading_3d.SMOOTH_COLOR)
         geom.v_vertices, geom.points_color = v_vertices, points_color
 
     if config.draw_edges:
         if config.edges_use_vertex_color and e_vertices:
             e_vertex_colors = points_color
         if config.uniform_edges:
-            shader_name = f'{"3D_" if bpy.app.version < (3, 4) else ""}UNIFORM_COLOR'
-            config.e_shader = gpu.shader.from_builtin(shader_name)
+            config.e_shader = gpu.shader.from_builtin(shading_3d.UNIFORM_COLOR)
         else:
-            shader_name = f'{"3D_" if bpy.app.version < (3, 4) else ""}SMOOTH_COLOR'
-            config.e_shader = gpu.shader.from_builtin(shader_name)
+            config.e_shader = gpu.shader.from_builtin(shading_3d.SMOOTH_COLOR)
         geom.e_vertices, geom.e_vertex_colors, geom.e_indices = e_vertices, e_vertex_colors, e_indices
 
 
     if config.draw_polys and config.shade_mode != 'fragment':
         if config.uniform_pols:
-            shader_name = f'{"3D_" if bpy.app.version < (3, 4) else ""}UNIFORM_COLOR'
-            config.p_shader = gpu.shader.from_builtin(shader_name)
+            config.p_shader = gpu.shader.from_builtin(shading_3d.UNIFORM_COLOR)
         else:
             if config.polygon_use_vertex_color and config.shade_mode not in ['facet', 'smooth']:
                 p_vertex_colors = points_color
-            shader_name = f'{"3D_" if bpy.app.version < (3, 4) else ""}SMOOTH_COLOR'
-            config.p_shader = gpu.shader.from_builtin(shader_name)
+            config.p_shader = gpu.shader.from_builtin(shading_3d.SMOOTH_COLOR)
         geom.p_vertices, geom.p_vertex_colors, geom.p_indices = p_vertices, p_vertex_colors, p_indices
 
     elif config.shade_mode == 'fragment' and config.draw_polys:
@@ -500,7 +535,7 @@ def generate_mesh_geom(config, vecs_in):
             config.draw_fragment_function = ND.get('draw_fragment')
             config.p_shader = gpu.types.GPUShader(config.node.custom_vertex_shader, config.node.custom_fragment_shader)
         else:
-            config.p_shader = gpu.types.GPUShader(default_vertex_shader, default_fragment_shader)
+            config.p_shader = gpu.types.GPUShader(default_vertex_shader, default_fragment_shader, geocode=default_geometry_shader)
         geom.p_vertices, geom.p_vertex_colors, geom.p_indices = p_vertices, p_vertex_colors, p_indices
 
     return geom
@@ -554,6 +589,8 @@ class SvViewerDrawMk4(SverchCustomTreeNode, bpy.types.Node):
     draw_gl_wireframe: BoolProperty(
         name="Draw gl wireframe",
         default=False, update=updateNode)
+
+    brightness: FloatProperty(min=0.0, max=1.0, default=0.8)
 
     vector_light: FloatVectorProperty(
         name='vector light', subtype='DIRECTION', min=0, max=1, size=3,
@@ -651,7 +688,6 @@ class SvViewerDrawMk4(SverchCustomTreeNode, bpy.types.Node):
 
             except Exception as err:
                 print(err)
-
 
                 # reset custom shader
                 self.custom_vertex_shader = ''
@@ -818,10 +854,9 @@ class SvViewerDrawMk4(SverchCustomTreeNode, bpy.types.Node):
         config.u_dash_size = self.u_dash_size
         config.u_gap_size = self.u_gap_size
         config.u_resolution = self.u_resolution[:]
+        # config.brightness = self.brightness  # this is only to test the passthrough of the geometry shader.
 
         config.node = self
-
-
         return config
 
 
@@ -954,7 +989,6 @@ class SvViewerDrawMk4(SverchCustomTreeNode, bpy.types.Node):
                 self.process()
             else:
                 callback_disable(node_id(self))
-
 
 
 classes = [SvViewerDrawMk4,]

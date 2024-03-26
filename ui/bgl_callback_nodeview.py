@@ -24,11 +24,11 @@ from inspect import isfunction
 
 import bpy
 import blf
-import bgl
 from bpy.types import SpaceNodeEditor
 
 from sverchok.utils.sv_stethoscope_helper import draw_text_data, draw_graphical_data
 from sverchok.utils.sv_logging import sv_logger
+from sverchok.utils.modules.drawing_abstractions import drawing 
 
 callback_dict = {}
 point_dict = {}
@@ -98,9 +98,8 @@ def callback_disable_filtered(pattern):
 
 
 def restore_opengl_defaults():
-    bgl.glLineWidth(1)
-    bgl.glDisable(bgl.GL_BLEND)
-    # bgl.glColor4f(0.0, 0.0, 0.0, 1.0)     # doesn't exist anymore ..    
+    drawing.set_line_width(1)
+    drawing.disable_blendmode()
 
 
 def get_xy_from_data(data):
@@ -189,12 +188,10 @@ def draw_callback_px(n_id, data):
         '''
         x, y = get_xy_from_data(data)
 
-        # bgl.glEnable(bgl.GL_DEPTH_TEST)
         drawing_func = data.get('custom_function')
         args = data.get('args', (None,))
         drawing_func(bpy.context, args, (x, y))
         restore_opengl_defaults()
-        # bgl.glDisable(bgl.GL_DEPTH_TEST)
 
 
 def _draw_text_handler(tree_id, node_id, text: str, color=(1, 1, 1, 1), scale=1.0, align='RIGHT',
@@ -235,7 +232,7 @@ def _draw_text_handler(tree_id, node_id, text: str, color=(1, 1, 1, 1), scale=1.
     font_id = 0
     dpi = 72
 
-    blf.size(font_id, text_height, dpi)
+    drawing.blf_size(font_id, text_height, dpi)
     blf.color(font_id, *color)
 
     for line in text.split('\n'):
@@ -245,7 +242,7 @@ def _draw_text_handler(tree_id, node_id, text: str, color=(1, 1, 1, 1), scale=1.
 
 
 def _get_text_location(node, align='RIGHT') -> tuple[int, int]:
-    """Find location for a text nearby give node"""
+    """Find location for a text nearby given node"""
     (x, y) = node.absolute_location
     gap = 10
 

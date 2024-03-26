@@ -53,7 +53,6 @@ if FreeCAD is not None:
     import Part
     STANDARD_TYPES = STANDARD_TYPES + (Part.Shape,)
 
-
 InterfaceSocket = bpy.types.NodeTreeInterfaceSocket if bpy.app.version >= (4, 0) \
              else bpy.types.NodeSocketInterface
 
@@ -1592,8 +1591,7 @@ def socket_interface_classes():
                 pass
 
         socket_interface_attributes['draw'] = draw
-        yield type(
-            f'{socket_cls.__name__}Interface', (InterfaceSocket,), socket_interface_attributes)
+        yield type(f'{socket_cls.__name__}Interface', (InterfaceSocket,), socket_interface_attributes)
 
 
 register, unregister = bpy.utils.register_classes_factory(classes + list(socket_interface_classes()))
