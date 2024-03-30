@@ -92,13 +92,11 @@ class SvVoronoiOnMeshNodeMK2(SverchCustomTreeNode, bpy.types.Node):
         self.inputs.new('SvStringsSocket', 'Faces')
         self.inputs.new('SvVerticesSocket', "Sites")
 #         self.inputs.new('SvStringsSocket', 'Thickness').prop_name = 'thickness'
-        self.inputs.new('SvStringsSocket', "Mask")
         self.inputs.new('SvStringsSocket', 'Spacing').prop_name = 'spacing'
         self.outputs.new('SvVerticesSocket', "Vertices")
         self.outputs.new('SvStringsSocket', "Edges")
         self.outputs.new('SvStringsSocket', "Faces")
         self.outputs.new('SvStringsSocket', "Sites_idx")
-        self.outputs.new('SvStringsSocket', "Sites_verts")
         self.update_sockets(context)
 
     def draw_buttons(self, context, layout):
@@ -121,13 +119,6 @@ class SvVoronoiOnMeshNodeMK2(SverchCustomTreeNode, bpy.types.Node):
         verts_in = self.inputs['Vertices'].sv_get(deepcopy=False)
         faces_in = self.inputs['Faces'].sv_get(deepcopy=False)
         sites_in = self.inputs['Sites'].sv_get(deepcopy=False)
-
-        mask_in = self.inputs['Mask'] #.sv_get(deepcopy=False)
-        if mask_in.is_linked==False:
-            mask_in = [[[]]]
-        else:
-            mask_in = mask_in.sv_get(deepcopy=False)
-            
         #thickness_in = self.inputs['Thickness'].sv_get()
         spacing_in = self.inputs['Spacing'].sv_get(deepcopy=False)
 
@@ -137,7 +128,6 @@ class SvVoronoiOnMeshNodeMK2(SverchCustomTreeNode, bpy.types.Node):
         faces_in = ensure_nesting_level(faces_in, 4)
         #thickness_in = ensure_nesting_level(thickness_in, 2)
         spacing_in = ensure_min_nesting(spacing_in, 2)
-        mask_in = ensure_min_nesting(mask_in, 3)
 
         nested_output = input_level > 3
 
@@ -147,62 +137,52 @@ class SvVoronoiOnMeshNodeMK2(SverchCustomTreeNode, bpy.types.Node):
         edges_out = []
         faces_out = []
         sites_idx_out = []
-        sites_verts_out = []
-        for params in zip_long_repeat(verts_in, faces_in, sites_in, spacing_in, mask_in):
+        for params in zip_long_repeat(verts_in, faces_in, sites_in, spacing_in):
             new_verts = []
             new_edges = []
             new_faces = []
-            new_sites_idx = []
-            new_sites_verts = []
-            for verts, faces, sites, spacing, mask in zip_long_repeat(*params):
-                verts, edges, faces, used_sites_idx, used_sites_verts = voronoi_on_mesh(verts, faces, sites, thickness=0,
+            new_sites = []
+            for verts, faces, sites, spacing in zip_long_repeat(*params):
+                verts, edges, faces, used_sites_idx = voronoi_on_mesh(verts, faces, sites, thickness=0,
                             spacing = spacing,
                             #clip_inner = self.clip_inner, clip_outer = self.clip_outer,
                             do_clip=True, clipping=None,
                             mode = self.mode,
                             normal_update = self.normals,
-                            precision = precision,
-                            mask = mask
-                            )
+                            precision = precision)
 
                 if self.join_mode == 'FLAT':
                     new_verts.extend(verts)
                     new_edges.extend(edges)
                     new_faces.extend(faces)
-                    new_sites_idx.extend([[idx] for idx in used_sites_idx])
-                    new_sites_verts.extend([[idx] for idx in used_sites_verts])
+                    new_sites.extend([[idx] for idx in used_sites_idx])
                 elif self.join_mode == 'SEPARATE':
                     new_verts.append(verts)
                     new_edges.append(edges)
                     new_faces.append(faces)
-                    new_sites_idx.append(used_sites_idx)
-                    new_sites_verts.append(used_sites_verts)
+                    new_sites.append(used_sites_idx)
                 else: # JOIN
                     verts, edges, faces = mesh_join(verts, edges, faces)
                     new_verts.append(verts)
                     new_edges.append(edges)
                     new_faces.append(faces)
-                    new_sites_idx.append(used_sites_idx)
-                    new_sites_verts.append(used_sites_verts)
+                    new_sites.append(used_sites_idx)
 
             if nested_output:
                 verts_out.append(new_verts)
                 edges_out.append(new_edges)
                 faces_out.append(new_faces)
-                sites_idx_out.append(new_sites_idx)
-                sites_verts_out.append(new_sites_verts)
+                sites_idx_out.append(new_sites)
             else:
                 verts_out.extend(new_verts)
                 edges_out.extend(new_edges)
                 faces_out.extend(new_faces)
-                sites_idx_out.extend(new_sites_idx)
-                sites_verts_out.extend(new_sites_verts)
+                sites_idx_out.extend(new_sites)
 
         self.outputs['Vertices'].sv_set(verts_out)
         self.outputs['Edges'].sv_set(edges_out)
         self.outputs['Faces'].sv_set(faces_out)
         self.outputs['Sites_idx'].sv_set(sites_idx_out)
-        self.outputs['Sites_verts'].sv_set(sites_verts_out)
 
 
 def register():

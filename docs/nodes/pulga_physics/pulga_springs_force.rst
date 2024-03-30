@@ -42,7 +42,7 @@ Example in description:
 
 * Generator-> :doc:`Cylinder </nodes/generator/cylinder_mk2>`
 * Spatial-> :doc:`Populate Mesh </nodes/spatial/random_points_on_mesh>`
-* Spatial-> :doc:`Voronoi on Mesh </nodes/spatial/voronoi_on_mesh_mk2>`
+* Spatial-> :doc:`Voronoi on Mesh </nodes/spatial/voronoi_on_mesh_mk3>`
 * Modifiers->Modifier Change-> :doc:`Mesh Join </nodes/modifier_change/mesh_join_mk2>`
 * Modifiers->Modifier Change-> :doc:`Merge by Distance </nodes/modifier_change/merge_by_distance>`
 * Analyzers->Component Analyzer **Vertices->Sharpness**: :ref:`Vertices Sharpness<VERTICES_SHARPNESS>`
