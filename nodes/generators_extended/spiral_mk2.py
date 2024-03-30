@@ -578,10 +578,9 @@ class SvSpiralNodeMK2(SverchCustomTreeNode, bpy.types.Node, SvAngleHelper):
         self.draw_angle_units_buttons(context, layout)
 
     def process(self):
-        outputs = self.outputs
-        # return if no outputs are connected
-        if not any(s.is_linked for s in outputs):
+        if not any(socket.is_linked for socket in self.outputs):
             return
+        outputs = self.outputs
 
         # input values lists (single or multi value)
         inputs = self.inputs

@@ -114,7 +114,11 @@ class ListFuncNode(SverchCustomTreeNode, bpy.types.Node):
         self.outputs.new('SvStringsSocket', "Function")
 
     def process(self):
-
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        if not self.inputs['Data'].is_linked:
+            raise Exception("Input socket 'Data' has to be connected")
+        
         if self.outputs['Function'].is_linked and self.inputs['Data'].is_linked:
             data = self.inputs['Data'].sv_get()
             func = func_dict[self.func_]

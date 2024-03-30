@@ -29,7 +29,7 @@ from sverchok.data_structure import (
 class DistancePPNode(SverchCustomTreeNode, bpy.types.Node):
     ''' Distance Point to Point '''
     bl_idname = 'DistancePPNode'
-    bl_label = 'Distance'
+    bl_label = 'Distance Point Point'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_DISTANCE'
 

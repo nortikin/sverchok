@@ -81,6 +81,11 @@ class ListFlipNode(SverchCustomTreeNode, bpy.types.Node):
         changable_sockets(self, inputsocketname, outputsocketname)
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        if not all(socket.is_linked for socket in self.inputs):
+            raise Exception("Input socket 'Data' has to be connected")
+        
         if self.inputs['data'].is_linked and self.outputs['data'].is_linked:
             outEval = self.inputs['data'].sv_get(deepcopy=False)
             #outCorr = dataCorrect(outEval)  # this is bullshit, as max 3 in levels

@@ -100,6 +100,8 @@ class SvCurveMapperNode(SverchCustomTreeNode, bpy.types.Node):
         return 'RGB Curves'+n_id
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
         inputs = self.inputs
         outputs = self.outputs
         curve_node_name = self._get_curve_node_name()

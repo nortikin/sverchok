@@ -131,12 +131,14 @@ Symmetric Diff'''
         return self.func_
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        if len([s for s in self.inputs if s.is_linked])<2:
+            raise Exception("Minimum one input socket has to be connected")
+        
         inputs = self.inputs
         outputs = self.outputs
 
-        if not outputs[0].is_linked:
-            return
-        
         unary = (num_inputs[no_space(self.func_)] == 1)
         f = self.get_f(unary)
 

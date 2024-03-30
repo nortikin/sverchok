@@ -274,7 +274,9 @@ class SvPointInside(SverchCustomTreeNode, bpy.types.Node):
         return main_func, params
 
     def process(self):
-
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        
         if not all(socket.is_linked for socket in self.inputs[:3]):
             return
 

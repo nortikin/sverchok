@@ -298,21 +298,22 @@ class SvRndNumGen(SverchCustomTreeNode, bpy.types.Node):
         return result
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
         inputs = self.inputs
         outputs = self.outputs
         mode = self.type_selected_mode
-        if outputs['Value'].is_linked:
 
-            if mode == 'Int':
-                params = [inputs[i].sv_get()[0] for i in range(4)]
-                if self.weighted and inputs[4].is_linked:
-                    params.append(inputs[4].sv_get())
+        if mode == 'Int':
+            params = [inputs[i].sv_get()[0] for i in range(4)]
+            if self.weighted and inputs[4].is_linked:
+                params.append(inputs[4].sv_get())
 
-            elif mode == 'Float':
-                params = [inputs[i].sv_get()[0] for i in range(len(inputs)) if not inputs[i].hide]
+        elif mode == 'Float':
+            params = [inputs[i].sv_get()[0] for i in range(len(inputs)) if not inputs[i].hide]
 
-            out = [self.produce_range(*args) for args in zip(*match_long_repeat(params))]
-            outputs['Value'].sv_set(out)
+        out = [self.produce_range(*args) for args in zip(*match_long_repeat(params))]
+        outputs['Value'].sv_set(out)
 
 
 def register():

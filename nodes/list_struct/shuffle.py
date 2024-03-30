@@ -58,6 +58,11 @@ class ListShuffleNode(SverchCustomTreeNode, bpy.types.Node):
             changable_sockets(self, inputsocketname, outputsocketname)
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        if not (self.inputs["data"].is_linked):
+            raise Exception("Input socket 'data' has to be connected")
+        
         if self.outputs[0].is_linked and self.inputs[0].is_linked:
 
             seed = self.inputs['seed'].sv_get(deepcopy=False)[0][0]

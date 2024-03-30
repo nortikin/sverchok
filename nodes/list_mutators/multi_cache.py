@@ -98,7 +98,7 @@ class SvMultiCacheNode(SverchCustomTreeNode, bpy.types.Node):
             changable_sockets(self, inputsocketname, outputsocketname)
 
     def process(self):
-        if not self.outputs['Data'].is_linked:
+        if not any(socket.is_linked for socket in self.outputs):
             return
 
         in_bucket_s = self.inputs['In Bucket'].sv_get()[0]

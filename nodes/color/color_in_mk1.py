@@ -177,7 +177,7 @@ class SvColorsInNodeMK1(SverchCustomTreeNode, bpy.types.Node):
 
     def process(self):
 
-        if not self.outputs['Colors'].is_linked:
+        if not any(socket.is_linked for socket in self.outputs):
             return
         inputs = self.inputs
 

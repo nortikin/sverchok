@@ -453,12 +453,9 @@ class SvPlaneNodeMk3(SverchCustomTreeNode, bpy.types.Node):
         return list_match_func[self.list_match_global](params)
 
     def process(self):
-
-        outputs = self.outputs
-
-        if not any(s.is_linked for s in outputs):
+        if not any(socket.is_linked for socket in self.outputs):
             return
-
+        outputs = self.outputs
         data_in = self.get_data()
 
         verts_out, edges_out, pols_out = [], [], []

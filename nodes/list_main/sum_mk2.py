@@ -43,6 +43,10 @@ class ListSumNodeMK2(SverchCustomTreeNode, bpy.types.Node):
         layout.prop(self, "level", text="level")
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        if not any(socket.is_linked for socket in self.inputs):
+            raise Exception("Input socket 'Data' has to be connected")
         # достаём два слота - вершины и полики
         if self.outputs['Sum'].is_linked and self.inputs['Data'].is_linked:
             data = self.inputs['Data'].sv_get()

@@ -44,7 +44,7 @@ class RandomNode(SverchCustomTreeNode, bpy.types.Node):
         self.outputs.new('SvStringsSocket', "Random")
 
     def process(self):
-        if not self.outputs[0].is_linked:
+        if not any(socket.is_linked for socket in self.outputs):
             return
 
         Coun = self.inputs['Count'].sv_get()[0]

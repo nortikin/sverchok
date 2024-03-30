@@ -64,6 +64,8 @@ class SvChessSelection(SverchCustomTreeNode, bpy.types.Node):
         self.outputs.new('SvStringsSocket', "Face mask")
 
     def process(self):
+        if not any(sock.is_linked for sock in self.outputs):
+            return
         if not all([sock.is_linked for sock in self.inputs]):
             return
         out = []

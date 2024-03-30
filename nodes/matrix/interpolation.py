@@ -50,8 +50,7 @@ class MatrixInterpolationNode(SverchCustomTreeNode, bpy.types.Node):
         self.outputs.new('SvMatrixSocket', "C")
 
     def process(self):
-        # inputs
-        if not self.outputs['C'].is_linked:
+        if not any(socket.is_linked for socket in self.outputs):
             return
         id_mat = [Matrix.Identity(4)]
         A = self.inputs['A'].sv_get(default=id_mat)

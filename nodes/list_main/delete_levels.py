@@ -54,6 +54,8 @@ class ListLevelsNode(SverchCustomTreeNode, bpy.types.Node):
             changable_sockets(self, inputsocketname, outputsocketname)
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
         if self.outputs['data'].is_linked:
             data = self.inputs['data'].sv_get()
             userlevelb = literal_eval('['+self.Sverch_LisLev+']')

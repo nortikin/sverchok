@@ -108,6 +108,9 @@ class SvDictionaryOut(SverchCustomTreeNode, bpy.types.Node):
             return
 
         self.rebuild_output()
+        
+        if not any(socket.is_linked for socket in self.outputs):
+            return
 
         out = {key: [] for key in self.inputs['Dict'].sv_get()[0]}
         for d in self.inputs['Dict'].sv_get():

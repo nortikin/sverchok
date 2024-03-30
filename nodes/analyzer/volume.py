@@ -36,6 +36,8 @@ class SvVolumeNodeMK2(SverchCustomTreeNode, bpy.types.Node):
         self.outputs.new('SvStringsSocket', "Volume")
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
         vertices = self.inputs['Vers'].sv_get(deepcopy=False, default=[])
         faces = self.inputs['Pols'].sv_get(deepcopy=False, default=[])
 

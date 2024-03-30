@@ -100,7 +100,7 @@ class SvKDTreePathNode(SverchCustomTreeNode, bpy.types.Node):
         outputs = self.outputs
         so = self.outputs
         si = self.inputs
-        if not so[0].is_linked and si[0].is_linked:
+        if not so[0].is_linked:
             return
 
         result = []

@@ -93,7 +93,8 @@ class SvIntersectEdgesNodeMK3(
             layout.prop(self, 'epsilon')
 
     def process(self):
-
+        if not any(socket.is_linked for socket in self.outputs):
+            return
         inputs = self.inputs
         outputs = self.outputs
         try:

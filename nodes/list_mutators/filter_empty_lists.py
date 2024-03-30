@@ -36,6 +36,10 @@ class SvFixEmptyObjectsNode(SverchCustomTreeNode, bpy.types.Node):
         self.outputs.new('SvStringsSocket', "numpy mask")
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        if not all(socket.is_linked for socket in self.inputs):
+            raise Exception("Input socket 'Data' has to be connected")
         sd, m, nm = self.outputs
         D = self.inputs[0].sv_get()
         if sd.is_linked:

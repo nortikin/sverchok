@@ -132,6 +132,8 @@ class svBasicArcNode(SverchCustomTreeNode, bpy.types.Node):
         pass
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
         outputs = self.outputs
         inputs = self.inputs
 

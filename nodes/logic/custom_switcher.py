@@ -92,6 +92,10 @@ class SvCustomSwitcher(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
                 col.prop(self, "user_list", toggle=True, index=i, text=val.name)
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        if not (self.inputs["Data"].is_linked):
+            raise Exception("Input socket 'Data' has to be connected")
         # Storing names of items
         if self.inputs['Data'].is_linked:
             data = self.inputs['Data'].sv_get()

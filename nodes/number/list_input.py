@@ -140,6 +140,9 @@ class SvListInputNode(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
                     row.scale_x = 0.8
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        
         if self.outputs[0].is_linked:
             if self.mode == 'int_list':
                 data = listinput_getI_needed(self)

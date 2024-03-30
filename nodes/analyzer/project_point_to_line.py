@@ -372,6 +372,8 @@ class SvProjectPointToLine(SverchCustomTreeNode, bpy.types.Node):
         layout.row().prop(self, 'set_res', toggle=True)
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
         if not (self.inputs['Vectors_lines'].is_linked and self.inputs['Project_points'].is_linked):
             return
 

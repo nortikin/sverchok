@@ -219,7 +219,7 @@ class SvMatrixInNodeMK4(SverchCustomTreeNode, bpy.types.Node, SvAngleHelper):
         layout.prop(self, "flat_output", text="Flat Output", expand=False)
 
     def process(self):
-        if not self.outputs['Matrices'].is_linked:
+        if not any(socket.is_linked for socket in self.outputs):
             return
 
         inputs = self.inputs

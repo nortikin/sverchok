@@ -190,6 +190,8 @@ class SvSegmentGenerator(SverchCustomTreeNode, bpy.types.Node):
         self.outputs.new('SvStringsSocket', 'Edges')
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
         num_objects = max([len(sock.sv_get(deepcopy=False, default=[])) for sock in self.inputs])
         out = []
         list_match_f = iter_list_match_func[self.list_match_global]

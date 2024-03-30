@@ -37,6 +37,11 @@ class Float2IntNode(SverchCustomTreeNode, bpy.types.Node):
         self.outputs.new('SvStringsSocket', "int")
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        if not (self.inputs["float"].is_linked):
+            raise Exception("Input socket 'float' has to be connected")
+        
         Number = self.inputs['float'].sv_get()
         if self.outputs['int'].is_linked:
             result = self.inte(Number)

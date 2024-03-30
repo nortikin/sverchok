@@ -73,6 +73,8 @@ class SvListSortNode(SverchCustomTreeNode, bpy.types.Node):
         self.level = 4-old_node.level
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
         if not self.outputs['data'].is_linked and not self.newsock:
             return
         self.newsock = False

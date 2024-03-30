@@ -37,6 +37,8 @@ class MatrixDeformNode(SverchCustomTreeNode, bpy.types.Node):
         self.outputs.new('SvMatrixSocket', "Matrix")
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
         O,L,S,R,A = self.inputs
         Om = self.outputs[0]
         if Om.is_linked:

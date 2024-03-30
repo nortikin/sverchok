@@ -240,9 +240,9 @@ class SvMatrixMathNode(SverchCustomTreeNode, bpy.types.Node):
                 inputs.remove(inputs[-1])
 
     def process(self):
-        outputs = self.outputs
-        if not any(s.is_linked for s in outputs):
+        if not any(socket.is_linked for socket in self.outputs):
             return
+        outputs = self.outputs
 
         data_in = []  # collect the inputs from the connected sockets
         for s in filter(lambda s: s.is_linked, self.inputs):

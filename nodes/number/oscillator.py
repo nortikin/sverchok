@@ -175,7 +175,9 @@ class SvOscillatorNode(SverchCustomTreeNode, bpy.types.Node):
 
 
     def process(self):
-
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        
         if self.outputs[0].is_linked:
             if self.current_op == 'Custom' and not self.inputs["Wave"].is_linked:
                 return

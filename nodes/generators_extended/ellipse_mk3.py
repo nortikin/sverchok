@@ -334,10 +334,9 @@ class SvEllipseNodeMK3(SverchCustomTreeNode, bpy.types.Node, SvAngleHelper):
         return list_verts, edges, polys, f1, f2
 
     def process(self):
-        outputs = self.outputs
-        # return if no outputs are connected
-        if not any(s.is_linked for s in outputs):
+        if not any(socket.is_linked for socket in self.outputs):
             return
+        outputs = self.outputs
 
         # input values lists (single or multi value)
         inputs = self.inputs

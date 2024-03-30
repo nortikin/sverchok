@@ -77,6 +77,8 @@ class SvGenFibonacci(SverchCustomTreeNode, bpy.types.Node):
         self.outputs.new('SvStringsSocket', "Sequence")
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
         # inputs
         x1 = self.inputs['X1'].sv_get()[0]
         x2 = self.inputs['X2'].sv_get()[0]

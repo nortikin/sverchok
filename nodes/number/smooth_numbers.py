@@ -99,17 +99,19 @@ class SvSmoothNumbersNode(SverchCustomTreeNode, bpy.types.Node):
 
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        if not (self.inputs["Value"].is_linked):
+            raise Exception("Input socket 'Value' has to be connected")
 
-        if self.outputs[0].is_linked:
+        params = [si.sv_get(default=[[]], deepcopy=False) for si in self.inputs]
+        matching_f = list_match_func[self.list_match]
 
-            params = [si.sv_get(default=[[]], deepcopy=False) for si in self.inputs]
-            matching_f = list_match_func[self.list_match]
+        desired_levels = [2, 2, 2]
+        ops = [self.cyclic, self.output_numpy]
+        result = recurse_f_level_control(params, ops, smooth_numbers, matching_f, desired_levels)
 
-            desired_levels = [2, 2, 2]
-            ops = [self.cyclic, self.output_numpy]
-            result = recurse_f_level_control(params, ops, smooth_numbers, matching_f, desired_levels)
-
-            self.outputs[0].sv_set(result)
+        self.outputs[0].sv_set(result)
 
 
 classes = [SvSmoothNumbersNode]

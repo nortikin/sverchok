@@ -221,8 +221,7 @@ class SvPentagonTilerNode(SverchCustomTreeNode, bpy.types.Node):
         return vert_list, edge_list, poly_list
 
     def process(self):
-        # return if no outputs are connected
-        if not any(s.is_linked for s in self.outputs):
+        if not any(socket.is_linked for socket in self.outputs):
             return
         # input values lists
         params = [s.sv_get() for s in self.inputs]

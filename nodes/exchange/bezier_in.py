@@ -156,9 +156,10 @@ class SvBezierInNode(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
             return points, segments
 
     def process(self):
-
-        if not self.object_names:
+        if not any(socket.is_linked for socket in self.outputs):
             return
+        if not self.object_names:
+            raise Exception("Empty objects list")
 
         curves_out = []
         matrices_out = []

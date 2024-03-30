@@ -132,6 +132,8 @@ class SvOrigins(SverchCustomTreeNode, bpy.types.Node):
         self.outputs.new('SvMatrixSocket', "Matrix")
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
         if not self.inputs['Verts'].is_linked:
             return
         if self.mode == MODE.faces and not self.inputs['Faces'].is_linked:

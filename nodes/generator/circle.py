@@ -105,7 +105,8 @@ class SvCircleNode(SverchCustomTreeNode, bpy.types.Node):
         return [_list_indexes]
 
     def process(self):
-        
+        if not any(socket.is_linked for socket in self.outputs):
+            return
         # inputs
         
         input_socket_names = ['Radius', 'num Verts', 'Degrees']

@@ -36,7 +36,10 @@ class ListLengthNode(SverchCustomTreeNode, bpy.types.Node):
         self.outputs.new('SvStringsSocket', "Length")
 
     def process(self):
-
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        if not all(socket.is_linked for socket in self.inputs):
+            raise Exception("All input sockets has to be connected")
         if 'Length' in self.outputs and self.outputs['Length'].is_linked:
             if 'Data' in self.inputs and self.inputs['Data'].is_linked:
                 data = self.inputs['Data'].sv_get(deepcopy=False)
