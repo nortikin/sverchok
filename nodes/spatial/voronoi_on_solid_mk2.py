@@ -88,9 +88,13 @@ class SvVoronoiOnSolidNodeMK2(SverchCustomTreeNode, bpy.types.Node):
         layout.prop(self, 'accuracy')
 
     def process(self):
-
         if not any(socket.is_linked for socket in self.outputs):
             return
+        if not (self.inputs["Solid"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Solid'].label or self.inputs['Solid'].identifier}' has to be connected")
+        if not (self.inputs["Sites"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Sites'].label or self.inputs['Sites'].identifier}' has to be connected")
+        
 
         solid_in = self.inputs['Solid'].sv_get()
         sites_in = self.inputs['Sites'].sv_get()

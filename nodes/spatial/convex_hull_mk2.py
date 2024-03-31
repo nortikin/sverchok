@@ -137,23 +137,25 @@ class SvConvexHullNodeMK2(SverchCustomTreeNode, bpy.types.Node):
         frow2.prop(self, 'sort_edges', text='Topo Sort', toggle=True)
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        if not (self.inputs["Vertices"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Vertices'].label or self.inputs['Vertices'].identifier}' has to be connected")
 
-        if self.inputs['Vertices'].is_linked:
+        verts = self.inputs['Vertices'].sv_get()
+        verts_out = []
+        polys_out = []
 
-            verts = self.inputs['Vertices'].sv_get()
-            verts_out = []
-            polys_out = []
+        for v_obj in verts:
+            res = make_hull(v_obj, self)
+            if not res:
+                return
 
-            for v_obj in verts:
-                res = make_hull(v_obj, self)
-                if not res:
-                    return
+            verts_out.append(res[0])
+            polys_out.append(res[1])
 
-                verts_out.append(res[0])
-                polys_out.append(res[1])
-
-            self.outputs['Vertices'].sv_set(verts_out)
-            self.outputs['Polygons'].sv_set(polys_out)
+        self.outputs['Vertices'].sv_set(verts_out)
+        self.outputs['Polygons'].sv_set(polys_out)
 
 
 def register():

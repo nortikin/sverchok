@@ -63,9 +63,10 @@ class SvLloyd3dNode(SverchCustomTreeNode, bpy.types.Node):
         layout.prop(self, "bounds_mode", text='')
 
     def process(self):
-
         if not any(socket.is_linked for socket in self.outputs):
             return
+        if not (self.inputs["Sites"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Sites'].label or self.inputs['Sites'].identifier}' has to be connected")
 
         sites_in = self.inputs['Sites'].sv_get()
         clipping_in = self.inputs['Clipping'].sv_get()

@@ -111,13 +111,11 @@ class Voronoi2DNode(SverchCustomTreeNode, bpy.types.Node):
             layout.prop(self, 'ordered_faces')
 
     def process(self):
-
-        if not self.inputs['Vertices'].is_linked:
+        if not any(socket.is_linked for socket in self.outputs):
             return
-
-        if not self.outputs['Vertices'].is_linked:
-            return
-
+        if not (self.inputs["Vertices"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Vertices'].label or self.inputs['Vertices'].identifier}' has to be connected")
+        
         points_in = self.inputs['Vertices'].sv_get()
         if 'MaxSides' in self.inputs:
             max_sides_in = self.inputs['MaxSides'].sv_get()

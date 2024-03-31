@@ -61,9 +61,10 @@ class SvLloyd2dNode(SverchCustomTreeNode, bpy.types.Node):
         layout.prop(self, "clip", text="Clipping")
 
     def process(self):
-
-        if not self.outputs['Vertices'].is_linked:
+        if not any(socket.is_linked for socket in self.outputs):
             return
+        if not (self.inputs["Vertices"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Vertices'].label or self.inputs['Vertices'].identifier}' has to be connected")
 
         verts_in = self.inputs['Vertices'].sv_get()
         iterations_in = self.inputs['Iterations'].sv_get()

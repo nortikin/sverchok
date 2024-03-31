@@ -113,6 +113,8 @@ class SvPopulateSurfaceMk2Node(SverchCustomTreeNode, bpy.types.Node):
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
             return
+        if not (self.inputs["Solid"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Solid'].label or self.inputs['Solid'].identifier}' has to be connected")
 
         if self.proportional and not self.inputs['Field'].is_linked:
             raise SvNoDataError(socket=self.inputs['Field'], node=self)
@@ -125,6 +127,8 @@ class SvPopulateSurfaceMk2Node(SverchCustomTreeNode, bpy.types.Node):
         field_max_s = self.inputs['FieldMax'].sv_get()
         min_r_s = self.inputs['MinDistance'].sv_get()
         if self.distance_mode == 'FIELD':
+            if not (self.inputs["RadiusField"].is_linked):
+                raise Exception(f"Input socket '{self.inputs['RadiusField'].label or self.inputs['RadiusField'].identifier}' has to be connected")
             radius_s = self.inputs['RadiusField'].sv_get()
         else:
             radius_s = [[None]]

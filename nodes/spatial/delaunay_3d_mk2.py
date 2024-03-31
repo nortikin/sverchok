@@ -300,6 +300,8 @@ class SvDelaunay3dMk2Node(SverchCustomTreeNode, bpy.types.Node):
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
             return
+        if not (self.inputs["Vertices"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Vertices'].label or self.inputs['Vertices'].identifier}' has to be connected")
 
         vertices_s = self.inputs['Vertices'].sv_get()
         volume_threshold_s = self.inputs['PlanarThreshold'].sv_get()
