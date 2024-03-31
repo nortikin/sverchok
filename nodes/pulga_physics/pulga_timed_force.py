@@ -48,9 +48,11 @@ class SvPulgaTimedForceNode(SverchCustomTreeNode, bpy.types.Node):
 
 
     def process(self):
-
-        if not any(s.is_linked for s in self.outputs):
+        if not any(socket.is_linked for socket in self.outputs):
             return
+        if not (self.inputs["Force"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Force'].label or self.inputs['Force'].identifier}' has to be connected")
+        
         forces_in = self.inputs["Force"].sv_get(deepcopy=False)
         start_in = self.inputs["Start"].sv_get(deepcopy=False)
         end_in = self.inputs["End"].sv_get(deepcopy=False)

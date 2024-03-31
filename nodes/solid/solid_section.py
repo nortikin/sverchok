@@ -56,6 +56,10 @@ class SvSolidSectionNode(SverchCustomTreeNode, bpy.types.Node):
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
             return
+        if not (self.inputs["Shape A"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Shape A'].label or self.inputs['Shape A'].identifier}' has to be connected")
+        if not (self.inputs["Shape B"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Shape B'].label or self.inputs['Shape B'].identifier}' has to be connected")
 
         sections_out = []
 

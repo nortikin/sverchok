@@ -60,6 +60,10 @@ class SvCollectionPicker(SverchCustomTreeNode, bpy.types.Node):
         layout.prop(self, "sort_object");
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        if not self.collection:
+            raise Exception(f"Collection not selected. Select collection")
 
         found_objects = []
         if self.collection:

@@ -41,18 +41,28 @@ class SvUVtextureNode(SverchCustomTreeNode, bpy.types.Node):
 
     def avail_objects(self, context):
         items = [('','','')]
+        objects = []
         if self.inputs and self.inputs[0].is_linked:
             objects = self.inputs[0].sv_get()
+        else:
+            objects = [self.inputs['Object'].object_ref_pointer]
+
+        if objects:
             items = [(obj.name, obj.name, '') for obj in objects]
         return items
 
     @keep_enum_reference
     def avail_uvs(self, context):
         items = [('','','')]
+        obj = None
         if self.inputs and self.inputs[0].is_linked:
             obj = bpy.data.objects[self.objects]
-            if obj.data.uv_layers:
-                items = [(p.name, p.name, "") for p in obj.data.uv_layers]
+        else:
+            obj = self.inputs['Object'].object_ref_pointer
+        
+        if obj and obj.data.uv_layers:
+            items = [(p.name, p.name, "") for p in obj.data.uv_layers]
+
         return items
 
     objects: EnumProperty(items=avail_objects, name="Objects",
@@ -110,20 +120,22 @@ class SvUVtextureNode(SverchCustomTreeNode, bpy.types.Node):
         return [vertices_new], [polygons_new]
 
     def process(self):
-        if self.inputs and self.inputs[0].is_linked:
-            obj = bpy.data.objects[self.objects]
-            if not self.uv:
-                print ('!!! for node:',self.name,'!!! object',self.objects,'have no UV')
-                if self.outputs and self.outputs[0].is_linked:
-                    self.outputs[0].sv_set([[]])
-                return
-            uv = self.uv
-            v,p = self.UV(obj,uv)
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        if not self.inputs['Object'].object_ref_pointer:
+            if not self.inputs['Object'].is_linked:
+                raise Exception("No object selected. Select object or connect input socket 'Object'.")
 
-            if self.outputs and self.outputs[0].is_linked:
-                self.outputs[0].sv_set(v)
-            if self.outputs and self.outputs[1].is_linked:
-                self.outputs[1].sv_set(p)
+        obj = bpy.data.objects[self.objects]
+        if not self.uv:
+            raise Exception("Not selected uv in object. Select UV or test if object has UV.")
+        uv = self.uv
+        v,p = self.UV(obj,uv)
+
+        if self.outputs and self.outputs[0].is_linked:
+            self.outputs[0].sv_set(v)
+        if self.outputs and self.outputs[1].is_linked:
+            self.outputs[1].sv_set(p)
 
 
 def register():

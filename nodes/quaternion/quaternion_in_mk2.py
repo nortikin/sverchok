@@ -165,7 +165,7 @@ class SvQuaternionInNodeMK2(SverchCustomTreeNode, bpy.types.Node, SvAngleHelper)
             self.draw_angle_units_buttons(context, layout)
 
     def process(self):
-        if not self.outputs['Quaternions'].is_linked:
+        if not any(socket.is_linked for socket in self.outputs):
             return
 
         inputs = self.inputs

@@ -493,8 +493,7 @@ class SvMeshEvalNode(SverchCustomTreeNode, bpy.types.Node):
         return result
 
     def process(self):
-
-        if not self.outputs[0].is_linked:
+        if not any(socket.is_linked for socket in self.outputs):
             return
 
         sync_pointer_and_stored_name(self, "file_pointer", "filename")

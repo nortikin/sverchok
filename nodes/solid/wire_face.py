@@ -63,6 +63,8 @@ class SvSolidWireFaceNode(SverchCustomTreeNode, bpy.types.Node):
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
             return
+        if not (self.inputs["Edges"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Edges'].label or self.inputs['Edges'].identifier}' has to be connected")
 
         tolerance = 10 ** (-self.accuracy)
 

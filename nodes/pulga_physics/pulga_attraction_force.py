@@ -68,8 +68,7 @@ class SvPulgaAttractionForceNode(SverchCustomTreeNode, bpy.types.Node):
         layout.prop(self, 'stop_on_collide')
 
     def process(self):
-
-        if not any(s.is_linked for s in self.outputs):
+        if not any(socket.is_linked for socket in self.outputs):
             return
         strength = self.inputs["Strength"].sv_get(deepcopy=False)
         decay = self.inputs["Decay"].sv_get(deepcopy=False)

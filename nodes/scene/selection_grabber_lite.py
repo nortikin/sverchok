@@ -31,9 +31,13 @@ class SvSelectionGrabberLite(SverchCustomTreeNode, bpy.types.Node):
         self.outputs.new('SvStringsSocket', "Face Mask")
 
     def process(self):
-        objects = self.inputs['Object'].sv_get()
-        if not objects:
+        if not any(socket.is_linked for socket in self.outputs):
             return
+        if not self.inputs['Object'].object_ref_pointer:
+            raise Exception("No object selected. Select object or connect input socket 'Object'.")
+
+        objects = self.inputs['Object'].sv_get()
+            
 
         include_vertex = self.outputs["Vertex Mask"].is_linked
         include_edges = self.outputs["Edge Mask"].is_linked

@@ -230,6 +230,9 @@ class SvExecNodeMod(SverchCustomTreeNode, bpy.types.Node):
         self.width = 289
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        
         v1, v2, v3 = self.inputs
         V1, V2, V3 = v1.sv_get(0), v2.sv_get(0), v3.sv_get(0)
         out = []

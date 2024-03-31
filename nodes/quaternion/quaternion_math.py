@@ -218,17 +218,17 @@ class SvQuaternionMathNode(SverchCustomTreeNode, bpy.types.Node):
             return lambda q: q.magnitude
 
     def process(self):
-        outputs = self.outputs
-        if not any(s.is_linked for s in outputs):
+        if not any(socket.is_linked for socket in self.outputs):
             return
-
+        
+        outputs = self.outputs
         inputs = self.inputs
 
         all_AZ_sockets = list(filter(lambda s: s.name in ABC, inputs))
         connected_AZ_sockets = list(filter(lambda s: s.is_linked, all_AZ_sockets))
 
         if len(connected_AZ_sockets) == 0:
-            return
+            raise Exception("Some input sockets has to be connected")
 
         # collect the quaternion inputs from all connected AZ sockets
         I = [s.sv_get(default=id_quat) for s in connected_AZ_sockets]

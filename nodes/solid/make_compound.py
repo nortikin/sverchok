@@ -38,7 +38,7 @@ class SvCompoundSolidNode(SverchCustomTreeNode, bpy.types.Node):
         if not self.outputs['Compound'].is_linked:
             return
         if not any(sock.is_linked for sock in self.inputs):
-            return
+            raise Exception("Some input sockets has to be connected")
 
         solids_s = self.inputs['Solids'].sv_get(default=[[None]])
         curves_s = self.inputs['Curves'].sv_get(default=[[None]])

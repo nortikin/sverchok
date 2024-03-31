@@ -62,8 +62,7 @@ class SvPulgaVectorForceNode(SverchCustomTreeNode, bpy.types.Node):
         layout.prop(self, "mass_proportional")
 
     def process(self):
-
-        if not any(s.is_linked for s in self.outputs):
+        if not any(socket.is_linked for socket in self.outputs):
             return
 
         forces_in = self.inputs["Force"].sv_get(deepcopy=False)

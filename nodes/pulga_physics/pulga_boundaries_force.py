@@ -100,10 +100,12 @@ class SvPulgaBoundingBoxForceNode(SverchCustomTreeNode, bpy.types.Node):
         layout.prop(self, 'mode')
 
     def process(self):
-
-        if not any(s.is_linked for s in self.outputs):
+        if not any(socket.is_linked for socket in self.outputs):
             return
+        
         if self.mode == 'Box':
+            if not (self.inputs["Bounding Box"].is_linked):
+                raise Exception(f"Input socket '{self.inputs['Bounding Box'].label or self.inputs['Bounding Box'].identifier}' has to be connected")
             b_box = self.inputs["Bounding Box"].sv_get(deepcopy=False)
 
             forces_out = []
@@ -134,7 +136,9 @@ class SvPulgaBoundingBoxForceNode(SverchCustomTreeNode, bpy.types.Node):
             for force in zip_long_repeat(center, radius):
                 forces_out.append(SvBoundingPlaneSurfaceForce(*force))
         elif 'Mesh' in self.mode:
-
+            if not (self.inputs["Vertices"].is_linked):
+                raise Exception(f"Input socket '{self.inputs['Vertices'].label or self.inputs['Vertices'].identifier}' has to be connected")
+            
             verts = self.inputs["Vertices"].sv_get(deepcopy=False)
             polygons = self.inputs["Polygons"].sv_get(deepcopy=False)
             volume = self.mode == "Mesh_(Volume)"
@@ -144,6 +148,9 @@ class SvPulgaBoundingBoxForceNode(SverchCustomTreeNode, bpy.types.Node):
 
         elif 'Solid' in self.mode:
             input_name = 'Solid' if self.mode in ['Solid_(Surface)', 'Solid_(Volume)'] else 'Solid Face'
+            if not (self.inputs[input_name].is_linked):
+                raise Exception(f"Input socket '{self.inputs[input_name].label or self.inputs[input_name].identifier}' has to be connected")
+        
             solid = self.inputs[input_name].sv_get(deepcopy=False)
             volume = self.mode == "Solid_(Volume)"
             forces_out = []

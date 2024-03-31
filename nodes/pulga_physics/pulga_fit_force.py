@@ -64,9 +64,9 @@ class SvPulgaFitForceNode(SverchCustomTreeNode, bpy.types.Node):
             layout.prop(self, 'algorithm')
 
     def process(self):
-
-        if not any(s.is_linked for s in self.outputs):
+        if not any(socket.is_linked for socket in self.outputs):
             return
+        
         forces_in = self.inputs["Magnitude"].sv_get(deepcopy=False)
         min_rad_in = self.inputs["Min Radius"].sv_get(deepcopy=False)
         max_rad_in = self.inputs["Max Radius"].sv_get(deepcopy=False)

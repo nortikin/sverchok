@@ -48,9 +48,13 @@ class SvPulgaPinForceNode(SverchCustomTreeNode, bpy.types.Node):
         self.outputs.new('SvPulgaForceSocket', "Force")
 
     def process(self):
-
-        if not any(s.is_linked for s in self.outputs):
+        if not any(socket.is_linked for socket in self.outputs):
             return
+        if not (self.inputs["Pins"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Pins'].label or self.inputs['Pins'].identifier}' has to be connected")
+        if not (self.inputs["Pins Goal"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Pins Goal'].label or self.inputs['Pins Goal'].identifier}' has to be connected")
+        
         # indices, pin_type, pins_goal_pos,use_pins_goal
         pins_in = self.inputs["Pins"].sv_get(deepcopy=False)
         pin_type = self.inputs["Pin Type"].sv_get(deepcopy=False)

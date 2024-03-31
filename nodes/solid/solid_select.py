@@ -461,12 +461,15 @@ class SvSelectSolidNode(SverchCustomTreeNode, bpy.types.Node):
         return vertex_mask, edge_mask, face_mask
 
     def process(self):
-
         if not any(output.is_linked for output in self.outputs):
             return
+        if not (self.inputs["Solid"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Solid'].label or self.inputs['Solid'].identifier}' has to be connected")
 
         solid_s = self.inputs['Solid'].sv_get()
         if self.criteria_type in {'SOLID_DISTANCE', 'SOLID_INSIDE'}:
+            if not (self.inputs["Tool"].is_linked):
+                raise Exception(f"Input socket '{self.inputs['Tool'].label or self.inputs['Tool'].identifier}' has to be connected")
             tool_s = self.inputs['Tool'].sv_get()
             tool_s = ensure_nesting_level(tool_s, 2, data_types=(Part.Shape,))
         else:

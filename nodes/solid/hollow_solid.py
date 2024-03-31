@@ -88,6 +88,8 @@ class SvHollowSolidNode(SverchCustomTreeNode, bpy.types.Node):
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
             return
+        if not (self.inputs["Solid"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Solid'].label or self.inputs['Solid'].identifier}' has to be connected")
 
         solids_s = self.inputs['Solid'].sv_get()
         input_level = get_data_nesting_level(solids_s, data_types=(Part.Shape,))

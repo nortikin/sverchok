@@ -109,6 +109,8 @@ class SvFCurveInNodeMK1(SverchCustomTreeNode, bpy.types.Node):
 
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
         """
         - if no input is given then the node will use current frame in bpy.context.scene
         - if input is given, behaviour depends on 2 things:

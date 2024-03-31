@@ -373,11 +373,13 @@ class SvGetObjectsDataMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
         return [face.material_index for face in bm.faces[:]]
 
     def process(self):
-
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        
         objs = self.inputs[0].sv_get(default=[[]])
         if not self.object_names and not objs[0]:
-
-            return
+            raise Exception("No objects. Check selection or connect input socket 'Objects'")
+        
         data_objects = bpy.data.objects
         outputs = self.outputs
 

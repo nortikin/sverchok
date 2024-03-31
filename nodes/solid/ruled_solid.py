@@ -175,6 +175,10 @@ class SvRuledSolidNode(SverchCustomTreeNode, bpy.types.Node):
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
             return
+        if not (self.inputs["SolidFace1"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['SolidFace1'].label or self.inputs['SolidFace1'].identifier}' has to be connected")
+        if not (self.inputs["SolidFace2"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['SolidFace2'].label or self.inputs['SolidFace2'].identifier}' has to be connected")
 
         face1_surfaces_s = self.inputs['SolidFace1'].sv_get()
         face1_surfaces_s = ensure_nesting_level(face1_surfaces_s, 2, data_types=(SvSurface,))

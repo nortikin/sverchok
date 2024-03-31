@@ -63,9 +63,10 @@ class SvPulgaAngleForceNode(SverchCustomTreeNode, bpy.types.Node):
     def draw_buttons(self, context, layout):
         layout.prop(self, 'mode')
     def process(self):
-
-        if not any(s.is_linked for s in self.outputs):
+        if not any(socket.is_linked for socket in self.outputs):
             return
+        if not (self.inputs["Edge_Pol"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Edge_Pol'].label}' has to be connected")
         springs_in = self.inputs["Edge_Pol"].sv_get(deepcopy=False)
         stiffness_in = self.inputs["Stiffness"].sv_get(deepcopy=False)
         lengths_in = self.inputs["Angle"].sv_get(deepcopy=False)

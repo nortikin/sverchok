@@ -59,6 +59,9 @@ Out:
         self.outputs.new('SvQuaternionSocket', 'Quaternions')
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        
         max_len = max([len(sock.sv_get(deepcopy=False)) for sock in self.inputs])
         inputs = [iter_last(sock.sv_get(default=False)) for sock in self.inputs]
         out = [get_quaternion(v1, v2) for i, v1, v2 in zip(range(max_len), *inputs)]

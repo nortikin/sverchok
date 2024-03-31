@@ -190,6 +190,8 @@ class SvSolidGeneralFuseNode(SverchCustomTreeNode, bpy.types.Node):
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
             return
+        if not (self.inputs["Solids"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Solids'].label or self.inputs['Solids'].identifier}' has to be connected")
 
         solids_in = self.inputs['Solids'].sv_get()
         input_level = get_data_nesting_level(solids_in, data_types=(Part.Shape,))
