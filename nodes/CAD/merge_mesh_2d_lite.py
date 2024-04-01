@@ -91,6 +91,7 @@ class SvMergeMesh2DLite(ModifierLiteNode, SverchCustomTreeNode, bpy.types.Node):
             return
         if not all([sock.is_linked for sock in self.inputs]):
             raise Exception("All input sockets has to be connected")
+        
         if self.alg_mode == "Blender" and not bl_merge_mesh:
             return
         out = []

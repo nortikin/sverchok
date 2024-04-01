@@ -77,11 +77,13 @@ class SvTriangulateNode(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
         layout.prop(self, "ngon_mode")
 
     def process(self):
-        if not (self.inputs['Vertices'].is_linked and self.inputs['Polygons'].is_linked):
+        if not any(socket.is_linked for socket in self.outputs):
             return
-        if not (any(self.outputs[name].is_linked for name in ['Vertices', 'Edges', 'Polygons', 'NewEdges', 'NewPolys'])):
-            return
-
+        if not (self.inputs["Vertices"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Vertices'].label or self.inputs['Vertices'].identifier}' has to be connected")
+        if not (self.inputs["Polygons"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Polygons'].label or self.inputs['Polygons'].identifier}' has to be connected")
+        
         vertices_s = self.inputs['Vertices'].sv_get(default=[[]], deepcopy=False)
         edges_s = self.inputs['Edges'].sv_get(default=[[]], deepcopy=False)
         faces_s = self.inputs['Polygons'].sv_get(default=[[]], deepcopy=False)

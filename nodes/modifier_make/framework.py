@@ -258,7 +258,7 @@ class SvFrameworkNode(EdgeGeneratorNode, SverchCustomTreeNode, bpy.types.Node):
         return is_in_segment(e1, e2, v1) or is_in_segment(e1, e2, v2)
 
     def process(self):
-        if not any(s.is_linked for s in self.outputs):
+        if not any(socket.is_linked for socket in self.outputs):
             return
 
         verts_in = self.inputs['Vertices'].sv_get()

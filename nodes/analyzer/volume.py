@@ -38,6 +38,11 @@ class SvVolumeNodeMK2(SverchCustomTreeNode, bpy.types.Node):
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
             return
+        if not (self.inputs["Vers"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Vers'].label or self.inputs['Vers'].identifier}' has to be connected")
+        if not (self.inputs["Pols"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Pols'].label or self.inputs['Pols'].identifier}' has to be connected")
+        
         vertices = self.inputs['Vers'].sv_get(deepcopy=False, default=[])
         faces = self.inputs['Pols'].sv_get(deepcopy=False, default=[])
 

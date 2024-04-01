@@ -141,6 +141,18 @@ class SvLinkedVertsNode(SverchCustomTreeNode, bpy.types.Node):
         return ready
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        if self.outputs["Verts"].is_linked:
+            if not (self.inputs["Verts"].is_linked):
+                raise Exception(f"Input socket '{self.inputs['Verts'].label or self.inputs['Verts'].identifier}' has to be connected")
+            if not (self.inputs["Edges"].is_linked):
+                raise Exception(f"Input socket '{self.inputs['Edges'].label or self.inputs['Edges'].identifier}' has to be connected")
+
+        if self.outputs["Verts Id"].is_linked:
+            if not (self.inputs["Edges"].is_linked):
+                raise Exception(f"Input socket '{self.inputs['Edges'].label or self.inputs['Edges'].identifier}' has to be connected")
+        
         '''main node function called every update'''
         so = self.outputs
         si = self.inputs

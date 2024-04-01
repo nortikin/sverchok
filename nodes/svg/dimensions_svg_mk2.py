@@ -273,9 +273,9 @@ class SvSvgDimensionNodeMK2(SverchCustomTreeNode, bpy.types.Node):
             layout.prop(self, "user_font")
 
     def process(self):
-
-        if not self.outputs[0].is_linked:
+        if not any(socket.is_linked for socket in self.outputs):
             return
+        
         params_in = [s.sv_get(deepcopy=False) for s in self.inputs[:7]]
         texts_out = []
         params_in.append(self.inputs['Text Fill / Stroke'].sv_get(deepcopy=False, default=[[None]]))

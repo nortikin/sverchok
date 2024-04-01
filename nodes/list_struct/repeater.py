@@ -56,6 +56,7 @@ class ListRepeaterNode(SverchCustomTreeNode, bpy.types.Node):
             return
         if not (self.inputs["Data"].is_linked):
             raise Exception("Input socket 'Data' has to be connected")
+        
         data = self.inputs['Data'].sv_get(deepcopy=False, default=[])
         number = self.inputs['Number'].sv_get(deepcopy=False)[0]
 

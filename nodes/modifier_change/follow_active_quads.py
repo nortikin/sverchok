@@ -297,9 +297,13 @@ class SvFollowActiveQuads(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
         ]
 
     def process(self):
-        if not all([sock.is_linked for sock in list(self.inputs)[:2]]):
+        if not any(socket.is_linked for socket in self.outputs):
             return
-
+        if not (self.inputs["Verts"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Verts'].label or self.inputs['Verts'].identifier}' has to be connected")
+        if not (self.inputs["Faces"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Faces'].label or self.inputs['Faces'].identifier}' has to be connected")
+        
         in1 = [sock.sv_get(deepcopy=False) for sock in [self.inputs[n] for n in ('Verts', 'Faces')]]
 
         in2 = [chain(sock.sv_get(deepcopy=False), cycle([sock.sv_get(deepcopy=False)[-1]])) if sock.is_linked else

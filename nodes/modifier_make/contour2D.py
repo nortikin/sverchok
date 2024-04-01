@@ -688,12 +688,10 @@ class SvContourNode(ModifierLiteNode, SverchCustomTreeNode, bpy.types.Node):
             output_lists[1].append(edges_out)
 
     def process(self):
-
-        inputs, outputs = self.inputs, self.outputs
-        if not outputs['Vertices'].is_linked:
+        if not any(socket.is_linked for socket in self.outputs):
             return
-
-
+        
+        inputs, outputs = self.inputs, self.outputs
         output_lists = [[], []]
 
         _ = [self.generate_outlines(output_lists, params) for params in zip(*self.get_inputs())]

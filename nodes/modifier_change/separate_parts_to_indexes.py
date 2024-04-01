@@ -128,8 +128,12 @@ class SvSeparatePartsToIndexes(SverchCustomTreeNode, bpy.types.Node):
     sv_internal_links = []
 
     def process(self):
-        if not (self.inputs['Verts'].is_linked and (self.inputs['Edges'].is_linked or self.inputs['Faces'].is_linked)):
+        if not any(socket.is_linked for socket in self.outputs):
             return
+        if not (self.inputs["Verts"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Verts'].label or self.inputs['Verts'].identifier}' has to be connected")
+        if not (self.inputs['Edges'].is_linked or self.inputs['Faces'].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Edges'].label or self.inputs['Edges'].identifier}' or '{self.inputs['Faces'].label or self.inputs['Faces'].identifier}' has to be connected")
 
         out = []
         for v, e, f in zip(*[sock.sv_get(deepcopy=False) if sock.is_linked else cycle([None]) for sock in self.inputs]):

@@ -63,23 +63,27 @@ class VectorsOutNode(SverchCustomTreeNode, bpy.types.Node):
         layout.prop(self, "output_numpy", toggle=True)
 
     def process(self):
-        if self.inputs['Vectors'].is_linked and any(s.is_linked for s in self.outputs):
-            xyz = self.inputs['Vectors'].sv_get(deepcopy=False)
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        if not (self.inputs["Vectors"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Vectors'].label or self.inputs['Vectors'].identifier}' has to be connected")
+        
+        xyz = self.inputs['Vectors'].sv_get(deepcopy=False)
 
-            data = dataCorrect_np(xyz)
-            X, Y, Z = [], [], []
-            if self.output_numpy:
-                unpack_func = unpack_np if isinstance(data[0], ndarray) else unpack_list_to_np
-            else:
-                unpack_func = unpack_list
-            for obj in data:
-                x_, y_, z_ = unpack_func(obj)
-                X.append(x_)
-                Y.append(y_)
-                Z.append(z_)
-            for i, name in enumerate(['X', 'Y', 'Z']):
-                if self.outputs[name].is_linked:
-                    self.outputs[name].sv_set([X, Y, Z][i])
+        data = dataCorrect_np(xyz)
+        X, Y, Z = [], [], []
+        if self.output_numpy:
+            unpack_func = unpack_np if isinstance(data[0], ndarray) else unpack_list_to_np
+        else:
+            unpack_func = unpack_list
+        for obj in data:
+            x_, y_, z_ = unpack_func(obj)
+            X.append(x_)
+            Y.append(y_)
+            Z.append(z_)
+        for i, name in enumerate(['X', 'Y', 'Z']):
+            if self.outputs[name].is_linked:
+                self.outputs[name].sv_set([X, Y, Z][i])
 
 
 def register():

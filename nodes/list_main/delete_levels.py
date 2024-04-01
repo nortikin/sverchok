@@ -56,10 +56,10 @@ class ListLevelsNode(SverchCustomTreeNode, bpy.types.Node):
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
             return
-        if self.outputs['data'].is_linked:
-            data = self.inputs['data'].sv_get()
-            userlevelb = literal_eval('['+self.Sverch_LisLev+']')
-            self.outputs['data'].sv_set(preobrazovatel(data, userlevelb))
+        
+        data = self.inputs['data'].sv_get()
+        userlevelb = literal_eval('['+self.Sverch_LisLev+']')
+        self.outputs['data'].sv_set(preobrazovatel(data, userlevelb))
 
 
 def register():

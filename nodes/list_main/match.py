@@ -107,6 +107,7 @@ class ListMatchNode(SverchCustomTreeNode, bpy.types.Node):
             return
         if not any(socket.is_linked for socket in self.inputs):
             raise Exception("Some input sockets has to be connected")
+        
         # check inputs and that there is at least one output
 
         count_inputs = sum(s.is_linked for s in self.inputs)

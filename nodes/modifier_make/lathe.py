@@ -75,14 +75,11 @@ class SvLatheNode(EdgeGeneratorLiteNode, SverchCustomTreeNode, bpy.types.Node):
         row = layout.row(align=True)
         row.prop(self, "remove_doubles", text="merge")
 
-    def nothing_to_process(self):
-        if not (self.inputs['Verts'].links and self.outputs['Verts'].links):
-            return True
-
     def process(self):
-
-        if self.nothing_to_process():
+        if not any(socket.is_linked for socket in self.outputs):
             return
+        if not (self.inputs["Verts"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Verts'].label or self.inputs['Verts'].identifier}' has to be connected")
 
         inputs = self.inputs
 

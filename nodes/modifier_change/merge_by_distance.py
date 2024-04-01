@@ -122,11 +122,11 @@ class SvMergeByDistanceNode(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
         pass
 
     def process(self):
-        if not any(s.is_linked for s in self.outputs):
+        if not any(socket.is_linked for socket in self.outputs):
             return
 
-        if not self.inputs['Vertices'].is_linked:
-            return
+        if not (self.inputs["Vertices"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Vertices'].label or self.inputs['Vertices'].identifier}' has to be connected")
 
         verts = Vector_generate(self.inputs['Vertices'].sv_get(deepcopy=False))
         polys = self.inputs['PolyEdge'].sv_get(default=[[]], deepcopy=False)

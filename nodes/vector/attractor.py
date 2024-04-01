@@ -201,6 +201,8 @@ Out: Vectors, Dir, Coeffs
     def process(self):
         if not any(output.is_linked for output in self.outputs):
             return
+        if not (self.inputs["Vertices"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Vertices'].label or self.inputs['Vertices'].identifier}' has to be connected")
 
         vertices_s = self.inputs['Vertices'].sv_get(default=[[]])
         centers = self.inputs['Center'].sv_get(default=[[]])[0]

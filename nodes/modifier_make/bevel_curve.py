@@ -358,7 +358,7 @@ class SvBevelCurveNode(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
         return mesh
 
     def process(self):
-        if not any(o.is_linked for o in self.outputs):
+        if not any(socket.is_linked for socket in self.outputs):
             return
 
         curves_s = self.inputs['Curve'].sv_get(default=[[]])

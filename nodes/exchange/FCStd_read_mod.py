@@ -197,7 +197,7 @@ class SvReadFCStdModNode(SverchCustomTreeNode, bpy.types.Node):
         if not any(socket.is_linked for socket in self.outputs):
             return
         if not self.inputs['File Path'].is_linked:
-            return
+            raise Exception(f"Input socket '{self.inputs['File Path'].label or self.inputs['File Path'].identifier}' has to be connected")
 
         if self.read_update:
             self.read_FCStd(self)

@@ -81,9 +81,10 @@ class SvRandomizeVerticesNode(SverchCustomTreeNode, bpy.types.Node):
         layout.prop(self, "output_numpy", toggle=True)
 
     def process(self):
-        # inputs
-        if not (self.inputs['Vertices'].is_linked and self.outputs['Vertices'].is_linked):
+        if not any(socket.is_linked for socket in self.outputs):
             return
+        if not (self.inputs["Vertices"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Vertices'].label or self.inputs['Vertices'].identifier}' has to be connected")
 
         vertices = self.inputs['Vertices'].sv_get(deepcopy=False)
         random_x = self.inputs['RandomX'].sv_get(deepcopy=False)[0]

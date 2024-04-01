@@ -51,19 +51,22 @@ class SvFormulaColorNode(SverchCustomTreeNode, bpy.types.Node):
             split.split().prop(self, "Mode"+element, text='')
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        
         Io, Io2 = self.inputs
         Oo = self.outputs[0]
-        if Oo.is_linked:
-            V = Io.sv_get()
-            if Io2.is_linked:
-                str = "for Enum,Val2L in zip(enumerate(V), V2): \n    I,L = Enum \n    Pfin = [] \n    for Enum2, col2 in zip(enumerate(L), safc(L, Val2L)): \n        i, (r, g, b, a) = Enum2 \n        (R, G, B, A) = col2 \n        Pfin.append(({n.ModeR},{n.ModeG},{n.ModeB},{n.ModeA})) \n    fin.append(Pfin)"
-                fin = []
-                V2 = Io2.sv_get()
-                exec(str.format(n=self))
-                Oo.sv_set(fin)
-            else:
-                exec_string = "Oo.sv_set([[({n.ModeR},{n.ModeG},{n.ModeB},{n.ModeA}) for i, (r, g, b, a) in enumerate(L)] for I, L in enumerate(V)])"
-                exec(exec_string.format(n=self))
+
+        V = Io.sv_get()
+        if Io2.is_linked:
+            str = "for Enum,Val2L in zip(enumerate(V), V2): \n    I,L = Enum \n    Pfin = [] \n    for Enum2, col2 in zip(enumerate(L), safc(L, Val2L)): \n        i, (r, g, b, a) = Enum2 \n        (R, G, B, A) = col2 \n        Pfin.append(({n.ModeR},{n.ModeG},{n.ModeB},{n.ModeA})) \n    fin.append(Pfin)"
+            fin = []
+            V2 = Io2.sv_get()
+            exec(str.format(n=self))
+            Oo.sv_set(fin)
+        else:
+            exec_string = "Oo.sv_set([[({n.ModeR},{n.ModeG},{n.ModeB},{n.ModeA}) for i, (r, g, b, a) in enumerate(L)] for I, L in enumerate(V)])"
+            exec(exec_string.format(n=self))
 
 
 def register():

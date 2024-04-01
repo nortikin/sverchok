@@ -76,6 +76,7 @@ class DistancePPNode(SverchCustomTreeNode, bpy.types.Node):
     def process(self):
         if not self.outputs['distances'].is_linked:
             return
+        
         inputs = self.inputs
         if inputs['vertices1'].is_linked and inputs['vertices2'].is_linked:
             prop1_ = self.inputs['vertices1'].sv_get()

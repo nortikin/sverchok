@@ -92,6 +92,7 @@ class SvMatrixEulerNode(SverchCustomTreeNode, bpy.types.Node):
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
             return
+        
         inputs = self.inputs
         params = [s.sv_get() for s in inputs]
         mats = []

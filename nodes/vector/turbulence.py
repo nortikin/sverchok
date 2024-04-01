@@ -95,11 +95,12 @@ class SvTurbulenceNode(SverchCustomTreeNode, bpy.types.Node):
         layout.prop(self, 'noise_type', text="Type")
 
     def process(self):
-        inputs, outputs = self.inputs, self.outputs
-
-        if not outputs[0].is_linked:
+        if not any(socket.is_linked for socket in self.outputs):
             return
-
+        if not (self.inputs["Vertices"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Vertices'].label or self.inputs['Vertices'].identifier}' has to be connected")
+                
+        inputs, outputs = self.inputs, self.outputs
         tfunc = turbulence_f[self.out_mode]
 
         verts = inputs['Vertices'].sv_get(deepcopy=False)

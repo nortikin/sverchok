@@ -68,7 +68,7 @@ class SvCatmullRomSplineNode(SverchCustomTreeNode, bpy.types.Node):
         self.update_sockets(context)
 
     def process(self):
-        if not any(o.is_linked for o in self.outputs):
+        if not any(socket.is_linked for socket in self.outputs):
             return
 
         vertices_s = self.inputs['Vertices'].sv_get( default=[[]])

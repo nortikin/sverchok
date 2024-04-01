@@ -101,10 +101,13 @@ class SvEdgeAnglesNode(SverchCustomTreeNode, bpy.types.Node):
         return (edge.is_wire or edge.is_boundary)
 
     def process(self):
-
-        if not self.outputs['Angles'].is_linked:
+        if not any(socket.is_linked for socket in self.outputs):
             return
-
+        if not (self.inputs["Vertices"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Vertices'].label or self.inputs['Vertices'].identifier}' has to be connected")
+        if not (self.inputs["Edges"].is_linked or self.inputs["Polygons"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Edges'].label or self.inputs['Edges'].identifier}' or '{self.inputs['Polygons'].label or self.inputs['Polygons'].identifier}' has to be connected")
+                
         vertices_s = self.inputs['Vertices'].sv_get(default=[[]])
         edges_s = self.inputs['Edges'].sv_get(default=[[]])
         faces_s = self.inputs['Polygons'].sv_get(default=[[]])

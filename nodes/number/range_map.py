@@ -143,6 +143,7 @@ class SvMapRangeNode(SverchCustomTreeNode, bpy.types.Node):
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
             return
+        
         inputs = self.inputs
 
         params = [si.sv_get(default=[[]], deepcopy=False) for si in inputs]

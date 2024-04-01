@@ -221,8 +221,7 @@ class SvSvgMeshNode(SverchCustomTreeNode, bpy.types.Node):
             layout.prop(self, 'invert_sort')
 
     def process(self):
-
-        if not self.outputs[0].is_linked:
+        if not any(socket.is_linked for socket in self.outputs):
             return
 
         verts_in = self.inputs['Vertices'].sv_get(deepcopy=True)

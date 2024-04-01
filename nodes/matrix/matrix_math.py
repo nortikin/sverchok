@@ -242,6 +242,7 @@ class SvMatrixMathNode(SverchCustomTreeNode, bpy.types.Node):
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
             return
+        
         outputs = self.outputs
 
         data_in = []  # collect the inputs from the connected sockets

@@ -116,6 +116,9 @@ class SvCSGBooleanNodeMK2(ModifierLiteNode, SverchCustomTreeNode, bpy.types.Node
             col.prop(self, "out_last", toggle=True)
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        
         OutV, OutP = self.outputs
         if not OutV.is_linked:
             return

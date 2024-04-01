@@ -51,6 +51,9 @@ class SvMatrixValueIn(SverchCustomTreeNode, bpy.types.Node):
                 row.prop(self, 'matrix', text='', index=j)
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        
         if self.outputs['Matrix'].is_linked:
             self.outputs[0].sv_set([self.matrix])
 

@@ -260,7 +260,6 @@ class SvMeshFilterNode(SverchCustomTreeNode, bpy.types.Node):
         self.set_submode(context)
 
     def process(self):
-
         if not any(output.is_linked for output in self.outputs):
             return
 

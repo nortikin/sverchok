@@ -52,7 +52,6 @@ class SvExMinimalScalarFieldNode(SverchCustomTreeNode, bpy.types.Node):
         layout.prop(self, "function")
 
     def process(self):
-
         if not any(socket.is_linked for socket in self.outputs):
             return
 

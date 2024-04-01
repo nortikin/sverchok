@@ -147,6 +147,7 @@ class SvNGonNode(SverchCustomTreeNode, bpy.types.Node):
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
             return
+        
         # inputs
         radius = self.inputs['Radius'].sv_get()[0]
 

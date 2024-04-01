@@ -160,11 +160,12 @@ class SvBarycentricTransformNode(
 
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        
         '''main node function called every update'''
         outputs = self.outputs
         inputs = self.inputs
-        if not (outputs[0].is_linked and all(s.is_linked for s in inputs[:1] + inputs[2:])):
-            return
 
         result = [[], []]
         out_numpy = self.output_numpy

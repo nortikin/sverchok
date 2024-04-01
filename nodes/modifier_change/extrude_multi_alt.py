@@ -271,7 +271,11 @@ class SvMultiExtrudeAlt(
         draw_ui(self, context, layout)
 
     def process(self):
-
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        if not (self.inputs["verts"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['verts'].label or self.inputs['verts'].identifier}' has to be connected")
+        
         # bmesh operations
         verts = self.inputs['verts'].sv_get()
         faces = self.inputs['faces'].sv_get()

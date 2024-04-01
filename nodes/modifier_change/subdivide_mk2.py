@@ -270,6 +270,9 @@ class SvSubdivideNodeMK2(
         return not (any(s.is_linked for s in outputs) and all(s.is_linked for s in inputs[:2]))
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        
         inputs, outputs = self.inputs, self.outputs
 
         if self.dont_process():

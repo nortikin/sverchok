@@ -385,6 +385,7 @@ class SvTorusKnotNodeMK2(SverchCustomTreeNode, bpy.types.Node, SvAngleHelper):
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
             return
+        
         outputs = self.outputs
 
         # input values lists (single or multi value)

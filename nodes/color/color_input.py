@@ -61,6 +61,7 @@ class SvColorInputNode(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
             return
+        
         if self.use_alpha:
             color = self.color_data[:]
         else:

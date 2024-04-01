@@ -70,6 +70,7 @@ class SvPulgaAttractionForceNode(SverchCustomTreeNode, bpy.types.Node):
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
             return
+        
         strength = self.inputs["Strength"].sv_get(deepcopy=False)
         decay = self.inputs["Decay"].sv_get(deepcopy=False)
         max_distance = self.inputs["Max Distance"].sv_get(deepcopy=False)

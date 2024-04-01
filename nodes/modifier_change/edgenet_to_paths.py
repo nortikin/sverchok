@@ -207,8 +207,9 @@ class SvEdgenetToPathsNode(ModifierLiteNode, SverchCustomTreeNode, bpy.types.Nod
 
 
     def process(self):
-        if not any(s.is_linked for s in self.outputs):
+        if not any(socket.is_linked for socket in self.outputs):
             return
+        
         verts = self.inputs[0].sv_get(deepcopy=False)
         edges = self.inputs[1].sv_get(deepcopy=False)
         verts_out = []

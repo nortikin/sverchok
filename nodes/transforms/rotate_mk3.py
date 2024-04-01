@@ -279,11 +279,12 @@ class SvRotationNodeMk3(SverchCustomTreeNode, bpy.types.Node):
         self.update_sockets()
 
     def process(self):
-        inputs, outputs = self.inputs, self.outputs
-
-        if not outputs[0].is_linked:
+        if not any(socket.is_linked for socket in self.outputs):
             return
-
+        if not (self.inputs["Vertices"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Vertices'].label or self.inputs['Vertices'].identifier}' has to be connected")
+        
+        inputs, outputs = self.inputs, self.outputs
         matching_f = list_match_func[self.list_match]
         ops = [self.list_match, self.output_numpy]
         inputs_used = ['Vertices', 'Centers'] + modes_dict[self.mode][1]

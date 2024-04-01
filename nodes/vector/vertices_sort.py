@@ -243,6 +243,11 @@ class SvVertSortNode(SverchCustomTreeNode, bpy.types.Node):
         self.outputs.new('SvStringsSocket', 'Item order')
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        if not (self.inputs["Vertices"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Vertices'].label or self.inputs['Vertices'].identifier}' has to be connected")
+        
         verts = self.inputs['Vertices'].sv_get()
 
         if self.inputs['PolyEdge'].is_linked:
@@ -427,27 +432,29 @@ class SvVertSortNode(SverchCustomTreeNode, bpy.types.Node):
                     item_order.append([i[-1] for i in s_v])
 
         if self.mode == 'CONNEX':
-            if self.inputs['PolyEdge'].is_linked:
-                edges = self.inputs['PolyEdge'].sv_get()
-                for v, p in zip(verts, edges):
-                    pols = []
-                    if len(p[0]) > 2:
-                        pols = [p[:]]
-                        p = polygons_to_edges([p], True)[0]
+            if not (self.inputs["PolyEdge"].is_linked):
+                raise Exception(f"Input socket '{self.inputs['PolyEdge'].label or self.inputs['PolyEdge'].identifier}' has to be connected")
+            
+            edges = self.inputs['PolyEdge'].sv_get()
+            for v, p in zip(verts, edges):
+                pols = []
+                if len(p[0]) > 2:
+                    pols = [p[:]]
+                    p = polygons_to_edges([p], True)[0]
 
-                    vect_new, pol_edge_new, index_new = sort_vertices_by_connexions(v, p, self.limit_mode)
-                    if len(pols) > 0:
-                        new_pols = []
-                        for pol in pols[0]:
-                            new_pol = []
-                            for i in pol:
-                                new_pol.append(index_new.index(i))
-                            new_pols.append(new_pol)
-                        pol_edge_new = [new_pols]
+                vect_new, pol_edge_new, index_new = sort_vertices_by_connexions(v, p, self.limit_mode)
+                if len(pols) > 0:
+                    new_pols = []
+                    for pol in pols[0]:
+                        new_pol = []
+                        for i in pol:
+                            new_pol.append(index_new.index(i))
+                        new_pols.append(new_pol)
+                    pol_edge_new = [new_pols]
 
-                    verts_out.append(vect_new)
-                    poly_edge_out.append(pol_edge_new)
-                    item_order.append(index_new)
+                verts_out.append(vect_new)
+                poly_edge_out.append(pol_edge_new)
+                item_order.append(index_new)
 
         if vert_output:
             self.outputs['Vertices'].sv_set(verts_out)

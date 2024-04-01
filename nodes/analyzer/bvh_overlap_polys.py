@@ -54,6 +54,9 @@ class SvBvhOverlapNodeNew(SverchCustomTreeNode, bpy.types.Node):
         self.outputs.new('SvStringsSocket', 'OverlapPoly(B)')
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        
         btr = BVHTree.FromPolygons
         V1, P1, V2, P2 = [i.sv_get()[0] for i in self.inputs]
         outIndA, outIndB, Pover1, Pover2 = self.outputs

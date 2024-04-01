@@ -57,6 +57,7 @@ class SvEdgesToFaces2D(ModifierLiteNode, SverchCustomTreeNode, bpy.types.Node):
             return
         if not all([soc.is_linked for soc in self.inputs]):
             raise Exception("All input sockets has to be connected")
+        
         out = []
         for vs, es in zip(self.inputs['Verts'].sv_get(), self.inputs['Edges'].sv_get()):
             out.append(edges_to_faces(vs, es, self.do_intersect, self.fill_holes, self.accuracy))

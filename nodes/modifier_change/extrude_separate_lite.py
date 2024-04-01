@@ -66,9 +66,10 @@ class SvExtrudeSeparateLiteNode(
         ]
 
     def process(self):
-        outputs = self.outputs
-        if not outputs['Vertices'].is_linked:
+        if not any(socket.is_linked for socket in self.outputs):
             return
+        
+        outputs = self.outputs
         IVerts, IFaces, IMask, Imatr = self.inputs
         vertices_s = IVerts.sv_get()
         faces_s = IFaces.sv_get()

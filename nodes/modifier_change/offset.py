@@ -71,9 +71,10 @@ class SvOffsetNode(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
         ]
 
     def process(self):
-
-        if not (self.outputs['Vers'].is_linked and self.inputs['Vers'].is_linked):
+        if not any(socket.is_linked for socket in self.outputs):
             return
+        if not (self.inputs["Vers"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Vers'].label or self.inputs['Vers'].identifier}' has to be connected")
 
         vertices = Vector_generate(self.inputs['Vers'].sv_get(deepcopy=False))
         faces = self.inputs['Pols'].sv_get(deepcopy=False)

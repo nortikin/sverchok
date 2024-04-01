@@ -64,10 +64,13 @@ class SvChessSelection(SverchCustomTreeNode, bpy.types.Node):
         self.outputs.new('SvStringsSocket', "Face mask")
 
     def process(self):
-        if not any(sock.is_linked for sock in self.outputs):
+        if not any(socket.is_linked for socket in self.outputs):
             return
-        if not all([sock.is_linked for sock in self.inputs]):
-            return
+        if not (self.inputs["Verts"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Verts'].label or self.inputs['Verts'].identifier}' has to be connected")
+        if not (self.inputs["Faces"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Faces'].label or self.inputs['Faces'].identifier}' has to be connected")
+        
         out = []
         for v, f in zip(self.inputs['Verts'].sv_get(), self.inputs['Faces'].sv_get()):
             out.append(get_selection(v, f))

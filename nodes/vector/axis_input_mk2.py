@@ -57,9 +57,11 @@ class SvAxisInputNodeMK2(SverchCustomTreeNode, bpy.types.Node):
         return str('[{0}, {1}, {2}]'.format(*self.get_axis()))
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        
         vec_out = self.outputs[0]
-        if vec_out.is_linked:
-            vec_out.sv_set([[list(self.get_axis())]])
+        vec_out.sv_set([[list(self.get_axis())]])
 
 
 def register():

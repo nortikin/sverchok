@@ -69,6 +69,7 @@ class SvMergeMesh2D(ModifierLiteNode, SverchCustomTreeNode, bpy.types.Node):
             return
         if not all([sock.is_linked for sock in self.inputs]):
             raise Exception("All input sockets has to be connected")
+        
         out = []
         for sv_verts_a, sv_faces_a, sv_verts_b, sv_faces_b in zip(self.inputs['Verts A'].sv_get(),
                                                                   self.inputs['Faces A'].sv_get(),

@@ -223,6 +223,7 @@ class SvPentagonTilerNode(SverchCustomTreeNode, bpy.types.Node):
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
             return
+        
         # input values lists
         params = [s.sv_get() for s in self.inputs]
         params = list_match_func[self.list_match_global](params)

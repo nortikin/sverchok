@@ -45,6 +45,9 @@ class SvMakeMonotone(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
         layout.prop(self, 'accuracy')
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        
         verts = self.inputs['Polygon'].sv_get()
         mesh = []
         if self.inputs['Hole vectors'].is_linked and self.inputs['Hole polygons'].is_linked:

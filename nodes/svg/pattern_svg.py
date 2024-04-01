@@ -89,8 +89,7 @@ class SvSvgPatternNode(SverchCustomTreeNode, bpy.types.Node):
         layout.prop(self, 'pattern_name')
 
     def process(self):
-
-        if not any(s.is_linked for s in self.outputs):
+        if not any(socket.is_linked for socket in self.outputs):
             return
 
         objs_in = self.inputs['SVG Objects'].sv_get(deepcopy=False, default=None)

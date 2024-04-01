@@ -62,7 +62,7 @@ class SvPols2EdgsNodeMk2(SverchCustomTreeNode, bpy.types.Node):
         self.outputs.new('SvStringsSocket', "edgs").label = 'Edges'
 
     def process(self):
-        if not self.outputs[0].is_linked:
+        if not any(socket.is_linked for socket in self.outputs):
             return
 
         polygons_ = self.inputs['pols'].sv_get(deepcopy=False)

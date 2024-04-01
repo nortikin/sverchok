@@ -220,7 +220,9 @@ class SvWafelNode(SverchCustomTreeNode, bpy.types.Node):
 
 
     def process(self):
-
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        
         if 'vecLine' in self.inputs and \
                 'vecPlane' in self.inputs and \
                 'edgPlane' in self.inputs:

@@ -107,6 +107,7 @@ class SvColorsOutNodeMK1(SverchCustomTreeNode, bpy.types.Node):
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
             return
+        
         color_input = self.inputs['Colors']
         if color_input.is_linked:
             abc = self.inputs['Colors'].sv_get(deepcopy=False)

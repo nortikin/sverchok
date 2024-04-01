@@ -65,6 +65,7 @@ class SvWFCTextureNode(SverchCustomTreeNode, bpy.types.Node):
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
             return
+        
         if not self.image_name:
             raise Exception("No image selected")
 

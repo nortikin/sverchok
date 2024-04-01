@@ -174,6 +174,7 @@ class SvMatrixApplyJoinNode(SverchCustomTreeNode, bpy.types.Node):
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
             return
+        
         vertices = self.inputs['Vertices'].sv_get(default=[], deepcopy=False)
         edges = self.inputs['Edges'].sv_get(default=[], deepcopy=False)
         faces = self.inputs['Faces'].sv_get(default=[], deepcopy=False)

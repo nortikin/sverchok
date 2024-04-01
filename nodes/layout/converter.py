@@ -42,6 +42,7 @@ class ConverterNode(SverchCustomTreeNode, bpy.types.Node):
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
             return
+        
         if self.inputs[0].is_linked:
             out = self.inputs[0].sv_get(deepcopy=False)
             for s in self.outputs:

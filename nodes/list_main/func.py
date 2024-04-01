@@ -119,17 +119,16 @@ class ListFuncNode(SverchCustomTreeNode, bpy.types.Node):
         if not self.inputs['Data'].is_linked:
             raise Exception("Input socket 'Data' has to be connected")
         
-        if self.outputs['Function'].is_linked and self.inputs['Data'].is_linked:
-            data = self.inputs['Data'].sv_get()
-            func = func_dict[self.func_]
-            numpy_func = numpy_func_dict[self.func_]
+        data = self.inputs['Data'].sv_get()
+        func = func_dict[self.func_]
+        numpy_func = numpy_func_dict[self.func_]
 
-            if not self.level:
-                out = [func(data)]
-            else:
-                out = self.count(data, self.level, func, numpy_func)
+        if not self.level:
+            out = [func(data)]
+        else:
+            out = self.count(data, self.level, func, numpy_func)
 
-            self.outputs['Function'].sv_set([out] if self.wrap else out)
+        self.outputs['Function'].sv_set([out] if self.wrap else out)
 
     def count(self, data, level, func, numpy_func):
         out = []

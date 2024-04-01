@@ -134,6 +134,7 @@ class svBasicArcNode(SverchCustomTreeNode, bpy.types.Node):
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
             return
+        
         outputs = self.outputs
         inputs = self.inputs
 
@@ -141,8 +142,8 @@ class svBasicArcNode(SverchCustomTreeNode, bpy.types.Node):
         - is Edges socket created, means all sockets exist.
         - is anything connected to the Verts socket?
         '''
-        if not all([outputs['Verts'].is_linked, inputs['arc_pts'].is_linked]):
-            return
+        if not inputs['arc_pts'].is_linked:
+            raise Exception(f"Input socket '{self.inputs['arc_pts'].label or self.inputs['arc_pts'].identifier}' has to be connected")
 
         '''
         operational scheme:

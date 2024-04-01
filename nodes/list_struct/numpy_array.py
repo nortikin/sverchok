@@ -53,6 +53,7 @@ class SvNumpyArrayNode(SverchCustomTreeNode, bpy.types.Node):
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
             return
+        
         out = self.outputs[0]
         if out.is_linked:
             X,Y = self.inputs

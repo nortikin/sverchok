@@ -96,6 +96,7 @@ class SvCustomSwitcher(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
             return
         if not (self.inputs["Data"].is_linked):
             raise Exception("Input socket 'Data' has to be connected")
+        
         # Storing names of items
         if self.inputs['Data'].is_linked:
             data = self.inputs['Data'].sv_get()

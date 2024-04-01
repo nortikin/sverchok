@@ -82,6 +82,7 @@ class HilbertImageNode(SverchCustomTreeNode, bpy.types.Node):
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
             return
+        
         level_socket, size_socket, sensitivity_socket = self.inputs
         verts_socket, edges_socket = self.outputs
 

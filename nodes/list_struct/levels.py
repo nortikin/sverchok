@@ -104,6 +104,7 @@ class SvListLevelsNodeMK2(SverchCustomTreeNode, bpy.types.Node):
             return
         if not any(socket.is_linked for socket in self.inputs):
             raise Exception("Input socket 'Data' has to be connected")
+        
         data = self.inputs['Data'].sv_get(default=[], deepcopy=False)
 
         nesting, descriptions = describe_data_shape_by_level(data, include_numpy_nesting=False)

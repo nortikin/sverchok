@@ -140,7 +140,6 @@ class SvExMinimalSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
         return np.array(us), np.array(vs)
 
     def process(self):
-
         if not any(socket.is_linked for socket in self.outputs):
             return
 

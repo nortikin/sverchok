@@ -194,13 +194,12 @@ class SvVectorMathNodeMK3(SverchCustomTreeNode, bpy.types.Node):
                 s.prop_name = f'v3_input_{idx}' if t_in == 'v' else 'amount'
 
     def process(self):
-
         self.ensure_enums_have_no_space(enums=["current_op"])
 
-        inputs, outputs = self.inputs, self.outputs
-
-        if not outputs[0].is_linked:
+        if not any(socket.is_linked for socket in self.outputs):
             return
+
+        inputs, outputs = self.inputs, self.outputs
 
         func = self.implementation_func_dict[self.implementation][0].get(self.current_op)[1]
         num_inputs = len(inputs)

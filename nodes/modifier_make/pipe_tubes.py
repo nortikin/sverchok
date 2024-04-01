@@ -62,24 +62,25 @@ class SvPipeNode(EdgeGeneratorLiteNode, SverchCustomTreeNode, bpy.types.Node):
         self.outputs.new('SvStringsSocket', "Pols")
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
 
-        if self.outputs['Vers'].is_linked and self.inputs['Vers'].is_linked:
-            Vecs = self.inputs['Vers'].sv_get()
-            Edgs = self.inputs['Edgs'].sv_get()
-            #Nsides = max(self.inputs['Sides'].sv_get()[0][0], 4)
-            Shape = self.shape
-            Cup = self.cup_fill
-            #Diameter = self.inputs['Diameter'].sv_get()[0][0]
-            Diameter = 1.0
-            Size = self.inputs['Size'].sv_get()[0]
-            #Offset = self.inputs['Offset'].sv_get()[0][0]
-            #Extrude = self.inputs['Extrude'].sv_get()[0][0]
-            outv, outp = self.Do_vecs(Vecs,Edgs,Diameter,Shape,Size,Cup) #Nsides,Offset,Extrude)
+        Vecs = self.inputs['Vers'].sv_get()
+        Edgs = self.inputs['Edgs'].sv_get()
+        #Nsides = max(self.inputs['Sides'].sv_get()[0][0], 4)
+        Shape = self.shape
+        Cup = self.cup_fill
+        #Diameter = self.inputs['Diameter'].sv_get()[0][0]
+        Diameter = 1.0
+        Size = self.inputs['Size'].sv_get()[0]
+        #Offset = self.inputs['Offset'].sv_get()[0][0]
+        #Extrude = self.inputs['Extrude'].sv_get()[0][0]
+        outv, outp = self.Do_vecs(Vecs,Edgs,Diameter,Shape,Size,Cup) #Nsides,Offset,Extrude)
 
-            if self.outputs['Vers'].is_linked:
-                self.outputs['Vers'].sv_set(outv)
-            if self.outputs['Pols'].is_linked:
-                self.outputs['Pols'].sv_set(outp)
+        if self.outputs['Vers'].is_linked:
+            self.outputs['Vers'].sv_set(outv)
+        if self.outputs['Pols'].is_linked:
+            self.outputs['Pols'].sv_set(outp)
 
 
     def Do_vecs(self, Vecs,Edgs,Diameter,Shape,Size,Cup): #Offset,Extrude):

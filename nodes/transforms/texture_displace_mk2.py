@@ -194,11 +194,12 @@ class SvDisplaceNodeMk2(SverchCustomTreeNode, bpy.types.Node):
             self.texture_pointer = self.get_bpy_data_from_name(old_node.name_texture, bpy.data.textures)
 
     def process(self):
-        inputs, outputs = self.inputs, self.outputs
-
-        if not outputs[0].is_linked:
+        if not any(socket.is_linked for socket in self.outputs):
             return
-
+        if not (self.inputs["Vertices"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Vertices'].label or self.inputs['Vertices'].identifier}' has to be connected")
+        
+        inputs, outputs = self.inputs, self.outputs
         result = []
 
         params = [si.sv_get(default=[[]], deepcopy=False) for si in inputs[:4]]

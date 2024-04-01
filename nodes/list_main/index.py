@@ -53,6 +53,7 @@ class SvIndexListNode(SverchCustomTreeNode, bpy.types.Node):
             return
         if not any(socket.is_linked for socket in self.inputs):
             raise Exception("All input sockets has to be connected")
+        
         data = self.inputs['data'].sv_get(deepcopy=False, default=[])
         items = self.inputs['Item'].sv_get(deepcopy=False, default=[])
 

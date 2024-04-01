@@ -236,26 +236,30 @@ class LineConnectNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
         multi_socket(self, min=1)
 
     def process(self):
-        if self.inputs[0].is_linked:
-            slots = [socket.sv_get() for socket in self.inputs if socket.is_linked]
-            lol = levelsOflist(slots)
-            if lol == 4:
-                one, two = self.connect(slots, self.dir_check, self.cicl_check_U, self.cicl_check_V, lol, self.polygons, self.slice_check, self.cap_U, self.cap_V)
-            elif lol == 5:
-                one = []
-                two = []
-                for slo in slots:
-                    for s in slo:
-                        result = self.connect([s], self.dir_check, self.cicl_check_U, self.cicl_check_V, lol, self.polygons, self.slice_check, self.cap_U, self.cap_V)
-                        one.extend(result[0])
-                        two.extend(result[1])
-            else:
-                return
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        if not any(socket.is_linked for socket in self.inputs):
+            raise Exception(f"Input sockets 'vertices' has to be connected")
+        
+        slots = [socket.sv_get() for socket in self.inputs if socket.is_linked]
+        lol = levelsOflist(slots)
+        if lol == 4:
+            one, two = self.connect(slots, self.dir_check, self.cicl_check_U, self.cicl_check_V, lol, self.polygons, self.slice_check, self.cap_U, self.cap_V)
+        elif lol == 5:
+            one = []
+            two = []
+            for slo in slots:
+                for s in slo:
+                    result = self.connect([s], self.dir_check, self.cicl_check_U, self.cicl_check_V, lol, self.polygons, self.slice_check, self.cap_U, self.cap_V)
+                    one.extend(result[0])
+                    two.extend(result[1])
+        else:
+            return
 
-            if self.outputs['vertices'].is_linked:
-                self.outputs['vertices'].sv_set(one)
-            if self.outputs['data'].is_linked:
-                self.outputs['data'].sv_set(two)
+        if self.outputs['vertices'].is_linked:
+            self.outputs['vertices'].sv_set(one)
+        if self.outputs['data'].is_linked:
+            self.outputs['data'].sv_set(two)
 
 
 def register():

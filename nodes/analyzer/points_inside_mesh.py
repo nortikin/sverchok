@@ -276,10 +276,13 @@ class SvPointInside(SverchCustomTreeNode, bpy.types.Node):
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
             return
+        if not (self.inputs["verts"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['verts'].label or self.inputs['verts'].identifier}' has to be connected")
+        if not (self.inputs["faces"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['faces'].label or self.inputs['faces'].identifier}' has to be connected")
+        if not (self.inputs["points"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['points'].label or self.inputs['points'].identifier}' has to be connected")
         
-        if not all(socket.is_linked for socket in self.inputs[:3]):
-            return
-
         main_func, params = self.get_data()
 
         mask = []

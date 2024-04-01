@@ -59,6 +59,7 @@ class MatrixShearNode(SverchCustomTreeNode, bpy.types.Node):
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
             return
+        
         # inputs
 
         factor1 = self.inputs['Factor1'].sv_get()

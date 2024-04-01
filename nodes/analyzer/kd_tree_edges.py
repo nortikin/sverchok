@@ -88,11 +88,14 @@ class SvKDTreeEdgesNodeMK3(SverchCustomTreeNode, bpy.types.Node):
             raise DependencyError(f'Current mode="{self.mode}" requires scipy'
                                   f' library to be installed')
 
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        if not (self.inputs["Verts"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Verts'].label or self.inputs['Verts'].identifier}' has to be connected")
+
         inputs = self.inputs
         outputs = self.outputs
 
-        if not inputs['Verts'].is_linked or not outputs['Edges'].is_linked:
-            return
         params = [inputs['Verts'].sv_get(deepcopy=False)]
         match = list_match_func[self.list_match]
 

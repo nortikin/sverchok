@@ -116,6 +116,7 @@ class SvGenExponential(SverchCustomTreeNode, bpy.types.Node):
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
             return
+        
         # inputs
         x0 = self.inputs['X0'].sv_get()[0]
         alpha = self.inputs['Alpha'].sv_get()[0]

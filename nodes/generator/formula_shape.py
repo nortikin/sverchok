@@ -114,6 +114,7 @@ class SvFormulaShapeNode(SverchCustomTreeNode, bpy.types.Node):
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
             return
+        
         # inputs
         Count = self.inputs['Count'].sv_get()[0][0]
         Scale = self.inputs['Scale'].sv_get()[0][0]

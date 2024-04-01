@@ -40,6 +40,11 @@ class VertsDelDoublesNode(SverchCustomTreeNode, bpy.types.Node):
         self.outputs.new('SvVerticesSocket', "vers")
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        if not (self.inputs["vers"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['vers'].label or self.inputs['vers'].identifier}' has to be connected")
+        
         vers = self.inputs['vers'].sv_get()
         # Process data
         levs = levelsOflist(vers)

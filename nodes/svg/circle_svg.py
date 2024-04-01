@@ -103,9 +103,9 @@ class SvSvgCircleNode(SverchCustomTreeNode, bpy.types.Node):
         layout.prop(self, "ungroup")
 
     def process(self):
-
-        if not any(s.is_linked for s in self.outputs):
+        if not any(socket.is_linked for socket in self.outputs):
             return
+        
         params_in = [s.sv_get(deepcopy=False) for s in self.inputs[:4]]
         params_in.append(self.inputs['Fill / Stroke'].sv_get(deepcopy=False, default=[[None]]))
         get_curves = self.outputs['Curves'].is_linked

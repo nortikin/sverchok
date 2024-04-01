@@ -71,6 +71,7 @@ class SvApproxSubdtoNurbsNode(SverchCustomTreeNode, bpy.types.Node):
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
             return
+        
         try:
             self.inputs['Subd Obj'].sv_get()[0]
         except:

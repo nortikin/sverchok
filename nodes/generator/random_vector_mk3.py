@@ -108,6 +108,7 @@ class RandomVectorNodeMK3(SverchCustomTreeNode, bpy.types.Node):
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
             return
+        
         params = [si.sv_get(default=[[]], deepcopy=False) for si in self.inputs]
 
         matching_f = list_match_func[self.list_match]
