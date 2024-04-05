@@ -1,5 +1,5 @@
-Center of Mass
-==============
+Center of Mass (Solid)
+======================
 
 Dependencies
 ------------
