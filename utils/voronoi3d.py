@@ -397,12 +397,12 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, mode='
         # select random sites to test are they are tethraeder or 3D?
         # If this thethod get wrong answer then not optimal method will be used.
         list_sites_for_test_plane = random.sample( range(0, len(sites)), 4)
-        v0 = sites[list_sites_for_test_plane[0]]
-        res = v0
-        for I in range(1,4):
+        v0  = Vector(sites[list_sites_for_test_plane[0]])
+        res = Vector(sites[list_sites_for_test_plane[1]])-v0
+        for I in range(2,4):
             v_I = list_sites_for_test_plane[I]
-            res = np.cross( res, sites[v_I] )
-        res_norm = np.linalg.norm( res/np.linalg.norm(res) )
+            res = np.cross( res, Vector(sites[v_I])-v0 )
+        res_norm = np.linalg.norm(res,ord=1)
         if res_norm>0.1:
             are_sites_plane = False
         else:
