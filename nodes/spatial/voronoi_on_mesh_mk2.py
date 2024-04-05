@@ -25,6 +25,7 @@ from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_
 from sverchok.utils.sv_bmesh_utils import recalc_normals
 from sverchok.utils.sv_mesh_utils import mesh_join
 from sverchok.utils.voronoi3d import voronoi_on_mesh
+import numpy as np
 
 
 class SvVoronoiOnMeshNodeMK3(SverchCustomTreeNode, bpy.types.Node):
@@ -80,6 +81,30 @@ class SvVoronoiOnMeshNodeMK3(SverchCustomTreeNode, bpy.types.Node):
         default = 'FLAT',
         update = updateNode)
 
+    def updateMaskMode(self, context):
+        if self.mask_mode=='MASK':
+            self.inputs["Mask"].label = "Mask of Sites"
+        elif self.mask_mode=='INDEXES':
+            self.inputs["Mask"].label = "Indexes of Sites"
+        updateNode(self, context)
+
+    mask_modes = [
+            ('MASK', "Mask of sites", "Boolean value (0/1) to mask of sites", 0),
+            ('INDEXES', "Index of sites", "Indexes of sites to mask", 1),
+        ]
+    mask_mode : EnumProperty(
+        name = "Mask mode",
+        items = mask_modes,
+        default = 'MASK',
+        update = updateMaskMode)
+
+    mask_inversion : BoolProperty(
+        name = "Inversion",
+        default = False,
+        description="Invert mask of sites",
+        update = updateNode)
+
+
     accuracy : IntProperty(
             name = "Accuracy",
             description = "Accuracy for mesh bisecting procedure",
@@ -92,7 +117,7 @@ class SvVoronoiOnMeshNodeMK3(SverchCustomTreeNode, bpy.types.Node):
         self.inputs.new('SvStringsSocket', 'Faces')
         self.inputs.new('SvVerticesSocket', "Sites")
 #         self.inputs.new('SvStringsSocket', 'Thickness').prop_name = 'thickness'
-        self.inputs.new('SvStringsSocket', "Mask")
+        self.inputs.new('SvStringsSocket', "Mask").label = "Mask of Sites"
         self.inputs.new('SvStringsSocket', 'Spacing').prop_name = 'spacing'
         self.outputs.new('SvVerticesSocket', "Vertices")
         self.outputs.new('SvStringsSocket', "Edges")
@@ -104,6 +129,9 @@ class SvVoronoiOnMeshNodeMK3(SverchCustomTreeNode, bpy.types.Node):
     def draw_buttons(self, context, layout):
         layout.label(text="Mode:")
         layout.prop(self, "mode", text='')
+        split = layout.column().split(factor=0.6)
+        split.column().prop(self, "mask_mode", text='')
+        split.column().prop(self, "mask_inversion", text='Invert')
         if self.mode == 'VOLUME':
             layout.prop(self, 'normals')
         layout.label(text='Output nesting:')
@@ -155,6 +183,34 @@ class SvVoronoiOnMeshNodeMK3(SverchCustomTreeNode, bpy.types.Node):
             new_sites_idx = []
             new_sites_verts = []
             for verts, faces, sites, spacing, mask in zip_long_repeat(*params):
+                # if mask is zero or not connected then do not mask any. Except of inversion,
+                if not mask:
+                    np_mask = np.ones(len(sites), dtype=bool)
+                    if self.mask_inversion==True:
+                        np_mask = np.invert(np_mask)
+                    mask = np_mask.tolist()
+                else:
+                    if self.mask_mode=='MASK':
+                        if self.mask_inversion==True:
+                            mask = list( map( lambda v: False if v==0 else True, mask) )
+                            mask = mask[:len(sites)]
+                            np_mask = np.zeros(len(sites), dtype=bool)
+                            np_mask[0:len(mask)]=mask
+                            np_mask = np.invert(np_mask)
+                            mask = np_mask.tolist()
+                        pass
+                    elif self.mask_mode=='INDEXES':
+                        mask_len = len(sites)
+                        mask_range = []
+                        for x in mask:
+                            if -mask_len<x<mask_len:
+                                mask_range.append(x)
+                        np_mask = np.ones(len(sites), dtype=bool)
+                        np_mask[mask_range] = False
+                        if self.mask_inversion==True:
+                            np_mask = np.invert(np_mask)
+                        mask = np_mask.tolist()
+
                 verts, edges, faces, used_sites_idx, used_sites_verts = voronoi_on_mesh(verts, faces, sites, thickness=0,
                             spacing = spacing,
                             #clip_inner = self.clip_inner, clip_outer = self.clip_outer,
