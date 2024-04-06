@@ -58,6 +58,7 @@ import mathutils
 
 from sverchok.data_structure import zip_long_repeat, has_element
 from sverchok.utils.sv_logging import sv_logger
+from sverchok.utils.math import np_dot
 
 @contextmanager
 def empty_bmesh(use_operators=True):
@@ -939,7 +940,198 @@ def recalc_normals(verts, edges, faces, loop=False):
         bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
         verts, edges, faces = pydata_from_bmesh(bm)
         bm.free()
-        return verts, edges, faces</code></pre>
+        return verts, edges, faces
+
+def calc_center_mass_bmesh(center_mode, mesh_vertices, mesh_edges, mesh_faces, mass_of_vertices=None, object_density=None, skip_test_volume_are_closed=False, quad_mode=&#34;BEAUTY&#34;, ngon_mode=&#34;BEAUTY&#34;):
+    &#39;&#39;&#39;
+    Calculate center of mass for single mesh.
+
+    Input:
+        - center_mode=[&#39;VERTICES&#39;, &#39;EDGES&#39;, &#39;FACES&#39;, &#39;VOLUMES&#39;]
+        - mesh_vertices = [[x1,y1,z1],[x2,y2,z2],...] (float) - vertices of mesh
+        - mesh_edges = [[0,1],[1,2],[2,3],...] (int) - indixes of verts (edges)
+        - mesh_faces = [[0,1,2],[1,2,3,4,...], ...] - indixes of verts (faces)
+        - mass_of_vertices = [ [ 1.1, 1.0, 5.2, 0.2,...] ] - mass of every vert in mesh. Extrapolate a last value to the all vertices
+        - object_density = [1.2] - density of volume. If center_mode is EDGES or FACES then mass of objects are proportional to length or area.
+        - skip_test_volume_are_closed - (only for volume node) If you know that volume are close then you can speed up performance if you set this parameter to True. False - force test mesh are closed.
+        - quad_mode [BEAUTY, FIXED, ALTERNATE, SHORT_EDGE], ngon_mode [BEAUTY, EAR_CLIP] - modes for triangulation if mesh has faces with 4 and more vertices (for center_mode FACES of VOLUMES only)
+
+    Output:
+
+        - result_mask - True/False. If False then another output params are None
+        - result_vertices, result_edges, result_polygons - result mesh (source mesh or triangulated mesh)
+        - result_center_mass_mesh - center of mass of mesh
+        - result_mass_mesh - mass of mesh
+        - result_size_mesh - for VERTICES - count vertices, for EDGES - length of edges, for FACES - area of mesh, for VOLUMES - volume of mesh
+
+    Example:
+        https://github.com/nortikin/sverchok/assets/14288520/e432b5c0-35e5-432b-8c9f-798f58b71f13
+    &#39;&#39;&#39;
+    result_mask = result_vertices_I = result_edges_I = result_polygons_I = result_center_mass_mesh_I = result_mass_mesh_I = result_size_mesh_I = None
+
+    vertices_I, edges_I, faces_I, mass_of_vertices_I, density_I = mesh_vertices, mesh_edges, mesh_faces, mass_of_vertices, object_density
+
+    if mass_of_vertices_I is None:
+        mass_of_vertices_I=[1]
+    if density_I is None:
+        density_I=[1]
+
+    if len(vertices_I)==0:
+        # skip mesh if no vertices at all:
+        result_mask = False
+
+    if center_mode==&#39;VERTICES&#39;:
+
+        if len(vertices_I)==0:
+            result_mask = False
+        else:
+            result_mask = True
+            result_vertices_I = vertices_I
+            result_edges_I = edges_I
+            result_polygons_I = faces_I
+
+            # shrink or extend list of mass if list of mass is not equals list of verts:
+            mass_of_vertices_I_shrinked = mass_of_vertices_I[:len(vertices_I)]
+            mass_of_vertices_I_np1 = np.append( mass_of_vertices_I_shrinked, np.full( (len(vertices_I)-len(mass_of_vertices_I_shrinked)), mass_of_vertices_I_shrinked[-1]) )
+            vertices_I_np = np.array(vertices_I)
+            mass_of_vertices_I_np2  = np.array([mass_of_vertices_I_np1])
+            mass_I = mass_of_vertices_I_np2.sum()
+            center_mass_mesh_I_np = (vertices_I_np * mass_of_vertices_I_np2.T).sum(axis=0) / mass_I
+
+            result_center_mass_mesh_I = center_mass_mesh_I_np.tolist()
+            result_mass_mesh_I = mass_I
+            result_size_mesh_I = vertices_I_np.shape[0]  # Count of vertices
+
+    elif center_mode==&#39;EDGES&#39;:
+            
+        old_edges = np.array(edges_I)
+        if old_edges.size==0:
+            # skip mesh if no edges at all:
+            result_mask = False
+        else:
+            result_mask = True
+            verts_I = np.array(vertices_I)
+
+            # Do not triangulate mesh for &#39;EDGE&#39; mode
+            result_vertices_I = vertices_I
+            result_edges_I = edges_I
+            result_polygons_I = faces_I
+            
+            segment_I = verts_I[old_edges]
+            distances_I = np.linalg.norm(segment_I[:,1]-segment_I[:,0], axis=1)
+            length_I = distances_I.sum()
+            segment_center_I = segment_I.sum(axis=1) / 2.0
+            center_mass_mesh_I_np = (segment_center_I * distances_I[np.newaxis].T).sum(axis=0) / length_I
+            mass_I             = length_I * density_I[0]
+
+            result_center_mass_mesh_I = center_mass_mesh_I_np.tolist()
+            result_mass_mesh_I = mass_I
+            result_size_mesh_I = length_I
+
+    elif center_mode==&#39;FACES&#39;:
+            
+        faces_I_np = np.array(faces_I)
+        if faces_I_np.size==0:
+            # skip mesh if no faces at all:
+            result_mask = False
+        else:
+            result_mask = True
+
+            # test if some polygons are not tris:
+            if max(map(len, faces_I_np))&gt;3:
+                # triangulate mesh for &#39;FACES&#39; mode
+                bm_I = bmesh_from_pydata(vertices_I, edges_I, faces_I, markup_face_data=True, normal_update=True)
+                b_faces = []
+                for face in bm_I.faces:
+                    b_faces.append(face)
+                res = bmesh.ops.triangulate(
+                    bm_I, faces=b_faces, quad_method=quad_mode, ngon_method=ngon_mode
+                )
+                new_vertices_I, new_edges_I, new_faces_I = pydata_from_bmesh(bm_I)
+                bm_I.free()
+            else:
+                new_vertices_I,new_edges_I,new_faces_I = vertices_I, edges_I, faces_I
+
+            result_vertices_I = new_vertices_I
+            result_edges_I = new_edges_I
+            result_polygons_I = new_faces_I
+            
+            verts_I_np         = np.array(new_vertices_I)
+            faces_I_np         = np.array(new_faces_I)
+            tris_I_np          = verts_I_np[faces_I_np]
+            areases_I          = np.linalg.norm(np.cross(tris_I_np[:,1]-tris_I_np[:,0], tris_I_np[:,2]-tris_I_np[:,0]) / 2.0, axis=1)
+            area_I             = areases_I.sum()
+            tris_centers_I     = tris_I_np.sum(axis=1) / 3.0
+            center_mass_mesh_I_np = (tris_centers_I * areases_I[np.newaxis].T).sum(axis=0) / area_I
+            mass_I             = area_I * density_I[0]
+
+            result_center_mass_mesh_I = center_mass_mesh_I_np.tolist()
+            result_mass_mesh_I = mass_I
+            result_size_mesh_I = area_I
+
+    elif center_mode==&#39;VOLUMES&#39;:
+            
+        faces_I_np = np.array(faces_I)
+        if faces_I_np.size==0:
+            # skip mesh if no faces at all:
+            result_mask = False
+        else:
+            do_calc = False
+            if max(map(len, faces_I_np))==3 and skip_test_volume_are_closed==True:
+                new_vertices_I, new_edges_I, new_faces_I = vertices_I, edges_I, faces_I
+                do_calc = True
+            else:
+                # triangulate mesh
+                bm_I = bmesh_from_pydata(vertices_I, edges_I, faces_I, markup_face_data=True, normal_update=True)
+                # test if all edges are contiguous (https://docs.blender.org/api/current/bmesh.types.html#bmesh.types.BMEdge.is_contiguous)
+                # then volume is closed:
+                for edge in bm_I.edges:
+                    if edge.is_contiguous==False:
+                        do_calc = False
+                        break
+                else:
+                    do_calc = True
+                    # test if some polygons are not tris:
+                    if max(map(len, faces_I_np))&gt;3:
+                        b_faces = []
+                        for face in bm_I.faces:
+                            b_faces.append(face)
+
+                        res = bmesh.ops.triangulate(
+                            bm_I, faces=b_faces, quad_method=quad_mode, ngon_method=ngon_mode
+                        )
+                        new_vertices_I, new_edges_I, new_faces_I = pydata_from_bmesh(bm_I)
+                    else:
+                        new_vertices_I, new_edges_I, new_faces_I = vertices_I, edges_I, faces_I
+                bm_I.free()
+
+            if do_calc==False:
+                result_mask = False
+            else:
+                result_mask = True
+                result_vertices_I = new_vertices_I
+                result_edges_I    = new_edges_I
+                result_polygons_I = new_faces_I
+                
+                verts_I = np.array(new_vertices_I)
+                faces_I = np.array(new_faces_I)
+                tris_I = verts_I[faces_I]
+                # to precise calc move all mesh to median point
+                tris_I_median = np.median(tris_I, axis=(0,1))
+                tris_I_delta = tris_I-tris_I_median
+                signed_volumes_I   = np_dot(tris_I_delta[:,0], np.cross(tris_I_delta[:,1], tris_I_delta[:,2]))
+                volume_I           = signed_volumes_I.sum()
+                tetra_centers_I    = tris_I_delta.sum(axis=1) / 4.0
+                center_mass_mesh_I_np = (tetra_centers_I * signed_volumes_I[np.newaxis].T).sum(axis=0) / volume_I + tris_I_median
+                mass_I             = volume_I * density_I[0]
+
+                result_center_mass_mesh_I = center_mass_mesh_I_np.tolist()
+                result_mass_mesh_I = mass_I
+                result_size_mesh_I = volume_I
+    else:
+        raise Exception(f&#39;calc_center_of_mesh: param \&#39;center_mode\&#39;={center_mode} must be in [\&#39;VERTICES\&#39;, \&#39;EDGES\&#39;, \&#39;FACES\&#39;, \&#39;VOLUMES\&#39;]&#39;)
+
+    return result_mask, result_vertices_I, result_edges_I, result_polygons_I, result_center_mass_mesh_I, result_mass_mesh_I, result_size_mesh_I</code></pre>
 </details>
 </section>
 <section>
@@ -1233,6 +1425,228 @@ iterate over any edges or do index lookups</p></div>
         bm.normal_update()
 
     return bm</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.sv_bmesh_utils.calc_center_mass_bmesh"><code class="name flex">
+<span>def <span class="ident">calc_center_mass_bmesh</span></span>(<span>center_mode, mesh_vertices, mesh_edges, mesh_faces, mass_of_vertices=None, object_density=None, skip_test_volume_are_closed=False, quad_mode='BEAUTY', ngon_mode='BEAUTY')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Calculate center of mass for single mesh.</p>
+<h2 id="input">Input</h2>
+<ul>
+<li>center_mode=['VERTICES', 'EDGES', 'FACES', 'VOLUMES']</li>
+<li>mesh_vertices = [[x1,y1,z1],[x2,y2,z2],&hellip;] (float) - vertices of mesh</li>
+<li>mesh_edges = [[0,1],[1,2],[2,3],&hellip;] (int) - indixes of verts (edges)</li>
+<li>mesh_faces = [[0,1,2],[1,2,3,4,&hellip;], &hellip;] - indixes of verts (faces)</li>
+<li>mass_of_vertices = [ [ 1.1, 1.0, 5.2, 0.2,&hellip;] ] - mass of every vert in mesh. Extrapolate a last value to the all vertices</li>
+<li>object_density = [1.2] - density of volume. If center_mode is EDGES or FACES then mass of objects are proportional to length or area.</li>
+<li>skip_test_volume_are_closed - (only for volume node) If you know that volume are close then you can speed up performance if you set this parameter to True. False - force test mesh are closed.</li>
+<li>quad_mode [BEAUTY, FIXED, ALTERNATE, SHORT_EDGE], ngon_mode [BEAUTY, EAR_CLIP] - modes for triangulation if mesh has faces with 4 and more vertices (for center_mode FACES of VOLUMES only)</li>
+</ul>
+<h2 id="output">Output</h2>
+<ul>
+<li>result_mask - True/False. If False then another output params are None</li>
+<li>result_vertices, result_edges, result_polygons - result mesh (source mesh or triangulated mesh)</li>
+<li>result_center_mass_mesh - center of mass of mesh</li>
+<li>result_mass_mesh - mass of mesh</li>
+<li>result_size_mesh - for VERTICES - count vertices, for EDGES - length of edges, for FACES - area of mesh, for VOLUMES - volume of mesh</li>
+</ul>
+<h2 id="example">Example</h2>
+<p><a href="https://github.com/nortikin/sverchok/assets/14288520/e432b5c0-35e5-432b-8c9f-798f58b71f13">https://github.com/nortikin/sverchok/assets/14288520/e432b5c0-35e5-432b-8c9f-798f58b71f13</a></p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def calc_center_mass_bmesh(center_mode, mesh_vertices, mesh_edges, mesh_faces, mass_of_vertices=None, object_density=None, skip_test_volume_are_closed=False, quad_mode=&#34;BEAUTY&#34;, ngon_mode=&#34;BEAUTY&#34;):
+    &#39;&#39;&#39;
+    Calculate center of mass for single mesh.
+
+    Input:
+        - center_mode=[&#39;VERTICES&#39;, &#39;EDGES&#39;, &#39;FACES&#39;, &#39;VOLUMES&#39;]
+        - mesh_vertices = [[x1,y1,z1],[x2,y2,z2],...] (float) - vertices of mesh
+        - mesh_edges = [[0,1],[1,2],[2,3],...] (int) - indixes of verts (edges)
+        - mesh_faces = [[0,1,2],[1,2,3,4,...], ...] - indixes of verts (faces)
+        - mass_of_vertices = [ [ 1.1, 1.0, 5.2, 0.2,...] ] - mass of every vert in mesh. Extrapolate a last value to the all vertices
+        - object_density = [1.2] - density of volume. If center_mode is EDGES or FACES then mass of objects are proportional to length or area.
+        - skip_test_volume_are_closed - (only for volume node) If you know that volume are close then you can speed up performance if you set this parameter to True. False - force test mesh are closed.
+        - quad_mode [BEAUTY, FIXED, ALTERNATE, SHORT_EDGE], ngon_mode [BEAUTY, EAR_CLIP] - modes for triangulation if mesh has faces with 4 and more vertices (for center_mode FACES of VOLUMES only)
+
+    Output:
+
+        - result_mask - True/False. If False then another output params are None
+        - result_vertices, result_edges, result_polygons - result mesh (source mesh or triangulated mesh)
+        - result_center_mass_mesh - center of mass of mesh
+        - result_mass_mesh - mass of mesh
+        - result_size_mesh - for VERTICES - count vertices, for EDGES - length of edges, for FACES - area of mesh, for VOLUMES - volume of mesh
+
+    Example:
+        https://github.com/nortikin/sverchok/assets/14288520/e432b5c0-35e5-432b-8c9f-798f58b71f13
+    &#39;&#39;&#39;
+    result_mask = result_vertices_I = result_edges_I = result_polygons_I = result_center_mass_mesh_I = result_mass_mesh_I = result_size_mesh_I = None
+
+    vertices_I, edges_I, faces_I, mass_of_vertices_I, density_I = mesh_vertices, mesh_edges, mesh_faces, mass_of_vertices, object_density
+
+    if mass_of_vertices_I is None:
+        mass_of_vertices_I=[1]
+    if density_I is None:
+        density_I=[1]
+
+    if len(vertices_I)==0:
+        # skip mesh if no vertices at all:
+        result_mask = False
+
+    if center_mode==&#39;VERTICES&#39;:
+
+        if len(vertices_I)==0:
+            result_mask = False
+        else:
+            result_mask = True
+            result_vertices_I = vertices_I
+            result_edges_I = edges_I
+            result_polygons_I = faces_I
+
+            # shrink or extend list of mass if list of mass is not equals list of verts:
+            mass_of_vertices_I_shrinked = mass_of_vertices_I[:len(vertices_I)]
+            mass_of_vertices_I_np1 = np.append( mass_of_vertices_I_shrinked, np.full( (len(vertices_I)-len(mass_of_vertices_I_shrinked)), mass_of_vertices_I_shrinked[-1]) )
+            vertices_I_np = np.array(vertices_I)
+            mass_of_vertices_I_np2  = np.array([mass_of_vertices_I_np1])
+            mass_I = mass_of_vertices_I_np2.sum()
+            center_mass_mesh_I_np = (vertices_I_np * mass_of_vertices_I_np2.T).sum(axis=0) / mass_I
+
+            result_center_mass_mesh_I = center_mass_mesh_I_np.tolist()
+            result_mass_mesh_I = mass_I
+            result_size_mesh_I = vertices_I_np.shape[0]  # Count of vertices
+
+    elif center_mode==&#39;EDGES&#39;:
+            
+        old_edges = np.array(edges_I)
+        if old_edges.size==0:
+            # skip mesh if no edges at all:
+            result_mask = False
+        else:
+            result_mask = True
+            verts_I = np.array(vertices_I)
+
+            # Do not triangulate mesh for &#39;EDGE&#39; mode
+            result_vertices_I = vertices_I
+            result_edges_I = edges_I
+            result_polygons_I = faces_I
+            
+            segment_I = verts_I[old_edges]
+            distances_I = np.linalg.norm(segment_I[:,1]-segment_I[:,0], axis=1)
+            length_I = distances_I.sum()
+            segment_center_I = segment_I.sum(axis=1) / 2.0
+            center_mass_mesh_I_np = (segment_center_I * distances_I[np.newaxis].T).sum(axis=0) / length_I
+            mass_I             = length_I * density_I[0]
+
+            result_center_mass_mesh_I = center_mass_mesh_I_np.tolist()
+            result_mass_mesh_I = mass_I
+            result_size_mesh_I = length_I
+
+    elif center_mode==&#39;FACES&#39;:
+            
+        faces_I_np = np.array(faces_I)
+        if faces_I_np.size==0:
+            # skip mesh if no faces at all:
+            result_mask = False
+        else:
+            result_mask = True
+
+            # test if some polygons are not tris:
+            if max(map(len, faces_I_np))&gt;3:
+                # triangulate mesh for &#39;FACES&#39; mode
+                bm_I = bmesh_from_pydata(vertices_I, edges_I, faces_I, markup_face_data=True, normal_update=True)
+                b_faces = []
+                for face in bm_I.faces:
+                    b_faces.append(face)
+                res = bmesh.ops.triangulate(
+                    bm_I, faces=b_faces, quad_method=quad_mode, ngon_method=ngon_mode
+                )
+                new_vertices_I, new_edges_I, new_faces_I = pydata_from_bmesh(bm_I)
+                bm_I.free()
+            else:
+                new_vertices_I,new_edges_I,new_faces_I = vertices_I, edges_I, faces_I
+
+            result_vertices_I = new_vertices_I
+            result_edges_I = new_edges_I
+            result_polygons_I = new_faces_I
+            
+            verts_I_np         = np.array(new_vertices_I)
+            faces_I_np         = np.array(new_faces_I)
+            tris_I_np          = verts_I_np[faces_I_np]
+            areases_I          = np.linalg.norm(np.cross(tris_I_np[:,1]-tris_I_np[:,0], tris_I_np[:,2]-tris_I_np[:,0]) / 2.0, axis=1)
+            area_I             = areases_I.sum()
+            tris_centers_I     = tris_I_np.sum(axis=1) / 3.0
+            center_mass_mesh_I_np = (tris_centers_I * areases_I[np.newaxis].T).sum(axis=0) / area_I
+            mass_I             = area_I * density_I[0]
+
+            result_center_mass_mesh_I = center_mass_mesh_I_np.tolist()
+            result_mass_mesh_I = mass_I
+            result_size_mesh_I = area_I
+
+    elif center_mode==&#39;VOLUMES&#39;:
+            
+        faces_I_np = np.array(faces_I)
+        if faces_I_np.size==0:
+            # skip mesh if no faces at all:
+            result_mask = False
+        else:
+            do_calc = False
+            if max(map(len, faces_I_np))==3 and skip_test_volume_are_closed==True:
+                new_vertices_I, new_edges_I, new_faces_I = vertices_I, edges_I, faces_I
+                do_calc = True
+            else:
+                # triangulate mesh
+                bm_I = bmesh_from_pydata(vertices_I, edges_I, faces_I, markup_face_data=True, normal_update=True)
+                # test if all edges are contiguous (https://docs.blender.org/api/current/bmesh.types.html#bmesh.types.BMEdge.is_contiguous)
+                # then volume is closed:
+                for edge in bm_I.edges:
+                    if edge.is_contiguous==False:
+                        do_calc = False
+                        break
+                else:
+                    do_calc = True
+                    # test if some polygons are not tris:
+                    if max(map(len, faces_I_np))&gt;3:
+                        b_faces = []
+                        for face in bm_I.faces:
+                            b_faces.append(face)
+
+                        res = bmesh.ops.triangulate(
+                            bm_I, faces=b_faces, quad_method=quad_mode, ngon_method=ngon_mode
+                        )
+                        new_vertices_I, new_edges_I, new_faces_I = pydata_from_bmesh(bm_I)
+                    else:
+                        new_vertices_I, new_edges_I, new_faces_I = vertices_I, edges_I, faces_I
+                bm_I.free()
+
+            if do_calc==False:
+                result_mask = False
+            else:
+                result_mask = True
+                result_vertices_I = new_vertices_I
+                result_edges_I    = new_edges_I
+                result_polygons_I = new_faces_I
+                
+                verts_I = np.array(new_vertices_I)
+                faces_I = np.array(new_faces_I)
+                tris_I = verts_I[faces_I]
+                # to precise calc move all mesh to median point
+                tris_I_median = np.median(tris_I, axis=(0,1))
+                tris_I_delta = tris_I-tris_I_median
+                signed_volumes_I   = np_dot(tris_I_delta[:,0], np.cross(tris_I_delta[:,1], tris_I_delta[:,2]))
+                volume_I           = signed_volumes_I.sum()
+                tetra_centers_I    = tris_I_delta.sum(axis=1) / 4.0
+                center_mass_mesh_I_np = (tetra_centers_I * signed_volumes_I[np.newaxis].T).sum(axis=0) / volume_I + tris_I_median
+                mass_I             = volume_I * density_I[0]
+
+                result_center_mass_mesh_I = center_mass_mesh_I_np.tolist()
+                result_mass_mesh_I = mass_I
+                result_size_mesh_I = volume_I
+    else:
+        raise Exception(f&#39;calc_center_of_mesh: param \&#39;center_mode\&#39;={center_mode} must be in [\&#39;VERTICES\&#39;, \&#39;EDGES\&#39;, \&#39;FACES\&#39;, \&#39;VOLUMES\&#39;]&#39;)
+
+    return result_mask, result_vertices_I, result_edges_I, result_polygons_I, result_center_mass_mesh_I, result_mass_mesh_I, result_size_mesh_I</code></pre>
 </details>
 </dd>
 <dt id="sverchok.utils.sv_bmesh_utils.diamond_mesh"><code class="name flex">
@@ -2201,6 +2615,7 @@ new manager class each call</p>
 <li><code><a title="sverchok.utils.sv_bmesh_utils.bmesh_from_edit_mesh" href="#sverchok.utils.sv_bmesh_utils.bmesh_from_edit_mesh">bmesh_from_edit_mesh</a></code></li>
 <li><code><a title="sverchok.utils.sv_bmesh_utils.bmesh_from_pydata" href="#sverchok.utils.sv_bmesh_utils.bmesh_from_pydata">bmesh_from_pydata</a></code></li>
 <li><code><a title="sverchok.utils.sv_bmesh_utils.bmesh_join" href="#sverchok.utils.sv_bmesh_utils.bmesh_join">bmesh_join</a></code></li>
+<li><code><a title="sverchok.utils.sv_bmesh_utils.calc_center_mass_bmesh" href="#sverchok.utils.sv_bmesh_utils.calc_center_mass_bmesh">calc_center_mass_bmesh</a></code></li>
 <li><code><a title="sverchok.utils.sv_bmesh_utils.diamond_mesh" href="#sverchok.utils.sv_bmesh_utils.diamond_mesh">diamond_mesh</a></code></li>
 <li><code><a title="sverchok.utils.sv_bmesh_utils.dual_mesh" href="#sverchok.utils.sv_bmesh_utils.dual_mesh">dual_mesh</a></code></li>
 <li><code><a title="sverchok.utils.sv_bmesh_utils.edge_data_from_bmesh_edges" href="#sverchok.utils.sv_bmesh_utils.edge_data_from_bmesh_edges">edge_data_from_bmesh_edges</a></code></li>
