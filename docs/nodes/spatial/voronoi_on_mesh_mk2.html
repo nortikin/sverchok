@@ -156,7 +156,7 @@
              
   <section id="voronoi-on-mesh">
 <h1>Voronoi on Mesh<a class="headerlink" href="#voronoi-on-mesh" title="Link to this heading">¶</a></h1>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/3782710e-2a14-4bea-a835-37ac6ff715b4"><img alt="https://github.com/nortikin/sverchok/assets/14288520/3782710e-2a14-4bea-a835-37ac6ff715b4" src="https://github.com/nortikin/sverchok/assets/14288520/3782710e-2a14-4bea-a835-37ac6ff715b4" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/c907cc2d-7493-4117-a20f-b5e760a47d28"><img alt="https://github.com/nortikin/sverchok/assets/14288520/c907cc2d-7493-4117-a20f-b5e760a47d28" src="https://github.com/nortikin/sverchok/assets/14288520/c907cc2d-7493-4117-a20f-b5e760a47d28" /></a>
 <section id="dependencies">
 <h2>Dependencies<a class="headerlink" href="#dependencies" title="Link to this heading">¶</a></h2>
 <p>This node requires <a class="reference external" href="https://scipy.org/">SciPy</a> library to work.</p>
@@ -178,6 +178,10 @@ mode, it is required that the mesh represents a closed volume.</p></li>
 <ul class="simple">
 <li><p><strong>Vertices</strong>. Vertices of the mesh to generate Voronoi diagram on. This input is mandatory.</p></li>
 <li><p><strong>Faces</strong>. Faces of the mesh to generate Voronoi diagram on. This input is mandatory.</p></li>
+<li><p><strong>Mask</strong>. List of True/False. What Sites will visible.</p></li>
+</ul>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/cc788894-acc7-4b1f-a1c0-fb5756e42eb2"><img alt="https://github.com/nortikin/sverchok/assets/14288520/cc788894-acc7-4b1f-a1c0-fb5756e42eb2" src="https://github.com/nortikin/sverchok/assets/14288520/cc788894-acc7-4b1f-a1c0-fb5756e42eb2" /></a>
+<ul class="simple">
 <li><p><strong>Sites</strong>. The points to generate Voronoi diagram for. Usually you want for
 this points to lie either inside the mesh or on it’s surface, but this is not
 necessary. This input is mandatory.</p></li>
