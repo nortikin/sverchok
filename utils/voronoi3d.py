@@ -23,6 +23,7 @@ import datetime
 
 import bpy
 import bmesh
+import random
 from mathutils import Vector
 from mathutils.bvhtree import BVHTree
 
@@ -236,7 +237,7 @@ def calc_bvh_projections(bvh, sites):
     return np.array(projections)
 
 # see additional info https://github.com/nortikin/sverchok/pull/4948
-def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, mode='VOLUME', normal_update = False, precision=1e-8):
+def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, mode='VOLUME', normal_update = False, precision=1e-8, mask=[]):
 
     def get_sites_delaunay_params(delaunay, n_orig_sites):
         result = defaultdict(list)
@@ -391,18 +392,37 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, mode='
     edges_out = []
     faces_out = []
 
-    # https://github.com/nortikin/sverchok/pull/4952
-    # http://www.qhull.org/html/qdelaun.htm
-    # http://www.qhull.org/html/qh-optc.htm
-    # https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.Delaunay.html
-    # Convert sites to 4D
-    np_sites = np.array([(s[0], s[1], s[2], 0) for s in sites], dtype=np.float32)
-    # Add 3D tetraedre to the 4D with W=1
-    np_sites = np.append(np_sites, [[0.0, 0.0, 0.0, 1],
-                                    [1.0, 0.0, 0.0, 1],
-                                    [0.0, 1.0, 0.0, 1],
-                                    [0.0, 0.0, 1.0, 1],
-                                    ], axis=0)
+    are_sites_plane = True # plane or line
+    if len(sites)>=4:
+        # select random sites to test are they are tethraeder or 3D?
+        # If this thethod get wrong answer then not optimal method will be used.
+        list_sites_for_test_plane = random.sample( range(0, len(sites)), 4)
+        v0  = Vector(sites[list_sites_for_test_plane[0]])
+        res = Vector(sites[list_sites_for_test_plane[1]])-v0
+        for I in range(2,4):
+            v_I = list_sites_for_test_plane[I]
+            res = np.cross( res, Vector(sites[v_I])-v0 )
+        res_norm = np.linalg.norm(res,ord=1)
+        if res_norm>0.1:
+            are_sites_plane = False
+        else:
+            are_sites_plane = True
+
+    if are_sites_plane:
+        # https://github.com/nortikin/sverchok/pull/4952
+        # http://www.qhull.org/html/qdelaun.htm
+        # http://www.qhull.org/html/qh-optc.htm
+        # https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.Delaunay.html
+        # Convert sites to 4D
+        np_sites = np.array([(s[0], s[1], s[2], 0) for s in sites], dtype=np.float32)
+        # Add 3D tetraedre to the 4D with W=1
+        np_sites = np.append(np_sites, [[0.0, 0.0, 0.0, 1],
+                                        [1.0, 0.0, 0.0, 1],
+                                        [0.0, 1.0, 0.0, 1],
+                                        [0.0, 0.0, 1.0, 1],
+                                        ], axis=0)
+    else:
+        np_sites = np.array([(s[0], s[1], s[2]) for s in sites], dtype=np.float32)
 
     delaunay = Delaunay(np.array(np_sites, dtype=np.float32))
     sites_delaunay_params = get_sites_delaunay_params(delaunay, n_orig_sites)
@@ -417,17 +437,28 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, mode='
     # using for precalc unneeded bisects
     bbox_aligned, *_ = bounding_box_aligned(verts)
 
+    # Extend mask if it is less len of sites
+    if len(mask)==0:
+        # if len of mask is 0 then use all sites
+        mask = [True] * ( len(sites)-len(mask) )
+    else:
+        # else extend mask by false and do not use sites that are not in the mask
+        mask = mask[:]+[False]*(len(sites)-len(mask) if len(mask)<=len(sites) else 0)
+
     start_mesh = bmesh_from_pydata(verts, [], faces, normal_update=False)
     used_sites_idx = []
+    used_sites_verts = []
     for site_idx in range(len(sites)):
-        cell = cut_cell(start_mesh, sites_delaunay_params, site_idx, spacing[site_idx], center_of_mass, bbox_aligned)
-        if cell is not None:
-            new_verts, new_edges, new_faces = cell
-            if new_verts:
-                verts_out.append(new_verts)
-                edges_out.append(new_edges)
-                faces_out.append(new_faces)
-                used_sites_idx.append( site_idx )
+        if(mask[site_idx]):
+            cell = cut_cell(start_mesh, sites_delaunay_params, site_idx, spacing[site_idx], center_of_mass, bbox_aligned)
+            if cell is not None:
+                new_verts, new_edges, new_faces = cell
+                if new_verts:
+                    verts_out.append(new_verts)
+                    edges_out.append(new_edges)
+                    faces_out.append(new_faces)
+                    used_sites_idx.append( site_idx )
+                    used_sites_verts.append( sites[site_idx] )
     start_mesh.clear() # remember to clear empty geometry
     start_mesh.free()
     
@@ -436,14 +467,18 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, mode='
     # bisects - count of bisects in cut_cell
     # unb - unpredicted erased mesh (bbox_aligned cannot make predicted results)
     # sites - count of sites in process
+    # mask - mask of sites that uset to the result. Empty list all sites uset to result.
     # print( f"bisects: {num_bisect: 4d}, unb={num_unpredicted_erased: 4d}, sites={len(sites)}")
-    return verts_out, edges_out, faces_out, used_sites_idx
+    return verts_out, edges_out, faces_out, used_sites_idx, used_sites_verts
 
 def voronoi_on_mesh(verts, faces, sites, thickness,
     spacing = 0.0,
     clip_inner=True, clip_outer=True, do_clip=True,
     clipping=1.0, mode = 'REGIONS', normal_update=False,
-    precision = 1e-8):
+    precision = 1e-8,
+    mask = []
+    ):
+
     bvh = BVHTree.FromPolygons(verts, faces)
     npoints = len(sites)
 
@@ -471,10 +506,10 @@ def voronoi_on_mesh(verts, faces, sites, thickness,
 
     else: # VOLUME, SURFACE
         all_points = sites[:]
-        verts, edges, faces, used_sites_idx = voronoi_on_mesh_bmesh(verts, faces, len(sites), all_points,
+        verts, edges, faces, used_sites_idx, used_sites_verts = voronoi_on_mesh_bmesh(verts, faces, len(sites), all_points,
                 spacing = spacing, mode = mode, normal_update = normal_update,
-                precision = precision)
-        return verts, edges, faces, used_sites_idx
+                precision = precision, mask=mask)
+        return verts, edges, faces, used_sites_idx, used_sites_verts
 
 def project_solid_normals(shell, pts, thickness, add_plus=True, add_minus=True, predicate_plus=None, predicate_minus=None):
     k = 0.5*thickness

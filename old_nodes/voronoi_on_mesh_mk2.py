@@ -25,15 +25,14 @@ from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_
 from sverchok.utils.sv_bmesh_utils import recalc_normals
 from sverchok.utils.sv_mesh_utils import mesh_join
 from sverchok.utils.voronoi3d import voronoi_on_mesh
-import numpy as np
 
 
-class SvVoronoiOnMeshNodeMK3(SverchCustomTreeNode, bpy.types.Node):
+class SvVoronoiOnMeshNodeMK2(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Voronoi Mesh
     Tooltip: Generate Voronoi diagram on the surface of a mesh object
     """
-    bl_idname = 'SvVoronoiOnMeshNodeMK3'
+    bl_idname = 'SvVoronoiOnMeshNodeMK2'
     bl_label = 'Voronoi on Mesh'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_VORONOI'
@@ -81,30 +80,6 @@ class SvVoronoiOnMeshNodeMK3(SverchCustomTreeNode, bpy.types.Node):
         default = 'FLAT',
         update = updateNode)
 
-    def updateMaskMode(self, context):
-        if self.mask_mode=='MASK':
-            self.inputs["Mask"].label = "Mask of Sites"
-        elif self.mask_mode=='INDEXES':
-            self.inputs["Mask"].label = "Indexes of Sites"
-        updateNode(self, context)
-
-    mask_modes = [
-            ('MASK', "Mask of sites", "Boolean value (0/1) to mask of sites", 0),
-            ('INDEXES', "Index of sites", "Indexes of sites to mask", 1),
-        ]
-    mask_mode : EnumProperty(
-        name = "Mask mode",
-        items = mask_modes,
-        default = 'MASK',
-        update = updateMaskMode)
-
-    mask_inversion : BoolProperty(
-        name = "Inversion",
-        default = False,
-        description="Invert mask of sites",
-        update = updateNode)
-
-
     accuracy : IntProperty(
             name = "Accuracy",
             description = "Accuracy for mesh bisecting procedure",
@@ -117,21 +92,16 @@ class SvVoronoiOnMeshNodeMK3(SverchCustomTreeNode, bpy.types.Node):
         self.inputs.new('SvStringsSocket', 'Faces')
         self.inputs.new('SvVerticesSocket', "Sites")
 #         self.inputs.new('SvStringsSocket', 'Thickness').prop_name = 'thickness'
-        self.inputs.new('SvStringsSocket', "Mask").label = "Mask of Sites"
         self.inputs.new('SvStringsSocket', 'Spacing').prop_name = 'spacing'
         self.outputs.new('SvVerticesSocket', "Vertices")
         self.outputs.new('SvStringsSocket', "Edges")
         self.outputs.new('SvStringsSocket', "Faces")
         self.outputs.new('SvStringsSocket', "Sites_idx")
-        self.outputs.new('SvStringsSocket', "Sites_verts")
         self.update_sockets(context)
 
     def draw_buttons(self, context, layout):
         layout.label(text="Mode:")
         layout.prop(self, "mode", text='')
-        split = layout.column().split(factor=0.6)
-        split.column().prop(self, "mask_mode", text='')
-        split.column().prop(self, "mask_inversion", text='Invert')
         if self.mode == 'VOLUME':
             layout.prop(self, 'normals')
         layout.label(text='Output nesting:')
@@ -149,13 +119,6 @@ class SvVoronoiOnMeshNodeMK3(SverchCustomTreeNode, bpy.types.Node):
         verts_in = self.inputs['Vertices'].sv_get(deepcopy=False)
         faces_in = self.inputs['Faces'].sv_get(deepcopy=False)
         sites_in = self.inputs['Sites'].sv_get(deepcopy=False)
-
-        mask_in = self.inputs['Mask'] #.sv_get(deepcopy=False)
-        if mask_in.is_linked==False:
-            mask_in = [[[]]]
-        else:
-            mask_in = mask_in.sv_get(deepcopy=False)
-            
         #thickness_in = self.inputs['Thickness'].sv_get()
         spacing_in = self.inputs['Spacing'].sv_get(deepcopy=False)
 
@@ -165,7 +128,6 @@ class SvVoronoiOnMeshNodeMK3(SverchCustomTreeNode, bpy.types.Node):
         faces_in = ensure_nesting_level(faces_in, 4)
         #thickness_in = ensure_nesting_level(thickness_in, 2)
         spacing_in = ensure_min_nesting(spacing_in, 2)
-        mask_in = ensure_min_nesting(mask_in, 3)
 
         nested_output = input_level > 3
 
@@ -175,90 +137,57 @@ class SvVoronoiOnMeshNodeMK3(SverchCustomTreeNode, bpy.types.Node):
         edges_out = []
         faces_out = []
         sites_idx_out = []
-        sites_verts_out = []
-        for params in zip_long_repeat(verts_in, faces_in, sites_in, spacing_in, mask_in):
+        for params in zip_long_repeat(verts_in, faces_in, sites_in, spacing_in):
             new_verts = []
             new_edges = []
             new_faces = []
-            new_sites_idx = []
-            new_sites_verts = []
-            for verts, faces, sites, spacing, mask in zip_long_repeat(*params):
-                # if mask is zero or not connected then do not mask any. Except of inversion,
-                if not mask:
-                    np_mask = np.ones(len(sites), dtype=bool)
-                    if self.mask_inversion==True:
-                        np_mask = np.invert(np_mask)
-                    mask = np_mask.tolist()
-                else:
-                    if self.mask_mode=='MASK':
-                        if self.mask_inversion==True:
-                            mask = list( map( lambda v: False if v==0 else True, mask) )
-                            mask = mask[:len(sites)]
-                            np_mask = np.zeros(len(sites), dtype=bool)
-                            np_mask[0:len(mask)]=mask
-                            np_mask = np.invert(np_mask)
-                            mask = np_mask.tolist()
-                        pass
-                    elif self.mask_mode=='INDEXES':
-                        mask_len = len(sites)
-                        mask_range = []
-                        for x in mask:
-                            if -mask_len<x<mask_len:
-                                mask_range.append(x)
-                        np_mask = np.ones(len(sites), dtype=bool)
-                        np_mask[mask_range] = False
-                        if self.mask_inversion==True:
-                            np_mask = np.invert(np_mask)
-                        mask = np_mask.tolist()
-
-                verts, edges, faces, used_sites_idx, used_sites_verts = voronoi_on_mesh(verts, faces, sites, thickness=0,
+            new_sites = []
+            for verts, faces, sites, spacing in zip_long_repeat(*params):
+                verts, edges, faces, used_sites_idx = voronoi_on_mesh(verts, faces, sites, thickness=0,
                             spacing = spacing,
                             #clip_inner = self.clip_inner, clip_outer = self.clip_outer,
                             do_clip=True, clipping=None,
                             mode = self.mode,
                             normal_update = self.normals,
-                            precision = precision,
-                            mask = mask
-                            )
+                            precision = precision)
 
                 if self.join_mode == 'FLAT':
                     new_verts.extend(verts)
                     new_edges.extend(edges)
                     new_faces.extend(faces)
-                    new_sites_idx.extend([[idx] for idx in used_sites_idx])
-                    new_sites_verts.extend([[idx] for idx in used_sites_verts])
+                    new_sites.extend([[idx] for idx in used_sites_idx])
                 elif self.join_mode == 'SEPARATE':
                     new_verts.append(verts)
                     new_edges.append(edges)
                     new_faces.append(faces)
-                    new_sites_idx.append(used_sites_idx)
-                    new_sites_verts.append(used_sites_verts)
+                    new_sites.append(used_sites_idx)
                 else: # JOIN
                     verts, edges, faces = mesh_join(verts, edges, faces)
                     new_verts.append(verts)
                     new_edges.append(edges)
                     new_faces.append(faces)
-                    new_sites_idx.append(used_sites_idx)
-                    new_sites_verts.append(used_sites_verts)
+                    new_sites.append(used_sites_idx)
 
             if nested_output:
                 verts_out.append(new_verts)
                 edges_out.append(new_edges)
                 faces_out.append(new_faces)
-                sites_idx_out.append(new_sites_idx)
-                sites_verts_out.append(new_sites_verts)
+                sites_idx_out.append(new_sites)
             else:
                 verts_out.extend(new_verts)
                 edges_out.extend(new_edges)
                 faces_out.extend(new_faces)
-                sites_idx_out.extend(new_sites_idx)
-                sites_verts_out.extend(new_sites_verts)
+                sites_idx_out.extend(new_sites)
 
         self.outputs['Vertices'].sv_set(verts_out)
         self.outputs['Edges'].sv_set(edges_out)
         self.outputs['Faces'].sv_set(faces_out)
         self.outputs['Sites_idx'].sv_set(sites_idx_out)
-        self.outputs['Sites_verts'].sv_set(sites_verts_out)
 
-classes = [SvVoronoiOnMeshNodeMK3]
-register, unregister = bpy.utils.register_classes_factory(classes)
+
+def register():
+    bpy.utils.register_class(SvVoronoiOnMeshNodeMK2)
+
+
+def unregister():
+    bpy.utils.unregister_class(SvVoronoiOnMeshNodeMK2)
