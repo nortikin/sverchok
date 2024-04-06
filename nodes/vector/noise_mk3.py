@@ -169,11 +169,12 @@ class SvNoiseNodeMK3(SverchCustomTreeNode, bpy.types.Node):
         layout.prop(self, "output_numpy", toggle=True)
 
     def process(self):
-        inputs, outputs = self.inputs, self.outputs
-
-        if not (outputs[0].is_linked and inputs[0].is_linked):
+        if not any(socket.is_linked for socket in self.outputs):
             return
-
+        if not (self.inputs["Vertices"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Vertices'].label or self.inputs['Vertices'].identifier}' has to be connected")
+        
+        inputs, outputs = self.inputs, self.outputs
         out = []
         verts = inputs['Vertices'].sv_get(deepcopy=False)
         noise_matrix = inputs['Noise Matrix'].sv_get(deepcopy=False, default=[])

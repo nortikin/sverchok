@@ -63,8 +63,11 @@ class SvWFCTextureNode(SverchCustomTreeNode, bpy.types.Node):
         layout.prop(self, 'tries_number')
 
     def process(self):
-        if not self.image_name:
+        if not any(socket.is_linked for socket in self.outputs):
             return
+        
+        if not self.image_name:
+            raise Exception("No image selected")
 
         image = load_image(self.image_name)
         wave = WaveFunctionCollapse(

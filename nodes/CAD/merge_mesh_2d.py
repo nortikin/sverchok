@@ -65,8 +65,11 @@ class SvMergeMesh2D(ModifierLiteNode, SverchCustomTreeNode, bpy.types.Node):
         self.outputs.new('SvStringsSocket', 'Mask B')
 
     def process(self):
-        if not all([sock.is_linked for sock in self.inputs]):
+        if not any(socket.is_linked for socket in self.outputs):
             return
+        if not all([sock.is_linked for sock in self.inputs]):
+            raise Exception("All input sockets has to be connected")
+        
         out = []
         for sv_verts_a, sv_faces_a, sv_verts_b, sv_faces_b in zip(self.inputs['Verts A'].sv_get(),
                                                                   self.inputs['Faces A'].sv_get(),

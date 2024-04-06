@@ -46,19 +46,22 @@ class SvFormulaDeformMK2Node(SverchCustomTreeNode, bpy.types.Node):
             split.split().prop(self, "Mode"+element, text='')
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        
         Io, Io2 = self.inputs
         Oo = self.outputs[0]
-        if Oo.is_linked:
-            V = Io.sv_get()
-            if Io2.is_linked:
-                str = "for Enum,Val2L in zip(enumerate(V), V2): \n    I,L = Enum \n    Pfin = [] \n    for Enum2, vert2 in zip(enumerate(L), safc(L, Val2L)): \n        i, (x, y, z) = Enum2 \n        (X, Y, Z) = vert2 \n        Pfin.append(({n.ModeX},{n.ModeY},{n.ModeZ})) \n    fin.append(Pfin)"
-                fin = []
-                V2 = Io2.sv_get()
-                exec(str.format(n=self))
-                Oo.sv_set(fin)
-            else:
-                exec_string = "Oo.sv_set([[({n.ModeX},{n.ModeY},{n.ModeZ}) for i, (x, y, z) in enumerate(L)] for I, L in enumerate(V)])"
-                exec(exec_string.format(n=self))
+
+        V = Io.sv_get()
+        if Io2.is_linked:
+            str = "for Enum,Val2L in zip(enumerate(V), V2): \n    I,L = Enum \n    Pfin = [] \n    for Enum2, vert2 in zip(enumerate(L), safc(L, Val2L)): \n        i, (x, y, z) = Enum2 \n        (X, Y, Z) = vert2 \n        Pfin.append(({n.ModeX},{n.ModeY},{n.ModeZ})) \n    fin.append(Pfin)"
+            fin = []
+            V2 = Io2.sv_get()
+            exec(str.format(n=self))
+            Oo.sv_set(fin)
+        else:
+            exec_string = "Oo.sv_set([[({n.ModeX},{n.ModeY},{n.ModeZ}) for i, (x, y, z) in enumerate(L)] for I, L in enumerate(V)])"
+            exec(exec_string.format(n=self))
 
 
 def register():

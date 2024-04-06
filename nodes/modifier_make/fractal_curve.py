@@ -156,7 +156,7 @@ class SvFractalCurveNode(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
         return [(self.inputs['Vertices'], self.outputs[0])]
 
     def process(self):
-        if not any(s.is_linked for s in self.outputs):
+        if not any(socket.is_linked for socket in self.outputs):
             return
 
         curves = Vector_generate(self.inputs['Vertices'].sv_get())

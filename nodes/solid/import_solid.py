@@ -25,6 +25,8 @@ class SvImportSolidNode(SverchCustomTreeNode, bpy.types.Node):
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
             return
+        if not (self.inputs["File Path"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['File Path'].label or self.inputs['File Path'].identifier}' has to be connected")
 
         files = self.inputs[0].sv_get()[0]
 

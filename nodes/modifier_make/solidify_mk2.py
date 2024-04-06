@@ -199,11 +199,12 @@ class SvSolidifyNodeMk2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
         self.draw_buttons(context, layout)
 
     def process(self):
-        if not any((s.is_linked for s in self.outputs)):
+        if not any(socket.is_linked for socket in self.outputs):
             return
-
-        if not (self.inputs['Vertices'].is_linked and self.inputs['Polygons'].is_linked):
-            return
+        if not (self.inputs["Vertices"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Vertices'].label or self.inputs['Vertices'].identifier}' has to be connected")
+        if not (self.inputs["Polygons"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Polygons'].label or self.inputs['Polygons'].identifier}' has to be connected")
 
         verts = self.inputs['Vertices'].sv_get(deepcopy=False)
         edges = self.inputs['Edges'].sv_get(deepcopy=False, default=[[]])

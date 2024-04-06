@@ -221,7 +221,7 @@ class SvRegularSolid(SverchCustomTreeNode, bpy.types.Node):
         return match_long_repeat(params)
 
     def process(self):
-        if not any(s.is_linked for s in self.outputs):
+        if not any(socket.is_linked for socket in self.outputs):
             return
 
         verts_out, edges_out, polys_out = [], [], []

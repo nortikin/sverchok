@@ -426,6 +426,11 @@ class SvListStatisticsNode(SverchCustomTreeNode, bpy.types.Node):
         nvBGL.callback_disable(node_id(self))
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        if not any(socket.is_linked for socket in self.inputs):
+            raise Exception("Input socket 'Data' has to be connected")
+        
         inputs = self.inputs
         outputs = self.outputs
 

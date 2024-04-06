@@ -125,8 +125,9 @@ class VectorPolarInNode(SverchCustomTreeNode, bpy.types.Node):
         layout.prop(self, "output_numpy", toggle=True)
 
     def process(self):
-        if not self.outputs['Vectors'].is_linked:
+        if not any(socket.is_linked for socket in self.outputs):
             return
+        
         inputs = self.inputs
         rhoss = inputs['rho'].sv_get(deepcopy=False)
         phiss = inputs['phi'].sv_get(deepcopy=False)

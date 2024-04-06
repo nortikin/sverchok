@@ -83,9 +83,7 @@ class SvEllipseCurveNodeMK2(SverchCustomTreeNode, bpy.types.Node):
         self.update_sockets(context)
 
     def process(self):
-        outputs = self.outputs
-        # return if no outputs are connected
-        if not any(s.is_linked for s in outputs):
+        if not any(socket.is_linked for socket in self.outputs):
             return
 
         major_radius_s = self.inputs['Major Radius'].sv_get(deepcopy=False)

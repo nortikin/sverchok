@@ -77,12 +77,16 @@ class SvDistancetLineLineNode(SverchCustomTreeNode, bpy.types.Node):
         return list_match_func[self.list_match_global]([s.sv_get(default=[[]], deepcopy=False) for s in si])
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        if not (self.inputs["Verts Line A"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Verts Line A'].label or self.inputs['Verts Line A'].identifier}' has to be connected")
+        if not (self.inputs["Verts Line B"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Verts Line B'].label or self.inputs['Verts Line B'].identifier}' has to be connected")
+        
         '''main node function called every update'''
         so = self.outputs
         si = self.inputs
-        if not (any(s.is_linked for s in so) and all(s.is_linked for s in si)):
-            return
-
         result = [[] for socket in so]
         gates = [socket.is_linked for socket in so]
 

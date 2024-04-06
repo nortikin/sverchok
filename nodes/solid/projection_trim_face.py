@@ -151,6 +151,10 @@ class SvProjectTrimFaceNode(SverchCustomTreeNode, bpy.types.Node):
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
             return
+        if not (self.inputs["Surface"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Surface'].label or self.inputs['Surface'].identifier}' has to be connected")
+        if not (self.inputs["Cut"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Cut'].label or self.inputs['Cut'].identifier}' has to be connected")
 
         surface_s = self.inputs['Surface'].sv_get()
         surface_s = ensure_nesting_level(surface_s, 2, data_types=(SvSurface,))

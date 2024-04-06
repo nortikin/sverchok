@@ -209,6 +209,9 @@ class SvEmbedMesh(SverchCustomTreeNode,bpy.types.Node):
         self.outputs.new('SvStringsSocket', "Faces")
         self.outputs.new('SvStringsSocket', "Index")
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        
         out = []
         for V_A,E_A,F_A,V_B,E_B,F_B,I in zip(
         self.inputs['VertsA'].sv_get(default=[[]]),

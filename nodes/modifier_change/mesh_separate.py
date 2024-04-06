@@ -41,8 +41,9 @@ class SvSeparateMeshNode(ModifierLiteNode, SverchCustomTreeNode, bpy.types.Node)
         self.outputs.new('SvStringsSocket', 'Poly Egde')
 
     def process(self):
-        if not any(s.is_linked for s in self.outputs):
+        if not any(socket.is_linked for socket in self.outputs):
             return
+        
         verts = self.inputs['Vertices'].sv_get(deepcopy=False)
         poly = self.inputs['Poly Egde'].sv_get(deepcopy=False)
         verts_out = []

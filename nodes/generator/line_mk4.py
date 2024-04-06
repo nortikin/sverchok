@@ -323,8 +323,12 @@ class SvLineNodeMK4(SverchCustomTreeNode, bpy.types.Node):
         layout.prop(self, 'as_numpy')
 
     def process(self):
-        if self.length_mode == LENGTH.step and not self.inputs['Steps'].is_linked:
+        if not any(socket.is_linked for socket in self.outputs):
             return
+        if self.length_mode == LENGTH.step and not self.inputs['Steps'].is_linked:
+            raise Exception("If length mode is 'Step' then input socket 'Steps' has to be connected")
+        if self.length_mode == LENGTH.step_size and not self.inputs['Steps'].is_linked:
+            raise Exception("If length mode is 'Step+Size' then input socket 'Steps' has to be connected")
 
         number, step, size, ors, dirs = [sock.sv_get(deepcopy=False, default=[[None]]) for sock in self.inputs]
         num_objects = max([len(item) for item in [number, step, size, ors, dirs]])

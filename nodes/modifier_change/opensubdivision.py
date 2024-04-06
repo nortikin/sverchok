@@ -68,6 +68,13 @@ class SvOpenSubdivisionNode(bpy.types.Node,SverchCustomTreeNode):
     def process(self):
         if not enable_module:
             raise Exception("The dependent library is not installed (pyOpenSubdiv).")
+        
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        if not (self.inputs["Vertices"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Vertices'].label or self.inputs['Vertices'].identifier}' has to be connected")
+        if not (self.inputs["Faces"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Faces'].label or self.inputs['Faces'].identifier}' has to be connected")
 
         vert_sets = self.inputs['Vertices'].sv_get(default=[],deepcopy=False)
         edges = []         

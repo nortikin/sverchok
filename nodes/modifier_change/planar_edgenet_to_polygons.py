@@ -351,13 +351,13 @@ class SvPlanarEdgenetToPolygons(ModifierNode, SverchCustomTreeNode, bpy.types.No
         return [(self.inputs[0], self.outputs[0])]
 
     def process(self):
-
-        if not (self.inputs['Vers'].is_linked or self.inputs['Edgs'].is_linked):
-            return        
-        
         if not any(socket.is_linked for socket in self.outputs):
             return
-
+        if not (self.inputs["Vers"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Vers'].label or self.inputs['Vers'].identifier}' has to be connected")
+        if not (self.inputs["Edgs"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Edgs'].label or self.inputs['Edgs'].identifier}' has to be connected")
+        
         verts_in = self.inputs['Vers'].sv_get()
         edges_in = self.inputs['Edgs'].sv_get()
         verts_out = []

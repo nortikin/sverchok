@@ -125,6 +125,13 @@ class SvIterateNode(SverchCustomTreeNode, bpy.types.Node):
         self.outputs.new('SvMatrixSocket', 'Matrices')
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        if not (self.inputs["Matrix"].is_linked):
+            raise Exception("Input socket 'Matrix' has to be connected")
+        if not (self.inputs["Vertices"].is_linked):
+            raise Exception("Input socket 'Vertices' has to be connected")
+
         # inputs
         if not self.inputs['Matrix'].is_linked:
             return

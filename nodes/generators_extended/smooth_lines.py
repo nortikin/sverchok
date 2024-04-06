@@ -199,8 +199,7 @@ class SvSmoothLines(SverchCustomTreeNode, bpy.types.Node):
 
 
     def process(self):
-        necessary_sockets = [self.inputs["vectors"],]
-        if not all(s.is_linked for s in necessary_sockets):
+        if not any(socket.is_linked for socket in self.outputs):
             return
 
         if self.inputs["attributes"].is_linked:

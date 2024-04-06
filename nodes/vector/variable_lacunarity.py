@@ -70,11 +70,12 @@ class SvLacunarityNode(SverchCustomTreeNode, bpy.types.Node):
         layout.prop(self, 'noise_type2', text="Type")
 
     def process(self):
-        inputs, outputs = self.inputs, self.outputs
-
-        if not outputs[0].is_linked:
+        if not any(socket.is_linked for socket in self.outputs):
             return
-
+        if not (self.inputs["Vertices"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Vertices'].label or self.inputs['Vertices'].identifier}' has to be connected")
+        
+        inputs, outputs = self.inputs, self.outputs
         out = []
         verts = inputs['Vertices'].sv_get(deepcopy=False)
         _seed = inputs['Seed'].sv_get()[0][0]

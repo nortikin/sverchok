@@ -53,8 +53,7 @@ class SvCalcMaskNode(SverchCustomTreeNode, bpy.types.Node):
         self.outputs.new('SvStringsSocket', 'Mask')
 
     def process(self):
-
-        if not any(output.is_linked for output in self.outputs):
+        if not any(socket.is_linked for socket in self.outputs):
             return
 
         subset_s = self.inputs['Subset'].sv_get(default=[[]])

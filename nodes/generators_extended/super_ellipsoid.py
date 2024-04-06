@@ -297,7 +297,7 @@ class SvSuperEllipsoidNode(SverchCustomTreeNode, bpy.types.Node):
         row.prop(self, "cap_top", text="Cap T", toggle=True)
 
     def process(self):
-        if not any(s.is_linked for s in self.outputs):
+        if not any(socket.is_linked for socket in self.outputs):
             return
 
         inputs = self.inputs

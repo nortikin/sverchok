@@ -276,13 +276,11 @@ class SvCastNode(SverchCustomTreeNode, bpy.types.Node):
         return self.label or self.name + ' to ' + self.cast_mode.title()
 
     def process(self):
-        inputs, outputs = self.inputs, self.outputs
-
-        if not outputs[0].is_linked:
+        if not any(socket.is_linked for socket in self.outputs):
             return
-
+        
+        inputs, outputs = self.inputs, self.outputs
         result = []
-
         params = [si.sv_get(default=[[]], deepcopy=False) for si in inputs]
 
         matching_f = list_match_func[self.list_match]

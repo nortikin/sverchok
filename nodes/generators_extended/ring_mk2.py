@@ -288,8 +288,7 @@ class SvRingNodeMK2(SverchCustomTreeNode, bpy.types.Node, SvAngleHelper):
         layout.prop(self, 'ring_u')
 
     def process(self):
-        # return if no outputs are connected
-        if not any(s.is_linked for s in self.outputs):
+        if not any(socket.is_linked for socket in self.outputs):
             return
 
         # list of MAJOR or EXTERIOR radii

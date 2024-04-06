@@ -97,8 +97,10 @@ class SvCropMesh2D(ModifierLiteNode, SverchCustomTreeNode, bpy.types.Node):
         self.outputs.new('SvStringsSocket', 'Face index')
 
     def process(self):
-        if not all([sock.is_linked for sock in self.inputs]) and any([sock.is_linked for sock in self.outputs]):
+        if not any(socket.is_linked for socket in self.outputs):
             return
+        if not all([sock.is_linked for sock in self.inputs]):
+            raise Exception("All input sockets has to be connected")
         if self.alg_mode == "Blender" and not crop_mesh_delaunay:
             return
 

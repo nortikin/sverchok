@@ -161,6 +161,9 @@ class SvSolidBooleanNode(SverchCustomTreeNode, bpy.types.Node):
         face_masks_out = []
         face_srcs_out = []
         if self.nest_objs:
+            if not (self.inputs["Solids"].is_linked):
+                raise Exception(f"Input socket '{self.inputs['Solids'].label or self.inputs['Solids'].identifier}' has to be connected")
+            
             solids_in = self.inputs['Solids'].sv_get()
             #level = get_data_nesting_level(solids_in, data_types=(Part.Shape,))
             solids_in = ensure_nesting_level(solids_in, 2, data_types=(Part.Shape,))
@@ -174,6 +177,11 @@ class SvSolidBooleanNode(SverchCustomTreeNode, bpy.types.Node):
                 face_srcs_out.append(result.face_map)
 
         else:
+            if not (self.inputs["Solid A"].is_linked):
+                raise Exception(f"Input socket '{self.inputs['Solid A'].label or self.inputs['Solid A'].identifier}' has to be connected")
+            if not (self.inputs["Solid B"].is_linked):
+                raise Exception(f"Input socket '{self.inputs['Solid B'].label or self.inputs['Solid B'].identifier}' has to be connected")
+            
             solids_a_in = self.inputs['Solid A'].sv_get()
             solids_b_in = self.inputs['Solid B'].sv_get()
             level_a = get_data_nesting_level(solids_a_in, data_types=(Part.Shape,))

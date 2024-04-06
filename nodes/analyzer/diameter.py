@@ -40,10 +40,10 @@ class SvDiameterNode(SverchCustomTreeNode, bpy.types.Node):
         self.outputs.new('SvStringsSocket', 'Diameter')
 
     def process(self):
-        if not self.inputs['Vertices'].is_linked:
+        if not any(socket.is_linked for socket in self.outputs):
             return
-        if not any(s.is_linked for s in self.outputs):
-            return
+        if not (self.inputs["Vertices"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Vertices'].label or self.inputs['Vertices'].identifier}' has to be connected")
         
         any_direction = not self.inputs['Direction'].is_linked
 

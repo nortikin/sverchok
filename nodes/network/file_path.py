@@ -91,9 +91,9 @@ class SvFilePathNode(SverchCustomTreeNode, bpy.types.Node):
             self.files_num = len(files)
 
     def process(self):
-        # return if no outputs are connected
-        if not any(s.is_linked for s in self.outputs):
+        if not any(socket.is_linked for socket in self.outputs):
             return
+        
         directory = self.directory
         if self.files:
             files = []

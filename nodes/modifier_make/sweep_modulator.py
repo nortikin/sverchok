@@ -177,6 +177,9 @@ class SvSweepModulator(SverchCustomTreeNode, bpy.types.Node):
     
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        
         """
         [ ] provide virtual Shape index shifting,
               - shifts the vertices in-situ of A or B to match the other

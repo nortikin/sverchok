@@ -52,9 +52,9 @@ class SvPulgaRandomForceNode(SverchCustomTreeNode, bpy.types.Node):
         self.outputs.new('SvPulgaForceSocket', "Force")
 
     def process(self):
-
-        if not any(s.is_linked for s in self.outputs):
+        if not any(socket.is_linked for socket in self.outputs):
             return
+        
         forces_in = self.inputs["Magnitude"].sv_get(deepcopy=False)
         random_variation = self.inputs["Variation"].sv_get(deepcopy=False)
         random_seed = self.inputs["Seed"].sv_get(deepcopy=False)

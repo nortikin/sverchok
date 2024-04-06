@@ -102,18 +102,22 @@ class SvFlatGeometryNode(TransformNode, SverchCustomTreeNode, bpy.types.Node):
         layout.prop(self, 'projection_mode')
 
     def process(self):
-        if not any(s.is_linked for s in self.outputs):
+        if not any(socket.is_linked for socket in self.outputs):
             return
-        if self.inputs['Vertices'].is_linked:
-            verts_in = self.inputs['Vertices'].sv_get(deepcopy=False)
-            plane_in = self.inputs['Plane Matrix'].sv_get(deepcopy=False)
-            if self.projection_mode == 'Orthographic':
-                verts_out, z_coord_out = ortho_projection(verts_in, plane_in)
-            else:
-                verts_out, z_coord_out = perspective_projection(verts_in, plane_in, 2)
+        if not (self.inputs["Vertices"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Vertices'].label or self.inputs['Vertices'].identifier}' has to be connected")
+        if not (self.inputs["Plane Matrix"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Plane Matrix'].label or self.inputs['Plane Matrix'].identifier}' has to be connected")
+        
+        verts_in = self.inputs['Vertices'].sv_get(deepcopy=False)
+        plane_in = self.inputs['Plane Matrix'].sv_get(deepcopy=False)
+        if self.projection_mode == 'Orthographic':
+            verts_out, z_coord_out = ortho_projection(verts_in, plane_in)
+        else:
+            verts_out, z_coord_out = perspective_projection(verts_in, plane_in, 2)
 
-            self.outputs['Vertices'].sv_set(verts_out)
-            self.outputs['Z coord'].sv_set(z_coord_out)
+        self.outputs['Vertices'].sv_set(verts_out)
+        self.outputs['Z coord'].sv_set(z_coord_out)
 
 
 

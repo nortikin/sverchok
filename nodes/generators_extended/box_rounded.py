@@ -387,6 +387,9 @@ class SvBoxRoundedNode(SverchCustomTreeNode, bpy.types.Node):
         pass
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        
         inputs = self.inputs
         outputs = self.outputs
         sizes = inputs['vector_size'].sv_get()[0]

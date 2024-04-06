@@ -563,8 +563,10 @@ class SvTransformMesh(SverchCustomTreeNode, bpy.types.Node):
                 socket.draw_property(col, self, 'direction')
 
     def process(self):
-        if not self.inputs['Verts'].is_linked:
+        if not any(socket.is_linked for socket in self.outputs):
             return
+        if not (self.inputs["Verts"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Verts'].label or self.inputs['Verts'].identifier}' has to be connected")
 
         verts = self.inputs['Verts'].sv_get(deepcopy=False)
         edges = self.inputs['Edges'].sv_get(deepcopy=False, default=cycle([None]))

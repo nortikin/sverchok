@@ -205,12 +205,15 @@ class SvBevelNode(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
         return geom
 
     def process(self):
-
-        if not (self.inputs[0].is_linked and (self.inputs[2].is_linked or self.inputs[1].is_linked)):
+        if not any(socket.is_linked for socket in self.outputs):
             return
-        if not any(self.outputs[name].is_linked for name in ['Vertices', 'Edges', 'Polygons', 'NewPolys']):
-            return
-
+        if not (self.inputs[0].is_linked):
+            raise Exception(f"Input socket '{self.inputs[0].label or self.inputs[0].identifier}' has to be connected")
+        if not (self.inputs[1].is_linked):
+            raise Exception(f"Input socket '{self.inputs[1].label or self.inputs[1].identifier}' has to be connected")
+        if not (self.inputs[2].is_linked):
+            raise Exception(f"Input socket '{self.inputs[2].label or self.inputs[2].identifier}' has to be connected")
+                
         verts_out = []
         edges_out = []
         faces_out = []

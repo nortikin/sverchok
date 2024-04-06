@@ -51,9 +51,9 @@ class SvPulgaObstacleForceNode(SverchCustomTreeNode, bpy.types.Node):
         self.outputs.new('SvPulgaForceSocket', "Force")
 
     def process(self):
-
-        if not any(s.is_linked for s in self.outputs):
+        if not any(socket.is_linked for socket in self.outputs):
             return
+        
         magnitude = self.inputs["Vertices"].sv_get(deepcopy=False)
         pols = self.inputs["Pols"].sv_get(deepcopy=False)
         absorption = self.inputs["Absorption"].sv_get(deepcopy=False)

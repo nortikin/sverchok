@@ -168,12 +168,16 @@ class SvDistancePointLineNode(SverchCustomTreeNode, bpy.types.Node):
         return list_match_func[self.list_match_global]([s.sv_get(default=[[]], deepcopy=False) for s in si])
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        if not (self.inputs["Vertices"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Vertices'].label or self.inputs['Vertices'].identifier}' has to be connected")
+        if not (self.inputs["Verts Line"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Verts Line'].label or self.inputs['Verts Line'].identifier}' has to be connected")
+        
         '''main node function called every update'''
         so = self.outputs
         si = self.inputs
-        if not (any(s.is_linked for s in so) and all(s.is_linked for s in si[:2])):
-            return
-
         result = [[] for socket in so]
         gates = [socket.is_linked for socket in so]
 

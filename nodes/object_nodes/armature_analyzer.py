@@ -40,7 +40,13 @@ class SvArmaturePropsNode(SverchCustomTreeNode, bpy.types.Node):
         self.outputs.new('SvObjectSocket', "Armature Object")
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        
         armobj, selm = self.inputs
+        if armobj.is_linked==False:
+            raise Exception("Input socket 'Armature Object' has to be connected")
+
         head, Cent, tail, Norm, lng, matr, obj = self.outputs
         armat =  [ob.data.bones for ob in armobj.sv_get()]
         if selm.is_linked:

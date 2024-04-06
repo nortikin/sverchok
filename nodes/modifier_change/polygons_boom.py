@@ -36,6 +36,9 @@ class PolygonBoomNode(ModifierLiteNode, SverchCustomTreeNode, bpy.types.Node):
         self.outputs.new('SvStringsSocket', 'edg_pol')
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        
         # inputs
         vertices = self.inputs['vertices'].sv_get(deepcopy=False)
         edgs_pols = self.inputs['edg_pol'].sv_get(deepcopy=False)

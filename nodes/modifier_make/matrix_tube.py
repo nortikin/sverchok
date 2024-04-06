@@ -48,8 +48,9 @@ class SvMatrixTubeNode(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
         return [(self.inputs['Vertices'], self.outputs['Vertices'])]
 
     def process(self):
-        if not self.outputs['Vertices'].is_linked:
+        if not any(socket.is_linked for socket in self.outputs):
             return
+        
         vertices = Vector_generate(self.inputs['Vertices'].sv_get())
         matrices = Matrix_generate(self.inputs['Matrices'].sv_get())
         verts_out, edges_out, faces_out = self.make_tube(matrices, vertices)

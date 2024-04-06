@@ -210,11 +210,14 @@ class SvIntersectLineSphereNode(SverchCustomTreeNode, bpy.types.Node):
         return list_match_func[self.list_match_global]([s.sv_get(default=[[]], deepcopy=False) for s in inputs])
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        if not (self.inputs["Verts"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Verts'].label or self.inputs['Verts'].identifier}' has to be connected")
+        
         '''main node function called every update'''
         outputs = self.outputs
         inputs = self.inputs
-        if not (any(s.is_linked for s in outputs) and inputs[0].is_linked):
-            return
 
         result = [[] for socket in outputs]
         gates = [socket.is_linked for socket in outputs]

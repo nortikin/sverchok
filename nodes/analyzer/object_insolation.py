@@ -95,6 +95,8 @@ class SvOBJInsolationNode(SverchCustomTreeNode, bpy.types.Node):
         #row.prop(self,    "mode2",   text="Out Mode")
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
 
         o,r,e = self.inputs
         #dd,o,r,e = self.inputs

@@ -93,9 +93,9 @@ class SvMatrixNormalNode(SverchCustomTreeNode, bpy.types.Node):
         layout.prop(self, "flat_output", text="Flat Output", expand=False)
 
     def process(self):
-        Ma = self.outputs[0]
-        if not Ma.is_linked:
+        if not any(socket.is_linked for socket in self.outputs):
             return
+
         L, N = self.inputs
         T, U = self.track, self.up
         loc = L.sv_get()

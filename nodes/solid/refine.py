@@ -32,6 +32,8 @@ class SvRefineSolidNode(SverchCustomTreeNode, bpy.types.Node):
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
             return
+        if not (self.inputs["Solid"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Solid'].label or self.inputs['Solid'].identifier}' has to be connected")
 
         solids_in = self.inputs['Solid'].sv_get()
 

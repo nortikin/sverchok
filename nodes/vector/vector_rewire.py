@@ -83,6 +83,11 @@ class SvVectorRewire(SverchCustomTreeNode, bpy.types.Node):
 
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        if not (self.inputs["Vectors"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Vectors'].label or self.inputs['Vectors'].identifier}' has to be connected")
+        
         vectors_in = self.inputs[0]
         scalar_in = self.inputs[1]
         vectors_out = self.outputs[0]

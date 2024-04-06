@@ -55,6 +55,10 @@ class SvSplitSolidNode(SverchCustomTreeNode, bpy.types.Node):
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
             return
+        if not (self.inputs["Solid"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Solid'].label or self.inputs['Solid'].identifier}' has to be connected")
+        if not (self.inputs["SolidFace"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['SolidFace'].label or self.inputs['SolidFace'].identifier}' has to be connected")
 
         face_surfaces_s = self.inputs['SolidFace'].sv_get()
         face_surfaces_s = ensure_nesting_level(face_surfaces_s, 3, data_types=(SvSurface,))

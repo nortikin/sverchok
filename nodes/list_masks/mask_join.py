@@ -68,15 +68,19 @@ class SvMaskJoinNodeMK2(SverchCustomTreeNode, bpy.types.Node):
         changable_sockets(self, inputsocketname, outputsocketname)
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        if not all(socket.is_linked for socket in self.inputs):
+            raise Exception("All input sockets has to be connected")
+        
         Ouso = self.outputs[0]
-        if Ouso.is_linked:
-            mask = self.inputs['Mask'].sv_get([[1, 0]])
-            data_t = self.inputs['Data True'].sv_get()
-            data_f = self.inputs['Data False'].sv_get()
+        mask = self.inputs['Mask'].sv_get([[1, 0]])
+        data_t = self.inputs['Data True'].sv_get()
+        data_f = self.inputs['Data False'].sv_get()
 
-            data_out = self.get_level(mask, data_t, data_f, self.level-1)
+        data_out = self.get_level(mask, data_t, data_f, self.level-1)
 
-            Ouso.sv_set(data_out)
+        Ouso.sv_set(data_out)
 
     def apply_choice_mask(self, mask, data_t, data_f):
         out = []

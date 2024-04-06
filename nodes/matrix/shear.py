@@ -57,8 +57,9 @@ class MatrixShearNode(SverchCustomTreeNode, bpy.types.Node):
         layout.prop(self, "plane_", text="Shear plane:", expand=True)
 
     def process(self):
-        if not self.outputs['Matrix'].is_linked:
+        if not any(socket.is_linked for socket in self.outputs):
             return
+        
         # inputs
 
         factor1 = self.inputs['Factor1'].sv_get()

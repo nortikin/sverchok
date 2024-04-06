@@ -147,11 +147,10 @@ class SvVectorFractal(SverchCustomTreeNode, bpy.types.Node):
         layout.prop(self, 'noise_type', text="Type")
 
     def process(self):
-        inputs, outputs = self.inputs, self.outputs
-
-        if not outputs[0].is_linked:
+        if not any(socket.is_linked for socket in self.outputs):
             return
-
+        
+        inputs, outputs = self.inputs, self.outputs
         _seed = inputs['Seed'].sv_get()[0][0]
         wrapped_fractal_function = fractal_f[self.fractal_type]
 

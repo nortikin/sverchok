@@ -162,8 +162,7 @@ class SvCurveLengthParameterMk2Node(DraftMode, SverchCustomTreeNode, bpy.types.N
             return np.arange(0.0, total_length, step = segment_length)
 
     def process(self):
-
-        if not any((s.is_linked for s in self.outputs)):
+        if not any(socket.is_linked for socket in self.outputs):
             return
 
         need_eval = self.outputs['Vertices'].is_linked

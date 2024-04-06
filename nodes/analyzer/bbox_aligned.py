@@ -81,16 +81,17 @@ class SvAlignedBBoxNode(SverchCustomTreeNode, bpy.types.Node, SvRecursiveNode):
         self.update_sockets(context)
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        
         inputs = self.inputs
-        Vertices = inputs["Vertices"].sv_get(default=None)
+        Vertices = inputs["Vertices"].sv_get()
         Matrixes = inputs["Matrix"].sv_get(default=-1)
         if Matrixes==-1:
             Matrixes = [None]
         Factors  = inputs["Factor"].sv_get()
 
         outputs = self.outputs
-        if not any( [o.is_linked for o in outputs]):
-            return
         
         lst_bba_vertices = []
         lst_bba_edges = []

@@ -79,11 +79,14 @@ class SvKDTreeNodeMK2(SverchCustomTreeNode, bpy.types.Node):
         so.new('SvStringsSocket', 'distance')
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        if not (self.inputs["insert"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['insert'].label or self.inputs['insert'].identifier}' has to be connected")
+        
         '''main node function called every update'''
         si = self.inputs
         so = self.outputs
-        if not (any(s.is_linked for s in so) and si[0].is_linked):
-            return
         V1, V2, N, R = mlr([i.sv_get() for i in si])
         out = []
         Co, ind, dist = so

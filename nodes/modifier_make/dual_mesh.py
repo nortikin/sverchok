@@ -50,7 +50,7 @@ class SvDualMeshNode(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
         ]
 
     def process(self):
-        if not any((s.is_linked for s in self.outputs)):
+        if not any(socket.is_linked for socket in self.outputs):
             return
 
         verts_s = self.inputs['Vertices'].sv_get()

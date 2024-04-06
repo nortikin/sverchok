@@ -93,9 +93,12 @@ class SvFlipNormalsNode(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
         r2.prop(self, "selected_mode", expand=True)
 
     def process(self):
-
-        if not any(self.outputs[idx].is_linked for idx in range(3)):
+        if not any(socket.is_linked for socket in self.outputs):
             return
+        if not (self.inputs["Vertices"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Vertices'].label or self.inputs['Vertices'].identifier}' has to be connected")
+        if not (self.inputs["Polygons"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Polygons'].label or self.inputs['Polygons'].identifier}' has to be connected")
 
         vertices_s = self.inputs['Vertices'].sv_get(default=[[]], deepcopy=False)
         edges_s = self.inputs['Edges'].sv_get(default=[[]], deepcopy=False)

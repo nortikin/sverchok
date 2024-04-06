@@ -150,8 +150,7 @@ class SvTransformSelectNode(ModifierLiteNode, SverchCustomTreeNode, bpy.types.No
         return poly_edge_true, poly_edge_false, poly_edge_other
 
     def process(self):
-        # return if no outputs are connected
-        if not any(s.is_linked for s in self.outputs):
+        if not any(socket.is_linked for socket in self.outputs):
             return
 
         params, input_polys, polys_linked = self.get_data()

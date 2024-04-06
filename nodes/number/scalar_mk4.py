@@ -256,28 +256,29 @@ class SvScalarMathNodeMK4(SverchCustomTreeNode, bpy.types.Node):
             self.outputs[0].replace_socket("SvStringsSocket", "sin( x )")
 
     def process(self):
-
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        
         self.ensure_enums_have_no_space(enums=["current_op"])
 
-        if self.outputs[0].is_linked:
-            current_func = func_from_mode(self.current_op)
-            params = [si.sv_get(default=[[]], deepcopy=False) for si in self.inputs]
-            matching_f = list_match_func[self.list_match]
-            desired_levels = [2 for p in params]
+        current_func = func_from_mode(self.current_op)
+        params = [si.sv_get(default=[[]], deepcopy=False) for si in self.inputs]
+        matching_f = list_match_func[self.list_match]
+        desired_levels = [2 for p in params]
 
-            if self.current_op in ['GCD', 'ROUND-N']:
-                result = recurse_fxy(params[0], params[1], current_func)
-            elif self.current_op  == 'SINCOS':
-                ops = [np.sin, self.list_match, self.output_numpy]
-                result = recurse_f_level_control(params, ops, math_numpy, matching_f, desired_levels)
-                ops2 = [np.cos, self.list_match, self.output_numpy]
-                result2 = recurse_f_level_control(params, ops2, math_numpy, matching_f, desired_levels)
-                self.outputs[1].sv_set(result2)
-            else:
-                ops = [current_func, self.list_match, self.output_numpy]
-                result = recurse_f_level_control(params, ops, math_numpy, matching_f, desired_levels)
+        if self.current_op in ['GCD', 'ROUND-N']:
+            result = recurse_fxy(params[0], params[1], current_func)
+        elif self.current_op  == 'SINCOS':
+            ops = [np.sin, self.list_match, self.output_numpy]
+            result = recurse_f_level_control(params, ops, math_numpy, matching_f, desired_levels)
+            ops2 = [np.cos, self.list_match, self.output_numpy]
+            result2 = recurse_f_level_control(params, ops2, math_numpy, matching_f, desired_levels)
+            self.outputs[1].sv_set(result2)
+        else:
+            ops = [current_func, self.list_match, self.output_numpy]
+            result = recurse_f_level_control(params, ops, math_numpy, matching_f, desired_levels)
 
-            self.outputs[0].sv_set(result)
+        self.outputs[0].sv_set(result)
 
     def ensure_enums_have_no_space(self, enums=None):
         """

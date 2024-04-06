@@ -196,10 +196,10 @@ class SvIntersectCircleCircleNode(SverchCustomTreeNode, bpy.types.Node):
         return list_match_func[self.list_match_global]([s.sv_get(default=[[]]) for s in si])
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
         '''main node function called every update'''
         so = self.outputs
-        if not any(s.is_linked for s in so):
-            return
 
         result = [[], [], []]
         gates = []

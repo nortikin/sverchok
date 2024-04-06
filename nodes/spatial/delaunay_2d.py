@@ -36,11 +36,10 @@ class DelaunayTriangulation2DNode(SverchCustomTreeNode, bpy.types.Node):
         self.outputs.new('SvStringsSocket', "Polygons")
 
     def process(self):
-
-        if not self.inputs['Vertices'].is_linked:
+        if not any(socket.is_linked for socket in self.outputs):
             return
-        if not self.outputs['Polygons'].is_linked:
-            return
+        if not (self.inputs["Vertices"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Vertices'].label or self.inputs['Vertices'].identifier}' has to be connected")
 
         tris_out = []
         points_in = []

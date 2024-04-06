@@ -141,12 +141,10 @@ class SvMapRangeNode(SverchCustomTreeNode, bpy.types.Node):
         layout.prop(self, "output_numpy", expand=False)
 
     def process(self):
-        inputs = self.inputs
-        outputs = self.outputs
-
-        # no outputs, end early.
-        if not outputs['Value'].is_linked:
+        if not any(socket.is_linked for socket in self.outputs):
             return
+        
+        inputs = self.inputs
 
         params = [si.sv_get(default=[[]], deepcopy=False) for si in inputs]
         matching_f = list_match_func[self.list_match]

@@ -177,6 +177,9 @@ class SphereNode(SverchCustomTreeNode, bpy.types.Node):
         layout.prop(self, "list_match")
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        
         # inputs
         if 'Polygons' not in self.outputs:
             return

@@ -116,10 +116,10 @@ class SvSymmetrizeNode(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
         return verts
 
     def process(self):
-        if not (self.inputs['Vertices'].is_linked):
+        if not any(socket.is_linked for socket in self.outputs):
             return
-        if not (any(output.is_linked for output in self.outputs)):
-            return
+        if not (self.inputs["Vertices"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Vertices'].label or self.inputs['Vertices'].identifier}' has to be connected")
 
         vertices_s = self.inputs['Vertices'].sv_get(default=[[]])
         edges_s = self.inputs['Edges'].sv_get(default=[[]])

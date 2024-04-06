@@ -165,9 +165,10 @@ class SvExtrudeRegionNode(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
         return mask
 
     def process(self):
-        # inputs
-        if not self.inputs['Vertices'].is_linked:
+        if not any(socket.is_linked for socket in self.outputs):
             return
+        if not (self.inputs["Vertices"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Vertices'].label or self.inputs['Vertices'].identifier}' has to be connected")
 
         vertices_s = self.inputs['Vertices'].sv_get(deepcopy=False)
         edges_s = self.inputs['Edges'].sv_get(default=[[]], deepcopy=False)

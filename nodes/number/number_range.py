@@ -209,10 +209,12 @@ class SvGenNumberRange(SverchCustomTreeNode, bpy.types.Node):
             self.range_mode = "RANGE_STEP"
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        
         inputs = self.inputs
         outputs = self.outputs
-        if not outputs[0].is_linked:
-            return
+
         matching_f = list_match_func[self.list_match]
         params = [s.sv_get() for s in inputs]
         if self.number_mode == 'int':

@@ -83,6 +83,7 @@ class SvBezierSplineNode(SverchCustomTreeNode, bpy.types.Node):
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
             return 
+        
         start_s = self.inputs['Start'].sv_get()
         end_s = self.inputs['End'].sv_get()
         knot1_s = self.inputs[CONTROL1_SOCKET].sv_get()

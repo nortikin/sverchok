@@ -86,8 +86,10 @@ class SvDelaunay2DCdt(SverchCustomTreeNode, bpy.types.Node):
             self.outputs.new('SvStringsSocket', "Face data")
 
     def process(self):
-        if not self.inputs['Verts'].is_linked:
+        if not any(socket.is_linked for socket in self.outputs):
             return
+        if not (self.inputs["Verts"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Verts'].label or self.inputs['Verts'].identifier}' has to be connected")
 
         out = []
         for v, e, f, fd in zip(self.inputs['Verts'].sv_get(),

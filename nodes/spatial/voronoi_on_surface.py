@@ -184,9 +184,12 @@ class SvVoronoiOnSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
         return uv_verts, verts, edges, faces
 
     def process(self):
-
         if not any(socket.is_linked for socket in self.outputs):
             return
+        if not (self.inputs["Surface"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Surface'].label or self.inputs['Surface'].identifier}' has to be connected")
+        if not (self.inputs["UVPoints"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['UVPoints'].label or self.inputs['UVPoints'].identifier}' has to be connected")
 
         surface_in = self.inputs['Surface'].sv_get()
         uvpoints_in = self.inputs['UVPoints'].sv_get()

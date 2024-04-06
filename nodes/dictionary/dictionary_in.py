@@ -103,8 +103,7 @@ class SvDictionaryIn(SverchCustomTreeNode, bpy.types.Node):
                 self.alert[int(sock.prop_name.rsplit('_', 1)[-1])] = False
 
     def process(self):
-
-        if not any((sock.links for sock in self.inputs)):
+        if not any(socket.is_linked for socket in self.outputs):
             return
 
         self.validate_names()

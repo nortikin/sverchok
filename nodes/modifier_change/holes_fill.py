@@ -69,10 +69,13 @@ class SvFillHolesNode(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
         ]
 
     def process(self):
-
-        if not (self.inputs['vertices'].is_linked and self.inputs['edges'].is_linked):
+        if not any(socket.is_linked for socket in self.outputs):
             return
-
+        if not (self.inputs["vertices"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['vertices'].label or self.inputs['vertices'].identifier}' has to be connected")
+        if not (self.inputs["edges"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['edges'].label or self.inputs['edges'].identifier}' has to be connected")
+        
         verts = dataCorrect(self.inputs['vertices'].sv_get(deepcopy=False))
         edges = dataCorrect(self.inputs['edges'].sv_get(deepcopy=False))
         sides = self.inputs['Sides'].sv_get(deepcopy=False)[0]

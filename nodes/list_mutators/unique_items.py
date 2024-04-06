@@ -143,9 +143,11 @@ class SvUniqueItemsNode(SverchCustomTreeNode, bpy.types.Node):
             changable_sockets(self, inputsocketname, outputsocketname)
 
     def process(self):
-
-        if not (self.inputs[0].is_linked and any([s.is_linked for s in self.outputs])):
+        if not any(socket.is_linked for socket in self.outputs):
             return
+        if not any(socket.is_linked for socket in self.inputs):
+            raise Exception("Input socket 'Data'has to be connected")
+        
         data_in = self.inputs[0].sv_get(deepcopy=False)
         linked_outputs = [s.is_linked for s in self.outputs[1:]]
         out_lists = recursive_unique_items(data_in, self.level, linked_outputs, self.output_numpy)

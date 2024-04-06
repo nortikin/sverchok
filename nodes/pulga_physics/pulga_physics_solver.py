@@ -284,15 +284,17 @@ class SvPulgaPhysicsSolverNode(SverchCustomTreeNode, bpy.types.Node):
         return data, past, from_file
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        if not (self.inputs["Initial_Pos"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Initial_Pos'].label or self.inputs['Initial_Pos'].identifier}' has to be connected")
+        if not (self.inputs["Forces"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Forces'].label or self.inputs['Forces'].identifier}' has to be connected")
+        
         '''main node function called every update'''
 
         si = self.inputs
         so = self.outputs
-        if not any(socket.is_linked for socket in so):
-            return
-
-        if not si['Initial_Pos'].is_linked or not si['Forces'].is_linked:
-            return
 
         verts_out = []
         rads_out = []

@@ -51,7 +51,6 @@ class SvVoronoiFieldNode(SverchCustomTreeNode, bpy.types.Node):
         self.outputs.new('SvVectorFieldSocket', "VField")
 
     def process(self):
-
         if not any(socket.is_linked for socket in self.outputs):
             return
 

@@ -50,9 +50,9 @@ class MatrixApplyNode(SverchCustomTreeNode, bpy.types.Node):
         layout.prop(self, "output_numpy", expand=False)
 
     def process(self):
-        if not self.inputs['Vectors'].is_linked:
+        if not any(socket.is_linked for socket in self.outputs):
             return
-
+        
         vertices = self.inputs['Vectors'].sv_get(deepcopy=False)
         matrices = self.inputs['Matrixes'].sv_get(deepcopy=False, default=[])
 

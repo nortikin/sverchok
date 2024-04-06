@@ -251,18 +251,25 @@ class SvDuplicateAlongEdgeNode(ModifierNode, SverchCustomTreeNode, bpy.types.Nod
         layout.prop(self, "apply_matrices")
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        
         # VerticesR & EdgesR or Vertex1 & Vertex2 are necessary anyway
         # to define recipient edge
         if self.input_mode == "edge":
-            if not (self.inputs['VerticesR'].is_linked and self.inputs['EdgesR'].is_linked):
-                return
+            if not (self.inputs["VerticesR"].is_linked):
+                raise Exception(f"Input socket '{self.inputs['VerticesR'].label or self.inputs['VerticesR'].identifier}' has to be connected")
+            if not (self.inputs["EdgesR"].is_linked):
+                raise Exception(f"Input socket '{self.inputs['EdgesR'].label or self.inputs['EdgesR'].identifier}' has to be connected")
         elif self.input_mode == "fixed":
-            if not (self.inputs['Vertex1'].is_linked and self.inputs['Vertex2'].is_linked):
-                return
+            if not (self.inputs["Vertex1"].is_linked):
+                raise Exception(f"Input socket '{self.inputs['Vertex1'].label or self.inputs['Vertex1'].identifier}' has to be connected")
+            if not (self.inputs["Vertex2"].is_linked):
+                raise Exception(f"Input socket '{self.inputs['Vertex2'].label or self.inputs['Vertex2'].identifier}' has to be connected")
         # Input vertices are used now to define count of objects.
         # Theoretically it is possible to not use them in "Count" mode.
-        if not self.inputs['Vertices'].is_linked:
-            return
+        if not (self.inputs["Vertices"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Vertices'].label or self.inputs['Vertices'].identifier}' has to be connected")
 
         vertices_s = self.inputs['Vertices'].sv_get(default=[[]])
         vertices_s = Vector_generate(vertices_s)

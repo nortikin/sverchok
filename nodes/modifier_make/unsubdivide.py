@@ -65,6 +65,13 @@ class SvUnsubdivideNode(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, 'show_bmesh_list')
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        if not (self.inputs["Vert"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Vert'].label or self.inputs['Vert'].identifier}' has to be connected")
+        if not (self.inputs["Poly"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Poly'].label or self.inputs['Poly'].identifier}' has to be connected")
+        
         bmL, V, P, mask, Iterate = self.inputs
         Val = bmL.sv_get([])
 

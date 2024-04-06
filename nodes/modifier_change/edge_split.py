@@ -69,6 +69,11 @@ class SvSplitEdgesMk3Node(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
         layout.prop(self, 'mode')
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        if not (self.inputs["Vertices"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Vertices'].label or self.inputs['Vertices'].identifier}' has to be connected")
+        
         verts = self.inputs['Vertices'].sv_get(default=[])
         edges = self.inputs['Edges'].sv_get(default=[])
         faces = self.inputs['Faces'].sv_get(default=[])

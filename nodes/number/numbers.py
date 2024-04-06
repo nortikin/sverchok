@@ -168,7 +168,9 @@ class SvNumberNode(Show3DProperties, DraftMode, SverchCustomTreeNode, bpy.types.
 
 
     def process(self):
-
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        
         if not self.inputs[0].is_linked:
             prop_name = self.get_prop_name()
             self.outputs[0].sv_set([[getattr(self, prop_name)]])

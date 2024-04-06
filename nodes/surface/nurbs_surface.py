@@ -135,6 +135,9 @@ class SvExNurbsSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
             row.prop(self, 'is_cyclic_v', toggle=True)
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        
         vertices_s = self.inputs['ControlPoints'].sv_get()
         has_weights = self.inputs['Weights'].is_linked
         weights_s = self.inputs['Weights'].sv_get(default = [[1.0]])

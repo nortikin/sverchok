@@ -127,11 +127,15 @@ class SvCombinatoricsNode(SverchCustomTreeNode, bpy.types.Node):
         layout.prop(self, "operation", text="")
 
     def process(self):
-        outputs = self.outputs
-        # return if no outputs are connected
-        if not any(s.is_linked for s in outputs):
+        if not any(socket.is_linked for socket in self.outputs):
             return
-
+        if len([s for s in self.inputs if s.is_linked])==0:
+            raise Exception("Minimum one input sockets [A,B,...] has to be connected")
+        if len([s for s in self.inputs if s.is_linked])==1:
+            if self.inputs["Repeat"].is_linked:
+                raise Exception("Minimum one input sockets [A,B,...] has to be connected")
+            
+        outputs = self.outputs
         inputs = self.inputs
 
         all_AZ_sockets = list(filter(lambda s: s.name in ABC, inputs))

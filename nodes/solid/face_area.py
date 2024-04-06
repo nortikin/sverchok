@@ -32,6 +32,8 @@ class SvSolidFaceAreaNode(SverchCustomTreeNode, bpy.types.Node):
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
             return
+        if not (self.inputs["SolidFace"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['SolidFace'].label or self.inputs['SolidFace'].identifier}' has to be connected")
 
         faces_in = self.inputs['SolidFace'].sv_get()
 

@@ -46,9 +46,10 @@ class SvLloydOnSphereNode(SverchCustomTreeNode, bpy.types.Node):
         self.outputs.new('SvVerticesSocket', "Sites")
 
     def process(self):
-
         if not any(socket.is_linked for socket in self.outputs):
             return
+        if not (self.inputs["Sites"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Sites'].label or self.inputs['Sites'].identifier}' has to be connected")
 
         center_in = self.inputs['Center'].sv_get()
         radius_in = self.inputs['Radius'].sv_get()

@@ -383,10 +383,10 @@ class SvTorusKnotNodeMK2(SverchCustomTreeNode, bpy.types.Node, SvAngleHelper):
         layout.prop(self, 'mode', expand=True)
 
     def process(self):
-        outputs = self.outputs
-        # return if no outputs are connected
-        if not any(s.is_linked for s in outputs):
+        if not any(socket.is_linked for socket in self.outputs):
             return
+        
+        outputs = self.outputs
 
         # input values lists (single or multi value)
         inputs = self.inputs

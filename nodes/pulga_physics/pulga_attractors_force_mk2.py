@@ -73,9 +73,11 @@ class SvPulgaAttractorsForceNodeMk2(SverchCustomTreeNode, bpy.types.Node):
         layout.prop(self, 'mode')
 
     def process(self):
-
-        if not any(s.is_linked for s in self.outputs):
+        if not any(socket.is_linked for socket in self.outputs):
             return
+        if not (self.inputs["Location"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Location'].label or self.inputs['Location'].identifier}' has to be connected")
+        
         loc = self.inputs["Location"].sv_get(deepcopy=False)
         strength = self.inputs["Strength"].sv_get(deepcopy=False)
         max_distance = self.inputs["Max. Distance"].sv_get(deepcopy=False)

@@ -217,6 +217,9 @@ class SvDeformationNode(SverchCustomTreeNode, bpy.types.Node):
         return ready
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        
         '''main node function called every update'''
         so = self.outputs
         if not self.ready():

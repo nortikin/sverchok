@@ -55,8 +55,8 @@ class SvApplyFieldToSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
             if not any(socket.is_linked for socket in self.outputs):
                 return
 
-            surface_s = self.inputs['Surface'].sv_get()
             field_s = self.inputs['Field'].sv_get()
+            surface_s = self.inputs['Surface'].sv_get()
             coeff_s = self.inputs['Coefficient'].sv_get()
 
             surface_out = []

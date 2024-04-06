@@ -84,7 +84,6 @@ class SvMeshSurfaceFieldNode(SverchCustomTreeNode, bpy.types.Node):
         self.outputs.new('SvScalarFieldSocket', "Field")
 
     def process(self):
-
         if not any(socket.is_linked for socket in self.outputs):
             return
 

@@ -205,100 +205,99 @@ class SvInterpolationStripesNode(SverchCustomTreeNode, bpy.types.Node):
         return vec.length
 
     def process(self):
-        if not any(s.is_linked for s in self.outputs):
+        if not any(socket.is_linked for socket in self.outputs):
             return
 
-        if self.inputs['Vertices'].is_linked:
-            verts = self.inputs['Vertices'].sv_get()
-            verts = dataCorrect(verts)
-            attrs = self.inputs['Attractor'].sv_get()
-            attrs = dataCorrect(attrs)
-            if not self.inputs['IntervalX'].is_linked:
-                t_ins_x = [[i/10 for i in range(0,11)]]
-            else:
-                t_ins_x = self.inputs['IntervalX'].sv_get()
-            if not self.inputs['IntervalY'].is_linked:
-                t_ins_y = [[i/10 for i in range(0,11)]]
-            else:
-                t_ins_y = self.inputs['IntervalY'].sv_get()
-            factor = self.factor
-            scale = self.scale
-            minimum = self.minimum
-            maximum = self.maximum
-            operations = self.operations
-            func = vector_out[operations]
+        verts = self.inputs['Vertices'].sv_get()
+        verts = dataCorrect(verts)
+        attrs = self.inputs['Attractor'].sv_get()
+        attrs = dataCorrect(attrs)
+        if not self.inputs['IntervalX'].is_linked:
+            t_ins_x = [[i/10 for i in range(0,11)]]
+        else:
+            t_ins_x = self.inputs['IntervalX'].sv_get()
+        if not self.inputs['IntervalY'].is_linked:
+            t_ins_y = [[i/10 for i in range(0,11)]]
+        else:
+            t_ins_y = self.inputs['IntervalY'].sv_get()
+        factor = self.factor
+        scale = self.scale
+        minimum = self.minimum
+        maximum = self.maximum
+        operations = self.operations
+        func = vector_out[operations]
 
-            # initial interpolation
-            vertsX = self.interpol(verts, t_ins_x)
-            verts_T = np.swapaxes(np.array(vertsX),0,1).tolist()
-            verts_int = self.interpol(verts_T, t_ins_y)
+        # initial interpolation
+        vertsX = self.interpol(verts, t_ins_x)
+        verts_T = np.swapaxes(np.array(vertsX),0,1).tolist()
+        verts_int = self.interpol(verts_T, t_ins_y)
 
-            # calculating distances with maximum one
-            dists = []
-            verts_int, attrs = match_long_repeat([verts_int, attrs])
-            for overts, oattrs in zip(verts_int,attrs):
-                overts, oattrs = match_long_repeat([overts, oattrs])
-                dists_ = []
-                for v, a in zip(overts,oattrs):
-                    dists_.append(self.distance(v,a))
-                dists.append(dists_)
-            dists_np = np.array(dists)
-            maxidist = dists_np.max()
+        # calculating distances with maximum one
+        dists = []
+        verts_int, attrs = match_long_repeat([verts_int, attrs])
+        for overts, oattrs in zip(verts_int,attrs):
+            overts, oattrs = match_long_repeat([overts, oattrs])
+            dists_ = []
+            for v, a in zip(overts,oattrs):
+                dists_.append(self.distance(v,a))
+            dists.append(dists_)
+        dists_np = np.array(dists)
+        maxidist = dists_np.max()
 
-            # normalize distances to coefficients for every vertex
-            # can be extended with formula evaluation... next step
-            #factor = eval(self.factor)
-            # vector-output
+        # normalize distances to coefficients for every vertex
+        # can be extended with formula evaluation... next step
+        #factor = eval(self.factor)
+        # vector-output
 
-            try:
-                #dists_normalized = dists_np/(maxidist*len(t_ins_y))
-                dists_normalized = func(dists_np,maxidist,t_ins_y,factor,scale,minimum,maximum)
-                #print(dists_normalized)
-            except ZeroDivisionError:
-                print ("division by zero!")
-                return
-            #except:
-            #    print('stripes cannot calc function')
-            #    return
+        try:
+            #dists_normalized = dists_np/(maxidist*len(t_ins_y))
+            dists_normalized = func(dists_np,maxidist,t_ins_y,factor,scale,minimum,maximum)
+            #print(dists_normalized)
+        except ZeroDivisionError:
+            print ("division by zero!")
+            return
+        #except:
+        #    print('stripes cannot calc function')
+        #    return
 
-            # calculate vertex moving coefficient
-            # simmetrically mirrored
-            t_ins_y_np = np.array(t_ins_y).repeat(len(dists_normalized),0)
-            a = np.roll(t_ins_y_np,1,1)
-            b = np.roll(t_ins_y_np,-1,1)
-            c = t_ins_y_np-(t_ins_y_np-a)*dists_normalized/2
-            d = t_ins_y_np+(b-t_ins_y_np)*dists_normalized/2
+        # calculate vertex moving coefficient
+        # simmetrically mirrored
+        t_ins_y_np = np.array(t_ins_y).repeat(len(dists_normalized),0)
+        a = np.roll(t_ins_y_np,1,1)
+        b = np.roll(t_ins_y_np,-1,1)
+        c = t_ins_y_np-(t_ins_y_np-a)*dists_normalized/2
+        d = t_ins_y_np+(b-t_ins_y_np)*dists_normalized/2
 
-            # replacing first-last for both mirrors
-            c[:,0] = t_ins_y_np[:,0]
-            d[:,-1] = t_ins_y_np[:,-1]
-            t_ins_y_mins = c.tolist()
-            t_ins_y_plus = d.tolist()
+        # replacing first-last for both mirrors
+        c[:,0] = t_ins_y_np[:,0]
+        d[:,-1] = t_ins_y_np[:,-1]
+        t_ins_y_mins = c.tolist()
+        t_ins_y_plus = d.tolist()
 
-            # secondary interpolation
-            # processing sliced stripes
-            vertsY_mins = self.interpol(verts_int, t_ins_y_mins)
-            vertsY_plus = self.interpol(verts_int, t_ins_y_plus)
-            verts_T_mins = np.swapaxes(np.array(vertsY_mins),0,1).tolist()
-            verts_T_plus = np.swapaxes(np.array(vertsY_plus),0,1).tolist()
-            verts_X_mins = self.interpol(verts_T_mins, t_ins_x)
-            verts_X_plus = self.interpol(verts_T_plus, t_ins_x)
+        # secondary interpolation
+        # processing sliced stripes
+        vertsY_mins = self.interpol(verts_int, t_ins_y_mins)
+        vertsY_plus = self.interpol(verts_int, t_ins_y_plus)
+        verts_T_mins = np.swapaxes(np.array(vertsY_mins),0,1).tolist()
+        verts_T_plus = np.swapaxes(np.array(vertsY_plus),0,1).tolist()
+        verts_X_mins = self.interpol(verts_T_mins, t_ins_x)
+        verts_X_plus = self.interpol(verts_T_plus, t_ins_x)
 
-            # zipping for UVconnect node to "eat" this
-            # mirrors on left and right side from initial interpolation
-            verts_out = [[M,P] for M,P in zip(verts_X_mins,verts_X_plus)]
-            vm,vp = verts_X_mins[1:],verts_X_plus[:-1]
-            #print('mnis----------',verts_X_mins[0])
-            verts_inner_out = [[M,P] for M,P in zip(vm,vp)]
+        # zipping for UVconnect node to "eat" this
+        # mirrors on left and right side from initial interpolation
+        verts_out = [[M,P] for M,P in zip(verts_X_mins,verts_X_plus)]
+        vm,vp = verts_X_mins[1:],verts_X_plus[:-1]
+        #print('mnis----------',verts_X_mins[0])
+        verts_inner_out = [[M,P] for M,P in zip(vm,vp)]
 
-            if self.outputs['vStripesOut'].is_linked:
-                self.outputs['vStripesOut'].sv_set(verts_out)
-            if self.outputs['vStripesIn'].is_linked:
-                self.outputs['vStripesIn'].sv_set(verts_inner_out)
-            if self.outputs['vShape'].is_linked:
-                self.outputs['vShape'].sv_set(verts_int)
-            if self.outputs['sCoefs'].is_linked:
-                self.outputs['sCoefs'].sv_set(dists_normalized.tolist())
+        if self.outputs['vStripesOut'].is_linked:
+            self.outputs['vStripesOut'].sv_set(verts_out)
+        if self.outputs['vStripesIn'].is_linked:
+            self.outputs['vStripesIn'].sv_set(verts_inner_out)
+        if self.outputs['vShape'].is_linked:
+            self.outputs['vShape'].sv_set(verts_int)
+        if self.outputs['sCoefs'].is_linked:
+            self.outputs['sCoefs'].sv_set(dists_normalized.tolist())
 
 
 def register():

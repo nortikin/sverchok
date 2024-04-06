@@ -202,8 +202,7 @@ class SvTriangleNode(SverchCustomTreeNode, bpy.types.Node):
         return out_verts, out_edges, out_faces
 
     def process(self):
-        # return if no outputs are connected
-        if not any(s.is_linked for s in self.outputs):
+        if not any(socket.is_linked for socket in self.outputs):
             return
 
         out_verts = []

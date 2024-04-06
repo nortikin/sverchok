@@ -139,12 +139,18 @@ class SvFieldRandomProbeMk3Node(SverchCustomTreeNode, bpy.types.Node):
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
             return
+        if not (self.inputs["Field"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Field'].label or self.inputs['Field'].identifier}' has to be connected")
+        if not (self.inputs["Bounds"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Bounds'].label or self.inputs['Bounds'].identifier}' has to be connected")
 
         if self.proportional and not self.inputs['Field'].is_linked:
             raise SvNoDataError(socket=self.inputs['Field'], node=self)
 
         fields_s = self.inputs['Field'].sv_get(default=[[None]])
         if self.distance_mode == 'FIELD':
+            if not (self.inputs["RadiusField"].is_linked):
+                raise Exception(f"Input socket '{self.inputs['RadiusField'].label or self.inputs['RadiusField'].identifier}' has to be connected")
             radius_s = self.inputs['RadiusField'].sv_get()
         else:
             radius_s = [[None]]

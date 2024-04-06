@@ -175,18 +175,19 @@ class SvOscillatorNode(SverchCustomTreeNode, bpy.types.Node):
 
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+    
+        if self.current_op == 'Custom' and not self.inputs["Wave"].is_linked:
+            return
+        params = [si.sv_get(default=[[]], deepcopy=False) for si in self.inputs[:6]]
+        matching_f = list_match_func[self.list_match]
+        spline_func = CubicSpline if self.wave_interp_mode == 'SPL' else LinearSpline
+        desired_levels = [2, 2, 2, 2, 2, 3]
+        ops = [self.current_op, spline_func, self.knot_mode, self.list_match, self.output_numpy]
+        result = recurse_f_level_control(params, ops, oscillator, matching_f, desired_levels)
 
-        if self.outputs[0].is_linked:
-            if self.current_op == 'Custom' and not self.inputs["Wave"].is_linked:
-                return
-            params = [si.sv_get(default=[[]], deepcopy=False) for si in self.inputs[:6]]
-            matching_f = list_match_func[self.list_match]
-            spline_func = CubicSpline if self.wave_interp_mode == 'SPL' else LinearSpline
-            desired_levels = [2, 2, 2, 2, 2, 3]
-            ops = [self.current_op, spline_func, self.knot_mode, self.list_match, self.output_numpy]
-            result = recurse_f_level_control(params, ops, oscillator, matching_f, desired_levels)
-
-            self.outputs[0].sv_set(result)
+        self.outputs[0].sv_set(result)
 
 
 classes = [SvOscillatorNode]

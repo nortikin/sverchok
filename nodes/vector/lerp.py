@@ -63,8 +63,9 @@ class SvVectorLerp(SverchCustomTreeNode, bpy.types.Node):
         layout.prop(self, 'process_mode', text='Evaluate', expand=True)
 
     def process(self):
-        if not self.outputs['EvPoint'].is_linked:
+        if not any(socket.is_linked for socket in self.outputs):
             return
+        
         VerticesA = self.inputs[1].sv_get()
         VerticesB = self.inputs[2].sv_get()
         factor = self.inputs['Factor'].sv_get()

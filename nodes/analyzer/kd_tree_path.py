@@ -95,13 +95,15 @@ class SvKDTreePathNode(SverchCustomTreeNode, bpy.types.Node):
         return list_match_func[self.list_match_global]([s.sv_get(default=[[]]) for s in si])
 
     def process(self):
-
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        if not (self.inputs["Verts"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Verts'].label or self.inputs['Verts'].identifier}' has to be connected")
+        
         inputs = self.inputs
         outputs = self.outputs
         so = self.outputs
         si = self.inputs
-        if not so[0].is_linked and si[0].is_linked:
-            return
 
         result = []
         group = self.get_data()

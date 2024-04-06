@@ -127,8 +127,9 @@ class GenVectorsNode(SverchCustomTreeNode, bpy.types.Node):
             get_cursor.treename = self.id_data.name
 
     def process(self):
-        if not self.outputs['Vectors'].is_linked:
+        if not any(socket.is_linked for socket in self.outputs):
             return
+        
         inputs = self.inputs
         X_ = inputs['X'].sv_get()
         Y_ = inputs['Y'].sv_get()

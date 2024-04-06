@@ -335,7 +335,7 @@ class SvCylinderNodeMK2(SverchCustomTreeNode, bpy.types.Node):
         layout.prop(self, "list_match")
 
     def process(self):
-        if not any(s.is_linked for s in self.outputs):
+        if not any(socket.is_linked for socket in self.outputs):
             return
 
         inputs = self.inputs

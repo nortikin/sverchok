@@ -124,7 +124,11 @@ class SvObjInLite(SverchCustomTreeNode, bpy.types.Node):
                     socket.sv_set([mesh_data[socket.name]])
 
     def process(self):
-
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        if not self.obj_name:
+            raise Exception("No selected objects.")
+        
         if not hash(self) in self.node_dict:
             if self.obj_name and bpy.data.objects.get(self.obj_name):
                 self.dget(self.obj_name)

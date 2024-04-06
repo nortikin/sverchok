@@ -106,13 +106,13 @@ class SvScaleNodeMk3(SverchCustomTreeNode, bpy.types.Node):
         layout.prop_menu_enum(self, "list_match", text="List Match")
 
     def process(self):
-        inputs, outputs = self.inputs, self.outputs
-
-        if not outputs[0].is_linked:
+        if not any(socket.is_linked for socket in self.outputs):
             return
-
+        if not (self.inputs["Vertices"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Vertices'].label or self.inputs['Vertices'].identifier}' has to be connected")
+        
+        inputs, outputs = self.inputs, self.outputs
         result = []
-
         params = [si.sv_get(default=[[]], deepcopy=False) for si in inputs]
 
         matching_f = list_match_func[self.list_match]

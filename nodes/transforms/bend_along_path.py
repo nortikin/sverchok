@@ -158,8 +158,6 @@ class SvBendAlongPathNode(SverchCustomTreeNode, bpy.types.Node):
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
             return
-        if not self.inputs['Vertices'].is_linked:
-            return
 
         vertices_s = self.inputs['Vertices'].sv_get()
         paths = self.inputs['Path'].sv_get()

@@ -84,6 +84,9 @@ class SvIndexToMaskNode(SverchCustomTreeNode, bpy.types.Node):
         if 'mask' in self.outputs:
             self.outputs['mask'].name = 'Mask'
 
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        
         index = self.inputs["Index"].sv_get(deepcopy=False, default=[])
         mask_size = self.inputs['Mask size'].sv_get(deepcopy=False, default=[None])
         data_to_mask = self.inputs['Data masking'].sv_get(deepcopy=False,

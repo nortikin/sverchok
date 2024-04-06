@@ -204,9 +204,9 @@ class SvSvgFillStrokeNodeMk2(SverchCustomTreeNode, bpy.types.Node):
         return mlr([fill, stroke, stroke_width, dash_pattern])
 
     def process(self):
-
-        if not self.outputs[0].is_linked:
+        if not any(socket.is_linked for socket in self.outputs):
             return
+        
         params_in = [s.sv_get(deepcopy=False, default=[[None]]) for s in self.inputs]
         params_in = self.get_data()
 

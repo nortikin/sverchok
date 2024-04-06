@@ -180,7 +180,6 @@ faces -> vertex and edges indexes'''
         self.update_mode(context)
 
     def process(self):
-
         if not any(output.is_linked for output in self.outputs):
             return
 

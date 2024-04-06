@@ -229,8 +229,7 @@ class SvMixNumbersNode(SverchCustomTreeNode, bpy.types.Node):
 
 
     def process(self):
-        # return if no outputs are connected
-        if not any(s.is_linked for s in self.outputs):
+        if not any(socket.is_linked for socket in self.outputs):
             return
 
         # input values lists (single or multi value)

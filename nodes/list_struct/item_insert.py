@@ -84,10 +84,15 @@ class SvListItemInsertNode(SverchCustomTreeNode, bpy.types.Node):
             changable_sockets(self, inputsocketname, outputsocketname)
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        
         out_socket = self.outputs[0]
         si = self.inputs
-        if not (si['Data'].is_linked and si['Item'].is_linked and out_socket.is_linked):
-            return
+        if not (si['Data'].is_linked):
+            raise Exception("Input socket 'Data' has to be connected")
+        if not (si['Item'].is_linked):
+            raise Exception("Input socket 'Item' has to be connected")
 
         data = si['Data'].sv_get(deepcopy=False)
 

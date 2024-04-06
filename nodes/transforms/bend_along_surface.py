@@ -169,8 +169,6 @@ class SvBendAlongSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
             return
-        if not self.inputs['Vertices'].is_linked:
-            return
 
         vertices_s = self.inputs['Vertices'].sv_get()
         vertices_s = ensure_nesting_level(vertices_s, 4)

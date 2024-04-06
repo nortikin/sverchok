@@ -286,20 +286,21 @@ class SvStringsToolsNode(SverchCustomTreeNode, bpy.types.Node):
                 self.outputs.new('SvStringsSocket', 'Out')
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
 
-        if self.outputs[0].is_linked:
-            current_func = func_from_mode(self.current_op)
-            params = [si.sv_get(default=[[]], deepcopy=False) for si in self.inputs]
-            matching_f = list_match_func[self.list_match]
-            desired_levels = [2 if self.current_op=='join_all' else 1]*len(params)
-            inputs_signature = self.sockets_signature.split(' ')[0]
-            ops = [current_func, inputs_signature]
-            if self.current_op  == 'to_string':
-                depth = levels_of_list_or_np(params[0])
-                desired_levels= [max(depth-self.level + 1, 1)]
-            result = recurse_f_level_control(params, ops, string_tools, matching_f, desired_levels)
+        current_func = func_from_mode(self.current_op)
+        params = [si.sv_get(default=[[]], deepcopy=False) for si in self.inputs]
+        matching_f = list_match_func[self.list_match]
+        desired_levels = [2 if self.current_op=='join_all' else 1]*len(params)
+        inputs_signature = self.sockets_signature.split(' ')[0]
+        ops = [current_func, inputs_signature]
+        if self.current_op  == 'to_string':
+            depth = levels_of_list_or_np(params[0])
+            desired_levels= [max(depth-self.level + 1, 1)]
+        result = recurse_f_level_control(params, ops, string_tools, matching_f, desired_levels)
 
-            self.outputs[0].sv_set(result)
+        self.outputs[0].sv_set(result)
 
 classes = [SvStringsToolsNode]
 register, unregister = bpy.utils.register_classes_factory(classes)

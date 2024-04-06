@@ -81,6 +81,9 @@ class SvListDecomposeNode(SverchCustomTreeNode, bpy.types.Node):
                 out.replace_socket(other.bl_idname)
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        
         data = self.inputs['data'].sv_get()
         result = self.beat(data, self.level)
         for out, socket in zip(result, self.outputs[:30]):

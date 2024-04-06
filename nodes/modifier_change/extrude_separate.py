@@ -153,17 +153,17 @@ class SvExtrudeSeparateNode(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
         return mask
 
     def process(self):
-
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        if not (self.inputs["Vertices"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Vertices'].label or self.inputs['Vertices'].identifier}' has to be connected")
+        if not (self.inputs["Polygons"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Polygons'].label or self.inputs['Polygons'].identifier}' has to be connected")
+                
         inputs = self.inputs
         outputs = self.outputs
 
-        if not (inputs['Vertices'].is_linked and inputs['Polygons'].is_linked):
-            return
-        if not any(socket.is_linked for socket in outputs):
-            return
-
         need_mask_out = 'Mask' in outputs and outputs['Mask'].is_linked
-
         vector_in = self.scale_socket_type
 
         vertices_s = inputs['Vertices'].sv_get(deepcopy=False)

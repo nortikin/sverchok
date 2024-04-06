@@ -442,8 +442,15 @@ class SvRandomPointsOnMesh(SverchCustomTreeNode, bpy.types.Node):
         self.outputs.new('SvStringsSocket', 'Face index')
 
     def process(self):
-        if not all([self.inputs['Verts'].is_linked, self.inputs['Faces'].is_linked]):
+        if not any(socket.is_linked for socket in self.outputs):
             return
+        if not (self.inputs["Verts"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Verts'].label or self.inputs['Verts'].identifier}' has to be connected")
+        if not (self.inputs["Faces"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Faces'].label or self.inputs['Faces'].identifier}' has to be connected")
+        
+        # if not all([self.inputs['Verts'].is_linked, self.inputs['Faces'].is_linked]):
+        #     return
 
         props = NodeProperties(self.proportional,
                                self.mode,

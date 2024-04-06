@@ -49,8 +49,10 @@ class SvLimitedDissolve(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
         layout.prop(self, "use_dissolve_boundaries")
 
     def process(self):
-        if not self.outputs['Verts'].is_linked:
+        if not any(socket.is_linked for socket in self.outputs):
             return
+        if not (self.inputs["Verts"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Verts'].label or self.inputs['Verts'].identifier}' has to be connected")
 
         verts = self.inputs['Verts'].sv_get(deepcopy=False)
         edges = self.inputs['Edges'].sv_get(default=[[]], deepcopy=False)

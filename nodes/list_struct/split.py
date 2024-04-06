@@ -72,6 +72,11 @@ class SvListSplitNode(SverchCustomTreeNode, bpy.types.Node):
         changable_sockets(self, inputsocketname, outputsocketname)
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        if not (self.inputs["Data"].is_linked):
+            raise Exception("Input socket 'Data' has to be connected")
+        
         if self.outputs['Split'].is_linked:
             data = self.inputs['Data'].sv_get(deepcopy=False)
             sizes = self.inputs['Split'].sv_get(deepcopy=False)[0]

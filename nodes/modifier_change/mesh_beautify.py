@@ -42,8 +42,7 @@ class SvMeshBeautify(ModifierLiteNode, SverchCustomTreeNode, bpy.types.Node):
         self.outputs.new('SvStringsSocket', 'Faces')
 
     def process(self):
-
-        if not any(s.is_linked for s in self.outputs):
+        if not any(socket.is_linked for socket in self.outputs):
             return
 
         in_verts = self.inputs['Verts'].sv_get(deepcopy=False)

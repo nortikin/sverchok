@@ -132,12 +132,17 @@ class SvOrigins(SverchCustomTreeNode, bpy.types.Node):
         self.outputs.new('SvMatrixSocket', "Matrix")
 
     def process(self):
-        if not self.inputs['Verts'].is_linked:
+        if not any(socket.is_linked for socket in self.outputs):
             return
-        if self.mode == MODE.faces and not self.inputs['Faces'].is_linked:
-            return
-        if self.mode == MODE.edges and not any([self.inputs[n].is_linked for n in ['Edges', 'Faces']]):
-            return
+        if not (self.inputs["Verts"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Verts'].label or self.inputs['Verts'].identifier}' has to be connected")
+        
+        if self.mode == MODE.faces:
+            if not self.inputs['Faces'].is_linked:
+                raise Exception(f"Input socket '{self.inputs['Faces'].label or self.inputs['Faces'].identifier}' has to be connected")
+        if self.mode == MODE.edges:
+            if not any([self.inputs[n].is_linked for n in ['Edges', 'Faces']]):
+                raise Exception(f"Input socket '{self.inputs['Edges'].label or self.inputs['Edges'].identifier}' or '{self.inputs['Faces'].label or self.inputs['Faces'].identifier}' has to be connected")
 
         out = []
         for v, e, f in zip(*[sock.sv_get(deepcopy=False, default=iter_last([None])) for sock in self.inputs]):

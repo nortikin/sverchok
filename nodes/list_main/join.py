@@ -186,9 +186,10 @@ class ListJoinNode(SverchCustomTreeNode, bpy.types.Node):
         self.set_output_socketype([sock.other.bl_idname for sock in self.inputs if sock.is_linked and sock.other])
 
     def process(self):
-
-        if not self.outputs['data'].is_linked:
+        if not any(socket.is_linked for socket in self.outputs):
             return
+        if not any(socket.is_linked for socket in self.inputs):
+            raise Exception("Some input sockets has to be connected")
 
         slots = []
         for socket in self.inputs:

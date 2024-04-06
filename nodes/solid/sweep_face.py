@@ -82,6 +82,10 @@ class SvSweepSolidFaceNode(SverchCustomTreeNode, bpy.types.Node):
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
             return
+        if not (self.inputs["Profile"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Profile'].label or self.inputs['Profile'].identifier}' has to be connected")
+        if not (self.inputs["Path"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Path'].label or self.inputs['Path'].identifier}' has to be connected")
 
         face_surface_s = self.inputs['Profile'].sv_get()
         face_surface_s = ensure_nesting_level(face_surface_s, 2, data_types=(SvSurface,))

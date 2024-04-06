@@ -81,6 +81,8 @@ class SvSolidFromFacesNode(SverchCustomTreeNode, bpy.types.Node):
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
             return
+        if not (self.inputs["SolidFaces"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['SolidFaces'].label or self.inputs['SolidFaces'].identifier}' has to be connected")
 
         face_surfaces_s = self.inputs['SolidFaces'].sv_get()
         input_level = get_data_nesting_level(face_surfaces_s, data_types=(SvSurface,))

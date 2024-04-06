@@ -50,6 +50,11 @@ class SvCacheNode(SverchCustomTreeNode, bpy.types.Node):
         changable_sockets(self, "Data", ["Data"])
         
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        if not (self.inputs["Data"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Data'].label or self.inputs['Data'].identifier}' has to be connected")
+        
         n_id = self.node_id
         data = self.node_dict.get(n_id)
         if not data:

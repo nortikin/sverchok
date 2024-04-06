@@ -52,6 +52,11 @@ class ListRepeaterNode(SverchCustomTreeNode, bpy.types.Node):
             changable_sockets(self, inputsocketname, outputsocketname)
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        if not (self.inputs["Data"].is_linked):
+            raise Exception("Input socket 'Data' has to be connected")
+        
         data = self.inputs['Data'].sv_get(deepcopy=False, default=[])
         number = self.inputs['Number'].sv_get(deepcopy=False)[0]
 

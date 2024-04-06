@@ -289,10 +289,12 @@ class SvFormulaNodeMk5(SverchCustomTreeNode, bpy.types.Node):
 
     def migrate_from(self, old_node):
         self.output_dimensions = old_node.dimensions
-    def process(self):
 
-        if not self.outputs[0].is_linked:
+    def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
             return
+        if self.inputs and not any(socket.is_linked for socket in self.inputs):
+            raise Exception("All input sockets has to be connected")
 
         # if the user specifies a variable, they must also link a value into that socket, this will prevent Exception
         self.ui_message = ""

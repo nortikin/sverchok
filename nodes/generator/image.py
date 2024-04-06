@@ -81,9 +81,10 @@ class ImageNode(SverchCustomTreeNode, bpy.types.Node):
         row.prop(self, "B", text="B")
 
     def process(self):
-        
-        if not self.image_pointer:
+        if not any(socket.is_linked for socket in self.outputs):
             return
+        if not self.image_pointer:
+            raise Exception("No Image. Select image")
 
         inputs, outputs = self.inputs, self.outputs
 

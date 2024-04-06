@@ -122,10 +122,10 @@ class SvQuaternionOutNodeMK2(SverchCustomTreeNode, bpy.types.Node, SvAngleHelper
             self.draw_angle_units_buttons(context, layout)
 
     def process(self):
-        outputs = self.outputs
-        if not any(s.is_linked for s in outputs):
+        if not any(socket.is_linked for socket in self.outputs):
             return
 
+        outputs = self.outputs
         input_Q = self.inputs['Quaternions'].sv_get()
         quaternion_list = [Quaternion(q) for q in input_Q]
 

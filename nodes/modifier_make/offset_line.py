@@ -208,13 +208,13 @@ class SvOffsetLineNode(EdgeGeneratorLiteNode, SverchCustomTreeNode, bpy.types.No
         self.outputs.new('SvStringsSocket', "VersMask")
 
     def process(self):
-
-        if not all(socket.is_linked for socket in self.inputs[:2]):
-            raise SvNotFullyConnected(self, sockets=["Vers", "Edgs"])
-        
         if not any(socket.is_linked for socket in self.outputs):
             return
-
+        if not (self.inputs["Vers"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Vers'].label or self.inputs['Vers'].identifier}' has to be connected")
+        if not (self.inputs["Edgs"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Edgs'].label or self.inputs['Edgs'].identifier}' has to be connected")
+        
         verts_in = self.inputs['Vers'].sv_get()
         edges_in = self.inputs['Edgs'].sv_get()
         shifter = self.inputs['Offset'].sv_get()

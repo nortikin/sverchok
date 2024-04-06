@@ -127,11 +127,12 @@ class SvIntersectPlanePlaneNode(SverchCustomTreeNode, bpy.types.Node):
 
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        
         '''main node function called every update'''
         so = self.outputs
         si = self.inputs
-        if not (any(s.is_linked for s in so)):
-            return
 
         result = [[] for socket in so]
         gates = [socket.is_linked for socket in so]

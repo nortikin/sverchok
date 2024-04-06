@@ -85,8 +85,12 @@ class SvJoinTrianglesNode(ModifierLiteNode, SverchCustomTreeNode, bpy.types.Node
         col.prop(self, 'shape_threshold', text='shape')
 
     def process(self):
-        if not self.outputs['Polygons'].is_linked:
+        if not any(socket.is_linked for socket in self.outputs):
             return
+        if not (self.inputs["Vertices"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Vertices'].label or self.inputs['Vertices'].identifier}' has to be connected")
+        if not (self.inputs["Polygons"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Polygons'].label or self.inputs['Polygons'].identifier}' has to be connected")
 
         verts = self.inputs['Vertices'].sv_get()
         faces = self.inputs['Polygons'].sv_get()

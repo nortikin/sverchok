@@ -254,6 +254,9 @@ class SvEasingNode(SverchCustomTreeNode, bpy.types.Node):
         return geom
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        
         p = self.inputs['Float'].sv_get()
         n_id = node_id(self)
 

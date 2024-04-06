@@ -58,6 +58,11 @@ class SvDissolveMeshElements(ModifierNode, SverchCustomTreeNode, bpy.types.Node)
         layout.prop(self, 'mask_mode', expand=True, text='')
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        if not (self.inputs["Verts"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Verts'].label or self.inputs['Verts'].identifier}' has to be connected")
+        
         verts = self.inputs['Verts'].sv_get(deepcopy=False, default=[])
         edges = self.inputs['Edges'].sv_get(deepcopy=False, default=[])
         faces = self.inputs['Faces'].sv_get(deepcopy=False, default=[])

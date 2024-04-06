@@ -189,9 +189,9 @@ If command Letter is not in the list [L, C, S, Q, T] it will be interpreted as L
         layout.prop(self, "cyclic", expand=True)
 
     def process(self):
-
-        if not self.outputs[0].is_linked:
+        if not any(socket.is_linked for socket in self.outputs):
             return
+        
         if self.mode == "CURVE":
             curves_in = self.inputs['Curve'].sv_get(deepcopy=False)
             atts_in = self.inputs['Fill / Stroke'].sv_get(deepcopy=False, default=[[None]])

@@ -64,6 +64,9 @@ class SvLimitedDissolveMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
         layout.prop(self, "delimit")
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        
         BML, Verts, Edges, Polys, vermask, edgmask, angllim = self.inputs
         o1,o2,o3,o4,o5 = self.outputs
         angle = angllim.sv_get()[0]

@@ -75,8 +75,9 @@ class SvAlignMeshByMesh(TransformNode, SverchCustomTreeNode, bpy.types.Node):
         layout.prop(self, 'align_moved_mesh', expand=True)
 
     def process(self):
-        if not self.inputs['Move mesh'].is_linked:
+        if not any(socket.is_linked for socket in self.outputs):
             return
+
         if not self.axis:
             self.outputs['Verts'].sv_set(self.inputs['Move mesh'].sv_get())
             self.outputs['Move vector'].sv_set([[(0, 0, 0)]])

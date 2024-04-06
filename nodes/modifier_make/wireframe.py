@@ -100,10 +100,14 @@ class SvWireframeNode(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
         layout.prop(self, 'replace', text="Replace")
 
     def process(self):
-        inputs, outputs = self.inputs, self.outputs
-
-        if not all(s.is_linked for s in [inputs['vertices'], inputs['polygons']]):
+        if not any(socket.is_linked for socket in self.outputs):
             return
+        if not (self.inputs["vertices"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['vertices'].label or self.inputs['vertices'].identifier}' has to be connected")
+        if not (self.inputs["polygons"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['polygons'].label or self.inputs['polygons'].identifier}' has to be connected")
+        
+        inputs, outputs = self.inputs, self.outputs
 
         poly_or_edge_linked = (outputs['edges'].is_linked or outputs['polygons'].is_linked)
         if not (outputs['vertices'].is_linked and poly_or_edge_linked):

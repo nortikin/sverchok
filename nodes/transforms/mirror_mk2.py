@@ -197,8 +197,10 @@ class SvMirrorNodeMk2(SverchCustomTreeNode, bpy.types.Node):
             layout.prop(self, "plane", expand=True)
 
     def process(self):
-        if not self.outputs['Vertices'].is_linked:
+        if not any(socket.is_linked for socket in self.outputs):
             return
+        if not (self.inputs["Vertices"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Vertices'].label or self.inputs['Vertices'].identifier}' has to be connected")
 
         vertices = self.inputs['Vertices'].sv_get(default=[])
         vert_A = self.inputs['Vert A'].sv_get(default=[[[0.0, 0.0, 0.0]]])
@@ -220,6 +222,8 @@ class SvMirrorNodeMk2(SverchCustomTreeNode, bpy.types.Node):
             points = [mirror_axis_point_and_direction(v, a, d) for v, a, d in zip(*parameters)]
             self.outputs['Vertices'].sv_set(points)
         elif self.mode == 'PLANE_M':
+            if not (self.inputs["Plane"].is_linked):
+                raise Exception(f"Input socket '{self.inputs['Plane'].label or self.inputs['Plane'].identifier}' has to be connected")
             parameters = match_long_repeat([vertices, plane])
             points = [mirror_plane_matrix(v, p) for v, p in zip(*parameters)]
             self.outputs['Vertices'].sv_set(points)

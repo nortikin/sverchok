@@ -63,13 +63,13 @@ class SvRigidOrigamiNode(TransformNode, SverchCustomTreeNode, bpy.types.Node):
         if not any(socket.is_linked for socket in self.outputs):
             return
         
-        if not self.inputs['Fold edge indices'].is_linked \
-                or not self.inputs['Fold edge angles'].is_linked:
-                    return
-        
         verts_in = self.inputs['Vertices'].sv_get()
         edges_in = self.inputs['Edges'].sv_get()
         faces_in = self.inputs['Faces'].sv_get()
+
+        if not self.inputs['Fold edge indices'].is_linked \
+                or not self.inputs['Fold edge angles'].is_linked:
+                    raise Exception(f"Input socket '{self.inputs['Fold edge indices'].label or self.inputs['Fold edge indices'].identifier}' or '{self.inputs['Fold edge angles'].label or self.inputs['Fold edge angles'].identifier}' has to be connected")
 
         fold_edge_indices = self.inputs['Fold edge indices'].sv_get()
         fold_edge_angles = self.inputs['Fold edge angles'].sv_get()

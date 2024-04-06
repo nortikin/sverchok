@@ -45,6 +45,9 @@ class SvParticlesMK2Node(SverchCustomTreeNode, bpy.types.Node):
         self.outputs.new('SvVerticesSocket', "outVelocity")
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        
         O, V, L, S = self.inputs
         outL, outV = self.outputs
 

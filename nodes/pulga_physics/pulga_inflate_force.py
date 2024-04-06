@@ -48,9 +48,11 @@ class SvPulgaInflateForceNode(SverchCustomTreeNode, bpy.types.Node):
         self.outputs.new('SvPulgaForceSocket', "Force")
 
     def process(self):
-
-        if not any(s.is_linked for s in self.outputs):
+        if not any(socket.is_linked for socket in self.outputs):
             return
+        if not (self.inputs["Polygons"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Polygons'].label or self.inputs['Polygons'].identifier}' has to be connected")
+        
         pols_in = self.inputs["Polygons"].sv_get(deepcopy=False)
         force_in = self.inputs["Magnitude"].sv_get(deepcopy=False)
 

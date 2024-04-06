@@ -48,6 +48,11 @@ class SvDataShapeNode(SverchCustomTreeNode, bpy.types.Node):
             self.outputs['Text Out'].sv_set(self.text)
         else:
             self.text = "No data"
+        
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        if not (self.inputs["Data"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Data'].label or self.inputs['Data'].identifier}' has to be connected")
 
 
     def sv_copy(self, node):

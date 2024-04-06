@@ -78,10 +78,11 @@ class SvRaycasterLiteNode(SverchCustomTreeNode, bpy.types.Node):
             yield bvh_tree_from_polygons(vertices, polygons, all_triangles=all_tris, epsilon=epsilon, safe_check=safe_check)
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        
         L, N, I, D, S = self.outputs
         RL = []
-        if not any([s.is_linked for s in self.outputs]):
-            return
         vert_in, face_in, start_in, direction_in = C([sock.sv_get(deepcopy=False) for sock in self.inputs])
 
         for bvh, st, di in zip(*[self.svmesh_to_bvh_lists(vert_in, face_in, self.all_triangles, self.epsilon, self.safe_check), start_in, direction_in]):

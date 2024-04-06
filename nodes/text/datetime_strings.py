@@ -110,7 +110,9 @@ class SvDatetimeStrings(SverchCustomTreeNode, bpy.types.Node):
         return f / seconds_in_day
 
     def process(self):
-
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        
         V1 = self.inputs["times"].sv_get()
         V2 = self.inputs["time offset"].sv_get()
 

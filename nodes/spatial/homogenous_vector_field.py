@@ -140,8 +140,9 @@ class SvHomogenousVectorField(SverchCustomTreeNode, bpy.types.Node):
         layout.prop(self, "output_numpy", toggle=True)
 
     def process(self):
-        if not self.outputs[0].is_linked:
+        if not any(socket.is_linked for socket in self.outputs):
             return
+        
         params = match_long_repeat([s.sv_get(deepcopy=False)[0] for s in self.inputs])
         get_faces = 'faces' in self.outputs and self.outputs['faces'].is_linked
         get_edges = 'edges' in self.outputs and self.outputs['edges'].is_linked

@@ -47,7 +47,7 @@ class SvAdaptiveEdgeNode(ModifierLiteNode, SverchCustomTreeNode, bpy.types.Node)
         self.outputs.new('SvStringsSocket', 'Edges')
 
     def process(self):
-        if not all(s.is_linked for s in self.inputs):
+        if not any(socket.is_linked for socket in self.outputs):
             return
 
         versR = Vector_generate(self.inputs['VersR'].sv_get())

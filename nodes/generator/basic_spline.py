@@ -82,14 +82,10 @@ class BasicSplineNode(SverchCustomTreeNode, bpy.types.Node):
         layout.prop(self, "list_match")
 
     def process(self):
-        outputs = self.outputs
-
-        '''
-        - is hnd_edges socket created, means all sockets exist.
-        - is anything connected to the Verts socket?
-        '''
-        if not (('hnd Edges' in outputs) and (outputs['Verts'].is_linked)):
+        if not any(socket.is_linked for socket in self.outputs):
             return
+        
+        outputs = self.outputs
 
         '''
         operational scheme: (spline = handle set (k1, ctrl1, ctrl2, k2))

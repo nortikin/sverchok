@@ -103,8 +103,11 @@ class SvColorsOutNodeMK1(SverchCustomTreeNode, bpy.types.Node):
         layout.prop_menu_enum(self, "selected_mode", text="Function")
         # layout.prop(self, 'use_alpha')
         layout.prop(self, "output_numpy", toggle=True)
-    def process(self):
 
+    def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        
         color_input = self.inputs['Colors']
         if color_input.is_linked:
             abc = self.inputs['Colors'].sv_get(deepcopy=False)

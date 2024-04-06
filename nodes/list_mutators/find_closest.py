@@ -49,6 +49,9 @@ class SvFindClosestValue(SverchCustomTreeNode, bpy.types.Node):
         layout.prop(self, 'mode', expand=True)
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        
         vals = self.inputs['Values'].sv_get(deepcopy=False)
         data = self.inputs['Data'].sv_get(deepcopy=False, default=[])
         _range = self.inputs['Range'].sv_get(deepcopy=False)

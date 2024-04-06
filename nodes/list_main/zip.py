@@ -68,6 +68,11 @@ class ZipNode(SverchCustomTreeNode, bpy.types.Node):
 
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        if len([s for s in self.inputs if s.is_linked])<2:
+            raise Exception("Minimum two input sockets has to be connected")
+        
         if self.outputs['data'].is_linked:
             slots = []
             for socket in self.inputs:

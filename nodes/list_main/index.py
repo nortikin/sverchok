@@ -49,6 +49,11 @@ class SvIndexListNode(SverchCustomTreeNode, bpy.types.Node):
         col.prop(self,'use_range')
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        if not any(socket.is_linked for socket in self.inputs):
+            raise Exception("All input sockets has to be connected")
+        
         data = self.inputs['data'].sv_get(deepcopy=False, default=[])
         items = self.inputs['Item'].sv_get(deepcopy=False, default=[])
 

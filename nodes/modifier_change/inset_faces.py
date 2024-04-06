@@ -383,8 +383,13 @@ class SvInsetFaces(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
         layout.label(text=socket.name)
 
     def process(self):
-        if not all([sock.is_linked for sock in [self.inputs['Verts'], self.inputs['Faces']]]):
+        if not any(socket.is_linked for socket in self.outputs):
             return
+        if not (self.inputs["Verts"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Verts'].label or self.inputs['Verts'].identifier}' has to be connected")
+        if not (self.inputs["Faces"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Faces'].label or self.inputs['Faces'].identifier}' has to be connected")
+        
         inputs = self.inputs
         params = [s.sv_get(deepcopy=False, default=[[]]) for s in self.inputs]
         max_len = max(map(len, params))

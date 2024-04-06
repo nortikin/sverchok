@@ -51,9 +51,12 @@ class SvLloydSolidFaceNode(SverchCustomTreeNode, bpy.types.Node):
         self.outputs.new('SvVerticesSocket', "UVPoints")
 
     def process(self):
-
         if not any(socket.is_linked for socket in self.outputs):
             return
+        if not (self.inputs["SolidFace"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['SolidFace'].label or self.inputs['SolidFace'].identifier}' has to be connected")
+        if not (self.inputs["Sites"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Sites'].label or self.inputs['Sites'].identifier}' has to be connected")
 
         surface_in = self.inputs['SolidFace'].sv_get()
         sites_in = self.inputs['Sites'].sv_get()

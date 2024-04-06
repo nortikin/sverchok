@@ -25,6 +25,7 @@ class SvNumExprNode(SverchCustomTreeNode, bpy.types.Node):
     """
     bl_idname = 'SvNumExprNode'
     bl_label = 'Num Expression node'
+    bl_icon = 'CON_TRANSFORM_CACHE'
     sv_icon = 'SV_FORMULA'
     sv_dependencies = ['numexpr']
 
@@ -145,9 +146,12 @@ class SvNumExprNode(SverchCustomTreeNode, bpy.types.Node):
             self.debug("It seems there is some problem in ordering sockets")
 
     def process(self):
-        if not self.expression:
-            self.outputs[0].sv_set([])
+        if not any(socket.is_linked for socket in self.outputs):
             return
+        
+        if not self.expression:
+            raise Exception("Expression is empty. Write expression.")
+        
         if invalid_names := self.get('invalid_names'):
             raise NameError(f"{invalid_names=}")
         inp_vars = [s.sv_get(deepcopy=False) for s in self.inputs]

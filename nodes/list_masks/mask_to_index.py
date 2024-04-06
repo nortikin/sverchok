@@ -43,10 +43,13 @@ class SvMaskToIndexNode(SverchCustomTreeNode, bpy.types.Node):
 
 
     def process(self):
+        if not any(socket.is_linked for socket in self.outputs):
+            return
+        if not all(socket.is_linked for socket in self.inputs):
+            raise Exception("Input socket 'Mask' has to be connected")
+        
         inputs = self.inputs
         outputs = self.outputs
-        if not (any(s.is_linked for s in outputs) and inputs[0].is_linked):
-            return
         mask = inputs['Mask'].sv_get(default=[[1, 0]])
 
 

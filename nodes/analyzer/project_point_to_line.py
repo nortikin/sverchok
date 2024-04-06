@@ -372,9 +372,13 @@ class SvProjectPointToLine(SverchCustomTreeNode, bpy.types.Node):
         layout.row().prop(self, 'set_res', toggle=True)
 
     def process(self):
-        if not (self.inputs['Vectors_lines'].is_linked and self.inputs['Project_points'].is_linked):
+        if not any(socket.is_linked for socket in self.outputs):
             return
-
+        if not (self.inputs["Vectors_lines"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Vectors_lines'].label or self.inputs['Vectors_lines'].identifier}' has to be connected")
+        if not (self.inputs["Project_points"].is_linked):
+            raise Exception(f"Input socket '{self.inputs['Project_points'].label or self.inputs['Project_points'].identifier}' has to be connected")
+        
         v_lines = self.inputs['Vectors_lines'].sv_get()
         p_points = self.inputs['Project_points'].sv_get()
         if self.set_res:
