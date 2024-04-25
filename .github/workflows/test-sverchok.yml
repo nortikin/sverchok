@@ -16,13 +16,13 @@ jobs:
       blender_version: "2.93"
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - name: Set up Python 3.9
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v5
       with:
         python-version: 3.9
     - name: Cache
-      uses: actions/cache@v2
+      uses: actions/cache@v4
       with:
         path: ./installation
         key: blender-${{ env.blender_version }}-${{ hashFiles('.github/workflows/test-sverchok.yml') }}
@@ -75,7 +75,7 @@ jobs:
           ./installation/blender/blender-softwaregl
 
     - name: Save logs
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       if: failure()
       with:
         name: log_files

@@ -12,7 +12,7 @@ jobs:
   build_docs:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - uses: ammaraskar/sphinx-action@master
       with:
 
@@ -20,4 +20,4 @@ jobs:
         # https://www.sphinx-doc.org/en/master/man/sphinx-build.html
         # https://www.sphinx-doc.org/en/master/usage/builders/index.html?highlight=DummyBuilder#sphinx.builders.dummy.DummyBuilder
         build-command: sphinx-build -W --keep-going -b dummy . _test
-        pre-build-command: pip install sphinx-rtd-theme
+        pre-build-command: pip install sphinx-rtd-theme==1.2.2
