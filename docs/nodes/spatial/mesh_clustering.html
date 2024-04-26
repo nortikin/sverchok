@@ -78,7 +78,6 @@
 <li class="toctree-l4"><a class="reference internal" href="#dependencies">Dependencies</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#outputs">Outputs</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#example-of-usage">Example of Usage</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#high-poly-clusterizing">High poly clusterizing</a></li>
@@ -156,7 +155,7 @@
              
   <section id="mesh-clustering">
 <h1>Mesh clustering<a class="headerlink" href="#mesh-clustering" title="Link to this heading">¶</a></h1>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/d850920c-856c-4beb-a273-a779d86ef434"><img alt="https://github.com/nortikin/sverchok/assets/14288520/d850920c-856c-4beb-a273-a779d86ef434" src="https://github.com/nortikin/sverchok/assets/14288520/d850920c-856c-4beb-a273-a779d86ef434" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/050bd959-f825-48c8-8036-790030ea5729"><img alt="https://github.com/nortikin/sverchok/assets/14288520/050bd959-f825-48c8-8036-790030ea5729" src="https://github.com/nortikin/sverchok/assets/14288520/050bd959-f825-48c8-8036-790030ea5729" /></a>
 <section id="dependencies">
 <h2>Dependencies<a class="headerlink" href="#dependencies" title="Link to this heading">¶</a></h2>
 <p>This node requires <a class="reference external" href="https://github.com/pyvista/pyacvd">pyacvd</a> library to work. One can install it in addon settings:</p>
@@ -171,20 +170,15 @@
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
-<ul class="simple">
-<li><p><strong>Vertices</strong>, <strong>Edges</strong>, <strong>Faces</strong> - Source mesh</p></li>
-</ul>
-</section>
-<section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
 <ul>
-<li><p><strong>Subdivide</strong> - if source mesh is not dense enough for uniform remeshing then subdivide source mesh. A linear subdivision of the mesh. If model has high dense one can low Subdivide param to zero. For low dense mesh a value 3 is good.</p>
+<li><p><strong>Vertices</strong>, <strong>Edges</strong>, <strong>Faces</strong> - Source mesh</p></li>
+<li><p><strong>Subdivide</strong> - if source mesh is not dense enough for uniform remeshing then subdivide source mesh. A linear subdivision of the mesh. If model has high dense one can low Subdivide param to zero. For low dense mesh a value 3 is good. (min=0)</p>
 <blockquote>
 <div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/2d2d6e3a-747e-4be2-88e2-50e9c9b39c1e"><img alt="https://github.com/nortikin/sverchok/assets/14288520/2d2d6e3a-747e-4be2-88e2-50e9c9b39c1e" src="https://github.com/nortikin/sverchok/assets/14288520/2d2d6e3a-747e-4be2-88e2-50e9c9b39c1e" /></a>
 </div></blockquote>
 </li>
-<li><p><strong>Max itereation</strong> - Max iteration of clusterization.</p></li>
-<li><p><strong>Clusters</strong> - Cluster counts.</p>
+<li><p><strong>Max itereation</strong> - Max iteration of clusterization. (min=0)</p></li>
+<li><p><strong>Clusters</strong> - Cluster counts. (min=4)</p>
 <blockquote>
 <div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/6d49a5cf-704d-4566-b56e-861a88b9d34f"><img alt="https://github.com/nortikin/sverchok/assets/14288520/6d49a5cf-704d-4566-b56e-861a88b9d34f" src="https://github.com/nortikin/sverchok/assets/14288520/6d49a5cf-704d-4566-b56e-861a88b9d34f" /></a>
 </div></blockquote>
@@ -206,7 +200,7 @@
 <section id="high-poly-clusterizing">
 <h2>High poly clusterizing<a class="headerlink" href="#high-poly-clusterizing" title="Link to this heading">¶</a></h2>
 <p>Subdivide is zero.</p>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/f4ca089c-7704-41aa-943f-b629f1dc10ab"><img alt="https://github.com/nortikin/sverchok/assets/14288520/f4ca089c-7704-41aa-943f-b629f1dc10ab" src="https://github.com/nortikin/sverchok/assets/14288520/f4ca089c-7704-41aa-943f-b629f1dc10ab" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/a25eb0d2-cccc-4086-b663-0036d60314a5"><img alt="https://github.com/nortikin/sverchok/assets/14288520/a25eb0d2-cccc-4086-b663-0036d60314a5" src="https://github.com/nortikin/sverchok/assets/14288520/a25eb0d2-cccc-4086-b663-0036d60314a5" /></a>
 </section>
 </section>
 
