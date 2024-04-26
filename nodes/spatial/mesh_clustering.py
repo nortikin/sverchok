@@ -127,6 +127,7 @@ class SvMeshClusteringNode(SverchCustomTreeNode, bpy.types.Node, SvRecursiveNode
         son('SvVerticesSocket', 'Vertices')
         son('SvStringsSocket', 'Edges')
         son('SvStringsSocket', 'Faces')
+        self.width = 210
         
 
         self.update_sockets(context)
