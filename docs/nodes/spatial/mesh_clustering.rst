@@ -1,8 +1,8 @@
 Mesh clustering
 ===============
 
-.. image:: https://github.com/nortikin/sverchok/assets/14288520/d850920c-856c-4beb-a273-a779d86ef434
-  :target: https://github.com/nortikin/sverchok/assets/14288520/d850920c-856c-4beb-a273-a779d86ef434
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/050bd959-f825-48c8-8036-790030ea5729
+  :target: https://github.com/nortikin/sverchok/assets/14288520/050bd959-f825-48c8-8036-790030ea5729
 
 Dependencies
 ------------
@@ -29,9 +29,6 @@ Inputs
 This node has the following inputs:
 
 - **Vertices**, **Edges**, **Faces** - Source mesh
-
-Parameters
-----------
 
 - **Subdivide** - if source mesh is not dense enough for uniform remeshing then subdivide source mesh. A linear subdivision of the mesh. If model has high dense one can low Subdivide param to zero. For low dense mesh a value 3 is good.
 
@@ -65,8 +62,8 @@ High poly clusterizing
 
 Subdivide is zero.
 
-.. image:: https://github.com/nortikin/sverchok/assets/14288520/f4ca089c-7704-41aa-943f-b629f1dc10ab
-  :target: https://github.com/nortikin/sverchok/assets/14288520/f4ca089c-7704-41aa-943f-b629f1dc10ab
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/a25eb0d2-cccc-4086-b663-0036d60314a5
+  :target: https://github.com/nortikin/sverchok/assets/14288520/a25eb0d2-cccc-4086-b663-0036d60314a5
 
 
 .. _pyacvd: https://github.com/pyvista/pyacvd

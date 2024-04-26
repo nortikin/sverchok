@@ -167,9 +167,13 @@ class SvMeshClusteringNode(SverchCustomTreeNode, bpy.types.Node, SvRecursiveNode
         res_edges = []
         res_faces = []
         for cluster_subdivide_i, max_iter_i, cluster_counts_i, verts_i, edges_i, faces_i in zip_long_repeat(cluster_subdivide, max_iter, cluster_counts, Vertices, Edges, Faces):
+            if cluster_subdivide_i<0:
+                cluster_subdivide_i=0
+            if max_iter_i<0:
+                max_iter_i=0
             if cluster_counts_i<10:
                 cluster_counts_i=10
-                
+
             if( max(map(len, faces_i))!=min(map(len, faces_i))):
                 bm_I = bmesh_from_pydata(verts_i, edges_i, faces_i, markup_face_data=True, normal_update=True)
                 b_faces = []
