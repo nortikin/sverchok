@@ -414,21 +414,21 @@ class SvGetObjectsDataMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
                     # verts, edgs, pols = pydata_from_bmesh(bm)
 
                     if o_vs:
-                        verts = [ Vector(v.co) for v in bm.verts]  # v.co is a Vector()
+                        verts = [ v.co[:] for v in bm.verts]  # v.co is a Vector()
                     if o_es:
                         edgs = [[e.verts[0].index, e.verts[1].index] for e in bm.edges]
                     if o_ps:
                         pols = [[i.index for i in p.verts] for p in bm.faces]
                     if o_vn:
-                        vertex_normals = [ Vector(v.normal) for v in bm.verts] # v.normal is a Vector()
+                        vertex_normals = [ v.normal[:] for v in bm.verts] # v.normal is a Vector()
                     if o_mi:
                         material_indexes = self.get_materials_from_bmesh(bm)
                     if o_pa:
                         polygons_areas = [ p.calc_area() for p in bm.faces ]
                     if o_pc:
-                        polygon_centers = [ Vector(p.calc_center_median()) for p in bm.faces ]
+                        polygon_centers = [ p.calc_center_median()[:] for p in bm.faces ]
                     if o_pn:
-                        polygon_normals = [ Vector(p.normal) for p in bm.faces ]
+                        polygon_normals = [ p.normal[:] for p in bm.faces ]
 
                     del bm
                 else:
