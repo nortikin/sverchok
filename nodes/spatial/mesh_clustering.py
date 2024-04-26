@@ -16,7 +16,7 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-from itertools import product
+from itertools import product, chain
 import numpy as np
 from sverchok.dependencies import pyacvd
 if pyacvd is not None:
@@ -34,7 +34,7 @@ from sverchok.utils.sv_mesh_utils import mesh_join
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 from sverchok.utils.modules.matrix_utils import matrix_apply_np
 
-from sverchok.data_structure import dataCorrect, updateNode, zip_long_repeat
+from sverchok.data_structure import dataCorrect, updateNode, zip_long_repeat, ensure_nesting_level, flatten_data
 from sverchok.utils.geom import bounding_box_aligned
 
 class SvMeshClusteringNode(SverchCustomTreeNode, bpy.types.Node, SvRecursiveNode):
@@ -100,9 +100,9 @@ class SvMeshClusteringNode(SverchCustomTreeNode, bpy.types.Node, SvRecursiveNode
         layout.row().prop(self, 'output_as_numpy')
 
     def draw_buttons(self, context, layout):
-        layout.row().prop(self, 'cluster_subdivide')
-        layout.row().prop(self, 'max_iter')
-        layout.row().prop(self, 'cluster_counts')
+        # layout.row().prop(self, 'cluster_subdivide')
+        # layout.row().prop(self, 'max_iter')
+        # layout.row().prop(self, 'cluster_counts')
 
         col = layout.column()
         col.row().label(text="Triangulate mesh polygons:")
@@ -120,9 +120,16 @@ class SvMeshClusteringNode(SverchCustomTreeNode, bpy.types.Node, SvRecursiveNode
 
     def sv_init(self, context):
         son = self.outputs.new
+        self.inputs.new('SvStringsSocket', "cluster_subdivide").prop_name = 'cluster_subdivide'
+        self.inputs.new('SvStringsSocket', "max_iter").prop_name = 'max_iter'
+        self.inputs.new('SvStringsSocket', "cluster_counts").prop_name = 'cluster_counts'
         self.inputs.new('SvVerticesSocket', 'Vertices')
         self.inputs.new('SvStringsSocket', 'Edges')
         self.inputs.new('SvStringsSocket', 'Faces')
+
+        self.inputs["cluster_subdivide"].label = "Cluster Subdivide"
+        self.inputs["max_iter"].label = "Max Iteration"
+        self.inputs["cluster_counts"].label = "Cluster counts"
 
         son('SvVerticesSocket', 'Vertices')
         son('SvStringsSocket', 'Edges')
@@ -134,9 +141,23 @@ class SvMeshClusteringNode(SverchCustomTreeNode, bpy.types.Node, SvRecursiveNode
 
     def process(self):
         inputs = self.inputs
-        Vertices = inputs["Vertices"].sv_get(default=None)
-        Edges = inputs["Edges"].sv_get(default=[[]])
-        Faces = inputs["Faces"].sv_get(default=None)
+        _cluster_subdivide = inputs["cluster_subdivide"].sv_get(default=[[0]], deepcopy=False)
+        cluster_subdivide = flatten_data(_cluster_subdivide)
+        _max_iter = inputs["max_iter"].sv_get(default=[[20]], deepcopy=False)
+        max_iter = flatten_data(_max_iter)
+        _cluster_counts = inputs["cluster_counts"].sv_get(default=[[1000]], deepcopy=False)
+        cluster_counts = flatten_data(_cluster_counts)
+
+        _Vertices = inputs["Vertices"].sv_get(default=[[]], deepcopy=False)
+        Vertices  = ensure_nesting_level(_Vertices, 3)
+        _Edges    = inputs["Edges"].sv_get(default=[[]], deepcopy=False)
+        Edges     = ensure_nesting_level(_Edges, 3)
+        _Faces    = inputs["Faces"].sv_get(default=[[]], deepcopy=False)
+        Faces     = ensure_nesting_level(_Faces, 3)
+
+        cluster_subdivide = cluster_subdivide[: len(Vertices)]
+        max_iter          = max_iter[: len(Vertices)]
+        cluster_counts    = cluster_counts[: len(Vertices)]
 
         outputs = self.outputs
         if not any( [o.is_linked for o in outputs]):
@@ -145,9 +166,12 @@ class SvMeshClusteringNode(SverchCustomTreeNode, bpy.types.Node, SvRecursiveNode
         res_verts = []
         res_edges = []
         res_faces = []
-        for verts, edges, faces in zip_long_repeat(Vertices, Edges, Faces):
-            if( max(map(len, faces))!=min(map(len, faces))):
-                bm_I = bmesh_from_pydata(verts, edges, faces, markup_face_data=True, normal_update=True)
+        for cluster_subdivide_i, max_iter_i, cluster_counts_i, verts_i, edges_i, faces_i in zip_long_repeat(cluster_subdivide, max_iter, cluster_counts, Vertices, Edges, Faces):
+            if cluster_counts_i<10:
+                cluster_counts_i=10
+                
+            if( max(map(len, faces_i))!=min(map(len, faces_i))):
+                bm_I = bmesh_from_pydata(verts_i, edges_i, faces_i, markup_face_data=True, normal_update=True)
                 b_faces = []
                 for face in bm_I.faces:
                     b_faces.append(face)
@@ -156,12 +180,12 @@ class SvMeshClusteringNode(SverchCustomTreeNode, bpy.types.Node, SvRecursiveNode
                 bm_I.free()
                 pdmesh = PolyData.from_regular_faces( new_vertices_I, new_faces_I)
             else:
-                pdmesh = PolyData.from_regular_faces( verts, faces)
+                pdmesh = PolyData.from_regular_faces( verts_i, faces_i)
 
             clust = pyacvd.Clustering(pdmesh)
-            if(self.cluster_subdivide>0):
-                clust.subdivide(self.cluster_subdivide)
-            clust.cluster(self.cluster_counts, maxiter=self.max_iter)
+            if(cluster_subdivide_i>0):
+                clust.subdivide(cluster_subdivide_i)
+            clust.cluster(cluster_counts_i, maxiter=max_iter_i)
             remesh = clust.create_mesh()
             # remesh is triangulated here
             edges0 = remesh.regular_faces[:,[0,1]]  # edges AB
