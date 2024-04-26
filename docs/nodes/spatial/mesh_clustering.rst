@@ -1,8 +1,8 @@
 Mesh clustering
 ===============
 
-.. image:: https://github.com/nortikin/sverchok/assets/14288520/d850920c-856c-4beb-a273-a779d86ef434
-  :target: https://github.com/nortikin/sverchok/assets/14288520/d850920c-856c-4beb-a273-a779d86ef434
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/050bd959-f825-48c8-8036-790030ea5729
+  :target: https://github.com/nortikin/sverchok/assets/14288520/050bd959-f825-48c8-8036-790030ea5729
 
 Dependencies
 ------------
@@ -30,16 +30,13 @@ This node has the following inputs:
 
 - **Vertices**, **Edges**, **Faces** - Source mesh
 
-Parameters
-----------
-
-- **Subdivide** - if source mesh is not dense enough for uniform remeshing then subdivide source mesh. A linear subdivision of the mesh. If model has high dense one can low Subdivide param to zero. For low dense mesh a value 3 is good.
+- **Subdivide** - if source mesh is not dense enough for uniform remeshing then subdivide source mesh. A linear subdivision of the mesh. If model has high dense one can low Subdivide param to zero. For low dense mesh a value 3 is good. (min=0)
 
     .. image:: https://github.com/nortikin/sverchok/assets/14288520/2d2d6e3a-747e-4be2-88e2-50e9c9b39c1e
       :target: https://github.com/nortikin/sverchok/assets/14288520/2d2d6e3a-747e-4be2-88e2-50e9c9b39c1e
 
-- **Max itereation** - Max iteration of clusterization.
-- **Clusters** - Cluster counts.
+- **Max itereation** - Max iteration of clusterization. (min=0)
+- **Clusters** - Cluster counts. (min=4)
 
     .. image:: https://github.com/nortikin/sverchok/assets/14288520/6d49a5cf-704d-4566-b56e-861a88b9d34f
       :target: https://github.com/nortikin/sverchok/assets/14288520/6d49a5cf-704d-4566-b56e-861a88b9d34f
@@ -65,8 +62,8 @@ High poly clusterizing
 
 Subdivide is zero.
 
-.. image:: https://github.com/nortikin/sverchok/assets/14288520/f4ca089c-7704-41aa-943f-b629f1dc10ab
-  :target: https://github.com/nortikin/sverchok/assets/14288520/f4ca089c-7704-41aa-943f-b629f1dc10ab
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/a25eb0d2-cccc-4086-b663-0036d60314a5
+  :target: https://github.com/nortikin/sverchok/assets/14288520/a25eb0d2-cccc-4086-b663-0036d60314a5
 
 
 .. _pyacvd: https://github.com/pyvista/pyacvd
