@@ -83,14 +83,14 @@ class SvMeshClusteringNode(SverchCustomTreeNode, bpy.types.Node, SvRecursiveNode
     
     cluster_subdivide : IntProperty(
         min=0, default=0, name='Subdivide',
-        description="Cluster subdivide", update=updateNode) # type: ignore
+        description="Cluster subdivide. (min=0)", update=updateNode) # type: ignore
     max_iter : IntProperty(
         min=1, default=100, name='Max iteration',
-        description="Max iteration of clusterization", update=updateNode) # type: ignore
+        description="Max iteration of clusterization. (min=0)", update=updateNode) # type: ignore
 
     cluster_counts : IntProperty(
-        min=0, default=1000, name='Clusters',
-        description="Cluster counts", update=updateNode) # type: ignore
+        min=4, default=1000, name='Clusters',
+        description="Cluster counts. (min=4)", update=updateNode) # type: ignore
 
 
     def update_sockets(self, context):
@@ -171,8 +171,8 @@ class SvMeshClusteringNode(SverchCustomTreeNode, bpy.types.Node, SvRecursiveNode
                 cluster_subdivide_i=0
             if max_iter_i<0:
                 max_iter_i=0
-            if cluster_counts_i<10:
-                cluster_counts_i=10
+            if cluster_counts_i<4:
+                cluster_counts_i=4
 
             if( max(map(len, faces_i))!=min(map(len, faces_i))):
                 bm_I = bmesh_from_pydata(verts_i, edges_i, faces_i, markup_face_data=True, normal_update=True)
