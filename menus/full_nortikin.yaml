@@ -395,6 +395,7 @@
     - ---
     - SvConvexHullNodeMK2
     - SvConcaveHullNode
+    - SvMeshClusteringNode
 
 
 ################################################################################

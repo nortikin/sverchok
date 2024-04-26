@@ -327,6 +327,7 @@
     - ---
     - SvConvexHullNodeMK2
     - SvConcaveHullNode
+    - SvMeshClusteringNode
 
 - Transforms:
     - icon_name: ORIENTATION_LOCAL
