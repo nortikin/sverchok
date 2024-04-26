@@ -105,7 +105,7 @@ class SvMeshClusteringNode(SverchCustomTreeNode, bpy.types.Node, SvRecursiveNode
         layout.row().prop(self, 'cluster_counts')
 
         col = layout.column()
-
+        col.row().label(text="Triangulate mesh polygons:")
         row = col.row()
         split = row.split(factor=0.4)
         split.column().label(text="Quads mode:")
