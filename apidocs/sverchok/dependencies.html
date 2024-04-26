@@ -236,6 +236,14 @@ try:
 except ImportError:
     ezdxf = None 
 
+pyacvd_d = sv_dependencies[&#34;pyacvd&#34;] = SvDependency(&#34;pyacvd&#34;,&#34;https://github.com/pyvista/pyacvd&#34;)
+pyacvd_d.pip_installable = True
+try:
+    import pyacvd
+    pyacvd_d.module = pyacvd
+except ImportError:
+    pyacvd = None 
+
 settings.pip = pip
 settings.sv_dependencies = sv_dependencies
 settings.ensurepip = ensurepip
