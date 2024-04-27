@@ -191,12 +191,7 @@ class SvMeshClusteringNode(SverchCustomTreeNode, bpy.types.Node, SvRecursiveNode
                 clust.subdivide(cluster_subdivide_i)
             clust.cluster(cluster_counts_i, maxiter=max_iter_i)
             remesh = clust.create_mesh()
-            # remesh is triangulated here
-            edges0 = remesh.regular_faces[:,[0,1]]  # edges AB
-            edges1 = remesh.regular_faces[:,[1,2]]  # edges BC
-            edges2 = remesh.regular_faces[:,[2,0]]  # edges CA
-            # stack
-            remesh_edges = np.vstack((edges0, edges1, edges2))
+            remesh_edges = np.reshape(remesh.extract_all_edges(use_all_points=True).lines, (-1,3))[:,[1,2]]  # https://docs.pyvista.org/version/stable/api/core/_autosummary/pyvista.CompositeFilters.extract_all_edges.html#pyvista.CompositeFilters.extract_all_edges
 
             if self.output_as_numpy:
                 res_verts.append(remesh.points)
