@@ -11,6 +11,571 @@ from cython.parallel import prange
 from pyacvd import _clustering
 
 
+def _clustering_weighted_points_double(v, f, additional_weights, return_weighted=True):
+    """
+    Returns point weight based on area weight and weighted points.
+    Points are weighted by adjacent area faces.
+
+    Parameters
+    ----------
+    v : np.ndarray, np.double
+        Point array
+
+    f : np.ndarray, int
+        n x 4 face array.  First column is padding and is ignored.
+
+    Returns
+    -------
+    pweight : np.ndarray, np.double
+        Point weight array
+
+    wvertex : np.ndarray, np.double
+        Vertices mutlipled by their corresponding weights.
+    """
+    if f.shape[1] != 4:
+        raise Exception('Must be an unclipped vtk face array')
+
+    nfaces = f.shape[0]
+    npoints = v.shape[0]
+    pweight = np.zeros(npoints)
+    farea = np.empty(nfaces)
+    wvertex = np.empty((npoints, 3))
+
+    #cdef double v0_0, v0_1, v0_2
+    #cdef double v1_0, v1_1, v1_2
+    #cdef double v2_0, v2_1, v2_2
+    #cdef double e0_0, e0_1, e0_2
+    #cdef double e1_0, e1_1, e1_2
+    #cdef double c0, c1, c2
+    #cdef double farea_l
+    #cdef int i
+
+    #cdef int point0, point1, point2
+
+    for i in prange(nfaces, nogil=True):
+        point0 = f[i, 1]
+        point1 = f[i, 2]
+        point2 = f[i, 3]
+
+        v0_0 = v[point0, 0]
+        v0_1 = v[point0, 1]
+        v0_2 = v[point0, 2]
+
+        v1_0 = v[point1, 0]
+        v1_1 = v[point1, 1]
+        v1_2 = v[point1, 2]
+
+        v2_0 = v[point2, 0]
+        v2_1 = v[point2, 1]
+        v2_2 = v[point2, 2]
+
+        # Edges
+        e0_0 = v1_0 - v0_0
+        e0_1 = v1_1 - v0_1
+        e0_2 = v1_2 - v0_2
+
+        e1_0 = v2_0 - v0_0
+        e1_1 = v2_1 - v0_1
+        e1_2 = v2_2 - v0_2
+
+        c0 = e0_1*e1_2 - e0_2*e1_1
+        c1 = e0_2*e1_0 - e0_0*e1_2
+        c2 = e0_0*e1_1 - e0_1*e1_0
+
+        # triangle area
+        farea[i] = 0.5*math.sqrt(c0**2 + c1**2 + c2**2)  # подумать о numpy
+
+    for i in range(nfaces):
+        point0 = f[i, 1]
+        point1 = f[i, 2]
+        point2 = f[i, 3]
+        farea_l = farea[i]
+
+        # Store the area of the faces adjacent to each point
+        pweight[point0] += farea_l
+        pweight[point1] += farea_l
+        pweight[point2] += farea_l
+
+    # Compute weighted vertex
+    #cdef double wgt
+    if return_weighted:
+        if additional_weights.shape[0] == npoints:
+            for i in prange(npoints, nogil=True):
+                wgt = additional_weights[i]*pweight[i]
+                wvertex[i, 0] = wgt*v[i, 0]
+                wvertex[i, 1] = wgt*v[i, 1]
+                wvertex[i, 2] = wgt*v[i, 2]
+
+        else:
+            for i in prange(npoints, nogil=True):
+                wgt = pweight[i]
+                wvertex[i, 0] = wgt*v[i, 0]
+                wvertex[i, 1] = wgt*v[i, 1]
+                wvertex[i, 2] = wgt*v[i, 2]
+
+        return np.asarray(pweight), np.asarray(wvertex)
+
+    else:
+        return np.asarray(pweight)
+
+
+def _clustering_weighted_points_float(v, f, additional_weights, return_weighted=True):
+    """
+    Returns point weight based on area weight and weighted points.
+    Points are weighted by adjacent area faces.
+
+    Parameters
+    ----------
+    v : np.ndarray, np.float
+        Point array
+
+    f : np.ndarray, int
+        n x 4 face array.  First column is padding and is ignored.
+
+    Returns
+    -------
+    pweight : np.ndarray, np.double
+        Point weight array
+
+    wvertex : np.ndarray, np.double
+        Vertices mutlipled by their corresponding weights.
+    """
+    if f.shape[1] != 4:
+        raise Exception('Must be an unclipped vtk face array')
+
+    nfaces = f.shape[0]
+    npoints = v.shape[0]
+    pweight = np.zeros(npoints)
+    farea = np.empty(nfaces)
+    wvertex = np.empty((npoints, 3))
+
+    #cdef double v0_0, v0_1, v0_2
+    #cdef double v1_0, v1_1, v1_2
+    #cdef double v2_0, v2_1, v2_2
+    #cdef double e0_0, e0_1, e0_2
+    #cdef double e1_0, e1_1, e1_2
+    #cdef double c0, c1, c2
+    #cdef double farea_l
+    #cdef int i
+
+    #cdef int point0, point1, point2
+
+    for i in prange(nfaces, nogil=True):
+        point0 = f[i, 1]
+        point1 = f[i, 2]
+        point2 = f[i, 3]
+
+        v0_0 = v[point0, 0]
+        v0_1 = v[point0, 1]
+        v0_2 = v[point0, 2]
+
+        v1_0 = v[point1, 0]
+        v1_1 = v[point1, 1]
+        v1_2 = v[point1, 2]
+
+        v2_0 = v[point2, 0]
+        v2_1 = v[point2, 1]
+        v2_2 = v[point2, 2]
+
+        # Edges
+        e0_0 = v1_0 - v0_0
+        e0_1 = v1_1 - v0_1
+        e0_2 = v1_2 - v0_2
+
+        e1_0 = v2_0 - v0_0
+        e1_1 = v2_1 - v0_1
+        e1_2 = v2_2 - v0_2
+
+        c0 = e0_1*e1_2 - e0_2*e1_1
+        c1 = e0_2*e1_0 - e0_0*e1_2
+        c2 = e0_0*e1_1 - e0_1*e1_0
+
+        # triangle area
+        farea[i] = 0.5*math.sqrt(c0**2 + c1**2 + c2**2)  # Подумать о numpy
+
+    for i in range(nfaces):
+        point0 = f[i, 1]
+        point1 = f[i, 2]
+        point2 = f[i, 3]
+        farea_l = farea[i]
+
+        # Store the area of the faces adjacent to each point
+        pweight[point0] += farea_l
+        pweight[point1] += farea_l
+        pweight[point2] += farea_l
+
+    # Compute weighted vertex
+    #cdef double wgt
+    if return_weighted:
+        if additional_weights.shape[0] == npoints:
+            for i in prange(npoints, nogil=True):
+                wgt = additional_weights[i]*pweight[i]
+                wvertex[i, 0] = wgt*v[i, 0]
+                wvertex[i, 1] = wgt*v[i, 1]
+                wvertex[i, 2] = wgt*v[i, 2]
+
+        else:
+            for i in prange(npoints, nogil=True):
+                wgt = pweight[i]
+                wvertex[i, 0] = wgt*v[i, 0]
+                wvertex[i, 1] = wgt*v[i, 1]
+                wvertex[i, 2] = wgt*v[i, 2]
+
+        return np.asarray(pweight), np.asarray(wvertex)
+
+    else:
+        return np.asarray(pweight)
+
+
+def _clustering_max_con_face(npoints, f):
+    """Get maximum number of connections given edges """
+
+    nfaces = f.shape[0]
+    #cdef int i
+    mxval = 0
+    ncon = np.zeros(npoints, ctypes.c_int)
+
+    for i in range(nfaces):
+        for j in range(1, 4):
+            ncon[f[i, j]] += 1
+
+    for i in range(npoints):
+        if ncon[i] > mxval:
+            mxval = ncon[i]
+
+    return mxval
+
+def _clustering_neighbors_from_faces(npoints, f):
+    """
+    Assemble neighbor array based on faces
+
+    Parameters
+    ----------
+    points : int
+        Number of points
+
+    f : int [:, ::1]
+        Face array.
+
+    Returns
+    -------
+    neigh : int np.ndarray [:, ::1]
+        Indices of each neighboring node for each node.
+
+    nneigh : int np.ndarray [::1]
+        Number of neighbors for each node.
+    """
+
+    # Find the maximum number of edges, with overflow buffer
+    nconmax = _clustering_max_con_face(npoints, f) + 10
+    # NON-CODE BREAKING BUG: under-estimates number of connections
+
+    nfaces = f.shape[0]
+    #cdef int i, j, k, pA, pB, pC
+    neigharr = np.empty((npoints, nconmax), ctypes.c_int)
+    neigharr[:] = -1
+    ncon = np.empty(npoints, ctypes.c_int)
+    ncon[:] = 0
+
+    for i in range(nfaces):
+
+        # for each edge
+        for j in range(1, 4):
+
+            # always the current point
+            pA = f[i, j]
+
+            # wrap around last edge
+            if j < 4 - 1:
+                pB = f[i, j + 1]
+            else:
+                pB = f[i, 1]
+
+            for k in range(nconmax):
+                if neigharr[pA, k] == pB:
+                    break
+                elif neigharr[pA, k] == -1:
+                    neigharr[pA, k] = pB
+                    ncon[pA] += 1
+
+                    # Mirror node will have the same number of connections
+                    neigharr[pB, ncon[pB]] = pA
+                    ncon[pB] += 1
+                    break
+
+    py_neigharr = np.asarray(neigharr)
+    py_ncon = np.asarray(ncon)
+    py_neigharr = np.ascontiguousarray(py_neigharr[:, :py_ncon.max()])
+    return py_neigharr, py_ncon
+
+def _clustering_subdivision(v, f):
+    """Subdivide triangles
+
+    Parameters
+    ----------
+    v : double np.ndarray
+        Point array
+
+    f : np.ndarray
+        n x 4 face array.  First column is padding and is ignored.
+    """
+    nface = f.shape[0]
+    nvert = v.shape[0]
+    #cdef int i, j
+
+    # Vertex and face arrays for maximum possible array sizes
+    newv = np.empty((nvert + nface*3, 3))
+    newf = np.empty((nface*4, 4), dtype=ctypes.c_int)
+
+    # copy existing vertex array
+    for i in range(nvert):
+        for j in range(3):
+            newv[i, j] = v[i, j]
+
+    # split triangle into three new ones
+    vc = nvert
+    fc = 0
+    #cdef int point0, point1, point2
+    for i in range(nface):
+        point0 = f[i, 1]
+        point1 = f[i, 2]
+        point2 = f[i, 3]
+
+        # Face 0
+        newf[fc, 0] = 3
+        newf[fc, 1] = point0
+        newf[fc, 2] = vc
+        newf[fc, 3] = vc + 2
+        fc += 1
+
+        # Face 1
+        newf[fc, 0] = 3
+        newf[fc, 1] = point1
+        newf[fc, 2] = vc + 1
+        newf[fc, 3] = vc
+        fc += 1
+
+        # Face 2
+        newf[fc, 0] = 3
+        newf[fc, 1] = point2
+        newf[fc, 2] = vc + 2
+        newf[fc, 3] = vc + 1
+        fc += 1
+
+        # Face 3
+        newf[fc, 0] = 3
+        newf[fc, 1] = vc
+        newf[fc, 2] = vc + 1
+        newf[fc, 3] = vc + 2
+        fc += 1
+
+        # New Vertices
+        newv[vc, 0] = (v[point0, 0] + v[point1, 0])*0.5
+        newv[vc, 1] = (v[point0, 1] + v[point1, 1])*0.5
+        newv[vc, 2] = (v[point0, 2] + v[point1, 2])*0.5
+        vc += 1
+
+        newv[vc, 0] = (v[point1, 0] + v[point2, 0])*0.5
+        newv[vc, 1] = (v[point1, 1] + v[point2, 1])*0.5
+        newv[vc, 2] = (v[point1, 2] + v[point2, 2])*0.5
+        vc += 1
+
+        newv[vc, 0] = (v[point0, 0] + v[point2, 0])*0.5
+        newv[vc, 1] = (v[point0, 1] + v[point2, 1])*0.5
+        newv[vc, 2] = (v[point0, 2] + v[point2, 2])*0.5
+        vc += 1
+
+    # Splice and return
+    return np.asarray(newv), np.asarray(newf)
+
+
+def cluster_centroid(cent, area, clusters):
+    """Computes an area normalized centroid for each cluster"""
+
+    # Check if null cluster exists
+    null_clusters = np.any(clusters == -1)
+    if null_clusters:
+        clusters = clusters.copy()
+        clusters[clusters == -1] = clusters.max() + 1
+
+    wval = cent * area.reshape(-1, 1)
+    cweight = np.bincount(clusters, weights=area)
+    cweight[cweight == 0] = 1
+
+    cval = (
+        np.vstack(
+            (
+                np.bincount(clusters, weights=wval[:, 0]),
+                np.bincount(clusters, weights=wval[:, 1]),
+                np.bincount(clusters, weights=wval[:, 2]),
+            )
+        )
+        / cweight
+    )
+
+    if null_clusters:
+        cval[:, -1] = np.inf
+
+    return cval.T
+
+
+def create_mesh(mesh, area, clusters, cnorm, flipnorm=True):
+    """Generates a new mesh given cluster data
+
+    moveclus is a boolean flag to move cluster centers to the surface of their
+    corresponding cluster
+
+    """
+    faces = mesh.faces.reshape(-1, 4)
+    points = mesh.points
+    if points.dtype != np.double:
+        points = points.astype(np.double)
+
+    # Compute centroids
+    ccent = np.ascontiguousarray(cluster_centroid(points, area, clusters))
+
+    # Create sparse matrix storing the number of adjacent clusters a point has
+    rng = np.arange(faces.shape[0]).reshape((-1, 1))
+    a = np.hstack((rng, rng, rng)).ravel()
+    b = clusters[faces[:, 1:]].ravel()  # take?
+    c = np.ones(len(a), dtype="bool")
+
+    boolmatrix = sparse.csr_matrix((c, (a, b)), dtype="bool")
+
+    # Find all points with three neighboring clusters.  Each of the three
+    # cluster neighbors becomes a point on a triangle
+    nadjclus = boolmatrix.sum(1)
+    adj = np.array(nadjclus == 3).nonzero()[0]
+    idx = boolmatrix[adj].nonzero()[1]
+
+    # Append these points and faces
+    points = ccent
+    f = idx.reshape((-1, 3))
+
+    # Remove duplicate faces
+    f = f[unique_row_indices(np.sort(f, 1))]
+
+    # Mean normals of clusters each face is build from
+    if flipnorm:
+        adjcnorm = cnorm[f].sum(1)
+        adjcnorm /= np.linalg.norm(adjcnorm, axis=1).reshape(-1, 1)
+
+        # and compare this with the normals of each face
+        faces = np.empty((f.shape[0], 4), dtype=f.dtype)
+        faces[:, 0] = 3
+        faces[:, 1:] = f
+
+        tmp_msh = pv.PolyData(points, faces.ravel())
+        tmp_msh.compute_normals(point_normals=False, inplace=True, consistent_normals=False)
+        newnorm = tmp_msh.cell_data["Normals"]
+
+        # If the dot is negative, reverse the order of those faces
+        agg = (adjcnorm * newnorm).sum(1)  # dot product
+        mask = agg < 0.0
+        f[mask] = f[mask, ::-1]
+
+    # Create vtk surface
+    triangles = np.empty((f.shape[0], 4), dtype=f.dtype)
+    triangles[:, -3:] = f
+    triangles[:, 0] = 3
+    return pv.PolyData(points, triangles.ravel())
+
+
+def unique_row_indices(a):
+    """Indices of unique rows"""
+    b = np.ascontiguousarray(a).view(np.dtype((np.void, a.dtype.itemsize * a.shape[1])))
+    _, idx = np.unique(b, return_index=True)
+    return idx
+
+def weighted_points(mesh, return_weighted=True, additional_weights=None):
+    """Returns point weight based on area weight and weighted points.
+
+    Points are weighted by adjacent area faces.
+
+    Parameters
+    ----------
+    mesh : pv.PolyData
+        All triangular surface mesh.
+
+    return_weighted : bool, optional
+        Returns vertices mutlipled by point weights.
+
+    Returns
+    -------
+    pweight : np.ndarray, np.double
+        Point weight array
+
+    wvertex : np.ndarray, np.double
+        Vertices mutlipled by their corresponding weights.  Returned only
+        when return_weighted is True.
+
+    """
+    faces = mesh.faces.reshape(-1, 4)
+    if faces.dtype != np.int32:
+        faces = faces.astype(np.int32)
+    points = mesh.points
+
+    if additional_weights is not None:
+        weights = additional_weights
+        return_weighted = True
+        if not weights.flags["C_CONTIGUOUS"]:
+            weights = np.ascontiguousarray(weights, dtype=ctypes.c_double)
+        elif weights.dtype != ctypes.c_double:
+            weights = weights.astype(ctypes.c_double)
+
+        if (weights < 0).any():
+            raise Exception("Negative weights not allowed.")
+
+    else:
+        weights = np.array([])
+
+    if points.dtype == np.float64:
+        weighted_point_func = _clustering_weighted_points_double
+    else:
+        weighted_point_func = _clustering_weighted_points_float
+
+    return weighted_point_func(points, faces, weights, return_weighted)
+
+def neighbors_from_mesh(mesh):
+    """Assemble neighbor array.  Assumes all-triangular mesh.
+
+    Parameters
+    ----------
+    mesh : pyvista.PolyData
+        Mesh to assemble neighbors from.
+
+    Returns
+    -------
+    neigh : int np.ndarray [:, ::1]
+        Indices of each neighboring node for each node.
+
+    nneigh : int np.ndarray [::1]
+        Number of neighbors for each node.
+    """
+    npoints = mesh.number_of_points
+    faces = mesh.faces.reshape(-1, 4)
+    if faces.dtype != np.int32:
+        faces = faces.astype(np.int32)
+
+    return _clustering_neighbors_from_faces(npoints, faces)
+
+def _subdivide(mesh, nsub):
+    """Perform a linear subdivision of a mesh"""
+    new_faces = mesh.faces.reshape(-1, 4)
+    if new_faces.dtype != np.int32:
+        new_faces = new_faces.astype(np.int32)
+
+    new_points = mesh.points
+    if new_points.dtype != np.double:
+        new_points = new_points.astype(np.double)
+
+    for _ in range(nsub):
+        new_points, new_faces = _clustering_subdivision(new_points, new_faces)
+
+    sub_mesh = pv.PolyData(new_points, new_faces)
+    sub_mesh.clean(inplace=True)
+    return sub_mesh
+
 class Clustering:
     """Uniform point clustering based on ACVD.
 
@@ -657,571 +1222,3 @@ class Clustering:
         weights[weights == 0] = 1
         cval /= weights
         return cval.T
-
-
-def cluster_centroid(cent, area, clusters):
-    """Computes an area normalized centroid for each cluster"""
-
-    # Check if null cluster exists
-    null_clusters = np.any(clusters == -1)
-    if null_clusters:
-        clusters = clusters.copy()
-        clusters[clusters == -1] = clusters.max() + 1
-
-    wval = cent * area.reshape(-1, 1)
-    cweight = np.bincount(clusters, weights=area)
-    cweight[cweight == 0] = 1
-
-    cval = (
-        np.vstack(
-            (
-                np.bincount(clusters, weights=wval[:, 0]),
-                np.bincount(clusters, weights=wval[:, 1]),
-                np.bincount(clusters, weights=wval[:, 2]),
-            )
-        )
-        / cweight
-    )
-
-    if null_clusters:
-        cval[:, -1] = np.inf
-
-    return cval.T
-
-
-def create_mesh(mesh, area, clusters, cnorm, flipnorm=True):
-    """Generates a new mesh given cluster data
-
-    moveclus is a boolean flag to move cluster centers to the surface of their
-    corresponding cluster
-
-    """
-    faces = mesh.faces.reshape(-1, 4)
-    points = mesh.points
-    if points.dtype != np.double:
-        points = points.astype(np.double)
-
-    # Compute centroids
-    ccent = np.ascontiguousarray(cluster_centroid(points, area, clusters))
-
-    # Create sparse matrix storing the number of adjacent clusters a point has
-    rng = np.arange(faces.shape[0]).reshape((-1, 1))
-    a = np.hstack((rng, rng, rng)).ravel()
-    b = clusters[faces[:, 1:]].ravel()  # take?
-    c = np.ones(len(a), dtype="bool")
-
-    boolmatrix = sparse.csr_matrix((c, (a, b)), dtype="bool")
-
-    # Find all points with three neighboring clusters.  Each of the three
-    # cluster neighbors becomes a point on a triangle
-    nadjclus = boolmatrix.sum(1)
-    adj = np.array(nadjclus == 3).nonzero()[0]
-    idx = boolmatrix[adj].nonzero()[1]
-
-    # Append these points and faces
-    points = ccent
-    f = idx.reshape((-1, 3))
-
-    # Remove duplicate faces
-    f = f[unique_row_indices(np.sort(f, 1))]
-
-    # Mean normals of clusters each face is build from
-    if flipnorm:
-        adjcnorm = cnorm[f].sum(1)
-        adjcnorm /= np.linalg.norm(adjcnorm, axis=1).reshape(-1, 1)
-
-        # and compare this with the normals of each face
-        faces = np.empty((f.shape[0], 4), dtype=f.dtype)
-        faces[:, 0] = 3
-        faces[:, 1:] = f
-
-        tmp_msh = pv.PolyData(points, faces.ravel())
-        tmp_msh.compute_normals(point_normals=False, inplace=True, consistent_normals=False)
-        newnorm = tmp_msh.cell_data["Normals"]
-
-        # If the dot is negative, reverse the order of those faces
-        agg = (adjcnorm * newnorm).sum(1)  # dot product
-        mask = agg < 0.0
-        f[mask] = f[mask, ::-1]
-
-    # Create vtk surface
-    triangles = np.empty((f.shape[0], 4), dtype=f.dtype)
-    triangles[:, -3:] = f
-    triangles[:, 0] = 3
-    return pv.PolyData(points, triangles.ravel())
-
-
-def unique_row_indices(a):
-    """Indices of unique rows"""
-    b = np.ascontiguousarray(a).view(np.dtype((np.void, a.dtype.itemsize * a.shape[1])))
-    _, idx = np.unique(b, return_index=True)
-    return idx
-
-
-def _clustering_weighted_points_double(v, f, additional_weights, return_weighted=True):
-    """
-    Returns point weight based on area weight and weighted points.
-    Points are weighted by adjacent area faces.
-
-    Parameters
-    ----------
-    v : np.ndarray, np.double
-        Point array
-
-    f : np.ndarray, int
-        n x 4 face array.  First column is padding and is ignored.
-
-    Returns
-    -------
-    pweight : np.ndarray, np.double
-        Point weight array
-
-    wvertex : np.ndarray, np.double
-        Vertices mutlipled by their corresponding weights.
-    """
-    if f.shape[1] != 4:
-        raise Exception('Must be an unclipped vtk face array')
-
-    nfaces = f.shape[0]
-    npoints = v.shape[0]
-    pweight = np.zeros(npoints)
-    farea = np.empty(nfaces)
-    wvertex = np.empty((npoints, 3))
-
-    #cdef double v0_0, v0_1, v0_2
-    #cdef double v1_0, v1_1, v1_2
-    #cdef double v2_0, v2_1, v2_2
-    #cdef double e0_0, e0_1, e0_2
-    #cdef double e1_0, e1_1, e1_2
-    #cdef double c0, c1, c2
-    #cdef double farea_l
-    #cdef int i
-
-    #cdef int point0, point1, point2
-
-    for i in prange(nfaces, nogil=True):
-        point0 = f[i, 1]
-        point1 = f[i, 2]
-        point2 = f[i, 3]
-
-        v0_0 = v[point0, 0]
-        v0_1 = v[point0, 1]
-        v0_2 = v[point0, 2]
-
-        v1_0 = v[point1, 0]
-        v1_1 = v[point1, 1]
-        v1_2 = v[point1, 2]
-
-        v2_0 = v[point2, 0]
-        v2_1 = v[point2, 1]
-        v2_2 = v[point2, 2]
-
-        # Edges
-        e0_0 = v1_0 - v0_0
-        e0_1 = v1_1 - v0_1
-        e0_2 = v1_2 - v0_2
-
-        e1_0 = v2_0 - v0_0
-        e1_1 = v2_1 - v0_1
-        e1_2 = v2_2 - v0_2
-
-        c0 = e0_1*e1_2 - e0_2*e1_1
-        c1 = e0_2*e1_0 - e0_0*e1_2
-        c2 = e0_0*e1_1 - e0_1*e1_0
-
-        # triangle area
-        farea[i] = 0.5*math.sqrt(c0**2 + c1**2 + c2**2)  # подумать о numpy
-
-    for i in range(nfaces):
-        point0 = f[i, 1]
-        point1 = f[i, 2]
-        point2 = f[i, 3]
-        farea_l = farea[i]
-
-        # Store the area of the faces adjacent to each point
-        pweight[point0] += farea_l
-        pweight[point1] += farea_l
-        pweight[point2] += farea_l
-
-    # Compute weighted vertex
-    #cdef double wgt
-    if return_weighted:
-        if additional_weights.shape[0] == npoints:
-            for i in prange(npoints, nogil=True):
-                wgt = additional_weights[i]*pweight[i]
-                wvertex[i, 0] = wgt*v[i, 0]
-                wvertex[i, 1] = wgt*v[i, 1]
-                wvertex[i, 2] = wgt*v[i, 2]
-
-        else:
-            for i in prange(npoints, nogil=True):
-                wgt = pweight[i]
-                wvertex[i, 0] = wgt*v[i, 0]
-                wvertex[i, 1] = wgt*v[i, 1]
-                wvertex[i, 2] = wgt*v[i, 2]
-
-        return np.asarray(pweight), np.asarray(wvertex)
-
-    else:
-        return np.asarray(pweight)
-
-
-def _clustering_weighted_points_float(v, f, additional_weights, return_weighted=True):
-    """
-    Returns point weight based on area weight and weighted points.
-    Points are weighted by adjacent area faces.
-
-    Parameters
-    ----------
-    v : np.ndarray, np.float
-        Point array
-
-    f : np.ndarray, int
-        n x 4 face array.  First column is padding and is ignored.
-
-    Returns
-    -------
-    pweight : np.ndarray, np.double
-        Point weight array
-
-    wvertex : np.ndarray, np.double
-        Vertices mutlipled by their corresponding weights.
-    """
-    if f.shape[1] != 4:
-        raise Exception('Must be an unclipped vtk face array')
-
-    nfaces = f.shape[0]
-    npoints = v.shape[0]
-    pweight = np.zeros(npoints)
-    farea = np.empty(nfaces)
-    wvertex = np.empty((npoints, 3))
-
-    #cdef double v0_0, v0_1, v0_2
-    #cdef double v1_0, v1_1, v1_2
-    #cdef double v2_0, v2_1, v2_2
-    #cdef double e0_0, e0_1, e0_2
-    #cdef double e1_0, e1_1, e1_2
-    #cdef double c0, c1, c2
-    #cdef double farea_l
-    #cdef int i
-
-    #cdef int point0, point1, point2
-
-    for i in prange(nfaces, nogil=True):
-        point0 = f[i, 1]
-        point1 = f[i, 2]
-        point2 = f[i, 3]
-
-        v0_0 = v[point0, 0]
-        v0_1 = v[point0, 1]
-        v0_2 = v[point0, 2]
-
-        v1_0 = v[point1, 0]
-        v1_1 = v[point1, 1]
-        v1_2 = v[point1, 2]
-
-        v2_0 = v[point2, 0]
-        v2_1 = v[point2, 1]
-        v2_2 = v[point2, 2]
-
-        # Edges
-        e0_0 = v1_0 - v0_0
-        e0_1 = v1_1 - v0_1
-        e0_2 = v1_2 - v0_2
-
-        e1_0 = v2_0 - v0_0
-        e1_1 = v2_1 - v0_1
-        e1_2 = v2_2 - v0_2
-
-        c0 = e0_1*e1_2 - e0_2*e1_1
-        c1 = e0_2*e1_0 - e0_0*e1_2
-        c2 = e0_0*e1_1 - e0_1*e1_0
-
-        # triangle area
-        farea[i] = 0.5*math.sqrt(c0**2 + c1**2 + c2**2)  # Подумать о numpy
-
-    for i in range(nfaces):
-        point0 = f[i, 1]
-        point1 = f[i, 2]
-        point2 = f[i, 3]
-        farea_l = farea[i]
-
-        # Store the area of the faces adjacent to each point
-        pweight[point0] += farea_l
-        pweight[point1] += farea_l
-        pweight[point2] += farea_l
-
-    # Compute weighted vertex
-    #cdef double wgt
-    if return_weighted:
-        if additional_weights.shape[0] == npoints:
-            for i in prange(npoints, nogil=True):
-                wgt = additional_weights[i]*pweight[i]
-                wvertex[i, 0] = wgt*v[i, 0]
-                wvertex[i, 1] = wgt*v[i, 1]
-                wvertex[i, 2] = wgt*v[i, 2]
-
-        else:
-            for i in prange(npoints, nogil=True):
-                wgt = pweight[i]
-                wvertex[i, 0] = wgt*v[i, 0]
-                wvertex[i, 1] = wgt*v[i, 1]
-                wvertex[i, 2] = wgt*v[i, 2]
-
-        return np.asarray(pweight), np.asarray(wvertex)
-
-    else:
-        return np.asarray(pweight)
-
-def weighted_points(mesh, return_weighted=True, additional_weights=None):
-    """Returns point weight based on area weight and weighted points.
-
-    Points are weighted by adjacent area faces.
-
-    Parameters
-    ----------
-    mesh : pv.PolyData
-        All triangular surface mesh.
-
-    return_weighted : bool, optional
-        Returns vertices mutlipled by point weights.
-
-    Returns
-    -------
-    pweight : np.ndarray, np.double
-        Point weight array
-
-    wvertex : np.ndarray, np.double
-        Vertices mutlipled by their corresponding weights.  Returned only
-        when return_weighted is True.
-
-    """
-    faces = mesh.faces.reshape(-1, 4)
-    if faces.dtype != np.int32:
-        faces = faces.astype(np.int32)
-    points = mesh.points
-
-    if additional_weights is not None:
-        weights = additional_weights
-        return_weighted = True
-        if not weights.flags["C_CONTIGUOUS"]:
-            weights = np.ascontiguousarray(weights, dtype=ctypes.c_double)
-        elif weights.dtype != ctypes.c_double:
-            weights = weights.astype(ctypes.c_double)
-
-        if (weights < 0).any():
-            raise Exception("Negative weights not allowed.")
-
-    else:
-        weights = np.array([])
-
-    if points.dtype == np.float64:
-        weighted_point_func = _clustering_weighted_points_double
-    else:
-        weighted_point_func = _clustering_weighted_points_float
-
-    return weighted_point_func(points, faces, weights, return_weighted)
-
-
-def _clustering_max_con_face(npoints, f):
-    """Get maximum number of connections given edges """
-
-    nfaces = f.shape[0]
-    #cdef int i
-    mxval = 0
-    ncon = np.zeros(npoints, ctypes.c_int)
-
-    for i in range(nfaces):
-        for j in range(1, 4):
-            ncon[f[i, j]] += 1
-
-    for i in range(npoints):
-        if ncon[i] > mxval:
-            mxval = ncon[i]
-
-    return mxval
-
-def _clustering_neighbors_from_faces(npoints, f):
-    """
-    Assemble neighbor array based on faces
-
-    Parameters
-    ----------
-    points : int
-        Number of points
-
-    f : int [:, ::1]
-        Face array.
-
-    Returns
-    -------
-    neigh : int np.ndarray [:, ::1]
-        Indices of each neighboring node for each node.
-
-    nneigh : int np.ndarray [::1]
-        Number of neighbors for each node.
-    """
-
-    # Find the maximum number of edges, with overflow buffer
-    nconmax = _clustering_max_con_face(npoints, f) + 10
-    # NON-CODE BREAKING BUG: under-estimates number of connections
-
-    nfaces = f.shape[0]
-    #cdef int i, j, k, pA, pB, pC
-    neigharr = np.empty((npoints, nconmax), ctypes.c_int)
-    neigharr[:] = -1
-    ncon = np.empty(npoints, ctypes.c_int)
-    ncon[:] = 0
-
-    for i in range(nfaces):
-
-        # for each edge
-        for j in range(1, 4):
-
-            # always the current point
-            pA = f[i, j]
-
-            # wrap around last edge
-            if j < 4 - 1:
-                pB = f[i, j + 1]
-            else:
-                pB = f[i, 1]
-
-            for k in range(nconmax):
-                if neigharr[pA, k] == pB:
-                    break
-                elif neigharr[pA, k] == -1:
-                    neigharr[pA, k] = pB
-                    ncon[pA] += 1
-
-                    # Mirror node will have the same number of connections
-                    neigharr[pB, ncon[pB]] = pA
-                    ncon[pB] += 1
-                    break
-
-    py_neigharr = np.asarray(neigharr)
-    py_ncon = np.asarray(ncon)
-    py_neigharr = np.ascontiguousarray(py_neigharr[:, :py_ncon.max()])
-    return py_neigharr, py_ncon
-
-def neighbors_from_mesh(mesh):
-    """Assemble neighbor array.  Assumes all-triangular mesh.
-
-    Parameters
-    ----------
-    mesh : pyvista.PolyData
-        Mesh to assemble neighbors from.
-
-    Returns
-    -------
-    neigh : int np.ndarray [:, ::1]
-        Indices of each neighboring node for each node.
-
-    nneigh : int np.ndarray [::1]
-        Number of neighbors for each node.
-    """
-    npoints = mesh.number_of_points
-    faces = mesh.faces.reshape(-1, 4)
-    if faces.dtype != np.int32:
-        faces = faces.astype(np.int32)
-
-    return _clustering_neighbors_from_faces(npoints, faces)
-
-
-def _clustering_subdivision(v, f):
-    """Subdivide triangles
-
-    Parameters
-    ----------
-    v : double np.ndarray
-        Point array
-
-    f : np.ndarray
-        n x 4 face array.  First column is padding and is ignored.
-    """
-    nface = f.shape[0]
-    nvert = v.shape[0]
-    #cdef int i, j
-
-    # Vertex and face arrays for maximum possible array sizes
-    newv = np.empty((nvert + nface*3, 3))
-    newf = np.empty((nface*4, 4), dtype=ctypes.c_int)
-
-    # copy existing vertex array
-    for i in range(nvert):
-        for j in range(3):
-            newv[i, j] = v[i, j]
-
-    # split triangle into three new ones
-    vc = nvert
-    fc = 0
-    #cdef int point0, point1, point2
-    for i in range(nface):
-        point0 = f[i, 1]
-        point1 = f[i, 2]
-        point2 = f[i, 3]
-
-        # Face 0
-        newf[fc, 0] = 3
-        newf[fc, 1] = point0
-        newf[fc, 2] = vc
-        newf[fc, 3] = vc + 2
-        fc += 1
-
-        # Face 1
-        newf[fc, 0] = 3
-        newf[fc, 1] = point1
-        newf[fc, 2] = vc + 1
-        newf[fc, 3] = vc
-        fc += 1
-
-        # Face 2
-        newf[fc, 0] = 3
-        newf[fc, 1] = point2
-        newf[fc, 2] = vc + 2
-        newf[fc, 3] = vc + 1
-        fc += 1
-
-        # Face 3
-        newf[fc, 0] = 3
-        newf[fc, 1] = vc
-        newf[fc, 2] = vc + 1
-        newf[fc, 3] = vc + 2
-        fc += 1
-
-        # New Vertices
-        newv[vc, 0] = (v[point0, 0] + v[point1, 0])*0.5
-        newv[vc, 1] = (v[point0, 1] + v[point1, 1])*0.5
-        newv[vc, 2] = (v[point0, 2] + v[point1, 2])*0.5
-        vc += 1
-
-        newv[vc, 0] = (v[point1, 0] + v[point2, 0])*0.5
-        newv[vc, 1] = (v[point1, 1] + v[point2, 1])*0.5
-        newv[vc, 2] = (v[point1, 2] + v[point2, 2])*0.5
-        vc += 1
-
-        newv[vc, 0] = (v[point0, 0] + v[point2, 0])*0.5
-        newv[vc, 1] = (v[point0, 1] + v[point2, 1])*0.5
-        newv[vc, 2] = (v[point0, 2] + v[point2, 2])*0.5
-        vc += 1
-
-    # Splice and return
-    return np.asarray(newv), np.asarray(newf)
-
-def _subdivide(mesh, nsub):
-    """Perform a linear subdivision of a mesh"""
-    new_faces = mesh.faces.reshape(-1, 4)
-    if new_faces.dtype != np.int32:
-        new_faces = new_faces.astype(np.int32)
-
-    new_points = mesh.points
-    if new_points.dtype != np.double:
-        new_points = new_points.astype(np.double)
-
-    for _ in range(nsub):
-        #new_points, new_faces = _clustering.subdivision(new_points, new_faces)
-        new_points, new_faces = _clustering_subdivision(new_points, new_faces)
-
-    sub_mesh = pv.PolyData(new_points, new_faces)
-    sub_mesh.clean(inplace=True)
-    return sub_mesh
