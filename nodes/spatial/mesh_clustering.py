@@ -19,7 +19,7 @@
 from itertools import product, chain
 import numpy as np
 from sverchok.dependencies import pyacvd, Cython
-from utils.mesh import clustering
+from sverchok.utils.mesh import clustering
 if pyacvd is not None:
     from pyvista import PolyData
 #import pyacvd
