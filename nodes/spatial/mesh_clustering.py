@@ -18,9 +18,10 @@
 
 from itertools import product, chain
 import numpy as np
-from sverchok.dependencies import pyacvd
+from sverchok.dependencies import pyacvd, Cython
+from utils.mesh import clustering
 if pyacvd is not None:
-    from pyvista import examples, PolyData
+    from pyvista import PolyData
 #import pyacvd
 
 import bpy
@@ -186,7 +187,7 @@ class SvMeshClusteringNode(SverchCustomTreeNode, bpy.types.Node, SvRecursiveNode
             else:
                 pdmesh = PolyData.from_regular_faces( verts_i, faces_i)
 
-            clust = pyacvd.Clustering(pdmesh)
+            clust = clustering.Clustering(pdmesh)
             if(cluster_subdivide_i>0):
                 clust.subdivide(cluster_subdivide_i)
             clust.cluster(cluster_counts_i, maxiter=max_iter_i)
