@@ -17,11 +17,15 @@ Functionality
 
 This node takes a surface mesh and returns a uniformly meshed surface using voronoi clustering.
 
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/fb0d011c-8550-4262-bf77-29d2012511c2
+  :target: https://github.com/nortikin/sverchok/assets/14288520/fb0d011c-8550-4262-bf77-29d2012511c2
+
 .. image:: https://github.com/nortikin/sverchok/assets/14288520/f50b985a-45b6-482c-8b7c-1f7551a50b8f
   :target: https://github.com/nortikin/sverchok/assets/14288520/f50b985a-45b6-482c-8b7c-1f7551a50b8f
 
 .. image:: https://github.com/nortikin/sverchok/assets/14288520/e761653b-a88f-42e1-b222-fa243b1642a5
   :target: https://github.com/nortikin/sverchok/assets/14288520/e761653b-a88f-42e1-b222-fa243b1642a5
+
 
 Inputs
 ------
@@ -121,5 +125,8 @@ High poly clusterizing with dual mesh
 .. image:: https://github.com/nortikin/sverchok/assets/14288520/1f786c06-cde4-4227-b539-59926e1e737b
   :target: https://github.com/nortikin/sverchok/assets/14288520/1f786c06-cde4-4227-b539-59926e1e737b
 
+example_001_
+
 .. _pyacvd: https://github.com/pyvista/pyacvd
 .. _triangulate: https://docs.pyvista.org/version/stable/api/core/_autosummary/pyvista.polydatafilters.triangulate
+.. _example_001: https://github.com/nortikin/sverchok/files/15172028/RoundedCube.Juwelry.0003.blend.zip
