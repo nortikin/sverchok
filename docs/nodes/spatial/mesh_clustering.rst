@@ -115,5 +115,11 @@ Subdivide is zero.
   :target: https://github.com/nortikin/sverchok/assets/14288520/a25eb0d2-cccc-4086-b663-0036d60314a5
 
 
+High poly clusterizing with dual mesh
+-------------------------------------
+
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/1f786c06-cde4-4227-b539-59926e1e737b
+  :target: https://github.com/nortikin/sverchok/assets/14288520/1f786c06-cde4-4227-b539-59926e1e737b
+
 .. _pyacvd: https://github.com/pyvista/pyacvd
 .. _triangulate: https://docs.pyvista.org/version/stable/api/core/_autosummary/pyvista.polydatafilters.triangulate
