@@ -54,6 +54,11 @@ class SvMeshClusteringNode(SverchCustomTreeNode, bpy.types.Node, SvRecursiveNode
         default = False,
         update = updateNode)  # type: ignore
 
+    subdiv_modes = [
+        ( "butterfly", "Butterfly", "Butterfly and loop subdivision perform smoothing when dividing, and may introduce artifacts into the mesh when dividing", 0),
+        (      "loop",      "Loop", "Butterfly and loop subdivision perform smoothing when dividing, and may introduce artifacts into the mesh when dividing", 1),
+        (    "linear",    "Linear", "Linear subdivision results in the fastest mesh subdivision, but it does not smooth mesh edges, but rather splits each triangle into 4 smaller triangles", 2)
+    ]
 
     quad_modes = [
         (    "BEAUTY",            "Beauty", "Split the quads in nice triangles, slower method", 1),
@@ -67,6 +72,13 @@ class SvMeshClusteringNode(SverchCustomTreeNode, bpy.types.Node, SvRecursiveNode
         ("EAR_CLIP",   "Clip", "Split the ngons using a scanfill algorithm", 2)
     ]
 
+    subdiv_mode: EnumProperty(
+        name='Subdiv mode',
+        description="Method of subdiv of mesh if param 'Cluster Subdivide'>0. If 'Cluster Subdivide'==0 then this parameter has no effect",
+        items=subdiv_modes,
+        default="loop",
+        update=updateNode) # type: ignore
+    
     quad_mode: EnumProperty(
         name='Quads mode',
         description="Quads processing mode",
@@ -83,7 +95,7 @@ class SvMeshClusteringNode(SverchCustomTreeNode, bpy.types.Node, SvRecursiveNode
     
     cluster_subdivide : IntProperty(
         min=0, default=0, name='Subdivide',
-        description="Cluster subdivide. (min=0)", update=updateNode) # type: ignore
+        description="Cluster subdivide. (min=0). Connect with parameter 'Subdiv mode'.", update=updateNode) # type: ignore
     max_iter : IntProperty(
         min=1, default=100, name='Max iteration',
         description="Max iteration of clusterization. (min=0)", update=updateNode) # type: ignore
@@ -100,12 +112,15 @@ class SvMeshClusteringNode(SverchCustomTreeNode, bpy.types.Node, SvRecursiveNode
         layout.row().prop(self, 'output_as_numpy')
 
     def draw_buttons(self, context, layout):
-        # layout.row().prop(self, 'cluster_subdivide')
-        # layout.row().prop(self, 'max_iter')
-        # layout.row().prop(self, 'cluster_counts')
 
         col = layout.column()
         col.row().label(text="Triangulate mesh polygons:")
+        
+        row = col.row()
+        split = row.split(factor=0.4)
+        split.column().label(text="Subdiv mode:")
+        split.column().row(align=True).prop(self, "subdiv_mode", text='')
+
         row = col.row()
         split = row.split(factor=0.4)
         split.column().label(text="Quads mode:")
@@ -120,20 +135,32 @@ class SvMeshClusteringNode(SverchCustomTreeNode, bpy.types.Node, SvRecursiveNode
 
     def sv_init(self, context):
         son = self.outputs.new
-        self.inputs.new('SvStringsSocket', "cluster_subdivide").prop_name = 'cluster_subdivide'
-        self.inputs.new('SvStringsSocket', "max_iter").prop_name = 'max_iter'
-        self.inputs.new('SvStringsSocket', "cluster_counts").prop_name = 'cluster_counts'
-        self.inputs.new('SvVerticesSocket', 'Vertices')
-        self.inputs.new('SvStringsSocket', 'Edges')
-        self.inputs.new('SvStringsSocket', 'Faces')
+        self.inputs.new('SvStringsSocket' , 'cluster_subdivide').prop_name = 'cluster_subdivide'
+        self.inputs.new('SvStringsSocket' , 'max_iter').prop_name = 'max_iter'
+        self.inputs.new('SvStringsSocket' , 'cluster_counts').prop_name = 'cluster_counts'
+        self.inputs.new('SvVerticesSocket', 'vertices')
+        self.inputs.new('SvStringsSocket' , 'edges')
+        self.inputs.new('SvStringsSocket' , 'polygons')
 
-        self.inputs["cluster_subdivide"].label = "Cluster Subdivide"
-        self.inputs["max_iter"].label = "Max Iteration"
-        self.inputs["cluster_counts"].label = "Cluster counts"
+        self.inputs['vertices'].label = 'Vertices'
+        self.inputs['edges'].label = 'Edges'
+        self.inputs['polygons'].label = 'Polygons'
 
-        son('SvVerticesSocket', 'Vertices')
-        son('SvStringsSocket', 'Edges')
-        son('SvStringsSocket', 'Faces')
+        self.inputs['cluster_subdivide'].label = "Cluster Subdivide"
+        self.inputs['max_iter'].label = "Max Iteration"
+        self.inputs['cluster_counts'].label = "Cluster counts"
+
+        son('SvVerticesSocket', 'vertices')
+        son('SvStringsSocket' , 'edges')
+        son('SvStringsSocket' , 'polygons')
+        son('SvVerticesSocket', 'polygon_centers')
+        son('SvVerticesSocket', 'polygon_normals')
+
+        self.outputs['vertices'].label = 'Vertices'
+        self.outputs['edges'].label = 'Edges'
+        self.outputs['polygons'].label = 'Polygons'
+        self.outputs['polygon_centers'].label = 'Centers of Polygons'
+        self.outputs['polygon_normals'].label = 'Normals of Polygons'
         self.width = 210
         
 
@@ -141,18 +168,18 @@ class SvMeshClusteringNode(SverchCustomTreeNode, bpy.types.Node, SvRecursiveNode
 
     def process(self):
         inputs = self.inputs
-        _cluster_subdivide = inputs["cluster_subdivide"].sv_get(default=[[0]], deepcopy=False)
+        _cluster_subdivide = inputs['cluster_subdivide'].sv_get(default=[[0]], deepcopy=False)
         cluster_subdivide = flatten_data(_cluster_subdivide)
-        _max_iter = inputs["max_iter"].sv_get(default=[[20]], deepcopy=False)
+        _max_iter = inputs['max_iter'].sv_get(default=[[20]], deepcopy=False)
         max_iter = flatten_data(_max_iter)
-        _cluster_counts = inputs["cluster_counts"].sv_get(default=[[1000]], deepcopy=False)
+        _cluster_counts = inputs['cluster_counts'].sv_get(default=[[1000]], deepcopy=False)
         cluster_counts = flatten_data(_cluster_counts)
 
-        _Vertices = inputs["Vertices"].sv_get(default=[[]], deepcopy=False)
+        _Vertices = inputs['vertices'].sv_get(default=[[]], deepcopy=False)
         Vertices  = ensure_nesting_level(_Vertices, 3)
-        _Edges    = inputs["Edges"].sv_get(default=[[]], deepcopy=False)
+        _Edges    = inputs['edges'].sv_get(default=[[]], deepcopy=False)
         Edges     = ensure_nesting_level(_Edges, 3)
-        _Faces    = inputs["Faces"].sv_get(default=[[]], deepcopy=False)
+        _Faces    = inputs['polygons'].sv_get(default=[[]], deepcopy=False)
         Faces     = ensure_nesting_level(_Faces, 3)
 
         cluster_subdivide = cluster_subdivide[: len(Vertices)]
@@ -166,6 +193,8 @@ class SvMeshClusteringNode(SverchCustomTreeNode, bpy.types.Node, SvRecursiveNode
         res_verts = []
         res_edges = []
         res_faces = []
+        res_polygon_centers = []
+        res_polygon_normals = []
         for cluster_subdivide_i, max_iter_i, cluster_counts_i, verts_i, edges_i, faces_i in zip_long_repeat(cluster_subdivide, max_iter, cluster_counts, Vertices, Edges, Faces):
             if cluster_subdivide_i<0:
                 cluster_subdivide_i=0
@@ -180,31 +209,50 @@ class SvMeshClusteringNode(SverchCustomTreeNode, bpy.types.Node, SvRecursiveNode
                 for face in bm_I.faces:
                     b_faces.append(face)
                 res = bmesh.ops.triangulate( bm_I, faces=b_faces, quad_method=self.quad_mode, ngon_method=self.ngon_mode )
-                new_vertices_I, new_edges_I, new_faces_I = pydata_from_bmesh(bm_I)
+                new_vertices_I, new_edges_I, new_faces_I = pydata_from_bmesh(bm_I, ret_edges=False)
                 bm_I.free()
-                pdmesh = PolyData.from_regular_faces( new_vertices_I, new_faces_I)
+                pdmesh = PolyData.from_regular_faces( new_vertices_I, new_faces_I) # https://docs.pyvista.org/version/stable/api/core/_autosummary/pyvista.PolyData.from_regular_faces.html#pyvista-polydata-from-regular-faces
             else:
-                pdmesh = PolyData.from_regular_faces( verts_i, faces_i)
+                pdmesh = PolyData.from_regular_faces( verts_i, faces_i) # https://docs.pyvista.org/version/stable/api/core/_autosummary/pyvista.PolyData.from_regular_faces.html#pyvista-polydata-from-regular-faces
+
+            if pdmesh.is_all_triangles==False:
+                pdmesh.triangulate(inplace=True) # https://docs.pyvista.org/version/stable/api/core/_autosummary/pyvista.polydatafilters.triangulate
+
+            if(cluster_subdivide_i>0):
+                pdmesh.subdivide(cluster_subdivide_i, self.subdiv_mode, inplace=True) # loop, butterfly, linear, https://docs.pyvista.org/version/stable/api/core/_autosummary/pyvista.polydatafilters.subdivide
+                pdmesh.clean(inplace=True)  # after pdmesh subdiv all vertces and faces are disconnected. This operation merge them.
 
             clust = pyacvd.Clustering(pdmesh)
-            if(cluster_subdivide_i>0):
-                clust.subdivide(cluster_subdivide_i)
+            # !!! do not use pyacvd subdiv. It has only linear mode
+            # if(cluster_subdivide_i>0):
+            #     clust.subdivide(cluster_subdivide_i)
+            
             clust.cluster(cluster_counts_i, maxiter=max_iter_i)
             remesh = clust.create_mesh()
             remesh_edges = np.reshape(remesh.extract_all_edges(use_all_points=True).lines, (-1,3))[:,[1,2]]  # https://docs.pyvista.org/version/stable/api/core/_autosummary/pyvista.CompositeFilters.extract_all_edges.html#pyvista.CompositeFilters.extract_all_edges
 
             if self.output_as_numpy:
-                res_verts.append(remesh.points)
-                res_edges.append(remesh_edges)
-                res_faces.append(remesh.regular_faces)
+                res_verts.append( np.array(remesh.points) )
+                res_edges.append( np.array(remesh_edges, int) )
+                res_faces.append( np.array(remesh.regular_faces, int) )
+                if outputs['polygon_normals'].is_linked:
+                    res_polygon_normals.append( np.array(remesh.face_normals) )
+                if outputs['polygon_centers'].is_linked:
+                    res_polygon_centers.append( np.array(remesh.cell_centers().points) )
             else:
                 res_verts.append(remesh.points.tolist())
                 res_edges.append(remesh_edges.tolist())
                 res_faces.append(remesh.regular_faces.tolist())
+                if outputs['polygon_normals'].is_linked:
+                    res_polygon_normals.append( remesh.face_normals.tolist() )
+                if outputs['polygon_centers'].is_linked:
+                    res_polygon_centers.append( remesh.cell_centers().points.tolist() )
 
-        outputs['Vertices'].sv_set(res_verts)
-        outputs['Edges'].sv_set(res_edges)
-        outputs['Faces'].sv_set(res_faces)
+        outputs['vertices'].sv_set(res_verts)
+        outputs['edges'].sv_set(res_edges)
+        outputs['polygons'].sv_set(res_faces)
+        outputs['polygon_normals'].sv_set(res_polygon_normals)
+        outputs['polygon_centers'].sv_set(res_polygon_centers)
 
 def register():
     bpy.utils.register_class(SvMeshClusteringNode)
