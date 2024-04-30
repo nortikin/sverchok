@@ -115,11 +115,6 @@ class SvMeshClusteringNode(SverchCustomTreeNode, bpy.types.Node, SvRecursiveNode
 
         col = layout.column()
         col.row().label(text="Triangulate mesh polygons:")
-        
-        row = col.row()
-        split = row.split(factor=0.4)
-        split.column().label(text="Subdiv mode:")
-        split.column().row(align=True).prop(self, "subdiv_mode", text='')
 
         row = col.row()
         split = row.split(factor=0.4)
@@ -130,6 +125,11 @@ class SvMeshClusteringNode(SverchCustomTreeNode, bpy.types.Node, SvRecursiveNode
         split = row.split(factor=0.5)
         split.column().label(text="Polygons mode:")
         split.column().row(align=True).prop(self, "ngon_mode", text='')
+
+        row = col.row()
+        split = row.split(factor=0.4)
+        split.column().label(text="Subdiv mode:")
+        split.column().row(align=True).prop(self, "subdiv_mode", text='')
 
         pass
 
