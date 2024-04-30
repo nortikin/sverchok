@@ -141,10 +141,12 @@ class SvMeshClusteringNode(SverchCustomTreeNode, bpy.types.Node, SvRecursiveNode
         self.inputs.new('SvVerticesSocket', 'vertices')
         self.inputs.new('SvStringsSocket' , 'edges')
         self.inputs.new('SvStringsSocket' , 'polygons')
+        self.inputs.new('SvMatrixSocket'  , "matrixes")
 
         self.inputs['vertices'].label = 'Vertices'
         self.inputs['edges'].label = 'Edges'
         self.inputs['polygons'].label = 'Polygons'
+        self.inputs['matrixes'].label = 'Matrixes'
 
         self.inputs['cluster_subdivide'].label = "Cluster Subdivide"
         self.inputs['max_iter'].label = "Max Iteration"
@@ -181,10 +183,13 @@ class SvMeshClusteringNode(SverchCustomTreeNode, bpy.types.Node, SvRecursiveNode
         Edges     = ensure_nesting_level(_Edges, 3)
         _Faces    = inputs['polygons'].sv_get(default=[[]], deepcopy=False)
         Faces     = ensure_nesting_level(_Faces, 3)
+        _Matrixes    = inputs['matrixes'].sv_get(default=[[Matrix()]], deepcopy=False)
+        Matrixes     = flatten_data(_Matrixes)
 
-        cluster_subdivide = cluster_subdivide[: len(Vertices)]
-        max_iter          = max_iter[: len(Vertices)]
-        cluster_counts    = cluster_counts[: len(Vertices)]
+        len_parameters = max( len(Vertices), len(Matrixes) )
+        cluster_subdivide = cluster_subdivide[: len_parameters]
+        max_iter          = max_iter[:          len_parameters]
+        cluster_counts    = cluster_counts[:    len_parameters]
 
         outputs = self.outputs
         if not any( [o.is_linked for o in outputs]):
@@ -195,7 +200,7 @@ class SvMeshClusteringNode(SverchCustomTreeNode, bpy.types.Node, SvRecursiveNode
         res_faces = []
         res_polygon_centers = []
         res_polygon_normals = []
-        for cluster_subdivide_i, max_iter_i, cluster_counts_i, verts_i, edges_i, faces_i in zip_long_repeat(cluster_subdivide, max_iter, cluster_counts, Vertices, Edges, Faces):
+        for cluster_subdivide_i, max_iter_i, cluster_counts_i, verts_i, edges_i, faces_i, matrix_i in zip_long_repeat(cluster_subdivide, max_iter, cluster_counts, Vertices, Edges, Faces, Matrixes):
             if cluster_subdivide_i<0:
                 cluster_subdivide_i=0
             if max_iter_i<0:
@@ -229,6 +234,10 @@ class SvMeshClusteringNode(SverchCustomTreeNode, bpy.types.Node, SvRecursiveNode
             
             clust.cluster(cluster_counts_i, maxiter=max_iter_i)
             remesh = clust.create_mesh()
+            if not matrix_i == Matrix():
+                np_matrix_i = np.asarray(matrix_i)
+                remesh.transform(np_matrix_i, transform_all_input_vectors=True, inplace=True)
+
             remesh_edges = np.reshape(remesh.extract_all_edges(use_all_points=True).lines, (-1,3))[:,[1,2]]  # https://docs.pyvista.org/version/stable/api/core/_autosummary/pyvista.CompositeFilters.extract_all_edges.html#pyvista.CompositeFilters.extract_all_edges
 
             if self.output_as_numpy:
