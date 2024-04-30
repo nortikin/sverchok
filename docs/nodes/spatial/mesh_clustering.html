@@ -78,9 +78,11 @@
 <li class="toctree-l4"><a class="reference internal" href="#dependencies">Dependencies</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#outputs">Outputs</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#example-of-usage">Example of Usage</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#high-poly-clusterizing">High poly clusterizing</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#high-poly-clusterizing-with-dual-mesh">High poly clusterizing with dual mesh</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="populate_solid.html">Populate Solid</a></li>
@@ -155,7 +157,7 @@
              
   <section id="mesh-clustering">
 <h1>Mesh clustering<a class="headerlink" href="#mesh-clustering" title="Link to this heading">¶</a></h1>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/050bd959-f825-48c8-8036-790030ea5729"><img alt="https://github.com/nortikin/sverchok/assets/14288520/050bd959-f825-48c8-8036-790030ea5729" src="https://github.com/nortikin/sverchok/assets/14288520/050bd959-f825-48c8-8036-790030ea5729" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/0ff2d512-2da9-492d-93af-00d85c2b38de"><img alt="https://github.com/nortikin/sverchok/assets/14288520/0ff2d512-2da9-492d-93af-00d85c2b38de" src="https://github.com/nortikin/sverchok/assets/14288520/0ff2d512-2da9-492d-93af-00d85c2b38de" /></a>
 <section id="dependencies">
 <h2>Dependencies<a class="headerlink" href="#dependencies" title="Link to this heading">¶</a></h2>
 <p>This node requires <a class="reference external" href="https://github.com/pyvista/pyacvd">pyacvd</a> library to work. One can install it in addon settings:</p>
@@ -164,6 +166,7 @@
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node takes a surface mesh and returns a uniformly meshed surface using voronoi clustering.</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/fb0d011c-8550-4262-bf77-29d2012511c2"><img alt="https://github.com/nortikin/sverchok/assets/14288520/fb0d011c-8550-4262-bf77-29d2012511c2" src="https://github.com/nortikin/sverchok/assets/14288520/fb0d011c-8550-4262-bf77-29d2012511c2" /></a>
 <a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/f50b985a-45b6-482c-8b7c-1f7551a50b8f"><img alt="https://github.com/nortikin/sverchok/assets/14288520/f50b985a-45b6-482c-8b7c-1f7551a50b8f" src="https://github.com/nortikin/sverchok/assets/14288520/f50b985a-45b6-482c-8b7c-1f7551a50b8f" /></a>
 <a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/e761653b-a88f-42e1-b222-fa243b1642a5"><img alt="https://github.com/nortikin/sverchok/assets/14288520/e761653b-a88f-42e1-b222-fa243b1642a5" src="https://github.com/nortikin/sverchok/assets/14288520/e761653b-a88f-42e1-b222-fa243b1642a5" /></a>
 </section>
@@ -183,14 +186,72 @@
 <div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/6d49a5cf-704d-4566-b56e-861a88b9d34f"><img alt="https://github.com/nortikin/sverchok/assets/14288520/6d49a5cf-704d-4566-b56e-861a88b9d34f" src="https://github.com/nortikin/sverchok/assets/14288520/6d49a5cf-704d-4566-b56e-861a88b9d34f" /></a>
 </div></blockquote>
 </li>
-<li><p><strong>Triangulate mesh polygons</strong>. If your mesh has faces with different count of vertices then this mash has to be triangulated.</p></li>
+<li><p><strong>Matrixes</strong>. Spread you source meshes by matrixes. You can use vertices of another meshes as matrixes:</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/1b110e99-ebec-4805-9e45-ba7cb49b640f"><img alt="https://github.com/nortikin/sverchok/assets/14288520/1b110e99-ebec-4805-9e45-ba7cb49b640f" src="https://github.com/nortikin/sverchok/assets/14288520/1b110e99-ebec-4805-9e45-ba7cb49b640f" /></a>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
+<p>Triangulation.</p>
+<p>Before clusterisation your source meshes has to be triangulated. Here are parameters for process of triangulation.</p>
+<p>If source mesh has ngons woth different count of vertices then source mesh has to be triangulated with the next methods [<strong>Quads mode</strong> and <strong>Polygons mode</strong>].
+If ngons of source mesh are equals (they can has 3,4,5 verts but for all faces) the mesh will be triangulated with pyvista method <a class="reference external" href="https://docs.pyvista.org/version/stable/api/core/_autosummary/pyvista.polydatafilters.triangulate">triangulate</a> authomatically.</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/66bedca2-c62f-4603-b42a-5b86a6a8eef6"><img alt="https://github.com/nortikin/sverchok/assets/14288520/66bedca2-c62f-4603-b42a-5b86a6a8eef6" src="https://github.com/nortikin/sverchok/assets/14288520/66bedca2-c62f-4603-b42a-5b86a6a8eef6" /></a>
+<ul class="simple">
+<li><dl class="simple">
+<dt><strong>Quads mode</strong>:</dt><dd><ul>
+<li><p><strong>Beauty</strong>. Split the quads in nice triangles, slower method</p></li>
+<li><p><strong>Fixed</strong>. Split the quads on the 1st and 3rd vertices</p></li>
+<li><p><strong>Fixed Alternate</strong>. Split the quads on the 2nd and 4th vertices</p></li>
+<li><p><strong>Shortest Diagonal</strong>. Split the quads based on the distance between the vertices</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><strong>Polygons mode</strong>:</dt><dd><ul>
+<li><p><strong>Beauty</strong>. Arrange the new triangles nicely, slower method</p></li>
+<li><p><strong>Clip</strong>. Split the ngons using a scanfill algorithm</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<p>If your mesh is low poly and you want to smooth it then you can use subdivide mode:</p>
+<ul>
+<li><dl>
+<dt><strong>Subdiv mode</strong>:</dt><dd><ul class="simple">
+<li><p><strong>Butterfly</strong>.</p></li>
+<li><p><strong>Loop</strong>. Butterfly and loop subdivision perform smoothing when dividing, and may introduce artifacts into the mesh when dividing</p></li>
+<li><p><strong>Linear</strong>. Linear subdivision results in the fastest mesh subdivision, but it does not smooth mesh edges, but rather splits each triangle into 4 smaller triangles</p></li>
+</ul>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/672dc04d-4f3d-4dff-b359-1b40b98de57a"><img alt="https://github.com/nortikin/sverchok/assets/14288520/672dc04d-4f3d-4dff-b359-1b40b98de57a" src="https://github.com/nortikin/sverchok/assets/14288520/672dc04d-4f3d-4dff-b359-1b40b98de57a" /></a>
+</dd>
+</dl>
+</li>
 </ul>
 </section>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
-<p>Triangulated mesh:</p>
-<ul class="simple">
-<li><p><strong>Vertices</strong>, <strong>Edges</strong>, <strong>Faces</strong></p></li>
+<p>Clusterized mesh:</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/6a203a16-e23a-4214-a674-bbe507d1c5a1"><img alt="https://github.com/nortikin/sverchok/assets/14288520/6a203a16-e23a-4214-a674-bbe507d1c5a1" src="https://github.com/nortikin/sverchok/assets/14288520/6a203a16-e23a-4214-a674-bbe507d1c5a1" /></a>
+<ul>
+<li><p><strong>Vertices</strong></p></li>
+<li><p><strong>Edges</strong></p></li>
+<li><p><strong>Polygons</strong></p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/6258394e-b5c6-4688-baff-dd964f599e4f"><img alt="https://github.com/nortikin/sverchok/assets/14288520/6258394e-b5c6-4688-baff-dd964f599e4f" src="https://github.com/nortikin/sverchok/assets/14288520/6258394e-b5c6-4688-baff-dd964f599e4f" /></a>
+</div></blockquote>
+</li>
+<li><p><strong>Centers of Polygons</strong></p></li>
+<li><p><strong>Normals of Polygons</strong></p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/f62224e2-0f7e-4ecc-9478-0be93ebd56d9"><img alt="https://github.com/nortikin/sverchok/assets/14288520/f62224e2-0f7e-4ecc-9478-0be93ebd56d9" src="https://github.com/nortikin/sverchok/assets/14288520/f62224e2-0f7e-4ecc-9478-0be93ebd56d9" /></a>
+</div></blockquote>
+</li>
 </ul>
 </section>
 <section id="example-of-usage">
@@ -201,6 +262,11 @@
 <h2>High poly clusterizing<a class="headerlink" href="#high-poly-clusterizing" title="Link to this heading">¶</a></h2>
 <p>Subdivide is zero.</p>
 <a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/a25eb0d2-cccc-4086-b663-0036d60314a5"><img alt="https://github.com/nortikin/sverchok/assets/14288520/a25eb0d2-cccc-4086-b663-0036d60314a5" src="https://github.com/nortikin/sverchok/assets/14288520/a25eb0d2-cccc-4086-b663-0036d60314a5" /></a>
+</section>
+<section id="high-poly-clusterizing-with-dual-mesh">
+<h2>High poly clusterizing with dual mesh<a class="headerlink" href="#high-poly-clusterizing-with-dual-mesh" title="Link to this heading">¶</a></h2>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/1f786c06-cde4-4227-b539-59926e1e737b"><img alt="https://github.com/nortikin/sverchok/assets/14288520/1f786c06-cde4-4227-b539-59926e1e737b" src="https://github.com/nortikin/sverchok/assets/14288520/1f786c06-cde4-4227-b539-59926e1e737b" /></a>
+<p><a class="reference external" href="https://github.com/nortikin/sverchok/files/15172028/RoundedCube.Juwelry.0003.blend.zip">example_001</a></p>
 </section>
 </section>
 
