@@ -9,6 +9,10 @@ from scipy import sparse
 from cython.parallel import prange
 
 from pyacvd import _clustering
+from datetime import datetime
+import time
+
+from pyvista.core import _vtk_core as _vtk
 
 
 def _clustering_weighted_points_double(v, f, additional_weights, return_weighted=True):
@@ -515,6 +519,7 @@ def weighted_points(mesh, return_weighted=True, additional_weights=None):
         faces = faces.astype(np.int32)
     points = mesh.points
 
+    # Пока ещё ни разу additional_weights не пришёл не равным None
     if additional_weights is not None:
         weights = additional_weights
         return_weighted = True
@@ -559,6 +564,108 @@ def neighbors_from_mesh(mesh):
 
     return _clustering_neighbors_from_faces(npoints, faces)
 
+# def clean(
+#         point_merging=True,
+#         tolerance=None,
+#         lines_to_points=True,
+#         polys_to_lines=True,
+#         strips_to_polys=True,
+#         inplace=False,
+#         absolute=True,
+#         progress_bar=False,
+#         **kwargs,
+#     ):
+#         """Clean the mesh.
+
+#         This merges duplicate points, removes unused points, and/or
+#         removes degenerate cells.
+
+#         Parameters
+#         ----------
+#         point_merging : bool, optional
+#             Enables point merging.  ``True`` by default.
+
+#         tolerance : float, optional
+#             Set merging tolerance.  When enabled merging is set to
+#             absolute distance. If ``absolute`` is ``False``, then the
+#             merging tolerance is a fraction of the bounding box
+#             length. The alias ``merge_tol`` is also excepted.
+
+#         lines_to_points : bool, optional
+#             Enable or disable the conversion of degenerate lines to
+#             points.  Enabled by default.
+
+#         polys_to_lines : bool, optional
+#             Enable or disable the conversion of degenerate polys to
+#             lines.  Enabled by default.
+
+#         strips_to_polys : bool, optional
+#             Enable or disable the conversion of degenerate strips to
+#             polys.
+
+#         inplace : bool, default: False
+#             Updates mesh in-place.
+
+#         absolute : bool, optional
+#             Control if ``tolerance`` is an absolute distance or a
+#             fraction.
+
+#         progress_bar : bool, default: False
+#             Display a progress bar to indicate progress.
+
+#         **kwargs : dict, optional
+#             Accepts for ``merge_tol`` to replace the ``tolerance``
+#             keyword argument.  This may be deprecated in future.
+
+#         Returns
+#         -------
+#         pyvista.PolyData
+#             Cleaned mesh.
+
+#         Examples
+#         --------
+#         Create a mesh with a degenerate face and then clean it,
+#         removing the degenerate face
+
+#         >>> import pyvista as pv
+#         >>> import numpy as np
+#         >>> points = np.array(
+#         ...     [[0, 0, 0], [0, 1, 0], [1, 0, 0]], dtype=np.float32
+#         ... )
+#         >>> faces = np.array([3, 0, 1, 2, 3, 0, 2, 2])
+#         >>> mesh = pv.PolyData(points, faces)
+#         >>> mout = mesh.clean()
+#         >>> mout.faces  # doctest:+SKIP
+#         array([3, 0, 1, 2])
+
+#         """
+#         if tolerance is None:
+#             tolerance = kwargs.pop('merge_tol', None)
+#         assert_empty_kwargs(**kwargs)
+#         alg = _vtk.vtkCleanPolyData()
+#         alg.SetPointMerging(point_merging)
+#         alg.SetConvertLinesToPoints(lines_to_points)
+#         alg.SetConvertPolysToLines(polys_to_lines)
+#         alg.SetConvertStripsToPolys(strips_to_polys)
+#         if isinstance(tolerance, (int, float)):
+#             if absolute:
+#                 alg.ToleranceIsAbsoluteOn()
+#                 alg.SetAbsoluteTolerance(tolerance)
+#             else:
+#                 alg.SetTolerance(tolerance)
+#         alg.SetInputData(self)
+#         #_update_alg(alg, progress_bar, 'Cleaning')
+#         output = _get_output(alg)
+
+#         # Check output so no segfaults occur
+#         if output.n_points < 1 and self.n_cells > 0:
+#             raise ValueError('Clean tolerance is too high. Empty mesh returned.')
+
+#         if inplace:
+#             self.copy_from(output, deep=False)
+#             return self
+#         return output
+
 def _subdivide(mesh, nsub):
     """Perform a linear subdivision of a mesh"""
     new_faces = mesh.faces.reshape(-1, 4)
@@ -575,6 +682,56 @@ def _subdivide(mesh, nsub):
     sub_mesh = pv.PolyData(new_points, new_faces)
     sub_mesh.clean(inplace=True)
     return sub_mesh
+
+def _clustering_edge_id(neigh, nneigh):
+    """
+    Convert neighbor connection array to unique edge array
+
+    Parameters
+    ----------
+    neigh : np.ndarray
+        Array containing the neighbors for each point at each row.
+        Array is square and -1 indicates not used.
+
+    nneigh : np.ndarray
+        Array containing the number of valid connections for each point.
+
+    Returns
+    -------
+    edges : np.ndarray
+        Unique edges.
+    """
+    npoints = neigh.shape[0]
+    maxnbr = neigh.shape[1]
+    # cdef int i, j, k, ind
+
+    # copy neighbor array
+    temp_neighbor = neigh[:npoints, :maxnbr].astype(ctypes.c_int)
+
+    # Compute maximum possible number of edges
+    maxedge = 0
+    maxedge = np.sum(nneigh[:npoints])
+
+    # Generate edgess
+    temp_arr = np.empty((maxedge, 2), ctypes.c_int)
+
+    c = 0
+    for i in range(npoints):
+        for j in range(nneigh[i]):
+            if temp_neighbor[i, j] == -1:
+                continue
+            else:
+                ind = neigh[i, j]
+                temp_arr[c, 0] = i
+                temp_arr[c, 1] = ind
+                c += 1
+
+            # remove this index in temporary neighbor array
+            for k in range(nneigh[ind]):
+                if temp_neighbor[ind, k] == i:
+                    temp_neighbor[ind, k] = -1
+
+    return np.asarray(temp_arr)[:c]
 
 class Clustering:
     """Uniform point clustering based on ACVD.
@@ -614,13 +771,14 @@ class Clustering:
         self._edges = None
         self._update_data(None)
 
+    # Во всех вызовах weights никогда не инициализировались.
     def _update_data(self, weights=None):
         # Compute point weights and weighted points
         self._area, self._wcent = weighted_points(self.mesh, additional_weights=weights)
 
         # neighbors and edges
         self._neigh, self._nneigh = neighbors_from_mesh(self.mesh)
-        self._edges = _clustering.edge_id(self._neigh, self._nneigh)
+        self._edges = _clustering_edge_id(self._neigh, self._nneigh)
 
     def _clustering_init_clusters(self, clusters, neighbors,
                             nneigh, area, nclus, items):
@@ -734,16 +892,15 @@ class Clustering:
         #cdef int [1] nchange_arr
 
         # start all as modified
-        for i in range(nclus):
-            mod2[i] = 1
+        if nclus>=0:
+            mod2[:nclus]=1
 
-        tlast = 0
         while nchange > 0 and niter < maxiter:
 
             # Reset modification arrays
-            for i in range(nclus):
-                mod1[i] = mod2[i]
-                mod2[i] = 0
+            if nclus>=0:
+                mod1[:nclus] = mod2[:nclus]
+                mod2[:nclus] = 0
 
             nchange = 0
             for i in range(nedge):
@@ -1061,20 +1218,19 @@ class Clustering:
 
         # Arrays for cluster centers, masses, and energies
         sgamma = np.zeros((nclus, 3))
+        sgamma1 = np.zeros((nclus, 3))
         srho = np.zeros(nclus)
+        srho1 = np.zeros(nclus)
         energy = np.empty(nclus)
+        energy1 = np.empty(nclus)
 
         # Compute initial masses of clusters
-        for i in range(npoints):
-            srho[clusters[i]] += area[i]
-            sgamma[clusters[i], 0] += cent[i, 0]
-            sgamma[clusters[i], 1] += cent[i, 1]
-            sgamma[clusters[i], 2] += cent[i, 2]
+        srho  [:npoints  ] = np.bincount(clusters, weights=area[:npoints])
+        sgamma[:npoints,0] = np.bincount(clusters, weights=cent[:npoints,0])
+        sgamma[:npoints,1] = np.bincount(clusters, weights=cent[:npoints,1])
+        sgamma[:npoints,2] = np.bincount(clusters, weights=cent[:npoints,2])
 
-        for i in range(nclus):
-            energy[i] = (sgamma[i, 0]**2 + \
-                        sgamma[i, 1]**2 + \
-                        sgamma[i, 2]**2)/srho[i]
+        energy[:nclus] = (sgamma[:nclus, 0]**2 + sgamma[:nclus, 1]**2 + sgamma[:nclus, 2]**2)/srho[:nclus]
 
         # Count number of clusters
         cluscount = np.bincount(clusters).astype(ctypes.c_int)
@@ -1084,16 +1240,14 @@ class Clustering:
         mod2 = np.empty(nclus, ctypes.c_uint8)
 
         # Optimize clusters
-        self._clustering_minimize_energy(edges, clusters, area, sgamma, cent, srho, cluscount,
-                        maxiter, energy, mod1, mod2)
+        self._clustering_minimize_energy(edges, clusters, area, sgamma, cent, srho, cluscount, maxiter, energy, mod1, mod2)
         # Identify isolated clusters here
         ndisc = self._clustering_null_disconnected(nclus, nneigh, neighbors, clusters)
         niter = 0
         while ndisc and niter < iso_try:
             self._clustering_grow_null(edges, clusters)
             # Re optimize clusters
-            self._clustering_minimize_energy(edges, clusters, area, sgamma, cent, srho, cluscount,
-                        maxiter, energy, mod1, mod2)
+            self._clustering_minimize_energy(edges, clusters, area, sgamma, cent, srho, cluscount, maxiter, energy, mod1, mod2)
             # Check again for disconnected clusters
             for i in range(npoints):
                 if clusters[i] == -1:
