@@ -217,11 +217,11 @@ def numpy_data_from_bmesh(bm, out_np, face_data=None):
     else:
         return verts, edges, faces, []
 
-def pydata_from_bmesh(bm, face_data=None):
+def pydata_from_bmesh(bm, face_data=None, ret_verts=True, ret_edges=True, ret_faces=True):
 
-    verts = [v.co[:] for v in bm.verts]
-    edges = [[e.verts[0].index, e.verts[1].index] for e in bm.edges]
-    faces = [[i.index for i in p.verts] for p in bm.faces]
+    verts = [v.co[:] for v in bm.verts] if ret_verts==True and face_data is None else None
+    edges = [[e.verts[0].index, e.verts[1].index] for e in bm.edges] if ret_edges==True and face_data is None else None
+    faces = [[i.index for i in p.verts] for p in bm.faces] if ret_faces==True and face_data is None else None
 
     if face_data is None:
         return verts, edges, faces
