@@ -232,7 +232,7 @@ class SvMeshClusteringNode(SverchCustomTreeNode, bpy.types.Node, SvRecursiveNode
             # if(cluster_subdivide_i>0):
             #     clust.subdivide(cluster_subdivide_i)
             
-            clust.cluster(cluster_counts_i, maxiter=max_iter_i)
+            clust.cluster(cluster_counts_i, maxiter=max_iter_i) # https://github.com/pyvista/pyacvd/blob/6cdecab61bf566bb9ebee197c5294bf607cb936d/pyacvd/cython/_clustering.pyx#L94
             remesh = clust.create_mesh()
             if not matrix_i == Matrix():
                 np_matrix_i = np.asarray(matrix_i)

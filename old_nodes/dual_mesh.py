@@ -17,30 +17,62 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
+import math
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (match_long_repeat, updateNode)
+from sverchok.data_structure import (match_long_repeat)
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, dual_mesh
 from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
-from bpy.props import BoolVectorProperty, EnumProperty, BoolProperty, FloatProperty, IntProperty
 
+def dual_mesh(bm, recalc_normals=True):
+    # Make vertices of dual mesh by finding
+    # centers of original mesh faces.
+    new_verts = dict()
+    for face in bm.faces:
+        new_verts[face.index] = face.calc_center_median()
 
-class SvDualMeshNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
+    new_faces = []
+
+    def calc_angle(co, orth, co_orth, face_idx):
+        face_center = new_verts[face_idx]
+        direction = face_center - co
+        dx = direction.dot(orth)
+        dy = direction.dot(co_orth)
+        return math.atan2(dy, dx)
+
+    # For each vertex of original mesh,
+    # find all connected faces and connect
+    # corresponding vertices of the dual mesh
+    # with a face.
+    # The problem is, that the order of edges in
+    # vert.link_edges (or faces in vert.link_faces)
+    # is undefined, so we have to sort them somehow.
+    for vert in bm.verts:
+        if not vert.link_faces:
+            continue
+        normal = vert.normal
+        orth = normal.orthogonal()
+        co_orth = normal.cross(orth)
+        face_idxs = [face.index for face in vert.link_faces]
+        new_face = sorted(face_idxs, key = lambda idx : calc_angle(vert.co, orth, co_orth, idx))
+        new_face = list(new_face)
+
+        m = len(new_face)
+        if m > 2:
+            new_faces.append(new_face)
+
+    vertices = [new_verts[idx] for idx in sorted(new_verts.keys())]
+    return vertices, new_faces
+
+class SvDualMeshNode(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Dual Mesh
     Tooltip: Create dual mesh for the given mesh
     """
-    bl_idname = 'SvDualMeshNodeMK2'
+    bl_idname = 'SvDualMeshNode'
     bl_label = "Dual Mesh"
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_DUAL_MESH'
-
-    keep_boundaries : BoolProperty(
-        name = "Keep Boundaries",
-        description = "Keep non-manifold boundaries of the mesh in place by avoiding the dual transformation there",
-        default = False,
-        update = updateNode)  # type: ignore
-
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', 'Vertices')
@@ -56,10 +88,6 @@ class SvDualMeshNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
             (self.inputs[0], self.outputs[0]),
             (self.inputs[2], self.outputs[1]),
         ]
-    
-    def draw_buttons(self, context, layout):
-        col = layout.column()
-        col.row().prop(self, 'keep_boundaries')
 
     def process(self):
         if not any((s.is_linked for s in self.outputs)):
@@ -75,7 +103,7 @@ class SvDualMeshNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
         objects = match_long_repeat([verts_s, edges_s, faces_s])
         for verts, edges, faces in zip(*objects):
             bm = bmesh_from_pydata(verts, edges, faces, normal_update=True)
-            new_verts, new_faces = dual_mesh(bm, keep_boundaries=self.keep_boundaries)
+            new_verts, new_faces = dual_mesh(bm)
             bm.free()
             new_verts = [tuple(v) for v in new_verts]
             verts_out.append(new_verts)
@@ -85,9 +113,9 @@ class SvDualMeshNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
         self.outputs['Faces'].sv_set(faces_out)
 
 def register():
-    bpy.utils.register_class(SvDualMeshNodeMK2)
+    bpy.utils.register_class(SvDualMeshNode)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvDualMeshNodeMK2)
+    bpy.utils.unregister_class(SvDualMeshNode)
 

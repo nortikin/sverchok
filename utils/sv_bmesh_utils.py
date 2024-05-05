@@ -471,45 +471,288 @@ def remove_doubles(vertices, edges, faces, d, face_data=None, vert_data=None, ed
 
 
 
-def dual_mesh(bm, recalc_normals=True):
+def dual_mesh(bm, recalc_normals=True, keep_boundaries=False):
+    from datetime import datetime
+    from time import time_ns
     # Make vertices of dual mesh by finding
     # centers of original mesh faces.
     new_verts = dict()
+    bm.edges.ensure_lookup_table()
+    
+    t1  =  t2 =  t3 =  t4 = 0
+    st1 = st2 = st3 = st4 = 0
+    dict_faces_indexes = dict()
+    dict_faces_edges_pair = dict()
+    dict_faces_centers = dict()
+
     for face in bm.faces:
-        new_verts[face.index] = face.calc_center_median()
+        # Подготовка индексов faces для расчёта направлений edges
+        # 146(170) ms
+        t1 = time_ns()
+        list_fv = []
+        for vI in face.verts:
+            list_fv.append(vI.index)
+        dict_faces_indexes[face.index] = list_fv
+        dict_faces_centers[face.index] = face.calc_center_median()[:]
+        t1 = time_ns()-t1
+        st1 = st1+t1
 
-    new_faces = []
+    # Куда складывать stripes для каждой вершины
+    dict_stripes = dict()
+    dual_mesh_verts = []
+    dual_mesh_faces = []
+    #  Соответствие индексов vertex, используемых в Dual Mesh 
+    dual_mesh_dict_verts_index = dict() # Первый индекс ключа: -1 - индекс vert, -2 - индекс edge, -3 - индекс faces в исходном bm
 
-    def calc_angle(co, orth, co_orth, face_idx):
-        face_center = new_verts[face_idx]
-        direction = face_center - co
-        dx = direction.dot(orth)
-        dy = direction.dot(co_orth)
-        return math.atan2(dy, dx)
 
-    # For each vertex of original mesh,
-    # find all connected faces and connect
-    # corresponding vertices of the dual mesh
-    # with a face.
-    # The problem is, that the order of edges in
-    # vert.link_edges (or faces in vert.link_faces)
-    # is undefined, so we have to sort them somehow.
     for vert in bm.verts:
         if not vert.link_faces:
             continue
-        normal = vert.normal
-        orth = normal.orthogonal()
-        co_orth = normal.cross(orth)
-        face_idxs = [face.index for face in vert.link_faces]
-        new_face = sorted(face_idxs, key = lambda idx : calc_angle(vert.co, orth, co_orth, idx))
-        new_face = list(new_face)
 
-        m = len(new_face)
-        if m > 2:
-            new_faces.append(new_face)
+        # Проблема: faces вокруг вершины не образуют кольцо, а могут прерываться в произвольных местах даже
+        # по несколько раз (как пропеллер, например). Для сравнения глянул геоноды. Там такая ситуация - по умолчанию делается dualmesh
+        # только если вокруг вершины замкнутое кольцо плоскостей. Иначе, если есть разрыв, то dualmesh не отрабатывает такую вершину.
+        # Есть ещё параметр - "Keep Boundaries". Он тогда добавляет ещё плоскостей, чтобы замостить всю поверхность mesh, протягивая
+        # рёбра к серединам внешних рёбер от исходного mesh.
+        # Определение обхода faces, присоединённых к вершине. Не учитывается проверка на manifold, не учитываются нормали (а надо как-то проверить) - отмена проверки,
+        # т.к. сюда mesh попадает с уже выровненными нормалями faces, поэтому вполне можно сразу брать вершины из faces
+        if not vert.link_edges:
+            continue
+        
+        v0 = vert
+        # В результате подготовки требуется разделить edges на manifold/non manifold.
+        # manifold - всегда с двумя faces (есть исключение, когда точка одна посередине отрезка и это тоже non-manifold), non-manifold - с одной faces.
+        list_faces1 = []  # Список faces, которые примыкают к edge по одному. (Если их примыкает больше двух, то происходит разделение по одной штуке)
+        list_faces2 = []  # Список faces, которые примыкают к edge по два.
+        # 667 (678) ms
+        # 915 (960) ms после того как убрал сортировку результата. Всё равно внутренняя сортировка list_faces1 и list_faces2 не имеет значения
+        
+        t2 = time_ns()
+        # 397 (430) ms
+        for v0_edge in v0.link_edges:
+            # Индексы в edge идут в неизвестной последовательности, поэтому не факт, что индекс v0 первый, а v1 - второй,
+            # Поэтому, чтобы выбрать индекс второй вершины надо проверять, какой из них какой в v0_edge
+            # 0.146ms
+            v1 = v0_edge.verts[0]
+            v1_index = v1.index
+            if v1_index==v0.index:
+                v1 = v0_edge.verts[1]
+                v1_index = v1.index
 
+            # Если к v0_edge присоединяются faces, то обработать этот edge
+            if v0_edge.link_faces:  # 31 ms
+                edge_verts_source_index = (v0_edge.verts[0].index, v0_edge.verts[1].index, )  # Запомнить исходное направление edge. Оно понадобиться позже, при определении ориентации stripe в dual_mesh face через индексы в faces
+                if len(v0_edge.link_faces)!=2:  # 62 ms
+                    # 589(638) ms
+                    # Если количество faces==1 и больше 2 (т.е. не равно 2), то данный edge будет считаться non-manifold
+                    # и поэтому его смежные faces надо добавить по одному (от них потом пойдут отдельные stripe):
+                    v_mid = ((v1.co+v0.co)/2.0)[:]  # 130(103) ms
+                    for fi in v0_edge.link_faces:
+                        list_faces1.append( { "v1.index": v1_index,
+                                              "edge_index":v0_edge.index,
+                                              "faces": [fi.index,],
+                                              "edge_verts_source_index": edge_verts_source_index,
+                                              "mid": v_mid,
+                                            } )
+                else:
+                    # 332(337) ms
+                    # Если количество faces 2, то добавить нужно пару целиком:
+                    f0 = v0_edge.link_faces[0]
+                    f1 = v0_edge.link_faces[1]
+
+                    list_faces2.append( { "v1.index": v1_index,
+                                          "edge_index":v0_edge.index,
+                                          "edge_verts_source_index": edge_verts_source_index,
+                                          "faces": [f0.index, f1.index,],
+                                        } )  # 143(158) ms
+            pass
+        # Поместить non-manifold edges в начало списка (это edges с одной смежной faces). При этом что является началом полосы всё ещё не известно (определяется позже),
+        # т.к. концы полос тоже заканчиваются на одном face.
+        # Важно помнить следуюшие свойства полос:
+        #  1. Полоса может состоять из индекса одного полигона (начнётся на середине edge, потом переходит в середину face, потом на середину смежного edge от v0).
+        #  2. Если полоса начинается на одном полигоне, то и заканчивается на одном (нет противоречия п.1). Также в этом случае считается, что полоса является не замкнутой.
+        #  3. Полосы бывают замкнутые, и разомкнутые. Разомкнутая полоса считается так: edge_start/2, center,... center, edge_last/2; Замкнутая полоса считается так: center, ..., center.
+        #     В случае замкнутых полос есть одно исключение - если полоса состоит только из двух смежных вершин, то это non-manifold. Обрабатывается позже.
+        
+        # Для ускорения чтобы лишний раз не выполнять list.extended на больших списках (экономия)
+        if list_faces1:
+            list_faces = list_faces1
+            if list_faces2:
+                list_faces.extend(list_faces2)
+        else:
+            list_faces = list_faces2
+
+        t2 = time_ns()-t2
+        st2 = st2+t2
+
+        t3 = time_ns()
+        list_stripes = []
+        t4 = time_ns()
+        # 601(602) ms
+        # Расчёт stripes, которые окружают v0
+        while True:
+            for list_faces_I in list_faces:
+                # 440(450) ms
+                # Не всегда можно сразу определить какому stripes принадлежит list_faces_I.
+                stripe_extended = False # Пока не удалось определить принадлежность list_faces_I какому либо stripe
+                # Проверить list_faces_I может ли он продолжить какой-либо stripe из list_stripes
+                for stripe in list_stripes:
+                    # Взять последний элемент stripe и проверить,может ли он дополнить этот stripe.
+                    # Технически выполняется сортировка списка вида [[1],[3,2],[1,3],[2]] в последовательность [1,3,2,2] (удвоение количества faces в конце списка нормально, эта ситуация обрабатывается позже)
+                    frame_last_stripe_face = stripe[-1]["stripe_face"]  # 66ms
+                    if frame_last_stripe_face in list_faces_I["faces"]:
+                        list_faces_I_faces = list_faces_I["faces"][:]  # 46 ms
+                        # Если подключаемый к stripe элемент list_faces_I является последним, то определить stripe_face
+                        # этого элемента из последнего face:
+                        if len(list_faces_I["faces"])==1:
+                            list_faces_I["stripe_face"] = list_faces_I_faces[0]
+                        else:
+                            # 98 ms
+                            # Количество faces, которое сейчас равно 2 говорит о том, что у текущего edge есть продолжение в виде второго face,
+                            # его и надо будет позже записать в качестве stripe_face позже:
+                            list_faces_I_faces.remove(frame_last_stripe_face) # 55 ms # Удалить face, который раньше был последним и оставить последний второй face
+                        # 69 ms
+                        # Пристроить элемент в конец stripe
+                        stripe.append(list_faces_I) # 43 ms
+                        stripe_extended = True
+                        list_faces_I["stripe_face"] = list_faces_I_faces[0]
+                        # раз элемент удалось пристроить, то прекратить проверять остальные stripes
+                        break
+                    pass
+                else:
+                    # Если элемент list_faces_I не подошёл в конец ни одному из list_stripes, то выбрать для обработки следующий элемент list_faces_I(+1)
+                    # Если элементы закончились, то создать новый stripes и установить в начало 0-й элемент из list_faces (см.ниже).
+                    pass
+                # 80ms
+                if stripe_extended == True:
+                    list_faces.remove(list_faces_I)
+                    break # for list_faces_I in list_faces. Goto While
+            else:
+                # 28ms
+                if list_faces:
+                    # Если остались элементы, которые ещё не удалось пристроить к list_stripes, то начать новый stripe.
+                    # Тут может оказаться как начало stripe, так и середина циклического stripe,
+                    # но это не существенно. Правильное направление обхода stripe (по сути определяет нормаль) будет определено позже на основе первого элемента stripe.
+                    list_faces_0 = list_faces.pop(0) # Берётся обязательно 0-й элемент, т.к. начальные/конечные элементы stripe располагаются вначале списка list_faces. (если такого одиночного/начального элемента в list_faces нет, то сюда можно попасть только один раз, когда надо начать считать замкнутый stripe, для него берётся любой элемент)
+                    list_faces_0["stripe_face"] = list_faces_0["faces"][0]
+                    list_stripes.append( [list_faces_0] )
+                else:
+                    break # while. Закончить while т.к. элементов больше не осталось.
+            pass
+        t4 = time_ns() - t4
+        st4 = st4+t4
+        v0_stripes_faces = []
+        # Определить порядок faces в list_stripes. Сейчас последовательность обхода индексов вершин в list_stripes произвольная, т.е. нормали результирующей stripe может быть сориентирована некорректно.
+        # По первой edge на face можно определить в каком направлении надо обходить stripe. Он должен соответствовать исходному face
+        for stripe in list_stripes:
+            # Определить опорный face
+            face_index = stripe[0]["faces"][0]
+            # индексы вернин первого edge
+            v0_index, v1_index = v0.index, stripe[0]["v1.index"]
+            # Если индекс главной вершины, вокруг которой рассчитывается stripe меньше, чем индекс второй вершины, то stripe надо развернуть, т.к. направление индексов edge
+            # обратно по отношению к face, на которой он строится. Нужно развернуть stripe как список
+            findex = dict_faces_indexes[face_index]
+            if ( findex.index(v1_index)-findex.index(v0_index) )%len(findex) != 1:
+                stripe.reverse()
+
+            # Рассчитать вершины нового face, соответствующего stripe (+ добавить в конце текущую главную точку)
+            # Если stripe разомкнутый, то нужно добавить среднюю точку
+            dual_mesh_face = []
+            for I, frame_I in enumerate(stripe):
+                if len(frame_I["faces"])==1:
+                    if keep_boundaries==False:
+                        # Не рассчитывать stripe, если параметр keep_boundaries отключен.
+                        # Это касается всех stripe, которые начинаются и заканчиваются на edges.
+                        break
+                    if I==0:
+                        # Это начало разомкнутого stripe, поэтому он начинается с середины edge
+                        edge_tupple = (-2, frame_I["edge_index"], )
+                        mid_index = dual_mesh_dict_verts_index.get( edge_tupple )
+                        if mid_index is None:
+                            dual_mesh_verts.append(frame_I["mid"])
+                            dual_mesh_dict_verts_index[edge_tupple] = mid_index = len(dual_mesh_verts)-1
+                        dual_mesh_face.append(mid_index)
+
+                        #  следом за ним надо взять середину face этого же первого элемента frame_I
+                        face_tupple = (-3, frame_I["stripe_face"], )
+                        frame_I_face_center_index = dual_mesh_dict_verts_index.get( face_tupple )
+                        if frame_I_face_center_index is None:
+                            dual_mesh_verts.append(dict_faces_centers[face_tupple[1]])
+                            dual_mesh_dict_verts_index[ face_tupple ] = frame_I_face_center_index = len(dual_mesh_verts)-1
+                        dual_mesh_face.append(frame_I_face_center_index)
+                        pass
+                    else:
+                        # Это конец разомкнутого stripe, поэтому сначала взять средний face,
+                        # но не добавлять его сразу, а проверить, не был ли он уже добавлен
+                        # в предыдущем действии. Бывает, что dual mesh строится на угле одного многоугольника, поэтому он начинается и заканчивается на одном face.
+                        # Но если он переходит на другой многоугольник, то тут надо добавить и его середину тоже!
+                        face_tupple = (-3, frame_I["stripe_face"], )
+                        frame_I_face_center_index = dual_mesh_dict_verts_index.get( face_tupple )
+                        if frame_I_face_center_index is None:
+                            dual_mesh_verts.append(dict_faces_centers[face_tupple[1]])
+                            dual_mesh_dict_verts_index[ face_tupple ] = frame_I_face_center_index = len(dual_mesh_verts)-1
+                        if frame_I_face_center_index not in dual_mesh_face:
+                            dual_mesh_face.append(frame_I_face_center_index)
+
+                        #  следом за ним надо взять середину edge элемента frame_I
+                        edge_tupple = (-2, frame_I["edge_index"], )
+                        mid_index = dual_mesh_dict_verts_index.get( edge_tupple )
+                        if mid_index is None: # Индексы бывают и нулевые! Раньше проверял not mid index
+                            dual_mesh_verts.append(frame_I["mid"])
+                            dual_mesh_dict_verts_index[edge_tupple] = mid_index = len(dual_mesh_verts)-1
+                        if mid_index not in dual_mesh_face:
+                            # Бывает одна исключительная ситуация, когда stripe топологически не замкнут, а технически замкнут. Это когда stripe образует кольцо,
+                            # но начинает и заканчивается на non-manifold edge. В этом случае не нужно добавлять последнюю среднюю точку edge (т.к. она уже используется в начале)
+                            # и не надо добавлять центральную точку, т.к. последовательность индексов станет некорректной, замкнувшись в центр.
+                            dual_mesh_face.append(mid_index)
+                            # После последней середины edge нужно замкнуть dual face через индекс главной точки
+                            v0_tupple = (-1, v0.index)
+                            v0_dual_mesh_index = dual_mesh_dict_verts_index.get( v0_tupple )
+                            if v0_dual_mesh_index is None:
+                                dual_mesh_verts.append(v0.co[:])
+                                dual_mesh_dict_verts_index[v0_tupple] = v0_dual_mesh_index = len(dual_mesh_verts)-1
+                            dual_mesh_face.append( v0_dual_mesh_index )
+                        pass
+                else:
+                    # Это среднее звено stripe. Просто добавляем подряд середины faces.
+                    # Возможное исключение: если frame_I состоит из трёх edges и двух сегментов, то иногда получается, что 
+                    # на одном конце stripe скапливается последовательность faces, в которой может оказаться два одинаковых
+                    # индекса faces (например, потому что был реверс последовательности). Например, изначально была такая последовательность stripe_face: [6,6,3],
+                    # а потом при реверсе её развернули и она стала 3,6,6. Поэтому перед добавление надо проверить, что такого индекса вершины не было:
+                    face_tupple = (-3, frame_I["stripe_face"], )
+                    frame_I_face_center_index = dual_mesh_dict_verts_index.get( face_tupple )
+                    if frame_I_face_center_index is None:
+                        dual_mesh_verts.append(dict_faces_centers[ frame_I["stripe_face"] ])
+                        dual_mesh_dict_verts_index[ face_tupple ] = frame_I_face_center_index = len(dual_mesh_verts)-1
+                    if frame_I_face_center_index not in dual_mesh_face:
+                        dual_mesh_face.append(frame_I_face_center_index)
+                    # Примечание: Замыкать через индекс главной точки не надо, т.к. dual_mesh должен обойти вокруг неё полностью.
+                    pass
+                pass
+            if len(dual_mesh_face) in [0,2]:
+                # len==2 - Исключительная ситуация, когда между двумя faces находится edge, разделённая пополам. В этом случае изначально предполагалось, что это будет
+                # замкнутый stripe, но это порождает невозможный face только из одной линии. Поэтому такой face надо пропустить.
+                # len==0 - использую для случая, если нужно не пускать какой-то stripe (пока только keep_boundaries)
+                pass
+            else:
+                #v0_stripes_faces.append( dual_mesh_face )
+                #stripe["stripes_faces"] = v0_stripes_faces
+                dual_mesh_faces.append( dual_mesh_face )
+
+        dict_stripes[v0.index] = list_stripes
+        t3 = time_ns()-t3
+        st3 = st3+t3
+        pass
+
+    print("st1=",(st1)/1000000.0)
+    print("st2=",(st2)/1000000.0)
+    print("st3=",(st3)/1000000.0)
+    print("st4=",(st4)/1000000.0)
+    print("st1+st2=",(st1+st2)/1000000.0)
+    print("st1+st2+st3=",(st1+st2+st3)/1000000.0)
     vertices = [new_verts[idx] for idx in sorted(new_verts.keys())]
-    return vertices, new_faces
+    #return vertices, new_faces
+    return dual_mesh_verts, dual_mesh_faces
 
 def diamond_mesh(bm):
     new_bm = bmesh.new()

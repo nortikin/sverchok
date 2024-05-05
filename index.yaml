@@ -451,7 +451,7 @@
         - SvOffsetLineNode
         - SvContourNode
         - ---
-        - SvDualMeshNode
+        - SvDualMeshNodeMK2
         - SvDiamondMeshNode
         - SvClipVertsNode
         - ---
