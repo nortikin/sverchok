@@ -19,7 +19,7 @@
 import bpy
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (match_long_repeat, updateNode)
+from sverchok.data_structure import (match_long_repeat, updateNode, flatten_data)
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, dual_mesh
 from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
 from bpy.props import BoolVectorProperty, EnumProperty, BoolProperty, FloatProperty, IntProperty
@@ -40,12 +40,16 @@ class SvDualMeshNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
         description = "Keep non-manifold boundaries of the mesh in place by avoiding the dual transformation there",
         default = False,
         update = updateNode)  # type: ignore
-
+    
+    dual_mesh_levels : IntProperty(
+        min=0, default=1, name='Levels',
+        description="Dual Mesh Levels. (min=0 - disable dual mesh, default=1)", update=updateNode) # type: ignore
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', 'vertices')
         self.inputs.new('SvStringsSocket' , 'edges')
         self.inputs.new('SvStringsSocket' , 'polygons')
+        self.inputs.new('SvStringsSocket' , 'dual_mesh_levels').prop_name = 'dual_mesh_levels'
 
         self.inputs['vertices'].label = 'Vertices'
         self.inputs['edges']   .label = 'Edges'
@@ -76,24 +80,31 @@ class SvDualMeshNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
 
         verts_s = self.inputs['vertices'].sv_get()
         edges_s = self.inputs['edges'].sv_get(default=[[]])
-        faces_s = self.inputs['polygons'].sv_get()
+        polygons_s = self.inputs['polygons'].sv_get()
+        _dual_mesh_levels = self.inputs['dual_mesh_levels'].sv_get(default=[[1]], deepcopy=False)
+        dual_mesh_levels = flatten_data(_dual_mesh_levels)
+
 
         verts_out = []
         edges_out = []
-        faces_out = []
+        polygons_out = []
 
-        objects = match_long_repeat([verts_s, edges_s, faces_s])
-        for verts, edges, faces in zip(*objects):
-            bm = bmesh_from_pydata(verts, edges, faces, normal_update=True)
-            new_verts, new_edges, new_faces = dual_mesh(bm, keep_boundaries=self.keep_boundaries)
-            bm.free()
+        objects = match_long_repeat([verts_s, edges_s, polygons_s, dual_mesh_levels])
+        for verts, edges, polygons, dual_mesh_level in zip(*objects):
+            if dual_mesh_level<0:
+                dual_mesh_level=0
+            new_verts, new_edges, new_polygons = verts, edges, polygons
+            for I in range(dual_mesh_level):
+                bm = bmesh_from_pydata(new_verts, new_edges, new_polygons, normal_update=True)
+                new_verts, new_edges, new_polygons = dual_mesh(bm, keep_boundaries=self.keep_boundaries)
+                bm.free()
             verts_out.append(new_verts)
             edges_out.append(new_edges)
-            faces_out.append(new_faces)
+            polygons_out.append(new_polygons)
 
         self.outputs['vertices'].sv_set(verts_out)
         self.outputs['edges'].sv_set(edges_out)
-        self.outputs['polygons'].sv_set(faces_out)
+        self.outputs['polygons'].sv_set(polygons_out)
 
 def register():
     bpy.utils.register_class(SvDualMeshNodeMK2)
