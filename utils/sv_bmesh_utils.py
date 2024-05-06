@@ -29,6 +29,7 @@ from bmesh.types import BMVert, BMEdge, BMFace
 import mathutils
 
 from sverchok.data_structure import zip_long_repeat, has_element
+#from sverchok.utils.sv_mesh_utils import polygons_to_edges_np
 from sverchok.utils.sv_logging import sv_logger
 from sverchok.utils.math import np_dot
 
@@ -474,6 +475,7 @@ def remove_doubles(vertices, edges, faces, d, face_data=None, vert_data=None, ed
 def dual_mesh(bm, recalc_normals=True, keep_boundaries=False):
     from datetime import datetime
     from time import time_ns
+    from sverchok.utils.sv_mesh_utils import polygons_to_edges_np
     # Make vertices of dual mesh by finding
     # centers of original mesh faces.
     new_verts = dict()
@@ -752,7 +754,8 @@ def dual_mesh(bm, recalc_normals=True, keep_boundaries=False):
     print("st1+st2+st3=",(st1+st2+st3)/1000000.0)
     vertices = [new_verts[idx] for idx in sorted(new_verts.keys())]
     #return vertices, new_faces
-    return dual_mesh_verts, dual_mesh_faces
+    dual_mesh_edges = polygons_to_edges_np( [dual_mesh_faces], unique_edges=True, output_numpy=False)[0]
+    return dual_mesh_verts, dual_mesh_edges, dual_mesh_faces
 
 def diamond_mesh(bm):
     new_bm = bmesh.new()

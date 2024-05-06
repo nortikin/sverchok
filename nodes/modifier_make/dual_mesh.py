@@ -43,12 +43,21 @@ class SvDualMeshNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
 
 
     def sv_init(self, context):
-        self.inputs.new('SvVerticesSocket', 'Vertices')
-        self.inputs.new('SvStringsSocket', 'Edges')
-        self.inputs.new('SvStringsSocket', 'Faces')
+        self.inputs.new('SvVerticesSocket', 'vertices')
+        self.inputs.new('SvStringsSocket' , 'edges')
+        self.inputs.new('SvStringsSocket' , 'polygons')
 
-        self.outputs.new('SvVerticesSocket', 'Vertices')
-        self.outputs.new('SvStringsSocket', 'Faces')
+        self.inputs['vertices'].label = 'Vertices'
+        self.inputs['edges']   .label = 'Edges'
+        self.inputs['polygons'].label = 'Polygons'
+
+        self.outputs.new('SvVerticesSocket', 'vertices')
+        self.outputs.new('SvStringsSocket' , 'edges')
+        self.outputs.new('SvStringsSocket' , 'polygons')
+
+        self.outputs['vertices'].label = 'Vertices'
+        self.outputs['edges']   .label = 'Edges'
+        self.outputs['polygons'].label = 'Polygons'
 
     @property
     def sv_internal_links(self):
@@ -65,24 +74,26 @@ class SvDualMeshNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
         if not any((s.is_linked for s in self.outputs)):
             return
 
-        verts_s = self.inputs['Vertices'].sv_get()
-        edges_s = self.inputs['Edges'].sv_get(default=[[]])
-        faces_s = self.inputs['Faces'].sv_get()
+        verts_s = self.inputs['vertices'].sv_get()
+        edges_s = self.inputs['edges'].sv_get(default=[[]])
+        faces_s = self.inputs['polygons'].sv_get()
 
         verts_out = []
+        edges_out = []
         faces_out = []
 
         objects = match_long_repeat([verts_s, edges_s, faces_s])
         for verts, edges, faces in zip(*objects):
             bm = bmesh_from_pydata(verts, edges, faces, normal_update=True)
-            new_verts, new_faces = dual_mesh(bm, keep_boundaries=self.keep_boundaries)
+            new_verts, new_edges, new_faces = dual_mesh(bm, keep_boundaries=self.keep_boundaries)
             bm.free()
-            new_verts = [tuple(v) for v in new_verts]
             verts_out.append(new_verts)
+            edges_out.append(new_edges)
             faces_out.append(new_faces)
 
-        self.outputs['Vertices'].sv_set(verts_out)
-        self.outputs['Faces'].sv_set(faces_out)
+        self.outputs['vertices'].sv_set(verts_out)
+        self.outputs['edges'].sv_set(edges_out)
+        self.outputs['polygons'].sv_set(faces_out)
 
 def register():
     bpy.utils.register_class(SvDualMeshNodeMK2)
