@@ -20,7 +20,7 @@ import bpy
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (match_long_repeat, updateNode, flatten_data)
-from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, dual_mesh
+from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, dual_mesh, add_mesh_to_bmesh
 from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
 from bpy.props import BoolVectorProperty, EnumProperty, BoolProperty, FloatProperty, IntProperty
 
@@ -75,6 +75,7 @@ class SvDualMeshNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
         col.row().prop(self, 'keep_boundaries')
 
     def process(self):
+        from time import time_ns
         if not any((s.is_linked for s in self.outputs)):
             return
 
@@ -84,23 +85,31 @@ class SvDualMeshNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
         _dual_mesh_levels = self.inputs['dual_mesh_levels'].sv_get(default=[[1]], deepcopy=False)
         dual_mesh_levels = flatten_data(_dual_mesh_levels)
 
-
         verts_out = []
         edges_out = []
         polygons_out = []
 
         objects = match_long_repeat([verts_s, edges_s, polygons_s, dual_mesh_levels])
+        st1 = t1 = 0
+        t1 = time_ns()
         for verts, edges, polygons, dual_mesh_level in zip(*objects):
             if dual_mesh_level<0:
                 dual_mesh_level=0
             new_verts, new_edges, new_polygons = verts, edges, polygons
-            for I in range(dual_mesh_level):
+            if dual_mesh_level>0:
                 bm = bmesh_from_pydata(new_verts, new_edges, new_polygons, normal_update=True)
-                new_verts, new_edges, new_polygons = dual_mesh(bm, keep_boundaries=self.keep_boundaries)
+                for I in range(dual_mesh_level):
+                    if I>0:
+                        bm.clear()
+                        add_mesh_to_bmesh(bm, new_verts, new_edges, new_polygons)
+                    new_verts, new_edges, new_polygons = dual_mesh(bm, keep_boundaries=self.keep_boundaries)
                 bm.free()
             verts_out.append(new_verts)
             edges_out.append(new_edges)
             polygons_out.append(new_polygons)
+        t1 = time_ns() - t1
+        st1 = st1+t1
+        print("DualMesh process: st1=",(st1)/1000000.0)
 
         self.outputs['vertices'].sv_set(verts_out)
         self.outputs['edges'].sv_set(edges_out)

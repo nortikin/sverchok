@@ -253,6 +253,7 @@ class SvPolygonGridNode(SverchCustomTreeNode, bpy.types.Node):
     """
     bl_idname = 'SvPolygonGridNode'
     bl_label = 'Polygon Grid'
+    bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_GRID'
 
     def update_layout(self, context):
