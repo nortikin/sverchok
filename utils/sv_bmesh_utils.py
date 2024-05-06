@@ -502,10 +502,10 @@ def dual_mesh(bm, recalc_normals=True, keep_boundaries=False):
     dict_stripes = dict()
     dual_mesh_verts = []
     dual_mesh_faces = []
-    #  Соответствие индексов vertex, используемых в Dual Mesh 
-    dual_mesh_dict_verts_index = dict() # Первый индекс ключа: -1 - индекс vert, -2 - индекс edge, -3 - индекс faces в исходном bm
+    # Кэш Vertex. Соответствие индексов vertex, используемых в Dual Mesh [(-1,10):0, (-3,5):17,...]
+    dual_mesh_dict_verts_index = dict() # Первый индекс ключа тип vertex из frame от stripe: -1 - индекс vert, -2 - индекс edge, -3 - индекс faces в исходном bm
 
-
+    # Список всех stripe
     list_stripes = []
     for vert in bm.verts:
         if not vert.link_faces:
@@ -659,6 +659,8 @@ def dual_mesh(bm, recalc_normals=True, keep_boundaries=False):
 
     # Заранее определить индексы faces, которые будут участвовать в расчёте и подгрузить их к кэш вершин:
     # Оказалось, что прямо в тесте есть пример, который основывается на этой особенности! (см. https://github.com/nortikin/sverchok/blame/master/json_examples/Architecture/Curved_Hexagonal_Truss.json)
+    t6 = time_ns()
+    # 289 ms вместе с сортировкой
     used_faces_indexes_set = set()
     for list_stripes_v0 in list_stripes:
         # Определить порядок faces в list_stripes_v0. Сейчас последовательность обхода индексов вершин в list_stripes_v0 произвольная, т.е. нормали результирующей stripe может быть сориентирована некорректно.
@@ -681,12 +683,16 @@ def dual_mesh(bm, recalc_normals=True, keep_boundaries=False):
                         used_faces_indexes_set.add( frame_I["faces"][0] )
                         used_faces_indexes_set.add( frame_I["faces"][1] )
                     pass
-    # Теперь отсортировать список используемых faces и подгрузить их центры этих faces в кеш вершин в начало списка.
+    # Теперь отсортировать список используемых faces и подгрузить центры этих faces в кеш вершин в начало списка вершин (теперь индексы вершин
+    # для DualMesh будут совпадать с индексами используемых faces, которые смогли преобразоваться в отображаемый DualMesh. Это не гарантирует, что
+    # попадут все faces исходного mesh, но они попадут в исходной последовательности, хотя некоторые face могут быть пропущены как non-manifold).
     used_faces_indises_ordered_list = sorted(used_faces_indexes_set)
     for idx in used_faces_indises_ordered_list:
         face_tupple = (-3, idx, )
         dual_mesh_verts.append(dict_faces_centers[idx])
         dual_mesh_dict_verts_index[ face_tupple ] = len(dual_mesh_verts)-1
+    t6 = time_ns()-t6
+    st6 = st6+t6
 
     for list_stripes_v0 in list_stripes:
         v0 = list_stripes_v0[0][0]["v0"]
@@ -806,6 +812,7 @@ def dual_mesh(bm, recalc_normals=True, keep_boundaries=False):
     print("st5=",(st5)/1000000.0)
     print("st1+st2=",(st1+st2)/1000000.0)
     print("st1+st2+st3+st4+st5=",(st1+st2+st3+st4+st5)/1000000.0)
+    print("st6=",(st6)/1000000.0)
     return dual_mesh_verts, dual_mesh_edges, dual_mesh_faces
 
 def diamond_mesh(bm):
