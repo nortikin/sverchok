@@ -37,7 +37,7 @@ class SvDualMeshNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
 
     keep_boundaries : BoolProperty(
         name = "Keep Boundaries",
-        description = "Keep non-manifold boundaries of the mesh in place by avoiding the dual transformation there",
+        description = "Keep non-manifold boundaries of the mesh in place by avoiding the dual transformation there. Has no influence if Levels==0",
         default = False,
         update = updateNode)  # type: ignore
     
@@ -58,10 +58,12 @@ class SvDualMeshNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
         self.outputs.new('SvVerticesSocket', 'vertices')
         self.outputs.new('SvStringsSocket' , 'edges')
         self.outputs.new('SvStringsSocket' , 'polygons')
+        self.outputs.new('SvStringsSocket' , 'dual_mesh_levels')
 
         self.outputs['vertices'].label = 'Vertices'
         self.outputs['edges']   .label = 'Edges'
         self.outputs['polygons'].label = 'Polygons'
+        self.outputs['dual_mesh_levels'].label = 'Levels'
 
     @property
     def sv_internal_links(self):
@@ -114,6 +116,7 @@ class SvDualMeshNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
         self.outputs['vertices'].sv_set(verts_out)
         self.outputs['edges'].sv_set(edges_out)
         self.outputs['polygons'].sv_set(polygons_out)
+        self.outputs['dual_mesh_levels'].sv_set([[l] for l in dual_mesh_levels])
 
 def register():
     bpy.utils.register_class(SvDualMeshNodeMK2)
