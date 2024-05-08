@@ -475,15 +475,25 @@ def remove_doubles(vertices, edges, faces, d, face_data=None, vert_data=None, ed
 def dual_mesh(bm, recalc_normals=True, keep_boundaries=False):
     from time import time_ns
     from sverchok.utils.sv_mesh_utils import polygons_to_edges_np
-    # Make vertices of dual mesh by finding
-    # centers of original mesh faces.
-    new_verts = dict()
+
     bm.edges.ensure_lookup_table()
-    
+
+    # some definitions:
+    # 1. source vertices, edges, faces - elements of cource mesh. Some vertices, edges and faces may be as single.
+    # 2. stripes - is a list of elements forms new faces of dual_mesh. They have linked to only single vertex of source mesh.
+    # 3. frames - are parts of stripes. They contain information about edges or faces of source mesh used for
+    #             calculation of dual_mesh
+    #             frame hold information about source vertice, source edge, second vertice and faces that related to edge (one or two faces not more)
+    # One vertex can hold 0, 1 or more stripes. Stripes can be opened or closed. Closed stripe are circular about source vertex and can be only one
+    # in list of vertex stripes. Count of opened stripes may be more than 1.
+    # There are some topology exclusions:
+    #     - Open stripes can start and finish on the same edge if edge is non-manifold (linked with 3 or more faces). This is not do stripe as closed!
+    #     - Open stripes can start and finish on the same face.
+
+
     t1  =  t2 =  t3 =  t4 =  t5 =  t6 = 0
     st1 = st2 = st3 = st4 = st5 = st6 = 0
     dict_faces_indexes = dict()
-    dict_faces_edges_pair = dict()
     dict_faces_centers = dict()
 
     t1 = time_ns()
@@ -548,7 +558,7 @@ def dual_mesh(bm, recalc_normals=True, keep_boundaries=False):
 
             # Если к v0_edge присоединяются faces, то обработать этот edge
             if v0_edge_link_faces:  # 31 ms
-                edge_verts_source_index = (v0_edge_verts[0].index, v0_edge_verts[1].index, )  # Запомнить исходное направление edge. Оно понадобиться позже, при определении ориентации stripe в dual_mesh face через индексы в faces
+                #edge_verts_source_index = (v0_edge_verts[0].index, v0_edge_verts[1].index, )  # Запомнить исходное направление edge. Оно понадобиться позже, при определении ориентации stripe в dual_mesh face через индексы в faces
                 if len(v0_edge_link_faces)!=2:  # 62 ms
                     # 589(638) ms
                     # Если количество faces==1 и больше 2 (т.е. не равно 2), то данный edge будет считаться non-manifold
@@ -557,10 +567,9 @@ def dual_mesh(bm, recalc_normals=True, keep_boundaries=False):
                     for fi in v0_edge_link_faces:
                         list_faces1_append( { "v1.index": v1_index,
                                               "v0": v0,
-                                              "edge_index":v0_edge.index,
-                                              "faces": [fi.index,],
-                                              "edge_verts_source_index": edge_verts_source_index,
-                                              "mid": v_mid,
+                                              "edge_index":v0_edge.index, # used to build a result of dual-mesh indices of vertex
+                                              "faces": [fi.index,], # if frame of stripe relates to NON-MANIFOLD edge then count of faces eq 1.
+                                              "mid_of_edge": v_mid, # this key exists only on NON-MANIFOLD edges
                                             } )
                 else:
                     # 332(337) ms
@@ -571,8 +580,7 @@ def dual_mesh(bm, recalc_normals=True, keep_boundaries=False):
                     list_faces2_append( { "v1.index": v1_index,
                                           "v0": v0,
                                           "edge_index":v0_edge.index,
-                                          "edge_verts_source_index": edge_verts_source_index,
-                                          "faces": [f0.index, f1.index,],
+                                          "faces": [f0.index, f1.index,], # if frame of stripe relates to MANIFOLD edge then count of faces eq 2.
                                         } )  # 143(158) ms
             pass
         # Поместить non-manifold edges в начало списка (это edges с одной смежной faces). При этом что является началом полосы всё ещё не известно (определяется позже),
@@ -657,6 +665,7 @@ def dual_mesh(bm, recalc_normals=True, keep_boundaries=False):
 
     t4 = time_ns()
 
+    # Make vertices of dual mesh by finding centers of original mesh faces.
     # Заранее определить индексы faces, которые будут участвовать в расчёте и подгрузить их в кэш вершин.
     # Т.е. список вершин в кэш начнётся с вершин, соответствующих центрам faces в последовательности, в которой эти faces
     # были определены в исходном mesh.
@@ -702,11 +711,13 @@ def dual_mesh(bm, recalc_normals=True, keep_boundaries=False):
         v0 = list_stripes_v0[0][0]["v0"]
 
         for stripe in list_stripes_v0:
-            # Определить опорный face
+            # Определить опорный face (первый в stripe), в котором индексы вершин беруться за "правильные" по нормали.
+            # По соотношению индексов вершин опорного face и исходного edge (индексы которого также принадлежат выбранному опорному face).
+            # можно определить направление вершин в новом face для dual_mesh
             face_index = stripe[0]["faces"][0]
             # индексы вершин edge от первого frame первого stripe
             v0_index, v1_index = v0.index, stripe[0]["v1.index"]
-            # Если индекс главной вершины, вокруг которой рассчитывается stripe меньше, чем индекс второй вершины (v1) на edge,
+            # Если индекс v0.index в face, вокруг которой рассчитывается stripe меньше, чем индекс второй вершины (v1) на edge в face,
             # то stripe надо развернуть, т.к. направление индексов edge обратно по отношению к face, на которой он строится.
             # Нужно развернуть stripe list:
             findex = dict_faces_indexes[face_index]
@@ -719,7 +730,7 @@ def dual_mesh(bm, recalc_normals=True, keep_boundaries=False):
             for I, frame_I in enumerate(stripe):
                 if len(frame_I["faces"])==1:
                     if keep_boundaries==False:
-                        # Не рассчитывать stripe, если параметр keep_boundaries отключен.
+                        # Не рассчитывать stripe, который стартует с non-manifold edge, если параметр keep_boundaries отключен.
                         # Это касается всех stripe, которые начинаются и заканчиваются на edges.
                         break
                     if I==0:
@@ -727,11 +738,12 @@ def dual_mesh(bm, recalc_normals=True, keep_boundaries=False):
                         edge_tupple = (-2, frame_I["edge_index"], )
                         mid_index = dual_mesh_dict_verts_index.get( edge_tupple )
                         if mid_index is None:
-                            dual_mesh_verts.append(frame_I["mid"])
+                            dual_mesh_verts.append(frame_I["mid_of_edge"])
                             dual_mesh_dict_verts_index[edge_tupple] = mid_index = len(dual_mesh_verts)-1
                         dual_mesh_face.append(mid_index)
 
-                        #  следом за ним надо взять середину face этого же первого элемента frame_I
+                        # следом за ним надо взять середину face этого же первого элемента frame_I,
+                        # потому что нужно обязательно пройти через середину face
                         face_tupple = (-3, frame_I["stripe_face"], )
                         frame_I_face_center_index = dual_mesh_dict_verts_index.get( face_tupple )
                         if frame_I_face_center_index is None:
@@ -758,7 +770,7 @@ def dual_mesh(bm, recalc_normals=True, keep_boundaries=False):
                         edge_tupple = (-2, frame_I["edge_index"], )
                         mid_index = dual_mesh_dict_verts_index.get( edge_tupple )
                         if mid_index is None: # Индексы бывают и нулевые! Раньше проверял not mid index
-                            dual_mesh_verts.append(frame_I["mid"])
+                            dual_mesh_verts.append(frame_I["mid_of_edge"])
                             dual_mesh_dict_verts_index[edge_tupple] = mid_index = len(dual_mesh_verts)-1
 
                         # Бывает одна исключительная ситуация, когда stripe топологически замкнут, а технически разомкнут. Это когда stripe образует кольцо,
@@ -766,7 +778,7 @@ def dual_mesh(bm, recalc_normals=True, keep_boundaries=False):
                         # используется в начале создаваемого face), а также не надо добавлять центральную точку исходного face, т.к. последовательность
                         # индексов станет некорректной, замкнувшись в центр.
                         # Т.е. тут проверяется, если разомкнутый stripe не заканчивается на той edge, с которой начался, то нужно замкнуть его через v0 (войти в условие).
-                        # Если разомкнутый stripe заканчивается на другой edge, а не на тот, с которого начался, то нужно зайти в это условие.
+                        # Если разомкнутый stripe заканчивается на тот же edge, с которого начался, то нужно пропустить в это условие.
                         if mid_index not in dual_mesh_face:
                             dual_mesh_face.append(mid_index)
                             # После последней середины edge нужно замкнуть dual face через индекс главной точки
@@ -805,9 +817,6 @@ def dual_mesh(bm, recalc_normals=True, keep_boundaries=False):
     t4 = time_ns()-t4
     st4 = st4+t4
 
-
-    #vertices = [new_verts[idx] for idx in sorted(new_verts.keys())]
-    #return vertices, new_faces
     st5 = t5 = 0
     t5 = time_ns()
     dual_mesh_edges = polygons_to_edges_np( [dual_mesh_faces], unique_edges=True, output_numpy=False)[0]
