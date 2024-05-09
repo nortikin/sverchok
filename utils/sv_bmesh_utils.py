@@ -827,7 +827,7 @@ def dual_mesh(bm, recalc_normals=True, keep_boundaries=False):
                         # Т.е. тут проверяется, если разомкнутый stripe не заканчивается на той edge, с которой начался, то нужно замкнуть его через v0 (войти в условие).
                         # Если разомкнутый stripe заканчивается на тот же edge, с которого начался, то нужно пропустить в это условие.
 
-                        # Exception situation. Some time stripe is closed but start and finish with same edge: https://github.com/nortikin/sverchok/assets/14288520/a204b4c7-a51e-46d9-a3d5-daa5bb492fe6
+                        # Exception situation. Some time stripe is closed but start and finish with same edge: https://github.com/nortikin/sverchok/assets/14288520/6369ce56-94c9-4051-9ea7-3b37f735d862
                         # In this case skip append last frame mid edge point and V0 point.
                         if mid_index not in dual_mesh_face:
                             # if this is not exception situation then add index of mid point and index of V0:
