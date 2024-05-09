@@ -802,7 +802,7 @@ def dual_mesh(bm, recalc_normals=True, keep_boundaries=False):
                         # в предыдущем действии. Бывает, что dual mesh строится на угле одного многоугольника, поэтому он начинается и заканчивается на одном face.
                         # Но если он переходит на другой многоугольник, то тут надо добавить и его середину тоже!
 
-                        # This is the end of open stripe. So test is the face of this stripe if not face of the previous frame.
+                        # This is the end of open stripe. So test is the face of this stripe is not face of the previous frame.
                         # Some time dual mesh face processed on the one face (in the corner of the face) so do not need this face if
                         # it was used.
                         face_tupple = (-3, frame_I["stripe_face"], )
@@ -816,7 +816,7 @@ def dual_mesh(bm, recalc_normals=True, keep_boundaries=False):
 
                         # следом за ним надо взять середину edge элемента frame_I
 
-                        # take a mid of the mid of edge of frame
+                        # take a mid of edge and a face of frame
                         edge_tupple = (-2, frame_I["edge_index"], )
                         mid_index = dual_mesh_dict_verts_index.get( edge_tupple )
                         if mid_index is None: # Индексы бывают и нулевые! Раньше проверял not mid index
