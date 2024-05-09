@@ -524,16 +524,19 @@ def dual_mesh(bm, recalc_normals=True, keep_boundaries=False):
     # List of stripes for all verts that can be used.
     list_stripes = []
     for vert in bm.verts:
-        # No faces, no dual mesh
+        # No linked faces, no dual mesh face
         if not vert.link_faces:
             continue
 
         v0 = vert
 
-        # Separate linked edges of v0 as manifold or non-manifold. Manifold edge has 2 linked faces, Non-manifold edge has 1 linked faces.
-        # There is exception of manifold edge - https://github.com/nortikin/sverchok/assets/14288520/d2cf43b3-536d-4870-ab97-3bcc8a18139f if v0 has only 2 edges and 2 vertices around.
         # Требуется разделить edges на manifold/non manifold.
         # manifold - всегда с двумя faces (есть исключение, когда точка одна посередине отрезка и это тоже non-manifold), non-manifold - с одной faces.
+
+        # Separate linked edges of v0 as manifold or non-manifold. Manifold edge has 2 linked faces, Non-manifold edge has 1 linked faces.
+        # There is exception in collection of manifold edges: if v0 has only 2 manifold edges with 2 vertices around.
+        # https://github.com/nortikin/sverchok/assets/14288520/8830d861-b9b4-4894-9756-d29cd0b83de7
+
         # list_frames1 - list of frames with NON-MANIFOLD edges
         # list_frames2 - list of frames with MANIFOLD edges
         list_frames1 = []  # Список faces, которые примыкают к edge по одному. (Если их примыкает больше двух, то происходит разделение по одной штуке)
@@ -563,7 +566,7 @@ def dual_mesh(bm, recalc_normals=True, keep_boundaries=False):
                 # Если количество faces==1 и больше 2 (т.е. не равно 2), то данный edge будет считаться non-manifold
                 # и поэтому его смежные faces надо добавить по одному (от них потом пойдут отдельные stripe):
 
-                # if count of faces are not 2 then need separate that frame to several frames by 1 face to hold data of non manifold edge
+                # if count of faces are not 2 then this list of faces need to be separated to several frames by 1 face to hold data of non manifold edge
                 if len(v0_edge_link_faces)!=2:  # 62 ms
                     # example: https://github.com/nortikin/sverchok/assets/14288520/5f2c61a0-fcce-4ff5-90d6-42223b7f777d
                     # 589(638) ms
@@ -827,7 +830,7 @@ def dual_mesh(bm, recalc_normals=True, keep_boundaries=False):
                         # Т.е. тут проверяется, если разомкнутый stripe не заканчивается на той edge, с которой начался, то нужно замкнуть его через v0 (войти в условие).
                         # Если разомкнутый stripe заканчивается на тот же edge, с которого начался, то нужно пропустить в это условие.
 
-                        # Exception situation. Some time stripe is closed but start and finish with same edge: https://github.com/nortikin/sverchok/assets/14288520/6369ce56-94c9-4051-9ea7-3b37f735d862
+                        # Exception situation. Some time stripe is opened but start and finish with same edge: https://github.com/nortikin/sverchok/assets/14288520/6369ce56-94c9-4051-9ea7-3b37f735d862
                         # In this case skip append last frame mid edge point and V0 point.
                         if mid_index not in dual_mesh_face:
                             # if this is not exception situation then add index of mid point and index of V0:
