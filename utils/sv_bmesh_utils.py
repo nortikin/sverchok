@@ -479,7 +479,7 @@ def dual_mesh(bm, recalc_normals=True, keep_boundaries=False):
     bm.edges.ensure_lookup_table()
 
     # some definitions:
-    # 1. source vertices, edges, faces - elements of cource mesh. Some vertices, edges and faces may be as single.
+    # 1. source vertices, edges, faces - elements of source mesh. Some vertices, edges and faces may be as single.
     # 2. stripes - is a list of elements forms new faces of dual_mesh. They have linked to only single vertex of source mesh.
     # 3. frames - are parts of stripes. They contain information about edges or faces of source mesh used for
     #             calculation of dual_mesh
@@ -566,16 +566,16 @@ def dual_mesh(bm, recalc_normals=True, keep_boundaries=False):
                 # Если количество faces==1 и больше 2 (т.е. не равно 2), то данный edge будет считаться non-manifold
                 # и поэтому его смежные faces надо добавить по одному (от них потом пойдут отдельные stripe):
 
-                # if count of faces are not 2 then this list of faces need to be separated to several frames by 1 face to hold data of non manifold edge
+                # If count of faces are not 2 then this list of faces need to be separated into several frames by 1 face to hold data of non manifold edge
                 if len(v0_edge_link_faces)!=2:  # 62 ms
                     # example: https://github.com/nortikin/sverchok/assets/14288520/5f2c61a0-fcce-4ff5-90d6-42223b7f777d
                     # 589(638) ms
                     v_mid = ((v1.co+v0.co)/2.0)[:]  # 130(103) ms
                     for fi in v0_edge_link_faces:
-                        list_frames1_append( { "v1index": v1.index,  # remember v1 index to calculate normal of dual-mesh face later
+                        list_frames1_append( { "v1index": v1.index,  # remember the v1 index to calculate the normal of the dual-mesh face later
                                                "v0": v0,
-                                               "edge_index":v0_edge.index, # used to build a result of dual-mesh indices of vertex
-                                               "faces": [fi.index,], # if frame of stripe relates to NON-MANIFOLD edge then count of faces eq 1.
+                                               "edge_index":v0_edge.index, # Used to build a result of dual-mesh indices of vertex
+                                               "faces": [fi.index,], # If the frame of stripe relates to a NON-MANIFOLD edge, then count of faces eq 1.
                                                "mid_of_edge": v_mid, # this key exists only for NON-MANIFOLD edges. Used as vertex coords later
                                             } )
                 else:
@@ -583,14 +583,14 @@ def dual_mesh(bm, recalc_normals=True, keep_boundaries=False):
                     # Если количество faces 2, то добавить нужно пару целиком:
 
                     # Example: https://github.com/nortikin/sverchok/assets/14288520/27d41820-2171-4118-900f-74a38efebf61
-                    # If count of faces are 2 then this frame hold data of manifold edge with two faces
+                    # If the count of faces are 2 then this frame holds data of a manifold edge with two faces
                     f0 = v0_edge_link_faces[0]
                     f1 = v0_edge_link_faces[1]
 
                     list_frames2_append( { "v1index": v1.index,
                                            "v0": v0,
                                            "edge_index":v0_edge.index,
-                                           "faces": [f0.index, f1.index,], # if frame of stripe relates to MANIFOLD edge then count of faces eq 2 always.
+                                           "faces": [f0.index, f1.index,], # If the frame of the stripe relates to a MANIFOLD edge, then a count of faces eq 2 always.
                                         } )  # 143(158) ms
             pass
         # Поместить non-manifold edges в начало списка (это edges с одной смежной faces). При этом что является началом полосы всё ещё не известно (определяется позже),
@@ -601,8 +601,8 @@ def dual_mesh(bm, recalc_normals=True, keep_boundaries=False):
         #  3. Полосы бывают замкнутые, и разомкнутые. Разомкнутая полоса считается так: edge_start/2, center,... center, edge_last/2; Замкнутая полоса считается так: center, ..., center.
         #     В случае open stripe есть одно исключение - если stripe состоит только из двух смежных faces, то создать такой dual mesh face нельзя. Обрабатывается позже.
         
-        # Move frames with non-manifold edges at begining of list. Manifold frames moved to the end of list.
-        # There is situation when all frames has non-manifold edges or all edges will be manifold. It is all ok.
+        # Move frames with non-manifold edges at the begining of list. Manifold frames will be moved to the end of list.
+        # There is a situation when all frames have non-manifold edges, or all edges will be manifold. It is all ok.
 
         # Для ускорения чтобы лишний раз не выполнять list.extended на больших списках (экономия)
         # Caching
@@ -634,20 +634,20 @@ def dual_mesh(bm, recalc_normals=True, keep_boundaries=False):
                     # Взять последний элемент stripe и проверить,может ли он дополнить этот stripe.
                     # Технически выполняется сортировка списка вида [[1],[3,2],[1,3],[2]] в последовательность [1,3,2,2] (удвоение количества faces в конце списка нормально, эта ситуация обрабатывается позже)
                     
-                    # Take last frame in the stripe and test posibility to link list_v0_frames_I to the tail of the stripe
+                    # Take the last frame in the stripe and test posibility of linking list_v0_frames_I to the tail of the stripe
                     frame_last_stripe_face = stripe[-1]["stripe_face"]  # 66ms
                     if frame_last_stripe_face in list_v0_frames_I["faces"]:
                         list_v0_frames_I_faces = list_v0_frames_I["faces"][:]  # 46 ms
                         # Если подключаемый к stripe элемент list_v0_frames_I является последним, то определить stripe_face
                         # этого элемента из последнего face:
                         if len(list_v0_frames_I["faces"])==1:
-                            # here is a non-manifold frame and it contins only one face always.
+                            # Here is a non-manifold frame, and it always contains only one face.
                             pass
                         else:
                             # 98 ms
                             # Количество faces, которое сейчас равно 2 говорит о том, что у текущего edge есть продолжение в виде второго face,
                             # его и надо будет позже записать в качестве stripe_face позже:
-                            # Remove face of tail stripe from list faces of current frame 
+                            # Remove the face of the tail stripe from the list of faces in the current frame.
                             list_v0_frames_I_faces.remove(frame_last_stripe_face) # 55 ms # Удалить face, который раньше был последним и оставить только второй face
                         # 69 ms
                         # Пристроить элемент в конец stripe
@@ -655,13 +655,13 @@ def dual_mesh(bm, recalc_normals=True, keep_boundaries=False):
                         stripe_extended = True
                         list_v0_frames_I["stripe_face"] = list_v0_frames_I_faces[0]
                         # раз элемент удалось пристроить, то прекратить проверять остальные stripes
-                        # frame find an owner stripe. Stop search an owner stripe.
+                        # Frame finds an owner stripe. Stop searching for an owner stripe.
                         break
                     pass
                 else:
                     # Если элемент list_v0_frames_I не подошёл в конец ни одному из list_stripes_v0, то выбрать для обработки следующий элемент list_v0_frames_I(+1)
                     # Если элементы закончились, то создать новый stripes и установить в начало 0-й элемент из list_v0_frames (см.ниже).
-                    # if owner stripe not found continue search with next frame
+                    # If the owner stripe is not found, continue searching with the next frame
                     pass
                 # 80ms
                 if stripe_extended == True:
@@ -674,7 +674,7 @@ def dual_mesh(bm, recalc_normals=True, keep_boundaries=False):
                     # Тут может оказаться как начало stripe, так и середина циклического stripe,
                     # но это не существенно. Правильное направление обхода stripe (по сути определяет нормаль) будет определено позже на основе первого элемента stripe.
 
-                    # If after test of all frames no one do not find owner stripe then take a first frame and set it as start of the new stripe.
+                    # If after test of all frames no one finds the owner's stripe, then take the first frame and set it as the start of the new stripe.
                     list_v0_frames_0 = list_v0_frames.pop(0) # Берётся обязательно 0-й элемент, т.к. начальные/конечные элементы stripe располагаются вначале списка list_v0_frames. (если такого одиночного/начального элемента в list_v0_frames нет, то сюда можно попасть только один раз, когда надо начать считать замкнутый stripe, для него берётся любой элемент)
                     list_v0_frames_0["stripe_face"] = list_v0_frames_0["faces"][0]
                     list_stripes_v0.append( [list_v0_frames_0] )
@@ -695,7 +695,7 @@ def dual_mesh(bm, recalc_normals=True, keep_boundaries=False):
     # были определены в исходном mesh.
     # Оказалось, что прямо в тесте есть пример, который основывается на этой особенности! (см. https://github.com/nortikin/sverchok/blame/master/json_examples/Architecture/Curved_Hexagonal_Truss.json)
 
-    # First vertices in the list of vertices of dual mesh are vertices of centers of faces of source mesh: https://github.com/nortikin/sverchok/assets/14288520/a5c8f822-35e7-4a30-9624-30791e1ca1a1
+    # The first vertices in the list of vertices of the dual mesh are vertices of centers of faces of source mesh: https://github.com/nortikin/sverchok/assets/14288520/a5c8f822-35e7-4a30-9624-30791e1ca1a1
     # with order of indices of source faces. https://github.com/nortikin/sverchok/assets/14288520/1447f4f8-7c6e-4507-b30d-7ea9865202e5
     t6 = time_ns()
     # 289 ms вместе с сортировкой
@@ -743,40 +743,40 @@ def dual_mesh(bm, recalc_normals=True, keep_boundaries=False):
             # По соотношению индексов вершин опорного face и исходного edge (индексы которого также принадлежат выбранному опорному face).
             # можно определить направление вершин в новом face для dual_mesh
 
-            # Take a first face index of the source faces in the first frame
+            # Take the face index of the source faces in the first frame
             base_face_index = stripe[0]["faces"][0]
             
             # индексы вершин edge от первого frame первого stripe
 
-            # Take vertices index of a frame edge
+            # Take vertices indexes of a frame edge
             v0_index, v1_index = v0.index, stripe[0]["v1index"]
             # Если индекс v0.index в face, вокруг которой рассчитывается stripe меньше, чем индекс второй вершины (v1) на edge в face,
             # то stripe надо развернуть, т.к. направление индексов edge обратно по отношению к face, на которой он строится.
             # Нужно развернуть stripe list:
             
-            # find direction of edge in the selected face
+            # Find the direction of the edge in the selected face
             findex = dict_faces_indexes[base_face_index]
             if ( findex.index(v1_index)-findex.index(v0_index) )%len(findex) != 1:
-                # if edge in reverse direction than face indices then revert stripe (here is no need to calc normal)
+                # If edge in reverse direction than face indices, then revert stripe (here is no need to calc normal)
                 stripe.reverse()
 
             # Рассчитать вершины нового face, соответствующего stripe (+ добавить в конце текущую главную точку)
             # Если stripe разомкнутый, то нужно добавить среднюю точку
             dual_mesh_face = []
-            # go through all frames and make or do not make new dual mesh faces:
+            # Go through all frames and make or do not make new dual mesh faces:
             for I, frame_I in enumerate(stripe):
                 if len(frame_I["faces"])==1:
-                    # if stripe start from one face this this is an open stripe!
+                    # If the stripe starts with one face, this is an open stripe!
                     if keep_boundaries==False:
                         # Не рассчитывать stripe, который стартует с non-manifold edge, если параметр keep_boundaries отключен.
                         # Это касается всех stripe, которые начинаются и заканчиваются на edges.
 
-                        # if stripe starts with non-manifold frames then skip this stripe.
+                        # If the stripe starts with non-manifold frames, then skip this stripe.
                         break
                     if I==0:
                         # Это начало разомкнутого stripe, поэтому он начинается с середины edge
 
-                        # If this is first non-manifold frame of stripe then it is open so take a mid of edge:
+                        # If this is the first non-manifold frame of stripe, then it is open, so take a mid of edge:
                         edge_tupple = (-2, frame_I["edge_index"], )
                         mid_index = dual_mesh_dict_verts_index.get( edge_tupple )
                         if mid_index is None:
@@ -787,7 +787,7 @@ def dual_mesh(bm, recalc_normals=True, keep_boundaries=False):
                         # следом за ним надо взять середину face этого же первого элемента frame_I,
                         # потому что нужно обязательно пройти через середину face
                         
-                        # next vertex is a center of linked face of this frame: https://github.com/nortikin/sverchok/assets/14288520/54239d54-01a0-4b6b-86aa-1400a5d799ea
+                        # The next vertex is the center of the linked face of this frame: https://github.com/nortikin/sverchok/assets/14288520/54239d54-01a0-4b6b-86aa-1400a5d799ea
                         face_tupple = (-3, frame_I["stripe_face"], )
                         frame_I_face_center_index = dual_mesh_dict_verts_index.get( face_tupple )
                         if frame_I_face_center_index is None:
@@ -802,9 +802,8 @@ def dual_mesh(bm, recalc_normals=True, keep_boundaries=False):
                         # в предыдущем действии. Бывает, что dual mesh строится на угле одного многоугольника, поэтому он начинается и заканчивается на одном face.
                         # Но если он переходит на другой многоугольник, то тут надо добавить и его середину тоже!
 
-                        # This is the end of open stripe. So test is the face of this stripe is not face of the previous frame.
-                        # Some time dual mesh face processed on the one face (in the corner of the face) so do not need this face if
-                        # it was used.
+                        # This is the end of the open stripe. So the test shows that the face of this frame is not the face of the previous frame.
+                        # Sometimes a dual mesh face is processed on the one face (in the corner of the face), so you do not need this face if it is used.
                         face_tupple = (-3, frame_I["stripe_face"], )
                         frame_I_face_center_index = dual_mesh_dict_verts_index.get( face_tupple )
                         if frame_I_face_center_index is None:
@@ -816,7 +815,7 @@ def dual_mesh(bm, recalc_normals=True, keep_boundaries=False):
 
                         # следом за ним надо взять середину edge элемента frame_I
 
-                        # take a mid of edge and a face of frame
+                        # Take a point in the middle of the edge and a point in the center of face of the frame
                         edge_tupple = (-2, frame_I["edge_index"], )
                         mid_index = dual_mesh_dict_verts_index.get( edge_tupple )
                         if mid_index is None: # Индексы бывают и нулевые! Раньше проверял not mid index
@@ -830,8 +829,8 @@ def dual_mesh(bm, recalc_normals=True, keep_boundaries=False):
                         # Т.е. тут проверяется, если разомкнутый stripe не заканчивается на той edge, с которой начался, то нужно замкнуть его через v0 (войти в условие).
                         # Если разомкнутый stripe заканчивается на тот же edge, с которого начался, то нужно пропустить в это условие.
 
-                        # Exception situation. Some time stripe is opened but start and finish with same edge: https://github.com/nortikin/sverchok/assets/14288520/6369ce56-94c9-4051-9ea7-3b37f735d862
-                        # In this case skip append last frame mid edge point and V0 point.
+                        # Exception situation. Sometimes a stripe is opened but starts and finishes with the same edge: https://github.com/nortikin/sverchok/assets/14288520/6369ce56-94c9-4051-9ea7-3b37f735d862
+                        # In this case skip appending the last frame mid edge point and V0 point.
                         if mid_index not in dual_mesh_face:
                             # if this is not exception situation then add index of mid point and index of V0:
                             dual_mesh_face.append(mid_index)
@@ -850,7 +849,7 @@ def dual_mesh(bm, recalc_normals=True, keep_boundaries=False):
                     # индекса faces (например, потому что был реверс последовательности). Например, изначально была такая последовательность stripe_face-s: [6,6,3],
                     # а потом при реверсе её развернули и она стала 3,6,6. Поэтому перед добавление надо проверить, что такого индекса вершины ещё не было:
 
-                    # this is middle of stripe (opened or closed stripe - any)
+                    # this is the middle of stripe (opened or closed stripe - any)
                     face_tupple = (-3, frame_I["stripe_face"], )
                     frame_I_face_center_index = dual_mesh_dict_verts_index.get( face_tupple )
                     if frame_I_face_center_index is None:
@@ -858,7 +857,7 @@ def dual_mesh(bm, recalc_normals=True, keep_boundaries=False):
                         #dual_mesh_verts.append(dict_faces_centers[ frame_I["stripe_face"] ])
                         #dual_mesh_dict_verts_index[ face_tupple ] = frame_I_face_center_index = len(dual_mesh_verts)-1
                     
-                    # Need check if this index is used. Some times this algorithm can collect to equal faces at the start or at the end of stripe (opened or closed)
+                    # Check if the index is used. Sometimes this algorithm can collect equal faces at the start or end of the stripe (opened or closed)
                     # Skip if used.
                     if frame_I_face_center_index not in dual_mesh_face:
                         dual_mesh_face.append(frame_I_face_center_index)
@@ -869,7 +868,7 @@ def dual_mesh(bm, recalc_normals=True, keep_boundaries=False):
                 # len==2 - Исключительная ситуация, когда между двумя faces находится edge, разделённая пополам. В этом случае изначально предполагалось, что это будет
                 # замкнутый stripe, но это порождает невозможный face только из двух линий между двумя точками. Поэтому такой face надо пропустить.
 
-                # Skip append resulted dual mesh face if it is boundary (and append vertices are skipped)
+                # Do not append result in the dual mesh face if it is a boundary (and append vertices are skipped)
                 # and property "Keep boundary" is Off: https://github.com/nortikin/sverchok/assets/14288520/0a060b47-ed33-47dc-923d-55847e9bf546
                 pass
             else:
