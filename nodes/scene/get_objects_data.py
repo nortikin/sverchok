@@ -243,19 +243,26 @@ class SvGetObjectsDataMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
 
 
     def sv_init(self, context):
-        new = self.outputs.new
+        #new = self.outputs.new
         self.width = 170
         self.inputs.new('SvObjectSocket', "Objects")
-        new('SvVerticesSocket', "Vertices")
-        new('SvStringsSocket', "Edges")
-        new('SvStringsSocket', "Polygons")
-        new('SvVerticesSocket', "Vertex Normals")
-        new('SvStringsSocket', "Material Idx")
-        new('SvStringsSocket', "Polygon Areas")
-        new('SvVerticesSocket', "Polygon Centers")
-        new('SvVerticesSocket', "Polygon Normals")
-        new('SvMatrixSocket', "Matrix")
-        new('SvObjectSocket', "Object")
+        self.outputs.new('SvVerticesSocket', "Vertices")
+        self.outputs.new('SvStringsSocket', "Edges")
+        self.outputs.new('SvStringsSocket', "Polygons")
+        edges_seam  = self.outputs.new('SvStringsSocket', "edges_seam")
+        edges_sharp = self.outputs.new('SvStringsSocket', "edges_sharp")
+        polygon_select = self.outputs.new('SvStringsSocket', "polygon_select")
+        self.outputs.new('SvVerticesSocket', "Vertex Normals")
+        self.outputs.new('SvStringsSocket', "Material Idx")
+        self.outputs.new('SvStringsSocket', "Polygon Areas")
+        self.outputs.new('SvVerticesSocket', "Polygon Centers")
+        self.outputs.new('SvVerticesSocket', "Polygon Normals")
+        self.outputs.new('SvMatrixSocket', "Matrix")
+        self.outputs.new('SvObjectSocket', "Object")
+
+        self.outputs["edges_seam"].label = "Edges Seams"
+        self.outputs["edges_sharp"].label = "Edges Sharps"
+        self.outputs["polygon_select"].label = "Polygons Select"
 
 
     def get_objects_from_scene(self, ops):
@@ -383,8 +390,8 @@ class SvGetObjectsDataMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
 
         vers_out_grouped = []
 
-        o_vs, o_es, o_ps, o_vn, o_mi, o_pa, o_pc, o_pn, o_ms, o_ob = [s.is_linked for s in self.outputs[:10]]
-        vs, es, ps, vn, mi, pa, pc, pn, ms = [[] for s in self.outputs[:9]]
+        o_vs, o_es, o_ps, o_seams, o_sharps, o_polygon_select, o_vn, o_mi, o_pa, o_pc, o_pn, o_ms, o_ob = [s.is_linked for s in self.outputs[:13]]
+        vs, es, ps, sm, sp, polygon_select, vn, mi, pa, pc, pn, ms = [[] for s in self.outputs[:12]]
         if self.modifiers:
             sv_depsgraph = bpy.context.evaluated_depsgraph_get()
 
@@ -419,6 +426,12 @@ class SvGetObjectsDataMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
                         edgs = [[e.verts[0].index, e.verts[1].index] for e in bm.edges]
                     if o_ps:
                         pols = [[i.index for i in p.verts] for p in bm.faces]
+                    if o_seams:
+                        seams = [e.seam for e in bm.edges]
+                    if o_sharps:
+                        sharps = [not(e.smooth) for e in bm.edges]
+                    if o_polygon_select:
+                        polygon_select1 = [f.select for f in bm.faces]
                     if o_vn:
                         vertex_normals = [ v.normal[:] for v in bm.verts] # v.normal is a Vector()
                     if o_mi:
@@ -450,6 +463,12 @@ class SvGetObjectsDataMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
                         edgs             = [[ e.vertices[0], e.vertices[1] ] for e in obj_data.edges]
                     if o_ps:
                         pols             = [list(p.vertices) for p in obj_data.polygons]
+                    if o_seams:
+                        seams = [e.use_seam for e in obj_data.edges]
+                    if o_sharps:
+                        sharps = [e.use_edge_sharp for e in obj_data.edges]
+                    if o_polygon_select:
+                        polygon_select1 = [p.select for p in obj_data.polygons]
                     if self.vergroups:
                         vert_groups      = get_vertgroups(obj_data)
                     if o_vn:
@@ -471,6 +490,12 @@ class SvGetObjectsDataMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
                     es.append( edgs )
                 if o_ps:
                     ps.append( pols )
+                if o_seams:
+                    sm.append( seams )
+                if o_sharps:
+                    sp.append( sharps )
+                if o_polygon_select:
+                    polygon_select.append( polygon_select1 )
                 if self.vergroups:
                     vers_out_grouped.append( vert_groups )
                 if o_vn:
@@ -498,7 +523,7 @@ class SvGetObjectsDataMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
             # vs, es, ps, vn, mi, pa, pc, pn, ms
             offset = 0
             _vs = []
-            _es, _ps, _vn, _pa, _pc, _pn, _vg = [], [], [], [], [], [], []
+            _es, _ps, _sm, _sp, _polygon_select, _vn, _pa, _pc, _pn, _vg = [], [], [], [], [], [], [], [], [], []
             for idx, vertices in enumerate(vs):
                 _vs.extend(vertices)
                 if es:
@@ -506,6 +531,12 @@ class SvGetObjectsDataMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
                 if ps:
                     _ps.extend( [[i + offset for i in o] for o in ps[idx] ] ) # polygons
                 #_vn.extend( [tuple(i + offset for i in o) for o in ps[idx] ] ) # vers_out_grouped. Skip in mesh_join
+                if sm:
+                    _sm.extend( sm[idx] )
+                if sp:
+                    _sp.extend( sp[idx] )
+                if polygon_select:
+                    _polygon_select.extend( polygon_select[idx] )
                 if vn:
                     _vn.extend( vn[idx] ) # vertex normals
                 # _mi - materia index. Do not change
@@ -524,7 +555,7 @@ class SvGetObjectsDataMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
                 
                 offset += len(vertices)
             
-            vs, es, ps, vn, pa, pc, pn, vers_out_grouped = [_vs], [_es], [_ps], [_vn], [_pa], [_pc], [_pn], [_vg]
+            vs, es, ps, sm, sp, polygon_select, vn, pa, pc, pn, vers_out_grouped = [_vs], [_es], [_ps], [_sm], [_sp], [_polygon_select], [_vn], [_pa], [_pc], [_pn], [_vg]
 
         if o_vs and (out_np[0]):
             vs = [np.array(vert) for vert in vs]
@@ -545,7 +576,7 @@ class SvGetObjectsDataMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
         if o_pn and (out_np[6]):
             pn = [np.array(polygon_normals) for polygon_normals in pn]
 
-        for i, i2 in zip(self.outputs, [vs, es, ps, vn, mi, pa, pc, pn, ms]):
+        for i, i2 in zip(self.outputs, [vs, es, ps, sm, sp, polygon_select, vn, mi, pa, pc, pn, ms]):
             if i.is_linked:
                 i.sv_set(i2)
 
