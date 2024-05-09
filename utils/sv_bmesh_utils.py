@@ -599,9 +599,9 @@ def dual_mesh(bm, recalc_normals=True, keep_boundaries=False):
         #  1. Полоса может состоять из индекса одного полигона (начнётся на середине edge, потом переходит в середину face, потом на середину смежного edge от v0).
         #  2. Если полоса начинается на одном полигоне, то и заканчивается на одном (нет противоречия п.1). Также в этом случае считается, что полоса является не замкнутой.
         #  3. Полосы бывают замкнутые, и разомкнутые. Разомкнутая полоса считается так: edge_start/2, center,... center, edge_last/2; Замкнутая полоса считается так: center, ..., center.
-        #     В случае замкнутых полос есть одно исключение - если полоса состоит только из двух смежных вершин, то это non-manifold. Обрабатывается позже.
+        #     В случае open stripe есть одно исключение - если stripe состоит только из двух смежных faces, то создать такой dual mesh face нельзя. Обрабатывается позже.
         
-        # Move frames with non-manifold edges at begining of list. Manifold frames moved to the end.
+        # Move frames with non-manifold edges at begining of list. Manifold frames moved to the end of list.
         # There is situation when all frames has non-manifold edges or all edges will be manifold. It is all ok.
 
         # Для ускорения чтобы лишний раз не выполнять list.extended на больших списках (экономия)
@@ -621,7 +621,7 @@ def dual_mesh(bm, recalc_normals=True, keep_boundaries=False):
         # Расчёт stripes, которые окружают v0
 
         # Now collect frames to ordered stripes. Direction will not define normal of new face of dual mesh yet.
-        # Here frames are only link to a chain.
+        # Here frames are only linked to chains.
         t3 = time_ns()
         while True:
             # link frames by faces.
