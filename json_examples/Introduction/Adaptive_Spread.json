@@ -56,7 +56,7 @@
       "width": 200.0
     },
     "Get Objects Data": {
-      "bl_idname": "SvGetObjectsDataMK2",
+      "bl_idname": "SvGetObjectsDataMK3",
       "color": [
         0.0,
         0.5,
@@ -76,7 +76,7 @@
       "width": 140.0
     },
     "Get Objects Data.001": {
-      "bl_idname": "SvGetObjectsDataMK2",
+      "bl_idname": "SvGetObjectsDataMK3",
       "color": [
         0.0,
         0.5,
