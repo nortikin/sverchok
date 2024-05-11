@@ -587,8 +587,6 @@ class SvGetObjectsDataMK3(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
                     elif self.modifiers:
                         obj = sv_depsgraph.objects[obj.name]
                         obj_data = obj.to_mesh(preserve_all_data_layers=True, depsgraph=sv_depsgraph)
-                        # obj_e = obj.evaluated_get(sv_depsgraph)
-                        # obj_data = obj_e.to_mesh()
                     else:
                         obj_data = obj.to_mesh()
                     
