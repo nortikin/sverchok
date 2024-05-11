@@ -686,7 +686,7 @@ class SvGetObjectsDataMK3(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
         if self.mesh_join:
             # l_vertices, l_edges, l_polygons, l_vertex_normals, l_material_idx, l_polygon_areas, l_polygon_centers, l_polygon_normals, l_matrices
             offset = 0
-            _vertices, _edges, _polygons, _vertices_select, _vertices_crease, _vertices_bevel_weight, _edges_select, _edges_seams, _edges_sharps, _edges_crease, _edges_bevel_weight, _polygon_selects, _polygon_smooth, _vertex_normals, _polygon_areas, _polygon_centers, _polygon_normals, _vg = [], [], [], [], [], [], [], [], [], [], [], [], [], [], []
+            _vertices, _edges, _polygons, _vertices_select, _vertices_crease, _vertices_bevel_weight, _edges_select, _edges_seams, _edges_sharps, _edges_crease, _edges_bevel_weight, _polygon_selects, _polygon_smooth, _vertex_normals, _polygon_areas, _polygon_centers, _polygon_normals, _vg = [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []
             for idx, vertices in enumerate(l_vertices):
                 _vertices.extend(vertices)
                 if l_edges:
