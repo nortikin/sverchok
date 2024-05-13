@@ -314,9 +314,39 @@ class SvGetObjectsDataMK3(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
         self.outputs["polygon_selects"]         .hide = not(self.enable_polygons_attribute_sockets)
         self.outputs["polygon_smooth"]          .hide = not(self.enable_polygons_attribute_sockets)
     
+    def draw_vertices_out_socket(self, socket, context, layout):
+        layout.label(text=f'{socket.label} ')
+        layout.prop(self, 'enable_verts_attribute_sockets', icon='STICKY_UVS_DISABLE', text='', toggle=True)
+        if socket.is_linked:  # linked INPUT or OUTPUT
+            layout.label(text=f". {socket.objects_number or ''}")
+        elif socket.is_output:  # unlinked OUTPUT
+            layout.separator()
+
+    def draw_edges_out_socket(self, socket, context, layout):
+        layout.prop(self, 'hide_render_type', expand=True)
+        layout.separator()
+        layout.prop(self, 'align_3dview_type', expand=True)
+        layout.separator()
+        layout.label(text=f'  {socket.label} ')
+        layout.prop(self, 'enable_edges_attribute_sockets', icon='MESH_DATA', text='', toggle=True)
+        if socket.is_linked:  # linked INPUT or OUTPUT
+            layout.label(text=f". {socket.objects_number or ''}")
+        elif socket.is_output:  # unlinked OUTPUT
+            layout.separator()
+
+    def draw_polygons_out_socket(self, socket, context, layout):
+        layout.prop(self, 'display_type', expand=True, text='')
+        layout.separator()
+        layout.label(text=f'{socket.label} ')
+        layout.prop(self, 'enable_polygons_attribute_sockets', icon='FILE_3D', text='', toggle=True)
+        if socket.is_linked:  # linked INPUT or OUTPUT
+            layout.label(text=f". {socket.objects_number or ''}")
+        elif socket.is_output:  # unlinked OUTPUT
+            layout.separator()
+
     def sv_init(self, context):
         #new = self.outputs.new
-        self.width = 250
+        self.width = 225
         
         self.inputs.new('SvObjectSocket'   , "objects")
 
@@ -375,6 +405,9 @@ class SvGetObjectsDataMK3(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
         self.outputs["polygon_selects"]         .hide = not(self.enable_polygons_attribute_sockets)
         self.outputs["polygon_smooth"]          .hide = not(self.enable_polygons_attribute_sockets)
 
+        self.outputs["vertices"].custom_draw = 'draw_vertices_out_socket'
+        self.outputs["edges"].custom_draw = 'draw_edges_out_socket'
+        self.outputs["polygons"].custom_draw = 'draw_polygons_out_socket'
 
     def get_objects_from_scene(self, ops):
         """
@@ -431,19 +464,6 @@ class SvGetObjectsDataMK3(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
                 op_text = "G E T"
 
             self.wrapper_tracked_ui_draw_op(row, callback, text=op_text).fn_name = 'get_objects_from_scene'
-
-        row = col.row()
-        col = row.column()
-        col.row().prop(self, 'display_type', expand=True)
-        col = row.column()
-        col.row().prop(self, 'hide_render_type', expand=True)
-        col = row.column()
-        col.row().prop(self, 'align_3dview_type', expand=True)
-
-        r1 = row.column().row(align=True)
-        r1.prop(self, 'enable_verts_attribute_sockets', icon='STICKY_UVS_DISABLE', text='', toggle=True)
-        r1.prop(self, 'enable_edges_attribute_sockets', icon='MESH_DATA', text='', toggle=True)
-        r1.prop(self, 'enable_polygons_attribute_sockets', icon='FILE_3D', text='', toggle=True)
 
         col = layout.column(align=True)
         row = col.row(align=True)
