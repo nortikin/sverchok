@@ -212,7 +212,7 @@ class SvGetObjectsDataMK3(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
 
     enable_verts_attribute_sockets: BoolProperty(
         name = "Show verts attribute sockets",
-        description = "Show additional sockets for verts attributes:\n1. select",
+        description = "Show additional sockets for verts attributes:\n1. select\n2. crease\n3. bevel weight",
         default = False,
         update = verts_sockets_update) # type: ignore
 
@@ -224,7 +224,7 @@ class SvGetObjectsDataMK3(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
 
     enable_polygons_attribute_sockets: BoolProperty(
         name = "Show polygons attribute sockets",
-        description = "Show additional sockets for faces attributes:\n1. select",
+        description = "Show additional sockets for faces attributes:\n1. select\n2. smooth",
         default = False,
         update = polygons_sockets_update) # type: ignore
     
@@ -509,8 +509,8 @@ class SvGetObjectsDataMK3(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
 
         vers_out_grouped = []
 
-        o_vertices, o_edges, o_polygons, o_vertices_select, o_vertices_crease, o_vertices_bevel_weight, o_edges_select, o_edges_seams, o_edges_sharps, o_edges_crease, o_edges_bevel_weight, o_polygon_selects, o_polygon_smooth, o_vertex_normals, o_material_idx, o_polygon_areas, o_polygon_centers, o_polygon_normals, o_matrices, o_objects = [s.is_linked for s in self.outputs[:20]]
-        l_vertices, l_edges, l_polygons, l_vertices_select, l_vertices_crease, l_vertices_bevel_weight, l_edges_select, l_edges_seams, l_edges_sharps, l_edges_crease, l_edges_bevel_weight, l_polygon_selects, l_polygon_smooth, l_vertex_normals, l_material_idx, l_polygon_areas, l_polygon_centers, l_polygon_normals, l_matrices = [[] for s in self.outputs[:19]]
+        o_vertices, o_edges, o_polygons, o_vertices_select, o_vertices_crease, o_vertices_bevel_weight, o_edges_select, o_edges_crease, o_edges_seams, o_edges_sharps, o_edges_bevel_weight, o_polygon_selects, o_polygon_smooth, o_vertex_normals, o_material_idx, o_polygon_areas, o_polygon_centers, o_polygon_normals, o_matrices, o_objects = [s.is_linked for s in self.outputs[:20]]
+        l_vertices, l_edges, l_polygons, l_vertices_select, l_vertices_crease, l_vertices_bevel_weight, l_edges_select, l_edges_crease, l_edges_seams, l_edges_sharps, l_edges_bevel_weight, l_polygon_selects, l_polygon_smooth, l_vertex_normals, l_material_idx, l_polygon_areas, l_polygon_centers, l_polygon_normals, l_matrices = [[] for s in self.outputs[:19]]
         if self.modifiers:
             sv_depsgraph = bpy.context.evaluated_depsgraph_get()
 
@@ -605,7 +605,7 @@ class SvGetObjectsDataMK3(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
                     if o_vertices_select:
                         vertices_select1 = [v.select for v in obj_data.vertices]
                     if o_vertices_crease:
-                        creases = obj_data.vertices_creases[0]
+                        creases = obj_data.vertex_creases[0]
                         vertices_crease1 = [creases.data[i].value for i, v in enumerate(obj_data.vertices)]
                     if o_vertices_bevel_weight:
                         vertices_bevel_weight1 = [v.bevel_weight for v in obj_data.vertices]
@@ -757,7 +757,7 @@ class SvGetObjectsDataMK3(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
         if o_polygon_normals and (out_np[6]):
             l_polygon_normals = [np.array(polygon_normals) for polygon_normals in l_polygon_normals]
 
-        for i, i2 in zip(self.outputs, [l_vertices, l_edges, l_polygons, l_vertices_select, l_vertices_crease, l_vertices_bevel_weight, l_edges_select, l_edges_seams, l_edges_sharps, l_edges_crease, l_edges_bevel_weight, l_polygon_selects, l_polygon_smooth, l_vertex_normals, l_material_idx, l_polygon_areas, l_polygon_centers, l_polygon_normals, l_matrices]):
+        for i, i2 in zip(self.outputs, [l_vertices, l_edges, l_polygons, l_vertices_select, l_vertices_crease, l_vertices_bevel_weight, l_edges_select, l_edges_crease, l_edges_seams, l_edges_sharps, l_edges_bevel_weight, l_polygon_selects, l_polygon_smooth, l_vertex_normals, l_material_idx, l_polygon_areas, l_polygon_centers, l_polygon_normals, l_matrices]):
             if i.is_linked:
                 i.sv_set(i2)
 
