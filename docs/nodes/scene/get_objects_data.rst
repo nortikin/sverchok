@@ -6,7 +6,8 @@ Get Objects Data
 
 Functionality
 -------------
-Get objects from the Blender ``Scene`` and output them into Sverchok's node tree. This node supports most object types. All are converted to a Sverchok representation of ``Mesh`` where possible. 
+Get objects from the Blender ``Scene`` and output them into Sverchok's node tree. This node supports most object types. All are converted to a Sverchok representation of ``Mesh`` where possible.
+Sockets for the selected mesh elements or creases on weights can be used for quck masking.
 
 A few points worth stating explicitly.
 
