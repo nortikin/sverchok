@@ -144,10 +144,11 @@
              
   <section id="get-objects-data">
 <h1>Get Objects Data<a class="headerlink" href="#get-objects-data" title="Link to this heading">¶</a></h1>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/d7662f9f-d398-4b73-8337-d0d228f104bc"><img alt="https://github.com/nortikin/sverchok/assets/14288520/d7662f9f-d398-4b73-8337-d0d228f104bc" src="https://github.com/nortikin/sverchok/assets/14288520/d7662f9f-d398-4b73-8337-d0d228f104bc" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/d2b29188-e471-4821-80fa-ea0da9e8403e"><img alt="https://github.com/nortikin/sverchok/assets/14288520/d2b29188-e471-4821-80fa-ea0da9e8403e" src="https://github.com/nortikin/sverchok/assets/14288520/d2b29188-e471-4821-80fa-ea0da9e8403e" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
-<p>Get objects from the Blender <code class="docutils literal notranslate"><span class="pre">Scene</span></code> and output them into Sverchok’s node tree. This node supports most object types. All are converted to a Sverchok representation of <code class="docutils literal notranslate"><span class="pre">Mesh</span></code> where possible.</p>
+<p>Get objects from the Blender <code class="docutils literal notranslate"><span class="pre">Scene</span></code> and output them into Sverchok’s node tree. This node supports most object types. All are converted to a Sverchok representation of <code class="docutils literal notranslate"><span class="pre">Mesh</span></code> where possible.
+Sockets for the selected mesh elements or creases on weights can be used for quck masking.</p>
 <p>A few points worth stating explicitly.</p>
 <ul class="simple">
 <li><p>Empties, Cameras, and Lamps produce only matrix data.</p></li>
@@ -238,6 +239,36 @@ After that you can press <cite>scan for props</cite> button on 3D panel for show
 <tr class="row-even"><td><p>Polygons</p></td>
 <td><p>Polygons of objects</p></td>
 </tr>
+<tr class="row-odd"><td><p>Vertices Select</p></td>
+<td><p>Mask of vertices selected in the edit mode</p></td>
+</tr>
+<tr class="row-even"><td><p>Vertices Crease</p></td>
+<td><p>Vertices crease values</p></td>
+</tr>
+<tr class="row-odd"><td><p>Vertices Bevel Weight</p></td>
+<td><p>Vertices Bevel Weight values</p></td>
+</tr>
+<tr class="row-even"><td><p>Edges Select</p></td>
+<td><p>Mask of Edges selected in the edit mode</p></td>
+</tr>
+<tr class="row-odd"><td><p>Edges Crease</p></td>
+<td><p>Edges crease values</p></td>
+</tr>
+<tr class="row-even"><td><p>Edges Seam</p></td>
+<td><p>Edges seam values</p></td>
+</tr>
+<tr class="row-odd"><td><p>Edges Sharp</p></td>
+<td><p>Edges sharp values</p></td>
+</tr>
+<tr class="row-even"><td><p>Edges Bevel Weight</p></td>
+<td><p>Edges Bevel Weight values</p></td>
+</tr>
+<tr class="row-odd"><td><p>Polygon Selected</p></td>
+<td><p>Mask of Polygons selected in the edit mode</p></td>
+</tr>
+<tr class="row-even"><td><p>Polygon Smooth</p></td>
+<td><p>Smooth of Polygons</p></td>
+</tr>
 <tr class="row-odd"><td><p>Vertex Normals</p></td>
 <td><p>Vertex Normals</p></td>
 </tr>
@@ -245,7 +276,7 @@ After that you can press <cite>scan for props</cite> button on 3D panel for show
 <td><p>Material indexes per object face.</p></td>
 </tr>
 <tr class="row-odd"><td><p>Polygons Areas</p></td>
-<td><p>Polygons of objects.</p></td>
+<td><p>Area of Polygons of objects.</p></td>
 </tr>
 <tr class="row-even"><td><p>Polygons Centers</p></td>
 <td><p>Polygons Center of objects.</p></td>
@@ -267,6 +298,23 @@ After that you can press <cite>scan for props</cite> button on 3D panel for show
 <h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">¶</a></h2>
 <img alt="https://user-images.githubusercontent.com/619340/126961901-4c300e39-6cbe-456f-a132-104f7b3827ca.png" src="https://user-images.githubusercontent.com/619340/126961901-4c300e39-6cbe-456f-a132-104f7b3827ca.png" />
 <p>Importing an object with two array modifiers applied and showing indices.</p>
+<p>Mask sites of Voronoi node with selection of faces:</p>
+<video width="700" controls>
+  <source src="https://github.com/nortikin/sverchok/assets/14288520/e08f226e-f13b-4fff-bdb1-aa4db06ac0a6" type="video/mp4">
+ Your browser does not support the video tag.
+</video><ul class="simple">
+<li><p>Spatial-&gt; <a class="reference internal" href="../spatial/voronoi_on_mesh_mk2.html"><span class="doc">Voronoi on Mesh</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+</ul>
+<p>Mask edges of Grid with selection of edges:</p>
+<video width="700" controls>
+  <source src="https://github.com/nortikin/sverchok/assets/14288520/280c72f7-8b51-44cc-9e63-75c9a97f5739" type="video/mp4">
+ Your browser does not support the video tag.
+</video><ul class="simple">
+<li><p>Modifiers-&gt;Modifier Change-&gt; <a class="reference internal" href="../modifier_change/extrude_edges_mk2.html"><span class="doc">Extrude Edges</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+</ul>
 </section>
 </section>
 
