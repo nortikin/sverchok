@@ -239,22 +239,6 @@ class SvGetObjectsDataMK3(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
         default = 'SELECTED',
         update = updateNode) # type: ignore
 
-    # def migrate_links_from(self, old_node, operator):
-    #     if old_node.bl_idname != 'SvGetObjectsDataMK2':
-    #         return
-    #     for name in ['edges_seams', 'edges_sharps', 'polygon_selects']:
-    #         self.outputs[name].enabled = True
-    #     super(SvGetObjectsDataMK2, self).migrate_links_from(old_node, operator)
-    #     for name in ['edges_seams', 'edges_sharps']:
-    #         self.outputs[name].enabled = self.enable_edges_attribute_sockets
-    #     for name in ['polygon_selects']:
-    #         self.outputs[name].enabled = self.enable_polygons_attribute_sockets
-    #     # tree = bpy.context.space_data.edit_tree
-    #     # links = tree.links
-    #     # old_in_links = [link for link in tree.links if link.to_node == old_node]
-    #     # old_out_links = [link for link in tree.links if link.from_node == old_node]
-    #     pass
-
     def update_align_3dview(self, context):
         if len(self.object_names)==0:
             return
