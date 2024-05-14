@@ -207,6 +207,42 @@ class SvSurfaceViewerDrawNode(SverchCustomTreeNode, bpy.types.Node):
             min = 1, default = 2,
             update = updateNode)
 
+    draw_curvature : BoolProperty(
+            name = "Indicate curvature",
+            default = False,
+            update = updateNode)
+    
+    curvature_types = [
+        ('GAUSS', "Gauss", "Gauss curvature - product of minimum and maximum curvature", 0),
+        ('MEAN', "Mean", "Mean curvature - average between minimum and maximum curvature", 1),
+        ('MAX', "Maximum", "Maximum curvature", 2),
+        ('MIN', "Minimum", "Minimum curvature", 3),
+        ('DIFF', "Difference", "Difference between maximum and minimum curvature", 4)
+    ]
+
+    curvature_type : EnumProperty(
+            name = "Curvature type",
+            description = "Type of surface curvature to be indicated by color",
+            items = curvature_types,
+            default = 'GAUSS',
+            update = updateNode)
+
+    curvature_max_color: FloatVectorProperty(
+            name = "Maximum curvature color",
+            description = "Color to be used to indicate positive curvature values",
+            default = (0.9, 0.1, 0.0, 1.0),
+            size = 4, min = 0.0, max = 1.0,
+            subtype = 'COLOR',
+            update = updateNode)
+
+    curvature_min_color: FloatVectorProperty(
+            name = "Minimum curvature color",
+            description = "Color to be used to indicate negative curvature values",
+            default = (0.0, 0.1, 0.9, 1.0),
+            size = 4, min = 0.0, max = 1.0,
+            subtype = 'COLOR',
+            update = updateNode)
+
     light_vector: FloatVectorProperty(
         name='Light Direction', subtype='DIRECTION', min=0, max=1, size=3,
         default=(0.2, 0.6, 0.4), update=updateNode)
@@ -249,6 +285,13 @@ class SvSurfaceViewerDrawNode(SverchCustomTreeNode, bpy.types.Node):
         row.prop(self, 'draw_node_lines', icon='EVENT_N', text='')
         row.prop(self, 'node_lines_color', text="")
         row.prop(self, 'node_lines_width', text="px")
+
+        row = grid.row(align=True)
+        row.prop(self, 'draw_curvature', icon='EVENT_C', text='')
+        row.prop(self, 'curvature_max_color', text='')
+        row.prop(self, 'curvature_min_color', text='')
+        if self.draw_curvature:
+            grid.prop(self, 'curvature_type', text="Type")
 
         row = layout.row(align=True)
         row.scale_y = 4.0 if self.prefs_over_sized_buttons else 1
