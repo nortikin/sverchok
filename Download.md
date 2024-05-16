@@ -19,7 +19,9 @@ Sverchok is hosted and developed on GitHub.
 
 ## Installation instructions
 
-The current [development versions of Sverchok (master)](https://github.com/nortikin/sverchok/archive/master.zip) are designed to work with the 3.6 Blender `2.8x`, for Blender versions 2.79 and lower please use [Sverchok for Blender 2.79](https://github.com/nortikin/sverchok/archive/279_master.zip)
+The current [development versions of Sverchok (master)](https://github.com/nortikin/sverchok/archive/master.zip) are designed to work with the Blender `2.8x` and `3.x`.
+
+For Blender versions 2.79 and lower please use [Sverchok for Blender 2.79](https://github.com/nortikin/sverchok/archive/279_master.zip)
 
 For blender 4.1+ please, use branch bgl_replacement. For Windows OS [download ready to use blender 4.1.1](https://disk.yandex.ru/d/szioxfeCvqdslQ)
 
