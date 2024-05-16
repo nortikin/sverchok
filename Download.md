@@ -23,7 +23,7 @@ The current [development versions of Sverchok (master)](https://github.com/norti
 
 For Blender versions 2.79 and lower please use [Sverchok for Blender 2.79](https://github.com/nortikin/sverchok/archive/279_master.zip)
 
-For blender 4.1+ please, use branch bgl_replacement. For Windows OS [download ready to use blender 4.1.1 with sverchok and extra nodes](https://disk.yandex.ru/d/szioxfeCvqdslQ)
+For blender 4.1+ please, use branch [bgl_replacement](https://github.com/nortikin/sverchok/tree/bgl_replacement). For Windows OS [download ready to use blender 4.1.1 with sverchok and extra nodes](https://disk.yandex.ru/d/szioxfeCvqdslQ)
 
 Downloading and installing for the first time? We have a handy guide to keep that process as painless as possible: [the read.me](https://github.com/nortikin/sverchok/#installation)
 
