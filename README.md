@@ -54,7 +54,7 @@ Comes with more than 600 nodes to help create and manipulate geometry. Combining
   - upgrade Sverchok with pressing one button  
   - using genetic algorithm in your workflow  
   - insolation/radiation calculations  
-  - SVG drawing export from node tree  
+  - SVG/DXF drawing export from node tree  
   - brep/NURBS/IFC exchange  
   - and much, much more!  
 
