@@ -112,6 +112,7 @@ class SvQuadriFlowNode(bpy.types.Node,SverchCustomTreeNode):
         return mapping 
 
     def sv_init(self,context):
+        self.width = 200
         self.inputs.new('SvVerticesSocket', "vertices")
         #self.inputs.new('SvVerticesSocket', "Edges")
         self.inputs.new('SvStringsSocket', "faces")
@@ -121,7 +122,7 @@ class SvQuadriFlowNode(bpy.types.Node,SverchCustomTreeNode):
         socket = self.inputs.new('SvStringsSocket', "number_faces")
         socket.use_prop=True
         socket.default_property_type = 'int'
-        socket.default_int_property = 4000
+        socket.default_int_property = 1000
         socket.label = "Number of Faces"
 
         socket = self.inputs.new('SvStringsSocket', "seed")
