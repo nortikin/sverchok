@@ -39,18 +39,23 @@ This node has the following inputs:
 Parameters
 ----------
 
-.. image:: https://github.com/nortikin/sverchok/assets/14288520/307d5cfd-3998-4cfb-86e1-0cc8e264316c
-  :target: https://github.com/nortikin/sverchok/assets/14288520/307d5cfd-3998-4cfb-86e1-0cc8e264316c
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/96d5b2d9-2a25-4bea-b50a-573ee0de6927
+  :target: https://github.com/nortikin/sverchok/assets/14288520/96d5b2d9-2a25-4bea-b50a-573ee0de6927
 
 - **Keep Boundaries** - Keep non-manifold boundaries of the mesh in place by avoiding the dual transformation there. Has no influence if Levels==0
 
   .. image:: https://github.com/nortikin/sverchok/assets/14288520/1c27f774-4d50-4db6-9f87-131a3f594590
     :target: https://github.com/nortikin/sverchok/assets/14288520/1c27f774-4d50-4db6-9f87-131a3f594590
 
+  This parameter can do strange results sometime:
+
+  .. image:: https://github.com/nortikin/sverchok/assets/14288520/eccf9081-9c3c-472d-bbff-4fa4b9ede04c
+    :target: https://github.com/nortikin/sverchok/assets/14288520/eccf9081-9c3c-472d-bbff-4fa4b9ede04c
+
 Outputs
 -------
-.. image:: https://github.com/nortikin/sverchok/assets/14288520/919676b2-6d15-4148-9bcd-1921577fda1c
-  :target: https://github.com/nortikin/sverchok/assets/14288520/919676b2-6d15-4148-9bcd-1921577fda1c
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/9f82d3f2-c3d6-49ee-9b03-e871d4c7652a
+  :target: https://github.com/nortikin/sverchok/assets/14288520/9f82d3f2-c3d6-49ee-9b03-e871d4c7652a
 
 This node has the following outputs:
 
@@ -65,8 +70,8 @@ Examples of Usage
 
 Dual mesh for lowpoly cylinder:
 
-.. image:: https://github.com/nortikin/sverchok/assets/14288520/493b98a1-65af-4d8c-b4dd-f7fda2a9586d
-  :target: https://github.com/nortikin/sverchok/assets/14288520/493b98a1-65af-4d8c-b4dd-f7fda2a9586d
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/7af16514-cbe3-40d9-8c58-5058521ddd72
+  :target: https://github.com/nortikin/sverchok/assets/14288520/7af16514-cbe3-40d9-8c58-5058521ddd72
 
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 * Scene-> :doc:`Get Objects Data </nodes/scene/get_objects_data>`
