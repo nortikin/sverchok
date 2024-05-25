@@ -453,7 +453,7 @@
         - ---
         - SvQuadriFlowNode
         - ---
-        - SvDualMeshNode
+        - SvDualMeshNodeMK2
         - SvDiamondMeshNode
         - SvClipVertsNode
         - ---
