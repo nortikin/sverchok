@@ -1,8 +1,8 @@
 Dual Mesh
 =========
 
-.. image:: https://user-images.githubusercontent.com/14288520/200945022-5dce027f-28ce-4370-8783-f02c358ac76b.png
-  :target: https://user-images.githubusercontent.com/14288520/200945022-5dce027f-28ce-4370-8783-f02c358ac76b.png
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/a7aff115-49ef-4136-b627-dda87f6baa4d
+  :target: https://github.com/nortikin/sverchok/assets/14288520/a7aff115-49ef-4136-b627-dda87f6baa4d
 
 Functionality
 -------------
@@ -23,27 +23,50 @@ Note that the volume of dual mesh is always a bit smaller than that of original 
 Inputs
 ------
 
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/307d5cfd-3998-4cfb-86e1-0cc8e264316c
+  :target: https://github.com/nortikin/sverchok/assets/14288520/307d5cfd-3998-4cfb-86e1-0cc8e264316c
+
 This node has the following inputs:
 
 - **Vertices**. Vertices of original mesh. This input is mandatory.
 - **Edges**. Edges of original mesh.
-- **Faces**. Faces of original mesh. This input is mandatory.
+- **Polygons**. Faces of original mesh. This input is mandatory.
+- **Levels**. Levels of Dual Mesh (recursion)
+
+  .. image:: https://github.com/nortikin/sverchok/assets/14288520/080a9e60-bc6c-451e-97d3-4d29d8596121
+    :target: https://github.com/nortikin/sverchok/assets/14288520/080a9e60-bc6c-451e-97d3-4d29d8596121
+
+Parameters
+----------
+
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/a6b74434-df6b-4b57-abbf-24fc08e5c455
+  :target: https://github.com/nortikin/sverchok/assets/14288520/a6b74434-df6b-4b57-abbf-24fc08e5c455
+
+- **Keep Boundaries** - Keep non-manifold boundaries of the mesh in place by avoiding the dual transformation there. Has no influence if Levels==0
+
+  .. image:: https://github.com/nortikin/sverchok/assets/14288520/1c27f774-4d50-4db6-9f87-131a3f594590
+    :target: https://github.com/nortikin/sverchok/assets/14288520/1c27f774-4d50-4db6-9f87-131a3f594590
 
 Outputs
 -------
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/919676b2-6d15-4148-9bcd-1921577fda1c
+  :target: https://github.com/nortikin/sverchok/assets/14288520/919676b2-6d15-4148-9bcd-1921577fda1c
 
 This node has the following outputs:
 
 - **Vertices**. Vertices of the dual mesh.
-- **Faces**. Faces of the dual mesh.
+- **Edges**. Edges of the dual mesh.
+- **Polygons**. Faces of the dual mesh.
+- **Edges Mask as Boundaries**. Process Manifold/Non manifold edges as Boundary Edge (For the first level only. For Levels 2,3 and so on this mask will be skipped).
+- **Levels**. Repeat Levels input. For your convinience to use it as a Number node.
 
 Examples of Usage
 -----------------
 
-Dual mesh for cube is an octahedron:
+Dual mesh for lowpoly cylinder:
 
-.. image:: https://user-images.githubusercontent.com/284644/68086032-278bb800-fe69-11e9-80d5-5b46bde8d9b0.png
-  :target: https://user-images.githubusercontent.com/284644/68086032-278bb800-fe69-11e9-80d5-5b46bde8d9b0.png
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/493b98a1-65af-4d8c-b4dd-f7fda2a9586d
+  :target: https://github.com/nortikin/sverchok/assets/14288520/493b98a1-65af-4d8c-b4dd-f7fda2a9586d
 
 * Generator-> :doc:`Box </nodes/generator/box_mk2>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`

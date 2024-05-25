@@ -46,14 +46,17 @@ class SvDualMeshNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
         description="Dual Mesh Levels. (min=0 - disable dual mesh, default=1)", update=updateNode) # type: ignore
 
     def sv_init(self, context):
+        self.width = 150
         self.inputs.new('SvVerticesSocket', 'vertices')
         self.inputs.new('SvStringsSocket' , 'edges')
         self.inputs.new('SvStringsSocket' , 'polygons')
+        self.inputs.new('SvStringsSocket' , 'edges_mask_as_boundary')
         self.inputs.new('SvStringsSocket' , 'dual_mesh_levels').prop_name = 'dual_mesh_levels'
 
         self.inputs['vertices'].label = 'Vertices'
         self.inputs['edges']   .label = 'Edges'
         self.inputs['polygons'].label = 'Polygons'
+        self.inputs['edges_mask_as_boundary'].label = 'Edges Mask as Boundary'
 
         self.outputs.new('SvVerticesSocket', 'vertices')
         self.outputs.new('SvStringsSocket' , 'edges')
@@ -77,13 +80,13 @@ class SvDualMeshNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
         col.row().prop(self, 'keep_boundaries')
 
     def process(self):
-        from time import time_ns
         if not any((s.is_linked for s in self.outputs)):
             return
 
         verts_s = self.inputs['vertices'].sv_get()
         edges_s = self.inputs['edges'].sv_get(default=[[]])
         polygons_s = self.inputs['polygons'].sv_get()
+        edges_mask_as_boundary_s = self.inputs['edges_mask_as_boundary'].sv_get(default=[[]])
         _dual_mesh_levels = self.inputs['dual_mesh_levels'].sv_get(default=[[1]], deepcopy=False)
         dual_mesh_levels = flatten_data(_dual_mesh_levels)
 
@@ -91,27 +94,29 @@ class SvDualMeshNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
         edges_out = []
         polygons_out = []
 
-        objects = match_long_repeat([verts_s, edges_s, polygons_s, dual_mesh_levels])
-        st1 = t1 = 0
-        t1 = time_ns()
-        for verts, edges, polygons, dual_mesh_level in zip(*objects):
+        objects = match_long_repeat([verts_s, edges_s, polygons_s, edges_mask_as_boundary_s, dual_mesh_levels])
+        for verts, edges, polygons, edges_mask_as_boundary, dual_mesh_level in zip(*objects):
             if dual_mesh_level<0:
                 dual_mesh_level=0
             new_verts, new_edges, new_polygons = verts, edges, polygons
             if dual_mesh_level>0:
-                bm = bmesh_from_pydata(new_verts, new_edges, new_polygons, normal_update=True)
+                bm = bmesh_from_pydata(new_verts, new_edges, new_polygons, markup_edge_data=True, normal_update=True)
                 for I in range(dual_mesh_level):
                     if I>0:
                         bm.clear()
                         add_mesh_to_bmesh(bm, new_verts, new_edges, new_polygons)
-                    new_verts, new_edges, new_polygons = dual_mesh(bm, keep_boundaries=self.keep_boundaries)
+                    if I==0:
+                        new_verts, new_edges, new_polygons = dual_mesh(bm, edges_mask_as_boundary, keep_boundaries=self.keep_boundaries)
+                    else:
+                        new_verts, new_edges, new_polygons = dual_mesh(bm, [], keep_boundaries=self.keep_boundaries)
                 bm.free()
+                if not new_polygons:
+                    break  # if no mesh
+                pass
+
             verts_out.append(new_verts)
             edges_out.append(new_edges)
             polygons_out.append(new_polygons)
-        t1 = time_ns() - t1
-        st1 = st1+t1
-        print("DualMesh process: st1=",(st1)/1000000.0)
 
         self.outputs['vertices'].sv_set(verts_out)
         self.outputs['edges'].sv_set(edges_out)
