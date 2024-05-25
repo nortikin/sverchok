@@ -137,6 +137,8 @@
         - SvOffsetLineNode
         - SvContourNode
         - ---
+        - SvQuadriFlowNode
+        - ---
         - SvDualMeshNodeMK2
         - SvDiamondMeshNode
         - SvClipVertsNode
@@ -735,7 +737,7 @@
 - Scene:
     - icon_name: SCENE_DATA
     - extra_menu: ConnectionPartialMenu
-    - SvGetObjectsDataMK2
+    - SvGetObjectsDataMK3
     - SvObjInLite
     - SvCurveInputNode
     - SvFCurveInNodeMK1
