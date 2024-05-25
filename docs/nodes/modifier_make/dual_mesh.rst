@@ -62,7 +62,6 @@ This node has the following outputs:
 - **Vertices**. Vertices of the dual mesh.
 - **Edges**. Edges of the dual mesh.
 - **Polygons**. Faces of the dual mesh.
-- **Edges Mask as Boundaries**. Process Manifold/Non manifold edges as Boundary Edge (For the first level only. For Levels 2,3 and so on this mask will be skipped).
 - **Levels**. Repeat Levels input. For your convinience to use it as a Number node.
 
 Examples of Usage
