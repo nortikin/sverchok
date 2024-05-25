@@ -76,6 +76,7 @@
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Dual Mesh</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#outputs">Outputs</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#examples-of-usage">Examples of Usage</a></li>
 </ul>
@@ -153,7 +154,7 @@
              
   <section id="dual-mesh">
 <h1>Dual Mesh<a class="headerlink" href="#dual-mesh" title="Link to this heading">¶</a></h1>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200945022-5dce027f-28ce-4370-8783-f02c358ac76b.png"><img alt="https://user-images.githubusercontent.com/14288520/200945022-5dce027f-28ce-4370-8783-f02c358ac76b.png" src="https://user-images.githubusercontent.com/14288520/200945022-5dce027f-28ce-4370-8783-f02c358ac76b.png" /></a>
+<a class="reference external image-reference" href="https://github.com/satabol/pyQuadriFlow/assets/14288520/3f124c3b-1974-47a3-9cd0-8be2df01c496"><img alt="https://github.com/satabol/pyQuadriFlow/assets/14288520/3f124c3b-1974-47a3-9cd0-8be2df01c496" src="https://github.com/satabol/pyQuadriFlow/assets/14288520/3f124c3b-1974-47a3-9cd0-8be2df01c496" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node generates dual mesh for the given mesh. Dual mesh is defined as a
@@ -167,28 +168,47 @@ consisting to NGons, or backwards.</p>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/982ac4df-55df-4301-a3ba-bcb986904b35"><img alt="https://github.com/nortikin/sverchok/assets/14288520/982ac4df-55df-4301-a3ba-bcb986904b35" src="https://github.com/nortikin/sverchok/assets/14288520/982ac4df-55df-4301-a3ba-bcb986904b35" /></a>
 <p>This node has the following inputs:</p>
-<ul class="simple">
+<ul>
 <li><p><strong>Vertices</strong>. Vertices of original mesh. This input is mandatory.</p></li>
 <li><p><strong>Edges</strong>. Edges of original mesh.</p></li>
-<li><p><strong>Faces</strong>. Faces of original mesh. This input is mandatory.</p></li>
+<li><p><strong>Polygons</strong>. Faces of original mesh. This input is mandatory.</p></li>
+<li><p><strong>Levels</strong>. Levels of Dual Mesh (recursion)</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/080a9e60-bc6c-451e-97d3-4d29d8596121"><img alt="https://github.com/nortikin/sverchok/assets/14288520/080a9e60-bc6c-451e-97d3-4d29d8596121" src="https://github.com/nortikin/sverchok/assets/14288520/080a9e60-bc6c-451e-97d3-4d29d8596121" /></a>
+</li>
+</ul>
+</section>
+<section id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/96d5b2d9-2a25-4bea-b50a-573ee0de6927"><img alt="https://github.com/nortikin/sverchok/assets/14288520/96d5b2d9-2a25-4bea-b50a-573ee0de6927" src="https://github.com/nortikin/sverchok/assets/14288520/96d5b2d9-2a25-4bea-b50a-573ee0de6927" /></a>
+<ul>
+<li><p><strong>Keep Boundaries</strong> - Keep non-manifold boundaries of the mesh in place by avoiding the dual transformation there. Has no influence if Levels==0</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/1c27f774-4d50-4db6-9f87-131a3f594590"><img alt="https://github.com/nortikin/sverchok/assets/14288520/1c27f774-4d50-4db6-9f87-131a3f594590" src="https://github.com/nortikin/sverchok/assets/14288520/1c27f774-4d50-4db6-9f87-131a3f594590" /></a>
+<p>This parameter can do strange results sometime:</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/eccf9081-9c3c-472d-bbff-4fa4b9ede04c"><img alt="https://github.com/nortikin/sverchok/assets/14288520/eccf9081-9c3c-472d-bbff-4fa4b9ede04c" src="https://github.com/nortikin/sverchok/assets/14288520/eccf9081-9c3c-472d-bbff-4fa4b9ede04c" /></a>
+</li>
 </ul>
 </section>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/9f82d3f2-c3d6-49ee-9b03-e871d4c7652a"><img alt="https://github.com/nortikin/sverchok/assets/14288520/9f82d3f2-c3d6-49ee-9b03-e871d4c7652a" src="https://github.com/nortikin/sverchok/assets/14288520/9f82d3f2-c3d6-49ee-9b03-e871d4c7652a" /></a>
 <p>This node has the following outputs:</p>
 <ul class="simple">
 <li><p><strong>Vertices</strong>. Vertices of the dual mesh.</p></li>
-<li><p><strong>Faces</strong>. Faces of the dual mesh.</p></li>
+<li><p><strong>Edges</strong>. Edges of the dual mesh.</p></li>
+<li><p><strong>Polygons</strong>. Faces of the dual mesh.</p></li>
+<li><p><strong>Edges Mask as Boundaries</strong>. Process Manifold/Non manifold edges as Boundary Edge (For the first level only. For Levels 2,3 and so on this mask will be skipped).</p></li>
+<li><p><strong>Levels</strong>. Repeat Levels input. For your convinience to use it as a Number node.</p></li>
 </ul>
 </section>
 <section id="examples-of-usage">
 <h2>Examples of Usage<a class="headerlink" href="#examples-of-usage" title="Link to this heading">¶</a></h2>
-<p>Dual mesh for cube is an octahedron:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/68086032-278bb800-fe69-11e9-80d5-5b46bde8d9b0.png"><img alt="https://user-images.githubusercontent.com/284644/68086032-278bb800-fe69-11e9-80d5-5b46bde8d9b0.png" src="https://user-images.githubusercontent.com/284644/68086032-278bb800-fe69-11e9-80d5-5b46bde8d9b0.png" /></a>
+<p>Dual mesh for lowpoly cylinder:</p>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/7af16514-cbe3-40d9-8c58-5058521ddd72"><img alt="https://github.com/nortikin/sverchok/assets/14288520/7af16514-cbe3-40d9-8c58-5058521ddd72" src="https://github.com/nortikin/sverchok/assets/14288520/7af16514-cbe3-40d9-8c58-5058521ddd72" /></a>
 <ul class="simple">
-<li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Scene-&gt; <a class="reference internal" href="../scene/get_objects_data.html"><span class="doc">Get Objects Data</span></a></p></li>
 </ul>
 <hr class="docutils" />
 <p>Dual mesh for Voronoi diagram is Delaunay triangulation:</p>
