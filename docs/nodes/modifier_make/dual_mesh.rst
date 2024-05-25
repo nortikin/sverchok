@@ -1,8 +1,8 @@
 Dual Mesh
 =========
 
-.. image:: https://github.com/nortikin/sverchok/assets/14288520/a7aff115-49ef-4136-b627-dda87f6baa4d
-  :target: https://github.com/nortikin/sverchok/assets/14288520/a7aff115-49ef-4136-b627-dda87f6baa4d
+.. image:: https://github.com/satabol/pyQuadriFlow/assets/14288520/3f124c3b-1974-47a3-9cd0-8be2df01c496
+  :target: https://github.com/satabol/pyQuadriFlow/assets/14288520/3f124c3b-1974-47a3-9cd0-8be2df01c496
 
 Functionality
 -------------
@@ -23,8 +23,8 @@ Note that the volume of dual mesh is always a bit smaller than that of original 
 Inputs
 ------
 
-.. image:: https://github.com/nortikin/sverchok/assets/14288520/307d5cfd-3998-4cfb-86e1-0cc8e264316c
-  :target: https://github.com/nortikin/sverchok/assets/14288520/307d5cfd-3998-4cfb-86e1-0cc8e264316c
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/982ac4df-55df-4301-a3ba-bcb986904b35
+  :target: https://github.com/nortikin/sverchok/assets/14288520/982ac4df-55df-4301-a3ba-bcb986904b35
 
 This node has the following inputs:
 
@@ -39,8 +39,8 @@ This node has the following inputs:
 Parameters
 ----------
 
-.. image:: https://github.com/nortikin/sverchok/assets/14288520/a6b74434-df6b-4b57-abbf-24fc08e5c455
-  :target: https://github.com/nortikin/sverchok/assets/14288520/a6b74434-df6b-4b57-abbf-24fc08e5c455
+.. image:: https://github.com/nortikin/sverchok/assets/14288520/307d5cfd-3998-4cfb-86e1-0cc8e264316c
+  :target: https://github.com/nortikin/sverchok/assets/14288520/307d5cfd-3998-4cfb-86e1-0cc8e264316c
 
 - **Keep Boundaries** - Keep non-manifold boundaries of the mesh in place by avoiding the dual transformation there. Has no influence if Levels==0
 
@@ -68,8 +68,8 @@ Dual mesh for lowpoly cylinder:
 .. image:: https://github.com/nortikin/sverchok/assets/14288520/493b98a1-65af-4d8c-b4dd-f7fda2a9586d
   :target: https://github.com/nortikin/sverchok/assets/14288520/493b98a1-65af-4d8c-b4dd-f7fda2a9586d
 
-* Generator-> :doc:`Box </nodes/generator/box_mk2>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+* Scene-> :doc:`Get Objects Data </nodes/scene/get_objects_data>`
 
 ---------
 

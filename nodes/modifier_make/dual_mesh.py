@@ -50,13 +50,11 @@ class SvDualMeshNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
         self.inputs.new('SvVerticesSocket', 'vertices')
         self.inputs.new('SvStringsSocket' , 'edges')
         self.inputs.new('SvStringsSocket' , 'polygons')
-        self.inputs.new('SvStringsSocket' , 'edges_mask_as_boundary')
         self.inputs.new('SvStringsSocket' , 'dual_mesh_levels').prop_name = 'dual_mesh_levels'
 
         self.inputs['vertices'].label = 'Vertices'
         self.inputs['edges']   .label = 'Edges'
         self.inputs['polygons'].label = 'Polygons'
-        self.inputs['edges_mask_as_boundary'].label = 'Edges Mask as Boundary'
 
         self.outputs.new('SvVerticesSocket', 'vertices')
         self.outputs.new('SvStringsSocket' , 'edges')
@@ -86,7 +84,6 @@ class SvDualMeshNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
         verts_s = self.inputs['vertices'].sv_get()
         edges_s = self.inputs['edges'].sv_get(default=[[]])
         polygons_s = self.inputs['polygons'].sv_get()
-        edges_mask_as_boundary_s = self.inputs['edges_mask_as_boundary'].sv_get(default=[[]])
         _dual_mesh_levels = self.inputs['dual_mesh_levels'].sv_get(default=[[1]], deepcopy=False)
         dual_mesh_levels = flatten_data(_dual_mesh_levels)
 
@@ -94,8 +91,8 @@ class SvDualMeshNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
         edges_out = []
         polygons_out = []
 
-        objects = match_long_repeat([verts_s, edges_s, polygons_s, edges_mask_as_boundary_s, dual_mesh_levels])
-        for verts, edges, polygons, edges_mask_as_boundary, dual_mesh_level in zip(*objects):
+        objects = match_long_repeat([verts_s, edges_s, polygons_s, dual_mesh_levels])
+        for verts, edges, polygons, dual_mesh_level in zip(*objects):
             if dual_mesh_level<0:
                 dual_mesh_level=0
             new_verts, new_edges, new_polygons = verts, edges, polygons
@@ -105,10 +102,7 @@ class SvDualMeshNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
                     if I>0:
                         bm.clear()
                         add_mesh_to_bmesh(bm, new_verts, new_edges, new_polygons)
-                    if I==0:
-                        new_verts, new_edges, new_polygons = dual_mesh(bm, edges_mask_as_boundary, keep_boundaries=self.keep_boundaries)
-                    else:
-                        new_verts, new_edges, new_polygons = dual_mesh(bm, [], keep_boundaries=self.keep_boundaries)
+                    new_verts, new_edges, new_polygons = dual_mesh(bm, keep_boundaries=self.keep_boundaries)
                 bm.free()
                 if not new_polygons:
                     break  # if no mesh

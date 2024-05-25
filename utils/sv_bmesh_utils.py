@@ -472,7 +472,7 @@ def remove_doubles(vertices, edges, faces, d, face_data=None, vert_data=None, ed
 
 
 
-def dual_mesh(bm, mask_boundary_edges=None, recalc_normals=True, keep_boundaries=False):
+def dual_mesh(bm, recalc_normals=True, keep_boundaries=False):
     from sverchok.utils.sv_mesh_utils import polygons_to_edges_np
 
     bm.edges.ensure_lookup_table()
@@ -514,6 +514,7 @@ def dual_mesh(bm, mask_boundary_edges=None, recalc_normals=True, keep_boundaries
     initial_index_edges_layer = None
     if "initial_index" in bm.edges.layers.int:
         initial_index_edges_layer = bm.edges.layers.int["initial_index"]
+        # To get initial index of edge: bm.edge[NN][initial_index_edges_layer]=<source index of edge>
 
     for vert in bm.verts:
         # No linked faces, no dual mesh face
@@ -544,7 +545,7 @@ def dual_mesh(bm, mask_boundary_edges=None, recalc_normals=True, keep_boundaries
             # Process all faces of v0_edge
             if v0_edge_link_faces:  # 31 ms
                 # If count of faces are not 2 then this list of faces need to be separated into several frames by 1 face to hold data of non manifold edge
-                if len(v0_edge_link_faces)!=2 or initial_index_edges_layer and mask_boundary_edges and mask_boundary_edges[v0_edge[initial_index_edges_layer]]:
+                if len(v0_edge_link_faces)!=2:
                     # example: https://github.com/nortikin/sverchok/assets/14288520/5f2c61a0-fcce-4ff5-90d6-42223b7f777d
                     v_mid = ((v1.co+v0.co)/2.0)[:]
                     for fi in v0_edge_link_faces:
