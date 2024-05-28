@@ -201,6 +201,14 @@ try:
 except ImportError:
     pyacvd = None 
 
+pyQuadriFlow_d = sv_dependencies["pyQuadriFlow"] = SvDependency("pyQuadriFlow","https://github.com/satabol/pyQuadriFlow")
+pyQuadriFlow_d.pip_installable = True
+try:
+    import pyQuadriFlow
+    pyQuadriFlow_d.module = pyQuadriFlow
+except ImportError:
+    pyQuadriFlow = None 
+
 settings.pip = pip
 settings.sv_dependencies = sv_dependencies
 settings.ensurepip = ensurepip

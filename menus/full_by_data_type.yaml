@@ -137,7 +137,9 @@
         - SvOffsetLineNode
         - SvContourNode
         - ---
-        - SvDualMeshNode
+        - SvQuadriFlowNode
+        - ---
+        - SvDualMeshNodeMK2
         - SvDiamondMeshNode
         - SvClipVertsNode
         - ---

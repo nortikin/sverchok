@@ -19,7 +19,11 @@
 
 import bpy
 from bpy.props import IntProperty, FloatProperty, BoolProperty, EnumProperty, FloatVectorProperty
-from add_mesh_extra_objects.add_mesh_solid import createSolid
+try:
+    from add_mesh_extra_objects.add_mesh_solid import createSolid
+except ImportError:
+    createSolid = None 
+
 from mathutils import Vector
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat
@@ -221,8 +225,14 @@ class SvRegularSolid(SverchCustomTreeNode, bpy.types.Node):
         return match_long_repeat(params)
 
     def process(self):
+        
         if not any(s.is_linked for s in self.outputs):
             return
+
+        if createSolid is None:
+            str_error = "There is no 'add_mesh_extra_objects' library. Node 'Regular Solid' does not work for a while. (In Blender 4.2-alpha)"
+            print(str_error)
+            raise Exception(str_error)
 
         verts_out, edges_out, polys_out = [], [], []
 
