@@ -506,7 +506,7 @@ def levels_of_list_or_np(lst):
 SIMPLE_DATA_TYPES = (float, int, float64, int32, int64, str, Matrix)
 
 
-def get_data_nesting_level(data, data_types=SIMPLE_DATA_TYPES):
+def get_data_nesting_level(data, data_types=SIMPLE_DATA_TYPES, search_first_data=False):
     """
     data: number, or list of numbers, or list of lists, etc.
     data_types: list or tuple of types.
@@ -529,19 +529,28 @@ def get_data_nesting_level(data, data_types=SIMPLE_DATA_TYPES):
     def helper(data, recursion_depth):
         """ Needed only for better error reporting. """
         if isinstance(data, data_types):
-            return 0
+            return (0, 0)
         elif isinstance(data, (list, tuple, ndarray)):
             if len(data) == 0:
-                return 1
+                return (1, -1)
             else:
-                return helper(data[0], recursion_depth+1) + 1
+                if search_first_data==False:
+                    res = helper(data[0], recursion_depth+1)
+                else:
+                    for I, data_I in enumerate(data):
+                        res = helper(data_I, recursion_depth+1)
+                        if res[1]==0:
+                            return (res[0]+1, res[1] )
+                #return helper(data[0], recursion_depth+1) + 1
+                return (res[0]+ 1, res[1] )
         elif data is None:
             raise TypeError("get_data_nesting_level: encountered None at nesting level {}".format(recursion_depth))
         else:
             #unknown class. Return 0 level
-            return 0
+            return (0, -1)
 
-    return helper(data, 0)
+    res = helper(data, 0)
+    return res[0] 
 
 def ensure_nesting_level(data, target_level, data_types=SIMPLE_DATA_TYPES, input_name=None):
     """
