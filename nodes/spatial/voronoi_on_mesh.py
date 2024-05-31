@@ -89,8 +89,8 @@ class SvVoronoiOnMeshNodeMK4(SverchCustomTreeNode, bpy.types.Node):
         updateNode(self, context)
 
     mask_modes = [
-            ('MASK', "Boolean", "Boolean values (0/1) as mask of sites. Has no influence if socket is not connected (All sites are used)", 0),
-            ('INDEXES', "Indexes", "Indexes of sites as mask of sites. Has no influence if socket is not connected (All sites are used)", 1),
+            ('MASK', "Booleans", "Boolean values (0/1) as mask of Voronoi Sites per objects [[0,1,0,0,1,1],[1,1,0,0,1],...]. Has no influence if socket is not connected (All sites are used)", 0),
+            ('INDEXES', "Indexes", "Indexes as mask of Voronoi Sites per objects [[1,2,0,4],[0,1,4,5,7],..]. Has no influence if socket is not connected (All sites are used)", 1),
         ]
     mask_mode : EnumProperty(
         name = "Mask mode",
@@ -124,50 +124,22 @@ class SvVoronoiOnMeshNodeMK4(SverchCustomTreeNode, bpy.types.Node):
         pass
 
     def draw_voronoi_sites_mask_in_socket(self, socket, context, layout):
-        if socket.is_linked:
-            grid = layout.grid_flow(row_major=True, columns=3)
-            col1 = grid.column()
-            col1.row().label(text=f"{socket.objects_number or ''}. ")
-            col1.row().label(text=f"")
-        else:
-            grid = layout.grid_flow(row_major=True, columns=2)
+        grid = layout.grid_flow(row_major=True, columns=2)
+        if not socket.is_linked:
             grid.enabled = False
         col2 = grid.column()
         col2_row1 = col2.row()
-        col2_row1.alignment='RIGHT'
-        col2_row1.label(text=f"Mask of sites:")
+        col2_row1.alignment='LEFT'
+        if socket.is_linked:
+            col2_row1.label(text=f"Mask of sites ({socket.objects_number or ''}):")
+        else:
+            col2_row1.label(text=f"Mask of sites:")
         col2_row2 = col2.row()
-        col2_row2.alignment='RIGHT'
-        #col2_row2.column(align=True).label(text='Invert Mask:')
+        col2_row2.alignment='LEFT'
         col2_row2.column(align=True).prop(self, "mask_inversion")
         col3 = grid.column()
         col3.prop(self, "mask_mode", expand=True)
 
-        # else:
-        #     col.enabled = False
-        #     col = layout.grid_flow(row_major=True, columns=2)
-        
-        # #col.alignment = 'LEFT'
-        # #row = col.row(align=True)
-        # col1 = col.column()
-        # if socket.is_linked:  # linked INPUT or OUTPUT
-        #     col.enabled = True
-        #     col1.row().label(text=f"{socket.objects_number or ''}. Mask by:")
-        #     #col1.row().label(text=f"")
-        # else:
-        #     col1.row().label(text=f"Mask by")
-        #     #col1.row().label(text=f"")
-        # col1.row().prop(self, "mask_inversion", text='Invert Mask')
-
-
-        # col2 = col.column()
-        # col2.prop(self, "mask_mode", expand=True)
-        # #col3 = col.column()
-        # #col2.row().prop(self, "mask_inversion", text='Invert Mask')
-
-        # # row = col.row(align=True).label(text="multiline1")
-        # # row = col.row(align=True).label(text="multiline2")
-        # # row = col.row(align=True).label(text="multiline3")
 
     def sv_init(self, context):
         self.width = 230
