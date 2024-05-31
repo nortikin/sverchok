@@ -35,6 +35,7 @@ import itertools
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 from sverchok.utils.geom import calc_bounds, PlaneEquation, bounding_box_aligned
 from sverchok.utils.voronoi3d import calc_bvh_normals, voronoi3d_layer
+from sverchok.dependencies import scipy
 if scipy is not None:
     from scipy.spatial import Voronoi, SphericalVoronoi, Delaunay
 
