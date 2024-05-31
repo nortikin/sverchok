@@ -170,7 +170,7 @@ class SvVoronoiOnMeshNodeMK4(SverchCustomTreeNode, bpy.types.Node):
         # # row = col.row(align=True).label(text="multiline3")
 
     def sv_init(self, context):
-        self.width = 220
+        self.width = 230
         self.inputs.new('SvVerticesSocket', 'vertices').label = 'Vertices'
         self.inputs.new('SvStringsSocket', 'polygons').label = 'Polygons'
         self.inputs.new('SvVerticesSocket', 'voronoi_sites').label = 'Voronoi Sites'
