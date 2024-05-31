@@ -28,12 +28,12 @@ from sverchok.utils.voronoi3d import voronoi_on_mesh
 import numpy as np
 
 
-class SvVoronoiOnMeshNodeMK3(SverchCustomTreeNode, bpy.types.Node):
+class SvVoronoiOnMeshNodeMK4(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Voronoi Mesh
     Tooltip: Generate Voronoi diagram on the surface of a mesh object
     """
-    bl_idname = 'SvVoronoiOnMeshNodeMK3'
+    bl_idname = 'SvVoronoiOnMeshNodeMK4'
     bl_label = 'Voronoi on Mesh'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_VORONOI'
@@ -70,9 +70,9 @@ class SvVoronoiOnMeshNodeMK3(SverchCustomTreeNode, bpy.types.Node):
         update = update_sockets) # type: ignore
     
     join_modes = [
-            ('FLAT', "Separate All Meshes", "Separate all results meshes into single objects", 0),
-            ('SEPARATE', "Keep Source Meshes", "Keep results meshes parts as the source meshes", 1),
-            ('JOIN', "Join All Meshes", "Join all results meshes into a single mesh", 2)
+            ('FLAT', "Separate All Meshes", "Post processing: Separate all results meshes into single objects", 0),
+            ('SEPARATE', "Keep Source Meshes", "Post processing: Keep results meshes parts as the source meshes", 1),
+            ('JOIN', "Join All Meshes", "Post processing: Join all results meshes into a single mesh", 2)
         ]
 
     join_mode : EnumProperty(
@@ -89,8 +89,8 @@ class SvVoronoiOnMeshNodeMK3(SverchCustomTreeNode, bpy.types.Node):
         updateNode(self, context)
 
     mask_modes = [
-            ('MASK', "Mask of sites", "Boolean value (0/1) to mask of sites", 0),
-            ('INDEXES', "Index of sites", "Indexes of sites to mask", 1),
+            ('MASK', "Boolean", "Boolean values (0/1) as mask of sites. Has no influence if socket is not connected (All sites are used)", 0),
+            ('INDEXES', "Indexes", "Indexes of sites as mask of sites. Has no influence if socket is not connected (All sites are used)", 1),
         ]
     mask_mode : EnumProperty(
         name = "Mask mode",
@@ -101,9 +101,9 @@ class SvVoronoiOnMeshNodeMK3(SverchCustomTreeNode, bpy.types.Node):
         ) # type: ignore
 
     mask_inversion : BoolProperty(
-        name = "Inversion",
+        name = "Invert",
         default = False,
-        description="Invert mask of sites",
+        description="Invert mask of sites. Has no influence if socket is not connected (All sites are used)",
         update = updateNode) # type: ignore
 
 
@@ -114,25 +114,63 @@ class SvVoronoiOnMeshNodeMK3(SverchCustomTreeNode, bpy.types.Node):
             min = 1,
             update = updateNode) # type: ignore
 
-    def draw_voronoi_sites_mask_in_socket(self, socket, context, layout):
-        col = layout.column()
-        col.enabled = False
+    def draw_vertices_out_socket(self, socket, context, layout):
+        layout.prop(self, 'join_mode', text='')
+        layout.label(text=f'{socket.label}.')
         if socket.is_linked:  # linked INPUT or OUTPUT
-            col.enabled = True
-            split = col.split(factor=0.05)
-            split.label(text=f"{socket.objects_number or ''}.")
-            split1 = split.row().split(factor=0.6)
-        else:
-            split1 = col.row().split(factor=0.5)
+            layout.label(text=f"{socket.objects_number or ''}")
+        elif socket.is_output:  # unlinked OUTPUT
+            layout.separator()
+        pass
 
-        split1.prop(self, "mask_mode", expand=True)
-        split1.prop(self, "mask_inversion", text='Invert')
-        # row = col.row(align=True).label(text="multiline1")
-        # row = col.row(align=True).label(text="multiline2")
-        # row = col.row(align=True).label(text="multiline3")
+    def draw_voronoi_sites_mask_in_socket(self, socket, context, layout):
+        if socket.is_linked:
+            grid = layout.grid_flow(row_major=True, columns=3)
+            col1 = grid.column()
+            col1.row().label(text=f"{socket.objects_number or ''}. ")
+            col1.row().label(text=f"")
+        else:
+            grid = layout.grid_flow(row_major=True, columns=2)
+            grid.enabled = False
+        col2 = grid.column()
+        col2_row1 = col2.row()
+        col2_row1.alignment='RIGHT'
+        col2_row1.label(text=f"Mask of sites:")
+        col2_row2 = col2.row()
+        col2_row2.alignment='RIGHT'
+        #col2_row2.column(align=True).label(text='Invert Mask:')
+        col2_row2.column(align=True).prop(self, "mask_inversion")
+        col3 = grid.column()
+        col3.prop(self, "mask_mode", expand=True)
+
+        # else:
+        #     col.enabled = False
+        #     col = layout.grid_flow(row_major=True, columns=2)
+        
+        # #col.alignment = 'LEFT'
+        # #row = col.row(align=True)
+        # col1 = col.column()
+        # if socket.is_linked:  # linked INPUT or OUTPUT
+        #     col.enabled = True
+        #     col1.row().label(text=f"{socket.objects_number or ''}. Mask by:")
+        #     #col1.row().label(text=f"")
+        # else:
+        #     col1.row().label(text=f"Mask by")
+        #     #col1.row().label(text=f"")
+        # col1.row().prop(self, "mask_inversion", text='Invert Mask')
+
+
+        # col2 = col.column()
+        # col2.prop(self, "mask_mode", expand=True)
+        # #col3 = col.column()
+        # #col2.row().prop(self, "mask_inversion", text='Invert Mask')
+
+        # # row = col.row(align=True).label(text="multiline1")
+        # # row = col.row(align=True).label(text="multiline2")
+        # # row = col.row(align=True).label(text="multiline3")
 
     def sv_init(self, context):
-        self.width = 200
+        self.width = 220
         self.inputs.new('SvVerticesSocket', 'vertices').label = 'Vertices'
         self.inputs.new('SvStringsSocket', 'polygons').label = 'Polygons'
         self.inputs.new('SvVerticesSocket', 'voronoi_sites').label = 'Voronoi Sites'
@@ -146,6 +184,9 @@ class SvVoronoiOnMeshNodeMK3(SverchCustomTreeNode, bpy.types.Node):
         self.outputs.new('SvStringsSocket', "polygons").label = 'Polygons'
         self.outputs.new('SvStringsSocket', "sites_idx").label = 'Used Sites Idx'
         self.outputs.new('SvStringsSocket', "sites_verts").label = 'Used Sites Verts'
+
+        self.outputs['vertices'].custom_draw = 'draw_vertices_out_socket'
+
         self.update_sockets(context)
 
     def draw_buttons(self, context, layout):
@@ -156,8 +197,8 @@ class SvVoronoiOnMeshNodeMK3(SverchCustomTreeNode, bpy.types.Node):
         # split.column().prop(self, "mask_inversion", text='Invert')
         if self.mode == 'VOLUME':
             layout.prop(self, 'normals')
-        layout.label(text='Recombine result:')
-        layout.prop(self, 'join_mode', text='')
+        # layout.label(text='Recombine result:')
+        # layout.prop(self, 'join_mode', text='')
 
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
@@ -201,7 +242,7 @@ class SvVoronoiOnMeshNodeMK3(SverchCustomTreeNode, bpy.types.Node):
             # if mask is zero or not connected then do not mask any. Except of inversion,
             if not mask:
                 np_mask = np.ones(len(sites), dtype=bool)
-                if self.mask_inversion==True:
+                if self.inputs['voronoi_sites_mask'].is_linked and self.mask_inversion==True:
                     np_mask = np.invert(np_mask)
                 mask = np_mask.tolist()
             else:
@@ -262,5 +303,5 @@ class SvVoronoiOnMeshNodeMK3(SverchCustomTreeNode, bpy.types.Node):
         self.outputs['sites_idx'].sv_set(sites_idx_out)
         self.outputs['sites_verts'].sv_set(sites_verts_out)
 
-classes = [SvVoronoiOnMeshNodeMK3]
+classes = [SvVoronoiOnMeshNodeMK4]
 register, unregister = bpy.utils.register_classes_factory(classes)
