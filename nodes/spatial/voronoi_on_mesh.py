@@ -130,7 +130,7 @@ class SvVoronoiOnMeshNodeMK4(SverchCustomTreeNode, bpy.types.Node):
         col2_row1 = col2.row()
         col2_row1.alignment='LEFT'
         if socket.is_linked:
-            col2_row1.label(text=f"Mask of sites ({socket.objects_number or ''}):")
+            col2_row1.label(text=f"Mask of sites. {socket.objects_number or ''}:")
         else:
             col2_row1.label(text=f"Mask of sites:")
         col2_row2 = col2.row()
