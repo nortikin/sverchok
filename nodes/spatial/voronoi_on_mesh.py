@@ -20,8 +20,8 @@ import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level,\
-    ensure_min_nesting
+from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level, ensure_min_nesting
+from sverchok.ui.sv_icons import custom_icon
 from sverchok.utils.sv_bmesh_utils import recalc_normals
 from sverchok.utils.sv_mesh_utils import mesh_join
 from sverchok.utils.voronoi3d import voronoi_on_mesh
@@ -70,9 +70,9 @@ class SvVoronoiOnMeshNodeMK4(SverchCustomTreeNode, bpy.types.Node):
         update = update_sockets) # type: ignore
     
     join_modes = [
-            ('FLAT', "Separate All Meshes", "Post processing: Separate the result meshes into individual meshes", 0),
-            ('SEPARATE', "Keep Source Meshes", "Post processing: Keep parts of the source meshes as source meshes.", 1),
-            ('JOIN', "Join All Meshes", "Post processing: Join all results meshes into a single mesh", 2)
+            ('FLAT', "Separate All Meshes", "Post processing: Separate the result meshes into individual meshes", custom_icon("SV_VOM_SEPARATE_ALL_MESHES"), 0),
+            ('SEPARATE', "Keep Source Meshes", "Post processing: Keep parts of the source meshes as source meshes.", custom_icon("SV_VOM_KEEP_SOURCE_MESHES"), 1),
+            ('JOIN', "Join All Meshes", "Post processing: Join all results meshes into a single mesh", custom_icon("SV_VOM_JOIN_ALL_MESHES"), 2)
         ]
 
     join_mode : EnumProperty(
@@ -142,7 +142,7 @@ class SvVoronoiOnMeshNodeMK4(SverchCustomTreeNode, bpy.types.Node):
 
 
     def sv_init(self, context):
-        self.width = 230
+        self.width = 250
         self.inputs.new('SvVerticesSocket', 'vertices').label = 'Vertices'
         self.inputs.new('SvStringsSocket', 'polygons').label = 'Polygons'
         self.inputs.new('SvVerticesSocket', 'voronoi_sites').label = 'Voronoi Sites'
