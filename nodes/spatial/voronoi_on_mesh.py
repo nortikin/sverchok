@@ -70,8 +70,8 @@ class SvVoronoiOnMeshNodeMK4(SverchCustomTreeNode, bpy.types.Node):
         update = update_sockets) # type: ignore
     
     join_modes = [
-            ('FLAT', "Separate All Meshes", "Post processing: Separate all results meshes into single objects", 0),
-            ('SEPARATE', "Keep Source Meshes", "Post processing: Keep results meshes parts as the source meshes", 1),
+            ('FLAT', "Separate All Meshes", "Post processing: Separate the result meshes into individual meshes", 0),
+            ('SEPARATE', "Keep Source Meshes", "Post processing: Keep parts of the source meshes as source meshes.", 1),
             ('JOIN', "Join All Meshes", "Post processing: Join all results meshes into a single mesh", 2)
         ]
 
@@ -233,8 +233,8 @@ class SvVoronoiOnMeshNodeMK4(SverchCustomTreeNode, bpy.types.Node):
                     for x in mask:
                         if -mask_len<x<mask_len:
                             mask_range.append(x)
-                    np_mask = np.ones(len(sites), dtype=bool)
-                    np_mask[mask_range] = False
+                    np_mask = np.zeros(len(sites), dtype=bool)
+                    np_mask[mask_range] = True
                     if self.mask_inversion==True:
                         np_mask = np.invert(np_mask)
                     mask = np_mask.tolist()
