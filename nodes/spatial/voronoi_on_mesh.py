@@ -116,11 +116,10 @@ class SvVoronoiOnMeshNodeMK4(SverchCustomTreeNode, bpy.types.Node):
 
     def draw_vertices_out_socket(self, socket, context, layout):
         layout.prop(self, 'join_mode', text='')
-        layout.label(text=f'{socket.label}.')
         if socket.is_linked:  # linked INPUT or OUTPUT
-            layout.label(text=f"{socket.objects_number or ''}")
-        elif socket.is_output:  # unlinked OUTPUT
-            layout.separator()
+            layout.label(text=f"{socket.label}. {socket.objects_number or ''}")
+        else:
+            layout.label(text=f'{socket.label}')
         pass
 
     def draw_voronoi_sites_mask_in_socket(self, socket, context, layout):
