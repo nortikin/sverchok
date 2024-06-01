@@ -35,7 +35,8 @@ This node has the following inputs:
 
 * **Voronoi Sites**. The points to generate Voronoi diagram for. Usually you want for
   this points to lie either inside the mesh or on it's surface, but this is not
-  necessary. This input is mandatory.
+  necessary. This input is mandatory. If list of Voronoi sites is Zero length then source object will not processed
+  and transfer it params to output sockets.
 
 .. image:: https://github.com/nortikin/sverchok/assets/14288520/4353aec1-e4f5-4cb4-a9ec-f3e8c6435c0b
   :target: https://github.com/nortikin/sverchok/assets/14288520/4353aec1-e4f5-4cb4-a9ec-f3e8c6435c0b
