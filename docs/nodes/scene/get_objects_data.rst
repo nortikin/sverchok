@@ -134,7 +134,7 @@ Mask sites of Voronoi node with selection of faces:
     Your browser does not support the video tag.
    </video>
 
-* Spatial-> :doc:`Voronoi on Mesh </nodes/spatial/voronoi_on_mesh_mk2>`
+* Spatial-> :doc:`Voronoi on Mesh </nodes/spatial/voronoi_on_mesh>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 
 Mask edges of Grid with selection of edges:
