@@ -18,6 +18,8 @@ import bpy
 from sverchok import old_nodes
 from sverchok.utils.handle_blender_data import BPYPointers, BPYProperty
 from sverchok.utils.sv_node_utils import recursive_framed_location_finder
+from sverchok.core.sockets import InterfaceSocket
+
 
 from sverchok.core.sockets import InterfaceSocket
 
@@ -781,7 +783,7 @@ class InterfaceStruct(Struct):
     def build(self, sockets, factories, imported_structs):
         name = self._struct["name"]
         # create the socket in the method because identifier is hidden is shown only inside the class
-        interface_class = BPY_NodeTreeInterfaceSocket.bl_rna_get_subclass_py(self.read_bl_type())
+        interface_class = InterfaceSocket.bl_rna_get_subclass_py(self.read_bl_type())
         socket_type = interface_class.bl_socket_idname
         socket = sockets.new(socket_type, name)  # the method gives its own identifier
         imported_structs[self.type, socket.id_data.name, self.identifier] = socket.identifier
