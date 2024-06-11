@@ -78,3 +78,5 @@ utils/sv_svg_custom_server.htm
 sv_svg_custom_server.htm
 node_scripts/SNLite_templates/local/
 
+# openstreetmap import
+cache/
