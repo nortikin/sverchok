@@ -121,7 +121,7 @@ class SvVoronoiOnSolidNodeMK2(SverchCustomTreeNode, bpy.types.Node):
                 z_min, z_max = box.ZMin - clipping, box.ZMax + clipping
                 bounds = list(itertools.product([x_min,x_max], [y_min, y_max], [z_min, z_max]))
                 bounds_box_faces = [ [0,1,3,2], [2,3,7,6], [6,7,5,4], [4,5,1,0], [2,6,4,0], [7,3,1,5] ]  # cube's faces
-                verts, edges, faces, used_sites_idx = voronoi_on_mesh_bmesh(bounds, bounds_box_faces, len(sites), sites, spacing=inset, mode='VOLUME' )
+                verts, edges, faces, used_sites_idx, _ = voronoi_on_mesh_bmesh(bounds, bounds_box_faces, len(sites), sites, spacing=inset, mode='VOLUME' )
 
                 if isinstance(inset, list):
                     inset = repeat_last_for_length(inset, len(sites))
