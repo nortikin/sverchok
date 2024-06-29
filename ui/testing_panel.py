@@ -37,7 +37,7 @@ class SvRunTests(bpy.types.Operator):
             # making self.report after all tests lead to strange error, so no report for testing all
             test.run_all_tests()
         else:
-            test_result = test.run_test_from_file(self.test_module + '.py')
+            test_result = test.run_all_tests(self.test_module + '.py')
             self.report(type={'ERROR'} if test_result != 'OK' else {'INFO'}, message=test_result)
         return {'FINISHED'}
 

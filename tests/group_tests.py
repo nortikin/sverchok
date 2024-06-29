@@ -24,7 +24,7 @@ class GroupingTest(SverchokTestCase):
                 importer.import_into_tree(new_tree, print_log=False)
                 [setattr(n, 'select', False) for n in new_tree.nodes]
                 [setattr(new_tree.nodes[n], 'select', True) for n in ['A Number', 'Formula',
-                                                                      'Vector polar input', 'Vector polar output']]
+                                                                      'Vector Polar Input', 'Vector Polar Output']]
                 with self.subTest(msg="Grouping nodes"):
                     bpy.ops.node.add_group_tree_from_selected()
                 with self.subTest(msg="Ungrouping nodes"):
