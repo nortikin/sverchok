@@ -115,7 +115,7 @@ class SvFontFileImporterOpV28(bpy.types.Operator):
         return {'FINISHED'}
 
     def invoke(self, context, event):
-        self.node = context.node
+        self.node = context.active_node
         wm = context.window_manager
         wm.fileselect_add(self)
         return {'RUNNING_MODAL'}
