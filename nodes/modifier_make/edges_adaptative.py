@@ -117,6 +117,8 @@ class SvAdaptiveEdgeNodeMK2(ModifierLiteNode, SverchCustomTreeNode, bpy.types.No
     def process(self):
         if not all(s.is_linked for s in self.inputs if s.name in ['adaptive_verts', 'adaptive_edges', 'mesh_verts', 'mesh_edges']):
             return
+        if not any(socket.is_linked for socket in self.outputs):
+            return
 
         adaptive_verts_in = self.inputs['adaptive_verts'].sv_get()
         mesh_verts_in = self.inputs['mesh_verts'].sv_get()
