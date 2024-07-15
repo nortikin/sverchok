@@ -1,7 +1,7 @@
 # This action is triggered whenever push to the docs folder of the master branch is made.
 # It generates HTML pages from the docs folder of the master branch and push them to the gh-pages branch.
 
-name: Build user documentation pages (test)
+name: Build user documentation pages (for manual run)
 on:
   workflow_dispatch
 
@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Install Sphinx
-        run: pip install -U Sphinx==7.3.7
+        run: pip install -U Sphinx==7.4.1
       
       - name: Install Theme
         run: pip install sphinx-rtd-theme
