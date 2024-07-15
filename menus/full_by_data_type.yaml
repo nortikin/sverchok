@@ -145,7 +145,7 @@
         - ---
         - SvBevelCurveNode
         - SvSweepModulator
-        - SvAdaptiveEdgeNode
+        - SvAdaptiveEdgeNodeMK2
         - SvAdaptivePolygonsNodeMk3
         - SvDuplicateAlongEdgeNode
         - SvFractalCurveNode
