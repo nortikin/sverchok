@@ -1,11 +1,9 @@
 # This action is triggered whenever push to the docs folder of the master branch is made.
 # It generates HTML pages from the docs folder of the master branch and push them to the gh-pages branch.
 
-name: Build user documentation pages
+name: Build user documentation pages (test)
 on:
-  push:
-    branches: 'master'
-    paths: 'docs/**'
+  workflow_dispatch
 
 jobs:
   build:
