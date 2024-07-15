@@ -2,18 +2,21 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
-<meta name="generator" content="pdoc 0.10.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.1">
 <title>sverchok.utils.catenary API documentation</title>
-<meta name="description" content="" />
-<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
-<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
-<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
-<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
-<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<meta name="description" content="">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
 <style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
-<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
-<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+})</script>
 </head>
 <body>
 <main>
@@ -22,188 +25,6 @@
 <h1 class="title">Module <code>sverchok.utils.catenary</code></h1>
 </header>
 <section id="section-intro">
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">import numpy as np
-from math import sqrt, atanh, sinh, cosh
-
-from sverchok.dependencies import scipy
-from sverchok.utils.curve import SvCurve
-
-if scipy is not None:
-    from scipy.optimize import root_scalar
-
-class SvCatenaryCurve(SvCurve):
-    def __init__(self, A, x0, point1, force, x_direction, x_range):
-        self.A = A
-        self.x0 = x0
-        self.point1 = point1
-        self.force = force
-        self.x_direction = x_direction
-        self.x_range = x_range
-        self.tangent_delta = 0.001
-
-    def eval_y(self, x):
-        return self.A * cosh((x - self.x0) / self.A)
-
-    def evaluate(self, t):
-        t = t * self.x_range
-        dx = t * self.x_direction#[np.newaxis].T
-        y = self.A * np.cosh((t - self.x0) / self.A)
-        y1 = self.A * np.cosh((- self.x0) / self.A)
-        dy = - (y-y1) * self.force#[np.newaxis].T
-        return self.point1 + dx + dy
-
-    def evaluate_array(self, ts):
-        ts = ts * self.x_range
-        dxs = ts * self.x_direction[np.newaxis].T
-        ys = self.A * np.cosh((ts - self.x0) / self.A)
-        y1 = self.A * np.cosh((- self.x0) / self.A)
-        dys = - (ys - y1) * self.force[np.newaxis].T
-        return self.point1 + (dxs + dys).T
-
-    def tangent(self, t):
-        return self.tangent_array(np.array([t]))[0]
-
-    def tangent_array(self, ts):
-        ts = ts * self.x_range
-        dxs = self.x_direction[np.newaxis].T
-        ys = np.sinh((ts - self.x0) / self.A)
-        dys = - ys * self.force[np.newaxis].T
-        return (dxs + dys).T
-
-    def second_derivative(self, t):
-        return self.second_derivative_array(np.array([t]))[0]
-
-    def second_derivative_array(self, ts):
-        ts = ts * self.x_range
-        ys = np.cosh((ts - self.x0) / self.A) / self.A
-        dys = - ys * self.force[np.newaxis].T
-        return dys.T
-
-    def third_derivative_array(self, ts):
-        ts = ts * self.x_range
-        ys = np.sinh((ts - self.x0) / self.A) / (self.A ** 2)
-        dys = - ys * self.force[np.newaxis].T
-        return dys.T
-
-    def get_u_bounds(self):
-        return (0.0, 1.0)
-
-class CatenarySolver(object):
-    # Equations:
-    # Catenary curve:
-    #
-    # y = A * cosh( (x-x0) / A) + B  (*)
-    #
-    # Here we are searching for A, B and x0, so that
-    # the curve goes through the point1 and point2, and
-    # the segment of the curve between them equals to `length`.
-    #
-    # We have to project everything onto a plane, so that:
-    # * point1, point2, and force vector all lie in that plane;
-    # * Y axis of that plane is opposite to the force direction.
-    # The origin of the plane can be chosen arbitrary.
-    # Let&#39;s assume that point1 has coordinates of (0, 0) in that plane.
-    # Than point2 will have coordinates of (dx, dy).
-    #
-    # It can be shown that 
-    # * B has no matter at all;
-    # * A and x0 can be found from equations
-    #
-    #  2 * A * sinh( dx / (2*A) ) = sqrt( L^2 - dy^2 )  (1)
-    #
-    #  (x3 - x0) / A = arctanh( dy / L )                (2)
-    #
-    # where x3 = dx / 2.
-    #
-    # The (1) equation can not be solved algebraically; we have to solve it
-    # numerically. For any numeric algorithm, we have to provide at least
-    # an initial guess and / or a range where to find the solution.
-    #
-    # By writing the left-hand side of (1) as Taylor series, and taking first three
-    # summands only, one can show that some approximation of the solution for (1)
-    # can be provided by the following formula:
-    #
-    #                   5 * dx + sqrt( 5 * dx * (6 * S - dx) )
-    # 4 * A^2 = dx^2 * ----------------------------------------    (3)
-    #                          60 * (S - dx)
-    #
-    # We will use (3) as an initial guess, and search for initial range (A0 - dA; A0 + dA).
-    #
-    def __init__(self, point1, point2, length, force):
-        self.point1 = point1
-        self.point2 = point2
-        self.length = length
-        distance = np.linalg.norm(point1 - point2)
-        if length &lt; distance:
-            raise Exception(f&#34;Cannot build catenary curve from {point1} to {point2} with length {length} - length must be at least {distance}&#34;)
-        self.force = force / np.linalg.norm(force)
-        self._init()
-
-    def _init(self):
-        dv = self.point2 - self.point1
-        force_direction = self.force
-        self.dy = - dv.dot(force_direction)
-        dx_v = dv + self.dy * force_direction
-        self.dx = np.linalg.norm(dx_v)
-        self.x_direction = dx_v / self.dx
-        if self.dx &lt; 0:
-            self.dx = -self.dx
-            self.dy = -self.dy
-            self.point1, self.point2 = self.point2, self.point1
-            self.x_direction = - self.x_direction
-        # Right-hand side of the (1) equation
-        self.S = sqrt(self.length * self.length - self.dy * self.dy)
-
-    def _goal(self, A):
-        # Left-hand side of (1) equation
-        return 2 * A * sinh (self.dx / (2*A))
-
-    def _init_guess(self):
-        d = self.dx
-        S = self.S
-        x2 = d*d * (5*d + sqrt(5*d * (6*S - d))) / (60 * (S - d))
-        try:
-            return sqrt(x2) / 2
-        except ValueError:
-            raise Exception(f&#34;Cannot build catenary curve from {self.point1} to {self.point2} with length {self.length} - probably length must be greater&#34;)
-
-    def _bracket(self, A0):
-        dA = 0.1
-        S = self.S
-        coeff = 2.0
-        counter = 0
-        while True:
-            y1 = self._goal(A0 - dA) - S
-            y2 = self._goal(A0 + dA) - S
-            if y1 * y2 &lt; 0:
-                return (A0 - dA), (A0 + dA)
-            dA = dA * coeff
-            counter += 1
-            if counter &gt; 15:
-                return None
-
-    def solve(self):
-        # Solve (1) equation
-        A0 = self._init_guess()
-        init_range = self._bracket(A0)
-        if init_range is None:
-            dp = np.linalg.norm(self.point1 - self.point2)
-            raise Exception(&#34;Can&#39;t find initial range for A, starting from {}, for points {} and {}, (distance {}) and length {}&#34;.format(A0, self.point1, self.point2, dp, self.length))
-
-        S = self.S
-        result = root_scalar(lambda A: self._goal(A) - S, method=&#39;ridder&#39;, bracket=init_range, x0=A0)
-        A = result.root
-
-        # Solve (2) equation
-        x3 = self.dx / 2.0
-        x0 = x3 - A * atanh(self.dy / self.length)
-        
-        return SvCatenaryCurve(A, x0, self.point1, self.force, self.x_direction, self.dx)</code></pre>
-</details>
 </section>
 <section>
 </section>
@@ -343,28 +164,6 @@ class CatenarySolver(object):
 </code></dt>
 <dd>
 <div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def solve(self):
-    # Solve (1) equation
-    A0 = self._init_guess()
-    init_range = self._bracket(A0)
-    if init_range is None:
-        dp = np.linalg.norm(self.point1 - self.point2)
-        raise Exception(&#34;Can&#39;t find initial range for A, starting from {}, for points {} and {}, (distance {}) and length {}&#34;.format(A0, self.point1, self.point2, dp, self.length))
-
-    S = self.S
-    result = root_scalar(lambda A: self._goal(A) - S, method=&#39;ridder&#39;, bracket=init_range, x0=A0)
-    A = result.root
-
-    # Solve (2) equation
-    x3 = self.dx / 2.0
-    x0 = x3 - A * atanh(self.dy / self.length)
-    
-    return SvCatenaryCurve(A, x0, self.point1, self.force, self.x_direction, self.dx)</code></pre>
-</details>
 </dd>
 </dl>
 </dd>
@@ -446,58 +245,24 @@ class CatenarySolver(object):
 </code></dt>
 <dd>
 <div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def eval_y(self, x):
-    return self.A * cosh((x - self.x0) / self.A)</code></pre>
-</details>
 </dd>
 <dt id="sverchok.utils.catenary.SvCatenaryCurve.second_derivative"><code class="name flex">
 <span>def <span class="ident">second_derivative</span></span>(<span>self, t)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def second_derivative(self, t):
-    return self.second_derivative_array(np.array([t]))[0]</code></pre>
-</details>
 </dd>
 <dt id="sverchok.utils.catenary.SvCatenaryCurve.second_derivative_array"><code class="name flex">
 <span>def <span class="ident">second_derivative_array</span></span>(<span>self, ts)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def second_derivative_array(self, ts):
-    ts = ts * self.x_range
-    ys = np.cosh((ts - self.x0) / self.A) / self.A
-    dys = - ys * self.force[np.newaxis].T
-    return dys.T</code></pre>
-</details>
 </dd>
 <dt id="sverchok.utils.catenary.SvCatenaryCurve.third_derivative_array"><code class="name flex">
 <span>def <span class="ident">third_derivative_array</span></span>(<span>self, ts)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def third_derivative_array(self, ts):
-    ts = ts * self.x_range
-    ys = np.sinh((ts - self.x0) / self.A) / (self.A ** 2)
-    dys = - ys * self.force[np.newaxis].T
-    return dys.T</code></pre>
-</details>
 </dd>
 </dl>
 <h3>Inherited members</h3>
@@ -523,7 +288,6 @@ class CatenarySolver(object):
 </section>
 </article>
 <nav id="sidebar">
-<h1>Index</h1>
 <div class="toc">
 <ul></ul>
 </div>
@@ -556,7 +320,7 @@ class CatenarySolver(object):
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.1</a>.</p>
 </footer>
 </body>
 </html>

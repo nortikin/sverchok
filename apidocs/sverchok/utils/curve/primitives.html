@@ -2,18 +2,21 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
-<meta name="generator" content="pdoc 0.10.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.1">
 <title>sverchok.utils.curve.primitives API documentation</title>
-<meta name="description" content="Module containing primitive curve types: straight lines, circles, ellipses." />
-<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
-<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
-<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
-<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
-<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<meta name="description" content="Module containing primitive curve types: straight lines, circles, ellipses.">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
 <style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
-<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
-<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+})</script>
 </head>
 <body>
 <main>
@@ -23,876 +26,6 @@
 </header>
 <section id="section-intro">
 <p>Module containing primitive curve types: straight lines, circles, ellipses.</p>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python"># This file is part of project Sverchok. It&#39;s copyrighted by the contributors
-# recorded in the version control history of the file, available from
-# its original location https://github.com/nortikin/sverchok/commit/master
-#
-# SPDX-License-Identifier: GPL3
-# License-Filename: LICENSE
-
-&#34;&#34;&#34;
-Module containing primitive curve types: straight lines, circles, ellipses.
-&#34;&#34;&#34;
-
-import numpy as np
-from math import sin, cos, pi, radians, sqrt
-
-from mathutils import Vector, Matrix
-
-from sverchok.utils.geom import LineEquation, CircleEquation2D, CircleEquation3D, Ellipse3D, rotate_vector_around_vector_np, rotate_vector_around_vector
-from sverchok.utils.nurbs_common import SvNurbsMaths
-from sverchok.utils.curve.core import SvCurve, UnsupportedCurveTypeException
-from sverchok.utils.surface.primitives import SvPlane
-from sverchok.utils.curve import knotvector as sv_knotvector
-from sverchok.utils.curve.bezier import SvBezierCurve
-from sverchok.utils.curve.algorithms import curve_segment
-
-class SvLine(SvCurve):
-    &#34;&#34;&#34;
-    Straight line segment curve.
-    &#34;&#34;&#34;
-
-    def __init__(self, point, direction, u_bounds=None):
-        &#34;&#34;&#34;
-        Args:
-            point: a point on a line.
-            direction: directing vector of a line.
-        &#34;&#34;&#34;
-        self.point = np.array(point)
-        self.direction = np.array(direction)
-        if u_bounds is None:
-            u_bounds = (0.0, 1.0)
-        self.u_bounds = u_bounds
-
-    def __repr__(self):
-        return f&#34;&lt;{self.point} - {self.point+self.direction}&gt;&#34;
-
-    @classmethod
-    def from_two_points(cls, point1, point2):
-        &#34;&#34;&#34;
-        Generate straight line segment from two points.
-        &#34;&#34;&#34;
-        direction = np.array(point2) - np.array(point1)
-        return SvLine(point1, direction)
-    
-    def copy(self, u_bounds=None):
-        if u_bounds is None:
-            u_bounds = self.u_bounds
-        return SvLine(self.point, self.direction, u_bounds=u_bounds)
-
-    def get_degree(self):
-        return 1
-
-    def get_u_bounds(self):
-        return self.u_bounds
-
-    def evaluate(self, t):
-        return self.point + t * self.direction
-
-    def evaluate_array(self, ts):
-        ts = ts[np.newaxis].T
-        return self.point + ts * self.direction
-
-    def tangent(self, t, tangent_delta=None):
-        tg = self.direction
-        n = np.linalg.norm(tg)
-        return tg / n
-
-    def tangent_array(self, ts, tangent_delta=None):
-        tg = self.direction
-        n = np.linalg.norm(tg)
-        tangent = tg / n
-        result = np.tile(tangent[np.newaxis].T, len(ts)).T
-        return result
-
-    def extrude_along_vector(self, vector):
-        return SvPlane(self.point, self.direction, vector)
-
-    def make_revolution_surface(self, point, direction, v_min, v_max, global_origin):
-        return self.to_nurbs().make_revolution_surface(point, direction, v_min, v_max, global_origin)
-    
-    def make_ruled_surface(self, curve2, vmin, vmax):
-        return self.to_nurbs().make_ruled_surface(curve2, vmin, vmax)
-
-    def extrude_to_point(self, point):
-        return self.to_nurbs().extrude_to_point(point)
-
-    def lerp_to(self, curve2, coefficient):
-        return self.to_nurbs().lerp_to(curve2, coefficient)
-
-    def split_at(self, t):
-        t_min, t_max = self.get_u_bounds()
-        curve1 = self.copy(u_bounds=(t_min, t))
-        curve2 = self.copy(u_bounds=(t, t_max))
-        return curve1, curve2
-
-    def reverse(self):
-        t_min, t_max = self.get_u_bounds()
-        p1, p2 = self.evaluate(t_min), self.evaluate(t_max)
-        return SvLine.from_two_points(p2, p1)
-
-    def to_nurbs(self, implementation=SvNurbsMaths.NATIVE):
-        u_min, u_max = self.get_u_bounds()
-        knotvector = sv_knotvector.generate(1, 2)
-        knotvector = sv_knotvector.rescale(knotvector, u_min, u_max)
-        p1 = self.evaluate(u_min)
-        p2 = self.evaluate(u_max)
-        control_points = np.array([p1, p2])
-        return SvNurbsMaths.build_curve(implementation,
-                degree=1, knotvector=knotvector,
-                control_points = control_points)
-
-    def to_bezier(self):
-        u_min, u_max = self.get_u_bounds()
-        p1 = self.evaluate(u_min)
-        p2 = self.evaluate(u_max)
-        return SvBezierCurve([p1, p2])
-
-    def to_bezier_segments(self):
-        return [self.to_bezier()]
-
-    def concatenate(self, curve2, tolerance=1e-6, remove_knots=False):
-        return self.to_nurbs().concatenate(curve2, tolerance=tolerance, remove_knots=remove_knots)
-
-    def reparametrize(self, new_t_min, new_t_max):
-        t_min, t_max = self.get_u_bounds()
-        scale = (t_max - t_min) / (new_t_max - new_t_min)
-        new_direction = self.direction * scale
-        new_point = self.point + self.direction * (t_min - scale * new_t_min)
-        return SvLine(new_point, new_direction, u_bounds = (new_t_min, new_t_max))
-
-    def is_polyline(self):
-        return True
-
-    def get_polyline_vertices(self):
-        return np.array(self.get_end_points())
-
-    def is_closed(self, *args):
-        return False
-
-    def extrude_along_vector(self, vector):
-        return self.to_nurbs().extrude_along_vector(vector)
-
-    def make_revolution_surface(self, point, direction, v_min, v_max, global_origin):
-        return self.to_nurbs().make_revolution_surface(point, direction, v_min, v_max, global_origin)
-    
-    def make_ruled_surface(self, curve2, vmin, vmax):
-        return self.to_nurbs().make_ruled_surface(curve2, vmin, vmax)
-
-    def extrude_to_point(self, point):
-        return self.to_nurbs().extrude_to_point(point)
-
-    def lerp_to(self, curve2, coefficient):
-        return self.to_nurbs().lerp_to(curve2, coefficient)
-
-class SvPointCurve(SvCurve):
-    __description__ = &#34;Single-Point&#34;
-
-    def __init__(self, point):
-        self.point = np.asarray(point)
-
-    def evaluate(self, t):
-        return self.point
-
-    def evaluate_array(self, ts):
-        points = np.empty((len(ts),3))
-        points[:] = self.point
-        return points
-    
-    def get_u_bounds(self):
-        return (0.0, 1.0)
-
-    def get_degree(self):
-        return 1
-
-    def to_bezier(self):
-        u_min, u_max = self.get_u_bounds()
-        p1 = self.evaluate(u_min)
-        p2 = self.evaluate(u_max)
-        return SvBezierCurve([p1, p2])
-
-    def to_bezier_segments(self):
-        return [self.to_bezier()]
-
-    def is_closed(self, *args):
-        return False
-
-    def concatenate(self, curve2, *args):
-        return curve2
-
-    def to_nurbs(self, implementation = SvNurbsMaths.NATIVE):
-        return self.to_bezier().to_nurbs()
-
-    def reverse(self):
-        return SvPointCurve(self.point)
-
-
-def rotate_radius(radius, normal, thetas):
-    &#34;&#34;&#34;Internal method&#34;&#34;&#34;
-    ct = np.cos(thetas)[np.newaxis].T
-    st = np.sin(thetas)[np.newaxis].T
-
-    normal /= np.linalg.norm(normal)
-    
-    binormal = np.cross(normal, radius)
-    vx = radius * ct
-    vy = binormal * st
-
-    return vx + vy
-
-class SvCircle(SvCurve):
-    &#34;&#34;&#34;
-    Circle (or circular arc) curve.
-    &#34;&#34;&#34;
-
-    def __init__(self, matrix=None, radius=None, center=None, normal=None, vectorx=None):
-        if matrix is not None:
-            self.matrix = np.array(matrix.to_3x3())
-            self.center = np.array(matrix.translation)
-        elif center is not None:
-            self.center = center
-        if matrix is None:
-            self.matrix = SvCircle.calc_matrix(normal, vectorx)
-        if radius is not None:
-            self.radius = radius
-        else:
-            self.radius = np.linalg.norm(vectorx)
-        if normal is not None:
-            self.normal = normal
-        elif matrix is not None:
-            z = Vector([0,0,1])
-            m = matrix.copy()
-            m.translation = Vector()
-            self.normal = np.array(m @ z)
-        if vectorx is not None:
-            self.vectorx = vectorx
-        elif matrix is not None:
-            x = Vector([radius,0,0])
-            m = matrix.copy()
-            m.translation = Vector()
-            self.vectorx = np.array(m @ x)
-        self.u_bounds = (0.0, 2*pi)
-
-    def copy(self):
-        circle = SvCircle(radius=self.radius,
-                    center=self.center,
-                    normal=self.normal,
-                    vectorx=self.vectorx)
-        circle.u_bounds = self.u_bounds
-        return circle
-
-    def get_mu_matrix(self):
-        m = Matrix(self.matrix).to_4x4()
-        m.translation = Vector(self.center)
-        return m
-
-    @staticmethod
-    def calc_matrix(normal, vectorx):
-        normal = normal / np.linalg.norm(normal)
-        vx = vectorx / np.linalg.norm(vectorx)
-        vy = np.cross(normal, vx)
-        vy = vy / np.linalg.norm(vy)
-        m = np.stack((vx, vy, normal))
-        return np.linalg.inv(m)
-
-    def set_normal(self, normal):
-        self.normal = normal
-        self.matrix = SvCircle.calc_matrix(normal, self.vectorx)
-
-    def __repr__(self):
-        try:
-            r = str(self.get_actual_radius())
-        except UnsupportedCurveTypeException:
-            r = f&#34;Matrix @ {self.radius}&#34;
-        return f&#34;&lt;Circle C={self.center}, N={self.normal}, R={r}&gt;&#34;
-
-    def get_actual_radius(self, tolerance=1e-10):
-        x = np.array([self.radius, 0, 0])
-        y = np.array([0, self.radius, 0])
-        m = self.matrix
-        vx = m @ x
-        vy = m @ y
-        rx = np.linalg.norm(vx)
-        ry = np.linalg.norm(vy)
-        if abs(rx - ry) &gt; tolerance:
-            raise UnsupportedCurveTypeException(f&#34;This SvCircle instance is not an exact circle: {rx} != {ry}&#34;)
-        return (rx + ry) / 2.0
-
-    @classmethod
-    def from_equation(cls, eq):
-        &#34;&#34;&#34;
-        Make an instance of SvCircle from an instance of CircleEquation2D/3D.
-        &#34;&#34;&#34;
-        # isinstance() wont work properly with &#34;reload scripts&#34;.
-        if type(eq).__name__ == &#39;CircleEquation2D&#39;:
-            matrix = Matrix.Translation(eq.center)
-            circle = SvCircle(matrix, eq.radius)
-            return circle
-        elif type(eq).__name__ == &#39;CircleEquation3D&#39;:
-            if eq.point1 is not None:
-                circle = SvCircle(center = np.array(eq.center),
-                            vectorx = np.array(eq.point1) - np.array(eq.center),
-                            normal = eq.normal)
-            else:
-                circle = SvCircle(eq.get_matrix(), eq.radius)
-            if eq.arc_angle:
-                circle.u_bounds = (0, eq.arc_angle)
-            return circle
-        else:
-            raise TypeError(&#34;Unsupported argument type:&#34; + str(eq))
-
-    @classmethod
-    def from_arc(cls, arc, z_axis=&#39;Z&#39;):
-        &#34;&#34;&#34;
-        Make an instance of SvCircle from an instance of sverchok.utils.sv_curve_utils.Arc
-        &#34;&#34;&#34;
-        if arc.radius.real == arc.radius.imag:
-            radius = arc.radius.real
-            radius_dx = radius_dy = 1.0
-            scale_x = scale_y = Matrix.Identity(4)
-        else:
-            radius = abs(arc.radius)
-            radius_dx = arc.radius.real / radius
-            radius_dy = arc.radius.imag / radius
-            scale_x = Matrix.Scale(radius_dx, 4, (1,0,0))
-            scale_y = Matrix.Scale(radius_dy, 4, (0,1,0))
-        matrix = Matrix.Translation(Vector((arc.center.real, arc.center.imag, 0)))
-        rotation = radians(arc.theta)
-        angle = radians(abs(arc.delta))
-        rot_z = Matrix.Rotation(rotation, 4, &#39;Z&#39;)
-        matrix = matrix @ scale_x @ scale_y @ rot_z
-        if arc.delta &lt; 0:
-            matrix = matrix @ Matrix.Rotation(radians(180), 4, &#39;X&#39;)
-
-        if z_axis == &#39;Y&#39;:
-            matrix = Matrix.Rotation(radians(90), 4, &#39;X&#39;) @ matrix
-        elif z_axis == &#39;X&#39;:
-            matrix = Matrix.Rotation(radians(90), 4, &#39;Z&#39;) @ Matrix.Rotation(radians(90), 4, &#39;X&#39;) @ matrix
-        circle = SvCircle(matrix=matrix, radius=radius)
-        circle.u_bounds = (0, angle)
-        return circle
-
-    def get_degree(self):
-        return 2
-
-    def get_u_bounds(self):
-        return self.u_bounds
-
-    def evaluate(self, t):
-        vx = self.vectorx
-        return self.center + rotate_vector_around_vector(vx, self.normal, t)
-
-    def evaluate_array(self, ts):
-        #n = len(ts)
-        #vx = np.broadcast_to(self.vectorx[np.newaxis], (n,3))
-        #return self.center + rotate_vector_around_vector_np(vx, self.normal, ts)
-        return self.center + rotate_radius(self.vectorx, self.normal, ts)
-
-    def tangent(self, t, tangent_delta=None):
-        x = - self.radius * sin(t)
-        y = self.radius * cos(t)
-        z = 0
-        return self.matrix @ np.array([x, y, z])
-
-    def tangent_array(self, ts, tangent_delta=None):
-        xs = - self.radius * np.sin(ts)
-        ys = self.radius * np.cos(ts)
-        zs = np.zeros_like(xs)
-        vectors = np.stack((xs, ys, zs)).T
-        result = np.apply_along_axis(lambda v: self.matrix @ v, 1, vectors)
-        return result
-
-#     def second_derivative_array(self, ts):
-#         xs = - np.cos(ts)
-#         ys = - np.sin(ts)
-#         zs = np.zeros_like(xs)
-#         vectors = np.stack((xs, ys, zs)).T
-#         return np.apply_along_axis(lambda v: self.matrix @ v, 1, vectors)
-
-    def _arc_to_nurbs(self, t_min, t_max, implementation = SvNurbsMaths.NATIVE):
-        alpha = t_max - t_min 
-        p0_x = cos(t_min)
-        p0_y = sin(t_min)
-        p2_x = cos(t_max)
-        p2_y = sin(t_max)
-        t_mid = 0.5*(t_max + t_min)
-        theta = 0.5*alpha
-        p1_r = 1.0 / cos(theta)
-        p1_x = p1_r * cos(t_mid)
-        p1_y = p1_r * sin(t_mid)
-
-        control_points = np.array([[p0_x, p0_y, 0],
-                                   [p1_x, p1_y, 0],
-                                   [p2_x, p2_y, 0]])
-        control_points = self.radius * control_points
-        control_points = np.apply_along_axis(lambda v: self.matrix @ v, 1, control_points)
-        control_points = self.center + control_points
-
-        w1 = cos(theta)
-        weights = np.array([1, w1, 1])
-        degree = 2
-        knotvector = sv_knotvector.generate(degree, 3)
-        knotvector = sv_knotvector.rescale(knotvector, t_min, t_max)
-
-        nurbs = SvNurbsMaths.build_curve(implementation,
-                    degree, knotvector,
-                    control_points, weights)
-
-        if alpha &gt; 2*pi/3:
-            nurbs = nurbs.insert_knot(t_mid)
-
-        return nurbs
-
-    def _half_circle_nurbs(self, t_min, implementation = SvNurbsMaths.NATIVE):
-        control_points = np.array([[1, 0, 0],
-                                   [1, 1, 0],
-                                   [0, 1, 0],
-                                   [-1, 1, 0],
-                                   [-1, 0, 0]])
-
-        ct, st = cos(t_min), sin(t_min)
-        rotate = np.array([[ct, -st, 0], [st, ct, 0], [0, 0, 1]])
-        control_points = np.apply_along_axis(lambda v: rotate @ v, 1, control_points)
-
-        control_points = self.radius * control_points
-        control_points = np.apply_along_axis(lambda v: self.matrix @ v, 1, control_points)
-        control_points = self.center + control_points
-
-        sqrt22 = sqrt(2.0)/2.0
-        weights = np.array([1, sqrt22, 1, sqrt22, 1])
-        pi2 = pi/2.0
-        knotvector = np.array([0, 0, 0,
-                               pi2, pi2,
-                               pi, pi, pi])
-        knotvector += t_min
-
-        degree = 2
-        nurbs = SvNurbsMaths.build_curve(implementation,
-                    degree, knotvector,
-                    control_points, weights)
-        return nurbs
-
-    def to_nurbs(self, implementation = SvNurbsMaths.NATIVE):
-        t_min, t_max = self.get_u_bounds()
-        epsilon = 1e-6
-
-        if -2*pi &lt; t_min &lt; 0 and 0 &lt; t_max &lt; 2*pi:
-            arc1 = self.copy()
-            arc1.u_bounds = (2*pi + t_min, 2*pi)
-            arc1 = arc1.to_nurbs()
-            arc2 = self.copy()
-            arc2.u_bounds = (0, t_max)
-            arc2 = arc2.to_nurbs()
-            return arc1.concatenate(arc2)
-
-        if t_min &lt; 0 or t_max &gt; 2*pi + epsilon:
-            raise UnsupportedCurveTypeException(f&#34;Can&#39;t transform a circle arc out of 0-2pi bound ({t_min} - {t_max}) to NURBS&#34;)
-
-        #print(f&#34;T {t_min},{t_max}, 2pi {2*pi}&#34;)
-        if t_max - t_min &lt; pi:
-            return self._arc_to_nurbs(t_min, t_max, implementation)
-        elif t_max - t_min &lt; 2*pi + epsilon:
-            half = self._half_circle_nurbs(t_min, implementation)
-            if abs(t_max - t_min - pi) &lt; epsilon:
-                return half
-            arc = self._arc_to_nurbs(t_min + pi, t_max, implementation)
-            return half.concatenate(arc)
-
-        control_points = np.array([[1, 0, 0],
-                                   [1, 1, 0],
-                                   [0, 1, 0],
-                                   [-1, 1, 0],
-                                   [-1, 0, 0],
-                                   [-1, -1, 0],
-                                   [0, -1, 0],
-                                   [1, -1, 0],
-                                   [1, 0, 0]])
-        control_points = self.radius * control_points
-        control_points = np.apply_along_axis(lambda v: self.matrix @ v, 1, control_points)
-        control_points = self.center + control_points
-        sqrt22 = sqrt(2.0)/2.0
-        weights = np.array([1, sqrt22, 1, sqrt22,
-                            1, sqrt22, 1, sqrt22, 1])
-        pi2 = pi/2.0
-        pi32 = 3*pi/2.0
-        knotvector = np.array([0, 0, 0,
-                               pi2, pi2,
-                               pi, pi,
-                               pi32, pi32,
-                               2*pi, 2*pi, 2*pi])
-        degree = 2
-        curve = SvNurbsMaths.build_curve(implementation,
-                    degree, knotvector,
-                    control_points, weights)
-
-        #if t_min != 0 or t_max != 2*pi:
-            #print(f&#34;Cut {t_min} - {t_max}&#34;)
-            #curve = curve_segment(curve, t_min, t_max)
-        return curve
-
-    def to_nurbs_arc(self, n=4, t_min=None, t_max=None, implementation = SvNurbsMaths.NATIVE):
-        if t_min is None:
-            t_min = 0.0
-        if t_max is None:
-            t_max = 2*pi
-
-        if t_max &lt; t_min:
-            return self.to_nurbs_arc(n=n, t_max=t_min, t_min=t_max, implementation=implementation).reverse()
-
-        omega = t_max - t_min
-        alpha = pi / n
-        n_full_arcs = round(omega // (2*alpha))
-        small_arc_angle = omega % (2*alpha)
-
-        idxs_full = np.array(range(2*n_full_arcs+1), dtype=np.float64)
-        ts_full = pi * idxs_full / n + t_min
-        rs_full = np.where(idxs_full % 2 == 0, 1.0, 1.0 / cos(alpha))
-
-        xs_full = rs_full * np.cos(ts_full)
-        ys_full = rs_full * np.sin(ts_full)
-        zs_full = np.zeros_like(xs_full)
-
-        weights_full = np.where(idxs_full % 2 == 0, 1.0, cos(alpha))
-
-        knots_full = np.array(range(n_full_arcs+1), dtype=np.float64)
-        knots_full = 2*pi * knots_full / n + t_min
-        knots_full = np.repeat(knots_full, 2)
-
-        if small_arc_angle &gt; 1e-6:
-            t_mid_small_arc = ts_full[-1] + small_arc_angle / 2.0
-            r_mid_small_arc = 1.0 / cos(small_arc_angle / 2.0)
-            x_mid_small_arc = r_mid_small_arc * cos(t_mid_small_arc)
-            y_mid_small_arc = r_mid_small_arc * sin(t_mid_small_arc)
-            z_mid_small_arc = 0.0
-
-            x_end = cos(t_max)
-            y_end = sin(t_max)
-            z_end = 0.0
-
-            xs = np.concatenate((xs_full, [x_mid_small_arc, x_end]))
-            ys = np.concatenate((ys_full, [y_mid_small_arc, y_end]))
-            zs = np.concatenate((zs_full, [z_mid_small_arc, z_end]))
-
-            weight_mid_small_arc = cos(small_arc_angle / 2.0)
-            weight_end = 1.0
-            weights = np.concatenate((weights_full, [weight_mid_small_arc, weight_end]))
-
-            knots = np.concatenate((knots_full, [t_max, t_max]))
-        else:
-            xs = xs_full
-            ys = ys_full
-            zs = zs_full
-
-            weights = weights_full
-            knots = knots_full
-
-        knots = np.concatenate(([knots[0]], knots, [knots[-1]]))
-
-        control_points = np.stack((xs, ys, zs)).T
-        control_points = self.radius * control_points
-        control_points = np.apply_along_axis(lambda v: self.matrix @ v, 1, control_points)
-        control_points = self.center + control_points
-
-        degree = 2
-        curve = SvNurbsMaths.build_curve(implementation,
-                    degree, knots,
-                    control_points, weights)
-        return curve
-
-    def to_nurbs_quadric(self, n=3, t_min=None, t_max=None, parametrization = &#39;C2&#39;, implementation = SvNurbsMaths.NATIVE):
-        &#34;&#34;&#34;
-        Convert the circle to NURBS curve with 4-degree parametrization.
-
-        This implements the algorithm described in the paper:
-        Carole Blanc, Christophe Schlick.
-        More Accurate Representation of Conics by NURBS.
-        Technical Report, LaBRI, 1995.
-
-        Args:
-            n: number of subdivisions, usually 3, 4 or 6.
-            t_min, t_max: indicate the arc to be converted.
-            parametrization: &#39;C2&#39; for parametrization with continuous 2nd
-                derivative; &#39;QIDEAL&#39; for quasi-ideal parametrization, i.e. for
-                parametrization which is almost identical to trigonometric
-                parametrization.
-            implementation: implementation of Nurbs mathematics.
-
-        Returns:
-            an instance of SvNurbsCurve.
-        &#34;&#34;&#34;
-        if parametrization not in {&#39;C2&#39;, &#39;QIDEAL&#39;}:
-            raise Exception(&#34;Unsupported parametrization type&#34;)
-
-        if t_min is None:
-            t_min = 0.0
-        if t_max is None:
-            t_max = 2*pi
-
-        if t_max &lt; t_min:
-            return self.to_nurbs_quadric(n=n, t_max=t_min, t_min=t_max, implementation=implementation).reverse()
-
-        def make_quad_arc(t1, t2):
-            p1 = [cos(t1), sin(t1), 0.0]
-            alpha = (t2 - t1)/2.0
-            r_mid = 1.0 / cos(alpha)
-            t_mid = (t1 + t2)/2.0
-            p_mid = [r_mid*cos(t_mid), r_mid*sin(t_mid), 0.0]
-            p2 = [cos(t2), sin(t2), 0.0]
-            points = np.array([p1, p_mid, p2])
-
-            w = cos(alpha)
-            return points, w
-
-        def make_quadric_arc(t1, t2):
-            ps, w = make_quad_arc(t1, t2)
-
-            if parametrization == &#39;C2&#39;:
-                p = (1.0 + sqrt(5.0 + 4.0*w)) / (2*(1.0 + w))
-            else:
-                phi = (t2 - t1) / 2.0
-                cosphi = cos(phi / 5.0)
-                p = (4 - 2*cosphi**3 + cosphi) / (-1 + 8*cosphi**3 - 4*cosphi)
-
-            q0 = ps[0]
-            q1 = (ps[0] + w*ps[1])/(1.0 + w)
-            q2 = (p*p*ps[0] + 2*w*(1+p*p)*ps[1] + p*p*ps[2]) / (2*(p*p + p*p*w + w))
-            q3 = (ps[2] + w*ps[1]) / (1.0 + w)
-            q4 = ps[2]
-
-            w0 = 1.0
-            w1 = p*(1.0 + w)/2.0
-            w2 = (p*p + p*p*w + w)/3.0
-            w3 = w1
-            w4 = w0
-
-            degree = 4
-            knots = (t2 - t1) * sv_knotvector.generate(degree, 5)
-            control_points = np.array([q0, q1, q2, q3, q4])
-            weights = np.array([w0, w1, w2, w3, w4])
-            return SvNurbsMaths.build_curve(implementation,
-                        degree, knots,
-                        control_points, weights)
-
-        omega = t_max - t_min
-        alpha = pi / n
-        full_arc_angle = 2*alpha
-        n_full_arcs = round(omega // full_arc_angle)
-        small_arc_angle = omega % full_arc_angle
-        ts_full = [t_min + full_arc_angle*i for i in range(n_full_arcs+1)]
-        full_arcs = [make_quadric_arc(t1, t2) for t1,t2 in zip(ts_full, ts_full[1:])]
-        if small_arc_angle &gt; 1e-6:
-            small_arc = make_quadric_arc(ts_full[-1], t_max)
-            small_arcs = [small_arc]
-        else:
-            small_arcs = []
-
-        all_arcs = full_arcs + small_arcs
-        unit_arc = all_arcs[0]
-        for arc in all_arcs[1:]:
-            unit_arc = unit_arc.concatenate(arc)
-
-        control_points = unit_arc.get_control_points()
-        control_points = self.radius * control_points
-        control_points = np.apply_along_axis(lambda v: self.matrix @ v, 1, control_points)
-        control_points = self.center + control_points
-
-        curve = unit_arc.copy(control_points = control_points)
-        return curve
-
-    def to_nurbs_full(self, n=4, parametrization = &#39;SIMPLE&#39;, implementation = SvNurbsMaths.NATIVE):
-        &#34;&#34;&#34;
-        Convert fulll circle to a NURBS curve.
-
-        Args:
-            n: number of subdivisions, usually 3, 4 or 6.
-            paramerization: &#39;SIMPLE&#39; for traditional (2-degree) circle
-                parametrization; &#39;C2&#39; for 4-degree parametrization with continuous
-                2nd derivative; &#39;QIDEAL&#39; for quasi-ideal parametrization, i.e. for
-                4-degree parametrization which is almost identical to trigonometric
-                parametrization.
-            implementation: implementation of Nurbs mathematics.
-
-        Returns:
-            an instance of SvNurbsCurve.
-        &#34;&#34;&#34;
-        if parametrization == &#39;SIMPLE&#39;:
-            return self.to_nurbs_arc(n=n, implementation=implementation)
-        elif parametrization in {&#39;C2&#39;, &#39;QIDEAL&#39;}:
-            return self.to_nurbs_quadric(n=n, parametrization=parametrization, implementation=implementation)
-        else:
-            raise Exception(&#34;Unsupported parametrization type&#34;)
-
-    def reverse(self):
-        circle = self.copy()
-        u1, u2 = self.u_bounds
-        circle.u_bounds = (2*pi - u2, 2*pi - u1)
-        circle.normal = - circle.normal
-        return circle
-
-    def make_revolution_surface(self, point, direction, v_min, v_max, global_origin):
-        return self.to_nurbs().make_revolution_surface(point, direction, v_min, v_max, global_origin)
-    
-    def extrude_along_vector(self, vector):
-        return self.to_nurbs().extrude_along_vector(vector)
-
-    def make_ruled_surface(self, curve2, vmin, vmax):
-        return self.to_nurbs().make_ruled_surface(curve2, vmin, vmax)
-
-    def extrude_to_point(self, point):
-        return self.to_nurbs().extrude_to_point(point)
-
-    def lerp_to(self, curve2, coefficient):
-        return self.to_nurbs().lerp_to(curve2, coefficient)
-
-    def elevate_degree(self, delta=None, target=None):
-        return self.to_nurbs().elevate_degree(delta=delta, target=target)
-
-#     def concatenate(self, curve2, tolerance=1e-6, remove_knots=False):
-#         t_min, t_max = self.get_u_bounds()
-#         return self.to_nurbs_arc(t_min=t_min, t_max=t_max).concatenate(curve2, tolerance=tolerance, remove_knots=remove_knots)
-
-class SvEllipse(SvCurve):
-    &#34;&#34;&#34;
-    Ellipse curve.
-    &#34;&#34;&#34;
-    __description__ = &#34;Ellipse&#34;
-
-    CENTER = &#39;center&#39;
-    F1 = &#39;f1&#39;
-    F2 = &#39;f2&#39;
-
-    def __init__(self, matrix, a, b, center_type=CENTER):
-        self.matrix = np.array(matrix.to_3x3())
-        self.center = np.array(matrix.translation)
-        self.center_type = center_type
-        self.a = a
-        self.b = b
-        self.u_bounds = (0, 2*pi)
-        self.tangent_delta = 0.001
-
-    def get_u_bounds(self):
-        return self.u_bounds
-
-    @classmethod
-    def from_equation(cls, eq):
-        &#34;&#34;&#34;
-        Build an instance of SvEllipse from `sverchok.utils.geom.Ellipse3D`.
-        &#34;&#34;&#34;
-        return SvEllipse(eq.get_matrix(), eq.a, eq.b)
-
-    def to_equation(self):
-        &#34;&#34;&#34;
-        Convert an instance of SvEllipse to `sverchok.utils.geom.Ellipse3D`.
-        &#34;&#34;&#34;
-        major_radius = self.matrix @ np.array([self.a, 0, 0])
-        minor_radius = self.matrix @ np.array([0, self.b, 0])
-        eq = Ellipse3D(Vector(self.center), Vector(major_radius), Vector(minor_radius))
-        return eq
-
-    @property
-    def c(self):
-        a, b = self.a, self.b
-        return sqrt(a*a - b*b)
-
-    def focal_points(self):
-        &#34;&#34;&#34;
-        Calculate ellipse focal points.
-
-        Returns:
-            list of two points.
-        &#34;&#34;&#34;
-        df = self.matrix @ np.array([self.c, 0, 0])
-        f1 = self.center + df
-        f2 = self.center - df
-        return [f1, f2]
-
-    def get_center(self):
-        &#34;&#34;&#34;
-        Calculate ellipse center.
-        &#34;&#34;&#34;
-        if self.center_type == SvEllipse.CENTER:
-            return self.center
-        elif self.center_type == SvEllipse.F1:
-            df = self.matrix @ np.array([self.c, 0, 0])
-            return self.center - df
-        else: # F2
-            df = self.matrix @ np.array([self.c, 0, 0])
-            return self.center + df
-
-    def get_degree(self):
-        return 2
-
-    def evaluate(self, t):
-        v = np.array([self.a * cos(t), self.b * sin(t), 0])
-        center = self.get_center()
-        v = center + self.matrix @ v
-        return v
-
-    def evaluate_array(self, ts):
-        xs = self.a * np.cos(ts)
-        ys = self.b * np.sin(ts)
-        zs = np.zeros_like(xs)
-        vs = np.array((xs, ys, zs)).T
-        vs = np.apply_along_axis(lambda v : self.matrix @ v, 1, vs)
-        center = self.get_center()
-        return center + vs
-
-    def tangent(self, t, tangent_delta=None):
-        return self.tangent_array(np.array([t]))[0]
-
-    def tangent_array(self, ts, tangent_delta=None):
-        xs = - self.a * np.sin(ts)
-        ys = self.b * np.cos(ts)
-        zs = np.zeros_like(xs)
-        vs = np.array((xs, ys, zs)).T
-        vs = np.apply_along_axis(lambda v : self.matrix @ v, 1, vs)
-        return vs
-
-    def second_derivative(self, t, tangent_delta=None):
-        return self.second_derivative_array(np.array([t]))[0]
-
-    def second_derivative_array(self, ts, tangent_delta=None):
-        xs = - self.a * np.cos(ts)
-        ys = - self.b * np.sin(ts)
-        zs = np.zeros_like(xs)
-        vs = np.array((xs, ys, zs)).T
-        vs = np.apply_along_axis(lambda v : self.matrix @ v, 1, vs)
-        return vs
-
-    def to_nurbs(self, implementation=SvNurbsMaths.NATIVE):
-        &#34;&#34;&#34;
-        Convert the ellipse to SvNurbsCurve.
-        &#34;&#34;&#34;
-        if self.a == 0 and self.b == 0:
-            coef_x = 0
-            coef_y = 0
-            radius = 0
-        elif self.a == 0:
-            coef_x = 0
-            coef_y = 1
-            radius = self.b
-        elif self.b == 0:
-            coef_x = 1
-            coef_y = 0
-            radius = self.a
-        else:
-            coef_x = 1
-            coef_y = self.b/self.a
-            radius = self.a
-        scale = Matrix([[coef_x,0,0], [0, coef_y, 0], [0, 0, 1]]).to_4x4()
-        matrix = Matrix(self.matrix).to_4x4()
-        matrix.translation = Vector(self.get_center())
-        circle = SvCircle(matrix = matrix @ scale, radius = radius,
-                    center = self.get_center())
-        return circle.to_nurbs(implementation)
-
-    def concatenate(self, curve2, tolerance=1e-6, remove_knots=False):
-        return self.to_nurbs().concatenate(curve2, tolerance=tolerance, remove_knots=remove_knots)</code></pre>
-</details>
 </section>
 <section>
 </section>
@@ -906,23 +39,6 @@ class SvEllipse(SvCurve):
 </code></dt>
 <dd>
 <div class="desc"><p>Internal method</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def rotate_radius(radius, normal, thetas):
-    &#34;&#34;&#34;Internal method&#34;&#34;&#34;
-    ct = np.cos(thetas)[np.newaxis].T
-    st = np.sin(thetas)[np.newaxis].T
-
-    normal /= np.linalg.norm(normal)
-    
-    binormal = np.cross(normal, radius)
-    vx = radius * ct
-    vy = binormal * st
-
-    return vx + vy</code></pre>
-</details>
 </dd>
 </dl>
 </section>
@@ -1138,7 +254,7 @@ class SvEllipse(SvCurve):
                     control_points, weights)
 
         if alpha &gt; 2*pi/3:
-            nurbs = nurbs.insert_knot(t_mid)
+            nurbs = nurbs.insert_knot(t_mid,2)
 
         return nurbs
 
@@ -1457,93 +573,18 @@ class SvEllipse(SvCurve):
 </code></dt>
 <dd>
 <div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">@staticmethod
-def calc_matrix(normal, vectorx):
-    normal = normal / np.linalg.norm(normal)
-    vx = vectorx / np.linalg.norm(vectorx)
-    vy = np.cross(normal, vx)
-    vy = vy / np.linalg.norm(vy)
-    m = np.stack((vx, vy, normal))
-    return np.linalg.inv(m)</code></pre>
-</details>
 </dd>
 <dt id="sverchok.utils.curve.primitives.SvCircle.from_arc"><code class="name flex">
 <span>def <span class="ident">from_arc</span></span>(<span>arc, z_axis='Z')</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Make an instance of SvCircle from an instance of sverchok.utils.sv_curve_utils.Arc</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">@classmethod
-def from_arc(cls, arc, z_axis=&#39;Z&#39;):
-    &#34;&#34;&#34;
-    Make an instance of SvCircle from an instance of sverchok.utils.sv_curve_utils.Arc
-    &#34;&#34;&#34;
-    if arc.radius.real == arc.radius.imag:
-        radius = arc.radius.real
-        radius_dx = radius_dy = 1.0
-        scale_x = scale_y = Matrix.Identity(4)
-    else:
-        radius = abs(arc.radius)
-        radius_dx = arc.radius.real / radius
-        radius_dy = arc.radius.imag / radius
-        scale_x = Matrix.Scale(radius_dx, 4, (1,0,0))
-        scale_y = Matrix.Scale(radius_dy, 4, (0,1,0))
-    matrix = Matrix.Translation(Vector((arc.center.real, arc.center.imag, 0)))
-    rotation = radians(arc.theta)
-    angle = radians(abs(arc.delta))
-    rot_z = Matrix.Rotation(rotation, 4, &#39;Z&#39;)
-    matrix = matrix @ scale_x @ scale_y @ rot_z
-    if arc.delta &lt; 0:
-        matrix = matrix @ Matrix.Rotation(radians(180), 4, &#39;X&#39;)
-
-    if z_axis == &#39;Y&#39;:
-        matrix = Matrix.Rotation(radians(90), 4, &#39;X&#39;) @ matrix
-    elif z_axis == &#39;X&#39;:
-        matrix = Matrix.Rotation(radians(90), 4, &#39;Z&#39;) @ Matrix.Rotation(radians(90), 4, &#39;X&#39;) @ matrix
-    circle = SvCircle(matrix=matrix, radius=radius)
-    circle.u_bounds = (0, angle)
-    return circle</code></pre>
-</details>
 </dd>
 <dt id="sverchok.utils.curve.primitives.SvCircle.from_equation"><code class="name flex">
 <span>def <span class="ident">from_equation</span></span>(<span>eq)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Make an instance of SvCircle from an instance of CircleEquation2D/3D.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">@classmethod
-def from_equation(cls, eq):
-    &#34;&#34;&#34;
-    Make an instance of SvCircle from an instance of CircleEquation2D/3D.
-    &#34;&#34;&#34;
-    # isinstance() wont work properly with &#34;reload scripts&#34;.
-    if type(eq).__name__ == &#39;CircleEquation2D&#39;:
-        matrix = Matrix.Translation(eq.center)
-        circle = SvCircle(matrix, eq.radius)
-        return circle
-    elif type(eq).__name__ == &#39;CircleEquation3D&#39;:
-        if eq.point1 is not None:
-            circle = SvCircle(center = np.array(eq.center),
-                        vectorx = np.array(eq.point1) - np.array(eq.center),
-                        normal = eq.normal)
-        else:
-            circle = SvCircle(eq.get_matrix(), eq.radius)
-        if eq.arc_angle:
-            circle.u_bounds = (0, eq.arc_angle)
-        return circle
-    else:
-        raise TypeError(&#34;Unsupported argument type:&#34; + str(eq))</code></pre>
-</details>
 </dd>
 </dl>
 <h3>Methods</h3>
@@ -1553,311 +594,78 @@ def from_equation(cls, eq):
 </code></dt>
 <dd>
 <div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def copy(self):
-    circle = SvCircle(radius=self.radius,
-                center=self.center,
-                normal=self.normal,
-                vectorx=self.vectorx)
-    circle.u_bounds = self.u_bounds
-    return circle</code></pre>
-</details>
 </dd>
 <dt id="sverchok.utils.curve.primitives.SvCircle.elevate_degree"><code class="name flex">
 <span>def <span class="ident">elevate_degree</span></span>(<span>self, delta=None, target=None)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def elevate_degree(self, delta=None, target=None):
-    return self.to_nurbs().elevate_degree(delta=delta, target=target)</code></pre>
-</details>
 </dd>
 <dt id="sverchok.utils.curve.primitives.SvCircle.extrude_along_vector"><code class="name flex">
 <span>def <span class="ident">extrude_along_vector</span></span>(<span>self, vector)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def extrude_along_vector(self, vector):
-    return self.to_nurbs().extrude_along_vector(vector)</code></pre>
-</details>
 </dd>
 <dt id="sverchok.utils.curve.primitives.SvCircle.extrude_to_point"><code class="name flex">
 <span>def <span class="ident">extrude_to_point</span></span>(<span>self, point)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def extrude_to_point(self, point):
-    return self.to_nurbs().extrude_to_point(point)</code></pre>
-</details>
 </dd>
 <dt id="sverchok.utils.curve.primitives.SvCircle.get_actual_radius"><code class="name flex">
 <span>def <span class="ident">get_actual_radius</span></span>(<span>self, tolerance=1e-10)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def get_actual_radius(self, tolerance=1e-10):
-    x = np.array([self.radius, 0, 0])
-    y = np.array([0, self.radius, 0])
-    m = self.matrix
-    vx = m @ x
-    vy = m @ y
-    rx = np.linalg.norm(vx)
-    ry = np.linalg.norm(vy)
-    if abs(rx - ry) &gt; tolerance:
-        raise UnsupportedCurveTypeException(f&#34;This SvCircle instance is not an exact circle: {rx} != {ry}&#34;)
-    return (rx + ry) / 2.0</code></pre>
-</details>
 </dd>
 <dt id="sverchok.utils.curve.primitives.SvCircle.get_mu_matrix"><code class="name flex">
 <span>def <span class="ident">get_mu_matrix</span></span>(<span>self)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def get_mu_matrix(self):
-    m = Matrix(self.matrix).to_4x4()
-    m.translation = Vector(self.center)
-    return m</code></pre>
-</details>
 </dd>
 <dt id="sverchok.utils.curve.primitives.SvCircle.lerp_to"><code class="name flex">
 <span>def <span class="ident">lerp_to</span></span>(<span>self, curve2, coefficient)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def lerp_to(self, curve2, coefficient):
-    return self.to_nurbs().lerp_to(curve2, coefficient)</code></pre>
-</details>
 </dd>
 <dt id="sverchok.utils.curve.primitives.SvCircle.make_revolution_surface"><code class="name flex">
 <span>def <span class="ident">make_revolution_surface</span></span>(<span>self, point, direction, v_min, v_max, global_origin)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def make_revolution_surface(self, point, direction, v_min, v_max, global_origin):
-    return self.to_nurbs().make_revolution_surface(point, direction, v_min, v_max, global_origin)</code></pre>
-</details>
 </dd>
 <dt id="sverchok.utils.curve.primitives.SvCircle.make_ruled_surface"><code class="name flex">
 <span>def <span class="ident">make_ruled_surface</span></span>(<span>self, curve2, vmin, vmax)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def make_ruled_surface(self, curve2, vmin, vmax):
-    return self.to_nurbs().make_ruled_surface(curve2, vmin, vmax)</code></pre>
-</details>
 </dd>
 <dt id="sverchok.utils.curve.primitives.SvCircle.reverse"><code class="name flex">
 <span>def <span class="ident">reverse</span></span>(<span>self)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def reverse(self):
-    circle = self.copy()
-    u1, u2 = self.u_bounds
-    circle.u_bounds = (2*pi - u2, 2*pi - u1)
-    circle.normal = - circle.normal
-    return circle</code></pre>
-</details>
 </dd>
 <dt id="sverchok.utils.curve.primitives.SvCircle.set_normal"><code class="name flex">
 <span>def <span class="ident">set_normal</span></span>(<span>self, normal)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def set_normal(self, normal):
-    self.normal = normal
-    self.matrix = SvCircle.calc_matrix(normal, self.vectorx)</code></pre>
-</details>
 </dd>
 <dt id="sverchok.utils.curve.primitives.SvCircle.to_nurbs"><code class="name flex">
 <span>def <span class="ident">to_nurbs</span></span>(<span>self, implementation='NATIVE')</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def to_nurbs(self, implementation = SvNurbsMaths.NATIVE):
-    t_min, t_max = self.get_u_bounds()
-    epsilon = 1e-6
-
-    if -2*pi &lt; t_min &lt; 0 and 0 &lt; t_max &lt; 2*pi:
-        arc1 = self.copy()
-        arc1.u_bounds = (2*pi + t_min, 2*pi)
-        arc1 = arc1.to_nurbs()
-        arc2 = self.copy()
-        arc2.u_bounds = (0, t_max)
-        arc2 = arc2.to_nurbs()
-        return arc1.concatenate(arc2)
-
-    if t_min &lt; 0 or t_max &gt; 2*pi + epsilon:
-        raise UnsupportedCurveTypeException(f&#34;Can&#39;t transform a circle arc out of 0-2pi bound ({t_min} - {t_max}) to NURBS&#34;)
-
-    #print(f&#34;T {t_min},{t_max}, 2pi {2*pi}&#34;)
-    if t_max - t_min &lt; pi:
-        return self._arc_to_nurbs(t_min, t_max, implementation)
-    elif t_max - t_min &lt; 2*pi + epsilon:
-        half = self._half_circle_nurbs(t_min, implementation)
-        if abs(t_max - t_min - pi) &lt; epsilon:
-            return half
-        arc = self._arc_to_nurbs(t_min + pi, t_max, implementation)
-        return half.concatenate(arc)
-
-    control_points = np.array([[1, 0, 0],
-                               [1, 1, 0],
-                               [0, 1, 0],
-                               [-1, 1, 0],
-                               [-1, 0, 0],
-                               [-1, -1, 0],
-                               [0, -1, 0],
-                               [1, -1, 0],
-                               [1, 0, 0]])
-    control_points = self.radius * control_points
-    control_points = np.apply_along_axis(lambda v: self.matrix @ v, 1, control_points)
-    control_points = self.center + control_points
-    sqrt22 = sqrt(2.0)/2.0
-    weights = np.array([1, sqrt22, 1, sqrt22,
-                        1, sqrt22, 1, sqrt22, 1])
-    pi2 = pi/2.0
-    pi32 = 3*pi/2.0
-    knotvector = np.array([0, 0, 0,
-                           pi2, pi2,
-                           pi, pi,
-                           pi32, pi32,
-                           2*pi, 2*pi, 2*pi])
-    degree = 2
-    curve = SvNurbsMaths.build_curve(implementation,
-                degree, knotvector,
-                control_points, weights)
-
-    #if t_min != 0 or t_max != 2*pi:
-        #print(f&#34;Cut {t_min} - {t_max}&#34;)
-        #curve = curve_segment(curve, t_min, t_max)
-    return curve</code></pre>
-</details>
 </dd>
 <dt id="sverchok.utils.curve.primitives.SvCircle.to_nurbs_arc"><code class="name flex">
 <span>def <span class="ident">to_nurbs_arc</span></span>(<span>self, n=4, t_min=None, t_max=None, implementation='NATIVE')</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def to_nurbs_arc(self, n=4, t_min=None, t_max=None, implementation = SvNurbsMaths.NATIVE):
-    if t_min is None:
-        t_min = 0.0
-    if t_max is None:
-        t_max = 2*pi
-
-    if t_max &lt; t_min:
-        return self.to_nurbs_arc(n=n, t_max=t_min, t_min=t_max, implementation=implementation).reverse()
-
-    omega = t_max - t_min
-    alpha = pi / n
-    n_full_arcs = round(omega // (2*alpha))
-    small_arc_angle = omega % (2*alpha)
-
-    idxs_full = np.array(range(2*n_full_arcs+1), dtype=np.float64)
-    ts_full = pi * idxs_full / n + t_min
-    rs_full = np.where(idxs_full % 2 == 0, 1.0, 1.0 / cos(alpha))
-
-    xs_full = rs_full * np.cos(ts_full)
-    ys_full = rs_full * np.sin(ts_full)
-    zs_full = np.zeros_like(xs_full)
-
-    weights_full = np.where(idxs_full % 2 == 0, 1.0, cos(alpha))
-
-    knots_full = np.array(range(n_full_arcs+1), dtype=np.float64)
-    knots_full = 2*pi * knots_full / n + t_min
-    knots_full = np.repeat(knots_full, 2)
-
-    if small_arc_angle &gt; 1e-6:
-        t_mid_small_arc = ts_full[-1] + small_arc_angle / 2.0
-        r_mid_small_arc = 1.0 / cos(small_arc_angle / 2.0)
-        x_mid_small_arc = r_mid_small_arc * cos(t_mid_small_arc)
-        y_mid_small_arc = r_mid_small_arc * sin(t_mid_small_arc)
-        z_mid_small_arc = 0.0
-
-        x_end = cos(t_max)
-        y_end = sin(t_max)
-        z_end = 0.0
-
-        xs = np.concatenate((xs_full, [x_mid_small_arc, x_end]))
-        ys = np.concatenate((ys_full, [y_mid_small_arc, y_end]))
-        zs = np.concatenate((zs_full, [z_mid_small_arc, z_end]))
-
-        weight_mid_small_arc = cos(small_arc_angle / 2.0)
-        weight_end = 1.0
-        weights = np.concatenate((weights_full, [weight_mid_small_arc, weight_end]))
-
-        knots = np.concatenate((knots_full, [t_max, t_max]))
-    else:
-        xs = xs_full
-        ys = ys_full
-        zs = zs_full
-
-        weights = weights_full
-        knots = knots_full
-
-    knots = np.concatenate(([knots[0]], knots, [knots[-1]]))
-
-    control_points = np.stack((xs, ys, zs)).T
-    control_points = self.radius * control_points
-    control_points = np.apply_along_axis(lambda v: self.matrix @ v, 1, control_points)
-    control_points = self.center + control_points
-
-    degree = 2
-    curve = SvNurbsMaths.build_curve(implementation,
-                degree, knots,
-                control_points, weights)
-    return curve</code></pre>
-</details>
 </dd>
 <dt id="sverchok.utils.curve.primitives.SvCircle.to_nurbs_full"><code class="name flex">
 <span>def <span class="ident">to_nurbs_full</span></span>(<span>self, n=4, parametrization='SIMPLE', implementation='NATIVE')</span>
@@ -1879,33 +687,6 @@ parametrization.</dd>
 </dl>
 <h2 id="returns">Returns</h2>
 <p>an instance of SvNurbsCurve.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def to_nurbs_full(self, n=4, parametrization = &#39;SIMPLE&#39;, implementation = SvNurbsMaths.NATIVE):
-    &#34;&#34;&#34;
-    Convert fulll circle to a NURBS curve.
-
-    Args:
-        n: number of subdivisions, usually 3, 4 or 6.
-        paramerization: &#39;SIMPLE&#39; for traditional (2-degree) circle
-            parametrization; &#39;C2&#39; for 4-degree parametrization with continuous
-            2nd derivative; &#39;QIDEAL&#39; for quasi-ideal parametrization, i.e. for
-            4-degree parametrization which is almost identical to trigonometric
-            parametrization.
-        implementation: implementation of Nurbs mathematics.
-
-    Returns:
-        an instance of SvNurbsCurve.
-    &#34;&#34;&#34;
-    if parametrization == &#39;SIMPLE&#39;:
-        return self.to_nurbs_arc(n=n, implementation=implementation)
-    elif parametrization in {&#39;C2&#39;, &#39;QIDEAL&#39;}:
-        return self.to_nurbs_quadric(n=n, parametrization=parametrization, implementation=implementation)
-    else:
-        raise Exception(&#34;Unsupported parametrization type&#34;)</code></pre>
-</details>
 </dd>
 <dt id="sverchok.utils.curve.primitives.SvCircle.to_nurbs_quadric"><code class="name flex">
 <span>def <span class="ident">to_nurbs_quadric</span></span>(<span>self, n=3, t_min=None, t_max=None, parametrization='C2', implementation='NATIVE')</span>
@@ -1931,110 +712,6 @@ parametrization.</dd>
 </dl>
 <h2 id="returns">Returns</h2>
 <p>an instance of SvNurbsCurve.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def to_nurbs_quadric(self, n=3, t_min=None, t_max=None, parametrization = &#39;C2&#39;, implementation = SvNurbsMaths.NATIVE):
-    &#34;&#34;&#34;
-    Convert the circle to NURBS curve with 4-degree parametrization.
-
-    This implements the algorithm described in the paper:
-    Carole Blanc, Christophe Schlick.
-    More Accurate Representation of Conics by NURBS.
-    Technical Report, LaBRI, 1995.
-
-    Args:
-        n: number of subdivisions, usually 3, 4 or 6.
-        t_min, t_max: indicate the arc to be converted.
-        parametrization: &#39;C2&#39; for parametrization with continuous 2nd
-            derivative; &#39;QIDEAL&#39; for quasi-ideal parametrization, i.e. for
-            parametrization which is almost identical to trigonometric
-            parametrization.
-        implementation: implementation of Nurbs mathematics.
-
-    Returns:
-        an instance of SvNurbsCurve.
-    &#34;&#34;&#34;
-    if parametrization not in {&#39;C2&#39;, &#39;QIDEAL&#39;}:
-        raise Exception(&#34;Unsupported parametrization type&#34;)
-
-    if t_min is None:
-        t_min = 0.0
-    if t_max is None:
-        t_max = 2*pi
-
-    if t_max &lt; t_min:
-        return self.to_nurbs_quadric(n=n, t_max=t_min, t_min=t_max, implementation=implementation).reverse()
-
-    def make_quad_arc(t1, t2):
-        p1 = [cos(t1), sin(t1), 0.0]
-        alpha = (t2 - t1)/2.0
-        r_mid = 1.0 / cos(alpha)
-        t_mid = (t1 + t2)/2.0
-        p_mid = [r_mid*cos(t_mid), r_mid*sin(t_mid), 0.0]
-        p2 = [cos(t2), sin(t2), 0.0]
-        points = np.array([p1, p_mid, p2])
-
-        w = cos(alpha)
-        return points, w
-
-    def make_quadric_arc(t1, t2):
-        ps, w = make_quad_arc(t1, t2)
-
-        if parametrization == &#39;C2&#39;:
-            p = (1.0 + sqrt(5.0 + 4.0*w)) / (2*(1.0 + w))
-        else:
-            phi = (t2 - t1) / 2.0
-            cosphi = cos(phi / 5.0)
-            p = (4 - 2*cosphi**3 + cosphi) / (-1 + 8*cosphi**3 - 4*cosphi)
-
-        q0 = ps[0]
-        q1 = (ps[0] + w*ps[1])/(1.0 + w)
-        q2 = (p*p*ps[0] + 2*w*(1+p*p)*ps[1] + p*p*ps[2]) / (2*(p*p + p*p*w + w))
-        q3 = (ps[2] + w*ps[1]) / (1.0 + w)
-        q4 = ps[2]
-
-        w0 = 1.0
-        w1 = p*(1.0 + w)/2.0
-        w2 = (p*p + p*p*w + w)/3.0
-        w3 = w1
-        w4 = w0
-
-        degree = 4
-        knots = (t2 - t1) * sv_knotvector.generate(degree, 5)
-        control_points = np.array([q0, q1, q2, q3, q4])
-        weights = np.array([w0, w1, w2, w3, w4])
-        return SvNurbsMaths.build_curve(implementation,
-                    degree, knots,
-                    control_points, weights)
-
-    omega = t_max - t_min
-    alpha = pi / n
-    full_arc_angle = 2*alpha
-    n_full_arcs = round(omega // full_arc_angle)
-    small_arc_angle = omega % full_arc_angle
-    ts_full = [t_min + full_arc_angle*i for i in range(n_full_arcs+1)]
-    full_arcs = [make_quadric_arc(t1, t2) for t1,t2 in zip(ts_full, ts_full[1:])]
-    if small_arc_angle &gt; 1e-6:
-        small_arc = make_quadric_arc(ts_full[-1], t_max)
-        small_arcs = [small_arc]
-    else:
-        small_arcs = []
-
-    all_arcs = full_arcs + small_arcs
-    unit_arc = all_arcs[0]
-    for arc in all_arcs[1:]:
-        unit_arc = unit_arc.concatenate(arc)
-
-    control_points = unit_arc.get_control_points()
-    control_points = self.radius * control_points
-    control_points = np.apply_along_axis(lambda v: self.matrix @ v, 1, control_points)
-    control_points = self.center + control_points
-
-    curve = unit_arc.copy(control_points = control_points)
-    return curve</code></pre>
-</details>
 </dd>
 </dl>
 <h3>Inherited members</h3>
@@ -2230,22 +907,11 @@ parametrization.</dd>
 </code></dt>
 <dd>
 <div class="desc"><p>Build an instance of SvEllipse from <code><a title="sverchok.utils.geom.Ellipse3D" href="../geom.html#sverchok.utils.geom.Ellipse3D">Ellipse3D</a></code>.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">@classmethod
-def from_equation(cls, eq):
-    &#34;&#34;&#34;
-    Build an instance of SvEllipse from `sverchok.utils.geom.Ellipse3D`.
-    &#34;&#34;&#34;
-    return SvEllipse(eq.get_matrix(), eq.a, eq.b)</code></pre>
-</details>
 </dd>
 </dl>
 <h3>Instance variables</h3>
 <dl>
-<dt id="sverchok.utils.curve.primitives.SvEllipse.c"><code class="name">var <span class="ident">c</span></code></dt>
+<dt id="sverchok.utils.curve.primitives.SvEllipse.c"><code class="name">prop <span class="ident">c</span></code></dt>
 <dd>
 <div class="desc"></div>
 <details class="source">
@@ -2266,13 +932,6 @@ def c(self):
 </code></dt>
 <dd>
 <div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def concatenate(self, curve2, tolerance=1e-6, remove_knots=False):
-    return self.to_nurbs().concatenate(curve2, tolerance=tolerance, remove_knots=remove_knots)</code></pre>
-</details>
 </dd>
 <dt id="sverchok.utils.curve.primitives.SvEllipse.focal_points"><code class="name flex">
 <span>def <span class="ident">focal_points</span></span>(<span>self)</span>
@@ -2281,132 +940,36 @@ def c(self):
 <div class="desc"><p>Calculate ellipse focal points.</p>
 <h2 id="returns">Returns</h2>
 <p>list of two points.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def focal_points(self):
-    &#34;&#34;&#34;
-    Calculate ellipse focal points.
-
-    Returns:
-        list of two points.
-    &#34;&#34;&#34;
-    df = self.matrix @ np.array([self.c, 0, 0])
-    f1 = self.center + df
-    f2 = self.center - df
-    return [f1, f2]</code></pre>
-</details>
 </dd>
 <dt id="sverchok.utils.curve.primitives.SvEllipse.get_center"><code class="name flex">
 <span>def <span class="ident">get_center</span></span>(<span>self)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Calculate ellipse center.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def get_center(self):
-    &#34;&#34;&#34;
-    Calculate ellipse center.
-    &#34;&#34;&#34;
-    if self.center_type == SvEllipse.CENTER:
-        return self.center
-    elif self.center_type == SvEllipse.F1:
-        df = self.matrix @ np.array([self.c, 0, 0])
-        return self.center - df
-    else: # F2
-        df = self.matrix @ np.array([self.c, 0, 0])
-        return self.center + df</code></pre>
-</details>
 </dd>
 <dt id="sverchok.utils.curve.primitives.SvEllipse.second_derivative"><code class="name flex">
 <span>def <span class="ident">second_derivative</span></span>(<span>self, t, tangent_delta=None)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def second_derivative(self, t, tangent_delta=None):
-    return self.second_derivative_array(np.array([t]))[0]</code></pre>
-</details>
 </dd>
 <dt id="sverchok.utils.curve.primitives.SvEllipse.second_derivative_array"><code class="name flex">
 <span>def <span class="ident">second_derivative_array</span></span>(<span>self, ts, tangent_delta=None)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def second_derivative_array(self, ts, tangent_delta=None):
-    xs = - self.a * np.cos(ts)
-    ys = - self.b * np.sin(ts)
-    zs = np.zeros_like(xs)
-    vs = np.array((xs, ys, zs)).T
-    vs = np.apply_along_axis(lambda v : self.matrix @ v, 1, vs)
-    return vs</code></pre>
-</details>
 </dd>
 <dt id="sverchok.utils.curve.primitives.SvEllipse.to_equation"><code class="name flex">
 <span>def <span class="ident">to_equation</span></span>(<span>self)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Convert an instance of SvEllipse to <code><a title="sverchok.utils.geom.Ellipse3D" href="../geom.html#sverchok.utils.geom.Ellipse3D">Ellipse3D</a></code>.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def to_equation(self):
-    &#34;&#34;&#34;
-    Convert an instance of SvEllipse to `sverchok.utils.geom.Ellipse3D`.
-    &#34;&#34;&#34;
-    major_radius = self.matrix @ np.array([self.a, 0, 0])
-    minor_radius = self.matrix @ np.array([0, self.b, 0])
-    eq = Ellipse3D(Vector(self.center), Vector(major_radius), Vector(minor_radius))
-    return eq</code></pre>
-</details>
 </dd>
 <dt id="sverchok.utils.curve.primitives.SvEllipse.to_nurbs"><code class="name flex">
 <span>def <span class="ident">to_nurbs</span></span>(<span>self, implementation='NATIVE')</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Convert the ellipse to SvNurbsCurve.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def to_nurbs(self, implementation=SvNurbsMaths.NATIVE):
-    &#34;&#34;&#34;
-    Convert the ellipse to SvNurbsCurve.
-    &#34;&#34;&#34;
-    if self.a == 0 and self.b == 0:
-        coef_x = 0
-        coef_y = 0
-        radius = 0
-    elif self.a == 0:
-        coef_x = 0
-        coef_y = 1
-        radius = self.b
-    elif self.b == 0:
-        coef_x = 1
-        coef_y = 0
-        radius = self.a
-    else:
-        coef_x = 1
-        coef_y = self.b/self.a
-        radius = self.a
-    scale = Matrix([[coef_x,0,0], [0, coef_y, 0], [0, 0, 1]]).to_4x4()
-    matrix = Matrix(self.matrix).to_4x4()
-    matrix.translation = Vector(self.get_center())
-    circle = SvCircle(matrix = matrix @ scale, radius = radius,
-                center = self.get_center())
-    return circle.to_nurbs(implementation)</code></pre>
-</details>
 </dd>
 </dl>
 <h3>Inherited members</h3>
@@ -2594,18 +1157,6 @@ def c(self):
 </code></dt>
 <dd>
 <div class="desc"><p>Generate straight line segment from two points.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">@classmethod
-def from_two_points(cls, point1, point2):
-    &#34;&#34;&#34;
-    Generate straight line segment from two points.
-    &#34;&#34;&#34;
-    direction = np.array(point2) - np.array(point1)
-    return SvLine(point1, direction)</code></pre>
-</details>
 </dd>
 </dl>
 <h3>Methods</h3>
@@ -2615,230 +1166,96 @@ def from_two_points(cls, point1, point2):
 </code></dt>
 <dd>
 <div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def concatenate(self, curve2, tolerance=1e-6, remove_knots=False):
-    return self.to_nurbs().concatenate(curve2, tolerance=tolerance, remove_knots=remove_knots)</code></pre>
-</details>
 </dd>
 <dt id="sverchok.utils.curve.primitives.SvLine.copy"><code class="name flex">
 <span>def <span class="ident">copy</span></span>(<span>self, u_bounds=None)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def copy(self, u_bounds=None):
-    if u_bounds is None:
-        u_bounds = self.u_bounds
-    return SvLine(self.point, self.direction, u_bounds=u_bounds)</code></pre>
-</details>
 </dd>
 <dt id="sverchok.utils.curve.primitives.SvLine.extrude_along_vector"><code class="name flex">
 <span>def <span class="ident">extrude_along_vector</span></span>(<span>self, vector)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def extrude_along_vector(self, vector):
-    return self.to_nurbs().extrude_along_vector(vector)</code></pre>
-</details>
 </dd>
 <dt id="sverchok.utils.curve.primitives.SvLine.extrude_to_point"><code class="name flex">
 <span>def <span class="ident">extrude_to_point</span></span>(<span>self, point)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def extrude_to_point(self, point):
-    return self.to_nurbs().extrude_to_point(point)</code></pre>
-</details>
 </dd>
 <dt id="sverchok.utils.curve.primitives.SvLine.get_polyline_vertices"><code class="name flex">
 <span>def <span class="ident">get_polyline_vertices</span></span>(<span>self)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def get_polyline_vertices(self):
-    return np.array(self.get_end_points())</code></pre>
-</details>
 </dd>
 <dt id="sverchok.utils.curve.primitives.SvLine.is_closed"><code class="name flex">
 <span>def <span class="ident">is_closed</span></span>(<span>self, *args)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def is_closed(self, *args):
-    return False</code></pre>
-</details>
 </dd>
 <dt id="sverchok.utils.curve.primitives.SvLine.is_polyline"><code class="name flex">
 <span>def <span class="ident">is_polyline</span></span>(<span>self)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def is_polyline(self):
-    return True</code></pre>
-</details>
 </dd>
 <dt id="sverchok.utils.curve.primitives.SvLine.lerp_to"><code class="name flex">
 <span>def <span class="ident">lerp_to</span></span>(<span>self, curve2, coefficient)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def lerp_to(self, curve2, coefficient):
-    return self.to_nurbs().lerp_to(curve2, coefficient)</code></pre>
-</details>
 </dd>
 <dt id="sverchok.utils.curve.primitives.SvLine.make_revolution_surface"><code class="name flex">
 <span>def <span class="ident">make_revolution_surface</span></span>(<span>self, point, direction, v_min, v_max, global_origin)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def make_revolution_surface(self, point, direction, v_min, v_max, global_origin):
-    return self.to_nurbs().make_revolution_surface(point, direction, v_min, v_max, global_origin)</code></pre>
-</details>
 </dd>
 <dt id="sverchok.utils.curve.primitives.SvLine.make_ruled_surface"><code class="name flex">
 <span>def <span class="ident">make_ruled_surface</span></span>(<span>self, curve2, vmin, vmax)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def make_ruled_surface(self, curve2, vmin, vmax):
-    return self.to_nurbs().make_ruled_surface(curve2, vmin, vmax)</code></pre>
-</details>
 </dd>
 <dt id="sverchok.utils.curve.primitives.SvLine.reparametrize"><code class="name flex">
 <span>def <span class="ident">reparametrize</span></span>(<span>self, new_t_min, new_t_max)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def reparametrize(self, new_t_min, new_t_max):
-    t_min, t_max = self.get_u_bounds()
-    scale = (t_max - t_min) / (new_t_max - new_t_min)
-    new_direction = self.direction * scale
-    new_point = self.point + self.direction * (t_min - scale * new_t_min)
-    return SvLine(new_point, new_direction, u_bounds = (new_t_min, new_t_max))</code></pre>
-</details>
 </dd>
 <dt id="sverchok.utils.curve.primitives.SvLine.reverse"><code class="name flex">
 <span>def <span class="ident">reverse</span></span>(<span>self)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def reverse(self):
-    t_min, t_max = self.get_u_bounds()
-    p1, p2 = self.evaluate(t_min), self.evaluate(t_max)
-    return SvLine.from_two_points(p2, p1)</code></pre>
-</details>
 </dd>
 <dt id="sverchok.utils.curve.primitives.SvLine.split_at"><code class="name flex">
 <span>def <span class="ident">split_at</span></span>(<span>self, t)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def split_at(self, t):
-    t_min, t_max = self.get_u_bounds()
-    curve1 = self.copy(u_bounds=(t_min, t))
-    curve2 = self.copy(u_bounds=(t, t_max))
-    return curve1, curve2</code></pre>
-</details>
 </dd>
 <dt id="sverchok.utils.curve.primitives.SvLine.to_bezier"><code class="name flex">
 <span>def <span class="ident">to_bezier</span></span>(<span>self)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def to_bezier(self):
-    u_min, u_max = self.get_u_bounds()
-    p1 = self.evaluate(u_min)
-    p2 = self.evaluate(u_max)
-    return SvBezierCurve([p1, p2])</code></pre>
-</details>
 </dd>
 <dt id="sverchok.utils.curve.primitives.SvLine.to_bezier_segments"><code class="name flex">
 <span>def <span class="ident">to_bezier_segments</span></span>(<span>self)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def to_bezier_segments(self):
-    return [self.to_bezier()]</code></pre>
-</details>
 </dd>
 <dt id="sverchok.utils.curve.primitives.SvLine.to_nurbs"><code class="name flex">
 <span>def <span class="ident">to_nurbs</span></span>(<span>self, implementation='NATIVE')</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def to_nurbs(self, implementation=SvNurbsMaths.NATIVE):
-    u_min, u_max = self.get_u_bounds()
-    knotvector = sv_knotvector.generate(1, 2)
-    knotvector = sv_knotvector.rescale(knotvector, u_min, u_max)
-    p1 = self.evaluate(u_min)
-    p2 = self.evaluate(u_max)
-    control_points = np.array([p1, p2])
-    return SvNurbsMaths.build_curve(implementation,
-            degree=1, knotvector=knotvector,
-            control_points = control_points)</code></pre>
-</details>
 </dd>
 </dl>
 <h3>Inherited members</h3>
@@ -2922,81 +1339,36 @@ def from_two_points(cls, point1, point2):
 </code></dt>
 <dd>
 <div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def concatenate(self, curve2, *args):
-    return curve2</code></pre>
-</details>
 </dd>
 <dt id="sverchok.utils.curve.primitives.SvPointCurve.is_closed"><code class="name flex">
 <span>def <span class="ident">is_closed</span></span>(<span>self, *args)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def is_closed(self, *args):
-    return False</code></pre>
-</details>
 </dd>
 <dt id="sverchok.utils.curve.primitives.SvPointCurve.reverse"><code class="name flex">
 <span>def <span class="ident">reverse</span></span>(<span>self)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def reverse(self):
-    return SvPointCurve(self.point)</code></pre>
-</details>
 </dd>
 <dt id="sverchok.utils.curve.primitives.SvPointCurve.to_bezier"><code class="name flex">
 <span>def <span class="ident">to_bezier</span></span>(<span>self)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def to_bezier(self):
-    u_min, u_max = self.get_u_bounds()
-    p1 = self.evaluate(u_min)
-    p2 = self.evaluate(u_max)
-    return SvBezierCurve([p1, p2])</code></pre>
-</details>
 </dd>
 <dt id="sverchok.utils.curve.primitives.SvPointCurve.to_bezier_segments"><code class="name flex">
 <span>def <span class="ident">to_bezier_segments</span></span>(<span>self)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def to_bezier_segments(self):
-    return [self.to_bezier()]</code></pre>
-</details>
 </dd>
 <dt id="sverchok.utils.curve.primitives.SvPointCurve.to_nurbs"><code class="name flex">
 <span>def <span class="ident">to_nurbs</span></span>(<span>self, implementation='NATIVE')</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def to_nurbs(self, implementation = SvNurbsMaths.NATIVE):
-    return self.to_bezier().to_nurbs()</code></pre>
-</details>
 </dd>
 </dl>
 <h3>Inherited members</h3>
@@ -3022,7 +1394,6 @@ def from_two_points(cls, point1, point2):
 </section>
 </article>
 <nav id="sidebar">
-<h1>Index</h1>
 <div class="toc">
 <ul></ul>
 </div>
@@ -3118,7 +1489,7 @@ def from_two_points(cls, point1, point2):
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.1</a>.</p>
 </footer>
 </body>
 </html>
