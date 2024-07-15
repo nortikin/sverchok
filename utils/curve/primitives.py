@@ -414,7 +414,7 @@ class SvCircle(SvCurve):
                     control_points, weights)
 
         if alpha > 2*pi/3:
-            nurbs = nurbs.insert_knot(t_mid)
+            nurbs = nurbs.insert_knot(t_mid,2)
 
         return nurbs
 

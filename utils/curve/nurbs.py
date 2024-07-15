@@ -370,6 +370,7 @@ class SvNurbsCurve(SvCurve):
 
         def reduce_degree_once(curve, tolerance):
             if curve.is_bezier():
+                logger.info(f"bz: degree => {curve.get_degree()}")
                 old_control_points = curve.get_homogenous_control_points()
                 control_points, error = reduce_bezier_degree(curve.get_degree(), old_control_points, 1)
                 if tolerance is not None and error > tolerance:
@@ -385,11 +386,14 @@ class SvNurbsCurve(SvCurve):
             else:
                 src_t_min, src_t_max = curve.get_u_bounds()
                 segments = curve.to_bezier_segments(to_bezier_class=False)
+                logger.info(f"not bz: degree => {curve.get_degree()}; segments: {len(segments)}")
                 reduced_segments = []
                 max_error = 0.0
                 for i, segment in enumerate(segments):
                     try:
+                        logger.info(f"=> #{i} c {segment}")
                         s, error, ok = reduce_degree_once(segment, tolerance)
+                        logger.info(f"=> degree = {s.get_degree()}")
                         logger.debug(f"Curve segment #{i}: error = {error}")
                     except CantReduceDegreeException as e:
                         raise CantReduceDegreeException(f"At segment #{i}: {e}") from e

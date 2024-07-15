@@ -1200,7 +1200,7 @@ def nurbs_revolution_surface(curve, origin, axis, v_min=0, v_max=2*pi, global_or
 
     any_circle = SvCircle(Matrix(), 1)
     any_circle.u_bounds = (v_min, v_max)
-    any_circle = any_circle.to_nurbs()
+    any_circle = any_circle.to_nurbs_full()
     # all circles with given (v_min, v_max)
     # actually always have the same knotvector
     # and the same number of control points
@@ -1217,7 +1217,7 @@ def nurbs_revolution_surface(curve, origin, axis, v_min=0, v_max=2*pi, global_or
         else:
             circle = SvCircle.from_equation(eq)
             circle.u_bounds = (v_min, v_max)
-            nurbs_circle = circle.to_nurbs()
+            nurbs_circle = circle.to_nurbs_full()
             parallel_points = nurbs_circle.get_control_points()
         parallel_weights = circle_weights * my_weight
         control_points.append(parallel_points)
