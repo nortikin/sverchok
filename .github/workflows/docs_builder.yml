@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Install Sphinx
-        run: pip install -U Sphinx==7.3.7
+        run: pip install -U Sphinx
       
       - name: Install Theme
         run: pip install sphinx-rtd-theme
