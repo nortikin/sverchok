@@ -17,14 +17,16 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from bpy.props import EnumProperty, FloatVectorProperty, IntProperty, FloatProperty, IntVectorProperty, BoolProperty, StringProperty, CollectionProperty
+from bpy.props import EnumProperty, FloatVectorProperty, IntProperty, FloatProperty, IntVectorProperty, BoolProperty, StringProperty, CollectionProperty, PointerProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, multi_socket
+from sverchok.data_structure import updateNode, multi_socket, ensure_min_nesting, ensure_nesting_level
 from sverchok.utils.nodes_mixins.show_3d_properties import Show3DProperties
 from sverchok.utils.sv_logging import sv_logger
 from sverchok.utils.handle_blender_data import correct_collection_length
-from mathutils import Vector
+import numpy as np
+from itertools import compress
+from mathutils import Vector, Quaternion, Euler
 
 class SvListInputBoolEntry(bpy.types.PropertyGroup):
     def update_entry(self, context):
@@ -277,13 +279,13 @@ class SvListInputVectorEntry(bpy.types.PropertyGroup):
         update=update_entry,
     ) # type: ignore
 
-    QUATERNION: FloatVectorProperty(
-        name = "Float number",
-        default = (0., 0., 0.,),
-        subtype='QUATERNION',
-        get = get_elem, set = set_elem,
-        update=update_entry,
-    ) # type: ignore
+    # QUATERNION: FloatVectorProperty(
+    #     name = "Float number",
+    #     default = (0., 0., 0.,),
+    #     subtype='QUATERNION',
+    #     get = get_elem, set = set_elem,
+    #     update=update_entry,
+    # ) # type: ignore
 
     AXISANGLE: FloatVectorProperty(
         name = "Float number",
@@ -341,6 +343,200 @@ class SvListInputVectorEntry(bpy.types.PropertyGroup):
         update=update_entry,
     ) # type: ignore
 
+quaternion_euler_orders = [
+    ('XYZ', 'XYZ', "", 0),
+    ('XZY', 'XZY', "", 1),
+    ('YXZ', 'YXZ', "", 2),
+    ('YZX', 'YZX', "", 3),
+    ('ZXY', 'ZXY', "", 4),
+    ('ZYX', 'ZYX', "", 5)
+]
+
+quaternion_default = Quaternion( (0,0,0,0) )[:]
+
+class SvListInputQuaternionEntry(bpy.types.PropertyGroup):
+
+    # share data with elements
+    def get_elem(self):
+        return self.elem
+
+    def set_elem(self, value):
+        self.elem = value
+
+    def get_elem_SCALARVECTOR(self):
+        #q = Quaternion(self.elem)
+        return self.elem
+
+    def set_elem_SCALARVECTOR(self, value):
+        self.elem = value
+
+    def get_elem_EULER(self):
+        q = Quaternion(self.elem)
+        angle = q.to_euler('XYZ')
+        #return self.elem
+        return angle
+
+    def set_elem_EULER(self, value):
+        euler = Euler( value, 'XYZ' )
+        q = euler.to_quaternion()
+        self.elem = q[:]
+        pass
+
+    def update_entry(self, context):
+        if hasattr(context, 'node'):
+            updateNode(context.node, context)
+        else:
+            sv_logger.debug("Node is not defined in this context, so will not update the node.")
+
+    item_enable : BoolProperty(
+        name = "Enable",
+        description = "Enable Element in list",
+        default=True,
+        update=update_entry,
+        ) # type: ignore
+    
+    quaternion_euler_order: EnumProperty(
+        name="Euler Order",
+        description="Order of the Euler rotations",
+        default="XYZ",
+        items=quaternion_euler_orders,
+    ) # type: ignore
+    
+    elem: FloatVectorProperty(
+        name = "Vector",
+        default = quaternion_default, #(0., 0., 0., 0., ),
+        size=4,
+        update=update_entry,
+    ) # type: ignore
+
+    NONE: FloatVectorProperty(
+        name = "Float number",
+        default = (0., 0., 0., 0., ),
+        subtype='NONE',
+        size=4,
+        get = get_elem, set = set_elem,
+        #update=update_entry,
+    ) # type: ignore
+
+    
+    WXYZ: FloatVectorProperty(
+        name = "Float number",
+        default = (0., 0., 0., 0., ),
+        subtype='QUATERNION',
+        size=4,
+        #update=update_entry,
+    ) # type: ignore
+
+    def get_WXYZ(self):
+        return self.WXYZ
+
+    def set_WXYZ(self, value):
+        self.WXYZ = value
+        q = Quaternion(value)
+        euler = q.to_euler('XYZ')
+        self.elem = q[:]
+        self.SCALARVECTOR = q[:]
+        self.EULER = euler
+        self.AXISANGLE = q[:]
+        pass
+
+    WXYZ_UI: FloatVectorProperty(
+        name = "Quaternion",
+        default = (0., 0., 0., 0., ),
+        subtype='QUATERNION',
+        size=4,
+        get = get_WXYZ, set = set_WXYZ,
+        update=update_entry,
+    ) # type: ignore
+
+    EULER: FloatVectorProperty(
+        name = "Eular Angle (XYZ)",
+        default = (0., 0., 0., ),
+        subtype='EULER',
+        size=3,
+    ) # type: ignore
+
+    def get_EULER(self):
+        return self.EULER
+
+    def set_EULER(self, value):
+        self.EULER = value
+        euler = Euler( value, 'XYZ' )
+        q = euler.to_quaternion()
+        self.elem = q[:]
+        self.WXYZ = q[:]
+        self.SCALARVECTOR = q[:]
+        self.AXISANGLE = q[:]
+        pass
+
+    EULER_UI: FloatVectorProperty(
+        name = "Eular Angle (XYZ)",
+        default = (0., 0., 0., ),
+        subtype='EULER',
+        size=3,
+        get = get_EULER, set = set_EULER,
+        update=update_entry,
+    ) # type: ignore
+
+    SCALARVECTOR: FloatVectorProperty(
+        name = "Scalar Vector (Scalar, XYZ)",
+        default = (0., 0., 0., 0, ),
+        subtype='QUATERNION',
+        size=4,
+    ) # type: ignore
+
+    def get_SCALARVECTOR(self):
+        return self.SCALARVECTOR
+
+    def set_SCALARVECTOR(self, value):
+        self.SCALARVECTOR = value
+        q = Quaternion(value)
+        euler = q.to_euler('XYZ')
+        self.elem = q[:]
+        self.WXYZ = q[:]
+        self.EULER = euler
+        self.AXISANGLE = q[:]
+        pass
+
+    SCALARVECTOR_UI: FloatVectorProperty(
+        name = "Scalar Vector",
+        default = (0., 0., 0., 0., ),
+        subtype='QUATERNION',
+        size=4,
+        get = get_SCALARVECTOR, set = set_SCALARVECTOR,
+        update=update_entry,
+    ) # type: ignore
+    
+
+    AXISANGLE: FloatVectorProperty(
+        name = "Angle-Axis (Angle, XYZ)",
+        default = (0., 0., 0., 0, ),
+        subtype='QUATERNION',
+        size=4,
+    ) # type: ignore
+
+    def get_AXISANGLE(self):
+        return self.AXISANGLE
+
+    def set_AXISANGLE(self, value):
+        self.AXISANGLE = value
+        q = Quaternion( value[1:], value[1] )
+        euler = q.to_euler('XYZ')
+        self.elem = q[:]
+        self.WXYZ = q[:]
+        self.SCALARVECTOR = q[:]
+        self.EULER = euler
+        pass
+
+    AXISANGLE_UI: FloatVectorProperty(
+        name = "Angle-Axis (Angle, XYZ)",
+        default = (0., 0., 0., 0., ),
+        subtype='AXISANGLE',
+        size=4,
+        get = get_AXISANGLE, set = set_AXISANGLE,
+        update=update_entry,
+    ) # type: ignore
+
 class SvListInputColorEntry(bpy.types.PropertyGroup):
 
     # share data with elements
@@ -349,6 +545,12 @@ class SvListInputColorEntry(bpy.types.PropertyGroup):
 
     def set_elem(self, value):
         self.elem = value
+
+    def get_elem_without_alpha(self):
+        return self.elem[:3]
+
+    def set_elem_without_alpha(self, value):
+        self.elem = (*value[:3], self.elem[3] )
 
     def update_entry(self, context):
         if hasattr(context, 'node'):
@@ -370,12 +572,28 @@ class SvListInputColorEntry(bpy.types.PropertyGroup):
         update=update_entry,
     ) # type: ignore
 
+    elem_WITHOUT_ALPHA: FloatVectorProperty(
+        name = "Vector",
+        default = (1., 1., 1., ),
+        size=3, min=0., max=1.,
+        update=update_entry,
+    ) # type: ignore
+
     NONE: FloatVectorProperty(
         name = "Color as vector",
         default = (1., 1., 1., 1.),
         subtype='NONE',
         size=4, min=0., max=1.,
         get = get_elem, set = set_elem,
+        update=update_entry,
+    ) # type: ignore
+
+    NONE_WITHOUT_ALPHA: FloatVectorProperty(
+        name = "Color as vector",
+        default = (1., 1., 1., ),
+        subtype='NONE',
+        size=3, min=0., max=1.,
+        get = get_elem_without_alpha, set = set_elem_without_alpha,
         update=update_entry,
     ) # type: ignore
 
@@ -388,12 +606,30 @@ class SvListInputColorEntry(bpy.types.PropertyGroup):
         update=update_entry,
     ) # type: ignore
 
+    COLOR_WITHOUT_ALPHA: FloatVectorProperty(
+        name = "Color",
+        default = (1., 1., 1., ),
+        size=3, min=0., max=1.,
+        subtype='COLOR',
+        get = get_elem_without_alpha, set = set_elem_without_alpha,
+        update=update_entry,
+    ) # type: ignore
+
     COLOR_GAMMA: FloatVectorProperty(
         name = "Color",
         default = (1., 1., 1., 1.),
         size=4, min=0., max=1.,
         subtype='COLOR_GAMMA',
         get = get_elem, set = set_elem,
+        update=update_entry,
+    ) # type: ignore
+
+    COLOR_GAMMA_WITHOUT_ALPHA: FloatVectorProperty(
+        name = "Color Gamma without alpha",
+        default = (1., 1., 1., ),
+        size=3, min=0., max=1.,
+        subtype='COLOR_GAMMA',
+        get = get_elem_without_alpha, set = set_elem_without_alpha,
         update=update_entry,
     ) # type: ignore
 
@@ -488,6 +724,8 @@ def Correct_ListInput_Length(self, context):
         correct_collection_length(self.float_list_items, self.float_list_counter)
     elif(self.mode=='VECTOR_LIST_MODE'):
         correct_collection_length(self.vector_list_items, self.vector_list_counter)
+    elif(self.mode=='QUATERNION_LIST_MODE'):
+        correct_collection_length(self.quaternion_list_items, self.quaternion_list_counter)
     elif(self.mode=='COLOR_LIST_MODE'):
         correct_collection_length(self.color_list_items, self.color_list_counter)
     elif(self.mode=='STRING_LIST_MODE'):
@@ -506,6 +744,8 @@ def invert_ListInput_Mask(self, context):
         items = self.float_list_items
     elif(self.mode=='VECTOR_LIST_MODE'):
         items = self.vector_list_items
+    elif(self.mode=='QUATERNION_LIST_MODE'):
+        items = self.quaternion_list_items
     elif(self.mode=='COLOR_LIST_MODE'):
         items = self.color_list_items
     elif(self.mode=='STRING_LIST_MODE'):
@@ -581,6 +821,14 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
         update=Correct_ListInput_Length)  # type: ignore
     vector_list_items : CollectionProperty(type=SvListInputVectorEntry) # type: ignore
 
+    quaternion_list_counter: IntProperty(
+        name='quaternion_list_counter',
+        description='vectors',
+        default=1,
+        min=1,
+        update=Correct_ListInput_Length)  # type: ignore
+    quaternion_list_items : CollectionProperty(type=SvListInputQuaternionEntry) # type: ignore
+
     color_list_counter: IntProperty(
         name='color_list_counter',
         description='Colors',
@@ -611,6 +859,42 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
     #     update=copy_to_clipboard,
     # ) # type: ignore
 
+    
+    mask_modes = [
+            ('BOOLEAN', "Booleans", "Boolean values (0/1) as mask [[0,1,0,0,1,1],[1,1,0,0,1],...]. Has no influence if socket is not connected (All data are used)", 0),
+            ('INDEXES', "Indexes", "Indexes as mask [[1,2,0,4],[0,1,4,5,7],..]. Has no influence if socket is not connected (All data are used)", 1),
+        ]
+    mask_mode : EnumProperty(
+        name = "Mask mode",
+        items = mask_modes,
+        default = 'BOOLEAN',
+        #update = updateMaskMode
+        update = updateNode
+        ) # type: ignore
+
+    mask_inversion : BoolProperty(
+        name = "Invert",
+        default = False,
+        description="Invert mask. Has no influence if socket is not connected (All data are used)",
+        update = updateNode) # type: ignore
+    
+    def draw_mask_in_socket(self, socket, context, layout):
+        grid = layout.grid_flow(row_major=True, columns=2)
+        if not socket.is_linked:
+            grid.enabled = False
+        col2 = grid.column()
+        col2_row1 = col2.row()
+        col2_row1.alignment='LEFT'
+        if socket.is_linked:
+            col2_row1.label(text=f"Mask. {socket.objects_number or ''}:")
+        else:
+            col2_row1.label(text=f"Mask: (not connected)")
+        col2_row2 = col2.row()
+        col2_row2.alignment='LEFT'
+        col2_row2.column(align=True).prop(self, "mask_inversion")
+        col3 = grid.column()
+        col3.prop(self, "mask_mode", expand=True)
+
     def changeMode(self, context):
         if self.mode == 'BOOL_LIST_MODE':
             self.set_output_socketype(['SvStringsSocket'])
@@ -624,11 +908,14 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
         elif self.mode == 'VECTOR_LIST_MODE':
             self.set_output_socketype(['SvVerticesSocket'])
             self.outputs['data_output'].label = 'Vectors'
+        elif self.mode == 'QUATERNION_LIST_MODE':
+            self.set_output_socketype(['SvQuaternionSocket'])
+            self.outputs['data_output'].label = 'Quaternion'
         elif self.mode == 'COLOR_LIST_MODE':
-            self.set_output_socketype(['SvVerticesSocket'])
+            self.set_output_socketype(['SvColorSocket'])
             self.outputs['data_output'].label = 'Colors'
         elif self.mode == 'STRING_LIST_MODE':
-            self.set_output_socketype(['SvVerticesSocket'])
+            self.set_output_socketype(['SvTextSocket'])
             self.outputs['data_output'].label = 'Strings'
         else:
             raise Exception(f"[func: changeMode] unknown mode {self.mode}.")
@@ -640,8 +927,9 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
         ("INT_LIST_MODE", "Int", "Integer", "", 1),
         ("FLOAT_LIST_MODE", "Float", "Float", "", 2),
         ("VECTOR_LIST_MODE", "Vector", "Vector", "", 3),
-        ("COLOR_LIST_MODE", "Color", "Color", "", 4),
-        ("STRING_LIST_MODE", "Text", "Text", "", 5)
+        ("QUATERNION_LIST_MODE", "Quaternion", "Quaternion", "", 4),
+        ("COLOR_LIST_MODE", "Color", "Color", "", 5),
+        ("STRING_LIST_MODE", "Text", "Text", "", 6),
     ]
 
     mode: EnumProperty(
@@ -660,7 +948,7 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
         ("ACCELERATION", "Acceleration", "Acceleration", "", 5),
         #("MATRIX", "Matrix", "Matrix", "", 6),
         ("EULER", "Euler Angles", "Euler Angles", "", 7),
-        ("QUATERNION", "Quaternion", "Quaternion", "", 8),
+        #("QUATERNION", "Quaternion", "Quaternion", "", 8), - moved to mode
         ("AXISANGLE", "Axis-Angle", "Axis-Angle", "", 9),
         ("XYZ", "XYZ", "XYZ", "", 10),
         ("XYZ_LENGTH", "XYZ Length", "XYZ Length", "", 11),
@@ -813,8 +1101,8 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
         pass
 
     system_rotations = [
-        ("RADIANS", "Radians", "Radians", "", 0),
-        ("DEGREES", "Degrees", "Degrees", "", 1),
+        ("DEGREES", "Degrees", "Degrees", "", 0),
+        ("RADIANS", "Radians", "Radians", "", 1),
     ]
     system_rotation: EnumProperty(
         name='Rotation unit',
@@ -894,8 +1182,67 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
         #update=changeSubTypeFloat
     ) # type:  ignore
 
+    # color_pointer: bpy.props.PointerProperty(
+    #     name="Object Reference",
+    #     #poll=filter_kinds,  # seld.object_kinds can be "MESH" or "MESH,CURVE,.."
+    #     #type=bpy.types.Object, # what kind of objects are we showing
+    #     type=bpy.types.ColorSequence, # what kind of objects are we showing
+    #     #update=process_from_socket,
+    # ) # type: ignore
+
+    # def quaternion_euler_order_update(self, context):
+    #     #self.quaternion_euler_order = [e[0] for e in quaternion_euler_orders if e[3]==value][0]
+    #     #self.quaternion_euler_order = value
+    #     for I, elem in enumerate(self.quaternion_list_items):
+    #         elem.quaternion_euler_order = self.quaternion_euler_order
+    #         pass
+    #     updateNode(self, context)
+    #     pass
+
+    quaternion_modes = [
+        ("WXYZ", "WXYZ", "Convert components into quaternion", 0),
+        ("SCALARVECTOR", "Scalar Vector", "Convert Scalar & Vector into quaternion", 1),
+        ("EULER", "Euler Angles XYZ", "Convert Euler angles into quaternion", 2),
+        ("AXISANGLE", "Angle Axis (Angle, XYZ)", "Convert Angle & Axis into quaternion", 3),
+        #("MATRIX", "Matrix", "Convert Rotation Matrix into quaternion", 4),
+    ]
+    quaternion_mode : EnumProperty(
+        name='Mode', description='The input component format of the quaternion',
+        items=quaternion_modes,
+        default="WXYZ",
+        update=updateNode,
+    ) # type: ignore
+
+    quaternion_WXYZ_SCALARVECTOR_normalize : BoolProperty(
+        name = "Normalize",
+        description = "Normalize the output quaternion",
+        default=False,
+        update=updateNode,
+    ) # type: ignore
+    
+    quaternion_euler_order: EnumProperty(
+        name="Euler Order",
+        description="Order of the Euler rotations",
+        default="XYZ",
+        items=quaternion_euler_orders,
+        update=updateNode,
+        #update=quaternion_euler_order_update
+        #update=quaternion_euler_order_update
+    ) # type: ignore
+
+
+
+
     base_name = 'data '
     multi_socket_type = 'SvStringsSocket'
+
+    use_alpha : BoolProperty(
+        name = "Use Alpha",
+        description = "Use Alpha channel in the Color",
+        default=True,
+        update=updateNode,
+    ) # type: ignore
+
 
     def set_output_socketype(self, slot_bl_idnames):
         """
@@ -917,6 +1264,10 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
 
     def sv_init(self, context):
         self.width = 260
+
+        self.inputs.new('SvStringsSocket', 'mask').label = "Mask"
+        self.inputs['mask'].custom_draw = 'draw_mask_in_socket'
+
         if self.mode == 'BOOL_LIST_MODE':
             self.outputs.new('SvStringsSocket', 'data_output').label = 'Boolean'
         elif self.mode == 'INT_LIST_MODE':
@@ -925,10 +1276,12 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
             self.outputs.new('SvStringsSocket', 'data_output').label = 'Floats'
         elif self.mode == 'VECTOR_LIST_MODE':
             self.outputs.new('SvVerticesSocket', 'data_output').label = 'Vectors'
+        elif self.mode == 'QUATERNION_LIST_MODE':
+            self.outputs.new('SvQuaternionSocket', 'data_output').label = 'Vectors'
         elif self.mode == 'COLOR_LIST_MODE':
-            self.outputs.new('SvVerticesSocket', 'data_output').label = 'Colors'
+            self.outputs.new('SvColorSocket', 'data_output').label = 'Colors'
         elif self.mode == 'STRING_LIST_MODE':
-            self.outputs.new('SvVerticesSocket', 'data_output').label = 'Strings'
+            self.outputs.new('SvTextSocket', 'data_output').label = 'Strings'
         else:
             raise Exception(f"[func: sv_init] unknown mode {self.mode}.")
         Correct_ListInput_Length(self, context)
@@ -945,6 +1298,8 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
             layout.prop(self, "float_list_counter", text="List Length (float)")
         elif self.mode == 'VECTOR_LIST_MODE':
             layout.prop(self, "vector_list_counter", text="List Length (vectors)")
+        elif self.mode == 'QUATERNION_LIST_MODE':
+            layout.prop(self, "quaternion_list_counter", text="List Length (quaternions)")
         elif self.mode == 'COLOR_LIST_MODE':
             layout.prop(self, "color_list_counter", text="List Length (colors)")
         elif self.mode == 'STRING_LIST_MODE':
@@ -974,31 +1329,58 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
             r_subtype_split2.row().prop(self, "subtype_string", expand=False, text='')
 
         if self.unit_system=='METRIC':
-            if self.mode=='FLOAT_LIST_MODE' and self.subtype_float=='DISTANCE' or self.mode=='VECTOR_LIST_MODE' and (self.subtype_vector=='TRANSLATION' or self.subtype_vector=='XYZ_LENGTH'):
+            if   self.mode=='FLOAT_LIST_MODE' and self.subtype_float=='DISTANCE' or self.mode=='VECTOR_LIST_MODE' and (self.subtype_vector=='TRANSLATION' or self.subtype_vector=='XYZ_LENGTH'):
                 r_subtype_split2.column().prop(self, 'length_unit_metric', expand=False, text='')
-            elif self.mode=='FLOAT_LIST_MODE' and self.subtype_float=='ANGLE' or self.mode=='VECTOR_LIST_MODE' and (self.subtype_vector=='EULER' or self.subtype_vector=='AXISANGLE'):
+            elif self.mode=='FLOAT_LIST_MODE' and self.subtype_float=='ANGLE' or self.mode=='VECTOR_LIST_MODE' and (self.subtype_vector=='EULER' or self.subtype_vector=='AXISANGLE' or self.subtype_vector=='DIRECTION') or self.mode=='QUATERNION_LIST_MODE' and (self.quaternion_mode=='EULER' or self.quaternion_mode=='AXISANGLE'):
                 r_subtype_split2.column().prop(self, 'system_rotation', expand=False, text='')
             elif self.mode=='FLOAT_LIST_MODE' and self.subtype_float=='TEMPERATURE':
                 r_subtype_split2.column().prop(self, 'temperature_unit_metric', expand=False, text='')
+            elif self.mode=='COLOR_LIST_MODE':
+                r_subtype_split2.column().prop(self, 'use_alpha')
             else:
                 r_subtype_split2.column().label(text='-----')
         elif self.unit_system=='IMPERIAL':
-            if self.mode=='FLOAT_LIST_MODE' and self.subtype_float=='DISTANCE' or self.mode=='VECTOR_LIST_MODE' and (self.subtype_vector=='TRANSLATION' or self.subtype_vector=='XYZ_LENGTH'):
+            if   self.mode=='FLOAT_LIST_MODE' and self.subtype_float=='DISTANCE' or self.mode=='VECTOR_LIST_MODE' and (self.subtype_vector=='TRANSLATION' or self.subtype_vector=='XYZ_LENGTH'):
                 r_subtype_split2.column().prop(self, 'length_unit_imperial', expand=False, text='')
-            elif self.mode=='FLOAT_LIST_MODE' and self.subtype_float=='ANGLE' or self.mode=='VECTOR_LIST_MODE' and (self.subtype_vector=='EULER' or self.subtype_vector=='AXISANGLE'):
+            elif self.mode=='FLOAT_LIST_MODE' and self.subtype_float=='ANGLE' or self.mode=='VECTOR_LIST_MODE' and (self.subtype_vector=='EULER' or self.subtype_vector=='AXISANGLE' or self.subtype_vector=='DIRECTION'):
                 r_subtype_split2.column().prop(self, 'system_rotation', expand=False, text='')
             elif self.mode=='FLOAT_LIST_MODE' and self.subtype_float=='TEMPERATURE':
                 r_subtype_split2.column().prop(self, 'temperature_unit_imperial', expand=False, text='')
+            elif self.mode=='COLOR_LIST_MODE':
+                r_subtype_split2.column().prop(self, 'use_alpha')
             else:
                 r_subtype_split2.column().label(text='-----')
         else:
-            if self.mode=='FLOAT_LIST_MODE' and self.subtype_float=='ANGLE':
+            if self.mode=='FLOAT_LIST_MODE' and (self.subtype_float=='ANGLE') or self.mode=='VECTOR_LIST_MODE' and (self.subtype_vector=='EULER' or self.subtype_vector=='AXISANGLE' or self.subtype_vector=='DIRECTION'):
                 r_subtype_split2.column().prop(self, 'system_rotation', expand=False, text='')
+            elif self.mode=='COLOR_LIST_MODE':
+                r_subtype_split2.column().prop(self, 'use_alpha')
             else:
                 r_subtype_split2.column().label(text='-----')
 
-            
-        layout.row().prop(self, "invert_mask", text="Invert mask", toggle=True)
+        if self.mode=='QUATERNION_LIST_MODE':
+            qp_row = layout.row() # quaternion_params_row
+            qp_row_s = qp_row.split(factor=0.3)
+            qp_row_s_c1 = qp_row_s.column()
+            qp_row_s_c1.label(text='Quaternion mode:')
+            qp_row_s_s = qp_row_s.column().split(factor=0.7)
+            qp_row_s_s_c1 = qp_row_s_s.column()
+            qp_row_s_s_c1.alignment="LEFT"
+            qp_row_s_s_c1.prop(self, 'quaternion_mode', text='')
+            qp_row_s_s_c2 = qp_row_s_s.row()
+            if self.quaternion_mode=='WXYZ' or self.quaternion_mode=='SCALARVECTOR':
+                qp_row_s_s_c2.prop(self, 'quaternion_WXYZ_SCALARVECTOR_normalize', toggle=True)
+            elif self.quaternion_mode=='EULER':
+                qp_row_s_s_c2.prop(self, 'quaternion_euler_order', text='')
+            else:
+                qp_row_s_s_c2.label(text='')
+            pass
+
+        invert_mask_row = layout.row()
+        invert_mask_row.prop(self, "invert_mask", text="Invert mask", toggle=True)
+        # if mask socked is connected then do not show source list controls
+        if self.inputs["mask"].is_linked==True:
+            invert_mask_row.enabled = False
         #layout.row().prop(self, "copy_clipboard", text="Copy data to clipboard", toggle=True)
        
         align = True
@@ -1015,21 +1397,27 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
                 split1r_r = split1r.row()
                 split1r_r_s = split1r_r.split(factor=0.3)
                 split1r_r_s_c1 = split1r_r_s.column()
-                split1r_r_s_c1.prop(elem, f'item_enable', icon_only=True)
-                if elem.item_enable==False:
-                    split1r_r_s_c2_label1 = '-'
-                    split1r_r_s_c2_s_c2_label = ''
+                # if mask socked is connected then do not show source list controls
+                if self.inputs["mask"].is_linked==False:
+                    split1r_r_s_c1.prop(elem, f'item_enable', icon_only=True)
+                    if elem.item_enable==False:
+                        split1r_r_s_c2_label1 = '-'
+                        split1r_r_s_c2_s_c2_label = ''
+                    else:
+                        split1r_r_s_c2_label1 = f'{J}'
+                        split1r_r_s_c2_s_c2_label = f'{elem.elem}'
+                        J+=1
+                    split1r_r_s_c2 = split1r_r_s.column()
+                    split1r_r_s_c2_s = split1r_r_s_c2.split(factor=0.4)
+                    split1r_r_s_c2_s_c1 = split1r_r_s_c2_s.column()
+                    split1r_r_s_c2_s_c1.label(text=split1r_r_s_c2_label1)
+                    split1r_r_s_c2_s_c2 = split1r_r_s_c2_s.column()
+                    split1r_r_s_c2_s_c2.alignment='RIGHT'
+                    split1r_r_s_c2_s_c2.label(text=split1r_r_s_c2_s_c2_label)
                 else:
-                    split1r_r_s_c2_label1 = f'{J}'
-                    split1r_r_s_c2_s_c2_label = f'{elem.elem}'
+                    index_label = f'{J}'
                     J+=1
-                split1r_r_s_c2 = split1r_r_s.column()
-                split1r_r_s_c2_s = split1r_r_s_c2.split(factor=0.4)
-                split1r_r_s_c2_s_c1 = split1r_r_s_c2_s.column()
-                split1r_r_s_c2_s_c1.label(text=split1r_r_s_c2_label1)
-                split1r_r_s_c2_s_c2 = split1r_r_s_c2_s.column()
-                split1r_r_s_c2_s_c2.alignment='RIGHT'
-                split1r_r_s_c2_s_c2.label(text=split1r_r_s_c2_s_c2_label)
+                    split1r_r_s_c1.label(text=index_label)
                 pass
         elif self.mode == 'INT_LIST_MODE':
             for I, elem in enumerate(self.int_list_items):
@@ -1039,21 +1427,27 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
                 s_r2 = s.row()
                 s_r2_s = s_r2.split(factor=0.2)
                 s_r2_s_c1 = s_r2_s.column()
-                s_r2_s_c1.prop(elem, f'item_enable', icon_only=True)
-                if elem.item_enable==False:
-                    split1r_r_s_c2_label1 = '-'
-                    split1r_r_s_c2_s_c2_label = ''
+                # if mask socked is connected then do not show source list controls
+                if self.inputs["mask"].is_linked==False:
+                    s_r2_s_c1.prop(elem, f'item_enable', icon_only=True)
+                    if elem.item_enable==False:
+                        split1r_r_s_c2_label1 = '-'
+                        split1r_r_s_c2_s_c2_label = ''
+                    else:
+                        split1r_r_s_c2_label1 = f'{J}'
+                        split1r_r_s_c2_s_c2_label = f'{elem.elem}'
+                        J+=1
+                    s_r2_s_c2 = s_r2_s.column()
+                    s_r2_s_c2_s = s_r2_s_c2.split(factor=0.3)
+                    s_r2_s_c2_s_c1 = s_r2_s_c2_s.column()
+                    s_r2_s_c2_s_c1.label(text=split1r_r_s_c2_label1)
+                    s_r2_s_c2_s_c2 = s_r2_s_c2_s.column()
+                    s_r2_s_c2_s_c2.alignment='RIGHT'
+                    s_r2_s_c2_s_c2.label(text=split1r_r_s_c2_s_c2_label)
                 else:
-                    split1r_r_s_c2_label1 = f'{J}'
-                    split1r_r_s_c2_s_c2_label = f'{elem.elem}'
+                    index_label = f'{J}'
                     J+=1
-                s_r2_s_c2 = s_r2_s.column()
-                s_r2_s_c2_s = s_r2_s_c2.split(factor=0.3)
-                s_r2_s_c2_s_c1 = s_r2_s_c2_s.column()
-                s_r2_s_c2_s_c1.label(text=split1r_r_s_c2_label1)
-                s_r2_s_c2_s_c2 = s_r2_s_c2_s.column()
-                s_r2_s_c2_s_c2.alignment='RIGHT'
-                s_r2_s_c2_s_c2.label(text=split1r_r_s_c2_s_c2_label)
+                    s_r2_s_c1.label(text=index_label)
                 pass
         elif self.mode == 'FLOAT_LIST_MODE':
             for I, elem in enumerate(self.float_list_items):
@@ -1063,53 +1457,111 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
                 s_r2 = s.row()
                 s_r2_s = s_r2.split(factor=0.2)
                 s_r2_s_c1 = s_r2_s.column()
-                s_r2_s_c1.prop(elem, f'item_enable', icon_only=True)
-                if elem.item_enable==False:
-                    split1r_r_s_c2_label1 = '-'
-                    split1r_r_s_c2_s_c2_label = ''
+                # if mask socked is connected then do not show source list controls
+                if self.inputs["mask"].is_linked==False:
+                    s_r2_s_c1.prop(elem, f'item_enable', icon_only=True)
+                    if elem.item_enable==False:
+                        split1r_r_s_c2_label1 = '-'
+                        split1r_r_s_c2_s_c2_label = ''
+                    else:
+                        split1r_r_s_c2_label1 = f'{J}'
+                        split1r_r_s_c2_s_c2_label = f'{elem.elem}'
+                        J+=1
+                    s_r2_s_c2 = s_r2_s.column()
+                    s_r2_s_c2_s = s_r2_s_c2.split(factor=0.3)
+                    s_r2_s_c2_s_c1 = s_r2_s_c2_s.column()
+                    s_r2_s_c2_s_c1.label(text=split1r_r_s_c2_label1)
+                    s_r2_s_c2_s_c2 = s_r2_s_c2_s.column()
+                    s_r2_s_c2_s_c2.alignment='RIGHT'
+                    s_r2_s_c2_s_c2.label(text=split1r_r_s_c2_s_c2_label)
                 else:
-                    split1r_r_s_c2_label1 = f'{J}'
-                    split1r_r_s_c2_s_c2_label = f'{elem.elem}'
+                    index_label = f'{J}'
                     J+=1
-                s_r2_s_c2 = s_r2_s.column()
-                s_r2_s_c2_s = s_r2_s_c2.split(factor=0.3)
-                s_r2_s_c2_s_c1 = s_r2_s_c2_s.column()
-                s_r2_s_c2_s_c1.label(text=split1r_r_s_c2_label1)
-                s_r2_s_c2_s_c2 = s_r2_s_c2_s.column()
-                s_r2_s_c2_s_c2.alignment='RIGHT'
-                s_r2_s_c2_s_c2.label(text=split1r_r_s_c2_s_c2_label)
+                    s_r2_s_c1.label(text=index_label)
                 pass
         elif self.mode == 'VECTOR_LIST_MODE':
             for I, elem in enumerate(self.vector_list_items):
                 s = col.row().split(factor=0.8)
                 s_r1 = s.row()
-                s_r1.prop(elem, self.subtype_vector, icon_only=True)
+                if self.subtype_vector=='DIRECTION':
+                    s_r1_c = s_r1.column()
+                    s_r1_c.row().prop(elem, self.subtype_vector, icon_only=True)
+                    s_r1_c.row().prop(elem, 'EULER', icon_only=True)
+                    pass
+                else:
+                    s_r1.prop(elem, self.subtype_vector, icon_only=True)
                 s_r2 = s.row()
                 s_r2_c1 = s_r2.column()
-                s_r2_c1.prop(elem, f'item_enable', icon_only=True)
-                if elem.item_enable==False:
-                    s_r2_c2_label1 = '-'
+                # if mask socked is connected then do not show source list controls
+                if self.inputs["mask"].is_linked==False:
+                    s_r2_c1.prop(elem, f'item_enable', icon_only=True)
+                    if elem.item_enable==False:
+                        s_r2_c2_label1 = '-'
+                    else:
+                        s_r2_c2_label1 = f'{J}'
+                        J+=1
+                    s_r2_c2 = s_r2.column()
+                    s_r2_c2.label(text=s_r2_c2_label1)
                 else:
-                    s_r2_c2_label1 = f'{J}'
+                    index_label = f'{J}'
                     J+=1
-                s_r2_c2 = s_r2.column()
-                s_r2_c2.label(text=s_r2_c2_label1)
+                    s_r2_c1.label(text=index_label)
+                pass
+        elif self.mode == 'QUATERNION_LIST_MODE':
+            for I, elem in enumerate(self.quaternion_list_items):
+                s = col.row().split(factor=0.8)
+                s_r1 = s.row()
+                s_r1.prop(elem, self.quaternion_mode+'_UI', icon_only=True)
+                s_r2 = s.row()
+                s_r2_c1 = s_r2.column()
+                # if mask socked is connected then do not show source list controls
+                if self.inputs["mask"].is_linked==False:
+                    s_r2_c1.prop(elem, f'item_enable', icon_only=True)
+                    if elem.item_enable==False:
+                        s_r2_c2_label1 = '-'
+                    else:
+                        s_r2_c2_label1 = f'{J}'
+                        J+=1
+                    s_r2_c2 = s_r2.column()
+                    s_r2_c2.label(text=s_r2_c2_label1)
+                else:
+                    index_label = f'{J}'
+                    J+=1
+                    s_r2_c1.label(text=index_label)
                 pass
         elif self.mode == 'COLOR_LIST_MODE':
             for I, elem in enumerate(self.color_list_items):
                 s = col.row().split(factor=0.8)
                 s_r1 = s.row()
-                s_r1.prop(elem, self.subtype_color, icon_only=True)
+                if self.subtype_color=='COLOR' or self.subtype_color=='COLOR_GAMMA':
+                    s_r1_c = s_r1.column()
+                    if self.use_alpha==True:
+                        s_r1_c.row().prop(elem, self.subtype_color, icon_only=True)
+                        s_r1_c.row().prop(elem, 'elem', icon_only=True)
+                    else:
+                        s_r1_c.row().prop(elem, self.subtype_color+'_WITHOUT_ALPHA', icon_only=True)
+                        s_r1_c.row().prop(elem, 'elem_WITHOUT_ALPHA', icon_only=True)
+                    #s_r1_c.row().operator(bpy.ops.ui.eyedropper_color, text='', icon='EYEDROPPER')
+                    #s_r1_c.row().prop(self, 'color_pointer', text='')
+                    pass
+                else:
+                    s_r1.prop(elem, self.subtype_color, icon_only=True)
                 s_r2 = s.row()
                 s_r2_c1 = s_r2.column()
-                s_r2_c1.prop(elem, f'item_enable', icon_only=True)
-                if elem.item_enable==False:
-                    s_r2_c2_label1 = '-'
+                # if mask socked is connected then do not show source list controls
+                if self.inputs["mask"].is_linked==False:
+                    s_r2_c1.prop(elem, f'item_enable', icon_only=True)
+                    if elem.item_enable==False:
+                        s_r2_c2_label1 = '-'
+                    else:
+                        s_r2_c2_label1 = f'{J}'
+                        J+=1
+                    s_r2_c2 = s_r2.column()
+                    s_r2_c2.label(text=s_r2_c2_label1)
                 else:
-                    s_r2_c2_label1 = f'{J}'
+                    index_label = f'{J}'
                     J+=1
-                s_r2_c2 = s_r2.column()
-                s_r2_c2.label(text=s_r2_c2_label1)
+                    s_r2_c1.label(text=index_label)
                 pass
         elif self.mode == 'STRING_LIST_MODE':
             for I, elem in enumerate(self.string_list_items):
@@ -1118,14 +1570,20 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
                 s_r1.prop(elem, self.subtype_string, icon_only=True)
                 s_r2 = s.row()
                 s_r2_c1 = s_r2.column()
-                s_r2_c1.prop(elem, f'item_enable', icon_only=True)
-                if elem.item_enable==False:
-                    s_r2_c2_label1 = '-'
+                # if mask socked is connected then do not show source list controls
+                if self.inputs["mask"].is_linked==False:
+                    s_r2_c1.prop(elem, f'item_enable', icon_only=True)
+                    if elem.item_enable==False:
+                        s_r2_c2_label1 = '-'
+                    else:
+                        s_r2_c2_label1 = f'{J}'
+                        J+=1
+                    s_r2_c2 = s_r2.column()
+                    s_r2_c2.label(text=s_r2_c2_label1)
                 else:
-                    s_r2_c2_label1 = f'{J}'
+                    index_label = f'{J}'
                     J+=1
-                s_r2_c2 = s_r2.column()
-                s_r2_c2.label(text=s_r2_c2_label1)
+                    s_r2_c1.label(text=index_label)
                 pass
         else:
             raise Exception(f"[func: draw_buttons] unknown mode {self.mode}.")
@@ -1151,28 +1609,114 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
                     row.scale_x = 0.8
 
     def process(self):
+        mask_in_socket = self.inputs['mask'] #.sv_get(deepcopy=False)
+        if mask_in_socket.is_linked==False:
+            mask_in_data = [[]]
+        else:
+            mask_in_data = mask_in_socket.sv_get(deepcopy=False)
+        mask_in_data = ensure_nesting_level(mask_in_data, 2)
+
         data = []
         append = data.append
         if self.outputs[0].is_linked:
-            
-            if self.mode == 'BOOL_LIST_MODE':
-                lst = [[elem.elem for elem in self.bool_list_items if elem.item_enable==True]]
-            elif self.mode == 'INT_LIST_MODE':
-                lst = [[elem.elem for elem in self.int_list_items if elem.item_enable==True]]
-            elif self.mode == 'FLOAT_LIST_MODE':
-                lst = [[elem.elem for elem in self.float_list_items if elem.item_enable==True]]
-            elif self.mode == 'VECTOR_LIST_MODE':
-                lst = [[tuple(Vector(elem.elem)) for elem in self.vector_list_items if elem.item_enable==True]]
-            elif self.mode == 'COLOR_LIST_MODE':
-                lst = [[tuple(elem.elem) for elem in self.color_list_items if elem.item_enable==True]]
-            elif self.mode == 'STRING_LIST_MODE':
-                lst = [[elem.elem for elem in self.string_list_items if elem.item_enable==True]]
+            if mask_in_socket.is_linked==False:
+
+                if self.mode == 'BOOL_LIST_MODE':
+                    lst = [[elem.elem for elem in self.bool_list_items if elem.item_enable==True]]
+
+                elif self.mode == 'INT_LIST_MODE':
+                    lst = [[elem.elem for elem in self.int_list_items if elem.item_enable==True]]
+
+                elif self.mode == 'FLOAT_LIST_MODE':
+                    lst = [[elem.elem for elem in self.float_list_items if elem.item_enable==True]]
+
+                elif self.mode == 'VECTOR_LIST_MODE':
+                    lst = [[tuple(Vector(elem.elem)) for elem in self.vector_list_items if elem.item_enable==True]]
+
+                elif self.mode == 'QUATERNION_LIST_MODE':
+                    if (self.quaternion_mode=='WXYZ' or self.quaternion_mode=='SCALARVECTOR') and self.quaternion_WXYZ_SCALARVECTOR_normalize==True:
+                        lst = [[Quaternion(elem.elem).normalized() for elem in self.quaternion_list_items if elem.item_enable==True]]
+                    elif self.quaternion_mode=='EULER':
+                        lst = [[Quaternion(elem.elem).to_euler(self.quaternion_euler_order).to_quaternion() for elem in self.quaternion_list_items if elem.item_enable==True]]
+                    else:
+                        lst = [[Quaternion(elem.elem) for elem in self.quaternion_list_items if elem.item_enable==True]]
+
+                elif self.mode == 'COLOR_LIST_MODE':
+                    if self.use_alpha==True:
+                        lst = [[tuple(elem.elem) for elem in self.color_list_items if elem.item_enable==True]]
+                    else:
+                        lst = [[tuple(elem.elem[:3]) for elem in self.color_list_items if elem.item_enable==True]]
+
+                elif self.mode == 'STRING_LIST_MODE':
+                    lst = [[elem.elem for elem in self.string_list_items if elem.item_enable==True]]
+                
+                else:
+                    raise Exception(f"[func: process] unknown mode {self.mode}.")
+                
+                data = lst
+
             else:
-                raise Exception(f"[func: process] unknown mode {self.mode}.")
-            
-            data = lst
+
+                if self.mode == 'BOOL_LIST_MODE':
+                    lst = [[elem.elem for elem in self.bool_list_items]]
+                elif self.mode == 'INT_LIST_MODE':
+                    lst = [[elem.elem for elem in self.int_list_items]]
+                elif self.mode == 'FLOAT_LIST_MODE':
+                    lst = [[elem.elem for elem in self.float_list_items]]
+                elif self.mode == 'VECTOR_LIST_MODE':
+                    lst = [[tuple(Vector(elem.elem)) for elem in self.vector_list_items]]
+                elif self.mode == 'QUATERNION_LIST_MODE':
+                    if (self.quaternion_mode=='WXYZ' or self.quaternion_mode=='SCALARVECTOR') and self.quaternion_WXYZ_SCALARVECTOR_normalize==True:
+                        lst = [[Quaternion(elem.elem).normalized() for elem in self.quaternion_list_items]]
+                    elif self.quaternion_mode=='EULER':
+                        lst = [[Quaternion(elem.elem).to_euler(self.quaternion_euler_order).to_quaternion() for elem in self.quaternion_list_items]]
+                    else:
+                        lst = [[Quaternion(elem.elem) for elem in self.quaternion_list_items]]
+                elif self.mode == 'COLOR_LIST_MODE':
+                    if self.use_alpha==True:
+                        lst = [[tuple(elem.elem) for elem in self.color_list_items]]
+                    else:
+                        lst = [[tuple(elem.elem[:3]) for elem in self.color_list_items]]
+                elif self.mode == 'STRING_LIST_MODE':
+                    lst = [[elem.elem for elem in self.string_list_items]]
+                else:
+                    raise Exception(f"[func: process] unknown mode {self.mode}.")
+                
+                lst_0 = lst[0]
+                for mask in mask_in_data:
+                    # if mask is zero or not connected then do not mask any. Except of inversion,
+                    if not mask:
+                        np_mask = np.zeros(len(lst_0), dtype=bool)
+                        if self.mask_inversion==True:
+                            np_mask = np.invert(np_mask)
+                        mask = np_mask.tolist()
+                    else:
+                        if self.mask_mode=='BOOLEAN':
+                            if self.mask_inversion==True:
+                                mask = list( map( lambda v: False if v==0 else True, mask) )
+                                mask = mask[:len(lst_0)]
+                                np_mask = np.zeros(len(lst_0), dtype=bool)
+                                np_mask[0:len(mask)]=mask
+                                np_mask = np.invert(np_mask)
+                                mask = np_mask.tolist()
+                            pass
+                        elif self.mask_mode=='INDEXES':
+                            mask_len = len(lst_0)
+                            mask_range = []
+                            for x in mask:
+                                if -mask_len<x<mask_len:
+                                    mask_range.append(x)
+                            np_mask = np.zeros(len(lst_0), dtype=bool)
+                            np_mask[mask_range] = True
+                            if self.mask_inversion==True:
+                                np_mask = np.invert(np_mask)
+                            mask = np_mask.tolist()
+                    mask = [not(e) for e in mask]
+                    lst_masked = list(compress(lst_0, mask))
+                    data.append(lst_masked)
+                    pass
             
         self.outputs[0].sv_set(data)
 
-classes = [SvListInputBoolEntry, SvListInputIntEntry, SvListInputFloatEntry, SvListInputVectorEntry, SvListInputColorEntry, SvListInputStringEntry, SvListInputNodeMK2]
+classes = [SvListInputBoolEntry, SvListInputIntEntry, SvListInputFloatEntry, SvListInputVectorEntry, SvListInputQuaternionEntry, SvListInputColorEntry, SvListInputStringEntry, SvListInputNodeMK2]
 register, unregister = bpy.utils.register_classes_factory(classes)
