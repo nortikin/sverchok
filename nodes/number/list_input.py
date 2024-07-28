@@ -24,9 +24,17 @@ from sverchok.data_structure import updateNode, multi_socket, ensure_min_nesting
 from sverchok.utils.nodes_mixins.show_3d_properties import Show3DProperties
 from sverchok.utils.sv_logging import sv_logger
 from sverchok.utils.handle_blender_data import correct_collection_length
+from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
 import numpy as np
+import re
 from itertools import compress
 from mathutils import Vector, Quaternion, Euler
+import json
+
+def ShowMessageBox(message = "", title = "Message Box", icon = 'INFO'):
+    def draw(self, context):
+        self.layout.label(text=message)
+    bpy.context.window_manager.popup_menu(draw, title = title, icon = icon)
 
 class SvListInputBoolEntry(bpy.types.PropertyGroup):
     def update_entry(self, context):
@@ -36,8 +44,8 @@ class SvListInputBoolEntry(bpy.types.PropertyGroup):
             sv_logger.debug("Node is not defined in this context, so will not update the node.")
 
     item_enable : BoolProperty(
-        name = "Enable",
-        description = "Enable Element in list",
+        name = "Mask",
+        description = "On - Add Element in the output socket,\nOff - Do not add Element in the output socket",
         default=True,
         update=update_entry,
         ) # type: ignore
@@ -56,8 +64,8 @@ class SvListInputIntEntry(bpy.types.PropertyGroup):
             sv_logger.debug("Node is not defined in this context, so will not update the node.")
 
     item_enable : BoolProperty(
-        name = "Enable",
-        description = "Enable Element in list",
+        name = "Mask",
+        description = "On - Add Element in the output socket,\nOff - Do not add Element in the output socket",
         default=True,
         update=update_entry,
         ) # type: ignore
@@ -84,8 +92,8 @@ class SvListInputFloatEntry(bpy.types.PropertyGroup):
             sv_logger.debug("Node is not defined in this context, so will not update the node.")
 
     item_enable : BoolProperty(
-        name = "Enable",
-        description = "Enable Element in list",
+        name = "Mask",
+        description = "On - Add Element in the output socket,\nOff - Do not add Element in the output socket",
         default=True,
         update=update_entry,
         ) # type: ignore
@@ -201,8 +209,8 @@ class SvListInputVectorEntry(bpy.types.PropertyGroup):
             sv_logger.debug("Node is not defined in this context, so will not update the node.")
 
     item_enable : BoolProperty(
-        name = "Enable",
-        description = "Enable Element in list",
+        name = "Mask",
+        description = "On - Add Element in the output socket,\nOff - Do not add Element in the output socket",
         default=True,
         update=update_entry,
         ) # type: ignore
@@ -389,8 +397,8 @@ class SvListInputQuaternionEntry(bpy.types.PropertyGroup):
             sv_logger.debug("Node is not defined in this context, so will not update the node.")
 
     item_enable : BoolProperty(
-        name = "Enable",
-        description = "Enable Element in list",
+        name = "Mask",
+        description = "On - Add Element in the output socket,\nOff - Do not add Element in the output socket",
         default=True,
         update=update_entry,
         ) # type: ignore
@@ -559,8 +567,8 @@ class SvListInputColorEntry(bpy.types.PropertyGroup):
             sv_logger.debug("Node is not defined in this context, so will not update the node.")
 
     item_enable : BoolProperty(
-        name = "Enable",
-        description = "Enable Element in list",
+        name = "Mask",
+        description = "On - Add Element in the output socket,\nOff - Do not add Element in the output socket",
         default=True,
         update=update_entry,
         ) # type: ignore
@@ -655,8 +663,8 @@ class SvListInputStringEntry(bpy.types.PropertyGroup):
             sv_logger.debug("Node is not defined in this context, so will not update the node.")
 
     item_enable : BoolProperty(
-        name = "Enable",
-        description = "Enable Element in list",
+        name = "Mask",
+        description = "On - Add Element in the output socket,\nOff - Do not add Element in the output socket",
         default=True,
         update=update_entry,
         ) # type: ignore
@@ -714,6 +722,54 @@ class SvListInputStringEntry(bpy.types.PropertyGroup):
         get = get_elem, set = set_elem,
         #update=update_entry,
     ) # type: ignore
+
+
+class SvCopyTextToClipboard(bpy.types.Operator, SvGenericNodeLocator):
+    ''' Copy node's data by data mode (bool, int, float, vector, quaternion, color, strings) to the clipboard '''
+    bl_idname = "node.sverchok_copy_text_to_clipboard"
+    bl_label = "sverchok: copy data to the clipboard as text"
+    # bl_options = {'REGISTER', 'UNDO'}
+
+    # def execute(self, context):
+    #     node = self.get_node(context)
+    #     context.window_manager.clipboard = self.text
+    #     return {'FINISHED'}
+    
+    def sv_execute(self, context, node):
+        if hasattr(node, 'dataAsString')==True:
+            text = node.dataAsString()
+            context.window_manager.clipboard = text
+            ShowMessageBox("Data copied to the Clipboard")
+        pass
+
+class SvPasteTextFromClipboard(bpy.types.Operator, SvGenericNodeLocator):
+    '''Paste data into the node by mode (bool, int, float, vector, quaternion, color, strings) from the clipboard text'''
+    bl_idname = "node.sverchok_paste_text_from_clipboard"
+    bl_label = "sverchok: paste data from the clipboard"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    # def execute(self, context):
+    #     node = self.get_node(context)
+    #     context.window_manager.clipboard = self.text
+    #     return {'FINISHED'}
+    
+    def sv_execute(self, context, node):
+        if hasattr(node, 'convertTextToData')==True:
+            text = context.window_manager.clipboard
+            node.convertTextToData(text)
+        pass
+
+class SvUpdateTextInListInputNode(bpy.types.Operator, SvGenericNodeLocator):
+    '''Update text data. This is a glitch on Blender. If node is not active then edited text fields are not updated automatically'''
+    bl_idname = "node.sverchok_update_text_in_list_input_node"
+    bl_label = "sverchok: update text in list input node"
+    # bl_options = {'REGISTER', 'UNDO'}
+
+    def sv_execute(self, context, node):
+        if hasattr(node, 'updateTextData')==True:
+            node.updateTextData(context)
+        pass
+
 
 def Correct_ListInput_Length(self, context):
     if(self.mode=='BOOL_LIST_MODE'):
@@ -790,10 +846,28 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_LIST_INPUT'
 
+    def wrapper_tracked_ui_draw_op(self, layout_element, operator_idname, **keywords):
+        """
+        this wrapper allows you to track the origin of a clicked operator, by automatically passing
+        the node_name and tree_name to the operator.
+
+        example usage:
+
+            row.separator()
+            self.wrapper_tracked_ui_draw_op(row, "node.view3d_align_from", icon='CURSOR', text='')
+
+        """
+        op = layout_element.operator(operator_idname, **keywords)
+        op.node_name = self.name
+        op.tree_name = self.id_data.name
+        return op
+
+
     bool_list_counter: IntProperty(
         name='bool_list_counter',
         description='boolean',
         default=True,
+        min=1,
         update=Correct_ListInput_Length)  # type: ignore
     bool_list_items : CollectionProperty(type=SvListInputBoolEntry) # type: ignore
 
@@ -847,7 +921,7 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
 
     invert_mask: BoolProperty(
         name = "Mask",
-        description = "Invert list of mask",
+        description = "Invert list of mask. Disabled if input socket 'Mask' are connected",
         default=True,
         update=invert_ListInput_Mask,
     ) # type: ignore
@@ -933,6 +1007,7 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
     ]
 
     mode: EnumProperty(
+        description="Data types of node",
         items=modes,
         default='INT_LIST_MODE',
         update=changeMode
@@ -947,7 +1022,7 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
         ("VELOCITY", "Velocity", "Velocity", "", 4),
         ("ACCELERATION", "Acceleration", "Acceleration", "", 5),
         #("MATRIX", "Matrix", "Matrix", "", 6),
-        ("EULER", "Euler Angles", "Euler Angles", "", 7),
+        ("EULER", "Euler Angles XYZ", "Euler Angles", "", 7),
         #("QUATERNION", "Quaternion", "Quaternion", "", 8), - moved to mode
         ("AXISANGLE", "Axis-Angle", "Axis-Angle", "", 9),
         ("XYZ", "XYZ", "XYZ", "", 10),
@@ -1290,31 +1365,37 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
         
 
     def draw_buttons(self, context, layout):
+        cm_split = layout.row().split(factor=0.7)
+        cm_split_c1 = cm_split.column()
         if self.mode == 'BOOL_LIST_MODE':
-            layout.prop(self, "bool_list_counter", text="List Length (bool)")
+            cm_split_c1.prop(self, "bool_list_counter", text="List Length (bool)")
         elif self.mode == 'INT_LIST_MODE':
-            layout.prop(self, "int_list_counter", text="List Length (int)")
+            cm_split_c1.prop(self, "int_list_counter", text="List Length (int)")
         elif self.mode == 'FLOAT_LIST_MODE':
-            layout.prop(self, "float_list_counter", text="List Length (float)")
+            cm_split_c1.prop(self, "float_list_counter", text="List Length (float)")
         elif self.mode == 'VECTOR_LIST_MODE':
-            layout.prop(self, "vector_list_counter", text="List Length (vectors)")
+            cm_split_c1.prop(self, "vector_list_counter", text="List Length (vectors)")
         elif self.mode == 'QUATERNION_LIST_MODE':
-            layout.prop(self, "quaternion_list_counter", text="List Length (quaternions)")
+            cm_split_c1.prop(self, "quaternion_list_counter", text="List Length (quaternions)")
         elif self.mode == 'COLOR_LIST_MODE':
-            layout.prop(self, "color_list_counter", text="List Length (colors)")
+            cm_split_c1.prop(self, "color_list_counter", text="List Length (colors)")
         elif self.mode == 'STRING_LIST_MODE':
-            layout.prop(self, "string_list_counter", text="List Length (strings)")
+            cm_split_c1.prop(self, "string_list_counter", text="List Length (strings)")
         else:
             raise Exception(f"[func: draw_buttons] unknown mode {self.mode}.")
 
-        layout.row().prop(self, "mode", expand=True)
+        cm_split_c2 = cm_split.column().prop(self, "mode", expand=False, text='')
+        #layout.row().prop(self, "mode", expand=True)
+        # grid = layout.grid_flow(row_major=True, columns=4)
+        # grid.prop(self, "mode", expand=True)
         
         r_unit_system = layout.row().split(factor=0.3)
         r_unit_system.column().label(text="Unit system:")
         if self.mode=='FLOAT_LIST_MODE' or self.mode=='VECTOR_LIST_MODE':
             r_unit_system.row().prop(self, "unit_system", expand=True)
         else:
-            r_unit_system.column().label(text='-----')
+            r_unit_system.column().label(text='')
+            r_unit_system.enabled = False
 
         r_subtype_split1 = layout.row().split(factor=0.3)
         r_subtype_split1.column().label(text="Subtype:")
@@ -1327,6 +1408,13 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
             r_subtype_split2.row().prop(self, "subtype_color", expand=False, text='')
         elif self.mode=='STRING_LIST_MODE':
             r_subtype_split2.row().prop(self, "subtype_string", expand=False, text='')
+        elif self.mode=='QUATERNION_LIST_MODE':
+            quaternion_label = r_subtype_split2.row()
+            quaternion_label.label(text='Quaternion')
+            quaternion_label.enabled = False
+        else:
+            r_subtype_split1.enabled = False
+            pass
 
         if self.unit_system=='METRIC':
             if   self.mode=='FLOAT_LIST_MODE' and self.subtype_float=='DISTANCE' or self.mode=='VECTOR_LIST_MODE' and (self.subtype_vector=='TRANSLATION' or self.subtype_vector=='XYZ_LENGTH'):
@@ -1335,28 +1423,28 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
                 r_subtype_split2.column().prop(self, 'system_rotation', expand=False, text='')
             elif self.mode=='FLOAT_LIST_MODE' and self.subtype_float=='TEMPERATURE':
                 r_subtype_split2.column().prop(self, 'temperature_unit_metric', expand=False, text='')
-            elif self.mode=='COLOR_LIST_MODE':
+            elif self.mode=='COLOR_LIST_MODE' and (self.subtype_color=='COLOR' or self.subtype_color=='COLOR_GAMMA'):
                 r_subtype_split2.column().prop(self, 'use_alpha')
             else:
-                r_subtype_split2.column().label(text='-----')
+                r_subtype_split2.column().label(text='')
         elif self.unit_system=='IMPERIAL':
             if   self.mode=='FLOAT_LIST_MODE' and self.subtype_float=='DISTANCE' or self.mode=='VECTOR_LIST_MODE' and (self.subtype_vector=='TRANSLATION' or self.subtype_vector=='XYZ_LENGTH'):
                 r_subtype_split2.column().prop(self, 'length_unit_imperial', expand=False, text='')
-            elif self.mode=='FLOAT_LIST_MODE' and self.subtype_float=='ANGLE' or self.mode=='VECTOR_LIST_MODE' and (self.subtype_vector=='EULER' or self.subtype_vector=='AXISANGLE' or self.subtype_vector=='DIRECTION'):
+            elif self.mode=='FLOAT_LIST_MODE' and self.subtype_float=='ANGLE' or self.mode=='VECTOR_LIST_MODE' and (self.subtype_vector=='EULER' or self.subtype_vector=='AXISANGLE' or self.subtype_vector=='DIRECTION') or self.mode=='QUATERNION_LIST_MODE' and (self.quaternion_mode=='EULER' or self.quaternion_mode=='AXISANGLE'):
                 r_subtype_split2.column().prop(self, 'system_rotation', expand=False, text='')
             elif self.mode=='FLOAT_LIST_MODE' and self.subtype_float=='TEMPERATURE':
                 r_subtype_split2.column().prop(self, 'temperature_unit_imperial', expand=False, text='')
-            elif self.mode=='COLOR_LIST_MODE':
+            elif self.mode=='COLOR_LIST_MODE' and (self.subtype_color=='COLOR' or self.subtype_color=='COLOR_GAMMA'):
                 r_subtype_split2.column().prop(self, 'use_alpha')
             else:
-                r_subtype_split2.column().label(text='-----')
+                r_subtype_split2.column().label(text='')
         else:
-            if self.mode=='FLOAT_LIST_MODE' and (self.subtype_float=='ANGLE') or self.mode=='VECTOR_LIST_MODE' and (self.subtype_vector=='EULER' or self.subtype_vector=='AXISANGLE' or self.subtype_vector=='DIRECTION'):
+            if self.mode=='FLOAT_LIST_MODE' and (self.subtype_float=='ANGLE') or self.mode=='VECTOR_LIST_MODE' and (self.subtype_vector=='EULER' or self.subtype_vector=='AXISANGLE' or self.subtype_vector=='DIRECTION') or self.mode=='QUATERNION_LIST_MODE' and (self.quaternion_mode=='EULER' or self.quaternion_mode=='AXISANGLE'):
                 r_subtype_split2.column().prop(self, 'system_rotation', expand=False, text='')
-            elif self.mode=='COLOR_LIST_MODE':
+            elif self.mode=='COLOR_LIST_MODE' and (self.subtype_color=='COLOR' or self.subtype_color=='COLOR_GAMMA'):
                 r_subtype_split2.column().prop(self, 'use_alpha')
             else:
-                r_subtype_split2.column().label(text='-----')
+                r_subtype_split2.column().label(text='')
 
         if self.mode=='QUATERNION_LIST_MODE':
             qp_row = layout.row() # quaternion_params_row
@@ -1376,12 +1464,27 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
                 qp_row_s_s_c2.label(text='')
             pass
 
-        invert_mask_row = layout.row()
-        invert_mask_row.prop(self, "invert_mask", text="Invert mask", toggle=True)
+        # invert_mask_row = layout.row()
+        # invert_mask_row.prop(self, "invert_mask", text="Invert mask", toggle=True)
+        grid_service_operators = layout.grid_flow(row_major=True, columns=10, align=True)
+        
+        if self.mode=='STRING_LIST_MODE':
+            self.wrapper_tracked_ui_draw_op(grid_service_operators, SvUpdateTextInListInputNode.bl_idname, text='update text', icon='FILE_REFRESH')
+        else:
+            grid_service_operators.label(text='')
+        invert_mask_prop = grid_service_operators.column()
         # if mask socked is connected then do not show source list controls
         if self.inputs["mask"].is_linked==True:
-            invert_mask_row.enabled = False
+            invert_mask_prop.enabled = False
+            invert_mask_prop.prop(self, "invert_mask", text='', icon='UV_SYNC_SELECT', emboss = False)
+        else:
+            invert_mask_prop.prop(self, "invert_mask", text='', icon='UV_SYNC_SELECT')
+
         #layout.row().prop(self, "copy_clipboard", text="Copy data to clipboard", toggle=True)
+        self.wrapper_tracked_ui_draw_op(grid_service_operators, SvCopyTextToClipboard.bl_idname, text='', icon='COPYDOWN')
+        self.wrapper_tracked_ui_draw_op(grid_service_operators, SvPasteTextFromClipboard.bl_idname, text='', icon='PASTEDOWN')
+        pass
+
        
         align = True
         if self.mode=='VECTOR_LIST_MODE' or self.mode=='COLOR_LIST_MODE':
@@ -1534,7 +1637,7 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
                 s = col.row().split(factor=0.8)
                 s_r1 = s.row()
                 if self.subtype_color=='COLOR' or self.subtype_color=='COLOR_GAMMA':
-                    s_r1_c = s_r1.column()
+                    s_r1_c = s_r1.column(align=True)
                     if self.use_alpha==True:
                         s_r1_c.row().prop(elem, self.subtype_color, icon_only=True)
                         s_r1_c.row().prop(elem, 'elem', icon_only=True)
@@ -1607,6 +1710,10 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
                     row = colum_list.row(align=True)
                     row.prop(self, self.mode, index=i, text=str(i)+(self.label if self.label else self.name))
                     row.scale_x = 0.8
+
+    def updateTextData(self, context):
+        self.process_node(context)
+        pass
 
     def process(self):
         mask_in_socket = self.inputs['mask'] #.sv_get(deepcopy=False)
@@ -1704,6 +1811,11 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
                             mask_len = len(lst_0)
                             mask_range = []
                             for x in mask:
+                                if type(x)==bool:
+                                    if x==False:
+                                        x=0
+                                    else:
+                                        x=1
                                 if -mask_len<x<mask_len:
                                     mask_range.append(x)
                             np_mask = np.zeros(len(lst_0), dtype=bool)
@@ -1715,8 +1827,218 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
                     lst_masked = list(compress(lst_0, mask))
                     data.append(lst_masked)
                     pass
-            
         self.outputs[0].sv_set(data)
 
-classes = [SvListInputBoolEntry, SvListInputIntEntry, SvListInputFloatEntry, SvListInputVectorEntry, SvListInputQuaternionEntry, SvListInputColorEntry, SvListInputStringEntry, SvListInputNodeMK2]
+    def dataAsString(self):
+
+        if self.mode == 'BOOL_LIST_MODE':
+            lst = [[str(elem.elem) for elem in self.bool_list_items]]
+        elif self.mode == 'INT_LIST_MODE':
+            lst = [[str(elem.elem) for elem in self.int_list_items]]
+        elif self.mode == 'FLOAT_LIST_MODE':
+            lst = [[str(elem.elem) for elem in self.float_list_items]]
+        elif self.mode == 'VECTOR_LIST_MODE':
+            lst = [[str(tuple(Vector(elem.elem)))[1:-1] for elem in self.vector_list_items]]
+        elif self.mode == 'QUATERNION_LIST_MODE':
+            lst = [[str(getattr(elem, f'{self.quaternion_mode}_UI')[:])[1:-1] for elem in self.quaternion_list_items]]
+        elif self.mode == 'COLOR_LIST_MODE':
+            if self.use_alpha==True:
+                lst = [[str(tuple(elem.elem))[1:-1] for elem in self.color_list_items]]
+            else:
+                lst = [[str(tuple(elem.elem[:3]))[1:-1] for elem in self.color_list_items]]
+        elif self.mode == 'STRING_LIST_MODE':
+            lst = [[elem.elem for elem in self.string_list_items]]
+        else:
+            ShowMessageBox(f"In copy to the clipboard unknown mode: '{self.mode}'. Data not copied.", icon='ERROR')
+            #raise Exception(f"[func: process] unknown mode {self.mode}.")
+        
+        lst_0 = lst[0]
+        res = '\n'.join( [str(s) for s in lst_0] )
+
+        return res
+    
+    def convertTextToData(self, text):
+        text = text.strip()
+        if self.mode == 'BOOL_LIST_MODE':
+            text = text.replace("  ", " ")
+            txt1 = re.sub(r'([^\,]) ([^$])', r'\1, \2', ' '.join(text.splitlines()))
+            txt2 = re.sub(r' ', r'', txt1)
+            txt2_arr = txt2.split(',')
+            arr = []
+            for elem in txt2_arr:
+                if   elem in [1, '1', 'ON', 'on', 'On', 'TRUE', 'True', 'true', 'YES','Yes', 'yes',]:
+                    c_elem = True
+                elif elem in [0, '0', 'OFF', 'Off', 'off', 'FALSE', 'False', 'false', 'NO','No', 'no',]:
+                    c_elem = False
+                else:
+                    c_elem = bool(elem)
+                arr.append(c_elem)
+                pass
+            self.bool_list_counter = len(arr)
+            for I, elem in enumerate(arr):
+                self.bool_list_items[I].elem = elem
+            pass
+
+        elif self.mode == 'INT_LIST_MODE':
+            # Convert multiline formats of vectors of floats as single line of floats
+            text = text.replace("  ", " ")
+            txt1 = re.sub(r'([^\,]) ', r'\1, ', ' '.join(text.splitlines()))
+            txt2 = re.sub(r' ', r'', txt1)
+            txt2_arr = txt2.split(',')
+            arr = []
+            for I, elem in enumerate(txt2_arr):
+                try:
+                    c_elem = int(float(elem))
+                except ValueError:
+                    ShowMessageBox(f"In paste the int numbers raise error: value '{str(elem)}' is not an integer number. Data not pasted.", icon='ERROR')
+                    return
+                arr.append(c_elem)
+                pass
+            self.int_list_counter = len(arr)
+            for I, elem in enumerate(arr):
+                self.int_list_items[I].elem = elem
+            pass
+
+        elif self.mode == 'VECTOR_LIST_MODE':
+            text = text.replace("  ", " ")
+            _arr_lines = text.splitlines()
+            arr_lines = []
+            for line in _arr_lines:
+                line = line.strip()
+                if line:
+                    arr_lines.append(line)
+                pass
+            pass
+
+            
+            arr = []
+            for line in arr_lines:
+                txt1 = re.sub(r'([^\,]) ', r'\1, ', line)
+                txt2 = re.sub(r' ', r'', txt1)
+                txt2_arr = txt2.split(',')
+                arr1 = []
+                for I, elem in enumerate(txt2_arr):
+                    try:
+                        c_elem = float(elem)
+                    except ValueError:
+                        ShowMessageBox(f"In paste the float numbers raise error: value '{str(elem)}' is not an float number. Data not pasted.", icon='ERROR')
+                        return
+                    arr1.append(c_elem)
+                    pass
+                arr.append(arr1)
+                pass
+            
+            self.vector_list_counter = len(arr)
+            for I, line in enumerate(arr):
+                self.vector_list_items[I].elem = [0]*len(self.vector_list_items[I].elem)
+                for J, elem in enumerate(line):
+                    if len(self.vector_list_items[I].elem)<=J:
+                        break
+                    self.vector_list_items[I].elem[J] = elem
+            pass
+
+        elif self.mode == 'COLOR_LIST_MODE':
+            text = text.replace("  ", " ")
+            _arr_lines = text.splitlines()
+            arr_lines = []
+            for line in _arr_lines:
+                line = line.strip()
+                if line:
+                    arr_lines.append(line)
+                pass
+            pass
+
+            
+            arr = []
+            for line in arr_lines:
+                txt1 = re.sub(r'([^\,]) ', r'\1, ', line)
+                txt2 = re.sub(r' ', r'', txt1)
+                txt2_arr = txt2.split(',')
+                arr1 = []
+                for I, elem in enumerate(txt2_arr):
+                    try:
+                        c_elem = float(elem)
+                    except ValueError:
+                        ShowMessageBox(f"In paste the float numbers raise error: value '{str(elem)}' is not an float number. Data not pasted.", icon='ERROR')
+                        return
+                    arr1.append(c_elem)
+                    pass
+                arr.append(arr1)
+                pass
+            
+            self.color_list_counter = len(arr)
+            for I, line in enumerate(arr):
+                self.color_list_items[I].elem = [0]*len(self.color_list_items[I].elem)
+                self.color_list_items[I].elem[-1]=1.0
+                for J, elem in enumerate(line):
+                    if len(self.color_list_items[I].elem)<=J:
+                        break
+                    self.color_list_items[I].elem[J] = elem
+            pass
+
+        elif self.mode == 'QUATERNION_LIST_MODE':
+            text = text.replace("  ", " ")
+            _arr_lines = text.splitlines()
+            arr_lines = []
+            for line in _arr_lines:
+                line = line.strip()
+                if line:
+                    arr_lines.append(line)
+                pass
+            pass
+
+            
+            arr = []
+            for line in arr_lines:
+                txt1 = re.sub(r'([^\,]) ', r'\1, ', line)
+                txt2 = re.sub(r' ', r'', txt1)
+                txt2_arr = txt2.split(',')
+                arr1 = []
+                for I, elem in enumerate(txt2_arr):
+                    try:
+                        c_elem = float(elem)
+                    except ValueError:
+                        ShowMessageBox(f"In paste the float numbers raise error: value '{str(elem)}' is not an float number. Data not pasted.", icon='ERROR')
+                        return
+                    arr1.append(c_elem)
+                    pass
+                arr.append(arr1)
+                pass
+            
+            self.quaternion_list_counter = len(arr)
+            for I, line in enumerate(arr):
+                attr = getattr(self.quaternion_list_items[I], f'{self.quaternion_mode}_UI')
+                attr[:] = [0]*len(attr)
+                for J, elem in enumerate(line):
+                    if len(attr)<=J:
+                        break
+                    attr[J] = elem
+            pass
+
+        elif self.mode == 'STRING_LIST_MODE':
+            text = text.replace("  ", " ")
+            _arr_lines = text.splitlines()
+            arr_lines = []
+            for line in _arr_lines:
+                line = line.strip()
+                if line:
+                    arr_lines.append(line)
+                pass
+            pass
+
+            self.string_list_counter = len(arr_lines)
+            for I, line in enumerate(arr_lines):
+                self.string_list_items[I].elem = line
+            pass
+
+        else:
+            mode_name = [m for m in self.modes if m[0]==self.mode][0][1]
+            ShowMessageBox(f"Data NOT pasted from the Clipboard, for {mode_name}", icon='ERROR')
+            return
+
+        ShowMessageBox(f"Data pasted from the Clipboard")
+        pass
+
+
+classes = [SvCopyTextToClipboard, SvPasteTextFromClipboard, SvUpdateTextInListInputNode, SvListInputBoolEntry, SvListInputIntEntry, SvListInputFloatEntry, SvListInputVectorEntry, SvListInputQuaternionEntry, SvListInputColorEntry, SvListInputStringEntry, SvListInputNodeMK2]
 register, unregister = bpy.utils.register_classes_factory(classes)
