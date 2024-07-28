@@ -1389,7 +1389,7 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
         # grid = layout.grid_flow(row_major=True, columns=4)
         # grid.prop(self, "mode", expand=True)
         
-        r_unit_system = layout.row().split(factor=0.3)
+        r_unit_system = layout.row().split(factor=0.25)
         r_unit_system.column().label(text="Unit system:")
         if self.mode=='FLOAT_LIST_MODE' or self.mode=='VECTOR_LIST_MODE':
             r_unit_system.row().prop(self, "unit_system", expand=True)
@@ -1397,9 +1397,9 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
             r_unit_system.column().label(text='')
             r_unit_system.enabled = False
 
-        r_subtype_split1 = layout.row().split(factor=0.3)
+        r_subtype_split1 = layout.row().split(factor=0.25)
         r_subtype_split1.column().label(text="Subtype:")
-        r_subtype_split2 = r_subtype_split1.column().split(factor=0.5)
+        r_subtype_split2 = r_subtype_split1.column().split(factor=0.6)
         if self.mode=='FLOAT_LIST_MODE':
             r_subtype_split2.column().prop(self, "subtype_float", expand=False, text='')
         elif self.mode=='VECTOR_LIST_MODE':
@@ -1637,13 +1637,15 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
                 s = col.row().split(factor=0.8)
                 s_r1 = s.row()
                 if self.subtype_color=='COLOR' or self.subtype_color=='COLOR_GAMMA':
-                    s_r1_c = s_r1.column(align=True)
+                    
+                    s_r1_s = s_r1.column().split(factor=0.15, align=True)
                     if self.use_alpha==True:
-                        s_r1_c.row().prop(elem, self.subtype_color, icon_only=True)
-                        s_r1_c.row().prop(elem, 'elem', icon_only=True)
+                        s_r1_s.row(align=True).prop(elem, self.subtype_color, icon_only=True)
+                        s_r1_s.row(align=True).prop(elem, 'elem', icon_only=True)
                     else:
-                        s_r1_c.row().prop(elem, self.subtype_color+'_WITHOUT_ALPHA', icon_only=True)
-                        s_r1_c.row().prop(elem, 'elem_WITHOUT_ALPHA', icon_only=True)
+                        s_r1_s.row(align=True).prop(elem, self.subtype_color+'_WITHOUT_ALPHA', icon_only=True)
+                        s_r1_s.row(align=True).prop(elem, 'elem_WITHOUT_ALPHA', icon_only=True)
+                    
                     #s_r1_c.row().operator(bpy.ops.ui.eyedropper_color, text='', icon='EYEDROPPER')
                     #s_r1_c.row().prop(self, 'color_pointer', text='')
                     pass
@@ -1899,6 +1901,26 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
                 self.int_list_items[I].elem = elem
             pass
 
+        elif self.mode == 'FLOAT_LIST_MODE':
+            # Convert multiline formats of vectors of floats as single line of floats
+            text = text.replace("  ", " ")
+            txt1 = re.sub(r'([^\,]) ', r'\1, ', ' '.join(text.splitlines()))
+            txt2 = re.sub(r' ', r'', txt1)
+            txt2_arr = txt2.split(',')
+            arr = []
+            for I, elem in enumerate(txt2_arr):
+                try:
+                    c_elem = float(elem)
+                except ValueError:
+                    ShowMessageBox(f"In paste the float numbers raise error: value '{str(elem)}' is not an integer number. Data not pasted.", icon='ERROR')
+                    return
+                arr.append(c_elem)
+                pass
+            self.float_list_counter = len(arr)
+            for I, elem in enumerate(arr):
+                self.float_list_items[I].elem = elem
+            pass
+
         elif self.mode == 'VECTOR_LIST_MODE':
             text = text.replace("  ", " ")
             _arr_lines = text.splitlines()
@@ -2033,7 +2055,7 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
 
         else:
             mode_name = [m for m in self.modes if m[0]==self.mode][0][1]
-            ShowMessageBox(f"Data NOT pasted from the Clipboard, for {mode_name}", icon='ERROR')
+            ShowMessageBox(f"Data NOT pasted from the Clipboard, for: '{mode_name}'", icon='ERROR')
             return
 
         ShowMessageBox(f"Data pasted from the Clipboard")
