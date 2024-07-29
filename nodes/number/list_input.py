@@ -723,6 +723,48 @@ class SvListInputStringEntry(bpy.types.PropertyGroup):
         #update=update_entry,
     ) # type: ignore
 
+class SvListInputMatrixEntry(bpy.types.PropertyGroup):
+
+    id_matrix = (1.0, 0.0, 0.0, 0.0,
+                 0.0, 1.0, 0.0, 0.0,
+                 0.0, 0.0, 1.0, 0.0,
+                 0.0, 0.0, 0.0, 1.0)
+
+    # share data with elements
+    def get_elem(self):
+        return self.elem
+
+    def set_elem(self, value):
+        self.elem = value
+
+    def update_entry(self, context):
+        if hasattr(context, 'node'):
+            updateNode(context.node, context)
+        else:
+            sv_logger.debug("Node is not defined in this context, so will not update the node.")
+
+    item_enable : BoolProperty(
+        name = "Mask",
+        description = "On - Add Element in the output socket,\nOff - Do not add Element in the output socket",
+        default=True,
+        update=update_entry,
+        ) # type: ignore
+    
+    elem: FloatVectorProperty(
+        name = "Vector",
+        default = id_matrix,
+        size=16,
+        update=update_entry,
+    ) # type: ignore
+
+    MATRIX: FloatVectorProperty(
+        name = "Matrix elem",
+        default = id_matrix,
+        size=16,
+        subtype='MATRIX',
+        get = get_elem, set = set_elem,
+        update=update_entry,
+    ) # type: ignore
 
 class SvCopyTextToClipboard(bpy.types.Operator, SvGenericNodeLocator):
     ''' Copy node's data by data mode (bool, int, float, vector, quaternion, color, strings) to the clipboard '''
@@ -782,6 +824,8 @@ def Correct_ListInput_Length(self, context):
         correct_collection_length(self.vector_list_items, self.vector_list_counter)
     elif(self.mode=='QUATERNION_LIST_MODE'):
         correct_collection_length(self.quaternion_list_items, self.quaternion_list_counter)
+    elif(self.mode=='MATRIX_LIST_MODE'):
+        correct_collection_length(self.matrix_list_items, self.matrix_list_counter)
     elif(self.mode=='COLOR_LIST_MODE'):
         correct_collection_length(self.color_list_items, self.color_list_counter)
     elif(self.mode=='STRING_LIST_MODE'):
@@ -895,6 +939,14 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
         update=Correct_ListInput_Length)  # type: ignore
     vector_list_items : CollectionProperty(type=SvListInputVectorEntry) # type: ignore
 
+    matrix_list_counter: IntProperty(
+        name='matrix_list_counter',
+        description='matrixes',
+        default=1,
+        min=1,
+        update=Correct_ListInput_Length)  # type: ignore
+    matrix_list_items : CollectionProperty(type=SvListInputMatrixEntry) # type: ignore
+
     quaternion_list_counter: IntProperty(
         name='quaternion_list_counter',
         description='vectors',
@@ -984,7 +1036,10 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
             self.outputs['data_output'].label = 'Vectors'
         elif self.mode == 'QUATERNION_LIST_MODE':
             self.set_output_socketype(['SvQuaternionSocket'])
-            self.outputs['data_output'].label = 'Quaternion'
+            self.outputs['data_output'].label = 'Quaternions'
+        elif self.mode == 'MATRIX_LIST_MODE':
+            self.set_output_socketype(['SvMatrixSocket'])
+            self.outputs['data_output'].label = 'Matrixes'
         elif self.mode == 'COLOR_LIST_MODE':
             self.set_output_socketype(['SvColorSocket'])
             self.outputs['data_output'].label = 'Colors'
@@ -1002,8 +1057,9 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
         ("FLOAT_LIST_MODE", "Float", "Float", "IPO_LINEAR", 2),
         ("VECTOR_LIST_MODE", "Vector", "Vector", "ORIENTATION_GLOBAL", 3),
         ("QUATERNION_LIST_MODE", "Quaternion", "Quaternion", "CURVE_PATH", 4),
-        ("COLOR_LIST_MODE", "Color", "Color", "COLOR", 5),
-        ("STRING_LIST_MODE", "Text", "Text", "SORTALPHA", 6),
+        ("MATRIX_LIST_MODE", "Matrix", "Matrix", "MOD_LATTICE", 5),
+        ("COLOR_LIST_MODE", "Color", "Color", "COLOR", 6),
+        ("STRING_LIST_MODE", "Text", "Text", "SORTALPHA", 7),
     ]
 
     mode: EnumProperty(
@@ -1352,7 +1408,9 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
         elif self.mode == 'VECTOR_LIST_MODE':
             self.outputs.new('SvVerticesSocket', 'data_output').label = 'Vectors'
         elif self.mode == 'QUATERNION_LIST_MODE':
-            self.outputs.new('SvQuaternionSocket', 'data_output').label = 'Vectors'
+            self.outputs.new('SvQuaternionSocket', 'data_output').label = 'Quaternions'
+        elif self.mode == 'MATRIX_LIST_MODE':
+            self.outputs.new('SvMatrixSocket', 'data_output').label = 'Matrixes'
         elif self.mode == 'COLOR_LIST_MODE':
             self.outputs.new('SvColorSocket', 'data_output').label = 'Colors'
         elif self.mode == 'STRING_LIST_MODE':
@@ -1382,6 +1440,8 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
             cm_split_c1.prop(self, "vector_list_counter", text="List Length (vectors)")
         elif self.mode == 'QUATERNION_LIST_MODE':
             cm_split_c1.prop(self, "quaternion_list_counter", text="List Length (quaternions)")
+        elif self.mode == 'MATRIX_LIST_MODE':
+            cm_split_c1.prop(self, "matrix_list_counter", text="List Length (matrixes)")
         elif self.mode == 'COLOR_LIST_MODE':
             cm_split_c1.prop(self, "color_list_counter", text="List Length (colors)")
         elif self.mode == 'STRING_LIST_MODE':
@@ -1620,6 +1680,34 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
                 s = col.row().split(factor=0.8)
                 s_r1 = s.row()
                 s_r1.prop(elem, self.quaternion_mode+'_UI', icon_only=True)
+                s_r2 = s.row()
+                s_r2_c1 = s_r2.column()
+                # if mask socked is connected then do not show source list controls
+                if self.inputs["mask"].is_linked==False:
+                    s_r2_c1.prop(elem, f'item_enable', icon_only=True)
+                    if elem.item_enable==False:
+                        s_r2_c2_label1 = '-'
+                    else:
+                        s_r2_c2_label1 = f'{J}'
+                        J+=1
+                    s_r2_c2 = s_r2.column()
+                    s_r2_c2.label(text=s_r2_c2_label1)
+                else:
+                    index_label = f'{J}'
+                    J+=1
+                    s_r2_c1.label(text=index_label)
+                pass
+        elif self.mode == 'MATRIX_LIST_MODE':
+            for I, elem in enumerate(self.matrix_list_items):
+                s = col.row().split(factor=0.8)
+                s_r1 = s.row()
+                matrix_grid = s_r1.grid_flow(row_major=True, columns=4, align=True)
+                for i in range(4):
+                    #row = col.row(align=True)
+                    for j in range(i, 16, 4):
+                        matrix_grid.prop(elem, 'MATRIX', text='', index=j)
+                col.separator(factor=1.0)
+                #s_r1.prop(elem, 'MATRIX', icon_only=True, index=-1)
                 s_r2 = s.row()
                 s_r2_c1 = s_r2.column()
                 # if mask socked is connected then do not show source list controls
@@ -2067,5 +2155,5 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
         pass
 
 
-classes = [SvCopyTextToClipboard, SvPasteTextFromClipboard, SvUpdateTextInListInputNode, SvListInputBoolEntry, SvListInputIntEntry, SvListInputFloatEntry, SvListInputVectorEntry, SvListInputQuaternionEntry, SvListInputColorEntry, SvListInputStringEntry, SvListInputNodeMK2]
+classes = [SvCopyTextToClipboard, SvPasteTextFromClipboard, SvUpdateTextInListInputNode, SvListInputBoolEntry, SvListInputIntEntry, SvListInputFloatEntry, SvListInputVectorEntry, SvListInputMatrixEntry, SvListInputQuaternionEntry, SvListInputColorEntry, SvListInputStringEntry, SvListInputNodeMK2]
 register, unregister = bpy.utils.register_classes_factory(classes)
