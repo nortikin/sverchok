@@ -997,13 +997,13 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
         pass
 
     modes = [
-        ("BOOL_LIST_MODE", "Bool", "Boolean", "", 0),
-        ("INT_LIST_MODE", "Int", "Integer", "", 1),
-        ("FLOAT_LIST_MODE", "Float", "Float", "", 2),
-        ("VECTOR_LIST_MODE", "Vector", "Vector", "", 3),
-        ("QUATERNION_LIST_MODE", "Quaternion", "Quaternion", "", 4),
-        ("COLOR_LIST_MODE", "Color", "Color", "", 5),
-        ("STRING_LIST_MODE", "Text", "Text", "", 6),
+        ("BOOL_LIST_MODE", "Bool", "Boolean", "IMAGE_ALPHA", 0),
+        ("INT_LIST_MODE", "Int", "Integer", "IPO_CONSTANT", 1),
+        ("FLOAT_LIST_MODE", "Float", "Float", "IPO_LINEAR", 2),
+        ("VECTOR_LIST_MODE", "Vector", "Vector", "ORIENTATION_GLOBAL", 3),
+        ("QUATERNION_LIST_MODE", "Quaternion", "Quaternion", "CURVE_PATH", 4),
+        ("COLOR_LIST_MODE", "Color", "Color", "COLOR", 5),
+        ("STRING_LIST_MODE", "Text", "Text", "SORTALPHA", 6),
     ]
 
     mode: EnumProperty(
@@ -1042,9 +1042,9 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
 
     subtypes_color = [
         # # https://docs.blender.org/api/current/bpy_types_enum_items/property_subtype_number_array_items.html#rna-enum-property-subtype-number-array-items
-        ("NONE", "None", "None", "", 0),
-        ("COLOR", "Color", "Color", "", 1),
-        ("COLOR_GAMMA", "Color Gamma", "Color Gamma", "", 12),
+        ("NONE", "None", "None (as vector)", "CHECKBOX_DEHLT", 0),
+        ("COLOR", "Color", "Color", "RESTRICT_COLOR_ON", 1),
+        ("COLOR_GAMMA", "Color Gamma", "Color Gamma", "COLOR", 12),
     ]
 
     subtype_color: EnumProperty(
@@ -1362,11 +1362,16 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
         Correct_ListInput_Length(self, context)
         
         pass
-        
+
+    def draw_buttons_ext(self, context, layout):
+        r_unit_system = layout.row().split(factor=0.25)
+        r_unit_system.column().label(text="Unit system:")
+        r_unit_system.row().prop(self, "unit_system", expand=True)
+        pass
 
     def draw_buttons(self, context, layout):
-        cm_split = layout.row().split(factor=0.7)
-        cm_split_c1 = cm_split.column()
+        cm_split = layout.row(align=True).split(factor=0.7, align=True)
+        cm_split_c1 = cm_split.column(align=True)
         if self.mode == 'BOOL_LIST_MODE':
             cm_split_c1.prop(self, "bool_list_counter", text="List Length (bool)")
         elif self.mode == 'INT_LIST_MODE':
@@ -1384,21 +1389,21 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
         else:
             raise Exception(f"[func: draw_buttons] unknown mode {self.mode}.")
 
-        cm_split_c2 = cm_split.column().prop(self, "mode", expand=False, text='')
+        cm_split_c2 = cm_split.column(align=True).prop(self, "mode", expand=False, text='')
         #layout.row().prop(self, "mode", expand=True)
         # grid = layout.grid_flow(row_major=True, columns=4)
         # grid.prop(self, "mode", expand=True)
         
-        r_unit_system = layout.row().split(factor=0.25)
-        r_unit_system.column().label(text="Unit system:")
-        if self.mode=='FLOAT_LIST_MODE' or self.mode=='VECTOR_LIST_MODE':
-            r_unit_system.row().prop(self, "unit_system", expand=True)
-        else:
-            r_unit_system.column().label(text='')
-            r_unit_system.enabled = False
+        # r_unit_system = layout.row().split(factor=0.25)
+        # r_unit_system.column().label(text="Unit system:")
+        # if self.mode=='FLOAT_LIST_MODE' or self.mode=='VECTOR_LIST_MODE':
+        #     r_unit_system.row().prop(self, "unit_system", expand=True)
+        # else:
+        #     r_unit_system.column().label(text='')
+        #     r_unit_system.enabled = False
 
         r_subtype_split1 = layout.row().split(factor=0.25)
-        r_subtype_split1.column().label(text="Subtype:")
+        r_subtype_split1.column().label(text="Type:")
         r_subtype_split2 = r_subtype_split1.column().split(factor=0.6)
         if self.mode=='FLOAT_LIST_MODE':
             r_subtype_split2.column().prop(self, "subtype_float", expand=False, text='')
