@@ -20,7 +20,7 @@ import bpy
 from bpy.props import EnumProperty, FloatVectorProperty, IntProperty, FloatProperty, IntVectorProperty, BoolProperty, StringProperty, CollectionProperty, PointerProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, multi_socket, ensure_min_nesting, ensure_nesting_level
+from sverchok.data_structure import updateNode, multi_socket, ensure_min_nesting, ensure_nesting_level, flatten_data
 from sverchok.utils.nodes_mixins.show_3d_properties import Show3DProperties
 from sverchok.utils.sv_logging import sv_logger
 from sverchok.utils.handle_blender_data import correct_collection_length
@@ -2071,6 +2071,11 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
         elif self.mode == 'MATRIX_LIST_MODE':
             grid_row = col.row().grid_flow(row_major=True, columns=3, align=True, even_rows=False)
             for I, elem in enumerate(self.matrix_list_items):
+                if self.matrix_mode1=='NONE':
+                    grid_row.label(text='')
+                    grid_row.label(text='')
+                    grid_row.label(text='')
+
                 c1 = grid_row.row()
                 c2 = grid_row.column()
                 c3 = grid_row.column()
@@ -2082,16 +2087,9 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
                 c1_r = c1.row()
                 if self.matrix_mode1=='NONE':
                     matrix_grid = c1_r.grid_flow(row_major=True, columns=4, align=True)
-                    # for i in range(4):
-                    #     for j in range(i, 16, 4):
-                    #         matrix_grid.prop(elem, 'MATRIX_UI', text='', index=j)
-                    #     pass
                     for I in range(16):
                         matrix_grid.prop(elem, 'MATRIX_UI', text='', index=I)
                     pass
-                    # for i in range(16):
-                    #     matrix_grid.prop(elem, 'elem', text='', index=i)
-                    # pass
                 else:
                     if self.matrix_mode1=='EULER':
                         matrix_grid = c1_r.grid_flow(row_major=False, columns=3, align=True)
@@ -2106,6 +2104,11 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
                         
                         matrix_grid.label(text='Angle:')
                         matrix_grid.prop(elem, 'EULER_ANGLE_UI', text='')
+
+                        grid_row.label(text='')
+                        grid_row.label(text='')
+                        grid_row.label(text='')
+
                         pass
                     elif self.matrix_mode1=='AXISANGLE':
                         matrix_grid = c1_r.grid_flow(row_major=False, columns=3, align=True)
@@ -2375,7 +2378,19 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
         elif self.mode == 'VECTOR_LIST_MODE':
             lst = [[str(tuple(Vector(elem.elem)))[1:-1] for elem in self.vector_list_items]]
         elif self.mode == 'MATRIX_LIST_MODE':
-            lst = [[str(tuple(elem.elem))[1:-1] for elem in self.matrix_list_items]]
+            if self.matrix_mode1=='EULER':
+                # EULER_LOCATION, EULER_SCALE, EULER_ANGLE
+                lst = [[ self.matrix_mode1+', '+str(flatten_data( ( elem.EULER_LOCATION[:], elem.EULER_SCALE[:], elem.EULER_ANGLE[:]) ))[1:-1] for elem in self.matrix_list_items ]]
+                pass
+            elif self.matrix_mode1=='AXISANGLE':
+                # AXISANGLE_LOCATION, AXISANGLE_SCALE, AXISANGLE_VECTOR, AXISANGLE_ANGLE
+                lst = [[ self.matrix_mode1+', '+str(flatten_data( (elem.AXISANGLE_LOCATION[:], elem.AXISANGLE_SCALE[:], elem.AXISANGLE_VECTOR[:], [elem.AXISANGLE_ANGLE]) ))[1:-1] for elem in self.matrix_list_items ]]
+                pass
+            else:
+                # NONE
+                lst = [[str(tuple(elem.MATRIX))[1:-1] for elem in self.matrix_list_items]]
+                pass
+            pass
         elif self.mode == 'QUATERNION_LIST_MODE':
             lst = [[str(getattr(elem, f'{self.quaternion_mode}_UI')[:])[1:-1] for elem in self.quaternion_list_items]]
         elif self.mode == 'COLOR_LIST_MODE':
@@ -2494,45 +2509,6 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
                     self.vector_list_items[I].elem[J] = elem
             pass
 
-        elif self.mode == 'COLOR_LIST_MODE':
-            text = text.replace("  ", " ")
-            _arr_lines = text.splitlines()
-            arr_lines = []
-            for line in _arr_lines:
-                line = line.strip()
-                if line:
-                    arr_lines.append(line)
-                pass
-            pass
-
-            
-            arr = []
-            for line in arr_lines:
-                txt1 = re.sub(r'([^\,]) ', r'\1, ', line)
-                txt2 = re.sub(r' ', r'', txt1)
-                txt2_arr = txt2.split(',')
-                arr1 = []
-                for I, elem in enumerate(txt2_arr):
-                    try:
-                        c_elem = float(elem)
-                    except ValueError:
-                        ShowMessageBox(f"In paste the float numbers raise error: value '{str(elem)}' is not an float number. Data not pasted.", icon='ERROR')
-                        return
-                    arr1.append(c_elem)
-                    pass
-                arr.append(arr1)
-                pass
-            
-            self.color_list_counter = len(arr)
-            for I, line in enumerate(arr):
-                self.color_list_items[I].elem = [0]*len(self.color_list_items[I].elem)
-                self.color_list_items[I].elem[-1]=1.0
-                for J, elem in enumerate(line):
-                    if len(self.color_list_items[I].elem)<=J:
-                        break
-                    self.color_list_items[I].elem[J] = elem
-            pass
-
         elif self.mode == 'QUATERNION_LIST_MODE':
             text = text.replace("  ", " ")
             _arr_lines = text.splitlines()
@@ -2570,6 +2546,138 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
                     if len(attr)<=J:
                         break
                     attr[J] = elem
+            pass
+
+        elif self.mode == 'MATRIX_LIST_MODE':
+            text = text.replace("  ", " ")
+            _arr_lines = text.splitlines()
+            arr_lines = []
+            for line in _arr_lines:
+                line = line.strip()
+                if line:
+                    arr_lines.append(line)
+                pass
+            pass
+
+            
+            arr = []
+            for line in arr_lines:
+                txt1 = re.sub(r'([^\,]) ', r'\1, ', line)
+                txt2 = re.sub(r' ', r'', txt1)
+                txt2_arr = txt2.split(',')
+                arr1 = []
+                for I, elem in enumerate(txt2_arr):
+                    if I==0 and elem=='EULER':
+                        self.matrix_mode1='EULER'
+                        continue
+                    elif I==0 and elem=='AXISANGLE':
+                        self.matrix_mode1='AXISANGLE'
+                        continue
+                    elif I==0:
+                        self.matrix_mode1='NONE'
+                    if not elem:
+                        continue
+
+                    try:
+                        c_elem = float(elem)
+                    except ValueError:
+                        ShowMessageBox(f"In paste the float numbers raise error: value '{str(elem)}' is not an float number. Data not pasted.", icon='ERROR')
+                        return
+                    arr1.append(c_elem)
+                    pass
+                arr.append(arr1)
+                pass
+            
+            self.matrix_list_counter = len(arr)
+
+            for I, line in enumerate(arr):
+                if self.matrix_mode1=='EULER':
+                    try:
+                        len_line = len(line)
+                        if len_line>=3:
+                            self.matrix_list_items[I].EULER_LOCATION_UI_NONE[:] = line[0:3]
+                        if len_line>=6:
+                            self.matrix_list_items[I].EULER_SCALE_UI[:] = line[3:6]
+                        if len_line>=9:
+                            self.matrix_list_items[I].EULER_ANGLE_UI[:] = line[6:9]
+                        else:
+                            raise f'not enought data in the {I}-th line.'
+                    except Exception as _ex:
+                        self.matrix_list_counter = I+1
+                        err = f'{I}-th elem has not enougth elements for EULER. {len(line)} is not enought. It has to be 9'
+                        ShowMessageBox(err)
+                        raise Exception(err)
+                        break
+                    pass
+                elif self.matrix_mode1=='AXISANGLE':
+                    try:
+                        len_line = len(line)
+                        if len_line>=3:
+                            self.matrix_list_items[I].AXISANGLE_LOCATION_UI_NONE[:] = line[0:3]
+                        if len_line>=6:
+                            self.matrix_list_items[I].AXISANGLE_SCALE_UI[:] = line[3:6]
+                        if len_line>=9:
+                            self.matrix_list_items[I].AXISANGLE_VECTOR_UI[:] = line[6:9]
+                        if len_line>=10:
+                            self.matrix_list_items[I].AXISANGLE_ANGLE_UI = line[9]
+                        else:
+                            raise f'not enought data in the {I}-th line.'
+                    except Exception as _ex:
+                        self.matrix_list_counter = I+1
+                        err = f'{I}-th elem has not enougth elements for AXISANGLE. {len(line)} is not enought. It has to be 10'
+                        ShowMessageBox(err)
+                        raise Exception(err)
+                        break
+                    pass
+                else:
+                    # NONE
+                    attr = getattr(self.matrix_list_items[I], f'MATRIX_UI')
+                    len_attr = len(attr)
+                    for J, elem in enumerate(line):
+                        if len_attr<=J:
+                            break
+                        attr[J] = elem
+                    pass
+                pass
+            pass
+
+        elif self.mode == 'COLOR_LIST_MODE':
+            text = text.replace("  ", " ")
+            _arr_lines = text.splitlines()
+            arr_lines = []
+            for line in _arr_lines:
+                line = line.strip()
+                if line:
+                    arr_lines.append(line)
+                pass
+            pass
+
+            
+            arr = []
+            for line in arr_lines:
+                txt1 = re.sub(r'([^\,]) ', r'\1, ', line)
+                txt2 = re.sub(r' ', r'', txt1)
+                txt2_arr = txt2.split(',')
+                arr1 = []
+                for I, elem in enumerate(txt2_arr):
+                    try:
+                        c_elem = float(elem)
+                    except ValueError:
+                        ShowMessageBox(f"In paste the float numbers raise error: value '{str(elem)}' is not an float number. Data not pasted.", icon='ERROR')
+                        return
+                    arr1.append(c_elem)
+                    pass
+                arr.append(arr1)
+                pass
+            
+            self.color_list_counter = len(arr)
+            for I, line in enumerate(arr):
+                self.color_list_items[I].elem = [0]*len(self.color_list_items[I].elem)
+                self.color_list_items[I].elem[-1]=1.0
+                for J, elem in enumerate(line):
+                    if len(self.color_list_items[I].elem)<=J:
+                        break
+                    self.color_list_items[I].elem[J] = elem
             pass
 
         elif self.mode == 'STRING_LIST_MODE':
