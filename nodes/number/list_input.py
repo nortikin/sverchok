@@ -723,6 +723,46 @@ class SvListInputStringEntry(bpy.types.PropertyGroup):
         #update=update_entry,
     ) # type: ignore
 
+def euler_matrix(EULER_LOCATION, EULER_SCALE, EULER_ANGLE, ANGLE_ORDER):
+    # translation
+    mat_t = Matrix().Identity(4)
+    mat_t[0][3] = EULER_LOCATION[0]
+    mat_t[1][3] = EULER_LOCATION[1]
+    mat_t[2][3] = EULER_LOCATION[2]
+
+    # rotation
+    mat_r = Euler(EULER_ANGLE[:], ANGLE_ORDER).to_matrix().to_4x4()
+    # scale
+    mat_s = Matrix().Identity(4)
+    mat_s[0][0] = EULER_SCALE[0]
+    mat_s[1][1] = EULER_SCALE[1]
+    mat_s[2][2] = EULER_SCALE[2]
+    # composite matrix
+    mat = mat_t @ mat_r @ mat_s
+
+    return mat
+
+
+def axisangle_matrix(AXISANGLE_LOCATION, AXISANGLE_SCALE, AXISANGLE_VECTOR, AXISANGLE_ANGLE):
+    # translation
+    mat_t = Matrix().Identity(4)
+    mat_t[0][3] = AXISANGLE_LOCATION[0]
+    mat_t[1][3] = AXISANGLE_LOCATION[1]
+    mat_t[2][3] = AXISANGLE_LOCATION[2]
+
+    # rotation
+    mat_r = Quaternion(AXISANGLE_VECTOR[:], AXISANGLE_ANGLE).to_matrix().to_4x4()
+    # scale
+    mat_s = Matrix().Identity(4)
+    mat_s[0][0] = AXISANGLE_SCALE[0]
+    mat_s[1][1] = AXISANGLE_SCALE[1]
+    mat_s[2][2] = AXISANGLE_SCALE[2]
+    # composite matrix
+    mat = mat_t @ mat_r @ mat_s
+    
+    return mat
+
+
 class SvListInputMatrixEntry(bpy.types.PropertyGroup):
 
     id_matrix = (1.0, 0.0, 0.0, 0.0,
@@ -772,11 +812,6 @@ class SvListInputMatrixEntry(bpy.types.PropertyGroup):
 
     def set_MATRIX(self, value):
         mat = np.array(value).reshape(-1,4).tolist()
-        # for i in range(4):
-        #     arr_i = []
-        #     mat.append(arr_i)
-        #     for j in range(i, 16, 4):
-        #         arr_i.append(value[j])
 
         self.MATRIX = value
         mat = Matrix(mat)
@@ -812,21 +847,7 @@ class SvListInputMatrixEntry(bpy.types.PropertyGroup):
     ) # type: ignore
 
     def update_by_EULER(self):
-        # translation
-        mat_t = Matrix().Identity(4)
-        mat_t[0][3] = self.EULER_LOCATION[0]
-        mat_t[1][3] = self.EULER_LOCATION[1]
-        mat_t[2][3] = self.EULER_LOCATION[2]
-
-        # rotation
-        mat_r = Euler(self.EULER_ANGLE[:], "XYZ").to_matrix().to_4x4()
-        # scale
-        mat_s = Matrix().Identity(4)
-        mat_s[0][0] = self.EULER_SCALE[0]
-        mat_s[1][1] = self.EULER_SCALE[1]
-        mat_s[2][2] = self.EULER_SCALE[2]
-        # composite matrix
-        mat = mat_t @ mat_r @ mat_s
+        mat = euler_matrix(self.EULER_LOCATION[:], self.EULER_SCALE[:], self.EULER_ANGLE[:], "XYZ")
         T, R, S = mat.decompose()
 
         self.MATRIX = list(chain( *mat.row ))
@@ -928,21 +949,7 @@ class SvListInputMatrixEntry(bpy.types.PropertyGroup):
     ) # type: ignore
 
     def update_by_AXISANGLE(self):
-        # translation
-        mat_t = Matrix().Identity(4)
-        mat_t[0][3] = self.AXISANGLE_LOCATION[0]
-        mat_t[1][3] = self.AXISANGLE_LOCATION[1]
-        mat_t[2][3] = self.AXISANGLE_LOCATION[2]
-
-        # rotation
-        mat_r = Quaternion(self.AXISANGLE_VECTOR[:], self.AXISANGLE_ANGLE).to_matrix().to_4x4()
-        # scale
-        mat_s = Matrix().Identity(4)
-        mat_s[0][0] = self.AXISANGLE_SCALE[0]
-        mat_s[1][1] = self.AXISANGLE_SCALE[1]
-        mat_s[2][2] = self.AXISANGLE_SCALE[2]
-        # composite matrix
-        mat = mat_t @ mat_r @ mat_s
+        mat = axisangle_matrix(self.AXISANGLE_LOCATION[:], self.AXISANGLE_SCALE[:], self.AXISANGLE_VECTOR[:], self.AXISANGLE_ANGLE)
         T, R, S = mat.decompose()
 
         self.MATRIX = list(chain( *mat.row ))
@@ -2280,9 +2287,29 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
                         lst = [[Quaternion(elem.elem) for elem in self.quaternion_list_items if elem.item_enable==True]]
 
                 elif self.mode == 'MATRIX_LIST_MODE':
-                    #lst = [[Matrix(elem.MATRIX_UI) for elem in self.matrix_list_items if elem.item_enable==True]]
-                    lst = [elem.MATRIX[:] for elem in self.matrix_list_items if elem.item_enable==True]
-                    lst = [[Matrix(m) for m in np.transpose( np.array(list(chain(*lst),)).reshape(-1,4,4), (0,1,2) ).tolist()]]
+                    if self.matrix_mode1=='EULER':
+                        lst = []
+                        for elem in self.matrix_list_items:
+                            if elem.item_enable==True:
+                                mat = euler_matrix(elem.EULER_LOCATION[:], elem.EULER_SCALE[:], elem.EULER_ANGLE[:], self.matrix_euler_order)
+                                lst.append(mat)
+                        pass
+                    elif self.matrix_mode1=='AXISANGLE':
+                        lst = []
+                        for elem in self.matrix_list_items:
+                            if elem.item_enable==True:
+                                mat = axisangle_matrix(elem.AXISANGLE_LOCATION[:], elem.AXISANGLE_SCALE[:], elem.AXISANGLE_VECTOR[:], elem.AXISANGLE_ANGLE)
+                                lst.append(mat)
+                        pass
+                    else:
+                        # NONE
+                        lst = [elem.MATRIX[:] for elem in self.matrix_list_items if elem.item_enable==True]
+                        lst = [Matrix(m) for m in np.transpose( np.array(list(chain(*lst),)).reshape(-1,4,4), (0,1,2) ).tolist()]
+
+                    lst = [lst]
+
+                    # lst = [elem.MATRIX[:] for elem in self.matrix_list_items if elem.item_enable==True]
+                    # lst = [[Matrix(m) for m in np.transpose( np.array(list(chain(*lst),)).reshape(-1,4,4), (0,1,2) ).tolist()]]
 
                 elif self.mode == 'COLOR_LIST_MODE':
                     if self.use_alpha==True:
@@ -2316,7 +2343,25 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
                     else:
                         lst = [[Quaternion(elem.elem) for elem in self.quaternion_list_items]]
                 elif self.mode == 'MATRIX_LIST_MODE':
-                    lst = [[Matrix(elem.MATRIX) for elem in self.matrix_list_items]]
+                    if self.matrix_mode1=='EULER':
+                        lst = []
+                        for elem in self.matrix_list_items:
+                            mat = euler_matrix(elem.EULER_LOCATION[:], elem.EULER_SCALE[:], elem.EULER_ANGLE[:], self.matrix_euler_order)
+                            lst.append(mat)
+                        pass
+                    elif self.matrix_mode1=='AXISANGLE':
+                        lst = []
+                        for elem in self.matrix_list_items:
+                            mat = axisangle_matrix(elem.AXISANGLE_LOCATION[:], elem.AXISANGLE_SCALE[:], elem.AXISANGLE_VECTOR[:], elem.AXISANGLE_ANGLE)
+                            lst.append(mat)
+                        pass
+                    else:
+                        # NONE
+                        lst = [elem.MATRIX[:] for elem in self.matrix_list_items]
+                        lst = [Matrix(m) for m in np.transpose( np.array(list(chain(*lst),)).reshape(-1,4,4), (0,1,2) ).tolist()]
+
+                    lst = [lst]
+                    pass
                 elif self.mode == 'COLOR_LIST_MODE':
                     if self.use_alpha==True:
                         lst = [[tuple(elem.elem) for elem in self.color_list_items]]
