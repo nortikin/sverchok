@@ -186,83 +186,6 @@ class SvBlendCurvesMk2Node(SverchCustomTreeNode, bpy.types.Node):
                 if len(params)==1 and curve1==curve2 and self.cyclic==False:
                     if self.output_src:
                         new_curves.append(curve1)
-                _, t_max_1 = curve1.get_u_bounds()
-                t_min_2, _ = curve2.get_u_bounds()
-
-                curve1_end = curve1.evaluate(t_max_1)
-                curve2_begin = curve2.evaluate(t_min_2)
-
-                smooth = self.smooth_mode
-
-                if smooth == '0':
-                    new_curve = SvLine.from_two_points(curve1_end, curve2_begin)
-                    controls = [curve1_end, curve2_begin]
-                elif smooth == '1':
-                    tangent_1_end = curve1.tangent(t_max_1)
-                    tangent_2_begin = curve2.tangent(t_min_2)
-
-                    tangent1 = factor1 * tangent_1_end
-                    tangent2 = factor2 * tangent_2_begin
-
-                    new_curve = SvCubicBezierCurve(
-                            curve1_end,
-                            curve1_end + tangent1 / 3.0,
-                            curve2_begin - tangent2 / 3.0,
-                            curve2_begin
-                        )
-                    controls = [new_curve.p0.tolist(), new_curve.p1.tolist(),
-                                    new_curve.p2.tolist(), new_curve.p3.tolist()]
-                elif smooth == '1b':
-                    tangent_1_end = curve1.tangent(t_max_1)
-                    tangent_2_begin = curve2.tangent(t_min_2)
-
-                    new_curve = SvBiArc.calc(
-                            curve1_end, curve2_begin,
-                            tangent_1_end, tangent_2_begin,
-                            parameter,
-                            planar_tolerance = self.planar_tolerance)
-                    
-                    controls = [new_curve.junction.tolist()]
-                elif smooth == '2':
-                    tangent_1_end = curve1.tangent(t_max_1)
-                    tangent_2_begin = curve2.tangent(t_min_2)
-                    second_1_end = curve1.second_derivative(t_max_1)
-                    second_2_begin = curve2.second_derivative(t_min_2)
-
-                    new_curve = SvBezierCurve.blend_second_derivatives(
-                                    curve1_end, tangent_1_end, second_1_end,
-                                    curve2_begin, tangent_2_begin, second_2_begin)
-                    controls = [p.tolist() for p in new_curve.points]
-                elif smooth == '3':
-                    tangent_1_end = curve1.tangent(t_max_1)
-                    tangent_2_begin = curve2.tangent(t_min_2)
-                    second_1_end = curve1.second_derivative(t_max_1)
-                    second_2_begin = curve2.second_derivative(t_min_2)
-                    third_1_end = curve1.third_derivative_array(np.array([t_max_1]))[0]
-                    third_2_begin = curve2.third_derivative_array(np.array([t_min_2]))[0]
-
-                    new_curve = SvBezierCurve.blend_third_derivatives(
-                                    curve1_end, tangent_1_end, second_1_end, third_1_end,
-                                    curve2_begin, tangent_2_begin, second_2_begin, third_2_begin)
-                    controls = [p.tolist() for p in new_curve.points]
-                elif smooth == 'G2':
-                    tangent_1_end = curve1.tangent(t_max_1)
-                    tangent_2_begin = curve2.tangent(t_min_2)
-                    tangent1 = factor1 * tangent_1_end
-                    tangent2 = factor2 * tangent_2_begin
-                    normal_1_end = curve1.main_normal(t_max_1)
-                    normal_2_begin = curve2.main_normal(t_min_2)
-                    curvature_1_end = curve1.curvature(t_max_1)
-                    curvature_2_begin = curve2.curvature(t_min_2)
-                    
-                    #print(f"Bz: P1 {curve1_end}, P2 {curve2_begin}, T1 {tangent1}, T2 {tangent2}, n1 {normal_1_end}, n2 {normal_2_begin}, c1 {curvature_1_end}, c2 {curvature_2_begin}")
-                    new_curve = SvBezierCurve.from_tangents_normals_curvatures(
-                                    curve1_end, curve2_begin,
-                                    tangent1, tangent2,
-                                    normal_1_end, normal_2_begin,
-                                    curvature_1_end, curvature_2_begin)
-                    controls = new_curve.get_control_points().tolist()
-
                 else:
                     _, t_max_1 = curve1.get_u_bounds()
                     t_min_2, _ = curve2.get_u_bounds()
@@ -323,8 +246,23 @@ class SvBlendCurvesMk2Node(SverchCustomTreeNode, bpy.types.Node):
                                         curve1_end, tangent_1_end, second_1_end, third_1_end,
                                         curve2_begin, tangent_2_begin, second_2_begin, third_2_begin)
                         controls = [p.tolist() for p in new_curve.points]
-                    else:
-                        raise Exception("Unsupported smooth level")
+                    elif smooth == 'G2':
+                        tangent_1_end = curve1.tangent(t_max_1)
+                        tangent_2_begin = curve2.tangent(t_min_2)
+                        tangent1 = factor1 * tangent_1_end
+                        tangent2 = factor2 * tangent_2_begin
+                        normal_1_end = curve1.main_normal(t_max_1)
+                        normal_2_begin = curve2.main_normal(t_min_2)
+                        curvature_1_end = curve1.curvature(t_max_1)
+                        curvature_2_begin = curve2.curvature(t_min_2)
+                        
+                        #print(f"Bz: P1 {curve1_end}, P2 {curve2_begin}, T1 {tangent1}, T2 {tangent2}, n1 {normal_1_end}, n2 {normal_2_begin}, c1 {curvature_1_end}, c2 {curvature_2_begin}")
+                        new_curve = SvBezierCurve.from_tangents_normals_curvatures(
+                                        curve1_end, curve2_begin,
+                                        tangent1, tangent2,
+                                        normal_1_end, normal_2_begin,
+                                        curvature_1_end, curvature_2_begin)
+                        controls = new_curve.get_control_points().tolist()
 
                     # There is two templates of result:
                     # 1. curve1 new_curve1 curve2 new_curve2 curve3 [new_curve3 curve4]/cyclic->curve1
