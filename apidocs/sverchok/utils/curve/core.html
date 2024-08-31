@@ -598,6 +598,10 @@ R is diagonal matrix.</p>
 
         return integral, new_matrices
 
+    def curvature(self, t, tangent_delta=None):
+        h = self.get_tangent_delta(tangent_delta)
+        return self.curvature_array(np.array([t]), tangent_delta=h)[0]
+
     def curvature_array(self, ts, tangent_delta=None):
         h = self.get_tangent_delta(tangent_delta)
         tangents, seconds = self.derivatives_array(2, ts, tangent_delta=h)
@@ -750,6 +754,12 @@ R is diagonal matrix.</p>
 <dd>
 <div class="desc"><p>Calculate the length of curve segment by interpolating that segment
 with polyline.</p></div>
+</dd>
+<dt id="sverchok.utils.curve.core.SvCurve.curvature"><code class="name flex">
+<span>def <span class="ident">curvature</span></span>(<span>self, t, tangent_delta=None)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.core.SvCurve.curvature_array"><code class="name flex">
 <span>def <span class="ident">curvature_array</span></span>(<span>self, ts, tangent_delta=None)</span>
@@ -1928,6 +1938,7 @@ def scale(self):
 <li><code><a title="sverchok.utils.curve.core.SvCurve.binormal" href="#sverchok.utils.curve.core.SvCurve.binormal">binormal</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.binormal_array" href="#sverchok.utils.curve.core.SvCurve.binormal_array">binormal_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.calc_length" href="#sverchok.utils.curve.core.SvCurve.calc_length">calc_length</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.curvature" href="#sverchok.utils.curve.core.SvCurve.curvature">curvature</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.curvature_array" href="#sverchok.utils.curve.core.SvCurve.curvature_array">curvature_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.derivatives_array" href="#sverchok.utils.curve.core.SvCurve.derivatives_array">derivatives_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.evaluate" href="#sverchok.utils.curve.core.SvCurve.evaluate">evaluate</a></code></li>

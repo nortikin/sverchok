@@ -74,6 +74,8 @@ several Nurbs.</p>
 <dt><strong><code>w_axis</code></strong></dt>
 <dd>defines which axis of the curve is surface's normal (two
 other axes are surface's U and V). Default of 2 means X is U and Y is V.</dd>
+<dt><strong><code>normalize</code></strong></dt>
+<dd>whether the returned vectors should have unit norm</dd>
 </dl>
 <h2 id="returns">Returns</h2>
 <p>tuple:
@@ -978,6 +980,312 @@ Can raise UnsupportedCurveTypeException if some degrees can not be elevated.</p>
 </li>
 </ul>
 </dd>
+<dt id="sverchok.utils.curve.algorithms.SvCurveOnSurfaceCurvaturesCalculator"><code class="flex name class">
+<span>class <span class="ident">SvCurveOnSurfaceCurvaturesCalculator</span></span>
+<span>(</span><span>uv_curve, surface, ts, w_axis=2)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvCurveOnSurfaceCurvaturesCalculator(object):
+    def __init__(self, uv_curve, surface, ts, w_axis=2):
+        self.uv_curve = uv_curve
+        self.surface = surface
+        self.ts = np.asarray(ts)
+        self.w_axis = w_axis
+        self.curve = SvCurveOnSurface(self.uv_curve, self.surface, axis=w_axis)
+        self._uv_points = None
+        self._uv_tangents = None
+        self._uv_normals = None
+        self._uv_normals_in_3d = None
+        self._tangents = None
+        self._unit_tangents = None
+        self._surface_calculator = None
+
+    def uv_axes(self):
+        if self.w_axis == 2:
+            U, V = 0, 1
+        elif self.w_axis == 1:
+            U, V = 0, 2
+        else:
+            U, V = 1, 2
+        return U, V
+
+    @property
+    def uv_points(self):
+        if self._uv_points is None:
+            self._uv_points = self.uv_curve.evaluate_array(self.ts)
+        return self._uv_points
+
+    @property
+    def uv_tangents(self):
+        if self._uv_tangents is None:
+            self._uv_tangents = self.uv_curve.tangent_array(self.ts)
+        return self._uv_tangents
+
+    @property
+    def uv_normals(self):
+        if self._uv_normals is None:
+            U, V = self.uv_axes()
+            tangents = self.uv_tangents
+            normals = np.zeros_like(tangents)
+            normals[:,U] = tangents[:,V]
+            normals[:,V] = -tangents[:,U]
+            self._uv_normals = normals
+        return self._uv_normals
+
+    @property
+    def uv_normals_in_3d(self):
+        if self._uv_normals_in_3d is None:
+            self._uv_normals_in_3d = self.surface_calculator.derivatives_data.tangents_in_direction(self.uv_normals, self.w_axis)
+        return self._uv_normals_in_3d
+
+    @property
+    def surface_calculator(self):
+        if self._surface_calculator is None:
+            U, V = self.uv_axes()
+            self._surface_calculator = self.surface.curvature_calculator(self.uv_points[:,U], self.uv_points[:,V])
+        return self._surface_calculator
+
+    @property
+    def tangents(self):
+        if self._tangents is None:
+            self._tangents = self.curve.tangent_array(self.ts)
+        return self._tangents
+
+    @property
+    def unit_tangents(self):
+        if self._unit_tangents is None:
+            self._unit_tangents = self.tangents / np.linalg.norm(self.tangents, axis=1, keepdims=True)
+        return self._unit_tangents
+
+    def calc_tangent_cosines(self):
+        du = self.surface_calculator.fu / np.linalg.norm(self.surface_calculator.fu, axis=1, keepdims=True)
+        dv = self.surface_calculator.fv / np.linalg.norm(self.surface_calculator.fv, axis=1, keepdims=True)
+        v1 = (self.unit_tangents * du).sum(axis=1)
+        v2 = (self.unit_tangents * dv).sum(axis=1)
+        return v1, v2
+
+    def calc_curvatures_along_curve(self):
+        v1, v2 = self.calc_tangent_cosines()
+        return self.surface_calculator.curvature_along_direction(v1, v2)
+
+    def calc_curvatures_across_curve(self):
+        v1, v2 = self.calc_tangent_cosines()
+
+        #mean = self.surface_calculator.mean()
+        #curvatures = self.surface_calculator.curvature_along_direction(v1, v2)
+        #curvatures = 2*mean - curvatures
+
+        n1 = -np.sqrt(1 - v1*v1)
+        n2 = np.sqrt(1 - v2*v2)
+        curvatures = self.surface_calculator.curvature_along_direction(n1, n2)
+        return curvatures
+
+    def curve_frame_on_surface_array(self, normalize=True, on_zero_curvature=SvCurve.ASIS):
+        &#34;&#34;&#34;
+        Curve frame which is lying in the surface.
+
+        Frame is oriented as follows:
+            * X is pointing along surface normal
+            * Z is pointing along curve tangent
+            * Y is perpendicular to both X and Z.
+
+        Args:
+            normalize: whether the returned vectors should have unit norm
+
+        Returns:
+            tuple:
+                * matrices: np.array of shape (n, 3, 3)
+                * points: np.array of shape (n, 3) - points on the surface
+                * tangents: np.array of shape (n, 3)
+                * normals: np.array of shape (n, 3)
+                * binormals: np.array of shape (n, 3)
+        &#34;&#34;&#34;
+        surf_points = self.surface_calculator.points
+        if normalize:
+            tangents = self.unit_tangents
+        else:
+            tangents = self.tangents
+
+        normals = self.surface_calculator.normals
+        if normalize:
+            normals = normals / np.linalg.norm(normals, axis=1, keepdims=True)
+
+        if on_zero_curvature != SvCurve.ASIS:
+            zero_normal = np.linalg.norm(normals, axis=1) &lt; 1e-6
+            if zero_normal.any():
+                if on_zero_curvature == SvCurve.FAIL:
+                    raise ZeroCurvatureException(np.unique(ts[zero_normal]), zero_normal)
+                elif on_zero_curvature == SvCurve.RETURN_NONE:
+                    return None
+
+        binormals = - np.cross(normals, tangents)
+        matrices_np = np.dstack((normals, binormals, tangents))
+        matrices_np = np.transpose(matrices_np, axes=(0,2,1))
+        matrices_np = np.linalg.inv(matrices_np)
+        return matrices_np, surf_points, tangents, normals, binormals</code></pre>
+</details>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sverchok.utils.curve.algorithms.SvCurveOnSurfaceCurvaturesCalculator.surface_calculator"><code class="name">prop <span class="ident">surface_calculator</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def surface_calculator(self):
+    if self._surface_calculator is None:
+        U, V = self.uv_axes()
+        self._surface_calculator = self.surface.curvature_calculator(self.uv_points[:,U], self.uv_points[:,V])
+    return self._surface_calculator</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.algorithms.SvCurveOnSurfaceCurvaturesCalculator.tangents"><code class="name">prop <span class="ident">tangents</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def tangents(self):
+    if self._tangents is None:
+        self._tangents = self.curve.tangent_array(self.ts)
+    return self._tangents</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.algorithms.SvCurveOnSurfaceCurvaturesCalculator.unit_tangents"><code class="name">prop <span class="ident">unit_tangents</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def unit_tangents(self):
+    if self._unit_tangents is None:
+        self._unit_tangents = self.tangents / np.linalg.norm(self.tangents, axis=1, keepdims=True)
+    return self._unit_tangents</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.algorithms.SvCurveOnSurfaceCurvaturesCalculator.uv_normals"><code class="name">prop <span class="ident">uv_normals</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def uv_normals(self):
+    if self._uv_normals is None:
+        U, V = self.uv_axes()
+        tangents = self.uv_tangents
+        normals = np.zeros_like(tangents)
+        normals[:,U] = tangents[:,V]
+        normals[:,V] = -tangents[:,U]
+        self._uv_normals = normals
+    return self._uv_normals</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.algorithms.SvCurveOnSurfaceCurvaturesCalculator.uv_normals_in_3d"><code class="name">prop <span class="ident">uv_normals_in_3d</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def uv_normals_in_3d(self):
+    if self._uv_normals_in_3d is None:
+        self._uv_normals_in_3d = self.surface_calculator.derivatives_data.tangents_in_direction(self.uv_normals, self.w_axis)
+    return self._uv_normals_in_3d</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.algorithms.SvCurveOnSurfaceCurvaturesCalculator.uv_points"><code class="name">prop <span class="ident">uv_points</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def uv_points(self):
+    if self._uv_points is None:
+        self._uv_points = self.uv_curve.evaluate_array(self.ts)
+    return self._uv_points</code></pre>
+</details>
+</dd>
+<dt id="sverchok.utils.curve.algorithms.SvCurveOnSurfaceCurvaturesCalculator.uv_tangents"><code class="name">prop <span class="ident">uv_tangents</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def uv_tangents(self):
+    if self._uv_tangents is None:
+        self._uv_tangents = self.uv_curve.tangent_array(self.ts)
+    return self._uv_tangents</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.curve.algorithms.SvCurveOnSurfaceCurvaturesCalculator.calc_curvatures_across_curve"><code class="name flex">
+<span>def <span class="ident">calc_curvatures_across_curve</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.curve.algorithms.SvCurveOnSurfaceCurvaturesCalculator.calc_curvatures_along_curve"><code class="name flex">
+<span>def <span class="ident">calc_curvatures_along_curve</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.curve.algorithms.SvCurveOnSurfaceCurvaturesCalculator.calc_tangent_cosines"><code class="name flex">
+<span>def <span class="ident">calc_tangent_cosines</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.curve.algorithms.SvCurveOnSurfaceCurvaturesCalculator.curve_frame_on_surface_array"><code class="name flex">
+<span>def <span class="ident">curve_frame_on_surface_array</span></span>(<span>self, normalize=True, on_zero_curvature='asis')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Curve frame which is lying in the surface.</p>
+<p>Frame is oriented as follows:
+* X is pointing along surface normal
+* Z is pointing along curve tangent
+* Y is perpendicular to both X and Z.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>normalize</code></strong></dt>
+<dd>whether the returned vectors should have unit norm</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>tuple:
+* matrices: np.array of shape (n, 3, 3)
+* points: np.array of shape (n, 3) - points on the surface
+* tangents: np.array of shape (n, 3)
+* normals: np.array of shape (n, 3)
+* binormals: np.array of shape (n, 3)</p></div>
+</dd>
+<dt id="sverchok.utils.curve.algorithms.SvCurveOnSurfaceCurvaturesCalculator.uv_axes"><code class="name flex">
+<span>def <span class="ident">uv_axes</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
 <dt id="sverchok.utils.curve.algorithms.SvCurvesSortResult"><code class="flex name class">
 <span>class <span class="ident">SvCurvesSortResult</span></span>
 </code></dt>
@@ -1539,6 +1847,23 @@ Can raise UnsupportedCurveTypeException if some degrees can not be elevated.</p>
 </li>
 <li>
 <h4><code><a title="sverchok.utils.curve.algorithms.SvCurveOnSurface" href="#sverchok.utils.curve.algorithms.SvCurveOnSurface">SvCurveOnSurface</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.curve.algorithms.SvCurveOnSurfaceCurvaturesCalculator" href="#sverchok.utils.curve.algorithms.SvCurveOnSurfaceCurvaturesCalculator">SvCurveOnSurfaceCurvaturesCalculator</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.curve.algorithms.SvCurveOnSurfaceCurvaturesCalculator.calc_curvatures_across_curve" href="#sverchok.utils.curve.algorithms.SvCurveOnSurfaceCurvaturesCalculator.calc_curvatures_across_curve">calc_curvatures_across_curve</a></code></li>
+<li><code><a title="sverchok.utils.curve.algorithms.SvCurveOnSurfaceCurvaturesCalculator.calc_curvatures_along_curve" href="#sverchok.utils.curve.algorithms.SvCurveOnSurfaceCurvaturesCalculator.calc_curvatures_along_curve">calc_curvatures_along_curve</a></code></li>
+<li><code><a title="sverchok.utils.curve.algorithms.SvCurveOnSurfaceCurvaturesCalculator.calc_tangent_cosines" href="#sverchok.utils.curve.algorithms.SvCurveOnSurfaceCurvaturesCalculator.calc_tangent_cosines">calc_tangent_cosines</a></code></li>
+<li><code><a title="sverchok.utils.curve.algorithms.SvCurveOnSurfaceCurvaturesCalculator.curve_frame_on_surface_array" href="#sverchok.utils.curve.algorithms.SvCurveOnSurfaceCurvaturesCalculator.curve_frame_on_surface_array">curve_frame_on_surface_array</a></code></li>
+<li><code><a title="sverchok.utils.curve.algorithms.SvCurveOnSurfaceCurvaturesCalculator.surface_calculator" href="#sverchok.utils.curve.algorithms.SvCurveOnSurfaceCurvaturesCalculator.surface_calculator">surface_calculator</a></code></li>
+<li><code><a title="sverchok.utils.curve.algorithms.SvCurveOnSurfaceCurvaturesCalculator.tangents" href="#sverchok.utils.curve.algorithms.SvCurveOnSurfaceCurvaturesCalculator.tangents">tangents</a></code></li>
+<li><code><a title="sverchok.utils.curve.algorithms.SvCurveOnSurfaceCurvaturesCalculator.unit_tangents" href="#sverchok.utils.curve.algorithms.SvCurveOnSurfaceCurvaturesCalculator.unit_tangents">unit_tangents</a></code></li>
+<li><code><a title="sverchok.utils.curve.algorithms.SvCurveOnSurfaceCurvaturesCalculator.uv_axes" href="#sverchok.utils.curve.algorithms.SvCurveOnSurfaceCurvaturesCalculator.uv_axes">uv_axes</a></code></li>
+<li><code><a title="sverchok.utils.curve.algorithms.SvCurveOnSurfaceCurvaturesCalculator.uv_normals" href="#sverchok.utils.curve.algorithms.SvCurveOnSurfaceCurvaturesCalculator.uv_normals">uv_normals</a></code></li>
+<li><code><a title="sverchok.utils.curve.algorithms.SvCurveOnSurfaceCurvaturesCalculator.uv_normals_in_3d" href="#sverchok.utils.curve.algorithms.SvCurveOnSurfaceCurvaturesCalculator.uv_normals_in_3d">uv_normals_in_3d</a></code></li>
+<li><code><a title="sverchok.utils.curve.algorithms.SvCurveOnSurfaceCurvaturesCalculator.uv_points" href="#sverchok.utils.curve.algorithms.SvCurveOnSurfaceCurvaturesCalculator.uv_points">uv_points</a></code></li>
+<li><code><a title="sverchok.utils.curve.algorithms.SvCurveOnSurfaceCurvaturesCalculator.uv_tangents" href="#sverchok.utils.curve.algorithms.SvCurveOnSurfaceCurvaturesCalculator.uv_tangents">uv_tangents</a></code></li>
+</ul>
 </li>
 <li>
 <h4><code><a title="sverchok.utils.curve.algorithms.SvCurvesSortResult" href="#sverchok.utils.curve.algorithms.SvCurvesSortResult">SvCurvesSortResult</a></code></h4>
