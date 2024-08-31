@@ -40,7 +40,7 @@ hljs.highlightAll();
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.surface.bakery.calc_surface_data"><code class="name flex">
-<span>def <span class="ident">calc_surface_data</span></span>(<span>light_vector, surface_color, n_u, n_v, points)</span>
+<span>def <span class="ident">calc_surface_data</span></span>(<span>light_vector, surface_colors, n_u, n_v, points)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -117,6 +117,57 @@ hljs.highlightAll();
         self.points = surface.evaluate_array(us, vs)#.tolist()
         self.points_list = self.points.reshape((resolution_u*resolution_v, 3)).tolist()
 
+        main_color = np.array(node.surface_color)
+        if node.draw_curvature:
+            calc = surface.curvature_calculator(us, vs, order=False)
+            if node.curvature_type == &#39;GAUSS&#39;:
+                curvature_values = calc.gauss()
+            elif node.curvature_type == &#39;MEAN&#39;:
+                curvature_values = calc.mean()
+            elif node.curvature_type == &#39;MAX&#39;:
+                c1, c2 = calc.values()
+                #curvature_values = np.max((abs(c1), abs(c2)), axis=0)
+                curvature_values = np.max((c1, c2), axis=0)
+            elif node.curvature_type == &#39;MIN&#39;:
+                c1, c2 = calc.values()
+                #curvature_values = np.min((abs(c1), abs(c2)), axis=0)
+                curvature_values = np.min((c1, c2), axis=0)
+            else: # DIFF
+                c1, c2 = calc.values()
+                m = np.min((c1, c2), axis=0)
+                M = np.max((c1, c2), axis=0)
+                #m = np.min((abs(c1), abs(c2)), axis=0)
+                #M = np.max((abs(c1), abs(c2)), axis=0)
+                curvature_values = M - m
+
+            curvature_values[np.isnan(curvature_values)] = 0
+            min_curvature = curvature_values.min()
+            max_curvature = curvature_values.max()
+            surface_colors = np.zeros((resolution_u*resolution_v, 4))
+            surface_colors[:] = main_color
+            max_color = np.array(node.curvature_max_color)
+            min_color = np.array(node.curvature_min_color)
+            if (max_curvature - min_curvature) &lt; 1e-4:
+                curvature = (max_curvature + min_curvature)*0.5
+                if curvature &gt; 0:
+                    surface_colors[:] = max_color
+                if curvature &lt; 0:
+                    surface_colors[:] = min_color
+            else:
+                if max_curvature &gt; 0:
+                    positive = (curvature_values &gt; 0)
+                    c = curvature_values[positive] / max_curvature
+                    c = c[np.newaxis].T
+                    surface_colors[positive] = (1 - c)*main_color + c*max_color
+                if min_curvature &lt; 0:
+                    negative = (curvature_values &lt; 0)
+                    c = (min_curvature - curvature_values[negative]) / min_curvature
+                    c = c[np.newaxis].T
+                    surface_colors[negative] = (1 - c)*min_color + c*main_color
+        else:
+            surface_colors = np.empty((resolution_u*resolution_v, 4))
+            surface_colors[:] = main_color
+
         if hasattr(surface, &#39;get_control_points&#39;):
             self.cpts = surface.get_control_points()
             n_v, n_u, _ = self.cpts.shape
@@ -137,7 +188,7 @@ hljs.highlightAll();
             self.node_u_isoline_data = node_v_isoline_data = None
 
         self.edges = make_quad_edges(resolution_u, resolution_v)
-        self.tris, self.tri_colors = calc_surface_data(node.light_vector, node.surface_color, resolution_u, resolution_v, self.points)
+        self.tris, self.tri_colors = calc_surface_data(node.light_vector, surface_colors, resolution_u, resolution_v, self.points)
     
     def bake(self, object_name):
         me = bpy.data.meshes.new(object_name)
