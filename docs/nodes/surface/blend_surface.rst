@@ -55,6 +55,21 @@ Parameters
 
 This node has the following parameters:
 
+* **Smoothness**. This defines how smooth the connection between initial
+  surfaces and generated blending surface should be. The available options are:
+
+  * **G1 - Tangency**. Exact matching of tangents is guaranteed.
+    
+    .. image:: https://user-images.githubusercontent.com/284644/210866314-f05d511e-8ae9-46aa-88b1-feb030c67ce1.png
+      :target: https://user-images.githubusercontent.com/284644/210866314-f05d511e-8ae9-46aa-88b1-feb030c67ce1.png
+
+  * **G2 - Curvature**. Matching of geometric curvature is guaranteed.
+
+    .. image:: https://user-images.githubusercontent.com/284644/210866466-2a0d5628-0d00-48ad-a28b-5c037d84b7fd.png
+      :target: https://user-images.githubusercontent.com/284644/210866466-2a0d5628-0d00-48ad-a28b-5c037d84b7fd.png
+
+   The default option is **G1 - Tangency**.
+
 * **Curve1**. This defines where the blending surface should touch the first surface. The available options are:
 
   * **Min U**. Use the edge of the surface with the minimum value of U parameter.

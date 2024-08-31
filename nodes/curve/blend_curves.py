@@ -43,8 +43,8 @@ class SvBlendCurvesMk2Node(SverchCustomTreeNode, bpy.types.Node):
         self.inputs['Curve1'].hide_safe = self.mode != 'TWO'
         self.inputs['Curve2'].hide_safe = self.mode != 'TWO'
         self.inputs['Curves'].hide_safe = self.mode != 'N'
-        self.inputs['Factor1'].hide_safe = self.smooth_mode != '1'
-        self.inputs['Factor2'].hide_safe = self.smooth_mode != '1'
+        self.inputs['Factor1'].hide_safe = self.smooth_mode not in ['1', 'G2']
+        self.inputs['Factor2'].hide_safe = self.smooth_mode not in ['1', 'G2']
         self.inputs['Parameter'].hide_safe = self.smooth_mode != '1b'
         updateNode(self, context)
 
@@ -60,11 +60,12 @@ class SvBlendCurvesMk2Node(SverchCustomTreeNode, bpy.types.Node):
         update = update_sockets)
 
     smooth_modes = [
-            ('0',  "0 - Position", "Connect ends of curves with straight line segment", 0),
-            ('1',  "1 - Tangency", "Connect curves such that their tangents are smoothly joined", 1),
-            ('1b', "1b - Bi Arc", "Connect curves with Bi Arc, such that tangents are smoothly joined", 2),
-            ('2',  "2 - Normals", "Connect curves such that their normals (second derivatives) are smoothly joined", 3),
-            ('3',  "3 - Curvature", "Connect curves such that their curvatures (third derivatives) are smoothly joined", 4)
+            ('0', "C0 - Position", "Connect ends of curves with straight line segment", 0),
+            ('1', "G1 - Tangency", "Connect curves such that their tangents are continuosly joined", 1),
+            ('1b', "G1 - Bi Arc", "Connect curves with Bi Arc, such that tangents are continuosly joined", 2),
+            ('2', "C2 - Smooth Normals", "Connect curves such that their second derivatives are continuosly joined", 3),
+            ('3', "C3 - Smooth Curvature", "Connect curves such that their third derivatives are continuosly joined", 4),
+            ('G2', "G2 - Curvature", "Connect curves such that their tangents, normals and curvatures are continuosly joined", 5)
         ]
 
     smooth_mode : EnumProperty(
@@ -245,8 +246,23 @@ class SvBlendCurvesMk2Node(SverchCustomTreeNode, bpy.types.Node):
                                         curve1_end, tangent_1_end, second_1_end, third_1_end,
                                         curve2_begin, tangent_2_begin, second_2_begin, third_2_begin)
                         controls = [p.tolist() for p in new_curve.points]
-                    else:
-                        raise Exception("Unsupported smooth level")
+                    elif smooth == 'G2':
+                        tangent_1_end = curve1.tangent(t_max_1)
+                        tangent_2_begin = curve2.tangent(t_min_2)
+                        tangent1 = factor1 * tangent_1_end
+                        tangent2 = factor2 * tangent_2_begin
+                        normal_1_end = curve1.main_normal(t_max_1)
+                        normal_2_begin = curve2.main_normal(t_min_2)
+                        curvature_1_end = curve1.curvature(t_max_1)
+                        curvature_2_begin = curve2.curvature(t_min_2)
+                        
+                        #print(f"Bz: P1 {curve1_end}, P2 {curve2_begin}, T1 {tangent1}, T2 {tangent2}, n1 {normal_1_end}, n2 {normal_2_begin}, c1 {curvature_1_end}, c2 {curvature_2_begin}")
+                        new_curve = SvBezierCurve.from_tangents_normals_curvatures(
+                                        curve1_end, curve2_begin,
+                                        tangent1, tangent2,
+                                        normal_1_end, normal_2_begin,
+                                        curvature_1_end, curvature_2_begin)
+                        controls = new_curve.get_control_points().tolist()
 
                     # There is two templates of result:
                     # 1. curve1 new_curve1 curve2 new_curve2 curve3 [new_curve3 curve4]/cyclic->curve1
