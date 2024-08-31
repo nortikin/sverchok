@@ -60,11 +60,6 @@ class SvBlendCurvesMk2Node(SverchCustomTreeNode, bpy.types.Node):
         update = update_sockets)
 
     smooth_modes = [
-            ('0',  "0 - Position", "Connect ends of curves with straight line segment", 0),
-            ('1',  "1 - Tangency", "Connect curves such that their tangents are smoothly joined", 1),
-            ('1b', "1b - Bi Arc", "Connect curves with Bi Arc, such that tangents are smoothly joined", 2),
-            ('2',  "2 - Normals", "Connect curves such that their normals (second derivatives) are smoothly joined", 3),
-            ('3',  "3 - Curvature", "Connect curves such that their curvatures (third derivatives) are smoothly joined", 4)
             ('0', "C0 - Position", "Connect ends of curves with straight line segment", 0),
             ('1', "G1 - Tangency", "Connect curves such that their tangents are continuosly joined", 1),
             ('1b', "G1 - Bi Arc", "Connect curves with Bi Arc, such that tangents are continuosly joined", 2),
@@ -188,11 +183,9 @@ class SvBlendCurvesMk2Node(SverchCustomTreeNode, bpy.types.Node):
             new_curves = []
             new_controls = []
             for curve1, curve2, factor1, factor2, parameter in params:
-<<<<<<< HEAD
                 if len(params)==1 and curve1==curve2 and self.cyclic==False:
                     if self.output_src:
                         new_curves.append(curve1)
-=======
                 _, t_max_1 = curve1.get_u_bounds()
                 t_min_2, _ = curve2.get_u_bounds()
 
@@ -269,7 +262,7 @@ class SvBlendCurvesMk2Node(SverchCustomTreeNode, bpy.types.Node):
                                     normal_1_end, normal_2_begin,
                                     curvature_1_end, curvature_2_begin)
                     controls = new_curve.get_control_points().tolist()
->>>>>>> 7b578d5a3 ("Blend Curves": G2 mode.)
+
                 else:
                     _, t_max_1 = curve1.get_u_bounds()
                     t_min_2, _ = curve2.get_u_bounds()
