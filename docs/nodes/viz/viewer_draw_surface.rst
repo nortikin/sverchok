@@ -90,6 +90,26 @@ The parameters of the node are (in this order):
 .. image:: https://user-images.githubusercontent.com/14288520/190234804-8789ca5c-d35a-46f3-9c6c-95cc440ce394.png
   :target: https://user-images.githubusercontent.com/14288520/190234804-8789ca5c-d35a-46f3-9c6c-95cc440ce394.png
 
+* **Indicate Curvature**, **Minimum Curvature Color**, **Maximum Curvature
+  Color**. Control indication of surface curvature. Colors control how places
+  with minimum and maximum curvature value will be indicated on surface. Places
+  with medium curvature values will be drawn with **Surface Color**, as usual.
+  The **Type** dropdown is visible only when **Indicate Curvature** is checked,
+  and it controls what type of curvature should be indicated:
+
+  * **Gauss** - indicate Gauss curvature (product of minimum and maximum
+    curvature). Places with positive Gaussian curvature are where the surface
+    behaves like sphere. Places with negative Gaussian curvature are where the
+    surface is like a saddle.
+  * **Mean** - indicate mean curvature (sum of minimum and maximum curvature).
+  * **Maximum** - indicate maximum curvature, i.e. the biggest of two principal
+    curvature values.
+  * **Minimum** - indicate minimum curvature, i.e. the smallest of two
+    principal curvature values.
+  * **Difference** - indicate difference between maximum and minimum curvature
+    values. Places where difference is zero, i.e. maximum curvature equals
+    minimum curvature, are umbillic points.
+
 Operators
 ---------
 
@@ -112,3 +132,26 @@ Example of Usage
 * Generator-> :doc:`Plane </nodes/generator/plane_mk3>`
 * Transform-> :doc:`Randomize </nodes/transforms/randomize>`
 * Surfaces->NURBS-> :doc:`Interpolate Nurbs Surface </nodes/surface/interpolate_nurbs_surface>`
+
+Examples of surface curvature indication:
+
+* Gaussian curvature:
+
+.. image:: https://user-images.githubusercontent.com/284644/212495583-9f71e2c3-5fa5-410f-be9d-9b5c6c72b066.png
+  :target: https://user-images.githubusercontent.com/284644/212495583-9f71e2c3-5fa5-410f-be9d-9b5c6c72b066.png
+
+* Another surface with indicated Gaussian curvature:
+
+.. image:: https://user-images.githubusercontent.com/284644/215551129-04652358-2704-4f6a-a069-d4f05a51158c.png
+  :target: https://user-images.githubusercontent.com/284644/215551129-04652358-2704-4f6a-a069-d4f05a51158c.png
+
+* Mean curvature:
+
+.. image:: https://user-images.githubusercontent.com/284644/212495578-f719c92f-a503-4146-92bb-f474c2905753.png
+  :target: https://user-images.githubusercontent.com/284644/212495578-f719c92f-a503-4146-92bb-f474c2905753.png
+
+* Difference of two curvatures:
+
+.. image:: https://user-images.githubusercontent.com/284644/212495582-cfae4468-8b65-4f78-9c55-6237e53a5e0a.png
+  :target: https://user-images.githubusercontent.com/284644/212495582-cfae4468-8b65-4f78-9c55-6237e53a5e0a.png
+
