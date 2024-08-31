@@ -66,7 +66,7 @@ This node has the following parameters:
 * **Continuity**. This defines how smooth the connection between initial curves
   and generated blending curves should be. The available options are:
 
-  * **0 - Position**. Blending curve starts at the end of first curve and ends
+  * **C0 - Position**. Blending curve starts at the end of first curve and ends
     at the beginning of the second curve, but no attempts are made to make
     these connections smooth. As a result, the blending curve is always a
     segment of a straight line.
@@ -74,21 +74,21 @@ This node has the following parameters:
     .. image:: https://user-images.githubusercontent.com/14288520/211332041-419c7002-28bb-45ca-b507-238ff4f13dcd.png
       :target: https://user-images.githubusercontent.com/14288520/211332041-419c7002-28bb-45ca-b507-238ff4f13dcd.png
 
-  * **1 - Tangency**. The blending curves are generated so that the tangent
+  * **G1 - Tangency**. The blending curves are generated so that the tangent
     vectors of the curves are equal at their meeting points. The generated
     curves are cubic Bezier curves.
 
     .. image:: https://user-images.githubusercontent.com/14288520/211333493-3dfe0a3f-1143-429f-bd1c-7a9c04ce45bf.png
       :target: https://user-images.githubusercontent.com/14288520/211333493-3dfe0a3f-1143-429f-bd1c-7a9c04ce45bf.png
 
-  * **1b - Bi Arc**. The blending curves are generated as biarc_ curves, i.e.
+  * **G1 - Bi Arc**. The blending curves are generated as biarc_ curves, i.e.
     pairs of circular arcs; they are generated so that the tanent vectors of
     the curves are equal at their meeting points.
 
     .. image:: https://user-images.githubusercontent.com/14288520/211338021-ae8c68d9-bc02-4323-8cc5-8888c0c8ad33.png
       :target: https://user-images.githubusercontent.com/14288520/211338021-ae8c68d9-bc02-4323-8cc5-8888c0c8ad33.png
 
-  * **2 - Normals**. The blending curves are generated so that 1) tangent
+  * **C2 - Smooth Normals**. The blending curves are generated so that 1) tangent
     vectors of the curves are equal at the meeting points; 2) second
     derivatives of the curves are also equal at the meeting points. Thus,
     normal and binormal vectors of the curves are equal at their meeting
@@ -97,7 +97,7 @@ This node has the following parameters:
     .. image:: https://user-images.githubusercontent.com/14288520/211343223-f0c9bc79-bf16-4833-a3cd-6b651d52d099.png
       :target: https://user-images.githubusercontent.com/14288520/211343223-f0c9bc79-bf16-4833-a3cd-6b651d52d099.png
 
-  * **3 - Curvature**. The blending curves are generated so that 1) tangent
+  * **C3 - Smooth Curvature**. The blending curves are generated so that 1) tangent
     vectors of the curves are equal at the meeting points; 2) second and third
     derivatives of the curves are also equal at the meeting points. Thus,
     normal and binormal vectors of the curves, as well as curvatures of the
@@ -106,6 +106,14 @@ This node has the following parameters:
 
     .. image:: https://user-images.githubusercontent.com/14288520/211344080-1146e033-7296-4f92-9bd5-f36348d7ebd7.png
       :target: https://user-images.githubusercontent.com/14288520/211344080-1146e033-7296-4f92-9bd5-f36348d7ebd7.png
+
+  * **G2 - Curvature**. This means continuous curvature. Curvature comb rim
+    line is continuous, but not smooth. In this sense, this mode is similar to
+    "C2 - Smooth Normals" mode. But with G2 mode, the blending curve does not
+    go so far from touching points as in C2 or C3 mode.
+
+    .. image:: https://user-images.githubusercontent.com/284644/210864882-de4a8a95-f73a-42d3-b30f-1f01ad7a6c33.png
+      :target: https://user-images.githubusercontent.com/284644/210864882-de4a8a95-f73a-42d3-b30f-1f01ad7a6c33.png
 
   The default value is **1 - Tangency**.
 

@@ -228,6 +228,20 @@ mean better approximation, but worse performance.</p></li>
 <h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
 <p>This node has the following parameters:</p>
 <ul>
+<li><p><strong>Smoothness</strong>. This defines how smooth the connection between initial
+surfaces and generated blending surface should be. The available options are:</p>
+<ul>
+<li><p><strong>G1 - Tangency</strong>. Exact matching of tangents is guaranteed.</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/210866314-f05d511e-8ae9-46aa-88b1-feb030c67ce1.png"><img alt="https://user-images.githubusercontent.com/284644/210866314-f05d511e-8ae9-46aa-88b1-feb030c67ce1.png" src="https://user-images.githubusercontent.com/284644/210866314-f05d511e-8ae9-46aa-88b1-feb030c67ce1.png" /></a>
+</li>
+<li><p><strong>G2 - Curvature</strong>. Matching of geometric curvature is guaranteed.</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/210866466-2a0d5628-0d00-48ad-a28b-5c037d84b7fd.png"><img alt="https://user-images.githubusercontent.com/284644/210866466-2a0d5628-0d00-48ad-a28b-5c037d84b7fd.png" src="https://user-images.githubusercontent.com/284644/210866466-2a0d5628-0d00-48ad-a28b-5c037d84b7fd.png" /></a>
+</li>
+</ul>
+<blockquote>
+<div><p>The default option is <strong>G1 - Tangency</strong>.</p>
+</div></blockquote>
+</li>
 <li><p><strong>Curve1</strong>. This defines where the blending surface should touch the first surface. The available options are:</p>
 <ul class="simple">
 <li><p><strong>Min U</strong>. Use the edge of the surface with the minimum value of U parameter.</p></li>

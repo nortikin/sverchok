@@ -257,36 +257,42 @@ set to <strong>BiArc</strong>. This defines the value of P parameter of the fami
 <li><p><strong>Continuity</strong>. This defines how smooth the connection between initial curves
 and generated blending curves should be. The available options are:</p>
 <ul>
-<li><p><strong>0 - Position</strong>. Blending curve starts at the end of first curve and ends
+<li><p><strong>C0 - Position</strong>. Blending curve starts at the end of first curve and ends
 at the beginning of the second curve, but no attempts are made to make
 these connections smooth. As a result, the blending curve is always a
 segment of a straight line.</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211332041-419c7002-28bb-45ca-b507-238ff4f13dcd.png"><img alt="https://user-images.githubusercontent.com/14288520/211332041-419c7002-28bb-45ca-b507-238ff4f13dcd.png" src="https://user-images.githubusercontent.com/14288520/211332041-419c7002-28bb-45ca-b507-238ff4f13dcd.png" /></a>
 </li>
-<li><p><strong>1 - Tangency</strong>. The blending curves are generated so that the tangent
+<li><p><strong>G1 - Tangency</strong>. The blending curves are generated so that the tangent
 vectors of the curves are equal at their meeting points. The generated
 curves are cubic Bezier curves.</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211333493-3dfe0a3f-1143-429f-bd1c-7a9c04ce45bf.png"><img alt="https://user-images.githubusercontent.com/14288520/211333493-3dfe0a3f-1143-429f-bd1c-7a9c04ce45bf.png" src="https://user-images.githubusercontent.com/14288520/211333493-3dfe0a3f-1143-429f-bd1c-7a9c04ce45bf.png" /></a>
 </li>
-<li><p><strong>1b - Bi Arc</strong>. The blending curves are generated as <a class="reference external" href="https://en.wikipedia.org/wiki/Biarc">biarc</a> curves, i.e.
+<li><p><strong>G1 - Bi Arc</strong>. The blending curves are generated as <a class="reference external" href="https://en.wikipedia.org/wiki/Biarc">biarc</a> curves, i.e.
 pairs of circular arcs; they are generated so that the tanent vectors of
 the curves are equal at their meeting points.</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211338021-ae8c68d9-bc02-4323-8cc5-8888c0c8ad33.png"><img alt="https://user-images.githubusercontent.com/14288520/211338021-ae8c68d9-bc02-4323-8cc5-8888c0c8ad33.png" src="https://user-images.githubusercontent.com/14288520/211338021-ae8c68d9-bc02-4323-8cc5-8888c0c8ad33.png" /></a>
 </li>
-<li><p><strong>2 - Normals</strong>. The blending curves are generated so that 1) tangent
+<li><p><strong>C2 - Smooth Normals</strong>. The blending curves are generated so that 1) tangent
 vectors of the curves are equal at the meeting points; 2) second
 derivatives of the curves are also equal at the meeting points. Thus,
 normal and binormal vectors of the curves are equal at their meeting
 points. The generated curves are Bezier curves of fifth order.</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211343223-f0c9bc79-bf16-4833-a3cd-6b651d52d099.png"><img alt="https://user-images.githubusercontent.com/14288520/211343223-f0c9bc79-bf16-4833-a3cd-6b651d52d099.png" src="https://user-images.githubusercontent.com/14288520/211343223-f0c9bc79-bf16-4833-a3cd-6b651d52d099.png" /></a>
 </li>
-<li><p><strong>3 - Curvature</strong>. The blending curves are generated so that 1) tangent
+<li><p><strong>C3 - Smooth Curvature</strong>. The blending curves are generated so that 1) tangent
 vectors of the curves are equal at the meeting points; 2) second and third
 derivatives of the curves are also equal at the meeting points. Thus,
 normal and binormal vectors of the curves, as well as curvatures of the
 curves, are equal at their meeting points. The generated curves are Bezier
 curves of order 7.</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211344080-1146e033-7296-4f92-9bd5-f36348d7ebd7.png"><img alt="https://user-images.githubusercontent.com/14288520/211344080-1146e033-7296-4f92-9bd5-f36348d7ebd7.png" src="https://user-images.githubusercontent.com/14288520/211344080-1146e033-7296-4f92-9bd5-f36348d7ebd7.png" /></a>
+</li>
+<li><p><strong>G2 - Curvature</strong>. This means continuous curvature. Curvature comb rim
+line is continuous, but not smooth. In this sense, this mode is similar to
+“C2 - Smooth Normals” mode. But with G2 mode, the blending curve does not
+go so far from touching points as in C2 or C3 mode.</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/210864882-de4a8a95-f73a-42d3-b30f-1f01ad7a6c33.png"><img alt="https://user-images.githubusercontent.com/284644/210864882-de4a8a95-f73a-42d3-b30f-1f01ad7a6c33.png" src="https://user-images.githubusercontent.com/284644/210864882-de4a8a95-f73a-42d3-b30f-1f01ad7a6c33.png" /></a>
 </li>
 </ul>
 <p>The default value is <strong>1 - Tangency</strong>.</p>
