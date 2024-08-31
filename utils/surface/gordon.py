@@ -6,6 +6,7 @@ from sverchok.utils.curve.algorithms import unify_curves_degree, SvCurveOnSurfac
 from sverchok.utils.curve.nurbs_solver_applications import interpolate_nurbs_curve_with_tangents, interpolate_nurbs_curve
 from sverchok.utils.surface.nurbs import SvNurbsSurface, simple_loft, interpolate_nurbs_surface
 from sverchok.utils.surface.algorithms import unify_nurbs_surfaces
+from sverchok.utils.sv_logging import get_logger
 
 def reparametrize_by_segments(curve, t_values, tolerance=1e-2):
     # Reparametrize given curve so that parameter values from t_values parameter

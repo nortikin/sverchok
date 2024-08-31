@@ -214,7 +214,7 @@ class SvBlendSurfaceNodeMk2(SverchCustomTreeNode, bpy.types.Node):
                                 absolute_bulge = absolute_bulge,
                                 tangency = self.tangency_mode,
                                 ortho_mode = self.ortho_mode,
-                                logger = self.get_logger())
+                                logger = self.sv_logger)
                 else:
                     surface = SvBlendSurface(surface1, surface2, curve1, curve2, bulge1, bulge2,
                                 absolute_bulge = absolute_bulge,
