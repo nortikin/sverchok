@@ -228,6 +228,29 @@ values of knotvectors along U and V parameter directions. Node lines are not
 displayed by default.</p></li>
 </ul>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190234804-8789ca5c-d35a-46f3-9c6c-95cc440ce394.png"><img alt="https://user-images.githubusercontent.com/14288520/190234804-8789ca5c-d35a-46f3-9c6c-95cc440ce394.png" src="https://user-images.githubusercontent.com/14288520/190234804-8789ca5c-d35a-46f3-9c6c-95cc440ce394.png" /></a>
+<ul class="simple">
+<li><p><strong>Indicate Curvature</strong>, <strong>Minimum Curvature Color</strong>, <strong>Maximum Curvature
+Color</strong>. Control indication of surface curvature. Colors control how places
+with minimum and maximum curvature value will be indicated on surface. Places
+with medium curvature values will be drawn with <strong>Surface Color</strong>, as usual.
+The <strong>Type</strong> dropdown is visible only when <strong>Indicate Curvature</strong> is checked,
+and it controls what type of curvature should be indicated:</p>
+<ul>
+<li><p><strong>Gauss</strong> - indicate Gauss curvature (product of minimum and maximum
+curvature). Places with positive Gaussian curvature are where the surface
+behaves like sphere. Places with negative Gaussian curvature are where the
+surface is like a saddle.</p></li>
+<li><p><strong>Mean</strong> - indicate mean curvature (sum of minimum and maximum curvature).</p></li>
+<li><p><strong>Maximum</strong> - indicate maximum curvature, i.e. the biggest of two principal
+curvature values.</p></li>
+<li><p><strong>Minimum</strong> - indicate minimum curvature, i.e. the smallest of two
+principal curvature values.</p></li>
+<li><p><strong>Difference</strong> - indicate difference between maximum and minimum curvature
+values. Places where difference is zero, i.e. maximum curvature equals
+minimum curvature, are umbillic points.</p></li>
+</ul>
+</li>
+</ul>
 </section>
 <section id="operators">
 <h2>Operators<a class="headerlink" href="#operators" title="Link to this heading">¶</a></h2>
@@ -249,6 +272,23 @@ displayed by default.</p></li>
 <li><p>Transform-&gt; <a class="reference internal" href="../transforms/randomize.html"><span class="doc">Randomize</span></a></p></li>
 <li><p>Surfaces-&gt;NURBS-&gt; <a class="reference internal" href="../surface/interpolate_nurbs_surface.html"><span class="doc">Interpolate Nurbs Surface</span></a></p></li>
 </ul>
+<p>Examples of surface curvature indication:</p>
+<ul class="simple">
+<li><p>Gaussian curvature:</p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/212495583-9f71e2c3-5fa5-410f-be9d-9b5c6c72b066.png"><img alt="https://user-images.githubusercontent.com/284644/212495583-9f71e2c3-5fa5-410f-be9d-9b5c6c72b066.png" src="https://user-images.githubusercontent.com/284644/212495583-9f71e2c3-5fa5-410f-be9d-9b5c6c72b066.png" /></a>
+<ul class="simple">
+<li><p>Another surface with indicated Gaussian curvature:</p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/215551129-04652358-2704-4f6a-a069-d4f05a51158c.png"><img alt="https://user-images.githubusercontent.com/284644/215551129-04652358-2704-4f6a-a069-d4f05a51158c.png" src="https://user-images.githubusercontent.com/284644/215551129-04652358-2704-4f6a-a069-d4f05a51158c.png" /></a>
+<ul class="simple">
+<li><p>Mean curvature:</p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/212495578-f719c92f-a503-4146-92bb-f474c2905753.png"><img alt="https://user-images.githubusercontent.com/284644/212495578-f719c92f-a503-4146-92bb-f474c2905753.png" src="https://user-images.githubusercontent.com/284644/212495578-f719c92f-a503-4146-92bb-f474c2905753.png" /></a>
+<ul class="simple">
+<li><p>Difference of two curvatures:</p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/212495582-cfae4468-8b65-4f78-9c55-6237e53a5e0a.png"><img alt="https://user-images.githubusercontent.com/284644/212495582-cfae4468-8b65-4f78-9c55-6237e53a5e0a.png" src="https://user-images.githubusercontent.com/284644/212495582-cfae4468-8b65-4f78-9c55-6237e53a5e0a.png" /></a>
 </section>
 </section>
 
