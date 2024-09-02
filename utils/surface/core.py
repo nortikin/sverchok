@@ -113,6 +113,9 @@ class SvSurface(object):
 
         calc = SurfaceCurvatureCalculator(us, vs, order=order)
         calc.set(surf_vertices, normal, fu, fv, duu, dvv, duv, nuu, nvv, nuv)
+        calc.fuu = fuu
+        calc.fvv = fvv
+        calc.fuv = fuv
         return calc
 
     def gauss_curvature_array(self, us, vs):

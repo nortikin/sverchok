@@ -121,6 +121,32 @@ class SurfaceCurvatureCalculator(object):
             self._derivatives_data = SurfaceDerivativesData(self.points, self.fu, self.fv)
         return self._derivatives_data
 
+    def christoffel(self):
+        U, V, W = 0,1,2
+        fu = self.fu # / np.linalg.norm(self.fu, axis=1, keepdims=True)
+        fv = self.fv # / np.linalg.norm(self.fv, axis=1, keepdims=True)
+        normal = self.normals
+        n = len(self.us)
+
+        def solve(vec):
+            A = np.zeros((n,3,3))
+            A[:,:,0] = fu
+            A[:,:,1] = fv
+            A[:,:,2] = normal
+            B = np.zeros((n,3))
+            B[:] = vec
+            res = np.linalg.solve(A, B) # (n, 3)
+            return res.T # (3, n)
+
+        gamma = np.zeros((2,3,3,n))
+        gamma[U,U,:,:] = solve(self.fuu)
+        gamma[U,V,:,:] = solve(self.fuv)
+        gamma[V,U,:,:] = gamma[U,V,:,:]
+        gamma[V,V,:,:] = solve(self.fvv)
+        gamma[U, W, W] = gamma[U,U,U] + gamma[U,V,V]
+        gamma[V, W, W] = gamma[V,U,U] + gamma[V,V,V]
+        return gamma
+
     def mean(self):
         """
         Calculate mean curvature.
