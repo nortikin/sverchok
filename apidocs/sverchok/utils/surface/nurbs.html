@@ -417,6 +417,9 @@ returns np.array((n, 3, 3)) of curve frames.
 
         calc = SurfaceCurvatureCalculator(us, vs, order=order)
         calc.set(surf_vertices, normal, fu, fv, duu, dvv, duv, nuu, nvv, nuv)
+        calc.fuu = fuu
+        calc.fvv = fvv
+        calc.fuv = fuv
         return calc
 
     def derivatives_data_array(self, us, vs):
@@ -986,6 +989,9 @@ def v_size(self):
 
         calc = SurfaceCurvatureCalculator(us, vs, order=order)
         calc.set(surface, normal, surface_u, surface_v, duu, dvv, duv, nuu, nvv, nuv)
+        calc.fuu = surface_uu
+        calc.fvv = surface_vv
+        calc.fuv = surface_uv
         return calc</code></pre>
 </details>
 <h3>Ancestors</h3>

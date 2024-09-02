@@ -83,6 +83,32 @@ and calculates any curvature information from them.</p></div>
             self._derivatives_data = SurfaceDerivativesData(self.points, self.fu, self.fv)
         return self._derivatives_data
 
+    def christoffel(self):
+        U, V, W = 0,1,2
+        fu = self.fu # / np.linalg.norm(self.fu, axis=1, keepdims=True)
+        fv = self.fv # / np.linalg.norm(self.fv, axis=1, keepdims=True)
+        normal = self.normals
+        n = len(self.us)
+
+        def solve(vec):
+            A = np.zeros((n,3,3))
+            A[:,:,0] = fu
+            A[:,:,1] = fv
+            A[:,:,2] = normal
+            B = np.zeros((n,3))
+            B[:] = vec
+            res = np.linalg.solve(A, B) # (n, 3)
+            return res.T # (3, n)
+
+        gamma = np.zeros((2,3,3,n))
+        gamma[U,U,:,:] = solve(self.fuu)
+        gamma[U,V,:,:] = solve(self.fuv)
+        gamma[V,U,:,:] = gamma[U,V,:,:]
+        gamma[V,V,:,:] = solve(self.fvv)
+        gamma[U, W, W] = gamma[U,U,U] + gamma[U,V,V]
+        gamma[V, W, W] = gamma[V,U,U] + gamma[V,V,V]
+        return gamma
+
     def mean(self):
         &#34;&#34;&#34;
         Calculate mean curvature.
@@ -333,6 +359,12 @@ def derivatives_data(self):
 <div class="desc"><p>Calculate curvature information.
 Return value: SurfaceCurvatureData instance.</p></div>
 </dd>
+<dt id="sverchok.utils.surface.data.SurfaceCurvatureCalculator.christoffel"><code class="name flex">
+<span>def <span class="ident">christoffel</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
 <dt id="sverchok.utils.surface.data.SurfaceCurvatureCalculator.curvature_along_direction"><code class="name flex">
 <span>def <span class="ident">curvature_along_direction</span></span>(<span>self, v1, v2)</span>
 </code></dt>
@@ -554,6 +586,7 @@ corresponds to principal_value_2.</p></div>
 <h4><code><a title="sverchok.utils.surface.data.SurfaceCurvatureCalculator" href="#sverchok.utils.surface.data.SurfaceCurvatureCalculator">SurfaceCurvatureCalculator</a></code></h4>
 <ul class="">
 <li><code><a title="sverchok.utils.surface.data.SurfaceCurvatureCalculator.calc" href="#sverchok.utils.surface.data.SurfaceCurvatureCalculator.calc">calc</a></code></li>
+<li><code><a title="sverchok.utils.surface.data.SurfaceCurvatureCalculator.christoffel" href="#sverchok.utils.surface.data.SurfaceCurvatureCalculator.christoffel">christoffel</a></code></li>
 <li><code><a title="sverchok.utils.surface.data.SurfaceCurvatureCalculator.curvature_along_direction" href="#sverchok.utils.surface.data.SurfaceCurvatureCalculator.curvature_along_direction">curvature_along_direction</a></code></li>
 <li><code><a title="sverchok.utils.surface.data.SurfaceCurvatureCalculator.derivatives_data" href="#sverchok.utils.surface.data.SurfaceCurvatureCalculator.derivatives_data">derivatives_data</a></code></li>
 <li><code><a title="sverchok.utils.surface.data.SurfaceCurvatureCalculator.gauss" href="#sverchok.utils.surface.data.SurfaceCurvatureCalculator.gauss">gauss</a></code></li>

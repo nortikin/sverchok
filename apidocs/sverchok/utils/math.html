@@ -296,6 +296,24 @@ Taken from fractions.py to override depreciation</p></div>
 <dd>
 <div class="desc"></div>
 </dd>
+<dt id="sverchok.utils.math.vector_coordinates_in_basis"><code class="name flex">
+<span>def <span class="ident">vector_coordinates_in_basis</span></span>(<span>u_vector, v_vector, w_vector, vector_3d)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.math.vectors_coordinates_in_basis"><code class="name flex">
+<span>def <span class="ident">vectors_coordinates_in_basis</span></span>(<span>u_vectors, v_vectors, w_vectors, vectors_3d)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Given lists of U, V and W vectors for some (probably non-orthogohal) basis,
+and list of arbitrary vectors coordinates in standard basis,
+return list of vector coordinates in UVW basis.</p>
+<ul>
+<li>u_vectors, v_vectors, w_vectors: np.array of shape (n, 3)</li>
+<li>return value: np.array of shape (n, 3).</li>
+</ul></div>
+</dd>
 <dt id="sverchok.utils.math.weighted_center"><code class="name flex">
 <span>def <span class="ident">weighted_center</span></span>(<span>verts, field=None)</span>
 </code></dt>
@@ -367,6 +385,8 @@ Taken from fractions.py to override depreciation</p></div>
 <li><code><a title="sverchok.utils.math.to_cylindrical_np" href="#sverchok.utils.math.to_cylindrical_np">to_cylindrical_np</a></code></li>
 <li><code><a title="sverchok.utils.math.to_spherical" href="#sverchok.utils.math.to_spherical">to_spherical</a></code></li>
 <li><code><a title="sverchok.utils.math.to_spherical_np" href="#sverchok.utils.math.to_spherical_np">to_spherical_np</a></code></li>
+<li><code><a title="sverchok.utils.math.vector_coordinates_in_basis" href="#sverchok.utils.math.vector_coordinates_in_basis">vector_coordinates_in_basis</a></code></li>
+<li><code><a title="sverchok.utils.math.vectors_coordinates_in_basis" href="#sverchok.utils.math.vectors_coordinates_in_basis">vectors_coordinates_in_basis</a></code></li>
 <li><code><a title="sverchok.utils.math.weighted_center" href="#sverchok.utils.math.weighted_center">weighted_center</a></code></li>
 <li><code><a title="sverchok.utils.math.wrap_falloff" href="#sverchok.utils.math.wrap_falloff">wrap_falloff</a></code></li>
 </ul>
