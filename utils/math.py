@@ -359,6 +359,31 @@ def np_multiply_matrices_vectors(matrices, vectors):
     r = matrices @ vectors
     return r[:,:,0]
 
+def vector_coordinates_in_basis(u_vector, v_vector, w_vector, vector_3d):
+    matrix = np.zeros((3,3))
+    matrix[:,0] = u_vector
+    matrix[:,1] = v_vector
+    matrix[:,2] = w_vector
+    inv = np.linalg.inv(matrix)
+    return inv @ vector_3d
+
+def vectors_coordinates_in_basis(u_vectors, v_vectors, w_vectors, vectors_3d):
+    """
+    Given lists of U, V and W vectors for some (probably non-orthogohal) basis,
+    and list of arbitrary vectors coordinates in standard basis,
+    return list of vector coordinates in UVW basis.
+
+    * u_vectors, v_vectors, w_vectors: np.array of shape (n, 3)
+    * return value: np.array of shape (n, 3).
+    """
+    n = len(vectors_3d)
+    matrices = np.zeros((n,3,3))
+    matrices[:,:,0] = u_vectors
+    matrices[:,:,1] = v_vectors
+    matrices[:,:,2] = w_vectors
+    inv = np.linalg.inv(matrices)
+    return np_multiply_matrices_vectors(inv, vectors_3d)
+
 def weighted_center(verts, field=None):
     if field is None:
         return np.mean(verts, axis=0)
