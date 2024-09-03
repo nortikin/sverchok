@@ -5,10 +5,9 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
-import bgl
 import gpu
 from gpu_extras.batch import batch_for_shader
-
+from sverchok.utils.modules.drawing_abstractions import drawing 
 
 tx_vertex_shader = '''
     uniform mat4 viewProjectionMatrix;
@@ -49,23 +48,7 @@ tx_fragment_shader = '''
 '''
 
 def init_texture(width, height, texname, texture, clr):
-    # function to init the texture
-    bgl.glPixelStorei(bgl.GL_UNPACK_ALIGNMENT, 1)
-
-    bgl.glEnable(bgl.GL_TEXTURE_2D)
-    bgl.glBindTexture(bgl.GL_TEXTURE_2D, texname)
-    bgl.glActiveTexture(bgl.GL_TEXTURE0)
-
-    bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_WRAP_S, bgl.GL_CLAMP_TO_EDGE)
-    bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_WRAP_T, bgl.GL_CLAMP_TO_EDGE)
-    bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MAG_FILTER, bgl.GL_LINEAR)
-    bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MIN_FILTER, bgl.GL_LINEAR)
-
-    bgl.glTexImage2D(
-        bgl.GL_TEXTURE_2D,
-        0, clr, width, height,
-        0, clr, bgl.GL_FLOAT, texture
-    )
+    drawing.init_image_from_texture(width, height, texname, texture, clr)
 
 
 def simple_screen(context, args, xy):
@@ -79,10 +62,9 @@ def simple_screen(context, args, xy):
         # function to draw a texture
         matrix = gpu.matrix.get_projection_matrix()
 
-        bgl.glDisable(bgl.GL_DEPTH_TEST)
-
-        act_tex = bgl.Buffer(bgl.GL_INT, 1)
-        bgl.glBindTexture(bgl.GL_TEXTURE_2D, texname)
+        drawing.disable_depth_test()
+        act_tex = drawing.new_buffer_texture()
+        drawing.bind_texture_2d(texname)
 
         shader.bind()
         shader.uniform_int("image", act_tex)
@@ -93,8 +75,8 @@ def simple_screen(context, args, xy):
         batch.draw(shader)
 
         # restoring settings
-        bgl.glBindTexture(bgl.GL_TEXTURE_2D, act_tex[0])
-        bgl.glDisable(bgl.GL_TEXTURE_2D)
+        drawing.bind_texture_2d(act_tex[0])
+        drawing.disable_texture_2d()
 
     draw_texture(x=x, y=y, w=width, h=height, texname=texname, c=cMod)
 
