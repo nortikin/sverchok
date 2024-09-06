@@ -79,10 +79,8 @@ hljs.highlightAll();
 
         for area in bpy.context.screen.areas:
             if area.type == &#39;VIEW_3D&#39;:
-                ctx = bpy.context.copy()
-                ctx[&#39;area&#39;] = area
-                ctx[&#39;region&#39;] = area.regions[-1]
-                bpy.ops.view3d.view_center_cursor(ctx)</code></pre>
+                with context.temp_override(area = area , region = area.regions[-1]):
+                    bpy.ops.view3d.view_center_cursor()</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
