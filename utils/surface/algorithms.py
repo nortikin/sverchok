@@ -1666,12 +1666,12 @@ def nurbs_surface_from_curve(curve, samples, degree_u, degree_v, num_cpts_u, num
     """
 
     if implementation is None:
-        implementation = curve.get_nurbs_implementation()
+        implementation = SvNurbsMaths.NATIVE
 
     t_min, t_max = curve.get_u_bounds()
-    ts = np.linspace(t_min, t_max, num=samples)
+    ts = np.linspace(t_min, t_max, num=samples, endpoint = not curve.is_closed())
     points = curve.evaluate_array(ts)
-    surface = nurbs_surface_from_points(points, degree_u, degere_v, num_cpts_u, num_cpts_v, implementation = implementation)
+    surface, uv_points = nurbs_surface_from_points(points, degree_u, degree_v, num_cpts_u, num_cpts_v, implementation = implementation)
     trim_curve = SvNurbsMaths.interpolate_curve(implementation, curve.get_degree(), uv_points)
     return surface, trim_curve
 
