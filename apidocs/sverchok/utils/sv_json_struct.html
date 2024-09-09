@@ -751,8 +751,8 @@ If a Blender file does not posses the material the empty material will be genera
             # in case the node is inside group tree it should be also imported with its sockets
             # to be able connect links to group out/in nodes
             imported_structs[StrTypes.TREE, &#39;&#39;, tree.name] = tree.name
-            for sock in chain(tree.inputs, tree.outputs):
-                imported_structs[StrTypes.INTERFACE, tree.name, sock.identifier] = sock.identifier
+            #for sock in chain(tree.inputs, tree.outputs):
+            #    imported_structs[StrTypes.INTERFACE, tree.name, sock.identifier] = sock.identifier
 
             # import the node and rebuild the links if possible
             node_struct.build(node, factories, imported_structs)
