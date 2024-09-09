@@ -6,13 +6,13 @@
 # License-Filename: LICENSE
 
 import numpy as np
-from math import isnan
+from math import isnan, pi
 
 from sverchok.utils.geom import Spline, CubicSpline, bounding_box
 from sverchok.utils.curve.splines import SvSplineCurve
 from sverchok.utils.curve.primitives import SvCircle
 from sverchok.utils.field.rbf import SvRbfVectorField
-from sverchok.utils.math import np_dot, np_multiply_matrices_vectors
+from sverchok.utils.math import np_dot, np_multiply_matrices_vectors, vectors_coordinates_in_basis
 from sverchok.utils.sv_logging import get_logger
 from sverchok.dependencies import scipy
 
@@ -29,25 +29,34 @@ def geodesic_curve_by_two_points(surface, point1, point2, n_points, iterations, 
     if logger is None:
         logger = get_logger()
 
+    def invert_basis_matrices(u_vectors, v_vectors, w_vectors):
+        n = len(u_vectors)
+        matrices = np.zeros((n,3,3))
+        matrices[:,:,0] = u_vectors
+        matrices[:,:,1] = v_vectors
+        matrices[:,:,2] = w_vectors
+        return np.linalg.inv(matrices)
+
     def project(derivs, uv_pts, vectors):
-        u_tangents, v_tangents = derivs.unit_tangents()
+        u_tangents, v_tangents = derivs.du, derivs.dv
+        normals = derivs.normals()[1:-1]
         u_tangents = u_tangents[1:-1]
         v_tangents = v_tangents[1:-1]
-        dus = (vectors * u_tangents).sum(axis=1)
-        dvs = (vectors * v_tangents).sum(axis=1)
-        dns = np.zeros_like(dus)
-        uv_vectors = np.stack((dus, dvs, dns)).T
-        uv_vectors = np.insert(uv_vectors, 0, [0,0,0], axis=0)
-        uv_vectors = np.insert(uv_vectors, len(uv_vectors), [0,0,0], axis=0)
+        inv_matrices = invert_basis_matrices(u_tangents, v_tangents, normals)
+        duv = np_multiply_matrices_vectors(inv_matrices, vectors)
+        duv[:,2] = 0
+        uv_vectors = np.zeros_like(uv_pts)
+        uv_vectors[1:-1] = duv
         return uv_pts + uv_vectors
 
-    def do_iteration(uv_pts, prev_pts):
+    def do_iteration(uv_pts, prev_length):
         data = surface.derivatives_data_array(uv_pts[:,0], uv_pts[:,1])
         pts = data.points
 
-        if prev_pts is not None:
-            diff = (prev_pts - pts).max()
-            #logger.debug(f"diff: {diff}")
+        length = np.linalg.norm(pts[1:] - pts[:-1], axis=1).sum()
+        if prev_length is not None:
+            diff = abs(prev_length - length)
+            logger.debug(f"diff: {diff}")
             if diff < tolerance:
                 return None
 
@@ -55,15 +64,15 @@ def geodesic_curve_by_two_points(surface, point1, point2, n_points, iterations, 
         sums = dvs[1:] - dvs[:-1]
         sums *= step
         uv_pts = project(data, uv_pts, sums)
-        return pts, uv_pts
+        return length, uv_pts
 
     def process(pt1, pt2, n_segments, n_iterations):
         uv_pts = np.linspace(pt1, pt2, num=n_segments)
-        prev_pts = None
+        prev_length = None
         for i in range(n_iterations):
-            r = do_iteration(uv_pts, prev_pts)
+            r = do_iteration(uv_pts, prev_length)
             if r is not None:
-                prev_pts, uv_pts = r
+                prev_length, uv_pts = r
             else:
                 logger.info(f"Stop at {i}'th iteration")
                 break
@@ -71,6 +80,67 @@ def geodesic_curve_by_two_points(surface, point1, point2, n_points, iterations, 
 
     uv_pts = process(point1, point2, n_points, iterations)
     return uv_pts
+
+def geodesic_curve_by_two_points_uv(surface, point1, point2, n_points, n_iterations, step, tolerance=1e-3, logger=None):
+    if logger is None:
+        logger = get_logger()
+
+    def do_iteration(uv_pts):
+        surface_pts = surface.evaluate_array(uv_pts[:,0], uv_pts[:,1]) # (n, 3)
+        vectors = surface_pts[1:] - surface_pts[:-1] # (n-1, 3)
+        lengths = np.linalg.norm(vectors, axis=1,keepdims=True) # (n-1, 1)
+        uv_vectors = uv_pts[1:] - uv_pts[:-1] # (n-1, 2)
+        uv_vectors /= np.linalg.norm(uv_vectors, axis=1, keepdims=True)
+        duv = lengths[1:]*uv_vectors[1:] - lengths[:-1]*uv_vectors[:-1] # (n-2, 2)
+        new_uv_pts = uv_pts.copy()
+        new_uv_pts[1:-1] += step * duv
+        dlen = lengths.sum()
+        return new_uv_pts, dlen
+
+    uv_pts = np.linspace(point1, point2, num=n_points)
+    prev_dlen = None
+    for i in range(n_iterations):
+        uv_pts, dlen = do_iteration(uv_pts)
+        if prev_dlen is not None:
+            diff = abs(dlen - prev_dlen)
+            logger.debug(f"diff: {diff}")
+            if diff < tolerance:
+                logger.info(f"Stop at {i}'th iteration")
+                break
+        prev_dlen = dlen
+    return uv_pts
+
+class GeodesicSolution:
+    def __init__(self, rhos, orig_points, uv_points, surface_points):
+        self.rhos = rhos
+        self.orig_points = orig_points
+        self.uv_points = uv_points
+        self.surface_points = surface_points
+
+    def get(self, i):
+        return GeodesicSolution(self.rhos[i], self.orig_points[i], self.uv_points[i], self.surface_points[i])
+
+    def add(self, sol):
+        return GeodesicSolution(
+                np.concatenate((self.rhos, sol.rhos), axis=0),
+                np.concatenate((self.orig_points, sol.orig_points), axis=0),
+                np.concatenate((self.uv_points, sol.uv_points), axis=0),
+                np.concatenate((self.surface_points, sol.surface_points), axis=0)
+            )
+
+    def get_uv_point_by_rho(self, i, rho, method='nearest'):
+        if method == 'nearest':
+            idx = self.rhos[i].searchsorted(rho, 'right') - 1
+            return self.uv_points[i,idx]
+        else:
+            raise Exception("Unsupported method")
+
+    def get_uv_points_by_rho(self, rho, method='nearest'):
+        points = []
+        for i in range(len(self.rhos)):
+            pt = self.get_uv_point_by_rho(i, rho, method=method)
+            points.append(pt)
+        return np.array(points)
 
 def geodesic_cauchy_problem(surface, uv_starts, phis, target_radius, n_steps=10, closed_u = False, closed_v = False):
     step = target_radius / n_steps
@@ -124,7 +194,7 @@ def geodesic_cauchy_problem(surface, uv_starts, phis, target_radius, n_steps=10,
         pts = np.zeros((len(us), 3))
         pts[:,0] = us
         pts[:,1] = vs
-        return pts
+        return rs, pts
 
     def transpose(pts, n_centers, n_steps):
         #pts1 = np.reshape(pts, (n_centers, n_steps, 3))
@@ -156,7 +226,7 @@ def geodesic_cauchy_problem(surface, uv_starts, phis, target_radius, n_steps=10,
     all_us = np.array(all_us)
     all_vs = np.array(all_vs)
 
-    orig_points = mk_orig_points()
+    rhos, orig_points = mk_orig_points()
     uvs = np.zeros((len(all_us), 3))
     uvs[:,0] = np.array(all_us)
     uvs[:,1] = np.array(all_vs)
@@ -170,14 +240,7 @@ def geodesic_cauchy_problem(surface, uv_starts, phis, target_radius, n_steps=10,
     uvs = filter_out_nans(uvs.tolist())
     all_points = filter_out_nans(all_points.tolist())
 
-    #u_min, u_max, v_min, v_max = surface.get_domain()
-    #good_uvs = (uvs[:,:,0] >= u_min) & (uvs[:,:,0] <= u_max) & (uvs[:,:,1] >= v_min) & (uvs[:,:,1] <= v_max)
-
-    #uvs = uvs[good_uvs]
-    #orig_points = orig_points[good_uvs]
-    #all_points = all_points[good_uvs]
-
-    return orig_points, uvs, all_points
+    return GeodesicSolution(rhos, orig_points, uvs, all_points)
 
 def make_rbf(orig_points, tgt_points):
     orig_us = orig_points[:,0]
