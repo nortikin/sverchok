@@ -112,10 +112,10 @@ def geodesic_curve_by_two_points_uv(surface, point1, point2, n_points, n_iterati
 
 class GeodesicSolution:
     def __init__(self, rhos, orig_points, uv_points, surface_points):
-        self.rhos = rhos
-        self.orig_points = orig_points
-        self.uv_points = uv_points
-        self.surface_points = surface_points
+        self.rhos = np.array(rhos)
+        self.orig_points = np.array(orig_points)
+        self.uv_points = np.array(uv_points)
+        self.surface_points = np.array(surface_points)
 
     def get(self, i):
         return GeodesicSolution(self.rhos[i], self.orig_points[i], self.uv_points[i], self.surface_points[i])
