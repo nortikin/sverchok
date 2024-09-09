@@ -51,6 +51,12 @@ hljs.highlightAll();
 <dd>
 <div class="desc"></div>
 </dd>
+<dt id="sverchok.utils.geodesic.geodesic_curve_by_two_points_uv"><code class="name flex">
+<span>def <span class="ident">geodesic_curve_by_two_points_uv</span></span>(<span>surface, point1, point2, n_points, n_iterations, step, tolerance=0.001, logger=None)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
 <dt id="sverchok.utils.geodesic.make_rbf"><code class="name flex">
 <span>def <span class="ident">make_rbf</span></span>(<span>orig_points, tgt_points)</span>
 </code></dt>
@@ -60,6 +66,79 @@ hljs.highlightAll();
 </dl>
 </section>
 <section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sverchok.utils.geodesic.GeodesicSolution"><code class="flex name class">
+<span>class <span class="ident">GeodesicSolution</span></span>
+<span>(</span><span>rhos, orig_points, uv_points, surface_points)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class GeodesicSolution:
+    def __init__(self, rhos, orig_points, uv_points, surface_points):
+        self.rhos = rhos
+        self.orig_points = orig_points
+        self.uv_points = uv_points
+        self.surface_points = surface_points
+
+    def get(self, i):
+        return GeodesicSolution(self.rhos[i], self.orig_points[i], self.uv_points[i], self.surface_points[i])
+
+    def add(self, sol):
+        return GeodesicSolution(
+                np.concatenate((self.rhos, sol.rhos), axis=0),
+                np.concatenate((self.orig_points, sol.orig_points), axis=0),
+                np.concatenate((self.uv_points, sol.uv_points), axis=0),
+                np.concatenate((self.surface_points, sol.surface_points), axis=0)
+            )
+
+    def get_uv_point_by_rho(self, i, rho, method=&#39;nearest&#39;):
+        if method == &#39;nearest&#39;:
+            idx = self.rhos[i].searchsorted(rho, &#39;right&#39;) - 1
+            return self.uv_points[i,idx]
+        else:
+            raise Exception(&#34;Unsupported method&#34;)
+
+    def get_uv_points_by_rho(self, rho, method=&#39;nearest&#39;):
+        points = []
+        for i in range(len(self.rhos)):
+            pt = self.get_uv_point_by_rho(i, rho, method=method)
+            points.append(pt)
+        return np.array(points)</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.geodesic.GeodesicSolution.add"><code class="name flex">
+<span>def <span class="ident">add</span></span>(<span>self, sol)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.geodesic.GeodesicSolution.get"><code class="name flex">
+<span>def <span class="ident">get</span></span>(<span>self, i)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.geodesic.GeodesicSolution.get_uv_point_by_rho"><code class="name flex">
+<span>def <span class="ident">get_uv_point_by_rho</span></span>(<span>self, i, rho, method='nearest')</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.geodesic.GeodesicSolution.get_uv_points_by_rho"><code class="name flex">
+<span>def <span class="ident">get_uv_points_by_rho</span></span>(<span>self, rho, method='nearest')</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+</dl>
 </section>
 </article>
 <nav id="sidebar">
@@ -77,7 +156,21 @@ hljs.highlightAll();
 <li><code><a title="sverchok.utils.geodesic.cubic_spline" href="#sverchok.utils.geodesic.cubic_spline">cubic_spline</a></code></li>
 <li><code><a title="sverchok.utils.geodesic.geodesic_cauchy_problem" href="#sverchok.utils.geodesic.geodesic_cauchy_problem">geodesic_cauchy_problem</a></code></li>
 <li><code><a title="sverchok.utils.geodesic.geodesic_curve_by_two_points" href="#sverchok.utils.geodesic.geodesic_curve_by_two_points">geodesic_curve_by_two_points</a></code></li>
+<li><code><a title="sverchok.utils.geodesic.geodesic_curve_by_two_points_uv" href="#sverchok.utils.geodesic.geodesic_curve_by_two_points_uv">geodesic_curve_by_two_points_uv</a></code></li>
 <li><code><a title="sverchok.utils.geodesic.make_rbf" href="#sverchok.utils.geodesic.make_rbf">make_rbf</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sverchok.utils.geodesic.GeodesicSolution" href="#sverchok.utils.geodesic.GeodesicSolution">GeodesicSolution</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.geodesic.GeodesicSolution.add" href="#sverchok.utils.geodesic.GeodesicSolution.add">add</a></code></li>
+<li><code><a title="sverchok.utils.geodesic.GeodesicSolution.get" href="#sverchok.utils.geodesic.GeodesicSolution.get">get</a></code></li>
+<li><code><a title="sverchok.utils.geodesic.GeodesicSolution.get_uv_point_by_rho" href="#sverchok.utils.geodesic.GeodesicSolution.get_uv_point_by_rho">get_uv_point_by_rho</a></code></li>
+<li><code><a title="sverchok.utils.geodesic.GeodesicSolution.get_uv_points_by_rho" href="#sverchok.utils.geodesic.GeodesicSolution.get_uv_points_by_rho">get_uv_points_by_rho</a></code></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
