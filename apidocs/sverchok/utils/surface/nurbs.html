@@ -401,15 +401,15 @@ returns np.array((n, 3, 3)) of curve frames.
 
         normal = np.cross(fu, fv)
         norm = np.linalg.norm(normal, axis=1, keepdims=True)
-        normal = normal / norm
+        normal1 = normal / norm
 
         fuu = derivatives[:,2,0]
         fvv = derivatives[:,0,2]
         fuv = derivatives[:,1,1]
 
-        nuu = (fuu * normal).sum(axis=1)
-        nvv = (fvv * normal).sum(axis=1)
-        nuv = (fuv * normal).sum(axis=1)
+        nuu = (fuu * normal1).sum(axis=1)
+        nvv = (fvv * normal1).sum(axis=1)
+        nuv = (fuv * normal1).sum(axis=1)
 
         duu = np.linalg.norm(fu, axis=1) **2
         dvv = np.linalg.norm(fv, axis=1) **2
