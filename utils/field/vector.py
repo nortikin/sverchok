@@ -43,6 +43,12 @@ class SvVectorField(object):
         ys = points[:,1]
         zs = points[:,2]
         return self.evaluate_grid(xs, ys, zs)
+    
+    def to_relative(self):
+        return SvRelativeVectorField(self)
+
+    def to_absolute(self):
+        return SvAbsoluteVectorField(self)
 
 class SvMatrixVectorField(SvVectorField):
 
@@ -781,6 +787,23 @@ class SvVectorFieldComposition(SvVectorField):
         r = self.field1.evaluate_grid(xs, ys, zs)
         vx1, vy1, vz1 = r
         return self.field2.evaluate_grid(vx1, vy1, vz1)
+
+class SvPreserveCoordinateField(SvVectorField):
+    def __init__(self, field, axis):
+        self.field = field
+        self.axis = axis
+
+    def evaluate(self, x, y, z):
+        xyz = self.field.evaluate(x, y, z)
+        xyz = np.array(xyz)
+        xyz[self.axis] = [x, y, z][self.axis]
+        return xyz
+
+    def evaluate_grid(self, xs, ys, zs):
+        r = self.field.evaluate_grid(xs, ys, zs)
+        r = np.array(r)
+        r[self.axis] = [xs, ys, zs][self.axis]
+        return r
 
 class SvScalarFieldGradient(SvVectorField):
     def __init__(self, field, step):
