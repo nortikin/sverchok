@@ -8,11 +8,11 @@
 import numpy as np
 from math import isnan, pi
 
-from sverchok.utils.geom import Spline, CubicSpline, bounding_box
+from sverchok.utils.geom import Spline, CubicSpline
 from sverchok.utils.curve.splines import SvSplineCurve
-from sverchok.utils.curve.primitives import SvCircle
 from sverchok.utils.field.rbf import SvRbfVectorField
-from sverchok.utils.math import np_dot, np_multiply_matrices_vectors, vectors_coordinates_in_basis
+from sverchok.utils.field.vector import SvBendAlongSurfaceField, SvVectorFieldComposition, SvPreserveCoordinateField
+from sverchok.utils.math import np_multiply_matrices_vectors
 from sverchok.utils.sv_logging import get_logger
 from sverchok.dependencies import scipy
 
@@ -242,14 +242,53 @@ def geodesic_cauchy_problem(surface, uv_starts, phis, target_radius, n_steps=10,
 
     return GeodesicSolution(rhos, orig_points, uvs, all_points)
 
-def make_rbf(orig_points, tgt_points):
+def make_rbf(orig_points, tgt_points, **kwargs):
     orig_us = orig_points[:,0]
     orig_vs = orig_points[:,1]
     orig_ws = orig_points[:,2]
+    if 'function' not in kwargs:
+        kwargs['function'] = 'thin_plate'
+    if 'smooth' not in kwargs:
+        kwargs['smooth'] = 0.0
+    if 'epsilon' not in kwargs:
+        kwargs['epsilon'] = 1.0
     rbf = Rbf(orig_us, orig_vs, orig_ws, tgt_points,
-        function = 'thin_plate',
-        smooth = 0.0,
-        epsilon = 1.0,
-        mode = 'N-D')
+            mode = 'N-D',
+            **kwargs)
     return SvRbfVectorField(rbf, relative=True)
+
+class ExponentialMap:
+    def __init__(self, surface, orig_points, uv_points, surface_points):
+        self.surface = surface
+        self.orig_points = orig_points
+        self.uv_points = uv_points
+        self.surface_points = surface_points
+
+    def get_uv_field(self, **kwargs):
+        return make_rbf(self.orig_points, self.uv_points, **kwargs)
+
+    def get_field(self, **kwargs):
+        bend = SvBendAlongSurfaceField(self.surface, axis=2, autoscale=True)
+        bend.u_bounds = self.surface.get_u_bounds()
+        bend.v_bounds = self.surface.get_v_bounds()
+        uv = self.get_uv_field(**kwargs)
+        uv = SvPreserveCoordinateField(uv, axis=2)
+        return SvVectorFieldComposition(uv.to_absolute(), bend.to_absolute()).to_relative()
+
+def exponential_map(surface, uv_center, radius, radius_steps=10, angle_steps=8, closed_u=False, closed_v=False):
+    angles = np.linspace(0, 2*pi, num=angle_steps, endpoint=False)
+    uv_centers = np.empty((angle_steps, 3))
+    uv_centers[:] = uv_center
+
+    solution = geodesic_cauchy_problem(surface, uv_centers, angles, radius, radius_steps,
+                                       closed_u=closed_u, closed_v=closed_v)
+
+    orig_points = solution.orig_points.reshape((radius_steps * angle_steps, 3))
+    uv_points = solution.uv_points.reshape((radius_steps * angle_steps, 3))
+    points = solution.surface_points.reshape((radius_steps * angle_steps, 3))
+
+    unq_orig_points, unq_idxs = np.unique(orig_points, axis=0, return_index=True)
+    unq_uv_points = uv_points[unq_idxs]
+    unq_points = points[unq_idxs]
+    return ExponentialMap(surface, unq_orig_points, unq_uv_points, unq_points)
 
