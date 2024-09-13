@@ -584,7 +584,7 @@ class SvViewerDrawMk4(SverchCustomTreeNode, bpy.types.Node):
 
     draw_gl_polygonoffset: BoolProperty(
         name="Draw gl polygon offset",
-        default=True, update=updateNode)
+        default=False, update=updateNode)
 
     draw_gl_wireframe: BoolProperty(
         name="Draw gl wireframe",
