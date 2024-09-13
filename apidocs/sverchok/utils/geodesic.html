@@ -39,6 +39,12 @@ hljs.highlightAll();
 <dd>
 <div class="desc"></div>
 </dd>
+<dt id="sverchok.utils.geodesic.exponential_map"><code class="name flex">
+<span>def <span class="ident">exponential_map</span></span>(<span>surface, uv_center, radius, radius_steps=10, angle_steps=8, closed_u=False, closed_v=False)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
 <dt id="sverchok.utils.geodesic.geodesic_cauchy_problem"><code class="name flex">
 <span>def <span class="ident">geodesic_cauchy_problem</span></span>(<span>surface, uv_starts, phis, target_radius, n_steps=10, closed_u=False, closed_v=False)</span>
 </code></dt>
@@ -58,7 +64,7 @@ hljs.highlightAll();
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.geodesic.make_rbf"><code class="name flex">
-<span>def <span class="ident">make_rbf</span></span>(<span>orig_points, tgt_points)</span>
+<span>def <span class="ident">make_rbf</span></span>(<span>orig_points, tgt_points, **kwargs)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -68,6 +74,50 @@ hljs.highlightAll();
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
+<dt id="sverchok.utils.geodesic.ExponentialMap"><code class="flex name class">
+<span>class <span class="ident">ExponentialMap</span></span>
+<span>(</span><span>surface, orig_points, uv_points, surface_points)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ExponentialMap:
+    def __init__(self, surface, orig_points, uv_points, surface_points):
+        self.surface = surface
+        self.orig_points = orig_points
+        self.uv_points = uv_points
+        self.surface_points = surface_points
+
+    def get_uv_field(self, **kwargs):
+        return make_rbf(self.orig_points, self.uv_points, **kwargs)
+
+    def get_field(self, **kwargs):
+        bend = SvBendAlongSurfaceField(self.surface, axis=2, autoscale=True)
+        bend.u_bounds = self.surface.get_u_bounds()
+        bend.v_bounds = self.surface.get_v_bounds()
+        uv = self.get_uv_field(**kwargs)
+        uv = SvPreserveCoordinateField(uv, axis=2)
+        return SvVectorFieldComposition(uv.to_absolute(), bend.to_absolute()).to_relative()</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.geodesic.ExponentialMap.get_field"><code class="name flex">
+<span>def <span class="ident">get_field</span></span>(<span>self, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.geodesic.ExponentialMap.get_uv_field"><code class="name flex">
+<span>def <span class="ident">get_uv_field</span></span>(<span>self, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
 <dt id="sverchok.utils.geodesic.GeodesicSolution"><code class="flex name class">
 <span>class <span class="ident">GeodesicSolution</span></span>
 <span>(</span><span>rhos, orig_points, uv_points, surface_points)</span>
@@ -154,6 +204,7 @@ hljs.highlightAll();
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
 <li><code><a title="sverchok.utils.geodesic.cubic_spline" href="#sverchok.utils.geodesic.cubic_spline">cubic_spline</a></code></li>
+<li><code><a title="sverchok.utils.geodesic.exponential_map" href="#sverchok.utils.geodesic.exponential_map">exponential_map</a></code></li>
 <li><code><a title="sverchok.utils.geodesic.geodesic_cauchy_problem" href="#sverchok.utils.geodesic.geodesic_cauchy_problem">geodesic_cauchy_problem</a></code></li>
 <li><code><a title="sverchok.utils.geodesic.geodesic_curve_by_two_points" href="#sverchok.utils.geodesic.geodesic_curve_by_two_points">geodesic_curve_by_two_points</a></code></li>
 <li><code><a title="sverchok.utils.geodesic.geodesic_curve_by_two_points_uv" href="#sverchok.utils.geodesic.geodesic_curve_by_two_points_uv">geodesic_curve_by_two_points_uv</a></code></li>
@@ -162,6 +213,13 @@ hljs.highlightAll();
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
+<li>
+<h4><code><a title="sverchok.utils.geodesic.ExponentialMap" href="#sverchok.utils.geodesic.ExponentialMap">ExponentialMap</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.geodesic.ExponentialMap.get_field" href="#sverchok.utils.geodesic.ExponentialMap.get_field">get_field</a></code></li>
+<li><code><a title="sverchok.utils.geodesic.ExponentialMap.get_uv_field" href="#sverchok.utils.geodesic.ExponentialMap.get_uv_field">get_uv_field</a></code></li>
+</ul>
+</li>
 <li>
 <h4><code><a title="sverchok.utils.geodesic.GeodesicSolution" href="#sverchok.utils.geodesic.GeodesicSolution">GeodesicSolution</a></code></h4>
 <ul class="">

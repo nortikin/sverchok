@@ -1168,6 +1168,53 @@ vertices must be np.array of shape (n, 3).</p></div>
 </dd>
 </dl>
 </dd>
+<dt id="sverchok.utils.field.vector.SvPreserveCoordinateField"><code class="flex name class">
+<span>class <span class="ident">SvPreserveCoordinateField</span></span>
+<span>(</span><span>field, axis)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvPreserveCoordinateField(SvVectorField):
+    def __init__(self, field, axis):
+        self.field = field
+        self.axis = axis
+
+    def evaluate(self, x, y, z):
+        xyz = self.field.evaluate(x, y, z)
+        xyz = np.array(xyz)
+        xyz[self.axis] = [x, y, z][self.axis]
+        return xyz
+
+    def evaluate_grid(self, xs, ys, zs):
+        r = self.field.evaluate_grid(xs, ys, zs)
+        r = np.array(r)
+        r[self.axis] = [xs, ys, zs][self.axis]
+        return r</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.field.vector.SvVectorField" href="#sverchok.utils.field.vector.SvVectorField">SvVectorField</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.field.vector.SvPreserveCoordinateField.evaluate"><code class="name flex">
+<span>def <span class="ident">evaluate</span></span>(<span>self, x, y, z)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.field.vector.SvPreserveCoordinateField.evaluate_grid"><code class="name flex">
+<span>def <span class="ident">evaluate_grid</span></span>(<span>self, xs, ys, zs)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
 <dt id="sverchok.utils.field.vector.SvRelativeVectorField"><code class="flex name class">
 <span>class <span class="ident">SvRelativeVectorField</span></span>
 <span>(</span><span>field)</span>
@@ -1465,7 +1512,13 @@ vertices must be np.array of shape (n, 3).</p></div>
         xs = points[:,0]
         ys = points[:,1]
         zs = points[:,2]
-        return self.evaluate_grid(xs, ys, zs)</code></pre>
+        return self.evaluate_grid(xs, ys, zs)
+    
+    def to_relative(self):
+        return SvRelativeVectorField(self)
+
+    def to_absolute(self):
+        return SvAbsoluteVectorField(self)</code></pre>
 </details>
 <h3>Subclasses</h3>
 <ul class="hlist">
@@ -1486,6 +1539,7 @@ vertices must be np.array of shape (n, 3).</p></div>
 <li><a title="sverchok.utils.field.vector.SvMatrixVectorField" href="#sverchok.utils.field.vector.SvMatrixVectorField">SvMatrixVectorField</a></li>
 <li><a title="sverchok.utils.field.vector.SvNoiseVectorField" href="#sverchok.utils.field.vector.SvNoiseVectorField">SvNoiseVectorField</a></li>
 <li><a title="sverchok.utils.field.vector.SvPlaneAttractorVectorField" href="#sverchok.utils.field.vector.SvPlaneAttractorVectorField">SvPlaneAttractorVectorField</a></li>
+<li><a title="sverchok.utils.field.vector.SvPreserveCoordinateField" href="#sverchok.utils.field.vector.SvPreserveCoordinateField">SvPreserveCoordinateField</a></li>
 <li><a title="sverchok.utils.field.vector.SvRelativeVectorField" href="#sverchok.utils.field.vector.SvRelativeVectorField">SvRelativeVectorField</a></li>
 <li><a title="sverchok.utils.field.vector.SvRotationVectorField" href="#sverchok.utils.field.vector.SvRotationVectorField">SvRotationVectorField</a></li>
 <li><a title="sverchok.utils.field.vector.SvScalarFieldCurveMap" href="#sverchok.utils.field.vector.SvScalarFieldCurveMap">SvScalarFieldCurveMap</a></li>
@@ -1519,6 +1573,18 @@ vertices must be np.array of shape (n, 3).</p></div>
 </dd>
 <dt id="sverchok.utils.field.vector.SvVectorField.evaluate_grid"><code class="name flex">
 <span>def <span class="ident">evaluate_grid</span></span>(<span>self, xs, ys, zs)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.field.vector.SvVectorField.to_absolute"><code class="name flex">
+<span>def <span class="ident">to_absolute</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.field.vector.SvVectorField.to_relative"><code class="name flex">
+<span>def <span class="ident">to_relative</span></span>(<span>self)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -2282,6 +2348,13 @@ vertices must be np.array of shape (n, 3).</p></div>
 </ul>
 </li>
 <li>
+<h4><code><a title="sverchok.utils.field.vector.SvPreserveCoordinateField" href="#sverchok.utils.field.vector.SvPreserveCoordinateField">SvPreserveCoordinateField</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.field.vector.SvPreserveCoordinateField.evaluate" href="#sverchok.utils.field.vector.SvPreserveCoordinateField.evaluate">evaluate</a></code></li>
+<li><code><a title="sverchok.utils.field.vector.SvPreserveCoordinateField.evaluate_grid" href="#sverchok.utils.field.vector.SvPreserveCoordinateField.evaluate_grid">evaluate_grid</a></code></li>
+</ul>
+</li>
+<li>
 <h4><code><a title="sverchok.utils.field.vector.SvRelativeVectorField" href="#sverchok.utils.field.vector.SvRelativeVectorField">SvRelativeVectorField</a></code></h4>
 <ul class="">
 <li><code><a title="sverchok.utils.field.vector.SvRelativeVectorField.evaluate" href="#sverchok.utils.field.vector.SvRelativeVectorField.evaluate">evaluate</a></code></li>
@@ -2322,6 +2395,8 @@ vertices must be np.array of shape (n, 3).</p></div>
 <li><code><a title="sverchok.utils.field.vector.SvVectorField.evaluate" href="#sverchok.utils.field.vector.SvVectorField.evaluate">evaluate</a></code></li>
 <li><code><a title="sverchok.utils.field.vector.SvVectorField.evaluate_array" href="#sverchok.utils.field.vector.SvVectorField.evaluate_array">evaluate_array</a></code></li>
 <li><code><a title="sverchok.utils.field.vector.SvVectorField.evaluate_grid" href="#sverchok.utils.field.vector.SvVectorField.evaluate_grid">evaluate_grid</a></code></li>
+<li><code><a title="sverchok.utils.field.vector.SvVectorField.to_absolute" href="#sverchok.utils.field.vector.SvVectorField.to_absolute">to_absolute</a></code></li>
+<li><code><a title="sverchok.utils.field.vector.SvVectorField.to_relative" href="#sverchok.utils.field.vector.SvVectorField.to_relative">to_relative</a></code></li>
 </ul>
 </li>
 <li>
