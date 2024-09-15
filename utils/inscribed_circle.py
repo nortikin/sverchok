@@ -7,13 +7,17 @@
 
 import numpy as np
 from mathutils import Vector, Matrix
-from sverchok.utils.geom import linear_approximation, CircleEquation3D
+from sverchok.utils.geom import linear_approximation, CircleEquation3D, is_convex_2d
 from sverchok.utils.math import np_multiply_matrices_vectors, np_dot
 from sverchok.dependencies import scipy
 if scipy is not None:
     from scipy.optimize import linprog
 
-def calc_inscribed_circle(verts):
+RETURN_NONE = 'RETURN_NONE'
+ERROR = 'ERROR'
+ASIS = 'ASIS'
+
+def calc_inscribed_circle(verts, on_concave=ERROR):
     """
     Calculate the biggest circle which can be inscribed into a polygon
     (i.e. a circle which is inside the polygon, and touches some of polygon's edges).
@@ -78,6 +82,12 @@ def calc_inscribed_circle(verts):
     inv = np.linalg.inv(m)
     pt0 = np.array(approx.center)
     verts2d = np_multiply_matrices_vectors(inv, verts - pt0)
+    if on_concave != ASIS:
+        if not is_convex_2d(verts2d):
+            if on_concave == ERROR:
+                raise Exception("Polygon is not convex")
+            else:
+                return None
     verts2d = verts2d[:,0:2]
     origin = verts2d.min(axis=0)
     verts2d -= origin[:2]

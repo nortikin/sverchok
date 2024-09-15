@@ -7,9 +7,9 @@
 
 import numpy as np
 import bpy
-from bpy.props import BoolProperty
+from bpy.props import BoolProperty, EnumProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.utils.inscribed_circle import calc_inscribed_circle
+from sverchok.utils.inscribed_circle import calc_inscribed_circle, ERROR, RETURN_NONE, ASIS
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level
 
 class SvSemiInscribedCircleNode(SverchCustomTreeNode, bpy.types.Node):
@@ -35,8 +35,26 @@ class SvSemiInscribedCircleNode(SverchCustomTreeNode, bpy.types.Node):
             default = True,
             update = updateNode)
 
+    concave_modes = [
+            (RETURN_NONE, "Skip", "Skip concave faces - do not generate output for them", 0),
+            (ERROR, "Error", "Generate an error if encounter a concave face", 1),
+            (ASIS, "As Is", "Try to calculate inscribed circle anyway (it probably will be incorrect)", 2)
+        ]
+
+    on_concave : EnumProperty(
+            name = "On concave face",
+            description = "What to do if encounter a concave face",
+            default = RETURN_NONE,
+            items = concave_modes,
+            update = updateNode)
+
     def draw_buttons(self, context, layout):
         layout.prop(self, 'flat_output')
+
+    def draw_buttons_ext(self, context, layout):
+        self.draw_buttons(context, layout)
+        layout.label(text = "On concave faces:")
+        layout.prop(self, 'on_concave', text='')
 
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
@@ -56,7 +74,8 @@ class SvSemiInscribedCircleNode(SverchCustomTreeNode, bpy.types.Node):
                 vertices = np.array(vertices)
                 for face in faces:
                     face = np.array(face)
-                    circle = calc_inscribed_circle(vertices[face])
+                    circle = calc_inscribed_circle(vertices[face],
+                                    on_concave = self.on_concave)
                     if circle is not None:
                         new_matrix.append(circle.get_matrix())
                         new_radius.append(circle.radius)
