@@ -809,6 +809,19 @@ def raycast_surface(surface, src_points, directions, samples=50, precise=True, c
     raycaster.init_bvh(samples)
     return raycaster.raycast(src_points, directions, precise=precise, calc_points=calc_points, method=method, on_init_fail=on_init_fail)
 
+class CurveSurfaceIntersections:
+    def __init__(self):
+        self.ts = []
+        self.us = []
+        self.vs = []
+        self.points = []
+
+    def add(self, t, u, v, point):
+        self.ts.append(t)
+        self.us.append(u)
+        self.vs.append(v)
+        self.points.append(point)
+
 def intersect_curve_surface(curve, surface, init_samples=10, raycast_samples=10, tolerance=1e-3, maxiter=50, raycast_method='hybr', support_nurbs=False):
     """
     Intersect a curve with a surface.
@@ -840,17 +853,17 @@ def intersect_curve_surface(curve, surface, init_samples=10, raycast_samples=10,
     u_range = np.linspace(u_min, u_max, num=init_samples)
     points = curve.evaluate_array(u_range)
     tangents = curve.tangent_array(u_range)
-    for u1, u2, p1, p2, tangent1, tangent2 in zip(u_range, u_range[1:], points, points[1:], tangents,tangents[1:]):
+    for t1, t2, p1, p2, tangent1, tangent2 in zip(u_range, u_range[1:], points, points[1:], tangents,tangents[1:]):
         raycast = raycaster.raycast([p1, p2], [tangent1, -tangent2],
                     precise = False, calc_points=False,
                     on_init_fail = RETURN_NONE)
         if raycast is None:
             continue
-        good_ranges.append((u1, u2, raycast.points[0], raycast.points[1]))
+        good_ranges.append((t1, t2, raycast.points[0], raycast.points[1]))
 
-    def to_curve(point, curve, u1, u2, raycast=None):
+    def to_curve(point, curve, t1, t2, raycast=None):
         if support_nurbs and is_nurbs and raycast is not None:
-            segment = curve.cut_segment(u1, u2)
+            segment = curve.cut_segment(t1, t2)
             surface_u, surface_v = raycast.us[0], raycast.vs[0]
             point_on_surface = raycast.points[0]
             surface_normal = surface.normal(surface_u, surface_v)
@@ -865,7 +878,7 @@ def intersect_curve_surface(curve, surface, init_samples=10, raycast_samples=10,
                 return r[0]
         else:
             ortho = ortho_project_curve(point, curve,
-                        subdomain = (u1, u2),
+                        subdomain = (t1, t2),
                         init_samples = 2,
                         on_fail = RETURN_NONE)
             if ortho is None:
@@ -873,17 +886,19 @@ def intersect_curve_surface(curve, surface, init_samples=10, raycast_samples=10,
             else:
                 return ortho.nearest_u, ortho.nearest
 
-    result = []
-    for u1, u2, init_p1, init_p2 in good_ranges:
+    result = CurveSurfaceIntersections()
+    for t1, t2, init_p1, init_p2 in good_ranges:
 
-        tangent = curve.tangent(u1)
-        point = curve.evaluate(u1)
+        tangent = curve.tangent(t1)
+        point = curve.evaluate(t1)
 
         i = 0
         sign = 1
         prev_prev_point = None
         prev_point = init_p1
-        u_root = None
+        t_root = None
+        u_value = None
+        v_value = None
         point_found = False
         raycast = None
         while True:
@@ -891,11 +906,11 @@ def intersect_curve_surface(curve, surface, init_samples=10, raycast_samples=10,
             if i > maxiter:
                 raise Exception("Maximum number of iterations is exceeded; last step {} - {} = {}".format(prev_prev_point, point, step))
 
-            on_curve = to_curve(prev_point, curve, u1, u2, raycast=raycast)
+            on_curve = to_curve(prev_point, curve, t1, t2, raycast=raycast)
             if on_curve is None:
                 break
-            u_root, point = on_curve
-            if u_root < u1 or u_root > u2:
+            t_root, point = on_curve
+            if t_root < t1 or t_root > t2:
                 break
             step = np.linalg.norm(point - prev_point)
             if step < tolerance and i > 1:
@@ -904,17 +919,19 @@ def intersect_curve_surface(curve, surface, init_samples=10, raycast_samples=10,
                 break
 
             prev_point = point
-            tangent = curve.tangent(u_root)
+            tangent = curve.tangent(t_root)
             sign, raycast = do_raycast(point, tangent, sign)
             if raycast is None:
                 raise Exception("Iteration #{}: Can't do a raycast with point {}, direction {} onto surface {}".format(i, point, tangent, surface))
             point = raycast.points[0]
+            u_value = raycast.us[0]
+            v_value = raycast.vs[0]
             step = np.linalg.norm(point - prev_point)
             prev_prev_point = prev_point
             prev_point = point
 
         if point_found:
-            result.append((u_root, point))
+            result.add(t_root, u_value, v_value, point)
 
     return result
 
