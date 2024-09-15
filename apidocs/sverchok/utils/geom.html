@@ -293,6 +293,19 @@ and calls for interpolate_bezier.</p></div>
 <h2 id="returns">Returns</h2>
 <p>boolean.</p></div>
 </dd>
+<dt id="sverchok.utils.geom.is_convex_2d"><code class="name flex">
+<span>def <span class="ident">is_convex_2d</span></span>(<span>verts)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Check if 2D polygon is convex.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>verts</code></strong></dt>
+<dd>np.array or list of shape (n,3); only first and second components are considered.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>boolean.</p></div>
+</dd>
 <dt id="sverchok.utils.geom.linear_approximation"><code class="name flex">
 <span>def <span class="ident">linear_approximation</span></span>(<span>data)</span>
 </code></dt>
@@ -3851,6 +3864,7 @@ returns: an instance of Ellipse3D.</p></div>
 <li><code><a title="sverchok.utils.geom.interpolate_quadratic_bezier" href="#sverchok.utils.geom.interpolate_quadratic_bezier">interpolate_quadratic_bezier</a></code></li>
 <li><code><a title="sverchok.utils.geom.intersect_segment_segment" href="#sverchok.utils.geom.intersect_segment_segment">intersect_segment_segment</a></code></li>
 <li><code><a title="sverchok.utils.geom.intersects_line_bbox" href="#sverchok.utils.geom.intersects_line_bbox">intersects_line_bbox</a></code></li>
+<li><code><a title="sverchok.utils.geom.is_convex_2d" href="#sverchok.utils.geom.is_convex_2d">is_convex_2d</a></code></li>
 <li><code><a title="sverchok.utils.geom.linear_approximation" href="#sverchok.utils.geom.linear_approximation">linear_approximation</a></code></li>
 <li><code><a title="sverchok.utils.geom.linear_approximation_array" href="#sverchok.utils.geom.linear_approximation_array">linear_approximation_array</a></code></li>
 <li><code><a title="sverchok.utils.geom.locate_linear" href="#sverchok.utils.geom.locate_linear">locate_linear</a></code></li>
