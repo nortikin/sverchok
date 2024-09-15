@@ -7,6 +7,7 @@
 
 import numpy as np
 import bpy
+from bpy.props import BoolProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.inscribed_circle import calc_inscribed_circle
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level
@@ -27,6 +28,15 @@ class SvSemiInscribedCircleNode(SverchCustomTreeNode, bpy.types.Node):
         self.inputs.new('SvStringsSocket', "Faces")
         self.outputs.new('SvMatrixSocket', "Center")
         self.outputs.new('SvStringsSocket', "Radius")
+
+    flat_output : BoolProperty(
+            name = "Flat Matrix output",
+            description = "Output single flat list of matrices",
+            default = True,
+            update = updateNode)
+
+    def draw_buttons(self, context, layout):
+        layout.prop(self, 'flat_output')
 
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
@@ -50,7 +60,10 @@ class SvSemiInscribedCircleNode(SverchCustomTreeNode, bpy.types.Node):
                     if circle is not None:
                         new_matrix.append(circle.get_matrix())
                         new_radius.append(circle.radius)
-                matrix_out.append(new_matrix)
+                if self.flat_output:
+                    matrix_out.extend(new_matrix)
+                else:
+                    matrix_out.append(new_matrix)
                 radius_out.append(new_radius)
 
         self.outputs['Center'].sv_set(matrix_out)
