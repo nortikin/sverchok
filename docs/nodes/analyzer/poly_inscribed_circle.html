@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Wave Painter &mdash; Sverchok 1, 2, 0 documentation</title>
+  <title>Polygon Inscribed Circle &mdash; Sverchok 1, 2, 0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
 
@@ -20,8 +20,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Center of Mass (Mesh) (Alpha)" href="weighted_vector_sum.html" />
-    <link rel="prev" title="Volume" href="volume.html" /> 
+    <link rel="next" title="Project Points to Line" href="project_point_to_line.html" />
+    <link rel="prev" title="Points Inside Mesh" href="points_inside_mesh.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -95,7 +95,15 @@
 <li class="toctree-l3"><a class="reference internal" href="origins.html">Origins</a></li>
 <li class="toctree-l3"><a class="reference internal" href="path_length_2.html">Path Length</a></li>
 <li class="toctree-l3"><a class="reference internal" href="points_inside_mesh.html">Points Inside Mesh</a></li>
-<li class="toctree-l3"><a class="reference internal" href="poly_inscribed_circle.html">Polygon Inscribed Circle</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Polygon Inscribed Circle</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#dependencies">Dependencies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#outputs">Outputs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#examples-of-usage">Examples of Usage</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="project_point_to_line.html">Project Points to Line</a></li>
 <li class="toctree-l3"><a class="reference internal" href="proportional.html">Proportional Edit Falloff</a></li>
 <li class="toctree-l3"><a class="reference internal" href="raycaster_lite.html">Raycaster</a></li>
@@ -103,14 +111,7 @@
 <li class="toctree-l3"><a class="reference internal" href="sphere_approx.html">Sphere Fit</a></li>
 <li class="toctree-l3"><a class="reference internal" href="steiner_ellipse.html">Steiner Ellipse</a></li>
 <li class="toctree-l3"><a class="reference internal" href="volume.html">Volume</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">Wave Painter</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#outputs">Outputs</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#examples-of-usage">Examples of usage</a></li>
-</ul>
-</li>
+<li class="toctree-l3"><a class="reference internal" href="wave_paint.html">Wave Painter</a></li>
 <li class="toctree-l3"><a class="reference internal" href="weighted_vector_sum.html">Center of Mass (Mesh) (Alpha)</a></li>
 </ul>
 </li>
@@ -161,9 +162,9 @@
       <li><a href="../../main.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../nodes.html">Nodes</a></li>
           <li class="breadcrumb-item"><a href="analyzer_index.html">Analyzers</a></li>
-      <li class="breadcrumb-item active">Wave Painter</li>
+      <li class="breadcrumb-item active">Polygon Inscribed Circle</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../../_sources/nodes/analyzer/wave_paint.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../../_sources/nodes/analyzer/poly_inscribed_circle.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -171,62 +172,45 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="wave-painter">
-<h1>Wave Painter<a class="headerlink" href="#wave-painter" title="Link to this heading">¶</a></h1>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197003680-9e86c41c-cbce-4bca-970d-8e9808a164e3.png"><img alt="https://user-images.githubusercontent.com/14288520/197003680-9e86c41c-cbce-4bca-970d-8e9808a164e3.png" src="https://user-images.githubusercontent.com/14288520/197003680-9e86c41c-cbce-4bca-970d-8e9808a164e3.png" /></a>
+  <section id="polygon-inscribed-circle">
+<h1>Polygon Inscribed Circle<a class="headerlink" href="#polygon-inscribed-circle" title="Link to this heading">¶</a></h1>
+<section id="dependencies">
+<h2>Dependencies<a class="headerlink" href="#dependencies" title="Link to this heading">¶</a></h2>
+<p>This node requires SciPy library to work.</p>
+</section>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
-<p>This node “paints” a wave pattern on either faces or vertices of the given mesh.</p>
-<p>The pattern is drawn by the following algorithm (see <a class="reference external" href="https://en.wikipedia.org/wiki/Lee_algorithm">Wikipedia</a>):</p>
-<ul class="simple">
-<li><p>First, the selected faces (or vertices) are marked with the number of 1.</p></li>
-<li><p>Then the faces (vertices), that are neighbour to faces marked with 1, which were not marked yet, are marked with the number 2.</p></li>
-<li><p>Faces (vertices), that are neighbour to faces marked with 2, which were not marked yet, are marked with the number 3.</p></li>
-<li><p>This continues until all faces / vertices of the mesh are painted.</p></li>
-</ul>
-<p>Some faces (vertices) of the mesh can be marked as obstacles, so that the wave can not pass through them.</p>
+<p>This node calculates the center and the radius of inscribed circle for each
+convex face of the input mesh. Obviously, it is not always possible to inscribe
+a circle into a polygon, if polygon is not a triangle. For non-tiangular
+polygons, this node calculates the biggest circle which can be inscribed into
+the polygon, i.e. the circle which touches as many polygon edges as possible.</p>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following inputs:</p>
 <ul class="simple">
-<li><p><strong>Vertices</strong>. Mesh vertices. Mandatory input.</p></li>
-<li><p><strong>Edges</strong>. Mesh edges.</p></li>
-<li><p><strong>Faces</strong>. Mesh faces.</p></li>
-<li><p><strong>InitMask</strong>. Mask for faces (or vertices, depending on the painting mode),
-which should be considered as initially selected. This input is mandatory and
-must select at least one face / vertex.</p></li>
-<li><p><strong>ObstacleMask</strong>. Mask for faces / vertices, which should be marked as
-obstacles. If not connected, all faces / vertices are considered  as
-passable.</p></li>
+<li><p><strong>Vertices</strong>. The vertices of the input mesh. This input is mandatory.</p></li>
+<li><p><strong>Faces</strong>. The faces of the input mesh. This input is mandatory.</p></li>
 </ul>
 </section>
 <section id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
 <p>This node has the following parameters:</p>
 <ul>
-<li><p><strong>Mode</strong>. Painting mode. The following modes are available:</p>
+<li><p><strong>Flat Matrix output</strong>. If checked, the node will generate a single flat list
+of matrices in the <strong>Matrix</strong> output, for all input meshes. Checked by default.</p></li>
+<li><p><strong>On concave faces</strong>. This parameter is available in the N panel only.
+Defines what the node should do if it encounters a concave face. There are
+the following options available:</p>
 <ul class="simple">
-<li><p><strong>Vertices</strong>. Paint on mesh vertices.</p></li>
-<li><p><strong>Faces</strong>. Paint on mesh faces.</p></li>
+<li><p><strong>Skip</strong>. Just skip such faces - do not generate inscribed circles for them.</p></li>
+<li><p><strong>Error</strong>. Stop processing and give an error (turn the node red).</p></li>
+<li><p><strong>As Is</strong>. Try to generate an inscribed circle for such face anyway. In
+many cases, the generated circle will be incorrect (will be too small or
+even outside the polygon), but in some simple cases it can be valid.</p></li>
 </ul>
-</li>
-<li><p><strong>Neighbour vertices</strong>. Visible only if <strong>Mode</strong> parameter is set to <strong>Vertices</strong>. This defines which vertices are considered to be neighbour. The available modes are:</p>
-<blockquote>
-<div><ul class="simple">
-<li><p><strong>By Edge</strong>. Vertices that share an edge are considered to be neighbour.</p></li>
-<li><p><strong>By Face</strong>. Vertices that share a face are considered to be neighbour.</p></li>
-</ul>
-<p>The default value is <strong>By Edge</strong>.</p>
-</div></blockquote>
-</li>
-<li><p><strong>Neighbour faces</strong>. Visible only if <strong>Mode</strong> parameter is set to <strong>Faces</strong>. This defines which faces are considered to be neighbour. The available modes are:</p>
-<blockquote>
-<div><ul class="simple">
-<li><p><strong>By Edge</strong>. Faces that share an edge are considered to be neighbour.</p></li>
-<li><p><strong>By Vertex</strong>. Faces that share a vertex are considered to be neighbour.</p></li>
-</ul>
-</div></blockquote>
+<p>The default option is <strong>Skip</strong>.</p>
 </li>
 </ul>
 </section>
@@ -234,46 +218,19 @@ passable.</p></li>
 <h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following outputs:</p>
 <ul class="simple">
-<li><p><strong>WaveFront</strong>. For each face (or vertex) of the mesh, this contains the
-number of steps which should be taken from initially selected faces
-(vertices), to take to this face (vertex), starting from 1 for initially
-selected faces. In other words, this is the number of the wave front. This
-output will contain 0 for obstacle faces / vertices and -1 if faces /
-vertices are unreachable from selected elements.</p></li>
-<li><p><strong>WaveDistance</strong>. For each face (or vertex) of the mesh, this contains the
-length of the shortest path from initially selected faces (vertices) to this
-face (vertex). The path is considered to be consisting of single steps from
-one face / vertex to one of it’s neighbours. The length of step between
-neighbour vertices is the Euclidean distance between such vertices. The
-length of step between neighbour faces is calculated as Euclidean distance
-between the centers of such faces. This input will contain 0 for initially
-selected faces as well as for obstacle faces and -1 for elements which are
-unreachable from selected ones.</p></li>
-<li><p><strong>StartIdx</strong>. For each face (or vertex) of the mesh, this contains the index
-of one of initially selected faces / vertices, which is the nearest from this
-face / vertex, in terms of the shortest path described above.</p></li>
+<li><p><strong>Center</strong>. For each inscribed circle, this contains a matrix, Z axis of
+which points along face normal, and the translation component equals to the
+center of the inscribed circle. This output can be used to actually place
+circles at their places.</p></li>
+<li><p><strong>Radius</strong>. Radiuses of the inscribed circles.</p></li>
 </ul>
 </section>
 <section id="examples-of-usage">
-<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Link to this heading">¶</a></h2>
-<p>Start a wave from some small area on the hexagonal grid; mark some vertices as obstacles. Note how the wave can not pass through the obstacle and has to go the long way around:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197005643-c639ff50-1da5-4df9-8fd7-f71c47a2a084.png"><img alt="https://user-images.githubusercontent.com/14288520/197005643-c639ff50-1da5-4df9-8fd7-f71c47a2a084.png" src="https://user-images.githubusercontent.com/14288520/197005643-c639ff50-1da5-4df9-8fd7-f71c47a2a084.png" /></a>
-<ul class="simple">
-<li><p>Generator-&gt;Generator Extended-&gt; <a class="reference internal" href="../generators_extended/polygon_grid.html"><span class="doc">Polygon Grid</span></a></p></li>
-<li><p>Analyzers-&gt; <a class="reference internal" href="mesh_select_mk2.html"><span class="doc">Select Mesh Elements</span></a></p></li>
-<li><p>Number-&gt; <a class="reference internal" href="../number/range_map.html"><span class="doc">Map Range</span></a></p></li>
-<li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/func.html"><span class="doc">List Math</span></a></p></li>
-<li><p>List-&gt; <a class="reference internal" href="../list_masks/mask.html"><span class="doc">List Mask (Out)</span></a></p></li>
-<li><p>Color-&gt; <a class="reference internal" href="../color/color_in_mk1.html"><span class="doc">Color In</span></a></p></li>
-<li><p>Viz-&gt; <a class="reference internal" href="../viz/mesh_viewer.html"><span class="doc">Mesh Viewer</span></a></p></li>
-</ul>
-<hr class="docutils" />
-<p>Similar setup with a rectangular grid; use wave front number to select faces to be extruded:</p>
-<img alt="https://user-images.githubusercontent.com/284644/71738492-917c0a00-2e78-11ea-8f82-c4b7307f1434.png" src="https://user-images.githubusercontent.com/284644/71738492-917c0a00-2e78-11ea-8f82-c4b7307f1434.png" />
-<p>Select some random vertices on a dual mesh of the icosphere, and push the wave from them; use sine of wave distance to deform the mesh:</p>
-<img alt="https://user-images.githubusercontent.com/284644/71737929-e9197600-2e76-11ea-8c00-51e00af9a2c5.png" src="https://user-images.githubusercontent.com/284644/71737929-e9197600-2e76-11ea-8c00-51e00af9a2c5.png" />
-<p>Paint the boundary faces of a rectangular grid with random colors; paint each other face with the color of the nearest boundary face; darken the color based on the distance from boundary. So here one single-colored stripe is actually the shortest path from some face to the boundary:</p>
-<img alt="https://user-images.githubusercontent.com/284644/71738976-0439b500-2e7a-11ea-998c-ded8178ea63e.png" src="https://user-images.githubusercontent.com/284644/71738976-0439b500-2e7a-11ea-998c-ded8178ea63e.png" />
+<h2>Examples of Usage<a class="headerlink" href="#examples-of-usage" title="Link to this heading">¶</a></h2>
+<p>In many cases inscribed circle can touch only two or three polygon edges:</p>
+<a class="reference external image-reference" href="../../../docs/assets/nodes/analyzer/inscribed_circle_1.png"><img alt="../../_images/inscribed_circle_1.png" src="../../_images/inscribed_circle_1.png" /></a>
+<p>If the polygon is almost regular, the circle will touch more edges:</p>
+<a class="reference external image-reference" href="../../../docs/assets/nodes/analyzer/inscribed_circle_2.png"><img alt="../../_images/inscribed_circle_2.png" src="../../_images/inscribed_circle_2.png" /></a>
 </section>
 </section>
 
@@ -281,8 +238,8 @@ face / vertex, in terms of the shortest path described above.</p></li>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="volume.html" class="btn btn-neutral float-left" title="Volume" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="weighted_vector_sum.html" class="btn btn-neutral float-right" title="Center of Mass (Mesh) (Alpha)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="points_inside_mesh.html" class="btn btn-neutral float-left" title="Points Inside Mesh" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="project_point_to_line.html" class="btn btn-neutral float-right" title="Project Points to Line" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
