@@ -58,11 +58,11 @@ Examples of Usage
 
 In many cases inscribed circle can touch only two or three polygon edges:
 
-.. image:: /docs/assets/nodes/analyzer/inscribed_circle_1.png
-   :target: /docs/assets/nodes/analyzer/inscribed_circle_1.png
+.. image:: ../../../docs/assets/nodes/analyzer/inscribed_circle_1.png
+   :target: ../../../docs/assets/nodes/analyzer/inscribed_circle_1.png
 
 If the polygon is almost regular, the circle will touch more edges:
 
-.. image:: /docs/assets/nodes/analyzer/inscribed_circle_2.png
-   :target: /docs/assets/nodes/analyzer/inscribed_circle_2.png
+.. image:: ../../../docs/assets/nodes/analyzer/inscribed_circle_2.png
+   :target: ../../../docs/assets/nodes/analyzer/inscribed_circle_2.png
 
