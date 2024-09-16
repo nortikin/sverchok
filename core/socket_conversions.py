@@ -19,7 +19,7 @@ from copy import deepcopy
 from enum import Enum
 
 from sverchok.core.sv_custom_exceptions import ImplicitConversionProhibited
-from sverchok.data_structure import get_data_nesting_level, is_ultimately
+from sverchok.data_structure import get_data_nesting_level, is_ultimately, NUMERIC_DATA_TYPES
 from sverchok.utils.field.vector import SvVectorField, SvMatrixVectorField, SvConstantVectorField
 from sverchok.utils.field.scalar import SvScalarField, SvConstantScalarField
 from sverchok.utils.curve import SvCurve
@@ -42,7 +42,7 @@ def matrices_to_vfield(data):
 
 
 def vertices_to_vfield(data):
-    if isinstance(data, (tuple, list)) and len(data) == 3 and isinstance(data[0], (float, int)):
+    if isinstance(data, (tuple, list)) and len(data) == 3 and isinstance(data[0], NUMERIC_DATA_TYPES):
         data = deepcopy(data)
         return SvConstantVectorField(data)
     elif isinstance(data, (list, tuple)):
@@ -52,7 +52,7 @@ def vertices_to_vfield(data):
 
 
 def numbers_to_sfield(data):
-    if isinstance(data, (int, float)):
+    if isinstance(data, NUMERIC_DATA_TYPES):
         return SvConstantScalarField(data)
     elif isinstance(data, (list, tuple)):
         return [numbers_to_sfield(item) for item in data]
@@ -68,7 +68,7 @@ def vectors_to_matrices(source_data):
 
     def get_all(data):
         for item in data:
-            if isinstance(item, (tuple, list, ndarray)) and len(item) == 3 and isinstance(item[0], (float, int)):
+            if isinstance(item, (tuple, list, ndarray)) and len(item) == 3 and isinstance(item[0], NUMERIC_DATA_TYPES):
                 # generate location matrix from location
                 x, y, z = item
                 collect_matrix(Matrix([(1., .0, .0, x), (.0, 1., .0, y), (.0, .0, 1., z), (.0, .0, .0, 1.)]))
@@ -97,7 +97,7 @@ def quaternions_to_matrices(source_data):
 
     def get_all(data):
         for item in data:
-            if isinstance(item, (tuple, list)) and len(item) == 4 and isinstance(item[0], (float, int)):
+            if isinstance(item, (tuple, list)) and len(item) == 4 and isinstance(item[0], NUMERIC_DATA_TYPES):
                 mat = Quaternion(item).to_matrix().to_4x4()
                 collect_matrix(mat)
             else:
@@ -122,14 +122,14 @@ def matrices_to_quaternions(source_data):
 
 def string_to_vector(source_data):
     # it can be so that socket is string but data their are already vectors, performance-wise we check only first item
-    if isinstance(source_data[0][0], (float, int)):
+    if isinstance(source_data[0][0], NUMERIC_DATA_TYPES):
         return [[(v, v, v) for v in obj] for obj in source_data]
     return source_data
 
 
 def string_to_color(source_data):
     # it can be so that socket is string but data their are already colors, performance-wise we check only first item
-    if isinstance(source_data[0][0], (float, int)):
+    if isinstance(source_data[0][0], NUMERIC_DATA_TYPES):
         return [[(v, v, v, 1) for v in obj] for obj in source_data]
     if len(source_data[0][0]) == 3:
         return vector_to_color(source_data)

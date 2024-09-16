@@ -503,6 +503,7 @@ def levels_of_list_or_np(lst):
         return level
     return 0
 
+NUMERIC_DATA_TYPES = (float, int, float64, int32, int64)
 SIMPLE_DATA_TYPES = (float, int, float64, int32, int64, str, Matrix)
 
 
