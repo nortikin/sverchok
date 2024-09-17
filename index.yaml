@@ -392,6 +392,7 @@
     - SvCircleApproxNode
     - SvSphereApproxNode
     - SvInscribedCircleNode
+    - SvSemiInscribedCircleNode
     - SvSteinerEllipseNode
     - ---
     - SvMeshSelectNodeMk2

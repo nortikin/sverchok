@@ -76,6 +76,7 @@ class SvExCrossCurveSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
         self.inputs.new('SvSurfaceSocket', "Surface")
         self.outputs.new('SvVerticesSocket', "Point")
         self.outputs.new('SvStringsSocket', "T")
+        self.outputs.new('SvVerticesSocket', "UVPoint")
 
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
@@ -89,7 +90,8 @@ class SvExCrossCurveSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
         tolerance = 10**(-self.accuracy)
 
         points_out = []
-        u_out = []
+        t_out = []
+        uv_out = []
         for surfaces, curves in zip_long_repeat(surfaces_s, curves_s):
             for surface, curve in zip_long_repeat(surfaces, curves):
                 result = intersect_curve_surface(curve, surface,
@@ -99,14 +101,17 @@ class SvExCrossCurveSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
                             raycast_method = self.raycast_method,
                             support_nurbs = self.use_nurbs
                         )
-                new_points = [p[1] for p in result]
-                new_u = [p[0] for p in result]
+                new_points = result.points
+                new_t = result.ts
+                new_uv = [(u, v, 0) for u, v in zip(result.us, result.vs)]
                 points_out.append(new_points)
-                u_out.append(new_u)
+                t_out.append(new_t)
+                uv_out.append(new_uv)
 
         self.outputs['Point'].sv_set(points_out)
-        self.outputs['T'].sv_set(u_out)
-
+        self.outputs['T'].sv_set(t_out)
+        if 'UVPoint' in self.outputs:
+            self.outputs['UVPoint'].sv_set(uv_out)
 
 def register():
     bpy.utils.register_class(SvExCrossCurveSurfaceNode)
