@@ -235,6 +235,15 @@ class SurfaceCurvatureCalculator(object):
         else:
             return c1, c2
 
+    def first_fundamental_form(self):
+        n = len(self.us)
+        G = np.empty((n,2,2))
+        G[:,0,0] = self.duu
+        G[:,0,1] = self.duv
+        G[:,1,0] = self.duv
+        G[:,1,1] = self.dvv
+        return G
+
     def values_and_directions(self):
         """
         Calculate principal curvature values together with principal curvature directions.
