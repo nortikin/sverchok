@@ -10,10 +10,9 @@ from collections import defaultdict
 
 from mathutils import Matrix, Vector
 
-
 from sverchok.utils.math import (
         ZERO, FRENET, HOUSEHOLDER, TRACK, DIFF, TRACK_NORMAL,
-        np_dot
+        np_dot, np_multiply_matrices_vectors
     )
 from sverchok.utils.geom import (
         LineEquation, CircleEquation3D, PlaneEquation,
@@ -1674,4 +1673,48 @@ def nurbs_surface_from_curve(curve, samples, degree_u, degree_v, num_cpts_u, num
     surface, uv_points = nurbs_surface_from_points(points, degree_u, degree_v, num_cpts_u, num_cpts_v, implementation = implementation)
     trim_curve = SvNurbsMaths.interpolate_curve(implementation, curve.get_degree(), uv_points)
     return surface, trim_curve
+
+def rotate_uv_vectors_on_surface(surface, uv_points, uv_vectors, angles):
+    """
+    Given vectors in surface's UV space, rotate them for given angle in 3D
+    space around surface's normal.
+
+    Args:
+        * surface - SvSurface instance.
+        * uv_points - np.ndarray of shape (n,3) - vector origins in UV space
+        * uv_vectors - np.ndarray of shape (n,3) - vectors in UV space
+        * angles - np.ndarray of shape (n,) - angles to rotate vectors for (in radians)
+
+    Returns:
+        np.ndarray of shape (n,3) - rotated vectors in UV space (third component is zero).
+    """
+    n = len(uv_points)
+    us0 = uv_points[:,0]
+    vs0 = uv_points[:,1]
+    curvatures = surface.curvature_calculator(us0, vs0)
+    G = curvatures.first_fundamental_form()
+    g11 = G[:,0,0]
+    g12 = G[:,0,1]
+    g22 = G[:,1,1]
+    
+    detG = g11*g22 - g12**2
+    ort = np.zeros((n,2,2))
+    y1 = np.array([-g12, g11]) / np.sqrt(detG).T
+    ort[:,:,0] = np.array([1,0])
+    ort[:,:,1] = y1.T
+    
+    vec1 = np_multiply_matrices_vectors(np.linalg.inv(ort), uv_vectors[:,:2])
+    
+    rot = np.zeros((n,2,2))
+    rot[:,0,0] = np.cos(angles)
+    rot[:,0,1] = - np.sin(angles)
+    rot[:,1,0] = - rot[:,0,1]
+    rot[:,1,1] = rot[:,0,0]
+    
+    vec2 = np_multiply_matrices_vectors(rot, vec1)
+    vec3 = np_multiply_matrices_vectors(ort, vec2)
+    
+    rs = np.zeros((n,3))
+    rs[:,:2] = vec3
+    return rs
 
