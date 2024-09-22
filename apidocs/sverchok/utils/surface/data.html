@@ -197,6 +197,15 @@ and calculates any curvature information from them.</p></div>
         else:
             return c1, c2
 
+    def first_fundamental_form(self):
+        n = len(self.us)
+        G = np.empty((n,2,2))
+        G[:,0,0] = self.duu
+        G[:,0,1] = self.duv
+        G[:,1,0] = self.duv
+        G[:,1,1] = self.dvv
+        return G
+
     def values_and_directions(self):
         &#34;&#34;&#34;
         Calculate principal curvature values together with principal curvature directions.
@@ -377,6 +386,12 @@ vector along df / du derivative, and dv is unit vector along df /
 dv derivative.
 Note: to calculate curvature along the direction perpendicular to (v1,v2),
 one can use formula: 2 * calc.mean() - calc.curvature_along_direction(v1, v2).</p></div>
+</dd>
+<dt id="sverchok.utils.surface.data.SurfaceCurvatureCalculator.first_fundamental_form"><code class="name flex">
+<span>def <span class="ident">first_fundamental_form</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.surface.data.SurfaceCurvatureCalculator.gauss"><code class="name flex">
 <span>def <span class="ident">gauss</span></span>(<span>self)</span>
@@ -589,6 +604,7 @@ corresponds to principal_value_2.</p></div>
 <li><code><a title="sverchok.utils.surface.data.SurfaceCurvatureCalculator.christoffel" href="#sverchok.utils.surface.data.SurfaceCurvatureCalculator.christoffel">christoffel</a></code></li>
 <li><code><a title="sverchok.utils.surface.data.SurfaceCurvatureCalculator.curvature_along_direction" href="#sverchok.utils.surface.data.SurfaceCurvatureCalculator.curvature_along_direction">curvature_along_direction</a></code></li>
 <li><code><a title="sverchok.utils.surface.data.SurfaceCurvatureCalculator.derivatives_data" href="#sverchok.utils.surface.data.SurfaceCurvatureCalculator.derivatives_data">derivatives_data</a></code></li>
+<li><code><a title="sverchok.utils.surface.data.SurfaceCurvatureCalculator.first_fundamental_form" href="#sverchok.utils.surface.data.SurfaceCurvatureCalculator.first_fundamental_form">first_fundamental_form</a></code></li>
 <li><code><a title="sverchok.utils.surface.data.SurfaceCurvatureCalculator.gauss" href="#sverchok.utils.surface.data.SurfaceCurvatureCalculator.gauss">gauss</a></code></li>
 <li><code><a title="sverchok.utils.surface.data.SurfaceCurvatureCalculator.mean" href="#sverchok.utils.surface.data.SurfaceCurvatureCalculator.mean">mean</a></code></li>
 <li><code><a title="sverchok.utils.surface.data.SurfaceCurvatureCalculator.set" href="#sverchok.utils.surface.data.SurfaceCurvatureCalculator.set">set</a></code></li>
