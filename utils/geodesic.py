@@ -8,8 +8,9 @@
 import numpy as np
 from math import isnan, pi
 
-from sverchok.utils.geom import Spline, CubicSpline
+from sverchok.utils.geom import Spline, CubicSpline, rotate_vector_around_vector_np
 from sverchok.utils.curve.splines import SvSplineCurve
+from sverchok.utils.surface.algorithms import rotate_uv_vectors_on_surface
 from sverchok.utils.field.rbf import SvRbfVectorField
 from sverchok.utils.field.vector import SvBendAlongSurfaceField, SvVectorFieldComposition, SvPreserveCoordinateField
 from sverchok.utils.math import np_multiply_matrices_vectors
@@ -112,39 +113,121 @@ def geodesic_curve_by_two_points_uv(surface, point1, point2, n_points, n_iterati
 
 class GeodesicSolution:
     def __init__(self, rhos, orig_points, uv_points, surface_points):
-        self.rhos = np.array(rhos)
-        self.orig_points = np.array(orig_points)
-        self.uv_points = np.array(uv_points)
-        self.surface_points = np.array(surface_points)
+        self.rhos = rhos
+        self.orig_points = orig_points
+        self.uv_points = uv_points
+        self.surface_points = surface_points
 
     def get(self, i):
-        return GeodesicSolution(self.rhos[i], self.orig_points[i], self.uv_points[i], self.surface_points[i])
+        return GeodesicSolution([self.rhos[i]], [self.orig_points[i]], [self.uv_points[i]], [self.surface_points[i]])
+
+    def shift(self, orig_centers):
+        return GeodesicSolution(
+                self.rhos,
+                [o1 + o2 for o1,o2 in zip(self.orig_points, orig_centers)],
+                self.uv_points,
+                self.surface_points)
 
     def add(self, sol):
         return GeodesicSolution(
-                np.concatenate((self.rhos, sol.rhos), axis=0),
-                np.concatenate((self.orig_points, sol.orig_points), axis=0),
-                np.concatenate((self.uv_points, sol.uv_points), axis=0),
-                np.concatenate((self.surface_points, sol.surface_points), axis=0)
+                self.rhos + sol.rhos,
+                self.orig_points + sol.orig_points,
+                self.uv_points + sol.uv_points,
+                self.surface_points + sol.surface_points
             )
 
-    def get_uv_point_by_rho(self, i, rho, method='nearest'):
-        if method == 'nearest':
+    def get_uv_point_by_rho(self, i, rho, method='cubic'):
+        if method == 'cubic':
+            return self.get_uv_line(i).evaluate_array(rho)
+        elif method == 'nearest':
             idx = self.rhos[i].searchsorted(rho, 'right') - 1
-            return self.uv_points[i,idx]
+            return self.uv_points[i][idx]
         else:
             raise Exception("Unsupported method")
 
-    def get_uv_points_by_rho(self, rho, method='nearest'):
+    def get_orig_point_by_rho(self, i, rho, method='cubic'):
+        if method == 'cubic':
+            return self.get_orig_line(i).evaluate_array(rho)
+        elif method == 'nearest':
+            idx = self.rhos[i].searchsorted(rho, 'right') - 1
+            return self.orig_points[i][idx]
+        else:
+            raise Exception("Unsupported method")
+
+    def get_uv_points_by_rho(self, rho, method='cubic'):
         points = []
         for i in range(len(self.rhos)):
             pt = self.get_uv_point_by_rho(i, rho, method=method)
             points.append(pt)
         return np.array(points)
 
-def geodesic_cauchy_problem(surface, uv_starts, phis, target_radius, n_steps=10, closed_u = False, closed_v = False):
+    def get_points_count(self):
+        return sum(len(line) for line in self.orig_points)
+
+    def get_all_orig_points(self):
+        return np.concatenate(self.orig_points)
+
+    def get_all_uv_points(self):
+        return np.concatenate(self.uv_points)
+
+    def get_all_surface_points(self):
+        return np.concatenate(self.surface_points)
+
+    def get_uv_line(self, i):
+        uv_pts = self.uv_points[i]
+        spline = CubicSpline(uv_pts, metric='POINTS')
+        return SvSplineCurve(spline)
+
+    def get_curve(self, i):
+        pts = self.surface_points[i]
+        spline = CubicSpline(pts, metric='POINTS')
+        return SvSplineCurve(spline)
+
+    def get_orig_line(self, i):
+        orig_pts = self.orig_points[i]
+        spline = CubicSpline(orig_pts, metric='POINTS')
+        return SvSplineCurve(spline)
+
+    def get_tangent_angles(self, surface, i, ts, alpha):
+        n = len(ts)
+        uv_curve = self.get_uv_line(i)
+        curve = self.get_curve(i)
+        uv_pts = uv_curve.evaluate_array(ts)
+        data = surface.derivatives_data_array(uv_pts[:,0], uv_pts[:,1])
+        matrices = np.empty((n, 3, 3))
+        matrices[:,:,0] = data.du
+        matrices[:,:,1] = data.dv
+        matrices[:,:,2] = data.normals()
+        tangents_3d = curve.tangent_array(ts)
+        tangents_3d = rotate_vector_around_vector_np(tangents_3d, data.normals(), np.array([alpha]))
+        inv_matrices = np.linalg.inv(matrices)
+        uv_tangents = np_multiply_matrices_vectors(inv_matrices, tangents_3d)
+        return np.arctan2(-uv_tangents[:,1], uv_tangents[:,0])
+
+    def rotate_tangents(self, surface, i, ts, alpha):
+        n = len(ts)
+        uv_curve = self.get_uv_line(i)
+        uv_pts = uv_curve.evaluate_array(ts)
+        uv_tangents = uv_curve.tangent_array(ts)
+        angles = np.full((n,), alpha)
+        res = rotate_uv_vectors_on_surface(surface, uv_pts, uv_tangents, angles)
+        return res[:,0], -res[:,1]
+
+def geodesic_cauchy_problem(surface, uv_starts, angles = None, u_tangents = None, v_tangents = None, target_radius=1.0, n_steps=10, closed_u = False, closed_v = False):
     step = target_radius / n_steps
     u_min, u_max, v_min, v_max = surface.get_domain()
+
+    if u_tangents is None or v_tangents is None and angles is not None:
+        u_tangents = np.cos(angles)
+        v_tangents = np.sin(angles)
+    elif u_tangents is not None and v_tangents is not None:
+        n = len(u_tangents)
+        uv_tangents = np.zeros((n,3))
+        uv_tangents[:,0] = u_tangents
+        uv_tangents[:,1] = v_tangents
+        uv_tangents /= np.linalg.norm(uv_tangents, axis=1, keepdims=True)
+        u_tangents = uv_tangents[:,0]
+        v_tangents = uv_tangents[:,1]
 
     def decompose_array(dus, dvs, normals, pts):
         n = len(pts)
@@ -157,12 +240,10 @@ def geodesic_cauchy_problem(surface, uv_starts, phis, target_radius, n_steps=10,
         return res[:,0], res[:,1]
 
     def initial_points(data):
-        nonlocal phis
         dy = np.cross(data.du, data.normals())
         dy /= np.linalg.norm(dy, axis=1, keepdims=True)
         dx = data.du / np.linalg.norm(data.du, axis=1, keepdims=True)
-        phis = phis[np.newaxis].T
-        return step * (dx * np.cos(phis) + dy * np.sin(phis)) + data.points
+        return step * (dx * u_tangents[np.newaxis].T + dy * v_tangents[np.newaxis].T) + data.points
 
     def do_step(data, us, vs, vectors, radius):
         vectors = radius * vectors / np.linalg.norm(vectors, axis=1, keepdims=True)
@@ -187,8 +268,8 @@ def geodesic_cauchy_problem(surface, uv_starts, phis, target_radius, n_steps=10,
 
     def mk_orig_points():
         rs = np.linspace(0, target_radius, num=n_steps)[np.newaxis].T
-        us = np.cos(phis.T)*rs
-        vs = np.sin(phis.T)*rs
+        us = u_tangents*rs
+        vs = v_tangents*rs
         us = us.flatten()
         vs = vs.flatten()
         pts = np.zeros((len(us), 3))
@@ -204,7 +285,8 @@ def geodesic_cauchy_problem(surface, uv_starts, phis, target_radius, n_steps=10,
 
     def filter_out_nans(lists):
         has_no_nans = lambda v: not any(isnan(x) for x in v)
-        return [list(filter(has_no_nans, lst)) for lst in lists]
+        r = [list(filter(has_no_nans, lst)) for lst in lists]
+        return list(np.array(r))
 
     us0, vs0 = uv_starts[:,0], uv_starts[:,1]
     data = surface.derivatives_data_array(us0, vs0)
@@ -236,11 +318,11 @@ def geodesic_cauchy_problem(surface, uv_starts, phis, target_radius, n_steps=10,
     uvs = transpose(uvs, n_starts, n_steps)
     all_points = transpose(all_points, n_starts, n_steps)
 
-    orig_points = filter_out_nans(orig_points.tolist())
-    uvs = filter_out_nans(uvs.tolist())
-    all_points = filter_out_nans(all_points.tolist())
+    orig_points = filter_out_nans(orig_points)
+    uvs = filter_out_nans(uvs)
+    all_points = filter_out_nans(all_points)
 
-    return GeodesicSolution(rhos, orig_points, uvs, all_points)
+    return GeodesicSolution([rhos[:,0]], orig_points, uvs, all_points)
 
 def make_rbf(orig_points, tgt_points, **kwargs):
     orig_us = orig_points[:,0]
@@ -280,12 +362,66 @@ def exponential_map(surface, uv_center, radius, radius_steps=10, angle_steps=8, 
     uv_centers = np.empty((angle_steps, 3))
     uv_centers[:] = uv_center
 
-    solution = geodesic_cauchy_problem(surface, uv_centers, angles, radius, radius_steps,
+    solution = geodesic_cauchy_problem(surface, uv_centers,
+                                       angles=angles,
+                                       target_radius = radius,
+                                       n_steps = radius_steps,
                                        closed_u=closed_u, closed_v=closed_v)
 
-    orig_points = solution.orig_points.reshape((radius_steps * angle_steps, 3))
-    uv_points = solution.uv_points.reshape((radius_steps * angle_steps, 3))
-    points = solution.surface_points.reshape((radius_steps * angle_steps, 3))
+    orig_points = solution.get_all_orig_points()
+    uv_points = solution.get_all_uv_points()
+    points = solution.get_all_surface_points()
+
+    unq_orig_points, unq_idxs = np.unique(orig_points, axis=0, return_index=True)
+    unq_uv_points = uv_points[unq_idxs]
+    unq_points = points[unq_idxs]
+    return ExponentialMap(surface, unq_orig_points, unq_uv_points, unq_points)
+
+def rectangular_exponential_map(surface, uv_center, u_radius, v_radius, n_v_lines, u_steps, v_steps):
+    u_line1 = geodesic_cauchy_problem(surface, np.array([uv_center]), angles=np.array([0]), target_radius=u_radius, n_steps=u_steps)
+    u_line2 = geodesic_cauchy_problem(surface, np.array([uv_center]), angles=np.array([pi]), target_radius=u_radius, n_steps=u_steps)
+
+    u_rhos = np.linspace(0, u_radius, num=n_v_lines)
+    u_points1 = u_line1.get_uv_point_by_rho(0, u_rhos)
+    u_points2 = u_line2.get_uv_point_by_rho(0, u_rhos)
+    orig_u_points1 = u_line1.get_orig_point_by_rho(0, u_rhos)
+    orig_u_points1 = np.transpose(orig_u_points1[np.newaxis], axes=(1,0,2))
+    orig_u_points2 = u_line2.get_orig_point_by_rho(0, u_rhos)
+    orig_u_points2 = np.transpose(orig_u_points2[np.newaxis], axes=(1,0,2))
+
+    u_tangents_1, v_tangents_1 = u_line1.rotate_tangents(surface, 0, u_rhos, -pi/2)
+    u_tangents_2, v_tangents_2 = u_line1.rotate_tangents(surface, 0, u_rhos, +pi/2)
+    u_tangents_3, v_tangents_3 = u_line2.rotate_tangents(surface, 0, u_rhos, -pi/2)
+    u_tangents_4, v_tangents_4 = u_line2.rotate_tangents(surface, 0, u_rhos, +pi/2)
+
+    v_lines1 = geodesic_cauchy_problem(surface, u_points1,
+                                       u_tangents = u_tangents_1,
+                                       v_tangents = v_tangents_1,
+                                       target_radius=v_radius, n_steps=v_steps)
+    v_lines2 = geodesic_cauchy_problem(surface, u_points1,
+                                       u_tangents = u_tangents_2,
+                                       v_tangents = v_tangents_2,
+                                       target_radius=v_radius, n_steps=v_steps)
+    v_lines3 = geodesic_cauchy_problem(surface, u_points2,
+                                       u_tangents = u_tangents_3,
+                                       v_tangents = v_tangents_3,
+                                       target_radius=v_radius, n_steps=v_steps)
+    v_lines4 = geodesic_cauchy_problem(surface, u_points2,
+                                       u_tangents = u_tangents_4,
+                                       v_tangents = v_tangents_4,
+                                       target_radius=v_radius, n_steps=v_steps)
+
+    solution = u_line1
+    solution = solution.add(u_line2)
+    solution = solution.add(v_lines1.shift(orig_u_points1))
+    solution = solution.add(v_lines2.shift(orig_u_points1))
+    solution = solution.add(v_lines3.shift(orig_u_points2))
+    solution = solution.add(v_lines4.shift(orig_u_points2))
+
+    n_points = solution.get_points_count()
+    orig_points = solution.get_all_orig_points()
+    uv_points = solution.get_all_uv_points()
+    points = solution.get_all_surface_points()
 
     unq_orig_points, unq_idxs = np.unique(orig_points, axis=0, return_index=True)
     unq_uv_points = uv_points[unq_idxs]
