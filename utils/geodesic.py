@@ -28,6 +28,23 @@ def cubic_spline(surface, uv_pts):
     return SvSplineCurve(spline)
 
 def geodesic_curve_by_two_points(surface, point1, point2, n_points, iterations, step, tolerance=1e-3, logger=None):
+    """
+    Generate a geodesic line between two points on surface.
+
+    Args:
+        * surface - an instance of SvSurface.
+        * point1, point2: np.ndarrays of shape (3,) (third coordinate is ignored) -
+          two points in surface's UV space.
+        * n_points: number of points on geodesic line to be generated.
+        * iterations - maximum number of numeric method iterations.
+        * tolerance - requested calculation tolerance; if this precision will be
+          achieved earlier than in requested number of iterations, the calculation
+          will be stopped.
+
+    Returns:
+        np.ndarray of shape (n_points, 3) (third coordinate will be zero) -
+        points of calculated geodesic line in surface's UV space.
+    """
     if logger is None:
         logger = get_logger()
 
@@ -113,6 +130,12 @@ def geodesic_curve_by_two_points_uv(surface, point1, point2, n_points, n_iterati
     return uv_pts
 
 class GeodesicSolution:
+    """
+    Class incapsulating result of calling geodesic_cauchy_problem method.
+
+    orig_points, uv_points and surface_points are lists of np.ndarrays of shape (n,3).
+    Shapes of different list items can differ.
+    """
     def __init__(self, rhos, orig_points, uv_points, surface_points):
         self.rhos = rhos
         self.orig_points = orig_points
@@ -214,7 +237,49 @@ class GeodesicSolution:
         res = rotate_uv_vectors_on_surface(surface, uv_pts, uv_tangents, angles)
         return res[:,0], -res[:,1]
 
-def geodesic_cauchy_problem(surface, uv_starts, angles = None, u_tangents = None, v_tangents = None, orig_u_tangents = None, orig_v_tangents = None, target_radius=1.0, n_steps=10, closed_u = False, closed_v = False):
+def geodesic_cauchy_problem(surface, uv_starts,
+                            angles = None,
+                            u_tangents = None, v_tangents = None,
+                            orig_u_tangents = None, orig_v_tangents = None,
+                            target_radius=1.0,
+                            n_steps=10,
+                            closed_u = False, closed_v = False):
+    """
+    Solve Cauchy problem to generate geodesic line: given start point (in UV space)
+    and direction (in UV space), draw a geodesic curve in that direction, of
+    requested length.
+
+    This method can generate several geodesic lines in one call.
+
+    The method uses simple Euler method to solve differential equation of geodesic
+    lines on surface. So it generates a series of points, which can be afterwards
+    interpolated with a cubic spline or another algorithm.
+
+    Initial direction of geodesic lines can be provided in one of two ways: by providing
+    angles, or by providing u_tangents and v_tangents.
+
+    Args:
+        * surface - an instance of SvSurface
+        * uv_starts - np.ndarray of shape (n, 3) (third coordinate is ignored) -
+          starting points of geodesic curves, in UV space
+        * angles - np.ndarray of shape (n,) - angles, in radians, counted
+          counterclockwise from surface's derivative vector in U parameter direction.
+          Can be provided instead of u_tangents and v_tangents.
+        * u_tangents, v_tangents - np.ndarrays of shape (n,): initial tangent direction
+          expressed as coefficients for surface's derivatives in U and V parametric
+          directions. Can be provided instead of angles.
+        * orig_u_tangents, orig_v_tangents - np.ndarrays of shape (n,): initial tangent
+          direction for "original" (undeformed) UV space. If not provided, u_tangents
+          and v_tangents will be used.
+        * target_radius - requested length of geodesic curves.
+        * n_steps - number of steps for calculation; it is also the number of points
+          which will be generated.
+        * closed_u, closed_v - indicates whether the surface is closed in U and/or V
+          direction.
+
+    Returns:
+        an instance of GeodesicSolution.
+    """
     step = target_radius / n_steps
     u_min, u_max, v_min, v_max = surface.get_domain()
 
@@ -223,13 +288,6 @@ def geodesic_cauchy_problem(surface, uv_starts, angles = None, u_tangents = None
         v_tangents = np.sin(angles)
         by_angles = True
     elif u_tangents is not None and v_tangents is not None:
-        #n = len(u_tangents)
-        #uv_tangents = np.zeros((n,3))
-        #uv_tangents[:,0] = u_tangents
-        #uv_tangents[:,1] = v_tangents
-        #uv_tangents /= np.linalg.norm(uv_tangents, axis=1, keepdims=True)
-        #u_tangents = uv_tangents[:,0]
-        #v_tangents = uv_tangents[:,1]
         by_angles = False
 
     if orig_u_tangents is None:
@@ -289,7 +347,6 @@ def geodesic_cauchy_problem(surface, uv_starts, angles = None, u_tangents = None
         return rs, pts
 
     def transpose(pts, n_centers, n_steps):
-        #pts1 = np.reshape(pts, (n_centers, n_steps, 3))
         pts1 = np.reshape(pts, (n_steps, n_centers, 3))
         pts1 = np.transpose(pts1, (1,0,2))
         return pts1#.reshape((n_centers * n_steps, 3))
@@ -336,6 +393,9 @@ def geodesic_cauchy_problem(surface, uv_starts, angles = None, u_tangents = None
     return GeodesicSolution([rhos[:,0]], orig_points, uvs, all_points)
 
 def make_rbf(orig_points, tgt_points, **kwargs):
+    """
+    Build RBF field, which maps orig_points to tgt_points.
+    """
     orig_us = orig_points[:,0]
     orig_vs = orig_points[:,1]
     orig_ws = orig_points[:,2]
@@ -409,9 +469,6 @@ def curve_exponential_map(surface, uv_curve, v_radius, u_steps, v_steps, u_mode=
     grid_us, grid_vs = np.meshgrid(orig_us, orig_vs)
     grid_us = grid_us.flatten()
     grid_vs = grid_vs.flatten()
-    #orig_points = np.zeros((2 * u_steps * v_steps, 3))
-    #orig_points[:,0] = np.concatenate((grid_us, grid_us))
-    #orig_points[:,1] = np.concatenate((grid_vs, -grid_vs))
 
     uv_starts = uv_curve.evaluate_array(orig_us)
     uv_tangents = uv_curve.tangent_array(orig_us)
@@ -426,11 +483,6 @@ def curve_exponential_map(surface, uv_curve, v_radius, u_steps, v_steps, u_mode=
                                     orig_u_tangents = np.full((u_steps,), 0),
                                     orig_v_tangents = np.full((u_steps,), 1),
                                     target_radius = v_radius, n_steps = v_steps)
-    #surface_pts = surface.evaluate_array(uv_starts[:,0], uv_starts[:,1])
-    #v1 = surface_pts[1:] - surface_pts[:-1]
-    #v2 = np.array([pts[1] - pts[0] for pts in lines.orig_points[:-1]])
-    #print("D", np_vectors_angle(v1, v2)*180/pi)
-    #print("UV", uv_starts)
     solution = solution.add(lines.shift(orig_centers))
     lines = geodesic_cauchy_problem(surface, uv_starts,
                                     u_tangents = uv_tangents_2[:,0],
@@ -491,7 +543,6 @@ def rectangular_exponential_map(surface, uv_center, u_radius, v_radius, n_v_line
     solution = solution.add(v_lines3.shift(orig_u_points2))
     solution = solution.add(v_lines4.shift(orig_u_points2))
 
-    n_points = solution.get_points_count()
     orig_points = solution.get_all_orig_points()
     uv_points = solution.get_all_uv_points()
     points = solution.get_all_surface_points()
