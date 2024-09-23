@@ -129,6 +129,22 @@ np.array of shape (n, 3).</p></div>
 <dd>
 <div class="desc"></div>
 </dd>
+<dt id="sverchok.utils.surface.algorithms.rotate_uv_vectors_on_surface"><code class="name flex">
+<span>def <span class="ident">rotate_uv_vectors_on_surface</span></span>(<span>surface, uv_points, uv_vectors, angles)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Given vectors in surface's UV space, rotate them for given angle in 3D
+space around surface's normal.</p>
+<h2 id="args">Args</h2>
+<ul>
+<li>surface - SvSurface instance.</li>
+<li>uv_points - np.ndarray of shape (n,3) - vector origins in UV space</li>
+<li>uv_vectors - np.ndarray of shape (n,3) - vectors in UV space</li>
+<li>angles - np.ndarray of shape (n,) - angles to rotate vectors for (in radians)</li>
+</ul>
+<h2 id="returns">Returns</h2>
+<p>np.ndarray of shape (n,3) - rotated vectors in UV space (third component is zero).</p></div>
+</dd>
 <dt id="sverchok.utils.surface.algorithms.round_knotvectors"><code class="name flex">
 <span>def <span class="ident">round_knotvectors</span></span>(<span>surface, accuracy)</span>
 </code></dt>
@@ -2664,6 +2680,7 @@ def v_size(self):
 <li><code><a title="sverchok.utils.surface.algorithms.nurbs_surface_from_curve" href="#sverchok.utils.surface.algorithms.nurbs_surface_from_curve">nurbs_surface_from_curve</a></code></li>
 <li><code><a title="sverchok.utils.surface.algorithms.nurbs_surface_from_points" href="#sverchok.utils.surface.algorithms.nurbs_surface_from_points">nurbs_surface_from_points</a></code></li>
 <li><code><a title="sverchok.utils.surface.algorithms.remove_excessive_knots" href="#sverchok.utils.surface.algorithms.remove_excessive_knots">remove_excessive_knots</a></code></li>
+<li><code><a title="sverchok.utils.surface.algorithms.rotate_uv_vectors_on_surface" href="#sverchok.utils.surface.algorithms.rotate_uv_vectors_on_surface">rotate_uv_vectors_on_surface</a></code></li>
 <li><code><a title="sverchok.utils.surface.algorithms.round_knotvectors" href="#sverchok.utils.surface.algorithms.round_knotvectors">round_knotvectors</a></code></li>
 <li><code><a title="sverchok.utils.surface.algorithms.unify_nurbs_surfaces" href="#sverchok.utils.surface.algorithms.unify_nurbs_surfaces">unify_nurbs_surfaces</a></code></li>
 </ul>

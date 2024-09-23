@@ -39,6 +39,12 @@ hljs.highlightAll();
 <dd>
 <div class="desc"></div>
 </dd>
+<dt id="sverchok.utils.geodesic.curve_exponential_map"><code class="name flex">
+<span>def <span class="ident">curve_exponential_map</span></span>(<span>surface, uv_curve, v_radius, u_steps, v_steps, u_mode='T', length_resolution=50)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
 <dt id="sverchok.utils.geodesic.exponential_map"><code class="name flex">
 <span>def <span class="ident">exponential_map</span></span>(<span>surface, uv_center, radius, radius_steps=10, angle_steps=8, closed_u=False, closed_v=False)</span>
 </code></dt>
@@ -46,7 +52,7 @@ hljs.highlightAll();
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.geodesic.geodesic_cauchy_problem"><code class="name flex">
-<span>def <span class="ident">geodesic_cauchy_problem</span></span>(<span>surface, uv_starts, phis, target_radius, n_steps=10, closed_u=False, closed_v=False)</span>
+<span>def <span class="ident">geodesic_cauchy_problem</span></span>(<span>surface, uv_starts, angles=None, u_tangents=None, v_tangents=None, orig_u_tangents=None, orig_v_tangents=None, target_radius=1.0, n_steps=10, closed_u=False, closed_v=False)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -65,6 +71,12 @@ hljs.highlightAll();
 </dd>
 <dt id="sverchok.utils.geodesic.make_rbf"><code class="name flex">
 <span>def <span class="ident">make_rbf</span></span>(<span>orig_points, tgt_points, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.geodesic.rectangular_exponential_map"><code class="name flex">
+<span>def <span class="ident">rectangular_exponential_map</span></span>(<span>surface, uv_center, u_radius, v_radius, n_v_lines, u_steps, v_steps)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -130,35 +142,105 @@ hljs.highlightAll();
 </summary>
 <pre><code class="python">class GeodesicSolution:
     def __init__(self, rhos, orig_points, uv_points, surface_points):
-        self.rhos = np.array(rhos)
-        self.orig_points = np.array(orig_points)
-        self.uv_points = np.array(uv_points)
-        self.surface_points = np.array(surface_points)
+        self.rhos = rhos
+        self.orig_points = orig_points
+        self.uv_points = uv_points
+        self.surface_points = surface_points
 
     def get(self, i):
-        return GeodesicSolution(self.rhos[i], self.orig_points[i], self.uv_points[i], self.surface_points[i])
+        return GeodesicSolution([self.rhos[i]], [self.orig_points[i]], [self.uv_points[i]], [self.surface_points[i]])
+
+    def shift(self, orig_centers):
+        return GeodesicSolution(
+                self.rhos,
+                [o1 + o2 for o1,o2 in zip(self.orig_points, orig_centers)],
+                self.uv_points,
+                self.surface_points)
 
     def add(self, sol):
         return GeodesicSolution(
-                np.concatenate((self.rhos, sol.rhos), axis=0),
-                np.concatenate((self.orig_points, sol.orig_points), axis=0),
-                np.concatenate((self.uv_points, sol.uv_points), axis=0),
-                np.concatenate((self.surface_points, sol.surface_points), axis=0)
+                self.rhos + sol.rhos,
+                self.orig_points + sol.orig_points,
+                self.uv_points + sol.uv_points,
+                self.surface_points + sol.surface_points
             )
 
-    def get_uv_point_by_rho(self, i, rho, method=&#39;nearest&#39;):
-        if method == &#39;nearest&#39;:
+    def get_uv_point_by_rho(self, i, rho, method=&#39;cubic&#39;):
+        if method == &#39;cubic&#39;:
+            return self.get_uv_line(i).evaluate_array(rho)
+        elif method == &#39;nearest&#39;:
             idx = self.rhos[i].searchsorted(rho, &#39;right&#39;) - 1
-            return self.uv_points[i,idx]
+            return self.uv_points[i][idx]
         else:
             raise Exception(&#34;Unsupported method&#34;)
 
-    def get_uv_points_by_rho(self, rho, method=&#39;nearest&#39;):
+    def get_orig_point_by_rho(self, i, rho, method=&#39;cubic&#39;):
+        if method == &#39;cubic&#39;:
+            return self.get_orig_line(i).evaluate_array(rho)
+        elif method == &#39;nearest&#39;:
+            idx = self.rhos[i].searchsorted(rho, &#39;right&#39;) - 1
+            return self.orig_points[i][idx]
+        else:
+            raise Exception(&#34;Unsupported method&#34;)
+
+    def get_uv_points_by_rho(self, rho, method=&#39;cubic&#39;):
         points = []
         for i in range(len(self.rhos)):
             pt = self.get_uv_point_by_rho(i, rho, method=method)
             points.append(pt)
-        return np.array(points)</code></pre>
+        return np.array(points)
+
+    def get_points_count(self):
+        return sum(len(line) for line in self.orig_points)
+
+    def get_all_orig_points(self):
+        return np.concatenate(self.orig_points)
+
+    def get_all_uv_points(self):
+        return np.concatenate(self.uv_points)
+
+    def get_all_surface_points(self):
+        return np.concatenate(self.surface_points)
+
+    def get_uv_line(self, i):
+        uv_pts = self.uv_points[i]
+        spline = CubicSpline(uv_pts, metric=&#39;POINTS&#39;)
+        return SvSplineCurve(spline)
+
+    def get_curve(self, i):
+        pts = self.surface_points[i]
+        spline = CubicSpline(pts, metric=&#39;POINTS&#39;)
+        return SvSplineCurve(spline)
+
+    def get_orig_line(self, i):
+        orig_pts = self.orig_points[i]
+        spline = CubicSpline(orig_pts, metric=&#39;POINTS&#39;)
+        return SvSplineCurve(spline)
+
+    def get_tangent_angles(self, surface, i, ts, alpha):
+        n = len(ts)
+        uv_curve = self.get_uv_line(i)
+        curve = self.get_curve(i)
+        uv_pts = uv_curve.evaluate_array(ts)
+        data = surface.derivatives_data_array(uv_pts[:,0], uv_pts[:,1])
+        matrices = np.empty((n, 3, 3))
+        matrices[:,:,0] = data.du
+        matrices[:,:,1] = data.dv
+        matrices[:,:,2] = data.normals()
+        tangents_3d = curve.tangent_array(ts)
+        tangents_3d = rotate_vector_around_vector_np(tangents_3d, data.normals(), np.array([alpha]))
+        inv_matrices = np.linalg.inv(matrices)
+        uv_tangents = np_multiply_matrices_vectors(inv_matrices, tangents_3d)
+        return np.arctan2(-uv_tangents[:,1], uv_tangents[:,0])
+
+    def rotate_tangents(self, surface, i, ts, alpha):
+        n = len(ts)
+        uv_curve = self.get_uv_line(i)
+        uv_pts = uv_curve.evaluate_array(ts)
+        uv_tangents = uv_curve.tangent_array(ts)
+        angles = np.full((n,), alpha)
+        res = rotate_uv_vectors_on_surface(surface, uv_pts, uv_tangents, angles)
+        return res[:,0], -res[:,1]</code></pre>
 </details>
 <h3>Methods</h3>
 <dl>
@@ -174,14 +256,80 @@ hljs.highlightAll();
 <dd>
 <div class="desc"></div>
 </dd>
+<dt id="sverchok.utils.geodesic.GeodesicSolution.get_all_orig_points"><code class="name flex">
+<span>def <span class="ident">get_all_orig_points</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.geodesic.GeodesicSolution.get_all_surface_points"><code class="name flex">
+<span>def <span class="ident">get_all_surface_points</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.geodesic.GeodesicSolution.get_all_uv_points"><code class="name flex">
+<span>def <span class="ident">get_all_uv_points</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.geodesic.GeodesicSolution.get_curve"><code class="name flex">
+<span>def <span class="ident">get_curve</span></span>(<span>self, i)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.geodesic.GeodesicSolution.get_orig_line"><code class="name flex">
+<span>def <span class="ident">get_orig_line</span></span>(<span>self, i)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.geodesic.GeodesicSolution.get_orig_point_by_rho"><code class="name flex">
+<span>def <span class="ident">get_orig_point_by_rho</span></span>(<span>self, i, rho, method='cubic')</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.geodesic.GeodesicSolution.get_points_count"><code class="name flex">
+<span>def <span class="ident">get_points_count</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.geodesic.GeodesicSolution.get_tangent_angles"><code class="name flex">
+<span>def <span class="ident">get_tangent_angles</span></span>(<span>self, surface, i, ts, alpha)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.geodesic.GeodesicSolution.get_uv_line"><code class="name flex">
+<span>def <span class="ident">get_uv_line</span></span>(<span>self, i)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
 <dt id="sverchok.utils.geodesic.GeodesicSolution.get_uv_point_by_rho"><code class="name flex">
-<span>def <span class="ident">get_uv_point_by_rho</span></span>(<span>self, i, rho, method='nearest')</span>
+<span>def <span class="ident">get_uv_point_by_rho</span></span>(<span>self, i, rho, method='cubic')</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.geodesic.GeodesicSolution.get_uv_points_by_rho"><code class="name flex">
-<span>def <span class="ident">get_uv_points_by_rho</span></span>(<span>self, rho, method='nearest')</span>
+<span>def <span class="ident">get_uv_points_by_rho</span></span>(<span>self, rho, method='cubic')</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.geodesic.GeodesicSolution.rotate_tangents"><code class="name flex">
+<span>def <span class="ident">rotate_tangents</span></span>(<span>self, surface, i, ts, alpha)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.geodesic.GeodesicSolution.shift"><code class="name flex">
+<span>def <span class="ident">shift</span></span>(<span>self, orig_centers)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -204,11 +352,13 @@ hljs.highlightAll();
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
 <li><code><a title="sverchok.utils.geodesic.cubic_spline" href="#sverchok.utils.geodesic.cubic_spline">cubic_spline</a></code></li>
+<li><code><a title="sverchok.utils.geodesic.curve_exponential_map" href="#sverchok.utils.geodesic.curve_exponential_map">curve_exponential_map</a></code></li>
 <li><code><a title="sverchok.utils.geodesic.exponential_map" href="#sverchok.utils.geodesic.exponential_map">exponential_map</a></code></li>
 <li><code><a title="sverchok.utils.geodesic.geodesic_cauchy_problem" href="#sverchok.utils.geodesic.geodesic_cauchy_problem">geodesic_cauchy_problem</a></code></li>
 <li><code><a title="sverchok.utils.geodesic.geodesic_curve_by_two_points" href="#sverchok.utils.geodesic.geodesic_curve_by_two_points">geodesic_curve_by_two_points</a></code></li>
 <li><code><a title="sverchok.utils.geodesic.geodesic_curve_by_two_points_uv" href="#sverchok.utils.geodesic.geodesic_curve_by_two_points_uv">geodesic_curve_by_two_points_uv</a></code></li>
 <li><code><a title="sverchok.utils.geodesic.make_rbf" href="#sverchok.utils.geodesic.make_rbf">make_rbf</a></code></li>
+<li><code><a title="sverchok.utils.geodesic.rectangular_exponential_map" href="#sverchok.utils.geodesic.rectangular_exponential_map">rectangular_exponential_map</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>
@@ -225,8 +375,19 @@ hljs.highlightAll();
 <ul class="">
 <li><code><a title="sverchok.utils.geodesic.GeodesicSolution.add" href="#sverchok.utils.geodesic.GeodesicSolution.add">add</a></code></li>
 <li><code><a title="sverchok.utils.geodesic.GeodesicSolution.get" href="#sverchok.utils.geodesic.GeodesicSolution.get">get</a></code></li>
+<li><code><a title="sverchok.utils.geodesic.GeodesicSolution.get_all_orig_points" href="#sverchok.utils.geodesic.GeodesicSolution.get_all_orig_points">get_all_orig_points</a></code></li>
+<li><code><a title="sverchok.utils.geodesic.GeodesicSolution.get_all_surface_points" href="#sverchok.utils.geodesic.GeodesicSolution.get_all_surface_points">get_all_surface_points</a></code></li>
+<li><code><a title="sverchok.utils.geodesic.GeodesicSolution.get_all_uv_points" href="#sverchok.utils.geodesic.GeodesicSolution.get_all_uv_points">get_all_uv_points</a></code></li>
+<li><code><a title="sverchok.utils.geodesic.GeodesicSolution.get_curve" href="#sverchok.utils.geodesic.GeodesicSolution.get_curve">get_curve</a></code></li>
+<li><code><a title="sverchok.utils.geodesic.GeodesicSolution.get_orig_line" href="#sverchok.utils.geodesic.GeodesicSolution.get_orig_line">get_orig_line</a></code></li>
+<li><code><a title="sverchok.utils.geodesic.GeodesicSolution.get_orig_point_by_rho" href="#sverchok.utils.geodesic.GeodesicSolution.get_orig_point_by_rho">get_orig_point_by_rho</a></code></li>
+<li><code><a title="sverchok.utils.geodesic.GeodesicSolution.get_points_count" href="#sverchok.utils.geodesic.GeodesicSolution.get_points_count">get_points_count</a></code></li>
+<li><code><a title="sverchok.utils.geodesic.GeodesicSolution.get_tangent_angles" href="#sverchok.utils.geodesic.GeodesicSolution.get_tangent_angles">get_tangent_angles</a></code></li>
+<li><code><a title="sverchok.utils.geodesic.GeodesicSolution.get_uv_line" href="#sverchok.utils.geodesic.GeodesicSolution.get_uv_line">get_uv_line</a></code></li>
 <li><code><a title="sverchok.utils.geodesic.GeodesicSolution.get_uv_point_by_rho" href="#sverchok.utils.geodesic.GeodesicSolution.get_uv_point_by_rho">get_uv_point_by_rho</a></code></li>
 <li><code><a title="sverchok.utils.geodesic.GeodesicSolution.get_uv_points_by_rho" href="#sverchok.utils.geodesic.GeodesicSolution.get_uv_points_by_rho">get_uv_points_by_rho</a></code></li>
+<li><code><a title="sverchok.utils.geodesic.GeodesicSolution.rotate_tangents" href="#sverchok.utils.geodesic.GeodesicSolution.rotate_tangents">rotate_tangents</a></code></li>
+<li><code><a title="sverchok.utils.geodesic.GeodesicSolution.shift" href="#sverchok.utils.geodesic.GeodesicSolution.shift">shift</a></code></li>
 </ul>
 </li>
 </ul>
