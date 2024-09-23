@@ -12,7 +12,7 @@ from mathutils import Matrix, Vector
 
 from sverchok.utils.math import (
         ZERO, FRENET, HOUSEHOLDER, TRACK, DIFF, TRACK_NORMAL,
-        np_dot, np_multiply_matrices_vectors
+        np_dot, np_multiply_matrices_vectors, sign
     )
 from sverchok.utils.geom import (
         LineEquation, CircleEquation3D, PlaneEquation,
@@ -1700,8 +1700,9 @@ def rotate_uv_vectors_on_surface(surface, uv_points, uv_vectors, angles):
     detG = g11*g22 - g12**2
     ort = np.zeros((n,2,2))
     y1 = np.array([-g12, g11]) / np.sqrt(detG).T
-    ort[:,:,0] = np.array([1,0])
-    ort[:,:,1] = y1.T
+    y1_norm = np.linalg.norm(y1, axis=0, keepdims=True)
+    ort[:,0,0] = 1.0
+    ort[:,:,1] = y1.T# / y1_norm.T
     
     vec1 = np_multiply_matrices_vectors(np.linalg.inv(ort), uv_vectors[:,:2])
     

@@ -10,10 +10,11 @@ from math import isnan, pi
 
 from sverchok.utils.geom import Spline, CubicSpline, rotate_vector_around_vector_np
 from sverchok.utils.curve.splines import SvSplineCurve
+from sverchok.utils.curve.algorithms import SvCurveOnSurface, SvCurveLengthSolver
 from sverchok.utils.surface.algorithms import rotate_uv_vectors_on_surface
 from sverchok.utils.field.rbf import SvRbfVectorField
 from sverchok.utils.field.vector import SvBendAlongSurfaceField, SvVectorFieldComposition, SvPreserveCoordinateField
-from sverchok.utils.math import np_multiply_matrices_vectors
+from sverchok.utils.math import np_multiply_matrices_vectors, np_dot, np_vectors_angle
 from sverchok.utils.sv_logging import get_logger
 from sverchok.dependencies import scipy
 
@@ -213,21 +214,28 @@ class GeodesicSolution:
         res = rotate_uv_vectors_on_surface(surface, uv_pts, uv_tangents, angles)
         return res[:,0], -res[:,1]
 
-def geodesic_cauchy_problem(surface, uv_starts, angles = None, u_tangents = None, v_tangents = None, target_radius=1.0, n_steps=10, closed_u = False, closed_v = False):
+def geodesic_cauchy_problem(surface, uv_starts, angles = None, u_tangents = None, v_tangents = None, orig_u_tangents = None, orig_v_tangents = None, target_radius=1.0, n_steps=10, closed_u = False, closed_v = False):
     step = target_radius / n_steps
     u_min, u_max, v_min, v_max = surface.get_domain()
 
     if u_tangents is None or v_tangents is None and angles is not None:
         u_tangents = np.cos(angles)
         v_tangents = np.sin(angles)
+        by_angles = True
     elif u_tangents is not None and v_tangents is not None:
-        n = len(u_tangents)
-        uv_tangents = np.zeros((n,3))
-        uv_tangents[:,0] = u_tangents
-        uv_tangents[:,1] = v_tangents
-        uv_tangents /= np.linalg.norm(uv_tangents, axis=1, keepdims=True)
-        u_tangents = uv_tangents[:,0]
-        v_tangents = uv_tangents[:,1]
+        #n = len(u_tangents)
+        #uv_tangents = np.zeros((n,3))
+        #uv_tangents[:,0] = u_tangents
+        #uv_tangents[:,1] = v_tangents
+        #uv_tangents /= np.linalg.norm(uv_tangents, axis=1, keepdims=True)
+        #u_tangents = uv_tangents[:,0]
+        #v_tangents = uv_tangents[:,1]
+        by_angles = False
+
+    if orig_u_tangents is None:
+        orig_u_tangents = u_tangents
+    if orig_v_tangents is None:
+        orig_v_tangents = v_tangents
 
     def decompose_array(dus, dvs, normals, pts):
         n = len(pts)
@@ -240,10 +248,13 @@ def geodesic_cauchy_problem(surface, uv_starts, angles = None, u_tangents = None
         return res[:,0], res[:,1]
 
     def initial_points(data):
-        dy = np.cross(data.du, data.normals())
-        dy /= np.linalg.norm(dy, axis=1, keepdims=True)
-        dx = data.du / np.linalg.norm(data.du, axis=1, keepdims=True)
-        return step * (dx * u_tangents[np.newaxis].T + dy * v_tangents[np.newaxis].T) + data.points
+        if by_angles:
+            dy = np.cross(data.du, data.normals())
+            dy /= np.linalg.norm(dy, axis=1, keepdims=True)
+            dx = data.du / np.linalg.norm(data.du, axis=1, keepdims=True)
+            return step * (dx * u_tangents[np.newaxis].T + dy * v_tangents[np.newaxis].T) + data.points
+        else:
+            return step * (data.du * u_tangents[np.newaxis].T + data.dv * v_tangents[np.newaxis].T) + data.points
 
     def do_step(data, us, vs, vectors, radius):
         vectors = radius * vectors / np.linalg.norm(vectors, axis=1, keepdims=True)
@@ -268,8 +279,8 @@ def geodesic_cauchy_problem(surface, uv_starts, angles = None, u_tangents = None
 
     def mk_orig_points():
         rs = np.linspace(0, target_radius, num=n_steps)[np.newaxis].T
-        us = u_tangents*rs
-        vs = v_tangents*rs
+        us = orig_u_tangents*rs
+        vs = orig_v_tangents*rs
         us = us.flatten()
         vs = vs.flatten()
         pts = np.zeros((len(us), 3))
@@ -376,6 +387,68 @@ def exponential_map(surface, uv_center, radius, radius_steps=10, angle_steps=8, 
     unq_uv_points = uv_points[unq_idxs]
     unq_points = points[unq_idxs]
     return ExponentialMap(surface, unq_orig_points, unq_uv_points, unq_points)
+
+BY_PARAMETER = 'T'
+BY_LENGTH = 'L'
+def curve_exponential_map(surface, uv_curve, v_radius, u_steps, v_steps, u_mode=BY_PARAMETER, length_resolution=50):
+    u_min, u_max = uv_curve.get_u_bounds()
+    center_us = np.linspace(u_min, u_max, num=u_steps)
+    if u_mode == BY_PARAMETER:
+        orig_us = center_us
+    else:
+        curve_3d = SvCurveOnSurface(uv_curve, surface, axis=2)
+        calculator = SvCurveLengthSolver(curve_3d)
+        calculator.prepare('SPL', length_resolution)
+        length = calculator.get_total_length()
+        lengths = np.linspace(0, length, num=u_steps)
+        orig_us = calculator.solve(lengths)
+    orig_vs = np.linspace(0, v_radius, num=v_steps)
+    orig_centers = np.zeros((u_steps, 3))
+    orig_centers[:,0] = center_us
+
+    grid_us, grid_vs = np.meshgrid(orig_us, orig_vs)
+    grid_us = grid_us.flatten()
+    grid_vs = grid_vs.flatten()
+    #orig_points = np.zeros((2 * u_steps * v_steps, 3))
+    #orig_points[:,0] = np.concatenate((grid_us, grid_us))
+    #orig_points[:,1] = np.concatenate((grid_vs, -grid_vs))
+
+    uv_starts = uv_curve.evaluate_array(orig_us)
+    uv_tangents = uv_curve.tangent_array(orig_us)
+
+    uv_tangents_1 = rotate_uv_vectors_on_surface(surface, uv_starts, uv_tangents, np.full((u_steps,), -pi/2))
+    uv_tangents_2 = rotate_uv_vectors_on_surface(surface, uv_starts, uv_tangents, np.full((u_steps,), pi/2))
+
+    solution = GeodesicSolution([], [], [], [])
+    lines = geodesic_cauchy_problem(surface, uv_starts,
+                                    u_tangents = uv_tangents_1[:,0],
+                                    v_tangents = uv_tangents_1[:,1],
+                                    orig_u_tangents = np.full((u_steps,), 0),
+                                    orig_v_tangents = np.full((u_steps,), 1),
+                                    target_radius = v_radius, n_steps = v_steps)
+    #surface_pts = surface.evaluate_array(uv_starts[:,0], uv_starts[:,1])
+    #v1 = surface_pts[1:] - surface_pts[:-1]
+    #v2 = np.array([pts[1] - pts[0] for pts in lines.orig_points[:-1]])
+    #print("D", np_vectors_angle(v1, v2)*180/pi)
+    #print("UV", uv_starts)
+    solution = solution.add(lines.shift(orig_centers))
+    lines = geodesic_cauchy_problem(surface, uv_starts,
+                                    u_tangents = uv_tangents_2[:,0],
+                                    v_tangents = uv_tangents_2[:,1],
+                                    orig_u_tangents = np.full((u_steps,), 0),
+                                    orig_v_tangents = np.full((u_steps,), -1),
+                                    target_radius = v_radius, n_steps = v_steps)
+    solution = solution.add(lines.shift(orig_centers))
+
+    orig_points = solution.get_all_orig_points()
+    uv_points = solution.get_all_uv_points()
+    points = solution.get_all_surface_points()
+
+    unq_orig_points, unq_idxs = np.unique(orig_points, axis=0, return_index=True)
+    unq_uv_points = uv_points[unq_idxs]
+    unq_points = points[unq_idxs]
+    return ExponentialMap(surface, unq_orig_points, unq_uv_points, unq_points)
+
 
 def rectangular_exponential_map(surface, uv_center, u_radius, v_radius, n_v_lines, u_steps, v_steps):
     u_line1 = geodesic_cauchy_problem(surface, np.array([uv_center]), angles=np.array([0]), target_radius=u_radius, n_steps=u_steps)
