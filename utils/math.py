@@ -331,7 +331,7 @@ def np_signed_angle(a, b, normal):
 def np_vectors_angle(v1, v2):
     v1 /= np.linalg.norm(v1)
     v2 /= np.linalg.norm(v2)
-    dot = np.dot(v1, v2)
+    dot = np_dot(v1, v2)
     return np.arccos(dot)
 
 def np_dot(u, v, axis=1):
