@@ -55,13 +55,57 @@ hljs.highlightAll();
 <span>def <span class="ident">geodesic_cauchy_problem</span></span>(<span>surface, uv_starts, angles=None, u_tangents=None, v_tangents=None, orig_u_tangents=None, orig_v_tangents=None, target_radius=1.0, n_steps=10, closed_u=False, closed_v=False)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Solve Cauchy problem to generate geodesic line: given start point (in UV space)
+and direction (in UV space), draw a geodesic curve in that direction, of
+requested length.</p>
+<p>This method can generate several geodesic lines in one call.</p>
+<p>The method uses simple Euler method to solve differential equation of geodesic
+lines on surface. So it generates a series of points, which can be afterwards
+interpolated with a cubic spline or another algorithm.</p>
+<p>Initial direction of geodesic lines can be provided in one of two ways: by providing
+angles, or by providing u_tangents and v_tangents.</p>
+<h2 id="args">Args</h2>
+<ul>
+<li>surface - an instance of SvSurface</li>
+<li>uv_starts - np.ndarray of shape (n, 3) (third coordinate is ignored) -
+starting points of geodesic curves, in UV space</li>
+<li>angles - np.ndarray of shape (n,) - angles, in radians, counted
+counterclockwise from surface's derivative vector in U parameter direction.
+Can be provided instead of u_tangents and v_tangents.</li>
+<li>u_tangents, v_tangents - np.ndarrays of shape (n,): initial tangent direction
+expressed as coefficients for surface's derivatives in U and V parametric
+directions. Can be provided instead of angles.</li>
+<li>orig_u_tangents, orig_v_tangents - np.ndarrays of shape (n,): initial tangent
+direction for "original" (undeformed) UV space. If not provided, u_tangents
+and v_tangents will be used.</li>
+<li>target_radius - requested length of geodesic curves.</li>
+<li>n_steps - number of steps for calculation; it is also the number of points
+which will be generated.</li>
+<li>closed_u, closed_v - indicates whether the surface is closed in U and/or V
+direction.</li>
+</ul>
+<h2 id="returns">Returns</h2>
+<p>an instance of GeodesicSolution.</p></div>
 </dd>
 <dt id="sverchok.utils.geodesic.geodesic_curve_by_two_points"><code class="name flex">
 <span>def <span class="ident">geodesic_curve_by_two_points</span></span>(<span>surface, point1, point2, n_points, iterations, step, tolerance=0.001, logger=None)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Generate a geodesic line between two points on surface.</p>
+<h2 id="args">Args</h2>
+<ul>
+<li>surface - an instance of SvSurface.</li>
+<li>point1, point2: np.ndarrays of shape (3,) (third coordinate is ignored) -
+two points in surface's UV space.</li>
+<li>n_points: number of points on geodesic line to be generated.</li>
+<li>iterations - maximum number of numeric method iterations.</li>
+<li>tolerance - requested calculation tolerance; if this precision will be
+achieved earlier than in requested number of iterations, the calculation
+will be stopped.</li>
+</ul>
+<h2 id="returns">Returns</h2>
+<p>np.ndarray of shape (n_points, 3) (third coordinate will be zero) -
+points of calculated geodesic line in surface's UV space.</p></div>
 </dd>
 <dt id="sverchok.utils.geodesic.geodesic_curve_by_two_points_uv"><code class="name flex">
 <span>def <span class="ident">geodesic_curve_by_two_points_uv</span></span>(<span>surface, point1, point2, n_points, n_iterations, step, tolerance=0.001, logger=None)</span>
@@ -73,7 +117,7 @@ hljs.highlightAll();
 <span>def <span class="ident">make_rbf</span></span>(<span>orig_points, tgt_points, **kwargs)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Build RBF field, which maps orig_points to tgt_points.</p></div>
 </dd>
 <dt id="sverchok.utils.geodesic.rectangular_exponential_map"><code class="name flex">
 <span>def <span class="ident">rectangular_exponential_map</span></span>(<span>surface, uv_center, u_radius, v_radius, n_v_lines, u_steps, v_steps)</span>
@@ -135,12 +179,20 @@ hljs.highlightAll();
 <span>(</span><span>rhos, orig_points, uv_points, surface_points)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Class incapsulating result of calling geodesic_cauchy_problem method.</p>
+<p>orig_points, uv_points and surface_points are lists of np.ndarrays of shape (n,3).
+Shapes of different list items can differ.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class GeodesicSolution:
+    &#34;&#34;&#34;
+    Class incapsulating result of calling geodesic_cauchy_problem method.
+
+    orig_points, uv_points and surface_points are lists of np.ndarrays of shape (n,3).
+    Shapes of different list items can differ.
+    &#34;&#34;&#34;
     def __init__(self, rhos, orig_points, uv_points, surface_points):
         self.rhos = rhos
         self.orig_points = orig_points
