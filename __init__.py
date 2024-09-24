@@ -54,7 +54,7 @@ bl_info = {
     "tracker_url": "http://www.blenderartists.org/forum/showthread.php?272679"
 }
 
-VERSION = 'v1.3.0-alpha'  # looks like the only way to have custom format for the version
+VERSION = 'v1.3.0'  # looks like the only way to have custom format for the version
 
 reload_event = "import_sverchok" in locals()  # reloading does not clear previous module names
 
