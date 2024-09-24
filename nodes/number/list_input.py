@@ -2065,7 +2065,7 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
 
     bool_list_counter: IntProperty(
         name='bool_list_counter',
-        description='boolean',
+        description='List Counter of Booleans',
         default=True,
         min=1,
         update=Correct_ListInput_Length)  # type: ignore
@@ -2073,7 +2073,7 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
 
     int_list_counter: IntProperty(
         name='int_list_counter',
-        description='integer number',
+        description='List Counter of Integers',
         default=1,
         min=1,
         update=Correct_ListInput_Length)  # type: ignore
@@ -2081,7 +2081,7 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
 
     float_list_counter: IntProperty(
         name='float_list_counter',
-        description='integer number',
+        description='List Counter of Floats',
         default=1,
         min=1,
         update=Correct_ListInput_Length)  # type: ignore
@@ -2089,7 +2089,7 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
 
     vector_list_counter: IntProperty(
         name='vector_list_counter',
-        description='vectors',
+        description='List Counter of Vectors',
         default=1,
         min=1,
         update=Correct_ListInput_Length)  # type: ignore
@@ -2097,7 +2097,7 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
 
     matrix_list_counter: IntProperty(
         name='matrix_list_counter',
-        description='matrixes (trs - translate, rotation, scale)',
+        description='List Counter of Matrixes',
         default=1,
         min=1,
         update=Correct_ListInput_Length)  # type: ignore
@@ -2105,7 +2105,7 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
 
     quaternion_list_counter: IntProperty(
         name='quaternion_list_counter',
-        description='vectors',
+        description='List Counter of Quaternions',
         default=1,
         min=1,
         update=Correct_ListInput_Length)  # type: ignore
@@ -2113,7 +2113,7 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
 
     color_list_counter: IntProperty(
         name='color_list_counter',
-        description='Colors',
+        description='List Counter of Colors',
         default=1,
         min=1,
         update=Correct_ListInput_Length)  # type: ignore
@@ -2121,7 +2121,7 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
 
     string_list_counter: IntProperty(
         name='string_list_counter',
-        description='String',
+        description='List Counter of Strings',
         default=1,
         min=1,
         update=Correct_ListInput_Length)  # type: ignore
@@ -2133,14 +2133,6 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
         default=True,
         update=invert_ListInput_Mask,
     ) # type: ignore
-
-    # copy_clipboard: BoolProperty(
-    #     name = "Mask",
-    #     description = "Invert list of mask",
-    #     default=True,
-    #     update=copy_to_clipboard,
-    # ) # type: ignore
-
     
     mask_modes = [
             ('BOOLEAN', "Booleans", "Boolean values (0/1) as mask [[0,1,0,0,1,1],[1,1,0,0,1],...]. Has no influence if socket is not connected (All data are used)", 0),
@@ -2213,8 +2205,7 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
         ("FLOAT_LIST_MODE", "Float", "Float", "IPO_LINEAR", 2),
         ("VECTOR_LIST_MODE", "Vector", "Vector", "ORIENTATION_GLOBAL", 3),
         ("QUATERNION_LIST_MODE", "Quaternion", "Quaternion", "CURVE_PATH", 4),
-        ("MATRIX_LIST_MODE", "Matrix", "Matrix", "VIEW_ORTHO", 5),
-        #("MATRIX_SHEAR_LIST_MODE", "Matrix (Shear)", "Matrix (Shear)", "MOD_LATTICE", 8),
+        ("MATRIX_LIST_MODE", "Matrix", "Matrix", "MOD_LATTICE", 5),
         ("COLOR_LIST_MODE", "Color", "Color", "COLOR", 6),
         ("STRING_LIST_MODE", "Text", "Text", "SORTALPHA", 7),
     ]
