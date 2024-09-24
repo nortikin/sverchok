@@ -25,11 +25,464 @@ from sverchok.utils.nodes_mixins.show_3d_properties import Show3DProperties
 from sverchok.utils.sv_logging import sv_logger
 from sverchok.utils.handle_blender_data import correct_collection_length
 from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
+import math
 import numpy as np
 import re
 from itertools import compress, chain
 from mathutils import Vector, Quaternion, Euler, Matrix
 import json
+
+############################################
+
+def decompose_matrix(M):
+    """Calculates the components of rotation, translation, scale, shear, and
+    perspective of a given transformation matrix M. [1]_
+
+    Parameters
+    ----------
+    M : list[list[float]]
+        The square matrix of any dimension.
+
+    Raises
+    ------
+    ValueError
+        If matrix is singular or degenerative.
+
+    Returns
+    -------
+    scale : [float, float, float]
+        The 3 scale factors in x-, y-, and z-direction.
+    shear : [float, float, float]
+        The 3 shear factors for x-y, x-z, and y-z axes.
+    angles : [float, float, float]
+        The rotation specified through the 3 Euler angles about static x, y, z axes.
+    translation : [float, float, float]
+        The 3 values of translation.
+    perspective : [float, float, float, float]
+        The 4 perspective entries of the matrix.
+
+    See Also
+    --------
+    compose_matrix
+
+    Examples
+    --------
+    >>> trans1 = [1, 2, 3]
+    >>> angle1 = [-2.142, 1.141, -0.142]
+    >>> scale1 = [0.123, 2, 0.5]
+    >>> T = matrix_from_translation(trans1)
+    >>> R = matrix_from_euler_angles(angle1)
+    >>> S = matrix_from_scale_factors(scale1)
+    >>> M = multiply_matrices(multiply_matrices(T, R), S)
+    >>> # M = compose_matrix(scale1, None, angle1, trans1, None)
+    >>> scale2, shear2, angle2, trans2, persp2 = decompose_matrix(M)
+    >>> allclose(scale1, scale2)
+    True
+    >>> allclose(angle1, angle2)
+    True
+    >>> allclose(trans1, trans2)
+    True
+
+    References
+    ----------
+    .. [1] Slabaugh, 1999. *Computing Euler angles from a rotation matrix*.
+           Available at: http://www.gregslabaugh.net/publications/euler.pdf
+
+    """
+    detM = M.determinant()  # raises ValueError if matrix is not squared
+    if detM == 0:
+        ValueError("The matrix is singular.")
+
+    #Mt = transpose_matrix(M)
+    Mt = M.transposed()
+    #if TOL.is_zero(Mt[3][3]):
+    if Mt[3][3]==0:
+        raise ValueError("The element [3,3] of the matrix is zero.")
+
+    for i in range(4):
+        for j in range(4):
+            Mt[i][j] /= Mt[3][3]
+
+    # copy Mt[:3, :3] into row
+    row = [
+        [0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0],
+    ]
+    for i in range(3):
+        for j in range(3):
+            row[i][j] = Mt[i][j]
+
+    # translation
+    translation = [M[0][3], M[1][3], M[2][3]]
+
+    # scale, shear, angles
+    scale = [0.0, 0.0, 0.0]
+    shear = [0.0, 0.0, 0.0]
+    angles = [0.0, 0.0, 0.0]
+
+    #scale[0] = norm_vector(row[0])
+    scale[0] = Vector(row[0]).magnitude
+    for i in range(3):
+        row[0][i] /= scale[0]  # type: ignore
+
+    #shear[0] = dot_vectors(row[0], row[1])
+    shear[0] = Vector(row[0]).dot( Vector(row[1]) )
+    for i in range(3):
+        row[1][i] -= row[0][i] * shear[0]
+
+    #scale[1] = norm_vector(row[1])
+    scale[1] = Vector(row[1]).magnitude
+    for i in range(3):
+        row[1][i] /= scale[1]  # type: ignore
+
+    #shear[1] = dot_vectors(row[0], row[2])
+    shear[1] = Vector(row[0]).dot( Vector(row[2]) )
+    for i in range(3):
+        row[2][i] -= row[0][i] * shear[1]
+
+    # why is the order different here?
+    # it certainly influences the result
+
+    #shear[2] = dot_vectors(row[1], row[2])
+    shear[2] = Vector(row[1]).dot( Vector(row[2]) )
+    for i in range(3):
+        row[2][i] -= row[0][i] * shear[2]
+
+    #scale[2] = norm_vector(row[2])
+    scale[2] = Vector(row[2]).magnitude
+    for i in range(3):
+        row[2][i] /= scale[2]  # type: ignore
+
+    shear[0] /= scale[1]
+    shear[1] /= scale[2]
+    shear[2] /= scale[2]
+
+    #if dot_vectors(row[0], cross_vectors(row[1], row[2])) < 0:
+    if Vector(row[0]).dot( Vector(row[1]).cross( Vector(row[2]))) < 0:
+        scale = [-x for x in scale]
+        row = [[-x for x in y] for y in row]
+
+    # angles
+    if row[0][2] != -1.0 and row[0][2] != 1.0:
+        #beta1 = asin(-row[0][2])
+        beta1 = math.asin(-row[0][2])
+        ## beta2 = pi - beta1
+        #alpha1 = atan2(row[1][2] / cos(beta1), row[2][2] / cos(beta1))
+        alpha1 = math.atan2(row[1][2] / math.cos(beta1), row[2][2] / math.cos(beta1))
+
+        ## alpha2 = atan2(row[1][2] / cos(beta2), row[2][2] / cos(beta2))
+        #gamma1 = atan2(row[0][1] / cos(beta1), row[0][0] / cos(beta1))
+        gamma1 = math.atan2(row[0][1] / math.cos(beta1), row[0][0] / math.cos(beta1))
+
+        ## gamma2 = atan2(row[0][1] / cos(beta2), row[0][0] / cos(beta2))
+        angles = [alpha1, beta1, gamma1]
+
+    else:
+        gamma = 0.0
+        if row[0][2] == -1.0:
+            beta = math.pi / 2.0
+            alpha = gamma + math.atan2(row[1][0], row[2][0])
+        else:  # row[0][2] == 1
+            beta = -math.pi / 2.0
+            alpha = -gamma + math.atan2(-row[1][0], -row[2][0])
+        angles = [alpha, beta, gamma]
+
+    # # perspective
+    # #if not TOL.is_zero(Mt[0][3]) and not TOL.is_zero(Mt[1][3]) and not TOL.is_zero(Mt[2][3]):
+    # if not Mt[0][3]==0 and not Mt[1][3]==0 and not Mt[2][3]==0:
+    #     #P = deepcopy(Mt)
+    #     P = Matrix(Mt)
+    #     P[0][3], P[1][3], P[2][3], P[3][3] = 0.0, 0.0, 0.0, 1.0
+    #     #Ptinv = matrix_inverse(transpose_matrix(P))
+    #     Ptinv = P.transposed().inverted()
+    #     #perspective = multiply_matrix_vector(Ptinv, [Mt[0][3], Mt[1][3], Mt[2][3], Mt[3][3]])
+    #     perspective = Ptinv @ Vector([Mt[0][3], Mt[1][3], Mt[2][3], Mt[3][3]])
+    # else:
+    #     perspective = [0.0, 0.0, 0.0, 1.0]
+
+    return translation, scale, angles, shear #, perspective
+############################################
+
+#############################################
+# https://github.com/matthew-brett/transforms3d/blob/main/transforms3d/affines.py
+def decompose_matrix_v02(A):
+    ''' Decompose homogenous affine transformation matrix `A` into parts.
+
+    The parts are translations, rotations, zooms, shears.
+
+    `A` can be any square matrix, but is typically shape (4,4).
+
+    Decomposes A into ``T, R, Z, S``, such that, if A is shape (4,4)::
+
+       Smat = np.array([[1, S[0], S[1]],
+                        [0,    1, S[2]],
+                        [0,    0,    1]])
+       RZS = np.dot(R, np.dot(np.diag(Z), Smat))
+       A = np.eye(4)
+       A[:3,:3] = RZS
+       A[:-1,-1] = T
+
+    The order of transformations is therefore shears, followed by
+    zooms, followed by rotations, followed by translations.
+
+    The case above (A.shape == (4,4)) is the most common, and
+    corresponds to a 3D affine, but in fact A need only be square.
+
+    Parameters
+    ----------
+    A : array shape (N,N)
+
+    Returns
+    -------
+    T : array, shape (N-1,)
+       Translation vector
+    R : array shape (N-1, N-1)
+        rotation matrix
+    Z : array, shape (N-1,)
+       Zoom vector.  May have one negative zoom to prevent need for negative
+       determinant R matrix above
+    S : array, shape (P,)
+       Shear vector, such that shears fill upper triangle above
+       diagonal to form shear matrix.  P is the (N-2)th Triangular
+       number, which happens to be 3 for a 4x4 affine.
+
+    Examples
+    --------
+    >>> T = [20, 30, 40] # translations
+    >>> R = [[0, -1, 0], [1, 0, 0], [0, 0, 1]] # rotation matrix
+    >>> Z = [2.0, 3.0, 4.0] # zooms
+    >>> S = [0.2, 0.1, 0.3] # shears
+    >>> # Now we make an affine matrix
+    >>> A = np.eye(4)
+    >>> Smat = np.array([[1, S[0], S[1]],
+    ...                  [0,    1, S[2]],
+    ...                  [0,    0,    1]])
+    >>> RZS = np.dot(R, np.dot(np.diag(Z), Smat))
+    >>> A[:3,:3] = RZS
+    >>> A[:-1,-1] = T # set translations
+    >>> Tdash, Rdash, Zdash, Sdash = decompose(A)
+    >>> np.allclose(T, Tdash)
+    True
+    >>> np.allclose(R, Rdash)
+    True
+    >>> np.allclose(Z, Zdash)
+    True
+    >>> np.allclose(S, Sdash)
+    True
+
+    Notes
+    -----
+    We have used a nice trick from SPM to get the shears.  Let us call the
+    starting N-1 by N-1 matrix ``RZS``, because it is the composition of the
+    rotations on the zooms on the shears.  The rotation matrix ``R`` must have
+    the property ``np.dot(R.T, R) == np.eye(N-1)``.  Thus ``np.dot(RZS.T,
+    RZS)`` will, by the transpose rules, be equal to ``np.dot((ZS).T, (ZS))``.
+    Because we are doing shears with the upper right part of the matrix, that
+    means that the Cholesky decomposition of ``np.dot(RZS.T, RZS)`` will give
+    us our ``ZS`` matrix, from which we take the zooms from the diagonal, and
+    the shear values from the off-diagonal elements.
+    '''
+    A = np.asarray(A)
+    T = A[:-1,-1]
+    RZS = A[:-1,:-1]
+    ZS = np.linalg.cholesky(np.dot(RZS.T,RZS)).T
+    Z = np.diag(ZS).copy()
+    shears = ZS / Z[:,np.newaxis]
+    n = len(Z)
+    S = shears[np.triu(np.ones((n,n)), 1).astype(bool)]
+    R = np.dot(RZS, np.linalg.inv(ZS))
+    if np.linalg.det(R) < 0:
+        Z[0] *= -1
+        ZS[0] *= -1
+        R = np.dot(RZS, np.linalg.inv(ZS))
+    return T, Z, R, S
+
+## decompose_shear ###########################################
+
+def shear_xy(f1, f2):
+    m = np.eye(3)
+    m[0][2] = f1
+    m[1][2] = f2
+    return m
+
+def shear_yz(f1, f2):
+    m = np.eye(3)
+    m[1][0] = f1
+    m[2][0] = f2
+    return m
+
+def shear_xz(f1, f2):
+    m = np.eye(3)
+    m[0][1] = f1
+    m[2][1] = f2
+    return m
+
+def decompose_shear(m):
+    """
+    (%i4) sxy . syz . sxz;
+                    [ f1 f4 + 1      f1 (f6 + f4 f5) + f5      f1 ]
+                    [                                             ]
+    (%o4)           [ f2 f4 + f3  f2 (f6 + f4 f5) + f3 f5 + 1  f2 ]
+                    [                                             ]
+                    [     f4              f6 + f4 f5           1  ]
+    """
+    A = np.zeros((3,2))
+    A[0][0] = 1 + m[2][0]*m[0][2]
+    A[0][1] = m[0][2]
+    A[1][0] = m[1][0]
+    A[1][1] = m[1][2]
+    A[2][0] = m[2][0]
+    A[2][1] = 1.0
+    B = np.array([m[0][1], m[1][1] - 1, m[2][1]])
+
+    x, res, rank, sing = np.linalg.lstsq(A, B, rcond=None)
+
+    f5, f6 = list(x)
+    f1 = m[0][2]
+    f2 = m[1][2]
+    f3 = m[1][0] - m[1][2]*m[2][0]
+    f4 = m[2][0]
+
+    sxy_ans = shear_xy(f1, f2)
+    syz_ans = shear_yz(f3, f4)
+    sxz_ans = shear_xz(f5, f6)
+
+    return sxy_ans, sxz_ans, syz_ans
+
+## /decompose_shear #########################################
+
+## decompose_matrxi_03 ######################################
+# https://github.com/vtlim/GLIC/blob/90e00e7030748c70ad284cda8785745b6c16ecbb/transformations.py#L739
+def vector_norm(data, axis=None, out=None):
+    """Return length, i.e. Euclidean norm, of ndarray along axis.
+
+    >>> v = np.random.random(3)
+    >>> n = vector_norm(v)
+    >>> np.allclose(n, np.linalg.norm(v))
+    True
+    >>> v = np.random.rand(6, 5, 3)
+    >>> n = vector_norm(v, axis=-1)
+    >>> np.allclose(n, np.sqrt(np.sum(v*v, axis=2)))
+    True
+    >>> n = vector_norm(v, axis=1)
+    >>> np.allclose(n, np.sqrt(np.sum(v*v, axis=1)))
+    True
+    >>> v = np.random.rand(5, 4, 3)
+    >>> n = np.empty((5, 3))
+    >>> vector_norm(v, axis=1, out=n)
+    >>> np.allclose(n, np.sqrt(np.sum(v*v, axis=1)))
+    True
+    >>> vector_norm([])
+    0.0
+    >>> vector_norm([1])
+    1.0
+
+    """
+    data = np.array(data, dtype=np.float64, copy=True)
+    if out is None:
+        if data.ndim == 1:
+            return math.sqrt(np.dot(data, data))
+        data *= data
+        out = np.atleast_1d(np.sum(data, axis=axis))
+        np.sqrt(out, out)
+        return out
+    else:
+        data *= data
+        np.sum(data, axis=axis, out=out)
+        np.sqrt(out, out)
+
+# epsilon for testing whether a number is close to zero
+_EPS = np.finfo(float).eps * 4.0
+
+def decompose_matrix_03(matrix):
+    """Return sequence of transformations from transformation matrix.
+
+    matrix : array_like
+        Non-degenerative homogeneous transformation matrix
+
+    Return tuple of:
+        scale : vector of 3 scaling factors
+        shear : list of shear factors for x-y, x-z, y-z axes
+        angles : list of Euler angles about static x, y, z axes
+        translate : translation vector along x, y, z axes
+        perspective : perspective partition of matrix
+
+    Raise ValueError if matrix is of wrong type or degenerative.
+
+    >>> T0 = translation_matrix([1, 2, 3])
+    >>> scale, shear, angles, trans, persp = decompose_matrix(T0)
+    >>> T1 = translation_matrix(trans)
+    >>> numpy.allclose(T0, T1)
+    True
+    >>> S = scale_matrix(0.123)
+    >>> scale, shear, angles, trans, persp = decompose_matrix(S)
+    >>> scale[0]
+    0.123
+    >>> R0 = euler_matrix(1, 2, 3)
+    >>> scale, shear, angles, trans, persp = decompose_matrix(R0)
+    >>> R1 = euler_matrix(*angles)
+    >>> numpy.allclose(R0, R1)
+    True
+
+    """
+    M = np.array(matrix, dtype=np.float64, copy=True).T
+    if abs(M[3, 3]) < _EPS:
+        raise ValueError('M[3, 3] is zero')
+    M /= M[3, 3]
+    P = M.copy()
+    P[:, 3] = 0.0, 0.0, 0.0, 1.0
+    if not np.linalg.det(P):
+        raise ValueError('matrix is singular')
+
+    scale = np.zeros((3, ))
+    shear = [0.0, 0.0, 0.0]
+    angles = [0.0, 0.0, 0.0]
+
+    if any(abs(M[:3, 3]) > _EPS):
+        perspective = np.dot(M[:, 3], np.linalg.inv(P.T))
+        M[:, 3] = 0.0, 0.0, 0.0, 1.0
+    else:
+        perspective = np.array([0.0, 0.0, 0.0, 1.0])
+
+    translate = M[3, :3].copy()
+    M[3, :3] = 0.0
+
+    row = M[:3, :3].copy()
+    scale[0] = vector_norm(row[0])
+    row[0] /= scale[0]
+    shear[0] = np.dot(row[0], row[1])
+    row[1] -= row[0] * shear[0]
+    scale[1] = vector_norm(row[1])
+    row[1] /= scale[1]
+    shear[0] /= scale[1]
+    shear[1] = np.dot(row[0], row[2])
+    row[2] -= row[0] * shear[1]
+    shear[2] = np.dot(row[1], row[2])
+    row[2] -= row[1] * shear[2]
+    scale[2] = vector_norm(row[2])
+    row[2] /= scale[2]
+    shear[1:] /= scale[2]
+
+    if np.dot(row[0], np.cross(row[1], row[2])) < 0:
+        np.negative(scale, scale)
+        np.negative(row, row)
+
+    angles[1] = math.asin(-row[0, 2])
+    if math.cos(angles[1]):
+        angles[0] = math.atan2(row[1, 2], row[2, 2])
+        angles[2] = math.atan2(row[0, 1], row[0, 0])
+    else:
+        # angles[0] = math.atan2(row[1, 0], row[1, 1])
+        angles[0] = math.atan2(-row[2, 1], row[1, 1])
+        angles[2] = 0.0
+
+    return scale, shear, angles, translate, perspective
+
+## /decompose_matrxi_03 ######################################
+
+## decompose_matrxi_04 ######################################
+## /decompose_matrxi_04 ######################################
 
 def ShowMessageBox(message = "", title = "Message Box", icon = 'INFO'):
     def draw(self, context):
@@ -458,7 +911,7 @@ class SvListInputQuaternionEntry(bpy.types.PropertyGroup):
     ) # type: ignore
 
     EULER: FloatVectorProperty(
-        name = "Eular Angle (XYZ)",
+        name = "Euler Angle (XYZ)",
         default = (0., 0., 0., ),
         subtype='EULER',
         size=3,
@@ -478,7 +931,7 @@ class SvListInputQuaternionEntry(bpy.types.PropertyGroup):
         pass
 
     EULER_UI: FloatVectorProperty(
-        name = "Eular Angle (XYZ)",
+        name = "Euler Angle (XYZ)",
         default = (0., 0., 0., ),
         subtype='EULER',
         size=3,
@@ -723,7 +1176,7 @@ class SvListInputStringEntry(bpy.types.PropertyGroup):
         #update=update_entry,
     ) # type: ignore
 
-def euler_matrix(EULER_LOCATION, EULER_SCALE, EULER_ANGLE, ANGLE_ORDER):
+def calc_euler_matrix(EULER_LOCATION, EULER_SCALE, EULER_ANGLE, ANGLE_ORDER):
     # translation
     mat_t = Matrix().Identity(4)
     mat_t[0][3] = EULER_LOCATION[0]
@@ -762,13 +1215,66 @@ def axisangle_matrix(AXISANGLE_LOCATION, AXISANGLE_SCALE, AXISANGLE_VECTOR, AXIS
     
     return mat
 
+def calc_shear_matrix(SHEAR_XY, SHEAR_XZ, SHEAR_YZ):
+    '''Shear maxtrix by xy, xz, yz'''
+    # translation
+    mat_sxy = Matrix().Identity(4)
+    mat_sxy[0][2] = SHEAR_XY[0]
+    mat_sxy[1][2] = SHEAR_XY[1]
+
+    mat_sxz = Matrix().Identity(4)
+    mat_sxz[0][1] = SHEAR_XZ[0]
+    mat_sxz[2][1] = SHEAR_XZ[1]
+
+    mat_syz = Matrix().Identity(4)
+    mat_syz[1][0] = SHEAR_YZ[0]
+    mat_syz[2][0] = SHEAR_YZ[1]
+
+    # composite matrix
+    mat = mat_sxy @ mat_sxz @ mat_syz
+    return mat
+
+matrix_modes1 = [
+    ('NONE', "None", "View as 4x4", 'VIEW_ORTHO', 0),
+    #("SCALARVECTOR", "Scalar Vector", "Convert Scalar & Vector into quaternion", 1),
+    ('EULER', "Euler Angles XYZ", "View as Euler Angles", 'OBJECT_ORIGIN', 2),
+    ('AXISANGLE', "Angle Axis (Angle, XYZ)", "View as quaternion", 'EMPTY_SINGLE_ARROW', 3),
+    #('SHEAR', "Shear (XY, XZ, YZ)", "Shear (XY, XZ, YZ)", 'MOD_LATTICE', 4),
+]
+
 
 class SvListInputMatrixEntry(bpy.types.PropertyGroup):
-
     id_matrix = (1.0, 0.0, 0.0, 0.0,
                  0.0, 1.0, 0.0, 0.0,
                  0.0, 0.0, 1.0, 0.0,
                  0.0, 0.0, 0.0, 1.0)
+
+    def update_entry(self, context):
+        if hasattr(context, 'node'):
+            updateNode(context.node, context)
+        else:
+            sv_logger.debug("Node is not defined in this context, so will not update the node.")
+
+    matrix_mode1 : EnumProperty(
+        name='Matrix mode', description='View mode of the matrix',
+        items=matrix_modes1,
+        default="NONE",
+        update=update_entry,
+    ) # type: ignore
+
+    matrix_mode_SHEAR : BoolProperty(
+        name='Matrix Shear', description='Shear components of matrix',
+        default=False,
+        #update=update_entry,
+    ) # type: ignore
+
+    matrix_euler_order: EnumProperty(
+        name="Euler Order",
+        description="Order of the Euler rotations",
+        default="XYZ",
+        items=quaternion_euler_orders,
+        update=update_entry,
+    ) # type: ignore
 
     # share data with elements
     def get_elem(self):
@@ -777,33 +1283,27 @@ class SvListInputMatrixEntry(bpy.types.PropertyGroup):
     def set_elem(self, value):
         self.elem = value
 
-    def update_entry(self, context):
-        if hasattr(context, 'node'):
-            updateNode(context.node, context)
-        else:
-            sv_logger.debug("Node is not defined in this context, so will not update the node.")
-
     item_enable : BoolProperty(
         name = "Mask",
         description = "On - Add Element in the output socket,\nOff - Do not add Element in the output socket",
         default=True,
         update=update_entry,
         ) # type: ignore
-    
-    elem: FloatVectorProperty(
-        name = "Vector",
-        default = id_matrix,
-        #subtype='MATRIX',
-        size=16,
-        update=update_entry,
-    ) # type: ignore
+
+    # elem: FloatVectorProperty(
+    #     name = "Vector",
+    #     default = id_matrix,
+    #     #subtype='MATRIX',
+    #     size=16,
+    #     update=update_entry,
+    # ) # type: ignore
 
     MATRIX: FloatVectorProperty(
         name = "Matrix elem",
         default = id_matrix,
         size=16,
         #subtype='MATRIX',
-        update=update_entry,
+        #update=update_entry,
     ) # type: ignore
 
     # share data with elements
@@ -811,20 +1311,30 @@ class SvListInputMatrixEntry(bpy.types.PropertyGroup):
         return self.MATRIX
 
     def set_MATRIX(self, value):
-        mat = np.array(value).reshape(-1,4).tolist()
-
         self.MATRIX = value
-        mat = Matrix(mat)
-        T, R, S = mat.decompose()
+        # mat = np.array(value).reshape(-1,4).tolist()
+        # mat = Matrix(mat)
+        # T, R, S = mat.decompose()
         
-        self.EULER_LOCATION[:] = T[:]
-        self.EULER_ANGLE[:]    = R.to_euler("XYZ")[:]
-        self.EULER_SCALE[:]    = S[:]
+        # self.EULER_LOCATION[:] = T[:]
+        # self.EULER_ANGLE[:]    = R.to_euler("XYZ")[:]
+        # self.EULER_SCALE[:]    = S[:]
 
-        self.AXISANGLE_LOCATION[:] = T[:]
-        self.AXISANGLE_SCALE[:]    = S[:]
-        self.AXISANGLE_VECTOR[:]   = R.axis[:]
-        self.AXISANGLE_ANGLE       = R.angle
+        # self.AXISANGLE_LOCATION[:] = T[:]
+        # self.AXISANGLE_SCALE[:]    = S[:]
+        # if abs(R.angle) >= _EPS:
+        #     self.AXISANGLE_VECTOR[:]   = R.axis[:]
+        # self.AXISANGLE_ANGLE       = R.angle
+
+        # mat_TRS = Matrix.LocRotScale(T,R,S)
+        # mat_REST = mat_TRS.inverted() @ mat
+        # sxy, sxz, syz = decompose_shear(mat_REST)
+        # self.SHEAR_XY_X = sxy[0][2]
+        # self.SHEAR_XY_Y = sxy[1][2]
+        # self.SHEAR_XZ_X = sxz[0][1]
+        # self.SHEAR_XZ_Z = sxz[2][1]
+        # self.SHEAR_YZ_Y = syz[1][0]
+        # self.SHEAR_YZ_Z = syz[2][0]
 
         pass
 
@@ -840,22 +1350,32 @@ class SvListInputMatrixEntry(bpy.types.PropertyGroup):
 
     ####### EULER_LOCATION, euler_scale, euler_angle_xyz #####################################################################################
     EULER_LOCATION: FloatVectorProperty(
-        name = "Eular Angle (XYZ)",
+        name = "Euler Angle (XYZ)",
         default = (0., 0., 0., ),
         #subtype='EULER',
         size=3,
     ) # type: ignore
 
     def update_by_EULER(self):
-        mat = euler_matrix(self.EULER_LOCATION[:], self.EULER_SCALE[:], self.EULER_ANGLE[:], "XYZ")
-        T, R, S = mat.decompose()
+        # mat = calc_euler_matrix(self.EULER_LOCATION[:], self.EULER_SCALE[:], self.EULER_ANGLE[:], "XYZ")
+        # T, R, S = mat.decompose()
+        # translation1, scale1, angles1, shear1 = decompose_matrix( mat )
+        # shear_matrix = calc_shear_matrix(
+        #     [self.SHEAR_XY_X, self.SHEAR_XY_Y],
+        #     [self.SHEAR_XZ_X, self.SHEAR_XZ_Z],
+        #     [self.SHEAR_YZ_Y, self.SHEAR_YZ_Z],
+        # )
+        # mat = Matrix.LocRotScale(T,R,S) @ shear_matrix
 
-        self.MATRIX = list(chain( *mat.row ))
-        # skip EULER
-        self.AXISANGLE_LOCATION[:] = T[:]
-        self.AXISANGLE_SCALE[:]    = S[:]
-        self.AXISANGLE_VECTOR[:]   = R.axis[:]
-        self.AXISANGLE_ANGLE       = R.angle
+        # # skip EULER
+        # self.AXISANGLE_LOCATION[:] = T[:]
+        # self.AXISANGLE_SCALE[:]    = S[:]
+        # self.AXISANGLE_VECTOR[:]   = R.axis[:]
+        # self.AXISANGLE_ANGLE       = R.angle
+        
+        # self.MATRIX = list(chain( *mat.row ))
+
+        pass
 
     def get_EULER_LOCATION(self):
         return self.EULER_LOCATION
@@ -866,7 +1386,7 @@ class SvListInputMatrixEntry(bpy.types.PropertyGroup):
         pass
 
     EULER_LOCATION_UI_NONE: FloatVectorProperty(
-        name = "Eular Location (XYZ)",
+        name = "Euler Location (XYZ)",
         default = (0., 0., 0., ),
         precision=3,
         #subtype='NONE',
@@ -875,7 +1395,7 @@ class SvListInputMatrixEntry(bpy.types.PropertyGroup):
         update=update_entry,
     ) # type: ignore
     EULER_LOCATION_UI_TRANSLATION: FloatVectorProperty(
-        name = "Eular Location (XYZ)",
+        name = "Euler Location (XYZ)",
         default = (0., 0., 0., ),
         subtype='TRANSLATION',
         precision=3,
@@ -888,7 +1408,7 @@ class SvListInputMatrixEntry(bpy.types.PropertyGroup):
     ####### euler_location, EULER_SCALE, euler_angle_xyz #####################################################################################
 
     EULER_SCALE: FloatVectorProperty(
-        name = "Eular Scale (XYZ)",
+        name = "Euler Scale (XYZ)",
         default = (1., 1., 1., ),
         #subtype='EULER',
         size=3,
@@ -903,7 +1423,7 @@ class SvListInputMatrixEntry(bpy.types.PropertyGroup):
         pass
 
     EULER_SCALE_UI: FloatVectorProperty(
-        name = "Eular Scale (XYZ)",
+        name = "Euler Scale (XYZ)",
         default = (1., 1., 1., ),
         precision=3,
         #subtype='EULER',
@@ -916,7 +1436,7 @@ class SvListInputMatrixEntry(bpy.types.PropertyGroup):
     ####### euler_location,  euler_scale, EULER_ANGLE_XYZ #####################################################################################
 
     EULER_ANGLE: FloatVectorProperty(
-        name = "Eular Angle (XYZ)",
+        name = "Euler Angle (XYZ)",
         default = (0., 0., 0., ),
         subtype='EULER',
         size=3,
@@ -931,7 +1451,7 @@ class SvListInputMatrixEntry(bpy.types.PropertyGroup):
         pass
 
     EULER_ANGLE_UI: FloatVectorProperty(
-        name = "Eular Scale (XYZ)",
+        name = "Euler Scale (XYZ)",
         default = (0., 0., 0., ),
         subtype='EULER',
         size=3,
@@ -949,14 +1469,24 @@ class SvListInputMatrixEntry(bpy.types.PropertyGroup):
     ) # type: ignore
 
     def update_by_AXISANGLE(self):
-        mat = axisangle_matrix(self.AXISANGLE_LOCATION[:], self.AXISANGLE_SCALE[:], self.AXISANGLE_VECTOR[:], self.AXISANGLE_ANGLE)
-        T, R, S = mat.decompose()
+        # mat_TRS = axisangle_matrix(self.AXISANGLE_LOCATION[:], self.AXISANGLE_SCALE[:], self.AXISANGLE_VECTOR[:], self.AXISANGLE_ANGLE)
+        # translation1, scale1, angles1, shear1 = decompose_matrix( mat_TRS )
+        # shear_matrix = calc_shear_matrix(
+        #     [self.SHEAR_XY_X, self.SHEAR_XY_Y],
+        #     [self.SHEAR_XZ_X, self.SHEAR_XZ_Z],
+        #     [self.SHEAR_YZ_Y, self.SHEAR_YZ_Z],
+        # )
+        # # mat_without_shear = shear_matrix.to_4x4().inverted() @ mat
+        # # T, R, S = mat.decompose()
+        # T, R, S = mat_TRS.decompose()
 
-        self.MATRIX = list(chain( *mat.row ))
-        self.EULER_LOCATION[:] = T[:]
-        self.EULER_ANGLE[:]    = R.to_euler("XYZ")[:]
-        self.EULER_SCALE[:]    = S[:]
-        # skip AXISANGLE
+        # self.EULER_LOCATION[:] = T[:]
+        # self.EULER_ANGLE[:]    = R.to_euler("XYZ")[:]
+        # self.EULER_SCALE[:]    = S[:]
+        # # skip AXISANGLE
+
+        # mat = mat_TRS @ shear_matrix
+        # self.MATRIX = list(chain( *mat.row ))
         pass
 
     def get_AXISANGLE_LOCATION(self):
@@ -1002,7 +1532,7 @@ class SvListInputMatrixEntry(bpy.types.PropertyGroup):
         pass
 
     AXISANGLE_SCALE_UI: FloatVectorProperty(
-        name = "Eular Scale (XYZ)",
+        name = "Euler Scale (XYZ)",
         default = (1., 1., 1., ),
         #subtype='EULER',
         size=3,
@@ -1028,7 +1558,7 @@ class SvListInputMatrixEntry(bpy.types.PropertyGroup):
         pass
 
     AXISANGLE_VECTOR_UI: FloatVectorProperty(
-        name = "Eular Angle (XYZ)",
+        name = "Euler Angle (XYZ)",
         default = (0., 0., 1., ),
         #subtype='EULER',
         size=3,
@@ -1061,17 +1591,327 @@ class SvListInputMatrixEntry(bpy.types.PropertyGroup):
 
     ####### axis_angle_location, /AXISANGLE_SCALE, axisangle_vector, AXISANGLE_ANGLE #########################################################################
 
+    def update_by_SHEAR(self):
+        if self.matrix_mode1=='EULER':
+            self.update_by_EULER()
+            pass
+        elif self.matrix_mode1=='AXISANGLE':
+            self.update_by_AXISANGLE()
+            pass
+        else:
+            # 'NONE' SHEAR do not update matrix.
+            pass
+        pass
+
+    ####### SHEAR_XY_X #########################################################################
+    SHEAR_XY_X: FloatProperty(
+        name = "Factor1",
+        default = 0.0,
+        #subtype='EULER',
+        #size=1,
+    ) # type: ignore
+
+    def get_SHEAR_XY_X(self):
+        return self.SHEAR_XY_X
+
+    def set_SHEAR_XY_X(self, value):
+        self.SHEAR_XY_X = value
+        self.update_by_SHEAR()
+        pass
+
+    SHEAR_XY_X_UI: FloatProperty(
+        name = "Factor1",
+        default = 0.0,
+        #subtype='EULER',
+        #size=1,
+        get = get_SHEAR_XY_X, set = set_SHEAR_XY_X,
+        update=update_entry,
+    ) # type: ignore
+
+    ####### SHEAR_XY_X #########################################################################
+
+    ####### SHEAR_XY_Y #########################################################################
+    SHEAR_XY_Y: FloatProperty(
+        name = "Factor2",
+        default = 0.0,
+        #subtype='EULER',
+        #size=1,
+    ) # type: ignore
+
+    def get_SHEAR_XY_Y(self):
+        return self.SHEAR_XY_Y
+
+    def set_SHEAR_XY_Y(self, value):
+        self.SHEAR_XY_Y = value
+        self.update_by_SHEAR()
+        pass
+
+    SHEAR_XY_Y_UI: FloatProperty(
+        name = "Factor2",
+        default = 0.0,
+        #subtype='EULER',
+        #size=1,
+        get = get_SHEAR_XY_Y, set = set_SHEAR_XY_Y,
+        update=update_entry,
+    ) # type: ignore
+
+    ####### SHEAR_XY_Y #########################################################################
+    
+
+    ####### SHEAR_XZ_X #########################################################################
+    SHEAR_XZ_X: FloatProperty(
+        name = "Factor1",
+        default = 0.0,
+        #subtype='EULER',
+        #size=1,
+    ) # type: ignore
+
+    def get_SHEAR_XZ_X(self):
+        return self.SHEAR_XZ_X
+
+    def set_SHEAR_XZ_X(self, value):
+        self.SHEAR_XZ_X = value
+        self.update_by_SHEAR()
+        pass
+
+    SHEAR_XZ_X_UI: FloatProperty(
+        name = "Factor1",
+        default = 0.0,
+        #subtype='EULER',
+        #size=1,
+        get = get_SHEAR_XZ_X, set = set_SHEAR_XZ_X,
+        update=update_entry,
+    ) # type: ignore
+
+    ####### SHEAR_XZ_X #########################################################################
+
+    ####### SHEAR_XZ_Z #########################################################################
+    SHEAR_XZ_Z: FloatProperty(
+        name = "Factor2",
+        default = 0.0,
+        #subtype='EULER',
+        #size=1,
+    ) # type: ignore
+
+    def get_SHEAR_XZ_Z(self):
+        return self.SHEAR_XZ_Z
+
+    def set_SHEAR_XZ_Z(self, value):
+        self.SHEAR_XZ_Z = value
+        self.update_by_SHEAR()
+        pass
+
+    SHEAR_XZ_Z_UI: FloatProperty(
+        name = "Factor2",
+        default = 0.0,
+        #subtype='EULER',
+        #size=1,
+        get = get_SHEAR_XZ_Z, set = set_SHEAR_XZ_Z,
+        update=update_entry,
+    ) # type: ignore
+
+    ####### SHEAR_XZ_Z #########################################################################
+
+    ####### SHEAR_YZ_Y #########################################################################
+    SHEAR_YZ_Y: FloatProperty(
+        name = "Factor1",
+        default = 0.0,
+        #subtype='EULER',
+        #size=1,
+    ) # type: ignore
+
+    def get_SHEAR_YZ_Y(self):
+        return self.SHEAR_YZ_Y
+
+    def set_SHEAR_YZ_Y(self, value):
+        self.SHEAR_YZ_Y = value
+        self.update_by_SHEAR()
+        pass
+
+    SHEAR_YZ_Y_UI: FloatProperty(
+        name = "Factor1",
+        default = 0.0,
+        #subtype='EULER',
+        #size=1,
+        get = get_SHEAR_YZ_Y, set = set_SHEAR_YZ_Y,
+        update=update_entry,
+    ) # type: ignore
+
+    ####### SHEAR_YZ_Y #########################################################################
+
+    ####### SHEAR_YZ_Z #########################################################################
+    SHEAR_YZ_Z: FloatProperty(
+        name = "Factor2",
+        default = 0.0,
+        #subtype='EULER',
+        #size=1,
+    ) # type: ignore
+
+    def get_SHEAR_YZ_Z(self):
+        return self.SHEAR_YZ_Z
+
+    def set_SHEAR_YZ_Z(self, value):
+        self.SHEAR_YZ_Z = value
+        self.update_by_SHEAR()
+        pass
+
+    SHEAR_YZ_Z_UI: FloatProperty(
+        name = "Factor2",
+        default = 0.0,
+        #subtype='EULER',
+        #size=1,
+        get = get_SHEAR_YZ_Z, set = set_SHEAR_YZ_Z,
+        update=update_entry,
+    ) # type: ignore
+
+    ####### SHEAR_YZ_Z #########################################################################
+
+
+class SvSetEulerAnglesFromAngleAxis(bpy.types.Operator, SvGenericNodeLocator):
+    '''Copy data from Angle Axis mode'''
+    bl_idname = "node.sverchok_set_euler_angles_from_angle_axis"
+    bl_label = "Convert data from Angle Axis to Euler Angles"
+
+    idx: bpy.props.IntProperty()
+    
+    def sv_execute(self, context, node):
+        if hasattr(node, 'matrix_list_items')==True:
+            #node.matrix_list_items[self.idx].MATRIX_UI = [1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1]
+            elem = node.matrix_list_items[self.idx]
+            mat_TRS = axisangle_matrix(elem.AXISANGLE_LOCATION[:], elem.AXISANGLE_SCALE[:], elem.AXISANGLE_VECTOR[:], elem.AXISANGLE_ANGLE)
+            T, R, S = mat_TRS.decompose()
+            elem.EULER_LOCATION_UI_NONE[:] = T[:]
+            elem.EULER_ANGLE_UI[:]    = R.to_euler("XYZ")[:]
+            elem.EULER_SCALE_UI[:]    = S[:]
+        pass
+
+class SvSetEulerAnglesFromInit(bpy.types.Operator, SvGenericNodeLocator):
+    '''Init data for Euler Angles'''
+    bl_idname = "node.sverchok_set_euler_angles_from_init"
+    bl_label = "Convert data from Angle Axis to Euler Angles"
+
+    idx: bpy.props.IntProperty()
+    
+    def sv_execute(self, context, node):
+        if hasattr(node, 'matrix_list_items')==True:
+            #node.matrix_list_items[self.idx].MATRIX_UI = [1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1]
+            elem = node.matrix_list_items[self.idx]
+            elem.EULER_LOCATION_UI_NONE[:] = [0,0,0]
+            elem.EULER_ANGLE_UI[:]    = [0,0,0]
+            elem.EULER_SCALE_UI[:]    = [1,1,1]
+        pass
+
+class SvSetMatrixFromAngleAxis(bpy.types.Operator, SvGenericNodeLocator):
+    '''Set Matrix data from Angle Axis'''
+    bl_idname = "node.sverchok_set_matrix_from_angle_axis"
+    bl_label = "Copy data from Angle Axis into a Matrix"
+
+    idx: bpy.props.IntProperty()
+    
+    def sv_execute(self, context, node):
+        if hasattr(node, 'matrix_list_items')==True:
+            elem = node.matrix_list_items[self.idx]
+            mat_TRS = axisangle_matrix(elem.AXISANGLE_LOCATION[:], elem.AXISANGLE_SCALE[:], elem.AXISANGLE_VECTOR[:], elem.AXISANGLE_ANGLE)
+            shear_matrix = calc_shear_matrix(
+                [elem.SHEAR_XY_X, elem.SHEAR_XY_Y],
+                [elem.SHEAR_XZ_X, elem.SHEAR_XZ_Z],
+                [elem.SHEAR_YZ_Y, elem.SHEAR_YZ_Z],
+            )
+            mat = mat_TRS @ shear_matrix
+            elem.MATRIX_UI = list(chain( *mat.row ))
+        pass
+
+class SvSetMatrixFromEulerAngles(bpy.types.Operator, SvGenericNodeLocator):
+    '''Set Matrix data from Euler Angles'''
+    bl_idname = "node.sverchok_set_matrix_from_euler_angles"
+    bl_label = "Copy data from Euler Angles into a Matrix"
+
+    idx: bpy.props.IntProperty()
+    
+    def sv_execute(self, context, node):
+        if hasattr(node, 'matrix_list_items')==True:
+            elem = node.matrix_list_items[self.idx]
+            mat_TRS = calc_euler_matrix(elem.EULER_LOCATION[:], elem.EULER_SCALE[:], elem.EULER_ANGLE[:], "XYZ")
+            shear_matrix = calc_shear_matrix(
+                [elem.SHEAR_XY_X, elem.SHEAR_XY_Y],
+                [elem.SHEAR_XZ_X, elem.SHEAR_XZ_Z],
+                [elem.SHEAR_YZ_Y, elem.SHEAR_YZ_Z],
+            )
+            mat = mat_TRS @ shear_matrix
+            elem.MATRIX_UI = list(chain( *mat.row ))
+        pass
+
+
+class SvSetAngleAxisFromEulerAngles(bpy.types.Operator, SvGenericNodeLocator):
+    '''Copy data from Euler Angles mode'''
+    bl_idname = "node.sverchok_set_angle_axis_from_euler_angles"
+    bl_label = "Convert data from Euler Angles to Angle Axis"
+
+    idx: bpy.props.IntProperty()
+    
+    def sv_execute(self, context, node):
+        if hasattr(node, 'matrix_list_items')==True:
+            #node.matrix_list_items[self.idx].MATRIX_UI = [1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1]
+            elem = node.matrix_list_items[self.idx]
+
+            mat = calc_euler_matrix(elem.EULER_LOCATION[:], elem.EULER_SCALE[:], elem.EULER_ANGLE[:], "XYZ")
+            T, R, S = mat.decompose()
+            elem.AXISANGLE_LOCATION_UI_NONE[:] = T[:]
+            elem.AXISANGLE_SCALE_UI[:]    = S[:]
+            elem.AXISANGLE_VECTOR_UI[:]   = R.axis[:]
+            elem.AXISANGLE_ANGLE_UI       = R.angle
+        pass
+
+class SvSetAngleAxisFromInit(bpy.types.Operator, SvGenericNodeLocator):
+    '''Init data for Angle Axis '''
+    bl_idname = "node.sverchok_set_angle_axis_from_init"
+    bl_label = "Convert data from Euler Angles to Angle Axis"
+
+    idx: bpy.props.IntProperty()
+    
+    def sv_execute(self, context, node):
+        if hasattr(node, 'matrix_list_items')==True:
+            #node.matrix_list_items[self.idx].MATRIX_UI = [1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1]
+            elem = node.matrix_list_items[self.idx]
+            elem.AXISANGLE_LOCATION_UI_NONE[:] = [0,0,0]
+            elem.AXISANGLE_SCALE_UI[:]    = [1,1,1]
+            elem.AXISANGLE_VECTOR_UI[:]   = [0,0,1]
+            elem.AXISANGLE_ANGLE_UI       = 0
+        pass
+
+class SvSetMatrixToOnes(bpy.types.Operator, SvGenericNodeLocator):
+    '''Set Matrix to diagonal ones'''
+    bl_idname = "node.sverchok_set_matrix_to_ones"
+    bl_label = "Set Matrix to diagonal ones"
+
+    idx: bpy.props.IntProperty()
+    
+    def sv_execute(self, context, node):
+        if hasattr(node, 'matrix_list_items')==True:
+            node.matrix_list_items[self.idx].MATRIX_UI = [1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1]
+        pass
+
+class SvSetShearsToZero(bpy.types.Operator, SvGenericNodeLocator):
+    ''' Set Shears to Zero'''
+    bl_idname = "node.sverchok_set_shears_to_zero"
+    bl_label = "Set Shears to Zero"
+
+    idx: bpy.props.IntProperty()
+    
+    def sv_execute(self, context, node):
+        if hasattr(node, 'matrix_list_items')==True:
+            node.matrix_list_items[self.idx].SHEAR_XY_X_UI = 0.0
+            node.matrix_list_items[self.idx].SHEAR_XY_Y_UI = 0.0
+            node.matrix_list_items[self.idx].SHEAR_XZ_X_UI = 0.0
+            node.matrix_list_items[self.idx].SHEAR_XZ_Z_UI = 0.0
+            node.matrix_list_items[self.idx].SHEAR_YZ_Y_UI = 0.0
+            node.matrix_list_items[self.idx].SHEAR_YZ_Z_UI = 0.0
+        pass
 
 class SvCopyTextToClipboard(bpy.types.Operator, SvGenericNodeLocator):
     ''' Copy node's data by data mode (bool, int, float, vector, quaternion, color, strings) to the clipboard '''
     bl_idname = "node.sverchok_copy_text_to_clipboard"
-    bl_label = "sverchok: copy data to the clipboard as text"
-    # bl_options = {'REGISTER', 'UNDO'}
-
-    # def execute(self, context):
-    #     node = self.get_node(context)
-    #     context.window_manager.clipboard = self.text
-    #     return {'FINISHED'}
+    bl_label = "Copy data to the clipboard as text"
     
     def sv_execute(self, context, node):
         if hasattr(node, 'dataAsString')==True:
@@ -1083,7 +1923,7 @@ class SvCopyTextToClipboard(bpy.types.Operator, SvGenericNodeLocator):
 class SvPasteTextFromClipboard(bpy.types.Operator, SvGenericNodeLocator):
     '''Paste data into the node by mode (bool, int, float, vector, quaternion, color, strings) from the clipboard text'''
     bl_idname = "node.sverchok_paste_text_from_clipboard"
-    bl_label = "sverchok: paste data from the clipboard"
+    bl_label = "Paste data from the clipboard"
     bl_options = {'REGISTER', 'UNDO'}
 
     # def execute(self, context):
@@ -1188,6 +2028,24 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_LIST_INPUT'
 
+    def wrapper_marix_elem_ui_draw_op(self, layout_element, operator_idname, idx, **keywords):
+        """
+        this wrapper allows you to track the origin of a clicked operator, by automatically passing
+        the node_name and tree_name to the operator.
+
+        example usage:
+
+            row.separator()
+            self.wrapper_tracked_ui_draw_op(row, "node.view3d_align_from", icon='CURSOR', text='')
+
+        """
+        op = layout_element.operator(operator_idname, **keywords)
+        op.node_name = self.name
+        op.tree_name = self.id_data.name
+        op.idx = idx
+        return op
+
+
     def wrapper_tracked_ui_draw_op(self, layout_element, operator_idname, **keywords):
         """
         this wrapper allows you to track the origin of a clicked operator, by automatically passing
@@ -1239,7 +2097,7 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
 
     matrix_list_counter: IntProperty(
         name='matrix_list_counter',
-        description='matrixes',
+        description='matrixes (trs - translate, rotation, scale)',
         default=1,
         min=1,
         update=Correct_ListInput_Length)  # type: ignore
@@ -1355,7 +2213,8 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
         ("FLOAT_LIST_MODE", "Float", "Float", "IPO_LINEAR", 2),
         ("VECTOR_LIST_MODE", "Vector", "Vector", "ORIENTATION_GLOBAL", 3),
         ("QUATERNION_LIST_MODE", "Quaternion", "Quaternion", "CURVE_PATH", 4),
-        ("MATRIX_LIST_MODE", "Matrix", "Matrix", "MOD_LATTICE", 5),
+        ("MATRIX_LIST_MODE", "Matrix", "Matrix", "VIEW_ORTHO", 5),
+        #("MATRIX_SHEAR_LIST_MODE", "Matrix (Shear)", "Matrix (Shear)", "MOD_LATTICE", 8),
         ("COLOR_LIST_MODE", "Color", "Color", "COLOR", 6),
         ("STRING_LIST_MODE", "Text", "Text", "SORTALPHA", 7),
     ]
@@ -1378,7 +2237,7 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
         #("MATRIX", "Matrix", "Matrix", "", 6),
         ("EULER", "Euler Angles XYZ", "Euler Angles", "", 7),
         #("QUATERNION", "Quaternion", "Quaternion", "", 8), - moved to mode
-        ("AXISANGLE", "Axis-Angle", "Axis-Angle", "", 9),
+        ('AXISANGLE', "Axis-Angle", "Axis-Angle", "", 9),
         ("XYZ", "XYZ", "XYZ", "", 10),
         ("XYZ_LENGTH", "XYZ Length", "XYZ Length", "", 11),
         #("COLOR_GAMMA", "Color Gamma", "Color Gamma", "", 12),
@@ -1630,10 +2489,10 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
     #     pass
 
     quaternion_modes = [
-        ("WXYZ", "WXYZ", "Convert components into quaternion", 0),
-        ("SCALARVECTOR", "Scalar Vector", "Convert Scalar & Vector into quaternion", 1),
-        ("EULER", "Euler Angles XYZ", "Convert Euler angles into quaternion", 2),
-        ("AXISANGLE", "Angle Axis (Angle, XYZ)", "Convert Angle & Axis into quaternion", 3),
+        ('WXYZ', "WXYZ", "Convert components into quaternion", 0),
+        ('SCALARVECTOR', "Scalar Vector", "Convert Scalar & Vector into quaternion", 1),
+        ('EULER', "Euler Angles XYZ", "Convert Euler angles into quaternion", 2),
+        ('AXISANGLE', "Angle Axis (Angle, XYZ)", "Convert Angle & Axis into quaternion", 3),
         #("MATRIX", "Matrix", "Convert Rotation Matrix into quaternion", 4),
     ]
     quaternion_mode : EnumProperty(
@@ -1660,26 +2519,32 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
         #update=quaternion_euler_order_update
     ) # type: ignore
 
-    matrix_modes1 = [
-        ("NONE", "None", "None", 0),
-        #("SCALARVECTOR", "Scalar Vector", "Convert Scalar & Vector into quaternion", 1),
-        ("EULER", "Euler Angles XYZ", "Convert Euler angles into quaternion", 2),
-        ("AXISANGLE", "Angle Axis (Angle, XYZ)", "Convert Angle & Axis into quaternion", 3),
-    ]
-    matrix_mode1 : EnumProperty(
-        name='Matrix mode', description='The input component format of the matrix',
-        items=matrix_modes1,
-        default="NONE",
-        update=updateNode,
-    ) # type: ignore
+    # def update_matrix_mode_in_matrix_list(self, context):
+    #     for items in self.matrix_list_items:
+    #         items.matrix_mode1 = self.matrix_mode1
+    #     updateNode(self, context)
+    #     pass
 
-    matrix_euler_order: EnumProperty(
-        name="Euler Order",
-        description="Order of the Euler rotations",
-        default="XYZ",
-        items=quaternion_euler_orders,
-        update=updateNode,
-    ) # type: ignore
+    # matrix_mode1 : EnumProperty(
+    #     name='Matrix mode', description='The input component format of the matrix',
+    #     items=matrix_modes1,
+    #     default="NONE",
+    #     update=update_matrix_mode_in_matrix_list,
+    # ) # type: ignore
+
+    # matrix_mode_SHEAR : BoolProperty(
+    #     name='Matrix Shear', description='Shear components of matrix',
+    #     default=False,
+    #     update=updateNode,
+    # ) # type: ignore
+
+    # matrix_euler_order: EnumProperty(
+    #     name="Euler Order",
+    #     description="Order of the Euler rotations",
+    #     default="XYZ",
+    #     items=quaternion_euler_orders,
+    #     update=updateNode,
+    # ) # type: ignore
 
     base_name = 'data '
     multi_socket_type = 'SvStringsSocket'
@@ -1783,15 +2648,11 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
             label_row = r_subtype_split2.row()
             label_row.label(text='Quaternion')
         elif self.mode=='MATRIX_LIST_MODE':
-            if self.matrix_mode1=='NONE':
-                pass
-            else:
-                label_row = r_subtype_split2.row()
-                #label_row.label(text='Matrix')
-                if self.unit_system=='METRIC':
-                    label_row.prop(self, 'length_unit_metric', text='')
-                elif self.unit_system=='IMPERIAL':
-                    label_row.prop(self, 'length_unit_imperial', text='')
+            label_row = r_subtype_split2.row()
+            if self.unit_system=='METRIC':
+                label_row.prop(self, 'length_unit_metric', text='')
+            elif self.unit_system=='IMPERIAL':
+                label_row.prop(self, 'length_unit_imperial', text='')
         else:
             r_subtype_split1.enabled = False
             pass
@@ -1803,14 +2664,15 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
             elif self.mode=='FLOAT_LIST_MODE' and self.subtype_float=='ANGLE' or \
                 self.mode=='VECTOR_LIST_MODE' and (self.subtype_vector=='EULER' or self.subtype_vector=='AXISANGLE' or self.subtype_vector=='DIRECTION') or \
                 self.mode=='QUATERNION_LIST_MODE' and (self.quaternion_mode=='EULER' or self.quaternion_mode=='AXISANGLE') or \
-                self.mode=='MATRIX_LIST_MODE' and (self.matrix_mode1=='EULER' or self.matrix_mode1=='AXISANGLE'):
-                    r_subtype_split2.column().prop(self, 'system_rotation', expand=False, text='')
+                self.mode=='MATRIX_LIST_MODE':
+                    r_subtype_split2.row().prop(self, 'system_rotation', expand=True)
             elif self.mode=='FLOAT_LIST_MODE' and self.subtype_float=='TEMPERATURE':
                     r_subtype_split2.column().prop(self, 'temperature_unit_metric', expand=False, text='')
             elif self.mode=='COLOR_LIST_MODE' and (self.subtype_color=='COLOR' or self.subtype_color=='COLOR_GAMMA'):
                     r_subtype_split2.column().prop(self, 'use_alpha')
             else:
                     r_subtype_split2.column().label(text='')
+
         elif self.unit_system=='IMPERIAL':
             if  self.mode=='FLOAT_LIST_MODE' and self.subtype_float=='DISTANCE' or \
                 self.mode=='VECTOR_LIST_MODE' and (self.subtype_vector=='TRANSLATION' or self.subtype_vector=='XYZ_LENGTH'):
@@ -1818,8 +2680,8 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
             elif self.mode=='FLOAT_LIST_MODE' and self.subtype_float=='ANGLE' or \
                  self.mode=='VECTOR_LIST_MODE' and (self.subtype_vector=='EULER' or self.subtype_vector=='AXISANGLE' or self.subtype_vector=='DIRECTION') or \
                  self.mode=='QUATERNION_LIST_MODE' and (self.quaternion_mode=='EULER' or self.quaternion_mode=='AXISANGLE') or \
-                 self.mode=='MATRIX_LIST_MODE' and (self.matrix_mode1=='EULER' or self.matrix_mode1=='AXISANGLE'):
-                    r_subtype_split2.column().prop(self, 'system_rotation', expand=False, text='')
+                 self.mode=='MATRIX_LIST_MODE':
+                    r_subtype_split2.row().prop(self, 'system_rotation', expand=True)
             elif self.mode=='FLOAT_LIST_MODE' and self.subtype_float=='TEMPERATURE':
                     r_subtype_split2.column().prop(self, 'temperature_unit_imperial', expand=False, text='')
             elif self.mode=='COLOR_LIST_MODE' and (self.subtype_color=='COLOR' or self.subtype_color=='COLOR_GAMMA'):
@@ -1830,7 +2692,7 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
             if   self.mode=='FLOAT_LIST_MODE' and (self.subtype_float=='ANGLE') or \
                  self.mode=='VECTOR_LIST_MODE' and (self.subtype_vector=='EULER' or self.subtype_vector=='AXISANGLE' or self.subtype_vector=='DIRECTION') or \
                  self.mode=='QUATERNION_LIST_MODE' and (self.quaternion_mode=='EULER' or self.quaternion_mode=='AXISANGLE') or \
-                 self.mode=='MATRIX_LIST_MODE' and (self.matrix_mode1=='EULER' or self.matrix_mode1=='AXISANGLE'):
+                 self.mode=='MATRIX_LIST_MODE':
                     r_subtype_split2.column().prop(self, 'system_rotation', expand=False, text='')
             elif self.mode=='COLOR_LIST_MODE' and (self.subtype_color=='COLOR' or self.subtype_color=='COLOR_GAMMA'):
                     r_subtype_split2.column().prop(self, 'use_alpha')
@@ -1856,21 +2718,26 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
             pass
         elif self.mode=='MATRIX_LIST_MODE':
             # Angles
-            qp_row = layout.row() # matrix_params_row
-            qp_row_s = qp_row.split(factor=0.3)
-            qp_row_s_c1 = qp_row_s.column()
-            qp_row_s_c1.label(text='Matrix mode:')
-            qp_row_s_s = qp_row_s.column().split(factor=0.6)
-            qp_row_s_s_c1 = qp_row_s_s.column()
-            qp_row_s_s_c1.alignment="LEFT"
-            qp_row_s_s_c1.prop(self, 'matrix_mode1', text='')
-            qp_row_s_s_c2 = qp_row_s_s.row()
-            if self.matrix_mode1=='NONE':
-                pass
-            elif self.matrix_mode1=='EULER':
-                qp_row_s_s_c2.prop(self, 'matrix_euler_order', text='')
-            else:
-                qp_row_s_s_c2.label(text='')
+            # qp_row = layout.row() # matrix_params_row
+            # qp_row_s = qp_row.split(factor=0.3)
+            # qp_row_s_c1 = qp_row_s.column()
+            # qp_row_s_c1.label(text='Matrix mode:')
+            # qp_row_s_s = qp_row_s.column().split(factor=0.6)
+            # qp_row_s_s_c1 = qp_row_s_s.column()
+            # qp_row_s_s_c1.alignment="LEFT"
+            # qp_row_s_s_c1.prop(self, 'matrix_mode1', text='')
+            # qp_row_s_s_c2 = qp_row_s_s.row()
+            # if self.matrix_mode1=='NONE':
+            #     pass
+            # elif self.matrix_mode1=='EULER':
+            #     qp_row_s_s_c2_c = qp_row_s_s_c2.row()
+            #     qp_row_s_s_c2_c.column().prop(self, 'matrix_euler_order', text='')
+            #     qp_row_s_s_c2_c.column().prop(self, 'matrix_mode_SHEAR', text='Shear', toggle=1)
+            # else:
+            #     #qp_row_s_s_c2.label(text='')
+            #     qp_row_s_s_c2_c = qp_row_s_s_c2.row()
+            #     qp_row_s_s_c2_c.column().label(text='')
+            #     qp_row_s_s_c2_c.column().prop(self, 'matrix_mode_SHEAR', text='Shear', toggle=1)
             pass
 
         # invert_mask_row = layout.row()
@@ -1890,8 +2757,9 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
             invert_mask_prop.prop(self, "invert_mask", text='', icon='UV_SYNC_SELECT')
 
         #layout.row().prop(self, "copy_clipboard", text="Copy data to clipboard", toggle=True)
-        self.wrapper_tracked_ui_draw_op(grid_service_operators, SvCopyTextToClipboard.bl_idname, text='', icon='COPYDOWN')
-        self.wrapper_tracked_ui_draw_op(grid_service_operators, SvPasteTextFromClipboard.bl_idname, text='', icon='PASTEDOWN')
+        if self.mode!='MATRIX_LIST_MODE':
+            self.wrapper_tracked_ui_draw_op(grid_service_operators, SvCopyTextToClipboard.bl_idname, text='', icon='COPYDOWN')
+            self.wrapper_tracked_ui_draw_op(grid_service_operators, SvPasteTextFromClipboard.bl_idname, text='', icon='PASTEDOWN')
         pass
 
        
@@ -2078,7 +2946,7 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
         elif self.mode == 'MATRIX_LIST_MODE':
             grid_row = col.row().grid_flow(row_major=True, columns=3, align=True, even_rows=False)
             for I, elem in enumerate(self.matrix_list_items):
-                if self.matrix_mode1=='NONE':
+                if elem.matrix_mode1=='NONE':
                     grid_row.label(text='')
                     grid_row.label(text='')
                     grid_row.label(text='')
@@ -2087,58 +2955,88 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
                 c2 = grid_row.column()
                 c3 = grid_row.column()
 
-                c1.ui_units_x = 85
-                c2.ui_units_x = 5
-                c3.ui_units_x = 10
+                c1.ui_units_x = 65
+                c2.ui_units_x = 3
+                c3.ui_units_x = 32
 
                 c1_r = c1.row()
-                if self.matrix_mode1=='NONE':
+                if elem.matrix_mode1=='NONE':
                     matrix_grid = c1_r.grid_flow(row_major=True, columns=4, align=True)
-                    for I in range(16):
-                        matrix_grid.prop(elem, 'MATRIX_UI', text='', index=I)
+                    for I1 in range(16):
+                        matrix_grid.prop(elem, 'MATRIX_UI', text='', index=I1)
                     pass
                 else:
-                    if self.matrix_mode1=='EULER':
-                        matrix_grid = c1_r.grid_flow(row_major=False, columns=3, align=True)
-                        matrix_grid.label(text='Location:')
-                        if self.unit_system=='NONE':
-                            matrix_grid.prop(elem, 'EULER_LOCATION_UI_NONE', text='')
+                    if elem.matrix_mode_SHEAR==False:
+                        if elem.matrix_mode1=='EULER':
+                            matrix_grid = c1_r.grid_flow(row_major=False, columns=3, align=True)
+                            matrix_grid.label(text='Location:')
+                            if self.unit_system=='NONE':
+                                matrix_grid.prop(elem, 'EULER_LOCATION_UI_NONE', text='')
+                            else:
+                                matrix_grid.prop(elem, 'EULER_LOCATION_UI_TRANSLATION', text='')
+
+                            matrix_grid.label(text='Scale:')
+                            matrix_grid.prop(elem, 'EULER_SCALE_UI', text='')
+                            
+                            matrix_grid.label(text='Angle:')
+                            matrix_grid.prop(elem, 'EULER_ANGLE_UI', text='')
+
+                            grid_row.label(text='Euler')
+                            grid_row.label(text='')
+                            grid_row.label(text='')
+
+                            pass
+                        elif elem.matrix_mode1=='AXISANGLE':
+                            matrix_grid = c1_r.grid_flow(row_major=False, columns=3, align=True, even_columns=False)
+                            matrix_grid.label(text='Location:')
+                            if self.unit_system=='NONE':
+                                matrix_grid.prop(elem, 'AXISANGLE_LOCATION_UI_NONE', text='')
+                            else:
+                                matrix_grid.prop(elem, 'AXISANGLE_LOCATION_UI_TRANSLATION', text='')
+
+                            matrix_grid.label(text='Scale:')
+                            matrix_grid.prop(elem, 'AXISANGLE_SCALE_UI', text='')
+                            
+                            matrix_grid.label(text='Axis:')
+                            matrix_grid.prop(elem, 'AXISANGLE_VECTOR_UI', text='')
+
+                            c1_r_r = grid_row.row(align=True)
+                            c1_r_r.column().label(text='Axis Angle:')
+                            c1_r_r.column().prop(elem, 'AXISANGLE_ANGLE_UI', text='')
+                            grid_row.column()
+                            grid_row.column()
+                            pass
                         else:
-                            matrix_grid.prop(elem, 'EULER_LOCATION_UI_TRANSLATION', text='')
-
-                        matrix_grid.label(text='Scale:')
-                        matrix_grid.prop(elem, 'EULER_SCALE_UI', text='')
-                        
-                        matrix_grid.label(text='Angle:')
-                        matrix_grid.prop(elem, 'EULER_ANGLE_UI', text='')
-
-                        grid_row.label(text='')
-                        grid_row.label(text='')
-                        grid_row.label(text='')
-
-                        pass
-                    elif self.matrix_mode1=='AXISANGLE':
-                        matrix_grid = c1_r.grid_flow(row_major=False, columns=3, align=True)
-                        matrix_grid.label(text='Location:')
-                        if self.unit_system=='NONE':
-                            matrix_grid.prop(elem, 'AXISANGLE_LOCATION_UI_NONE', text='')
-                        else:
-                            matrix_grid.prop(elem, 'AXISANGLE_LOCATION_UI_TRANSLATION', text='')
-
-                        matrix_grid.label(text='Scale:')
-                        matrix_grid.prop(elem, 'AXISANGLE_SCALE_UI', text='')
-                        
-                        matrix_grid.label(text='Axis:')
-                        matrix_grid.prop(elem, 'AXISANGLE_VECTOR_UI', text='')
-
-                        c1_r_r = grid_row.row(align=True)
-                        c1_r_r.column().label(text='Angle:')
-                        c1_r_r.column().prop(elem, 'AXISANGLE_ANGLE_UI', text='')
-                        grid_row.column()
-                        grid_row.column()
-                        pass
+                            raise Exception(f'Unknown Matrix mode: {elem.matrix_mode1}')
                     else:
-                        raise Exception(f'Unknown Matrix mode: {self.matrix_mode1}')
+                        shears = c1_r.row().grid_flow(row_major=True, columns=3, align=True)
+                        shears_c1 = shears.column()
+                        shears_c2 = shears.column(align=True)
+                        shears_c3 = shears.column(align=True)
+                        
+                        shears_c1.ui_units_x = 20
+                        shears_c2.ui_units_x = 40
+                        shears_c3.ui_units_x = 40
+
+                        shears_c1.label(text=f'')
+                        shears_c2.label(text=f'')
+                        shears_c3.label(text=f'')
+
+                        lst_planes = ["XY", "XZ", "YZ"]
+                        for plane in lst_planes:
+                            shears_c1.label(text=f'{plane}:')
+                            shears_c2.prop(elem, f'SHEAR_{plane}_{plane[0]}_UI')
+                            shears_c3.prop(elem, f'SHEAR_{plane}_{plane[1]}_UI')
+                            pass
+
+                        if elem.matrix_mode1=='EULER':
+                            shears_c1.label(text=f'Euler')
+                        elif elem.matrix_mode1=='AXISANGLE':
+                            shears_c1.label(text=f'Axis Angle')
+                        else:
+                            shears_c1.label(text=f'')
+                        #shears_c1.label(text=f'')
+                        pass
                 
                 if self.inputs["mask"].is_linked==False:
                     if elem.item_enable==False:
@@ -2146,19 +3044,44 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
                     else:
                         index_label = f'{J}'
                         J+=1
-                    if self.matrix_mode1=='NONE':
+                    if elem.matrix_mode1=='NONE':
                         pass
                     else:
                         c2.row().label(text='')
                         c3.row().label(text='')
-                    c2.row().prop(elem, f'item_enable', icon_only=True)
-                    c3.row().label(text=index_label)
+                    c2.row().label(text=index_label)
+                    c3_row1 = c3.row(align=True)
+                    c3_row1.column().prop(elem, f'item_enable', icon_only=True)
+
+                    c3.row().prop(elem, 'matrix_mode1', text='', expand=False)
+                    if elem.matrix_mode1=='NONE':
+                        c3_row = c3.row(align=True)
+                        self.wrapper_marix_elem_ui_draw_op(c3_row.column(), SvSetMatrixToOnes.bl_idname, I, text='ones', icon='MOD_DECIM')
+                        self.wrapper_marix_elem_ui_draw_op(c3_row.column(), SvSetMatrixFromEulerAngles.bl_idname, I, text='', icon='OBJECT_ORIGIN')
+                        self.wrapper_marix_elem_ui_draw_op(c3_row.column(), SvSetMatrixFromAngleAxis.bl_idname, I, text='', icon='EMPTY_SINGLE_ARROW')
+                        pass
+                    elif elem.matrix_mode1=='EULER':
+                        c3_row1.column().prop(elem, 'matrix_mode_SHEAR', text='Shear', toggle=1)
+                        self.wrapper_marix_elem_ui_draw_op(c3_row1.column(), SvSetShearsToZero.bl_idname, I, text='0')
+                        c3_row2 = c3.row(align=True)
+                        c3_row2.column().prop(elem, 'matrix_euler_order', text='')
+                        self.wrapper_marix_elem_ui_draw_op(c3_row2.column(), SvSetEulerAnglesFromAngleAxis.bl_idname, I, text='', icon='EMPTY_SINGLE_ARROW')
+                        self.wrapper_marix_elem_ui_draw_op(c3_row2.column(), SvSetEulerAnglesFromInit.bl_idname, I, text='init')
+                    else:
+                        c3_row1.column().prop(elem, 'matrix_mode_SHEAR', text='Shear', toggle=1)
+                        self.wrapper_marix_elem_ui_draw_op(c3_row1.column(), SvSetShearsToZero.bl_idname, I, text='0')
+                        c3_row2 = c3.row(align=True)
+                        #c3_row2.column().label(text='')
+                        self.wrapper_marix_elem_ui_draw_op(c3_row2.column(), SvSetAngleAxisFromEulerAngles.bl_idname, I, text='>', icon='OBJECT_ORIGIN')
+                        self.wrapper_marix_elem_ui_draw_op(c3_row2.column(),        SvSetAngleAxisFromInit.bl_idname, I, text='init')
+                    pass
+
                 else:
                     index_label = f'{J}'
                     J+=1
-                    c2.label(text='')
-                    c3.label(text=index_label)
-
+                    c2.label(text=index_label)
+                    c3.label(text='')
+                
                 col.row()
                 pass
 
@@ -2287,28 +3210,43 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
                         lst = [[Quaternion(elem.elem) for elem in self.quaternion_list_items if elem.item_enable==True]]
 
                 elif self.mode == 'MATRIX_LIST_MODE':
-                    if self.matrix_mode1=='EULER':
-                        lst = []
-                        for elem in self.matrix_list_items:
-                            if elem.item_enable==True:
-                                mat = euler_matrix(elem.EULER_LOCATION[:], elem.EULER_SCALE[:], elem.EULER_ANGLE[:], self.matrix_euler_order)
+                    lst = []
+                    for elem in self.matrix_list_items:
+                        if elem.item_enable==True:
+                            if elem.matrix_mode1=='EULER':
+                                mat = calc_euler_matrix(elem.EULER_LOCATION[:], elem.EULER_SCALE[:], elem.EULER_ANGLE[:], elem.matrix_euler_order)
+                                mat_SHEAR = calc_shear_matrix(
+                                    [elem.SHEAR_XY_X, elem.SHEAR_XY_Y],
+                                    [elem.SHEAR_XZ_X, elem.SHEAR_XZ_Z],
+                                    [elem.SHEAR_YZ_Y, elem.SHEAR_YZ_Z],
+                                    )
+                                mat = mat @ mat_SHEAR
                                 lst.append(mat)
-                        pass
-                    elif self.matrix_mode1=='AXISANGLE':
-                        lst = []
-                        for elem in self.matrix_list_items:
-                            if elem.item_enable==True:
+                            elif elem.matrix_mode1=='AXISANGLE':
                                 mat = axisangle_matrix(elem.AXISANGLE_LOCATION[:], elem.AXISANGLE_SCALE[:], elem.AXISANGLE_VECTOR[:], elem.AXISANGLE_ANGLE)
+                                mat_SHEAR = calc_shear_matrix(
+                                    [elem.SHEAR_XY_X, elem.SHEAR_XY_Y],
+                                    [elem.SHEAR_XZ_X, elem.SHEAR_XZ_Z],
+                                    [elem.SHEAR_YZ_Y, elem.SHEAR_YZ_Z],
+                                    )
+                                mat = mat @ mat_SHEAR
                                 lst.append(mat)
+                            else:
+                                # NONE
+                                mat = np.transpose( np.array( elem.MATRIX[:] ).reshape(-1,4,4), (0,1,2) ).tolist()
+                                mat = Matrix(mat[0])
+                                lst.append(mat)
+                                # for m in lst:
+                                #     translation1, scale1, angles1, shear1 = decompose_matrix( m )
+                                #     translation2, scale2, angles2, shear2 = decompose_matrix_v02( m )
+                                #     print(1, "T1:", translation1, "Scale1:", scale1, "R1:", angles1, "Shear1:", shear1)
+                                #     print(2, "T2:", translation2.tolist(), "Scale2:", scale2.tolist(), "R2:", angles2.tolist(), "Shear2:", shear2.tolist())
+                                #     pass
                         pass
-                    else:
-                        # NONE
-                        lst = [elem.MATRIX[:] for elem in self.matrix_list_items if elem.item_enable==True]
-                        lst = [Matrix(m) for m in np.transpose( np.array(list(chain(*lst),)).reshape(-1,4,4), (0,1,2) ).tolist()]
 
                     lst = [lst]
 
-                    # lst = [elem.MATRIX[:] for elem in self.matrix_list_items if elem.item_enable==True]
+                    # lst = [elem.MATRIX[:] for elem in self.matrix_trs_list_items if elem.item_enable==True]
                     # lst = [[Matrix(m) for m in np.transpose( np.array(list(chain(*lst),)).reshape(-1,4,4), (0,1,2) ).tolist()]]
 
                 elif self.mode == 'COLOR_LIST_MODE':
@@ -2325,7 +3263,7 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
                 
                 data = lst
 
-            else:
+            else: # mask_in_socket.is_linked==True:
 
                 if self.mode == 'BOOL_LIST_MODE':
                     lst = [[elem.elem for elem in self.bool_list_items]]
@@ -2346,7 +3284,7 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
                     if self.matrix_mode1=='EULER':
                         lst = []
                         for elem in self.matrix_list_items:
-                            mat = euler_matrix(elem.EULER_LOCATION[:], elem.EULER_SCALE[:], elem.EULER_ANGLE[:], self.matrix_euler_order)
+                            mat = calc_euler_matrix(elem.EULER_LOCATION[:], elem.EULER_SCALE[:], elem.EULER_ANGLE[:], elem.matrix_euler_order)
                             lst.append(mat)
                         pass
                     elif self.matrix_mode1=='AXISANGLE':
@@ -2750,5 +3688,5 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
         pass
 
 
-classes = [SvCopyTextToClipboard, SvPasteTextFromClipboard, SvUpdateTextInListInputNode, SvListInputBoolEntry, SvListInputIntEntry, SvListInputFloatEntry, SvListInputVectorEntry, SvListInputMatrixEntry, SvListInputQuaternionEntry, SvListInputColorEntry, SvListInputStringEntry, SvListInputNodeMK2]
+classes = [SvSetEulerAnglesFromAngleAxis, SvSetEulerAnglesFromInit, SvSetMatrixFromAngleAxis, SvSetMatrixFromEulerAngles, SvSetAngleAxisFromEulerAngles, SvSetAngleAxisFromInit, SvSetMatrixToOnes, SvSetShearsToZero, SvCopyTextToClipboard, SvPasteTextFromClipboard, SvUpdateTextInListInputNode, SvListInputBoolEntry, SvListInputIntEntry, SvListInputFloatEntry, SvListInputVectorEntry, SvListInputMatrixEntry, SvListInputQuaternionEntry, SvListInputColorEntry, SvListInputStringEntry, SvListInputNodeMK2]
 register, unregister = bpy.utils.register_classes_factory(classes)
