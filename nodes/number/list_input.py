@@ -1235,7 +1235,7 @@ def calc_shear_matrix(SHEAR_XY, SHEAR_XZ, SHEAR_YZ):
     return mat
 
 matrix_modes1 = [
-    ('NONE', "None", "View as 4x4", 'VIEW_ORTHO', 0),
+    ('NONE', "4x4", "View as 4x4", 'VIEW_ORTHO', 0),
     #("SCALARVECTOR", "Scalar Vector", "Convert Scalar & Vector into quaternion", 1),
     ('EULER', "Euler Angles XYZ", "View as Euler Angles", 'OBJECT_ORIGIN', 2),
     ('AXISANGLE', "Angle Axis (Angle, XYZ)", "View as quaternion", 'EMPTY_SINGLE_ARROW', 3),
@@ -2951,7 +2951,7 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
                     grid_row.label(text='')
                     grid_row.label(text='')
 
-                c1 = grid_row.row()
+                c1 = grid_row.column()
                 c2 = grid_row.column()
                 c3 = grid_row.column()
 
@@ -2959,7 +2959,7 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
                 c2.ui_units_x = 3
                 c3.ui_units_x = 32
 
-                c1_r = c1.row()
+                c1_r = c1.column()
                 if elem.matrix_mode1=='NONE':
                     matrix_grid = c1_r.grid_flow(row_major=True, columns=4, align=True)
                     for I1 in range(16):
@@ -2981,13 +2981,13 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
                             matrix_grid.label(text='Angle:')
                             matrix_grid.prop(elem, 'EULER_ANGLE_UI', text='')
 
-                            grid_row.label(text='Euler')
-                            grid_row.label(text='')
-                            grid_row.label(text='')
+                            # grid_row.label(text='Euler')
+                            # grid_row.label(text='')
+                            # grid_row.label(text='')
 
                             pass
                         elif elem.matrix_mode1=='AXISANGLE':
-                            matrix_grid = c1_r.grid_flow(row_major=False, columns=3, align=True, even_columns=False)
+                            matrix_grid = c1_r.row().grid_flow(row_major=False, columns=3, align=True, even_columns=False)
                             matrix_grid.label(text='Location:')
                             if self.unit_system=='NONE':
                                 matrix_grid.prop(elem, 'AXISANGLE_LOCATION_UI_NONE', text='')
@@ -3000,11 +3000,11 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
                             matrix_grid.label(text='Axis:')
                             matrix_grid.prop(elem, 'AXISANGLE_VECTOR_UI', text='')
 
-                            c1_r_r = grid_row.row(align=True)
+                            c1_r_r = c1_r.row() #.column(align=True)
                             c1_r_r.column().label(text='Axis Angle:')
                             c1_r_r.column().prop(elem, 'AXISANGLE_ANGLE_UI', text='')
-                            grid_row.column()
-                            grid_row.column()
+                            # grid_row.column()
+                            # grid_row.column()
                             pass
                         else:
                             raise Exception(f'Unknown Matrix mode: {elem.matrix_mode1}')
@@ -3030,11 +3030,11 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
                             pass
 
                         if elem.matrix_mode1=='EULER':
-                            shears_c1.label(text=f'Euler')
+                            c1_r.row().label(text=f'Shears of Euler Angles View')
                         elif elem.matrix_mode1=='AXISANGLE':
-                            shears_c1.label(text=f'Axis Angle')
+                            c1_r.row().label(text=f'Shears of Axis Angle View')
                         else:
-                            shears_c1.label(text=f'')
+                            c1_r.row().label(text=f'')
                         #shears_c1.label(text=f'')
                         pass
                 
@@ -3061,19 +3061,23 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
                         self.wrapper_marix_elem_ui_draw_op(c3_row.column(), SvSetMatrixFromAngleAxis.bl_idname, I, text='', icon='EMPTY_SINGLE_ARROW')
                         pass
                     elif elem.matrix_mode1=='EULER':
-                        c3_row1.column().prop(elem, 'matrix_mode_SHEAR', text='Shear', toggle=1)
-                        self.wrapper_marix_elem_ui_draw_op(c3_row1.column(), SvSetShearsToZero.bl_idname, I, text='0')
                         c3_row2 = c3.row(align=True)
                         c3_row2.column().prop(elem, 'matrix_euler_order', text='')
                         self.wrapper_marix_elem_ui_draw_op(c3_row2.column(), SvSetEulerAnglesFromAngleAxis.bl_idname, I, text='', icon='EMPTY_SINGLE_ARROW')
                         self.wrapper_marix_elem_ui_draw_op(c3_row2.column(), SvSetEulerAnglesFromInit.bl_idname, I, text='init')
+                        c3_row3 = c3.row(align=True)
+                        c3_row3.column().prop(elem, 'matrix_mode_SHEAR', text='Shear', toggle=1)
+                        self.wrapper_marix_elem_ui_draw_op(c3_row3.column(), SvSetShearsToZero.bl_idname, I, text='0')
                     else:
-                        c3_row1.column().prop(elem, 'matrix_mode_SHEAR', text='Shear', toggle=1)
-                        self.wrapper_marix_elem_ui_draw_op(c3_row1.column(), SvSetShearsToZero.bl_idname, I, text='0')
+                        # c3_row1.column().prop(elem, 'matrix_mode_SHEAR', text='Shear', toggle=1)
+                        # self.wrapper_marix_elem_ui_draw_op(c3_row1.column(), SvSetShearsToZero.bl_idname, I, text='0')
                         c3_row2 = c3.row(align=True)
                         #c3_row2.column().label(text='')
                         self.wrapper_marix_elem_ui_draw_op(c3_row2.column(), SvSetAngleAxisFromEulerAngles.bl_idname, I, text='>', icon='OBJECT_ORIGIN')
                         self.wrapper_marix_elem_ui_draw_op(c3_row2.column(),        SvSetAngleAxisFromInit.bl_idname, I, text='init')
+                        c3_row3 = c3.row(align=True)
+                        c3_row3.column().prop(elem, 'matrix_mode_SHEAR', text='Shear', toggle=1)
+                        self.wrapper_marix_elem_ui_draw_op(c3_row3.column(), SvSetShearsToZero.bl_idname, I, text='0')
                     pass
 
                 else:
@@ -3081,8 +3085,12 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
                     J+=1
                     c2.label(text=index_label)
                     c3.label(text='')
+
+                    pass
                 
-                col.row()
+                grid_row.column().label(text='')
+                grid_row.column().label(text='')
+                grid_row.column().label(text='')
                 pass
 
         elif self.mode == 'COLOR_LIST_MODE':
