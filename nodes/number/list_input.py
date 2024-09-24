@@ -1263,7 +1263,7 @@ class SvListInputMatrixEntry(bpy.types.PropertyGroup):
     ) # type: ignore
 
     matrix_mode_SHEAR : BoolProperty(
-        name='Matrix Shear', description='Shear components of matrix',
+        name='Matrix Shears', description='Shears components of matrix',
         default=False,
         #update=update_entry,
     ) # type: ignore
@@ -3044,50 +3044,47 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
                     else:
                         index_label = f'{J}'
                         J+=1
-                    if elem.matrix_mode1=='NONE':
-                        pass
-                    else:
-                        c2.row().label(text='')
-                        c3.row().label(text='')
-                    c2.row().label(text=index_label)
-                    c3_row1 = c3.row(align=True)
-                    c3_row1.column().prop(elem, f'item_enable', icon_only=True)
-
-                    c3.row().prop(elem, 'matrix_mode1', text='', expand=False)
-                    if elem.matrix_mode1=='NONE':
-                        c3_row = c3.row(align=True)
-                        self.wrapper_marix_elem_ui_draw_op(c3_row.column(), SvSetMatrixToOnes.bl_idname, I, text='ones', icon='MOD_DECIM')
-                        self.wrapper_marix_elem_ui_draw_op(c3_row.column(), SvSetMatrixFromEulerAngles.bl_idname, I, text='', icon='OBJECT_ORIGIN')
-                        self.wrapper_marix_elem_ui_draw_op(c3_row.column(), SvSetMatrixFromAngleAxis.bl_idname, I, text='', icon='EMPTY_SINGLE_ARROW')
-                        pass
-                    elif elem.matrix_mode1=='EULER':
-                        c3_row2 = c3.row(align=True)
-                        c3_row2.column().prop(elem, 'matrix_euler_order', text='')
-                        self.wrapper_marix_elem_ui_draw_op(c3_row2.column(), SvSetEulerAnglesFromAngleAxis.bl_idname, I, text='', icon='EMPTY_SINGLE_ARROW')
-                        self.wrapper_marix_elem_ui_draw_op(c3_row2.column(), SvSetEulerAnglesFromInit.bl_idname, I, text='init')
-                        c3_row3 = c3.row(align=True)
-                        c3_row3.column().prop(elem, 'matrix_mode_SHEAR', text='Shear', toggle=1)
-                        self.wrapper_marix_elem_ui_draw_op(c3_row3.column(), SvSetShearsToZero.bl_idname, I, text='0')
-                    else:
-                        # c3_row1.column().prop(elem, 'matrix_mode_SHEAR', text='Shear', toggle=1)
-                        # self.wrapper_marix_elem_ui_draw_op(c3_row1.column(), SvSetShearsToZero.bl_idname, I, text='0')
-                        c3_row2 = c3.row(align=True)
-                        #c3_row2.column().label(text='')
-                        self.wrapper_marix_elem_ui_draw_op(c3_row2.column(), SvSetAngleAxisFromEulerAngles.bl_idname, I, text='>', icon='OBJECT_ORIGIN')
-                        self.wrapper_marix_elem_ui_draw_op(c3_row2.column(),        SvSetAngleAxisFromInit.bl_idname, I, text='init')
-                        c3_row3 = c3.row(align=True)
-                        c3_row3.column().prop(elem, 'matrix_mode_SHEAR', text='Shear', toggle=1)
-                        self.wrapper_marix_elem_ui_draw_op(c3_row3.column(), SvSetShearsToZero.bl_idname, I, text='0')
-                    pass
-
                 else:
                     index_label = f'{J}'
                     J+=1
-                    c2.label(text=index_label)
-                    c3.label(text='')
-
                     pass
-                
+
+                #c2.label(text=index_label)
+                c2.row().label(text=index_label)
+                c3_row1 = c3.row(align=True)
+                c3_row1_col = c3_row1.column()
+
+
+                if self.inputs["mask"].is_linked==True:
+                    c3_row1_col.enabled = False
+                    c3_row1_col.prop(elem, f'item_enable', icon_only=True, text='(masked by socket)')
+                else:
+                    c3_row1_col.prop(elem, f'item_enable', icon_only=True)
+
+                c3.row().prop(elem, 'matrix_mode1', text='', expand=False)
+                if elem.matrix_mode1=='NONE':
+                    c3_row = c3.row(align=True)
+                    self.wrapper_marix_elem_ui_draw_op(c3_row.column(), SvSetMatrixToOnes.bl_idname, I, text='ones', icon='MOD_DECIM')
+                    self.wrapper_marix_elem_ui_draw_op(c3_row.column(), SvSetMatrixFromEulerAngles.bl_idname, I, text='', icon='OBJECT_ORIGIN')
+                    self.wrapper_marix_elem_ui_draw_op(c3_row.column(), SvSetMatrixFromAngleAxis.bl_idname, I, text='', icon='EMPTY_SINGLE_ARROW')
+                    pass
+                elif elem.matrix_mode1=='EULER':
+                    c3_row2 = c3.row(align=True)
+                    c3_row2.column().prop(elem, 'matrix_euler_order', text='')
+                    self.wrapper_marix_elem_ui_draw_op(c3_row2.column(), SvSetEulerAnglesFromAngleAxis.bl_idname, I, text='', icon='EMPTY_SINGLE_ARROW')
+                    self.wrapper_marix_elem_ui_draw_op(c3_row2.column(), SvSetEulerAnglesFromInit.bl_idname, I, text='init')
+                    c3_row3 = c3.row(align=True)
+                    c3_row3.column().prop(elem, 'matrix_mode_SHEAR', text='Shears', toggle=1)
+                    self.wrapper_marix_elem_ui_draw_op(c3_row3.column(), SvSetShearsToZero.bl_idname, I, text='0')
+                else:
+                    c3_row2 = c3.row(align=True)
+                    self.wrapper_marix_elem_ui_draw_op(c3_row2.column(), SvSetAngleAxisFromEulerAngles.bl_idname, I, text='>', icon='OBJECT_ORIGIN')
+                    self.wrapper_marix_elem_ui_draw_op(c3_row2.column(),        SvSetAngleAxisFromInit.bl_idname, I, text='init')
+                    c3_row3 = c3.row(align=True)
+                    c3_row3.column().prop(elem, 'matrix_mode_SHEAR', text='Shears', toggle=1)
+                    self.wrapper_marix_elem_ui_draw_op(c3_row3.column(), SvSetShearsToZero.bl_idname, I, text='0')
+                pass
+
                 grid_row.column().label(text='')
                 grid_row.column().label(text='')
                 grid_row.column().label(text='')
@@ -3289,23 +3286,33 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
                     else:
                         lst = [[Quaternion(elem.elem) for elem in self.quaternion_list_items]]
                 elif self.mode == 'MATRIX_LIST_MODE':
-                    if self.matrix_mode1=='EULER':
-                        lst = []
-                        for elem in self.matrix_list_items:
+                    
+                    lst = []
+                    for elem in self.matrix_list_items:
+                        if elem.matrix_mode1=='EULER':
                             mat = calc_euler_matrix(elem.EULER_LOCATION[:], elem.EULER_SCALE[:], elem.EULER_ANGLE[:], elem.matrix_euler_order)
+                            mat_SHEAR = calc_shear_matrix(
+                                    [elem.SHEAR_XY_X, elem.SHEAR_XY_Y],
+                                    [elem.SHEAR_XZ_X, elem.SHEAR_XZ_Z],
+                                    [elem.SHEAR_YZ_Y, elem.SHEAR_YZ_Z],
+                                    )
+                            mat = mat @ mat_SHEAR
                             lst.append(mat)
-                        pass
-                    elif self.matrix_mode1=='AXISANGLE':
-                        lst = []
-                        for elem in self.matrix_list_items:
+                        elif elem.matrix_mode1=='AXISANGLE':
                             mat = axisangle_matrix(elem.AXISANGLE_LOCATION[:], elem.AXISANGLE_SCALE[:], elem.AXISANGLE_VECTOR[:], elem.AXISANGLE_ANGLE)
+                            mat_SHEAR = calc_shear_matrix(
+                                    [elem.SHEAR_XY_X, elem.SHEAR_XY_Y],
+                                    [elem.SHEAR_XZ_X, elem.SHEAR_XZ_Z],
+                                    [elem.SHEAR_YZ_Y, elem.SHEAR_YZ_Z],
+                                    )
+                            mat = mat @ mat_SHEAR
                             lst.append(mat)
-                        pass
-                    else:
-                        # NONE
-                        lst = [elem.MATRIX[:] for elem in self.matrix_list_items]
-                        lst = [Matrix(m) for m in np.transpose( np.array(list(chain(*lst),)).reshape(-1,4,4), (0,1,2) ).tolist()]
-
+                        else:
+                            # lst = [elem.MATRIX[:] for elem in self.matrix_list_items]
+                            # lst = [Matrix(m) for m in np.transpose( np.array(list(chain(*lst),)).reshape(-1,4,4), (0,1,2) ).tolist()]
+                            elem_mat = np.array(elem.MATRIX[:]).reshape(-1,4).tolist()
+                            mat = Matrix(elem_mat)
+                            lst.append( mat )
                     lst = [lst]
                     pass
                 elif self.mode == 'COLOR_LIST_MODE':
