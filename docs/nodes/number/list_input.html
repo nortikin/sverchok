@@ -75,6 +75,18 @@
 <li class="toctree-l3 current"><a class="current reference internal" href="#">List Input</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#general-controls">1. General controls</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#list-length">1.1. List length</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#type-selector">1.2. Type Selector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#data">1.3. Data</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#select-elements">1.4. Select elements</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#clipboard-control-copy-paste">1.5. Clipboard control (Copy/Paste)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#indexes-of-outputs">1.6. Indexes of outputs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#subtype-of-data">1.7. Subtype of data</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#using-of-mask-input-socket">2. Using of Mask input socket</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#matrixes">3. Matrixes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#matrixes-addition-controls">3.1. Matrixes addition controls</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#strings-mode">4. Strings mode</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#output">Output</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#d-panel">3D panel</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#examples">Examples</a></li>
@@ -147,18 +159,99 @@
              
   <section id="list-input">
 <h1>List Input<a class="headerlink" href="#list-input" title="Link to this heading">¶</a></h1>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189119138-868bf887-8eb0-4839-8cf2-9664388bcb35.png"><img alt="https://user-images.githubusercontent.com/14288520/189119138-868bf887-8eb0-4839-8cf2-9664388bcb35.png" src="https://user-images.githubusercontent.com/14288520/189119138-868bf887-8eb0-4839-8cf2-9664388bcb35.png" /></a>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/dda5d39e-91ab-48e2-8a61-aad2dbe06a59"><img alt="https://github.com/user-attachments/assets/dda5d39e-91ab-48e2-8a61-aad2dbe06a59" src="https://github.com/user-attachments/assets/dda5d39e-91ab-48e2-8a61-aad2dbe06a59" /></a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
-<p>Provides a way to create a flat list of <em>Integers</em>, <em>Floats</em>, or <em>Vectors</em>.
-The length of the list is hardcoded to a maximum of <strong>32</strong> elements for integer or float and <strong>10</strong> vectors,
-we believe that if you need  more then you should use a Text File</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189121461-11d4ff38-7142-4da7-884a-10bf8e3d4915.png"><img alt="https://user-images.githubusercontent.com/14288520/189121461-11d4ff38-7142-4da7-884a-10bf8e3d4915.png" src="https://user-images.githubusercontent.com/14288520/189121461-11d4ff38-7142-4da7-884a-10bf8e3d4915.png" /></a>
-<p>and the <a class="reference internal" href="../text/text_in_mk2.html"><span class="doc">Text-&gt;Text In+</span></a> node.</p>
+<p>This node got huge update for MK2 version:</p>
+<ul class="simple">
+<li><p>appended new types of data.</p></li>
+<li><p>now there is no limits of counters.</p></li>
+</ul>
+<p>Provides a way to create a flat list of <em>Booleans</em>, <em>Integers</em>, <em>Floats</em>, <em>Vectors</em>, <em>Quaternions</em>,
+<em>Matrixes</em>, <em>Colors</em>, <em>Texts</em> with subtypes.
+Also see: <a class="reference internal" href="../text/text_in_mk2.html"><span class="doc">Text-&gt;Text In+</span></a> node.</p>
 </section>
 <section id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
-<p>The value input fields change according to the Mode choice.</p>
+<p>The value of input fields changes according to the Type selector.</p>
+</section>
+<section id="general-controls">
+<h2>1. General controls<a class="headerlink" href="#general-controls" title="Link to this heading">¶</a></h2>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/69ed06b6-b90e-4a8b-aace-6891fc6750ab"><img alt="https://github.com/user-attachments/assets/69ed06b6-b90e-4a8b-aace-6891fc6750ab" src="https://github.com/user-attachments/assets/69ed06b6-b90e-4a8b-aace-6891fc6750ab" /></a>
+</section>
+<section id="list-length">
+<h2>1.1. List length<a class="headerlink" href="#list-length" title="Link to this heading">¶</a></h2>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/3a4fd57f-e347-40ab-9b49-653b11fddf97"><img alt="https://github.com/user-attachments/assets/3a4fd57f-e347-40ab-9b49-653b11fddf97" src="https://github.com/user-attachments/assets/3a4fd57f-e347-40ab-9b49-653b11fddf97" /></a>
+<p>Length of the list is individual of Type Selector (2). You can set different length for every type of data independently.</p>
+</section>
+<section id="type-selector">
+<h2>1.2. Type Selector<a class="headerlink" href="#type-selector" title="Link to this heading">¶</a></h2>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/80039ca9-6da9-480b-a12e-40e5d7d58504"><img alt="https://github.com/user-attachments/assets/80039ca9-6da9-480b-a12e-40e5d7d58504" src="https://github.com/user-attachments/assets/80039ca9-6da9-480b-a12e-40e5d7d58504" /></a>
+<p>You can select type of <em>Bool</em>, <em>Int</em>, <em>Float</em>, <em>Vector</em>, <em>Quaternion</em>, <em>Matrix</em>, <em>Color</em>, <em>Text</em>.</p>
+</section>
+<section id="data">
+<h2>1.3. Data<a class="headerlink" href="#data" title="Link to this heading">¶</a></h2>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/093ec7ae-6c26-4dcb-942a-d7d523ef50c8"><img alt="https://github.com/user-attachments/assets/093ec7ae-6c26-4dcb-942a-d7d523ef50c8" src="https://github.com/user-attachments/assets/093ec7ae-6c26-4dcb-942a-d7d523ef50c8" /></a>
+<p>Data you can input manually.</p>
+</section>
+<section id="select-elements">
+<h2>1.4. Select elements<a class="headerlink" href="#select-elements" title="Link to this heading">¶</a></h2>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/e2a6281b-ecdf-4ce7-b54d-736995159237"><img alt="https://github.com/user-attachments/assets/e2a6281b-ecdf-4ce7-b54d-736995159237" src="https://github.com/user-attachments/assets/e2a6281b-ecdf-4ce7-b54d-736995159237" /></a>
+<p>You can manually select/hide elements to output socket without changes of the source data</p>
+</section>
+<section id="clipboard-control-copy-paste">
+<h2>1.5. Clipboard control (Copy/Paste)<a class="headerlink" href="#clipboard-control-copy-paste" title="Link to this heading">¶</a></h2>
+<p><strong>Copy</strong></p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/3c79346a-a828-4412-a570-84664a265d76"><img alt="https://github.com/user-attachments/assets/3c79346a-a828-4412-a570-84664a265d76" src="https://github.com/user-attachments/assets/3c79346a-a828-4412-a570-84664a265d76" /></a>
+<p><strong>Paste</strong></p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/9e43585a-8860-4c7e-a870-121f99adac0f"><img alt="https://github.com/user-attachments/assets/9e43585a-8860-4c7e-a870-121f99adac0f" src="https://github.com/user-attachments/assets/9e43585a-8860-4c7e-a870-121f99adac0f" /></a>
+<p>You can copy/paste data into or from the external text data.</p>
+</section>
+<section id="indexes-of-outputs">
+<h2>1.6. Indexes of outputs<a class="headerlink" href="#indexes-of-outputs" title="Link to this heading">¶</a></h2>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/b20dec0e-cc66-4e67-b006-3adf1a95b5d6"><img alt="https://github.com/user-attachments/assets/b20dec0e-cc66-4e67-b006-3adf1a95b5d6" src="https://github.com/user-attachments/assets/b20dec0e-cc66-4e67-b006-3adf1a95b5d6" /></a>
+<p>Indexes of output list. (For information)</p>
+</section>
+<section id="subtype-of-data">
+<h2>1.7. Subtype of data<a class="headerlink" href="#subtype-of-data" title="Link to this heading">¶</a></h2>
+<p>View list of Floats as Angles (Degrees or Radians), Distance (meters) of Power:</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/5386c842-7bd7-48b7-8f03-5d579b91684f"><img alt="https://github.com/user-attachments/assets/5386c842-7bd7-48b7-8f03-5d579b91684f" src="https://github.com/user-attachments/assets/5386c842-7bd7-48b7-8f03-5d579b91684f" /></a>
+<p>View list of colors as 4D vector, Color with Alpha and Color Gamma without Alpha:</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/793737be-be57-4fec-9801-55a0655b047c"><img alt="https://github.com/user-attachments/assets/793737be-be57-4fec-9801-55a0655b047c" src="https://github.com/user-attachments/assets/793737be-be57-4fec-9801-55a0655b047c" /></a>
+</section>
+<section id="using-of-mask-input-socket">
+<h2>2. Using of Mask input socket<a class="headerlink" href="#using-of-mask-input-socket" title="Link to this heading">¶</a></h2>
+<p>If mask is true then element is hiding from output (is an oposite of selector 4)</p>
+<p>You can use external data as mask for this node:</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/d82738df-eb38-46e8-9201-28f697a4b3a2"><img alt="https://github.com/user-attachments/assets/d82738df-eb38-46e8-9201-28f697a4b3a2" src="https://github.com/user-attachments/assets/d82738df-eb38-46e8-9201-28f697a4b3a2" /></a>
+<p>You can select what type of data are mask - boolean or indexes. You can invert mask by “Invert” button in Mask input socket.</p>
+</section>
+<section id="matrixes">
+<h2>3. Matrixes<a class="headerlink" href="#matrixes" title="Link to this heading">¶</a></h2>
+<p>Matrixes are compicated elements. So they has a some controls to converts views. You can set view of every mastrix as you wish: as 4x4, or Euler Angles, or Angle Axis:</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/7a08d702-f816-4820-b49c-d544c3e7f2c9"><img alt="https://github.com/user-attachments/assets/7a08d702-f816-4820-b49c-d544c3e7f2c9" src="https://github.com/user-attachments/assets/7a08d702-f816-4820-b49c-d544c3e7f2c9" /></a>
+<p>if you choose matrix view as <em>Euler</em> or <em>Axis Angle</em> then you can also set a shears componets of matrix:</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/83fa740e-12b9-4711-b641-a17b60111610"><img alt="https://github.com/user-attachments/assets/83fa740e-12b9-4711-b641-a17b60111610" src="https://github.com/user-attachments/assets/83fa740e-12b9-4711-b641-a17b60111610" /></a>
+<p>Shears components are shares between Euler and Axis Angle.</p>
+</section>
+<section id="matrixes-addition-controls">
+<h2>3.1. Matrixes addition controls<a class="headerlink" href="#matrixes-addition-controls" title="Link to this heading">¶</a></h2>
+<p><strong>Reset 4x4 diagonal to ones</strong>:</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/f14afd06-c86a-44ee-92d9-ecffbd492873"><img alt="https://github.com/user-attachments/assets/f14afd06-c86a-44ee-92d9-ecffbd492873" src="https://github.com/user-attachments/assets/f14afd06-c86a-44ee-92d9-ecffbd492873" /></a>
+<p><strong>Reset shears to zero</strong>:</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/cd46b2fe-d71f-48c7-9f7a-cfe0bcdbafd7"><img alt="https://github.com/user-attachments/assets/cd46b2fe-d71f-48c7-9f7a-cfe0bcdbafd7" src="https://github.com/user-attachments/assets/cd46b2fe-d71f-48c7-9f7a-cfe0bcdbafd7" /></a>
+<p><strong>Copy data from Euler view into the 4x4 view</strong>:</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/4033ef48-6403-4593-96c0-c4ca158a1c02"><img alt="https://github.com/user-attachments/assets/4033ef48-6403-4593-96c0-c4ca158a1c02" src="https://github.com/user-attachments/assets/4033ef48-6403-4593-96c0-c4ca158a1c02" /></a>
+<p><strong>Copy data from Axis Angle view into the 4x4 view</strong>:</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/bea0f130-e7a7-482f-84a3-3050c3d5cf71"><img alt="https://github.com/user-attachments/assets/bea0f130-e7a7-482f-84a3-3050c3d5cf71" src="https://github.com/user-attachments/assets/bea0f130-e7a7-482f-84a3-3050c3d5cf71" /></a>
+<p><strong>Copy data from Euler Angles view into the Axis Angle View (all shears has to be 0)</strong>:</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/25cca0ab-54bc-488c-bc84-3ed4d4169e7e"><img alt="https://github.com/user-attachments/assets/25cca0ab-54bc-488c-bc84-3ed4d4169e7e" src="https://github.com/user-attachments/assets/25cca0ab-54bc-488c-bc84-3ed4d4169e7e" /></a>
+</section>
+<section id="strings-mode">
+<h2>4. Strings mode<a class="headerlink" href="#strings-mode" title="Link to this heading">¶</a></h2>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/9ee3c288-1f2d-4469-8e8f-eef31e2cb3a8"><img alt="https://github.com/user-attachments/assets/9ee3c288-1f2d-4469-8e8f-eef31e2cb3a8" src="https://github.com/user-attachments/assets/9ee3c288-1f2d-4469-8e8f-eef31e2cb3a8" /></a>
+<p>You can edit strings without activate Sverchok node. Some times Blender do not want to update output data for strings. So you have to press button “update text”:</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/7db1644e-55fa-4c9c-b9a0-3aead716320c"><img alt="https://github.com/user-attachments/assets/7db1644e-55fa-4c9c-b9a0-3aead716320c" src="https://github.com/user-attachments/assets/7db1644e-55fa-4c9c-b9a0-3aead716320c" /></a>
 </section>
 <section id="output">
 <h2>Output<a class="headerlink" href="#output" title="Link to this heading">¶</a></h2>
@@ -169,6 +262,9 @@ we believe that if you need  more then you should use a Text File</p>
 <p>The node can show its properties on 3D panel.
 For this parameter <cite>to 3d</cite> should be enabled, output should be linked.
 After that you can press <cite>scan for props</cite> button on 3D panel for showing the node properties on 3D panel.</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/a9f600f4-901a-43a6-9482-82e11a4878f3"><img alt="https://github.com/user-attachments/assets/a9f600f4-901a-43a6-9482-82e11a4878f3" src="https://github.com/user-attachments/assets/a9f600f4-901a-43a6-9482-82e11a4878f3" /></a>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/b790da38-c16d-41ee-bb7c-d83e2d0219d1"><img alt="https://github.com/user-attachments/assets/b790da38-c16d-41ee-bb7c-d83e2d0219d1" src="https://github.com/user-attachments/assets/b790da38-c16d-41ee-bb7c-d83e2d0219d1" /></a>
+<p>Warning: Matrixes are not shown for a while in 3D panel.</p>
 </section>
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">¶</a></h2>
@@ -177,6 +273,12 @@ After that you can press <cite>scan for props</cite> button on 3D panel for show
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189119167-e08360ab-fd27-47d1-947d-1c0628bdac8a.png"><img alt="https://user-images.githubusercontent.com/14288520/189119167-e08360ab-fd27-47d1-947d-1c0628bdac8a.png" src="https://user-images.githubusercontent.com/14288520/189119167-e08360ab-fd27-47d1-947d-1c0628bdac8a.png" /></a>
 <ul class="simple">
 <li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
+</ul>
+<p>Use List input as input matrixes and colors:</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/457905bd-1d9e-41f2-9d7d-5e4cd97a364a"><img alt="https://github.com/user-attachments/assets/457905bd-1d9e-41f2-9d7d-5e4cd97a364a" src="https://github.com/user-attachments/assets/457905bd-1d9e-41f2-9d7d-5e4cd97a364a" /></a>
+<ul class="simple">
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/suzanne.html"><span class="doc">Suzanne</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
 </ul>
 </section>
 </section>
