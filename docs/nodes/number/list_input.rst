@@ -154,7 +154,7 @@ Shears components are shares between Euler and Axis Angle.
 
 
 Output
--------
+------
 
 A single *flat* ``list``.
 
