@@ -152,6 +152,16 @@ Shears components are shares between Euler and Axis Angle.
 .. image:: https://github.com/user-attachments/assets/25cca0ab-54bc-488c-bc84-3ed4d4169e7e
   :target: https://github.com/user-attachments/assets/25cca0ab-54bc-488c-bc84-3ed4d4169e7e
 
+4. Strings mode
+---------------
+
+.. image:: https://github.com/user-attachments/assets/9ee3c288-1f2d-4469-8e8f-eef31e2cb3a8
+  :target: https://github.com/user-attachments/assets/9ee3c288-1f2d-4469-8e8f-eef31e2cb3a8
+
+You can edit strings without activate Sverchok node. Some times Blender do not want to update output data for strings. So you have to press button "update text":
+
+.. image:: https://github.com/user-attachments/assets/7db1644e-55fa-4c9c-b9a0-3aead716320c
+  :target: https://github.com/user-attachments/assets/7db1644e-55fa-4c9c-b9a0-3aead716320c
 
 Output
 ------
