@@ -450,7 +450,7 @@ def exponential_map(surface, uv_center, radius, radius_steps=10, angle_steps=8, 
 
 BY_PARAMETER = 'T'
 BY_LENGTH = 'L'
-def curve_exponential_map(surface, uv_curve, v_radius, u_steps, v_steps, u_mode=BY_PARAMETER, length_resolution=50):
+def curve_exponential_map(surface, uv_curve, v_radius, u_steps, v_steps, u_mode=BY_PARAMETER, length_resolution=50, closed_u=False, closed_v=False):
     u_min, u_max = uv_curve.get_u_bounds()
     center_us = np.linspace(u_min, u_max, num=u_steps)
     if u_mode == BY_PARAMETER:
@@ -482,14 +482,16 @@ def curve_exponential_map(surface, uv_curve, v_radius, u_steps, v_steps, u_mode=
                                     v_tangents = uv_tangents_1[:,1],
                                     orig_u_tangents = np.full((u_steps,), 0),
                                     orig_v_tangents = np.full((u_steps,), 1),
-                                    target_radius = v_radius, n_steps = v_steps)
+                                    target_radius = v_radius, n_steps = v_steps,
+                                    closed_u=closed_u, closed_v=closed_v)
     solution = solution.add(lines.shift(orig_centers))
     lines = geodesic_cauchy_problem(surface, uv_starts,
                                     u_tangents = uv_tangents_2[:,0],
                                     v_tangents = uv_tangents_2[:,1],
                                     orig_u_tangents = np.full((u_steps,), 0),
                                     orig_v_tangents = np.full((u_steps,), -1),
-                                    target_radius = v_radius, n_steps = v_steps)
+                                    target_radius = v_radius, n_steps = v_steps,
+                                    closed_u=closed_u, closed_v=closed_v)
     solution = solution.add(lines.shift(orig_centers))
 
     orig_points = solution.get_all_orig_points()
