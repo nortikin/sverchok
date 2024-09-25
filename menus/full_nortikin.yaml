@@ -570,7 +570,7 @@
     - extra_menu: BasicDataPartialMenu
     - List generator:
         - SvGenNumberRange
-        - SvListInputNode
+        - SvListInputNodeMK2
         - SvRndNumGen
         - SvConstantListNode
         - SvNumpyArrayNode
