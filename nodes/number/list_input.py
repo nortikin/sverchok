@@ -32,458 +32,6 @@ from itertools import compress, chain
 from mathutils import Vector, Quaternion, Euler, Matrix
 import json
 
-############################################
-
-def decompose_matrix(M):
-    """Calculates the components of rotation, translation, scale, shear, and
-    perspective of a given transformation matrix M. [1]_
-
-    Parameters
-    ----------
-    M : list[list[float]]
-        The square matrix of any dimension.
-
-    Raises
-    ------
-    ValueError
-        If matrix is singular or degenerative.
-
-    Returns
-    -------
-    scale : [float, float, float]
-        The 3 scale factors in x-, y-, and z-direction.
-    shear : [float, float, float]
-        The 3 shear factors for x-y, x-z, and y-z axes.
-    angles : [float, float, float]
-        The rotation specified through the 3 Euler angles about static x, y, z axes.
-    translation : [float, float, float]
-        The 3 values of translation.
-    perspective : [float, float, float, float]
-        The 4 perspective entries of the matrix.
-
-    See Also
-    --------
-    compose_matrix
-
-    Examples
-    --------
-    >>> trans1 = [1, 2, 3]
-    >>> angle1 = [-2.142, 1.141, -0.142]
-    >>> scale1 = [0.123, 2, 0.5]
-    >>> T = matrix_from_translation(trans1)
-    >>> R = matrix_from_euler_angles(angle1)
-    >>> S = matrix_from_scale_factors(scale1)
-    >>> M = multiply_matrices(multiply_matrices(T, R), S)
-    >>> # M = compose_matrix(scale1, None, angle1, trans1, None)
-    >>> scale2, shear2, angle2, trans2, persp2 = decompose_matrix(M)
-    >>> allclose(scale1, scale2)
-    True
-    >>> allclose(angle1, angle2)
-    True
-    >>> allclose(trans1, trans2)
-    True
-
-    References
-    ----------
-    .. [1] Slabaugh, 1999. *Computing Euler angles from a rotation matrix*.
-           Available at: http://www.gregslabaugh.net/publications/euler.pdf
-
-    """
-    detM = M.determinant()  # raises ValueError if matrix is not squared
-    if detM == 0:
-        ValueError("The matrix is singular.")
-
-    #Mt = transpose_matrix(M)
-    Mt = M.transposed()
-    #if TOL.is_zero(Mt[3][3]):
-    if Mt[3][3]==0:
-        raise ValueError("The element [3,3] of the matrix is zero.")
-
-    for i in range(4):
-        for j in range(4):
-            Mt[i][j] /= Mt[3][3]
-
-    # copy Mt[:3, :3] into row
-    row = [
-        [0, 0, 0],
-        [0, 0, 0],
-        [0, 0, 0],
-    ]
-    for i in range(3):
-        for j in range(3):
-            row[i][j] = Mt[i][j]
-
-    # translation
-    translation = [M[0][3], M[1][3], M[2][3]]
-
-    # scale, shear, angles
-    scale = [0.0, 0.0, 0.0]
-    shear = [0.0, 0.0, 0.0]
-    angles = [0.0, 0.0, 0.0]
-
-    #scale[0] = norm_vector(row[0])
-    scale[0] = Vector(row[0]).magnitude
-    for i in range(3):
-        row[0][i] /= scale[0]  # type: ignore
-
-    #shear[0] = dot_vectors(row[0], row[1])
-    shear[0] = Vector(row[0]).dot( Vector(row[1]) )
-    for i in range(3):
-        row[1][i] -= row[0][i] * shear[0]
-
-    #scale[1] = norm_vector(row[1])
-    scale[1] = Vector(row[1]).magnitude
-    for i in range(3):
-        row[1][i] /= scale[1]  # type: ignore
-
-    #shear[1] = dot_vectors(row[0], row[2])
-    shear[1] = Vector(row[0]).dot( Vector(row[2]) )
-    for i in range(3):
-        row[2][i] -= row[0][i] * shear[1]
-
-    # why is the order different here?
-    # it certainly influences the result
-
-    #shear[2] = dot_vectors(row[1], row[2])
-    shear[2] = Vector(row[1]).dot( Vector(row[2]) )
-    for i in range(3):
-        row[2][i] -= row[0][i] * shear[2]
-
-    #scale[2] = norm_vector(row[2])
-    scale[2] = Vector(row[2]).magnitude
-    for i in range(3):
-        row[2][i] /= scale[2]  # type: ignore
-
-    shear[0] /= scale[1]
-    shear[1] /= scale[2]
-    shear[2] /= scale[2]
-
-    #if dot_vectors(row[0], cross_vectors(row[1], row[2])) < 0:
-    if Vector(row[0]).dot( Vector(row[1]).cross( Vector(row[2]))) < 0:
-        scale = [-x for x in scale]
-        row = [[-x for x in y] for y in row]
-
-    # angles
-    if row[0][2] != -1.0 and row[0][2] != 1.0:
-        #beta1 = asin(-row[0][2])
-        beta1 = math.asin(-row[0][2])
-        ## beta2 = pi - beta1
-        #alpha1 = atan2(row[1][2] / cos(beta1), row[2][2] / cos(beta1))
-        alpha1 = math.atan2(row[1][2] / math.cos(beta1), row[2][2] / math.cos(beta1))
-
-        ## alpha2 = atan2(row[1][2] / cos(beta2), row[2][2] / cos(beta2))
-        #gamma1 = atan2(row[0][1] / cos(beta1), row[0][0] / cos(beta1))
-        gamma1 = math.atan2(row[0][1] / math.cos(beta1), row[0][0] / math.cos(beta1))
-
-        ## gamma2 = atan2(row[0][1] / cos(beta2), row[0][0] / cos(beta2))
-        angles = [alpha1, beta1, gamma1]
-
-    else:
-        gamma = 0.0
-        if row[0][2] == -1.0:
-            beta = math.pi / 2.0
-            alpha = gamma + math.atan2(row[1][0], row[2][0])
-        else:  # row[0][2] == 1
-            beta = -math.pi / 2.0
-            alpha = -gamma + math.atan2(-row[1][0], -row[2][0])
-        angles = [alpha, beta, gamma]
-
-    # # perspective
-    # #if not TOL.is_zero(Mt[0][3]) and not TOL.is_zero(Mt[1][3]) and not TOL.is_zero(Mt[2][3]):
-    # if not Mt[0][3]==0 and not Mt[1][3]==0 and not Mt[2][3]==0:
-    #     #P = deepcopy(Mt)
-    #     P = Matrix(Mt)
-    #     P[0][3], P[1][3], P[2][3], P[3][3] = 0.0, 0.0, 0.0, 1.0
-    #     #Ptinv = matrix_inverse(transpose_matrix(P))
-    #     Ptinv = P.transposed().inverted()
-    #     #perspective = multiply_matrix_vector(Ptinv, [Mt[0][3], Mt[1][3], Mt[2][3], Mt[3][3]])
-    #     perspective = Ptinv @ Vector([Mt[0][3], Mt[1][3], Mt[2][3], Mt[3][3]])
-    # else:
-    #     perspective = [0.0, 0.0, 0.0, 1.0]
-
-    return translation, scale, angles, shear #, perspective
-############################################
-
-#############################################
-# https://github.com/matthew-brett/transforms3d/blob/main/transforms3d/affines.py
-def decompose_matrix_v02(A):
-    ''' Decompose homogenous affine transformation matrix `A` into parts.
-
-    The parts are translations, rotations, zooms, shears.
-
-    `A` can be any square matrix, but is typically shape (4,4).
-
-    Decomposes A into ``T, R, Z, S``, such that, if A is shape (4,4)::
-
-       Smat = np.array([[1, S[0], S[1]],
-                        [0,    1, S[2]],
-                        [0,    0,    1]])
-       RZS = np.dot(R, np.dot(np.diag(Z), Smat))
-       A = np.eye(4)
-       A[:3,:3] = RZS
-       A[:-1,-1] = T
-
-    The order of transformations is therefore shears, followed by
-    zooms, followed by rotations, followed by translations.
-
-    The case above (A.shape == (4,4)) is the most common, and
-    corresponds to a 3D affine, but in fact A need only be square.
-
-    Parameters
-    ----------
-    A : array shape (N,N)
-
-    Returns
-    -------
-    T : array, shape (N-1,)
-       Translation vector
-    R : array shape (N-1, N-1)
-        rotation matrix
-    Z : array, shape (N-1,)
-       Zoom vector.  May have one negative zoom to prevent need for negative
-       determinant R matrix above
-    S : array, shape (P,)
-       Shear vector, such that shears fill upper triangle above
-       diagonal to form shear matrix.  P is the (N-2)th Triangular
-       number, which happens to be 3 for a 4x4 affine.
-
-    Examples
-    --------
-    >>> T = [20, 30, 40] # translations
-    >>> R = [[0, -1, 0], [1, 0, 0], [0, 0, 1]] # rotation matrix
-    >>> Z = [2.0, 3.0, 4.0] # zooms
-    >>> S = [0.2, 0.1, 0.3] # shears
-    >>> # Now we make an affine matrix
-    >>> A = np.eye(4)
-    >>> Smat = np.array([[1, S[0], S[1]],
-    ...                  [0,    1, S[2]],
-    ...                  [0,    0,    1]])
-    >>> RZS = np.dot(R, np.dot(np.diag(Z), Smat))
-    >>> A[:3,:3] = RZS
-    >>> A[:-1,-1] = T # set translations
-    >>> Tdash, Rdash, Zdash, Sdash = decompose(A)
-    >>> np.allclose(T, Tdash)
-    True
-    >>> np.allclose(R, Rdash)
-    True
-    >>> np.allclose(Z, Zdash)
-    True
-    >>> np.allclose(S, Sdash)
-    True
-
-    Notes
-    -----
-    We have used a nice trick from SPM to get the shears.  Let us call the
-    starting N-1 by N-1 matrix ``RZS``, because it is the composition of the
-    rotations on the zooms on the shears.  The rotation matrix ``R`` must have
-    the property ``np.dot(R.T, R) == np.eye(N-1)``.  Thus ``np.dot(RZS.T,
-    RZS)`` will, by the transpose rules, be equal to ``np.dot((ZS).T, (ZS))``.
-    Because we are doing shears with the upper right part of the matrix, that
-    means that the Cholesky decomposition of ``np.dot(RZS.T, RZS)`` will give
-    us our ``ZS`` matrix, from which we take the zooms from the diagonal, and
-    the shear values from the off-diagonal elements.
-    '''
-    A = np.asarray(A)
-    T = A[:-1,-1]
-    RZS = A[:-1,:-1]
-    ZS = np.linalg.cholesky(np.dot(RZS.T,RZS)).T
-    Z = np.diag(ZS).copy()
-    shears = ZS / Z[:,np.newaxis]
-    n = len(Z)
-    S = shears[np.triu(np.ones((n,n)), 1).astype(bool)]
-    R = np.dot(RZS, np.linalg.inv(ZS))
-    if np.linalg.det(R) < 0:
-        Z[0] *= -1
-        ZS[0] *= -1
-        R = np.dot(RZS, np.linalg.inv(ZS))
-    return T, Z, R, S
-
-## decompose_shear ###########################################
-
-def shear_xy(f1, f2):
-    m = np.eye(3)
-    m[0][2] = f1
-    m[1][2] = f2
-    return m
-
-def shear_yz(f1, f2):
-    m = np.eye(3)
-    m[1][0] = f1
-    m[2][0] = f2
-    return m
-
-def shear_xz(f1, f2):
-    m = np.eye(3)
-    m[0][1] = f1
-    m[2][1] = f2
-    return m
-
-def decompose_shear(m):
-    """
-    (%i4) sxy . syz . sxz;
-                    [ f1 f4 + 1      f1 (f6 + f4 f5) + f5      f1 ]
-                    [                                             ]
-    (%o4)           [ f2 f4 + f3  f2 (f6 + f4 f5) + f3 f5 + 1  f2 ]
-                    [                                             ]
-                    [     f4              f6 + f4 f5           1  ]
-    """
-    A = np.zeros((3,2))
-    A[0][0] = 1 + m[2][0]*m[0][2]
-    A[0][1] = m[0][2]
-    A[1][0] = m[1][0]
-    A[1][1] = m[1][2]
-    A[2][0] = m[2][0]
-    A[2][1] = 1.0
-    B = np.array([m[0][1], m[1][1] - 1, m[2][1]])
-
-    x, res, rank, sing = np.linalg.lstsq(A, B, rcond=None)
-
-    f5, f6 = list(x)
-    f1 = m[0][2]
-    f2 = m[1][2]
-    f3 = m[1][0] - m[1][2]*m[2][0]
-    f4 = m[2][0]
-
-    sxy_ans = shear_xy(f1, f2)
-    syz_ans = shear_yz(f3, f4)
-    sxz_ans = shear_xz(f5, f6)
-
-    return sxy_ans, sxz_ans, syz_ans
-
-## /decompose_shear #########################################
-
-## decompose_matrxi_03 ######################################
-# https://github.com/vtlim/GLIC/blob/90e00e7030748c70ad284cda8785745b6c16ecbb/transformations.py#L739
-def vector_norm(data, axis=None, out=None):
-    """Return length, i.e. Euclidean norm, of ndarray along axis.
-
-    >>> v = np.random.random(3)
-    >>> n = vector_norm(v)
-    >>> np.allclose(n, np.linalg.norm(v))
-    True
-    >>> v = np.random.rand(6, 5, 3)
-    >>> n = vector_norm(v, axis=-1)
-    >>> np.allclose(n, np.sqrt(np.sum(v*v, axis=2)))
-    True
-    >>> n = vector_norm(v, axis=1)
-    >>> np.allclose(n, np.sqrt(np.sum(v*v, axis=1)))
-    True
-    >>> v = np.random.rand(5, 4, 3)
-    >>> n = np.empty((5, 3))
-    >>> vector_norm(v, axis=1, out=n)
-    >>> np.allclose(n, np.sqrt(np.sum(v*v, axis=1)))
-    True
-    >>> vector_norm([])
-    0.0
-    >>> vector_norm([1])
-    1.0
-
-    """
-    data = np.array(data, dtype=np.float64, copy=True)
-    if out is None:
-        if data.ndim == 1:
-            return math.sqrt(np.dot(data, data))
-        data *= data
-        out = np.atleast_1d(np.sum(data, axis=axis))
-        np.sqrt(out, out)
-        return out
-    else:
-        data *= data
-        np.sum(data, axis=axis, out=out)
-        np.sqrt(out, out)
-
-# epsilon for testing whether a number is close to zero
-_EPS = np.finfo(float).eps * 4.0
-
-def decompose_matrix_03(matrix):
-    """Return sequence of transformations from transformation matrix.
-
-    matrix : array_like
-        Non-degenerative homogeneous transformation matrix
-
-    Return tuple of:
-        scale : vector of 3 scaling factors
-        shear : list of shear factors for x-y, x-z, y-z axes
-        angles : list of Euler angles about static x, y, z axes
-        translate : translation vector along x, y, z axes
-        perspective : perspective partition of matrix
-
-    Raise ValueError if matrix is of wrong type or degenerative.
-
-    >>> T0 = translation_matrix([1, 2, 3])
-    >>> scale, shear, angles, trans, persp = decompose_matrix(T0)
-    >>> T1 = translation_matrix(trans)
-    >>> numpy.allclose(T0, T1)
-    True
-    >>> S = scale_matrix(0.123)
-    >>> scale, shear, angles, trans, persp = decompose_matrix(S)
-    >>> scale[0]
-    0.123
-    >>> R0 = euler_matrix(1, 2, 3)
-    >>> scale, shear, angles, trans, persp = decompose_matrix(R0)
-    >>> R1 = euler_matrix(*angles)
-    >>> numpy.allclose(R0, R1)
-    True
-
-    """
-    M = np.array(matrix, dtype=np.float64, copy=True).T
-    if abs(M[3, 3]) < _EPS:
-        raise ValueError('M[3, 3] is zero')
-    M /= M[3, 3]
-    P = M.copy()
-    P[:, 3] = 0.0, 0.0, 0.0, 1.0
-    if not np.linalg.det(P):
-        raise ValueError('matrix is singular')
-
-    scale = np.zeros((3, ))
-    shear = [0.0, 0.0, 0.0]
-    angles = [0.0, 0.0, 0.0]
-
-    if any(abs(M[:3, 3]) > _EPS):
-        perspective = np.dot(M[:, 3], np.linalg.inv(P.T))
-        M[:, 3] = 0.0, 0.0, 0.0, 1.0
-    else:
-        perspective = np.array([0.0, 0.0, 0.0, 1.0])
-
-    translate = M[3, :3].copy()
-    M[3, :3] = 0.0
-
-    row = M[:3, :3].copy()
-    scale[0] = vector_norm(row[0])
-    row[0] /= scale[0]
-    shear[0] = np.dot(row[0], row[1])
-    row[1] -= row[0] * shear[0]
-    scale[1] = vector_norm(row[1])
-    row[1] /= scale[1]
-    shear[0] /= scale[1]
-    shear[1] = np.dot(row[0], row[2])
-    row[2] -= row[0] * shear[1]
-    shear[2] = np.dot(row[1], row[2])
-    row[2] -= row[1] * shear[2]
-    scale[2] = vector_norm(row[2])
-    row[2] /= scale[2]
-    shear[1:] /= scale[2]
-
-    if np.dot(row[0], np.cross(row[1], row[2])) < 0:
-        np.negative(scale, scale)
-        np.negative(row, row)
-
-    angles[1] = math.asin(-row[0, 2])
-    if math.cos(angles[1]):
-        angles[0] = math.atan2(row[1, 2], row[2, 2])
-        angles[2] = math.atan2(row[0, 1], row[0, 0])
-    else:
-        # angles[0] = math.atan2(row[1, 0], row[1, 1])
-        angles[0] = math.atan2(-row[2, 1], row[1, 1])
-        angles[2] = 0.0
-
-    return scale, shear, angles, translate, perspective
-
-## /decompose_matrxi_03 ######################################
-
-## decompose_matrxi_04 ######################################
-## /decompose_matrxi_04 ######################################
-
 def ShowMessageBox(message = "", title = "Message Box", icon = 'INFO'):
     def draw(self, context):
         self.layout.label(text=message)
@@ -2177,7 +1725,7 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
         Correct_ListInput_Length(self, context)
         pass
 
-    modes = [
+    list_items_types = [
         ("BOOL_LIST_MODE", "Bool", "Boolean", "IMAGE_ALPHA", 0),
         ("INT_LIST_MODE", "Int", "Integer", "IPO_CONSTANT", 1),
         ("FLOAT_LIST_MODE", "Float", "Float", "IPO_LINEAR", 2),
@@ -2190,7 +1738,7 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
 
     list_items_type: EnumProperty(
         description="Data types of node",
-        items=modes,
+        items=list_items_types,
         default='INT_LIST_MODE',
         update=changeListItemsType
     ) # type: ignore
@@ -2572,11 +2120,11 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
         
         pass
 
-    def draw_buttons_ext(self, context, layout):
-        r_unit_system = layout.row().split(factor=0.25)
-        r_unit_system.column().label(text="Unit system:")
-        r_unit_system.row().prop(self, "unit_system", expand=True)
-        pass
+    # def draw_buttons_ext(self, context, layout):
+    #     r_unit_system = layout.row().split(factor=0.25)
+    #     r_unit_system.column().label(text="Unit system:")
+    #     r_unit_system.row().prop(self, "unit_system", expand=True)
+    #     pass
 
     def draw_buttons(self, context, layout):
         cm_split = layout.row(align=True).split(factor=0.7, align=True)
@@ -3104,19 +2652,249 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
             menu.tree_name = self.id_data.name
             menu.node_name = self.name
         else:
-            layout.label(text=self.label or self.name)
-            if self.list_items_type == 'vector':
-                colum_list = layout.column(align=True)
-                for i in range(self.v_int):
-                    row = colum_list.row(align=True)
-                    for j in range(3):
-                        row.prop(self, 'vector_list', index=i*3+j, text='XYZ'[j]+(self.label if self.label else self.name))
+            label = self.label
+            if not label:
+                label_type = [e for e in self.list_items_types if e[0]==self.list_items_type][0][1]
+                label = f'{self.name} ({label_type})'
+            layout.label(text=label)
+            align = True
+            if self.list_items_type=='VECTOR_LIST_MODE' or self.list_items_type=='COLOR_LIST_MODE':
+                align=False
+            col = layout.column(align=align)
+            J=0
+            if self.list_items_type == 'BOOL_LIST_MODE':
+                grid_row = col.row().grid_flow(row_major=True, columns=3, align=True, even_rows=False)
+                for I, elem in enumerate(self.bool_list_items):
+                    c1 = grid_row.column()
+                    c2 = grid_row.column()
+                    c3 = grid_row.column()
+
+                    c1.ui_units_x = 20
+                    c2.ui_units_x = 10
+                    c3.ui_units_x = 70
+
+                    c1.prop(elem, f'elem', text=f"({I})")
+                    if self.inputs["mask"].is_linked==False:
+                        if elem.item_enable==False:
+                            index_label = '-'
+                            value_label = ''
+                        else:
+                            index_label = f'{J}'
+                            value_label = f'{elem.elem}'
+                            J+=1
+                        c2.prop(elem, f'item_enable', icon_only=True)
+                        c3.label(text=index_label)
+                    else:
+                        index_label = f'{J}'
+                        value_label = ''
+                        J+=1
+                        c2.label(text='')
+                        c3.label(text=index_label)
+                    pass
+                pass
+            elif self.list_items_type == 'INT_LIST_MODE':
+                grid_row = col.row().grid_flow(row_major=True, columns=3, align=True, even_rows=False)
+                for I, elem in enumerate(self.int_list_items):
+                    c1 = grid_row.column()
+                    c2 = grid_row.column()
+                    c3 = grid_row.column()
+
+                    c1.ui_units_x = 50
+                    c2.ui_units_x = 5
+                    c3.ui_units_x = 15
+                    
+                    c1.prop(elem, f'elem', text=str(I))
+                    # if mask socked is connected then do not show source list controls
+                    if self.inputs["mask"].is_linked==False:
+                        if elem.item_enable==False:
+                            index_label = '-'
+                            value_label = ''
+                        else:
+                            index_label = f'{J}'
+                            value_label = f'{elem.elem}'
+                            J+=1
+                        c2.prop(elem, f'item_enable', icon_only=True)
+                        c3.label(text=index_label)
+                    else:
+                        index_label = f'{J}'
+                        value_label=''
+                        J+=1
+                        c2.label(text='')
+                        c3.label(text=index_label)
+                    pass
+            elif self.list_items_type == 'FLOAT_LIST_MODE':
+                grid_row = col.row().grid_flow(row_major=True, columns=3, align=True, even_rows=False)
+                for I, elem in enumerate(self.float_list_items):
+                    c1 = grid_row.column()
+                    c2 = grid_row.column()
+                    c3 = grid_row.column()
+
+                    c1.ui_units_x = 50
+                    c2.ui_units_x = 5
+                    c3.ui_units_x = 15
+
+                    c1.prop(elem, self.subtype_float, text=str(I))
+
+                    # if mask socked is connected then do not show source list controls
+                    if self.inputs["mask"].is_linked==False:
+                        if elem.item_enable==False:
+                            index_label = '-'
+                            value_label = ''
+                        else:
+                            index_label = f'{J}'
+                            value_label = f'{elem.elem}'
+                            J+=1
+                        c2.prop(elem, f'item_enable', icon_only=True)
+                        c3.label(text=index_label)
+                    else:
+                        index_label = f'{J}'
+                        value_label = ''
+                        J+=1
+                        c2.label(text='')
+                        c3.label(text=index_label)
+                    pass
+            elif self.list_items_type == 'VECTOR_LIST_MODE':
+                grid_row = col.row().grid_flow(row_major=True, columns=3, align=True, even_rows=False)
+                for I, elem in enumerate(self.vector_list_items):
+                    c1 = grid_row.column()
+                    c2 = grid_row.column()
+                    c3 = grid_row.column()
+
+                    c1.ui_units_x = 85
+                    c2.ui_units_x = 5
+                    c3.ui_units_x = 10
+
+                    if self.subtype_vector=='DIRECTION':
+                        c1_r = c1.row(align=True)
+                        c1_r.column(align=True).prop(elem, self.subtype_vector, icon_only=True)
+                        c1_r.column(align=True).prop(elem, 'EULER', icon_only=True)
+                        pass
+                    else:
+                        c1.row().prop(elem, self.subtype_vector, icon_only=True)
+
+                    # if mask socked is connected then do not show source list controls
+                    if self.inputs["mask"].is_linked==False:
+                        if elem.item_enable==False:
+                            index_label = '-'
+                        else:
+                            index_label = f'{J}'
+                            J+=1
+                        c2.prop(elem, f'item_enable', icon_only=True)
+                        c3.label(text=index_label)
+                    else:
+                        index_label = f'{J}'
+                        J+=1
+                        c2.label(text='')
+                        c3.label(text=index_label)
+                    pass
+            elif self.list_items_type == 'QUATERNION_LIST_MODE':
+                grid_row = col.row().grid_flow(row_major=True, columns=3, align=True, even_rows=False)
+                for I, elem in enumerate(self.quaternion_list_items):
+                    c1 = grid_row.row()
+                    c2 = grid_row.column()
+                    c3 = grid_row.column()
+
+                    c1.ui_units_x = 85
+                    c2.ui_units_x = 5
+                    c3.ui_units_x = 10
+
+                    c1.prop(elem, self.quaternion_mode+'_UI', icon_only=True)
+                    if self.inputs["mask"].is_linked==False:
+                        if elem.item_enable==False:
+                            index_label = '-'
+                        else:
+                            index_label = f'{J}'
+                            J+=1
+                        c2.prop(elem, f'item_enable', icon_only=True)
+                        c3.label(text=index_label)
+                    else:
+                        index_label = f'{J}'
+                        J+=1
+                        c2.label(text='')
+                        c3.label(text=index_label)
+                    pass
+            elif self.list_items_type == 'MATRIX_LIST_MODE':
+                col.row().label(text='Sorry, matrix are hidden for a while...')
+                pass
+            elif self.list_items_type == 'COLOR_LIST_MODE':
+                grid_row = col.row().grid_flow(row_major=True, columns=3, align=True, even_rows=False)
+                for I, elem in enumerate(self.color_list_items):
+                    c1 = grid_row.column().row(align=True) # row.row - to align=True only one row. If only row() then all elems in grid will connect each other.
+                    c2 = grid_row.column()
+                    c3 = grid_row.column()
+
+                    c1.ui_units_x = 85
+                    c2.ui_units_x = 5
+                    c3.ui_units_x = 10
+
+                    if self.subtype_color=='COLOR' or self.subtype_color=='COLOR_GAMMA':
+                        if self.use_alpha==True:
+                            c1.row(align=True).prop(elem, self.subtype_color, icon_only=True)
+                            c1.row(align=True).prop(elem, 'elem', icon_only=True)
+                        else:
+                            c1.row(align=True).prop(elem, self.subtype_color+'_WITHOUT_ALPHA', icon_only=True)
+                            c1.row(align=True).prop(elem, 'elem_WITHOUT_ALPHA', icon_only=True)
+                        
+                        pass
+                    else:
+                        c1.prop(elem, self.subtype_color, icon_only=True)
+
+                    if self.inputs["mask"].is_linked==False:
+                        if elem.item_enable==False:
+                            index_label = '-'
+                        else:
+                            index_label = f'{J}'
+                            J+=1
+                        c2.prop(elem, f'item_enable', icon_only=True)
+                        c3.label(text=index_label)
+                    else:
+                        index_label = f'{J}'
+                        J+=1
+                        c2.label(text='')
+                        c3.label(text=index_label)
+                    pass
+            elif self.list_items_type == 'STRING_LIST_MODE':
+                grid_row = col.row().grid_flow(row_major=True, columns=3, align=True, even_rows=False)
+                for I, elem in enumerate(self.string_list_items):
+
+                    c1 = grid_row.column()
+                    c2 = grid_row.column()
+                    c3 = grid_row.column()
+
+                    c1.ui_units_x = 85
+                    c2.ui_units_x = 5
+                    c3.ui_units_x = 10
+
+                    c1.prop(elem, self.subtype_string, icon_only=False, text='')
+                    if self.inputs["mask"].is_linked==False:
+                        if elem.item_enable==False:
+                            index_label = '-'
+                        else:
+                            index_label = f'{J}'
+                            J+=1
+                        c2.prop(elem, f'item_enable', icon_only=True)
+                        c3.label(text=index_label)
+                    else:
+                        index_label = f'{J}'
+                        J+=1
+                        c2.label(text='')
+                        c3.label(text=index_label)
+                    pass
             else:
-                colum_list = layout.column(align=True)
-                for i in range(self.int_list_counter):
-                    row = colum_list.row(align=True)
-                    row.prop(self, self.list_items_type, index=i, text=str(i)+(self.label if self.label else self.name))
-                    row.scale_x = 0.8
+                col.row().label(text=f'{self.list_items_type} is unknown type of data')
+                pass
+            # if self.list_items_type == 'vector':
+            #     colum_list = layout.column(align=True)
+            #     for i in range(self.v_int):
+            #         row = colum_list.row(align=True)
+            #         for j in range(3):
+            #             row.prop(self, 'vector_list', index=i*3+j, text='XYZ'[j]+(self.label if self.label else self.name))
+            # else:
+            #     colum_list = layout.column(align=True)
+            #     for i in range(self.int_list_counter):
+            #         row = colum_list.row(align=True)
+            #         row.prop(self, self.list_items_type, index=i, text=str(i)+(self.label if self.label else self.name))
+            #         row.scale_x = 0.8
 
     def updateTextData(self, context):
         self.process_node(context)

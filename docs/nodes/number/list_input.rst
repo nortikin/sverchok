@@ -165,6 +165,14 @@ The node can show its properties on 3D panel.
 For this parameter `to 3d` should be enabled, output should be linked.
 After that you can press `scan for props` button on 3D panel for showing the node properties on 3D panel.
 
+.. image:: https://github.com/user-attachments/assets/a9f600f4-901a-43a6-9482-82e11a4878f3
+  :target: https://github.com/user-attachments/assets/a9f600f4-901a-43a6-9482-82e11a4878f3
+
+.. image:: https://github.com/user-attachments/assets/b790da38-c16d-41ee-bb7c-d83e2d0219d1
+  :target: https://github.com/user-attachments/assets/b790da38-c16d-41ee-bb7c-d83e2d0219d1
+
+Warning: Matrixes are not shown for a while in 3D panel.
+
 Examples
 --------
 
