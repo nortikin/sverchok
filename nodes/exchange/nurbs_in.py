@@ -133,6 +133,10 @@ class SvExNurbsInNode(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
 
         self.draw_obj_names(layout)
 
+    def draw_buttons_ext(self, context, layout):
+        layout.prop(self, "draw_3dpanel", icon="PLUGIN")
+        self.draw_buttons(context, layout)
+
     def draw_buttons_3dpanel(self, layout):
         row = layout.row(align=True)
         row.label(text=self.label if self.label else self.name)

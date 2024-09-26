@@ -472,8 +472,6 @@ class SvGetObjectsDataMK3(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
             for i in range(7):
                 r.prop(self, "out_np", index=i, text=numpy_socket_names[i], toggle=True)
 
-        layout.prop(self, 'draw_3dpanel', text="To Control panel")
-
     def rclick_menu(self, context, layout):
         '''right click sv_menu items'''
         layout.label(text="Output Numpy:")
@@ -481,6 +479,10 @@ class SvGetObjectsDataMK3(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
         if not self.output_np_all:
             for i in range(7):
                 layout.prop(self, "out_np", index=i, text=numpy_socket_names[i], toggle=True)
+
+    def draw_buttons_ext(self, context, layout):
+        layout.prop(self, "draw_3dpanel", icon="PLUGIN")
+        self.sv_draw_buttons_ext(context, layout)
 
     def draw_buttons_3dpanel(self, layout):
         if not self.by_input:
