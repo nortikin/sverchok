@@ -38,7 +38,7 @@ class Show3DProperties:
             layout.prop(self, 'mu_prop')
 
     def draw_buttons_ext(self, context, layout):
-        layout.prop(self, 'draw_3dpanel', icon='PLUGIN', text='to 3dview')
+        layout.prop(self, 'draw_3dpanel', icon='PLUGIN')
         if hasattr(super(), 'draw_buttons_ext'):
             super().draw_buttons_ext(context, layout)  # in case if mixin override other class with such method
 
