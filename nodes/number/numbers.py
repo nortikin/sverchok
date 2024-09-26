@@ -132,6 +132,9 @@ class SvNumberNode(Show3DProperties, DraftMode, SverchCustomTreeNode, bpy.types.
             else:
                 prop_name = 'int_'
         return prop_name
+    
+    def draw_buttons_ext(self, context, layout):
+        layout.prop(self, "draw_3dpanel", icon="PLUGIN")
 
     def draw_buttons_3dpanel(self, layout):
         row = layout.row(align=True)

@@ -2645,12 +2645,19 @@ class SvListInputNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node)
                 pass
         else:
             raise Exception(f"[func: draw_buttons] unknown mode {self.list_items_type}.")
+    
+    def draw_buttons_ext(self, context, layout):
+        layout.prop(self, "draw_3dpanel", icon="PLUGIN")
 
     def draw_buttons_3dpanel(self, layout, in_menu=None):
         if not in_menu:
-            menu = layout.row(align=True).operator('node.popup_3d_menu', text=f'Show: "{self.label or self.name}"')
-            menu.tree_name = self.id_data.name
-            menu.node_name = self.name
+            menu_row = layout.row(align=True)
+            menu_row.column().label(text=f'Show: {self.label or self.name}')
+            self.wrapper_tracked_ui_draw_op(menu_row.column(), "node.sv_nodeview_zoom_border", text="", icon="TRACKER_DATA")
+            # If disable next lines then 3D Panel will show context menu with menu items
+            # menu = menu_row.column().operator('node.popup_3d_menu', text=f'"{self.label or self.name}"')
+            # menu.tree_name = self.id_data.name
+            # menu.node_name = self.name
         else:
             label = self.label
             if not label:

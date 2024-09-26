@@ -50,8 +50,8 @@ class SvColorInputNode(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
         layout.prop(self, "use_alpha")
 
     def draw_buttons_ext(self, context, layout):
+        layout.prop(self, "draw_3dpanel", icon="PLUGIN")
         self.draw_buttons(context, layout)
-        layout.prop(self, "draw_3dpanel")
 
     def draw_buttons_3dpanel(self, layout):
         row = layout.row(align=True)

@@ -16,7 +16,7 @@ class Show3DProperties:
     """
     draw_3dpanel: bpy.props.BoolProperty(
         name="To 3D Panel",
-        description="Show this node in 3D panel", 
+        description="Show this node in 3D panel. (See area 3D Viewport, N-menu->Tool->3D Panel )", 
         default=False,
         update=lambda n, c: bpy.context.scene.sv_ui_node_props.update_properties()  # automatically add/remove item
     )
