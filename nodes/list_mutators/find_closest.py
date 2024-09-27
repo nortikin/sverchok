@@ -28,7 +28,7 @@ class SvFindClosestValue(SverchCustomTreeNode, bpy.types.Node):
 
     def update_mode(self, context):
         self.inputs['Range'].hide = False  # old nodes should not use the attr
-        self.inputs['Range'].enabled = self.mode == 'range'
+        self.inputs['Range'].hide_safe = self.mode != 'range'
         self.process_node(context)
 
     value: FloatProperty(name='Value', update=lambda s, c: s.process_node(c))
@@ -41,7 +41,7 @@ class SvFindClosestValue(SverchCustomTreeNode, bpy.types.Node):
         self.inputs.new('SvStringsSocket', 'Data')
         s = self.inputs.new('SvStringsSocket', 'Range')
         s.prop_name = 'range'
-        s.enabled = False
+        s.hide_safe = True
         self.outputs.new('SvStringsSocket', 'Closest values')
         self.outputs.new('SvStringsSocket', 'Closest indexes')
 
