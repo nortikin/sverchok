@@ -85,7 +85,7 @@ class SvPopulateMeshNode(SverchCustomTreeNode, bpy.types.Node):
 
     proportional_faces : BoolProperty(
             name = "Proportional to Face Area",
-            default = False,
+            default = True,
             description="If checked, then number of points at each face is proportional to the area of the face",
             update = update_sockets)
 
@@ -119,7 +119,9 @@ class SvPopulateMeshNode(SverchCustomTreeNode, bpy.types.Node):
         layout.prop(self, 'distance_mode')
         layout.prop(self, "proportional_field")
         if self.gen_mode == 'SURFACE':
-            layout.prop(self, "proportional_faces")
+            layout.prop(self, "proportional_faces", text="Proportional to Face Area")
+        elif self.gen_mode == 'EDGES':
+            layout.prop(self, "proportional_faces", text="Proportional to Edge Length")
         if self.distance_mode == 'FIELD':
             layout.prop(self, 'random_radius')
 
