@@ -5,13 +5,12 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
-import random
 import numpy as np
 
 from sverchok.utils.sv_logging import sv_logger
 from sverchok.utils.kdtree import SvKdTree
 
-BATCH_SIZE = 50
+BATCH_SIZE = 100
 MAX_ITERATIONS = 1000
 
 def _check_min_distance(v_new, vs_old, min_r):
@@ -69,7 +68,7 @@ def field_random_probe(field, bbox, count,
     if seed == 0:
         seed = 12345
     if seed is not None:
-        random.seed(seed)
+        np.random.seed(seed)
 
     b1, b2 = bbox
     x_min, y_min, z_min = b1
@@ -84,52 +83,37 @@ def field_random_probe(field, bbox, count,
         if iterations > MAX_ITERATIONS:
             sv_logger.error("Maximum number of iterations (%s) reached, stop.", MAX_ITERATIONS)
             break
-        batch_xs = []
-        batch_ys = []
-        batch_zs = []
-        batch = []
         left = count - done
         max_size = min(BATCH_SIZE, left)
-        for i in range(max_size):
-            x = random.uniform(x_min, x_max)
-            y = random.uniform(y_min, y_max)
-            z = random.uniform(z_min, z_max)
-            batch_xs.append(x)
-            batch_ys.append(y)
-            batch_zs.append(z)
-            batch.append((x, y, z))
-        batch_xs = np.array(batch_xs)#[np.newaxis][np.newaxis]
-        batch_ys = np.array(batch_ys)#[np.newaxis][np.newaxis]
-        batch_zs = np.array(batch_zs)#[np.newaxis][np.newaxis]
-        batch = np.array(batch)
+        batch = np.random.uniform((x_min,y_min,z_min), (x_max,y_max,z_max), size=(max_size,3))
 
         if field is None:
-            candidates = batch.tolist()
+            candidates = batch
         else:
-            values = field.evaluate_grid(batch_xs, batch_ys, batch_zs)
+            values = field.evaluate_grid(batch[:,0], batch[:,1], batch[:,2])
             good_idxs = values >= threshold
             if not proportional:
-                candidates = batch[good_idxs].tolist()
+                candidates = batch[good_idxs]
             else:
                 candidates = []
-                for vert, value in zip(batch[good_idxs].tolist(), values[good_idxs].tolist()):
-                    probe = random.uniform(field_min, field_max)
-                    if probe <= value:
-                        candidates.append(vert)
+                probes = np.random.uniform(field_min, field_max, size=len(batch))
+                probe_idxs = probes <= values
+                good_idxs = np.logical_and(good_idxs, probe_idxs)
+                candidates = batch[good_idxs]
 
         good_radiuses = []
         if min_r == 0 and min_r_field is None:
             good_verts = candidates
             good_radiuses = [0 for i in range(len(good_verts))]
         elif min_r_field is not None:
-            xs = np.array([p[0] for p in candidates])
-            ys = np.array([p[1] for p in candidates])
-            zs = np.array([p[2] for p in candidates])
-            min_rs = min_r_field.evaluate_grid(xs, ys, zs).tolist()
+            min_rs = min_r_field.evaluate_grid(candidates[:,0], candidates[:,1], candidates[:,2])
+            if random_radius:
+                min_rs = np.random.uniform(
+                            np.zeros((len(candidates),)),
+                            min_rs
+                        )
             good_verts = []
             for candidate, min_r in zip(candidates, min_rs):
-                if random_radius:
-                    min_r = random.uniform(0, min_r)
                 if _check_min_radius(candidate, generated_verts + good_verts, generated_radiuses + good_radiuses, min_r):
                     good_verts.append(candidate)
                     good_radiuses.append(min_r)

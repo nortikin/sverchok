@@ -119,6 +119,17 @@ def find_nearest_idxs(verts, faces, add_verts):
         idxs.append(idx)
     return idxs
 
+def _verts_edges(verts, edges):
+    if isinstance(verts, np.ndarray):
+        np_verts = verts
+    else:
+        np_verts = np.array(verts)
+    if isinstance(edges, np.ndarray):
+        np_edges = edges
+    else:
+        np_edges = np.array(edges)
+    return np_verts[np_edges]
+
 BATCH_SIZE = 200
 MAX_ITERATIONS = 1000
 
@@ -143,16 +154,15 @@ def populate_mesh_volume(verts, bvh, field, count,
                 seed = seed, predicate=check)
 
 def populate_mesh_surface(bm, weights, field,
-                          total_count, min_r, radius_field,
+                          total_count, min_r, min_r_field,
                           threshold, field_min, field_max,
                           proportional_field=False,
                           proportional_faces=True,
                           random_radius=False,
-                          seed=0):
+                          seed=0, predicate=None):
 
-    def distribute_faces():
+    def get_weights():
         nonlocal weights
-        points_per_face = [0 for _ in range(len(bm.faces))]
         if proportional_faces:
             areas = [face.calc_area() for face in bm.faces]
         else:
@@ -163,48 +173,120 @@ def populate_mesh_surface(bm, weights, field,
             weights = repeat_last_for_length(weights, len(bm.faces))
             weights = [w*a for w, a in zip(weights, areas)]
 
-        ps = np.array(weights) / np.sum(weights)
-        chosen_faces = np.random.choice(range(len(bm.faces)),
-                                        size=total_count,
-                                        p=ps)
-        for i in chosen_faces:
-            points_per_face[i] += 1
-        return points_per_face
+        return weights
 
-    def check_uv(uv, vert):
-        u, v, _ = uv
-        return u + v <= 1
+    all_idxs = np.arange(len(bm.faces))
+    start_verts = np.array([f.verts[0].co for f in bm.faces])
+    edges_1 = np.array([f.verts[1].co - f.verts[0].co for f in bm.faces])
+    edges_2 = np.array([f.verts[2].co - f.verts[0].co for f in bm.faces])
+    weights = get_weights()
+
+    def generate_batch(batch_size):
+        ps = np.array(weights) / np.sum(weights)
+        chosen_faces = np.random.choice(all_idxs,
+                                         batch_size,
+                                         replace=True,
+                                         p = ps)
+        faces_with_points, points_per_face = np.unique(chosen_faces, return_counts=True)
+        uvs = np.random.uniform(0.0, 1.0, size=(batch_size,2))
+        us = uvs[:,0]
+        vs = uvs[:,1]
+        edges_u = np.repeat(edges_1[faces_with_points], points_per_face, axis=0)
+        edges_v = np.repeat(edges_2[faces_with_points], points_per_face, axis=0)
+        start = np.repeat(start_verts[faces_with_points], points_per_face, axis=0)
+        chosen_indices = np.repeat(all_idxs[faces_with_points], points_per_face, axis=0)
+        random_points = start + edges_u * us[np.newaxis].T + edges_v * vs[np.newaxis].T
+        good_uv_idxs = (us + vs) <= 1
+        return random_points[good_uv_idxs], chosen_indices[good_uv_idxs]
 
     if seed == 0:
         seed = 12345
     if seed is not None:
         np.random.seed(seed)
 
-    counts = distribute_faces()
-    print("Cs", counts, np.sum(counts))
-    new_verts = []
-    new_radiuses = []
-    counts = repeat_last_for_length(counts, len(bm.faces))
-    done_spheres = []
-    indices = []
-    for bm_face, cnt in zip(bm.faces, counts):
+    done = 0
+    iterations = 0
+    generated_pts = []
+    generated_idxs = []
+    generated_radiuses = []
 
-        pt1 = np.array(bm_face.verts[0].co)
-        vec1 = np.array(bm_face.verts[1].co) - pt1
-        vec2 = np.array(bm_face.verts[2].co) - pt1
-        surface = SvPlane(pt1, vec1, vec2)
+    if field is None and min_r == 0 and min_r_field is None and predicate is None:
+        batch_size = total_count
+    else:
+        batch_size = BATCH_SIZE
 
-        _, face_verts, radiuses = populate_surface(surface, field, cnt, threshold,
-                proportional_field, field_min, field_max,
-                min_r = min_r, min_r_field = radius_field,
-                random_radius = random_radius,
-                avoid_spheres = done_spheres,
-                seed = None, predicate=check_uv)
-        done_spheres.extend(list(zip(face_verts, radiuses)))
-        new_verts.extend(face_verts)
-        new_radiuses.extend(radiuses)
-        indices.extend(np.repeat(bm_face.index, len(face_verts)).tolist())
-    return new_verts, new_radiuses, indices
+    while done < total_count:
+        iterations += 1
+        if iterations > MAX_ITERATIONS:
+            sv_logger.error("Maximum number of iterations (%s) reached, stop.", MAX_ITERATIONS)
+            break
+        left = total_count - done
+        size = min(batch_size, left)
+        batch_pts, batch_idxs = generate_batch(size)
+        size = len(batch_pts)
+
+        if field is not None:
+            values = field.evaluate_grid(batch_pts[:,0], batch_pts[:,1], batch_pts[:,2])
+            threshold_idxs = values >= threshold
+            if not proportional_field:
+                good_idxs = threshold_idxs
+            else:
+                probes = np.random.uniform(field_min, field_max, size=size)
+                probe_idxs = probes <= values
+                good_idxs = np.logical_and(threshold_idxs, probe_idxs)
+            candidates = batch_pts[good_idxs]
+            candidate_idxs = batch_idxs[good_idxs]
+        else:
+            candidates = batch_pts
+            candidate_idxs = batch_idxs
+
+        good_radiuses = []
+        if len(candidates) > 0:
+            if min_r == 0 and min_r_field is None:
+                good_pts = candidates
+                good_idxs = candidate_idxs
+                good_radiuses = np.zeros((len(good_pts),))
+            elif min_r_field is not None:
+                min_rs = min_r_field.evaluate_grid(candidates[:,0], candidates[:,1], candidates[:,2])
+                if random_radius:
+                    min_rs = np.random.uniform(
+                                np.zeros((len(candidates),)),
+                                min_rs
+                            )
+                good_pts = []
+                good_idxs = []
+                for candidate_idx, candidate, min_r in zip(candidate_idxs, candidates, min_rs):
+                    radius_ok = _check_min_radius(candidate,
+                                                  generated_pts + good_pts,
+                                                  generated_radiuses + good_radiuses,
+                                                  min_r)
+                    if radius_ok:
+                        good_pts.append(candidate)
+                        good_idxs.append(candidate_idx)
+                        good_radiuses.append(min_r)
+            else: # min_r != 0:
+                good_pts = []
+                good_idxs = []
+                for candidate_idx, candidate in zip(candidate_idxs, candidates):
+                    distance_ok = _check_min_distance(candidate,
+                                                      generated_pts + good_pts,
+                                                      min_r)
+                    if distance_ok:
+                        good_pts.append(candidate)
+                        good_idxs.append(candidate_idx)
+                        good_radiuses.append(0)
+            if predicate is not None:
+                res = [(i, pt, radius) for i, pt, radius in zip(good_idxs, good_pts, good_radiuses) if predicate(pt)]
+                good_idxs = [r[0] for r in res]
+                good_pts = [r[1] for r in res]
+                good_radiuses = [r[2] for r in res]
+
+            generated_pts.extend(np.array(good_pts).tolist())
+            generated_idxs.extend(good_idxs)
+            generated_radiuses.extend(good_radiuses)
+            done += len(good_pts)
+
+    return generated_idxs, generated_pts, generated_radiuses
 
 def populate_mesh_edges(verts, edges, weights,
                        field, total_count, threshold,
@@ -212,23 +294,13 @@ def populate_mesh_edges(verts, edges, weights,
                        min_r=0, min_r_field = None,
                        random_radius = False,
                        avoid_spheres = None,
-                       proportional=False,
+                       proportional_field=False,
+                       proportional_edges=True,
                        seed=0, predicate=None):
 
-    def verts_edges(verts, edges):
-        if isinstance(verts, np.ndarray):
-            np_verts = verts
-        else:
-            np_verts = np.array(verts)
-        if isinstance(edges, np.ndarray):
-            np_edges = edges
-        else:
-            np_edges = np.array(edges)
 
-        return np_verts[np_edges]
-
-    def get_weights(edges_dir, weights, proportional):
-        if proportional:
+    def get_weights(edges_dir, weights):
+        if proportional_edges:
             lengths = np.linalg.norm(edges_dir, axis=1)
         else:
             lengths = np.full((len(edges_dir),), 1.0)
@@ -245,9 +317,9 @@ def populate_mesh_edges(verts, edges, weights,
     if seed is not None:
         np.random.seed(seed)
 
-    v_edges = verts_edges(verts, edges)
+    v_edges = _verts_edges(verts, edges)
     edges_dir = v_edges[:, 1] - v_edges[:, 0]
-    weights = get_weights(edges_dir, weights, proportional)
+    weights = get_weights(edges_dir, weights)
     indices = np.arange(len(edges))
 
     if avoid_spheres is not None:
@@ -297,7 +369,7 @@ def populate_mesh_edges(verts, edges, weights,
             values = field.evaluate_grid(batch_pts[:,0], batch_pts[:,1], batch_pts[:,2])
 
             threshold_idxs = values >= threshold
-            if not proportional:
+            if not proportional_field:
                 good_idxs = threshold_idxs
             else:
                 probes = np.random.uniform(field_min, field_max, size=size)
