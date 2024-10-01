@@ -14,7 +14,7 @@ class SV_PT_3DPanel(bpy.types.Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_category = 'Tool'
-    bl_label = "Sverchok"
+    bl_label = "3D Panel (Sverchok)"
     bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):

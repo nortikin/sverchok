@@ -67,10 +67,10 @@ class SvCustomSwitcher(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
             col.prop(self, "user_list", toggle=True, index=i, text=val.name)
 
     def draw_buttons_ext(self, context, layout):
+        layout.prop(self, "draw_3dpanel", icon="PLUGIN")
         row = layout.row()
         row.scale_y = 2
         row.prop(self, 'multiple_selection', toggle=True)
-        layout.prop(self, 'draw_3dpanel', toggle=True)
         layout.prop(self, 'ui_scale', text='Size of buttons')
 
     def draw_buttons_3dpanel(self, layout, in_menu=None):

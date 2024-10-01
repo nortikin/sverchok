@@ -66,35 +66,55 @@ class SvNumberNode(Show3DProperties, DraftMode, SverchCustomTreeNode, bpy.types.
         default=0, name="an int", update=updateNode,
         description = "Integer value",
         get=lambda s: uget(s, 'int_'),
-        set=lambda s, val: uset(s, val, 'int_', 'int_min', 'int_max'))
+        set=lambda s, val: uset(s, val, 'int_', 'int_min', 'int_max')
+    ) # type: ignore
     int_draft_ : IntProperty(
         default=0, name="[D] an int", update=updateNode,
         description = "Integer value (draft mode)",
         get=lambda s: uget(s, 'int_draft_'),
-        set=lambda s, val: uset(s, val, 'int_draft_', 'int_min', 'int_max'))
-    int_min: IntProperty(default=-1024, description='minimum')
-    int_max: IntProperty(default=1024, description='maximum')
+        set=lambda s, val: uset(s, val, 'int_draft_', 'int_min', 'int_max')
+    ) # type: ignore
+    int_min: IntProperty(
+        default=-1024,
+        description='minimum'
+    ) # type: ignore
+    int_max: IntProperty(
+        default=1024,
+        description='maximum'
+    ) # type: ignore
 
     float_: FloatProperty(
         default=0.0, name="a float", update=updateNode,
         description = "Floating-point value",
         get=lambda s: uget(s, 'float_'),
-        set=lambda s, val: uset(s, val, 'float_', 'float_min', 'float_max'))
+        set=lambda s, val: uset(s, val, 'float_', 'float_min', 'float_max')
+    ) # type: ignore
     float_draft_: FloatProperty(
         default=0.0, name="[D] a float",
         description = "Floating-point value (draft mode)",
         update=updateNode,
         get=lambda s: uget(s, 'float_draft_'),
-        set=lambda s, val: uset(s, val, 'float_draft_', 'float_min', 'float_max'))
-    float_min: FloatProperty(default=-500.0, description='minimum')
-    float_max: FloatProperty(default=500.0, description='maximum')
+        set=lambda s, val: uset(s, val, 'float_draft_', 'float_min', 'float_max')) # type: ignore
+    float_min: FloatProperty(
+        default=-500.0, description='minimum'
+    ) # type: ignore
+    float_max: FloatProperty(
+        default=500.0,
+        description='maximum'
+    ) # type: ignore
 
     mode_options = [(k, k, '', i) for i, k in enumerate(["float", "int"])]
 
     selected_mode: bpy.props.EnumProperty(
-        items=mode_options, default="float", update=wrapped_update)
+        items=mode_options,
+        default="float",
+        update=wrapped_update
+    ) # type: ignore
 
-    show_limits: BoolProperty(default=False)
+    show_limits: BoolProperty(
+        default=False,
+        description = "Show range of value"
+    ) # type: ignore
 
     draft_properties_mapping = dict(float_ = 'float_draft_', int_ = 'int_draft_')
 
@@ -107,18 +127,15 @@ class SvNumberNode(Show3DProperties, DraftMode, SverchCustomTreeNode, bpy.types.
         self.outputs.new('SvStringsSocket', "Float").custom_draw = 'mode_custom_draw'
 
     def mode_custom_draw(self, socket, context, layout):
-
-        if not self.show_limits:
-            r = layout.row(align=True)
-            r.prop(self, 'selected_mode', expand=True)
-            r.prop(self, 'show_limits', icon='SETTINGS', text='')
-        else:
-            c = layout.column(align=True)
+        c1 = layout.column()
+        r1 = c1.row(align=True)
+        r1.prop(self, 'selected_mode', expand=True)
+        r1.prop(self, 'show_limits', icon='SETTINGS', text='')
+        if self.show_limits:
+            c2 = c1.row().column(align=True)
             kind = self.selected_mode
-            c.prop(self, kind + '_min', text='min')
-            c.prop(self, kind + '_max', text='max')
-            c = layout.column()
-            c.prop(self, 'show_limits', icon='SETTINGS', text='')
+            c2.prop(self, kind + '_min', text='min')
+            c2.prop(self, kind + '_max', text='max')
 
     def get_prop_name(self):
         if self.id_data.sv_draft:
@@ -132,6 +149,23 @@ class SvNumberNode(Show3DProperties, DraftMode, SverchCustomTreeNode, bpy.types.
             else:
                 prop_name = 'int_'
         return prop_name
+    
+    def draw_buttons(self, context, layout):
+        #layout.label(text="1234")
+        pass
+    
+    def draw_buttons_ext(self, context, layout):
+        layout.prop(self, "draw_3dpanel", icon="PLUGIN")
+
+        c1 = layout.column()
+        r1 = c1.row(align=True)
+        r1.prop(self, 'selected_mode', expand=True)
+        #r1.prop(self, 'show_limits', icon='SETTINGS', text='')
+        #if self.show_limits:
+        c2 = c1.row().column(align=True)
+        kind = self.selected_mode
+        c2.prop(self, kind + '_min', text='min')
+        c2.prop(self, kind + '_max', text='max')
 
     def draw_buttons_3dpanel(self, layout):
         row = layout.row(align=True)

@@ -1,8 +1,8 @@
 A Number
 ========
 
-.. image:: https://user-images.githubusercontent.com/14288520/188991980-17fc419c-a7e2-4c60-9ff9-c464277adab3.png
-  :target: https://user-images.githubusercontent.com/14288520/188991980-17fc419c-a7e2-4c60-9ff9-c464277adab3.png
+.. image:: https://github.com/user-attachments/assets/25848436-3f59-448b-80e4-a17ba775b308
+  :target: https://github.com/user-attachments/assets/25848436-3f59-448b-80e4-a17ba775b308
 
 Functionality
 -------------
@@ -40,6 +40,9 @@ Outputs
 The node can show its properties on 3D panel. 
 For this parameter `to 3d` should be enabled, output should be linked and input should not be linked.
 After that you can press `scan for props` button on 3D panel for showing the node properties on 3D panel.
+
+.. image:: https://github.com/user-attachments/assets/c4d37081-fae1-4acd-971b-dec5fc3671cb
+  :target: https://github.com/user-attachments/assets/c4d37081-fae1-4acd-971b-dec5fc3671cb
 
 Examples
 --------
