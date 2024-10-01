@@ -170,7 +170,32 @@
 </div></blockquote>
 <ol class="arabic simple" start="5">
 <li><p><strong>Flattening every plate</strong>:</p></li>
+</ol>
+<p><img alt="image4" src="../../_images/04_tree.png" /></p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>Analytic outputs. There is row of analysis component node. There are area, perimeters, Nsides, IsBondary, Centers, Angles. All that going to 7 step, tipisation;</p></li>
+<li><p>Visual checking for cutting parts. There is color highlighting for ngons;</p></li>
+<li><p>Explode (boom node) polygons, dropping them on floor with inverted coplanar matrix for each plane, scale Z to zero (flattening itself);</p></li>
+<li><p>Insetting gap between plates. So it appears line, compensating diferent deviations concerning flattening;</p></li>
+<li><p>Also adding borders with extrude outer edges;</p></li>
+<li><p>collecting rerotes for data on that step.</p></li>
+</ol>
+</div></blockquote>
+<ol class="arabic simple" start="6">
 <li><p><strong>Sew corner splitted plates</strong>:</p></li>
+</ol>
+<p>Demonstrating from one side:</p>
+<p><img alt="image5" src="../../_images/05_tree.png" /></p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>Every plate merged by distance to be sure it consistent and sorted to manipulate after bisect disorder;</p></li>
+<li><p>Mask formula. For every edge find out thouse of edges, are vertically oriented. That edges are bend edges, that needed to be joined when sewing left and right;</p></li>
+</ol>
+<p>3. Loop for every plate. Input to that loop original “triangle” and inseted (gap between plates);
+4.</p>
+</div></blockquote>
+<ol class="arabic simple" start="7">
 <li><p><strong>Tipisation of plates</strong>:</p></li>
 <li><p><strong>Drop plates to layout</strong>:</p></li>
 <li><p><strong>Testing and gathering</strong>:</p></li>
