@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
-import random
+import numpy as np
 import bpy
 from bpy.props import FloatProperty, BoolProperty, EnumProperty, IntProperty
 import bmesh
@@ -220,7 +220,7 @@ class SvPopulateMeshNode(SverchCustomTreeNode, bpy.types.Node):
                 verts, edges, faces = pydata_from_bmesh(bm)
                 if seed == 0:
                     seed = 12345
-                random.seed(seed)
+                np.random.seed(seed)
                 if self.distance_mode == 'FIELD':
                     min_r = 0
                 if self.gen_mode == 'VOLUME':
@@ -233,6 +233,7 @@ class SvPopulateMeshNode(SverchCustomTreeNode, bpy.types.Node):
                                                            proportional_field = self.proportional_field,
                                                            random_radius = self.random_radius,
                                                            seed=seed)
+                    verts = np.array(verts).tolist()
                     indices = [None]
                 elif self.gen_mode == 'SURFACE':
                     indices, verts, radiuses = populate_mesh_surface(bm, weights, field,
