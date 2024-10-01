@@ -16,6 +16,7 @@ from math import pi
 from sverchok.utils.curve.core import SvCurve, SvTaylorCurve, UnsupportedCurveTypeException, calc_taylor_nurbs_matrices
 from sverchok.utils.curve.bezier import SvBezierCurve
 from sverchok.utils.curve import knotvector as sv_knotvector
+from sverchok.utils.curve.primitives import SvPointCurve
 from sverchok.utils.curve.algorithms import unify_curves_degree
 from sverchok.utils.curve.nurbs_algorithms import unify_two_curves
 from sverchok.utils.curve.nurbs_solver_applications import interpolate_nurbs_curve
@@ -552,14 +553,18 @@ class SvNurbsCurve(SvCurve):
                         degree, knotvector,
                         control_points, weights)
         if new_t_max < t_max:
-            params, _ = curve._split_at(new_t_max)
-            if params is None:
-                raise Exception(f"Cut 2: {new_t_min} - {new_t_max} from {t_min} - {t_max}")
-            knotvector, control_points, weights = params
-            curve = SvNurbsCurve.build(implementation,
-                        degree, knotvector,
-                        control_points, weights)
-        t1, t2 = curve.get_u_bounds()
+            if new_t_max > new_t_min:
+                params, _ = curve._split_at(new_t_max)
+                if params is None:
+                    raise Exception(f"Cut 2: {new_t_min} - {new_t_max} from {t_min} - {t_max}")
+                knotvector, control_points, weights = params
+                curve = SvNurbsCurve.build(implementation,
+                            degree, knotvector,
+                            control_points, weights)
+            else:
+                return None
+                #pt = curve.evaluate(new_t_min)
+                #return SvPointCurve(pt).to_nurbs()
         if rescale:
             curve = curve.reparametrize(0, 1)
         return curve
@@ -605,6 +610,16 @@ class SvNurbsCurve(SvCurve):
         cpts = self.get_control_points()
         return cpts[-1] - cpts[-2]
 
+    def is_point(self, tolerance=0.001):
+        cpts = self.get_control_points()
+        if len(cpts) <= 1:
+            return True
+        if len(cpts) > 2:
+            return False
+        if not sv_knotvector.is_clamped(self.get_knotvector(), self.get_degree()):
+            return False
+        return np.linalg.norm(cpts[-1] - cpts[0]) < tolerance
+
     def is_line(self, tolerance=0.001):
         """
         Check that the curve is nearly a straight line segment.
@@ -634,7 +649,7 @@ class SvNurbsCurve(SvCurve):
         """
 
         def calc_knots(segment, u1, u2):
-            if not segment.is_closed(tolerance) and segment.is_line(tolerance):
+            if segment is None or abs(u2-u1) < tolerance or segment.is_point(tolerance) or (not segment.is_closed(tolerance) and segment.is_line(tolerance)):
                 return set([u1, u2])
             else:
                 us = np.linspace(u1, u2, num=int(splits+1))
@@ -646,8 +661,16 @@ class SvNurbsCurve(SvCurve):
                     knots = knots.union(ks)
                 return knots
         
-        u1, u2 = self.get_u_bounds()
-        knots = np.array(sorted(calc_knots(self, u1, u2)))
+        all_knots = set()
+        split_ts, split_points, segments = self.split_at_fracture_points(return_details=True)
+        all_knots.update(split_ts)
+        for segment in segments:
+            u1, u2 = segment.get_u_bounds()
+            if segment.is_line(tolerance):
+                all_knots.update((u1, u2))
+            else:
+                all_knots.update(calc_knots(self, u1, u2))
+        knots = np.array(sorted(all_knots))
         return knots
 
     def to_bezier(self):
