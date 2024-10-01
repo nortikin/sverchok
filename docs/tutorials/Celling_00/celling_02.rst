@@ -59,7 +59,25 @@ Node Tree
 
 5. **Flattening every plate**:
 
+|image4|
+
+  1. Analytic outputs. There is row of analysis component node. There are area, perimeters, Nsides, IsBondary, Centers, Angles. All that going to 7 step, tipisation;
+  2. Visual checking for cutting parts. There is color highlighting for ngons;
+  3. Explode (boom node) polygons, dropping them on floor with inverted coplanar matrix for each plane, scale Z to zero (flattening itself);
+  4. Insetting gap between plates. So it appears line, compensating diferent deviations concerning flattening;
+  5. Also adding borders with extrude outer edges;
+  6. collecting rerotes for data on that step.
+
 6. **Sew corner splitted plates**:
+
+Demonstrating from one side:
+
+|Image5|
+
+  1. Every plate merged by distance to be sure it consistent and sorted to manipulate after bisect disorder;
+  2. Mask formula. For every edge find out thouse of edges, are vertically oriented. That edges are bend edges, that needed to be joined when sewing left and right;
+  3. Loop for every plate. Input to that loop original "triangle" and inseted (gap between plates);
+  4. 
 
 7. **Tipisation of plates**:
 
@@ -81,3 +99,5 @@ Node Tree
 .. |image3| image:: celling_02_images/03_tree.png
 
 .. |image4| image:: celling_02_images/04_tree.png
+
+.. |image5| image:: celling_02_images/05_tree.png
