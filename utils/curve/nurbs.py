@@ -634,13 +634,14 @@ class SvNurbsCurve(SvCurve):
         direction = end - begin
         if np.linalg.norm(direction) < tolerance:
             return True
-        line = LineEquation.from_direction_and_point(direction, begin)
+        line = LineEquation.from_direction_and_point(direction, begin).normalized()
         distances = line.distance_to_points(cpts)
         # Technically, this means that all control points lie
         # inside the cylinder, defined as "distance from line < tolerance";
         # As a consequence, the convex hull of control points lie in the
         # same cylinder; and the curve lies in that convex hull.
-        return (distances < tolerance).all()
+        result = (distances < tolerance).all()
+        return result
 
     def calc_linear_segment_knots(self, splits=2, tolerance=0.001):
         """
