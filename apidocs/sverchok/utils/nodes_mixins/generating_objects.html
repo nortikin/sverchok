@@ -148,15 +148,15 @@ hljs.highlightAll();
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.utils.nodes_mixins.generating_objects.BlenderObjects.render_objects"><code class="name">var <span class="ident">render_objects</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'default': True, 'description': 'Show / hide objects for render engines', 'update': <function <a title="sverchok.utils.nodes_mixins.generating_objects.BlenderObjects.render_objects_update" href="#sverchok.utils.nodes_mixins.generating_objects.BlenderObjects.render_objects_update">BlenderObjects.render_objects_update()</a> at 0x7f1b6a774b80>, 'attr': 'render_objects'}></code></dt>
+<dt id="sverchok.utils.nodes_mixins.generating_objects.BlenderObjects.render_objects"><code class="name">var <span class="ident">render_objects</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'default': True, 'description': 'Show / hide objects for render engines', 'update': <function <a title="sverchok.utils.nodes_mixins.generating_objects.BlenderObjects.render_objects_update" href="#sverchok.utils.nodes_mixins.generating_objects.BlenderObjects.render_objects_update">BlenderObjects.render_objects_update()</a> at 0x7f09ad686290>, 'attr': 'render_objects'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.utils.nodes_mixins.generating_objects.BlenderObjects.selectable_objects"><code class="name">var <span class="ident">selectable_objects</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'default': True, 'description': 'Make objects selectable / unselectable', 'update': <function <a title="sverchok.utils.nodes_mixins.generating_objects.BlenderObjects.selectable_objects_update" href="#sverchok.utils.nodes_mixins.generating_objects.BlenderObjects.selectable_objects_update">BlenderObjects.selectable_objects_update()</a> at 0x7f1b6a774af0>, 'attr': 'selectable_objects'}></code></dt>
+<dt id="sverchok.utils.nodes_mixins.generating_objects.BlenderObjects.selectable_objects"><code class="name">var <span class="ident">selectable_objects</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'default': True, 'description': 'Make objects selectable / unselectable', 'update': <function <a title="sverchok.utils.nodes_mixins.generating_objects.BlenderObjects.selectable_objects_update" href="#sverchok.utils.nodes_mixins.generating_objects.BlenderObjects.selectable_objects_update">BlenderObjects.selectable_objects_update()</a> at 0x7f09ad686200>, 'attr': 'selectable_objects'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.utils.nodes_mixins.generating_objects.BlenderObjects.show_objects"><code class="name">var <span class="ident">show_objects</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'default': True, 'description': 'Show / hide objects in viewport', 'update': <function <a title="sverchok.utils.nodes_mixins.generating_objects.BlenderObjects.show_objects_update" href="#sverchok.utils.nodes_mixins.generating_objects.BlenderObjects.show_objects_update">BlenderObjects.show_objects_update()</a> at 0x7f1b6a774c10>, 'attr': 'show_objects'}></code></dt>
+<dt id="sverchok.utils.nodes_mixins.generating_objects.BlenderObjects.show_objects"><code class="name">var <span class="ident">show_objects</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'default': True, 'description': 'Show / hide objects in viewport', 'update': <function <a title="sverchok.utils.nodes_mixins.generating_objects.BlenderObjects.show_objects_update" href="#sverchok.utils.nodes_mixins.generating_objects.BlenderObjects.show_objects_update">BlenderObjects.show_objects_update()</a> at 0x7f09ad686320>, 'attr': 'show_objects'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -170,7 +170,7 @@ hljs.highlightAll();
 <div class="desc"><p>Should be used for adding hide, select, render objects properties</p></div>
 </dd>
 <dt id="sverchok.utils.nodes_mixins.generating_objects.BlenderObjects.regenerate_objects"><code class="name flex">
-<span>def <span class="ident">regenerate_objects</span></span>(<span>self, object_names: List[str], data_blocks, collections: List[bpy_types.Collection] = None, object_template: List[bpy_types.Object] = None, to_show: list = None)</span>
+<span>def <span class="ident">regenerate_objects</span></span>(<span>self, object_names: List[str], data_blocks, collections: List[bpy_types.Collection] = None, object_template: List[bpy_types.Object] = None, to_show: list[bool] = None)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>It will generate new or remove old objects, number of generated objects will be equal to given data_blocks
@@ -314,14 +314,6 @@ def node(self):
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.nodes_mixins.generating_objects.SvBakeObjectsOperator.bl_rna"><code class="name">var <span class="ident">bl_rna</span></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt id="sverchok.utils.nodes_mixins.generating_objects.SvBakeObjectsOperator.node_name"><code class="name">var <span class="ident">node_name</span> : <_PropertyDeferred, <built-in function StringProperty>, {'attr': 'node_name'}></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt id="sverchok.utils.nodes_mixins.generating_objects.SvBakeObjectsOperator.tree_name"><code class="name">var <span class="ident">tree_name</span> : <_PropertyDeferred, <built-in function StringProperty>, {'attr': 'tree_name'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -569,14 +561,6 @@ and assign it to base_data_name property of node</p></div>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.nodes_mixins.generating_objects.SvGenerateRandomObjectName.bl_rna"><code class="name">var <span class="ident">bl_rna</span></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt id="sverchok.utils.nodes_mixins.generating_objects.SvGenerateRandomObjectName.node_name"><code class="name">var <span class="ident">node_name</span> : <_PropertyDeferred, <built-in function StringProperty>, {'attr': 'node_name'}></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt id="sverchok.utils.nodes_mixins.generating_objects.SvGenerateRandomObjectName.tree_name"><code class="name">var <span class="ident">tree_name</span> : <_PropertyDeferred, <built-in function StringProperty>, {'attr': 'tree_name'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -1137,14 +1121,6 @@ Previous object will be removed, data block remains unchanged</p></div>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.utils.nodes_mixins.generating_objects.SvSelectObjects.node_name"><code class="name">var <span class="ident">node_name</span> : <_PropertyDeferred, <built-in function StringProperty>, {'attr': 'node_name'}></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt id="sverchok.utils.nodes_mixins.generating_objects.SvSelectObjects.tree_name"><code class="name">var <span class="ident">tree_name</span> : <_PropertyDeferred, <built-in function StringProperty>, {'attr': 'tree_name'}></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
 </dl>
 <h3>Static methods</h3>
 <dl>
@@ -1350,11 +1326,11 @@ Previous object will be removed, data block remains unchanged</p></div>
 </ul>
 <h3>Class variables</h3>
 <dl>
-<dt id="sverchok.utils.nodes_mixins.generating_objects.SvViewerLightNode.base_data_name"><code class="name">var <span class="ident">base_data_name</span> : <_PropertyDeferred, <built-in function StringProperty>, {'default': 'Alpha', 'description': 'stores the mesh name found in the object, this mesh is instanced', 'update': <function updateNode at 0x7f1b83780430>, 'attr': 'base_data_name'}></code></dt>
+<dt id="sverchok.utils.nodes_mixins.generating_objects.SvViewerLightNode.base_data_name"><code class="name">var <span class="ident">base_data_name</span> : <_PropertyDeferred, <built-in function StringProperty>, {'default': 'Alpha', 'description': 'stores the mesh name found in the object, this mesh is instanced', 'update': <function updateNode at 0x7f09c0597250>, 'attr': 'base_data_name'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.utils.nodes_mixins.generating_objects.SvViewerLightNode.is_active"><code class="name">var <span class="ident">is_active</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Live', 'default': True, 'update': <function updateNode at 0x7f1b83780430>, 'description': 'When enabled this will process incoming data', 'attr': 'is_active'}></code></dt>
+<dt id="sverchok.utils.nodes_mixins.generating_objects.SvViewerLightNode.is_active"><code class="name">var <span class="ident">is_active</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Live', 'default': True, 'update': <function updateNode at 0x7f09c0597250>, 'description': 'When enabled this will process incoming data', 'attr': 'is_active'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -1524,15 +1500,15 @@ Use super().sv_copy(other) to override this method</p></div>
 </ul>
 <h3>Class variables</h3>
 <dl>
-<dt id="sverchok.utils.nodes_mixins.generating_objects.SvViewerNode.base_data_name"><code class="name">var <span class="ident">base_data_name</span> : <_PropertyDeferred, <built-in function StringProperty>, {'default': 'Alpha', 'description': 'stores the mesh name found in the object, this mesh is instanced', 'update': <function updateNode at 0x7f1b83780430>, 'attr': 'base_data_name'}></code></dt>
+<dt id="sverchok.utils.nodes_mixins.generating_objects.SvViewerNode.base_data_name"><code class="name">var <span class="ident">base_data_name</span> : <_PropertyDeferred, <built-in function StringProperty>, {'default': 'Alpha', 'description': 'stores the mesh name found in the object, this mesh is instanced', 'update': <function updateNode at 0x7f09c0597250>, 'attr': 'base_data_name'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.utils.nodes_mixins.generating_objects.SvViewerNode.collection"><code class="name">var <span class="ident">collection</span> : <_PropertyDeferred, <built-in function PointerProperty>, {'type': <class 'bpy_types.Collection'>, 'update': <function updateNode at 0x7f1b83780430>, 'description': 'Collection where to put objects', 'attr': 'collection'}></code></dt>
+<dt id="sverchok.utils.nodes_mixins.generating_objects.SvViewerNode.collection"><code class="name">var <span class="ident">collection</span> : <_PropertyDeferred, <built-in function PointerProperty>, {'type': <class 'bpy_types.Collection'>, 'update': <function updateNode at 0x7f09c0597250>, 'description': 'Collection where to put objects', 'attr': 'collection'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.utils.nodes_mixins.generating_objects.SvViewerNode.is_active"><code class="name">var <span class="ident">is_active</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Live', 'default': True, 'update': <function updateNode at 0x7f1b83780430>, 'description': 'When enabled this will process incoming data', 'attr': 'is_active'}></code></dt>
+<dt id="sverchok.utils.nodes_mixins.generating_objects.SvViewerNode.is_active"><code class="name">var <span class="ident">is_active</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Live', 'default': True, 'update': <function updateNode at 0x7f09c0597250>, 'description': 'When enabled this will process incoming data', 'attr': 'is_active'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -1635,14 +1611,12 @@ Use super().sv_copy(other) to override this method</p></div>
 </li>
 <li>
 <h4><code><a title="sverchok.utils.nodes_mixins.generating_objects.SvBakeObjectsOperator" href="#sverchok.utils.nodes_mixins.generating_objects.SvBakeObjectsOperator">SvBakeObjectsOperator</a></code></h4>
-<ul class="two-column">
+<ul class="">
 <li><code><a title="sverchok.utils.nodes_mixins.generating_objects.SvBakeObjectsOperator.bl_idname" href="#sverchok.utils.nodes_mixins.generating_objects.SvBakeObjectsOperator.bl_idname">bl_idname</a></code></li>
 <li><code><a title="sverchok.utils.nodes_mixins.generating_objects.SvBakeObjectsOperator.bl_label" href="#sverchok.utils.nodes_mixins.generating_objects.SvBakeObjectsOperator.bl_label">bl_label</a></code></li>
 <li><code><a title="sverchok.utils.nodes_mixins.generating_objects.SvBakeObjectsOperator.bl_options" href="#sverchok.utils.nodes_mixins.generating_objects.SvBakeObjectsOperator.bl_options">bl_options</a></code></li>
 <li><code><a title="sverchok.utils.nodes_mixins.generating_objects.SvBakeObjectsOperator.bl_rna" href="#sverchok.utils.nodes_mixins.generating_objects.SvBakeObjectsOperator.bl_rna">bl_rna</a></code></li>
 <li><code><a title="sverchok.utils.nodes_mixins.generating_objects.SvBakeObjectsOperator.execute" href="#sverchok.utils.nodes_mixins.generating_objects.SvBakeObjectsOperator.execute">execute</a></code></li>
-<li><code><a title="sverchok.utils.nodes_mixins.generating_objects.SvBakeObjectsOperator.node_name" href="#sverchok.utils.nodes_mixins.generating_objects.SvBakeObjectsOperator.node_name">node_name</a></code></li>
-<li><code><a title="sverchok.utils.nodes_mixins.generating_objects.SvBakeObjectsOperator.tree_name" href="#sverchok.utils.nodes_mixins.generating_objects.SvBakeObjectsOperator.tree_name">tree_name</a></code></li>
 </ul>
 </li>
 <li>
@@ -1675,8 +1649,6 @@ Use super().sv_copy(other) to override this method</p></div>
 <li><code><a title="sverchok.utils.nodes_mixins.generating_objects.SvGenerateRandomObjectName.bl_rna" href="#sverchok.utils.nodes_mixins.generating_objects.SvGenerateRandomObjectName.bl_rna">bl_rna</a></code></li>
 <li><code><a title="sverchok.utils.nodes_mixins.generating_objects.SvGenerateRandomObjectName.description" href="#sverchok.utils.nodes_mixins.generating_objects.SvGenerateRandomObjectName.description">description</a></code></li>
 <li><code><a title="sverchok.utils.nodes_mixins.generating_objects.SvGenerateRandomObjectName.execute" href="#sverchok.utils.nodes_mixins.generating_objects.SvGenerateRandomObjectName.execute">execute</a></code></li>
-<li><code><a title="sverchok.utils.nodes_mixins.generating_objects.SvGenerateRandomObjectName.node_name" href="#sverchok.utils.nodes_mixins.generating_objects.SvGenerateRandomObjectName.node_name">node_name</a></code></li>
-<li><code><a title="sverchok.utils.nodes_mixins.generating_objects.SvGenerateRandomObjectName.tree_name" href="#sverchok.utils.nodes_mixins.generating_objects.SvGenerateRandomObjectName.tree_name">tree_name</a></code></li>
 </ul>
 </li>
 <li>
@@ -1736,8 +1708,6 @@ Use super().sv_copy(other) to override this method</p></div>
 <li><code><a title="sverchok.utils.nodes_mixins.generating_objects.SvSelectObjects.bl_rna" href="#sverchok.utils.nodes_mixins.generating_objects.SvSelectObjects.bl_rna">bl_rna</a></code></li>
 <li><code><a title="sverchok.utils.nodes_mixins.generating_objects.SvSelectObjects.description" href="#sverchok.utils.nodes_mixins.generating_objects.SvSelectObjects.description">description</a></code></li>
 <li><code><a title="sverchok.utils.nodes_mixins.generating_objects.SvSelectObjects.execute" href="#sverchok.utils.nodes_mixins.generating_objects.SvSelectObjects.execute">execute</a></code></li>
-<li><code><a title="sverchok.utils.nodes_mixins.generating_objects.SvSelectObjects.node_name" href="#sverchok.utils.nodes_mixins.generating_objects.SvSelectObjects.node_name">node_name</a></code></li>
-<li><code><a title="sverchok.utils.nodes_mixins.generating_objects.SvSelectObjects.tree_name" href="#sverchok.utils.nodes_mixins.generating_objects.SvSelectObjects.tree_name">tree_name</a></code></li>
 </ul>
 </li>
 <li>

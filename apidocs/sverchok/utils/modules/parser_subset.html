@@ -37,8 +37,58 @@ module as used by these nodes.</p>
 <section>
 </section>
 <section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sverchok.utils.modules.parser_subset.parser"><code class="name flex">
+<span>def <span class="ident">parser</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
 </section>
 <section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sverchok.utils.modules.parser_subset.Expr"><code class="flex name class">
+<span>class <span class="ident">Expr</span></span>
+<span>(</span><span>str_formula: str)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Expr(str_formula: str)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@dataclass
+class Expr(str):
+    str_formula: str
+    def compile(self):
+        # print(&#39;use mock&#39;)
+        return compile(self.str_formula, &#39;&lt;string&gt;&#39;, mode=&#39;eval&#39;)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.str</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sverchok.utils.modules.parser_subset.Expr.str_formula"><code class="name">var <span class="ident">str_formula</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.modules.parser_subset.Expr.compile"><code class="name flex">
+<span>def <span class="ident">compile</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+</dl>
 </section>
 </article>
 <nav id="sidebar">
@@ -49,6 +99,22 @@ module as used by these nodes.</p>
 <li><h3>Super-module</h3>
 <ul>
 <li><code><a title="sverchok.utils.modules" href="index.html">sverchok.utils.modules</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sverchok.utils.modules.parser_subset.parser" href="#sverchok.utils.modules.parser_subset.parser">parser</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sverchok.utils.modules.parser_subset.Expr" href="#sverchok.utils.modules.parser_subset.Expr">Expr</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.modules.parser_subset.Expr.compile" href="#sverchok.utils.modules.parser_subset.Expr.compile">compile</a></code></li>
+<li><code><a title="sverchok.utils.modules.parser_subset.Expr.str_formula" href="#sverchok.utils.modules.parser_subset.Expr.str_formula">str_formula</a></code></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

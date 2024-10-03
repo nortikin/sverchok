@@ -855,13 +855,6 @@ class NodeFrame(BaseNode):
 <ul class="hlist">
 <li><a title="sverchok.core.node_group.BaseNode" href="#sverchok.core.node_group.BaseNode">BaseNode</a></li>
 </ul>
-<h3>Class variables</h3>
-<dl>
-<dt id="sverchok.core.node_group.NodeFrame.n_id"><code class="name">var <span class="ident">n_id</span> : <_PropertyDeferred, <built-in function StringProperty>, {'options': {'SKIP_SAVE'}, 'attr': 'n_id'}></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-</dl>
 <h3>Inherited members</h3>
 <ul class="hlist">
 <li><code><b><a title="sverchok.core.node_group.BaseNode" href="#sverchok.core.node_group.BaseNode">BaseNode</a></b></code>:
@@ -892,13 +885,6 @@ class NodeGroupInput(BaseNode):
 <ul class="hlist">
 <li><a title="sverchok.core.node_group.BaseNode" href="#sverchok.core.node_group.BaseNode">BaseNode</a></li>
 </ul>
-<h3>Class variables</h3>
-<dl>
-<dt id="sverchok.core.node_group.NodeGroupInput.n_id"><code class="name">var <span class="ident">n_id</span> : <_PropertyDeferred, <built-in function StringProperty>, {'options': {'SKIP_SAVE'}, 'attr': 'n_id'}></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-</dl>
 <h3>Methods</h3>
 <dl>
 <dt id="sverchok.core.node_group.NodeGroupInput.process"><code class="name flex">
@@ -938,13 +924,6 @@ class NodeGroupOutput(BaseNode):  # todo copy node id problem
 <ul class="hlist">
 <li><a title="sverchok.core.node_group.BaseNode" href="#sverchok.core.node_group.BaseNode">BaseNode</a></li>
 </ul>
-<h3>Class variables</h3>
-<dl>
-<dt id="sverchok.core.node_group.NodeGroupOutput.n_id"><code class="name">var <span class="ident">n_id</span> : <_PropertyDeferred, <built-in function StringProperty>, {'options': {'SKIP_SAVE'}, 'attr': 'n_id'}></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-</dl>
 <h3>Methods</h3>
 <dl>
 <dt id="sverchok.core.node_group.NodeGroupOutput.process"><code class="name flex">
@@ -984,13 +963,6 @@ class NodeReroute(BaseNode):
 <ul class="hlist">
 <li><a title="sverchok.core.node_group.BaseNode" href="#sverchok.core.node_group.BaseNode">BaseNode</a></li>
 </ul>
-<h3>Class variables</h3>
-<dl>
-<dt id="sverchok.core.node_group.NodeReroute.n_id"><code class="name">var <span class="ident">n_id</span> : <_PropertyDeferred, <built-in function StringProperty>, {'options': {'SKIP_SAVE'}, 'attr': 'n_id'}></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-</dl>
 <h3>Inherited members</h3>
 <ul class="hlist">
 <li><code><b><a title="sverchok.core.node_group.BaseNode" href="#sverchok.core.node_group.BaseNode">BaseNode</a></b></code>:
@@ -1133,7 +1105,7 @@ class NodeReroute(BaseNode):
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.core.node_group.SearchGroupTree.tree_name"><code class="name">var <span class="ident">tree_name</span> : <_PropertyDeferred, <built-in function EnumProperty>, {'items': <function <a title="sverchok.core.node_group.SearchGroupTree.available_trees" href="#sverchok.core.node_group.SearchGroupTree.available_trees">SearchGroupTree.available_trees()</a> at 0x7f1b6cf841f0>, 'attr': 'tree_name'}></code></dt>
+<dt id="sverchok.core.node_group.SearchGroupTree.tree_name"><code class="name">var <span class="ident">tree_name</span> : <_PropertyDeferred, <built-in function EnumProperty>, {'items': <function <a title="sverchok.core.node_group.SearchGroupTree.available_trees" href="#sverchok.core.node_group.SearchGroupTree.available_trees">SearchGroupTree.available_trees()</a> at 0x7f09ae3d8e50>, 'attr': 'tree_name'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -1480,6 +1452,12 @@ class NodeReroute(BaseNode):
 <dd>
 <div class="desc"></div>
 </dd>
+<dt id="sverchok.core.node_group.SvGroupTree.valid_socket_type"><code class="name flex">
+<span>def <span class="ident">valid_socket_type</span></span>(<span>socket_type: str)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
 </dl>
 <h3>Instance variables</h3>
 <dl>
@@ -1803,11 +1781,11 @@ The method can help to predict if linking new sub tree can lead to cyclic linkin
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.core.node_group.SvGroupTreeNode.group_tree"><code class="name">var <span class="ident">group_tree</span> : <_PropertyDeferred, <built-in function PointerProperty>, {'type': <class '<a title="sverchok.core.node_group.SvGroupTree" href="#sverchok.core.node_group.SvGroupTree">SvGroupTree</a>'>, 'poll': <function <a title="sverchok.core.node_group.SvGroupTreeNode.nested_tree_filter" href="#sverchok.core.node_group.SvGroupTreeNode.nested_tree_filter">SvGroupTreeNode.nested_tree_filter()</a> at 0x7f1b6cfa3d30>, 'update': <function <a title="sverchok.core.node_group.SvGroupTreeNode.update_group_tree" href="#sverchok.core.node_group.SvGroupTreeNode.update_group_tree">SvGroupTreeNode.update_group_tree()</a> at 0x7f1b6cfa3dc0>, 'attr': 'group_tree'}></code></dt>
+<dt id="sverchok.core.node_group.SvGroupTreeNode.group_tree"><code class="name">var <span class="ident">group_tree</span> : <_PropertyDeferred, <built-in function PointerProperty>, {'type': <class '<a title="sverchok.core.node_group.SvGroupTree" href="#sverchok.core.node_group.SvGroupTree">SvGroupTree</a>'>, 'poll': <function <a title="sverchok.core.node_group.SvGroupTreeNode.nested_tree_filter" href="#sverchok.core.node_group.SvGroupTreeNode.nested_tree_filter">SvGroupTreeNode.nested_tree_filter()</a> at 0x7f09ae32b9a0>, 'update': <function <a title="sverchok.core.node_group.SvGroupTreeNode.update_group_tree" href="#sverchok.core.node_group.SvGroupTreeNode.update_group_tree">SvGroupTreeNode.update_group_tree()</a> at 0x7f09ae32ba30>, 'attr': 'group_tree'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.core.node_group.SvGroupTreeNode.is_active"><code class="name">var <span class="ident">is_active</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Live', 'description': 'Update realtime if active', 'default': True, 'update': <function <a title="sverchok.core.node_group.SvGroupTreeNode" href="#sverchok.core.node_group.SvGroupTreeNode">SvGroupTreeNode</a>.<lambda> at 0x7f1b6cfa3ee0>, 'attr': 'is_active'}></code></dt>
+<dt id="sverchok.core.node_group.SvGroupTreeNode.is_active"><code class="name">var <span class="ident">is_active</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Live', 'description': 'Update realtime if active', 'default': True, 'update': <function <a title="sverchok.core.node_group.SvGroupTreeNode" href="#sverchok.core.node_group.SvGroupTreeNode">SvGroupTreeNode</a>.<lambda> at 0x7f09ae32bb50>, 'attr': 'is_active'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -1815,7 +1793,7 @@ The method can help to predict if linking new sub tree can lead to cyclic linkin
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.core.node_group.SvGroupTreeNode.show"><code class="name">var <span class="ident">show</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'default': True, 'description': 'On/off viewer nodes inside', 'update': <function <a title="sverchok.core.node_group.SvGroupTreeNode.switch_viewers" href="#sverchok.core.node_group.SvGroupTreeNode.switch_viewers">SvGroupTreeNode.switch_viewers()</a> at 0x7f1b6cfa3f70>, 'attr': 'show'}></code></dt>
+<dt id="sverchok.core.node_group.SvGroupTreeNode.show"><code class="name">var <span class="ident">show</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'default': True, 'description': 'On/off viewer nodes inside', 'update': <function <a title="sverchok.core.node_group.SvGroupTreeNode.switch_viewers" href="#sverchok.core.node_group.SvGroupTreeNode.switch_viewers">SvGroupTreeNode.switch_viewers()</a> at 0x7f09ae32bbe0>, 'attr': 'show'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -1887,16 +1865,20 @@ By this attribute Blender is aware of linking between the node and nested tree.<
 <li><code><a title="sverchok.node_tree.SverchCustomTreeNode.get_doc_link" href="../node_tree.html#sverchok.node_tree.NodeDocumentation.get_doc_link">get_doc_link</a></code></li>
 <li><code><a title="sverchok.node_tree.SverchCustomTreeNode.init" href="../node_tree.html#sverchok.node_tree.UpdateNodes.init">init</a></code></li>
 <li><code><a title="sverchok.node_tree.SverchCustomTreeNode.insert_link" href="../node_tree.html#sverchok.node_tree.UpdateNodes.insert_link">insert_link</a></code></li>
+<li><code><a title="sverchok.node_tree.SverchCustomTreeNode.is_animatable" href="../node_tree.html#sverchok.node_tree.UpdateNodes.is_animatable">is_animatable</a></code></li>
 <li><code><a title="sverchok.node_tree.SverchCustomTreeNode.is_animation_dependent" href="../node_tree.html#sverchok.node_tree.UpdateNodes.is_animation_dependent">is_animation_dependent</a></code></li>
+<li><code><a title="sverchok.node_tree.SverchCustomTreeNode.is_interactive" href="../node_tree.html#sverchok.node_tree.UpdateNodes.is_interactive">is_interactive</a></code></li>
 <li><code><a title="sverchok.node_tree.SverchCustomTreeNode.is_scene_dependent" href="../node_tree.html#sverchok.node_tree.UpdateNodes.is_scene_dependent">is_scene_dependent</a></code></li>
 <li><code><a title="sverchok.node_tree.SverchCustomTreeNode.migrate_from" href="../node_tree.html#sverchok.node_tree.SverchCustomTreeNode.migrate_from">migrate_from</a></code></li>
 <li><code><a title="sverchok.node_tree.SverchCustomTreeNode.migrate_links_from" href="../node_tree.html#sverchok.node_tree.SverchCustomTreeNode.migrate_links_from">migrate_links_from</a></code></li>
+<li><code><a title="sverchok.node_tree.SverchCustomTreeNode.n_id" href="../node_tree.html#sverchok.node_tree.UpdateNodes.n_id">n_id</a></code></li>
 <li><code><a title="sverchok.node_tree.SverchCustomTreeNode.node_id" href="../node_tree.html#sverchok.node_tree.UpdateNodes.node_id">node_id</a></code></li>
 <li><code><a title="sverchok.node_tree.SverchCustomTreeNode.node_replacement_menu" href="../node_tree.html#sverchok.node_tree.SverchCustomTreeNode.node_replacement_menu">node_replacement_menu</a></code></li>
 <li><code><a title="sverchok.node_tree.SverchCustomTreeNode.poll" href="../node_tree.html#sverchok.node_tree.SverchCustomTreeNode.poll">poll</a></code></li>
 <li><code><a title="sverchok.node_tree.SverchCustomTreeNode.prefs_over_sized_buttons" href="../node_tree.html#sverchok.node_tree.SverchCustomTreeNode.prefs_over_sized_buttons">prefs_over_sized_buttons</a></code></li>
 <li><code><a title="sverchok.node_tree.SverchCustomTreeNode.process_node" href="../node_tree.html#sverchok.node_tree.UpdateNodes.process_node">process_node</a></code></li>
 <li><code><a title="sverchok.node_tree.SverchCustomTreeNode.rclick_menu" href="../node_tree.html#sverchok.node_tree.SverchCustomTreeNode.rclick_menu">rclick_menu</a></code></li>
+<li><code><a title="sverchok.node_tree.SverchCustomTreeNode.refresh" href="../node_tree.html#sverchok.node_tree.UpdateNodes.refresh">refresh</a></code></li>
 <li><code><a title="sverchok.node_tree.SverchCustomTreeNode.refresh_node" href="../node_tree.html#sverchok.node_tree.UpdateNodes.refresh_node">refresh_node</a></code></li>
 <li><code><a title="sverchok.node_tree.SverchCustomTreeNode.set_temp_color" href="../node_tree.html#sverchok.node_tree.SverchCustomTreeNode.set_temp_color">set_temp_color</a></code></li>
 <li><code><a title="sverchok.node_tree.SverchCustomTreeNode.sv_category" href="../node_tree.html#sverchok.node_tree.SverchCustomTreeNode.sv_category">sv_category</a></code></li>
@@ -1913,14 +1895,6 @@ By this attribute Blender is aware of linking between the node and nested tree.<
 <li><code><a title="sverchok.node_tree.SverchCustomTreeNode.update_interactive_mode" href="../node_tree.html#sverchok.node_tree.UpdateNodes.update_interactive_mode">update_interactive_mode</a></code></li>
 <li><code><a title="sverchok.node_tree.SverchCustomTreeNode.update_ui" href="../node_tree.html#sverchok.node_tree.UpdateNodes.update_ui">update_ui</a></code></li>
 <li><code><a title="sverchok.node_tree.SverchCustomTreeNode.wrapper_tracked_ui_draw_op" href="../node_tree.html#sverchok.node_tree.NodeUtils.wrapper_tracked_ui_draw_op">wrapper_tracked_ui_draw_op</a></code></li>
-</ul>
-</li>
-<li><code><b><a title="sverchok.node_tree.UpdateNodes" href="../node_tree.html#sverchok.node_tree.UpdateNodes">UpdateNodes</a></b></code>:
-<ul class="hlist">
-<li><code><a title="sverchok.node_tree.UpdateNodes.is_animatable" href="../node_tree.html#sverchok.node_tree.UpdateNodes.is_animatable">is_animatable</a></code></li>
-<li><code><a title="sverchok.node_tree.UpdateNodes.is_interactive" href="../node_tree.html#sverchok.node_tree.UpdateNodes.is_interactive">is_interactive</a></code></li>
-<li><code><a title="sverchok.node_tree.UpdateNodes.n_id" href="../node_tree.html#sverchok.node_tree.UpdateNodes.n_id">n_id</a></code></li>
-<li><code><a title="sverchok.node_tree.UpdateNodes.refresh" href="../node_tree.html#sverchok.node_tree.UpdateNodes.refresh">refresh</a></code></li>
 </ul>
 </li>
 </ul>
@@ -2186,29 +2160,21 @@ By this attribute Blender is aware of linking between the node and nested tree.<
 </li>
 <li>
 <h4><code><a title="sverchok.core.node_group.NodeFrame" href="#sverchok.core.node_group.NodeFrame">NodeFrame</a></code></h4>
-<ul class="">
-<li><code><a title="sverchok.core.node_group.NodeFrame.n_id" href="#sverchok.core.node_group.NodeFrame.n_id">n_id</a></code></li>
-</ul>
 </li>
 <li>
 <h4><code><a title="sverchok.core.node_group.NodeGroupInput" href="#sverchok.core.node_group.NodeGroupInput">NodeGroupInput</a></code></h4>
 <ul class="">
-<li><code><a title="sverchok.core.node_group.NodeGroupInput.n_id" href="#sverchok.core.node_group.NodeGroupInput.n_id">n_id</a></code></li>
 <li><code><a title="sverchok.core.node_group.NodeGroupInput.process" href="#sverchok.core.node_group.NodeGroupInput.process">process</a></code></li>
 </ul>
 </li>
 <li>
 <h4><code><a title="sverchok.core.node_group.NodeGroupOutput" href="#sverchok.core.node_group.NodeGroupOutput">NodeGroupOutput</a></code></h4>
 <ul class="">
-<li><code><a title="sverchok.core.node_group.NodeGroupOutput.n_id" href="#sverchok.core.node_group.NodeGroupOutput.n_id">n_id</a></code></li>
 <li><code><a title="sverchok.core.node_group.NodeGroupOutput.process" href="#sverchok.core.node_group.NodeGroupOutput.process">process</a></code></li>
 </ul>
 </li>
 <li>
 <h4><code><a title="sverchok.core.node_group.NodeReroute" href="#sverchok.core.node_group.NodeReroute">NodeReroute</a></code></h4>
-<ul class="">
-<li><code><a title="sverchok.core.node_group.NodeReroute.n_id" href="#sverchok.core.node_group.NodeReroute.n_id">n_id</a></code></li>
-</ul>
 </li>
 <li>
 <h4><code><a title="sverchok.core.node_group.PlacingNodeOperator" href="#sverchok.core.node_group.PlacingNodeOperator">PlacingNodeOperator</a></code></h4>
@@ -2257,6 +2223,7 @@ By this attribute Blender is aware of linking between the node and nested tree.<
 <li><code><a title="sverchok.core.node_group.SvGroupTree.update_nodes" href="#sverchok.core.node_group.SvGroupTree.update_nodes">update_nodes</a></code></li>
 <li><code><a title="sverchok.core.node_group.SvGroupTree.update_sockets" href="#sverchok.core.node_group.SvGroupTree.update_sockets">update_sockets</a></code></li>
 <li><code><a title="sverchok.core.node_group.SvGroupTree.upstream_trees" href="#sverchok.core.node_group.SvGroupTree.upstream_trees">upstream_trees</a></code></li>
+<li><code><a title="sverchok.core.node_group.SvGroupTree.valid_socket_type" href="#sverchok.core.node_group.SvGroupTree.valid_socket_type">valid_socket_type</a></code></li>
 </ul>
 </li>
 <li>

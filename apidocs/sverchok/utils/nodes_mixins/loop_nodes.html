@@ -117,7 +117,7 @@ hljs.highlightAll();
 <h3>Static methods</h3>
 <dl>
 <dt id="sverchok.utils.nodes_mixins.loop_nodes.LoopNode.copy_sockets"><code class="name flex">
-<span>def <span class="ident">copy_sockets</span></span>(<span>from_socks: list, to_socks: list, attr_name: str)</span>
+<span>def <span class="ident">copy_sockets</span></span>(<span>from_socks: list[typing.Optional[bpy_types.NodeSocket]], to_socks: list[bpy_types.NodeSocket], attr_name: str)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>It copies the attribute from sockets to sockets</p></div>

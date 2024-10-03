@@ -44,7 +44,7 @@ hljs.highlightAll();
 </ol></div>
 </dd>
 <dt id="sverchok.core.update_system.prepare_input_data"><code class="name flex">
-<span>def <span class="ident">prepare_input_data</span></span>(<span>prev_socks: list, input_socks: list)</span>
+<span>def <span class="ident">prepare_input_data</span></span>(<span>prev_socks: list[typing.Optional[bpy_types.NodeSocket]], input_socks: list[bpy_types.NodeSocket])</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Reads data from given outputs socket make it conversion if necessary and
@@ -437,7 +437,7 @@ If socket is not connected it returns None</p></div>
 <div class="desc"><p>Returns all next nodes from given ones</p></div>
 </dd>
 <dt id="sverchok.core.update_system.SearchTree.nodes_from_socket"><code class="name flex">
-<span>def <span class="ident">nodes_from_socket</span></span>(<span>self, socket: bpy_types.NodeSocket) ‑> list</span>
+<span>def <span class="ident">nodes_from_socket</span></span>(<span>self, socket: bpy_types.NodeSocket) ‑> list['SvNode']</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Returns linked to the given socket nodes.

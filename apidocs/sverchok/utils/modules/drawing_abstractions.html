@@ -31,6 +31,15 @@ hljs.highlightAll();
 <section>
 </section>
 <section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sverchok.utils.modules.drawing_abstractions.placeholder_function"><code class="name flex">
+<span>def <span class="ident">placeholder_function</span></span>(<span>*params)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
 </section>
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
@@ -78,28 +87,19 @@ hljs.highlightAll();
 <h3>Methods</h3>
 <dl>
 <dt id="sverchok.utils.modules.drawing_abstractions.Drawing.bind_texture_2d"><code class="name flex">
-<span>def <span class="ident">bind_texture_2d</span></span>(<span>self, texture)</span>
+<span>def <span class="ident">bind_texture_2d</span></span>(<span>*params)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.modules.drawing_abstractions.Drawing.blf_size"><code class="name flex">
-<span>def <span class="ident">blf_size</span></span>(<span>...)</span>
+<span>def <span class="ident">blf_size</span></span>(<span>self, font_id, height, dpi)</span>
 </code></dt>
 <dd>
-<div class="desc"><div class="admonition function">
-<p class="admonition-title">Function:&ensp;size(fontid, size, dpi)</p>
-</div>
-<p>Set the size and dpi for drawing text.</p>
-<p>:arg fontid: The id of the typeface as returned by :func:<code>blf.load</code>, for default font use 0.
-:type fontid: int
-:arg size: Point size of the font.
-:type size: int
-:arg dpi: dots per inch value to use for drawing.
-:type dpi: int</p></div>
+<div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.modules.drawing_abstractions.Drawing.delete_texture"><code class="name flex">
-<span>def <span class="ident">delete_texture</span></span>(<span>self, texture)</span>
+<span>def <span class="ident">delete_texture</span></span>(<span>*params)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -117,13 +117,7 @@ hljs.highlightAll();
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.modules.drawing_abstractions.Drawing.disable_polygon_offset_fill"><code class="name flex">
-<span>def <span class="ident">disable_polygon_offset_fill</span></span>(<span>self)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt id="sverchok.utils.modules.drawing_abstractions.Drawing.disable_texture_2d"><code class="name flex">
-<span>def <span class="ident">disable_texture_2d</span></span>(<span>self)</span>
+<span>def <span class="ident">disable_polygon_offset_fill</span></span>(<span>*params)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -147,31 +141,25 @@ hljs.highlightAll();
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.modules.drawing_abstractions.Drawing.generate_textures"><code class="name flex">
-<span>def <span class="ident">generate_textures</span></span>(<span>self, name)</span>
+<span>def <span class="ident">generate_textures</span></span>(<span>*params)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.modules.drawing_abstractions.Drawing.get_buffer"><code class="name flex">
-<span>def <span class="ident">get_buffer</span></span>(<span>self, indexed_buffer)</span>
+<span>def <span class="ident">get_buffer</span></span>(<span>*params)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.modules.drawing_abstractions.Drawing.init_complex_texture"><code class="name flex">
-<span>def <span class="ident">init_complex_texture</span></span>(<span>self, width, height, texname, data, format)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt id="sverchok.utils.modules.drawing_abstractions.Drawing.init_image_from_texture"><code class="name flex">
-<span>def <span class="ident">init_image_from_texture</span></span>(<span>self, width, height, texname, texture, format)</span>
+<span>def <span class="ident">init_complex_texture</span></span>(<span>*params)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.modules.drawing_abstractions.Drawing.new_buffer_texture"><code class="name flex">
-<span>def <span class="ident">new_buffer_texture</span></span>(<span>self)</span>
+<span>def <span class="ident">new_buffer_texture</span></span>(<span>*params)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -198,16 +186,26 @@ hljs.highlightAll();
 <span>def <span class="ident">set_line_width</span></span>(<span>...)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><div class="admonition function">
+<p class="admonition-title">Function:&ensp;line_width_set(width)</p>
+</div>
+<p>Specify the width of rasterized lines.</p>
+<p>:arg size: New width.
+:type mode: float</p></div>
 </dd>
 <dt id="sverchok.utils.modules.drawing_abstractions.Drawing.set_point_size"><code class="name flex">
 <span>def <span class="ident">set_point_size</span></span>(<span>...)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><div class="admonition function">
+<p class="admonition-title">Function:&ensp;point_size_set(size)</p>
+</div>
+<p>Specify the diameter of rasterized points.</p>
+<p>:arg size: New diameter.
+:type mode: float</p></div>
 </dd>
 <dt id="sverchok.utils.modules.drawing_abstractions.Drawing.set_polygon_offset_amounts"><code class="name flex">
-<span>def <span class="ident">set_polygon_offset_amounts</span></span>(<span>self)</span>
+<span>def <span class="ident">set_polygon_offset_amounts</span></span>(<span>*params)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -219,7 +217,7 @@ hljs.highlightAll();
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.modules.drawing_abstractions.Drawing.set_polygonmode_line"><code class="name flex">
-<span>def <span class="ident">set_polygonmode_line</span></span>(<span>self)</span>
+<span>def <span class="ident">set_polygonmode_line</span></span>(<span>*params)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -305,6 +303,11 @@ hljs.highlightAll();
 <li><code><a title="sverchok.utils.modules" href="index.html">sverchok.utils.modules</a></code></li>
 </ul>
 </li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sverchok.utils.modules.drawing_abstractions.placeholder_function" href="#sverchok.utils.modules.drawing_abstractions.placeholder_function">placeholder_function</a></code></li>
+</ul>
+</li>
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
 <li>
@@ -316,14 +319,12 @@ hljs.highlightAll();
 <li><code><a title="sverchok.utils.modules.drawing_abstractions.Drawing.disable_blendmode" href="#sverchok.utils.modules.drawing_abstractions.Drawing.disable_blendmode">disable_blendmode</a></code></li>
 <li><code><a title="sverchok.utils.modules.drawing_abstractions.Drawing.disable_depth_test" href="#sverchok.utils.modules.drawing_abstractions.Drawing.disable_depth_test">disable_depth_test</a></code></li>
 <li><code><a title="sverchok.utils.modules.drawing_abstractions.Drawing.disable_polygon_offset_fill" href="#sverchok.utils.modules.drawing_abstractions.Drawing.disable_polygon_offset_fill">disable_polygon_offset_fill</a></code></li>
-<li><code><a title="sverchok.utils.modules.drawing_abstractions.Drawing.disable_texture_2d" href="#sverchok.utils.modules.drawing_abstractions.Drawing.disable_texture_2d">disable_texture_2d</a></code></li>
 <li><code><a title="sverchok.utils.modules.drawing_abstractions.Drawing.enable_blendmode" href="#sverchok.utils.modules.drawing_abstractions.Drawing.enable_blendmode">enable_blendmode</a></code></li>
 <li><code><a title="sverchok.utils.modules.drawing_abstractions.Drawing.enable_depth_test" href="#sverchok.utils.modules.drawing_abstractions.Drawing.enable_depth_test">enable_depth_test</a></code></li>
 <li><code><a title="sverchok.utils.modules.drawing_abstractions.Drawing.enable_polygon_offset_fill" href="#sverchok.utils.modules.drawing_abstractions.Drawing.enable_polygon_offset_fill">enable_polygon_offset_fill</a></code></li>
 <li><code><a title="sverchok.utils.modules.drawing_abstractions.Drawing.generate_textures" href="#sverchok.utils.modules.drawing_abstractions.Drawing.generate_textures">generate_textures</a></code></li>
 <li><code><a title="sverchok.utils.modules.drawing_abstractions.Drawing.get_buffer" href="#sverchok.utils.modules.drawing_abstractions.Drawing.get_buffer">get_buffer</a></code></li>
 <li><code><a title="sverchok.utils.modules.drawing_abstractions.Drawing.init_complex_texture" href="#sverchok.utils.modules.drawing_abstractions.Drawing.init_complex_texture">init_complex_texture</a></code></li>
-<li><code><a title="sverchok.utils.modules.drawing_abstractions.Drawing.init_image_from_texture" href="#sverchok.utils.modules.drawing_abstractions.Drawing.init_image_from_texture">init_image_from_texture</a></code></li>
 <li><code><a title="sverchok.utils.modules.drawing_abstractions.Drawing.new_buffer_texture" href="#sverchok.utils.modules.drawing_abstractions.Drawing.new_buffer_texture">new_buffer_texture</a></code></li>
 <li><code><a title="sverchok.utils.modules.drawing_abstractions.Drawing.new_buffer_texture_sized" href="#sverchok.utils.modules.drawing_abstractions.Drawing.new_buffer_texture_sized">new_buffer_texture_sized</a></code></li>
 <li><code><a title="sverchok.utils.modules.drawing_abstractions.Drawing.reset_line_width" href="#sverchok.utils.modules.drawing_abstractions.Drawing.reset_line_width">reset_line_width</a></code></li>
