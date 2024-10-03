@@ -72,9 +72,9 @@ jobs:
         fi
 
         #mkdir -p ${PWD}/installation/blender/${BLENDER_VERSION}/${SVERCHOK_DIR}
-        ln -s ${PWD} ${PWD}/installation/blender/${BLENDER_VERSION}/${SVERCHOK_DIR}
-        mkdir -p ~/.config/blender/${BLENDER_VERSION}/config/
-        ln -s ${PWD}/tests/references/userpref.blend ~/.config/blender/${BLENDER_VERSION}/config/
+        ln -s ${PWD} ${PWD}/installation/blender/${MAJOR_BLENDER_VERSION}/${SVERCHOK_DIR}
+        mkdir -p ~/.config/blender/${MAJOR_BLENDER_VERSION}/config/
+        ln -s ${PWD}/tests/references/userpref.blend ~/.config/blender/${MAJOR_BLENDER_VERSION}/config/
         
     - name: Checkout master
       uses: actions/checkout@master
