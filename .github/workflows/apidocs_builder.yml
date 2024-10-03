@@ -20,6 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       blender_version: "3.6.16"
+      major_blender_version: "3.6"
       python_version: "3.10"
 
     steps:
@@ -37,6 +38,7 @@ jobs:
       run: |
         # echo "starting run"
         BLENDER_VERSION=${{env.blender_version}}
+        MAJOR_BLENDER_VERSION=${{env.major_blender_version}}
         BLENDER_URL=https://mirrors.de.sahilister.net/blender/release/Blender3.6/blender-3.6.16-linux-x64.tar.xz
         SVERCHOK_DIR=scripts/addons/sverchok
         BLENDER_TAR=$(basename $BLENDER_URL)
@@ -59,7 +61,7 @@ jobs:
             mv $RELEASE blender
 
             pushd blender/
-            PYTHON=${BLENDER_VERSION}/python/bin/python${{env.python_version}}
+            PYTHON=${MAJOR_BLENDER_VERSION}/python/bin/python${{env.python_version}}
             $PYTHON -m ensurepip
             $PYTHON -m pip install --upgrade pip setuptools wheel
             $PYTHON -m pip install --upgrade scipy geomdl scikit-image
