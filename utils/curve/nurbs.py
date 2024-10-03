@@ -924,7 +924,7 @@ class SvNurbsCurve(SvCurve):
                     split_points.append(prev_segment.get_end_point())
                     prev_segment = segment
                 else:
-                    prev_segment = prev_segment.concatenate(segment)
+                    prev_segment = prev_segment.concatenate(segment, remove_knots=True)
 
             new_segments.append(prev_segment)
             return split_ts, split_points, new_segments
