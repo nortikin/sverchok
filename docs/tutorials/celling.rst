@@ -24,4 +24,3 @@ So, plus-minus optimal way of recreation invented here.
    Lesson 05 - Types definition with checking <Celling_00/celling_05>
    Lesson 06 - "Layouts" on "paper space" <Celling_00/celling_06>
    Lesson 07 - SVG/DXF/XMLX/IFC export <Celling_00/celling_07>
-   Lesson 08 - Realisation <Celling_00/celling_08>

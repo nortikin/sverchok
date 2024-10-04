@@ -94,7 +94,7 @@ def populate_surface(surface, field, count, threshold,
     if seed == 0:
         seed = 12345
     if seed is not None:
-        random.seed(seed)
+        np.random.seed(seed)
     done = 0
     generated_verts = []
     generated_uv = []
@@ -109,19 +109,15 @@ def populate_surface(surface, field, count, threshold,
     while done < count:
         iterations += 1
         if iterations > MAX_ITERATIONS:
-            sv_logger.error("Maximum number of iterations (%s) reached, stop.", MAX_ITERATIONS)
+            sv_logger.error("Maximum number of iterations (%s) reached, generated only %s points of %s, stop.", MAX_ITERATIONS, done, count)
             break
         batch_us = []
         batch_vs = []
         left = count - done
         max_size = min(batch_size, left)
-        for i in range(max_size):
-            u = random.uniform(u_min, u_max)
-            v = random.uniform(v_min, v_max)
-            batch_us.append(u)
-            batch_vs.append(v)
-        batch_us = np.array(batch_us)
-        batch_vs = np.array(batch_vs)
+        batch_uvs = np.random.uniform((u_min,v_min), (u_max,v_max), (max_size,2))
+        batch_us = batch_uvs[:,0]
+        batch_vs = batch_uvs[:,1]
         batch_ws = np.zeros_like(batch_us)
         batch_uvs = np.stack((batch_us, batch_vs, batch_ws)).T
 
@@ -138,15 +134,11 @@ def populate_surface(surface, field, count, threshold,
                 candidates = batch_verts[good_idxs]
                 candidate_uvs = batch_uvs[good_idxs]
             else:
-                candidates = []
-                candidate_uvs = []
-                for uv, vert, value in zip(batch_uvs[good_idxs].tolist(), batch_verts[good_idxs].tolist(), values[good_idxs].tolist()):
-                    probe = random.uniform(field_min, field_max)
-                    if probe <= value:
-                        candidates.append(vert)
-                        candidate_uvs.append(uv)
-                candidates = np.array(candidates)
-                candidate_uvs = np.array(candidate_uvs)
+                probes = np.random.uniform(field_min, field_max, len(batch_verts))
+                probe_idxs = probes <= values
+                good_idxs = np.logical_and(good_idxs, probe_idxs)
+                candidates = batch_verts[good_idxs]
+                candidate_uvs = batch_uvs[good_idxs]
         else:
             candidates = batch_verts
             candidate_uvs = batch_uvs
