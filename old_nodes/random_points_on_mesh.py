@@ -423,6 +423,7 @@ class SvRandomPointsOnMesh(SverchCustomTreeNode, bpy.types.Node):
             r.prop(self, "out_np", index=1, text='Edge index', toggle=True)
 
     def rclick_menu(self, context, layout):
+        self.node_replacement_menu(context, layout)
         layout.prop_menu_enum(self, "mode")
         if self.mode == 'SURFACE':
             layout.prop(self, "proportional")
