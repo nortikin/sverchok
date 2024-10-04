@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Lloyd 3D &mdash; Sverchok 1, 2, 0 documentation</title>
+  <title>Populate Mesh &mdash; Sverchok 1, 2, 0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
 
@@ -20,8 +20,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Lloyd on Mesh" href="lloyd_on_mesh.html" />
-    <link rel="prev" title="Lloyd 2D" href="lloyd2d.html" /> 
+    <link rel="next" title="Populate Solid" href="populate_solid.html" />
+    <link rel="prev" title="Mesh clustering" href="mesh_clustering.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -69,21 +69,21 @@
 <li class="toctree-l3"><a class="reference internal" href="field_random_probe.html">Field Random Probe</a></li>
 <li class="toctree-l3"><a class="reference internal" href="homogenous_vector_field.html">Vector P Field</a></li>
 <li class="toctree-l3"><a class="reference internal" href="lloyd2d.html">Lloyd 2D</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">Lloyd 3D</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#dependencies">Dependencies</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#outputs">Outputs</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#example-of-usage">Example of Usage</a></li>
-</ul>
-</li>
+<li class="toctree-l3"><a class="reference internal" href="lloyd3d.html">Lloyd 3D</a></li>
 <li class="toctree-l3"><a class="reference internal" href="lloyd_on_mesh.html">Lloyd on Mesh</a></li>
 <li class="toctree-l3"><a class="reference internal" href="lloyd_on_sphere.html">Lloyd on Sphere</a></li>
 <li class="toctree-l3"><a class="reference internal" href="lloyd_solid.html">Lloyd in Solid</a></li>
 <li class="toctree-l3"><a class="reference internal" href="lloyd_solid_face.html">Lloyd on Solid Face</a></li>
 <li class="toctree-l3"><a class="reference internal" href="mesh_clustering.html">Mesh clustering</a></li>
-<li class="toctree-l3"><a class="reference internal" href="populate_mesh_mk2.html">Populate Mesh</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Populate Mesh</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#category">Category</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#outputs">Outputs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#examples-of-usage">Examples of Usage</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="populate_solid.html">Populate Solid</a></li>
 <li class="toctree-l3"><a class="reference internal" href="populate_surface.html">Populate Surface</a></li>
 <li class="toctree-l3"><a class="reference internal" href="random_points_on_mesh.html">Populate Mesh (Random points on mesh)</a></li>
@@ -144,9 +144,9 @@
       <li><a href="../../main.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../nodes.html">Nodes</a></li>
           <li class="breadcrumb-item"><a href="spatial_index.html">Spatial</a></li>
-      <li class="breadcrumb-item active">Lloyd 3D</li>
+      <li class="breadcrumb-item active">Populate Mesh</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../../_sources/nodes/spatial/lloyd3d.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../../_sources/nodes/spatial/populate_mesh_mk2.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -154,73 +154,124 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="lloyd-3d">
-<h1>Lloyd 3D<a class="headerlink" href="#lloyd-3d" title="Link to this heading">¶</a></h1>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202770272-e3256501-f4c1-4393-8ae9-464c2804fead.png"><img alt="https://user-images.githubusercontent.com/14288520/202770272-e3256501-f4c1-4393-8ae9-464c2804fead.png" src="https://user-images.githubusercontent.com/14288520/202770272-e3256501-f4c1-4393-8ae9-464c2804fead.png" /></a>
-<section id="dependencies">
-<h2>Dependencies<a class="headerlink" href="#dependencies" title="Link to this heading">¶</a></h2>
-<p>This node requires <a class="reference external" href="https://scipy.org/">SciPy</a> library to work.</p>
-</section>
+  <section id="populate-mesh">
+<h1>Populate Mesh<a class="headerlink" href="#populate-mesh" title="Link to this heading">¶</a></h1>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
-<p>This node uses <a class="reference external" href="https://en.wikipedia.org/wiki/Lloyd%27s_algorithm">Lloyd</a> algorithm to redistribute a set of points in 3D space
-(XOY plane) uniformly inside bounding box or bounding sphere.</p>
-<p>Optionally, weighted Lloyd algorithm can be used, to put points more dense in
-places to which higher weight is assigned.</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202794664-d44e94b0-de0a-4712-938d-805ca00f7d1f.gif"><img alt="https://user-images.githubusercontent.com/14288520/202794664-d44e94b0-de0a-4712-938d-805ca00f7d1f.gif" src="https://user-images.githubusercontent.com/14288520/202794664-d44e94b0-de0a-4712-938d-805ca00f7d1f.gif" /></a>
+<p>The node distributes points on given mesh.</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201531076-d2b9e049-b229-4065-acbe-a9c735364e3c.png"><img alt="https://user-images.githubusercontent.com/14288520/201531076-d2b9e049-b229-4065-acbe-a9c735364e3c.png" src="https://user-images.githubusercontent.com/14288520/201531076-d2b9e049-b229-4065-acbe-a9c735364e3c.png" /></a>
+<p>Volume:</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201530858-6d55519a-b06d-4a90-a15d-a564d7c9e5e6.gif"><img alt="https://user-images.githubusercontent.com/14288520/201530858-6d55519a-b06d-4a90-a15d-a564d7c9e5e6.gif" src="https://user-images.githubusercontent.com/14288520/201530858-6d55519a-b06d-4a90-a15d-a564d7c9e5e6.gif" /></a>
+</section>
+<section id="category">
+<h2>Category<a class="headerlink" href="#category" title="Link to this heading">¶</a></h2>
+<p>Spatial -&gt; Populate Mesh</p>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
-<p>This node has the following inputs:</p>
 <ul class="simple">
-<li><p><strong>Sites</strong>. Initial points to be redistributed. This input is mandatory.</p></li>
+<li><p><strong>Vertices</strong>. Vertices of given mesh(es). This input is mandatory.</p></li>
+<li><p><strong>Edges</strong>. Edges of given mesh(es).</p></li>
+<li><p><strong>Faces</strong>. Faces of given mesh(es). This input is mandatory.</p></li>
+<li><p><strong>Weights</strong>. This input is optional. Available only in <strong>Surface</strong> and
+<strong>Edges</strong> modes. This input is supposed to contain one value per face or
+edge. The less value the less number of vertices generates on current face.
+Values lessen then 0 will be changed to 0. This input can be used as mask.
+Just assign 0 values to faces on which there is no need in generation points.</p></li>
+<li><p><strong>Field</strong>. The scalar field defining the distribution of generated points. If
+this input is not connected, the node will generate evenly distributed
+points. This input is mandatory, if <strong>Proportional to Field</strong> parameter is checked.</p></li>
+<li><p><strong>Count</strong>. The number of points to be generated. The default value is 50.</p></li>
+<li><p><strong>MinDistance</strong>. This input is available only when <strong>Distance</strong> parameter is
+set to <strong>Min. Distance</strong>. Minimum allowable distance between generated
+points. If set to zero, there will be no restriction on distance between
+points. Default value is 0.</p></li>
+<li><p><strong>RadiusField</strong>. This input is available and mandatory only when <strong>Distance</strong>
+parameter is set to <strong>Radius Field</strong>. The scalar field, which defines radius
+of free sphere around any generated point.</p></li>
+<li><p><strong>Threshold</strong>. Threshold value: the node will not generate points in areas
+where the value of scalar field is less than this value. The default value is
+0.5.</p></li>
+<li><p><strong>Field Minimum</strong>. Minimum value of scalar field reached within the mesh.
+This input is used to define the probability of vertices generation at
+certain points. This input is only available when the <strong>Proportional to
+Field</strong> parameter is checked. The default value is 0.0.</p></li>
+<li><p><strong>Field Maximum</strong>. Maximum value of scalar field reached within mesh.
+This input is used to define the probability of vertices generation at
+certain points. This input is only available when the <strong>Proportional to Field</strong>
+parameter is checked. The default value is 1.0.</p></li>
+<li><p><strong>Seed</strong>. Random seed. The default value is 0.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202796059-1b124063-5977-48a0-a2a1-d88b845e8894.png"><img alt="https://user-images.githubusercontent.com/14288520/202796059-1b124063-5977-48a0-a2a1-d88b845e8894.png" src="https://user-images.githubusercontent.com/14288520/202796059-1b124063-5977-48a0-a2a1-d88b845e8894.png" /></a>
-<ul class="simple">
-<li><p><strong>Clipping</strong>. Clipping distance for Voronoi diagram. This value will be added
-to size of bounding box or sphere. The default value is 1.0.</p></li>
-</ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202797248-3c10c478-db02-4271-b082-77c834985b5d.gif"><img alt="https://user-images.githubusercontent.com/14288520/202797248-3c10c478-db02-4271-b082-77c834985b5d.gif" src="https://user-images.githubusercontent.com/14288520/202797248-3c10c478-db02-4271-b082-77c834985b5d.gif" /></a>
-<ul class="simple">
-<li><p><strong>Iterations</strong>. Number of Lloyd’s algorithm iterations. The default value is 3.</p></li>
-</ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202796545-27303108-9532-45d8-91c9-6e50cb53f212.gif"><img alt="https://user-images.githubusercontent.com/14288520/202796545-27303108-9532-45d8-91c9-6e50cb53f212.gif" src="https://user-images.githubusercontent.com/14288520/202796545-27303108-9532-45d8-91c9-6e50cb53f212.gif" /></a>
-<ul class="simple">
-<li><p><strong>Weights</strong>. Scalar Field object used to assign different weights for
-different places in 3D space. More points will be put in places which have
-bigger weight. This input is optional. If not connected, uniform Lloyd
-algorithm will be used.</p></li>
-</ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202799380-4a66f4f5-23b5-4fa5-b041-f20259807169.gif"><img alt="https://user-images.githubusercontent.com/14288520/202799380-4a66f4f5-23b5-4fa5-b041-f20259807169.gif" src="https://user-images.githubusercontent.com/14288520/202799380-4a66f4f5-23b5-4fa5-b041-f20259807169.gif" /></a>
 </section>
 <section id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
 <p>This node has the following parameters:</p>
 <ul>
-<li><p><strong>Bounds mode</strong>. This defines bounding shape of generated points. The available options are:</p>
+<li><p><strong>Mode</strong>. This defines where the points will be generated. The available options are:</p>
 <ul class="simple">
-<li><p><strong>Bounding box</strong></p></li>
-<li><p><strong>Bounding sphere</strong>.</p></li>
+<li><p><strong>Volume</strong>. The points will be generated inside the mesh.</p></li>
+<li><p><strong>Surface</strong>. The points will be generated on the surface of the mesh.</p></li>
+<li><p><strong>Edges</strong>. The points will be generated on the edges of the mesh.</p></li>
 </ul>
-<p>The default value is <strong>Bounding box</strong>.</p>
+<p>The default value is <strong>Volume</strong>.</p>
 </li>
+<li><p><strong>Distance</strong>. This defines how minimum distance between generated points is
+defined. The available options are:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><strong>Min. Distance</strong>. The user provides minimum distance between any two
+points in the <strong>MinDistance</strong> input.</p></li>
+<li><p><strong>RadiusField</strong>. The user defines a radius of a sphere that should be
+empty around each generated point, by providing a scalar field in the
+<strong>RadiusField</strong> input. The node makes sure that these spheres will not
+intersect.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202795295-d642f1ae-e544-4dcb-9fc0-0cf6d8e56aa2.png"><img alt="https://user-images.githubusercontent.com/14288520/202795295-d642f1ae-e544-4dcb-9fc0-0cf6d8e56aa2.png" src="https://user-images.githubusercontent.com/14288520/202795295-d642f1ae-e544-4dcb-9fc0-0cf6d8e56aa2.png" /></a>
+<p>The default value is <strong>Min. Distance</strong>.</p>
+</div></blockquote>
+</li>
+<li><p><strong>Proportional to Field</strong>. If checked, then the points density will be distributed
+proportionally to the values of scalar field. Otherwise, the points will be
+uniformly distributed in the area where the value of scalar field exceeds
+threshold. Unchecked by default.</p></li>
+<li><p><strong>Proportional to Face Area / Edge Length</strong>. This parameter is available only
+in <strong>Surface</strong> and <strong>Edges</strong> modes. If checked then the points density will
+be distributed proportionally to areas of mesh faces (in <strong>Surface</strong> mode) or
+length of mesh edges (in <strong>Edges</strong> mode). Checked by default.</p></li>
+<li><p><strong>Random Radius</strong>. This parameter is available only when <strong>Distance</strong>
+parameter is set to <strong>RadiusField</strong>. If checked, then radiuses of empty
+spheres will be generated randomly, by using uniform distribution between 0
+(zero) and the value defined by the scalar field provided in the
+<strong>RadiusField</strong> input. Unchecked by default.</p></li>
+</ul>
 </section>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following output:</p>
 <ul class="simple">
-<li><p><strong>Sites</strong>. Redisrtibuted points.</p></li>
+<li><p><strong>Vertices</strong>. Generated vertices.</p></li>
+<li><p><strong>Indices</strong>. This output is available only in <strong>Surface</strong> and <strong>Edges</strong>
+modes. For each generated point, it contains the index of mesh face or edge
+the point was generated on.</p></li>
+<li><p><strong>Radiuses</strong>. This output is available only when <strong>Distance</strong> parameter is
+set to <strong>RadiusField</strong>. For each generated point, this output contains the
+radius of free space around the point.</p></li>
 </ul>
 </section>
-<section id="example-of-usage">
-<h2>Example of Usage<a class="headerlink" href="#example-of-usage" title="Link to this heading">¶</a></h2>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202798423-78027419-5703-49a3-a38d-49fb20a98ee9.png"><img alt="https://user-images.githubusercontent.com/14288520/202798423-78027419-5703-49a3-a38d-49fb20a98ee9.png" src="https://user-images.githubusercontent.com/14288520/202798423-78027419-5703-49a3-a38d-49fb20a98ee9.png" /></a>
-<ul class="simple">
-<li><p>Spacial-&gt; <a class="reference internal" href="homogenous_vector_field.html"><span class="doc">Vector P Field</span></a></p></li>
-<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
-</ul>
+<section id="examples-of-usage">
+<h2>Examples of Usage<a class="headerlink" href="#examples-of-usage" title="Link to this heading">¶</a></h2>
+<p>Points on the surface of cricket model:</p>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201532606-a738a7b3-c303-44d6-ab81-3f49b0c11468.gif"><img alt="https://user-images.githubusercontent.com/14288520/201532606-a738a7b3-c303-44d6-ab81-3f49b0c11468.gif" src="https://user-images.githubusercontent.com/14288520/201532606-a738a7b3-c303-44d6-ab81-3f49b0c11468.gif" /></a>
+<a class="reference external image-reference" href="../../../docs/assets/nodes/spatial/populate_mesh_surface_1.png"><img alt="../../_images/populate_mesh_surface_1.png" src="../../_images/populate_mesh_surface_1.png" /></a>
+<p>Points within mesh volume, with distribution controlled by scalar field:</p>
+<a class="reference external image-reference" href="../../../docs/assets/nodes/spatial/populate_mesh_volume_2.png"><img alt="../../_images/populate_mesh_volume_2.png" src="../../_images/populate_mesh_volume_2.png" /></a>
+<p>Points on mesh surface, with distribution controlled by scalar field:</p>
+<a class="reference external image-reference" href="../../../docs/assets/nodes/spatial/populate_mesh_surface_2.png"><img alt="../../_images/populate_mesh_surface_2.png" src="../../_images/populate_mesh_surface_2.png" /></a>
+<p>Points on mesh edges, with distribution controlled by scalar field:</p>
+<a class="reference external image-reference" href="../../../docs/assets/nodes/spatial/populate_mesh_edges_1.png"><img alt="../../_images/populate_mesh_edges_1.png" src="../../_images/populate_mesh_edges_1.png" /></a>
+<p>Points on mesh surface, with distribution controlled by scalar field:</p>
+<a class="reference external image-reference" href="../../../docs/assets/nodes/spatial/populate_mesh_field_1.png"><img alt="../../_images/populate_mesh_field_1.png" src="../../_images/populate_mesh_field_1.png" /></a>
+<p>Voronoi built from mesh, with sites distribution controlled by scalar field:</p>
+<a class="reference external image-reference" href="../../../docs/assets/nodes/spatial/populate_mesh_voronoi_1.png"><img alt="../../_images/populate_mesh_voronoi_1.png" src="../../_images/populate_mesh_voronoi_1.png" /></a>
 </section>
 </section>
 
@@ -228,8 +279,8 @@ algorithm will be used.</p></li>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="lloyd2d.html" class="btn btn-neutral float-left" title="Lloyd 2D" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="lloyd_on_mesh.html" class="btn btn-neutral float-right" title="Lloyd on Mesh" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="mesh_clustering.html" class="btn btn-neutral float-left" title="Mesh clustering" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="populate_solid.html" class="btn btn-neutral float-right" title="Populate Solid" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

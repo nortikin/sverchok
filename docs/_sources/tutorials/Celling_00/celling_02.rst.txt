@@ -77,7 +77,6 @@ Demonstrating from one side:
   1. Every plate merged by distance to be sure it consistent and sorted to manipulate after bisect disorder;
   2. Mask formula. For every edge find out thouse of edges, are vertically oriented. That edges are bend edges, that needed to be joined when sewing left and right;
   3. Loop for every plate. Input to that loop original "triangle" and inseted (gap between plates);
-  4. 
 
 7. **Tipisation of plates**:
 
