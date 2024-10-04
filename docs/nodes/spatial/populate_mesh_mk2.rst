@@ -110,3 +110,6 @@ Examples of Usage
 .. image:: https://user-images.githubusercontent.com/14288520/201532606-a738a7b3-c303-44d6-ab81-3f49b0c11468.gif
   :target: https://user-images.githubusercontent.com/14288520/201532606-a738a7b3-c303-44d6-ab81-3f49b0c11468.gif
 
+.. image:: ../../../docs/assets/nodes/spatial/populate_mesh_volume_1.png
+   :target: ../../../docs/assets/nodes/spatial/populate_mesh_volume_1.png
+
