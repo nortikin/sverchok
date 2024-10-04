@@ -115,8 +115,10 @@ class SvPopulateMeshNode(SverchCustomTreeNode, bpy.types.Node):
             update = updateNode)
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, "gen_mode", text='Mode')
-        layout.prop(self, 'distance_mode')
+        layout.label(text='Mode:')
+        layout.prop(self, "gen_mode", text='')
+        layout.label(text='Distance:')
+        layout.prop(self, 'distance_mode', text='')
         layout.prop(self, "proportional_field")
         if self.gen_mode == 'SURFACE':
             layout.prop(self, "proportional_faces", text="Proportional to Face Area")

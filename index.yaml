@@ -302,7 +302,6 @@
     - icon_name: POINTCLOUD_DATA
     - extra_menu: AdvancedObjectsPartialMenu
     - SvHomogenousVectorField
-    - SvRandomPointsOnMesh
     - SvPopulateMeshNode
     - SvPopulateSurfaceMk2Node
     - SvPopulateSolidMk2Node
