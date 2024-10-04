@@ -24,7 +24,7 @@ class SvPopulateMeshNode(SverchCustomTreeNode, bpy.types.Node):
     Tooltip: Generate random points within mesh
     """
     bl_idname = 'SvPopulateMeshNode'
-    bl_label = 'Populate Mesh Mk2'
+    bl_label = 'Populate Mesh'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_POPULATE_SOLID'
 
@@ -153,8 +153,11 @@ class SvPopulateMeshNode(SverchCustomTreeNode, bpy.types.Node):
             raise SvNoDataError(socket=self.inputs['Field'], node=self)
 
         verts_s = self.inputs['Vertices'].sv_get()
-        edges_s = self.inputs['Edges'].sv_get()
-        edges_s = ensure_nesting_level(edges_s, 4)
+        if self.inputs['Edges'].is_linked:
+            edges_s = self.inputs['Edges'].sv_get()
+            edges_s = ensure_nesting_level(edges_s, 4)
+        else:
+            edges_s = [[[None]]]
         faces_s = self.inputs['Faces'].sv_get()
         faces_s = ensure_nesting_level(faces_s, 4)
         if self.gen_mode in {'SURFACE', 'EDGES'} and self.inputs['Weights'].is_linked:
