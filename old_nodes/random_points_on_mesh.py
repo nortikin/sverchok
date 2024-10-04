@@ -320,6 +320,12 @@ class SvRandomPointsOnMesh(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Populate Mesh'
     sv_icon = 'SV_RANDOM_NUM_GEN'
 
+    replacement_nodes = [('SvPopulateMeshNode',
+                          {'Verts': 'Vertices', 'Faces': 'Faces',
+                           'Face weight': 'Weights',
+                           'Number': 'Count'},
+                          None)]
+
     viewer_map = [
         ("SvViewerDrawMk4", [60, 0])
         ], [
