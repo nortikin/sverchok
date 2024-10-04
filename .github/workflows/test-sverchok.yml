@@ -13,14 +13,16 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      blender_version: "2.93"
+      blender_version: "3.6.16"
+      major_blender_version: "3.6"
+      python_version: "3.10"
 
     steps:
     - uses: actions/checkout@v4
-    - name: Set up Python 3.9
+    - name: Set up Python ${{env.python_version}}
       uses: actions/setup-python@v5
       with:
-        python-version: 3.9
+        python-version: ${{env.python_version}}
     - name: Cache
       uses: actions/cache@v4
       with:
@@ -29,13 +31,13 @@ jobs:
     - name: Install Blender
       run: |
         # echo "starting run"
-        BLENDER_VERSION=2.93
-        BLENDER_URL=https://ftp.nluug.nl/pub/graphics/blender/release/Blender2.93/blender-2.93.1-linux-x64.tar.xz
-        # BLENDER_URL=https://ftp.nluug.nl/pub/graphics/blender/release/Blender2.93/blender-2.93.0-linux-x64.tar.xz  # OLDER
+        BLENDER_VERSION=${{env.blender_version}}
+        MAJOR_BLENDER_VERSION=${{env.major_blender_version}}
+        BLENDER_URL=https://mirrors.de.sahilister.net/blender/release/Blender3.6/blender-3.6.16-linux-x64.tar.xz
         SVERCHOK_DIR=scripts/addons/sverchok
         BLENDER_TAR=$(basename $BLENDER_URL)
         BLENDER_DIR=$(basename $BLENDER_URL .tar.xz)
-        RELEASE=blender293_LTS
+        RELEASE=blender3616_LTS
 
         if [ ! -f installation/blender/blender ]
         then
@@ -53,7 +55,7 @@ jobs:
             mv $RELEASE blender
 
             pushd blender/
-            PYTHON=${BLENDER_VERSION}/python/bin/python3.9
+            PYTHON=${MAJOR_BLENDER_VERSION}/python/bin/python${{env.python_version}}
             $PYTHON -m ensurepip
             $PYTHON -m pip install --upgrade pip setuptools wheel
             $PYTHON -m pip install --upgrade scipy geomdl scikit-image
@@ -63,9 +65,9 @@ jobs:
         fi
 
         #mkdir -p ${PWD}/installation/blender/${BLENDER_VERSION}/${SVERCHOK_DIR}
-        ln -s ${PWD} ${PWD}/installation/blender/${BLENDER_VERSION}/${SVERCHOK_DIR}
-        mkdir -p ~/.config/blender/${BLENDER_VERSION}/config/
-        ln -s ${PWD}/tests/references/userpref.blend ~/.config/blender/${BLENDER_VERSION}/config/
+        ln -s ${PWD} ${PWD}/installation/blender/${MAJOR_BLENDER_VERSION}/${SVERCHOK_DIR}
+        mkdir -p ~/.config/blender/${MAJOR_BLENDER_VERSION}/config/
+        ln -s ${PWD}/tests/references/userpref.blend ~/.config/blender/${MAJOR_BLENDER_VERSION}/config/
         
     - name: Test it
       run: |
