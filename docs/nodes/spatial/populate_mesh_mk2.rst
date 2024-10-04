@@ -107,9 +107,36 @@ This node has the following output:
 Examples of Usage
 -----------------
 
+Points on the surface of cricket model:
+
 .. image:: https://user-images.githubusercontent.com/14288520/201532606-a738a7b3-c303-44d6-ab81-3f49b0c11468.gif
   :target: https://user-images.githubusercontent.com/14288520/201532606-a738a7b3-c303-44d6-ab81-3f49b0c11468.gif
 
-.. image:: ../../../docs/assets/nodes/spatial/populate_mesh_volume_1.png
-   :target: ../../../docs/assets/nodes/spatial/populate_mesh_volume_1.png
+.. image:: ../../../docs/assets/nodes/spatial/populate_mesh_surface_1.png
+   :target: ../../../docs/assets/nodes/spatial/populate_mesh_surface_1.png
+
+Points within mesh volume, with distribution controlled by scalar field:
+
+.. image:: ../../../docs/assets/nodes/spatial/populate_mesh_volume_2.png
+   :target: ../../../docs/assets/nodes/spatial/populate_mesh_volume_2.png
+
+Points on mesh surface, with distribution controlled by scalar field:
+
+.. image:: ../../../docs/assets/nodes/spatial/populate_mesh_surface_2.png
+   :target: ../../../docs/assets/nodes/spatial/populate_mesh_surface_2.png
+
+Points on mesh edges, with distribution controlled by scalar field:
+
+.. image:: ../../../docs/assets/nodes/spatial/populate_mesh_edges_1.png
+   :target: ../../../docs/assets/nodes/spatial/populate_mesh_edges_1.png
+
+Points on mesh surface, with distribution controlled by scalar field:
+
+.. image:: ../../../docs/assets/nodes/spatial/populate_mesh_field_1.png
+   :target: ../../../docs/assets/nodes/spatial/populate_mesh_field_1.png
+
+Voronoi built from mesh, with sites distribution controlled by scalar field:
+
+.. image:: ../../../docs/assets/nodes/spatial/populate_mesh_voronoi_1.png
+   :target: ../../../docs/assets/nodes/spatial/populate_mesh_voronoi_1.png
 
