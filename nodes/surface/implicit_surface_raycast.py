@@ -2,55 +2,12 @@
 import numpy as np
 
 import bpy
-from bpy.props import FloatProperty
+from bpy.props import FloatProperty, IntProperty, BoolProperty, EnumProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 from sverchok.utils.field.scalar import SvScalarField
-from sverchok.dependencies import scipy
-
-if scipy is not None:
-    from scipy.optimize import root_scalar
-
-
-def goal(field, init, direction, iso_value):
-    def function(t):
-        p = init + t * direction
-        v = field.evaluate(p[0], p[1], p[2])
-        return v - iso_value
-    return function
-
-
-def find_distance(field, init, direction, max_distance, iso_value):
-    init_value = field.evaluate(init[0], init[1], init[2])
-    sign = (init_value - iso_value)
-    distance = max_distance
-    max_sections = 10
-    i = 0
-    while True:
-        i += 1
-        if i > max_sections:
-            raise Exception(f"Can not find range where the field jumps over iso_value: init value at {init} = {init_value}, last value at {distance} = {value}")
-        p = init + direction * distance
-        value = field.evaluate(p[0], p[1], p[2])
-        #print(value)
-        if (value - iso_value) * sign < 0:
-            break
-        distance /= 2.0
-
-    return distance
-
-
-def solve(field, init, direction, max_distance, iso_value):
-    distance = find_distance(field, init, direction, max_distance, iso_value)
-    sol = root_scalar(goal(field, init, direction, iso_value), method = 'ridder',
-            x0 = 0,
-            bracket = (0, distance)
-        )
-    t = sol.root
-    p = init + t*direction
-    return t, p
-
+from sverchok.utils.manifolds import intersect_line_iso_surface, FAIL, RETURN_NONE, SKIP
 
 class SvExImplSurfaceRaycastNode(SverchCustomTreeNode, bpy.types.Node):
     """
@@ -74,6 +31,29 @@ class SvExImplSurfaceRaycastNode(SverchCustomTreeNode, bpy.types.Node):
             default = 0.0,
             update = updateNode)
 
+    sections : IntProperty(
+            name = "N Sections",
+            default = 10,
+            min = 2,
+            update = updateNode)
+
+    first_only : BoolProperty(
+            name = "First solution only",
+            default = True,
+            update = updateNode)
+
+    fail_modes = [
+            (FAIL, "Fail", "Raise an error", 0),
+            (SKIP, "Skip", "Do not output anything", 1),
+            (RETURN_NONE, "Return None", "Return None", 2)
+        ]
+
+    on_fail : EnumProperty(
+            name = "On fail",
+            items = fail_modes,
+            default = FAIL,
+            update = updateNode)
+
     def sv_init(self, context):
         self.inputs.new('SvScalarFieldSocket', "Field")
         p = self.inputs.new('SvVerticesSocket', "Vertices")
@@ -86,6 +66,14 @@ class SvExImplSurfaceRaycastNode(SverchCustomTreeNode, bpy.types.Node):
         self.inputs.new('SvStringsSocket', 'MaxDistance').prop_name = 'max_distance'
         self.outputs.new('SvVerticesSocket', 'Vertices')
         self.outputs.new('SvStringsSocket', 'Distance')
+
+    def draw_buttons(self, context, layout):
+        layout.prop(self, 'first_only')
+        layout.prop(self, 'sections')
+
+    def draw_buttons_ext(self, context, layout):
+        self.draw_buttons(context, layout)
+        layout.prop(self, 'on_fail')
 
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
@@ -106,20 +94,32 @@ class SvExImplSurfaceRaycastNode(SverchCustomTreeNode, bpy.types.Node):
         verts_out = []
         distance_out = []
 
+        on_fail = self.on_fail
+        if on_fail == SKIP:
+            on_fail = RETURN_NONE
+
         for fields, verts_i, directions, iso_value_i, max_distance_i in zip_long_repeat(field_s, verts_s, direction_s, iso_value_s, max_distance_s):
             new_verts = []
             new_t = []
             for field, vert, direction, iso_value, max_distance in zip_long_repeat(fields, verts_i, directions, iso_value_i, max_distance_i):
-                direction = np.array(direction)
-                norm = np.linalg.norm(direction)
-                if norm == 0:
-                    raise ValueError("Direction vector length is zero!")
-                direction = direction / norm
-                t, p = solve(field, np.array(vert), direction, max_distance, iso_value)
-                #t = t * norm
-                p = tuple(p)
-                new_verts.append(p)
-                new_t.append(t)
+                res = intersect_line_iso_surface(field, vert, direction,
+                                                     max_distance, iso_value,
+                                                     sections = self.sections,
+                                                     first_only = self.first_only,
+                                                     on_fail = on_fail)
+                if res is None:
+                    if self.on_fail == SKIP:
+                        continue
+                    else:
+                        ts = [None]
+                        pts = [None]
+                else:
+                    ts, pts = res
+                if self.first_only:
+                    ts = ts[0]
+                    pts = pts[0]
+                new_verts.append(pts)
+                new_t.append(ts)
             verts_out.append(new_verts)
             distance_out.append(new_t)
 
