@@ -20,7 +20,7 @@ from sverchok.utils.nurbs_common import SvNurbsMaths
 from sverchok.utils.curve.nurbs_algorithms import refine_curve, remove_excessive_knots
 from sverchok.utils.curve.nurbs_solver import SvNurbsCurvePoints, SvNurbsCurveTangents, SvNurbsCurveCotangents, SvNurbsCurveSolver
 
-def adjust_curve_points(curve, us_bar, points):
+def adjust_curve_points(curve, us_bar, points, preserve_tangents=False):
     """
     Modify NURBS curve so that it would pass through specified points
     at specified parameter values.
@@ -40,6 +40,9 @@ def adjust_curve_points(curve, us_bar, points):
     solver = SvNurbsCurveSolver(src_curve=curve)
     orig_pts = curve.evaluate_array(us_bar)
     solver.add_goal(SvNurbsCurvePoints(us_bar, points - orig_pts, relative=True))
+    if preserve_tangents:
+        zeros = np.zeros((n_target_points,3))
+        solver.add_goal(SvNurbsCurveTangents(us_bar, zeros, relative=True))
     solver.set_curve_params(len(curve.get_control_points()), curve.get_knotvector())
     return solver.solve()
 
