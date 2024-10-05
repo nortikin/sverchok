@@ -38,8 +38,9 @@ def adjust_curve_points(curve, us_bar, points):
         raise Exception("Number of U parameters must be equal to number of points")
 
     solver = SvNurbsCurveSolver(src_curve=curve)
-    solver.add_goal(SvNurbsCurvePoints(us_bar, points))
-    solver.set_curve_params(len(curve.get_control_points()))
+    orig_pts = curve.evaluate_array(us_bar)
+    solver.add_goal(SvNurbsCurvePoints(us_bar, points - orig_pts, relative=True))
+    solver.set_curve_params(len(curve.get_control_points()), curve.get_knotvector())
     return solver.solve()
 
 def deform_curve_with_falloff(curve, length_solver, u_bar, falloff_delta, falloff_type, vector, refine_samples=30, tolerance=1e-4):
