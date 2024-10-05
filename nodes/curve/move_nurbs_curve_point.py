@@ -121,23 +121,23 @@ class SvNurbsCurveMovePointNode(SverchCustomTreeNode, bpy.types.Node):
 
                 vector = np.array(vector)
                 if self.method == 'ONE_CPT':
-                    curve = move_curve_point_by_moving_control_point(curve, t_value, index, vector)
+                    new_curve = move_curve_point_by_moving_control_point(curve, t_value, index, vector)
                 elif self.method == 'ONE_WEIGHT':
-                    curve = move_curve_point_by_adjusting_one_weight(curve, t_value, index, distance)
+                    new_curve = move_curve_point_by_adjusting_one_weight(curve, t_value, index, distance)
                 elif self.method == 'TWO_WEIGHTS':
-                    curve = move_curve_point_by_adjusting_two_weights(curve, t_value, index, distance=distance)
+                    new_curve = move_curve_point_by_adjusting_two_weights(curve, t_value, index, distance=distance)
                 elif self.method == 'MOVE_CPTS':
                     if self.preserve_tangent:
                         tangent = TANGENT_PRESERVE
                     else:
                         tangent = None
-                    curve = move_curve_point_by_moving_control_points(curve, t_value, vector, tangent=tangent)
+                    new_curve = move_curve_point_by_moving_control_points(curve, t_value, vector, tangent=tangent)
                 elif self.method == 'INSERT_KNOT':
-                    curve = move_curve_point_by_inserting_knot(curve, t_value, vector)
+                    new_curve = move_curve_point_by_inserting_knot(curve, t_value, vector)
                 else:
                     raise Exception("Unsupported method")
 
-                new_curves.append(curve)
+                new_curves.append(new_curve)
 
             if flat_output:
                 curves_out.extend(new_curves)
