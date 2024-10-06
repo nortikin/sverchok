@@ -24,7 +24,7 @@ class SvPrepareCurvesNetNode(SverchCustomTreeNode, bpy.types.Node):
     bl_idname = 'SvPrepareCurvesNetNode'
     bl_label = 'Prepare NURBS Curves Net'
     bl_icon = 'OUTLINER_OB_EMPTY'
-    sv_icon = 'SV_INTERSECT_CURVES'
+    sv_icon = 'SV_SURFACE_FROM_CURVES'
     sv_dependencies = {'scipy'}
 
     t_modes = [
