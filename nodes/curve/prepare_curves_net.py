@@ -13,7 +13,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level
 from sverchok.utils.curve import SvCurve
 from sverchok.utils.curve.nurbs import SvNurbsCurve
-from sverchok.utils.curve.nurbs_solver_applications import adjust_curve_points
+from sverchok.utils.curve.prepare_curves_net import prepare_curves_net, COUNT, FIT, EXPLICIT, PRIMARY_U, PRIMARY_V
 from sverchok.utils.manifolds import nearest_point_on_curve
 
 class SvPrepareCurvesNetNode(SverchCustomTreeNode, bpy.types.Node):
@@ -28,9 +28,9 @@ class SvPrepareCurvesNetNode(SverchCustomTreeNode, bpy.types.Node):
     sv_dependencies = {'scipy'}
 
     t_modes = [
-            ('COUNT', "Uniform", "Use uniform T values distribution according to curves count", 0),
-            ('FIT', "By Curves Location", "Automatically find T values for nearest points", 1),
-            ('EXPLICIT', "Explicit", "Use explicitly provided T values", 2)
+            (COUNT, "Uniform", "Use uniform T values distribution according to curves count", 0),
+            (FIT, "By Curves Location", "Automatically find T values for nearest points", 1),
+            (EXPLICIT, "Explicit", "Use explicitly provided T values", 2)
         ]
 
     bias_modes = [
@@ -98,85 +98,9 @@ class SvPrepareCurvesNetNode(SverchCustomTreeNode, bpy.types.Node):
         self.outputs.new('SvStringsSocket', 'T2')
         self.update_sockets(context)
 
-    def prepare_t_by_count(self, curves, n):
-        bounds = np.array([c.get_u_bounds() for c in curves])
-        ts_min = bounds[:,0]
-        ts_max = bounds[:,1]
-        t_values = np.linspace(ts_min, ts_max, num=n).T
-        pts = [c.evaluate_array(t) for c, t in zip(curves, t_values)]
-        pts = np.array(pts)
-        return t_values, pts
-
-    def prepare_t(self, mode, curves, t_values, n):
-        if mode == 'EXPLICIT':
-            target_pts = [c.evaluate_array(t) for c, t in zip(curves, t_values)]
-            target_pts = np.array(target_pts)
-        elif mode == 'COUNT':
-            t_values, target_pts = self.prepare_t_by_count(curves, n)
-        else: # FIT
-            raise Exception("Can't fit T values for base curves")
-        return t_values, target_pts
-
-    def fit_t(self, primary_curves, primary_t_values, secondary_curves):
-        primary_curve_pts = [c.evaluate_array(primary_t_values[i]) for i, c in enumerate(primary_curves)]
-        primary_curve_pts = np.array(primary_curve_pts)
-        secondary_t_values = [nearest_point_on_curve(primary_curve_pts[:,i], curve, samples=self.fit_samples, output_points=False) for i, curve in enumerate(secondary_curves)]
-        secondary_t_values = np.array(secondary_t_values)
-        return secondary_t_values
-
-    def prepare_uv(self, u_curves, v_curves, u_values, v_values):
-        if self.u_mode != 'FIT':
-            u_values, u_pts = self.prepare_t(self.u_mode, u_curves, u_values, len(v_curves))
-        else:
-            u_values, u_pts = None, None
-        if self.v_mode != 'FIT':
-            v_values, v_pts = self.prepare_t(self.v_mode, v_curves, v_values, len(u_curves))
-        else:
-            v_values, v_pts = None, None
-        if self.bias == 'U':
-            return u_values, v_values, u_pts
-        else:
-            return u_values, v_values, v_pts
-
-    def process_single(self, u_curves, v_curves, u_values, v_values):
-        u_values, v_values, target_pts = self.prepare_uv(u_curves, v_curves, u_values, v_values)
-        if self.u_mode == 'FIT' and self.v_mode != 'FIT':
-            u_values = self.fit_t(v_curves, v_values, u_curves)
-        elif self.u_mode != 'FIT' and self.v_mode == 'FIT':
-            v_values = self.fit_t(u_curves, u_values, v_curves)
-        if target_pts is None:
-            if self.bias == 'U':
-                target_pts = [c.evaluate_array(t) for c, t in zip(u_curves, u_values)]
-            else:
-                target_pts = [c.evaluate_array(t) for c, t in zip(v_curves, v_values)]
-            target_pts = np.array(target_pts)
-
-        if self.bias == 'U':
-            new_u_curves = u_curves
-            new_v_curves = []
-            for i, v_curve in enumerate(v_curves):
-                pts = target_pts[:,i]
-                new_curve = adjust_curve_points(v_curve, v_values[i], pts,
-                                                preserve_tangents = self.preserve_tangents)
-                new_v_curves.append(new_curve)
-        else:
-            new_u_curves = []
-            new_v_curves = v_curves
-            for i, u_curve in enumerate(u_curves):
-                pts = target_pts[:,i]
-                new_curve = adjust_curve_points(u_curve, u_values[i], pts,
-                                                preserve_tangents = self.preserve_tangents)
-                new_u_curves.append(new_curve)
-        if self.bias == 'U':
-            target_pts = np.transpose(target_pts, axes=(1,0,2))
-        return new_u_curves, new_v_curves, target_pts, u_values, v_values
-
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
             return
-
-        if self.u_mode == 'FIT' and self.v_mode == 'FIT':
-            raise Exception("Automatic T values fitting can not be enabled for both directions")
 
         u_curves_s = self.inputs['Curve1'].sv_get()
         v_curves_s = self.inputs['Curve2'].sv_get()
@@ -209,7 +133,14 @@ class SvPrepareCurvesNetNode(SverchCustomTreeNode, bpy.types.Node):
             new_u_values = []
             new_v_values = []
             for u_curves, v_curves, u_values, v_values in zip_long_repeat(*params):
-                u_curves, v_curves, pts, u_values, v_values = self.process_single(u_curves, v_curves, u_values, v_values)
+                res = prepare_curves_net(u_curves, v_curves,
+                                         u_values, v_values,
+                                         bias = self.bias,
+                                         u_mode = self.u_mode,
+                                         v_mode = self.v_mode,
+                                         fit_samples = self.fit_samples,
+                                         preserve_tangents = self.preserve_tangents)
+                u_curves, v_curves, pts, u_values, v_values = res
                 new_u_curves.append(u_curves)
                 new_v_curves.append(v_curves)
                 new_pts.append(pts)
