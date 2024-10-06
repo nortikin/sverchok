@@ -20,6 +20,8 @@ def prepare_curves_net(u_curves, v_curves,
                        bias = PRIMARY_U,
                        u_mode = UNIFORM,
                        v_mode = UNIFORM,
+                       crop_u = False,
+                       crop_v = False,
                        fit_samples = 50,
                        preserve_tangents = False):
     """
@@ -38,6 +40,8 @@ def prepare_curves_net(u_curves, v_curves,
           provided values. u_mode and v_mode can not be set to  FIT simultaneously.
         * fit_samples: initial resolution parameter for finding nearest point
           (for FIT mode).
+        * crop_u, crop_v: if True, cut off tails of U and/or V curves, which
+          are outside first and last intersections.
         * preserve_tangents: if True, preserve curve tangents while adjusting.
           This may lead to error if there are too few control points on curves
           being adjusted (you may need to refine curves first).
@@ -67,7 +71,7 @@ def prepare_curves_net(u_curves, v_curves,
         if mode == EXPLICIT:
             target_pts = [c.evaluate_array(t) for c, t in zip(curves, t_values)]
             target_pts = np.array(target_pts)
-        elif mode == COUNT:
+        elif mode == UNIFORM:
             t_values, target_pts = prepare_t_by_count(curves, n)
         else: # FIT
             raise Exception("Can't fit T values for base curves")
@@ -94,6 +98,11 @@ def prepare_curves_net(u_curves, v_curves,
             return u_values, v_values, u_pts
         else:
             return u_values, v_values, v_pts
+
+    def crop(curve, t_values):
+        t_min = min(t_values)
+        t_max = max(t_values)
+        return curve.cut_segment(t_min, t_max)
 
     u_values, v_values, target_pts = prepare_uv()
     if u_mode == FIT and v_mode != FIT:
@@ -125,5 +134,9 @@ def prepare_curves_net(u_curves, v_curves,
             new_u_curves.append(new_curve)
     if bias == PRIMARY_U:
         target_pts = np.transpose(target_pts, axes=(1,0,2))
+    if crop_u:
+        new_u_curves = [crop(c, u_values[i]) for i, c in enumerate(new_u_curves)]
+    if crop_v:
+        new_v_curves = [crop(c, v_values[i]) for i, c in enumerate(new_v_curves)]
     return new_u_curves, new_v_curves, target_pts, u_values, v_values
 

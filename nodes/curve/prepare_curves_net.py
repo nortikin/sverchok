@@ -66,6 +66,16 @@ class SvPrepareCurvesNetNode(SverchCustomTreeNode, bpy.types.Node):
             default = False,
             update = updateNode)
 
+    crop_u : BoolProperty(
+            name = "Crop U Curves",
+            default = False,
+            update = updateNode)
+
+    crop_v : BoolProperty(
+            name = "Crop V Curves",
+            default = False,
+            update = updateNode)
+
     fit_samples : IntProperty(
             name = "Fit Samples",
             description = "Initial number of subdivisions for search of nearest points",
@@ -81,6 +91,8 @@ class SvPrepareCurvesNetNode(SverchCustomTreeNode, bpy.types.Node):
         layout.label(text='Curve 2 parameters:')
         layout.prop(self, 'v_mode', text='')
         layout.prop(self, 'preserve_tangents')
+        layout.prop(self, 'crop_u')
+        layout.prop(self, 'crop_v')
 
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
@@ -133,12 +145,19 @@ class SvPrepareCurvesNetNode(SverchCustomTreeNode, bpy.types.Node):
             new_u_values = []
             new_v_values = []
             for u_curves, v_curves, u_values, v_values in zip_long_repeat(*params):
+                u_curves = [SvNurbsCurve.to_nurbs(c) for c in u_curves]
+                v_curves = [SvNurbsCurve.to_nurbs(c) for c in v_curves]
+                if any(c is None for c in u_curves):
+                    raise Exception("Some of U curves are not NURBS curves")
+                if any(c is None for c in v_curves):
+                    raise Exception("Some of V curves are not NURBS curves")
                 res = prepare_curves_net(u_curves, v_curves,
                                          u_values, v_values,
                                          bias = self.bias,
                                          u_mode = self.u_mode,
                                          v_mode = self.v_mode,
                                          fit_samples = self.fit_samples,
+                                         crop_u = self.crop_u, crop_v = self.crop_v,
                                          preserve_tangents = self.preserve_tangents)
                 u_curves, v_curves, pts, u_values, v_values = res
                 new_u_curves.append(u_curves)
