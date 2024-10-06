@@ -28,7 +28,7 @@ class SvPrepareCurvesNetNode(SverchCustomTreeNode, bpy.types.Node):
     sv_dependencies = {'scipy'}
 
     t_modes = [
-            ('COUNT', "By Curves Count", "Use uniform T values distribution according to curves count", 0),
+            ('COUNT', "Uniform", "Use uniform T values distribution according to curves count", 0),
             ('FIT', "By Curves Location", "Automatically find T values for nearest points", 1),
             ('EXPLICIT', "Explicit", "Use explicitly provided T values", 2)
         ]
