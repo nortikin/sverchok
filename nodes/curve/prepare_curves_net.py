@@ -7,10 +7,10 @@
 
 import numpy as np
 import bpy
-from bpy.props import FloatProperty, EnumProperty, BoolProperty
+from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
+from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level
 from sverchok.utils.curve import SvCurve
 from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.curve.nurbs_solver_applications import adjust_curve_points
@@ -29,8 +29,8 @@ class SvPrepareCurvesNetNode(SverchCustomTreeNode, bpy.types.Node):
 
     t_modes = [
             ('COUNT', "By Curves Count", "Use uniform T values distribution according to curves count", 0),
-            ('EXPLICIT', "Explicit", "Use explicitly provided T values", 1),
-            ('FIT', "Nearest", "Automatically find T values for nearest points", 2)
+            ('FIT', "By Curves Location", "Automatically find T values for nearest points", 1),
+            ('EXPLICIT', "Explicit", "Use explicitly provided T values", 2)
         ]
 
     bias_modes = [
@@ -66,10 +66,25 @@ class SvPrepareCurvesNetNode(SverchCustomTreeNode, bpy.types.Node):
             default = False,
             update = updateNode)
 
+    fit_samples : IntProperty(
+            name = "Fit Samples",
+            description = "Initial number of subdivisions for search of nearest points",
+            default = 50,
+            min = 3,
+            update = updateNode)
+
     def draw_buttons(self, context, layout):
-        layout.prop(self, 'bias')
-        layout.prop(self, 'u_mode')
-        layout.prop(self, 'v_mode')
+        layout.label(text='Primary curves:')
+        layout.prop(self, 'bias', text='')
+        layout.label(text='Curve 1 parameters:')
+        layout.prop(self, 'u_mode', text='')
+        layout.label(text='Curve 2 parameters:')
+        layout.prop(self, 'v_mode', text='')
+        layout.prop(self, 'preserve_tangents')
+
+    def draw_buttons_ext(self, context, layout):
+        self.draw_buttons(context, layout)
+        layout.prop(self, 'fit_samples')
 
     def sv_init(self, context):
         self.inputs.new('SvCurveSocket', "Curve1")
@@ -105,7 +120,7 @@ class SvPrepareCurvesNetNode(SverchCustomTreeNode, bpy.types.Node):
     def fit_t(self, primary_curves, primary_t_values, secondary_curves):
         primary_curve_pts = [c.evaluate_array(primary_t_values[i]) for i, c in enumerate(primary_curves)]
         primary_curve_pts = np.array(primary_curve_pts)
-        secondary_t_values = [nearest_point_on_curve(primary_curve_pts[:,i], curve, samples=100, output_points=False) for i, curve in enumerate(secondary_curves)]
+        secondary_t_values = [nearest_point_on_curve(primary_curve_pts[:,i], curve, samples=self.fit_samples, output_points=False) for i, curve in enumerate(secondary_curves)]
         secondary_t_values = np.array(secondary_t_values)
         return secondary_t_values
 
@@ -165,6 +180,9 @@ class SvPrepareCurvesNetNode(SverchCustomTreeNode, bpy.types.Node):
 
         u_curves_s = self.inputs['Curve1'].sv_get()
         v_curves_s = self.inputs['Curve2'].sv_get()
+        input_level_u = get_data_nesting_level(u_curves_s, data_types=(SvCurve,))
+        input_level_v = get_data_nesting_level(v_curves_s, data_types=(SvCurve,))
+        flat_output = max(input_level_u, input_level_v) <= 2
         u_curves_s = ensure_nesting_level(u_curves_s, 3, data_types=(SvCurve,))
         v_curves_s = ensure_nesting_level(v_curves_s, 3, data_types=(SvCurve,))
 
@@ -197,11 +215,18 @@ class SvPrepareCurvesNetNode(SverchCustomTreeNode, bpy.types.Node):
                 new_pts.append(pts)
                 new_u_values.append(u_values)
                 new_v_values.append(v_values)
-            u_curves_out.append(new_u_curves)
-            v_curves_out.append(new_v_curves)
-            pts_out.append(new_pts)
-            u_out.append(new_u_values)
-            v_out.append(new_v_values)
+            if flat_output:
+                u_curves_out.extend(new_u_curves)
+                v_curves_out.extend(new_v_curves)
+                pts_out.extend(new_pts)
+                u_out.extend(new_u_values)
+                v_out.extend(new_v_values)
+            else:
+                u_curves_out.append(new_u_curves)
+                v_curves_out.append(new_v_curves)
+                pts_out.append(new_pts)
+                u_out.append(new_u_values)
+                v_out.append(new_v_values)
 
         self.outputs['Curve1'].sv_set(u_curves_out)
         self.outputs['Curve2'].sv_set(v_curves_out)
