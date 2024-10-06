@@ -537,6 +537,7 @@
         - icon_name: OUTLINER_OB_CURVE
         - extra_menu: AdvancedObjectsPartialMenu
         - SvIntersectNurbsCurvesNode
+        - SvPrepareCurvesNetNode
         - SvExCastCurveNode
         - SvProjectCurveSurfaceNode
         - SvOffsetCurveMk2Node
