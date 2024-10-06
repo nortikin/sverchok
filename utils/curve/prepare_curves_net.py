@@ -9,7 +9,7 @@ import numpy as np
 from sverchok.utils.curve.nurbs_solver_applications import adjust_curve_points
 from sverchok.utils.manifolds import nearest_point_on_curve
 
-COUNT = 'COUNT'
+UNIFORM = 'COUNT'
 FIT = 'FIT'
 EXPLICIT = 'EXPLICIT'
 PRIMARY_U = 'U'
@@ -18,10 +18,38 @@ PRIMARY_V = 'V'
 def prepare_curves_net(u_curves, v_curves,
                        u_values, v_values,
                        bias = PRIMARY_U,
-                       u_mode = COUNT,
-                       v_mode = COUNT,
+                       u_mode = UNIFORM,
+                       v_mode = UNIFORM,
                        fit_samples = 50,
                        preserve_tangents = False):
+    """
+    Adjust U- or V-curves so that each U-curve would exactly intersect each V-curve.
+
+    Args:
+        * u_curves, v_curves: two lists of SvCurve instances.
+        * u_values, v_values: curve parameter values, at which they should
+          intersect. Mandatory if corresponding (u_mode or v_mode) is EXPLICIT.
+        * bias: PRIMARY_U or PRIMARY_V. PRIMARY_U means leave U curves as is
+          and adjust V curves. PRIMARY_V means adjust U curves.
+        * u_mode, v_mode: modes of providing curve parameter values for intersection.
+          Possible values are UNIFORM, FIT and EXPLICIT. UNIFORM means uniform T
+          values distribution; FIT means find nearest place on the curve to
+          corresponding point on another curve; EXPLICIT means use explicitly
+          provided values. u_mode and v_mode can not be set to  FIT simultaneously.
+        * fit_samples: initial resolution parameter for finding nearest point
+          (for FIT mode).
+        * preserve_tangents: if True, preserve curve tangents while adjusting.
+          This may lead to error if there are too few control points on curves
+          being adjusted (you may need to refine curves first).
+
+    Returns:
+        Tuple:
+        * new u_curves
+        * new v_curves
+        * intersection points
+        * intersection T parameter values for U curves
+        * intersection T parameter values for V curves
+    """
 
     if u_mode == FIT and v_mode == FIT:
         raise Exception("Automatic T values fitting can not be enabled for both directions")

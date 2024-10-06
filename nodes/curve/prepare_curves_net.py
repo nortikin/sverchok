@@ -13,7 +13,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level
 from sverchok.utils.curve import SvCurve
 from sverchok.utils.curve.nurbs import SvNurbsCurve
-from sverchok.utils.curve.prepare_curves_net import prepare_curves_net, COUNT, FIT, EXPLICIT, PRIMARY_U, PRIMARY_V
+from sverchok.utils.curve.prepare_curves_net import prepare_curves_net, UNIFORM, FIT, EXPLICIT, PRIMARY_U, PRIMARY_V
 from sverchok.utils.manifolds import nearest_point_on_curve
 
 class SvPrepareCurvesNetNode(SverchCustomTreeNode, bpy.types.Node):
@@ -28,19 +28,19 @@ class SvPrepareCurvesNetNode(SverchCustomTreeNode, bpy.types.Node):
     sv_dependencies = {'scipy'}
 
     t_modes = [
-            (COUNT, "Uniform", "Use uniform T values distribution according to curves count", 0),
+            (UNIFORM, "Uniform", "Use uniform T values distribution according to curves count", 0),
             (FIT, "By Curves Location", "Automatically find T values for nearest points", 1),
             (EXPLICIT, "Explicit", "Use explicitly provided T values", 2)
         ]
 
     bias_modes = [
-            ('U', "Curve 1", "Curves along U direction are main, adjust curves along V direction", 0),
-            ('V', "Curve 2", "Curves along V direction are main, adjust curves along U direction", 1)
+            (PRIMARY_U, "Curve 1", "Curves along U direction are main, adjust curves along V direction", 0),
+            (PRIMARY_V, "Curve 2", "Curves along V direction are main, adjust curves along U direction", 1)
         ]
 
     def update_sockets(self, context):
-        self.inputs['T1'].hide_safe = self.u_mode != 'EXPLICIT'
-        self.inputs['T2'].hide_safe = self.v_mode != 'EXPLICIT'
+        self.inputs['T1'].hide_safe = self.u_mode != EXPLICIT
+        self.inputs['T2'].hide_safe = self.v_mode != EXPLICIT
         updateNode(self, context)
 
     bias : EnumProperty(
@@ -52,13 +52,13 @@ class SvPrepareCurvesNetNode(SverchCustomTreeNode, bpy.types.Node):
     u_mode : EnumProperty(
             name = "T1 values",
             items = t_modes,
-            default = 'COUNT',
+            default = UNIFORM,
             update = update_sockets)
 
     v_mode : EnumProperty(
             name = "T2 values",
             items = t_modes,
-            default = 'COUNT',
+            default = UNIFORM,
             update = update_sockets)
 
     preserve_tangents : BoolProperty(
@@ -110,12 +110,12 @@ class SvPrepareCurvesNetNode(SverchCustomTreeNode, bpy.types.Node):
         u_curves_s = ensure_nesting_level(u_curves_s, 3, data_types=(SvCurve,))
         v_curves_s = ensure_nesting_level(v_curves_s, 3, data_types=(SvCurve,))
 
-        if self.u_mode == 'EXPLICIT':
+        if self.u_mode == EXPLICIT:
             u_values_s = self.inputs['T1'].sv_get()
             u_values_s = ensure_nesting_level(u_values_s, 4)
         else:
             u_values_s = [[None]]
-        if self.v_mode == 'EXPLICIT':
+        if self.v_mode == EXPLICIT:
             v_values_s = self.inputs['T2'].sv_get()
             v_values_s = ensure_nesting_level(v_values_s, 4)
         else:
