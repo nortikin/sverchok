@@ -5,16 +5,14 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
-import numpy as np
 import bpy
-from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
+from bpy.props import EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level
 from sverchok.utils.curve import SvCurve
 from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.curve.prepare_curves_net import prepare_curves_net, UNIFORM, FIT, EXPLICIT, PRIMARY_U, PRIMARY_V
-from sverchok.utils.manifolds import nearest_point_on_curve
 
 class SvPrepareCurvesNetNode(SverchCustomTreeNode, bpy.types.Node):
     """
@@ -67,12 +65,12 @@ class SvPrepareCurvesNetNode(SverchCustomTreeNode, bpy.types.Node):
             update = updateNode)
 
     crop_u : BoolProperty(
-            name = "Crop U Curves",
+            name = "Crop Curves 1",
             default = False,
             update = updateNode)
 
     crop_v : BoolProperty(
-            name = "Crop V Curves",
+            name = "Crop Curves 2",
             default = False,
             update = updateNode)
 
