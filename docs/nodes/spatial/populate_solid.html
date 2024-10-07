@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../">
 <head>
@@ -6,17 +8,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Populate Solid &mdash; Sverchok 1, 2, 0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=7ab3649f" />
 
   
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/documentation_options.js?v=773c2105"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/documentation_options.js?v=773c2105"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -36,9 +34,6 @@
             Sverchok
               <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
           </a>
-              <div class="version">
-                1, 2, 0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -155,7 +150,8 @@
              
   <section id="populate-solid">
 <h1>Populate Solid<a class="headerlink" href="#populate-solid" title="Link to this heading">¶</a></h1>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202823386-8c640d40-e5b2-40d4-8d52-ae4aa6dbf891.png"><img alt="https://user-images.githubusercontent.com/14288520/202823386-8c640d40-e5b2-40d4-8d52-ae4aa6dbf891.png" src="https://user-images.githubusercontent.com/14288520/202823386-8c640d40-e5b2-40d4-8d52-ae4aa6dbf891.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202823386-8c640d40-e5b2-40d4-8d52-ae4aa6dbf891.png"><img alt="https://user-images.githubusercontent.com/14288520/202823386-8c640d40-e5b2-40d4-8d52-ae4aa6dbf891.png" src="https://user-images.githubusercontent.com/14288520/202823386-8c640d40-e5b2-40d4-8d52-ae4aa6dbf891.png" />
+</a>
 <section id="dependencies">
 <h2>Dependencies<a class="headerlink" href="#dependencies" title="Link to this heading">¶</a></h2>
 <p>This node requires <a class="reference external" href="../../solids.rst">FreeCAD</a> library to work.</p>
@@ -183,7 +179,8 @@ radiuses of such spheres are provided as a scalar field: it defines a radius
 value for any point in the space.</p></li>
 </ul>
 <p>The node can generate points either inside the Solid body, or on it’s surface.</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202843160-4d678ed7-f50e-4b8d-bf7c-2e9405b4a69f.png"><img alt="https://user-images.githubusercontent.com/14288520/202843160-4d678ed7-f50e-4b8d-bf7c-2e9405b4a69f.png" src="https://user-images.githubusercontent.com/14288520/202843160-4d678ed7-f50e-4b8d-bf7c-2e9405b4a69f.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202843160-4d678ed7-f50e-4b8d-bf7c-2e9405b4a69f.png"><img alt="https://user-images.githubusercontent.com/14288520/202843160-4d678ed7-f50e-4b8d-bf7c-2e9405b4a69f.png" src="https://user-images.githubusercontent.com/14288520/202843160-4d678ed7-f50e-4b8d-bf7c-2e9405b4a69f.png" />
+</a>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
@@ -192,40 +189,46 @@ value for any point in the space.</p></li>
 <li><p><strong>Solid</strong>. Solid object, in which the points must be generated. This input is
 mandatory.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202843238-83e37c2e-7756-4e60-93b6-54b83a848918.png"><img alt="https://user-images.githubusercontent.com/14288520/202843238-83e37c2e-7756-4e60-93b6-54b83a848918.png" src="https://user-images.githubusercontent.com/14288520/202843238-83e37c2e-7756-4e60-93b6-54b83a848918.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202843238-83e37c2e-7756-4e60-93b6-54b83a848918.png"><img alt="https://user-images.githubusercontent.com/14288520/202843238-83e37c2e-7756-4e60-93b6-54b83a848918.png" src="https://user-images.githubusercontent.com/14288520/202843238-83e37c2e-7756-4e60-93b6-54b83a848918.png" />
+</a>
 <p>Solids-&gt; <a class="reference internal" href="../solid/sphere_solid.html"><span class="doc">Sphere (Solid)</span></a></p>
 <ul class="simple">
 <li><p><strong>Field</strong>. The scalar field defining the distribution of generated points. If
 this input is not connected, the node will generate evenly distributed
 points. This input is mandatory, if <strong>Proportional</strong> parameter is checked.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202843480-46245c44-7dfe-4560-a7f1-1bb52292979a.png"><img alt="https://user-images.githubusercontent.com/14288520/202843480-46245c44-7dfe-4560-a7f1-1bb52292979a.png" src="https://user-images.githubusercontent.com/14288520/202843480-46245c44-7dfe-4560-a7f1-1bb52292979a.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202843480-46245c44-7dfe-4560-a7f1-1bb52292979a.png"><img alt="https://user-images.githubusercontent.com/14288520/202843480-46245c44-7dfe-4560-a7f1-1bb52292979a.png" src="https://user-images.githubusercontent.com/14288520/202843480-46245c44-7dfe-4560-a7f1-1bb52292979a.png" />
+</a>
 <p>Fields-&gt; <a class="reference internal" href="../field/scalar_field_formula.html"><span class="doc">Scalar Field Formula</span></a></p>
 <ul class="simple">
 <li><p><strong>Count</strong>. The number of points to be generated. The default value is 50.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202843675-b9e470ed-e2dd-40bc-974c-59db5edb320b.png"><img alt="https://user-images.githubusercontent.com/14288520/202843675-b9e470ed-e2dd-40bc-974c-59db5edb320b.png" src="https://user-images.githubusercontent.com/14288520/202843675-b9e470ed-e2dd-40bc-974c-59db5edb320b.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202843675-b9e470ed-e2dd-40bc-974c-59db5edb320b.png"><img alt="https://user-images.githubusercontent.com/14288520/202843675-b9e470ed-e2dd-40bc-974c-59db5edb320b.png" src="https://user-images.githubusercontent.com/14288520/202843675-b9e470ed-e2dd-40bc-974c-59db5edb320b.png" />
+</a>
 <ul class="simple">
 <li><p><strong>MinDistance</strong>. This input is available only when <strong>Distance</strong> parameter is
 set to <strong>Min. Distance</strong>. Minimum allowable distance between generated
 points. If set to zero, there will be no restriction on distance between
 points. Default value is 0.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202844045-8b48c206-1aeb-4d99-9d66-4e3b5fc71f92.gif"><img alt="https://user-images.githubusercontent.com/14288520/202844045-8b48c206-1aeb-4d99-9d66-4e3b5fc71f92.gif" src="https://user-images.githubusercontent.com/14288520/202844045-8b48c206-1aeb-4d99-9d66-4e3b5fc71f92.gif" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202844045-8b48c206-1aeb-4d99-9d66-4e3b5fc71f92.gif"><img alt="https://user-images.githubusercontent.com/14288520/202844045-8b48c206-1aeb-4d99-9d66-4e3b5fc71f92.gif" src="https://user-images.githubusercontent.com/14288520/202844045-8b48c206-1aeb-4d99-9d66-4e3b5fc71f92.gif" />
+</a>
 <p>Number-&gt; <a class="reference internal" href="../number/numbers.html"><span class="doc">A Number</span></a></p>
 <ul class="simple">
 <li><p><strong>RadiusField</strong>. This input is available and mandatory only when <strong>Distance</strong>
 parameter is set to <strong>Radius Field</strong>. The scalar field, which defines radius
 of free sphere around any generated point.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202844272-85199fd7-ad08-4314-9ab3-8c4521da5b38.png"><img alt="https://user-images.githubusercontent.com/14288520/202844272-85199fd7-ad08-4314-9ab3-8c4521da5b38.png" src="https://user-images.githubusercontent.com/14288520/202844272-85199fd7-ad08-4314-9ab3-8c4521da5b38.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202844272-85199fd7-ad08-4314-9ab3-8c4521da5b38.png"><img alt="https://user-images.githubusercontent.com/14288520/202844272-85199fd7-ad08-4314-9ab3-8c4521da5b38.png" src="https://user-images.githubusercontent.com/14288520/202844272-85199fd7-ad08-4314-9ab3-8c4521da5b38.png" />
+</a>
 <p>Fields-&gt; <a class="reference internal" href="../field/scalar_field_formula.html"><span class="doc">Scalar Field Formula</span></a></p>
 <ul class="simple">
 <li><p><strong>Threshold</strong>. Threshold value: the node will not generate points in areas
 where the value of scalar field is less than this value. The default value is
 0.5.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202844937-b2b05fe9-abac-4e17-b12c-10b81a52c026.png"><img alt="https://user-images.githubusercontent.com/14288520/202844937-b2b05fe9-abac-4e17-b12c-10b81a52c026.png" src="https://user-images.githubusercontent.com/14288520/202844937-b2b05fe9-abac-4e17-b12c-10b81a52c026.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202844937-b2b05fe9-abac-4e17-b12c-10b81a52c026.png"><img alt="https://user-images.githubusercontent.com/14288520/202844937-b2b05fe9-abac-4e17-b12c-10b81a52c026.png" src="https://user-images.githubusercontent.com/14288520/202844937-b2b05fe9-abac-4e17-b12c-10b81a52c026.png" />
+</a>
 <p>Number-&gt; <a class="reference internal" href="../number/numbers.html"><span class="doc">A Number</span></a>, Fields-&gt; <a class="reference internal" href="../field/scalar_field_formula.html"><span class="doc">Scalar Field Formula</span></a></p>
 <ul class="simple">
 <li><p><strong>Field Minimum</strong>. Minimum value of scalar field reached within the area
@@ -237,17 +240,20 @@ defined by <strong>Bounds</strong> input. This input is used to define the proba
 vertices generation at certain points. This input is only available when the
 <strong>Proportional</strong> parameter is checked. The default value is 1.0.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202845089-a14b0487-10a5-437b-a9d0-f845e38fe666.png"><img alt="https://user-images.githubusercontent.com/14288520/202845089-a14b0487-10a5-437b-a9d0-f845e38fe666.png" src="https://user-images.githubusercontent.com/14288520/202845089-a14b0487-10a5-437b-a9d0-f845e38fe666.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202845089-a14b0487-10a5-437b-a9d0-f845e38fe666.png"><img alt="https://user-images.githubusercontent.com/14288520/202845089-a14b0487-10a5-437b-a9d0-f845e38fe666.png" src="https://user-images.githubusercontent.com/14288520/202845089-a14b0487-10a5-437b-a9d0-f845e38fe666.png" />
+</a>
 <p>Fields-&gt; <a class="reference internal" href="../field/scalar_field_formula.html"><span class="doc">Scalar Field Formula</span></a></p>
 <ul class="simple">
 <li><p><strong>FaceMask</strong>. Mask Solid faces.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202845552-233c083b-5ae3-4287-974b-2d87c0ee798c.png"><img alt="https://user-images.githubusercontent.com/14288520/202845552-233c083b-5ae3-4287-974b-2d87c0ee798c.png" src="https://user-images.githubusercontent.com/14288520/202845552-233c083b-5ae3-4287-974b-2d87c0ee798c.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202845552-233c083b-5ae3-4287-974b-2d87c0ee798c.png"><img alt="https://user-images.githubusercontent.com/14288520/202845552-233c083b-5ae3-4287-974b-2d87c0ee798c.png" src="https://user-images.githubusercontent.com/14288520/202845552-233c083b-5ae3-4287-974b-2d87c0ee798c.png" />
+</a>
 <p>Solids-&gt; <a class="reference internal" href="../solid/box_solid.html"><span class="doc">Box (Solid)</span></a>, Number-&gt; <a class="reference internal" href="../number/list_input.html"><span class="doc">List Input</span></a></p>
 <ul class="simple">
 <li><p><strong>Seed</strong>. Random seed. The default value is 0.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202845244-60dc104d-14c9-4c08-bf90-597e1500c218.png"><img alt="https://user-images.githubusercontent.com/14288520/202845244-60dc104d-14c9-4c08-bf90-597e1500c218.png" src="https://user-images.githubusercontent.com/14288520/202845244-60dc104d-14c9-4c08-bf90-597e1500c218.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202845244-60dc104d-14c9-4c08-bf90-597e1500c218.png"><img alt="https://user-images.githubusercontent.com/14288520/202845244-60dc104d-14c9-4c08-bf90-597e1500c218.png" src="https://user-images.githubusercontent.com/14288520/202845244-60dc104d-14c9-4c08-bf90-597e1500c218.png" />
+</a>
 </section>
 <section id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
@@ -261,7 +267,8 @@ vertices generation at certain points. This input is only available when the
 <p>The default value is <strong>Volume</strong></p>
 </li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202845679-df6b1eb2-936c-4f4d-8769-765f26a9aee8.png"><img alt="https://user-images.githubusercontent.com/14288520/202845679-df6b1eb2-936c-4f4d-8769-765f26a9aee8.png" src="https://user-images.githubusercontent.com/14288520/202845679-df6b1eb2-936c-4f4d-8769-765f26a9aee8.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202845679-df6b1eb2-936c-4f4d-8769-765f26a9aee8.png"><img alt="https://user-images.githubusercontent.com/14288520/202845679-df6b1eb2-936c-4f4d-8769-765f26a9aee8.png" src="https://user-images.githubusercontent.com/14288520/202845679-df6b1eb2-936c-4f4d-8769-765f26a9aee8.png" />
+</a>
 <ul>
 <li><p><strong>Distance</strong>. This defines how minimum distance between generated points is
 defined. The available options are:</p>
@@ -278,7 +285,8 @@ intersect.</p></li>
 </div></blockquote>
 </li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202846408-88497a53-c69d-4d6c-bfaa-61f3d8852e8e.png"><img alt="https://user-images.githubusercontent.com/14288520/202846408-88497a53-c69d-4d6c-bfaa-61f3d8852e8e.png" src="https://user-images.githubusercontent.com/14288520/202846408-88497a53-c69d-4d6c-bfaa-61f3d8852e8e.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202846408-88497a53-c69d-4d6c-bfaa-61f3d8852e8e.png"><img alt="https://user-images.githubusercontent.com/14288520/202846408-88497a53-c69d-4d6c-bfaa-61f3d8852e8e.png" src="https://user-images.githubusercontent.com/14288520/202846408-88497a53-c69d-4d6c-bfaa-61f3d8852e8e.png" />
+</a>
 <p>Fields-&gt; <a class="reference internal" href="../field/scalar_field_formula.html"><span class="doc">Scalar Field Formula</span></a>, Solids-&gt; <a class="reference internal" href="../solid/box_solid.html"><span class="doc">Box (Solid)</span></a>, Number-&gt; <a class="reference internal" href="../number/numbers.html"><span class="doc">A Number</span></a></p>
 <ul class="simple">
 <li><p><strong>Proportional</strong>. If checked, then the points density will be distributed
@@ -286,7 +294,8 @@ proportionally to the values of scalar field. Otherwise, the points will be
 uniformly distributed in the area where the value of scalar field exceeds
 threshold. Unchecked by default.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202846803-8536c6a0-d952-43cc-a9ad-453f72d65ba8.gif"><img alt="https://user-images.githubusercontent.com/14288520/202846803-8536c6a0-d952-43cc-a9ad-453f72d65ba8.gif" src="https://user-images.githubusercontent.com/14288520/202846803-8536c6a0-d952-43cc-a9ad-453f72d65ba8.gif" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202846803-8536c6a0-d952-43cc-a9ad-453f72d65ba8.gif"><img alt="https://user-images.githubusercontent.com/14288520/202846803-8536c6a0-d952-43cc-a9ad-453f72d65ba8.gif" src="https://user-images.githubusercontent.com/14288520/202846803-8536c6a0-d952-43cc-a9ad-453f72d65ba8.gif" />
+</a>
 <p>Fields-&gt; <a class="reference internal" href="../field/scalar_field_formula.html"><span class="doc">Scalar Field Formula</span></a>, Solids-&gt; <a class="reference internal" href="../solid/box_solid.html"><span class="doc">Box (Solid)</span></a>, Number-&gt; <a class="reference internal" href="../number/numbers.html"><span class="doc">A Number</span></a></p>
 <ul class="simple">
 <li><p><strong>Random Radius</strong>. This parameter is available only when <strong>Distance</strong>
@@ -295,7 +304,8 @@ spheres will be generated randomly, by using uniform distribution between 0
 (zero) and the value defined by the scalar field provided in the
 <strong>RadiusField</strong> input. Unchecked by default.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202846901-c14239c3-c7d5-4b2b-803d-6d097f90385d.gif"><img alt="https://user-images.githubusercontent.com/14288520/202846901-c14239c3-c7d5-4b2b-803d-6d097f90385d.gif" src="https://user-images.githubusercontent.com/14288520/202846901-c14239c3-c7d5-4b2b-803d-6d097f90385d.gif" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202846901-c14239c3-c7d5-4b2b-803d-6d097f90385d.gif"><img alt="https://user-images.githubusercontent.com/14288520/202846901-c14239c3-c7d5-4b2b-803d-6d097f90385d.gif" src="https://user-images.githubusercontent.com/14288520/202846901-c14239c3-c7d5-4b2b-803d-6d097f90385d.gif" />
+</a>
 <p>Fields-&gt; <a class="reference internal" href="../field/scalar_field_formula.html"><span class="doc">Scalar Field Formula</span></a>, Solids-&gt; <a class="reference internal" href="../solid/box_solid.html"><span class="doc">Box (Solid)</span></a>, Number-&gt; <a class="reference internal" href="../number/numbers.html"><span class="doc">A Number</span></a></p>
 <ul class="simple">
 <li><p><strong>Accept in surface</strong>. This parameter is only available when the <strong>Generation
@@ -307,7 +317,8 @@ the accuracy of defining whether the point lies on the surface of the body.
 The higher the value, the more precise this process is. The default value is
 5.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202847008-cf135052-a08d-49ae-838e-9ee4e458489d.png"><img alt="https://user-images.githubusercontent.com/14288520/202847008-cf135052-a08d-49ae-838e-9ee4e458489d.png" src="https://user-images.githubusercontent.com/14288520/202847008-cf135052-a08d-49ae-838e-9ee4e458489d.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202847008-cf135052-a08d-49ae-838e-9ee4e458489d.png"><img alt="https://user-images.githubusercontent.com/14288520/202847008-cf135052-a08d-49ae-838e-9ee4e458489d.png" src="https://user-images.githubusercontent.com/14288520/202847008-cf135052-a08d-49ae-838e-9ee4e458489d.png" />
+</a>
 <p>When <strong>Proportional</strong> mode is enabled, then the probability of vertex
 appearance at the certain point is calculated as <code class="docutils literal notranslate"><span class="pre">P</span> <span class="pre">=</span> <span class="pre">(V</span> <span class="pre">-</span> <span class="pre">FieldMin)</span> <span class="pre">/</span>
 <span class="pre">(FieldMax</span> <span class="pre">-</span> <span class="pre">FieldMin)</span></code>, where V is the value of scalar field at that point,
@@ -322,7 +333,8 @@ and FieldMin, FieldMax are values of corresponding node inputs.</p>
 </section>
 <section id="example-of-usage">
 <h2>Example of Usage<a class="headerlink" href="#example-of-usage" title="Link to this heading">¶</a></h2>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202847380-7b36aa68-4e6d-4c79-88a3-3017fb174eae.png"><img alt="https://user-images.githubusercontent.com/14288520/202847380-7b36aa68-4e6d-4c79-88a3-3017fb174eae.png" src="https://user-images.githubusercontent.com/14288520/202847380-7b36aa68-4e6d-4c79-88a3-3017fb174eae.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202847380-7b36aa68-4e6d-4c79-88a3-3017fb174eae.png"><img alt="https://user-images.githubusercontent.com/14288520/202847380-7b36aa68-4e6d-4c79-88a3-3017fb174eae.png" src="https://user-images.githubusercontent.com/14288520/202847380-7b36aa68-4e6d-4c79-88a3-3017fb174eae.png" />
+</a>
 <ul class="simple">
 <li><p>Solids-&gt; <a class="reference internal" href="../solid/cylinder_solid.html"><span class="doc">Cylinder (Solid)</span></a></p></li>
 <li><p>Solids-&gt; <a class="reference internal" href="../solid/solid_boolean.html"><span class="doc">Solid Boolean</span></a></p></li>
@@ -331,16 +343,19 @@ and FieldMin, FieldMax are values of corresponding node inputs.</p>
 </ul>
 <hr class="docutils" />
 <p>Example of “Radius Field” mode usage:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202847664-26cd5174-bfe9-4f44-b594-0dd5ea13f402.png"><img alt="https://user-images.githubusercontent.com/14288520/202847664-26cd5174-bfe9-4f44-b594-0dd5ea13f402.png" src="https://user-images.githubusercontent.com/14288520/202847664-26cd5174-bfe9-4f44-b594-0dd5ea13f402.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202847664-26cd5174-bfe9-4f44-b594-0dd5ea13f402.png"><img alt="https://user-images.githubusercontent.com/14288520/202847664-26cd5174-bfe9-4f44-b594-0dd5ea13f402.png" src="https://user-images.githubusercontent.com/14288520/202847664-26cd5174-bfe9-4f44-b594-0dd5ea13f402.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/icosphere.html"><span class="doc">IcoSphere</span></a></p></li>
 <li><p>Fields-&gt; <a class="reference internal" href="../field/scalar_field_formula.html"><span class="doc">Scalar Field Formula</span></a></p></li>
 <li><p>Solids-&gt; <a class="reference internal" href="../solid/cylinder_solid.html"><span class="doc">Cylinder (Solid)</span></a></p></li>
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202847746-7b1c966a-85b6-41ab-8173-f5296cdab34b.gif"><img alt="https://user-images.githubusercontent.com/14288520/202847746-7b1c966a-85b6-41ab-8173-f5296cdab34b.gif" src="https://user-images.githubusercontent.com/14288520/202847746-7b1c966a-85b6-41ab-8173-f5296cdab34b.gif" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202847746-7b1c966a-85b6-41ab-8173-f5296cdab34b.gif"><img alt="https://user-images.githubusercontent.com/14288520/202847746-7b1c966a-85b6-41ab-8173-f5296cdab34b.gif" src="https://user-images.githubusercontent.com/14288520/202847746-7b1c966a-85b6-41ab-8173-f5296cdab34b.gif" />
+</a>
 <hr class="docutils" />
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202848027-ff0bf841-2b98-4df8-95a8-11078ec2ab09.png"><img alt="https://user-images.githubusercontent.com/14288520/202848027-ff0bf841-2b98-4df8-95a8-11078ec2ab09.png" src="https://user-images.githubusercontent.com/14288520/202848027-ff0bf841-2b98-4df8-95a8-11078ec2ab09.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202848027-ff0bf841-2b98-4df8-95a8-11078ec2ab09.png"><img alt="https://user-images.githubusercontent.com/14288520/202848027-ff0bf841-2b98-4df8-95a8-11078ec2ab09.png" src="https://user-images.githubusercontent.com/14288520/202848027-ff0bf841-2b98-4df8-95a8-11078ec2ab09.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/icosphere.html"><span class="doc">IcoSphere</span></a></p></li>
 <li><p>Fields-&gt; <a class="reference internal" href="../field/scalar_field_formula.html"><span class="doc">Scalar Field Formula</span></a></p></li>

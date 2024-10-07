@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../">
 <head>
@@ -6,17 +8,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Line (Curve) &mdash; Sverchok 1, 2, 0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=7ab3649f" />
 
   
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/documentation_options.js?v=773c2105"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/documentation_options.js?v=773c2105"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -36,9 +34,6 @@
             Sverchok
               <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
           </a>
-              <div class="version">
-                1, 2, 0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -124,6 +119,7 @@
 <li class="toctree-l3"><a class="reference internal" href="point_curve.html">Single-Point Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="polyarc.html">Poly Arc</a></li>
 <li class="toctree-l3"><a class="reference internal" href="polyline.html">Polyline</a></li>
+<li class="toctree-l3"><a class="reference internal" href="prepare_curves_net.html">Prepare NURBS Curves Net</a></li>
 <li class="toctree-l3"><a class="reference internal" href="project_curve_surface.html">Project Curve to Surface (NURBS)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="rbf_curve.html">RBF Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="reduce_degree.html">Reduce Degree (NURBS Curve)</a></li>
@@ -205,19 +201,23 @@
              
   <section id="line-curve">
 <h1>Line (Curve)<a class="headerlink" href="#line-curve" title="Link to this heading">¶</a></h1>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205123453-f5972461-f396-4c3f-a3ce-35d1a227d364.png"><img alt="https://user-images.githubusercontent.com/14288520/205123453-f5972461-f396-4c3f-a3ce-35d1a227d364.png" src="https://user-images.githubusercontent.com/14288520/205123453-f5972461-f396-4c3f-a3ce-35d1a227d364.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205123453-f5972461-f396-4c3f-a3ce-35d1a227d364.png"><img alt="https://user-images.githubusercontent.com/14288520/205123453-f5972461-f396-4c3f-a3ce-35d1a227d364.png" src="https://user-images.githubusercontent.com/14288520/205123453-f5972461-f396-4c3f-a3ce-35d1a227d364.png" />
+</a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node generates a Curve object, which is a segment of straight line between two points.</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205124501-de4bcbd5-4ee1-49ef-a743-6e9aa4e4b77f.png"><img alt="https://user-images.githubusercontent.com/14288520/205124501-de4bcbd5-4ee1-49ef-a743-6e9aa4e4b77f.png" src="https://user-images.githubusercontent.com/14288520/205124501-de4bcbd5-4ee1-49ef-a743-6e9aa4e4b77f.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205124501-de4bcbd5-4ee1-49ef-a743-6e9aa4e4b77f.png"><img alt="https://user-images.githubusercontent.com/14288520/205124501-de4bcbd5-4ee1-49ef-a743-6e9aa4e4b77f.png" src="https://user-images.githubusercontent.com/14288520/205124501-de4bcbd5-4ee1-49ef-a743-6e9aa4e4b77f.png" />
+</a>
 <ul class="simple">
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_curve.html"><span class="doc">Viewer Draw Curve</span></a></p></li>
 </ul>
 <p>Curve domain: defined in node’s inputs, by default from 0 to 1.</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205121877-50a420e7-6d04-4726-aed3-1c2e4aa9fb9e.png"><img alt="https://user-images.githubusercontent.com/14288520/205121877-50a420e7-6d04-4726-aed3-1c2e4aa9fb9e.png" src="https://user-images.githubusercontent.com/14288520/205121877-50a420e7-6d04-4726-aed3-1c2e4aa9fb9e.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205121877-50a420e7-6d04-4726-aed3-1c2e4aa9fb9e.png"><img alt="https://user-images.githubusercontent.com/14288520/205121877-50a420e7-6d04-4726-aed3-1c2e4aa9fb9e.png" src="https://user-images.githubusercontent.com/14288520/205121877-50a420e7-6d04-4726-aed3-1c2e4aa9fb9e.png" />
+</a>
 <p>Behavior when trying to evaluate curve outside of it’s boundaries: returns
 corresponding point on the line.</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205149346-8dbc3261-6974-4160-b169-a8a4655e409c.png"><img alt="https://user-images.githubusercontent.com/14288520/205149346-8dbc3261-6974-4160-b169-a8a4655e409c.png" src="https://user-images.githubusercontent.com/14288520/205149346-8dbc3261-6974-4160-b169-a8a4655e409c.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205149346-8dbc3261-6974-4160-b169-a8a4655e409c.png"><img alt="https://user-images.githubusercontent.com/14288520/205149346-8dbc3261-6974-4160-b169-a8a4655e409c.png" src="https://user-images.githubusercontent.com/14288520/205149346-8dbc3261-6974-4160-b169-a8a4655e409c.png" />
+</a>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
@@ -226,16 +226,19 @@ corresponding point on the line.</p>
 <li><p><strong>Point1</strong>. The first point on the line (the beginning of the curve, if <strong>UMin</strong> is set to 0).</p></li>
 <li><p><strong>Point2</strong>. The second point on the line (the end of the curve, if <strong>UMax</strong> is set to 1). This input is available only if <strong>Mode</strong> parameter is set to <strong>Two points</strong>.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205124931-291bc550-eae1-40ea-8082-bed70256f135.png"><img alt="https://user-images.githubusercontent.com/14288520/205124931-291bc550-eae1-40ea-8082-bed70256f135.png" src="https://user-images.githubusercontent.com/14288520/205124931-291bc550-eae1-40ea-8082-bed70256f135.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205124931-291bc550-eae1-40ea-8082-bed70256f135.png"><img alt="https://user-images.githubusercontent.com/14288520/205124931-291bc550-eae1-40ea-8082-bed70256f135.png" src="https://user-images.githubusercontent.com/14288520/205124931-291bc550-eae1-40ea-8082-bed70256f135.png" />
+</a>
 <ul class="simple">
 <li><p><strong>Direction</strong>. Directing vector of the line. This input is available only when <strong>Mode</strong> parameter is set to <strong>Point and direction</strong>.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205125279-f98c0924-4bb9-4631-9e41-fc739d2d90f8.png"><img alt="https://user-images.githubusercontent.com/14288520/205125279-f98c0924-4bb9-4631-9e41-fc739d2d90f8.png" src="https://user-images.githubusercontent.com/14288520/205125279-f98c0924-4bb9-4631-9e41-fc739d2d90f8.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205125279-f98c0924-4bb9-4631-9e41-fc739d2d90f8.png"><img alt="https://user-images.githubusercontent.com/14288520/205125279-f98c0924-4bb9-4631-9e41-fc739d2d90f8.png" src="https://user-images.githubusercontent.com/14288520/205125279-f98c0924-4bb9-4631-9e41-fc739d2d90f8.png" />
+</a>
 <ul class="simple">
 <li><p><strong>UMin</strong>. Minimum value of curve parameter. The default value is 0.0.</p></li>
 <li><p><strong>UMax</strong>. Maximum value of curve parameter. The default value is 1.0.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205126046-ecd09ee4-14b6-46a4-bdf4-41becd718b81.png"><img alt="https://user-images.githubusercontent.com/14288520/205126046-ecd09ee4-14b6-46a4-bdf4-41becd718b81.png" src="https://user-images.githubusercontent.com/14288520/205126046-ecd09ee4-14b6-46a4-bdf4-41becd718b81.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205126046-ecd09ee4-14b6-46a4-bdf4-41becd718b81.png"><img alt="https://user-images.githubusercontent.com/14288520/205126046-ecd09ee4-14b6-46a4-bdf4-41becd718b81.png" src="https://user-images.githubusercontent.com/14288520/205126046-ecd09ee4-14b6-46a4-bdf4-41becd718b81.png" />
+</a>
 </section>
 <section id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
@@ -248,14 +251,16 @@ corresponding point on the line.</p>
 </ul>
 </li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205126495-ca08918e-9890-46d7-9072-26f3ead54d7c.png"><img alt="https://user-images.githubusercontent.com/14288520/205126495-ca08918e-9890-46d7-9072-26f3ead54d7c.png" src="https://user-images.githubusercontent.com/14288520/205126495-ca08918e-9890-46d7-9072-26f3ead54d7c.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205126495-ca08918e-9890-46d7-9072-26f3ead54d7c.png"><img alt="https://user-images.githubusercontent.com/14288520/205126495-ca08918e-9890-46d7-9072-26f3ead54d7c.png" src="https://user-images.githubusercontent.com/14288520/205126495-ca08918e-9890-46d7-9072-26f3ead54d7c.png" />
+</a>
 <ul class="simple">
 <li><p><strong>Join</strong>. If checked, the node will output a single flat list of Curve
 objects for all sets of input parameters. Otherwise, it will output a
 separate list of Curve objects for each set of input parameters. Checked by
 default.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205127293-da38c0b3-c3ea-4475-984c-ad3bed4ca979.png"><img alt="https://user-images.githubusercontent.com/14288520/205127293-da38c0b3-c3ea-4475-984c-ad3bed4ca979.png" src="https://user-images.githubusercontent.com/14288520/205127293-da38c0b3-c3ea-4475-984c-ad3bed4ca979.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205127293-da38c0b3-c3ea-4475-984c-ad3bed4ca979.png"><img alt="https://user-images.githubusercontent.com/14288520/205127293-da38c0b3-c3ea-4475-984c-ad3bed4ca979.png" src="https://user-images.githubusercontent.com/14288520/205127293-da38c0b3-c3ea-4475-984c-ad3bed4ca979.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/line_mk4.html"><span class="doc">Line</span></a></p></li>
 </ul>
@@ -270,19 +275,22 @@ default.</p></li>
 <section id="examples-of-usage">
 <h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Link to this heading">¶</a></h2>
 <p>Trivial example:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205145147-4617c648-0492-4d35-ad23-0294cdfabab9.png"><img alt="https://user-images.githubusercontent.com/14288520/205145147-4617c648-0492-4d35-ad23-0294cdfabab9.png" src="https://user-images.githubusercontent.com/14288520/205145147-4617c648-0492-4d35-ad23-0294cdfabab9.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205145147-4617c648-0492-4d35-ad23-0294cdfabab9.png"><img alt="https://user-images.githubusercontent.com/14288520/205145147-4617c648-0492-4d35-ad23-0294cdfabab9.png" src="https://user-images.githubusercontent.com/14288520/205145147-4617c648-0492-4d35-ad23-0294cdfabab9.png" />
+</a>
 <ul class="simple">
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_curve.html"><span class="doc">Viewer Draw Curve</span></a></p></li>
 </ul>
 <p>Generate several lines, and bend them according to noise vector field:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205147576-d1b65086-c767-4aa9-8be9-4b3fc66b9809.png"><img alt="https://user-images.githubusercontent.com/14288520/205147576-d1b65086-c767-4aa9-8be9-4b3fc66b9809.png" src="https://user-images.githubusercontent.com/14288520/205147576-d1b65086-c767-4aa9-8be9-4b3fc66b9809.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205147576-d1b65086-c767-4aa9-8be9-4b3fc66b9809.png"><img alt="https://user-images.githubusercontent.com/14288520/205147576-d1b65086-c767-4aa9-8be9-4b3fc66b9809.png" src="https://user-images.githubusercontent.com/14288520/205147576-d1b65086-c767-4aa9-8be9-4b3fc66b9809.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>
 <li><p>Fields-&gt; <a class="reference internal" href="../field/noise_vfield.html"><span class="doc">Noise Vector Field</span></a></p></li>
 <li><p>Curves-&gt; <a class="reference internal" href="apply_field_to_curve.html"><span class="doc">Apply Field to Curve</span></a></p></li>
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_curve.html"><span class="doc">Viewer Draw Curve</span></a></p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205146654-161c1f83-5b36-42fc-99cc-4649d5b2ec45.gif"><img alt="https://user-images.githubusercontent.com/14288520/205146654-161c1f83-5b36-42fc-99cc-4649d5b2ec45.gif" src="https://user-images.githubusercontent.com/14288520/205146654-161c1f83-5b36-42fc-99cc-4649d5b2ec45.gif" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205146654-161c1f83-5b36-42fc-99cc-4649d5b2ec45.gif"><img alt="https://user-images.githubusercontent.com/14288520/205146654-161c1f83-5b36-42fc-99cc-4649d5b2ec45.gif" src="https://user-images.githubusercontent.com/14288520/205146654-161c1f83-5b36-42fc-99cc-4649d5b2ec45.gif" />
+</a>
 </section>
 </section>
 

@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../">
 <head>
@@ -6,17 +8,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Offset Curve &mdash; Sverchok 1, 2, 0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=7ab3649f" />
 
   
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/documentation_options.js?v=773c2105"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/documentation_options.js?v=773c2105"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -36,9 +34,6 @@
             Sverchok
               <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
           </a>
-              <div class="version">
-                1, 2, 0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -124,6 +119,7 @@
 <li class="toctree-l3"><a class="reference internal" href="point_curve.html">Single-Point Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="polyarc.html">Poly Arc</a></li>
 <li class="toctree-l3"><a class="reference internal" href="polyline.html">Polyline</a></li>
+<li class="toctree-l3"><a class="reference internal" href="prepare_curves_net.html">Prepare NURBS Curves Net</a></li>
 <li class="toctree-l3"><a class="reference internal" href="project_curve_surface.html">Project Curve to Surface (NURBS)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="rbf_curve.html">RBF Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="reduce_degree.html">Reduce Degree (NURBS Curve)</a></li>
@@ -205,7 +201,8 @@
              
   <section id="offset-curve">
 <h1>Offset Curve<a class="headerlink" href="#offset-curve" title="Link to this heading">¶</a></h1>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/210442183-f0ed37ab-79d7-4062-91b4-175595212016.png"><img alt="https://user-images.githubusercontent.com/14288520/210442183-f0ed37ab-79d7-4062-91b4-175595212016.png" src="https://user-images.githubusercontent.com/14288520/210442183-f0ed37ab-79d7-4062-91b4-175595212016.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/210442183-f0ed37ab-79d7-4062-91b4-175595212016.png"><img alt="https://user-images.githubusercontent.com/14288520/210442183-f0ed37ab-79d7-4062-91b4-175595212016.png" src="https://user-images.githubusercontent.com/14288520/210442183-f0ed37ab-79d7-4062-91b4-175595212016.png" />
+</a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node generates a Curve, calculated as offset of another Curve by some
@@ -225,7 +222,8 @@ straight line is zero). If the extrusion curve
 has zero curvature points, or, even worse, it has straight segments, these
 algorithms will either make “flipping” surface, or give an error.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/210894147-00b44d39-6842-4a75-80cc-2e0b3a1e2ed2.png"><img alt="https://user-images.githubusercontent.com/14288520/210894147-00b44d39-6842-4a75-80cc-2e0b3a1e2ed2.png" src="https://user-images.githubusercontent.com/14288520/210894147-00b44d39-6842-4a75-80cc-2e0b3a1e2ed2.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/210894147-00b44d39-6842-4a75-80cc-2e0b3a1e2ed2.png"><img alt="https://user-images.githubusercontent.com/14288520/210894147-00b44d39-6842-4a75-80cc-2e0b3a1e2ed2.png" src="https://user-images.githubusercontent.com/14288520/210894147-00b44d39-6842-4a75-80cc-2e0b3a1e2ed2.png" />
+</a>
 <ul class="simple">
 <li><p><strong>Householder</strong>, <strong>Tracking</strong> and <strong>Rotation difference</strong> algorithms are
 “curve-agnostic”, they work independently of curve by itself, depending only
@@ -233,13 +231,15 @@ on tangent direction. They give “good enough” result (at least, without
 errors or sudden flips) for all extrusion curves, but may make twisted
 surfaces in some special cases.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/210892606-1e623971-82b3-4b97-a0a4-a8bda04ddc14.png"><img alt="https://user-images.githubusercontent.com/14288520/210892606-1e623971-82b3-4b97-a0a4-a8bda04ddc14.png" src="https://user-images.githubusercontent.com/14288520/210892606-1e623971-82b3-4b97-a0a4-a8bda04ddc14.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/210892606-1e623971-82b3-4b97-a0a4-a8bda04ddc14.png"><img alt="https://user-images.githubusercontent.com/14288520/210892606-1e623971-82b3-4b97-a0a4-a8bda04ddc14.png" src="https://user-images.githubusercontent.com/14288520/210892606-1e623971-82b3-4b97-a0a4-a8bda04ddc14.png" />
+</a>
 <ul class="simple">
 <li><p><strong>Track normal</strong> algorithm is supposed to give good results without twisting
 for all extrusion curves. It will give better results with higher values of
 “resolution” parameter, but that may be slow.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/210893380-e8e5e7a3-fc7e-4b98-b712-88b64dfc90a3.png"><img alt="https://user-images.githubusercontent.com/14288520/210893380-e8e5e7a3-fc7e-4b98-b712-88b64dfc90a3.png" src="https://user-images.githubusercontent.com/14288520/210893380-e8e5e7a3-fc7e-4b98-b712-88b64dfc90a3.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/210893380-e8e5e7a3-fc7e-4b98-b712-88b64dfc90a3.png"><img alt="https://user-images.githubusercontent.com/14288520/210893380-e8e5e7a3-fc7e-4b98-b712-88b64dfc90a3.png" src="https://user-images.githubusercontent.com/14288520/210893380-e8e5e7a3-fc7e-4b98-b712-88b64dfc90a3.png" />
+</a>
 <ul class="simple">
 <li><p><strong>Specified plane</strong> algorithm selects offset direction vector so that it
 satisfies two conditions: 1) it is perpendicular to curve’s tangent vector,
@@ -254,9 +254,11 @@ approximation” node to automatically calculate normal vector of offset
 operation plane.</p></li>
 </ul>
 <p><a class="reference external" href="https://gist.github.com/0f8f8c8d4b0dca3a403534fb1c423305">https://gist.github.com/0f8f8c8d4b0dca3a403534fb1c423305</a></p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/210561951-0a2a47f8-34ba-4a2f-adb7-d5db19da352b.png"><img alt="https://user-images.githubusercontent.com/14288520/210561951-0a2a47f8-34ba-4a2f-adb7-d5db19da352b.png" src="https://user-images.githubusercontent.com/14288520/210561951-0a2a47f8-34ba-4a2f-adb7-d5db19da352b.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/210561951-0a2a47f8-34ba-4a2f-adb7-d5db19da352b.png"><img alt="https://user-images.githubusercontent.com/14288520/210561951-0a2a47f8-34ba-4a2f-adb7-d5db19da352b.png" src="https://user-images.githubusercontent.com/14288520/210561951-0a2a47f8-34ba-4a2f-adb7-d5db19da352b.png" />
+</a>
 <p>Animation for “specified plane” mode (press image to open):</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/210567213-8e792e30-3794-4398-a298-82ea0c11c150.gif"><img alt="https://user-images.githubusercontent.com/14288520/210567502-07ed3926-8eef-4fdd-b593-8b1fdb340cf0.png" src="https://user-images.githubusercontent.com/14288520/210567502-07ed3926-8eef-4fdd-b593-8b1fdb340cf0.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/210567213-8e792e30-3794-4398-a298-82ea0c11c150.gif"><img alt="https://user-images.githubusercontent.com/14288520/210567502-07ed3926-8eef-4fdd-b593-8b1fdb340cf0.png" src="https://user-images.githubusercontent.com/14288520/210567502-07ed3926-8eef-4fdd-b593-8b1fdb340cf0.png" />
+</a>
 <p>For all algorithms, reference frame’s Z axis is always pointing along curve’s
 tangent direction. Two other axes are always perpendicular to tangent
 direction, but where exactly they are pointing - depends on the algorithm. For
@@ -274,7 +276,8 @@ parameter is set to <strong>Specified plane</strong>, or the <strong>Direction</
 set to <strong>X (Normal)</strong> or <strong>Y (Binormal)</strong>. The input is not available when
 <strong>Offset type</strong> parameter is set to <strong>Variable</strong>. The default value is 0.1.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/210970519-a9710a31-43d2-427d-bb6b-4bfb4d4258eb.png"><img alt="https://user-images.githubusercontent.com/14288520/210970519-a9710a31-43d2-427d-bb6b-4bfb4d4258eb.png" src="https://user-images.githubusercontent.com/14288520/210970519-a9710a31-43d2-427d-bb6b-4bfb4d4258eb.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/210970519-a9710a31-43d2-427d-bb6b-4bfb4d4258eb.png"><img alt="https://user-images.githubusercontent.com/14288520/210970519-a9710a31-43d2-427d-bb6b-4bfb4d4258eb.png" src="https://user-images.githubusercontent.com/14288520/210970519-a9710a31-43d2-427d-bb6b-4bfb4d4258eb.png" />
+</a>
 <ul class="simple">
 <li><p><strong>OffsetCurve</strong>. The curve defining the offset amount for each point of
 original curve. The curve is supposed to lie in XOY coordinate plane. The
@@ -284,7 +287,8 @@ curve, or it’s length share, depending on <strong>Offset curve type</strong> p
 This input is available and mandatory only if <strong>Offset type</strong> parameter is
 set to <strong>Variable</strong>.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/210972964-d27f19cc-6caf-4ff2-b967-3983c30d48eb.png"><img alt="https://user-images.githubusercontent.com/14288520/210972964-d27f19cc-6caf-4ff2-b967-3983c30d48eb.png" src="https://user-images.githubusercontent.com/14288520/210972964-d27f19cc-6caf-4ff2-b967-3983c30d48eb.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/210972964-d27f19cc-6caf-4ff2-b967-3983c30d48eb.png"><img alt="https://user-images.githubusercontent.com/14288520/210972964-d27f19cc-6caf-4ff2-b967-3983c30d48eb.png" src="https://user-images.githubusercontent.com/14288520/210972964-d27f19cc-6caf-4ff2-b967-3983c30d48eb.png" />
+</a>
 <ul>
 <li><p><strong>Vector</strong>. Offset direction vector. This input is available only if
 <strong>Algorithm</strong> parameter is set to <strong>Specified plane</strong>, or the <strong>Direction</strong>
@@ -293,15 +297,18 @@ parameter is set to <strong>Custom (N/B/T)</strong>.</p>
 <li><p>For <strong>Specified plane</strong> algorithm, this input defines the normal vector of
 offset operation plane (offset direction vector will be always
 perpendicular to it).</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/210975432-3eb5d15b-310f-4b85-8f2f-c84e855f2d58.png"><img alt="https://user-images.githubusercontent.com/14288520/210975432-3eb5d15b-310f-4b85-8f2f-c84e855f2d58.png" src="https://user-images.githubusercontent.com/14288520/210975432-3eb5d15b-310f-4b85-8f2f-c84e855f2d58.png" /></a>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/210978406-fc76c02c-4ab0-4b64-9f0f-060fb57bc9bb.gif"><img alt="https://user-images.githubusercontent.com/14288520/210978406-fc76c02c-4ab0-4b64-9f0f-060fb57bc9bb.gif" src="https://user-images.githubusercontent.com/14288520/210978406-fc76c02c-4ab0-4b64-9f0f-060fb57bc9bb.gif" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/210975432-3eb5d15b-310f-4b85-8f2f-c84e855f2d58.png"><img alt="https://user-images.githubusercontent.com/14288520/210975432-3eb5d15b-310f-4b85-8f2f-c84e855f2d58.png" src="https://user-images.githubusercontent.com/14288520/210975432-3eb5d15b-310f-4b85-8f2f-c84e855f2d58.png" />
+</a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/210978406-fc76c02c-4ab0-4b64-9f0f-060fb57bc9bb.gif"><img alt="https://user-images.githubusercontent.com/14288520/210978406-fc76c02c-4ab0-4b64-9f0f-060fb57bc9bb.gif" src="https://user-images.githubusercontent.com/14288520/210978406-fc76c02c-4ab0-4b64-9f0f-060fb57bc9bb.gif" />
+</a>
 </li>
 <li><p>For other algorithms, Components of the vector are used within curve frame,
 calculated according to <strong>Algorithm</strong> parameter. For Frenet algorithm, X
 component of the vector represents offset along curve’s normal, Y component
 of the vector represents offset along curve’s binormal, and Z component of
 the vector represents offset along curve’s tangent.</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211044420-85db6cd8-5d8e-4f5a-bab2-8f642ba1ee7b.png"><img alt="https://user-images.githubusercontent.com/14288520/211044420-85db6cd8-5d8e-4f5a-bab2-8f642ba1ee7b.png" src="https://user-images.githubusercontent.com/14288520/211044420-85db6cd8-5d8e-4f5a-bab2-8f642ba1ee7b.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211044420-85db6cd8-5d8e-4f5a-bab2-8f642ba1ee7b.png"><img alt="https://user-images.githubusercontent.com/14288520/211044420-85db6cd8-5d8e-4f5a-bab2-8f642ba1ee7b.png" src="https://user-images.githubusercontent.com/14288520/211044420-85db6cd8-5d8e-4f5a-bab2-8f642ba1ee7b.png" />
+</a>
 </li>
 </ul>
 <p>The default value is <code class="docutils literal notranslate"><span class="pre">(0.1,</span> <span class="pre">0,</span> <span class="pre">0)</span></code>.</p>
@@ -315,8 +322,10 @@ input is only available when <strong>Algorithm</strong> parameter is set to <str
 or <strong>Track normal</strong>, or when <strong>Offset type</strong> parameter is set to <strong>Variable</strong>
 and <strong>Offset curve use</strong> parameter is set to <strong>Curve length</strong>.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211007523-82c07800-6c0f-4a47-8313-ef51da2b3aaa.png"><img alt="https://user-images.githubusercontent.com/14288520/211007523-82c07800-6c0f-4a47-8313-ef51da2b3aaa.png" src="https://user-images.githubusercontent.com/14288520/211007523-82c07800-6c0f-4a47-8313-ef51da2b3aaa.png" /></a>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211007253-36290b0b-de32-4606-bf5b-35cbf6a57e33.gif"><img alt="https://user-images.githubusercontent.com/14288520/211007253-36290b0b-de32-4606-bf5b-35cbf6a57e33.gif" src="https://user-images.githubusercontent.com/14288520/211007253-36290b0b-de32-4606-bf5b-35cbf6a57e33.gif" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211007523-82c07800-6c0f-4a47-8313-ef51da2b3aaa.png"><img alt="https://user-images.githubusercontent.com/14288520/211007523-82c07800-6c0f-4a47-8313-ef51da2b3aaa.png" src="https://user-images.githubusercontent.com/14288520/211007523-82c07800-6c0f-4a47-8313-ef51da2b3aaa.png" />
+</a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211007253-36290b0b-de32-4606-bf5b-35cbf6a57e33.gif"><img alt="https://user-images.githubusercontent.com/14288520/211007253-36290b0b-de32-4606-bf5b-35cbf6a57e33.gif" src="https://user-images.githubusercontent.com/14288520/211007253-36290b0b-de32-4606-bf5b-35cbf6a57e33.gif" />
+</a>
 </section>
 <section id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
@@ -329,31 +338,38 @@ and <strong>Offset curve use</strong> parameter is set to <strong>Curve length</
 <div><ul>
 <li><p><strong>Frenet</strong>. Rotate the profile curve according to Frenet frame of the
 extrusion curve (press image to animate).</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211011663-0150f048-ab33-4591-a593-4097a17fa570.gif"><img alt="https://user-images.githubusercontent.com/14288520/211011794-3cdaecce-991c-4e10-a551-efad0b25c277.png" src="https://user-images.githubusercontent.com/14288520/211011794-3cdaecce-991c-4e10-a551-efad0b25c277.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211011663-0150f048-ab33-4591-a593-4097a17fa570.gif"><img alt="https://user-images.githubusercontent.com/14288520/211011794-3cdaecce-991c-4e10-a551-efad0b25c277.png" src="https://user-images.githubusercontent.com/14288520/211011794-3cdaecce-991c-4e10-a551-efad0b25c277.png" />
+</a>
 </li>
 <li><p><strong>Zero-Twist</strong>. Rotate the profile curve according to “zero-twist” frame of
 the extrusion curve.</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211012646-108ade70-735f-4efe-a5bf-2adf8f228805.gif"><img alt="https://user-images.githubusercontent.com/14288520/211012243-84eaf3e9-187d-43d9-96bc-1677db73294e.png" src="https://user-images.githubusercontent.com/14288520/211012243-84eaf3e9-187d-43d9-96bc-1677db73294e.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211012646-108ade70-735f-4efe-a5bf-2adf8f228805.gif"><img alt="https://user-images.githubusercontent.com/14288520/211012243-84eaf3e9-187d-43d9-96bc-1677db73294e.png" src="https://user-images.githubusercontent.com/14288520/211012243-84eaf3e9-187d-43d9-96bc-1677db73294e.png" />
+</a>
 </li>
 <li><p><strong>Householder</strong>. Calculate rotation by using Householder’s reflection matrix
 (see <a class="reference external" href="https://en.wikipedia.org/wiki/QR_decomposition#Using_Householder_reflections">Wikipedia</a> article).</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211013591-1bc61f00-bfd8-4b3a-b4b2-5d964d32a1c3.gif"><img alt="https://user-images.githubusercontent.com/14288520/211013397-b606e1eb-3b96-49a2-83f9-120fa3434f01.png" src="https://user-images.githubusercontent.com/14288520/211013397-b606e1eb-3b96-49a2-83f9-120fa3434f01.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211013591-1bc61f00-bfd8-4b3a-b4b2-5d964d32a1c3.gif"><img alt="https://user-images.githubusercontent.com/14288520/211013397-b606e1eb-3b96-49a2-83f9-120fa3434f01.png" src="https://user-images.githubusercontent.com/14288520/211013397-b606e1eb-3b96-49a2-83f9-120fa3434f01.png" />
+</a>
 </li>
 <li><p><strong>Tracking</strong>. Use the same algorithm as in Blender’s “TrackTo” kinematic
 constraint. This node currently always uses X as the Up axis.</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211014189-8315f06f-8c4b-4caf-bcf0-884ee99a893c.gif"><img alt="https://user-images.githubusercontent.com/14288520/211013932-f1d03a0b-9685-4250-b2ce-334084054698.png" src="https://user-images.githubusercontent.com/14288520/211013932-f1d03a0b-9685-4250-b2ce-334084054698.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211014189-8315f06f-8c4b-4caf-bcf0-884ee99a893c.gif"><img alt="https://user-images.githubusercontent.com/14288520/211013932-f1d03a0b-9685-4250-b2ce-334084054698.png" src="https://user-images.githubusercontent.com/14288520/211013932-f1d03a0b-9685-4250-b2ce-334084054698.png" />
+</a>
 </li>
 <li><p><strong>Rotation difference</strong>. Calculate rotation as rotation difference between two
 vectors.</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211032854-08120c6f-85ef-4b20-9845-f1faa8fce5b2.gif"><img alt="https://user-images.githubusercontent.com/14288520/211032437-537b9d20-35e6-49f8-80e7-9e9694dd8492.png" src="https://user-images.githubusercontent.com/14288520/211032437-537b9d20-35e6-49f8-80e7-9e9694dd8492.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211032854-08120c6f-85ef-4b20-9845-f1faa8fce5b2.gif"><img alt="https://user-images.githubusercontent.com/14288520/211032437-537b9d20-35e6-49f8-80e7-9e9694dd8492.png" src="https://user-images.githubusercontent.com/14288520/211032437-537b9d20-35e6-49f8-80e7-9e9694dd8492.png" />
+</a>
 </li>
 <li><p><strong>Track normal</strong>. Try to maintain constant normal direction by tracking it
 along the curve.</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211033788-c94a2f21-e151-41a1-99d4-9f65da89e4f5.gif"><img alt="https://user-images.githubusercontent.com/14288520/211033494-833df34c-a151-42ff-aed0-86bb20895e1d.png" src="https://user-images.githubusercontent.com/14288520/211033494-833df34c-a151-42ff-aed0-86bb20895e1d.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211033788-c94a2f21-e151-41a1-99d4-9f65da89e4f5.gif"><img alt="https://user-images.githubusercontent.com/14288520/211033494-833df34c-a151-42ff-aed0-86bb20895e1d.png" src="https://user-images.githubusercontent.com/14288520/211033494-833df34c-a151-42ff-aed0-86bb20895e1d.png" />
+</a>
 </li>
 <li><p><strong>Specified plane</strong>. Offset direction vector will be always lying in a
 plane which is defined by normal vector provided in <strong>Vector</strong> input. (<a class="reference external" href="https://gist.github.com/c000254e670af7a3435e84ca301ded81">https://gist.github.com/c000254e670af7a3435e84ca301ded81</a>)</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211037516-2c25c468-5751-45d2-a9a9-6ee2e175421f.gif"><img alt="https://user-images.githubusercontent.com/14288520/211036054-327073ee-bb27-44c0-b34a-47055731736a.png" src="https://user-images.githubusercontent.com/14288520/211036054-327073ee-bb27-44c0-b34a-47055731736a.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211037516-2c25c468-5751-45d2-a9a9-6ee2e175421f.gif"><img alt="https://user-images.githubusercontent.com/14288520/211036054-327073ee-bb27-44c0-b34a-47055731736a.png" src="https://user-images.githubusercontent.com/14288520/211036054-327073ee-bb27-44c0-b34a-47055731736a.png" />
+</a>
 </li>
 </ul>
 <p>The default option is <strong>Householder</strong>.</p>
@@ -374,7 +390,8 @@ frame - curve binormal).</p></li>
 </div></blockquote>
 </li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211070103-24aa4724-7677-4733-8740-2b81b2c940a9.png"><img alt="https://user-images.githubusercontent.com/14288520/211070103-24aa4724-7677-4733-8740-2b81b2c940a9.png" src="https://user-images.githubusercontent.com/14288520/211070103-24aa4724-7677-4733-8740-2b81b2c940a9.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211070103-24aa4724-7677-4733-8740-2b81b2c940a9.png"><img alt="https://user-images.githubusercontent.com/14288520/211070103-24aa4724-7677-4733-8740-2b81b2c940a9.png" src="https://user-images.githubusercontent.com/14288520/211070103-24aa4724-7677-4733-8740-2b81b2c940a9.png" />
+</a>
 </section>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
@@ -382,12 +399,14 @@ frame - curve binormal).</p></li>
 <ul class="simple">
 <li><p><strong>Curve</strong>. The offsetted curve.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211048162-b8e636c8-34a0-40f0-9885-6c18f50f5df4.png"><img alt="https://user-images.githubusercontent.com/14288520/211048162-b8e636c8-34a0-40f0-9885-6c18f50f5df4.png" src="https://user-images.githubusercontent.com/14288520/211048162-b8e636c8-34a0-40f0-9885-6c18f50f5df4.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211048162-b8e636c8-34a0-40f0-9885-6c18f50f5df4.png"><img alt="https://user-images.githubusercontent.com/14288520/211048162-b8e636c8-34a0-40f0-9885-6c18f50f5df4.png" src="https://user-images.githubusercontent.com/14288520/211048162-b8e636c8-34a0-40f0-9885-6c18f50f5df4.png" />
+</a>
 </section>
 <section id="examples-of-usage">
 <h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Link to this heading">¶</a></h2>
 <p>Offset one curve with several different offset amounts:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211057398-9c88a831-d9e6-4f47-b306-bc29f5a5153f.png"><img alt="https://user-images.githubusercontent.com/14288520/211057398-9c88a831-d9e6-4f47-b306-bc29f5a5153f.png" src="https://user-images.githubusercontent.com/14288520/211057398-9c88a831-d9e6-4f47-b306-bc29f5a5153f.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211057398-9c88a831-d9e6-4f47-b306-bc29f5a5153f.png"><img alt="https://user-images.githubusercontent.com/14288520/211057398-9c88a831-d9e6-4f47-b306-bc29f5a5153f.png" src="https://user-images.githubusercontent.com/14288520/211057398-9c88a831-d9e6-4f47-b306-bc29f5a5153f.png" />
+</a>
 <ul class="simple">
 <li><p>Curves-&gt; <a class="reference internal" href="cubic_spline.html"><span class="doc">Cubic Spline</span></a></p></li>
 <li><p>Curves-&gt; <a class="reference internal" href="eval_curve.html"><span class="doc">Evaluate Curve</span></a></p></li>
@@ -398,7 +417,8 @@ frame - curve binormal).</p></li>
 </ul>
 <hr class="docutils" />
 <p>Example of <strong>Custom (N/B/T)</strong> mode usage:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211058665-ba9623df-b1db-4751-b773-505f5f6ee5d8.png"><img alt="https://user-images.githubusercontent.com/14288520/211058665-ba9623df-b1db-4751-b773-505f5f6ee5d8.png" src="https://user-images.githubusercontent.com/14288520/211058665-ba9623df-b1db-4751-b773-505f5f6ee5d8.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211058665-ba9623df-b1db-4751-b773-505f5f6ee5d8.png"><img alt="https://user-images.githubusercontent.com/14288520/211058665-ba9623df-b1db-4751-b773-505f5f6ee5d8.png" src="https://user-images.githubusercontent.com/14288520/211058665-ba9623df-b1db-4751-b773-505f5f6ee5d8.png" />
+</a>
 <ul class="simple">
 <li><p>Curves-&gt; <a class="reference internal" href="cubic_spline.html"><span class="doc">Cubic Spline</span></a></p></li>
 <li><p>Curves-&gt; <a class="reference internal" href="eval_curve.html"><span class="doc">Evaluate Curve</span></a></p></li>
@@ -414,7 +434,8 @@ is used to automatically detect the plane where the curve is lying (mostly); it
 outputs a normal vector, which is nearly OY axis, so the offset operation plane
 will be nearly XOZ. Note that the offsetted curve has a twist in a place where
 the tangent of original curve is perpendicular to offset operation plane.</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211066233-f38a07f4-be2e-4c04-85da-79ad36d32d52.png"><img alt="https://user-images.githubusercontent.com/14288520/211066233-f38a07f4-be2e-4c04-85da-79ad36d32d52.png" src="https://user-images.githubusercontent.com/14288520/211066233-f38a07f4-be2e-4c04-85da-79ad36d32d52.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211066233-f38a07f4-be2e-4c04-85da-79ad36d32d52.png"><img alt="https://user-images.githubusercontent.com/14288520/211066233-f38a07f4-be2e-4c04-85da-79ad36d32d52.png" src="https://user-images.githubusercontent.com/14288520/211066233-f38a07f4-be2e-4c04-85da-79ad36d32d52.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/line_mk4.html"><span class="doc">Line</span></a></p></li>
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/segment.html"><span class="doc">Segment</span></a></p></li>
@@ -431,7 +452,8 @@ the tangent of original curve is perpendicular to offset operation plane.</p>
 </ul>
 <hr class="docutils" />
 <p>Example of <strong>Variable</strong> offset mode usage:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211068041-f2f513fc-067f-4d4a-8e2d-1235b485e86c.png"><img alt="https://user-images.githubusercontent.com/14288520/211068041-f2f513fc-067f-4d4a-8e2d-1235b485e86c.png" src="https://user-images.githubusercontent.com/14288520/211068041-f2f513fc-067f-4d4a-8e2d-1235b485e86c.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211068041-f2f513fc-067f-4d4a-8e2d-1235b485e86c.png"><img alt="https://user-images.githubusercontent.com/14288520/211068041-f2f513fc-067f-4d4a-8e2d-1235b485e86c.png" src="https://user-images.githubusercontent.com/14288520/211068041-f2f513fc-067f-4d4a-8e2d-1235b485e86c.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/line_mk4.html"><span class="doc">Line</span></a></p></li>
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/segment.html"><span class="doc">Segment</span></a></p></li>
@@ -447,7 +469,8 @@ the tangent of original curve is perpendicular to offset operation plane.</p>
 <li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211071408-a2f9312f-e857-4141-9646-c133b2cb9c73.gif"><img alt="https://user-images.githubusercontent.com/14288520/211071408-a2f9312f-e857-4141-9646-c133b2cb9c73.gif" src="https://user-images.githubusercontent.com/14288520/211071408-a2f9312f-e857-4141-9646-c133b2cb9c73.gif" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211071408-a2f9312f-e857-4141-9646-c133b2cb9c73.gif"><img alt="https://user-images.githubusercontent.com/14288520/211071408-a2f9312f-e857-4141-9646-c133b2cb9c73.gif" src="https://user-images.githubusercontent.com/14288520/211071408-a2f9312f-e857-4141-9646-c133b2cb9c73.gif" />
+</a>
 </section>
 </section>
 

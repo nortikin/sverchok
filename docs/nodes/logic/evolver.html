@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../">
 <head>
@@ -6,17 +8,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Evolver &mdash; Sverchok 1, 2, 0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=7ab3649f" />
 
   
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/documentation_options.js?v=773c2105"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/documentation_options.js?v=773c2105"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -36,9 +34,6 @@
             Sverchok
               <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
           </a>
-              <div class="version">
-                1, 2, 0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -142,7 +137,8 @@
              
   <section id="evolver">
 <h1>Evolver<a class="headerlink" href="#evolver" title="Link to this heading">¶</a></h1>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189763466-4ab9972b-505c-4a79-a8e4-11c5a5c69181.png"><img alt="https://user-images.githubusercontent.com/14288520/189763466-4ab9972b-505c-4a79-a8e4-11c5a5c69181.png" src="https://user-images.githubusercontent.com/14288520/189763466-4ab9972b-505c-4a79-a8e4-11c5a5c69181.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189763466-4ab9972b-505c-4a79-a8e4-11c5a5c69181.png"><img alt="https://user-images.githubusercontent.com/14288520/189763466-4ab9972b-505c-4a79-a8e4-11c5a5c69181.png" src="https://user-images.githubusercontent.com/14288520/189763466-4ab9972b-505c-4a79-a8e4-11c5a5c69181.png" />
+</a>
 <p>This node implements a Genetics Algorithm system inspired in Galapagos (the Grasshopper plugin) and the 9th chapter of “The Nature of Code” by Daniel Shiffman <a class="reference external" href="https://natureofcode.com/book/chapter-9-the-evolution-of-code/">https://natureofcode.com/book/chapter-9-the-evolution-of-code/</a></p>
 <p>The system creates a starting population, evaluates the fitness of each “agent” and creates a new population bases on the crossover of the fitter agents and a mutation chance. The new population is evaluated and mixed every iteration rising the global fitness of the population by generating fitter agents.</p>
 <p>The starting value of the Genotype nodes will be the first agent of the population.</p>
@@ -188,7 +184,8 @@
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">¶</a></h2>
 <p>Solved problem: Which is the smallest box (as the sum of faces area) in which I can fit Suzanne mesh?</p>
-<a class="reference external image-reference" href="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/logic/evolver/evolver_genetics_algorithm_sverchok_blender_example_01.png"><img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/logic/evolver/evolver_genetics_algorithm_sverchok_blender_example_01.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/logic/evolver/evolver_genetics_algorithm_sverchok_blender_example_01.png" /></a>
+<a class="reference external image-reference" href="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/logic/evolver/evolver_genetics_algorithm_sverchok_blender_example_01.png"><img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/logic/evolver/evolver_genetics_algorithm_sverchok_blender_example_01.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/logic/evolver/evolver_genetics_algorithm_sverchok_blender_example_01.png" />
+</a>
 <ul class="simple">
 <li><p>Transform-&gt; <a class="reference internal" href="../transforms/rotate_mk3.html"><span class="doc">Rotate</span></a></p></li>
 <li><p>Transform-&gt; <a class="reference internal" href="../transforms/apply.html"><span class="doc">Matrix Apply (verts)</span></a></p></li>
@@ -200,7 +197,8 @@
 <li><p>Scene-&gt; <a class="reference internal" href="../scene/objects_in_lite.html"><span class="doc">Objects In Lite</span></a></p></li>
 </ul>
 <p>Solved problem: Where is the point where the minimum distance to a set of points is closest to the maximum distance?</p>
-<a class="reference external image-reference" href="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/logic/evolver/evolver_genetics_algorithm_sverchok_blender_example_02.png"><img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/logic/evolver/evolver_genetics_algorithm_sverchok_blender_example_02.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/logic/evolver/evolver_genetics_algorithm_sverchok_blender_example_02.png" /></a>
+<a class="reference external image-reference" href="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/logic/evolver/evolver_genetics_algorithm_sverchok_blender_example_02.png"><img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/logic/evolver/evolver_genetics_algorithm_sverchok_blender_example_02.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/logic/evolver/evolver_genetics_algorithm_sverchok_blender_example_02.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/circle.html"><span class="doc">Circle</span></a></p></li>
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>
@@ -213,7 +211,8 @@
 <li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
 </ul>
 <p>Solved problem: Which is the shortest path that cycles through all the points?</p>
-<a class="reference external image-reference" href="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/logic/evolver/evolver_genetics_algorithm_sverchok_blender_example_03.png"><img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/logic/evolver/evolver_genetics_algorithm_sverchok_blender_example_03.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/logic/evolver/evolver_genetics_algorithm_sverchok_blender_example_03.png" /></a>
+<a class="reference external image-reference" href="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/logic/evolver/evolver_genetics_algorithm_sverchok_blender_example_03.png"><img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/logic/evolver/evolver_genetics_algorithm_sverchok_blender_example_03.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/logic/evolver/evolver_genetics_algorithm_sverchok_blender_example_03.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/circle.html"><span class="doc">Circle</span></a></p></li>
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/random_vector_mk3.html"><span class="doc">Random Vector</span></a></p></li>

@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../">
 <head>
@@ -6,17 +8,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Extrude Separate Faces &mdash; Sverchok 1, 2, 0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=7ab3649f" />
 
   
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/documentation_options.js?v=773c2105"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/documentation_options.js?v=773c2105"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -36,9 +34,6 @@
             Sverchok
               <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
           </a>
-              <div class="version">
-                1, 2, 0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -172,14 +167,16 @@
              
   <section id="extrude-separate-faces">
 <h1>Extrude Separate Faces<a class="headerlink" href="#extrude-separate-faces" title="Link to this heading">¶</a></h1>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200059403-a4f56307-a840-4e45-8f4e-0fe1f803e7b9.png"><img alt="https://user-images.githubusercontent.com/14288520/200059403-a4f56307-a840-4e45-8f4e-0fe1f803e7b9.png" src="https://user-images.githubusercontent.com/14288520/200059403-a4f56307-a840-4e45-8f4e-0fe1f803e7b9.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200059403-a4f56307-a840-4e45-8f4e-0fe1f803e7b9.png"><img alt="https://user-images.githubusercontent.com/14288520/200059403-a4f56307-a840-4e45-8f4e-0fe1f803e7b9.png" src="https://user-images.githubusercontent.com/14288520/200059403-a4f56307-a840-4e45-8f4e-0fe1f803e7b9.png" />
+</a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node applies Extrude operator to each of input faces separately. After
 that, resulting faces can be scaled up or down by specified factor.
 It is possible to provide specific extrude and scaling factors for each face.
 As an option, transformation matrix may be provided for each face.</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200061209-f3345179-13ac-4a52-8e7b-ac646464d86d.png"><img alt="https://user-images.githubusercontent.com/14288520/200061209-f3345179-13ac-4a52-8e7b-ac646464d86d.png" src="https://user-images.githubusercontent.com/14288520/200061209-f3345179-13ac-4a52-8e7b-ac646464d86d.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200061209-f3345179-13ac-4a52-8e7b-ac646464d86d.png"><img alt="https://user-images.githubusercontent.com/14288520/200061209-f3345179-13ac-4a52-8e7b-ac646464d86d.png" src="https://user-images.githubusercontent.com/14288520/200061209-f3345179-13ac-4a52-8e7b-ac646464d86d.png" />
+</a>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
@@ -307,13 +304,16 @@ depends on the <strong>Mask Output</strong> parameter.</p></li>
 <li><p><strong>FaceData</strong>. List containing data items from the <strong>FaceData</strong> input, which
 contains one item for each output mesh face.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202865440-2bb41cad-b22c-49bc-8efe-0600fa2627e0.png"><img alt="https://user-images.githubusercontent.com/14288520/202865440-2bb41cad-b22c-49bc-8efe-0600fa2627e0.png" src="https://user-images.githubusercontent.com/14288520/202865440-2bb41cad-b22c-49bc-8efe-0600fa2627e0.png" /></a>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200063766-001beaba-ad54-4ab4-aa55-ceff013989b5.png"><img alt="https://user-images.githubusercontent.com/14288520/200063766-001beaba-ad54-4ab4-aa55-ceff013989b5.png" src="https://user-images.githubusercontent.com/14288520/200063766-001beaba-ad54-4ab4-aa55-ceff013989b5.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202865440-2bb41cad-b22c-49bc-8efe-0600fa2627e0.png"><img alt="https://user-images.githubusercontent.com/14288520/202865440-2bb41cad-b22c-49bc-8efe-0600fa2627e0.png" src="https://user-images.githubusercontent.com/14288520/202865440-2bb41cad-b22c-49bc-8efe-0600fa2627e0.png" />
+</a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200063766-001beaba-ad54-4ab4-aa55-ceff013989b5.png"><img alt="https://user-images.githubusercontent.com/14288520/200063766-001beaba-ad54-4ab4-aa55-ceff013989b5.png" src="https://user-images.githubusercontent.com/14288520/200063766-001beaba-ad54-4ab4-aa55-ceff013989b5.png" />
+</a>
 </section>
 <section id="example-of-usage">
 <h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Link to this heading">¶</a></h2>
 <p>Extruded faces of sphere, extruding factor depending on Z coordinate of face:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200066554-e0edef9c-f45c-493d-a278-8b9c1c354062.png"><img alt="https://user-images.githubusercontent.com/14288520/200066554-e0edef9c-f45c-493d-a278-8b9c1c354062.png" src="https://user-images.githubusercontent.com/14288520/200066554-e0edef9c-f45c-493d-a278-8b9c1c354062.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200066554-e0edef9c-f45c-493d-a278-8b9c1c354062.png"><img alt="https://user-images.githubusercontent.com/14288520/200066554-e0edef9c-f45c-493d-a278-8b9c1c354062.png" src="https://user-images.githubusercontent.com/14288520/200066554-e0edef9c-f45c-493d-a278-8b9c1c354062.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/icosphere.html"><span class="doc">IcoSphere</span></a></p></li>
 <li><p>Analyzers-&gt; <a class="reference internal" href="../analyzer/origins.html"><span class="doc">Origins</span></a></p></li>
@@ -325,14 +325,16 @@ contains one item for each output mesh face.</p></li>
 </ul>
 <hr class="docutils" />
 <p>Sort of cage:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200066985-dec9a695-6826-499f-a486-242789199028.png"><img alt="https://user-images.githubusercontent.com/14288520/200066985-dec9a695-6826-499f-a486-242789199028.png" src="https://user-images.githubusercontent.com/14288520/200066985-dec9a695-6826-499f-a486-242789199028.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200066985-dec9a695-6826-499f-a486-242789199028.png"><img alt="https://user-images.githubusercontent.com/14288520/200066985-dec9a695-6826-499f-a486-242789199028.png" src="https://user-images.githubusercontent.com/14288520/200066985-dec9a695-6826-499f-a486-242789199028.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
 </ul>
 <hr class="docutils" />
 <p>An example of <strong>Matrix</strong> mode usage:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200067832-443b8691-248b-4a26-90e9-fb6d78a5b306.png"><img alt="https://user-images.githubusercontent.com/14288520/200067832-443b8691-248b-4a26-90e9-fb6d78a5b306.png" src="https://user-images.githubusercontent.com/14288520/200067832-443b8691-248b-4a26-90e9-fb6d78a5b306.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200067832-443b8691-248b-4a26-90e9-fb6d78a5b306.png"><img alt="https://user-images.githubusercontent.com/14288520/200067832-443b8691-248b-4a26-90e9-fb6d78a5b306.png" src="https://user-images.githubusercontent.com/14288520/200067832-443b8691-248b-4a26-90e9-fb6d78a5b306.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
 <li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
@@ -342,7 +344,8 @@ contains one item for each output mesh face.</p></li>
 </ul>
 <hr class="docutils" />
 <p>Voronoi grid with each cell extruded by it’s specific random matrix:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200071116-b875ffcc-61d9-4a9e-bb4b-365309a16afb.png"><img alt="https://user-images.githubusercontent.com/14288520/200071116-b875ffcc-61d9-4a9e-bb4b-365309a16afb.png" src="https://user-images.githubusercontent.com/14288520/200071116-b875ffcc-61d9-4a9e-bb4b-365309a16afb.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200071116-b875ffcc-61d9-4a9e-bb4b-365309a16afb.png"><img alt="https://user-images.githubusercontent.com/14288520/200071116-b875ffcc-61d9-4a9e-bb4b-365309a16afb.png" src="https://user-images.githubusercontent.com/14288520/200071116-b875ffcc-61d9-4a9e-bb4b-365309a16afb.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/random_vector_mk3.html"><span class="doc">Random Vector</span></a></p></li>
@@ -355,9 +358,11 @@ contains one item for each output mesh face.</p></li>
 </ul>
 <hr class="docutils" />
 <p>FaceData sockets usage:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/71816744-69bdb980-30a5-11ea-94eb-5a3a459a9b0a.png"><img alt="https://user-images.githubusercontent.com/284644/71816744-69bdb980-30a5-11ea-94eb-5a3a459a9b0a.png" src="https://user-images.githubusercontent.com/284644/71816744-69bdb980-30a5-11ea-94eb-5a3a459a9b0a.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/71816744-69bdb980-30a5-11ea-94eb-5a3a459a9b0a.png"><img alt="https://user-images.githubusercontent.com/284644/71816744-69bdb980-30a5-11ea-94eb-5a3a459a9b0a.png" src="https://user-images.githubusercontent.com/284644/71816744-69bdb980-30a5-11ea-94eb-5a3a459a9b0a.png" />
+</a>
 <p>Replay with new nodes:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200072683-6e2627b4-f5b1-420e-9922-ff03d57d3ec6.png"><img alt="https://user-images.githubusercontent.com/14288520/200072683-6e2627b4-f5b1-420e-9922-ff03d57d3ec6.png" src="https://user-images.githubusercontent.com/14288520/200072683-6e2627b4-f5b1-420e-9922-ff03d57d3ec6.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200072683-6e2627b4-f5b1-420e-9922-ff03d57d3ec6.png"><img alt="https://user-images.githubusercontent.com/14288520/200072683-6e2627b4-f5b1-420e-9922-ff03d57d3ec6.png" src="https://user-images.githubusercontent.com/14288520/200072683-6e2627b4-f5b1-420e-9922-ff03d57d3ec6.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt;Generator Extended-&gt; <a class="reference internal" href="../generators_extended/polygon_grid.html"><span class="doc">Polygon Grid</span></a></p></li>
 <li><p>Analyzers-&gt; <a class="reference internal" href="../analyzer/mesh_select_mk2.html#mode-by-center-and-radius"><span class="std std-ref">Select Mesh Elements (By Center and radius)</span></a></p></li>

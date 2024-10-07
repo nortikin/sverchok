@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../">
 <head>
@@ -6,17 +8,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Compose Vector Field &mdash; Sverchok 1, 2, 0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=7ab3649f" />
 
   
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/documentation_options.js?v=773c2105"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/documentation_options.js?v=773c2105"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -36,9 +34,6 @@
             Sverchok
               <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
           </a>
-              <div class="version">
-                1, 2, 0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -160,7 +155,8 @@
              
   <section id="compose-vector-field">
 <h1>Compose Vector Field<a class="headerlink" href="#compose-vector-field" title="Link to this heading">¶</a></h1>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/ad20fcb7-7cf0-4275-9598-c7f609889b44"><img alt="https://github.com/nortikin/sverchok/assets/14288520/ad20fcb7-7cf0-4275-9598-c7f609889b44" src="https://github.com/nortikin/sverchok/assets/14288520/ad20fcb7-7cf0-4275-9598-c7f609889b44" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/ad20fcb7-7cf0-4275-9598-c7f609889b44"><img alt="https://github.com/nortikin/sverchok/assets/14288520/ad20fcb7-7cf0-4275-9598-c7f609889b44" src="https://github.com/nortikin/sverchok/assets/14288520/ad20fcb7-7cf0-4275-9598-c7f609889b44" />
+</a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node generates a Vector Field by composing it from three Scalar Fields which represent different coordinates of the vectors.</p>
@@ -173,7 +169,8 @@
 <li><p><strong>Y</strong> / <strong>Phi</strong> / <strong>Phi</strong>. The second scalar field. The input is mandatory.</p></li>
 <li><p><strong>Z</strong> / <strong>Z</strong> / <strong>Theta</strong>. The third scalar field. The input is mandatory.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/cf8d285a-4ff8-42cb-b27c-9994e0989be1"><img alt="https://github.com/nortikin/sverchok/assets/14288520/cf8d285a-4ff8-42cb-b27c-9994e0989be1" src="https://github.com/nortikin/sverchok/assets/14288520/cf8d285a-4ff8-42cb-b27c-9994e0989be1" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/cf8d285a-4ff8-42cb-b27c-9994e0989be1"><img alt="https://github.com/nortikin/sverchok/assets/14288520/cf8d285a-4ff8-42cb-b27c-9994e0989be1" src="https://github.com/nortikin/sverchok/assets/14288520/cf8d285a-4ff8-42cb-b27c-9994e0989be1" />
+</a>
 </section>
 <section id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
@@ -198,7 +195,8 @@
 <section id="example-of-usage">
 <h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Link to this heading">¶</a></h2>
 <p>Compose the vector field from three attraction fields:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/79472827-c07c4d00-801d-11ea-8ada-7494115955cc.png"><img alt="https://user-images.githubusercontent.com/284644/79472827-c07c4d00-801d-11ea-8ada-7494115955cc.png" src="https://user-images.githubusercontent.com/284644/79472827-c07c4d00-801d-11ea-8ada-7494115955cc.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/79472827-c07c4d00-801d-11ea-8ada-7494115955cc.png"><img alt="https://user-images.githubusercontent.com/284644/79472827-c07c4d00-801d-11ea-8ada-7494115955cc.png" src="https://user-images.githubusercontent.com/284644/79472827-c07c4d00-801d-11ea-8ada-7494115955cc.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
 <li><p>Fields-&gt; <a class="reference internal" href="attractor_field_mk2.html"><span class="doc">Attractor Field</span></a></p></li>

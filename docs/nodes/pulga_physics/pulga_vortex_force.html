@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../">
 <head>
@@ -6,17 +8,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Pulga Vortex Force &mdash; Sverchok 1, 2, 0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=7ab3649f" />
 
   
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/documentation_options.js?v=773c2105"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/documentation_options.js?v=773c2105"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -36,9 +34,6 @@
             Sverchok
               <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
           </a>
-              <div class="version">
-                1, 2, 0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -147,10 +142,12 @@
              
   <section id="pulga-vortex-force">
 <h1>Pulga Vortex Force<a class="headerlink" href="#pulga-vortex-force" title="Link to this heading">¶</a></h1>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/c36e5cee-8557-4e55-ab04-0804c4b7c863"><img alt="https://github.com/nortikin/sverchok/assets/14288520/c36e5cee-8557-4e55-ab04-0804c4b7c863" src="https://github.com/nortikin/sverchok/assets/14288520/c36e5cee-8557-4e55-ab04-0804c4b7c863" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/c36e5cee-8557-4e55-ab04-0804c4b7c863"><img alt="https://github.com/nortikin/sverchok/assets/14288520/c36e5cee-8557-4e55-ab04-0804c4b7c863" src="https://github.com/nortikin/sverchok/assets/14288520/c36e5cee-8557-4e55-ab04-0804c4b7c863" />
+</a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/f92cc57b-295e-486a-b745-d6fb549781a0"><img alt="https://github.com/nortikin/sverchok/assets/14288520/f92cc57b-295e-486a-b745-d6fb549781a0" src="https://github.com/nortikin/sverchok/assets/14288520/f92cc57b-295e-486a-b745-d6fb549781a0" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/f92cc57b-295e-486a-b745-d6fb549781a0"><img alt="https://github.com/nortikin/sverchok/assets/14288520/f92cc57b-295e-486a-b745-d6fb549781a0" src="https://github.com/nortikin/sverchok/assets/14288520/f92cc57b-295e-486a-b745-d6fb549781a0" />
+</a>
 <p>This node creates a force to be applied with the Pulga Physics Solver node.
 The vortex force is defined with a “Line” with Location and Direction.
 It has three components, rotation around the line, attraction towards the line (Inflow) and a movement in the line direction (Forward).</p>
@@ -161,33 +158,39 @@ It has three components, rotation around the line, attraction towards the line (
 <li><p><strong>Location</strong>: A point of the line.</p></li>
 <li><p><strong>Direction</strong>: Direction of the line.</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/c683f977-27a0-4b4a-86ed-cd0b09b8f087"><img alt="https://github.com/nortikin/sverchok/assets/14288520/c683f977-27a0-4b4a-86ed-cd0b09b8f087" src="https://github.com/nortikin/sverchok/assets/14288520/c683f977-27a0-4b4a-86ed-cd0b09b8f087" /></a>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/c683f977-27a0-4b4a-86ed-cd0b09b8f087"><img alt="https://github.com/nortikin/sverchok/assets/14288520/c683f977-27a0-4b4a-86ed-cd0b09b8f087" src="https://github.com/nortikin/sverchok/assets/14288520/c683f977-27a0-4b4a-86ed-cd0b09b8f087" />
+</a>
 </div></blockquote>
 </li>
 <li><p><strong>Rotation Strength</strong>: Multiplier of the rotation force.</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/9194caaf-bb91-45f8-93ed-017d7794f2a7"><img alt="https://github.com/nortikin/sverchok/assets/14288520/9194caaf-bb91-45f8-93ed-017d7794f2a7" src="https://github.com/nortikin/sverchok/assets/14288520/9194caaf-bb91-45f8-93ed-017d7794f2a7" /></a>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/9194caaf-bb91-45f8-93ed-017d7794f2a7"><img alt="https://github.com/nortikin/sverchok/assets/14288520/9194caaf-bb91-45f8-93ed-017d7794f2a7" src="https://github.com/nortikin/sverchok/assets/14288520/9194caaf-bb91-45f8-93ed-017d7794f2a7" />
+</a>
 </div></blockquote>
 </li>
 <li><p><strong>Inflow Strength</strong>: Multiplier of the inflow force (towards the line).</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/29a764ce-e612-422c-afc8-71959886d8ff"><img alt="https://github.com/nortikin/sverchok/assets/14288520/29a764ce-e612-422c-afc8-71959886d8ff" src="https://github.com/nortikin/sverchok/assets/14288520/29a764ce-e612-422c-afc8-71959886d8ff" /></a>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/29a764ce-e612-422c-afc8-71959886d8ff"><img alt="https://github.com/nortikin/sverchok/assets/14288520/29a764ce-e612-422c-afc8-71959886d8ff" src="https://github.com/nortikin/sverchok/assets/14288520/29a764ce-e612-422c-afc8-71959886d8ff" />
+</a>
 </div></blockquote>
 </li>
 <li><p><strong>Forward Strength</strong>: Multiplier of the forward force (in the direction of the line).</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/52674c95-dc42-4f9b-b985-706cd8d5ad3c"><img alt="https://github.com/nortikin/sverchok/assets/14288520/52674c95-dc42-4f9b-b985-706cd8d5ad3c" src="https://github.com/nortikin/sverchok/assets/14288520/52674c95-dc42-4f9b-b985-706cd8d5ad3c" /></a>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/52674c95-dc42-4f9b-b985-706cd8d5ad3c"><img alt="https://github.com/nortikin/sverchok/assets/14288520/52674c95-dc42-4f9b-b985-706cd8d5ad3c" src="https://github.com/nortikin/sverchok/assets/14288520/52674c95-dc42-4f9b-b985-706cd8d5ad3c" />
+</a>
 </div></blockquote>
 </li>
 <li><p><strong>Max. Distance</strong>: Distance under the force will be applied.</p></li>
 <li><p><strong>Decay</strong>: How the force will decay with distance. 0= no decay, 1= linear, 2= cubic, 4= quadratic…</p></li>
 </ul>
 <p>Animated params overview:</p>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/1882814d-93da-418d-af2e-788f7aa4781f"><img alt="https://github.com/nortikin/sverchok/assets/14288520/1882814d-93da-418d-af2e-788f7aa4781f" src="https://github.com/nortikin/sverchok/assets/14288520/1882814d-93da-418d-af2e-788f7aa4781f" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/1882814d-93da-418d-af2e-788f7aa4781f"><img alt="https://github.com/nortikin/sverchok/assets/14288520/1882814d-93da-418d-af2e-788f7aa4781f" src="https://github.com/nortikin/sverchok/assets/14288520/1882814d-93da-418d-af2e-788f7aa4781f" />
+</a>
 </section>
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">¶</a></h2>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/bc15cfdd-207c-4f50-8b80-b30c6b12127b"><img alt="https://github.com/nortikin/sverchok/assets/14288520/bc15cfdd-207c-4f50-8b80-b30c6b12127b" src="https://github.com/nortikin/sverchok/assets/14288520/bc15cfdd-207c-4f50-8b80-b30c6b12127b" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/bc15cfdd-207c-4f50-8b80-b30c6b12127b"><img alt="https://github.com/nortikin/sverchok/assets/14288520/bc15cfdd-207c-4f50-8b80-b30c6b12127b" src="https://github.com/nortikin/sverchok/assets/14288520/bc15cfdd-207c-4f50-8b80-b30c6b12127b" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/line_mk4.html"><span class="doc">Line</span></a></p></li>
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>

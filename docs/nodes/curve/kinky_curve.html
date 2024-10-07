@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../">
 <head>
@@ -6,17 +8,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Kinked Curve &mdash; Sverchok 1, 2, 0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=7ab3649f" />
 
   
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/documentation_options.js?v=773c2105"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/documentation_options.js?v=773c2105"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -36,9 +34,6 @@
             Sverchok
               <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
           </a>
-              <div class="version">
-                1, 2, 0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -124,6 +119,7 @@
 <li class="toctree-l3"><a class="reference internal" href="point_curve.html">Single-Point Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="polyarc.html">Poly Arc</a></li>
 <li class="toctree-l3"><a class="reference internal" href="polyline.html">Polyline</a></li>
+<li class="toctree-l3"><a class="reference internal" href="prepare_curves_net.html">Prepare NURBS Curves Net</a></li>
 <li class="toctree-l3"><a class="reference internal" href="project_curve_surface.html">Project Curve to Surface (NURBS)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="rbf_curve.html">RBF Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="reduce_degree.html">Reduce Degree (NURBS Curve)</a></li>
@@ -205,14 +201,16 @@
              
   <section id="kinked-curve">
 <h1>Kinked Curve<a class="headerlink" href="#kinked-curve" title="Link to this heading">¶</a></h1>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205459954-6d595c27-0b4d-4bd8-813f-4544d1b081ec.png"><img alt="https://user-images.githubusercontent.com/14288520/205459954-6d595c27-0b4d-4bd8-813f-4544d1b081ec.png" src="https://user-images.githubusercontent.com/14288520/205459954-6d595c27-0b4d-4bd8-813f-4544d1b081ec.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205459954-6d595c27-0b4d-4bd8-813f-4544d1b081ec.png"><img alt="https://user-images.githubusercontent.com/14288520/205459954-6d595c27-0b4d-4bd8-813f-4544d1b081ec.png" src="https://user-images.githubusercontent.com/14288520/205459954-6d595c27-0b4d-4bd8-813f-4544d1b081ec.png" />
+</a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node generates a “kinky” curve, i.e. a curve that is smooth in some places
 and sharp in others. The node allows the ability to control a specific angle
 threshold where the curve will transition from a kinked line to a smooth
 interpolated curve.</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205460382-798cddf0-3fa8-42bd-8c38-ad66b5608a17.png"><img alt="https://user-images.githubusercontent.com/14288520/205460382-798cddf0-3fa8-42bd-8c38-ad66b5608a17.png" src="https://user-images.githubusercontent.com/14288520/205460382-798cddf0-3fa8-42bd-8c38-ad66b5608a17.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205460382-798cddf0-3fa8-42bd-8c38-ad66b5608a17.png"><img alt="https://user-images.githubusercontent.com/14288520/205460382-798cddf0-3fa8-42bd-8c38-ad66b5608a17.png" src="https://user-images.githubusercontent.com/14288520/205460382-798cddf0-3fa8-42bd-8c38-ad66b5608a17.png" />
+</a>
 <p>This node calculates angles between consequent segments of a polyline built
 from original points; if the angle at a point is less than specified threshold,
 the curve will have sharp angle at this point; otherwise, the curve will be
@@ -229,7 +227,8 @@ these segments can be optionally concatenated into one Curve object.</p>
 which points the curve will have sharp corners. The value is expected in
 radians. The default value is <code class="docutils literal notranslate"><span class="pre">pi/6</span></code>.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205460666-76feff7d-5cea-4a3b-8b92-556c788f90e7.png"><img alt="https://user-images.githubusercontent.com/14288520/205460666-76feff7d-5cea-4a3b-8b92-556c788f90e7.png" src="https://user-images.githubusercontent.com/14288520/205460666-76feff7d-5cea-4a3b-8b92-556c788f90e7.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205460666-76feff7d-5cea-4a3b-8b92-556c788f90e7.png"><img alt="https://user-images.githubusercontent.com/14288520/205460666-76feff7d-5cea-4a3b-8b92-556c788f90e7.png" src="https://user-images.githubusercontent.com/14288520/205460666-76feff7d-5cea-4a3b-8b92-556c788f90e7.png" />
+</a>
 </section>
 <section id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
@@ -239,12 +238,14 @@ radians. The default value is <code class="docutils literal notranslate"><span c
 each set of points. Otherwise, it will generate a separate Curve object for
 each smooth segment of the curve. Checked by default.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205460811-0814b605-ffc1-4b12-a12b-6d862cff012e.png"><img alt="https://user-images.githubusercontent.com/14288520/205460811-0814b605-ffc1-4b12-a12b-6d862cff012e.png" src="https://user-images.githubusercontent.com/14288520/205460811-0814b605-ffc1-4b12-a12b-6d862cff012e.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205460811-0814b605-ffc1-4b12-a12b-6d862cff012e.png"><img alt="https://user-images.githubusercontent.com/14288520/205460811-0814b605-ffc1-4b12-a12b-6d862cff012e.png" src="https://user-images.githubusercontent.com/14288520/205460811-0814b605-ffc1-4b12-a12b-6d862cff012e.png" />
+</a>
 <ul class="simple">
 <li><p><strong>Cyclic</strong>. If checked, the node will generate a cyclic (closed) curve.
 Unchecked by default.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205460979-21eac21e-cfb0-49c3-93f7-1f42d7af2040.gif"><img alt="https://user-images.githubusercontent.com/14288520/205460979-21eac21e-cfb0-49c3-93f7-1f42d7af2040.gif" src="https://user-images.githubusercontent.com/14288520/205460979-21eac21e-cfb0-49c3-93f7-1f42d7af2040.gif" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205460979-21eac21e-cfb0-49c3-93f7-1f42d7af2040.gif"><img alt="https://user-images.githubusercontent.com/14288520/205460979-21eac21e-cfb0-49c3-93f7-1f42d7af2040.gif" src="https://user-images.githubusercontent.com/14288520/205460979-21eac21e-cfb0-49c3-93f7-1f42d7af2040.gif" />
+</a>
 <ul class="simple">
 <li><p><strong>NURBS output</strong>. This parameter is available in the N panel only. If
 checked, the node will output a NURBS curve. Built-in NURBS maths
@@ -255,7 +256,8 @@ to use NURBS-specific API methods with generated curve, or if you want to
 output the result in file format that understands NURBS only. Unchecked by
 default.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205461077-fbf75b36-5d5e-4c69-add8-4df6d274907e.png"><img alt="https://user-images.githubusercontent.com/14288520/205461077-fbf75b36-5d5e-4c69-add8-4df6d274907e.png" src="https://user-images.githubusercontent.com/14288520/205461077-fbf75b36-5d5e-4c69-add8-4df6d274907e.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205461077-fbf75b36-5d5e-4c69-add8-4df6d274907e.png"><img alt="https://user-images.githubusercontent.com/14288520/205461077-fbf75b36-5d5e-4c69-add8-4df6d274907e.png" src="https://user-images.githubusercontent.com/14288520/205461077-fbf75b36-5d5e-4c69-add8-4df6d274907e.png" />
+</a>
 <ul>
 <li><p><strong>Metric</strong>. This parameter is available in the N panel only. This defines the
 metric used to calculate curve’s T parameter values corresponding to
@@ -271,7 +273,8 @@ specified curve points. The available values are:</p>
 </div></blockquote>
 </li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205461520-05d351b9-6dc2-41d7-803b-b5f5bffb8e64.gif"><img alt="https://user-images.githubusercontent.com/14288520/205461520-05d351b9-6dc2-41d7-803b-b5f5bffb8e64.gif" src="https://user-images.githubusercontent.com/14288520/205461520-05d351b9-6dc2-41d7-803b-b5f5bffb8e64.gif" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205461520-05d351b9-6dc2-41d7-803b-b5f5bffb8e64.gif"><img alt="https://user-images.githubusercontent.com/14288520/205461520-05d351b9-6dc2-41d7-803b-b5f5bffb8e64.gif" src="https://user-images.githubusercontent.com/14288520/205461520-05d351b9-6dc2-41d7-803b-b5f5bffb8e64.gif" />
+</a>
 </section>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
@@ -283,7 +286,8 @@ specified curve points. The available values are:</p>
 <section id="examples-of-usage">
 <h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Link to this heading">¶</a></h2>
 <p>A simple example:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205461748-b2bdfd6e-2d96-4b17-a60f-22c6f650a279.png"><img alt="https://user-images.githubusercontent.com/14288520/205461748-b2bdfd6e-2d96-4b17-a60f-22c6f650a279.png" src="https://user-images.githubusercontent.com/14288520/205461748-b2bdfd6e-2d96-4b17-a60f-22c6f650a279.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205461748-b2bdfd6e-2d96-4b17-a60f-22c6f650a279.png"><img alt="https://user-images.githubusercontent.com/14288520/205461748-b2bdfd6e-2d96-4b17-a60f-22c6f650a279.png" src="https://user-images.githubusercontent.com/14288520/205461748-b2bdfd6e-2d96-4b17-a60f-22c6f650a279.png" />
+</a>
 <ul class="simple">
 <li><p>Number-&gt; <a class="reference internal" href="../number/numbers.html"><span class="doc">A Number</span></a></p></li>
 <li><p>RADIAND: Number-&gt; <a class="reference internal" href="../number/scalar_mk4.html"><span class="doc">Scalar Math</span></a></p></li>
@@ -295,7 +299,8 @@ specified curve points. The available values are:</p>
 </ul>
 <hr class="docutils" />
 <p>Similar example with a closed curve:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205461887-70252d9b-4858-42ab-a510-921b1c71ea5d.png"><img alt="https://user-images.githubusercontent.com/14288520/205461887-70252d9b-4858-42ab-a510-921b1c71ea5d.png" src="https://user-images.githubusercontent.com/14288520/205461887-70252d9b-4858-42ab-a510-921b1c71ea5d.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205461887-70252d9b-4858-42ab-a510-921b1c71ea5d.png"><img alt="https://user-images.githubusercontent.com/14288520/205461887-70252d9b-4858-42ab-a510-921b1c71ea5d.png" src="https://user-images.githubusercontent.com/14288520/205461887-70252d9b-4858-42ab-a510-921b1c71ea5d.png" />
+</a>
 </section>
 </section>
 

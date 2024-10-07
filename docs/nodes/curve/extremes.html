@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../">
 <head>
@@ -6,17 +8,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Curve Extremes &mdash; Sverchok 1, 2, 0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=7ab3649f" />
 
   
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/documentation_options.js?v=773c2105"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/documentation_options.js?v=773c2105"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -36,9 +34,6 @@
             Sverchok
               <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
           </a>
-              <div class="version">
-                1, 2, 0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -125,6 +120,7 @@
 <li class="toctree-l3"><a class="reference internal" href="point_curve.html">Single-Point Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="polyarc.html">Poly Arc</a></li>
 <li class="toctree-l3"><a class="reference internal" href="polyline.html">Polyline</a></li>
+<li class="toctree-l3"><a class="reference internal" href="prepare_curves_net.html">Prepare NURBS Curves Net</a></li>
 <li class="toctree-l3"><a class="reference internal" href="project_curve_surface.html">Project Curve to Surface (NURBS)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="rbf_curve.html">RBF Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="reduce_degree.html">Reduce Degree (NURBS Curve)</a></li>
@@ -206,7 +202,8 @@
              
   <section id="curve-extremes">
 <h1>Curve Extremes<a class="headerlink" href="#curve-extremes" title="Link to this heading">¶</a></h1>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/bad8c870-51b7-4373-8094-7d8ac68c73d0"><img alt="https://github.com/nortikin/sverchok/assets/14288520/bad8c870-51b7-4373-8094-7d8ac68c73d0" src="https://github.com/nortikin/sverchok/assets/14288520/bad8c870-51b7-4373-8094-7d8ac68c73d0" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/bad8c870-51b7-4373-8094-7d8ac68c73d0"><img alt="https://github.com/nortikin/sverchok/assets/14288520/bad8c870-51b7-4373-8094-7d8ac68c73d0" src="https://github.com/nortikin/sverchok/assets/14288520/bad8c870-51b7-4373-8094-7d8ac68c73d0" />
+</a>
 <section id="dependencies">
 <h2>Dependencies<a class="headerlink" href="#dependencies" title="Link to this heading">¶</a></h2>
 <p>This node requires <a class="reference external" href="https://scipy.org/">SciPy</a> library to work.</p>
@@ -223,7 +220,8 @@ analytically (by writing down all formulas for your field and your curve), it
 will be much faster to calculate points by formulas. This node, in turn, is
 most useful when you do not know exact formulas for the curve and / or for the
 scalar field - for example, if they were defined by approximation.</p>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/0066bb85-784f-40d3-a670-14283253b33b"><img alt="https://github.com/nortikin/sverchok/assets/14288520/0066bb85-784f-40d3-a670-14283253b33b" src="https://github.com/nortikin/sverchok/assets/14288520/0066bb85-784f-40d3-a670-14283253b33b" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/0066bb85-784f-40d3-a670-14283253b33b"><img alt="https://github.com/nortikin/sverchok/assets/14288520/0066bb85-784f-40d3-a670-14283253b33b" src="https://github.com/nortikin/sverchok/assets/14288520/0066bb85-784f-40d3-a670-14283253b33b" />
+</a>
 <ul class="simple">
 <li><p>Fields-&gt; <a class="reference internal" href="../field/coordinate_scalar_field.html"><span class="doc">Coordinate Scalar Field</span></a></p></li>
 <li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/join.html"><span class="doc">List Join</span></a></p></li>
@@ -276,7 +274,8 @@ other curves in the input list (if there are more than one curve).</p></li>
 <section id="example-of-usage">
 <h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Link to this heading">¶</a></h2>
 <p>Find the point on a curve which has the maximum value of Y coordinate:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/86952365-5383d980-c16c-11ea-84d3-75830c0dbc75.png"><img alt="https://user-images.githubusercontent.com/284644/86952365-5383d980-c16c-11ea-84d3-75830c0dbc75.png" src="https://user-images.githubusercontent.com/284644/86952365-5383d980-c16c-11ea-84d3-75830c0dbc75.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/86952365-5383d980-c16c-11ea-84d3-75830c0dbc75.png"><img alt="https://user-images.githubusercontent.com/284644/86952365-5383d980-c16c-11ea-84d3-75830c0dbc75.png" src="https://user-images.githubusercontent.com/284644/86952365-5383d980-c16c-11ea-84d3-75830c0dbc75.png" />
+</a>
 <ul class="simple">
 <li><p>Curves-&gt; <a class="reference internal" href="nurbs_curve.html"><span class="doc">Build NURBS Curve</span></a></p></li>
 <li><p>Curves-&gt; <a class="reference internal" href="eval_curve.html"><span class="doc">Evaluate Curve</span></a></p></li>

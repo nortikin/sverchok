@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../">
 <head>
@@ -6,17 +8,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Field Random Probe &mdash; Sverchok 1, 2, 0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=7ab3649f" />
 
   
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/documentation_options.js?v=773c2105"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/documentation_options.js?v=773c2105"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -36,9 +34,6 @@
             Sverchok
               <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
           </a>
-              <div class="version">
-                1, 2, 0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -154,7 +149,8 @@
              
   <section id="field-random-probe">
 <h1>Field Random Probe<a class="headerlink" href="#field-random-probe" title="Link to this heading">¶</a></h1>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201920986-aab5aaa6-7a49-4604-876b-5031dc52feab.png"><img alt="https://user-images.githubusercontent.com/14288520/201920986-aab5aaa6-7a49-4604-876b-5031dc52feab.png" src="https://user-images.githubusercontent.com/14288520/201920986-aab5aaa6-7a49-4604-876b-5031dc52feab.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201920986-aab5aaa6-7a49-4604-876b-5031dc52feab.png"><img alt="https://user-images.githubusercontent.com/14288520/201920986-aab5aaa6-7a49-4604-876b-5031dc52feab.png" src="https://user-images.githubusercontent.com/14288520/201920986-aab5aaa6-7a49-4604-876b-5031dc52feab.png" />
+</a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node generates random points, which are distributed according to the provided Scalar Field. It has two modes:</p>
@@ -185,55 +181,64 @@ value for any point in the space.</p></li>
 this input is not connected, the node will generate evenly distributed
 points. This input is mandatory, if <strong>Proportional</strong> parameter is checked.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201991541-76e85981-e32a-4153-8a2f-2b2fca84b38e.png"><img alt="https://user-images.githubusercontent.com/14288520/201991541-76e85981-e32a-4153-8a2f-2b2fca84b38e.png" src="https://user-images.githubusercontent.com/14288520/201991541-76e85981-e32a-4153-8a2f-2b2fca84b38e.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201991541-76e85981-e32a-4153-8a2f-2b2fca84b38e.png"><img alt="https://user-images.githubusercontent.com/14288520/201991541-76e85981-e32a-4153-8a2f-2b2fca84b38e.png" src="https://user-images.githubusercontent.com/14288520/201991541-76e85981-e32a-4153-8a2f-2b2fca84b38e.png" />
+</a>
 <p><strong>Fields</strong>-&gt; <a class="reference internal" href="../field/scalar_field_formula.html"><span class="doc">Scalar Field Formula</span></a></p>
 <ul class="simple">
 <li><p><strong>Bounds</strong>. Vertices defining the general area where the points will be
 generated. Only bounding box of these vertices will be used. This input is
 mandatory.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201993790-04ffeb02-ec26-409f-bdfc-c137eff69bb1.png"><img alt="https://user-images.githubusercontent.com/14288520/201993790-04ffeb02-ec26-409f-bdfc-c137eff69bb1.png" src="https://user-images.githubusercontent.com/14288520/201993790-04ffeb02-ec26-409f-bdfc-c137eff69bb1.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201993790-04ffeb02-ec26-409f-bdfc-c137eff69bb1.png"><img alt="https://user-images.githubusercontent.com/14288520/201993790-04ffeb02-ec26-409f-bdfc-c137eff69bb1.png" src="https://user-images.githubusercontent.com/14288520/201993790-04ffeb02-ec26-409f-bdfc-c137eff69bb1.png" />
+</a>
 <ul class="simple">
 <li><p><strong>Count</strong>. The number of points to be generated. The default value is 50.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201993542-e174184f-2bd4-4a39-a0a1-01469c61b0af.png"><img alt="https://user-images.githubusercontent.com/14288520/201993542-e174184f-2bd4-4a39-a0a1-01469c61b0af.png" src="https://user-images.githubusercontent.com/14288520/201993542-e174184f-2bd4-4a39-a0a1-01469c61b0af.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201993542-e174184f-2bd4-4a39-a0a1-01469c61b0af.png"><img alt="https://user-images.githubusercontent.com/14288520/201993542-e174184f-2bd4-4a39-a0a1-01469c61b0af.png" src="https://user-images.githubusercontent.com/14288520/201993542-e174184f-2bd4-4a39-a0a1-01469c61b0af.png" />
+</a>
 <ul class="simple">
 <li><p><strong>MinDistance</strong>. This input is available only when <strong>Distance</strong> parameter is
 set to <strong>Min. Distance</strong>. Minimum allowable distance between generated
 points. If set to zero, there will be no restriction on distance between
 points. Default value is 0.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201994709-323a12fa-3f52-4280-ad78-9db8d62df3bf.png"><img alt="https://user-images.githubusercontent.com/14288520/201994709-323a12fa-3f52-4280-ad78-9db8d62df3bf.png" src="https://user-images.githubusercontent.com/14288520/201994709-323a12fa-3f52-4280-ad78-9db8d62df3bf.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201994709-323a12fa-3f52-4280-ad78-9db8d62df3bf.png"><img alt="https://user-images.githubusercontent.com/14288520/201994709-323a12fa-3f52-4280-ad78-9db8d62df3bf.png" src="https://user-images.githubusercontent.com/14288520/201994709-323a12fa-3f52-4280-ad78-9db8d62df3bf.png" />
+</a>
 <ul class="simple">
 <li><p><strong>RadiusField</strong>. This input is available and mandatory only when <strong>Distance</strong>
 parameter is set to <strong>Radius Field</strong>. The scalar field, which defines radius
 of free sphere around any generated point.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201995939-d21f87f6-ea58-49ef-b845-355d473a6130.png"><img alt="https://user-images.githubusercontent.com/14288520/201995939-d21f87f6-ea58-49ef-b845-355d473a6130.png" src="https://user-images.githubusercontent.com/14288520/201995939-d21f87f6-ea58-49ef-b845-355d473a6130.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201995939-d21f87f6-ea58-49ef-b845-355d473a6130.png"><img alt="https://user-images.githubusercontent.com/14288520/201995939-d21f87f6-ea58-49ef-b845-355d473a6130.png" src="https://user-images.githubusercontent.com/14288520/201995939-d21f87f6-ea58-49ef-b845-355d473a6130.png" />
+</a>
 <ul class="simple">
 <li><p><strong>Threshold</strong>. Threshold value: the node will not generate points in areas
 where the value of scalar field is less than this value. The default value is
 0.5.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201998468-7320eae9-3901-4b2f-b769-0a03b599d1cd.png"><img alt="https://user-images.githubusercontent.com/14288520/201998468-7320eae9-3901-4b2f-b769-0a03b599d1cd.png" src="https://user-images.githubusercontent.com/14288520/201998468-7320eae9-3901-4b2f-b769-0a03b599d1cd.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201998468-7320eae9-3901-4b2f-b769-0a03b599d1cd.png"><img alt="https://user-images.githubusercontent.com/14288520/201998468-7320eae9-3901-4b2f-b769-0a03b599d1cd.png" src="https://user-images.githubusercontent.com/14288520/201998468-7320eae9-3901-4b2f-b769-0a03b599d1cd.png" />
+</a>
 <ul class="simple">
 <li><p><strong>Field Minimum</strong>. Minimum value of scalar field reached within the area
 defined by <strong>Bounds</strong> input. This input is used to define the probability of
 vertices generation at certain points. This input is only available when the
 <strong>Proportional</strong> parameter is checked. The default value is 0.0.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201997186-64476415-8bda-4f8a-b3f1-8ac2faf05af3.png"><img alt="https://user-images.githubusercontent.com/14288520/201997186-64476415-8bda-4f8a-b3f1-8ac2faf05af3.png" src="https://user-images.githubusercontent.com/14288520/201997186-64476415-8bda-4f8a-b3f1-8ac2faf05af3.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201997186-64476415-8bda-4f8a-b3f1-8ac2faf05af3.png"><img alt="https://user-images.githubusercontent.com/14288520/201997186-64476415-8bda-4f8a-b3f1-8ac2faf05af3.png" src="https://user-images.githubusercontent.com/14288520/201997186-64476415-8bda-4f8a-b3f1-8ac2faf05af3.png" />
+</a>
 <ul class="simple">
 <li><p><strong>Field Maximum</strong>. Maximum value of scalar field reached within the area
 defined by <strong>Bounds</strong> input. This input is used to define the probability of
 vertices generation at certain points. This input is only available when the
 <strong>Proportional</strong> parameter is checked. The default value is 1.0.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201999011-dc9a2ce2-94d0-48d4-9b70-bd2255fd9907.png"><img alt="https://user-images.githubusercontent.com/14288520/201999011-dc9a2ce2-94d0-48d4-9b70-bd2255fd9907.png" src="https://user-images.githubusercontent.com/14288520/201999011-dc9a2ce2-94d0-48d4-9b70-bd2255fd9907.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201999011-dc9a2ce2-94d0-48d4-9b70-bd2255fd9907.png"><img alt="https://user-images.githubusercontent.com/14288520/201999011-dc9a2ce2-94d0-48d4-9b70-bd2255fd9907.png" src="https://user-images.githubusercontent.com/14288520/201999011-dc9a2ce2-94d0-48d4-9b70-bd2255fd9907.png" />
+</a>
 <ul class="simple">
 <li><p><strong>Seed</strong>. Random seed. The default value is 0.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201999569-8908019a-0c55-4d3f-aff8-c04f78f6547e.png"><img alt="https://user-images.githubusercontent.com/14288520/201999569-8908019a-0c55-4d3f-aff8-c04f78f6547e.png" src="https://user-images.githubusercontent.com/14288520/201999569-8908019a-0c55-4d3f-aff8-c04f78f6547e.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201999569-8908019a-0c55-4d3f-aff8-c04f78f6547e.png"><img alt="https://user-images.githubusercontent.com/14288520/201999569-8908019a-0c55-4d3f-aff8-c04f78f6547e.png" src="https://user-images.githubusercontent.com/14288520/201999569-8908019a-0c55-4d3f-aff8-c04f78f6547e.png" />
+</a>
 </section>
 <section id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
@@ -255,23 +260,27 @@ intersect. (If radius is negative then result is unpredictable)</p></li>
 </li>
 </ul>
 <p><strong>Min.Distance</strong></p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202023076-208dd585-9f3b-462f-b17e-66479165a397.gif"><img alt="https://user-images.githubusercontent.com/14288520/202023076-208dd585-9f3b-462f-b17e-66479165a397.gif" src="https://user-images.githubusercontent.com/14288520/202023076-208dd585-9f3b-462f-b17e-66479165a397.gif" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202023076-208dd585-9f3b-462f-b17e-66479165a397.gif"><img alt="https://user-images.githubusercontent.com/14288520/202023076-208dd585-9f3b-462f-b17e-66479165a397.gif" src="https://user-images.githubusercontent.com/14288520/202023076-208dd585-9f3b-462f-b17e-66479165a397.gif" />
+</a>
 <p><strong>Radius Field</strong></p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202022780-85482c48-14c0-4e8b-b78e-90b2af9d9cf0.gif"><img alt="https://user-images.githubusercontent.com/14288520/202022780-85482c48-14c0-4e8b-b78e-90b2af9d9cf0.gif" src="https://user-images.githubusercontent.com/14288520/202022780-85482c48-14c0-4e8b-b78e-90b2af9d9cf0.gif" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202022780-85482c48-14c0-4e8b-b78e-90b2af9d9cf0.gif"><img alt="https://user-images.githubusercontent.com/14288520/202022780-85482c48-14c0-4e8b-b78e-90b2af9d9cf0.gif" src="https://user-images.githubusercontent.com/14288520/202022780-85482c48-14c0-4e8b-b78e-90b2af9d9cf0.gif" />
+</a>
 <ul class="simple">
 <li><p><strong>Proportional</strong>. If checked, then the points density will be distributed
 proportionally to the values of scalar field. Otherwise, the points will be
 uniformly distributed in the area where the value of scalar field exceeds
 threshold. Unchecked by default.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202024927-d3b7bc4b-8130-4bd9-ba64-9d9284bb9112.gif"><img alt="https://user-images.githubusercontent.com/14288520/202024927-d3b7bc4b-8130-4bd9-ba64-9d9284bb9112.gif" src="https://user-images.githubusercontent.com/14288520/202024927-d3b7bc4b-8130-4bd9-ba64-9d9284bb9112.gif" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202024927-d3b7bc4b-8130-4bd9-ba64-9d9284bb9112.gif"><img alt="https://user-images.githubusercontent.com/14288520/202024927-d3b7bc4b-8130-4bd9-ba64-9d9284bb9112.gif" src="https://user-images.githubusercontent.com/14288520/202024927-d3b7bc4b-8130-4bd9-ba64-9d9284bb9112.gif" />
+</a>
 <ul class="simple">
 <li><p><strong>Flat output</strong>. If checked, the node will generate
 one flat list of objects for all sets of input parameters. Otherwise, a
 separate list of objects will be generated for each set of input parameter
 values.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202544718-b6bf467a-b044-42cb-b036-9214ed8d3c73.png"><img alt="https://user-images.githubusercontent.com/14288520/202544718-b6bf467a-b044-42cb-b036-9214ed8d3c73.png" src="https://user-images.githubusercontent.com/14288520/202544718-b6bf467a-b044-42cb-b036-9214ed8d3c73.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202544718-b6bf467a-b044-42cb-b036-9214ed8d3c73.png"><img alt="https://user-images.githubusercontent.com/14288520/202544718-b6bf467a-b044-42cb-b036-9214ed8d3c73.png" src="https://user-images.githubusercontent.com/14288520/202544718-b6bf467a-b044-42cb-b036-9214ed8d3c73.png" />
+</a>
 <ul class="simple">
 <li><p><strong>Random Radius</strong>. This parameter is available only when <strong>Distance</strong>
 parameter is set to <strong>RadiusField</strong>. If checked, then radiuses of empty
@@ -279,7 +288,8 @@ spheres will be generated randomly, by using uniform distribution between 0
 (zero) and the value defined by the scalar field provided in the
 <strong>RadiusField</strong> input. Unchecked by default.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202025651-21db71da-9001-4c06-b93c-2b927d51c475.gif"><img alt="https://user-images.githubusercontent.com/14288520/202025651-21db71da-9001-4c06-b93c-2b927d51c475.gif" src="https://user-images.githubusercontent.com/14288520/202025651-21db71da-9001-4c06-b93c-2b927d51c475.gif" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202025651-21db71da-9001-4c06-b93c-2b927d51c475.gif"><img alt="https://user-images.githubusercontent.com/14288520/202025651-21db71da-9001-4c06-b93c-2b927d51c475.gif" src="https://user-images.githubusercontent.com/14288520/202025651-21db71da-9001-4c06-b93c-2b927d51c475.gif" />
+</a>
 <p>When <strong>Proportional</strong> mode is enabled, then the probability of vertex
 appearance at the certain point is calculated as <code class="docutils literal notranslate"><span class="pre">P</span> <span class="pre">=</span> <span class="pre">(V</span> <span class="pre">-</span> <span class="pre">FieldMin)</span> <span class="pre">/</span>
 <span class="pre">(FieldMax</span> <span class="pre">-</span> <span class="pre">FieldMin)</span></code>, where V is the value of scalar field at that point,
@@ -296,7 +306,8 @@ and FieldMin, FieldMax are values of corresponding node inputs.</p>
 <section id="examples-of-usage">
 <h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Link to this heading">¶</a></h2>
 <p>Generate cubes near the cylinder:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202032902-34d25e2c-d641-4568-aeee-e4608037b2d5.png"><img alt="https://user-images.githubusercontent.com/14288520/202032902-34d25e2c-d641-4568-aeee-e4608037b2d5.png" src="https://user-images.githubusercontent.com/14288520/202032902-34d25e2c-d641-4568-aeee-e4608037b2d5.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202032902-34d25e2c-d641-4568-aeee-e4608037b2d5.png"><img alt="https://user-images.githubusercontent.com/14288520/202032902-34d25e2c-d641-4568-aeee-e4608037b2d5.png" src="https://user-images.githubusercontent.com/14288520/202032902-34d25e2c-d641-4568-aeee-e4608037b2d5.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/cylinder_mk2.html"><span class="doc">Cylinder</span></a></p></li>
@@ -305,7 +316,8 @@ and FieldMin, FieldMax are values of corresponding node inputs.</p>
 </ul>
 <hr class="docutils" />
 <p>Generate cubes according to the scalar field defined by some formula:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/81504488-f94cd080-9302-11ea-9da5-f27f633f2191.png"><img alt="https://user-images.githubusercontent.com/284644/81504488-f94cd080-9302-11ea-9da5-f27f633f2191.png" src="https://user-images.githubusercontent.com/284644/81504488-f94cd080-9302-11ea-9da5-f27f633f2191.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/81504488-f94cd080-9302-11ea-9da5-f27f633f2191.png"><img alt="https://user-images.githubusercontent.com/284644/81504488-f94cd080-9302-11ea-9da5-f27f633f2191.png" src="https://user-images.githubusercontent.com/284644/81504488-f94cd080-9302-11ea-9da5-f27f633f2191.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
 <li><p>Fields-&gt; <a class="reference internal" href="../field/scalar_field_formula.html"><span class="doc">Scalar Field Formula</span></a></p></li>
@@ -313,14 +325,16 @@ and FieldMin, FieldMax are values of corresponding node inputs.</p>
 </ul>
 <hr class="docutils" />
 <p>Example of <strong>Radius Field</strong> mode usage:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202041621-1b474361-f34b-4023-ad92-8414171f31fd.gif"><img alt="https://user-images.githubusercontent.com/14288520/202041621-1b474361-f34b-4023-ad92-8414171f31fd.gif" src="https://user-images.githubusercontent.com/14288520/202041621-1b474361-f34b-4023-ad92-8414171f31fd.gif" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202041621-1b474361-f34b-4023-ad92-8414171f31fd.gif"><img alt="https://user-images.githubusercontent.com/14288520/202041621-1b474361-f34b-4023-ad92-8414171f31fd.gif" src="https://user-images.githubusercontent.com/14288520/202041621-1b474361-f34b-4023-ad92-8414171f31fd.gif" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
 <li><p>Fields-&gt; <a class="reference internal" href="../field/scalar_field_formula.html"><span class="doc">Scalar Field Formula</span></a></p></li>
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/icosphere.html"><span class="doc">IcoSphere</span></a></p></li>
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202041205-f782a3dd-16cd-44bd-bef3-3b69a82ea12c.png"><img alt="https://user-images.githubusercontent.com/14288520/202041205-f782a3dd-16cd-44bd-bef3-3b69a82ea12c.png" src="https://user-images.githubusercontent.com/14288520/202041205-f782a3dd-16cd-44bd-bef3-3b69a82ea12c.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202041205-f782a3dd-16cd-44bd-bef3-3b69a82ea12c.png"><img alt="https://user-images.githubusercontent.com/14288520/202041205-f782a3dd-16cd-44bd-bef3-3b69a82ea12c.png" src="https://user-images.githubusercontent.com/14288520/202041205-f782a3dd-16cd-44bd-bef3-3b69a82ea12c.png" />
+</a>
 <p>Here we are placing spheres of different radiuses at each generated point.
 Since radiuses of the sphere are defined by the same scalar field which is used
 for RadiusField input, these spheres do never intersect.</p>

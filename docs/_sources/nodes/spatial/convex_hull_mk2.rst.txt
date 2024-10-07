@@ -30,7 +30,7 @@ Examples
 .. image:: https://user-images.githubusercontent.com/14288520/202849248-6c2d96c3-cbaa-4f38-88a5-b6ae16feb4fc.png
   :target: https://user-images.githubusercontent.com/14288520/202849248-6c2d96c3-cbaa-4f38-88a5-b6ae16feb4fc.png
 
-* Generator-> :doc:`Random Vector </nodes/generator/random_vector_mk3>`
+* Generator-> :doc:`Random Vector </nodes/spatial/populate_mesh_mk2>`
 * Transform-> :doc:`Noise Displace </nodes/transforms/noise_displace>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 
@@ -59,7 +59,7 @@ Examples
 
 * Generator-> :doc:`Plane </nodes/generator/plane_mk3>`
 * Generator-> :doc:`NGon </nodes/generator/ngon>`
-* Spatial-> :doc:`Populate Mesh </nodes/spatial/random_points_on_mesh>`
+* Spatial-> :doc:`Populate Mesh </nodes/spatial/populate_mesh_mk2>`
 * Transform-> :doc:`Noise Displace </nodes/transforms/noise_displace>`
 * Modifiers->Modifier Change-> :doc:`Mesh Join </nodes/modifier_change/mesh_join_mk2>`
 * List->List Main-> :doc:`List Join </nodes/list_main/join>`

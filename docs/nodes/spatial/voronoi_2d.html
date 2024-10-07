@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../">
 <head>
@@ -6,17 +8,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Voronoi 2D Node &mdash; Sverchok 1, 2, 0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=7ab3649f" />
 
   
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/documentation_options.js?v=773c2105"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/documentation_options.js?v=773c2105"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -36,9 +34,6 @@
             Sverchok
               <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
           </a>
-              <div class="version">
-                1, 2, 0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -154,7 +149,8 @@
              
   <section id="voronoi-2d-node">
 <h1>Voronoi 2D Node<a class="headerlink" href="#voronoi-2d-node" title="Link to this heading">¶</a></h1>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202251049-aea22f20-4e85-4f60-acff-9f2107f41a35.png"><img alt="https://user-images.githubusercontent.com/14288520/202251049-aea22f20-4e85-4f60-acff-9f2107f41a35.png" src="https://user-images.githubusercontent.com/14288520/202251049-aea22f20-4e85-4f60-acff-9f2107f41a35.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202251049-aea22f20-4e85-4f60-acff-9f2107f41a35.png"><img alt="https://user-images.githubusercontent.com/14288520/202251049-aea22f20-4e85-4f60-acff-9f2107f41a35.png" src="https://user-images.githubusercontent.com/14288520/202251049-aea22f20-4e85-4f60-acff-9f2107f41a35.png" />
+</a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node generates <a class="reference external" href="https://en.wikipedia.org/wiki/Voronoi_diagram">Voronoi</a> diagram for the provided set of vertices in 2D space (in XOY plane).</p>
@@ -186,26 +182,30 @@ checked. The value can also be provided as a parameter.</p></li>
 <li><p><strong>Draw Bounds</strong>. If checked, then the edges connecting boundary vertices will
 be generated. Checked by default.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202302819-11154af6-a7ba-41e4-ae22-a7f29caf356a.gif"><img alt="https://user-images.githubusercontent.com/14288520/202302819-11154af6-a7ba-41e4-ae22-a7f29caf356a.gif" src="https://user-images.githubusercontent.com/14288520/202302819-11154af6-a7ba-41e4-ae22-a7f29caf356a.gif" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202302819-11154af6-a7ba-41e4-ae22-a7f29caf356a.gif"><img alt="https://user-images.githubusercontent.com/14288520/202302819-11154af6-a7ba-41e4-ae22-a7f29caf356a.gif" src="https://user-images.githubusercontent.com/14288520/202302819-11154af6-a7ba-41e4-ae22-a7f29caf356a.gif" />
+</a>
 <ul class="simple">
 <li><p><strong>Draw Tails</strong>. If checked, then the edges that go from the central part of
 diagram to outside the bounding line, will be generated. This parameter is
 available only if <strong>Draw Bounds</strong> is not checked. Checked by default.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202302012-eeae6d5d-eeba-4085-ad42-024f9d62b14a.gif"><img alt="https://user-images.githubusercontent.com/14288520/202302012-eeae6d5d-eeba-4085-ad42-024f9d62b14a.gif" src="https://user-images.githubusercontent.com/14288520/202302012-eeae6d5d-eeba-4085-ad42-024f9d62b14a.gif" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202302012-eeae6d5d-eeba-4085-ad42-024f9d62b14a.gif"><img alt="https://user-images.githubusercontent.com/14288520/202302012-eeae6d5d-eeba-4085-ad42-024f9d62b14a.gif" src="https://user-images.githubusercontent.com/14288520/202302012-eeae6d5d-eeba-4085-ad42-024f9d62b14a.gif" />
+</a>
 <ul class="simple">
 <li><p><strong>Clipping</strong>. Amount of space to be added for bounding line. If bounds are
 defined by bounding box, then this amount of space will be added in each
 direction (top, bottom, right and left). If bounds are defined by bounding
 circle, then this amount will be added to the circle’s radius. Default value is 1.0.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202301245-290645f8-e54c-45da-b158-5e6eb5c17dce.gif"><img alt="https://user-images.githubusercontent.com/14288520/202301245-290645f8-e54c-45da-b158-5e6eb5c17dce.gif" src="https://user-images.githubusercontent.com/14288520/202301245-290645f8-e54c-45da-b158-5e6eb5c17dce.gif" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202301245-290645f8-e54c-45da-b158-5e6eb5c17dce.gif"><img alt="https://user-images.githubusercontent.com/14288520/202301245-290645f8-e54c-45da-b158-5e6eb5c17dce.gif" src="https://user-images.githubusercontent.com/14288520/202301245-290645f8-e54c-45da-b158-5e6eb5c17dce.gif" />
+</a>
 <ul class="simple">
 <li><p><strong>Make Faces</strong>. If checked, then “fill holes” function will be used to create
 polygons of the Voronoi diagram. Maximum number of polygon sides is
 controlled by the <strong>MaxSides</strong> input / parameter. Unchecked by default.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202297472-63ba8e87-5fb8-4348-a60b-3b0e8f747736.gif"><img alt="https://user-images.githubusercontent.com/14288520/202297472-63ba8e87-5fb8-4348-a60b-3b0e8f747736.gif" src="https://user-images.githubusercontent.com/14288520/202297472-63ba8e87-5fb8-4348-a60b-3b0e8f747736.gif" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202297472-63ba8e87-5fb8-4348-a60b-3b0e8f747736.gif"><img alt="https://user-images.githubusercontent.com/14288520/202297472-63ba8e87-5fb8-4348-a60b-3b0e8f747736.gif" src="https://user-images.githubusercontent.com/14288520/202297472-63ba8e87-5fb8-4348-a60b-3b0e8f747736.gif" />
+</a>
 <ul class="simple">
 <li><p><strong>Ordered faces</strong>. This parameter is available in the N palen only, and only
 if <strong>Make Faces</strong> parameter is checked. If enabled, the node will make sure
@@ -213,7 +213,8 @@ that generated faces are in the same order as input vertices. This procedure
 can take additional time. If not checked, the order of faces will not be the
 same as order of initial points.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202300322-bfa83fa1-2f19-46cc-a462-f47cc21a4d08.gif"><img alt="https://user-images.githubusercontent.com/14288520/202300322-bfa83fa1-2f19-46cc-a462-f47cc21a4d08.gif" src="https://user-images.githubusercontent.com/14288520/202300322-bfa83fa1-2f19-46cc-a462-f47cc21a4d08.gif" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202300322-bfa83fa1-2f19-46cc-a462-f47cc21a4d08.gif"><img alt="https://user-images.githubusercontent.com/14288520/202300322-bfa83fa1-2f19-46cc-a462-f47cc21a4d08.gif" src="https://user-images.githubusercontent.com/14288520/202300322-bfa83fa1-2f19-46cc-a462-f47cc21a4d08.gif" />
+</a>
 </section>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
@@ -227,10 +228,13 @@ same as order of initial points.</p></li>
 <section id="examples-of-usage">
 <h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Link to this heading">¶</a></h2>
 <p>Simple example:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202290645-5c54af82-7ecc-4bc9-bd6d-c2d06d7d875d.png"><img alt="https://user-images.githubusercontent.com/14288520/202290645-5c54af82-7ecc-4bc9-bd6d-c2d06d7d875d.png" src="https://user-images.githubusercontent.com/14288520/202290645-5c54af82-7ecc-4bc9-bd6d-c2d06d7d875d.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202290645-5c54af82-7ecc-4bc9-bd6d-c2d06d7d875d.png"><img alt="https://user-images.githubusercontent.com/14288520/202290645-5c54af82-7ecc-4bc9-bd6d-c2d06d7d875d.png" src="https://user-images.githubusercontent.com/14288520/202290645-5c54af82-7ecc-4bc9-bd6d-c2d06d7d875d.png" />
+</a>
 <p>Circular clipping:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202292894-4961f0d2-62c2-4062-af19-8a5b5d3ce07b.png"><img alt="https://user-images.githubusercontent.com/14288520/202292894-4961f0d2-62c2-4062-af19-8a5b5d3ce07b.png" src="https://user-images.githubusercontent.com/14288520/202292894-4961f0d2-62c2-4062-af19-8a5b5d3ce07b.png" /></a>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202293847-815df87d-b861-4416-82ef-70184e55c102.png"><img alt="https://user-images.githubusercontent.com/14288520/202293847-815df87d-b861-4416-82ef-70184e55c102.png" src="https://user-images.githubusercontent.com/14288520/202293847-815df87d-b861-4416-82ef-70184e55c102.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202292894-4961f0d2-62c2-4062-af19-8a5b5d3ce07b.png"><img alt="https://user-images.githubusercontent.com/14288520/202292894-4961f0d2-62c2-4062-af19-8a5b5d3ce07b.png" src="https://user-images.githubusercontent.com/14288520/202292894-4961f0d2-62c2-4062-af19-8a5b5d3ce07b.png" />
+</a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202293847-815df87d-b861-4416-82ef-70184e55c102.png"><img alt="https://user-images.githubusercontent.com/14288520/202293847-815df87d-b861-4416-82ef-70184e55c102.png" src="https://user-images.githubusercontent.com/14288520/202293847-815df87d-b861-4416-82ef-70184e55c102.png" />
+</a>
 </section>
 </section>
 

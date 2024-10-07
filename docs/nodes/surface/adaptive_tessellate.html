@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../">
 <head>
@@ -6,17 +8,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Adaptive Tessellate Surface &mdash; Sverchok 1, 2, 0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=7ab3649f" />
 
   
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/documentation_options.js?v=773c2105"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/documentation_options.js?v=773c2105"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -36,9 +34,6 @@
             Sverchok
               <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
           </a>
-              <div class="version">
-                1, 2, 0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -180,7 +175,8 @@
              
   <section id="adaptive-tessellate-surface">
 <h1>Adaptive Tessellate Surface<a class="headerlink" href="#adaptive-tessellate-surface" title="Link to this heading">¶</a></h1>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/caf1b655-26d2-44ec-8d58-600bc9be0832"><img alt="https://github.com/nortikin/sverchok/assets/14288520/caf1b655-26d2-44ec-8d58-600bc9be0832" src="https://github.com/nortikin/sverchok/assets/14288520/caf1b655-26d2-44ec-8d58-600bc9be0832" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/caf1b655-26d2-44ec-8d58-600bc9be0832"><img alt="https://github.com/nortikin/sverchok/assets/14288520/caf1b655-26d2-44ec-8d58-600bc9be0832" src="https://github.com/nortikin/sverchok/assets/14288520/caf1b655-26d2-44ec-8d58-600bc9be0832" />
+</a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node generates an adaptive tessellation for the given surface, i.e. the
@@ -339,29 +335,36 @@ on the surface. Z coordinates of these points is always zero.</p></li>
 several bumps. On the left: a surface evaluated with cartesian grid; on the
 right: the same surface with adaptive tessellation. Each of these meshes has
 (nearly) the same count of triangles - 41K.</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/80983371-eb500900-8e45-11ea-93ad-50ccee371bb3.png"><img alt="https://user-images.githubusercontent.com/284644/80983371-eb500900-8e45-11ea-93ad-50ccee371bb3.png" src="https://user-images.githubusercontent.com/284644/80983371-eb500900-8e45-11ea-93ad-50ccee371bb3.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/80983371-eb500900-8e45-11ea-93ad-50ccee371bb3.png"><img alt="https://user-images.githubusercontent.com/284644/80983371-eb500900-8e45-11ea-93ad-50ccee371bb3.png" src="https://user-images.githubusercontent.com/284644/80983371-eb500900-8e45-11ea-93ad-50ccee371bb3.png" />
+</a>
 <p>Notice how much smoother the bumps are on the right mesh. Also notice the sharp
 edges around the bumps - they are made by explicitly defining the points where
 they should be (by use of <strong>AddUVPoints</strong> input).</p>
 <p>The same pictue with wireframe display enabled:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/80921813-14af5d00-8d92-11ea-9038-b504a176b7fe.png"><img alt="https://user-images.githubusercontent.com/284644/80921813-14af5d00-8d92-11ea-9038-b504a176b7fe.png" src="https://user-images.githubusercontent.com/284644/80921813-14af5d00-8d92-11ea-9038-b504a176b7fe.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/80921813-14af5d00-8d92-11ea-9038-b504a176b7fe.png"><img alt="https://user-images.githubusercontent.com/284644/80921813-14af5d00-8d92-11ea-9038-b504a176b7fe.png" src="https://user-images.githubusercontent.com/284644/80921813-14af5d00-8d92-11ea-9038-b504a176b7fe.png" />
+</a>
 <p>Notice that on the left, the mesh has a lot of subdivisions in the flat part,
 where they are not at all necessary. The right mesh has much less subdivisions
 in flat parts, and much more on the bumps.</p>
 <p>A simpler example, with one bump and no additional points used:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/80983350-e68b5500-8e45-11ea-8c91-50f56adbc0fe.png"><img alt="https://user-images.githubusercontent.com/284644/80983350-e68b5500-8e45-11ea-8c91-50f56adbc0fe.png" src="https://user-images.githubusercontent.com/284644/80983350-e68b5500-8e45-11ea-8c91-50f56adbc0fe.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/80983350-e68b5500-8e45-11ea-8c91-50f56adbc0fe.png"><img alt="https://user-images.githubusercontent.com/284644/80983350-e68b5500-8e45-11ea-8c91-50f56adbc0fe.png" src="https://user-images.githubusercontent.com/284644/80983350-e68b5500-8e45-11ea-8c91-50f56adbc0fe.png" />
+</a>
 <p>Use of the node with formula-defined surface, with only <strong>By Curvature</strong>
 parameter enabled. Notice that there are more subdivisions in the places where
 the surface is bent:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/80983355-e7bc8200-8e45-11ea-8007-d3b6469d4f61.png"><img alt="https://user-images.githubusercontent.com/284644/80983355-e7bc8200-8e45-11ea-8007-d3b6469d4f61.png" src="https://user-images.githubusercontent.com/284644/80983355-e7bc8200-8e45-11ea-8007-d3b6469d4f61.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/80983355-e7bc8200-8e45-11ea-8007-d3b6469d4f61.png"><img alt="https://user-images.githubusercontent.com/284644/80983355-e7bc8200-8e45-11ea-8007-d3b6469d4f61.png" src="https://user-images.githubusercontent.com/284644/80983355-e7bc8200-8e45-11ea-8007-d3b6469d4f61.png" />
+</a>
 <p>The same surface with only <strong>By Area</strong> parameter enabled. Here there are more
 subdivisions in places where the surface is stretched (but it is almost flat at
 these places):</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/80983357-e8551880-8e45-11ea-8f2c-881beebe8d39.png"><img alt="https://user-images.githubusercontent.com/284644/80983357-e8551880-8e45-11ea-8f2c-881beebe8d39.png" src="https://user-images.githubusercontent.com/284644/80983357-e8551880-8e45-11ea-8f2c-881beebe8d39.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/80983357-e8551880-8e45-11ea-8f2c-881beebe8d39.png"><img alt="https://user-images.githubusercontent.com/284644/80983357-e8551880-8e45-11ea-8f2c-881beebe8d39.png" src="https://user-images.githubusercontent.com/284644/80983357-e8551880-8e45-11ea-8f2c-881beebe8d39.png" />
+</a>
 <p>And with both parameters enabled at the same time:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/80983360-e8edaf00-8e45-11ea-8af5-8f86334ef066.png"><img alt="https://user-images.githubusercontent.com/284644/80983360-e8edaf00-8e45-11ea-8af5-8f86334ef066.png" src="https://user-images.githubusercontent.com/284644/80983360-e8edaf00-8e45-11ea-8af5-8f86334ef066.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/80983360-e8edaf00-8e45-11ea-8af5-8f86334ef066.png"><img alt="https://user-images.githubusercontent.com/284644/80983360-e8edaf00-8e45-11ea-8af5-8f86334ef066.png" src="https://user-images.githubusercontent.com/284644/80983360-e8edaf00-8e45-11ea-8af5-8f86334ef066.png" />
+</a>
 <p>An example of the <strong>TrimCurve</strong> input usage:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/80983363-e9864580-8e45-11ea-8dc9-f656108177a4.png"><img alt="https://user-images.githubusercontent.com/284644/80983363-e9864580-8e45-11ea-8dc9-f656108177a4.png" src="https://user-images.githubusercontent.com/284644/80983363-e9864580-8e45-11ea-8dc9-f656108177a4.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/80983363-e9864580-8e45-11ea-8dc9-f656108177a4.png"><img alt="https://user-images.githubusercontent.com/284644/80983363-e9864580-8e45-11ea-8dc9-f656108177a4.png" src="https://user-images.githubusercontent.com/284644/80983363-e9864580-8e45-11ea-8dc9-f656108177a4.png" />
+</a>
 </section>
 </section>
 

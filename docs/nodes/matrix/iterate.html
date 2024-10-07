@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../">
 <head>
@@ -6,17 +8,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Iterate Matrix Transformation &mdash; Sverchok 1, 2, 0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=7ab3649f" />
 
   
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/documentation_options.js?v=773c2105"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/documentation_options.js?v=773c2105"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -36,9 +34,6 @@
             Sverchok
               <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
           </a>
-              <div class="version">
-                1, 2, 0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -143,7 +138,8 @@
              
   <section id="iterate-matrix-transformation">
 <h1>Iterate Matrix Transformation<a class="headerlink" href="#iterate-matrix-transformation" title="Link to this heading">¶</a></h1>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189550986-f7b0bce0-c82a-4e82-a3d5-4622ff5b02ad.png"><img alt="https://user-images.githubusercontent.com/14288520/189550986-f7b0bce0-c82a-4e82-a3d5-4622ff5b02ad.png" src="https://user-images.githubusercontent.com/14288520/189550986-f7b0bce0-c82a-4e82-a3d5-4622ff5b02ad.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189550986-f7b0bce0-c82a-4e82-a3d5-4622ff5b02ad.png"><img alt="https://user-images.githubusercontent.com/14288520/189550986-f7b0bce0-c82a-4e82-a3d5-4622ff5b02ad.png" src="https://user-images.githubusercontent.com/14288520/189550986-f7b0bce0-c82a-4e82-a3d5-4622ff5b02ad.png" />
+</a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node iteratively applies affine transformation (specified by matrix) to
@@ -200,29 +196,34 @@ to output as is.</p>
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">¶</a></h2>
 <p>Circle as input, Iterations = 3; one matrix specifies scale by 0.65 (along all axis) and translation along X axis by 0.3:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189550990-87147385-9f4e-4a2f-b1c8-a2bcbbf8072c.png"><img alt="https://user-images.githubusercontent.com/14288520/189550990-87147385-9f4e-4a2f-b1c8-a2bcbbf8072c.png" src="https://user-images.githubusercontent.com/14288520/189550990-87147385-9f4e-4a2f-b1c8-a2bcbbf8072c.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189550990-87147385-9f4e-4a2f-b1c8-a2bcbbf8072c.png"><img alt="https://user-images.githubusercontent.com/14288520/189550990-87147385-9f4e-4a2f-b1c8-a2bcbbf8072c.png" src="https://user-images.githubusercontent.com/14288520/189550990-87147385-9f4e-4a2f-b1c8-a2bcbbf8072c.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/circle.html"><span class="doc">Circle</span></a></p></li>
 <li><p>Matrix-&gt; <a class="reference internal" href="matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
 </ul>
 <p>One object as input, Iterations = 4; one matrix specifies scale by 0.6 along X and Y axis, and translation along Z by 1:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189550997-ede7060e-9806-4745-bed1-f5d476cbf651.png"><img alt="https://user-images.githubusercontent.com/14288520/189550997-ede7060e-9806-4745-bed1-f5d476cbf651.png" src="https://user-images.githubusercontent.com/14288520/189550997-ede7060e-9806-4745-bed1-f5d476cbf651.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189550997-ede7060e-9806-4745-bed1-f5d476cbf651.png"><img alt="https://user-images.githubusercontent.com/14288520/189550997-ede7060e-9806-4745-bed1-f5d476cbf651.png" src="https://user-images.githubusercontent.com/14288520/189550997-ede7060e-9806-4745-bed1-f5d476cbf651.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/cylinder_mk2.html"><span class="doc">Cylinder</span></a></p></li>
 <li><p>Matrix-&gt; <a class="reference internal" href="matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189550930-bf0fa44a-e125-4955-b729-2d8703655a52.gif"><img alt="https://user-images.githubusercontent.com/14288520/189550930-bf0fa44a-e125-4955-b729-2d8703655a52.gif" src="https://user-images.githubusercontent.com/14288520/189550930-bf0fa44a-e125-4955-b729-2d8703655a52.gif" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189550930-bf0fa44a-e125-4955-b729-2d8703655a52.gif"><img alt="https://user-images.githubusercontent.com/14288520/189550930-bf0fa44a-e125-4955-b729-2d8703655a52.gif" src="https://user-images.githubusercontent.com/14288520/189550930-bf0fa44a-e125-4955-b729-2d8703655a52.gif" />
+</a>
 <p>One Box as input, Iteration = 3, two matrices:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189551001-415db1a9-7543-4cf6-adc0-4f1a6bb05a57.png"><img alt="https://user-images.githubusercontent.com/14288520/189551001-415db1a9-7543-4cf6-adc0-4f1a6bb05a57.png" src="https://user-images.githubusercontent.com/14288520/189551001-415db1a9-7543-4cf6-adc0-4f1a6bb05a57.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189551001-415db1a9-7543-4cf6-adc0-4f1a6bb05a57.png"><img alt="https://user-images.githubusercontent.com/14288520/189551001-415db1a9-7543-4cf6-adc0-4f1a6bb05a57.png" src="https://user-images.githubusercontent.com/14288520/189551001-415db1a9-7543-4cf6-adc0-4f1a6bb05a57.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
 <li><p>Matrix-&gt; <a class="reference internal" href="matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
 </ul>
 <p>Iterate cubes along with pentagons:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189551009-d76b48d0-c329-4a92-9ab6-3f095619a79a.png"><img alt="https://user-images.githubusercontent.com/14288520/189551009-d76b48d0-c329-4a92-9ab6-3f095619a79a.png" src="https://user-images.githubusercontent.com/14288520/189551009-d76b48d0-c329-4a92-9ab6-3f095619a79a.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189551009-d76b48d0-c329-4a92-9ab6-3f095619a79a.png"><img alt="https://user-images.githubusercontent.com/14288520/189551009-d76b48d0-c329-4a92-9ab6-3f095619a79a.png" src="https://user-images.githubusercontent.com/14288520/189551009-d76b48d0-c329-4a92-9ab6-3f095619a79a.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>

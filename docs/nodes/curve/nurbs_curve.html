@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../">
 <head>
@@ -6,17 +8,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Build NURBS Curve &mdash; Sverchok 1, 2, 0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=7ab3649f" />
 
   
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/documentation_options.js?v=773c2105"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/documentation_options.js?v=773c2105"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -36,9 +34,6 @@
             Sverchok
               <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
           </a>
-              <div class="version">
-                1, 2, 0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -125,6 +120,7 @@
 <li class="toctree-l3"><a class="reference internal" href="point_curve.html">Single-Point Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="polyarc.html">Poly Arc</a></li>
 <li class="toctree-l3"><a class="reference internal" href="polyline.html">Polyline</a></li>
+<li class="toctree-l3"><a class="reference internal" href="prepare_curves_net.html">Prepare NURBS Curves Net</a></li>
 <li class="toctree-l3"><a class="reference internal" href="project_curve_surface.html">Project Curve to Surface (NURBS)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="rbf_curve.html">RBF Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="reduce_degree.html">Reduce Degree (NURBS Curve)</a></li>
@@ -206,7 +202,8 @@
              
   <section id="build-nurbs-curve">
 <h1>Build NURBS Curve<a class="headerlink" href="#build-nurbs-curve" title="Link to this heading">¶</a></h1>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/206802961-8bfcc0bf-11a3-4835-a217-7ff24e9bbcdf.png"><img alt="https://user-images.githubusercontent.com/14288520/206802961-8bfcc0bf-11a3-4835-a217-7ff24e9bbcdf.png" src="https://user-images.githubusercontent.com/14288520/206802961-8bfcc0bf-11a3-4835-a217-7ff24e9bbcdf.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/206802961-8bfcc0bf-11a3-4835-a217-7ff24e9bbcdf.png"><img alt="https://user-images.githubusercontent.com/14288520/206802961-8bfcc0bf-11a3-4835-a217-7ff24e9bbcdf.png" src="https://user-images.githubusercontent.com/14288520/206802961-8bfcc0bf-11a3-4835-a217-7ff24e9bbcdf.png" />
+</a>
 <section id="dependencies">
 <h2>Dependencies<a class="headerlink" href="#dependencies" title="Link to this heading">¶</a></h2>
 <p>This node can optionally use <a class="reference external" href="https://onurraufbingol.com/NURBS-Python/">Geomdl</a> library; also it can optionally use <a class="reference external" href="https://www.freecadweb.org/">FreeCAD</a> libraries.</p>
@@ -214,7 +211,8 @@
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node generates a <a class="reference external" href="https://en.wikipedia.org/wiki/Non-uniform_rational_B-spline">NURBS</a> Curve object, given all it’s details: control points, weights and knot vector.</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/206803431-318d41b1-a9f3-43bd-8c5c-d3def98f61fe.png"><img alt="https://user-images.githubusercontent.com/14288520/206803431-318d41b1-a9f3-43bd-8c5c-d3def98f61fe.png" src="https://user-images.githubusercontent.com/14288520/206803431-318d41b1-a9f3-43bd-8c5c-d3def98f61fe.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/206803431-318d41b1-a9f3-43bd-8c5c-d3def98f61fe.png"><img alt="https://user-images.githubusercontent.com/14288520/206803431-318d41b1-a9f3-43bd-8c5c-d3def98f61fe.png" src="https://user-images.githubusercontent.com/14288520/206803431-318d41b1-a9f3-43bd-8c5c-d3def98f61fe.png" />
+</a>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
@@ -222,25 +220,29 @@
 <ul>
 <li><p><strong>ControlPoints</strong>. NURBS curve control points. This input is mandatory.</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/206803792-e8189dd5-e8ef-44c9-b170-1115c31b815f.png"><img alt="https://user-images.githubusercontent.com/14288520/206803792-e8189dd5-e8ef-44c9-b170-1115c31b815f.png" src="https://user-images.githubusercontent.com/14288520/206803792-e8189dd5-e8ef-44c9-b170-1115c31b815f.png" /></a>
+<div><a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/206803792-e8189dd5-e8ef-44c9-b170-1115c31b815f.png"><img alt="https://user-images.githubusercontent.com/14288520/206803792-e8189dd5-e8ef-44c9-b170-1115c31b815f.png" src="https://user-images.githubusercontent.com/14288520/206803792-e8189dd5-e8ef-44c9-b170-1115c31b815f.png" />
+</a>
 </div></blockquote>
 </li>
 <li><p><strong>Weights</strong>. NURBS curve control point weights. If this input is not linked,
 it will be assumed that all control points have weight of 1. This input is
 not available when <strong>Curve mode</strong> parameter is set to <strong>BSpline</strong>.</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/206859966-478c9426-5204-4523-a322-998695325b48.png"><img alt="https://user-images.githubusercontent.com/14288520/206859966-478c9426-5204-4523-a322-998695325b48.png" src="https://user-images.githubusercontent.com/14288520/206859966-478c9426-5204-4523-a322-998695325b48.png" /></a>
+<div><a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/206859966-478c9426-5204-4523-a322-998695325b48.png"><img alt="https://user-images.githubusercontent.com/14288520/206859966-478c9426-5204-4523-a322-998695325b48.png" src="https://user-images.githubusercontent.com/14288520/206859966-478c9426-5204-4523-a322-998695325b48.png" />
+</a>
 </div></blockquote>
 </li>
 <li><p><strong>Knots</strong>. NURBS curve knot vector. This input is not available if
 <strong>Knots</strong> parameter is set to <strong>Auto</strong>.</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/206849746-f514f3b0-9d26-4c2a-8ecf-9b33a3be658b.png"><img alt="https://user-images.githubusercontent.com/14288520/206849746-f514f3b0-9d26-4c2a-8ecf-9b33a3be658b.png" src="https://user-images.githubusercontent.com/14288520/206849746-f514f3b0-9d26-4c2a-8ecf-9b33a3be658b.png" /></a>
+<div><a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/206849746-f514f3b0-9d26-4c2a-8ecf-9b33a3be658b.png"><img alt="https://user-images.githubusercontent.com/14288520/206849746-f514f3b0-9d26-4c2a-8ecf-9b33a3be658b.png" src="https://user-images.githubusercontent.com/14288520/206849746-f514f3b0-9d26-4c2a-8ecf-9b33a3be658b.png" />
+</a>
 </div></blockquote>
 </li>
 <li><p><strong>Degree</strong>. NURBS curve degree. The default value is 3.</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/7551f5c8-372a-4184-a01a-40f212dd5732"><img alt="https://github.com/nortikin/sverchok/assets/14288520/7551f5c8-372a-4184-a01a-40f212dd5732" src="https://github.com/nortikin/sverchok/assets/14288520/7551f5c8-372a-4184-a01a-40f212dd5732" /></a>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/7551f5c8-372a-4184-a01a-40f212dd5732"><img alt="https://github.com/nortikin/sverchok/assets/14288520/7551f5c8-372a-4184-a01a-40f212dd5732" src="https://github.com/nortikin/sverchok/assets/14288520/7551f5c8-372a-4184-a01a-40f212dd5732" />
+</a>
 </div></blockquote>
 </li>
 </ul>
@@ -251,7 +253,8 @@ not available when <strong>Curve mode</strong> parameter is set to <strong>BSpli
 <ul>
 <li><p><strong>Implementation</strong>. This defines the implementation of NURBS mathematics to be used. The available options are:</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/206850688-61bae59d-5fdb-426e-93d7-bd6819ab4737.png"><img alt="https://user-images.githubusercontent.com/14288520/206850688-61bae59d-5fdb-426e-93d7-bd6819ab4737.png" src="https://user-images.githubusercontent.com/14288520/206850688-61bae59d-5fdb-426e-93d7-bd6819ab4737.png" /></a>
+<div><a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/206850688-61bae59d-5fdb-426e-93d7-bd6819ab4737.png"><img alt="https://user-images.githubusercontent.com/14288520/206850688-61bae59d-5fdb-426e-93d7-bd6819ab4737.png" src="https://user-images.githubusercontent.com/14288520/206850688-61bae59d-5fdb-426e-93d7-bd6819ab4737.png" />
+</a>
 </div></blockquote>
 <ul class="simple">
 <li><p><strong>Geomdl</strong>. Use <a class="reference external" href="https://onurraufbingol.com/NURBS-Python/">Geomdl</a> library. This option is available only when Geomdl package is installed.</p></li>
@@ -263,7 +266,8 @@ The default option is <strong>Geomdl</strong>, when it is available; otherwise, 
 </li>
 <li><p><strong>Curve mode</strong>. This defines the type of curve to be built:</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/206850743-a02a37d3-48b5-4000-a0ac-f6037c0cd89e.png"><img alt="https://user-images.githubusercontent.com/14288520/206850743-a02a37d3-48b5-4000-a0ac-f6037c0cd89e.png" src="https://user-images.githubusercontent.com/14288520/206850743-a02a37d3-48b5-4000-a0ac-f6037c0cd89e.png" /></a>
+<div><a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/206850743-a02a37d3-48b5-4000-a0ac-f6037c0cd89e.png"><img alt="https://user-images.githubusercontent.com/14288520/206850743-a02a37d3-48b5-4000-a0ac-f6037c0cd89e.png" src="https://user-images.githubusercontent.com/14288520/206850743-a02a37d3-48b5-4000-a0ac-f6037c0cd89e.png" />
+</a>
 </div></blockquote>
 <ul class="simple">
 <li><p>NURBS: rational B-Spline curve (with ability to have different weights of control points)</p></li>
@@ -273,7 +277,8 @@ The default option is <strong>Geomdl</strong>, when it is available; otherwise, 
 </li>
 <li><p><strong>Knots</strong>. This defines how the knot vector is specified:</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/206850990-15e88e1b-180c-4442-973c-988101bf86cd.png"><img alt="https://user-images.githubusercontent.com/14288520/206850990-15e88e1b-180c-4442-973c-988101bf86cd.png" src="https://user-images.githubusercontent.com/14288520/206850990-15e88e1b-180c-4442-973c-988101bf86cd.png" /></a>
+<div><a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/206850990-15e88e1b-180c-4442-973c-988101bf86cd.png"><img alt="https://user-images.githubusercontent.com/14288520/206850990-15e88e1b-180c-4442-973c-988101bf86cd.png" src="https://user-images.githubusercontent.com/14288520/206850990-15e88e1b-180c-4442-973c-988101bf86cd.png" />
+</a>
 </div></blockquote>
 <ul class="simple">
 <li><p><strong>Auto</strong>: Knot vector is generated automatically (the curve will be clamped and periodic).</p></li>
@@ -285,14 +290,16 @@ The default option is <strong>Geomdl</strong>, when it is available; otherwise, 
 <code class="docutils literal notranslate"><span class="pre">[0</span> <span class="pre">..</span> <span class="pre">1]</span></code> range; so, the curve domain will always be from 0 to 1. If not
 checked, the curve domain will be defined by knotvector.</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/206851280-24d632ef-d444-424b-887c-11683ad12307.png"><img alt="https://user-images.githubusercontent.com/14288520/206851280-24d632ef-d444-424b-887c-11683ad12307.png" src="https://user-images.githubusercontent.com/14288520/206851280-24d632ef-d444-424b-887c-11683ad12307.png" /></a>
+<div><a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/206851280-24d632ef-d444-424b-887c-11683ad12307.png"><img alt="https://user-images.githubusercontent.com/14288520/206851280-24d632ef-d444-424b-887c-11683ad12307.png" src="https://user-images.githubusercontent.com/14288520/206851280-24d632ef-d444-424b-887c-11683ad12307.png" />
+</a>
 </div></blockquote>
 </li>
 <li><p><strong>Cyclic</strong>. Whether the curve should be cyclic (closed). This option is
 available only when the <strong>Knots</strong> parameter is set to <strong>Auto</strong>. Unchecked by
 default.</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/206852256-57bd4b12-6338-4be1-9a49-2b511b6de5f8.png"><img alt="https://user-images.githubusercontent.com/14288520/206852256-57bd4b12-6338-4be1-9a49-2b511b6de5f8.png" src="https://user-images.githubusercontent.com/14288520/206852256-57bd4b12-6338-4be1-9a49-2b511b6de5f8.png" /></a>
+<div><a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/206852256-57bd4b12-6338-4be1-9a49-2b511b6de5f8.png"><img alt="https://user-images.githubusercontent.com/14288520/206852256-57bd4b12-6338-4be1-9a49-2b511b6de5f8.png" src="https://user-images.githubusercontent.com/14288520/206852256-57bd4b12-6338-4be1-9a49-2b511b6de5f8.png" />
+</a>
 </div></blockquote>
 </li>
 </ul>
@@ -304,14 +311,16 @@ default.</p>
 <li><p><strong>Curve</strong>. The generated NURBS curve object.</p></li>
 <li><p><strong>Knots</strong>. NURBS curve knotvector.</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/206858099-db937584-edf4-4aa0-96fa-6ed637255c9f.png"><img alt="https://user-images.githubusercontent.com/14288520/206858099-db937584-edf4-4aa0-96fa-6ed637255c9f.png" src="https://user-images.githubusercontent.com/14288520/206858099-db937584-edf4-4aa0-96fa-6ed637255c9f.png" /></a>
+<div><a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/206858099-db937584-edf4-4aa0-96fa-6ed637255c9f.png"><img alt="https://user-images.githubusercontent.com/14288520/206858099-db937584-edf4-4aa0-96fa-6ed637255c9f.png" src="https://user-images.githubusercontent.com/14288520/206858099-db937584-edf4-4aa0-96fa-6ed637255c9f.png" />
+</a>
 </div></blockquote>
 </li>
 </ul>
 </section>
 <section id="example-of-usage">
 <h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Link to this heading">¶</a></h2>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/86948496-a6f32900-c166-11ea-850f-5977d5a0fea8.png"><img alt="https://user-images.githubusercontent.com/284644/86948496-a6f32900-c166-11ea-850f-5977d5a0fea8.png" src="https://user-images.githubusercontent.com/284644/86948496-a6f32900-c166-11ea-850f-5977d5a0fea8.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/86948496-a6f32900-c166-11ea-850f-5977d5a0fea8.png"><img alt="https://user-images.githubusercontent.com/284644/86948496-a6f32900-c166-11ea-850f-5977d5a0fea8.png" src="https://user-images.githubusercontent.com/284644/86948496-a6f32900-c166-11ea-850f-5977d5a0fea8.png" />
+</a>
 <ul class="simple">
 <li><p>Curves-&gt; <a class="reference internal" href="eval_curve.html"><span class="doc">Evaluate Curve</span></a></p></li>
 <li><p>Number-&gt; <a class="reference internal" href="../number/list_input.html"><span class="doc">List Input</span></a></p></li>
@@ -322,7 +331,8 @@ default.</p>
 </ul>
 <hr class="docutils" />
 <p>Updated example:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/206858775-33daf322-7f68-4883-97c6-688bedda897c.png"><img alt="https://user-images.githubusercontent.com/14288520/206858775-33daf322-7f68-4883-97c6-688bedda897c.png" src="https://user-images.githubusercontent.com/14288520/206858775-33daf322-7f68-4883-97c6-688bedda897c.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/206858775-33daf322-7f68-4883-97c6-688bedda897c.png"><img alt="https://user-images.githubusercontent.com/14288520/206858775-33daf322-7f68-4883-97c6-688bedda897c.png" src="https://user-images.githubusercontent.com/14288520/206858775-33daf322-7f68-4883-97c6-688bedda897c.png" />
+</a>
 <ul class="simple">
 <li><p>Number-&gt; <a class="reference internal" href="../number/list_input.html"><span class="doc">List Input</span></a></p></li>
 <li><p>Vector-&gt; <a class="reference internal" href="../vector/vertices_sort.html"><span class="doc">Vector sort</span></a></p></li>

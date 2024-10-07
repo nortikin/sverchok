@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../">
 <head>
@@ -6,17 +8,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Implicit Surface Raycast &mdash; Sverchok 1, 2, 0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=7ab3649f" />
 
   
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/documentation_options.js?v=773c2105"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/documentation_options.js?v=773c2105"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -36,9 +34,6 @@
             Sverchok
               <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
           </a>
-              <div class="version">
-                1, 2, 0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -181,7 +176,8 @@
              
   <section id="implicit-surface-raycast">
 <h1>Implicit Surface Raycast<a class="headerlink" href="#implicit-surface-raycast" title="Link to this heading">¶</a></h1>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/c77d08d7-3cf5-40f0-96d9-9a298b180aae"><img alt="https://github.com/nortikin/sverchok/assets/14288520/c77d08d7-3cf5-40f0-96d9-9a298b180aae" src="https://github.com/nortikin/sverchok/assets/14288520/c77d08d7-3cf5-40f0-96d9-9a298b180aae" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/c77d08d7-3cf5-40f0-96d9-9a298b180aae"><img alt="https://github.com/nortikin/sverchok/assets/14288520/c77d08d7-3cf5-40f0-96d9-9a298b180aae" src="https://github.com/nortikin/sverchok/assets/14288520/c77d08d7-3cf5-40f0-96d9-9a298b180aae" />
+</a>
 <section id="dependencies">
 <h2>Dependencies<a class="headerlink" href="#dependencies" title="Link to this heading">¶</a></h2>
 <p>This node requires <a class="reference external" href="https://scipy.org/">SciPy</a> library to work.</p>
@@ -195,7 +191,8 @@ this ray intersects the given surface first time.</p>
 <p>This node uses a numerical method to find the intersection point, so it may be
 not very fast. If you happen to know how to find the intersection point for
 your specific surface by some formula, that will be faster and more precise.</p>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/81e705a6-0ebd-4b32-836f-e3a0c8fbc3d5"><img alt="https://github.com/nortikin/sverchok/assets/14288520/81e705a6-0ebd-4b32-836f-e3a0c8fbc3d5" src="https://github.com/nortikin/sverchok/assets/14288520/81e705a6-0ebd-4b32-836f-e3a0c8fbc3d5" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/81e705a6-0ebd-4b32-836f-e3a0c8fbc3d5"><img alt="https://github.com/nortikin/sverchok/assets/14288520/81e705a6-0ebd-4b32-836f-e3a0c8fbc3d5" src="https://github.com/nortikin/sverchok/assets/14288520/81e705a6-0ebd-4b32-836f-e3a0c8fbc3d5" />
+</a>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
@@ -205,7 +202,8 @@ your specific surface by some formula, that will be faster and more precise.</p>
 <li><p><strong>Vertices</strong>. Source point(s) of the ray(s). The default value is <code class="docutils literal notranslate"><span class="pre">(0,</span> <span class="pre">0,</span> <span class="pre">0)</span></code>.</p></li>
 <li><p><strong>Direction</strong>. Direction vector of the ray. The default value is <code class="docutils literal notranslate"><span class="pre">(0,</span> <span class="pre">0,</span> <span class="pre">1)</span></code>.</p></li>
 <li><p><strong>IsoValue</strong>. The value of the scalar field, which defines the iso-surface in question. The default value is 0.</p>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/792915bc-0726-445d-bf8c-3f6d8e83ba70"><img alt="https://github.com/nortikin/sverchok/assets/14288520/792915bc-0726-445d-bf8c-3f6d8e83ba70" src="https://github.com/nortikin/sverchok/assets/14288520/792915bc-0726-445d-bf8c-3f6d8e83ba70" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/792915bc-0726-445d-bf8c-3f6d8e83ba70"><img alt="https://github.com/nortikin/sverchok/assets/14288520/792915bc-0726-445d-bf8c-3f6d8e83ba70" src="https://github.com/nortikin/sverchok/assets/14288520/792915bc-0726-445d-bf8c-3f6d8e83ba70" />
+</a>
 </li>
 </ul>
 </section>
@@ -240,7 +238,8 @@ value is 10.</p></li>
 </section>
 <section id="example-of-usage">
 <h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Link to this heading">¶</a></h2>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/cf1514ec-f894-4264-8619-64ccc354f7c5"><img alt="https://github.com/nortikin/sverchok/assets/14288520/cf1514ec-f894-4264-8619-64ccc354f7c5" src="https://github.com/nortikin/sverchok/assets/14288520/cf1514ec-f894-4264-8619-64ccc354f7c5" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/cf1514ec-f894-4264-8619-64ccc354f7c5"><img alt="https://github.com/nortikin/sverchok/assets/14288520/cf1514ec-f894-4264-8619-64ccc354f7c5" src="https://github.com/nortikin/sverchok/assets/14288520/cf1514ec-f894-4264-8619-64ccc354f7c5" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/segment.html"><span class="doc">Segment</span></a></p></li>
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
@@ -250,9 +249,11 @@ value is 10.</p></li>
 <li><p>Surfaces-&gt; <a class="reference internal" href="marching_cubes.html"><span class="doc">Marching Cubes</span></a></p></li>
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
 </ul>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/dd79a2ff-d011-4d05-89fc-eed0d585eb6e"><img alt="https://github.com/nortikin/sverchok/assets/14288520/dd79a2ff-d011-4d05-89fc-eed0d585eb6e" src="https://github.com/nortikin/sverchok/assets/14288520/dd79a2ff-d011-4d05-89fc-eed0d585eb6e" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/dd79a2ff-d011-4d05-89fc-eed0d585eb6e"><img alt="https://github.com/nortikin/sverchok/assets/14288520/dd79a2ff-d011-4d05-89fc-eed0d585eb6e" src="https://github.com/nortikin/sverchok/assets/14288520/dd79a2ff-d011-4d05-89fc-eed0d585eb6e" />
+</a>
 <hr class="docutils" />
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/87581701-d075fc80-c6f2-11ea-9eb6-ab02ba69ef2a.png"><img alt="https://user-images.githubusercontent.com/284644/87581701-d075fc80-c6f2-11ea-9eb6-ab02ba69ef2a.png" src="https://user-images.githubusercontent.com/284644/87581701-d075fc80-c6f2-11ea-9eb6-ab02ba69ef2a.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/87581701-d075fc80-c6f2-11ea-9eb6-ab02ba69ef2a.png"><img alt="https://user-images.githubusercontent.com/284644/87581701-d075fc80-c6f2-11ea-9eb6-ab02ba69ef2a.png" src="https://user-images.githubusercontent.com/284644/87581701-d075fc80-c6f2-11ea-9eb6-ab02ba69ef2a.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
 <li><p>Curves-&gt;Curve Primitives-&gt; <a class="reference internal" href="../curve/ellipse_curve.html"><span class="doc">Ellipse (Curve)</span></a></p></li>

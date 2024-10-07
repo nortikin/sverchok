@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../">
 <head>
@@ -6,17 +8,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Extrude Region &mdash; Sverchok 1, 2, 0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=7ab3649f" />
 
   
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/documentation_options.js?v=773c2105"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/documentation_options.js?v=773c2105"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -36,9 +34,6 @@
             Sverchok
               <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
           </a>
-              <div class="version">
-                1, 2, 0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -172,12 +167,14 @@
              
   <section id="extrude-region">
 <h1>Extrude Region<a class="headerlink" href="#extrude-region" title="Link to this heading">¶</a></h1>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200082470-2101619a-c63c-45e6-8663-017922fafbc8.png"><img alt="https://user-images.githubusercontent.com/14288520/200082470-2101619a-c63c-45e6-8663-017922fafbc8.png" src="https://user-images.githubusercontent.com/14288520/200082470-2101619a-c63c-45e6-8663-017922fafbc8.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200082470-2101619a-c63c-45e6-8663-017922fafbc8.png"><img alt="https://user-images.githubusercontent.com/14288520/200082470-2101619a-c63c-45e6-8663-017922fafbc8.png" src="https://user-images.githubusercontent.com/14288520/200082470-2101619a-c63c-45e6-8663-017922fafbc8.png" />
+</a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node applies Extrude operator to the region of selected faces, as whole. After that, resulting faces can be either transformed by any matrix, or moved along normal and scaled.
 If transformation is specified by matrix, it is possible to provide specific matrix for each vertex.</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200111848-b798b6b6-06d8-4679-822c-957e3d7ea3ee.png"><img alt="https://user-images.githubusercontent.com/14288520/200111848-b798b6b6-06d8-4679-822c-957e3d7ea3ee.png" src="https://user-images.githubusercontent.com/14288520/200111848-b798b6b6-06d8-4679-822c-957e3d7ea3ee.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200111848-b798b6b6-06d8-4679-822c-957e3d7ea3ee.png"><img alt="https://user-images.githubusercontent.com/14288520/200111848-b798b6b6-06d8-4679-822c-957e3d7ea3ee.png" src="https://user-images.githubusercontent.com/14288520/200111848-b798b6b6-06d8-4679-822c-957e3d7ea3ee.png" />
+</a>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
@@ -279,7 +276,8 @@ extrusion operation.</p>
 <section id="examples-of-usage">
 <h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Link to this heading">¶</a></h2>
 <p>Extrude along normal:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200112273-879eb030-b0fa-40c8-8b05-6b7fc03aa104.png"><img alt="https://user-images.githubusercontent.com/14288520/200112273-879eb030-b0fa-40c8-8b05-6b7fc03aa104.png" src="https://user-images.githubusercontent.com/14288520/200112273-879eb030-b0fa-40c8-8b05-6b7fc03aa104.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200112273-879eb030-b0fa-40c8-8b05-6b7fc03aa104.png"><img alt="https://user-images.githubusercontent.com/14288520/200112273-879eb030-b0fa-40c8-8b05-6b7fc03aa104.png" src="https://user-images.githubusercontent.com/14288520/200112273-879eb030-b0fa-40c8-8b05-6b7fc03aa104.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
 <li><p>Analyzers-&gt; <a class="reference internal" href="../analyzer/mesh_select_mk2.html#mode-by-center-and-radius"><span class="std std-ref">Select Mesh Elements (By Center and radius)</span></a></p></li>
@@ -287,7 +285,8 @@ extrusion operation.</p>
 </ul>
 <hr class="docutils" />
 <p>Extrude by scale matrix:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200112489-b9eac1f7-25a8-4be3-bce9-6d29f5003017.png"><img alt="https://user-images.githubusercontent.com/14288520/200112489-b9eac1f7-25a8-4be3-bce9-6d29f5003017.png" src="https://user-images.githubusercontent.com/14288520/200112489-b9eac1f7-25a8-4be3-bce9-6d29f5003017.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200112489-b9eac1f7-25a8-4be3-bce9-6d29f5003017.png"><img alt="https://user-images.githubusercontent.com/14288520/200112489-b9eac1f7-25a8-4be3-bce9-6d29f5003017.png" src="https://user-images.githubusercontent.com/14288520/200112489-b9eac1f7-25a8-4be3-bce9-6d29f5003017.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
 <li><p>Analyzers-&gt; <a class="reference internal" href="../analyzer/mesh_select_mk2.html#mode-by-center-and-radius"><span class="std std-ref">Select Mesh Elements (By Center and radius)</span></a></p></li>
@@ -298,7 +297,8 @@ extrusion operation.</p>
 </ul>
 <hr class="docutils" />
 <p>Multiple extrusion mode:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200115164-2be6a492-f834-46c4-b49a-443c9d15e0f6.png"><img alt="https://user-images.githubusercontent.com/14288520/200115164-2be6a492-f834-46c4-b49a-443c9d15e0f6.png" src="https://user-images.githubusercontent.com/14288520/200115164-2be6a492-f834-46c4-b49a-443c9d15e0f6.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200115164-2be6a492-f834-46c4-b49a-443c9d15e0f6.png"><img alt="https://user-images.githubusercontent.com/14288520/200115164-2be6a492-f834-46c4-b49a-443c9d15e0f6.png" src="https://user-images.githubusercontent.com/14288520/200115164-2be6a492-f834-46c4-b49a-443c9d15e0f6.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
 <li><p>Analyzers-&gt; <a class="reference internal" href="../analyzer/mesh_select_mk2.html#mode-by-center-and-radius"><span class="std std-ref">Select Mesh Elements (By Center and radius)</span></a></p></li>
@@ -309,7 +309,8 @@ extrusion operation.</p>
 </ul>
 <hr class="docutils" />
 <p>Example of FaceData sockets usage:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200115914-b7cef699-9436-4157-990f-6d7f328a110d.png"><img alt="https://user-images.githubusercontent.com/14288520/200115914-b7cef699-9436-4157-990f-6d7f328a110d.png" src="https://user-images.githubusercontent.com/14288520/200115914-b7cef699-9436-4157-990f-6d7f328a110d.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200115914-b7cef699-9436-4157-990f-6d7f328a110d.png"><img alt="https://user-images.githubusercontent.com/14288520/200115914-b7cef699-9436-4157-990f-6d7f328a110d.png" src="https://user-images.githubusercontent.com/14288520/200115914-b7cef699-9436-4157-990f-6d7f328a110d.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt;Generator Extended-&gt; <a class="reference internal" href="../generators_extended/polygon_grid.html"><span class="doc">Polygon Grid</span></a></p></li>
 <li><p>Analyzers-&gt; <a class="reference internal" href="../analyzer/mesh_select_mk2.html#mode-by-center-and-radius"><span class="std std-ref">Select Mesh Elements (By Center and radius)</span></a></p></li>
@@ -323,9 +324,11 @@ extrusion operation.</p>
 </ul>
 <hr class="docutils" />
 <p>Example of Mask output usage together with Extrude Separate node:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/71817318-4562dc80-30a7-11ea-9f44-ae2d2bae7acf.png"><img alt="https://user-images.githubusercontent.com/284644/71817318-4562dc80-30a7-11ea-9f44-ae2d2bae7acf.png" src="https://user-images.githubusercontent.com/284644/71817318-4562dc80-30a7-11ea-9f44-ae2d2bae7acf.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/71817318-4562dc80-30a7-11ea-9f44-ae2d2bae7acf.png"><img alt="https://user-images.githubusercontent.com/284644/71817318-4562dc80-30a7-11ea-9f44-ae2d2bae7acf.png" src="https://user-images.githubusercontent.com/284644/71817318-4562dc80-30a7-11ea-9f44-ae2d2bae7acf.png" />
+</a>
 <p>replay with new nodes:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200116794-70581c84-8f8f-4265-b4c4-7109375a863a.png"><img alt="https://user-images.githubusercontent.com/14288520/200116794-70581c84-8f8f-4265-b4c4-7109375a863a.png" src="https://user-images.githubusercontent.com/14288520/200116794-70581c84-8f8f-4265-b4c4-7109375a863a.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200116794-70581c84-8f8f-4265-b4c4-7109375a863a.png"><img alt="https://user-images.githubusercontent.com/14288520/200116794-70581c84-8f8f-4265-b4c4-7109375a863a.png" src="https://user-images.githubusercontent.com/14288520/200116794-70581c84-8f8f-4265-b4c4-7109375a863a.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt;Generator Extended-&gt; <a class="reference internal" href="../generators_extended/polygon_grid.html"><span class="doc">Polygon Grid</span></a></p></li>
 <li><p>Modifiers-&gt;Modifier Change-&gt; <a class="reference internal" href="flip_normals.html"><span class="doc">Flip Normals</span></a></p></li>
@@ -341,7 +344,8 @@ extrusion operation.</p>
 </ul>
 <hr class="docutils" />
 <p>Example of “Dissolve orthogonal edges” parameter usage:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200117301-f28d4450-eeb4-4d30-b28f-22e3018003bf.png"><img alt="https://user-images.githubusercontent.com/14288520/200117301-f28d4450-eeb4-4d30-b28f-22e3018003bf.png" src="https://user-images.githubusercontent.com/14288520/200117301-f28d4450-eeb4-4d30-b28f-22e3018003bf.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200117301-f28d4450-eeb4-4d30-b28f-22e3018003bf.png"><img alt="https://user-images.githubusercontent.com/14288520/200117301-f28d4450-eeb4-4d30-b28f-22e3018003bf.png" src="https://user-images.githubusercontent.com/14288520/200117301-f28d4450-eeb4-4d30-b28f-22e3018003bf.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
 <li><p>Analyzers-&gt; <a class="reference internal" href="../analyzer/mesh_select_mk2.html#mode-by-cylinder"><span class="std std-ref">Select Mesh Elements (By Cylinder)</span></a></p></li>

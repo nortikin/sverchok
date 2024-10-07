@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../">
 <head>
@@ -6,17 +8,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Pipe Surface Along Curve &mdash; Sverchok 1, 2, 0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=7ab3649f" />
 
   
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/documentation_options.js?v=773c2105"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/documentation_options.js?v=773c2105"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -36,9 +34,6 @@
             Sverchok
               <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
           </a>
-              <div class="version">
-                1, 2, 0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -180,12 +175,14 @@
              
   <section id="pipe-surface-along-curve">
 <h1>Pipe Surface Along Curve<a class="headerlink" href="#pipe-surface-along-curve" title="Link to this heading">¶</a></h1>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/88163a6e-5b0f-4e2b-a737-d9924eb7f222"><img alt="https://github.com/nortikin/sverchok/assets/14288520/88163a6e-5b0f-4e2b-a737-d9924eb7f222" src="https://github.com/nortikin/sverchok/assets/14288520/88163a6e-5b0f-4e2b-a737-d9924eb7f222" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/88163a6e-5b0f-4e2b-a737-d9924eb7f222"><img alt="https://github.com/nortikin/sverchok/assets/14288520/88163a6e-5b0f-4e2b-a737-d9924eb7f222" src="https://github.com/nortikin/sverchok/assets/14288520/88163a6e-5b0f-4e2b-a737-d9924eb7f222" />
+</a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node generates cylindrical “pipe” Surface along a given Curve; the result
 is the same as if you extruded circular profile curve along your curve.</p>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/7e625f58-a153-45d6-a5e7-acfcbf4483c7"><img alt="https://github.com/nortikin/sverchok/assets/14288520/7e625f58-a153-45d6-a5e7-acfcbf4483c7" src="https://github.com/nortikin/sverchok/assets/14288520/7e625f58-a153-45d6-a5e7-acfcbf4483c7" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/7e625f58-a153-45d6-a5e7-acfcbf4483c7"><img alt="https://github.com/nortikin/sverchok/assets/14288520/7e625f58-a153-45d6-a5e7-acfcbf4483c7" src="https://github.com/nortikin/sverchok/assets/14288520/7e625f58-a153-45d6-a5e7-acfcbf4483c7" />
+</a>
 <p>If you want more complex (not cylindrical) profile, or you want more control
 over extrusion, you probably want to use [<a class="reference internal" href="extrude_curve.html"><span class="doc">Surfaces-&gt; Extrude Curve Along Curve</span></a>] node.</p>
 <p>The Profile curve (circle) may optionally be rotated while extruding, to make result
@@ -219,14 +216,16 @@ same as of “extrusion” curve.</p>
 <li><p><strong>Curve</strong>. The curve to build pipe around (the extrusion curve). This input
 is mandatory.</p></li>
 <li><p><strong>Radius</strong>. Pipe radius. The default value is 0.1.</p>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/45de54d3-db0b-41a0-8179-0e43a9743bb5"><img alt="https://github.com/nortikin/sverchok/assets/14288520/45de54d3-db0b-41a0-8179-0e43a9743bb5" src="https://github.com/nortikin/sverchok/assets/14288520/45de54d3-db0b-41a0-8179-0e43a9743bb5" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/45de54d3-db0b-41a0-8179-0e43a9743bb5"><img alt="https://github.com/nortikin/sverchok/assets/14288520/45de54d3-db0b-41a0-8179-0e43a9743bb5" src="https://github.com/nortikin/sverchok/assets/14288520/45de54d3-db0b-41a0-8179-0e43a9743bb5" />
+</a>
 </li>
 <li><p><strong>Resolution</strong>. Number of samples for <strong>Zero-Twist</strong> or <strong>Track normal</strong>
 rotation algorithm calculation. The more the number is, the more precise the
 calculation is, but the slower. The default value is 50. This input is only
 available when <strong>Algorithm</strong> parameter is set to <strong>Zero-Twist</strong> or <strong>Track
 normal</strong>.</p>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/f5dc1eb0-b9f3-48b9-9c01-8e6a87cb0079"><img alt="https://github.com/nortikin/sverchok/assets/14288520/01d5f107-03a8-4fa6-af36-4ab3acc6637c" src="https://github.com/nortikin/sverchok/assets/14288520/01d5f107-03a8-4fa6-af36-4ab3acc6637c" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/f5dc1eb0-b9f3-48b9-9c01-8e6a87cb0079"><img alt="https://github.com/nortikin/sverchok/assets/14288520/01d5f107-03a8-4fa6-af36-4ab3acc6637c" src="https://github.com/nortikin/sverchok/assets/14288520/01d5f107-03a8-4fa6-af36-4ab3acc6637c" />
+</a>
 </li>
 </ul>
 </section>
@@ -237,25 +236,31 @@ normal</strong>.</p>
 <li><p><strong>Algorithm</strong>. Profile curve rotation calculation algorithm. The available options are:</p>
 <ul>
 <li><p><strong>Frenet</strong>. Rotate the profile curve according to Frenet frame of the extrusion curve.</p>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/c23ded9a-f4dd-4e33-9449-0eb594af8526"><img alt="https://github.com/nortikin/sverchok/assets/14288520/c23ded9a-f4dd-4e33-9449-0eb594af8526" src="https://github.com/nortikin/sverchok/assets/14288520/c23ded9a-f4dd-4e33-9449-0eb594af8526" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/c23ded9a-f4dd-4e33-9449-0eb594af8526"><img alt="https://github.com/nortikin/sverchok/assets/14288520/c23ded9a-f4dd-4e33-9449-0eb594af8526" src="https://github.com/nortikin/sverchok/assets/14288520/c23ded9a-f4dd-4e33-9449-0eb594af8526" />
+</a>
 </li>
 <li><p><strong>Zero-Twist</strong>. Rotate the profile curve according to “zero-twist” frame of the extrusion curve.</p>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/af300812-412b-410b-8f80-7d8460433fa7"><img alt="https://github.com/nortikin/sverchok/assets/14288520/af300812-412b-410b-8f80-7d8460433fa7" src="https://github.com/nortikin/sverchok/assets/14288520/af300812-412b-410b-8f80-7d8460433fa7" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/af300812-412b-410b-8f80-7d8460433fa7"><img alt="https://github.com/nortikin/sverchok/assets/14288520/af300812-412b-410b-8f80-7d8460433fa7" src="https://github.com/nortikin/sverchok/assets/14288520/af300812-412b-410b-8f80-7d8460433fa7" />
+</a>
 </li>
 <li><p><strong>Householder</strong>: calculate rotation by using Householder’s reflection matrix
 (see <a class="reference external" href="https://en.wikipedia.org/wiki/QR_decomposition#Using_Householder_reflections">Wikipedia</a> article).</p>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/e6e754fb-ae3a-4c4a-920d-3bcfa83dcd70"><img alt="https://github.com/nortikin/sverchok/assets/14288520/e6e754fb-ae3a-4c4a-920d-3bcfa83dcd70" src="https://github.com/nortikin/sverchok/assets/14288520/e6e754fb-ae3a-4c4a-920d-3bcfa83dcd70" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/e6e754fb-ae3a-4c4a-920d-3bcfa83dcd70"><img alt="https://github.com/nortikin/sverchok/assets/14288520/e6e754fb-ae3a-4c4a-920d-3bcfa83dcd70" src="https://github.com/nortikin/sverchok/assets/14288520/e6e754fb-ae3a-4c4a-920d-3bcfa83dcd70" />
+</a>
 </li>
 <li><p><strong>Tracking</strong>: use the same algorithm as in Blender’s “TrackTo” kinematic
 constraint. This node currently always uses X as the Up axis.</p>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/c8ee9171-193e-467b-aa7e-ff65ad3d5ed3"><img alt="https://github.com/nortikin/sverchok/assets/14288520/c8ee9171-193e-467b-aa7e-ff65ad3d5ed3" src="https://github.com/nortikin/sverchok/assets/14288520/c8ee9171-193e-467b-aa7e-ff65ad3d5ed3" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/c8ee9171-193e-467b-aa7e-ff65ad3d5ed3"><img alt="https://github.com/nortikin/sverchok/assets/14288520/c8ee9171-193e-467b-aa7e-ff65ad3d5ed3" src="https://github.com/nortikin/sverchok/assets/14288520/c8ee9171-193e-467b-aa7e-ff65ad3d5ed3" />
+</a>
 </li>
 <li><p><strong>Rotation difference</strong>: calculate rotation as rotation difference between two
 vectors.</p>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/c5a75e70-183e-4ef5-a185-592bcb6d10b0"><img alt="https://github.com/nortikin/sverchok/assets/14288520/c5a75e70-183e-4ef5-a185-592bcb6d10b0" src="https://github.com/nortikin/sverchok/assets/14288520/c5a75e70-183e-4ef5-a185-592bcb6d10b0" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/c5a75e70-183e-4ef5-a185-592bcb6d10b0"><img alt="https://github.com/nortikin/sverchok/assets/14288520/c5a75e70-183e-4ef5-a185-592bcb6d10b0" src="https://github.com/nortikin/sverchok/assets/14288520/c5a75e70-183e-4ef5-a185-592bcb6d10b0" />
+</a>
 </li>
 <li><p><strong>Track normal</strong>: try to maintain constant normal direction by tracking it along the curve.</p>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/3d7d4e3f-a1a6-48f9-ad53-033824b02209"><img alt="https://github.com/nortikin/sverchok/assets/14288520/3d7d4e3f-a1a6-48f9-ad53-033824b02209" src="https://github.com/nortikin/sverchok/assets/14288520/3d7d4e3f-a1a6-48f9-ad53-033824b02209" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/3d7d4e3f-a1a6-48f9-ad53-033824b02209"><img alt="https://github.com/nortikin/sverchok/assets/14288520/3d7d4e3f-a1a6-48f9-ad53-033824b02209" src="https://github.com/nortikin/sverchok/assets/14288520/3d7d4e3f-a1a6-48f9-ad53-033824b02209" />
+</a>
 </li>
 </ul>
 <p>The default option is <strong>Householder</strong>.</p>
@@ -272,7 +277,8 @@ vectors.</p>
 <section id="example-of-usage">
 <h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Link to this heading">¶</a></h2>
 <p>Build a pipe from cubic curve:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/84814573-1e7fdd80-b02b-11ea-82d9-572288d7a770.png"><img alt="https://user-images.githubusercontent.com/284644/84814573-1e7fdd80-b02b-11ea-82d9-572288d7a770.png" src="https://user-images.githubusercontent.com/284644/84814573-1e7fdd80-b02b-11ea-82d9-572288d7a770.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/84814573-1e7fdd80-b02b-11ea-82d9-572288d7a770.png"><img alt="https://user-images.githubusercontent.com/284644/84814573-1e7fdd80-b02b-11ea-82d9-572288d7a770.png" src="https://user-images.githubusercontent.com/284644/84814573-1e7fdd80-b02b-11ea-82d9-572288d7a770.png" />
+</a>
 <ul class="simple">
 <li><p>Curves-&gt; <a class="reference internal" href="../curve/cubic_spline.html"><span class="doc">Cubic Spline</span></a></p></li>
 <li><p>Surfaces-&gt; <a class="reference internal" href="evaluate_surface.html"><span class="doc">Evaluate Surface</span></a></p></li>
@@ -280,7 +286,8 @@ vectors.</p>
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
 <li><p>Scene-&gt; <a class="reference internal" href="../scene/objects_in_lite.html"><span class="doc">Objects In Lite</span></a></p></li>
 </ul>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/307f5bfb-0761-4afb-bc81-4ee73abb5cb6"><img alt="https://github.com/nortikin/sverchok/assets/14288520/307f5bfb-0761-4afb-bc81-4ee73abb5cb6" src="https://github.com/nortikin/sverchok/assets/14288520/307f5bfb-0761-4afb-bc81-4ee73abb5cb6" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/307f5bfb-0761-4afb-bc81-4ee73abb5cb6"><img alt="https://github.com/nortikin/sverchok/assets/14288520/307f5bfb-0761-4afb-bc81-4ee73abb5cb6" src="https://github.com/nortikin/sverchok/assets/14288520/307f5bfb-0761-4afb-bc81-4ee73abb5cb6" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt;Generatots Extended-&gt; <a class="reference internal" href="../generators_extended/hilbert3d.html"><span class="doc">Hilbert 3D</span></a></p></li>
 <li><p>Curves-&gt;Curve Primitives-&gt; <a class="reference internal" href="../curve/fillet_polyline.html"><span class="doc">Fillet Polyline</span></a></p></li>

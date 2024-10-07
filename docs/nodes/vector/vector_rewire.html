@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../">
 <head>
@@ -6,17 +8,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Vector Rewire &mdash; Sverchok 1, 2, 0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=7ab3649f" />
 
   
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/documentation_options.js?v=773c2105"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/documentation_options.js?v=773c2105"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -36,9 +34,6 @@
             Sverchok
               <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
           </a>
-              <div class="version">
-                1, 2, 0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -149,11 +144,13 @@
              
   <section id="vector-rewire">
 <h1>Vector Rewire<a class="headerlink" href="#vector-rewire" title="Link to this heading">¶</a></h1>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189385948-68ae2146-49f1-41e3-acd7-d75b874d2042.png"><img alt="https://user-images.githubusercontent.com/14288520/189385948-68ae2146-49f1-41e3-acd7-d75b874d2042.png" src="https://user-images.githubusercontent.com/14288520/189385948-68ae2146-49f1-41e3-acd7-d75b874d2042.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189385948-68ae2146-49f1-41e3-acd7-d75b874d2042.png"><img alt="https://user-images.githubusercontent.com/14288520/189385948-68ae2146-49f1-41e3-acd7-d75b874d2042.png" src="https://user-images.githubusercontent.com/14288520/189385948-68ae2146-49f1-41e3-acd7-d75b874d2042.png" />
+</a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>Use this node to swap Vector components, for instance pass X to Y (and Y to X ). Or completely filter out a component by switching to the Scalar option. it will default to <em>0.0</em> when the Scalar socket is unconnected, when connected it will replace the component with the values from the socket. If the content of the Scalar input lists don’t match the length of the Vectors list, the node will repeat the last value in the list or sublist (expected Sverchok behaviour).</p>
-<a class="reference external image-reference" href="https://cloud.githubusercontent.com/assets/619340/22211977/3bb60a64-e18f-11e6-82ca-5afac681b195.png"><img alt="with vector rewire" src="https://cloud.githubusercontent.com/assets/619340/22211977/3bb60a64-e18f-11e6-82ca-5afac681b195.png" /></a>
+<a class="reference external image-reference" href="https://cloud.githubusercontent.com/assets/619340/22211977/3bb60a64-e18f-11e6-82ca-5afac681b195.png"><img alt="with vector rewire" src="https://cloud.githubusercontent.com/assets/619340/22211977/3bb60a64-e18f-11e6-82ca-5afac681b195.png" />
+</a>
 <ul class="simple">
 <li><p>Vector-&gt; <a class="reference internal" href="noise_mk3.html"><span class="doc">Vector Noise</span></a></p></li>
 <li><p>Scene-&gt; <a class="reference internal" href="../scene/objects_in_lite.html"><span class="doc">Objects In Lite</span></a></p></li>
@@ -175,13 +172,16 @@
 </section>
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">¶</a></h2>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189385973-5431c3a0-fc22-4893-9f75-86a97dd15f6d.png"><img alt="https://user-images.githubusercontent.com/14288520/189385973-5431c3a0-fc22-4893-9f75-86a97dd15f6d.png" src="https://user-images.githubusercontent.com/14288520/189385973-5431c3a0-fc22-4893-9f75-86a97dd15f6d.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189385973-5431c3a0-fc22-4893-9f75-86a97dd15f6d.png"><img alt="https://user-images.githubusercontent.com/14288520/189385973-5431c3a0-fc22-4893-9f75-86a97dd15f6d.png" src="https://user-images.githubusercontent.com/14288520/189385973-5431c3a0-fc22-4893-9f75-86a97dd15f6d.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189386007-b01037a4-a855-49fa-a36f-1d94d151bd4f.gif"><img alt="https://user-images.githubusercontent.com/14288520/189386007-b01037a4-a855-49fa-a36f-1d94d151bd4f.gif" src="https://user-images.githubusercontent.com/14288520/189386007-b01037a4-a855-49fa-a36f-1d94d151bd4f.gif" /></a>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189389853-0101ef1d-9cd9-4300-a108-1b26ad7a81ad.gif"><img alt="https://user-images.githubusercontent.com/14288520/189389853-0101ef1d-9cd9-4300-a108-1b26ad7a81ad.gif" src="https://user-images.githubusercontent.com/14288520/189389853-0101ef1d-9cd9-4300-a108-1b26ad7a81ad.gif" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189386007-b01037a4-a855-49fa-a36f-1d94d151bd4f.gif"><img alt="https://user-images.githubusercontent.com/14288520/189386007-b01037a4-a855-49fa-a36f-1d94d151bd4f.gif" src="https://user-images.githubusercontent.com/14288520/189386007-b01037a4-a855-49fa-a36f-1d94d151bd4f.gif" />
+</a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189389853-0101ef1d-9cd9-4300-a108-1b26ad7a81ad.gif"><img alt="https://user-images.githubusercontent.com/14288520/189389853-0101ef1d-9cd9-4300-a108-1b26ad7a81ad.gif" src="https://user-images.githubusercontent.com/14288520/189389853-0101ef1d-9cd9-4300-a108-1b26ad7a81ad.gif" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
 <li><p>Vector-&gt; <a class="reference internal" href="noise_mk3.html"><span class="doc">Vector Noise</span></a></p></li>

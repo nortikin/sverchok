@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../">
 <head>
@@ -6,17 +8,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Clip Vertices &mdash; Sverchok 1, 2, 0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=7ab3649f" />
 
   
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/documentation_options.js?v=773c2105"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/documentation_options.js?v=773c2105"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -36,9 +34,6 @@
             Sverchok
               <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
           </a>
-              <div class="version">
-                1, 2, 0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -154,7 +149,8 @@
              
   <section id="clip-vertices">
 <h1>Clip Vertices<a class="headerlink" href="#clip-vertices" title="Link to this heading">¶</a></h1>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200960985-def2d5c6-85cf-422c-9617-3bb3d916a417.png"><img alt="https://user-images.githubusercontent.com/14288520/200960985-def2d5c6-85cf-422c-9617-3bb3d916a417.png" src="https://user-images.githubusercontent.com/14288520/200960985-def2d5c6-85cf-422c-9617-3bb3d916a417.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200960985-def2d5c6-85cf-422c-9617-3bb3d916a417.png"><img alt="https://user-images.githubusercontent.com/14288520/200960985-def2d5c6-85cf-422c-9617-3bb3d916a417.png" src="https://user-images.githubusercontent.com/14288520/200960985-def2d5c6-85cf-422c-9617-3bb3d916a417.png" />
+</a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node cuts off (clips, truncates) all vertices of original mesh, by cutting
@@ -164,7 +160,8 @@ understanding.</p>
 <p>This can give interesting topology, especially in combination with
 “dual mesh” and/or “triangulate” and/or “join triangles” and/or “limited
 dissolve” nodes.</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201035921-1bb5ab23-7f33-430c-9be4-590d3dc227f7.png"><img alt="https://user-images.githubusercontent.com/14288520/201035921-1bb5ab23-7f33-430c-9be4-590d3dc227f7.png" src="https://user-images.githubusercontent.com/14288520/201035921-1bb5ab23-7f33-430c-9be4-590d3dc227f7.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201035921-1bb5ab23-7f33-430c-9be4-590d3dc227f7.png"><img alt="https://user-images.githubusercontent.com/14288520/201035921-1bb5ab23-7f33-430c-9be4-590d3dc227f7.png" src="https://user-images.githubusercontent.com/14288520/201035921-1bb5ab23-7f33-430c-9be4-590d3dc227f7.png" />
+</a>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
@@ -187,35 +184,40 @@ dissolve” nodes.</p>
 <section id="examples-of-usage">
 <h2>Examples of Usage<a class="headerlink" href="#examples-of-usage" title="Link to this heading">¶</a></h2>
 <p>Clip a simple plane / grid:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201036656-26edc580-2810-4794-99ce-6376b9891f56.png"><img alt="https://user-images.githubusercontent.com/14288520/201036656-26edc580-2810-4794-99ce-6376b9891f56.png" src="https://user-images.githubusercontent.com/14288520/201036656-26edc580-2810-4794-99ce-6376b9891f56.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201036656-26edc580-2810-4794-99ce-6376b9891f56.png"><img alt="https://user-images.githubusercontent.com/14288520/201036656-26edc580-2810-4794-99ce-6376b9891f56.png" src="https://user-images.githubusercontent.com/14288520/201036656-26edc580-2810-4794-99ce-6376b9891f56.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
 </ul>
 <hr class="docutils" />
 <p>Clip vertices of a cube:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201037590-83643a05-f856-4db0-b80d-29bd6ae98415.png"><img alt="https://user-images.githubusercontent.com/14288520/201037590-83643a05-f856-4db0-b80d-29bd6ae98415.png" src="https://user-images.githubusercontent.com/14288520/201037590-83643a05-f856-4db0-b80d-29bd6ae98415.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201037590-83643a05-f856-4db0-b80d-29bd6ae98415.png"><img alt="https://user-images.githubusercontent.com/14288520/201037590-83643a05-f856-4db0-b80d-29bd6ae98415.png" src="https://user-images.githubusercontent.com/14288520/201037590-83643a05-f856-4db0-b80d-29bd6ae98415.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
 </ul>
 <hr class="docutils" />
 <p>Applied to a cylinder:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201038962-4e65f478-cf6f-4171-934a-fe7e96b0c108.png"><img alt="https://user-images.githubusercontent.com/14288520/201038962-4e65f478-cf6f-4171-934a-fe7e96b0c108.png" src="https://user-images.githubusercontent.com/14288520/201038962-4e65f478-cf6f-4171-934a-fe7e96b0c108.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201038962-4e65f478-cf6f-4171-934a-fe7e96b0c108.png"><img alt="https://user-images.githubusercontent.com/14288520/201038962-4e65f478-cf6f-4171-934a-fe7e96b0c108.png" src="https://user-images.githubusercontent.com/14288520/201038962-4e65f478-cf6f-4171-934a-fe7e96b0c108.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/cylinder_mk2.html"><span class="doc">Cylinder</span></a></p></li>
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
 </ul>
 <hr class="docutils" />
 <p>Applied to Suzanne:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201039845-46541257-eb9c-4a8f-b3e0-9ea94eaafda2.png"><img alt="https://user-images.githubusercontent.com/14288520/201039845-46541257-eb9c-4a8f-b3e0-9ea94eaafda2.png" src="https://user-images.githubusercontent.com/14288520/201039845-46541257-eb9c-4a8f-b3e0-9ea94eaafda2.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201039845-46541257-eb9c-4a8f-b3e0-9ea94eaafda2.png"><img alt="https://user-images.githubusercontent.com/14288520/201039845-46541257-eb9c-4a8f-b3e0-9ea94eaafda2.png" src="https://user-images.githubusercontent.com/14288520/201039845-46541257-eb9c-4a8f-b3e0-9ea94eaafda2.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/suzanne.html"><span class="doc">Suzanne</span></a></p></li>
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
 </ul>
 <hr class="docutils" />
 <p>Apply node several times:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201617752-5703d4be-d2ae-45e1-82e2-4a890a5081b6.png"><img alt="https://user-images.githubusercontent.com/14288520/201617752-5703d4be-d2ae-45e1-82e2-4a890a5081b6.png" src="https://user-images.githubusercontent.com/14288520/201617752-5703d4be-d2ae-45e1-82e2-4a890a5081b6.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201617752-5703d4be-d2ae-45e1-82e2-4a890a5081b6.png"><img alt="https://user-images.githubusercontent.com/14288520/201617752-5703d4be-d2ae-45e1-82e2-4a890a5081b6.png" src="https://user-images.githubusercontent.com/14288520/201617752-5703d4be-d2ae-45e1-82e2-4a890a5081b6.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/cylinder_mk2.html"><span class="doc">Cylinder</span></a></p></li>
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>

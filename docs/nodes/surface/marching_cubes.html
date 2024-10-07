@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../">
 <head>
@@ -6,17 +8,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Marching Cubes &mdash; Sverchok 1, 2, 0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=7ab3649f" />
 
   
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/documentation_options.js?v=773c2105"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/documentation_options.js?v=773c2105"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -36,9 +34,6 @@
             Sverchok
               <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
           </a>
-              <div class="version">
-                1, 2, 0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -181,7 +176,8 @@
              
   <section id="marching-cubes">
 <h1>Marching Cubes<a class="headerlink" href="#marching-cubes" title="Link to this heading">¶</a></h1>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/4ca44a7b-8df5-4fae-a9a0-bb8a460e5854"><img alt="https://github.com/nortikin/sverchok/assets/14288520/4ca44a7b-8df5-4fae-a9a0-bb8a460e5854" src="https://github.com/nortikin/sverchok/assets/14288520/4ca44a7b-8df5-4fae-a9a0-bb8a460e5854" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/4ca44a7b-8df5-4fae-a9a0-bb8a460e5854"><img alt="https://github.com/nortikin/sverchok/assets/14288520/4ca44a7b-8df5-4fae-a9a0-bb8a460e5854" src="https://github.com/nortikin/sverchok/assets/14288520/4ca44a7b-8df5-4fae-a9a0-bb8a460e5854" />
+</a>
 <section id="dependencies">
 <h2>Dependencies<a class="headerlink" href="#dependencies" title="Link to this heading">¶</a></h2>
 <p>This node can optionally use <a class="reference external" href="https://scikit-image.org/">SkImage</a> or <a class="reference external" href="https://github.com/pmneila/PyMCubes">PyMCubes</a> library to work. It can also
@@ -193,12 +189,14 @@ work without any dependencies, but slower.</p>
 field, i.e. such surfaces, that for each point on a surface the scalar field
 has the given value. Such surfaces are also known as “implicit surfaces”.</p>
 <p>Surfaces are generated as mesh - vertices and faces.</p>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/36b4857e-cc12-4f8a-94e0-aa2e80db5029"><img alt="https://github.com/nortikin/sverchok/assets/14288520/36b4857e-cc12-4f8a-94e0-aa2e80db5029" src="https://github.com/nortikin/sverchok/assets/14288520/36b4857e-cc12-4f8a-94e0-aa2e80db5029" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/36b4857e-cc12-4f8a-94e0-aa2e80db5029"><img alt="https://github.com/nortikin/sverchok/assets/14288520/36b4857e-cc12-4f8a-94e0-aa2e80db5029" src="https://github.com/nortikin/sverchok/assets/14288520/36b4857e-cc12-4f8a-94e0-aa2e80db5029" />
+</a>
 <ul class="simple">
 <li><p>Fields-&gt; <a class="reference internal" href="../field/coordinate_scalar_field.html"><span class="doc">Coordinate Scalar Field</span></a></p></li>
 <li><p>Fields-&gt; <a class="reference internal" href="../field/voronoi_field.html"><span class="doc">Voronoi Field</span></a></p></li>
 </ul>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/baedf54d-2df4-4f43-8fa8-f4d583731c54"><img alt="https://github.com/nortikin/sverchok/assets/14288520/baedf54d-2df4-4f43-8fa8-f4d583731c54" src="https://github.com/nortikin/sverchok/assets/14288520/baedf54d-2df4-4f43-8fa8-f4d583731c54" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/baedf54d-2df4-4f43-8fa8-f4d583731c54"><img alt="https://github.com/nortikin/sverchok/assets/14288520/baedf54d-2df4-4f43-8fa8-f4d583731c54" src="https://github.com/nortikin/sverchok/assets/14288520/baedf54d-2df4-4f43-8fa8-f4d583731c54" />
+</a>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
@@ -208,19 +206,22 @@ has the given value. Such surfaces are also known as “implicit surfaces”.</p
 <li><p><strong>Bounds</strong>. Vertices defining the bounds for generated geometry. Only
 bounding box of these points is used. This input is mandatory.</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/931c798b-9a73-432b-b85d-9f184ec502c2"><img alt="https://github.com/nortikin/sverchok/assets/14288520/931c798b-9a73-432b-b85d-9f184ec502c2" src="https://github.com/nortikin/sverchok/assets/14288520/931c798b-9a73-432b-b85d-9f184ec502c2" /></a>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/931c798b-9a73-432b-b85d-9f184ec502c2"><img alt="https://github.com/nortikin/sverchok/assets/14288520/931c798b-9a73-432b-b85d-9f184ec502c2" src="https://github.com/nortikin/sverchok/assets/14288520/931c798b-9a73-432b-b85d-9f184ec502c2" />
+</a>
 </div></blockquote>
 </li>
 <li><p><strong>Value</strong>. The value of scalar field, for which the iso-surfaces should be
 generated. The default value is 1.0.</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/98a222d9-ac36-441a-b7e2-987381dd3585"><img alt="https://github.com/nortikin/sverchok/assets/14288520/98a222d9-ac36-441a-b7e2-987381dd3585" src="https://github.com/nortikin/sverchok/assets/14288520/98a222d9-ac36-441a-b7e2-987381dd3585" /></a>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/98a222d9-ac36-441a-b7e2-987381dd3585"><img alt="https://github.com/nortikin/sverchok/assets/14288520/98a222d9-ac36-441a-b7e2-987381dd3585" src="https://github.com/nortikin/sverchok/assets/14288520/98a222d9-ac36-441a-b7e2-987381dd3585" />
+</a>
 <ul class="simple">
 <li><p>Fields-&gt; <a class="reference internal" href="../field/coordinate_scalar_field.html"><span class="doc">Coordinate Scalar Field</span></a></p></li>
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
 </ul>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/2f4b814e-e480-4e15-9f0a-8a0b3b637930"><img alt="https://github.com/nortikin/sverchok/assets/14288520/2f4b814e-e480-4e15-9f0a-8a0b3b637930" src="https://github.com/nortikin/sverchok/assets/14288520/2f4b814e-e480-4e15-9f0a-8a0b3b637930" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/2f4b814e-e480-4e15-9f0a-8a0b3b637930"><img alt="https://github.com/nortikin/sverchok/assets/14288520/2f4b814e-e480-4e15-9f0a-8a0b3b637930" src="https://github.com/nortikin/sverchok/assets/14288520/2f4b814e-e480-4e15-9f0a-8a0b3b637930" />
+</a>
 </div></blockquote>
 </li>
 <li><p><strong>SamplesX</strong>, <strong>SamplesY</strong>, <strong>SamplesZ</strong>. Number of scalar field samples to
@@ -234,7 +235,8 @@ only when <strong>Sampling</strong> parameter is set to <strong>Non-uniform</str
 input is used instead of <strong>SamplesX</strong>, <strong>SamplesY</strong> and <strong>SamplesZ</strong> when the
 <strong>Sampling</strong> parameter is set to <strong>Uniform</strong>.</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/47b1786c-568f-48b1-b0e9-e16c03bfda93"><img alt="https://github.com/nortikin/sverchok/assets/14288520/47b1786c-568f-48b1-b0e9-e16c03bfda93" src="https://github.com/nortikin/sverchok/assets/14288520/47b1786c-568f-48b1-b0e9-e16c03bfda93" /></a>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/47b1786c-568f-48b1-b0e9-e16c03bfda93"><img alt="https://github.com/nortikin/sverchok/assets/14288520/47b1786c-568f-48b1-b0e9-e16c03bfda93" src="https://github.com/nortikin/sverchok/assets/14288520/47b1786c-568f-48b1-b0e9-e16c03bfda93" />
+</a>
 <ul class="simple">
 <li><p>Fields-&gt; <a class="reference internal" href="../field/coordinate_scalar_field.html"><span class="doc">Coordinate Scalar Field</span></a></p></li>
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
@@ -262,7 +264,8 @@ input is used instead of <strong>SamplesX</strong>, <strong>SamplesY</strong> an
 The number of samples is provided in <strong>Samples</strong> input.</p></li>
 <li><p><strong>Non-Uniform</strong>. This allows to provide different values for X, Y and Z
 axes, in <strong>SamplesX</strong>, <strong>SamplesY</strong>, <strong>SamplesZ</strong> inputs, correspondingly.</p>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/cf4280dc-8ce2-43fc-85a6-022f28985c17"><img alt="https://github.com/nortikin/sverchok/assets/14288520/cf4280dc-8ce2-43fc-85a6-022f28985c17" src="https://github.com/nortikin/sverchok/assets/14288520/cf4280dc-8ce2-43fc-85a6-022f28985c17" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/cf4280dc-8ce2-43fc-85a6-022f28985c17"><img alt="https://github.com/nortikin/sverchok/assets/14288520/cf4280dc-8ce2-43fc-85a6-022f28985c17" src="https://github.com/nortikin/sverchok/assets/14288520/cf4280dc-8ce2-43fc-85a6-022f28985c17" />
+</a>
 </li>
 </ul>
 <p>The default option is <strong>Uniform</strong>.</p>
@@ -279,7 +282,8 @@ output will always contain only tris.</p></li>
 <li><p><strong>VertexNormals</strong>. Vertex normals. This output is only available if
 <strong>Implementation</strong> parameter is set to <strong>SciKit-Image</strong>.</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/6de95427-b18f-4f68-9775-c9b8fa111dbe"><img alt="https://github.com/nortikin/sverchok/assets/14288520/6de95427-b18f-4f68-9775-c9b8fa111dbe" src="https://github.com/nortikin/sverchok/assets/14288520/6de95427-b18f-4f68-9775-c9b8fa111dbe" /></a>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/6de95427-b18f-4f68-9775-c9b8fa111dbe"><img alt="https://github.com/nortikin/sverchok/assets/14288520/6de95427-b18f-4f68-9775-c9b8fa111dbe" src="https://github.com/nortikin/sverchok/assets/14288520/6de95427-b18f-4f68-9775-c9b8fa111dbe" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/line_mk4.html"><span class="doc">Line</span></a></p></li>
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
@@ -293,7 +297,8 @@ output will always contain only tris.</p></li>
 <section id="examples-of-usage">
 <h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Link to this heading">¶</a></h2>
 <p>This node can be used to generate metaball-like structures:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/87254841-41bd7180-c49f-11ea-90d8-439b6f0c8dfd.png"><img alt="https://user-images.githubusercontent.com/284644/87254841-41bd7180-c49f-11ea-90d8-439b6f0c8dfd.png" src="https://user-images.githubusercontent.com/284644/87254841-41bd7180-c49f-11ea-90d8-439b6f0c8dfd.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/87254841-41bd7180-c49f-11ea-90d8-439b6f0c8dfd.png"><img alt="https://user-images.githubusercontent.com/284644/87254841-41bd7180-c49f-11ea-90d8-439b6f0c8dfd.png" src="https://user-images.githubusercontent.com/284644/87254841-41bd7180-c49f-11ea-90d8-439b6f0c8dfd.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>
 <li><p>Fields-&gt; <a class="reference internal" href="../field/attractor_field_mk2.html"><span class="doc">Attractor Field</span></a></p></li>
@@ -301,13 +306,15 @@ output will always contain only tris.</p></li>
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
 </ul>
 <p>Or it is possible to generate mathematically-specified implicit surfaces. The following is known as “Saddle Tower”:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/87254916-c7412180-c49f-11ea-98eb-a271a67df181.png"><img alt="https://user-images.githubusercontent.com/284644/87254916-c7412180-c49f-11ea-98eb-a271a67df181.png" src="https://user-images.githubusercontent.com/284644/87254916-c7412180-c49f-11ea-98eb-a271a67df181.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/87254916-c7412180-c49f-11ea-98eb-a271a67df181.png"><img alt="https://user-images.githubusercontent.com/284644/87254916-c7412180-c49f-11ea-98eb-a271a67df181.png" src="https://user-images.githubusercontent.com/284644/87254916-c7412180-c49f-11ea-98eb-a271a67df181.png" />
+</a>
 <ul class="simple">
 <li><p>Fields-&gt; <a class="reference internal" href="../field/scalar_field_formula.html"><span class="doc">Scalar Field Formula</span></a></p></li>
 <li><p>Spacial-&gt; <a class="reference internal" href="../spatial/homogenous_vector_field.html"><span class="doc">Vector P Field</span></a></p></li>
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
 </ul>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/49a2e64b-6358-4e3e-811e-a71ed69b568c"><img alt="https://github.com/nortikin/sverchok/assets/14288520/49a2e64b-6358-4e3e-811e-a71ed69b568c" src="https://github.com/nortikin/sverchok/assets/14288520/49a2e64b-6358-4e3e-811e-a71ed69b568c" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/49a2e64b-6358-4e3e-811e-a71ed69b568c"><img alt="https://github.com/nortikin/sverchok/assets/14288520/49a2e64b-6358-4e3e-811e-a71ed69b568c" src="https://github.com/nortikin/sverchok/assets/14288520/49a2e64b-6358-4e3e-811e-a71ed69b568c" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
 <li><p>Fields-&gt; <a class="reference internal" href="../field/scalar_field_formula.html"><span class="doc">Scalar Field Formula</span></a></p></li>
@@ -319,7 +326,8 @@ output will always contain only tris.</p></li>
 <li><p>Color-&gt; <a class="reference internal" href="../color/color_in_mk1.html"><span class="doc">Color In</span></a></p></li>
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
 </ul>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/4b774523-e129-490f-918f-b7c3b27f90b9"><img alt="https://github.com/nortikin/sverchok/assets/14288520/4b774523-e129-490f-918f-b7c3b27f90b9" src="https://github.com/nortikin/sverchok/assets/14288520/4b774523-e129-490f-918f-b7c3b27f90b9" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/4b774523-e129-490f-918f-b7c3b27f90b9"><img alt="https://github.com/nortikin/sverchok/assets/14288520/4b774523-e129-490f-918f-b7c3b27f90b9" src="https://github.com/nortikin/sverchok/assets/14288520/4b774523-e129-490f-918f-b7c3b27f90b9" />
+</a>
 </section>
 </section>
 

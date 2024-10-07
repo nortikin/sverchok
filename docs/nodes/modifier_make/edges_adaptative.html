@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../">
 <head>
@@ -6,17 +8,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Adaptative Edges &mdash; Sverchok 1, 2, 0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=7ab3649f" />
 
   
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/documentation_options.js?v=773c2105"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/documentation_options.js?v=773c2105"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -36,9 +34,6 @@
             Sverchok
               <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
           </a>
-              <div class="version">
-                1, 2, 0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -156,29 +151,37 @@
              
   <section id="adaptative-edges">
 <h1>Adaptative Edges<a class="headerlink" href="#adaptative-edges" title="Link to this heading">¶</a></h1>
-<a class="reference external image-reference" href="https://github.com/user-attachments/assets/b2e12f75-f2c1-46ff-9b39-df83d2d74380"><img alt="https://github.com/user-attachments/assets/b2e12f75-f2c1-46ff-9b39-df83d2d74380" src="https://github.com/user-attachments/assets/b2e12f75-f2c1-46ff-9b39-df83d2d74380" /></a>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/b2e12f75-f2c1-46ff-9b39-df83d2d74380"><img alt="https://github.com/user-attachments/assets/b2e12f75-f2c1-46ff-9b39-df83d2d74380" src="https://github.com/user-attachments/assets/b2e12f75-f2c1-46ff-9b39-df83d2d74380" />
+</a>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
 <ul>
 <li><p><strong>Adaptive verts</strong>.</p></li>
 <li><p><strong>Adaptive edges</strong>. What edges are used as base:</p>
-<a class="reference external image-reference" href="https://github.com/user-attachments/assets/9eac2148-bda4-4eed-baa3-4bbdbd46fa2c"><img alt="https://github.com/user-attachments/assets/9eac2148-bda4-4eed-baa3-4bbdbd46fa2c" src="https://github.com/user-attachments/assets/9eac2148-bda4-4eed-baa3-4bbdbd46fa2c" /></a>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/9eac2148-bda4-4eed-baa3-4bbdbd46fa2c"><img alt="https://github.com/user-attachments/assets/9eac2148-bda4-4eed-baa3-4bbdbd46fa2c" src="https://github.com/user-attachments/assets/9eac2148-bda4-4eed-baa3-4bbdbd46fa2c" />
+</a>
 </li>
 <li><p><strong>Mask of adaptive edges</strong>. What edges hide from using as adaptive edges. Can be used as Boolean mask or Indexes mask</p>
-<a class="reference external image-reference" href="https://github.com/user-attachments/assets/ecb6fe06-b83d-4c44-8af4-5e8405e4452b"><img alt="https://github.com/user-attachments/assets/ecb6fe06-b83d-4c44-8af4-5e8405e4452b" src="https://github.com/user-attachments/assets/ecb6fe06-b83d-4c44-8af4-5e8405e4452b" /></a>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/ecb6fe06-b83d-4c44-8af4-5e8405e4452b"><img alt="https://github.com/user-attachments/assets/ecb6fe06-b83d-4c44-8af4-5e8405e4452b" src="https://github.com/user-attachments/assets/ecb6fe06-b83d-4c44-8af4-5e8405e4452b" />
+</a>
 <p>if socket <strong>Mask of adaptive edges</strong> are not connected then all edges are ised:</p>
-<a class="reference external image-reference" href="https://github.com/user-attachments/assets/81479547-9405-41d6-9c2a-260e575ed66d"><img alt="https://github.com/user-attachments/assets/81479547-9405-41d6-9c2a-260e575ed66d" src="https://github.com/user-attachments/assets/81479547-9405-41d6-9c2a-260e575ed66d" /></a>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/81479547-9405-41d6-9c2a-260e575ed66d"><img alt="https://github.com/user-attachments/assets/81479547-9405-41d6-9c2a-260e575ed66d" src="https://github.com/user-attachments/assets/81479547-9405-41d6-9c2a-260e575ed66d" />
+</a>
 </li>
 <li><p><strong>Verts</strong>.</p></li>
 <li><p><strong>Edges</strong>. Mesh are used to adaptive</p>
-<a class="reference external image-reference" href="https://github.com/user-attachments/assets/6a44b94e-f726-409f-b718-0e77e70dc575"><img alt="https://github.com/user-attachments/assets/6a44b94e-f726-409f-b718-0e77e70dc575" src="https://github.com/user-attachments/assets/6a44b94e-f726-409f-b718-0e77e70dc575" /></a>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/6a44b94e-f726-409f-b718-0e77e70dc575"><img alt="https://github.com/user-attachments/assets/6a44b94e-f726-409f-b718-0e77e70dc575" src="https://github.com/user-attachments/assets/6a44b94e-f726-409f-b718-0e77e70dc575" />
+</a>
 </li>
 <li><p><strong>First adaptive index</strong>.</p></li>
 <li><p><strong>Second adaptive index</strong>. Indexes of vertices of Mesh that will be used to align with adaptive edges (you may use verts not only Ox direction)</p>
-<a class="reference external image-reference" href="https://github.com/user-attachments/assets/b79aa32d-8d5f-4aee-95cf-7173a76f3f96"><img alt="https://github.com/user-attachments/assets/b79aa32d-8d5f-4aee-95cf-7173a76f3f96" src="https://github.com/user-attachments/assets/b79aa32d-8d5f-4aee-95cf-7173a76f3f96" /></a>
-<a class="reference external image-reference" href="https://github.com/user-attachments/assets/f4ece3e3-36bd-494c-b5d8-28e23b336e4c"><img alt="https://github.com/user-attachments/assets/f4ece3e3-36bd-494c-b5d8-28e23b336e4c" src="https://github.com/user-attachments/assets/f4ece3e3-36bd-494c-b5d8-28e23b336e4c" /></a>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/b79aa32d-8d5f-4aee-95cf-7173a76f3f96"><img alt="https://github.com/user-attachments/assets/b79aa32d-8d5f-4aee-95cf-7173a76f3f96" src="https://github.com/user-attachments/assets/b79aa32d-8d5f-4aee-95cf-7173a76f3f96" />
+</a>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/f4ece3e3-36bd-494c-b5d8-28e23b336e4c"><img alt="https://github.com/user-attachments/assets/f4ece3e3-36bd-494c-b5d8-28e23b336e4c" src="https://github.com/user-attachments/assets/f4ece3e3-36bd-494c-b5d8-28e23b336e4c" />
+</a>
 <p>If you swap indexes then shape of adaptive mesh will changed:</p>
-<a class="reference external image-reference" href="https://github.com/user-attachments/assets/5a9444eb-3d94-4f09-8f38-8fae23242a60"><img alt="https://github.com/user-attachments/assets/5a9444eb-3d94-4f09-8f38-8fae23242a60" src="https://github.com/user-attachments/assets/5a9444eb-3d94-4f09-8f38-8fae23242a60" /></a>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/5a9444eb-3d94-4f09-8f38-8fae23242a60"><img alt="https://github.com/user-attachments/assets/5a9444eb-3d94-4f09-8f38-8fae23242a60" src="https://github.com/user-attachments/assets/5a9444eb-3d94-4f09-8f38-8fae23242a60" />
+</a>
 </li>
 </ul>
 </section>
@@ -200,7 +203,8 @@
 <h1>Examples<a class="headerlink" href="#examples" title="Link to this heading">¶</a></h1>
 <section id="rotation-of-source-mesh-are-transfered-to-the-adaptive-mesh">
 <h2>Rotation of source mesh are transfered to the adaptive mesh<a class="headerlink" href="#rotation-of-source-mesh-are-transfered-to-the-adaptive-mesh" title="Link to this heading">¶</a></h2>
-<a class="reference external image-reference" href="https://github.com/user-attachments/assets/ce50368c-0f1e-413a-9915-0ef92e532b72"><img alt="https://github.com/user-attachments/assets/ce50368c-0f1e-413a-9915-0ef92e532b72" src="https://github.com/user-attachments/assets/ce50368c-0f1e-413a-9915-0ef92e532b72" /></a>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/ce50368c-0f1e-413a-9915-0ef92e532b72"><img alt="https://github.com/user-attachments/assets/ce50368c-0f1e-413a-9915-0ef92e532b72" src="https://github.com/user-attachments/assets/ce50368c-0f1e-413a-9915-0ef92e532b72" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/basic_3pt_arc.html"><span class="doc">3pt Arc</span></a></p></li>
@@ -208,7 +212,8 @@
 <li><p>Matrix-&gt; <a class="reference internal" href="../matrix/input.html"><span class="doc">Matrix Input</span></a></p></li>
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_idx28.html"><span class="doc">Viewer Index+</span></a></p></li>
 </ul>
-<a class="reference external image-reference" href="https://github.com/user-attachments/assets/6796a0c3-7df6-4ec2-93a9-91f2dda3d4f7"><img alt="https://github.com/user-attachments/assets/6796a0c3-7df6-4ec2-93a9-91f2dda3d4f7" src="https://github.com/user-attachments/assets/6796a0c3-7df6-4ec2-93a9-91f2dda3d4f7" /></a>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/6796a0c3-7df6-4ec2-93a9-91f2dda3d4f7"><img alt="https://github.com/user-attachments/assets/6796a0c3-7df6-4ec2-93a9-91f2dda3d4f7" src="https://github.com/user-attachments/assets/6796a0c3-7df6-4ec2-93a9-91f2dda3d4f7" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/basic_3pt_arc.html"><span class="doc">3pt Arc</span></a></p></li>
@@ -216,7 +221,8 @@
 <li><p>Matrix-&gt; <a class="reference internal" href="../matrix/input.html"><span class="doc">Matrix Input</span></a></p></li>
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_idx28.html"><span class="doc">Viewer Index+</span></a></p></li>
 </ul>
-<a class="reference external image-reference" href="https://github.com/user-attachments/assets/9891b297-a860-487f-aa46-d116b7d6001d"><img alt="https://github.com/user-attachments/assets/9891b297-a860-487f-aa46-d116b7d6001d" src="https://github.com/user-attachments/assets/9891b297-a860-487f-aa46-d116b7d6001d" /></a>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/9891b297-a860-487f-aa46-d116b7d6001d"><img alt="https://github.com/user-attachments/assets/9891b297-a860-487f-aa46-d116b7d6001d" src="https://github.com/user-attachments/assets/9891b297-a860-487f-aa46-d116b7d6001d" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>
 <li><p>Generator-&gt;Generatots Extended-&gt; <a class="reference internal" href="../generators_extended/hilbert.html"><span class="doc">Hilbert</span></a></p></li>

@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../">
 <head>
@@ -6,17 +8,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Viewer Draw Curve &mdash; Sverchok 1, 2, 0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=7ab3649f" />
 
   
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/documentation_options.js?v=773c2105"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/documentation_options.js?v=773c2105"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -36,9 +34,6 @@
             Sverchok
               <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
           </a>
-              <div class="version">
-                1, 2, 0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -158,7 +153,8 @@
              
   <section id="viewer-draw-curve">
 <h1>Viewer Draw Curve<a class="headerlink" href="#viewer-draw-curve" title="Link to this heading">¶</a></h1>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190132455-a3a2b98a-bd6e-495e-86bc-181dd7ca1ad8.png"><img alt="https://user-images.githubusercontent.com/14288520/190132455-a3a2b98a-bd6e-495e-86bc-181dd7ca1ad8.png" src="https://user-images.githubusercontent.com/14288520/190132455-a3a2b98a-bd6e-495e-86bc-181dd7ca1ad8.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190132455-a3a2b98a-bd6e-495e-86bc-181dd7ca1ad8.png"><img alt="https://user-images.githubusercontent.com/14288520/190132455-a3a2b98a-bd6e-495e-86bc-181dd7ca1ad8.png" src="https://user-images.githubusercontent.com/14288520/190132455-a3a2b98a-bd6e-495e-86bc-181dd7ca1ad8.png" />
+</a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node displays Curve objects in the 3D View, using opengl. The node is
@@ -193,21 +189,24 @@ display it, the color to be used, and point size / line width to be used.</p>
 of points on the curve (number of points is conrtolled by <strong>Resolution</strong>
 parameter). Display of points is disabled by default.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190182798-35670d4f-1d74-41bc-8b5d-01ba98d3130a.png"><img alt="https://user-images.githubusercontent.com/14288520/190182798-35670d4f-1d74-41bc-8b5d-01ba98d3130a.png" src="https://user-images.githubusercontent.com/14288520/190182798-35670d4f-1d74-41bc-8b5d-01ba98d3130a.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190182798-35670d4f-1d74-41bc-8b5d-01ba98d3130a.png"><img alt="https://user-images.githubusercontent.com/14288520/190182798-35670d4f-1d74-41bc-8b5d-01ba98d3130a.png" src="https://user-images.githubusercontent.com/14288520/190182798-35670d4f-1d74-41bc-8b5d-01ba98d3130a.png" />
+</a>
 <hr class="docutils" />
 <ul class="simple">
 <li><p><strong>Display Curve Line</strong>, <strong>Curve Line Color</strong>, <strong>Curve Line Width</strong>. Control
 display of the curve itself (more precisely, the edges between curve points).
 Curve line is shown by default.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190168448-b0691bc4-392f-4f83-bb5b-926da7b64b8e.png"><img alt="https://user-images.githubusercontent.com/14288520/190168448-b0691bc4-392f-4f83-bb5b-926da7b64b8e.png" src="https://user-images.githubusercontent.com/14288520/190168448-b0691bc4-392f-4f83-bb5b-926da7b64b8e.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190168448-b0691bc4-392f-4f83-bb5b-926da7b64b8e.png"><img alt="https://user-images.githubusercontent.com/14288520/190168448-b0691bc4-392f-4f83-bb5b-926da7b64b8e.png" src="https://user-images.githubusercontent.com/14288520/190168448-b0691bc4-392f-4f83-bb5b-926da7b64b8e.png" />
+</a>
 <hr class="docutils" />
 <ul class="simple">
 <li><p><strong>Display Control Points</strong>, <strong>Control Points Color</strong>, <strong>Control Points
 Size</strong>. Control display of curve’s control points, for NURBS and NURBS-like
 curves. Control points are not shown by default.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190171362-e1193750-3fec-4964-8af6-7e8b0de158f9.png"><img alt="https://user-images.githubusercontent.com/14288520/190171362-e1193750-3fec-4964-8af6-7e8b0de158f9.png" src="https://user-images.githubusercontent.com/14288520/190171362-e1193750-3fec-4964-8af6-7e8b0de158f9.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190171362-e1193750-3fec-4964-8af6-7e8b0de158f9.png"><img alt="https://user-images.githubusercontent.com/14288520/190171362-e1193750-3fec-4964-8af6-7e8b0de158f9.png" src="https://user-images.githubusercontent.com/14288520/190171362-e1193750-3fec-4964-8af6-7e8b0de158f9.png" />
+</a>
 <hr class="docutils" />
 <ul class="simple">
 <li><p><strong>Display Control Polygon</strong>, <strong>Control Polygon Color</strong>, <strong>Control Polygon
@@ -215,14 +214,16 @@ Line Width</strong>. Control display of curve’s control polygon (edges between
 control points), for NURBS and NURBS-like curves. Control polygon is not
 shown by default.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190172536-af4307dd-c342-4e73-9936-0e1f58cd68b6.png"><img alt="https://user-images.githubusercontent.com/14288520/190172536-af4307dd-c342-4e73-9936-0e1f58cd68b6.png" src="https://user-images.githubusercontent.com/14288520/190172536-af4307dd-c342-4e73-9936-0e1f58cd68b6.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190172536-af4307dd-c342-4e73-9936-0e1f58cd68b6.png"><img alt="https://user-images.githubusercontent.com/14288520/190172536-af4307dd-c342-4e73-9936-0e1f58cd68b6.png" src="https://user-images.githubusercontent.com/14288520/190172536-af4307dd-c342-4e73-9936-0e1f58cd68b6.png" />
+</a>
 <hr class="docutils" />
 <ul class="simple">
 <li><p><strong>Display Node Points</strong> (N icon), <strong>Node Points Color</strong>, <strong>Node Points Size</strong>. Control
 display of curve’s node points, for NURBS and NURBS-like curves. Nodes are
 not shown by default.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190176111-16a43da1-2fd4-4b1c-bf74-78712bcd6a3f.png"><img alt="https://user-images.githubusercontent.com/14288520/190176111-16a43da1-2fd4-4b1c-bf74-78712bcd6a3f.png" src="https://user-images.githubusercontent.com/14288520/190176111-16a43da1-2fd4-4b1c-bf74-78712bcd6a3f.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190176111-16a43da1-2fd4-4b1c-bf74-78712bcd6a3f.png"><img alt="https://user-images.githubusercontent.com/14288520/190176111-16a43da1-2fd4-4b1c-bf74-78712bcd6a3f.png" src="https://user-images.githubusercontent.com/14288520/190176111-16a43da1-2fd4-4b1c-bf74-78712bcd6a3f.png" />
+</a>
 <hr class="docutils" />
 <ul class="simple">
 <li><p><strong>Display Curvature Comb</strong> (C icon), <strong>Comb Color</strong>, <strong>Comb Line Width</strong>. Control
@@ -256,11 +257,14 @@ Disabled by default.</p></li>
 </section>
 <section id="example-of-usage">
 <h2>Example of Usage<a class="headerlink" href="#example-of-usage" title="Link to this heading">¶</a></h2>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190133906-61748350-414f-4d3e-8e71-2bd6be30597c.png"><img alt="https://user-images.githubusercontent.com/14288520/190133906-61748350-414f-4d3e-8e71-2bd6be30597c.png" src="https://user-images.githubusercontent.com/14288520/190133906-61748350-414f-4d3e-8e71-2bd6be30597c.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190133906-61748350-414f-4d3e-8e71-2bd6be30597c.png"><img alt="https://user-images.githubusercontent.com/14288520/190133906-61748350-414f-4d3e-8e71-2bd6be30597c.png" src="https://user-images.githubusercontent.com/14288520/190133906-61748350-414f-4d3e-8e71-2bd6be30597c.png" />
+</a>
 <p>Example of curvature comb display:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/206860681-a70d93af-a72b-4dcb-bf36-3678135b835a.png"><img alt="https://user-images.githubusercontent.com/284644/206860681-a70d93af-a72b-4dcb-bf36-3678135b835a.png" src="https://user-images.githubusercontent.com/284644/206860681-a70d93af-a72b-4dcb-bf36-3678135b835a.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/206860681-a70d93af-a72b-4dcb-bf36-3678135b835a.png"><img alt="https://user-images.githubusercontent.com/284644/206860681-a70d93af-a72b-4dcb-bf36-3678135b835a.png" src="https://user-images.githubusercontent.com/284644/206860681-a70d93af-a72b-4dcb-bf36-3678135b835a.png" />
+</a>
 <p>Example of curvature indication by color gradient:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/206875486-4f018e3e-4b90-4b6d-9df1-28df129e65d2.png"><img alt="https://user-images.githubusercontent.com/284644/206875486-4f018e3e-4b90-4b6d-9df1-28df129e65d2.png" src="https://user-images.githubusercontent.com/284644/206875486-4f018e3e-4b90-4b6d-9df1-28df129e65d2.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/206875486-4f018e3e-4b90-4b6d-9df1-28df129e65d2.png"><img alt="https://user-images.githubusercontent.com/284644/206875486-4f018e3e-4b90-4b6d-9df1-28df129e65d2.png" src="https://user-images.githubusercontent.com/284644/206875486-4f018e3e-4b90-4b6d-9df1-28df129e65d2.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/line_mk4.html"><span class="doc">Line</span></a></p></li>
 <li><p>Transform-&gt; <a class="reference internal" href="../transforms/randomize.html"><span class="doc">Randomize</span></a></p></li>

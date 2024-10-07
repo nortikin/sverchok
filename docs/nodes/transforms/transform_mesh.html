@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../">
 <head>
@@ -6,17 +8,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Transform mesh &mdash; Sverchok 1, 2, 0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=7ab3649f" />
 
   
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/documentation_options.js?v=773c2105"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/documentation_options.js?v=773c2105"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -36,9 +34,6 @@
             Sverchok
               <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
           </a>
-              <div class="version">
-                1, 2, 0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -150,14 +145,17 @@
              
   <section id="transform-mesh">
 <h1>Transform mesh<a class="headerlink" href="#transform-mesh" title="Link to this heading">¶</a></h1>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/193476315-46d82a9e-43ea-4e0c-8dac-9e81b9b9c925.png"><img alt="https://user-images.githubusercontent.com/14288520/193476315-46d82a9e-43ea-4e0c-8dac-9e81b9b9c925.png" src="https://user-images.githubusercontent.com/14288520/193476315-46d82a9e-43ea-4e0c-8dac-9e81b9b9c925.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/193476315-46d82a9e-43ea-4e0c-8dac-9e81b9b9c925.png"><img alt="https://user-images.githubusercontent.com/14288520/193476315-46d82a9e-43ea-4e0c-8dac-9e81b9b9c925.png" src="https://user-images.githubusercontent.com/14288520/193476315-46d82a9e-43ea-4e0c-8dac-9e81b9b9c925.png" />
+</a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>The node takes mesh and transform it according parameters. It can move, scale and rotate parts of mesh.
 The logic is close how Blender manipulate with mesh itself. Selection elements determines by mask input.</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/28003269/73249068-98730f80-41cd-11ea-8ae9-a939cfbe94de.gif"><img alt="https://user-images.githubusercontent.com/28003269/73249068-98730f80-41cd-11ea-8ae9-a939cfbe94de.gif" src="https://user-images.githubusercontent.com/28003269/73249068-98730f80-41cd-11ea-8ae9-a939cfbe94de.gif" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/28003269/73249068-98730f80-41cd-11ea-8ae9-a939cfbe94de.gif"><img alt="https://user-images.githubusercontent.com/28003269/73249068-98730f80-41cd-11ea-8ae9-a939cfbe94de.gif" src="https://user-images.githubusercontent.com/28003269/73249068-98730f80-41cd-11ea-8ae9-a939cfbe94de.gif" />
+</a>
 <hr class="docutils" />
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/193644280-57ce17f7-2460-4c95-9bc7-b825b8ab1b3b.png"><img alt="https://user-images.githubusercontent.com/14288520/193644280-57ce17f7-2460-4c95-9bc7-b825b8ab1b3b.png" src="https://user-images.githubusercontent.com/14288520/193644280-57ce17f7-2460-4c95-9bc7-b825b8ab1b3b.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/193644280-57ce17f7-2460-4c95-9bc7-b825b8ab1b3b.png"><img alt="https://user-images.githubusercontent.com/14288520/193644280-57ce17f7-2460-4c95-9bc7-b825b8ab1b3b.png" src="https://user-images.githubusercontent.com/14288520/193644280-57ce17f7-2460-4c95-9bc7-b825b8ab1b3b.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
 <li><p>Number-&gt; <a class="reference internal" href="../number/list_input.html"><span class="doc">List Input</span></a></p></li>
@@ -251,7 +249,8 @@ with indexes equal to given indexes via <cite>mask index</cite> socket.</p>
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">¶</a></h2>
 <p><strong>Generating and moving lines on mesh level:</strong></p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/193643631-6ffa24ba-7e09-42ca-a240-29c57ca7fd42.png"><img alt="https://user-images.githubusercontent.com/14288520/193643631-6ffa24ba-7e09-42ca-a240-29c57ca7fd42.png" src="https://user-images.githubusercontent.com/14288520/193643631-6ffa24ba-7e09-42ca-a240-29c57ca7fd42.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/193643631-6ffa24ba-7e09-42ca-a240-29c57ca7fd42.png"><img alt="https://user-images.githubusercontent.com/14288520/193643631-6ffa24ba-7e09-42ca-a240-29c57ca7fd42.png" src="https://user-images.githubusercontent.com/14288520/193643631-6ffa24ba-7e09-42ca-a240-29c57ca7fd42.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/line_mk4.html"><span class="doc">Line</span></a></p></li>
 <li><p>Number-&gt; <a class="reference internal" href="../number/random_num_gen.html"><span class="doc">Random Num Gen</span></a></p></li>
@@ -263,8 +262,10 @@ with indexes equal to given indexes via <cite>mask index</cite> socket.</p>
 </ul>
 <hr class="docutils" />
 <p><strong>Moving disjoint parts =):</strong></p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/193647222-a2948853-8180-4870-acc2-b71d1261518c.gif"><img alt="https://user-images.githubusercontent.com/14288520/193647222-a2948853-8180-4870-acc2-b71d1261518c.gif" src="https://user-images.githubusercontent.com/14288520/193647222-a2948853-8180-4870-acc2-b71d1261518c.gif" /></a>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/193647813-e456ffc8-0ba1-4f37-957a-653aa96bca31.png"><img alt="https://user-images.githubusercontent.com/14288520/193647813-e456ffc8-0ba1-4f37-957a-653aa96bca31.png" src="https://user-images.githubusercontent.com/14288520/193647813-e456ffc8-0ba1-4f37-957a-653aa96bca31.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/193647222-a2948853-8180-4870-acc2-b71d1261518c.gif"><img alt="https://user-images.githubusercontent.com/14288520/193647222-a2948853-8180-4870-acc2-b71d1261518c.gif" src="https://user-images.githubusercontent.com/14288520/193647222-a2948853-8180-4870-acc2-b71d1261518c.gif" />
+</a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/193647813-e456ffc8-0ba1-4f37-957a-653aa96bca31.png"><img alt="https://user-images.githubusercontent.com/14288520/193647813-e456ffc8-0ba1-4f37-957a-653aa96bca31.png" src="https://user-images.githubusercontent.com/14288520/193647813-e456ffc8-0ba1-4f37-957a-653aa96bca31.png" />
+</a>
 <ul class="simple">
 <li><p>Modifiers-&gt;Modifier Change-&gt; <a class="reference internal" href="../modifier_change/separate_parts_to_indexes.html"><span class="doc">Separate Parts To Indexes</span></a></p></li>
 <li><p>MUL X: Number-&gt; <a class="reference internal" href="../number/scalar_mk4.html"><span class="doc">Scalar Math</span></a></p></li>
@@ -276,7 +277,8 @@ with indexes equal to given indexes via <cite>mask index</cite> socket.</p>
 </ul>
 <hr class="docutils" />
 <p><strong>Randomly scaled faces:</strong></p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/193649147-9fe39b7b-2999-466f-ac51-04822a3603d2.png"><img alt="https://user-images.githubusercontent.com/14288520/193649147-9fe39b7b-2999-466f-ac51-04822a3603d2.png" src="https://user-images.githubusercontent.com/14288520/193649147-9fe39b7b-2999-466f-ac51-04822a3603d2.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/193649147-9fe39b7b-2999-466f-ac51-04822a3603d2.png"><img alt="https://user-images.githubusercontent.com/14288520/193649147-9fe39b7b-2999-466f-ac51-04822a3603d2.png" src="https://user-images.githubusercontent.com/14288520/193649147-9fe39b7b-2999-466f-ac51-04822a3603d2.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
 <li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/length.html"><span class="doc">List Length</span></a></p></li>
@@ -285,7 +287,8 @@ with indexes equal to given indexes via <cite>mask index</cite> socket.</p>
 </ul>
 <hr class="docutils" />
 <p><strong>Randomly scaled loops of torus:</strong></p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/193651715-cc02f1cb-7fd1-4bcd-99f7-503f7e0f3182.png"><img alt="https://user-images.githubusercontent.com/14288520/193651715-cc02f1cb-7fd1-4bcd-99f7-503f7e0f3182.png" src="https://user-images.githubusercontent.com/14288520/193651715-cc02f1cb-7fd1-4bcd-99f7-503f7e0f3182.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/193651715-cc02f1cb-7fd1-4bcd-99f7-503f7e0f3182.png"><img alt="https://user-images.githubusercontent.com/14288520/193651715-cc02f1cb-7fd1-4bcd-99f7-503f7e0f3182.png" src="https://user-images.githubusercontent.com/14288520/193651715-cc02f1cb-7fd1-4bcd-99f7-503f7e0f3182.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/torus_mk2.html"><span class="doc">Torus</span></a></p></li>
 <li><p>Number-&gt; <a class="reference internal" href="../number/numbers.html"><span class="doc">A Number</span></a></p></li>
@@ -295,8 +298,10 @@ with indexes equal to given indexes via <cite>mask index</cite> socket.</p>
 </ul>
 <hr class="docutils" />
 <p><strong>Flatten monkey by nearby point:</strong></p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/193666573-41b375bf-b083-4216-aacd-a834375caebb.gif"><img alt="https://user-images.githubusercontent.com/14288520/193666573-41b375bf-b083-4216-aacd-a834375caebb.gif" src="https://user-images.githubusercontent.com/14288520/193666573-41b375bf-b083-4216-aacd-a834375caebb.gif" /></a>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/193666541-1a514f6e-735c-4f4a-8b5a-578c79bea253.png"><img alt="https://user-images.githubusercontent.com/14288520/193666541-1a514f6e-735c-4f4a-8b5a-578c79bea253.png" src="https://user-images.githubusercontent.com/14288520/193666541-1a514f6e-735c-4f4a-8b5a-578c79bea253.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/193666573-41b375bf-b083-4216-aacd-a834375caebb.gif"><img alt="https://user-images.githubusercontent.com/14288520/193666573-41b375bf-b083-4216-aacd-a834375caebb.gif" src="https://user-images.githubusercontent.com/14288520/193666573-41b375bf-b083-4216-aacd-a834375caebb.gif" />
+</a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/193666541-1a514f6e-735c-4f4a-8b5a-578c79bea253.png"><img alt="https://user-images.githubusercontent.com/14288520/193666541-1a514f6e-735c-4f4a-8b5a-578c79bea253.png" src="https://user-images.githubusercontent.com/14288520/193666541-1a514f6e-735c-4f4a-8b5a-578c79bea253.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/suzanne.html"><span class="doc">Suzanne</span></a></p></li>
 <li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_out_mk2.html"><span class="doc">Matrix Out</span></a></p></li>

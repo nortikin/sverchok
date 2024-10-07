@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../">
 <head>
@@ -6,17 +8,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Pulga Pin Force &mdash; Sverchok 1, 2, 0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=7ab3649f" />
 
   
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/documentation_options.js?v=773c2105"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/documentation_options.js?v=773c2105"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -36,9 +34,6 @@
             Sverchok
               <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
           </a>
-              <div class="version">
-                1, 2, 0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -147,31 +142,37 @@
              
   <section id="pulga-pin-force">
 <h1>Pulga Pin Force<a class="headerlink" href="#pulga-pin-force" title="Link to this heading">¶</a></h1>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/c38bf44e-b9f5-47cf-81dc-6028c38b9ecf"><img alt="https://github.com/nortikin/sverchok/assets/14288520/c38bf44e-b9f5-47cf-81dc-6028c38b9ecf" src="https://github.com/nortikin/sverchok/assets/14288520/c38bf44e-b9f5-47cf-81dc-6028c38b9ecf" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/c38bf44e-b9f5-47cf-81dc-6028c38b9ecf"><img alt="https://github.com/nortikin/sverchok/assets/14288520/c38bf44e-b9f5-47cf-81dc-6028c38b9ecf" src="https://github.com/nortikin/sverchok/assets/14288520/c38bf44e-b9f5-47cf-81dc-6028c38b9ecf" />
+</a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node creates a force to be applied with the Pulga Physics Solver node.</p>
 <p>The force restricts the movement of the pinned verts</p>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/9335ef65-affc-485e-89ed-fe9d709ce18a"><img alt="https://github.com/nortikin/sverchok/assets/14288520/9335ef65-affc-485e-89ed-fe9d709ce18a" src="https://github.com/nortikin/sverchok/assets/14288520/9335ef65-affc-485e-89ed-fe9d709ce18a" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/9335ef65-affc-485e-89ed-fe9d709ce18a"><img alt="https://github.com/nortikin/sverchok/assets/14288520/9335ef65-affc-485e-89ed-fe9d709ce18a" src="https://github.com/nortikin/sverchok/assets/14288520/9335ef65-affc-485e-89ed-fe9d709ce18a" />
+</a>
 </section>
 <section id="input">
 <h2>Input<a class="headerlink" href="#input" title="Link to this heading">¶</a></h2>
 <ul>
 <li><p><strong>Pins</strong>: It will accept a Boolean list as a mask list or a Integer list as the index of the vertex to pin</p>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/08c46707-59ab-440c-bd9c-0904f939d107"><img alt="https://github.com/nortikin/sverchok/assets/14288520/08c46707-59ab-440c-bd9c-0904f939d107" src="https://github.com/nortikin/sverchok/assets/14288520/08c46707-59ab-440c-bd9c-0904f939d107" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/08c46707-59ab-440c-bd9c-0904f939d107"><img alt="https://github.com/nortikin/sverchok/assets/14288520/08c46707-59ab-440c-bd9c-0904f939d107" src="https://github.com/nortikin/sverchok/assets/14288520/08c46707-59ab-440c-bd9c-0904f939d107" />
+</a>
 </li>
 <li><p><strong>Axis</strong>: Axis to restrict. It can be defined with the drop-down menu or a list from a list from 0 to 6 to define the axis restriction per pin. (0 = XYZ, 1 = XY, 2 = XZ, 3 = YZ, 4 = X, 5 = Y, 6 = Z )</p>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/fd1b527d-03b9-4df4-b904-bf58ff6a09dd"><img alt="https://github.com/nortikin/sverchok/assets/14288520/fd1b527d-03b9-4df4-b904-bf58ff6a09dd" src="https://github.com/nortikin/sverchok/assets/14288520/fd1b527d-03b9-4df4-b904-bf58ff6a09dd" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/fd1b527d-03b9-4df4-b904-bf58ff6a09dd"><img alt="https://github.com/nortikin/sverchok/assets/14288520/fd1b527d-03b9-4df4-b904-bf58ff6a09dd" src="https://github.com/nortikin/sverchok/assets/14288520/fd1b527d-03b9-4df4-b904-bf58ff6a09dd" />
+</a>
 </li>
 <li><p><strong>Pins Goal</strong>: End position of the pinned vertices.</p>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/b79858f9-f878-46ee-b7ee-2e4326051b41"><img alt="https://github.com/nortikin/sverchok/assets/14288520/b79858f9-f878-46ee-b7ee-2e4326051b41" src="https://github.com/nortikin/sverchok/assets/14288520/b79858f9-f878-46ee-b7ee-2e4326051b41" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/b79858f9-f878-46ee-b7ee-2e4326051b41"><img alt="https://github.com/nortikin/sverchok/assets/14288520/b79858f9-f878-46ee-b7ee-2e4326051b41" src="https://github.com/nortikin/sverchok/assets/14288520/b79858f9-f878-46ee-b7ee-2e4326051b41" />
+</a>
 </li>
 </ul>
 </section>
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">¶</a></h2>
 <p>Description example:</p>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/09eca1c8-ad58-4d83-9618-59a286f6babf"><img alt="https://github.com/nortikin/sverchok/assets/14288520/09eca1c8-ad58-4d83-9618-59a286f6babf" src="https://github.com/nortikin/sverchok/assets/14288520/09eca1c8-ad58-4d83-9618-59a286f6babf" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/09eca1c8-ad58-4d83-9618-59a286f6babf"><img alt="https://github.com/nortikin/sverchok/assets/14288520/09eca1c8-ad58-4d83-9618-59a286f6babf" src="https://github.com/nortikin/sverchok/assets/14288520/09eca1c8-ad58-4d83-9618-59a286f6babf" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/segment.html"><span class="doc">Segment</span></a></p></li>
 <li><p>Generator-&gt;Generator Extended-&gt; <a class="reference internal" href="../generators_extended/polygon_grid.html"><span class="doc">Polygon Grid</span></a></p></li>
@@ -188,7 +189,8 @@
 <li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_springs_force.html"><span class="doc">Pulga Springs Force</span></a></p></li>
 </ul>
 <hr class="docutils" />
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/fe532189-7aca-41b4-91eb-3ab2594295f2"><img alt="https://github.com/nortikin/sverchok/assets/14288520/fe532189-7aca-41b4-91eb-3ab2594295f2" src="https://github.com/nortikin/sverchok/assets/14288520/fe532189-7aca-41b4-91eb-3ab2594295f2" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/fe532189-7aca-41b4-91eb-3ab2594295f2"><img alt="https://github.com/nortikin/sverchok/assets/14288520/fe532189-7aca-41b4-91eb-3ab2594295f2" src="https://github.com/nortikin/sverchok/assets/14288520/fe532189-7aca-41b4-91eb-3ab2594295f2" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/segment.html"><span class="doc">Segment</span></a></p></li>
 <li><p>Generator-&gt;Generator Extended-&gt; <a class="reference internal" href="../generators_extended/polygon_grid.html"><span class="doc">Polygon Grid</span></a></p></li>
@@ -202,7 +204,8 @@
 <li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_springs_force.html"><span class="doc">Pulga Springs Force</span></a></p></li>
 </ul>
 <hr class="docutils" />
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/4ec10d8b-b78e-45fd-b325-855e3e0deb9b"><img alt="https://github.com/nortikin/sverchok/assets/14288520/4ec10d8b-b78e-45fd-b325-855e3e0deb9b" src="https://github.com/nortikin/sverchok/assets/14288520/4ec10d8b-b78e-45fd-b325-855e3e0deb9b" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/4ec10d8b-b78e-45fd-b325-855e3e0deb9b"><img alt="https://github.com/nortikin/sverchok/assets/14288520/4ec10d8b-b78e-45fd-b325-855e3e0deb9b" src="https://github.com/nortikin/sverchok/assets/14288520/4ec10d8b-b78e-45fd-b325-855e3e0deb9b" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
 <li><p>Analyzers-&gt;Component Analyzer: <a class="reference internal" href="../analyzer/component_analyzer.html#vertices-adjacent-faces-num"><span class="std std-ref">Adjacent faces num</span></a></p></li>
@@ -215,7 +218,8 @@
 <li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_springs_force.html"><span class="doc">Pulga Springs Force</span></a></p></li>
 </ul>
 <hr class="docutils" />
-<a class="reference external image-reference" href="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/pulga_physics/pulga_pin_force/blender_sverchok_pulga_pin_force_example_02.png"><img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/pulga_physics/pulga_pin_force/blender_sverchok_pulga_pin_force_example_02.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/pulga_physics/pulga_pin_force/blender_sverchok_pulga_pin_force_example_02.png" /></a>
+<a class="reference external image-reference" href="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/pulga_physics/pulga_pin_force/blender_sverchok_pulga_pin_force_example_02.png"><img alt="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/pulga_physics/pulga_pin_force/blender_sverchok_pulga_pin_force_example_02.png" src="https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/pulga_physics/pulga_pin_force/blender_sverchok_pulga_pin_force_example_02.png" />
+</a>
 </section>
 </section>
 

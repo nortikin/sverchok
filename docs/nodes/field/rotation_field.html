@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../">
 <head>
@@ -6,17 +8,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Rotation Field &mdash; Sverchok 1, 2, 0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=7ab3649f" />
 
   
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/documentation_options.js?v=773c2105"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/documentation_options.js?v=773c2105"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -36,9 +34,6 @@
             Sverchok
               <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
           </a>
-              <div class="version">
-                1, 2, 0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -160,14 +155,16 @@
              
   <section id="rotation-field">
 <h1>Rotation Field<a class="headerlink" href="#rotation-field" title="Link to this heading">¶</a></h1>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/024400d8-69ae-4482-9ab7-f22e67df09c0"><img alt="https://github.com/nortikin/sverchok/assets/14288520/024400d8-69ae-4482-9ab7-f22e67df09c0" src="https://github.com/nortikin/sverchok/assets/14288520/024400d8-69ae-4482-9ab7-f22e67df09c0" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/024400d8-69ae-4482-9ab7-f22e67df09c0"><img alt="https://github.com/nortikin/sverchok/assets/14288520/024400d8-69ae-4482-9ab7-f22e67df09c0" src="https://github.com/nortikin/sverchok/assets/14288520/024400d8-69ae-4482-9ab7-f22e67df09c0" />
+</a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node generates a Vector Field which is calculated as
 force rotating points around some axis. Several physics-like falloff laws are supported.
 Falloffs similar to standard proportional editing mode are supported too (they
 are marked with <cite>(P)</cite> in the name).</p>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/5ef50da8-6d61-4266-8e31-8db6d66262fe"><img alt="https://github.com/nortikin/sverchok/assets/14288520/5ef50da8-6d61-4266-8e31-8db6d66262fe" src="https://github.com/nortikin/sverchok/assets/14288520/5ef50da8-6d61-4266-8e31-8db6d66262fe" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/5ef50da8-6d61-4266-8e31-8db6d66262fe"><img alt="https://github.com/nortikin/sverchok/assets/14288520/5ef50da8-6d61-4266-8e31-8db6d66262fe" src="https://github.com/nortikin/sverchok/assets/14288520/5ef50da8-6d61-4266-8e31-8db6d66262fe" />
+</a>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
@@ -175,21 +172,26 @@ are marked with <cite>(P)</cite> in the name).</p>
 <ul>
 <li><p><strong>Location</strong>. Point on the rotating axis</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/bee32d7c-da5b-4e6f-9250-817e92c032fd"><img alt="https://github.com/nortikin/sverchok/assets/14288520/bee32d7c-da5b-4e6f-9250-817e92c032fd" src="https://github.com/nortikin/sverchok/assets/14288520/bee32d7c-da5b-4e6f-9250-817e92c032fd" /></a>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/bee32d7c-da5b-4e6f-9250-817e92c032fd"><img alt="https://github.com/nortikin/sverchok/assets/14288520/bee32d7c-da5b-4e6f-9250-817e92c032fd" src="https://github.com/nortikin/sverchok/assets/14288520/bee32d7c-da5b-4e6f-9250-817e92c032fd" />
+</a>
 </div></blockquote>
 <p>It is possible to provide several location points. The default value is <cite>(0, 0, 0)</cite> (origin).</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/f75c6563-c894-41d4-bade-b4fbb30b0597"><img alt="https://github.com/nortikin/sverchok/assets/14288520/f75c6563-c894-41d4-bade-b4fbb30b0597" src="https://github.com/nortikin/sverchok/assets/14288520/f75c6563-c894-41d4-bade-b4fbb30b0597" /></a>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/f75c6563-c894-41d4-bade-b4fbb30b0597"><img alt="https://github.com/nortikin/sverchok/assets/14288520/f75c6563-c894-41d4-bade-b4fbb30b0597" src="https://github.com/nortikin/sverchok/assets/14288520/f75c6563-c894-41d4-bade-b4fbb30b0597" />
+</a>
 </div></blockquote>
 </li>
 <li><p><strong>Direction</strong>. Direction of the rotation axis.  The default value is <cite>(0, 0, 1)</cite> (Z axis).</p></li>
 </ul>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/25cdcca7-0347-4cbe-801c-6d003a3226f5"><img alt="https://github.com/nortikin/sverchok/assets/14288520/25cdcca7-0347-4cbe-801c-6d003a3226f5" src="https://github.com/nortikin/sverchok/assets/14288520/25cdcca7-0347-4cbe-801c-6d003a3226f5" /></a>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/356a88c5-aa31-41d1-9d27-dba7c75acc3e"><img alt="https://github.com/nortikin/sverchok/assets/14288520/356a88c5-aa31-41d1-9d27-dba7c75acc3e" src="https://github.com/nortikin/sverchok/assets/14288520/356a88c5-aa31-41d1-9d27-dba7c75acc3e" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/25cdcca7-0347-4cbe-801c-6d003a3226f5"><img alt="https://github.com/nortikin/sverchok/assets/14288520/25cdcca7-0347-4cbe-801c-6d003a3226f5" src="https://github.com/nortikin/sverchok/assets/14288520/25cdcca7-0347-4cbe-801c-6d003a3226f5" />
+</a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/356a88c5-aa31-41d1-9d27-dba7c75acc3e"><img alt="https://github.com/nortikin/sverchok/assets/14288520/356a88c5-aa31-41d1-9d27-dba7c75acc3e" src="https://github.com/nortikin/sverchok/assets/14288520/356a88c5-aa31-41d1-9d27-dba7c75acc3e" />
+</a>
 <ul>
 <li><p><strong>Amplitude</strong>. The attracting force amplitude. The default value is 0.5.</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/bd77d08b-d5eb-4eb0-9506-31501db70d2c"><img alt="https://github.com/nortikin/sverchok/assets/14288520/bd77d08b-d5eb-4eb0-9506-31501db70d2c" src="https://github.com/nortikin/sverchok/assets/14288520/bd77d08b-d5eb-4eb0-9506-31501db70d2c" /></a>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/bd77d08b-d5eb-4eb0-9506-31501db70d2c"><img alt="https://github.com/nortikin/sverchok/assets/14288520/bd77d08b-d5eb-4eb0-9506-31501db70d2c" src="https://github.com/nortikin/sverchok/assets/14288520/bd77d08b-d5eb-4eb0-9506-31501db70d2c" />
+</a>
 </div></blockquote>
 </li>
 <li><p><strong>Coefficient</strong>. The coefficient used in the attracting force falloff
@@ -200,16 +202,20 @@ calculation formula. The exact meaning of this input depends on fallof type:</p>
 is the coefficient K in the corresponding formula: <code class="docutils literal notranslate"><span class="pre">exp(-K*R)</span></code> or
 <code class="docutils literal notranslate"><span class="pre">exp(-K*x^2/2)</span></code>.</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/12681a87-6547-4574-86f2-e81c923362ff"><img alt="https://github.com/nortikin/sverchok/assets/14288520/12681a87-6547-4574-86f2-e81c923362ff" src="https://github.com/nortikin/sverchok/assets/14288520/12681a87-6547-4574-86f2-e81c923362ff" /></a>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/42e354b8-baaa-4de5-a7b7-c7e291de4f44"><img alt="https://github.com/nortikin/sverchok/assets/14288520/42e354b8-baaa-4de5-a7b7-c7e291de4f44" src="https://github.com/nortikin/sverchok/assets/14288520/42e354b8-baaa-4de5-a7b7-c7e291de4f44" /></a>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/12681a87-6547-4574-86f2-e81c923362ff"><img alt="https://github.com/nortikin/sverchok/assets/14288520/12681a87-6547-4574-86f2-e81c923362ff" src="https://github.com/nortikin/sverchok/assets/14288520/12681a87-6547-4574-86f2-e81c923362ff" />
+</a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/42e354b8-baaa-4de5-a7b7-c7e291de4f44"><img alt="https://github.com/nortikin/sverchok/assets/14288520/42e354b8-baaa-4de5-a7b7-c7e291de4f44" src="https://github.com/nortikin/sverchok/assets/14288520/42e354b8-baaa-4de5-a7b7-c7e291de4f44" />
+</a>
 </div></blockquote>
 </li>
 <li><p>If <strong>Falloff type</strong> is set to one of proportional editing modes (one
 starting with <code class="docutils literal notranslate"><span class="pre">(P)</span></code> prefix), this is the radius of proportional editing
 falloff.</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/475f6396-80b6-437b-8570-1f52420891b6"><img alt="https://github.com/nortikin/sverchok/assets/14288520/475f6396-80b6-437b-8570-1f52420891b6" src="https://github.com/nortikin/sverchok/assets/14288520/475f6396-80b6-437b-8570-1f52420891b6" /></a>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/d7ea8b5e-6cdc-40e7-a2fd-5541197a359d"><img alt="https://github.com/nortikin/sverchok/assets/14288520/d7ea8b5e-6cdc-40e7-a2fd-5541197a359d" src="https://github.com/nortikin/sverchok/assets/14288520/d7ea8b5e-6cdc-40e7-a2fd-5541197a359d" /></a>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/475f6396-80b6-437b-8570-1f52420891b6"><img alt="https://github.com/nortikin/sverchok/assets/14288520/475f6396-80b6-437b-8570-1f52420891b6" src="https://github.com/nortikin/sverchok/assets/14288520/475f6396-80b6-437b-8570-1f52420891b6" />
+</a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/d7ea8b5e-6cdc-40e7-a2fd-5541197a359d"><img alt="https://github.com/nortikin/sverchok/assets/14288520/d7ea8b5e-6cdc-40e7-a2fd-5541197a359d" src="https://github.com/nortikin/sverchok/assets/14288520/d7ea8b5e-6cdc-40e7-a2fd-5541197a359d" />
+</a>
 </div></blockquote>
 </li>
 <li><p>For <strong>other</strong> falloff types, this input is not available.</p></li>
@@ -248,7 +254,8 @@ restricted with the distance to attractor object. Unchecked by default.</p></li>
 </section>
 <section id="examples-of-usage">
 <h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Link to this heading">¶</a></h2>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/ebd38346-a271-456f-a8c1-22c5d9dfd2fb"><img alt="https://github.com/nortikin/sverchok/assets/14288520/ebd38346-a271-456f-a8c1-22c5d9dfd2fb" src="https://github.com/nortikin/sverchok/assets/14288520/ebd38346-a271-456f-a8c1-22c5d9dfd2fb" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/ebd38346-a271-456f-a8c1-22c5d9dfd2fb"><img alt="https://github.com/nortikin/sverchok/assets/14288520/ebd38346-a271-456f-a8c1-22c5d9dfd2fb" src="https://github.com/nortikin/sverchok/assets/14288520/ebd38346-a271-456f-a8c1-22c5d9dfd2fb" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/line_mk4.html"><span class="doc">Line</span></a></p></li>
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/segment.html"><span class="doc">Segment</span></a></p></li>
@@ -263,7 +270,8 @@ restricted with the distance to attractor object. Unchecked by default.</p></li>
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
 </ul>
 <hr class="docutils" />
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/10011941/107337942-45f45080-6abb-11eb-8245-74afc5fab5df.png"><img alt="https://user-images.githubusercontent.com/10011941/107337942-45f45080-6abb-11eb-8245-74afc5fab5df.png" src="https://user-images.githubusercontent.com/10011941/107337942-45f45080-6abb-11eb-8245-74afc5fab5df.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/10011941/107337942-45f45080-6abb-11eb-8245-74afc5fab5df.png"><img alt="https://user-images.githubusercontent.com/10011941/107337942-45f45080-6abb-11eb-8245-74afc5fab5df.png" src="https://user-images.githubusercontent.com/10011941/107337942-45f45080-6abb-11eb-8245-74afc5fab5df.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
 <li><p>Fields-&gt; <a class="reference internal" href="vector_field_apply.html"><span class="doc">Apply Vector Field</span></a></p></li>

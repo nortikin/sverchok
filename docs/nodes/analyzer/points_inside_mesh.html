@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../">
 <head>
@@ -6,17 +8,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Points Inside Mesh &mdash; Sverchok 1, 2, 0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=7ab3649f" />
 
   
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/documentation_options.js?v=773c2105"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/documentation_options.js?v=773c2105"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -36,9 +34,6 @@
             Sverchok
               <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
           </a>
-              <div class="version">
-                1, 2, 0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -170,10 +165,14 @@
              
   <section id="points-inside-mesh">
 <h1>Points Inside Mesh<a class="headerlink" href="#points-inside-mesh" title="Link to this heading">¶</a></h1>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198854766-ac4b81c7-d9ef-4377-bec1-ddb15157329f.png"><img alt="https://user-images.githubusercontent.com/14288520/198854766-ac4b81c7-d9ef-4377-bec1-ddb15157329f.png" src="https://user-images.githubusercontent.com/14288520/198854766-ac4b81c7-d9ef-4377-bec1-ddb15157329f.png" /></a>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196754002-c9ab80b9-29ef-48bc-a47b-f3ea836fb09e.png"><img alt="https://user-images.githubusercontent.com/14288520/196754002-c9ab80b9-29ef-48bc-a47b-f3ea836fb09e.png" src="https://user-images.githubusercontent.com/14288520/196754002-c9ab80b9-29ef-48bc-a47b-f3ea836fb09e.png" /></a>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196754459-e6b45887-3a06-4653-b9f5-53f8e7d2d64e.png"><img alt="https://user-images.githubusercontent.com/14288520/196754459-e6b45887-3a06-4653-b9f5-53f8e7d2d64e.png" src="https://user-images.githubusercontent.com/14288520/196754459-e6b45887-3a06-4653-b9f5-53f8e7d2d64e.png" /></a>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196778786-ca4b3065-8142-434e-a504-4a1c3e5ae1ae.png"><img alt="https://user-images.githubusercontent.com/14288520/196778786-ca4b3065-8142-434e-a504-4a1c3e5ae1ae.png" src="https://user-images.githubusercontent.com/14288520/196778786-ca4b3065-8142-434e-a504-4a1c3e5ae1ae.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198854766-ac4b81c7-d9ef-4377-bec1-ddb15157329f.png"><img alt="https://user-images.githubusercontent.com/14288520/198854766-ac4b81c7-d9ef-4377-bec1-ddb15157329f.png" src="https://user-images.githubusercontent.com/14288520/198854766-ac4b81c7-d9ef-4377-bec1-ddb15157329f.png" />
+</a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196754002-c9ab80b9-29ef-48bc-a47b-f3ea836fb09e.png"><img alt="https://user-images.githubusercontent.com/14288520/196754002-c9ab80b9-29ef-48bc-a47b-f3ea836fb09e.png" src="https://user-images.githubusercontent.com/14288520/196754002-c9ab80b9-29ef-48bc-a47b-f3ea836fb09e.png" />
+</a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196754459-e6b45887-3a06-4653-b9f5-53f8e7d2d64e.png"><img alt="https://user-images.githubusercontent.com/14288520/196754459-e6b45887-3a06-4653-b9f5-53f8e7d2d64e.png" src="https://user-images.githubusercontent.com/14288520/196754459-e6b45887-3a06-4653-b9f5-53f8e7d2d64e.png" />
+</a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196778786-ca4b3065-8142-434e-a504-4a1c3e5ae1ae.png"><img alt="https://user-images.githubusercontent.com/14288520/196778786-ca4b3065-8142-434e-a504-4a1c3e5ae1ae.png" src="https://user-images.githubusercontent.com/14288520/196778786-ca4b3065-8142-434e-a504-4a1c3e5ae1ae.png" />
+</a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>The node determines if points are inside a mesh. It has two modes, 2D and 3D</p>
@@ -195,14 +194,16 @@
 </section>
 <section id="examples-of-use">
 <h2>Examples of use<a class="headerlink" href="#examples-of-use" title="Link to this heading">¶</a></h2>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196766892-42718417-18cc-4388-b6f9-e4e50f311002.png"><img alt="https://user-images.githubusercontent.com/14288520/196766892-42718417-18cc-4388-b6f9-e4e50f311002.png" src="https://user-images.githubusercontent.com/14288520/196766892-42718417-18cc-4388-b6f9-e4e50f311002.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196766892-42718417-18cc-4388-b6f9-e4e50f311002.png"><img alt="https://user-images.githubusercontent.com/14288520/196766892-42718417-18cc-4388-b6f9-e4e50f311002.png" src="https://user-images.githubusercontent.com/14288520/196766892-42718417-18cc-4388-b6f9-e4e50f311002.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
 </ul>
 <hr class="docutils" />
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196765846-5b94a190-7e66-42ba-ae40-4a54382e23b0.png"><img alt="https://user-images.githubusercontent.com/14288520/196765846-5b94a190-7e66-42ba-ae40-4a54382e23b0.png" src="https://user-images.githubusercontent.com/14288520/196765846-5b94a190-7e66-42ba-ae40-4a54382e23b0.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196765846-5b94a190-7e66-42ba-ae40-4a54382e23b0.png"><img alt="https://user-images.githubusercontent.com/14288520/196765846-5b94a190-7e66-42ba-ae40-4a54382e23b0.png" src="https://user-images.githubusercontent.com/14288520/196765846-5b94a190-7e66-42ba-ae40-4a54382e23b0.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/circle.html"><span class="doc">Circle</span></a></p></li>
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
@@ -214,9 +215,11 @@
 <li><p>NEG: Number-&gt; <a class="reference internal" href="../number/scalar_mk4.html"><span class="doc">Scalar Math</span></a></p></li>
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196765769-736f57f6-f212-4c27-8244-c0b4ee1f3135.gif"><img alt="https://user-images.githubusercontent.com/14288520/196765769-736f57f6-f212-4c27-8244-c0b4ee1f3135.gif" src="https://user-images.githubusercontent.com/14288520/196765769-736f57f6-f212-4c27-8244-c0b4ee1f3135.gif" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196765769-736f57f6-f212-4c27-8244-c0b4ee1f3135.gif"><img alt="https://user-images.githubusercontent.com/14288520/196765769-736f57f6-f212-4c27-8244-c0b4ee1f3135.gif" src="https://user-images.githubusercontent.com/14288520/196765769-736f57f6-f212-4c27-8244-c0b4ee1f3135.gif" />
+</a>
 <hr class="docutils" />
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196770641-ada28443-0adf-4b26-ab4e-aafa0bbaaa1c.png"><img alt="https://user-images.githubusercontent.com/14288520/196770641-ada28443-0adf-4b26-ab4e-aafa0bbaaa1c.png" src="https://user-images.githubusercontent.com/14288520/196770641-ada28443-0adf-4b26-ab4e-aafa0bbaaa1c.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196770641-ada28443-0adf-4b26-ab4e-aafa0bbaaa1c.png"><img alt="https://user-images.githubusercontent.com/14288520/196770641-ada28443-0adf-4b26-ab4e-aafa0bbaaa1c.png" src="https://user-images.githubusercontent.com/14288520/196770641-ada28443-0adf-4b26-ab4e-aafa0bbaaa1c.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/line_mk4.html"><span class="doc">Line</span></a></p></li>
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
@@ -228,7 +231,8 @@
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
 </ul>
 <hr class="docutils" />
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196773927-d1087ccb-fb5a-4d5d-957e-743b24e9fd2c.png"><img alt="https://user-images.githubusercontent.com/14288520/196773927-d1087ccb-fb5a-4d5d-957e-743b24e9fd2c.png" src="https://user-images.githubusercontent.com/14288520/196773927-d1087ccb-fb5a-4d5d-957e-743b24e9fd2c.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196773927-d1087ccb-fb5a-4d5d-957e-743b24e9fd2c.png"><img alt="https://user-images.githubusercontent.com/14288520/196773927-d1087ccb-fb5a-4d5d-957e-743b24e9fd2c.png" src="https://user-images.githubusercontent.com/14288520/196773927-d1087ccb-fb5a-4d5d-957e-743b24e9fd2c.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>
@@ -239,7 +243,8 @@
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
 </ul>
 <hr class="docutils" />
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196775884-d25e9a4b-f081-4a7d-94bd-fa8d614bdb35.png"><img alt="https://user-images.githubusercontent.com/14288520/196775884-d25e9a4b-f081-4a7d-94bd-fa8d614bdb35.png" src="https://user-images.githubusercontent.com/14288520/196775884-d25e9a4b-f081-4a7d-94bd-fa8d614bdb35.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196775884-d25e9a4b-f081-4a7d-94bd-fa8d614bdb35.png"><img alt="https://user-images.githubusercontent.com/14288520/196775884-d25e9a4b-f081-4a7d-94bd-fa8d614bdb35.png" src="https://user-images.githubusercontent.com/14288520/196775884-d25e9a4b-f081-4a7d-94bd-fa8d614bdb35.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/icosphere.html"><span class="doc">IcoSphere</span></a></p></li>
 <li><p>Spacial-&gt; <a class="reference internal" href="../spatial/homogenous_vector_field.html"><span class="doc">Vector P Field</span></a></p></li>

@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../">
 <head>
@@ -6,17 +8,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>KDT Closest Edges &mdash; Sverchok 1, 2, 0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=7ab3649f" />
 
   
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/documentation_options.js?v=773c2105"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/documentation_options.js?v=773c2105"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -36,9 +34,6 @@
             Sverchok
               <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
           </a>
-              <div class="version">
-                1, 2, 0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -176,9 +171,12 @@
   <section id="kdt-closest-edges">
 <h1>KDT Closest Edges<a class="headerlink" href="#kdt-closest-edges" title="Link to this heading">¶</a></h1>
 <p><em>Alias: KDTree Edges</em></p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196486631-373996a4-c49a-48f8-a03b-71919988efd8.png"><img alt="https://user-images.githubusercontent.com/14288520/196486631-373996a4-c49a-48f8-a03b-71919988efd8.png" src="https://user-images.githubusercontent.com/14288520/196486631-373996a4-c49a-48f8-a03b-71919988efd8.png" /></a>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196487746-16ac4469-f108-4e28-b8e8-3e65ea7005fe.png"><img alt="https://user-images.githubusercontent.com/14288520/196487746-16ac4469-f108-4e28-b8e8-3e65ea7005fe.png" src="https://user-images.githubusercontent.com/14288520/196487746-16ac4469-f108-4e28-b8e8-3e65ea7005fe.png" /></a>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196505056-fd750650-f7ba-4f94-9a7e-1225e9a165c6.png"><img alt="https://user-images.githubusercontent.com/14288520/196505056-fd750650-f7ba-4f94-9a7e-1225e9a165c6.png" src="https://user-images.githubusercontent.com/14288520/196505056-fd750650-f7ba-4f94-9a7e-1225e9a165c6.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196486631-373996a4-c49a-48f8-a03b-71919988efd8.png"><img alt="https://user-images.githubusercontent.com/14288520/196486631-373996a4-c49a-48f8-a03b-71919988efd8.png" src="https://user-images.githubusercontent.com/14288520/196486631-373996a4-c49a-48f8-a03b-71919988efd8.png" />
+</a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196487746-16ac4469-f108-4e28-b8e8-3e65ea7005fe.png"><img alt="https://user-images.githubusercontent.com/14288520/196487746-16ac4469-f108-4e28-b8e8-3e65ea7005fe.png" src="https://user-images.githubusercontent.com/14288520/196487746-16ac4469-f108-4e28-b8e8-3e65ea7005fe.png" />
+</a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196505056-fd750650-f7ba-4f94-9a7e-1225e9a165c6.png"><img alt="https://user-images.githubusercontent.com/14288520/196505056-fd750650-f7ba-4f94-9a7e-1225e9a165c6.png" src="https://user-images.githubusercontent.com/14288520/196505056-fd750650-f7ba-4f94-9a7e-1225e9a165c6.png" />
+</a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>On each update it takes an incoming pool of Vertices and places them in a K-dimensional Tree.
@@ -223,7 +221,8 @@ imposed by the 4 parameters.</p>
 <section id="fast-mode">
 <h2>Fast Mode<a class="headerlink" href="#fast-mode" title="Link to this heading">¶</a></h2>
 <p>This mode requires Scipy dependency. It can be from 3 to 10 times faster but lacks of ‘maxNum’ and ‘Skip’ properties</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196498573-c789eeb7-6ddc-4aad-9fae-c6c7b9fd137f.png"><img alt="https://user-images.githubusercontent.com/14288520/196498573-c789eeb7-6ddc-4aad-9fae-c6c7b9fd137f.png" src="https://user-images.githubusercontent.com/14288520/196498573-c789eeb7-6ddc-4aad-9fae-c6c7b9fd137f.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196498573-c789eeb7-6ddc-4aad-9fae-c6c7b9fd137f.png"><img alt="https://user-images.githubusercontent.com/14288520/196498573-c789eeb7-6ddc-4aad-9fae-c6c7b9fd137f.png" src="https://user-images.githubusercontent.com/14288520/196498573-c789eeb7-6ddc-4aad-9fae-c6c7b9fd137f.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
 <li><p>Transform-&gt; <a class="reference internal" href="../transforms/randomize.html"><span class="doc">Randomize</span></a></p></li>
@@ -231,7 +230,8 @@ imposed by the 4 parameters.</p>
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
 </ul>
 <hr class="docutils" />
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196499791-72a36288-0e0e-4e36-b97f-40c77b50d1f8.png"><img alt="https://user-images.githubusercontent.com/14288520/196499791-72a36288-0e0e-4e36-b97f-40c77b50d1f8.png" src="https://user-images.githubusercontent.com/14288520/196499791-72a36288-0e0e-4e36-b97f-40c77b50d1f8.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196499791-72a36288-0e0e-4e36-b97f-40c77b50d1f8.png"><img alt="https://user-images.githubusercontent.com/14288520/196499791-72a36288-0e0e-4e36-b97f-40c77b50d1f8.png" src="https://user-images.githubusercontent.com/14288520/196499791-72a36288-0e0e-4e36-b97f-40c77b50d1f8.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/circle.html"><span class="doc">Circle</span></a></p></li>
@@ -242,26 +242,30 @@ imposed by the 4 parameters.</p>
 <li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196500183-959e0a23-ed56-4640-b9a0-b3bc5e481d42.gif"><img alt="https://user-images.githubusercontent.com/14288520/196500183-959e0a23-ed56-4640-b9a0-b3bc5e481d42.gif" src="https://user-images.githubusercontent.com/14288520/196500183-959e0a23-ed56-4640-b9a0-b3bc5e481d42.gif" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196500183-959e0a23-ed56-4640-b9a0-b3bc5e481d42.gif"><img alt="https://user-images.githubusercontent.com/14288520/196500183-959e0a23-ed56-4640-b9a0-b3bc5e481d42.gif" src="https://user-images.githubusercontent.com/14288520/196500183-959e0a23-ed56-4640-b9a0-b3bc5e481d42.gif" />
+</a>
 </section>
 <hr class="docutils" />
 <section id="max-queries-mode">
 <h2>Max Queries Mode<a class="headerlink" href="#max-queries-mode" title="Link to this heading">¶</a></h2>
 <p>This mode requires Scipy dependency. In this mode the maxNum property is used to determine how many points will be verified so it will produce less connections that the complete mode</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196501322-5df056cf-653b-46d2-899c-a1ba1b098f7e.png"><img alt="https://user-images.githubusercontent.com/14288520/196501322-5df056cf-653b-46d2-899c-a1ba1b098f7e.png" src="https://user-images.githubusercontent.com/14288520/196501322-5df056cf-653b-46d2-899c-a1ba1b098f7e.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196501322-5df056cf-653b-46d2-899c-a1ba1b098f7e.png"><img alt="https://user-images.githubusercontent.com/14288520/196501322-5df056cf-653b-46d2-899c-a1ba1b098f7e.png" src="https://user-images.githubusercontent.com/14288520/196501322-5df056cf-653b-46d2-899c-a1ba1b098f7e.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
 <li><p>Transform-&gt; <a class="reference internal" href="../transforms/randomize.html"><span class="doc">Randomize</span></a></p></li>
 <li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196503091-0bef1667-1129-4e6b-bb09-d9013de2a9f1.gif"><img alt="https://user-images.githubusercontent.com/14288520/196503091-0bef1667-1129-4e6b-bb09-d9013de2a9f1.gif" src="https://user-images.githubusercontent.com/14288520/196503091-0bef1667-1129-4e6b-bb09-d9013de2a9f1.gif" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196503091-0bef1667-1129-4e6b-bb09-d9013de2a9f1.gif"><img alt="https://user-images.githubusercontent.com/14288520/196503091-0bef1667-1129-4e6b-bb09-d9013de2a9f1.gif" src="https://user-images.githubusercontent.com/14288520/196503091-0bef1667-1129-4e6b-bb09-d9013de2a9f1.gif" />
+</a>
 </section>
 <hr class="docutils" />
 <section id="no-skip-mode">
 <h2>No Skip Mode<a class="headerlink" href="#no-skip-mode" title="Link to this heading">¶</a></h2>
 <p>This mode requires Scipy dependency. This is similar to the existing mode but the way the maximum connections is coded produces different results sorting the filter by minimum vertex index</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196502262-6ad08724-44e2-4210-895b-1b41721386a7.png"><img alt="https://user-images.githubusercontent.com/14288520/196502262-6ad08724-44e2-4210-895b-1b41721386a7.png" src="https://user-images.githubusercontent.com/14288520/196502262-6ad08724-44e2-4210-895b-1b41721386a7.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196502262-6ad08724-44e2-4210-895b-1b41721386a7.png"><img alt="https://user-images.githubusercontent.com/14288520/196502262-6ad08724-44e2-4210-895b-1b41721386a7.png" src="https://user-images.githubusercontent.com/14288520/196502262-6ad08724-44e2-4210-895b-1b41721386a7.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
 <li><p>Transform-&gt; <a class="reference internal" href="../transforms/randomize.html"><span class="doc">Randomize</span></a></p></li>

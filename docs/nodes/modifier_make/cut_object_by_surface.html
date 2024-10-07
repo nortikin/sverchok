@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../">
 <head>
@@ -6,17 +8,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Cut Object by Surface &mdash; Sverchok 1, 2, 0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=7ab3649f" />
 
   
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/documentation_options.js?v=773c2105"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/documentation_options.js?v=773c2105"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -36,9 +34,6 @@
             Sverchok
               <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
           </a>
-              <div class="version">
-                1, 2, 0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -156,7 +151,8 @@
              
   <section id="cut-object-by-surface">
 <h1>Cut Object by Surface<a class="headerlink" href="#cut-object-by-surface" title="Link to this heading">¶</a></h1>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198824817-a8729120-16f4-4c9c-baa5-6dec7dd049a7.png"><img alt="https://user-images.githubusercontent.com/14288520/198824817-a8729120-16f4-4c9c-baa5-6dec7dd049a7.png" src="https://user-images.githubusercontent.com/14288520/198824817-a8729120-16f4-4c9c-baa5-6dec7dd049a7.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198824817-a8729120-16f4-4c9c-baa5-6dec7dd049a7.png"><img alt="https://user-images.githubusercontent.com/14288520/198824817-a8729120-16f4-4c9c-baa5-6dec7dd049a7.png" src="https://user-images.githubusercontent.com/14288520/198824817-a8729120-16f4-4c9c-baa5-6dec7dd049a7.png" />
+</a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node cuts <strong>edges</strong> of one mesh (“object”) by intersecting them with faces
@@ -170,7 +166,8 @@ it finds intersections of <strong>edges</strong>, not intersections of volumes.<
 the node requires that of each face of “object” mesh, only two edges intersect
 the “surface” mesh. So, each face can be cut only in two pieces, not in three or more.
 The node will not crash, just ignore these options and simply output intersection points.</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198825816-dc69dab6-36fa-40a5-9ad5-481d9b43d17e.gif"><img alt="https://user-images.githubusercontent.com/14288520/198825816-dc69dab6-36fa-40a5-9ad5-481d9b43d17e.gif" src="https://user-images.githubusercontent.com/14288520/198825816-dc69dab6-36fa-40a5-9ad5-481d9b43d17e.gif" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198825816-dc69dab6-36fa-40a5-9ad5-481d9b43d17e.gif"><img alt="https://user-images.githubusercontent.com/14288520/198825816-dc69dab6-36fa-40a5-9ad5-481d9b43d17e.gif" src="https://user-images.githubusercontent.com/14288520/198825816-dc69dab6-36fa-40a5-9ad5-481d9b43d17e.gif" />
+</a>
 <p><strong>Developer notes</strong> : for those interested in removing this limitation, a general idea
 on how to proceed, with its limitations, is included in the code as comments.
 If multiple points are detected for a single real intersection point,
@@ -243,7 +240,8 @@ parameter is not checked, then this output will not contain faces in places
 where the “object” is cut by “surface” (i.e. there will be holes). This
 output is only available if the <strong>Make cut pieces</strong> parameter is checked.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198872895-229c30cb-3e5b-4f3a-b456-b16b27fcf96a.png"><img alt="https://user-images.githubusercontent.com/14288520/198872895-229c30cb-3e5b-4f3a-b456-b16b27fcf96a.png" src="https://user-images.githubusercontent.com/14288520/198872895-229c30cb-3e5b-4f3a-b456-b16b27fcf96a.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198872895-229c30cb-3e5b-4f3a-b456-b16b27fcf96a.png"><img alt="https://user-images.githubusercontent.com/14288520/198872895-229c30cb-3e5b-4f3a-b456-b16b27fcf96a.png" src="https://user-images.githubusercontent.com/14288520/198872895-229c30cb-3e5b-4f3a-b456-b16b27fcf96a.png" />
+</a>
 </section>
 <section id="examples-of-usage">
 <h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Link to this heading">¶</a></h2>
@@ -251,7 +249,8 @@ output is only available if the <strong>Make cut pieces</strong> parameter is ch
 connect resulting vertices. Note that in this case the number of box’s
 subdivisions does not have any meaning, because the places of intersections of
 sphere’s edges with the box are always the same.</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198826268-d9f35b1a-0838-4247-89d7-2902a335e4f5.png"><img alt="https://user-images.githubusercontent.com/14288520/198826268-d9f35b1a-0838-4247-89d7-2902a335e4f5.png" src="https://user-images.githubusercontent.com/14288520/198826268-d9f35b1a-0838-4247-89d7-2902a335e4f5.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198826268-d9f35b1a-0838-4247-89d7-2902a335e4f5.png"><img alt="https://user-images.githubusercontent.com/14288520/198826268-d9f35b1a-0838-4247-89d7-2902a335e4f5.png" src="https://user-images.githubusercontent.com/14288520/198826268-d9f35b1a-0838-4247-89d7-2902a335e4f5.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/sphere.html"><span class="doc">Sphere</span></a></p></li>
@@ -262,26 +261,31 @@ sphere’s edges with the box are always the same.</p>
 <p>Box cut by sphere. Here we intersect edges of the box with the sphere, and then
 connect resulting vertices. Note that if we specify number of box’s
 subdivisions = 1, we would get nothing at all.</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198826493-2f2b97bd-3fd1-415d-935b-737ad30d01f4.png"><img alt="https://user-images.githubusercontent.com/14288520/198826493-2f2b97bd-3fd1-415d-935b-737ad30d01f4.png" src="https://user-images.githubusercontent.com/14288520/198826493-2f2b97bd-3fd1-415d-935b-737ad30d01f4.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198826493-2f2b97bd-3fd1-415d-935b-737ad30d01f4.png"><img alt="https://user-images.githubusercontent.com/14288520/198826493-2f2b97bd-3fd1-415d-935b-737ad30d01f4.png" src="https://user-images.githubusercontent.com/14288520/198826493-2f2b97bd-3fd1-415d-935b-737ad30d01f4.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/sphere.html"><span class="doc">Sphere</span></a></p></li>
 <li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198826593-e906e059-d88b-413b-add3-07c96b45051e.gif"><img alt="https://user-images.githubusercontent.com/14288520/198826593-e906e059-d88b-413b-add3-07c96b45051e.gif" src="https://user-images.githubusercontent.com/14288520/198826593-e906e059-d88b-413b-add3-07c96b45051e.gif" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198826593-e906e059-d88b-413b-add3-07c96b45051e.gif"><img alt="https://user-images.githubusercontent.com/14288520/198826593-e906e059-d88b-413b-add3-07c96b45051e.gif" src="https://user-images.githubusercontent.com/14288520/198826593-e906e059-d88b-413b-add3-07c96b45051e.gif" />
+</a>
 <hr class="docutils" />
 <p>Intersection of eight cubes (green edges) with the icosphere (yellowish edges):</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198827326-1735070e-8862-42f3-9524-7eb317572fcc.png"><img alt="https://user-images.githubusercontent.com/14288520/198827326-1735070e-8862-42f3-9524-7eb317572fcc.png" src="https://user-images.githubusercontent.com/14288520/198827326-1735070e-8862-42f3-9524-7eb317572fcc.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198827326-1735070e-8862-42f3-9524-7eb317572fcc.png"><img alt="https://user-images.githubusercontent.com/14288520/198827326-1735070e-8862-42f3-9524-7eb317572fcc.png" src="https://user-images.githubusercontent.com/14288520/198827326-1735070e-8862-42f3-9524-7eb317572fcc.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/sphere.html"><span class="doc">Sphere</span></a></p></li>
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198827251-28890723-1762-4265-85be-5e8f033f4253.gif"><img alt="https://user-images.githubusercontent.com/14288520/198827251-28890723-1762-4265-85be-5e8f033f4253.gif" src="https://user-images.githubusercontent.com/14288520/198827251-28890723-1762-4265-85be-5e8f033f4253.gif" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198827251-28890723-1762-4265-85be-5e8f033f4253.gif"><img alt="https://user-images.githubusercontent.com/14288520/198827251-28890723-1762-4265-85be-5e8f033f4253.gif" src="https://user-images.githubusercontent.com/14288520/198827251-28890723-1762-4265-85be-5e8f033f4253.gif" />
+</a>
 <hr class="docutils" />
 <p>The same cut surface passed through the “split faces” node:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198828991-37f88604-6cea-4cee-a980-11dbe8465a60.png"><img alt="https://user-images.githubusercontent.com/14288520/198828991-37f88604-6cea-4cee-a980-11dbe8465a60.png" src="https://user-images.githubusercontent.com/14288520/198828991-37f88604-6cea-4cee-a980-11dbe8465a60.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198828991-37f88604-6cea-4cee-a980-11dbe8465a60.png"><img alt="https://user-images.githubusercontent.com/14288520/198828991-37f88604-6cea-4cee-a980-11dbe8465a60.png" src="https://user-images.githubusercontent.com/14288520/198828991-37f88604-6cea-4cee-a980-11dbe8465a60.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/sphere.html"><span class="doc">Sphere</span></a></p></li>

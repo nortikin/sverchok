@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../">
 <head>
@@ -6,17 +8,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>NGon &mdash; Sverchok 1, 2, 0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=7ab3649f" />
 
   
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/documentation_options.js?v=773c2105"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/documentation_options.js?v=773c2105"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -36,9 +34,6 @@
             Sverchok
               <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
           </a>
-              <div class="version">
-                1, 2, 0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -150,7 +145,8 @@
              
   <section id="ngon">
 <h1>NGon<a class="headerlink" href="#ngon" title="Link to this heading">¶</a></h1>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/188597852-51e09d66-5fea-4ef2-9700-4d8e1f0b9dfa.png"><img alt="https://user-images.githubusercontent.com/14288520/188597852-51e09d66-5fea-4ef2-9700-4d8e1f0b9dfa.png" src="https://user-images.githubusercontent.com/14288520/188597852-51e09d66-5fea-4ef2-9700-4d8e1f0b9dfa.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/188597852-51e09d66-5fea-4ef2-9700-4d8e1f0b9dfa.png"><img alt="https://user-images.githubusercontent.com/14288520/188597852-51e09d66-5fea-4ef2-9700-4d8e1f0b9dfa.png" src="https://user-images.githubusercontent.com/14288520/188597852-51e09d66-5fea-4ef2-9700-4d8e1f0b9dfa.png" />
+</a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>NGon generator creates regular (or not exactly, see below) polygons of given
@@ -162,7 +158,8 @@ along radius and randomization of angle. See the examples below.</p>
 polygon), or some number of vertices can be skipped, to produce star-like
 polygons. In the last case, you most probably will want to pass output of this
 node to Intersect Edges node.</p>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/50207c0e-d4e4-4bc1-9bfb-41b224516eb7"><img alt="https://github.com/nortikin/sverchok/assets/14288520/50207c0e-d4e4-4bc1-9bfb-41b224516eb7" src="https://github.com/nortikin/sverchok/assets/14288520/50207c0e-d4e4-4bc1-9bfb-41b224516eb7" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/50207c0e-d4e4-4bc1-9bfb-41b224516eb7"><img alt="https://github.com/nortikin/sverchok/assets/14288520/50207c0e-d4e4-4bc1-9bfb-41b224516eb7" src="https://github.com/nortikin/sverchok/assets/14288520/50207c0e-d4e4-4bc1-9bfb-41b224516eb7" />
+</a>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
@@ -262,17 +259,23 @@ node does not create degenerated polygons.</p>
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">¶</a></h2>
 <p>Sides=5, Shift=0, RandomR=0, RandomPhi=0 (default values):</p>
-<a class="reference external image-reference" href="https://cloud.githubusercontent.com/assets/284644/5680574/bd0ee2e8-9830-11e4-92b7-8c031fb9ff08.png"><img alt="https://cloud.githubusercontent.com/assets/284644/5680574/bd0ee2e8-9830-11e4-92b7-8c031fb9ff08.png" src="https://cloud.githubusercontent.com/assets/284644/5680574/bd0ee2e8-9830-11e4-92b7-8c031fb9ff08.png" /></a>
+<a class="reference external image-reference" href="https://cloud.githubusercontent.com/assets/284644/5680574/bd0ee2e8-9830-11e4-92b7-8c031fb9ff08.png"><img alt="https://cloud.githubusercontent.com/assets/284644/5680574/bd0ee2e8-9830-11e4-92b7-8c031fb9ff08.png" src="https://cloud.githubusercontent.com/assets/284644/5680574/bd0ee2e8-9830-11e4-92b7-8c031fb9ff08.png" />
+</a>
 <p>Sides=6, RandomPhi=0.3:</p>
-<a class="reference external image-reference" href="https://cloud.githubusercontent.com/assets/284644/5680573/bd0e5d5a-9830-11e4-83d2-350a03740d98.png"><img alt="https://cloud.githubusercontent.com/assets/284644/5680573/bd0e5d5a-9830-11e4-83d2-350a03740d98.png" src="https://cloud.githubusercontent.com/assets/284644/5680573/bd0e5d5a-9830-11e4-83d2-350a03740d98.png" /></a>
+<a class="reference external image-reference" href="https://cloud.githubusercontent.com/assets/284644/5680573/bd0e5d5a-9830-11e4-83d2-350a03740d98.png"><img alt="https://cloud.githubusercontent.com/assets/284644/5680573/bd0e5d5a-9830-11e4-83d2-350a03740d98.png" src="https://cloud.githubusercontent.com/assets/284644/5680573/bd0e5d5a-9830-11e4-83d2-350a03740d98.png" />
+</a>
 <p>Sides=6, RandomR=0.3:</p>
-<a class="reference external image-reference" href="https://cloud.githubusercontent.com/assets/284644/5680571/bd0b8602-9830-11e4-993c-b7f43e4f76ec.png"><img alt="https://cloud.githubusercontent.com/assets/284644/5680571/bd0b8602-9830-11e4-993c-b7f43e4f76ec.png" src="https://cloud.githubusercontent.com/assets/284644/5680571/bd0b8602-9830-11e4-993c-b7f43e4f76ec.png" /></a>
+<a class="reference external image-reference" href="https://cloud.githubusercontent.com/assets/284644/5680571/bd0b8602-9830-11e4-993c-b7f43e4f76ec.png"><img alt="https://cloud.githubusercontent.com/assets/284644/5680571/bd0b8602-9830-11e4-993c-b7f43e4f76ec.png" src="https://cloud.githubusercontent.com/assets/284644/5680571/bd0b8602-9830-11e4-993c-b7f43e4f76ec.png" />
+</a>
 <p>Sides=7, Shift=1, RandomR=0.24, RandomPhi=0.15:</p>
-<a class="reference external image-reference" href="https://cloud.githubusercontent.com/assets/284644/5680572/bd0d9f3c-9830-11e4-9706-0b6f15d7dc4c.png"><img alt="https://cloud.githubusercontent.com/assets/284644/5680572/bd0d9f3c-9830-11e4-9706-0b6f15d7dc4c.png" src="https://cloud.githubusercontent.com/assets/284644/5680572/bd0d9f3c-9830-11e4-9706-0b6f15d7dc4c.png" /></a>
+<a class="reference external image-reference" href="https://cloud.githubusercontent.com/assets/284644/5680572/bd0d9f3c-9830-11e4-9706-0b6f15d7dc4c.png"><img alt="https://cloud.githubusercontent.com/assets/284644/5680572/bd0d9f3c-9830-11e4-9706-0b6f15d7dc4c.png" src="https://cloud.githubusercontent.com/assets/284644/5680572/bd0d9f3c-9830-11e4-9706-0b6f15d7dc4c.png" />
+</a>
 <p>Sides=29, Shift=9, RandomR=0, RandomPhi=0:</p>
-<a class="reference external image-reference" href="https://cloud.githubusercontent.com/assets/284644/5680575/bd1095e8-9830-11e4-8942-a281b6ab8a8d.png"><img alt="https://cloud.githubusercontent.com/assets/284644/5680575/bd1095e8-9830-11e4-8942-a281b6ab8a8d.png" src="https://cloud.githubusercontent.com/assets/284644/5680575/bd1095e8-9830-11e4-8942-a281b6ab8a8d.png" /></a>
+<a class="reference external image-reference" href="https://cloud.githubusercontent.com/assets/284644/5680575/bd1095e8-9830-11e4-8942-a281b6ab8a8d.png"><img alt="https://cloud.githubusercontent.com/assets/284644/5680575/bd1095e8-9830-11e4-8942-a281b6ab8a8d.png" src="https://cloud.githubusercontent.com/assets/284644/5680575/bd1095e8-9830-11e4-8942-a281b6ab8a8d.png" />
+</a>
 <p>Example of use of <strong>Divisions</strong> input:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/65439024-f66aa180-de3f-11e9-8d40-bcaeb20bfa3c.png"><img alt="https://user-images.githubusercontent.com/284644/65439024-f66aa180-de3f-11e9-8d40-bcaeb20bfa3c.png" src="https://user-images.githubusercontent.com/284644/65439024-f66aa180-de3f-11e9-8d40-bcaeb20bfa3c.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/65439024-f66aa180-de3f-11e9-8d40-bcaeb20bfa3c.png"><img alt="https://user-images.githubusercontent.com/284644/65439024-f66aa180-de3f-11e9-8d40-bcaeb20bfa3c.png" src="https://user-images.githubusercontent.com/284644/65439024-f66aa180-de3f-11e9-8d40-bcaeb20bfa3c.png" />
+</a>
 </section>
 </section>
 

@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../">
 <head>
@@ -6,17 +8,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Bend Along Curve Field &mdash; Sverchok 1, 2, 0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=7ab3649f" />
 
   
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/documentation_options.js?v=773c2105"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/documentation_options.js?v=773c2105"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -36,9 +34,6 @@
             Sverchok
               <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
           </a>
-              <div class="version">
-                1, 2, 0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -160,12 +155,14 @@
              
   <section id="bend-along-curve-field">
 <h1>Bend Along Curve Field<a class="headerlink" href="#bend-along-curve-field" title="Link to this heading">¶</a></h1>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/24e3fe93-4eb7-4cea-9d80-1b97e32802ab"><img alt="https://github.com/nortikin/sverchok/assets/14288520/24e3fe93-4eb7-4cea-9d80-1b97e32802ab" src="https://github.com/nortikin/sverchok/assets/14288520/24e3fe93-4eb7-4cea-9d80-1b97e32802ab" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/24e3fe93-4eb7-4cea-9d80-1b97e32802ab"><img alt="https://github.com/nortikin/sverchok/assets/14288520/24e3fe93-4eb7-4cea-9d80-1b97e32802ab" src="https://github.com/nortikin/sverchok/assets/14288520/24e3fe93-4eb7-4cea-9d80-1b97e32802ab" />
+</a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node generates a Vector Field, which bends some part of 3D space along the
 provided Curve object.</p>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/9b3e1f64-c352-487a-a9ef-86677644059f"><img alt="https://github.com/nortikin/sverchok/assets/14288520/9b3e1f64-c352-487a-a9ef-86677644059f" src="https://github.com/nortikin/sverchok/assets/14288520/9b3e1f64-c352-487a-a9ef-86677644059f" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/9b3e1f64-c352-487a-a9ef-86677644059f"><img alt="https://github.com/nortikin/sverchok/assets/14288520/9b3e1f64-c352-487a-a9ef-86677644059f" src="https://github.com/nortikin/sverchok/assets/14288520/9b3e1f64-c352-487a-a9ef-86677644059f" />
+</a>
 <p>It is in general not a trivial task to rotate a 3D object along a vector,
 because there are always 2 other axes of object and it is not clear where
 should they be directed to. So, this node supports 3 different algorithms of
@@ -179,7 +176,8 @@ extrusion curve has non-zero curvature in all points. If the extrusion curve
 has zero curvature points, or, even worse, it has straight segments, these
 algorithms will either make “flipping” surface, or give an error.</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/cd204b2f-438f-4cef-bdea-1e10b2c0bf85"><img alt="https://github.com/nortikin/sverchok/assets/14288520/cd204b2f-438f-4cef-bdea-1e10b2c0bf85" src="https://github.com/nortikin/sverchok/assets/14288520/cd204b2f-438f-4cef-bdea-1e10b2c0bf85" /></a>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/cd204b2f-438f-4cef-bdea-1e10b2c0bf85"><img alt="https://github.com/nortikin/sverchok/assets/14288520/cd204b2f-438f-4cef-bdea-1e10b2c0bf85" src="https://github.com/nortikin/sverchok/assets/14288520/cd204b2f-438f-4cef-bdea-1e10b2c0bf85" />
+</a>
 </div></blockquote>
 </li>
 <li><p>“<strong>Householder</strong>”, “<strong>Tracking</strong>” and “<strong>Rotation difference</strong>” algorithms are
@@ -188,14 +186,16 @@ on tangent direction. They give “good enough” result (at least, without
 errors or sudden flips) for all extrusion curves, but may make twisted
 surfaces in some special cases.</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/1a2a405b-e669-4470-af5f-bace59d4c885"><img alt="https://github.com/nortikin/sverchok/assets/14288520/1a2a405b-e669-4470-af5f-bace59d4c885" src="https://github.com/nortikin/sverchok/assets/14288520/1a2a405b-e669-4470-af5f-bace59d4c885" /></a>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/1a2a405b-e669-4470-af5f-bace59d4c885"><img alt="https://github.com/nortikin/sverchok/assets/14288520/1a2a405b-e669-4470-af5f-bace59d4c885" src="https://github.com/nortikin/sverchok/assets/14288520/1a2a405b-e669-4470-af5f-bace59d4c885" />
+</a>
 </div></blockquote>
 </li>
 <li><p>“<strong>Track normal</strong>” algorithm is supposed to give good results without twisting
 for all extrusion curves. It will give better results with higher values of
 “resolution” parameter, but that may be slow.</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/c3964449-d1a7-4080-b5c1-e314460a3b1c"><img alt="https://github.com/nortikin/sverchok/assets/14288520/c3964449-d1a7-4080-b5c1-e314460a3b1c" src="https://github.com/nortikin/sverchok/assets/14288520/c3964449-d1a7-4080-b5c1-e314460a3b1c" /></a>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/c3964449-d1a7-4080-b5c1-e314460a3b1c"><img alt="https://github.com/nortikin/sverchok/assets/14288520/c3964449-d1a7-4080-b5c1-e314460a3b1c" src="https://github.com/nortikin/sverchok/assets/14288520/c3964449-d1a7-4080-b5c1-e314460a3b1c" />
+</a>
 </div></blockquote>
 </li>
 </ul>
@@ -206,7 +206,8 @@ for all extrusion curves. It will give better results with higher values of
 <ul>
 <li><p><strong>Curve</strong>. The curve to bend the space along. This input is mandatory.</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/bd514fa4-06f8-4848-9640-b9daa8680d5f"><img alt="https://github.com/nortikin/sverchok/assets/14288520/bd514fa4-06f8-4848-9640-b9daa8680d5f" src="https://github.com/nortikin/sverchok/assets/14288520/bd514fa4-06f8-4848-9640-b9daa8680d5f" /></a>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/bd514fa4-06f8-4848-9640-b9daa8680d5f"><img alt="https://github.com/nortikin/sverchok/assets/14288520/bd514fa4-06f8-4848-9640-b9daa8680d5f" src="https://github.com/nortikin/sverchok/assets/14288520/bd514fa4-06f8-4848-9640-b9daa8680d5f" />
+</a>
 </div></blockquote>
 </li>
 <li><p><strong>Src T Min</strong>. The minimum value of the orientation coordinate, where the
@@ -217,9 +218,11 @@ bending should end. For example, if <strong>Orientation axis</strong> parameter 
 <strong>Z</strong>, this is the maximum value of <strong>Z</strong> coordinate. The default value is <strong>1.0</strong>.</p>
 <blockquote>
 <div><p>Cylinder Z start do not equal Src T min</p>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/8d454251-d08a-4fc6-a5d8-ff0806996c7c"><img alt="https://github.com/nortikin/sverchok/assets/14288520/8d454251-d08a-4fc6-a5d8-ff0806996c7c" src="https://github.com/nortikin/sverchok/assets/14288520/8d454251-d08a-4fc6-a5d8-ff0806996c7c" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/8d454251-d08a-4fc6-a5d8-ff0806996c7c"><img alt="https://github.com/nortikin/sverchok/assets/14288520/8d454251-d08a-4fc6-a5d8-ff0806996c7c" src="https://github.com/nortikin/sverchok/assets/14288520/8d454251-d08a-4fc6-a5d8-ff0806996c7c" />
+</a>
 <p>Cylinder Z start equal “Src T min” and Cylinder Z top equal “Src T max” and Cylinder Height equal curve’s T Range</p>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/dbadce3f-e328-48c7-8135-db6419dfe4c0"><img alt="https://github.com/nortikin/sverchok/assets/14288520/dbadce3f-e328-48c7-8135-db6419dfe4c0" src="https://github.com/nortikin/sverchok/assets/14288520/dbadce3f-e328-48c7-8135-db6419dfe4c0" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/dbadce3f-e328-48c7-8135-db6419dfe4c0"><img alt="https://github.com/nortikin/sverchok/assets/14288520/dbadce3f-e328-48c7-8135-db6419dfe4c0" src="https://github.com/nortikin/sverchok/assets/14288520/dbadce3f-e328-48c7-8135-db6419dfe4c0" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/cylinder_mk2.html"><span class="doc">Cylinder</span></a></p></li>
 <li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
@@ -233,7 +236,8 @@ curve</strong> parameter is set to <strong>Curve length</strong>. The higher the
 more precise is the calculation, but more time it is going to take. The
 default value is 50.</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/d1bc55b1-2a19-4d34-a4ad-7573714fb584"><img alt="https://github.com/nortikin/sverchok/assets/14288520/d1bc55b1-2a19-4d34-a4ad-7573714fb584" src="https://github.com/nortikin/sverchok/assets/14288520/d1bc55b1-2a19-4d34-a4ad-7573714fb584" /></a>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/d1bc55b1-2a19-4d34-a4ad-7573714fb584"><img alt="https://github.com/nortikin/sverchok/assets/14288520/d1bc55b1-2a19-4d34-a4ad-7573714fb584" src="https://github.com/nortikin/sverchok/assets/14288520/d1bc55b1-2a19-4d34-a4ad-7573714fb584" />
+</a>
 </div></blockquote>
 </li>
 </ul>
@@ -242,7 +246,8 @@ Max</strong>, along the curve. For example, with default settings, the source pa
 space is the space between Z = -1 and Z = 1. The behaviour of the field outside
 of these bounds is not guaranteed.</p>
 <p>Changing Cylinder height and position and Changing of T min/max (see example 2)</p>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/6bebd03a-e0af-4f52-b6f7-b0c84a4d0782"><img alt="https://github.com/nortikin/sverchok/assets/14288520/6bebd03a-e0af-4f52-b6f7-b0c84a4d0782" src="https://github.com/nortikin/sverchok/assets/14288520/6bebd03a-e0af-4f52-b6f7-b0c84a4d0782" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/6bebd03a-e0af-4f52-b6f7-b0c84a4d0782"><img alt="https://github.com/nortikin/sverchok/assets/14288520/6bebd03a-e0af-4f52-b6f7-b0c84a4d0782" src="https://github.com/nortikin/sverchok/assets/14288520/6bebd03a-e0af-4f52-b6f7-b0c84a4d0782" />
+</a>
 </section>
 <section id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
@@ -253,7 +258,8 @@ curve. The available values are X, Y and Z. The default value is Z. When the
 <strong>Algorithm</strong> parameter is set to <strong>Zero-Twist</strong> or <strong>Frenet</strong>, the only
 available option is Z.</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/f31f02cb-6cbe-464a-a90c-be7bfb22eac1"><img alt="https://github.com/nortikin/sverchok/assets/14288520/f31f02cb-6cbe-464a-a90c-be7bfb22eac1" src="https://github.com/nortikin/sverchok/assets/14288520/f31f02cb-6cbe-464a-a90c-be7bfb22eac1" /></a>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/f31f02cb-6cbe-464a-a90c-be7bfb22eac1"><img alt="https://github.com/nortikin/sverchok/assets/14288520/f31f02cb-6cbe-464a-a90c-be7bfb22eac1" src="https://github.com/nortikin/sverchok/assets/14288520/f31f02cb-6cbe-464a-a90c-be7bfb22eac1" />
+</a>
 </div></blockquote>
 </li>
 <li><p><strong>Scale all axis</strong>. If checked, all three axis of the source space will be
@@ -261,7 +267,8 @@ scaled by the same amount as is required to fit the space between <strong>Src T
 Min</strong> and <strong>Src T Max</strong> to the curve length. Otherwise, only orientation axis
 will be scaled. Checked by default.</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/3adefa0a-1b43-494c-bb75-14c63042f596"><img alt="https://github.com/nortikin/sverchok/assets/14288520/3adefa0a-1b43-494c-bb75-14c63042f596" src="https://github.com/nortikin/sverchok/assets/14288520/3adefa0a-1b43-494c-bb75-14c63042f596" /></a>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/3adefa0a-1b43-494c-bb75-14c63042f596"><img alt="https://github.com/nortikin/sverchok/assets/14288520/3adefa0a-1b43-494c-bb75-14c63042f596" src="https://github.com/nortikin/sverchok/assets/14288520/3adefa0a-1b43-494c-bb75-14c63042f596" />
+</a>
 <ul class="simple">
 <li><p>T Min, T Max: Number-&gt; <a class="reference internal" href="../number/numbers.html"><span class="doc">A Number</span></a></p></li>
 <li><p>CEIL X: Number-&gt; <a class="reference internal" href="../number/scalar_mk4.html"><span class="doc">Scalar Math</span></a></p></li>
@@ -280,7 +287,8 @@ vectors.</p></li>
 <li><p><strong>Frenet</strong>: rotate the space according to curve’s Frenet frame.</p></li>
 <li><p><strong>Zero-Twist</strong>: rotate the space according to curve’s “zero-twist” frame.</p></li>
 <li><p><strong>Track normal</strong>: try to maintain constant normal direction by tracking it along the curve.</p>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/17a5b971-3242-49e1-8a22-d83fee3d9b7a"><img alt="https://github.com/nortikin/sverchok/assets/14288520/17a5b971-3242-49e1-8a22-d83fee3d9b7a" src="https://github.com/nortikin/sverchok/assets/14288520/17a5b971-3242-49e1-8a22-d83fee3d9b7a" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/17a5b971-3242-49e1-8a22-d83fee3d9b7a"><img alt="https://github.com/nortikin/sverchok/assets/14288520/17a5b971-3242-49e1-8a22-d83fee3d9b7a" src="https://github.com/nortikin/sverchok/assets/14288520/17a5b971-3242-49e1-8a22-d83fee3d9b7a" />
+</a>
 </li>
 </ul>
 <p>Default value is Householder.</p>
@@ -290,7 +298,8 @@ parameter is available only when Tracking algorithm is selected.  Value of
 this parameter must differ from <strong>Orientation</strong> parameter, otherwise you will
 get an error. Default value is X.</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/a131d717-deb6-4d07-9595-c525ec3c4eda"><img alt="https://github.com/nortikin/sverchok/assets/14288520/a131d717-deb6-4d07-9595-c525ec3c4eda" src="https://github.com/nortikin/sverchok/assets/14288520/a131d717-deb6-4d07-9595-c525ec3c4eda" /></a>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/a131d717-deb6-4d07-9595-c525ec3c4eda"><img alt="https://github.com/nortikin/sverchok/assets/14288520/a131d717-deb6-4d07-9595-c525ec3c4eda" src="https://github.com/nortikin/sverchok/assets/14288520/a131d717-deb6-4d07-9595-c525ec3c4eda" />
+</a>
 </div></blockquote>
 </li>
 <li><p><strong>Scale along curve</strong>. This defines how the scaling of the space along the
@@ -302,7 +311,8 @@ curve is to be calculated. The available options are:</p>
 usually gives more natural results, but takes more time to compute.</p></li>
 </ul>
 <blockquote>
-<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/45b2c295-08a7-4600-99c4-52d76a80f742"><img alt="https://github.com/nortikin/sverchok/assets/14288520/45b2c295-08a7-4600-99c4-52d76a80f742" src="https://github.com/nortikin/sverchok/assets/14288520/45b2c295-08a7-4600-99c4-52d76a80f742" /></a>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/45b2c295-08a7-4600-99c4-52d76a80f742"><img alt="https://github.com/nortikin/sverchok/assets/14288520/45b2c295-08a7-4600-99c4-52d76a80f742" src="https://github.com/nortikin/sverchok/assets/14288520/45b2c295-08a7-4600-99c4-52d76a80f742" />
+</a>
 </div></blockquote>
 </div></blockquote>
 <p>The default option is <strong>Curve parameter</strong>.</p>
@@ -319,7 +329,8 @@ usually gives more natural results, but takes more time to compute.</p></li>
 <section id="examples-of-usage">
 <h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Link to this heading">¶</a></h2>
 <p>Example 1 of description:</p>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/a73f3c58-9af4-4d05-baff-7ea27a35b853"><img alt="https://github.com/nortikin/sverchok/assets/14288520/a73f3c58-9af4-4d05-baff-7ea27a35b853" src="https://github.com/nortikin/sverchok/assets/14288520/a73f3c58-9af4-4d05-baff-7ea27a35b853" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/a73f3c58-9af4-4d05-baff-7ea27a35b853"><img alt="https://github.com/nortikin/sverchok/assets/14288520/a73f3c58-9af4-4d05-baff-7ea27a35b853" src="https://github.com/nortikin/sverchok/assets/14288520/a73f3c58-9af4-4d05-baff-7ea27a35b853" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/cylinder_mk2.html"><span class="doc">Cylinder</span></a></p></li>
 <li><p>Fields-&gt; <a class="reference internal" href="vector_field_apply.html"><span class="doc">Apply Vector Field</span></a></p></li>
@@ -328,10 +339,12 @@ usually gives more natural results, but takes more time to compute.</p></li>
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_curve.html"><span class="doc">Viewer Draw Curve</span></a></p></li>
 <li><p>Scene-&gt; <a class="reference internal" href="../exchange/bezier_in.html"><span class="doc">Bezier Input</span></a></p></li>
 </ul>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/628d3de4-3f64-4c5f-a685-ccb883869064"><img alt="https://github.com/nortikin/sverchok/assets/14288520/628d3de4-3f64-4c5f-a685-ccb883869064" src="https://github.com/nortikin/sverchok/assets/14288520/628d3de4-3f64-4c5f-a685-ccb883869064" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/628d3de4-3f64-4c5f-a685-ccb883869064"><img alt="https://github.com/nortikin/sverchok/assets/14288520/628d3de4-3f64-4c5f-a685-ccb883869064" src="https://github.com/nortikin/sverchok/assets/14288520/628d3de4-3f64-4c5f-a685-ccb883869064" />
+</a>
 <hr class="docutils" />
 <p>Example 2 of description</p>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/fa0af069-1b6c-4b23-b172-e862d214a066"><img alt="https://github.com/nortikin/sverchok/assets/14288520/fa0af069-1b6c-4b23-b172-e862d214a066" src="https://github.com/nortikin/sverchok/assets/14288520/fa0af069-1b6c-4b23-b172-e862d214a066" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/fa0af069-1b6c-4b23-b172-e862d214a066"><img alt="https://github.com/nortikin/sverchok/assets/14288520/fa0af069-1b6c-4b23-b172-e862d214a066" src="https://github.com/nortikin/sverchok/assets/14288520/fa0af069-1b6c-4b23-b172-e862d214a066" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/cylinder_mk2.html"><span class="doc">Cylinder</span></a></p></li>
 <li><p>Curves-&gt; <a class="reference internal" href="../curve/reparametrize.html"><span class="doc">Reparametrize Curve</span></a></p></li>
@@ -351,7 +364,8 @@ usually gives more natural results, but takes more time to compute.</p></li>
 </ul>
 <hr class="docutils" />
 <p>Bend a cube along some closed curve:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/79593221-93e73480-80f4-11ea-8c14-7f1511b1bd7b.png"><img alt="https://user-images.githubusercontent.com/284644/79593221-93e73480-80f4-11ea-8c14-7f1511b1bd7b.png" src="https://user-images.githubusercontent.com/284644/79593221-93e73480-80f4-11ea-8c14-7f1511b1bd7b.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/79593221-93e73480-80f4-11ea-8c14-7f1511b1bd7b.png"><img alt="https://user-images.githubusercontent.com/284644/79593221-93e73480-80f4-11ea-8c14-7f1511b1bd7b.png" src="https://user-images.githubusercontent.com/284644/79593221-93e73480-80f4-11ea-8c14-7f1511b1bd7b.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
 <li><p>Curves-&gt; <a class="reference internal" href="../curve/cubic_spline.html"><span class="doc">Cubic Spline</span></a></p></li>
@@ -362,7 +376,8 @@ usually gives more natural results, but takes more time to compute.</p></li>
 </ul>
 <hr class="docutils" />
 <p>It is possible to use one field to bend several objects:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/79593228-95186180-80f4-11ea-930f-59f3f124da63.png"><img alt="https://user-images.githubusercontent.com/284644/79593228-95186180-80f4-11ea-930f-59f3f124da63.png" src="https://user-images.githubusercontent.com/284644/79593228-95186180-80f4-11ea-930f-59f3f124da63.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/79593228-95186180-80f4-11ea-930f-59f3f124da63.png"><img alt="https://user-images.githubusercontent.com/284644/79593228-95186180-80f4-11ea-930f-59f3f124da63.png" src="https://user-images.githubusercontent.com/284644/79593228-95186180-80f4-11ea-930f-59f3f124da63.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
 <li><p>Curves-&gt; <a class="reference internal" href="../curve/cubic_spline.html"><span class="doc">Cubic Spline</span></a></p></li>

@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../">
 <head>
@@ -6,21 +8,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Polyline &mdash; Sverchok 1, 2, 0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=7ab3649f" />
 
   
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/documentation_options.js?v=773c2105"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/documentation_options.js?v=773c2105"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Project Curve to Surface (NURBS)" href="project_curve_surface.html" />
+    <link rel="next" title="Prepare NURBS Curves Net" href="prepare_curves_net.html" />
     <link rel="prev" title="Poly Arc" href="polyarc.html" /> 
 </head>
 
@@ -36,9 +34,6 @@
             Sverchok
               <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
           </a>
-              <div class="version">
-                1, 2, 0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -124,6 +119,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#examples-of-usage">Examples of usage</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="prepare_curves_net.html">Prepare NURBS Curves Net</a></li>
 <li class="toctree-l3"><a class="reference internal" href="project_curve_surface.html">Project Curve to Surface (NURBS)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="rbf_curve.html">RBF Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="reduce_degree.html">Reduce Degree (NURBS Curve)</a></li>
@@ -205,13 +201,15 @@
              
   <section id="polyline">
 <h1>Polyline<a class="headerlink" href="#polyline" title="Link to this heading">¶</a></h1>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205451607-4a09d62e-15e8-412f-9a4c-14d652981457.png"><img alt="https://user-images.githubusercontent.com/14288520/205451607-4a09d62e-15e8-412f-9a4c-14d652981457.png" src="https://user-images.githubusercontent.com/14288520/205451607-4a09d62e-15e8-412f-9a4c-14d652981457.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205451607-4a09d62e-15e8-412f-9a4c-14d652981457.png"><img alt="https://user-images.githubusercontent.com/14288520/205451607-4a09d62e-15e8-412f-9a4c-14d652981457.png" src="https://user-images.githubusercontent.com/14288520/205451607-4a09d62e-15e8-412f-9a4c-14d652981457.png" />
+</a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node generates a polyline (polygonal chain), i.e. a curve consisting of
 segments of straight lines between the specified points. The polyline may be
 closed or not.</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205452066-af0ab9ef-75b9-454a-8c90-b0290b6bda0c.png"><img alt="https://user-images.githubusercontent.com/14288520/205452066-af0ab9ef-75b9-454a-8c90-b0290b6bda0c.png" src="https://user-images.githubusercontent.com/14288520/205452066-af0ab9ef-75b9-454a-8c90-b0290b6bda0c.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205452066-af0ab9ef-75b9-454a-8c90-b0290b6bda0c.png"><img alt="https://user-images.githubusercontent.com/14288520/205452066-af0ab9ef-75b9-454a-8c90-b0290b6bda0c.png" src="https://user-images.githubusercontent.com/14288520/205452066-af0ab9ef-75b9-454a-8c90-b0290b6bda0c.png" />
+</a>
 <p>Curve domain / parameterization specifics: depends on <strong>Metrics</strong> parameter.
 Curve domain will be equal to sum of distanes between the control points (in
 the order they are provided) in the specified metric. For example, if
@@ -224,7 +222,8 @@ points.</p>
 <ul class="simple">
 <li><p><strong>Vertices</strong>. The points through which it is required to plot the curve. This input is mandatory.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205452363-1875511b-302b-4c97-8fbe-9cbfbd4bc202.png"><img alt="https://user-images.githubusercontent.com/14288520/205452363-1875511b-302b-4c97-8fbe-9cbfbd4bc202.png" src="https://user-images.githubusercontent.com/14288520/205452363-1875511b-302b-4c97-8fbe-9cbfbd4bc202.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205452363-1875511b-302b-4c97-8fbe-9cbfbd4bc202.png"><img alt="https://user-images.githubusercontent.com/14288520/205452363-1875511b-302b-4c97-8fbe-9cbfbd4bc202.png" src="https://user-images.githubusercontent.com/14288520/205452363-1875511b-302b-4c97-8fbe-9cbfbd4bc202.png" />
+</a>
 </section>
 <section id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
@@ -232,13 +231,15 @@ points.</p>
 <ul class="simple">
 <li><p><strong>Cyclic</strong>. If checked, the node will generate a cyclic (closed) curve. Unchecked by default.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205452583-094906f8-8daf-4aa7-a3a3-a11d28cb708f.png"><img alt="https://user-images.githubusercontent.com/14288520/205452583-094906f8-8daf-4aa7-a3a3-a11d28cb708f.png" src="https://user-images.githubusercontent.com/14288520/205452583-094906f8-8daf-4aa7-a3a3-a11d28cb708f.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205452583-094906f8-8daf-4aa7-a3a3-a11d28cb708f.png"><img alt="https://user-images.githubusercontent.com/14288520/205452583-094906f8-8daf-4aa7-a3a3-a11d28cb708f.png" src="https://user-images.githubusercontent.com/14288520/205452583-094906f8-8daf-4aa7-a3a3-a11d28cb708f.png" />
+</a>
 <ul class="simple">
 <li><p><strong>Concatenate</strong>. If checked, the node will generate one Curve object that
 passes through all provided vertices. Otherwise, the node will generate a
 separate Curve object for each edge. Checked by default.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205452985-cb3246e4-489f-404f-a63d-b6d13aee138c.png"><img alt="https://user-images.githubusercontent.com/14288520/205452985-cb3246e4-489f-404f-a63d-b6d13aee138c.png" src="https://user-images.githubusercontent.com/14288520/205452985-cb3246e4-489f-404f-a63d-b6d13aee138c.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205452985-cb3246e4-489f-404f-a63d-b6d13aee138c.png"><img alt="https://user-images.githubusercontent.com/14288520/205452985-cb3246e4-489f-404f-a63d-b6d13aee138c.png" src="https://user-images.githubusercontent.com/14288520/205452985-cb3246e4-489f-404f-a63d-b6d13aee138c.png" />
+</a>
 <ul>
 <li><p><strong>Metric</strong>. This parameter is available in the N panel only. This defines the
 metric used to calculate curve’s T parameter values corresponding to
@@ -265,7 +266,8 @@ specified curve points. The available values are:</p>
 <section id="examples-of-usage">
 <h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Link to this heading">¶</a></h2>
 <p>Polyline through some random points:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205453940-22304865-7d62-443f-8dca-e118c5306b82.png"><img alt="https://user-images.githubusercontent.com/14288520/205453940-22304865-7d62-443f-8dca-e118c5306b82.png" src="https://user-images.githubusercontent.com/14288520/205453940-22304865-7d62-443f-8dca-e118c5306b82.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205453940-22304865-7d62-443f-8dca-e118c5306b82.png"><img alt="https://user-images.githubusercontent.com/14288520/205453940-22304865-7d62-443f-8dca-e118c5306b82.png" src="https://user-images.githubusercontent.com/14288520/205453940-22304865-7d62-443f-8dca-e118c5306b82.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/random_vector_mk3.html"><span class="doc">Random Vector</span></a></p></li>
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_surface.html"><span class="doc">Viewer Draw Surface</span></a></p></li>
@@ -273,14 +275,16 @@ specified curve points. The available values are:</p>
 </ul>
 <hr class="docutils" />
 <p>The same with <strong>Cyclic</strong> checked:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205454065-0c79131f-4aa0-4973-a102-3e7de086b449.gif"><img alt="https://user-images.githubusercontent.com/14288520/205454065-0c79131f-4aa0-4973-a102-3e7de086b449.gif" src="https://user-images.githubusercontent.com/14288520/205454065-0c79131f-4aa0-4973-a102-3e7de086b449.gif" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205454065-0c79131f-4aa0-4973-a102-3e7de086b449.gif"><img alt="https://user-images.githubusercontent.com/14288520/205454065-0c79131f-4aa0-4973-a102-3e7de086b449.gif" src="https://user-images.githubusercontent.com/14288520/205454065-0c79131f-4aa0-4973-a102-3e7de086b449.gif" />
+</a>
 <hr class="docutils" />
 <p>These examples had Metric set to Euclidean (default). Since <strong>Eval Curve</strong> node
 generates evenly-distributed values of the T parameter, the number of points at
 each segment is proportional to the distance between points. The next example
 is with Metric set to Points.</p>
 <p>In this case, number of points at each segment is the same.</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205454380-60a00da5-e605-4f59-a376-6dae078af756.png"><img alt="https://user-images.githubusercontent.com/14288520/205454380-60a00da5-e605-4f59-a376-6dae078af756.png" src="https://user-images.githubusercontent.com/14288520/205454380-60a00da5-e605-4f59-a376-6dae078af756.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/205454380-60a00da5-e605-4f59-a376-6dae078af756.png"><img alt="https://user-images.githubusercontent.com/14288520/205454380-60a00da5-e605-4f59-a376-6dae078af756.png" src="https://user-images.githubusercontent.com/14288520/205454380-60a00da5-e605-4f59-a376-6dae078af756.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/random_vector_mk3.html"><span class="doc">Random Vector</span></a></p></li>
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_surface.html"><span class="doc">Viewer Draw Surface</span></a></p></li>
@@ -294,7 +298,7 @@ is with Metric set to Points.</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="polyarc.html" class="btn btn-neutral float-left" title="Poly Arc" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="project_curve_surface.html" class="btn btn-neutral float-right" title="Project Curve to Surface (NURBS)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="prepare_curves_net.html" class="btn btn-neutral float-right" title="Prepare NURBS Curves Net" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

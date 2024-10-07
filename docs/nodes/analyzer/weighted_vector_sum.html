@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../">
 <head>
@@ -6,17 +8,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Center of Mass (Mesh) (Alpha) &mdash; Sverchok 1, 2, 0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=7ab3649f" />
 
   
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/documentation_options.js?v=773c2105"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/documentation_options.js?v=773c2105"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -36,9 +34,6 @@
             Sverchok
               <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
           </a>
-              <div class="version">
-                1, 2, 0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -173,16 +168,20 @@
              
   <section id="center-of-mass-mesh-alpha">
 <h1>Center of Mass (Mesh) (Alpha)<a class="headerlink" href="#center-of-mass-mesh-alpha" title="Link to this heading">¶</a></h1>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/d4ea8073-e205-4a93-867e-55c77ac81f4d"><img alt="https://github.com/nortikin/sverchok/assets/14288520/d4ea8073-e205-4a93-867e-55c77ac81f4d" src="https://github.com/nortikin/sverchok/assets/14288520/d4ea8073-e205-4a93-867e-55c77ac81f4d" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/d4ea8073-e205-4a93-867e-55c77ac81f4d"><img alt="https://github.com/nortikin/sverchok/assets/14288520/d4ea8073-e205-4a93-867e-55c77ac81f4d" src="https://github.com/nortikin/sverchok/assets/14288520/d4ea8073-e205-4a93-867e-55c77ac81f4d" />
+</a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>Calculate centers of mass every input mesh (with mass verts or density of materials) and calculate total center of mass:</p>
 <p>By edges and density:</p>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/23b5b892-ba5d-491a-b900-503d09242e97"><img alt="https://github.com/nortikin/sverchok/assets/14288520/23b5b892-ba5d-491a-b900-503d09242e97" src="https://github.com/nortikin/sverchok/assets/14288520/23b5b892-ba5d-491a-b900-503d09242e97" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/23b5b892-ba5d-491a-b900-503d09242e97"><img alt="https://github.com/nortikin/sverchok/assets/14288520/23b5b892-ba5d-491a-b900-503d09242e97" src="https://github.com/nortikin/sverchok/assets/14288520/23b5b892-ba5d-491a-b900-503d09242e97" />
+</a>
 <p>Extrapolates lists of mass of vertices:</p>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/bde8dfeb-ace0-4eac-b5b8-195f1700ac99"><img alt="https://github.com/nortikin/sverchok/assets/14288520/bde8dfeb-ace0-4eac-b5b8-195f1700ac99" src="https://github.com/nortikin/sverchok/assets/14288520/bde8dfeb-ace0-4eac-b5b8-195f1700ac99" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/bde8dfeb-ace0-4eac-b5b8-195f1700ac99"><img alt="https://github.com/nortikin/sverchok/assets/14288520/bde8dfeb-ace0-4eac-b5b8-195f1700ac99" src="https://github.com/nortikin/sverchok/assets/14288520/bde8dfeb-ace0-4eac-b5b8-195f1700ac99" />
+</a>
 <p>Using of modifier stack:</p>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/027a572b-e764-4009-b08b-b1acff23bb27"><img alt="https://github.com/nortikin/sverchok/assets/14288520/027a572b-e764-4009-b08b-b1acff23bb27" src="https://github.com/nortikin/sverchok/assets/14288520/027a572b-e764-4009-b08b-b1acff23bb27" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/027a572b-e764-4009-b08b-b1acff23bb27"><img alt="https://github.com/nortikin/sverchok/assets/14288520/027a572b-e764-4009-b08b-b1acff23bb27" src="https://github.com/nortikin/sverchok/assets/14288520/027a572b-e764-4009-b08b-b1acff23bb27" />
+</a>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
@@ -199,26 +198,31 @@
 <ul>
 <li><p><strong>Skip unmanifold centers</strong> - True: If some meshes cannot be used to calc centers of mass then skip them. False - show exception</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/c23429a9-44c3-47b6-bd8e-817d1cf6e4eb"><img alt="https://github.com/nortikin/sverchok/assets/14288520/c23429a9-44c3-47b6-bd8e-817d1cf6e4eb" src="https://github.com/nortikin/sverchok/assets/14288520/c23429a9-44c3-47b6-bd8e-817d1cf6e4eb" /></a>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/c23429a9-44c3-47b6-bd8e-817d1cf6e4eb"><img alt="https://github.com/nortikin/sverchok/assets/14288520/c23429a9-44c3-47b6-bd8e-817d1cf6e4eb" src="https://github.com/nortikin/sverchok/assets/14288520/c23429a9-44c3-47b6-bd8e-817d1cf6e4eb" />
+</a>
 </div></blockquote>
 </li>
 <li><p><strong>Center mode</strong> - select mode to calculate center of mass (Vertices, edges, faces or volumes)</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/c5bc5545-9d2a-42f0-bc59-c48caee94165"><img alt="https://github.com/nortikin/sverchok/assets/14288520/c5bc5545-9d2a-42f0-bc59-c48caee94165" src="https://github.com/nortikin/sverchok/assets/14288520/c5bc5545-9d2a-42f0-bc59-c48caee94165" /></a>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/c5bc5545-9d2a-42f0-bc59-c48caee94165"><img alt="https://github.com/nortikin/sverchok/assets/14288520/c5bc5545-9d2a-42f0-bc59-c48caee94165" src="https://github.com/nortikin/sverchok/assets/14288520/c5bc5545-9d2a-42f0-bc59-c48caee94165" />
+</a>
 <p>for modes <strong>Vertices</strong> and <strong>Edges</strong> triangulations are disabled (not used):</p>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/a9136534-a9b2-4fbe-982e-45d56a437a0b"><img alt="https://github.com/nortikin/sverchok/assets/14288520/a9136534-a9b2-4fbe-982e-45d56a437a0b" src="https://github.com/nortikin/sverchok/assets/14288520/a9136534-a9b2-4fbe-982e-45d56a437a0b" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/a9136534-a9b2-4fbe-982e-45d56a437a0b"><img alt="https://github.com/nortikin/sverchok/assets/14288520/a9136534-a9b2-4fbe-982e-45d56a437a0b" src="https://github.com/nortikin/sverchok/assets/14288520/a9136534-a9b2-4fbe-982e-45d56a437a0b" />
+</a>
 </div></blockquote>
 </li>
 <li><p><strong>Triangulation</strong> - used only for <strong>Faces</strong> or <strong>Volumes</strong> mode. Calculations of center of mass do triangulations before calculations.</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/d3853de6-7a49-4658-87ec-c9e3b84fc3b3"><img alt="https://github.com/nortikin/sverchok/assets/14288520/d3853de6-7a49-4658-87ec-c9e3b84fc3b3" src="https://github.com/nortikin/sverchok/assets/14288520/d3853de6-7a49-4658-87ec-c9e3b84fc3b3" /></a>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/d3853de6-7a49-4658-87ec-c9e3b84fc3b3"><img alt="https://github.com/nortikin/sverchok/assets/14288520/d3853de6-7a49-4658-87ec-c9e3b84fc3b3" src="https://github.com/nortikin/sverchok/assets/14288520/d3853de6-7a49-4658-87ec-c9e3b84fc3b3" />
+</a>
 </div></blockquote>
 </li>
 </ul>
 </section>
 <section id="output">
 <h2>Output<a class="headerlink" href="#output" title="Link to this heading">¶</a></h2>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/7de47244-453c-4029-bd6d-916365fd1197"><img alt="https://github.com/nortikin/sverchok/assets/14288520/7de47244-453c-4029-bd6d-916365fd1197" src="https://github.com/nortikin/sverchok/assets/14288520/7de47244-453c-4029-bd6d-916365fd1197" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/7de47244-453c-4029-bd6d-916365fd1197"><img alt="https://github.com/nortikin/sverchok/assets/14288520/7de47244-453c-4029-bd6d-916365fd1197" src="https://github.com/nortikin/sverchok/assets/14288520/7de47244-453c-4029-bd6d-916365fd1197" />
+</a>
 <ul class="simple">
 <li><p><strong>Vertices</strong> - Vertices of result meshes</p></li>
 <li><p><strong>Edges</strong> - Edges of result meshes (Triangulated after <strong>Face</strong> or <strong>Volume</strong> mode)</p></li>

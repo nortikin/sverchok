@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../">
 <head>
@@ -6,17 +8,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Minimal Surface from Curve &mdash; Sverchok 1, 2, 0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=7ab3649f" />
 
   
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/documentation_options.js?v=773c2105"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/documentation_options.js?v=773c2105"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -36,9 +34,6 @@
             Sverchok
               <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
           </a>
-              <div class="version">
-                1, 2, 0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -181,7 +176,8 @@
              
   <section id="minimal-surface-from-curve">
 <h1>Minimal Surface from Curve<a class="headerlink" href="#minimal-surface-from-curve" title="Link to this heading">¶</a></h1>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/36d36059-be37-46e4-9793-bba7082f30f5"><img alt="https://github.com/nortikin/sverchok/assets/14288520/36d36059-be37-46e4-9793-bba7082f30f5" src="https://github.com/nortikin/sverchok/assets/14288520/36d36059-be37-46e4-9793-bba7082f30f5" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/36d36059-be37-46e4-9793-bba7082f30f5"><img alt="https://github.com/nortikin/sverchok/assets/14288520/36d36059-be37-46e4-9793-bba7082f30f5" src="https://github.com/nortikin/sverchok/assets/14288520/36d36059-be37-46e4-9793-bba7082f30f5" />
+</a>
 <section id="dependencies">
 <h2>Dependencies<a class="headerlink" href="#dependencies" title="Link to this heading">¶</a></h2>
 <p>This node requires <a class="reference external" href="https://scipy.org/">SciPy</a> library to work.</p>
@@ -194,7 +190,8 @@ generates an RBF surface for these points.  Depending on node parameters, the
 curve can be either interpolating (go through all points) or only approximating.</p>
 <p>The generated surface is not, strictly speaking, guaranteed to be <a class="reference external" href="https://en.wikipedia.org/wiki/Minimal_surface">minimal</a>; but
 in many simple cases it is close enough to the minimal.</p>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/55ef75d8-747c-4271-9a11-4a3d3da3407b"><img alt="https://github.com/nortikin/sverchok/assets/14288520/55ef75d8-747c-4271-9a11-4a3d3da3407b" src="https://github.com/nortikin/sverchok/assets/14288520/55ef75d8-747c-4271-9a11-4a3d3da3407b" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/55ef75d8-747c-4271-9a11-4a3d3da3407b"><img alt="https://github.com/nortikin/sverchok/assets/14288520/55ef75d8-747c-4271-9a11-4a3d3da3407b" src="https://github.com/nortikin/sverchok/assets/14288520/55ef75d8-747c-4271-9a11-4a3d3da3407b" />
+</a>
 <ul class="simple">
 <li><p>Scene-&gt; <a class="reference internal" href="../exchange/bezier_in.html"><span class="doc">Bezier Input</span></a></p></li>
 <li><p>Surfaces-&gt; <a class="reference internal" href="evaluate_surface.html"><span class="doc">Evaluate Surface</span></a></p></li>
@@ -210,16 +207,19 @@ in many simple cases it is close enough to the minimal.</p>
 greater number of samples will give the surface which follows the curve more
 precisely. However, for some RBF functions too high values generate weird
 results. The default value is 50.</p>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/8f811065-cd92-48c2-ad9b-98ca3cdc1a57"><img alt="https://github.com/nortikin/sverchok/assets/14288520/8f811065-cd92-48c2-ad9b-98ca3cdc1a57" src="https://github.com/nortikin/sverchok/assets/14288520/8f811065-cd92-48c2-ad9b-98ca3cdc1a57" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/8f811065-cd92-48c2-ad9b-98ca3cdc1a57"><img alt="https://github.com/nortikin/sverchok/assets/14288520/8f811065-cd92-48c2-ad9b-98ca3cdc1a57" src="https://github.com/nortikin/sverchok/assets/14288520/8f811065-cd92-48c2-ad9b-98ca3cdc1a57" />
+</a>
 </li>
 <li><p><strong>Epsilon</strong>. Epsilon parameter of used RBF function; it affects the shape of
 generated surface. The default value is 1.0.</p>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/270750e7-5189-4c68-a30c-bb5f1e23992a"><img alt="https://github.com/nortikin/sverchok/assets/14288520/270750e7-5189-4c68-a30c-bb5f1e23992a" src="https://github.com/nortikin/sverchok/assets/14288520/270750e7-5189-4c68-a30c-bb5f1e23992a" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/270750e7-5189-4c68-a30c-bb5f1e23992a"><img alt="https://github.com/nortikin/sverchok/assets/14288520/270750e7-5189-4c68-a30c-bb5f1e23992a" src="https://github.com/nortikin/sverchok/assets/14288520/270750e7-5189-4c68-a30c-bb5f1e23992a" />
+</a>
 </li>
 <li><p><strong>Smooth</strong>. Smoothness parameter of used RBF function. If this is zero, then
 the surface will go through all provided points; otherwise, it will be only an
 approximating surface. The default value is 0.0.</p>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/cbde4c9c-3659-4afb-9d85-461b89913c0e"><img alt="https://github.com/nortikin/sverchok/assets/14288520/cbde4c9c-3659-4afb-9d85-461b89913c0e" src="https://github.com/nortikin/sverchok/assets/14288520/cbde4c9c-3659-4afb-9d85-461b89913c0e" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/cbde4c9c-3659-4afb-9d85-461b89913c0e"><img alt="https://github.com/nortikin/sverchok/assets/14288520/cbde4c9c-3659-4afb-9d85-461b89913c0e" src="https://github.com/nortikin/sverchok/assets/14288520/cbde4c9c-3659-4afb-9d85-461b89913c0e" />
+</a>
 </li>
 </ul>
 </section>
@@ -237,7 +237,8 @@ approximating surface. The default value is 0.0.</p>
 <li><p>Thin Plate</p></li>
 </ul>
 <p>The default function is Multi Quadric. <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.Rbf.html">Scipy RBF Functions</a> :</p>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/36d36059-be37-46e4-9793-bba7082f30f5"><img alt="https://github.com/nortikin/sverchok/assets/14288520/36d36059-be37-46e4-9793-bba7082f30f5" src="https://github.com/nortikin/sverchok/assets/14288520/36d36059-be37-46e4-9793-bba7082f30f5" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/36d36059-be37-46e4-9793-bba7082f30f5"><img alt="https://github.com/nortikin/sverchok/assets/14288520/36d36059-be37-46e4-9793-bba7082f30f5" src="https://github.com/nortikin/sverchok/assets/14288520/36d36059-be37-46e4-9793-bba7082f30f5" />
+</a>
 </li>
 </ul>
 </section>
@@ -250,7 +251,8 @@ approximating surface. The default value is 0.0.</p>
 provided input Curve. This output can be used with “Trim &amp; Tessellate” or
 “Adaptive tessellate” nodes to trim the surface.</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/61341dfd-bfdc-4f4d-9a7a-d9b7a2f6d520"><img alt="https://github.com/nortikin/sverchok/assets/14288520/61341dfd-bfdc-4f4d-9a7a-d9b7a2f6d520" src="https://github.com/nortikin/sverchok/assets/14288520/61341dfd-bfdc-4f4d-9a7a-d9b7a2f6d520" /></a>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/61341dfd-bfdc-4f4d-9a7a-d9b7a2f6d520"><img alt="https://github.com/nortikin/sverchok/assets/14288520/61341dfd-bfdc-4f4d-9a7a-d9b7a2f6d520" src="https://github.com/nortikin/sverchok/assets/14288520/61341dfd-bfdc-4f4d-9a7a-d9b7a2f6d520" />
+</a>
 </div></blockquote>
 <ul class="simple">
 <li><p>Curves-&gt; <a class="reference internal" href="../curve/eval_curve.html"><span class="doc">Evaluate Curve</span></a></p></li>
@@ -261,7 +263,8 @@ provided input Curve. This output can be used with “Trim &amp; Tessellate” o
 </ul>
 </li>
 <li><p><strong>Curve</strong>. The curve from <strong>TrimCurve</strong> output mapped to the surface.</p>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/7888aafb-f5d9-4f8d-9b5f-38d2c7802935"><img alt="https://github.com/nortikin/sverchok/assets/14288520/7888aafb-f5d9-4f8d-9b5f-38d2c7802935" src="https://github.com/nortikin/sverchok/assets/14288520/7888aafb-f5d9-4f8d-9b5f-38d2c7802935" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/7888aafb-f5d9-4f8d-9b5f-38d2c7802935"><img alt="https://github.com/nortikin/sverchok/assets/14288520/7888aafb-f5d9-4f8d-9b5f-38d2c7802935" src="https://github.com/nortikin/sverchok/assets/14288520/7888aafb-f5d9-4f8d-9b5f-38d2c7802935" />
+</a>
 <ul class="simple">
 <li><p>Surfaces-&gt; <a class="reference internal" href="evaluate_surface.html"><span class="doc">Evaluate Surface</span></a></p></li>
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
@@ -272,7 +275,8 @@ provided input Curve. This output can be used with “Trim &amp; Tessellate” o
 </section>
 <section id="example-of-usage">
 <h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Link to this heading">¶</a></h2>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/87231392-54b54080-c3d0-11ea-8374-a7e1c0528e5b.png"><img alt="https://user-images.githubusercontent.com/284644/87231392-54b54080-c3d0-11ea-8374-a7e1c0528e5b.png" src="https://user-images.githubusercontent.com/284644/87231392-54b54080-c3d0-11ea-8374-a7e1c0528e5b.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/87231392-54b54080-c3d0-11ea-8374-a7e1c0528e5b.png"><img alt="https://user-images.githubusercontent.com/284644/87231392-54b54080-c3d0-11ea-8374-a7e1c0528e5b.png" src="https://user-images.githubusercontent.com/284644/87231392-54b54080-c3d0-11ea-8374-a7e1c0528e5b.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>
 <li><p>Curves-&gt;Curve Primitives-&gt; <a class="reference internal" href="../curve/fillet_polyline.html"><span class="doc">Fillet Polyline</span></a></p></li>

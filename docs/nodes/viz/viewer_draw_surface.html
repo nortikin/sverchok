@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../">
 <head>
@@ -6,17 +8,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Viewer Draw Surface &mdash; Sverchok 1, 2, 0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=7ab3649f" />
 
   
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/documentation_options.js?v=773c2105"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/documentation_options.js?v=773c2105"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -36,9 +34,6 @@
             Sverchok
               <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
           </a>
-              <div class="version">
-                1, 2, 0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -158,7 +153,8 @@
              
   <section id="viewer-draw-surface">
 <h1>Viewer Draw Surface<a class="headerlink" href="#viewer-draw-surface" title="Link to this heading">¶</a></h1>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190859856-a96709c4-434f-444b-849a-09dfc89e1f26.png"><img alt="https://user-images.githubusercontent.com/14288520/190859856-a96709c4-434f-444b-849a-09dfc89e1f26.png" src="https://user-images.githubusercontent.com/14288520/190859856-a96709c4-434f-444b-849a-09dfc89e1f26.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190859856-a96709c4-434f-444b-849a-09dfc89e1f26.png"><img alt="https://user-images.githubusercontent.com/14288520/190859856-a96709c4-434f-444b-849a-09dfc89e1f26.png" src="https://user-images.githubusercontent.com/14288520/190859856-a96709c4-434f-444b-849a-09dfc89e1f26.png" />
+</a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node displays Surface objects in the 3D View, using opengl. The node is
@@ -185,7 +181,8 @@ U and V parameters. The default value is 50.</p></li>
 <ul class="simple">
 <li><p><strong>Show</strong>. The node displays something only when this parameter is enabled.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190235190-86138e03-8423-4b86-9d35-4337b25513f3.png"><img alt="https://user-images.githubusercontent.com/14288520/190235190-86138e03-8423-4b86-9d35-4337b25513f3.png" src="https://user-images.githubusercontent.com/14288520/190235190-86138e03-8423-4b86-9d35-4337b25513f3.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190235190-86138e03-8423-4b86-9d35-4337b25513f3.png"><img alt="https://user-images.githubusercontent.com/14288520/190235190-86138e03-8423-4b86-9d35-4337b25513f3.png" src="https://user-images.githubusercontent.com/14288520/190235190-86138e03-8423-4b86-9d35-4337b25513f3.png" />
+</a>
 <p>Most parameters of this node are grouped in rows; for each type of
 information this node can display, there are three parameters: whether to
 display it, the color to be used, and point size / line width to be used.</p>
@@ -196,27 +193,31 @@ of points on the surface (number of points along U and V parameters are
 controlled by <strong>Resolution U</strong>, <strong>Resolution V</strong> inputs). Display of points
 is disabled by default.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190232504-7efd678d-60da-45e9-a8f9-3a00a68096b4.png"><img alt="https://user-images.githubusercontent.com/14288520/190232504-7efd678d-60da-45e9-a8f9-3a00a68096b4.png" src="https://user-images.githubusercontent.com/14288520/190232504-7efd678d-60da-45e9-a8f9-3a00a68096b4.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190232504-7efd678d-60da-45e9-a8f9-3a00a68096b4.png"><img alt="https://user-images.githubusercontent.com/14288520/190232504-7efd678d-60da-45e9-a8f9-3a00a68096b4.png" src="https://user-images.githubusercontent.com/14288520/190232504-7efd678d-60da-45e9-a8f9-3a00a68096b4.png" />
+</a>
 <hr class="docutils" />
 <ul class="simple">
 <li><p><strong>Display Edges</strong>, <strong>Edges Color</strong>, <strong>Edges Line Width</strong>. Control display of
 edges on the curve (edges between points). Display of edges is disabled by
 default.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190232619-676b8cfd-839a-4c1f-9cc9-703b8d6b3bda.png"><img alt="https://user-images.githubusercontent.com/14288520/190232619-676b8cfd-839a-4c1f-9cc9-703b8d6b3bda.png" src="https://user-images.githubusercontent.com/14288520/190232619-676b8cfd-839a-4c1f-9cc9-703b8d6b3bda.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190232619-676b8cfd-839a-4c1f-9cc9-703b8d6b3bda.png"><img alt="https://user-images.githubusercontent.com/14288520/190232619-676b8cfd-839a-4c1f-9cc9-703b8d6b3bda.png" src="https://user-images.githubusercontent.com/14288520/190232619-676b8cfd-839a-4c1f-9cc9-703b8d6b3bda.png" />
+</a>
 <hr class="docutils" />
 <ul class="simple">
 <li><p><strong>Display Surface</strong>, <strong>Surface Color</strong>. Control display of the surface
 itself. The surface is shown by default.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190233082-7627834b-cd18-476c-8abf-27be180c8705.png"><img alt="https://user-images.githubusercontent.com/14288520/190233082-7627834b-cd18-476c-8abf-27be180c8705.png" src="https://user-images.githubusercontent.com/14288520/190233082-7627834b-cd18-476c-8abf-27be180c8705.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190233082-7627834b-cd18-476c-8abf-27be180c8705.png"><img alt="https://user-images.githubusercontent.com/14288520/190233082-7627834b-cd18-476c-8abf-27be180c8705.png" src="https://user-images.githubusercontent.com/14288520/190233082-7627834b-cd18-476c-8abf-27be180c8705.png" />
+</a>
 <hr class="docutils" />
 <ul class="simple">
 <li><p><strong>Display Control Points</strong>, <strong>Control Points Color</strong>, <strong>Control Points
 Size</strong>. Control display of surface’s control points, for NURBS and NURBS-like
 surfaces. Control points are not shown by default.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190233234-3e638636-4945-4e31-8872-ccc45c0ddeaf.png"><img alt="https://user-images.githubusercontent.com/14288520/190233234-3e638636-4945-4e31-8872-ccc45c0ddeaf.png" src="https://user-images.githubusercontent.com/14288520/190233234-3e638636-4945-4e31-8872-ccc45c0ddeaf.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190233234-3e638636-4945-4e31-8872-ccc45c0ddeaf.png"><img alt="https://user-images.githubusercontent.com/14288520/190233234-3e638636-4945-4e31-8872-ccc45c0ddeaf.png" src="https://user-images.githubusercontent.com/14288520/190233234-3e638636-4945-4e31-8872-ccc45c0ddeaf.png" />
+</a>
 <hr class="docutils" />
 <ul class="simple">
 <li><p><strong>Display Control Net</strong>, <strong>Control Net Color</strong>, <strong>Control Net Line Width</strong>.
@@ -227,7 +228,8 @@ display of node lines, i.e. isolines at U and V parameters according to node
 values of knotvectors along U and V parameter directions. Node lines are not
 displayed by default.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190234804-8789ca5c-d35a-46f3-9c6c-95cc440ce394.png"><img alt="https://user-images.githubusercontent.com/14288520/190234804-8789ca5c-d35a-46f3-9c6c-95cc440ce394.png" src="https://user-images.githubusercontent.com/14288520/190234804-8789ca5c-d35a-46f3-9c6c-95cc440ce394.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/190234804-8789ca5c-d35a-46f3-9c6c-95cc440ce394.png"><img alt="https://user-images.githubusercontent.com/14288520/190234804-8789ca5c-d35a-46f3-9c6c-95cc440ce394.png" src="https://user-images.githubusercontent.com/14288520/190234804-8789ca5c-d35a-46f3-9c6c-95cc440ce394.png" />
+</a>
 <ul class="simple">
 <li><p><strong>Indicate Curvature</strong>, <strong>Minimum Curvature Color</strong>, <strong>Maximum Curvature
 Color</strong>. Control indication of surface curvature. Colors control how places
@@ -266,7 +268,8 @@ minimum curvature, are umbillic points.</p></li>
 </section>
 <section id="example-of-usage">
 <h2>Example of Usage<a class="headerlink" href="#example-of-usage" title="Link to this heading">¶</a></h2>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/189537929-2be26995-0cb3-4063-9531-8ca0f955e155.png"><img alt="https://user-images.githubusercontent.com/284644/189537929-2be26995-0cb3-4063-9531-8ca0f955e155.png" src="https://user-images.githubusercontent.com/284644/189537929-2be26995-0cb3-4063-9531-8ca0f955e155.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/189537929-2be26995-0cb3-4063-9531-8ca0f955e155.png"><img alt="https://user-images.githubusercontent.com/284644/189537929-2be26995-0cb3-4063-9531-8ca0f955e155.png" src="https://user-images.githubusercontent.com/284644/189537929-2be26995-0cb3-4063-9531-8ca0f955e155.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
 <li><p>Transform-&gt; <a class="reference internal" href="../transforms/randomize.html"><span class="doc">Randomize</span></a></p></li>
@@ -276,19 +279,23 @@ minimum curvature, are umbillic points.</p></li>
 <ul class="simple">
 <li><p>Gaussian curvature:</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/212495583-9f71e2c3-5fa5-410f-be9d-9b5c6c72b066.png"><img alt="https://user-images.githubusercontent.com/284644/212495583-9f71e2c3-5fa5-410f-be9d-9b5c6c72b066.png" src="https://user-images.githubusercontent.com/284644/212495583-9f71e2c3-5fa5-410f-be9d-9b5c6c72b066.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/212495583-9f71e2c3-5fa5-410f-be9d-9b5c6c72b066.png"><img alt="https://user-images.githubusercontent.com/284644/212495583-9f71e2c3-5fa5-410f-be9d-9b5c6c72b066.png" src="https://user-images.githubusercontent.com/284644/212495583-9f71e2c3-5fa5-410f-be9d-9b5c6c72b066.png" />
+</a>
 <ul class="simple">
 <li><p>Another surface with indicated Gaussian curvature:</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/215551129-04652358-2704-4f6a-a069-d4f05a51158c.png"><img alt="https://user-images.githubusercontent.com/284644/215551129-04652358-2704-4f6a-a069-d4f05a51158c.png" src="https://user-images.githubusercontent.com/284644/215551129-04652358-2704-4f6a-a069-d4f05a51158c.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/215551129-04652358-2704-4f6a-a069-d4f05a51158c.png"><img alt="https://user-images.githubusercontent.com/284644/215551129-04652358-2704-4f6a-a069-d4f05a51158c.png" src="https://user-images.githubusercontent.com/284644/215551129-04652358-2704-4f6a-a069-d4f05a51158c.png" />
+</a>
 <ul class="simple">
 <li><p>Mean curvature:</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/212495578-f719c92f-a503-4146-92bb-f474c2905753.png"><img alt="https://user-images.githubusercontent.com/284644/212495578-f719c92f-a503-4146-92bb-f474c2905753.png" src="https://user-images.githubusercontent.com/284644/212495578-f719c92f-a503-4146-92bb-f474c2905753.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/212495578-f719c92f-a503-4146-92bb-f474c2905753.png"><img alt="https://user-images.githubusercontent.com/284644/212495578-f719c92f-a503-4146-92bb-f474c2905753.png" src="https://user-images.githubusercontent.com/284644/212495578-f719c92f-a503-4146-92bb-f474c2905753.png" />
+</a>
 <ul class="simple">
 <li><p>Difference of two curvatures:</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/212495582-cfae4468-8b65-4f78-9c55-6237e53a5e0a.png"><img alt="https://user-images.githubusercontent.com/284644/212495582-cfae4468-8b65-4f78-9c55-6237e53a5e0a.png" src="https://user-images.githubusercontent.com/284644/212495582-cfae4468-8b65-4f78-9c55-6237e53a5e0a.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/212495582-cfae4468-8b65-4f78-9c55-6237e53a5e0a.png"><img alt="https://user-images.githubusercontent.com/284644/212495582-cfae4468-8b65-4f78-9c55-6237e53a5e0a.png" src="https://user-images.githubusercontent.com/284644/212495582-cfae4468-8b65-4f78-9c55-6237e53a5e0a.png" />
+</a>
 </section>
 </section>
 

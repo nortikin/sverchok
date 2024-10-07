@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../">
 <head>
@@ -6,17 +8,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Voronoi on Solid &mdash; Sverchok 1, 2, 0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=7ab3649f" />
 
   
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/documentation_options.js?v=773c2105"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/documentation_options.js?v=773c2105"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -36,9 +34,6 @@
             Sverchok
               <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
           </a>
-              <div class="version">
-                1, 2, 0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -155,7 +150,8 @@
              
   <section id="voronoi-on-solid">
 <h1>Voronoi on Solid<a class="headerlink" href="#voronoi-on-solid" title="Link to this heading">¶</a></h1>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/d9691d7f-2d19-4ed5-a64b-b89ce488bbae"><img alt="https://github.com/nortikin/sverchok/assets/14288520/d9691d7f-2d19-4ed5-a64b-b89ce488bbae" src="https://github.com/nortikin/sverchok/assets/14288520/d9691d7f-2d19-4ed5-a64b-b89ce488bbae" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/d9691d7f-2d19-4ed5-a64b-b89ce488bbae"><img alt="https://github.com/nortikin/sverchok/assets/14288520/d9691d7f-2d19-4ed5-a64b-b89ce488bbae" src="https://github.com/nortikin/sverchok/assets/14288520/d9691d7f-2d19-4ed5-a64b-b89ce488bbae" />
+</a>
 <section id="dependencies">
 <h2>Dependencies<a class="headerlink" href="#dependencies" title="Link to this heading">¶</a></h2>
 <p>This node requires both <a class="reference external" href="https://scipy.org/">SciPy</a> and <a class="reference external" href="../../solids.rst">FreeCAD</a> libraries to work.</p>
@@ -170,7 +166,8 @@ internally. This functionality is known to be <strong>slow</strong> when working
 defined by NURBS surfaces, especially when there are a lot of sites used. Also
 please be warned that this functionality is known to cause Blender crashes on
 some setups.</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202863312-ef965247-efac-4f98-9b62-127bc0a03f32.png"><img alt="https://user-images.githubusercontent.com/14288520/202863312-ef965247-efac-4f98-9b62-127bc0a03f32.png" src="https://user-images.githubusercontent.com/14288520/202863312-ef965247-efac-4f98-9b62-127bc0a03f32.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202863312-ef965247-efac-4f98-9b62-127bc0a03f32.png"><img alt="https://user-images.githubusercontent.com/14288520/202863312-ef965247-efac-4f98-9b62-127bc0a03f32.png" src="https://user-images.githubusercontent.com/14288520/202863312-ef965247-efac-4f98-9b62-127bc0a03f32.png" />
+</a>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
@@ -179,12 +176,14 @@ some setups.</p>
 <li><p><strong>Solid</strong>. The solid object, on which the Voronoi diagram is to be generated.
 This input is mandatory.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202748963-647952f5-744d-4db6-b538-6b4c0f454d39.png"><img alt="https://user-images.githubusercontent.com/14288520/202748963-647952f5-744d-4db6-b538-6b4c0f454d39.png" src="https://user-images.githubusercontent.com/14288520/202748963-647952f5-744d-4db6-b538-6b4c0f454d39.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202748963-647952f5-744d-4db6-b538-6b4c0f454d39.png"><img alt="https://user-images.githubusercontent.com/14288520/202748963-647952f5-744d-4db6-b538-6b4c0f454d39.png" src="https://user-images.githubusercontent.com/14288520/202748963-647952f5-744d-4db6-b538-6b4c0f454d39.png" />
+</a>
 <ul class="simple">
 <li><p><strong>Sites</strong>. List of points, for which Voronoi diagram is to be generated. This
 input is mandatory.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202750050-afdaeee2-0b86-4d41-af5f-d025cc5f467e.png"><img alt="https://user-images.githubusercontent.com/14288520/202750050-afdaeee2-0b86-4d41-af5f-d025cc5f467e.png" src="https://user-images.githubusercontent.com/14288520/202750050-afdaeee2-0b86-4d41-af5f-d025cc5f467e.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202750050-afdaeee2-0b86-4d41-af5f-d025cc5f467e.png"><img alt="https://user-images.githubusercontent.com/14288520/202750050-afdaeee2-0b86-4d41-af5f-d025cc5f467e.png" src="https://user-images.githubusercontent.com/14288520/202750050-afdaeee2-0b86-4d41-af5f-d025cc5f467e.png" />
+</a>
 <ul class="simple">
 <li><p><strong>Inset</strong>. Percentage of space to leave between generated Voronoi regions.
 Zero means the object will be fully covered by generated regions. Maximum
@@ -192,8 +191,10 @@ value is 1.0. The default value is 0.1. This input can consume either a
 single value per object, or a list of values per object - one value per site.
 In the later case, each value will be used for corresponding cell.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202751076-960737db-e8e0-4d71-aed8-0f2773f0facb.png"><img alt="https://user-images.githubusercontent.com/14288520/202751076-960737db-e8e0-4d71-aed8-0f2773f0facb.png" src="https://user-images.githubusercontent.com/14288520/202751076-960737db-e8e0-4d71-aed8-0f2773f0facb.png" /></a>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202864166-e3317496-d617-496f-8dc7-8033a77c6578.png"><img alt="https://user-images.githubusercontent.com/14288520/202864166-e3317496-d617-496f-8dc7-8033a77c6578.png" src="https://user-images.githubusercontent.com/14288520/202864166-e3317496-d617-496f-8dc7-8033a77c6578.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202751076-960737db-e8e0-4d71-aed8-0f2773f0facb.png"><img alt="https://user-images.githubusercontent.com/14288520/202751076-960737db-e8e0-4d71-aed8-0f2773f0facb.png" src="https://user-images.githubusercontent.com/14288520/202751076-960737db-e8e0-4d71-aed8-0f2773f0facb.png" />
+</a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202864166-e3317496-d617-496f-8dc7-8033a77c6578.png"><img alt="https://user-images.githubusercontent.com/14288520/202864166-e3317496-d617-496f-8dc7-8033a77c6578.png" src="https://user-images.githubusercontent.com/14288520/202864166-e3317496-d617-496f-8dc7-8033a77c6578.png" />
+</a>
 <ul class="simple">
 <li><p>Spatial-&gt; <a class="reference internal" href="populate_solid.html"><span class="doc">Populate Solid</span></a></p></li>
 <li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
@@ -217,7 +218,8 @@ of Voronoi diagram.</p></li>
 <p>The default value is <strong>Surface</strong>.</p>
 </li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202751663-1e7af390-77e7-42ff-844f-010403538b8f.png"><img alt="https://user-images.githubusercontent.com/14288520/202751663-1e7af390-77e7-42ff-844f-010403538b8f.png" src="https://user-images.githubusercontent.com/14288520/202751663-1e7af390-77e7-42ff-844f-010403538b8f.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202751663-1e7af390-77e7-42ff-844f-010403538b8f.png"><img alt="https://user-images.githubusercontent.com/14288520/202751663-1e7af390-77e7-42ff-844f-010403538b8f.png" src="https://user-images.githubusercontent.com/14288520/202751663-1e7af390-77e7-42ff-844f-010403538b8f.png" />
+</a>
 <ul class="simple">
 <li><p><strong>Flat output</strong>. If checked, output single flat list of fragments for all
 output solids. Otherwise, output a separate list of fragments for each solid.
@@ -225,7 +227,8 @@ Checked by default.</p></li>
 <li><p><strong>Accuracy</strong>. This parameter is available in the N panel only. Precision of
 calculations (number of digits after decimal point). The default value is 6.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202752114-c940ad55-3e56-40dc-a55e-4f9b4992700e.png"><img alt="https://user-images.githubusercontent.com/14288520/202752114-c940ad55-3e56-40dc-a55e-4f9b4992700e.png" src="https://user-images.githubusercontent.com/14288520/202752114-c940ad55-3e56-40dc-a55e-4f9b4992700e.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202752114-c940ad55-3e56-40dc-a55e-4f9b4992700e.png"><img alt="https://user-images.githubusercontent.com/14288520/202752114-c940ad55-3e56-40dc-a55e-4f9b4992700e.png" src="https://user-images.githubusercontent.com/14288520/202752114-c940ad55-3e56-40dc-a55e-4f9b4992700e.png" />
+</a>
 </section>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
@@ -241,7 +244,8 @@ is left between the regions of Voronoi diagram. This object will be empty if
 <section id="examples-of-usage">
 <h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Link to this heading">¶</a></h2>
 <p>Inner solids with <strong>Surface</strong> mode:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202754852-bfdbd502-ec68-4484-983c-de288e4c2dd6.png"><img alt="https://user-images.githubusercontent.com/14288520/202754852-bfdbd502-ec68-4484-983c-de288e4c2dd6.png" src="https://user-images.githubusercontent.com/14288520/202754852-bfdbd502-ec68-4484-983c-de288e4c2dd6.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202754852-bfdbd502-ec68-4484-983c-de288e4c2dd6.png"><img alt="https://user-images.githubusercontent.com/14288520/202754852-bfdbd502-ec68-4484-983c-de288e4c2dd6.png" src="https://user-images.githubusercontent.com/14288520/202754852-bfdbd502-ec68-4484-983c-de288e4c2dd6.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>
 <li><p>Transform-&gt; <a class="reference internal" href="../transforms/move_mk3.html"><span class="doc">Move</span></a></p></li>
@@ -252,11 +256,14 @@ is left between the regions of Voronoi diagram. This object will be empty if
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
 </ul>
 <p>Outer solid for the same setup:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202755395-edec16e0-042a-4f97-9c1a-f71a39d146dc.png"><img alt="https://user-images.githubusercontent.com/14288520/202755395-edec16e0-042a-4f97-9c1a-f71a39d146dc.png" src="https://user-images.githubusercontent.com/14288520/202755395-edec16e0-042a-4f97-9c1a-f71a39d146dc.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202755395-edec16e0-042a-4f97-9c1a-f71a39d146dc.png"><img alt="https://user-images.githubusercontent.com/14288520/202755395-edec16e0-042a-4f97-9c1a-f71a39d146dc.png" src="https://user-images.githubusercontent.com/14288520/202755395-edec16e0-042a-4f97-9c1a-f71a39d146dc.png" />
+</a>
 <p>Inner solids with <strong>Volume</strong> mode:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202755962-0c3a7391-330f-4d7c-9301-d7731368e37b.png"><img alt="https://user-images.githubusercontent.com/14288520/202755962-0c3a7391-330f-4d7c-9301-d7731368e37b.png" src="https://user-images.githubusercontent.com/14288520/202755962-0c3a7391-330f-4d7c-9301-d7731368e37b.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202755962-0c3a7391-330f-4d7c-9301-d7731368e37b.png"><img alt="https://user-images.githubusercontent.com/14288520/202755962-0c3a7391-330f-4d7c-9301-d7731368e37b.png" src="https://user-images.githubusercontent.com/14288520/202755962-0c3a7391-330f-4d7c-9301-d7731368e37b.png" />
+</a>
 <p>Outer solid with <strong>Volume</strong> mode:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202756392-4490fc0d-2b94-4890-bff7-0397e4186f8a.png"><img alt="https://user-images.githubusercontent.com/14288520/202756392-4490fc0d-2b94-4890-bff7-0397e4186f8a.png" src="https://user-images.githubusercontent.com/14288520/202756392-4490fc0d-2b94-4890-bff7-0397e4186f8a.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202756392-4490fc0d-2b94-4890-bff7-0397e4186f8a.png"><img alt="https://user-images.githubusercontent.com/14288520/202756392-4490fc0d-2b94-4890-bff7-0397e4186f8a.png" src="https://user-images.githubusercontent.com/14288520/202756392-4490fc0d-2b94-4890-bff7-0397e4186f8a.png" />
+</a>
 </section>
 </section>
 

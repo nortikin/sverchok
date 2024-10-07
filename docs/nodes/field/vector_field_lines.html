@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../">
 <head>
@@ -6,17 +8,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Vector Field Lines &mdash; Sverchok 1, 2, 0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=7ab3649f" />
 
   
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/documentation_options.js?v=773c2105"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/documentation_options.js?v=773c2105"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -36,9 +34,6 @@
             Sverchok
               <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
           </a>
-              <div class="version">
-                1, 2, 0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -161,7 +156,8 @@
              
   <section id="vector-field-lines">
 <h1>Vector Field Lines<a class="headerlink" href="#vector-field-lines" title="Link to this heading">¶</a></h1>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/2864ff02-7bb6-48a3-9c47-c1e4fdab3e7d"><img alt="https://github.com/nortikin/sverchok/assets/14288520/2864ff02-7bb6-48a3-9c47-c1e4fdab3e7d" src="https://github.com/nortikin/sverchok/assets/14288520/2864ff02-7bb6-48a3-9c47-c1e4fdab3e7d" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/2864ff02-7bb6-48a3-9c47-c1e4fdab3e7d"><img alt="https://github.com/nortikin/sverchok/assets/14288520/2864ff02-7bb6-48a3-9c47-c1e4fdab3e7d" src="https://github.com/nortikin/sverchok/assets/14288520/2864ff02-7bb6-48a3-9c47-c1e4fdab3e7d" />
+</a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node visualizes a Vector Field object by generating lines of that field. More precisely, given the point X and field VF, the node does the following:</p>
@@ -174,8 +170,10 @@
 <p>And then the edges are created between these points. When the coefficient is
 small enough, and the number of iterations is big enough, such lines represent
 trajectories of material points, when they are moved by some force field.</p>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/a765eed2-b18e-42e7-9d34-1d0249ad17ba"><img alt="https://github.com/nortikin/sverchok/assets/14288520/a765eed2-b18e-42e7-9d34-1d0249ad17ba" src="https://github.com/nortikin/sverchok/assets/14288520/a765eed2-b18e-42e7-9d34-1d0249ad17ba" /></a>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/3a7dce66-207c-4008-b898-882552837ac4"><img alt="https://github.com/nortikin/sverchok/assets/14288520/3a7dce66-207c-4008-b898-882552837ac4" src="https://github.com/nortikin/sverchok/assets/14288520/3a7dce66-207c-4008-b898-882552837ac4" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/a765eed2-b18e-42e7-9d34-1d0249ad17ba"><img alt="https://github.com/nortikin/sverchok/assets/14288520/a765eed2-b18e-42e7-9d34-1d0249ad17ba" src="https://github.com/nortikin/sverchok/assets/14288520/a765eed2-b18e-42e7-9d34-1d0249ad17ba" />
+</a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/3a7dce66-207c-4008-b898-882552837ac4"><img alt="https://github.com/nortikin/sverchok/assets/14288520/3a7dce66-207c-4008-b898-882552837ac4" src="https://github.com/nortikin/sverchok/assets/14288520/3a7dce66-207c-4008-b898-882552837ac4" />
+</a>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
@@ -188,7 +186,8 @@ checked, then this coefficient is divided by vector norm. The default value
 is 0.1.</p></li>
 <li><p><strong>Iterations</strong>. The number of iterations. The default value is 10.</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/a42be49c-1075-4094-a247-f4efd71c8cf9"><img alt="https://github.com/nortikin/sverchok/assets/14288520/a42be49c-1075-4094-a247-f4efd71c8cf9" src="https://github.com/nortikin/sverchok/assets/14288520/a42be49c-1075-4094-a247-f4efd71c8cf9" /></a>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/a42be49c-1075-4094-a247-f4efd71c8cf9"><img alt="https://github.com/nortikin/sverchok/assets/14288520/a42be49c-1075-4094-a247-f4efd71c8cf9" src="https://github.com/nortikin/sverchok/assets/14288520/a42be49c-1075-4094-a247-f4efd71c8cf9" />
+</a>
 </div></blockquote>
 </li>
 </ul>
@@ -201,13 +200,15 @@ is 0.1.</p></li>
 the same length (defined by <strong>Steps</strong> input). Otherwise, length of segments
 will be proportional to vector norms. Checked by default.</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/f99381d2-603d-4da5-98cd-daf99a4d938a"><img alt="https://github.com/nortikin/sverchok/assets/14288520/f99381d2-603d-4da5-98cd-daf99a4d938a" src="https://github.com/nortikin/sverchok/assets/14288520/f99381d2-603d-4da5-98cd-daf99a4d938a" /></a>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/f99381d2-603d-4da5-98cd-daf99a4d938a"><img alt="https://github.com/nortikin/sverchok/assets/14288520/f99381d2-603d-4da5-98cd-daf99a4d938a" src="https://github.com/nortikin/sverchok/assets/14288520/f99381d2-603d-4da5-98cd-daf99a4d938a" />
+</a>
 </div></blockquote>
 </li>
 <li><p><strong>Join</strong>. If checked, join all lines into single mesh object. Checked by default.</p></li>
 <li><p><strong>Output NumPy</strong>. Outputs NumPy arrays in stead of regular python lists. Improves performance</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/e840093e-036d-4864-9f28-a30d0fe6754e"><img alt="https://github.com/nortikin/sverchok/assets/14288520/e840093e-036d-4864-9f28-a30d0fe6754e" src="https://github.com/nortikin/sverchok/assets/14288520/e840093e-036d-4864-9f28-a30d0fe6754e" /></a>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/e840093e-036d-4864-9f28-a30d0fe6754e"><img alt="https://github.com/nortikin/sverchok/assets/14288520/e840093e-036d-4864-9f28-a30d0fe6754e" src="https://github.com/nortikin/sverchok/assets/14288520/e840093e-036d-4864-9f28-a30d0fe6754e" />
+</a>
 </div></blockquote>
 </li>
 </ul>
@@ -226,7 +227,8 @@ will be proportional to vector norms. Checked by default.</p>
 <section id="example-of-usage">
 <h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Link to this heading">¶</a></h2>
 <p>Example of description:</p>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/a05a6685-e422-4cf6-b2f2-d7ef458eb649"><img alt="https://github.com/nortikin/sverchok/assets/14288520/a05a6685-e422-4cf6-b2f2-d7ef458eb649" src="https://github.com/nortikin/sverchok/assets/14288520/a05a6685-e422-4cf6-b2f2-d7ef458eb649" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/a05a6685-e422-4cf6-b2f2-d7ef458eb649"><img alt="https://github.com/nortikin/sverchok/assets/14288520/a05a6685-e422-4cf6-b2f2-d7ef458eb649" src="https://github.com/nortikin/sverchok/assets/14288520/a05a6685-e422-4cf6-b2f2-d7ef458eb649" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/line_mk4.html"><span class="doc">Line</span></a></p></li>
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
@@ -238,10 +240,12 @@ will be proportional to vector norms. Checked by default.</p>
 <li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
 </ul>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/52ece8f1-58c7-4deb-b119-9cabb7af6d15"><img alt="https://github.com/nortikin/sverchok/assets/14288520/52ece8f1-58c7-4deb-b119-9cabb7af6d15" src="https://github.com/nortikin/sverchok/assets/14288520/52ece8f1-58c7-4deb-b119-9cabb7af6d15" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/52ece8f1-58c7-4deb-b119-9cabb7af6d15"><img alt="https://github.com/nortikin/sverchok/assets/14288520/52ece8f1-58c7-4deb-b119-9cabb7af6d15" src="https://github.com/nortikin/sverchok/assets/14288520/52ece8f1-58c7-4deb-b119-9cabb7af6d15" />
+</a>
 <hr class="docutils" />
 <p>Visualize some vector field:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/79495842-a56e0500-803e-11ea-91ed-611abf181ec2.png"><img alt="https://user-images.githubusercontent.com/284644/79495842-a56e0500-803e-11ea-91ed-611abf181ec2.png" src="https://user-images.githubusercontent.com/284644/79495842-a56e0500-803e-11ea-91ed-611abf181ec2.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/79495842-a56e0500-803e-11ea-91ed-611abf181ec2.png"><img alt="https://user-images.githubusercontent.com/284644/79495842-a56e0500-803e-11ea-91ed-611abf181ec2.png" src="https://user-images.githubusercontent.com/284644/79495842-a56e0500-803e-11ea-91ed-611abf181ec2.png" />
+</a>
 <ul class="simple">
 <li><p>Fields-&gt; <a class="reference internal" href="attractor_field_mk2.html"><span class="doc">Attractor Field</span></a></p></li>
 <li><p>Fields-&gt; <a class="reference internal" href="vector_field_math.html"><span class="doc">Vector Field Math</span></a></p></li>

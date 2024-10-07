@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../">
 <head>
@@ -6,17 +8,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Lloyd 2D &mdash; Sverchok 1, 2, 0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=7ab3649f" />
 
   
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/documentation_options.js?v=773c2105"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/documentation_options.js?v=773c2105"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -36,9 +34,6 @@
             Sverchok
               <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
           </a>
-              <div class="version">
-                1, 2, 0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -154,14 +149,16 @@
              
   <section id="lloyd-2d">
 <h1>Lloyd 2D<a class="headerlink" href="#lloyd-2d" title="Link to this heading">¶</a></h1>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202758803-abfc383d-8feb-4ef7-8159-4ca7545fa1f3.png"><img alt="https://user-images.githubusercontent.com/14288520/202758803-abfc383d-8feb-4ef7-8159-4ca7545fa1f3.png" src="https://user-images.githubusercontent.com/14288520/202758803-abfc383d-8feb-4ef7-8159-4ca7545fa1f3.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202758803-abfc383d-8feb-4ef7-8159-4ca7545fa1f3.png"><img alt="https://user-images.githubusercontent.com/14288520/202758803-abfc383d-8feb-4ef7-8159-4ca7545fa1f3.png" src="https://user-images.githubusercontent.com/14288520/202758803-abfc383d-8feb-4ef7-8159-4ca7545fa1f3.png" />
+</a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node uses <a class="reference external" href="https://en.wikipedia.org/wiki/Lloyd%27s_algorithm">Lloyd</a> algorithm to redistribute a set of points in 2D space
 (XOY plane) uniformly inside bounding box or bounding circle.</p>
 <p>Optionally, weighted Lloyd algorithm can be used, to put points more dense in
 places to which higher weight is assigned.</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202763588-bc4d27ec-87fc-4a75-849e-9cee13db7a14.png"><img alt="https://user-images.githubusercontent.com/14288520/202763588-bc4d27ec-87fc-4a75-849e-9cee13db7a14.png" src="https://user-images.githubusercontent.com/14288520/202763588-bc4d27ec-87fc-4a75-849e-9cee13db7a14.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202763588-bc4d27ec-87fc-4a75-849e-9cee13db7a14.png"><img alt="https://user-images.githubusercontent.com/14288520/202763588-bc4d27ec-87fc-4a75-849e-9cee13db7a14.png" src="https://user-images.githubusercontent.com/14288520/202763588-bc4d27ec-87fc-4a75-849e-9cee13db7a14.png" />
+</a>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
@@ -170,7 +167,8 @@ places to which higher weight is assigned.</p>
 <li><p><strong>Vertices</strong>. Points to be redistributed. Only X and Y coordinates of these
 points will be used. This input is mandatory.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202764057-d3496a5d-21dc-4ebb-b7da-690c0fdfe416.png"><img alt="https://user-images.githubusercontent.com/14288520/202764057-d3496a5d-21dc-4ebb-b7da-690c0fdfe416.png" src="https://user-images.githubusercontent.com/14288520/202764057-d3496a5d-21dc-4ebb-b7da-690c0fdfe416.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202764057-d3496a5d-21dc-4ebb-b7da-690c0fdfe416.png"><img alt="https://user-images.githubusercontent.com/14288520/202764057-d3496a5d-21dc-4ebb-b7da-690c0fdfe416.png" src="https://user-images.githubusercontent.com/14288520/202764057-d3496a5d-21dc-4ebb-b7da-690c0fdfe416.png" />
+</a>
 <ul class="simple">
 <li><p><strong>Iterations</strong>. Number of Lloyd’s algorithm iterations. The default value is 3.</p></li>
 <li><p><strong>Weights</strong>. Scalar Field object used to assign different weights for
@@ -191,14 +189,16 @@ algorithm will be used.</p></li>
 <p>The default value is <strong>Bounding box</strong>.</p>
 </li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202764601-be65e31c-b467-4937-8584-9ac48b7b6e67.png"><img alt="https://user-images.githubusercontent.com/14288520/202764601-be65e31c-b467-4937-8584-9ac48b7b6e67.png" src="https://user-images.githubusercontent.com/14288520/202764601-be65e31c-b467-4937-8584-9ac48b7b6e67.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202764601-be65e31c-b467-4937-8584-9ac48b7b6e67.png"><img alt="https://user-images.githubusercontent.com/14288520/202764601-be65e31c-b467-4937-8584-9ac48b7b6e67.png" src="https://user-images.githubusercontent.com/14288520/202764601-be65e31c-b467-4937-8584-9ac48b7b6e67.png" />
+</a>
 <ul class="simple">
 <li><p><strong>Clipping</strong>. This parameter is available in the N panel only. Clipping
 distance for Voronoi diagrams used in the process of Lloyd algorithm. In most
 cases, this parameter has very slight effect on the result, so you do not
 have to change it. The default value is 1.0.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202764959-b6f2acd9-964d-4ef3-a114-e4983b396c2e.png"><img alt="https://user-images.githubusercontent.com/14288520/202764959-b6f2acd9-964d-4ef3-a114-e4983b396c2e.png" src="https://user-images.githubusercontent.com/14288520/202764959-b6f2acd9-964d-4ef3-a114-e4983b396c2e.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202764959-b6f2acd9-964d-4ef3-a114-e4983b396c2e.png"><img alt="https://user-images.githubusercontent.com/14288520/202764959-b6f2acd9-964d-4ef3-a114-e4983b396c2e.png" src="https://user-images.githubusercontent.com/14288520/202764959-b6f2acd9-964d-4ef3-a114-e4983b396c2e.png" />
+</a>
 </section>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
@@ -210,7 +210,8 @@ have to change it. The default value is 1.0.</p></li>
 <section id="examples-of-usage">
 <h2>Examples of Usage<a class="headerlink" href="#examples-of-usage" title="Link to this heading">¶</a></h2>
 <p>Redistribution within bounding box:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202765810-9c1f77e7-7d90-412e-9850-0eb447cc3940.png"><img alt="https://user-images.githubusercontent.com/14288520/202765810-9c1f77e7-7d90-412e-9850-0eb447cc3940.png" src="https://user-images.githubusercontent.com/14288520/202765810-9c1f77e7-7d90-412e-9850-0eb447cc3940.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202765810-9c1f77e7-7d90-412e-9850-0eb447cc3940.png"><img alt="https://user-images.githubusercontent.com/14288520/202765810-9c1f77e7-7d90-412e-9850-0eb447cc3940.png" src="https://user-images.githubusercontent.com/14288520/202765810-9c1f77e7-7d90-412e-9850-0eb447cc3940.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
 <li><p>Transform-&gt; <a class="reference internal" href="../transforms/randomize.html"><span class="doc">Randomize</span></a></p></li>
@@ -218,10 +219,12 @@ have to change it. The default value is 1.0.</p></li>
 </ul>
 <hr class="docutils" />
 <p>The same setup, but in “bounding circle” mode:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202766150-cddbf502-9043-4bfc-8990-3ce4d73e49c2.png"><img alt="https://user-images.githubusercontent.com/14288520/202766150-cddbf502-9043-4bfc-8990-3ce4d73e49c2.png" src="https://user-images.githubusercontent.com/14288520/202766150-cddbf502-9043-4bfc-8990-3ce4d73e49c2.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202766150-cddbf502-9043-4bfc-8990-3ce4d73e49c2.png"><img alt="https://user-images.githubusercontent.com/14288520/202766150-cddbf502-9043-4bfc-8990-3ce4d73e49c2.png" src="https://user-images.githubusercontent.com/14288520/202766150-cddbf502-9043-4bfc-8990-3ce4d73e49c2.png" />
+</a>
 <hr class="docutils" />
 <p>The same setup, but with distance from origin used as weight:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202766665-5c6d1029-4b3b-40b4-974b-257027197199.png"><img alt="https://user-images.githubusercontent.com/14288520/202766665-5c6d1029-4b3b-40b4-974b-257027197199.png" src="https://user-images.githubusercontent.com/14288520/202766665-5c6d1029-4b3b-40b4-974b-257027197199.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202766665-5c6d1029-4b3b-40b4-974b-257027197199.png"><img alt="https://user-images.githubusercontent.com/14288520/202766665-5c6d1029-4b3b-40b4-974b-257027197199.png" src="https://user-images.githubusercontent.com/14288520/202766665-5c6d1029-4b3b-40b4-974b-257027197199.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
 <li><p>Fields-&gt; <a class="reference internal" href="../field/coordinate_scalar_field.html"><span class="doc">Coordinate Scalar Field</span></a></p></li>
@@ -230,7 +233,8 @@ have to change it. The default value is 1.0.</p></li>
 </ul>
 <hr class="docutils" />
 <p>Weighted Lloyd distribution used to create Voronoi diagram:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202767953-6726827d-c1cf-4713-b39c-d35dd4335d30.png"><img alt="https://user-images.githubusercontent.com/14288520/202767953-6726827d-c1cf-4713-b39c-d35dd4335d30.png" src="https://user-images.githubusercontent.com/14288520/202767953-6726827d-c1cf-4713-b39c-d35dd4335d30.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202767953-6726827d-c1cf-4713-b39c-d35dd4335d30.png"><img alt="https://user-images.githubusercontent.com/14288520/202767953-6726827d-c1cf-4713-b39c-d35dd4335d30.png" src="https://user-images.githubusercontent.com/14288520/202767953-6726827d-c1cf-4713-b39c-d35dd4335d30.png" />
+</a>
 </section>
 </section>
 

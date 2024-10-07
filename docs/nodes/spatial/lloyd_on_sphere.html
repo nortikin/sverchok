@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../">
 <head>
@@ -6,17 +8,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Lloyd on Sphere &mdash; Sverchok 1, 2, 0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=7ab3649f" />
 
   
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/documentation_options.js?v=773c2105"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/documentation_options.js?v=773c2105"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -36,9 +34,6 @@
             Sverchok
               <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
           </a>
-              <div class="version">
-                1, 2, 0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -154,7 +149,8 @@
              
   <section id="lloyd-on-sphere">
 <h1>Lloyd on Sphere<a class="headerlink" href="#lloyd-on-sphere" title="Link to this heading">¶</a></h1>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202800864-8c2b7767-d748-46cc-9817-0c23e80dc699.png"><img alt="https://user-images.githubusercontent.com/14288520/202800864-8c2b7767-d748-46cc-9817-0c23e80dc699.png" src="https://user-images.githubusercontent.com/14288520/202800864-8c2b7767-d748-46cc-9817-0c23e80dc699.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202800864-8c2b7767-d748-46cc-9817-0c23e80dc699.png"><img alt="https://user-images.githubusercontent.com/14288520/202800864-8c2b7767-d748-46cc-9817-0c23e80dc699.png" src="https://user-images.githubusercontent.com/14288520/202800864-8c2b7767-d748-46cc-9817-0c23e80dc699.png" />
+</a>
 <section id="dependencies">
 <h2>Dependencies<a class="headerlink" href="#dependencies" title="Link to this heading">¶</a></h2>
 <p>This node requires <a class="reference external" href="https://scipy.org/">SciPy</a> library to work.</p>
@@ -193,7 +189,8 @@ algorithm will be used.</p></li>
 <section id="example-of-usage">
 <h2>Example of Usage<a class="headerlink" href="#example-of-usage" title="Link to this heading">¶</a></h2>
 <p>Let’s start with boxes distributed randomly on a sphere:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202802127-3ae8c392-6f8f-4122-9e1b-a5eaded79f03.png"><img alt="https://user-images.githubusercontent.com/14288520/202802127-3ae8c392-6f8f-4122-9e1b-a5eaded79f03.png" src="https://user-images.githubusercontent.com/14288520/202802127-3ae8c392-6f8f-4122-9e1b-a5eaded79f03.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202802127-3ae8c392-6f8f-4122-9e1b-a5eaded79f03.png"><img alt="https://user-images.githubusercontent.com/14288520/202802127-3ae8c392-6f8f-4122-9e1b-a5eaded79f03.png" src="https://user-images.githubusercontent.com/14288520/202802127-3ae8c392-6f8f-4122-9e1b-a5eaded79f03.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/random_vector_mk3.html"><span class="doc">Random Vector</span></a></p></li>
@@ -201,16 +198,19 @@ algorithm will be used.</p></li>
 </ul>
 <hr class="docutils" />
 <p>Note that the distribution is very unregular. Now we apply “Lloyd on Sphere” node:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202803212-748a4d11-8054-4cc9-9791-c79d32cef6ae.png"><img alt="https://user-images.githubusercontent.com/14288520/202803212-748a4d11-8054-4cc9-9791-c79d32cef6ae.png" src="https://user-images.githubusercontent.com/14288520/202803212-748a4d11-8054-4cc9-9791-c79d32cef6ae.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202803212-748a4d11-8054-4cc9-9791-c79d32cef6ae.png"><img alt="https://user-images.githubusercontent.com/14288520/202803212-748a4d11-8054-4cc9-9791-c79d32cef6ae.png" src="https://user-images.githubusercontent.com/14288520/202803212-748a4d11-8054-4cc9-9791-c79d32cef6ae.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/random_vector_mk3.html"><span class="doc">Random Vector</span></a></p></li>
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202803190-5106f5d6-177b-471b-b839-01d6367afa03.gif"><img alt="https://user-images.githubusercontent.com/14288520/202803190-5106f5d6-177b-471b-b839-01d6367afa03.gif" src="https://user-images.githubusercontent.com/14288520/202803190-5106f5d6-177b-471b-b839-01d6367afa03.gif" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202803190-5106f5d6-177b-471b-b839-01d6367afa03.gif"><img alt="https://user-images.githubusercontent.com/14288520/202803190-5106f5d6-177b-471b-b839-01d6367afa03.gif" src="https://user-images.githubusercontent.com/14288520/202803190-5106f5d6-177b-471b-b839-01d6367afa03.gif" />
+</a>
 <hr class="docutils" />
 <p>Density of distribution can be controlled with a scalar field - in this example, by absolute value of Z coordinate:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202804854-9c58b26e-148f-4055-a9db-9082f3e495a2.png"><img alt="https://user-images.githubusercontent.com/14288520/202804854-9c58b26e-148f-4055-a9db-9082f3e495a2.png" src="https://user-images.githubusercontent.com/14288520/202804854-9c58b26e-148f-4055-a9db-9082f3e495a2.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202804854-9c58b26e-148f-4055-a9db-9082f3e495a2.png"><img alt="https://user-images.githubusercontent.com/14288520/202804854-9c58b26e-148f-4055-a9db-9082f3e495a2.png" src="https://user-images.githubusercontent.com/14288520/202804854-9c58b26e-148f-4055-a9db-9082f3e495a2.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/random_vector_mk3.html"><span class="doc">Random Vector</span></a></p></li>
@@ -218,7 +218,8 @@ algorithm will be used.</p></li>
 <li><p>Fields-&gt; <a class="reference internal" href="../field/scalar_field_math.html"><span class="doc">Scalar Field Math</span></a></p></li>
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202804718-b87b02db-d756-4e81-a5a6-1683d0f8292a.gif"><img alt="https://user-images.githubusercontent.com/14288520/202804718-b87b02db-d756-4e81-a5a6-1683d0f8292a.gif" src="https://user-images.githubusercontent.com/14288520/202804718-b87b02db-d756-4e81-a5a6-1683d0f8292a.gif" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/202804718-b87b02db-d756-4e81-a5a6-1683d0f8292a.gif"><img alt="https://user-images.githubusercontent.com/14288520/202804718-b87b02db-d756-4e81-a5a6-1683d0f8292a.gif" src="https://user-images.githubusercontent.com/14288520/202804718-b87b02db-d756-4e81-a5a6-1683d0f8292a.gif" />
+</a>
 </section>
 </section>
 

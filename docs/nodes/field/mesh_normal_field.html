@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../">
 <head>
@@ -6,17 +8,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Mesh Nearest Normal &mdash; Sverchok 1, 2, 0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=7ab3649f" />
 
   
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/documentation_options.js?v=773c2105"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/documentation_options.js?v=773c2105"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -36,9 +34,6 @@
             Sverchok
               <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
           </a>
-              <div class="version">
-                1, 2, 0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -161,7 +156,8 @@
              
   <section id="mesh-nearest-normal">
 <h1>Mesh Nearest Normal<a class="headerlink" href="#mesh-nearest-normal" title="Link to this heading">¶</a></h1>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/33796495-8674-47b6-a227-f4b4231c69db"><img alt="https://github.com/nortikin/sverchok/assets/14288520/33796495-8674-47b6-a227-f4b4231c69db" src="https://github.com/nortikin/sverchok/assets/14288520/33796495-8674-47b6-a227-f4b4231c69db" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/33796495-8674-47b6-a227-f4b4231c69db"><img alt="https://github.com/nortikin/sverchok/assets/14288520/33796495-8674-47b6-a227-f4b4231c69db" src="https://github.com/nortikin/sverchok/assets/14288520/33796495-8674-47b6-a227-f4b4231c69db" />
+</a>
 <section id="dependencies">
 <h2>Dependencies<a class="headerlink" href="#dependencies" title="Link to this heading">¶</a></h2>
 <p>This node optionally uses <a class="reference external" href="https://scipy.org/">SciPy</a> library to work.</p>
@@ -172,7 +168,8 @@
 normal vector of the nearest face of the given mesh. Optionally, the node can
 interpolate between these face normals, so that the field will be smooth.
 Interpolation is done with <a class="reference external" href="http://www.scholarpedia.org/article/Radial_basis_function">RBF</a> method.</p>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/6567015b-3981-4332-a5d1-cc8f1f18b2a6"><img alt="https://github.com/nortikin/sverchok/assets/14288520/6567015b-3981-4332-a5d1-cc8f1f18b2a6" src="https://github.com/nortikin/sverchok/assets/14288520/6567015b-3981-4332-a5d1-cc8f1f18b2a6" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/6567015b-3981-4332-a5d1-cc8f1f18b2a6"><img alt="https://github.com/nortikin/sverchok/assets/14288520/6567015b-3981-4332-a5d1-cc8f1f18b2a6" src="https://github.com/nortikin/sverchok/assets/14288520/6567015b-3981-4332-a5d1-cc8f1f18b2a6" />
+</a>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
@@ -190,14 +187,16 @@ Interpolation is done with <a class="reference external" href="http://www.schola
 available. If checked, then the node will interpolate between nearest mesh
 normals to generate a smooth field. Unchecked by default.</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/865eb1fc-b0ba-4226-8e74-d5ca4f39bd75"><img alt="https://github.com/nortikin/sverchok/assets/14288520/865eb1fc-b0ba-4226-8e74-d5ca4f39bd75" src="https://github.com/nortikin/sverchok/assets/14288520/865eb1fc-b0ba-4226-8e74-d5ca4f39bd75" /></a>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/865eb1fc-b0ba-4226-8e74-d5ca4f39bd75"><img alt="https://github.com/nortikin/sverchok/assets/14288520/865eb1fc-b0ba-4226-8e74-d5ca4f39bd75" src="https://github.com/nortikin/sverchok/assets/14288520/865eb1fc-b0ba-4226-8e74-d5ca4f39bd75" />
+</a>
 </div></blockquote>
 </li>
 <li><p><strong>Function</strong>. This parameter is available only when <strong>Interpolate</strong> parameter
 is available. The specific function used by the node. The available values
 are:</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/402016d9-a345-4db4-bd3f-8e99a6c73d36"><img alt="https://github.com/nortikin/sverchok/assets/14288520/402016d9-a345-4db4-bd3f-8e99a6c73d36" src="https://github.com/nortikin/sverchok/assets/14288520/402016d9-a345-4db4-bd3f-8e99a6c73d36" /></a>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/402016d9-a345-4db4-bd3f-8e99a6c73d36"><img alt="https://github.com/nortikin/sverchok/assets/14288520/402016d9-a345-4db4-bd3f-8e99a6c73d36" src="https://github.com/nortikin/sverchok/assets/14288520/402016d9-a345-4db4-bd3f-8e99a6c73d36" />
+</a>
 </div></blockquote>
 <ul class="simple">
 <li><p><strong>Multi Quadric</strong></p></li>
@@ -212,7 +211,8 @@ are:</p>
 <li><p><strong>Signed</strong>. This parameter is available only when <strong>Interpolate</strong> parameter is unchecked. If signed is ON then some normals may
 get opposite normals of mesh:</p></li>
 </ul>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/c3292e20-b407-4c0c-a31f-50c28fd8f4af"><img alt="https://github.com/nortikin/sverchok/assets/14288520/c3292e20-b407-4c0c-a31f-50c28fd8f4af" src="https://github.com/nortikin/sverchok/assets/14288520/c3292e20-b407-4c0c-a31f-50c28fd8f4af" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/c3292e20-b407-4c0c-a31f-50c28fd8f4af"><img alt="https://github.com/nortikin/sverchok/assets/14288520/c3292e20-b407-4c0c-a31f-50c28fd8f4af" src="https://github.com/nortikin/sverchok/assets/14288520/c3292e20-b407-4c0c-a31f-50c28fd8f4af" />
+</a>
 </section>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
@@ -223,7 +223,8 @@ get opposite normals of mesh:</p></li>
 </section>
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">¶</a></h2>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/b57dbe15-3bb1-4ede-9d66-c7b2ceba0d13"><img alt="https://github.com/nortikin/sverchok/assets/14288520/b57dbe15-3bb1-4ede-9d66-c7b2ceba0d13" src="https://github.com/nortikin/sverchok/assets/14288520/b57dbe15-3bb1-4ede-9d66-c7b2ceba0d13" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/b57dbe15-3bb1-4ede-9d66-c7b2ceba0d13"><img alt="https://github.com/nortikin/sverchok/assets/14288520/b57dbe15-3bb1-4ede-9d66-c7b2ceba0d13" src="https://github.com/nortikin/sverchok/assets/14288520/b57dbe15-3bb1-4ede-9d66-c7b2ceba0d13" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/icosphere.html"><span class="doc">IcoSphere</span></a></p></li>
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>

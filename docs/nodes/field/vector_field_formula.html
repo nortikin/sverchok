@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../">
 <head>
@@ -6,17 +8,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Vector Field Formula &mdash; Sverchok 1, 2, 0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=7ab3649f" />
 
   
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/documentation_options.js?v=773c2105"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/documentation_options.js?v=773c2105"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -36,9 +34,6 @@
             Sverchok
               <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
           </a>
-              <div class="version">
-                1, 2, 0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -161,11 +156,13 @@
              
   <section id="vector-field-formula">
 <h1>Vector Field Formula<a class="headerlink" href="#vector-field-formula" title="Link to this heading">¶</a></h1>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/c1363f46-6308-4af9-bbf9-78dd8e9d0e24"><img alt="https://github.com/nortikin/sverchok/assets/14288520/c1363f46-6308-4af9-bbf9-78dd8e9d0e24" src="https://github.com/nortikin/sverchok/assets/14288520/c1363f46-6308-4af9-bbf9-78dd8e9d0e24" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/c1363f46-6308-4af9-bbf9-78dd8e9d0e24"><img alt="https://github.com/nortikin/sverchok/assets/14288520/c1363f46-6308-4af9-bbf9-78dd8e9d0e24" src="https://github.com/nortikin/sverchok/assets/14288520/c1363f46-6308-4af9-bbf9-78dd8e9d0e24" />
+</a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node generates a Vector Field, defined by some user-provided formula.</p>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/c730fd5c-3dbc-4924-a2e0-afab3d433dfd"><img alt="https://github.com/nortikin/sverchok/assets/14288520/c730fd5c-3dbc-4924-a2e0-afab3d433dfd" src="https://github.com/nortikin/sverchok/assets/14288520/c730fd5c-3dbc-4924-a2e0-afab3d433dfd" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/c730fd5c-3dbc-4924-a2e0-afab3d433dfd"><img alt="https://github.com/nortikin/sverchok/assets/14288520/c730fd5c-3dbc-4924-a2e0-afab3d433dfd" src="https://github.com/nortikin/sverchok/assets/14288520/c730fd5c-3dbc-4924-a2e0-afab3d433dfd" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/line_mk4.html"><span class="doc">Line</span></a></p></li>
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/circle.html"><span class="doc">Circle</span></a></p></li>
@@ -175,9 +172,11 @@
 </ul>
 <p>The formula should map the coordinates of the point in 3D space into some vector in 3D space. Both original points and the resulting vector can be expressed in one of supported coordinate systems.</p>
 <p>It is possible to use additional parameters in the formula, they will become inputs of the node.</p>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/ec94eedb-297a-47df-b6ab-44b7e64674c0"><img alt="https://github.com/nortikin/sverchok/assets/14288520/ec94eedb-297a-47df-b6ab-44b7e64674c0" src="https://github.com/nortikin/sverchok/assets/14288520/ec94eedb-297a-47df-b6ab-44b7e64674c0" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/ec94eedb-297a-47df-b6ab-44b7e64674c0"><img alt="https://github.com/nortikin/sverchok/assets/14288520/ec94eedb-297a-47df-b6ab-44b7e64674c0" src="https://github.com/nortikin/sverchok/assets/14288520/ec94eedb-297a-47df-b6ab-44b7e64674c0" />
+</a>
 <p>It is also possible to use the value of some other Vector Field in the same point in the formula.</p>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/b985b80c-969a-4ad2-b8b1-cf4250b22f37"><img alt="https://github.com/nortikin/sverchok/assets/14288520/b985b80c-969a-4ad2-b8b1-cf4250b22f37" src="https://github.com/nortikin/sverchok/assets/14288520/b985b80c-969a-4ad2-b8b1-cf4250b22f37" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/b985b80c-969a-4ad2-b8b1-cf4250b22f37"><img alt="https://github.com/nortikin/sverchok/assets/14288520/b985b80c-969a-4ad2-b8b1-cf4250b22f37" src="https://github.com/nortikin/sverchok/assets/14288520/b985b80c-969a-4ad2-b8b1-cf4250b22f37" />
+</a>
 </section>
 <section id="expression-syntax">
 <h2>Expression syntax<a class="headerlink" href="#expression-syntax" title="Link to this heading">¶</a></h2>
@@ -218,7 +217,8 @@ pow, radians, sin, sinh, sqrt, tan, tanh, trunc;</p></li>
 <li><p><strong>Field</strong>. A vector field, whose values can be used in the formula. This
 input is required only if the formula involves the <strong>V</strong> variable.</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/60d44880-034b-4930-bc6b-9c2f597aa6b7"><img alt="https://github.com/nortikin/sverchok/assets/14288520/60d44880-034b-4930-bc6b-9c2f597aa6b7" src="https://github.com/nortikin/sverchok/assets/14288520/60d44880-034b-4930-bc6b-9c2f597aa6b7" /></a>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/60d44880-034b-4930-bc6b-9c2f597aa6b7"><img alt="https://github.com/nortikin/sverchok/assets/14288520/60d44880-034b-4930-bc6b-9c2f597aa6b7" src="https://github.com/nortikin/sverchok/assets/14288520/60d44880-034b-4930-bc6b-9c2f597aa6b7" />
+</a>
 </div></blockquote>
 </li>
 </ul>
@@ -228,7 +228,8 @@ also becomes additional input.</p>
 <ul>
 <li><p>For Cartesian input mode: <cite>x</cite>, <cite>y</cite> and <cite>z</cite>;</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/e11482bd-17b8-492a-ac78-bc8487be779f"><img alt="https://github.com/nortikin/sverchok/assets/14288520/e11482bd-17b8-492a-ac78-bc8487be779f" src="https://github.com/nortikin/sverchok/assets/14288520/e11482bd-17b8-492a-ac78-bc8487be779f" /></a>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/e11482bd-17b8-492a-ac78-bc8487be779f"><img alt="https://github.com/nortikin/sverchok/assets/14288520/e11482bd-17b8-492a-ac78-bc8487be779f" src="https://github.com/nortikin/sverchok/assets/14288520/e11482bd-17b8-492a-ac78-bc8487be779f" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt;Generatots Extended-&gt; <a class="reference internal" href="../generators_extended/spiral_mk2.html"><span class="doc">Spiral</span></a></p></li>
 </ul>
@@ -236,7 +237,8 @@ also becomes additional input.</p>
 </li>
 <li><p>For Cylindrical input mode: <cite>rho</cite>, <cite>phi</cite> and <cite>z</cite>;</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/ac2b5633-138a-4832-b477-d069bd7d580f"><img alt="https://github.com/nortikin/sverchok/assets/14288520/ac2b5633-138a-4832-b477-d069bd7d580f" src="https://github.com/nortikin/sverchok/assets/14288520/ac2b5633-138a-4832-b477-d069bd7d580f" /></a>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/ac2b5633-138a-4832-b477-d069bd7d580f"><img alt="https://github.com/nortikin/sverchok/assets/14288520/ac2b5633-138a-4832-b477-d069bd7d580f" src="https://github.com/nortikin/sverchok/assets/14288520/ac2b5633-138a-4832-b477-d069bd7d580f" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt;Generatots Extended-&gt; <a class="reference internal" href="../generators_extended/spiral_mk2.html"><span class="doc">Spiral</span></a></p></li>
 </ul>
@@ -244,7 +246,8 @@ also becomes additional input.</p>
 </li>
 <li><p>For Spherical input mode: <cite>rho</cite>, <cite>phi</cite> and <cite>theta</cite>.</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/fd3bdcd0-c0b5-4808-b9b3-ce165b600124"><img alt="https://github.com/nortikin/sverchok/assets/14288520/fd3bdcd0-c0b5-4808-b9b3-ce165b600124" src="https://github.com/nortikin/sverchok/assets/14288520/fd3bdcd0-c0b5-4808-b9b3-ce165b600124" /></a>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/fd3bdcd0-c0b5-4808-b9b3-ce165b600124"><img alt="https://github.com/nortikin/sverchok/assets/14288520/fd3bdcd0-c0b5-4808-b9b3-ce165b600124" src="https://github.com/nortikin/sverchok/assets/14288520/fd3bdcd0-c0b5-4808-b9b3-ce165b600124" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt;Generators Extended <a class="reference internal" href="../generators_extended/torus_knot_mk2.html"><span class="doc">Torus Knot</span></a></p></li>
 </ul>
@@ -264,7 +267,8 @@ it’s Y coordinate, and <cite>V[2]</cite> is Z coordinate.</p>
 points. The available values are <strong>Carhtesian</strong>, <strong>Cylindrical</strong> and
 <strong>Spherical</strong>. The default value is <strong>Cartesian</strong>.</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/351ed6d0-1bbc-4527-a581-3e57a1e4214e"><img alt="https://github.com/nortikin/sverchok/assets/14288520/351ed6d0-1bbc-4527-a581-3e57a1e4214e" src="https://github.com/nortikin/sverchok/assets/14288520/351ed6d0-1bbc-4527-a581-3e57a1e4214e" /></a>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/351ed6d0-1bbc-4527-a581-3e57a1e4214e"><img alt="https://github.com/nortikin/sverchok/assets/14288520/351ed6d0-1bbc-4527-a581-3e57a1e4214e" src="https://github.com/nortikin/sverchok/assets/14288520/351ed6d0-1bbc-4527-a581-3e57a1e4214e" />
+</a>
 </div></blockquote>
 </li>
 <li><p><strong>Formula1</strong>, <strong>Formula2</strong>, <strong>Formula3</strong>. Three formulas defining the
@@ -273,7 +277,8 @@ Phi, Z, or Rho, Phi, Theta, depending on the <strong>Output</strong> parameter. 
 default formulas are <cite>-y</cite>, <cite>x</cite> and <cite>z</cite>, which defines the field which rotates
 the whole space 90 degrees around the Z axis.</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/66ab7f3a-619a-465b-967e-2c9175c6d216"><img alt="https://github.com/nortikin/sverchok/assets/14288520/66ab7f3a-619a-465b-967e-2c9175c6d216" src="https://github.com/nortikin/sverchok/assets/14288520/66ab7f3a-619a-465b-967e-2c9175c6d216" /></a>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/66ab7f3a-619a-465b-967e-2c9175c6d216"><img alt="https://github.com/nortikin/sverchok/assets/14288520/66ab7f3a-619a-465b-967e-2c9175c6d216" src="https://github.com/nortikin/sverchok/assets/14288520/66ab7f3a-619a-465b-967e-2c9175c6d216" />
+</a>
 <ul class="simple">
 <li><p>Fields-&gt; <a class="reference internal" href="vector_field_math.html"><span class="doc">Vector Field Math</span></a></p></li>
 <li><p>Fields-&gt; <a class="reference internal" href="vector_field_apply.html"><span class="doc">Apply Vector Field</span></a></p></li>
@@ -284,7 +289,8 @@ the whole space 90 degrees around the Z axis.</p>
 are expressed. The available values are <strong>Carhtesian</strong>, <strong>Cylindrical</strong> and
 <strong>Spherical</strong>. The default value is <strong>Cartesian</strong>.</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/1ece7076-a9b2-4502-b860-087f23c61e00"><img alt="https://github.com/nortikin/sverchok/assets/14288520/1ece7076-a9b2-4502-b860-087f23c61e00" src="https://github.com/nortikin/sverchok/assets/14288520/1ece7076-a9b2-4502-b860-087f23c61e00" /></a>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/1ece7076-a9b2-4502-b860-087f23c61e00"><img alt="https://github.com/nortikin/sverchok/assets/14288520/1ece7076-a9b2-4502-b860-087f23c61e00" src="https://github.com/nortikin/sverchok/assets/14288520/1ece7076-a9b2-4502-b860-087f23c61e00" />
+</a>
 </div></blockquote>
 </li>
 <li><p><strong>Vectorize</strong>. This parameter is available in the N panel only. If enabled,
@@ -296,7 +302,8 @@ parameter is enabled by default. If you experience some kind of troubles with
 calculating some of functions (errors or not good enough precision), you can
 disable this parameter.</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/3e4476c5-5319-48ab-bb77-21bdbba6c271"><img alt="https://github.com/nortikin/sverchok/assets/14288520/3e4476c5-5319-48ab-bb77-21bdbba6c271" src="https://github.com/nortikin/sverchok/assets/14288520/3e4476c5-5319-48ab-bb77-21bdbba6c271" /></a>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/3e4476c5-5319-48ab-bb77-21bdbba6c271"><img alt="https://github.com/nortikin/sverchok/assets/14288520/3e4476c5-5319-48ab-bb77-21bdbba6c271" src="https://github.com/nortikin/sverchok/assets/14288520/3e4476c5-5319-48ab-bb77-21bdbba6c271" />
+</a>
 </div></blockquote>
 </li>
 </ul>
@@ -310,7 +317,8 @@ disable this parameter.</p>
 </section>
 <section id="examples-of-usage">
 <h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Link to this heading">¶</a></h2>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/3270c50d-098c-45bb-891a-caa183aeb927"><img alt="https://github.com/nortikin/sverchok/assets/14288520/3270c50d-098c-45bb-891a-caa183aeb927" src="https://github.com/nortikin/sverchok/assets/14288520/3270c50d-098c-45bb-891a-caa183aeb927" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/3270c50d-098c-45bb-891a-caa183aeb927"><img alt="https://github.com/nortikin/sverchok/assets/14288520/3270c50d-098c-45bb-891a-caa183aeb927" src="https://github.com/nortikin/sverchok/assets/14288520/3270c50d-098c-45bb-891a-caa183aeb927" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/segment.html"><span class="doc">Segment</span></a></p></li>
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/cylinder_mk2.html"><span class="doc">Cylinder</span></a></p></li>
@@ -322,7 +330,8 @@ disable this parameter.</p>
 </ul>
 <hr class="docutils" />
 <p>Some vector field defined by a formula in Spherical coordinates:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/79491540-0a722c80-8038-11ea-914f-0221e5e75f68.png"><img alt="https://user-images.githubusercontent.com/284644/79491540-0a722c80-8038-11ea-914f-0221e5e75f68.png" src="https://user-images.githubusercontent.com/284644/79491540-0a722c80-8038-11ea-914f-0221e5e75f68.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/79491540-0a722c80-8038-11ea-914f-0221e5e75f68.png"><img alt="https://user-images.githubusercontent.com/284644/79491540-0a722c80-8038-11ea-914f-0221e5e75f68.png" src="https://user-images.githubusercontent.com/284644/79491540-0a722c80-8038-11ea-914f-0221e5e75f68.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
 <li><p>Number-&gt; <a class="reference internal" href="../number/numbers.html"><span class="doc">A Number</span></a></p></li>
@@ -330,7 +339,8 @@ disable this parameter.</p>
 </ul>
 <hr class="docutils" />
 <p>Similar field applied to some box:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/79491547-0ba35980-8038-11ea-89fc-063982ea65cd.png"><img alt="https://user-images.githubusercontent.com/284644/79491547-0ba35980-8038-11ea-89fc-063982ea65cd.png" src="https://user-images.githubusercontent.com/284644/79491547-0ba35980-8038-11ea-89fc-063982ea65cd.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/79491547-0ba35980-8038-11ea-89fc-063982ea65cd.png"><img alt="https://user-images.githubusercontent.com/284644/79491547-0ba35980-8038-11ea-89fc-063982ea65cd.png" src="https://user-images.githubusercontent.com/284644/79491547-0ba35980-8038-11ea-89fc-063982ea65cd.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
 <li><p>Fields-&gt; <a class="reference internal" href="vector_field_apply.html"><span class="doc">Apply Vector Field</span></a></p></li>
@@ -339,7 +349,8 @@ disable this parameter.</p>
 </ul>
 <hr class="docutils" />
 <p>Example of V variable usage:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/137764029-bf397e56-5558-48bd-97a9-f8031d72a1c0.png"><img alt="https://user-images.githubusercontent.com/284644/137764029-bf397e56-5558-48bd-97a9-f8031d72a1c0.png" src="https://user-images.githubusercontent.com/284644/137764029-bf397e56-5558-48bd-97a9-f8031d72a1c0.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/137764029-bf397e56-5558-48bd-97a9-f8031d72a1c0.png"><img alt="https://user-images.githubusercontent.com/284644/137764029-bf397e56-5558-48bd-97a9-f8031d72a1c0.png" src="https://user-images.githubusercontent.com/284644/137764029-bf397e56-5558-48bd-97a9-f8031d72a1c0.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
 <li><p>Fields-&gt; <a class="reference internal" href="attractor_field_mk2.html"><span class="doc">Attractor Field</span></a></p></li>

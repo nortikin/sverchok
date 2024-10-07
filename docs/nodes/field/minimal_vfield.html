@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../">
 <head>
@@ -6,17 +8,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>RBF Vector Field &mdash; Sverchok 1, 2, 0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=7ab3649f" />
 
   
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/documentation_options.js?v=773c2105"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/documentation_options.js?v=773c2105"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -36,9 +34,6 @@
             Sverchok
               <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
           </a>
-              <div class="version">
-                1, 2, 0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -161,7 +156,8 @@
              
   <section id="rbf-vector-field">
 <h1>RBF Vector Field<a class="headerlink" href="#rbf-vector-field" title="Link to this heading">¶</a></h1>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/91843f6d-fe55-4a20-b48b-f062ce73b28f"><img alt="https://github.com/nortikin/sverchok/assets/14288520/91843f6d-fe55-4a20-b48b-f062ce73b28f" src="https://github.com/nortikin/sverchok/assets/14288520/91843f6d-fe55-4a20-b48b-f062ce73b28f" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/91843f6d-fe55-4a20-b48b-f062ce73b28f"><img alt="https://github.com/nortikin/sverchok/assets/14288520/91843f6d-fe55-4a20-b48b-f062ce73b28f" src="https://github.com/nortikin/sverchok/assets/14288520/91843f6d-fe55-4a20-b48b-f062ce73b28f" />
+</a>
 <section id="dependencies">
 <h2>Dependencies<a class="headerlink" href="#dependencies" title="Link to this heading">¶</a></h2>
 <p>This node optionally uses <a class="reference external" href="https://scipy.org/">SciPy</a> library to work.</p>
@@ -172,7 +168,8 @@
 corresponding vector field values (vectors), by use of <a class="reference external" href="http://www.scholarpedia.org/article/Radial_basis_function">RBF</a> method. Depending
 on node parameters, the field can be interpolating, i.e. have exactly the
 provided values in the provided points, or only approximating.</p>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/f329b42f-367c-43cf-93f4-afce5f944492"><img alt="https://github.com/nortikin/sverchok/assets/14288520/f329b42f-367c-43cf-93f4-afce5f944492" src="https://github.com/nortikin/sverchok/assets/14288520/f329b42f-367c-43cf-93f4-afce5f944492" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/f329b42f-367c-43cf-93f4-afce5f944492"><img alt="https://github.com/nortikin/sverchok/assets/14288520/f329b42f-367c-43cf-93f4-afce5f944492" src="https://github.com/nortikin/sverchok/assets/14288520/f329b42f-367c-43cf-93f4-afce5f944492" />
+</a>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
@@ -183,7 +180,8 @@ known. This input is mandatory.</p></li>
 <li><p><strong>VerticesTo</strong>. The values of the vector field (i.e. vectors) in points
 defined by <strong>VerticesFrom</strong> input. This input is mandatory.</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/8b9e9bbb-aa10-494e-a96b-8e0681a8bee4"><img alt="https://github.com/nortikin/sverchok/assets/14288520/8b9e9bbb-aa10-494e-a96b-8e0681a8bee4" src="https://github.com/nortikin/sverchok/assets/14288520/8b9e9bbb-aa10-494e-a96b-8e0681a8bee4" /></a>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/8b9e9bbb-aa10-494e-a96b-8e0681a8bee4"><img alt="https://github.com/nortikin/sverchok/assets/14288520/8b9e9bbb-aa10-494e-a96b-8e0681a8bee4" src="https://github.com/nortikin/sverchok/assets/14288520/8b9e9bbb-aa10-494e-a96b-8e0681a8bee4" />
+</a>
 </div></blockquote>
 </li>
 <li><p><strong>Epsilon</strong>. Epsilon parameter of used RBF function; it affects the shape of
@@ -192,7 +190,8 @@ generated field. The default value is 1.0.</p></li>
 the field will have exactly the specified values in all provided points;
 otherwise, it will be only an approximating field. The default value is 0.0.</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/1e639272-7a9b-4c5f-9749-5ed969a4feb6"><img alt="https://github.com/nortikin/sverchok/assets/14288520/1e639272-7a9b-4c5f-9749-5ed969a4feb6" src="https://github.com/nortikin/sverchok/assets/14288520/1e639272-7a9b-4c5f-9749-5ed969a4feb6" /></a>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/1e639272-7a9b-4c5f-9749-5ed969a4feb6"><img alt="https://github.com/nortikin/sverchok/assets/14288520/1e639272-7a9b-4c5f-9749-5ed969a4feb6" src="https://github.com/nortikin/sverchok/assets/14288520/1e639272-7a9b-4c5f-9749-5ed969a4feb6" />
+</a>
 </div></blockquote>
 </li>
 </ul>
@@ -203,7 +202,8 @@ otherwise, it will be only an approximating field. The default value is 0.0.</p>
 <ul>
 <li><p><strong>Field type</strong>. The available options are:</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/06c34294-1f26-44d7-b46d-b884a51073b6"><img alt="https://github.com/nortikin/sverchok/assets/14288520/06c34294-1f26-44d7-b46d-b884a51073b6" src="https://github.com/nortikin/sverchok/assets/14288520/06c34294-1f26-44d7-b46d-b884a51073b6" /></a>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/06c34294-1f26-44d7-b46d-b884a51073b6"><img alt="https://github.com/nortikin/sverchok/assets/14288520/06c34294-1f26-44d7-b46d-b884a51073b6" src="https://github.com/nortikin/sverchok/assets/14288520/06c34294-1f26-44d7-b46d-b884a51073b6" />
+</a>
 </div></blockquote>
 <ul class="simple">
 <li><p><strong>Relative</strong>. The node will output a “relative” vector field, i.e. it will
@@ -225,7 +225,8 @@ be supposed to work with <a class="reference internal" href="vector_field_eval.h
 <li><p>Cubic</p></li>
 <li><p>Quintic</p></li>
 <li><p>Thin Plate</p>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/da412d29-d035-4dcf-b2eb-a4413dbd50f3"><img alt="https://github.com/nortikin/sverchok/assets/14288520/da412d29-d035-4dcf-b2eb-a4413dbd50f3" src="https://github.com/nortikin/sverchok/assets/14288520/da412d29-d035-4dcf-b2eb-a4413dbd50f3" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/da412d29-d035-4dcf-b2eb-a4413dbd50f3"><img alt="https://github.com/nortikin/sverchok/assets/14288520/da412d29-d035-4dcf-b2eb-a4413dbd50f3" src="https://github.com/nortikin/sverchok/assets/14288520/da412d29-d035-4dcf-b2eb-a4413dbd50f3" />
+</a>
 </li>
 </ul>
 <p>The default function is Multi Quadric.</p>
@@ -242,7 +243,8 @@ be supposed to work with <a class="reference internal" href="vector_field_eval.h
 <section id="example-of-usage">
 <h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Link to this heading">¶</a></h2>
 <p>Define eight “force” vectors for each of eight vertices of a cube. Build an interpolating vector field for such vectors. Then apply it to better subdivided cube:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/87243779-19f3ec80-c452-11ea-8570-b95db6e11efb.png"><img alt="https://user-images.githubusercontent.com/284644/87243779-19f3ec80-c452-11ea-8570-b95db6e11efb.png" src="https://user-images.githubusercontent.com/284644/87243779-19f3ec80-c452-11ea-8570-b95db6e11efb.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/87243779-19f3ec80-c452-11ea-8570-b95db6e11efb.png"><img alt="https://user-images.githubusercontent.com/284644/87243779-19f3ec80-c452-11ea-8570-b95db6e11efb.png" src="https://user-images.githubusercontent.com/284644/87243779-19f3ec80-c452-11ea-8570-b95db6e11efb.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
 <li><p>Fields-&gt; <a class="reference internal" href="vector_field_apply.html"><span class="doc">Apply Vector Field</span></a></p></li>
@@ -250,7 +252,8 @@ be supposed to work with <a class="reference internal" href="vector_field_eval.h
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
 </ul>
 <hr class="docutils" />
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/e1035edc-cec7-47b1-8fb6-f6b3e01827d6"><img alt="https://github.com/nortikin/sverchok/assets/14288520/e1035edc-cec7-47b1-8fb6-f6b3e01827d6" src="https://github.com/nortikin/sverchok/assets/14288520/e1035edc-cec7-47b1-8fb6-f6b3e01827d6" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/e1035edc-cec7-47b1-8fb6-f6b3e01827d6"><img alt="https://github.com/nortikin/sverchok/assets/14288520/e1035edc-cec7-47b1-8fb6-f6b3e01827d6" src="https://github.com/nortikin/sverchok/assets/14288520/e1035edc-cec7-47b1-8fb6-f6b3e01827d6" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/line_mk4.html"><span class="doc">Line</span></a></p></li>
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/segment.html"><span class="doc">Segment</span></a></p></li>

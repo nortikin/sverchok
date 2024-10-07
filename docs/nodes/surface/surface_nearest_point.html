@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../">
 <head>
@@ -6,17 +8,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Nearest Point on Surface &mdash; Sverchok 1, 2, 0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=7ab3649f" />
 
   
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/documentation_options.js?v=773c2105"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/documentation_options.js?v=773c2105"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -36,9 +34,6 @@
             Sverchok
               <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
           </a>
-              <div class="version">
-                1, 2, 0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -181,7 +176,8 @@
              
   <section id="nearest-point-on-surface">
 <h1>Nearest Point on Surface<a class="headerlink" href="#nearest-point-on-surface" title="Link to this heading">¶</a></h1>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/aeb96cdd-91d3-4ade-aaef-d0b76e61ae46"><img alt="https://github.com/nortikin/sverchok/assets/14288520/aeb96cdd-91d3-4ade-aaef-d0b76e61ae46" src="https://github.com/nortikin/sverchok/assets/14288520/aeb96cdd-91d3-4ade-aaef-d0b76e61ae46" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/aeb96cdd-91d3-4ade-aaef-d0b76e61ae46"><img alt="https://github.com/nortikin/sverchok/assets/14288520/aeb96cdd-91d3-4ade-aaef-d0b76e61ae46" src="https://github.com/nortikin/sverchok/assets/14288520/aeb96cdd-91d3-4ade-aaef-d0b76e61ae46" />
+</a>
 <section id="dependencies">
 <h2>Dependencies<a class="headerlink" href="#dependencies" title="Link to this heading">¶</a></h2>
 <p>This node requires <a class="reference external" href="https://scipy.org/">SciPy</a> library to work.</p>
@@ -201,7 +197,8 @@ as an initial guess for the more precise algorithm.</p>
 <p>In case there are several points on the surface with equal distance to the
 original point, the node will return one of them (it is not guaranteed which
 one).</p>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/668eebba-dcbb-456b-9bdd-f825bd686af3"><img alt="https://github.com/nortikin/sverchok/assets/14288520/668eebba-dcbb-456b-9bdd-f825bd686af3" src="https://github.com/nortikin/sverchok/assets/14288520/668eebba-dcbb-456b-9bdd-f825bd686af3" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/668eebba-dcbb-456b-9bdd-f825bd686af3"><img alt="https://github.com/nortikin/sverchok/assets/14288520/668eebba-dcbb-456b-9bdd-f825bd686af3" src="https://github.com/nortikin/sverchok/assets/14288520/668eebba-dcbb-456b-9bdd-f825bd686af3" />
+</a>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
@@ -224,7 +221,8 @@ location of the nearest point. Otherwise, the node will return the initial
 guess. So if this parameter is not checked, the <strong>Init Resolution</strong> parameter
 will define the precision of the node. Checked by default.</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/010a3bea-e988-4a69-9aee-567e07bd2a7a"><img alt="https://github.com/nortikin/sverchok/assets/14288520/010a3bea-e988-4a69-9aee-567e07bd2a7a" src="https://github.com/nortikin/sverchok/assets/14288520/010a3bea-e988-4a69-9aee-567e07bd2a7a" /></a>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/010a3bea-e988-4a69-9aee-567e07bd2a7a"><img alt="https://github.com/nortikin/sverchok/assets/14288520/010a3bea-e988-4a69-9aee-567e07bd2a7a" src="https://github.com/nortikin/sverchok/assets/14288520/010a3bea-e988-4a69-9aee-567e07bd2a7a" />
+</a>
 </div></blockquote>
 </li>
 <li><p><strong>Method</strong>. This parameter is available in the N panel only. The algorithm
@@ -240,7 +238,8 @@ used to find the nearest point. The available algorithms are:</p>
 this parameter. In more complex cases, you will have to try all algorithms
 and select the one which fits you the best.</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/3c69245a-9e78-405f-a0b6-0784f690c99f"><img alt="https://github.com/nortikin/sverchok/assets/14288520/3c69245a-9e78-405f-a0b6-0784f690c99f" src="https://github.com/nortikin/sverchok/assets/14288520/3c69245a-9e78-405f-a0b6-0784f690c99f" /></a>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/3c69245a-9e78-405f-a0b6-0784f690c99f"><img alt="https://github.com/nortikin/sverchok/assets/14288520/3c69245a-9e78-405f-a0b6-0784f690c99f" src="https://github.com/nortikin/sverchok/assets/14288520/3c69245a-9e78-405f-a0b6-0784f690c99f" />
+</a>
 </div></blockquote>
 </div></blockquote>
 </li>
@@ -252,7 +251,8 @@ better results or better performance in case you are, for example, finding
 nearest points for a series of points generated from one curve. Unchecked by
 default.</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/8de6fe38-943e-4d3d-a503-6ac86d852a4b"><img alt="https://github.com/nortikin/sverchok/assets/14288520/8de6fe38-943e-4d3d-a503-6ac86d852a4b" src="https://github.com/nortikin/sverchok/assets/14288520/8de6fe38-943e-4d3d-a503-6ac86d852a4b" /></a>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/8de6fe38-943e-4d3d-a503-6ac86d852a4b"><img alt="https://github.com/nortikin/sverchok/assets/14288520/8de6fe38-943e-4d3d-a503-6ac86d852a4b" src="https://github.com/nortikin/sverchok/assets/14288520/8de6fe38-943e-4d3d-a503-6ac86d852a4b" />
+</a>
 </div></blockquote>
 </li>
 </ul>
@@ -269,7 +269,8 @@ to U and V.</p></li>
 </section>
 <section id="example-of-usage">
 <h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Link to this heading">¶</a></h2>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/377c8839-91d0-4348-863e-0338310618d4"><img alt="https://github.com/nortikin/sverchok/assets/14288520/377c8839-91d0-4348-863e-0338310618d4" src="https://github.com/nortikin/sverchok/assets/14288520/377c8839-91d0-4348-863e-0338310618d4" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/377c8839-91d0-4348-863e-0338310618d4"><img alt="https://github.com/nortikin/sverchok/assets/14288520/377c8839-91d0-4348-863e-0338310618d4" src="https://github.com/nortikin/sverchok/assets/14288520/377c8839-91d0-4348-863e-0338310618d4" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/segment.html"><span class="doc">Segment</span></a></p></li>
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
@@ -279,9 +280,11 @@ to U and V.</p></li>
 <li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
 </ul>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/e5e6c83f-7c34-4bff-b2fa-97dcaed59e57"><img alt="https://github.com/nortikin/sverchok/assets/14288520/e5e6c83f-7c34-4bff-b2fa-97dcaed59e57" src="https://github.com/nortikin/sverchok/assets/14288520/e5e6c83f-7c34-4bff-b2fa-97dcaed59e57" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/e5e6c83f-7c34-4bff-b2fa-97dcaed59e57"><img alt="https://github.com/nortikin/sverchok/assets/14288520/e5e6c83f-7c34-4bff-b2fa-97dcaed59e57" src="https://github.com/nortikin/sverchok/assets/14288520/e5e6c83f-7c34-4bff-b2fa-97dcaed59e57" />
+</a>
 <hr class="docutils" />
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/87247996-782fc800-c470-11ea-8ccc-e15021b59591.png"><img alt="https://user-images.githubusercontent.com/284644/87247996-782fc800-c470-11ea-8ccc-e15021b59591.png" src="https://user-images.githubusercontent.com/284644/87247996-782fc800-c470-11ea-8ccc-e15021b59591.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/87247996-782fc800-c470-11ea-8ccc-e15021b59591.png"><img alt="https://user-images.githubusercontent.com/284644/87247996-782fc800-c470-11ea-8ccc-e15021b59591.png" src="https://user-images.githubusercontent.com/284644/87247996-782fc800-c470-11ea-8ccc-e15021b59591.png" />
+</a>
 <ul class="simple">
 <li><p>Curves-&gt; <a class="reference internal" href="../curve/cubic_spline.html"><span class="doc">Cubic Spline</span></a></p></li>
 <li><p>Surfaces-&gt; <a class="reference internal" href="minimal_surface.html"><span class="doc">Minimal Surface</span></a></p></li>

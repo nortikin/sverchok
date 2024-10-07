@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../">
 <head>
@@ -6,17 +8,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Merge Mesh 2d &mdash; Sverchok 1, 2, 0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=7ab3649f" />
 
   
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/documentation_options.js?v=773c2105"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/documentation_options.js?v=773c2105"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -36,9 +34,6 @@
             Sverchok
               <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
           </a>
-              <div class="version">
-                1, 2, 0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -141,7 +136,8 @@
              
   <section id="merge-mesh-2d">
 <h1>Merge Mesh 2d<a class="headerlink" href="#merge-mesh-2d" title="Link to this heading">¶</a></h1>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198872809-790f46b2-31dc-4e28-8e30-36f0b3f75f79.png"><img alt="https://user-images.githubusercontent.com/14288520/198872809-790f46b2-31dc-4e28-8e30-36f0b3f75f79.png" src="https://user-images.githubusercontent.com/14288520/198872809-790f46b2-31dc-4e28-8e30-36f0b3f75f79.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198872809-790f46b2-31dc-4e28-8e30-36f0b3f75f79.png"><img alt="https://user-images.githubusercontent.com/14288520/198872809-790f46b2-31dc-4e28-8e30-36f0b3f75f79.png" src="https://user-images.githubusercontent.com/14288520/198872809-790f46b2-31dc-4e28-8e30-36f0b3f75f79.png" />
+</a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node merging to input meshes in one with finding intersections and providing extra information about faces.</p>
@@ -156,7 +152,8 @@ what can seem obvious that it should be but it was a bit tricky in implementatio
 Also the node can create holes in polygons.
 The algorithm will split polygon with holes into some pieces so holes lay on boundary of new pieces.</p>
 <p>The node can use information related with faces of initial meshes for assign them to new mesh.</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198845493-94f3bdb3-391a-4689-974e-9e453908b535.png"><img alt="https://user-images.githubusercontent.com/14288520/198845493-94f3bdb3-391a-4689-974e-9e453908b535.png" src="https://user-images.githubusercontent.com/14288520/198845493-94f3bdb3-391a-4689-974e-9e453908b535.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198845493-94f3bdb3-391a-4689-974e-9e453908b535.png"><img alt="https://user-images.githubusercontent.com/14288520/198845493-94f3bdb3-391a-4689-974e-9e453908b535.png" src="https://user-images.githubusercontent.com/14288520/198845493-94f3bdb3-391a-4689-974e-9e453908b535.png" />
+</a>
 </section>
 <section id="performance">
 <h2>Performance<a class="headerlink" href="#performance" title="Link to this heading">¶</a></h2>
@@ -191,7 +188,8 @@ if there is at least one edge which has a lot of overlapping with other edges.</
 <li><p><strong>Face Index A</strong> (hidden by default) - list of indexes with range from -1 to infinite related with <cite>faces</cite> socket output where index points to face from mesh A</p></li>
 <li><p><strong>Face Index B</strong> (hidden by default) - list of indexes with range from -1 to infinite related with <cite>faces</cite> socket output where index points to face from mesh B</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198845254-c9f95b1f-f0cb-487d-b1d3-1431003e3bf1.png"><img alt="https://user-images.githubusercontent.com/14288520/198845254-c9f95b1f-f0cb-487d-b1d3-1431003e3bf1.png" src="https://user-images.githubusercontent.com/14288520/198845254-c9f95b1f-f0cb-487d-b1d3-1431003e3bf1.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198845254-c9f95b1f-f0cb-487d-b1d3-1431003e3bf1.png"><img alt="https://user-images.githubusercontent.com/14288520/198845254-c9f95b1f-f0cb-487d-b1d3-1431003e3bf1.png" src="https://user-images.githubusercontent.com/14288520/198845254-c9f95b1f-f0cb-487d-b1d3-1431003e3bf1.png" />
+</a>
 </section>
 <section id="n-panel">
 <h2>N panel<a class="headerlink" href="#n-panel" title="Link to this heading">¶</a></h2>

@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../">
 <head>
@@ -6,17 +8,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Select Similar &mdash; Sverchok 1, 2, 0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=7ab3649f" />
 
   
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/documentation_options.js?v=773c2105"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/documentation_options.js?v=773c2105"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -36,9 +34,6 @@
             Sverchok
               <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
           </a>
-              <div class="version">
-                1, 2, 0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -173,7 +168,8 @@
              
   <section id="select-similar">
 <h1>Select Similar<a class="headerlink" href="#select-similar" title="Link to this heading">¶</a></h1>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197363787-fc0253a1-087e-4f65-9b89-338ac6a426ab.png"><img alt="https://user-images.githubusercontent.com/14288520/197363787-fc0253a1-087e-4f65-9b89-338ac6a426ab.png" src="https://user-images.githubusercontent.com/14288520/197363787-fc0253a1-087e-4f65-9b89-338ac6a426ab.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197363787-fc0253a1-087e-4f65-9b89-338ac6a426ab.png"><img alt="https://user-images.githubusercontent.com/14288520/197363787-fc0253a1-087e-4f65-9b89-338ac6a426ab.png" src="https://user-images.githubusercontent.com/14288520/197363787-fc0253a1-087e-4f65-9b89-338ac6a426ab.png" />
+</a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node allows to select mesh elements (vertices, edges and faces), which are similar to elements already selected in some aspect.
@@ -240,11 +236,14 @@ This is the implementation of Blender’s own “Select Similar” (Shift+G) fea
 <section id="examples-of-usage">
 <h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Link to this heading">¶</a></h2>
 <p>Select faces with similar normal vector. Originally selected faces are marked with red color.</p>
-<a class="reference external image-reference" href="https://cloud.githubusercontent.com/assets/284644/25073036/6cabd4da-22ff-11e7-9880-143d8af4b8c9.png"><img alt="https://cloud.githubusercontent.com/assets/284644/25073036/6cabd4da-22ff-11e7-9880-143d8af4b8c9.png" src="https://cloud.githubusercontent.com/assets/284644/25073036/6cabd4da-22ff-11e7-9880-143d8af4b8c9.png" /></a>
+<a class="reference external image-reference" href="https://cloud.githubusercontent.com/assets/284644/25073036/6cabd4da-22ff-11e7-9880-143d8af4b8c9.png"><img alt="https://cloud.githubusercontent.com/assets/284644/25073036/6cabd4da-22ff-11e7-9880-143d8af4b8c9.png" src="https://cloud.githubusercontent.com/assets/284644/25073036/6cabd4da-22ff-11e7-9880-143d8af4b8c9.png" />
+</a>
 <p>Select faces with similar area. Originally selected faces are marked with red color.</p>
-<a class="reference external image-reference" href="https://cloud.githubusercontent.com/assets/284644/25073037/6ce11f50-22ff-11e7-8744-f5aefb616f23.png"><img alt="https://cloud.githubusercontent.com/assets/284644/25073037/6ce11f50-22ff-11e7-8744-f5aefb616f23.png" src="https://cloud.githubusercontent.com/assets/284644/25073037/6ce11f50-22ff-11e7-8744-f5aefb616f23.png" /></a>
+<a class="reference external image-reference" href="https://cloud.githubusercontent.com/assets/284644/25073037/6ce11f50-22ff-11e7-8744-f5aefb616f23.png"><img alt="https://cloud.githubusercontent.com/assets/284644/25073037/6ce11f50-22ff-11e7-8744-f5aefb616f23.png" src="https://cloud.githubusercontent.com/assets/284644/25073037/6ce11f50-22ff-11e7-8744-f5aefb616f23.png" />
+</a>
 <p>Select edges with direction similar to selected edges. Originally selected edges are marked with orange color.</p>
-<a class="reference external image-reference" href="https://cloud.githubusercontent.com/assets/284644/25073037/6ce11f50-22ff-11e7-8744-f5aefb616f23.png"><img alt="https://cloud.githubusercontent.com/assets/284644/25073037/6ce11f50-22ff-11e7-8744-f5aefb616f23.png" src="https://cloud.githubusercontent.com/assets/284644/25073037/6ce11f50-22ff-11e7-8744-f5aefb616f23.png" /></a>
+<a class="reference external image-reference" href="https://cloud.githubusercontent.com/assets/284644/25073037/6ce11f50-22ff-11e7-8744-f5aefb616f23.png"><img alt="https://cloud.githubusercontent.com/assets/284644/25073037/6ce11f50-22ff-11e7-8744-f5aefb616f23.png" src="https://cloud.githubusercontent.com/assets/284644/25073037/6ce11f50-22ff-11e7-8744-f5aefb616f23.png" />
+</a>
 </section>
 </section>
 

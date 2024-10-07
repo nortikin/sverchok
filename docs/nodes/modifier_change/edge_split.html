@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../">
 <head>
@@ -6,17 +8,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Split Edges &mdash; Sverchok 1, 2, 0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=7ab3649f" />
 
   
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/documentation_options.js?v=773c2105"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/documentation_options.js?v=773c2105"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -36,9 +34,6 @@
             Sverchok
               <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
           </a>
-              <div class="version">
-                1, 2, 0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -172,7 +167,8 @@
              
   <section id="split-edges">
 <h1>Split Edges<a class="headerlink" href="#split-edges" title="Link to this heading">¶</a></h1>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200128313-beaf2178-fb18-4a82-a94c-f3db3e2b5ad9.png"><img alt="https://user-images.githubusercontent.com/14288520/200128313-beaf2178-fb18-4a82-a94c-f3db3e2b5ad9.png" src="https://user-images.githubusercontent.com/14288520/200128313-beaf2178-fb18-4a82-a94c-f3db3e2b5ad9.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200128313-beaf2178-fb18-4a82-a94c-f3db3e2b5ad9.png"><img alt="https://user-images.githubusercontent.com/14288520/200128313-beaf2178-fb18-4a82-a94c-f3db3e2b5ad9.png" src="https://user-images.githubusercontent.com/14288520/200128313-beaf2178-fb18-4a82-a94c-f3db3e2b5ad9.png" />
+</a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node splits each edge of the input mesh. It supports the following modes of operation:</p>
@@ -183,7 +179,8 @@ between two vertices of the edge with user-provided factor value.</p></li>
 offset from one of vertices of the edge by user-provided factor value.</p></li>
 <li><p>Split each edge in arbitrary number of pieces, by making several cuts. New vertices are placed evenly.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200128601-00df8252-5379-4f1e-b820-18c14a45fda7.png"><img alt="https://user-images.githubusercontent.com/14288520/200128601-00df8252-5379-4f1e-b820-18c14a45fda7.png" src="https://user-images.githubusercontent.com/14288520/200128601-00df8252-5379-4f1e-b820-18c14a45fda7.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200128601-00df8252-5379-4f1e-b820-18c14a45fda7.png"><img alt="https://user-images.githubusercontent.com/14288520/200128601-00df8252-5379-4f1e-b820-18c14a45fda7.png" src="https://user-images.githubusercontent.com/14288520/200128601-00df8252-5379-4f1e-b820-18c14a45fda7.png" />
+</a>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
@@ -233,9 +230,12 @@ defined by <strong>Cuts</strong> input.</p></li>
 <p>The default option is <strong>Simple</strong>.</p>
 </li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201472654-55398ec8-d437-44be-8d77-1f023695b0e2.png"><img alt="https://user-images.githubusercontent.com/14288520/201472654-55398ec8-d437-44be-8d77-1f023695b0e2.png" src="https://user-images.githubusercontent.com/14288520/201472654-55398ec8-d437-44be-8d77-1f023695b0e2.png" /></a>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201472763-44e8782e-50ae-4b0b-9aa4-7c75e1bcfab6.png"><img alt="https://user-images.githubusercontent.com/14288520/201472763-44e8782e-50ae-4b0b-9aa4-7c75e1bcfab6.png" src="https://user-images.githubusercontent.com/14288520/201472763-44e8782e-50ae-4b0b-9aa4-7c75e1bcfab6.png" /></a>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201472839-2662621f-f2d6-4fb5-aa04-d48108d30e2c.png"><img alt="https://user-images.githubusercontent.com/14288520/201472839-2662621f-f2d6-4fb5-aa04-d48108d30e2c.png" src="https://user-images.githubusercontent.com/14288520/201472839-2662621f-f2d6-4fb5-aa04-d48108d30e2c.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201472654-55398ec8-d437-44be-8d77-1f023695b0e2.png"><img alt="https://user-images.githubusercontent.com/14288520/201472654-55398ec8-d437-44be-8d77-1f023695b0e2.png" src="https://user-images.githubusercontent.com/14288520/201472654-55398ec8-d437-44be-8d77-1f023695b0e2.png" />
+</a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201472763-44e8782e-50ae-4b0b-9aa4-7c75e1bcfab6.png"><img alt="https://user-images.githubusercontent.com/14288520/201472763-44e8782e-50ae-4b0b-9aa4-7c75e1bcfab6.png" src="https://user-images.githubusercontent.com/14288520/201472763-44e8782e-50ae-4b0b-9aa4-7c75e1bcfab6.png" />
+</a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201472839-2662621f-f2d6-4fb5-aa04-d48108d30e2c.png"><img alt="https://user-images.githubusercontent.com/14288520/201472839-2662621f-f2d6-4fb5-aa04-d48108d30e2c.png" src="https://user-images.githubusercontent.com/14288520/201472839-2662621f-f2d6-4fb5-aa04-d48108d30e2c.png" />
+</a>
 </section>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
@@ -250,7 +250,8 @@ is not connected.</p></li>
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">¶</a></h2>
 <p>Split even edges</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200129550-d9c578a3-4f61-4ae2-98ee-24521f8adc6e.png"><img alt="https://user-images.githubusercontent.com/14288520/200129550-d9c578a3-4f61-4ae2-98ee-24521f8adc6e.png" src="https://user-images.githubusercontent.com/14288520/200129550-d9c578a3-4f61-4ae2-98ee-24521f8adc6e.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/200129550-d9c578a3-4f61-4ae2-98ee-24521f8adc6e.png"><img alt="https://user-images.githubusercontent.com/14288520/200129550-d9c578a3-4f61-4ae2-98ee-24521f8adc6e.png" src="https://user-images.githubusercontent.com/14288520/200129550-d9c578a3-4f61-4ae2-98ee-24521f8adc6e.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>
 <li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>

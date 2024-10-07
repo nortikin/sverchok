@@ -174,7 +174,7 @@ Example of usage
   :target: https://user-images.githubusercontent.com/14288520/202578440-c713aac3-c787-456a-b796-190204bf297a.png
 
 * Generator-> :doc:`Box </nodes/generator/box_mk2>`
-* Spatial-> :doc:`Populate Mesh </nodes/spatial/random_points_on_mesh>`
+* Spatial-> :doc:`Populate Mesh </nodes/spatial/populate_mesh_mk2>`
 * Modifiers->Modifier Change-> :doc:`Inset Faces </nodes/modifier_change/inset_faces>`
 * Modifiers->Modifier Make-> :doc:`Subdivide </nodes/modifier_change/subdivide_mk2>`
 * Matrix-> :doc:`Matrix In </nodes/matrix/matrix_in_mk4>`

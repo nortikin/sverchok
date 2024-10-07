@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../">
 <head>
@@ -6,17 +8,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Extend Curve &mdash; Sverchok 1, 2, 0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=7ab3649f" />
 
   
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/documentation_options.js?v=773c2105"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/documentation_options.js?v=773c2105"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -36,9 +34,6 @@
             Sverchok
               <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
           </a>
-              <div class="version">
-                1, 2, 0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -124,6 +119,7 @@
 <li class="toctree-l3"><a class="reference internal" href="point_curve.html">Single-Point Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="polyarc.html">Poly Arc</a></li>
 <li class="toctree-l3"><a class="reference internal" href="polyline.html">Polyline</a></li>
+<li class="toctree-l3"><a class="reference internal" href="prepare_curves_net.html">Prepare NURBS Curves Net</a></li>
 <li class="toctree-l3"><a class="reference internal" href="project_curve_surface.html">Project Curve to Surface (NURBS)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="rbf_curve.html">RBF Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="reduce_degree.html">Reduce Degree (NURBS Curve)</a></li>
@@ -205,14 +201,16 @@
              
   <section id="extend-curve">
 <h1>Extend Curve<a class="headerlink" href="#extend-curve" title="Link to this heading">¶</a></h1>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/bc848d08-3c37-49a6-8aca-bf61cd984bb5"><img alt="https://github.com/nortikin/sverchok/assets/14288520/bc848d08-3c37-49a6-8aca-bf61cd984bb5" src="https://github.com/nortikin/sverchok/assets/14288520/bc848d08-3c37-49a6-8aca-bf61cd984bb5" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/bc848d08-3c37-49a6-8aca-bf61cd984bb5"><img alt="https://github.com/nortikin/sverchok/assets/14288520/bc848d08-3c37-49a6-8aca-bf61cd984bb5" src="https://github.com/nortikin/sverchok/assets/14288520/bc848d08-3c37-49a6-8aca-bf61cd984bb5" />
+</a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node generates a continuation of given Curve beyond it’s end points in a
 smooth manner. It can be used if you for some reason have just a segment of a
 curve, and want to continue it, for example, until it meets some plane or
 surface.</p>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/5974da75-a142-4f25-83fb-1af361e6936b"><img alt="https://github.com/nortikin/sverchok/assets/14288520/5974da75-a142-4f25-83fb-1af361e6936b" src="https://github.com/nortikin/sverchok/assets/14288520/5974da75-a142-4f25-83fb-1af361e6936b" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/5974da75-a142-4f25-83fb-1af361e6936b"><img alt="https://github.com/nortikin/sverchok/assets/14288520/5974da75-a142-4f25-83fb-1af361e6936b" src="https://github.com/nortikin/sverchok/assets/14288520/5974da75-a142-4f25-83fb-1af361e6936b" />
+</a>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
@@ -220,7 +218,8 @@ surface.</p>
 <ul class="simple">
 <li><p><strong>Curve</strong>. The curve to be extended. This input is mandatory.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/f2868357-5132-4e55-bb75-e136f1ba9e29"><img alt="https://github.com/nortikin/sverchok/assets/14288520/f2868357-5132-4e55-bb75-e136f1ba9e29" src="https://github.com/nortikin/sverchok/assets/14288520/f2868357-5132-4e55-bb75-e136f1ba9e29" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/f2868357-5132-4e55-bb75-e136f1ba9e29"><img alt="https://github.com/nortikin/sverchok/assets/14288520/f2868357-5132-4e55-bb75-e136f1ba9e29" src="https://github.com/nortikin/sverchok/assets/14288520/f2868357-5132-4e55-bb75-e136f1ba9e29" />
+</a>
 <ul class="simple">
 <li><p><strong>StartExt</strong>. This defines how far the curve should be extended beyond it’s
 starting point. Depending on <strong>Extend by</strong> parameter, this is measured either
@@ -246,7 +245,8 @@ and ending point. Thus, it is guaranteed that the resulting curve will have
 continuous first derivative at the point where original curve is glued with
 it’s extension.</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/296b9895-c5cb-4acb-848f-a804c12513c5"><img alt="https://github.com/nortikin/sverchok/assets/14288520/296b9895-c5cb-4acb-848f-a804c12513c5" src="https://github.com/nortikin/sverchok/assets/14288520/296b9895-c5cb-4acb-848f-a804c12513c5" /></a>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/296b9895-c5cb-4acb-848f-a804c12513c5"><img alt="https://github.com/nortikin/sverchok/assets/14288520/296b9895-c5cb-4acb-848f-a804c12513c5" src="https://github.com/nortikin/sverchok/assets/14288520/296b9895-c5cb-4acb-848f-a804c12513c5" />
+</a>
 </div></blockquote>
 </li>
 <li><p><strong>1 - Arc</strong>. Extend the curve with circular arcs. Extension direction and arc
@@ -255,7 +255,8 @@ lie is calculated based on curve’s second derivatives at ending points.
 Thus, it is guaranteed that the resulting curve will have continuous first
 derivative at the point where original curve is glued with it’s extension.</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/8d6812be-a400-41cb-b569-74c4eaf0ba98"><img alt="https://github.com/nortikin/sverchok/assets/14288520/8d6812be-a400-41cb-b569-74c4eaf0ba98" src="https://github.com/nortikin/sverchok/assets/14288520/8d6812be-a400-41cb-b569-74c4eaf0ba98" /></a>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/8d6812be-a400-41cb-b569-74c4eaf0ba98"><img alt="https://github.com/nortikin/sverchok/assets/14288520/8d6812be-a400-41cb-b569-74c4eaf0ba98" src="https://github.com/nortikin/sverchok/assets/14288520/8d6812be-a400-41cb-b569-74c4eaf0ba98" />
+</a>
 </div></blockquote>
 </li>
 <li><p><strong>2 - Smooth - Normal</strong>. Extend the curve with segments of second order
@@ -265,7 +266,8 @@ points. Thus, it is guaraneed that the resulting curve will have continuous
 first and second derivatives at the point where original curve is glued
 with it’s extension.</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/a804f9d9-e274-408c-8051-d8a52db2b8ca"><img alt="https://github.com/nortikin/sverchok/assets/14288520/a804f9d9-e274-408c-8051-d8a52db2b8ca" src="https://github.com/nortikin/sverchok/assets/14288520/a804f9d9-e274-408c-8051-d8a52db2b8ca" /></a>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/a804f9d9-e274-408c-8051-d8a52db2b8ca"><img alt="https://github.com/nortikin/sverchok/assets/14288520/a804f9d9-e274-408c-8051-d8a52db2b8ca" src="https://github.com/nortikin/sverchok/assets/14288520/a804f9d9-e274-408c-8051-d8a52db2b8ca" />
+</a>
 </div></blockquote>
 </li>
 <li><p><strong>3 - Smooth - Curvature</strong>. Extend the curve with segments of third order
@@ -275,7 +277,8 @@ points. Thus, it is guaraneed that the resulting curve will have continuous
 first, second and third derivatives at the point where original curve is glued
 with it’s extension.</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/7fc31678-10eb-4ba0-a03b-f72d83283300"><img alt="https://github.com/nortikin/sverchok/assets/14288520/7fc31678-10eb-4ba0-a03b-f72d83283300" src="https://github.com/nortikin/sverchok/assets/14288520/7fc31678-10eb-4ba0-a03b-f72d83283300" /></a>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/7fc31678-10eb-4ba0-a03b-f72d83283300"><img alt="https://github.com/nortikin/sverchok/assets/14288520/7fc31678-10eb-4ba0-a03b-f72d83283300" src="https://github.com/nortikin/sverchok/assets/14288520/7fc31678-10eb-4ba0-a03b-f72d83283300" />
+</a>
 </div></blockquote>
 </li>
 </ul>
@@ -292,7 +295,8 @@ the input values. On the other hand, this option is the faster one.</p></li>
 ranges of curve’s T parameter is calculated numerically, so this option is
 slower.</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/3994636b-4fac-4c28-bb43-eefd584c6bd9"><img alt="https://github.com/nortikin/sverchok/assets/14288520/3994636b-4fac-4c28-bb43-eefd584c6bd9" src="https://github.com/nortikin/sverchok/assets/14288520/3994636b-4fac-4c28-bb43-eefd584c6bd9" /></a>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/3994636b-4fac-4c28-bb43-eefd584c6bd9"><img alt="https://github.com/nortikin/sverchok/assets/14288520/3994636b-4fac-4c28-bb43-eefd584c6bd9" src="https://github.com/nortikin/sverchok/assets/14288520/3994636b-4fac-4c28-bb43-eefd584c6bd9" />
+</a>
 </div></blockquote>
 </li>
 </ul>
@@ -312,17 +316,20 @@ but the slower the computation will be. The default value is 50.</p></li>
 <li><p><strong>ExtendedCurve</strong>. The original curve extended by one extension curve at the
 beginning and another curve at the end.</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/e49b567e-90cc-4a83-a781-3b62ad13d4c6"><img alt="https://github.com/nortikin/sverchok/assets/14288520/e49b567e-90cc-4a83-a781-3b62ad13d4c6" src="https://github.com/nortikin/sverchok/assets/14288520/e49b567e-90cc-4a83-a781-3b62ad13d4c6" /></a>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/e49b567e-90cc-4a83-a781-3b62ad13d4c6"><img alt="https://github.com/nortikin/sverchok/assets/14288520/e49b567e-90cc-4a83-a781-3b62ad13d4c6" src="https://github.com/nortikin/sverchok/assets/14288520/e49b567e-90cc-4a83-a781-3b62ad13d4c6" />
+</a>
 </div></blockquote>
 </li>
 <li><p><strong>StartExtent</strong>. Extension curve generated at the beginning of the original curve.</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/faa2c57c-4813-4a9c-8c91-958bdc8183bc"><img alt="https://github.com/nortikin/sverchok/assets/14288520/faa2c57c-4813-4a9c-8c91-958bdc8183bc" src="https://github.com/nortikin/sverchok/assets/14288520/faa2c57c-4813-4a9c-8c91-958bdc8183bc" /></a>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/faa2c57c-4813-4a9c-8c91-958bdc8183bc"><img alt="https://github.com/nortikin/sverchok/assets/14288520/faa2c57c-4813-4a9c-8c91-958bdc8183bc" src="https://github.com/nortikin/sverchok/assets/14288520/faa2c57c-4813-4a9c-8c91-958bdc8183bc" />
+</a>
 </div></blockquote>
 </li>
 <li><p><strong>EndExtent</strong>. Extension curve generated at the end of the original curve.</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/7b697ee7-7ebc-4cad-90c4-4249d503f1e2"><img alt="https://github.com/nortikin/sverchok/assets/14288520/7b697ee7-7ebc-4cad-90c4-4249d503f1e2" src="https://github.com/nortikin/sverchok/assets/14288520/7b697ee7-7ebc-4cad-90c4-4249d503f1e2" /></a>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/7b697ee7-7ebc-4cad-90c4-4249d503f1e2"><img alt="https://github.com/nortikin/sverchok/assets/14288520/7b697ee7-7ebc-4cad-90c4-4249d503f1e2" src="https://github.com/nortikin/sverchok/assets/14288520/7b697ee7-7ebc-4cad-90c4-4249d503f1e2" />
+</a>
 </div></blockquote>
 </li>
 </ul>
@@ -331,7 +338,8 @@ beginning and another curve at the end.</p>
 <h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Link to this heading">¶</a></h2>
 <p>Build part of curve from points, and then extend it to additional length of 1
 at the beginning and to additional length of 2 at the end:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/84564568-07679400-ad7c-11ea-8370-c4a8008a8c74.png"><img alt="https://user-images.githubusercontent.com/284644/84564568-07679400-ad7c-11ea-8370-c4a8008a8c74.png" src="https://user-images.githubusercontent.com/284644/84564568-07679400-ad7c-11ea-8370-c4a8008a8c74.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/84564568-07679400-ad7c-11ea-8370-c4a8008a8c74.png"><img alt="https://user-images.githubusercontent.com/284644/84564568-07679400-ad7c-11ea-8370-c4a8008a8c74.png" src="https://user-images.githubusercontent.com/284644/84564568-07679400-ad7c-11ea-8370-c4a8008a8c74.png" />
+</a>
 <ul class="simple">
 <li><p>Vector-&gt; <a class="reference internal" href="../vector/vertices_sort.html"><span class="doc">Vector sort</span></a></p></li>
 <li><p>Curves-&gt; <a class="reference internal" href="cubic_spline.html"><span class="doc">Cubic Spline</span></a></p></li>

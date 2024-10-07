@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../">
 <head>
@@ -6,17 +8,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Select Mesh Elements &mdash; Sverchok 1, 2, 0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=7ab3649f" />
 
   
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/documentation_options.js?v=773c2105"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/documentation_options.js?v=773c2105"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -36,9 +34,6 @@
             Sverchok
               <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
           </a>
-              <div class="version">
-                1, 2, 0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -180,7 +175,8 @@
              
   <section id="select-mesh-elements">
 <h1>Select Mesh Elements<a class="headerlink" href="#select-mesh-elements" title="Link to this heading">¶</a></h1>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197348551-a2d5c2ae-f213-47e6-becc-7a02bc563e50.png"><img alt="https://user-images.githubusercontent.com/14288520/197348551-a2d5c2ae-f213-47e6-becc-7a02bc563e50.png" src="https://user-images.githubusercontent.com/14288520/197348551-a2d5c2ae-f213-47e6-becc-7a02bc563e50.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197348551-a2d5c2ae-f213-47e6-becc-7a02bc563e50.png"><img alt="https://user-images.githubusercontent.com/14288520/197348551-a2d5c2ae-f213-47e6-becc-7a02bc563e50.png" src="https://user-images.githubusercontent.com/14288520/197348551-a2d5c2ae-f213-47e6-becc-7a02bc563e50.png" />
+</a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node allows to select mesh elements (vertices, edges and faces) by their geometrical location, by one of supported criteria.</p>
@@ -222,7 +218,8 @@
 </li>
 <li><p><strong>Include partial selection</strong>. Not available in <strong>By normal</strong> mode. All other modes select vertices first. This parameter controls either we need to select edges and faces that have <strong>any</strong> of vertices selected (Include partial = True), or only edges and faces that have <strong>all</strong> vertices selected (Include partial = False).</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197355140-b84f32bf-79c1-45d5-a060-d301dc10f100.png"><img alt="https://user-images.githubusercontent.com/14288520/197355140-b84f32bf-79c1-45d5-a060-d301dc10f100.png" src="https://user-images.githubusercontent.com/14288520/197355140-b84f32bf-79c1-45d5-a060-d301dc10f100.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197355140-b84f32bf-79c1-45d5-a060-d301dc10f100.png"><img alt="https://user-images.githubusercontent.com/14288520/197355140-b84f32bf-79c1-45d5-a060-d301dc10f100.png" src="https://user-images.githubusercontent.com/14288520/197355140-b84f32bf-79c1-45d5-a060-d301dc10f100.png" />
+</a>
 <ul class="simple">
 <li><p><strong>Level</strong>. Data nesting level to work with. Default (and minimum) value is 2,
 which means that the node’s <strong>Vertices</strong> input will expect a list of lists of
@@ -244,7 +241,8 @@ lists of booleans; and so on.</p></li>
 <section id="mode-by-side">
 <span id="id1"></span><h2>Mode - By Side<a class="headerlink" href="#mode-by-side" title="Link to this heading">¶</a></h2>
 <p>Selects vertices that are located at one side of mesh. The side is specified by <strong>Direction</strong> input. So you can select “rightmost” vertices by passing (0, 0, 1) as Direction. Number of vertices to select is controlled by <strong>Percent</strong> input: 1% means select only “most rightmost” vertices, 99% means select “all but most leftmost”. More exactly, this mode selects vertex V if <cite>(Direction, V) &gt;= max - Percent * (max - min)</cite>, where <cite>max</cite> and <cite>min</cite> are maximum and minimum values of that scalar product amongst all vertices.</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197350451-1c209494-153e-4f82-9758-f4f22983fddc.png"><img alt="https://user-images.githubusercontent.com/14288520/197350451-1c209494-153e-4f82-9758-f4f22983fddc.png" src="https://user-images.githubusercontent.com/14288520/197350451-1c209494-153e-4f82-9758-f4f22983fddc.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197350451-1c209494-153e-4f82-9758-f4f22983fddc.png"><img alt="https://user-images.githubusercontent.com/14288520/197350451-1c209494-153e-4f82-9758-f4f22983fddc.png" src="https://user-images.githubusercontent.com/14288520/197350451-1c209494-153e-4f82-9758-f4f22983fddc.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/line_mk4.html"><span class="doc">Line</span></a></p></li>
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
@@ -253,9 +251,11 @@ lists of booleans; and so on.</p></li>
 <li><p>List-&gt; <a class="reference internal" href="../list_masks/mask.html"><span class="doc">List Mask (Out)</span></a></p></li>
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197350918-26a4a94e-7ad8-4c59-a4d3-fb9356cfab21.gif"><img alt="https://user-images.githubusercontent.com/14288520/197350918-26a4a94e-7ad8-4c59-a4d3-fb9356cfab21.gif" src="https://user-images.githubusercontent.com/14288520/197350918-26a4a94e-7ad8-4c59-a4d3-fb9356cfab21.gif" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197350918-26a4a94e-7ad8-4c59-a4d3-fb9356cfab21.gif"><img alt="https://user-images.githubusercontent.com/14288520/197350918-26a4a94e-7ad8-4c59-a4d3-fb9356cfab21.gif" src="https://user-images.githubusercontent.com/14288520/197350918-26a4a94e-7ad8-4c59-a4d3-fb9356cfab21.gif" />
+</a>
 <hr class="docutils" />
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197352357-a5133a0e-9556-45a9-8095-485b8595c5af.png"><img alt="https://user-images.githubusercontent.com/14288520/197352357-a5133a0e-9556-45a9-8095-485b8595c5af.png" src="https://user-images.githubusercontent.com/14288520/197352357-a5133a0e-9556-45a9-8095-485b8595c5af.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197352357-a5133a0e-9556-45a9-8095-485b8595c5af.png"><img alt="https://user-images.githubusercontent.com/14288520/197352357-a5133a0e-9556-45a9-8095-485b8595c5af.png" src="https://user-images.githubusercontent.com/14288520/197352357-a5133a0e-9556-45a9-8095-485b8595c5af.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/line_mk4.html"><span class="doc">Line</span></a></p></li>
 <li><p>Generator-&gt;Generators Extended <a class="reference internal" href="../generators_extended/torus_knot_mk2.html"><span class="doc">Torus Knot</span></a></p></li>
@@ -266,12 +266,14 @@ lists of booleans; and so on.</p></li>
 <li><p>List-&gt; <a class="reference internal" href="../list_masks/mask.html"><span class="doc">List Mask (Out)</span></a></p></li>
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197351814-c5cc0ae0-b56e-4c19-ba36-197443bb0acb.gif"><img alt="https://user-images.githubusercontent.com/14288520/197351814-c5cc0ae0-b56e-4c19-ba36-197443bb0acb.gif" src="https://user-images.githubusercontent.com/14288520/197351814-c5cc0ae0-b56e-4c19-ba36-197443bb0acb.gif" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197351814-c5cc0ae0-b56e-4c19-ba36-197443bb0acb.gif"><img alt="https://user-images.githubusercontent.com/14288520/197351814-c5cc0ae0-b56e-4c19-ba36-197443bb0acb.gif" src="https://user-images.githubusercontent.com/14288520/197351814-c5cc0ae0-b56e-4c19-ba36-197443bb0acb.gif" />
+</a>
 </section>
 <section id="mode-by-normal-direction">
 <span id="id2"></span><h2>Mode - By Normal Direction<a class="headerlink" href="#mode-by-normal-direction" title="Link to this heading">¶</a></h2>
 <p>Selects faces, that have normal vectors pointing in specified <strong>Direction</strong>. So you can select “faces looking to right”. Number of faces to select is controlled by <strong>Percent</strong> input, similar to <strong>By side</strong> mode. More exactly, this mode selects face F if <cite>(Direction, Normal(F)) &gt;= max - Percent * (max - min)</cite>, where <cite>max</cite> and <cite>min</cite> are maximum and minimum values of that scalar product amongst all vertices.</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197353517-6383bd19-151c-4ab9-9601-e385bbd92e60.png"><img alt="https://user-images.githubusercontent.com/14288520/197353517-6383bd19-151c-4ab9-9601-e385bbd92e60.png" src="https://user-images.githubusercontent.com/14288520/197353517-6383bd19-151c-4ab9-9601-e385bbd92e60.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197353517-6383bd19-151c-4ab9-9601-e385bbd92e60.png"><img alt="https://user-images.githubusercontent.com/14288520/197353517-6383bd19-151c-4ab9-9601-e385bbd92e60.png" src="https://user-images.githubusercontent.com/14288520/197353517-6383bd19-151c-4ab9-9601-e385bbd92e60.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/line_mk4.html"><span class="doc">Line</span></a></p></li>
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/icosphere.html"><span class="doc">IcoSphere</span></a></p></li>
@@ -280,9 +282,11 @@ lists of booleans; and so on.</p></li>
 <li><p>List-&gt; <a class="reference internal" href="../list_masks/mask.html"><span class="doc">List Mask (Out)</span></a></p></li>
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197353693-1e6c029d-ebe3-4e4d-8161-383055683415.gif"><img alt="https://user-images.githubusercontent.com/14288520/197353693-1e6c029d-ebe3-4e4d-8161-383055683415.gif" src="https://user-images.githubusercontent.com/14288520/197353693-1e6c029d-ebe3-4e4d-8161-383055683415.gif" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197353693-1e6c029d-ebe3-4e4d-8161-383055683415.gif"><img alt="https://user-images.githubusercontent.com/14288520/197353693-1e6c029d-ebe3-4e4d-8161-383055683415.gif" src="https://user-images.githubusercontent.com/14288520/197353693-1e6c029d-ebe3-4e4d-8161-383055683415.gif" />
+</a>
 <hr class="docutils" />
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197354223-637bf456-cb3b-458d-b1b6-250205a4ac0c.png"><img alt="https://user-images.githubusercontent.com/14288520/197354223-637bf456-cb3b-458d-b1b6-250205a4ac0c.png" src="https://user-images.githubusercontent.com/14288520/197354223-637bf456-cb3b-458d-b1b6-250205a4ac0c.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197354223-637bf456-cb3b-458d-b1b6-250205a4ac0c.png"><img alt="https://user-images.githubusercontent.com/14288520/197354223-637bf456-cb3b-458d-b1b6-250205a4ac0c.png" src="https://user-images.githubusercontent.com/14288520/197354223-637bf456-cb3b-458d-b1b6-250205a4ac0c.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/line_mk4.html"><span class="doc">Line</span></a></p></li>
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/torus_mk2.html"><span class="doc">Torus</span></a></p></li>
@@ -291,12 +295,14 @@ lists of booleans; and so on.</p></li>
 <li><p>List-&gt; <a class="reference internal" href="../list_masks/mask.html"><span class="doc">List Mask (Out)</span></a></p></li>
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197354299-304aefc1-9374-4c83-ac3b-8de4b8f0a747.gif"><img alt="https://user-images.githubusercontent.com/14288520/197354299-304aefc1-9374-4c83-ac3b-8de4b8f0a747.gif" src="https://user-images.githubusercontent.com/14288520/197354299-304aefc1-9374-4c83-ac3b-8de4b8f0a747.gif" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197354299-304aefc1-9374-4c83-ac3b-8de4b8f0a747.gif"><img alt="https://user-images.githubusercontent.com/14288520/197354299-304aefc1-9374-4c83-ac3b-8de4b8f0a747.gif" src="https://user-images.githubusercontent.com/14288520/197354299-304aefc1-9374-4c83-ac3b-8de4b8f0a747.gif" />
+</a>
 </section>
 <section id="mode-by-center-and-radius">
 <span id="id3"></span><h2>Mode - By Center and Radius<a class="headerlink" href="#mode-by-center-and-radius" title="Link to this heading">¶</a></h2>
 <p>Selects vertices, which are within Radius from specified <strong>Center</strong>; in other words, it selects vertices that are located inside given sphere. More exactly, this mode selects vertex V if <cite>Distance(V, Center) &lt;= Radius</cite>. This mode also supports passing many points to <strong>Center</strong> input; in this case, “Distance” is distance from vertex to the nearest “Center”.</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197355447-89fc4aac-8178-4175-ba5a-150d53ff5bc4.png"><img alt="https://user-images.githubusercontent.com/14288520/197355447-89fc4aac-8178-4175-ba5a-150d53ff5bc4.png" src="https://user-images.githubusercontent.com/14288520/197355447-89fc4aac-8178-4175-ba5a-150d53ff5bc4.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197355447-89fc4aac-8178-4175-ba5a-150d53ff5bc4.png"><img alt="https://user-images.githubusercontent.com/14288520/197355447-89fc4aac-8178-4175-ba5a-150d53ff5bc4.png" src="https://user-images.githubusercontent.com/14288520/197355447-89fc4aac-8178-4175-ba5a-150d53ff5bc4.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/sphere.html"><span class="doc">Sphere</span></a></p></li>
@@ -305,12 +311,14 @@ lists of booleans; and so on.</p></li>
 <li><p>List-&gt; <a class="reference internal" href="../list_masks/mask.html"><span class="doc">List Mask (Out)</span></a></p></li>
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197355253-a631e319-ddd9-4b08-b8d5-f160cc80eafa.gif"><img alt="https://user-images.githubusercontent.com/14288520/197355253-a631e319-ddd9-4b08-b8d5-f160cc80eafa.gif" src="https://user-images.githubusercontent.com/14288520/197355253-a631e319-ddd9-4b08-b8d5-f160cc80eafa.gif" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197355253-a631e319-ddd9-4b08-b8d5-f160cc80eafa.gif"><img alt="https://user-images.githubusercontent.com/14288520/197355253-a631e319-ddd9-4b08-b8d5-f160cc80eafa.gif" src="https://user-images.githubusercontent.com/14288520/197355253-a631e319-ddd9-4b08-b8d5-f160cc80eafa.gif" />
+</a>
 </section>
 <section id="mode-by-plane">
 <span id="id4"></span><h2>Mode - By Plane<a class="headerlink" href="#mode-by-plane" title="Link to this heading">¶</a></h2>
 <p>Selects vertices, which are within <strong>Radius</strong> from specified plane. Plane is specified by providing normal vector (<strong>Direction</strong> input) and a point, belonging to that plane (<strong>Center</strong> input). For example, if you specify Direction = (0, 0, 1) and Center = (0, 0, 0), the plane will by OXY. More exactly, this mode selects vertex V if <cite>Distance(V, Plane) &lt;= Radius</cite>.</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197356952-2ecd3971-f8ef-4014-8b1f-483e3d219a68.png"><img alt="https://user-images.githubusercontent.com/14288520/197356952-2ecd3971-f8ef-4014-8b1f-483e3d219a68.png" src="https://user-images.githubusercontent.com/14288520/197356952-2ecd3971-f8ef-4014-8b1f-483e3d219a68.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197356952-2ecd3971-f8ef-4014-8b1f-483e3d219a68.png"><img alt="https://user-images.githubusercontent.com/14288520/197356952-2ecd3971-f8ef-4014-8b1f-483e3d219a68.png" src="https://user-images.githubusercontent.com/14288520/197356952-2ecd3971-f8ef-4014-8b1f-483e3d219a68.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
@@ -320,12 +328,14 @@ lists of booleans; and so on.</p></li>
 <li><p>List-&gt; <a class="reference internal" href="../list_masks/mask.html"><span class="doc">List Mask (Out)</span></a></p></li>
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197357111-a954f4e4-c227-4046-874a-079a5db99b7f.gif"><img alt="https://user-images.githubusercontent.com/14288520/197357111-a954f4e4-c227-4046-874a-079a5db99b7f.gif" src="https://user-images.githubusercontent.com/14288520/197357111-a954f4e4-c227-4046-874a-079a5db99b7f.gif" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197357111-a954f4e4-c227-4046-874a-079a5db99b7f.gif"><img alt="https://user-images.githubusercontent.com/14288520/197357111-a954f4e4-c227-4046-874a-079a5db99b7f.gif" src="https://user-images.githubusercontent.com/14288520/197357111-a954f4e4-c227-4046-874a-079a5db99b7f.gif" />
+</a>
 </section>
 <section id="mode-by-cylinder">
 <span id="id5"></span><h2>Mode - By Cylinder<a class="headerlink" href="#mode-by-cylinder" title="Link to this heading">¶</a></h2>
 <p>Selects vertices, which are within <strong>Radius</strong> from specified straight line. Line is specified by providing directing vector (<strong>Direction</strong> input) and a point, belonging to that line (<strong>Center</strong> input). For example, if you specify Direction = (0, 0, 1) and Center = (0, 0, 0), the line will by Z axis. More exactly, this mode selects vertex V if <cite>Distance(V, Line) &lt;= Radius</cite>.</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197360789-4dc49b05-0015-48e0-a6e8-4f7d6bab110a.png"><img alt="https://user-images.githubusercontent.com/14288520/197360789-4dc49b05-0015-48e0-a6e8-4f7d6bab110a.png" src="https://user-images.githubusercontent.com/14288520/197360789-4dc49b05-0015-48e0-a6e8-4f7d6bab110a.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197360789-4dc49b05-0015-48e0-a6e8-4f7d6bab110a.png"><img alt="https://user-images.githubusercontent.com/14288520/197360789-4dc49b05-0015-48e0-a6e8-4f7d6bab110a.png" src="https://user-images.githubusercontent.com/14288520/197360789-4dc49b05-0015-48e0-a6e8-4f7d6bab110a.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/cylinder_mk2.html"><span class="doc">Cylinder</span></a></p></li>
@@ -337,12 +347,14 @@ lists of booleans; and so on.</p></li>
 <li><p>List-&gt; <a class="reference internal" href="../list_masks/mask.html"><span class="doc">List Mask (Out)</span></a></p></li>
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197360940-336f925f-f0f3-42f4-9a56-197f7d5b68d4.gif"><img alt="https://user-images.githubusercontent.com/14288520/197360940-336f925f-f0f3-42f4-9a56-197f7d5b68d4.gif" src="https://user-images.githubusercontent.com/14288520/197360940-336f925f-f0f3-42f4-9a56-197f7d5b68d4.gif" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197360940-336f925f-f0f3-42f4-9a56-197f7d5b68d4.gif"><img alt="https://user-images.githubusercontent.com/14288520/197360940-336f925f-f0f3-42f4-9a56-197f7d5b68d4.gif" src="https://user-images.githubusercontent.com/14288520/197360940-336f925f-f0f3-42f4-9a56-197f7d5b68d4.gif" />
+</a>
 </section>
 <section id="mode-by-edge-direction">
 <span id="id6"></span><h2>Mode - By Edge Direction<a class="headerlink" href="#mode-by-edge-direction" title="Link to this heading">¶</a></h2>
 <p>Selects edges, which are nearly parallel to specified <strong>Direction</strong> vector. Note that this mode considers edges as non-directed; as a result, you can change sign of all coordinates of <strong>Direction</strong> and it will not affect output. More exactly, this mode selects edge E if <cite>Abs(Cos(Angle(E, Direction))) &gt;= max - Percent * (max - min)</cite>, where max and min are maximum and minimum values of that cosine.</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197361794-ad1c0708-6689-4af0-b7fd-495aaff7f5c2.png"><img alt="https://user-images.githubusercontent.com/14288520/197361794-ad1c0708-6689-4af0-b7fd-495aaff7f5c2.png" src="https://user-images.githubusercontent.com/14288520/197361794-ad1c0708-6689-4af0-b7fd-495aaff7f5c2.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197361794-ad1c0708-6689-4af0-b7fd-495aaff7f5c2.png"><img alt="https://user-images.githubusercontent.com/14288520/197361794-ad1c0708-6689-4af0-b7fd-495aaff7f5c2.png" src="https://user-images.githubusercontent.com/14288520/197361794-ad1c0708-6689-4af0-b7fd-495aaff7f5c2.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/line_mk4.html"><span class="doc">Line</span></a></p></li>
 <li><p>Generator-&gt;Generator Extended-&gt; <a class="reference internal" href="../generators_extended/polygon_grid.html"><span class="doc">Polygon Grid</span></a></p></li>
@@ -350,12 +362,14 @@ lists of booleans; and so on.</p></li>
 <li><p>List-&gt; <a class="reference internal" href="../list_masks/mask.html"><span class="doc">List Mask (Out)</span></a></p></li>
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197361869-193cf2fb-8d56-4975-84bc-679f5e9a2b1c.gif"><img alt="https://user-images.githubusercontent.com/14288520/197361869-193cf2fb-8d56-4975-84bc-679f5e9a2b1c.gif" src="https://user-images.githubusercontent.com/14288520/197361869-193cf2fb-8d56-4975-84bc-679f5e9a2b1c.gif" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197361869-193cf2fb-8d56-4975-84bc-679f5e9a2b1c.gif"><img alt="https://user-images.githubusercontent.com/14288520/197361869-193cf2fb-8d56-4975-84bc-679f5e9a2b1c.gif" src="https://user-images.githubusercontent.com/14288520/197361869-193cf2fb-8d56-4975-84bc-679f5e9a2b1c.gif" />
+</a>
 </section>
 <section id="mode-by-bounding-box">
 <span id="id7"></span><h2>Mode - By Bounding Box<a class="headerlink" href="#mode-by-bounding-box" title="Link to this heading">¶</a></h2>
 <p>Selects vertices, that are within bounding box defined by points passed into <strong>Center</strong> input. <strong>Radius</strong> is interpreted as tolerance limit.</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197362690-52d369de-29e4-42d6-950e-db25b75edca8.png"><img alt="https://user-images.githubusercontent.com/14288520/197362690-52d369de-29e4-42d6-950e-db25b75edca8.png" src="https://user-images.githubusercontent.com/14288520/197362690-52d369de-29e4-42d6-950e-db25b75edca8.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197362690-52d369de-29e4-42d6-950e-db25b75edca8.png"><img alt="https://user-images.githubusercontent.com/14288520/197362690-52d369de-29e4-42d6-950e-db25b75edca8.png" src="https://user-images.githubusercontent.com/14288520/197362690-52d369de-29e4-42d6-950e-db25b75edca8.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/torus_mk2.html"><span class="doc">Torus</span></a></p></li>
@@ -365,29 +379,39 @@ lists of booleans; and so on.</p></li>
 <li><p>List-&gt; <a class="reference internal" href="../list_masks/mask.html"><span class="doc">List Mask (Out)</span></a></p></li>
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197362774-5ec0b49a-66bc-49dd-a795-1c72022e4cbe.gif"><img alt="https://user-images.githubusercontent.com/14288520/197362774-5ec0b49a-66bc-49dd-a795-1c72022e4cbe.gif" src="https://user-images.githubusercontent.com/14288520/197362774-5ec0b49a-66bc-49dd-a795-1c72022e4cbe.gif" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197362774-5ec0b49a-66bc-49dd-a795-1c72022e4cbe.gif"><img alt="https://user-images.githubusercontent.com/14288520/197362774-5ec0b49a-66bc-49dd-a795-1c72022e4cbe.gif" src="https://user-images.githubusercontent.com/14288520/197362774-5ec0b49a-66bc-49dd-a795-1c72022e4cbe.gif" />
+</a>
 </section>
 <section id="examples-of-usage">
 <h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Link to this heading">¶</a></h2>
 <p>Select rightmost vertices:</p>
-<a class="reference external image-reference" href="https://cloud.githubusercontent.com/assets/284644/23761326/aa0cacf6-051c-11e7-8dae-1848bc0e81cd.png"><img alt="https://cloud.githubusercontent.com/assets/284644/23761326/aa0cacf6-051c-11e7-8dae-1848bc0e81cd.png" src="https://cloud.githubusercontent.com/assets/284644/23761326/aa0cacf6-051c-11e7-8dae-1848bc0e81cd.png" /></a>
+<a class="reference external image-reference" href="https://cloud.githubusercontent.com/assets/284644/23761326/aa0cacf6-051c-11e7-8dae-1848bc0e81cd.png"><img alt="https://cloud.githubusercontent.com/assets/284644/23761326/aa0cacf6-051c-11e7-8dae-1848bc0e81cd.png" src="https://cloud.githubusercontent.com/assets/284644/23761326/aa0cacf6-051c-11e7-8dae-1848bc0e81cd.png" />
+</a>
 <p>Select faces looking to right:</p>
-<a class="reference external image-reference" href="https://cloud.githubusercontent.com/assets/284644/23761372/cc0950b6-051c-11e7-9c57-4b76a91c2e5d.png"><img alt="https://cloud.githubusercontent.com/assets/284644/23761372/cc0950b6-051c-11e7-9c57-4b76a91c2e5d.png" src="https://cloud.githubusercontent.com/assets/284644/23761372/cc0950b6-051c-11e7-9c57-4b76a91c2e5d.png" /></a>
+<a class="reference external image-reference" href="https://cloud.githubusercontent.com/assets/284644/23761372/cc0950b6-051c-11e7-9c57-4b76a91c2e5d.png"><img alt="https://cloud.githubusercontent.com/assets/284644/23761372/cc0950b6-051c-11e7-9c57-4b76a91c2e5d.png" src="https://cloud.githubusercontent.com/assets/284644/23761372/cc0950b6-051c-11e7-9c57-4b76a91c2e5d.png" />
+</a>
 <p>Select vertices within sphere:</p>
-<a class="reference external image-reference" href="https://cloud.githubusercontent.com/assets/284644/23761537/5106db9e-051d-11e7-81e8-2fca30c02b18.png"><img alt="https://cloud.githubusercontent.com/assets/284644/23761537/5106db9e-051d-11e7-81e8-2fca30c02b18.png" src="https://cloud.githubusercontent.com/assets/284644/23761537/5106db9e-051d-11e7-81e8-2fca30c02b18.png" /></a>
+<a class="reference external image-reference" href="https://cloud.githubusercontent.com/assets/284644/23761537/5106db9e-051d-11e7-81e8-2fca30c02b18.png"><img alt="https://cloud.githubusercontent.com/assets/284644/23761537/5106db9e-051d-11e7-81e8-2fca30c02b18.png" src="https://cloud.githubusercontent.com/assets/284644/23761537/5106db9e-051d-11e7-81e8-2fca30c02b18.png" />
+</a>
 <p>Using multiple centers:</p>
 <p>See also: Analyzers-&gt; <a class="reference internal" href="kd_tree_MK2.html"><span class="doc">KDT Closest Verts</span></a></p>
-<a class="reference external image-reference" href="https://cloud.githubusercontent.com/assets/284644/24580675/b5206da8-172d-11e7-9aa3-2c345712c899.png"><img alt="https://cloud.githubusercontent.com/assets/284644/24580675/b5206da8-172d-11e7-9aa3-2c345712c899.png" src="https://cloud.githubusercontent.com/assets/284644/24580675/b5206da8-172d-11e7-9aa3-2c345712c899.png" /></a>
+<a class="reference external image-reference" href="https://cloud.githubusercontent.com/assets/284644/24580675/b5206da8-172d-11e7-9aa3-2c345712c899.png"><img alt="https://cloud.githubusercontent.com/assets/284644/24580675/b5206da8-172d-11e7-9aa3-2c345712c899.png" src="https://cloud.githubusercontent.com/assets/284644/24580675/b5206da8-172d-11e7-9aa3-2c345712c899.png" />
+</a>
 <p>Select vertices near OYZ plane:</p>
-<a class="reference external image-reference" href="https://cloud.githubusercontent.com/assets/284644/23756618/7036cf88-050e-11e7-9619-b0d748d03d20.png"><img alt="https://cloud.githubusercontent.com/assets/284644/23756618/7036cf88-050e-11e7-9619-b0d748d03d20.png" src="https://cloud.githubusercontent.com/assets/284644/23756618/7036cf88-050e-11e7-9619-b0d748d03d20.png" /></a>
+<a class="reference external image-reference" href="https://cloud.githubusercontent.com/assets/284644/23756618/7036cf88-050e-11e7-9619-b0d748d03d20.png"><img alt="https://cloud.githubusercontent.com/assets/284644/23756618/7036cf88-050e-11e7-9619-b0d748d03d20.png" src="https://cloud.githubusercontent.com/assets/284644/23756618/7036cf88-050e-11e7-9619-b0d748d03d20.png" />
+</a>
 <p>Select vertices near vertical line:</p>
-<a class="reference external image-reference" href="https://cloud.githubusercontent.com/assets/284644/23756638/81324d3a-050e-11e7-89c2-e2016557aa47.png"><img alt="https://cloud.githubusercontent.com/assets/284644/23756638/81324d3a-050e-11e7-89c2-e2016557aa47.png" src="https://cloud.githubusercontent.com/assets/284644/23756638/81324d3a-050e-11e7-89c2-e2016557aa47.png" /></a>
+<a class="reference external image-reference" href="https://cloud.githubusercontent.com/assets/284644/23756638/81324d3a-050e-11e7-89c2-e2016557aa47.png"><img alt="https://cloud.githubusercontent.com/assets/284644/23756638/81324d3a-050e-11e7-89c2-e2016557aa47.png" src="https://cloud.githubusercontent.com/assets/284644/23756638/81324d3a-050e-11e7-89c2-e2016557aa47.png" />
+</a>
 <p>Bevel only edges that are parallel to Z axis:</p>
-<a class="reference external image-reference" href="https://cloud.githubusercontent.com/assets/284644/23831501/fcebffee-074c-11e7-8e15-de759d67588c.png"><img alt="https://cloud.githubusercontent.com/assets/284644/23831501/fcebffee-074c-11e7-8e15-de759d67588c.png" src="https://cloud.githubusercontent.com/assets/284644/23831501/fcebffee-074c-11e7-8e15-de759d67588c.png" /></a>
+<a class="reference external image-reference" href="https://cloud.githubusercontent.com/assets/284644/23831501/fcebffee-074c-11e7-8e15-de759d67588c.png"><img alt="https://cloud.githubusercontent.com/assets/284644/23831501/fcebffee-074c-11e7-8e15-de759d67588c.png" src="https://cloud.githubusercontent.com/assets/284644/23831501/fcebffee-074c-11e7-8e15-de759d67588c.png" />
+</a>
 <p>Select faces that are looking outside:</p>
-<a class="reference external image-reference" href="https://cloud.githubusercontent.com/assets/284644/23831280/62e48816-0748-11e7-887f-b9223dbbf939.png"><img alt="https://cloud.githubusercontent.com/assets/284644/23831280/62e48816-0748-11e7-887f-b9223dbbf939.png" src="https://cloud.githubusercontent.com/assets/284644/23831280/62e48816-0748-11e7-887f-b9223dbbf939.png" /></a>
+<a class="reference external image-reference" href="https://cloud.githubusercontent.com/assets/284644/23831280/62e48816-0748-11e7-887f-b9223dbbf939.png"><img alt="https://cloud.githubusercontent.com/assets/284644/23831280/62e48816-0748-11e7-887f-b9223dbbf939.png" src="https://cloud.githubusercontent.com/assets/284644/23831280/62e48816-0748-11e7-887f-b9223dbbf939.png" />
+</a>
 <p>Select faces by bounding box:</p>
-<a class="reference external image-reference" href="https://cloud.githubusercontent.com/assets/284644/24332028/248a1026-1261-11e7-8886-f7a0f88ecb60.png"><img alt="https://cloud.githubusercontent.com/assets/284644/24332028/248a1026-1261-11e7-8886-f7a0f88ecb60.png" src="https://cloud.githubusercontent.com/assets/284644/24332028/248a1026-1261-11e7-8886-f7a0f88ecb60.png" /></a>
+<a class="reference external image-reference" href="https://cloud.githubusercontent.com/assets/284644/24332028/248a1026-1261-11e7-8886-f7a0f88ecb60.png"><img alt="https://cloud.githubusercontent.com/assets/284644/24332028/248a1026-1261-11e7-8886-f7a0f88ecb60.png" src="https://cloud.githubusercontent.com/assets/284644/24332028/248a1026-1261-11e7-8886-f7a0f88ecb60.png" />
+</a>
 </section>
 </section>
 

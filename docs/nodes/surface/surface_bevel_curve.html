@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../">
 <head>
@@ -6,17 +8,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Bevel a Curve (Surface) &mdash; Sverchok 1, 2, 0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=7ab3649f" />
 
   
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/documentation_options.js?v=773c2105"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/documentation_options.js?v=773c2105"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -36,9 +34,6 @@
             Sverchok
               <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
           </a>
-              <div class="version">
-                1, 2, 0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -180,15 +175,18 @@
              
   <section id="bevel-a-curve-surface">
 <h1>Bevel a Curve (Surface)<a class="headerlink" href="#bevel-a-curve-surface" title="Link to this heading">¶</a></h1>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/4b72744d-1cb5-469d-8b67-065004137158"><img alt="https://github.com/nortikin/sverchok/assets/14288520/4b72744d-1cb5-469d-8b67-065004137158" src="https://github.com/nortikin/sverchok/assets/14288520/4b72744d-1cb5-469d-8b67-065004137158" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/4b72744d-1cb5-469d-8b67-065004137158"><img alt="https://github.com/nortikin/sverchok/assets/14288520/4b72744d-1cb5-469d-8b67-065004137158" src="https://github.com/nortikin/sverchok/assets/14288520/4b72744d-1cb5-469d-8b67-065004137158" />
+</a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node provides functionality similar to Blender’s standard “bevel curve”
 <a class="reference external" href="https://docs.blender.org/manual/en/latest/modeling/curves/properties/geometry.html">feature</a>. More precisely, it extrudes one flat curve (called “profile curve”)
 along another curve (path). Scale of “profile curve” may vary along the curve,
 as it is controlled by third curve (called “taper curve”).</p>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/291ccad3-2815-4d30-86bf-569313a444b0"><img alt="https://github.com/nortikin/sverchok/assets/14288520/291ccad3-2815-4d30-86bf-569313a444b0" src="https://github.com/nortikin/sverchok/assets/14288520/291ccad3-2815-4d30-86bf-569313a444b0" /></a>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/077e4f88-c752-437c-9369-0359b1097d51"><img alt="https://github.com/nortikin/sverchok/assets/14288520/077e4f88-c752-437c-9369-0359b1097d51" src="https://github.com/nortikin/sverchok/assets/14288520/077e4f88-c752-437c-9369-0359b1097d51" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/291ccad3-2815-4d30-86bf-569313a444b0"><img alt="https://github.com/nortikin/sverchok/assets/14288520/291ccad3-2815-4d30-86bf-569313a444b0" src="https://github.com/nortikin/sverchok/assets/14288520/291ccad3-2815-4d30-86bf-569313a444b0" />
+</a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/077e4f88-c752-437c-9369-0359b1097d51"><img alt="https://github.com/nortikin/sverchok/assets/14288520/077e4f88-c752-437c-9369-0359b1097d51" src="https://github.com/nortikin/sverchok/assets/14288520/077e4f88-c752-437c-9369-0359b1097d51" />
+</a>
 <p>It is in general not a trivial task to rotate a 3D object along a vector,
 because there are always 2 other axes of object and it is not clear where
 should they be directed to. So, this node supports 3 different algorithms of
@@ -202,7 +200,8 @@ extrusion curve has non-zero curvature in all points. If the extrusion curve
 has zero curvature points, or, even worse, it has straight segments, these
 algorithms will either make “flipping” surface, or give an error.</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/fcc4873a-88b8-4b93-a42a-b2f08af9b411"><img alt="https://github.com/nortikin/sverchok/assets/14288520/fcc4873a-88b8-4b93-a42a-b2f08af9b411" src="https://github.com/nortikin/sverchok/assets/14288520/fcc4873a-88b8-4b93-a42a-b2f08af9b411" /></a>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/fcc4873a-88b8-4b93-a42a-b2f08af9b411"><img alt="https://github.com/nortikin/sverchok/assets/14288520/fcc4873a-88b8-4b93-a42a-b2f08af9b411" src="https://github.com/nortikin/sverchok/assets/14288520/fcc4873a-88b8-4b93-a42a-b2f08af9b411" />
+</a>
 </div></blockquote>
 </li>
 <li><p>“Householder”, “Tracking” and “Rotation difference” algorithms are
@@ -211,14 +210,16 @@ on tangent direction. They give “good enough” result (at least, without
 errors or sudden flips) for all extrusion curves, but may make twisted
 surfaces in some special cases.</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/a8f2555a-27d0-48e7-a25b-299761f3c28d"><img alt="https://github.com/nortikin/sverchok/assets/14288520/a8f2555a-27d0-48e7-a25b-299761f3c28d" src="https://github.com/nortikin/sverchok/assets/14288520/a8f2555a-27d0-48e7-a25b-299761f3c28d" /></a>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/a8f2555a-27d0-48e7-a25b-299761f3c28d"><img alt="https://github.com/nortikin/sverchok/assets/14288520/a8f2555a-27d0-48e7-a25b-299761f3c28d" src="https://github.com/nortikin/sverchok/assets/14288520/a8f2555a-27d0-48e7-a25b-299761f3c28d" />
+</a>
 </div></blockquote>
 </li>
 <li><p>“Track normal” algorithm is supposed to give good results without twisting
 for all extrusion curves. It will give better results with higher values of
 “resolution” parameter, but that may be slow.</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/e6e1746c-c0c3-42e2-94ba-8ce6c858fa25"><img alt="https://github.com/nortikin/sverchok/assets/14288520/e6e1746c-c0c3-42e2-94ba-8ce6c858fa25" src="https://github.com/nortikin/sverchok/assets/14288520/e6e1746c-c0c3-42e2-94ba-8ce6c858fa25" /></a>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/e6e1746c-c0c3-42e2-94ba-8ce6c858fa25"><img alt="https://github.com/nortikin/sverchok/assets/14288520/e6e1746c-c0c3-42e2-94ba-8ce6c858fa25" src="https://github.com/nortikin/sverchok/assets/14288520/e6e1746c-c0c3-42e2-94ba-8ce6c858fa25" />
+</a>
 </div></blockquote>
 </li>
 </ul>
@@ -232,7 +233,8 @@ orientation axis will be Z.</p>
 <li><p>Generic surface. In this mode, the node can process arbitrary Curve objects,
 and will generate a generic Surface object.</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/654d69cb-84cb-4acf-abba-14ad0c481198"><img alt="https://github.com/nortikin/sverchok/assets/14288520/654d69cb-84cb-4acf-abba-14ad0c481198" src="https://github.com/nortikin/sverchok/assets/14288520/654d69cb-84cb-4acf-abba-14ad0c481198" /></a>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/654d69cb-84cb-4acf-abba-14ad0c481198"><img alt="https://github.com/nortikin/sverchok/assets/14288520/654d69cb-84cb-4acf-abba-14ad0c481198" src="https://github.com/nortikin/sverchok/assets/14288520/654d69cb-84cb-4acf-abba-14ad0c481198" />
+</a>
 </div></blockquote>
 </li>
 <li><p>NURBS surface by simple algorithm. In this mode, the node can process only
@@ -241,7 +243,8 @@ generates a minimal amount of control points; so, the generated surface may
 follow the path curve only approximately. On the other hand, this is the
 fastest of NURBS modes of this node.</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/5d9c9f79-12e3-4f16-8bba-6df7dc850e7d"><img alt="https://github.com/nortikin/sverchok/assets/14288520/5d9c9f79-12e3-4f16-8bba-6df7dc850e7d" src="https://github.com/nortikin/sverchok/assets/14288520/5d9c9f79-12e3-4f16-8bba-6df7dc850e7d" /></a>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/5d9c9f79-12e3-4f16-8bba-6df7dc850e7d"><img alt="https://github.com/nortikin/sverchok/assets/14288520/5d9c9f79-12e3-4f16-8bba-6df7dc850e7d" src="https://github.com/nortikin/sverchok/assets/14288520/5d9c9f79-12e3-4f16-8bba-6df7dc850e7d" />
+</a>
 </div></blockquote>
 </li>
 <li><p>NURBS surface with refinement. In this mode, the node can process only
@@ -251,7 +254,8 @@ and then applies the “simple” algorithm. This algorithm produces more contro
 points, and that allows it to generate a surface which follows the path and
 taper curves more precisely.</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/92ae010e-e96e-4b3d-b696-53a0d08e4163"><img alt="https://github.com/nortikin/sverchok/assets/14288520/92ae010e-e96e-4b3d-b696-53a0d08e4163" src="https://github.com/nortikin/sverchok/assets/14288520/92ae010e-e96e-4b3d-b696-53a0d08e4163" /></a>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/92ae010e-e96e-4b3d-b696-53a0d08e4163"><img alt="https://github.com/nortikin/sverchok/assets/14288520/92ae010e-e96e-4b3d-b696-53a0d08e4163" src="https://github.com/nortikin/sverchok/assets/14288520/92ae010e-e96e-4b3d-b696-53a0d08e4163" />
+</a>
 </div></blockquote>
 </li>
 <li><p>NURBS Gordon surface:</p>
@@ -268,7 +272,8 @@ algorithm.</p></li>
 <p>For smooth curves, Gordon algorithm is supposed to be the most precise of
 NURBS modes of this node; but it is also the slowest one.</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/ba59f580-e4f3-4bc6-965b-0a840f871c0f"><img alt="https://github.com/nortikin/sverchok/assets/14288520/ba59f580-e4f3-4bc6-965b-0a840f871c0f" src="https://github.com/nortikin/sverchok/assets/14288520/ba59f580-e4f3-4bc6-965b-0a840f871c0f" /></a>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/ba59f580-e4f3-4bc6-965b-0a840f871c0f"><img alt="https://github.com/nortikin/sverchok/assets/14288520/ba59f580-e4f3-4bc6-965b-0a840f871c0f" src="https://github.com/nortikin/sverchok/assets/14288520/ba59f580-e4f3-4bc6-965b-0a840f871c0f" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>
 <li><p>Curves-&gt; <a class="reference internal" href="../curve/cubic_spline.html"><span class="doc">Cubic Spline</span></a></p></li>
@@ -280,7 +285,8 @@ profile or taper.</p>
 you provide it with profile curve which has hard turns (discontinuities of
 curve’s derivative), the output will look weird.</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/cd695c32-32d3-4107-b641-78174a5196a6"><img alt="https://github.com/nortikin/sverchok/assets/14288520/cd695c32-32d3-4107-b641-78174a5196a6" src="https://github.com/nortikin/sverchok/assets/14288520/cd695c32-32d3-4107-b641-78174a5196a6" /></a>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/cd695c32-32d3-4107-b641-78174a5196a6"><img alt="https://github.com/nortikin/sverchok/assets/14288520/cd695c32-32d3-4107-b641-78174a5196a6" src="https://github.com/nortikin/sverchok/assets/14288520/cd695c32-32d3-4107-b641-78174a5196a6" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>
 <li><p>Curves-&gt;Curve Primitives-&gt; <a class="reference internal" href="../curve/polyline.html"><span class="doc">Polyline</span></a></p></li>
@@ -305,7 +311,8 @@ be used.</p></li>
 only when <strong>Samples distribution</strong> parameter is set to <strong>Curve length</strong>. The
 default value is 50.</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/e67af704-ceb2-4fc7-a243-854e362a0ca8"><img alt="https://github.com/nortikin/sverchok/assets/14288520/e67af704-ceb2-4fc7-a243-854e362a0ca8" src="https://github.com/nortikin/sverchok/assets/14288520/e67af704-ceb2-4fc7-a243-854e362a0ca8" /></a>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/e67af704-ceb2-4fc7-a243-854e362a0ca8"><img alt="https://github.com/nortikin/sverchok/assets/14288520/e67af704-ceb2-4fc7-a243-854e362a0ca8" src="https://github.com/nortikin/sverchok/assets/14288520/e67af704-ceb2-4fc7-a243-854e362a0ca8" />
+</a>
 </div></blockquote>
 </li>
 <li><p><strong>ProfileCopies</strong>. This input is available only when <strong>Mode</strong> parameter is
@@ -321,7 +328,8 @@ set to <strong>NURBS</strong>, and <strong>Precision</strong> parameter is set t
 copies of the taper curve to be rotated and bent along the path curve, in
 order to build a Gordon surface. The default value is 10.</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/7cbbfb25-80e7-458d-ab9a-363116fc3b3d"><img alt="https://github.com/nortikin/sverchok/assets/14288520/7cbbfb25-80e7-458d-ab9a-363116fc3b3d" src="https://github.com/nortikin/sverchok/assets/14288520/7cbbfb25-80e7-458d-ab9a-363116fc3b3d" /></a>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/7cbbfb25-80e7-458d-ab9a-363116fc3b3d"><img alt="https://github.com/nortikin/sverchok/assets/14288520/7cbbfb25-80e7-458d-ab9a-363116fc3b3d" src="https://github.com/nortikin/sverchok/assets/14288520/7cbbfb25-80e7-458d-ab9a-363116fc3b3d" />
+</a>
 </div></blockquote>
 </li>
 </ul>
@@ -387,7 +395,8 @@ usually gives more natural results, but takes more time to compute.</p></li>
 <section id="examples-of-usage">
 <h2>Examples of Usage<a class="headerlink" href="#examples-of-usage" title="Link to this heading">¶</a></h2>
 <p>Example 1:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/128608455-8bcf578f-6de4-4f28-a7aa-c5c0737d998e.png"><img alt="https://user-images.githubusercontent.com/284644/128608455-8bcf578f-6de4-4f28-a7aa-c5c0737d998e.png" src="https://user-images.githubusercontent.com/284644/128608455-8bcf578f-6de4-4f28-a7aa-c5c0737d998e.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/128608455-8bcf578f-6de4-4f28-a7aa-c5c0737d998e.png"><img alt="https://user-images.githubusercontent.com/284644/128608455-8bcf578f-6de4-4f28-a7aa-c5c0737d998e.png" src="https://user-images.githubusercontent.com/284644/128608455-8bcf578f-6de4-4f28-a7aa-c5c0737d998e.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>
 <li><p>Curves-&gt;Curve Primitives-&gt; <a class="reference internal" href="../curve/polyline.html"><span class="doc">Polyline</span></a></p></li>
@@ -399,7 +408,8 @@ usually gives more natural results, but takes more time to compute.</p></li>
 <li><p>Scene-&gt; <a class="reference internal" href="../exchange/bezier_in.html"><span class="doc">Bezier Input</span></a></p></li>
 </ul>
 <p>Example 2:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/128609193-25240b31-1e4f-49d3-81f0-0df70863ccec.png"><img alt="https://user-images.githubusercontent.com/284644/128609193-25240b31-1e4f-49d3-81f0-0df70863ccec.png" src="https://user-images.githubusercontent.com/284644/128609193-25240b31-1e4f-49d3-81f0-0df70863ccec.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/128609193-25240b31-1e4f-49d3-81f0-0df70863ccec.png"><img alt="https://user-images.githubusercontent.com/284644/128609193-25240b31-1e4f-49d3-81f0-0df70863ccec.png" src="https://user-images.githubusercontent.com/284644/128609193-25240b31-1e4f-49d3-81f0-0df70863ccec.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/line_mk4.html"><span class="doc">Line</span></a></p></li>
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>
@@ -417,7 +427,8 @@ usually gives more natural results, but takes more time to compute.</p></li>
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/mesh_viewer.html"><span class="doc">Mesh Viewer</span></a></p></li>
 <li><p>Scene-&gt; <a class="reference internal" href="../exchange/bezier_in.html"><span class="doc">Bezier Input</span></a></p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/128609192-06d65d48-7875-4dce-a084-c4e4c700be04.png"><img alt="https://user-images.githubusercontent.com/284644/128609192-06d65d48-7875-4dce-a084-c4e4c700be04.png" src="https://user-images.githubusercontent.com/284644/128609192-06d65d48-7875-4dce-a084-c4e4c700be04.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/128609192-06d65d48-7875-4dce-a084-c4e4c700be04.png"><img alt="https://user-images.githubusercontent.com/284644/128609192-06d65d48-7875-4dce-a084-c4e4c700be04.png" src="https://user-images.githubusercontent.com/284644/128609192-06d65d48-7875-4dce-a084-c4e4c700be04.png" />
+</a>
 </section>
 </section>
 

@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../">
 <head>
@@ -6,17 +8,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Mesh Filter &mdash; Sverchok 1, 2, 0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=7ab3649f" />
 
   
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/documentation_options.js?v=773c2105"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/documentation_options.js?v=773c2105"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -36,9 +34,6 @@
             Sverchok
               <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
           </a>
-              <div class="version">
-                1, 2, 0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -174,15 +169,19 @@
              
   <section id="mesh-filter">
 <h1>Mesh Filter<a class="headerlink" href="#mesh-filter" title="Link to this heading">¶</a></h1>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196620844-4cf39a96-a0f8-427c-bde7-f8a10aaf953a.png"><img alt="https://user-images.githubusercontent.com/14288520/196620844-4cf39a96-a0f8-427c-bde7-f8a10aaf953a.png" src="https://user-images.githubusercontent.com/14288520/196620844-4cf39a96-a0f8-427c-bde7-f8a10aaf953a.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196620844-4cf39a96-a0f8-427c-bde7-f8a10aaf953a.png"><img alt="https://user-images.githubusercontent.com/14288520/196620844-4cf39a96-a0f8-427c-bde7-f8a10aaf953a.png" src="https://user-images.githubusercontent.com/14288520/196620844-4cf39a96-a0f8-427c-bde7-f8a10aaf953a.png" />
+</a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node sorts vertices, edges or faces of input mesh by several available criteria: boundary vs interior, convex vs concave and so on. For each criteria, it puts “good” and “bad” mesh elements to different outputs. Also mask output is available for each criteria.</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196633865-6a01676e-b9ed-489f-a158-50d287b807a5.png"><img alt="https://user-images.githubusercontent.com/14288520/196633865-6a01676e-b9ed-489f-a158-50d287b807a5.png" src="https://user-images.githubusercontent.com/14288520/196633865-6a01676e-b9ed-489f-a158-50d287b807a5.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196633865-6a01676e-b9ed-489f-a158-50d287b807a5.png"><img alt="https://user-images.githubusercontent.com/14288520/196633865-6a01676e-b9ed-489f-a158-50d287b807a5.png" src="https://user-images.githubusercontent.com/14288520/196633865-6a01676e-b9ed-489f-a158-50d287b807a5.png" />
+</a>
 <hr class="docutils" />
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196634393-107d004a-fa42-4ab7-92c0-607a18e4e650.png"><img alt="https://user-images.githubusercontent.com/14288520/196634393-107d004a-fa42-4ab7-92c0-607a18e4e650.png" src="https://user-images.githubusercontent.com/14288520/196634393-107d004a-fa42-4ab7-92c0-607a18e4e650.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196634393-107d004a-fa42-4ab7-92c0-607a18e4e650.png"><img alt="https://user-images.githubusercontent.com/14288520/196634393-107d004a-fa42-4ab7-92c0-607a18e4e650.png" src="https://user-images.githubusercontent.com/14288520/196634393-107d004a-fa42-4ab7-92c0-607a18e4e650.png" />
+</a>
 <hr class="docutils" />
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196637958-188fd916-dae6-43b7-b19b-baa5836e914f.png"><img alt="https://user-images.githubusercontent.com/14288520/196637958-188fd916-dae6-43b7-b19b-baa5836e914f.png" src="https://user-images.githubusercontent.com/14288520/196637958-188fd916-dae6-43b7-b19b-baa5836e914f.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196637958-188fd916-dae6-43b7-b19b-baa5836e914f.png"><img alt="https://user-images.githubusercontent.com/14288520/196637958-188fd916-dae6-43b7-b19b-baa5836e914f.png" src="https://user-images.githubusercontent.com/14288520/196637958-188fd916-dae6-43b7-b19b-baa5836e914f.png" />
+</a>
 <p><em>destination after Beta: Analyzers</em></p>
 </section>
 <section id="inputs">
@@ -269,7 +268,8 @@
 <section id="examples-of-usage">
 <h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Link to this heading">¶</a></h2>
 <p>Move only boundary vertices of plane grid:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196641596-f6c4e335-de95-4433-86e4-5b48da9a1a8c.png"><img alt="https://user-images.githubusercontent.com/14288520/196641596-f6c4e335-de95-4433-86e4-5b48da9a1a8c.png" src="https://user-images.githubusercontent.com/14288520/196641596-f6c4e335-de95-4433-86e4-5b48da9a1a8c.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196641596-f6c4e335-de95-4433-86e4-5b48da9a1a8c.png"><img alt="https://user-images.githubusercontent.com/14288520/196641596-f6c4e335-de95-4433-86e4-5b48da9a1a8c.png" src="https://user-images.githubusercontent.com/14288520/196641596-f6c4e335-de95-4433-86e4-5b48da9a1a8c.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
 <li><p>List-&gt;List Struct-&gt; <a class="reference internal" href="../list_struct/item.html"><span class="doc">List Item</span></a></p></li>
@@ -281,7 +281,8 @@
 </ul>
 <hr class="docutils" />
 <p>Bevel only concave edges:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196665550-f2cb5751-e5e3-46e7-9c40-a68f3b7e197f.png"><img alt="https://user-images.githubusercontent.com/14288520/196665550-f2cb5751-e5e3-46e7-9c40-a68f3b7e197f.png" src="https://user-images.githubusercontent.com/14288520/196665550-f2cb5751-e5e3-46e7-9c40-a68f3b7e197f.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196665550-f2cb5751-e5e3-46e7-9c40-a68f3b7e197f.png"><img alt="https://user-images.githubusercontent.com/14288520/196665550-f2cb5751-e5e3-46e7-9c40-a68f3b7e197f.png" src="https://user-images.githubusercontent.com/14288520/196665550-f2cb5751-e5e3-46e7-9c40-a68f3b7e197f.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/icosphere.html"><span class="doc">IcoSphere</span></a></p></li>
 <li><p>Transform-&gt; <a class="reference internal" href="../transforms/move_mk3.html"><span class="doc">Move</span></a></p></li>
@@ -298,7 +299,8 @@
 </ul>
 <hr class="docutils" />
 <p>Extrude only boundary faces:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196672202-23b0fc30-8d97-46de-9a72-7b1be48293d3.png"><img alt="https://user-images.githubusercontent.com/14288520/196672202-23b0fc30-8d97-46de-9a72-7b1be48293d3.png" src="https://user-images.githubusercontent.com/14288520/196672202-23b0fc30-8d97-46de-9a72-7b1be48293d3.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/196672202-23b0fc30-8d97-46de-9a72-7b1be48293d3.png"><img alt="https://user-images.githubusercontent.com/14288520/196672202-23b0fc30-8d97-46de-9a72-7b1be48293d3.png" src="https://user-images.githubusercontent.com/14288520/196672202-23b0fc30-8d97-46de-9a72-7b1be48293d3.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt;Generators Extended-&gt; <a class="reference internal" href="../generator/bricks.html"><span class="doc">Bricks Grid</span></a></p></li>
 <li><p>Modifiers-&gt;Modifier Change-&gt; <a class="reference internal" href="../modifier_change/extrude_separate.html"><span class="doc">Extrude Separate Faces</span></a></p></li>

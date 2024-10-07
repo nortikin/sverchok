@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../">
 <head>
@@ -6,17 +8,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>RBF Scalar Field &mdash; Sverchok 1, 2, 0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=7ab3649f" />
 
   
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/documentation_options.js?v=773c2105"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/documentation_options.js?v=773c2105"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -36,9 +34,6 @@
             Sverchok
               <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
           </a>
-              <div class="version">
-                1, 2, 0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -161,7 +156,8 @@
              
   <section id="rbf-scalar-field">
 <h1>RBF Scalar Field<a class="headerlink" href="#rbf-scalar-field" title="Link to this heading">¶</a></h1>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/7b7cc987-f48d-40b5-886b-4f716f3b916b"><img alt="https://github.com/nortikin/sverchok/assets/14288520/7b7cc987-f48d-40b5-886b-4f716f3b916b" src="https://github.com/nortikin/sverchok/assets/14288520/7b7cc987-f48d-40b5-886b-4f716f3b916b" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/7b7cc987-f48d-40b5-886b-4f716f3b916b"><img alt="https://github.com/nortikin/sverchok/assets/14288520/7b7cc987-f48d-40b5-886b-4f716f3b916b" src="https://github.com/nortikin/sverchok/assets/14288520/7b7cc987-f48d-40b5-886b-4f716f3b916b" />
+</a>
 <section id="dependencies">
 <h2>Dependencies<a class="headerlink" href="#dependencies" title="Link to this heading">¶</a></h2>
 <p>This node optionally uses <a class="reference external" href="https://scipy.org/">SciPy</a> library to work.</p>
@@ -172,7 +168,8 @@
 corresponding scalar field values, by use of <a class="reference external" href="http://www.scholarpedia.org/article/Radial_basis_function">RBF</a> method. Depending on node
 parameters, the field can be interpolating, i.e. have exactly the provided
 values in the provided points, or only approximating.</p>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/05f3c475-dd46-43db-8e48-f1ef383f8dc9"><img alt="https://github.com/nortikin/sverchok/assets/14288520/05f3c475-dd46-43db-8e48-f1ef383f8dc9" src="https://github.com/nortikin/sverchok/assets/14288520/05f3c475-dd46-43db-8e48-f1ef383f8dc9" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/05f3c475-dd46-43db-8e48-f1ef383f8dc9"><img alt="https://github.com/nortikin/sverchok/assets/14288520/05f3c475-dd46-43db-8e48-f1ef383f8dc9" src="https://github.com/nortikin/sverchok/assets/14288520/05f3c475-dd46-43db-8e48-f1ef383f8dc9" />
+</a>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
@@ -183,7 +180,8 @@ This input is mandatory.</p></li>
 <li><p><strong>Values</strong>. Values of the scalar field in the specified points. This input is
 mandatory.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/51175cf8-c62b-4d49-a73d-cbe9a36dd67e"><img alt="https://github.com/nortikin/sverchok/assets/14288520/51175cf8-c62b-4d49-a73d-cbe9a36dd67e" src="https://github.com/nortikin/sverchok/assets/14288520/51175cf8-c62b-4d49-a73d-cbe9a36dd67e" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/51175cf8-c62b-4d49-a73d-cbe9a36dd67e"><img alt="https://github.com/nortikin/sverchok/assets/14288520/51175cf8-c62b-4d49-a73d-cbe9a36dd67e" src="https://github.com/nortikin/sverchok/assets/14288520/51175cf8-c62b-4d49-a73d-cbe9a36dd67e" />
+</a>
 <ul class="simple">
 <li><p><strong>Epsilon</strong>. Epsilon parameter of used RBF function; it affects the shape of
 generated field. The default value is 1.0.</p></li>
@@ -205,7 +203,8 @@ otherwise, it will be only an approximating field. The default value is 0.0.</p>
 <li><p>Quintic</p></li>
 <li><p>Thin Plate</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/515076c7-0f6c-4ffe-a29a-6019aa6960b4"><img alt="https://github.com/nortikin/sverchok/assets/14288520/515076c7-0f6c-4ffe-a29a-6019aa6960b4" src="https://github.com/nortikin/sverchok/assets/14288520/515076c7-0f6c-4ffe-a29a-6019aa6960b4" /></a>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/515076c7-0f6c-4ffe-a29a-6019aa6960b4"><img alt="https://github.com/nortikin/sverchok/assets/14288520/515076c7-0f6c-4ffe-a29a-6019aa6960b4" src="https://github.com/nortikin/sverchok/assets/14288520/515076c7-0f6c-4ffe-a29a-6019aa6960b4" />
+</a>
 </div></blockquote>
 </li>
 </ul>
@@ -228,7 +227,8 @@ otherwise, it will be only an approximating field. The default value is 0.0.</p>
 <li><p>In eight vertices of 2x2x2 cube, it has the value of 2;</p></li>
 <li><p>In the vertices of 4x4x4 cube, it has the value of 4.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/87240833-7f39e480-c436-11ea-9706-d7e55849c136.png"><img alt="https://user-images.githubusercontent.com/284644/87240833-7f39e480-c436-11ea-9706-d7e55849c136.png" src="https://user-images.githubusercontent.com/284644/87240833-7f39e480-c436-11ea-9706-d7e55849c136.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/87240833-7f39e480-c436-11ea-9706-d7e55849c136.png"><img alt="https://user-images.githubusercontent.com/284644/87240833-7f39e480-c436-11ea-9706-d7e55849c136.png" src="https://user-images.githubusercontent.com/284644/87240833-7f39e480-c436-11ea-9706-d7e55849c136.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
 <li><p>Fields-&gt; <a class="reference internal" href="scalar_field_graph.html"><span class="doc">Scalar Field Graph</span></a></p></li>
@@ -239,7 +239,8 @@ otherwise, it will be only an approximating field. The default value is 0.0.</p>
 </ul>
 <hr class="docutils" />
 <p>Let’s move the smaller cube slightly and generate an iso-surface instead of iso-curves:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/87240927-4ea67a80-c437-11ea-9b36-04b56a6ae696.png"><img alt="https://user-images.githubusercontent.com/284644/87240927-4ea67a80-c437-11ea-9b36-04b56a6ae696.png" src="https://user-images.githubusercontent.com/284644/87240927-4ea67a80-c437-11ea-9b36-04b56a6ae696.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/87240927-4ea67a80-c437-11ea-9b36-04b56a6ae696.png"><img alt="https://user-images.githubusercontent.com/284644/87240927-4ea67a80-c437-11ea-9b36-04b56a6ae696.png" src="https://user-images.githubusercontent.com/284644/87240927-4ea67a80-c437-11ea-9b36-04b56a6ae696.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
 <li><p>Surfaces-&gt; <a class="reference internal" href="../surface/marching_cubes.html"><span class="doc">Marching Cubes</span></a></p></li>
@@ -250,7 +251,8 @@ otherwise, it will be only an approximating field. The default value is 0.0.</p>
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
 </ul>
 <hr class="docutils" />
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/055dc1d2-6c59-4568-b095-52b74ac27d52"><img alt="https://github.com/nortikin/sverchok/assets/14288520/055dc1d2-6c59-4568-b095-52b74ac27d52" src="https://github.com/nortikin/sverchok/assets/14288520/055dc1d2-6c59-4568-b095-52b74ac27d52" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/055dc1d2-6c59-4568-b095-52b74ac27d52"><img alt="https://github.com/nortikin/sverchok/assets/14288520/055dc1d2-6c59-4568-b095-52b74ac27d52" src="https://github.com/nortikin/sverchok/assets/14288520/055dc1d2-6c59-4568-b095-52b74ac27d52" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/segment.html"><span class="doc">Segment</span></a></p></li>
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
@@ -267,7 +269,8 @@ otherwise, it will be only an approximating field. The default value is 0.0.</p>
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
 <li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
 </ul>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/9d961a3f-3962-431e-a1d2-408d6664190f"><img alt="https://github.com/nortikin/sverchok/assets/14288520/9d961a3f-3962-431e-a1d2-408d6664190f" src="https://github.com/nortikin/sverchok/assets/14288520/9d961a3f-3962-431e-a1d2-408d6664190f" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/9d961a3f-3962-431e-a1d2-408d6664190f"><img alt="https://github.com/nortikin/sverchok/assets/14288520/9d961a3f-3962-431e-a1d2-408d6664190f" src="https://github.com/nortikin/sverchok/assets/14288520/9d961a3f-3962-431e-a1d2-408d6664190f" />
+</a>
 </section>
 </section>
 

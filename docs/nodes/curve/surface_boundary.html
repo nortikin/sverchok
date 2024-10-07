@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../">
 <head>
@@ -6,17 +8,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Surface’s Boundary &mdash; Sverchok 1, 2, 0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=7ab3649f" />
 
   
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/documentation_options.js?v=773c2105"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/documentation_options.js?v=773c2105"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -36,9 +34,6 @@
             Sverchok
               <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
           </a>
-              <div class="version">
-                1, 2, 0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -117,6 +112,7 @@
 <li class="toctree-l3"><a class="reference internal" href="point_curve.html">Single-Point Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="polyarc.html">Poly Arc</a></li>
 <li class="toctree-l3"><a class="reference internal" href="polyline.html">Polyline</a></li>
+<li class="toctree-l3"><a class="reference internal" href="prepare_curves_net.html">Prepare NURBS Curves Net</a></li>
 <li class="toctree-l3"><a class="reference internal" href="project_curve_surface.html">Project Curve to Surface (NURBS)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="rbf_curve.html">RBF Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="reduce_degree.html">Reduce Degree (NURBS Curve)</a></li>
@@ -205,7 +201,8 @@
              
   <section id="surface-s-boundary">
 <h1>Surface’s Boundary<a class="headerlink" href="#surface-s-boundary" title="Link to this heading">¶</a></h1>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211388504-d688ddff-0ba8-41ec-a674-74ad7dc45040.png"><img alt="https://user-images.githubusercontent.com/14288520/211388504-d688ddff-0ba8-41ec-a674-74ad7dc45040.png" src="https://user-images.githubusercontent.com/14288520/211388504-d688ddff-0ba8-41ec-a674-74ad7dc45040.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211388504-d688ddff-0ba8-41ec-a674-74ad7dc45040.png"><img alt="https://user-images.githubusercontent.com/14288520/211388504-d688ddff-0ba8-41ec-a674-74ad7dc45040.png" src="https://user-images.githubusercontent.com/14288520/211388504-d688ddff-0ba8-41ec-a674-74ad7dc45040.png" />
+</a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node outputs the curve (or curves) which represent the boundaries of some surface. The supported types of surfaces are:</p>
@@ -216,7 +213,8 @@ many cases it will have four non-smooth points).</p></li>
 is represented by two closed curves at two open sides of the surface.</p></li>
 </ul>
 <p>If the surface is closed in both U and V direction (torus-like), then it will not have any boundary.</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211390865-1e54510c-969a-4545-800a-0231b55fa8dd.png"><img alt="https://user-images.githubusercontent.com/14288520/211390865-1e54510c-969a-4545-800a-0231b55fa8dd.png" src="https://user-images.githubusercontent.com/14288520/211390865-1e54510c-969a-4545-800a-0231b55fa8dd.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211390865-1e54510c-969a-4545-800a-0231b55fa8dd.png"><img alt="https://user-images.githubusercontent.com/14288520/211390865-1e54510c-969a-4545-800a-0231b55fa8dd.png" src="https://user-images.githubusercontent.com/14288520/211390865-1e54510c-969a-4545-800a-0231b55fa8dd.png" />
+</a>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
@@ -233,22 +231,26 @@ is represented by two closed curves at two open sides of the surface.</p></li>
 <ul class="simple">
 <li><p><strong>Plain</strong>. The surface is not closed in any direction, so it has single closed curve as a boundary.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211394815-fbe51d8d-b182-4b2c-b89b-7f60c5299d2b.png"><img alt="https://user-images.githubusercontent.com/14288520/211394815-fbe51d8d-b182-4b2c-b89b-7f60c5299d2b.png" src="https://user-images.githubusercontent.com/14288520/211394815-fbe51d8d-b182-4b2c-b89b-7f60c5299d2b.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211394815-fbe51d8d-b182-4b2c-b89b-7f60c5299d2b.png"><img alt="https://user-images.githubusercontent.com/14288520/211394815-fbe51d8d-b182-4b2c-b89b-7f60c5299d2b.png" src="https://user-images.githubusercontent.com/14288520/211394815-fbe51d8d-b182-4b2c-b89b-7f60c5299d2b.png" />
+</a>
 <ul class="simple">
 <li><p><strong>U Cyclic</strong>. The surface is closed along the U direction. It has two closed curves as boundary.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211395429-de1cec75-f633-4fb2-9cb2-94288584617c.png"><img alt="https://user-images.githubusercontent.com/14288520/211395429-de1cec75-f633-4fb2-9cb2-94288584617c.png" src="https://user-images.githubusercontent.com/14288520/211395429-de1cec75-f633-4fb2-9cb2-94288584617c.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211395429-de1cec75-f633-4fb2-9cb2-94288584617c.png"><img alt="https://user-images.githubusercontent.com/14288520/211395429-de1cec75-f633-4fb2-9cb2-94288584617c.png" src="https://user-images.githubusercontent.com/14288520/211395429-de1cec75-f633-4fb2-9cb2-94288584617c.png" />
+</a>
 <ul class="simple">
 <li><p><strong>V Cyclic</strong>. The surface is closed along the V direction.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211395853-0ce0f227-da33-41f3-86fe-936054021da5.png"><img alt="https://user-images.githubusercontent.com/14288520/211395853-0ce0f227-da33-41f3-86fe-936054021da5.png" src="https://user-images.githubusercontent.com/14288520/211395853-0ce0f227-da33-41f3-86fe-936054021da5.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211395853-0ce0f227-da33-41f3-86fe-936054021da5.png"><img alt="https://user-images.githubusercontent.com/14288520/211395853-0ce0f227-da33-41f3-86fe-936054021da5.png" src="https://user-images.githubusercontent.com/14288520/211395853-0ce0f227-da33-41f3-86fe-936054021da5.png" />
+</a>
 </li>
 <li><p><strong>Concatenate</strong>. This parameter is available only if <strong>Cyclic</strong> parameter is
 set to <strong>Plain</strong>. If checked, then four edges of the surface will be
 concatenated into one Curve object. Otherwise, the node will output four
 separate Curve objects. Checked by default.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211396496-ff819f75-6254-48d7-86a5-15d310062ebd.png"><img alt="https://user-images.githubusercontent.com/14288520/211396496-ff819f75-6254-48d7-86a5-15d310062ebd.png" src="https://user-images.githubusercontent.com/14288520/211396496-ff819f75-6254-48d7-86a5-15d310062ebd.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211396496-ff819f75-6254-48d7-86a5-15d310062ebd.png"><img alt="https://user-images.githubusercontent.com/14288520/211396496-ff819f75-6254-48d7-86a5-15d310062ebd.png" src="https://user-images.githubusercontent.com/14288520/211396496-ff819f75-6254-48d7-86a5-15d310062ebd.png" />
+</a>
 </section>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
@@ -260,9 +262,11 @@ separate Curve objects. Checked by default.</p></li>
 <section id="examples-of-usage">
 <h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Link to this heading">¶</a></h2>
 <p>Visualize the boundary of some random plane-like surface:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/78506070-b8581e00-7790-11ea-9af1-2c3c84264dc8.png"><img alt="https://user-images.githubusercontent.com/284644/78506070-b8581e00-7790-11ea-9af1-2c3c84264dc8.png" src="https://user-images.githubusercontent.com/284644/78506070-b8581e00-7790-11ea-9af1-2c3c84264dc8.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/78506070-b8581e00-7790-11ea-9af1-2c3c84264dc8.png"><img alt="https://user-images.githubusercontent.com/284644/78506070-b8581e00-7790-11ea-9af1-2c3c84264dc8.png" src="https://user-images.githubusercontent.com/284644/78506070-b8581e00-7790-11ea-9af1-2c3c84264dc8.png" />
+</a>
 <p>replay with new nodes:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211398183-1acee1d4-ca57-4e0d-bc04-20d5a0feacdd.png"><img alt="https://user-images.githubusercontent.com/14288520/211398183-1acee1d4-ca57-4e0d-bc04-20d5a0feacdd.png" src="https://user-images.githubusercontent.com/14288520/211398183-1acee1d4-ca57-4e0d-bc04-20d5a0feacdd.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211398183-1acee1d4-ca57-4e0d-bc04-20d5a0feacdd.png"><img alt="https://user-images.githubusercontent.com/14288520/211398183-1acee1d4-ca57-4e0d-bc04-20d5a0feacdd.png" src="https://user-images.githubusercontent.com/14288520/211398183-1acee1d4-ca57-4e0d-bc04-20d5a0feacdd.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
 <li><p>Curves-&gt; <a class="reference internal" href="cubic_spline.html"><span class="doc">Cubic Spline</span></a></p></li>
@@ -274,7 +278,8 @@ separate Curve objects. Checked by default.</p></li>
 </ul>
 <hr class="docutils" />
 <p>Visualize the boundary of cylinder-like surface:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211399221-75994afc-4a1a-41b5-8092-b3cbd30a1efd.png"><img alt="https://user-images.githubusercontent.com/14288520/211399221-75994afc-4a1a-41b5-8092-b3cbd30a1efd.png" src="https://user-images.githubusercontent.com/14288520/211399221-75994afc-4a1a-41b5-8092-b3cbd30a1efd.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/211399221-75994afc-4a1a-41b5-8092-b3cbd30a1efd.png"><img alt="https://user-images.githubusercontent.com/14288520/211399221-75994afc-4a1a-41b5-8092-b3cbd30a1efd.png" src="https://user-images.githubusercontent.com/14288520/211399221-75994afc-4a1a-41b5-8092-b3cbd30a1efd.png" />
+</a>
 <ul class="simple">
 <li><p>Curves-&gt; <a class="reference internal" href="curve_circle.html"><span class="doc">Circle (Curve)</span></a></p></li>
 <li><p>Curves-&gt; <a class="reference internal" href="eval_curve.html"><span class="doc">Evaluate Curve</span></a></p></li>

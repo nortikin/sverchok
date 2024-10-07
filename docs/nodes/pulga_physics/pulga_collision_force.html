@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../">
 <head>
@@ -6,17 +8,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Pulga Collision Force &mdash; Sverchok 1, 2, 0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=7ab3649f" />
 
   
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/documentation_options.js?v=773c2105"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/documentation_options.js?v=773c2105"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -36,9 +34,6 @@
             Sverchok
               <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
           </a>
-              <div class="version">
-                1, 2, 0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -148,14 +143,16 @@
              
   <section id="pulga-collision-force">
 <h1>Pulga Collision Force<a class="headerlink" href="#pulga-collision-force" title="Link to this heading">¶</a></h1>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/211c68f3-e0b1-4de8-93f5-45bf09367729"><img alt="https://github.com/nortikin/sverchok/assets/14288520/211c68f3-e0b1-4de8-93f5-45bf09367729" src="https://github.com/nortikin/sverchok/assets/14288520/211c68f3-e0b1-4de8-93f5-45bf09367729" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/211c68f3-e0b1-4de8-93f5-45bf09367729"><img alt="https://github.com/nortikin/sverchok/assets/14288520/211c68f3-e0b1-4de8-93f5-45bf09367729" src="https://github.com/nortikin/sverchok/assets/14288520/211c68f3-e0b1-4de8-93f5-45bf09367729" />
+</a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node creates a force to be applied with the Pulga Physics Solver node.</p>
 <p>The force will be applied when de particles (vertices) are nearer than the sum of particle radius.</p>
 <p>The force direction will be the difference of the verts location</p>
 <p>The force magnitude will be:  (Distance - Radius Sum) * Force Strength</p>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/0d6e942b-c487-4746-aac2-632f389fcaaf"><img alt="https://github.com/nortikin/sverchok/assets/14288520/0d6e942b-c487-4746-aac2-632f389fcaaf" src="https://github.com/nortikin/sverchok/assets/14288520/0d6e942b-c487-4746-aac2-632f389fcaaf" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/0d6e942b-c487-4746-aac2-632f389fcaaf"><img alt="https://github.com/nortikin/sverchok/assets/14288520/0d6e942b-c487-4746-aac2-632f389fcaaf" src="https://github.com/nortikin/sverchok/assets/14288520/0d6e942b-c487-4746-aac2-632f389fcaaf" />
+</a>
 </section>
 <section id="input">
 <h2>Input<a class="headerlink" href="#input" title="Link to this heading">¶</a></h2>
@@ -167,7 +164,8 @@
 <ul>
 <li><p><strong>Kd-tree</strong>: this is the fastest mode but in order to work it needs ‘Scipy’ and ‘Cython’ dependencies to be installed.</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/b87f2ad1-e8e3-4937-adab-6baa99c3bbc6"><img alt="https://github.com/nortikin/sverchok/assets/14288520/b87f2ad1-e8e3-4937-adab-6baa99c3bbc6" src="https://github.com/nortikin/sverchok/assets/14288520/b87f2ad1-e8e3-4937-adab-6baa99c3bbc6" /></a>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/b87f2ad1-e8e3-4937-adab-6baa99c3bbc6"><img alt="https://github.com/nortikin/sverchok/assets/14288520/b87f2ad1-e8e3-4937-adab-6baa99c3bbc6" src="https://github.com/nortikin/sverchok/assets/14288520/b87f2ad1-e8e3-4937-adab-6baa99c3bbc6" />
+</a>
 </div></blockquote>
 </li>
 <li><p><strong>Brute-Force</strong>: This mode is much slower but does not need any dependencies to work.</p></li>
@@ -175,7 +173,8 @@
 </section>
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">¶</a></h2>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/07394e3c-c5bc-4280-98ab-9c0e5349b839"><img alt="https://github.com/nortikin/sverchok/assets/14288520/07394e3c-c5bc-4280-98ab-9c0e5349b839" src="https://github.com/nortikin/sverchok/assets/14288520/07394e3c-c5bc-4280-98ab-9c0e5349b839" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/07394e3c-c5bc-4280-98ab-9c0e5349b839"><img alt="https://github.com/nortikin/sverchok/assets/14288520/07394e3c-c5bc-4280-98ab-9c0e5349b839" src="https://github.com/nortikin/sverchok/assets/14288520/07394e3c-c5bc-4280-98ab-9c0e5349b839" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/icosphere.html"><span class="doc">IcoSphere</span></a></p></li>
@@ -186,7 +185,8 @@
 <li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_physics_solver.html"><span class="doc">Pulga Physics Solver</span></a></p></li>
 <li><p>Pulga Physics-&gt; <a class="reference internal" href="pulga_drag_force.html"><span class="doc">Pulga Drag Force</span></a></p></li>
 </ul>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/e9d04904-58a5-4e8f-b8c1-61fd51c545a5"><img alt="https://github.com/nortikin/sverchok/assets/14288520/e9d04904-58a5-4e8f-b8c1-61fd51c545a5" src="https://github.com/nortikin/sverchok/assets/14288520/e9d04904-58a5-4e8f-b8c1-61fd51c545a5" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/e9d04904-58a5-4e8f-b8c1-61fd51c545a5"><img alt="https://github.com/nortikin/sverchok/assets/14288520/e9d04904-58a5-4e8f-b8c1-61fd51c545a5" src="https://github.com/nortikin/sverchok/assets/14288520/e9d04904-58a5-4e8f-b8c1-61fd51c545a5" />
+</a>
 </section>
 </section>
 

@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../">
 <head>
@@ -6,17 +8,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Evaluate Vector Field &mdash; Sverchok 1, 2, 0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=7ab3649f" />
 
   
     <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/documentation_options.js?v=773c2105"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/documentation_options.js?v=773c2105"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -36,9 +34,6 @@
             Sverchok
               <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
           </a>
-              <div class="version">
-                1, 2, 0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -161,14 +156,17 @@
              
   <section id="evaluate-vector-field">
 <h1>Evaluate Vector Field<a class="headerlink" href="#evaluate-vector-field" title="Link to this heading">¶</a></h1>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/11055b4a-b9c1-406d-9c56-c7c7054b6d9b"><img alt="https://github.com/nortikin/sverchok/assets/14288520/11055b4a-b9c1-406d-9c56-c7c7054b6d9b" src="https://github.com/nortikin/sverchok/assets/14288520/11055b4a-b9c1-406d-9c56-c7c7054b6d9b" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/11055b4a-b9c1-406d-9c56-c7c7054b6d9b"><img alt="https://github.com/nortikin/sverchok/assets/14288520/11055b4a-b9c1-406d-9c56-c7c7054b6d9b" src="https://github.com/nortikin/sverchok/assets/14288520/11055b4a-b9c1-406d-9c56-c7c7054b6d9b" />
+</a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
 <p>This node calculates the values of the provided Vector Field at the given
 points. More precisely, given the field VF (which is a function from vectors to
 vectors), and point X, it calculates the vector VF(X).</p>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/3b015573-a8c3-4724-8c32-396169b70eb8"><img alt="https://github.com/nortikin/sverchok/assets/14288520/3b015573-a8c3-4724-8c32-396169b70eb8" src="https://github.com/nortikin/sverchok/assets/14288520/3b015573-a8c3-4724-8c32-396169b70eb8" /></a>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/5b6ebc53-29a8-46d2-9698-03c15bc98cd0"><img alt="https://github.com/nortikin/sverchok/assets/14288520/5b6ebc53-29a8-46d2-9698-03c15bc98cd0" src="https://github.com/nortikin/sverchok/assets/14288520/5b6ebc53-29a8-46d2-9698-03c15bc98cd0" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/3b015573-a8c3-4724-8c32-396169b70eb8"><img alt="https://github.com/nortikin/sverchok/assets/14288520/3b015573-a8c3-4724-8c32-396169b70eb8" src="https://github.com/nortikin/sverchok/assets/14288520/3b015573-a8c3-4724-8c32-396169b70eb8" />
+</a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/5b6ebc53-29a8-46d2-9698-03c15bc98cd0"><img alt="https://github.com/nortikin/sverchok/assets/14288520/5b6ebc53-29a8-46d2-9698-03c15bc98cd0" src="https://github.com/nortikin/sverchok/assets/14288520/5b6ebc53-29a8-46d2-9698-03c15bc98cd0" />
+</a>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
@@ -183,7 +181,8 @@ vectors), and point X, it calculates the vector VF(X).</p>
 <ul>
 <li><p><strong>Output NumPy</strong>. Outputs NumPy arrays in stead of regular python lists. Improves performance</p>
 <blockquote>
-<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/84b5166d-092f-4ff3-8802-a2da38f4b25d"><img alt="https://github.com/nortikin/sverchok/assets/14288520/84b5166d-092f-4ff3-8802-a2da38f4b25d" src="https://github.com/nortikin/sverchok/assets/14288520/84b5166d-092f-4ff3-8802-a2da38f4b25d" /></a>
+<div><a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/84b5166d-092f-4ff3-8802-a2da38f4b25d"><img alt="https://github.com/nortikin/sverchok/assets/14288520/84b5166d-092f-4ff3-8802-a2da38f4b25d" src="https://github.com/nortikin/sverchok/assets/14288520/84b5166d-092f-4ff3-8802-a2da38f4b25d" />
+</a>
 <ul class="simple">
 <li><p>Text-&gt; <a class="reference internal" href="../text/stethoscope_v28.html"><span class="doc">Stethoscope</span></a></p></li>
 </ul>
@@ -205,7 +204,8 @@ vectors), and point X, it calculates the vector VF(X).</p>
 <section id="examples-of-usage">
 <h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Link to this heading">¶</a></h2>
 <p>Example of description:</p>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/ba8e4458-cc1a-444b-b1ef-413ea28b89a7"><img alt="https://github.com/nortikin/sverchok/assets/14288520/ba8e4458-cc1a-444b-b1ef-413ea28b89a7" src="https://github.com/nortikin/sverchok/assets/14288520/ba8e4458-cc1a-444b-b1ef-413ea28b89a7" /></a>
+<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/ba8e4458-cc1a-444b-b1ef-413ea28b89a7"><img alt="https://github.com/nortikin/sverchok/assets/14288520/ba8e4458-cc1a-444b-b1ef-413ea28b89a7" src="https://github.com/nortikin/sverchok/assets/14288520/ba8e4458-cc1a-444b-b1ef-413ea28b89a7" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/line_mk4.html"><span class="doc">Line</span></a></p></li>
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>
@@ -222,7 +222,8 @@ vectors), and point X, it calculates the vector VF(X).</p>
 </ul>
 <hr class="docutils" />
 <p>Replace each point of straight line segment with the result of noise vector field evaluation at that point:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/79476391-5c0fbc80-8022-11ea-9457-1babe56f4388.png"><img alt="https://user-images.githubusercontent.com/284644/79476391-5c0fbc80-8022-11ea-9457-1babe56f4388.png" src="https://user-images.githubusercontent.com/284644/79476391-5c0fbc80-8022-11ea-9457-1babe56f4388.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/79476391-5c0fbc80-8022-11ea-9457-1babe56f4388.png"><img alt="https://user-images.githubusercontent.com/284644/79476391-5c0fbc80-8022-11ea-9457-1babe56f4388.png" src="https://user-images.githubusercontent.com/284644/79476391-5c0fbc80-8022-11ea-9457-1babe56f4388.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/segment.html"><span class="doc">Segment</span></a></p></li>
 <li><p>Fields-&gt; <a class="reference internal" href="noise_vfield.html"><span class="doc">Noise Vector Field</span></a></p></li>
@@ -230,7 +231,8 @@ vectors), and point X, it calculates the vector VF(X).</p>
 </ul>
 <hr class="docutils" />
 <p>Visualize vector field vectors by connecting original points of the line segment and the points obtained by moving the original points by the results of vector field evaluation:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/79476395-5d40e980-8022-11ea-846b-68da09ed2e41.png"><img alt="https://user-images.githubusercontent.com/284644/79476395-5d40e980-8022-11ea-846b-68da09ed2e41.png" src="https://user-images.githubusercontent.com/284644/79476395-5d40e980-8022-11ea-846b-68da09ed2e41.png" /></a>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/79476395-5d40e980-8022-11ea-846b-68da09ed2e41.png"><img alt="https://user-images.githubusercontent.com/284644/79476395-5d40e980-8022-11ea-846b-68da09ed2e41.png" src="https://user-images.githubusercontent.com/284644/79476395-5d40e980-8022-11ea-846b-68da09ed2e41.png" />
+</a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/segment.html"><span class="doc">Segment</span></a></p></li>
 <li><p>Fields-&gt; <a class="reference internal" href="noise_vfield.html"><span class="doc">Noise Vector Field</span></a></p></li>
