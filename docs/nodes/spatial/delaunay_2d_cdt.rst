@@ -73,7 +73,7 @@ Examples
   :target: https://user-images.githubusercontent.com/14288520/202162212-a0b731ea-0afa-4c23-bbf2-c646090fd805.png
 
 * Generator-> :doc:`Segment </nodes/generator/segment>`
-* Generator-> :doc:`Random Vector </nodes/generator/populate_mesh_mk2>`
+* Generator-> :doc:`Random Vector </nodes/spatial/populate_mesh_mk2>`
 * List->List Main-> :doc:`List Join </nodes/list_main/join>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 
