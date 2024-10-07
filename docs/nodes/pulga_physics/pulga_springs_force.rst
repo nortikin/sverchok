@@ -41,7 +41,7 @@ Example in description:
   :target: https://github.com/nortikin/sverchok/assets/14288520/e8c76f03-518a-458d-a2d5-3f7edf8ffb77
 
 * Generator-> :doc:`Cylinder </nodes/generator/cylinder_mk2>`
-* Spatial-> :doc:`Populate Mesh </nodes/spatial/random_points_on_mesh>`
+* Spatial-> :doc:`Populate Mesh </nodes/spatial/populate_mesh_mk2>`
 * Spatial-> :doc:`Voronoi on Mesh </nodes/spatial/voronoi_on_mesh>`
 * Modifiers->Modifier Change-> :doc:`Mesh Join </nodes/modifier_change/mesh_join_mk2>`
 * Modifiers->Modifier Change-> :doc:`Merge by Distance </nodes/modifier_change/merge_by_distance>`

@@ -73,7 +73,7 @@ Examples
   :target: https://user-images.githubusercontent.com/14288520/202162212-a0b731ea-0afa-4c23-bbf2-c646090fd805.png
 
 * Generator-> :doc:`Segment </nodes/generator/segment>`
-* Generator-> :doc:`Random Vector </nodes/generator/random_vector_mk3>`
+* Generator-> :doc:`Random Vector </nodes/spatial/populate_mesh_mk2>`
 * List->List Main-> :doc:`List Join </nodes/list_main/join>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 
@@ -85,7 +85,7 @@ Examples
   :target: https://user-images.githubusercontent.com/14288520/202170634-f26119f8-bf1c-41a6-881e-cf1d4fdf3739.png
 
 * Scene-> :doc:`Get Objects Data </nodes/scene/get_objects_data>`
-* Spatial-> :doc:`Populate Mesh </nodes/spatial/random_points_on_mesh>`
+* Spatial-> :doc:`Populate Mesh </nodes/spatial/populate_mesh_mk2>`
 * List->List Main-> :doc:`List Join </nodes/list_main/join>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 
@@ -97,7 +97,7 @@ Examples
   :target: https://user-images.githubusercontent.com/14288520/202174338-9f178515-36eb-4110-b851-35f9b6e29471.png
 
 * Generator-> :doc:`Plane </nodes/generator/plane_mk3>`
-* Spatial-> :doc:`Populate Mesh </nodes/spatial/random_points_on_mesh>`
+* Spatial-> :doc:`Populate Mesh </nodes/spatial/populate_mesh_mk2>`
 * Number-> :doc:`Random Num Gen </nodes/number/random_num_gen>`
 * List->List Main-> :doc:`List Length </nodes/list_main/length>`
 * Color-> :doc:`Color In </nodes/color/color_in_mk1>`

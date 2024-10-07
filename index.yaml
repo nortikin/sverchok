@@ -126,6 +126,7 @@
     - SvExSurfaceBoundaryNode
     - ---
     - SvIntersectNurbsCurvesNode
+    - SvPrepareCurvesNetNode
     - SvExNearestPointOnCurveNode
     - SvExOrthoProjectCurveNode
     - SvExCurveEndpointsNode

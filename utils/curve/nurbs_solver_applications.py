@@ -44,7 +44,11 @@ def adjust_curve_points(curve, us_bar, points, preserve_tangents=False):
         zeros = np.zeros((n_target_points,3))
         solver.add_goal(SvNurbsCurveTangents(us_bar, zeros, relative=True))
     solver.set_curve_params(len(curve.get_control_points()), curve.get_knotvector())
-    return solver.solve()
+    problem_type, residue, curve = solver.solve_ex(
+                    problem_types = {SvNurbsCurveSolver.PROBLEM_UNDERDETERMINED,
+                                     SvNurbsCurveSolver.PROBLEM_WELLDETERMINED}
+                )
+    return curve
 
 def deform_curve_with_falloff(curve, length_solver, u_bar, falloff_delta, falloff_type, vector, refine_samples=30, tolerance=1e-4):
     """
