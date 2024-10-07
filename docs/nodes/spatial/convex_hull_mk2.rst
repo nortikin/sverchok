@@ -30,7 +30,7 @@ Examples
 .. image:: https://user-images.githubusercontent.com/14288520/202849248-6c2d96c3-cbaa-4f38-88a5-b6ae16feb4fc.png
   :target: https://user-images.githubusercontent.com/14288520/202849248-6c2d96c3-cbaa-4f38-88a5-b6ae16feb4fc.png
 
-* Generator-> :doc:`Random Vector </nodes/generator/random_vector_mk3>`
+* Generator-> :doc:`Random Vector </nodes/generator/populate_mesh_mk2>`
 * Transform-> :doc:`Noise Displace </nodes/transforms/noise_displace>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 
