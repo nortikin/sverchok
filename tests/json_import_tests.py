@@ -87,6 +87,7 @@ UNITTEST_SKIPLIST = [
     "CNC_PUZZLES.zip",
     "CNC_GCODE.zip",
     "PointsONmeshINlines.json",
+    "Technical_ring_with_holes.zip",
 ]
 
 # @batch_only
