@@ -735,43 +735,6 @@
         },
         "bl_idname": "SvMeshViewer"
       },
-      "Path Length Mk2": {
-        "attributes": {
-          "location": [
-            214.44064331054688,
-            472.56988525390625
-          ]
-        },
-        "inputs": {
-          "Vertices": {
-            "bl_idname": "SvVerticesSocket",
-            "name": "Vertices"
-          },
-          "Edges": {
-            "bl_idname": "SvStringsSocket",
-            "name": "Edges"
-          }
-        },
-        "outputs": {
-          "SegmentLength": {
-            "bl_idname": "SvStringsSocket",
-            "name": "SegmentLength"
-          },
-          "TotalLength": {
-            "bl_idname": "SvStringsSocket",
-            "name": "TotalLength"
-          },
-          "CumulativeSum": {
-            "bl_idname": "SvStringsSocket",
-            "name": "CumulativeSum"
-          },
-          "CumulativeSum1": {
-            "bl_idname": "SvStringsSocket",
-            "name": "CumulativeSum1"
-          }
-        },
-        "bl_idname": "SvPathLengthMk2Node"
-      },
       "Polygon Grid": {
         "attributes": {
           "location": [
@@ -1154,72 +1117,6 @@
           }
         },
         "bl_idname": "SvPulgaPhysicsNode"
-      },
-      "Reroute": {
-        "attributes": {
-          "location": [
-            625.296142578125,
-            -511.2069396972656
-          ],
-          "width": 16.0
-        },
-        "inputs": {
-          "Input": {
-            "bl_idname": "NodeSocketColor",
-            "name": "Input"
-          }
-        },
-        "outputs": {
-          "Output": {
-            "bl_idname": "NodeSocketColor",
-            "name": "Output"
-          }
-        },
-        "bl_idname": "NodeReroute"
-      },
-      "Reroute.002": {
-        "attributes": {
-          "location": [
-            958.3682861328125,
-            315.803955078125
-          ],
-          "width": 16.0
-        },
-        "inputs": {
-          "Input": {
-            "bl_idname": "NodeSocketColor",
-            "name": "Input"
-          }
-        },
-        "outputs": {
-          "Output": {
-            "bl_idname": "NodeSocketColor",
-            "name": "Output"
-          }
-        },
-        "bl_idname": "NodeReroute"
-      },
-      "Reroute.003": {
-        "attributes": {
-          "location": [
-            233.83367919921875,
-            315.803955078125
-          ],
-          "width": 16.0
-        },
-        "inputs": {
-          "Input": {
-            "bl_idname": "NodeSocketColor",
-            "name": "Input"
-          }
-        },
-        "outputs": {
-          "Output": {
-            "bl_idname": "NodeSocketColor",
-            "name": "Output"
-          }
-        },
-        "bl_idname": "NodeReroute"
       },
       "Solidify.001": {
         "attributes": {
@@ -1691,12 +1588,22 @@
         },
         "properties": {
           "int_list_items": [
-            {"elem": 0},
-            {"elem": 1},
-            {"elem": 2},
-            {"elem": 5},
-            {"elem": 6},
-            {"elem": 4}
+            {},
+            {
+              "elem": 1
+            },
+            {
+              "elem": 2
+            },
+            {
+              "elem": 5
+            },
+            {
+              "elem": 6
+            },
+            {
+              "elem": 4
+            }
           ],
           "int_list_counter": 6
         },
@@ -1731,12 +1638,18 @@
         },
         "properties": {
           "int_list_items": [
-            {"elem": 0},
-            {"elem": 1},
-            {"elem": 0},
-            {"elem": 0},
-            {"elem": 1},
-            {"elem": 1}
+            {},
+            {
+              "elem": 1
+            },
+            {},
+            {},
+            {
+              "elem": 1
+            },
+            {
+              "elem": 1
+            }
           ],
           "int_list_counter": 6
         },
@@ -1865,9 +1778,13 @@
         },
         "properties": {
           "int_list_items": [
-            {"elem": 0},
-            {"elem": 1},
-            {"elem": 3}
+            {},
+            {
+              "elem": 1
+            },
+            {
+              "elem": 3
+            }
           ],
           "int_list_counter": 3
         },
@@ -1902,8 +1819,10 @@
         },
         "properties": {
           "int_list_items": [
-            {"elem": 0},
-            {"elem": 180}
+            {},
+            {
+              "elem": 180
+            }
           ],
           "int_list_counter": 2
         },
@@ -1927,6 +1846,43 @@
           }
         },
         "bl_idname": "SvListInputNodeMK2"
+      },
+      "Path Length Mk2": {
+        "attributes": {
+          "location": [
+            214.44064331054688,
+            515.1373291015625
+          ]
+        },
+        "inputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices"
+          },
+          "Edges": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Edges"
+          }
+        },
+        "outputs": {
+          "SegmentLength": {
+            "bl_idname": "SvStringsSocket",
+            "name": "SegmentLength"
+          },
+          "TotalLength": {
+            "bl_idname": "SvStringsSocket",
+            "name": "TotalLength"
+          },
+          "CumulativeSum": {
+            "bl_idname": "SvStringsSocket",
+            "name": "CumulativeSum"
+          },
+          "CumulativeSum1": {
+            "bl_idname": "SvStringsSocket",
+            "name": "CumulativeSum1"
+          }
+        },
+        "bl_idname": "SvPathLengthMk2Node"
       }
     },
     "links": [
@@ -2003,8 +1959,8 @@
         "to_socket": "data"
       },
       {
-        "from_node": "Reroute",
-        "from_socket": "Output",
+        "from_node": "List Input",
+        "from_socket": "data_output",
         "to_node": "List Mask (Out).001",
         "to_socket": "mask"
       },
@@ -2015,8 +1971,8 @@
         "to_socket": "data"
       },
       {
-        "from_node": "Reroute",
-        "from_socket": "Output",
+        "from_node": "List Input",
+        "from_socket": "data_output",
         "to_node": "List Mask (Out).002",
         "to_socket": "mask"
       },
@@ -2057,8 +2013,8 @@
         "to_socket": "vertices"
       },
       {
-        "from_node": "Reroute.002",
-        "from_socket": "Output",
+        "from_node": "Subdivide",
+        "from_socket": "Faces",
         "to_node": "Mesh Viewer",
         "to_socket": "faces"
       },
@@ -2079,18 +2035,6 @@
         "from_socket": "Matrices",
         "to_node": "Mesh Viewer.001",
         "to_socket": "matrix"
-      },
-      {
-        "from_node": "Subdivide",
-        "from_socket": "Vertices",
-        "to_node": "Path Length Mk2",
-        "to_socket": "Vertices"
-      },
-      {
-        "from_node": "Subdivide",
-        "from_socket": "Edges",
-        "to_node": "Path Length Mk2",
-        "to_socket": "Edges"
       },
       {
         "from_node": "Subdivide",
@@ -2121,24 +2065,6 @@
         "from_socket": "Vertices",
         "to_node": "Pulga Physics.001",
         "to_socket": "Pins Goal Position"
-      },
-      {
-        "from_node": "List Input",
-        "from_socket": "data_output",
-        "to_node": "Reroute",
-        "to_socket": "Input"
-      },
-      {
-        "from_node": "Reroute.003",
-        "from_socket": "Output",
-        "to_node": "Reroute.002",
-        "to_socket": "Input"
-      },
-      {
-        "from_node": "Subdivide",
-        "from_socket": "Faces",
-        "to_node": "Reroute.003",
-        "to_socket": "Input"
       },
       {
         "from_node": "UV Connection",
@@ -2253,6 +2179,18 @@
         "from_socket": "dataTrue_001",
         "to_node": "Vector Out",
         "to_socket": "Vectors"
+      },
+      {
+        "from_node": "Subdivide",
+        "from_socket": "Vertices",
+        "to_node": "Path Length Mk2",
+        "to_socket": "Vertices"
+      },
+      {
+        "from_node": "Subdivide",
+        "from_socket": "Edges",
+        "to_node": "Path Length Mk2",
+        "to_socket": "Edges"
       }
     ]
   }
