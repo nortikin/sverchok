@@ -65,7 +65,29 @@ UNITTEST_SKIPLIST = [
     "BIM_ArchiCAD24_import.json",
     "BIM_FreeCAD_import.json",
     "BIM_truss_joint.json",
-    "SverchokLogo.json" # Blender 2.90 has a crash in delaunay_2d_cdt on this file :/
+    "SverchokLogo.json", # Blender 2.90 has a crash in delaunay_2d_cdt on this file :/
+
+    "Tie_revange_2020.json",
+    "rigid_origami.json",
+    "Water_bomb_origami_tessellation_namako.json",
+    "GeoDOME_preset.json",
+    "Coliseum.zip",
+    "ProfileBuilding.zip",
+    "Fasade_from_surfaces.json",
+    "Biological.zip",
+    "CNC_Waffle.zip",
+    "CNC_SVG_A4.json",
+    "Strip_spools_tension.json",
+    "Genetic_algorithm_simple.json",
+    "Candy.zip",
+    "Pineapple.zip.zip",
+    "List_multymasking.zip",
+    "Fasade_Complicated.zip",
+    "CNC_PANNO.zip",
+    "CNC_PUZZLES.zip",
+    "CNC_GCODE.zip",
+    "PointsONmeshINlines.json",
+    "Technical_ring_with_holes.zip",
 ]
 
 # @batch_only

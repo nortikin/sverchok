@@ -1040,7 +1040,8 @@ class PlaneEquation(object):
         # (A x + B y + C z) is a scalar product of (x, y, z) and (A, B, C)
         numerators = abs(points.dot([a, b, c]) + d)
         denominator = math.sqrt(a*a + b*b + c*c)
-        return numerators / denominator
+        res = numerators / denominator
+        return res
 
     def intersect_with_line(self, line, min_det=1e-12):
         """

@@ -71,7 +71,7 @@ Examples of Usage
   :target: https://user-images.githubusercontent.com/14288520/202860801-f540fe36-6332-4575-bba1-705ae288fb46.png
 
 * Generator-> :doc:`Suzanne </nodes/generator/suzanne>`
-* Spatial-> :doc:`Populate Mesh </nodes/spatial/random_points_on_mesh>`
+* Spatial-> :doc:`Populate Mesh </nodes/spatial/populate_mesh_mk2>`
 * Spatial-> :doc:`Lloyd on Mesh </nodes/spatial/lloyd_on_mesh>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 

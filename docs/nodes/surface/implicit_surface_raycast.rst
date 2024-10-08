@@ -43,6 +43,26 @@ This node has the following inputs:
   .. image:: https://github.com/nortikin/sverchok/assets/14288520/792915bc-0726-445d-bf8c-3f6d8e83ba70
     :target: https://github.com/nortikin/sverchok/assets/14288520/792915bc-0726-445d-bf8c-3f6d8e83ba70
 
+Parameters
+----------
+
+This node has the following parameters:
+
+* **First solution only**. If checked, the node will output only first
+  intersection of the ray with the implicit surface. Otherwise, it will output
+  all intersections. Checked by default.
+* **N Sections**. To search for intersection, the node subdivides the ray into
+  N segments, and checks for intersection in each segment. The number of
+  segments defines maximum number of solutions which can be found. The default
+  value is 10.
+* **On fail**. This parameter is available in the N panel only. This defines what the node should do if the ray does not intersect the surface. The available options are:
+
+  * **Fail**. If any of rays does not intersect surface, the node will fail (become red) and processing will stop.
+  * **Skip**. Just do not output anything for such rays.
+  * **Return None**. Return None value for such rays.
+
+  The default option is **Fail**.
+
 Outputs
 -------
 

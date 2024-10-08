@@ -51,7 +51,7 @@ Examples
 .. image:: https://github.com/nortikin/sverchok/assets/14288520/84588685-1360-4029-b8de-5346008b982b
   :target: https://github.com/nortikin/sverchok/assets/14288520/84588685-1360-4029-b8de-5346008b982b
 
-* Spatial-> :doc:`Populate Mesh </nodes/spatial/random_points_on_mesh>`
+* Spatial-> :doc:`Populate Mesh </nodes/spatial/populate_mesh_mk2>`
 * Spatial-> :doc:`Voronoi on Mesh </nodes/spatial/voronoi_on_mesh>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 * Scene-> :doc:`Get Objects Data </nodes/scene/get_objects_data>`

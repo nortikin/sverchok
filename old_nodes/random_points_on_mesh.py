@@ -320,6 +320,12 @@ class SvRandomPointsOnMesh(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Populate Mesh'
     sv_icon = 'SV_RANDOM_NUM_GEN'
 
+    replacement_nodes = [('SvPopulateMeshNode',
+                          {'Verts': 'Vertices', 'Faces': 'Faces',
+                           'Face weight': 'Weights',
+                           'Number': 'Count'},
+                          None)]
+
     viewer_map = [
         ("SvViewerDrawMk4", [60, 0])
         ], [
@@ -417,6 +423,7 @@ class SvRandomPointsOnMesh(SverchCustomTreeNode, bpy.types.Node):
             r.prop(self, "out_np", index=1, text='Edge index', toggle=True)
 
     def rclick_menu(self, context, layout):
+        self.node_replacement_menu(context, layout)
         layout.prop_menu_enum(self, "mode")
         if self.mode == 'SURFACE':
             layout.prop(self, "proportional")

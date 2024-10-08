@@ -1286,3 +1286,47 @@ def curve_extremes(curve, field, samples=10, direction = 'MAX', on_fail = 'FAIL'
         target_v = min(res_vs)
         res_ts = [t for t,v in zip(res_ts, res_vs) if v == target_v]
         return res_ts
+
+def intersect_line_iso_surface(field, pt1, direction, max_distance, iso_value, sections=10, first_only=True, on_fail=FAIL):
+
+    pt1 = np.array(pt1)
+    direction = np.array(direction)
+    direction /= np.linalg.norm(direction)
+    pt2 = pt1 + max_distance * direction
+    ts = np.linspace(0, max_distance, num=sections)
+    pts = pt1 + ts[np.newaxis].T * direction
+    values = field.evaluate_grid(pts[:,0], pts[:,1], pts[:,2]) - iso_value
+
+    def goal(t):
+        p = pt1 + t*direction
+        v = field.evaluate(p[0], p[1], p[2])
+        return v - iso_value
+
+    ranges = []
+    for i, (v1,v2) in enumerate(zip(values, values[1:])):
+        if v1*v2 < 0:
+            ranges.append(i)
+    if len(ranges) == 0:
+        if on_fail == FAIL:
+            raise Exception(f"Ray {pt1} + {direction} does not intersect iso surface with iso_value={iso_value}")
+        elif on_fail == RETURN_NONE:
+            return None
+        else:
+            raise Exception("unsupported on_fail variant")
+    if first_only:
+        ranges = ranges[:1]
+
+    result_ts = []
+    result_pts = []
+    for i in ranges:
+        sol = root_scalar(goal, method='ridder',
+                          x0 = ts[i],
+                          bracket = (ts[i], ts[i+1])
+                        )
+        t = sol.root
+        p = pt1 + t*direction
+        result_ts.append(t)
+        result_pts.append(tuple(p))
+    return result_ts, result_pts
+
+

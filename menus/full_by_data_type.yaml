@@ -319,6 +319,7 @@
     - Analyze NURBS Curve:
         - icon_name: VIEWZOOM
         - SvIntersectNurbsCurvesNode
+        - SvPrepareCurvesNetNode
         - SvNurbsCurveNodesNode
         - SvDeconstructCurveNode
     - SvExMarchingSquaresNode
@@ -498,7 +499,7 @@
     - icon_name: POINTCLOUD_DATA
     - extra_menu: AdvancedObjectsPartialMenu
     - SvHomogenousVectorField
-    - SvRandomPointsOnMesh
+    - SvPopulateMeshNode
     - SvPopulateSurfaceMk2Node
     - SvPopulateSolidMk2Node
     - SvFieldRandomProbeMk3Node

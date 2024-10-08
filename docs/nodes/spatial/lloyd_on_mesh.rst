@@ -59,7 +59,7 @@ Example of Usage
   :target: https://user-images.githubusercontent.com/14288520/202814364-f58907d3-67a4-467e-93e7-44acbe22be2b.png
 
 * Generator-> :doc:`Suzanne </nodes/generator/suzanne>`
-* Spatial-> :doc:`Populate Mesh </nodes/spatial/random_points_on_mesh>`
+* Spatial-> :doc:`Populate Mesh </nodes/spatial/populate_mesh_mk2>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 
 ---------
@@ -68,7 +68,7 @@ Example of Usage
   :target: https://user-images.githubusercontent.com/14288520/202815217-e3ce3c1c-1855-46b3-ae01-af3d36433fa9.png
 
 * Generator-> :doc:`Suzanne </nodes/generator/suzanne>`
-* Spatial-> :doc:`Populate Mesh </nodes/spatial/random_points_on_mesh>`
+* Spatial-> :doc:`Populate Mesh </nodes/spatial/populate_mesh_mk2>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 
 .. image:: https://user-images.githubusercontent.com/14288520/202814946-ae47a3b1-3063-4254-aec2-f404327a590f.gif

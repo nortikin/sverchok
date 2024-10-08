@@ -56,7 +56,7 @@
       "width": 140.0
     },
     "List Input": {
-      "bl_idname": "SvListInputNode",
+      "bl_idname": "SvListInputNodeMK2",
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -65,8 +65,8 @@
         119.14979553222656
       ],
       "params": {
-        "int_": 36,
-        "int_list": [
+        "int_list_counter": 36,
+        "int_list_items": [
           3,
           4,
           20,
@@ -138,7 +138,7 @@
       "width": 140.0
     },
     "List Input.001": {
-      "bl_idname": "SvListInputNode",
+      "bl_idname": "SvListInputNodeMK2",
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -147,8 +147,9 @@
         35.43647003173828
       ],
       "params": {
-        "int_": 34,
-        "int_list": [
+        "list_items_type": "INT_LIST_MODE",
+        "int_list_counter": 34,
+        "int_list_items": [
           58,
           59,
           18,
