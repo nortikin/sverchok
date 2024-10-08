@@ -2154,6 +2154,10 @@
         "bl_idname": "ZipNode"
       },
       "List Input": {
+        "bl_idname": "SvListInputNodeMK2",
+        "custom_socket_props": {},
+        "height": 100.0,
+        "hide": false,
         "attributes": {
           "location": [
             1420.0,
@@ -2166,41 +2170,11 @@
           }
         },
         "properties": {
-          "int_": 2,
-          "mode": "float_list",
-          "float_list": [
-            0.20000000298023224,
-            -0.30000001192092896,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0
+          "list_items_type": "FLOAT_LIST_MODE",
+          "float_list_counter": 2,
+          "float_list_items": [
+            {"elem": 0.20000000298023224},
+            {"elem": -0.30000001192092896}
           ],
           "draw_3dpanel": true
         },
@@ -2210,7 +2184,16 @@
             "name": "List"
           }
         },
-        "bl_idname": "SvListInputNode"
+        "inputs": {
+          "mask": {
+            "bl_idname": "SvStringsSocket",
+            "name": "mask",
+            "properties": {
+              "label": "Mask",
+              "custom_draw": "draw_mask_in_socket"
+            }
+          }
+        }
       },
       "A Number.002": {
         "attributes": {
@@ -2261,43 +2244,16 @@
           }
         },
         "properties": {
-          "int_": 6,
-          "mode": "float_list",
-          "float_list": [
-            0.10000000149011612,
-            0.20000000298023224,
-            0.30000001192092896,
-            0.5,
-            0.800000011920929,
-            1.5,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0
-          ],
-          "draw_3dpanel": true
+          "list_items_type": "FLOAT_LIST_MODE",
+          "float_list_counter": 6,
+          "float_list_items": [
+            {"elem": 0.10000000149011612},
+            {"elem": 0.20000000298023224},
+            {"elem": 0.30000001192092896},
+            {"elem": 0.5},
+            {"elem": 0.800000011920929},
+            {"elem": 1.5}
+          ]
         },
         "outputs": {
           "List": {
@@ -2305,7 +2261,17 @@
             "name": "List"
           }
         },
-        "bl_idname": "SvListInputNode"
+        "inputs": {
+          "mask": {
+            "bl_idname": "SvStringsSocket",
+            "name": "mask",
+            "properties": {
+              "label": "Mask",
+              "custom_draw": "draw_mask_in_socket"
+            }
+          }
+        },
+        "bl_idname": "SvListInputNodeMK2"
       },
       "A Number": {
         "attributes": {
