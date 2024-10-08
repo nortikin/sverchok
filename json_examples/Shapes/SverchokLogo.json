@@ -1,1208 +1,2346 @@
 {
-  "export_version": "0.10",
-  "framed_nodes": {
-    "Area": "Frame.005",
-    "Bezier Spline (Curve)": "Frame.003",
-    "Bezier Spline (Curve).001": "Frame.002",
-    "Circle (Curve)": "Frame.001",
-    "Color in": "Frame.012",
-    "Contour 2D": "Frame.006",
-    "Edges to Faces 2D": "Frame.006",
-    "Edges to Faces 2D.001": "Frame.005",
-    "Evaluate Curve": "Frame.003",
-    "Evaluate Curve.001": "Frame.002",
-    "Evaluate Curve.002": "Frame.001",
-    "Frame.001": "Frame.017",
-    "Frame.002": "Frame.017",
-    "Frame.003": "Frame.017",
-    "Intersect Edges": "Frame.006",
-    "List Input": "Frame.012",
-    "List Input.001": "Frame.012",
-    "List Input.002": "Frame.012",
-    "List Join": "Frame.006",
-    "List Join.001": "Frame.006",
-    "List Mask (Out)": "Frame.006",
-    "List Mask (Out).001": "Frame.005",
-    "List Mask (Out).002": "Frame.005",
-    "Logic Functions": "Frame.005",
-    "Merge by Distance": "Frame.012",
-    "Merge Mesh 2D": "Frame.005",
-    "Mesh Join.001": "Frame.006",
-    "Select Mesh Elements by Location": "Frame.006",
-    "Viewer Draw": "Frame.006",
-    "Viewer Draw.001": "Frame.001",
-    "Viewer Draw.002": "Frame.002",
-    "Viewer Draw.003": "Frame.003",
-    "Viewer Draw.004": "Frame.012",
-    "Viewer Draw.005": "Frame.005"
-  },
-  "groups": {},
-  "nodes": {
-    "Area": {
-      "bl_idname": "SvAreaNode",
-      "custom_socket_props": {},
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        2683.8118286132812,
-        -1594.3728942871094
-      ],
-      "params": {},
-      "width": 140.0
-    },
-    "Bezier Spline (Curve)": {
-      "bl_idname": "SvBezierSplineNode",
-      "custom_socket_props": {
-        "0": {
-          "expanded": true,
-          "prop": [
-            -1.0,
-            0.0,
-            0.0
-          ]
+  "export_version": "1.0",
+  "main_tree": {
+    "nodes": {
+      "Frame.017": {
+        "attributes": {
+          "location": [
+            -154.67269897460938,
+            134.64405822753906
+          ],
+          "height": 1236.0,
+          "width": 672.0,
+          "label": "inputs"
         },
-        "1": {
-          "expanded": true,
-          "prop": [
-            -0.23999999463558197,
-            0.0,
-            0.0
-          ]
+        "bl_idname": "NodeFrame"
+      },
+      "Frame.001": {
+        "attributes": {
+          "location": [
+            -367.63446044921875,
+            -26.795333862304688
+          ],
+          "height": 306.0,
+          "width": 407.00006103515625,
+          "label": "circle",
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.017"
+          }
         },
-        "2": {
-          "expanded": true,
-          "prop": [
-            0.14999999105930328,
-            0.5,
-            0.0
-          ]
+        "bl_idname": "NodeFrame"
+      },
+      "Frame.002": {
+        "attributes": {
+          "location": [
+            -388.6966247558594,
+            48.075111389160156
+          ],
+          "height": 425.0,
+          "width": 600.0,
+          "label": "bottom curve",
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.017"
+          }
         },
-        "3": {
-          "expanded": true,
-          "prop": [
-            0.8659999966621399,
-            0.5,
-            0.0
-          ]
-        }
+        "bl_idname": "NodeFrame"
       },
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        353.11029052734375,
-        -940.975715637207
-      ],
-      "params": {},
-      "width": 140.0
-    },
-    "Bezier Spline (Curve).001": {
-      "bl_idname": "SvBezierSplineNode",
-      "custom_socket_props": {
-        "0": {
-          "expanded": true,
-          "prop": [
-            -1.0,
-            0.0,
-            0.0
-          ]
+      "Frame.003": {
+        "attributes": {
+          "location": [
+            -376.99542236328125,
+            94.86913299560547
+          ],
+          "height": 430.0,
+          "width": 599.9999389648438,
+          "label": "upper curve",
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.017"
+          }
         },
-        "1": {
-          "expanded": true,
-          "prop": [
-            -0.23999999463558197,
-            0.0,
-            0.0
-          ]
+        "bl_idname": "NodeFrame"
+      },
+      "Frame.006": {
+        "attributes": {
+          "location": [
+            -312.2635803222656,
+            47.90728759765625
+          ],
+          "height": 534.0,
+          "width": 1517.0001220703125,
+          "label": "logo"
         },
-        "2": {
-          "expanded": true,
-          "prop": [
-            0.14999999105930328,
-            -0.5,
-            0.0
-          ]
+        "bl_idname": "NodeFrame"
+      },
+      "Frame.012": {
+        "attributes": {
+          "location": [
+            -921.41748046875,
+            1045.65234375
+          ],
+          "height": 874.0,
+          "width": 673.0,
+          "label": "TRI color"
         },
-        "3": {
-          "expanded": true,
-          "prop": [
-            0.8659999966621399,
-            -0.5,
-            0.0
-          ]
-        }
+        "bl_idname": "NodeFrame"
       },
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        341.4090881347656,
-        -1363.8501815795898
-      ],
-      "params": {},
-      "width": 140.0
-    },
-    "Circle (Curve)": {
-      "bl_idname": "SvExCircleNode",
-      "custom_socket_props": {},
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        345.551025390625,
-        -1798.1175994873047
-      ],
-      "params": {},
-      "width": 140.0
-    },
-    "Color in": {
-      "bl_idname": "SvColorsInNodeMK1",
-      "custom_socket_props": {},
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        2856.1989135742188,
-        -907.2793579101562
-      ],
-      "params": {
-        "b_": 0.75,
-        "g_": 0.75,
-        "r_": 0.75
-      },
-      "width": 110.0
-    },
-    "Contour 2D": {
-      "bl_idname": "SvContourNode",
-      "custom_socket_props": {},
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        1703.0390319824219,
-        -1151.8834838867188
-      ],
-      "params": {
-        "rad_": 0.03999999910593033,
-        "rm_doubles": 0.0010999999940395355,
-        "vert_": 4
-      },
-      "width": 140.0
-    },
-    "Edges to Faces 2D": {
-      "bl_idname": "SvEdgesToFaces2D",
-      "custom_socket_props": {},
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        2240.6177673339844,
-        -1158.0241088867188
-      ],
-      "params": {},
-      "width": 140.0
-    },
-    "Edges to Faces 2D.001": {
-      "bl_idname": "SvEdgesToFaces2D",
-      "custom_socket_props": {},
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        2686.4861450195312,
-        -1413.0393981933594
-      ],
-      "params": {},
-      "width": 140.0
-    },
-    "Evaluate Curve": {
-      "bl_idname": "SvExEvalCurveNode",
-      "custom_socket_props": {},
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        556.8338623046875,
-        -936.012092590332
-      ],
-      "params": {
-        "sample_size": 30
-      },
-      "width": 140.0
-    },
-    "Evaluate Curve.001": {
-      "bl_idname": "SvExEvalCurveNode",
-      "custom_socket_props": {},
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        541.4090881347656,
-        -1363.8501815795898
-      ],
-      "params": {
-        "sample_size": 30
-      },
-      "width": 140.0
-    },
-    "Evaluate Curve.002": {
-      "bl_idname": "SvExEvalCurveNode",
-      "custom_socket_props": {},
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        539.0554809570312,
-        -1795.9529266357422
-      ],
-      "params": {
-        "sample_size": 100
-      },
-      "width": 140.0
-    },
-    "Frame.001": {
-      "bl_idname": "NodeFrame",
-      "custom_socket_props": {},
-      "height": 314.647216796875,
-      "hide": false,
-      "label": "circle",
-      "location": [
-        -367.63446044921875,
-        -26.795333862304688
-      ],
-      "params": {},
-      "width": 600.0000610351562
-    },
-    "Frame.002": {
-      "bl_idname": "NodeFrame",
-      "custom_socket_props": {},
-      "height": 409.749755859375,
-      "hide": false,
-      "label": "bottom curve",
-      "location": [
-        -388.6966247558594,
-        48.075111389160156
-      ],
-      "params": {},
-      "width": 600.0
-    },
-    "Frame.003": {
-      "bl_idname": "NodeFrame",
-      "custom_socket_props": {},
-      "height": 414.587890625,
-      "hide": false,
-      "label": "upper curve",
-      "location": [
-        -376.99542236328125,
-        94.86913299560547
-      ],
-      "params": {},
-      "width": 600.0
-    },
-    "Frame.005": {
-      "bl_idname": "NodeFrame",
-      "custom_socket_props": {},
-      "height": 498.871826171875,
-      "hide": false,
-      "label": "black circle",
-      "location": [
-        341.04791259765625,
-        98.01004028320312
-      ],
-      "params": {},
-      "width": 924.5224609375
-    },
-    "Frame.006": {
-      "bl_idname": "NodeFrame",
-      "custom_socket_props": {},
-      "height": 521.116455078125,
-      "hide": false,
-      "label": "logo",
-      "location": [
-        -312.2635803222656,
-        47.90728759765625
-      ],
-      "params": {},
-      "width": 1516.5701904296875
-    },
-    "Frame.012": {
-      "bl_idname": "NodeFrame",
-      "custom_socket_props": {},
-      "height": 702.49365234375,
-      "hide": false,
-      "label": "TRI color",
-      "location": [
-        -929.4793090820312,
-        763.5648803710938
-      ],
-      "params": {},
-      "width": 557.658203125
-    },
-    "Frame.017": {
-      "bl_idname": "NodeFrame",
-      "custom_socket_props": {},
-      "height": 1234.5880126953125,
-      "hide": false,
-      "label": "inputs",
-      "location": [
-        -154.67269897460938,
-        134.64405822753906
-      ],
-      "params": {},
-      "width": 671.701171875
-    },
-    "Intersect Edges": {
-      "bl_idname": "SvIntersectEdgesNodeMK2",
-      "custom_socket_props": {},
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        1526.1084899902344,
-        -1154.4083862304688
-      ],
-      "params": {
-        "mode": "2D",
-        "rm_doubles": 0.0010000000474974513,
-        "rm_switch": true
-      },
-      "width": 140.0
-    },
-    "List Input": {
-      "bl_idname": "SvListInputNode",
-      "custom_socket_props": {},
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        2668.1740112304688,
-        -947.3660278320312
-      ],
-      "params": {
-        "float_list": [
-          0.10000000149011612,
-          1.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0
-        ],
-        "int_": 3,
-        "mode": "float_list"
-      },
-      "width": 140.0
-    },
-    "List Input.001": {
-      "bl_idname": "SvListInputNode",
-      "custom_socket_props": {},
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        2668.1740112304688,
-        -1129.7905883789062
-      ],
-      "params": {
-        "float_list": [
-          0.5,
-          0.5,
-          1.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0
-        ],
-        "int_": 3,
-        "mode": "float_list"
-      },
-      "width": 140.0
-    },
-    "List Input.002": {
-      "bl_idname": "SvListInputNode",
-      "custom_socket_props": {},
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        2840.9804077148438,
-        -1127.6443481445312
-      ],
-      "params": {
-        "float_list": [
-          1.0,
-          0.0,
-          0.20000000298023224,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0,
-          0.0
-        ],
-        "int_": 3,
-        "mode": "float_list"
-      },
-      "width": 140.0
-    },
-    "List Join": {
-      "bl_idname": "ListJoinNode",
-      "custom_socket_props": {},
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        1102.1221618652344,
-        -1153.6796264648438
-      ],
-      "params": {},
-      "width": 140.0
-    },
-    "List Join.001": {
-      "bl_idname": "ListJoinNode",
-      "custom_socket_props": {},
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        1101.1423034667969,
-        -1395.0346069335938
-      ],
-      "params": {},
-      "width": 140.0
-    },
-    "List Mask (Out)": {
-      "bl_idname": "MaskListNode",
-      "custom_socket_props": {},
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        2063.6055603027344,
-        -1158.5353393554688
-      ],
-      "params": {
-        "Level": 2
-      },
-      "width": 140.0
-    },
-    "List Mask (Out).001": {
-      "bl_idname": "MaskListNode",
-      "custom_socket_props": {},
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        2879.5098266601562,
-        -1413.7173767089844
-      ],
-      "params": {
-        "Level": 2
-      },
-      "width": 140.0
-    },
-    "List Mask (Out).002": {
-      "bl_idname": "MaskListNode",
-      "custom_socket_props": {},
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        3225.3550415039062,
-        -1414.6155700683594
-      ],
-      "params": {
-        "Level": 2
-      },
-      "width": 140.0
-    },
-    "Logic Functions": {
-      "bl_idname": "SvLogicNode",
-      "custom_socket_props": {},
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        2685.9033813476562,
-        -1723.2314147949219
-      ],
-      "params": {
-        "items_": "LESS",
-        "prop_types": [
-          true,
-          true
-        ]
-      },
-      "width": 140.0
-    },
-    "Merge by Distance": {
-      "bl_idname": "SvMergeByDistanceNode",
-      "custom_socket_props": {
-        "0": {
-          "default_mode": "NONE",
-          "is_mandatory": true
+      "Frame.005": {
+        "attributes": {
+          "location": [
+            341.0478515625,
+            98.010009765625
+          ],
+          "height": 388.0,
+          "width": 1222.0,
+          "label": "black circle"
         },
-        "1": {
-          "nesting_level": 3
+        "bl_idname": "NodeFrame"
+      },
+      "Bezier Spline (Curve)": {
+        "attributes": {
+          "location": [
+            353.11029052734375,
+            -940.975715637207
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.003"
+          }
         },
-        "4": {
-          "nesting_level": 1,
-          "pre_processing": "ONE_ITEM"
-        }
-      },
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        2664.1447143554688,
-        -656.5064086914062
-      ],
-      "params": {
-        "distance": 0.029999999329447746
-      },
-      "width": 140.0
-    },
-    "Merge Mesh 2D": {
-      "bl_idname": "SvMergeMesh2D",
-      "custom_socket_props": {},
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        3054.3787231445312,
-        -1410.1281433105469
-      ],
-      "params": {},
-      "width": 140.0
-    },
-    "Mesh Join.001": {
-      "bl_idname": "SvMeshJoinNodeMk2",
-      "custom_socket_props": {
-        "0": {
-          "default_mode": "NONE",
-          "is_mandatory": true
+        "inputs": {
+          "Start": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Start",
+            "properties": {
+              "use_prop": true,
+              "prop": [
+                -1.0,
+                0.0,
+                0.0
+              ],
+              "expanded": true
+            }
+          },
+          "Control1": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Control1",
+            "properties": {
+              "use_prop": true,
+              "prop": [
+                -0.23999999463558197,
+                0.0,
+                0.0
+              ],
+              "expanded": true
+            }
+          },
+          "Control2": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Control2",
+            "properties": {
+              "use_prop": true,
+              "prop": [
+                0.14999999105930328,
+                0.5,
+                0.0
+              ],
+              "expanded": true
+            }
+          },
+          "End": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "End",
+            "properties": {
+              "use_prop": true,
+              "prop": [
+                0.8659999966621399,
+                0.5,
+                0.0
+              ],
+              "expanded": true
+            }
+          },
+          "ControlPoints": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "ControlPoints",
+            "attributes": {
+              "hide": true
+            }
+          }
         },
-        "1": {
-          "nesting_level": 3
+        "outputs": {
+          "Curve": {
+            "bl_idname": "SvCurveSocket",
+            "name": "Curve"
+          },
+          "ControlPoints": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "ControlPoints"
+          }
         },
-        "2": {
-          "nesting_level": 3
-        }
+        "bl_idname": "SvBezierSplineNode"
       },
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        1324.4762878417969,
-        -1195.3109741210938
-      ],
-      "params": {},
-      "width": 140.0
-    },
-    "Note": {
-      "bl_idname": "NoteNode",
-      "color": [
-        1.0,
-        0.8993440270423889,
-        0.9742509722709656
-      ],
-      "custom_socket_props": {},
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        1057.25830078125,
-        -913.431884765625
-      ],
-      "params": {
-        "n_id": "-7572912227783136283",
-        "show_text": false,
-        "text": "Nikitron | 2020 | Sverchok logo"
+      "Bezier Spline (Curve).001": {
+        "attributes": {
+          "location": [
+            341.4090881347656,
+            -1363.8501815795898
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.002"
+          }
+        },
+        "inputs": {
+          "Start": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Start",
+            "properties": {
+              "use_prop": true,
+              "prop": [
+                -1.0,
+                0.0,
+                0.0
+              ],
+              "expanded": true
+            }
+          },
+          "Control1": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Control1",
+            "properties": {
+              "use_prop": true,
+              "prop": [
+                -0.23999999463558197,
+                0.0,
+                0.0
+              ],
+              "expanded": true
+            }
+          },
+          "Control2": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Control2",
+            "properties": {
+              "use_prop": true,
+              "prop": [
+                0.14999999105930328,
+                -0.5,
+                0.0
+              ],
+              "expanded": true
+            }
+          },
+          "End": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "End",
+            "properties": {
+              "use_prop": true,
+              "prop": [
+                0.8659999966621399,
+                -0.5,
+                0.0
+              ],
+              "expanded": true
+            }
+          },
+          "ControlPoints": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "ControlPoints",
+            "attributes": {
+              "hide": true
+            }
+          }
+        },
+        "outputs": {
+          "Curve": {
+            "bl_idname": "SvCurveSocket",
+            "name": "Curve"
+          },
+          "ControlPoints": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "ControlPoints"
+          }
+        },
+        "bl_idname": "SvBezierSplineNode"
       },
-      "use_custom_color": true,
-      "width": 400.0
-    },
-    "Select Mesh Elements by Location": {
-      "bl_idname": "SvMeshSelectNodeMk2",
-      "custom_socket_props": {
-        "3": {
-          "prop": [
-            0.0,
-            0.0,
+      "Contour 2D": {
+        "attributes": {
+          "location": [
+            1703.0390319824219,
+            -1151.8834838867188
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.006"
+          }
+        },
+        "properties": {
+          "rad_": 0.03999999910593033,
+          "rm_doubles": 0.0010999999940395355,
+          "vert_": 4
+        },
+        "inputs": {
+          "Distance": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Distance",
+            "properties": {
+              "prop_name": "rad_"
+            }
+          },
+          "N\u00ba Vertices": {
+            "bl_idname": "SvStringsSocket",
+            "name": "N\u00ba Vertices",
+            "properties": {
+              "prop_name": "vert_"
+            }
+          },
+          "Verts_in": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Verts_in"
+          },
+          "Edges_in": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Edges_in"
+          }
+        },
+        "outputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices"
+          },
+          "Edges": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Edges"
+          }
+        },
+        "bl_idname": "SvContourNode"
+      },
+      "Edges to Faces 2D": {
+        "attributes": {
+          "location": [
+            2240.6177673339844,
+            -1158.0241088867188
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.006"
+          }
+        },
+        "inputs": {
+          "Verts": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Verts"
+          },
+          "Edges": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Edges"
+          }
+        },
+        "outputs": {
+          "Verts": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Verts"
+          },
+          "Faces": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Faces"
+          }
+        },
+        "bl_idname": "SvEdgesToFaces2D"
+      },
+      "Evaluate Curve": {
+        "attributes": {
+          "location": [
+            556.8338623046875,
+            -936.012092590332
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.003"
+          }
+        },
+        "properties": {
+          "sample_size": 30
+        },
+        "inputs": {
+          "Curve": {
+            "bl_idname": "SvCurveSocket",
+            "name": "Curve"
+          },
+          "T": {
+            "bl_idname": "SvStringsSocket",
+            "name": "T",
+            "attributes": {
+              "hide": true
+            },
+            "properties": {
+              "prop_name": "t_value"
+            }
+          },
+          "Samples": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Samples",
+            "properties": {
+              "prop_name": "sample_size"
+            }
+          }
+        },
+        "outputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices"
+          },
+          "Edges": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Edges"
+          },
+          "Tangents": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Tangents"
+          }
+        },
+        "bl_idname": "SvExEvalCurveNode"
+      },
+      "Evaluate Curve.001": {
+        "attributes": {
+          "location": [
+            541.4090881347656,
+            -1363.8501815795898
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.002"
+          }
+        },
+        "properties": {
+          "sample_size": 30
+        },
+        "inputs": {
+          "Curve": {
+            "bl_idname": "SvCurveSocket",
+            "name": "Curve"
+          },
+          "T": {
+            "bl_idname": "SvStringsSocket",
+            "name": "T",
+            "attributes": {
+              "hide": true
+            },
+            "properties": {
+              "prop_name": "t_value"
+            }
+          },
+          "Samples": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Samples",
+            "properties": {
+              "prop_name": "sample_size"
+            }
+          }
+        },
+        "outputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices"
+          },
+          "Edges": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Edges"
+          },
+          "Tangents": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Tangents"
+          }
+        },
+        "bl_idname": "SvExEvalCurveNode"
+      },
+      "Evaluate Curve.002": {
+        "attributes": {
+          "location": [
+            539.0554809570312,
+            -1795.9529266357422
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.001"
+          }
+        },
+        "properties": {
+          "sample_size": 100
+        },
+        "inputs": {
+          "Curve": {
+            "bl_idname": "SvCurveSocket",
+            "name": "Curve"
+          },
+          "T": {
+            "bl_idname": "SvStringsSocket",
+            "name": "T",
+            "attributes": {
+              "hide": true
+            },
+            "properties": {
+              "prop_name": "t_value"
+            }
+          },
+          "Samples": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Samples",
+            "properties": {
+              "prop_name": "sample_size"
+            }
+          }
+        },
+        "outputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices"
+          },
+          "Edges": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Edges"
+          },
+          "Tangents": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Tangents"
+          }
+        },
+        "bl_idname": "SvExEvalCurveNode"
+      },
+      "List Join": {
+        "attributes": {
+          "location": [
+            1102.1221618652344,
+            -1153.6796264648438
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.006"
+          }
+        },
+        "inputs": {
+          "data": {
+            "bl_idname": "SvStringsSocket",
+            "name": "data"
+          },
+          "data 1": {
+            "bl_idname": "SvStringsSocket",
+            "name": "data 1"
+          },
+          "data 2": {
+            "bl_idname": "SvStringsSocket",
+            "name": "data 2"
+          },
+          "data 3": {
+            "bl_idname": "SvStringsSocket",
+            "name": "data 3"
+          }
+        },
+        "outputs": {
+          "data_001": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "data"
+          }
+        },
+        "bl_idname": "ListJoinNode"
+      },
+      "List Join.001": {
+        "attributes": {
+          "location": [
+            1101.1423034667969,
+            -1395.0346069335938
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.006"
+          }
+        },
+        "inputs": {
+          "data": {
+            "bl_idname": "SvStringsSocket",
+            "name": "data"
+          },
+          "data 1": {
+            "bl_idname": "SvStringsSocket",
+            "name": "data 1"
+          },
+          "data 2": {
+            "bl_idname": "SvStringsSocket",
+            "name": "data 2"
+          },
+          "data 3": {
+            "bl_idname": "SvStringsSocket",
+            "name": "data 3"
+          }
+        },
+        "outputs": {
+          "data": {
+            "bl_idname": "SvStringsSocket",
+            "name": "data"
+          }
+        },
+        "bl_idname": "ListJoinNode"
+      },
+      "List Mask (Out)": {
+        "attributes": {
+          "location": [
+            2063.6055603027344,
+            -1158.5353393554688
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.006"
+          }
+        },
+        "properties": {
+          "Level": 2
+        },
+        "inputs": {
+          "data": {
+            "bl_idname": "SvStringsSocket",
+            "name": "data"
+          },
+          "mask": {
+            "bl_idname": "SvStringsSocket",
+            "name": "mask"
+          }
+        },
+        "outputs": {
+          "mask": {
+            "bl_idname": "SvStringsSocket",
+            "name": "mask"
+          },
+          "ind_true": {
+            "bl_idname": "SvStringsSocket",
+            "name": "ind_true"
+          },
+          "ind_false": {
+            "bl_idname": "SvStringsSocket",
+            "name": "ind_false"
+          },
+          "dataTrue": {
+            "bl_idname": "SvStringsSocket",
+            "name": "dataTrue"
+          },
+          "dataFalse": {
+            "bl_idname": "SvStringsSocket",
+            "name": "dataFalse"
+          }
+        },
+        "bl_idname": "MaskListNode"
+      },
+      "Note": {
+        "attributes": {
+          "location": [
+            1057.25830078125,
+            -913.431884765625
+          ],
+          "width": 400.0,
+          "color": [
+            1.0,
+            0.8993440270423889,
+            0.9742509722709656
+          ],
+          "use_custom_color": true
+        },
+        "properties": {
+          "n_id": "-7572912227783136283",
+          "show_text": false,
+          "text": "Nikitron | 2020 | Sverchok logo"
+        },
+        "inputs": {
+          "Text In": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Text In"
+          }
+        },
+        "outputs": {
+          "Text Out": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Text Out"
+          }
+        },
+        "bl_idname": "NoteNode"
+      },
+      "Select Mesh Elements by Location": {
+        "attributes": {
+          "location": [
+            1888.0923767089844,
+            -1157.7511596679688
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.006"
+          }
+        },
+        "properties": {
+          "mode": "BySphere",
+          "radius": 0.9800000190734863
+        },
+        "inputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices",
+            "properties": {
+              "is_mandatory": true
+            }
+          },
+          "Edges": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Edges",
+            "properties": {
+              "nesting_level": 3
+            }
+          },
+          "Polygons": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Polygons",
+            "properties": {
+              "nesting_level": 3
+            }
+          },
+          "Direction": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Direction",
+            "attributes": {
+              "hide": true
+            },
+            "properties": {
+              "use_prop": true,
+              "prop": [
+                0.0,
+                0.0,
+                1.0
+              ]
+            }
+          },
+          "Center": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Center",
+            "properties": {
+              "use_prop": true
+            }
+          },
+          "Percent": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Percent",
+            "attributes": {
+              "hide": true
+            },
+            "properties": {
+              "prop_name": "percent"
+            }
+          },
+          "Radius": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Radius",
+            "properties": {
+              "prop_name": "radius"
+            }
+          }
+        },
+        "outputs": {
+          "VerticesMask": {
+            "bl_idname": "SvStringsSocket",
+            "name": "VerticesMask"
+          },
+          "EdgesMask": {
+            "bl_idname": "SvStringsSocket",
+            "name": "EdgesMask"
+          },
+          "FacesMask": {
+            "bl_idname": "SvStringsSocket",
+            "name": "FacesMask"
+          }
+        },
+        "bl_idname": "SvMeshSelectNodeMk2"
+      },
+      "Viewer Draw": {
+        "attributes": {
+          "location": [
+            2417.7124938964844,
+            -1156.5744018554688
+          ],
+          "color": [
+            0.6284880042076111,
+            0.931007981300354,
+            1.0
+          ],
+          "use_custom_color": true,
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.006"
+          }
+        },
+        "properties": {
+          "activate": false,
+          "display_verts": false,
+          "vector_color": [
+            0.800000011920929,
+            0.800000011920929,
+            0.800000011920929,
             1.0
           ]
-        }
+        },
+        "inputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices",
+            "properties": {
+              "custom_draw": "draw_property_socket"
+            }
+          },
+          "Edges": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Edges",
+            "properties": {
+              "custom_draw": "draw_property_socket"
+            }
+          },
+          "Polygons": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Polygons"
+          },
+          "Matrix": {
+            "bl_idname": "SvMatrixSocket",
+            "name": "Matrix"
+          },
+          "Vector Color": {
+            "bl_idname": "SvColorSocket",
+            "name": "Vector Color",
+            "properties": {
+              "custom_draw": "draw_color_socket",
+              "prop_name": "vector_color"
+            }
+          },
+          "Edge Color": {
+            "bl_idname": "SvColorSocket",
+            "name": "Edge Color",
+            "properties": {
+              "custom_draw": "draw_color_socket",
+              "prop_name": "edge_color"
+            }
+          },
+          "Polygon Color": {
+            "bl_idname": "SvColorSocket",
+            "name": "Polygon Color",
+            "properties": {
+              "custom_draw": "draw_color_socket",
+              "prop_name": "polygon_color"
+            }
+          },
+          "attrs": {
+            "bl_idname": "SvStringsSocket",
+            "name": "attrs",
+            "attributes": {
+              "hide": true
+            },
+            "properties": {
+              "quick_link_to_node": "SvVDAttrsNodeMk2"
+            }
+          }
+        },
+        "bl_idname": "SvViewerDrawMk4"
       },
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        1888.0923767089844,
-        -1157.7511596679688
-      ],
-      "params": {
-        "mode": "BySphere",
-        "radius": 0.9800000190734863
+      "Viewer Draw.001": {
+        "attributes": {
+          "location": [
+            745.5510864257812,
+            -1798.1175994873047
+          ],
+          "color": [
+            0.6284880042076111,
+            0.931007981300354,
+            1.0
+          ],
+          "use_custom_color": true,
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.001"
+          }
+        },
+        "properties": {
+          "activate": false,
+          "display_verts": false,
+          "edge_color": [
+            0.8956438899040222,
+            0.32270321249961853,
+            1.0,
+            1.0
+          ],
+          "vector_color": [
+            0.800000011920929,
+            0.800000011920929,
+            0.800000011920929,
+            1.0
+          ]
+        },
+        "inputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices",
+            "properties": {
+              "custom_draw": "draw_property_socket"
+            }
+          },
+          "Edges": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Edges",
+            "properties": {
+              "custom_draw": "draw_property_socket"
+            }
+          },
+          "Polygons": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Polygons"
+          },
+          "Matrix": {
+            "bl_idname": "SvMatrixSocket",
+            "name": "Matrix"
+          },
+          "Vector Color": {
+            "bl_idname": "SvColorSocket",
+            "name": "Vector Color",
+            "properties": {
+              "custom_draw": "draw_color_socket",
+              "prop_name": "vector_color"
+            }
+          },
+          "Edge Color": {
+            "bl_idname": "SvColorSocket",
+            "name": "Edge Color",
+            "properties": {
+              "custom_draw": "draw_color_socket",
+              "prop_name": "edge_color"
+            }
+          },
+          "Polygon Color": {
+            "bl_idname": "SvColorSocket",
+            "name": "Polygon Color",
+            "properties": {
+              "custom_draw": "draw_color_socket",
+              "prop_name": "polygon_color"
+            }
+          },
+          "attrs": {
+            "bl_idname": "SvStringsSocket",
+            "name": "attrs",
+            "attributes": {
+              "hide": true
+            },
+            "properties": {
+              "quick_link_to_node": "SvVDAttrsNodeMk2"
+            }
+          }
+        },
+        "bl_idname": "SvViewerDrawMk4"
       },
-      "width": 140.0
+      "Viewer Draw.002": {
+        "attributes": {
+          "location": [
+            741.4090881347656,
+            -1363.8501815795898
+          ],
+          "color": [
+            0.6284880042076111,
+            0.931007981300354,
+            1.0
+          ],
+          "use_custom_color": true,
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.002"
+          }
+        },
+        "properties": {
+          "activate": false,
+          "display_verts": false,
+          "vector_color": [
+            0.800000011920929,
+            0.800000011920929,
+            0.800000011920929,
+            1.0
+          ]
+        },
+        "inputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices",
+            "properties": {
+              "custom_draw": "draw_property_socket"
+            }
+          },
+          "Edges": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Edges",
+            "properties": {
+              "custom_draw": "draw_property_socket"
+            }
+          },
+          "Polygons": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Polygons"
+          },
+          "Matrix": {
+            "bl_idname": "SvMatrixSocket",
+            "name": "Matrix"
+          },
+          "Vector Color": {
+            "bl_idname": "SvColorSocket",
+            "name": "Vector Color",
+            "properties": {
+              "custom_draw": "draw_color_socket",
+              "prop_name": "vector_color"
+            }
+          },
+          "Edge Color": {
+            "bl_idname": "SvColorSocket",
+            "name": "Edge Color",
+            "properties": {
+              "custom_draw": "draw_color_socket",
+              "prop_name": "edge_color"
+            }
+          },
+          "Polygon Color": {
+            "bl_idname": "SvColorSocket",
+            "name": "Polygon Color",
+            "properties": {
+              "custom_draw": "draw_color_socket",
+              "prop_name": "polygon_color"
+            }
+          },
+          "attrs": {
+            "bl_idname": "SvStringsSocket",
+            "name": "attrs",
+            "attributes": {
+              "hide": true
+            },
+            "properties": {
+              "quick_link_to_node": "SvVDAttrsNodeMk2"
+            }
+          }
+        },
+        "bl_idname": "SvViewerDrawMk4"
+      },
+      "Viewer Draw.003": {
+        "attributes": {
+          "location": [
+            753.1102905273438,
+            -940.975715637207
+          ],
+          "color": [
+            0.6284880042076111,
+            0.931007981300354,
+            1.0
+          ],
+          "use_custom_color": true,
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.003"
+          }
+        },
+        "properties": {
+          "activate": false,
+          "display_verts": false,
+          "vector_color": [
+            0.800000011920929,
+            0.800000011920929,
+            0.800000011920929,
+            1.0
+          ]
+        },
+        "inputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices",
+            "properties": {
+              "custom_draw": "draw_property_socket"
+            }
+          },
+          "Edges": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Edges",
+            "properties": {
+              "custom_draw": "draw_property_socket"
+            }
+          },
+          "Polygons": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Polygons"
+          },
+          "Matrix": {
+            "bl_idname": "SvMatrixSocket",
+            "name": "Matrix"
+          },
+          "Vector Color": {
+            "bl_idname": "SvColorSocket",
+            "name": "Vector Color",
+            "properties": {
+              "custom_draw": "draw_color_socket",
+              "prop_name": "vector_color"
+            }
+          },
+          "Edge Color": {
+            "bl_idname": "SvColorSocket",
+            "name": "Edge Color",
+            "properties": {
+              "custom_draw": "draw_color_socket",
+              "prop_name": "edge_color"
+            }
+          },
+          "Polygon Color": {
+            "bl_idname": "SvColorSocket",
+            "name": "Polygon Color",
+            "properties": {
+              "custom_draw": "draw_color_socket",
+              "prop_name": "polygon_color"
+            }
+          },
+          "attrs": {
+            "bl_idname": "SvStringsSocket",
+            "name": "attrs",
+            "attributes": {
+              "hide": true
+            },
+            "properties": {
+              "quick_link_to_node": "SvVDAttrsNodeMk2"
+            }
+          }
+        },
+        "bl_idname": "SvViewerDrawMk4"
+      },
+      "Circle (Curve).001": {
+        "attributes": {
+          "location": [
+            332.5771789550781,
+            -1801.507553100586
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.017"
+          }
+        },
+        "inputs": {
+          "Center": {
+            "bl_idname": "SvMatrixSocket",
+            "name": "Center"
+          },
+          "Radius": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Radius",
+            "properties": {
+              "prop_name": "radius"
+            }
+          },
+          "TMin": {
+            "bl_idname": "SvStringsSocket",
+            "name": "TMin",
+            "properties": {
+              "prop_name": "t_min"
+            }
+          },
+          "TMax": {
+            "bl_idname": "SvStringsSocket",
+            "name": "TMax",
+            "properties": {
+              "prop_name": "t_max"
+            }
+          },
+          "NPoints": {
+            "bl_idname": "SvStringsSocket",
+            "name": "NPoints",
+            "attributes": {
+              "hide": true
+            },
+            "properties": {
+              "prop_name": "n_points"
+            }
+          }
+        },
+        "outputs": {
+          "Curve": {
+            "bl_idname": "SvCurveSocket",
+            "name": "Curve"
+          }
+        },
+        "bl_idname": "SvCircleCurveMk2Node"
+      },
+      "Mesh Join.001": {
+        "attributes": {
+          "location": [
+            1324.4762878417969,
+            -1195.3109741210938
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.006"
+          }
+        },
+        "inputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices",
+            "properties": {
+              "is_mandatory": true,
+              "default_mode": "NONE"
+            }
+          },
+          "Edges": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Edges",
+            "properties": {
+              "nesting_level": 3
+            }
+          },
+          "Polygons": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Polygons",
+            "properties": {
+              "nesting_level": 3
+            }
+          }
+        },
+        "outputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices"
+          },
+          "Edges": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Edges"
+          },
+          "Polygons": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Polygons"
+          }
+        },
+        "bl_idname": "SvMeshJoinNodeMk2"
+      },
+      "Intersect Edges.001": {
+        "attributes": {
+          "location": [
+            1493.1027526855469,
+            -1177.1417846679688
+          ],
+          "width": 183.072265625,
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.006"
+          }
+        },
+        "properties": {
+          "mode": "2D",
+          "rm_switch": true
+        },
+        "inputs": {
+          "Verts_in": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Verts_in"
+          },
+          "Edges_in": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Edges_in"
+          }
+        },
+        "outputs": {
+          "Verts_out": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Verts_out"
+          },
+          "Edges_out": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Edges_out"
+          }
+        },
+        "bl_idname": "SvIntersectEdgesNodeMK3"
+      },
+      "Color in": {
+        "attributes": {
+          "location": [
+            2864.2607421875,
+            -625.19189453125
+          ],
+          "width": 110.0,
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.012"
+          }
+        },
+        "properties": {
+          "b_": 0.75,
+          "g_": 0.75,
+          "r_": 0.75
+        },
+        "inputs": {
+          "R": {
+            "bl_idname": "SvStringsSocket",
+            "name": "R",
+            "properties": {
+              "prop_name": "r_"
+            }
+          },
+          "G": {
+            "bl_idname": "SvStringsSocket",
+            "name": "G",
+            "properties": {
+              "prop_name": "g_"
+            }
+          },
+          "B": {
+            "bl_idname": "SvStringsSocket",
+            "name": "B",
+            "properties": {
+              "prop_name": "b_"
+            }
+          },
+          "A": {
+            "bl_idname": "SvStringsSocket",
+            "name": "A",
+            "properties": {
+              "prop_name": "a_"
+            }
+          }
+        },
+        "outputs": {
+          "Colors": {
+            "bl_idname": "SvColorSocket",
+            "name": "Colors"
+          }
+        },
+        "bl_idname": "SvColorsInNodeMK1"
+      },
+      "Merge by Distance": {
+        "attributes": {
+          "location": [
+            2672.20654296875,
+            -374.4189453125
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.012"
+          }
+        },
+        "properties": {
+          "distance": 0.029999999329447746
+        },
+        "inputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices",
+            "properties": {
+              "default_mode": "NONE",
+              "is_mandatory": true
+            }
+          },
+          "PolyEdge": {
+            "bl_idname": "SvStringsSocket",
+            "name": "PolyEdge",
+            "properties": {
+              "nesting_level": 3
+            }
+          },
+          "FaceData": {
+            "bl_idname": "SvStringsSocket",
+            "name": "FaceData"
+          },
+          "Mask": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Mask"
+          },
+          "Distance": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Distance",
+            "properties": {
+              "prop_name": "distance",
+              "nesting_level": 1,
+              "pre_processing": "ONE_ITEM"
+            }
+          }
+        },
+        "outputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices"
+          },
+          "Edges": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Edges"
+          },
+          "Polygons": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Polygons"
+          },
+          "FaceData": {
+            "bl_idname": "SvStringsSocket",
+            "name": "FaceData"
+          },
+          "Doubles": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Doubles"
+          },
+          "Mask": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Mask"
+          }
+        },
+        "bl_idname": "SvMergeByDistanceNode"
+      },
+      "Viewer Draw.004": {
+        "attributes": {
+          "location": [
+            3029.86474609375,
+            -408.00634765625
+          ],
+          "color": [
+            0.6284880042076111,
+            0.931007981300354,
+            1.0
+          ],
+          "use_custom_color": true,
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.012"
+          }
+        },
+        "properties": {
+          "color_per_polygon": true,
+          "display_edges": false,
+          "display_verts": false,
+          "point_size": 7
+        },
+        "inputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices",
+            "properties": {
+              "custom_draw": "draw_property_socket"
+            }
+          },
+          "Edges": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Edges",
+            "properties": {
+              "custom_draw": "draw_property_socket"
+            }
+          },
+          "Polygons": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Polygons"
+          },
+          "Matrix": {
+            "bl_idname": "SvMatrixSocket",
+            "name": "Matrix"
+          },
+          "Vector Color": {
+            "bl_idname": "SvColorSocket",
+            "name": "Vector Color",
+            "properties": {
+              "custom_draw": "draw_color_socket",
+              "prop_name": "vector_color"
+            }
+          },
+          "Edge Color": {
+            "bl_idname": "SvColorSocket",
+            "name": "Edge Color",
+            "properties": {
+              "custom_draw": "draw_color_socket",
+              "prop_name": "edge_color"
+            }
+          },
+          "Polygon Color": {
+            "bl_idname": "SvColorSocket",
+            "name": "Polygon Color",
+            "properties": {
+              "custom_draw": "draw_color_socket",
+              "prop_name": "polygon_color"
+            }
+          },
+          "attrs": {
+            "bl_idname": "SvStringsSocket",
+            "name": "attrs",
+            "attributes": {
+              "hide": true
+            },
+            "properties": {
+              "quick_link_to_node": "SvVDAttrsNodeMk2"
+            }
+          }
+        },
+        "bl_idname": "SvViewerDrawMk4"
+      },
+      "List Input.003": {
+        "attributes": {
+          "location": [
+            2558.144287109375,
+            -663.6199951171875
+          ],
+          "width": 260.0,
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.012"
+          }
+        },
+        "properties": {
+          "int_list_items": [
+            {}
+          ],
+          "list_items_type": "FLOAT_LIST_MODE",
+          "float_list_items": [
+            {
+              "elem": 0.10000000149011612,
+              "NONE": 0.10000000149011612,
+              "PERCENTAGE": 0.10000000149011612,
+              "FACTOR": 0.10000000149011612,
+              "ANGLE": 0.10000000149011612,
+              "TIME": 0.10000000149011612,
+              "TIME_ABSOLUTE": 0.10000000149011612,
+              "DISTANCE": 0.10000000149011612,
+              "DISTANCE_CAMERA": 0.10000000149011612,
+              "TEMPERATURE": 0.10000000149011612,
+              "POWER": 0.10000000149011612
+            },
+            {
+              "elem": 1.0,
+              "NONE": 1.0,
+              "PERCENTAGE": 1.0,
+              "FACTOR": 1.0,
+              "ANGLE": 1.0,
+              "TIME": 1.0,
+              "TIME_ABSOLUTE": 1.0,
+              "DISTANCE": 1.0,
+              "DISTANCE_CAMERA": 1.0,
+              "TEMPERATURE": 1.0,
+              "POWER": 1.0
+            },
+            {}
+          ],
+          "float_list_counter": 3
+        },
+        "inputs": {
+          "mask": {
+            "bl_idname": "SvStringsSocket",
+            "name": "mask",
+            "properties": {
+              "label": "Mask",
+              "custom_draw": "draw_mask_in_socket"
+            }
+          }
+        },
+        "outputs": {
+          "data_output": {
+            "bl_idname": "SvStringsSocket",
+            "name": "data_output",
+            "properties": {
+              "label": "Floats"
+            }
+          }
+        },
+        "bl_idname": "SvListInputNodeMK2"
+      },
+      "List Input.004": {
+        "attributes": {
+          "location": [
+            2556.992919921875,
+            -932.28125
+          ],
+          "width": 260.0,
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.012"
+          }
+        },
+        "properties": {
+          "int_list_items": [
+            {}
+          ],
+          "list_items_type": "FLOAT_LIST_MODE",
+          "float_list_items": [
+            {
+              "elem": 0.5,
+              "NONE": 0.5,
+              "PERCENTAGE": 0.5,
+              "FACTOR": 0.5,
+              "ANGLE": 0.5,
+              "TIME": 0.5,
+              "TIME_ABSOLUTE": 0.5,
+              "DISTANCE": 0.5,
+              "DISTANCE_CAMERA": 0.5,
+              "TEMPERATURE": 0.5,
+              "POWER": 0.5
+            },
+            {
+              "elem": 0.5,
+              "NONE": 0.5,
+              "PERCENTAGE": 0.5,
+              "FACTOR": 0.5,
+              "ANGLE": 0.5,
+              "TIME": 0.5,
+              "TIME_ABSOLUTE": 0.5,
+              "DISTANCE": 0.5,
+              "DISTANCE_CAMERA": 0.5,
+              "TEMPERATURE": 0.5,
+              "POWER": 0.5
+            },
+            {
+              "elem": 1.0,
+              "NONE": 1.0,
+              "PERCENTAGE": 1.0,
+              "FACTOR": 1.0,
+              "ANGLE": 1.0,
+              "TIME": 1.0,
+              "TIME_ABSOLUTE": 1.0,
+              "DISTANCE": 1.0,
+              "DISTANCE_CAMERA": 1.0,
+              "TEMPERATURE": 1.0,
+              "POWER": 1.0
+            }
+          ],
+          "float_list_counter": 3
+        },
+        "inputs": {
+          "mask": {
+            "bl_idname": "SvStringsSocket",
+            "name": "mask",
+            "properties": {
+              "label": "Mask",
+              "custom_draw": "draw_mask_in_socket"
+            }
+          }
+        },
+        "outputs": {
+          "data_output": {
+            "bl_idname": "SvStringsSocket",
+            "name": "data_output",
+            "properties": {
+              "label": "Floats"
+            }
+          }
+        },
+        "bl_idname": "SvListInputNodeMK2"
+      },
+      "List Input.005": {
+        "attributes": {
+          "location": [
+            2849.519287109375,
+            -923.0565185546875
+          ],
+          "width": 260.0,
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.012"
+          }
+        },
+        "properties": {
+          "int_list_items": [
+            {}
+          ],
+          "list_items_type": "FLOAT_LIST_MODE",
+          "float_list_items": [
+            {
+              "elem": 1.0,
+              "NONE": 1.0,
+              "PERCENTAGE": 1.0,
+              "FACTOR": 1.0,
+              "ANGLE": 1.0,
+              "TIME": 1.0,
+              "TIME_ABSOLUTE": 1.0,
+              "DISTANCE": 1.0,
+              "DISTANCE_CAMERA": 1.0,
+              "TEMPERATURE": 1.0,
+              "POWER": 1.0
+            },
+            {},
+            {
+              "elem": 0.20000000298023224,
+              "NONE": 0.20000000298023224,
+              "PERCENTAGE": 0.20000000298023224,
+              "FACTOR": 0.20000000298023224,
+              "ANGLE": 0.20000000298023224,
+              "TIME": 0.20000000298023224,
+              "TIME_ABSOLUTE": 0.20000000298023224,
+              "DISTANCE": 0.20000000298023224,
+              "DISTANCE_CAMERA": 0.20000000298023224,
+              "TEMPERATURE": 0.20000000298023224,
+              "POWER": 0.20000000298023224
+            }
+          ],
+          "float_list_counter": 3
+        },
+        "inputs": {
+          "mask": {
+            "bl_idname": "SvStringsSocket",
+            "name": "mask",
+            "properties": {
+              "label": "Mask",
+              "custom_draw": "draw_mask_in_socket"
+            }
+          }
+        },
+        "outputs": {
+          "data_output": {
+            "bl_idname": "SvStringsSocket",
+            "name": "data_output",
+            "properties": {
+              "label": "Floats"
+            }
+          }
+        },
+        "bl_idname": "SvListInputNodeMK2"
+      },
+      "Edges to Faces 2D.001": {
+        "attributes": {
+          "location": [
+            2686.486083984375,
+            -1413.0394287109375
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.005"
+          }
+        },
+        "inputs": {
+          "Verts": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Verts"
+          },
+          "Edges": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Edges"
+          }
+        },
+        "outputs": {
+          "Verts": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Verts"
+          },
+          "Faces": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Faces"
+          }
+        },
+        "bl_idname": "SvEdgesToFaces2D"
+      },
+      "List Mask (Out).001": {
+        "attributes": {
+          "location": [
+            3176.979248046875,
+            -1406.9793701171875
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.005"
+          }
+        },
+        "properties": {
+          "Level": 2
+        },
+        "inputs": {
+          "data": {
+            "bl_idname": "SvStringsSocket",
+            "name": "data"
+          },
+          "mask": {
+            "bl_idname": "SvStringsSocket",
+            "name": "mask"
+          }
+        },
+        "outputs": {
+          "mask": {
+            "bl_idname": "SvStringsSocket",
+            "name": "mask"
+          },
+          "ind_true": {
+            "bl_idname": "SvStringsSocket",
+            "name": "ind_true"
+          },
+          "ind_false": {
+            "bl_idname": "SvStringsSocket",
+            "name": "ind_false"
+          },
+          "dataTrue": {
+            "bl_idname": "SvStringsSocket",
+            "name": "dataTrue"
+          },
+          "dataFalse": {
+            "bl_idname": "SvStringsSocket",
+            "name": "dataFalse"
+          }
+        },
+        "bl_idname": "MaskListNode"
+      },
+      "List Mask (Out).002": {
+        "attributes": {
+          "location": [
+            3522.824462890625,
+            -1407.8775634765625
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.005"
+          }
+        },
+        "properties": {
+          "Level": 2
+        },
+        "inputs": {
+          "data": {
+            "bl_idname": "SvStringsSocket",
+            "name": "data"
+          },
+          "mask": {
+            "bl_idname": "SvStringsSocket",
+            "name": "mask"
+          }
+        },
+        "outputs": {
+          "mask": {
+            "bl_idname": "SvStringsSocket",
+            "name": "mask"
+          },
+          "ind_true": {
+            "bl_idname": "SvStringsSocket",
+            "name": "ind_true"
+          },
+          "ind_false": {
+            "bl_idname": "SvStringsSocket",
+            "name": "ind_false"
+          },
+          "dataTrue": {
+            "bl_idname": "SvStringsSocket",
+            "name": "dataTrue"
+          },
+          "dataFalse": {
+            "bl_idname": "SvStringsSocket",
+            "name": "dataFalse"
+          }
+        },
+        "bl_idname": "MaskListNode"
+      },
+      "Merge Mesh 2D": {
+        "attributes": {
+          "location": [
+            3351.84814453125,
+            -1403.39013671875
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.005"
+          }
+        },
+        "inputs": {
+          "Verts A": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Verts A"
+          },
+          "Faces A": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Faces A"
+          },
+          "Verts B": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Verts B"
+          },
+          "Faces B": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Faces B"
+          }
+        },
+        "outputs": {
+          "Verts": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Verts"
+          },
+          "Faces": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Faces"
+          },
+          "Mask A": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Mask A"
+          },
+          "Mask B": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Mask B"
+          }
+        },
+        "bl_idname": "SvMergeMesh2D"
+      },
+      "Viewer Draw.005": {
+        "attributes": {
+          "location": [
+            3705.8037109375,
+            -1409.7965087890625
+          ],
+          "color": [
+            0.6284880042076111,
+            0.931007981300354,
+            1.0
+          ],
+          "use_custom_color": true,
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.005"
+          }
+        },
+        "properties": {
+          "display_edges": false,
+          "display_verts": false,
+          "polygon_color": [
+            0.012966225855052471,
+            0.03907668590545654,
+            0.05552525445818901,
+            1.0
+          ]
+        },
+        "inputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices",
+            "properties": {
+              "custom_draw": "draw_property_socket"
+            }
+          },
+          "Edges": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Edges",
+            "properties": {
+              "custom_draw": "draw_property_socket"
+            }
+          },
+          "Polygons": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Polygons"
+          },
+          "Matrix": {
+            "bl_idname": "SvMatrixSocket",
+            "name": "Matrix"
+          },
+          "Vector Color": {
+            "bl_idname": "SvColorSocket",
+            "name": "Vector Color",
+            "properties": {
+              "custom_draw": "draw_color_socket",
+              "prop_name": "vector_color"
+            }
+          },
+          "Edge Color": {
+            "bl_idname": "SvColorSocket",
+            "name": "Edge Color",
+            "properties": {
+              "custom_draw": "draw_color_socket",
+              "prop_name": "edge_color"
+            }
+          },
+          "Polygon Color": {
+            "bl_idname": "SvColorSocket",
+            "name": "Polygon Color",
+            "properties": {
+              "custom_draw": "draw_color_socket",
+              "prop_name": "polygon_color"
+            }
+          },
+          "attrs": {
+            "bl_idname": "SvStringsSocket",
+            "name": "attrs",
+            "attributes": {
+              "hide": true
+            },
+            "properties": {
+              "quick_link_to_node": "SvVDAttrsNodeMk2"
+            }
+          }
+        },
+        "bl_idname": "SvViewerDrawMk4"
+      },
+      "Area": {
+        "attributes": {
+          "location": [
+            2683.811767578125,
+            -1594.3729248046875
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.005"
+          }
+        },
+        "inputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices"
+          },
+          "Polygons": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Polygons"
+          }
+        },
+        "outputs": {
+          "Area": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Area"
+          }
+        },
+        "bl_idname": "SvAreaNode"
+      },
+      "Logic Functions.001": {
+        "attributes": {
+          "location": [
+            2921.87451171875,
+            -1580.9852294921875
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.005"
+          }
+        },
+        "properties": {
+          "function_name": "LESS"
+        },
+        "inputs": {
+          "A": {
+            "bl_idname": "SvStringsSocket",
+            "name": "A",
+            "properties": {
+              "use_prop": true,
+              "show_property_type": true,
+              "default_property_type": "int"
+            }
+          },
+          "B": {
+            "bl_idname": "SvStringsSocket",
+            "name": "B",
+            "properties": {
+              "use_prop": true,
+              "show_property_type": true,
+              "default_int_property": 1,
+              "default_float_property": 1.0
+            }
+          }
+        },
+        "outputs": {
+          "Result": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Result"
+          }
+        },
+        "bl_idname": "SvLogicNodeMK2"
+      }
     },
-    "Viewer Draw": {
-      "bl_idname": "SvViewerDrawMk4",
-      "color": [
-        0.6284880042076111,
-        0.931007981300354,
-        1.0
-      ],
-      "custom_socket_props": {},
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        2417.7124938964844,
-        -1156.5744018554688
-      ],
-      "params": {
-        "activate": false,
-        "display_verts": false,
-        "vector_color": [
-          0.800000011920929,
-          0.800000011920929,
-          0.800000011920929,
-          1.0
-        ]
+    "links": [
+      {
+        "from_node": "Intersect Edges.001",
+        "from_socket": "Verts_out",
+        "to_node": "Contour 2D",
+        "to_socket": "Verts_in"
       },
-      "use_custom_color": true,
-      "width": 140.0
-    },
-    "Viewer Draw.001": {
-      "bl_idname": "SvViewerDrawMk4",
-      "color": [
-        0.6284880042076111,
-        0.931007981300354,
-        1.0
-      ],
-      "custom_socket_props": {},
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        745.5510864257812,
-        -1798.1175994873047
-      ],
-      "params": {
-        "activate": false,
-        "display_verts": false,
-        "edge_color": [
-          0.8956438899040222,
-          0.32270321249961853,
-          1.0,
-          1.0
-        ],
-        "vector_color": [
-          0.800000011920929,
-          0.800000011920929,
-          0.800000011920929,
-          1.0
-        ]
+      {
+        "from_node": "Intersect Edges.001",
+        "from_socket": "Edges_out",
+        "to_node": "Contour 2D",
+        "to_socket": "Edges_in"
       },
-      "use_custom_color": true,
-      "width": 140.0
-    },
-    "Viewer Draw.002": {
-      "bl_idname": "SvViewerDrawMk4",
-      "color": [
-        0.6284880042076111,
-        0.931007981300354,
-        1.0
-      ],
-      "custom_socket_props": {},
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        741.4090881347656,
-        -1363.8501815795898
-      ],
-      "params": {
-        "activate": false,
-        "display_verts": false,
-        "vector_color": [
-          0.800000011920929,
-          0.800000011920929,
-          0.800000011920929,
-          1.0
-        ]
+      {
+        "from_node": "Contour 2D",
+        "from_socket": "Vertices",
+        "to_node": "Edges to Faces 2D",
+        "to_socket": "Verts"
       },
-      "use_custom_color": true,
-      "width": 140.0
-    },
-    "Viewer Draw.003": {
-      "bl_idname": "SvViewerDrawMk4",
-      "color": [
-        0.6284880042076111,
-        0.931007981300354,
-        1.0
-      ],
-      "custom_socket_props": {},
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        753.1102905273438,
-        -940.975715637207
-      ],
-      "params": {
-        "activate": false,
-        "display_verts": false,
-        "vector_color": [
-          0.800000011920929,
-          0.800000011920929,
-          0.800000011920929,
-          1.0
-        ]
+      {
+        "from_node": "List Mask (Out)",
+        "from_socket": "dataTrue",
+        "to_node": "Edges to Faces 2D",
+        "to_socket": "Edges"
       },
-      "use_custom_color": true,
-      "width": 140.0
-    },
-    "Viewer Draw.004": {
-      "bl_idname": "SvViewerDrawMk4",
-      "color": [
-        0.6284880042076111,
-        0.931007981300354,
-        1.0
-      ],
-      "custom_socket_props": {},
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        3021.8029174804688,
-        -690.0938110351562
-      ],
-      "params": {
-        "color_per_polygon": true,
-        "display_edges": false,
-        "display_verts": false,
-        "point_size": 7
+      {
+        "from_node": "Bezier Spline (Curve)",
+        "from_socket": "Curve",
+        "to_node": "Evaluate Curve",
+        "to_socket": "Curve"
       },
-      "use_custom_color": true,
-      "width": 140.0
-    },
-    "Viewer Draw.005": {
-      "bl_idname": "SvViewerDrawMk4",
-      "color": [
-        0.6284880042076111,
-        0.931007981300354,
-        1.0
-      ],
-      "custom_socket_props": {},
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        3408.3342895507812,
-        -1416.5345153808594
-      ],
-      "params": {
-        "display_edges": false,
-        "display_verts": false,
-        "polygon_color": [
-          0.012966225855052471,
-          0.03907668590545654,
-          0.05552525445818901,
-          1.0
-        ]
+      {
+        "from_node": "Bezier Spline (Curve).001",
+        "from_socket": "Curve",
+        "to_node": "Evaluate Curve.001",
+        "to_socket": "Curve"
       },
-      "use_custom_color": true,
-      "width": 140.0
-    }
-  },
-  "update_lists": [
-    [
-      "Edges to Faces 2D.001",
-      0,
-      "Area",
-      0
-    ],
-    [
-      "Edges to Faces 2D.001",
-      1,
-      "Area",
-      1
-    ],
-    [
-      "List Input",
-      0,
-      "Color in",
-      0
-    ],
-    [
-      "List Input.001",
-      0,
-      "Color in",
-      1
-    ],
-    [
-      "List Input.002",
-      0,
-      "Color in",
-      2
-    ],
-    [
-      "Contour 2D",
-      0,
-      "Edges to Faces 2D.001",
-      0
-    ],
-    [
-      "Contour 2D",
-      1,
-      "Edges to Faces 2D.001",
-      1
-    ],
-    [
-      "Bezier Spline (Curve)",
-      0,
-      "Evaluate Curve",
-      0
-    ],
-    [
-      "Bezier Spline (Curve).001",
-      0,
-      "Evaluate Curve.001",
-      0
-    ],
-    [
-      "Circle (Curve)",
-      0,
-      "Evaluate Curve.002",
-      0
-    ],
-    [
-      "Edges to Faces 2D.001",
-      1,
-      "List Mask (Out).001",
-      0
-    ],
-    [
-      "Logic Functions",
-      0,
-      "List Mask (Out).001",
-      1
-    ],
-    [
-      "Merge Mesh 2D",
-      1,
-      "List Mask (Out).002",
-      0
-    ],
-    [
-      "Merge Mesh 2D",
-      3,
-      "List Mask (Out).002",
-      1
-    ],
-    [
-      "Area",
-      0,
-      "Logic Functions",
-      0
-    ],
-    [
-      "Edges to Faces 2D",
-      0,
-      "Merge by Distance",
-      0
-    ],
-    [
-      "Edges to Faces 2D",
-      1,
-      "Merge by Distance",
-      1
-    ],
-    [
-      "Edges to Faces 2D.001",
-      0,
-      "Merge Mesh 2D",
-      0
-    ],
-    [
-      "List Mask (Out).001",
-      4,
-      "Merge Mesh 2D",
-      1
-    ],
-    [
-      "Edges to Faces 2D.001",
-      0,
-      "Merge Mesh 2D",
-      2
-    ],
-    [
-      "List Mask (Out).001",
-      3,
-      "Merge Mesh 2D",
-      3
-    ],
-    [
-      "Evaluate Curve.002",
-      0,
-      "Viewer Draw.001",
-      0
-    ],
-    [
-      "Evaluate Curve.002",
-      1,
-      "Viewer Draw.001",
-      1
-    ],
-    [
-      "Evaluate Curve.001",
-      0,
-      "Viewer Draw.002",
-      0
-    ],
-    [
-      "Evaluate Curve.001",
-      1,
-      "Viewer Draw.002",
-      1
-    ],
-    [
-      "Evaluate Curve",
-      0,
-      "Viewer Draw.003",
-      0
-    ],
-    [
-      "Evaluate Curve",
-      1,
-      "Viewer Draw.003",
-      1
-    ],
-    [
-      "Merge by Distance",
-      0,
-      "Viewer Draw.004",
-      0
-    ],
-    [
-      "Merge by Distance",
-      2,
-      "Viewer Draw.004",
-      2
-    ],
-    [
-      "Color in",
-      0,
-      "Viewer Draw.004",
-      6
-    ],
-    [
-      "Merge Mesh 2D",
-      0,
-      "Viewer Draw.005",
-      0
-    ],
-    [
-      "List Mask (Out).002",
-      4,
-      "Viewer Draw.005",
-      2
-    ],
-    [
-      "Intersect Edges",
-      0,
-      "Contour 2D",
-      2
-    ],
-    [
-      "Intersect Edges",
-      1,
-      "Contour 2D",
-      3
-    ],
-    [
-      "Contour 2D",
-      0,
-      "Edges to Faces 2D",
-      0
-    ],
-    [
-      "List Mask (Out)",
-      3,
-      "Edges to Faces 2D",
-      1
-    ],
-    [
-      "Mesh Join.001",
-      0,
-      "Intersect Edges",
-      0
-    ],
-    [
-      "Mesh Join.001",
-      1,
-      "Intersect Edges",
-      1
-    ],
-    [
-      "Evaluate Curve",
-      0,
-      "List Join",
-      0
-    ],
-    [
-      "Evaluate Curve.001",
-      0,
-      "List Join",
-      1
-    ],
-    [
-      "Evaluate Curve.002",
-      0,
-      "List Join",
-      2
-    ],
-    [
-      "Evaluate Curve",
-      1,
-      "List Join.001",
-      0
-    ],
-    [
-      "Evaluate Curve.001",
-      1,
-      "List Join.001",
-      1
-    ],
-    [
-      "Evaluate Curve.002",
-      1,
-      "List Join.001",
-      2
-    ],
-    [
-      "Contour 2D",
-      1,
-      "List Mask (Out)",
-      0
-    ],
-    [
-      "Select Mesh Elements by Location",
-      1,
-      "List Mask (Out)",
-      1
-    ],
-    [
-      "Contour 2D",
-      0,
-      "Select Mesh Elements by Location",
-      0
-    ],
-    [
-      "Contour 2D",
-      1,
-      "Select Mesh Elements by Location",
-      1
-    ],
-    [
-      "Edges to Faces 2D",
-      0,
-      "Viewer Draw",
-      0
-    ],
-    [
-      "Edges to Faces 2D",
-      1,
-      "Viewer Draw",
-      2
-    ],
-    [
-      "List Join",
-      0,
-      "Mesh Join.001",
-      0
-    ],
-    [
-      "List Join.001",
-      0,
-      "Mesh Join.001",
-      1
+      {
+        "from_node": "Circle (Curve).001",
+        "from_socket": "Curve",
+        "to_node": "Evaluate Curve.002",
+        "to_socket": "Curve"
+      },
+      {
+        "from_node": "Evaluate Curve",
+        "from_socket": "Vertices",
+        "to_node": "List Join",
+        "to_socket": "data"
+      },
+      {
+        "from_node": "Evaluate Curve.001",
+        "from_socket": "Vertices",
+        "to_node": "List Join",
+        "to_socket": "data 1"
+      },
+      {
+        "from_node": "Evaluate Curve.002",
+        "from_socket": "Vertices",
+        "to_node": "List Join",
+        "to_socket": "data 2"
+      },
+      {
+        "from_node": "Evaluate Curve",
+        "from_socket": "Edges",
+        "to_node": "List Join.001",
+        "to_socket": "data"
+      },
+      {
+        "from_node": "Evaluate Curve.001",
+        "from_socket": "Edges",
+        "to_node": "List Join.001",
+        "to_socket": "data 1"
+      },
+      {
+        "from_node": "Evaluate Curve.002",
+        "from_socket": "Edges",
+        "to_node": "List Join.001",
+        "to_socket": "data 2"
+      },
+      {
+        "from_node": "Contour 2D",
+        "from_socket": "Edges",
+        "to_node": "List Mask (Out)",
+        "to_socket": "data"
+      },
+      {
+        "from_node": "Select Mesh Elements by Location",
+        "from_socket": "EdgesMask",
+        "to_node": "List Mask (Out)",
+        "to_socket": "mask"
+      },
+      {
+        "from_node": "Contour 2D",
+        "from_socket": "Vertices",
+        "to_node": "Select Mesh Elements by Location",
+        "to_socket": "Vertices"
+      },
+      {
+        "from_node": "Contour 2D",
+        "from_socket": "Edges",
+        "to_node": "Select Mesh Elements by Location",
+        "to_socket": "Edges"
+      },
+      {
+        "from_node": "Edges to Faces 2D",
+        "from_socket": "Verts",
+        "to_node": "Viewer Draw",
+        "to_socket": "Vertices"
+      },
+      {
+        "from_node": "Edges to Faces 2D",
+        "from_socket": "Faces",
+        "to_node": "Viewer Draw",
+        "to_socket": "Polygons"
+      },
+      {
+        "from_node": "Evaluate Curve.002",
+        "from_socket": "Vertices",
+        "to_node": "Viewer Draw.001",
+        "to_socket": "Vertices"
+      },
+      {
+        "from_node": "Evaluate Curve.002",
+        "from_socket": "Edges",
+        "to_node": "Viewer Draw.001",
+        "to_socket": "Edges"
+      },
+      {
+        "from_node": "Evaluate Curve.001",
+        "from_socket": "Vertices",
+        "to_node": "Viewer Draw.002",
+        "to_socket": "Vertices"
+      },
+      {
+        "from_node": "Evaluate Curve.001",
+        "from_socket": "Edges",
+        "to_node": "Viewer Draw.002",
+        "to_socket": "Edges"
+      },
+      {
+        "from_node": "Evaluate Curve",
+        "from_socket": "Vertices",
+        "to_node": "Viewer Draw.003",
+        "to_socket": "Vertices"
+      },
+      {
+        "from_node": "Evaluate Curve",
+        "from_socket": "Edges",
+        "to_node": "Viewer Draw.003",
+        "to_socket": "Edges"
+      },
+      {
+        "from_node": "List Join",
+        "from_socket": "data_001",
+        "to_node": "Mesh Join.001",
+        "to_socket": "Vertices"
+      },
+      {
+        "from_node": "List Join.001",
+        "from_socket": "data",
+        "to_node": "Mesh Join.001",
+        "to_socket": "Edges"
+      },
+      {
+        "from_node": "Mesh Join.001",
+        "from_socket": "Vertices",
+        "to_node": "Intersect Edges.001",
+        "to_socket": "Verts_in"
+      },
+      {
+        "from_node": "Mesh Join.001",
+        "from_socket": "Edges",
+        "to_node": "Intersect Edges.001",
+        "to_socket": "Edges_in"
+      },
+      {
+        "from_node": "List Input.003",
+        "from_socket": "data_output",
+        "to_node": "Color in",
+        "to_socket": "R"
+      },
+      {
+        "from_node": "List Input.004",
+        "from_socket": "data_output",
+        "to_node": "Color in",
+        "to_socket": "G"
+      },
+      {
+        "from_node": "List Input.005",
+        "from_socket": "data_output",
+        "to_node": "Color in",
+        "to_socket": "B"
+      },
+      {
+        "from_node": "Edges to Faces 2D",
+        "from_socket": "Verts",
+        "to_node": "Merge by Distance",
+        "to_socket": "Vertices"
+      },
+      {
+        "from_node": "Edges to Faces 2D",
+        "from_socket": "Faces",
+        "to_node": "Merge by Distance",
+        "to_socket": "PolyEdge"
+      },
+      {
+        "from_node": "Merge by Distance",
+        "from_socket": "Vertices",
+        "to_node": "Viewer Draw.004",
+        "to_socket": "Vertices"
+      },
+      {
+        "from_node": "Merge by Distance",
+        "from_socket": "Polygons",
+        "to_node": "Viewer Draw.004",
+        "to_socket": "Polygons"
+      },
+      {
+        "from_node": "Color in",
+        "from_socket": "Colors",
+        "to_node": "Viewer Draw.004",
+        "to_socket": "Polygon Color"
+      },
+      {
+        "from_node": "Contour 2D",
+        "from_socket": "Vertices",
+        "to_node": "Edges to Faces 2D.001",
+        "to_socket": "Verts"
+      },
+      {
+        "from_node": "Contour 2D",
+        "from_socket": "Edges",
+        "to_node": "Edges to Faces 2D.001",
+        "to_socket": "Edges"
+      },
+      {
+        "from_node": "Edges to Faces 2D.001",
+        "from_socket": "Faces",
+        "to_node": "List Mask (Out).001",
+        "to_socket": "data"
+      },
+      {
+        "from_node": "Logic Functions.001",
+        "from_socket": "Result",
+        "to_node": "List Mask (Out).001",
+        "to_socket": "mask"
+      },
+      {
+        "from_node": "Merge Mesh 2D",
+        "from_socket": "Faces",
+        "to_node": "List Mask (Out).002",
+        "to_socket": "data"
+      },
+      {
+        "from_node": "Merge Mesh 2D",
+        "from_socket": "Mask B",
+        "to_node": "List Mask (Out).002",
+        "to_socket": "mask"
+      },
+      {
+        "from_node": "Edges to Faces 2D.001",
+        "from_socket": "Verts",
+        "to_node": "Merge Mesh 2D",
+        "to_socket": "Verts A"
+      },
+      {
+        "from_node": "List Mask (Out).001",
+        "from_socket": "dataFalse",
+        "to_node": "Merge Mesh 2D",
+        "to_socket": "Faces A"
+      },
+      {
+        "from_node": "Edges to Faces 2D.001",
+        "from_socket": "Verts",
+        "to_node": "Merge Mesh 2D",
+        "to_socket": "Verts B"
+      },
+      {
+        "from_node": "List Mask (Out).001",
+        "from_socket": "dataTrue",
+        "to_node": "Merge Mesh 2D",
+        "to_socket": "Faces B"
+      },
+      {
+        "from_node": "Merge Mesh 2D",
+        "from_socket": "Verts",
+        "to_node": "Viewer Draw.005",
+        "to_socket": "Vertices"
+      },
+      {
+        "from_node": "List Mask (Out).002",
+        "from_socket": "dataFalse",
+        "to_node": "Viewer Draw.005",
+        "to_socket": "Polygons"
+      },
+      {
+        "from_node": "Edges to Faces 2D.001",
+        "from_socket": "Verts",
+        "to_node": "Area",
+        "to_socket": "Vertices"
+      },
+      {
+        "from_node": "Edges to Faces 2D.001",
+        "from_socket": "Faces",
+        "to_node": "Area",
+        "to_socket": "Polygons"
+      },
+      {
+        "from_node": "Area",
+        "from_socket": "Area",
+        "to_node": "Logic Functions.001",
+        "to_socket": "A"
+      }
     ]
-  ]
+  }
 }
