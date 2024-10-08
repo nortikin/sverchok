@@ -519,7 +519,7 @@ class SvGetObjectsDataMK3(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
 
         if len(self.object_names)>0:
             row = layout.row()
-            self.wrapper_tracked_ui_draw_op(row, 'node.ob3_callback_mk2', text="Select objects").fn_name = 'set_objects_selected_scene'
+            self.wrapper_tracked_ui_draw_op(row, 'node.ob3_callback_mk2', text=f"Select objects ({len(self.object_names)})").fn_name = 'set_objects_selected_scene'
             self.wrapper_tracked_ui_draw_op(row, 'node.ob3_callback_mk2', text="Deselect objects").fn_name = 'deselect_objects_from_scene'
 
     def sv_draw_buttons_ext(self, context, layout):
