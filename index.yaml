@@ -493,6 +493,9 @@
     - SvCropMesh2D
     - SvCSGBooleanNodeMK2
     - SvWafelNode
+    - ---
+    - SvStraightSkeleton2D
+    - SvStraightSkeleton2DTest001
 
 - ---
 
