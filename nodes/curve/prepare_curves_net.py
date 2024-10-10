@@ -161,8 +161,8 @@ class SvPrepareCurvesNetNode(SverchCustomTreeNode, bpy.types.Node):
                 new_u_curves.append(u_curves)
                 new_v_curves.append(v_curves)
                 new_pts.append(pts)
-                new_u_values.append(u_values)
-                new_v_values.append(v_values)
+                new_u_values.append(u_values.tolist())
+                new_v_values.append(v_values.tolist())
             if flat_output:
                 u_curves_out.extend(new_u_curves)
                 v_curves_out.extend(new_v_curves)
