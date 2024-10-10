@@ -43,7 +43,8 @@ def reparametrize_by_segments(curve, t_values, tolerance=1e-2):
     
     result = segments[0]
     for segment in segments[1:]:
-        result = result.concatenate(segment)
+        if segment is not None:
+            result = result.concatenate(segment)
     
     return result
 

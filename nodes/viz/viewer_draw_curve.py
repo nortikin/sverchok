@@ -36,6 +36,18 @@ def draw_edges(shader, points, edges, line_width, color, is_smooth=False):
         batch.draw(shader)
         drawing.reset_line_width()
 
+def draw_arrows(shader, tips, pts1, pts2, line_width, color):
+    n = len(tips)
+    points = np.concatenate((tips, pts1, pts2))
+    edges = [(i, i+n) for i in range(n-1)]
+    edges.extend([(i, i+2*n) for i in range(n-1)])
+    drawing.set_line_width(line_width)
+    batch = batch_for_shader(shader, 'LINES', {"pos": points.tolist()}, indices=edges)
+    shader.bind()
+    shader.uniform_float('color', color)
+    batch.draw(shader)
+    drawing.reset_line_width()
+
 def draw_edges_colored(shader, points, edges, line_width, colors):
     drawing.set_line_width(line_width)
     batch = batch_for_shader(shader, 'LINES', {"pos": points, "color": colors}, indices=edges)
@@ -87,6 +99,9 @@ def draw_curves(context, args):
 
         if node.draw_verts and item.points is not None:
             draw_points(v_shader, item.points, node.verts_size, node.verts_color)
+
+        if node.draw_arrows and item.arrow_pts1 is not None and item.arrow_pts2 is not None:
+            draw_arrows(e_shader, item.np_points[1:], item.arrow_pts1, item.arrow_pts2, node.arrows_line_width, node.arrows_color)
 
     drawing.enable_blendmode()
 
@@ -151,6 +166,23 @@ class SvCurveViewerDrawNode(SverchCustomTreeNode, bpy.types.Node):
     line_width : IntProperty(
             name = "Line Width",
             min = 1, default = 2,
+            update = updateNode)
+
+    draw_arrows : BoolProperty(
+            name = "Display arrows",
+            default = False,
+            update = updateNode)
+
+    arrows_line_width : IntProperty(
+            name = "Arrows Line Width",
+            min = 1, default = 1,
+            update = updateNode)
+
+    arrows_color : FloatVectorProperty(
+            name = "Arrows Color",
+            default = (0.5, 0.8, 1.0, 1.0),
+            size = 4, min = 0.0, max = 1.0,
+            subtype = 'COLOR',
             update = updateNode)
 
     draw_control_points: BoolProperty(
@@ -242,6 +274,11 @@ class SvCurveViewerDrawNode(SverchCustomTreeNode, bpy.types.Node):
         row.prop(self, 'draw_line', icon='MOD_CURVE', text='')
         row.prop(self, 'line_color', text="")
         row.prop(self, 'line_width', text="px")
+
+        row = grid.row(align=True)
+        row.prop(self, 'draw_arrows', icon='EVENT_RIGHT_ARROW', text='')
+        row.prop(self, 'arrows_color', text='')
+        row.prop(self, 'arrows_line_width', text='px')
 
         row = grid.row(align=True)
         row.prop(self, 'draw_control_points', icon='DECORATE_KEYFRAME', text='')

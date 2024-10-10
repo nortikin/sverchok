@@ -135,6 +135,9 @@ class SvRefineNurbsCurveNode(SverchCustomTreeNode, bpy.types.Node):
             curves_list = []
             new_knots_list = []
             for curve, new_knots, resolution, t_min, t_max in zip_long_repeat(*params):
+                curve = SvNurbsCurve.to_nurbs(curve)
+                if curve is None:
+                    raise Exception("Curve is not NURBS")
                 if not self.specify_segment:
                     t_min = t_max = None
 
