@@ -37,11 +37,12 @@ class CurveData(object):
 
         logger = get_logger()
 
-        if node.draw_line or node.draw_verts or node.draw_comb or node.draw_curvature:
+        if node.draw_line or node.draw_verts or node.draw_comb or node.draw_curvature or node.draw_arrows:
             t_min, t_max = curve.get_u_bounds()
             ts = np.linspace(t_min, t_max, num=resolution)
             n = len(ts)
-            self.points = curve.evaluate_array(ts).tolist()
+            self.np_points = curve.evaluate_array(ts)
+            self.points = self.np_points.tolist()
         else:
             self.points = None
 
@@ -85,8 +86,8 @@ class CurveData(object):
             normals = curve.main_normal_array(ts, normalize=True)
             curvatures = self.curvatures[np.newaxis].T
             comb_normals = node.comb_scale * curvatures * normals
-            comb_points = self.points - comb_normals
-            self.comb_points = np.concatenate((self.points, comb_points)).tolist()
+            comb_points = self.np_points - comb_normals
+            self.comb_points = np.concatenate((self.np_points, comb_points)).tolist()
             comb_normal_edges = [(i, i+n) for i in range(n)]
             comb_tangent_edges = [(i, i+1) for i in range(n, 2*n-1)]
             self.comb_edges = comb_normal_edges + comb_tangent_edges
@@ -107,6 +108,27 @@ class CurveData(object):
         else:
             self.curvature_point_colors = None
             self.curvature_edge_colors = None
+
+        if node.draw_arrows:
+            n = len(self.points)
+            binormals = curve.binormal_array(ts[1:], normalize=True)
+            vectors = self.np_points[1:] - self.np_points[:-1]
+            vector_lens = np.linalg.norm(vectors, axis=1, keepdims=True)
+            mean_len = vector_lens.mean()
+            vectors /= vector_lens
+            is_zero = np.linalg.norm(binormals, axis=1) < 1e-4
+            z = np.array([0,0,1])
+            binormals[is_zero] = np.cross(z, vectors)[is_zero]
+            vectors *= mean_len
+            binormals *= mean_len
+            arrow_vecs1 = binormals - vectors
+            arrow_vecs2 = -binormals - vectors
+            tips = self.np_points[1:]
+            self.arrow_pts1 = tips + arrow_vecs1
+            self.arrow_pts2 = tips + arrow_vecs2
+        else:
+            self.arrow_pts1 = None
+            self.arrow_pts2 = None
 
     @property
     def nurbs_curve(self):
