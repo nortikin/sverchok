@@ -55,6 +55,13 @@ The parameters of the node are (in this order):
 .. image:: https://user-images.githubusercontent.com/14288520/190168448-b0691bc4-392f-4f83-bb5b-926da7b64b8e.png
   :target: https://user-images.githubusercontent.com/14288520/190168448-b0691bc4-392f-4f83-bb5b-926da7b64b8e.png
 
+* **Display Arrows**, **Arrows Color**, **Arrows Line Width**. Control display
+  of small arrows which indicate the direction of curve (direction in which
+  curve's T parameter grows). Curve arrows are not shown by default.
+
+.. image:: ../../../docs/assets/nodes/viz/viewer_draw_curve_arrows.png
+   :target: ../../../docs/assets/nodes/viz/viewer_draw_curve_arrows.png
+
 -------------
 
 * **Display Control Points**, **Control Points Color**, **Control Points
