@@ -22,14 +22,24 @@ subtending the edges, tracing a tree-like structure, the straight skeleton.
 .. image:: https://github.com/user-attachments/assets/8baaadf0-1e09-454a-af6a-85517db3bdb4
   :target: https://github.com/user-attachments/assets/50fd85bb-db65-41d3-a536-142c2cefffac
 
+Install dependency
+------------------
+
+To use node install additional library pySVCGAL in the Extra Nodes Section:
+
+.. image:: https://github.com/user-attachments/assets/548ad0a2-86af-4f12-9f39-230f6cda7d41
+  :target: https://github.com/user-attachments/assets/548ad0a2-86af-4f12-9f39-230f6cda7d41
+
+
+
 Inputs
 ------
 
-- Vertices, Edges, Faces - Input Mesh (2D only)
+- **Vertices**, **Edges**, **Faces** - Input Mesh (2D only)
     .. image:: https://github.com/user-attachments/assets/3ce5a747-9b8d-4aef-94fc-9e268425e6a6
       :target: https://github.com/user-attachments/assets/3ce5a747-9b8d-4aef-94fc-9e268425e6a6
 
-- Taper Angle - Angle between plane and Face that this algorithm will build.
+- **Taper Angle** - Angle between plane and Face that this algorithm will build.
 
     .. image:: https://github.com/user-attachments/assets/666c3a16-f124-4230-906b-8b4ea2cd699c
       :target: https://github.com/user-attachments/assets/666c3a16-f124-4230-906b-8b4ea2cd699c
@@ -54,7 +64,7 @@ If you connect list of floats then it will be used per objects:
     .. image:: https://github.com/user-attachments/assets/f40f4f4f-92dd-4d41-9eae-ddb890214fb6
       :target: https://github.com/user-attachments/assets/f40f4f4f-92dd-4d41-9eae-ddb890214fb6
 
-- Height - Height of object or objects. If used single value then this value vill be used for every objects. If socket is connected with float values then values will be used per objects:
+- **Height** - Height of object or objects. If used single value then this value vill be used for every objects. If socket is connected with float values then values will be used per objects:
 
 .. raw:: html
 
@@ -65,7 +75,7 @@ If you connect list of floats then it will be used per objects:
 
 |
 
-- Mask of objects - Mask hide objects. If element of boolean mask is True then object are hidden. If length of mask is more than length of objects then exceeded values will be omitted.
+- **Mask of objects** - Mask hide objects. If element of boolean mask is True then object are hidden. If length of mask is more than length of objects then exceeded values will be omitted.
 
 .. raw:: html
 
@@ -94,7 +104,7 @@ Parameters
 .. image:: https://github.com/user-attachments/assets/0119d5b9-09d2-49a4-b4fd-91e0afdcf76c
   :target: https://github.com/user-attachments/assets/0119d5b9-09d2-49a4-b4fd-91e0afdcf76c
 
-- Join mode. Split, Keep, Merge.
+- **Join mode**. **Split**, **Keep**, **Merge**.
     - **Split** - If some of objects has several independent meshes then they will be splitten individually and you can get more object on output than on input. (Mask will hide all meshes in multimesh objects)
 
         .. image:: https://github.com/user-attachments/assets/5d76cd4f-bb2a-4a05-b218-85ae0d96adee
@@ -128,6 +138,11 @@ Parameters
 
         .. image:: https://github.com/user-attachments/assets/f71aba10-3d00-48d0-b352-907f20b45ef8
           :target: https://github.com/user-attachments/assets/f71aba10-3d00-48d0-b352-907f20b45ef8
+
+Output sockets
+--------------
+
+
 
 
 Performance
@@ -176,3 +191,21 @@ Src: https://www.templatesarea.com/celtic-tree-of-life-silhouettes-free-vector-g
 .. image:: https://github.com/user-attachments/assets/6527588d-a89e-4b04-8965-9450014cc0ba
   :target: https://github.com/user-attachments/assets/6527588d-a89e-4b04-8965-9450014cc0ba
 
+
+Creating Abstract Shape from 2D Bezier Circle
+---------------------------------------------
+
+.. image:: https://github.com/user-attachments/assets/1feac759-2b7f-4266-86f4-f9e0a8e0244d
+  :target: https://github.com/user-attachments/assets/1feac759-2b7f-4266-86f4-f9e0a8e0244d
+
+.. raw:: html
+
+    <video width="700" controls>
+        <source src="https://github.com/user-attachments/assets/781b8de0-183e-46b8-a9c3-b5abc9656470" type="video/mp4">
+    Your browser does not support the video tag.
+    </video>
+
+This shape with autosmooth:
+
+.. image:: https://github.com/user-attachments/assets/10c38207-9d24-4b00-bcd6-84d502bc964e
+  :target: https://github.com/user-attachments/assets/10c38207-9d24-4b00-bcd6-84d502bc964e
