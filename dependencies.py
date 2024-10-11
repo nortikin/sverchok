@@ -209,6 +209,14 @@ try:
 except ImportError:
     pyQuadriFlow = None 
 
+pySVCGAL_d = sv_dependencies["pySVCGAL"] = SvDependency("pySVCGAL","https://github.com/satabol/pySVCGAL")
+pySVCGAL_d.pip_installable = True
+try:
+    import pySVCGAL
+    pySVCGAL_d.module = pySVCGAL
+except ImportError:
+    pySVCGAL = None 
+
 settings.pip = pip
 settings.sv_dependencies = sv_dependencies
 settings.ensurepip = ensurepip
