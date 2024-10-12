@@ -186,7 +186,7 @@ class SvStraightSkeleton2D(ModifierLiteNode, SverchCustomTreeNode, bpy.types.Nod
     Only X and Y coordinate takes in account
     """
     bl_idname = 'SvStraightSkeleton2D'
-    bl_label = 'Straight Skeleton 2D'
+    bl_label = 'Straight Skeleton 2D (Alpha)'
     bl_icon = 'MOD_OUTLINE'
 
     sv_dependencies = ['pySVCGAL', 'more_itertools']

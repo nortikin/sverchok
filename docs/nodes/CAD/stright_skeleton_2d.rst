@@ -1,10 +1,12 @@
-Stright Skeleton 2d
-===================
+Stright Skeleton 2d (Alpha)
+===========================
 
 .. image:: https://github.com/user-attachments/assets/2a141705-62e6-489b-a4be-9333df8c7951
   :target: https://github.com/user-attachments/assets/2a141705-62e6-489b-a4be-9333df8c7951
 
-!!! **"Exclude height" parameter was renamed into "Restrict Height" !!! Images will be updated later...**
+!!! **"Exclude height" parameter was renamed into "Restrict Height" !!! Images will be update later...**
+
+**It is Alpha version of node. Any function and names can be changed without notification! (but it will most likely be reported in the documentation).**
 
 Functionality
 -------------
