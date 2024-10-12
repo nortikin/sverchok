@@ -477,6 +477,9 @@ class SvStraightSkeleton2DExtrude(ModifierLiteNode, SverchCustomTreeNode, bpy.ty
                 raise f'Stright Skeleton angles_mode={self.angles_mode} not reailized'
             
             # separate objects of loose parts (objects can has islands. Every island have to be separated)
+            if not faces_i or not faces_i[0]:
+                raise Exception(f"Error: Object {I} has no faces. Extrusion is not possible. Objects should be flat.")
+            
             verts_i_separated, faces_i_separated, _ = separate_loose_mesh(verts_i, faces_i)
 
             for IJ in range(len(verts_i_separated)):
