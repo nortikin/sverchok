@@ -493,6 +493,8 @@ class SvStraightSkeleton2D(ModifierLiteNode, SverchCustomTreeNode, bpy.types.Nod
                     contours_failed_at_all.append(verts_i_separated_IJ)
                     continue
 
+                if not BoundaryEdges:
+                    raise Exception(f"Error: Object {I} has no boundaries. Extrusion is not possible. Objects should be flat.")
                 # separate contours of every island
                 verts_boundaries, edges_boundaries, _ = separate_loose_mesh(verts_i_separated_IJ, BoundaryEdges)
 
