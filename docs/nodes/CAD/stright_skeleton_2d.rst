@@ -8,6 +8,8 @@ Stright Skeleton 2d (Alpha)
 
 **It is Alpha version of node. Any function and names can be changed without notification! (but it will most likely be reported in the documentation).**
 
+Now tested with  **Windows 10**, **Windows 11**, **Ubuntu 22.04** (minimal libstdc++ version 12.3 ). It is not work with iOS (Apple) and we has no plan for a while. If you get issue please write https://github.com/nortikin/sverchok/issues
+
 Functionality
 -------------
 
