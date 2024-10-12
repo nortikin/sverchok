@@ -215,12 +215,13 @@ class SvStraightSkeleton2D(ModifierLiteNode, SverchCustomTreeNode, bpy.types.Nod
 
     ss_height: FloatProperty(
         default=1.0, name="Height", update=updateNode,
-        description = "Max height",
+        description = "Max height. Disabled if (socket connected or Restrict height is off)",
     ) # type: ignore
 
+    # !!! Inverted in UI. Named as in a CGAL library
     exclude_height: BoolProperty(
-        name="Exclude height",
-        description='Exclude height from calculations. (If you do not want change height to unlimit height)',
+        name="Restrict height",
+        description='Restrict height of object. (If no then all heights wil bu unlimited height)',
         default=False, update=updateNode) # type: ignore
 
     only_tests_for_valid: BoolProperty(
@@ -325,9 +326,25 @@ class SvStraightSkeleton2D(ModifierLiteNode, SverchCustomTreeNode, bpy.types.Nod
         # Временно отключено
         #grid.prop(self, 'angles_mode', expand=True, icon_only=True) 
 
+    def draw_ss_height_in_socket(self, socket, context, layout):
+        grid = layout.grid_flow(row_major=False, columns=3, align=True)
+        col = grid.column()
+        col.prop(self, 'ss_height')
+        if socket.is_linked==True:
+            col.enabled = False
+        else:
+            if self.exclude_height==True:
+                col.enabled = False
+            else:
+                col.enabled = True
+            pass
+            #col.enabled = True
+            pass
+        pass
+
     def draw_buttons(self, context, layout):
         col = layout.column()
-        col.prop(self, 'exclude_height')
+        col.prop(self, 'exclude_height', invert_checkbox=True)
         col.prop(self, 'only_tests_for_valid')
         col.prop(self, 'verbose_messages_while_process') 
         #col.row().prop(self, 'join_mode', expand=True)
@@ -358,6 +375,7 @@ class SvStraightSkeleton2D(ModifierLiteNode, SverchCustomTreeNode, bpy.types.Nod
         self.inputs['ss_angles'].label = 'Angles'
         self.inputs['ss_angles'].custom_draw = 'draw_angles_mode_in_socket'
         self.inputs['ss_height'].label = 'Height'
+        self.inputs['ss_height'].custom_draw = 'draw_ss_height_in_socket'
         self.inputs['objects_mask'].custom_draw = 'draw_objects_mask_in_socket'
         self.inputs['file_name'].label = 'File Name'
         self.inputs['file_name'].hide = True

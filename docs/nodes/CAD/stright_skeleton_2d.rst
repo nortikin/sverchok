@@ -4,6 +4,8 @@ Stright Skeleton 2d
 .. image:: https://github.com/user-attachments/assets/2a141705-62e6-489b-a4be-9333df8c7951
   :target: https://github.com/user-attachments/assets/2a141705-62e6-489b-a4be-9333df8c7951
 
+!!! **"Exclude height" parameter was renamed into "Restrict Height" !!! Images will be updated later...**
+
 Functionality
 -------------
 
@@ -39,7 +41,7 @@ Inputs
     .. image:: https://github.com/user-attachments/assets/3ce5a747-9b8d-4aef-94fc-9e268425e6a6
       :target: https://github.com/user-attachments/assets/3ce5a747-9b8d-4aef-94fc-9e268425e6a6
 
-- **Taper Angle** - Angle between plane and Face that this algorithm will build.
+- **Taper Angle** - Angle between plane and Face that this algorithm will build. Valid range is 0 < Taper Angle <180 Degrees; 0 and 180 are invelid angles. Also 90 degrees is invalid param if "Restrict Height" is off.
 
     .. image:: https://github.com/user-attachments/assets/666c3a16-f124-4230-906b-8b4ea2cd699c
       :target: https://github.com/user-attachments/assets/666c3a16-f124-4230-906b-8b4ea2cd699c
@@ -120,7 +122,7 @@ Parameters
         .. image:: https://github.com/user-attachments/assets/bd119bb8-ad08-4983-be67-d97c20ad8bb3
           :target: https://github.com/user-attachments/assets/bd119bb8-ad08-4983-be67-d97c20ad8bb3
 
-    - **Exclude Height** - If you want to see objects without height limits just turn it on. All objects will be recalulated without heights limits.
+    - **Restrict Height** (old name is "Exclude Height")- If you want to see objects without height limits just turn it off. All objects will be recalulated without heights limits (in the input field or socket).
 
         .. raw:: html
 
