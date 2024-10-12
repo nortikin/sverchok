@@ -533,6 +533,9 @@
         - SvCropMesh2D
         - SvCSGBooleanNodeMK2
         - SvWafelNode
+        - ---
+        - SvStraightSkeleton2D
+        
     - C CURVES:
         - icon_name: OUTLINER_OB_CURVE
         - extra_menu: AdvancedObjectsPartialMenu
