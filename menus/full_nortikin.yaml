@@ -534,7 +534,7 @@
         - SvCSGBooleanNodeMK2
         - SvWafelNode
         - ---
-        - SvStraightSkeleton2D
+        - SvStraightSkeleton2DExtrude
         
     - C CURVES:
         - icon_name: OUTLINER_OB_CURVE

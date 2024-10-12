@@ -178,15 +178,15 @@ class SvSaveCGALDatFile(bpy.types.Operator, SvGenericNodeLocator):
         pass
 
 
-class SvStraightSkeleton2D(ModifierLiteNode, SverchCustomTreeNode, bpy.types.Node):
+class SvStraightSkeleton2DExtrude(ModifierLiteNode, SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Merge two 2d meshes
 
     Each mesh can have disjoint parts
     Only X and Y coordinate takes in account
     """
-    bl_idname = 'SvStraightSkeleton2D'
-    bl_label = 'Straight Skeleton 2D (Alpha)'
+    bl_idname = 'SvStraightSkeleton2DExtrude'
+    bl_label = 'Straight Skeleton 2D Extrude (Alpha)'
     bl_icon = 'MOD_OUTLINE'
 
     sv_dependencies = ['pySVCGAL', 'more_itertools']
@@ -688,5 +688,5 @@ class SvStraightSkeleton2D(ModifierLiteNode, SverchCustomTreeNode, bpy.types.Nod
         print("file .dat saved")
         pass
 
-classes = [SvSaveCGALDatFile, SvStraightSkeleton2D,]
+classes = [SvSaveCGALDatFile, SvStraightSkeleton2DExtrude,]
 register, unregister = bpy.utils.register_classes_factory(classes)
