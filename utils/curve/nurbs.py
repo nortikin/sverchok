@@ -911,8 +911,6 @@ class SvNurbsCurve(SvCurve):
             t2_amplitude = np.linalg.norm(tangent2)
             cos_alpha = np_dot(tangent1 / t1_amplitude, tangent2 / t2_amplitude, axis=0)
             angle = np.arccos(cos_alpha)
-            print("T1", tangent1, "T2", tangent2)
-            print("A", angle)
             if direction_only:
                 return angle >= angle_tolerance
             else:
