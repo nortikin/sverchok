@@ -323,6 +323,7 @@
         - SvIntersectNurbsCurvesNode
         - SvPrepareCurvesNetNode
         - SvNurbsCurveNodesNode
+        - SvCurveDiscontinuityNode
         - SvDeconstructCurveNode
     - SvExMarchingSquaresNode
     - SvExMSquaresOnSurfaceNode
