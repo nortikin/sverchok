@@ -508,13 +508,13 @@ class SvStraightSkeleton2DExtrude(ModifierLiteNode, SverchCustomTreeNode, bpy.ty
                 areas = []
                 for IJK in range(len(verts_boundaries)):
                     verts_boundaries_IJK, edges_boundaries_IJK = verts_boundaries[len(verts_boundaries)-1-IJK], edges_boundaries[len(verts_boundaries)-1-IJK]
-                    vect_boundaries_IJ_sorted = vertices_sort_by_edges(verts_boundaries_IJK, edges_boundaries_IJK)
-                    res_boundaries_verts.append(vect_boundaries_IJ_sorted)
-                    area = areas_from_polygons(vect_boundaries_IJ_sorted, [list(range(len(vect_boundaries_IJ_sorted)))], )
+                    vect_boundaries_IJK_sorted = vertices_sort_by_edges(verts_boundaries_IJK, edges_boundaries_IJK)
+                    res_boundaries_verts.append(vect_boundaries_IJK_sorted)
+                    area = areas_from_polygons(vect_boundaries_IJK_sorted, [list(range(len(vect_boundaries_IJK_sorted)))], )
                     areas.append(area[0])
-                    object_boundaries.append(vect_boundaries_IJ_sorted)
-                    object_area_boundaries.append({"area":area, "object_boundaries":vect_boundaries_IJ_sorted})
-                    objects_angles_of_boundary.append( [ss_angle*180/math.pi,]*len(verts_boundaries_IJK) )
+                    object_boundaries.append(vect_boundaries_IJK_sorted)
+                    object_area_boundaries.append({"area":area, "object_boundaries":vect_boundaries_IJK_sorted})
+                    objects_angles_of_boundary.append( [ss_angle*180/math.pi,]*len(vect_boundaries_IJK_sorted) )
                     pass
                 srt = sort_together([areas, object_boundaries, objects_angles_of_boundary])
                 object_boundaries_sorted, objects_angles_of_boundary_sorted = list(reversed(srt[1])), list(reversed(srt[2]))
