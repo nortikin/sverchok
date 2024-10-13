@@ -24,6 +24,10 @@ class SvCurveDiscontinuityNode(SverchCustomTreeNode, bpy.types.Node):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_CURVE_SEGMENT'
 
+    def update_sockets(self, context):
+        self.inputs['AmplitudeTolerance'].hide_safe = self.direction_only
+        updateNode(self, context)
+
     order : IntProperty(
             name = "Order",
             description = "Discontinuity order",
@@ -35,10 +39,17 @@ class SvCurveDiscontinuityNode(SverchCustomTreeNode, bpy.types.Node):
             name = "Geometric",
             description = "If checked, check only direction of derivatives, not their lengths",
             default = True,
+            update = update_sockets)
+
+    angle_tolerance : FloatProperty(
+            name = "AngleTolerance",
+            precision = 8,
+            default = 1e-6,
+            min = 0.0,
             update = updateNode)
 
-    tolerance : FloatProperty(
-            name = "Tolerance",
+    amplitude_tolerance : FloatProperty(
+            name = "AmplitudeTolerance",
             precision = 8,
             default = 1e-6,
             min = 0.0,
@@ -47,10 +58,12 @@ class SvCurveDiscontinuityNode(SverchCustomTreeNode, bpy.types.Node):
     def sv_init(self, context):
         self.inputs.new('SvCurveSocket', "Curve")
         self.inputs.new('SvStringsSocket', "Order").prop_name = 'order'
-        self.inputs.new('SvStringsSocket', "Tolerance").prop_name = 'tolerance'
+        self.inputs.new('SvStringsSocket', "AngleTolerance").prop_name = 'angle_tolerance'
+        self.inputs.new('SvStringsSocket', "AmplitudeTolerance").prop_name = 'amplitude_tolerance'
         self.outputs.new('SvCurveSocket', "Segments")
         self.outputs.new('SvVerticesSocket', "Points")
         self.outputs.new('SvStringsSocket', "T")
+        self.update_sockets(context)
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'direction_only')
@@ -61,23 +74,25 @@ class SvCurveDiscontinuityNode(SverchCustomTreeNode, bpy.types.Node):
 
         curve_s = self.inputs['Curve'].sv_get()
         order_s = self.inputs['Order'].sv_get()
-        tolerance_s = self.inputs['Tolerance'].sv_get()
+        angle_tolerance_s = self.inputs['AngleTolerance'].sv_get()
+        amplitude_tolerance_s = self.inputs['AmplitudeTolerance'].sv_get()
 
         input_level = get_data_nesting_level(curve_s, data_types=(SvCurve,))
         flat_output = input_level < 2
 
         curve_s = ensure_nesting_level(curve_s, 2, data_types=(SvCurve,))
         order_s = ensure_nesting_level(order_s, 2)
-        tolerance_s = ensure_nesting_level(tolerance_s, 2)
+        angle_tolerance_s = ensure_nesting_level(angle_tolerance_s, 2)
+        amplitude_tolerance_s = ensure_nesting_level(amplitude_tolerance_s, 2)
 
         segments_out = []
         points_out = []
         t_out = []
-        for params in zip_long_repeat(curve_s, order_s, tolerance_s):
+        for params in zip_long_repeat(curve_s, order_s, angle_tolerance_s, amplitude_tolerance_s):
             new_segments = []
             new_points = []
             new_t = []
-            for curve, order, tolerance in zip_long_repeat(*params):
+            for curve, order, angle_tolerance, amplitude_tolerance in zip_long_repeat(*params):
                 curve = SvNurbsCurve.to_nurbs(curve)
                 if curve is None:
                     raise Exception("One of curves is not NURBS!")
@@ -85,7 +100,8 @@ class SvCurveDiscontinuityNode(SverchCustomTreeNode, bpy.types.Node):
                                         order = order,
                                         direction_only = self.direction_only,
                                         or_worse = True,
-                                        tangent_tolerance = tolerance,
+                                        angle_tolerance = angle_tolerance,
+                                        amplitude_tolerance = amplitude_tolerance,
                                         return_details = True)
                 new_t.append(ts)
                 new_points.append(points)
