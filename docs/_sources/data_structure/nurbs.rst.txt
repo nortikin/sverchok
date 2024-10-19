@@ -109,6 +109,48 @@ for reference.
 
 .. _Book: https://www.springer.com/gp/book/9783642973857
 
+Bezier Curves
+^^^^^^^^^^^^^
+
+One of most used types of curves in 2D and 3D graphics is Bezier curves.
+Technically, Bezier curves constitute a very simple special case of NURBS
+curves. Bezier curve of degree **p** has exactly **p+1** control points.
+Technically, there exist "rational Bezier curves", i.e. Bezier curves with
+weights; but in most software  (including Blender), non-rational Bezier curves
+(without weights) are used.
+Usually Bezier curves of 2nd and 3rd degree are used, so they have
+correspondingly 3 or 4 control points. As such, Bezier curves can not give much
+flexiblity of shape. For example, quadratic Bezier curve always has shape of an
+arc. Cubic Bezier curve can be "S-shaped" or "C-shaped". To make more complex
+forms, more control points (and, thus, higher degree) would be needed.
+But in most 2D and 3D graphics software, there is widely spread misuse of
+terminology. In software, one usually composes complex curves of several
+sequential Bezier segments of 2nd or 3rd degree. Technically, such curve is not
+Bezier curve, it is a NURBS curve of general form. However, since it is
+composed of Bezier curves, in software such curves are usually themselves
+called Bezier curves. In such case, initial Bezier curves which composed the
+complex curve, are called "Bezier segments" or "Bezier splines". Such
+terminology is used in Inkscape and in Blender, for example.
+
+NURBS-like curves
+^^^^^^^^^^^^^^^^^
+
+Some kinds of curves are not NURBS curves "by construction", but can be
+represented (exactly, not approximately) as NURBS curves. We call such curves
+"NURBS-like curves". Examples of NURBS-like curves are:
+
+* Straight line segments
+* Polylines
+* Bezier curves (and also curves composed of several Bezier segments, as it was
+  explained earlier)
+* Cubic splines
+* Catmull-Rom splines
+* Circles and circular arcs; ellipses and elliptic arcs. This case is a bit
+  special. One can build a NURBS curve which has an exact shape of a circle.
+  However, curve parametrization would differ from standard ("natural")
+  parametrization of a circle. The same goes for circluar arcs, ellipses and
+  elliptic arcs.
+
 Workflow
 ^^^^^^^^
 
@@ -135,16 +177,8 @@ NURBS-transparent nodes will probably grow, but there is no guarantee that some
 time all curve / surface processing nodes will become NURBS-transparent (and
 there is no such goal at the moment).
 
-"NURBS-transparent" nodes also automatically convert several special kinds of
-curves into NURBS, when such curves are passed to inputs of such nodes. We call
-types of curves, that can be automatically (and exactly, not approximately)
-converted to NURBS, "NURBS-like". Examples of NURBS-like curves are:
-
-* Bezier curves
-* Cubic splines
-* Polylines
-* Circular arcs
-* Line segments
+"NURBS-transparent" nodes also automatically convert "NURBS-like" curves into
+NURBS, when such curves are passed to inputs of such nodes.
 
 Sverchok has "NURBS to JSON" and "JSON to NURBS" nodes, which allow to save
 NURBS objects in JSON format and read NURBS from it; such JSON format can be
