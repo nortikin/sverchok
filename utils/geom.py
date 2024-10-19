@@ -1283,7 +1283,7 @@ class LineEquation(object):
 
     def __init__(self, a, b, c, point):
         epsilon = 1e-8
-        if abs(a) < epsilon and abs(b) < epsilon and abs(c) < epsilon:
+        if a*a + b*b + c*c < epsilon:
             raise Exception("Direction is (nearly) zero: {}, {}, {}".format(a, b, c))
         self.a = a
         self.b = b
@@ -1450,7 +1450,7 @@ class LineEquation(object):
         num = np_mixed_product(r2-r1, s1, s2)
         denom = np.linalg.norm(np.cross(s1, s2))
         if denom < parallel_threshold:
-            raise Exception("Lines are (almost) parallel")
+            return self.distance_to_point(r2)
         return abs(num) / denom
 
     def intersect_with_line_coplanar(self, line2):
