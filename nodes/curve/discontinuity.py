@@ -22,7 +22,7 @@ class SvCurveDiscontinuityNode(SverchCustomTreeNode, bpy.types.Node):
     bl_idname = 'SvCurveDiscontinuityNode'
     bl_label = 'NURBS Curve Discontinuity'
     bl_icon = 'OUTLINER_OB_EMPTY'
-    sv_icon = 'SV_CURVE_SEGMENT'
+    sv_icon = 'SV_CURVE_DISCONTINUITY'
 
     def update_sockets(self, context):
         self.inputs['AmplitudeTolerance'].hide_safe = self.direction_only
