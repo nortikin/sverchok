@@ -460,6 +460,7 @@
         - SvExCurveExtremesNode
         - ---
         - SvNurbsCurveNodesNode
+        - SvCurveDiscontinuityNode
         - SvDeconstructCurveNode
         - ---
         - SvExNearestPointOnCurveNode
