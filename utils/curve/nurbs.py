@@ -926,7 +926,7 @@ class SvNurbsCurve(SvCurve):
                 if is_fracture(prev_segment, segment):
                     new_segments.append(prev_segment)
                     split_ts.append(split_t)
-                    split_points.append(prev_segment.get_end_point())
+                    split_points.append(prev_segment.get_end_point().tolist())
                     prev_segment = segment
                 else:
                     prev_segment = prev_segment.concatenate(segment, remove_knots=True)
