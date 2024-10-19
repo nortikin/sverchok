@@ -1740,7 +1740,7 @@ equation of a line:</p>
 
     def __init__(self, a, b, c, point):
         epsilon = 1e-8
-        if abs(a) &lt; epsilon and abs(b) &lt; epsilon and abs(c) &lt; epsilon:
+        if a*a + b*b + c*c &lt; epsilon:
             raise Exception(&#34;Direction is (nearly) zero: {}, {}, {}&#34;.format(a, b, c))
         self.a = a
         self.b = b
@@ -1907,7 +1907,7 @@ equation of a line:</p>
         num = np_mixed_product(r2-r1, s1, s2)
         denom = np.linalg.norm(np.cross(s1, s2))
         if denom &lt; parallel_threshold:
-            raise Exception(&#34;Lines are (almost) parallel&#34;)
+            return self.distance_to_point(r2)
         return abs(num) / denom
 
     def intersect_with_line_coplanar(self, line2):
