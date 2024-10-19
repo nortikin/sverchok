@@ -29,6 +29,7 @@ from sverchok.utils.nurbs_common import (
     )
 from sverchok.utils.surface.nurbs import SvNativeNurbsSurface, SvGeomdlSurface
 from sverchok.utils.surface.algorithms import nurbs_revolution_surface
+from sverchok.utils.math import np_dot
 from sverchok.utils.geom import bounding_box, LineEquation, are_points_coplanar, get_common_plane
 from sverchok.utils.sv_logging import get_logger, sv_logger
 from sverchok.dependencies import geomdl
@@ -891,7 +892,7 @@ class SvNurbsCurve(SvCurve):
         points.append(segments[-1].get_end_points()[1])
         return np.array(points)
 
-    def split_at_fracture_points(self, order=1, direction_only = True, or_worse = True, tangent_tolerance = 1e-6, return_details = False):
+    def split_at_fracture_points(self, order=1, direction_only = True, or_worse = True, angle_tolerance = 1e-6, amplitude_tolerance=1e-6, return_details = False):
 
         if order not in {1,2,3}:
             raise Exception(f"Unsupported discontinuity order: {order}")
@@ -906,11 +907,15 @@ class SvNurbsCurve(SvCurve):
                 tangent1 = segment1.nth_derivative(order, u1_max)
                 tangent2 = segment2.nth_derivative(order, u2_min)
 
+            t1_amplitude = np.linalg.norm(tangent1)
+            t2_amplitude = np.linalg.norm(tangent2)
+            cos_alpha = np_dot(tangent1 / t1_amplitude, tangent2 / t2_amplitude, axis=0)
+            angle = np.arccos(cos_alpha)
             if direction_only:
-                tangent1 = tangent1 / np.linalg.norm(tangent1)
-                tangent2 = tangent2 / np.linalg.norm(tangent2)
-            delta = np.linalg.norm(tangent1 - tangent2)
-            return delta >= tangent_tolerance
+                return angle >= angle_tolerance
+            else:
+                amplitude_diff = abs(t1_amplitude - t2_amplitude)
+                return (angle >= angle_tolerance) or (amplitude_diff >= amplitude_tolerance)
 
         def concatenate_non_fractured(segments, start_ts):
             prev_segment = segments[0]
@@ -921,7 +926,7 @@ class SvNurbsCurve(SvCurve):
                 if is_fracture(prev_segment, segment):
                     new_segments.append(prev_segment)
                     split_ts.append(split_t)
-                    split_points.append(prev_segment.get_end_point())
+                    split_points.append(prev_segment.get_end_point().tolist())
                     prev_segment = segment
                 else:
                     prev_segment = prev_segment.concatenate(segment, remove_knots=True)
