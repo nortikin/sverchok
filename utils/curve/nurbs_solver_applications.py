@@ -15,7 +15,7 @@ import numpy as np
 from sverchok.utils.math import falloff_array, distribute_int
 from sverchok.utils.geom import Spline
 from sverchok.utils.curve import knotvector as sv_knotvector
-from sverchok.utils.curve.algorithms import SvCurveOnSurface, SvCurveLengthSolver
+from sverchok.utils.curve.algorithms import SvCurveOnSurface, SvCurveLengthSolver, CurvatureIntegral
 from sverchok.utils.nurbs_common import SvNurbsMaths
 from sverchok.utils.curve.nurbs_algorithms import refine_curve, remove_excessive_knots, concatenate_nurbs_curves
 from sverchok.utils.curve.nurbs_solver import SvNurbsCurvePoints, SvNurbsCurveTangents, SvNurbsCurveCotangents, SvNurbsCurveSolver
@@ -245,13 +245,18 @@ def interpolate_nurbs_curve_with_tangents(degree, points, tangents,
 
 CURVE_LENGTH = 'L'
 CURVE_PARAMETER = 'T'
+CURVE_CURVATURE = 'C'
+CURVE_ARBITRARY = 'A'
 
 def curve_to_nurbs(degree, curve,
                    samples,
                    method = CURVE_PARAMETER,
+                   parametrization = None,
                    resolution = 50,
-                   metric = 'DISTANCE',
                    use_tangents = False, logger=None):
+
+    if method not in {CURVE_PARAMETER, CURVE_LENGTH, CURVE_CURVATURE, CURVE_ARBITRARY}:
+        raise Exception("Unsupported conversion method")
 
     t_min, t_max = curve.get_u_bounds()
     nurbs_curve = SvNurbsMaths.to_nurbs_curve(curve)
@@ -270,7 +275,8 @@ def curve_to_nurbs(degree, curve,
             local_ts = np.linspace(t1, t2, num=s)
             ts_by_split.append(local_ts)
         ranges = [None for i in samples_by_split]
-    else:
+        metric = 'POINTS'
+    elif method == CURVE_LENGTH:
         solver = SvCurveLengthSolver(curve)
         solver.prepare('SPL', resolution=resolution)
         lengths = [solver.calc_length(t_min, t) for t in split_ts]
@@ -283,6 +289,36 @@ def curve_to_nurbs(degree, curve,
             local_ts = solver.solve(local_ls)
             ts_by_split.append(local_ts)
         ranges = segment_lengths
+        metric = 'DISTANCE'
+    elif method == CURVE_CURVATURE:
+        integral = CurvatureIntegral(curve, resolution, rescale_t=False, rescale_curvature=True)
+        curvatures = integral.evaluate_curvatures(split_ts)
+        curvature_deltas = curvatures[1:] - curvatures[:-1]
+        samples_by_split = distribute_int(samples, curvature_deltas)
+        ts_by_split = []
+        for c1, c2, s in zip(curvatures[:-1], curvatures[1:], samples_by_split):
+            local_cs = np.linspace(c1, c2, num=s)
+            local_ts = integral.evaluate_reverse(local_cs)
+            ts_by_split.append(local_ts)
+        ranges = curvature_deltas
+        metric = 'POINTS'
+
+    else: # ARBITRARY
+        if parametrization is None:
+            raise Exception("Parametrization curve is required")
+        u_min, u_max = parametrization.get_u_bounds()
+        split_ts_rescaled = (u_max - u_min) * (split_ts - t_min) / (t_max - t_min)
+        ps = parametrization.evaluate_array(split_ts_rescaled)[:,1]
+        ps_deltas = ps[1:] - ps[:-1]
+        samples_by_split = distribute_int(samples, ps_deltas)
+        ts_by_split = []
+        for p1, p2, s in zip(ps[:-1], ps[1:], samples_by_split):
+            local_ps = np.linspace(p1, p2, num=s)
+            local_pts = (t_max - t_min) * parametrization.evaluate_array(local_ps)
+            local_ts = local_pts[:,1]
+            ts_by_split.append(local_ts)
+        ranges = ps_deltas
+        metric = 'POINTS'
 
     new_segments = []
     for segment, ts, t_range in zip(segments, ts_by_split, ranges):

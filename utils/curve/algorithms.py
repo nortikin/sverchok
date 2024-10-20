@@ -22,6 +22,7 @@ from sverchok.utils.math import (
     ZERO, FRENET, HOUSEHOLDER, TRACK, DIFF, TRACK_NORMAL,
     NORMAL_DIR, NONE
 )
+from sverchok.utils.integrate import TrapezoidIntegral
 from sverchok.utils.sv_logging import sv_logger
 
 def make_euclidean_ts(pts):
@@ -1157,4 +1158,28 @@ def curve_segment(curve, new_t_min, new_t_max, use_native=True, rescale=False):
         return curve
     else:
         return SvCurveSegment(curve, new_t_min, new_t_max, rescale)
+
+class CurvatureIntegral:
+    def __init__(self, curve, resolution, rescale_t = False, rescale_curvature = False):
+        t_min, t_max = curve.get_u_bounds()
+        ts = np.linspace(t_min, t_max, num=resolution)
+        curvatures = curve.curvature_array(ts)
+        integral = TrapezoidIntegral(ts, ts, curvatures)
+        integral.calc()
+        ys = integral.evaluate_cubic(ts)
+        if rescale_t:
+            ts = (ts - t_min) / (t_max - t_min)
+        if rescale_curvature:
+            ys = ys / ys[-1]
+        zeros = np.zeros(len(ts))
+        cpts = np.vstack((ts, ys, zeros)).T
+        self.prime_spline = CubicSpline(cpts, tknots = ts, is_cyclic=False)
+        cpts = np.vstack((ys, ts, zeros)).T
+        self.reverse_spline = CubicSpline(cpts, tknots = ys, is_cyclic=False)
+
+    def evaluate_curvatures(self, ts):
+        return self.prime_spline.eval(ts)[:,1]
+
+    def evaluate_reverse(self, curvatures):
+        return self.reverse_spline.eval(curvatures)[:,1]
 
