@@ -87,7 +87,7 @@ weights. None means all weights are equal.</dd>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.nurbs_solver_applications.curve_to_nurbs"><code class="name flex">
-<span>def <span class="ident">curve_to_nurbs</span></span>(<span>degree, curve, samples, metric='DISTANCE', use_tangents=False, logger=None)</span>
+<span>def <span class="ident">curve_to_nurbs</span></span>(<span>degree, curve, samples, method='T', resolution=50, metric='DISTANCE', use_tangents=False, logger=None)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -122,7 +122,7 @@ transformation.</dd>
 <p>an instance of SvNurbsCurve.</p></div>
 </dd>
 <dt id="sverchok.utils.curve.nurbs_solver_applications.interpolate_nurbs_curve"><code class="name flex">
-<span>def <span class="ident">interpolate_nurbs_curve</span></span>(<span>degree, points, metric='DISTANCE', tknots=None, cyclic=False, implementation='NATIVE', logger=None)</span>
+<span>def <span class="ident">interpolate_nurbs_curve</span></span>(<span>degree, points, metric='DISTANCE', tknots=None, t_range=None, cyclic=False, implementation='NATIVE', logger=None)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Interpolate points by a NURBS curve.</p>
@@ -146,7 +146,7 @@ shape (n,). If None, these values will be calculated based on metric.</dd>
 <p>an instance of SvNurbsCurve.</p></div>
 </dd>
 <dt id="sverchok.utils.curve.nurbs_solver_applications.interpolate_nurbs_curve_with_tangents"><code class="name flex">
-<span>def <span class="ident">interpolate_nurbs_curve_with_tangents</span></span>(<span>degree, points, tangents, metric='DISTANCE', tknots=None, cyclic=False, implementation='NATIVE', logger=None)</span>
+<span>def <span class="ident">interpolate_nurbs_curve_with_tangents</span></span>(<span>degree, points, tangents, metric='DISTANCE', tknots=None, t_range=None, cyclic=False, implementation='NATIVE', logger=None)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -158,7 +158,7 @@ shape (n,). If None, these values will be calculated based on metric.</dd>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.nurbs_solver_applications.prepare_solver_for_interpolation"><code class="name flex">
-<span>def <span class="ident">prepare_solver_for_interpolation</span></span>(<span>degree, points, metric='DISTANCE', tknots=None, cyclic=False)</span>
+<span>def <span class="ident">prepare_solver_for_interpolation</span></span>(<span>degree, points, metric='DISTANCE', tknots=None, t_range=None, cyclic=False)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
