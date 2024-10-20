@@ -265,6 +265,7 @@
         - SvExNurbsCurveNode
         - SvApproxNurbsCurveMk3Node
         - SvExInterpolateNurbsCurveNodeMK2
+        - SvCurveToNurbsNode
         - ---
         - SvGenerateKnotvectorNode
     - Modify Curve:
