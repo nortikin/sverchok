@@ -243,6 +243,41 @@ def interpolate_nurbs_curve_with_tangents(degree, points, tangents,
                                     logger = logger)
     return curve
 
+def interpolate_nurbs_curve_with_end_tangents(degree, points,
+                                              start_tangent, end_tangent,
+                                              metric = 'DISTANCE', tknots = None,
+                                              t_range = None,
+                                              cyclic = False,
+                                              implementation = SvNurbsMaths.NATIVE,
+                                              logger = None):
+    points = np.asarray(points)
+    ndim = points.shape[-1]
+    if ndim not in {3,4}:
+        raise Exception(f"Points must be 3 or 4 dimensional, not {ndim}")
+
+    if cyclic:
+        points = np.append(points, [points[0]], axis=0)
+
+    if tknots is None:
+        tknots = Spline.create_knots(points, metric=metric)
+    if t_range is not None:
+        tknots *= t_range
+    t_min, t_max = tknots[0], tknots[-1]
+
+    endknots = np.array([t_min, t_max])
+    tangents = np.array([start_tangent, end_tangent])
+
+    solver = SvNurbsCurveSolver(degree=degree, ndim=ndim)
+    solver.add_goal(SvNurbsCurvePoints(tknots, points, relative=False))
+    solver.add_goal(SvNurbsCurvePoints(endknots, tangents, relative=False))
+    knotvector = sv_knotvector.from_tknots(degree, tknots, include_endpoints=True)
+    n_cpts = solver.guess_n_control_points()
+    solver.set_curve_params(n_cpts, knotvector)
+    problem_type, residue, curve = solver.solve_ex(problem_types = {SvNurbsCurveSolver.PROBLEM_WELLDETERMINED},
+                                    implementation = implementation,
+                                    logger = logger)
+    return curve
+
 CURVE_LENGTH = 'L'
 CURVE_PARAMETER = 'T'
 CURVE_CURVATURE = 'C'
@@ -327,8 +362,13 @@ def curve_to_nurbs(degree, curve,
             ts = ts[:-1]
         points = curve.evaluate_array(ts)
         if use_tangents:
-            tangents = curve.tangent_array(ts)
-            new_segment = interpolate_nurbs_curve_with_tangents(degree, points, tangents, metric=metric, t_range=t_range, logger=logger)
+            tangent1 = curve.tangent(ts[0])
+            tangent2 = curve.tangent(ts[-1])
+            new_segment = interpolate_nurbs_curve_with_end_tangents(degree, points,
+                                                                    tangent1, tangent2,
+                                                                    metric=metric,
+                                                                    t_range=t_range,
+                                                                    logger=logger)
         else:
             new_segment = interpolate_nurbs_curve(degree, points, cyclic=is_cyclic, metric=metric, t_range=t_range, logger=logger)
         new_segments.append(new_segment)
