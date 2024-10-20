@@ -111,7 +111,7 @@ def approximate_nurbs_curve(degree, n_cpts, points, weights=None, metric='DISTAN
     """
     points = np.asarray(points)
     tknots = Spline.create_knots(points, metric=metric)
-    knotvector = sv_knotvector.from_tknots(degree, tknots, n_cpts)
+    knotvector = sv_knotvector.from_tknots(degree, tknots, n_cpts=n_cpts)
     goal = SvNurbsCurvePoints(tknots, points, weights = weights, relative=False)
     solver = SvNurbsCurveSolver(degree=degree)
     solver.set_curve_params(n_cpts, knotvector = knotvector)
