@@ -209,11 +209,12 @@ class TextBufferHandler(logging.Handler):
 # Convenience functions
 
 
-def get_logger():
+def get_logger(name=None):
     """Get Logger instance. Logger name is obtained from caller module name."""
-    frame, *_ = inspect.stack()[1]
-    module = inspect.getmodule(frame)
-    name = module.__name__
+    if name is None:
+        frame, *_ = inspect.stack()[1]
+        module = inspect.getmodule(frame)
+        name = module.__name__
     return logging.getLogger(name)
 
 

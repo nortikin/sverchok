@@ -12,12 +12,12 @@ solver (`sverchok.utils.curve.nurbs_solver` module).
 
 import numpy as np
 
-from sverchok.utils.math import falloff_array
+from sverchok.utils.math import falloff_array, distribute_int
 from sverchok.utils.geom import Spline
 from sverchok.utils.curve import knotvector as sv_knotvector
-from sverchok.utils.curve.algorithms import SvCurveOnSurface
+from sverchok.utils.curve.algorithms import SvCurveOnSurface, SvCurveLengthSolver
 from sverchok.utils.nurbs_common import SvNurbsMaths
-from sverchok.utils.curve.nurbs_algorithms import refine_curve, remove_excessive_knots
+from sverchok.utils.curve.nurbs_algorithms import refine_curve, remove_excessive_knots, concatenate_nurbs_curves
 from sverchok.utils.curve.nurbs_solver import SvNurbsCurvePoints, SvNurbsCurveTangents, SvNurbsCurveCotangents, SvNurbsCurveSolver
 
 def adjust_curve_points(curve, us_bar, points, preserve_tangents=False):
@@ -118,7 +118,11 @@ def approximate_nurbs_curve(degree, n_cpts, points, weights=None, metric='DISTAN
     solver.add_goal(goal)
     return solver.solve(implementation=implementation)
 
-def prepare_solver_for_interpolation(degree, points, metric='DISTANCE', tknots=None, cyclic=False):
+def prepare_solver_for_interpolation(degree, points,
+                                     metric='DISTANCE',
+                                     tknots=None,
+                                     t_range = None,
+                                     cyclic=False):
     n_points = len(points)
     points = np.asarray(points)
     if points.ndim != 2:
@@ -130,13 +134,15 @@ def prepare_solver_for_interpolation(degree, points, metric='DISTANCE', tknots=N
         points = np.concatenate((points, points[0][np.newaxis]))
     if tknots is None:
         tknots = Spline.create_knots(points, metric=metric)
+    if t_range is not None:
+        tknots *= t_range
     solver = SvNurbsCurveSolver(degree=degree, ndim=ndim)
     solver.add_goal(SvNurbsCurvePoints(tknots, points, relative=False))
     if cyclic:
         k = 1.0/float(degree)
         tangent = k*(points[1] - points[-2])
-        solver.add_goal(SvNurbsCurveTangents.single(0.0, tangent))
-        solver.add_goal(SvNurbsCurveTangents.single(1.0, tangent))
+        solver.add_goal(SvNurbsCurveTangents.single(tknots[0], tangent))
+        solver.add_goal(SvNurbsCurveTangents.single(tknots[-1], tangent))
         knotvector = sv_knotvector.from_tknots(degree, tknots, include_endpoints=True)
     else:
         knotvector = sv_knotvector.from_tknots(degree, tknots)
@@ -145,7 +151,12 @@ def prepare_solver_for_interpolation(degree, points, metric='DISTANCE', tknots=N
     solver.set_curve_params(n_cpts, knotvector)
     return solver
 
-def interpolate_nurbs_curve(degree, points, metric='DISTANCE', tknots=None, cyclic=False, implementation=SvNurbsMaths.NATIVE, logger=None):
+def interpolate_nurbs_curve(degree, points,
+                            metric='DISTANCE',
+                            tknots=None,
+                            t_range = None,
+                            cyclic=False,
+                            implementation=SvNurbsMaths.NATIVE, logger=None):
     """
     Interpolate points by a NURBS curve.
 
@@ -163,6 +174,7 @@ def interpolate_nurbs_curve(degree, points, metric='DISTANCE', tknots=None, cycl
     """
     solver = prepare_solver_for_interpolation(degree, points,
                     metric = metric, tknots = tknots,
+                    t_range = t_range,
                     cyclic = cyclic)
     problem_type, residue, curve = solver.solve_ex(problem_types = {SvNurbsCurveSolver.PROBLEM_WELLDETERMINED},
                                     implementation = implementation,
@@ -197,6 +209,7 @@ def knotvector_with_tangents_from_tknots(degree, u):
 
 def interpolate_nurbs_curve_with_tangents(degree, points, tangents,
             metric='DISTANCE', tknots=None,
+            t_range = None,
             cyclic = False,
             implementation = SvNurbsMaths.NATIVE,
             logger = None):
@@ -216,6 +229,8 @@ def interpolate_nurbs_curve_with_tangents(degree, points, tangents,
 
     if tknots is None:
         tknots = Spline.create_knots(points, metric=metric)
+    if t_range is not None:
+        tknots *= t_range
 
     solver = SvNurbsCurveSolver(degree=degree, ndim=ndim)
     solver.add_goal(SvNurbsCurvePoints(tknots, points, relative=False))
@@ -228,18 +243,62 @@ def interpolate_nurbs_curve_with_tangents(degree, points, tangents,
                                     logger = logger)
     return curve
 
-def curve_to_nurbs(degree, curve, samples, metric = 'DISTANCE', use_tangents = False, logger=None):
-    is_cyclic = curve.is_closed()
+CURVE_LENGTH = 'L'
+CURVE_PARAMETER = 'T'
+
+def curve_to_nurbs(degree, curve,
+                   samples,
+                   method = CURVE_PARAMETER,
+                   resolution = 50,
+                   metric = 'DISTANCE',
+                   use_tangents = False, logger=None):
+
     t_min, t_max = curve.get_u_bounds()
-    ts = np.linspace(t_min, t_max, num=samples)
-    if is_cyclic:
-        ts = ts[:-1]
-    points = curve.evaluate_array(ts)
-    if use_tangents:
-        tangents = curve.tangent_array(ts)
-        return interpolate_nurbs_curve_with_tangents(degree, points, tangents, metric=metric, logger=logger)
+    nurbs_curve = SvNurbsMaths.to_nurbs_curve(curve)
+    if nurbs_curve is not None:
+        split_ts, split_points, segments = nurbs_curve.split_at_fracture_points(order=1, return_details=True)
+        split_ts = [t_min] + split_ts + [t_max]
     else:
-        return interpolate_nurbs_curve(degree, points, cyclic=is_cyclic, metric=metric, logger=logger)
+        split_ts = [t_min, t_max]
+        segments = [curve]
+    split_ts = np.asarray(split_ts)
+
+    if method == CURVE_PARAMETER:
+        samples_by_split = distribute_int(samples, split_ts[1:] - split_ts[:-1])
+        ts_by_split = []
+        for t1, t2, s in zip(split_ts[:-1], split_ts[1:], samples_by_split):
+            local_ts = np.linspace(t1, t2, num=s)
+            ts_by_split.append(local_ts)
+        ranges = [None for i in samples_by_split]
+    else:
+        solver = SvCurveLengthSolver(curve)
+        solver.prepare('SPL', resolution=resolution)
+        lengths = [solver.calc_length(t_min, t) for t in split_ts]
+        lengths = np.array(lengths)
+        segment_lengths = lengths[1:] - lengths[:-1]
+        samples_by_split = distribute_int(samples, segment_lengths)
+        ts_by_split = []
+        for l1, l2, s in zip(lengths[:-1], lengths[1:], samples_by_split):
+            local_ls = np.linspace(l1, l2, num=s)
+            local_ts = solver.solve(local_ls)
+            ts_by_split.append(local_ts)
+        ranges = segment_lengths
+
+    new_segments = []
+    for segment, ts, t_range in zip(segments, ts_by_split, ranges):
+        is_cyclic = segment.is_closed()
+        if is_cyclic:
+            ts = ts[:-1]
+        points = curve.evaluate_array(ts)
+        if use_tangents:
+            tangents = curve.tangent_array(ts)
+            new_segment = interpolate_nurbs_curve_with_tangents(degree, points, tangents, metric=metric, t_range=t_range, logger=logger)
+        else:
+            new_segment = interpolate_nurbs_curve(degree, points, cyclic=is_cyclic, metric=metric, t_range=t_range, logger=logger)
+        new_segments.append(new_segment)
+    if len(new_segments) == 1:
+        return new_segments[0]
+    return concatenate_nurbs_curves(new_segments)
 
 def curve_on_surface_to_nurbs(degree, uv_curve, surface, samples, metric = 'DISTANCE', use_tangents = False, logger = None):
     #is_cyclic = uv_curve.is_closed()
