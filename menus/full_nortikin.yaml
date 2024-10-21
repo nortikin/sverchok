@@ -535,6 +535,7 @@
         - SvWafelNode
         - ---
         - SvStraightSkeleton2DExtrude
+        - SvStraightSkeleton2DOffset
         
     - C CURVES:
         - icon_name: OUTLINER_OB_CURVE

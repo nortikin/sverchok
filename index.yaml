@@ -496,6 +496,7 @@
     - SvWafelNode
     - ---
     - SvStraightSkeleton2DExtrude
+    - SvStraightSkeleton2DOffset
 
 - ---
 
