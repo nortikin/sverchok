@@ -91,6 +91,7 @@
             - SvExNurbsCurveNode
             - SvApproxNurbsCurveMk3Node
             - SvExInterpolateNurbsCurveNodeMK2
+            - SvCurveToNurbsNode
         - GC SCRIPTED:
             - icon_name: PLUGIN
             - SvExCurveFormulaNode
