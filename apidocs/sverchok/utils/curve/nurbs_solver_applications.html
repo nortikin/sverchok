@@ -87,7 +87,7 @@ weights. None means all weights are equal.</dd>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.nurbs_solver_applications.curve_to_nurbs"><code class="name flex">
-<span>def <span class="ident">curve_to_nurbs</span></span>(<span>degree, curve, samples, method='T', resolution=50, metric='DISTANCE', use_tangents=False, logger=None)</span>
+<span>def <span class="ident">curve_to_nurbs</span></span>(<span>degree, curve, samples, method='T', parametrization=None, resolution=50, use_tangents=False, logger=None)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -145,6 +145,12 @@ shape (n,). If None, these values will be calculated based on metric.</dd>
 <h2 id="returns">Returns</h2>
 <p>an instance of SvNurbsCurve.</p></div>
 </dd>
+<dt id="sverchok.utils.curve.nurbs_solver_applications.interpolate_nurbs_curve_with_end_tangents"><code class="name flex">
+<span>def <span class="ident">interpolate_nurbs_curve_with_end_tangents</span></span>(<span>degree, points, start_tangent, end_tangent, metric='DISTANCE', tknots=None, t_range=None, cyclic=False, implementation='NATIVE', logger=None)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
 <dt id="sverchok.utils.curve.nurbs_solver_applications.interpolate_nurbs_curve_with_tangents"><code class="name flex">
 <span>def <span class="ident">interpolate_nurbs_curve_with_tangents</span></span>(<span>degree, points, tangents, metric='DISTANCE', tknots=None, t_range=None, cyclic=False, implementation='NATIVE', logger=None)</span>
 </code></dt>
@@ -186,6 +192,7 @@ shape (n,). If None, these values will be calculated based on metric.</dd>
 <li><code><a title="sverchok.utils.curve.nurbs_solver_applications.curve_to_nurbs" href="#sverchok.utils.curve.nurbs_solver_applications.curve_to_nurbs">curve_to_nurbs</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs_solver_applications.deform_curve_with_falloff" href="#sverchok.utils.curve.nurbs_solver_applications.deform_curve_with_falloff">deform_curve_with_falloff</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs_solver_applications.interpolate_nurbs_curve" href="#sverchok.utils.curve.nurbs_solver_applications.interpolate_nurbs_curve">interpolate_nurbs_curve</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs_solver_applications.interpolate_nurbs_curve_with_end_tangents" href="#sverchok.utils.curve.nurbs_solver_applications.interpolate_nurbs_curve_with_end_tangents">interpolate_nurbs_curve_with_end_tangents</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs_solver_applications.interpolate_nurbs_curve_with_tangents" href="#sverchok.utils.curve.nurbs_solver_applications.interpolate_nurbs_curve_with_tangents">interpolate_nurbs_curve_with_tangents</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs_solver_applications.knotvector_with_tangents_from_tknots" href="#sverchok.utils.curve.nurbs_solver_applications.knotvector_with_tangents_from_tknots">knotvector_with_tangents_from_tknots</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs_solver_applications.prepare_solver_for_interpolation" href="#sverchok.utils.curve.nurbs_solver_applications.prepare_solver_for_interpolation">prepare_solver_for_interpolation</a></code></li>

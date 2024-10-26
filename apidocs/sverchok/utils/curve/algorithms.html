@@ -164,6 +164,56 @@ Can raise UnsupportedCurveTypeException if some degrees can not be elevated.</p>
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
+<dt id="sverchok.utils.curve.algorithms.CurvatureIntegral"><code class="flex name class">
+<span>class <span class="ident">CurvatureIntegral</span></span>
+<span>(</span><span>curve, resolution, rescale_t=False, rescale_curvature=False)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class CurvatureIntegral:
+    def __init__(self, curve, resolution, rescale_t = False, rescale_curvature = False):
+        t_min, t_max = curve.get_u_bounds()
+        ts = np.linspace(t_min, t_max, num=resolution)
+        curvatures = curve.curvature_array(ts)
+        integral = TrapezoidIntegral(ts, ts, curvatures)
+        integral.calc()
+        ys = integral.evaluate_cubic(ts)
+        if rescale_t:
+            ts = (ts - t_min) / (t_max - t_min)
+        if rescale_curvature:
+            ys = ys / ys[-1]
+        zeros = np.zeros(len(ts))
+        cpts = np.vstack((ts, ys, zeros)).T
+        self.prime_spline = CubicSpline(cpts, tknots = ts, is_cyclic=False)
+        cpts = np.vstack((ys, ts, zeros)).T
+        self.reverse_spline = CubicSpline(cpts, tknots = ys, is_cyclic=False)
+
+    def evaluate_curvatures(self, ts):
+        return self.prime_spline.eval(ts)[:,1]
+
+    def evaluate_reverse(self, curvatures):
+        return self.reverse_spline.eval(curvatures)[:,1]</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.curve.algorithms.CurvatureIntegral.evaluate_curvatures"><code class="name flex">
+<span>def <span class="ident">evaluate_curvatures</span></span>(<span>self, ts)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.curve.algorithms.CurvatureIntegral.evaluate_reverse"><code class="name flex">
+<span>def <span class="ident">evaluate_reverse</span></span>(<span>self, curvatures)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
 <dt id="sverchok.utils.curve.algorithms.DifferentialRotationCalculator"><code class="flex name class">
 <span>class <span class="ident">DifferentialRotationCalculator</span></span>
 <span>(</span><span>curve, algorithm, resolution=50)</span>
@@ -1792,6 +1842,13 @@ def uv_tangents(self):
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
+<li>
+<h4><code><a title="sverchok.utils.curve.algorithms.CurvatureIntegral" href="#sverchok.utils.curve.algorithms.CurvatureIntegral">CurvatureIntegral</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.curve.algorithms.CurvatureIntegral.evaluate_curvatures" href="#sverchok.utils.curve.algorithms.CurvatureIntegral.evaluate_curvatures">evaluate_curvatures</a></code></li>
+<li><code><a title="sverchok.utils.curve.algorithms.CurvatureIntegral.evaluate_reverse" href="#sverchok.utils.curve.algorithms.CurvatureIntegral.evaluate_reverse">evaluate_reverse</a></code></li>
+</ul>
+</li>
 <li>
 <h4><code><a title="sverchok.utils.curve.algorithms.DifferentialRotationCalculator" href="#sverchok.utils.curve.algorithms.DifferentialRotationCalculator">DifferentialRotationCalculator</a></code></h4>
 <ul class="">
