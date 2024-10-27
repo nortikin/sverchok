@@ -606,7 +606,7 @@ def offset_nurbs_curve(curve, offset_vector,
     offset_curve = remove_excessive_knots(offset_curve, tolerance = target_tolerance)
     return offset_curve
 
-def move_curve_point_by_moving_control_point(curve, u_bar, k, vector):
+def move_curve_point_by_moving_control_point(curve, u_bar, k, vector, relative=True):
     """
     Adjust the given curve so that at parameter u_bar it goes through
     the point C[u_bar] + vector instead of C[u_bar].
@@ -626,6 +626,9 @@ def move_curve_point_by_moving_control_point(curve, u_bar, k, vector):
     cpts = curve.get_control_points().copy()
     weights = curve.get_weights()
     vector = np.array(vector)
+    if not relative:
+        src_pt = curve.evaluate(u_bar)
+        vector = vector - src_pt
     distance = np.linalg.norm(vector)
     vector = vector / distance
     functions = SvNurbsBasisFunctions(curve.get_knotvector())
@@ -757,7 +760,7 @@ WEIGHTS_NONE = 'NONE'
 WEIGHTS_EUCLIDIAN = 'EUCLIDIAN'
 TANGENT_PRESERVE = 'PRESERVE'
 
-def move_curve_point_by_moving_control_points(curve, u_bar, vector, weights_mode = WEIGHTS_NONE, tangent = None):
+def move_curve_point_by_moving_control_points(curve, u_bar, vector, weights_mode = WEIGHTS_NONE, tangent = None, relative=True):
     """
     Adjust the given curve so that at parameter u_bar it goues through
     the point C[u_bar] + vector instead of C[u_bar].
@@ -813,6 +816,9 @@ def move_curve_point_by_moving_control_points(curve, u_bar, vector, weights_mode
     ndim = 3
     cpts = curve.get_control_points().copy()
     curve_weights = curve.get_weights()
+    if not relative:
+        src_pt = curve.evaluate(u_bar)
+        vector = vector - src_pt
     if weights_mode == WEIGHTS_EUCLIDIAN:
         pt0 = curve.evaluate(u_bar)
         pt1 = pt0 + vector
@@ -853,7 +859,7 @@ def move_curve_point_by_moving_control_points(curve, u_bar, vector, weights_mode
     cpts = cpts + d_cpts
     return curve.copy(control_points = cpts)
 
-def move_curve_point_by_inserting_knot(curve, u_bar, vector):
+def move_curve_point_by_inserting_knot(curve, u_bar, vector, relative=True):
     """
     Adjust the given curve so that at parameter u_bar it goues through
     the point C[u_bar] + vector instead of C[u_bar].
@@ -867,6 +873,8 @@ def move_curve_point_by_inserting_knot(curve, u_bar, vector):
         you want the point to be moved
     """
     pt0 = curve.evaluate(u_bar)
+    if not relative:
+        vector = vector - pt0
     p = curve.get_degree()
     curve2 = curve.insert_knot(u_bar, p-1, if_possible=True)
     cpts = curve2.get_control_points().copy()

@@ -41,10 +41,12 @@ This node has the following inputs:
 
   The default value is 1.0.
 
-* **Vector**. The vector for which the curve point at **T** parameter is to be
-  moved. This input is available only when **Method** is set to **Move one
-  control point**, **Move control points**, or **Insert knot**. The default
-  value is ``(1.0, 0.0, 0.0)``.
+* **Vector** / **Point**. This input is available only when **Method** is set
+  to **Move one control point**, **Move control points**, or **Insert knot**.
+  If **Mode** parameter is set to **Relative**, this input specifies the vector
+  for which the curve point at **T** parameter is to be moved. In **Absolute**
+  mode, this input specifies the point where curve point is to be moved to. The
+  default value is ``(1.0, 0.0, 0.0)``.
 
 Parameters
 ----------
@@ -93,6 +95,9 @@ This node has the following parameters:
   direction of curve tangent at the point being moved. In many cases, this
   gives only a slight difference; but sometimes this will make the result
   smoother. Unchecked by default.
+* **Mode**. The available options are **Relative** and **Absolute**. In the
+  **Relative** mode, you specify the movement vector; in the **Absolute** mode,
+  you specify the target point. The default mode is **Relative**.
 
 Outputs
 -------

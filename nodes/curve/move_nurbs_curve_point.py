@@ -39,10 +39,16 @@ class SvNurbsCurveMovePointNode(SverchCustomTreeNode, bpy.types.Node):
             ('INSERT_KNOT', "Insert knot", "Insert additional knot and move several control points", 4)
         ]
 
+    modes = [
+            ('REL', "Relative", "Specify vector by which the point is to be moved", 0),
+            ('ABS', "Absolute", "Specify target place where to place the point", 2)
+        ]
+
     def update_sockets(self, context):
         self.inputs['Index'].hide_safe = self.method not in ['ONE_CPT', 'ONE_WEIGHT', 'TWO_WEIGHTS']
         self.inputs['Distance'].hide_safe = self.method not in ['ONE_WEIGHT', 'TWO_WEIGHTS']
         self.inputs['Vector'].hide_safe = self.method not in ['ONE_CPT', 'MOVE_CPTS', 'INSERT_KNOT']
+        self.inputs['Vector'].label = 'Vector' if self.vector_mode == 'REL' else 'Point'
         updateNode(self, context)
 
     method : EnumProperty(
@@ -50,6 +56,12 @@ class SvNurbsCurveMovePointNode(SverchCustomTreeNode, bpy.types.Node):
             description = "How should we modify the curve control points or weights",
             items = methods,
             default = 'ONE_CPT',
+            update = update_sockets)
+
+    vector_mode : EnumProperty(
+            name = "Mode",
+            items = modes,
+            default = 'REL',
             update = update_sockets)
 
     t_value : FloatProperty(
@@ -78,6 +90,8 @@ class SvNurbsCurveMovePointNode(SverchCustomTreeNode, bpy.types.Node):
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'method')
+        if self.method in ['ONE_CPT', 'MOVE_CPTS', 'INSERT_KNOT']:
+            layout.prop(self, 'vector_mode')
         if self.method == 'MOVE_CPTS':
             layout.prop(self, 'preserve_tangent')
 
@@ -111,6 +125,8 @@ class SvNurbsCurveMovePointNode(SverchCustomTreeNode, bpy.types.Node):
         distance_s = ensure_nesting_level(distance_s, 2)
         vector_s = ensure_nesting_level(vector_s, 3)
 
+        relative = self.vector_mode == 'REL'
+
         curves_out = []
         for params in zip_long_repeat(curve_s, t_value_s, index_s, distance_s, vector_s):
             new_curves = []
@@ -121,7 +137,7 @@ class SvNurbsCurveMovePointNode(SverchCustomTreeNode, bpy.types.Node):
 
                 vector = np.array(vector)
                 if self.method == 'ONE_CPT':
-                    new_curve = move_curve_point_by_moving_control_point(curve, t_value, index, vector)
+                    new_curve = move_curve_point_by_moving_control_point(curve, t_value, index, vector, relative=relative)
                 elif self.method == 'ONE_WEIGHT':
                     new_curve = move_curve_point_by_adjusting_one_weight(curve, t_value, index, distance)
                 elif self.method == 'TWO_WEIGHTS':
@@ -131,9 +147,9 @@ class SvNurbsCurveMovePointNode(SverchCustomTreeNode, bpy.types.Node):
                         tangent = TANGENT_PRESERVE
                     else:
                         tangent = None
-                    new_curve = move_curve_point_by_moving_control_points(curve, t_value, vector, tangent=tangent)
+                    new_curve = move_curve_point_by_moving_control_points(curve, t_value, vector, tangent=tangent, relative=relative)
                 elif self.method == 'INSERT_KNOT':
-                    new_curve = move_curve_point_by_inserting_knot(curve, t_value, vector)
+                    new_curve = move_curve_point_by_inserting_knot(curve, t_value, vector, relative=relative)
                 else:
                     raise Exception("Unsupported method")
 
