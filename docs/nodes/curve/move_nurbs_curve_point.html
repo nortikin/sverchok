@@ -242,10 +242,12 @@ the opposite direction.</p></li>
 </ul>
 <p>The default value is 1.0.</p>
 </li>
-<li><p><strong>Vector</strong>. The vector for which the curve point at <strong>T</strong> parameter is to be
-moved. This input is available only when <strong>Method</strong> is set to <strong>Move one
-control point</strong>, <strong>Move control points</strong>, or <strong>Insert knot</strong>. The default
-value is <code class="docutils literal notranslate"><span class="pre">(1.0,</span> <span class="pre">0.0,</span> <span class="pre">0.0)</span></code>.</p></li>
+<li><p><strong>Vector</strong> / <strong>Point</strong>. This input is available only when <strong>Method</strong> is set
+to <strong>Move one control point</strong>, <strong>Move control points</strong>, or <strong>Insert knot</strong>.
+If <strong>Mode</strong> parameter is set to <strong>Relative</strong>, this input specifies the vector
+for which the curve point at <strong>T</strong> parameter is to be moved. In <strong>Absolute</strong>
+mode, this input specifies the point where curve point is to be moved to. The
+default value is <code class="docutils literal notranslate"><span class="pre">(1.0,</span> <span class="pre">0.0,</span> <span class="pre">0.0)</span></code>.</p></li>
 </ul>
 </section>
 <section id="parameters">
@@ -294,6 +296,9 @@ to <strong>Move control points</strong>. If checked, the node will try to preser
 direction of curve tangent at the point being moved. In many cases, this
 gives only a slight difference; but sometimes this will make the result
 smoother. Unchecked by default.</p></li>
+<li><p><strong>Mode</strong>. The available options are <strong>Relative</strong> and <strong>Absolute</strong>. In the
+<strong>Relative</strong> mode, you specify the movement vector; in the <strong>Absolute</strong> mode,
+you specify the target point. The default mode is <strong>Relative</strong>.</p></li>
 </ul>
 </section>
 <section id="outputs">
