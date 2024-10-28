@@ -104,7 +104,7 @@ Of distance and scale, exactly one parameter must be provided.</p>
 <p>See The NURBS Book, 2nd ed., p.11.3.2.</p></div>
 </dd>
 <dt id="sverchok.utils.curve.nurbs_algorithms.move_curve_point_by_inserting_knot"><code class="name flex">
-<span>def <span class="ident">move_curve_point_by_inserting_knot</span></span>(<span>curve, u_bar, vector)</span>
+<span>def <span class="ident">move_curve_point_by_inserting_knot</span></span>(<span>curve, u_bar, vector, relative=True)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Adjust the given curve so that at parameter u_bar it goues through
@@ -118,7 +118,7 @@ then moving two control points.</p>
 you want the point to be moved</p></div>
 </dd>
 <dt id="sverchok.utils.curve.nurbs_algorithms.move_curve_point_by_moving_control_point"><code class="name flex">
-<span>def <span class="ident">move_curve_point_by_moving_control_point</span></span>(<span>curve, u_bar, k, vector)</span>
+<span>def <span class="ident">move_curve_point_by_moving_control_point</span></span>(<span>curve, u_bar, k, vector, relative=True)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Adjust the given curve so that at parameter u_bar it goes through
@@ -134,7 +134,7 @@ curve weights.</p>
 you want the point to be moved</p></div>
 </dd>
 <dt id="sverchok.utils.curve.nurbs_algorithms.move_curve_point_by_moving_control_points"><code class="name flex">
-<span>def <span class="ident">move_curve_point_by_moving_control_points</span></span>(<span>curve, u_bar, vector, weights_mode='NONE', tangent=None)</span>
+<span>def <span class="ident">move_curve_point_by_moving_control_points</span></span>(<span>curve, u_bar, vector, weights_mode='NONE', tangent=None, relative=True)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Adjust the given curve so that at parameter u_bar it goues through
