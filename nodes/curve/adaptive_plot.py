@@ -4,7 +4,7 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 from sverchok.utils.curve import SvCurve
-from sverchok.utils.adaptive_curve import populate_curve, MinMaxPerSegment, TotalCount
+from sverchok.utils.adaptive_curve import populate_curve_old, MinMaxPerSegment, TotalCount
 
 class SvAdaptivePlotCurveNode(SverchCustomTreeNode, bpy.types.Node):
     """
@@ -138,7 +138,7 @@ class SvAdaptivePlotCurveNode(SverchCustomTreeNode, bpy.types.Node):
                     controller = MinMaxPerSegment(min_ppe, max_ppe)
                 else:
                     controller = TotalCount(count)
-                new_t = populate_curve(curve, samples+1,
+                new_t = populate_curve_old(curve, samples+1,
                             by_length = self.by_length,
                             by_curvature = self.by_curvature,
                             population_controller = controller,
