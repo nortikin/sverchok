@@ -182,6 +182,7 @@
         - icon_name: OUTLINER_OB_CURVE
         - extra_menu: AdvancedObjectsPartialMenu
         - SvNurbsCurveMovePointNode
+        - SvSnapCurvesNode
         - SvExApplyFieldToCurveNode
     - T SURFACES:
         - icon_name: SURFACE_DATA

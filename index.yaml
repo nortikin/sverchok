@@ -96,6 +96,7 @@
         - SvNurbsCurveNodesNode
         - ---
         - SvNurbsCurveMovePointNode
+        - SvSnapCurvesNode
         - ---
         - SvCurveInsertKnotNode
         - SvCurveRemoveKnotNode
