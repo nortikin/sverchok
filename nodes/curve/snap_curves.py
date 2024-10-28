@@ -29,7 +29,7 @@ class SvSnapCurvesNode(SverchCustomTreeNode, bpy.types.Node):
     bl_idname = 'SvSnapCurvesNode'
     bl_label = 'Snap NURBS Curves'
     bl_icon = 'OUTLINER_OB_EMPTY'
-    sv_icon = 'SV_CONCAT_CURVES'
+    sv_icon = 'SV_SNAP_CURVES'
 
     bias_modes = [
             (BIAS_MID, "Middle point", "Snap to middle point between end of first curve and start of second curve", 0),
