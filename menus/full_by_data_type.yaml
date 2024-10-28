@@ -291,6 +291,7 @@
         - SvProjectCurveSurfaceNode
         - ---
         - SvNurbsCurveMovePointNode
+        - SvSnapCurvesNode
         - ---
         - SvCurveInsertKnotNode
         - SvCurveRemoveKnotNode
