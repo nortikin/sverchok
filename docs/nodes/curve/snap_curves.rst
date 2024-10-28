@@ -91,3 +91,10 @@ Outputs
 This node has the following output:
 
 * **Curves**. The resulting curves.
+
+Example of Usage
+----------------
+
+.. image:: ../../../docs/assets/nodes/curve/snap_curves.gif
+   :target: ../../../docs/assets/nodes/curve/snap_curves.gif
+
