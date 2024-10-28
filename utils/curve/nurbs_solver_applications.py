@@ -393,3 +393,86 @@ def curve_on_surface_to_nurbs(degree, uv_curve, surface, samples, metric = 'DIST
     else:
         return interpolate_nurbs_curve(degree, points, cyclic=is_cyclic, tknots = tknots, logger=logger)
 
+
+BIAS_CURVE1 = 'C1'
+BIAS_CURVE2 = 'C2'
+BIAS_MID = 'M'
+
+TANGENT_ANY = 'A'
+TANGENT_PRESERVE = 'P'
+TANGENT_MATCH = 'M'
+TANGENT_CURVE1 = 'C1'
+TANGENT_CURVE2 = 'C2'
+
+def snap_curves(curves, bias=BIAS_CURVE1, tangent=TANGENT_ANY, cyclic=False):
+
+    class Problem:
+        def __init__(self,curve):
+            self.curve = curve
+            self.t1, self.t2 = curve.get_u_bounds()
+            self.point1 = None
+            self.point2 = None
+            self.tangent1 = None
+            self.tangent2 = None
+
+        def solve(self):
+            solver = SvNurbsCurveSolver(src_curve = self.curve)
+            if self.point1 is not None:
+                orig_pt1 = self.curve.evaluate(self.t1)
+                solver.add_goal(SvNurbsCurvePoints.single(self.t1, self.point1 - orig_pt1, relative=True))
+            if self.point2 is not None:
+                orig_pt2 = self.curve.evaluate(self.t2)
+                solver.add_goal(SvNurbsCurvePoints.single(self.t2, self.point2 - orig_pt2, relative=True))
+            if self.tangent1 is not None:
+                orig_tangent1 = self.curve.tangent(self.t1)
+                solver.add_goal(SvNurbsCurveTangents.single(self.t1, self.tangent1 - orig_tangent1, relative=True))
+            if self.tangent2 is not None:
+                orig_tangent2 = self.curve.tangent(self.t2)
+                solver.add_goal(SvNurbsCurveTangents.single(self.t2, self.tangent2 - orig_tangent2, relative=True))
+            solver.set_curve_params(len(self.curve.get_control_points()), self.curve.get_knotvector())
+            problem_type, residue, curve = solver.solve_ex(
+                            problem_types = {SvNurbsCurveSolver.PROBLEM_UNDERDETERMINED,
+                                             SvNurbsCurveSolver.PROBLEM_WELLDETERMINED}
+                        )
+            return curve
+
+    def setup_problems(p1, p2):
+        if bias == BIAS_CURVE1:
+            target_pt = p1.curve.evaluate(p1.t2)
+        elif bias == BIAS_CURVE2:
+            target_pt = p2.curve.evaluate(p2.t1)
+        else:
+            pt1 = p1.curve.evaluate(p1.t2)
+            pt2 = p2.curve.evaluate(p2.t1)
+            target_pt = 0.5 * (pt1 + pt2)
+        p1.point2 = target_pt
+        p2.point1 = target_pt
+
+        if tangent == TANGENT_ANY:
+            target_tangent1 = None
+            target_tangent2 = None
+        elif tangent == TANGENT_PRESERVE:
+            target_tangent1 = p1.curve.tangent(p1.t2)
+            target_tangent2 = p2.curve.tangent(p2.t1)
+        elif tangent == TANGENT_CURVE1:
+            target_tangent1 = p1.curve.tangent(p1.t2)
+            target_tangent2 = target_tangent1
+        elif tangent == TANGENT_CURVE2:
+            target_tangent2 = p2.curve.tangent(p2.t1)
+            target_tangent1 = target_tangent2
+        else:
+            tgt1 = p1.curve.tangent(p1.t2)
+            tgt2 = p2.curve.tangent(p2.t1)
+            target_tangent1 = 0.5 * (tgt1 + tgt2)
+            target_tangent2 = target_tangent1
+        p1.tangent2 = target_tangent1
+        p2.tangent1 = target_tangent2
+
+    problems = [Problem(c) for c in curves]
+    for p1, p2 in zip(problems[:-1], problems[1:]):
+        setup_problems(p1, p2)
+    if cyclic:
+        setup_problems(problems[-1], problems[0])
+
+    return [p.solve() for p in problems]
+
