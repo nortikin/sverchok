@@ -15,6 +15,8 @@ class SvAdaptivePlotCurveNode(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Adaptive Plot Curve'
     bl_icon = 'CURVE_NCURVE'
 
+    replacement_nodes = [('SvAdaptivePlotCurveMk2Node', None, None)]
+
     sample_size : IntProperty(
             name = "Segments",
             description = "Number of initial subdivisions",
