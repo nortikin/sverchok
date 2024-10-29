@@ -196,6 +196,7 @@ def populate_curve(curve, n_points, resolution=100, by_length = False, by_curvat
             seed = 12345
         np.random.seed(seed)
         factor_values = np.random.uniform(0.0, 1.0, size=n_points)
+        factor_values = np.append(factor_values, [0.0, 1.0])
         factor_values = np.sort(factor_values)
     else:
         factor_values = np.linspace(0.0, 1.0, num=n_points)
