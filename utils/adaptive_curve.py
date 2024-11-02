@@ -12,7 +12,8 @@ from math import ceil, floor, isnan
 from sverchok.utils.sv_logging import sv_logger
 from sverchok.utils.math import distribute_int
 from sverchok.utils.geom import CubicSpline
-from sverchok.utils.curve import SvCurveLengthSolver, CurvatureIntegral
+from sverchok.utils.integrate import TrapezoidIntegral
+from sverchok.utils.curve import SvCurveLengthSolver
 
 
 class CurvePopulationController(object):
@@ -173,7 +174,7 @@ def populate_curve_old(curve, samples_t, by_length = False, by_curvature = True,
         new_t = np.sort(new_t)
     return new_t
 
-def populate_curve(curve, n_points, resolution=100, by_length = False, by_curvature = True, random=False, seed=None):
+def populate_curve(curve, n_points, resolution=100, by_length = False, by_curvature = True, curvature_clip=100.0, random=False, seed=None):
     t_min, t_max = curve.get_u_bounds()
     factors = np.zeros((resolution,))
     ts = np.linspace(t_min, t_max, num=resolution)
@@ -182,8 +183,12 @@ def populate_curve(curve, n_points, resolution=100, by_length = False, by_curvat
         lengths = np.cumsum(np.insert(lengths, 0, 0))
         factors += lengths / lengths[-1]
     if by_curvature:
-        integral = CurvatureIntegral(curve, resolution, rescale_curvature = True)
-        factors += integral.values
+        curvatures = curve.curvature_array(ts)
+        curvatures = np.clip(curvatures, 0.0, curvature_clip)
+        integral = TrapezoidIntegral(ts, ts, np.sqrt(curvatures))
+        #integral = TrapezoidIntegral(ts, ts, curvatures)
+        integral.calc()
+        factors += integral.summands
     if not by_length and not by_curvature:
         factors = np.linspace(0.0, 1.0, num=resolution)
     factors /= factors[-1]
