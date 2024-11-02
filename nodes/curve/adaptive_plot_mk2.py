@@ -56,11 +56,21 @@ class SvAdaptivePlotCurveMk2Node(SverchCustomTreeNode, bpy.types.Node):
             default = False,
             update = update_sockets)
 
+    curvature_clip : FloatProperty(
+            name = "Curvature Clip",
+            min = 0.0,
+            default = 100.0,
+            update = updateNode)
+
     def draw_buttons(self, context, layout):
         row = layout.row(align=True)
         row.prop(self, 'by_curvature', toggle=True)
         row.prop(self, 'by_length', toggle=True)
         layout.prop(self, 'random')
+
+    def draw_buttons_ext(self, context, layout):
+        self.draw_buttons(context, layout)
+        layout.prop(self, 'curvature_clip')
 
     def sv_init(self, context):
         self.inputs.new('SvCurveSocket', "Curve")
@@ -95,6 +105,7 @@ class SvAdaptivePlotCurveMk2Node(SverchCustomTreeNode, bpy.types.Node):
                             resolution = resolution,
                             by_length = self.by_length,
                             by_curvature = self.by_curvature,
+                            curvature_clip = self.curvature_clip,
                             random = self.random,
                             seed = seed)
                 n = len(new_t)
