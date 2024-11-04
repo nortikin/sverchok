@@ -427,6 +427,7 @@
         - SvExNoiseVectorFieldNode
         - ---
         - SvExBendAlongCurveFieldNode
+        - SvSlerpCurveFieldNode
         - SvBendAlongSurfaceFieldMk2Node
     - Field Operations:
         - icon_name: TOOL_SETTINGS
