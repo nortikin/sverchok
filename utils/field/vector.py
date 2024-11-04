@@ -10,11 +10,14 @@ import numpy as np
 
 from mathutils import Vector
 from mathutils import bvhtree
-from mathutils import kdtree
 from mathutils import noise
 from sverchok.utils.curve import SvCurveLengthSolver, SvNormalTrack, MathutilsRotationCalculator
-from sverchok.utils.geom import LineEquation, CircleEquation3D
-from sverchok.utils.math import from_cylindrical, from_spherical, np_dot
+from sverchok.utils.geom import LineEquation, CircleEquation3D, rotate_around_vector_matrix
+from sverchok.utils.math import (
+            from_cylindrical, from_spherical,
+            from_cylindrical_np, to_cylindrical_np,
+            from_spherical_np, to_spherical_np,
+            np_dot, np_multiply_matrices_vectors)
 from sverchok.utils.kdtree import SvKdTree
 from sverchok.utils.field.voronoi import SvVoronoiFieldData
 
@@ -32,8 +35,9 @@ class SvVectorField(object):
             description = self.__class__.__name__
         return "<{} vector field>".format(description)
 
-    def evaluate(self, point):
-        raise Exception("not implemented")
+    def evaluate(self, x, y, z):
+        rxs, rys, rzs = self.evaluate_grid([x], [y], [z])
+        return rxs[0], rys[0], rzs[0]
 
     def evaluate_grid(self, xs, ys, zs):
         raise Exception("not implemented")
@@ -686,6 +690,83 @@ class SvRotationVectorField(SvVectorField):
             R = vectors.T
             return R[0], R[1], R[2]
 
+class SvTwistVectorField(SvVectorField):
+    def __init__(self, center, axis, angle_along_axis, angle_along_radius,
+                 min_z = None, max_z = None, min_r = None, max_r = None):
+        self.center = np.asarray(center)
+        self.axis = np.asarray(axis)
+        self.axis = self.axis / np.linalg.norm(self.axis)
+        self.angle_along_axis = angle_along_axis
+        self.angle_along_radius = angle_along_radius
+        self.min_z = min_z
+        self.max_z = max_z
+        self.min_r = min_r
+        self.max_r = max_r
+
+    def evaluate_grid(self, xs, ys, zs):
+        pts = np.stack((xs, ys, zs)).T
+        dpts = pts - self.center
+        ts = np_dot(dpts, self.axis)
+        rads = dpts - ts[np.newaxis].T * self.axis
+        rs = np.linalg.norm(rads, axis=1)
+        if self.min_z is not None or self.max_z is not None:
+            ts = np.clip(ts, self.min_z, self.max_z)
+        if self.min_r is not None or self.max_r is not None:
+            rs = np.clip(rs, self.min_r, self.max_r)
+        angles = ts * self.angle_along_axis + rs * self.angle_along_radius
+        matrices = rotate_around_vector_matrix(self.axis, angles)
+        new_pts = np_multiply_matrices_vectors(matrices, dpts)
+        new_pts += self.center
+        vectors = (new_pts - pts).T
+        return vectors[0], vectors[1], vectors[2]
+
+    def evaluate(self, x, y, z):
+        rxs, rys, rzs = self.evaluate_grid([x], [y], [z])
+        return rxs[0], rys[0], rzs[0]
+
+class SvTaperVectorField(SvVectorField):
+    def __init__(self, center, axis, coefficient, min_z=None, max_z=None):
+        self.center = np.asarray(center)
+        self.axis = np.asarray(axis)
+        self.axis = self.axis / np.linalg.norm(self.axis)
+        self.coefficient = coefficient
+        self.min_z = None
+        self.max_z = None
+        rho = 1.0 / coefficient
+        if min_z is not None:
+            self.max_z = rho - min_z
+        if max_z is not None:
+            self.min_z = rho - max_z
+
+    @classmethod
+    def from_base_point_and_vertex(cls, base_point, vertex, **kwargs):
+        base_point = np.array(base_point)
+        vertex = np.array(vertex)
+        rho = np.linalg.norm(base_point - vertex)
+        return SvTaperVectorField(vertex, base_point - vertex, 1.0/rho, **kwargs)
+
+    @classmethod
+    def from_base_point_and_vector(cls, base_point, vector, **kwargs):
+        base_point = np.array(base_point)
+        vector = np.array(vector)
+        return SvTaperVectorField.from_base_point_and_vertex(base_point, base_point + vector, **kwargs)
+
+    def evaluate_grid(self, xs, ys, zs):
+        pts = np.stack((xs, ys, zs)).T
+        dpts = pts - self.center
+        ts = np_dot(dpts, self.axis)
+        projections = ts[np.newaxis].T * self.axis
+        rads = dpts - projections
+        if self.min_z is not None or self.max_z is not None:
+            ts = np.clip(ts, self.min_z, self.max_z)
+        rads *= self.coefficient * ts[np.newaxis].T
+        new_pts = self.center + projections + rads
+        vectors = (new_pts - pts).T
+        return vectors[0], vectors[1], vectors[2]
+
+    def evaluate(self, x, y, z):
+        rxs, rys, rzs = self.evaluate_grid([x], [y], [z])
+        return rxs[0], rys[0], rzs[0]
 
 class SvSelectVectorField(SvVectorField):
     def __init__(self, fields, mode):
@@ -715,8 +796,76 @@ class SvSelectVectorField(SvVectorField):
             selected = np.argmax(norms, axis=1)
         all_points = list(range(n))
         vectors = vectors[all_points, selected, :]
-        #print(vectors.shape)
         return vectors.T
+
+class SvVectorFieldCartesianFilter(SvVectorField):
+    def __init__(self, field, use_x=True, use_y=True, use_z=True):
+        self.field = field
+        self.use_x = use_x
+        self.use_y = use_y
+        self.use_z = use_z
+        desc = ""
+        if use_x:
+            desc = desc + 'X'
+        if use_y:
+            desc = desc + 'Y'
+        if use_z:
+            desc = desc + 'Z'
+        self.__description__ = f"Filter[{desc}]({field})"
+
+    def evaluate_grid(self, xs, ys, zs):
+        vxs, vys, vzs = self.field.evaluate_grid(xs, ys, zs)
+        if not self.use_x:
+            vxs[:] = 0
+        if not self.use_y:
+            vys[:] = 0
+        if not self.use_z:
+            vzs[:] = 0
+        return vxs, vys, vzs
+
+class SvVectorFieldCylindricalFilter(SvVectorField):
+    def __init__(self, field, use_rho=True, use_phi=True, use_z=True):
+        self.field = field
+        self.use_rho = use_rho
+        self.use_phi = use_phi
+        self.use_z = use_z
+
+    def evaluate_grid(self, xs, ys, zs):
+        pts = np.stack((xs,ys,zs)).T
+        vxs, vys, vzs = self.field.evaluate_grid(xs, ys, zs)
+        vectors = np.stack((vxs,vys,vzs)).T
+        s_rho, s_phi, s_z = to_cylindrical_np(pts.T, mode='radians')
+        v_rho, v_phi, v_z = to_cylindrical_np((pts + vectors).T, mode='radians')
+        if not self.use_rho:
+            v_rho = s_rho
+        if not self.use_phi:
+            v_phi = s_phi
+        if not self.use_z:
+            v_z = s_z
+        v_x, v_y, v_z = from_cylindrical_np(v_rho, v_phi, v_z, mode='radians')
+        return (v_x - xs), (v_y - ys), (v_z - zs)
+
+class SvVectorFieldSphericalFilter(SvVectorField):
+    def __init__(self, field, use_rho=True, use_phi=True, use_theta=True):
+        self.field = field
+        self.use_rho = use_rho
+        self.use_phi = use_phi
+        self.use_theta = use_theta
+
+    def evaluate_grid(self, xs, ys, zs):
+        pts = np.stack((xs,ys,zs)).T
+        vxs, vys, vzs = self.field.evaluate_grid(xs, ys, zs)
+        vectors = np.stack((vxs,vys,vzs)).T
+        s_rho, s_phi, s_theta = to_spherical_np(pts.T, mode='radians')
+        v_rho, v_phi, v_theta = to_spherical_np((pts + vectors).T, mode='radians')
+        if not self.use_rho:
+            v_rho = s_rho
+        if not self.use_phi:
+            v_phi = s_phi
+        if not self.use_theta:
+            v_theta = s_theta
+        v_x, v_y, v_z = from_spherical_np(v_rho, v_phi, v_theta, mode='radians')
+        return (v_x - xs), (v_y - ys), (v_z - zs)
 
 class SvVectorFieldTangent(SvVectorField):
 
@@ -1068,6 +1217,7 @@ class SvBendAlongSurfaceField(SvVectorField):
             return self.surface.evaluate_array(us, vs)
 
         spline_normals, surf_vertices = self.surface.normal_vertices_array(us, vs)
+        spline_normals /= np.linalg.norm(spline_normals, axis=1, keepdims=True)
         zs = vertices[:,self.orient_axis].flatten()
         zs = zs[np.newaxis].T
         v1 = zs * spline_normals

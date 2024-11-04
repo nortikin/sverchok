@@ -2768,6 +2768,24 @@ def rotate_vector_around_vector_np(v, k, theta):
     s3 = p1 * p2 * k
     return s1 + s2 + s3
 
+def rotate_around_vector_matrix(k, theta):
+    if isinstance(theta, (list,tuple,np.ndarray)):
+        theta = np.array(theta)
+        theta = theta[np.newaxis,np.newaxis].T
+    kx, ky, kz = k
+    K = np.zeros((3,3))
+    K[0,1] = -kz
+    K[0,2] = ky
+    K[1,2] = -kx
+    K[1,0] = -K[0,1]
+    K[2,0] = -K[0,2]
+    K[2,1] = -K[1,2]
+    I = np.eye(3)
+    st = np.sin(theta)
+    ct = np.cos(theta)
+    R = I + st * K + (1 - ct)*(K @ K)
+    return R
+
 def calc_bounds(vertices, allowance=0):
     x_min = min(v[0] for v in vertices)
     y_min = min(v[1] for v in vertices)

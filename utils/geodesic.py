@@ -421,7 +421,7 @@ class ExponentialMap:
         return make_rbf(self.orig_points, self.uv_points, **kwargs)
 
     def get_field(self, **kwargs):
-        bend = SvBendAlongSurfaceField(self.surface, axis=2, autoscale=True)
+        bend = SvBendAlongSurfaceField(self.surface, axis=2, autoscale=False)
         bend.u_bounds = self.surface.get_u_bounds()
         bend.v_bounds = self.surface.get_v_bounds()
         uv = self.get_uv_field(**kwargs)
