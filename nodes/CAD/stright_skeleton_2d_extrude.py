@@ -297,7 +297,7 @@ class SvStraightSkeleton2DExtrude(ModifierLiteNode, SverchCustomTreeNode, bpy.ty
     Only X and Y coordinate takes in account
     """
     bl_idname = 'SvStraightSkeleton2DExtrude'
-    bl_label = 'Straight Skeleton 2D Extrude (Alpha)'
+    bl_label = 'Straight Skeleton 2D Extrude (DO NOT USE)'
     bl_icon = 'MOD_OUTLINE'
 
     sv_dependencies = ['pySVCGAL', 'more_itertools']

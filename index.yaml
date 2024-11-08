@@ -497,6 +497,7 @@
     - ---
     - SvStraightSkeleton2DExtrude
     - SvStraightSkeleton2DOffset
+    - SvStraightSkeleton2DExtrudeInternal
 
 - ---
 

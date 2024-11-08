@@ -28,6 +28,9 @@ from sverchok.nodes.vector.vertices_sort import sort_vertices_by_connexions
 from sverchok.utils.modules.polygon_utils import areas_from_polygons
 from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
 from .stright_skeleton_2d_extrude import create_list2_in_range
+import networkx as nx
+
+from time import time
 
 enable_module = False
 try:
@@ -94,6 +97,27 @@ def vertices_sort_by_edges(verts_in, edges_in):
     return verts_out
     pass
 
+# Сюда можно передать только контуры у которых edges boundary=True
+def separate_edges(verts_in, edges_in):
+    np_poly_edge_in = np.array(edges_in)
+    np_verts = np.array(verts_in)
+    G = nx.Graph()
+    G.add_edges_from(edges_in)
+
+    contours = []
+    verts = []
+    for c in nx.connected_components(G):
+        print( len(G.subgraph(c)))
+        #print( list(G.subgraph(c)))
+        sg0 = G.subgraph(c)
+        contour1_indexes = nx.cycle_basis(sg0)[0]  # get cycle. https://networkx.org/documentation/stable/reference/algorithms/generated/networkx.algorithms.cycles.cycle_basis.html#networkx.algorithms.cycles.cycle_basis
+        vert_c1 = np_verts[contour1_indexes]
+        contours.append(contour1_indexes)
+        verts.append(vert_c1)
+
+    return verts
+    pass
+
 def separate_loose_mesh(verts_in, poly_edge_in):
         ''' separate a mesh by loose parts.
         input:
@@ -104,6 +128,66 @@ def separate_loose_mesh(verts_in, poly_edge_in):
           2. separated list of edges/polygons with new indices of separated elements
           3. separated list of edges/polygons (like 2) with old indices
         '''
+        
+        # # # def dict_key_of_value(d, val):
+        # # #     res = None
+        # # #     for KV in d:
+        # # #         if val in d[KV]:
+        # # #             res =  KV
+        # # #     return res
+        
+        # # # np_poly_edge_in = np.array(poly_edge_in)
+        # # # dict_objects_indexes = dict()
+        # # # for I in range(len(poly_edge_in)):
+            
+        # # #     object_I_owner = None
+        # # #     for IJ in range(I+1, len(poly_edge_in)):
+        # # #         if np.any(np.intersect1d(poly_edge_in[I], poly_edge_in[IJ])):
+
+        # # #             object_I_owner = dict_key_of_value(dict_objects_indexes, I)
+        # # #             if object_I_owner is None:
+        # # #                 object_I_owner = dict_key_of_value(dict_objects_indexes, IJ)
+        # # #                 if object_I_owner is None:
+        # # #                     if len(dict_objects_indexes)==0:
+        # # #                         object_I_owner = 0
+        # # #                     else:
+        # # #                         object_I_owner = max( list(dict_objects_indexes.keys()) )
+        # # #                         object_I_owner+=1
+        # # #                     dict_objects_indexes[object_I_owner] = set()
+
+        # # #             dict_objects_indexes[object_I_owner].update([I, IJ])
+        # # #         # else:
+        # # #         #     if (poly_edge_in[I] in np_poly_edge_in[IJ+1:])==False:
+        # # #         #         break
+        # # #         #     pass
+
+        # # #     if object_I_owner is None:
+        # # #         if dict_key_of_value(dict_objects_indexes, I) is None:
+        # # #             if len(dict_objects_indexes)==0:
+        # # #                 object_I_owner = 0
+        # # #             else:
+        # # #                 object_I_owner = max( list(dict_objects_indexes.keys()) )
+        # # #                 object_I_owner+=1
+        # # #             dict_objects_indexes[object_I_owner] = set([I])
+        # # #             #dict_objects_indexes[object_I_owner].update([I])
+        # # #             pass
+        # # #         pass
+        # # #     pass
+        # # # pass
+
+        # # # objects_sets = []
+        # # # for KV in dict_objects_indexes:
+        # # #     objectI = list(dict_objects_indexes[KV])
+        # # #     idx_faces = []
+        # # #     for idx in objectI:
+        # # #         idx_faces.extend(poly_edge_in[idx])
+        # # #     objects_sets.append(idx_faces)
+        # # # pass
+        # # # node_set_list = objects_sets
+
+        ########################
+
+
         verts_out = []
         poly_edge_out = []
         poly_edge_old_indexes_out = []  # faces with old indices 
@@ -251,16 +335,15 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
     ) # type: ignore
 
     ss_shapes_modes = [
-            (          'FULL_MODE',          "Full mode", "Extrude full shape (outer contours with holes)", 'RENDER_ANIMATION', 0),
-            (      'EXCLUDE_HOLES',      "Exclude Holes", "Keep only outer boundary", 'SELECT_EXTEND', 1),
-            (  'INVERT_HOLES_SOFT',  "Invert Holes Soft", "Exclude outer boundary and fill holes. If outer boundary has no holes then keep outer boundary.", 'SELECT_INTERSECT', 2),
-            (  'INVERT_HOLES_HARD',  "Invert Holes Hard", "Exclude outer boundary and Fill holes. If Outer Boundary has no holes then shape removed", 'SNAP_VERTEX', 3),
+            ( 'ORIGINAL_BOUNDARIES',          "Original", "Offset of original boundaries", 'RENDER_ANIMATION', 0),
+            (       'EXCLUDE_HOLES',     "Exclude Holes", "Keep only outer boundary", 'SELECT_EXTEND', 1),
+            (        'INVERT_HOLES',      "Invert Holes", "Exclude outer boundary and fill holes", 'SELECT_INTERSECT', 2),
         ]
     ss_shapes_mode1 : EnumProperty(
         name = "Shapes mode",
         description = "0-Full mode (outer contour and holes), 1-only outer contours, 2-Extrude holes as boundary, exclude outer boundary)",
         items = ss_shapes_modes,
-        default = 'FULL_MODE',
+        default = 'ORIGINAL_BOUNDARIES',
         update = updateNode
         ) # type: ignore
 
@@ -336,11 +419,14 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
     def draw_failed_contours_vertices_out_socket(self, socket, context, layout):
         if socket.objects_number>0:
             layout.label(text=f'', icon='ERROR')
-        layout.label(text=f'{socket.label} ')
+            layout.label(text=f'Errors verts in objects')
+        else:
+            layout.label(text=f'{socket.label} ')
         if socket.is_linked:  # linked INPUT or OUTPUT
             layout.label(text=f". {socket.objects_number or ''}")
         elif socket.is_output:  # unlinked OUTPUT
             layout.separator()
+        #socket.draw_quick_link(context, layout, self)
 
     def updateMaskMode(self, context):
         if self.objects_mask_mode=='BOOLEANS':
@@ -450,7 +536,7 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
         self.outputs['polygons'].label = 'Polygons'
         self.outputs['offsets'].label = 'Offsets'
         self.outputs['altitudes'].label = 'Altitudes'
-        self.outputs['failed_contours_vertices'].label = 'Wrong contours verts'
+        self.outputs['failed_contours_vertices'].label = 'No wrong contours verts'
         self.outputs['failed_contours_vertices'].custom_draw = 'draw_failed_contours_vertices_out_socket'
 
     def process(self):
@@ -567,27 +653,51 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
 
             # separate objects of loose parts (objects can has islands. Every island have to be separated)
             if not faces_i or not faces_i[0]:
-                raise Exception(f"Error: Object {I} has no faces. Extrusion is not possible. Objects should be flat.")
+                raise Exception(f"Error: Object {I} has no faces. Straight Skeleton Offset is not possible. Objects should be flat.")
             
+            # Попытка разделить graph mesh  на контуры через networkx не особо помогла
+            # time_1_1 = time()
+            # try:
+            #     # Разделить объект на контуры:
+            #     bm = bmesh_from_pydata(verts_i, edges_i, faces_i, normal_update=True)
+            #     bm.edges.ensure_lookup_table()
+            #     edges = [[e.verts[0].index, e.verts[1].index] for e in bm.edges]
+            #     object_I_contours_edges, _, _ = Edges.process(bm, "Boundary", edges)
+            #     object_I_verts = separate_edges(verts_i, object_I_contours_edges)
+            #     bm.free()
+            # except Exception as ex:
+            #     # Keep shape to show as errors in the future
+            #     contours_failed_at_all.append(verts_i)
+            #     continue
+            # time_1_1 = time()-time_1_1
+            # print(f'object {I} separates parts: {time_1_1}, contours: {len(object_I_verts)}')
+
+            time_4_1 = time()
+            # object_I_planes_verts, object_I_planes_faces, _ = separate_edges(verts_i, edges_i)
             object_I_planes_verts, object_I_planes_faces, _ = separate_loose_mesh(verts_i, faces_i)
 
             for IJ in range(len(object_I_planes_verts)):
                 object_I_plane_IJ_verts, object_I_plane_IJ_faces = object_I_planes_verts[IJ], object_I_planes_faces[IJ]
 
+                time_2_1 = time()
                 try:
                     bm = bmesh_from_pydata(object_I_plane_IJ_verts, None, object_I_plane_IJ_faces, normal_update=True)
                     bm.edges.ensure_lookup_table()
                     edges = [[e.verts[0].index, e.verts[1].index] for e in bm.edges]
                     object_I_plane_IJ_contours_edges, _, _ = Edges.process(bm, "Boundary", edges)
                     bm.free()
+
                 except Exception as ex:
                     # Keep shape to show as errors in the future
                     contours_failed_at_all.append(object_I_plane_IJ_verts)
                     continue
+                time_2_1 = time()-time_2_1
+                print(f'object {I}, part {IJ} calc baunadries: {time_2_1}')
 
                 if not object_I_plane_IJ_contours_edges:
                     raise Exception(f"Error: Object {I} has no boundaries. Extrusion is not possible. Objects should be flat.")
                 # separate contours of every island
+                #object_I_plane_IJ_contours_verts, edges_boundaries, _ = separate_edges(object_I_plane_IJ_verts, object_I_plane_IJ_contours_edges)
                 object_I_plane_IJ_contours_verts, edges_boundaries, _ = separate_loose_mesh(object_I_plane_IJ_verts, object_I_plane_IJ_contours_edges)
 
                 object_I_plane_IJ_contours = []
@@ -595,6 +705,9 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
                 objects_offsets_of_boundary = []
                 failed_contours_vertices = []
                 areas = []
+                
+                time_3_1 = time()
+                
                 for IJK in range(len(object_I_plane_IJ_contours_verts)):
                     object_I_plane_IJ_contour_IJK_verts, object_I_plane_IJ_contour_IJK_edges = object_I_plane_IJ_contours_verts[len(object_I_plane_IJ_contours_verts)-1-IJK], edges_boundaries[len(object_I_plane_IJ_contours_verts)-1-IJK]
                     object_I_plane_IJ_contour_IJK_verts_sorted = vertices_sort_by_edges(object_I_plane_IJ_contour_IJK_verts, object_I_plane_IJ_contour_IJK_edges)
@@ -607,50 +720,21 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
                 srt = sort_together([areas, object_I_plane_IJ_contours, ])
                 object_I_plane_IJ_contours_sorted_by_area = list(reversed(srt[1]))  # First contour is outer boundary - another is holes
 
-                # objects_boundaries.append({"idx": I, "boundaries":object_boundaries_sorted_by_area,})
-                # objects_offsets_of_boundaries.append( {"idx":I, "offsets": ss_offsets,} )
-                # objects_area_boundaries.append( {"idx":I, "areas":object_area_boundaries,})
-                
-                if shapes_mode_1 in [ 'EXCLUDE_HOLES', 'INVERT_HOLES_SOFT', 'INVERT_HOLES_HARD',]: # and len(object_boundaries_sorted_by_area)>1:
-                    for IJK in range( len(object_I_plane_IJ_contours_sorted_by_area) ):
-                        
-                        if shapes_mode_1=='INVERT_HOLES_HARD':
-                            # Skip add outer boundary any way. If it is single boundary then shape will not compute.
-                            if IJK==0:
-                                continue
+                time_3_1 = time()-time_3_1
+                print(f'object {I}, part {IJ} process baundaries: {time_3_1}')
 
-                        if shapes_mode_1=='INVERT_HOLES_SOFT':
-                            # if shape_mode is 'INVERT_HOLES_SOFT' and shape has more than one contour then first contour excluded
-                            # and all another contour processed as external contours else keep outer boundary
-                            if len(object_I_plane_IJ_contours_sorted_by_area)>1:
-                                if IJK==0:
-                                    # skip outer boundary
-                                    continue
-                                else:
-                                    # keep outer boundary
-                                    pass
-                            else:
-                                # keep outer boundary
-                                pass
-
-                        object_I_plane_IJ_contours_sorted_by_area_IJK = object_I_plane_IJ_contours_sorted_by_area[IJK],
-                        if I not in objects_data:
-                            objects_data[I] = {"idx": I, 'offsets': ss_offsets, 'altitudes': ss_altitudes, 'planes':[]}
-                        objects_data[I]['planes'].append(object_I_plane_IJ_contours_sorted_by_area_IJK)
-                        
-                        if shapes_mode_1=='EXCLUDE_HOLES':
-                            # if shape_mode is 'EXCLUDE HOLES' then only first contour need to processed
-                            break
-                    pass
-                elif shapes_mode_1=="FULL_MODE":
+                if shapes_mode_1 in [ 'ORIGINAL_BOUNDARIES', 'EXCLUDE_HOLES', 'INVERT_HOLES', ]: # and len(object_boundaries_sorted_by_area)>1:
+                    shapes_mode_1_id = [info for info in self.ss_shapes_modes if info[0]==shapes_mode_1][0][4]
                     if I not in objects_data:
-                        objects_data[I] = {"idx": I, 'offsets': ss_offsets, 'altitudes': ss_altitudes, 'planes':[]}
+                        objects_data[I] = {"idx": I, 'offsets': ss_offsets, 'altitudes': ss_altitudes, 'planes':[], 'shape_mode':shapes_mode_1_id}
                     objects_data[I]['planes'].append(object_I_plane_IJ_contours_sorted_by_area)
                     pass
                 else:
                     raise Exception(f"unknown Shapes mode value: '{_shapes_modes[I]}'. Allowed values {allowed_shapes_modes}")
                 pass
             pass
+            time_4_1 = time()-time_4_1
+            print(f'object calc baunadries general time: {time_4_1}')
         pass
 
         errors_vertices = []
@@ -658,22 +742,6 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
             lst_errors = []
             was_errors = False
             
-            def parallel_straight_skeleton_2d_offset(data1):
-                new_mesh = pySVCGAL_straight_skeleton_2d_offset(
-                    data1['object_id'],
-                    data1['polygon_id'],
-                    data1['offsets'],
-                    data1['altitudes'],
-                    data1['planes'],
-                    data1['only_tests_for_valid'],
-                    data1['res_type'],
-                    data1['force_z_zero'],
-                    data1['verbose']
-                    )
-                return new_mesh
-            
-            #with ThreadPoolExecutor() as executor:
-            #data_copy = []
             if(self.res_type=='CONTOURS'):
                 res_type=0
             elif(self.res_type=='FACES'):
@@ -681,16 +749,19 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
             else:
                 raise Exception(f"Unknown res_type={self.res_type}. Allowed only 'CONTOURS' or 'FACES'.")
 
+            join_mode_id = [info for info in self.join_modes if info[0]==self.join_mode][0][4]
             data = {
                 'objects' : [],
-                'force_z_zero': self.force_z_zero, 
+                'force_z_zero'          : self.force_z_zero, 
                 'res_type': res_type, 
-                'only_tests_for_valid': self.only_tests_for_valid, 
-                'verbose' : self.verbose_messages_while_process,
+                'join_mode'             : join_mode_id,
+                'only_tests_for_valid'  : self.only_tests_for_valid, 
+                'verbose'               : self.verbose_messages_while_process,
             }
             
             for I in range(len(objects_data)):
                 objects_data_I       = objects_data[I]
+                shape_mode_I         = objects_data_I["shape_mode"]
                 offsets_I            = objects_data_I["offsets"]
                 altitudes_I          = objects_data_I["altitudes"]
                 offsets = []
@@ -706,7 +777,8 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
                 if len(offsets)>0:
                     data['objects'].append( {
                         'object_id':objects_data_I['idx'],
-                        'polygon_id':I, 
+                        'shape_mode' : shape_mode_I,
+                        #'polygon_id':I, 
                         'offsets': offsets,
                         'altitudes': altitudes,
                         'planes' : objects_data_I["planes"], # I is not wrong, boundary1 (array of contours) - plane
@@ -734,20 +806,21 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
             valid_offsets_keep = dict()
             valid_altitudes_keep = dict()
 
-            polygon_id = 'undefined' # data1['polygon_id']
-            if data_processed['has_error']==True:
-                was_errors = True
-                if 'ftcs_count' in data_processed and data_processed['ftcs_count']>0:
-                    lst_errors1.append(f"Polygon : {polygon_id} is failed. ")
-                    if data_processed['str_error']:
-                        lst_errors1[-1] = lst_errors1[-1] + (data_processed['str_error'])
-                    for s in data_processed['ftcs_vertices_description']:
-                        if s:
-                            lst_errors1.append(f'{s}')
-                    failed_contours_vertices.extend(data_processed['ftcs_vertices_list'])
-                pass
+            #polygon_id = 'undefined' # data1['polygon_id']
+
+            # if data_processed['has_error']==True:
+            #     was_errors = True
+            #     if 'ftcs_count' in data_processed and data_processed['ftcs_count']>0:
+            #         lst_errors1.append(f"Polygon : {polygon_id} is failed. ")
+            #         if data_processed['str_error']:
+            #             lst_errors1[-1] = lst_errors1[-1] + (data_processed['str_error'])
+            #         for s in data_processed['ftcs_vertices_description']:
+            #             if s:
+            #                 lst_errors1.append(f'{s}')
+            #         failed_contours_vertices.extend(data_processed['ftcs_vertices_list'])
+            #     pass
             
-            for data1 in data_processed['objects']:
+            for data1 in data_processed['source_objects_errors']: 
                 object_index = data1["object_index"]
                 error_vertices_object1 = []
                 if(len(data1['vertices_of_errors'])>0):
@@ -757,84 +830,103 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
                         for s in data1['descriptions_per_errors']:
                             print(f'    {s}')
                 errors_vertices.append(error_vertices_object1)
-                #else:
-                #print(f"\nPolygon_id: {polygon_id} is good. It has no errors")
+                pass
+
+            for data1 in data_processed['objects']:
+                # object_index = data1["object_index"]
+                # error_vertices_object1 = []
+                # if(len(data1['vertices_of_errors'])>0):
+                #     error_vertices_object1 = data1['vertices_of_errors']
+                #     if self.verbose_messages_while_process==True:
+                #         print(f'Object {object_index} has errors:')
+                #         for s in data1['descriptions_per_errors']:
+                #             print(f'    {s}')
+                # errors_vertices.append(error_vertices_object1)
 
                 # Даже если была ошибка, то проверить, может есть возможность отобразить хоть какие-то данные? Тем более, если ошибки не было!
                 if self.only_tests_for_valid==True:
                     # no result, no output
                     pass
                 else:
-                    # Нельзя пропускать, иначе не будет соответствия исходных объектов и результирующих если по кому-то не получено результатов!!!
-                    # if len(data1["vertices"])==0:
+                    # # Нельзя пропускать, иначе не будет соответствия исходных объектов и результирующих если по кому-то не получено результатов!!!
+                    # # if len(data1["vertices"])==0:
+                    # #     pass
+                    # # else:
+                    #     if self.join_mode=='SPLIT':
+                    #         # res_offsets.append( [ data1['offset'] ] )
+                    #         # res_altitudes.append( [ data1['altitude'] ] )
+
+                    #         res_verts.append( data1['vertices'] )
+                    #         res_edges.append( data1['edges']    )
+                    #         res_faces.append( data1['faces']    )
+                    #         pass
+                    #     elif self.join_mode=='KEEP':
+
+                    #         # valid_offsets_keep  [object_id].append(data1['offset'])
+                    #         # valid_altitudes_keep[object_id].append(data1['altitude'])
+
+                    #         pass
+                    #     elif self.join_mode=='MERGE':
+                    #         object_verts_merge.extend(data1['vertices'])
+                    #         object_edges_merge.extend( [ list(map(lambda n: n+faces_delta, face)) for face in data1['edges'] ] )
+                    #         object_faces_merge.extend( [ list(map(lambda n: n+faces_delta, face)) for face in data1['faces'] ] )
+                    #         faces_delta+=len(data1['vertices'])
+
+                    #         # valid_offsets_merge.append(data1['offset'])
+                    #         # valid_altitudes_merge.append(data1['altitude'])
+
+                    #         pass
+
+                    #     # len_verts1 = len(data1['vertices'])
+                    #     # len_edges1 = len(data1['edges'])
+                    #     # len_faces1 = len(data1['faces'])
+                    #     #idx = data1['polygon_id']
+                    #     #str_error = f'Polygon {idx} is good. Stright Skeleton mesh: verts {len_verts1}, edges {len_edges1}, faces {len_faces1}'
+                    #     #lst_errors1.append(str_error)
+
+                    pass # теперь библиотека C++ возвращает результат в нужном join_mode
+                    object_index = data1['object_index']
+                    res_verts.append(data1['vertices'])
+                    res_edges.append(data1['edges'])
+                    res_faces.append(data1['faces'])
+                    # object_index = data1['object_index']
+                    # if object_index not in objects_verts_keep:
+                    #     objects_verts_keep[object_index] = []
+                    #     objects_edges_keep[object_index] = []
+                    #     objects_faces_keep[object_index] = []
+
+                    #     valid_offsets_keep  [object_index] = []
+                    #     valid_altitudes_keep[object_index] = []
+
                     #     pass
-                    # else:
-                        if self.join_mode=='SPLIT':
-                            # res_offsets.append( [ data1['offset'] ] )
-                            # res_altitudes.append( [ data1['altitude'] ] )
+                    # objects_verts_keep[object_index].extend( data1['vertices'] )
+                    # objects_edges_keep[object_index].extend( data1['edges'] )
+                    # objects_faces_keep[object_index].extend( data1['faces'] )
 
-                            res_verts.append( data1['vertices'] )
-                            res_edges.append( data1['edges']    )
-                            res_faces.append( data1['faces']    )
-                            pass
-                        elif self.join_mode=='KEEP':
-                            object_index = data1['object_index']
-                            if object_index not in objects_verts_keep:
-                                objects_verts_keep[object_index] = []
-                                objects_edges_keep[object_index] = []
-                                objects_faces_keep[object_index] = []
-
-                                valid_offsets_keep  [object_index] = []
-                                valid_altitudes_keep[object_index] = []
-
-                                pass
-                            objects_verts_keep[object_index].extend( data1['vertices'] )
-                            objects_edges_keep[object_index].extend( data1['edges'] )
-                            objects_faces_keep[object_index].extend( data1['faces'] )
-
-                            # valid_offsets_keep  [object_id].append(data1['offset'])
-                            # valid_altitudes_keep[object_id].append(data1['altitude'])
-
-                            pass
-                        elif self.join_mode=='MERGE':
-                            object_verts_merge.extend(data1['vertices'])
-                            object_edges_merge.extend( [ list(map(lambda n: n+faces_delta, face)) for face in data1['edges'] ] )
-                            object_faces_merge.extend( [ list(map(lambda n: n+faces_delta, face)) for face in data1['faces'] ] )
-                            faces_delta+=len(data1['vertices'])
-
-                            # valid_offsets_merge.append(data1['offset'])
-                            # valid_altitudes_merge.append(data1['altitude'])
-
-                            pass
-
-                        len_verts1 = len(data1['vertices'])
-                        len_edges1 = len(data1['edges'])
-                        len_faces1 = len(data1['faces'])
-                        #idx = data1['polygon_id']
-                        #str_error = f'Polygon {idx} is good. Stright Skeleton mesh: verts {len_verts1}, edges {len_edges1}, faces {len_faces1}'
-                        #lst_errors1.append(str_error)
+                    pass
                 pass
             lst_errors.extend(lst_errors1)
-            if self.join_mode=='MERGE':
-                res_verts.append(object_verts_merge)
-                res_edges.append(object_edges_merge)
-                res_faces.append(object_faces_merge)
+            # if self.join_mode=='MERGE':
+            #     res_verts.append(object_verts_merge)
+            #     res_edges.append(object_edges_merge)
+            #     res_faces.append(object_faces_merge)
 
-                res_offsets.append(valid_offsets_merge)
-                res_altitudes.append(valid_altitudes_merge)
+            #     res_offsets.append(valid_offsets_merge)
+            #     res_altitudes.append(valid_altitudes_merge)
 
-                pass
+            #     pass
 
-            elif self.join_mode=='KEEP':
-                for KEY in objects_verts_keep:
-                    res_verts.append(objects_verts_keep[KEY])
-                    res_edges.append(objects_edges_keep[KEY])
-                    res_faces.append(objects_faces_keep[KEY])
+            # elif self.join_mode=='KEEP':
+            #     for KEY in objects_verts_keep:
+            #         res_verts.append(objects_verts_keep[KEY])
+            #         res_edges.append(objects_edges_keep[KEY])
+            #         res_faces.append(objects_faces_keep[KEY])
 
-                    res_offsets.append(valid_offsets_keep[KEY])
-                    res_altitudes.append(valid_altitudes_keep[KEY])
-            else:
-                pass
+            #         res_offsets.append(valid_offsets_keep[KEY])
+            #         res_altitudes.append(valid_altitudes_keep[KEY])
+            # else:
+            #     pass
+            
             if len(contours_failed_at_all)>0:
                 failed_contours_vertices.extend(contours_failed_at_all)
             pass
@@ -895,7 +987,17 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
         self.outputs['polygons'].sv_set(res_faces)
         self.outputs['offsets'].sv_set(res_offsets)
         self.outputs['altitudes'].sv_set(res_altitudes)
-        self.outputs['failed_contours_vertices'].sv_set(errors_vertices)
+        # Test any data in errors
+        is_errors = False
+        for elem in errors_vertices:
+            if len(elem)>0:
+                is_errors = True
+                break
+
+        if is_errors:
+            self.outputs['failed_contours_vertices'].sv_set(errors_vertices)
+        else:
+            self.outputs['failed_contours_vertices'].sv_set([])
 
         pass
     
