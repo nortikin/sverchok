@@ -495,9 +495,8 @@
     - SvCSGBooleanNodeMK2
     - SvWafelNode
     - ---
-    - SvStraightSkeleton2DExtrude
     - SvStraightSkeleton2DOffset
-    - SvStraightSkeleton2DExtrudeInternal
+    - SvStraightSkeleton2DExtrude
 
 - ---
 
