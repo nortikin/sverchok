@@ -189,6 +189,16 @@ class SvMeshViewer(Show3DProperties, SvViewerNode, SverchCustomTreeNode, bpy.typ
                     mat_i = [int(mi) for _, mi in zip(me_data.mesh.polygons, cycle(mat_i))]
                 me_data.mesh.polygons.foreach_set('material_index', mat_i)
             me_data.set_smooth(self.is_smooth_mesh)
+            # https://blender.stackexchange.com/questions/274330/set-shade-smooth-with-a-script
+            # if self.is_smooth_mesh:
+            #     with bpy.context.temp_override(selected_editable_objects=[bpy.data.objects[me_data.mesh.name]]):
+            #         bpy.ops.object.shade_smooth(use_auto_smooth=True)
+            #         pass
+            # else:
+            #     with bpy.context.temp_override(selected_editable_objects=[bpy.data.objects[me_data.mesh.name]]):
+            #         bpy.ops.object.shade_flat()
+            #         pass
+
 
 
         # regenerate object data blocks

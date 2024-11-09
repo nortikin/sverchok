@@ -369,15 +369,27 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
     #     description='off - contours, on - mesh',
     #     default=True, update=updateNode) # type: ignore
 
-    join_modes = [
+    source_objects_join_modes = [
             ('SPLIT', "Split", "Separate the result meshes into individual meshes", 'SNAP_VERTEX', 0),
-            ('KEEP' , "Keep", "Keep as source meshes", 'SYNTAX_ON', 1),
-            ('MERGE', "Merge", "Join all results meshes into a single mesh", 'STICKY_UVS_LOC', 2)
+            ('KEEP' , "Keep", "Keep as input meshes", 'SYNTAX_ON', 1),
+            ('MERGE', "Merge", "Join all meshes into a single mesh", 'STICKY_UVS_LOC', 2)
         ]
 
-    join_mode : EnumProperty(
+    source_objects_join_mode : EnumProperty(
+        name = "How process input objects",
+        items = source_objects_join_modes,
+        default = 'KEEP',
+        update = updateNode) # type: ignore
+
+    results_join_modes = [
+            ('SPLIT', "Split", "Separate source meshes into individual meshes", 'SNAP_VERTEX', 0),
+            ('KEEP' , "Keep", "Keep as source meshes", 'SYNTAX_ON', 1),
+            ('MERGE', "Merge", "Join all source meshes into a single mesh (if you need general external contour)", 'STICKY_UVS_LOC', 2)
+        ]
+
+    results_join_mode : EnumProperty(
         name = "Output mode",
-        items = join_modes,
+        items = results_join_modes,
         default = 'KEEP',
         update = updateNode) # type: ignore
 
@@ -408,8 +420,16 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
         description="Invert mask of sites. Has no influence if socket is not connected (All sites are used)",
         update = updateNode) # type: ignore
 
+    def draw_vertices_in_socket(self, socket, context, layout):
+        if socket.is_linked:  # linked INPUT or OUTPUT
+            layout.label(text=f"{socket.label}. {socket.objects_number or ''}")
+        else:
+            layout.label(text=f'{socket.label}')
+        layout.prop(self, 'source_objects_join_mode', text='')
+        pass
+
     def draw_vertices_out_socket(self, socket, context, layout):
-        layout.prop(self, 'join_mode', text='')
+        layout.prop(self, 'results_join_mode', text='')
         if socket.is_linked:  # linked INPUT or OUTPUT
             layout.label(text=f"{socket.label}. {socket.objects_number or ''}")
         else:
@@ -512,6 +532,7 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
         self.inputs.new('SvTextSocket'    , 'file_name')
 
         self.inputs['vertices'].label = 'Vertices'
+        self.inputs['vertices'].custom_draw = 'draw_vertices_in_socket'
         self.inputs['edges'].label = 'Edges'
         self.inputs['polygons'].label = 'Polygons'
         self.inputs['ss_shapes_modes'].custom_draw = 'draw_ss_shapes_modes_in_socket'
@@ -526,16 +547,16 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
         self.outputs.new('SvVerticesSocket', 'vertices')
         self.outputs.new('SvStringsSocket' , 'edges')
         self.outputs.new('SvStringsSocket' , 'polygons')
-        self.outputs.new('SvStringsSocket' , 'offsets')
-        self.outputs.new('SvStringsSocket' , 'altitudes')
+        #self.outputs.new('SvStringsSocket' , 'offsets')
+        #self.outputs.new('SvStringsSocket' , 'altitudes')
         self.outputs.new('SvVerticesSocket', 'failed_contours_vertices')
 
         self.outputs['vertices'].label = 'Vertices'
         self.outputs['vertices'].custom_draw = 'draw_vertices_out_socket'
         self.outputs['edges'].label = 'Edges'
         self.outputs['polygons'].label = 'Polygons'
-        self.outputs['offsets'].label = 'Offsets'
-        self.outputs['altitudes'].label = 'Altitudes'
+        #self.outputs['offsets'].label = 'Offsets'
+        #self.outputs['altitudes'].label = 'Altitudes'
         self.outputs['failed_contours_vertices'].label = 'No wrong contours verts'
         self.outputs['failed_contours_vertices'].custom_draw = 'draw_failed_contours_vertices_out_socket'
 
@@ -655,7 +676,7 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
             if not faces_i or not faces_i[0]:
                 raise Exception(f"Error: Object {I} has no faces. Straight Skeleton Offset is not possible. Objects should be flat.")
             
-            # Попытка разделить graph mesh  на контуры через networkx не особо помогла
+            # Попытка разделить graph mesh  на контуры через networkx не особо помогла. Производительность не улучшилась, но библиотека всё равно интересная
             # time_1_1 = time()
             # try:
             #     # Разделить объект на контуры:
@@ -691,8 +712,9 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
                     # Keep shape to show as errors in the future
                     contours_failed_at_all.append(object_I_plane_IJ_verts)
                     continue
-                time_2_1 = time()-time_2_1
-                print(f'object {I}, part {IJ} calc baunadries: {time_2_1}')
+                if self.verbose_messages_while_process==True:
+                    time_2_1 = time()-time_2_1
+                    print(f'object {I}, part {IJ} calc baunadries: {time_2_1}')
 
                 if not object_I_plane_IJ_contours_edges:
                     raise Exception(f"Error: Object {I} has no boundaries. Extrusion is not possible. Objects should be flat.")
@@ -720,8 +742,9 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
                 srt = sort_together([areas, object_I_plane_IJ_contours, ])
                 object_I_plane_IJ_contours_sorted_by_area = list(reversed(srt[1]))  # First contour is outer boundary - another is holes
 
-                time_3_1 = time()-time_3_1
-                print(f'object {I}, part {IJ} process baundaries: {time_3_1}')
+                if self.verbose_messages_while_process==True:
+                    time_3_1 = time()-time_3_1
+                    print(f'object {I}, part {IJ} process baundaries: {time_3_1}')
 
                 if shapes_mode_1 in [ 'ORIGINAL_BOUNDARIES', 'EXCLUDE_HOLES', 'INVERT_HOLES', ]: # and len(object_boundaries_sorted_by_area)>1:
                     shapes_mode_1_id = [info for info in self.ss_shapes_modes if info[0]==shapes_mode_1][0][4]
@@ -733,8 +756,10 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
                     raise Exception(f"unknown Shapes mode value: '{_shapes_modes[I]}'. Allowed values {allowed_shapes_modes}")
                 pass
             pass
-            time_4_1 = time()-time_4_1
-            print(f'object calc baunadries general time: {time_4_1}')
+
+            if self.verbose_messages_while_process==True:
+                time_4_1 = time()-time_4_1
+                print(f'object calc baunadries general time: {time_4_1}')
         pass
 
         errors_vertices = []
@@ -749,12 +774,14 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
             else:
                 raise Exception(f"Unknown res_type={self.res_type}. Allowed only 'CONTOURS' or 'FACES'.")
 
-            join_mode_id = [info for info in self.join_modes if info[0]==self.join_mode][0][4]
+            source_objects_join_mode_id = [info for info in self.source_objects_join_modes if info[0]==self.source_objects_join_mode][0][4]
+            results_join_mode_id = [info for info in self.results_join_modes if info[0]==self.results_join_mode][0][4]
             data = {
                 'objects' : [],
                 'force_z_zero'          : self.force_z_zero, 
                 'res_type': res_type, 
-                'join_mode'             : join_mode_id,
+                'source_objects_join_mode'             : source_objects_join_mode_id,
+                'results_join_mode'             : results_join_mode_id,
                 'only_tests_for_valid'  : self.only_tests_for_valid, 
                 'verbose'               : self.verbose_messages_while_process,
             }
@@ -985,8 +1012,8 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
         self.outputs['vertices'].sv_set(res_verts)
         self.outputs['edges'].sv_set(res_edges)
         self.outputs['polygons'].sv_set(res_faces)
-        self.outputs['offsets'].sv_set(res_offsets)
-        self.outputs['altitudes'].sv_set(res_altitudes)
+        #self.outputs['offsets'].sv_set(res_offsets)
+        #self.outputs['altitudes'].sv_set(res_altitudes)
         # Test any data in errors
         is_errors = False
         for elem in errors_vertices:
