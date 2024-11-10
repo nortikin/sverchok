@@ -1,5 +1,5 @@
-Stright Skeleton 2d (Alpha)
-===========================
+Straight Skeleton 2d (Alpha)
+============================
 
 .. image:: https://github.com/user-attachments/assets/9f51d3d0-822f-43ee-adde-ce06acc09ea2
   :target: https://github.com/user-attachments/assets/9f51d3d0-822f-43ee-adde-ce06acc09ea2
@@ -165,8 +165,8 @@ If you try high poly like Besier 2D with many points and hi resolution (1) then 
 Examples
 ========
 
-Hexagon with Stright Skeleton
------------------------------
+Hexagon with Straight Skeleton
+------------------------------
 
 .. image:: https://github.com/user-attachments/assets/61342e4d-7a10-4903-90e9-5e654db42dae
   :target: https://github.com/user-attachments/assets/61342e4d-7a10-4903-90e9-5e654db42dae
