@@ -1,8 +1,8 @@
-Stright Skeleton 2d (Alpha)
-===========================
+Straight Skeleton 2d (Alpha)
+============================
 
-.. image:: https://github.com/user-attachments/assets/2a141705-62e6-489b-a4be-9333df8c7951
-  :target: https://github.com/user-attachments/assets/2a141705-62e6-489b-a4be-9333df8c7951
+.. image:: https://github.com/user-attachments/assets/9f51d3d0-822f-43ee-adde-ce06acc09ea2
+  :target: https://github.com/user-attachments/assets/9f51d3d0-822f-43ee-adde-ce06acc09ea2
 
 !!! **"Exclude height" parameter was renamed into "Restrict Height" !!! Images will be update later...**
 
@@ -55,21 +55,19 @@ Inputs
     .. image:: https://github.com/user-attachments/assets/7828d4c0-eac3-4c7d-992e-c527cdcbfbe0
       :target: https://github.com/user-attachments/assets/7828d4c0-eac3-4c7d-992e-c527cdcbfbe0
 
-|
-
 If you do not connect any lists of floats values then this value will be used for every objects
 connected into this node:
 
     .. image:: https://github.com/user-attachments/assets/51ccfb1a-30c5-43ed-9b9f-b2e1c6402cb8
       :target: https://github.com/user-attachments/assets/51ccfb1a-30c5-43ed-9b9f-b2e1c6402cb8
 
-| 
-
 If you connect list of floats then it will be used per objects:
 
     .. image:: https://github.com/user-attachments/assets/f40f4f4f-92dd-4d41-9eae-ddb890214fb6
       :target: https://github.com/user-attachments/assets/f40f4f4f-92dd-4d41-9eae-ddb890214fb6
 
+- **Shapes mode**. Original, Exckude Holes, Invert Holes
+- **Restrict Height**.
 - **Height** - Height of object or objects. If used single value then this value vill be used for every objects. If socket is connected with float values then values will be used per objects:
 
 .. raw:: html
@@ -78,8 +76,6 @@ If you connect list of floats then it will be used per objects:
         <source src="https://github.com/user-attachments/assets/97a9e1f8-cd46-451e-902d-3606ed53b255" type="video/mp4">
     Your browser does not support the video tag.
     </video>
-
-|
 
 - **Mask of objects** - Mask hide objects. If element of boolean mask is True then object are hidden. If length of mask is more than length of objects then exceeded values will be omitted.
 
@@ -90,8 +86,6 @@ If you connect list of floats then it will be used per objects:
     Your browser does not support the video tag.
     </video>
 
-|
-
     You can use index mask of integer values. If index is out of count of objects then it will be omitted. Equals values are merged.
 
 .. raw:: html
@@ -101,16 +95,13 @@ If you connect list of floats then it will be used per objects:
     Your browser does not support the video tag.
     </video>
 
-|
-|
-
 Parameters
 ----------
 
 .. image:: https://github.com/user-attachments/assets/0119d5b9-09d2-49a4-b4fd-91e0afdcf76c
   :target: https://github.com/user-attachments/assets/0119d5b9-09d2-49a4-b4fd-91e0afdcf76c
 
-- **Join mode**. **Split**, **Keep**, **Merge**.
+- **Results Join mode**. **Split**, **Keep**, **Merge**.
     - **Split** - If some of objects has several independent meshes then they will be splitten individually and you can get more object on output than on input. (Mask will hide all meshes in multimesh objects)
 
         .. image:: https://github.com/user-attachments/assets/5d76cd4f-bb2a-4a05-b218-85ae0d96adee
@@ -126,7 +117,7 @@ Parameters
         .. image:: https://github.com/user-attachments/assets/bd119bb8-ad08-4983-be67-d97c20ad8bb3
           :target: https://github.com/user-attachments/assets/bd119bb8-ad08-4983-be67-d97c20ad8bb3
 
-    - **Restrict Height** (old name is "Exclude Height")- If you want to see objects without height limits just turn it off. All objects will be recalulated without heights limits (in the input field or socket).
+    - **Restrict Height** -  If you want to see objects without height limits just turn it off. All objects will be recalulated without heights limits (in the input field or socket).
 
         .. raw:: html
 
@@ -174,8 +165,8 @@ If you try high poly like Besier 2D with many points and hi resolution (1) then 
 Examples
 ========
 
-Hexagon with Stright Skeleton
------------------------------
+Hexagon with Straight Skeleton
+------------------------------
 
 .. image:: https://github.com/user-attachments/assets/61342e4d-7a10-4903-90e9-5e654db42dae
   :target: https://github.com/user-attachments/assets/61342e4d-7a10-4903-90e9-5e654db42dae
@@ -215,3 +206,8 @@ This shape with autosmooth:
 
 .. image:: https://github.com/user-attachments/assets/10c38207-9d24-4b00-bcd6-84d502bc964e
   :target: https://github.com/user-attachments/assets/10c38207-9d24-4b00-bcd6-84d502bc964e
+
+DEVELOPMENT
+===========
+
+If you have skills for work with CGAL see: https://github.com/satabol/SVCGAL

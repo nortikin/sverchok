@@ -179,6 +179,7 @@
         - SvCSGBooleanNodeMK2
         - SvWafelNode
         - ---
+        - SvStraightSkeleton2DOffset
         - SvStraightSkeleton2DExtrude
 
     - Analyze Mesh:
