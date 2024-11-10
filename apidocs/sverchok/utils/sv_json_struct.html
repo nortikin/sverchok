@@ -409,7 +409,7 @@ If a Blender file does not posses the collection the empty collection will be ge
     def build(self, sockets, factories, imported_structs):
         name = self._struct[&#34;name&#34;]
         # create the socket in the method because identifier is hidden is shown only inside the class
-        interface_class = bpy.types.NodeSocketInterface.bl_rna_get_subclass_py(self.read_bl_type())
+        interface_class = InterfaceSocket.bl_rna_get_subclass_py(self.read_bl_type())
         socket_type = interface_class.bl_socket_idname
         socket = sockets.new(socket_type, name)  # the method gives its own identifier
         imported_structs[self.type, socket.id_data.name, self.identifier] = socket.identifier
@@ -871,7 +871,7 @@ The methods will get empty dictionary for storing advanced properties</p></div>
         # where sockets would be defined by pressing buttons for example like in the node group interface.
         # there is no sense of exporting information about sockets of group input and output nodes
         # they are totally controlled by Blender update system.
-        if node.bl_idname not in [&#39;NodeGroupInput&#39;, &#39;NodeGroupOutput&#39;]:
+        if node.bl_idname not in SKIP_SOCKETS:
             for socket in node.inputs:
                 raw_struct = factories.sock(socket.identifier, self.logger).export(socket, factories, dependencies)
                 self._struct[&#34;inputs&#34;][socket.identifier] = raw_struct
@@ -909,19 +909,24 @@ The methods will get empty dictionary for storing advanced properties</p></div>
         # it will cause replacing of all sockets with wrong identifiers in the group node.
         # clearing and adding sockets of Group input and Group output nodes
         # immediately cause their rebuilding by Blender, so JSON file does not save information about their sockets.
-        if node.bl_idname not in {&#39;NodeGroupInput&#39;, &#39;NodeGroupOutput&#39;}:
-            node.inputs.clear()
-        for sock_identifier, raw_struct in self._struct.get(&#34;inputs&#34;, dict()).items():
-            with self.logger.add_fail(&#34;Add in socket&#34;,
-                                      f&#34;Tree: {node.id_data.name}, Node {node.name}, Sock: {sock_identifier}&#34;):
-                factories.sock(sock_identifier, self.logger, raw_struct).build(node.inputs, factories, imported_data)
+        if node.bl_idname not in SKIP_SOCKETS:
+            try:
+                node.inputs.clear()
+            except Exception as e:
+                print(f&#34;Can&#39;t clear inputs for {node.bl_idname}: {e}&#34;)
 
-        if node.bl_idname not in {&#39;NodeGroupInput&#39;, &#39;NodeGroupOutput&#39;}:
+            for sock_identifier, raw_struct in self._struct.get(&#34;inputs&#34;, dict()).items():
+                with self.logger.add_fail(&#34;Add in socket&#34;,
+                                          f&#34;Tree: {node.id_data.name}, Node {node.name}, Sock: {sock_identifier}&#34;):
+                    factories.sock(sock_identifier, self.logger, raw_struct).build(node.inputs, factories, imported_data)
+
+        if node.bl_idname not in SKIP_SOCKETS:
             node.outputs.clear()
-        for sock_identifier, raw_struct in self._struct.get(&#34;outputs&#34;, dict()).items():
-            with self.logger.add_fail(&#34;Add out socket&#34;,
-                                      f&#34;Tree: {node.id_data.name}, Node {node.name}, Sock: {sock_identifier}&#34;):
-                factories.sock(sock_identifier, self.logger, raw_struct).build(node.outputs, factories, imported_data)
+
+            for sock_identifier, raw_struct in self._struct.get(&#34;outputs&#34;, dict()).items():
+                with self.logger.add_fail(&#34;Add out socket&#34;,
+                                          f&#34;Tree: {node.id_data.name}, Node {node.name}, Sock: {sock_identifier}&#34;):
+                    factories.sock(sock_identifier, self.logger, raw_struct).build(node.outputs, factories, imported_data)
 
         if hasattr(node, &#39;load_from_json&#39;):
             with self.logger.add_fail(&#34;Setting advance node properties&#34;,
@@ -1583,6 +1588,75 @@ then a tree structure can use the node structure that we chose</p></div>
 </dd>
 </dl>
 </dd>
+<dt id="sverchok.utils.sv_json_struct.SvNodeTreeInterface"><code class="flex name class">
+<span>class <span class="ident">SvNodeTreeInterface</span></span>
+<span>(</span><span>*args, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Built-in mutable sequence.</p>
+<p>If no argument is given, the constructor creates a new empty list.
+The argument must be an iterable if specified.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvNodeTreeInterface(list):
+    if bpy.app.version &gt;= (4,0):
+        def __init__(self, interface, in_out, sockets):
+            super().__init__(sockets)
+            self.in_out = in_out
+            self.interface = interface
+
+        def __repr__(self):
+            return repr(self.interface)
+
+        @classmethod
+        def get_inputs(cls, tree):
+            return SvNodeTreeInterface(
+                    interface = tree.interface,
+                    in_out = &#39;INPUT&#39;,
+                    sockets = [item for item in tree.interface.items_tree if item.item_type == &#39;SOCKET&#39; and item.in_out == &#39;INPUT&#39;])
+
+        @classmethod
+        def get_outputs(cls, tree):
+            return SvNodeTreeInterface(
+                    interface = tree.interface,
+                    in_out = &#39;OUTPUT&#39;,
+                    sockets = [item for item in tree.interface.items_tree if item.item_type == &#39;SOCKET&#39; and item.in_out == &#39;OUTPUT&#39;])
+
+        def new(self, socket_type, name):
+            return self.interface.new_socket(name=name, in_out=self.in_out, socket_type=socket_type)
+
+    else:
+
+        @classmethod
+        def get_inputs(cls, tree):
+            return tree.inputs
+
+        @classmethod
+        def get_outputs(cls, tree):
+            return tree.outputs</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.list</li>
+</ul>
+<h3>Static methods</h3>
+<dl>
+<dt id="sverchok.utils.sv_json_struct.SvNodeTreeInterface.get_inputs"><code class="name flex">
+<span>def <span class="ident">get_inputs</span></span>(<span>tree)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_json_struct.SvNodeTreeInterface.get_outputs"><code class="name flex">
+<span>def <span class="ident">get_outputs</span></span>(<span>tree)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
 <dt id="sverchok.utils.sv_json_struct.TextureStruct"><code class="flex name class">
 <span>class <span class="ident">TextureStruct</span></span>
 <span>(</span><span>name, logger=None, struct=None)</span>
@@ -1683,11 +1757,11 @@ then a tree structure can use the node structure that we chose</p></div>
         for link in _ordered_links(tree):
             self._struct[&#34;links&#34;].append(factories.link(None, self.logger).export(link, factories, dependencies))
 
-        for socket in tree.inputs:
+        for socket in SvNodeTreeInterface.get_inputs(tree):
             raw_struct = factories.interface(socket.name, self.logger).export(socket, factories, dependencies)
             self._struct[&#34;inputs&#34;][socket.identifier] = raw_struct
 
-        for socket in tree.outputs:
+        for socket in SvNodeTreeInterface.get_outputs(tree):
             raw_struct = factories.interface(socket.name, self.logger).export(socket, factories, dependencies)
             self._struct[&#34;outputs&#34;][socket.identifier] = raw_struct
 
@@ -1742,11 +1816,11 @@ then a tree structure can use the node structure that we chose</p></div>
     def build_interface(self, tree, factories, imported_structs):
         for sock_name, raw_struct in self._struct[&#34;inputs&#34;].items():
             with self.logger.add_fail(&#34;Create tree in socket&#34;, f&#34;Tree: {tree.name}, Sock: {sock_name}&#34;):
-                factories.interface(sock_name, self.logger, raw_struct).build(tree.inputs, factories, imported_structs)
+                factories.interface(sock_name, self.logger, raw_struct).build(SvNodeTreeInterface.get_inputs(tree), factories, imported_structs)
 
         for sock_name, raw_struct in self._struct[&#34;outputs&#34;].items():
             with self.logger.add_fail(&#34;Create tree out socket&#34;, f&#34;Tree: {tree.name}, Sock: {sock_name}&#34;):
-                factories.interface(sock_name, self.logger, raw_struct).build(tree.outputs, factories, imported_structs)
+                factories.interface(sock_name, self.logger, raw_struct).build(SvNodeTreeInterface.get_outputs(tree), factories, imported_structs)
 
     def read_bl_type(self):
         return self._struct[&#34;bl_idname&#34;]</code></pre>
@@ -1921,6 +1995,13 @@ then a tree structure can use the node structure that we chose</p></div>
 <ul class="">
 <li><code><a title="sverchok.utils.sv_json_struct.StructFactory.get_factory" href="#sverchok.utils.sv_json_struct.StructFactory.get_factory">get_factory</a></code></li>
 <li><code><a title="sverchok.utils.sv_json_struct.StructFactory.grab_from_module" href="#sverchok.utils.sv_json_struct.StructFactory.grab_from_module">grab_from_module</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.sv_json_struct.SvNodeTreeInterface" href="#sverchok.utils.sv_json_struct.SvNodeTreeInterface">SvNodeTreeInterface</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.sv_json_struct.SvNodeTreeInterface.get_inputs" href="#sverchok.utils.sv_json_struct.SvNodeTreeInterface.get_inputs">get_inputs</a></code></li>
+<li><code><a title="sverchok.utils.sv_json_struct.SvNodeTreeInterface.get_outputs" href="#sverchok.utils.sv_json_struct.SvNodeTreeInterface.get_outputs">get_outputs</a></code></li>
 </ul>
 </li>
 <li>
