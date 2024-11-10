@@ -452,9 +452,9 @@ BY_PARAMETER = 'T'
 BY_LENGTH = 'L'
 def curve_exponential_map(surface, uv_curve, v_radius, u_steps, v_steps, u_mode=BY_PARAMETER, length_resolution=50, closed_u=False, closed_v=False):
     u_min, u_max = uv_curve.get_u_bounds()
-    center_us = np.linspace(u_min, u_max, num=u_steps)
     if u_mode == BY_PARAMETER:
         orig_us = center_us
+        center_us = np.linspace(u_min, u_max, num=u_steps)
     else:
         curve_3d = SvCurveOnSurface(uv_curve, surface, axis=2)
         calculator = SvCurveLengthSolver(curve_3d)
@@ -462,13 +462,9 @@ def curve_exponential_map(surface, uv_curve, v_radius, u_steps, v_steps, u_mode=
         length = calculator.get_total_length()
         lengths = np.linspace(0, length, num=u_steps)
         orig_us = calculator.solve(lengths)
-    orig_vs = np.linspace(0, v_radius, num=v_steps)
+        center_us = lengths
     orig_centers = np.zeros((u_steps, 3))
     orig_centers[:,0] = center_us
-
-    grid_us, grid_vs = np.meshgrid(orig_us, orig_vs)
-    grid_us = grid_us.flatten()
-    grid_vs = grid_vs.flatten()
 
     uv_starts = uv_curve.evaluate_array(orig_us)
     uv_tangents = uv_curve.tangent_array(orig_us)
