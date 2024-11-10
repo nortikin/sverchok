@@ -1,5 +1,5 @@
-Straight Skeleton 2d (Alpha)
-============================
+Straight Skeleton 2d Extrude (Alpha)
+====================================
 
 .. image:: https://github.com/user-attachments/assets/9f51d3d0-822f-43ee-adde-ce06acc09ea2
   :target: https://github.com/user-attachments/assets/9f51d3d0-822f-43ee-adde-ce06acc09ea2
