@@ -107,11 +107,9 @@ class ExamplesImportTest(SverchokTestCase):
                 # assuming these are all jsons for now.
                 name = basename(path)
 
-                if name in UNITTEST_SKIPLIST:
-                    sv_logger.info(f"Skipping test import of: {name} - the tree in the skip list")
-                    continue
-
                 with self.subTest(file=name):
+                    if name in UNITTEST_SKIPLIST:
+                        self.skipTest("The tree in the skip list")
                     # info("Importing: %s", name)
                     with self.temporary_node_tree("ImportedTree") as new_tree:
                         # Do not try to process imported tree,
