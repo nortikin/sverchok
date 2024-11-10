@@ -72,3 +72,9 @@ If you try high poly like Besier 2D with many points and hi resolution (1) then 
 
 Examples
 ========
+
+
+DEVELOPMENT
+===========
+
+If you have skills for work with CGAL see: https://github.com/satabol/SVCGAL

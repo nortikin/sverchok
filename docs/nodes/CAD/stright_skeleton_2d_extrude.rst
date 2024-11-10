@@ -206,3 +206,8 @@ This shape with autosmooth:
 
 .. image:: https://github.com/user-attachments/assets/10c38207-9d24-4b00-bcd6-84d502bc964e
   :target: https://github.com/user-attachments/assets/10c38207-9d24-4b00-bcd6-84d502bc964e
+
+DEVELOPMENT
+===========
+
+If you have skills for work with CGAL see: https://github.com/satabol/SVCGAL
