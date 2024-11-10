@@ -1,0 +1,297 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Straight Skeleton 2d Offset (Alpha) &mdash; Sverchok 1, 2, 0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+    <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
+      <script src="../../_static/documentation_options.js?v=773c2105"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Number" href="../number/number_index.html" />
+    <link rel="prev" title="Straight Skeleton 2d (Alpha)" href="straight_skeleton_2d_extrude.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../main.html" class="icon icon-home">
+            Sverchok
+              <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../introduction/introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_interface/user_interface.html">User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tree_evaluation_system.html">Node tree evaluation system</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data_structure/data_structure_index.html">Data structure</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../nodes.html">Nodes</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../generator/generator_index.html">Generators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generators_extended/generators_extended_index.html">Generators Extended</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../curve/curve_index.html">Curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../surface/surface_index.html">Surfaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../field/field_index.html">Fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../solid/solid_index.html">Solids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spatial/spatial_index.html">Spatial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../transforms/transforms_index.html">Transforms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../analyzer/analyzer_index.html">Analyzers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modifier_change/modifier_change_index.html">Modifier Change</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modifier_make/modifier_make_index.html">Modifier Make</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="CAD_index.html">CAD</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="crop_mesh_2d.html">Crop Mesh 2D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="edges_intersect_mk3.html">Intersect Edges</a></li>
+<li class="toctree-l3"><a class="reference internal" href="edges_to_faces_2d.html">Edges to Faces 2D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="embed%20mesh.html">Embed Mesh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="inset_special_mk2.html">Inset Special</a></li>
+<li class="toctree-l3"><a class="reference internal" href="merge_mesh_2d.html">Merge Mesh 2d</a></li>
+<li class="toctree-l3"><a class="reference internal" href="merge_mesh_2d_lite.html">Merge mesh 2D lite</a></li>
+<li class="toctree-l3"><a class="reference internal" href="straight_skeleton_2d_extrude.html">Straight Skeleton 2d (Alpha)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="straight_skeleton_2d_extrude.html#examples">Examples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="straight_skeleton_2d_extrude.html#development">DEVELOPMENT</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Straight Skeleton 2d Offset (Alpha)</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#install-dependency">Install dependency</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#output-sockets">Output sockets</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#performance">Performance</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#examples">Examples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#development">DEVELOPMENT</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../number/number_index.html">Number</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../vector/vector_index.html">Vector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../matrix/matrix_index.html">Matrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../quaternion/quaternion_index.html">Quaternion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../color/color_index.html">Color</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../logic/logic_index.html">Logic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_main/list_main_index.html">List Main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_struct/list_struct_index.html">List Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_masks/list_masks_index.html">List Masks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_mutators/list_mutators_index.html">List Mutators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../dictionary/dictionary_index.html">Dictionary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../viz/viz_index.html">Viz</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../text/text_index.html">Text</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../script/script_index.html">Script</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scene/scene_index.html">Scene</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../object_nodes/object_nodes_index.html">Object</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../layout/layout_index.html">Layout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../network/network_index.html">Network</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pulga_physics/pulga_physics_index.html">Pulga Physics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../exchange/exchange_index.html">Exchange</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../svg/svg_index.html">SVG</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/celling.html">Celling design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing/contributing_to_sverchok.html">Contributing to sverchok</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../main.html">Sverchok</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../main.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../nodes.html">Nodes</a></li>
+          <li class="breadcrumb-item"><a href="CAD_index.html">CAD</a></li>
+      <li class="breadcrumb-item active">Straight Skeleton 2d Offset (Alpha)</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/nodes/CAD/straight_skeleton_2d_offset.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="straight-skeleton-2d-offset-alpha">
+<h1>Straight Skeleton 2d Offset (Alpha)<a class="headerlink" href="#straight-skeleton-2d-offset-alpha" title="Link to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/68a3e88e-8e16-4c0c-8b68-58d81312a265"><img alt="https://github.com/user-attachments/assets/68a3e88e-8e16-4c0c-8b68-58d81312a265" src="https://github.com/user-attachments/assets/68a3e88e-8e16-4c0c-8b68-58d81312a265" />
+</a>
+<section id="functionality">
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
+<p>This node is a python wrapper of function “Skeleton Offset 2d” of CGAL <a class="reference external" href="https://doc.cgal.org/latest/Straight_skeleton_2/index.html">https://doc.cgal.org/latest/Straight_skeleton_2/index.html</a>.</p>
+<p>This package implements straight skeletons offset for two-dimensional polygons with holes.</p>
+<p>Simple example:</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/fb5613bc-6ba0-426c-b6ed-be707b333747"><img alt="https://github.com/user-attachments/assets/fb5613bc-6ba0-426c-b6ed-be707b333747" src="https://github.com/user-attachments/assets/fb5613bc-6ba0-426c-b6ed-be707b333747" />
+</a>
+<p>More complex example:</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/afa62b30-d5e4-4877-8efc-ccade1730e63"><img alt="https://github.com/user-attachments/assets/afa62b30-d5e4-4877-8efc-ccade1730e63" src="https://github.com/user-attachments/assets/afa62b30-d5e4-4877-8efc-ccade1730e63" />
+</a>
+</section>
+<section id="install-dependency">
+<h2>Install dependency<a class="headerlink" href="#install-dependency" title="Link to this heading">¶</a></h2>
+<p>To use node install additional library pySVCGAL in the Extra Nodes Section:</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/548ad0a2-86af-4f12-9f39-230f6cda7d41"><img alt="https://github.com/user-attachments/assets/548ad0a2-86af-4f12-9f39-230f6cda7d41" src="https://github.com/user-attachments/assets/548ad0a2-86af-4f12-9f39-230f6cda7d41" />
+</a>
+</section>
+<section id="inputs">
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
+<ul>
+<li><dl>
+<dt><strong>Vertices</strong>, <strong>Edges</strong>, <strong>Faces</strong> - Input Mesh (2D only) or Meshes. You can use several meshes as input.</dt><dd><a class="reference external image-reference" href="https://github.com/user-attachments/assets/460ffdd6-f2d0-4277-9137-fd9e56862f42"><img alt="https://github.com/user-attachments/assets/460ffdd6-f2d0-4277-9137-fd9e56862f42" src="https://github.com/user-attachments/assets/460ffdd6-f2d0-4277-9137-fd9e56862f42" />
+</a>
+</dd>
+</dl>
+</li>
+<li><p><strong>Join mode</strong>. Preprocess source meshes. Split, Keep, Merge. <strong>Split</strong> - separate source meshes into independent islands and process them individually. Results boundaries can overlaps. <strong>Keep</strong> - If source meshes has several islands then they has influence. <strong>Merge</strong> - Combine all islands to influence all islands.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/3cc4b707-2068-4743-8c81-2b707edfc8ef"><img alt="https://github.com/user-attachments/assets/3cc4b707-2068-4743-8c81-2b707edfc8ef" src="https://github.com/user-attachments/assets/3cc4b707-2068-4743-8c81-2b707edfc8ef" />
+</a>
+</div></blockquote>
+</li>
+<li><p><strong>Shapes mode</strong>. Original, Exclude Holes, Invert Holes. Original - Process original meshes. Exclude holes - process only external boundaries. Invert Holes - process holes as islands, exclude external boundaries from process.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/f3b577f9-25c1-424b-ac55-0b7ceb754877"><img alt="https://github.com/user-attachments/assets/f3b577f9-25c1-424b-ac55-0b7ceb754877" src="https://github.com/user-attachments/assets/f3b577f9-25c1-424b-ac55-0b7ceb754877" />
+</a>
+</div></blockquote>
+</li>
+<li><p><strong>Offsets</strong>, <strong>Altitudes</strong>. <strong>Offsets</strong> - distance from contour in plane (one can use negative value). <strong>Altitudes</strong> - results heights in Z axis (one can use negative value).</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/1f5868a6-141d-4a32-bb9a-1596f2f954a9"><img alt="https://github.com/user-attachments/assets/1f5868a6-141d-4a32-bb9a-1596f2f954a9" src="https://github.com/user-attachments/assets/1f5868a6-141d-4a32-bb9a-1596f2f954a9" />
+</a>
+</div></blockquote>
+</li>
+</ul>
+<p>If you do not connect any lists of floats values then this value will be used for every objects
+connected into this node:</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/21b5edc3-5304-4a40-afb8-f1a2b5781443"><img alt="https://github.com/user-attachments/assets/21b5edc3-5304-4a40-afb8-f1a2b5781443" src="https://github.com/user-attachments/assets/21b5edc3-5304-4a40-afb8-f1a2b5781443" />
+</a>
+</div></blockquote>
+<ul class="simple">
+<li><p><strong>Mask of objects</strong> - Mask hide objects. If element of boolean mask is True then object are hidden. If length of mask is more than length of objects then exceeded values will be omitted.</p></li>
+</ul>
+</section>
+<section id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/bc18752b-7ce5-43dd-b0c1-df658a057ded"><img alt="https://github.com/user-attachments/assets/bc18752b-7ce5-43dd-b0c1-df658a057ded" src="https://github.com/user-attachments/assets/bc18752b-7ce5-43dd-b0c1-df658a057ded" />
+</a>
+<ul>
+<li><p><strong>Result Type</strong>. <strong>Contours</strong> or <strong>Faces</strong>. <strong>Contours</strong> - results are only edges. <strong>Faces</strong> - Results are faces with holes.</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/7c8edb34-aef2-43a0-907e-83b18e833fe2"><img alt="https://github.com/user-attachments/assets/7c8edb34-aef2-43a0-907e-83b18e833fe2" src="https://github.com/user-attachments/assets/7c8edb34-aef2-43a0-907e-83b18e833fe2" />
+</a>
+</div></blockquote>
+</li>
+<li><dl>
+<dt><strong>Results Join Mode</strong>. <strong>Split</strong>, <strong>Keep</strong>, <strong>Merge</strong>.</dt><dd><ul>
+<li><p><strong>Split</strong> - Separate all results into independent meshes. <strong>Keep</strong> - If some of objects has several independent meshes then they will be as one object on output. <strong>Merge</strong> - This node will merge all vertices, edjes, and faces into a single object. Results in merge mode can be overlapped.</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/e469b38b-a0de-4e7a-a595-a027e77aae48"><img alt="https://github.com/user-attachments/assets/e469b38b-a0de-4e7a-a595-a027e77aae48" src="https://github.com/user-attachments/assets/e469b38b-a0de-4e7a-a595-a027e77aae48" />
+</a>
+</li>
+<li><p><strong>Only Tests</strong> - If you have a hi poly mesh like imported SVG file one can save time and do not Skeletonize all meshes before fix all. You can connect viewer draw into the “Wrong Contours Verts” with red color or any color you prefer for errors to see any wrong contrours. Red dots are wrong contours.</p></li>
+<li><p><strong>Force z=0.0</strong> - To force use meshes as planes</p></li>
+<li><p><strong>Verbose</strong> - Enabled - Show process messages in console while process meshes. Disabled - Hide any process messages.</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/5b1ffdef-8a1a-4ed0-b580-c53b2d1fdb9d"><img alt="https://github.com/user-attachments/assets/5b1ffdef-8a1a-4ed0-b580-c53b2d1fdb9d" src="https://github.com/user-attachments/assets/5b1ffdef-8a1a-4ed0-b580-c53b2d1fdb9d" />
+</a>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</section>
+<section id="output-sockets">
+<h2>Output sockets<a class="headerlink" href="#output-sockets" title="Link to this heading">¶</a></h2>
+<ul>
+<li><p>Vertices, Edges, Faces - Results meshes.</p></li>
+<li><p>Wrong Contour Verts - If source meshes can’t be processed then this socket will output vertices of that contours (ex. if meshes contours is self intersection)</p>
+<blockquote>
+<div><a class="reference external image-reference" href="https://github.com/user-attachments/assets/18cc453d-c1a7-4692-a5b4-ba2e67eb7203"><img alt="https://github.com/user-attachments/assets/18cc453d-c1a7-4692-a5b4-ba2e67eb7203" src="https://github.com/user-attachments/assets/18cc453d-c1a7-4692-a5b4-ba2e67eb7203" />
+</a>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="performance">
+<h2>Performance<a class="headerlink" href="#performance" title="Link to this heading">¶</a></h2>
+<p>If you have a low poly model then no problem - you can work with that model in real time:</p>
+<video width="400" controls>
+    <source src="https://github.com/user-attachments/assets/eb9dc0cb-cee8-4373-8330-5068c5fd2330" type="video/mp4">
+Your browser does not support the video tag.
+</video><p>If you try high poly like Besier 2D with many points and hi resolution (1) then better is to turn off (2) update sverchok nodes while editing objects and run process manually (3):</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/429e6571-fe73-4fc7-b242-4f038f670871"><img alt="https://github.com/user-attachments/assets/429e6571-fe73-4fc7-b242-4f038f670871" src="https://github.com/user-attachments/assets/429e6571-fe73-4fc7-b242-4f038f670871" />
+</a>
+</section>
+</section>
+<section id="examples">
+<h1>Examples<a class="headerlink" href="#examples" title="Link to this heading">¶</a></h1>
+<p>Boundary background contour:</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/f6cf099c-1e3a-47ac-be87-e6e9b44b4683"><img alt="https://github.com/user-attachments/assets/f6cf099c-1e3a-47ac-be87-e6e9b44b4683" src="https://github.com/user-attachments/assets/f6cf099c-1e3a-47ac-be87-e6e9b44b4683" />
+</a>
+<p>Inner Offset</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/78568725-254e-469c-98bd-50ffb24321b0"><img alt="https://github.com/user-attachments/assets/78568725-254e-469c-98bd-50ffb24321b0" src="https://github.com/user-attachments/assets/78568725-254e-469c-98bd-50ffb24321b0" />
+</a>
+</section>
+<section id="development">
+<h1>DEVELOPMENT<a class="headerlink" href="#development" title="Link to this heading">¶</a></h1>
+<p>If you have skills for work with CGAL see: <a class="reference external" href="https://github.com/satabol/SVCGAL">https://github.com/satabol/SVCGAL</a></p>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="straight_skeleton_2d_extrude.html" class="btn btn-neutral float-left" title="Straight Skeleton 2d (Alpha)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../number/number_index.html" class="btn btn-neutral float-right" title="Number" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2014...2024, sverchok team.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
