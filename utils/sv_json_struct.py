@@ -22,6 +22,48 @@ from sverchok.utils.sv_node_utils import recursive_framed_location_finder
 if TYPE_CHECKING:
     from sverchok.utils.sv_json_import import FailsLog
 
+InterfaceSocket = bpy.types.NodeTreeInterfaceSocket if bpy.app.version >= (4, 0) \
+             else bpy.types.NodeSocketInterface
+
+
+SKIP_SOCKETS = {'NodeGroupInput', 'NodeGroupOutput', 'NodeReroute', 'Reroute', 'NodeFrame'}
+
+class SvNodeTreeInterface(list):
+    if bpy.app.version >= (4,0):
+        def __init__(self, interface, in_out, sockets):
+            super().__init__(sockets)
+            self.in_out = in_out
+            self.interface = interface
+
+        def __repr__(self):
+            return repr(self.interface)
+
+        @classmethod
+        def get_inputs(cls, tree):
+            return SvNodeTreeInterface(
+                    interface = tree.interface,
+                    in_out = 'INPUT',
+                    sockets = [item for item in tree.interface.items_tree if item.item_type == 'SOCKET' and item.in_out == 'INPUT'])
+
+        @classmethod
+        def get_outputs(cls, tree):
+            return SvNodeTreeInterface(
+                    interface = tree.interface,
+                    in_out = 'OUTPUT',
+                    sockets = [item for item in tree.interface.items_tree if item.item_type == 'SOCKET' and item.in_out == 'OUTPUT'])
+
+        def new(self, socket_type, name):
+            return self.interface.new_socket(name=name, in_out=self.in_out, socket_type=socket_type)
+
+    else:
+
+        @classmethod
+        def get_inputs(cls, tree):
+            return tree.inputs
+
+        @classmethod
+        def get_outputs(cls, tree):
+            return tree.outputs
 
 """
 Terminology:
@@ -481,11 +523,11 @@ class TreeStruct(Struct):
         for link in _ordered_links(tree):
             self._struct["links"].append(factories.link(None, self.logger).export(link, factories, dependencies))
 
-        for socket in tree.inputs:
+        for socket in SvNodeTreeInterface.get_inputs(tree):
             raw_struct = factories.interface(socket.name, self.logger).export(socket, factories, dependencies)
             self._struct["inputs"][socket.identifier] = raw_struct
 
-        for socket in tree.outputs:
+        for socket in SvNodeTreeInterface.get_outputs(tree):
             raw_struct = factories.interface(socket.name, self.logger).export(socket, factories, dependencies)
             self._struct["outputs"][socket.identifier] = raw_struct
 
@@ -540,11 +582,11 @@ class TreeStruct(Struct):
     def build_interface(self, tree, factories, imported_structs):
         for sock_name, raw_struct in self._struct["inputs"].items():
             with self.logger.add_fail("Create tree in socket", f"Tree: {tree.name}, Sock: {sock_name}"):
-                factories.interface(sock_name, self.logger, raw_struct).build(tree.inputs, factories, imported_structs)
+                factories.interface(sock_name, self.logger, raw_struct).build(SvNodeTreeInterface.get_inputs(tree), factories, imported_structs)
 
         for sock_name, raw_struct in self._struct["outputs"].items():
             with self.logger.add_fail("Create tree out socket", f"Tree: {tree.name}, Sock: {sock_name}"):
-                factories.interface(sock_name, self.logger, raw_struct).build(tree.outputs, factories, imported_structs)
+                factories.interface(sock_name, self.logger, raw_struct).build(SvNodeTreeInterface.get_outputs(tree), factories, imported_structs)
 
     def read_bl_type(self):
         return self._struct["bl_idname"]
@@ -610,7 +652,7 @@ class NodeStruct(Struct):
         # where sockets would be defined by pressing buttons for example like in the node group interface.
         # there is no sense of exporting information about sockets of group input and output nodes
         # they are totally controlled by Blender update system.
-        if node.bl_idname not in ['NodeGroupInput', 'NodeGroupOutput']:
+        if node.bl_idname not in SKIP_SOCKETS:
             for socket in node.inputs:
                 raw_struct = factories.sock(socket.identifier, self.logger).export(socket, factories, dependencies)
                 self._struct["inputs"][socket.identifier] = raw_struct
@@ -648,19 +690,24 @@ class NodeStruct(Struct):
         # it will cause replacing of all sockets with wrong identifiers in the group node.
         # clearing and adding sockets of Group input and Group output nodes
         # immediately cause their rebuilding by Blender, so JSON file does not save information about their sockets.
-        if node.bl_idname not in {'NodeGroupInput', 'NodeGroupOutput'}:
-            node.inputs.clear()
-        for sock_identifier, raw_struct in self._struct.get("inputs", dict()).items():
-            with self.logger.add_fail("Add in socket",
-                                      f"Tree: {node.id_data.name}, Node {node.name}, Sock: {sock_identifier}"):
-                factories.sock(sock_identifier, self.logger, raw_struct).build(node.inputs, factories, imported_data)
+        if node.bl_idname not in SKIP_SOCKETS:
+            try:
+                node.inputs.clear()
+            except Exception as e:
+                print(f"Can't clear inputs for {node.bl_idname}: {e}")
 
-        if node.bl_idname not in {'NodeGroupInput', 'NodeGroupOutput'}:
+            for sock_identifier, raw_struct in self._struct.get("inputs", dict()).items():
+                with self.logger.add_fail("Add in socket",
+                                          f"Tree: {node.id_data.name}, Node {node.name}, Sock: {sock_identifier}"):
+                    factories.sock(sock_identifier, self.logger, raw_struct).build(node.inputs, factories, imported_data)
+
+        if node.bl_idname not in SKIP_SOCKETS:
             node.outputs.clear()
-        for sock_identifier, raw_struct in self._struct.get("outputs", dict()).items():
-            with self.logger.add_fail("Add out socket",
-                                      f"Tree: {node.id_data.name}, Node {node.name}, Sock: {sock_identifier}"):
-                factories.sock(sock_identifier, self.logger, raw_struct).build(node.outputs, factories, imported_data)
+
+            for sock_identifier, raw_struct in self._struct.get("outputs", dict()).items():
+                with self.logger.add_fail("Add out socket",
+                                          f"Tree: {node.id_data.name}, Node {node.name}, Sock: {sock_identifier}"):
+                    factories.sock(sock_identifier, self.logger, raw_struct).build(node.outputs, factories, imported_data)
 
         if hasattr(node, 'load_from_json'):
             with self.logger.add_fail("Setting advance node properties",
@@ -778,7 +825,7 @@ class InterfaceStruct(Struct):
     def build(self, sockets, factories, imported_structs):
         name = self._struct["name"]
         # create the socket in the method because identifier is hidden is shown only inside the class
-        interface_class = bpy.types.NodeSocketInterface.bl_rna_get_subclass_py(self.read_bl_type())
+        interface_class = InterfaceSocket.bl_rna_get_subclass_py(self.read_bl_type())
         socket_type = interface_class.bl_socket_idname
         socket = sockets.new(socket_type, name)  # the method gives its own identifier
         imported_structs[self.type, socket.id_data.name, self.identifier] = socket.identifier
