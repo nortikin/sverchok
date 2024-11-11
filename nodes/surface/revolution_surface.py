@@ -57,8 +57,12 @@ class SvRevolutionSurfaceNodeMK2(SverchCustomTreeNode, bpy.types.Node):
         p = self.inputs.new('SvVerticesSocket', "Direction")
         p.use_prop = True
         p.default_property = (0.0, 0.0, 1.0)
-        self.inputs.new('SvStringsSocket', 'AngleFrom').prop_name = 'v_min'
-        self.inputs.new('SvStringsSocket', 'AngleTo').prop_name = 'v_max'
+        p = self.inputs.new('SvStringsSocket', 'AngleFrom')
+        p.prop_name = 'v_min'
+        p.angles_socket = True
+        p = self.inputs.new('SvStringsSocket', 'AngleTo')
+        p.prop_name = 'v_max'
+        p.angles_socket = True
         self.outputs.new('SvSurfaceSocket', "Surface")
         # default for newly created nodes
         self.origin = 'POINT'
