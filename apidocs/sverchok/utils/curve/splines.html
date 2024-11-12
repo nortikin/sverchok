@@ -61,6 +61,11 @@ hljs.highlightAll();
         spline = CubicSpline(points, metric=metric, is_cyclic=is_cyclic)
         return SvSplineCurve(spline)
 
+    @classmethod
+    def from_2d_points(cls, xs, ys):
+        spline = CubicSpline.from_2d_points(xs, ys)
+        return SvSplineCurve(spline)
+
     def evaluate(self, t):
         v = self.spline.eval_at_point(t)
         return np.array(v)
@@ -151,6 +156,12 @@ hljs.highlightAll();
 </ul>
 <h3>Static methods</h3>
 <dl>
+<dt id="sverchok.utils.curve.splines.SvSplineCurve.from_2d_points"><code class="name flex">
+<span>def <span class="ident">from_2d_points</span></span>(<span>xs, ys)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
 <dt id="sverchok.utils.curve.splines.SvSplineCurve.from_points"><code class="name flex">
 <span>def <span class="ident">from_points</span></span>(<span>points, metric=None, is_cyclic=False)</span>
 </code></dt>
@@ -280,6 +291,7 @@ hljs.highlightAll();
 <li><code><a title="sverchok.utils.curve.splines.SvSplineCurve.cut_segment" href="#sverchok.utils.curve.splines.SvSplineCurve.cut_segment">cut_segment</a></code></li>
 <li><code><a title="sverchok.utils.curve.splines.SvSplineCurve.extrude_along_vector" href="#sverchok.utils.curve.splines.SvSplineCurve.extrude_along_vector">extrude_along_vector</a></code></li>
 <li><code><a title="sverchok.utils.curve.splines.SvSplineCurve.extrude_to_point" href="#sverchok.utils.curve.splines.SvSplineCurve.extrude_to_point">extrude_to_point</a></code></li>
+<li><code><a title="sverchok.utils.curve.splines.SvSplineCurve.from_2d_points" href="#sverchok.utils.curve.splines.SvSplineCurve.from_2d_points">from_2d_points</a></code></li>
 <li><code><a title="sverchok.utils.curve.splines.SvSplineCurve.from_points" href="#sverchok.utils.curve.splines.SvSplineCurve.from_points">from_points</a></code></li>
 <li><code><a title="sverchok.utils.curve.splines.SvSplineCurve.get_polyline_vertices" href="#sverchok.utils.curve.splines.SvSplineCurve.get_polyline_vertices">get_polyline_vertices</a></code></li>
 <li><code><a title="sverchok.utils.curve.splines.SvSplineCurve.is_polyline" href="#sverchok.utils.curve.splines.SvSplineCurve.is_polyline">is_polyline</a></code></li>

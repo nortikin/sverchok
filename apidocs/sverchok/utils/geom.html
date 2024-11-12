@@ -1219,6 +1219,13 @@ is_cyclic: whether the spline is cyclic</p>
     def create(cls, vertices, tknots = None, metric = None, is_cyclic = False):
         return CubicSpline(vertices, tknots=tknots, metric=metric, is_cyclic=is_cyclic)
 
+    @classmethod
+    def from_2d_points(cls, xs, ys):
+        vertices = np.zeros((len(xs), 3))
+        vertices[:,0] = np.array(xs)
+        vertices[:,1] = np.zrray(ys)
+        return CubicSpline(vertices, metric=&#39;X&#39;, is_cyclic=False)
+
     def eval(self, t_in, tknots = None):
         &#34;&#34;&#34;
         Evaluate the spline at the points in t_in, which must be an array
@@ -1317,6 +1324,12 @@ is_cyclic: whether the spline is cyclic</p>
 <dl>
 <dt id="sverchok.utils.geom.CubicSpline.create"><code class="name flex">
 <span>def <span class="ident">create</span></span>(<span>vertices, tknots=None, metric=None, is_cyclic=False)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.geom.CubicSpline.from_2d_points"><code class="name flex">
+<span>def <span class="ident">from_2d_points</span></span>(<span>xs, ys)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -3941,6 +3954,7 @@ returns: an instance of Ellipse3D.</p></div>
 <ul class="two-column">
 <li><code><a title="sverchok.utils.geom.CubicSpline.create" href="#sverchok.utils.geom.CubicSpline.create">create</a></code></li>
 <li><code><a title="sverchok.utils.geom.CubicSpline.eval" href="#sverchok.utils.geom.CubicSpline.eval">eval</a></code></li>
+<li><code><a title="sverchok.utils.geom.CubicSpline.from_2d_points" href="#sverchok.utils.geom.CubicSpline.from_2d_points">from_2d_points</a></code></li>
 <li><code><a title="sverchok.utils.geom.CubicSpline.get_control_points" href="#sverchok.utils.geom.CubicSpline.get_control_points">get_control_points</a></code></li>
 <li><code><a title="sverchok.utils.geom.CubicSpline.get_degree" href="#sverchok.utils.geom.CubicSpline.get_degree">get_degree</a></code></li>
 <li><code><a title="sverchok.utils.geom.CubicSpline.get_t_segments" href="#sverchok.utils.geom.CubicSpline.get_t_segments">get_t_segments</a></code></li>
