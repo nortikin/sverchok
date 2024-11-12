@@ -18,7 +18,7 @@ from sverchok.utils.field.vector import SvVectorField
 from sverchok.dependencies import scipy
 
 if scipy is not None:
-    from scipy.spatial.transform import Rotation, Slerp
+    from scipy.spatial.transform import Rotation, Slerp, RotationSpline
 
 class IntersectionParams:
     def __init__(self, init_samples=10, tolerance=1e-3, max_iterations=50):
@@ -29,32 +29,44 @@ class IntersectionParams:
 DEFAULT_INTERSECTION_PARAMS = IntersectionParams(init_samples=10, tolerance=1e-3, max_iterations=50)
 
 class SvFrameAlongCurveField(SvVectorField):
-    def __init__(self, curve, matrices, z_axis='Z',
-                 intersection_params = DEFAULT_INTERSECTION_PARAMS):
-        nurbs_curve = SvNurbsCurve.to_nurbs(curve)
-        if nurbs_curve is None:
-            self.curve = curve
-            self.is_nurbs = False
-        else:
-            self.curve = nurbs_curve
-            self.is_nurbs = True
-        self.matrices = matrices
+    INTERP_LINEAR = 'LIN'
+    INTERP_SPLINE = 'SPL'
+
+    def __init__(self, curve, tknots, quats, z_axis='Z',
+                 interpolation = INTERP_SPLINE):
+        self.curve = curve
+        self.tknots = tknots
+        self.quats = quats
         self.z_axis = z_axis
-        self.intersection_params = intersection_params
+        self.interpolation = interpolation
 
-        self._calc_quats()
+        self._init_slerp()
 
-    def _calc_quats(self):
+    @staticmethod
+    def from_matrices(curve, matrices,
+                      z_axis = 'Z',
+                      interpolation = INTERP_SPLINE,
+                      intersection_params = DEFAULT_INTERSECTION_PARAMS):
+        quats, tknots = SvFrameAlongCurveField._calc_quats(curve, matrices, z_axis=z_axis, intersection_params=intersection_params)
+        field = SvFrameAlongCurveField(curve, tknots, quats,
+                                       z_axis = z_axis,
+                                       interpolation = interpolation)
+        return field
+
+    @staticmethod
+    def _calc_quats(curve, matrices, z_axis = 'Z', intersection_params = DEFAULT_INTERSECTION_PARAMS):
         pairs = []
-        for matrix in self.matrices:
-            tk, quat = self._matrix_to_curve(matrix)
+        for matrix in matrices:
+            tk, quat = SvFrameAlongCurveField._matrix_to_curve(curve, matrix, z_axis=z_axis, intersection_params=intersection_params)
             quat = list(quat)
             pairs.append((tk, quat))
 
         pairs = list(sorted(pairs, key = lambda p: p[0]))
-        self.quats = [p[1] for p in pairs]
-        self.tknots = [p[0] for p in pairs]
+        quats = [p[1] for p in pairs]
+        tknots = [p[0] for p in pairs]
+        return quats, tknots
 
+    def _init_slerp(self):
         self.quats.insert(0, self.quats[0])
         self.quats.append(self.quats[-1])
 
@@ -66,23 +78,35 @@ class SvFrameAlongCurveField(SvVectorField):
         self.tknots = np.array(self.tknots)
         #self.t_min, self.t_max = min(self.tknots), max(self.tknots)
         #self.tknots = (self.tknots - self.t_min) / (self.t_max - self.t_min)
-        self.slerp = Slerp(self.tknots, self.quats)
+        if self.interpolation == SvFrameAlongCurveField.INTERP_LINEAR:
+            self.slerp = Slerp(self.tknots, self.quats)
+        else:
+            self.slerp = RotationSpline(self.tknots, self.quats)
 
-    def _matrix_to_curve(self, matrix):
-        plane = PlaneEquation.from_matrix(matrix, normal_axis=self.z_axis)
+    @staticmethod
+    def _matrix_to_curve(curve, matrix, z_axis, intersection_params = DEFAULT_INTERSECTION_PARAMS):
+        plane = PlaneEquation.from_matrix(matrix, normal_axis=z_axis)
+
+        nurbs_curve = SvNurbsCurve.to_nurbs(curve)
+        if nurbs_curve is None:
+            is_nurbs = False
+        else:
+            curve = nurbs_curve
+            is_nurbs = True
         # Or take nearest point?
-        solutions = intersect_curve_plane(self.curve, plane,
-                        method = NURBS if self.is_nurbs else EQUATION,
-                        init_samples=self.intersection_params.init_samples,
-                        tolerance=self.intersection_params.tolerance,
-                        maxiter=self.intersection_params.max_iterations)
-        t, point = self._nearest_solution(matrix.translation, solutions)
+        solutions = intersect_curve_plane(curve, plane,
+                        method = NURBS if is_nurbs else EQUATION,
+                        init_samples = intersection_params.init_samples,
+                        tolerance = intersection_params.tolerance,
+                        maxiter = intersection_params.max_iterations)
+        t, point = SvFrameAlongCurveField._nearest_solution(matrix.translation, solutions)
         if t is None:
-            raise Exception(f"Can't project the matrix {matrix} to the {self.curve}!")
+            raise Exception(f"Can't project the matrix {matrix} to the {curve}!")
         #matrix.translation = Vector(point)
         return t, matrix.to_quaternion()
 
-    def _nearest_solution(self, point, solutions):
+    @staticmethod
+    def _nearest_solution(point, solutions):
         if len(solutions) == 0:
             return None, None
         if len(solutions) <= 1:

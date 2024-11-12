@@ -21,6 +21,18 @@ class SvSlerpCurveFieldNode(SverchCustomTreeNode, bpy.types.Node):
     sv_icon = 'SV_INTERP_FRAME'
     sv_dependencies = {'scipy'}
 
+    interp_modes = [
+            (SvFrameAlongCurveField.INTERP_LINEAR, "Linear", "Linear quaternion interpolation", 0),
+            (SvFrameAlongCurveField.INTERP_SPLINE, "Spline", "Spline quaternion interpolation", 1)
+        ]
+
+    interpolation_mode : EnumProperty(
+        name = "Interpolation",
+        description = "Rotation interpolation mode",
+        items = interp_modes,
+        default = SvFrameAlongCurveField.INTERP_SPLINE,
+        update = updateNode)
+
     samples : IntProperty(
         name = "Curve Resolution",
         description = "A number of segments to subdivide the curve in; defines the maximum number of intersection points that is possible to find.",
@@ -44,6 +56,7 @@ class SvSlerpCurveFieldNode(SverchCustomTreeNode, bpy.types.Node):
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'z_axis', expand=True)
+        layout.prop(self, 'interpolation_mode')
 
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
@@ -74,8 +87,9 @@ class SvSlerpCurveFieldNode(SverchCustomTreeNode, bpy.types.Node):
         for curves, frames_i in zip_long_repeat(curves_s, frames_s):
             new_fields = []
             for curve, frames in zip_long_repeat(curves, frames_i):
-                field = SvFrameAlongCurveField(curve, frames,
+                field = SvFrameAlongCurveField.from_matrices(curve, frames,
                                     z_axis = self.z_axis,
+                                    interpolation = self.interpolation_mode,
                                     intersection_params = intersection_params)
                 new_fields.append(field)
             if flat_output:
