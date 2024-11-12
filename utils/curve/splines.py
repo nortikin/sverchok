@@ -32,6 +32,11 @@ class SvSplineCurve(SvCurve):
         spline = CubicSpline(points, metric=metric, is_cyclic=is_cyclic)
         return SvSplineCurve(spline)
 
+    @classmethod
+    def from_2d_points(cls, xs, ys):
+        spline = CubicSpline.from_2d_points(xs, ys)
+        return SvSplineCurve(spline)
+
     def evaluate(self, t):
         v = self.spline.eval_at_point(t)
         return np.array(v)

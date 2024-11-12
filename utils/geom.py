@@ -370,6 +370,13 @@ class CubicSpline(Spline):
     def create(cls, vertices, tknots = None, metric = None, is_cyclic = False):
         return CubicSpline(vertices, tknots=tknots, metric=metric, is_cyclic=is_cyclic)
 
+    @classmethod
+    def from_2d_points(cls, xs, ys):
+        vertices = np.zeros((len(xs), 3))
+        vertices[:,0] = np.array(xs)
+        vertices[:,1] = np.zrray(ys)
+        return CubicSpline(vertices, metric='X', is_cyclic=False)
+
     def eval(self, t_in, tknots = None):
         """
         Evaluate the spline at the points in t_in, which must be an array
