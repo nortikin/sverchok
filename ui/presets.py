@@ -34,6 +34,7 @@ from sverchok.utils import sv_gist_tools
 from sverchok.utils import sv_IO_panel_tools
 from sverchok.utils.sv_json_import import JSONImporter
 from sverchok.utils.sv_json_export import JSONExporter
+from sverchok.utils.profile import profile
 import sverchok
 
 # To be moved somewhere under core/
@@ -62,36 +63,69 @@ def get_presets_directory(category=None, mkdir=True, standard=False):
         os.makedirs(presets)
     return presets
 
-def get_category_names(mkdir=True, include_empty=False):
+def get_category_names(mkdir=True, include_empty=False, mark_empty = False):
     standard = get_presets_directory(standard=True)
     user = get_presets_directory(standard=False, mkdir=mkdir)
     categories = []
+    result = []
     for base in [standard, user]:
         for path in sorted(glob(join(base, "*"))):
             if isdir(path):
                 is_empty = len(os.listdir(path)) == 0
-                if include_empty or not is_empty:
+                include = mark_empty or include_empty or not is_empty
+                if include:
                     name = basename(path)
                     if name not in categories:
                         categories.append(name)
-    return categories
+                        if mark_empty:
+                            result.append((name, is_empty))
+                        else:
+                            result.append(name)
+    return result
+
+general_category_items = None
+node_category_items = None
+empty_node_category_items = None
+
+def reset_categories_cache():
+    global general_category_items
+    global node_category_items
+    global empty_node_category_items
+
+    general_category_items = None
+    node_category_items = None
+    empty_node_category_items = None
+
 
 def get_category_items(self, context, include_empty=False):
-    category_items = None
-    category_items = [(GENERAL, "General", "Uncategorized presets", 0)]
-    node_category_items = []
-    for idx, category in enumerate(get_category_names(include_empty=include_empty)):
-        # actually category is mixture of categories and node.bl_idname(s)
-        node_class = bpy.types.Node.bl_rna_get_subclass_py(category)
-        if node_class and hasattr(node_class, 'bl_label'):
-            title = "/Node/ {}".format(node_class.bl_label)
-            node_category_items.append((category, title, category, idx+1))
-        else:
-            title = category
-            category_items.append((category, title, category, idx+1))
+    global general_category_items
+    global node_category_items
+    global empty_node_category_items
+    
     include_node_categories = not hasattr(self, 'include_node_categories') or self.include_node_categories
+
+    if general_category_items is None or node_category_items is None or empty_node_category_items is None:
+        general_category_items = [(GENERAL, "General", "Uncategorized presets", 0)]
+        node_category_items = []
+        empty_node_category_items = []
+        for idx, (category, is_empty) in enumerate(get_category_names(mark_empty=True)):
+            # actually category is mixture of categories and node.bl_idname(s)
+            node_class = bpy.types.Node.bl_rna_get_subclass_py(category)
+            if node_class and hasattr(node_class, 'bl_label'):
+                title = "/Node/ {}".format(node_class.bl_label)
+                if is_empty:
+                    empty_node_category_items.append((category, title, category, idx+1))
+                else:
+                    node_category_items.append((category, title, category, idx+1))
+            else:
+                title = category
+                general_category_items.append((category, title, category, idx+1))
     if node_category_items and include_node_categories:
-        category_items = category_items + [None] + node_category_items
+        category_items = general_category_items + [None] + node_category_items
+        if include_empty:
+            category_items.extend(empty_node_category_items)
+    else:
+        category_items = general_category_items
     return category_items
 
 def get_category_items_all(self, context):
@@ -242,6 +276,7 @@ class SvPreset(object):
             jsonfile.write(data)
 
         sv_logger.info("Saved preset `%s'", self.name)
+        reset_categories_cache()
 
     @staticmethod
     def get_target_location(node_tree):
@@ -575,6 +610,7 @@ class SvDeletePreset(bpy.types.Operator):
         os.remove(path)
         sv_logger.info("Removed `%s'", path)
         self.report({'INFO'}, "Removed `{} / {}'".format(self.category, self.preset_name))
+        reset_categories_cache()
 
         return {'FINISHED'}
 
@@ -799,6 +835,7 @@ class SvPresetCategoryNew(bpy.types.Operator):
         path = get_presets_directory(category = self.category, mkdir=True)
         sv_logger.info("Created new category `%s' at %s", self.category, path)
         self.report({'INFO'}, "Created new category {}".format(self.category))
+        reset_categories_cache()
         return {'FINISHED'}
 
     def invoke(self, context, event):
@@ -839,6 +876,7 @@ class SvPresetCategoryDelete(bpy.types.Operator):
         ntree = context.space_data.node_tree
         panel_props = ntree.preset_panel_properties
         panel_props.category = GENERAL
+        reset_categories_cache()
 
         return {'FINISHED'}
 
@@ -898,103 +936,106 @@ class SV_PT_UserPresetsPanel(bpy.types.Panel):
             return False
 
     def draw(self, context):
-        layout = self.layout
-        if len(context.space_data.path) > 1:
-            layout.label(text="Is not supported inside node groups")
-            return
-        ntree = context.space_data.node_tree
-        panel_props = ntree.preset_panel_properties
+        @profile
+        def _draw():
+            layout = self.layout
+            if len(context.space_data.path) > 1:
+                layout.label(text="Is not supported inside node groups")
+                return
+            ntree = context.space_data.node_tree
+            panel_props = ntree.preset_panel_properties
 
-        layout.prop(panel_props, 'manage_mode', toggle=True, icon='PREFERENCES')
+            layout.prop(panel_props, 'manage_mode', toggle=True, icon='PREFERENCES')
 
-        needle = None
-        if not panel_props.manage_mode:
-            row = layout.row(align=True)
-            row.prop(panel_props, "search_text", text="")
-            row.operator("node.sv_reset_preset_search", icon="X", text="")
-            needle = panel_props.search_text
+            needle = None
+            if not panel_props.manage_mode:
+                row = layout.row(align=True)
+                row.prop(panel_props, "search_text", text="")
+                row.operator("node.sv_reset_preset_search", icon="X", text="")
+                needle = panel_props.search_text
 
-        if not panel_props.search_text:
-            layout.prop(panel_props, 'category', text='')
+            if not panel_props.search_text:
+                layout.prop(panel_props, 'category', text='')
 
-        row = layout.row()
-        op = row.operator('node.sv_save_selected', text="Save Preset", icon='SOLO_ON')
-        op.id_tree = ntree.name
-        op.category = panel_props.category
-        op.is_node_preset = False
+            row = layout.row()
+            op = row.operator('node.sv_save_selected', text="Save Preset", icon='SOLO_ON')
+            op.id_tree = ntree.name
+            op.category = panel_props.category
+            op.is_node_preset = False
 
-        selected_nodes = [node for node in ntree.nodes if node.select]
-        can_save_preset = len(selected_nodes) > 0
-        # op.category is either category or node bl_idname
-        category_node_class = bpy.types.Node.bl_rna_get_subclass_py(op.category)
-        if category_node_class is not None:
-            if len(selected_nodes) == 1:
-                selected_node = selected_nodes[0]
-                can_save_preset = can_save_preset and hasattr(selected_node, 'bl_idname') and selected_node.bl_idname == op.category
+            selected_nodes = [node for node in ntree.nodes if node.select]
+            can_save_preset = len(selected_nodes) > 0
+            # op.category is either category or node bl_idname
+            category_node_class = bpy.types.Node.bl_rna_get_subclass_py(op.category)
+            if category_node_class is not None:
+                if len(selected_nodes) == 1:
+                    selected_node = selected_nodes[0]
+                    can_save_preset = can_save_preset and hasattr(selected_node, 'bl_idname') and selected_node.bl_idname == op.category
+                else:
+                    can_save_preset = False
+            row.enabled = can_save_preset
+
+            layout.separator()
+
+            presets = get_presets(panel_props.category, search=needle)
+            layout.separator()
+
+            if panel_props.manage_mode:
+                col = layout.column(align=True)
+                col.operator("node.sv_preset_from_gist", icon='URL').category = panel_props.category
+                col.operator("node.sv_preset_from_file", icon='IMPORT').category = panel_props.category
+
+                col.operator('node.sv_preset_category_new', icon='NEWFOLDER')
+                if panel_props.category != GENERAL:
+                    remove = col.operator('node.sv_preset_category_remove', text="Delete category {}".format(panel_props.category), icon='CANCEL')
+                    remove.category = panel_props.category
+
+                if len(presets):
+                    layout.label(text="Manage presets:")
+                    for preset in presets:
+                        name = preset.name
+
+                        row = layout.row(align=True)
+                        row.label(text=name)
+
+                        gist = row.operator('node.sv_preset_to_gist', text="", icon='URL')
+                        gist.preset_name = name
+                        gist.category = panel_props.category
+
+                        export = row.operator('node.sv_preset_to_file', text="", icon="EXPORT")
+                        export.preset_name = name
+                        export.category = panel_props.category
+
+                        if not preset.standard:
+                            rename = row.operator('node.sv_preset_props', text="", icon="GREASEPENCIL")
+                            rename.old_name = name
+                            rename.old_category = panel_props.category
+                            rename.allow_change_category = (category_node_class is None)
+                            if rename.allow_change_category:
+                                rename.new_category = rename.old_category
+
+                            delete = row.operator('node.sv_preset_delete', text="", icon='CANCEL')
+                            delete.preset_name = name
+                            delete.category = panel_props.category
+                else:
+                    layout.label(text="You do not have any presets")
+                    layout.label(text="under `{}` category.".format(panel_props.category))
+                    layout.label(text="You can import some presets")
+                    layout.label(text="from Gist or from file.")
+
             else:
-                can_save_preset = False
-        row.enabled = can_save_preset
-
-        layout.separator()
-
-        presets = get_presets(panel_props.category, search=needle)
-        layout.separator()
-
-        if panel_props.manage_mode:
-            col = layout.column(align=True)
-            col.operator("node.sv_preset_from_gist", icon='URL').category = panel_props.category
-            col.operator("node.sv_preset_from_file", icon='IMPORT').category = panel_props.category
-
-            col.operator('node.sv_preset_category_new', icon='NEWFOLDER')
-            if panel_props.category != GENERAL:
-                remove = col.operator('node.sv_preset_category_remove', text="Delete category {}".format(panel_props.category), icon='CANCEL')
-                remove.category = panel_props.category
-
-            if len(presets):
-                layout.label(text="Manage presets:")
-                for preset in presets:
-                    name = preset.name
-
-                    row = layout.row(align=True)
-                    row.label(text=name)
-
-                    gist = row.operator('node.sv_preset_to_gist', text="", icon='URL')
-                    gist.preset_name = name
-                    gist.category = panel_props.category
-
-                    export = row.operator('node.sv_preset_to_file', text="", icon="EXPORT")
-                    export.preset_name = name
-                    export.category = panel_props.category
-
-                    if not preset.standard:
-                        rename = row.operator('node.sv_preset_props', text="", icon="GREASEPENCIL")
-                        rename.old_name = name
-                        rename.old_category = panel_props.category
-                        rename.allow_change_category = (category_node_class is None)
-                        if rename.allow_change_category:
-                            rename.new_category = rename.old_category
-
-                        delete = row.operator('node.sv_preset_delete', text="", icon='CANCEL')
-                        delete.preset_name = name
-                        delete.category = panel_props.category
-            else:
-                layout.label(text="You do not have any presets")
-                layout.label(text="under `{}` category.".format(panel_props.category))
-                layout.label(text="You can import some presets")
-                layout.label(text="from Gist or from file.")
-
-        else:
-            if len(presets):
-                layout.label(text="Use preset:")
-                draw_presets_ops(layout, panel_props.category, ntree.name, presets)
-            elif needle:
-                layout.label(text="There are no presets matching")
-                layout.label(text="the search terms.")
-            else:
-                layout.label(text="You do not have any presets")
-                layout.label(text="under `{}` category.".format(panel_props.category))
-                layout.label(text="Select some nodes and")
-                layout.label(text="Use the `Save Preset' button.")
+                if len(presets):
+                    layout.label(text="Use preset:")
+                    draw_presets_ops(layout, panel_props.category, ntree.name, presets)
+                elif needle:
+                    layout.label(text="There are no presets matching")
+                    layout.label(text="the search terms.")
+                else:
+                    layout.label(text="You do not have any presets")
+                    layout.label(text="under `{}` category.".format(panel_props.category))
+                    layout.label(text="Select some nodes and")
+                    layout.label(text="Use the `Save Preset' button.")
+        _draw()
 
 classes = [
     SvSaveSelected,
