@@ -46,6 +46,9 @@ class SvNurbsCurveNodesNode(SverchCustomTreeNode, bpy.types.Node):
             point_list = []
             t_list = []
             for curve in curves:
+                curve = SvNurbsCurve.to_nurbs(curve)
+                if curve is None:
+                    raise Exception("Curve is not NURBS!")
                 ts = curve.calc_greville_ts()
                 pts = curve.evaluate_array(ts)
                 t_list.append(ts.tolist())
