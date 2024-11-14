@@ -70,6 +70,8 @@ class SvBezierInNode(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
         self.outputs.new('SvCurveSocket', 'Curves')
         self.outputs.new('SvVerticesSocket', 'ControlPoints')
         self.outputs.new('SvMatrixSocket', 'Matrices')
+        self.outputs.new('SvStringsSocket', 'Tilt')
+        self.outputs.new('SvStringsSocket', 'Radius')
 
     def get_objects_from_scene(self, ops):
         """
@@ -137,7 +139,6 @@ class SvBezierInNode(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
         if spline.use_cyclic_u:
             pairs = list(pairs) + [(spline.bezier_points[-1], spline.bezier_points[0])]
         points = []
-        is_first = True
         for p1, p2 in pairs:
             c0 = p1.co
             c1 = p1.handle_right
@@ -150,10 +151,18 @@ class SvBezierInNode(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
             points.append([c0, c1, c2, c3])
             segment = SvCubicBezierCurve(c0, c1, c2, c3)
             segments.append(segment)
+
+        tilt_values = []
+        radius_values = []
         if self.concat_segments:
-            return points, concatenate_curves(segments)
+            tilt_values = [p.tilt for p in spline.bezier_points]
+            radius_values = [p.radius for p in spline.bezier_points]
+            return points, tilt_values, radius_values, concatenate_curves(segments)
         else:
-            return points, segments
+            for p1, p2 in pairs:
+                tilt_values.append([p1.tilt, p2.tilt])
+                radius_values.append([p1.radius, p2.radius])
+            return points, tilt_values, radius_values, segments
 
     def process(self):
 
@@ -163,6 +172,8 @@ class SvBezierInNode(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
         curves_out = []
         matrices_out = []
         controls_out = []
+        tilt_out = []
+        radius_out = []
         for item in self.object_names:
             object_name = item.name
             obj = bpy.data.objects.get(object_name)
@@ -177,14 +188,20 @@ class SvBezierInNode(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
                 if spline.type != 'BEZIER':
                     self.warning("%s: not supported spline type: %s", spline, spline.type)
                     continue
-                controls, curve = self.get_curve(spline, matrix)
+                controls, tilt_values, radius_values, curve = self.get_curve(spline, matrix)
                 curves_out.append(curve)
                 controls_out.append(controls)
                 matrices_out.append(matrix)
+                tilt_out.append(tilt_values)
+                radius_out.append(radius_values)
 
         self.outputs['Curves'].sv_set(curves_out)
         self.outputs['ControlPoints'].sv_set(controls_out)
         self.outputs['Matrices'].sv_set(matrices_out)
+        if 'Tilt' in self.outputs:
+            self.outputs['Tilt'].sv_set(tilt_out)
+        if 'Radius' in self.outputs:
+            self.outputs['Radius'].sv_set(radius_out)
 
 
 def register():
