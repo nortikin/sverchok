@@ -241,6 +241,7 @@
     - SvExMergeScalarFieldsNode
     - ---
     - SvExBendAlongCurveFieldNode
+    - SvSlerpCurveFieldNode
     - SvBendAlongSurfaceFieldMk2Node
     - ---
     - SvExScalarFieldEvaluateNode
