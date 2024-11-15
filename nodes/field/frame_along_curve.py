@@ -99,11 +99,6 @@ class SvSlerpCurveFieldNode(SverchCustomTreeNode, bpy.types.Node):
         default = 'X',
         update = updateNode)
 
-    t_value : FloatProperty(
-        name = "T",
-        default = 0.5,
-        update = updateNode)
-
     def draw_buttons(self, context, layout):
         layout.label(text='Input:')
         layout.prop(self, 'input_mode', text='')
@@ -129,7 +124,7 @@ class SvSlerpCurveFieldNode(SverchCustomTreeNode, bpy.types.Node):
         p = self.inputs.new('SvVerticesSocket', "Vectors")
         p.use_prop = True
         p.default_property = (1.0, 0.0, 0.0)
-        self.inputs.new('SvStringsSocket', "T").prop_name = 't_value'
+        self.inputs.new('SvStringsSocket', "T")
         self.inputs.new('SvStringsSocket', "LengthResolution").prop_name = 'length_resolution'
         self.outputs.new('SvVectorFieldSocket', 'Field')
         self.update_sockets(context)
