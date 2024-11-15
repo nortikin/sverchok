@@ -98,3 +98,32 @@ Outputs
 This node has the following output:
 
 * **Field**. The generated vector field.
+
+Examples of Usage
+-----------------
+
+Example nodes setup:
+
+.. image:: https://github.com/user-attachments/assets/f699e348-5f7d-4e1f-a3e2-9cd3d3ea8348
+  :target: https://github.com/user-attachments/assets/f699e348-5f7d-4e1f-a3e2-9cd3d3ea8348
+
+Result:
+
+.. image:: https://github.com/user-attachments/assets/f0aced76-351a-4adb-99ab-3485506c1d9e
+  :target: https://github.com/user-attachments/assets/f0aced76-351a-4adb-99ab-3485506c1d9e
+
+Same, but with Linear interpolation mode:
+
+.. image:: https://github.com/user-attachments/assets/bfa083e6-27f2-49b1-98d2-b5b1132dc651
+  :target: https://github.com/user-attachments/assets/bfa083e6-27f2-49b1-98d2-b5b1132dc651
+
+Example setup for Matrices input mode:
+
+.. image:: https://github.com/user-attachments/assets/723ad29f-f6a9-49dc-ae7b-2df595815e19
+  :target: https://github.com/user-attachments/assets/723ad29f-f6a9-49dc-ae7b-2df595815e19
+
+Result:
+
+.. image:: https://github.com/user-attachments/assets/008d709e-4b2f-4ad5-aa12-6ba1f353892f
+  :target: https://github.com/user-attachments/assets/008d709e-4b2f-4ad5-aa12-6ba1f353892f
+
