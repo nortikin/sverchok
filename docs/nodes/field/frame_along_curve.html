@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Noise Vector Field &mdash; Sverchok 1, 2, 0 documentation</title>
+  <title>Twist along Curve Field &mdash; Sverchok 1, 2, 0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
 
@@ -18,8 +18,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Rotation Field" href="rotation_field.html" />
-    <link rel="prev" title="RBF Vector Field" href="minimal_vfield.html" /> 
+    <link rel="next" title="Image Field" href="image_field.html" />
+    <link rel="prev" title="Bend Along Surface Field" href="field_bend_along_surface_mk2.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -61,21 +61,21 @@
 <li class="toctree-l3"><a class="reference internal" href="decompose_vector_field.html">Decompose Vector Field</a></li>
 <li class="toctree-l3"><a class="reference internal" href="differential_operations.html">Field Differential Operations</a></li>
 <li class="toctree-l3"><a class="reference internal" href="field_bend_along_surface_mk2.html">Bend Along Surface Field</a></li>
-<li class="toctree-l3"><a class="reference internal" href="frame_along_curve.html">Twist along Curve Field</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Twist along Curve Field</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#outputs">Outputs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#examples-of-usage">Examples of Usage</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="image_field.html">Image Field</a></li>
 <li class="toctree-l3"><a class="reference internal" href="merge_scalar_fields.html">Join Scalar Fields</a></li>
 <li class="toctree-l3"><a class="reference internal" href="mesh_normal_field.html">Mesh Nearest Normal</a></li>
 <li class="toctree-l3"><a class="reference internal" href="mesh_surface_field.html">Mesh Smoothed Surface Field</a></li>
 <li class="toctree-l3"><a class="reference internal" href="minimal_sfield.html">RBF Scalar Field</a></li>
 <li class="toctree-l3"><a class="reference internal" href="minimal_vfield.html">RBF Vector Field</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">Noise Vector Field</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#outputs">Outputs</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#example-of-usage">Example of usage</a></li>
-</ul>
-</li>
+<li class="toctree-l3"><a class="reference internal" href="noise_vfield.html">Noise Vector Field</a></li>
 <li class="toctree-l3"><a class="reference internal" href="rotation_field.html">Rotation Field</a></li>
 <li class="toctree-l3"><a class="reference internal" href="scalar_field_curvature.html">Scalar Field Curvature</a></li>
 <li class="toctree-l3"><a class="reference internal" href="scalar_field_curve_map.html">Map Scalar Field by Curve</a></li>
@@ -144,9 +144,9 @@
       <li><a href="../../main.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../nodes.html">Nodes</a></li>
           <li class="breadcrumb-item"><a href="field_index.html">Field</a></li>
-      <li class="breadcrumb-item active">Noise Vector Field</li>
+      <li class="breadcrumb-item active">Twist along Curve Field</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../../_sources/nodes/field/noise_vfield.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../../_sources/nodes/field/frame_along_curve.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -154,73 +154,122 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="noise-vector-field">
-<h1>Noise Vector Field<a class="headerlink" href="#noise-vector-field" title="Link to this heading">¶</a></h1>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/3506be1a-cde3-4e39-b220-07a350309750"><img alt="https://github.com/nortikin/sverchok/assets/14288520/3506be1a-cde3-4e39-b220-07a350309750" src="https://github.com/nortikin/sverchok/assets/14288520/3506be1a-cde3-4e39-b220-07a350309750" />
-</a>
+  <section id="twist-along-curve-field">
+<h1>Twist along Curve Field<a class="headerlink" href="#twist-along-curve-field" title="Link to this heading">¶</a></h1>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
-<p>This node generates a Vector Field, which is defined by one of several noise types supported.</p>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/5eb1f27c-537d-466b-8551-0f74b33e12c2"><img alt="https://github.com/nortikin/sverchok/assets/14288520/5eb1f27c-537d-466b-8551-0f74b33e12c2" src="https://github.com/nortikin/sverchok/assets/14288520/5eb1f27c-537d-466b-8551-0f74b33e12c2" />
-</a>
+<p>This node generates a vector field, which does a generic type of space
+transformation. It is similar to what “Bend Along Curve Field” node does, but
+rotation of space around the curve is controlled by user, not calculated by
+some algorithm. So with this node you can generate a field that does a
+combination of two transformations: 1) bending along some curve, and 2)
+arbitrary twisting around that curve.</p>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
-<p>This node has the following input:</p>
+<p>This node has the following inputs:</p>
 <ul class="simple">
-<li><p><strong>Seed</strong>. The noise seed.</p></li>
+<li><p><strong>Curve</strong>. The curve to bend and twist around. This input is mandatory.</p></li>
+<li><p><strong>Matrices</strong>. This input is available and mandatory only when <strong>Input</strong>
+parameter is set to <strong>Matrices</strong>. This input should contain a list of
+matrices, that specify rotation of space around the curve. Locations of
+matrices define places on the curve where corresponding rotation should be
+done.</p></li>
+<li><p><strong>Quaternions</strong>. This input is availale and mandatory only when <strong>Input</strong>
+parameter is set to <strong>Quaternions</strong>. This input should contain a lsit of
+quaternions, which define rotation of space around the curve. Locations of
+these rotations on the curve are defined by values in <strong>T</strong>/<strong>Length</strong> input.</p></li>
+<li><p><strong>Vectors</strong>. This input is available and mandatory only when <strong>Input</strong>
+parameter is set to <strong>Track Vectors</strong>. This input should contain a list of
+vectors, which point in a direction to which tracking axis must be rotated.
+Locations of these rotations on the curve are defined by values in
+<strong>T</strong>/<strong>Length</strong> input.</p></li>
+<li><p><strong>T</strong>/<strong>Length</strong>. This input is available and mandatory when <strong>Input</strong>
+parameter is set to <strong>Quaternions</strong> or <strong>Track Vectors</strong>. Values define
+places on the curve where corresponding rotations should be placed. If
+<strong>Parametrization</strong> parameter is set to <strong>Curve Parameter</strong>, then this input
+should contain curve T parameter values; otherwise, this input should contain
+arc length parameters (lengths from the beginning on the curve).</p></li>
+<li><p><strong>LengthResolution</strong>. This input is available and mandatory only when
+<strong>Parametrization</strong> parameter is set to <strong>Curve Length</strong>. This defines the
+resolution used to calculate curve lengths. Higher values give more
+precision, but take more time to calculate. The default value is 50.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/4decf713-6ffa-4acd-85e5-bba21ffe9c7e"><img alt="https://github.com/nortikin/sverchok/assets/14288520/4decf713-6ffa-4acd-85e5-bba21ffe9c7e" src="https://github.com/nortikin/sverchok/assets/14288520/4decf713-6ffa-4acd-85e5-bba21ffe9c7e" />
-</a>
 </section>
 <section id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
-<p>This node has the following parameter:</p>
-<ul class="simple">
-<li><p><strong>Type</strong>. The type of noise. The available values are:</p>
+<p>This node has the following parameters:</p>
 <ul>
-<li><p><strong>Blender</strong></p></li>
-<li><p><strong>Perlin Original</strong></p></li>
-<li><p><strong>Perlin New</strong></p></li>
-<li><p><strong>Voronoi F1</strong></p></li>
-<li><p><strong>Voronoi F2</strong></p></li>
-<li><p><strong>Voronoi F3</strong></p></li>
-<li><p><strong>Voronoi F4</strong></p></li>
-<li><p><strong>Voronoi F2F1</strong></p></li>
-<li><p><strong>Voronoi Crackle</strong></p></li>
-<li><p><strong>Cellnoise</strong></p></li>
+<li><p><strong>Input</strong>. This defines how rotations around the curve will be specified. The
+available options are:</p>
+<ul class="simple">
+<li><p><strong>Matrices</strong>. The user provides a list of matrices. Locations of matrices
+in 3D space define locations on the curve where rotations should be placed.
+One of matrix axes (called orientation axis, see <strong>Orientation</strong> parameter
+below) is supposed to be directed along the curve, but not necessarily
+precisely. Rotation of the matrix along orientation curve define the
+rotaiton of the space around the curve. Scale and skew components of
+matrices are ignored.</p></li>
+<li><p><strong>Quaternions</strong>. The user provides a list of quaternions, which define
+rotations around the curve. Places of these rotations along the curve are
+defined by values in <strong>T</strong>/<strong>Length</strong> input.</p></li>
+<li><p><strong>Track Vectors</strong>. The user provides a list of vectors, which define
+directions where “tracking axis” should look to. Rotations are always done
+around curve tangent vectors. The places on the curve where these rotations
+should be placed are defined by values in <strong>T</strong>/<strong>Length</strong> input.</p></li>
 </ul>
+<p>The default option is <strong>Matrices</strong>.</p>
 </li>
+<li><p><strong>Parametrization</strong>. This defines what type of curve parametrization should
+be used. This also defines the part of 3D space which will be bent and
+rotated around the curve. The available options are:</p>
+<ul class="simple">
+<li><p><strong>Curve Parameter</strong>. Original coordinates in 3D space along axis specified
+in <strong>Orientation</strong> parameter will be used as curve T parameters. So, for
+example, if curve domain is from 0 to 1, then the part of space which will
+be bent is from 0 to 1 along orientation axis.</p></li>
+<li><p><strong>Curve Length</strong>. Original coordinates in 3D space along orientation axis
+will be used as curve arc length parameters (length of parts of curve from
+beginning of the curve). So, for example, if curve length is 11.5, then the
+part of space to be bent will be from 0 to 11.5 along orientation axis.</p></li>
 </ul>
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/7c8265c6-6dd7-4ffa-bd5f-74bc5aab79ec"><img alt="https://github.com/nortikin/sverchok/assets/14288520/7c8265c6-6dd7-4ffa-bd5f-74bc5aab79ec" src="https://github.com/nortikin/sverchok/assets/14288520/7c8265c6-6dd7-4ffa-bd5f-74bc5aab79ec" />
-</a>
+<p>The default option is <strong>Curve Parameter</strong>.</p>
+</li>
+<li><p><strong>Orientation</strong>. This parameter defines which axis of original 3D space
+should be bent along the curve. The default value is <strong>Z</strong>.</p></li>
+<li><p><strong>Track Axis</strong>. This parameter is only available when <strong>Input</strong> parameter is
+set to <strong>Track Vectors</strong>. This defines which axis of original 3D space should
+be looking along user-provided tracking vectors after rotations. Tracking
+axis must not coincide with orientation axis. The default option is <strong>X</strong>.</p></li>
+<li><p><strong>Interpolation</strong>. This defines the type of interpolation between
+user-provided rotations of the space. The available options are <strong>Linear</strong>
+and <strong>Spline</strong>. The default option is <strong>Spline</strong>.</p></li>
+</ul>
 </section>
 <section id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
 <p>This node has the following output:</p>
 <ul class="simple">
-<li><p><strong>Noise</strong>. The generated vector field.</p></li>
+<li><p><strong>Field</strong>. The generated vector field.</p></li>
 </ul>
 </section>
-<section id="example-of-usage">
-<h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Link to this heading">¶</a></h2>
-<p>Visualize the noise field:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/79488796-b8c7a300-8033-11ea-956c-fc66819a0aed.png"><img alt="https://user-images.githubusercontent.com/284644/79488796-b8c7a300-8033-11ea-956c-fc66819a0aed.png" src="https://user-images.githubusercontent.com/284644/79488796-b8c7a300-8033-11ea-956c-fc66819a0aed.png" />
+<section id="examples-of-usage">
+<h2>Examples of Usage<a class="headerlink" href="#examples-of-usage" title="Link to this heading">¶</a></h2>
+<p>Example nodes setup:</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/f699e348-5f7d-4e1f-a3e2-9cd3d3ea8348"><img alt="https://github.com/user-attachments/assets/f699e348-5f7d-4e1f-a3e2-9cd3d3ea8348" src="https://github.com/user-attachments/assets/f699e348-5f7d-4e1f-a3e2-9cd3d3ea8348" />
 </a>
-<ul class="simple">
-<li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
-<li><p>Fields-&gt; <a class="reference internal" href="vector_field_graph.html"><span class="doc">Vector Field Graph</span></a></p></li>
-<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
-</ul>
-<hr class="docutils" />
-<a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/2b3e3067-8422-4024-9a9a-fb9444eb1273"><img alt="https://github.com/nortikin/sverchok/assets/14288520/2b3e3067-8422-4024-9a9a-fb9444eb1273" src="https://github.com/nortikin/sverchok/assets/14288520/2b3e3067-8422-4024-9a9a-fb9444eb1273" />
+<p>Result:</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/f0aced76-351a-4adb-99ab-3485506c1d9e"><img alt="https://github.com/user-attachments/assets/f0aced76-351a-4adb-99ab-3485506c1d9e" src="https://github.com/user-attachments/assets/f0aced76-351a-4adb-99ab-3485506c1d9e" />
 </a>
-<ul class="simple">
-<li><p>Generator-&gt; <a class="reference internal" href="../generator/line_mk4.html"><span class="doc">Line</span></a></p></li>
-<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
-<li><p>Fields-&gt; <a class="reference internal" href="vector_field_eval.html"><span class="doc">Evaluate Vector Field</span></a></p></li>
-<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
-</ul>
+<p>Same, but with Linear interpolation mode:</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/bfa083e6-27f2-49b1-98d2-b5b1132dc651"><img alt="https://github.com/user-attachments/assets/bfa083e6-27f2-49b1-98d2-b5b1132dc651" src="https://github.com/user-attachments/assets/bfa083e6-27f2-49b1-98d2-b5b1132dc651" />
+</a>
+<p>Example setup for Matrices input mode:</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/723ad29f-f6a9-49dc-ae7b-2df595815e19"><img alt="https://github.com/user-attachments/assets/723ad29f-f6a9-49dc-ae7b-2df595815e19" src="https://github.com/user-attachments/assets/723ad29f-f6a9-49dc-ae7b-2df595815e19" />
+</a>
+<p>Result:</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/008d709e-4b2f-4ad5-aa12-6ba1f353892f"><img alt="https://github.com/user-attachments/assets/008d709e-4b2f-4ad5-aa12-6ba1f353892f" src="https://github.com/user-attachments/assets/008d709e-4b2f-4ad5-aa12-6ba1f353892f" />
+</a>
 </section>
 </section>
 
@@ -228,8 +277,8 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="minimal_vfield.html" class="btn btn-neutral float-left" title="RBF Vector Field" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="rotation_field.html" class="btn btn-neutral float-right" title="Rotation Field" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="field_bend_along_surface_mk2.html" class="btn btn-neutral float-left" title="Bend Along Surface Field" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="image_field.html" class="btn btn-neutral float-right" title="Image Field" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
