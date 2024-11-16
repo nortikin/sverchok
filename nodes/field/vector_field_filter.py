@@ -11,7 +11,11 @@ from bpy.props import EnumProperty, BoolProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, map_recursive
 from sverchok.utils.math import coordinate_modes
-from sverchok.utils.field.vector import SvVectorFieldCartesianFilter, SvVectorFieldCylindricalFilter, SvVectorFieldSphericalFilter, SvVectorField
+from sverchok.utils.field.vector import SvVectorField
+from sverchok.utils.field.vector_operations import (
+        SvVectorFieldCartesianFilter,
+        SvVectorFieldCylindricalFilter,
+        SvVectorFieldSphericalFilter)
 
 class SvVectorFieldFilterNode(SverchCustomTreeNode, bpy.types.Node):
     """

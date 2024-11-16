@@ -14,7 +14,7 @@ from mathutils import bvhtree
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
-from sverchok.utils.field.vector import SvBvhAttractorVectorField
+from sverchok.utils.field.attractor import SvBvhAttractorVectorField
 from sverchok.utils.field.rbf import SvBvhRbfNormalVectorField
 from sverchok.dependencies import scipy
 from sverchok.utils.math import rbf_functions
