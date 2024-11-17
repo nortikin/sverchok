@@ -111,7 +111,7 @@ If you try high poly like Besier 2D with many points and hi resolution (1) then 
   :target: https://github.com/user-attachments/assets/429e6571-fe73-4fc7-b242-4f038f670871
 
 Examples
-========
+--------
 
 Boundary background contour:
 
@@ -125,6 +125,6 @@ Inner Offset
 
 
 DEVELOPMENT
-===========
+-----------
 
 If you have skills for work with CGAL see: https://github.com/satabol/SVCGAL

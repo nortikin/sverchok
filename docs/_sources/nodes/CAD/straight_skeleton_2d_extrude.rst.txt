@@ -163,7 +163,7 @@ If you try high poly like Besier 2D with many points and hi resolution (1) then 
   :target: https://github.com/user-attachments/assets/7103fb0d-3ad2-477a-8364-8997722c261c
 
 Examples
-========
+--------
 
 Hexagon with Straight Skeleton
 ------------------------------
@@ -208,6 +208,6 @@ This shape with autosmooth:
   :target: https://github.com/user-attachments/assets/10c38207-9d24-4b00-bcd6-84d502bc964e
 
 DEVELOPMENT
-===========
+-----------
 
 If you have skills for work with CGAL see: https://github.com/satabol/SVCGAL
