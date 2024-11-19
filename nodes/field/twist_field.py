@@ -13,7 +13,7 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat
-from sverchok.utils.field.vector import SvTwistVectorField
+from sverchok.utils.field.vector_primitives import SvTwistVectorField
 
 class SvTwistFieldNode(SverchCustomTreeNode, bpy.types.Node):
     """

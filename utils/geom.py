@@ -374,7 +374,7 @@ class CubicSpline(Spline):
     def from_2d_points(cls, xs, ys):
         vertices = np.zeros((len(xs), 3))
         vertices[:,0] = np.array(xs)
-        vertices[:,1] = np.zrray(ys)
+        vertices[:,1] = np.array(ys)
         return CubicSpline(vertices, metric='X', is_cyclic=False)
 
     def eval(self, t_in, tknots = None):

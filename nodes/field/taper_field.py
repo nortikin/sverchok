@@ -12,7 +12,7 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat
-from sverchok.utils.field.vector import SvTaperVectorField
+from sverchok.utils.field.vector_primitives import SvTaperVectorField
 
 class SvTaperFieldNode(SverchCustomTreeNode, bpy.types.Node):
     """
