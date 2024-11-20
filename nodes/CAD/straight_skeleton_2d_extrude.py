@@ -36,6 +36,9 @@ try:
     enable_module = True
 except ModuleNotFoundError:
     enable_module = False
+except Exception as _ex:
+    enable_module = False
+    print(_ex)
 
 
 # if values out of range then values will be aligned to range
