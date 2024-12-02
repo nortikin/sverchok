@@ -7,7 +7,7 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat
 
-from sverchok.utils.field.scalar import SvScalarFieldPointDistance
+from sverchok.utils.field.attractor import SvScalarFieldPointDistance
 from sverchok.utils.math import falloff_types, falloff_array
 
 class SvScalarFieldPointNode(SverchCustomTreeNode, bpy.types.Node):

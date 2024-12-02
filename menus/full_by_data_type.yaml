@@ -417,6 +417,8 @@
         - SvExDecomposeVectorFieldNode
         - SvExScalarFieldPointNode
         - SvAttractorFieldNodeMk2
+        - SvTwistFieldNode
+        - SvTaperFieldNode
         - SvRotationFieldNode
         - SvExImageFieldNode
         - SvMeshSurfaceFieldNode
@@ -433,6 +435,7 @@
         - icon_name: TOOL_SETTINGS
         - SvExScalarFieldMathNode
         - SvExVectorFieldMathNode
+        - SvVectorFieldFilterNode
         - SvScalarFieldCurveMapNode
         - SvExFieldDiffOpsNode
         - SvScalarFieldCurvatureNode
