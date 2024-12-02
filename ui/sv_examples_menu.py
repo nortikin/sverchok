@@ -118,10 +118,12 @@ class SvNodeTreeImporterSilent(bpy.types.Operator):
 
 
 classes = [SW_OT_Console, SV_MT_LayoutsExamples, SvNodeTreeImporterSilent]
+submenu_classes = []
 
 
 def register():
-    submenu_classes = (make_submenu_classes(path, category_name) for path, category_name in example_categories_names())
+    global submenu_classes
+    submenu_classes = [make_submenu_classes(path, category_name) for path, category_name in example_categories_names()]
     _ = [bpy.utils.register_class(cls) for cls in chain(classes, submenu_classes)]
     bpy.types.NODE_HT_header.append(node_examples_pulldown)
     bpy.types.NODE_HT_header.append(node_settings_pulldown)
@@ -130,4 +132,4 @@ def register():
 def unregister():
     bpy.types.NODE_HT_header.remove(node_settings_pulldown)
     bpy.types.NODE_HT_header.remove(node_examples_pulldown)
-    _ = [bpy.utils.unregister_class(cls) for cls in reversed(classes)]
+    _ = [bpy.utils.unregister_class(cls) for cls in reversed(list(chain(classes, submenu_classes)))]
