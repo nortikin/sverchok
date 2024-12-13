@@ -60,7 +60,7 @@ def ensure_valid_show_string(nodetype):
 
     try:
         loop_reverse[nodetype.bl_label] = nodetype.bl_idname
-        description = nodetype.bl_rna.docstring.get_shorthand()
+        description = SvDocstring(nodetype.bl_rna.description).get_shorthand()
         return nodetype.bl_label + ensure_short_description(description)
     except Exception as err:
         sv_logger.error(f'Nodetype "{nodetype}": ensure_valid_show_string() threw an exception:\n {err}')
