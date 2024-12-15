@@ -143,7 +143,7 @@ With any luck you are still smiling through this code detour, visual programming
 A recipe which you should be able to hook up yourself by seeing the example image.
 
 - ``Vector In``
-- ``Sclar Math`` (3x) notice I minimized the Multiplication Node.
+- ``Scalar Math`` (3x) notice I minimized the Multiplication Node.
 - ``A Number`` (2x)
 - ``Number Range`` (int)
 
@@ -202,7 +202,7 @@ The pattern is::
 
 - We know how many polygons we need (let's call this number ``j``)
 
-We know there are interuptions in the polygon pattern, between polygon index 2 and 3.  it is useful to think of an algorithm that produces these index sequences based on a range from ``0 thru j-1`` or ``[0,1,2,3,4,5]``. We can first ignore the fact that we need to remove every n-th polygon, or avoid creating it in the first place. Whatever you decide will be a choice between convenience and efficiency - I will choose convenience here.
+We know there are interruptions in the polygon pattern, between polygon index 2 and 3.  It is useful to think of an algorithm that produces these index sequences based on a range from ``0 thru j-1`` or ``[0,1,2,3,4,5]``. We can first ignore the fact that we need to remove every n-th polygon, or avoid creating it in the first place. Whatever you decide will be a choice between convenience and efficiency - I will choose convenience here.
 
 .. Note::
 
