@@ -44,7 +44,7 @@ Node Tree
   3. Most intriguing part - MANUAL angustment. Look for third part point 4. Dissolve;
   4. Joining all geometry to one;
   5. Convenient to make such reroute points (NodesMenu->layout->Reroute);
-  6. Additionallychecking all vertical dimentions to match initial line. We are using manually created lines in scene to adjust that Z-values. Maybe in some cases this checkout should be after flattening stage.
+  6. Additionallychecking all vertical dimensions to match initial line. We are using manually created lines in scene to adjust that Z-values. Maybe in some cases this checkout should be after flattening stage.
 
 4. **Separating bended corner plates**:
 
@@ -64,7 +64,7 @@ Node Tree
   1. Analytic outputs. There is row of analysis component node. There are area, perimeters, Nsides, IsBondary, Centers, Angles. All that going to 7 step, tipisation;
   2. Visual checking for cutting parts. There is color highlighting for ngons;
   3. Explode (boom node) polygons, dropping them on floor with inverted coplanar matrix for each plane, scale Z to zero (flattening itself);
-  4. Insetting gap between plates. So it appears line, compensating diferent deviations concerning flattening;
+  4. Insetting gap between plates. So it appears line, compensating different deviations concerning flattening;
   5. Also adding borders with extrude outer edges;
   6. collecting rerotes for data on that step.
 
@@ -76,7 +76,7 @@ Demonstrating from one side:
 
   1. Every plate merged by distance to be sure it consistent and sorted to manipulate after bisect disorder;
   2. Mask formula. For every edge find out thouse of edges, are vertically oriented. That edges are bend edges, that needed to be joined when sewing left and right;
-  3. Loop for every plate. Input to that loop original "triangle" and inseted (gap between plates);
+  3. Loop for every plate. Input to that loop original "triangle" and inserted (gap between plates);
 
 7. **Tipisation of plates**:
 

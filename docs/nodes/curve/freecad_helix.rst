@@ -14,7 +14,7 @@ This node requires FreeCAD_ libraries installed to work.
 Functionality
 -------------
 
-This node generates a helix Curve. The helix can be either cylyndrical (by default) or conical.
+This node generates a helix Curve. The helix can be either cylindrical (by default) or conical.
 
 The produced Curve object is NURBS-like, i.e. will be automatically converted
 to NURBS by nodes which require NURBS curves.

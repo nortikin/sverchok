@@ -14,7 +14,7 @@ Workflow
 
 1. **Importing DXF**:
 
-    First of all we import DXF. Last 15 years using Blender I did not checked correctness of geometry. Reason for that was usage of blender, mostly for vizualisation. But now checked for production we found that Blender' DXF importer works as shit in circles case. Deviation can achive 200 mm, that is not suits any needs of production ever in the world. So, only way to avoid such dissapointments was to write short importer by myself for only circles to replace original bezier. On vertical it have deviations because of different rails levels. It required  little triangulation, that not calculated, but manually esteblished and checked on viewer index node.
+    First of all we import DXF. Last 15 years using Blender I did not check for correctness of geometry. Reason for that was usage of blender, mostly for visualisation. But now checking for production, we found that Blender's DXF importer works as shit in circles case. Deviation can achieve 200 mm, that doesn't suit any needs of production ever in the world. So, the only way to avoid such disappointments was to write a short importer by myself for circles only to replace original bezier. On vertical it has deviations because of different rails levels. It required a little triangulation, that's not calculated, but manually established and checked on viewer index node.
 
     |image2|
 
@@ -97,13 +97,13 @@ Workflow
 
 3. **Raycasting on surface**:
 
-    Raycasting pattern on surface. For cropping pattern i used other countour - offseted from shape-definition curves. dimensions are defined by farthere offset for plates. So, offset for plates is half of 14 mm, 7 mm. That means, i needed to offset other 7 mm here.
+    Raycasting pattern on surface. For cropping pattern I used other contour - offsetted from shape-definition curves. Dimensions are defined by further offset for plates. So, offset for plates is half of 14 mm, 7 mm. That means, I needed to offset the other 7 mm here.
 
     |image4|
 
 4. **Dissolve**:
 
-    Dissolve accures with list of edges. Manually iterate all 2500 edges. So, i created edges generator, that choose edges by plate area threshold and boundary analising. Output is flat list in texts, that i need to edit manually. So, need to finish at some stage and not return back for autogenerate list. That means, shape boundary and pattern need to be fixed by design. In practic it was several times changed. After that, i get text with text in node and dissolve it. Than check border elevations (heights) to manually esteblish correct surface shape.
+    Dissolve accures with list of edges. Manually iterate all 2500 edges. So, i created edges generator, that choose edges by plate area threshold and boundary analysing. Output is flat list in texts, that i need to edit manually. So, need to finish at some stage and not return back for autogenerate list. That means, shape boundary and pattern need to be fixed by design. In practic it was several times changed. After that, i get text with text in node and dissolve it. Than check border elevations (heights) to manually esteblish correct surface shape.
 
     |image5|
     

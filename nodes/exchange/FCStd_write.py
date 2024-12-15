@@ -159,7 +159,7 @@ def fc_write_parts(fc_file, verts, faces, part_name, solid, mod):
 
     part_name += '_sv_' #->suffix added to avoid deleting freecad objects erroneously
 
-    # SEARCH the freecad project for previous writed parts from this node
+    # SEARCH the freecad project for previous written parts from this node
 
     if part_name in obj_names: #if the part name is numberless is detected as single
         fc_root.removeObject(part_name)
@@ -169,7 +169,7 @@ def fc_write_parts(fc_file, verts, faces, part_name, solid, mod):
             if part_name in name:
                 fc_root.removeObject(name)
 
-    ############### if there, previous writed parts are removed ####################
+    ############### if there, previous writted parts are removed ####################
     ############### so then write them again...
 
     if mod == 'solid': #EXPORT SOLID 

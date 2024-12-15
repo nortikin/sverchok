@@ -39,7 +39,7 @@ This node has the following inputs:
     .. image:: https://github.com/nortikin/sverchok/assets/14288520/2d2d6e3a-747e-4be2-88e2-50e9c9b39c1e
       :target: https://github.com/nortikin/sverchok/assets/14288520/2d2d6e3a-747e-4be2-88e2-50e9c9b39c1e
 
-- **Max itereation** - Max iteration of clusterization. (min=0)
+- **Max iteration** - Max iteration of clusterization. (min=0)
 - **Clusters** - Cluster counts. (min=4)
 
     .. image:: https://github.com/nortikin/sverchok/assets/14288520/6d49a5cf-704d-4566-b56e-861a88b9d34f
@@ -57,7 +57,7 @@ Triangulation.
 
 Before clusterisation your source meshes has to be triangulated. Here are parameters for process of triangulation.
 
-If source mesh has ngons woth different count of vertices then source mesh has to be triangulated with the next methods [**Quads mode** and **Polygons mode**].
+If source mesh has ngons with different count of vertices then source mesh has to be triangulated with the next methods [**Quads mode** and **Polygons mode**].
 If ngons of source mesh are equals (they can has 3,4,5 verts but for all faces) the mesh will be triangulated with pyvista method triangulate_ authomatically.
 
 .. image:: https://github.com/nortikin/sverchok/assets/14288520/66bedca2-c62f-4603-b42a-5b86a6a8eef6

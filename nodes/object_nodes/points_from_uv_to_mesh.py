@@ -77,7 +77,7 @@ class SvUVPointonMeshNodeMK2(SverchCustomTreeNode, bpy.types.Node):
     def sv_draw_buttons(self, context, layout):
         row = layout.row()
         col = row.column()
-        col.label(text='Apply midifiers:')
+        col.label(text='Apply modifiers:')
         col = row.column()
         col.alignment = 'LEFT'
         col.prop(self, 'apply_modifiers', expand=True, text='')
@@ -155,7 +155,7 @@ class SvUVPointonMeshNodeMK2(SverchCustomTreeNode, bpy.types.Node):
             bm.faces.ensure_lookup_table()
             UVMAPV, UVMAPP = UV(self, bm, uv_layer)
             if Pom.is_linked:
-                # resore UV to 3D
+                # restore UV to 3D
                 bvh = BVHTree.FromPolygons(UVMAPV, UVMAPP, all_triangles=False, epsilon=0.0)
                 lpom = [] # result in 3D
                 for Puv in PointUV:

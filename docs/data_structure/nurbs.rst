@@ -120,7 +120,7 @@ weights; but in most software  (including Blender), non-rational Bezier curves
 (without weights) are used.
 Usually Bezier curves of 2nd and 3rd degree are used, so they have
 correspondingly 3 or 4 control points. As such, Bezier curves can not give much
-flexiblity of shape. For example, quadratic Bezier curve always has shape of an
+flexibility of shape. For example, quadratic Bezier curve always has shape of an
 arc. Cubic Bezier curve can be "S-shaped" or "C-shaped". To make more complex
 forms, more control points (and, thus, higher degree) would be needed.
 But in most 2D and 3D graphics software, there is widely spread misuse of
@@ -148,7 +148,7 @@ represented (exactly, not approximately) as NURBS curves. We call such curves
 * Circles and circular arcs; ellipses and elliptic arcs. This case is a bit
   special. One can build a NURBS curve which has an exact shape of a circle.
   However, curve parametrization would differ from standard ("natural")
-  parametrization of a circle. The same goes for circluar arcs, ellipses and
+  parametrization of a circle. The same goes for circular arcs, ellipses and
   elliptic arcs.
 
 Workflow

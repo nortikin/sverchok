@@ -22,8 +22,8 @@ This node has the following inputs:
   matrices, that specify rotation of space around the curve. Locations of
   matrices define places on the curve where corresponding rotation should be
   done.
-* **Quaternions**. This input is availale and mandatory only when **Input**
-  parameter is set to **Quaternions**. This input should contain a lsit of
+* **Quaternions**. This input is available and mandatory only when **Input**
+  parameter is set to **Quaternions**. This input should contain a list of
   quaternions, which define rotation of space around the curve. Locations of
   these rotations on the curve are defined by values in **T**/**Length** input.
 * **Vectors**. This input is available and mandatory only when **Input**
@@ -55,7 +55,7 @@ This node has the following parameters:
     One of matrix axes (called orientation axis, see **Orientation** parameter
     below) is supposed to be directed along the curve, but not necessarily
     precisely. Rotation of the matrix along orientation curve define the
-    rotaiton of the space around the curve. Scale and skew components of
+    rotation of the space around the curve. Scale and skew components of
     matrices are ignored.
   * **Quaternions**. The user provides a list of quaternions, which define
     rotations around the curve. Places of these rotations along the curve are

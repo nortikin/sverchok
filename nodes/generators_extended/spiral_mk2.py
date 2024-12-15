@@ -148,7 +148,7 @@ def make_logarithmic_spiral(settings):
 
 def make_spherical_spiral(settings):
     '''
-        This is the approximate sperical spiral that has a finite length,
+        This is the approximate spherical spiral that has a finite length,
         where the phi & theta angles sweep their ranges at constant rates.
 
         eR       : exterior radius

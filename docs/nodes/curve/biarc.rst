@@ -36,7 +36,7 @@ This node has the following inputs:
 * **Tangent1**. Tangent vector at the start point of the curve. Length of this
   vector is not used, only direction. The default value is ``(0, 1, 0)``.
 * **Tangent2**. Tangent vector at the end point of the curve. Length of this
-  vector is not used, only diretion. The default value is ``(0, 1, 0)``.
+  vector is not used, only direction. The default value is ``(0, 1, 0)``.
 * **Parameter**. The value of P parameter for selecting a biarc curve from a
   family. The default value is 1.0.
 
