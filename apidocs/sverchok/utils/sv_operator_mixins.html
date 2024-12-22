@@ -3,19 +3,30 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
-<meta name="generator" content="pdoc3 0.11.1">
+<meta name="generator" content="pdoc3 0.11.5">
 <title>sverchok.utils.sv_operator_mixins API documentation</title>
 <meta name="description" content="">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
-<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
 <style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
 <style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
 <script>window.addEventListener('DOMContentLoaded', () => {
 hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
 hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
 })</script>
 </head>
 <body>
@@ -37,12 +48,26 @@ hljs.highlightAll();
 <span>def <span class="ident">register</span></span>(<span>)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def register():
+    bpy.utils.register_class(SvGenericCallbackOldOp)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.sv_operator_mixins.unregister"><code class="name flex">
 <span>def <span class="ident">unregister</span></span>(<span>)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def unregister():
+    bpy.utils.unregister_class(SvGenericCallbackOldOp)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -55,7 +80,6 @@ hljs.highlightAll();
 <span>(</span><span>...)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>This operator is generic and will call .fn_name on the instance of the caller node</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -84,6 +108,7 @@ hljs.highlightAll();
 
         return {&#39;FINISHED&#39;}</code></pre>
 </details>
+<div class="desc"><p>This operator is generic and will call .fn_name on the instance of the caller node</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li>bpy_types.Operator</li>
@@ -119,6 +144,24 @@ hljs.highlightAll();
 <span>def <span class="ident">execute</span></span>(<span>self, context)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def execute(self, context):
+    n = self.get_node(context)
+    if not n:
+        return {&#39;CANCELLED&#39;}
+
+    f = getattr(n, self.fn_name, None)
+    if not f:
+        msg = f&#34;{n.name} has no function named &#39;{self.fn_name}&#39;&#34;
+        self.report({&#34;WARNING&#34;}, msg)
+        return {&#39;CANCELLED&#39;}
+    f()
+
+    return {&#39;FINISHED&#39;}</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -136,7 +179,6 @@ hljs.highlightAll();
 <span>class <span class="ident">SvGenericCallbackWithParams</span></span>
 </code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -180,6 +222,7 @@ hljs.highlightAll();
         # return just in case, else let the content of the called function decide the return value
         return {&#39;FINISHED&#39;}</code></pre>
 </details>
+<div class="desc"></div>
 <h3>Subclasses</h3>
 <ul class="hlist">
 <li>sverchok.nodes.list_mutators.polygon_sort.SvSetSortDirection</li>
@@ -220,6 +263,22 @@ def some_function(self, operator):
 <span>def <span class="ident">execute</span></span>(<span>self, context)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def execute(self, context):
+    try:
+        f = getattr(context.node, self.fn_name)(self)
+        return f or {&#39;FINISHED&#39;}
+
+    except Exception as err:
+        print(repr(err))
+        return {&#39;CANCELLED&#39;}
+
+    # return just in case, else let the content of the called function decide the return value
+    return {&#39;FINISHED&#39;}</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -228,7 +287,6 @@ def some_function(self, operator):
 <span>class <span class="ident">SvGenericDirectorySelector</span></span>
 </code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -283,6 +341,7 @@ def some_function(self, operator):
         wm.fileselect_add(self)
         return {&#39;RUNNING_MODAL&#39;}</code></pre>
 </details>
+<div class="desc"></div>
 <h3>Subclasses</h3>
 <ul class="hlist">
 <li>sverchok.nodes.viz.viewer_texture.SvTextureViewerDirSelect</li>
@@ -323,12 +382,39 @@ def some_function(self, operator):
 <span>def <span class="ident">execute</span></span>(<span>self, context)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def execute(self, context):
+    node = self.node   # definitely have the node here
+    try:
+        f = getattr(node, self.fn_name)(self)
+        return f or {&#39;FINISHED&#39;}
+
+    except Exception as err:
+        print(repr(err))
+        return {&#39;CANCELLED&#39;}
+
+    # return just in case, else let the content of the called function decide the return value
+    return {&#39;FINISHED&#39;}</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.sv_operator_mixins.SvGenericDirectorySelector.invoke"><code class="name flex">
 <span>def <span class="ident">invoke</span></span>(<span>self, context, event)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def invoke(self, context, event):
+    self.node = context.node
+    wm = context.window_manager
+    wm.fileselect_add(self)
+    return {&#39;RUNNING_MODAL&#39;}</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -337,14 +423,6 @@ def some_function(self, operator):
 <span>class <span class="ident">SvGenericNodeLocator</span></span>
 </code></dt>
 <dd>
-<div class="desc"><p>usage:
-add this to an Operator class definition if you need to track the origin
-of a click.</p>
-<p>see at the bottom of this file in " class SvGenericCallbackOldOp " how to use it.
-you can then use the "node.wrapper_tracked_ui_draw_op", in the UI draw function..</p>
-<p>f.ex:
-callback = "node.sverchok_mesh_baker_mk3"
-self.wrapper_tracked_ui_draw_op(row, callback, icon='', text='')</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -413,6 +491,14 @@ self.wrapper_tracked_ui_draw_op(row, callback, icon='', text='')</p></div>
         self.report({&#39;ERROR&#39;}, msg)
         return {&#39;CANCELLED&#39;}</code></pre>
 </details>
+<div class="desc"><p>usage:
+add this to an Operator class definition if you need to track the origin
+of a click.</p>
+<p>see at the bottom of this file in " class SvGenericCallbackOldOp " how to use it.
+you can then use the "node.wrapper_tracked_ui_draw_op", in the UI draw function..</p>
+<p>f.ex:
+callback = "node.sverchok_mesh_baker_mk3"
+self.wrapper_tracked_ui_draw_op(row, callback, icon='', text='')</p></div>
 <h3>Subclasses</h3>
 <ul class="hlist">
 <li>sverchok.nodes.exchange.FCStd_read.SvReadFCStdOperator</li>
@@ -476,24 +562,87 @@ self.wrapper_tracked_ui_draw_op(row, callback, icon='', text='')</p></div>
 <span>def <span class="ident">execute</span></span>(<span>self, context)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def execute(self, context):
+    node = self.get_node(context)
+    if node:
+        response = self.sv_execute(context, node)
+        if response:
+            return response
+        return {&#39;FINISHED&#39;}
+
+    msg = f&#39;{self.bl_idname} was unable to locate the node &lt;{self.tree_name}|{self.node_name}&gt;&#39;
+    self.report({&#39;ERROR&#39;}, msg)
+    return {&#39;CANCELLED&#39;}</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.sv_operator_mixins.SvGenericNodeLocator.get_node"><code class="name flex">
 <span>def <span class="ident">get_node</span></span>(<span>self, context)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_node(self, context):
+    &#34;&#34;&#34; context.node is usually provided, else tree_name/node_name must be passed &#34;&#34;&#34;
+    if self.tree_name and self.node_name:
+        return bpy.data.node_groups[self.tree_name].nodes[self.node_name]
+
+    if hasattr(context, &#34;node&#34;):
+        return context.node
+
+    print(&#34;treename or nodename not supplied, node not found in available trees&#34;)
+    print(f&#34;received tree_name: {tree_name} and node_name: {node_name}&#34;)
+    return None</code></pre>
+</details>
 <div class="desc"><p>context.node is usually provided, else tree_name/node_name must be passed</p></div>
 </dd>
 <dt id="sverchok.utils.sv_operator_mixins.SvGenericNodeLocator.get_tree"><code class="name flex">
 <span>def <span class="ident">get_tree</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_tree(self):
+    return bpy.data.node_groups.get(self.tree_name)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.sv_operator_mixins.SvGenericNodeLocator.sv_execute"><code class="name flex">
 <span>def <span class="ident">sv_execute</span></span>(<span>self, context, node)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def sv_execute(self, context, node):
+    &#34;&#34;&#34; 
+    you override this, inside this function you place the code you want to execute 
+    if the locator finds the node.
+    
+    - you can use a return statement to end the sv_execute function early.
+    - return can be one of two things. success or failure
+
+        success:  (these are all equal)
+            return False,
+            return 0
+            return None
+            return
+            return {&#39;FINISHED&#39;}
+
+        failure:
+            return {&#39;CANCELLED&#39;} as a regular execute function
+    &#34;&#34;&#34;
+    pass</code></pre>
+</details>
 <div class="desc"><p>you override this, inside this function you place the code you want to execute
 if the locator finds the node.</p>
 <ul>
@@ -583,7 +732,7 @@ return {'CANCELLED'} as a regular execute function</p>
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.1</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.5</a>.</p>
 </footer>
 </body>
 </html>

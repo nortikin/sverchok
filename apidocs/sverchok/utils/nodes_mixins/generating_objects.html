@@ -3,19 +3,30 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
-<meta name="generator" content="pdoc3 0.11.1">
+<meta name="generator" content="pdoc3 0.11.5">
 <title>sverchok.utils.nodes_mixins.generating_objects API documentation</title>
 <meta name="description" content="">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
-<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
 <style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
 <style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
 <script>window.addEventListener('DOMContentLoaded', () => {
 hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
 hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
 })</script>
 </head>
 <body>
@@ -37,12 +48,27 @@ hljs.highlightAll();
 <span>def <span class="ident">register</span></span>(<span>)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def register():
+    [bpy.utils.register_class(cls) for cls in module_classes]
+    bpy.types.Scene.sv_object_names = bpy.props.PointerProperty(type=SvObjectNames)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.nodes_mixins.generating_objects.unregister"><code class="name flex">
 <span>def <span class="ident">unregister</span></span>(<span>)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def unregister():
+    [bpy.utils.unregister_class(cls) for cls in module_classes[::-1]]</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -54,7 +80,6 @@ hljs.highlightAll();
 <span>class <span class="ident">BlenderObjects</span></span>
 </code></dt>
 <dd>
-<div class="desc"><p>Should be used for generating list of objects</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -137,6 +162,7 @@ hljs.highlightAll();
         layout.prop(self, &#39;render_objects&#39;, toggle=True, text=&#39;&#39;,
                     icon=f&#34;RESTRICT_RENDER_{&#39;OFF&#39; if self.render_objects else &#39;ON&#39;}&#34;)</code></pre>
 </details>
+<div class="desc"><p>Should be used for generating list of objects</p></div>
 <h3>Subclasses</h3>
 <ul class="hlist">
 <li><a title="sverchok.utils.nodes_mixins.generating_objects.SvViewerLightNode" href="#sverchok.utils.nodes_mixins.generating_objects.SvViewerLightNode">SvViewerLightNode</a></li>
@@ -148,15 +174,15 @@ hljs.highlightAll();
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.utils.nodes_mixins.generating_objects.BlenderObjects.render_objects"><code class="name">var <span class="ident">render_objects</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'default': True, 'description': 'Show / hide objects for render engines', 'update': <function <a title="sverchok.utils.nodes_mixins.generating_objects.BlenderObjects.render_objects_update" href="#sverchok.utils.nodes_mixins.generating_objects.BlenderObjects.render_objects_update">BlenderObjects.render_objects_update()</a> at 0x7f0c6af0e320>, 'attr': 'render_objects'}></code></dt>
+<dt id="sverchok.utils.nodes_mixins.generating_objects.BlenderObjects.render_objects"><code class="name">var <span class="ident">render_objects</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'default': True, 'description': 'Show / hide objects for render engines', 'update': <function <a title="sverchok.utils.nodes_mixins.generating_objects.BlenderObjects.render_objects_update" href="#sverchok.utils.nodes_mixins.generating_objects.BlenderObjects.render_objects_update">BlenderObjects.render_objects_update()</a> at 0x7ffb33f63eb0>, 'attr': 'render_objects'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.utils.nodes_mixins.generating_objects.BlenderObjects.selectable_objects"><code class="name">var <span class="ident">selectable_objects</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'default': True, 'description': 'Make objects selectable / unselectable', 'update': <function <a title="sverchok.utils.nodes_mixins.generating_objects.BlenderObjects.selectable_objects_update" href="#sverchok.utils.nodes_mixins.generating_objects.BlenderObjects.selectable_objects_update">BlenderObjects.selectable_objects_update()</a> at 0x7f0c6af0e290>, 'attr': 'selectable_objects'}></code></dt>
+<dt id="sverchok.utils.nodes_mixins.generating_objects.BlenderObjects.selectable_objects"><code class="name">var <span class="ident">selectable_objects</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'default': True, 'description': 'Make objects selectable / unselectable', 'update': <function <a title="sverchok.utils.nodes_mixins.generating_objects.BlenderObjects.selectable_objects_update" href="#sverchok.utils.nodes_mixins.generating_objects.BlenderObjects.selectable_objects_update">BlenderObjects.selectable_objects_update()</a> at 0x7ffb33f63e20>, 'attr': 'selectable_objects'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.utils.nodes_mixins.generating_objects.BlenderObjects.show_objects"><code class="name">var <span class="ident">show_objects</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'default': True, 'description': 'Show / hide objects in viewport', 'update': <function <a title="sverchok.utils.nodes_mixins.generating_objects.BlenderObjects.show_objects_update" href="#sverchok.utils.nodes_mixins.generating_objects.BlenderObjects.show_objects_update">BlenderObjects.show_objects_update()</a> at 0x7f0c6af0e3b0>, 'attr': 'show_objects'}></code></dt>
+<dt id="sverchok.utils.nodes_mixins.generating_objects.BlenderObjects.show_objects"><code class="name">var <span class="ident">show_objects</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'default': True, 'description': 'Show / hide objects in viewport', 'update': <function <a title="sverchok.utils.nodes_mixins.generating_objects.BlenderObjects.show_objects_update" href="#sverchok.utils.nodes_mixins.generating_objects.BlenderObjects.show_objects_update">BlenderObjects.show_objects_update()</a> at 0x7ffb33f63f40>, 'attr': 'show_objects'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -167,12 +193,68 @@ hljs.highlightAll();
 <span>def <span class="ident">draw_object_properties</span></span>(<span>self, layout)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def draw_object_properties(self, layout):
+    &#34;&#34;&#34;Should be used for adding hide, select, render objects properties&#34;&#34;&#34;
+    layout.prop(self, &#39;show_objects&#39;, toggle=True, text=&#39;&#39;,
+                icon=f&#34;RESTRICT_VIEW_{&#39;OFF&#39; if self.show_objects else &#39;ON&#39;}&#34;)
+    layout.prop(self, &#39;selectable_objects&#39;, toggle=True, text=&#39;&#39;,
+                icon=f&#34;RESTRICT_SELECT_{&#39;OFF&#39; if self.selectable_objects else &#39;ON&#39;}&#34;)
+    layout.prop(self, &#39;render_objects&#39;, toggle=True, text=&#39;&#39;,
+                icon=f&#34;RESTRICT_RENDER_{&#39;OFF&#39; if self.render_objects else &#39;ON&#39;}&#34;)</code></pre>
+</details>
 <div class="desc"><p>Should be used for adding hide, select, render objects properties</p></div>
 </dd>
 <dt id="sverchok.utils.nodes_mixins.generating_objects.BlenderObjects.regenerate_objects"><code class="name flex">
-<span>def <span class="ident">regenerate_objects</span></span>(<span>self, object_names: List[str], data_blocks, collections: List[bpy_types.Collection] = None, object_template: List[bpy_types.Object] = None, to_show: list[bool] = None)</span>
+<span>def <span class="ident">regenerate_objects</span></span>(<span>self,<br>object_names: List[str],<br>data_blocks,<br>collections: List[bpy_types.Collection] = None,<br>object_template: List[bpy_types.Object] = None,<br>to_show: list[bool] = None)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def regenerate_objects(self,
+                       object_names: List[str],
+                       data_blocks,
+                       collections: List[bpy.types.Collection] = None,
+                       object_template: List[bpy.types.Object] = None,
+                       to_show: list[bool] = None,
+                       ):
+    &#34;&#34;&#34;
+    It will generate new or remove old objects, number of generated objects will be equal to given data_blocks
+    Object_names list can contain one name. In this case Blender will add suffix to next objects (.001, .002,...)
+    :param object_template: optionally, object which properties should be grabbed for instanced object
+    :param collections: objects will be putted into collections if given, only one in list can be given
+    :param data_blocks: nearly any data blocks - mesh, curves, lights ...
+    :param object_names: usually equal to name of data block
+    :param data_blocks: for now it is support only be bpy.types.Mesh
+    :param to_show: whether to show objects in viewport.
+    &#34;&#34;&#34;
+    if collections is None:
+        collections = [None]
+    if object_template is None:
+        object_template = [None]
+    if to_show is None:
+        to_show = [True]
+
+    correct_collection_length(self.object_data, len(data_blocks))
+    prop_group: SvObjectData
+    input_data = zip(self.object_data,
+                     data_blocks,
+                     cycle(object_names),
+                     cycle(collections),
+                     cycle(object_template),
+                     cycle(to_show),
+                     )
+    for prop_group, data_block, name, collection, template, show in input_data:
+        prop_group.ensure_object(data_block, name, template)
+        prop_group.ensure_link_to_collection(collection)
+        prop_group.check_object_name(name)
+        prop_group.check_object_show_state(show)</code></pre>
+</details>
 <div class="desc"><p>It will generate new or remove old objects, number of generated objects will be equal to given data_blocks
 Object_names list can contain one name. In this case Blender will add suffix to next objects (.001, .002,&hellip;)
 :param object_template: optionally, object which properties should be grabbed for instanced object
@@ -186,18 +268,41 @@ Object_names list can contain one name. In this case Blender will add suffix to 
 <span>def <span class="ident">render_objects_update</span></span>(<span>self, context)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def render_objects_update(self, context):
+    [setattr(prop.obj, &#39;hide_render&#39;, False if self.render_objects else True) for prop in self.object_data]</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.nodes_mixins.generating_objects.BlenderObjects.selectable_objects_update"><code class="name flex">
 <span>def <span class="ident">selectable_objects_update</span></span>(<span>self, context)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def selectable_objects_update(self, context):
+    [setattr(prop.obj, &#39;hide_select&#39;, False if self.selectable_objects else True) for prop in self.object_data]</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.nodes_mixins.generating_objects.BlenderObjects.show_objects_update"><code class="name flex">
 <span>def <span class="ident">show_objects_update</span></span>(<span>self, context, to_show: bool = None)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def show_objects_update(self, context, to_show: bool = None):
+    &#34;&#34;&#34;Hide / show objects. It should be only place to hide objects&#34;&#34;&#34;
+    to_show = to_show if to_show is not None else self.show_objects
+    [setattr(prop.obj, &#39;hide_viewport&#39;, not to_show) for prop in self.object_data]</code></pre>
+</details>
 <div class="desc"><p>Hide / show objects. It should be only place to hide objects</p></div>
 </dd>
 </dl>
@@ -206,7 +311,6 @@ Object_names list can contain one name. In this case Blender will add suffix to 
 <span>class <span class="ident">SearchNode</span></span>
 </code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -226,6 +330,7 @@ Object_names list can contain one name. In this case Blender will add suffix to 
             self._node = context.node
         return self.execute(context)</code></pre>
 </details>
+<div class="desc"></div>
 <h3>Subclasses</h3>
 <ul class="hlist">
 <li>sverchok.nodes.viz.geo_nodes_viewer.SvAddNewGNTree</li>
@@ -250,7 +355,6 @@ Object_names list can contain one name. In this case Blender will add suffix to 
 <dl>
 <dt id="sverchok.utils.nodes_mixins.generating_objects.SearchNode.node"><code class="name">prop <span class="ident">node</span></code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -261,6 +365,7 @@ def node(self):
         self._node = bpy.data.node_groups[self.tree_name].nodes[self.node_name]
     return self._node</code></pre>
 </details>
+<div class="desc"></div>
 </dd>
 </dl>
 <h3>Methods</h3>
@@ -269,6 +374,15 @@ def node(self):
 <span>def <span class="ident">invoke</span></span>(<span>self, context, event)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def invoke(self, context, event):
+    if hasattr(context, &#39;node&#39;):
+        self._node = context.node
+    return self.execute(context)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -278,7 +392,6 @@ def node(self):
 <span>(</span><span>...)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Create object copies independent of the node</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -293,6 +406,7 @@ def node(self):
         self.node.bake()
         return {&#39;FINISHED&#39;}</code></pre>
 </details>
+<div class="desc"><p>Create object copies independent of the node</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="sverchok.utils.nodes_mixins.generating_objects.SearchNode" href="#sverchok.utils.nodes_mixins.generating_objects.SearchNode">SearchNode</a></li>
@@ -324,6 +438,14 @@ def node(self):
 <span>def <span class="ident">execute</span></span>(<span>self, context)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def execute(self, context):
+    self.node.bake()
+    return {&#39;FINISHED&#39;}</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -333,7 +455,6 @@ def node(self):
 <span>(</span><span>...)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>It creates and add new material to a node</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -358,6 +479,7 @@ def node(self):
     def poll(cls, context):
         return hasattr(context.node, &#39;material&#39;)</code></pre>
 </details>
+<div class="desc"><p>It creates and add new material to a node</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li>bpy_types.Operator</li>
@@ -403,6 +525,16 @@ def node(self):
 <span>def <span class="ident">execute</span></span>(<span>self, context)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def execute(self, context):
+    mat = bpy.data.materials.new(&#39;sv_material&#39;)
+    mat.use_nodes = True
+    context.node.material = mat
+    return {&#39;FINISHED&#39;}</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -412,7 +544,6 @@ def node(self):
 <span>(</span><span>...)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>For now it is supporting only one spline per curve</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -479,6 +610,7 @@ def node(self):
         if tilt is not None:
             spline.points.foreach_set(&#39;tilt&#39;, numpy_full_list(tilt, len(vertices)))</code></pre>
 </details>
+<div class="desc"><p>For now it is supporting only one spline per curve</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li>bpy_types.PropertyGroup</li>
@@ -498,15 +630,60 @@ def node(self):
 <h3>Methods</h3>
 <dl>
 <dt id="sverchok.utils.nodes_mixins.generating_objects.SvCurveData.regenerate_curve"><code class="name flex">
-<span>def <span class="ident">regenerate_curve</span></span>(<span>self, curve_name: str, vertices: Union[List[list], List[numpy.ndarray]], spline_type: str = 'POLY', vertices_radius: Union[List[list], List[numpy.ndarray]] = None, close_spline: Union[List[bool], List[int]] = None, use_smooth: bool = True, tilt: Union[List[list], List[numpy.ndarray]] = None)</span>
+<span>def <span class="ident">regenerate_curve</span></span>(<span>self,<br>curve_name: str,<br>vertices: List[list] | List[numpy.ndarray],<br>spline_type: str = 'POLY',<br>vertices_radius: List[list] | List[numpy.ndarray] = None,<br>close_spline: List[bool] | List[int] = None,<br>use_smooth: bool = True,<br>tilt: List[list] | List[numpy.ndarray] = None)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def regenerate_curve(self,
+                     curve_name: str,
+                     vertices: Union[List[list], List[np.ndarray]],
+                     spline_type: str = &#39;POLY&#39;,
+                     vertices_radius: Union[List[list], List[np.ndarray]] = None,
+                     close_spline: Union[List[bool], List[int]] = None,
+                     use_smooth: bool = True,
+                     tilt: Union[List[list], List[np.ndarray]] = None):
+    # Be aware that curve consists multiple splines
+    if not self.curve:
+        self.curve = bpy.data.curves.new(name=curve_name, type=&#39;CURVE&#39;)  # type [&#39;CURVE&#39;, &#39;SURFACE&#39;, &#39;FONT&#39;]
+    if len(self.curve.splines) != len(vertices) \
+            or any(len(s.points) != len(v) for s, v in zip(self.curve.splines, vertices)):
+        # if at least on spline has wrong number of points whole list of splines should be recreated
+        # thanks to Blender API
+        self.curve.splines.clear()
+        [self.curve.splines.new(spline_type) for _ in range(len(vertices))]
+        [s.points.add(len(v) - 1) for s, v in zip(self.curve.splines, vertices)]
+
+    for s, v, r, t, c in zip(self.curve.splines, vertices,
+                          repeat_last(vertices_radius or [None]),
+                          repeat_last(tilt or [None]),
+                          repeat_last(close_spline)):
+        v = np.asarray(v, dtype=np.float32)
+        if r is None:
+            r = np.ones(len(v), dtype=np.float32)
+        r = np.asarray(r, dtype=np.float32)
+        self._regenerate_spline(s, v, spline_type, r, t, c, use_smooth)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.nodes_mixins.generating_objects.SvCurveData.remove_data"><code class="name flex">
 <span>def <span class="ident">remove_data</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def remove_data(self):
+    &#34;&#34;&#34;
+    This method should be called before deleting the property
+    The mesh is belonged only to this property and should be deleted with it
+    &#34;&#34;&#34;
+    if self.curve:
+        delete_data_block(self.curve)</code></pre>
+</details>
 <div class="desc"><p>This method should be called before deleting the property
 The mesh is belonged only to this property and should be deleted with it</p></div>
 </dd>
@@ -517,8 +694,6 @@ The mesh is belonged only to this property and should be deleted with it</p></di
 <span>(</span><span>...)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>It calls get_random_name fo sv_object_names property in scene
-and assign it to base_data_name property of node</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -540,6 +715,8 @@ and assign it to base_data_name property of node</p></div>
         self.node.base_data_name = bpy.context.scene.sv_object_names.get_random_name()
         return {&#39;FINISHED&#39;}</code></pre>
 </details>
+<div class="desc"><p>It calls get_random_name fo sv_object_names property in scene
+and assign it to base_data_name property of node</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="sverchok.utils.nodes_mixins.generating_objects.SearchNode" href="#sverchok.utils.nodes_mixins.generating_objects.SearchNode">SearchNode</a></li>
@@ -580,6 +757,14 @@ and assign it to base_data_name property of node</p></div>
 <span>def <span class="ident">execute</span></span>(<span>self, context)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def execute(self, context):
+    self.node.base_data_name = bpy.context.scene.sv_object_names.get_random_name()
+    return {&#39;FINISHED&#39;}</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -589,7 +774,6 @@ and assign it to base_data_name property of node</p></div>
 <span>(</span><span>...)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -613,6 +797,7 @@ and assign it to base_data_name property of node</p></div>
         if self.light:
             delete_data_block(self.light)</code></pre>
 </details>
+<div class="desc"></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li>bpy_types.PropertyGroup</li>
@@ -635,12 +820,36 @@ and assign it to base_data_name property of node</p></div>
 <span>def <span class="ident">regenerate_light</span></span>(<span>self, light_name: str, light_type: str)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def regenerate_light(self, light_name: str, light_type: str):
+    if not self.light:
+        # new mesh should be created
+        self.light = bpy.data.lights.new(name=light_name, type=light_type)
+    elif self.light.type != light_type:
+        # in case if type was changed
+        self.light.type = light_type</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.nodes_mixins.generating_objects.SvLightData.remove_data"><code class="name flex">
 <span>def <span class="ident">remove_data</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def remove_data(self):
+    &#34;&#34;&#34;
+    This method should be called before deleting the property
+    The mesh is belonged only to this property and should be deleted with it
+    &#34;&#34;&#34;
+    if self.light:
+        delete_data_block(self.light)</code></pre>
+</details>
 <div class="desc"><p>This method should be called before deleting the property
 The mesh is belonged only to this property and should be deleted with it</p></div>
 </dd>
@@ -651,7 +860,6 @@ The mesh is belonged only to this property and should be deleted with it</p></di
 <span>(</span><span>...)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -751,6 +959,7 @@ The mesh is belonged only to this property and should be deleted with it</p></di
         if self.mesh:
             delete_data_block(self.mesh)</code></pre>
 </details>
+<div class="desc"></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li>bpy_types.PropertyGroup</li>
@@ -773,21 +982,101 @@ The mesh is belonged only to this property and should be deleted with it</p></di
 <span>def <span class="ident">copy</span></span>(<span>self) ‑> bpy_types.Mesh</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def copy(self) -&gt; bpy.types.Mesh:
+    return self.mesh.copy()</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.nodes_mixins.generating_objects.SvMeshData.is_topology_changed"><code class="name flex">
 <span>def <span class="ident">is_topology_changed</span></span>(<span>self, verts: list, edges: list, faces: list) ‑> bool</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def is_topology_changed(self, verts: list, edges: list, faces: list) -&gt; bool:
+    &#34;&#34;&#34;
+    Simple and fast test but not 100% robust.
+    If number of vertices and faces are unchanged it assumes that topology is not changed
+    This test is useful if mesh just changed its location.
+    It is much faster just set new coordinate for each vector then recreate whole object
+    &#34;&#34;&#34;
+    if not faces:
+        # edges can be take in account if mesh does not have polygons
+        # because Sverchok edges can exclude edges within polygons
+        return len(self.mesh.vertices) != len(verts) or len(self.mesh.edges) != len(edges)
+    else:
+        number_is_changed = len(self.mesh.vertices) != len(verts) or len(self.mesh.polygons) != len(faces)
+        # check several polygons indexes
+        are_polygons_changed = any([list(p.vertices) != f for _, p, f in zip(range(5), self.mesh.polygons, faces)])
+        return number_is_changed or are_polygons_changed</code></pre>
+</details>
 <div class="desc"><p>Simple and fast test but not 100% robust.
 If number of vertices and faces are unchanged it assumes that topology is not changed
 This test is useful if mesh just changed its location.
 It is much faster just set new coordinate for each vector then recreate whole object</p></div>
 </dd>
 <dt id="sverchok.utils.nodes_mixins.generating_objects.SvMeshData.regenerate_mesh"><code class="name flex">
-<span>def <span class="ident">regenerate_mesh</span></span>(<span>self, mesh_name: str, verts, edges=None, faces=None, matrix: Matrix = None, make_changes_test=True)</span>
+<span>def <span class="ident">regenerate_mesh</span></span>(<span>self,<br>mesh_name: str,<br>verts,<br>edges=None,<br>faces=None,<br>matrix: Matrix = None,<br>make_changes_test=True)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def regenerate_mesh(self, mesh_name: str, verts, edges=None, faces=None, matrix: Matrix = None,
+                    make_changes_test=True):
+    &#34;&#34;&#34;
+    It takes vertices, edges and faces and updates mesh data block
+    If it assume that topology is unchanged only position of vertices will be changed
+    In this case it will be more efficient if vertices are given in np.array float32 format
+    Can apply matrix to mesh optionally
+    &#34;&#34;&#34;
+    if edges is None:
+        edges = []
+    if faces is None:
+        faces = []
+
+    if not self.mesh:
+        # new mesh should be created
+        self.mesh = bpy.data.meshes.new(name=mesh_name)
+
+    if not make_changes_test or self.is_topology_changed(verts, edges, faces):
+
+        if self.mesh.is_editmode:
+            with bmesh_from_edit_mesh(self.mesh) as bm:
+                bm.clear()
+                add_mesh_to_bmesh(bm, verts, edges, faces, update_indexes=False, update_normals=False)
+                bm.normal_update()
+                if matrix:
+                    bm.transform(matrix)
+        else:
+            with EmptyBmesh(False) as bm:
+                add_mesh_to_bmesh(bm, verts, edges, faces, update_indexes=False, update_normals=False)
+                if matrix:
+                    bm.transform(matrix)
+                bm.to_mesh(self.mesh)
+
+    else:
+
+        if self.mesh.is_editmode:
+            with bmesh_from_edit_mesh(self.mesh) as bm:
+                for bv, v in zip(bm.verts, verts):
+                    bv.co = v
+                if matrix:
+                    bm.transform(matrix)
+        else:
+            self.update_vertices(verts)
+            if matrix:
+                self.mesh.transform(matrix)
+
+    self.mesh.update()</code></pre>
+</details>
 <div class="desc"><p>It takes vertices, edges and faces and updates mesh data block
 If it assume that topology is unchanged only position of vertices will be changed
 In this case it will be more efficient if vertices are given in np.array float32 format
@@ -797,6 +1086,18 @@ Can apply matrix to mesh optionally</p></div>
 <span>def <span class="ident">remove_data</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def remove_data(self):
+    &#34;&#34;&#34;
+    This method should be called before deleting the property
+    The mesh is belonged only to this property and should be deleted with it
+    &#34;&#34;&#34;
+    if self.mesh:
+        delete_data_block(self.mesh)</code></pre>
+</details>
 <div class="desc"><p>This method should be called before deleting the property
 The mesh is belonged only to this property and should be deleted with it</p></div>
 </dd>
@@ -804,12 +1105,36 @@ The mesh is belonged only to this property and should be deleted with it</p></di
 <span>def <span class="ident">set_smooth</span></span>(<span>self, is_smooth_mesh)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_smooth(self, is_smooth_mesh):
+    &#34;&#34;&#34;Make mesh smooth or flat&#34;&#34;&#34;
+    if is_smooth_mesh:
+        is_smooth = np.ones(len(self.mesh.polygons), dtype=bool)
+    else:
+        is_smooth = np.zeros(len(self.mesh.polygons), dtype=bool)
+    self.mesh.polygons.foreach_set(&#39;use_smooth&#39;, is_smooth)</code></pre>
+</details>
 <div class="desc"><p>Make mesh smooth or flat</p></div>
 </dd>
 <dt id="sverchok.utils.nodes_mixins.generating_objects.SvMeshData.update_vertices"><code class="name flex">
-<span>def <span class="ident">update_vertices</span></span>(<span>self, verts: Union[list, numpy.ndarray])</span>
+<span>def <span class="ident">update_vertices</span></span>(<span>self, verts: list | numpy.ndarray)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def update_vertices(self, verts: Union[list, np.ndarray]):
+    &#34;&#34;&#34;
+    Just update position of mesh vertices, order and number of given vertices should be the same as mesh
+    numpy array with float32 type will be 10 times faster than any other input data
+    &#34;&#34;&#34;
+    verts = np.array(verts, dtype=np.float32)  # todo will be this fast if it is already array float 32?
+    self.mesh.vertices.foreach_set(&#39;co&#39;, np.ravel(verts))</code></pre>
+</details>
 <div class="desc"><p>Just update position of mesh vertices, order and number of given vertices should be the same as mesh
 numpy array with float32 type will be 10 times faster than any other input data</p></div>
 </dd>
@@ -820,7 +1145,6 @@ numpy array with float32 type will be 10 times faster than any other input data<
 <span>(</span><span>...)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -924,6 +1248,7 @@ numpy array with float32 type will be 10 times faster than any other input data<
         if self.obj:
             delete_data_block(self.obj)</code></pre>
 </details>
+<div class="desc"></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li>bpy_types.PropertyGroup</li>
@@ -950,36 +1275,141 @@ numpy array with float32 type will be 10 times faster than any other input data<
 <span>def <span class="ident">check_object_name</span></span>(<span>self, name: str) ‑> None</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def check_object_name(self, name: str) -&gt; None:
+    &#34;&#34;&#34;If base name of an object was changed names of all instances also should be changed&#34;&#34;&#34;
+    real_name = self.obj.name.rsplit(&#39;.&#39;, 1)[0]
+    if real_name != name:
+        self.obj.name = name</code></pre>
+</details>
 <div class="desc"><p>If base name of an object was changed names of all instances also should be changed</p></div>
 </dd>
 <dt id="sverchok.utils.nodes_mixins.generating_objects.SvObjectData.check_object_show_state"><code class="name flex">
 <span>def <span class="ident">check_object_show_state</span></span>(<span>self, to_show: bool)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def check_object_show_state(self, to_show: bool):
+    # hide_viewport is faster than hide_set and hide_viewport is stable
+    # when objects are assigned to a collection
+    hide = not to_show
+    if self.obj.hide_viewport != hide:
+        self.obj.hide_viewport = hide</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.nodes_mixins.generating_objects.SvObjectData.copy"><code class="name flex">
 <span>def <span class="ident">copy</span></span>(<span>self) ‑> bpy_types.Object</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def copy(self) -&gt; bpy.types.Object:
+    &#34;&#34;&#34;Return copy of object which is assigned to a collection&#34;&#34;&#34;
+    obj = self.obj.copy()
+    for collection in self.obj.users_collection:
+        collection.objects.link(obj)
+    return obj</code></pre>
+</details>
 <div class="desc"><p>Return copy of object which is assigned to a collection</p></div>
 </dd>
 <dt id="sverchok.utils.nodes_mixins.generating_objects.SvObjectData.ensure_link_to_collection"><code class="name flex">
 <span>def <span class="ident">ensure_link_to_collection</span></span>(<span>self, collection: bpy_types.Collection = None)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def ensure_link_to_collection(self, collection: bpy.types.Collection = None):
+    &#34;&#34;&#34;Links object to scene or given collection, unlink from previous collection&#34;&#34;&#34;
+    try:
+        if collection:
+            collection.objects.link(self.obj)
+        else:
+            # default collection
+            bpy.context.scene.collection.objects.link(self.obj)
+    except RuntimeError:
+        # then the object already added, it looks like more faster way to ensure object is in the scene
+        pass
+
+    if self.collection != collection:
+        # new collection was given, object should be removed from previous one
+        if self.collection is None:
+            # it means that it is scene default collection
+            # from other hand if item only was created it also will be None but object is not in any collection yet
+            try:
+                bpy.context.scene.collection.objects.unlink(self.obj)
+            except RuntimeError:
+                pass
+        else:
+            try:
+                self.collection.objects.unlink(self.obj)
+            except RuntimeError:
+                # collection was already unliked by user or another node
+                pass
+
+        self.collection = collection</code></pre>
+</details>
 <div class="desc"><p>Links object to scene or given collection, unlink from previous collection</p></div>
 </dd>
 <dt id="sverchok.utils.nodes_mixins.generating_objects.SvObjectData.ensure_object"><code class="name flex">
 <span>def <span class="ident">ensure_object</span></span>(<span>self, data_block, name: str, object_template: bpy_types.Object = None)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def ensure_object(self, data_block, name: str, object_template: bpy.types.Object = None):
+    &#34;&#34;&#34;Add object if it does not exist, if object_template is given new object will be copied from it&#34;&#34;&#34;
+    if not self.obj:
+        # it looks like it means only that the property group item was created newly
+        if object_template:
+            self.obj = object_template.copy()
+            self.obj.data = data_block
+        else:
+            self.obj = bpy.data.objects.new(name=name, object_data=data_block)
+    else:
+        # in case if data block was changed
+        if self.obj.data != data_block:
+            self.obj.data = data_block  # EXPENSIVE</code></pre>
+</details>
 <div class="desc"><p>Add object if it does not exist, if object_template is given new object will be copied from it</p></div>
 </dd>
 <dt id="sverchok.utils.nodes_mixins.generating_objects.SvObjectData.recreate_object"><code class="name flex">
 <span>def <span class="ident">recreate_object</span></span>(<span>self, object_template: bpy_types.Object = None)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def recreate_object(self, object_template: bpy.types.Object = None):
+    &#34;&#34;&#34;
+    Object will be replaced by new object recreated from scratch or copied from given object_template if given
+    Previous object will be removed, data block remains unchanged
+    &#34;&#34;&#34;
+    # in case recreated object should have a chance to get the same name of previous object
+    # previous object should be deleted first
+    data_block = self.obj.data
+    obj_name = self.obj.name
+    bpy.data.objects.remove(self.obj)
+    if object_template:
+        new_obj = object_template.copy()
+        new_obj.data = data_block
+    else:
+        new_obj = bpy.data.objects.new(name=obj_name, object_data=data_block)
+    self.obj = new_obj</code></pre>
+</details>
 <div class="desc"><p>Object will be replaced by new object recreated from scratch or copied from given object_template if given
 Previous object will be removed, data block remains unchanged</p></div>
 </dd>
@@ -987,12 +1417,30 @@ Previous object will be removed, data block remains unchanged</p></div>
 <span>def <span class="ident">remove_data</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def remove_data(self):
+    &#34;&#34;&#34;Should be called before removing item&#34;&#34;&#34;
+    if self.obj:
+        delete_data_block(self.obj)</code></pre>
+</details>
 <div class="desc"><p>Should be called before removing item</p></div>
 </dd>
 <dt id="sverchok.utils.nodes_mixins.generating_objects.SvObjectData.select"><code class="name flex">
 <span>def <span class="ident">select</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def select(self):
+    &#34;&#34;&#34;Just select the object&#34;&#34;&#34;
+    if self.obj:
+        self.obj.select_set(True)</code></pre>
+</details>
 <div class="desc"><p>Just select the object</p></div>
 </dd>
 </dl>
@@ -1002,7 +1450,6 @@ Previous object will be removed, data block remains unchanged</p></div>
 <span>(</span><span>...)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1032,6 +1479,7 @@ Previous object will be removed, data block remains unchanged</p></div>
         &#34;&#34;&#34;Generate random name from random letters&#34;&#34;&#34;
         return &#39;&#39;.join(random.sample(set(string.ascii_uppercase), 6))</code></pre>
 </details>
+<div class="desc"></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li>bpy_types.PropertyGroup</li>
@@ -1058,6 +1506,15 @@ Previous object will be removed, data block remains unchanged</p></div>
 <span>def <span class="ident">get_random_name</span></span>(<span>)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def get_random_name():
+    &#34;&#34;&#34;Generate random name from random letters&#34;&#34;&#34;
+    return &#39;&#39;.join(random.sample(set(string.ascii_uppercase), 6))</code></pre>
+</details>
 <div class="desc"><p>Generate random name from random letters</p></div>
 </dd>
 </dl>
@@ -1067,6 +1524,20 @@ Previous object will be removed, data block remains unchanged</p></div>
 <span>def <span class="ident">get_available_name</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_available_name(self):
+    &#34;&#34;&#34;It returns name from greek alphabet, if all names was used it returns random letters&#34;&#34;&#34;
+    if self.available_name_number &lt;= 23:
+        name = self.greek_alphabet[self.available_name_number]
+        self.available_name_number += 1
+    else:
+        name = self.get_random_name()
+
+    return name</code></pre>
+</details>
 <div class="desc"><p>It returns name from greek alphabet, if all names was used it returns random letters</p></div>
 </dd>
 </dl>
@@ -1076,7 +1547,6 @@ Previous object will be removed, data block remains unchanged</p></div>
 <span>(</span><span>...)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>It calls <code>select</code> method of every item in <code>object_data</code> collection of node</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1097,6 +1567,7 @@ Previous object will be removed, data block remains unchanged</p></div>
             prop.select()
         return {&#39;FINISHED&#39;}</code></pre>
 </details>
+<div class="desc"><p>It calls <code>select</code> method of every item in <code>object_data</code> collection of node</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="sverchok.utils.nodes_mixins.generating_objects.SearchNode" href="#sverchok.utils.nodes_mixins.generating_objects.SearchNode">SearchNode</a></li>
@@ -1137,6 +1608,16 @@ Previous object will be removed, data block remains unchanged</p></div>
 <span>def <span class="ident">execute</span></span>(<span>self, context)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def execute(self, context):
+    prop: SvObjectData
+    for prop in self.node.object_data:
+        prop.select()
+    return {&#39;FINISHED&#39;}</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -1146,7 +1627,6 @@ Previous object will be removed, data block remains unchanged</p></div>
 <span>(</span><span>...)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Shows extra node options</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1168,6 +1648,7 @@ Previous object will be removed, data block remains unchanged</p></div>
     def draw(self, context):
         self.node.draw_buttons_fly(self.layout)</code></pre>
 </details>
+<div class="desc"><p>Shows extra node options</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li>bpy_types.Operator</li>
@@ -1198,18 +1679,41 @@ Previous object will be removed, data block remains unchanged</p></div>
 <span>def <span class="ident">draw</span></span>(<span>self, context)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def draw(self, context):
+    self.node.draw_buttons_fly(self.layout)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.nodes_mixins.generating_objects.SvShowFlyPanelOpeartor.execute"><code class="name flex">
 <span>def <span class="ident">execute</span></span>(<span>self, context)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def execute(self, context):
+    return {&#39;FINISHED&#39;}</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.nodes_mixins.generating_objects.SvShowFlyPanelOpeartor.invoke"><code class="name flex">
 <span>def <span class="ident">invoke</span></span>(<span>self, context, event)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def invoke(self, context, event):
+    self.node = context.node
+    wm = context.window_manager
+    return wm.invoke_popup(self, width=200)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -1218,7 +1722,6 @@ Previous object will be removed, data block remains unchanged</p></div>
 <span>class <span class="ident">SvViewerLightNode</span></span>
 </code></dt>
 <dd>
-<div class="desc"><p>Mixin for all nodes which displays any objects in viewport</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1316,6 +1819,7 @@ Previous object will be removed, data block remains unchanged</p></div>
         else:
             return self.bl_label</code></pre>
 </details>
+<div class="desc"><p>Mixin for all nodes which displays any objects in viewport</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="sverchok.utils.nodes_mixins.generating_objects.BlenderObjects" href="#sverchok.utils.nodes_mixins.generating_objects.BlenderObjects">BlenderObjects</a></li>
@@ -1326,11 +1830,11 @@ Previous object will be removed, data block remains unchanged</p></div>
 </ul>
 <h3>Class variables</h3>
 <dl>
-<dt id="sverchok.utils.nodes_mixins.generating_objects.SvViewerLightNode.base_data_name"><code class="name">var <span class="ident">base_data_name</span> : <_PropertyDeferred, <built-in function StringProperty>, {'default': 'Alpha', 'description': 'stores the mesh name found in the object, this mesh is instanced', 'update': <function updateNode at 0x7f0c7f16ac20>, 'attr': 'base_data_name'}></code></dt>
+<dt id="sverchok.utils.nodes_mixins.generating_objects.SvViewerLightNode.base_data_name"><code class="name">var <span class="ident">base_data_name</span> : <_PropertyDeferred, <built-in function StringProperty>, {'default': 'Alpha', 'description': 'stores the mesh name found in the object, this mesh is instanced', 'update': <function updateNode at 0x7ffb527d6b90>, 'attr': 'base_data_name'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.utils.nodes_mixins.generating_objects.SvViewerLightNode.is_active"><code class="name">var <span class="ident">is_active</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Live', 'default': True, 'update': <function updateNode at 0x7f0c7f16ac20>, 'description': 'When enabled this will process incoming data', 'attr': 'is_active'}></code></dt>
+<dt id="sverchok.utils.nodes_mixins.generating_objects.SvViewerLightNode.is_active"><code class="name">var <span class="ident">is_active</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Live', 'default': True, 'update': <function updateNode at 0x7ffb527d6b90>, 'description': 'When enabled this will process incoming data', 'attr': 'is_active'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -1341,42 +1845,143 @@ Previous object will be removed, data block remains unchanged</p></div>
 <span>def <span class="ident">bake</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def bake(self):
+    raise NotImplemented</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.nodes_mixins.generating_objects.SvViewerLightNode.draw_buttons_fly"><code class="name flex">
 <span>def <span class="ident">draw_buttons_fly</span></span>(<span>self, layout)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def draw_buttons_fly(self, layout):
+    col = layout.column()
+    row = col.row()
+
+    row_show = row.row(align=True)
+
+    row_show.prop(self, &#39;is_active&#39;, toggle=True)
+    row_show.prop(self, &#39;show_objects&#39;, toggle=True, text=&#39;&#39;,
+                  icon=f&#39;HIDE_{&#34;OFF&#34; if self.show_objects else &#34;ON&#34;}&#39;)
+    row = row.row(align=True)
+    row.prop(self, &#39;selectable_objects&#39;, toggle=True, text=&#39;&#39;,
+                icon=f&#34;RESTRICT_SELECT_{&#39;OFF&#39; if self.selectable_objects else &#39;ON&#39;}&#34;)
+    row.prop(self, &#39;render_objects&#39;, toggle=True, text=&#39;&#39;,
+                icon=f&#34;RESTRICT_RENDER_{&#39;OFF&#39; if self.render_objects else &#39;ON&#39;}&#34;)
+
+    row = col.row(align=True)
+    row.prop(self, &#34;base_data_name&#34;, text=&#34;&#34;, icon=&#39;OUTLINER_OB_MESH&#39;)
+    op = row.operator(SvGenerateRandomObjectName.bl_idname, text=&#39;&#39;, icon=&#39;FILE_REFRESH&#39;)
+    op.node_name = self.name
+    op.tree_name = self.id_data.name
+    row = col.row(align=True)
+    row.scale_y = 2
+    op = row.operator(&#39;node.sv_select_objects&#39;, text=&#34;Select&#34;)
+    op.node_name = self.name
+    op.tree_name = self.id_data.name
+    op = row.operator(SvBakeObjectsOperator.bl_idname, text=&#34;Bake&#34;)
+    op.node_name = self.name
+    op.tree_name = self.id_data.name</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.nodes_mixins.generating_objects.SvViewerLightNode.draw_label"><code class="name flex">
 <span>def <span class="ident">draw_label</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def draw_label(self):
+    if self.hide:
+        return f&#34;{self.bl_label[:2]}V {self.base_data_name}&#34;
+    else:
+        return self.bl_label</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.nodes_mixins.generating_objects.SvViewerLightNode.draw_viewer_properties"><code class="name flex">
 <span>def <span class="ident">draw_viewer_properties</span></span>(<span>self, layout)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def draw_viewer_properties(self, layout):
+    col = layout.column(align=True)
+    row = col.row()
+
+    row_show = row.row(align=True)
+    row_show.prop(self, &#39;is_active&#39;, toggle=True)
+    row_show.prop(self, &#39;show_objects&#39;, toggle=True, text=&#39;&#39;,
+                  icon=f&#39;HIDE_{&#34;OFF&#34; if self.show_objects else &#34;ON&#34;}&#39;)
+
+    row.operator(SvShowFlyPanelOpeartor.bl_idname, text=&#34;Options&#34;)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.nodes_mixins.generating_objects.SvViewerLightNode.init_viewer"><code class="name flex">
 <span>def <span class="ident">init_viewer</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def init_viewer(self):
+    &#34;&#34;&#34;Should be called from descendant class&#34;&#34;&#34;
+    self.base_data_name = bpy.context.scene.sv_object_names.get_available_name()
+    self.use_custom_color = True
+
+    self.outputs.new(&#39;SvObjectSocket&#39;, &#34;Objects&#34;)</code></pre>
+</details>
 <div class="desc"><p>Should be called from descendant class</p></div>
 </dd>
 <dt id="sverchok.utils.nodes_mixins.generating_objects.SvViewerLightNode.show_viewport"><code class="name flex">
 <span>def <span class="ident">show_viewport</span></span>(<span>self, is_show: bool)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def show_viewport(self, is_show: bool):
+    &#34;&#34;&#34;It should be called by node tree to show/hide objects&#34;&#34;&#34;
+    if not self.show_objects:
+        # just ignore request
+        pass
+    else:
+        self.show_objects_update(None, is_show)</code></pre>
+</details>
 <div class="desc"><p>It should be called by node tree to show/hide objects</p></div>
 </dd>
 <dt id="sverchok.utils.nodes_mixins.generating_objects.SvViewerLightNode.sv_copy"><code class="name flex">
 <span>def <span class="ident">sv_copy</span></span>(<span>self, other)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def sv_copy(self, other):
+    &#34;&#34;&#34;
+    Regenerate object names, and clean data
+    Use super().sv_copy(other) to override this method
+    &#34;&#34;&#34;
+    self.base_data_name = bpy.context.scene.sv_object_names.get_available_name()
+    # object and mesh lists should be clear other wise two nodes would have links to the same objects
+    self.object_data.clear()</code></pre>
+</details>
 <div class="desc"><p>Regenerate object names, and clean data
 Use super().sv_copy(other) to override this method</p></div>
 </dd>
@@ -1384,6 +1989,14 @@ Use super().sv_copy(other) to override this method</p></div>
 <span>def <span class="ident">sv_free</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def sv_free(self):
+    for data in self.object_data:
+        data.remove_data()</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -1402,7 +2015,6 @@ Use super().sv_copy(other) to override this method</p></div>
 <span>class <span class="ident">SvViewerNode</span></span>
 </code></dt>
 <dd>
-<div class="desc"><p>Mixin for all nodes which displays any objects in viewport</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1485,6 +2097,7 @@ Use super().sv_copy(other) to override this method</p></div>
         else:
             return self.bl_label</code></pre>
 </details>
+<div class="desc"><p>Mixin for all nodes which displays any objects in viewport</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="sverchok.utils.nodes_mixins.generating_objects.BlenderObjects" href="#sverchok.utils.nodes_mixins.generating_objects.BlenderObjects">BlenderObjects</a></li>
@@ -1500,15 +2113,15 @@ Use super().sv_copy(other) to override this method</p></div>
 </ul>
 <h3>Class variables</h3>
 <dl>
-<dt id="sverchok.utils.nodes_mixins.generating_objects.SvViewerNode.base_data_name"><code class="name">var <span class="ident">base_data_name</span> : <_PropertyDeferred, <built-in function StringProperty>, {'default': 'Alpha', 'description': 'stores the mesh name found in the object, this mesh is instanced', 'update': <function updateNode at 0x7f0c7f16ac20>, 'attr': 'base_data_name'}></code></dt>
+<dt id="sverchok.utils.nodes_mixins.generating_objects.SvViewerNode.base_data_name"><code class="name">var <span class="ident">base_data_name</span> : <_PropertyDeferred, <built-in function StringProperty>, {'default': 'Alpha', 'description': 'stores the mesh name found in the object, this mesh is instanced', 'update': <function updateNode at 0x7ffb527d6b90>, 'attr': 'base_data_name'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.utils.nodes_mixins.generating_objects.SvViewerNode.collection"><code class="name">var <span class="ident">collection</span> : <_PropertyDeferred, <built-in function PointerProperty>, {'type': <class 'bpy_types.Collection'>, 'update': <function updateNode at 0x7f0c7f16ac20>, 'description': 'Collection where to put objects', 'attr': 'collection'}></code></dt>
+<dt id="sverchok.utils.nodes_mixins.generating_objects.SvViewerNode.collection"><code class="name">var <span class="ident">collection</span> : <_PropertyDeferred, <built-in function PointerProperty>, {'type': <class 'bpy_types.Collection'>, 'update': <function updateNode at 0x7ffb527d6b90>, 'description': 'Collection where to put objects', 'attr': 'collection'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.utils.nodes_mixins.generating_objects.SvViewerNode.is_active"><code class="name">var <span class="ident">is_active</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Live', 'default': True, 'update': <function updateNode at 0x7f0c7f16ac20>, 'description': 'When enabled this will process incoming data', 'attr': 'is_active'}></code></dt>
+<dt id="sverchok.utils.nodes_mixins.generating_objects.SvViewerNode.is_active"><code class="name">var <span class="ident">is_active</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Live', 'default': True, 'update': <function updateNode at 0x7ffb527d6b90>, 'description': 'When enabled this will process incoming data', 'attr': 'is_active'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -1519,24 +2132,85 @@ Use super().sv_copy(other) to override this method</p></div>
 <span>def <span class="ident">draw_label</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def draw_label(self):
+    if self.hide:
+        return f&#34;{self.bl_label[:2]}V {self.base_data_name}&#34;
+    else:
+        return self.bl_label</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.nodes_mixins.generating_objects.SvViewerNode.draw_viewer_properties"><code class="name flex">
 <span>def <span class="ident">draw_viewer_properties</span></span>(<span>self, layout)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def draw_viewer_properties(self, layout):
+    col = layout.column(align=True)
+    row = col.row(align=True)
+    row.column().prop(self, &#39;is_active&#39;, toggle=True)
+
+    self.draw_object_properties(row)  # hide, selectable, render
+
+    col = layout.column(align=True)
+    row = col.row(align=True)
+    row.prop(self, &#34;base_data_name&#34;, text=&#34;&#34;, icon=&#39;OUTLINER_OB_MESH&#39;)
+    row.operator(&#39;node.sv_generate_random_object_name&#39;, text=&#39;&#39;, icon=&#39;FILE_REFRESH&#39;)
+
+    row = col.row(align=True)
+    row.scale_y = 2
+    row.operator(&#39;node.sv_select_objects&#39;, text=&#34;Select&#34;)
+
+    col.prop_search(self, &#39;collection&#39;, bpy.data, &#39;collections&#39;, text=&#39;&#39;, icon=&#39;GROUP&#39;)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.nodes_mixins.generating_objects.SvViewerNode.init_viewer"><code class="name flex">
 <span>def <span class="ident">init_viewer</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def init_viewer(self):
+    &#34;&#34;&#34;Should be called from descendant class&#34;&#34;&#34;
+    self.base_data_name = bpy.context.scene.sv_object_names.get_available_name()
+    self.use_custom_color = True
+
+    self.outputs.new(&#39;SvObjectSocket&#39;, &#34;Objects&#34;)</code></pre>
+</details>
 <div class="desc"><p>Should be called from descendant class</p></div>
 </dd>
 <dt id="sverchok.utils.nodes_mixins.generating_objects.SvViewerNode.load_from_json"><code class="name flex">
 <span>def <span class="ident">load_from_json</span></span>(<span>self, node_data: dict, import_version: float)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def load_from_json(self, node_data: dict, import_version: float):
+    &#34;&#34;&#34;
+    Manually serialization node properties
+    Should be overridden in zis way: super().storage_get_data(storage); self.my_prop = storage[&#39;my_prop&#39;]
+    &#34;&#34;&#34;
+    if import_version &lt;= 0.08:
+        collection_name = node_data[&#39;collection&#39;]
+        if collection_name:
+            collection = (bpy.data.collections.get(collection_name))
+            if not collection:
+                collection = bpy.data.collections.new(collection_name)
+                bpy.context.collection.children.link(collection)
+            self.collection = collection</code></pre>
+</details>
 <div class="desc"><p>Manually serialization node properties
 Should be overridden in zis way: super().storage_get_data(storage); self.my_prop = storage['my_prop']</p></div>
 </dd>
@@ -1544,12 +2218,37 @@ Should be overridden in zis way: super().storage_get_data(storage); self.my_prop
 <span>def <span class="ident">show_viewport</span></span>(<span>self, is_show: bool)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def show_viewport(self, is_show: bool):
+    &#34;&#34;&#34;It should be called by node tree to show/hide objects&#34;&#34;&#34;
+    if not self.show_objects:
+        # just ignore request
+        pass
+    else:
+        self.show_objects_update(None, is_show)</code></pre>
+</details>
 <div class="desc"><p>It should be called by node tree to show/hide objects</p></div>
 </dd>
 <dt id="sverchok.utils.nodes_mixins.generating_objects.SvViewerNode.sv_copy"><code class="name flex">
 <span>def <span class="ident">sv_copy</span></span>(<span>self, other)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def sv_copy(self, other):
+    &#34;&#34;&#34;
+    Regenerate object names, and clean data
+    Use super().sv_copy(other) to override this method
+    &#34;&#34;&#34;
+    self.base_data_name = bpy.context.scene.sv_object_names.get_available_name()
+    # object and mesh lists should be clear other wise two nodes would have links to the same objects
+    self.object_data.clear()</code></pre>
+</details>
 <div class="desc"><p>Regenerate object names, and clean data
 Use super().sv_copy(other) to override this method</p></div>
 </dd>
@@ -1757,7 +2456,7 @@ Use super().sv_copy(other) to override this method</p></div>
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.1</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.5</a>.</p>
 </footer>
 </body>
 </html>

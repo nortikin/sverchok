@@ -3,19 +3,30 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
-<meta name="generator" content="pdoc3 0.11.1">
+<meta name="generator" content="pdoc3 0.11.5">
 <title>sverchok.core.sockets API documentation</title>
 <meta name="description" content="">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
-<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
 <style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
 <style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
 <script>window.addEventListener('DOMContentLoaded', () => {
 hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
 hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
 })</script>
 </head>
 <body>
@@ -37,12 +48,66 @@ hljs.highlightAll();
 <span>def <span class="ident">process_from_socket</span></span>(<span>self, context)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def process_from_socket(self, context):
+    &#34;&#34;&#34;Update function of exposed properties in Sockets&#34;&#34;&#34;
+    if self.node is not None:  # https://developer.blender.org/T88587
+        self.node.process_node(context)</code></pre>
+</details>
 <div class="desc"><p>Update function of exposed properties in Sockets</p></div>
 </dd>
 <dt id="sverchok.core.sockets.socket_interface_classes"><code class="name flex">
 <span>def <span class="ident">socket_interface_classes</span></span>(<span>)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def socket_interface_classes():
+    &#34;&#34;&#34;
+    All sockets should have their twins - SocketInterface
+    Tis function generate SocketInterface classes for Sockets for which interface sockets was not coded manually
+    This function assume to find all socket and interface classes in classes variable of the current module
+
+    If socket class has default property interface will also have this property named `default value`
+    This value will be used for setting it to `default property` during connecting group tree to group node
+    Also interface will get `show property` attribute which should hide property from group node
+    Socket itself should track status of this property
+    &#34;&#34;&#34;
+    sockets = {cls for cls in classes if hasattr(cls, &#39;links&#39;)}  # best test for now
+    with_interface_sockets = {globals()[cls.bl_socket_idname] for cls in classes if hasattr(cls, &#39;bl_socket_idname&#39;)}
+    for socket_cls in sockets - with_interface_sockets:
+        socket_interface_attributes = {
+            &#39;bl_idname&#39;: f&#39;{socket_cls.__name__}Interface&#39;,
+            &#39;bl_socket_idname&#39;: socket_cls.__name__,
+            &#39;bl_label&#39;: socket_cls.bl_label,
+            &#39;color&#39;: socket_cls.color,
+            &#39;draw_color&#39;: lambda self, context: self.color
+        }
+        if &#39;default_property&#39; in socket_cls.__annotations__:
+            prop_func, prop_args = get_func_and_args(socket_cls.__annotations__[&#39;default_property&#39;])
+            prop_args = {k: prop_args[k] for k in prop_args if k not in {&#39;update&#39;, &#39;name&#39;}}
+            prop_args[&#39;name&#39;] = &#34;Default value&#34;
+            prop_args[&#39;update&#39;] = lambda s, c: s.id_data.update_sockets()
+            socket_interface_attributes[&#39;__annotations__&#39;] = {}
+            socket_interface_attributes[&#39;__annotations__&#39;][&#39;default_value&#39;] = socket_cls.__annotations__[&#39;default_property&#39;]
+
+            def draw(self, context, layout):
+                col = layout.column()
+                col.prop(self, &#39;default_value&#39;)
+                col.prop(self, &#39;hide_value&#39;)
+        else:
+            def draw(self, context, layout):
+                pass
+
+        socket_interface_attributes[&#39;draw&#39;] = draw
+        yield type(
+            f&#39;{socket_cls.__name__}Interface&#39;, (InterfaceSocket,), socket_interface_attributes)</code></pre>
+</details>
 <div class="desc"><p>All sockets should have their twins - SocketInterface
 Tis function generate SocketInterface classes for Sockets for which interface sockets was not coded manually
 This function assume to find all socket and interface classes in classes variable of the current module</p>
@@ -55,12 +120,42 @@ Socket itself should track status of this property</p></div>
 <span>def <span class="ident">socket_type_names</span></span>(<span>) ‑> Set[str]</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def socket_type_names() -&gt; Set[str]:
+    names = set()
+    for name, member in inspect.getmembers(sys.modules[__name__]):
+        is_module_cls = inspect.isclass(member) and member.__module__ == __name__
+        if is_module_cls:
+            if NodeSocket in member.__bases__:
+                names.add(member.bl_idname)
+    return names</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.sockets.update_interface"><code class="name flex">
 <span>def <span class="ident">update_interface</span></span>(<span>self, context)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def update_interface(self, context):
+    &#34;&#34;&#34;Update group node sockets and update it&#34;&#34;&#34;
+    # For now I don&#39;t think that `hide value` property should call this function, but in some cases it could be useful
+    # if interface socket will get min and max value parameter then probably Sv sockets also should get it
+    if not self.id_data.group_node_name:  # initialization tree
+        return
+    self.id_data.update_sockets()
+    group_tree = self.id_data
+    group_node = group_tree.get_update_path()[-1]
+    input_node = group_node.active_input()
+    if input_node:
+        group_tree.update_nodes([input_node])</code></pre>
+</details>
 <div class="desc"><p>Update group node sockets and update it</p></div>
 </dd>
 </dl>
@@ -73,7 +168,6 @@ Socket itself should track status of this property</p></div>
 <span>(</span><span>...)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -98,6 +192,7 @@ Socket itself should track status of this property</p></div>
                 layout.context_pointer_set(&#34;node&#34;, node)
                 layout.menu(&#39;SV_MT_SocketOptionsMenu&#39;, text=s.name)</code></pre>
 </details>
+<div class="desc"></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li>bpy_types.Menu</li>
@@ -130,6 +225,23 @@ Socket itself should track status of this property</p></div>
 <span>def <span class="ident">draw</span></span>(<span>self, context)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def draw(self, context):
+    node = context.active_node
+
+    if not node:
+        return
+    layout = self.layout
+
+    for s in node.outputs:
+        if hasattr(s, &#39;draw_menu_items&#39;):
+            layout.context_pointer_set(&#34;socket&#34;, s)
+            layout.context_pointer_set(&#34;node&#34;, node)
+            layout.menu(&#39;SV_MT_SocketOptionsMenu&#39;, text=s.name)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -139,7 +251,6 @@ Socket itself should track status of this property</p></div>
 <span>(</span><span>...)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -155,6 +266,7 @@ Socket itself should track status of this property</p></div>
         if hasattr(context.socket, &#39;draw_menu_items&#39;):
             context.socket.draw_menu_items(context, layout)</code></pre>
 </details>
+<div class="desc"></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li>bpy_types.Menu</li>
@@ -178,6 +290,18 @@ Socket itself should track status of this property</p></div>
 <span>def <span class="ident">draw</span></span>(<span>self, context)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def draw(self, context):
+    node = context.node
+    if not node:
+        return
+    layout = self.layout
+    if hasattr(context.socket, &#39;draw_menu_items&#39;):
+        context.socket.draw_menu_items(context, layout)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -186,9 +310,6 @@ Socket itself should track status of this property</p></div>
 <span>class <span class="ident">SocketDomain</span></span>
 </code></dt>
 <dd>
-<div class="desc"><p>Socket mix-in class to define domain options
-The option is shown when socket is connected
-and can be used for transferring data to certain elements of an object.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -201,6 +322,9 @@ and can be used for transferring data to certain elements of an object.</p></div
                          update=process_from_socket)
     show_domain: BoolProperty()</code></pre>
 </details>
+<div class="desc"><p>Socket mix-in class to define domain options
+The option is shown when socket is connected
+and can be used for transferring data to certain elements of an object.</p></div>
 <h3>Subclasses</h3>
 <ul class="hlist">
 <li><a title="sverchok.core.sockets.SvColorSocket" href="#sverchok.core.sockets.SvColorSocket">SvColorSocket</a></li>
@@ -209,7 +333,7 @@ and can be used for transferring data to certain elements of an object.</p></div
 </ul>
 <h3>Class variables</h3>
 <dl>
-<dt id="sverchok.core.sockets.SocketDomain.domain"><code class="name">var <span class="ident">domain</span> : <_PropertyDeferred, <built-in function EnumProperty>, {'items': [('POINT', 'Point', ''), ('EDGE', 'Edge', ''), ('FACE', 'Face', ''), ('CORNER', 'Face Corner', '')], 'update': <function <a title="sverchok.core.sockets.process_from_socket" href="#sverchok.core.sockets.process_from_socket">process_from_socket()</a> at 0x7f0c6c79a710>, 'attr': 'domain'}></code></dt>
+<dt id="sverchok.core.sockets.SocketDomain.domain"><code class="name">var <span class="ident">domain</span> : <_PropertyDeferred, <built-in function EnumProperty>, {'items': [('POINT', 'Point', ''), ('EDGE', 'Edge', ''), ('FACE', 'Face', ''), ('CORNER', 'Face Corner', '')], 'update': <function <a title="sverchok.core.sockets.process_from_socket" href="#sverchok.core.sockets.process_from_socket">process_from_socket()</a> at 0x7ffb351cee60>, 'attr': 'domain'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -224,7 +348,6 @@ and can be used for transferring data to certain elements of an object.</p></div
 <span>(</span><span>...)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Using as input socket with color of other connected socket</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -251,6 +374,7 @@ and can be used for transferring data to certain elements of an object.</p></div
 
     default_conversion_name = ConversionPolicies.LENIENT.conversion_name</code></pre>
 </details>
+<div class="desc"><p>Using as input socket with color of other connected socket</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li>bpy_types.NodeSocket</li>
@@ -291,6 +415,20 @@ and can be used for transferring data to certain elements of an object.</p></div
 <span>def <span class="ident">catch_props</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def catch_props(self):
+    # should be called during update event of a node for catching its property
+    other = self.other
+    if other:
+        self.color = other.color
+        self.dynamic_type = other.bl_idname
+    else:
+        self.color = (0.0, 0.0, 0.0, 0.0)
+        self.dynamic_type = self.bl_idname</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -318,9 +456,6 @@ and can be used for transferring data to certain elements of an object.</p></div
 <span>(</span><span>...)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Base class for all Sockets</p>
-<p>'SKIP_SAVE' in properties means skipping them during saving in JSON format
-some of the properties can be skipped because they are static, they are always set only in sv_init method</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -336,6 +471,9 @@ some of the properties can be skipped because they are static, they are always s
         type=bpy.types.Collection,
         update=process_from_socket)</code></pre>
 </details>
+<div class="desc"><p>Base class for all Sockets</p>
+<p>'SKIP_SAVE' in properties means skipping them during saving in JSON format
+some of the properties can be skipped because they are static, they are always set only in sv_init method</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li>bpy_types.NodeSocket</li>
@@ -361,7 +499,7 @@ some of the properties can be skipped because they are static, they are always s
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.core.sockets.SvCollectionSocket.default_property"><code class="name">var <span class="ident">default_property</span> : <_PropertyDeferred, <built-in function PointerProperty>, {'name': 'Collection', 'type': <class 'bpy_types.Collection'>, 'update': <function <a title="sverchok.core.sockets.process_from_socket" href="#sverchok.core.sockets.process_from_socket">process_from_socket()</a> at 0x7f0c6c79a710>, 'attr': 'default_value'}></code></dt>
+<dt id="sverchok.core.sockets.SvCollectionSocket.default_property"><code class="name">var <span class="ident">default_property</span> : <_PropertyDeferred, <built-in function PointerProperty>, {'name': 'Collection', 'type': <class 'bpy_types.Collection'>, 'update': <function <a title="sverchok.core.sockets.process_from_socket" href="#sverchok.core.sockets.process_from_socket">process_from_socket()</a> at 0x7ffb351cee60>, 'attr': 'default_value'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -390,7 +528,6 @@ some of the properties can be skipped because they are static, they are always s
 <span>(</span><span>...)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>For color data</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -432,6 +569,7 @@ some of the properties can be skipped because they are static, they are always s
     def do_flat_topology(self, data):
         return flatten_data(data, 3)</code></pre>
 </details>
+<div class="desc"><p>For color data</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="sverchok.core.sockets.SocketDomain" href="#sverchok.core.sockets.SocketDomain">SocketDomain</a></li>
@@ -458,7 +596,7 @@ some of the properties can be skipped because they are static, they are always s
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.core.sockets.SvColorSocket.default_property"><code class="name">var <span class="ident">default_property</span> : <_PropertyDeferred, <built-in function FloatVectorProperty>, {'default': (0, 0, 0, 1), 'size': 4, 'subtype': 'COLOR', 'min': 0, 'max': 1, 'update': <function <a title="sverchok.core.sockets.process_from_socket" href="#sverchok.core.sockets.process_from_socket">process_from_socket()</a> at 0x7f0c6c79a710>, 'attr': 'default_value'}></code></dt>
+<dt id="sverchok.core.sockets.SvColorSocket.default_property"><code class="name">var <span class="ident">default_property</span> : <_PropertyDeferred, <built-in function FloatVectorProperty>, {'default': (0, 0, 0, 1), 'size': 4, 'subtype': 'COLOR', 'min': 0, 'max': 1, 'update': <function <a title="sverchok.core.sockets.process_from_socket" href="#sverchok.core.sockets.process_from_socket">process_from_socket()</a> at 0x7ffb351cee60>, 'attr': 'default_value'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -477,12 +615,29 @@ some of the properties can be skipped because they are static, they are always s
 <span>def <span class="ident">do_flat_topology</span></span>(<span>self, data)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def do_flat_topology(self, data):
+    return flatten_data(data, 3)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.sockets.SvColorSocket.draw_group_property"><code class="name flex">
 <span>def <span class="ident">draw_group_property</span></span>(<span>self, layout, text, interface_socket)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def draw_group_property(self, layout, text, interface_socket):
+    if not interface_socket.hide_value:
+        layout.prop(self, &#39;default_property&#39;, text=text)
+    else:
+        layout.label(text=text)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -510,9 +665,6 @@ some of the properties can be skipped because they are static, they are always s
 <span>(</span><span>...)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Base class for all Sockets</p>
-<p>'SKIP_SAVE' in properties means skipping them during saving in JSON format
-some of the properties can be skipped because they are static, they are always set only in sv_init method</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -556,6 +708,9 @@ some of the properties can be skipped because they are static, they are always s
             data = map_at_level(reparametrize_curve, data, data_types=(SvCurve,))
         return data</code></pre>
 </details>
+<div class="desc"><p>Base class for all Sockets</p>
+<p>'SKIP_SAVE' in properties means skipping them during saving in JSON format
+some of the properties can be skipped because they are static, they are always set only in sv_init method</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li>bpy_types.NodeSocket</li>
@@ -581,7 +736,7 @@ some of the properties can be skipped because they are static, they are always s
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.core.sockets.SvCurveSocket.reparametrize"><code class="name">var <span class="ident">reparametrize</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Reparametrize', 'default': False, 'update': <function <a title="sverchok.core.sockets.process_from_socket" href="#sverchok.core.sockets.process_from_socket">process_from_socket()</a> at 0x7f0c6c79a710>, 'attr': 'reparametrize'}></code></dt>
+<dt id="sverchok.core.sockets.SvCurveSocket.reparametrize"><code class="name">var <span class="ident">reparametrize</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Reparametrize', 'default': False, 'update': <function <a title="sverchok.core.sockets.process_from_socket" href="#sverchok.core.sockets.process_from_socket">process_from_socket()</a> at 0x7ffb351cee60>, 'attr': 'reparametrize'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -592,36 +747,88 @@ some of the properties can be skipped because they are static, they are always s
 <span>def <span class="ident">do_flatten</span></span>(<span>self, data)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def do_flatten(self, data):
+    return flatten_data(data, 1, data_types=(SvCurve,))</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.sockets.SvCurveSocket.do_graft"><code class="name flex">
 <span>def <span class="ident">do_graft</span></span>(<span>self, data)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def do_graft(self, data):
+    return graft_data(data, item_level=0, data_types=(SvCurve,))</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.sockets.SvCurveSocket.draw_menu_items"><code class="name flex">
 <span>def <span class="ident">draw_menu_items</span></span>(<span>self, context, layout)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def draw_menu_items(self, context, layout):
+    super().draw_menu_items(context, layout)
+    layout.prop(self, &#39;reparametrize&#39;)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.sockets.SvCurveSocket.get_mode_flags"><code class="name flex">
 <span>def <span class="ident">get_mode_flags</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_mode_flags(self):
+    flags = super().get_mode_flags()
+    if self.reparametrize:
+        flags.append(&#39;R&#39;)
+    return flags</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.sockets.SvCurveSocket.postprocess_output"><code class="name flex">
 <span>def <span class="ident">postprocess_output</span></span>(<span>self, data)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def postprocess_output(self, data):
+    data = SvSocketCommon.postprocess_output(self, data)
+    if self.reparametrize:
+        data = map_at_level(reparametrize_curve, data, data_types=(SvCurve,))
+    return data</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.sockets.SvCurveSocket.preprocess_input"><code class="name flex">
 <span>def <span class="ident">preprocess_input</span></span>(<span>self, data)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def preprocess_input(self, data):
+    data = SvSocketCommon.preprocess_input(self, data)
+    if self.reparametrize:
+        data = map_at_level(reparametrize_curve, data, data_types=(SvCurve,))
+    return data</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -649,7 +856,6 @@ some of the properties can be skipped because they are static, they are always s
 <span>(</span><span>...)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>For dictionary data</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -668,6 +874,7 @@ some of the properties can be skipped because they are static, they are always s
     def do_simplify(self, data):
         return flatten_data(data, 2, data_types=(dict,))</code></pre>
 </details>
+<div class="desc"><p>For dictionary data</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li>bpy_types.NodeSocket</li>
@@ -704,12 +911,26 @@ some of the properties can be skipped because they are static, they are always s
 <span>def <span class="ident">do_flatten</span></span>(<span>self, data)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def do_flatten(self, data):
+    return flatten_data(data, 1, data_types=(dict,))</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.sockets.SvDictionarySocket.do_simplify"><code class="name flex">
 <span>def <span class="ident">do_simplify</span></span>(<span>self, data)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def do_simplify(self, data):
+    return flatten_data(data, 2, data_types=(dict,))</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -737,7 +958,6 @@ some of the properties can be skipped because they are static, they are always s
 <span>(</span><span>...)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Dummy Socket for sockets awaiting assignment of type</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -753,6 +973,7 @@ some of the properties can be skipped because they are static, they are always s
         if self.is_linked:
             return self.links[0].bl_idname</code></pre>
 </details>
+<div class="desc"><p>Dummy Socket for sockets awaiting assignment of type</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li>bpy_types.NodeSocket</li>
@@ -803,7 +1024,6 @@ some of the properties can be skipped because they are static, they are always s
 <span>(</span><span>...)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>For file path data</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -816,6 +1036,7 @@ some of the properties can be skipped because they are static, they are always s
     color = (0.9, 0.9, 0.3, 1.0)
     quick_link_to_node = &#39;SvFilePathNode&#39;</code></pre>
 </details>
+<div class="desc"><p>For file path data</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li>bpy_types.NodeSocket</li>
@@ -870,9 +1091,6 @@ some of the properties can be skipped because they are static, they are always s
 <span>(</span><span>...)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Base class for all Sockets</p>
-<p>'SKIP_SAVE' in properties means skipping them during saving in JSON format
-some of the properties can be skipped because they are static, they are always set only in sv_init method</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -906,6 +1124,9 @@ some of the properties can be skipped because they are static, they are always s
         layout.prop(self,&#39;depth&#39;,text=&#39;Depth&#39;)
         layout.prop(self,&#39;transform&#39;,text=&#39;&#39;)</code></pre>
 </details>
+<div class="desc"><p>Base class for all Sockets</p>
+<p>'SKIP_SAVE' in properties means skipping them during saving in JSON format
+some of the properties can be skipped because they are static, they are always set only in sv_init method</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li>bpy_types.NodeSocket</li>
@@ -935,11 +1156,11 @@ some of the properties can be skipped because they are static, they are always s
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.core.sockets.SvFormulaSocket.depth"><code class="name">var <span class="ident">depth</span> : <_PropertyDeferred, <built-in function IntProperty>, {'description': 'Depth exposed to the formula', 'update': <function <a title="sverchok.core.sockets.process_from_socket" href="#sverchok.core.sockets.process_from_socket">process_from_socket()</a> at 0x7f0c6c79a710>, 'default': 1, 'min': 1, 'attr': 'depth'}></code></dt>
+<dt id="sverchok.core.sockets.SvFormulaSocket.depth"><code class="name">var <span class="ident">depth</span> : <_PropertyDeferred, <built-in function IntProperty>, {'description': 'Depth exposed to the formula', 'update': <function <a title="sverchok.core.sockets.process_from_socket" href="#sverchok.core.sockets.process_from_socket">process_from_socket()</a> at 0x7ffb351cee60>, 'default': 1, 'min': 1, 'attr': 'depth'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.core.sockets.SvFormulaSocket.transform"><code class="name">var <span class="ident">transform</span> : <_PropertyDeferred, <built-in function EnumProperty>, {'description': 'Transform before exposing to the formula', 'items': [('As_is', 'As is', '', 0), ('Vector', 'Vector', '', 1), ('Array', 'Array', '', 2), ('Set', 'Set', '', 3), ('String', 'String', '', 4)], 'update': <function <a title="sverchok.core.sockets.SvFormulaSocket.update_depth" href="#sverchok.core.sockets.SvFormulaSocket.update_depth">SvFormulaSocket.update_depth()</a> at 0x7f0c6c7f5120>, 'attr': 'transform'}></code></dt>
+<dt id="sverchok.core.sockets.SvFormulaSocket.transform"><code class="name">var <span class="ident">transform</span> : <_PropertyDeferred, <built-in function EnumProperty>, {'description': 'Transform before exposing to the formula', 'items': [('As_is', 'As is', '', 0), ('Vector', 'Vector', '', 1), ('Array', 'Array', '', 2), ('Set', 'Set', '', 3), ('String', 'String', '', 4)], 'update': <function <a title="sverchok.core.sockets.SvFormulaSocket.update_depth" href="#sverchok.core.sockets.SvFormulaSocket.update_depth">SvFormulaSocket.update_depth()</a> at 0x7ffb351b9870>, 'attr': 'transform'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -950,12 +1171,31 @@ some of the properties can be skipped because they are static, they are always s
 <span>def <span class="ident">draw</span></span>(<span>self, context, layout, node, text)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def draw(self, context, layout, node, text):
+    layout.label(text=self.name+ &#39;. &#39; + str(self.objects_number))
+    layout.prop(self,&#39;depth&#39;,text=&#39;Depth&#39;)
+    layout.prop(self,&#39;transform&#39;,text=&#39;&#39;)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.sockets.SvFormulaSocket.update_depth"><code class="name flex">
 <span>def <span class="ident">update_depth</span></span>(<span>self, context)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def update_depth(self, context):
+    if self.transform == &#39;Vector&#39; and self.depth &lt; 2:
+        self.depth = 2
+    else:
+        process_from_socket(self, context)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -983,9 +1223,6 @@ some of the properties can be skipped because they are static, they are always s
 <span>(</span><span>...)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Base class for all Sockets</p>
-<p>'SKIP_SAVE' in properties means skipping them during saving in JSON format
-some of the properties can be skipped because they are static, they are always set only in sv_init method</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1001,6 +1238,9 @@ some of the properties can be skipped because they are static, they are always s
         type=bpy.types.Image,
         update=process_from_socket)</code></pre>
 </details>
+<div class="desc"><p>Base class for all Sockets</p>
+<p>'SKIP_SAVE' in properties means skipping them during saving in JSON format
+some of the properties can be skipped because they are static, they are always set only in sv_init method</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li>bpy_types.NodeSocket</li>
@@ -1026,7 +1266,7 @@ some of the properties can be skipped because they are static, they are always s
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.core.sockets.SvImageSocket.default_property"><code class="name">var <span class="ident">default_property</span> : <_PropertyDeferred, <built-in function PointerProperty>, {'name': 'Image', 'type': <class 'bpy.types.Image'>, 'update': <function <a title="sverchok.core.sockets.process_from_socket" href="#sverchok.core.sockets.process_from_socket">process_from_socket()</a> at 0x7f0c6c79a710>, 'attr': 'default_value'}></code></dt>
+<dt id="sverchok.core.sockets.SvImageSocket.default_property"><code class="name">var <span class="ident">default_property</span> : <_PropertyDeferred, <built-in function PointerProperty>, {'name': 'Image', 'type': <class 'bpy.types.Image'>, 'update': <function <a title="sverchok.core.sockets.process_from_socket" href="#sverchok.core.sockets.process_from_socket">process_from_socket()</a> at 0x7ffb351cee60>, 'attr': 'default_value'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -1055,7 +1295,6 @@ some of the properties can be skipped because they are static, they are always s
 <span>(</span><span>...)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Opens a menu</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1231,6 +1470,7 @@ some of the properties can be skipped because they are static, they are always s
         wm.invoke_search_popup(self)
         return {&#39;FINISHED&#39;}</code></pre>
 </details>
+<div class="desc"><p>Opens a menu</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li>bpy_types.Operator</li>
@@ -1266,7 +1506,7 @@ some of the properties can be skipped because they are static, they are always s
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.core.sockets.SvInputLinkMenuOp.option"><code class="name">var <span class="ident">option</span> : <_PropertyDeferred, <built-in function EnumProperty>, {'name': 'Action', 'description': 'Action to be executed', 'items': <function <a title="sverchok.core.sockets.SvInputLinkMenuOp.get_items" href="#sverchok.core.sockets.SvInputLinkMenuOp.get_items">SvInputLinkMenuOp.get_items()</a> at 0x7f0c6c7f7640>, 'attr': 'option'}></code></dt>
+<dt id="sverchok.core.sockets.SvInputLinkMenuOp.option"><code class="name">var <span class="ident">option</span> : <_PropertyDeferred, <built-in function EnumProperty>, {'name': 'Action', 'description': 'Action to be executed', 'items': <function <a title="sverchok.core.sockets.SvInputLinkMenuOp.get_items" href="#sverchok.core.sockets.SvInputLinkMenuOp.get_items">SvInputLinkMenuOp.get_items()</a> at 0x7ffb351bbd90>, 'attr': 'option'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -1281,18 +1521,189 @@ some of the properties can be skipped because they are static, they are always s
 <span>def <span class="ident">execute</span></span>(<span>self, context)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def execute(self, context):
+
+    tree = bpy.data.node_groups[self.tree_name]
+    node = tree.nodes[self.node_name]
+    socket = node.inputs[self.input_name]
+
+    def is_linked(node1, node2):
+        for link in tree.links:
+            if link.from_node == node1 and link.to_node == node2:
+                return True
+        return False
+
+    if self.option == &#39;__SV_PARAM_CREATE__&#39;:
+        new_node = tree.nodes.new(socket.get_link_parameter_node())
+        new_node.label = socket.label or socket.name
+        socket.setup_parameter_node(new_node)
+        links_number = len([s for s in node.inputs if s.is_linked])
+        new_node.location = (node.location[0] - 200, node.location[1] - 100 * links_number)
+        tree.links.new(new_node.outputs[0], socket)
+
+        if node.parent:
+            new_node.parent = node.parent
+            new_node.location = new_node.absolute_location
+
+        new_node.process_node(context)
+
+    elif self.option == &#39;__SV_WIFI_CREATE__&#39;:
+        label = socket.label or socket.name
+        param_node = tree.nodes.new(socket.get_link_parameter_node())
+        param_node.label = label
+
+        wifi_in_node = tree.nodes.new(&#39;WifiInNode&#39;)
+        wifi_in_node.label = f&#34;WiFi In - {label}&#34;
+        wifi_in_node.gen_var_name()
+        wifi_var = wifi_in_node.var_name
+
+        wifi_out_node = tree.nodes.new(&#39;WifiOutNode&#39;)
+        wifi_out_node.label = f&#34;WiFi Out - {label}&#34;
+        wifi_out_node.var_name = wifi_var
+
+        socket.setup_parameter_node(param_node)
+
+        tree.links.new(param_node.outputs[0], wifi_in_node.inputs[0])
+        tree.links.new(wifi_out_node.outputs[0], socket)
+
+        setup_new_node_location(wifi_out_node, node)
+        setup_new_node_location(wifi_in_node, wifi_out_node)
+        setup_new_node_location(param_node, wifi_in_node)
+
+        param_node.process_node(context)
+
+    elif self.option.startswith(&#39;PARAM_&#39;):
+        input_name = self.option[6:]
+        param_node = tree.nodes[input_name]
+        tree.links.new(param_node.outputs[0], socket)
+
+    elif self.option.startswith(&#39;WIFI_&#39;):
+        prefix, socket_idx, wifi_var = self.option.split(&#39;_&#39;, maxsplit=2)
+        socket_idx = int(socket_idx)
+
+        found_existing = False
+        for name, wifi_node in tree.nodes.items():
+            if wifi_node.bl_idname == &#39;WifiOutNode&#39; and is_linked(wifi_node, node):
+                if wifi_node.var_name == wifi_var:
+                    tree.links.new(wifi_node.outputs[socket_idx], socket)
+                    found_existing = True
+                    break
+
+        if not found_existing:
+            new_node = tree.nodes.new(&#39;WifiOutNode&#39;)
+            new_node.var_name = wifi_var
+            new_node.set_var_name()
+            links_number = len([s for s in node.inputs if s.is_linked])
+            new_node.location = (node.location[0] - 200, node.location[1] - 100 * links_number)
+            tree.links.new(new_node.outputs[socket_idx], socket)
+
+            if node.parent:
+                new_node.parent = node.parent
+                new_node.location = new_node.absolute_location
+
+            new_node.process_node(context)
+
+    elif socket.link_menu_handler:
+        handler = getattr(node, socket.link_menu_handler)
+        handler.on_selected(tree, node, socket, self.option, context)
+
+    return {&#39;FINISHED&#39;}</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.sockets.SvInputLinkMenuOp.get_items"><code class="name flex">
 <span>def <span class="ident">get_items</span></span>(<span>self, context)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_items(self, context):
+    tree = context.space_data.node_tree
+    node = tree.nodes[self.node_name]
+    socket = node.inputs[self.input_name]
+
+    items = []
+    link_param_node = socket.get_link_parameter_node()
+    i = 0
+    if link_param_node:
+        items.append(
+                (&#39;__SV_PARAM_CREATE__&#39;, &#34;Create new parameter&#34;, &#34;Create new parameter node&#34;, i)
+            )
+        i += 1
+
+        items.append(
+                    (&#39;__SV_WIFI_CREATE__&#39;, &#34;Create new parameter via WiFi&#34;, &#34;Create new parameter node and link it via WiFi pair&#34;, 1)
+                )
+        i += 1
+
+    for name, other_node in tree.nodes.items():
+        if other_node.bl_idname == link_param_node:
+            item = (&#39;PARAM_&#39; + other_node.name, f&#34;Link to parameter: {other_node.label or other_node.name}&#34;, &#34;Link to existing input node&#34;, i)
+            items.append(item)
+            i += 1
+
+    for name, other_node in tree.nodes.items():
+        if other_node.bl_idname == &#39;WifiInNode&#39;:
+            for input_idx, wifi_input in enumerate(other_node.inputs):
+                linked = get_other_socket(wifi_input)
+                if linked is None:
+                    continue
+                if linked.bl_idname != socket.bl_idname:
+                    continue
+                item = (f&#34;WIFI_{input_idx}_{other_node.var_name}&#34;, f&#34;Link to WiFi: {other_node.label or other_node.name} - {other_node.var_name}[{input_idx}]&#34;, &#34;Link to existing WiFi input node&#34;, i)
+                items.append(item)
+                i += 1
+
+    # In the node class, it is possible to define
+    # additional menu entries by specifying `link_menu_handler`
+    # property of the socket. It should be name of a class with
+    # two classmethods: get_items() and on_selected():
+    #
+    # class MyNode(...):
+    #   class MenuHandler:
+    #       @classmethod
+    #       def get_items(cls, context):
+    #           return [(&#39;MY_ENTRY&#39;, &#34;My entry&#34;, &#34;My entry description&#34;)]
+    #
+    #       @classmethod
+    #       def on_selected(cls, tree, node, item, context):
+    #           if item == &#39;MY_ENTRY&#39;:
+    #               print(&#34;Hello world!&#34;)
+    #
+    #   def sv_init(self):
+    #       self.inputs.new(&#39;SvVerticesSocket&#39;, &#39;Vertices&#39;).link_menu_handler = &#39;MenuHandler&#39;
+    #
+    handler_name = socket.link_menu_handler
+    if handler_name:
+        handler = getattr(node, handler_name)
+        for id, title, description in handler.get_items(socket, context):
+            items.append((id, title, description, i))
+            i += 1
+
+    return items</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.sockets.SvInputLinkMenuOp.invoke"><code class="name flex">
 <span>def <span class="ident">invoke</span></span>(<span>self, context, event)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def invoke(self, context, event):
+    context.space_data.cursor_location_from_region(event.mouse_region_x, event.mouse_region_y)
+    wm = context.window_manager
+    wm.invoke_search_popup(self)
+    return {&#39;FINISHED&#39;}</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -1302,7 +1713,6 @@ some of the properties can be skipped because they are static, they are always s
 <span>(</span><span>...)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Spawn and link new node to the left of the caller node</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1332,6 +1742,7 @@ some of the properties can be skipped because they are static, they are always s
 
         return {&#39;FINISHED&#39;}</code></pre>
 </details>
+<div class="desc"><p>Spawn and link new node to the left of the caller node</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li>bpy_types.Operator</li>
@@ -1367,6 +1778,26 @@ some of the properties can be skipped because they are static, they are always s
 <span>def <span class="ident">execute</span></span>(<span>self, context)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def execute(self, context):
+    tree, node, socket = context.node.id_data, context.node, context.socket
+
+    new_node = tree.nodes.new(socket.quick_link_to_node)
+    links_number = len([s for s in node.inputs if s.is_linked])
+    new_node.location = (node.location[0] - 200, node.location[1] - 100 * links_number)
+    tree.links.new(new_node.outputs[0], socket)
+
+    if node.parent:
+        new_node.parent = node.parent
+        new_node.location = new_node.absolute_location
+
+    new_node.process_node(context)
+
+    return {&#39;FINISHED&#39;}</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -1376,7 +1807,6 @@ some of the properties can be skipped because they are static, they are always s
 <span>(</span><span>...)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>For loop in-loop out node pair</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1389,6 +1819,7 @@ some of the properties can be skipped because they are static, they are always s
     color = (0.1, 0.1, 0.1, 1.0)
     quick_link_to_node = &#39;SvLoopInNode&#39;</code></pre>
 </details>
+<div class="desc"><p>For loop in-loop out node pair</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li>bpy_types.NodeSocket</li>
@@ -1443,9 +1874,6 @@ some of the properties can be skipped because they are static, they are always s
 <span>(</span><span>...)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Base class for all Sockets</p>
-<p>'SKIP_SAVE' in properties means skipping them during saving in JSON format
-some of the properties can be skipped because they are static, they are always set only in sv_init method</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1461,6 +1889,9 @@ some of the properties can be skipped because they are static, they are always s
         type=bpy.types.Material,
         update=process_from_socket)</code></pre>
 </details>
+<div class="desc"><p>Base class for all Sockets</p>
+<p>'SKIP_SAVE' in properties means skipping them during saving in JSON format
+some of the properties can be skipped because they are static, they are always set only in sv_init method</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li>bpy_types.NodeSocket</li>
@@ -1486,7 +1917,7 @@ some of the properties can be skipped because they are static, they are always s
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.core.sockets.SvMaterialSocket.default_property"><code class="name">var <span class="ident">default_property</span> : <_PropertyDeferred, <built-in function PointerProperty>, {'name': 'Material', 'type': <class 'bpy.types.Material'>, 'update': <function <a title="sverchok.core.sockets.process_from_socket" href="#sverchok.core.sockets.process_from_socket">process_from_socket()</a> at 0x7f0c6c79a710>, 'attr': 'default_value'}></code></dt>
+<dt id="sverchok.core.sockets.SvMaterialSocket.default_property"><code class="name">var <span class="ident">default_property</span> : <_PropertyDeferred, <built-in function PointerProperty>, {'name': 'Material', 'type': <class 'bpy.types.Material'>, 'update': <function <a title="sverchok.core.sockets.process_from_socket" href="#sverchok.core.sockets.process_from_socket">process_from_socket()</a> at 0x7ffb351cee60>, 'attr': 'default_value'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -1515,7 +1946,6 @@ some of the properties can be skipped because they are static, they are always s
 <span>(</span><span>...)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>4x4 matrix Socket type</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1536,6 +1966,7 @@ some of the properties can be skipped because they are static, they are always s
     def do_graft(self, data):
         return graft_data(data, item_level=0, data_types=(Matrix,))</code></pre>
 </details>
+<div class="desc"><p>4x4 matrix Socket type</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li>bpy_types.NodeSocket</li>
@@ -1576,12 +2007,26 @@ some of the properties can be skipped because they are static, they are always s
 <span>def <span class="ident">do_flatten</span></span>(<span>self, data)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def do_flatten(self, data):
+    return flatten_data(data, 1, data_types=(Matrix,))</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.sockets.SvMatrixSocket.do_graft"><code class="name flex">
 <span>def <span class="ident">do_graft</span></span>(<span>self, data)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def do_graft(self, data):
+    return graft_data(data, item_level=0, data_types=(Matrix,))</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -1609,9 +2054,6 @@ some of the properties can be skipped because they are static, they are always s
 <span>(</span><span>...)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Base class for all Sockets</p>
-<p>'SKIP_SAVE' in properties means skipping them during saving in JSON format
-some of the properties can be skipped because they are static, they are always set only in sv_init method</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1666,6 +2108,9 @@ some of the properties can be skipped because they are static, they are always s
         else:
             layout.prop_search(self, &#39;object_ref_pointer&#39;, bpy.data, &#39;objects&#39;, text=self.label or self.name)</code></pre>
 </details>
+<div class="desc"><p>Base class for all Sockets</p>
+<p>'SKIP_SAVE' in properties means skipping them during saving in JSON format
+some of the properties can be skipped because they are static, they are always set only in sv_init method</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li>bpy_types.NodeSocket</li>
@@ -1695,11 +2140,11 @@ some of the properties can be skipped because they are static, they are always s
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.core.sockets.SvObjectSocket.object_ref"><code class="name">var <span class="ident">object_ref</span> : <_PropertyDeferred, <built-in function StringProperty>, {'update': <function <a title="sverchok.core.sockets.process_from_socket" href="#sverchok.core.sockets.process_from_socket">process_from_socket()</a> at 0x7f0c6c79a710>, 'attr': 'object_ref'}></code></dt>
+<dt id="sverchok.core.sockets.SvObjectSocket.object_ref"><code class="name">var <span class="ident">object_ref</span> : <_PropertyDeferred, <built-in function StringProperty>, {'update': <function <a title="sverchok.core.sockets.process_from_socket" href="#sverchok.core.sockets.process_from_socket">process_from_socket()</a> at 0x7ffb351cee60>, 'attr': 'object_ref'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.core.sockets.SvObjectSocket.object_ref_pointer"><code class="name">var <span class="ident">object_ref_pointer</span> : <_PropertyDeferred, <built-in function PointerProperty>, {'name': 'Object Reference', 'poll': <function <a title="sverchok.core.sockets.SvObjectSocket.filter_kinds" href="#sverchok.core.sockets.SvObjectSocket.filter_kinds">SvObjectSocket.filter_kinds()</a> at 0x7f0c6c7f4f70>, 'type': <class 'bpy_types.Object'>, 'update': <function <a title="sverchok.core.sockets.process_from_socket" href="#sverchok.core.sockets.process_from_socket">process_from_socket()</a> at 0x7f0c6c79a710>, 'attr': 'object_ref_pointer'}></code></dt>
+<dt id="sverchok.core.sockets.SvObjectSocket.object_ref_pointer"><code class="name">var <span class="ident">object_ref_pointer</span> : <_PropertyDeferred, <built-in function PointerProperty>, {'name': 'Object Reference', 'poll': <function <a title="sverchok.core.sockets.SvObjectSocket.filter_kinds" href="#sverchok.core.sockets.SvObjectSocket.filter_kinds">SvObjectSocket.filter_kinds()</a> at 0x7ffb351b96c0>, 'type': <class 'bpy_types.Object'>, 'update': <function <a title="sverchok.core.sockets.process_from_socket" href="#sverchok.core.sockets.process_from_socket">process_from_socket()</a> at 0x7ffb351cee60>, 'attr': 'object_ref_pointer'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -1712,7 +2157,6 @@ some of the properties can be skipped because they are static, they are always s
 <dl>
 <dt id="sverchok.core.sockets.SvObjectSocket.default_property"><code class="name">prop <span class="ident">default_property</span></code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1722,6 +2166,7 @@ def default_property(self):
     # this can be more granular and even attempt to set object_ref_points from object_ref, and then wipe object_ref
     return self.node.get_bpy_data_from_name(self.object_ref or self.object_ref_pointer, bpy.data.objects)</code></pre>
 </details>
+<div class="desc"></div>
 </dd>
 </dl>
 <h3>Methods</h3>
@@ -1730,6 +2175,34 @@ def default_property(self):
 <span>def <span class="ident">filter_kinds</span></span>(<span>self, objs)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def filter_kinds(self, objs):
+    &#34;&#34;&#34;
+    object_kinds could be any of these:
+     [‘MESH’, ‘CURVE’, ‘SURFACE’, ‘META’, ‘FONT’, ‘VOLUME’, ‘ARMATURE’, ‘LATTICE’,
+     ‘EMPTY’, ‘GPENCIL’, ‘CAMERA’, ‘LIGHT’, ‘SPEAKER’, ‘LIGHT_PROBE’, ‘EMPTY’
+
+    for example
+        socket.object_kinds = &#34;MESH&#34;
+    or if you want various kinds
+        socket.object_kinds = &#34;MESH,CURVE&#34;
+    &#34;&#34;&#34;
+    if self.object_kinds in {&#39;ALL&#39;, &#39;&#39;}:
+        return True
+
+    if not self.object_kinds:
+        return True
+    kind = self.object_kinds
+    if &#34;,&#34; in kind:
+        kinds = kind.split(&#39;,&#39;)
+        if objs.type in set(kinds):
+            return True
+    if objs.type == kind:
+        return True</code></pre>
+</details>
 <div class="desc"><p>object_kinds could be any of these:
 [‘MESH’, ‘CURVE’, ‘SURFACE’, ‘META’, ‘FONT’, ‘VOLUME’, ‘ARMATURE’, ‘LATTICE’,
 ‘EMPTY’, ‘GPENCIL’, ‘CAMERA’, ‘LIGHT’, ‘SPEAKER’, ‘LIGHT_PROBE’, ‘EMPTY’</p>
@@ -1763,7 +2236,6 @@ socket.object_kinds = "MESH,CURVE"</p></div>
 <span>(</span><span>...)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>For Pulga forces data</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1775,6 +2247,7 @@ socket.object_kinds = "MESH,CURVE"</p></div>
 
     color = (0.4, 0.3, 0.6, 1.0)</code></pre>
 </details>
+<div class="desc"><p>For Pulga forces data</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li>bpy_types.NodeSocket</li>
@@ -1825,7 +2298,6 @@ socket.object_kinds = "MESH,CURVE"</p></div>
 <span>(</span><span>...)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>For quaternion data</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1870,6 +2342,7 @@ socket.object_kinds = "MESH,CURVE"</p></div>
         else:
             layout.label(text=text)</code></pre>
 </details>
+<div class="desc"><p>For quaternion data</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li>bpy_types.NodeSocket</li>
@@ -1895,7 +2368,7 @@ socket.object_kinds = "MESH,CURVE"</p></div>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.core.sockets.SvQuaternionSocket.default_property"><code class="name">var <span class="ident">default_property</span> : <_PropertyDeferred, <built-in function FloatVectorProperty>, {'default': (1, 0, 0, 0), 'size': 4, 'subtype': 'QUATERNION', 'update': <function <a title="sverchok.core.sockets.process_from_socket" href="#sverchok.core.sockets.process_from_socket">process_from_socket()</a> at 0x7f0c6c79a710>, 'attr': 'default_value'}></code></dt>
+<dt id="sverchok.core.sockets.SvQuaternionSocket.default_property"><code class="name">var <span class="ident">default_property</span> : <_PropertyDeferred, <built-in function FloatVectorProperty>, {'default': (1, 0, 0, 0), 'size': 4, 'subtype': 'QUATERNION', 'update': <function <a title="sverchok.core.sockets.process_from_socket" href="#sverchok.core.sockets.process_from_socket">process_from_socket()</a> at 0x7ffb351cee60>, 'attr': 'default_value'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -1910,18 +2383,42 @@ socket.object_kinds = "MESH,CURVE"</p></div>
 <span>def <span class="ident">do_flatten</span></span>(<span>self, data)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def do_flatten(self, data):
+    return flatten_data(data, 1, data_types=(Quaternion,))</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.sockets.SvQuaternionSocket.do_graft"><code class="name flex">
 <span>def <span class="ident">do_graft</span></span>(<span>self, data)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def do_graft(self, data):
+    return graft_data(data, item_level=0, data_types=(Quaternion,))</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.sockets.SvQuaternionSocket.draw_group_property"><code class="name flex">
 <span>def <span class="ident">draw_group_property</span></span>(<span>self, layout, text, interface_socket)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def draw_group_property(self, layout, text, interface_socket):
+    if not interface_socket.hide_value:
+        layout.template_component_menu(self, &#39;default_property&#39;, name=text)
+    else:
+        layout.label(text=text)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -1949,9 +2446,6 @@ socket.object_kinds = "MESH,CURVE"</p></div>
 <span>(</span><span>...)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Base class for all Sockets</p>
-<p>'SKIP_SAVE' in properties means skipping them during saving in JSON format
-some of the properties can be skipped because they are static, they are always set only in sv_init method</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1970,6 +2464,9 @@ some of the properties can be skipped because they are static, they are always s
     def do_graft(self, data):
         return graft_data(data, item_level=0, data_types=(SvScalarField,))</code></pre>
 </details>
+<div class="desc"><p>Base class for all Sockets</p>
+<p>'SKIP_SAVE' in properties means skipping them during saving in JSON format
+some of the properties can be skipped because they are static, they are always set only in sv_init method</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li>bpy_types.NodeSocket</li>
@@ -2010,12 +2507,26 @@ some of the properties can be skipped because they are static, they are always s
 <span>def <span class="ident">do_flatten</span></span>(<span>self, data)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def do_flatten(self, data):
+    return flatten_data(data, 1, data_types=(SvScalarField,))</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.sockets.SvScalarFieldSocket.do_graft"><code class="name flex">
 <span>def <span class="ident">do_graft</span></span>(<span>self, data)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def do_graft(self, data):
+    return graft_data(data, item_level=0, data_types=(SvScalarField,))</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -2043,7 +2554,6 @@ some of the properties can be skipped because they are static, they are always s
 <span>(</span><span>...)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Separator Socket used to separate groups of sockets</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -2059,6 +2569,7 @@ some of the properties can be skipped because they are static, they are always s
         # layout.label(&#34;&#34;)
         layout.label(text=&#34;——————&#34;)</code></pre>
 </details>
+<div class="desc"><p>Separator Socket used to separate groups of sockets</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li>bpy_types.NodeSocket</li>
@@ -2091,6 +2602,14 @@ some of the properties can be skipped because they are static, they are always s
 <span>def <span class="ident">draw</span></span>(<span>self, context, layout, node, text)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def draw(self, context, layout, node, text):
+    # layout.label(&#34;&#34;)
+    layout.label(text=&#34;——————&#34;)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -2117,9 +2636,6 @@ some of the properties can be skipped because they are static, they are always s
 <span>class <span class="ident">SvSocketCommon</span></span>
 </code></dt>
 <dd>
-<div class="desc"><p>Base class for all Sockets</p>
-<p>'SKIP_SAVE' in properties means skipping them during saving in JSON format
-some of the properties can be skipped because they are static, they are always set only in sv_init method</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -2374,6 +2890,9 @@ some of the properties can be skipped because they are static, they are always s
         def draw_color(self, context, node):
             return self.color</code></pre>
 </details>
+<div class="desc"><p>Base class for all Sockets</p>
+<p>'SKIP_SAVE' in properties means skipping them during saving in JSON format
+some of the properties can be skipped because they are static, they are always set only in sv_init method</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="sverchok.core.sockets.SvSocketProcessing" href="#sverchok.core.sockets.SvSocketProcessing">SvSocketProcessing</a></li>
@@ -2477,7 +2996,6 @@ some of the properties can be skipped because they are static, they are always s
 <dl>
 <dt id="sverchok.core.sockets.SvSocketCommon.hide_safe"><code class="name">prop <span class="ident">hide_safe</span></code></dt>
 <dd>
-<div class="desc"><p>It will hide even linked sockets</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -2487,10 +3005,10 @@ def hide_safe(self):
     &#34;&#34;&#34;It will hide even linked sockets&#34;&#34;&#34;
     return self.hide</code></pre>
 </details>
+<div class="desc"><p>It will hide even linked sockets</p></div>
 </dd>
 <dt id="sverchok.core.sockets.SvSocketCommon.index"><code class="name">prop <span class="ident">index</span></code></dt>
 <dd>
-<div class="desc"><p>Index of socket, hidden sockets are also taken into account</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -2504,10 +3022,10 @@ def index(self):
         if s == self:
             return i</code></pre>
 </details>
+<div class="desc"><p>Index of socket, hidden sockets are also taken into account</p></div>
 </dd>
 <dt id="sverchok.core.sockets.SvSocketCommon.other"><code class="name">prop <span class="ident">other</span></code></dt>
 <dd>
-<div class="desc"><p>Returns opposite linked socket, if socket is outputs it will return one random opposite linked socket</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -2517,10 +3035,10 @@ def other(self):
     &#34;&#34;&#34;Returns opposite linked socket, if socket is outputs it will return one random opposite linked socket&#34;&#34;&#34;
     return get_other_socket(self)</code></pre>
 </details>
+<div class="desc"><p>Returns opposite linked socket, if socket is outputs it will return one random opposite linked socket</p></div>
 </dd>
 <dt id="sverchok.core.sockets.SvSocketCommon.socket_id"><code class="name">prop <span class="ident">socket_id</span></code></dt>
 <dd>
-<div class="desc"><p>Id of socket used by data_cache</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -2534,6 +3052,7 @@ def socket_id(self):
         _id = self.s_id
     return _id</code></pre>
 </details>
+<div class="desc"><p>Id of socket used by data_cache</p></div>
 </dd>
 </dl>
 <h3>Methods</h3>
@@ -2542,30 +3061,143 @@ def socket_id(self):
 <span>def <span class="ident">does_support_link_input_menu</span></span>(<span>self, context, layout, node)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def does_support_link_input_menu(self, context, layout, node):
+    if not self.enable_input_link_menu:
+        return False
+    param_node = self.get_link_parameter_node()
+    if not param_node:
+        return False
+    return True</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.sockets.SvSocketCommon.draw"><code class="name flex">
 <span>def <span class="ident">draw</span></span>(<span>self, context, layout, node, text)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def draw(self, context, layout, node, text):
+
+    def draw_label(text):
+        flags = self.get_mode_flags()
+        if flags:
+            text = text + &#34; [&#34; + &#34;,&#34;.join(flags) + &#34;]&#34;
+        if self.description:
+            layout.operator(&#39;node.sv_socket_show_help&#39;, text=text, emboss=False).text = self.description
+        else:
+            if hasattr(self, &#39;show_domain&#39;) and self.show_domain:
+                row = layout.row()
+                row.label(text=text)
+                row.prop(self, &#39;domain&#39;, text=&#39;&#39;)
+            else:
+                layout.label(text=text)
+
+    menu_option = get_param(&#39;show_input_menus&#39;, &#39;QUICKLINK&#39;)
+
+    # just handle custom draw..be it input or output.
+    if self.custom_draw:
+        # does the node have the draw function referred to by
+        # the string stored in socket&#39;s custom_draw attribute
+        if hasattr(node, self.custom_draw):
+            getattr(node, self.custom_draw)(self, context, layout)
+
+    elif self.is_linked:  # linked INPUT or OUTPUT
+        draw_label((self.label or text) + f&#34;. {self.objects_number or &#39;&#39;}&#34;)
+
+    elif self.is_output:  # unlinked OUTPUT
+        draw_label(self.label or text)
+
+    else:  # unlinked INPUT
+        prop_name = self.get_prop_name()
+        if prop_name:  # has property
+            if menu_option == &#39;ALL&#39;:
+                self.draw_link_input_menu(context, layout, node)
+            self.draw_property(layout, prop_origin=node, prop_name=prop_name)
+
+        elif node.bl_idname == &#39;SvGroupTreeNode&#39; and hasattr(self, &#39;draw_group_property&#39;):  # group node
+            if node.node_tree:  # when tree is removed from node sockets still exist
+                interface_socket = list(node.node_tree.sockets(&#39;INPUT&#39;))[self.index]
+                self.draw_group_property(layout, text, interface_socket)
+
+        elif node.bl_idname == &#39;NodeGroupOutput&#39; and hasattr(self, &#39;draw_group_property&#39;):  # group out node
+            if self.index &lt; len(node.outputs):  # in case of last socket of the node which is virtual
+                interface_socket = node.outputs[self.index]
+                self.draw_group_property(layout, text, interface_socket)
+
+        elif self.use_prop:  # no property but use default prop
+            if menu_option == &#39;ALL&#39;:
+                self.draw_link_input_menu(context, layout, node)
+            self.draw_property(layout)
+
+        else:  # no property and not use default prop
+            if menu_option == &#39;QUICKLINK&#39;:
+                self.draw_quick_link(context, layout, node)
+            elif menu_option == &#39;ALL&#39;:
+                self.draw_link_input_menu(context, layout, node)
+            draw_label(self.label or text)
+
+    if self.has_menu(context):
+        self.draw_menu_button(context, layout, node, text)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.sockets.SvSocketCommon.draw_color"><code class="name flex">
 <span>def <span class="ident">draw_color</span></span>(<span>self, context, node)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def draw_color(self, context, node):
+    return self.color</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.sockets.SvSocketCommon.draw_link_input_menu"><code class="name flex">
 <span>def <span class="ident">draw_link_input_menu</span></span>(<span>self, context, layout, node)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def draw_link_input_menu(self, context, layout, node):
+    if not self.does_support_link_input_menu(context, layout, node):
+        return
+    op = layout.operator(&#39;node.sv_input_link_menu_popup&#39;, text=&#34;&#34;, icon=&#34;PLUGIN&#34;)
+    op.tree_name = node.id_data.name
+    op.node_name = node.name
+    op.input_name = self.name</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.sockets.SvSocketCommon.draw_property"><code class="name flex">
 <span>def <span class="ident">draw_property</span></span>(<span>self, layout, prop_origin=None, prop_name='default_property')</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def draw_property(self, layout, prop_origin=None, prop_name=&#39;default_property&#39;):
+    &#34;&#34;&#34;
+    This method can be overridden for showing property in another way
+    Property will be shown only if socket is unconnected input
+    If prop_origin is None then the default socket property should be shown
+    &#34;&#34;&#34;
+    if prop_origin is None and hasattr(self, prop_name):
+        layout.prop(self, &#39;default_property&#39;, text=self.label or None)
+    else:
+        layout.prop(prop_origin, prop_name, text=self.label or None)</code></pre>
+</details>
 <div class="desc"><p>This method can be overridden for showing property in another way
 Property will be shown only if socket is unconnected input
 If prop_origin is None then the default socket property should be shown</p></div>
@@ -2574,6 +3206,18 @@ If prop_origin is None then the default socket property should be shown</p></div
 <span>def <span class="ident">draw_quick_link</span></span>(<span>self, context, layout, node)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def draw_quick_link(self, context, layout, node):
+    &#34;&#34;&#34;
+    Will draw button for creating new node which is often used with such type of sockets
+    The socket should have `bl_idname` of other node in `quick_link_to_node` attribute for using this UI
+    &#34;&#34;&#34;
+    if self.quick_link_to_node:
+        layout.operator(&#39;node.sv_quicklink_new_node_input&#39;, text=&#34;&#34;, icon=&#34;PLUGIN&#34;)</code></pre>
+</details>
 <div class="desc"><p>Will draw button for creating new node which is often used with such type of sockets
 The socket should have <code>bl_idname</code> of other node in <code>quick_link_to_node</code> attribute for using this UI</p></div>
 </dd>
@@ -2581,12 +3225,37 @@ The socket should have <code>bl_idname</code> of other node in <code>quick_link_
 <span>def <span class="ident">get_link_parameter_node</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_link_parameter_node(self):
+    return self.quick_link_to_node</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.sockets.SvSocketCommon.get_prop_name"><code class="name flex">
 <span>def <span class="ident">get_prop_name</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_prop_name(self):
+    &#34;&#34;&#34;
+    Intended to return name of property related with socket owned by its node
+    Name can be replaced by twin property name in draft mode of a tree
+    &#34;&#34;&#34;
+    node = self.node
+    if node and hasattr(node, &#39;does_support_draft_mode&#39;) and node.does_support_draft_mode() and hasattr(node.id_data, &#39;sv_draft&#39;) and node.id_data.sv_draft:
+        prop_name_draft = self.node.draft_properties_mapping.get(self.prop_name, None)
+        if prop_name_draft:
+            return prop_name_draft
+        return self.prop_name
+
+    return self.prop_name</code></pre>
+</details>
 <div class="desc"><p>Intended to return name of property related with socket owned by its node
 Name can be replaced by twin property name in draft mode of a tree</p></div>
 </dd>
@@ -2594,6 +3263,16 @@ Name can be replaced by twin property name in draft mode of a tree</p></div>
 <span>def <span class="ident">replace_socket</span></span>(<span>self, new_type, new_name=None)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def replace_socket(self, new_type, new_name=None):
+    &#34;&#34;&#34;Replace a socket with a socket of new_type and keep links,
+    return the new socket, the old reference might be invalid&#34;&#34;&#34;
+    self.sv_forget()
+    return replace_socket(self, new_type, new_name)</code></pre>
+</details>
 <div class="desc"><p>Replace a socket with a socket of new_type and keep links,
 return the new socket, the old reference might be invalid</p></div>
 </dd>
@@ -2601,18 +3280,72 @@ return the new socket, the old reference might be invalid</p></div>
 <span>def <span class="ident">setup_parameter_node</span></span>(<span>self, param_node)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setup_parameter_node(self, param_node):
+    pass</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.sockets.SvSocketCommon.sv_forget"><code class="name flex">
 <span>def <span class="ident">sv_forget</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def sv_forget(self):
+    &#34;&#34;&#34;Delete socket memory&#34;&#34;&#34;
+    sv_forget_socket(self)</code></pre>
+</details>
 <div class="desc"><p>Delete socket memory</p></div>
 </dd>
 <dt id="sverchok.core.sockets.SvSocketCommon.sv_get"><code class="name flex">
 <span>def <span class="ident">sv_get</span></span>(<span>self, default=Ellipsis, deepcopy=True)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def sv_get(self, default=..., deepcopy=True):
+    &#34;&#34;&#34;
+    The method is used for getting socket data
+    In most cases the method should not be overridden
+    Also a socket can use its default_property
+    Order of getting data (if available):
+    1. written socket data
+    2. node default property
+    3. socket default property
+    4. script default property
+    5. Raise no data error
+    :param default: script default property
+    :param deepcopy: in most cases should be False for efficiency but not in cases if input data will be modified
+    :return: data bound to the socket
+    &#34;&#34;&#34;
+    if self.is_output:
+        return sv_get_socket(self, False)
+
+    if self.is_linked:
+        return sv_get_socket(self, deepcopy)
+
+    prop_name = self.get_prop_name()
+    if prop_name:
+        prop = getattr(self.node, prop_name)
+        return format_bpy_property(prop)
+
+    if self.use_prop and hasattr(self, &#39;default_property&#39;) and self.default_property is not None:
+        default_property = self.default_property
+        return format_bpy_property(default_property)
+
+    if default is not ...:
+        return default
+
+    raise SvNoDataError(self)</code></pre>
+</details>
 <div class="desc"><p>The method is used for getting socket data
 In most cases the method should not be overridden
 Also a socket can use its default_property
@@ -2630,6 +3363,20 @@ Order of getting data (if available):
 <span>def <span class="ident">sv_set</span></span>(<span>self, data)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def sv_set(self, data):
+    &#34;&#34;&#34;Set data, provide context in case the node can be evaluated several times in different context&#34;&#34;&#34;
+    if self.is_output:
+        data = self.postprocess_output(data)
+
+    # it&#39;s expensive to call sv_get method to update the number in other places
+    self.objects_number = len(data)
+
+    sv_set_socket(self, data)</code></pre>
+</details>
 <div class="desc"><p>Set data, provide context in case the node can be evaluated several times in different context</p></div>
 </dd>
 </dl>
@@ -2639,7 +3386,6 @@ Order of getting data (if available):
 <span>(</span><span>...)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -2663,6 +3409,7 @@ Order of getting data (if available):
         bpy.context.window_manager.popup_menu(draw, title=&#34;Socket description&#34;, icon=&#39;QUESTION&#39;)
         return {&#39;FINISHED&#39;}</code></pre>
 </details>
+<div class="desc"></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li>bpy_types.Operator</li>
@@ -2706,6 +3453,18 @@ Order of getting data (if available):
 <span>def <span class="ident">execute</span></span>(<span>self, context)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def execute(self, context):
+    def draw(menu, context):
+        col = menu.layout.column(align=True)
+        for line in self.text.split(&#39;\n&#39;):
+            col.label(text=line)
+    bpy.context.window_manager.popup_menu(draw, title=&#34;Socket description&#34;, icon=&#39;QUESTION&#39;)
+    return {&#39;FINISHED&#39;}</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -2714,7 +3473,6 @@ Order of getting data (if available):
 <span>class <span class="ident">SvSocketProcessing</span></span>
 </code></dt>
 <dd>
-<div class="desc"><p>Mixin class for data processing logic of a socket.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -2916,6 +3674,7 @@ Order of getting data (if available):
             if isinstance(prop, bpy.props._PropertyDeferred):
                 setattr(self, identifier, getattr(other, identifier))</code></pre>
 </details>
+<div class="desc"><p>Mixin class for data processing logic of a socket.</p></div>
 <h3>Subclasses</h3>
 <ul class="hlist">
 <li><a title="sverchok.core.sockets.SvSocketCommon" href="#sverchok.core.sockets.SvSocketCommon">SvSocketCommon</a></li>
@@ -2954,27 +3713,27 @@ Order of getting data (if available):
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.core.sockets.SvSocketProcessing.use_flatten"><code class="name">var <span class="ident">use_flatten</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Flatten', 'default': False, 'update': <function <a title="sverchok.core.sockets.SvSocketProcessing.update_flatten_flag" href="#sverchok.core.sockets.SvSocketProcessing.update_flatten_flag">SvSocketProcessing.update_flatten_flag()</a> at 0x7f0c6c79bb50>, 'attr': 'use_flatten'}></code></dt>
+<dt id="sverchok.core.sockets.SvSocketProcessing.use_flatten"><code class="name">var <span class="ident">use_flatten</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Flatten', 'default': False, 'update': <function <a title="sverchok.core.sockets.SvSocketProcessing.update_flatten_flag" href="#sverchok.core.sockets.SvSocketProcessing.update_flatten_flag">SvSocketProcessing.update_flatten_flag()</a> at 0x7ffb351b8310>, 'attr': 'use_flatten'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.core.sockets.SvSocketProcessing.use_flatten_topology"><code class="name">var <span class="ident">use_flatten_topology</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Flatten Topology', 'default': False, 'update': <function <a title="sverchok.core.sockets.process_from_socket" href="#sverchok.core.sockets.process_from_socket">process_from_socket()</a> at 0x7f0c6c79a710>, 'attr': 'use_flatten_topology'}></code></dt>
+<dt id="sverchok.core.sockets.SvSocketProcessing.use_flatten_topology"><code class="name">var <span class="ident">use_flatten_topology</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Flatten Topology', 'default': False, 'update': <function <a title="sverchok.core.sockets.process_from_socket" href="#sverchok.core.sockets.process_from_socket">process_from_socket()</a> at 0x7ffb351cee60>, 'attr': 'use_flatten_topology'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.core.sockets.SvSocketProcessing.use_graft"><code class="name">var <span class="ident">use_graft</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Graft', 'default': False, 'update': <function <a title="sverchok.core.sockets.process_from_socket" href="#sverchok.core.sockets.process_from_socket">process_from_socket()</a> at 0x7f0c6c79a710>, 'attr': 'use_graft'}></code></dt>
+<dt id="sverchok.core.sockets.SvSocketProcessing.use_graft"><code class="name">var <span class="ident">use_graft</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Graft', 'default': False, 'update': <function <a title="sverchok.core.sockets.process_from_socket" href="#sverchok.core.sockets.process_from_socket">process_from_socket()</a> at 0x7ffb351cee60>, 'attr': 'use_graft'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.core.sockets.SvSocketProcessing.use_simplify"><code class="name">var <span class="ident">use_simplify</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Simplify', 'default': False, 'update': <function <a title="sverchok.core.sockets.SvSocketProcessing.update_simplify_flag" href="#sverchok.core.sockets.SvSocketProcessing.update_simplify_flag">SvSocketProcessing.update_simplify_flag()</a> at 0x7f0c6c79bbe0>, 'attr': 'use_simplify'}></code></dt>
+<dt id="sverchok.core.sockets.SvSocketProcessing.use_simplify"><code class="name">var <span class="ident">use_simplify</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Simplify', 'default': False, 'update': <function <a title="sverchok.core.sockets.SvSocketProcessing.update_simplify_flag" href="#sverchok.core.sockets.SvSocketProcessing.update_simplify_flag">SvSocketProcessing.update_simplify_flag()</a> at 0x7ffb351b83a0>, 'attr': 'use_simplify'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.core.sockets.SvSocketProcessing.use_unwrap"><code class="name">var <span class="ident">use_unwrap</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Unwrap', 'default': False, 'update': <function <a title="sverchok.core.sockets.SvSocketProcessing.update_unwrap_flag" href="#sverchok.core.sockets.SvSocketProcessing.update_unwrap_flag">SvSocketProcessing.update_unwrap_flag()</a> at 0x7f0c6c79ba30>, 'attr': 'use_unwrap'}></code></dt>
+<dt id="sverchok.core.sockets.SvSocketProcessing.use_unwrap"><code class="name">var <span class="ident">use_unwrap</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Unwrap', 'default': False, 'update': <function <a title="sverchok.core.sockets.SvSocketProcessing.update_unwrap_flag" href="#sverchok.core.sockets.SvSocketProcessing.update_unwrap_flag">SvSocketProcessing.update_unwrap_flag()</a> at 0x7ffb351b81f0>, 'attr': 'use_unwrap'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.core.sockets.SvSocketProcessing.use_wrap"><code class="name">var <span class="ident">use_wrap</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Wrap', 'default': False, 'update': <function <a title="sverchok.core.sockets.SvSocketProcessing.update_wrap_flag" href="#sverchok.core.sockets.SvSocketProcessing.update_wrap_flag">SvSocketProcessing.update_wrap_flag()</a> at 0x7f0c6c79bac0>, 'attr': 'use_wrap'}></code></dt>
+<dt id="sverchok.core.sockets.SvSocketProcessing.use_wrap"><code class="name">var <span class="ident">use_wrap</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Wrap', 'default': False, 'update': <function <a title="sverchok.core.sockets.SvSocketProcessing.update_wrap_flag" href="#sverchok.core.sockets.SvSocketProcessing.update_wrap_flag">SvSocketProcessing.update_wrap_flag()</a> at 0x7ffb351b8280>, 'attr': 'use_wrap'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -2985,114 +3744,339 @@ Order of getting data (if available):
 <span>def <span class="ident">can_flatten</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def can_flatten(self):
+    return hasattr(self, &#39;do_flatten&#39;) and (self.allow_flatten or self.is_output)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.sockets.SvSocketProcessing.can_flatten_topology"><code class="name flex">
 <span>def <span class="ident">can_flatten_topology</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def can_flatten_topology(self):
+    return hasattr(self, &#39;do_flat_topology&#39;) and (self.allow_flatten_topology or self.is_output)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.sockets.SvSocketProcessing.can_graft"><code class="name flex">
 <span>def <span class="ident">can_graft</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def can_graft(self):
+    return hasattr(self, &#39;do_graft&#39;) and (self.is_output or self.allow_graft)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.sockets.SvSocketProcessing.can_simplify"><code class="name flex">
 <span>def <span class="ident">can_simplify</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def can_simplify(self):
+    return hasattr(self, &#39;do_simplify&#39;) and (self.allow_simplify or self.is_output)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.sockets.SvSocketProcessing.can_unwrap"><code class="name flex">
 <span>def <span class="ident">can_unwrap</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def can_unwrap(self):
+    return self.is_output or self.allow_unwrap</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.sockets.SvSocketProcessing.can_wrap"><code class="name flex">
 <span>def <span class="ident">can_wrap</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def can_wrap(self):
+    return self.is_output or self.allow_wrap</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.sockets.SvSocketProcessing.copy_options"><code class="name flex">
 <span>def <span class="ident">copy_options</span></span>(<span>self, other)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def copy_options(self, other):
+    for identifier, prop in SvSocketProcessing.__annotations__.items():
+        if isinstance(prop, bpy.props._PropertyDeferred):
+            setattr(self, identifier, getattr(other, identifier))</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.sockets.SvSocketProcessing.draw_menu_button"><code class="name flex">
 <span>def <span class="ident">draw_menu_button</span></span>(<span>self, context, layout, node, text)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def draw_menu_button(self, context, layout, node, text):
+    if hasattr(node.id_data, &#39;sv_show_socket_menus&#39;) and node.id_data.sv_show_socket_menus:
+        if (self.is_output or self.is_linked or not self.use_prop):
+            layout.menu(&#39;SV_MT_SocketOptionsMenu&#39;, text=&#39;&#39;, icon=&#39;TRIA_DOWN&#39;)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.sockets.SvSocketProcessing.draw_menu_items"><code class="name flex">
 <span>def <span class="ident">draw_menu_items</span></span>(<span>self, context, layout)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def draw_menu_items(self, context, layout):
+    if self.can_flatten_topology():
+        layout.prop(self, &#39;use_flatten_topology&#39;)
+    self.draw_simplify_modes(layout)
+    if self.can_graft():
+        layout.prop(self, &#39;use_graft&#39;)
+    if self.can_unwrap():
+        layout.prop(self, &#39;use_unwrap&#39;)
+    if self.can_wrap():
+        layout.prop(self, &#39;use_wrap&#39;)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.sockets.SvSocketProcessing.draw_simplify_modes"><code class="name flex">
 <span>def <span class="ident">draw_simplify_modes</span></span>(<span>self, layout)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def draw_simplify_modes(self, layout):
+    if self.can_flatten():
+        layout.prop(self, &#39;use_flatten&#39;)
+    if self.can_simplify():
+        layout.prop(self, &#39;use_simplify&#39;)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.sockets.SvSocketProcessing.get_mode_flags"><code class="name flex">
 <span>def <span class="ident">get_mode_flags</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_mode_flags(self):
+    flags = []
+    if self.use_flatten:
+        flags.append(&#39;F&#39;)
+    if self.use_flatten_topology:
+        flags.append(&#39;FT&#39;)
+    if self.use_simplify:
+        flags.append(&#39;S&#39;)
+    if self.use_graft:
+        flags.append(&#39;G&#39;)
+    if self.use_unwrap:
+        flags.append(&#39;U&#39;)
+    if self.use_wrap:
+        flags.append(&#39;W&#39;)
+    return flags</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.sockets.SvSocketProcessing.has_menu"><code class="name flex">
 <span>def <span class="ident">has_menu</span></span>(<span>self, context)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def has_menu(self, context):
+    return self.has_simplify_modes(context) or self.can_graft() or self.can_wrap()</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.sockets.SvSocketProcessing.has_simplify_modes"><code class="name flex">
 <span>def <span class="ident">has_simplify_modes</span></span>(<span>self, context)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def has_simplify_modes(self, context):
+    return self.can_flatten() or self.can_simplify()</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.sockets.SvSocketProcessing.postprocess_output"><code class="name flex">
 <span>def <span class="ident">postprocess_output</span></span>(<span>self, data)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def postprocess_output(self, data):
+    result = data
+    if self.use_flatten_topology:
+        result = self.do_flat_topology(data)
+    if self.use_flatten:
+        result = self.do_flatten(data)
+    elif self.use_simplify:
+        result = self.do_simplify(data)
+    if self.use_graft:
+        result = self.do_graft(result)
+    if self.use_unwrap:
+        result = unwrap_data(result, socket=self)
+    if self.use_wrap:
+        result = wrap_data(result)
+    return result</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.sockets.SvSocketProcessing.preprocess_input"><code class="name flex">
 <span>def <span class="ident">preprocess_input</span></span>(<span>self, data)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def preprocess_input(self, data):
+    result = data
+    if self.use_flatten:
+        result = self.do_flatten(data)
+    elif self.use_simplify:
+        result = self.do_simplify(data)
+    if self.use_graft:
+        result = self.do_graft(result)
+    if self.use_unwrap:
+        result = unwrap_data(result, socket=self)
+    if self.use_wrap:
+        result = wrap_data(result)
+    return result</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.sockets.SvSocketProcessing.update_flatten_flag"><code class="name flex">
 <span>def <span class="ident">update_flatten_flag</span></span>(<span>self, context)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def update_flatten_flag(self, context):
+    if self.skip_simplify_mode_update:
+        return
+
+    try:
+        self.skip_simplify_mode_update = True
+        if self.use_flatten:
+            self.use_simplify = False
+    finally:
+        self.skip_simplify_mode_update = False
+
+    process_from_socket(self, context)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.sockets.SvSocketProcessing.update_simplify_flag"><code class="name flex">
 <span>def <span class="ident">update_simplify_flag</span></span>(<span>self, context)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def update_simplify_flag(self, context):
+    if self.skip_simplify_mode_update:
+        return
+
+    try:
+        self.skip_simplify_mode_update = True
+        if self.use_simplify:
+            self.use_flatten = False
+    finally:
+        self.skip_simplify_mode_update = False
+
+    process_from_socket(self, context)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.sockets.SvSocketProcessing.update_unwrap_flag"><code class="name flex">
 <span>def <span class="ident">update_unwrap_flag</span></span>(<span>self, context)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def update_unwrap_flag(self, context):
+    if self.skip_wrap_mode_update:
+        return
+
+    try:
+        self.skip_wrap_mode_update = True
+        if self.use_unwrap:
+            self.use_wrap = False
+    finally:
+        self.skip_wrap_mode_update = False
+
+    process_from_socket(self, context)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.sockets.SvSocketProcessing.update_wrap_flag"><code class="name flex">
 <span>def <span class="ident">update_wrap_flag</span></span>(<span>self, context)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def update_wrap_flag(self, context):
+    if self.skip_wrap_mode_update:
+        return
+
+    try:
+        self.skip_wrap_mode_update = True
+        if self.use_wrap:
+            self.use_unwrap = False
+    finally:
+        self.skip_wrap_mode_update = False
+
+    process_from_socket(self, context)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -3102,9 +4086,6 @@ Order of getting data (if available):
 <span>(</span><span>...)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Base class for all Sockets</p>
-<p>'SKIP_SAVE' in properties means skipping them during saving in JSON format
-some of the properties can be skipped because they are static, they are always set only in sv_init method</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -3126,6 +4107,9 @@ some of the properties can be skipped because they are static, they are always s
         import Part
         return graft_data(data, item_level=0, data_types=(Part.Shape,))</code></pre>
 </details>
+<div class="desc"><p>Base class for all Sockets</p>
+<p>'SKIP_SAVE' in properties means skipping them during saving in JSON format
+some of the properties can be skipped because they are static, they are always set only in sv_init method</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li>bpy_types.NodeSocket</li>
@@ -3162,12 +4146,30 @@ some of the properties can be skipped because they are static, they are always s
 <span>def <span class="ident">do_flatten</span></span>(<span>self, data)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def do_flatten(self, data):
+    from sverchok.dependencies import FreeCAD
+    import Part
+    return flatten_data(data, 1, data_types=(Part.Shape,))</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.sockets.SvSolidSocket.do_graft"><code class="name flex">
 <span>def <span class="ident">do_graft</span></span>(<span>self, data)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def do_graft(self, data):
+    from sverchok.dependencies import FreeCAD
+    import Part
+    return graft_data(data, item_level=0, data_types=(Part.Shape,))</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -3195,7 +4197,6 @@ some of the properties can be skipped because they are static, they are always s
 <span>(</span><span>...)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Generic, mostly numbers, socket type</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -3373,6 +4374,7 @@ some of the properties can be skipped because they are static, they are always s
         else:
             layout.label(text=text)</code></pre>
 </details>
+<div class="desc"><p>Generic, mostly numbers, socket type</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="sverchok.core.sockets.SocketDomain" href="#sverchok.core.sockets.SocketDomain">SocketDomain</a></li>
@@ -3399,11 +4401,11 @@ some of the properties can be skipped because they are static, they are always s
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.core.sockets.SvStringsSocket.default_float_property"><code class="name">var <span class="ident">default_float_property</span> : <_PropertyDeferred, <built-in function FloatProperty>, {'update': <function <a title="sverchok.core.sockets.process_from_socket" href="#sverchok.core.sockets.process_from_socket">process_from_socket()</a> at 0x7f0c6c79a710>, 'attr': 'default_float_property'}></code></dt>
+<dt id="sverchok.core.sockets.SvStringsSocket.default_float_property"><code class="name">var <span class="ident">default_float_property</span> : <_PropertyDeferred, <built-in function FloatProperty>, {'update': <function <a title="sverchok.core.sockets.process_from_socket" href="#sverchok.core.sockets.process_from_socket">process_from_socket()</a> at 0x7ffb351cee60>, 'attr': 'default_float_property'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.core.sockets.SvStringsSocket.default_int_property"><code class="name">var <span class="ident">default_int_property</span> : <_PropertyDeferred, <built-in function IntProperty>, {'update': <function <a title="sverchok.core.sockets.process_from_socket" href="#sverchok.core.sockets.process_from_socket">process_from_socket()</a> at 0x7f0c6c79a710>, 'attr': 'default_int_property'}></code></dt>
+<dt id="sverchok.core.sockets.SvStringsSocket.default_int_property"><code class="name">var <span class="ident">default_int_property</span> : <_PropertyDeferred, <built-in function IntProperty>, {'update': <function <a title="sverchok.core.sockets.process_from_socket" href="#sverchok.core.sockets.process_from_socket">process_from_socket()</a> at 0x7ffb351cee60>, 'attr': 'default_int_property'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -3419,7 +4421,7 @@ some of the properties can be skipped because they are static, they are always s
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.core.sockets.SvStringsSocket.use_graft_2"><code class="name">var <span class="ident">use_graft_2</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Graft Topology', 'default': False, 'update': <function <a title="sverchok.core.sockets.process_from_socket" href="#sverchok.core.sockets.process_from_socket">process_from_socket()</a> at 0x7f0c6c79a710>, 'attr': 'use_graft_2'}></code></dt>
+<dt id="sverchok.core.sockets.SvStringsSocket.use_graft_2"><code class="name">var <span class="ident">use_graft_2</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Graft Topology', 'default': False, 'update': <function <a title="sverchok.core.sockets.process_from_socket" href="#sverchok.core.sockets.process_from_socket">process_from_socket()</a> at 0x7ffb351cee60>, 'attr': 'use_graft_2'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -3428,7 +4430,6 @@ some of the properties can be skipped because they are static, they are always s
 <dl>
 <dt id="sverchok.core.sockets.SvStringsSocket.default_property"><code class="name">prop <span class="ident">default_property</span></code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -3437,6 +4438,7 @@ some of the properties can be skipped because they are static, they are always s
 def default_property(self):
     return self.default_float_property if self.default_property_type == &#39;float&#39; else self.default_int_property</code></pre>
 </details>
+<div class="desc"></div>
 </dd>
 </dl>
 <h3>Methods</h3>
@@ -3445,84 +4447,258 @@ def default_property(self):
 <span>def <span class="ident">do_flat_topology</span></span>(<span>self, data)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def do_flat_topology(self, data):
+    return flatten_data(data, 3)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.sockets.SvStringsSocket.do_flatten"><code class="name flex">
 <span>def <span class="ident">do_flatten</span></span>(<span>self, data)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def do_flatten(self, data):
+    return flatten_data(data, 1)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.sockets.SvStringsSocket.do_graft"><code class="name flex">
 <span>def <span class="ident">do_graft</span></span>(<span>self, data)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def do_graft(self, data):
+    return graft_data(data, item_level=0, data_types = STANDARD_TYPES)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.sockets.SvStringsSocket.do_graft_2"><code class="name flex">
 <span>def <span class="ident">do_graft_2</span></span>(<span>self, data)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def do_graft_2(self, data):
+    def to_zero_base(lst):
+        m = min(lst)
+        return [x - m for x in lst]
+
+    result = map_at_level(to_zero_base, data, item_level=1, data_types = STANDARD_TYPES)
+    result = graft_data(result, item_level=1, data_types = STANDARD_TYPES)
+    return result</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.sockets.SvStringsSocket.do_simplify"><code class="name flex">
 <span>def <span class="ident">do_simplify</span></span>(<span>self, data)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def do_simplify(self, data):
+    return flatten_data(data, 2)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.sockets.SvStringsSocket.does_support_link_input_menu"><code class="name flex">
 <span>def <span class="ident">does_support_link_input_menu</span></span>(<span>self, context, layout, node)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def does_support_link_input_menu(self, context, layout, node):
+    ok = super().does_support_link_input_menu(context, layout, node)
+    if not ok:
+        return False
+    return self.name not in {&#39;Edges&#39;, &#39;Polygons&#39;, &#39;Edgs&#39;, &#39;Polys&#39;, &#39;Faces&#39;, &#39;EdgPol&#39;, &#39;Mask&#39;, &#39;EdgesMask&#39;, &#39;FaceMask&#39;}</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.sockets.SvStringsSocket.draw_group_property"><code class="name flex">
 <span>def <span class="ident">draw_group_property</span></span>(<span>self, layout, text, interface_socket)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def draw_group_property(self, layout, text, interface_socket):
+    # only for input sockets group node nodes with sub trees
+    if not interface_socket.hide_value:
+        if interface_socket.default_type == &#39;float&#39;:
+            layout.prop(self, &#39;default_float_property&#39;, text=text)
+        elif interface_socket.default_type == &#39;int&#39;:
+            layout.prop(self, &#39;default_int_property&#39;, text=text)
+    else:
+        layout.label(text=text)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.sockets.SvStringsSocket.draw_menu_items"><code class="name flex">
 <span>def <span class="ident">draw_menu_items</span></span>(<span>self, context, layout)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def draw_menu_items(self, context, layout):
+    self.draw_simplify_modes(layout)
+    if self.can_flatten_topology():
+        layout.prop(self, &#39;use_flatten_topology&#39;)
+    if self.can_graft():
+        layout.prop(self, &#39;use_graft&#39;)
+        if not self.use_flatten:
+            layout.prop(self, &#39;use_graft_2&#39;)
+    if self.can_unwrap():
+        layout.prop(self, &#39;use_unwrap&#39;)
+    if self.can_wrap():
+        layout.prop(self, &#39;use_wrap&#39;)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.sockets.SvStringsSocket.get_link_parameter_node"><code class="name flex">
 <span>def <span class="ident">get_link_parameter_node</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_link_parameter_node(self):
+    if self.quick_link_to_node:
+        return self.quick_link_to_node
+    return &#39;SvNumberNode&#39;</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.sockets.SvStringsSocket.get_mode_flags"><code class="name flex">
 <span>def <span class="ident">get_mode_flags</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_mode_flags(self):
+    flags = super().get_mode_flags()
+    if self.use_graft_2:
+        flags.append(&#39;G2&#39;)
+    return flags</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.sockets.SvStringsSocket.get_prop_data"><code class="name flex">
 <span>def <span class="ident">get_prop_data</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_prop_data(self):
+    prop_name = self.get_prop_name()
+    if prop_name:
+        return {&#34;prop_name&#34;: prop_name}
+    elif self.prop_type:
+        return {&#34;prop_type&#34;: self.prop_type,
+                &#34;prop_index&#34;: self.prop_index}
+    else:
+        return {}</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.sockets.SvStringsSocket.postprocess_output"><code class="name flex">
 <span>def <span class="ident">postprocess_output</span></span>(<span>self, data)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def postprocess_output(self, data):
+    result = data
+
+    if self.use_flatten_topology:
+        result = self.do_flat_topology(data)
+    if self.use_flatten:
+        result = self.do_flatten(data)
+    elif self.use_simplify:
+        result = self.do_simplify(data)
+    if self.use_graft:
+        result = self.do_graft(result)
+    elif self.use_graft_2:
+        result = self.do_graft_2(result)
+    if self.use_unwrap:
+        result = unwrap_data(result, socket=self)
+    if self.use_wrap:
+        result = wrap_data(result)
+    return result</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.sockets.SvStringsSocket.preprocess_input"><code class="name flex">
 <span>def <span class="ident">preprocess_input</span></span>(<span>self, data)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def preprocess_input(self, data):
+    result = data
+    if self.use_flatten:
+        result = self.do_flatten(data)
+    elif self.use_simplify:
+        result = self.do_simplify(data)
+    if self.use_graft:
+        result = self.do_graft(result)
+    elif not self.use_flatten and self.use_graft_2:
+        result = self.do_graft_2(result)
+    if self.use_unwrap:
+        result = unwrap_data(result, socket=self)
+    if self.use_wrap:
+        result = wrap_data(result)
+    return result</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.sockets.SvStringsSocket.setup_parameter_node"><code class="name flex">
 <span>def <span class="ident">setup_parameter_node</span></span>(<span>self, param_node)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setup_parameter_node(self, param_node):
+    if param_node.bl_idname == &#39;SvNumberNode&#39;:
+        if self.use_prop or self.get_prop_name():
+            value = self.sv_get()[0][0]
+            print(&#34;V&#34;, value)
+            if isinstance(value, int):
+                param_node.selected_mode = &#39;int&#39;
+                param_node.int_ = value
+            elif isinstance(value, float):
+                param_node.selected_mode = &#39;float&#39;
+                param_node.float_ = value</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -3550,8 +4726,6 @@ def default_property(self):
 <span>(</span><span>...)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>This socket will be created in tree.inputs to tree.outputs collection
-when normal socket will be connected to input or output group nodes</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -3585,6 +4759,8 @@ when normal socket will be connected to input or output group nodes</p></div>
         elif self.default_type == &#39;int&#39;:
             layout.prop(self, &#39;default_int_value&#39;)</code></pre>
 </details>
+<div class="desc"><p>This socket will be created in tree.inputs to tree.outputs collection
+when normal socket will be connected to input or output group nodes</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li>bpy_types.NodeSocketInterface</li>
@@ -3620,7 +4796,7 @@ when normal socket will be connected to input or output group nodes</p></div>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.core.sockets.SvStringsSocketInterface.default_type"><code class="name">var <span class="ident">default_type</span> : <_PropertyDeferred, <built-in function EnumProperty>, {'items': [('float', 'float', ''), ('int', 'int', '')], 'update': <function <a title="sverchok.core.sockets.update_interface" href="#sverchok.core.sockets.update_interface">update_interface()</a> at 0x7f0c6c79b6d0>, 'attr': 'default_type'}></code></dt>
+<dt id="sverchok.core.sockets.SvStringsSocketInterface.default_type"><code class="name">var <span class="ident">default_type</span> : <_PropertyDeferred, <built-in function EnumProperty>, {'items': [('float', 'float', ''), ('int', 'int', '')], 'update': <function <a title="sverchok.core.sockets.update_interface" href="#sverchok.core.sockets.update_interface">update_interface()</a> at 0x7ffb351cfe20>, 'attr': 'default_type'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -3629,7 +4805,6 @@ when normal socket will be connected to input or output group nodes</p></div>
 <dl>
 <dt id="sverchok.core.sockets.SvStringsSocketInterface.default_value"><code class="name">prop <span class="ident">default_value</span></code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -3638,6 +4813,7 @@ when normal socket will be connected to input or output group nodes</p></div>
 def default_value(self):
     return self.default_float_value if self.default_type == &#39;float&#39; else self.default_int_value</code></pre>
 </details>
+<div class="desc"></div>
 </dd>
 </dl>
 <h3>Methods</h3>
@@ -3646,12 +4822,31 @@ def default_value(self):
 <span>def <span class="ident">draw</span></span>(<span>self, context, layout)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def draw(self, context, layout):
+    layout.prop(self, &#39;hide_value&#39;)
+    layout.prop(self, &#39;default_type&#39;, expand=True)
+    if self.default_type == &#39;float&#39;:
+        layout.prop(self, &#39;default_float_value&#39;)
+    elif self.default_type == &#39;int&#39;:
+        layout.prop(self, &#39;default_int_value&#39;)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.sockets.SvStringsSocketInterface.draw_color"><code class="name flex">
 <span>def <span class="ident">draw_color</span></span>(<span>self, context)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def draw_color(self, context):
+    return self.color</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -3661,9 +4856,6 @@ def default_value(self):
 <span>(</span><span>...)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Base class for all Sockets</p>
-<p>'SKIP_SAVE' in properties means skipping them during saving in JSON format
-some of the properties can be skipped because they are static, they are always set only in sv_init method</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -3680,6 +4872,9 @@ some of the properties can be skipped because they are static, they are always s
     def do_graft(self, data):
         return graft_data(data, item_level=0, data_types=(SvSurface,))</code></pre>
 </details>
+<div class="desc"><p>Base class for all Sockets</p>
+<p>'SKIP_SAVE' in properties means skipping them during saving in JSON format
+some of the properties can be skipped because they are static, they are always set only in sv_init method</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li>bpy_types.NodeSocket</li>
@@ -3712,12 +4907,26 @@ some of the properties can be skipped because they are static, they are always s
 <span>def <span class="ident">do_flatten</span></span>(<span>self, data)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def do_flatten(self, data):
+    return flatten_data(data, 1, data_types=(SvSurface,))</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.sockets.SvSurfaceSocket.do_graft"><code class="name flex">
 <span>def <span class="ident">do_graft</span></span>(<span>self, data)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def do_graft(self, data):
+    return graft_data(data, item_level=0, data_types=(SvSurface,))</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -3745,7 +4954,6 @@ some of the properties can be skipped because they are static, they are always s
 <span>(</span><span>...)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>For file path data</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -3766,6 +4974,7 @@ some of the properties can be skipped because they are static, they are always s
 
         return</code></pre>
 </details>
+<div class="desc"><p>For file path data</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li>bpy_types.NodeSocket</li>
@@ -3796,15 +5005,6 @@ some of the properties can be skipped because they are static, they are always s
 <dl>
 <dt id="sverchok.core.sockets.SvSvgSocket.quick_link_to_node"><code class="name">prop <span class="ident">quick_link_to_node</span></code></dt>
 <dd>
-<div class="desc"><p>str(object='') -&gt; str
-str(bytes_or_buffer[, encoding[, errors]]) -&gt; str</p>
-<p>Create a new string object from the given object. If encoding or
-errors is specified, then the object must expose a data buffer
-that will be decoded using the given encoding and error handler.
-Otherwise, returns the result of object.<strong>str</strong>() (if defined)
-or repr(object).
-encoding defaults to sys.getdefaultencoding().
-errors defaults to 'strict'.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -3818,6 +5018,15 @@ def quick_link_to_node(self):
 
     return</code></pre>
 </details>
+<div class="desc"><p>str(object='') -&gt; str
+str(bytes_or_buffer[, encoding[, errors]]) -&gt; str</p>
+<p>Create a new string object from the given object. If encoding or
+errors is specified, then the object must expose a data buffer
+that will be decoded using the given encoding and error handler.
+Otherwise, returns the result of object.<strong>str</strong>() (if defined)
+or repr(object).
+encoding defaults to sys.getdefaultencoding().
+errors defaults to 'strict'.</p></div>
 </dd>
 </dl>
 <h3>Inherited members</h3>
@@ -3844,7 +5053,6 @@ def quick_link_to_node(self):
 <span>(</span><span>...)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Either Float or Integer</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -3865,6 +5073,7 @@ def quick_link_to_node(self):
         process_from_socket(s, context)
         return {&#39;FINISHED&#39;}</code></pre>
 </details>
+<div class="desc"><p>Either Float or Integer</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li>bpy_types.Operator</li>
@@ -3904,6 +5113,16 @@ def quick_link_to_node(self):
 <span>def <span class="ident">execute</span></span>(<span>self, context)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def execute(self, context):
+    s = context.socket
+    s.default_property_type = &#39;float&#39; if s.default_property_type == &#39;int&#39; else &#39;int&#39;
+    process_from_socket(s, context)
+    return {&#39;FINISHED&#39;}</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -3913,9 +5132,6 @@ def quick_link_to_node(self):
 <span>(</span><span>...)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Base class for all Sockets</p>
-<p>'SKIP_SAVE' in properties means skipping them during saving in JSON format
-some of the properties can be skipped because they are static, they are always set only in sv_init method</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -3930,6 +5146,9 @@ some of the properties can be skipped because they are static, they are always s
     default_property: StringProperty(update=process_from_socket)
     default_conversion_name = ConversionPolicies.LENIENT.conversion_name</code></pre>
 </details>
+<div class="desc"><p>Base class for all Sockets</p>
+<p>'SKIP_SAVE' in properties means skipping them during saving in JSON format
+some of the properties can be skipped because they are static, they are always set only in sv_init method</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li>bpy_types.NodeSocket</li>
@@ -3959,7 +5178,7 @@ some of the properties can be skipped because they are static, they are always s
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.core.sockets.SvTextSocket.default_property"><code class="name">var <span class="ident">default_property</span> : <_PropertyDeferred, <built-in function StringProperty>, {'update': <function <a title="sverchok.core.sockets.process_from_socket" href="#sverchok.core.sockets.process_from_socket">process_from_socket()</a> at 0x7f0c6c79a710>, 'attr': 'default_value'}></code></dt>
+<dt id="sverchok.core.sockets.SvTextSocket.default_property"><code class="name">var <span class="ident">default_property</span> : <_PropertyDeferred, <built-in function StringProperty>, {'update': <function <a title="sverchok.core.sockets.process_from_socket" href="#sverchok.core.sockets.process_from_socket">process_from_socket()</a> at 0x7ffb351cee60>, 'attr': 'default_value'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -3992,9 +5211,6 @@ some of the properties can be skipped because they are static, they are always s
 <span>(</span><span>...)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Base class for all Sockets</p>
-<p>'SKIP_SAVE' in properties means skipping them during saving in JSON format
-some of the properties can be skipped because they are static, they are always set only in sv_init method</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -4010,6 +5226,9 @@ some of the properties can be skipped because they are static, they are always s
         type=bpy.types.Texture,
         update=process_from_socket)</code></pre>
 </details>
+<div class="desc"><p>Base class for all Sockets</p>
+<p>'SKIP_SAVE' in properties means skipping them during saving in JSON format
+some of the properties can be skipped because they are static, they are always set only in sv_init method</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li>bpy_types.NodeSocket</li>
@@ -4035,7 +5254,7 @@ some of the properties can be skipped because they are static, they are always s
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.core.sockets.SvTextureSocket.default_property"><code class="name">var <span class="ident">default_property</span> : <_PropertyDeferred, <built-in function PointerProperty>, {'name': 'Texture', 'type': <class 'bpy_types.Texture'>, 'update': <function <a title="sverchok.core.sockets.process_from_socket" href="#sverchok.core.sockets.process_from_socket">process_from_socket()</a> at 0x7f0c6c79a710>, 'attr': 'default_value'}></code></dt>
+<dt id="sverchok.core.sockets.SvTextureSocket.default_property"><code class="name">var <span class="ident">default_property</span> : <_PropertyDeferred, <built-in function PointerProperty>, {'name': 'Texture', 'type': <class 'bpy_types.Texture'>, 'update': <function <a title="sverchok.core.sockets.process_from_socket" href="#sverchok.core.sockets.process_from_socket">process_from_socket()</a> at 0x7ffb351cee60>, 'attr': 'default_value'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -4064,9 +5283,6 @@ some of the properties can be skipped because they are static, they are always s
 <span>(</span><span>...)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Base class for all Sockets</p>
-<p>'SKIP_SAVE' in properties means skipping them during saving in JSON format
-some of the properties can be skipped because they are static, they are always set only in sv_init method</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -4085,6 +5301,9 @@ some of the properties can be skipped because they are static, they are always s
     def do_graft(self, data):
         return graft_data(data, item_level=0, data_types=(SvVectorField,))</code></pre>
 </details>
+<div class="desc"><p>Base class for all Sockets</p>
+<p>'SKIP_SAVE' in properties means skipping them during saving in JSON format
+some of the properties can be skipped because they are static, they are always set only in sv_init method</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li>bpy_types.NodeSocket</li>
@@ -4125,12 +5344,26 @@ some of the properties can be skipped because they are static, they are always s
 <span>def <span class="ident">do_flatten</span></span>(<span>self, data)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def do_flatten(self, data):
+    return flatten_data(data, 1, data_types=(SvVectorField,))</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.sockets.SvVectorFieldSocket.do_graft"><code class="name flex">
 <span>def <span class="ident">do_graft</span></span>(<span>self, data)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def do_graft(self, data):
+    return graft_data(data, item_level=0, data_types=(SvVectorField,))</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -4158,7 +5391,6 @@ some of the properties can be skipped because they are static, they are always s
 <span>(</span><span>...)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>For vertex data</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -4232,6 +5464,7 @@ some of the properties can be skipped because they are static, they are always s
             return False
         return self.name not in {&#39;Vertices&#39;, &#39;Verts&#39;}</code></pre>
 </details>
+<div class="desc"><p>For vertex data</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="sverchok.core.sockets.SocketDomain" href="#sverchok.core.sockets.SocketDomain">SocketDomain</a></li>
@@ -4266,7 +5499,7 @@ some of the properties can be skipped because they are static, they are always s
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.core.sockets.SvVerticesSocket.prop"><code class="name">var <span class="ident">prop</span> : <_PropertyDeferred, <built-in function FloatVectorProperty>, {'default': (0, 0, 0), 'size': 3, 'update': <function <a title="sverchok.core.sockets.process_from_socket" href="#sverchok.core.sockets.process_from_socket">process_from_socket()</a> at 0x7f0c6c79a710>, 'attr': 'prop'}></code></dt>
+<dt id="sverchok.core.sockets.SvVerticesSocket.prop"><code class="name">var <span class="ident">prop</span> : <_PropertyDeferred, <built-in function FloatVectorProperty>, {'default': (0, 0, 0), 'size': 3, 'update': <function <a title="sverchok.core.sockets.process_from_socket" href="#sverchok.core.sockets.process_from_socket">process_from_socket()</a> at 0x7ffb351cee60>, 'attr': 'prop'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -4279,7 +5512,6 @@ some of the properties can be skipped because they are static, they are always s
 <dl>
 <dt id="sverchok.core.sockets.SvVerticesSocket.default_property"><code class="name">prop <span class="ident">default_property</span></code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -4288,6 +5520,7 @@ some of the properties can be skipped because they are static, they are always s
 def default_property(self):
     return self.prop</code></pre>
 </details>
+<div class="desc"></div>
 </dd>
 </dl>
 <h3>Methods</h3>
@@ -4296,36 +5529,88 @@ def default_property(self):
 <span>def <span class="ident">do_flat_topology</span></span>(<span>self, data)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def do_flat_topology(self, data):
+    return flatten_data(data, 3)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.sockets.SvVerticesSocket.do_graft"><code class="name flex">
 <span>def <span class="ident">do_graft</span></span>(<span>self, data)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def do_graft(self, data):
+    return graft_data(data, item_level=1)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.sockets.SvVerticesSocket.do_simplify"><code class="name flex">
 <span>def <span class="ident">do_simplify</span></span>(<span>self, data)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def do_simplify(self, data):
+    return flatten_data(data, 2)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.sockets.SvVerticesSocket.does_support_link_input_menu"><code class="name flex">
 <span>def <span class="ident">does_support_link_input_menu</span></span>(<span>self, context, layout, node)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def does_support_link_input_menu(self, context, layout, node):
+    ok = super().does_support_link_input_menu(context, layout, node)
+    if not ok:
+        return False
+    return self.name not in {&#39;Vertices&#39;, &#39;Verts&#39;}</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.sockets.SvVerticesSocket.draw_group_property"><code class="name flex">
 <span>def <span class="ident">draw_group_property</span></span>(<span>self, layout, text, interface_socket)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def draw_group_property(self, layout, text, interface_socket):
+    if not interface_socket.hide_value:
+        layout.template_component_menu(self, &#39;prop&#39;, name=text)
+    else:
+        layout.label(text=text)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.sockets.SvVerticesSocket.setup_parameter_node"><code class="name flex">
 <span>def <span class="ident">setup_parameter_node</span></span>(<span>self, param_node)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setup_parameter_node(self, param_node):
+    if self.use_prop or self.get_prop_name():
+        value = self.sv_get()[0][0]
+        param_node.x_ = value[0]
+        param_node.y_ = value[1]
+        param_node.z_ = value[2]</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -4353,8 +5638,6 @@ def default_property(self):
 <span>(</span><span>...)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>This socket will be created in tree.inputs to tree.outputs collection
-when normal socket will be connected to input or output group nodes</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -4381,6 +5664,8 @@ when normal socket will be connected to input or output group nodes</p></div>
         col.prop(self, &#39;default_value&#39;)
         col.prop(self, &#39;hide_value&#39;)</code></pre>
 </details>
+<div class="desc"><p>This socket will be created in tree.inputs to tree.outputs collection
+when normal socket will be connected to input or output group nodes</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li>bpy_types.NodeSocketInterface</li>
@@ -4419,12 +5704,28 @@ when normal socket will be connected to input or output group nodes</p></div>
 <span>def <span class="ident">draw</span></span>(<span>self, context, layout)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def draw(self, context, layout):
+    col = layout.column()
+    col.prop(self, &#39;default_value&#39;)
+    col.prop(self, &#39;hide_value&#39;)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.sockets.SvVerticesSocketInterface.draw_color"><code class="name flex">
 <span>def <span class="ident">draw_color</span></span>(<span>self, context)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def draw_color(self, context):
+    return self.color</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -4956,7 +6257,7 @@ when normal socket will be connected to input or output group nodes</p></div>
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.1</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.5</a>.</p>
 </footer>
 </body>
 </html>

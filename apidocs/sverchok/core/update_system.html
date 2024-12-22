@@ -3,19 +3,30 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
-<meta name="generator" content="pdoc3 0.11.1">
+<meta name="generator" content="pdoc3 0.11.5">
 <title>sverchok.core.update_system API documentation</title>
 <meta name="description" content="">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
-<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
 <style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
 <style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
 <script>window.addEventListener('DOMContentLoaded', () => {
 hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
 hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
 })</script>
 </head>
 <body>
@@ -37,6 +48,69 @@ hljs.highlightAll();
 <span>def <span class="ident">control_center</span></span>(<span>event)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def control_center(event):
+    &#34;&#34;&#34;
+    1. Update tree model lazily
+    2. Check whether the event should be processed
+    3. Process event or create task to process via timer&#34;&#34;&#34;
+    was_executed = True
+
+    # frame update
+    # This event can&#39;t be handled via NodesUpdater during animation rendering
+    # because new frame change event can arrive before timer finishes its tusk.
+    # Or timer can start working before frame change is handled.
+    if type(event) is ev.AnimationEvent:
+        if event.tree.sv_animate:
+            UpdateTree.get(event.tree).is_animation_updated = False
+            UpdateTree.update_animation(event)
+
+    # something changed in the scene
+    elif type(event) is ev.SceneEvent:
+        if event.tree.sv_scene_update and event.tree.sv_process:
+            UpdateTree.get(event.tree).is_scene_updated = False
+            ts.tasks.add(ts.Task(event.tree,
+                                 UpdateTree.main_update(event.tree),
+                                 is_scene_update=True))
+
+    # nodes changed properties
+    elif type(event) is ev.PropertyEvent:
+        tree = UpdateTree.get(event.tree)
+        tree.add_outdated(event.updated_nodes)
+        if event.tree.sv_process:
+            ts.tasks.add(ts.Task(event.tree,
+                                 UpdateTree.main_update(event.tree),
+                                 is_scene_update=False))
+
+    # update the whole tree anyway
+    elif type(event) is ev.ForceEvent:
+        UpdateTree.reset_tree(event.tree)
+        ts.tasks.add(ts.Task(event.tree,
+                             UpdateTree.main_update(event.tree),
+                             is_scene_update=False))
+
+    # mark that the tree topology has changed
+    # also this can be called (by Blender) during undo event in this case all
+    # nodes will have another hash id and the comparison method will decide that
+    # all nodes are new, and won&#39;t be able to detect changes, and will update all
+    elif type(event) is ev.TreeEvent:
+        UpdateTree.get(event.tree).is_updated = False
+        if event.tree.sv_process:
+            ts.tasks.add(ts.Task(event.tree,
+                                 UpdateTree.main_update(event.tree),
+                                 is_scene_update=False))
+
+    # new file opened
+    elif type(event) is ev.FileEvent:
+        UpdateTree.reset_tree()
+
+    else:
+        was_executed = False
+    return was_executed</code></pre>
+</details>
 <div class="desc"><ol>
 <li>Update tree model lazily</li>
 <li>Check whether the event should be processed</li>
@@ -44,9 +118,34 @@ hljs.highlightAll();
 </ol></div>
 </dd>
 <dt id="sverchok.core.update_system.prepare_input_data"><code class="name flex">
-<span>def <span class="ident">prepare_input_data</span></span>(<span>prev_socks: list[typing.Optional[bpy_types.NodeSocket]], input_socks: list[bpy_types.NodeSocket])</span>
+<span>def <span class="ident">prepare_input_data</span></span>(<span>prev_socks: list[bpy_types.NodeSocket | None],<br>input_socks: list[bpy_types.NodeSocket])</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def prepare_input_data(prev_socks: list[Optional[NodeSocket]],
+                       input_socks: list[NodeSocket]):
+    &#34;&#34;&#34;Reads data from given outputs socket make it conversion if necessary and
+    put data into input given socket&#34;&#34;&#34;
+    # this can be a socket method
+    for ps, ns in zip(prev_socks, input_socks):
+        if ps is None:
+            continue
+        try:
+            data = ps.sv_get()
+        except SvNoDataError:
+            # let to the node handle No Data error
+            ns.sv_forget()
+        else:
+            # cast data
+            if ps.bl_idname != ns.bl_idname:
+                implicit_conversion = conversions[ns.default_conversion_name]
+                data = implicit_conversion.convert(ns, ps, data)
+
+            ns.sv_set(data)</code></pre>
+</details>
 <div class="desc"><p>Reads data from given outputs socket make it conversion if necessary and
 put data into input given socket</p></div>
 </dd>
@@ -54,6 +153,18 @@ put data into input given socket</p></div>
 <span>def <span class="ident">update_ui</span></span>(<span>tree: bpy_types.NodeTree, times: Iterable[float] = None)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def update_ui(tree: NodeTree, times: Iterable[float] = None):
+    &#34;&#34;&#34;Updates UI of the given tree
+    :times: optional node timing in order of group_tree.nodes collection&#34;&#34;&#34;
+    # probably this can be moved to tree.update_ui method
+    errors = (n.get(ERROR_KEY, None) for n in tree.nodes)
+    times = times or (n.get(TIME_KEY, 0) for n in tree.nodes)
+    tree.update_ui(errors, times)</code></pre>
+</details>
 <div class="desc"><p>Updates UI of the given tree
 :times: optional node timing in order of group_tree.nodes collection</p></div>
 </dd>
@@ -67,9 +178,6 @@ put data into input given socket</p></div>
 <span>(</span><span>node: SvNode, supress=True)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>It caches errors during execution of process method of a node and saves
-update time, update status and error</p>
-<p>:supress: if True any errors during node execution will be suppressed</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -105,15 +213,15 @@ update time, update status and error</p>
                 return False
             return issubclass(exc_type, Exception)</code></pre>
 </details>
+<div class="desc"><p>It caches errors during execution of process method of a node and saves
+update time, update status and error</p>
+<p>:supress: if True any errors during node execution will be suppressed</p></div>
 </dd>
 <dt id="sverchok.core.update_system.SearchTree"><code class="flex name class">
 <span>class <span class="ident">SearchTree</span></span>
 <span>(</span><span>tree: bpy_types.NodeTree)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Data structure which represents Blender node trees but with ability
-of efficient search tree elements. Also it keeps tree state so it can be
-compared with new one to define differences.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -417,6 +525,9 @@ compared with new one to define differences.</p></div>
               f&#34;{links}&#34;
         return msg</code></pre>
 </details>
+<div class="desc"><p>Data structure which represents Blender node trees but with ability
+of efficient search tree elements. Also it keeps tree state so it can be
+compared with new one to define differences.</p></div>
 <h3>Subclasses</h3>
 <ul class="hlist">
 <li><a title="sverchok.core.update_system.UpdateTree" href="#sverchok.core.update_system.UpdateTree">UpdateTree</a></li>
@@ -424,56 +535,154 @@ compared with new one to define differences.</p></div>
 <h3>Methods</h3>
 <dl>
 <dt id="sverchok.core.update_system.SearchTree.node_from_input"><code class="name flex">
-<span>def <span class="ident">node_from_input</span></span>(<span>self, in_socket: bpy_types.NodeSocket)</span>
+<span>def <span class="ident">node_from_input</span></span>(<span>self, in_socket: bpy_types.NodeSocket) ‑> SvNode | None</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def node_from_input(self, in_socket: NodeSocket) -&gt; Optional[&#39;SvNode&#39;]:
+    &#34;&#34;&#34;It expects input socket and returns connected node to it.
+    If socket is not connected it returns None&#34;&#34;&#34;
+    prev_sock = self._from_sock.get(in_socket)
+    return prev_sock and self._sock_node[prev_sock]</code></pre>
+</details>
 <div class="desc"><p>It expects input socket and returns connected node to it.
 If socket is not connected it returns None</p></div>
 </dd>
 <dt id="sverchok.core.update_system.SearchTree.nodes_from"><code class="name flex">
-<span>def <span class="ident">nodes_from</span></span>(<span>self, from_nodes: Iterable[ForwardRef('SvNode')])</span>
+<span>def <span class="ident">nodes_from</span></span>(<span>self, from_nodes: Iterable[ForwardRef('SvNode')]) ‑> set['SvNode']</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def nodes_from(self, from_nodes: Iterable[&#39;SvNode&#39;]) -&gt; set[&#39;SvNode&#39;]:
+    &#34;&#34;&#34;Returns all next nodes from given ones&#34;&#34;&#34;
+    def node_walker_to(node_: &#39;SvNode&#39;):
+        for nn in self._to_nodes.get(node_, []):
+            yield nn
+
+    return set(bfs_walk(from_nodes, node_walker_to))</code></pre>
+</details>
 <div class="desc"><p>Returns all next nodes from given ones</p></div>
 </dd>
 <dt id="sverchok.core.update_system.SearchTree.nodes_from_socket"><code class="name flex">
 <span>def <span class="ident">nodes_from_socket</span></span>(<span>self, socket: bpy_types.NodeSocket) ‑> list['SvNode']</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def nodes_from_socket(self, socket: NodeSocket) -&gt; list[&#39;SvNode&#39;]:
+    &#34;&#34;&#34;Returns linked to the given socket nodes.
+    The list will be empty if the socket is not connected.
+    Connected input socket will always return list with one node&#34;&#34;&#34;
+    if socket.is_output:
+        next_socks = self._to_socks.get(socket, [])
+        return [self._sock_node[s] for s in next_socks]
+    else:
+        prev_sock = self._from_sock.get(socket)
+        return [self._sock_node[s] for s in [prev_sock] if s is not None]</code></pre>
+</details>
 <div class="desc"><p>Returns linked to the given socket nodes.
 The list will be empty if the socket is not connected.
 Connected input socket will always return list with one node</p></div>
 </dd>
 <dt id="sverchok.core.update_system.SearchTree.nodes_to"><code class="name flex">
-<span>def <span class="ident">nodes_to</span></span>(<span>self, to_nodes: Iterable[ForwardRef('SvNode')])</span>
+<span>def <span class="ident">nodes_to</span></span>(<span>self, to_nodes: Iterable[ForwardRef('SvNode')]) ‑> set['SvNode']</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def nodes_to(self, to_nodes: Iterable[&#39;SvNode&#39;]) -&gt; set[&#39;SvNode&#39;]:
+    &#34;&#34;&#34;Returns all previous nodes from given ones&#34;&#34;&#34;
+    def node_walker_from(node_: &#39;SvNode&#39;):
+        for nn in self._from_nodes.get(node_, []):
+            yield nn
+
+    return set(bfs_walk(to_nodes, node_walker_from))</code></pre>
+</details>
 <div class="desc"><p>Returns all previous nodes from given ones</p></div>
 </dd>
 <dt id="sverchok.core.update_system.SearchTree.previous_sockets"><code class="name flex">
-<span>def <span class="ident">previous_sockets</span></span>(<span>self, node: SvNode)</span>
+<span>def <span class="ident">previous_sockets</span></span>(<span>self, node: SvNode) ‑> list[bpy_types.NodeSocket | None]</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def previous_sockets(self, node: &#39;SvNode&#39;) -&gt; list[Optional[NodeSocket]]:
+    &#34;&#34;&#34;Return output sockets connected to input ones of given node
+    If input socket is not linked the output socket will be None&#34;&#34;&#34;
+    return [self._from_sock.get(s) for s in node.inputs]</code></pre>
+</details>
 <div class="desc"><p>Return output sockets connected to input ones of given node
 If input socket is not linked the output socket will be None</p></div>
 </dd>
 <dt id="sverchok.core.update_system.SearchTree.socket_from_input"><code class="name flex">
-<span>def <span class="ident">socket_from_input</span></span>(<span>self, in_socket: bpy_types.NodeSocket) ‑> Optional[bpy_types.NodeSocket]</span>
+<span>def <span class="ident">socket_from_input</span></span>(<span>self, in_socket: bpy_types.NodeSocket) ‑> bpy_types.NodeSocket | None</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def socket_from_input(self, in_socket: NodeSocket) -&gt; Optional[NodeSocket]:
+    &#34;&#34;&#34;It expects input socket and returns opposite connected socket to it.
+    If socket is not connected it returns None&#34;&#34;&#34;
+    return self._from_sock.get(in_socket)</code></pre>
+</details>
 <div class="desc"><p>It expects input socket and returns opposite connected socket to it.
 If socket is not connected it returns None</p></div>
 </dd>
 <dt id="sverchok.core.update_system.SearchTree.sort_nodes"><code class="name flex">
-<span>def <span class="ident">sort_nodes</span></span>(<span>self, nodes: Iterable[ForwardRef('SvNode')])</span>
+<span>def <span class="ident">sort_nodes</span></span>(<span>self, nodes: Iterable[ForwardRef('SvNode')]) ‑> list['SvNode']</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def sort_nodes(self, nodes: Iterable[&#39;SvNode&#39;]) -&gt; list[&#39;SvNode&#39;]:
+    &#34;&#34;&#34;Returns nodes in order of their correct execution&#34;&#34;&#34;
+    walk_structure: dict[SvNode, set[SvNode]] = defaultdict(set)
+    for n in nodes:
+        if n in self._from_nodes:
+            walk_structure[n] = {_n for _n in self._from_nodes[n]
+                                 if _n in nodes}
+    nodes = []
+    for node in TopologicalSorter(walk_structure).static_order():
+        nodes.append(node)
+    return nodes</code></pre>
+</details>
 <div class="desc"><p>Returns nodes in order of their correct execution</p></div>
 </dd>
 <dt id="sverchok.core.update_system.SearchTree.update_node"><code class="name flex">
 <span>def <span class="ident">update_node</span></span>(<span>self, node: SvNode, suppress=True)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def update_node(self, node: &#39;SvNode&#39;, suppress=True):
+    &#34;&#34;&#34;Fetches data from previous node, makes data conversion if connected
+    sockets have different types, calls process method of the given node
+    records nodes statistics
+    If suppress is True an error during node execution will be suppressed&#34;&#34;&#34;
+    with AddStatistic(node, suppress):
+        prepare_input_data(self.previous_sockets(node), node.inputs)
+        if error := node.dependency_error:
+            raise error
+        node.process()</code></pre>
+</details>
 <div class="desc"><p>Fetches data from previous node, makes data conversion if connected
 sockets have different types, calls process method of the given node
 records nodes statistics
@@ -486,18 +695,6 @@ If suppress is True an error during node execution will be suppressed</p></div>
 <span>(</span><span>tree: bpy_types.NodeTree)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>It caches the trees to keep outdated nodes and to perform tree updating
-efficiently.</p>
-<p>Should not use be used directly, only via the get class method
-:is_updated: Should be False if topology of the tree was changed
-:is_animation_updated: Should be False animation dependent nodes should
-be updated
-:is_scene_updated: Should be False if scene dependent nodes should be
-updated
-:_outdated_nodes: Keeps nodes which properties were changed or which
-have errors. Can be None when what means that all nodes are outdated
-:_copy_attrs: list of attributes which should be copied by the copy
-method</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -794,6 +991,18 @@ method</p></div>
             _set_color(node, use_color)
             yield node, *args</code></pre>
 </details>
+<div class="desc"><p>It caches the trees to keep outdated nodes and to perform tree updating
+efficiently.</p>
+<p>Should not use be used directly, only via the get class method
+:is_updated: Should be False if topology of the tree was changed
+:is_animation_updated: Should be False animation dependent nodes should
+be updated
+:is_scene_updated: Should be False if scene dependent nodes should be
+updated
+:_outdated_nodes: Keeps nodes which properties were changed or which
+have errors. Can be None when what means that all nodes are outdated
+:_copy_attrs: list of attributes which should be copied by the copy
+method</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="sverchok.core.update_system.SearchTree" href="#sverchok.core.update_system.SearchTree">SearchTree</a></li>
@@ -841,6 +1050,16 @@ the tree should have information of what is outdated</p></div>
 <span>def <span class="ident">add_outdated</span></span>(<span>self, nodes: Iterable)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_outdated(self, nodes: Iterable):
+    &#34;&#34;&#34;Add outdated nodes explicitly. Animation and scene dependent nodes
+    can be marked as outdated via dedicated flags for performance.&#34;&#34;&#34;
+    if self._outdated_nodes is not None:
+        self._outdated_nodes.update(nodes)</code></pre>
+</details>
 <div class="desc"><p>Add outdated nodes explicitly. Animation and scene dependent nodes
 can be marked as outdated via dedicated flags for performance.</p></div>
 </dd>
@@ -848,6 +1067,20 @@ can be marked as outdated via dedicated flags for performance.</p></div>
 <span>def <span class="ident">copy</span></span>(<span>self, new_tree: bpy_types.NodeTree) ‑> <a title="sverchok.core.update_system.UpdateTree" href="#sverchok.core.update_system.UpdateTree">UpdateTree</a></span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def copy(self, new_tree: NodeTree) -&gt; &#39;UpdateTree&#39;:
+    &#34;&#34;&#34;They copy will be with new topology if original tree was changed
+    since instancing of the first tree. Other attributes copied as is.
+    :new_tree: it&#39;s import to pass fresh tree object because during undo
+    events all previous tree objects invalidates&#34;&#34;&#34;
+    copy_ = type(self)(new_tree)
+    for attr in self._copy_attrs:
+        setattr(copy_, attr, copy(getattr(self, attr)))
+    return copy_</code></pre>
+</details>
 <div class="desc"><p>They copy will be with new topology if original tree was changed
 since instancing of the first tree. Other attributes copied as is.
 :new_tree: it's import to pass fresh tree object because during undo
@@ -925,7 +1158,7 @@ events all previous tree objects invalidates</p></div>
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.1</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.5</a>.</p>
 </footer>
 </body>
 </html>

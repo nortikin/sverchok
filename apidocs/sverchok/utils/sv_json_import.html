@@ -3,19 +3,30 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
-<meta name="generator" content="pdoc3 0.11.1">
+<meta name="generator" content="pdoc3 0.11.5">
 <title>sverchok.utils.sv_json_import API documentation</title>
 <meta name="description" content="">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
-<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
 <style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
 <style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
 <script>window.addEventListener('DOMContentLoaded', () => {
 hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
 hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
 })</script>
 </head>
 <body>
@@ -39,7 +50,6 @@ hljs.highlightAll();
 <span>class <span class="ident">FailsLog</span></span>
 </code></dt>
 <dd>
-<div class="desc"><p>Keen register fails messages and count them, for example {'add_node': 4}</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -83,13 +93,11 @@ hljs.highlightAll();
         &#34;&#34;&#34;
         return &#39;\n&#39;.join([f&#39;FAIL: {msg} - {number}&#39; for msg, number in self._log.items()])</code></pre>
 </details>
+<div class="desc"><p>Keen register fails messages and count them, for example {'add_node': 4}</p></div>
 <h3>Instance variables</h3>
 <dl>
 <dt id="sverchok.utils.sv_json_import.FailsLog.fail_message"><code class="name">prop <span class="ident">fail_message</span> : str</code></dt>
 <dd>
-<div class="desc"><p>Returns fail message in such format:
-FAIL add node - 4
-FAIL read property - 10</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -103,10 +111,12 @@ def fail_message(self) -&gt; str:
     &#34;&#34;&#34;
     return &#39;\n&#39;.join([f&#39;FAIL: {msg} - {number}&#39; for msg, number in self._log.items()])</code></pre>
 </details>
+<div class="desc"><p>Returns fail message in such format:
+FAIL add node - 4
+FAIL read property - 10</p></div>
 </dd>
 <dt id="sverchok.utils.sv_json_import.FailsLog.has_fails"><code class="name">prop <span class="ident">has_fails</span> : bool</code></dt>
 <dd>
-<div class="desc"><p>True if at least one fail was added</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -116,6 +126,7 @@ def has_fails(self) -&gt; bool:
     &#34;&#34;&#34;True if at least one fail was added&#34;&#34;&#34;
     return bool(self._log)</code></pre>
 </details>
+<div class="desc"><p>True if at least one fail was added</p></div>
 </dd>
 </dl>
 <h3>Methods</h3>
@@ -124,12 +135,40 @@ def has_fails(self) -&gt; bool:
 <span>def <span class="ident">add_fail</span></span>(<span>self, fail_name, source=None)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@contextmanager
+def add_fail(self, fail_name, source=None):
+    &#34;&#34;&#34;Increase counter of given fail message, also printing error message in debug mode&#34;&#34;&#34;
+    try:
+        yield
+    except Exception as e:
+        self._log[fail_name] += 1
+        logger = get_logger()
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug(f&#39;FAIL: &#34;{fail_name}&#34;, {&#34;SOURCE: &#34; if source else &#34;&#34;}{source or &#34;&#34;}, {e}&#39;)
+            traceback.print_exc()</code></pre>
+</details>
 <div class="desc"><p>Increase counter of given fail message, also printing error message in debug mode</p></div>
 </dd>
 <dt id="sverchok.utils.sv_json_import.FailsLog.report_log_result"><code class="name flex">
 <span>def <span class="ident">report_log_result</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def report_log_result(self):
+    &#34;&#34;&#34;Prints fails if their was or that they did not happen&#34;&#34;&#34;
+    if self.has_fails:
+        sv_logger.warning(f&#39;During import next fails has happened:&#39;)
+        print(self.fail_message)
+    else:
+        sv_logger.info(f&#39;Import done with no fails&#39;)</code></pre>
+</details>
 <div class="desc"><p>Prints fails if their was or that they did not happen</p></div>
 </dd>
 </dl>
@@ -139,7 +178,6 @@ def has_fails(self) -&gt; bool:
 <span>(</span><span>structure: dict)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Read given structure, generate tree and log errors during the whole importing process</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -212,6 +250,7 @@ def has_fails(self) -&gt; bool:
     def structure_version(self):
         return float(self._structure[&#34;export_version&#34;])</code></pre>
 </details>
+<div class="desc"><p>Read given structure, generate tree and log errors during the whole importing process</p></div>
 <h3>Static methods</h3>
 <dl>
 <dt id="sverchok.utils.sv_json_import.JSONImporter.init_from_path"><code class="name flex">
@@ -225,7 +264,6 @@ def has_fails(self) -&gt; bool:
 <dl>
 <dt id="sverchok.utils.sv_json_import.JSONImporter.fail_massage"><code class="name">prop <span class="ident">fail_massage</span> : str</code></dt>
 <dd>
-<div class="desc"><p>Brief information about fails if their was</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -235,10 +273,10 @@ def fail_massage(self) -&gt; str:
     &#34;&#34;&#34;Brief information about fails if their was&#34;&#34;&#34;
     return self._fails_log.fail_message</code></pre>
 </details>
+<div class="desc"><p>Brief information about fails if their was</p></div>
 </dd>
 <dt id="sverchok.utils.sv_json_import.JSONImporter.has_fails"><code class="name">prop <span class="ident">has_fails</span> : bool</code></dt>
 <dd>
-<div class="desc"><p>True if there was at least one fail during importing process</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -248,10 +286,10 @@ def has_fails(self) -&gt; bool:
     &#34;&#34;&#34;True if there was at least one fail during importing process&#34;&#34;&#34;
     return self._fails_log.has_fails</code></pre>
 </details>
+<div class="desc"><p>True if there was at least one fail during importing process</p></div>
 </dd>
 <dt id="sverchok.utils.sv_json_import.JSONImporter.structure_version"><code class="name">prop <span class="ident">structure_version</span></code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -260,6 +298,7 @@ def has_fails(self) -&gt; bool:
 def structure_version(self):
     return float(self._structure[&#34;export_version&#34;])</code></pre>
 </details>
+<div class="desc"></div>
 </dd>
 </dl>
 <h3>Methods</h3>
@@ -268,22 +307,49 @@ def structure_version(self):
 <span>def <span class="ident">import_into_tree</span></span>(<span>self, tree: SverchCustomTree, print_log: bool = True)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def import_into_tree(self, tree: SverchCustomTree, print_log: bool = True):
+    &#34;&#34;&#34;Import json structure into given tree and update it&#34;&#34;&#34;
+    if self.structure_version &lt; 0.1001:
+        root_tree_builder = TreeImporter01(tree, self._structure, self._fails_log)
+        root_tree_builder.import_tree()
+    else:
+        importer = FileStruct(logger=self._fails_log, struct=self._structure)
+        importer.build_into_tree(tree)
+
+    if print_log:
+        self._fails_log.report_log_result()
+
+    tree.update()</code></pre>
+</details>
 <div class="desc"><p>Import json structure into given tree and update it</p></div>
 </dd>
 <dt id="sverchok.utils.sv_json_import.JSONImporter.import_node_settings"><code class="name flex">
 <span>def <span class="ident">import_node_settings</span></span>(<span>self, node: SverchCustomTreeNode)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def import_node_settings(self, node: SverchCustomTreeNode):
+    if self.structure_version &lt; 1.0:
+        return self._old_import_node_settings(node)
+    else:
+        return NodePresetFileStruct(logger=self._fails_log, structure=self._structure).build(node)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
 </dd>
 <dt id="sverchok.utils.sv_json_import.NodeImporter01"><code class="flex name class">
 <span>class <span class="ident">NodeImporter01</span></span>
-<span>(</span><span>node: SverchCustomTreeNode, structure: dict, log: <a title="sverchok.utils.sv_json_import.FailsLog" href="#sverchok.utils.sv_json_import.FailsLog">FailsLog</a>, import_version: float)</span>
+<span>(</span><span>node: SverchCustomTreeNode,<br>structure: dict,<br>log: <a title="sverchok.utils.sv_json_import.FailsLog" href="#sverchok.utils.sv_json_import.FailsLog">FailsLog</a>,<br>import_version: float)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Apply attributes and node/sockets properties to given node, log fails</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -356,22 +422,60 @@ def structure_version(self):
                     for prop_name, prop_value in sock_props.items():
                         yield sock_index, prop_name, prop_value</code></pre>
 </details>
+<div class="desc"><p>Apply attributes and node/sockets properties to given node, log fails</p></div>
 <h3>Methods</h3>
 <dl>
 <dt id="sverchok.utils.sv_json_import.NodeImporter01.import_node"><code class="name flex">
 <span>def <span class="ident">import_node</span></span>(<span>self, apply_attributes: bool = True)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def import_node(self, apply_attributes: bool = True):
+    &#34;&#34;&#34;Reads node structure and apply settings to node&#34;&#34;&#34;
+    if apply_attributes:
+        for attr_name, attr_value in self._node_attributes():
+            with self._fails_log.add_fail(
+                    &#34;Setting node attribute&#34;,
+                    f&#39;Tree: {self._node.id_data.name}, Node: {self._node.name}, attr: {attr_name}&#39;):
+                setattr(self._node, attr_name, attr_value)
+
+    for prop_name, prop_value in self._node_properties():
+        with self._fails_log.add_fail(
+                &#34;Setting node property&#34;,
+                f&#39;Tree: {self._node.id_data.name}, Node: {self._node.name}, prop: {prop_name}&#39;):
+            prop = BPYProperty(self._node, prop_name)
+            if prop.is_valid:  # some files can have outdated properties which should be filtered
+                prop.value = prop_value
+
+    # this block is before applying socket properties because some nodes can generate them in load method
+    if hasattr(self._node, &#39;load_from_json&#39;):
+        with self._fails_log.add_fail(
+                &#34;Setting advance node properties&#34;,
+                f&#39;Tree: {self._node.id_data.name}, Node: {self._node.name}&#39;):
+            self._node.load_from_json(self._structure, self._import_version)
+
+    for sock_index, prop_name, prop_value in self._input_socket_properties():
+        with self._fails_log.add_fail(
+                &#34;Setting socket property&#34;,
+                f&#39;Tree: {self._node.id_data.name}, Node: {self._node.name}, prop: {prop_name}&#39;):
+            socket = self._node.inputs[sock_index]
+            prop = BPYProperty(socket, prop_name)
+            if prop.is_valid:
+                prop.value = prop_value
+    return self._node</code></pre>
+</details>
 <div class="desc"><p>Reads node structure and apply settings to node</p></div>
 </dd>
 </dl>
 </dd>
 <dt id="sverchok.utils.sv_json_import.TreeGenerator"><code class="flex name class">
 <span>class <span class="ident">TreeGenerator</span></span>
-<span>(</span><span>tree_name: str, log: <a title="sverchok.utils.sv_json_import.FailsLog" href="#sverchok.utils.sv_json_import.FailsLog">FailsLog</a>)</span>
+<span>(</span><span>tree_name: str,<br>log: <a title="sverchok.utils.sv_json_import.FailsLog" href="#sverchok.utils.sv_json_import.FailsLog">FailsLog</a>)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Adds nodes and links to given tree, also logs fails</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -419,12 +523,27 @@ def structure_version(self):
         &#34;&#34;&#34;Given tree&#34;&#34;&#34;
         return bpy.data.node_groups[self._tree_name]</code></pre>
 </details>
+<div class="desc"><p>Adds nodes and links to given tree, also logs fails</p></div>
 <h3>Static methods</h3>
 <dl>
 <dt id="sverchok.utils.sv_json_import.TreeGenerator.start_from_tree"><code class="name flex">
-<span>def <span class="ident">start_from_tree</span></span>(<span>cls, tree: SverchCustomTree, log: <a title="sverchok.utils.sv_json_import.FailsLog" href="#sverchok.utils.sv_json_import.FailsLog">FailsLog</a>)</span>
+<span>def <span class="ident">start_from_tree</span></span>(<span>cls,<br>tree: SverchCustomTree,<br>log: <a title="sverchok.utils.sv_json_import.FailsLog" href="#sverchok.utils.sv_json_import.FailsLog">FailsLog</a>) ‑> ContextManager[<a title="sverchok.utils.sv_json_import.TreeGenerator" href="#sverchok.utils.sv_json_import.TreeGenerator">TreeGenerator</a>]</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+@contextmanager
+def start_from_tree(cls, tree: SverchCustomTree, log: FailsLog) -&gt; ContextManager[TreeGenerator]:
+    &#34;&#34;&#34;
+    Returns itself and freezing tree what should prevent tree from updating
+    but actually often tree can unfreeze itself in during importing
+    &#34;&#34;&#34;
+    builder = cls(tree.name, log)
+    yield builder</code></pre>
+</details>
 <div class="desc"><p>Returns itself and freezing tree what should prevent tree from updating
 but actually often tree can unfreeze itself in during importing</p></div>
 </dd>
@@ -435,12 +554,42 @@ but actually often tree can unfreeze itself in during importing</p></div>
 <span>def <span class="ident">add_link</span></span>(<span>self, from_node_name, from_socket_index, to_node_name, to_socket_index)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_link(self, from_node_name, from_socket_index, to_node_name, to_socket_index):
+    &#34;&#34;&#34;Searching sockets and trying to connect them by link&#34;&#34;&#34;
+    with self._fails_log.add_fail(
+            &#34;Creating link&#34;, f&#39;Tree: {self._tree_name}, from: {from_node_name, from_socket_index}, &#39;
+                             f&#39;to: {to_node_name, to_socket_index}&#39;):
+        from_socket = self._tree.nodes[from_node_name].outputs[from_socket_index]
+        to_socket = self._tree.nodes[to_node_name].inputs[to_socket_index]
+        self._tree.links.new(from_socket, to_socket)</code></pre>
+</details>
 <div class="desc"><p>Searching sockets and trying to connect them by link</p></div>
 </dd>
 <dt id="sverchok.utils.sv_json_import.TreeGenerator.add_node"><code class="name flex">
-<span>def <span class="ident">add_node</span></span>(<span>self, bl_type: str, node_name: str)</span>
+<span>def <span class="ident">add_node</span></span>(<span>self, bl_type: str, node_name: str) ‑> Union[SverchCustomTreeNode, None]</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_node(self, bl_type: str, node_name: str) -&gt; Union[SverchCustomTreeNode, None]:
+    &#34;&#34;&#34;
+    Trying to add node with given bl_idname into given tree
+    Also it can register dummy and old nodes and register fails
+    &#34;&#34;&#34;
+    with self._fails_log.add_fail(&#34;Creating node&#34;, f&#39;Tree: {self._tree_name}, Node: {node_name}&#39;):
+        if old_nodes.is_old(bl_type):  # old node classes are registered only by request
+            old_nodes.register_old(bl_type)
+        # import only here to do not create a cyclic import
+        node = self._tree.nodes.new(bl_type)
+        node.name = node_name
+        return node</code></pre>
+</details>
 <div class="desc"><p>Trying to add node with given bl_idname into given tree
 Also it can register dummy and old nodes and register fails</p></div>
 </dd>
@@ -448,11 +597,9 @@ Also it can register dummy and old nodes and register fails</p></div>
 </dd>
 <dt id="sverchok.utils.sv_json_import.TreeImporter01"><code class="flex name class">
 <span>class <span class="ident">TreeImporter01</span></span>
-<span>(</span><span>tree: SverchCustomTree, structure: dict, log: <a title="sverchok.utils.sv_json_import.FailsLog" href="#sverchok.utils.sv_json_import.FailsLog">FailsLog</a>)</span>
+<span>(</span><span>tree: SverchCustomTree,<br>structure: dict,<br>log: <a title="sverchok.utils.sv_json_import.FailsLog" href="#sverchok.utils.sv_json_import.FailsLog">FailsLog</a>)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>It reads given structure, regenerate it into given tree and logs fails
-It expects to read files with version 0.1 and earlier</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -532,11 +679,12 @@ It expects to read files with version 0.1 and earlier</p></div>
             for node, parent in self._structure.get(&#34;framed_nodes&#34;, dict()).items():
                 yield node, parent</code></pre>
 </details>
+<div class="desc"><p>It reads given structure, regenerate it into given tree and logs fails
+It expects to read files with version 0.1 and earlier</p></div>
 <h3>Instance variables</h3>
 <dl>
 <dt id="sverchok.utils.sv_json_import.TreeImporter01.file_version"><code class="name">prop <span class="ident">file_version</span> : float</code></dt>
 <dd>
-<div class="desc"><p>json structure version</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -546,6 +694,7 @@ def file_version(self) -&gt; float:
     &#34;&#34;&#34;json structure version&#34;&#34;&#34;
     return float(self._structure[&#39;export_version&#39;])</code></pre>
 </details>
+<div class="desc"><p>json structure version</p></div>
 </dd>
 </dl>
 <h3>Methods</h3>
@@ -554,12 +703,55 @@ def file_version(self) -&gt; float:
 <span>def <span class="ident">import_tree</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def import_tree(self):
+    &#34;&#34;&#34;Reads and generates nodes, frames, links&#34;&#34;&#34;
+    with TreeGenerator.start_from_tree(self._tree, self._fails_log) as tree_builder:
+        for node_name, node_type, node_structure in self.nodes():
+            node = tree_builder.add_node(node_type, node_name)
+            if node:
+                self._new_node_names[node_name] = node.name
+                NodeImporter01(node, node_structure, self._fails_log, self.file_version).import_node()
+
+        for from_node_name, from_socket_index, to_node_name, to_socket_index in self._links():
+            with self._fails_log.add_fail(&#34;Search node to link&#34;):
+                from_node_name = self._get_new_node_name(from_node_name)
+                to_node_name = self._get_new_node_name(to_node_name)
+            tree_builder.add_link(from_node_name, from_socket_index, to_node_name, to_socket_index)
+
+        for node_name, parent_name in self._parent_nodes():
+            with self._fails_log.add_fail(
+                    &#34;Assign node parent&#34;,
+                    f&#39;Tree: {self._tree.name}, Node: {node_name}, Parent node: {parent_name}&#39;):
+                node_name = self._get_new_node_name(node_name)
+                parent_name = self._get_new_node_name(parent_name)
+                self._tree.nodes[node_name].parent = self._tree.nodes[parent_name]
+
+        # mark old nodes
+        for node in self._tree.nodes:
+            if old_nodes.is_old(node):
+                old_nodes.mark_old(node)</code></pre>
+</details>
 <div class="desc"><p>Reads and generates nodes, frames, links</p></div>
 </dd>
 <dt id="sverchok.utils.sv_json_import.TreeImporter01.nodes"><code class="name flex">
-<span>def <span class="ident">nodes</span></span>(<span>self)</span>
+<span>def <span class="ident">nodes</span></span>(<span>self) ‑> Generator[tuple]</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def nodes(self) -&gt; Generator[tuple]:
+    &#34;&#34;&#34;Reads node names and their structure from tree structure&#34;&#34;&#34;
+    with self._fails_log.add_fail(&#34;Reading nodes&#34;, f&#39;Tree: {self._tree.name}&#39;):
+        for node_name, node_structure in self._structure.get(&#34;nodes&#34;, dict()).items():
+            with self._fails_log.add_fail(&#34;Reading node&#34;):
+                yield node_name, node_structure[&#39;bl_idname&#39;], node_structure</code></pre>
+</details>
 <div class="desc"><p>Reads node names and their structure from tree structure</p></div>
 </dd>
 </dl>
@@ -627,7 +819,7 @@ def file_version(self) -&gt; float:
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.1</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.5</a>.</p>
 </footer>
 </body>
 </html>

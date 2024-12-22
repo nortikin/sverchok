@@ -3,19 +3,30 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
-<meta name="generator" content="pdoc3 0.11.1">
+<meta name="generator" content="pdoc3 0.11.5">
 <title>sverchok.utils.pulga_physics_modular_core API documentation</title>
 <meta name="description" content="">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
-<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
 <style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
 <style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
 <script>window.addEventListener('DOMContentLoaded', () => {
 hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
 hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
 })</script>
 </head>
 <body>
@@ -37,126 +48,398 @@ hljs.highlightAll();
 <span>def <span class="ident">bvh_safe_check</span></span>(<span>verts, pols)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def bvh_safe_check(verts, pols):
+    len_v = len(verts)
+    for p in pols:
+        for c in p:
+            if c &gt; len_v:
+                raise Exception(f&#34;Index {c} should be less than vertices length ({len_v})&#34;)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.pulga_physics_modular_core.calc_area"><code class="name flex">
 <span>def <span class="ident">calc_area</span></span>(<span>pol_side_max, pol_v, pols_normal)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def calc_area(pol_side_max, pol_v, pols_normal):
+    &#39;&#39;&#39;calculate polygons area (equal sided polygons)&#39;&#39;&#39;
+    prod = np.zeros((pol_side_max, len(pols_normal), 3), dtype=np.float32)
+    for i in range(pol_side_max):
+        prod[i, :, :] = np.cross(pol_v[:, i, :], pol_v[:, (i + 1) % pol_side_max, :])
+    tot = np.sum(prod, axis=0)
+    return abs(np.sum(tot * pols_normal, axis=1) / 2)</code></pre>
+</details>
 <div class="desc"><p>calculate polygons area (equal sided polygons)</p></div>
 </dd>
 <dt id="sverchok.utils.pulga_physics_modular_core.calc_area_var_sides"><code class="name flex">
 <span>def <span class="ident">calc_area_var_sides</span></span>(<span>pol_side_max, pols_sides, pol_v, pols_normal)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def calc_area_var_sides(pol_side_max, pols_sides, pol_v, pols_normal):
+    &#39;&#39;&#39;calculate polygons area (variable sided polygons)&#39;&#39;&#39;
+    prod = np.zeros((pol_side_max, len(pols_sides), 3), dtype=np.float32)
+    for i in range(pol_side_max):
+        mask = pols_sides &gt; i
+        prod[i, mask, :] = np.cross(pol_v[mask, i, :], pol_v[mask, (i + 1) % pol_side_max, :])
+
+    tot = np.sum(prod, axis=0)
+    return abs(np.sum(tot * pols_normal, axis=1) / 2)</code></pre>
+</details>
 <div class="desc"><p>calculate polygons area (variable sided polygons)</p></div>
 </dd>
 <dt id="sverchok.utils.pulga_physics_modular_core.calc_rest_length"><code class="name flex">
 <span>def <span class="ident">calc_rest_length</span></span>(<span>np_verts, np_springs)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def calc_rest_length(np_verts, np_springs):
+    &#39;&#39;&#39;calculate edges length&#39;&#39;&#39;
+    pairs_springs = np_verts[np_springs, :]
+    vect_rest = (pairs_springs[:, 0, :] - pairs_springs[:, 1, :])
+    dist_rest = np.linalg.norm(vect_rest, axis=1)
+    return dist_rest</code></pre>
+</details>
 <div class="desc"><p>calculate edges length</p></div>
 </dd>
 <dt id="sverchok.utils.pulga_physics_modular_core.cross_indices3"><code class="name flex">
 <span>def <span class="ident">cross_indices3</span></span>(<span>n)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def cross_indices3(n):
+    &#39;&#39;&#39;create crossed indices&#39;&#39;&#39;
+
+    nu = np.sum(np.arange(n, dtype=np.int64))
+    ind = np.zeros((nu, 2), dtype=np.int16)
+    c = 0
+    for i in range(n-1):
+        l = n-i-1
+        np_i = np.full(n-i-1, i, dtype=np.int32)
+        np_j = np.arange(i+1, n, dtype=np.int32)
+        np_a = np.stack((np_i, np_j), axis=-1)
+        ind[c:c+l, :] = np_a
+        c += l
+
+    return ind</code></pre>
+</details>
 <div class="desc"><p>create crossed indices</p></div>
 </dd>
 <dt id="sverchok.utils.pulga_physics_modular_core.expand_pols_numpy"><code class="name flex">
 <span>def <span class="ident">expand_pols_numpy</span></span>(<span>p, len_max)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def expand_pols_numpy(p, len_max):
+    &#39;&#39;&#39;to fit variable sided polygons in one array (cycling)&#39;&#39;&#39;
+    np_match_cycle = np.vectorize(match_cylce)
+    np_match_cycle(p, len_max)
+    new_pols = np.zeros((len(p), len_max), dtype=np.int32)
+    for i in range(len(p)):
+        new_pols[i, :] = p[i]
+    return new_pols</code></pre>
+</details>
 <div class="desc"><p>to fit variable sided polygons in one array (cycling)</p></div>
 </dd>
 <dt id="sverchok.utils.pulga_physics_modular_core.iterate"><code class="name flex">
 <span>def <span class="ident">iterate</span></span>(<span>iterations_max, out_params)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def iterate(iterations_max, out_params):
+    &#39;&#39;&#39; execute repeatedly the defined force map&#39;&#39;&#39;
+    ps = out_params[1]
+
+    for it in range(iterations_max):
+        ps.iterate()
+        output_data(it, out_params)</code></pre>
+</details>
 <div class="desc"><p>execute repeatedly the defined force map</p></div>
 </dd>
 <dt id="sverchok.utils.pulga_physics_modular_core.limit_speed"><code class="name flex">
 <span>def <span class="ident">limit_speed</span></span>(<span>np_vel, max_vel)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def limit_speed(np_vel, max_vel):
+    &#39;&#39;&#39;&#39;constrain speed magniture&#39;&#39;&#39;
+    vel_mag = np.linalg.norm(np_vel, axis=1)
+    vel_exceded = vel_mag &gt; max_vel
+    np_vel[vel_exceded] = np_vel[vel_exceded] / vel_mag[vel_exceded, np.newaxis] * max_vel</code></pre>
+</details>
 <div class="desc"><p>'constrain speed magniture</p></div>
 </dd>
 <dt id="sverchok.utils.pulga_physics_modular_core.local_dict"><code class="name flex">
 <span>def <span class="ident">local_dict</span></span>(<span>dictionaries, name)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def local_dict(dictionaries, name):
+    &#39;&#39;&#39;get all related to the name&#39;&#39;&#39;
+    return [dictionaries[0][name], dictionaries[1][name], dictionaries[2][name]]</code></pre>
+</details>
 <div class="desc"><p>get all related to the name</p></div>
 </dd>
 <dt id="sverchok.utils.pulga_physics_modular_core.match_cylce"><code class="name flex">
 <span>def <span class="ident">match_cylce</span></span>(<span>p, n)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def match_cylce(p, n):
+    &#39;&#39;&#39;append cylcing till have n items&#39;&#39;&#39;
+    difference = n - len(p)
+    for i in range(difference):
+        p.append(p[i % len(p)])</code></pre>
+</details>
 <div class="desc"><p>append cylcing till have n items</p></div>
 </dd>
 <dt id="sverchok.utils.pulga_physics_modular_core.np_dot"><code class="name flex">
 <span>def <span class="ident">np_dot</span></span>(<span>u, v, axis=1)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def np_dot(u, v, axis=1):
+    return np.sum(u * v, axis=axis)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.pulga_physics_modular_core.numpy_fit_long_repeat"><code class="name flex">
 <span>def <span class="ident">numpy_fit_long_repeat</span></span>(<span>p, maxl)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def numpy_fit_long_repeat(p, maxl):
+    &#39;&#39;&#39;match list length by repeating last one or removing end&#39;&#39;&#39;
+    q = []
+    for g in p:
+        difl = maxl - g.shape[0]
+        if difl &gt; 0:
+            rr = np.repeat(g[np.newaxis, -1], difl, axis=0)
+            g = np.concatenate((g, rr))
+        if difl &lt; 0:
+            g = g[:maxl]
+        q.append(g)
+    return q</code></pre>
+</details>
 <div class="desc"><p>match list length by repeating last one or removing end</p></div>
 </dd>
 <dt id="sverchok.utils.pulga_physics_modular_core.numpy_match_long_repeat"><code class="name flex">
 <span>def <span class="ident">numpy_match_long_repeat</span></span>(<span>p)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def numpy_match_long_repeat(p):
+    &#39;&#39;&#39;match list length by repeating last one&#39;&#39;&#39;
+    q = []
+    maxl = 0
+    for g in p:
+        maxl = max(maxl, g.shape[0])
+    for g in p:
+        difl = maxl - g.shape[0]
+        if difl &gt; 0:
+            rr = np.repeat(g[np.newaxis, -1], difl, axis=0)
+            g = np.concatenate((g, rr))
+        q.append(g)
+    return q</code></pre>
+</details>
 <div class="desc"><p>match list length by repeating last one</p></div>
 </dd>
 <dt id="sverchok.utils.pulga_physics_modular_core.output_data"><code class="name flex">
 <span>def <span class="ident">output_data</span></span>(<span>it, params)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def output_data(it, params):
+    &#39;&#39;&#39;if is pertinent output the data&#39;&#39;&#39;
+    iterations_rec, ps, gate, out_lists = params
+    record_iteration = it in iterations_rec
+    if record_iteration:
+        data_out = prepare_output_data(ps, gate)
+        record_data(data_out, out_lists)</code></pre>
+</details>
 <div class="desc"><p>if is pertinent output the data</p></div>
 </dd>
 <dt id="sverchok.utils.pulga_physics_modular_core.pin_type_get"><code class="name flex">
 <span>def <span class="ident">pin_type_get</span></span>(<span>pin_type)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def pin_type_get(pin_type):
+
+    if isinstance(pin_type[0], str):
+        axis = []
+        for ch in pin_type[0]:
+            if ch == &#34;X&#34;:
+                axis.append(0)
+            elif ch == &#34;Y&#34;:
+                axis.append(1)
+            else:
+                axis.append(2)
+        return np.array(axis)
+
+    pin_types = [[0, 1, 2], [0, 1], [0, 2], [1, 2], [0], [1], [2]]
+
+    return np.array(pin_types[pin_type[0]])</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.pulga_physics_modular_core.pols_normals"><code class="name flex">
 <span>def <span class="ident">pols_normals</span></span>(<span>pol_v, mag)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def pols_normals(pol_v, mag):
+    &#39;&#39;&#39;get actual polygons normal with controlled magnitude&#39;&#39;&#39;
+    v1 = pol_v[:, 1, :] - pol_v[:, 0, :]
+    v2 = pol_v[:, 2, :] - pol_v[:, 0, :]
+    pols_normal = np.cross(v1, v2)
+    pols_normal_d = np.linalg.norm(pols_normal, axis=1)
+    return pols_normal / pols_normal_d[:, np.newaxis] * mag</code></pre>
+</details>
 <div class="desc"><p>get actual polygons normal with controlled magnitude</p></div>
 </dd>
 <dt id="sverchok.utils.pulga_physics_modular_core.prepare_output_data"><code class="name flex">
 <span>def <span class="ident">prepare_output_data</span></span>(<span>ps, use_numpy_out)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def prepare_output_data(ps, use_numpy_out):
+    &#39;&#39;&#39;prepare data to output&#39;&#39;&#39;
+
+    if use_numpy_out:
+        return [ps.verts, ps.rads, ps.vel, ps.params[&#34;Pins Reactions&#34;][np.invert(ps.params[&#39;unpinned&#39;])]]
+
+    return [ps.verts.tolist(), ps.rads.tolist(), ps.vel.tolist(), ps.params[&#34;Pins Reactions&#34;][np.invert(ps.params[&#39;unpinned&#39;])].tolist()]</code></pre>
+</details>
 <div class="desc"><p>prepare data to output</p></div>
 </dd>
 <dt id="sverchok.utils.pulga_physics_modular_core.project_on_plane"><code class="name flex">
 <span>def <span class="ident">project_on_plane</span></span>(<span>vects, normal)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def project_on_plane(vects, normal):
+    distance = np.sum(vects * normal, axis=1)
+    return vects - normal * distance[:,np.newaxis]</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.pulga_physics_modular_core.pulga_system_init"><code class="name flex">
 <span>def <span class="ident">pulga_system_init</span></span>(<span>parameters, gates, out_lists, cache)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def pulga_system_init(parameters, gates, out_lists, cache):
+    &#39;&#39;&#39;the main function of the engine&#39;&#39;&#39;
+
+    ps = PulgaSystem(parameters)
+
+    iterations = parameters[1]
+    iterations_max = max(iterations)
+    iterations_rec = [i-1 for i in iterations]
+    out_params = [iterations_rec, ps, gates[&#34;output&#34;], out_lists]
+    ps.setup_forces()
+
+    if gates[&#34;accumulate&#34;] and len(cache) &gt; 0:
+        ps.hard_update_list(cache)
+
+    iterate(iterations_max, out_params)
+
+    return ps.verts, ps.rads, ps.vel, ps.params[&#34;Pins Reactions&#34;][np.invert(ps.params[&#39;unpinned&#39;])]</code></pre>
+</details>
 <div class="desc"><p>the main function of the engine</p></div>
 </dd>
 <dt id="sverchok.utils.pulga_physics_modular_core.record_data"><code class="name flex">
 <span>def <span class="ident">record_data</span></span>(<span>data_out, out_lists)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def record_data(data_out, out_lists):
+    &#39;&#39;&#39;save data to main list&#39;&#39;&#39;
+    verts_out, rads_out, velocity_out, reactions_out = out_lists
+    new_verts, new_rad, new_vel, new_react = data_out
+    verts_out.append(new_verts)
+    rads_out.append(new_rad)
+    velocity_out.append(new_vel)
+    reactions_out.append(new_react)</code></pre>
+</details>
 <div class="desc"><p>save data to main list</p></div>
 </dd>
 <dt id="sverchok.utils.pulga_physics_modular_core.reflect"><code class="name flex">
 <span>def <span class="ident">reflect</span></span>(<span>v1, mirror)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def reflect(v1, mirror):
+
+    dot2 = 2 * np.sum(mirror * v1, axis=1)
+    return v1 - (dot2[:, np.newaxis] * mirror)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -169,7 +452,6 @@ hljs.highlightAll();
 <span>(</span><span>init_params)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Store states</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -349,6 +631,7 @@ hljs.highlightAll();
         self.iteration += 1
         self.apply_forces()</code></pre>
 </details>
+<div class="desc"><p>Store states</p></div>
 <h3>Class variables</h3>
 <dl>
 <dt id="sverchok.utils.pulga_physics_modular_core.PulgaSystem.density"><code class="name">var <span class="ident">density</span></code></dt>
@@ -382,48 +665,218 @@ hljs.highlightAll();
 <span>def <span class="ident">apply_forces</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def apply_forces(self):
+    &#39;&#39;&#39;resultant --&gt; acceleration --&gt; speed --&gt; position&#39;&#39;&#39;
+    acc = self.force_resultant / self.mass[:, np.newaxis]
+    self.vel += acc
+
+    if np.any(self.params[&#39;max_vel&#39;]) &gt; 0:
+        limit_speed(self.vel, self.params[&#39;max_vel&#39;])
+
+    self.verts += self.vel
+    self.force_resultant[:] = 0</code></pre>
+</details>
 <div class="desc"><p>resultant &ndash;&gt; acceleration &ndash;&gt; speed &ndash;&gt; position</p></div>
 </dd>
 <dt id="sverchok.utils.pulga_physics_modular_core.PulgaSystem.hard_update"><code class="name flex">
 <span>def <span class="ident">hard_update</span></span>(<span>self, cache)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def hard_update(self, cache):
+    &#39;&#39;&#39;replace verts, rads and vel (in NumPy)&#39;&#39;&#39;
+
+    size_change = self.size_change
+    verts, rads, vel, react = cache
+    if len(verts) == self.v_len:
+
+        if self.pinned and self.goal_pins:
+            unpinned = self.params[&#39;unpinned&#39;]
+            self.verts[unpinned] = verts[unpinned]
+        else:
+            self.verts = verts
+        self.vel = vel
+        if size_change:
+            self.rads = rads
+            self.mass = self.density * np.power(self.rads, 3)</code></pre>
+</details>
 <div class="desc"><p>replace verts, rads and vel (in NumPy)</p></div>
 </dd>
 <dt id="sverchok.utils.pulga_physics_modular_core.PulgaSystem.hard_update_list"><code class="name flex">
 <span>def <span class="ident">hard_update_list</span></span>(<span>self, cache)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def hard_update_list(self, cache):
+    &#39;&#39;&#39;replace verts, rads and velocity&#39;&#39;&#39;
+    size_change = self.size_change
+    verts, rads, vel, react = cache
+    if type(verts) == list:
+        if len(verts) == self.v_len:
+            if self.pinned and self.goal_pins:
+                unpinned = self.params[&#39;unpinned&#39;]
+                self.verts[unpinned] = np.array(verts)[unpinned]
+            else:
+                self.verts = np.array(verts)
+            if size_change:
+                self.rads = np.array(rads)
+                self.mass = self.density * np.power(self.rads, 3)
+            self.vel = np.array(vel)
+    else:
+        self.hard_update(cache)</code></pre>
+</details>
 <div class="desc"><p>replace verts, rads and velocity</p></div>
 </dd>
 <dt id="sverchok.utils.pulga_physics_modular_core.PulgaSystem.iterate"><code class="name flex">
 <span>def <span class="ident">iterate</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def iterate(self):
+    if self.aware:
+        self.relations_update()
+    if self.pinned:
+        self.params[&#39;unpinned&#39;][:] = True
+    for force in self.forces:
+
+        force.add(self)
+    self.iteration += 1
+    self.apply_forces()</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.pulga_physics_modular_core.PulgaSystem.main_setup"><code class="name flex">
 <span>def <span class="ident">main_setup</span></span>(<span>self, local_params)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def main_setup(self, local_params):
+    &#39;&#39;&#39;prepare main data&#39;&#39;&#39;
+    params = self.params
+    initial_pos, _, rads_in, initial_vel, max_vel, density, forces = local_params
+    self.forces = forces
+    self.verts = np.array(initial_pos)
+    self.rads = np.array(rads_in, dtype=np.float64)
+    self.vel = np.array(initial_vel, dtype=np.float64)
+    self.v_len = len(self.verts)
+    params[&#39;max_vel&#39;] = np.array(max_vel)
+    self.rads, self.vel = numpy_fit_long_repeat([self.rads, self.vel], self.v_len)
+
+    if len(params[&#39;max_vel&#39;]) &gt; 1:
+        params[&#39;max_vel&#39;] = numpy_fit_long_repeat([params[&#39;max_vel&#39;]], self.v_len)[0]
+
+    self.density = np.array(density)
+    if len(density) &gt; 1:
+        self.density = numpy_fit_long_repeat([self.density], self.v_len)[0]</code></pre>
+</details>
 <div class="desc"><p>prepare main data</p></div>
 </dd>
 <dt id="sverchok.utils.pulga_physics_modular_core.PulgaSystem.relations_setup"><code class="name flex">
 <span>def <span class="ident">relations_setup</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def relations_setup(self):
+    if &#39;indexes&#39; in self.relations.needed:
+        self.relations.indexes = cross_indices3(self.v_len)
+    if &#39;cross_matrix&#39; in self.relations.needed:
+        self.relations.result = np.zeros((self.v_len, self.v_len, 3), dtype=np.float64)
+    if not self.size_change:
+        if &#39;sum_rad&#39; in self.relations.needed:
+            self.relations.sum_rad = self.rads[self.relations.indexes[:, 0]] + self.rads[self.relations.indexes[:, 1]]
+        if &#39;mass_product&#39; in self.relations.needed:
+            self.relations.mass_product = self.mass[self.relations.indexes[:, 0]] * self.mass[self.relations.indexes[:, 1]]</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.pulga_physics_modular_core.PulgaSystem.relations_update"><code class="name flex">
 <span>def <span class="ident">relations_update</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def relations_update(self):
+    if &#39;max_radius&#39; in self.relations.needed:
+        self.relations.max_radius = np.amax(self.rads)
+    if &#39;kd_tree&#39; in self.relations.needed:
+        self.relations.kd_tree = scipy.spatial.cKDTree(self.verts)
+    if &#39;kd_collisions&#39; in self.relations.needed:
+        indexes = self.relations.kd_tree.query_pairs(r=self.relations.max_radius*2, output_type=&#39;ndarray&#39;)
+        self.relations.kd_indexes = indexes
+        if len(indexes) &gt; 0:
+            self.relations.kd_dif_v = self.verts[indexes[:, 0], :] - self.verts[indexes[:, 1], :]
+            self.relations.kd_sum_rad = self.rads[indexes[:, 0]] + self.rads[indexes[:, 1]]
+            self.relations.kd_dist = np.linalg.norm(self.relations.kd_dif_v, axis=1)
+            self.relations.kd_mask = self.relations.kd_dist &lt; self.relations.kd_sum_rad
+    if self.size_change:
+        if &#39;sum_rad&#39; in self.relations.needed:
+            self.relations.sum_rad = self.rads[self.relations.indexes[:, 0]] + self.rads[self.relations.indexes[:, 1]]
+        if &#39;mass_product&#39; in self.relations.needed:
+            self.relations.mass_product = self.mass[self.relations.indexes[:, 0]] * self.mass[self.relations.indexes[:, 1]]
+
+
+    if &#39;dif_v&#39; in self.relations.needed:
+        self.relations.dif_v = self.verts[self.relations.indexes[:, 0], :] - self.verts[self.relations.indexes[:, 1], :]
+    if &#39;dist&#39; in self.relations.needed:
+        self.relations.dist = np.linalg.norm(self.relations.dif_v, axis=1)
+    if &#39;collide&#39; in self.relations.needed or &#39;attract_mask&#39; in self.relations.needed:
+        self.relations.mask = self.relations.sum_rad &gt; self.relations.dist
+        self.relations.index_inter = self.relations.indexes[self.relations.mask]
+    if &#39;collide&#39; in self.relations.needed:
+        self.relations.some_collisions = len(self.relations.index_inter) &gt; 0
+    if &#39;attract_mask&#39; in self.relations.needed:
+        self.relations.attract_mask = np.invert(self.relations.mask)
+
+    if &#39;dist_cor&#39; in self.relations.needed or &#39;normal_v&#39; in self.relations.needed:
+        self.relations.dist_cor = np.clip(self.relations.dist, 1e-6, 1e4)
+
+    if &#39;normal_v&#39; in self.relations.needed:
+        self.relations.normal_v = self.relations.dif_v / self.relations.dist_cor[:, np.newaxis]
+    if &#39;cross_matrix&#39; in self.relations.needed:
+        self.relations.result[:] = 0</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.pulga_physics_modular_core.PulgaSystem.setup_forces"><code class="name flex">
 <span>def <span class="ident">setup_forces</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setup_forces(self):
+    for force in self.forces:
+        if hasattr(force, &#39;size_changer&#39;):
+            self.size_change = True
+            break
+
+    for force in self.forces:
+        force.setup(self)
+    if self.aware:
+        self.relations_setup()</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -433,7 +886,6 @@ hljs.highlightAll();
 <span>(</span><span>strength, decay, max_distance, use_kdtree=False)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -512,24 +964,90 @@ hljs.highlightAll();
                 np.add.at(ps.force_resultant, id0, ps.vel[id1, :] * constant0)
                 np.add.at(ps.force_resultant, id1, ps.vel[id0, :] * constant1)</code></pre>
 </details>
+<div class="desc"></div>
 <h3>Methods</h3>
 <dl>
 <dt id="sverchok.utils.pulga_physics_modular_core.SvAlignForce.add_brute_force"><code class="name flex">
 <span>def <span class="ident">add_brute_force</span></span>(<span>self, ps)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_brute_force(self, ps):
+    relations = ps.relations
+    mask = relations.dist_cor &lt; self.max_distance
+    id0 = relations.indexes[mask, 0]
+    id1 = relations.indexes[mask, 1]
+    dist2 = np.power(relations.dist_cor[mask], self.decay)
+
+
+    if self.uniform_strength:
+        constant = (self.f_strength / (dist2 * ps.v_len))[:, np.newaxis]
+        np.add.at(ps.force_resultant, id0, ps.vel[id1, :] * constant)
+        np.add.at(ps.force_resultant, id1, ps.vel[id0, :] * constant)
+
+    else:
+        constant0 = (self.f_strength[id0] / (dist2 * ps.v_len))[:, np.newaxis]
+        constant1 = (self.f_strength[id1] / (dist2 * ps.v_len))[:, np.newaxis]
+        np.add.at(ps.force_resultant, id0, ps.vel[id1, :] * constant0)
+        np.add.at(ps.force_resultant, id1, ps.vel[id0, :] * constant1)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.pulga_physics_modular_core.SvAlignForce.add_kdt"><code class="name flex">
 <span>def <span class="ident">add_kdt</span></span>(<span>self, ps)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_kdt(self, ps):
+
+    relations = ps.relations
+    indexes = relations.kd_tree.query_pairs(r=self.max_distance, output_type=&#39;ndarray&#39;)
+    if len(indexes) &gt; 0:
+        dif_v = ps.verts[indexes[:, 0], :] - ps.verts[indexes[:, 1], :]
+        dist = np.linalg.norm(dif_v, axis=1)
+        dist_cor = np.clip(dist, 1e-6, 1e4)
+        id0 = indexes[:, 0]
+        id1 = indexes[:, 1]
+        dist2 = np.power(dist_cor, self.decay)
+
+
+        if self.uniform_strength:
+            constant = (self.f_strength / (dist2 * ps.v_len))[:, np.newaxis]
+            np.add.at(ps.force_resultant, id0, ps.vel[id1, :] * constant)
+            np.add.at(ps.force_resultant, id1, ps.vel[id0, :] * constant)
+
+        else:
+            constant0 = (self.f_strength[id0] / (dist2 * ps.v_len))[:, np.newaxis]
+            constant1 = (self.f_strength[id1] / (dist2 * ps.v_len))[:, np.newaxis]
+            np.add.at(ps.force_resultant, id0, ps.vel[id1, :] * constant0)
+            np.add.at(ps.force_resultant, id1, ps.vel[id0, :] * constant1)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.pulga_physics_modular_core.SvAlignForce.setup"><code class="name flex">
 <span>def <span class="ident">setup</span></span>(<span>self, ps)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setup(self, ps):
+
+    ps.aware = True
+    for need in self.needs:
+        ps.relations.needed[need] = True
+    if self.uniform_strength:
+        self.f_strength = self.strength
+    else:
+        self.f_strength = numpy_fit_long_repeat([self.strength], ps.v_len)[0]</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -539,7 +1057,6 @@ hljs.highlightAll();
 <span>(</span><span>magnitude, decay, max_distance, stop_on_collide=False, use_kdtree=False)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -624,24 +1141,98 @@ hljs.highlightAll();
             np.add.at(ps.force_resultant, id0, -direction * len0)
             np.add.at(ps.force_resultant, id1, direction * len1)</code></pre>
 </details>
+<div class="desc"></div>
 <h3>Methods</h3>
 <dl>
 <dt id="sverchok.utils.pulga_physics_modular_core.SvAttractionForce.add_brute_force"><code class="name flex">
 <span>def <span class="ident">add_brute_force</span></span>(<span>self, ps)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_brute_force(self, ps):
+    relations = ps.relations
+    if self.stop_on_collide:
+        mask = np.all((relations.dist &lt; self.max_distance, relations.attract_mask), axis=0)
+    else:
+        mask = relations.dist &lt; self.max_distance
+    index_non_inter = ps.relations.indexes[mask]
+    id0 = index_non_inter[:, 0]
+    id1 = index_non_inter[:, 1]
+    dist2 = np.power(relations.dist[mask], self.decay)[:, np.newaxis]
+    normal = relations.normal_v[mask]
+    direction = normal / dist2 * relations.mass_product[mask, np.newaxis]
+
+
+    att = self.f_magnitude
+    len0, len1 = [att, att] if self.uniform_magnitude else [att[id1], att[id0]]
+
+    np.add.at(ps.force_resultant, id0, -direction * len0)
+    np.add.at(ps.force_resultant, id1, direction * len1)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.pulga_physics_modular_core.SvAttractionForce.add_kdt"><code class="name flex">
 <span>def <span class="ident">add_kdt</span></span>(<span>self, ps)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_kdt(self, ps):
+    relations = ps.relations
+    indexes = relations.kd_tree.query_pairs(r=self.max_distance, output_type=&#39;ndarray&#39;)
+    if len(indexes) &gt; 0:
+
+        id0 = indexes[:, 0]
+        id1 = indexes[:, 1]
+        dif_v = ps.verts[id0, :] - ps.verts[id1, :]
+
+        dist = np.linalg.norm(dif_v, axis=1)
+        if self.stop_on_collide:
+            collide_mask = dist &gt; ps.mass[id0] * ps.mass[id1]
+            dist_cor = np.clip(dist[collide_mask], 1e-6, 1e4)
+            dist2 = np.power(dist[collide_mask], self.decay)[:, np.newaxis]
+            normal_v = dif_v[collide_mask] / dist_cor[:, np.newaxis]
+            id0 = indexes[collide_mask, 0]
+            id1 = indexes[collide_mask, 1]
+            mass_product = (ps.mass[id0] * ps.mass[id1])
+        else:
+
+            mass_product = ps.mass[id0] * ps.mass[id1]
+            dist_cor = np.clip(dist, 1e-6, 1e4)
+            dist2 = np.power(dist, self.decay)[:, np.newaxis]
+            normal_v = dif_v / dist_cor[:, np.newaxis]
+
+        direction = normal_v / dist2 * mass_product[:, np.newaxis]
+
+        att = self.f_magnitude
+        len0, len1 = [att, att] if self.uniform_magnitude else [att[id1], att[id0]]
+        np.add.at(ps.force_resultant, id0, -direction * len0)
+        np.add.at(ps.force_resultant, id1, direction * len1)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.pulga_physics_modular_core.SvAttractionForce.setup"><code class="name flex">
 <span>def <span class="ident">setup</span></span>(<span>self, ps)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setup(self, ps):
+    ps.aware = True
+    for need in self.needs:
+        ps.relations.needed[need] = True
+    if self.uniform_magnitude:
+        self.f_magnitude = self.magnitude
+    else:
+        self.f_magnitude = numpy_fit_long_repeat([self.magnitude], ps.v_len)[0]</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -651,7 +1242,6 @@ hljs.highlightAll();
 <span>(</span><span>location, strength, clamp, decay_power)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -695,18 +1285,49 @@ hljs.highlightAll();
         r_attract = np.sum(v_attract, axis=0)
         ps.force_resultant += r_attract</code></pre>
 </details>
+<div class="desc"></div>
 <h3>Methods</h3>
 <dl>
 <dt id="sverchok.utils.pulga_physics_modular_core.SvAttractorsForce.add"><code class="name flex">
 <span>def <span class="ident">add</span></span>(<span>self, ps)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add(self, ps):
+    if not self.use_attractors:
+        return
+    v_attract = ps.verts[np.newaxis, :, :] - self.points[:, np.newaxis, :]
+    dist_attract = np.linalg.norm(v_attract, axis=2)
+    mask = dist_attract &gt; self.clamp[:, np.newaxis]
+    mask_true = np.invert(mask)
+    dist_attract2 = np.power(dist_attract, self.decay[:, np.newaxis])
+    dist_attract_cor = np.clip(dist_attract2[mask_true], 1e-2, 1e4)
+
+    v_attract *= self.strength[:, np.newaxis, np.newaxis]
+    v_attract_normal = v_attract[mask_true] / dist_attract_cor[:, np.newaxis]
+
+    v_attract[mask_true] = -v_attract_normal
+    v_attract[mask, :] = 0
+
+    r_attract = np.sum(v_attract, axis=0)
+    ps.force_resultant += r_attract</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.pulga_physics_modular_core.SvAttractorsForce.setup"><code class="name flex">
 <span>def <span class="ident">setup</span></span>(<span>self, ps)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setup(self, ps):
+    pass</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -716,7 +1337,6 @@ hljs.highlightAll();
 <span>(</span><span>location, direction, strength, clamp, decay_power)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -768,18 +1388,55 @@ hljs.highlightAll();
         r_attract = np.sum(v_attract, axis=0)
         ps.force_resultant += r_attract</code></pre>
 </details>
+<div class="desc"></div>
 <h3>Methods</h3>
 <dl>
 <dt id="sverchok.utils.pulga_physics_modular_core.SvAttractorsLineForce.add"><code class="name flex">
 <span>def <span class="ident">add</span></span>(<span>self, ps)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add(self, ps):
+    if not self.use_attractors:
+        return
+    v_attract = ps.verts[np.newaxis, :, :] - self.points[:, np.newaxis, :]
+    vect_proy = np_dot(v_attract, self.direction[:, np.newaxis, :], axis=2)
+
+    closest_point = self.points[:, np.newaxis, :] + vect_proy[:, :, np.newaxis] * self.direction[:, np.newaxis, :]
+
+    dif_v = closest_point -  ps.verts[np.newaxis, :, :]
+    dist_attract = np.linalg.norm(dif_v, axis=2)
+    mask = dist_attract &gt; self.clamp[:, np.newaxis]
+
+    mask_true = np.invert(mask)
+    dist_attract2 = np.power(dist_attract, self.decay[:, np.newaxis])
+    dist_attract_cor = np.clip(dist_attract2[mask_true], 1e-2, 1e4)
+
+    dif_v *= self.strength[:, np.newaxis, np.newaxis]
+    v_attract_normal = dif_v[mask_true] / dist_attract_cor[:, np.newaxis]
+
+    v_attract[mask_true] = v_attract_normal
+    v_attract[mask, :] = 0
+
+    r_attract = np.sum(v_attract, axis=0)
+    ps.force_resultant += r_attract</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.pulga_physics_modular_core.SvAttractorsLineForce.setup"><code class="name flex">
 <span>def <span class="ident">setup</span></span>(<span>self, ps)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setup(self, ps):
+    pass</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -789,7 +1446,6 @@ hljs.highlightAll();
 <span>(</span><span>location, normal, strength, clamp, decay_power)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -838,18 +1494,51 @@ hljs.highlightAll();
         r_attract = np.sum(v_attract, axis=0)
         ps.force_resultant += r_attract</code></pre>
 </details>
+<div class="desc"></div>
 <h3>Methods</h3>
 <dl>
 <dt id="sverchok.utils.pulga_physics_modular_core.SvAttractorsPlaneForce.add"><code class="name flex">
 <span>def <span class="ident">add</span></span>(<span>self, ps)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add(self, ps):
+    if not self.use_attractors:
+        return
+
+    v_attract = ps.verts[np.newaxis, :, :] - self.points[:, np.newaxis, :]
+    dist_attract = np_dot(v_attract, self.normal[:, np.newaxis, :], axis=2)
+
+    mask = dist_attract &gt; self.clamp[:, np.newaxis]
+    mask_true = np.invert(mask)
+    plane_side = dist_attract &lt; 0
+    dist_attract2 = np.power(dist_attract, self.decay[:, np.newaxis])
+    dist_attract_cor = np.clip(dist_attract2, 1e-2, 1e4)
+    dist_attract_cor[plane_side] *= -1
+
+    v_attract_normal = self.normal[:, np.newaxis, :] / dist_attract_cor[:, :, np.newaxis] * self.strength[:, np.newaxis, np.newaxis]
+    v_attract[mask_true] = -v_attract_normal[mask_true]
+    v_attract[mask, :] = 0
+
+    r_attract = np.sum(v_attract, axis=0)
+    ps.force_resultant += r_attract</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.pulga_physics_modular_core.SvAttractorsPlaneForce.setup"><code class="name flex">
 <span>def <span class="ident">setup</span></span>(<span>self, ps)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setup(self, ps):
+    pass</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -859,7 +1548,6 @@ hljs.highlightAll();
 <span>(</span><span>b_box)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -886,18 +1574,40 @@ hljs.highlightAll();
 
         ps.verts = np.clip(ps.verts, self.bbox_min + ps.rads[:, np.newaxis], self.bbox_max - ps.rads[:, np.newaxis])</code></pre>
 </details>
+<div class="desc"></div>
 <h3>Methods</h3>
 <dl>
 <dt id="sverchok.utils.pulga_physics_modular_core.SvBoundingBoxForce.add"><code class="name flex">
 <span>def <span class="ident">add</span></span>(<span>self, ps)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add(self, ps):
+    min_mask = ps.verts &lt;= self.bbox_min + ps.rads[:, np.newaxis]
+    max_mask = ps.verts &gt;= self.bbox_max - ps.rads[:, np.newaxis]
+    out_vals = np.any([min_mask, max_mask], axis=0)
+
+    ps.vel[out_vals] = 0
+    ps.force_resultant[out_vals] = 0
+
+    ps.verts = np.clip(ps.verts, self.bbox_min + ps.rads[:, np.newaxis], self.bbox_max - ps.rads[:, np.newaxis])</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.pulga_physics_modular_core.SvBoundingBoxForce.setup"><code class="name flex">
 <span>def <span class="ident">setup</span></span>(<span>self, ps)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setup(self, ps):
+    pass</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -907,7 +1617,6 @@ hljs.highlightAll();
 <span>(</span><span>vertices, polygons, volume=False)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -955,30 +1664,79 @@ hljs.highlightAll();
         ps.vel[outer_mask] = project_on_plane(ps.vel[outer_mask], self.normals[outer_mask])
         ps.force_resultant[outer_mask] = project_on_plane(ps.force_resultant[outer_mask], self.normals[outer_mask])</code></pre>
 </details>
+<div class="desc"></div>
 <h3>Methods</h3>
 <dl>
 <dt id="sverchok.utils.pulga_physics_modular_core.SvBoundingMeshForce.add_surface"><code class="name flex">
 <span>def <span class="ident">add_surface</span></span>(<span>self, ps)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_surface(self, ps):
+
+    self.find_nearest(ps.verts)
+    ps.verts = self.nearest
+    ps.vel = project_on_plane(ps.vel, self.normals)
+    ps.force_resultant = project_on_plane(ps.force_resultant, self.normals)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.pulga_physics_modular_core.SvBoundingMeshForce.add_volume"><code class="name flex">
 <span>def <span class="ident">add_volume</span></span>(<span>self, ps)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_volume(self, ps):
+    self.find_nearest(ps.verts)
+    outer_mask = np_dot(self.nearest - ps.verts, self.normals) &lt;= 0
+    ps.verts[outer_mask] = self.nearest[outer_mask]
+
+    ps.vel[outer_mask] = project_on_plane(ps.vel[outer_mask], self.normals[outer_mask])
+    ps.force_resultant[outer_mask] = project_on_plane(ps.force_resultant[outer_mask], self.normals[outer_mask])</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.pulga_physics_modular_core.SvBoundingMeshForce.find_nearest"><code class="name flex">
 <span>def <span class="ident">find_nearest</span></span>(<span>self, verts)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def find_nearest(self, verts):
+    v_nearest = self.nearest
+    v_normals = self.normals
+    for v, near, norm in zip(verts, v_nearest, v_normals):
+        nearest, normal, _, _ = self.bvh.find_nearest(v)
+
+        near[0] = nearest[0]
+        near[1] = nearest[1]
+        near[2] = nearest[2]
+        norm[0] = normal[0]
+        norm[1] = normal[1]
+        norm[2] = normal[2]</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.pulga_physics_modular_core.SvBoundingMeshForce.setup"><code class="name flex">
 <span>def <span class="ident">setup</span></span>(<span>self, ps)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setup(self, ps):
+    self.nearest = np.zeros(ps.verts.shape, dtype=np.float64)
+    self.normals = np.zeros(ps.verts.shape, dtype=np.float64)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -988,7 +1746,6 @@ hljs.highlightAll();
 <span>(</span><span>center, normal)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1015,18 +1772,39 @@ hljs.highlightAll();
         ps.vel = project_on_plane(ps.vel, self.normal)
         ps.force_resultant = project_on_plane(ps.force_resultant, self.normal)</code></pre>
 </details>
+<div class="desc"></div>
 <h3>Methods</h3>
 <dl>
 <dt id="sverchok.utils.pulga_physics_modular_core.SvBoundingPlaneSurfaceForce.add"><code class="name flex">
 <span>def <span class="ident">add</span></span>(<span>self, ps)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add(self, ps):
+
+    vs = ps.verts - self.center
+    distance = np.sum(vs * self.normal, axis=1)
+    ps.verts = ps.verts - self.normal[np.newaxis, :] * distance[:, np.newaxis]
+
+    ps.vel = project_on_plane(ps.vel, self.normal)
+    ps.force_resultant = project_on_plane(ps.force_resultant, self.normal)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.pulga_physics_modular_core.SvBoundingPlaneSurfaceForce.setup"><code class="name flex">
 <span>def <span class="ident">setup</span></span>(<span>self, ps)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setup(self, ps):
+    pass</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -1036,7 +1814,6 @@ hljs.highlightAll();
 <span>(</span><span>solid, volume=False)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1154,48 +1931,175 @@ hljs.highlightAll();
         ps.vel[outside] = project_on_plane(ps.vel[outside], self.normals[outside])
         ps.force_resultant[outside] = project_on_plane(ps.force_resultant[outside], self.normals[outside])</code></pre>
 </details>
+<div class="desc"></div>
 <h3>Methods</h3>
 <dl>
 <dt id="sverchok.utils.pulga_physics_modular_core.SvBoundingSolidForce.add_surface"><code class="name flex">
 <span>def <span class="ident">add_surface</span></span>(<span>self, ps)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_surface(self, ps):
+    self.find(ps.verts)
+    ps.verts = self.nearest
+    ps.vel = project_on_plane(ps.vel, self.normals)
+    ps.force_resultant = project_on_plane(ps.force_resultant, self.normals)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.pulga_physics_modular_core.SvBoundingSolidForce.add_volume"><code class="name flex">
 <span>def <span class="ident">add_volume</span></span>(<span>self, ps)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_volume(self, ps):
+    outside = self.is_outside(ps.verts)
+    self.find_masked(ps.verts, outside)
+    ps.verts[outside] =  self.nearest[outside]
+    ps.vel[outside] = project_on_plane(ps.vel[outside], self.normals[outside])
+    ps.force_resultant[outside] = project_on_plane(ps.force_resultant[outside], self.normals[outside])</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.pulga_physics_modular_core.SvBoundingSolidForce.find"><code class="name flex">
 <span>def <span class="ident">find</span></span>(<span>self, verts)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def find(self, verts):
+    v_nearest = self.nearest
+    v_normals = self.normals
+    for v, near, norm in zip(verts, v_nearest, v_normals):
+        nearest, normal = self.find_closest(v)
+        near[0] = nearest[0]
+        near[1] = nearest[1]
+        near[2] = nearest[2]
+        norm[0] = normal[0]
+        norm[1] = normal[1]
+        norm[2] = normal[2]</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.pulga_physics_modular_core.SvBoundingSolidForce.find_closest"><code class="name flex">
 <span>def <span class="ident">find_closest</span></span>(<span>self, v)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def find_closest(self,v):
+    vertex = Part.Vertex(Base.Vector(v))
+
+    dist = self.shape.distToShape(vertex)
+    if str(dist[2][0][0]) == &#34;b&#39;Face&#39;&#34;:
+        normal = self.shape.Faces[dist[2][0][1]].normalAt(*dist[2][0][2])
+    elif str(dist[2][0][0]) == &#34;b&#39;Edge&#39;&#34;:
+        edge = self.shape.Edges[dist[2][0][1]]
+        vector = self.shape.Edges[dist[2][0][1]].valueAt(dist[2][0][2])
+        face_list = self.shape.ancestorsOfType(edge, Part.Face)
+        normal = [0,0,0]
+        count = 0
+        for face in face_list:
+            for edge1 in face.Edges:
+
+                if edge1.isSame(edge):
+                    param = face.Surface.parameter(vector)
+                    normal_ed = face.normalAt(*param)
+                    normal[0] += normal_ed[0]
+                    normal[1] += normal_ed[1]
+                    normal[2] += normal_ed[2]
+                    count+=1
+                    break
+        if count &gt; 0:
+            normal[0] /= count
+            normal[1] /= count
+            normal[2] /= count
+        else:
+            normal = [0, 0, 1]
+    else:
+        vertex = self.shape.Vertexes[dist[2][0][1]]
+        face_list = self.shape.ancestorsOfType(vertex, Part.Face)
+        normal = [0, 0, 0]
+        count = 0
+        for face in face_list:
+            for vertex1 in face.Vertexes:
+
+                if vertex1.isSame(vertex):
+                    param = face.Surface.parameter(vertex.Point)
+                    normal_ed = face.normalAt(*param)
+                    normal[0] += normal_ed[0]
+                    normal[1] += normal_ed[1]
+                    normal[2] += normal_ed[2]
+                    count+=1
+                    break
+        if count &gt; 0:
+            normal[0] /= count
+            normal[1] /= count
+            normal[2] /= count
+        else:
+            normal = [0, 0, 1]
+    return dist[1][0][0], normal</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.pulga_physics_modular_core.SvBoundingSolidForce.find_masked"><code class="name flex">
 <span>def <span class="ident">find_masked</span></span>(<span>self, verts, mask)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def find_masked(self, verts, mask):
+    v_nearest = self.nearest
+    v_normals = self.normals
+    for v, near, norm in zip(verts[mask], v_nearest[mask], v_normals[mask]):
+        nearest, normal = self.find_closest(v)
+        near[0] = nearest[0]
+        near[1] = nearest[1]
+        near[2] = nearest[2]
+        norm[0] = normal[0]
+        norm[1] = normal[1]
+        norm[2] = normal[2]</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.pulga_physics_modular_core.SvBoundingSolidForce.is_outside"><code class="name flex">
 <span>def <span class="ident">is_outside</span></span>(<span>self, verts)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def is_outside(self, verts):
+
+    return np.array([not self.shape.isInside(Base.Vector(v), 1e-6, False) for v in verts], dtype=np.bool_)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.pulga_physics_modular_core.SvBoundingSolidForce.setup"><code class="name flex">
 <span>def <span class="ident">setup</span></span>(<span>self, ps)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setup(self, ps):
+    self.nearest = np.zeros(ps.verts.shape, dtype=np.float64)
+    self.normals = np.zeros(ps.verts.shape, dtype=np.float64)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -1205,7 +2109,6 @@ hljs.highlightAll();
 <span>(</span><span>center, radius)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1233,18 +2136,40 @@ hljs.highlightAll();
         ps.vel[mask] = project_on_plane(ps.vel[mask], vs_normal)
         ps.force_resultant[mask] = project_on_plane(ps.force_resultant[mask], vs_normal)</code></pre>
 </details>
+<div class="desc"></div>
 <h3>Methods</h3>
 <dl>
 <dt id="sverchok.utils.pulga_physics_modular_core.SvBoundingSphereForce.add"><code class="name flex">
 <span>def <span class="ident">add</span></span>(<span>self, ps)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add(self, ps):
+    vs = ps.verts - self.center
+    dist = np.linalg.norm(vs, axis=1)
+    mask = dist + ps.rads &gt; self.radius
+    vs_normal = vs[mask]/dist[mask, np.newaxis]
+    ps.verts[mask] = vs_normal*(self.radius - ps.rads[mask])[:,np.newaxis]
+
+    ps.vel[mask] = project_on_plane(ps.vel[mask], vs_normal)
+    ps.force_resultant[mask] = project_on_plane(ps.force_resultant[mask], vs_normal)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.pulga_physics_modular_core.SvBoundingSphereForce.setup"><code class="name flex">
 <span>def <span class="ident">setup</span></span>(<span>self, ps)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setup(self, ps):
+    pass</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -1254,7 +2179,6 @@ hljs.highlightAll();
 <span>(</span><span>center, radius)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1284,18 +2208,42 @@ hljs.highlightAll();
         ps.vel = project_on_plane(ps.vel, vs_normal)
         ps.force_resultant = project_on_plane(ps.force_resultant, vs_normal)</code></pre>
 </details>
+<div class="desc"></div>
 <h3>Methods</h3>
 <dl>
 <dt id="sverchok.utils.pulga_physics_modular_core.SvBoundingSphereSurfaceForce.add"><code class="name flex">
 <span>def <span class="ident">add</span></span>(<span>self, ps)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add(self, ps):
+    vs = ps.verts - self.center
+    dist = np.linalg.norm(vs, axis=1)
+    mask = dist == 0
+    vs[mask]=ps.verts[mask]+[[1,0,0]]
+    dist[mask] = 1
+    vs_normal = vs/dist[:, np.newaxis]
+    ps.verts = vs_normal * self.radius
+
+    ps.vel = project_on_plane(ps.vel, vs_normal)
+    ps.force_resultant = project_on_plane(ps.force_resultant, vs_normal)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.pulga_physics_modular_core.SvBoundingSphereSurfaceForce.setup"><code class="name flex">
 <span>def <span class="ident">setup</span></span>(<span>self, ps)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setup(self, ps):
+    pass</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -1305,7 +2253,6 @@ hljs.highlightAll();
 <span>(</span><span>magnitude, use_kdtree=False)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1373,24 +2320,85 @@ hljs.highlightAll();
             np.add.at(ps.force_resultant, id0[mask], -normal_v * le * len0)
             np.add.at(ps.force_resultant, id1[mask], normal_v * le * len1)</code></pre>
 </details>
+<div class="desc"></div>
 <h3>Methods</h3>
 <dl>
 <dt id="sverchok.utils.pulga_physics_modular_core.SvCollisionForce.add_brute_force"><code class="name flex">
 <span>def <span class="ident">add_brute_force</span></span>(<span>self, ps)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_brute_force(self, ps):
+
+    id0 = ps.relations.index_inter[:, 0]
+    id1 = ps.relations.index_inter[:, 1]
+
+    le = ps.relations.dist[ps.relations.mask, np.newaxis] - ps.relations.sum_rad[ps.relations.mask, np.newaxis]
+    no = ps.relations.normal_v[ps.relations.mask]
+    sf = self.f_magnitude[:, np.newaxis]
+    len0, len1 = [sf, sf] if self.uniform_magnitude else [sf[id1], sf[id0]]
+
+    np.add.at(ps.force_resultant, id0, -no * le * len0)
+    np.add.at(ps.force_resultant, id1, no * le * len1)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.pulga_physics_modular_core.SvCollisionForce.add_kdt"><code class="name flex">
 <span>def <span class="ident">add_kdt</span></span>(<span>self, ps)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_kdt(self, ps):
+    relations = ps.relations
+    if len(relations.kd_indexes) &gt; 0:
+
+        id0 = relations.kd_indexes[:, 0]
+        id1 = relations.kd_indexes[:, 1]
+        sum_rad = relations.kd_sum_rad
+        dif_v = relations.kd_dif_v
+        dist = relations.kd_dist
+        mask = relations.kd_mask
+        dist_cor = np.clip(dist[mask], 1e-6, 1e4)
+
+        normal_v = dif_v[mask] / dist_cor[:, np.newaxis]
+
+
+
+        le = (dist[mask] - sum_rad[mask])[:, np.newaxis]
+
+        variable_coll = len(self.f_magnitude) &gt; 1
+        sf = self.f_magnitude[:, np.newaxis]
+        len0, len1 = [sf[id1[mask]], sf[id0[mask]]] if variable_coll else [sf, sf]
+
+
+        np.add.at(ps.force_resultant, id0[mask], -normal_v * le * len0)
+        np.add.at(ps.force_resultant, id1[mask], normal_v * le * len1)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.pulga_physics_modular_core.SvCollisionForce.setup"><code class="name flex">
 <span>def <span class="ident">setup</span></span>(<span>self, ps)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setup(self, ps):
+    ps.aware = True
+    for need in self.needs:
+        ps.relations.needed[need] = True
+    if self.uniform_magnitude:
+        self.f_magnitude = self.magnitude
+    else:
+        self.f_magnitude = numpy_fit_long_repeat([self.magnitude], ps.v_len)[0]</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -1400,7 +2408,6 @@ hljs.highlightAll();
 <span>(</span><span>drag_force, exponent)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1459,24 +2466,81 @@ hljs.highlightAll();
 
         ps.force_resultant += drag</code></pre>
 </details>
+<div class="desc"></div>
 <h3>Methods</h3>
 <dl>
 <dt id="sverchok.utils.pulga_physics_modular_core.SvDragForce.add_constant_size"><code class="name flex">
 <span>def <span class="ident">add_constant_size</span></span>(<span>self, ps)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_constant_size(self, ps):
+
+    vel_mag = np.linalg.norm(ps.vel, axis=1)
+    vel_mag_zero = vel_mag == 0
+    vel_mag[vel_mag_zero] = 1
+
+    vel_mag2 = np.power(vel_mag, self.ap_exponent)
+    vel_norm = ps.vel/vel_mag[:, np.newaxis]
+
+    drag = -vel_norm * vel_mag2[:, np.newaxis] *  self.constant
+
+    ps.force_resultant += drag</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.pulga_physics_modular_core.SvDragForce.add_size_change"><code class="name flex">
 <span>def <span class="ident">add_size_change</span></span>(<span>self, ps)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_size_change(self, ps):
+    vel_mag = np.linalg.norm(ps.vel, axis=1)
+    vel_mag_zero = vel_mag == 0
+    vel_mag[vel_mag_zero] = 1
+    vel_mag2 = np.power(vel_mag, self.ap_exponent)
+    vel_norm = ps.vel/vel_mag[:, np.newaxis]
+    self.surf = np.power(ps.rads, 2)
+    drag = -vel_norm * self.ap_magnitude * vel_mag2[:, np.newaxis] * self.surf[:, np.newaxis]
+
+    ps.force_resultant += drag</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.pulga_physics_modular_core.SvDragForce.setup"><code class="name flex">
 <span>def <span class="ident">setup</span></span>(<span>self, ps)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setup(self, ps):
+    size_change = ps.size_change
+    if len(self.magnitude) &lt; 2:
+        self.ap_magnitude = self.magnitude
+    else:
+        self.ap_magnitude = numpy_fit_long_repeat([self.magnitude], ps.v_len)[0]
+    if len(self.exponent) &lt; 2:
+        self.ap_exponent = self.exponent
+    else:
+        self.ap_exponent = numpy_fit_long_repeat([self.exponent], ps.v_len)[0]
+
+    self.surf = np.power(ps.rads, 2)
+    if not size_change:
+        self.constant = (self.ap_magnitude * self.surf)[:, np.newaxis]
+
+        self.add = self.add_constant_size
+    else:
+        self.add = self.add_size_change
+        self.ap_magnitude = self.magnitude[:, np.newaxis]</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -1486,7 +2550,6 @@ hljs.highlightAll();
 <span>(</span><span>springs, spring_k, fixed_angle, use_fix_angle)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1556,18 +2619,83 @@ hljs.highlightAll();
         f = average_vector * ((self.rest_ang - act_ang)*self.spring_k)[:, np.newaxis]
         np.add.at(ps.force_resultant, self.target_v, f)</code></pre>
 </details>
+<div class="desc"></div>
 <h3>Methods</h3>
 <dl>
 <dt id="sverchok.utils.pulga_physics_modular_core.SvEdgesAngleForce.add"><code class="name flex">
 <span>def <span class="ident">add</span></span>(<span>self, ps)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add(self, ps):
+
+
+    vs = ps.verts[self.target_v, :]
+    v1_u = unit_vector(ps.verts[self.rel_idx[:,0]] - vs)
+    v2_u = unit_vector(ps.verts[self.rel_idx[:,1]] - vs)
+    act_ang = np.arccos(np.clip(np_dot(v1_u, v2_u), -1.0, 1.0))
+
+
+    average_vector = (v1_u + v2_u)/2
+    f = average_vector * ((self.rest_ang - act_ang)*self.spring_k)[:, np.newaxis]
+    np.add.at(ps.force_resultant, self.target_v, f)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.pulga_physics_modular_core.SvEdgesAngleForce.setup"><code class="name flex">
 <span>def <span class="ident">setup</span></span>(<span>self, ps)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setup(self, ps):
+    rel=[[] for i in range(ps.v_len)]
+    for (e0, e1) in self.springs:
+        rel[e0].append(e1)
+        rel[e1].append(e0)
+    target_v = []
+    rest_ang = []
+    rel_idx = []
+
+    if self.use_fix_angle or self.fixed_angle[0] &gt; 0:
+        self.rest_ang = self.fixed_angle
+        for v,r, idx in zip(ps.verts, rel, range(ps.v_len)):
+            if len(r) == 2:
+                target_v.append(idx)
+                rel_idx.append(r)
+            elif len(r)&gt;2:
+                for idx0, idx1 in zip(r,r[1:]+[r[0]]):
+                    target_v.append(idx)
+                    rel_idx.append([idx0, idx1])
+
+        self.target_v = np.array(target_v)
+        self.rest_ang = self.fixed_angle
+        self.rel_idx = np.array(rel_idx)
+    else:
+
+        for v,r, idx in zip(ps.verts, rel, range(ps.v_len)):
+            if len(r) == 2:
+                vec = ps.verts[r[0]] - v
+                vec2 = ps.verts[r[1]] - v
+                rest_ang.append(angle_between([vec], [vec2])[0])
+                target_v.append(idx)
+                rel_idx.append(r)
+            elif len(r)&gt;2:
+                for idx0, idx1 in zip(r,r[1:]+[r[0]]):
+                    vec = ps.verts[idx0] - v
+                    vec2 = ps.verts[idx1] - v
+                    rest_ang.append(angle_between([vec], [vec2])[0])
+                    target_v.append(idx)
+                    rel_idx.append([idx0, idx1])
+        self.target_v = np.array(target_v)
+        self.rest_ang = np.array(rest_ang)
+        self.rel_idx = np.array(rel_idx)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -1577,7 +2705,6 @@ hljs.highlightAll();
 <span>(</span><span>field, strength, mass_proportional)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1626,30 +2753,77 @@ hljs.highlightAll();
     def add(self, ps):
         self.add_func(ps)</code></pre>
 </details>
+<div class="desc"></div>
 <h3>Methods</h3>
 <dl>
 <dt id="sverchok.utils.pulga_physics_modular_core.SvFieldForce.add"><code class="name flex">
 <span>def <span class="ident">add</span></span>(<span>self, ps)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add(self, ps):
+    self.add_func(ps)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.pulga_physics_modular_core.SvFieldForce.apply_dependant"><code class="name flex">
 <span>def <span class="ident">apply_dependant</span></span>(<span>self, ps)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def apply_dependant(self, ps):
+    &#39;&#39;&#39;apply constant forces&#39;&#39;&#39;
+    if not np.any(self.strength != 0):
+        return
+    xs = ps.verts[:, 0]
+    ys = ps.verts[:, 1]
+    zs = ps.verts[:, 2]
+    rx, ry, rz = self.field.evaluate_grid(xs, ys, zs)
+    ps.force_resultant[:, 0] += rx * self.strength
+    ps.force_resultant[:, 1] += ry * self.strength
+    ps.force_resultant[:, 2] += rz * self.strength</code></pre>
+</details>
 <div class="desc"><p>apply constant forces</p></div>
 </dd>
 <dt id="sverchok.utils.pulga_physics_modular_core.SvFieldForce.apply_mass_proportional"><code class="name flex">
 <span>def <span class="ident">apply_mass_proportional</span></span>(<span>self, ps)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def apply_mass_proportional(self, ps):
+    &#39;&#39;&#39;apply constant forces&#39;&#39;&#39;
+    if not np.any(self.strength != 0):
+        return
+    xs = ps.verts[:, 0]
+    ys = ps.verts[:, 1]
+    zs = ps.verts[:, 2]
+    rx, ry, rz = self.field.evaluate_grid(xs, ys, zs)
+    ps.force_resultant[:, 0] += rx * ps.mass * self.strength
+    ps.force_resultant[:, 1] += ry * ps.mass * self.strength
+    ps.force_resultant[:, 2] += rz * ps.mass * self.strength</code></pre>
+</details>
 <div class="desc"><p>apply constant forces</p></div>
 </dd>
 <dt id="sverchok.utils.pulga_physics_modular_core.SvFieldForce.setup"><code class="name flex">
 <span>def <span class="ident">setup</span></span>(<span>self, ps)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setup(self, ps):
+    pass</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -1659,7 +2833,6 @@ hljs.highlightAll();
 <span>(</span><span>magnitude, min_radius, max_radius, mode, use_kdtree=False)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1735,24 +2908,85 @@ hljs.highlightAll();
 
             ps.rads = np.clip(ps.rads, self.min_radius, self.max_radius)</code></pre>
 </details>
+<div class="desc"></div>
 <h3>Methods</h3>
 <dl>
 <dt id="sverchok.utils.pulga_physics_modular_core.SvFitForce.add_brute_force"><code class="name flex">
 <span>def <span class="ident">add_brute_force</span></span>(<span>self, ps)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_brute_force(self, ps):
+    rel = ps.relations
+    touch = np.unique(rel.index_inter)
+    free = np.setdiff1d(self.all_range, touch)
+    u_grow = self.uniform_magnitude
+    grow_un, grow_tou = [self.f_magnitude, self.f_magnitude] if u_grow else [self.f_magnitude[free], self.f_magnitude[touch]]
+    if self.absolute:
+        ps.rads[free] += grow_un
+        ps.rads[touch] -= grow_tou
+    else:
+        ps.rads[free] += grow_un * ps.rads[free]
+        ps.rads[touch] -= grow_tou * ps.rads[touch]
+    ps.rads = np.clip(ps.rads, self.min_radius, self.max_radius)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.pulga_physics_modular_core.SvFitForce.add_kdt"><code class="name flex">
 <span>def <span class="ident">add_kdt</span></span>(<span>self, ps)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_kdt(self, ps):
+    relations = ps.relations
+    if len(relations.kd_indexes) &gt; 0:
+        touch = np.unique(relations.kd_indexes[ps.relations.kd_mask])
+        free = np.setdiff1d(self.all_range, touch)
+        u_grow = self.uniform_magnitude
+        grow_un, grow_tou = [self.f_magnitude, self.f_magnitude] if u_grow else [self.f_magnitude[free], self.f_magnitude[touch]]
+        if self.absolute:
+            ps.rads[free] += grow_un
+            ps.rads[touch] -= grow_tou
+        else:
+            ps.rads[free] += grow_un * ps.rads[free]
+            ps.rads[touch] -= grow_tou * ps.rads[touch]
+        ps.rads = np.clip(ps.rads, self.min_radius, self.max_radius)
+    else:
+        if self.absolute:
+            ps.rads += self.f_magnitude
+
+        else:
+            ps.rads += self.f_magnitude * ps.rads
+
+        ps.rads = np.clip(ps.rads, self.min_radius, self.max_radius)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.pulga_physics_modular_core.SvFitForce.setup"><code class="name flex">
 <span>def <span class="ident">setup</span></span>(<span>self, ps)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setup(self, ps):
+    ps.aware = True
+    self.all_range = np.arange(ps.v_len, dtype=np.int16)
+
+    for need in self.needs:
+        ps.relations.needed[need] = True
+    if self.uniform_magnitude:
+        self.f_magnitude = self.magnitude
+    else:
+        self.f_magnitude = numpy_fit_long_repeat([self.magnitude], ps.v_len)[0]</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -1762,7 +2996,6 @@ hljs.highlightAll();
 <span>(</span><span>pols, inflate)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1816,18 +3049,52 @@ hljs.highlightAll();
                 mask = pols_sides &gt; i
                 np.add.at(ps.force_resultant, np_pols[mask, i], pols_normal[mask] * p_area[mask])</code></pre>
 </details>
+<div class="desc"></div>
 <h3>Methods</h3>
 <dl>
 <dt id="sverchok.utils.pulga_physics_modular_core.SvInflateForce.add"><code class="name flex">
 <span>def <span class="ident">add</span></span>(<span>self, ps)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add(self, ps):
+
+    np_pols = self.pols
+    pol_side_max = self.pols_side_max
+    pols_sides = self.pols_sides
+    inflate = self.inflate
+    p_regular = self.p_regular
+
+    pol_v = ps.verts[np_pols, :]
+    pols_normal = pols_normals(pol_v, inflate)
+
+    if p_regular:
+        p_area = calc_area(pol_side_max, pol_v, pols_normal)[:, np.newaxis]
+        for i in range(pol_side_max):
+            np.add.at(ps.force_resultant, np_pols[:, i], pols_normal * p_area)
+
+    else:
+        p_area = calc_area_var_sides(pol_side_max, pols_sides, pol_v, pols_normal)[:, np.newaxis]
+        for i in range(pol_side_max):
+            mask = pols_sides &gt; i
+            np.add.at(ps.force_resultant, np_pols[mask, i], pols_normal[mask] * p_area[mask])</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.pulga_physics_modular_core.SvInflateForce.setup"><code class="name flex">
 <span>def <span class="ident">setup</span></span>(<span>self, ps)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setup(self, ps):
+    pass</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -1837,7 +3104,6 @@ hljs.highlightAll();
 <span>(</span><span>verts, pols, absorption)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1881,24 +3147,68 @@ hljs.highlightAll();
         ps.vel[mask] = reflect(ps.vel[mask], self.normals[mask]) * self.absorption
         ps.force_resultant[mask] = reflect(ps.force_resultant[mask], self.normals[mask]) * self.absorption</code></pre>
 </details>
+<div class="desc"></div>
 <h3>Methods</h3>
 <dl>
 <dt id="sverchok.utils.pulga_physics_modular_core.SvObstaclesBVHForce.add"><code class="name flex">
 <span>def <span class="ident">add</span></span>(<span>self, ps)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add(self, ps):
+
+    self.find_nearest(ps.verts)
+    mask = self.distance &lt; ps.rads
+    outer_mask = np_dot(self.nearest[mask] - ps.verts[mask], self.normals[mask]) &gt;= 0
+    sign = np.ones(outer_mask.shape, dtype=np.int32)
+    sign[outer_mask] = -1
+    ps.verts[mask] = self.nearest[mask] + self.normals[mask] * ps.rads[mask, np.newaxis] * sign[:, np.newaxis]
+    ps.vel[mask] = reflect(ps.vel[mask], self.normals[mask]) * self.absorption
+    ps.force_resultant[mask] = reflect(ps.force_resultant[mask], self.normals[mask]) * self.absorption</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.pulga_physics_modular_core.SvObstaclesBVHForce.find_nearest"><code class="name flex">
 <span>def <span class="ident">find_nearest</span></span>(<span>self, verts)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def find_nearest(self, verts):
+    v_nearest = self.nearest
+    v_normals = self.normals
+    v_dist = self.distance
+    for v, near, norm, idx in zip(verts, v_nearest, v_normals, range(len(verts))):
+        nearest, normal, _, distance = self.bvh.find_nearest(v)
+
+        near[0] = nearest[0]
+        near[1] = nearest[1]
+        near[2] = nearest[2]
+        norm[0] = normal[0]
+        norm[1] = normal[1]
+        norm[2] = normal[2]
+        v_dist[idx] = distance</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.pulga_physics_modular_core.SvObstaclesBVHForce.setup"><code class="name flex">
 <span>def <span class="ident">setup</span></span>(<span>self, ps)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setup(self, ps):
+    self.nearest = np.zeros(ps.verts.shape, dtype=np.float64)
+    self.normals = np.zeros(ps.verts.shape, dtype=np.float64)
+    self.distance = np.zeros(len(ps.verts), dtype=np.float64)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -1908,7 +3218,6 @@ hljs.highlightAll();
 <span>(</span><span>indices, pin_type, pins_goal_pos, use_pins_goal)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1948,18 +3257,52 @@ hljs.highlightAll();
 
         ps.params[&#39;unpinned&#39;][self.pins] = False</code></pre>
 </details>
+<div class="desc"></div>
 <h3>Methods</h3>
 <dl>
 <dt id="sverchok.utils.pulga_physics_modular_core.SvPinForce.add"><code class="name flex">
 <span>def <span class="ident">add</span></span>(<span>self, ps)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add(self, ps):
+    if self.use_pins_goal:
+        ps.verts[self.pins, :] = self.pins_goal_pos
+    ps.params[&#34;Pins Reactions&#34;][self.pins] = -ps.force_resultant[self.pins]
+    for i in range(3):
+        if not i in self.pin_type:
+            ps.params[&#34;Pins Reactions&#34;][:, i] = 0
+    for axis in self.pin_type:
+
+        ps.vel[self.pins, axis] = 0
+        ps.force_resultant[self.pins, axis] = 0
+
+    ps.params[&#39;unpinned&#39;][self.pins] = False</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.pulga_physics_modular_core.SvPinForce.setup"><code class="name flex">
 <span>def <span class="ident">setup</span></span>(<span>self, ps)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setup(self, ps):
+    if self.pins.dtype == np.int32:
+        if len(self.pins) == len(ps.verts):
+            self.pins = self.pins == 1
+            self.unpinned = np.invert(self.pins)
+        else:
+            self.unpinned = np.ones(len(ps.verts), dtype=np.bool_)
+            self.unpinned[self.pins] = False
+    for axis in self.pin_type:
+        ps.vel[self.pins, axis] = 0</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -1969,7 +3312,6 @@ hljs.highlightAll();
 <span>(</span><span>polygons, polygons_k, fixed_angle, use_fix_angle)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -2026,18 +3368,50 @@ hljs.highlightAll();
         np.add.at(ps.force_resultant, self.valid_edges[:, 0], force)
         np.add.at(ps.force_resultant, self.valid_edges[:, 1], force)</code></pre>
 </details>
+<div class="desc"></div>
 <h3>Methods</h3>
 <dl>
 <dt id="sverchok.utils.pulga_physics_modular_core.SvPolygonsAngleForce.add"><code class="name flex">
 <span>def <span class="ident">add</span></span>(<span>self, ps)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add(self, ps):
+    pol_v = ps.verts[self.polygons, :]
+    pols_normal = pols_normals(pol_v, 1)
+    v1 = pols_normal[self.np_adjecent_faces[:, 0]]
+    v2 = pols_normal[self.np_adjecent_faces[:, 1]]
+
+    act_angles = np.arccos(np.clip(np_dot(v1, v2), -1.0, 1.0))
+    average_vector = (v1 + v2)/2
+
+    force = average_vector * ((self.rest_angles - act_angles) * self.spring_k)[:, np.newaxis]
+
+    np.add.at(ps.force_resultant, self.valid_edges[:, 0], force)
+    np.add.at(ps.force_resultant, self.valid_edges[:, 1], force)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.pulga_physics_modular_core.SvPolygonsAngleForce.setup"><code class="name flex">
 <span>def <span class="ident">setup</span></span>(<span>self, ps)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setup(self, ps):
+    if not self.use_fix_angle:
+        pol_v = ps.verts[self.polygons, :]
+        pols_normal = pols_normals(pol_v, 1)
+        dot_p = np_dot(pols_normal[self.np_adjecent_faces[:, 0]], pols_normal[self.np_adjecent_faces[:, 1]])
+        rest_angles = np.arccos(np.clip(dot_p, -1.0, 1.0))
+
+        self.rest_angles = rest_angles</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -2047,7 +3421,6 @@ hljs.highlightAll();
 <span>(</span><span>random_force, random_variation, random_seed)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -2079,18 +3452,38 @@ hljs.highlightAll();
             self.random_v = self.random_v * (1 - self.random_variation) + random_var * self.random_variation
         ps.force_resultant += self.random_v</code></pre>
 </details>
+<div class="desc"></div>
 <h3>Methods</h3>
 <dl>
 <dt id="sverchok.utils.pulga_physics_modular_core.SvRandomForce.add"><code class="name flex">
 <span>def <span class="ident">add</span></span>(<span>self, ps)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add(self, ps):
+
+    if self.random_variate:
+        random_var = 2 * self.random_force * np.random.random((ps.v_len, 3)) - self.random_force
+        self.random_v = self.random_v * (1 - self.random_variation) + random_var * self.random_variation
+    ps.force_resultant += self.random_v</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.pulga_physics_modular_core.SvRandomForce.setup"><code class="name flex">
 <span>def <span class="ident">setup</span></span>(<span>self, ps)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setup(self, ps):
+    np.random.seed(int(self.seed))
+    self.random_v = self.random_force * np.random.random((ps.v_len, 3)) - self.random_force / 2</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -2100,7 +3493,6 @@ hljs.highlightAll();
 <span>(</span><span>springs, spring_k, fixed_len, clamp, use_fix_len)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -2143,18 +3535,55 @@ hljs.highlightAll();
         np.subtract.at(ps.force_resultant, id0, force)
         np.add.at(ps.force_resultant, id1, force)</code></pre>
 </details>
+<div class="desc"></div>
 <h3>Methods</h3>
 <dl>
 <dt id="sverchok.utils.pulga_physics_modular_core.SvSpringsForce.add"><code class="name flex">
 <span>def <span class="ident">add</span></span>(<span>self, ps)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add(self, ps):
+
+    id0 = self.springs[:, 0]
+    id1 = self.springs[:, 1]
+
+    dif_v = ps.verts[id0, :] - ps.verts[id1, :]
+    dist = np.linalg.norm(dif_v, axis=1)
+
+    if self.use_clamp:
+        dif_l = np.clip(dist - self.dist_rest, -self.clamp_distance, self.clamp_distance)
+    else:
+        dif_l = dist - self.dist_rest
+    dist[dist == 0] = 1
+
+    dif_v /= dist[:, np.newaxis]
+    force = dif_v * (dif_l * self.spring_k)[:, np.newaxis]
+
+    np.subtract.at(ps.force_resultant, id0, force)
+    np.add.at(ps.force_resultant, id1, force)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.pulga_physics_modular_core.SvSpringsForce.setup"><code class="name flex">
 <span>def <span class="ident">setup</span></span>(<span>self, ps)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setup(self, ps):
+    if self.use_fix_len or self.fixed_len[0] &gt; 0:
+        self.dist_rest = self.fixed_len
+        self.clamp_distance = self.dist_rest * self.clamp
+    else:
+        self.dist_rest = calc_rest_length(ps.verts, self.springs)
+        self.clamp_distance = self.dist_rest * self.clamp</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -2164,7 +3593,6 @@ hljs.highlightAll();
 <span>(</span><span>force, start, end)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -2191,28 +3619,45 @@ hljs.highlightAll();
 
             self.force.add(ps)</code></pre>
 </details>
+<div class="desc"></div>
 <h3>Methods</h3>
 <dl>
 <dt id="sverchok.utils.pulga_physics_modular_core.SvTimedForce.add"><code class="name flex">
 <span>def <span class="ident">add</span></span>(<span>self, ps)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add(self, ps):
+    iteration = ps.iteration
+    if self.end &gt; iteration &gt;= self.start:
+
+        self.force.add(ps)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.pulga_physics_modular_core.SvTimedForce.setup"><code class="name flex">
 <span>def <span class="ident">setup</span></span>(<span>self, ps)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setup(self, ps):
+    self.force.setup(ps)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
 </dd>
 <dt id="sverchok.utils.pulga_physics_modular_core.SvVortexForce"><code class="flex name class">
 <span>class <span class="ident">SvVortexForce</span></span>
-<span>(</span><span>location, direction, rot_strength, inflow_strength, forward_strength, clamp, decay_power)</span>
+<span>(</span><span>location,<br>direction,<br>rot_strength,<br>inflow_strength,<br>forward_strength,<br>clamp,<br>decay_power)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -2285,18 +3730,67 @@ hljs.highlightAll();
         r_attract = np.sum(v_attract, axis=0)
         ps.force_resultant += r_attract</code></pre>
 </details>
+<div class="desc"></div>
 <h3>Methods</h3>
 <dl>
 <dt id="sverchok.utils.pulga_physics_modular_core.SvVortexForce.add"><code class="name flex">
 <span>def <span class="ident">add</span></span>(<span>self, ps)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add(self, ps):
+
+    if not self.use_vortex:
+        return
+
+    v_attract = ps.verts[np.newaxis, :, :] - self.points[:, np.newaxis, :]
+    vect_proy = np_dot(v_attract, self.direction[:, np.newaxis, :],axis=2)
+
+    closest_point = self.points[:, np.newaxis, :] +vect_proy[:, :, np.newaxis] * self.direction[:, np.newaxis, :]
+
+    dif_v = closest_point -  ps.verts[np.newaxis, :, :]
+    dist_attract = np.linalg.norm(dif_v, axis=2)
+    mask_true = dist_attract &lt; self.clamp[:, np.newaxis]
+
+    dist_attract2 = np.power(dist_attract, self.decay[:, np.newaxis])
+    dist_attract_cor = np.clip(dist_attract2, 1e-2, 1e4)
+
+
+    v_attract_normal = dif_v/ dist_attract_cor[:, :,np.newaxis]
+    v_attract[:] = 0
+
+    if self.use_rotation:
+        v_rotation = np.cross(v_attract_normal, self.direction[:, np.newaxis, :]) * self.rot_strength[:, np.newaxis, np.newaxis]
+        v_attract[mask_true] += v_rotation[mask_true]
+
+    if self.use_forward:
+        v_forward = self.direction[:, np.newaxis, :] *  self.forward_strength[:, np.newaxis, np.newaxis] / dist_attract_cor[:, :,np.newaxis]
+        v_attract[mask_true] += v_forward[mask_true]
+
+    if self.use_inflow:
+        v_attract_normal *= self.inflow_strength[:, np.newaxis, np.newaxis]
+        v_attract[mask_true] += v_attract_normal[mask_true]
+
+
+    r_attract = np.sum(v_attract, axis=0)
+    ps.force_resultant += r_attract</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.pulga_physics_modular_core.SvVortexForce.setup"><code class="name flex">
 <span>def <span class="ident">setup</span></span>(<span>self, ps)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setup(self, ps):
+    pass</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -2306,7 +3800,6 @@ hljs.highlightAll();
 <span>(</span><span>force, strength, mass_proportional)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -2346,24 +3839,63 @@ hljs.highlightAll();
 
         ps.force_resultant += self.force_final</code></pre>
 </details>
+<div class="desc"></div>
 <h3>Methods</h3>
 <dl>
 <dt id="sverchok.utils.pulga_physics_modular_core.SvWorldForce.apply_dependant"><code class="name flex">
 <span>def <span class="ident">apply_dependant</span></span>(<span>self, ps)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def apply_dependant(self, ps):
+    &#39;&#39;&#39;apply constant forces&#39;&#39;&#39;
+
+    ps.force_resultant += self.force_final</code></pre>
+</details>
 <div class="desc"><p>apply constant forces</p></div>
 </dd>
 <dt id="sverchok.utils.pulga_physics_modular_core.SvWorldForce.apply_mass_proportional"><code class="name flex">
 <span>def <span class="ident">apply_mass_proportional</span></span>(<span>self, ps)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def apply_mass_proportional(self, ps):
+    &#39;&#39;&#39;apply constant forces&#39;&#39;&#39;
+
+    ps.force_resultant += self.force_final * ps.mass[:, np.newaxis]</code></pre>
+</details>
 <div class="desc"><p>apply constant forces</p></div>
 </dd>
 <dt id="sverchok.utils.pulga_physics_modular_core.SvWorldForce.setup"><code class="name flex">
 <span>def <span class="ident">setup</span></span>(<span>self, ps)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setup(self, ps):
+    size_change = ps.size_change
+    if len(self.force) &gt; 1:
+        self.force2 = numpy_fit_long_repeat([self.force], ps.v_len)[0]
+    if size_change and self.mass_proportional:
+        self.func = self.apply_mass_proportional
+
+    elif self.mass_proportional:
+
+        self.force_final = self.force * ps.mass[:, np.newaxis]
+        self.add = self.apply_dependant
+    else:
+
+        self.force_final = self.force
+        self.add = self.apply_dependant</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -2624,7 +4156,7 @@ hljs.highlightAll();
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.1</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.5</a>.</p>
 </footer>
 </body>
 </html>

@@ -3,19 +3,30 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
-<meta name="generator" content="pdoc3 0.11.1">
+<meta name="generator" content="pdoc3 0.11.5">
 <title>sverchok.utils.tree_structure API documentation</title>
 <meta name="description" content="">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
-<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
 <style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
 <style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
 <script>window.addEventListener('DOMContentLoaded', () => {
 hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
 hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
 })</script>
 </head>
 <body>
@@ -37,10 +48,9 @@ hljs.highlightAll();
 <dl>
 <dt id="sverchok.utils.tree_structure.Link"><code class="flex name class">
 <span>class <span class="ident">Link</span></span>
-<span>(</span><span>from_socket: <a title="sverchok.utils.tree_structure.Socket" href="#sverchok.utils.tree_structure.Socket">Socket</a>, to_socket: <a title="sverchok.utils.tree_structure.Socket" href="#sverchok.utils.tree_structure.Socket">Socket</a>, index: int)</span>
+<span>(</span><span>from_socket: <a title="sverchok.utils.tree_structure.Socket" href="#sverchok.utils.tree_structure.Socket">Socket</a>,<br>to_socket: <a title="sverchok.utils.tree_structure.Socket" href="#sverchok.utils.tree_structure.Socket">Socket</a>,<br>index: int)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -71,11 +81,11 @@ hljs.highlightAll();
         return f&#39;FROM &#34;{self.from_node.name}.{self.from_socket.identifier}&#34; &#39; \
                f&#39;TO &#34;{self.to_node.name}.{self.to_socket.identifier}&#34;&#39;</code></pre>
 </details>
+<div class="desc"></div>
 <h3>Instance variables</h3>
 <dl>
 <dt id="sverchok.utils.tree_structure.Link.from_node"><code class="name">prop <span class="ident">from_node</span> : <a title="sverchok.utils.tree_structure.Node" href="#sverchok.utils.tree_structure.Node">Node</a></code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -84,10 +94,10 @@ hljs.highlightAll();
 def from_node(self) -&gt; Node:
     return self.from_socket.node</code></pre>
 </details>
+<div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.tree_structure.Link.index"><code class="name">prop <span class="ident">index</span></code></dt>
 <dd>
-<div class="desc"><p>Index of the link location in Blender collection from which it was copied</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -97,10 +107,10 @@ def index(self):
     &#34;&#34;&#34;Index of the link location in Blender collection from which it was copied&#34;&#34;&#34;
     return self._index</code></pre>
 </details>
+<div class="desc"><p>Index of the link location in Blender collection from which it was copied</p></div>
 </dd>
 <dt id="sverchok.utils.tree_structure.Link.to_node"><code class="name">prop <span class="ident">to_node</span> : <a title="sverchok.utils.tree_structure.Node" href="#sverchok.utils.tree_structure.Node">Node</a></code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -109,19 +119,15 @@ def index(self):
 def to_node(self) -&gt; Node:
     return self.to_socket.node</code></pre>
 </details>
+<div class="desc"></div>
 </dd>
 </dl>
 </dd>
 <dt id="sverchok.utils.tree_structure.LinksCollection"><code class="flex name class">
 <span>class <span class="ident">LinksCollection</span></span>
-<span>(</span><span>bl_tree: SvGroupTree, tree: <a title="sverchok.utils.tree_structure.Tree" href="#sverchok.utils.tree_structure.Tree">Tree</a>)</span>
+<span>(</span><span>bl_tree: SvGroupTree,<br>tree: <a title="sverchok.utils.tree_structure.Tree" href="#sverchok.utils.tree_structure.Tree">Tree</a>)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>The idea of this collection is to have access to its elements by their identifier
-and meantime to have access to their indexes of true blender collections
-so to get fast mapping between python and blender collections
-downside is that this collection is immutable
-because it impossible to predict order of Blender collection after changing of their content</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -146,6 +152,11 @@ because it impossible to predict order of Blender collection after changing of t
 
     def __iter__(self) -&gt; Iterable[Link]: return super().__iter__()</code></pre>
 </details>
+<div class="desc"><p>The idea of this collection is to have access to its elements by their identifier
+and meantime to have access to their indexes of true blender collections
+so to get fast mapping between python and blender collections
+downside is that this collection is immutable
+because it impossible to predict order of Blender collection after changing of their content</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="sverchok.utils.tree_structure.TreeCollections" href="#sverchok.utils.tree_structure.TreeCollections">TreeCollections</a></li>
@@ -159,11 +170,9 @@ because it impossible to predict order of Blender collection after changing of t
 </dd>
 <dt id="sverchok.utils.tree_structure.Node"><code class="flex name class">
 <span>class <span class="ident">Node</span></span>
-<span>(</span><span>name: str, index: int, tree: <a title="sverchok.utils.tree_structure.Tree" href="#sverchok.utils.tree_structure.Tree">Tree</a>, bl_node)</span>
+<span>(</span><span>name: str,<br>index: int,<br>tree: <a title="sverchok.utils.tree_structure.Tree" href="#sverchok.utils.tree_structure.Tree">Tree</a>,<br>bl_node)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Helper class that provides a standard way to create an ABC using
-inheritance.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -246,6 +255,8 @@ inheritance.</p></div>
     def __repr__(self):
         return f&#39;Node:&#34;{self.name}&#34;&#39;</code></pre>
 </details>
+<div class="desc"><p>Helper class that provides a standard way to create an ABC using
+inheritance.</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="sverchok.utils.tree_walk.Node" href="tree_walk.html#sverchok.utils.tree_walk.Node">Node</a></li>
@@ -254,7 +265,7 @@ inheritance.</p></div>
 <h3>Static methods</h3>
 <dl>
 <dt id="sverchok.utils.tree_structure.Node.from_bl_node"><code class="name flex">
-<span>def <span class="ident">from_bl_node</span></span>(<span>bl_node: bpy.types.Node, index: int, tree: <a title="sverchok.utils.tree_structure.Tree" href="#sverchok.utils.tree_structure.Tree">Tree</a>) ‑> <a title="sverchok.utils.tree_structure.Node" href="#sverchok.utils.tree_structure.Node">Node</a></span>
+<span>def <span class="ident">from_bl_node</span></span>(<span>bl_node: bpy.types.Node,<br>index: int,<br>tree: <a title="sverchok.utils.tree_structure.Tree" href="#sverchok.utils.tree_structure.Tree">Tree</a>) ‑> <a title="sverchok.utils.tree_structure.Node" href="#sverchok.utils.tree_structure.Node">Node</a></span>
 </code></dt>
 <dd>
 <div class="desc"><p>Generate node and its sockets from Blender node instance</p></div>
@@ -264,7 +275,6 @@ inheritance.</p></div>
 <dl>
 <dt id="sverchok.utils.tree_structure.Node.index"><code class="name">prop <span class="ident">index</span></code></dt>
 <dd>
-<div class="desc"><p>Index of node location in Blender collection from which it was copied</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -274,10 +284,10 @@ def index(self):
     &#34;&#34;&#34;Index of node location in Blender collection from which it was copied&#34;&#34;&#34;
     return self._index</code></pre>
 </details>
+<div class="desc"><p>Index of node location in Blender collection from which it was copied</p></div>
 </dd>
 <dt id="sverchok.utils.tree_structure.Node.inputs"><code class="name">prop <span class="ident">inputs</span> : List[<a title="sverchok.utils.tree_structure.Socket" href="#sverchok.utils.tree_structure.Socket">Socket</a>]</code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -286,10 +296,10 @@ def index(self):
 def inputs(self) -&gt; List[Socket]:
     return self._inputs</code></pre>
 </details>
+<div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.tree_structure.Node.last_nodes"><code class="name">prop <span class="ident">last_nodes</span> : Iterable[<a title="sverchok.utils.tree_structure.Node" href="#sverchok.utils.tree_structure.Node">Node</a>]</code></dt>
 <dd>
-<div class="desc"><p>Returns all nodes which are linked wia the node input sockets</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -299,10 +309,10 @@ def last_nodes(self) -&gt; Iterable[Node]:
     &#34;&#34;&#34;Returns all nodes which are linked wia the node input sockets&#34;&#34;&#34;
     return {other_s.node for s in self.inputs for other_s in s.linked_sockets}</code></pre>
 </details>
+<div class="desc"><p>Returns all nodes which are linked wia the node input sockets</p></div>
 </dd>
 <dt id="sverchok.utils.tree_structure.Node.next_nodes"><code class="name">prop <span class="ident">next_nodes</span> : Iterable[<a title="sverchok.utils.tree_structure.Node" href="#sverchok.utils.tree_structure.Node">Node</a>]</code></dt>
 <dd>
-<div class="desc"><p>Returns all nodes which are linked wia the node output sockets</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -312,10 +322,10 @@ def next_nodes(self) -&gt; Iterable[Node]:
     &#34;&#34;&#34;Returns all nodes which are linked wia the node output sockets&#34;&#34;&#34;
     return {other_s.node for s in self.outputs for other_s in s.linked_sockets}</code></pre>
 </details>
+<div class="desc"><p>Returns all nodes which are linked wia the node output sockets</p></div>
 </dd>
 <dt id="sverchok.utils.tree_structure.Node.outputs"><code class="name">prop <span class="ident">outputs</span> : List[<a title="sverchok.utils.tree_structure.Socket" href="#sverchok.utils.tree_structure.Socket">Socket</a>]</code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -324,27 +334,61 @@ def next_nodes(self) -&gt; Iterable[Node]:
 def outputs(self) -&gt; List[Socket]:
     return self._outputs</code></pre>
 </details>
+<div class="desc"></div>
 </dd>
 </dl>
 <h3>Methods</h3>
 <dl>
 <dt id="sverchok.utils.tree_structure.Node.get_bl_node"><code class="name flex">
-<span>def <span class="ident">get_bl_node</span></span>(<span>self, tree: SvGroupTree)</span>
+<span>def <span class="ident">get_bl_node</span></span>(<span>self, tree: SvGroupTree) ‑> bpy.types.Node</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_bl_node(self, tree: SvGroupTree) -&gt; bpy.types.Node:
+    &#34;&#34;&#34;
+    Will return the node from given tree with the same name
+    It is slower then `bl_tween` attribute but can return node from another given tree
+    &#34;&#34;&#34;
+    return tree.nodes[self.name]</code></pre>
+</details>
 <div class="desc"><p>Will return the node from given tree with the same name
 It is slower then <code>bl_tween</code> attribute but can return node from another given tree</p></div>
 </dd>
 <dt id="sverchok.utils.tree_structure.Node.get_input_socket"><code class="name flex">
-<span>def <span class="ident">get_input_socket</span></span>(<span>self, identifier: str, default=None) ‑> Optional[<a title="sverchok.utils.tree_structure.Socket" href="#sverchok.utils.tree_structure.Socket">Socket</a>]</span>
+<span>def <span class="ident">get_input_socket</span></span>(<span>self, identifier: str, default=None) ‑> <a title="sverchok.utils.tree_structure.Socket" href="#sverchok.utils.tree_structure.Socket">Socket</a> | None</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_input_socket(self, identifier: str, default=None) -&gt; Optional[Socket]:
+    &#34;&#34;&#34;Search input socket by its identifier&#34;&#34;&#34;
+    for socket in self._inputs:
+        if socket.identifier == identifier:
+            return socket
+    return default</code></pre>
+</details>
 <div class="desc"><p>Search input socket by its identifier</p></div>
 </dd>
 <dt id="sverchok.utils.tree_structure.Node.get_output_socket"><code class="name flex">
-<span>def <span class="ident">get_output_socket</span></span>(<span>self, identifier: str, default=None) ‑> Optional[<a title="sverchok.utils.tree_structure.Socket" href="#sverchok.utils.tree_structure.Socket">Socket</a>]</span>
+<span>def <span class="ident">get_output_socket</span></span>(<span>self, identifier: str, default=None) ‑> <a title="sverchok.utils.tree_structure.Socket" href="#sverchok.utils.tree_structure.Socket">Socket</a> | None</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_output_socket(self, identifier: str, default=None) -&gt; Optional[Socket]:
+    &#34;&#34;&#34;Search output socket by its identifier&#34;&#34;&#34;
+    for socket in self._outputs:
+        if socket.identifier == identifier:
+            return socket
+    return default</code></pre>
+</details>
 <div class="desc"><p>Search output socket by its identifier</p></div>
 </dd>
 </dl>
@@ -360,14 +404,9 @@ It is slower then <code>bl_tween</code> attribute but can return node from anoth
 </dd>
 <dt id="sverchok.utils.tree_structure.NodesCollection"><code class="flex name class">
 <span>class <span class="ident">NodesCollection</span></span>
-<span>(</span><span>bl_tree: SvGroupTree, tree: <a title="sverchok.utils.tree_structure.Tree" href="#sverchok.utils.tree_structure.Tree">Tree</a>)</span>
+<span>(</span><span>bl_tree: SvGroupTree,<br>tree: <a title="sverchok.utils.tree_structure.Tree" href="#sverchok.utils.tree_structure.Tree">Tree</a>)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>The idea of this collection is to have access to its elements by their identifier
-and meantime to have access to their indexes of true blender collections
-so to get fast mapping between python and blender collections
-downside is that this collection is immutable
-because it impossible to predict order of Blender collection after changing of their content</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -395,6 +434,11 @@ because it impossible to predict order of Blender collection after changing of t
     def active_output(self) -&gt; Optional[Node]:
         return self._active_output</code></pre>
 </details>
+<div class="desc"><p>The idea of this collection is to have access to its elements by their identifier
+and meantime to have access to their indexes of true blender collections
+so to get fast mapping between python and blender collections
+downside is that this collection is immutable
+because it impossible to predict order of Blender collection after changing of their content</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="sverchok.utils.tree_structure.TreeCollections" href="#sverchok.utils.tree_structure.TreeCollections">TreeCollections</a></li>
@@ -409,7 +453,6 @@ because it impossible to predict order of Blender collection after changing of t
 <dl>
 <dt id="sverchok.utils.tree_structure.NodesCollection.active_input"><code class="name">prop <span class="ident">active_input</span> : Optional[<a title="sverchok.utils.tree_structure.Node" href="#sverchok.utils.tree_structure.Node">Node</a>]</code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -418,10 +461,10 @@ because it impossible to predict order of Blender collection after changing of t
 def active_input(self) -&gt; Optional[Node]:
     return self._active_input</code></pre>
 </details>
+<div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.tree_structure.NodesCollection.active_output"><code class="name">prop <span class="ident">active_output</span> : Optional[<a title="sverchok.utils.tree_structure.Node" href="#sverchok.utils.tree_structure.Node">Node</a>]</code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -430,15 +473,15 @@ def active_input(self) -&gt; Optional[Node]:
 def active_output(self) -&gt; Optional[Node]:
     return self._active_output</code></pre>
 </details>
+<div class="desc"></div>
 </dd>
 </dl>
 </dd>
 <dt id="sverchok.utils.tree_structure.Socket"><code class="flex name class">
 <span>class <span class="ident">Socket</span></span>
-<span>(</span><span>node: <a title="sverchok.utils.tree_structure.Node" href="#sverchok.utils.tree_structure.Node">Node</a>, is_output: bool, identifier: str)</span>
+<span>(</span><span>node: <a title="sverchok.utils.tree_structure.Node" href="#sverchok.utils.tree_structure.Node">Node</a>,<br>is_output: bool,<br>identifier: str)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -490,10 +533,11 @@ def active_output(self) -&gt; Optional[Node]:
     def __repr__(self):
         return f&#39;Socket &#34;{self.identifier}&#34;&#39;</code></pre>
 </details>
+<div class="desc"></div>
 <h3>Static methods</h3>
 <dl>
 <dt id="sverchok.utils.tree_structure.Socket.from_bl_socket"><code class="name flex">
-<span>def <span class="ident">from_bl_socket</span></span>(<span>node: <a title="sverchok.utils.tree_structure.Node" href="#sverchok.utils.tree_structure.Node">Node</a>, bl_socket: bpy.types.NodeSocket) ‑> <a title="sverchok.utils.tree_structure.Socket" href="#sverchok.utils.tree_structure.Socket">Socket</a></span>
+<span>def <span class="ident">from_bl_socket</span></span>(<span>node: <a title="sverchok.utils.tree_structure.Node" href="#sverchok.utils.tree_structure.Node">Node</a>,<br>bl_socket: bpy.types.NodeSocket) ‑> <a title="sverchok.utils.tree_structure.Socket" href="#sverchok.utils.tree_structure.Socket">Socket</a></span>
 </code></dt>
 <dd>
 <div class="desc"><p>Generate socket from Blender socket instance</p></div>
@@ -503,7 +547,6 @@ def active_output(self) -&gt; Optional[Node]:
 <dl>
 <dt id="sverchok.utils.tree_structure.Socket.bl_tween"><code class="name">prop <span class="ident">bl_tween</span> : bpy.types.NodeSocket</code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -512,10 +555,10 @@ def active_output(self) -&gt; Optional[Node]:
 def bl_tween(self) -&gt; bpy.types.NodeSocket:
     return getattr(self._node.bl_tween, &#39;outputs&#39; if self.is_output else &#39;inputs&#39;)[self.index]</code></pre>
 </details>
+<div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.tree_structure.Socket.index"><code class="name">prop <span class="ident">index</span> : int</code></dt>
 <dd>
-<div class="desc"><p>Index of the node in inputs or outputs collection</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -525,10 +568,10 @@ def index(self) -&gt; int:
     &#34;&#34;&#34;Index of the node in inputs or outputs collection&#34;&#34;&#34;
     return getattr(self.node, &#39;outputs&#39; if self.is_output else &#39;inputs&#39;).index(self)</code></pre>
 </details>
+<div class="desc"><p>Index of the node in inputs or outputs collection</p></div>
 </dd>
 <dt id="sverchok.utils.tree_structure.Socket.linked_sockets"><code class="name">prop <span class="ident">linked_sockets</span> : List[<a title="sverchok.utils.tree_structure.Socket" href="#sverchok.utils.tree_structure.Socket">Socket</a>]</code></dt>
 <dd>
-<div class="desc"><p>All sockets which share the same links</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -538,10 +581,10 @@ def linked_sockets(self) -&gt; List[Socket]:
     &#34;&#34;&#34;All sockets which share the same links&#34;&#34;&#34;
     return [link.to_socket if self.is_output else link.from_socket for link in self.links]</code></pre>
 </details>
+<div class="desc"><p>All sockets which share the same links</p></div>
 </dd>
 <dt id="sverchok.utils.tree_structure.Socket.links"><code class="name">prop <span class="ident">links</span> : List[<a title="sverchok.utils.tree_structure.Link" href="#sverchok.utils.tree_structure.Link">Link</a>]</code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -550,10 +593,10 @@ def linked_sockets(self) -&gt; List[Socket]:
 def links(self) -&gt; List[Link]:
     return self._links</code></pre>
 </details>
+<div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.tree_structure.Socket.node"><code class="name">prop <span class="ident">node</span> : <a title="sverchok.utils.tree_structure.Node" href="#sverchok.utils.tree_structure.Node">Node</a></code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -562,14 +605,29 @@ def links(self) -&gt; List[Link]:
 def node(self) -&gt; Node:
     return self._node</code></pre>
 </details>
+<div class="desc"></div>
 </dd>
 </dl>
 <h3>Methods</h3>
 <dl>
 <dt id="sverchok.utils.tree_structure.Socket.get_bl_socket"><code class="name flex">
-<span>def <span class="ident">get_bl_socket</span></span>(<span>self, bl_tree: SvGroupTree)</span>
+<span>def <span class="ident">get_bl_socket</span></span>(<span>self, bl_tree: SvGroupTree) ‑> bpy.types.NodeSocket</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_bl_socket(self, bl_tree: SvGroupTree) -&gt; bpy.types.NodeSocket:
+    &#34;&#34;&#34;Search socket in given tree by its identifier&#34;&#34;&#34;
+    bl_node = self.node.get_bl_node(bl_tree)
+    for bl_socket in bl_node.outputs if self.is_output else bl_node.inputs:
+        if bl_socket.identifier == self.identifier:
+            return bl_socket
+    raise LookupError(f&#39;Socket &#34;{self.identifier}&#34; was not found in Node &#34;{bl_node.name}&#34;&#39;
+                      f&#39;in {&#34;outputs&#34; if self.is_output else &#34;inputs&#34;} sockets:&#39;
+                      f&#39;&#34;{[s.identefier for s in (bl_node.outputs if self.is_output else bl_node.inputs)]}&#34;&#39;)</code></pre>
+</details>
 <div class="desc"><p>Search socket in given tree by its identifier</p></div>
 </dd>
 </dl>
@@ -579,9 +637,6 @@ def node(self) -&gt; Node:
 <span>(</span><span>bl_tree: SvGroupTree)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Structure similar to blender node groups but is more efficient in searching neighbours
-Each time when nodes or links collections are changed the instance of the tree should be recreated
-so it is immutable (topologically) data structure</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -650,6 +705,9 @@ so it is immutable (topologically) data structure</p></div>
                         (from_node.name, from_socket.identifier,
                          to_node.name, to_socket.identifier)] = Link(from_socket, to_socket, len(self.links))</code></pre>
 </details>
+<div class="desc"><p>Structure similar to blender node groups but is more efficient in searching neighbours
+Each time when nodes or links collections are changed the instance of the tree should be recreated
+so it is immutable (topologically) data structure</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="sverchok.utils.tree_walk.Tree" href="tree_walk.html#sverchok.utils.tree_walk.Tree">Tree</a></li>
@@ -660,7 +718,6 @@ so it is immutable (topologically) data structure</p></div>
 <dl>
 <dt id="sverchok.utils.tree_structure.Tree.bl_tween"><code class="name">prop <span class="ident">bl_tween</span> : SvGroupTree</code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -669,10 +726,10 @@ so it is immutable (topologically) data structure</p></div>
 def bl_tween(self) -&gt; SvGroupTree:
     return bpy.data.node_groups[self._index]  # todo should keep real tree object instead</code></pre>
 </details>
+<div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.tree_structure.Tree.id"><code class="name">prop <span class="ident">id</span> : str</code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -681,10 +738,10 @@ def bl_tween(self) -&gt; SvGroupTree:
 def id(self) -&gt; str:
     return self._tree_id</code></pre>
 </details>
+<div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.tree_structure.Tree.links"><code class="name">prop <span class="ident">links</span> : <a title="sverchok.utils.tree_structure.LinksCollection" href="#sverchok.utils.tree_structure.LinksCollection">LinksCollection</a></code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -693,10 +750,10 @@ def id(self) -&gt; str:
 def links(self) -&gt; LinksCollection:
     return self._links</code></pre>
 </details>
+<div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.tree_structure.Tree.nodes"><code class="name">prop <span class="ident">nodes</span> : <a title="sverchok.utils.tree_structure.NodesCollection" href="#sverchok.utils.tree_structure.NodesCollection">NodesCollection</a></code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -705,6 +762,7 @@ def links(self) -&gt; LinksCollection:
 def nodes(self) -&gt; NodesCollection:
     return self._nodes</code></pre>
 </details>
+<div class="desc"></div>
 </dd>
 </dl>
 <h3>Inherited members</h3>
@@ -724,11 +782,6 @@ def nodes(self) -&gt; NodesCollection:
 <span>class <span class="ident">TreeCollections</span></span>
 </code></dt>
 <dd>
-<div class="desc"><p>The idea of this collection is to have access to its elements by their identifier
-and meantime to have access to their indexes of true blender collections
-so to get fast mapping between python and blender collections
-downside is that this collection is immutable
-because it impossible to predict order of Blender collection after changing of their content</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -765,6 +818,11 @@ because it impossible to predict order of Blender collection after changing of t
         else:
             return NotImplemented</code></pre>
 </details>
+<div class="desc"><p>The idea of this collection is to have access to its elements by their identifier
+and meantime to have access to their indexes of true blender collections
+so to get fast mapping between python and blender collections
+downside is that this collection is immutable
+because it impossible to predict order of Blender collection after changing of their content</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li>collections.abc.Mapping</li>
@@ -857,7 +915,7 @@ because it impossible to predict order of Blender collection after changing of t
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.1</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.5</a>.</p>
 </footer>
 </body>
 </html>

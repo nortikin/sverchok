@@ -3,19 +3,30 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
-<meta name="generator" content="pdoc3 0.11.1">
+<meta name="generator" content="pdoc3 0.11.5">
 <title>sverchok.utils.geodesic API documentation</title>
 <meta name="description" content="">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
-<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
 <style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
 <style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
 <script>window.addEventListener('DOMContentLoaded', () => {
 hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
 hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
 })</script>
 </head>
 <body>
@@ -37,24 +48,270 @@ hljs.highlightAll();
 <span>def <span class="ident">cubic_spline</span></span>(<span>surface, uv_pts)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def cubic_spline(surface, uv_pts):
+    pts = surface.evaluate_array(uv_pts[:,0], uv_pts[:,1])
+    tknots = Spline.create_knots(pts)
+    spline = CubicSpline(uv_pts, tknots=tknots)
+    return SvSplineCurve(spline)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.geodesic.curve_exponential_map"><code class="name flex">
-<span>def <span class="ident">curve_exponential_map</span></span>(<span>surface, uv_curve, v_radius, u_steps, v_steps, u_mode='T', length_resolution=50, closed_u=False, closed_v=False)</span>
+<span>def <span class="ident">curve_exponential_map</span></span>(<span>surface,<br>uv_curve,<br>v_radius,<br>u_steps,<br>v_steps,<br>u_mode='T',<br>length_resolution=50,<br>closed_u=False,<br>closed_v=False)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def curve_exponential_map(surface, uv_curve, v_radius, u_steps, v_steps, u_mode=BY_PARAMETER, length_resolution=50, closed_u=False, closed_v=False):
+    u_min, u_max = uv_curve.get_u_bounds()
+    if u_mode == BY_PARAMETER:
+        orig_us = center_us
+        center_us = np.linspace(u_min, u_max, num=u_steps)
+    else:
+        curve_3d = SvCurveOnSurface(uv_curve, surface, axis=2)
+        calculator = SvCurveLengthSolver(curve_3d)
+        calculator.prepare(&#39;SPL&#39;, length_resolution)
+        length = calculator.get_total_length()
+        lengths = np.linspace(0, length, num=u_steps)
+        orig_us = calculator.solve(lengths)
+        center_us = lengths
+    orig_centers = np.zeros((u_steps, 3))
+    orig_centers[:,0] = center_us
+
+    uv_starts = uv_curve.evaluate_array(orig_us)
+    uv_tangents = uv_curve.tangent_array(orig_us)
+
+    uv_tangents_1 = rotate_uv_vectors_on_surface(surface, uv_starts, uv_tangents, np.full((u_steps,), -pi/2))
+    uv_tangents_2 = rotate_uv_vectors_on_surface(surface, uv_starts, uv_tangents, np.full((u_steps,), pi/2))
+
+    solution = GeodesicSolution([], [], [], [])
+    lines = geodesic_cauchy_problem(surface, uv_starts,
+                                    u_tangents = uv_tangents_1[:,0],
+                                    v_tangents = uv_tangents_1[:,1],
+                                    orig_u_tangents = np.full((u_steps,), 0),
+                                    orig_v_tangents = np.full((u_steps,), 1),
+                                    target_radius = v_radius, n_steps = v_steps,
+                                    closed_u=closed_u, closed_v=closed_v)
+    solution = solution.add(lines.shift(orig_centers))
+    lines = geodesic_cauchy_problem(surface, uv_starts,
+                                    u_tangents = uv_tangents_2[:,0],
+                                    v_tangents = uv_tangents_2[:,1],
+                                    orig_u_tangents = np.full((u_steps,), 0),
+                                    orig_v_tangents = np.full((u_steps,), -1),
+                                    target_radius = v_radius, n_steps = v_steps,
+                                    closed_u=closed_u, closed_v=closed_v)
+    solution = solution.add(lines.shift(orig_centers))
+
+    orig_points = solution.get_all_orig_points()
+    uv_points = solution.get_all_uv_points()
+    points = solution.get_all_surface_points()
+
+    unq_orig_points, unq_idxs = np.unique(orig_points, axis=0, return_index=True)
+    unq_uv_points = uv_points[unq_idxs]
+    unq_points = points[unq_idxs]
+    return ExponentialMap(surface, unq_orig_points, unq_uv_points, unq_points)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.geodesic.exponential_map"><code class="name flex">
-<span>def <span class="ident">exponential_map</span></span>(<span>surface, uv_center, radius, radius_steps=10, angle_steps=8, closed_u=False, closed_v=False)</span>
+<span>def <span class="ident">exponential_map</span></span>(<span>surface,<br>uv_center,<br>radius,<br>radius_steps=10,<br>angle_steps=8,<br>closed_u=False,<br>closed_v=False)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def exponential_map(surface, uv_center, radius, radius_steps=10, angle_steps=8, closed_u=False, closed_v=False):
+    angles = np.linspace(0, 2*pi, num=angle_steps, endpoint=False)
+    uv_centers = np.empty((angle_steps, 3))
+    uv_centers[:] = uv_center
+
+    solution = geodesic_cauchy_problem(surface, uv_centers,
+                                       angles=angles,
+                                       target_radius = radius,
+                                       n_steps = radius_steps,
+                                       closed_u=closed_u, closed_v=closed_v)
+
+    orig_points = solution.get_all_orig_points()
+    uv_points = solution.get_all_uv_points()
+    points = solution.get_all_surface_points()
+
+    unq_orig_points, unq_idxs = np.unique(orig_points, axis=0, return_index=True)
+    unq_uv_points = uv_points[unq_idxs]
+    unq_points = points[unq_idxs]
+    return ExponentialMap(surface, unq_orig_points, unq_uv_points, unq_points)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.geodesic.geodesic_cauchy_problem"><code class="name flex">
-<span>def <span class="ident">geodesic_cauchy_problem</span></span>(<span>surface, uv_starts, angles=None, u_tangents=None, v_tangents=None, orig_u_tangents=None, orig_v_tangents=None, target_radius=1.0, n_steps=10, closed_u=False, closed_v=False)</span>
+<span>def <span class="ident">geodesic_cauchy_problem</span></span>(<span>surface,<br>uv_starts,<br>angles=None,<br>u_tangents=None,<br>v_tangents=None,<br>orig_u_tangents=None,<br>orig_v_tangents=None,<br>target_radius=1.0,<br>n_steps=10,<br>closed_u=False,<br>closed_v=False)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def geodesic_cauchy_problem(surface, uv_starts,
+                            angles = None,
+                            u_tangents = None, v_tangents = None,
+                            orig_u_tangents = None, orig_v_tangents = None,
+                            target_radius=1.0,
+                            n_steps=10,
+                            closed_u = False, closed_v = False):
+    &#34;&#34;&#34;
+    Solve Cauchy problem to generate geodesic line: given start point (in UV space)
+    and direction (in UV space), draw a geodesic curve in that direction, of
+    requested length.
+
+    This method can generate several geodesic lines in one call.
+
+    The method uses simple Euler method to solve differential equation of geodesic
+    lines on surface. So it generates a series of points, which can be afterwards
+    interpolated with a cubic spline or another algorithm.
+
+    Initial direction of geodesic lines can be provided in one of two ways: by providing
+    angles, or by providing u_tangents and v_tangents.
+
+    Args:
+        * surface - an instance of SvSurface
+        * uv_starts - np.ndarray of shape (n, 3) (third coordinate is ignored) -
+          starting points of geodesic curves, in UV space
+        * angles - np.ndarray of shape (n,) - angles, in radians, counted
+          counterclockwise from surface&#39;s derivative vector in U parameter direction.
+          Can be provided instead of u_tangents and v_tangents.
+        * u_tangents, v_tangents - np.ndarrays of shape (n,): initial tangent direction
+          expressed as coefficients for surface&#39;s derivatives in U and V parametric
+          directions. Can be provided instead of angles.
+        * orig_u_tangents, orig_v_tangents - np.ndarrays of shape (n,): initial tangent
+          direction for &#34;original&#34; (undeformed) UV space. If not provided, u_tangents
+          and v_tangents will be used.
+        * target_radius - requested length of geodesic curves.
+        * n_steps - number of steps for calculation; it is also the number of points
+          which will be generated.
+        * closed_u, closed_v - indicates whether the surface is closed in U and/or V
+          direction.
+
+    Returns:
+        an instance of GeodesicSolution.
+    &#34;&#34;&#34;
+    step = target_radius / n_steps
+    u_min, u_max, v_min, v_max = surface.get_domain()
+
+    if u_tangents is None or v_tangents is None and angles is not None:
+        u_tangents = np.cos(angles)
+        v_tangents = np.sin(angles)
+        by_angles = True
+    elif u_tangents is not None and v_tangents is not None:
+        by_angles = False
+
+    if orig_u_tangents is None:
+        orig_u_tangents = u_tangents
+    if orig_v_tangents is None:
+        orig_v_tangents = v_tangents
+
+    def decompose_array(dus, dvs, normals, pts):
+        n = len(pts)
+        matrices = np.zeros((n,3,3))
+        matrices[:,:,0] = dus
+        matrices[:,:,1] = dvs
+        matrices[:,:,2] = normals
+        inv = np.linalg.inv(matrices)
+        res = np_multiply_matrices_vectors(inv, pts)
+        return res[:,0], res[:,1]
+
+    def initial_points(data):
+        if by_angles:
+            dy = np.cross(data.du, data.normals())
+            dy /= np.linalg.norm(dy, axis=1, keepdims=True)
+            dx = data.du / np.linalg.norm(data.du, axis=1, keepdims=True)
+            return step * (dx * u_tangents[np.newaxis].T + dy * v_tangents[np.newaxis].T) + data.points
+        else:
+            return step * (data.du * u_tangents[np.newaxis].T + data.dv * v_tangents[np.newaxis].T) + data.points
+
+    def do_step(data, us, vs, vectors, radius):
+        vectors = radius * vectors / np.linalg.norm(vectors, axis=1, keepdims=True)
+        circle_du, circle_dv = decompose_array(data.du, data.dv, data.normals(), vectors)
+        circle_pts_on_surface = surface.evaluate_array(us + circle_du, vs + circle_dv)
+        circle_vectors = circle_pts_on_surface - data.points
+        circle_rs_on_surface = np.linalg.norm(circle_vectors, axis=1)
+        circle_du /= circle_rs_on_surface
+        circle_dv /= circle_rs_on_surface
+        new_us = us + radius*circle_du
+        new_vs = vs + radius * circle_dv
+        if closed_u:
+            new_us = np.mod(new_us - u_min, u_max - u_min) + u_min
+        if closed_v:
+            new_vs = np.mod(new_vs - v_min, v_max - v_min) + v_min
+        return new_us, new_vs, data.points
+
+    def do_iteration(us, vs, prev_surface_pts, radius):
+        data = surface.derivatives_data_array(us, vs)
+        vectors = data.points - prev_surface_pts
+        return do_step(data, us, vs, vectors, radius)
+
+    def mk_orig_points():
+        rs = np.linspace(0, target_radius, num=n_steps)[np.newaxis].T
+        us = orig_u_tangents*rs
+        vs = orig_v_tangents*rs
+        us = us.flatten()
+        vs = vs.flatten()
+        pts = np.zeros((len(us), 3))
+        pts[:,0] = us
+        pts[:,1] = vs
+        return rs, pts
+
+    def transpose(pts, n_centers, n_steps):
+        pts1 = np.reshape(pts, (n_steps, n_centers, 3))
+        pts1 = np.transpose(pts1, (1,0,2))
+        return pts1#.reshape((n_centers * n_steps, 3))
+
+    def filter_out_nans(lists):
+        has_no_nans = lambda v: not any(isnan(x) for x in v)
+        r = [list(filter(has_no_nans, lst)) for lst in lists]
+        return list(np.array(r))
+
+    us0, vs0 = uv_starts[:,0], uv_starts[:,1]
+    data = surface.derivatives_data_array(us0, vs0)
+    pts1 = initial_points(data)
+    us, vs, pts = do_step(data, us0, vs0, pts1 - data.points, step)
+
+    all_points = data.points.tolist()
+    all_us = us0.tolist()
+    all_us.extend(us.tolist())
+    all_vs = vs0.tolist()
+    all_vs.extend(vs.tolist())
+    for i in range(n_steps - 1):
+        us, vs, points = do_iteration(us, vs, data.points, step)
+        all_points.extend(points.tolist())
+        if i != n_steps - 2:
+            all_us.extend(us.tolist())
+            all_vs.extend(vs.tolist())
+
+    all_us = np.array(all_us)
+    all_vs = np.array(all_vs)
+
+    rhos, orig_points = mk_orig_points()
+    uvs = np.zeros((len(all_us), 3))
+    uvs[:,0] = np.array(all_us)
+    uvs[:,1] = np.array(all_vs)
+
+    n_starts = len(uv_starts)
+    orig_points = transpose(orig_points, n_starts, n_steps)
+    uvs = transpose(uvs, n_starts, n_steps)
+    all_points = transpose(all_points, n_starts, n_steps)
+
+    orig_points = filter_out_nans(orig_points)
+    uvs = filter_out_nans(uvs)
+    all_points = filter_out_nans(all_points)
+
+    return GeodesicSolution([rhos[:,0]], orig_points, uvs, all_points)</code></pre>
+</details>
 <div class="desc"><p>Solve Cauchy problem to generate geodesic line: given start point (in UV space)
 and direction (in UV space), draw a geodesic curve in that direction, of
 requested length.</p>
@@ -91,6 +348,83 @@ direction.</li>
 <span>def <span class="ident">geodesic_curve_by_two_points</span></span>(<span>surface, point1, point2, n_points, iterations, step, tolerance=0.001, logger=None)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def geodesic_curve_by_two_points(surface, point1, point2, n_points, iterations, step, tolerance=1e-3, logger=None):
+    &#34;&#34;&#34;
+    Generate a geodesic line between two points on surface.
+
+    Args:
+        * surface - an instance of SvSurface.
+        * point1, point2: np.ndarrays of shape (3,) (third coordinate is ignored) -
+          two points in surface&#39;s UV space.
+        * n_points: number of points on geodesic line to be generated.
+        * iterations - maximum number of numeric method iterations.
+        * tolerance - requested calculation tolerance; if this precision will be
+          achieved earlier than in requested number of iterations, the calculation
+          will be stopped.
+
+    Returns:
+        np.ndarray of shape (n_points, 3) (third coordinate will be zero) -
+        points of calculated geodesic line in surface&#39;s UV space.
+    &#34;&#34;&#34;
+    if logger is None:
+        logger = get_logger()
+
+    def invert_basis_matrices(u_vectors, v_vectors, w_vectors):
+        n = len(u_vectors)
+        matrices = np.zeros((n,3,3))
+        matrices[:,:,0] = u_vectors
+        matrices[:,:,1] = v_vectors
+        matrices[:,:,2] = w_vectors
+        return np.linalg.inv(matrices)
+
+    def project(derivs, uv_pts, vectors):
+        u_tangents, v_tangents = derivs.du, derivs.dv
+        normals = derivs.normals()[1:-1]
+        u_tangents = u_tangents[1:-1]
+        v_tangents = v_tangents[1:-1]
+        inv_matrices = invert_basis_matrices(u_tangents, v_tangents, normals)
+        duv = np_multiply_matrices_vectors(inv_matrices, vectors)
+        duv[:,2] = 0
+        uv_vectors = np.zeros_like(uv_pts)
+        uv_vectors[1:-1] = duv
+        return uv_pts + uv_vectors
+
+    def do_iteration(uv_pts, prev_length):
+        data = surface.derivatives_data_array(uv_pts[:,0], uv_pts[:,1])
+        pts = data.points
+
+        length = np.linalg.norm(pts[1:] - pts[:-1], axis=1).sum()
+        if prev_length is not None:
+            diff = abs(prev_length - length)
+            logger.debug(f&#34;diff: {diff}&#34;)
+            if diff &lt; tolerance:
+                return None
+
+        dvs = pts[1:] - pts[:-1]
+        sums = dvs[1:] - dvs[:-1]
+        sums *= step
+        uv_pts = project(data, uv_pts, sums)
+        return length, uv_pts
+
+    def process(pt1, pt2, n_segments, n_iterations):
+        uv_pts = np.linspace(pt1, pt2, num=n_segments)
+        prev_length = None
+        for i in range(n_iterations):
+            r = do_iteration(uv_pts, prev_length)
+            if r is not None:
+                prev_length, uv_pts = r
+            else:
+                logger.info(f&#34;Stop at {i}&#39;th iteration&#34;)
+                break
+        return uv_pts
+
+    uv_pts = process(point1, point2, n_points, iterations)
+    return uv_pts</code></pre>
+</details>
 <div class="desc"><p>Generate a geodesic line between two points on surface.</p>
 <h2 id="args">Args</h2>
 <ul>
@@ -111,18 +445,127 @@ points of calculated geodesic line in surface's UV space.</p></div>
 <span>def <span class="ident">geodesic_curve_by_two_points_uv</span></span>(<span>surface, point1, point2, n_points, n_iterations, step, tolerance=0.001, logger=None)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def geodesic_curve_by_two_points_uv(surface, point1, point2, n_points, n_iterations, step, tolerance=1e-3, logger=None):
+    if logger is None:
+        logger = get_logger()
+
+    def do_iteration(uv_pts):
+        surface_pts = surface.evaluate_array(uv_pts[:,0], uv_pts[:,1]) # (n, 3)
+        vectors = surface_pts[1:] - surface_pts[:-1] # (n-1, 3)
+        lengths = np.linalg.norm(vectors, axis=1,keepdims=True) # (n-1, 1)
+        uv_vectors = uv_pts[1:] - uv_pts[:-1] # (n-1, 2)
+        uv_vectors /= np.linalg.norm(uv_vectors, axis=1, keepdims=True)
+        duv = lengths[1:]*uv_vectors[1:] - lengths[:-1]*uv_vectors[:-1] # (n-2, 2)
+        new_uv_pts = uv_pts.copy()
+        new_uv_pts[1:-1] += step * duv
+        dlen = lengths.sum()
+        return new_uv_pts, dlen
+
+    uv_pts = np.linspace(point1, point2, num=n_points)
+    prev_dlen = None
+    for i in range(n_iterations):
+        uv_pts, dlen = do_iteration(uv_pts)
+        if prev_dlen is not None:
+            diff = abs(dlen - prev_dlen)
+            logger.debug(f&#34;diff: {diff}&#34;)
+            if diff &lt; tolerance:
+                logger.info(f&#34;Stop at {i}&#39;th iteration&#34;)
+                break
+        prev_dlen = dlen
+    return uv_pts</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.geodesic.make_rbf"><code class="name flex">
 <span>def <span class="ident">make_rbf</span></span>(<span>orig_points, tgt_points, **kwargs)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def make_rbf(orig_points, tgt_points, **kwargs):
+    &#34;&#34;&#34;
+    Build RBF field, which maps orig_points to tgt_points.
+    &#34;&#34;&#34;
+    orig_us = orig_points[:,0]
+    orig_vs = orig_points[:,1]
+    orig_ws = orig_points[:,2]
+    if &#39;function&#39; not in kwargs:
+        kwargs[&#39;function&#39;] = &#39;thin_plate&#39;
+    if &#39;smooth&#39; not in kwargs:
+        kwargs[&#39;smooth&#39;] = 0.0
+    if &#39;epsilon&#39; not in kwargs:
+        kwargs[&#39;epsilon&#39;] = 1.0
+    rbf = Rbf(orig_us, orig_vs, orig_ws, tgt_points,
+            mode = &#39;N-D&#39;,
+            **kwargs)
+    return SvRbfVectorField(rbf, relative=True)</code></pre>
+</details>
 <div class="desc"><p>Build RBF field, which maps orig_points to tgt_points.</p></div>
 </dd>
 <dt id="sverchok.utils.geodesic.rectangular_exponential_map"><code class="name flex">
 <span>def <span class="ident">rectangular_exponential_map</span></span>(<span>surface, uv_center, u_radius, v_radius, n_v_lines, u_steps, v_steps)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def rectangular_exponential_map(surface, uv_center, u_radius, v_radius, n_v_lines, u_steps, v_steps):
+    u_line1 = geodesic_cauchy_problem(surface, np.array([uv_center]), angles=np.array([0]), target_radius=u_radius, n_steps=u_steps)
+    u_line2 = geodesic_cauchy_problem(surface, np.array([uv_center]), angles=np.array([pi]), target_radius=u_radius, n_steps=u_steps)
+
+    u_rhos = np.linspace(0, u_radius, num=n_v_lines)
+    u_points1 = u_line1.get_uv_point_by_rho(0, u_rhos)
+    u_points2 = u_line2.get_uv_point_by_rho(0, u_rhos)
+    orig_u_points1 = u_line1.get_orig_point_by_rho(0, u_rhos)
+    orig_u_points1 = np.transpose(orig_u_points1[np.newaxis], axes=(1,0,2))
+    orig_u_points2 = u_line2.get_orig_point_by_rho(0, u_rhos)
+    orig_u_points2 = np.transpose(orig_u_points2[np.newaxis], axes=(1,0,2))
+
+    u_tangents_1, v_tangents_1 = u_line1.rotate_tangents(surface, 0, u_rhos, -pi/2)
+    u_tangents_2, v_tangents_2 = u_line1.rotate_tangents(surface, 0, u_rhos, +pi/2)
+    u_tangents_3, v_tangents_3 = u_line2.rotate_tangents(surface, 0, u_rhos, -pi/2)
+    u_tangents_4, v_tangents_4 = u_line2.rotate_tangents(surface, 0, u_rhos, +pi/2)
+
+    v_lines1 = geodesic_cauchy_problem(surface, u_points1,
+                                       u_tangents = u_tangents_1,
+                                       v_tangents = v_tangents_1,
+                                       target_radius=v_radius, n_steps=v_steps)
+    v_lines2 = geodesic_cauchy_problem(surface, u_points1,
+                                       u_tangents = u_tangents_2,
+                                       v_tangents = v_tangents_2,
+                                       target_radius=v_radius, n_steps=v_steps)
+    v_lines3 = geodesic_cauchy_problem(surface, u_points2,
+                                       u_tangents = u_tangents_3,
+                                       v_tangents = v_tangents_3,
+                                       target_radius=v_radius, n_steps=v_steps)
+    v_lines4 = geodesic_cauchy_problem(surface, u_points2,
+                                       u_tangents = u_tangents_4,
+                                       v_tangents = v_tangents_4,
+                                       target_radius=v_radius, n_steps=v_steps)
+
+    solution = u_line1
+    solution = solution.add(u_line2)
+    solution = solution.add(v_lines1.shift(orig_u_points1))
+    solution = solution.add(v_lines2.shift(orig_u_points1))
+    solution = solution.add(v_lines3.shift(orig_u_points2))
+    solution = solution.add(v_lines4.shift(orig_u_points2))
+
+    orig_points = solution.get_all_orig_points()
+    uv_points = solution.get_all_uv_points()
+    points = solution.get_all_surface_points()
+
+    unq_orig_points, unq_idxs = np.unique(orig_points, axis=0, return_index=True)
+    unq_uv_points = uv_points[unq_idxs]
+    unq_points = points[unq_idxs]
+    return ExponentialMap(surface, unq_orig_points, unq_uv_points, unq_points)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -135,7 +578,6 @@ points of calculated geodesic line in surface's UV space.</p></div>
 <span>(</span><span>surface, orig_points, uv_points, surface_points)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -158,18 +600,38 @@ points of calculated geodesic line in surface's UV space.</p></div>
         uv = SvPreserveCoordinateField(uv, axis=2)
         return SvVectorFieldComposition(uv.to_absolute(), bend.to_absolute()).to_relative()</code></pre>
 </details>
+<div class="desc"></div>
 <h3>Methods</h3>
 <dl>
 <dt id="sverchok.utils.geodesic.ExponentialMap.get_field"><code class="name flex">
 <span>def <span class="ident">get_field</span></span>(<span>self, **kwargs)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_field(self, **kwargs):
+    bend = SvBendAlongSurfaceField(self.surface, axis=2, autoscale=True)
+    bend.u_bounds = self.surface.get_u_bounds()
+    bend.v_bounds = self.surface.get_v_bounds()
+    uv = self.get_uv_field(**kwargs)
+    uv = SvPreserveCoordinateField(uv, axis=2)
+    return SvVectorFieldComposition(uv.to_absolute(), bend.to_absolute()).to_relative()</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.geodesic.ExponentialMap.get_uv_field"><code class="name flex">
 <span>def <span class="ident">get_uv_field</span></span>(<span>self, **kwargs)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_uv_field(self, **kwargs):
+    return make_rbf(self.orig_points, self.uv_points, **kwargs)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -179,9 +641,6 @@ points of calculated geodesic line in surface's UV space.</p></div>
 <span>(</span><span>rhos, orig_points, uv_points, surface_points)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Class incapsulating result of calling geodesic_cauchy_problem method.</p>
-<p>orig_points, uv_points and surface_points are lists of np.ndarrays of shape (n,3).
-Shapes of different list items can differ.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -294,96 +753,254 @@ Shapes of different list items can differ.</p></div>
         res = rotate_uv_vectors_on_surface(surface, uv_pts, uv_tangents, angles)
         return res[:,0], -res[:,1]</code></pre>
 </details>
+<div class="desc"><p>Class incapsulating result of calling geodesic_cauchy_problem method.</p>
+<p>orig_points, uv_points and surface_points are lists of np.ndarrays of shape (n,3).
+Shapes of different list items can differ.</p></div>
 <h3>Methods</h3>
 <dl>
 <dt id="sverchok.utils.geodesic.GeodesicSolution.add"><code class="name flex">
 <span>def <span class="ident">add</span></span>(<span>self, sol)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add(self, sol):
+    return GeodesicSolution(
+            self.rhos + sol.rhos,
+            self.orig_points + sol.orig_points,
+            self.uv_points + sol.uv_points,
+            self.surface_points + sol.surface_points
+        )</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.geodesic.GeodesicSolution.get"><code class="name flex">
 <span>def <span class="ident">get</span></span>(<span>self, i)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get(self, i):
+    return GeodesicSolution([self.rhos[i]], [self.orig_points[i]], [self.uv_points[i]], [self.surface_points[i]])</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.geodesic.GeodesicSolution.get_all_orig_points"><code class="name flex">
 <span>def <span class="ident">get_all_orig_points</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_all_orig_points(self):
+    return np.concatenate(self.orig_points)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.geodesic.GeodesicSolution.get_all_surface_points"><code class="name flex">
 <span>def <span class="ident">get_all_surface_points</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_all_surface_points(self):
+    return np.concatenate(self.surface_points)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.geodesic.GeodesicSolution.get_all_uv_points"><code class="name flex">
 <span>def <span class="ident">get_all_uv_points</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_all_uv_points(self):
+    return np.concatenate(self.uv_points)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.geodesic.GeodesicSolution.get_curve"><code class="name flex">
 <span>def <span class="ident">get_curve</span></span>(<span>self, i)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_curve(self, i):
+    pts = self.surface_points[i]
+    spline = CubicSpline(pts, metric=&#39;POINTS&#39;)
+    return SvSplineCurve(spline)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.geodesic.GeodesicSolution.get_orig_line"><code class="name flex">
 <span>def <span class="ident">get_orig_line</span></span>(<span>self, i)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_orig_line(self, i):
+    orig_pts = self.orig_points[i]
+    spline = CubicSpline(orig_pts, metric=&#39;POINTS&#39;)
+    return SvSplineCurve(spline)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.geodesic.GeodesicSolution.get_orig_point_by_rho"><code class="name flex">
 <span>def <span class="ident">get_orig_point_by_rho</span></span>(<span>self, i, rho, method='cubic')</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_orig_point_by_rho(self, i, rho, method=&#39;cubic&#39;):
+    if method == &#39;cubic&#39;:
+        return self.get_orig_line(i).evaluate_array(rho)
+    elif method == &#39;nearest&#39;:
+        idx = self.rhos[i].searchsorted(rho, &#39;right&#39;) - 1
+        return self.orig_points[i][idx]
+    else:
+        raise Exception(&#34;Unsupported method&#34;)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.geodesic.GeodesicSolution.get_points_count"><code class="name flex">
 <span>def <span class="ident">get_points_count</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_points_count(self):
+    return sum(len(line) for line in self.orig_points)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.geodesic.GeodesicSolution.get_tangent_angles"><code class="name flex">
 <span>def <span class="ident">get_tangent_angles</span></span>(<span>self, surface, i, ts, alpha)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_tangent_angles(self, surface, i, ts, alpha):
+    n = len(ts)
+    uv_curve = self.get_uv_line(i)
+    curve = self.get_curve(i)
+    uv_pts = uv_curve.evaluate_array(ts)
+    data = surface.derivatives_data_array(uv_pts[:,0], uv_pts[:,1])
+    matrices = np.empty((n, 3, 3))
+    matrices[:,:,0] = data.du
+    matrices[:,:,1] = data.dv
+    matrices[:,:,2] = data.normals()
+    tangents_3d = curve.tangent_array(ts)
+    tangents_3d = rotate_vector_around_vector_np(tangents_3d, data.normals(), np.array([alpha]))
+    inv_matrices = np.linalg.inv(matrices)
+    uv_tangents = np_multiply_matrices_vectors(inv_matrices, tangents_3d)
+    return np.arctan2(-uv_tangents[:,1], uv_tangents[:,0])</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.geodesic.GeodesicSolution.get_uv_line"><code class="name flex">
 <span>def <span class="ident">get_uv_line</span></span>(<span>self, i)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_uv_line(self, i):
+    uv_pts = self.uv_points[i]
+    spline = CubicSpline(uv_pts, metric=&#39;POINTS&#39;)
+    return SvSplineCurve(spline)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.geodesic.GeodesicSolution.get_uv_point_by_rho"><code class="name flex">
 <span>def <span class="ident">get_uv_point_by_rho</span></span>(<span>self, i, rho, method='cubic')</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_uv_point_by_rho(self, i, rho, method=&#39;cubic&#39;):
+    if method == &#39;cubic&#39;:
+        return self.get_uv_line(i).evaluate_array(rho)
+    elif method == &#39;nearest&#39;:
+        idx = self.rhos[i].searchsorted(rho, &#39;right&#39;) - 1
+        return self.uv_points[i][idx]
+    else:
+        raise Exception(&#34;Unsupported method&#34;)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.geodesic.GeodesicSolution.get_uv_points_by_rho"><code class="name flex">
 <span>def <span class="ident">get_uv_points_by_rho</span></span>(<span>self, rho, method='cubic')</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_uv_points_by_rho(self, rho, method=&#39;cubic&#39;):
+    points = []
+    for i in range(len(self.rhos)):
+        pt = self.get_uv_point_by_rho(i, rho, method=method)
+        points.append(pt)
+    return np.array(points)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.geodesic.GeodesicSolution.rotate_tangents"><code class="name flex">
 <span>def <span class="ident">rotate_tangents</span></span>(<span>self, surface, i, ts, alpha)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def rotate_tangents(self, surface, i, ts, alpha):
+    n = len(ts)
+    uv_curve = self.get_uv_line(i)
+    uv_pts = uv_curve.evaluate_array(ts)
+    uv_tangents = uv_curve.tangent_array(ts)
+    angles = np.full((n,), alpha)
+    res = rotate_uv_vectors_on_surface(surface, uv_pts, uv_tangents, angles)
+    return res[:,0], -res[:,1]</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.geodesic.GeodesicSolution.shift"><code class="name flex">
 <span>def <span class="ident">shift</span></span>(<span>self, orig_centers)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def shift(self, orig_centers):
+    return GeodesicSolution(
+            self.rhos,
+            [o1 + o2 for o1,o2 in zip(self.orig_points, orig_centers)],
+            self.uv_points,
+            self.surface_points)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -448,7 +1065,7 @@ Shapes of different list items can differ.</p></div>
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.1</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.5</a>.</p>
 </footer>
 </body>
 </html>

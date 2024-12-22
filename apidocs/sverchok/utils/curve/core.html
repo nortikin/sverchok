@@ -3,19 +3,30 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
-<meta name="generator" content="pdoc3 0.11.1">
+<meta name="generator" content="pdoc3 0.11.5">
 <title>sverchok.utils.curve.core API documentation</title>
 <meta name="description" content="General definition of Sverchok curve classes and basic utilities.">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
-<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
 <style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
 <style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
 <script>window.addEventListener('DOMContentLoaded', () => {
 hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
 hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
 })</script>
 </head>
 <body>
@@ -38,6 +49,97 @@ hljs.highlightAll();
 <span>def <span class="ident">calc_taylor_nurbs_matrices</span></span>(<span>degree, u_bounds=(0.0, 1.0), calc_M=True, calc_R=True, calc_M1=False, calc_R1=False)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def calc_taylor_nurbs_matrices(degree, u_bounds=(0.0,1.0), calc_M=True, calc_R=True, calc_M1=False, calc_R1=False):
+    &#34;&#34;&#34;
+    Calculate two matrices, M and R, such that coefficients
+    of polynomial representation of Bezier curve can be expressed
+    in terms of Bezier control points as
+
+        coeffs[:,axis] = R @ M @ control_points[:,axis]
+
+    Correspondingly, the same matrices can be used to convert
+    polynomial representation of curve into control points of Bezier
+    curve as
+
+        control_points[:,k] = M1 @ R1 @ coeffs[:,axis]
+
+    where M1 is inverse of M and R1 is inverse of R.
+
+    Note that M matrix depends only on degree, and R depends both on
+    degree and u_bounds. M matrix is always lower-triangular matrix.
+    R matrix is upper-triangular matrix. If u_bounds[0] == 0.0, then
+    R is diagonal matrix.
+
+    Refer to The NURBS Book, 2nd ed., p. 6.6
+
+    Args:
+        degree: degree of Bezier curve
+        u_bounds: tuple of (u_min, u_max) - domain of the curve.
+        calc_M: whether to calculate M matrix
+        calc_R: whether to calculate R matrix
+
+    Returns:
+        dictionary with string keys:
+        * &#39;M&#39;: np.array of shape (degree+1, degree+1) - present only if calc_M == True
+        * &#39;R&#39;: np.array of shape (degree+1, degree+1) - present only if calc_R == True
+    &#34;&#34;&#34;
+
+    global _taylor_nurbs_matrix_cache
+    global _taylor_nurbs_inverse_matrix_cache
+
+    p = degree
+
+    if calc_M1:
+        calc_M = True
+    if calc_R1:
+        calc_R = True
+
+    if calc_M or calc_R:
+        binom = binomial_array(p+1)
+
+    result = dict()
+    if calc_M:
+        if p in _taylor_nurbs_matrix_cache:
+            M = result[&#39;M&#39;] = _taylor_nurbs_matrix_cache[p]
+        else:
+            M = np.zeros((p+1, p+1), dtype=np.float64)
+            for k in range(p+1):
+                sign = 1.0
+                for j in range(k, p+1):
+                    M[j,k] = sign * binom[p,k] * binom[p-k, j-k]
+                    sign = - sign
+            result[&#39;M&#39;] = M
+            _taylor_nurbs_matrix_cache[p] = M
+        if calc_M1:
+            if p in _taylor_nurbs_inverse_matrix_cache:
+                result[&#39;M1&#39;] = _taylor_nurbs_inverse_matrix_cache[p]
+            else:
+                M1 = np.linalg.inv(M)
+                result[&#39;M1&#39;] = M1
+                _taylor_nurbs_inverse_matrix_cache[p] = M1
+
+    if calc_R:
+        u1, u2 = u_bounds
+        c = 1.0 / (u2 - u1)
+        d = -u1 / (u2 - u1)
+
+        R = np.zeros((p+1, p+1), dtype=np.float64)
+        c_i = 1.0
+        for i in range(p+1):
+            for j in range(i, p+1):
+                R[i,j] = binom[j, i] * c_i * d**(j-i)
+            c_i *= c
+        result[&#39;R&#39;] = R
+
+        if calc_R1:
+            result[&#39;R1&#39;] = np.linalg.inv(R)
+
+    return result</code></pre>
+</details>
 <div class="desc"><p>Calculate two matrices, M and R, such that coefficients
 of polynomial representation of Bezier curve can be expressed
 in terms of Bezier control points as</p>
@@ -80,7 +182,6 @@ R is diagonal matrix.</p>
 <span>(</span><span>curves, scale_to_unit=False)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -179,6 +280,7 @@ R is diagonal matrix.</p>
             result.append(ith_derivs)
         return result</code></pre>
 </details>
+<div class="desc"></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="sverchok.utils.curve.core.SvCurve" href="#sverchok.utils.curve.core.SvCurve">SvCurve</a></li>
@@ -193,18 +295,50 @@ R is diagonal matrix.</p>
 <span>def <span class="ident">derivatives_array</span></span>(<span>self, n, ts, tangent_delta=None)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def derivatives_array(self, n, ts, tangent_delta=None):
+    dts_grouped = self._get_ts_grouped(ts)
+    derivs = [self.curves[i].derivatives_array(n, np.array(dts), tangent_delta=tangent_delta) for i, dts in dts_grouped]
+    result = []
+    for i in range(n):
+        ith_derivs_grouped = [curve_derivs[i] for curve_derivs in derivs]
+        ith_derivs = np.concatenate(ith_derivs_grouped)
+        result.append(ith_derivs)
+    return result</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.core.SvConcatCurve.second_derivative_array"><code class="name flex">
 <span>def <span class="ident">second_derivative_array</span></span>(<span>self, ts, tangent_delta=None)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def second_derivative_array(self, ts, tangent_delta=None):
+    dts_grouped = self._get_ts_grouped(ts)
+    vectors = [self.curves[i].second_derivative_array(np.array(dts), tangent_delta=tangent_delta) for i, dts in dts_grouped]
+    return np.concatenate(vectors)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.core.SvConcatCurve.third_derivative_array"><code class="name flex">
 <span>def <span class="ident">third_derivative_array</span></span>(<span>self, ts, tangent_delta=None)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def third_derivative_array(self, ts, tangent_delta=None):
+    dts_grouped = self._get_ts_grouped(ts)
+    vectors = [self.curves[i].third_derivative_array(np.array(dts), tangent_delta=tangent_delta) for i, dts in dts_grouped]
+    return np.concatenate(vectors)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -231,7 +365,6 @@ R is diagonal matrix.</p>
 <span>class <span class="ident">SvCurve</span></span>
 </code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -677,6 +810,7 @@ R is diagonal matrix.</p>
         return np.array([])
         #raise Exception(&#34;Curve of type type `{}&#39; does not have control points&#34;.format(type(self)))</code></pre>
 </details>
+<div class="desc"></div>
 <h3>Subclasses</h3>
 <ul class="hlist">
 <li><a title="sverchok.utils.catenary.SvCatenaryCurve" href="../catenary.html#sverchok.utils.catenary.SvCatenaryCurve">SvCatenaryCurve</a></li>
@@ -734,24 +868,98 @@ R is diagonal matrix.</p>
 <span>def <span class="ident">arbitrary_frame_array</span></span>(<span>self, ts, tangent_delta=None)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def arbitrary_frame_array(self, ts, tangent_delta=None):
+    h = self.get_tangent_delta(tangent_delta)
+
+    normals = []
+    binormals = []
+
+    points = self.evaluate_array(ts)
+    tangents = self.tangent_array(ts, tangent_delta=h)
+    tangents /= np.linalg.norm(tangents, axis=1, keepdims=True)
+
+    for i, t in enumerate(ts):
+        tangent = tangents[i]
+        normal = np.array(Vector(tangent).orthogonal())
+        binormal = np.cross(tangent, normal)
+        binormal /= np.linalg.norm(binormal)
+        normals.append(normal)
+        binormals.append(binormal)
+
+    normals = np.array(normals)
+    binormals = np.array(binormals)
+
+    matrices_np = np.dstack((normals, binormals, tangents))
+    matrices_np = np.transpose(matrices_np, axes=(0,2,1))
+    matrices_np = np.linalg.inv(matrices_np)
+    return matrices_np, normals, binormals</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.core.SvCurve.binormal"><code class="name flex">
 <span>def <span class="ident">binormal</span></span>(<span>self, t, normalize=True, tangent_delta=None)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def binormal(self, t, normalize=True, tangent_delta=None):
+    h = self.get_tangent_delta(tangent_delta)
+
+    tangent = self.tangent(t, tangent_delta=h)
+    second = self.second_derivative(t, tangent_delta=h)
+    v = np.cross(tangent, second)
+    if normalize:
+        v = v / np.linalg.norm(v)
+    return v</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.core.SvCurve.binormal_array"><code class="name flex">
 <span>def <span class="ident">binormal_array</span></span>(<span>self, ts, normalize=True, tangent_delta=None)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def binormal_array(self, ts, normalize=True, tangent_delta=None):
+    h = self.get_tangent_delta(tangent_delta)
+
+    tangents, seconds = self.derivatives_array(2, ts, tangent_delta=h)
+    v = np.cross(tangents, seconds)
+    if normalize:
+        norms = np.linalg.norm(v, axis=1, keepdims=True)
+        nonzero = (norms &gt; 0)[:,0]
+        v[nonzero] = v[nonzero] / norms[nonzero][:,0][np.newaxis].T
+    return v</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.core.SvCurve.calc_length"><code class="name flex">
 <span>def <span class="ident">calc_length</span></span>(<span>self, t_min, t_max, resolution=50)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def calc_length(self, t_min, t_max, resolution = 50):
+    &#34;&#34;&#34;
+    Calculate the length of curve segment by interpolating that segment
+    with polyline.
+    &#34;&#34;&#34;
+    ts = np.linspace(t_min, t_max, num=resolution)
+    vectors = self.evaluate_array(ts)
+    dvs = vectors[1:] - vectors[:-1]
+    lengths = np.linalg.norm(dvs, axis=1)
+    return np.sum(lengths)</code></pre>
+</details>
 <div class="desc"><p>Calculate the length of curve segment by interpolating that segment
 with polyline.</p></div>
 </dd>
@@ -759,24 +967,111 @@ with polyline.</p></div>
 <span>def <span class="ident">curvature</span></span>(<span>self, t, tangent_delta=None)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def curvature(self, t, tangent_delta=None):
+    h = self.get_tangent_delta(tangent_delta)
+    return self.curvature_array(np.array([t]), tangent_delta=h)[0]</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.core.SvCurve.curvature_array"><code class="name flex">
 <span>def <span class="ident">curvature_array</span></span>(<span>self, ts, tangent_delta=None)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def curvature_array(self, ts, tangent_delta=None):
+    h = self.get_tangent_delta(tangent_delta)
+    tangents, seconds = self.derivatives_array(2, ts, tangent_delta=h)
+    numerator = np.linalg.norm(np.cross(tangents, seconds), axis=1)
+    tangents_norm = np.linalg.norm(tangents, axis=1)
+    denominator = tangents_norm * tangents_norm * tangents_norm
+    return numerator / denominator</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.core.SvCurve.derivatives_array"><code class="name flex">
 <span>def <span class="ident">derivatives_array</span></span>(<span>self, n, ts, tangent_delta=None)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def derivatives_array(self, n, ts, tangent_delta=None):
+    h = self.get_tangent_delta(tangent_delta)
+
+    result = []
+    N = len(ts)
+    t_min, t_max = self.get_u_bounds()
+    if n &gt;= 1:
+        first = self.tangent_array(ts, tangent_delta=h)
+        result.append(first)
+
+    if n &gt;= 2:
+        low = ts &lt; t_min + h
+        high = ts &gt; t_max - h
+        good = np.logical_and(np.logical_not(low), np.logical_not(high))
+
+        points = np.empty((N, 3))
+        minus_h = np.empty((N, 3))
+        plus_h = np.empty((N, 3))
+
+        if good.any():
+            minus_h[good] = self.evaluate_array(ts[good]-h)
+            points[good] = self.evaluate_array(ts[good])
+            plus_h[good] = self.evaluate_array(ts[good]+h)
+
+        if low.any():
+            minus_h[low] = self.evaluate_array(ts[low])
+            points[low] = self.evaluate_array(ts[low]+h)
+            plus_h[low] = self.evaluate_array(ts[low]+2*h)
+
+        if high.any():
+            minus_h[high] = self.evaluate_array(ts[high]-2*h)
+            points[high] = self.evaluate_array(ts[high]-h)
+            plus_h[high] = self.evaluate_array(ts[high])
+
+        second = (plus_h - 2*points + minus_h) / (h * h)
+        result.append(second)
+
+    if n &gt;= 3:
+        v0s = points
+        v1s = plus_h
+        v2s = self.evaluate_array(ts+2*h)
+        v3s = self.evaluate_array(ts+3*h)
+        third = (- v0s + 3*v1s - 3*v2s + v3s) / (h * h * h)
+        result.append(third)
+
+    return result</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.core.SvCurve.evaluate"><code class="name flex">
 <span>def <span class="ident">evaluate</span></span>(<span>self, t)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate(self, t):
+    &#34;&#34;&#34;
+    Evaluate the curve at one point.
+
+    Args:
+        t: curve parameter value.
+
+    Returns:
+        Curve point - np.array of shape (3,).
+    &#34;&#34;&#34;
+    raise Exception(&#34;not implemented!&#34;)</code></pre>
+</details>
 <div class="desc"><p>Evaluate the curve at one point.</p>
 <h2 id="args">Args</h2>
 <dl>
@@ -790,6 +1085,22 @@ with polyline.</p></div>
 <span>def <span class="ident">evaluate_array</span></span>(<span>self, ts)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate_array(self, ts):
+    &#34;&#34;&#34;
+    Evaluate the curve at a series of points.
+
+    Args:
+        ts: curve parameter values. np.array of shape (n,).
+
+    Returns:
+        Curve points - np.array of shape (n,3).
+    &#34;&#34;&#34;
+    raise Exception(&#34;not implemented!&#34;)</code></pre>
+</details>
 <div class="desc"><p>Evaluate the curve at a series of points.</p>
 <h2 id="args">Args</h2>
 <dl>
@@ -803,6 +1114,53 @@ with polyline.</p></div>
 <span>def <span class="ident">frame_array</span></span>(<span>self, ts, on_zero_curvature='asis', tangent_delta=None)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def frame_array(self, ts, on_zero_curvature=ASIS, tangent_delta=None):
+    &#34;&#34;&#34;
+    Calculate curve frames at a series of points.
+
+    Args:
+        ts: np.array of shape (n,)
+        on_zero_curvature: what to do if the curve has zero curvature at one of T values.
+          The supported options are:
+          * SvCurve.FAIL: raise ZeroCurvatureException
+          * SvCurve.RETURN_NONE: return None
+          * SvCurve.ASIS: do not perform special check for this case, the
+            algorithm will raise a general LinAlgError exception if it can&#39;t calculate the matrix.
+
+    Returns:
+        tuple:
+            * matrices: np.array of shape (n, 3, 3)
+            * normals: np.array of shape (n, 3)
+            * binormals: np.array of shape (n, 3)
+    &#34;&#34;&#34;
+    h = self.get_tangent_delta(tangent_delta)
+    tangents, normals, binormals = self.tangent_normal_binormal_array(ts, tangent_delta=h)
+
+    if on_zero_curvature != SvCurve.ASIS:
+        zero_normal = np.linalg.norm(normals, axis=1) &lt; 1e-6
+        if zero_normal.any():
+            if on_zero_curvature == SvCurve.FAIL:
+                raise ZeroCurvatureException(np.unique(ts[zero_normal]), zero_normal)
+            elif on_zero_curvature == SvCurve.RETURN_NONE:
+                return None
+
+    tangents = tangents / np.linalg.norm(tangents, axis=1)[np.newaxis].T
+    matrices_np = np.dstack((normals, binormals, tangents))
+    matrices_np = np.transpose(matrices_np, axes=(0,2,1))
+    try:
+        matrices_np = np.linalg.inv(matrices_np)
+        return matrices_np, normals, binormals
+    except np.linalg.LinAlgError as e:
+        sv_logger.error(&#34;Some of matrices are singular:&#34;)
+        for i, m in enumerate(matrices_np):
+            if abs(np.linalg.det(m) &lt; 1e-5):
+                sv_logger.error(&#34;M[%s] (t = %s):\n%s&#34;, i, ts[i], m)
+        raise e</code></pre>
+</details>
 <div class="desc"><p>Calculate curve frames at a series of points.</p>
 <h2 id="args">Args</h2>
 <dl>
@@ -826,12 +1184,45 @@ algorithm will raise a general LinAlgError exception if it can't calculate the m
 <span>def <span class="ident">frame_by_plane_array</span></span>(<span>self, ts, plane_normal, tangent_delta=None)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def frame_by_plane_array(self, ts, plane_normal, tangent_delta=None):
+    h = self.get_tangent_delta(tangent_delta)
+    n = len(ts)
+    tangents = self.tangent_array(ts, tangent_delta=h)
+    tangents /= np.linalg.norm(tangents, axis=1, keepdims=True)
+    plane_normals = np.tile(plane_normal[np.newaxis].T, n).T
+    normals = np.cross(tangents, plane_normals)
+    normals /= np.linalg.norm(normals, axis=1, keepdims=True)
+    binormals = np.cross(tangents, normals)
+
+    matrices_np = np.dstack((normals, binormals, tangents))
+    matrices_np = np.transpose(matrices_np, axes=(0,2,1))
+    matrices_np = np.linalg.inv(matrices_np)
+    return matrices_np, normals, binormals</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.core.SvCurve.get_control_points"><code class="name flex">
 <span>def <span class="ident">get_control_points</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_control_points(self):
+    &#34;&#34;&#34;
+    Get curve control points, if applicable.
+
+    Returns:
+        np.array of shape (n, 3)
+    &#34;&#34;&#34;
+    return np.array([])
+    #raise Exception(&#34;Curve of type type `{}&#39; does not have control points&#34;.format(type(self)))</code></pre>
+</details>
 <div class="desc"><p>Get curve control points, if applicable.</p>
 <h2 id="returns">Returns</h2>
 <p>np.array of shape (n, 3)</p></div>
@@ -840,30 +1231,87 @@ algorithm will raise a general LinAlgError exception if it can't calculate the m
 <span>def <span class="ident">get_degree</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_degree(self):
+    &#34;&#34;&#34;
+    Get curve degree, if applicable.
+    &#34;&#34;&#34;
+    raise Exception(&#34;`Get Degree&#39; method is not applicable to curve of type `{}&#39;&#34;.format(type(self)))</code></pre>
+</details>
 <div class="desc"><p>Get curve degree, if applicable.</p></div>
 </dd>
 <dt id="sverchok.utils.curve.core.SvCurve.get_end_points"><code class="name flex">
 <span>def <span class="ident">get_end_points</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_end_points(self):
+    u_min, u_max = self.get_u_bounds()
+    begin = self.evaluate(u_min)
+    end = self.evaluate(u_max)
+    return begin, end</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.core.SvCurve.get_polyline_vertices"><code class="name flex">
 <span>def <span class="ident">get_polyline_vertices</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_polyline_vertices(self):
+    raise Exception(&#34;Curve is not a polyline&#34;)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.core.SvCurve.get_tangent_delta"><code class="name flex">
 <span>def <span class="ident">get_tangent_delta</span></span>(<span>self, tangent_delta=None)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_tangent_delta(self, tangent_delta=None):
+    &#34;&#34;&#34;
+    Utility method to define delta for curve derivatives calculation.
+    &#34;&#34;&#34;
+    if tangent_delta is None:
+        if hasattr(self, &#39;tangent_delta&#39;):
+            h = self.tangent_delta
+        else:
+            h = DEFAULT_TANGENT_DELTA
+    else:
+        h = DEFAULT_TANGENT_DELTA
+    return h</code></pre>
+</details>
 <div class="desc"><p>Utility method to define delta for curve derivatives calculation.</p></div>
 </dd>
 <dt id="sverchok.utils.curve.core.SvCurve.get_u_bounds"><code class="name flex">
 <span>def <span class="ident">get_u_bounds</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_u_bounds(self):
+    &#34;&#34;&#34;
+    Obtain curve domain.
+
+    Returns:
+        Tuple: minimum and maximum value of curve&#39;s parameter.
+    &#34;&#34;&#34;
+    raise Exception(&#34;not implemented!&#34;)</code></pre>
+</details>
 <div class="desc"><p>Obtain curve domain.</p>
 <h2 id="returns">Returns</h2>
 <dl>
@@ -875,54 +1323,175 @@ algorithm will raise a general LinAlgError exception if it can't calculate the m
 <span>def <span class="ident">is_closed</span></span>(<span>self, tolerance=1e-06)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def is_closed(self, tolerance=1e-6):
+    begin, end = self.get_end_points()
+    return np.linalg.norm(begin - end) &lt; tolerance</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.core.SvCurve.is_polyline"><code class="name flex">
 <span>def <span class="ident">is_polyline</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def is_polyline(self):
+    return False</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.core.SvCurve.main_normal"><code class="name flex">
 <span>def <span class="ident">main_normal</span></span>(<span>self, t, normalize=True, tangent_delta=None)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def main_normal(self, t, normalize=True, tangent_delta=None):
+    h = self.get_tangent_delta(tangent_delta)
+
+    tangent = self.tangent(t, tangent_delta=h)
+    binormal = self.binormal(t, normalize, tangent_delta=h)
+    v = np.cross(binormal, tangent)
+    if normalize:
+        v = v / np.linalg.norm(v)
+    return v</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.core.SvCurve.main_normal_array"><code class="name flex">
 <span>def <span class="ident">main_normal_array</span></span>(<span>self, ts, normalize=True, tangent_delta=None)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def main_normal_array(self, ts, normalize=True, tangent_delta=None):
+    h = self.get_tangent_delta(tangent_delta)
+
+    tangents = self.tangent_array(ts, tangent_delta=h)
+    binormals = self.binormal_array(ts, normalize, tangent_delta=h)
+    v = np.cross(binormals, tangents)
+    if normalize:
+        norms = np.linalg.norm(v, axis=1, keepdims=True)
+        nonzero = (norms &gt; 0)[:,0]
+        v[nonzero] = v[nonzero] / norms[nonzero][:,0][np.newaxis].T
+    return v</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.core.SvCurve.nth_derivative"><code class="name flex">
 <span>def <span class="ident">nth_derivative</span></span>(<span>self, order, t, tangent_delta=None)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def nth_derivative(self, order, t, tangent_delta=None):
+    h = self.get_tangent_delta(tangent_delta)
+    if order == 0:
+        return self.evaluate(t)
+    elif order == 1:
+        return self.tangent(t, tangent_delta=tangent_delta)
+    elif order == 2:
+        return self.second_derivative(t, tangent_delta=tangent_delta)
+    elif order == 3:
+        return self.third_derivative(t, tangent_delta=tangent_delta)
+    else:
+        raise Exception(f&#34;Unsupported derivative order: {order}&#34;)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.core.SvCurve.pre_calc_torsion_integral"><code class="name flex">
 <span>def <span class="ident">pre_calc_torsion_integral</span></span>(<span>self, resolution, tangent_delta=None)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def pre_calc_torsion_integral(self, resolution, tangent_delta=None):
+    h = self.get_tangent_delta(tangent_delta)
+    t_min, t_max = self.get_u_bounds()
+    ts = np.linspace(t_min, t_max, resolution)
+    vectors = self.evaluate_array(ts)
+    dvs = vectors[1:] - vectors[:-1]
+    lengths = np.linalg.norm(dvs, axis=1)
+    xs = np.insert(np.cumsum(lengths), 0, 0)
+    ys = self.torsion_array(ts, tangent_delta=h)
+    self._torsion_integral = TrapezoidIntegral(ts, xs, ys)
+    self._torsion_integral.calc()</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.core.SvCurve.second_derivative"><code class="name flex">
 <span>def <span class="ident">second_derivative</span></span>(<span>self, t, tangent_delta=None)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def second_derivative(self, t, tangent_delta = None):
+    h = self.get_tangent_delta(tangent_delta)
+
+    v0 = self.evaluate(t-h)
+    v1 = self.evaluate(t)
+    v2 = self.evaluate(t+h)
+    return (v2 - 2*v1 + v0) / (h * h)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.core.SvCurve.second_derivative_array"><code class="name flex">
 <span>def <span class="ident">second_derivative_array</span></span>(<span>self, ts, tangent_delta=None)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def second_derivative_array(self, ts, tangent_delta=None):
+    h = self.get_tangent_delta(tangent_delta)
+    v0s = self.evaluate_array(ts-h)
+    v1s = self.evaluate_array(ts)
+    v2s = self.evaluate_array(ts+h)
+    return (v2s - 2*v1s + v0s) / (h * h)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.core.SvCurve.tangent"><code class="name flex">
 <span>def <span class="ident">tangent</span></span>(<span>self, t, tangent_delta=None)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def tangent(self, t, tangent_delta=None):
+    &#34;&#34;&#34;
+    Calculate curve tangent vector at one point.
+
+    Args:
+        t: curve parameter value.
+        tangent_delta: delta value for derivative calculation.
+
+    Returns:
+        tangent vector - np.array of shape (3,).
+    &#34;&#34;&#34;
+    v = self.evaluate(t)
+    h = self.get_tangent_delta(tangent_delta)
+    v_h = self.evaluate(t+h)
+    return (v_h - v) / h</code></pre>
+</details>
 <div class="desc"><p>Calculate curve tangent vector at one point.</p>
 <h2 id="args">Args</h2>
 <dl>
@@ -938,6 +1507,38 @@ algorithm will raise a general LinAlgError exception if it can't calculate the m
 <span>def <span class="ident">tangent_array</span></span>(<span>self, ts, tangent_delta=None)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def tangent_array(self, ts, tangent_delta=None):
+    &#34;&#34;&#34;
+    Calculate curve tangent vectors at a series of points.
+
+    Args:
+        ts: curve parameter values - np.array of shape (n,).
+        tangent_delta: delta value for derivative calculation.
+
+    Returns:
+        tangent vectors - np.array of shape (n,3).
+    &#34;&#34;&#34;
+    vs = self.evaluate_array(ts)
+    h = self.get_tangent_delta(tangent_delta)
+    u_max = self.get_u_bounds()[1]
+    bad_idxs = (ts+h) &gt; u_max
+    good_idxs = (ts+h) &lt;= u_max
+    ts_h = ts + h
+    ts_h[bad_idxs] = (ts - h)[bad_idxs]
+
+    vs_h = self.evaluate_array(ts_h)
+    tangents_plus = (vs_h - vs) / h
+    tangents_minus = (vs - vs_h) / h
+    tangents_x = np.where(good_idxs, tangents_plus[:,0], tangents_minus[:,0])
+    tangents_y = np.where(good_idxs, tangents_plus[:,1], tangents_minus[:,1])
+    tangents_z = np.where(good_idxs, tangents_plus[:,2], tangents_minus[:,2])
+    tangents = np.stack((tangents_x, tangents_y, tangents_z)).T
+    return tangents</code></pre>
+</details>
 <div class="desc"><p>Calculate curve tangent vectors at a series of points.</p>
 <h2 id="args">Args</h2>
 <dl>
@@ -953,36 +1554,130 @@ algorithm will raise a general LinAlgError exception if it can't calculate the m
 <span>def <span class="ident">tangent_normal_binormal_array</span></span>(<span>self, ts, normalize=True, tangent_delta=None)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def tangent_normal_binormal_array(self, ts, normalize=True, tangent_delta=None):
+    h = self.get_tangent_delta(tangent_delta)
+
+    tangents, seconds = self.derivatives_array(2, ts, tangent_delta=h)
+    binormals = np.cross(tangents, seconds)
+    if normalize:
+        norms = np.linalg.norm(binormals, axis=1, keepdims=True)
+        nonzero = (norms &gt; 0)[:,0]
+        binormals[nonzero] = binormals[nonzero] / norms[nonzero][:,0][np.newaxis].T
+    normals = np.cross(binormals, tangents)
+    if normalize:
+        norms = np.linalg.norm(normals, axis=1, keepdims=True)
+        nonzero = (norms &gt; 0)[:,0]
+        normals[nonzero] = normals[nonzero] / norms[nonzero][:,0][np.newaxis].T
+    return tangents, normals, binormals</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.core.SvCurve.third_derivative"><code class="name flex">
 <span>def <span class="ident">third_derivative</span></span>(<span>self, t, tangent_delta=None)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def third_derivative(self, t, tangent_delta = None):
+    return self.third_derivative_array(np.array([t]), tangent_delta=tangent_delta)[0]</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.core.SvCurve.third_derivative_array"><code class="name flex">
 <span>def <span class="ident">third_derivative_array</span></span>(<span>self, ts, tangent_delta=None)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def third_derivative_array(self, ts, tangent_delta=None):
+    h = self.get_tangent_delta(tangent_delta)
+    v0s = self.evaluate_array(ts)
+    v1s = self.evaluate_array(ts+h)
+    v2s = self.evaluate_array(ts+2*h)
+    v3s = self.evaluate_array(ts+3*h)
+    return (- v0s + 3*v1s - 3*v2s + v3s) / (h * h * h)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.core.SvCurve.torsion_array"><code class="name flex">
 <span>def <span class="ident">torsion_array</span></span>(<span>self, ts, tangent_delta=None)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def torsion_array(self, ts, tangent_delta=None):
+    h = self.get_tangent_delta(tangent_delta)
+
+    tangents, seconds, thirds = self.derivatives_array(3, ts, tangent_delta=h)
+    seconds_thirds = np.cross(seconds, thirds)
+    numerator = (tangents * seconds_thirds).sum(axis=1)
+    #numerator = np.apply_along_axis(lambda tangent: tangent.dot(seconds_thirds), 1, tangents)
+    first_second = np.cross(tangents, seconds)
+    denominator = np.linalg.norm(first_second, axis=1)
+    return numerator / (denominator * denominator)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.core.SvCurve.torsion_integral"><code class="name flex">
 <span>def <span class="ident">torsion_integral</span></span>(<span>self, ts)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def torsion_integral(self, ts):
+    return self._torsion_integral.evaluate_cubic(ts)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.core.SvCurve.zero_torsion_frame_array"><code class="name flex">
 <span>def <span class="ident">zero_torsion_frame_array</span></span>(<span>self, ts, tangent_delta=None)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def zero_torsion_frame_array(self, ts, tangent_delta=None):
+    &#34;&#34;&#34;
+    Calculate curve frames with zero integral torsion, at a series of points.
+
+    Args:
+        ts: np.array of shape (n,)
+
+    Returns:
+        tuple:
+            * cumulative torsion - np.array of shape (n,) (rotation angles in radians)
+            * matrices - np.array of shape (n, 3, 3)
+    &#34;&#34;&#34;
+    if not hasattr(self, &#39;_torsion_integral&#39;):
+        raise Exception(&#34;pre_calc_torsion_integral() has to be called first&#34;)
+
+    h = self.get_tangent_delta(tangent_delta)
+    vectors = self.evaluate_array(ts)
+    matrices_np, normals, binormals = self.frame_array(ts, tangent_delta=h)
+    integral = self.torsion_integral(ts)
+    new_matrices = []
+    for matrix_np, point, angle in zip(matrices_np, vectors, integral):
+        frenet_matrix = Matrix(matrix_np.tolist()).to_4x4()
+        rotation_matrix = Matrix.Rotation(-angle, 4, &#39;Z&#39;)
+        matrix = frenet_matrix @ rotation_matrix
+        matrix.translation = Vector(point)
+        new_matrices.append(matrix)
+
+    return integral, new_matrices</code></pre>
+</details>
 <div class="desc"><p>Calculate curve frames with zero integral torsion, at a series of points.</p>
 <h2 id="args">Args</h2>
 <dl>
@@ -1001,7 +1696,6 @@ algorithm will raise a general LinAlgError exception if it can't calculate the m
 <span>(</span><span>curve, u_min, u_max, rescale=False)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1074,6 +1768,7 @@ algorithm will raise a general LinAlgError exception if it can't calculate the m
             ts = (M - m)*ts + m
         return self.curve.derivatives_array(ts, tangent_delta=tangent_delta)</code></pre>
 </details>
+<div class="desc"></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="sverchok.utils.curve.core.SvCurve" href="#sverchok.utils.curve.core.SvCurve">SvCurve</a></li>
@@ -1084,18 +1779,48 @@ algorithm will raise a general LinAlgError exception if it can't calculate the m
 <span>def <span class="ident">derivatives_array</span></span>(<span>self, ts, tangent_delta=None)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def derivatives_array(self, ts, tangent_delta=None):
+    if self.rescale:
+        m,M = self.target_u_bounds
+        ts = (M - m)*ts + m
+    return self.curve.derivatives_array(ts, tangent_delta=tangent_delta)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.core.SvCurveSegment.second_derivative_array"><code class="name flex">
 <span>def <span class="ident">second_derivative_array</span></span>(<span>self, ts, tangent_delta=None)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def second_derivative_array(self, ts, tangent_delta=None):
+    if self.rescale:
+        m,M = self.target_u_bounds
+        ts = (M - m)*ts + m
+    return self.curve.second_derivative_array(ts, tangent_delta=tangent_delta)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.core.SvCurveSegment.third_derivative_array"><code class="name flex">
 <span>def <span class="ident">third_derivative_array</span></span>(<span>self, ts, tangent_delta=None)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def third_derivative_array(self, ts, tangent_delta=None):
+    if self.rescale:
+        m,M = self.target_u_bounds
+        ts = (M - m)*ts + m
+    return self.curve.third_derivative_array(ts, tangent_delta=tangent_delta)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -1123,7 +1848,6 @@ algorithm will raise a general LinAlgError exception if it can't calculate the m
 <span>(</span><span>curve)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1183,6 +1907,7 @@ algorithm will raise a general LinAlgError exception if it can't calculate the m
             sign = -sign
         return array</code></pre>
 </details>
+<div class="desc"></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="sverchok.utils.curve.core.SvCurve" href="#sverchok.utils.curve.core.SvCurve">SvCurve</a></li>
@@ -1193,18 +1918,51 @@ algorithm will raise a general LinAlgError exception if it can't calculate the m
 <span>def <span class="ident">derivatives_array</span></span>(<span>self, n, ts, tangent_delta=None)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def derivatives_array(self, n, ts, tangent_delta=None):
+    m, M = self.curve.get_u_bounds()
+    ts = M - ts + m
+    derivs = self.curve.derivatives_array(n, ts, tangent_delta=tangent_delta)
+    array = []
+    sign = -1
+    for deriv in derivs:
+        array.append(sign * deriv)
+        sign = -sign
+    return array</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.core.SvFlipCurve.second_derivative_array"><code class="name flex">
 <span>def <span class="ident">second_derivative_array</span></span>(<span>self, ts, tangent_detla=None)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def second_derivative_array(self, ts, tangent_detla=None):
+    m, M = self.curve.get_u_bounds()
+    ts = M - ts + m
+    return self.curve.second_derivative_array(ts, tangnet_delta=tangent_delta)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.core.SvFlipCurve.third_derivative_array"><code class="name flex">
 <span>def <span class="ident">third_derivative_array</span></span>(<span>self, ts, tangent_delta=None)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def third_derivative_array(self, ts, tangent_delta=None):
+    m, M = self.curve.get_u_bounds()
+    ts = M - ts + m
+    return - self.curve.third_derivative_array(ts, tangent_delta=tangent_delta)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -1232,7 +1990,6 @@ algorithm will raise a general LinAlgError exception if it can't calculate the m
 <span>(</span><span>function, function_numpy=None)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1270,6 +2027,7 @@ algorithm will raise a general LinAlgError exception if it can't calculate the m
         points_h = np.vectorize(self.function, signature=&#39;()-&gt;(3)&#39;)(ts+h)
         return (points_h - points) / h</code></pre>
 </details>
+<div class="desc"></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="sverchok.utils.curve.core.SvCurve" href="#sverchok.utils.curve.core.SvCurve">SvCurve</a></li>
@@ -1298,7 +2056,6 @@ algorithm will raise a general LinAlgError exception if it can't calculate the m
 <span>(</span><span>curve)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1350,6 +2107,7 @@ algorithm will raise a general LinAlgError exception if it can't calculate the m
         ts = m + ts*(M-m)
         return self.curve.derivatives_array(ts, tangent_delta=tangent_delta)</code></pre>
 </details>
+<div class="desc"></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="sverchok.utils.curve.core.SvCurve" href="#sverchok.utils.curve.core.SvCurve">SvCurve</a></li>
@@ -1360,18 +2118,45 @@ algorithm will raise a general LinAlgError exception if it can't calculate the m
 <span>def <span class="ident">derivatives_array</span></span>(<span>self, ts, tangent_delta=None)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def derivatives_array(self, ts, tangent_delta=None):
+    m, M = self.curve.get_u_bounds()
+    ts = m + ts*(M-m)
+    return self.curve.derivatives_array(ts, tangent_delta=tangent_delta)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.core.SvReparametrizeCurve.second_derivative_array"><code class="name flex">
 <span>def <span class="ident">second_derivative_array</span></span>(<span>self, ts, tangent_delta=None)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def second_derivative_array(self, ts, tangent_delta=None):
+    m, M = self.curve.get_u_bounds()
+    ts = m + ts*(M-m)
+    return self.curve.second_derivative_array(ts, tangent_delta=tangent_delta)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.core.SvReparametrizeCurve.third_derivative_array"><code class="name flex">
 <span>def <span class="ident">third_derivative_array</span></span>(<span>self, ts, tangent_delta=None)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def third_derivative_array(self, ts, tangent_delta=None):
+    m, M = self.curve.get_u_bounds()
+    ts = m + ts*(M-m)
+    return self.curve.third_derivative_array(ts, tangent_delta=tangent_delta)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -1399,7 +2184,6 @@ algorithm will raise a general LinAlgError exception if it can't calculate the m
 <span>(</span><span>curve, new_u_min, new_u_max)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1448,6 +2232,7 @@ algorithm will raise a general LinAlgError exception if it can't calculate the m
     #def third_derivative_array(self, ts, tangent_delta=None):
     #    return self.scale**3 * self.curve.third_derivative_array(self.map_u(ts), tangent_delta=tangent_delta)</code></pre>
 </details>
+<div class="desc"></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="sverchok.utils.curve.core.SvCurve" href="#sverchok.utils.curve.core.SvCurve">SvCurve</a></li>
@@ -1456,7 +2241,6 @@ algorithm will raise a general LinAlgError exception if it can't calculate the m
 <dl>
 <dt id="sverchok.utils.curve.core.SvReparametrizedCurve.scale"><code class="name">prop <span class="ident">scale</span></code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1467,6 +2251,7 @@ def scale(self):
     #return (u_max - u_min) / (self.new_u_max - self.new_u_min)
     return  (self.new_u_max - self.new_u_min) / (u_max - u_min)</code></pre>
 </details>
+<div class="desc"></div>
 </dd>
 </dl>
 <h3>Methods</h3>
@@ -1475,6 +2260,14 @@ def scale(self):
 <span>def <span class="ident">map_u</span></span>(<span>self, u)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def map_u(self, u):
+    u_min, u_max = self.curve.get_u_bounds()
+    return (u_max - u_min) * (u - self.new_u_min) / (self.new_u_max - self.new_u_min) + u_min</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -1502,7 +2295,6 @@ def scale(self):
 <span>(</span><span>function)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1525,6 +2317,7 @@ def scale(self):
     def evaluate_array(self, ts):
         return np.vectorize(self.evaluate, signature=&#39;()-&gt;(3)&#39;)(ts)</code></pre>
 </details>
+<div class="desc"></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="sverchok.utils.curve.core.SvCurve" href="#sverchok.utils.curve.core.SvCurve">SvCurve</a></li>
@@ -1553,7 +2346,6 @@ def scale(self):
 <span>(</span><span>start, derivatives, u_bounds=None)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1733,6 +2525,7 @@ def scale(self):
         square.u_bounds = self.u_bounds
         return square</code></pre>
 </details>
+<div class="desc"></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="sverchok.utils.curve.core.SvCurve" href="#sverchok.utils.curve.core.SvCurve">SvCurve</a></li>
@@ -1752,78 +2545,228 @@ def scale(self):
 <span>def <span class="ident">concatenate</span></span>(<span>self, curve2, tolerance=1e-06, remove_knots=False)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def concatenate(self, curve2, tolerance=1e-6, remove_knots=False):
+    return self.to_nurbs().concatenate(curve2, tolerance=tolerance, remove_knots=remove_knots)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.core.SvTaylorCurve.extrude_along_vector"><code class="name flex">
 <span>def <span class="ident">extrude_along_vector</span></span>(<span>self, vector)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def extrude_along_vector(self, vector):
+    return self.to_nurbs().extrude_along_vector(vector)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.core.SvTaylorCurve.extrude_to_point"><code class="name flex">
 <span>def <span class="ident">extrude_to_point</span></span>(<span>self, point)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def extrude_to_point(self, point):
+    return self.to_nurbs().extrude_to_point(point)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.core.SvTaylorCurve.get_coefficients"><code class="name flex">
 <span>def <span class="ident">get_coefficients</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_coefficients(self):
+    coeffs = np.zeros((len(self.derivatives)+1, self.ndim))
+    coeffs[0] = self.start
+
+    fac = 1.0
+    for i, deriv in enumerate(self.derivatives):
+        coeffs[i+1] = deriv / fac
+        fac *= (i+2)
+
+    return coeffs</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.core.SvTaylorCurve.lerp_to"><code class="name flex">
 <span>def <span class="ident">lerp_to</span></span>(<span>self, curve2, coefficient)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def lerp_to(self, curve2, coefficient):
+    return self.to_nurbs().lerp_to(curve2, coefficient)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.core.SvTaylorCurve.make_revolution_surface"><code class="name flex">
 <span>def <span class="ident">make_revolution_surface</span></span>(<span>self, point, direction, v_min, v_max, global_origin)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def make_revolution_surface(self, point, direction, v_min, v_max, global_origin):
+    return self.to_nurbs().make_revolution_surface(point, direction, v_min, v_max, global_origin)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.core.SvTaylorCurve.make_ruled_surface"><code class="name flex">
 <span>def <span class="ident">make_ruled_surface</span></span>(<span>self, curve2, vmin, vmax)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def make_ruled_surface(self, curve2, vmin, vmax):
+    return self.to_nurbs().make_ruled_surface(curve2, vmin, vmax)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.core.SvTaylorCurve.reverse"><code class="name flex">
 <span>def <span class="ident">reverse</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def reverse(self):
+    return self.to_nurbs().reverse()</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.core.SvTaylorCurve.second_derivative"><code class="name flex">
 <span>def <span class="ident">second_derivative</span></span>(<span>self, t, tangent_delta=None)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def second_derivative(self, t, tangent_delta=None):
+    return self.second_derivative_array(np.array([t]))[0]</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.core.SvTaylorCurve.second_derivative_array"><code class="name flex">
 <span>def <span class="ident">second_derivative_array</span></span>(<span>self, ts, tangent_delta=None)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def second_derivative_array(self, ts, tangent_delta=None):
+    n = len(ts)
+    result = np.zeros((n, self.ndim))
+    denom = 1
+    ts = ts[np.newaxis].T
+    for k, vec in enumerate(self.derivatives[1:]):
+        i = k+1
+        result = result + (i+1)*i*ts**(i-1) * vec / denom
+        denom *= (i+2)
+    return result</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.core.SvTaylorCurve.square"><code class="name flex">
 <span>def <span class="ident">square</span></span>(<span>self, to_axis=0)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def square(self, to_axis=0):
+    &#34;&#34;&#34;
+    Returns a curve which expresses squared distance from origin to points of this curve.
+    &#34;&#34;&#34;
+    coeffs = self.get_coefficients()
+    p = len(coeffs)
+    square_coeffs = np.zeros(((p-1)*2+1, coeffs.shape[1]))
+
+    for power in range(len(square_coeffs)):
+        for i in range(p):
+            j = power - i
+            if 0 &lt;= j &lt; p:
+                square_coeffs[power,:] += coeffs[i,:] * coeffs[j,:]
+
+    result_coeffs = np.zeros_like(square_coeffs)
+    result_coeffs[:, to_axis] = square_coeffs[:,:3].sum(axis=1)
+    if result_coeffs.shape[1] == 4:
+        result_coeffs[0][3] = 1.0
+
+    square = SvTaylorCurve.from_coefficients(result_coeffs)
+    square.u_bounds = self.u_bounds
+    return square</code></pre>
+</details>
 <div class="desc"><p>Returns a curve which expresses squared distance from origin to points of this curve.</p></div>
 </dd>
 <dt id="sverchok.utils.curve.core.SvTaylorCurve.third_derivative_array"><code class="name flex">
 <span>def <span class="ident">third_derivative_array</span></span>(<span>self, ts, tangent_delta=None)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def third_derivative_array(self, ts, tangent_delta=None):
+    n = len(ts)
+    result = np.zeros((n, self.ndim))
+    denom = 1
+    ts = ts[np.newaxis].T
+    for k, vec in enumerate(self.derivatives[2:]):
+        i = k+2
+        result = result + (i+1)*i*(i-1)*ts**(i-2) * vec / denom
+        denom *= (i+2)
+    return result</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.core.SvTaylorCurve.to_nurbs"><code class="name flex">
 <span>def <span class="ident">to_nurbs</span></span>(<span>self, implementation='NATIVE')</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def to_nurbs(self, implementation = SvNurbsMaths.NATIVE):
+    control_points = self.get_control_points() 
+    if control_points.shape[1] == 4:
+        control_points, weights = from_homogenous(control_points)
+    else:
+        weights = None
+    degree = self.get_degree()
+    knotvector = sv_knotvector.generate(degree, len(control_points))
+    u1, u2 = self.get_u_bounds()
+    knotvector = (u2-u1) * knotvector + u1
+    nurbs = SvNurbsMaths.build_curve(implementation,
+            degree = degree, knotvector = knotvector,
+            control_points = control_points,
+            weights = weights)
+    #return nurbs.reparametrize(*self.get_u_bounds())
+    return nurbs
+    #return nurbs.cut_segment(u1, u2)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -1851,7 +2794,6 @@ def scale(self):
 <span>(</span><span>*args, **kwargs)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Inappropriate argument type.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1859,6 +2801,7 @@ def scale(self):
 <pre><code class="python">class UnsupportedCurveTypeException(TypeError):
     pass</code></pre>
 </details>
+<div class="desc"><p>Inappropriate argument type.</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li>builtins.TypeError</li>
@@ -1871,7 +2814,6 @@ def scale(self):
 <span>(</span><span>ts, mask=None)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Common base class for all non-exit exceptions.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1885,6 +2827,7 @@ def scale(self):
     def get_message(self):
         return f&#34;Curve has zero curvature at some points: {self.ts}&#34;</code></pre>
 </details>
+<div class="desc"><p>Common base class for all non-exit exceptions.</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li>builtins.Exception</li>
@@ -1896,6 +2839,13 @@ def scale(self):
 <span>def <span class="ident">get_message</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_message(self):
+    return f&#34;Curve has zero curvature at some points: {self.ts}&#34;</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -2040,7 +2990,7 @@ def scale(self):
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.1</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.5</a>.</p>
 </footer>
 </body>
 </html>

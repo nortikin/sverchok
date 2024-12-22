@@ -3,19 +3,30 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
-<meta name="generator" content="pdoc3 0.11.1">
+<meta name="generator" content="pdoc3 0.11.5">
 <title>sverchok.utils.modules.polygon_utils API documentation</title>
 <meta name="description" content="">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
-<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
 <style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
 <style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
 <script>window.addEventListener('DOMContentLoaded', () => {
 hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
 hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
 })</script>
 </head>
 <body>
@@ -37,6 +48,42 @@ hljs.highlightAll();
 <span>def <span class="ident">areas_from_polygons</span></span>(<span>verts, polygons, sum_faces=False)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def areas_from_polygons(verts, polygons, sum_faces=False):
+    &#39;&#39;&#39;
+    returns pols area as [float, float,...]
+    vertices: list as [vertex, vertex, ...], being each vertex [float, float, float].
+    faces: list as [polygon, polygon,..], being each polygon [int, int, ...].
+    sum_faces if True it will return the sum of the areas as [float]
+    &#39;&#39;&#39;
+    areas = []
+    concat_area = areas.append
+
+    for polygon in polygons:
+        num = len(polygon)
+        if num == 3:
+            concat_area(area(verts[polygon[0]], verts[polygon[1]], verts[polygon[2]]))
+        elif num == 4:
+            area_1 = area(verts[polygon[0]], verts[polygon[1]], verts[polygon[2]])
+            area_2 = area(verts[polygon[0]], verts[polygon[2]], verts[polygon[3]])
+            concat_area(area_1 + area_2)
+        elif num &gt; 4:
+            ngon_area = 0.0
+            subcoords = [Vector(verts[idx]) for idx in polygon]
+            for tri in tessellate([subcoords]):
+                ngon_area += area(*[verts[polygon[i]] for i in tri])
+            concat_area(ngon_area)
+        else:
+            concat_area(0)
+
+    if sum_faces:
+        areas = [sum(areas)]
+
+    return areas</code></pre>
+</details>
 <div class="desc"><p>returns pols area as [float, float,&hellip;]
 vertices: list as [vertex, vertex, &hellip;], being each vertex [float, float, float].
 faces: list as [polygon, polygon,..], being each polygon [int, int, &hellip;].
@@ -46,66 +93,201 @@ sum_faces if True it will return the sum of the areas as [float]</p></div>
 <span>def <span class="ident">edges_lengths</span></span>(<span>v_pols)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def edges_lengths(v_pols):
+    return np.linalg.norm(v_pols-np.roll(v_pols, -1, axis=1), axis=2)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.modules.polygon_utils.np_center_bbox"><code class="name flex">
 <span>def <span class="ident">np_center_bbox</span></span>(<span>v_pols)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def np_center_bbox(v_pols):
+
+    return (np.amin(v_pols, axis=1) + np.amax(v_pols, axis=1))/2</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.modules.polygon_utils.np_center_median"><code class="name flex">
 <span>def <span class="ident">np_center_median</span></span>(<span>v_pols)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def np_center_median(v_pols):
+    return np.sum(v_pols, axis=1) / v_pols.shape[1]</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.modules.polygon_utils.np_center_weighted"><code class="name flex">
 <span>def <span class="ident">np_center_weighted</span></span>(<span>v_pols)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def np_center_weighted(v_pols):
+
+    v_factor = vertex_weight_factor(v_pols)
+
+    return np.sum(v_pols * v_factor[:, :, np.newaxis], axis=1)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.modules.polygon_utils.np_faces_absolute_normals"><code class="name flex">
 <span>def <span class="ident">np_faces_absolute_normals</span></span>(<span>v_pols)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def np_faces_absolute_normals(v_pols):
+    return np_center_median(v_pols) + np_faces_normals(v_pols)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.modules.polygon_utils.np_faces_normals"><code class="name flex">
 <span>def <span class="ident">np_faces_normals</span></span>(<span>v_pols)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def np_faces_normals(v_pols):
+    pol_sides = v_pols.shape[1]
+    if pol_sides &gt; 3:
+        f_normals = np.zeros((len(v_pols), 3), dtype=np.float64)
+        for i in range(pol_sides - 2):
+            f_normals += np.cross(v_pols[::, (1+i)%pol_sides] - v_pols[::, 0], v_pols[::, (2+i)%pol_sides] - v_pols[::, 0])
+    else:
+        f_normals = np.cross(v_pols[::, 1] - v_pols[::, 0], v_pols[::, 2] - v_pols[::, 0])
+    np_normalize_vectors(f_normals)
+
+    return f_normals</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.modules.polygon_utils.np_faces_perimeters"><code class="name flex">
 <span>def <span class="ident">np_faces_perimeters</span></span>(<span>v_pols)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def np_faces_perimeters(v_pols):
+
+    return np.sum(edges_lengths(v_pols), axis=1)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.modules.polygon_utils.np_process_polygons"><code class="name flex">
 <span>def <span class="ident">np_process_polygons</span></span>(<span>verts, faces, func=None, dims=3, output_numpy=False)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def np_process_polygons(verts, faces, func=None, dims=3, output_numpy=False):
+    if not func:
+        return
+    if not (has_element(verts) and has_element(faces)):
+        return
+    if isinstance(verts, np.ndarray):
+        np_verts = verts
+    else:
+        np_verts = np.array(verts)
+
+    if isinstance(faces, np.ndarray):
+        np_faces = faces
+    else:
+        np_faces = np.array(faces,dtype=object)
+
+    if np_faces.dtype == object:
+        lens = np.array([len(i) for i in np_faces])
+        pol_types = np.unique(lens)
+        if dims == 1:
+            vals = np.zeros(np_faces.shape[0], dtype=float)
+        else:
+            vals = np.zeros((np_faces.shape[0], dims), dtype=float)
+        for p in pol_types:
+            mask = lens == p
+            np_faces_g = np.array(np_faces[mask].tolist())
+            v_pols = np_verts[np_faces_g]
+            if dims == 1:
+                vals[mask] = func(v_pols)
+            else:
+                vals[mask, :] = func(v_pols)
+    else:
+        v_pols = np_verts[np_faces] #num pols, num sides
+        vals = func(v_pols)
+
+    if output_numpy:
+        return vals
+    return vals.tolist()</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.modules.polygon_utils.np_tangent_center_orig"><code class="name flex">
 <span>def <span class="ident">np_tangent_center_orig</span></span>(<span>v_pols)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def np_tangent_center_orig(v_pols):
+    return np_normalize_vectors(np_center_median(v_pols) - v_pols[:, 0, :])</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.modules.polygon_utils.np_tangent_longest_edge"><code class="name flex">
 <span>def <span class="ident">np_tangent_longest_edge</span></span>(<span>v_pols)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def np_tangent_longest_edge(v_pols):
+    edges_dir = v_pols-np.roll(v_pols, 1, axis=1)
+    ed_length = np.linalg.norm(edges_dir, axis=2)
+    ed_idx = np.argmax(ed_length, axis=1)
+
+    return np_normalize_vectors(edges_dir[np.arange(len(v_pols)), ed_idx, :])</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.modules.polygon_utils.pols_absolute_normals"><code class="name flex">
 <span>def <span class="ident">pols_absolute_normals</span></span>(<span>vertices, faces, output_numpy)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def pols_absolute_normals(vertices, faces, output_numpy):
+    &#39;&#39;&#39;
+    Returns Faces center + faces normals as [vector, vector,...]
+    vertices: list as [vertex, vertex, ...], being each vertex [float, float, float].
+    faces: list as [polygon, polygon,..], being each polygon [int, int, ...].
+    &#39;&#39;&#39;
+    return np_process_polygons(vertices, faces, func=np_faces_absolute_normals, output_numpy=output_numpy)</code></pre>
+</details>
 <div class="desc"><p>Returns Faces center + faces normals as [vector, vector,&hellip;]
 vertices: list as [vertex, vertex, &hellip;], being each vertex [float, float, float].
 faces: list as [polygon, polygon,..], being each polygon [int, int, &hellip;].</p></div>
@@ -114,6 +296,17 @@ faces: list as [polygon, polygon,..], being each polygon [int, int, &hellip;].</
 <span>def <span class="ident">pols_adjacent</span></span>(<span>pols)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def pols_adjacent(pols):
+    &#34;&#34;&#34;
+    returns the polygons that share a vertex with each polygon [[pol, pol,..], [pol,..]]
+    pols: list as [polygon, polygon,..], being each polygon [int, int, ...].
+    &#34;&#34;&#34;
+    return [[pols[i] for i in p_indexes] for p_indexes in pols_adjacent_idx(pols)]</code></pre>
+</details>
 <div class="desc"><p>returns the polygons that share a vertex with each polygon [[pol, pol,..], [pol,..]]
 pols: list as [polygon, polygon,..], being each polygon [int, int, &hellip;].</p></div>
 </dd>
@@ -121,6 +314,22 @@ pols: list as [polygon, polygon,..], being each polygon [int, int, &hellip;].</p
 <span>def <span class="ident">pols_adjacent_idx</span></span>(<span>pols)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def pols_adjacent_idx(pols):
+    &#34;&#34;&#34;
+    returns the polygons that share a vertex with each polygon [[pol, pol,..], [pol,..]]
+    pols: list as [polygon, polygon,..], being each polygon [int, int, ...].
+    &#34;&#34;&#34;
+    edges = {tuple(sorted(e)): None for pol_edges in pols_edges(pols) for e in pol_edges}
+    edges = {e: adj_indexes for e, adj_indexes in zip(edges.keys(), adjacent_faces_idx(edges.keys(), pols))}
+    adj_pols = []
+    for ei, pol_edges in enumerate(pols_edges(pols)):
+        adj_pols.append(list({fi for e in pol_edges for fi in edges[tuple(sorted(e))]} - {ei}))
+    return adj_pols</code></pre>
+</details>
 <div class="desc"><p>returns the polygons that share a vertex with each polygon [[pol, pol,..], [pol,..]]
 pols: list as [polygon, polygon,..], being each polygon [int, int, &hellip;].</p></div>
 </dd>
@@ -128,6 +337,17 @@ pols: list as [polygon, polygon,..], being each polygon [int, int, &hellip;].</p
 <span>def <span class="ident">pols_adjacent_num</span></span>(<span>pols)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def pols_adjacent_num(pols):
+    &#34;&#34;&#34;
+    returns the number polygons that share a vertex with each polygon [int, int,..]]
+    pols: list as [polygon, polygon,..], being each polygon [int, int, ...].
+    &#34;&#34;&#34;
+    return [len(p) for p in pols_adjacent_idx(pols)]</code></pre>
+</details>
 <div class="desc"><p>returns the number polygons that share a vertex with each polygon [int, int,..]]
 pols: list as [polygon, polygon,..], being each polygon [int, int, &hellip;].</p></div>
 </dd>
@@ -135,6 +355,31 @@ pols: list as [polygon, polygon,..], being each polygon [int, int, &hellip;].</p
 <span>def <span class="ident">pols_center</span></span>(<span>vertices, faces, origin, output_numpy)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def pols_center(vertices, faces, origin, output_numpy):
+    &#39;&#39;&#39;
+    Cemter of faces
+    vertices: list as [vertex, vertex, ...], being each vertex [float, float, float].
+    edges: list as [edge, edge,..], being each edge [int, int].
+    faces: list as [polygon, polygon,..], being each polygon [int, int, ...].
+    origin: String  that can be any key of pols_origin_modes_dict
+    returns vals as [float, float,...]
+    &#39;&#39;&#39;
+
+    if origin == &#39;Median Center&#39;:
+        centers_func = np_center_median
+    elif origin == &#39;Bounds Center&#39;:
+        centers_func = np_center_bbox
+    else:
+        centers_func = np_center_weighted
+
+    vals = np_process_polygons(vertices, faces, func=centers_func, output_numpy=output_numpy)
+
+    return vals</code></pre>
+</details>
 <div class="desc"><p>Cemter of faces
 vertices: list as [vertex, vertex, &hellip;], being each vertex [float, float, float].
 edges: list as [edge, edge,..], being each edge [int, int].
@@ -147,24 +392,57 @@ returns vals as [float, float,&hellip;]</p></div>
 <span>def <span class="ident">pols_center_bounds</span></span>(<span>bm_faces)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def pols_center_bounds(bm_faces):
+    return [tuple(bm_face.calc_center_bounds()) for bm_face in bm_faces]</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.modules.polygon_utils.pols_center_median"><code class="name flex">
 <span>def <span class="ident">pols_center_median</span></span>(<span>bm_faces)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def pols_center_median(bm_faces):
+    return [tuple(bm_face.calc_center_median()) for bm_face in bm_faces]</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.modules.polygon_utils.pols_center_median_weighted"><code class="name flex">
 <span>def <span class="ident">pols_center_median_weighted</span></span>(<span>bm_faces)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def pols_center_median_weighted(bm_faces):
+    return [tuple(bm_face.calc_center_median_weighted()) for bm_face in bm_faces]</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.modules.polygon_utils.pols_edges"><code class="name flex">
 <span>def <span class="ident">pols_edges</span></span>(<span>faces)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def pols_edges(faces):
+    &#39;&#39;&#39;
+    extracts the edges from polygons order [0, 1, 2] -&gt; [[0, 1], [1, 2], [2, 0]]
+    faces: list as [polygon, polygon,..], being each polygon [int, int, ...].
+    &#39;&#39;&#39;
+    vals = [[(c, cn) for c, cn in zip(face, face[1:] + [face[0]])] for face in faces]
+    return vals</code></pre>
+</details>
 <div class="desc"><p>extracts the edges from polygons order [0, 1, 2] -&gt; [[0, 1], [1, 2], [2, 0]]
 faces: list as [polygon, polygon,..], being each polygon [int, int, &hellip;].</p></div>
 </dd>
@@ -172,12 +450,31 @@ faces: list as [polygon, polygon,..], being each polygon [int, int, &hellip;].</
 <span>def <span class="ident">pols_first_vert</span></span>(<span>bm_faces)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def pols_first_vert(bm_faces):
+    return [tuple(bm_face.verts[0].co) for bm_face in bm_faces]</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.modules.polygon_utils.pols_inverted"><code class="name flex">
 <span>def <span class="ident">pols_inverted</span></span>(<span>faces)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def pols_inverted(faces):
+    &#39;&#39;&#39;
+    inverts the polygon order [0, 1, 2] -&gt; [2, 1, 0]
+    faces: list as [polygon, polygon,..], being each polygon [int, int, ...].
+    &#39;&#39;&#39;
+    vals = [list(reversed(f)) for f in faces]
+    return vals</code></pre>
+</details>
 <div class="desc"><p>inverts the polygon order [0, 1, 2] -&gt; [2, 1, 0]
 faces: list as [polygon, polygon,..], being each polygon [int, int, &hellip;].</p></div>
 </dd>
@@ -185,6 +482,21 @@ faces: list as [polygon, polygon,..], being each polygon [int, int, &hellip;].</
 <span>def <span class="ident">pols_is_boundary</span></span>(<span>vertices, faces)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def pols_is_boundary(vertices, faces):
+    &#39;&#39;&#39;
+    bridge to mesh filter node Faces class
+    vertices: list as [vertex, vertex, ...], being each vertex [float, float, float].
+    faces: list as [polygon, polygon,..], being each polygon [int, int, ...].
+    &#39;&#39;&#39;
+    bm = bmesh_from_pydata(vertices, [], faces, normal_update=True)
+    interior, boundary, mask = Faces.process(bm, [], [])
+    bm.free()
+    return mask, interior, boundary</code></pre>
+</details>
 <div class="desc"><p>bridge to mesh filter node Faces class
 vertices: list as [vertex, vertex, &hellip;], being each vertex [float, float, float].
 faces: list as [polygon, polygon,..], being each polygon [int, int, &hellip;].</p></div>
@@ -193,12 +505,42 @@ faces: list as [polygon, polygon,..], being each polygon [int, int, &hellip;].</
 <span>def <span class="ident">pols_last_vert</span></span>(<span>bm_faces)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def pols_last_vert(bm_faces):
+    return [tuple(bm_face.verts[-1].co) for bm_face in bm_faces]</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.modules.polygon_utils.pols_matrix"><code class="name flex">
 <span>def <span class="ident">pols_matrix</span></span>(<span>vertices, faces, origin, direc)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def pols_matrix(vertices, faces, origin, direc):
+    &#39;&#39;&#39;
+    Matrix aligned with faces
+    vertices: list as [vertex, vertex, ...], being each vertex [float, float, float].
+    faces: list as [polygon, polygon,..], being each polygon [int, int, ...].
+    orientation: contains origin and direction
+    origin: String  that can be any key of pols_origin_modes_dict
+    direction: String  that can be  any key of tangent_modes_dict
+    outputs each polygon matrix [matrix, matrix, matrix]
+    &#39;&#39;&#39;
+
+    bm = bmesh_from_pydata(vertices, [], faces, normal_update=True)
+    normals = [Vector(face.normal) for face in bm.faces]
+    centers = pols_origin_modes_dict[origin][1](bm.faces)
+    tangents = tangent_modes_dict[direc][1](bm.faces)
+    vals = vectors_center_axis_to_matrix(centers, normals, tangents)
+    bm.free()
+    return vals</code></pre>
+</details>
 <div class="desc"><p>Matrix aligned with faces
 vertices: list as [vertex, vertex, &hellip;], being each vertex [float, float, float].
 faces: list as [polygon, polygon,..], being each polygon [int, int, &hellip;].
@@ -214,6 +556,29 @@ outputs each polygon matrix [matrix, matrix, matrix]</p></div>
 <span>def <span class="ident">pols_neighbor</span></span>(<span>verts, pols)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def pols_neighbor(verts, pols):
+    &#39;&#39;&#39;
+    returns the polygons that share one edges with each polygon [[pol, pol,..], [pol,..]]
+    pols: list as [polygon, polygon,..], being each polygon [int, int, ...].
+    &#39;&#39;&#39;
+    v_adj = adjacent_edg_pol(verts, pols)
+    vals = []
+    for pol in pols:
+        pol_adj = []
+        for v_id in pol:
+            for related_pol in v_adj[v_id]:
+                if not related_pol in pol_adj:
+                    pol_adj.append(related_pol)
+
+        pol_adj.remove(pol)
+        vals.append(pol_adj)
+
+    return vals</code></pre>
+</details>
 <div class="desc"><p>returns the polygons that share one edges with each polygon [[pol, pol,..], [pol,..]]
 pols: list as [polygon, polygon,..], being each polygon [int, int, &hellip;].</p></div>
 </dd>
@@ -221,6 +586,29 @@ pols: list as [polygon, polygon,..], being each polygon [int, int, &hellip;].</p
 <span>def <span class="ident">pols_neighbor_idx</span></span>(<span>verts, pols)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def pols_neighbor_idx(verts, pols):
+    &#39;&#39;&#39;
+    returns the polygons that share one edges with each polygon [[pol, pol,..], [pol,..]]
+    pols: list as [polygon, polygon,..], being each polygon [int, int, ...].
+    &#39;&#39;&#39;
+    v_adj = adjacent_edg_pol_idx(verts, pols)
+    vals = []
+    for idx, pol in enumerate(pols):
+        pol_adj = []
+        for v_id in pol:
+            for related_pol in v_adj[v_id]:
+                if not related_pol in pol_adj:
+                    pol_adj.append(related_pol)
+
+        pol_adj.remove(idx)
+        vals.append(pol_adj)
+
+    return vals</code></pre>
+</details>
 <div class="desc"><p>returns the polygons that share one edges with each polygon [[pol, pol,..], [pol,..]]
 pols: list as [polygon, polygon,..], being each polygon [int, int, &hellip;].</p></div>
 </dd>
@@ -228,6 +616,17 @@ pols: list as [polygon, polygon,..], being each polygon [int, int, &hellip;].</p
 <span>def <span class="ident">pols_neighbor_num</span></span>(<span>verts, pols)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def pols_neighbor_num(verts, pols):
+    &#39;&#39;&#39;
+    returns the number of polygons that share one edges with each polygon [int, int,...]
+    pols: list as [polygon, polygon,..], being each polygon [int, int, ...].
+    &#39;&#39;&#39;
+    return [len(p) for p in pols_neighbor(verts, pols)]</code></pre>
+</details>
 <div class="desc"><p>returns the number of polygons that share one edges with each polygon [int, int,&hellip;]
 pols: list as [polygon, polygon,..], being each polygon [int, int, &hellip;].</p></div>
 </dd>
@@ -235,6 +634,19 @@ pols: list as [polygon, polygon,..], being each polygon [int, int, &hellip;].</p
 <span>def <span class="ident">pols_normals</span></span>(<span>vertices, faces, output_numpy)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def pols_normals(vertices, faces, output_numpy):
+    &#39;&#39;&#39;
+    Returns Faces normals as [vector, vector,...]
+    vertices: list as [vertex, vertex, ...], being each vertex [float, float, float].
+    faces: list as [polygon, polygon,..], being each polygon [int, int, ...].
+    &#39;&#39;&#39;
+    vals = np_process_polygons(vertices, faces, func=np_faces_normals, output_numpy=output_numpy)
+    return vals</code></pre>
+</details>
 <div class="desc"><p>Returns Faces normals as [vector, vector,&hellip;]
 vertices: list as [vertex, vertex, &hellip;], being each vertex [float, float, float].
 faces: list as [polygon, polygon,..], being each polygon [int, int, &hellip;].</p></div>
@@ -243,6 +655,21 @@ faces: list as [polygon, polygon,..], being each polygon [int, int, &hellip;].</
 <span>def <span class="ident">pols_perimeter</span></span>(<span>vertices, faces)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def pols_perimeter(vertices, faces):
+    &#39;&#39;&#39;
+    returns pols perimeter.
+    vertices: list as [vertex, vertex, ...], being each vertex [float, float, float].
+    faces: list as [polygon, polygon,..], being each polygon [int, int, ...].
+    &#39;&#39;&#39;
+    bm = bmesh_from_pydata(vertices, [], faces, normal_update=True)
+    vals = [bm_face.calc_perimeter() for bm_face in bm.faces]
+    bm.free()
+    return vals</code></pre>
+</details>
 <div class="desc"><p>returns pols perimeter.
 vertices: list as [vertex, vertex, &hellip;], being each vertex [float, float, float].
 faces: list as [polygon, polygon,..], being each polygon [int, int, &hellip;].</p></div>
@@ -251,6 +678,28 @@ faces: list as [polygon, polygon,..], being each polygon [int, int, &hellip;].</
 <span>def <span class="ident">pols_perimeters</span></span>(<span>verts, polygons, sum_perimeters=False, output_numpy=False)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def pols_perimeters(verts, polygons, sum_perimeters=False, output_numpy=False):
+    &#39;&#39;&#39;
+    returns pols perimeter as [float, float,...]
+    vertices: list as [vertex, vertex, ...], being each vertex [float, float, float].
+    faces: list as [polygon, polygon,..], being each polygon [int, int, ...].
+    sum_perimeters if True it will return the sum of the perimenters as [float]
+    &#39;&#39;&#39;
+    vals = np_process_polygons(verts, polygons, func=np_faces_perimeters, dims=1, output_numpy=True)
+
+    if sum_perimeters:
+        if output_numpy:
+            return [np.sum(vals)]
+
+        return [np.sum(vals).tolist()]
+    if output_numpy:
+        return vals
+    return vals.tolist()</code></pre>
+</details>
 <div class="desc"><p>returns pols perimeter as [float, float,&hellip;]
 vertices: list as [vertex, vertex, &hellip;], being each vertex [float, float, float].
 faces: list as [polygon, polygon,..], being each polygon [int, int, &hellip;].
@@ -260,6 +709,28 @@ sum_perimeters if True it will return the sum of the perimenters as [float]</p><
 <span>def <span class="ident">pols_shell_factor</span></span>(<span>vertices, faces)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def pols_shell_factor(vertices, faces):
+    &#39;&#39;&#39;
+    Average of vertex shell_factor
+    vertices: list as [vertex, vertex, ...], being each vertex [float, float, float].
+    edges: list as [edge, edge,..], being each edge [int, int].
+    faces: list as [polygon, polygon,..], being each polygon [int, int, ...].
+    returns vals as [float, float,...]
+    &#39;&#39;&#39;
+    v_shell = vertex_shell_factor(vertices, [], faces)
+    vals = []
+    for face in faces:
+        p_shell = 0
+        for v_id in face:
+            p_shell += v_shell[v_id]
+        vals.append(p_shell/len(face))
+
+    return vals</code></pre>
+</details>
 <div class="desc"><p>Average of vertex shell_factor
 vertices: list as [vertex, vertex, &hellip;], being each vertex [float, float, float].
 edges: list as [edge, edge,..], being each edge [int, int].
@@ -270,6 +741,21 @@ returns vals as [float, float,&hellip;]</p></div>
 <span>def <span class="ident">pols_sides</span></span>(<span>faces, sum_sides=False)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def pols_sides(faces, sum_sides=False):
+    &#39;&#39;&#39;
+    returns the number of sides of each polygon as [int, int, ... ]
+    faces: list as [polygon, polygon,..], being each polygon [int, int, ...].
+    sum_sides: if True will return the sum of sides of the whole object returning [int]
+    &#39;&#39;&#39;
+    vals = [len(p) for p in faces]
+    if sum_sides:
+        vals = [sum(vals)]
+    return vals</code></pre>
+</details>
 <div class="desc"><p>returns the number of sides of each polygon as [int, int, &hellip; ]
 faces: list as [polygon, polygon,..], being each polygon [int, int, &hellip;].
 sum_sides: if True will return the sum of sides of the whole object returning [int]</p></div>
@@ -278,6 +764,31 @@ sum_sides: if True will return the sum of sides of the whole object returning [i
 <span>def <span class="ident">pols_tangent</span></span>(<span>vertices, faces, direction)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def pols_tangent(vertices, faces, direction):
+    &#39;&#39;&#39;
+    returns pols tangents.
+    vertices: list as [vertex, vertex, ...], being each vertex [float, float, float].
+    faces: list as [polygon, polygon,..], being each polygon [int, int, ...].
+    direction: String  that can be  any key of tangent_modes_dict
+    &#39;&#39;&#39;
+    if direction == &#39;Edge&#39;:
+        return np_process_polygons(vertices, faces,
+                                   func=np_tangent_longest_edge,
+                                   output_numpy=False)
+    if direction == &#39;Center - Origin&#39;:
+        return np_process_polygons(vertices, faces,
+                                   func=np_tangent_center_orig,
+                                   output_numpy=False)
+    else:
+        bm = bmesh_from_pydata(vertices, [], faces, normal_update=True)
+        vals = tangent_modes_dict[direction][1](bm.faces)
+        bm.free()
+        return vals</code></pre>
+</details>
 <div class="desc"><p>returns pols tangents.
 vertices: list as [vertex, vertex, &hellip;], being each vertex [float, float, float].
 faces: list as [polygon, polygon,..], being each polygon [int, int, &hellip;].
@@ -289,36 +800,95 @@ any key of tangent_modes_dict</p></div>
 <span>def <span class="ident">pols_tangent_center_origin</span></span>(<span>bm_faces)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def pols_tangent_center_origin(bm_faces):
+    return [tuple((Vector(bm_face.verts[0].co)-Vector(bm_face.calc_center_median())).normalized()) for bm_face in bm_faces]</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.modules.polygon_utils.pols_tangent_edge"><code class="name flex">
 <span>def <span class="ident">pols_tangent_edge</span></span>(<span>bm_faces)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def pols_tangent_edge(bm_faces):
+    return [tuple(bm_face.calc_tangent_edge()) for bm_face in bm_faces]</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.modules.polygon_utils.pols_tangent_edge_diagonal"><code class="name flex">
 <span>def <span class="ident">pols_tangent_edge_diagonal</span></span>(<span>bm_faces)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def pols_tangent_edge_diagonal(bm_faces):
+    return [tuple(bm_face.calc_tangent_edge_diagonal()) for bm_face in bm_faces]</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.modules.polygon_utils.pols_tangent_edge_pair"><code class="name flex">
 <span>def <span class="ident">pols_tangent_edge_pair</span></span>(<span>bm_faces)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def pols_tangent_edge_pair(bm_faces):
+    return [tuple(bm_face.calc_tangent_edge_pair()) for bm_face in bm_faces]</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.modules.polygon_utils.pols_tangent_vert_diagonal"><code class="name flex">
 <span>def <span class="ident">pols_tangent_vert_diagonal</span></span>(<span>bm_faces)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def pols_tangent_vert_diagonal(bm_faces):
+    return [tuple(bm_face.calc_tangent_vert_diagonal()) for bm_face in bm_faces]</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.modules.polygon_utils.pols_to_edges"><code class="name flex">
 <span>def <span class="ident">pols_to_edges</span></span>(<span>obj, unique_edges=False)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def pols_to_edges(obj, unique_edges=False):
+    &#39;&#39;&#39;
+    Generate edges from pols
+    obj: list as [[polygon, polygon,..], [polygon,...],...], being each polygon [int, int, ...].
+    unique_edges: if False will return all polygon edges if True will remove the doubled edges
+    &#39;&#39;&#39;
+    out = []
+    for faces in obj:
+        out_edges = []
+        seen = set()
+        for face in faces:
+            for edge in zip(face, list(face[1:]) + list([face[0]])):
+                if unique_edges and tuple(sorted(edge)) in seen:
+                    continue
+                if unique_edges:
+                    seen.add(tuple(sorted(edge)))
+                out_edges.append(edge)
+        out.append(out_edges)
+    return out</code></pre>
+</details>
 <div class="desc"><p>Generate edges from pols
 obj: list as [[polygon, polygon,..], [polygon,&hellip;],&hellip;], being each polygon [int, int, &hellip;].
 unique_edges: if False will return all polygon edges if True will remove the doubled edges</p></div>
@@ -327,6 +897,23 @@ unique_edges: if False will return all polygon edges if True will remove the dou
 <span>def <span class="ident">pols_vertices</span></span>(<span>vertices, faces)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def pols_vertices(vertices, faces):
+    &#39;&#39;&#39;
+    Explodes geometry.
+    vertices: list as [vertex, vertex, ...], being each vertex [float, float, float].
+    faces: list as [polygon, polygon,..], being each polygon [int, int, ...].
+    returns [[vertex, vertex, vertex,..], [vertex, vertex, vertex,..], ...] and [[polygon], [polygon],...]
+    &#39;&#39;&#39;
+    verts = [[vertices[c] for c in p] for p in faces]
+    pols = [[list(range(len(p)))] for p in faces]
+
+    vals = [verts, pols]
+    return vals</code></pre>
+</details>
 <div class="desc"><p>Explodes geometry.
 vertices: list as [vertex, vertex, &hellip;], being each vertex [float, float, float].
 faces: list as [polygon, polygon,..], being each polygon [int, int, &hellip;].
@@ -336,6 +923,16 @@ returns [[vertex, vertex, vertex,..], [vertex, vertex, vertex,..], &hellip;] and
 <span>def <span class="ident">vertex_weight_factor</span></span>(<span>v_pols)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def vertex_weight_factor(v_pols):
+    ed_lengths = edges_lengths(v_pols)
+    perimeters = np.sum(ed_lengths, axis=1)
+    edges_prop = ed_lengths/perimeters[:, np.newaxis]
+    return (edges_prop + np.roll(edges_prop, 1, axis=1))/2</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -403,7 +1000,7 @@ returns [[vertex, vertex, vertex,..], [vertex, vertex, vertex,..], &hellip;] and
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.1</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.5</a>.</p>
 </footer>
 </body>
 </html>

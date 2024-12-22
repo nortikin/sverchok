@@ -3,19 +3,30 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
-<meta name="generator" content="pdoc3 0.11.1">
+<meta name="generator" content="pdoc3 0.11.5">
 <title>sverchok.utils.modules.edge_utils API documentation</title>
 <meta name="description" content="">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
-<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
 <style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
 <style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
 <script>window.addEventListener('DOMContentLoaded', () => {
 hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
 hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
 })</script>
 </head>
 <body>
@@ -37,6 +48,23 @@ hljs.highlightAll();
 <span>def <span class="ident">adjacent_faces</span></span>(<span>edges, pols)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def adjacent_faces(edges, pols):
+    &#34;&#34;&#34;
+    calculates of adjacent faces
+    edges: list as [edge, edge,..], being each edge [int, int].
+    pols: list as [polygon, polygon,..], being each polygon [int, int, ...].
+    returns polygon connected to each edge as [[polygon, polygon, ...], [polygon, ...],...]
+    &#34;&#34;&#34;
+    edge_to_adj_face = [[] for _ in edges]
+    for adj_faces, face_indexes in zip(edge_to_adj_face, adjacent_faces_idx(edges, pols)):
+        for fi in face_indexes:
+            adj_faces.append(pols[fi])
+    return edge_to_adj_face</code></pre>
+</details>
 <div class="desc"><p>calculates of adjacent faces
 edges: list as [edge, edge,..], being each edge [int, int].
 pols: list as [polygon, polygon,..], being each polygon [int, int, &hellip;].
@@ -46,6 +74,30 @@ returns polygon connected to each edge as [[polygon, polygon, &hellip;], [polygo
 <span>def <span class="ident">adjacent_faces_idx</span></span>(<span>edges, pols)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def adjacent_faces_idx(edges, pols):
+    &#34;&#34;&#34;
+    calculates of adjacent faces
+    edges: list as [edge, edge,..], being each edge [int, int]. Optional, it can be empty lies
+    pols: list as [polygon, polygon,..], being each polygon [int, int, ...].
+    returns polygon connected to each edge as [[polygon, polygon, ...], [polygon, ...],...]
+    &#34;&#34;&#34;
+    edge_to_index = {tuple(sorted(e)): i for i, e in enumerate(edges)}
+    ad_faces = [[] for e in edges]
+    for p_idx, pol in enumerate(pols):
+        for edge in zip(pol, pol[1:] + [pol[0]]):
+            e_s = tuple(sorted(edge))
+            try:
+                e_idx = edge_to_index[e_s]
+            except KeyError:
+                pass
+            else:
+                ad_faces[e_idx].append(p_idx)
+    return ad_faces</code></pre>
+</details>
 <div class="desc"><p>calculates of adjacent faces
 edges: list as [edge, edge,..], being each edge [int, int]. Optional, it can be empty lies
 pols: list as [polygon, polygon,..], being each polygon [int, int, &hellip;].
@@ -55,6 +107,19 @@ returns polygon connected to each edge as [[polygon, polygon, &hellip;], [polygo
 <span>def <span class="ident">adjacent_faces_number</span></span>(<span>edges, pols)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def adjacent_faces_number(edges, pols):
+    &#34;&#34;&#34;
+    calculate number of adjacent faces
+    edges: list as [edge, edge,..], being each edge [int, int].
+    pols: list as [polygon, polygon,..], being each polygon [int, int, ...].
+    returns number of faces connected to each edge as [int, int,...]
+    &#34;&#34;&#34;
+    return [len(face_indexes) for face_indexes in adjacent_faces_idx(edges, pols)]</code></pre>
+</details>
 <div class="desc"><p>calculate number of adjacent faces
 edges: list as [edge, edge,..], being each edge [int, int].
 pols: list as [polygon, polygon,..], being each polygon [int, int, &hellip;].
@@ -64,6 +129,27 @@ returns number of faces connected to each edge as [int, int,&hellip;]</p></div>
 <span>def <span class="ident">connected_edges</span></span>(<span>verts, edges)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def connected_edges(verts, edges):
+    &#39;&#39;&#39;
+    edges connected to each edge
+    vertices: list as [vertex, vertex, ...], being each vertex [float, float, float].
+    edges: list as [edge, edge,..], being each edge [int, int].
+    returns edges connected to each edge as [[edge, edge,...],[edge,...],...]
+    &#39;&#39;&#39;
+    v_adjacent = adjacent_edg_pol(verts, edges)
+    vals = []
+    for edge in edges:
+        adj_edges = []
+        for v_ind in edge:
+            adj_edges.extend(v_adjacent[v_ind])
+            adj_edges.remove(edge)
+        vals.append(adj_edges)
+    return vals</code></pre>
+</details>
 <div class="desc"><p>edges connected to each edge
 vertices: list as [vertex, vertex, &hellip;], being each vertex [float, float, float].
 edges: list as [edge, edge,..], being each edge [int, int].
@@ -73,6 +159,27 @@ returns edges connected to each edge as [[edge, edge,&hellip;],[edge,&hellip;],&
 <span>def <span class="ident">connected_edges_idx</span></span>(<span>verts, edges)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def connected_edges_idx(verts, edges):
+    &#39;&#39;&#39;
+    edges connected to each edge
+    vertices: list as [vertex, vertex, ...], being each vertex [float, float, float].
+    edges: list as [edge, edge,..], being each edge [int, int].
+    returns edges connected to each edge as [[edge, edge,...],[edge,...],...]
+    &#39;&#39;&#39;
+    v_adjacent = adjacent_edg_pol_idx(verts, edges)
+    vals = []
+    for idx, edge in enumerate(edges):
+        adj_edges = []
+        for v_ind in edge:
+            adj_edges.extend(v_adjacent[v_ind])
+            adj_edges.remove(idx)
+        vals.append(adj_edges)
+    return vals</code></pre>
+</details>
 <div class="desc"><p>edges connected to each edge
 vertices: list as [vertex, vertex, &hellip;], being each vertex [float, float, float].
 edges: list as [edge, edge,..], being each edge [int, int].
@@ -82,6 +189,26 @@ returns edges connected to each edge as [[edge, edge,&hellip;],[edge,&hellip;],&
 <span>def <span class="ident">connected_edges_num</span></span>(<span>verts, edges)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def connected_edges_num(verts, edges):
+    &#39;&#39;&#39;
+    number of edges connected to each edge
+    vertices: list as [vertex, vertex, ...], being each vertex [float, float, float].
+    edges: list as [edge, edge,..], being each edge [int, int].
+    returns number of edges connected to each edge as [int, int,...]
+    &#39;&#39;&#39;
+    v_adja = adjacent_edg_pol_num(verts, edges)
+    vals = []
+    for edge in edges:
+        adj = 0
+        for c in edge:
+            adj += v_adja[c] - 1
+        vals.append(adj)
+    return vals</code></pre>
+</details>
 <div class="desc"><p>number of edges connected to each edge
 vertices: list as [vertex, vertex, &hellip;], being each vertex [float, float, float].
 edges: list as [edge, edge,..], being each edge [int, int].
@@ -91,6 +218,27 @@ returns number of edges connected to each edge as [int, int,&hellip;]</p></div>
 <span>def <span class="ident">edge_is_filter</span></span>(<span>vertices, edges, faces, mode)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def edge_is_filter(vertices, edges, faces, mode):
+    &#39;&#39;&#39;
+    access to mesh_filter to get different bmesh edges filters
+    vertices: list as [vertex, vertex, ...], being each vertex [float, float, float].
+    edges: list as [edge, edge,..], being each edge [int, int].
+    faces: list as [polygon, polygon,..], being each polygon [int, int, ...].
+    returns mask as [bool, bool,...],  good and bad as [edge, edge]
+    &#39;&#39;&#39;
+    mode = mode.split(&#39; &#39;)[1]
+    if not edges:
+        return [], [], []
+
+    bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
+    good, bad, mask = Edges.process(bm, mode, edges)
+    bm.free()
+    return mask, good, bad</code></pre>
+</details>
 <div class="desc"><p>access to mesh_filter to get different bmesh edges filters
 vertices: list as [vertex, vertex, &hellip;], being each vertex [float, float, float].
 edges: list as [edge, edge,..], being each edge [int, int].
@@ -102,6 +250,25 @@ good and bad as [edge, edge]</p></div>
 <span>def <span class="ident">edge_vertex</span></span>(<span>vertices, edges, origin)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def edge_vertex(vertices, edges, origin):
+    &#39;&#39;&#39;
+    vertices: list as [vertex, vertex, ...], being each vertex [float, float, float].
+    edges: list with edges [[int, int], [int,int]...]
+    origin: String  that can be First, Center, Last
+    outputs the desired point of each edge [vertex, vertex..]
+    &#39;&#39;&#39;
+    if origin == &#39;Center&#39;:
+        center = [(Vector(vertices[e[0]])+Vector(vertices[e[1]]))/2 for e in edges]
+    elif origin == &#39;First&#39;:
+        center = [Vector(vertices[e[0]]) for e in edges]
+    else:
+        center = [Vector(vertices[e[1]]) for e in edges]
+    return center</code></pre>
+</details>
 <div class="desc"><p>vertices: list as [vertex, vertex, &hellip;], being each vertex [float, float, float].
 edges: list with edges [[int, int], [int,int]&hellip;]
 origin: String
@@ -112,6 +279,22 @@ outputs the desired point of each edge [vertex, vertex..]</p></div>
 <span>def <span class="ident">edges_aux</span></span>(<span>vertices)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def edges_aux(vertices):
+    &#39;&#39;&#39;
+    vertices: list as [[vertex,vertex,..], [vertex,..],..]
+    returns edges array with the maximum length of the vertices list supplied as [np.array]
+    &#39;&#39;&#39;
+    v_len = len(vertices)
+
+    np_in = np.arange(v_len - 1)
+    np_edges = np.array([np_in, np_in + 1]).T
+
+    return np_edges</code></pre>
+</details>
 <div class="desc"><p>vertices: list as [[vertex,vertex,..], [vertex,..],..]
 returns edges array with the maximum length of the vertices list supplied as [np.array]</p></div>
 </dd>
@@ -119,6 +302,21 @@ returns edges array with the maximum length of the vertices list supplied as [np
 <span>def <span class="ident">edges_center</span></span>(<span>vertices, edges, output_numpy=False)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def edges_center(vertices, edges, output_numpy=False):
+    &#39;&#39;&#39;
+    vertices: list as [vertex, vertex, ...], being each vertex [float, float, float].
+    edges: list with edges [[int, int], [int,int]...]
+    outputs the center point of each edge [vertex, vertex..]
+    &#39;&#39;&#39;
+    v_edges = get_v_edges(vertices, edges)
+    if output_numpy:
+        return ((v_edges[:, 0,:] + v_edges[:, 1,:])/2)
+    return ((v_edges[:, 0,:] + v_edges[:, 1,:])/2).tolist()</code></pre>
+</details>
 <div class="desc"><p>vertices: list as [vertex, vertex, &hellip;], being each vertex [float, float, float].
 edges: list with edges [[int, int], [int,int]&hellip;]
 outputs the center point of each edge [vertex, vertex..]</p></div>
@@ -127,6 +325,24 @@ outputs the center point of each edge [vertex, vertex..]</p></div>
 <span>def <span class="ident">edges_direction</span></span>(<span>vertices, edges, out_numpy=False)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def edges_direction(vertices, edges, out_numpy=False):
+    &#39;&#39;&#39;
+    calculate edges direction
+    vertices: list as [vertex, vertex, ...], being each vertex [float, float, float]. Also accepts numpy arrays with two axis
+    edges: list as [edge, edge,..], being each edge [int, int]. Also accept numpy arrays with one axis.
+    out_numpy: boolean to determine if outputtig  np_array or regular python list
+    returns edges direction as [vertex, vertex,...] or numpy array with two axis
+    &#39;&#39;&#39;
+    v_edges = get_v_edges(vertices, edges)
+    if out_numpy:
+        return np_normalize_vectors(v_edges[:,1,:] - v_edges[:,0,:])
+
+    return np_normalize_vectors(v_edges[:, 1, :] - v_edges[:, 0, :]).tolist()</code></pre>
+</details>
 <div class="desc"><p>calculate edges direction
 vertices: list as [vertex, vertex, &hellip;], being each vertex [float, float, float]. Also accepts numpy arrays with two axis
 edges: list as [edge, edge,..], being each edge [int, int]. Also accept numpy arrays with one axis.
@@ -138,6 +354,19 @@ returns edges direction as [vertex, vertex,&hellip;] or numpy array with two axi
 <span>def <span class="ident">edges_end</span></span>(<span>vertices, edges)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def edges_end(vertices, edges):
+    &#39;&#39;&#39;
+    vertices: list as [vertex, vertex, ...], being each vertex [float, float, float].
+    edges: list with edges [[int, int], [int,int]...]
+    outputs the end point of each edge [vertex, vertex..]
+    &#39;&#39;&#39;
+    vals = [vertices[e[1]] for e in edges]
+    return vals</code></pre>
+</details>
 <div class="desc"><p>vertices: list as [vertex, vertex, &hellip;], being each vertex [float, float, float].
 edges: list with edges [[int, int], [int,int]&hellip;]
 outputs the end point of each edge [vertex, vertex..]</p></div>
@@ -146,6 +375,18 @@ outputs the end point of each edge [vertex, vertex..]</p></div>
 <span>def <span class="ident">edges_inverted</span></span>(<span>edges)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def edges_inverted(edges):
+    &#39;&#39;&#39;
+    edges: list with edges [[int, int], [int,int]...]
+    outputs the same list with inverted index [[0, 1],[1, 2]] ---&gt; [[1, 0], [2, 1]]
+    &#39;&#39;&#39;
+    vals = [[e[1], e[0]] for e in edges]
+    return vals</code></pre>
+</details>
 <div class="desc"><p>edges: list with edges [[int, int], [int,int]&hellip;]
 outputs the same list with inverted index [[0, 1],[1, 2]] &mdash;&gt; [[1, 0], [2, 1]]</p></div>
 </dd>
@@ -153,6 +394,31 @@ outputs the same list with inverted index [[0, 1],[1, 2]] &mdash;&gt; [[1, 0], [
 <span>def <span class="ident">edges_length</span></span>(<span>vertices, edges, sum_length=False, out_numpy=False)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def edges_length(vertices, edges, sum_length=False, out_numpy=False):
+    &#39;&#39;&#39;
+    calculate edges length using numpy
+    vertices: list as [vertex, vertex, ...] being each vertex [float, float, float]. Also accept numpy arrays with two axis
+    edges: list as [edge, edge,..] being each edge [int, int]. Also accept numpy arrays with one axis
+    sum_length: boolean to determine if outputtig each length or the sum of all
+    out_numpy: boolean to determine if outputtig  np_array or regular python list
+    returns length of edges or sum of lengths
+    &#39;&#39;&#39;
+    if not has_element(vertices):
+        return
+    if not has_element(edges):
+        edges = edges_aux(vertices)
+    v_edges = get_v_edges(vertices, edges)
+    vect = v_edges[:, 1, :] - v_edges[:, 0, :]
+    length = np.linalg.norm(vect, axis=1)
+    if sum_length:
+        length = np.sum(length)[np.newaxis]
+
+    return length if out_numpy else length.tolist()</code></pre>
+</details>
 <div class="desc"><p>calculate edges length using numpy
 vertices: list as [vertex, vertex, &hellip;] being each vertex [float, float, float]. Also accept numpy arrays with two axis
 edges: list as [edge, edge,..] being each edge [int, int]. Also accept numpy arrays with one axis
@@ -165,6 +431,28 @@ returns length of edges or sum of lengths</p></div>
 <span>def <span class="ident">edges_matrix</span></span>(<span>vertices, edges, origin, track, up_axis)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def edges_matrix(vertices, edges, origin, track, up_axis):
+    &#39;&#39;&#39;
+    Matrix aligned with edge.
+    vertices: list as [vertex, vertex, ...], being each vertex [float, float, float].
+    edges: list with edges [[int, int], [int,int]...]
+    orientation: contains origin track and up_axis
+    origin: String  that can be First, Center, Last
+    track: String  that can be X, Y, Z, -X, -Y or -Z
+    up_axis: String  that can be X, Y, Z, -X, -Y or -Z
+    outputs each edge matrix [matrix, matrix, matrix]
+    &#39;&#39;&#39;
+
+    normal = edges_direction(vertices, edges, out_numpy=False)
+    normal_v = [Vector(n) for n in normal]
+    center = edge_vertex(vertices, edges, origin)
+    vals = matrix_normal([center, normal_v], track, up_axis)
+    return vals</code></pre>
+</details>
 <div class="desc"><p>Matrix aligned with edge.
 vertices: list as [vertex, vertex, &hellip;], being each vertex [float, float, float].
 edges: list with edges [[int, int], [int,int]&hellip;]
@@ -181,6 +469,33 @@ outputs each edge matrix [matrix, matrix, matrix]</p></div>
 <span>def <span class="ident">edges_matrix_normal</span></span>(<span>vertices, edges, faces, origin, track)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def edges_matrix_normal(vertices, edges, faces, origin, track):
+    &#39;&#39;&#39;
+    Matrix aligned with edge and edge normal (needs faces)
+    vertices: list as [vertex, vertex, ...], being each vertex [float, float, float].
+    edges: list with edges [[int, int], [int,int]...]
+    faces: list as [polygon, polygon,..], being each polygon [int, int, ...].
+    orientation: contains origin track and up
+    origin: String  that can be First, Center, Last
+    track: String  that can be X, Y, Z, -X, -Y or -Z
+    up: String  that can be X, Y, Z, -X, -Y or -Z
+    outputs each edge matrix [matrix, matrix, matrix]
+    &#39;&#39;&#39;
+
+    direction = edges_direction(vertices, edges, out_numpy=False)
+    center = edge_vertex(vertices, edges, origin)
+    ed_normals = edges_normal(vertices, edges, faces)
+
+    if track == &#39;Z&#39;:
+        vals = vectors_center_axis_to_matrix(center, direction, ed_normals)
+    if track == &#39;X&#39;:
+        vals = vectors_center_axis_to_matrix(center, ed_normals, direction)
+    return vals</code></pre>
+</details>
 <div class="desc"><p>Matrix aligned with edge and edge normal (needs faces)
 vertices: list as [vertex, vertex, &hellip;], being each vertex [float, float, float].
 edges: list with edges [[int, int], [int,int]&hellip;]
@@ -198,6 +513,30 @@ outputs each edge matrix [matrix, matrix, matrix]</p></div>
 <span>def <span class="ident">edges_normal</span></span>(<span>vertices, edges, faces)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def edges_normal(vertices, edges, faces):
+    &#39;&#39;&#39;
+    Average of vertex normals of the edge
+    vertices: list as [vertex, vertex, ...], being each vertex [float, float, float].
+    edges: list as [edge, edge,..], being each edge [int, int].
+    faces: list as [polygon, polygon,..], being each polygon [int, int, ...].
+    returns normal vector to each edge as [vertex, vertex,...]
+    algorithm by Durman
+    &#39;&#39;&#39;
+
+    bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
+    normal = []
+    for edge in edges:
+        y = (Vector(vertices[edge[1]]) - Vector(vertices[edge[0]])).normalized()
+        _normal = (bm.verts[edge[0]].normal + bm.verts[edge[1]].normal).normalized()
+        x = y.cross(_normal)
+        normal.append(tuple(x.cross(y)))
+    bm.free()
+    return normal</code></pre>
+</details>
 <div class="desc"><p>Average of vertex normals of the edge
 vertices: list as [vertex, vertex, &hellip;], being each vertex [float, float, float].
 edges: list as [edge, edge,..], being each edge [int, int].
@@ -209,6 +548,19 @@ algorithm by Durman</p></div>
 <span>def <span class="ident">edges_origin</span></span>(<span>vertices, edges)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def edges_origin(vertices, edges):
+    &#39;&#39;&#39;
+    vertices: list as [vertex, vertex, ...], being each vertex [float, float, float].
+    edges: list with edges [[int, int], [int,int]...]
+    outputs the first point of each edge [vertex, vertex..]
+    &#39;&#39;&#39;
+    vals = [vertices[e[0]] for e in edges]
+    return vals</code></pre>
+</details>
 <div class="desc"><p>vertices: list as [vertex, vertex, &hellip;], being each vertex [float, float, float].
 edges: list with edges [[int, int], [int,int]&hellip;]
 outputs the first point of each edge [vertex, vertex..]</p></div>
@@ -217,6 +569,22 @@ outputs the first point of each edge [vertex, vertex..]</p></div>
 <span>def <span class="ident">edges_shell_factor</span></span>(<span>vertices, edges, faces)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def edges_shell_factor(vertices, edges, faces):
+    &#39;&#39;&#39;
+    Average of vertex shell_factor
+    vertices: list as [vertex, vertex, ...], being each vertex [float, float, float].
+    edges: list as [edge, edge,..], being each edge [int, int].
+    faces: list as [polygon, polygon,..], being each polygon [int, int, ...].
+    returns vals as [float, float,...]
+    &#39;&#39;&#39;
+    v_shell = vertex_shell_factor(vertices, edges, faces)
+    vals = [(v_shell[e[0]] + v_shell[e[1]])/2 for e in edges]
+    return vals</code></pre>
+</details>
 <div class="desc"><p>Average of vertex shell_factor
 vertices: list as [vertex, vertex, &hellip;], being each vertex [float, float, float].
 edges: list as [edge, edge,..], being each edge [int, int].
@@ -227,6 +595,21 @@ returns vals as [float, float,&hellip;]</p></div>
 <span>def <span class="ident">edges_vertices</span></span>(<span>vertices, edges)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def edges_vertices(vertices, edges):
+    &#39;&#39;&#39;
+    Explode edges
+    vertices: list as [vertex, vertex, ...], being each vertex [float, float, float].
+    edges: list as [edge, edge,..], being each edge [int, int].
+    returns verts as  [vertex, vertex,...] and edges as [[0, 1], [0, 1], ...]
+    &#39;&#39;&#39;
+    verts = [[vertices[c] for c in e] for e in edges]
+    edges_out = [[[0, 1]] for e in edges]
+    return verts, edges_out</code></pre>
+</details>
 <div class="desc"><p>Explode edges
 vertices: list as [vertex, vertex, &hellip;], being each vertex [float, float, float].
 edges: list as [edge, edge,..], being each edge [int, int].
@@ -237,6 +620,32 @@ returns verts as
 <span>def <span class="ident">faces_angle</span></span>(<span>normals, edges, pols)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def faces_angle(normals, edges, pols):
+    &#34;&#34;&#34;
+    angle between faces of each edge (only first two faces)
+    normals: list as [vertex, vertex, ...], being each vertex Vector([float, float, float]).
+    edges: list as [edge, edge,..], being each edge [int, int].
+    faces: list as [polygon, polygon,..], being each polygon [int, int, ...].
+    returns angle of faces (in radians) connected to each edge as [int, int,...]
+    &#34;&#34;&#34;
+    angles = []
+    for face_indexes in adjacent_faces_idx(edges, pols):
+        if len(face_indexes) &gt; 1:
+            dot_p = Vector(normals[face_indexes[0]]).dot(Vector(normals[face_indexes[1]]))
+            if dot_p &gt;= 1.0:
+                # Floating-point maths calculation error workaround
+                ang = 0.0
+            else:
+                ang = acos(dot_p)
+        else:
+            ang = 2*pi
+        angles.append(ang)
+    return angles</code></pre>
+</details>
 <div class="desc"><p>angle between faces of each edge (only first two faces)
 normals: list as [vertex, vertex, &hellip;], being each vertex Vector([float, float, float]).
 edges: list as [edge, edge,..], being each edge [int, int].
@@ -247,6 +656,24 @@ returns angle of faces (in radians) connected to each edge as [int, int,&hellip;
 <span>def <span class="ident">faces_angle_full</span></span>(<span>vertices, edges, faces)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def faces_angle_full(vertices, edges, faces):
+    &#39;&#39;&#39;
+    angle between faces of each edge (only first two faces)
+    vertices: list as [vertex, vertex, ...], being each vertex [float, float, float].
+    edges: list as [edge, edge,..], being each edge [int, int].
+    faces: list as [polygon, polygon,..], being each polygon [int, int, ...].
+    returns angle of faces (in radians) connected to each edge as [int, int,...]
+    &#39;&#39;&#39;
+    bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
+    normals = [tuple(face.normal) for face in bm.faces]
+    bm.free()
+    vals = faces_angle(normals, edges, faces)
+    return vals</code></pre>
+</details>
 <div class="desc"><p>angle between faces of each edge (only first two faces)
 vertices: list as [vertex, vertex, &hellip;], being each vertex [float, float, float].
 edges: list as [edge, edge,..], being each edge [int, int].
@@ -257,6 +684,21 @@ returns angle of faces (in radians) connected to each edge as [int, int,&hellip;
 <span>def <span class="ident">get_v_edges</span></span>(<span>vertices, edges)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_v_edges(vertices, edges):
+    if isinstance(vertices, np.ndarray):
+        np_verts = vertices
+    else:
+        np_verts = np.array(vertices)
+    if isinstance(edges, np.ndarray):
+        np_edges = edges
+    else:
+        np_edges = np.array(edges)
+    return np_verts[np_edges]</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -305,7 +747,7 @@ returns angle of faces (in radians) connected to each edge as [int, int,&hellip;
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.1</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.5</a>.</p>
 </footer>
 </body>
 </html>

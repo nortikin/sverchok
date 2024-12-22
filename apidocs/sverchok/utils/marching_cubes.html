@@ -3,20 +3,31 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
-<meta name="generator" content="pdoc3 0.11.1">
+<meta name="generator" content="pdoc3 0.11.5">
 <title>sverchok.utils.marching_cubes API documentation</title>
 <meta name="description" content="Pure Python implementation of marching cubes algorithm
 Adapted from https://github.com/mutantbob/blender-marching-cubes/blob/master/marching-cube.py">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
-<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
 <style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
 <style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
 <script>window.addEventListener('DOMContentLoaded', () => {
 hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
 hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
 })</script>
 </head>
 <body>
@@ -40,30 +51,125 @@ Adapted from <a href="https://github.com/mutantbob/blender-marching-cubes/blob/m
 <span>def <span class="ident">cornerloop</span></span>(<span>x, y, z)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def cornerloop(x,y,z):
+    for cz in (0,z):
+        for cy,cx in zip((0,y,y,0),(0,0,x,x)):
+             yield cx,cy,cz</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.marching_cubes.create_mesh_for"><code class="name flex">
 <span>def <span class="ident">create_mesh_for</span></span>(<span>objname, verts, faces)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def create_mesh_for(objname,verts,faces):
+    me = bpy.data.meshes.new(objname)  # create a new mesh
+    me.from_pydata(verts,[],faces)
+    me.update()      # update the mesh with the new data
+
+
+    bm = bmesh.new()
+    bm.from_mesh(me)
+    bmesh.ops.remove_doubles(bm, verts=bm.verts, dist=0.01)
+    bm.to_mesh(me)
+
+    ob = bpy.data.objects.new(objname,me) # create a new object
+    ob.data = me          # link the mesh data to the object
+    return ob</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.marching_cubes.creategeometry"><code class="name flex">
 <span>def <span class="ident">creategeometry</span></span>(<span>verts)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def creategeometry(verts):
+    faces=[]
+    faceoffset=0
+    for ver in verts:
+        if len(ver)==4:
+            faces.append((faceoffset+0,faceoffset+1,faceoffset+2,faceoffset+3))
+            faceoffset+=4
+        elif len(ver)==3:
+            faces.append((faceoffset+0,faceoffset+1,faceoffset+2))
+            faceoffset+=3
+    return list(chain.from_iterable(verts)),faces</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.marching_cubes.isosurface_np"><code class="name flex">
 <span>def <span class="ident">isosurface_np</span></span>(<span>data, isolevel)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def isosurface_np(data, isolevel):
+    triangles = []
+    z_a = 0
+    z_plane_a = data[:,:,z_a]
+    sx, sy, sz = data.shape
+
+    polygoniser = Polygoniser(isolevel)
+    for z in range(sz-1):
+        z2 = z+1
+        z_plane_b = data[:,:,z2]
+        for y in range(sy-1):
+            y2 = y+1
+            for x in range(sx-1):
+                x2 = x+1
+                cornervalues = [
+                    z_plane_a[x][y],
+                    z_plane_a[x][y+1],
+                    z_plane_a[x+1][y+1],
+                    z_plane_a[x+1][y],
+                    z_plane_b[x][y],
+                    z_plane_b[x][y+1],
+                    z_plane_b[x+1][y+1],
+                    z_plane_b[x+1][y],
+                ]
+                triangles.extend(polygoniser.polygonise(cornervalues, x,y,z, x2, y2, z2))
+        z_plane_a = z_plane_b
+
+    return np.array(polygoniser.vertices), triangles</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.marching_cubes.vertexinterp"><code class="name flex">
 <span>def <span class="ident">vertexinterp</span></span>(<span>isolevel, p1, p2, valp1, valp2)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def vertexinterp(isolevel,p1,p2,valp1,valp2):
+   if (ABS(isolevel-valp1) &lt; 0.00001):
+      return p1
+   if (ABS(isolevel-valp2) &lt; 0.00001):
+      return p2
+   if (ABS(valp1-valp2) &lt; 0.00001):
+      return p1
+   mu = (isolevel - valp1) / (valp2 - valp1);
+   x = p1[0] + mu * (p2[0] - p1[0]);
+   y = p1[1] + mu * (p2[1] - p1[1]);
+   z = p1[2] + mu * (p2[2] - p1[2]);
+
+   return x,y,z</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -76,7 +182,6 @@ Adapted from <a href="https://github.com/mutantbob/blender-marching-cubes/blob/m
 <span>(</span><span>isolevel)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -146,18 +251,86 @@ Adapted from <a href="https://github.com/mutantbob/blender-marching-cubes/blob/m
 
         return triangles</code></pre>
 </details>
+<div class="desc"></div>
 <h3>Methods</h3>
 <dl>
 <dt id="sverchok.utils.marching_cubes.Polygoniser.polygonise"><code class="name flex">
 <span>def <span class="ident">polygonise</span></span>(<span>self, cornervalues, x1, y1, z1, x2, y2, z2)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def polygonise(self, cornervalues, x1, y1, z1, x2, y2, z2):
+
+    #   Determine the index into the edge table which
+    #   tells us which vertices are inside of the surface
+    cubeindex = 0
+    if cornervalues[0] &lt; self.isolevel: cubeindex = cubeindex | 1
+    if cornervalues[1] &lt; self.isolevel: cubeindex = cubeindex | 2
+    if cornervalues[2] &lt; self.isolevel: cubeindex = cubeindex | 4
+    if cornervalues[3] &lt; self.isolevel: cubeindex = cubeindex | 8
+    if cornervalues[4] &lt; self.isolevel: cubeindex = cubeindex | 16
+    if cornervalues[5] &lt; self.isolevel: cubeindex = cubeindex | 32
+    if cornervalues[6] &lt; self.isolevel: cubeindex = cubeindex | 64
+    if cornervalues[7] &lt; self.isolevel: cubeindex = cubeindex | 128
+
+    # Cube is entirely in/out of the surface
+    if edgetable[cubeindex] == 0: return []
+
+    vertlist=[[]]*12
+    # Find the vertices where the surface intersects the cube
+    if (edgetable[cubeindex] &amp; 1):    vertlist[0]  = self.vertexinterp_cached([x1,y1,z1],[x1,y2,z1],cornervalues[0],cornervalues[1])
+    if (edgetable[cubeindex] &amp; 2):    vertlist[1]  = self.vertexinterp_cached([x1,y2,z1],[x2,y2,z1],cornervalues[1],cornervalues[2])
+    if (edgetable[cubeindex] &amp; 4):    vertlist[2]  = self.vertexinterp_cached([x2,y2,z1],[x2,y1,z1],cornervalues[2],cornervalues[3])
+    if (edgetable[cubeindex] &amp; 8):    vertlist[3]  = self.vertexinterp_cached([x2,y1,z1],[x1,y1,z1],cornervalues[3],cornervalues[0])
+    if (edgetable[cubeindex] &amp; 16):   vertlist[4]  = self.vertexinterp_cached([x1,y1,z2],[x1,y2,z2],cornervalues[4],cornervalues[5])
+    if (edgetable[cubeindex] &amp; 32):   vertlist[5]  = self.vertexinterp_cached([x1,y2,z2],[x2,y2,z2],cornervalues[5],cornervalues[6])
+    if (edgetable[cubeindex] &amp; 64):   vertlist[6]  = self.vertexinterp_cached([x2,y2,z2],[x2,y1,z2],cornervalues[6],cornervalues[7])
+    if (edgetable[cubeindex] &amp; 128):  vertlist[7]  = self.vertexinterp_cached([x2,y1,z2],[x1,y1,z2],cornervalues[7],cornervalues[4])
+    if (edgetable[cubeindex] &amp; 256):  vertlist[8]  = self.vertexinterp_cached([x1,y1,z1],[x1,y1,z2],cornervalues[0],cornervalues[4])
+    if (edgetable[cubeindex] &amp; 512):  vertlist[9]  = self.vertexinterp_cached([x1,y2,z1],[x1,y2,z2],cornervalues[1],cornervalues[5])
+    if (edgetable[cubeindex] &amp; 1024): vertlist[10] = self.vertexinterp_cached([x2,y2,z1],[x2,y2,z2],cornervalues[2],cornervalues[6])
+    if (edgetable[cubeindex] &amp; 2048): vertlist[11] = self.vertexinterp_cached([x2,y1,z1],[x2,y1,z2],cornervalues[3],cornervalues[7])
+
+    #Create the triangle
+    triangles = []
+    #for (i=0;triTable[cubeindex][i]!=-1;i+=3) {
+    i=0
+    while tritable[cubeindex][i] != -1:
+        triangles.append([vertlist[tritable[cubeindex][i  ]],
+                                   vertlist[tritable[cubeindex][i+1]],
+                                   vertlist[tritable[cubeindex][i+2]]])
+        i+=3
+
+    return triangles</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.marching_cubes.Polygoniser.vertexinterp_cached"><code class="name flex">
 <span>def <span class="ident">vertexinterp_cached</span></span>(<span>self, p1, p2, v1, v2)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def vertexinterp_cached(self, p1, p2, v1, v2):
+    key1 = (tuple(p1), tuple(p2))
+    key2 = (tuple(p2), tuple(p1))
+    cached = self.cache.get(key1, None)
+    if cached is not None:
+        return cached
+    else:
+        vertex = vertexinterp(self.isolevel, p1, p2, v1, v2)
+        #print(f&#34;V[{p1}][{p2}] := {vertex}&#34;)
+        n = len(self.vertices)
+        self.vertices.append(vertex)
+        self.cache[key1] = n
+        self.cache[key2] = n
+        return n</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -199,7 +372,7 @@ Adapted from <a href="https://github.com/mutantbob/blender-marching-cubes/blob/m
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.1</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.5</a>.</p>
 </footer>
 </body>
 </html>

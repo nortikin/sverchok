@@ -3,19 +3,30 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
-<meta name="generator" content="pdoc3 0.11.1">
+<meta name="generator" content="pdoc3 0.11.5">
 <title>sverchok.utils.modules.vertex_utils API documentation</title>
 <meta name="description" content="">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
-<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
 <style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
 <style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
 <script>window.addEventListener('DOMContentLoaded', () => {
 hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
 hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
 })</script>
 </head>
 <body>
@@ -37,12 +48,53 @@ hljs.highlightAll();
 <span>def <span class="ident">add_faces_normals</span></span>(<span>v_pols, np_faces_g, algorithm, pol_sides, v_normals)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_faces_normals(v_pols, np_faces_g, algorithm, pol_sides, v_normals):
+    if algorithm in (&#39;MWE&#39;, &#39;MWAT&#39;):
+        if algorithm == &#39;MWE&#39;: #weighted equally
+            f_normal_g = np_normalize_vectors(np_faces_normals(v_pols))
+        else: #weighted by area of triangle
+            f_normal_g = np_faces_normals(v_pols)
+        for i in range(pol_sides):
+            np.add.at(v_normals, np_faces_g[:, i], f_normal_g)
+    else:
+        if algorithm == &#39;MWELR&#39;:  #weighted edge length reciprocal
+            f_normal_g = np_normalize_vectors(np_faces_normals(v_pols))
+        else:  # algorithm == &#39;MWS&#39;: #weighted by sine
+            f_normal_g = np_faces_normals(v_pols)
+        edges_length = np.linalg.norm(v_pols - np.roll(v_pols, 1, axis=1), axis=2)
+        factor = edges_length * np.roll(edges_length, -1, axis=1)
+
+        for i in range(pol_sides):
+            np.add.at(v_normals, np_faces_g[:, i], f_normal_g * factor[:, i, np.newaxis])</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.modules.vertex_utils.adjacent_edg_pol"><code class="name flex">
 <span>def <span class="ident">adjacent_edg_pol</span></span>(<span>verts, edgs_pols)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def adjacent_edg_pol(verts, edgs_pols):
+    &#39;&#39;&#39;
+    returns adjacent faces or edges as [[edge,edge,...], [edge, ...], ...]
+    verts: list as [vertex, vertex, ...], being each vertex [float, float, float].
+    edg_pol: list as [edge, edge,..], being each edge [int, int].
+                  or [polygon, polygon,...] being each polygon [int, int, int, ...].
+    &#39;&#39;&#39;
+    adj_edgs_pols = [[] for v in verts]
+    for ep in edgs_pols:
+        for v_id in ep:
+            adj_edgs_pols[v_id] += [ep]
+
+    return adj_edgs_pols</code></pre>
+</details>
 <div class="desc"><p>returns adjacent faces or edges as [[edge,edge,&hellip;], [edge, &hellip;], &hellip;]
 verts: list as [vertex, vertex, &hellip;], being each vertex [float, float, float].
 edg_pol: list as [edge, edge,..], being each edge [int, int].
@@ -52,6 +104,24 @@ or [polygon, polygon,&hellip;] being each polygon [int, int, int, &hellip;].</p>
 <span>def <span class="ident">adjacent_edg_pol_idx</span></span>(<span>verts, edgs_pols)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def adjacent_edg_pol_idx(verts, edgs_pols):
+    &#39;&#39;&#39;
+    calculate the number of adjacent faces  or edges as [int, int,...]
+    verts: list as [vertex, vertex, ...], being each vertex [float, float, float].
+    edg_pol: list as [edge, edge,..], being each edge [int, int].
+                  or [polygon, polygon,...] being each polygon [int, int, int, ...].
+    &#39;&#39;&#39;
+    adj_edgs_pols = [[] for v in verts]
+    for idx, edg_pol in enumerate(edgs_pols):
+        for v_id in edg_pol:
+            adj_edgs_pols[v_id] += [idx]
+
+    return adj_edgs_pols</code></pre>
+</details>
 <div class="desc"><p>calculate the number of adjacent faces
 or edges as [int, int,&hellip;]
 verts: list as [vertex, vertex, &hellip;], being each vertex [float, float, float].
@@ -62,6 +132,24 @@ or [polygon, polygon,&hellip;] being each polygon [int, int, int, &hellip;].</p>
 <span>def <span class="ident">adjacent_edg_pol_num</span></span>(<span>verts, edgs_pols)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def adjacent_edg_pol_num(verts, edgs_pols):
+    &#39;&#39;&#39;
+    calculate the number of adjacent faces  or edges as [int, int,...]
+    verts: list as [vertex, vertex, ...], being each vertex [float, float, float].
+    edg_pol: list as [edge, edge,..], being each edge [int, int].
+                  or [polygon, polygon,...] being each polygon [int, int, int, ...].
+    &#39;&#39;&#39;
+    adj_edgs_pols = [0 for v in verts]
+    for edg_pol in edgs_pols:
+        for v_id in edg_pol:
+            adj_edgs_pols[v_id] += 1
+
+    return adj_edgs_pols</code></pre>
+</details>
 <div class="desc"><p>calculate the number of adjacent faces
 or edges as [int, int,&hellip;]
 verts: list as [vertex, vertex, &hellip;], being each vertex [float, float, float].
@@ -72,6 +160,24 @@ or [polygon, polygon,&hellip;] being each polygon [int, int, int, &hellip;].</p>
 <span>def <span class="ident">center</span></span>(<span>verts)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def center(verts):
+    &#39;&#39;&#39;
+    verts: list as [vertex, vertex, ...], being each vertex [float, float, float].
+    returns the verts centered around [0,0,0]
+    &#39;&#39;&#39;
+    verts_out = []
+    for vec in verts:
+
+        avr = list(map(sum, zip(*vec)))
+        avr = [n/len(vec) for n in avr]
+        vec = [[v[0]-avr[0], v[1]-avr[1], v[2]-avr[2]] for v in vec]
+        verts_out.append(vec)
+    return verts_out</code></pre>
+</details>
 <div class="desc"><p>verts: list as [vertex, vertex, &hellip;], being each vertex [float, float, float].
 returns the verts centered around [0,0,0]</p></div>
 </dd>
@@ -79,6 +185,25 @@ returns the verts centered around [0,0,0]</p></div>
 <span>def <span class="ident">center_of_many</span></span>(<span>verts)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def center_of_many(verts):
+    &#39;&#39;&#39;
+    verts: list as [[vertex, vertex, ...],[vertex,...]], being each vertex [float, float, float].
+    returns the verts centered around [0,0,0] calculating the mean of all lists
+    &#39;&#39;&#39;
+    verts_out = []
+    verts_ungrouped = [[v for vec in group for v in vec] for group in verts]
+
+    for vec_g, vec_ung in zip(verts, verts_ungrouped):
+        avr = list(map(sum, zip(*vec_ung)))
+        avr = [n/len(vec_ung) for n in avr]
+        vec = [[[v[0]-avr[0], v[1]-avr[1], v[2]-avr[2]] for v in vec] for vec in vec_g]
+        verts_out.append(vec)
+    return verts_out</code></pre>
+</details>
 <div class="desc"><p>verts: list as [[vertex, vertex, &hellip;],[vertex,&hellip;]], being each vertex [float, float, float].
 returns the verts centered around [0,0,0] calculating the mean of all lists</p></div>
 </dd>
@@ -86,48 +211,175 @@ returns the verts centered around [0,0,0] calculating the mean of all lists</p><
 <span>def <span class="ident">np_faces_normals</span></span>(<span>v_pols)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def np_faces_normals(v_pols):
+    pol_sides = v_pols.shape[1]
+    if pol_sides &gt; 3:
+        f_normals = np.zeros((len(v_pols), 3), dtype=np.float64)
+        for i in range(pol_sides - 2):
+            f_normals += np.cross(v_pols[::, (1+i)%pol_sides] - v_pols[::, 0], v_pols[::, (2+i)%pol_sides] - v_pols[::, 0])
+    else:
+        f_normals = np.cross(v_pols[::, 1] - v_pols[::, 0], v_pols[::, 2] - v_pols[::, 0])
+    np_normalize_vectors(f_normals)
+
+    return f_normals</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.modules.vertex_utils.np_vertex_normals"><code class="name flex">
 <span>def <span class="ident">np_vertex_normals</span></span>(<span>vertices, faces, algorithm='MWE', output_numpy=False)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def np_vertex_normals(vertices, faces, algorithm=&#39;MWE&#39;, output_numpy=False):
+
+    if isinstance(vertices, np.ndarray):
+        np_verts = vertices
+    else:
+        np_verts = np.array(vertices)
+
+    if isinstance(faces, np.ndarray):
+        np_faces = faces
+    else:
+        np_faces = np.array(faces)
+
+    v_normals = np.zeros(np_verts.shape, dtype=np_verts.dtype)
+
+    if np_faces.dtype == object:
+        np_len = np.vectorize(len)
+        lens = np_len(np_faces)
+        pol_types = np.unique(lens)
+        for pol_sides in pol_types:
+            mask = lens == pol_sides
+            np_faces_g = np.array(np_faces[mask].tolist())
+            v_pols = np_verts[np_faces_g]
+            add_faces_normals(v_pols, np_faces_g, algorithm, pol_sides, v_normals)
+
+    else:
+        pol_sides = np_faces.shape[1]
+        v_pols = np_verts[np_faces]
+        add_faces_normals(v_pols, np_faces, algorithm, pol_sides, v_normals)
+
+
+    if output_numpy:
+        return np_normalize_vectors(v_normals)
+    return np_normalize_vectors(v_normals).tolist()</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.modules.vertex_utils.vertex_calc_angle"><code class="name flex">
 <span>def <span class="ident">vertex_calc_angle</span></span>(<span>vertices, edges, faces)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def vertex_calc_angle(vertices, edges, faces):
+    bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
+    num_edges = adjacent_edg_pol_num(vertices, edges)
+
+
+    vals = [v.calc_edge_angle() if n == 2 else -1 for v, n in zip(bm.verts, num_edges) ]
+    bm.free()
+    return vals</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.modules.vertex_utils.vertex_is_boundary"><code class="name flex">
 <span>def <span class="ident">vertex_is_boundary</span></span>(<span>vertices, edges, faces)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def vertex_is_boundary(vertices, edges, faces):
+    bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
+    vals = [v.is_boundary for v in bm.verts]
+    bm.free()
+    return vals</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.modules.vertex_utils.vertex_is_interior"><code class="name flex">
 <span>def <span class="ident">vertex_is_interior</span></span>(<span>vertices, edges, faces)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def vertex_is_interior(vertices, edges, faces):
+    bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
+    vals = [v.is_manifold and not v.is_boundary for v in bm.verts]
+    bm.free()
+    return vals</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.modules.vertex_utils.vertex_is_manifold"><code class="name flex">
 <span>def <span class="ident">vertex_is_manifold</span></span>(<span>vertices, edges, faces)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def vertex_is_manifold(vertices, edges, faces):
+    bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
+    vals = [v.is_manifold for v in bm.verts]
+    bm.free()
+    return vals</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.modules.vertex_utils.vertex_is_wire"><code class="name flex">
 <span>def <span class="ident">vertex_is_wire</span></span>(<span>vertices, edges, faces)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def vertex_is_wire(vertices, edges, faces):
+    bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
+    vals = [v.is_wire for v in bm.verts]
+    bm.free()
+    return vals</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.modules.vertex_utils.vertex_matrix"><code class="name flex">
 <span>def <span class="ident">vertex_matrix</span></span>(<span>vertices, edges, faces, track, up)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def vertex_matrix(vertices, edges, faces, track, up):
+    &#39;&#39;&#39;
+    orientation: contains origin track and up
+    origin: String  that can be First, Center, Last
+    track: String  that can be X, Y, Z, -X, -Y or -Z
+    up: String  that can be X, Y, Z, -X, -Y or -Z
+    outputs each vertex matrix [matrix, matrix, matrix]
+    &#39;&#39;&#39;
+
+    bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
+    loc = [Vector(v) for v in vertices]
+    normal = [v.normal for v in bm.verts]
+    vals = matrix_normal([loc, normal], track, up)
+    bm.free()
+    return vals</code></pre>
+</details>
 <div class="desc"><p>orientation: contains origin track and up
 origin: String
 that can be First, Center, Last
@@ -141,12 +393,35 @@ outputs each vertex matrix [matrix, matrix, matrix]</p></div>
 <span>def <span class="ident">vertex_normal</span></span>(<span>vertices, faces, algorithm='MWE', output_numpy=True)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def vertex_normal(vertices, faces, algorithm=&#39;MWE&#39;, output_numpy=True):
+    if len(faces) == 0 or algorithm == &#39;BMESH&#39;:
+        bm = bmesh_from_pydata(vertices, [], faces, normal_update=True)
+        vals = [tuple(v.normal) for v in bm.verts]
+        bm.free()
+        return vals
+
+    return np_vertex_normals(vertices, faces, algorithm, output_numpy=output_numpy)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.modules.vertex_utils.vertex_shell_factor"><code class="name flex">
 <span>def <span class="ident">vertex_shell_factor</span></span>(<span>vertices, edges, faces)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def vertex_shell_factor(vertices, edges, faces):
+    bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
+    vals = [v.calc_shell_factor() for v in bm.verts]
+    bm.free()
+    return vals</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -188,7 +463,7 @@ outputs each vertex matrix [matrix, matrix, matrix]</p></div>
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.1</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.5</a>.</p>
 </footer>
 </body>
 </html>

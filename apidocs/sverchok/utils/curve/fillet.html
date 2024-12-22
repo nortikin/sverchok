@@ -3,19 +3,30 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
-<meta name="generator" content="pdoc3 0.11.1">
+<meta name="generator" content="pdoc3 0.11.5">
 <title>sverchok.utils.curve.fillet API documentation</title>
 <meta name="description" content="">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
-<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
 <style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
 <style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
 <script>window.addEventListener('DOMContentLoaded', () => {
 hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
 hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
 })</script>
 </head>
 <body>
@@ -34,39 +45,319 @@ hljs.highlightAll();
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
 <dt id="sverchok.utils.curve.fillet.calc_single_fillet"><code class="name flex">
-<span>def <span class="ident">calc_single_fillet</span></span>(<span>smooth, curve1, curve2, k1, k2, bulge_factor=0.5, biarc_parameter=1.0, planar_tolerance=1e-06)</span>
+<span>def <span class="ident">calc_single_fillet</span></span>(<span>smooth,<br>curve1,<br>curve2,<br>k1,<br>k2,<br>bulge_factor=0.5,<br>biarc_parameter=1.0,<br>planar_tolerance=1e-06)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def calc_single_fillet(smooth, curve1, curve2, k1, k2, bulge_factor = 0.5, biarc_parameter = 1.0, planar_tolerance = 1e-6):
+    u1_max = curve1.get_u_bounds()[1]
+    u2_min = curve2.get_u_bounds()[0]
+    curve1_end = curve1.evaluate(u1_max)
+    curve2_begin = curve2.evaluate(u2_min)
+    tangent1_end = k1 * curve1.get_end_tangent()
+    tangent2_begin = k2 * curve2.get_start_tangent()
+
+    if smooth == SMOOTH_POSITION:
+        return SvLine.from_two_points(curve1_end, curve2_begin)
+    elif smooth == SMOOTH_TANGENT:
+        tangent1 = tangent1_end # / np.linalg.norm(tangent1_end)
+        tangent2 = tangent2_begin # / np.linalg.norm(tangent2_begin)
+        tangent1 = bulge_factor * tangent1
+        tangent2 = bulge_factor * tangent2
+        return SvCubicBezierCurve(
+                    curve1_end,
+                    curve1_end + tangent1 / 3.0,
+                    curve2_begin - tangent2 / 3.0,
+                    curve2_begin
+                )
+    elif smooth == SMOOTH_BIARC:
+        return SvBiArc.calc(
+                curve1_end, curve2_begin,
+                tangent1_end, tangent2_begin,
+                biarc_parameter,
+                planar_tolerance = planar_tolerance)
+    elif smooth == SMOOTH_NORMAL:
+        second_1_end = k1**2 * curve1.second_derivative(u1_max)
+        second_2_begin = k2**2 * curve2.second_derivative(u2_min)
+        return SvBezierCurve.blend_second_derivatives(
+                        curve1_end, tangent1_end, second_1_end,
+                        curve2_begin, tangent2_begin, second_2_begin)
+    elif smooth == SMOOTH_CURVATURE:
+        second_1_end = k1**2 * curve1.second_derivative(u1_max)
+        second_2_begin = k2**2 * curve2.second_derivative(u2_min)
+        third_1_end = k1**3 * curve1.third_derivative_array(np.array([u1_max]))[0]
+        third_2_begin = k2**3 * curve2.third_derivative_array(np.array([u2_min]))[0]
+
+        return SvBezierCurve.blend_third_derivatives(
+                        curve1_end, tangent1_end, second_1_end, third_1_end,
+                        curve2_begin, tangent2_begin, second_2_begin, third_2_begin)
+    elif smooth == &#39;G2&#39;:
+        normal_1_end = curve1.main_normal(u1_max)
+        normal_2_begin = curve2.main_normal(u2_min)
+        curvature_1_end = curve1.curvature(u1_max)
+        curvature_2_begin = curve2.curvature(u2_min)
+        
+        return SvBezierCurve.from_tangents_normals_curvatures(
+                        curve1_end, curve2_begin,
+                        tangent1_end, tangent2_begin,
+                        normal_1_end, normal_2_begin,
+                        curvature_1_end, curvature_2_begin)
+    else:
+        raise Exception(f&#34;Unsupported smooth level: {smooth}&#34;)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.fillet.cut_ends"><code class="name flex">
 <span>def <span class="ident">cut_ends</span></span>(<span>curve, cut_offset, cut_start=True, cut_end=True)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def cut_ends(curve, cut_offset, cut_start=True, cut_end=True):
+    u_min, u_max = curve.get_u_bounds()
+    p1, p2 = curve.get_end_points()
+    l = np.linalg.norm(p1 - p2)
+    dt = cut_offset * (u_max - u_min)
+    if cut_start:
+        u1 = u_min + dt
+    else:
+        u1 = u_min
+    if cut_end:
+        u2 = u_max - dt
+    else:
+        u2 = u_max
+    du = u2 - u1
+    #print(f&#34;cut: {u_min} - {u_max} * cut_offset =&gt; {u1} - {u2}&#34;)
+    return du, curve.cut_segment(u1, u2)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.fillet.fillet_nurbs_curve"><code class="name flex">
-<span>def <span class="ident">fillet_nurbs_curve</span></span>(<span>curve, smooth, cut_offset, bulge_factor=0.5, biarc_parameter=1.0, planar_tolerance=1e-06, tangent_tolerance=1e-06)</span>
+<span>def <span class="ident">fillet_nurbs_curve</span></span>(<span>curve,<br>smooth,<br>cut_offset,<br>bulge_factor=0.5,<br>biarc_parameter=1.0,<br>planar_tolerance=1e-06,<br>angle_tolerance=1e-06,<br>amplitude_tolerance=1e-06)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def fillet_nurbs_curve(curve, smooth, cut_offset,
+        bulge_factor = 0.5,
+        biarc_parameter = 1.0,
+        planar_tolerance = 1e-6,
+        angle_tolerance = 1e-6,
+        amplitude_tolerance = 1e-6):
+
+    cyclic = curve.is_closed()
+    segments = curve.split_at_fracture_points(angle_tolerance = angle_tolerance, amplitude_tolerance = amplitude_tolerance)
+    n = len(segments)
+    cuts = [cut_ends(s, cut_offset, cut_start = (i &gt; 0 or cyclic), cut_end = (i &lt; n-1 or cyclic)) for i, s in enumerate(segments)]
+    fillets = [calc_single_fillet(smooth, s1, s2, dt1, dt2, bulge_factor, biarc_parameter, planar_tolerance) for (dt1,s1), (dt2,s2) in zip(cuts, cuts[1:])]
+    if cyclic:
+        dt1, s1 = cuts[-1]
+        dt2, s2 = cuts[0]
+        fillet = calc_single_fillet(smooth, s1, s2, dt1, dt2, bulge_factor, biarc_parameter, planar_tolerance)
+        fillets.append(fillet)
+    segments = [cut[1] for cut in cuts]
+    new_segments = [[segment, fillet] for segment, fillet in zip(segments, fillets)]
+    if not cyclic:
+        new_segments.append([segments[-1]])
+    new_segments = sum(new_segments, [])
+    return concatenate_curves(new_segments)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.fillet.fillet_polyline_from_curve"><code class="name flex">
-<span>def <span class="ident">fillet_polyline_from_curve</span></span>(<span>curve, radiuses, smooth='1a', concat=True, clamp=True, scale_to_unit=False, make_nurbs=True)</span>
+<span>def <span class="ident">fillet_polyline_from_curve</span></span>(<span>curve,<br>radiuses,<br>smooth='1a',<br>concat=True,<br>clamp=True,<br>scale_to_unit=False,<br>make_nurbs=True)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def fillet_polyline_from_curve(curve, radiuses,
+            smooth = SMOOTH_ARC,
+            concat = True,
+            clamp = True,
+            scale_to_unit = False,
+            make_nurbs = True):
+
+    if not curve.is_polyline():
+        raise Exception(&#34;Curve is not a polyline&#34;)
+    vertices = curve.get_polyline_vertices().tolist()
+    cyclic = curve.is_closed()
+
+    if isinstance(radiuses, (int,float)):
+        radiuses = [radiuses]
+    if cyclic:
+        vertices = vertices[:-1]
+    n = len(vertices)
+    radiuses = repeat_last_for_length(radiuses, n)
+
+    if smooth == SMOOTH_POSITION:
+        arc_mode = FILLET_BEVEL
+    elif smooth == SMOOTH_TANGENT:
+        arc_mode = FILLET_BEZIER
+    elif smooth == SMOOTH_ARC:
+        arc_mode = FILLET_ARC
+    elif smooth == SMOOTH_QUAD:
+        arc_mode = FILLET_BEZIER
+    else:
+        raise Exception(f&#34;Unsupported smooth level: {smooth}&#34;)
+
+    return fillet_polyline_from_vertices(vertices, radiuses,
+                cyclic = cyclic,
+                concat = concat,
+                clamp = clamp,
+                arc_mode = arc_mode,
+                scale_to_unit = scale_to_unit,
+                make_nurbs = make_nurbs)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.fillet.fillet_polyline_from_vertices"><code class="name flex">
-<span>def <span class="ident">fillet_polyline_from_vertices</span></span>(<span>vertices, radiuses, cyclic=False, concat=True, clamp=True, arc_mode='ARC', scale_to_unit=False, make_nurbs=True)</span>
+<span>def <span class="ident">fillet_polyline_from_vertices</span></span>(<span>vertices,<br>radiuses,<br>cyclic=False,<br>concat=True,<br>clamp=True,<br>arc_mode='ARC',<br>scale_to_unit=False,<br>make_nurbs=True)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def fillet_polyline_from_vertices(vertices, radiuses,
+            cyclic=False,
+            concat=True,
+            clamp=True,
+            arc_mode = FILLET_ARC,
+            scale_to_unit=False,
+            make_nurbs=True):
+
+    if len(radiuses) != len(vertices):
+        raise Exception(f&#34;Number of radiuses provided ({len(radiuses)}) must be equal to number of vertices ({len(vertices)})&#34;)
+
+    if clamp:
+        radiuses = limit_filet_radiuses(vertices, radiuses, cyclic=cyclic)
+
+    if cyclic:
+        if radiuses[-1] == 0 :
+            last_fillet = None
+        else:
+            last_fillet = calc_fillet(vertices[-2], vertices[-1], vertices[0], radiuses[-1])
+        vertices = [vertices[-1]] + vertices + [vertices[0]] 
+        prev_edge_start = vertices[0] if last_fillet is None else last_fillet.p2
+        corners = list(zip(vertices, vertices[1:], vertices[2:], radiuses))
+    else:
+        prev_edge_start = vertices[0]
+        corners = zip(vertices, vertices[1:], vertices[2:], radiuses)
+
+    curves = []
+    centers = []
+    for v1, v2, v3, radius in corners:
+        if radius == 0 :
+            fillet = None
+        else:
+            fillet = calc_fillet(v1, v2, v3, radius)
+        if fillet is not None :
+            edge_direction = np.array(fillet.p1) - np.array(prev_edge_start)
+            edge_len = np.linalg.norm(edge_direction)
+            if edge_len != 0 :
+                edge = SvLine(prev_edge_start, edge_direction / edge_len)
+                edge.u_bounds = (0.0, edge_len)
+                curves.append(edge)
+            if arc_mode == FILLET_ARC:
+                arc = fillet.get_circular_arc()
+            elif arc_mode == FILLET_BEZIER:
+                arc = fillet.get_bezier_arc()
+            elif arc_mode == FILLET_BEVEL:
+                arc = fillet.get_bevel()
+            else:
+                raise Exception(f&#34;Unsupported arc mode: {arc_mode}&#34;)
+            prev_edge_start = fillet.p2
+            curves.append(arc)
+            centers.append(fillet.matrix)
+        else:
+            edge = SvLine.from_two_points(prev_edge_start, v2)
+            prev_edge_start = v2
+            curves.append(edge)
+
+    if not cyclic:
+        edge_direction = np.array(vertices[-1]) - np.array(prev_edge_start)
+        edge_len = np.linalg.norm(edge_direction)
+        if edge_len != 0 :
+            edge = SvLine(prev_edge_start, edge_direction / edge_len)
+            edge.u_bounds = (0.0, edge_len)
+            curves.append(edge)
+
+    if make_nurbs:
+        if concat:
+            curves = [curve.to_nurbs().elevate_degree(target=2) for curve in curves]
+        else:
+            curves = [curve.to_nurbs() for curve in curves]
+    if concat:
+        concat = concatenate_curves(curves, scale_to_unit = scale_to_unit)
+        return concat, centers, radiuses
+    else:
+        return curves, centers, radiuses</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.fillet.limit_filet_radiuses"><code class="name flex">
 <span>def <span class="ident">limit_filet_radiuses</span></span>(<span>vertices, radiuses, cyclic=False)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def limit_filet_radiuses(vertices, radiuses, cyclic=False):
+    factor = 0.999
+    if cyclic:
+        vertices = [vertices[-1]] + vertices + [vertices[0]]
+    vertices = [Vector(v) for v in vertices]
+    limit_radiuses = []
+    for n in range(len(vertices)-2):
+        v1,v2,v3,r = vertices[n],vertices[n+1],vertices[n+2],radiuses[n]
+        vector1,vector2 = v1-v2,v3-v2
+        d1,d2 = vector1.length,vector2.length
+        min_length1 = d1 if d1&lt;d2 else d2
+
+        v_2,v_3,v_4 = v2,v3, v3 if v3 is vertices[-1] else vertices[n+3]
+        vector_1 ,vector_2 = vector2*-1,v_4-v_3
+        d_1,d_2 = d2 , vector_2.length
+        min_length2 = d_1 if d_1&lt;d_2 else d_2
+
+        if d2 - min_length1 &gt;= min_length2 :
+            if cyclic and n==0:
+                min_length1 = min_length1/2
+                vertices[-1] = (v1+v2)/2
+
+            angle = vector1.angle(vector2,0)
+            max_r = math.tan(angle/2)*min_length1
+        else:
+            vec2 = vector2.copy()
+            vec2.normalize()
+            vec_1 = vector_1.copy()
+            vec_1.normalize()
+            f_vector1 = vec2*min_length1
+            f_vector2 = vec_1*(d2-min_length2)
+
+            mid_vector = (f_vector1 + -f_vector2)/2
+            mid_vertex = v2 + mid_vector
+            vertices[n+1] = mid_vertex
+            min_length = mid_vector.length
+
+            if cyclic and n==0:
+                vertices[-1] = v2 + vector1*(min_length/d1)
+            
+            angle = vector1.angle(vector2,0)
+            max_r = math.tan(angle/2)*min_length
+        r = max_r*factor if r&gt;max_r else r
+        limit_radiuses.append(r)
+    return limit_radiuses</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -98,7 +389,7 @@ hljs.highlightAll();
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.1</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.5</a>.</p>
 </footer>
 </body>
 </html>

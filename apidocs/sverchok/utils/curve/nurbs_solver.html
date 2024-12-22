@@ -3,19 +3,30 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
-<meta name="generator" content="pdoc3 0.11.1">
+<meta name="generator" content="pdoc3 0.11.5">
 <title>sverchok.utils.curve.nurbs_solver API documentation</title>
 <meta name="description" content="NURBS Curve Solver: general algorithm to find a curve which meets certain requirements …">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
-<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
 <style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
 <style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
 <script>window.addEventListener('DOMContentLoaded', () => {
 hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
 hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
 })</script>
 </head>
 <body>
@@ -66,8 +77,6 @@ instruct the solver that some goals are more important than others.
 <span>(</span><span>cpt_idxs, cpt_vectors, weights=None, relative=True)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Goal which says that the curve must have control points at particular
-locations.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -150,6 +159,8 @@ locations.</p></div>
 
         return A, B</code></pre>
 </details>
+<div class="desc"><p>Goal which says that the curve must have control points at particular
+locations.</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="sverchok.utils.curve.nurbs_solver.SvNurbsCurveGoal" href="#sverchok.utils.curve.nurbs_solver.SvNurbsCurveGoal">SvNurbsCurveGoal</a></li>
@@ -160,6 +171,18 @@ locations.</p></div>
 <span>def <span class="ident">single</span></span>(<span>idx, vector, weight=None, relative=True)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def single(idx, vector, weight=None, relative=True):
+    if weight is None:
+        weights = None
+    else:
+        weights = [weight]
+    return SvNurbsCurveControlPoints([idx], [vector], weights=weights, relative=relative)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -169,30 +192,106 @@ locations.</p></div>
 <span>def <span class="ident">add</span></span>(<span>self, other)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add(self, other):
+    if other.relative != self.relative:
+        return None
+    g = self.copy()
+    g.cpt_idxs = np.concatenate((g.cpt_idxs, other.cpt_idxs))
+    g.cpt_vectors = np.concatenate((g.cpt_vectors, other.cpt_vectors))
+    g.weights = np.concatenate((g.get_weights(), other.get_weights()))
+    return g</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.nurbs_solver.SvNurbsCurveControlPoints.copy"><code class="name flex">
 <span>def <span class="ident">copy</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def copy(self):
+    return SvNurbsCurveControlPoints(self.cpt_idxs, self.cpt_vectors, self.weights, self.relative)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.nurbs_solver.SvNurbsCurveControlPoints.get_equations"><code class="name flex">
 <span>def <span class="ident">get_equations</span></span>(<span>self, solver)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_equations(self, solver):
+    ndim = solver.ndim
+
+    n_points = len(self.cpt_vectors)
+    n_equations = ndim * n_points
+    n_unknowns = ndim * solver.n_cpts
+
+    weights = self.get_weights()
+
+    A = np.zeros((n_equations, n_unknowns))
+    B = np.zeros((n_equations, 1))
+
+    for pt_idx, cpt_idx in enumerate(self.cpt_idxs):
+        for dim_idx in range(ndim):
+            A[dim_idx, ndim*cpt_idx + dim_idx] = weights[pt_idx]
+
+    if solver.src_curve is None:
+        if self.relative:
+            raise Exception(&#34;Can not solve relative constraint without original curve&#34;)
+        else:
+            src_points = None
+    else:
+        if self.relative:
+            src_points = None
+        else:
+            src_points = solver.src_curve.get_control_points()
+
+    for pt_idx, (cpt_idx, point) in enumerate(zip(self.cpt_idxs, self.cpt_vectors)):
+        if src_points is not None:
+            point = point - src_points[cpt_idx]
+        B[pt_idx*ndim:pt_idx*ndim+ndim,0] = weights[pt_idx] * point[np.newaxis]
+
+    return A, B</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.nurbs_solver.SvNurbsCurveControlPoints.get_n_defined_control_points"><code class="name flex">
 <span>def <span class="ident">get_n_defined_control_points</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_n_defined_control_points(self):
+    return len(self.cpt_idxs)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.nurbs_solver.SvNurbsCurveControlPoints.get_weights"><code class="name flex">
 <span>def <span class="ident">get_weights</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_weights(self):
+    weights = self.weights
+    n_points = len(self.cpt_vectors)
+    if weights is None:
+        weights = np.ones((n_points,))
+    return weights</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -202,8 +301,6 @@ locations.</p></div>
 <span>(</span><span>us1, us2, weights=None, relative_u=False, relative=False)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Goal which says that curve must have equal tangent vectors at two sets of
-parameter values.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -298,6 +395,8 @@ parameter values.</p></div>
         print(f&#34;Tg1: {points1}, Tg2: {points2}&#34;)
         return points1, points2</code></pre>
 </details>
+<div class="desc"><p>Goal which says that curve must have equal tangent vectors at two sets of
+parameter values.</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSelfIntersections" href="#sverchok.utils.curve.nurbs_solver.SvNurbsCurveSelfIntersections">SvNurbsCurveSelfIntersections</a></li>
@@ -309,6 +408,18 @@ parameter values.</p></div>
 <span>def <span class="ident">single</span></span>(<span>u1, u2, weight=None, relative_u=False, relative=False)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def single(u1, u2, weight=None, relative_u=False, relative=False):
+    if weight is None:
+        weights = None
+    else:
+        weights = [weight]
+    return SvNurbsCurveCotangents([u1], [u2], weights, relative_u=relative_u, relative=relative)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -318,24 +429,102 @@ parameter values.</p></div>
 <span>def <span class="ident">calc_alphas</span></span>(<span>self, solver)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def calc_alphas(self, solver):
+    us1 = self.us1
+    us2 = self.us2
+    if self.relative_u:
+        u_min, u_max = solver.knotvector[0], solver.knotvector[-1]
+        us1 = u_min + (u_max - u_min) * us1
+        us2 = u_min + (u_max - u_min) * us2
+    p = solver.degree
+    alphas = [solver.basis.weighted_derivative(k, p, 1, solver.curve_weights)(us1) for k in range(solver.n_cpts)]
+    alphas = np.array(alphas) # (n_cpts, n_points)
+    betas = [solver.basis.weighted_derivative(k, p, 1, solver.curve_weights)(us2) for k in range(solver.n_cpts)]
+    betas = np.array(betas) # (n_cpts, n_points)
+    return alphas, betas</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.nurbs_solver.SvNurbsCurveCotangents.calc_vectors"><code class="name flex">
 <span>def <span class="ident">calc_vectors</span></span>(<span>self, solver)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def calc_vectors(self, solver):
+    points1 = solver.src_curve.tangent_array(self.us1)
+    points2 = solver.src_curve.tangent_array(self.us2)
+    print(f&#34;Tg1: {points1}, Tg2: {points2}&#34;)
+    return points1, points2</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.nurbs_solver.SvNurbsCurveCotangents.copy"><code class="name flex">
 <span>def <span class="ident">copy</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def copy(self):
+    return SvNurbsCurveCotangents(self.us1, self.us2, self.weights, self.relative_u, self.relative)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.nurbs_solver.SvNurbsCurveCotangents.get_equations"><code class="name flex">
 <span>def <span class="ident">get_equations</span></span>(<span>self, solver)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_equations(self, solver):
+    ndim = solver.ndim
+    us1 = self.us1
+    us2 = self.us2
+    p = solver.degree
+
+    n_points = len(us1)
+    n_equations = ndim * n_points
+    n_unknowns = ndim * solver.n_cpts
+
+    alphas, betas = self.calc_alphas(solver)
+
+    weights = self.get_weights()
+
+    A = np.zeros((n_equations, n_unknowns))
+    B = np.zeros((n_equations, 1))
+
+    weight = 1
+
+    for pt_idx in range(n_points):
+        for cpt_idx in range(solver.n_cpts):
+            alpha = alphas[cpt_idx][pt_idx]
+            beta = betas[cpt_idx][pt_idx]
+            for dim_idx in range(ndim):
+                A[ndim*pt_idx + dim_idx, ndim*cpt_idx + dim_idx] = weight * (alpha - beta)
+
+    if self.relative:
+        if solver.src_curve is None:
+            raise Exception(&#34;Can not solve relative constraint without original curve&#34;)
+        else:
+            points1, points2 = self.calc_vectors(solver)
+            for pt_idx, (pt1, pt2) in enumerate(zip(points1, points2)):
+                for dim_idx in range(ndim):
+                    B[pt_idx*ndim:pt_idx*ndim+ndim,0] = weight * (pt2 - pt1)[np.newaxis]
+
+    print(&#34;A&#34;, A)
+    print(&#34;B&#34;, B)
+    return A, B</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -345,8 +534,6 @@ parameter values.</p></div>
 <span>(</span><span>order, us, vectors, weights=None, relative=False)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Goal which says that the curve must pass through the specified points at
-specified values of parameter.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -405,6 +592,8 @@ specified values of parameter.</p></div>
     def get_src_points(self, solver):
         return solver.src_curve.tangent_array(self.us)</code></pre>
 </details>
+<div class="desc"><p>Goal which says that the curve must pass through the specified points at
+specified values of parameter.</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="sverchok.utils.curve.nurbs_solver.SvNurbsCurvePoints" href="#sverchok.utils.curve.nurbs_solver.SvNurbsCurvePoints">SvNurbsCurvePoints</a></li>
@@ -416,6 +605,18 @@ specified values of parameter.</p></div>
 <span>def <span class="ident">single</span></span>(<span>order, u, tangent, weight=None, relative=False)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def single(order, u, tangent, weight=None, relative=False):
+    if weight is None:
+        weights = None
+    else:
+        weights = [weight]
+    return SvNurbsCurveDerivatives(order, [u], [tangent], weights, relative=relative)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -425,24 +626,63 @@ specified values of parameter.</p></div>
 <span>def <span class="ident">add</span></span>(<span>self, other)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add(self, other):
+    if self.relative != other.relative:
+        return None
+    if self.order != other.order:
+        return None
+    g = self.copy()
+    g.us = np.concatenate((g.us, other.us))
+    g.vectors = np.concatenate((g.vectors, other.vectors))
+    g.weights = np.concatenate((g.get_weights(), other.get_weights()))
+    return g</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.nurbs_solver.SvNurbsCurveDerivatives.calc_alphas"><code class="name flex">
 <span>def <span class="ident">calc_alphas</span></span>(<span>self, solver, us)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def calc_alphas(self, solver, us):
+    p = solver.degree
+    betas = [solver.basis.weighted_derivative(k, p, self.order, solver.curve_weights)(us) for k in range(solver.n_cpts)]
+    betas = np.array(betas) # (n_cpts, n_points)
+    return betas</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.nurbs_solver.SvNurbsCurveDerivatives.copy"><code class="name flex">
 <span>def <span class="ident">copy</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def copy(self):
+    return SvNurbsCurveDerivatives(self.order, self.us, self.vectors, self.weights, relative=self.relative)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.nurbs_solver.SvNurbsCurveDerivatives.get_src_points"><code class="name flex">
 <span>def <span class="ident">get_src_points</span></span>(<span>self, solver)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_src_points(self, solver):
+    return solver.src_curve.tangent_array(self.us)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -451,7 +691,6 @@ specified values of parameter.</p></div>
 <span>class <span class="ident">SvNurbsCurveGoal</span></span>
 </code></dt>
 <dd>
-<div class="desc"><p>Abstract class for curve goal.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -472,6 +711,7 @@ specified values of parameter.</p></div>
     def get_n_defined_control_points(self):
         raise Exception(&#34;Not implemented&#34;)</code></pre>
 </details>
+<div class="desc"><p>Abstract class for curve goal.</p></div>
 <h3>Subclasses</h3>
 <ul class="hlist">
 <li><a title="sverchok.utils.curve.nurbs_solver.SvNurbsCurveControlPoints" href="#sverchok.utils.curve.nurbs_solver.SvNurbsCurveControlPoints">SvNurbsCurveControlPoints</a></li>
@@ -484,24 +724,52 @@ specified values of parameter.</p></div>
 <span>def <span class="ident">add</span></span>(<span>self, other)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add(self, other):
+    raise Exception(&#34;Not implemented&#34;)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.nurbs_solver.SvNurbsCurveGoal.copy"><code class="name flex">
 <span>def <span class="ident">copy</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def copy(self):
+    raise Exception(&#34;Not implemented&#34;)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.nurbs_solver.SvNurbsCurveGoal.get_equations"><code class="name flex">
 <span>def <span class="ident">get_equations</span></span>(<span>self, solver)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_equations(self, solver):
+    raise Exception(&#34;Not implemented&#34;)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.nurbs_solver.SvNurbsCurveGoal.get_n_defined_control_points"><code class="name flex">
 <span>def <span class="ident">get_n_defined_control_points</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_n_defined_control_points(self):
+    raise Exception(&#34;Not implemented&#34;)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -511,8 +779,6 @@ specified values of parameter.</p></div>
 <span>(</span><span>us, points, weights=None, relative=False)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Goal which says that the curve must pass through the specified points at
-specified values of parameter.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -630,6 +896,8 @@ specified values of parameter.</p></div>
 
         return A, B</code></pre>
 </details>
+<div class="desc"><p>Goal which says that the curve must pass through the specified points at
+specified values of parameter.</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="sverchok.utils.curve.nurbs_solver.SvNurbsCurveGoal" href="#sverchok.utils.curve.nurbs_solver.SvNurbsCurveGoal">SvNurbsCurveGoal</a></li>
@@ -645,6 +913,18 @@ specified values of parameter.</p></div>
 <span>def <span class="ident">single</span></span>(<span>u, point, weight=None, relative=False)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def single(u, point, weight=None, relative=False):
+    if weight is None:
+        weights = None
+    else:
+        weights = [weight]
+    return SvNurbsCurvePoints([u], [point], weights, relative=relative)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -654,42 +934,149 @@ specified values of parameter.</p></div>
 <span>def <span class="ident">add</span></span>(<span>self, other)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add(self, other):
+    if other.relative != self.relative:
+        return None
+    g = self.copy()
+    g.us = np.concatenate((g.us, other.us))
+    g.vectors = np.concatenate((g.vectors, other.vectors))
+    g.weights = np.concatenate((g.get_weights(), other.get_weights()))
+    return g</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.nurbs_solver.SvNurbsCurvePoints.calc_alphas"><code class="name flex">
 <span>def <span class="ident">calc_alphas</span></span>(<span>self, solver, us)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def calc_alphas(self, solver, us):
+    p = solver.degree
+    if solver.is_rational():
+        alphas = [solver.basis.fraction(k,p, solver.curve_weights)(us) for k in range(solver.n_cpts)]
+    else:
+        alphas = [solver.basis.function(k,p)(us) for k in range(solver.n_cpts)]
+    alphas = np.array(alphas) # (n_cpts, n_points)
+    return alphas</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.nurbs_solver.SvNurbsCurvePoints.copy"><code class="name flex">
 <span>def <span class="ident">copy</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def copy(self):
+    return SvNurbsCurvePoints(self.us, self.vectors, self.weights, relative=self.relative)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.nurbs_solver.SvNurbsCurvePoints.get_equations"><code class="name flex">
 <span>def <span class="ident">get_equations</span></span>(<span>self, solver)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_equations(self, solver):
+    ndim = solver.ndim
+    us = self.us
+    vectors = self.vectors
+
+    n_points = len(vectors)
+    n_equations = ndim * n_points
+    n_unknowns = ndim * solver.n_cpts
+
+    alphas = self.calc_alphas(solver, us)
+
+    weights = self.get_weights()
+
+    A = np.zeros((n_equations, n_unknowns))
+    B = np.zeros((n_equations, 1))
+    #print(f&#34;A: {A.shape}, W {weights.shape}, n_points {n_points}&#34;)
+
+    for pt_idx in range(n_points):
+        for cpt_idx in range(solver.n_cpts):
+            alpha = alphas[cpt_idx][pt_idx]
+            for dim_idx in range(ndim):
+                A[ndim*pt_idx + dim_idx, ndim*cpt_idx + dim_idx] = weights[pt_idx] * alpha
+
+    if solver.src_curve is None:
+        if self.relative:
+            raise Exception(&#34;Can not solve relative constraint without original curve&#34;)
+        else:
+            src_points = None
+    else:
+        if self.relative:
+            src_points = None
+        else:
+            src_points = self.get_src_points(solver)
+
+    for pt_idx, point in enumerate(vectors):
+        if src_points is not None:
+            point = point - src_points[pt_idx]
+        B[pt_idx*ndim:pt_idx*ndim+ndim,0] = weights[pt_idx] * point[np.newaxis]
+
+    return A, B</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.nurbs_solver.SvNurbsCurvePoints.get_n_defined_control_points"><code class="name flex">
 <span>def <span class="ident">get_n_defined_control_points</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_n_defined_control_points(self):
+    return len(self.us)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.nurbs_solver.SvNurbsCurvePoints.get_src_points"><code class="name flex">
 <span>def <span class="ident">get_src_points</span></span>(<span>self, solver)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_src_points(self, solver):
+    return solver.src_curve.evaluate_array(self.us)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.nurbs_solver.SvNurbsCurvePoints.get_weights"><code class="name flex">
 <span>def <span class="ident">get_weights</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_weights(self):
+    weights = self.weights
+    n_points = len(self.vectors)
+    if weights is None:
+        weights = np.ones((n_points,))
+    elif isinstance(weights, np.ndarray) and weights.shape == (1,):
+        weights = np.full((n_points,), weights[0])
+    elif isinstance(weights, (int,float)):
+        weights = np.full((n_points,), weights)
+    return weights</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -699,8 +1086,6 @@ specified values of parameter.</p></div>
 <span>(</span><span>us1, us2, weights=None, relative_u=False, relative=False)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Goal which says that the curve must have self-intersections at specified
-sets of parameter values.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -811,6 +1196,8 @@ sets of parameter values.</p></div>
 
         return A, B</code></pre>
 </details>
+<div class="desc"><p>Goal which says that the curve must have self-intersections at specified
+sets of parameter values.</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="sverchok.utils.curve.nurbs_solver.SvNurbsCurveGoal" href="#sverchok.utils.curve.nurbs_solver.SvNurbsCurveGoal">SvNurbsCurveGoal</a></li>
@@ -825,6 +1212,18 @@ sets of parameter values.</p></div>
 <span>def <span class="ident">single</span></span>(<span>u1, u2, weight=None, relative_u=False, relative=False)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def single(u1, u2, weight=None, relative_u=False, relative=False):
+    if weight is None:
+        weights = None
+    else:
+        weights = [weight]
+    return SvNurbsCurveSelfIntersections([u1], [u2], weights, relative_u=relative_u, relative=relative)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -834,42 +1233,148 @@ sets of parameter values.</p></div>
 <span>def <span class="ident">add</span></span>(<span>self, other)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add(self, other):
+    if other.relative_u != self.relative_u:
+        return None
+    if other.relative != self.relative:
+        return None
+    g = self.copy()
+    g.us1 = np.concatenate((g.us1, other.us1))
+    g.us2 = np.concatenate((g.us2, other.us2))
+    g.weights = np.concatenate((g.get_weights(), other.get_weights()))
+    return g</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSelfIntersections.calc_alphas"><code class="name flex">
 <span>def <span class="ident">calc_alphas</span></span>(<span>self, solver)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def calc_alphas(self, solver):
+    us1 = self.us1
+    us2 = self.us2
+    if self.relative_u:
+        u_min, u_max = solver.knotvector[0], solver.knotvector[-1]
+        us1 = u_min + (u_max - u_min) * us1
+        us2 = u_min + (u_max - u_min) * us2
+    p = solver.degree
+    alphas = [solver.basis.fraction(k,p, solver.curve_weights)(us1) for k in range(solver.n_cpts)]
+    alphas = np.array(alphas) # (n_cpts, n_points)
+    betas = [solver.basis.fraction(k,p, solver.curve_weights)(us2) for k in range(solver.n_cpts)]
+    betas = np.array(betas) # (n_cpts, n_points)
+    return alphas, betas</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSelfIntersections.calc_vectors"><code class="name flex">
 <span>def <span class="ident">calc_vectors</span></span>(<span>self, solver)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def calc_vectors(self, solver):
+    points1 = solver.src_curve.evaluate_array(self.us1)
+    points2 = solver.src_curve.evaluate_array(self.us2)
+    return points1, points2</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSelfIntersections.copy"><code class="name flex">
 <span>def <span class="ident">copy</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def copy(self):
+    return SvNurbsCurveSelfIntersections(self.us1, self.us2, self.weights, self.relative_u, self.relative)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSelfIntersections.get_equations"><code class="name flex">
 <span>def <span class="ident">get_equations</span></span>(<span>self, solver)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_equations(self, solver):
+    ndim = solver.ndim
+    us1 = self.us1
+    us2 = self.us2
+    p = solver.degree
+
+    n_points = len(us1)
+    n_equations = ndim * n_points
+    n_unknowns = ndim * solver.n_cpts
+
+    alphas, betas = self.calc_alphas(solver)
+
+    weights = self.get_weights()
+
+    A = np.zeros((n_equations, n_unknowns))
+    B = np.zeros((n_equations, 1))
+
+    for pt_idx in range(n_points):
+        for cpt_idx in range(solver.n_cpts):
+            alpha = alphas[cpt_idx][pt_idx]
+            beta = betas[cpt_idx][pt_idx]
+            for dim_idx in range(ndim):
+                A[ndim*pt_idx + dim_idx, ndim*cpt_idx + dim_idx] = weights[pt_idx] * (alpha - beta)
+
+    if self.relative:
+        if solver.src_curve is None:
+            raise Exception(&#34;Can not solve relative constraint without original curve&#34;)
+        else:
+            points1, points2 = self.calc_vectors(solver)
+            for pt_idx, (pt1, pt2) in enumerate(zip(points1, points2)):
+                for dim_idx in range(ndim):
+                    B[pt_idx*ndim:pt_idx*ndim+ndim,0] = weights[pt_idx] * (pt2 - pt1)[np.newaxis]
+
+    return A, B</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSelfIntersections.get_n_defined_control_points"><code class="name flex">
 <span>def <span class="ident">get_n_defined_control_points</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_n_defined_control_points(self):
+    return len(self.us1)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSelfIntersections.get_weights"><code class="name flex">
 <span>def <span class="ident">get_weights</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_weights(self):
+    weights = self.weights
+    if weights is None:
+        n_points = len(self.us1)
+        weights = np.ones((n_points,))
+    return weights</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -879,21 +1384,6 @@ sets of parameter values.</p></div>
 <span>(</span><span>degree=None, src_curve=None, ndim=3)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>NURBS Curve Solver.</p>
-<p>Usually this class is used as follows:</p>
-<pre><code>solver = SvNurbsCurveSolver(degree=3)
-# Provide goals
-solver.add_goal(SvNurbsCurvePoints(...))
-solver.add_goal(SvNurbsCurveTangents(...))
-
-# Guess curve parameters so that the system would be well-determined:
-solver.guess_curve_params()
-# Or the parameters can be provided explicitly:
-solver.set_curve_params(n_cpts, knotvector)
-
-# Solve the problem:
-curve = solver.solve()
-</code></pre></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1135,6 +1625,21 @@ curve = solver.solve()
         solver.guess_curve_params()
         return solver.solve(implementation = implementation)</code></pre>
 </details>
+<div class="desc"><p>NURBS Curve Solver.</p>
+<p>Usually this class is used as follows:</p>
+<pre><code>solver = SvNurbsCurveSolver(degree=3)
+# Provide goals
+solver.add_goal(SvNurbsCurvePoints(...))
+solver.add_goal(SvNurbsCurveTangents(...))
+
+# Guess curve parameters so that the system would be well-determined:
+solver.guess_curve_params()
+# Or the parameters can be provided explicitly:
+solver.set_curve_params(n_cpts, knotvector)
+
+# Solve the problem:
+curve = solver.solve()
+</code></pre></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="sverchok.utils.curve.core.SvCurve" href="core.html#sverchok.utils.curve.core.SvCurve">SvCurve</a></li>
@@ -1162,7 +1667,6 @@ curve = solver.solve()
 <dl>
 <dt id="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.curve_weights"><code class="name">prop <span class="ident">curve_weights</span></code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1171,6 +1675,7 @@ curve = solver.solve()
 def curve_weights(self):
     return self._curve_weights</code></pre>
 </details>
+<div class="desc"></div>
 </dd>
 </dl>
 <h3>Methods</h3>
@@ -1179,84 +1684,258 @@ def curve_weights(self):
 <span>def <span class="ident">add_goal</span></span>(<span>self, goal)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_goal(self, goal):
+    self.goals.append(goal)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.copy"><code class="name flex">
 <span>def <span class="ident">copy</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def copy(self):
+    solver = SvNurbsCurveSolver(degree=self.degree, src_curve=self.src_curve)
+    solver.n_cpts = self.n_cpts
+    solver.curve_weights = self.curve_weights
+    solver.knotvector = self.knotvector
+    solver.goals = self.goals[:]
+    solver.A = self.A
+    solver.B = self.B
+    return solver</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.get_knotvector"><code class="name flex">
 <span>def <span class="ident">get_knotvector</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_knotvector(self):
+    return self.knotvector</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.guess_curve_params"><code class="name flex">
 <span>def <span class="ident">guess_curve_params</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def guess_curve_params(self):
+    n_equations = sum(g.get_n_defined_control_points() for g in self.goals)
+    self.n_cpts = n_equations
+    self.knotvector = sv_knotvector.generate(self.degree, self.n_cpts)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.guess_n_control_points"><code class="name flex">
 <span>def <span class="ident">guess_n_control_points</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def guess_n_control_points(self):
+    n_equations = sum(g.get_n_defined_control_points() for g in self.goals)
+    return n_equations</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.is_rational"><code class="name flex">
 <span>def <span class="ident">is_rational</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def is_rational(self):
+    if self._is_rational is None:
+        self._is_rational = SvNurbsCurveSolver._check_is_rational(self._curve_weights)
+    return self._is_rational</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.set_curve_params"><code class="name flex">
 <span>def <span class="ident">set_curve_params</span></span>(<span>self, n_cpts, knotvector=None, weights=None)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_curve_params(self, n_cpts, knotvector = None, weights = None):
+    self.n_cpts = n_cpts
+    if knotvector is not None:
+        err = sv_knotvector.check(self.degree, knotvector, n_cpts)
+        if err is not None:
+            raise Exception(err)
+        self.knotvector = np.asarray(knotvector)
+    else:
+        self.knotvector = sv_knotvector.generate(self.degree, n_cpts)
+    self.curve_weights = weights</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.set_curve_weights"><code class="name flex">
 <span>def <span class="ident">set_curve_weights</span></span>(<span>self, weights)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_curve_weights(self, weights):
+    if len(weights) != self.n_cpts:
+        raise Exception(&#34;Number of weights must be equal to the number of control points&#34;)
+    self.curve_weights = np.asarray(weights)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.set_goals"><code class="name flex">
 <span>def <span class="ident">set_goals</span></span>(<span>self, goals)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_goals(self, goals):
+    self.goals = goals[:]</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.set_knotvector"><code class="name flex">
 <span>def <span class="ident">set_knotvector</span></span>(<span>self, knotvector)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_knotvector(self, knotvector):
+    self.knotvector = np.asarray(knotvector)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.solve"><code class="name flex">
 <span>def <span class="ident">solve</span></span>(<span>self, implementation='NATIVE', logger=None)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def solve(self, implementation = SvNurbsMaths.NATIVE, logger = None):
+    problem_type, residue, curve = self.solve_ex(implementation = implementation, logger = logger)
+    return curve</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.solve_ex"><code class="name flex">
-<span>def <span class="ident">solve_ex</span></span>(<span>self, problem_types={'WELLDETERMINED', 'UNDERDETERMINED', 'OVERDETERMINED'}, implementation='NATIVE', logger=None)</span>
+<span>def <span class="ident">solve_ex</span></span>(<span>self,<br>problem_types={'WELLDETERMINED', 'UNDERDETERMINED', 'OVERDETERMINED'},<br>implementation='NATIVE',<br>logger=None)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def solve_ex(self, problem_types = PROBLEM_ANY, implementation = SvNurbsMaths.NATIVE, logger = None):
+    self._init()
+
+    if logger is None:
+        logger = get_logger()
+
+    residue = 0.0
+    ndim = self.ndim
+    n = self.n_cpts
+    n_equations, n_unknowns = self.A.shape
+    if n_equations == n_unknowns:
+        #logger.debug(f&#34;Solving well-determined system: #equations = {n_equations}, #unknonwns = {n_unknowns}&#34;)
+        problem_type = SvNurbsCurveSolver.PROBLEM_WELLDETERMINED
+        if problem_type not in problem_types:
+            raise Exception(&#34;The problem is well-determined&#34;)
+        try:
+            A1 = np.linalg.inv(self.A)
+            X = (A1 @ self.B).T
+        except np.linalg.LinAlgError as e:
+            logger.error(f&#34;Matrix: {self.A}&#34;)
+            raise Exception(f&#34;Can not solve: #equations = {n_equations}, #unknowns = {n_unknowns}: {e}&#34;) from e
+    elif n_equations &lt; n_unknowns:
+        #logger.debug(f&#34;Solving underdetermined system: #equations = {n_equations}, #unknonwns = {n_unknowns}&#34;)
+        problem_type = SvNurbsCurveSolver.PROBLEM_UNDERDETERMINED
+        if problem_type not in problem_types:
+            raise Exception(&#34;The problem is underdetermined&#34;)
+        A1 = np.linalg.pinv(self.A)
+        X = (A1 @ self.B).T
+    else: # n_equations &gt; n_unknowns
+        #logger.debug(f&#34;Solving overdetermined system: #equations = {n_equations}, #unknonwns = {n_unknowns}&#34;)
+        problem_type = SvNurbsCurveSolver.PROBLEM_OVERDETERMINED
+        if problem_type not in problem_types:
+            raise Exception(&#34;The system is overdetermined&#34;)
+        X, residues, rank, singval = np.linalg.lstsq(self.A, self.B)
+        residue = residues.sum()
+        
+    d_cpts = X.reshape((n, ndim))
+    if ndim == 4:
+        d_cpts, d_weights = from_homogenous(d_cpts)
+        if self.src_curve is None:
+            weights = d_weights
+        else:
+            weights = self.curve_weights + d_weights
+    else:
+        weights = self.curve_weights
+    if self.src_curve is None:
+        curve = SvNurbsMaths.build_curve(implementation, self.degree, self.knotvector, d_cpts, weights)
+    else:
+        cpts = self.src_curve.get_control_points() + d_cpts
+        curve = SvNurbsMaths.build_curve(implementation, self.degree, self.knotvector, cpts, weights)
+    return problem_type, residue, curve</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.solve_welldetermined"><code class="name flex">
 <span>def <span class="ident">solve_welldetermined</span></span>(<span>self, implementation='NATIVE', logger=None)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def solve_welldetermined(self, implementation = SvNurbsMaths.NATIVE, logger = None):
+    problem_type, residue, curve = self.solve_ex(problem_types = {SvNurbsCurveSolver.PROBLEM_WELLDETERMINED},
+                                    implementation = implementation, logger = logger)
+    return curve</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.nurbs_solver.SvNurbsCurveSolver.to_nurbs"><code class="name flex">
 <span>def <span class="ident">to_nurbs</span></span>(<span>self, implementation='NATIVE')</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def to_nurbs(self, implementation = SvNurbsMaths.NATIVE):
+    solver = self.copy()
+    solver.guess_curve_params()
+    return solver.solve(implementation = implementation)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -1284,8 +1963,6 @@ def curve_weights(self):
 <span>(</span><span>us, tangents, weights=None, relative=False)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Goal which says that the curve must have specified tangent vectors at
-specified values of parameter.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1356,6 +2033,8 @@ specified values of parameter.</p></div>
     def get_src_points(self, solver):
         return solver.src_curve.tangent_array(self.us)</code></pre>
 </details>
+<div class="desc"><p>Goal which says that the curve must have specified tangent vectors at
+specified values of parameter.</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="sverchok.utils.curve.nurbs_solver.SvNurbsCurvePoints" href="#sverchok.utils.curve.nurbs_solver.SvNurbsCurvePoints">SvNurbsCurvePoints</a></li>
@@ -1367,6 +2046,18 @@ specified values of parameter.</p></div>
 <span>def <span class="ident">single</span></span>(<span>u, tangent, weight=None, relative=False)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def single(u, tangent, weight=None, relative=False):
+    if weight is None:
+        weights = None
+    else:
+        weights = [weight]
+    return SvNurbsCurveTangents([u], [tangent], weights, relative=relative)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -1376,24 +2067,72 @@ specified values of parameter.</p></div>
 <span>def <span class="ident">add</span></span>(<span>self, other)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add(self, other):
+    if self.relative != other.relative:
+        return None
+    g = self.copy()
+    g.us = np.concatenate((g.us, other.us))
+    g.vectors = np.concatenate((g.vectors, other.vectors))
+    g.weights = np.concatenate((g.get_weights(), other.get_weights()))
+    return g</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.nurbs_solver.SvNurbsCurveTangents.calc_alphas"><code class="name flex">
 <span>def <span class="ident">calc_alphas</span></span>(<span>self, solver, us)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def calc_alphas(self, solver, us):
+    p = solver.degree
+    ns = [solver.basis.function(k, p)(us) for k in range(solver.n_cpts)]
+    ns = np.array(ns) # (n_cpts, n_pts)
+    derivs = [solver.basis.derivative(k, p, 1)(us) for k in range(solver.n_cpts)]
+    derivs = np.array(derivs) # (n_cpts, n_pts)
+    weights = solver.curve_weights[np.newaxis].T # (n_cpts, 1)
+
+    sum_ns = (ns * weights).sum(axis=0) # (n_pts,)
+    sum_derivs = (derivs * weights).sum(axis=0) # (n_pts,)
+
+    numerator = weights * (derivs * sum_ns - ns * sum_derivs)
+
+    denominator = sum_ns**2
+
+    return numerator / denominator</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.nurbs_solver.SvNurbsCurveTangents.copy"><code class="name flex">
 <span>def <span class="ident">copy</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def copy(self):
+    return SvNurbsCurveTangents(self.us, self.vectors, self.weights, relative=self.relative)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.nurbs_solver.SvNurbsCurveTangents.get_src_points"><code class="name flex">
 <span>def <span class="ident">get_src_points</span></span>(<span>self, solver)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_src_points(self, solver):
+    return solver.src_curve.tangent_array(self.us)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -1519,7 +2258,7 @@ specified values of parameter.</p></div>
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.1</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.5</a>.</p>
 </footer>
 </body>
 </html>

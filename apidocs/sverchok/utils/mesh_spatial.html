@@ -3,19 +3,30 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
-<meta name="generator" content="pdoc3 0.11.1">
+<meta name="generator" content="pdoc3 0.11.5">
 <title>sverchok.utils.mesh_spatial API documentation</title>
 <meta name="description" content="">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
-<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
 <style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
 <style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
 <script>window.addEventListener('DOMContentLoaded', () => {
 hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
 hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
 })</script>
 </head>
 <body>
@@ -37,54 +48,469 @@ hljs.highlightAll();
 <span>def <span class="ident">find_nearest_idxs</span></span>(<span>verts, faces, add_verts)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def find_nearest_idxs(verts, faces, add_verts):
+    bvh = BVHTree.FromPolygons(verts, faces)
+    idxs = []
+    for vert in add_verts:
+        loc, normal, idx, distance = bvh.find_nearest(vert)
+        idxs.append(idx)
+    return idxs</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.mesh_spatial.find_nearest_points"><code class="name flex">
 <span>def <span class="ident">find_nearest_points</span></span>(<span>bvh, verts)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def find_nearest_points(bvh, verts):
+    locs = []
+    for vert in verts:
+        loc, normal, idx, distance = bvh.find_nearest(vert)
+        locs.append(tuple(loc))
+    return locs</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.mesh_spatial.is_on_edge"><code class="name flex">
 <span>def <span class="ident">is_on_edge</span></span>(<span>pt, v1, v2, epsilon=1e-06)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def is_on_edge(pt, v1, v2, epsilon=1e-6):
+    nearest, percentage = intersect_point_line(pt, v1, v2)
+    distance = (Vector(pt) - nearest).length
+    return (0.0 &lt;= percentage &lt;= 1.0) and (distance &lt; epsilon)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.mesh_spatial.is_on_face_edge"><code class="name flex">
 <span>def <span class="ident">is_on_face_edge</span></span>(<span>pt, face_verts, epsilon=1e-06)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def is_on_face_edge(pt, face_verts, epsilon=1e-6):
+    for v1, v2 in zip(face_verts, rotate_list(face_verts)):
+        if is_on_edge(pt, v1, v2, epsilon):
+            return True
+    return False</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.mesh_spatial.mesh_insert_verts"><code class="name flex">
-<span>def <span class="ident">mesh_insert_verts</span></span>(<span>verts, faces, add_verts_by_face, epsilon=1e-06, exclude_boundary=True, recalc_normals=True, preserve_shape=False)</span>
+<span>def <span class="ident">mesh_insert_verts</span></span>(<span>verts,<br>faces,<br>add_verts_by_face,<br>epsilon=1e-06,<br>exclude_boundary=True,<br>recalc_normals=True,<br>preserve_shape=False)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def mesh_insert_verts(verts, faces, add_verts_by_face, epsilon=1e-6, exclude_boundary=True, recalc_normals=True, preserve_shape=False):
+    if preserve_shape:
+        bvh = BVHTree.FromPolygons(verts, faces)
+    bm = bmesh_from_pydata(verts, [], [])
+    for face_idx, face in enumerate(faces):
+        n = len(face)
+        add_verts = add_verts_by_face.get(face_idx)
+
+        if not add_verts:
+            bm_verts = [bm.verts[idx] for idx in face]
+            bm.faces.new(bm_verts)
+            bm.faces.index_update()
+            continue
+
+        done_verts = dict((i, bm.verts[face[i]]) for i in range(n))
+        face_verts = [verts[i] for i in face]
+        new_face_verts, edges, new_faces = single_face_delaunay(face_verts, add_verts, epsilon, exclude_boundary)
+        if preserve_shape:
+            new_face_verts = find_nearest_points(bvh, new_face_verts)
+        for new_face in new_faces:
+            bm_verts = []
+            for i in new_face:
+                bm_vert = done_verts.get(i)
+                if not bm_vert:
+                    bm_vert = bm.verts.new(new_face_verts[i])
+                    bm.verts.index_update()
+                    bm.verts.ensure_lookup_table()
+                    done_verts[i] = bm_vert
+                bm_verts.append(bm_vert)
+                
+            bm.faces.new(bm_verts)
+            bm.faces.index_update()
+
+    if recalc_normals:
+        bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+
+    verts, edges, faces = pydata_from_bmesh(bm)
+    bm.free()
+    return verts, edges, faces</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.mesh_spatial.populate_mesh_edges"><code class="name flex">
-<span>def <span class="ident">populate_mesh_edges</span></span>(<span>verts, edges, weights, field, total_count, threshold, field_min=None, field_max=None, min_r=0, min_r_field=None, random_radius=False, avoid_spheres=None, proportional_field=False, proportional_edges=True, seed=0, predicate=None)</span>
+<span>def <span class="ident">populate_mesh_edges</span></span>(<span>verts,<br>edges,<br>weights,<br>field,<br>total_count,<br>threshold,<br>field_min=None,<br>field_max=None,<br>min_r=0,<br>min_r_field=None,<br>random_radius=False,<br>avoid_spheres=None,<br>proportional_field=False,<br>proportional_edges=True,<br>seed=0,<br>predicate=None)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def populate_mesh_edges(verts, edges, weights,
+                       field, total_count, threshold,
+                       field_min=None, field_max=None,
+                       min_r=0, min_r_field = None,
+                       random_radius = False,
+                       avoid_spheres = None,
+                       proportional_field=False,
+                       proportional_edges=True,
+                       seed=0, predicate=None):
+
+
+    def get_weights(edges_dir, weights):
+        if proportional_edges:
+            lengths = np.linalg.norm(edges_dir, axis=1)
+        else:
+            lengths = np.full((len(edges_dir),), 1.0)
+
+        if weights is not None and len(weights) &gt; 0:
+            weights = numpy_full_list(weights, len(edges_dir)) * lengths
+        else:
+            weights = lengths
+
+        return weights
+
+    if seed == 0:
+        seed = 12345
+    if seed is not None:
+        np.random.seed(seed)
+
+    v_edges = _verts_edges(verts, edges)
+    edges_dir = v_edges[:, 1] - v_edges[:, 0]
+    weights = get_weights(edges_dir, weights)
+    indices = np.arange(len(edges))
+
+    if avoid_spheres is not None:
+        old_points = [s[0] for s in avoid_spheres]
+        old_radiuses = [s[1] for s in avoid_spheres]
+    else:
+        old_points = []
+        old_radiuses = []
+
+    def generate_batch(batch_size):
+        ps = np.array(weights) / np.sum(weights)
+        chosen_edges = np.random.choice(indices,
+                                        batch_size,
+                                        replace=True,
+                                        p=ps)
+
+        edges_with_points, points_total_per_edge = np.unique(chosen_edges, return_counts=True)
+        t_s = np.random.uniform(low=0, high=1, size=batch_size)
+        direc = np.repeat(edges_dir[edges_with_points], points_total_per_edge, axis=0)
+        orig = np.repeat(v_edges[edges_with_points, 0], points_total_per_edge, axis=0)
+
+        chosen_indices = np.repeat(indices[edges_with_points], points_total_per_edge, axis=0)
+        random_points = orig + direc * t_s[np.newaxis].T
+
+        return random_points, chosen_indices
+
+    done = 0
+    iterations = 0
+    generated_pts = []
+    generated_idxs = []
+    generated_radiuses = []
+
+    if field is None and avoid_spheres is None and min_r == 0 and min_r_field is None and predicate is None:
+        batch_size = total_count
+    else:
+        batch_size = BATCH_SIZE
+    while done &lt; total_count:
+        if iterations &gt; MAX_ITERATIONS:
+            sv_logger.error(&#34;Maximum number of iterations (%s) reached, generated only (%s) points of (%s), stop.&#34;, MAX_ITERATIONS, done, total_count)
+            break
+        iterations += 1
+        left = total_count - done
+        size = min(batch_size, left)
+        batch_pts, batch_idxs = generate_batch(size)
+
+        if field is not None:
+            values = field.evaluate_grid(batch_pts[:,0], batch_pts[:,1], batch_pts[:,2])
+
+            threshold_idxs = values &gt;= threshold
+            if not proportional_field:
+                good_idxs = threshold_idxs
+            else:
+                probes = np.random.uniform(field_min, field_max, size=size)
+                probe_idxs = probes &lt;= values
+                good_idxs = np.logical_and(threshold_idxs, probe_idxs)
+            candidates = batch_pts[good_idxs]
+            candidate_idxs = batch_idxs[good_idxs]
+        else:
+            candidates = batch_pts
+            candidate_idxs = batch_idxs
+
+        good_radiuses = []
+        if len(candidates) &gt; 0:
+            if min_r == 0 and min_r_field is None:
+                good_pts = candidates
+                good_idxs = candidate_idxs
+                good_radiuses = np.zeros((len(good_pts),))
+            elif min_r_field is not None:
+                min_rs = min_r_field.evaluate_grid(candidates[:,0], candidates[:,1], candidates[:,2])
+                if random_radius:
+                    min_rs = np.random.uniform(
+                                np.zeros((len(candidates),)),
+                                min_rs
+                            )
+                good_pts = []
+                good_idxs = []
+                for candidate_idx, candidate, min_r in zip(candidate_idxs, candidates, min_rs):
+                    radius_ok = _check_min_radius(candidate,
+                                                  old_points + generated_pts + good_pts,
+                                                  old_radiuses + generated_radiuses + good_radiuses,
+                                                  min_r)
+                    if radius_ok:
+                        good_pts.append(candidate)
+                        good_idxs.append(candidate_idx)
+                        good_radiuses.append(min_r)
+            else: # min_r != 0:
+                good_pts = []
+                good_idxs = []
+                for candidate_idx, candidate in zip(candidate_idxs, candidates):
+                    distance_ok = _check_min_distance(candidate,
+                                                      old_points + generated_pts + good_pts,
+                                                      min_r)
+                    if distance_ok:
+                        good_pts.append(candidate)
+                        good_idxs.append(candidate_idx)
+                        good_radiuses.append(0)
+            if predicate is not None:
+                res = [(i, pt, radius) for i, pt, radius in zip(good_idxs, good_pts, good_radiuses) if predicate(pt)]
+                good_idxs = [r[0] for r in res]
+                good_pts = [r[1] for r in res]
+                good_radiuses = [r[2] for r in res]
+
+            generated_pts.extend(np.array(good_pts).tolist())
+            generated_idxs.extend(good_idxs)
+            generated_radiuses.extend(good_radiuses)
+            done += len(good_pts)
+
+    return generated_idxs, generated_pts, generated_radiuses</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.mesh_spatial.populate_mesh_surface"><code class="name flex">
-<span>def <span class="ident">populate_mesh_surface</span></span>(<span>bm, weights, field, total_count, min_r, min_r_field, threshold, field_min, field_max, proportional_field=False, proportional_faces=True, random_radius=False, seed=0, predicate=None)</span>
+<span>def <span class="ident">populate_mesh_surface</span></span>(<span>bm,<br>weights,<br>field,<br>total_count,<br>min_r,<br>min_r_field,<br>threshold,<br>field_min,<br>field_max,<br>proportional_field=False,<br>proportional_faces=True,<br>random_radius=False,<br>seed=0,<br>predicate=None)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def populate_mesh_surface(bm, weights, field,
+                          total_count, min_r, min_r_field,
+                          threshold, field_min, field_max,
+                          proportional_field=False,
+                          proportional_faces=True,
+                          random_radius=False,
+                          seed=0, predicate=None):
+
+    def get_weights():
+        nonlocal weights
+        if proportional_faces:
+            areas = [face.calc_area() for face in bm.faces]
+        else:
+            areas = [1.0 for face in bm.faces]
+        if weights is None:
+            weights = areas
+        else:
+            weights = repeat_last_for_length(weights, len(bm.faces))
+            weights = [w*a for w, a in zip(weights, areas)]
+
+        return weights
+
+    all_idxs = np.arange(len(bm.faces))
+    start_verts = np.array([f.verts[0].co for f in bm.faces])
+    edges_1 = np.array([f.verts[1].co - f.verts[0].co for f in bm.faces])
+    edges_2 = np.array([f.verts[2].co - f.verts[0].co for f in bm.faces])
+    weights = get_weights()
+
+    def generate_batch(batch_size):
+        ps = np.array(weights) / np.sum(weights)
+        chosen_faces = np.random.choice(all_idxs,
+                                         batch_size,
+                                         replace=True,
+                                         p = ps)
+        faces_with_points, points_per_face = np.unique(chosen_faces, return_counts=True)
+        uvs = np.random.uniform(0.0, 1.0, size=(batch_size,2))
+        us = uvs[:,0]
+        vs = uvs[:,1]
+        edges_u = np.repeat(edges_1[faces_with_points], points_per_face, axis=0)
+        edges_v = np.repeat(edges_2[faces_with_points], points_per_face, axis=0)
+        start = np.repeat(start_verts[faces_with_points], points_per_face, axis=0)
+        chosen_indices = np.repeat(all_idxs[faces_with_points], points_per_face, axis=0)
+        random_points = start + edges_u * us[np.newaxis].T + edges_v * vs[np.newaxis].T
+        good_uv_idxs = (us + vs) &lt;= 1
+        return random_points[good_uv_idxs], chosen_indices[good_uv_idxs]
+
+    if seed == 0:
+        seed = 12345
+    if seed is not None:
+        np.random.seed(seed)
+
+    done = 0
+    iterations = 0
+    generated_pts = []
+    generated_idxs = []
+    generated_radiuses = []
+
+    if field is None and min_r == 0 and min_r_field is None and predicate is None:
+        batch_size = total_count
+    else:
+        batch_size = BATCH_SIZE
+
+    while done &lt; total_count:
+        iterations += 1
+        if iterations &gt; MAX_ITERATIONS:
+            sv_logger.error(&#34;Maximum number of iterations (%s) reached, stop.&#34;, MAX_ITERATIONS)
+            break
+        left = total_count - done
+        size = min(batch_size, left)
+        batch_pts, batch_idxs = generate_batch(size)
+        size = len(batch_pts)
+
+        if field is not None:
+            values = field.evaluate_grid(batch_pts[:,0], batch_pts[:,1], batch_pts[:,2])
+            threshold_idxs = values &gt;= threshold
+            if not proportional_field:
+                good_idxs = threshold_idxs
+            else:
+                probes = np.random.uniform(field_min, field_max, size=size)
+                probe_idxs = probes &lt;= values
+                good_idxs = np.logical_and(threshold_idxs, probe_idxs)
+            candidates = batch_pts[good_idxs]
+            candidate_idxs = batch_idxs[good_idxs]
+        else:
+            candidates = batch_pts
+            candidate_idxs = batch_idxs
+
+        good_radiuses = []
+        if len(candidates) &gt; 0:
+            if min_r == 0 and min_r_field is None:
+                good_pts = candidates
+                good_idxs = candidate_idxs
+                good_radiuses = np.zeros((len(good_pts),))
+            elif min_r_field is not None:
+                min_rs = min_r_field.evaluate_grid(candidates[:,0], candidates[:,1], candidates[:,2])
+                if random_radius:
+                    min_rs = np.random.uniform(
+                                np.zeros((len(candidates),)),
+                                min_rs
+                            )
+                good_pts = []
+                good_idxs = []
+                for candidate_idx, candidate, min_r in zip(candidate_idxs, candidates, min_rs):
+                    radius_ok = _check_min_radius(candidate,
+                                                  generated_pts + good_pts,
+                                                  generated_radiuses + good_radiuses,
+                                                  min_r)
+                    if radius_ok:
+                        good_pts.append(candidate)
+                        good_idxs.append(candidate_idx)
+                        good_radiuses.append(min_r)
+            else: # min_r != 0:
+                good_pts = []
+                good_idxs = []
+                for candidate_idx, candidate in zip(candidate_idxs, candidates):
+                    distance_ok = _check_min_distance(candidate,
+                                                      generated_pts + good_pts,
+                                                      min_r)
+                    if distance_ok:
+                        good_pts.append(candidate)
+                        good_idxs.append(candidate_idx)
+                        good_radiuses.append(0)
+            if predicate is not None:
+                res = [(i, pt, radius) for i, pt, radius in zip(good_idxs, good_pts, good_radiuses) if predicate(pt)]
+                good_idxs = [r[0] for r in res]
+                good_pts = [r[1] for r in res]
+                good_radiuses = [r[2] for r in res]
+
+            generated_pts.extend(np.array(good_pts).tolist())
+            generated_idxs.extend(good_idxs)
+            generated_radiuses.extend(good_radiuses)
+            done += len(good_pts)
+
+    return generated_idxs, generated_pts, generated_radiuses</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.mesh_spatial.populate_mesh_volume"><code class="name flex">
-<span>def <span class="ident">populate_mesh_volume</span></span>(<span>verts, bvh, field, count, min_r, radius_field, threshold, field_min, field_max, proportional_field=False, random_radius=False, seed=0)</span>
+<span>def <span class="ident">populate_mesh_volume</span></span>(<span>verts,<br>bvh,<br>field,<br>count,<br>min_r,<br>radius_field,<br>threshold,<br>field_min,<br>field_max,<br>proportional_field=False,<br>random_radius=False,<br>seed=0)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def populate_mesh_volume(verts, bvh, field, count,
+                         min_r, radius_field, threshold,
+                         field_min, field_max,
+                         proportional_field = False,
+                         random_radius=False,
+                         seed=0):
+    def check(vert):
+        result = point_inside_mesh(bvh, vert)
+        #print(f&#34;{vert} =&gt; {result}&#34;)
+        return result
+
+    x_min, x_max, y_min, y_max, z_min, z_max = calc_bounds(verts)
+    bbox = ((x_min, y_min, z_min), (x_max, y_max, z_max))
+    
+    return field_random_probe(field, bbox, count, threshold,
+                proportional_field, field_min, field_max,
+                min_r = min_r, min_r_field = radius_field,
+                random_radius = random_radius,
+                seed = seed, predicate=check)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.mesh_spatial.single_face_delaunay"><code class="name flex">
 <span>def <span class="ident">single_face_delaunay</span></span>(<span>face_verts, add_verts, epsilon=1e-06, exclude_boundary=True)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def single_face_delaunay(face_verts, add_verts, epsilon=1e-6, exclude_boundary=True):
+    n = len(face_verts)
+    face = list(range(n))
+    edges = [(i,i+1) for i in range(n-1)] + [(n-1, 0)]
+    plane = linear_approximation(face_verts).most_similar_plane()
+    face_verts_2d = [plane.point_uv_projection(v) for v in face_verts]
+    if exclude_boundary:
+        add_verts = [v for v in add_verts if not is_on_face_edge(v, face_verts, epsilon)]
+    add_verts_2d = [plane.point_uv_projection(v) for v in add_verts]
+    TRIANGLES = 1
+    res = delaunay_2d_cdt(face_verts_2d + add_verts_2d, edges, [face], TRIANGLES, epsilon)
+    new_verts_2d = res[0]
+    new_edges = res[1]
+    new_faces = res[2]
+    new_add_verts = [tuple(plane.evaluate(p[0], p[1], normalize=True)) for p in new_verts_2d[n:]]
+    return face_verts + new_add_verts, new_edges, new_faces</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -119,7 +545,7 @@ hljs.highlightAll();
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.1</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.5</a>.</p>
 </footer>
 </body>
 </html>

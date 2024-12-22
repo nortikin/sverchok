@@ -3,19 +3,30 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
-<meta name="generator" content="pdoc3 0.11.1">
+<meta name="generator" content="pdoc3 0.11.5">
 <title>sverchok.utils.math API documentation</title>
 <meta name="description" content="">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
-<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
 <style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
 <style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
 <script>window.addEventListener('DOMContentLoaded', () => {
 hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
 hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
 })</script>
 </head>
 <body>
@@ -37,36 +48,124 @@ hljs.highlightAll();
 <span>def <span class="ident">binomial</span></span>(<span>n, k)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def binomial(n,k):
+    if not 0&lt;=k&lt;=n:
+        return 0
+    b = 1
+    for t in range(min(k,n-k)):
+        b *= n
+        b //= t+1
+        n -= 1
+    return b</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.math.binomial_array"><code class="name flex">
 <span>def <span class="ident">binomial_array</span></span>(<span>size, dtype=numpy.float64)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def binomial_array(size, dtype=np.float64):
+    global _binomial_array_cache
+
+    if size in _binomial_array_cache:
+        return _binomial_array_cache[size]
+    else:
+        binom = np.zeros((size, size), dtype=dtype)
+        binom[:,0] = 1.0
+        for j in range(size):
+            binom[j,j] = 1.0
+        for n in range(2, size):
+            for k in range(1, n):
+                binom[n,k] = binom[n-1, k-1] + binom[n-1, k]
+        _binomial_array_cache[size] = binom
+        return binom</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.math.cartesian_product"><code class="name flex">
 <span>def <span class="ident">cartesian_product</span></span>(<span>*arrays)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def cartesian_product(*arrays):
+    la = len(arrays)
+    dtype = np.result_type(*arrays)
+    arr = np.empty([len(a) for a in arrays] + [la], dtype=dtype)
+    for i, a in enumerate(np.ix_(*arrays)):
+        arr[...,i] = a
+    return arr.reshape(-1, la)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.math.cmp"><code class="name flex">
 <span>def <span class="ident">cmp</span></span>(<span>a, b)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def cmp(a, b):
+    return int(a &gt; b) - int(a &lt; b)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.math.const"><code class="name flex">
 <span>def <span class="ident">const</span></span>(<span>x)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def const(x):
+    return 0.0</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.math.distribute_int"><code class="name flex">
 <span>def <span class="ident">distribute_int</span></span>(<span>n, sizes)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def distribute_int(n, sizes):
+    &#34;&#34;&#34;
+    Distribute the integer number (`n`) of items among several buckets of
+    different sizes, so that the number of items in each bucket is proportional
+    to bucket&#39;s size.
+    Parameters:
+    * n - total number of items (integer)
+    * sizes - sizes of buckets do distribute between (list of numbers)
+    Output:
+    * list of integers: for each bucket, the number of items to be put
+        into that bucket. Sum of all numbers in this list is always equal to `n`.
+    &#34;&#34;&#34;
+    total_size = sum(sizes)
+    ratios = [size / total_size for size in sizes]
+    counts = [int(n * ratio) for ratio in ratios]
+    count_good = sum(counts)
+    count_left = n - count_good
+    for idx in np.argsort(sizes)[::-1]:
+        if count_left == 0:
+            break
+        counts[idx] += 1
+        count_left -= 1
+    return counts</code></pre>
+</details>
 <div class="desc"><p>Distribute the integer number (<code>n</code>) of items among several buckets of
 different sizes, so that the number of items in each bucket is proportional
 to bucket's size.
@@ -81,54 +180,184 @@ into that bucket. Sum of all numbers in this list is always equal to <code>n</co
 <span>def <span class="ident">falloff</span></span>(<span>type, radius, rho)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def falloff(type, radius, rho):
+    if rho &lt;= 0:
+        return 1.0
+    if rho &gt; radius:
+        return 0.0
+    func = globals()[type]
+    return 1.0 - func(rho / radius)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.math.falloff_array"><code class="name flex">
 <span>def <span class="ident">falloff_array</span></span>(<span>falloff_type, amplitude, coefficient, clamp=False)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def falloff_array(falloff_type, amplitude, coefficient, clamp=False):
+    types = {
+            &#39;inverse&#39;: inverse,
+            &#39;inverse_square&#39;: inverse_square,
+            &#39;inverse_cubic&#39;: inverse_cubic,
+            &#39;inverse_exp&#39;: inverse_exp_np,
+            &#39;gauss&#39;: gauss_np,
+            &#39;rotation&#39;: rotation_fallof_np,
+            &#39;smooth&#39;: wrap_falloff(smooth),
+            &#39;sphere&#39;: wrap_falloff(sphere_np),
+            &#39;root&#39;: wrap_falloff(root_np),
+            &#39;invsquare&#39;: wrap_falloff(invsquare),
+            &#39;sharp&#39;: wrap_falloff(sharp),
+            &#39;linear&#39;: wrap_falloff(linear),
+            &#39;const&#39;: wrap_falloff(const)
+        }
+    falloff_func = types[falloff_type]
+
+    def function(rho_array):
+        zero_idxs = (rho_array == 0)
+        nonzero = (rho_array != 0)
+        result = np.empty_like(rho_array)
+        result[zero_idxs] = amplitude
+        result[nonzero] = amplitude * falloff_func(coefficient, rho_array[nonzero])
+        negative = result &lt;= 0
+        result[negative] = 0.0
+
+        if clamp:
+            high = result &gt;= rho_array
+            result[high] = rho_array[high]
+        return result
+    return function</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.math.from_cylindrical"><code class="name flex">
 <span>def <span class="ident">from_cylindrical</span></span>(<span>rho, phi, z, mode='degrees')</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def from_cylindrical(rho, phi, z, mode=&#34;degrees&#34;):
+    if mode == &#34;degrees&#34;:
+        phi = radians(phi)
+    x = rho*cos(phi)
+    y = rho*sin(phi)
+    return x, y, z</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.math.from_cylindrical_np"><code class="name flex">
 <span>def <span class="ident">from_cylindrical_np</span></span>(<span>rho, phi, z, mode='degrees')</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def from_cylindrical_np(rho, phi, z, mode=&#39;degrees&#39;):
+    if mode == &#34;degrees&#34;:
+        phi = np.radians(phi)
+    x = rho*np.cos(phi)
+    y = rho*np.sin(phi)
+    return x, y, z</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.math.from_spherical"><code class="name flex">
 <span>def <span class="ident">from_spherical</span></span>(<span>rho, phi, theta, mode='degrees')</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def from_spherical(rho, phi, theta, mode=&#34;degrees&#34;):
+    if mode == &#34;degrees&#34;:
+        phi = radians(phi)
+        theta = radians(theta)
+    x = rho * sin(theta) * cos(phi)
+    y = rho * sin(theta) * sin(phi)
+    z = rho * cos(theta)
+    return x, y, z</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.math.from_spherical_np"><code class="name flex">
 <span>def <span class="ident">from_spherical_np</span></span>(<span>rho, phi, theta, mode='degrees')</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def from_spherical_np(rho, phi, theta, mode=&#34;degrees&#34;):
+    if mode == &#34;degrees&#34;:
+        phi = np.radians(phi)
+        theta = np.radians(theta)
+    x = rho * np.sin(theta) * np.cos(phi)
+    y = rho * np.sin(theta) * np.sin(phi)
+    z = rho * np.cos(theta)
+    return x, y, z</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.math.gauss"><code class="name flex">
 <span>def <span class="ident">gauss</span></span>(<span>c, x)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def gauss(c, x):
+    return math.exp(-c*x*x/2.0)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.math.gauss_np"><code class="name flex">
 <span>def <span class="ident">gauss_np</span></span>(<span>c, x)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def gauss_np(c, x):
+    return np.exp(-c*x*x/2.0)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.math.gcd"><code class="name flex">
 <span>def <span class="ident">gcd</span></span>(<span>a, b)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def gcd(a, b):
+
+    &#34;&#34;&#34;Calculate the Greatest Common Divisor of a and b.
+
+    Unless b==0, the result will have the same sign as b (so that when
+    b is divided by it, the result comes out positive).
+    Taken from fractions.py to override depreciation
+    &#34;&#34;&#34;
+
+    if type(a) is int is type(b):
+        if (b or a) &lt; 0:
+            return -math.gcd(a, b)
+        return math.gcd(a, b)
+    return _gcd(a, b)</code></pre>
+</details>
 <div class="desc"><p>Calculate the Greatest Common Divisor of a and b.</p>
 <p>Unless b==0, the result will have the same sign as b (so that when
 b is divided by it, the result comes out positive).
@@ -138,174 +367,464 @@ Taken from fractions.py to override depreciation</p></div>
 <span>def <span class="ident">inverse</span></span>(<span>c, x)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def inverse(c, x):
+    return 1.0/x</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.math.inverse_cubic"><code class="name flex">
 <span>def <span class="ident">inverse_cubic</span></span>(<span>c, x)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def inverse_cubic(c, x):
+    return 1.0/(x*x*x)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.math.inverse_exp"><code class="name flex">
 <span>def <span class="ident">inverse_exp</span></span>(<span>c, x)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def inverse_exp(c, x):
+    return math.exp(-c*x)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.math.inverse_exp_np"><code class="name flex">
 <span>def <span class="ident">inverse_exp_np</span></span>(<span>c, x)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def inverse_exp_np(c, x):
+    return np.exp(-c*x)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.math.inverse_square"><code class="name flex">
 <span>def <span class="ident">inverse_square</span></span>(<span>c, x)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def inverse_square(c, x):
+    return 1.0/(x*x)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.math.invsquare"><code class="name flex">
 <span>def <span class="ident">invsquare</span></span>(<span>x)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def invsquare(x):
+    return x*x</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.math.linear"><code class="name flex">
 <span>def <span class="ident">linear</span></span>(<span>x)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def linear(x):
+    return x</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.math.np_dot"><code class="name flex">
 <span>def <span class="ident">np_dot</span></span>(<span>u, v, axis=1)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def np_dot(u, v, axis=1):
+    &#39;&#39;&#39;convenience function to calculate dot vector between vector arrays&#39;&#39;&#39;
+    return np.sum(u * v, axis=axis)</code></pre>
+</details>
 <div class="desc"><p>convenience function to calculate dot vector between vector arrays</p></div>
 </dd>
 <dt id="sverchok.utils.math.np_mixed_product"><code class="name flex">
 <span>def <span class="ident">np_mixed_product</span></span>(<span>a, b, c)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def np_mixed_product(a, b, c):
+    return np.dot(a, np.cross(b, c))</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.math.np_multiply_matrices_vectors"><code class="name flex">
 <span>def <span class="ident">np_multiply_matrices_vectors</span></span>(<span>matrices, vectors)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def np_multiply_matrices_vectors(matrices, vectors):
+    vectors = vectors[np.newaxis]
+    vectors = np.transpose(vectors, axes=(1,2,0))
+    r = matrices @ vectors
+    return r[:,:,0]</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.math.np_normalize_vectors"><code class="name flex">
 <span>def <span class="ident">np_normalize_vectors</span></span>(<span>vecs)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def np_normalize_vectors(vecs):
+    &#39;&#39;&#39;Does normalization in-place&#39;&#39;&#39;
+    norms = np.linalg.norm(vecs, axis=1)
+    nonzero = (norms &gt; 0)
+    vecs[nonzero] = vecs[nonzero] / norms[nonzero][:,np.newaxis]
+    return vecs</code></pre>
+</details>
 <div class="desc"><p>Does normalization in-place</p></div>
 </dd>
 <dt id="sverchok.utils.math.np_normalized_vectors"><code class="name flex">
 <span>def <span class="ident">np_normalized_vectors</span></span>(<span>vecs)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def np_normalized_vectors(vecs):
+    &#39;&#39;&#39;Returns new array with normalized vectors&#39;&#39;&#39;
+    result = np.zeros(vecs.shape)
+    norms = np.linalg.norm(vecs, axis=1)
+    nonzero = (norms &gt; 0)
+    result[nonzero] = vecs[nonzero] / norms[nonzero][:,np.newaxis]
+    return result</code></pre>
+</details>
 <div class="desc"><p>Returns new array with normalized vectors</p></div>
 </dd>
 <dt id="sverchok.utils.math.np_signed_angle"><code class="name flex">
 <span>def <span class="ident">np_signed_angle</span></span>(<span>a, b, normal)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def np_signed_angle(a, b, normal):
+    cross = np.cross(a, b)
+    scalar = np.dot(cross, normal)
+    sign = 1 if scalar &gt;= 0 else -1
+    #sin_alpha = np.linalg.norm(cross) / (np.linalg.norm(a) * np.linalg.norm(b))
+    cos_alpha = np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
+    alpha = acos(cos_alpha)
+    return sign * alpha</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.math.np_vectors_angle"><code class="name flex">
 <span>def <span class="ident">np_vectors_angle</span></span>(<span>v1, v2)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def np_vectors_angle(v1, v2):
+    v1 /= np.linalg.norm(v1)
+    v2 /= np.linalg.norm(v2)
+    dot = np_dot(v1, v2)
+    return np.arccos(dot)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.math.project_to_sphere"><code class="name flex">
 <span>def <span class="ident">project_to_sphere</span></span>(<span>center, radius, v)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def project_to_sphere(center, radius, v):
+    x,y,z = v
+    x0,y0,z0 = center
+    dv = x-x0, y-y0, z-z0
+    rho, phi, theta = to_spherical(dv, &#34;radians&#34;)
+    x,y,z = from_spherical(radius, phi, theta, &#34;radians&#34;)
+    result = x+x0, y+y0, z+z0
+    return result</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.math.root"><code class="name flex">
 <span>def <span class="ident">root</span></span>(<span>x)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def root(x):
+    return 1.0 - math.sqrt(1.0 - x)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.math.root_np"><code class="name flex">
 <span>def <span class="ident">root_np</span></span>(<span>x)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def root_np(x):
+    return 1.0 - np.sqrt(1.0 - x)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.math.rotation_fallof_np"><code class="name flex">
 <span>def <span class="ident">rotation_fallof_np</span></span>(<span>c, x)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def rotation_fallof_np(c, x):
+    return np.power(x, -3/2)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.math.sharp"><code class="name flex">
 <span>def <span class="ident">sharp</span></span>(<span>x)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def sharp(x):
+    return x * (2 - x)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.math.sign"><code class="name flex">
 <span>def <span class="ident">sign</span></span>(<span>x)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def sign(x):
+    if x &lt; 0:
+        return -1
+    elif x &gt; 0:
+        return 1
+    else:
+        return 0</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.math.smooth"><code class="name flex">
 <span>def <span class="ident">smooth</span></span>(<span>x)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def smooth(x):
+    return 3*x*x - 2*x*x*x</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.math.sphere"><code class="name flex">
 <span>def <span class="ident">sphere</span></span>(<span>x)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def sphere(x):
+    return 1.0 - math.sqrt(1.0 - x*x)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.math.sphere_np"><code class="name flex">
 <span>def <span class="ident">sphere_np</span></span>(<span>x)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def sphere_np(x):
+    return 1.0 - np.sqrt(1.0 - x*x)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.math.to_cylindrical"><code class="name flex">
 <span>def <span class="ident">to_cylindrical</span></span>(<span>v, mode='degrees')</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def to_cylindrical(v, mode=&#34;degrees&#34;):
+    x,y,z = v
+    rho = sqrt(x*x + y*y)
+    phi = atan2(y,x)
+    if mode == &#34;degrees&#34;:
+        phi = degrees(phi)
+    return rho, phi, z</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.math.to_cylindrical_np"><code class="name flex">
 <span>def <span class="ident">to_cylindrical_np</span></span>(<span>v, mode='degrees')</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def to_cylindrical_np(v, mode=&#34;degrees&#34;):
+    x,y,z = v
+    rho = np.sqrt(x*x + y*y)
+    phi = np.arctan2(y,x)
+    if mode == &#34;degrees&#34;:
+        phi = np.degrees(phi)
+    return rho, phi, z</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.math.to_spherical"><code class="name flex">
 <span>def <span class="ident">to_spherical</span></span>(<span>v, mode='degrees')</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def to_spherical(v, mode=&#34;degrees&#34;):
+    x,y,z = v
+    rho = sqrt(x*x + y*y + z*z)
+    if rho == 0.0:
+        return 0.0, 0.0, 0.0
+    theta = acos(z/rho)
+    phi = atan2(y,x)
+    if mode == &#34;degrees&#34;:
+        phi = degrees(phi)
+        theta = degrees(theta)
+    return rho, phi, theta</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.math.to_spherical_np"><code class="name flex">
 <span>def <span class="ident">to_spherical_np</span></span>(<span>v, mode='degrees')</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def to_spherical_np(v, mode=&#34;degrees&#34;):
+    x,y,z = v
+    rho = np.sqrt(x*x + y*y + z*z)
+    bad = (rho == 0)
+    good = np.logical_not(bad)
+
+    theta = np.empty_like(x)
+    theta[good] = np.arccos(z[good]/rho[good])
+    theta[bad] = 0.0
+
+    phi = np.empty_like(x)
+    phi[good] = np.arctan2(y[good], x[good])
+    phi[bad] = 0.0
+
+    if mode == &#34;degrees&#34;:
+        phi = np.degrees(phi)
+        theta = np.degrees(theta)
+    return rho, phi, theta</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.math.vector_coordinates_in_basis"><code class="name flex">
 <span>def <span class="ident">vector_coordinates_in_basis</span></span>(<span>u_vector, v_vector, w_vector, vector_3d)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def vector_coordinates_in_basis(u_vector, v_vector, w_vector, vector_3d):
+    matrix = np.zeros((3,3))
+    matrix[:,0] = u_vector
+    matrix[:,1] = v_vector
+    matrix[:,2] = w_vector
+    inv = np.linalg.inv(matrix)
+    return inv @ vector_3d</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.math.vectors_coordinates_in_basis"><code class="name flex">
 <span>def <span class="ident">vectors_coordinates_in_basis</span></span>(<span>u_vectors, v_vectors, w_vectors, vectors_3d)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def vectors_coordinates_in_basis(u_vectors, v_vectors, w_vectors, vectors_3d):
+    &#34;&#34;&#34;
+    Given lists of U, V and W vectors for some (probably non-orthogohal) basis,
+    and list of arbitrary vectors coordinates in standard basis,
+    return list of vector coordinates in UVW basis.
+
+    * u_vectors, v_vectors, w_vectors: np.array of shape (n, 3)
+    * return value: np.array of shape (n, 3).
+    &#34;&#34;&#34;
+    n = len(vectors_3d)
+    matrices = np.zeros((n,3,3))
+    matrices[:,:,0] = u_vectors
+    matrices[:,:,1] = v_vectors
+    matrices[:,:,2] = w_vectors
+    inv = np.linalg.inv(matrices)
+    return np_multiply_matrices_vectors(inv, vectors_3d)</code></pre>
+</details>
 <div class="desc"><p>Given lists of U, V and W vectors for some (probably non-orthogohal) basis,
 and list of arbitrary vectors coordinates in standard basis,
 return list of vector coordinates in UVW basis.</p>
@@ -318,12 +837,44 @@ return list of vector coordinates in UVW basis.</p>
 <span>def <span class="ident">weighted_center</span></span>(<span>verts, field=None)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def weighted_center(verts, field=None):
+    if field is None:
+        return np.mean(verts, axis=0)
+    else:
+        xs = verts[:,0]
+        ys = verts[:,1]
+        zs = verts[:,2]
+        weights = field.evaluate_grid(xs, ys, zs)
+        wpoints = weights[:,np.newaxis] * verts
+        result = wpoints.sum(axis=0) / weights.sum()
+        return result</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.math.wrap_falloff"><code class="name flex">
 <span>def <span class="ident">wrap_falloff</span></span>(<span>func)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def wrap_falloff(func):
+    def falloff(c, xs):
+        result = np.empty_like(xs)
+        negative = (xs &lt;= 0)
+        result[negative] = 1.0
+        outer = (xs &gt; c)
+        result[outer] = 0.0
+        good = np.logical_not(negative) &amp; np.logical_not(outer)
+        result[good] = 1.0 - func(xs[good] / c)
+        return result
+    return falloff</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -395,7 +946,7 @@ return list of vector coordinates in UVW basis.</p>
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.1</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.5</a>.</p>
 </footer>
 </body>
 </html>

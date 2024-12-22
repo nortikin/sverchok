@@ -3,19 +3,30 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
-<meta name="generator" content="pdoc3 0.11.1">
+<meta name="generator" content="pdoc3 0.11.5">
 <title>sverchok.core.node_group API documentation</title>
 <meta name="description" content="">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
-<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
 <style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
 <style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
 <script>window.addEventListener('DOMContentLoaded', () => {
 hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
 hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
 })</script>
 </head>
 <body>
@@ -40,7 +51,6 @@ hljs.highlightAll();
 <span>(</span><span>...)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Creating just group node without linking any sub tree to it</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -77,6 +87,7 @@ hljs.highlightAll();
         else:
             return False, f&#34;Can&#39;t add in &#39;{tree.bl_idname}&#39; type&#34;</code></pre>
 </details>
+<div class="desc"><p>Creating just group node without linking any sub tree to it</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="sverchok.core.node_group.PlacingNodeOperator" href="#sverchok.core.node_group.PlacingNodeOperator">PlacingNodeOperator</a></li>
@@ -125,6 +136,14 @@ hljs.highlightAll();
 <span>def <span class="ident">execute</span></span>(<span>self, context)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def execute(self, context):
+    self.placing_node(context, &#39;SvGroupTreeNode&#39;)
+    return {&#39;FINISHED&#39;}</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -134,7 +153,6 @@ hljs.highlightAll();
 <span>(</span><span>...)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Create empty sub tree for group node</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -153,6 +171,7 @@ hljs.highlightAll();
         sub_tree.nodes.new(&#39;NodeGroupOutput&#39;).location = (250, 0)  # create node for getting data from sub tree
         return bpy.ops.node.edit_group_tree({&#39;node&#39;: context.node})</code></pre>
 </details>
+<div class="desc"><p>Create empty sub tree for group node</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li>bpy_types.Operator</li>
@@ -179,6 +198,19 @@ hljs.highlightAll();
 <span>def <span class="ident">execute</span></span>(<span>self, context)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def execute(self, context):
+    &#34;&#34;&#34;Link new sub tree to group node, create input and output nodes in sub tree and go to edit one&#34;&#34;&#34;
+    sub_tree = bpy.data.node_groups.new(&#39;Sverchok group&#39;, &#39;SvGroupTree&#39;)  # creating sub tree
+    sub_tree.use_fake_user = True
+    context.node.group_tree = sub_tree  # link sub tree to group node
+    sub_tree.nodes.new(&#39;NodeGroupInput&#39;).location = (-250, 0)  # create node for putting data into sub tree
+    sub_tree.nodes.new(&#39;NodeGroupOutput&#39;).location = (250, 0)  # create node for getting data from sub tree
+    return bpy.ops.node.edit_group_tree({&#39;node&#39;: context.node})</code></pre>
+</details>
 <div class="desc"><p>Link new sub tree to group node, create input and output nodes in sub tree and go to edit one</p></div>
 </dd>
 </dl>
@@ -188,7 +220,6 @@ hljs.highlightAll();
 <span>(</span><span>...)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Create instead of select nodes group node and placing them into sub tree</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -375,6 +406,7 @@ hljs.highlightAll();
             socks = tree.inputs if in_out == &#39;INPUT&#39; else tree.outputs
             return socks.new(bl_idname, name)</code></pre>
 </details>
+<div class="desc"><p>Create instead of select nodes group node and placing them into sub tree</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li>bpy_types.Operator</li>
@@ -401,18 +433,61 @@ hljs.highlightAll();
 <span>def <span class="ident">can_be_grouped</span></span>(<span>tree) ‑> bool</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def can_be_grouped(tree) -&gt; bool:
+    &#34;&#34;&#34;True if selected nodes can be putted into group (does not produce cyclic links)&#34;&#34;&#34;
+    # if there is one or more unselected nodes between nodes to be grouped
+    # then current selection can&#39;t be grouped
+    py_tree = Tree(tree)
+    [setattr(py_tree.nodes[n.name], &#39;select&#39;, n.select) for n in tree.nodes]
+    for node in py_tree.nodes:
+        if not node.select:
+            continue
+        for neighbour_node in node.next_nodes:
+            if neighbour_node.select:
+                continue
+            for next_node in py_tree.bfs_walk([neighbour_node]):
+                if next_node.select:
+                    return False
+    return True</code></pre>
+</details>
 <div class="desc"><p>True if selected nodes can be putted into group (does not produce cyclic links)</p></div>
 </dd>
 <dt id="sverchok.core.node_group.AddGroupTreeFromSelected.filter_selected_nodes"><code class="name flex">
 <span>def <span class="ident">filter_selected_nodes</span></span>(<span>tree) ‑> list</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def filter_selected_nodes(tree) -&gt; list:
+    &#34;&#34;&#34;Avoiding selecting nodes which should not be copied into sub tree&#34;&#34;&#34;
+    return [n for n in tree.nodes if n.select and n.bl_idname not in {&#39;NodeGroupInput&#39;, &#39;NodeGroupOutput&#39;}]</code></pre>
+</details>
 <div class="desc"><p>Avoiding selecting nodes which should not be copied into sub tree</p></div>
 </dd>
 <dt id="sverchok.core.node_group.AddGroupTreeFromSelected.new_tree_socket"><code class="name flex">
 <span>def <span class="ident">new_tree_socket</span></span>(<span>tree, bl_idname, name, in_out='INPUT')</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def new_tree_socket(tree, bl_idname, name, in_out=&#39;INPUT&#39;):
+    if bpy.app.version &gt;= (4, 0):
+        tree.interface.new_socket(name, in_out=in_out, socket_type=bl_idname)
+    else:
+        socks = tree.inputs if in_out == &#39;INPUT&#39; else tree.outputs
+        return socks.new(bl_idname, name)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.node_group.AddGroupTreeFromSelected.poll"><code class="name flex">
@@ -422,9 +497,39 @@ hljs.highlightAll();
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.node_group.AddGroupTreeFromSelected.recreate_frames"><code class="name flex">
-<span>def <span class="ident">recreate_frames</span></span>(<span>from_tree: bpy_types.NodeTree, to_tree: bpy_types.NodeTree, frame_names: Set[str], from_to_node_names: Dict[str, str])</span>
+<span>def <span class="ident">recreate_frames</span></span>(<span>from_tree: bpy_types.NodeTree,<br>to_tree: bpy_types.NodeTree,<br>frame_names: Set[str],<br>from_to_node_names: Dict[str, str])</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def recreate_frames(from_tree: bpy.types.NodeTree,
+                    to_tree: bpy.types.NodeTree,
+                    frame_names: Set[str],
+                    from_to_node_names: Dict[str, str]):
+    &#34;&#34;&#34;
+    It will copy frames from one tree to another
+    from_to_node_names - mapping of node names between two trees
+    &#34;&#34;&#34;
+    new_frame_names = {n: to_tree.nodes.new(&#39;NodeFrame&#39;).name for n in frame_names}
+    frame_attributes = [&#39;label&#39;, &#39;use_custom_color&#39;, &#39;color&#39;, &#39;label_size&#39;, &#39;text&#39;]
+    for frame_name in frame_names:
+        old_frame = from_tree.nodes[frame_name]
+        new_frame = to_tree.nodes[new_frame_names[frame_name]]
+        for attr in frame_attributes:
+            setattr(new_frame, attr, getattr(old_frame, attr))
+    for from_node in from_tree.nodes:
+        if from_node.name not in from_to_node_names:
+            continue
+        if from_node.parent and from_node.parent.name in new_frame_names:
+            if from_node.bl_idname == &#39;NodeFrame&#39;:
+                to_node = to_tree.nodes[new_frame_names[from_node.name]]
+            else:
+                to_node = to_tree.nodes[from_to_node_names[from_node.name]]
+            to_node.parent = to_tree.nodes[new_frame_names[from_node.parent.name]]</code></pre>
+</details>
 <div class="desc"><p>It will copy frames from one tree to another
 from_to_node_names - mapping of node names between two trees</p></div>
 </dd>
@@ -435,6 +540,122 @@ from_to_node_names - mapping of node names between two trees</p></div>
 <span>def <span class="ident">execute</span></span>(<span>self, context)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def execute(self, context):
+    &#34;&#34;&#34;
+    Add group tree from selected:
+    01. Deselect group Input and Output nodes
+    02. Copy nodes into clipboard
+    03. Create group tree and move into one
+    04. Past nodes from clipboard
+    05. Move nodes into tree center
+    06. Add group &#34;input&#34; and &#34;output&#34; outside of bounding box of the nodes
+    07. Connect &#34;input&#34; and &#34;output&#34; sockets with group nodes
+    08. Add Group tree node in center of selected node in initial tree
+    09. Link the node with appropriate sockets
+    10. Cleaning
+    &#34;&#34;&#34;
+    base_tree = context.space_data.path[-1].node_tree
+    if not self.can_be_grouped(base_tree):
+        self.report({&#39;WARNING&#39;}, &#39;Current selection can not be converted to group&#39;)
+        return {&#39;CANCELLED&#39;}
+    sub_tree: SvGroupTree = bpy.data.node_groups.new(&#39;Sverchok group&#39;, SvGroupTree.bl_idname)
+
+    # deselect group nodes if selected
+    [setattr(n, &#39;select&#39;, False) for n in base_tree.nodes
+     if n.select and n.bl_idname in {&#39;NodeGroupInput&#39;, &#39;NodeGroupOutput&#39;}]
+
+    # Frames can&#39;t be just copied because they does not have absolute location, but they can be recreated
+    frame_names = {n.name for n in base_tree.nodes if n.select and n.bl_idname == &#39;NodeFrame&#39;}
+    [setattr(n, &#39;select&#39;, False) for n in base_tree.nodes if n.bl_idname == &#39;NodeFrame&#39;]
+
+    with base_tree.init_tree(), sub_tree.init_tree():
+        # copy and past nodes into group tree
+        bpy.ops.node.clipboard_copy()
+        context.space_data.path.append(sub_tree)
+        bpy.ops.node.clipboard_paste()
+        context.space_data.path.pop()  # will enter later via operator
+
+        # move nodes in tree center
+        sub_tree_nodes = self.filter_selected_nodes(sub_tree)
+        center = reduce(lambda v1, v2: v1 + v2, [n.location for n in sub_tree_nodes]) / len(sub_tree_nodes)
+        [setattr(n, &#39;location&#39;, n.location - center) for n in sub_tree_nodes]
+
+        # recreate frames
+        node_name_mapping = {n.name: n.name for n in sub_tree.nodes}  # all nodes have the same name as in base tree
+        self.recreate_frames(base_tree, sub_tree, frame_names, node_name_mapping)
+
+        # add group input and output nodes
+        min_x = min(n.location[0] for n in sub_tree_nodes)
+        max_x = max(n.location[0] for n in sub_tree_nodes)
+        input_node = sub_tree.nodes.new(&#39;NodeGroupInput&#39;)
+        input_node.location = (min_x - 250, 0)
+        output_node = sub_tree.nodes.new(&#39;NodeGroupOutput&#39;)
+        output_node.location = (max_x + 250, 0)
+
+        # add group tree node
+        initial_nodes = self.filter_selected_nodes(base_tree)
+        center = reduce(lambda v1, v2: v1 + v2,
+                        [Vector(n.absolute_location) for n in initial_nodes]) / len(initial_nodes)
+        group_node = base_tree.nodes.new(SvGroupTreeNode.bl_idname)
+        group_node.select = False
+        group_node.group_tree = sub_tree
+        group_node.location = center
+        sub_tree.group_node_name = group_node.name
+
+        # generate new sockets
+        py_base_tree = Tree(base_tree)
+        [setattr(py_base_tree.nodes[n.name], &#39;select&#39;, n.select) for n in base_tree.nodes]
+        from_sockets, to_sockets = defaultdict(set), defaultdict(set)
+        for py_node in py_base_tree.nodes:
+            if not py_node.select:
+                continue
+            for in_s in py_node.inputs:
+                for out_s in in_s.linked_sockets:  # only one link always
+                    if not out_s.node.select:
+                        from_sockets[out_s.bl_tween].add(in_s.get_bl_socket(sub_tree))
+            for out_py_socket in py_node.outputs:
+                for in_py_socket in out_py_socket.linked_sockets:
+                    if not in_py_socket.node.select:
+                        to_sockets[in_py_socket.bl_tween].add(out_py_socket.get_bl_socket(sub_tree))
+        for fs in from_sockets.keys():
+            self.new_tree_socket(sub_tree, fs.bl_idname, fs.name, in_out=&#39;INPUT&#39;)
+        for ts in to_sockets.keys():
+            self.new_tree_socket(sub_tree, ts.bl_idname, ts.name, in_out=&#39;OUTPUT&#39;)
+        if bpy.app.version &gt;= (3, 5):  # generate also sockets of group nodes
+            for fs in sub_tree.sockets(&#39;INPUT&#39;):
+                group_node.inputs.new(fs.bl_socket_idname, fs.name, identifier=fs.identifier)
+            for ts in sub_tree.sockets(&#39;OUTPUT&#39;):
+                group_node.outputs.new(ts.bl_socket_idname, ts.name, identifier=ts.identifier)
+
+        # linking, linking should be ordered from first socket to last (in case like `join list` nodes)
+        for i, (from_s, first_ss) in enumerate(from_sockets.items()):
+            base_tree.links.new(group_node.inputs[i], from_s)
+            for first_s in first_ss:
+                sub_tree.links.new(first_s, input_node.outputs[i])
+        for i, (to_s, last_ss) in enumerate(to_sockets.items()):
+            base_tree.links.new(to_s, group_node.outputs[i])
+            for last_s in last_ss:
+                sub_tree.links.new(output_node.inputs[i], last_s)
+
+        # delete selected nodes and copied frames without children
+        [base_tree.nodes.remove(n) for n in self.filter_selected_nodes(base_tree)]
+        with_children_frames = {n.parent.name for n in base_tree.nodes if n.parent}
+        [base_tree.nodes.remove(n) for n in base_tree.nodes
+         if n.name in frame_names and n.name not in with_children_frames]
+
+    # todo one ui update (useless) will be done by the operator and another with update system of main handler
+    if bpy.app.version &gt;= (3, 2):
+        with context.temp_override(node=group_node):
+            bpy.ops.node.edit_group_tree(is_new_group=True)
+    else:
+        bpy.ops.node.edit_group_tree({&#39;node&#39;: group_node}, is_new_group=True)
+
+    return {&#39;FINISHED&#39;}</code></pre>
+</details>
 <div class="desc"><p>Add group tree from selected:
 01. Deselect group Input and Output nodes
 02. Copy nodes into clipboard
@@ -454,7 +675,6 @@ from_to_node_names - mapping of node names between two trees</p></div>
 <span>(</span><span>...)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Operator for creating output and input nodes in sub trees</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -487,6 +707,7 @@ from_to_node_names - mapping of node names between two trees</p></div>
     def description(cls, context, properties):
         return f&#39;Add group {properties.node_type} node&#39;</code></pre>
 </details>
+<div class="desc"><p>Operator for creating output and input nodes in sub trees</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="sverchok.core.node_group.PlacingNodeOperator" href="#sverchok.core.node_group.PlacingNodeOperator">PlacingNodeOperator</a></li>
@@ -537,6 +758,18 @@ from_to_node_names - mapping of node names between two trees</p></div>
 <span>def <span class="ident">execute</span></span>(<span>self, context)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def execute(self, context):
+    if self.node_type == &#39;input&#39;:
+        node_type = &#39;NodeGroupInput&#39;
+    else:
+        node_type = &#39;NodeGroupOutput&#39;
+    self.placing_node(context, node_type)
+    return {&#39;FINISHED&#39;}</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -546,7 +779,6 @@ from_to_node_names - mapping of node names between two trees</p></div>
 <span>(</span><span>...)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>UI for filling Group tree description</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -588,6 +820,7 @@ from_to_node_names - mapping of node names between two trees</p></div>
         row.active = self.from_file
         row.prop_search(self, &#39;text_name&#39;, bpy.data, &#39;texts&#39;, text=&#34;Description&#34;)</code></pre>
 </details>
+<div class="desc"><p>UI for filling Group tree description</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li>bpy_types.Operator</li>
@@ -635,18 +868,52 @@ from_to_node_names - mapping of node names between two trees</p></div>
 <span>def <span class="ident">draw</span></span>(<span>self, context)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def draw(self, context):
+    col = self.layout.column()
+    col.use_property_split = True
+    row = col.row()
+    row.active = not self.from_file
+    row.prop(self, &#39;description&#39;)
+    col.prop(self, &#39;from_file&#39;)
+    row = col.row()
+    row.active = self.from_file
+    row.prop_search(self, &#39;text_name&#39;, bpy.data, &#39;texts&#39;, text=&#34;Description&#34;)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.node_group.AddTreeDescription.execute"><code class="name flex">
 <span>def <span class="ident">execute</span></span>(<span>self, context)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def execute(self, context):
+    tree = bpy.data.node_groups[self.tree_name]
+    if self.from_file:
+        tree.description = bpy.data.texts[self.text_name].as_string()
+    else:
+        tree.description = self.description
+    return {&#39;FINISHED&#39;}</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.node_group.AddTreeDescription.invoke"><code class="name flex">
 <span>def <span class="ident">invoke</span></span>(<span>self, context, event)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def invoke(self, context, event):
+    return context.window_manager.invoke_props_dialog(self)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -655,7 +922,6 @@ from_to_node_names - mapping of node names between two trees</p></div>
 <span>class <span class="ident">BaseNode</span></span>
 </code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -686,6 +952,7 @@ from_to_node_names - mapping of node names between two trees</p></div>
     def absolute_location(self):
         return recursive_framed_location_finder(self, self.location[:])</code></pre>
 </details>
+<div class="desc"></div>
 <h3>Subclasses</h3>
 <ul class="hlist">
 <li><a title="sverchok.core.node_group.NodeFrame" href="#sverchok.core.node_group.NodeFrame">NodeFrame</a></li>
@@ -708,7 +975,6 @@ from_to_node_names - mapping of node names between two trees</p></div>
 <dl>
 <dt id="sverchok.core.node_group.BaseNode.absolute_location"><code class="name">prop <span class="ident">absolute_location</span></code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -717,10 +983,10 @@ from_to_node_names - mapping of node names between two trees</p></div>
 def absolute_location(self):
     return recursive_framed_location_finder(self, self.location[:])</code></pre>
 </details>
+<div class="desc"></div>
 </dd>
 <dt id="sverchok.core.node_group.BaseNode.node_id"><code class="name">prop <span class="ident">node_id</span></code></dt>
 <dd>
-<div class="desc"><p>Identifier of the node</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -732,10 +998,10 @@ def node_id(self):
         self.n_id = str(hash(self) ^ hash(time.monotonic()))
     return self.n_id</code></pre>
 </details>
+<div class="desc"><p>Identifier of the node</p></div>
 </dd>
 <dt id="sverchok.core.node_group.BaseNode.sv_default_color"><code class="name">prop <span class="ident">sv_default_color</span></code></dt>
 <dd>
-<div class="desc"><p>Returns default color of the node which can be changed in add-on settings.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -745,6 +1011,7 @@ def sv_default_color(self):
     &#34;&#34;&#34;Returns default color of the node which can be changed in add-on settings.&#34;&#34;&#34;
     return color_def.get_color(self.bl_idname)</code></pre>
 </details>
+<div class="desc"><p>Returns default color of the node which can be changed in add-on settings.</p></div>
 </dd>
 </dl>
 <h3>Methods</h3>
@@ -753,18 +1020,58 @@ def sv_default_color(self):
 <span>def <span class="ident">copy</span></span>(<span>self, original)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def copy(self, original):
+    self.n_id = &#39;&#39;</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.node_group.BaseNode.process_node"><code class="name flex">
 <span>def <span class="ident">process_node</span></span>(<span>self, context)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def process_node(self, context):
+    &#34;&#34;&#34;update properties of socket of the node trigger this method&#34;&#34;&#34;
+    self.id_data.update_nodes([self])</code></pre>
+</details>
 <div class="desc"><p>update properties of socket of the node trigger this method</p></div>
 </dd>
 <dt id="sverchok.core.node_group.BaseNode.set_temp_color"><code class="name flex">
 <span>def <span class="ident">set_temp_color</span></span>(<span>self, color=None)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_temp_color(self, color=None):
+    &#34;&#34;&#34;This method memorize its initial color and override it with given one
+    if given color is None it tries to return its initial color or do nothing&#34;&#34;&#34;
+
+    if color is None:
+        # looks like the node should return its initial color (user choice)
+        if &#39;user_color&#39; in self:
+            self.use_custom_color = self[&#39;use_user_color&#39;]
+            del self[&#39;use_user_color&#39;]
+            self.color = self[&#39;user_color&#39;]
+            del self[&#39;user_color&#39;]
+
+    # set temporary color
+    else:
+        # save overridden color (only once)
+        if &#39;user_color&#39; not in self:
+            self[&#39;use_user_color&#39;] = self.use_custom_color
+            self[&#39;user_color&#39;] = self.color
+        self.use_custom_color = True
+        self.color = color</code></pre>
+</details>
 <div class="desc"><p>This method memorize its initial color and override it with given one
 if given color is None it tries to return its initial color or do nothing</p></div>
 </dd>
@@ -775,7 +1082,6 @@ if given color is None it tries to return its initial color or do nothing</p></d
 <span>(</span><span>...)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Go into sub tree to edit</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -803,6 +1109,7 @@ if given color is None it tries to return its initial color or do nothing</p></d
         # todo add the same logic to exit from tree operator
         return {&#39;FINISHED&#39;}</code></pre>
 </details>
+<div class="desc"><p>Go into sub tree to edit</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li>bpy_types.Operator</li>
@@ -833,6 +1140,25 @@ if given color is None it tries to return its initial color or do nothing</p></d
 <span>def <span class="ident">execute</span></span>(<span>self, context)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def execute(self, context):
+    group_node = context.node
+    sub_tree: SvGroupTree = context.node.node_tree
+    context.space_data.path.append(sub_tree, node=group_node)
+    sub_tree.group_node_name = group_node.name
+    if self.is_new_group:
+        event = ev.NewGroupTreeEvent(
+            sub_tree, sub_tree.get_update_path(), group_node.id_data)
+    else:
+        event = ev.GroupTreeEvent(sub_tree, sub_tree.get_update_path())
+    handle_event(event)
+    # todo make protection from editing the same trees in more then one area
+    # todo add the same logic to exit from tree operator
+    return {&#39;FINISHED&#39;}</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -841,7 +1167,6 @@ if given color is None it tries to return its initial color or do nothing</p></d
 <span>class <span class="ident">NodeFrame</span></span>
 </code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -851,6 +1176,7 @@ class NodeFrame(BaseNode):
     # for API consistency, it&#39;s much simpler way then create extra conditions everywhere
     pass</code></pre>
 </details>
+<div class="desc"></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="sverchok.core.node_group.BaseNode" href="#sverchok.core.node_group.BaseNode">BaseNode</a></li>
@@ -871,7 +1197,6 @@ class NodeFrame(BaseNode):
 <span>class <span class="ident">NodeGroupInput</span></span>
 </code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -881,6 +1206,7 @@ class NodeGroupInput(BaseNode):
     def process(self):
         return</code></pre>
 </details>
+<div class="desc"></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="sverchok.core.node_group.BaseNode" href="#sverchok.core.node_group.BaseNode">BaseNode</a></li>
@@ -891,6 +1217,13 @@ class NodeGroupInput(BaseNode):
 <span>def <span class="ident">process</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def process(self):
+    return</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -910,7 +1243,6 @@ class NodeGroupInput(BaseNode):
 <span>class <span class="ident">NodeGroupOutput</span></span>
 </code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -920,6 +1252,7 @@ class NodeGroupOutput(BaseNode):  # todo copy node id problem
     def process(self):
         return</code></pre>
 </details>
+<div class="desc"></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="sverchok.core.node_group.BaseNode" href="#sverchok.core.node_group.BaseNode">BaseNode</a></li>
@@ -930,6 +1263,13 @@ class NodeGroupOutput(BaseNode):  # todo copy node id problem
 <span>def <span class="ident">process</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def process(self):
+    return</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -949,7 +1289,6 @@ class NodeGroupOutput(BaseNode):  # todo copy node id problem
 <span>class <span class="ident">NodeReroute</span></span>
 </code></dt>
 <dd>
-<div class="desc"><p>Add sv logic</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -959,6 +1298,7 @@ class NodeReroute(BaseNode):
     &#34;&#34;&#34;Add sv logic&#34;&#34;&#34;
     # `copy` attribute can&#39;t be overridden for this class</code></pre>
 </details>
+<div class="desc"><p>Add sv logic</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="sverchok.core.node_group.BaseNode" href="#sverchok.core.node_group.BaseNode">BaseNode</a></li>
@@ -979,7 +1319,6 @@ class NodeReroute(BaseNode):
 <span>class <span class="ident">PlacingNodeOperator</span></span>
 </code></dt>
 <dd>
-<div class="desc"><p>Helper class for locating nodes in a node tree</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1012,6 +1351,7 @@ class NodeReroute(BaseNode):
 
         return result</code></pre>
 </details>
+<div class="desc"><p>Helper class for locating nodes in a node tree</p></div>
 <h3>Subclasses</h3>
 <ul class="hlist">
 <li><a title="sverchok.core.node_group.AddGroupNode" href="#sverchok.core.node_group.AddGroupNode">AddGroupNode</a></li>
@@ -1023,12 +1363,33 @@ class NodeReroute(BaseNode):
 <span>def <span class="ident">placing_node</span></span>(<span>context, node_type: str)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def placing_node(context, node_type: str):
+    tree = context.space_data.path[-1].node_tree
+    bpy.ops.node.select_all(action=&#39;DESELECT&#39;)
+    group_node = tree.nodes.new(node_type)
+    group_node.location = context.space_data.cursor_location</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.node_group.PlacingNodeOperator.store_mouse_cursor"><code class="name flex">
 <span>def <span class="ident">store_mouse_cursor</span></span>(<span>context, event)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def store_mouse_cursor(context, event):
+    # convert mouse position to the View2D for later node placement
+    space = context.space_data
+    space.cursor_location_from_region(event.mouse_region_x, event.mouse_region_y)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -1038,6 +1399,20 @@ class NodeReroute(BaseNode):
 <span>def <span class="ident">invoke</span></span>(<span>self, context, event)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def invoke(self, context, event):
+    self.store_mouse_cursor(context, event)
+    result = self.execute(context)
+
+    if &#39;FINISHED&#39; in result:
+        # removes the node again if transform is canceled
+        bpy.ops.node.translate_attach_remove_on_cancel(&#39;INVOKE_DEFAULT&#39;)
+
+    return result</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -1047,7 +1422,6 @@ class NodeReroute(BaseNode):
 <span>(</span><span>...)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Browse group trees to be linked</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1078,6 +1452,7 @@ class NodeReroute(BaseNode):
         context.window_manager.invoke_search_popup(self)
         return {&#39;FINISHED&#39;}</code></pre>
 </details>
+<div class="desc"><p>Browse group trees to be linked</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li>bpy_types.Operator</li>
@@ -1105,7 +1480,7 @@ class NodeReroute(BaseNode):
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.core.node_group.SearchGroupTree.tree_name"><code class="name">var <span class="ident">tree_name</span> : <_PropertyDeferred, <built-in function EnumProperty>, {'items': <function <a title="sverchok.core.node_group.SearchGroupTree.available_trees" href="#sverchok.core.node_group.SearchGroupTree.available_trees">SearchGroupTree.available_trees()</a> at 0x7f0c6c7c5ab0>, 'attr': 'tree_name'}></code></dt>
+<dt id="sverchok.core.node_group.SearchGroupTree.tree_name"><code class="name">var <span class="ident">tree_name</span> : <_PropertyDeferred, <built-in function EnumProperty>, {'items': <function <a title="sverchok.core.node_group.SearchGroupTree.available_trees" href="#sverchok.core.node_group.SearchGroupTree.available_trees">SearchGroupTree.available_trees()</a> at 0x7ffb351b6200>, 'attr': 'tree_name'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -1116,18 +1491,46 @@ class NodeReroute(BaseNode):
 <span>def <span class="ident">available_trees</span></span>(<span>self, context)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def available_trees(self, context):
+    linkable_trees = filter(lambda t: hasattr(t, &#39;can_be_linked&#39;) and t.can_be_linked(), bpy.data.node_groups)
+    return [(t.name, t.name, &#39;&#39;) for t in linkable_trees]</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.node_group.SearchGroupTree.execute"><code class="name flex">
 <span>def <span class="ident">execute</span></span>(<span>self, context)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def execute(self, context):
+    tree = context.space_data.path[-1].node_tree
+    tree_to_link = bpy.data.node_groups[self.tree_name]
+    group_node = tree.nodes[self.group_node_name]
+    group_node.group_tree = tree_to_link
+    return {&#39;FINISHED&#39;}</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.node_group.SearchGroupTree.invoke"><code class="name flex">
 <span>def <span class="ident">invoke</span></span>(<span>self, context, event)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def invoke(self, context, event):
+    self.group_node_name = context.node.name  # execute context does not have the attribute -_-
+    context.window_manager.invoke_search_popup(self)
+    return {&#39;FINISHED&#39;}</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -1137,7 +1540,6 @@ class NodeReroute(BaseNode):
 <span>(</span><span>...)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Separate tree class for sub trees</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1394,6 +1796,7 @@ class NodeReroute(BaseNode):
         else:
             yield from self.inputs if in_out == &#39;INPUT&#39; else self.outputs</code></pre>
 </details>
+<div class="desc"><p>Separate tree class for sub trees</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="sverchok.node_tree.SvNodeTreeCommon" href="../node_tree.html#sverchok.node_tree.SvNodeTreeCommon">SvNodeTreeCommon</a></li>
@@ -1463,7 +1866,6 @@ class NodeReroute(BaseNode):
 <dl>
 <dt id="sverchok.core.node_group.SvGroupTree.sv_show_socket_menus"><code class="name">prop <span class="ident">sv_show_socket_menus</span></code></dt>
 <dd>
-<div class="desc"><p>It searches root tree and returns its eponymous attribute</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1487,6 +1889,7 @@ def sv_show_socket_menus(self):
         return area.spaces[0].path[0].node_tree.sv_show_socket_menus
     return False</code></pre>
 </details>
+<div class="desc"><p>It searches root tree and returns its eponymous attribute</p></div>
 </dd>
 </dl>
 <h3>Methods</h3>
@@ -1495,18 +1898,95 @@ def sv_show_socket_menus(self):
 <span>def <span class="ident">can_be_linked</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def can_be_linked(self):
+    &#34;&#34;&#34;trying to avoid creating loops of group trees to each other&#34;&#34;&#34;
+    # upstream trees of tested treed should nad share trees with downstream trees of current tree
+    tested_tree_upstream_trees = {t.name for t in self.upstream_trees()}
+    current_tree_downstream_trees = {p.node_tree.name for p in bpy.context.space_data.path}
+    shared_trees = tested_tree_upstream_trees &amp; current_tree_downstream_trees
+    return not shared_trees</code></pre>
+</details>
 <div class="desc"><p>trying to avoid creating loops of group trees to each other</p></div>
 </dd>
 <dt id="sverchok.core.node_group.SvGroupTree.check_last_socket"><code class="name flex">
 <span>def <span class="ident">check_last_socket</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def check_last_socket(self):
+    &#34;&#34;&#34;Override socket creation of standard operator in Node interface menu&#34;&#34;&#34;
+    if self.inputs:
+        if self.inputs[-1].bl_socket_idname == &#39;NodeSocketFloat&#39;:
+            # This is wrong socket type -&gt; fixing
+            self.inputs.remove(self.inputs[-1])
+            self.inputs.new(&#39;SvStringsSocket&#39;, &#39;Value&#39;)
+    if self.outputs:
+        if self.outputs[-1].bl_socket_idname == &#39;NodeSocketFloat&#39;:
+            self.outputs.remove(self.outputs[-1])
+            self.outputs.new(&#39;SvStringsSocket&#39;, &#39;Value&#39;)</code></pre>
+</details>
 <div class="desc"><p>Override socket creation of standard operator in Node interface menu</p></div>
 </dd>
 <dt id="sverchok.core.node_group.SvGroupTree.check_reroutes_sockets"><code class="name flex">
 <span>def <span class="ident">check_reroutes_sockets</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def check_reroutes_sockets(self):
+    &#34;&#34;&#34;
+    Fix reroute sockets type
+    For now it does work properly in first update
+    because all new sockets even if they have links have `is_linked` attribute with False value
+    at next update events all works perfectly (skip first update?)
+
+    There is hope this will be fixed https://developer.blender.org/T82390
+    &#34;&#34;&#34;
+    tree = Tree(self)
+    socket_job = []
+    Requirements = namedtuple(&#39;Requirements&#39;, [&#39;left_n_i&#39;, &#39;left_s_i&#39;, &#39;left_t&#39;, &#39;reroute_n_i&#39;,
+                                               &#39;right_n_is&#39;, &#39;right_s_is&#39;])
+    # analytical part, it&#39;s impossible to use Tree structure and modify the tree
+    for node in tree.sorted_walk(tree.output_nodes):
+        # walk should be sorted in case if reroute nodes are going one after other
+        if node.bl_tween.bl_idname == &#39;NodeReroute&#39;:
+            rer_in_s = node.inputs[0]
+            rer_out_s = node.outputs[0]
+            if rer_in_s.links:
+                left_s = rer_in_s.linked_sockets[0]
+                left_type = left_s.type if hasattr(left_s, &#39;type&#39;) else left_s.bl_tween.bl_idname
+                if left_type != rer_in_s.bl_tween.bl_idname:
+                    rer_out_s.type = left_type
+                    socket_job.append(Requirements(left_s.node.index, left_s.index, left_type, node.index,
+                                                   [s.node.index for s in rer_out_s.linked_sockets],
+                                                   [s.index for s in rer_out_s.linked_sockets]))
+
+    # regenerating sockets
+    for props in socket_job:
+        left_s = self.nodes[props.left_n_i].outputs[props.left_s_i]
+        reroute = self.nodes[props.reroute_n_i]
+
+        # handle input socket
+        in_s = reroute.inputs.new(props.left_t, left_s.name)
+        self.links.new(in_s, left_s)
+        reroute.inputs.remove(reroute.inputs[0])
+
+        # handle output sockets
+        out_s = reroute.outputs.new(props.left_t, left_s.name)
+        for right_n_i, right_s_i in zip(props.right_n_is, props.right_s_is):
+            left_s = self.nodes[right_n_i].inputs[right_s_i]
+            self.links.new(left_s, out_s)
+        reroute.outputs.remove(reroute.outputs[0])</code></pre>
+</details>
 <div class="desc"><p>Fix reroute sockets type
 For now it does work properly in first update
 because all new sockets even if they have links have <code>is_linked</code> attribute with False value
@@ -1517,6 +1997,37 @@ at next update events all works perfectly (skip first update?)</p>
 <span>def <span class="ident">get_update_path</span></span>(<span>self) ‑> List[<a title="sverchok.core.node_group.SvGroupTreeNode" href="#sverchok.core.node_group.SvGroupTreeNode">SvGroupTreeNode</a>]</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_update_path(self) -&gt; List[&#39;SvGroupTreeNode&#39;]:
+    &#34;&#34;&#34;
+    Should be called only when the tree is opened in one of tree editors
+    returns list of group nodes in path of current screen
+    &#34;&#34;&#34;
+    for area in bpy.context.screen.areas:
+        # this is not Sverchok editor
+        if area.ui_type != BlTrees.MAIN_TREE_ID:
+            continue
+
+        # editor does not have any active tree
+        if not area.spaces[0].node_tree:
+            continue
+
+        # this editor edits another tree, What!?
+        if self not in (p.node_tree for p in area.spaces[0].path):
+            continue
+
+        group_nodes = []
+        paths = area.spaces[0].path
+        for path, next_path in zip(paths[:-1], paths[1:]):
+            group_nodes.append(path.node_tree.nodes[next_path.node_tree.group_node_name])
+            if next_path.node_tree == self:
+                break  # the tree is no last in the path
+        return group_nodes
+    raise LookupError(f&#39;Path the group tree: {self} was not found&#39;)</code></pre>
+</details>
 <div class="desc"><p>Should be called only when the tree is opened in one of tree editors
 returns list of group nodes in path of current screen</p></div>
 </dd>
@@ -1524,18 +2035,78 @@ returns list of group nodes in path of current screen</p></div>
 <span>def <span class="ident">parent_nodes</span></span>(<span>self) ‑> Iterator[<a title="sverchok.core.node_group.SvGroupTreeNode" href="#sverchok.core.node_group.SvGroupTreeNode">SvGroupTreeNode</a>]</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parent_nodes(self) -&gt; Iterator[&#39;SvGroupTreeNode&#39;]:
+    &#34;&#34;&#34;Returns all parent nodes&#34;&#34;&#34;
+    # todo optimisation?
+    for tree in (t for t in bpy.data.node_groups if t.bl_idname in {&#39;SverchCustomTreeType&#39;, &#39;SvGroupTree&#39;}):
+        for node in tree.nodes:
+            if hasattr(node, &#39;node_tree&#39;) and node.node_tree and node.node_tree.name == self.name:
+                yield node</code></pre>
+</details>
 <div class="desc"><p>Returns all parent nodes</p></div>
 </dd>
 <dt id="sverchok.core.node_group.SvGroupTree.sockets"><code class="name flex">
 <span>def <span class="ident">sockets</span></span>(<span>self, in_out='INTPUT')</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def sockets(self, in_out=&#39;INTPUT&#39;):
+    if bpy.app.version &gt;= (4, 0):
+        for item in self.interface.items_tree:
+            if item.item_type == &#39;SOCKET&#39;:
+                if item.in_out == in_out:
+                    yield item
+    else:
+        yield from self.inputs if in_out == &#39;INPUT&#39; else self.outputs</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.node_group.SvGroupTree.update"><code class="name flex">
 <span>def <span class="ident">update</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def update(self):
+    &#34;&#34;&#34;trigger on links or nodes collections changes, on assigning tree to a group node
+    also it is triggered when a tree, next in the path, was changed (even if this tree was not effected)&#34;&#34;&#34;
+    # When group input or output nodes are connected some extra work should be done
+    if &#39;init_tree&#39; in self.id_data:  # tree is building by a script - let it do this
+        return
+
+    if bpy.app.version &lt; (4, 0):  # https://projects.blender.org/blender/blender/issues/113134
+        self.check_last_socket()  # Should not be too expensive to call it each update
+
+    if self.name not in bpy.data.node_groups:  # load new file event
+        return
+    if not hasattr(bpy.context.space_data, &#39;path&#39;):  # 3D panel also can call update method O_o
+        return
+    if not self.group_node_name:  # initialization tree
+        return
+
+    group_node: SvGroupTreeNode = None
+    # update tree can lead to calling update of previous tree too, so should find position tree in the path
+    for i, path in zip(range(-1, -1000, -1), reversed(bpy.context.space_data.path)):
+        if path.node_tree == self:
+            group_node = bpy.context.space_data.path[i - 1].node_tree.nodes[self.group_node_name]
+            break
+    if group_node is None:
+        # the tree was assigned to a group node, it does not have sense to update
+        return
+
+    self.check_reroutes_sockets()
+    self.update_sockets()  # probably more precise trigger could be found for calling this method
+    handle_event(ev.GroupTreeEvent(self, self.get_update_path()))</code></pre>
+</details>
 <div class="desc"><p>trigger on links or nodes collections changes, on assigning tree to a group node
 also it is triggered when a tree, next in the path, was changed (even if this tree was not effected)</p></div>
 </dd>
@@ -1543,6 +2114,24 @@ also it is triggered when a tree, next in the path, was changed (even if this tr
 <span>def <span class="ident">update_nodes</span></span>(<span>self, nodes: list)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def update_nodes(self, nodes: list):
+    &#34;&#34;&#34;
+    This method expect to get list of its nodes which should be updated
+    Execution won&#39;t be immediately, use cases -
+    1. Node property of was changed
+    2. ???
+    &#34;&#34;&#34;
+    # the method can be called during tree reconstruction from JSON file
+    # in this case we does not intend doing any updates
+    if not self.group_node_name:  # initialization tree
+        return
+
+    handle_event(ev.GroupPropertyEvent(self, self.get_update_path(), nodes))</code></pre>
+</details>
 <div class="desc"><p>This method expect to get list of its nodes which should be updated
 Execution won't be immediately, use cases -
 1. Node property of was changed
@@ -1552,12 +2141,59 @@ Execution won't be immediately, use cases -
 <span>def <span class="ident">update_sockets</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def update_sockets(self):  # todo it lets simplify sockets API
+    &#34;&#34;&#34;Set properties of sockets of parent nodes and of output modes&#34;&#34;&#34;
+    for node in self.parent_nodes():
+        for n_in_s, t_in_s in zip(node.inputs, self.sockets(&#39;INPUTS&#39;)):
+            # also before getting data from socket `socket.use_prop` property should be set
+            if hasattr(n_in_s, &#39;default_property&#39;):
+                n_in_s.use_prop = not t_in_s.hide_value
+            if hasattr(t_in_s, &#39;default_type&#39;):
+                n_in_s.default_property_type = t_in_s.default_type
+    for out_node in (n for n in self.nodes if n.bl_idname == &#39;NodeGroupOutput&#39;):
+        for n_in_s, t_out_s in zip(out_node.inputs, self.sockets(&#39;OUTPUTS&#39;)):
+            if hasattr(n_in_s, &#39;default_property&#39;):
+                n_in_s.use_prop = not t_out_s.hide_value
+                if hasattr(t_out_s, &#39;default_type&#39;):
+                    n_in_s.default_property_type = t_out_s.default_type
+            else:
+                n_in_s.use_prop = False</code></pre>
+</details>
 <div class="desc"><p>Set properties of sockets of parent nodes and of output modes</p></div>
 </dd>
 <dt id="sverchok.core.node_group.SvGroupTree.upstream_trees"><code class="name flex">
 <span>def <span class="ident">upstream_trees</span></span>(<span>self) ‑> List[<a title="sverchok.core.node_group.SvGroupTree" href="#sverchok.core.node_group.SvGroupTree">SvGroupTree</a>]</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def upstream_trees(self) -&gt; List[&#39;SvGroupTree&#39;]:
+    &#34;&#34;&#34;
+    It will try to return all the tree sub trees (in case if there is group nodes)
+    and sub trees of sub trees and so on
+    The method can help to predict if linking new sub tree can lead to cyclic linking
+    &#34;&#34;&#34;
+    next_group_nodes = [node for node in self.nodes if node.bl_idname == &#39;SvGroupTreeNode&#39;]
+    trees = [self]
+    safe_counter = 0
+    while next_group_nodes:
+        next_node = next_group_nodes.pop()
+        if next_node.node_tree:
+            trees.append(next_node.node_tree)
+            next_group_nodes.extend([
+                node for node in next_node.node_tree.nodes if node.bl_idname == &#39;SvGroupTreeNode&#39;])
+        safe_counter += 1
+
+        if safe_counter &gt; 1000:
+            raise RecursionError(f&#39;Looks like group tree &#34;{self}&#34; has links to itself from other groups&#39;)
+    return trees</code></pre>
+</details>
 <div class="desc"><p>It will try to return all the tree sub trees (in case if there is group nodes)
 and sub trees of sub trees and so on
 The method can help to predict if linking new sub tree can lead to cyclic linking</p></div>
@@ -1581,7 +2217,6 @@ The method can help to predict if linking new sub tree can lead to cyclic linkin
 <span>(</span><span>...)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Node for keeping sub trees</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1756,6 +2391,7 @@ The method can help to predict if linking new sub tree can lead to cyclic linkin
     def sv_free(self):
         handle_event(ev.TreesGraphEvent())</code></pre>
 </details>
+<div class="desc"><p>Node for keeping sub trees</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="sverchok.node_tree.SverchCustomTreeNode" href="../node_tree.html#sverchok.node_tree.SverchCustomTreeNode">SverchCustomTreeNode</a></li>
@@ -1781,11 +2417,11 @@ The method can help to predict if linking new sub tree can lead to cyclic linkin
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.core.node_group.SvGroupTreeNode.group_tree"><code class="name">var <span class="ident">group_tree</span> : <_PropertyDeferred, <built-in function PointerProperty>, {'type': <class '<a title="sverchok.core.node_group.SvGroupTree" href="#sverchok.core.node_group.SvGroupTree">SvGroupTree</a>'>, 'poll': <function <a title="sverchok.core.node_group.SvGroupTreeNode.nested_tree_filter" href="#sverchok.core.node_group.SvGroupTreeNode.nested_tree_filter">SvGroupTreeNode.nested_tree_filter()</a> at 0x7f0c6c7c4670>, 'update': <function <a title="sverchok.core.node_group.SvGroupTreeNode.update_group_tree" href="#sverchok.core.node_group.SvGroupTreeNode.update_group_tree">SvGroupTreeNode.update_group_tree()</a> at 0x7f0c6c7c4700>, 'attr': 'group_tree'}></code></dt>
+<dt id="sverchok.core.node_group.SvGroupTreeNode.group_tree"><code class="name">var <span class="ident">group_tree</span> : <_PropertyDeferred, <built-in function PointerProperty>, {'type': <class '<a title="sverchok.core.node_group.SvGroupTree" href="#sverchok.core.node_group.SvGroupTree">SvGroupTree</a>'>, 'poll': <function <a title="sverchok.core.node_group.SvGroupTreeNode.nested_tree_filter" href="#sverchok.core.node_group.SvGroupTreeNode.nested_tree_filter">SvGroupTreeNode.nested_tree_filter()</a> at 0x7ffb351b4dc0>, 'update': <function <a title="sverchok.core.node_group.SvGroupTreeNode.update_group_tree" href="#sverchok.core.node_group.SvGroupTreeNode.update_group_tree">SvGroupTreeNode.update_group_tree()</a> at 0x7ffb351b4e50>, 'attr': 'group_tree'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.core.node_group.SvGroupTreeNode.is_active"><code class="name">var <span class="ident">is_active</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Live', 'description': 'Update realtime if active', 'default': True, 'update': <function <a title="sverchok.core.node_group.SvGroupTreeNode" href="#sverchok.core.node_group.SvGroupTreeNode">SvGroupTreeNode</a>.<lambda> at 0x7f0c6c7c4820>, 'attr': 'is_active'}></code></dt>
+<dt id="sverchok.core.node_group.SvGroupTreeNode.is_active"><code class="name">var <span class="ident">is_active</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Live', 'description': 'Update realtime if active', 'default': True, 'update': <function <a title="sverchok.core.node_group.SvGroupTreeNode" href="#sverchok.core.node_group.SvGroupTreeNode">SvGroupTreeNode</a>.<lambda> at 0x7ffb351b4f70>, 'attr': 'is_active'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -1793,7 +2429,7 @@ The method can help to predict if linking new sub tree can lead to cyclic linkin
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.core.node_group.SvGroupTreeNode.show"><code class="name">var <span class="ident">show</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'default': True, 'description': 'On/off viewer nodes inside', 'update': <function <a title="sverchok.core.node_group.SvGroupTreeNode.switch_viewers" href="#sverchok.core.node_group.SvGroupTreeNode.switch_viewers">SvGroupTreeNode.switch_viewers()</a> at 0x7f0c6c7c48b0>, 'attr': 'show'}></code></dt>
+<dt id="sverchok.core.node_group.SvGroupTreeNode.show"><code class="name">var <span class="ident">show</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'default': True, 'description': 'On/off viewer nodes inside', 'update': <function <a title="sverchok.core.node_group.SvGroupTreeNode.switch_viewers" href="#sverchok.core.node_group.SvGroupTreeNode.switch_viewers">SvGroupTreeNode.switch_viewers()</a> at 0x7ffb351b5000>, 'attr': 'show'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -1801,27 +2437,107 @@ The method can help to predict if linking new sub tree can lead to cyclic linkin
 <h3>Methods</h3>
 <dl>
 <dt id="sverchok.core.node_group.SvGroupTreeNode.active_input"><code class="name flex">
-<span>def <span class="ident">active_input</span></span>(<span>self) ‑> Optional[bpy_types.Node]</span>
+<span>def <span class="ident">active_input</span></span>(<span>self) ‑> bpy_types.Node | None</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def active_input(self) -&gt; Optional[bpy.types.Node]:
+    # https://developer.blender.org/T82350
+    for node in reversed(self.node_tree.nodes):
+        if node.bl_idname == &#39;NodeGroupInput&#39;:
+            return node</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.node_group.SvGroupTreeNode.active_output"><code class="name flex">
-<span>def <span class="ident">active_output</span></span>(<span>self) ‑> Optional[bpy_types.Node]</span>
+<span>def <span class="ident">active_output</span></span>(<span>self) ‑> bpy_types.Node | None</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def active_output(self) -&gt; Optional[bpy.types.Node]:
+    for node in reversed(self.node_tree.nodes):
+        if node.bl_idname == &#39;NodeGroupOutput&#39;:
+            return node</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.node_group.SvGroupTreeNode.nested_tree_filter"><code class="name flex">
 <span>def <span class="ident">nested_tree_filter</span></span>(<span>self, context)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def nested_tree_filter(self, context):
+    &#34;&#34;&#34;Define which tree we would like to use as nested trees.&#34;&#34;&#34;
+    tested_tree = context
+    if tested_tree.bl_idname == SvGroupTree.bl_idname:  # It should be our dedicated to this class
+        return tested_tree.can_be_linked()
+    else:
+        return False</code></pre>
+</details>
 <div class="desc"><p>Define which tree we would like to use as nested trees.</p></div>
 </dd>
 <dt id="sverchok.core.node_group.SvGroupTreeNode.process"><code class="name flex">
 <span>def <span class="ident">process</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def process(self):
+    &#34;&#34;&#34;
+    This method is going to be called only by update system of main tree
+    Calling this method means that input group node should fetch data from group node
+    &#34;&#34;&#34;
+    # it&#39;s better process the node even if it is switched off in case when tree is just opened
+    should_update_output_data = False
+    if self.outputs:
+        try:
+            self.outputs[0].sv_get(deepcopy=False)
+        except LookupError:
+            should_update_output_data = True
+
+    if not self.node_tree or (not self.is_active and not should_update_output_data):
+        return
+
+    self.node_tree: SvGroupTree
+
+    # most simple way to pass data about whether node group should show timings
+    self.node_tree.sv_show_time_nodes = self.id_data.sv_show_time_nodes
+    self.node_tree.show_time_mode = self.id_data.show_time_mode
+
+    input_node = self.active_input()
+    output_node = self.active_output()
+    if not input_node or not output_node:
+        return
+
+    for in_s, out_s in zip(self.inputs, input_node.outputs):
+        if out_s.identifier == &#39;__extend__&#39;:  # virtual socket
+            break
+        out_s.sv_set(in_s.sv_get(deepcopy=False))
+
+    tree = gus.GroupUpdateTree.get(self.node_tree, refresh_tree=True)
+    tree.add_outdated([input_node])
+    tree.update(self)
+
+    for node in self.node_tree.nodes:
+        if err := node.get(ERROR_KEY):
+            raise Exception(err)
+    else:
+        for in_s, out_s in zip(output_node.inputs, self.outputs):
+            if in_s.identifier == &#39;__extend__&#39;:  # virtual socket
+                break
+            out_s.sv_set(in_s.sv_get(deepcopy=False))</code></pre>
+</details>
 <div class="desc"><p>This method is going to be called only by update system of main tree
 Calling this method means that input group node should fetch data from group node</p></div>
 </dd>
@@ -1829,24 +2545,99 @@ Calling this method means that input group node should fetch data from group nod
 <span>def <span class="ident">sv_update</span></span>(<span>self)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def sv_update(self):
+    &#34;&#34;&#34;This method is also called when interface of the subtree is changed&#34;&#34;&#34;
+    def copy_socket_names(from_sockets, to_sockets):
+        for from_s, to_s in zip(from_sockets, to_sockets):
+            to_s.name = from_s.name
+
+    tree_inputs = list(self.node_tree.sockets(&#39;INPUT&#39;))
+    tree_outputs = list(self.node_tree.sockets(&#39;OUTPUT&#39;))
+    if bpy.app.version &gt;= (3, 5):  # sockets should be generated manually
+        BlSockets(self.inputs).copy_sockets(tree_inputs)
+        copy_socket_names(tree_inputs, self.inputs)
+        BlSockets(self.outputs).copy_sockets(tree_outputs)
+        copy_socket_names(tree_outputs, self.outputs)
+
+    # this code should work only first time a socket was added
+    if self.node_tree:
+        for n_in_s, t_in_s in zip(self.inputs, tree_inputs):
+            # also before getting data from socket `socket.use_prop` property should be set
+            if hasattr(n_in_s, &#39;default_property&#39;):
+                n_in_s.use_prop = not t_in_s.hide_value
+            if hasattr(t_in_s, &#39;default_type&#39;):
+                n_in_s.default_property_type = t_in_s.default_type</code></pre>
+</details>
 <div class="desc"><p>This method is also called when interface of the subtree is changed</p></div>
 </dd>
 <dt id="sverchok.core.node_group.SvGroupTreeNode.switch_viewers"><code class="name flex">
 <span>def <span class="ident">switch_viewers</span></span>(<span>self, context)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def switch_viewers(self, context):
+    &#34;&#34;&#34;Turn on/off displaying objects in viewport generated by viewer nodes inside group tree&#34;&#34;&#34;
+    for node in self.node_tree.nodes:
+        try:
+            node.show_viewport(self.show)
+        except AttributeError:
+            pass</code></pre>
+</details>
 <div class="desc"><p>Turn on/off displaying objects in viewport generated by viewer nodes inside group tree</p></div>
 </dd>
 <dt id="sverchok.core.node_group.SvGroupTreeNode.toggle_active"><code class="name flex">
 <span>def <span class="ident">toggle_active</span></span>(<span>self, state: bool, to_update: bool = True)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def toggle_active(self, state: bool, to_update: bool = True):
+    &#34;&#34;&#34;This function can change state of `is_active` attribute without node updating&#34;&#34;&#34;
+    if &#39;toggle_active&#39; in self:
+        # avoiding recursion
+        del self[&#39;toggle_active&#39;]
+        return
+    else:
+        self[&#39;toggle_active&#39;] = True
+        self.is_active = state  # it will call the method again and will delete &#39;toggle_active&#39; key
+        if state and to_update:
+            self.id_data.update_nodes([self])</code></pre>
+</details>
 <div class="desc"><p>This function can change state of <code>is_active</code> attribute without node updating</p></div>
 </dd>
 <dt id="sverchok.core.node_group.SvGroupTreeNode.update_group_tree"><code class="name flex">
 <span>def <span class="ident">update_group_tree</span></span>(<span>self, context)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def update_group_tree(self, context):
+    &#34;&#34;&#34;Apply filtered tree to `node_tree` attribute.
+    By this attribute Blender is aware of linking between the node and nested tree.&#34;&#34;&#34;
+    handle_event(ev.TreesGraphEvent())
+    self.node_tree: SvGroupTree = self.group_tree
+    # also default values should be fixed
+    if self.node_tree:
+        self.node_tree.use_fake_user = True
+        for node_sock, interface_sock in zip(self.inputs, self.node_tree.sockets(&#39;INPUT&#39;)):
+            if hasattr(interface_sock, &#39;default_value&#39;) and hasattr(node_sock, &#39;default_property&#39;):
+                node_sock.default_property = interface_sock.default_value
+            self.node_tree.update_sockets()  # properties of input socket properties should be updated
+    else:  # in case if None is assigned to node_tree
+        self.inputs.clear()
+        self.outputs.clear()</code></pre>
+</details>
 <div class="desc"><p>Apply filtered tree to <code>node_tree</code> attribute.
 By this attribute Blender is aware of linking between the node and nested tree.</p></div>
 </dd>
@@ -1904,7 +2695,6 @@ By this attribute Blender is aware of linking between the node and nested tree.<
 <span>(</span><span>...)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Put sub nodes into current layout and delete current group node</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -2014,6 +2804,7 @@ By this attribute Blender is aware of linking between the node and nested tree.<
 
         return {&#39;FINISHED&#39;}</code></pre>
 </details>
+<div class="desc"><p>Put sub nodes into current layout and delete current group node</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li>bpy_types.Operator</li>
@@ -2053,6 +2844,101 @@ By this attribute Blender is aware of linking between the node and nested tree.<
 <span>def <span class="ident">execute</span></span>(<span>self, context)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def execute(self, context):
+    &#34;&#34;&#34;Similar to AddGroupTreeFromSelected operator but in backward direction (from sub tree to tree)&#34;&#34;&#34;
+
+    # go to sub tree, select all except input and output groups and mark nodes to be copied
+    group_node = context.node
+    sub_tree = group_node.node_tree
+    if bpy.app.version &gt;= (3, 2):
+        with context.temp_override(node=group_node):
+            bpy.ops.node.edit_group_tree()
+    else:
+        bpy.ops.node.edit_group_tree({&#39;node&#39;: group_node})
+    [setattr(n, &#39;select&#39;, False) for n in sub_tree.nodes]
+    group_nodes_filter = filter(lambda n: n.bl_idname not in {&#39;NodeGroupInput&#39;, &#39;NodeGroupOutput&#39;}, sub_tree.nodes)
+    for node in group_nodes_filter:
+        node.select = True
+        node[&#39;sub_node_name&#39;] = node.name  # this will be copied within the nodes
+
+    # the attribute should be empty in destination tree
+    tree = context.space_data.path[-2].node_tree
+    for node in tree.nodes:
+        if &#39;sub_node_name&#39; in node:
+            del node[&#39;sub_node_name&#39;]
+
+    # Frames can&#39;t be just copied because they does not have absolute location, but they can be recreated
+    frame_names = {n.name for n in sub_tree.nodes if n.select and n.bl_idname == &#39;NodeFrame&#39;}
+    [setattr(n, &#39;select&#39;, False) for n in sub_tree.nodes if n.bl_idname == &#39;NodeFrame&#39;]
+
+    if any(n for n in sub_tree.nodes if n.select):  # if no selection copy operator will raise error
+        # copy and past nodes into group tree
+        bpy.ops.node.clipboard_copy()
+        context.space_data.path.pop()
+        bpy.ops.node.clipboard_paste()  # this will deselect all and select only pasted nodes
+
+        # move nodes in group node center
+        tree_select_nodes = [n for n in tree.nodes if n.select]
+        center = reduce(lambda v1, v2: v1 + v2,
+                        [Vector(n.absolute_location) for n in tree_select_nodes]) / len(tree_select_nodes)
+        [setattr(n, &#39;location&#39;, n.location - (center - group_node.location)) for n in tree_select_nodes]
+
+        # recreate frames
+        node_name_mapping = {n[&#39;sub_node_name&#39;]: n.name for n in tree.nodes if &#39;sub_node_name&#39; in n}
+        AddGroupTreeFromSelected.recreate_frames(sub_tree, tree, frame_names, node_name_mapping)
+    else:
+        context.space_data.path.pop()  # should exit from sub tree anywhere
+
+    # recreate py tree structure
+    sub_py_tree = Tree(sub_tree)
+    [setattr(sub_py_tree.nodes[n.name], &#39;type&#39;, n.bl_idname) for n in sub_tree.nodes]
+    py_tree = Tree(tree)
+    [setattr(py_tree.nodes[n.name], &#39;select&#39;, n.select) for n in tree.nodes]
+    group_py_node = py_tree.nodes[group_node.name]
+    for node in tree.nodes:
+        if &#39;sub_node_name&#39; in node:
+            sub_py_tree.nodes[node[&#39;sub_node_name&#39;]].twin = py_tree.nodes[node.name]
+            py_tree.nodes[node.name].twin = sub_py_tree.nodes[node[&#39;sub_node_name&#39;]]
+
+    # create in links
+    for group_input_py_node in [n for n in sub_py_tree.nodes if n.type == &#39;NodeGroupInput&#39;]:
+        for group_in_s, input_out_s in zip(group_py_node.inputs, group_input_py_node.outputs):
+            if group_in_s.links and input_out_s.links:
+                link_out_s = group_in_s.linked_sockets[0]
+                for twin_in_s in input_out_s.linked_sockets:
+                    if twin_in_s.node.type == &#39;NodeGroupOutput&#39;:  # node should be searched in above tree
+                        group_out_s = group_py_node.outputs[twin_in_s.index]
+                        for link_in_s in group_out_s.linked_sockets:
+                            tree.links.new(link_in_s.get_bl_socket(tree), link_out_s.get_bl_socket(tree))
+                    else:
+                        link_in_s = twin_in_s.node.twin.inputs[twin_in_s.index]
+                        tree.links.new(link_in_s.get_bl_socket(tree), link_out_s.get_bl_socket(tree))
+
+    # create out links
+    for group_output_py_node in [n for n in sub_py_tree.nodes if n.type == &#39;NodeGroupOutput&#39;]:
+        for group_out_s, output_in_s in zip(group_py_node.outputs, group_output_py_node.inputs):
+            if group_out_s.links and output_in_s.links:
+                twin_out_s = output_in_s.linked_sockets[0]
+                if twin_out_s.node.type == &#39;NodeGroupInput&#39;:
+                    continue  # we already added this link
+                for link_in_s in group_out_s.linked_sockets:
+                    link_out_s = twin_out_s.node.twin.outputs[twin_out_s.index]
+                    tree.links.new(link_in_s.get_bl_socket(tree), link_out_s.get_bl_socket(tree))
+
+    # delete group node
+    tree.nodes.remove(group_node)
+    for node in tree.nodes:
+        if &#39;sub_node_name&#39; in node:
+            del node[&#39;sub_node_name&#39;]
+
+    tree.update()
+
+    return {&#39;FINISHED&#39;}</code></pre>
+</details>
 <div class="desc"><p>Similar to AddGroupTreeFromSelected operator but in backward direction (from sub tree to tree)</p></div>
 </dd>
 </dl>
@@ -2263,7 +3149,7 @@ By this attribute Blender is aware of linking between the node and nested tree.<
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.1</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.5</a>.</p>
 </footer>
 </body>
 </html>

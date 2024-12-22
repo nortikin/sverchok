@@ -3,19 +3,30 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
-<meta name="generator" content="pdoc3 0.11.1">
+<meta name="generator" content="pdoc3 0.11.5">
 <title>sverchok.core.socket_conversions API documentation</title>
 <meta name="description" content="">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
-<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
 <style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
 <style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
 <script>window.addEventListener('DOMContentLoaded', () => {
 hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
 hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
 })</script>
 </head>
 <body>
@@ -37,60 +48,204 @@ hljs.highlightAll();
 <span>def <span class="ident">check_nesting_level</span></span>(<span>func)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def check_nesting_level(func):
+    def the_check(source_data):
+        level = get_data_nesting_level(source_data)
+        if level &gt; 2:
+            raise TypeError(&#34;Too high data nesting level for Number -&gt; Scalar Field conversion: %s&#34; % level)
+        return func(source_data)
+    return the_check</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.socket_conversions.matrices_to_quaternions"><code class="name flex">
 <span>def <span class="ident">matrices_to_quaternions</span></span>(<span>source_data)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def matrices_to_quaternions(source_data):
+    quaternions = []
+    collect_quaternion = quaternions.append
+
+    def get_all(data):
+        for mat in data:
+            q = tuple(mat.to_quaternion())
+            collect_quaternion(q)
+
+    get_all(source_data)
+    return [quaternions]</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.socket_conversions.matrices_to_vectors"><code class="name flex">
 <span>def <span class="ident">matrices_to_vectors</span></span>(<span>source_data)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def matrices_to_vectors(source_data):
+    locations = []
+    collect_vector = locations.append
+
+    def get_all(data):
+        for sublist in data:
+            collect_vector(sublist.to_translation()[:])
+
+    get_all(source_data)
+    return [locations]</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.socket_conversions.matrices_to_vfield"><code class="name flex">
 <span>def <span class="ident">matrices_to_vfield</span></span>(<span>data)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def matrices_to_vfield(data):
+    if isinstance(data, Matrix):
+        data = deepcopy(data)
+        return SvMatrixVectorField(data)
+    if isinstance(data, (list, tuple)):
+        return [matrices_to_vfield(item) for item in data]
+
+    raise TypeError(&#34;Unexpected data type from Matrix socket: %s&#34; % type(data))</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.socket_conversions.numbers_to_sfield"><code class="name flex">
 <span>def <span class="ident">numbers_to_sfield</span></span>(<span>data)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def numbers_to_sfield(data):
+    if isinstance(data, NUMERIC_DATA_TYPES):
+        return SvConstantScalarField(data)
+    elif isinstance(data, (list, tuple)):
+        return [numbers_to_sfield(item) for item in data]
+    else:
+        raise TypeError(&#34;Unexpected data type from String socket: %s&#34; % type(data))</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.socket_conversions.quaternions_to_matrices"><code class="name flex">
 <span>def <span class="ident">quaternions_to_matrices</span></span>(<span>source_data)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def quaternions_to_matrices(source_data):
+    matrices = []
+    collect_matrix = matrices.append
+
+    def get_all(data):
+        for item in data:
+            if isinstance(item, (tuple, list)) and len(item) == 4 and isinstance(item[0], NUMERIC_DATA_TYPES):
+                mat = Quaternion(item).to_matrix().to_4x4()
+                collect_matrix(mat)
+            else:
+                get_all(item)
+
+    get_all(source_data)
+    return matrices</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.socket_conversions.string_to_color"><code class="name flex">
 <span>def <span class="ident">string_to_color</span></span>(<span>source_data)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def string_to_color(source_data):
+    # it can be so that socket is string but data their are already colors, performance-wise we check only first item
+    if isinstance(source_data[0][0], NUMERIC_DATA_TYPES):
+        return [[(v, v, v, 1) for v in obj] for obj in source_data]
+    if len(source_data[0][0]) == 3:
+        return vector_to_color(source_data)
+    return source_data</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.socket_conversions.string_to_vector"><code class="name flex">
 <span>def <span class="ident">string_to_vector</span></span>(<span>source_data)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def string_to_vector(source_data):
+    # it can be so that socket is string but data their are already vectors, performance-wise we check only first item
+    if isinstance(source_data[0][0], NUMERIC_DATA_TYPES):
+        return [[(v, v, v) for v in obj] for obj in source_data]
+    return source_data</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.socket_conversions.vector_to_color"><code class="name flex">
 <span>def <span class="ident">vector_to_color</span></span>(<span>source_data)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def vector_to_color(source_data):
+    if source_data and isinstance(source_data[0], np.ndarray):
+        out = []
+        for obj in source_data:
+            out.append(np.concatenate((obj, np.ones((len(obj), 1))), axis=1))
+        return out
+    else:
+        return [[(v[0], v[1], v[2], 1) for v in obj] for obj in source_data]</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.core.socket_conversions.vectors_to_matrices"><code class="name flex">
 <span>def <span class="ident">vectors_to_matrices</span></span>(<span>source_data)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def vectors_to_matrices(source_data):
+    &#34;&#34;&#34;This means we&#39;re going to get a flat list of the incoming
+    locations and convert those into matrices proper.&#34;&#34;&#34;
+    location_matrices = []
+    collect_matrix = location_matrices.append
+
+    def get_all(data):
+        for item in data:
+            if isinstance(item, (tuple, list, ndarray)) and len(item) == 3 and isinstance(item[0], NUMERIC_DATA_TYPES):
+                # generate location matrix from location
+                x, y, z = item
+                collect_matrix(Matrix([(1., .0, .0, x), (.0, 1., .0, y), (.0, .0, 1., z), (.0, .0, .0, 1.)]))
+            else:
+                get_all(item)
+
+    get_all(source_data)
+    return location_matrices</code></pre>
+</details>
 <div class="desc"><p>This means we're going to get a flat list of the incoming
 locations and convert those into matrices proper.</p></div>
 </dd>
@@ -98,6 +253,19 @@ locations and convert those into matrices proper.</p></div>
 <span>def <span class="ident">vertices_to_vfield</span></span>(<span>data)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def vertices_to_vfield(data):
+    if isinstance(data, (tuple, list)) and len(data) == 3 and isinstance(data[0], NUMERIC_DATA_TYPES):
+        data = deepcopy(data)
+        return SvConstantVectorField(data)
+    elif isinstance(data, (list, tuple)):
+        return [vertices_to_vfield(item) for item in data]
+    else:
+        raise TypeError(&#34;Unexpected data type from Vertex socket: %s&#34; % type(data))</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -110,7 +278,6 @@ locations and convert those into matrices proper.</p></div>
 <span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>It should keeps all policy classes</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -130,6 +297,7 @@ locations and convert those into matrices proper.</p></div>
     def conversion_name(self):
         return self.value.__name__</code></pre>
 </details>
+<div class="desc"><p>It should keeps all policy classes</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li>enum.Enum</li>
@@ -157,7 +325,6 @@ locations and convert those into matrices proper.</p></div>
 <dl>
 <dt id="sverchok.core.socket_conversions.ConversionPolicies.conversion"><code class="name">prop <span class="ident">conversion</span></code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -166,10 +333,10 @@ locations and convert those into matrices proper.</p></div>
 def conversion(self):
     return self.value</code></pre>
 </details>
+<div class="desc"></div>
 </dd>
 <dt id="sverchok.core.socket_conversions.ConversionPolicies.conversion_name"><code class="name">prop <span class="ident">conversion_name</span></code></dt>
 <dd>
-<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -178,6 +345,7 @@ def conversion(self):
 def conversion_name(self):
     return self.value.__name__</code></pre>
 </details>
+<div class="desc"></div>
 </dd>
 </dl>
 </dd>
@@ -185,7 +353,6 @@ def conversion_name(self):
 <span>class <span class="ident">DefaultImplicitConversionPolicy</span></span>
 </code></dt>
 <dd>
-<div class="desc"><p>Default implicit conversion policy.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -242,6 +409,7 @@ def conversion_name(self):
         if expected_type := cls.expected_data_types.get(to_sock.bl_idname):
             return is_ultimately(source_data, expected_type)</code></pre>
 </details>
+<div class="desc"><p>Default implicit conversion policy.</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="sverchok.core.socket_conversions.NoImplicitConversionPolicy" href="#sverchok.core.socket_conversions.NoImplicitConversionPolicy">NoImplicitConversionPolicy</a></li>
@@ -285,7 +453,6 @@ def conversion_name(self):
 <span>class <span class="ident">FieldImplicitConversionPolicy</span></span>
 </code></dt>
 <dd>
-<div class="desc"><p>Default implicit conversion policy.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -306,6 +473,7 @@ def conversion_name(self):
             return conversion(source_data)
         return super().convert(to_sock, from_sock, source_data)</code></pre>
 </details>
+<div class="desc"><p>Default implicit conversion policy.</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="sverchok.core.socket_conversions.DefaultImplicitConversionPolicy" href="#sverchok.core.socket_conversions.DefaultImplicitConversionPolicy">DefaultImplicitConversionPolicy</a></li>
@@ -332,12 +500,6 @@ def conversion_name(self):
 <span>class <span class="ident">LenientImplicitConversionPolicy</span></span>
 </code></dt>
 <dd>
-<div class="desc"><p>Lenient implicit conversion policy.
-Does not actually convert anything, but passes any
-type of data as-is.
-To be used for sockets that do not care about the
-nature of data they process (such as most List processing
-nodes).</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -355,6 +517,12 @@ nodes).</p></div>
     def convert(cls, socket, other, source_data):
         return source_data</code></pre>
 </details>
+<div class="desc"><p>Lenient implicit conversion policy.
+Does not actually convert anything, but passes any
+type of data as-is.
+To be used for sockets that do not care about the
+nature of data they process (such as most List processing
+nodes).</p></div>
 <h3>Static methods</h3>
 <dl>
 <dt id="sverchok.core.socket_conversions.LenientImplicitConversionPolicy.convert"><code class="name flex">
@@ -369,8 +537,6 @@ nodes).</p></div>
 <span>class <span class="ident">NoImplicitConversionPolicy</span></span>
 </code></dt>
 <dd>
-<div class="desc"><p>Base (empty) implicit conversion policy.
-This prohibits any implicit conversions.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -384,6 +550,8 @@ This prohibits any implicit conversions.</p></div>
     def convert(cls, socket, other, source_data):
         raise ImplicitConversionProhibited(socket)</code></pre>
 </details>
+<div class="desc"><p>Base (empty) implicit conversion policy.
+This prohibits any implicit conversions.</p></div>
 <h3>Subclasses</h3>
 <ul class="hlist">
 <li><a title="sverchok.core.socket_conversions.DefaultImplicitConversionPolicy" href="#sverchok.core.socket_conversions.DefaultImplicitConversionPolicy">DefaultImplicitConversionPolicy</a></li>
@@ -403,8 +571,6 @@ This prohibits any implicit conversions.</p></div>
 <span>class <span class="ident">SolidImplicitConversionPolicy</span></span>
 </code></dt>
 <dd>
-<div class="desc"><p>Base (empty) implicit conversion policy.
-This prohibits any implicit conversions.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -419,6 +585,8 @@ This prohibits any implicit conversions.</p></div>
                 socket, msg=f&#34;Cannot perform implicit socket conversion for&#34;
                             f&#34; socket {socket.name}: {e}&#34;)</code></pre>
 </details>
+<div class="desc"><p>Base (empty) implicit conversion policy.
+This prohibits any implicit conversions.</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="sverchok.core.socket_conversions.NoImplicitConversionPolicy" href="#sverchok.core.socket_conversions.NoImplicitConversionPolicy">NoImplicitConversionPolicy</a></li>
@@ -515,7 +683,7 @@ This prohibits any implicit conversions.</p></div>
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.1</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.5</a>.</p>
 </footer>
 </body>
 </html>
