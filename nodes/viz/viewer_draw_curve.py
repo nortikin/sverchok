@@ -276,7 +276,7 @@ class SvCurveViewerDrawNode(SverchCustomTreeNode, bpy.types.Node):
         row.prop(self, 'line_width', text="px")
 
         row = grid.row(align=True)
-        row.prop(self, 'draw_arrows', icon='EVENT_RIGHT_ARROW', text='')
+        row.prop(self, 'draw_arrows', icon='FORWARD', text='')
         row.prop(self, 'arrows_color', text='')
         row.prop(self, 'arrows_line_width', text='px')
 
