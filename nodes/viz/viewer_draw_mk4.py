@@ -100,7 +100,7 @@ default_fragment_shader = '''
 
 def ensure_triangles(coords, indices, handle_concave_quads):
     """
-    this fully tesselates the incoming topology into tris,
+    this fully tessellates the incoming topology into tris,
     not optimized for meshes that don't contain ngons
     """
     new_indices = []

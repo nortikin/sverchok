@@ -105,7 +105,7 @@ class SvOffsetNode(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
         self.outputs['InPols'].sv_set(outn)
 
     # #################
-    #   part from ofset operator in extra tools
+    #   part from offset operator in extra tools
     #   that in own place based completely on addon by zmj100
     #   in russian is called "Круговая порука", Various artists
     # #################
