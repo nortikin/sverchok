@@ -11,10 +11,10 @@ Requirements
 ------------
 
 You will need to install:
-    **Blender3.6** (for **Blender4.0+** you need git branch ```bgl_replacement```)
-    **Sverchok** with dependencies (not *opensubdiv*, no *Freecad* and no *mcubes* needed)
-    **Sverchok-extra** with mostly *xmlx* deps (no *pygalmesh* and no *SDF* needed)
-    ```pip install latex``` for SVG export
+    **Blender4.0+**    
+    **Sverchok** with dependencies (not *opensubdiv*, no *Freecad* and no *mcubes* needed)     
+    **Sverchok-extra** with mostly *xmlx* deps (no *pygalmesh* and no *SDF* needed)     
+    ```pip install latex``` for SVG export     
     
     
 Inputs
