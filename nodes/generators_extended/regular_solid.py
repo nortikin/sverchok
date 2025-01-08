@@ -16,13 +16,27 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-
 import bpy
+
 from bpy.props import IntProperty, FloatProperty, BoolProperty, EnumProperty, FloatVectorProperty
 try:
     from add_mesh_extra_objects.add_mesh_solid import createSolid
 except ImportError:
-    createSolid = None 
+    try:
+        import os
+        addons_dir = os.path.join(bpy.utils.resource_path('USER'), "extensions", "blender_org")
+        addon_path = os.path.join(addons_dir, "extra_mesh_objects", "add_mesh_solid.py")
+
+        if not os.path.exists(addon_path):
+            createSolid = None 
+        else:
+            import importlib.util
+            spec = importlib.util.spec_from_file_location("add_mesh_solid", addon_path)
+            module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(module)
+            createSolid = module.createSolid
+    except:
+        createSolid = None 
 
 from mathutils import Vector
 from sverchok.node_tree import SverchCustomTreeNode
@@ -230,7 +244,7 @@ class SvRegularSolid(SverchCustomTreeNode, bpy.types.Node):
             return
 
         if createSolid is None:
-            str_error = "There is no 'add_mesh_extra_objects' library. Node 'Regular Solid' does not work for a while. (In Blender 4.2-alpha)"
+            str_error = "This node needs 'Extra Mesh Objects' add-on installed to work properly"
             print(str_error)
             raise Exception(str_error)
 
