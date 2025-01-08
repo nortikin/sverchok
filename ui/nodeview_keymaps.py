@@ -202,6 +202,11 @@ def add_keymap():
         kmi.properties.name = "NODEVIEW_MT_sv_rclick_menu"
         nodeview_keymaps.append((km, kmi))
 
+        # Alt + Right Click   | show custom menu (to avoid conflict with the Blender right click menu)
+        kmi = km.keymap_items.new('wm.call_menu', 'RIGHTMOUSE', 'RELEASE', alt=True)
+        kmi.properties.name = "NODEVIEW_MT_sv_rclick_menu"
+        nodeview_keymaps.append((km, kmi))
+
         kmi = km.keymap_items.new('wm.call_menu', 'P', 'PRESS', shift=True)
         kmi.properties.name = "SV_MT_LoadPresetMenu"
         nodeview_keymaps.append((km, kmi))
