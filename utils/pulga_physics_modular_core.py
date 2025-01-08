@@ -1333,7 +1333,7 @@ class SvInflateForce():
 
         np_pols = np.array(pols)
         p_len = len(pols)
-        if np_pols.dtype == np.object:
+        if np_pols.dtype == object: #np.object:
             np_len = np.vectorize(len)
             pols_sides = np_len(np_pols)
             pol_side_max = np.amax(pols_sides)

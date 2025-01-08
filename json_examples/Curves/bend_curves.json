@@ -1,0 +1,3932 @@
+{
+  "export_version": "1.0",
+  "main_tree": {
+    "nodes": {
+      "Frame.004": {
+        "attributes": {
+          "location": [
+            80.0,
+            20.0
+          ],
+          "height": 886.0,
+          "width": 910.0,
+          "label": "2 WAY",
+          "color": [
+            0.16307437419891357,
+            0.5724622011184692,
+            1.0
+          ],
+          "use_custom_color": true
+        },
+        "bl_idname": "NodeFrame"
+      },
+      "Frame.003": {
+        "attributes": {
+          "location": [
+            90.0,
+            -390.0
+          ],
+          "height": 406.0,
+          "width": 600.0,
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.004"
+          }
+        },
+        "bl_idname": "NodeFrame"
+      },
+      "Frame": {
+        "attributes": {
+          "location": [
+            -290.0,
+            -520.0
+          ],
+          "height": 443.0,
+          "width": 640.0,
+          "label": "1 WAY",
+          "color": [
+            0.0983472466468811,
+            1.0,
+            0.6463665962219238
+          ],
+          "use_custom_color": true
+        },
+        "bl_idname": "NodeFrame"
+      },
+      "Frame.001": {
+        "attributes": {
+          "location": [
+            -820.0,
+            370.0
+          ],
+          "height": 674.0,
+          "width": 1271.0,
+          "label": "3 WAY",
+          "color": [
+            0.9866245985031128,
+            1.0,
+            0.0
+          ],
+          "use_custom_color": true
+        },
+        "bl_idname": "NodeFrame"
+      },
+      "Frame.002": {
+        "attributes": {
+          "location": [
+            80.0,
+            20.0
+          ],
+          "height": 406.0,
+          "width": 840.0,
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.004"
+          }
+        },
+        "bl_idname": "NodeFrame"
+      },
+      "Frame.005": {
+        "attributes": {
+          "location": [
+            52.24677276611328,
+            88.51751708984375
+          ],
+          "height": 724.0,
+          "width": 1674.0,
+          "label": "Additional representation",
+          "color": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "use_custom_color": true
+        },
+        "bl_idname": "NodeFrame"
+      },
+      "Frame.006": {
+        "attributes": {
+          "location": [
+            69.855224609375,
+            9.57659912109375
+          ],
+          "height": 279.0,
+          "width": 389.0,
+          "label": "moving down and apply",
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.005"
+          }
+        },
+        "bl_idname": "NodeFrame"
+      },
+      "Vector Polar Input.002": {
+        "attributes": {
+          "location": [
+            -680.0,
+            -600.0
+          ],
+          "width": 100.0
+        },
+        "properties": {
+          "rho_": 0.5099999904632568,
+          "phi_": 0.8399999737739563
+        },
+        "inputs": {
+          "rho": {
+            "bl_idname": "SvStringsSocket",
+            "name": "rho",
+            "properties": {
+              "prop_name": "rho_"
+            }
+          },
+          "phi": {
+            "bl_idname": "SvStringsSocket",
+            "name": "phi",
+            "properties": {
+              "prop_name": "phi_"
+            }
+          },
+          "Z": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Z",
+            "properties": {
+              "prop_name": "z_"
+            }
+          }
+        },
+        "outputs": {
+          "Vectors": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vectors"
+          }
+        },
+        "bl_idname": "VectorPolarInNode"
+      },
+      "Vector Polar Input.001": {
+        "attributes": {
+          "location": [
+            -680.0,
+            -420.0
+          ],
+          "width": 100.0
+        },
+        "properties": {
+          "rho_": 0.5099999904632568
+        },
+        "inputs": {
+          "rho": {
+            "bl_idname": "SvStringsSocket",
+            "name": "rho",
+            "properties": {
+              "prop_name": "rho_"
+            }
+          },
+          "phi": {
+            "bl_idname": "SvStringsSocket",
+            "name": "phi",
+            "properties": {
+              "prop_name": "phi_"
+            }
+          },
+          "Z": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Z",
+            "properties": {
+              "prop_name": "z_"
+            }
+          }
+        },
+        "outputs": {
+          "Vectors": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vectors"
+          }
+        },
+        "bl_idname": "VectorPolarInNode"
+      },
+      "A Number.002": {
+        "attributes": {
+          "location": [
+            -1300.0,
+            -520.0
+          ],
+          "hide": true
+        },
+        "properties": {
+          "float_": 180.0,
+          "float_min": 0.10000000149011612
+        },
+        "inputs": {
+          "Float": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Float",
+            "properties": {
+              "prop_name": "float_"
+            }
+          }
+        },
+        "outputs": {
+          "Float": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Float",
+            "properties": {
+              "custom_draw": "mode_custom_draw"
+            }
+          }
+        },
+        "bl_idname": "SvNumberNode"
+      },
+      "Scalar Math": {
+        "attributes": {
+          "location": [
+            -880.0,
+            -380.0
+          ],
+          "hide": true
+        },
+        "properties": {
+          "current_op": "RADIANS"
+        },
+        "inputs": {
+          "x": {
+            "bl_idname": "SvStringsSocket",
+            "name": "x",
+            "properties": {
+              "prop_name": "x_"
+            }
+          }
+        },
+        "outputs": {
+          "Out": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Out"
+          }
+        },
+        "bl_idname": "SvScalarMathNodeMK4"
+      },
+      "Scalar Math.003": {
+        "attributes": {
+          "location": [
+            -880.0,
+            -500.0
+          ],
+          "hide": true
+        },
+        "properties": {
+          "current_op": "RADIANS"
+        },
+        "inputs": {
+          "x": {
+            "bl_idname": "SvStringsSocket",
+            "name": "x",
+            "properties": {
+              "prop_name": "x_"
+            }
+          }
+        },
+        "outputs": {
+          "Out": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Out"
+          }
+        },
+        "bl_idname": "SvScalarMathNodeMK4"
+      },
+      "Scalar Math.001": {
+        "attributes": {
+          "location": [
+            -880.0,
+            -620.0
+          ],
+          "hide": true
+        },
+        "properties": {
+          "current_op": "RADIANS"
+        },
+        "inputs": {
+          "x": {
+            "bl_idname": "SvStringsSocket",
+            "name": "x",
+            "properties": {
+              "prop_name": "x_"
+            }
+          }
+        },
+        "outputs": {
+          "Out": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Out"
+          }
+        },
+        "bl_idname": "SvScalarMathNodeMK4"
+      },
+      "Scalar Math.002": {
+        "attributes": {
+          "location": [
+            -1060.0,
+            -620.0
+          ],
+          "hide": true
+        },
+        "properties": {
+          "current_op": "NEG"
+        },
+        "inputs": {
+          "x": {
+            "bl_idname": "SvStringsSocket",
+            "name": "x",
+            "properties": {
+              "prop_name": "x_"
+            }
+          }
+        },
+        "outputs": {
+          "Out": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Out"
+          }
+        },
+        "bl_idname": "SvScalarMathNodeMK4"
+      },
+      "Vector Polar Input": {
+        "attributes": {
+          "location": [
+            -680.0,
+            -240.0
+          ],
+          "width": 100.0
+        },
+        "properties": {
+          "rho_": 0.5099999904632568,
+          "phi_": 0.8399999737739563
+        },
+        "inputs": {
+          "rho": {
+            "bl_idname": "SvStringsSocket",
+            "name": "rho",
+            "properties": {
+              "prop_name": "rho_"
+            }
+          },
+          "phi": {
+            "bl_idname": "SvStringsSocket",
+            "name": "phi",
+            "properties": {
+              "prop_name": "phi_"
+            }
+          },
+          "Z": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Z",
+            "properties": {
+              "prop_name": "z_"
+            }
+          }
+        },
+        "outputs": {
+          "Vectors": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vectors"
+          }
+        },
+        "bl_idname": "VectorPolarInNode"
+      },
+      "Move.002": {
+        "attributes": {
+          "location": [
+            -180.0,
+            -560.0
+          ]
+        },
+        "inputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices"
+          },
+          "Movement Vectors": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Movement Vectors",
+            "properties": {
+              "prop_name": "movement_vectors",
+              "expanded": true
+            }
+          },
+          "Strength": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Strength",
+            "properties": {
+              "prop_name": "strength"
+            }
+          }
+        },
+        "outputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices"
+          }
+        },
+        "bl_idname": "SvMoveNodeMk3"
+      },
+      "Move": {
+        "attributes": {
+          "location": [
+            -180.0,
+            -280.0
+          ]
+        },
+        "inputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices"
+          },
+          "Movement Vectors": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Movement Vectors",
+            "properties": {
+              "prop_name": "movement_vectors",
+              "expanded": true
+            }
+          },
+          "Strength": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Strength",
+            "properties": {
+              "prop_name": "strength"
+            }
+          }
+        },
+        "outputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices"
+          }
+        },
+        "bl_idname": "SvMoveNodeMk3"
+      },
+      "Move.001": {
+        "attributes": {
+          "location": [
+            -180.0,
+            -420.0
+          ]
+        },
+        "inputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices"
+          },
+          "Movement Vectors": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Movement Vectors",
+            "properties": {
+              "prop_name": "movement_vectors",
+              "expanded": true
+            }
+          },
+          "Strength": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Strength",
+            "properties": {
+              "prop_name": "strength"
+            }
+          }
+        },
+        "outputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices"
+          }
+        },
+        "bl_idname": "SvMoveNodeMk3"
+      },
+      "Evaluate Curve.003": {
+        "attributes": {
+          "location": [
+            560.0,
+            -880.0
+          ]
+        },
+        "properties": {
+          "eval_mode": "MANUAL",
+          "t_value": 0.0
+        },
+        "inputs": {
+          "Curve": {
+            "bl_idname": "SvCurveSocket",
+            "name": "Curve"
+          },
+          "T": {
+            "bl_idname": "SvStringsSocket",
+            "name": "T",
+            "properties": {
+              "prop_name": "t_value"
+            }
+          },
+          "Samples": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Samples",
+            "attributes": {
+              "hide": true
+            },
+            "properties": {
+              "prop_name": "sample_size"
+            }
+          }
+        },
+        "outputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices"
+          },
+          "Edges": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Edges"
+          },
+          "Tangents": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Tangents"
+          }
+        },
+        "bl_idname": "SvExEvalCurveNode"
+      },
+      "A Number": {
+        "attributes": {
+          "location": [
+            -1300.0,
+            -240.0
+          ],
+          "label": "radius"
+        },
+        "properties": {
+          "float_": 0.7339999675750732,
+          "float_min": 0.10000000149011612,
+          "float_max": 5.0,
+          "draw_3dpanel": true
+        },
+        "inputs": {
+          "Float": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Float",
+            "properties": {
+              "prop_name": "float_"
+            }
+          }
+        },
+        "outputs": {
+          "Float": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Float",
+            "properties": {
+              "custom_draw": "mode_custom_draw"
+            }
+          }
+        },
+        "bl_idname": "SvNumberNode"
+      },
+      "A Number.001": {
+        "attributes": {
+          "location": [
+            -1300.0,
+            -400.0
+          ],
+          "label": "openness"
+        },
+        "properties": {
+          "float_": 48.060001373291016,
+          "float_min": 45.0,
+          "draw_3dpanel": true,
+          "float_max": 135.0
+        },
+        "inputs": {
+          "Float": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Float",
+            "properties": {
+              "prop_name": "float_"
+            }
+          }
+        },
+        "outputs": {
+          "Float": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Float",
+            "properties": {
+              "custom_draw": "mode_custom_draw"
+            }
+          }
+        },
+        "bl_idname": "SvNumberNode"
+      },
+      "Vector In": {
+        "attributes": {
+          "location": [
+            -380.0,
+            -460.0
+          ],
+          "width": 100.0,
+          "hide": true
+        },
+        "inputs": {
+          "X": {
+            "bl_idname": "SvStringsSocket",
+            "name": "X",
+            "properties": {
+              "prop_name": "x_"
+            }
+          },
+          "Y": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Y",
+            "properties": {
+              "prop_name": "y_"
+            }
+          },
+          "Z": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Z",
+            "properties": {
+              "prop_name": "z_"
+            }
+          }
+        },
+        "outputs": {
+          "Vectors": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vectors"
+          }
+        },
+        "bl_idname": "GenVectorsNode"
+      },
+      "Mirror Mk2.002": {
+        "attributes": {
+          "location": [
+            60.0,
+            -900.0
+          ],
+          "hide": true
+        },
+        "inputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices"
+          },
+          "Vert A": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vert A",
+            "properties": {
+              "prop_name": "vert_a"
+            }
+          },
+          "Vert B": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vert B",
+            "attributes": {
+              "hide": true
+            },
+            "properties": {
+              "prop_name": "vert_b"
+            }
+          },
+          "Plane": {
+            "bl_idname": "SvMatrixSocket",
+            "name": "Plane",
+            "attributes": {
+              "hide": true
+            }
+          },
+          "Normal": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Normal",
+            "attributes": {
+              "hide": true
+            },
+            "properties": {
+              "prop_name": "normal"
+            }
+          },
+          "Direction": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Direction",
+            "attributes": {
+              "hide": true
+            },
+            "properties": {
+              "prop_name": "direction"
+            }
+          }
+        },
+        "outputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices"
+          }
+        },
+        "bl_idname": "SvMirrorNodeMk2"
+      },
+      "Scalar Math.004": {
+        "attributes": {
+          "location": [
+            -400.0,
+            -400.0
+          ],
+          "hide": true
+        },
+        "properties": {
+          "current_op": "NEG"
+        },
+        "inputs": {
+          "x": {
+            "bl_idname": "SvStringsSocket",
+            "name": "x",
+            "properties": {
+              "prop_name": "x_"
+            }
+          }
+        },
+        "outputs": {
+          "Out": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Out"
+          }
+        },
+        "bl_idname": "SvScalarMathNodeMK4"
+      },
+      "Evaluate Curve.002": {
+        "attributes": {
+          "location": [
+            560.0,
+            -660.0
+          ],
+          "width": 144.89105224609375
+        },
+        "properties": {
+          "eval_mode": "MANUAL",
+          "t_value": 4.5743889808654785
+        },
+        "inputs": {
+          "Curve": {
+            "bl_idname": "SvCurveSocket",
+            "name": "Curve"
+          },
+          "T": {
+            "bl_idname": "SvStringsSocket",
+            "name": "T",
+            "properties": {
+              "prop_name": "t_value"
+            }
+          },
+          "Samples": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Samples",
+            "attributes": {
+              "hide": true
+            },
+            "properties": {
+              "prop_name": "sample_size"
+            }
+          }
+        },
+        "outputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices"
+          },
+          "Edges": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Edges"
+          },
+          "Tangents": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Tangents"
+          }
+        },
+        "bl_idname": "SvExEvalCurveNode"
+      },
+      "Arc 3pt (Curve)": {
+        "attributes": {
+          "location": [
+            240.0,
+            -400.0
+          ]
+        },
+        "inputs": {
+          "Point1": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Point1",
+            "properties": {
+              "use_prop": true
+            }
+          },
+          "Point2": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Point2",
+            "properties": {
+              "use_prop": true,
+              "prop": [
+                1.0,
+                0.0,
+                0.0
+              ]
+            }
+          },
+          "Point3": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Point3",
+            "properties": {
+              "use_prop": true,
+              "prop": [
+                0.0,
+                1.0,
+                0.0
+              ]
+            }
+          }
+        },
+        "outputs": {
+          "Arc": {
+            "bl_idname": "SvCurveSocket",
+            "name": "Arc"
+          },
+          "Circle": {
+            "bl_idname": "SvCurveSocket",
+            "name": "Circle"
+          },
+          "Center": {
+            "bl_idname": "SvMatrixSocket",
+            "name": "Center"
+          },
+          "Radius": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Radius"
+          },
+          "Angle": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Angle"
+          }
+        },
+        "bl_idname": "SvArc3ptCurveNode"
+      },
+      "Curve Domain": {
+        "attributes": {
+          "location": [
+            400.0,
+            -640.0
+          ],
+          "hide": true
+        },
+        "inputs": {
+          "Curve": {
+            "bl_idname": "SvCurveSocket",
+            "name": "Curve"
+          }
+        },
+        "outputs": {
+          "TMin": {
+            "bl_idname": "SvStringsSocket",
+            "name": "TMin"
+          },
+          "TMax": {
+            "bl_idname": "SvStringsSocket",
+            "name": "TMax"
+          },
+          "Range": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Range"
+          }
+        },
+        "bl_idname": "SvExCurveRangeNode"
+      },
+      "A Number.005": {
+        "attributes": {
+          "location": [
+            -1300.0,
+            -600.0
+          ],
+          "label": "curvaturing"
+        },
+        "properties": {
+          "float_": 2.2770001888275146,
+          "draw_3dpanel": true
+        },
+        "inputs": {
+          "Float": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Float",
+            "properties": {
+              "prop_name": "float_"
+            }
+          }
+        },
+        "outputs": {
+          "Float": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Float",
+            "properties": {
+              "custom_draw": "mode_custom_draw"
+            }
+          }
+        },
+        "bl_idname": "SvNumberNode"
+      },
+      "Evaluate Curve.001": {
+        "attributes": {
+          "location": [
+            560.0,
+            -420.0
+          ]
+        },
+        "properties": {
+          "eval_mode": "MANUAL",
+          "t_value": 4.71238899230957
+        },
+        "inputs": {
+          "Curve": {
+            "bl_idname": "SvCurveSocket",
+            "name": "Curve"
+          },
+          "T": {
+            "bl_idname": "SvStringsSocket",
+            "name": "T",
+            "properties": {
+              "prop_name": "t_value"
+            }
+          },
+          "Samples": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Samples",
+            "attributes": {
+              "hide": true
+            },
+            "properties": {
+              "prop_name": "sample_size"
+            }
+          }
+        },
+        "outputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices"
+          },
+          "Edges": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Edges"
+          },
+          "Tangents": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Tangents"
+          }
+        },
+        "bl_idname": "SvExEvalCurveNode"
+      },
+      "Scale.002": {
+        "attributes": {
+          "location": [
+            1150.0,
+            -670.0
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.003"
+          }
+        },
+        "inputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices"
+          },
+          "Centers": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Centers",
+            "properties": {
+              "prop_name": "centers"
+            }
+          },
+          "Scale": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Scale",
+            "properties": {
+              "prop_name": "scale"
+            }
+          },
+          "Strength": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Strength",
+            "properties": {
+              "prop_name": "multiplier"
+            }
+          }
+        },
+        "outputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices"
+          }
+        },
+        "bl_idname": "SvScaleNodeMk3"
+      },
+      "Scale.003": {
+        "attributes": {
+          "location": [
+            1150.0,
+            -830.0
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.003"
+          }
+        },
+        "inputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices"
+          },
+          "Centers": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Centers",
+            "properties": {
+              "prop_name": "centers"
+            }
+          },
+          "Scale": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Scale",
+            "properties": {
+              "prop_name": "scale"
+            }
+          },
+          "Strength": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Strength",
+            "properties": {
+              "prop_name": "multiplier"
+            }
+          }
+        },
+        "outputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices"
+          }
+        },
+        "bl_idname": "SvScaleNodeMk3"
+      },
+      "Bezier Spline Segment (Curve).001": {
+        "attributes": {
+          "location": [
+            1350.0,
+            -670.0
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.003"
+          }
+        },
+        "properties": {
+          "mode": "3_2pt_tan"
+        },
+        "inputs": {
+          "Start": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Start",
+            "properties": {
+              "use_prop": true
+            }
+          },
+          "Control1": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Tangent1",
+            "properties": {
+              "use_prop": true,
+              "prop": [
+                1.0,
+                1.0,
+                0.0
+              ]
+            }
+          },
+          "Control2": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Tangent2",
+            "properties": {
+              "use_prop": true,
+              "prop": [
+                2.0,
+                -1.0,
+                0.0
+              ]
+            }
+          },
+          "End": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "End",
+            "properties": {
+              "use_prop": true,
+              "prop": [
+                3.0,
+                0.0,
+                0.0
+              ]
+            }
+          },
+          "ControlPoints": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "ControlPoints",
+            "attributes": {
+              "hide": true
+            }
+          }
+        },
+        "outputs": {
+          "Curve": {
+            "bl_idname": "SvCurveSocket",
+            "name": "Curve"
+          },
+          "ControlPoints": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "ControlPoints"
+          }
+        },
+        "bl_idname": "SvBezierSplineNode"
+      },
+      "Viewer Draw Curve.004": {
+        "attributes": {
+          "location": [
+            1550.0,
+            -670.0
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.003"
+          }
+        },
+        "inputs": {
+          "Curve": {
+            "bl_idname": "SvCurveSocket",
+            "name": "Curve"
+          },
+          "Resolution": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Resolution",
+            "properties": {
+              "prop_name": "resolution"
+            }
+          }
+        },
+        "bl_idname": "SvCurveViewerDrawNode"
+      },
+      "Viewer Draw Curve.003": {
+        "attributes": {
+          "location": [
+            1570.0,
+            -1140.0
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame"
+          }
+        },
+        "properties": {
+          "resolution": 120,
+          "line_color": [
+            0.4466232657432556,
+            1.0,
+            0.3343181908130646,
+            1.0
+          ]
+        },
+        "inputs": {
+          "Curve": {
+            "bl_idname": "SvCurveSocket",
+            "name": "Curve"
+          },
+          "Resolution": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Resolution",
+            "properties": {
+              "prop_name": "resolution"
+            }
+          }
+        },
+        "bl_idname": "SvCurveViewerDrawNode"
+      },
+      "Blend Curves": {
+        "attributes": {
+          "location": [
+            1130.0,
+            -1140.0
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame"
+          }
+        },
+        "properties": {
+          "cyclic": true,
+          "factor1": 0.6700000166893005
+        },
+        "inputs": {
+          "Curve1": {
+            "bl_idname": "SvCurveSocket",
+            "name": "Curve1"
+          },
+          "Curve2": {
+            "bl_idname": "SvCurveSocket",
+            "name": "Curve2"
+          },
+          "Curves": {
+            "bl_idname": "SvCurveSocket",
+            "name": "Curves",
+            "attributes": {
+              "hide": true
+            }
+          },
+          "Factor1": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Factor1",
+            "properties": {
+              "prop_name": "factor1"
+            }
+          },
+          "Factor2": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Factor2",
+            "properties": {
+              "prop_name": "factor2"
+            }
+          },
+          "Parameter": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Parameter",
+            "attributes": {
+              "hide": true
+            },
+            "properties": {
+              "prop_name": "parameter"
+            }
+          }
+        },
+        "outputs": {
+          "Curve": {
+            "bl_idname": "SvCurveSocket",
+            "name": "Curve"
+          },
+          "ControlPoints": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "ControlPoints"
+          }
+        },
+        "bl_idname": "SvExBlendCurvesMk2Node"
+      },
+      "Viewer Draw Curve.001": {
+        "attributes": {
+          "location": [
+            300.0,
+            -960.0
+          ],
+          "hide": true
+        },
+        "inputs": {
+          "Curve": {
+            "bl_idname": "SvCurveSocket",
+            "name": "Curve"
+          },
+          "Resolution": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Resolution",
+            "properties": {
+              "prop_name": "resolution"
+            }
+          }
+        },
+        "bl_idname": "SvCurveViewerDrawNode"
+      },
+      "Mirror Mk2.001": {
+        "attributes": {
+          "location": [
+            60.0,
+            -760.0
+          ],
+          "hide": true
+        },
+        "inputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices"
+          },
+          "Vert A": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vert A",
+            "properties": {
+              "prop_name": "vert_a"
+            }
+          },
+          "Vert B": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vert B",
+            "attributes": {
+              "hide": true
+            },
+            "properties": {
+              "prop_name": "vert_b"
+            }
+          },
+          "Plane": {
+            "bl_idname": "SvMatrixSocket",
+            "name": "Plane",
+            "attributes": {
+              "hide": true
+            }
+          },
+          "Normal": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Normal",
+            "attributes": {
+              "hide": true
+            },
+            "properties": {
+              "prop_name": "normal"
+            }
+          },
+          "Direction": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Direction",
+            "attributes": {
+              "hide": true
+            },
+            "properties": {
+              "prop_name": "direction"
+            }
+          }
+        },
+        "outputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices"
+          }
+        },
+        "bl_idname": "SvMirrorNodeMk2"
+      },
+      "Mirror Mk2": {
+        "attributes": {
+          "location": [
+            60.0,
+            -620.0
+          ],
+          "hide": true
+        },
+        "inputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices"
+          },
+          "Vert A": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vert A",
+            "properties": {
+              "prop_name": "vert_a"
+            }
+          },
+          "Vert B": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vert B",
+            "attributes": {
+              "hide": true
+            },
+            "properties": {
+              "prop_name": "vert_b"
+            }
+          },
+          "Plane": {
+            "bl_idname": "SvMatrixSocket",
+            "name": "Plane",
+            "attributes": {
+              "hide": true
+            }
+          },
+          "Normal": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Normal",
+            "attributes": {
+              "hide": true
+            },
+            "properties": {
+              "prop_name": "normal"
+            }
+          },
+          "Direction": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Direction",
+            "attributes": {
+              "hide": true
+            },
+            "properties": {
+              "prop_name": "direction"
+            }
+          }
+        },
+        "outputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices"
+          }
+        },
+        "bl_idname": "SvMirrorNodeMk2"
+      },
+      "Apply Field to Curve": {
+        "attributes": {
+          "location": [
+            1340.0,
+            -1210.0
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame"
+          }
+        },
+        "inputs": {
+          "Field": {
+            "bl_idname": "SvVectorFieldSocket",
+            "name": "Field"
+          },
+          "Curve": {
+            "bl_idname": "SvCurveSocket",
+            "name": "Curve"
+          },
+          "Coefficient": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Coefficient",
+            "properties": {
+              "prop_name": "coefficient"
+            }
+          }
+        },
+        "outputs": {
+          "Curve": {
+            "bl_idname": "SvCurveSocket",
+            "name": "Curve"
+          }
+        },
+        "bl_idname": "SvExApplyFieldToCurveNode"
+      },
+      "Vector In.003": {
+        "attributes": {
+          "location": [
+            1340.0,
+            -1390.0
+          ],
+          "width": 100.0,
+          "parent": {
+            "type": "NODE",
+            "value": "Frame"
+          }
+        },
+        "properties": {
+          "z_": -0.05999999865889549
+        },
+        "inputs": {
+          "X": {
+            "bl_idname": "SvStringsSocket",
+            "name": "X",
+            "properties": {
+              "prop_name": "x_"
+            }
+          },
+          "Y": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Y",
+            "properties": {
+              "prop_name": "y_"
+            }
+          },
+          "Z": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Z",
+            "properties": {
+              "prop_name": "z_"
+            }
+          }
+        },
+        "outputs": {
+          "Vectors": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vectors"
+          }
+        },
+        "bl_idname": "GenVectorsNode"
+      },
+      "Viewer Draw Curve": {
+        "attributes": {
+          "location": [
+            300.0,
+            -320.0
+          ],
+          "hide": true
+        },
+        "inputs": {
+          "Curve": {
+            "bl_idname": "SvCurveSocket",
+            "name": "Curve"
+          },
+          "Resolution": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Resolution",
+            "properties": {
+              "prop_name": "resolution"
+            }
+          }
+        },
+        "bl_idname": "SvCurveViewerDrawNode"
+      },
+      "Evaluate Curve": {
+        "attributes": {
+          "location": [
+            560.0,
+            -200.0
+          ]
+        },
+        "properties": {
+          "eval_mode": "MANUAL",
+          "t_value": 0.0
+        },
+        "inputs": {
+          "Curve": {
+            "bl_idname": "SvCurveSocket",
+            "name": "Curve"
+          },
+          "T": {
+            "bl_idname": "SvStringsSocket",
+            "name": "T",
+            "properties": {
+              "prop_name": "t_value"
+            }
+          },
+          "Samples": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Samples",
+            "attributes": {
+              "hide": true
+            },
+            "properties": {
+              "prop_name": "sample_size"
+            }
+          }
+        },
+        "outputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices"
+          },
+          "Edges": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Edges"
+          },
+          "Tangents": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Tangents"
+          }
+        },
+        "bl_idname": "SvExEvalCurveNode"
+      },
+      "Arc 3pt (Curve).001": {
+        "attributes": {
+          "location": [
+            240.0,
+            -660.0
+          ]
+        },
+        "inputs": {
+          "Point1": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Point1",
+            "properties": {
+              "use_prop": true
+            }
+          },
+          "Point2": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Point2",
+            "properties": {
+              "use_prop": true,
+              "prop": [
+                1.0,
+                0.0,
+                0.0
+              ]
+            }
+          },
+          "Point3": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Point3",
+            "properties": {
+              "use_prop": true,
+              "prop": [
+                0.0,
+                1.0,
+                0.0
+              ]
+            }
+          }
+        },
+        "outputs": {
+          "Arc": {
+            "bl_idname": "SvCurveSocket",
+            "name": "Arc"
+          },
+          "Circle": {
+            "bl_idname": "SvCurveSocket",
+            "name": "Circle"
+          },
+          "Center": {
+            "bl_idname": "SvMatrixSocket",
+            "name": "Center"
+          },
+          "Radius": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Radius"
+          },
+          "Angle": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Angle"
+          }
+        },
+        "bl_idname": "SvArc3ptCurveNode"
+      },
+      "Evaluate Curve.004": {
+        "attributes": {
+          "location": [
+            1755.0028076171875,
+            453.0643615722656
+          ]
+        },
+        "properties": {
+          "t_value": 0.0
+        },
+        "inputs": {
+          "Curve": {
+            "bl_idname": "SvCurveSocket",
+            "name": "Curve"
+          },
+          "T": {
+            "bl_idname": "SvStringsSocket",
+            "name": "T",
+            "attributes": {
+              "hide": true
+            },
+            "properties": {
+              "prop_name": "t_value"
+            }
+          },
+          "Samples": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Samples",
+            "properties": {
+              "prop_name": "sample_size"
+            }
+          }
+        },
+        "outputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices"
+          },
+          "Edges": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Edges"
+          },
+          "Tangents": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Tangents"
+          }
+        },
+        "bl_idname": "SvExEvalCurveNode"
+      },
+      "Evaluate Curve.005": {
+        "attributes": {
+          "location": [
+            1763.040771484375,
+            233.78314208984375
+          ]
+        },
+        "properties": {
+          "t_value": 0.0
+        },
+        "inputs": {
+          "Curve": {
+            "bl_idname": "SvCurveSocket",
+            "name": "Curve"
+          },
+          "T": {
+            "bl_idname": "SvStringsSocket",
+            "name": "T",
+            "attributes": {
+              "hide": true
+            },
+            "properties": {
+              "prop_name": "t_value"
+            }
+          },
+          "Samples": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Samples",
+            "properties": {
+              "prop_name": "sample_size"
+            }
+          }
+        },
+        "outputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices"
+          },
+          "Edges": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Edges"
+          },
+          "Tangents": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Tangents"
+          }
+        },
+        "bl_idname": "SvExEvalCurveNode"
+      },
+      "2pt Quadratic Spline": {
+        "attributes": {
+          "location": [
+            1320.0,
+            510.0
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.001"
+          }
+        },
+        "properties": {
+          "handle": [
+            0.0,
+            0.4270000159740448,
+            0.0
+          ],
+          "num_verts": 30
+        },
+        "inputs": {
+          "NumVerts": {
+            "bl_idname": "SvStringsSocket",
+            "name": "NumVerts",
+            "properties": {
+              "prop_name": "num_verts"
+            }
+          },
+          "Knot1": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Knot1",
+            "properties": {
+              "prop_name": "knot1"
+            }
+          },
+          "Knot2": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Knot2",
+            "properties": {
+              "prop_name": "knot2"
+            }
+          },
+          "Handle": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Handle",
+            "properties": {
+              "prop_name": "handle",
+              "expanded": true
+            }
+          }
+        },
+        "outputs": {
+          "Verts": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Verts"
+          },
+          "Edges": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Edges"
+          },
+          "ControlVerts": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "ControlVerts"
+          },
+          "ControlEdges": {
+            "bl_idname": "SvStringsSocket",
+            "name": "ControlEdges"
+          }
+        },
+        "bl_idname": "SvQuadraticSplineNode"
+      },
+      "2pt Quadratic Spline.001": {
+        "attributes": {
+          "location": [
+            1330.0,
+            200.0
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.001"
+          }
+        },
+        "properties": {
+          "handle": [
+            0.0,
+            0.4270000159740448,
+            0.0
+          ],
+          "num_verts": 30
+        },
+        "inputs": {
+          "NumVerts": {
+            "bl_idname": "SvStringsSocket",
+            "name": "NumVerts",
+            "properties": {
+              "prop_name": "num_verts"
+            }
+          },
+          "Knot1": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Knot1",
+            "properties": {
+              "prop_name": "knot1"
+            }
+          },
+          "Knot2": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Knot2",
+            "properties": {
+              "prop_name": "knot2"
+            }
+          },
+          "Handle": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Handle",
+            "properties": {
+              "prop_name": "handle",
+              "expanded": true
+            }
+          }
+        },
+        "outputs": {
+          "Verts": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Verts"
+          },
+          "Edges": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Edges"
+          },
+          "ControlVerts": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "ControlVerts"
+          },
+          "ControlEdges": {
+            "bl_idname": "SvStringsSocket",
+            "name": "ControlEdges"
+          }
+        },
+        "bl_idname": "SvQuadraticSplineNode"
+      },
+      "Vector In.001": {
+        "attributes": {
+          "location": [
+            1130.0,
+            500.0
+          ],
+          "width": 100.0,
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.001"
+          }
+        },
+        "inputs": {
+          "X": {
+            "bl_idname": "SvStringsSocket",
+            "name": "X",
+            "properties": {
+              "prop_name": "x_"
+            }
+          },
+          "Y": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Y",
+            "properties": {
+              "prop_name": "y_"
+            }
+          },
+          "Z": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Z",
+            "properties": {
+              "prop_name": "z_"
+            }
+          }
+        },
+        "outputs": {
+          "Vectors": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vectors"
+          }
+        },
+        "bl_idname": "GenVectorsNode"
+      },
+      "Vector In.002": {
+        "attributes": {
+          "location": [
+            1090.0,
+            80.0
+          ],
+          "width": 100.0,
+          "hide": true,
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.001"
+          }
+        },
+        "inputs": {
+          "X": {
+            "bl_idname": "SvStringsSocket",
+            "name": "X",
+            "properties": {
+              "prop_name": "x_"
+            }
+          },
+          "Y": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Y",
+            "properties": {
+              "prop_name": "y_"
+            }
+          },
+          "Z": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Z",
+            "properties": {
+              "prop_name": "z_"
+            }
+          }
+        },
+        "outputs": {
+          "Vectors": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vectors"
+          }
+        },
+        "bl_idname": "GenVectorsNode"
+      },
+      "Scalar Math.006": {
+        "attributes": {
+          "location": [
+            1070.0,
+            120.0
+          ],
+          "hide": true,
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.001"
+          }
+        },
+        "properties": {
+          "current_op": "NEG"
+        },
+        "inputs": {
+          "x": {
+            "bl_idname": "SvStringsSocket",
+            "name": "x",
+            "properties": {
+              "prop_name": "x_"
+            }
+          }
+        },
+        "outputs": {
+          "Out": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Out"
+          }
+        },
+        "bl_idname": "SvScalarMathNodeMK4"
+      },
+      "Formula": {
+        "attributes": {
+          "location": [
+            900.0,
+            320.0
+          ],
+          "width": 111.912109375,
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.001"
+          }
+        },
+        "properties": {
+          "formula1": "(y*x/(100))"
+        },
+        "inputs": {
+          "x": {
+            "bl_idname": "SvFormulaSocket",
+            "name": "x"
+          },
+          "y": {
+            "bl_idname": "SvFormulaSocket",
+            "name": "y"
+          }
+        },
+        "outputs": {
+          "Result": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Result"
+          }
+        },
+        "bl_idname": "SvFormulaNodeMk5"
+      },
+      "Matrix In": {
+        "attributes": {
+          "location": [
+            1340.0,
+            260.0
+          ],
+          "hide": true,
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.001"
+          }
+        },
+        "properties": {
+          "location_": [
+            0.0,
+            0.0,
+            0.05000000074505806
+          ]
+        },
+        "inputs": {
+          "Location": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Location",
+            "properties": {
+              "prop_name": "location_",
+              "expanded": true
+            }
+          },
+          "Scale": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Scale",
+            "properties": {
+              "prop_name": "scale"
+            }
+          },
+          "Quaternion": {
+            "bl_idname": "SvQuaternionSocket",
+            "name": "Quaternion",
+            "attributes": {
+              "hide": true
+            },
+            "properties": {
+              "prop_name": "quaternion"
+            }
+          },
+          "Angle X": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Angle X",
+            "attributes": {
+              "hide": true
+            },
+            "properties": {
+              "prop_name": "angle_x"
+            }
+          },
+          "Angle Y": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Angle Y",
+            "attributes": {
+              "hide": true
+            },
+            "properties": {
+              "prop_name": "angle_y"
+            }
+          },
+          "Angle Z": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Angle Z",
+            "attributes": {
+              "hide": true
+            },
+            "properties": {
+              "prop_name": "angle_z"
+            }
+          },
+          "Axis": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Axis",
+            "properties": {
+              "prop_name": "axis"
+            }
+          },
+          "Angle": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Angle",
+            "properties": {
+              "prop_name": "angle"
+            }
+          }
+        },
+        "outputs": {
+          "Matrices": {
+            "bl_idname": "SvMatrixSocket",
+            "name": "Matrices"
+          }
+        },
+        "bl_idname": "SvMatrixInNodeMK4"
+      },
+      "Viewer Draw.001": {
+        "attributes": {
+          "location": [
+            1530.0,
+            200.0
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.001"
+          }
+        },
+        "properties": {
+          "display_verts": false,
+          "line_width": 2
+        },
+        "inputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices",
+            "properties": {
+              "custom_draw": "draw_property_socket"
+            }
+          },
+          "Edges": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Edges",
+            "properties": {
+              "custom_draw": "draw_property_socket"
+            }
+          },
+          "Polygons": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Polygons"
+          },
+          "Matrix": {
+            "bl_idname": "SvMatrixSocket",
+            "name": "Matrix"
+          },
+          "Vector Color": {
+            "bl_idname": "SvColorSocket",
+            "name": "Vector Color",
+            "properties": {
+              "custom_draw": "draw_color_socket",
+              "prop_name": "vector_color"
+            }
+          },
+          "Edge Color": {
+            "bl_idname": "SvColorSocket",
+            "name": "Edge Color",
+            "properties": {
+              "custom_draw": "draw_color_socket",
+              "prop_name": "edge_color"
+            }
+          },
+          "Polygon Color": {
+            "bl_idname": "SvColorSocket",
+            "name": "Polygon Color",
+            "properties": {
+              "custom_draw": "draw_color_socket",
+              "prop_name": "polygon_color"
+            }
+          },
+          "attrs": {
+            "bl_idname": "SvStringsSocket",
+            "name": "attrs",
+            "attributes": {
+              "hide": true
+            },
+            "properties": {
+              "quick_link_to_node": "SvVDAttrsNodeMk2"
+            }
+          }
+        },
+        "bl_idname": "SvViewerDrawMk4"
+      },
+      "Viewer Draw": {
+        "attributes": {
+          "location": [
+            1520.0,
+            510.0
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.001"
+          }
+        },
+        "properties": {
+          "display_verts": false,
+          "line_width": 2
+        },
+        "inputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices",
+            "properties": {
+              "custom_draw": "draw_property_socket"
+            }
+          },
+          "Edges": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Edges",
+            "properties": {
+              "custom_draw": "draw_property_socket"
+            }
+          },
+          "Polygons": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Polygons"
+          },
+          "Matrix": {
+            "bl_idname": "SvMatrixSocket",
+            "name": "Matrix"
+          },
+          "Vector Color": {
+            "bl_idname": "SvColorSocket",
+            "name": "Vector Color",
+            "properties": {
+              "custom_draw": "draw_color_socket",
+              "prop_name": "vector_color"
+            }
+          },
+          "Edge Color": {
+            "bl_idname": "SvColorSocket",
+            "name": "Edge Color",
+            "properties": {
+              "custom_draw": "draw_color_socket",
+              "prop_name": "edge_color"
+            }
+          },
+          "Polygon Color": {
+            "bl_idname": "SvColorSocket",
+            "name": "Polygon Color",
+            "properties": {
+              "custom_draw": "draw_color_socket",
+              "prop_name": "polygon_color"
+            }
+          },
+          "attrs": {
+            "bl_idname": "SvStringsSocket",
+            "name": "attrs",
+            "attributes": {
+              "hide": true
+            },
+            "properties": {
+              "quick_link_to_node": "SvVDAttrsNodeMk2"
+            }
+          }
+        },
+        "bl_idname": "SvViewerDrawMk4"
+      },
+      "Viewer Draw.003": {
+        "attributes": {
+          "location": [
+            1960.55810546875,
+            510.81622314453125
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.001"
+          }
+        },
+        "properties": {
+          "display_verts": false,
+          "line_width": 2
+        },
+        "inputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices",
+            "properties": {
+              "custom_draw": "draw_property_socket"
+            }
+          },
+          "Edges": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Edges",
+            "properties": {
+              "custom_draw": "draw_property_socket"
+            }
+          },
+          "Polygons": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Polygons"
+          },
+          "Matrix": {
+            "bl_idname": "SvMatrixSocket",
+            "name": "Matrix"
+          },
+          "Vector Color": {
+            "bl_idname": "SvColorSocket",
+            "name": "Vector Color",
+            "properties": {
+              "custom_draw": "draw_color_socket",
+              "prop_name": "vector_color"
+            }
+          },
+          "Edge Color": {
+            "bl_idname": "SvColorSocket",
+            "name": "Edge Color",
+            "properties": {
+              "custom_draw": "draw_color_socket",
+              "prop_name": "edge_color"
+            }
+          },
+          "Polygon Color": {
+            "bl_idname": "SvColorSocket",
+            "name": "Polygon Color",
+            "properties": {
+              "custom_draw": "draw_color_socket",
+              "prop_name": "polygon_color"
+            }
+          },
+          "attrs": {
+            "bl_idname": "SvStringsSocket",
+            "name": "attrs",
+            "attributes": {
+              "hide": true
+            },
+            "properties": {
+              "quick_link_to_node": "SvVDAttrsNodeMk2"
+            }
+          }
+        },
+        "bl_idname": "SvViewerDrawMk4"
+      },
+      "Viewer Draw.002": {
+        "attributes": {
+          "location": [
+            1970.55810546875,
+            200.81622314453125
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.001"
+          }
+        },
+        "properties": {
+          "display_verts": false,
+          "line_width": 2
+        },
+        "inputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices",
+            "properties": {
+              "custom_draw": "draw_property_socket"
+            }
+          },
+          "Edges": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Edges",
+            "properties": {
+              "custom_draw": "draw_property_socket"
+            }
+          },
+          "Polygons": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Polygons"
+          },
+          "Matrix": {
+            "bl_idname": "SvMatrixSocket",
+            "name": "Matrix"
+          },
+          "Vector Color": {
+            "bl_idname": "SvColorSocket",
+            "name": "Vector Color",
+            "properties": {
+              "custom_draw": "draw_color_socket",
+              "prop_name": "vector_color"
+            }
+          },
+          "Edge Color": {
+            "bl_idname": "SvColorSocket",
+            "name": "Edge Color",
+            "properties": {
+              "custom_draw": "draw_color_socket",
+              "prop_name": "edge_color"
+            }
+          },
+          "Polygon Color": {
+            "bl_idname": "SvColorSocket",
+            "name": "Polygon Color",
+            "properties": {
+              "custom_draw": "draw_color_socket",
+              "prop_name": "polygon_color"
+            }
+          },
+          "attrs": {
+            "bl_idname": "SvStringsSocket",
+            "name": "attrs",
+            "attributes": {
+              "hide": true
+            },
+            "properties": {
+              "quick_link_to_node": "SvVDAttrsNodeMk2"
+            }
+          }
+        },
+        "bl_idname": "SvViewerDrawMk4"
+      },
+      "Scale": {
+        "attributes": {
+          "location": [
+            1140.0,
+            -260.0
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.002"
+          }
+        },
+        "properties": {
+          "multiplier": -1.0
+        },
+        "inputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices"
+          },
+          "Centers": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Centers",
+            "properties": {
+              "prop_name": "centers"
+            }
+          },
+          "Scale": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Scale",
+            "properties": {
+              "prop_name": "scale"
+            }
+          },
+          "Strength": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Strength",
+            "properties": {
+              "prop_name": "multiplier"
+            }
+          }
+        },
+        "outputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices"
+          }
+        },
+        "bl_idname": "SvScaleNodeMk3"
+      },
+      "Scale.001": {
+        "attributes": {
+          "location": [
+            1140.0,
+            -420.0
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.002"
+          }
+        },
+        "properties": {
+          "multiplier": -1.0
+        },
+        "inputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices"
+          },
+          "Centers": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Centers",
+            "properties": {
+              "prop_name": "centers"
+            }
+          },
+          "Scale": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Scale",
+            "properties": {
+              "prop_name": "scale"
+            }
+          },
+          "Strength": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Strength",
+            "properties": {
+              "prop_name": "multiplier"
+            }
+          }
+        },
+        "outputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices"
+          }
+        },
+        "bl_idname": "SvScaleNodeMk3"
+      },
+      "Bezier Spline Segment (Curve)": {
+        "attributes": {
+          "location": [
+            1340.0,
+            -260.0
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.002"
+          }
+        },
+        "properties": {
+          "mode": "3_2pt_tan"
+        },
+        "inputs": {
+          "Start": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Start",
+            "properties": {
+              "use_prop": true
+            }
+          },
+          "Control1": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Tangent1",
+            "properties": {
+              "use_prop": true,
+              "prop": [
+                1.0,
+                1.0,
+                0.0
+              ]
+            }
+          },
+          "Control2": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Tangent2",
+            "properties": {
+              "use_prop": true,
+              "prop": [
+                2.0,
+                -1.0,
+                0.0
+              ]
+            }
+          },
+          "End": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "End",
+            "properties": {
+              "use_prop": true,
+              "prop": [
+                3.0,
+                0.0,
+                0.0
+              ]
+            }
+          },
+          "ControlPoints": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "ControlPoints",
+            "attributes": {
+              "hide": true
+            }
+          }
+        },
+        "outputs": {
+          "Curve": {
+            "bl_idname": "SvCurveSocket",
+            "name": "Curve"
+          },
+          "ControlPoints": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "ControlPoints"
+          }
+        },
+        "bl_idname": "SvBezierSplineNode"
+      },
+      "Viewer Draw Curve.002": {
+        "attributes": {
+          "location": [
+            1540.0,
+            -260.0
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.002"
+          }
+        },
+        "inputs": {
+          "Curve": {
+            "bl_idname": "SvCurveSocket",
+            "name": "Curve"
+          },
+          "Resolution": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Resolution",
+            "properties": {
+              "prop_name": "resolution"
+            }
+          }
+        },
+        "bl_idname": "SvCurveViewerDrawNode"
+      },
+      "Scalar Math.005": {
+        "attributes": {
+          "location": [
+            900.0,
+            -400.0
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.002"
+          }
+        },
+        "properties": {
+          "current_op": "NEG"
+        },
+        "inputs": {
+          "x": {
+            "bl_idname": "SvStringsSocket",
+            "name": "x",
+            "properties": {
+              "prop_name": "x_"
+            }
+          }
+        },
+        "outputs": {
+          "Out": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Out"
+          }
+        },
+        "bl_idname": "SvScalarMathNodeMK4"
+      },
+      "List Join": {
+        "attributes": {
+          "location": [
+            1949.5227737426758,
+            -515.5711059570312
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.005"
+          }
+        },
+        "properties": {
+          "JoinLevel": 2
+        },
+        "inputs": {
+          "data": {
+            "bl_idname": "SvStringsSocket",
+            "name": "data"
+          },
+          "data 1": {
+            "bl_idname": "SvStringsSocket",
+            "name": "data 1"
+          },
+          "data 2": {
+            "bl_idname": "SvStringsSocket",
+            "name": "data 2"
+          },
+          "data 3": {
+            "bl_idname": "SvStringsSocket",
+            "name": "data 3"
+          },
+          "data 4": {
+            "bl_idname": "SvStringsSocket",
+            "name": "data 4"
+          },
+          "data 5": {
+            "bl_idname": "SvStringsSocket",
+            "name": "data 5"
+          },
+          "data 6": {
+            "bl_idname": "SvStringsSocket",
+            "name": "data 6"
+          }
+        },
+        "outputs": {
+          "data_001": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "data"
+          }
+        },
+        "bl_idname": "ListJoinNode"
+      },
+      "Viewer Index+": {
+        "attributes": {
+          "location": [
+            2278.0062942504883,
+            -291.9642333984375
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.005"
+          }
+        },
+        "properties": {
+          "draw_bg": true
+        },
+        "inputs": {
+          "verts": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "verts"
+          },
+          "edges": {
+            "bl_idname": "SvStringsSocket",
+            "name": "edges"
+          },
+          "faces": {
+            "bl_idname": "SvStringsSocket",
+            "name": "faces"
+          },
+          "matrix": {
+            "bl_idname": "SvMatrixSocket",
+            "name": "matrix"
+          },
+          "text": {
+            "bl_idname": "SvStringsSocket",
+            "name": "text"
+          }
+        },
+        "bl_idname": "SvIDXViewer28"
+      },
+      "Poly Arc": {
+        "attributes": {
+          "location": [
+            2300.9931106567383,
+            -618.62548828125
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.005"
+          }
+        },
+        "properties": {
+          "is_cyclic": true
+        },
+        "inputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices"
+          },
+          "Tangent": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Tangent"
+          }
+        },
+        "outputs": {
+          "Curve": {
+            "bl_idname": "SvCurveSocket",
+            "name": "Curve"
+          },
+          "Center": {
+            "bl_idname": "SvMatrixSocket",
+            "name": "Center",
+            "properties": {
+              "use_unwrap": true
+            }
+          },
+          "Radius": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Radius"
+          },
+          "Angle": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Angle"
+          }
+        },
+        "bl_idname": "SvPolyArcNode"
+      },
+      "Vector In.005": {
+        "attributes": {
+          "location": [
+            2505.7018508911133,
+            -320.76385498046875
+          ],
+          "width": 100.0,
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.005"
+          }
+        },
+        "properties": {
+          "z_": -0.12600000202655792
+        },
+        "inputs": {
+          "X": {
+            "bl_idname": "SvStringsSocket",
+            "name": "X",
+            "properties": {
+              "prop_name": "x_"
+            }
+          },
+          "Y": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Y",
+            "properties": {
+              "prop_name": "y_"
+            }
+          },
+          "Z": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Z",
+            "properties": {
+              "prop_name": "z_"
+            }
+          }
+        },
+        "outputs": {
+          "Vectors": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vectors"
+          }
+        },
+        "bl_idname": "GenVectorsNode"
+      },
+      "Circle": {
+        "attributes": {
+          "location": [
+            2740.6898880004883,
+            -639.0964965820312
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.005"
+          }
+        },
+        "properties": {
+          "mode_": true
+        },
+        "inputs": {
+          "Radius": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Radius",
+            "properties": {
+              "prop_name": "rad_"
+            }
+          },
+          "num Verts": {
+            "bl_idname": "SvStringsSocket",
+            "name": "num Verts",
+            "properties": {
+              "prop_name": "vert_"
+            }
+          },
+          "Degrees": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Degrees",
+            "properties": {
+              "prop_name": "degr_"
+            }
+          }
+        },
+        "outputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices"
+          },
+          "Edges": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Edges"
+          },
+          "Polygons": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Polygons"
+          }
+        },
+        "bl_idname": "SvCircleNode"
+      },
+      "Viewer Draw.004": {
+        "attributes": {
+          "location": [
+            3423.5067825317383,
+            -520.239501953125
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.005"
+          }
+        },
+        "properties": {
+          "polygon_color": [
+            0.810000479221344,
+            0.39131268858909607,
+            0.3553163409233093,
+            0.38727784156799316
+          ],
+          "edge_color": [
+            0.9000002145767212,
+            0.4555129110813141,
+            0.22065219283103943,
+            1.0
+          ],
+          "vector_color": [
+            0.9500002264976501,
+            0.4653158485889435,
+            0.19318033754825592,
+            1.0
+          ],
+          "display_verts": false,
+          "use_dashed": true
+        },
+        "inputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices",
+            "properties": {
+              "custom_draw": "draw_property_socket"
+            }
+          },
+          "Edges": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Edges",
+            "properties": {
+              "custom_draw": "draw_property_socket"
+            }
+          },
+          "Polygons": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Polygons"
+          },
+          "Matrix": {
+            "bl_idname": "SvMatrixSocket",
+            "name": "Matrix"
+          },
+          "Vector Color": {
+            "bl_idname": "SvColorSocket",
+            "name": "Vector Color",
+            "properties": {
+              "custom_draw": "draw_color_socket",
+              "prop_name": "vector_color"
+            }
+          },
+          "Edge Color": {
+            "bl_idname": "SvColorSocket",
+            "name": "Edge Color",
+            "properties": {
+              "custom_draw": "draw_color_socket",
+              "prop_name": "edge_color"
+            }
+          },
+          "Polygon Color": {
+            "bl_idname": "SvColorSocket",
+            "name": "Polygon Color",
+            "properties": {
+              "custom_draw": "draw_color_socket",
+              "prop_name": "polygon_color"
+            }
+          },
+          "attrs": {
+            "bl_idname": "SvStringsSocket",
+            "name": "attrs",
+            "attributes": {
+              "hide": true
+            },
+            "properties": {
+              "quick_link_to_node": "SvVDAttrsNodeMk2"
+            }
+          }
+        },
+        "bl_idname": "SvViewerDrawMk4"
+      },
+      "Move.003": {
+        "attributes": {
+          "location": [
+            3204.926025390625,
+            -589.5496215820312
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.006"
+          }
+        },
+        "inputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices"
+          },
+          "Movement Vectors": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Movement Vectors",
+            "properties": {
+              "prop_name": "movement_vectors"
+            }
+          },
+          "Strength": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Strength",
+            "properties": {
+              "prop_name": "strength"
+            }
+          }
+        },
+        "outputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices"
+          }
+        },
+        "bl_idname": "SvMoveNodeMk3"
+      },
+      "Matrix Apply to Mesh": {
+        "attributes": {
+          "location": [
+            3015.657958984375,
+            -587.3740844726562
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.006"
+          }
+        },
+        "properties": {
+          "do_join": false
+        },
+        "inputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices"
+          },
+          "Edges": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Edges"
+          },
+          "Faces": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Faces"
+          },
+          "Matrices": {
+            "bl_idname": "SvMatrixSocket",
+            "name": "Matrices"
+          }
+        },
+        "outputs": {
+          "Vertices": {
+            "bl_idname": "SvVerticesSocket",
+            "name": "Vertices"
+          },
+          "Edges": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Edges"
+          },
+          "Faces": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Faces"
+          }
+        },
+        "bl_idname": "SvMatrixApplyJoinNode"
+      },
+      "Scalar Math.007": {
+        "attributes": {
+          "location": [
+            2516.0600051879883,
+            -716.1231079101562
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.005"
+          }
+        },
+        "properties": {
+          "current_op": "DEGREES"
+        },
+        "inputs": {
+          "x": {
+            "bl_idname": "SvStringsSocket",
+            "name": "x",
+            "properties": {
+              "prop_name": "x_"
+            }
+          }
+        },
+        "outputs": {
+          "Out": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Out"
+          }
+        },
+        "bl_idname": "SvScalarMathNodeMK4"
+      },
+      "Apply Field to Curve.001": {
+        "attributes": {
+          "location": [
+            2721.5529251098633,
+            -266.575439453125
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.005"
+          }
+        },
+        "inputs": {
+          "Field": {
+            "bl_idname": "SvVectorFieldSocket",
+            "name": "Field"
+          },
+          "Curve": {
+            "bl_idname": "SvCurveSocket",
+            "name": "Curve"
+          },
+          "Coefficient": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Coefficient",
+            "properties": {
+              "prop_name": "coefficient"
+            }
+          }
+        },
+        "outputs": {
+          "Curve": {
+            "bl_idname": "SvCurveSocket",
+            "name": "Curve"
+          }
+        },
+        "bl_idname": "SvExApplyFieldToCurveNode"
+      },
+      "Viewer Draw Curve.005": {
+        "attributes": {
+          "location": [
+            2990.9132766723633,
+            -176.555419921875
+          ],
+          "parent": {
+            "type": "NODE",
+            "value": "Frame.005"
+          }
+        },
+        "properties": {
+          "resolution": 150,
+          "line_color": [
+            1.0,
+            0.011060788296163082,
+            0.007282166741788387,
+            1.0
+          ]
+        },
+        "inputs": {
+          "Curve": {
+            "bl_idname": "SvCurveSocket",
+            "name": "Curve"
+          },
+          "Resolution": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Resolution",
+            "properties": {
+              "prop_name": "resolution"
+            }
+          }
+        },
+        "bl_idname": "SvCurveViewerDrawNode"
+      },
+      "Note": {
+        "attributes": {
+          "location": [
+            -1312.3856201171875,
+            5.3248291015625
+          ],
+          "width": 400.0,
+          "color": [
+            0.5,
+            0.5,
+            1.0
+          ],
+          "use_custom_color": true
+        },
+        "properties": {
+          "n_id": "-7764821777361755284",
+          "text": "2024 - nikitron. Bend Curves in different ways"
+        },
+        "inputs": {
+          "Text In": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Text In"
+          }
+        },
+        "outputs": {
+          "Text Out": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Text Out"
+          }
+        },
+        "bl_idname": "NoteNode"
+      },
+      "Stethoscope MK2": {
+        "attributes": {
+          "location": [
+            -852.3856201171875,
+            5.3248291015625
+          ],
+          "color": [
+            0.5,
+            0.5,
+            1.0
+          ],
+          "use_custom_color": true
+        },
+        "properties": {
+          "text_color": [
+            0.949999988079071,
+            0.949999988079071,
+            0.949999988079071
+          ],
+          "location_theta": 1.0080000162124634,
+          "num_elements": 1
+        },
+        "inputs": {
+          "Data": {
+            "bl_idname": "SvStringsSocket",
+            "name": "Data"
+          }
+        },
+        "bl_idname": "SvStethoscopeNodeMK2"
+      }
+    },
+    "links": [
+      {
+        "from_node": "A Number",
+        "from_socket": "Float",
+        "to_node": "Vector Polar Input.002",
+        "to_socket": "rho"
+      },
+      {
+        "from_node": "Scalar Math.001",
+        "from_socket": "Out",
+        "to_node": "Vector Polar Input.002",
+        "to_socket": "phi"
+      },
+      {
+        "from_node": "A Number",
+        "from_socket": "Float",
+        "to_node": "Vector Polar Input.001",
+        "to_socket": "rho"
+      },
+      {
+        "from_node": "Scalar Math.003",
+        "from_socket": "Out",
+        "to_node": "Vector Polar Input.001",
+        "to_socket": "phi"
+      },
+      {
+        "from_node": "A Number.001",
+        "from_socket": "Float",
+        "to_node": "Scalar Math",
+        "to_socket": "x"
+      },
+      {
+        "from_node": "A Number.002",
+        "from_socket": "Float",
+        "to_node": "Scalar Math.003",
+        "to_socket": "x"
+      },
+      {
+        "from_node": "Scalar Math.002",
+        "from_socket": "Out",
+        "to_node": "Scalar Math.001",
+        "to_socket": "x"
+      },
+      {
+        "from_node": "A Number.001",
+        "from_socket": "Float",
+        "to_node": "Scalar Math.002",
+        "to_socket": "x"
+      },
+      {
+        "from_node": "A Number",
+        "from_socket": "Float",
+        "to_node": "Vector Polar Input",
+        "to_socket": "rho"
+      },
+      {
+        "from_node": "Scalar Math",
+        "from_socket": "Out",
+        "to_node": "Vector Polar Input",
+        "to_socket": "phi"
+      },
+      {
+        "from_node": "Vector Polar Input.002",
+        "from_socket": "Vectors",
+        "to_node": "Move.002",
+        "to_socket": "Vertices"
+      },
+      {
+        "from_node": "Vector In",
+        "from_socket": "Vectors",
+        "to_node": "Move.002",
+        "to_socket": "Movement Vectors"
+      },
+      {
+        "from_node": "Vector Polar Input",
+        "from_socket": "Vectors",
+        "to_node": "Move",
+        "to_socket": "Vertices"
+      },
+      {
+        "from_node": "Vector In",
+        "from_socket": "Vectors",
+        "to_node": "Move",
+        "to_socket": "Movement Vectors"
+      },
+      {
+        "from_node": "Vector Polar Input.001",
+        "from_socket": "Vectors",
+        "to_node": "Move.001",
+        "to_socket": "Vertices"
+      },
+      {
+        "from_node": "Vector In",
+        "from_socket": "Vectors",
+        "to_node": "Move.001",
+        "to_socket": "Movement Vectors"
+      },
+      {
+        "from_node": "Arc 3pt (Curve).001",
+        "from_socket": "Arc",
+        "to_node": "Evaluate Curve.003",
+        "to_socket": "Curve"
+      },
+      {
+        "from_node": "Scalar Math.004",
+        "from_socket": "Out",
+        "to_node": "Vector In",
+        "to_socket": "X"
+      },
+      {
+        "from_node": "Move.002",
+        "from_socket": "Vertices",
+        "to_node": "Mirror Mk2.002",
+        "to_socket": "Vertices"
+      },
+      {
+        "from_node": "A Number",
+        "from_socket": "Float",
+        "to_node": "Scalar Math.004",
+        "to_socket": "x"
+      },
+      {
+        "from_node": "Arc 3pt (Curve).001",
+        "from_socket": "Arc",
+        "to_node": "Evaluate Curve.002",
+        "to_socket": "Curve"
+      },
+      {
+        "from_node": "Curve Domain",
+        "from_socket": "TMax",
+        "to_node": "Evaluate Curve.002",
+        "to_socket": "T"
+      },
+      {
+        "from_node": "Move",
+        "from_socket": "Vertices",
+        "to_node": "Arc 3pt (Curve)",
+        "to_socket": "Point1"
+      },
+      {
+        "from_node": "Move.001",
+        "from_socket": "Vertices",
+        "to_node": "Arc 3pt (Curve)",
+        "to_socket": "Point2"
+      },
+      {
+        "from_node": "Move.002",
+        "from_socket": "Vertices",
+        "to_node": "Arc 3pt (Curve)",
+        "to_socket": "Point3"
+      },
+      {
+        "from_node": "Arc 3pt (Curve)",
+        "from_socket": "Arc",
+        "to_node": "Curve Domain",
+        "to_socket": "Curve"
+      },
+      {
+        "from_node": "Arc 3pt (Curve)",
+        "from_socket": "Arc",
+        "to_node": "Evaluate Curve.001",
+        "to_socket": "Curve"
+      },
+      {
+        "from_node": "Curve Domain",
+        "from_socket": "TMax",
+        "to_node": "Evaluate Curve.001",
+        "to_socket": "T"
+      },
+      {
+        "from_node": "Evaluate Curve.001",
+        "from_socket": "Tangents",
+        "to_node": "Scale.002",
+        "to_socket": "Vertices"
+      },
+      {
+        "from_node": "A Number.005",
+        "from_socket": "Float",
+        "to_node": "Scale.002",
+        "to_socket": "Strength"
+      },
+      {
+        "from_node": "Evaluate Curve.003",
+        "from_socket": "Tangents",
+        "to_node": "Scale.003",
+        "to_socket": "Vertices"
+      },
+      {
+        "from_node": "A Number.005",
+        "from_socket": "Float",
+        "to_node": "Scale.003",
+        "to_socket": "Strength"
+      },
+      {
+        "from_node": "Evaluate Curve.001",
+        "from_socket": "Vertices",
+        "to_node": "Bezier Spline Segment (Curve).001",
+        "to_socket": "Start"
+      },
+      {
+        "from_node": "Scale.002",
+        "from_socket": "Vertices",
+        "to_node": "Bezier Spline Segment (Curve).001",
+        "to_socket": "Control1"
+      },
+      {
+        "from_node": "Scale.003",
+        "from_socket": "Vertices",
+        "to_node": "Bezier Spline Segment (Curve).001",
+        "to_socket": "Control2"
+      },
+      {
+        "from_node": "Evaluate Curve.003",
+        "from_socket": "Vertices",
+        "to_node": "Bezier Spline Segment (Curve).001",
+        "to_socket": "End"
+      },
+      {
+        "from_node": "Bezier Spline Segment (Curve).001",
+        "from_socket": "Curve",
+        "to_node": "Viewer Draw Curve.004",
+        "to_socket": "Curve"
+      },
+      {
+        "from_node": "Apply Field to Curve",
+        "from_socket": "Curve",
+        "to_node": "Viewer Draw Curve.003",
+        "to_socket": "Curve"
+      },
+      {
+        "from_node": "Arc 3pt (Curve)",
+        "from_socket": "Arc",
+        "to_node": "Blend Curves",
+        "to_socket": "Curve1"
+      },
+      {
+        "from_node": "Arc 3pt (Curve).001",
+        "from_socket": "Arc",
+        "to_node": "Blend Curves",
+        "to_socket": "Curve2"
+      },
+      {
+        "from_node": "A Number.005",
+        "from_socket": "Float",
+        "to_node": "Blend Curves",
+        "to_socket": "Factor1"
+      },
+      {
+        "from_node": "A Number.005",
+        "from_socket": "Float",
+        "to_node": "Blend Curves",
+        "to_socket": "Factor2"
+      },
+      {
+        "from_node": "Arc 3pt (Curve).001",
+        "from_socket": "Arc",
+        "to_node": "Viewer Draw Curve.001",
+        "to_socket": "Curve"
+      },
+      {
+        "from_node": "Move.001",
+        "from_socket": "Vertices",
+        "to_node": "Mirror Mk2.001",
+        "to_socket": "Vertices"
+      },
+      {
+        "from_node": "Move",
+        "from_socket": "Vertices",
+        "to_node": "Mirror Mk2",
+        "to_socket": "Vertices"
+      },
+      {
+        "from_node": "Vector In.003",
+        "from_socket": "Vectors",
+        "to_node": "Apply Field to Curve",
+        "to_socket": "Field"
+      },
+      {
+        "from_node": "Blend Curves",
+        "from_socket": "Curve",
+        "to_node": "Apply Field to Curve",
+        "to_socket": "Curve"
+      },
+      {
+        "from_node": "Arc 3pt (Curve)",
+        "from_socket": "Arc",
+        "to_node": "Viewer Draw Curve",
+        "to_socket": "Curve"
+      },
+      {
+        "from_node": "Arc 3pt (Curve)",
+        "from_socket": "Arc",
+        "to_node": "Evaluate Curve",
+        "to_socket": "Curve"
+      },
+      {
+        "from_node": "Mirror Mk2",
+        "from_socket": "Vertices",
+        "to_node": "Arc 3pt (Curve).001",
+        "to_socket": "Point1"
+      },
+      {
+        "from_node": "Mirror Mk2.001",
+        "from_socket": "Vertices",
+        "to_node": "Arc 3pt (Curve).001",
+        "to_socket": "Point2"
+      },
+      {
+        "from_node": "Mirror Mk2.002",
+        "from_socket": "Vertices",
+        "to_node": "Arc 3pt (Curve).001",
+        "to_socket": "Point3"
+      },
+      {
+        "from_node": "Arc 3pt (Curve)",
+        "from_socket": "Arc",
+        "to_node": "Evaluate Curve.004",
+        "to_socket": "Curve"
+      },
+      {
+        "from_node": "Arc 3pt (Curve).001",
+        "from_socket": "Arc",
+        "to_node": "Evaluate Curve.005",
+        "to_socket": "Curve"
+      },
+      {
+        "from_node": "Evaluate Curve",
+        "from_socket": "Vertices",
+        "to_node": "2pt Quadratic Spline",
+        "to_socket": "Knot1"
+      },
+      {
+        "from_node": "Evaluate Curve.002",
+        "from_socket": "Vertices",
+        "to_node": "2pt Quadratic Spline",
+        "to_socket": "Knot2"
+      },
+      {
+        "from_node": "Vector In.001",
+        "from_socket": "Vectors",
+        "to_node": "2pt Quadratic Spline",
+        "to_socket": "Handle"
+      },
+      {
+        "from_node": "Evaluate Curve.001",
+        "from_socket": "Vertices",
+        "to_node": "2pt Quadratic Spline.001",
+        "to_socket": "Knot1"
+      },
+      {
+        "from_node": "Evaluate Curve.003",
+        "from_socket": "Vertices",
+        "to_node": "2pt Quadratic Spline.001",
+        "to_socket": "Knot2"
+      },
+      {
+        "from_node": "Vector In.002",
+        "from_socket": "Vectors",
+        "to_node": "2pt Quadratic Spline.001",
+        "to_socket": "Handle"
+      },
+      {
+        "from_node": "Formula",
+        "from_socket": "Result",
+        "to_node": "Vector In.001",
+        "to_socket": "Y"
+      },
+      {
+        "from_node": "Scalar Math.006",
+        "from_socket": "Out",
+        "to_node": "Vector In.002",
+        "to_socket": "Y"
+      },
+      {
+        "from_node": "Formula",
+        "from_socket": "Result",
+        "to_node": "Scalar Math.006",
+        "to_socket": "x"
+      },
+      {
+        "from_node": "A Number.001",
+        "from_socket": "Float",
+        "to_node": "Formula",
+        "to_socket": "x"
+      },
+      {
+        "from_node": "A Number",
+        "from_socket": "Float",
+        "to_node": "Formula",
+        "to_socket": "y"
+      },
+      {
+        "from_node": "2pt Quadratic Spline.001",
+        "from_socket": "Verts",
+        "to_node": "Viewer Draw.001",
+        "to_socket": "Vertices"
+      },
+      {
+        "from_node": "2pt Quadratic Spline.001",
+        "from_socket": "Edges",
+        "to_node": "Viewer Draw.001",
+        "to_socket": "Edges"
+      },
+      {
+        "from_node": "Matrix In",
+        "from_socket": "Matrices",
+        "to_node": "Viewer Draw.001",
+        "to_socket": "Matrix"
+      },
+      {
+        "from_node": "2pt Quadratic Spline",
+        "from_socket": "Verts",
+        "to_node": "Viewer Draw",
+        "to_socket": "Vertices"
+      },
+      {
+        "from_node": "2pt Quadratic Spline",
+        "from_socket": "Edges",
+        "to_node": "Viewer Draw",
+        "to_socket": "Edges"
+      },
+      {
+        "from_node": "Matrix In",
+        "from_socket": "Matrices",
+        "to_node": "Viewer Draw",
+        "to_socket": "Matrix"
+      },
+      {
+        "from_node": "Evaluate Curve.004",
+        "from_socket": "Vertices",
+        "to_node": "Viewer Draw.003",
+        "to_socket": "Vertices"
+      },
+      {
+        "from_node": "Evaluate Curve.004",
+        "from_socket": "Edges",
+        "to_node": "Viewer Draw.003",
+        "to_socket": "Edges"
+      },
+      {
+        "from_node": "Matrix In",
+        "from_socket": "Matrices",
+        "to_node": "Viewer Draw.003",
+        "to_socket": "Matrix"
+      },
+      {
+        "from_node": "Evaluate Curve.005",
+        "from_socket": "Vertices",
+        "to_node": "Viewer Draw.002",
+        "to_socket": "Vertices"
+      },
+      {
+        "from_node": "Evaluate Curve.005",
+        "from_socket": "Edges",
+        "to_node": "Viewer Draw.002",
+        "to_socket": "Edges"
+      },
+      {
+        "from_node": "Matrix In",
+        "from_socket": "Matrices",
+        "to_node": "Viewer Draw.002",
+        "to_socket": "Matrix"
+      },
+      {
+        "from_node": "Evaluate Curve",
+        "from_socket": "Tangents",
+        "to_node": "Scale",
+        "to_socket": "Vertices"
+      },
+      {
+        "from_node": "Scalar Math.005",
+        "from_socket": "Out",
+        "to_node": "Scale",
+        "to_socket": "Strength"
+      },
+      {
+        "from_node": "Evaluate Curve.002",
+        "from_socket": "Tangents",
+        "to_node": "Scale.001",
+        "to_socket": "Vertices"
+      },
+      {
+        "from_node": "Scalar Math.005",
+        "from_socket": "Out",
+        "to_node": "Scale.001",
+        "to_socket": "Strength"
+      },
+      {
+        "from_node": "Evaluate Curve",
+        "from_socket": "Vertices",
+        "to_node": "Bezier Spline Segment (Curve)",
+        "to_socket": "Start"
+      },
+      {
+        "from_node": "Scale",
+        "from_socket": "Vertices",
+        "to_node": "Bezier Spline Segment (Curve)",
+        "to_socket": "Control1"
+      },
+      {
+        "from_node": "Scale.001",
+        "from_socket": "Vertices",
+        "to_node": "Bezier Spline Segment (Curve)",
+        "to_socket": "Control2"
+      },
+      {
+        "from_node": "Evaluate Curve.002",
+        "from_socket": "Vertices",
+        "to_node": "Bezier Spline Segment (Curve)",
+        "to_socket": "End"
+      },
+      {
+        "from_node": "Bezier Spline Segment (Curve)",
+        "from_socket": "Curve",
+        "to_node": "Viewer Draw Curve.002",
+        "to_socket": "Curve"
+      },
+      {
+        "from_node": "A Number.005",
+        "from_socket": "Float",
+        "to_node": "Scalar Math.005",
+        "to_socket": "x"
+      },
+      {
+        "from_node": "Move",
+        "from_socket": "Vertices",
+        "to_node": "List Join",
+        "to_socket": "data"
+      },
+      {
+        "from_node": "Move.001",
+        "from_socket": "Vertices",
+        "to_node": "List Join",
+        "to_socket": "data 1"
+      },
+      {
+        "from_node": "Move.002",
+        "from_socket": "Vertices",
+        "to_node": "List Join",
+        "to_socket": "data 2"
+      },
+      {
+        "from_node": "Mirror Mk2",
+        "from_socket": "Vertices",
+        "to_node": "List Join",
+        "to_socket": "data 3"
+      },
+      {
+        "from_node": "Mirror Mk2.001",
+        "from_socket": "Vertices",
+        "to_node": "List Join",
+        "to_socket": "data 4"
+      },
+      {
+        "from_node": "Mirror Mk2.002",
+        "from_socket": "Vertices",
+        "to_node": "List Join",
+        "to_socket": "data 5"
+      },
+      {
+        "from_node": "List Join",
+        "from_socket": "data_001",
+        "to_node": "Viewer Index+",
+        "to_socket": "verts"
+      },
+      {
+        "from_node": "List Join",
+        "from_socket": "data_001",
+        "to_node": "Poly Arc",
+        "to_socket": "Vertices"
+      },
+      {
+        "from_node": "Evaluate Curve",
+        "from_socket": "Tangents",
+        "to_node": "Poly Arc",
+        "to_socket": "Tangent"
+      },
+      {
+        "from_node": "Poly Arc",
+        "from_socket": "Radius",
+        "to_node": "Circle",
+        "to_socket": "Radius"
+      },
+      {
+        "from_node": "Scalar Math.007",
+        "from_socket": "Out",
+        "to_node": "Circle",
+        "to_socket": "Degrees"
+      },
+      {
+        "from_node": "Move.003",
+        "from_socket": "Vertices",
+        "to_node": "Viewer Draw.004",
+        "to_socket": "Vertices"
+      },
+      {
+        "from_node": "Matrix Apply to Mesh",
+        "from_socket": "Edges",
+        "to_node": "Viewer Draw.004",
+        "to_socket": "Edges"
+      },
+      {
+        "from_node": "Matrix Apply to Mesh",
+        "from_socket": "Faces",
+        "to_node": "Viewer Draw.004",
+        "to_socket": "Polygons"
+      },
+      {
+        "from_node": "Matrix Apply to Mesh",
+        "from_socket": "Vertices",
+        "to_node": "Move.003",
+        "to_socket": "Vertices"
+      },
+      {
+        "from_node": "Vector In.005",
+        "from_socket": "Vectors",
+        "to_node": "Move.003",
+        "to_socket": "Movement Vectors"
+      },
+      {
+        "from_node": "Circle",
+        "from_socket": "Vertices",
+        "to_node": "Matrix Apply to Mesh",
+        "to_socket": "Vertices"
+      },
+      {
+        "from_node": "Circle",
+        "from_socket": "Edges",
+        "to_node": "Matrix Apply to Mesh",
+        "to_socket": "Edges"
+      },
+      {
+        "from_node": "Circle",
+        "from_socket": "Polygons",
+        "to_node": "Matrix Apply to Mesh",
+        "to_socket": "Faces"
+      },
+      {
+        "from_node": "Poly Arc",
+        "from_socket": "Center",
+        "to_node": "Matrix Apply to Mesh",
+        "to_socket": "Matrices"
+      },
+      {
+        "from_node": "Poly Arc",
+        "from_socket": "Angle",
+        "to_node": "Scalar Math.007",
+        "to_socket": "x"
+      },
+      {
+        "from_node": "Vector In.005",
+        "from_socket": "Vectors",
+        "to_node": "Apply Field to Curve.001",
+        "to_socket": "Field"
+      },
+      {
+        "from_node": "Poly Arc",
+        "from_socket": "Curve",
+        "to_node": "Apply Field to Curve.001",
+        "to_socket": "Curve"
+      },
+      {
+        "from_node": "Apply Field to Curve.001",
+        "from_socket": "Curve",
+        "to_node": "Viewer Draw Curve.005",
+        "to_socket": "Curve"
+      },
+      {
+        "from_node": "Note",
+        "from_socket": "Text Out",
+        "to_node": "Stethoscope MK2",
+        "to_socket": "Data"
+      }
+    ]
+  }
+}
