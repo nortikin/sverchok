@@ -5,8 +5,9 @@ from bpy.props import FloatProperty, EnumProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat
 
-from sverchok.utils.field.scalar import (SvVectorFieldDivergence, SvScalarFieldLaplacian)
-from sverchok.utils.field.vector import (SvScalarFieldGradient, SvVectorFieldRotor)
+from sverchok.utils.field.differential import (
+        SvVectorFieldDivergence, SvScalarFieldLaplacian,
+        SvScalarFieldGradient, SvVectorFieldRotor)
 from sverchok.utils.modules.sockets import SvDynamicSocketsHandler, SocketInfo
 
 sockets_handler = SvDynamicSocketsHandler()
