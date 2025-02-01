@@ -241,7 +241,7 @@ class SverchokBakeAll(bpy.types.Operator):
         for node in ng.nodes:
             if hasattr(node, 'bake'):
                 if getattr(node, 'activate', getattr(node, 'show_objects', False)):
-                    node.bake()
+                    node.bake(context)
 
         return {'FINISHED'}
 

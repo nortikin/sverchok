@@ -299,6 +299,10 @@ class SvSurfaceViewerDrawNode(SverchCustomTreeNode, bpy.types.Node):
         row.separator()
         self.wrapper_tracked_ui_draw_op(row, Sv3DviewAlign.bl_idname, icon='CURSOR', text='')
 
+    def bake(self, context):
+        with context.temp_override(node=self):
+            bpy.ops.node.sverchok_surface_baker()
+
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, 'light_vector')
         self.draw_buttons(context, layout)

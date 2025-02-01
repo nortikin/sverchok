@@ -396,10 +396,10 @@ class SvSolidViewerNode(SverchCustomTreeNode, bpy.types.Node):
 
         layout.prop(self, 'vector_light', text='')
 
-    def bake(self):
-        bpy.ops.node.sverchok_mesh_baker_mk3(
-            node_name=self.name, tree_name=self.id_data.name
-        )
+
+    def bake(self, context):
+        with context.temp_override(node=self):
+            bpy.ops.node.sverchok_solid_baker_mk3()
 
     def rclick_menu(self, context, layout):
         self.draw_additional_props(context, layout, n_panel=False)

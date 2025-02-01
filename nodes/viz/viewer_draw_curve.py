@@ -313,6 +313,10 @@ class SvCurveViewerDrawNode(SverchCustomTreeNode, bpy.types.Node):
         row.separator()
         self.wrapper_tracked_ui_draw_op(row, Sv3DviewAlign.bl_idname, icon='CURSOR', text='')
 
+    def bake(self, context):
+        with context.temp_override(node=self):
+                    bpy.ops.node.sverchok_curve_baker()
+
     def sv_init(self, context):
         self.inputs.new('SvCurveSocket', 'Curve')
         self.inputs.new('SvStringsSocket', 'Resolution').prop_name = 'resolution'

@@ -752,7 +752,7 @@ class SvViewerDrawMk4(SverchCustomTreeNode, bpy.types.Node):
         layout.separator()
         self.node_replacement_menu(context, layout)
 
-    def bake(self):
+    def bake(self, context):
         bpy.ops.node.sverchok_mesh_baker_mk3(
             node_name=self.name, tree_name=self.id_data.name
         )
