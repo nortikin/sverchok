@@ -452,7 +452,7 @@ def voronoi_on_mesh_bmesh(verts, faces, n_orig_sites, sites, spacing=0.0, mode='
             # else extend mask by false and do not use sites that are not in the mask
             mask = mask[:]+[False]*(len(sites)-len(mask) if len(mask)<=len(sites) else 0)
 
-        start_mesh = bmesh_from_pydata(verts, [], faces, normal_update=False)
+        start_mesh = bmesh_from_pydata(verts, [], faces, normal_update=True)
         for site_idx in range(len(sites)):
             if(mask[site_idx]):
                 cell = cut_cell(start_mesh, sites_delaunay_params, site_idx, spacing[site_idx], center_of_mass, bbox_aligned)
