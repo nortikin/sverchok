@@ -27,7 +27,7 @@ There are switches and modes.
   :target: https://raw.githubusercontent.com/kevinsmia1939/images/refs/heads/main/sverchok%20screenshot/example.png
 
 * Generator-> :doc:`IcoSphere </nodes/generator/icosphere>`
-* Generator-> :doc:`Circle </nodes/generator/torus_mk2>`
+* Generator-> :doc:`Torus </nodes/generator/torus_mk2>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 
 warnings
