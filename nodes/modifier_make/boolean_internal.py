@@ -28,28 +28,21 @@ def boolean_internal(VA, PA, VB, PB, operation, solver):
     Create two temporary mesh objects from the given vertices and faces,
     apply a Boolean modifier on object A using object B as the target,
     then extract the resulting geometry.
-
-    Parameters:
-        VA, PA: vertices and faces for object A.
-        VB, PB: vertices and faces for object B.
-        operation: 'ITX', 'JOIN', or 'DIFF' for the Boolean operation.
-        solver: 'FAST' or 'EXACT' to choose the Boolean solver.
     """
-    # --- Create temporary object A ---
+    #create temporary object A
     mesh_a = bpy.data.meshes.new("temp_mesh_a")
     mesh_a.from_pydata(VA, [], PA)
     mesh_a.update()
     obj_a = bpy.data.objects.new("temp_obj_a", mesh_a)
     bpy.context.collection.objects.link(obj_a)
 
-    # --- Create temporary object B ---
+    #create temporary object B
     mesh_b = bpy.data.meshes.new("temp_mesh_b")
     mesh_b.from_pydata(VB, [], PB)
     mesh_b.update()
     obj_b = bpy.data.objects.new("temp_obj_b", mesh_b)
     bpy.context.collection.objects.link(obj_b)
 
-    # --- Add and configure the Boolean modifier ---
     mod = obj_a.modifiers.new(name="Boolean", type='BOOLEAN')
     mod.object = obj_b
     mod.solver = solver
