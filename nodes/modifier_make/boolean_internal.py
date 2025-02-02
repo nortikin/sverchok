@@ -1,3 +1,21 @@
+# ##### BEGIN GPL LICENSE BLOCK #####
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# ##### END GPL LICENSE BLOCK #####
+
 import bpy
 import sys
 from bpy.props import EnumProperty, BoolProperty
@@ -5,11 +23,17 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_cycle as mlr
 from sverchok.utils.nodes_mixins.sockets_config import ModifierLiteNode
 
-def boolean_internal(VA, PA, VB, PB, operation):
+def boolean_internal(VA, PA, VB, PB, operation, solver):
     """
     Create two temporary mesh objects from the given vertices and faces,
     apply a Boolean modifier on object A using object B as the target,
     then extract the resulting geometry.
+
+    Parameters:
+        VA, PA: vertices and faces for object A.
+        VB, PB: vertices and faces for object B.
+        operation: 'ITX', 'JOIN', or 'DIFF' for the Boolean operation.
+        solver: 'FAST' or 'EXACT' to choose the Boolean solver.
     """
     # --- Create temporary object A ---
     mesh_a = bpy.data.meshes.new("temp_mesh_a")
@@ -17,39 +41,41 @@ def boolean_internal(VA, PA, VB, PB, operation):
     mesh_a.update()
     obj_a = bpy.data.objects.new("temp_obj_a", mesh_a)
     bpy.context.collection.objects.link(obj_a)
-    
+
     # --- Create temporary object B ---
     mesh_b = bpy.data.meshes.new("temp_mesh_b")
     mesh_b.from_pydata(VB, [], PB)
     mesh_b.update()
     obj_b = bpy.data.objects.new("temp_obj_b", mesh_b)
     bpy.context.collection.objects.link(obj_b)
-    
+
     # --- Add and configure the Boolean modifier ---
     mod = obj_a.modifiers.new(name="Boolean", type='BOOLEAN')
     mod.object = obj_b
+    mod.solver = solver
+
     if operation == 'ITX':
         mod.operation = 'INTERSECT'
     elif operation == 'JOIN':
         mod.operation = 'UNION'
     elif operation == 'DIFF':
         mod.operation = 'DIFFERENCE'
-    
-    # --- Evaluate the modifier and extract the result ---
+
+    #apply modifier
     depsgraph = bpy.context.evaluated_depsgraph_get()
     obj_eval = obj_a.evaluated_get(depsgraph)
     new_mesh = bpy.data.meshes.new_from_object(obj_eval)
-    
+
     verts = [list(v.co) for v in new_mesh.vertices]
     faces = [list(p.vertices) for p in new_mesh.polygons]
-    
-    # --- Cleanup: remove temporary data ---
+
+    #cleanup
     bpy.data.meshes.remove(new_mesh)
     bpy.data.objects.remove(obj_a, do_unlink=True)
     bpy.data.objects.remove(obj_b, do_unlink=True)
     bpy.data.meshes.remove(mesh_a)
     bpy.data.meshes.remove(mesh_b)
-    
+
     return verts, faces
 
 class SvInternalBooleanNode(ModifierLiteNode, SverchCustomTreeNode, bpy.types.Node):
@@ -66,8 +92,17 @@ class SvInternalBooleanNode(ModifierLiteNode, SverchCustomTreeNode, bpy.types.No
 
     selected_mode: EnumProperty(
         items=mode_options,
-        description="Select the Boolean operation (using Blender's modifier)",
+        description="Select the Boolean operation (using Blender's internal modifier)",
         default="ITX",
+        update=updateNode)
+
+    solver_options: EnumProperty(
+        items=[
+            ("FAST", "Fast", "Fast, but does not support overlapping geometry"),
+            ("EXACT", "Exact", "Best result")
+        ],
+        description="Select solver type for the Boolean modifier",
+        default="EXACT",
         update=updateNode)
 
     def update_mode(self, context):
@@ -114,6 +149,7 @@ class SvInternalBooleanNode(ModifierLiteNode, SverchCustomTreeNode, bpy.types.No
     def draw_buttons(self, context, layout):
         row = layout.row()
         row.prop(self, 'selected_mode', expand=True)
+        layout.prop(self, "solver_options", text="Solver")
         col = layout.column(align=True)
         col.prop(self, "nest_objs", toggle=True)
         if self.nest_objs:
@@ -123,37 +159,33 @@ class SvInternalBooleanNode(ModifierLiteNode, SverchCustomTreeNode, bpy.types.No
         OutV, OutP = self.outputs
         if not OutV.is_linked:
             return
-
         VertA, PolA, VertB, PolB, VertN, PolN = self.inputs
-        op_mode = self.selected_mode
-        results = []
-        
-        # Increase recursion limit if needed (as in your original node)
+        SMode = self.selected_mode
+        solver = self.solver_options
+        out = []
         recursionlimit = sys.getrecursionlimit()
         sys.setrecursionlimit(10000)
-        
+
         if not self.nest_objs:
-            for v1, p1, v2, p2 in zip(*mlr([VertA.sv_get(), PolA.sv_get(), VertB.sv_get(), PolB.sv_get()])):
-                result = boolean_internal(v1, p1, v2, p2, op_mode)
-                results.append(result)
+            for v1, p1, v2, p2 in zip(*mlr([VertA.sv_get(), PolA.sv_get(),
+                                              VertB.sv_get(), PolB.sv_get()])):
+                out.append(boolean_internal(v1, p1, v2, p2, SMode, solver))
         else:
             vnest, pnest = VertN.sv_get(), PolN.sv_get()
-            result = boolean_internal(vnest[0], pnest[0], vnest[1], pnest[1], op_mode)
+            First = boolean_internal(vnest[0], pnest[0], vnest[1], pnest[1], SMode, solver)
             if not self.out_last:
-                results.append(result)
+                out.append(First)
                 for i in range(2, len(vnest)):
-                    result = boolean_internal(result[0], result[1], vnest[i], pnest[i], op_mode)
-                    results.append(result)
+                    out.append(boolean_internal(First[0], First[1], vnest[i], pnest[i], SMode, solver))
+                    First = out[-1]
             else:
                 for i in range(2, len(vnest)):
-                    result = boolean_internal(result[0], result[1], vnest[i], pnest[i], op_mode)
-                results.append(result)
-                
+                    First = boolean_internal(First[0], First[1], vnest[i], pnest[i], SMode, solver)
+                out.append(First)
         sys.setrecursionlimit(recursionlimit)
-        
-        OutV.sv_set([r[0] for r in results])
+        OutV.sv_set([i[0] for i in out])
         if OutP.is_linked:
-            OutP.sv_set([r[1] for r in results])
+            OutP.sv_set([i[1] for i in out])
 
 def register():
     bpy.utils.register_class(SvInternalBooleanNode)
