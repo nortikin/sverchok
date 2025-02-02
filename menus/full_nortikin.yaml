@@ -536,6 +536,7 @@
         - SvEmbedMesh
         - SvCropMesh2D
         - SvCSGBooleanNodeMK2
+        - SvInternalBooleanNode
         - SvWafelNode
         - ---
         - SvStraightSkeleton2DOffset
