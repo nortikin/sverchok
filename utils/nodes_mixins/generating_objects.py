@@ -575,7 +575,7 @@ class SvObjectNames(bpy.types.PropertyGroup):
     @staticmethod
     def get_random_name():
         """Generate random name from random letters"""
-        return ''.join(random.sample(set(string.ascii_uppercase), 6))
+        return ''.join(random.sample(list(set(string.ascii_uppercase)), 6))
 
 
 class SearchNode:
