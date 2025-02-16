@@ -138,7 +138,7 @@ def np_vertex_normals(vertices, faces, algorithm='MWE', output_numpy=False):
     if isinstance(faces, np.ndarray):
         np_faces = faces
     else:
-        np_faces = np.array(faces)
+        np_faces = np.array(faces, dtype=object)
 
     v_normals = np.zeros(np_verts.shape, dtype=np_verts.dtype)
 
