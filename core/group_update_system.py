@@ -229,7 +229,7 @@ class TreesGraph:
         return self._group_nodes[gr_tree]
 
     def walk(self, gr_tree: 'GrTree') -> Iterator['GrNode']:
-        """It expects a grop tree which was changed and returns iterator of
+        """It expects a group tree which was changed and returns iterator of
         all group nodes which should be updated"""
         if not self.is_updated:
             self._update()

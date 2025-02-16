@@ -159,7 +159,7 @@ def make_spherical_spiral(flags, settings):
     '''
         Make a SPHERICAL spiral
 
-        This is the approximate sperical spiral that has a finite length,
+        This is the approximate spherical spiral that has a finite length,
         where the phi & theta angles sweep their ranges at constant rates.
 
         eR       : exterior radius
