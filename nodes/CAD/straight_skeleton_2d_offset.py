@@ -324,8 +324,7 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
         items = altitude_modes,
         update = updateNode
         ) # type: ignore
-
-
+    
     ss_altitude1: FloatProperty(
         name="Altitudes",
         default=1, 
@@ -347,6 +346,32 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
         ) # type: ignore
 
 
+    profile_faces__close_mode__modes = [
+            ('OBJECT_ALL_OPEN_MODE', "All", "Every profile faces per object get all input modes", 'THREE_DOTS', 0),
+            ('OBJECT_ONE_OPEN_MODE', "One", "Every object get one open mode in every its profile faces", 'DECORATE', 1),
+        ]
+    profile_faces__close_mode__mode : EnumProperty(
+        name = "Open mode",
+        default = 'OBJECT_ALL_OPEN_MODE',
+        description = "How many open mode per object (One or All)",
+        items = profile_faces__close_mode__modes,
+        update = updateNode
+        ) # type: ignore
+    
+    profile_faces__close_modes = [
+            ( 'CLOSED' , "Closed", "Close contour", 'PROP_CON', 1),
+            ( 'OPENED' , "Opened", "Open contour", 'PROP_PROJECTED', 0),
+            ( 'INPAIRS', "Pairs" , "Pair list. ex.: your list is 1,2,2,3,3,4,6,7,7,8 => as program interpret it: [1,2],[2,3],[3,4],[6,7],[7,8]. Be careful. If there is no offset with this index then pair will be skipped", 'CON_TRACKTO', 2),
+        ]
+    profile_faces__close_mode1 : EnumProperty(
+        name = "Open mode",
+        description = "Open mode",
+        items = profile_faces__close_modes,
+        default = 'CLOSED',
+        update = updateNode
+        ) # type: ignore
+
+
 
     only_tests_for_valid: BoolProperty(
         name="Only tests",
@@ -361,7 +386,17 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
     verbose_messages_while_process: BoolProperty(
         name='Verbose',
         description='Show additional debug info in console',
-        default=True, update=updateNode) # type: ignore
+        default=False, update=updateNode) # type: ignore
+
+    use_cache_of_straight_skeleton: BoolProperty(
+        name='Use cache',
+        description='Use internal cache of Straight Skeleton to improve performance if the original coordinates have not changed',
+        default=False, update=updateNode) # type: ignore
+
+    bevel_more_split: BoolProperty(
+        name='Detailed split',
+        description='If use negative offsets then this will split result beveled Offset with more parts (used only in Bevel mode). For fun. )',
+        default=False, update=updateNode) # type: ignore
 
     source_objects_join_modes = [
             ('SPLIT', "Split", "Separate the result meshes into individual meshes", 'SNAP_VERTEX', 0),
@@ -390,6 +425,8 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
     res_types = [
             ('CONTOURS', "Contours", "Edges of contours", 'SNAP_VERTEX', 0),
             ('FACES' , "Faces", "Fill faces", 'SYNTAX_ON', 1),
+            ('BEVEL' , "Bevel", "Beveled extrude throught offsets", 'MOD_BEVEL', 2),
+            ('STRAIGHT_SKELETON' , "Skeleton", "Straight Skeletons geometry. Ignore Altitude input socket", 'MOD_SKIN', 3),
         ]
 
     res_type : EnumProperty(
@@ -459,23 +496,6 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
             col.prop(self, 'ss_shapes_mode1', text='Shapes mode')
         pass
 
-    def draw_objects_mask_in_socket(self, socket, context, layout):
-        grid = layout.grid_flow(row_major=True, columns=2)
-        if not socket.is_linked:
-            grid.enabled = False
-        col2 = grid.column()
-        col2_row1 = col2.row()
-        col2_row1.alignment='LEFT'
-        if socket.is_linked:
-            col2_row1.label(text=f"Mask of Objects. {socket.objects_number or ''}:")
-        else:
-            col2_row1.label(text=f"Mask of Objects:")
-        col2_row2 = col2.row()
-        col2_row2.alignment='LEFT'
-        col2_row2.column(align=True).prop(self, "objects_mask_inversion")
-        col3 = grid.column()
-        col3.prop(self, "objects_mask_mode", expand=True)
-
     def draw_offset_mode_in_socket(self, socket, context, layout):
         grid = layout.grid_flow(row_major=False, columns=3, align=True)
         col = grid.column() # align=True
@@ -496,12 +516,68 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
             col.enabled = True
         grid.prop(self, 'altitude_mode', expand=True, icon_only=True) 
 
+
+    def draw_profile_faces_indexes_in_socket(self, socket, context, layout):
+        grid = layout.grid_flow(row_major=False, columns=3, align=True)
+        col = grid.row(align=True)
+        socket_label = socket.objects_number if hasattr(socket, "objects_number")==True else '-'
+        col.enabled = False
+        if(self.res_type=='BEVEL'):
+            col.enabled = True
+        col.label(text=f"Profile faces indexes {socket_label}")
+        pass
+        
+        pass
+
+        #layout.prop(self, 'source_objects_join_mode', text='')
+        pass
+
+    def draw_profile_faces_close_mode_in_socket(self, socket, context, layout):
+        grid = layout.grid_flow(row_major=False, columns=3, align=True)
+        col = grid.row()
+        col.prop(self, 'profile_faces__close_mode1', expand=False, text='Profile close mode')
+        if socket.is_linked==True:
+            col.enabled = False
+        else:
+            col.enabled = False
+            if(self.res_type=='BEVEL'):
+                col.enabled = True
+        grid.prop(self, 'profile_faces__close_mode__mode', expand=True, icon_only=True) 
+        pass
+
+    def draw_objects_mask_in_socket(self, socket, context, layout):
+        grid = layout.grid_flow(row_major=True, columns=2)
+        col2 = grid.column()
+        col2_row1 = col2.row()
+        col2_row1.alignment='LEFT'
+        if socket.is_linked:
+            col2_row1.label(text=f"Mask of Objects. {socket.objects_number or ''}:")
+        else:
+            col2_row1.label(text=f"Mask of Objects:")
+        col2_row2 = col2.row()
+        col2_row2.alignment='LEFT'
+        col2_row2.column(align=True).prop(self, "objects_mask_inversion")
+        col3 = grid.column()
+        col3.prop(self, "objects_mask_mode", expand=True)
+
+        col2_row2.enabled = True
+        col3.enabled = True
+        if not socket.is_linked:
+            #grid.enabled = False
+            col2_row2.enabled = False
+            col3.enabled = False
+
     def draw_buttons(self, context, layout):
         col = layout.column()
-        col.row(align=True).prop(self, 'res_type', expand=True)
-        col.prop(self, 'only_tests_for_valid')
+        col.grid_flow(columns=2,align=True, row_major=True).prop(self, 'res_type', expand=True)
+        #col.row(align=True).prop(self, 'res_type', expand=True)
         col.prop(self, 'force_z_zero')
-        col.prop(self, 'verbose_messages_while_process') 
+        col.prop(self, 'use_cache_of_straight_skeleton')
+        col1 = layout.column()
+        col1.enabled = False
+        if self.res_type=='BEVEL' and  self.results_join_mode=='SPLIT':
+            col1.enabled = True
+        col1.prop(self, 'bevel_more_split') 
         #col.row().prop(self, 'join_mode', expand=True)
         #ui_file_save_dat = col.row()
         #self.wrapper_tracked_ui_draw_op(ui_file_save_dat, SvSaveCGALDatFile.bl_idname, text='', icon='DISK_DRIVE')
@@ -510,6 +586,8 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
 
     def draw_buttons_ext(self, context, layout):
         col = layout.column(align=True)
+        col.prop(self, 'only_tests_for_valid')
+        col.prop(self, 'verbose_messages_while_process')
         pass
 
     def sv_init(self, context):
@@ -522,6 +600,8 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
         self.inputs.new('SvStringsSocket' , 'ss_shapes_modes')
         self.inputs.new('SvStringsSocket' , 'ss_offsets').prop_name = 'ss_offset1'
         self.inputs.new('SvStringsSocket' , 'ss_altitudes').prop_name = 'ss_altitude1'
+        self.inputs.new('SvStringsSocket' , 'ss_profile_faces_indexes')
+        self.inputs.new('SvStringsSocket' , 'ss_profile_faces_close_mode')
         self.inputs.new('SvStringsSocket' , 'objects_mask').label = "Mask of Objects"
         self.inputs.new('SvTextSocket'    , 'file_name')
 
@@ -534,6 +614,10 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
         self.inputs['ss_offsets'].custom_draw = 'draw_offset_mode_in_socket'
         self.inputs['ss_altitudes'].label = 'Offsets'
         self.inputs['ss_altitudes'].custom_draw = 'draw_altitude_mode_in_socket'
+        self.inputs['ss_profile_faces_indexes'].label = 'Profile faces indexes'
+        self.inputs['ss_profile_faces_indexes'].custom_draw = 'draw_profile_faces_indexes_in_socket'
+        self.inputs['ss_profile_faces_close_mode'].label = 'Profile Close mode'
+        self.inputs['ss_profile_faces_close_mode'].custom_draw = 'draw_profile_faces_close_mode_in_socket'
         self.inputs['objects_mask'].custom_draw = 'draw_objects_mask_in_socket'
         self.inputs['file_name'].label = 'File Name'
         self.inputs['file_name'].hide = True
@@ -571,6 +655,10 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
         ss_offsets2     = ensure_nesting_level(_ss_offsets, 2)
         _ss_altitudes   = inputs['ss_altitudes'].sv_get(default=[[self.ss_altitude1]], deepcopy=False)
         ss_altitudes2   = ensure_nesting_level(_ss_altitudes, 2)
+        _profile_faces_indexes   = inputs['ss_profile_faces_indexes'].sv_get(default=[[]], deepcopy=False)
+        profile_faces3_indexes   = ensure_nesting_level(_profile_faces_indexes, 3)
+        _profile_faces_close_mode   = inputs['ss_profile_faces_close_mode'].sv_get(default=[[self.profile_faces__close_mode1]], deepcopy=False)
+        profile_faces2_close_mode   = ensure_nesting_level(_profile_faces_close_mode, 2)
 
         # selecte shape mode in property
         ss_shapes_mode1 = [I for I, shapes_modes in enumerate(self.ss_shapes_modes) if shapes_modes[0] == self.ss_shapes_mode1]
@@ -602,7 +690,7 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
         #objects_area_boundaries = []
 
         contours_failed_at_all = []
-        params = zip_long_repeat(Vertices3, Edges3, Faces3)
+        params = zip_long_repeat(Vertices3, Edges3, Faces3, profile_faces3_indexes)
 
         len_vertices3 = len(Vertices3)
         np_mask = np.zeros(len_vertices3, dtype=bool)
@@ -630,12 +718,12 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
         _shapes_modes = create_list2_in_range(len_vertices3, ss_shapes_mode2, [shapes_modes[-1] for I, shapes_modes in enumerate(self.ss_shapes_modes)])
         allowed_shapes_modes = [shapes_modes[-1] for I, shapes_modes in enumerate(self.ss_shapes_modes)] # for ensurence for developers. Will not work in production mode.
 
-        for I, (verts_i, edges_i, faces_i) in enumerate( params ):
+        for I, (verts_i, edges_i, faces_i, profile_faces__indexes_I) in enumerate( params ):
             mask = objects_mask[I]
             if mask==True:
                 continue
 
-            if self.offset_mode=='OBJECT_ALL_OFFSETS':
+            if self.offset_mode=='OBJECT_ALL_OFFSETS' or self.res_type=='BEVEL':
                 if I<=len(ss_offsets2)-1:
                     ss_offsets = ss_offsets2[I]
                 else:
@@ -648,7 +736,7 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
                     ss_offsets = [ss_offsets2[0][-1]]
                 pass
             
-            if self.altitude_mode=='OBJECT_ALL_ALTITUDES':
+            if self.altitude_mode=='OBJECT_ALL_ALTITUDES' or self.res_type=='BEVEL':
                 if I<=len(ss_altitudes2)-1:
                     ss_altitudes = ss_altitudes2[I]
                 else:
@@ -659,6 +747,61 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
                     ss_altitudes = [ss_altitudes2[0][I]]
                 else:
                     ss_altitudes = [ss_altitudes2[0][-1]]
+                pass
+
+            if self.profile_faces__close_mode__mode=='OBJECT_ALL_OPEN_MODE':
+                if I<=len(profile_faces2_close_mode)-1:
+                    input_close_mode = profile_faces2_close_mode[I]
+                else:
+                    input_close_mode = profile_faces2_close_mode[-1]
+                ss_profile_faces__close_modes_I = []
+                for IJ in range(len(profile_faces__indexes_I)):
+                    # if IJ<len(input_close_mode):
+                    #     ss_profile_faces__close_modes_I.append(1 if input_close_mode[IJ] in ['CLOSED', True, 1] else 0)
+                    # else:
+                    #     ss_profile_faces__close_modes_I.append(1 if input_close_mode[-1] in ['CLOSED', True, 1] else 0)
+                    close_mode_IJ = 'OPENED'
+                    if IJ<len(input_close_mode):
+                        close_mode_IJ = input_close_mode[IJ]
+                    else:
+                        close_mode_IJ = input_close_mode[-1]
+
+                    close_mode = 0
+                    if close_mode_IJ in ['CLOSED', True, 1]:
+                        close_mode = 1
+                    elif close_mode_IJ in ['INPAIRS', 2]:
+                        close_mode = 2
+
+                    ss_profile_faces__close_modes_I.append(close_mode)
+
+                pass
+            elif self.profile_faces__close_mode__mode=='OBJECT_ONE_OPEN_MODE':
+                if I<=len(profile_faces2_close_mode[0])-1:
+                    input_close_mode = [profile_faces2_close_mode[0][I]]
+                else:
+                    input_close_mode = [profile_faces2_close_mode[0][-1]]
+
+                ss_profile_faces__close_modes_I = []
+                for IJ in range(len(profile_faces__indexes_I)):
+                    # if IJ<len(input_close_mode):
+                    #     ss_profile_faces__close_modes_I.append(0 if input_close_mode[IJ] in ['CLOSED', True, 1] else 1)
+                    # else:
+                    #     ss_profile_faces__close_modes_I.append(0 if input_close_mode[-1] in ['CLOSED', True, 1] else 1)
+                    close_mode_IJ = 'OPENED'
+                    if IJ<len(input_close_mode):
+                        close_mode_IJ = input_close_mode[IJ]
+                    else:
+                        close_mode_IJ = input_close_mode[-1]
+
+                    close_mode = 0
+                    if close_mode_IJ in ['CLOSED', True, 1]:
+                        close_mode = 1
+                    elif close_mode_IJ in ['INPAIRS', 2]:
+                        close_mode = 2
+
+                    ss_profile_faces__close_modes_I.append(close_mode)
+
+
                 pass
             
             if _shapes_modes[I]<0 or len(self.ss_shapes_modes) < _shapes_modes[I]:
@@ -708,7 +851,7 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
                     continue
                 if self.verbose_messages_while_process==True:
                     time_2_1 = time()-time_2_1
-                    print(f'object {I}, part {IJ} calc baunadries: {time_2_1}')
+                    print(f'\nobject {I}, part {IJ} calc baunadries: {time_2_1}')
 
                 if not object_I_plane_IJ_contours_edges:
                     raise Exception(f"Error: Object {I} has no boundaries. Extrusion is not possible. Objects should be flat.")
@@ -743,7 +886,15 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
                 if shapes_mode_1 in [ 'ORIGINAL_BOUNDARIES', 'EXCLUDE_HOLES', 'INVERT_HOLES', ]: # and len(object_boundaries_sorted_by_area)>1:
                     shapes_mode_1_id = [info for info in self.ss_shapes_modes if info[0]==shapes_mode_1][0][4]
                     if I not in objects_data:
-                        objects_data[I] = {"idx": I, 'offsets': ss_offsets, 'altitudes': ss_altitudes, 'planes':[], 'shape_mode':shapes_mode_1_id}
+                        objects_data[I] = {
+                            "idx": I,
+                            'offsets': ss_offsets,
+                            'altitudes': ss_altitudes,
+                            'profile_faces__indexes': profile_faces__indexes_I,
+                            'profile_faces__close_modes': ss_profile_faces__close_modes_I,
+                            'planes':[],
+                            'shape_mode':shapes_mode_1_id,
+                        }
                     objects_data[I]['planes'].append(object_I_plane_IJ_contours_sorted_by_area)
                     pass
                 else:
@@ -765,26 +916,34 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
                 res_type=0
             elif(self.res_type=='FACES'):
                 res_type=1
+            elif(self.res_type=='BEVEL'):
+                res_type=2
+            elif(self.res_type=='STRAIGHT_SKELETON'):
+                res_type=3
             else:
-                raise Exception(f"Unknown res_type={self.res_type}. Allowed only 'CONTOURS' or 'FACES'.")
+                raise Exception(f"Unknown res_type={self.res_type}. Allowed only 'CONTOURS' or 'FACES', 'BEVEL' and 'STRAIGHT_SKELETON'.")
 
             source_objects_join_mode_id = [info for info in self.source_objects_join_modes if info[0]==self.source_objects_join_mode][0][4]
             results_join_mode_id = [info for info in self.results_join_modes if info[0]==self.results_join_mode][0][4]
             data = {
                 'objects' : [],
-                'force_z_zero'          : self.force_z_zero, 
-                'res_type': res_type, 
-                'source_objects_join_mode'             : source_objects_join_mode_id,
-                'results_join_mode'             : results_join_mode_id,
-                'only_tests_for_valid'  : self.only_tests_for_valid, 
-                'verbose'               : self.verbose_messages_while_process,
+                'force_z_zero'              : self.force_z_zero, 
+                'res_type'                  : res_type, 
+                'source_objects_join_mode'  : source_objects_join_mode_id,
+                'results_join_mode'         : results_join_mode_id,
+                'only_tests_for_valid'      : self.only_tests_for_valid, 
+                'verbose'                   : self.verbose_messages_while_process,
+                'use_cache_of_straight_skeleton' : self.use_cache_of_straight_skeleton,
+                'bevel_more_split'          : self.bevel_more_split,
             }
             
             for I in range(len(objects_data)):
-                objects_data_I       = objects_data[I]
-                shape_mode_I         = objects_data_I["shape_mode"]
-                offsets_I            = objects_data_I["offsets"]
-                altitudes_I          = objects_data_I["altitudes"]
+                objects_data_I                  = objects_data[I]
+                shape_mode_I                    = objects_data_I["shape_mode"]
+                offsets_I                       = objects_data_I["offsets"]
+                altitudes_I                     = objects_data_I["altitudes"]
+                profile_faces__indexes_I        = objects_data_I["profile_faces__indexes"]
+                profile_faces__close_modes_I    = objects_data_I["profile_faces__close_modes"]
                 offsets = []
                 altitudes = []
                 for offset_index, offset1 in enumerate(offsets_I):
@@ -802,6 +961,8 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
                         #'polygon_id':I, 
                         'offsets': offsets,
                         'altitudes': altitudes,
+                        'profile_faces__indexes': profile_faces__indexes_I,
+                        'profile_faces__close_modes': profile_faces__close_modes_I,
                         'planes' : objects_data_I["planes"], # I is not wrong, boundary1 (array of contours) - plane
                     } )
 
