@@ -386,7 +386,7 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
     verbose_messages_while_process: BoolProperty(
         name='Verbose',
         description='Show additional debug info in console',
-        default=True, update=updateNode) # type: ignore
+        default=False, update=updateNode) # type: ignore
 
     use_cache_of_straight_skeleton: BoolProperty(
         name='Use cache',
@@ -394,7 +394,7 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
         default=False, update=updateNode) # type: ignore
 
     bevel_more_split: BoolProperty(
-        name='Bevel more split',
+        name='Detailed split',
         description='If use negative offsets then this will split result beveled Offset with more parts (used only in Bevel mode). For fun. )',
         default=False, update=updateNode) # type: ignore
 
@@ -521,6 +521,9 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
         grid = layout.grid_flow(row_major=False, columns=3, align=True)
         col = grid.row(align=True)
         socket_label = socket.objects_number if hasattr(socket, "objects_number")==True else '-'
+        col.enabled = False
+        if(self.res_type=='BEVEL'):
+            col.enabled = True
         col.label(text=f"Profile faces indexes {socket_label}")
         pass
         
@@ -536,14 +539,14 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
         if socket.is_linked==True:
             col.enabled = False
         else:
-            col.enabled = True
+            col.enabled = False
+            if(self.res_type=='BEVEL'):
+                col.enabled = True
         grid.prop(self, 'profile_faces__close_mode__mode', expand=True, icon_only=True) 
         pass
 
     def draw_objects_mask_in_socket(self, socket, context, layout):
         grid = layout.grid_flow(row_major=True, columns=2)
-        if not socket.is_linked:
-            grid.enabled = False
         col2 = grid.column()
         col2_row1 = col2.row()
         col2_row1.alignment='LEFT'
@@ -557,13 +560,18 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
         col3 = grid.column()
         col3.prop(self, "objects_mask_mode", expand=True)
 
+        col2_row2.enabled = True
+        col3.enabled = True
+        if not socket.is_linked:
+            #grid.enabled = False
+            col2_row2.enabled = False
+            col3.enabled = False
+
     def draw_buttons(self, context, layout):
         col = layout.column()
         col.grid_flow(columns=2,align=True, row_major=True).prop(self, 'res_type', expand=True)
         #col.row(align=True).prop(self, 'res_type', expand=True)
-        col.prop(self, 'only_tests_for_valid')
         col.prop(self, 'force_z_zero')
-        col.prop(self, 'verbose_messages_while_process')
         col.prop(self, 'use_cache_of_straight_skeleton')
         col1 = layout.column()
         col1.enabled = False
@@ -578,6 +586,8 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
 
     def draw_buttons_ext(self, context, layout):
         col = layout.column(align=True)
+        col.prop(self, 'only_tests_for_valid')
+        col.prop(self, 'verbose_messages_while_process')
         pass
 
     def sv_init(self, context):

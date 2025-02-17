@@ -1,8 +1,8 @@
 Straight Skeleton 2d Offset (Alpha)
 ===================================
 
-.. image:: https://github.com/user-attachments/assets/e127c195-2b76-44b8-a75b-976e772000f1
-  :target: https://github.com/user-attachments/assets/e127c195-2b76-44b8-a75b-976e772000f1
+.. image:: https://github.com/user-attachments/assets/c4f3f9dd-9866-4a52-b49b-fc3ea4b84ad8
+  :target: https://github.com/user-attachments/assets/c4f3f9dd-9866-4a52-b49b-fc3ea4b84ad8
 
 Functionality
 -------------
@@ -42,14 +42,19 @@ Inputs
     .. image:: https://github.com/user-attachments/assets/8249d2f4-6c22-4899-b63e-1ded807a7f82
       :target: https://github.com/user-attachments/assets/8249d2f4-6c22-4899-b63e-1ded807a7f82
 
-- **Join mode**. Preprocess source meshes. Split, Keep, Merge. **Split** - separate source meshes into independent islands and process them individually. Results boundaries can overlaps. **Keep** - If source meshes has several islands then they has influence. **Merge** - Combine all islands to influence all islands.
+- **Join mode**. Preprocess source meshes. **Split**, **Keep**, **Merge**. 
+    - **Split** - separate source meshes into independent islands and process them individually. Results boundaries can overlaps.
+    - **Keep** - If source meshes has several islands then they has influence.
+    - **Merge** - Combine all islands to influence all islands.
 
     .. image:: https://github.com/user-attachments/assets/3cc4b707-2068-4743-8c81-2b707edfc8ef 
       :target: https://github.com/user-attachments/assets/3cc4b707-2068-4743-8c81-2b707edfc8ef
 
 - **Shapes mode**. **Original**, **Exclude Holes**, **Invert Holes**.
 
-    **Original** - Process original meshes. **Exclude holes** - process only external boundaries. **Invert Holes** - process holes as islands, exclude external boundaries from process.
+    - **Original** - Process original meshes.
+    - **Exclude holes** - process only external boundaries.
+    - **Invert Holes** - process holes as islands, exclude external boundaries from process.
 
     .. image:: https://github.com/user-attachments/assets/f3b577f9-25c1-424b-ac55-0b7ceb754877
       :target: https://github.com/user-attachments/assets/f3b577f9-25c1-424b-ac55-0b7ceb754877
@@ -135,8 +140,12 @@ Parameters
       .. image:: https://github.com/user-attachments/assets/e469b38b-a0de-4e7a-a595-a027e77aae48
         :target: https://github.com/user-attachments/assets/e469b38b-a0de-4e7a-a595-a027e77aae48
 
+- **Force z=0.0** - To force use meshes as planes. Useful for ex. bezier 2D curve some time take Z not zero.
+
+      .. image:: https://github.com/user-attachments/assets/171ee664-1f24-4f00-aed7-4d69ab0f8e75
+        :target: https://github.com/user-attachments/assets/171ee664-1f24-4f00-aed7-4d69ab0f8e75
+
 - **Only Tests** - If you have a hi poly mesh like imported SVG file one can save time and do not Skeletonize all meshes before fix all. You can connect viewer draw into the "Wrong Contours Verts" with red color or any color you prefer for errors to see any wrong contrours. Red dots are wrong contours.
-- **Force z=0.0** - To force use meshes as planes. Iy is useful for ex. bezier 2D curve some time take Z not zero.
 - **Verbose** - Enabled - Show process messages in console while process meshes. Disabled - Hide any process messages.
 
       .. image:: https://github.com/user-attachments/assets/5b1ffdef-8a1a-4ed0-b580-c53b2d1fdb9d
@@ -144,10 +153,10 @@ Parameters
 
 - **Use cache** - Store Straight Skeleton 2D calculations in cache. If you pass the geometry for calculation a Straight Skeleton a second time, the result will be taken from the cache. This is a new feature so this is disabled by default. If the setting is disabled, the cache is not used.
 
-- **Bevel more split** - Work only in Bevel mode. Additional separation of the object by profile faces in **split** mode.
+- **Detailed split** - Work only in Bevel mode. Additional separation of the object by profile faces in **split** mode.
 
-      .. image:: https://github.com/user-attachments/assets/cdc0ee17-f050-41b3-889c-9b3b369667de
-        :target: https://github.com/user-attachments/assets/cdc0ee17-f050-41b3-889c-9b3b369667de
+      .. image:: https://github.com/user-attachments/assets/69670c31-d4e8-42ff-936f-699500f41359
+        :target: https://github.com/user-attachments/assets/69670c31-d4e8-42ff-936f-699500f41359
 
 Output sockets
 --------------
@@ -175,6 +184,12 @@ If you try high poly like Besier 2D with many points and hi resolution (1) then 
 .. image:: https://github.com/user-attachments/assets/429e6571-fe73-4fc7-b242-4f038f670871
   :target: https://github.com/user-attachments/assets/429e6571-fe73-4fc7-b242-4f038f670871
 
+Also you can use cache mode (it is experimental property for a while!!!):
+
+.. image:: https://github.com/user-attachments/assets/2e8eaadc-ac14-4789-826a-3bf992ebeb7d
+  :target: https://github.com/user-attachments/assets/2e8eaadc-ac14-4789-826a-3bf992ebeb7d
+
+
 Examples
 --------
 
@@ -188,7 +203,7 @@ Inner Offset
 .. image:: https://github.com/user-attachments/assets/78568725-254e-469c-98bd-50ffb24321b0
   :target: https://github.com/user-attachments/assets/78568725-254e-469c-98bd-50ffb24321b0
 
-Extrude by offsets:
+Extrude with profile faces:
 
 .. image:: https://github.com/user-attachments/assets/e7278c18-18aa-4e3c-8897-71369f8566b9
   :target: https://github.com/user-attachments/assets/e7278c18-18aa-4e3c-8897-71369f8566b9
