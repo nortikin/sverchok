@@ -1,8 +1,8 @@
 Straight Skeleton 2d Offset (Alpha)
 ===================================
 
-.. image:: https://github.com/user-attachments/assets/c4f3f9dd-9866-4a52-b49b-fc3ea4b84ad8
-  :target: https://github.com/user-attachments/assets/c4f3f9dd-9866-4a52-b49b-fc3ea4b84ad8
+.. image:: https://github.com/user-attachments/assets/4bcfbcad-9e1d-49cc-b2db-d703b5c465a3
+  :target: https://github.com/user-attachments/assets/4bcfbcad-9e1d-49cc-b2db-d703b5c465a3
 
 Functionality
 -------------
@@ -13,8 +13,8 @@ This package implements straight skeletons offset for two-dimensional polygons w
 
 Simple example:
 
-.. image:: https://github.com/user-attachments/assets/fb5613bc-6ba0-426c-b6ed-be707b333747
-  :target: https://github.com/user-attachments/assets/fb5613bc-6ba0-426c-b6ed-be707b333747
+.. image:: https://github.com/user-attachments/assets/8fb1ad28-4e4c-4cd5-8afe-8e0a7b5d27e5
+  :target: https://github.com/user-attachments/assets/8fb1ad28-4e4c-4cd5-8afe-8e0a7b5d27e5
 
 More complex example:
 
@@ -39,16 +39,32 @@ Inputs
 ------
 
 - **Vertices**, **Edges**, **Faces** - Input Mesh (2D only) or Meshes. You can use several meshes as input.
-    .. image:: https://github.com/user-attachments/assets/8249d2f4-6c22-4899-b63e-1ded807a7f82
-      :target: https://github.com/user-attachments/assets/8249d2f4-6c22-4899-b63e-1ded807a7f82
+
+    .. image:: https://github.com/user-attachments/assets/d23fe603-e4d2-4799-ba92-b50dffb65ee1
+      :target: https://github.com/user-attachments/assets/d23fe603-e4d2-4799-ba92-b50dffb65ee1
 
 - **Join mode**. Preprocess source meshes. **Split**, **Keep**, **Merge**. 
+
+    .. image:: https://github.com/user-attachments/assets/3cd2f905-254e-4b4b-981e-58b58f24154b
+      :target: https://github.com/user-attachments/assets/3cd2f905-254e-4b4b-981e-58b58f24154b
+
     - **Split** - separate source meshes into independent islands and process them individually. Results boundaries can overlaps.
     - **Keep** - If source meshes has several islands then they has influence.
     - **Merge** - Combine all islands to influence all islands.
 
     .. image:: https://github.com/user-attachments/assets/3cc4b707-2068-4743-8c81-2b707edfc8ef 
       :target: https://github.com/user-attachments/assets/3cc4b707-2068-4743-8c81-2b707edfc8ef
+
+- **Combine mode**. How to combine shapes and profiles.
+
+    .. image:: https://github.com/user-attachments/assets/109f3625-64bf-4b7a-92d6-34ba720743f4
+      :target: https://github.com/user-attachments/assets/109f3625-64bf-4b7a-92d6-34ba720743f4
+
+    - **one dot** - combine one shape and one profile. If no profile then skipped
+    - **three dots** - combine every shape with all profiles.
+
+    .. image:: https://github.com/user-attachments/assets/491362a5-e47f-4ee4-b1e1-2348fceab2d9
+      :target: https://github.com/user-attachments/assets/491362a5-e47f-4ee4-b1e1-2348fceab2d9
 
 - **Shapes mode**. **Original**, **Exclude Holes**, **Invert Holes**.
 
@@ -64,49 +80,52 @@ Inputs
     **Offsets** - distance from contour in plane (one can use negative value). 
     **Altitudes** - results heights in Z axis (one can use negative value).
 
-    .. image:: https://github.com/user-attachments/assets/ea4938cc-7c67-4543-900a-1b2edeb473f1
-      :target: https://github.com/user-attachments/assets/ea4938cc-7c67-4543-900a-1b2edeb473f1
+    .. image:: https://github.com/user-attachments/assets/a6d31042-4564-4b38-a90c-ab8d32f8109e
+      :target: https://github.com/user-attachments/assets/a6d31042-4564-4b38-a90c-ab8d32f8109e
 
 
 If you do not connect any lists of floats values then this value will be used for every objects
 connected into this node:
 
-    .. image:: https://github.com/user-attachments/assets/21b5edc3-5304-4a40-afb8-f1a2b5781443
-      :target: https://github.com/user-attachments/assets/21b5edc3-5304-4a40-afb8-f1a2b5781443
+    .. image:: https://github.com/user-attachments/assets/378b3a91-a5f1-4660-9c81-81e196b063ee
+      :target: https://github.com/user-attachments/assets/378b3a91-a5f1-4660-9c81-81e196b063ee
 
 - **Profile faces indexes**. Only used in **Bevel mode**. List of indexes to connect offsets. If you use some mesh objects you can use profile faces to connect these offset as in profile shape:
 
-      .. image:: https://github.com/user-attachments/assets/96398637-a68b-4439-a379-e5f718e0865c
-        :target: https://github.com/user-attachments/assets/96398637-a68b-4439-a379-e5f718e0865c
+      .. image:: https://github.com/user-attachments/assets/1d73265a-ca29-40bc-a460-04a9dcab39d8
+        :target: https://github.com/user-attachments/assets/1d73265a-ca29-40bc-a460-04a9dcab39d8
 
 
 - **Profile close mode**. Only used in **Bevel mode**. This option affects the way the profile points are connected.
 
+      .. image:: https://github.com/user-attachments/assets/07570dd0-d855-4135-a835-29775adf83ea
+        :target: https://github.com/user-attachments/assets/07570dd0-d855-4135-a835-29775adf83ea
+
       - **Close** - Profile forms closed shape. The first and last points are connected. The shape is closed from all sides.
 
-          .. image:: https://github.com/user-attachments/assets/12a69746-7ecf-492d-84ce-964aa1f0af66
-            :target: https://github.com/user-attachments/assets/12a69746-7ecf-492d-84ce-964aa1f0af66
+          .. image:: https://github.com/user-attachments/assets/81804a13-c392-48f9-9cc6-c9401e013928
+            :target: https://github.com/user-attachments/assets/81804a13-c392-48f9-9cc6-c9401e013928
 
       - **Open**  - Profile forms opened shape. The first and last points do not connect
 
-          .. image:: https://github.com/user-attachments/assets/826f2671-8167-4a75-b2bc-a2add3b404a1
-            :target: https://github.com/user-attachments/assets/826f2671-8167-4a75-b2bc-a2add3b404a1
+          .. image:: https://github.com/user-attachments/assets/30697e95-8c08-4e65-bf3b-9442c880ea03
+            :target: https://github.com/user-attachments/assets/30697e95-8c08-4e65-bf3b-9442c880ea03
 
       - **Pair**  - List items are joined in pairs. If an index is out of offset index range, the pair is completely ignored. Ex.: [1,2,3,4,5,6,7,8,9,0] will be [1,2],[3,4],[5,6],[7,8],[9,0] and you get the bands
 
-          .. image:: https://github.com/user-attachments/assets/4f461c1e-86f4-47fe-bcf2-8cba5d23c29f
-            :target: https://github.com/user-attachments/assets/4f461c1e-86f4-47fe-bcf2-8cba5d23c29f
+          .. image:: https://github.com/user-attachments/assets/a72f8880-daf3-4062-adda-1a902a2d0375
+            :target: https://github.com/user-attachments/assets/a72f8880-daf3-4062-adda-1a902a2d0375
 
 
 - **Mask of objects** - Mask hide objects. If element of boolean mask is True then object are hidden. If length of mask is more than length of objects then exceeded values will be omitted.
 
-      .. image:: https://github.com/user-attachments/assets/0afddc03-fb45-483e-aad5-01f387a4a584
-        :target: https://github.com/user-attachments/assets/0afddc03-fb45-483e-aad5-01f387a4a584
+      .. image:: https://github.com/user-attachments/assets/112402bd-e369-468e-84cd-b8537611bda8
+        :target: https://github.com/user-attachments/assets/112402bd-e369-468e-84cd-b8537611bda8
 
       You can get this result with boolean mask too
 
-      .. image:: https://github.com/user-attachments/assets/b96936b4-68bf-4037-8d9b-e5ec592f04ae
-        :target: https://github.com/user-attachments/assets/b96936b4-68bf-4037-8d9b-e5ec592f04ae
+      .. image:: https://github.com/user-attachments/assets/655d5abe-cfab-40c1-873d-ae11f86f6eca
+        :target: https://github.com/user-attachments/assets/655d5abe-cfab-40c1-873d-ae11f86f6eca
 
 
 Parameters
@@ -148,8 +167,8 @@ Parameters
 - **Only Tests** - If you have a hi poly mesh like imported SVG file one can save time and do not Skeletonize all meshes before fix all. You can connect viewer draw into the "Wrong Contours Verts" with red color or any color you prefer for errors to see any wrong contrours. Red dots are wrong contours.
 - **Verbose** - Enabled - Show process messages in console while process meshes. Disabled - Hide any process messages.
 
-      .. image:: https://github.com/user-attachments/assets/5b1ffdef-8a1a-4ed0-b580-c53b2d1fdb9d
-        :target: https://github.com/user-attachments/assets/5b1ffdef-8a1a-4ed0-b580-c53b2d1fdb9d
+      .. image:: https://github.com/user-attachments/assets/b5c4590d-8eff-4e32-8626-6c8cd8be0f6d
+        :target: https://github.com/user-attachments/assets/b5c4590d-8eff-4e32-8626-6c8cd8be0f6d
 
 - **Use cache** - Store Straight Skeleton 2D calculations in cache. If you pass the geometry for calculation a Straight Skeleton a second time, the result will be taken from the cache. This is a new feature so this is disabled by default. If the setting is disabled, the cache is not used.
 
