@@ -346,6 +346,18 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
         ) # type: ignore
 
 
+    shape__profile__modes = [
+            ('SHAPE_ONE__PROFILE_ONE', "One profile" , "One profile to one shape. Exceed profiles are ignored.", 'DECORATE', 0),
+            ('SHAPE_ONE__PROFILE_ALL', "All profiles", "All profiles to one shape", 'THREE_DOTS', 1),
+        ]
+    shape__profile__mode : EnumProperty(
+        name = "Shape: Profile",
+        default = 'SHAPE_ONE__PROFILE_ALL',
+        description = "How many profiles are applied to the shape:\nOne profile per One shape\nor\nAll profiles per One shape\n",
+        items = shape__profile__modes,
+        update = updateNode
+        ) # type: ignore
+    
     profile_faces__close_mode__modes = [
             ('OBJECT_ALL_OPEN_MODE', "All", "Every profile faces per object get all input modes", 'THREE_DOTS', 0),
             ('OBJECT_ONE_OPEN_MODE', "One", "Every object get one open mode in every its profile faces", 'DECORATE', 1),
@@ -359,9 +371,9 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
         ) # type: ignore
     
     profile_faces__close_modes = [
-            ( 'CLOSED' , "Closed", "Close contour", 'PROP_CON', 1),
-            ( 'OPENED' , "Opened", "Open contour", 'PROP_PROJECTED', 0),
-            ( 'INPAIRS', "Pairs" , "Pair list. ex.: your list is 1,2,2,3,3,4,6,7,7,8 => as program interpret it: [1,2],[2,3],[3,4],[6,7],[7,8]. Be careful. If there is no offset with this index then pair will be skipped", 'CON_TRACKTO', 2),
+            ( 'CLOSED' , "Closed", "Close contour (as 1)", 'PROP_CON', 1),
+            ( 'OPENED' , "Opened", "Open contour (as 0)", 'PROP_PROJECTED', 0),
+            ( 'INPAIRS', "Pairs" , "Pair list (as 2). ex.: your list is 1,2,2,3,3,4,6,7,7,8 => as program interpret it: [1,2],[2,3],[3,4],[6,7],[7,8]. Be careful. If there is no offset with this index then pair will be skipped", 'CON_TRACKTO', 2),
         ]
     profile_faces__close_mode1 : EnumProperty(
         name = "Open mode",
@@ -440,7 +452,7 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
             ('INDEXES', "Indexes", "Indexes as mask of Voronoi Sites per objects [[1,2,0,4],[0,1,4,5,7],..]. Has no influence if socket is not connected (All sites are used)", 1),
         ]
     objects_mask_mode : EnumProperty(
-        name = "Mask of Objects",
+        name = "Mask of shapes",
         items = objects_mask_modes,
         default = 'BOOLEANS',
         update = updateNode
@@ -457,6 +469,7 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
         else:
             layout.label(text=f'{socket.label}')
         layout.prop(self, 'source_objects_join_mode', text='')
+        layout.prop(self, 'shape__profile__mode', text='', expand=True)
         pass
 
     def draw_vertices_out_socket(self, socket, context, layout):
@@ -481,9 +494,9 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
 
     def updateMaskMode(self, context):
         if self.objects_mask_mode=='BOOLEANS':
-            self.inputs["objects_mask"].label = "Mask of Objects"
+            self.inputs["objects_mask"].label = "Mask of shapes"
         elif self.objects_mask_mode=='INDEXES':
-            self.inputs["objects_mask"].label = "Indexes of Objects"
+            self.inputs["objects_mask"].label = "Indexes of shapes"
         updateNode(self, context)
 
     def draw_ss_shapes_modes_in_socket(self, socket, context, layout):
@@ -504,7 +517,7 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
             col.enabled = False
         else:
             col.enabled = True
-        grid.prop(self, 'offset_mode', expand=True, icon_only=True) 
+        #grid.prop(self, 'offset_mode', expand=True, icon_only=True) 
 
     def draw_altitude_mode_in_socket(self, socket, context, layout):
         grid = layout.grid_flow(row_major=False, columns=3, align=True)
@@ -514,7 +527,7 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
             col.enabled = False
         else:
             col.enabled = True
-        grid.prop(self, 'altitude_mode', expand=True, icon_only=True) 
+        #grid.prop(self, 'altitude_mode', expand=True, icon_only=True) 
 
 
     def draw_profile_faces_indexes_in_socket(self, socket, context, layout):
@@ -526,9 +539,6 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
             col.enabled = True
         col.label(text=f"Profile faces indexes {socket_label}")
         pass
-        
-        pass
-
         #layout.prop(self, 'source_objects_join_mode', text='')
         pass
 
@@ -542,7 +552,7 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
             col.enabled = False
             if(self.res_type=='BEVEL'):
                 col.enabled = True
-        grid.prop(self, 'profile_faces__close_mode__mode', expand=True, icon_only=True) 
+        #grid.prop(self, 'profile_faces__close_mode__mode', expand=True, icon_only=True) 
         pass
 
     def draw_objects_mask_in_socket(self, socket, context, layout):
@@ -551,9 +561,9 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
         col2_row1 = col2.row()
         col2_row1.alignment='LEFT'
         if socket.is_linked:
-            col2_row1.label(text=f"Mask of Objects. {socket.objects_number or ''}:")
+            col2_row1.label(text=f"Mask of shapes. {socket.objects_number or ''}:")
         else:
-            col2_row1.label(text=f"Mask of Objects:")
+            col2_row1.label(text=f"Mask of shapes:")
         col2_row2 = col2.row()
         col2_row2.alignment='LEFT'
         col2_row2.column(align=True).prop(self, "objects_mask_inversion")
@@ -570,14 +580,14 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
     def draw_buttons(self, context, layout):
         col = layout.column()
         col.grid_flow(columns=2,align=True, row_major=True).prop(self, 'res_type', expand=True)
-        #col.row(align=True).prop(self, 'res_type', expand=True)
         col.prop(self, 'force_z_zero')
         col.prop(self, 'use_cache_of_straight_skeleton')
         col1 = layout.column()
         col1.enabled = False
         if self.res_type=='BEVEL' and  self.results_join_mode=='SPLIT':
             col1.enabled = True
-        col1.prop(self, 'bevel_more_split') 
+        col1.prop(self, 'bevel_more_split')
+
         #col.row().prop(self, 'join_mode', expand=True)
         #ui_file_save_dat = col.row()
         #self.wrapper_tracked_ui_draw_op(ui_file_save_dat, SvSaveCGALDatFile.bl_idname, text='', icon='DISK_DRIVE')
@@ -598,11 +608,11 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
         self.inputs.new('SvStringsSocket' , 'edges')
         self.inputs.new('SvStringsSocket' , 'polygons')
         self.inputs.new('SvStringsSocket' , 'ss_shapes_modes')
+        self.inputs.new('SvStringsSocket' , 'objects_mask').label = "Mask of shapes"
         self.inputs.new('SvStringsSocket' , 'ss_offsets').prop_name = 'ss_offset1'
         self.inputs.new('SvStringsSocket' , 'ss_altitudes').prop_name = 'ss_altitude1'
         self.inputs.new('SvStringsSocket' , 'ss_profile_faces_indexes')
         self.inputs.new('SvStringsSocket' , 'ss_profile_faces_close_mode')
-        self.inputs.new('SvStringsSocket' , 'objects_mask').label = "Mask of Objects"
         self.inputs.new('SvTextSocket'    , 'file_name')
 
         self.inputs['vertices'].label = 'Vertices'
@@ -625,21 +635,17 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
         self.outputs.new('SvVerticesSocket', 'vertices')
         self.outputs.new('SvStringsSocket' , 'edges')
         self.outputs.new('SvStringsSocket' , 'polygons')
-        #self.outputs.new('SvStringsSocket' , 'offsets')
-        #self.outputs.new('SvStringsSocket' , 'altitudes')
         self.outputs.new('SvVerticesSocket', 'failed_contours_vertices')
 
         self.outputs['vertices'].label = 'Vertices'
         self.outputs['vertices'].custom_draw = 'draw_vertices_out_socket'
         self.outputs['edges'].label = 'Edges'
         self.outputs['polygons'].label = 'Polygons'
-        #self.outputs['offsets'].label = 'Offsets'
-        #self.outputs['altitudes'].label = 'Altitudes'
         self.outputs['failed_contours_vertices'].label = 'No wrong contours verts'
         self.outputs['failed_contours_vertices'].custom_draw = 'draw_failed_contours_vertices_out_socket'
 
     def process(self):
-        if not all([sock.is_linked for sock in self.inputs if sock.name in ['vertices', 'edges', 'polygons'] ]):
+        if not all([sock.is_linked for sock in self.inputs if sock.name in ['vertices', 'polygons'] ]):
             return
         if not any([sock.is_linked for sock in self.outputs]):
             return
@@ -660,7 +666,7 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
         _profile_faces_close_mode   = inputs['ss_profile_faces_close_mode'].sv_get(default=[[self.profile_faces__close_mode1]], deepcopy=False)
         profile_faces2_close_mode   = ensure_nesting_level(_profile_faces_close_mode, 2)
 
-        # selecte shape mode in property
+        #select shape mode in property
         ss_shapes_mode1 = [I for I, shapes_modes in enumerate(self.ss_shapes_modes) if shapes_modes[0] == self.ss_shapes_mode1]
         if len(ss_shapes_mode1)>0:
             ss_shapes_mode1 = ss_shapes_mode1[0]
@@ -682,15 +688,11 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
         res_boundaries_verts = []
         res_edges = []
         res_faces = []
-        #res_offsets = []   # what offset used for results objects
-        #res_altitudes = [] # what altitude used for results objects
 
         objects_data = dict()
-        #objects_offsets_of_boundaries = []
-        #objects_area_boundaries = []
 
         contours_failed_at_all = []
-        params = zip_long_repeat(Vertices3, Edges3, Faces3, profile_faces3_indexes)
+        params = zip_long_repeat(Vertices3, Faces3) # profile_faces3_indexes
 
         len_vertices3 = len(Vertices3)
         np_mask = np.zeros(len_vertices3, dtype=bool)
@@ -718,96 +720,105 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
         _shapes_modes = create_list2_in_range(len_vertices3, ss_shapes_mode2, [shapes_modes[-1] for I, shapes_modes in enumerate(self.ss_shapes_modes)])
         allowed_shapes_modes = [shapes_modes[-1] for I, shapes_modes in enumerate(self.ss_shapes_modes)] # for ensurence for developers. Will not work in production mode.
 
-        for I, (verts_i, edges_i, faces_i, profile_faces__indexes_I) in enumerate( params ):
-            mask = objects_mask[I]
+        for I, (verts_i, faces_i) in enumerate( params ):
+            
+            mask=False
+            if I<=len(objects_mask)-1:
+                mask = objects_mask[I]
             if mask==True:
                 continue
 
-            if self.offset_mode=='OBJECT_ALL_OFFSETS' or self.res_type=='BEVEL':
+            ss_offsets_I = []
+            if self.shape__profile__mode=='SHAPE_ONE__PROFILE_ALL':
+                ss_offsets_I = ss_offsets2
+            elif self.shape__profile__mode=='SHAPE_ONE__PROFILE_ONE':
                 if I<=len(ss_offsets2)-1:
-                    ss_offsets = ss_offsets2[I]
+                    ss_offsets_I = [ss_offsets2[I]]
                 else:
-                    ss_offsets = ss_offsets2[-1]
-                pass
-            elif self.offset_mode=='OBJECT_ONE_OFFSET':
-                if I<=len(ss_offsets2[0])-1:
-                    ss_offsets = [ss_offsets2[0][I]]
-                else:
-                    ss_offsets = [ss_offsets2[0][-1]]
+                    ss_offsets_I = []
                 pass
             
-            if self.altitude_mode=='OBJECT_ALL_ALTITUDES' or self.res_type=='BEVEL':
+            ss_altitudes_I = []
+            if self.shape__profile__mode=='SHAPE_ONE__PROFILE_ALL':
+                ss_altitudes_I = ss_altitudes2
+            elif self.shape__profile__mode=='SHAPE_ONE__PROFILE_ONE':
                 if I<=len(ss_altitudes2)-1:
-                    ss_altitudes = ss_altitudes2[I]
+                    ss_altitudes_I = [ss_altitudes2[I]]
                 else:
-                    ss_altitudes = ss_altitudes2[-1]
-                pass
-            elif self.altitude_mode=='OBJECT_ONE_ALTITUDE':
-                if I<=len(ss_altitudes2[0])-1:
-                    ss_altitudes = [ss_altitudes2[0][I]]
-                else:
-                    ss_altitudes = [ss_altitudes2[0][-1]]
+                    ss_altitudes_I = []
                 pass
 
-            if self.profile_faces__close_mode__mode=='OBJECT_ALL_OPEN_MODE':
+            if self.shape__profile__mode=='SHAPE_ONE__PROFILE_ALL':
+                profile_faces__indexes_I = profile_faces3_indexes
+                pass
+            elif self.shape__profile__mode=='SHAPE_ONE__PROFILE_ONE':
+                if I<=len(profile_faces3_indexes)-1:
+                    profile_faces__indexes_I = [profile_faces3_indexes[I]]
+                else:
+                    profile_faces__indexes_I = []
+                pass
+
+            if self.shape__profile__mode=='SHAPE_ONE__PROFILE_ALL':
+                input_close_mode_I = profile_faces2_close_mode
+            elif self.shape__profile__mode=='SHAPE_ONE__PROFILE_ONE':
                 if I<=len(profile_faces2_close_mode)-1:
-                    input_close_mode = profile_faces2_close_mode[I]
+                    input_close_mode_I = [profile_faces2_close_mode[I]]
                 else:
-                    input_close_mode = profile_faces2_close_mode[-1]
-                ss_profile_faces__close_modes_I = []
-                for IJ in range(len(profile_faces__indexes_I)):
-                    # if IJ<len(input_close_mode):
-                    #     ss_profile_faces__close_modes_I.append(1 if input_close_mode[IJ] in ['CLOSED', True, 1] else 0)
-                    # else:
-                    #     ss_profile_faces__close_modes_I.append(1 if input_close_mode[-1] in ['CLOSED', True, 1] else 0)
-                    close_mode_IJ = 'OPENED'
-                    if IJ<len(input_close_mode):
-                        close_mode_IJ = input_close_mode[IJ]
-                    else:
-                        close_mode_IJ = input_close_mode[-1]
-
-                    close_mode = 0
-                    if close_mode_IJ in ['CLOSED', True, 1]:
-                        close_mode = 1
-                    elif close_mode_IJ in ['INPAIRS', 2]:
-                        close_mode = 2
-
-                    ss_profile_faces__close_modes_I.append(close_mode)
-
+                    input_close_mode_I = [profile_faces2_close_mode[-1]] # close_mode ориентируется по последнему
                 pass
-            elif self.profile_faces__close_mode__mode=='OBJECT_ONE_OPEN_MODE':
-                if I<=len(profile_faces2_close_mode[0])-1:
-                    input_close_mode = [profile_faces2_close_mode[0][I]]
+
+            # align lists to minimal lengths (but input_close_mode - it is aligned to all)
+            min_len = min(len(ss_offsets_I), len(ss_altitudes_I), len(profile_faces__indexes_I))
+            if(min_len==0):
+                continue
+            ss_offsets_I               = ss_offsets_I               [:min_len]
+            ss_altitudes_I             = ss_altitudes_I             [:min_len]
+            profile_faces__indexes_I   = profile_faces__indexes_I   [:min_len]
+            input_close_mode_I         = input_close_mode_I         [:min_len]
+
+            _ss_offsets = []
+            _ss_altitudes = []
+            _profile_faces__indexes_I = []
+            _input_close_mode = []
+            profile_indexes_delta = 0
+            for IJ, ss_offsets_IJ in enumerate(ss_offsets_I):
+                ss_altitudes_IJ = ss_altitudes_I[IJ]
+                len_ss_offsets_IJ = len(ss_offsets_IJ)
+                len_ss_altitudes_IJ = len(ss_altitudes_IJ)
+                if(len_ss_offsets_IJ!=len_ss_altitudes_IJ):
+                    raise f'Length of offsets[{IJ}]({len_ss_offsets_IJ}) and altitudes[{IJ}]{len_ss_altitudes_IJ} are not equals. Check source data.'
+                _ss_offsets.extend(ss_offsets_IJ)
+                _ss_altitudes.extend(ss_altitudes_IJ)
+                ex_faces_indexes = [[x + profile_indexes_delta for x in sublist] for sublist in profile_faces__indexes_I[IJ]]
+                _profile_faces__indexes_I.extend(ex_faces_indexes)
+                _input_close_mode1 = []
+                if IJ<=len(input_close_mode_I)-1:
+                    _input_close_mode1 = input_close_mode_I[IJ][:len(ex_faces_indexes)]
                 else:
-                    input_close_mode = [profile_faces2_close_mode[0][-1]]
-
-                ss_profile_faces__close_modes_I = []
-                for IJ in range(len(profile_faces__indexes_I)):
-                    # if IJ<len(input_close_mode):
-                    #     ss_profile_faces__close_modes_I.append(0 if input_close_mode[IJ] in ['CLOSED', True, 1] else 1)
-                    # else:
-                    #     ss_profile_faces__close_modes_I.append(0 if input_close_mode[-1] in ['CLOSED', True, 1] else 1)
-                    close_mode_IJ = 'OPENED'
-                    if IJ<len(input_close_mode):
-                        close_mode_IJ = input_close_mode[IJ]
-                    else:
-                        close_mode_IJ = input_close_mode[-1]
-
-                    close_mode = 0
-                    if close_mode_IJ in ['CLOSED', True, 1]:
-                        close_mode = 1
-                    elif close_mode_IJ in ['INPAIRS', 2]:
-                        close_mode = 2
-
-                    ss_profile_faces__close_modes_I.append(close_mode)
-
-
+                    _input_close_mode1 = input_close_mode_I[-1][:len(ex_faces_indexes)]
+                _input_close_mode1+=[_input_close_mode1[-1]]*(len(ex_faces_indexes)-len(_input_close_mode1))
+                _input_close_mode.extend(_input_close_mode1)
+                profile_indexes_delta+=len_ss_offsets_IJ
                 pass
+            pass
+
+            for IJK, elem in enumerate(_input_close_mode):
+                close_mode = 0
+                if elem in ['CLOSED', True, 1]:
+                    close_mode = 1
+                elif elem in ['INPAIRS', 2]:
+                    close_mode = 2
+                _input_close_mode[IJK] = close_mode
+
+            ss_offsets_I                = _ss_offsets
+            ss_altitudes_I              = _ss_altitudes
+            profile_faces__indexes_I    = _profile_faces__indexes_I
+            input_close_mode_I          = _input_close_mode
             
             if _shapes_modes[I]<0 or len(self.ss_shapes_modes) < _shapes_modes[I]:
                 raise Exception(f"unknown Shapes mode value: '{_shapes_modes[I]}'. Allowed values [{allowed_shapes_modes}]")
             
-            shapes_mode_1 = self.ss_shapes_modes[ _shapes_modes[I] ][0]
+            shapes_mode_I = self.ss_shapes_modes[ _shapes_modes[I] ][0]
 
             # separate objects of loose parts (objects can has islands. Every island have to be separated)
             if not faces_i or not faces_i[0]:
@@ -856,12 +867,10 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
                 if not object_I_plane_IJ_contours_edges:
                     raise Exception(f"Error: Object {I} has no boundaries. Extrusion is not possible. Objects should be flat.")
                 # separate contours of every island
-                #object_I_plane_IJ_contours_verts, edges_boundaries, _ = separate_edges(object_I_plane_IJ_verts, object_I_plane_IJ_contours_edges)
                 object_I_plane_IJ_contours_verts, edges_boundaries, _ = separate_loose_mesh(object_I_plane_IJ_verts, object_I_plane_IJ_contours_edges)
 
                 object_I_plane_IJ_contours = []
                 object_area_boundaries = []
-                #objects_offsets_of_boundary = []
                 failed_contours_vertices = []
                 areas = []
                 
@@ -883,17 +892,17 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
                     time_3_1 = time()-time_3_1
                     print(f'object {I}, part {IJ} process baundaries: {time_3_1}')
 
-                if shapes_mode_1 in [ 'ORIGINAL_BOUNDARIES', 'EXCLUDE_HOLES', 'INVERT_HOLES', ]: # and len(object_boundaries_sorted_by_area)>1:
-                    shapes_mode_1_id = [info for info in self.ss_shapes_modes if info[0]==shapes_mode_1][0][4]
+                if shapes_mode_I in [ 'ORIGINAL_BOUNDARIES', 'EXCLUDE_HOLES', 'INVERT_HOLES', ]: # and len(object_boundaries_sorted_by_area)>1:
+                    shapes_mode_I_id = [info for info in self.ss_shapes_modes if info[0]==shapes_mode_I][0][4]
                     if I not in objects_data:
                         objects_data[I] = {
                             "idx": I,
-                            'offsets': ss_offsets,
-                            'altitudes': ss_altitudes,
+                            'offsets': ss_offsets_I,
+                            'altitudes': ss_altitudes_I,
                             'profile_faces__indexes': profile_faces__indexes_I,
-                            'profile_faces__close_modes': ss_profile_faces__close_modes_I,
+                            'profile_faces__close_modes': input_close_mode_I, #ss_profile_faces__close_modes_I,
                             'planes':[],
-                            'shape_mode':shapes_mode_1_id,
+                            'shape_mode':shapes_mode_I_id,
                         }
                     objects_data[I]['planes'].append(object_I_plane_IJ_contours_sorted_by_area)
                     pass
@@ -944,23 +953,14 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
                 altitudes_I                     = objects_data_I["altitudes"]
                 profile_faces__indexes_I        = objects_data_I["profile_faces__indexes"]
                 profile_faces__close_modes_I    = objects_data_I["profile_faces__close_modes"]
-                offsets = []
-                altitudes = []
-                for offset_index, offset1 in enumerate(offsets_I):
-                    if offset_index<=len(ss_altitudes)-1:
-                        ss_altitude1 = altitudes_I[offset_index]
-                    else:
-                        ss_altitude1 = altitudes_I[-1]
-                    offsets.append(offset1)
-                    altitudes.append(ss_altitude1)
                 
-                if len(offsets)>0:
+                if len(offsets_I)>0:
                     data['objects'].append( {
                         'object_id':objects_data_I['idx'],
                         'shape_mode' : shape_mode_I,
                         #'polygon_id':I, 
-                        'offsets': offsets,
-                        'altitudes': altitudes,
+                        'offsets': offsets_I,
+                        'altitudes': altitudes_I,
                         'profile_faces__indexes': profile_faces__indexes_I,
                         'profile_faces__close_modes': profile_faces__close_modes_I,
                         'planes' : objects_data_I["planes"], # I is not wrong, boundary1 (array of contours) - plane
