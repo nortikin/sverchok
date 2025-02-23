@@ -6,7 +6,6 @@ from sverchok.data_structure import updateNode
 
 from sverchok.utils.field.scalar import SvMergedScalarField, SvScalarField
 
-
 class SvMergeScalarFieldsNode(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Merge / Join Scalar Fields
