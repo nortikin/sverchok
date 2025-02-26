@@ -607,6 +607,7 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
         self.inputs.new('SvVerticesSocket', 'vertices')
         self.inputs.new('SvStringsSocket' , 'edges')
         self.inputs.new('SvStringsSocket' , 'polygons')
+        self.inputs.new('SvMatrixSocket'  , 'matrixes')
         self.inputs.new('SvStringsSocket' , 'ss_shapes_modes')
         self.inputs.new('SvStringsSocket' , 'objects_mask').label = "Mask of shapes"
         self.inputs.new('SvStringsSocket' , 'ss_offsets').prop_name = 'ss_offset1'
@@ -619,6 +620,7 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
         self.inputs['vertices'].custom_draw = 'draw_vertices_in_socket'
         self.inputs['edges'].label = 'Edges'
         self.inputs['polygons'].label = 'Polygons'
+        self.inputs['matrixes'].label = 'Matrixes'
         self.inputs['ss_shapes_modes'].custom_draw = 'draw_ss_shapes_modes_in_socket'
         self.inputs['ss_offsets'].label = 'Offsets'
         self.inputs['ss_offsets'].custom_draw = 'draw_offset_mode_in_socket'
@@ -635,12 +637,14 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
         self.outputs.new('SvVerticesSocket', 'vertices')
         self.outputs.new('SvStringsSocket' , 'edges')
         self.outputs.new('SvStringsSocket' , 'polygons')
+        self.outputs.new('SvMatrixSocket'  , 'matrixes')
         self.outputs.new('SvVerticesSocket', 'failed_contours_vertices')
 
         self.outputs['vertices'].label = 'Vertices'
         self.outputs['vertices'].custom_draw = 'draw_vertices_out_socket'
         self.outputs['edges'].label = 'Edges'
         self.outputs['polygons'].label = 'Polygons'
+        self.outputs['matrixes'].label = 'Matrixes'
         self.outputs['failed_contours_vertices'].label = 'No wrong contours verts'
         self.outputs['failed_contours_vertices'].custom_draw = 'draw_failed_contours_vertices_out_socket'
 
@@ -650,6 +654,12 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
         if not any([sock.is_linked for sock in self.outputs]):
             return
         
+        timer_general = time()
+        if self.verbose_messages_while_process==True:
+            print(f'===========================================')
+            print(f'start process node {self.bl_idname}: {self.bl_label}')
+
+
         inputs = self.inputs
         _Vertices       = inputs['vertices'].sv_get(default=[[]], deepcopy=False)
         Vertices3       = ensure_nesting_level(_Vertices, 3)
@@ -657,6 +667,8 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
         Edges3          = ensure_nesting_level(_Edges, 3)
         _Faces          = inputs['polygons'].sv_get(default=[[]], deepcopy=False)
         Faces3          = ensure_nesting_level(_Faces, 3)
+        _Matrixes       = inputs['matrixes'].sv_get(default=[[Matrix()]], deepcopy=False)
+        Matrixes2       = ensure_nesting_level(_Matrixes, 2)
         _ss_offsets     = inputs['ss_offsets'].sv_get(default=[[self.ss_offset1]], deepcopy=False)
         ss_offsets2     = ensure_nesting_level(_ss_offsets, 2)
         _ss_altitudes   = inputs['ss_altitudes'].sv_get(default=[[self.ss_altitude1]], deepcopy=False)
@@ -666,6 +678,7 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
         _profile_faces_close_mode   = inputs['ss_profile_faces_close_mode'].sv_get(default=[[self.profile_faces__close_mode1]], deepcopy=False)
         profile_faces2_close_mode   = ensure_nesting_level(_profile_faces_close_mode, 2)
 
+        timer_process_input_sockets = time()
         #select shape mode in property
         ss_shapes_mode1 = [I for I, shapes_modes in enumerate(self.ss_shapes_modes) if shapes_modes[0] == self.ss_shapes_mode1]
         if len(ss_shapes_mode1)>0:
@@ -720,6 +733,13 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
         _shapes_modes = create_list2_in_range(len_vertices3, ss_shapes_mode2, [shapes_modes[-1] for I, shapes_modes in enumerate(self.ss_shapes_modes)])
         allowed_shapes_modes = [shapes_modes[-1] for I, shapes_modes in enumerate(self.ss_shapes_modes)] # for ensurence for developers. Will not work in production mode.
 
+        timer_process_input_sockets = time()-timer_process_input_sockets
+        if self.verbose_messages_while_process==True:
+            print(f'process input socket: {timer_process_input_sockets} ms', end='')
+
+        timer_prepare_data = time()
+        matrix_0 = None
+        matrix_0_inverted = None
         for I, (verts_i, faces_i) in enumerate( params ):
             
             mask=False
@@ -766,6 +786,16 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
                 else:
                     input_close_mode_I = [profile_faces2_close_mode[-1]] # close_mode ориентируется по последнему
                 pass
+
+            if I<=len(Matrixes2[0])-1:
+                matrix_I = Matrixes2[0][I]
+            else:
+                matrix_I = Matrixes2[0][-1]
+            
+            # this is for Merge operation
+            if matrix_0 is None:
+                matrix_0 = matrix_I
+                matrix_0_inverted = matrix_0.inverted()
 
             # align lists to minimal lengths (but input_close_mode - it is aligned to all)
             min_len = min(len(ss_offsets_I), len(ss_altitudes_I), len(profile_faces__indexes_I))
@@ -845,8 +875,19 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
             # object_I_planes_verts, object_I_planes_faces, _ = separate_edges(verts_i, edges_i)
             object_I_planes_verts, object_I_planes_faces, _ = separate_loose_mesh(verts_i, faces_i)
 
+            mtr = matrix_I@matrix_0_inverted
             for IJ in range(len(object_I_planes_verts)):
                 object_I_plane_IJ_verts, object_I_plane_IJ_faces = object_I_planes_verts[IJ], object_I_planes_faces[IJ]
+                if self.source_objects_join_mode=='MERGE' or self.source_objects_join_mode in ['KEEP', 'SPLIT'] and self.results_join_mode=='MERGE':
+                    new_verts = []
+                    new_verts_append = new_verts.append
+                    for v in object_I_plane_IJ_verts:
+                        #v1 = matrix_0_inverted @ Vector(v)
+                        v1 = mtr @ Vector(v)
+                        new_verts_append( (v1.x, v1.y, v1.z) )
+                        pass
+                    object_I_plane_IJ_verts = new_verts
+                    pass
 
                 time_2_1 = time()
                 try:
@@ -897,11 +938,12 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
                     if I not in objects_data:
                         objects_data[I] = {
                             "idx": I,
-                            'offsets': ss_offsets_I,
+                            'offsets'  : ss_offsets_I,
+                            'matrix'   : matrix_I,
                             'altitudes': ss_altitudes_I,
                             'profile_faces__indexes': profile_faces__indexes_I,
                             'profile_faces__close_modes': input_close_mode_I, #ss_profile_faces__close_modes_I,
-                            'planes':[],
+                            'planes'   :[],
                             'shape_mode':shapes_mode_I_id,
                         }
                     objects_data[I]['planes'].append(object_I_plane_IJ_contours_sorted_by_area)
@@ -915,6 +957,9 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
                 time_4_1 = time()-time_4_1
                 print(f'object calc baunadries general time: {time_4_1}')
         pass
+        timer_prepare_data = time() - timer_prepare_data
+        if self.verbose_messages_while_process==True:
+            print(f'prepare data to process: {timer_prepare_data} ms')
 
         errors_vertices = []
         if not file_name_dat:
@@ -950,20 +995,22 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
                 objects_data_I                  = objects_data[I]
                 shape_mode_I                    = objects_data_I["shape_mode"]
                 offsets_I                       = objects_data_I["offsets"]
+                matrix_I                        = objects_data_I["matrix"]
                 altitudes_I                     = objects_data_I["altitudes"]
                 profile_faces__indexes_I        = objects_data_I["profile_faces__indexes"]
                 profile_faces__close_modes_I    = objects_data_I["profile_faces__close_modes"]
                 
                 if len(offsets_I)>0:
                     data['objects'].append( {
-                        'object_id':objects_data_I['idx'],
-                        'shape_mode' : shape_mode_I,
+                        'object_id' :objects_data_I['idx'],
+                        'shape_mode': shape_mode_I,
                         #'polygon_id':I, 
-                        'offsets': offsets_I,
-                        'altitudes': altitudes_I,
-                        'profile_faces__indexes': profile_faces__indexes_I,
+                        'offsets'   : offsets_I,
+                        'altitudes' : altitudes_I,
+                        'matrix'    : matrix_I,
+                        'profile_faces__indexes'    : profile_faces__indexes_I,
                         'profile_faces__close_modes': profile_faces__close_modes_I,
-                        'planes' : objects_data_I["planes"], # I is not wrong, boundary1 (array of contours) - plane
+                        'planes'                    : objects_data_I["planes"], # I is not wrong, boundary1 (array of contours) - plane
                     } )
 
             # run all skeletons in Threads
@@ -982,7 +1029,7 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
                             print(f'    {s}')
                 errors_vertices.append(error_vertices_object1)
                 pass
-
+            matrixes = dict()
             for data1 in data_processed['objects']:
                 # Даже если была ошибка, то проверить, может есть возможность отобразить хоть какие-то данные? Тем более, если ошибки не было!
                 if self.only_tests_for_valid==True:
@@ -990,11 +1037,16 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
                     pass
                 else:
                     object_index = data1['object_index']
+                    if 'object_original_index' in data1:
+                        # заглушка для старых нодов без этого сокета
+                        matrixes[object_index] = objects_data[data1['object_original_index']]['matrix']
                     res_verts.append(data1['vertices'])
                     res_edges.append(data1['edges'])
                     res_faces.append(data1['faces'])
                     pass
                 pass
+            # Пересчитать матрицы новых объектов:
+            res_matrixes = [value for key, value in sorted(matrixes.items())]
             lst_errors.extend(lst_errors1)
             
             if len(contours_failed_at_all)>0:
@@ -1055,6 +1107,7 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
         self.outputs['vertices'].sv_set(res_verts)
         self.outputs['edges'].sv_set(res_edges)
         self.outputs['polygons'].sv_set(res_faces)
+        self.outputs['matrixes'].sv_set(res_matrixes)
         #self.outputs['offsets'].sv_set(res_offsets)
         #self.outputs['altitudes'].sv_set(res_altitudes)
         # Test any data in errors
@@ -1068,6 +1121,12 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
             self.outputs['failed_contours_vertices'].sv_set(errors_vertices)
         else:
             self.outputs['failed_contours_vertices'].sv_set([])
+
+        timer_general = time()-timer_general
+        if self.verbose_messages_while_process==True:
+            print(f'The process of node {self.bl_idname}: {self.bl_label} is finished in {timer_general} ms')
+            print(f'=================================================================================================')
+
 
         pass
     
