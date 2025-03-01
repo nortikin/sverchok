@@ -10,6 +10,7 @@
 [![Stack Exchange questions](https://img.shields.io/stackexchange/blender/t/sverchok?label=StackExchange)](https://blender.stackexchange.com/questions/tagged/sverchok)
 ![GitHub issues by-label](https://img.shields.io/github/issues/nortikin/sverchok/Proposal%20:bulb:?color=%237de57b&label=Proposal)
 ![GitHub issues by-label](https://img.shields.io/github/issues/nortikin/sverchok/bug%20:bug:?color=%23f4f277&label=Bug)
+[![Telegram chat](https://img.shields.io/badge/Telegram-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white)]
 
 [comment]: <> (To get more labels or edit current go to https://shields.io/, type Github in project URL field and you will get available labels which can be customized)
 
