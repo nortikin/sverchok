@@ -533,11 +533,22 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
     def draw_profile_faces_indexes_in_socket(self, socket, context, layout):
         grid = layout.grid_flow(row_major=False, columns=3, align=True)
         col = grid.row(align=True)
-        socket_label = socket.objects_number if hasattr(socket, "objects_number")==True else '-'
+        if socket.is_linked==True:
+            socket_label = socket.objects_number if hasattr(socket, "objects_number")==True else '-'
+        else:
+            socket_label = ''
         col.enabled = False
         if(self.res_type=='BEVEL'):
             col.enabled = True
-        col.label(text=f"Profile faces indexes {socket_label}")
+            if socket.is_linked==False:
+                col.label(text=f"Profile faces indexes {socket_label}")
+                col.label(text=f"", icon='ERROR')
+                col.label(text=f"needs to be connected")
+            else:
+                col.label(text=f"Profile faces indexes {socket_label}")
+        else:
+            col.label(text=f"Profile faces indexes {socket_label}")
+
         pass
         #layout.prop(self, 'source_objects_join_mode', text='')
         pass
@@ -661,6 +672,10 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
 
 
         inputs = self.inputs
+
+        if self.res_type=='BEVEL' and inputs['ss_profile_faces_indexes'].is_linked==False:
+            raise Exception('in Bevel mode input socket "Profile faces indexes" must be connected')
+        
         _Vertices       = inputs['vertices'].sv_get(default=[[]], deepcopy=False)
         Vertices3       = ensure_nesting_level(_Vertices, 3)
         _Edges          = inputs['edges'].sv_get(default=[[]], deepcopy=False)
@@ -755,7 +770,7 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
                 if I<=len(ss_offsets2)-1:
                     ss_offsets_I = [ss_offsets2[I]]
                 else:
-                    ss_offsets_I = []
+                    ss_offsets_I = [ss_offsets2[-1]]
                 pass
             
             ss_altitudes_I = []
@@ -765,7 +780,7 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
                 if I<=len(ss_altitudes2)-1:
                     ss_altitudes_I = [ss_altitudes2[I]]
                 else:
-                    ss_altitudes_I = []
+                    ss_altitudes_I = [ss_altitudes2[-1]]
                 pass
 
             if self.shape__profile__mode=='SHAPE_ONE__PROFILE_ALL':
@@ -775,7 +790,7 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
                 if I<=len(profile_faces3_indexes)-1:
                     profile_faces__indexes_I = [profile_faces3_indexes[I]]
                 else:
-                    profile_faces__indexes_I = []
+                    profile_faces__indexes_I = [profile_faces3_indexes[-1]] # при недостатке profile_faces__indexes устанавливается по последнему
                 pass
 
             if self.shape__profile__mode=='SHAPE_ONE__PROFILE_ALL':
@@ -784,7 +799,7 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
                 if I<=len(profile_faces2_close_mode)-1:
                     input_close_mode_I = [profile_faces2_close_mode[I]]
                 else:
-                    input_close_mode_I = [profile_faces2_close_mode[-1]] # close_mode ориентируется по последнему
+                    input_close_mode_I = [profile_faces2_close_mode[-1]] # при недостатке close_mode устанавливается по последнему
                 pass
 
             if I<=len(Matrixes2[0])-1:
@@ -798,7 +813,7 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
                 matrix_0_inverted = matrix_0.inverted()
 
             # align lists to minimal lengths (but input_close_mode - it is aligned to all)
-            min_len = min(len(ss_offsets_I), len(ss_altitudes_I), len(profile_faces__indexes_I))
+            min_len = min(len(ss_offsets_I), len(ss_altitudes_I)) #, len(profile_faces__indexes_I))
             if(min_len==0):
                 continue
             ss_offsets_I               = ss_offsets_I               [:min_len]
@@ -819,15 +834,18 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
                     raise f'Length of offsets[{IJ}]({len_ss_offsets_IJ}) and altitudes[{IJ}]{len_ss_altitudes_IJ} are not equals. Check source data.'
                 _ss_offsets.extend(ss_offsets_IJ)
                 _ss_altitudes.extend(ss_altitudes_IJ)
-                ex_faces_indexes = [[x + profile_indexes_delta for x in sublist] for sublist in profile_faces__indexes_I[IJ]]
-                _profile_faces__indexes_I.extend(ex_faces_indexes)
+                if IJ<=len(profile_faces__indexes_I)-1:
+                    ex_faces_indexes = [[x + profile_indexes_delta for x in sublist] for sublist in profile_faces__indexes_I[IJ]]
+                    _profile_faces__indexes_I.extend(ex_faces_indexes)
+                    pass
                 _input_close_mode1 = []
                 if IJ<=len(input_close_mode_I)-1:
                     _input_close_mode1 = input_close_mode_I[IJ][:len(ex_faces_indexes)]
                 else:
                     _input_close_mode1 = input_close_mode_I[-1][:len(ex_faces_indexes)]
-                _input_close_mode1+=[_input_close_mode1[-1]]*(len(ex_faces_indexes)-len(_input_close_mode1))
-                _input_close_mode.extend(_input_close_mode1)
+                if len(_input_close_mode1)>0:
+                    _input_close_mode1+=[_input_close_mode1[-1]]*(len(ex_faces_indexes)-len(_input_close_mode1))
+                    _input_close_mode.extend(_input_close_mode1)
                 profile_indexes_delta+=len_ss_offsets_IJ
                 pass
             pass
