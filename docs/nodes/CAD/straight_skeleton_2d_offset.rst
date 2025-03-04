@@ -1,8 +1,8 @@
 Straight Skeleton 2d Offset (Alpha)
 ===================================
 
-.. image:: https://github.com/user-attachments/assets/4bcfbcad-9e1d-49cc-b2db-d703b5c465a3
-  :target: https://github.com/user-attachments/assets/4bcfbcad-9e1d-49cc-b2db-d703b5c465a3
+.. image:: https://github.com/user-attachments/assets/d47db67a-7f1f-4930-b8f6-b688d54c32de
+  :target: https://github.com/user-attachments/assets/d47db67a-7f1f-4930-b8f6-b688d54c32de
 
 Functionality
 -------------
@@ -40,13 +40,13 @@ Inputs
 
 - **Vertices**, **Edges**, **Faces** - Input Mesh (2D only) or Meshes. You can use several meshes as input.
 
-    .. image:: https://github.com/user-attachments/assets/d23fe603-e4d2-4799-ba92-b50dffb65ee1
-      :target: https://github.com/user-attachments/assets/d23fe603-e4d2-4799-ba92-b50dffb65ee1
+    .. image:: https://github.com/user-attachments/assets/b36eab6d-395c-49b5-9e43-c66c83e78d70
+      :target: https://github.com/user-attachments/assets/b36eab6d-395c-49b5-9e43-c66c83e78d70
 
 - **Join mode**. Preprocess source meshes. **Split**, **Keep**, **Merge**. 
 
-    .. image:: https://github.com/user-attachments/assets/3cd2f905-254e-4b4b-981e-58b58f24154b
-      :target: https://github.com/user-attachments/assets/3cd2f905-254e-4b4b-981e-58b58f24154b
+    .. image:: https://github.com/user-attachments/assets/eb3f3937-466e-4621-9edf-25a07f837620
+      :target: https://github.com/user-attachments/assets/eb3f3937-466e-4621-9edf-25a07f837620
 
     - **Split** - separate source meshes into independent islands and process them individually. Results boundaries can overlaps.
     - **Keep** - If source meshes has several islands then they has influence.
@@ -57,8 +57,8 @@ Inputs
 
 - **Combine mode**. How to combine shapes and profiles.
 
-    .. image:: https://github.com/user-attachments/assets/109f3625-64bf-4b7a-92d6-34ba720743f4
-      :target: https://github.com/user-attachments/assets/109f3625-64bf-4b7a-92d6-34ba720743f4
+    .. image:: https://github.com/user-attachments/assets/130fc055-a563-48fe-a118-8109dc1b7f96
+      :target: https://github.com/user-attachments/assets/130fc055-a563-48fe-a118-8109dc1b7f96
 
     - **one dot** - combine one shape and one profile. If no profile then skipped
     - **three dots** - combine every shape with all profiles.
@@ -66,7 +66,19 @@ Inputs
     .. image:: https://github.com/user-attachments/assets/491362a5-e47f-4ee4-b1e1-2348fceab2d9
       :target: https://github.com/user-attachments/assets/491362a5-e47f-4ee4-b1e1-2348fceab2d9
 
+- **Matrixes** - Apply matrixes to the results parts if Shape Mode or Result Mode sets with SPLIT/MERGE
+
+    .. image:: https://github.com/user-attachments/assets/c045d9d8-41a6-47da-99d5-dfca194035bb
+      :target: https://github.com/user-attachments/assets/c045d9d8-41a6-47da-99d5-dfca194035bb
+
+    .. image:: https://github.com/user-attachments/assets/17928457-8849-4180-baa4-7897f0263090
+      :target: https://github.com/user-attachments/assets/17928457-8849-4180-baa4-7897f0263090
+
+
 - **Shapes mode**. **Original**, **Exclude Holes**, **Invert Holes**.
+
+    .. image:: https://github.com/user-attachments/assets/51292f9a-44bb-40e3-adda-d80cfc303602
+      :target: https://github.com/user-attachments/assets/51292f9a-44bb-40e3-adda-d80cfc303602
 
     - **Original** - Process original meshes.
     - **Exclude holes** - process only external boundaries.
