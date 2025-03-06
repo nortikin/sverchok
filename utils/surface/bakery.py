@@ -75,7 +75,7 @@ def make_tris(n_u, n_v):
     return tris
 
 def vert_light_factor(vecs, polygons, light):
-    return (np_dot(np_vertex_normals(vecs, polygons, output_numpy=True), light)*0.5+0.5).tolist()
+    return (np_dot(np_vertex_normals(vecs, polygons, all_faces_equal_len=True, output_numpy=True), light)*0.5+0.5).tolist()
 
 def calc_surface_data(light_vector, surface_colors, n_u, n_v, points):
     #points = points.reshape((n_u*n_v, 3))

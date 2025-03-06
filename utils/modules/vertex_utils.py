@@ -128,7 +128,7 @@ def add_faces_normals(v_pols, np_faces_g, algorithm, pol_sides, v_normals):
         for i in range(pol_sides):
             np.add.at(v_normals, np_faces_g[:, i], f_normal_g * factor[:, i, np.newaxis])
 
-def np_vertex_normals(vertices, faces, algorithm='MWE', output_numpy=False):
+def np_vertex_normals(vertices, faces, all_faces_equal_len = False, algorithm='MWE', output_numpy=False):
 
     if isinstance(vertices, np.ndarray):
         np_verts = vertices
@@ -138,13 +138,15 @@ def np_vertex_normals(vertices, faces, algorithm='MWE', output_numpy=False):
     if isinstance(faces, np.ndarray):
         np_faces = faces
     else:
-        np_faces = np.array(faces, dtype=object)
+        if all_faces_equal_len:
+            np_faces = np.array(faces)
+        else:
+            np_faces = np.array(faces, dtype=object)
 
     v_normals = np.zeros(np_verts.shape, dtype=np_verts.dtype)
 
-    if np_faces.dtype == object:
-        np_len = np.vectorize(len)
-        lens = np_len(np_faces)
+    if not all_faces_equal_len:
+        lens = [len(face) for face in np_faces]
         pol_types = np.unique(lens)
         for pol_sides in pol_types:
             mask = lens == pol_sides
