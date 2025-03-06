@@ -182,7 +182,7 @@ el.replaceWith(d);
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def vert_light_factor(vecs, polygons, light):
-    return (np_dot(np_vertex_normals(vecs, polygons, output_numpy=True), light)*0.5+0.5).tolist()</code></pre>
+    return (np_dot(np_vertex_normals(vecs, polygons, all_faces_equal_len=True, output_numpy=True), light)*0.5+0.5).tolist()</code></pre>
 </details>
 <div class="desc"></div>
 </dd>

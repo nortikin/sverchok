@@ -230,14 +230,14 @@ returns the verts centered around [0,0,0] calculating the mean of all lists</p><
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.modules.vertex_utils.np_vertex_normals"><code class="name flex">
-<span>def <span class="ident">np_vertex_normals</span></span>(<span>vertices, faces, algorithm='MWE', output_numpy=False)</span>
+<span>def <span class="ident">np_vertex_normals</span></span>(<span>vertices, faces, all_faces_equal_len=False, algorithm='MWE', output_numpy=False)</span>
 </code></dt>
 <dd>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def np_vertex_normals(vertices, faces, algorithm=&#39;MWE&#39;, output_numpy=False):
+<pre><code class="python">def np_vertex_normals(vertices, faces, all_faces_equal_len = False, algorithm=&#39;MWE&#39;, output_numpy=False):
 
     if isinstance(vertices, np.ndarray):
         np_verts = vertices
@@ -247,13 +247,15 @@ returns the verts centered around [0,0,0] calculating the mean of all lists</p><
     if isinstance(faces, np.ndarray):
         np_faces = faces
     else:
-        np_faces = np.array(faces)
+        if all_faces_equal_len:
+            np_faces = np.array(faces)
+        else:
+            np_faces = np.array(faces, dtype=object)
 
     v_normals = np.zeros(np_verts.shape, dtype=np_verts.dtype)
 
-    if np_faces.dtype == object:
-        np_len = np.vectorize(len)
-        lens = np_len(np_faces)
+    if not all_faces_equal_len:
+        lens = [len(face) for face in np_faces]
         pol_types = np.unique(lens)
         for pol_sides in pol_types:
             mask = lens == pol_sides
