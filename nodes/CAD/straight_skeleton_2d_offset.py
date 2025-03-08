@@ -831,7 +831,12 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
                 len_ss_offsets_IJ = len(ss_offsets_IJ)
                 len_ss_altitudes_IJ = len(ss_altitudes_IJ)
                 if(len_ss_offsets_IJ!=len_ss_altitudes_IJ):
-                    raise f'Length of offsets[{IJ}]({len_ss_offsets_IJ}) and altitudes[{IJ}]{len_ss_altitudes_IJ} are not equals. Check source data.'
+                    if len_ss_offsets_IJ>len_ss_altitudes_IJ and len_ss_altitudes_IJ>0:
+                        while len(ss_offsets_IJ)>len(ss_altitudes_IJ):
+                            ss_altitudes_IJ.append(ss_altitudes_IJ[-1])
+                        pass
+                    else:
+                        raise Exception(f'Length of offsets[{IJ}]({len_ss_offsets_IJ}) are less length of altitudes[{IJ}]{len_ss_altitudes_IJ}. Lengths should be equal.')
                 _ss_offsets.extend(ss_offsets_IJ)
                 _ss_altitudes.extend(ss_altitudes_IJ)
                 if IJ<=len(profile_faces__indexes_I)-1:
