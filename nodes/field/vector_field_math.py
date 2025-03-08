@@ -9,11 +9,11 @@ from sverchok.utils.field.scalar import (
             SvVectorFieldsScalarProduct,
             SvVectorFieldNorm,
             SvVectorScalarFieldComposition)
-from sverchok.utils.field.vector import (SvVectorField,
+from sverchok.utils.field.vector import (SvAbsoluteVectorField, SvRelativeVectorField)
+from sverchok.utils.field.vector_operations import (
             SvVectorFieldBinOp, SvVectorFieldMultipliedByScalar,
-            SvVectorFieldsLerp, SvVectorFieldCrossProduct, 
+            SvVectorFieldsLerp, SvVectorFieldCrossProduct,
             SvVectorFieldTangent, SvVectorFieldCotangent,
-            SvAbsoluteVectorField, SvRelativeVectorField,
             SvVectorFieldComposition)
 from sverchok.utils.modules.sockets import SvDynamicSocketsHandler, SocketInfo
 
