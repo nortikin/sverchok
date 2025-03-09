@@ -115,4 +115,4 @@
 
 Email: sverchok-b3d@yandex.ru  
 
-[Помочь проекту](https://yoomoney.ru/fundraise/18SSCA4FIG5.250310)
+[₽₽₽ Помочь проекту ₽₽₽](https://yoomoney.ru/fundraise/18SSCA4FIG5.250310)
