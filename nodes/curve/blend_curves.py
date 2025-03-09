@@ -61,11 +61,11 @@ class SvBlendCurvesMk2Node(SverchCustomTreeNode, bpy.types.Node):
 
     smooth_modes = [
             ('0', "C0 - Position", "Connect ends of curves with straight line segment", 0),
-            ('1', "G1 - Tangency", "Connect curves such that their tangents are continuosly joined", 1),
-            ('1b', "G1 - Bi Arc", "Connect curves with Bi Arc, such that tangents are continuosly joined", 2),
-            ('2', "C2 - Smooth Normals", "Connect curves such that their second derivatives are continuosly joined", 3),
-            ('3', "C3 - Smooth Curvature", "Connect curves such that their third derivatives are continuosly joined", 4),
-            ('G2', "G2 - Curvature", "Connect curves such that their tangents, normals and curvatures are continuosly joined", 5)
+            ('1', "G1 - Tangency", "Connect curves such that their tangents are continuously joined", 1),
+            ('1b', "G1 - Bi Arc", "Connect curves with Bi Arc, such that tangents are continuously joined", 2),
+            ('2', "C2 - Smooth Normals", "Connect curves such that their second derivatives are continuously joined", 3),
+            ('3', "C3 - Smooth Curvature", "Connect curves such that their third derivatives are continuously joined", 4),
+            ('G2', "G2 - Curvature", "Connect curves such that their tangents, normals and curvatures are continuously joined", 5)
         ]
 
     smooth_mode : EnumProperty(
