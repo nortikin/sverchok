@@ -115,5 +115,4 @@
 
 Email: sverchok-b3d@yandex.ru  
 
-
-[![Помогите проекту](https://www.paypalobjects.com/en_US/GB/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=JZESR6GN9AKNS)
+<iframe src="https://yoomoney.ru/quickpay/fundraise/widget?billNumber=18SSCA4FIG5.250310&" width="500" height="480" frameborder="0" allowtransparency="true" scrolling="no"></iframe>
