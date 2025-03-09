@@ -115,4 +115,4 @@
 
 Email: sverchok-b3d@yandex.ru  
 
-<iframe src="https://yoomoney.ru/quickpay/fundraise/widget?billNumber=18SSCA4FIG5.250310&" width="500" height="480" frameborder="0" allowtransparency="true" scrolling="no"></iframe>
+[Помочь проекту](https://yoomoney.ru/fundraise/18SSCA4FIG5.250310)
