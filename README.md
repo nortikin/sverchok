@@ -136,7 +136,8 @@ Authors:
 -  Victor Doval,  
 -  Dion Moult,  
 -  Alessandro Zomparelli
--  Alex (aka Satabol)   
+-  Alex (aka Satabol)
+-  @kevinsmia1939
 
 Email: sverchok-b3d@yandex.ru  
 
