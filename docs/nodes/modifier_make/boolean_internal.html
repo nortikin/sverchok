@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Adaptative Edges &mdash; Sverchok 1, 2, 0 documentation</title>
+  <title>Internal Boolean &mdash; Sverchok 1, 2, 0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
 
@@ -18,8 +18,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Fractal Curve" href="fractal_curve.html" />
-    <link rel="prev" title="Dual Mesh" href="dual_mesh.html" /> 
+    <link rel="next" title="Clip Vertices" href="clip_verts.html" />
+    <link rel="prev" title="Bisect" href="bisect.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -63,23 +63,20 @@
 <li class="toctree-l3"><a class="reference internal" href="adaptive_polygons_mk3.html">Adaptive Polygons Mk2</a></li>
 <li class="toctree-l3"><a class="reference internal" href="bevel_curve.html">Bevel a Curve (Mesh)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="bisect.html">Bisect</a></li>
-<li class="toctree-l3"><a class="reference internal" href="boolean_internal.html">Internal Boolean</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Internal Boolean</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#warnings">warnings</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#alternatives">Alternatives</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="clip_verts.html">Clip Vertices</a></li>
 <li class="toctree-l3"><a class="reference internal" href="contour2D.html">Contour 2D</a></li>
 <li class="toctree-l3"><a class="reference internal" href="csg_booleanMK2.html">CSG Boolean MK2</a></li>
 <li class="toctree-l3"><a class="reference internal" href="cut_object_by_surface.html">Cut Object by Surface</a></li>
 <li class="toctree-l3"><a class="reference internal" href="diamond_mesh.html">Diamond Mesh</a></li>
 <li class="toctree-l3"><a class="reference internal" href="dual_mesh.html">Dual Mesh</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">Adaptative Edges</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#outputs">Outputs</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#examples">Examples</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#rotation-of-source-mesh-are-transfered-to-the-adaptive-mesh">Rotation of source mesh are transfered to the adaptive mesh</a></li>
-</ul>
-</li>
+<li class="toctree-l3"><a class="reference internal" href="edges_adaptative.html">Adaptative Edges</a></li>
+<li class="toctree-l3"><a class="reference internal" href="edges_adaptative.html#examples">Examples</a></li>
 <li class="toctree-l3"><a class="reference internal" href="fractal_curve.html">Fractal Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="framework.html">Framework</a></li>
 <li class="toctree-l3"><a class="reference internal" href="join_tris.html">Join Triangles</a></li>
@@ -140,9 +137,9 @@
       <li><a href="../../main.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../nodes.html">Nodes</a></li>
           <li class="breadcrumb-item"><a href="modifier_make_index.html">Modifier Make</a></li>
-      <li class="breadcrumb-item active">Adaptative Edges</li>
+      <li class="breadcrumb-item active">Internal Boolean</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../../_sources/nodes/modifier_make/edges_adaptative.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../../_sources/nodes/modifier_make/boolean_internal.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -150,87 +147,41 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="adaptative-edges">
-<h1>Adaptative Edges<a class="headerlink" href="#adaptative-edges" title="Link to this heading">¶</a></h1>
-<a class="reference external image-reference" href="https://github.com/user-attachments/assets/b2e12f75-f2c1-46ff-9b39-df83d2d74380"><img alt="https://github.com/user-attachments/assets/b2e12f75-f2c1-46ff-9b39-df83d2d74380" src="https://github.com/user-attachments/assets/b2e12f75-f2c1-46ff-9b39-df83d2d74380" />
+  <section id="internal-boolean">
+<h1>Internal Boolean<a class="headerlink" href="#internal-boolean" title="Link to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://raw.githubusercontent.com/kevinsmia1939/images/refs/heads/main/sverchok%20screenshot/functionality.png"><img alt="https://raw.githubusercontent.com/kevinsmia1939/images/refs/heads/main/sverchok%20screenshot/functionality.png" src="https://raw.githubusercontent.com/kevinsmia1939/images/refs/heads/main/sverchok%20screenshot/functionality.png" />
 </a>
-<section id="inputs">
-<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
-<ul>
-<li><p><strong>Adaptive verts</strong>.</p></li>
-<li><p><strong>Adaptive edges</strong>. What edges are used as base:</p>
-<a class="reference external image-reference" href="https://github.com/user-attachments/assets/9eac2148-bda4-4eed-baa3-4bbdbd46fa2c"><img alt="https://github.com/user-attachments/assets/9eac2148-bda4-4eed-baa3-4bbdbd46fa2c" src="https://github.com/user-attachments/assets/9eac2148-bda4-4eed-baa3-4bbdbd46fa2c" />
+<section id="functionality">
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
+<p>This node implements Blender’s internal boolean modifier with 3 functions: Intersect, Union, and Difference.
+Solver options include Fast and Exact solvers. Fast Solver is simpler and faster but does not support overlapping geometries, which Exact Solver does support overlapping geometries but is slower than the Fast Solver.</p>
+<p>More information on Blender’s internal boolean modifier can be found here:
+<a class="reference external" href="https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/booleans.html">https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/booleans.html</a></p>
+<a class="reference external image-reference" href="https://raw.githubusercontent.com/kevinsmia1939/images/refs/heads/main/sverchok%20screenshot/node.png"><img alt="https://raw.githubusercontent.com/kevinsmia1939/images/refs/heads/main/sverchok%20screenshot/node.png" src="https://raw.githubusercontent.com/kevinsmia1939/images/refs/heads/main/sverchok%20screenshot/node.png" />
 </a>
-</li>
-<li><p><strong>Mask of adaptive edges</strong>. What edges hide from using as adaptive edges. Can be used as Boolean mask or Indexes mask</p>
-<a class="reference external image-reference" href="https://github.com/user-attachments/assets/ecb6fe06-b83d-4c44-8af4-5e8405e4452b"><img alt="https://github.com/user-attachments/assets/ecb6fe06-b83d-4c44-8af4-5e8405e4452b" src="https://github.com/user-attachments/assets/ecb6fe06-b83d-4c44-8af4-5e8405e4452b" />
-</a>
-<p>if socket <strong>Mask of adaptive edges</strong> are not connected then all edges are ised:</p>
-<a class="reference external image-reference" href="https://github.com/user-attachments/assets/81479547-9405-41d6-9c2a-260e575ed66d"><img alt="https://github.com/user-attachments/assets/81479547-9405-41d6-9c2a-260e575ed66d" src="https://github.com/user-attachments/assets/81479547-9405-41d6-9c2a-260e575ed66d" />
-</a>
-</li>
-<li><p><strong>Verts</strong>.</p></li>
-<li><p><strong>Edges</strong>. Mesh are used to adaptive</p>
-<a class="reference external image-reference" href="https://github.com/user-attachments/assets/6a44b94e-f726-409f-b718-0e77e70dc575"><img alt="https://github.com/user-attachments/assets/6a44b94e-f726-409f-b718-0e77e70dc575" src="https://github.com/user-attachments/assets/6a44b94e-f726-409f-b718-0e77e70dc575" />
-</a>
-</li>
-<li><p><strong>First adaptive index</strong>.</p></li>
-<li><p><strong>Second adaptive index</strong>. Indexes of vertices of Mesh that will be used to align with adaptive edges (you may use verts not only Ox direction)</p>
-<a class="reference external image-reference" href="https://github.com/user-attachments/assets/b79aa32d-8d5f-4aee-95cf-7173a76f3f96"><img alt="https://github.com/user-attachments/assets/b79aa32d-8d5f-4aee-95cf-7173a76f3f96" src="https://github.com/user-attachments/assets/b79aa32d-8d5f-4aee-95cf-7173a76f3f96" />
-</a>
-<a class="reference external image-reference" href="https://github.com/user-attachments/assets/f4ece3e3-36bd-494c-b5d8-28e23b336e4c"><img alt="https://github.com/user-attachments/assets/f4ece3e3-36bd-494c-b5d8-28e23b336e4c" src="https://github.com/user-attachments/assets/f4ece3e3-36bd-494c-b5d8-28e23b336e4c" />
-</a>
-<p>If you swap indexes then shape of adaptive mesh will changed:</p>
-<a class="reference external image-reference" href="https://github.com/user-attachments/assets/5a9444eb-3d94-4f09-8f38-8fae23242a60"><img alt="https://github.com/user-attachments/assets/5a9444eb-3d94-4f09-8f38-8fae23242a60" src="https://github.com/user-attachments/assets/5a9444eb-3d94-4f09-8f38-8fae23242a60" />
-</a>
-</li>
-</ul>
-</section>
-<section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
+<p>There are switches and modes.</p>
 <ul class="simple">
-<li><p><strong>Join meshes</strong>. Join all meshes to a single mesh.</p></li>
+<li><p>Nested Accumulate (bool first two objects, then applies the rest to the result one by one.</p></li>
+<li><p>Only final result (output only last iteration result)</p></li>
 </ul>
-</section>
-<section id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
-<ul class="simple">
-<li><p><strong>Vertices</strong>.</p></li>
-<li><p><strong>Edges</strong>. Results mesh or meshes</p></li>
-</ul>
-</section>
-</section>
-<section id="examples">
-<h1>Examples<a class="headerlink" href="#examples" title="Link to this heading">¶</a></h1>
-<section id="rotation-of-source-mesh-are-transfered-to-the-adaptive-mesh">
-<h2>Rotation of source mesh are transfered to the adaptive mesh<a class="headerlink" href="#rotation-of-source-mesh-are-transfered-to-the-adaptive-mesh" title="Link to this heading">¶</a></h2>
-<a class="reference external image-reference" href="https://github.com/user-attachments/assets/ce50368c-0f1e-413a-9915-0ef92e532b72"><img alt="https://github.com/user-attachments/assets/ce50368c-0f1e-413a-9915-0ef92e532b72" src="https://github.com/user-attachments/assets/ce50368c-0f1e-413a-9915-0ef92e532b72" />
+<p>::<a href="#id1"><span class="problematic" id="id2">|Internal Boolean demo|</span></a></p>
+<a class="reference external image-reference" href="https://raw.githubusercontent.com/kevinsmia1939/images/refs/heads/main/sverchok%20screenshot/example.png"><img alt="https://raw.githubusercontent.com/kevinsmia1939/images/refs/heads/main/sverchok%20screenshot/example.png" src="https://raw.githubusercontent.com/kevinsmia1939/images/refs/heads/main/sverchok%20screenshot/example.png" />
 </a>
 <ul class="simple">
-<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
-<li><p>Generator-&gt; <a class="reference internal" href="../generator/basic_3pt_arc.html"><span class="doc">3pt Arc</span></a></p></li>
-<li><p>Number-&gt; <a class="reference internal" href="../number/list_input.html"><span class="doc">List Input</span></a></p></li>
-<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/input.html"><span class="doc">Matrix Input</span></a></p></li>
-<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_idx28.html"><span class="doc">Viewer Index+</span></a></p></li>
-</ul>
-<a class="reference external image-reference" href="https://github.com/user-attachments/assets/6796a0c3-7df6-4ec2-93a9-91f2dda3d4f7"><img alt="https://github.com/user-attachments/assets/6796a0c3-7df6-4ec2-93a9-91f2dda3d4f7" src="https://github.com/user-attachments/assets/6796a0c3-7df6-4ec2-93a9-91f2dda3d4f7" />
-</a>
-<ul class="simple">
-<li><p>Generator-&gt; <a class="reference internal" href="../generator/plane_mk3.html"><span class="doc">Plane</span></a></p></li>
-<li><p>Generator-&gt; <a class="reference internal" href="../generator/basic_3pt_arc.html"><span class="doc">3pt Arc</span></a></p></li>
-<li><p>Number-&gt; <a class="reference internal" href="../number/list_input.html"><span class="doc">List Input</span></a></p></li>
-<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/input.html"><span class="doc">Matrix Input</span></a></p></li>
-<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_idx28.html"><span class="doc">Viewer Index+</span></a></p></li>
-</ul>
-<a class="reference external image-reference" href="https://github.com/user-attachments/assets/9891b297-a860-487f-aa46-d116b7d6001d"><img alt="https://github.com/user-attachments/assets/9891b297-a860-487f-aa46-d116b7d6001d" src="https://github.com/user-attachments/assets/9891b297-a860-487f-aa46-d116b7d6001d" />
-</a>
-<ul class="simple">
-<li><p>Generator-&gt; <a class="reference internal" href="../generator/ngon.html"><span class="doc">NGon</span></a></p></li>
-<li><p>Generator-&gt;Generatots Extended-&gt; <a class="reference internal" href="../generators_extended/hilbert.html"><span class="doc">Hilbert</span></a></p></li>
-<li><p>Transform-&gt; <a class="reference internal" href="../transforms/rotate_mk3.html"><span class="doc">Rotate</span></a></p></li>
-<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/matrix_in_mk4.html"><span class="doc">Matrix In</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/icosphere.html"><span class="doc">IcoSphere</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/torus_mk2.html"><span class="doc">Torus</span></a></p></li>
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
 </ul>
+</section>
+<section id="warnings">
+<h2>warnings<a class="headerlink" href="#warnings" title="Link to this heading">¶</a></h2>
+<p>This implementation creates a temporary object and converts data back, which adds overhead. Might become quickly sluggish with many objects. Until bmesh-based boolean APIs are available, this will be a workaround solution.
+This is the pull request that adds this node: <a class="reference external" href="https://github.com/nortikin/sverchok/pull/5190">https://github.com/nortikin/sverchok/pull/5190</a></p>
+</section>
+<section id="alternatives">
+<h2>Alternatives<a class="headerlink" href="#alternatives" title="Link to this heading">¶</a></h2>
+<p>CSG Boolean: <a class="reference external" href="https://nortikin.github.io/sverchok/docs/nodes/modifier_make/csg_booleanMK2.html">https://nortikin.github.io/sverchok/docs/nodes/modifier_make/csg_booleanMK2.html</a>
+You might be interested in the FreeCAD implementation discussed here. <a class="reference external" href="https://github.com/nortikin/sverchok/issues/3430">https://github.com/nortikin/sverchok/issues/3430</a></p>
 </section>
 </section>
 
@@ -238,8 +189,8 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="dual_mesh.html" class="btn btn-neutral float-left" title="Dual Mesh" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="fractal_curve.html" class="btn btn-neutral float-right" title="Fractal Curve" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="bisect.html" class="btn btn-neutral float-left" title="Bisect" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="clip_verts.html" class="btn btn-neutral float-right" title="Clip Vertices" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
