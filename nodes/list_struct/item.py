@@ -120,7 +120,7 @@ class SvListItemNode(SverchCustomTreeNode, bpy.types.Node):
         else:
             return None
 
-    def get_(self, data, level, indexes, func):  # get is build-in method of Node class
+    def get_(self, data, level, indexes, func):  # get is built-in method of Node class
         """iterative function to get down to the requested level"""
         if level == 1:
             obj_num = max(len(data), len(indexes))
