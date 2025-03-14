@@ -111,7 +111,8 @@
 -  Доваль Виктор;   
 -  Маулт Дион;  
 -  Зомпарелли Алессандро;
--  Алекс (aka Satabol)    
+-  Алекс (aka Satabol)
+-  kevinsmia1939
 
 Email: sverchok-b3d@yandex.ru  
 
