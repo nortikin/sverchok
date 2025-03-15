@@ -848,6 +848,15 @@
     - SvSvgFillStrokeNodeMk2
     - SvSvgPatternNode
 
+- DXF:
+    - icon_name: SV_SVG
+    - extra_menu: ConnectionPartialMenu
+    - SvDxfExportNode
+    - SvDxfLinDimsNode
+    - SvDxfHatchNode
+    - SvDxfLinesNode
+    - SvDxfPolygonsNode
+
 - ---
 
 - Group:  # label of custom menu to show

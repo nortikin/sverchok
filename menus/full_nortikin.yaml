@@ -1011,6 +1011,19 @@
     - SvSvgFillStrokeNodeMk2
     - SvSvgPatternNode
 
+################################################################################
+#################################### DXFs ######################################
+################################################################################
+
+- DXF:
+    - icon_name: SV_SVG
+    - extra_menu: ConnectionPartialMenu
+    - SvDxfExportNode
+    - SvDxfLinDimsNode
+    - SvDxfHatchNode
+    - SvDxfLinesNode
+    - SvDxfPolygonsNode
+
 - ---
 
 ################################################################################
