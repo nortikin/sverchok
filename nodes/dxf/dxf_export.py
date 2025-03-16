@@ -8,6 +8,7 @@ from ezdxf import colors
 from ezdxf import units
 from ezdxf.tools.standards import setup_dimstyle
 from sverchok.data_structure import get_data_nesting_level, ensure_nesting_level
+from sverchok.utils.dxf import LWdict, lineweights, linetypes
 
 
 
@@ -89,9 +90,12 @@ class SvDxfExportNode(SverchCustomTreeNode, bpy.types.Node):
         def hatches_draw(points, scal, lhatch, msp):
             for points_ in points:
                 vers,col,patt,sc = points_.vers, points_.color,points_.pattern,points_.scale
-                if type(col) == tuple or type(col) == list:
-                    col = tuple([int(i*255) for i in col])
+                color_int = points_.color_int
+                if color_int < 1:
+                    col = tuple([int(i*255) for i in col[:3]])
                     col = ezdxf.colors.rgb2int(col)
+                else:
+                    col = color_int
 
                 ht = msp.add_hatch(color=col, dxfattribs={"layer": lhatch})
                 ht.set_pattern_fill(patt, scale=sc)
@@ -106,17 +110,16 @@ class SvDxfExportNode(SverchCustomTreeNode, bpy.types.Node):
             ''' draw simple polyline polygon '''
             print('POLS!!')
             for points_ in points:
-                #print(points_.vers)
-                #print("Полигони!", points_.vers)
                 vers,col = points_.vers, points_.color
                 lw,lt = points_.lineweight, points_.linetype
-                if col:
-                    if type(col) == tuple or type(col) == list:
-                        col = tuple([int(i*255) for i in col])
-                        col = ezdxf.colors.rgb2int(col)
-                        pl = msp.add_polyline3d(points_.vers, dxfattribs={"layer": lpols,'linetype': lt,'lineweight': lw, 'true_color': col}, close=True)
-                    else:
-                        pl = msp.add_polyline3d(points_.vers, dxfattribs={"layer": lpols,'linetype': lt,'lineweight': lw, 'color': col}, close=True)
+                color_int = points_.color_int
+                if color_int < 1:
+                    col = tuple([int(i*255) for i in col[:3]])
+                    print('!!!',col)
+                    col = ezdxf.colors.rgb2int(col)
+                    pl = msp.add_polyline3d(points_.vers, dxfattribs={"layer": lpols,'linetype': lt,'lineweight': lw, 'true_color': col}, close=True)
+                else:
+                    pl = msp.add_polyline3d(points_.vers, dxfattribs={"layer": lpols,'linetype': lt,'lineweight': lw, 'color': color_int}, close=True)
                 #pf = msp.add_polyface()
                 #pf.append_face(points, dxfattribs={"layer": lpols})
                 #pm = msp.add_polymesh()
@@ -173,14 +176,13 @@ class SvDxfExportNode(SverchCustomTreeNode, bpy.types.Node):
                 vers,col = points_.vers, points_.color
                 lw,lt = points_.lineweight, points_.linetype
                 v1,v2 = vers
-                
-                if col:
-                    if type(col) == tuple or type(col) == list:
-                        col = tuple([int(i*255) for i in col])
-                        col = ezdxf.colors.rgb2int(col)
-                        ed = msp.add_line(v1,v2, dxfattribs={"layer": ledgs,'linetype': lt,'lineweight': lw, 'true_color': col})
-                    else:
-                        ed = msp.add_line(v1,v2, dxfattribs={"layer": ledgs,'linetype': lt,'lineweight': lw, 'color': col})
+                color_int = points_.color_int
+                if color_int < 1:
+                    col = tuple([int(i*255) for i in col[:3]])
+                    col = ezdxf.colors.rgb2int(col)
+                    ed = msp.add_line(v1,v2, dxfattribs={"layer": ledgs,'linetype': lt,'lineweight': lw, 'true_color': col})
+                else:
+                    ed = msp.add_line(v1,v2, dxfattribs={"layer": ledgs,'linetype': lt,'lineweight': lw, 'color': color_int})
 
         def text_draw(tv,tt,scal,ltext,msp,t_scal):
             ''' draw text '''
@@ -309,9 +311,9 @@ class SvDxfExportNode(SverchCustomTreeNode, bpy.types.Node):
             ltext = "SVERCHOK_TEXT"
             lvers = "SVERCHOK_VERS"
             ledgs = "SVERCHOK_EDGES"
-            ledg1 = "SVERCHOK_EDGES0.1"
-            ledg3 = "SVERCHOK_EDGES0.3"
-            ledg6 = "SVERCHOK_EDGES0.6"
+            #ledg1 = "SVERCHOK_EDGES0.1"
+            #ledg3 = "SVERCHOK_EDGES0.3"
+            #ledg6 = "SVERCHOK_EDGES0.6"
             lpols = "SVERCHOK_POLYGONS"
             ldims = "SVERCHOK_DIMENTIONS"
             llidr = "SVERCHOK_LEADERS"
@@ -320,9 +322,9 @@ class SvDxfExportNode(SverchCustomTreeNode, bpy.types.Node):
             doc.layers.add(ltext, color=colors.MAGENTA)
             doc.layers.add(lvers, color=colors.CYAN)
             doc.layers.add(ledgs, color=colors.YELLOW)
-            doc.layers.add(ledg1, color=colors.BLUE, lineweight=9)
-            doc.layers.add(ledg3, color=colors.GRAY, lineweight=30)
-            doc.layers.add(ledg6, color=colors.LIGHT_GRAY, lineweight=60)
+            #doc.layers.add(ledg1, color=colors.BLUE, lineweight=9)
+            #doc.layers.add(ledg3, color=colors.GRAY, lineweight=30)
+            #doc.layers.add(ledg6, color=colors.LIGHT_GRAY, lineweight=60)
             doc.layers.add(lpols, color=colors.WHITE)
             doc.layers.add(ldims, color=colors.GREEN)
             doc.layers.add(llidr, color=colors.CYAN)
@@ -331,9 +333,9 @@ class SvDxfExportNode(SverchCustomTreeNode, bpy.types.Node):
             doc.layers.add(ltext)
             doc.layers.add(lvers)
             doc.layers.add(ledgs)
-            doc.layers.add(ledg1)
-            doc.layers.add(ledg3)
-            doc.layers.add(ledg6)
+            #doc.layers.add(ledg1)
+            #doc.layers.add(ledg3)
+            #doc.layers.add(ledg6)
             doc.layers.add(lpols)
             doc.layers.add(ldims)
             doc.layers.add(llidr)
