@@ -28,11 +28,14 @@ class SvDxfImportNode(SverchCustomTreeNode, bpy.types.Node):
         update=updateNode
     )
     
-    scale: bpy.props.FloatProperty(default=1.0,name='scale')
+    scale: bpy.props.FloatProperty(default=1.0,name='scale',
+        update=updateNode)
 
-    resolution: bpy.props.IntProperty(default=10,name='resolution for arcs')
+    resolution: bpy.props.IntProperty(default=10, min=3, max=100,name='resolution for arcs',
+        update=updateNode)
 
-    text_scale: bpy.props.FloatProperty(default=1.0,name='text_scale')
+    text_scale: bpy.props.FloatProperty(default=1.0,name='text_scale',
+        update=updateNode)
 
     def sv_init(self, context):
         '''
@@ -62,17 +65,21 @@ class SvDxfImportNode(SverchCustomTreeNode, bpy.types.Node):
         layout.prop(self, "resolution", expand=False)
 
     def process(self):
-        pass  # Данные будут обрабатываться в операторе
+        if self.file_path:
+            self.DXF_OPEN()
 
-    def DXF_OPEN(self, context):
+    def DXF_OPEN(self):
         ''' ЗАГОТОВКА ДЛЯ БУДУЩИХ ОТДЕЛЬНЫХ УЗЛОВ
             DXF ИМПОРТА. '''
 
         resolution = self.resolution
-        fp = self.inputs['path'].sv_get()[0][0]
+        if not self.file_path:
+            fp = self.inputs['path'].sv_get()[0][0]
+            self.file_path = fp
+        else:
+            fp = self.file_path
         dxf = ezdxf.readfile(fp)
         lifehack = 50
-        ran = [i/lifehack for i in range(0,lifehack*360,int((lifehack*360)/resolution))]
         vers = []
         edges = []
         pols = []
@@ -83,17 +90,32 @@ class SvDxfImportNode(SverchCustomTreeNode, bpy.types.Node):
         for typ in pointered:
             for a in dxf.query(typ):
                 vers_ = []
+                center = a.dxf.center
+                radius = a.dxf.radius
+                start  = int(a.dxf.start_angle)
+                end    = int(a.dxf.end_angle)
+                if start > end:
+                    start1 = (360-start)
+                    step = int((start1+end)/resolution)
+                    ran = [i for i in range(start,360,step)]
+                    ran.extend([i for i in range(0,end,step)])
+                else:
+                    #ran = [i/lifehack for i in range(start,lifehack*end,int((lifehack*end)/resolution))]
+                    ran = [i for i in range(start,end,int((end-start)/resolution))]
+                print('!!!!!!',start,end)
+                print(ran)
                 for i in  a.vertices(ran): # line 43 is 35 in make 24 in import
                     cen = a.dxf.center.xyz
-                    vers_.append([j/1000 for j,k in zip(i,cen)])
+                    vers_.append([j for j in i])
+                #vers_.append(a.dxf.)
                 vers.append(vers_)
                 edges.append([[i,i+1] for i in range(len(vers_)-1)])
-                edges[-1].append([len(vers_)-1,0])
+                #edges[-1].append([len(vers_)-1,0])
         vers_ = []
         for a in dxf.query('Line'):
-            vers_.append([[a.dxf.start.xyz,a.dxf.end.xyz]])
+            vers_.append([a.dxf.start.xyz,a.dxf.end.xyz])
             edges.append([[0,1]])
-        vers.append(vers_)
+        vers.extend(vers_)
             
         self.outputs['verts'].sv_set(vers)
         self.outputs['edges'].sv_set(edges)
@@ -118,7 +140,7 @@ class DXFImportOperator(bpy.types.Operator):
             return {'CANCELLED'}
 
         try:
-            node.DXF_OPEN(context)
+            node.DXF_OPEN()
             #node.create_dxf(**data)
             self.report({'INFO'}, f"DXF opened as {file_path}")
         except Exception as e:
