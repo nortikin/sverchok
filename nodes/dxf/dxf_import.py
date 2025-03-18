@@ -92,18 +92,18 @@ class SvDxfImportNode(SverchCustomTreeNode, bpy.types.Node):
                 vers_ = []
                 center = a.dxf.center
                 radius = a.dxf.radius
-                start  = int(a.dxf.start_angle)
-                end    = int(a.dxf.end_angle)
-                if start > end:
-                    start1 = (360-start)
-                    step = int((start1+end)/resolution)
-                    ran = [i for i in range(start,360,step)]
-                    ran.extend([i for i in range(0,end,step)])
+                if typ == 'Arc':
+                    start  = int(a.dxf.start_angle)
+                    end    = int(a.dxf.end_angle)
+                    if start > end:
+                        start1 = (360-start)
+                        step = int((start1+end)/resolution)
+                        ran = [i for i in range(start,360,step)]
+                        ran.extend([i for i in range(0,end,step)])
+                    else:
+                        ran = [i for i in range(start,end,int((end-start)/resolution))]
                 else:
-                    #ran = [i/lifehack for i in range(start,lifehack*end,int((lifehack*end)/resolution))]
-                    ran = [i for i in range(start,end,int((end-start)/resolution))]
-                print('!!!!!!',start,end)
-                print(ran)
+                    ran = [i/lifehack for i in range(0,lifehack*360,int((lifehack*360)/resolution))]
                 for i in  a.vertices(ran): # line 43 is 35 in make 24 in import
                     cen = a.dxf.center.xyz
                     vers_.append([j for j in i])
