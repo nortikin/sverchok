@@ -134,6 +134,7 @@ class DXFImportOperator(bpy.types.Operator):
         inputs = node.inputs
 
         file_path = inputs['path'].sv_get()[0][0]
+        node.file_path = file_path
 
         if not file_path:
             self.report({'ERROR'}, "File path not specified!")
