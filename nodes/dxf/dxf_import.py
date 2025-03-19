@@ -1,13 +1,8 @@
 import bpy
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
-from ezdxf.math import Vec3
-from mathutils import Vector
+import math
 import ezdxf
-from ezdxf import colors
-from ezdxf import units
-from ezdxf.tools.standards import setup_dimstyle
-from mathutils import Vector
 from sverchok.data_structure import get_data_nesting_level, ensure_nesting_level
 from sverchok.utils.dxf import LWdict, lineweights, linetypes
 
@@ -69,8 +64,8 @@ class SvDxfImportNode(SverchCustomTreeNode, bpy.types.Node):
             self.DXF_OPEN()
 
     def DXF_OPEN(self):
-        ''' ЗАГОТОВКА ДЛЯ БУДУЩИХ ОТДЕЛЬНЫХ УЗЛОВ
-            DXF ИМПОРТА. '''
+        ''' Проблема окружностей в импорте dxf блендера решается этим узлом.
+            DXF ИМПОРТ. '''
 
         resolution = self.resolution
         if not self.file_path:
@@ -79,38 +74,52 @@ class SvDxfImportNode(SverchCustomTreeNode, bpy.types.Node):
         else:
             fp = self.file_path
         dxf = ezdxf.readfile(fp)
-        lifehack = 50
+        lifehack = 500 # for increase range int values to reduce than to floats. Seems like optimal maybe 50-100
         vers = []
         edges = []
         pols = []
         #a = dxf.query('Arc')[1]
             #arc = sverchok.utils.curve.primitives.SvCircle
             #arc.to_nurbs()
+        # similar types grouped, but maybe it is disoriented little
         pointered = ['Arc','Circle','Ellipse']
         for typ in pointered:
             for a in dxf.query(typ):
                 vers_ = []
                 center = a.dxf.center
-                radius = a.dxf.radius
+                #radius = a.dxf.radius
                 if typ == 'Arc':
                     start  = int(a.dxf.start_angle)
                     end    = int(a.dxf.end_angle)
                     if start > end:
                         start1 = (360-start)
-                        step = int((start1+end)/resolution)
-                        ran = [i for i in range(start,360,step)]
-                        ran.extend([i for i in range(0,end,step)])
+                        overall = start1+end
+                        resolution_arc = max(3,int(resolution*(overall/360))) # redefine resolution for partially angles
+                        step = int((start1+end)/resolution_arc)
+                        ran = [i/lifehack for i in range(lifehack*start,lifehack*360,lifehack*step)]
+                        ran.extend([i/lifehack for i in range(0,lifehack*end,lifehack*step)])
                     else:
-                        ran = [i for i in range(start,end,int((end-start)/resolution))]
-                else:
+                        start1 = start
+                        overall = end-start1
+                        resolution_arc = max(3,int(resolution*(overall/360))) # redefine resolution for partially angles
+                        ran = [i/lifehack for i in range(lifehack*start,lifehack*end,int(lifehack*(end-start)/resolution_arc))]
+                elif typ == 'Circle':
                     ran = [i/lifehack for i in range(0,lifehack*360,int((lifehack*360)/resolution))]
+                elif typ == 'Ellipse':
+                    start  = a.dxf.start_param
+                    end    = a.dxf.end_param
+                    ran = [start + ((end-start)*i)/(lifehack*360) for i in range(0,lifehack*360,int(lifehack*360/resolution))]
                 for i in  a.vertices(ran): # line 43 is 35 in make 24 in import
                     cen = a.dxf.center.xyz
                     vers_.append([j for j in i])
                 #vers_.append(a.dxf.)
                 vers.append(vers_)
                 edges.append([[i,i+1] for i in range(len(vers_)-1)])
-                #edges[-1].append([len(vers_)-1,0])
+                if typ == 'Circle':
+                    edges[-1].append([len(vers_)-1,0])
+                if typ == 'Ellipse' and (start <= 0.001 or end >= math.pi*4-0.001):
+                    edges[-1].append([len(vers_)-1,0])
+        
         vers_ = []
         for a in dxf.query('Line'):
             vers_.append([a.dxf.start.xyz,a.dxf.end.xyz])
