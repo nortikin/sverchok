@@ -95,20 +95,20 @@ class SvDxfImportNode(SverchCustomTreeNode, bpy.types.Node):
                         start1 = (360-start)
                         overall = start1+end
                         resolution_arc = max(3,int(resolution*(overall/360))) # redefine resolution for partially angles
-                        step = int((start1+end)/resolution_arc)
+                        step = max(1,int((start1+end)/resolution_arc))
                         ran = [i/lifehack for i in range(lifehack*start,lifehack*360,lifehack*step)]
                         ran.extend([i/lifehack for i in range(0,lifehack*end,lifehack*step)])
                     else:
                         start1 = start
                         overall = end-start1
                         resolution_arc = max(3,int(resolution*(overall/360))) # redefine resolution for partially angles
-                        ran = [i/lifehack for i in range(lifehack*start,lifehack*end,int(lifehack*(end-start)/resolution_arc))]
+                        ran = [i/lifehack for i in range(lifehack*start,lifehack*end,max(1,int(lifehack*(end-start)/resolution_arc)))]
                 elif typ == 'Circle':
-                    ran = [i/lifehack for i in range(0,lifehack*360,int((lifehack*360)/resolution))]
+                    ran = [i/lifehack for i in range(0,lifehack*360,max(1,int((lifehack*360)/resolution)))]
                 elif typ == 'Ellipse':
                     start  = a.dxf.start_param
                     end    = a.dxf.end_param
-                    ran = [start + ((end-start)*i)/(lifehack*360) for i in range(0,lifehack*360,int(lifehack*360/resolution))]
+                    ran = [start + ((end-start)*i)/(lifehack*360) for i in range(0,lifehack*360,max(1,int(lifehack*360/resolution)))]
                 for i in  a.vertices(ran): # line 43 is 35 in make 24 in import
                     cen = a.dxf.center.xyz
                     vers_.append([j for j in i])
@@ -120,11 +120,24 @@ class SvDxfImportNode(SverchCustomTreeNode, bpy.types.Node):
                 if typ == 'Ellipse' and (start <= 0.001 or end >= math.pi*4-0.001):
                     edges[-1].append([len(vers_)-1,0])
         
+        #print('ACE',vers_)
         vers_ = []
         for a in dxf.query('Line'):
             vers_.append([a.dxf.start.xyz,a.dxf.end.xyz])
             edges.append([[0,1]])
+        #print('L',vers_)
         vers.extend(vers_)
+        for a in dxf.query('LWPOLYLINE'):
+            edges_ = []
+            vers_ = []
+            for i,p in enumerate(a.vertices()): # points in line
+                vers_.append([p[0],p[1],0])
+                if i != 0:
+                    edges_.append([i-1,i])
+            vers.append(vers_)
+            edges.append(edges_)
+        #print('LWPL',vers_)
+        
             
         self.outputs['verts'].sv_set(vers)
         self.outputs['edges'].sv_set(edges)
