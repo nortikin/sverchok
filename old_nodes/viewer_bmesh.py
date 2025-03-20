@@ -69,7 +69,7 @@ def set_vertices(obj, islands):
         for vert_idx in isle_set:
             islands_lookup[vert_idx] = isle_num
 
-    vertex_index = np.zeros(loop_count, dtype=int)
+    vertex_index = np.empty(loop_count, dtype="I")
     loops.foreach_get("vertex_index", vertex_index)
 
     num_components = 4  # ( r g b , not a )
@@ -399,7 +399,7 @@ class SvBmeshViewerNodeV28(SverchCustomTreeNode, bpy.types.Node, SvObjHelper):
         
         for obj in objs:
             mesh = obj.data
-            smooth_states = [True] * len(mesh.polygons)
+            smooth_states = np.ones(len(mesh.polygons), dtype=bool)
             mesh.polygons.foreach_set('use_smooth', smooth_states)
             mesh.update()
 
