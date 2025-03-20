@@ -350,7 +350,6 @@ class SvSocketCommon(SvSocketProcessing):
     # utility field for showing number of objects in sockets data
     objects_number: IntProperty(min=0, options={'SKIP_SAVE'})
 
-    description : StringProperty()
     is_mandatory: BoolProperty(default=False)
     nesting_level: IntProperty(default=2)
     default_mode: EnumProperty(items=enum_item_4(['NONE', 'EMPTY_LIST', 'MATRIX', 'MASK']), default='EMPTY_LIST')
