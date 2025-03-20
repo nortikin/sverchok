@@ -268,7 +268,7 @@ class Nester:
                                 # if all vertices are outside, the pieces could still
                                 # overlap
 
-                                # TODO this code is slow and could be otimized...
+                                # TODO this code is slow and could be optimized...
 
                                 if outside:
                                     for e1 in facecopy.OuterWire.Edges:
