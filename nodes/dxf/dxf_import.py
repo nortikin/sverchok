@@ -5,7 +5,11 @@ import math
 import ezdxf
 from sverchok.data_structure import get_data_nesting_level, ensure_nesting_level
 from sverchok.utils.dxf import LWdict, lineweights, linetypes
-
+from sverchok.utils.nurbs_common import SvNurbsMaths
+from sverchok.utils.curve.nurbs import SvNurbsCurve
+from sverchok.utils.curve import knotvector as sv_knotvector
+from sverchok.dependencies import geomdl
+from sverchok.dependencies import FreeCAD
 
 
 class SvDxfImportNode(SverchCustomTreeNode, bpy.types.Node):
@@ -22,8 +26,23 @@ class SvDxfImportNode(SverchCustomTreeNode, bpy.types.Node):
         subtype='FILE_PATH',
         update=updateNode
     )
-    
+
+    implementations = []
+    if geomdl is not None:
+        implementations.append((SvNurbsCurve.GEOMDL, "Geomdl", "Geomdl (NURBS-Python) package implementation", 0))
+    implementations.append((SvNurbsCurve.NATIVE, "Sverchok", "Sverchok built-in implementation", 1))
+    if FreeCAD is not None:
+        implementations.append((SvNurbsMaths.FREECAD, "FreeCAD", "FreeCAD library implementation", 2))
+
+    implementation : bpy.props.EnumProperty(
+            name = "Implementation",
+            items=implementations,
+            update = updateNode)
+
     scale: bpy.props.FloatProperty(default=1.0,name='scale',
+        update=updateNode)
+
+    curve_degree: bpy.props.IntProperty(default=3, min=1, max=4,name='degree for nurbses',
         update=updateNode)
 
     resolution: bpy.props.IntProperty(default=10, min=3, max=100,name='resolution for arcs',
@@ -52,9 +71,12 @@ class SvDxfImportNode(SverchCustomTreeNode, bpy.types.Node):
         self.outputs.new('SvVerticesSocket', 'verts')
         self.outputs.new('SvStringsSocket', 'edges')
         self.outputs.new('SvStringsSocket', 'pols')
+        self.outputs.new('SvCurveSocket', "curves")
+        self.outputs.new('SvStringsSocket', "knots")
 
     def draw_buttons(self, context, layout):
         layout.operator("node.dxf_import", text="Import DXF")
+        layout.prop(self, 'implementation', text='')
         layout.prop(self, "scale", expand=False)
         layout.prop(self, "text_scale", expand=False)
         layout.prop(self, "resolution", expand=False)
@@ -82,9 +104,39 @@ class SvDxfImportNode(SverchCustomTreeNode, bpy.types.Node):
             #arc = sverchok.utils.curve.primitives.SvCircle
             #arc.to_nurbs()
         # similar types grouped, but maybe it is disoriented little
+        '''
+        • Line
+        • Point
+        • 3DFace
+        • Polyline (3D)
+        • Vertex (3D)
+        • Polymesh
+        • Polyface
+        • Viewport
+        ---
+        • Circle
+        • Arc
+        • Solid
+        • Trace
+        • Text
+        • Attrib
+        • Attdef
+        • Shape
+        • Insert
+        • Polyline (2D)
+        • Vertex (2D)
+        • LWPolyline
+        • Hatch
+        • Image
+        
+        entry.graphic_properties() - графические свойства, цвет, толщина, слой, тип линий
+        entry.has_hyperlink()  -->  get_hyperlink()
+        entry.source_block_reference --> принадлежность к блоку
+        '''
         pointered = ['Arc','Circle','Ellipse']
         for typ in pointered:
             for a in dxf.query(typ):
+                print('Блок', a.source_block_reference)
                 vers_ = []
                 center = a.dxf.center
                 #radius = a.dxf.radius
@@ -119,7 +171,8 @@ class SvDxfImportNode(SverchCustomTreeNode, bpy.types.Node):
                     edges[-1].append([len(vers_)-1,0])
                 if typ == 'Ellipse' and (start <= 0.001 or end >= math.pi*4-0.001):
                     edges[-1].append([len(vers_)-1,0])
-        
+        for a in dxf.query('Point'):
+            vers_.append(a.dxf.location.xyz)
         #print('ACE',vers_)
         vers_ = []
         for a in dxf.query('Line'):
@@ -128,6 +181,7 @@ class SvDxfImportNode(SverchCustomTreeNode, bpy.types.Node):
         #print('L',vers_)
         vers.extend(vers_)
         for a in dxf.query('LWPOLYLINE'):
+            print('Блок', a.source_block_reference)
             edges_ = []
             vers_ = []
             for i,p in enumerate(a.vertices()): # points in line
@@ -137,12 +191,50 @@ class SvDxfImportNode(SverchCustomTreeNode, bpy.types.Node):
             vers.append(vers_)
             edges.append(edges_)
         #print('LWPL',vers_)
+        # Splines as NURBS curves
+        vers_ = []
+        curve_degree = self.curve_degree
+        curves_out = []
+        knots_out = []
+
+        for a in dxf.query('Spline'):
+            #print('Блок', a.source_block_reference)
+            control_points = a.control_points
+            n_total = len(control_points)
+            # Set knot vector
+            if a.closed:
+                self.debug("N: %s, degree: %s", n_total, curve_degree)
+                knots = list(range(n_total + curve_degree + 1))
+            else:
+                knots = sv_knotvector.generate(curve_degree, n_total)
+
+            curve_weights = [1 for i in control_points]
+            self.debug('Auto knots: %s', knots)
+            curve_knotvector = knots
+
+            # Nurbs curve
+            new_curve = SvNurbsCurve.build(self.implementation, curve_degree, curve_knotvector, control_points, curve_weights, normalize_knots = True)
+
+            curve_knotvector = new_curve.get_knotvector().tolist()
+            if a.closed:
+                u_min = curve_knotvector[degree]
+                u_max = curve_knotvector[-degree-1]
+                new_curve.u_bounds = u_min, u_max
+            else:
+                u_min = min(curve_knotvector)
+                u_max = max(curve_knotvector)
+                new_curve.u_bounds = (u_min, u_max)
+            curves_out.append(new_curve)
+            knots_out.append(curve_knotvector)
         
             
         self.outputs['verts'].sv_set(vers)
         self.outputs['edges'].sv_set(edges)
         if pols:
             self.outputs['pols'].sv_set(pols)
+        if curves_out:
+            self.outputs['curves'].sv_set(curves_out)
+            self.outputs['knots'].sv_set(knots_out)
 
 
 
