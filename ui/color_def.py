@@ -29,6 +29,14 @@ from sverchok.ui.nodeview_space_menu import get_add_node_menu
 colors_cache = {}
 
 
+naming = {
+    "Viz": ('V ', 'Viz'),
+    "Text": ('T ', 'Text'),
+    "Scene": ('S ', 'Scene'),
+    "Layout": ('List', 'Dictionary', 'Layout'),
+    "Generator": ("G ", "GM ", "GS " ,"GC ", 'Generator'),
+}
+
 default_theme = {
     "Viz": (1, 0.589, 0.214),
     "Text": (0.5, 0.5, 1),
@@ -105,7 +113,13 @@ def sv_colors_definition():
             if not hasattr(elem, 'bl_idname'):
                 continue
             try:
-                sv_cats_node[elem.bl_idname] = sv_node_colors[cat.name]
+                # cat.name может быть в ямле G ..., V ..., L ..., etc
+                # надо составить список замен и проходиться по каждому узлу
+                for k,v in naming.items():
+                    if cat.name.startswith(v):
+                        catname = k
+                        continue
+                sv_cats_node[elem.bl_idname] = sv_node_colors[catname]
             except:
                 sv_cats_node[elem.bl_idname] = False
     return sv_cats_node
