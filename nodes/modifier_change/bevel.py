@@ -353,15 +353,82 @@ class SvBevelNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
             if bevel_face_data and isinstance(bevel_face_data, (list, tuple)):
                 bevel_face_data = bevel_face_data[0]
 
+            sub_elements_selected3_I = sub_elements_selected3[I]
+            sub_elements_selected3I1 = []
+            # Убрать дибликаты в каждом списке
+            for sub_elements in sub_elements_selected3_I:
+                sub_elements_selected3I1.append( list(set(sub_elements)))
+            source_elemets_indexes = [I for I in range(len(vertices if self.vertexOnly else edges))]
+            # убрать дубликаты везде
+            sub_elements_selected3I2 = []
+            for sub_elements1 in sub_elements_selected3I1:
+                sub_elements2 = []
+                for index in sub_elements1:
+                    if index in source_elemets_indexes:
+                        source_elemets_indexes.remove(index)
+                        sub_elements2.append( index )
+                sub_elements_selected3I2.append(sub_elements2)
+            sub_elements_selected3_I = sub_elements_selected3I2
+
+            if self.vertexOnly:
+                # Если обрабатывать надо вершины, то нужно перестроить порядок подэлементов так, чтобы 
+                # чтобы индексы подэлементов начинались с конца:
+                
+                
+                vertices_dict_indexes = dict()
+                sub_elements_selected3I3 = []
+                new_vertices_list = []
+                IJ=len(vertices)-1
+                # Разместить вершины в новом порядке, чтобы первыми использовались вершины с конца:
+                for sub_elements in sub_elements_selected3I2:
+                    sub_elements3 = []
+                    for index in sub_elements:
+                        vertices_dict_indexes[index] = IJ
+                        sub_elements3.append(IJ)
+                        IJ=IJ-1
+                        new_vertices_list.append(vertices[index])
+                    sub_elements_selected3I3.append(sub_elements3)
+                for index in source_elemets_indexes:
+                    vertices_dict_indexes[index] = IJ
+                    IJ=IJ-1
+                    new_vertices_list.append(vertices[index])
+                new_vertices_list.reverse()
+                new_edges_list = []
+                for e1 in edges:
+                    edge1 = []
+                    for index in e1:
+                        edge1.append(vertices_dict_indexes[index])
+                    new_edges_list.append(edge1)
+
+                new_faces_list = []
+                for face in faces:
+                    face1 = []
+                    for index in face:
+                        face1.append(vertices_dict_indexes[index])
+                    new_faces_list.append(face1)
+
+                vertices = new_vertices_list
+                edges = new_edges_list
+                faces = new_faces_list
+                sub_elements_selected3_I = sub_elements_selected3I3
+
+
             bm = bmesh_from_pydata(vertices, edges, faces, markup_face_data=True, normal_update=True)
+
+            # Список индексов вершин текущего bmesh:
+            bmesh_source_verts_indexes = [I for I in range(len(vertices))]
+
             
             for IJ, face in enumerate(bm.faces):
                 face.material_index=IJ
             
             max_material_index = len(bm.faces)
-            edges_adjacent_material = dict()
             verts_adjacent_material = dict()
+            edges_adjacent_material = dict()
             
+            # Получить список смежных faces для каждой vert. Нормально работает только когда фигура замкнута
+            # Неудобные случаи - когда фигура разомкнута и не является объёмной, тогда некоторые точки
+            # могут иметь только одну смежную face и по одному индексу face невозможно точно определить точку.
             for vert in bm.verts:
                 vert_adjacent_faces_material = tuple(sorted(set((face.material_index for face in vert.link_faces))))
                 if len(vert_adjacent_faces_material)>0:
@@ -416,7 +483,7 @@ class SvBevelNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
                 bevel_profiles3_I = bevel_profiles3[-1]
 
 
-            for IJ, sub_elements_selected in enumerate( sub_elements_selected3[I] ):
+            for IJ, sub_elements_selected in enumerate( sub_elements_selected3_I ):
 
                 if self.select_elements_mode=='BOOL':
                     source_indexes_mask = sub_elements_selected
@@ -431,18 +498,33 @@ class SvBevelNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
                 # select elements by source indexes mask:
                 mask = []
                 if self.vertexOnly:
+                    # Получить список индексов для sub_elements_selected в текущем списке индексов вершин:
+                    sub_element_indexes_IJ = []
+                    for index in sub_elements_selected:
+                        if index in bmesh_source_verts_indexes:
+                            sub_element_indexes_IJ.append(bmesh_source_verts_indexes.index(index))
+                    # Удалить дубликаты индексов
+                    sub_element_indexes_IJ = list(set(sub_element_indexes_IJ))
+                    # Удалить из исходного списка использованные индексы
+                    for IJK in sub_elements_selected:
+                        if IJK in bmesh_source_verts_indexes:
+                            bmesh_source_verts_indexes.remove(IJK)
+                    # Создать маску из индексов подэлементов:
+                    for IJK in range(len(bm.verts)):
+                        mask.append( IJK in sub_element_indexes_IJ )
                     pass
-                    for IJK, bm_vert in enumerate(bm.verts):
-                        #mask.append( source_indexes_mask[vert[source_verts_indexes_layer]]==True )
-                        vert_adjacent_faces_material = tuple(sorted(set(face.material_index for face in bm_vert.link_faces)))
-                        if len(vert_adjacent_faces_material)>0:
-                            if vert_adjacent_faces_material in verts_adjacent_material:
-                                source_vert_index = verts_adjacent_material[vert_adjacent_faces_material]
-                                mask.append(source_indexes_mask[source_vert_index]==True)
-                            else:
-                                mask.append(False)
-                            pass
-                        pass
+
+                    # for IJK, bm_vert in enumerate(bm.verts):
+                    #     #mask.append( source_indexes_mask[vert[source_verts_indexes_layer]]==True )
+                    #     vert_adjacent_faces_material = tuple(sorted(set(face.material_index for face in bm_vert.link_faces)))
+                    #     if len(vert_adjacent_faces_material)>0:
+                    #         if vert_adjacent_faces_material in verts_adjacent_material:
+                    #             source_vert_index = verts_adjacent_material[vert_adjacent_faces_material]
+                    #             mask.append(source_indexes_mask[source_vert_index]==True)
+                    #         else:
+                    #             mask.append(False)
+                    #         pass
+                    #     pass
 
                     pass
                 else:
@@ -528,10 +610,10 @@ class SvBevelNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
 
                 except Exception as e:
                     self.exception(e)
-                bm.verts.index_update()
-                bm.edges.index_update()
-                bm.verts.ensure_lookup_table()
-                bm.edges.ensure_lookup_table()
+                # bm.verts.index_update()
+                # bm.edges.index_update()
+                # bm.verts.ensure_lookup_table()
+                # bm.edges.ensure_lookup_table()
                 pass
 
             new_bevel_faces = [[v.index for v in face.verts] for face in bevel_faces]
