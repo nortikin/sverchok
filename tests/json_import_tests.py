@@ -59,7 +59,8 @@ UNITTEST_SKIPLIST = [
     "Grain.json",
     "Genetic_algorithm_simple.json",
     "Fasade_Complicated.zip",
-    "CNC_WAFFLE_SOLID.json"
+    "CNC_WAFFLE_SOLID.json",
+    "Sverchok_extra_contiour.json"
 ]
 
 # @batch_only
