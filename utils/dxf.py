@@ -8,7 +8,7 @@
 import math
 
 
-def arc_points(start, end, bulge, num_points=3, resolution): # вариант 1
+def arc_points(start, end, bulge, num_points=3, resolution=50): # вариант 1
     """Генерирует точки на дуге между start и end с заданным bulge."""
     if bulge == 0:
         return [start, end]  # Линейный сегмент
@@ -24,7 +24,7 @@ def arc_points(start, end, bulge, num_points=3, resolution): # вариант 1
     distance_apex = radius - sagitta if radius > sagitta else sagitta - radius
     center = (
         (start[0] + end[0]) / 2 + distance_apex * math.cos(angle_apex),
-        (start[1] + end[1]) / 2 + distance_apex * math.sin(angle_apex)
+        (start[1] + end[1]) / 2 + distance_apex * math.sin(angle_apex),
     )
 
     # 3. Вычисляем начальный и конечный углы
