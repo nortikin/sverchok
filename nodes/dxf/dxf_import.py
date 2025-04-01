@@ -4,7 +4,7 @@ from sverchok.data_structure import updateNode
 import math
 import ezdxf
 from sverchok.data_structure import get_data_nesting_level, ensure_nesting_level
-from sverchok.utils.dxf import LWdict, lineweights, linetypes
+from sverchok.utils.dxf import LWdict, lineweights, linetypes, arc_points
 from sverchok.utils.nurbs_common import SvNurbsMaths
 from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.curve import knotvector as sv_knotvector
@@ -181,13 +181,33 @@ class SvDxfImportNode(SverchCustomTreeNode, bpy.types.Node):
         #print('L',vers_)
         vers.extend(vers_)
         for a in dxf.query('LWPOLYLINE'):
-            print('Блок', a.source_block_reference)
+            #arc_points(start, end, bulge, num_points=3)
+            #print('Блок', a.source_block_reference)
             edges_ = []
             vers_ = []
+
+            # вариант от DeepSeek
+            points = a.get_points()  # Получаем вершины
+            #bulges = a.bulge
+            vertices = list(a.vertices())
+            for i, (x, y, _, _, bulge) in enumerate(points):
+                # Добавляем точки сегмента (линия или дуга)
+                if bulge != 0:
+                    segment_points = arc_points((x,y,0), (vertices[i+1][0],vertices[i+1][1],0), bulge)
+                    edges_.extend([[len(vers_)+k-1,len(vers_)+k] for k in range(len(segment_points))])
+                else:
+                    segment_points = [(x,y,0)]
+                    if i != 0:
+                        edges_.append([len(vers_)-1,len(vers_)])
+                vers_.extend(segment_points)
+            # вариант от DeepSeek
+
+            '''
             for i,p in enumerate(a.vertices()): # points in line
                 vers_.append([p[0],p[1],0])
                 if i != 0:
                     edges_.append([i-1,i])
+            '''
             vers.append(vers_)
             edges.append(edges_)
         #print('LWPL',vers_)
