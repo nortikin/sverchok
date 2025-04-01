@@ -95,6 +95,7 @@ class SvDxfImportNode(SverchCustomTreeNode, bpy.types.Node):
             self.file_path = fp
         else:
             fp = self.file_path
+        scale = self.scale
         dxf = ezdxf.readfile(fp)
         lifehack = 500 # for increase range int values to reduce than to floats. Seems like optimal maybe 50-100
         vers = []
@@ -138,7 +139,7 @@ class SvDxfImportNode(SverchCustomTreeNode, bpy.types.Node):
             for a in dxf.query(typ):
                 print('Блок', a.source_block_reference)
                 vers_ = []
-                center = a.dxf.center
+                center = a.dxf.center*scale
                 #radius = a.dxf.radius
                 if typ == 'Arc':
                     start  = int(a.dxf.start_angle)
@@ -162,8 +163,8 @@ class SvDxfImportNode(SverchCustomTreeNode, bpy.types.Node):
                     end    = a.dxf.end_param
                     ran = [start + ((end-start)*i)/(lifehack*360) for i in range(0,lifehack*360,max(1,int(lifehack*360/resolution)))]
                 for i in  a.vertices(ran): # line 43 is 35 in make 24 in import
-                    cen = a.dxf.center.xyz
-                    vers_.append([j for j in i])
+                    cen = a.dxf.center.xyz*scale
+                    vers_.append([j*scale for j in i])
                 #vers_.append(a.dxf.)
                 vers.append(vers_)
                 edges.append([[i,i+1] for i in range(len(vers_)-1)])
@@ -171,8 +172,18 @@ class SvDxfImportNode(SverchCustomTreeNode, bpy.types.Node):
                     edges[-1].append([len(vers_)-1,0])
                 if typ == 'Ellipse' and (start <= 0.001 or end >= math.pi*4-0.001):
                     edges[-1].append([len(vers_)-1,0])
+        vers_ = []
         for a in dxf.query('Point'):
-            vers_.append(a.dxf.location.xyz)
+            ver = [i*scale for i in a.dxf.location.xyz]
+            ver_ = [ ver,
+                    [-1+ver[0],-1+ver[1],ver[2]],
+                    [-1+ver[0],1+ver[1],ver[2]],
+                    [1+ver[0],1+ver[1],ver[2]],
+                    [1+ver[0],-1+ver[1],ver[2]],
+                    ]
+            vers_.append(ver_)
+            edges.append([[1,3],[2,4]])
+        vers.extend(vers_)
         #print('ACE',vers_)
         vers_ = []
         for a in dxf.query('Line'):
