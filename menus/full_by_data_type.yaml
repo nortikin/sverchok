@@ -333,7 +333,7 @@
     - SvExMSquaresOnSurfaceNode
     - ---
     - SvAdaptivePlotNurbsCurveNode
-    - SvAdaptivePlotCurveNode
+    - SvAdaptivePlotCurveMk2Node
     - SvExEvalCurveNode
 
 - Surfaces:
