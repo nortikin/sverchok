@@ -1,0 +1,1917 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sverchok.utils.field.attractor API documentation</title>
+<meta name="description" content="">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sverchok.utils.field.attractor</code></h1>
+</header>
+<section id="section-intro">
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sverchok.utils.field.attractor.SvBvhAttractorScalarField"><code class="flex name class">
+<span>class <span class="ident">SvBvhAttractorScalarField</span></span>
+<span>(</span><span>bvh=None, verts=None, faces=None, falloff=None, signed=False)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvBvhAttractorScalarField(SvScalarField):
+    __description__ = &#34;BVH Attractor (faces)&#34;
+
+    def __init__(self, bvh=None, verts=None, faces=None, falloff=None, signed=False):
+        self.falloff = falloff
+        self.signed = signed
+        if bvh is not None:
+            self.bvh = bvh
+        elif verts is not None and faces is not None:
+            self.bvh = bvhtree.BVHTree.FromPolygons(verts, faces)
+        else:
+            raise Exception(&#34;Either bvh or verts and faces must be provided!&#34;)
+
+    def evaluate(self, x, y, z):
+        nearest, normal, idx, distance = self.bvh.find_nearest((x,y,z))
+        if self.signed:
+            sign = (Vector((x,y,z)) - nearest).dot(normal)
+            sign = copysign(1, sign)
+        else:
+            sign = 1
+        value = sign * distance
+        if self.falloff is None:
+            return value
+        else:
+            return self.falloff(np.array([value]))[0]
+
+    def evaluate_grid(self, xs, ys, zs):
+        def find(v):
+            nearest, normal, idx, distance = self.bvh.find_nearest(v)
+            if nearest is None:
+                raise Exception(&#34;No nearest point on mesh found for vertex %s&#34; % v)
+            if self.signed:
+                sign = (v - nearest).dot(normal)
+                sign = copysign(1, sign)
+            else:
+                sign = 1
+            return sign * distance
+
+        points = np.stack((xs, ys, zs)).T
+        norms = np.vectorize(find, signature=&#39;(3)-&gt;()&#39;)(points)
+        if self.falloff is not None:
+            result = self.falloff(norms)
+            return result
+        else:
+            return norms</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.field.scalar.SvScalarField" href="scalar.html#sverchok.utils.field.scalar.SvScalarField">SvScalarField</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.field.attractor.SvBvhAttractorScalarField.evaluate"><code class="name flex">
+<span>def <span class="ident">evaluate</span></span>(<span>self, x, y, z)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate(self, x, y, z):
+    nearest, normal, idx, distance = self.bvh.find_nearest((x,y,z))
+    if self.signed:
+        sign = (Vector((x,y,z)) - nearest).dot(normal)
+        sign = copysign(1, sign)
+    else:
+        sign = 1
+    value = sign * distance
+    if self.falloff is None:
+        return value
+    else:
+        return self.falloff(np.array([value]))[0]</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.field.attractor.SvBvhAttractorScalarField.evaluate_grid"><code class="name flex">
+<span>def <span class="ident">evaluate_grid</span></span>(<span>self, xs, ys, zs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate_grid(self, xs, ys, zs):
+    def find(v):
+        nearest, normal, idx, distance = self.bvh.find_nearest(v)
+        if nearest is None:
+            raise Exception(&#34;No nearest point on mesh found for vertex %s&#34; % v)
+        if self.signed:
+            sign = (v - nearest).dot(normal)
+            sign = copysign(1, sign)
+        else:
+            sign = 1
+        return sign * distance
+
+    points = np.stack((xs, ys, zs)).T
+    norms = np.vectorize(find, signature=&#39;(3)-&gt;()&#39;)(points)
+    if self.falloff is not None:
+        result = self.falloff(norms)
+        return result
+    else:
+        return norms</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.field.attractor.SvBvhAttractorVectorField"><code class="flex name class">
+<span>class <span class="ident">SvBvhAttractorVectorField</span></span>
+<span>(</span><span>bvh=None, verts=None, faces=None, falloff=None, use_normal=False, signed_normal=False)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvBvhAttractorVectorField(SvVectorField):
+
+    def __init__(self, bvh=None, verts=None, faces=None, falloff=None, use_normal=False, signed_normal=False):
+        self.falloff = falloff
+        self.use_normal = use_normal
+        self.signed_normal = signed_normal
+        if bvh is not None:
+            self.bvh = bvh
+        elif verts is not None and faces is not None:
+            self.bvh = bvhtree.BVHTree.FromPolygons(verts, faces)
+        else:
+            raise Exception(&#34;Either bvh or verts and faces must be provided!&#34;)
+        self.__description__ = &#34;BVH Attractor&#34;
+
+    def evaluate(self, x, y, z):
+        vertex = Vector((x,y,z))
+        nearest, normal, idx, distance = self.bvh.find_nearest(vertex)
+        if self.use_normal:
+            if self.signed_normal:
+                sign = (v - nearest).dot(normal)
+                sign = copysign(1, sign)
+            else:
+                sign = 1
+            return sign * np.array(normal)
+        else:
+            dv = np.array(nearest - vertex)
+            if self.falloff is not None:
+                norm = np.linalg.norm(dv)
+                len = self.falloff(norm)
+                dv = len * dv
+                return dv
+            else:
+                return dv
+
+    def evaluate_grid(self, xs, ys, zs):
+        def find(v):
+            nearest, normal, idx, distance = self.bvh.find_nearest(v)
+            if nearest is None:
+                raise Exception(&#34;No nearest point on mesh found for vertex %s&#34; % v)
+            if self.use_normal:
+                if self.signed_normal:
+                    sign = (v - nearest).dot(normal)
+                    sign = copysign(1, sign)
+                else:
+                    sign = 1
+                return sign * np.array(normal)
+            else:
+                return np.array(nearest) - v
+
+        points = np.stack((xs, ys, zs)).T
+        vectors = np.vectorize(find, signature=&#39;(3)-&gt;(3)&#39;)(points)
+        if self.falloff is not None:
+            norms = np.linalg.norm(vectors, axis=1, keepdims=True)
+            nonzero = (norms &gt; 0)[:,0]
+            lens = self.falloff(norms)
+            vectors[nonzero] = vectors[nonzero] / norms[nonzero]
+            R = (lens * vectors).T
+            return R[0], R[1], R[2]
+        else:
+            R = vectors.T
+            return R[0], R[1], R[2]</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.field.vector.SvVectorField" href="vector.html#sverchok.utils.field.vector.SvVectorField">SvVectorField</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.field.attractor.SvBvhAttractorVectorField.evaluate"><code class="name flex">
+<span>def <span class="ident">evaluate</span></span>(<span>self, x, y, z)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate(self, x, y, z):
+    vertex = Vector((x,y,z))
+    nearest, normal, idx, distance = self.bvh.find_nearest(vertex)
+    if self.use_normal:
+        if self.signed_normal:
+            sign = (v - nearest).dot(normal)
+            sign = copysign(1, sign)
+        else:
+            sign = 1
+        return sign * np.array(normal)
+    else:
+        dv = np.array(nearest - vertex)
+        if self.falloff is not None:
+            norm = np.linalg.norm(dv)
+            len = self.falloff(norm)
+            dv = len * dv
+            return dv
+        else:
+            return dv</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.field.attractor.SvBvhAttractorVectorField.evaluate_grid"><code class="name flex">
+<span>def <span class="ident">evaluate_grid</span></span>(<span>self, xs, ys, zs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate_grid(self, xs, ys, zs):
+    def find(v):
+        nearest, normal, idx, distance = self.bvh.find_nearest(v)
+        if nearest is None:
+            raise Exception(&#34;No nearest point on mesh found for vertex %s&#34; % v)
+        if self.use_normal:
+            if self.signed_normal:
+                sign = (v - nearest).dot(normal)
+                sign = copysign(1, sign)
+            else:
+                sign = 1
+            return sign * np.array(normal)
+        else:
+            return np.array(nearest) - v
+
+    points = np.stack((xs, ys, zs)).T
+    vectors = np.vectorize(find, signature=&#39;(3)-&gt;(3)&#39;)(points)
+    if self.falloff is not None:
+        norms = np.linalg.norm(vectors, axis=1, keepdims=True)
+        nonzero = (norms &gt; 0)[:,0]
+        lens = self.falloff(norms)
+        vectors[nonzero] = vectors[nonzero] / norms[nonzero]
+        R = (lens * vectors).T
+        return R[0], R[1], R[2]
+    else:
+        R = vectors.T
+        return R[0], R[1], R[2]</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.field.attractor.SvBvhEdgesAttractorScalarField"><code class="flex name class">
+<span>class <span class="ident">SvBvhEdgesAttractorScalarField</span></span>
+<span>(</span><span>verts, edges, falloff=None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvBvhEdgesAttractorScalarField(SvScalarField):
+    __description__ = &#34;BVH Attractor (edges)&#34;
+
+    def __init__(self, verts, edges, falloff=None):
+        self.verts = verts
+        self.edges = edges
+        self.falloff = falloff
+        self.bvh = self._make_bvh(verts, edges)
+
+    def _make_bvh(self, verts, edges):
+        faces = [(i1, i2, i1) for i1, i2 in edges]
+        return bvhtree.BVHTree.FromPolygons(verts, faces)
+
+    def evaluate(self, x, y, z):
+        nearest, normal, idx, distance = self.bvh.find_nearest((x,y,z))
+        if self.falloff is None:
+            return distance
+        else:
+            return self.falloff(np.array([distance]))[0]
+
+    def evaluate_grid(self, xs, ys, zs):
+        def find(v):
+            nearest, normal, idx, distance = self.bvh.find_nearest(v)
+            return distance
+
+        points = np.stack((xs, ys, zs)).T
+        norms = np.vectorize(find, signature=&#39;(3)-&gt;()&#39;)(points)
+        if self.falloff is not None:
+            result = self.falloff(norms)
+            return result
+        else:
+            return norms</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.field.scalar.SvScalarField" href="scalar.html#sverchok.utils.field.scalar.SvScalarField">SvScalarField</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.field.attractor.SvBvhEdgesAttractorScalarField.evaluate"><code class="name flex">
+<span>def <span class="ident">evaluate</span></span>(<span>self, x, y, z)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate(self, x, y, z):
+    nearest, normal, idx, distance = self.bvh.find_nearest((x,y,z))
+    if self.falloff is None:
+        return distance
+    else:
+        return self.falloff(np.array([distance]))[0]</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.field.attractor.SvBvhEdgesAttractorScalarField.evaluate_grid"><code class="name flex">
+<span>def <span class="ident">evaluate_grid</span></span>(<span>self, xs, ys, zs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate_grid(self, xs, ys, zs):
+    def find(v):
+        nearest, normal, idx, distance = self.bvh.find_nearest(v)
+        return distance
+
+    points = np.stack((xs, ys, zs)).T
+    norms = np.vectorize(find, signature=&#39;(3)-&gt;()&#39;)(points)
+    if self.falloff is not None:
+        result = self.falloff(norms)
+        return result
+    else:
+        return norms</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.field.attractor.SvCircleAttractorScalarField"><code class="flex name class">
+<span>class <span class="ident">SvCircleAttractorScalarField</span></span>
+<span>(</span><span>center, radius, normal, falloff=None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvCircleAttractorScalarField(SvScalarField):
+    __description__ = &#34;Circle Attractor&#34;
+
+    def __init__(self, center, radius, normal, falloff=None):
+        self.circle = CircleEquation3D.from_center_radius_normal(center, radius, normal)
+        self.falloff = falloff
+
+    def evaluate(self, x, y, z):
+        v = np.array([x,y,z])
+        projection = self.circle.get_projections([v])[0]
+        distance = np.linalg.norm(v - projection)
+        if self.fallof is not None:
+            return self.falloff(np.array([distance]))[0]
+        else:
+            return distance
+
+    def evaluate_grid(self, xs, ys, zs):
+        vs = np.stack((xs, ys, zs)).T
+        projections = self.circle.get_projections(vs)
+        distances = np.linalg.norm(vs - projections, axis=1)
+        if self.falloff is not None:
+            return self.falloff(distances)
+        else:
+            return distances</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.field.scalar.SvScalarField" href="scalar.html#sverchok.utils.field.scalar.SvScalarField">SvScalarField</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.field.attractor.SvCircleAttractorScalarField.evaluate"><code class="name flex">
+<span>def <span class="ident">evaluate</span></span>(<span>self, x, y, z)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate(self, x, y, z):
+    v = np.array([x,y,z])
+    projection = self.circle.get_projections([v])[0]
+    distance = np.linalg.norm(v - projection)
+    if self.fallof is not None:
+        return self.falloff(np.array([distance]))[0]
+    else:
+        return distance</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.field.attractor.SvCircleAttractorScalarField.evaluate_grid"><code class="name flex">
+<span>def <span class="ident">evaluate_grid</span></span>(<span>self, xs, ys, zs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate_grid(self, xs, ys, zs):
+    vs = np.stack((xs, ys, zs)).T
+    projections = self.circle.get_projections(vs)
+    distances = np.linalg.norm(vs - projections, axis=1)
+    if self.falloff is not None:
+        return self.falloff(distances)
+    else:
+        return distances</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.field.attractor.SvCircleAttractorVectorField"><code class="flex name class">
+<span>class <span class="ident">SvCircleAttractorVectorField</span></span>
+<span>(</span><span>center, radius, normal, falloff=None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvCircleAttractorVectorField(SvVectorField):
+    __description__ = &#34;Circle Attractor&#34;
+
+    def __init__(self, center, radius, normal, falloff=None):
+        self.circle = CircleEquation3D.from_center_radius_normal(center, radius, normal)
+        self.falloff = falloff
+
+    def evaluate(self, x, y, z):
+        v = np.array([x,y,z])
+        projection = self.circle.get_projections([v])[0]
+        vector = projection - v
+        if self.fallof is not None:
+            new_len = self.falloff(np.array([distance]))[0]
+            norm = np.linalg.norm(vector)
+            return new_len * vector / norm
+        else:
+            return vector
+
+    def evaluate_grid(self, xs, ys, zs):
+        vs = np.stack((xs, ys, zs)).T
+        projections = self.circle.get_projections(vs)
+        vectors = projections - vs
+        if self.falloff is not None:
+            norms = np.linalg.norm(vectors, axis=1, keepdims=True)
+            lens = self.falloff(norms)
+            nonzero = (norms &gt; 0)[:,0]
+            vectors[nonzero] = vectors[nonzero] / norms[nonzero][:,0][np.newaxis].T
+            R = (lens * vectors).T
+            return R[0], R[1], R[2]
+        else:
+            R = vectors.T
+            return R[0], R[1], R[2]</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.field.vector.SvVectorField" href="vector.html#sverchok.utils.field.vector.SvVectorField">SvVectorField</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.field.attractor.SvCircleAttractorVectorField.evaluate"><code class="name flex">
+<span>def <span class="ident">evaluate</span></span>(<span>self, x, y, z)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate(self, x, y, z):
+    v = np.array([x,y,z])
+    projection = self.circle.get_projections([v])[0]
+    vector = projection - v
+    if self.fallof is not None:
+        new_len = self.falloff(np.array([distance]))[0]
+        norm = np.linalg.norm(vector)
+        return new_len * vector / norm
+    else:
+        return vector</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.field.attractor.SvCircleAttractorVectorField.evaluate_grid"><code class="name flex">
+<span>def <span class="ident">evaluate_grid</span></span>(<span>self, xs, ys, zs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate_grid(self, xs, ys, zs):
+    vs = np.stack((xs, ys, zs)).T
+    projections = self.circle.get_projections(vs)
+    vectors = projections - vs
+    if self.falloff is not None:
+        norms = np.linalg.norm(vectors, axis=1, keepdims=True)
+        lens = self.falloff(norms)
+        nonzero = (norms &gt; 0)[:,0]
+        vectors[nonzero] = vectors[nonzero] / norms[nonzero][:,0][np.newaxis].T
+        R = (lens * vectors).T
+        return R[0], R[1], R[2]
+    else:
+        R = vectors.T
+        return R[0], R[1], R[2]</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.field.attractor.SvEdgeAttractorScalarField"><code class="flex name class">
+<span>class <span class="ident">SvEdgeAttractorScalarField</span></span>
+<span>(</span><span>v1, v2, falloff=None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvEdgeAttractorScalarField(SvScalarField):
+    __description__ = &#34;Edge attractor&#34;
+
+    def __init__(self, v1, v2, falloff=None):
+        self.falloff = falloff
+        self.v1 = Vector(v1)
+        self.v2 = Vector(v2)
+    
+    def evaluate(self, x, y, z):
+        v = Vector([x,y,z])
+        dv1 = (v - self.v1).length
+        dv2 = (v - self.v2).length
+        if dv1 &gt; dv2:
+            distance_to_nearest = dv2
+            nearest_vert = self.v2
+            another_vert = self.v1
+        else:
+            distance_to_nearest = dv1
+            nearest_vert = self.v1
+            another_vert = self.v2
+        edge = another_vert - nearest_vert
+        to_nearest = v - nearest_vert
+        if to_nearest.length == 0:
+            return 0
+        angle = edge.angle(to_nearest)
+        if angle &gt; pi/2:
+            distance = distance_to_nearest
+        else:
+            distance = LineEquation.from_two_points(self.v1, self.v2).distance_to_point(v)
+        if self.falloff is not None:
+            value = self.falloff(np.array([distance]))[0]
+            return value
+        else:
+            return distance
+    
+    def evaluate_grid(self, xs, ys, zs):
+        n = len(xs)
+        vs = np.stack((xs, ys, zs)).T
+        v1 = np.array(self.v1)
+        v2 = np.array(self.v2)    
+        dv1 = vs - v1
+        dv2 = vs - v2
+        edge = v2 - v1
+        dot1 = (dv1 * edge).sum(axis=1)
+        dot2 = -(dv2 * edge).sum(axis=1)
+        v1_is_nearest = (dot1 &lt; 0)
+        v2_is_nearest = (dot2 &lt; 0)
+        at_edge = np.logical_not(np.logical_or(v1_is_nearest, v2_is_nearest))
+
+        distances = np.empty((n,))
+        distances[v1_is_nearest] = np.linalg.norm(dv1[v1_is_nearest], axis=1)
+        distances[v2_is_nearest] = np.linalg.norm(dv2[v2_is_nearest], axis=1)
+        distances[at_edge] = LineEquation.from_two_points(self.v1, self.v2).distance_to_points(vs[at_edge])
+
+        if self.falloff is not None:
+            distances = self.falloff(distances)
+            return distances
+        else:
+            return distances</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.field.scalar.SvScalarField" href="scalar.html#sverchok.utils.field.scalar.SvScalarField">SvScalarField</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.field.attractor.SvEdgeAttractorScalarField.evaluate"><code class="name flex">
+<span>def <span class="ident">evaluate</span></span>(<span>self, x, y, z)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate(self, x, y, z):
+    v = Vector([x,y,z])
+    dv1 = (v - self.v1).length
+    dv2 = (v - self.v2).length
+    if dv1 &gt; dv2:
+        distance_to_nearest = dv2
+        nearest_vert = self.v2
+        another_vert = self.v1
+    else:
+        distance_to_nearest = dv1
+        nearest_vert = self.v1
+        another_vert = self.v2
+    edge = another_vert - nearest_vert
+    to_nearest = v - nearest_vert
+    if to_nearest.length == 0:
+        return 0
+    angle = edge.angle(to_nearest)
+    if angle &gt; pi/2:
+        distance = distance_to_nearest
+    else:
+        distance = LineEquation.from_two_points(self.v1, self.v2).distance_to_point(v)
+    if self.falloff is not None:
+        value = self.falloff(np.array([distance]))[0]
+        return value
+    else:
+        return distance</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.field.attractor.SvEdgeAttractorScalarField.evaluate_grid"><code class="name flex">
+<span>def <span class="ident">evaluate_grid</span></span>(<span>self, xs, ys, zs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate_grid(self, xs, ys, zs):
+    n = len(xs)
+    vs = np.stack((xs, ys, zs)).T
+    v1 = np.array(self.v1)
+    v2 = np.array(self.v2)    
+    dv1 = vs - v1
+    dv2 = vs - v2
+    edge = v2 - v1
+    dot1 = (dv1 * edge).sum(axis=1)
+    dot2 = -(dv2 * edge).sum(axis=1)
+    v1_is_nearest = (dot1 &lt; 0)
+    v2_is_nearest = (dot2 &lt; 0)
+    at_edge = np.logical_not(np.logical_or(v1_is_nearest, v2_is_nearest))
+
+    distances = np.empty((n,))
+    distances[v1_is_nearest] = np.linalg.norm(dv1[v1_is_nearest], axis=1)
+    distances[v2_is_nearest] = np.linalg.norm(dv2[v2_is_nearest], axis=1)
+    distances[at_edge] = LineEquation.from_two_points(self.v1, self.v2).distance_to_points(vs[at_edge])
+
+    if self.falloff is not None:
+        distances = self.falloff(distances)
+        return distances
+    else:
+        return distances</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.field.attractor.SvEdgeAttractorVectorField"><code class="flex name class">
+<span>class <span class="ident">SvEdgeAttractorVectorField</span></span>
+<span>(</span><span>v1, v2, falloff=None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvEdgeAttractorVectorField(SvVectorField):
+    __description__ = &#34;Edge attractor&#34;
+
+    def __init__(self, v1, v2, falloff=None):
+        self.falloff = falloff
+        self.v1 = Vector(v1)
+        self.v2 = Vector(v2)
+
+    def evaluate(self, x, y, z):
+        v = Vector([x,y,z])
+        dv1 = (v - self.v1).length
+        dv2 = (v - self.v2).length
+        if dv1 &gt; dv2:
+            distance_to_nearest = dv2
+            nearest_vert = self.v2
+            another_vert = self.v1
+        else:
+            distance_to_nearest = dv1
+            nearest_vert = self.v1
+            another_vert = self.v2
+        edge = another_vert - nearest_vert
+        to_nearest = v - nearest_vert
+        if to_nearest.length == 0:
+            return 0
+        angle = edge.angle(to_nearest)
+        if angle &gt; pi/2:
+            distance = distance_to_nearest
+            vector = - to_nearest
+        else:
+            vector = LineEquation.from_two_points(self.v1, self.v2).projection_of_points(v)
+            distance = vector.length
+            vector = np.array(vector)
+        if self.falloff is not None:
+            return self.falloff(distance) * vector / distance
+        else:
+            return vector
+
+    def evaluate_grid(self, xs, ys, zs):
+        n = len(xs)
+        vs = np.stack((xs, ys, zs)).T
+        v1 = np.array(self.v1)
+        v2 = np.array(self.v2)
+        dv1s = np.linalg.norm(vs - v1, axis=1)
+        dv2s = np.linalg.norm(vs - v2, axis=1)
+        v1_is_nearest = (dv1s &lt; dv2s)
+        v2_is_nearest = np.logical_not(v1_is_nearest)
+        nearest_verts = np.empty_like(vs)
+        other_verts = np.empty_like(vs)
+        nearest_verts[v1_is_nearest] = v1
+        nearest_verts[v2_is_nearest] = v2
+        other_verts[v1_is_nearest] = v2
+        other_verts[v2_is_nearest] = v1
+
+        to_nearest = vs - nearest_verts
+
+        edges = other_verts - nearest_verts
+        dot = (to_nearest * edges).sum(axis=1)
+        at_edge = (dot &gt; 0)
+        at_vertex = np.logical_not(at_edge)
+        at_v1 = np.logical_and(at_vertex, v1_is_nearest)
+        at_v2 = np.logical_and(at_vertex, v2_is_nearest)
+
+        line = LineEquation.from_two_points(self.v1, self.v2)
+
+        vectors = np.empty((n,3))
+        vectors[at_edge] = line.projection_of_points(vs[at_edge]) - vs[at_edge]
+        vectors[at_v1] = v1 - vs[at_v1]
+        vectors[at_v2] = v2 - vs[at_v2]
+
+        if self.falloff is not None:
+            norms = np.linalg.norm(vectors, axis=1, keepdims=True)
+            lens = self.falloff(norms)
+            nonzero = (norms &gt; 0)[:,0]
+            vectors[nonzero] = vectors[nonzero] / norms[nonzero][:,0][np.newaxis].T
+            R = (lens * vectors).T
+            return R[0], R[1], R[2]
+        else:
+            R = vectors.T
+            return R[0], R[1], R[2]</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.field.vector.SvVectorField" href="vector.html#sverchok.utils.field.vector.SvVectorField">SvVectorField</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.field.attractor.SvEdgeAttractorVectorField.evaluate"><code class="name flex">
+<span>def <span class="ident">evaluate</span></span>(<span>self, x, y, z)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate(self, x, y, z):
+    v = Vector([x,y,z])
+    dv1 = (v - self.v1).length
+    dv2 = (v - self.v2).length
+    if dv1 &gt; dv2:
+        distance_to_nearest = dv2
+        nearest_vert = self.v2
+        another_vert = self.v1
+    else:
+        distance_to_nearest = dv1
+        nearest_vert = self.v1
+        another_vert = self.v2
+    edge = another_vert - nearest_vert
+    to_nearest = v - nearest_vert
+    if to_nearest.length == 0:
+        return 0
+    angle = edge.angle(to_nearest)
+    if angle &gt; pi/2:
+        distance = distance_to_nearest
+        vector = - to_nearest
+    else:
+        vector = LineEquation.from_two_points(self.v1, self.v2).projection_of_points(v)
+        distance = vector.length
+        vector = np.array(vector)
+    if self.falloff is not None:
+        return self.falloff(distance) * vector / distance
+    else:
+        return vector</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.field.attractor.SvEdgeAttractorVectorField.evaluate_grid"><code class="name flex">
+<span>def <span class="ident">evaluate_grid</span></span>(<span>self, xs, ys, zs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate_grid(self, xs, ys, zs):
+    n = len(xs)
+    vs = np.stack((xs, ys, zs)).T
+    v1 = np.array(self.v1)
+    v2 = np.array(self.v2)
+    dv1s = np.linalg.norm(vs - v1, axis=1)
+    dv2s = np.linalg.norm(vs - v2, axis=1)
+    v1_is_nearest = (dv1s &lt; dv2s)
+    v2_is_nearest = np.logical_not(v1_is_nearest)
+    nearest_verts = np.empty_like(vs)
+    other_verts = np.empty_like(vs)
+    nearest_verts[v1_is_nearest] = v1
+    nearest_verts[v2_is_nearest] = v2
+    other_verts[v1_is_nearest] = v2
+    other_verts[v2_is_nearest] = v1
+
+    to_nearest = vs - nearest_verts
+
+    edges = other_verts - nearest_verts
+    dot = (to_nearest * edges).sum(axis=1)
+    at_edge = (dot &gt; 0)
+    at_vertex = np.logical_not(at_edge)
+    at_v1 = np.logical_and(at_vertex, v1_is_nearest)
+    at_v2 = np.logical_and(at_vertex, v2_is_nearest)
+
+    line = LineEquation.from_two_points(self.v1, self.v2)
+
+    vectors = np.empty((n,3))
+    vectors[at_edge] = line.projection_of_points(vs[at_edge]) - vs[at_edge]
+    vectors[at_v1] = v1 - vs[at_v1]
+    vectors[at_v2] = v2 - vs[at_v2]
+
+    if self.falloff is not None:
+        norms = np.linalg.norm(vectors, axis=1, keepdims=True)
+        lens = self.falloff(norms)
+        nonzero = (norms &gt; 0)[:,0]
+        vectors[nonzero] = vectors[nonzero] / norms[nonzero][:,0][np.newaxis].T
+        R = (lens * vectors).T
+        return R[0], R[1], R[2]
+    else:
+        R = vectors.T
+        return R[0], R[1], R[2]</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.field.attractor.SvKdtScalarField"><code class="flex name class">
+<span>class <span class="ident">SvKdtScalarField</span></span>
+<span>(</span><span>vertices=None, kdt=None, falloff=None, power=2)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvKdtScalarField(SvScalarField):
+    __description__ = &#34;KDT&#34;
+
+    def __init__(self, vertices=None, kdt=None, falloff=None, power=2):
+        self.falloff = falloff
+        if kdt is not None:
+            self.kdt = kdt
+        elif vertices is not None:
+            self.kdt = SvKdTree.new(SvKdTree.best_available_implementation(), vertices, power=power)
+        else:
+            raise Exception(&#34;Either kdt or vertices must be provided&#34;)
+
+    def evaluate(self, x, y, z):
+        nearest, i, distance = self.kdt.query(np.array([x,y,z]))
+        if self.falloff is not None:
+            value = self.falloff(np.array([distance]))[0]
+            return value
+        else:
+            return distance
+
+    def evaluate_grid(self, xs, ys, zs):
+        points = np.stack((xs, ys, zs)).T
+        locs, idxs, distances = self.kdt.query_array(points)
+        if self.falloff is not None:
+            result = self.falloff(distances)
+            return result
+        else:
+            return distances</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.field.scalar.SvScalarField" href="scalar.html#sverchok.utils.field.scalar.SvScalarField">SvScalarField</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.field.attractor.SvKdtScalarField.evaluate"><code class="name flex">
+<span>def <span class="ident">evaluate</span></span>(<span>self, x, y, z)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate(self, x, y, z):
+    nearest, i, distance = self.kdt.query(np.array([x,y,z]))
+    if self.falloff is not None:
+        value = self.falloff(np.array([distance]))[0]
+        return value
+    else:
+        return distance</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.field.attractor.SvKdtScalarField.evaluate_grid"><code class="name flex">
+<span>def <span class="ident">evaluate_grid</span></span>(<span>self, xs, ys, zs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate_grid(self, xs, ys, zs):
+    points = np.stack((xs, ys, zs)).T
+    locs, idxs, distances = self.kdt.query_array(points)
+    if self.falloff is not None:
+        result = self.falloff(distances)
+        return result
+    else:
+        return distances</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.field.attractor.SvKdtVectorField"><code class="flex name class">
+<span>class <span class="ident">SvKdtVectorField</span></span>
+<span>(</span><span>vertices=None, kdt=None, falloff=None, negate=False, power=2)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvKdtVectorField(SvVectorField):
+
+    def __init__(self, vertices=None, kdt=None, falloff=None, negate=False, power=2):
+        self.falloff = falloff
+        self.negate = negate
+        if kdt is not None:
+            self.kdt = kdt
+        elif vertices is not None:
+            self.kdt = SvKdTree.new(SvKdTree.best_available_implementation(), vertices, power=power)
+        else:
+            raise Exception(&#34;Either kdt or vertices must be provided&#34;)
+        self.__description__ = &#34;KDT Attractor&#34;
+
+    def evaluate(self, x, y, z):
+        nearest, i, distance = self.kdt.query(np.array([x, y, z]))
+        vector = nearest - np.array([x, y, z])
+        if self.falloff is not None:
+            value = self.falloff(np.array([distance]))[0]
+            if self.negate:
+                value = - value
+            norm = np.linalg.norm(vector)
+            return value * vector / norm
+        else:
+            if self.negate:
+                return - vector
+            else:
+                return vector
+
+    def evaluate_grid(self, xs, ys, zs):
+        points = np.stack((xs, ys, zs)).T
+        locs, idxs, distances = self.kdt.query_array(points)
+        vectors = locs - points
+        if self.negate:
+            vectors = - vectors
+        if self.falloff is not None:
+            norms = np.linalg.norm(vectors, axis=1, keepdims=True)
+            lens = self.falloff(norms)
+            nonzero = (norms &gt; 0)[:,0]
+            lens = self.falloff(norms)
+            vectors[nonzero] = vectors[nonzero] / norms[nonzero]
+            R = (lens * vectors).T
+            return R[0], R[1], R[2]
+        else:
+            R = vectors.T
+            return R[0], R[1], R[2]</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.field.vector.SvVectorField" href="vector.html#sverchok.utils.field.vector.SvVectorField">SvVectorField</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.field.attractor.SvKdtVectorField.evaluate"><code class="name flex">
+<span>def <span class="ident">evaluate</span></span>(<span>self, x, y, z)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate(self, x, y, z):
+    nearest, i, distance = self.kdt.query(np.array([x, y, z]))
+    vector = nearest - np.array([x, y, z])
+    if self.falloff is not None:
+        value = self.falloff(np.array([distance]))[0]
+        if self.negate:
+            value = - value
+        norm = np.linalg.norm(vector)
+        return value * vector / norm
+    else:
+        if self.negate:
+            return - vector
+        else:
+            return vector</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.field.attractor.SvKdtVectorField.evaluate_grid"><code class="name flex">
+<span>def <span class="ident">evaluate_grid</span></span>(<span>self, xs, ys, zs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate_grid(self, xs, ys, zs):
+    points = np.stack((xs, ys, zs)).T
+    locs, idxs, distances = self.kdt.query_array(points)
+    vectors = locs - points
+    if self.negate:
+        vectors = - vectors
+    if self.falloff is not None:
+        norms = np.linalg.norm(vectors, axis=1, keepdims=True)
+        lens = self.falloff(norms)
+        nonzero = (norms &gt; 0)[:,0]
+        lens = self.falloff(norms)
+        vectors[nonzero] = vectors[nonzero] / norms[nonzero]
+        R = (lens * vectors).T
+        return R[0], R[1], R[2]
+    else:
+        R = vectors.T
+        return R[0], R[1], R[2]</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.field.attractor.SvLineAttractorScalarField"><code class="flex name class">
+<span>class <span class="ident">SvLineAttractorScalarField</span></span>
+<span>(</span><span>center, direction, falloff=None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvLineAttractorScalarField(SvScalarField):
+    __description__ = &#34;Line Attractor&#34;
+
+    def __init__(self, center, direction, falloff=None):
+        self.center = center
+        self.direction = direction
+        self.falloff = falloff
+
+    def evaluate(self, x, y, z):
+        vertex = np.array([x,y,z])
+        direction = self.direction
+        to_center = self.center - vertex
+        projection = np.dot(to_center, direction) * direction / np.dot(direction, direction)
+        dv = to_center - projection
+        return np.linalg.norm(dv)
+
+    def evaluate_grid(self, xs, ys, zs):
+        direction = self.direction
+        direction2 = np.dot(direction, direction)
+        points = np.stack((xs, ys, zs)).T
+        to_center = self.center - points
+        dot = (to_center * direction).sum(axis=1)
+        projections = (dot * direction[np.newaxis].T / direction2).T
+        vectors = to_center - projections
+        norms = np.linalg.norm(vectors, axis=1)
+
+        if self.falloff is not None:
+            result = self.falloff(norms)
+            return result
+        else:
+            return norms</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.field.scalar.SvScalarField" href="scalar.html#sverchok.utils.field.scalar.SvScalarField">SvScalarField</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.field.attractor.SvLineAttractorScalarField.evaluate"><code class="name flex">
+<span>def <span class="ident">evaluate</span></span>(<span>self, x, y, z)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate(self, x, y, z):
+    vertex = np.array([x,y,z])
+    direction = self.direction
+    to_center = self.center - vertex
+    projection = np.dot(to_center, direction) * direction / np.dot(direction, direction)
+    dv = to_center - projection
+    return np.linalg.norm(dv)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.field.attractor.SvLineAttractorScalarField.evaluate_grid"><code class="name flex">
+<span>def <span class="ident">evaluate_grid</span></span>(<span>self, xs, ys, zs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate_grid(self, xs, ys, zs):
+    direction = self.direction
+    direction2 = np.dot(direction, direction)
+    points = np.stack((xs, ys, zs)).T
+    to_center = self.center - points
+    dot = (to_center * direction).sum(axis=1)
+    projections = (dot * direction[np.newaxis].T / direction2).T
+    vectors = to_center - projections
+    norms = np.linalg.norm(vectors, axis=1)
+
+    if self.falloff is not None:
+        result = self.falloff(norms)
+        return result
+    else:
+        return norms</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.field.attractor.SvLineAttractorVectorField"><code class="flex name class">
+<span>class <span class="ident">SvLineAttractorVectorField</span></span>
+<span>(</span><span>center, direction, falloff=None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvLineAttractorVectorField(SvVectorField):
+
+    def __init__(self, center, direction, falloff=None):
+        self.center = center
+        self.direction = direction
+        self.falloff = falloff
+        self.__description__ = &#34;Line Attractor&#34;
+
+    def evaluate(self, x, y, z):
+        vertex = np.array([x,y,z])
+        direction = self.direction
+        to_center = self.center - vertex
+        projection = np.dot(to_center, direction) * direction / np.dot(direction, direction)
+        dv = to_center - projection
+        if self.falloff is not None:
+            norm = np.linalg.norm(dv)
+            dv = self.falloff(norm) * dv / norm
+        return dv
+
+    def evaluate_grid(self, xs, ys, zs):
+        direction = self.direction
+        direction2 = np.dot(direction, direction)
+
+        def func(vertex):
+            to_center = self.center - vertex
+            projection = np.dot(to_center, direction) * direction / direction2
+            dv = to_center - projection
+            return dv
+
+        points = np.stack((xs, ys, zs)).T
+        vectors = np.vectorize(func, signature=&#39;(3)-&gt;(3)&#39;)(points)
+        if self.falloff is not None:
+            norms = np.linalg.norm(vectors, axis=1, keepdims=True)
+            nonzero = (norms &gt; 0)[:,0]
+            lens = self.falloff(norms)
+            vectors[nonzero] = vectors[nonzero] / norms[nonzero][:,0][np.newaxis].T
+            R = (lens * vectors).T
+            return R[0], R[1], R[2]
+        else:
+            R = vectors.T
+            return R[0], R[1], R[2]</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.field.vector.SvVectorField" href="vector.html#sverchok.utils.field.vector.SvVectorField">SvVectorField</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.field.attractor.SvLineAttractorVectorField.evaluate"><code class="name flex">
+<span>def <span class="ident">evaluate</span></span>(<span>self, x, y, z)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate(self, x, y, z):
+    vertex = np.array([x,y,z])
+    direction = self.direction
+    to_center = self.center - vertex
+    projection = np.dot(to_center, direction) * direction / np.dot(direction, direction)
+    dv = to_center - projection
+    if self.falloff is not None:
+        norm = np.linalg.norm(dv)
+        dv = self.falloff(norm) * dv / norm
+    return dv</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.field.attractor.SvLineAttractorVectorField.evaluate_grid"><code class="name flex">
+<span>def <span class="ident">evaluate_grid</span></span>(<span>self, xs, ys, zs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate_grid(self, xs, ys, zs):
+    direction = self.direction
+    direction2 = np.dot(direction, direction)
+
+    def func(vertex):
+        to_center = self.center - vertex
+        projection = np.dot(to_center, direction) * direction / direction2
+        dv = to_center - projection
+        return dv
+
+    points = np.stack((xs, ys, zs)).T
+    vectors = np.vectorize(func, signature=&#39;(3)-&gt;(3)&#39;)(points)
+    if self.falloff is not None:
+        norms = np.linalg.norm(vectors, axis=1, keepdims=True)
+        nonzero = (norms &gt; 0)[:,0]
+        lens = self.falloff(norms)
+        vectors[nonzero] = vectors[nonzero] / norms[nonzero][:,0][np.newaxis].T
+        R = (lens * vectors).T
+        return R[0], R[1], R[2]
+    else:
+        R = vectors.T
+        return R[0], R[1], R[2]</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.field.attractor.SvPlaneAttractorScalarField"><code class="flex name class">
+<span>class <span class="ident">SvPlaneAttractorScalarField</span></span>
+<span>(</span><span>center, direction, falloff=None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvPlaneAttractorScalarField(SvScalarField):
+    __description__ = &#34;Plane Attractor&#34;
+
+    def __init__(self, center, direction, falloff=None):
+        self.center = center
+        self.direction = direction
+        self.falloff = falloff
+
+    def evaluate(self, x, y, z):
+        vertex = np.array([x,y,z])
+        direction = self.direction
+        to_center = self.center - vertex
+        projection = np.dot(to_center, direction) * direction / np.dot(direction, direction)
+        return np.linalg.norm(projection)
+
+    def evaluate_grid(self, xs, ys, zs):
+        direction = self.direction
+        direction2 = np.dot(direction, direction)
+
+        def func(vertex):
+            to_center = self.center - vertex
+            projection = np.dot(to_center, direction) * direction / direction2
+            return np.linalg.norm(projection)
+
+        points = np.stack((xs, ys, zs)).T
+        norms = np.vectorize(func, signature=&#39;(3)-&gt;()&#39;)(points)
+        if self.falloff is not None:
+            result = self.falloff(norms)
+            return result
+        else:
+            return norms</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.field.scalar.SvScalarField" href="scalar.html#sverchok.utils.field.scalar.SvScalarField">SvScalarField</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.field.attractor.SvPlaneAttractorScalarField.evaluate"><code class="name flex">
+<span>def <span class="ident">evaluate</span></span>(<span>self, x, y, z)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate(self, x, y, z):
+    vertex = np.array([x,y,z])
+    direction = self.direction
+    to_center = self.center - vertex
+    projection = np.dot(to_center, direction) * direction / np.dot(direction, direction)
+    return np.linalg.norm(projection)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.field.attractor.SvPlaneAttractorScalarField.evaluate_grid"><code class="name flex">
+<span>def <span class="ident">evaluate_grid</span></span>(<span>self, xs, ys, zs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate_grid(self, xs, ys, zs):
+    direction = self.direction
+    direction2 = np.dot(direction, direction)
+
+    def func(vertex):
+        to_center = self.center - vertex
+        projection = np.dot(to_center, direction) * direction / direction2
+        return np.linalg.norm(projection)
+
+    points = np.stack((xs, ys, zs)).T
+    norms = np.vectorize(func, signature=&#39;(3)-&gt;()&#39;)(points)
+    if self.falloff is not None:
+        result = self.falloff(norms)
+        return result
+    else:
+        return norms</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.field.attractor.SvPlaneAttractorVectorField"><code class="flex name class">
+<span>class <span class="ident">SvPlaneAttractorVectorField</span></span>
+<span>(</span><span>center, direction, falloff=None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvPlaneAttractorVectorField(SvVectorField):
+
+    def __init__(self, center, direction, falloff=None):
+        self.center = center
+        self.direction = direction
+        self.falloff = falloff
+        self.__description__ = &#34;Plane Attractor&#34;
+
+    def evaluate(self, x, y, z):
+        vertex = np.array([x,y,z])
+        direction = self.direction
+        to_center = self.center - vertex
+        dv = np.dot(to_center, direction) * direction / np.dot(direction, direction)
+        if self.falloff is not None:
+            norm = np.linalg.norm(dv)
+            dv = self.falloff(norm) * dv / norm
+        return dv
+
+    def evaluate_grid(self, xs, ys, zs):
+        direction = self.direction
+        direction2 = np.dot(direction, direction)
+
+        def func(vertex):
+            to_center = self.center - vertex
+            projection = np.dot(to_center, direction) * direction / direction2
+            return projection
+
+        points = np.stack((xs, ys, zs)).T
+        vectors = np.vectorize(func, signature=&#39;(3)-&gt;(3)&#39;)(points)
+        if self.falloff is not None:
+            norms = np.linalg.norm(vectors, axis=1, keepdims=True)
+            lens = self.falloff(norms)
+            nonzero = (norms &gt; 0)[:,0]
+            vectors[nonzero] = vectors[nonzero] / norms[nonzero][:,0][np.newaxis].T
+            R = (lens * vectors).T
+            return R[0], R[1], R[2]
+        else:
+            R = vectors.T
+            return R[0], R[1], R[2]</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.field.vector.SvVectorField" href="vector.html#sverchok.utils.field.vector.SvVectorField">SvVectorField</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.field.attractor.SvPlaneAttractorVectorField.evaluate"><code class="name flex">
+<span>def <span class="ident">evaluate</span></span>(<span>self, x, y, z)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate(self, x, y, z):
+    vertex = np.array([x,y,z])
+    direction = self.direction
+    to_center = self.center - vertex
+    dv = np.dot(to_center, direction) * direction / np.dot(direction, direction)
+    if self.falloff is not None:
+        norm = np.linalg.norm(dv)
+        dv = self.falloff(norm) * dv / norm
+    return dv</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.field.attractor.SvPlaneAttractorVectorField.evaluate_grid"><code class="name flex">
+<span>def <span class="ident">evaluate_grid</span></span>(<span>self, xs, ys, zs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate_grid(self, xs, ys, zs):
+    direction = self.direction
+    direction2 = np.dot(direction, direction)
+
+    def func(vertex):
+        to_center = self.center - vertex
+        projection = np.dot(to_center, direction) * direction / direction2
+        return projection
+
+    points = np.stack((xs, ys, zs)).T
+    vectors = np.vectorize(func, signature=&#39;(3)-&gt;(3)&#39;)(points)
+    if self.falloff is not None:
+        norms = np.linalg.norm(vectors, axis=1, keepdims=True)
+        lens = self.falloff(norms)
+        nonzero = (norms &gt; 0)[:,0]
+        vectors[nonzero] = vectors[nonzero] / norms[nonzero][:,0][np.newaxis].T
+        R = (lens * vectors).T
+        return R[0], R[1], R[2]
+    else:
+        R = vectors.T
+        return R[0], R[1], R[2]</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.field.attractor.SvScalarFieldPointDistance"><code class="flex name class">
+<span>class <span class="ident">SvScalarFieldPointDistance</span></span>
+<span>(</span><span>center, metric='EUCLIDEAN', falloff=None, power=2)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvScalarFieldPointDistance(SvScalarField):
+    def __init__(self, center, metric=&#39;EUCLIDEAN&#39;, falloff=None, power=2):
+        self.center = center
+        self.falloff = falloff
+        self.metric = metric
+        self.power = power
+        self.__description__ = &#34;Distance from {}&#34;.format(tuple(center))
+
+    def evaluate_grid(self, xs, ys, zs):
+        x0, y0, z0 = tuple(self.center)
+        xs = xs - x0
+        ys = ys - y0
+        zs = zs - z0
+        points = np.stack((xs, ys, zs))
+        if self.metric == &#39;EUCLIDEAN&#39;:
+            norms = np.linalg.norm(points, axis=0)
+        elif self.metric == &#39;CHEBYSHEV&#39;:
+            norms = np.max(np.abs(points), axis=0)
+        elif self.metric == &#39;MANHATTAN&#39;:
+            norms = np.sum(np.abs(points), axis=0)
+        elif self.metric == &#39;CUSTOM&#39;:
+            norms = np.linalg.norm(points, axis=0, ord=self.power)
+        else:
+            raise Exception(&#39;Unknown metric&#39;)
+        if self.falloff is not None:
+            result = self.falloff(norms)
+            return result
+        else:
+            return norms
+
+    def evaluate(self, x, y, z):
+        point = np.array([x, y, z]) - self.center
+        if self.metric == &#39;EUCLIDEAN&#39;:
+            norm = np.linalg.norm(point)
+        elif self.metric == &#39;CHEBYSHEV&#39;:
+            norm = np.max(np.abs(point))
+        elif self.metric == &#39;MANHATTAN&#39;:
+            norm = np.sum(np.abs(point))
+        elif self.metric == &#39;CUSTOM&#39;:
+            norm = np.linalg.norm(point, ord=self.power)
+        else:
+            raise Exception(&#39;Unknown metric&#39;)
+        if self.falloff is not None:
+            return self.falloff(np.array([norm]))[0]
+        else:
+            return norm</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.field.scalar.SvScalarField" href="scalar.html#sverchok.utils.field.scalar.SvScalarField">SvScalarField</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.field.attractor.SvScalarFieldPointDistance.evaluate"><code class="name flex">
+<span>def <span class="ident">evaluate</span></span>(<span>self, x, y, z)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate(self, x, y, z):
+    point = np.array([x, y, z]) - self.center
+    if self.metric == &#39;EUCLIDEAN&#39;:
+        norm = np.linalg.norm(point)
+    elif self.metric == &#39;CHEBYSHEV&#39;:
+        norm = np.max(np.abs(point))
+    elif self.metric == &#39;MANHATTAN&#39;:
+        norm = np.sum(np.abs(point))
+    elif self.metric == &#39;CUSTOM&#39;:
+        norm = np.linalg.norm(point, ord=self.power)
+    else:
+        raise Exception(&#39;Unknown metric&#39;)
+    if self.falloff is not None:
+        return self.falloff(np.array([norm]))[0]
+    else:
+        return norm</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.field.attractor.SvScalarFieldPointDistance.evaluate_grid"><code class="name flex">
+<span>def <span class="ident">evaluate_grid</span></span>(<span>self, xs, ys, zs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate_grid(self, xs, ys, zs):
+    x0, y0, z0 = tuple(self.center)
+    xs = xs - x0
+    ys = ys - y0
+    zs = zs - z0
+    points = np.stack((xs, ys, zs))
+    if self.metric == &#39;EUCLIDEAN&#39;:
+        norms = np.linalg.norm(points, axis=0)
+    elif self.metric == &#39;CHEBYSHEV&#39;:
+        norms = np.max(np.abs(points), axis=0)
+    elif self.metric == &#39;MANHATTAN&#39;:
+        norms = np.sum(np.abs(points), axis=0)
+    elif self.metric == &#39;CUSTOM&#39;:
+        norms = np.linalg.norm(points, axis=0, ord=self.power)
+    else:
+        raise Exception(&#39;Unknown metric&#39;)
+    if self.falloff is not None:
+        result = self.falloff(norms)
+        return result
+    else:
+        return norms</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sverchok.utils.field.attractor.SvVectorFieldPointDistance"><code class="flex name class">
+<span>class <span class="ident">SvVectorFieldPointDistance</span></span>
+<span>(</span><span>center, metric='EUCLIDEAN', falloff=None, power=2)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvVectorFieldPointDistance(SvVectorField):
+    def __init__(self, center, metric=&#39;EUCLIDEAN&#39;, falloff=None, power=2):
+        self.center = center
+        self.falloff = falloff
+        self.metric = metric
+        self.power = power
+        self.__description__ = &#34;Distance from {}&#34;.format(tuple(center))
+
+    def evaluate_grid(self, xs, ys, zs):
+        x0, y0, z0 = tuple(self.center)
+        xs = x0 - xs
+        ys = y0 - ys
+        zs = z0 - zs
+        vectors = np.stack((xs, ys, zs))
+        if self.metric == &#39;EUCLIDEAN&#39;:
+            norms = np.linalg.norm(vectors, axis=0)
+        elif self.metric == &#39;CHEBYSHEV&#39;:
+            norms = np.max(np.abs(vectors), axis=0)
+        elif self.metric == &#39;MANHATTAN&#39;:
+            norms = np.sum(np.abs(vectors), axis=0)
+        elif self.metric == &#39;CUSTOM&#39;:
+            norms = np.linalg.norm(vectors, axis=0, ord=self.power)
+        else:
+            raise Exception(&#39;Unknown metric&#39;)
+        if self.falloff is not None:
+            lens = self.falloff(norms)
+            R = lens * vectors / norms
+        else:
+            R = vectors
+        return R[0], R[1], R[2]
+
+    def evaluate(self, x, y, z):
+        point = np.array([x, y, z]) - self.center
+        if self.metric == &#39;EUCLIDEAN&#39;:
+            norm = np.linalg.norm(point)
+        elif self.metric == &#39;CHEBYSHEV&#39;:
+            norm = np.max(point)
+        elif self.metric == &#39;MANHATTAN&#39;:
+            norm = np.sum(np.abs(point))
+        elif self.metric == &#39;CUSTOM&#39;:
+            norm = np.linalg.norm(point, ord=self.power)
+        else:
+            raise Exception(&#39;Unknown metric&#39;)
+        if self.falloff is not None:
+            value = self.falloff(np.array([norm]))[0]
+            return value * point / norm
+        else:
+            return point</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.field.vector.SvVectorField" href="vector.html#sverchok.utils.field.vector.SvVectorField">SvVectorField</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.field.attractor.SvVectorFieldPointDistance.evaluate"><code class="name flex">
+<span>def <span class="ident">evaluate</span></span>(<span>self, x, y, z)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate(self, x, y, z):
+    point = np.array([x, y, z]) - self.center
+    if self.metric == &#39;EUCLIDEAN&#39;:
+        norm = np.linalg.norm(point)
+    elif self.metric == &#39;CHEBYSHEV&#39;:
+        norm = np.max(point)
+    elif self.metric == &#39;MANHATTAN&#39;:
+        norm = np.sum(np.abs(point))
+    elif self.metric == &#39;CUSTOM&#39;:
+        norm = np.linalg.norm(point, ord=self.power)
+    else:
+        raise Exception(&#39;Unknown metric&#39;)
+    if self.falloff is not None:
+        value = self.falloff(np.array([norm]))[0]
+        return value * point / norm
+    else:
+        return point</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.field.attractor.SvVectorFieldPointDistance.evaluate_grid"><code class="name flex">
+<span>def <span class="ident">evaluate_grid</span></span>(<span>self, xs, ys, zs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate_grid(self, xs, ys, zs):
+    x0, y0, z0 = tuple(self.center)
+    xs = x0 - xs
+    ys = y0 - ys
+    zs = z0 - zs
+    vectors = np.stack((xs, ys, zs))
+    if self.metric == &#39;EUCLIDEAN&#39;:
+        norms = np.linalg.norm(vectors, axis=0)
+    elif self.metric == &#39;CHEBYSHEV&#39;:
+        norms = np.max(np.abs(vectors), axis=0)
+    elif self.metric == &#39;MANHATTAN&#39;:
+        norms = np.sum(np.abs(vectors), axis=0)
+    elif self.metric == &#39;CUSTOM&#39;:
+        norms = np.linalg.norm(vectors, axis=0, ord=self.power)
+    else:
+        raise Exception(&#39;Unknown metric&#39;)
+    if self.falloff is not None:
+        lens = self.falloff(norms)
+        R = lens * vectors / norms
+    else:
+        R = vectors
+    return R[0], R[1], R[2]</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sverchok.utils.field" href="index.html">sverchok.utils.field</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sverchok.utils.field.attractor.SvBvhAttractorScalarField" href="#sverchok.utils.field.attractor.SvBvhAttractorScalarField">SvBvhAttractorScalarField</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.field.attractor.SvBvhAttractorScalarField.evaluate" href="#sverchok.utils.field.attractor.SvBvhAttractorScalarField.evaluate">evaluate</a></code></li>
+<li><code><a title="sverchok.utils.field.attractor.SvBvhAttractorScalarField.evaluate_grid" href="#sverchok.utils.field.attractor.SvBvhAttractorScalarField.evaluate_grid">evaluate_grid</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.field.attractor.SvBvhAttractorVectorField" href="#sverchok.utils.field.attractor.SvBvhAttractorVectorField">SvBvhAttractorVectorField</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.field.attractor.SvBvhAttractorVectorField.evaluate" href="#sverchok.utils.field.attractor.SvBvhAttractorVectorField.evaluate">evaluate</a></code></li>
+<li><code><a title="sverchok.utils.field.attractor.SvBvhAttractorVectorField.evaluate_grid" href="#sverchok.utils.field.attractor.SvBvhAttractorVectorField.evaluate_grid">evaluate_grid</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.field.attractor.SvBvhEdgesAttractorScalarField" href="#sverchok.utils.field.attractor.SvBvhEdgesAttractorScalarField">SvBvhEdgesAttractorScalarField</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.field.attractor.SvBvhEdgesAttractorScalarField.evaluate" href="#sverchok.utils.field.attractor.SvBvhEdgesAttractorScalarField.evaluate">evaluate</a></code></li>
+<li><code><a title="sverchok.utils.field.attractor.SvBvhEdgesAttractorScalarField.evaluate_grid" href="#sverchok.utils.field.attractor.SvBvhEdgesAttractorScalarField.evaluate_grid">evaluate_grid</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.field.attractor.SvCircleAttractorScalarField" href="#sverchok.utils.field.attractor.SvCircleAttractorScalarField">SvCircleAttractorScalarField</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.field.attractor.SvCircleAttractorScalarField.evaluate" href="#sverchok.utils.field.attractor.SvCircleAttractorScalarField.evaluate">evaluate</a></code></li>
+<li><code><a title="sverchok.utils.field.attractor.SvCircleAttractorScalarField.evaluate_grid" href="#sverchok.utils.field.attractor.SvCircleAttractorScalarField.evaluate_grid">evaluate_grid</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.field.attractor.SvCircleAttractorVectorField" href="#sverchok.utils.field.attractor.SvCircleAttractorVectorField">SvCircleAttractorVectorField</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.field.attractor.SvCircleAttractorVectorField.evaluate" href="#sverchok.utils.field.attractor.SvCircleAttractorVectorField.evaluate">evaluate</a></code></li>
+<li><code><a title="sverchok.utils.field.attractor.SvCircleAttractorVectorField.evaluate_grid" href="#sverchok.utils.field.attractor.SvCircleAttractorVectorField.evaluate_grid">evaluate_grid</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.field.attractor.SvEdgeAttractorScalarField" href="#sverchok.utils.field.attractor.SvEdgeAttractorScalarField">SvEdgeAttractorScalarField</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.field.attractor.SvEdgeAttractorScalarField.evaluate" href="#sverchok.utils.field.attractor.SvEdgeAttractorScalarField.evaluate">evaluate</a></code></li>
+<li><code><a title="sverchok.utils.field.attractor.SvEdgeAttractorScalarField.evaluate_grid" href="#sverchok.utils.field.attractor.SvEdgeAttractorScalarField.evaluate_grid">evaluate_grid</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.field.attractor.SvEdgeAttractorVectorField" href="#sverchok.utils.field.attractor.SvEdgeAttractorVectorField">SvEdgeAttractorVectorField</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.field.attractor.SvEdgeAttractorVectorField.evaluate" href="#sverchok.utils.field.attractor.SvEdgeAttractorVectorField.evaluate">evaluate</a></code></li>
+<li><code><a title="sverchok.utils.field.attractor.SvEdgeAttractorVectorField.evaluate_grid" href="#sverchok.utils.field.attractor.SvEdgeAttractorVectorField.evaluate_grid">evaluate_grid</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.field.attractor.SvKdtScalarField" href="#sverchok.utils.field.attractor.SvKdtScalarField">SvKdtScalarField</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.field.attractor.SvKdtScalarField.evaluate" href="#sverchok.utils.field.attractor.SvKdtScalarField.evaluate">evaluate</a></code></li>
+<li><code><a title="sverchok.utils.field.attractor.SvKdtScalarField.evaluate_grid" href="#sverchok.utils.field.attractor.SvKdtScalarField.evaluate_grid">evaluate_grid</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.field.attractor.SvKdtVectorField" href="#sverchok.utils.field.attractor.SvKdtVectorField">SvKdtVectorField</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.field.attractor.SvKdtVectorField.evaluate" href="#sverchok.utils.field.attractor.SvKdtVectorField.evaluate">evaluate</a></code></li>
+<li><code><a title="sverchok.utils.field.attractor.SvKdtVectorField.evaluate_grid" href="#sverchok.utils.field.attractor.SvKdtVectorField.evaluate_grid">evaluate_grid</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.field.attractor.SvLineAttractorScalarField" href="#sverchok.utils.field.attractor.SvLineAttractorScalarField">SvLineAttractorScalarField</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.field.attractor.SvLineAttractorScalarField.evaluate" href="#sverchok.utils.field.attractor.SvLineAttractorScalarField.evaluate">evaluate</a></code></li>
+<li><code><a title="sverchok.utils.field.attractor.SvLineAttractorScalarField.evaluate_grid" href="#sverchok.utils.field.attractor.SvLineAttractorScalarField.evaluate_grid">evaluate_grid</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.field.attractor.SvLineAttractorVectorField" href="#sverchok.utils.field.attractor.SvLineAttractorVectorField">SvLineAttractorVectorField</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.field.attractor.SvLineAttractorVectorField.evaluate" href="#sverchok.utils.field.attractor.SvLineAttractorVectorField.evaluate">evaluate</a></code></li>
+<li><code><a title="sverchok.utils.field.attractor.SvLineAttractorVectorField.evaluate_grid" href="#sverchok.utils.field.attractor.SvLineAttractorVectorField.evaluate_grid">evaluate_grid</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.field.attractor.SvPlaneAttractorScalarField" href="#sverchok.utils.field.attractor.SvPlaneAttractorScalarField">SvPlaneAttractorScalarField</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.field.attractor.SvPlaneAttractorScalarField.evaluate" href="#sverchok.utils.field.attractor.SvPlaneAttractorScalarField.evaluate">evaluate</a></code></li>
+<li><code><a title="sverchok.utils.field.attractor.SvPlaneAttractorScalarField.evaluate_grid" href="#sverchok.utils.field.attractor.SvPlaneAttractorScalarField.evaluate_grid">evaluate_grid</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.field.attractor.SvPlaneAttractorVectorField" href="#sverchok.utils.field.attractor.SvPlaneAttractorVectorField">SvPlaneAttractorVectorField</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.field.attractor.SvPlaneAttractorVectorField.evaluate" href="#sverchok.utils.field.attractor.SvPlaneAttractorVectorField.evaluate">evaluate</a></code></li>
+<li><code><a title="sverchok.utils.field.attractor.SvPlaneAttractorVectorField.evaluate_grid" href="#sverchok.utils.field.attractor.SvPlaneAttractorVectorField.evaluate_grid">evaluate_grid</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.field.attractor.SvScalarFieldPointDistance" href="#sverchok.utils.field.attractor.SvScalarFieldPointDistance">SvScalarFieldPointDistance</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.field.attractor.SvScalarFieldPointDistance.evaluate" href="#sverchok.utils.field.attractor.SvScalarFieldPointDistance.evaluate">evaluate</a></code></li>
+<li><code><a title="sverchok.utils.field.attractor.SvScalarFieldPointDistance.evaluate_grid" href="#sverchok.utils.field.attractor.SvScalarFieldPointDistance.evaluate_grid">evaluate_grid</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.field.attractor.SvVectorFieldPointDistance" href="#sverchok.utils.field.attractor.SvVectorFieldPointDistance">SvVectorFieldPointDistance</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.field.attractor.SvVectorFieldPointDistance.evaluate" href="#sverchok.utils.field.attractor.SvVectorFieldPointDistance.evaluate">evaluate</a></code></li>
+<li><code><a title="sverchok.utils.field.attractor.SvVectorFieldPointDistance.evaluate_grid" href="#sverchok.utils.field.attractor.SvVectorFieldPointDistance.evaluate_grid">evaluate_grid</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

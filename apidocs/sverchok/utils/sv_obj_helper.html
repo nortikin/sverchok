@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
-<meta name="generator" content="pdoc3 0.11.5">
+<meta name="generator" content="pdoc3 0.11.6">
 <title>sverchok.utils.sv_obj_helper API documentation</title>
 <meta name="description" content="">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
@@ -473,15 +473,15 @@ us to track the nodetree and nodename origins of the callback.</p>
 </ul>
 <h3>Class variables</h3>
 <dl>
-<dt id="sverchok.utils.sv_obj_helper.SvObjHelper.activate"><code class="name">var <span class="ident">activate</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'activate', 'description': 'When enabled this will process incoming data', 'default': True, 'update': <function updateNode at 0x7f9fbbaa1900>, 'attr': 'activate'}></code></dt>
+<dt id="sverchok.utils.sv_obj_helper.SvObjHelper.activate"><code class="name">var <span class="ident">activate</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'activate', 'description': 'When enabled this will process incoming data', 'default': True, 'update': <function updateNode at 0x7f77390c6dd0>, 'attr': 'activate'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.utils.sv_obj_helper.SvObjHelper.basedata_name"><code class="name">var <span class="ident">basedata_name</span> : <_PropertyDeferred, <built-in function StringProperty>, {'name': 'basedata name', 'default': 'Alpha', 'description': 'which base name the object and data will use', 'update': <function updateNode at 0x7f9fbbaa1900>, 'attr': 'basedata_name'}></code></dt>
+<dt id="sverchok.utils.sv_obj_helper.SvObjHelper.basedata_name"><code class="name">var <span class="ident">basedata_name</span> : <_PropertyDeferred, <built-in function StringProperty>, {'name': 'basedata name', 'default': 'Alpha', 'description': 'which base name the object and data will use', 'update': <function updateNode at 0x7f77390c6dd0>, 'attr': 'basedata_name'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.utils.sv_obj_helper.SvObjHelper.custom_collection_name"><code class="name">var <span class="ident">custom_collection_name</span> : <_PropertyDeferred, <built-in function StringProperty>, {'name': 'collection name', 'update': <function updateNode at 0x7f9fbbaa1900>, 'description': 'custom collection name, will default to the basename of the node first', 'attr': 'custom_collection_name'}></code></dt>
+<dt id="sverchok.utils.sv_obj_helper.SvObjHelper.custom_collection_name"><code class="name">var <span class="ident">custom_collection_name</span> : <_PropertyDeferred, <built-in function StringProperty>, {'name': 'collection name', 'update': <function updateNode at 0x7f77390c6dd0>, 'description': 'custom collection name, will default to the basename of the node first', 'attr': 'custom_collection_name'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -489,7 +489,7 @@ us to track the nodetree and nodename origins of the callback.</p>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.utils.sv_obj_helper.SvObjHelper.layer_choice"><code class="name">var <span class="ident">layer_choice</span> : <_PropertyDeferred, <built-in function BoolVectorProperty>, {'subtype': 'LAYER', 'size': 20, 'name': 'Layer Choice', 'update': <function <a title="sverchok.utils.sv_obj_helper.SvObjHelper.layer_updateNode" href="#sverchok.utils.sv_obj_helper.SvObjHelper.layer_updateNode">SvObjHelper.layer_updateNode()</a> at 0x7f9f9d4abc70>, 'description': 'This sets which layer objects are placed on', 'get': <function <a title="sverchok.utils.sv_obj_helper.SvObjHelper.g" href="#sverchok.utils.sv_obj_helper.SvObjHelper.g">SvObjHelper.g()</a> at 0x7f9f9d4abb50>, 'set': <function <a title="sverchok.utils.sv_obj_helper.SvObjHelper.s" href="#sverchok.utils.sv_obj_helper.SvObjHelper.s">SvObjHelper.s()</a> at 0x7f9f9d4abbe0>, 'attr': 'layer_choice'}></code></dt>
+<dt id="sverchok.utils.sv_obj_helper.SvObjHelper.layer_choice"><code class="name">var <span class="ident">layer_choice</span> : <_PropertyDeferred, <built-in function BoolVectorProperty>, {'subtype': 'LAYER', 'size': 20, 'name': 'Layer Choice', 'update': <function <a title="sverchok.utils.sv_obj_helper.SvObjHelper.layer_updateNode" href="#sverchok.utils.sv_obj_helper.SvObjHelper.layer_updateNode">SvObjHelper.layer_updateNode()</a> at 0x7f771a66c3a0>, 'description': 'This sets which layer objects are placed on', 'get': <function <a title="sverchok.utils.sv_obj_helper.SvObjHelper.g" href="#sverchok.utils.sv_obj_helper.SvObjHelper.g">SvObjHelper.g()</a> at 0x7f771a66c280>, 'set': <function <a title="sverchok.utils.sv_obj_helper.SvObjHelper.s" href="#sverchok.utils.sv_obj_helper.SvObjHelper.s">SvObjHelper.s()</a> at 0x7f771a66c310>, 'attr': 'layer_choice'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -497,7 +497,7 @@ us to track the nodetree and nodename origins of the callback.</p>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.utils.sv_obj_helper.SvObjHelper.material_pointer"><code class="name">var <span class="ident">material_pointer</span> : <_PropertyDeferred, <built-in function PointerProperty>, {'type': <class 'bpy.types.Material'>, 'poll': <function <a title="sverchok.utils.sv_obj_helper.SvObjHelper" href="#sverchok.utils.sv_obj_helper.SvObjHelper">SvObjHelper</a>.<lambda> at 0x7f9f9d4c40d0>, 'update': <function updateNode at 0x7f9fbbaa1900>, 'attr': 'material_pointer'}></code></dt>
+<dt id="sverchok.utils.sv_obj_helper.SvObjHelper.material_pointer"><code class="name">var <span class="ident">material_pointer</span> : <_PropertyDeferred, <built-in function PointerProperty>, {'type': <class 'bpy.types.Material'>, 'poll': <function <a title="sverchok.utils.sv_obj_helper.SvObjHelper" href="#sverchok.utils.sv_obj_helper.SvObjHelper">SvObjHelper</a>.<lambda> at 0x7f771a66c790>, 'update': <function updateNode at 0x7f77390c6dd0>, 'attr': 'material_pointer'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -521,15 +521,15 @@ us to track the nodetree and nodename origins of the callback.</p>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.utils.sv_obj_helper.SvObjHelper.parent_to_empty"><code class="name">var <span class="ident">parent_to_empty</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'parent to empty', 'default': False, 'update': <function updateNode at 0x7f9fbbaa1900>, 'attr': 'parent_to_empty'}></code></dt>
+<dt id="sverchok.utils.sv_obj_helper.SvObjHelper.parent_to_empty"><code class="name">var <span class="ident">parent_to_empty</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'parent to empty', 'default': False, 'update': <function updateNode at 0x7f77390c6dd0>, 'attr': 'parent_to_empty'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.utils.sv_obj_helper.SvObjHelper.show_wire"><code class="name">var <span class="ident">show_wire</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'show wire', 'update': <function updateNode at 0x7f9fbbaa1900>, 'attr': 'show_wire'}></code></dt>
+<dt id="sverchok.utils.sv_obj_helper.SvObjHelper.show_wire"><code class="name">var <span class="ident">show_wire</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'show wire', 'update': <function updateNode at 0x7f77390c6dd0>, 'attr': 'show_wire'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.utils.sv_obj_helper.SvObjHelper.use_smooth"><code class="name">var <span class="ident">use_smooth</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'use smooth', 'default': True, 'update': <function updateNode at 0x7f9fbbaa1900>, 'attr': 'use_smooth'}></code></dt>
+<dt id="sverchok.utils.sv_obj_helper.SvObjHelper.use_smooth"><code class="name">var <span class="ident">use_smooth</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'use smooth', 'default': True, 'update': <function updateNode at 0x7f77390c6dd0>, 'attr': 'use_smooth'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -1520,7 +1520,7 @@ the button should result in asymmetric behaviour depending on the new state of
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.5</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
 </footer>
 </body>
 </html>
