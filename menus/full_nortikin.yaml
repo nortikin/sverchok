@@ -128,6 +128,8 @@
         - SvExDecomposeVectorFieldNode
         - SvExScalarFieldPointNode
         - SvAttractorFieldNodeMk2
+        - SvTwistFieldNode
+        - SvTaperFieldNode
         - SvRotationFieldNode
         - SvExImageFieldNode
         - SvMeshSurfaceFieldNode
@@ -342,6 +344,7 @@
         - extra_menu: AdvancedObjectsPartialMenu
         - SvExScalarFieldMathNode
         - SvExVectorFieldMathNode
+        - SvVectorFieldFilterNode
         - SvScalarFieldCurveMapNode
         - SvExFieldDiffOpsNode
         - SvExMergeScalarFieldsNode

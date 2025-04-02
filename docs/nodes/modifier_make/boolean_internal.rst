@@ -21,8 +21,6 @@ There are switches and modes.
 - Nested Accumulate (bool first two objects, then applies the rest to the result one by one.
 - Only final result (output only last iteration result)
 
-::|Internal Boolean demo|
-
 .. image:: https://raw.githubusercontent.com/kevinsmia1939/images/refs/heads/main/sverchok%20screenshot/example.png
   :target: https://raw.githubusercontent.com/kevinsmia1939/images/refs/heads/main/sverchok%20screenshot/example.png
 
@@ -40,4 +38,3 @@ Alternatives
 CSG Boolean: https://nortikin.github.io/sverchok/docs/nodes/modifier_make/csg_booleanMK2.html
 You might be interested in the FreeCAD implementation discussed here. https://github.com/nortikin/sverchok/issues/3430
 
-.. |Internal Boolean demo|
