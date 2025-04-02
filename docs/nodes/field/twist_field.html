@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Twist / Whirld Field &#8212; Sverchok 1, 2, 0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/zerovm.css?v=bbc7d13e" />
+    <script src="../../_static/documentation_options.js?v=773c2105"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="icon" href="../../_static/sverchock_icon_b.ico"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Apply Vector Field" href="vector_field_apply.html" />
+    <link rel="prev" title="Taper Field" href="taper_field.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="vector_field_apply.html" title="Apply Vector Field"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="taper_field.html" title="Taper Field"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../main.html">Sverchok 1, 2, 0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../nodes.html" >Nodes</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="field_index.html" accesskey="U">Field</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Twist / Whirld Field</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="twist-whirld-field">
+<h1>Twist / Whirld Field<a class="headerlink" href="#twist-whirld-field" title="Link to this heading">¶</a></h1>
+<section id="functionality">
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
+<p>This node generates a Vector Field, which does Twist or Whirl transformation of
+some region of space, or combination of Twist and Whirl.</p>
+<p>We call Twist a transformation which you get if you take some object, for
+example a cube, then rotate one of it’s sides (for example, bottom one) around
+some axis, counterclockwise, and rotate the opposite side (top side, for
+example) around the same axis clockwise.</p>
+<p>Whirl transformation rotates all parts of object in the same direction, just
+with different angle; the farther from whirl axis, the bigger is rotation
+angle.</p>
+<p>Both Twist and Whirl transformation require some axis for rotation. This axis
+can be defined by a point, through which the axis goes, and the direction
+vector.</p>
+</section>
+<section id="inputs">
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
+<p>This node has the following inputs:</p>
+<ul class="simple">
+<li><p><strong>Center</strong>. Rotation center; a point on twist / whirl axis. The default value
+is the origin, <cite>(0, 0, 0)</cite>.</p></li>
+<li><p><strong>Axis</strong>. Direction vector of the twist / whirl axis. The default value is Z
+axis, <cite>(0, 0, 1)</cite>.</p></li>
+<li><p><strong>TwistAngle</strong>. This is not exactly an angle, but a coefficient, which
+defines the force of twist transformation. More specifically, the plane lying
+at distance of 1 from rotation center in direction of rotation axis, will be
+rotated by angle specified in this input; plane passing through rotation
+center will not be rotated by twist transformation; all other planes
+perpendicular to rotation axis will be rotated on an angle proportional to
+distance from rotation center. The value is specified in radians. The default
+value is <cite>pi/2</cite>.</p></li>
+<li><p><strong>WhirlAngle</strong>. Similar to previous input, this is not exactly an angle, but
+a coefficient, which defines the force of whirl transformation. More
+specifically, points at distance 1 from rotation axis will be rotated by
+angle specified in this input. All other points will be rotated by angle
+which is proportional to distance from rotation axis. The value is specified
+in radians. The default value is 0.</p></li>
+<li><p><strong>MinZ</strong>, <strong>MaxZ</strong>. These inputs are available only when <strong>Use Min Z</strong> /
+<strong>Use Max Z</strong> parameters are enabled. Both twist and whirl transformation
+will stop at these distances from rotation center along rotation axis.
+Positive direction of rotation axis is the one defined by <strong>Axis</strong> input. The
+default values are 0.0 and 1.0, correspondingly.</p></li>
+<li><p><strong>MinR</strong>, <strong>MaxR</strong>. These inputs are available only when <strong>Use Min R</strong> /
+<strong>Use Max R</strong> parameters are enabled. Both twist and whirl transformations
+will be ceased for points which have distance from rotation axis below
+<strong>MinR</strong> or above <strong>MaxR</strong> values. The default values are 0.0 and 1.0.</p></li>
+</ul>
+</section>
+<section id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
+<p>This node has the following parameters:</p>
+<ul class="simple">
+<li><p><strong>Use Min Z</strong>, <strong>Use Max Z</strong>. If enabled, these parameters will allow to
+define a part of space along rotation axis which will be transformed; space
+outside this area will not be twisted any further.</p></li>
+<li><p><strong>Use Min R</strong>, <strong>Use Max R</strong>. If enabled, these parameters allow to define a
+(cylindrical) part of space in terms of distance from rotation axis, which
+should be transformed; outside this area, the space will not be twisted any
+further.</p></li>
+</ul>
+</section>
+<section id="outputs">
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
+<p>This node has the following output:</p>
+<ul class="simple">
+<li><p><strong>Field</strong>. The generated vector field.</p></li>
+</ul>
+</section>
+<section id="examples-of-usage">
+<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Link to this heading">¶</a></h2>
+<p>Example of Twist transformation:</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/edb22301-0dd3-492b-abea-a20a2f2ee772"><img alt="https://github.com/user-attachments/assets/edb22301-0dd3-492b-abea-a20a2f2ee772" src="https://github.com/user-attachments/assets/edb22301-0dd3-492b-abea-a20a2f2ee772" />
+</a>
+<p>Example of Whirl transformation:</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/3467f0e7-884a-496e-9516-133d3c5596f4"><img alt="https://github.com/user-attachments/assets/3467f0e7-884a-496e-9516-133d3c5596f4" src="https://github.com/user-attachments/assets/3467f0e7-884a-496e-9516-133d3c5596f4" />
+</a>
+<p>Twist and Whirl combined:</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/0b351703-97ae-4960-9f86-42f7c2825c0b"><img alt="https://github.com/user-attachments/assets/0b351703-97ae-4960-9f86-42f7c2825c0b" src="https://github.com/user-attachments/assets/0b351703-97ae-4960-9f86-42f7c2825c0b" />
+</a>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../main.html">
+              <img class="logo" src="../../_static/title_big_b.svg" alt="Logo of Sverchok"/>
+            </a></p>
+  <div>
+    <h3><a href="../../main.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Twist / Whirld Field</a><ul>
+<li><a class="reference internal" href="#functionality">Functionality</a></li>
+<li><a class="reference internal" href="#inputs">Inputs</a></li>
+<li><a class="reference internal" href="#parameters">Parameters</a></li>
+<li><a class="reference internal" href="#outputs">Outputs</a></li>
+<li><a class="reference internal" href="#examples-of-usage">Examples of usage</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="taper_field.html"
+                          title="previous chapter">Taper Field</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="vector_field_apply.html"
+                          title="next chapter">Apply Vector Field</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/nodes/field/twist_field.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="vector_field_apply.html" title="Apply Vector Field"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="taper_field.html" title="Taper Field"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../main.html">Sverchok 1, 2, 0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../nodes.html" >Nodes</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="field_index.html" >Field</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Twist / Whirld Field</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2014...2025, sverchok team.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    </div>
+  </body>
+</html>

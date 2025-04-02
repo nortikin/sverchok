@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Vector Field Filter &#8212; Sverchok 1, 2, 0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/zerovm.css?v=bbc7d13e" />
+    <script src="../../_static/documentation_options.js?v=773c2105"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="icon" href="../../_static/sverchock_icon_b.ico"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Vector Field Formula" href="vector_field_formula.html" />
+    <link rel="prev" title="Evaluate Vector Field" href="vector_field_eval.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="vector_field_formula.html" title="Vector Field Formula"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="vector_field_eval.html" title="Evaluate Vector Field"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../main.html">Sverchok 1, 2, 0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../nodes.html" >Nodes</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="field_index.html" accesskey="U">Field</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Vector Field Filter</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="vector-field-filter">
+<h1>Vector Field Filter<a class="headerlink" href="#vector-field-filter" title="Link to this heading">¶</a></h1>
+<section id="functionality">
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
+<p>This node changes vector field so that the new field acts only along chosen coordinates.</p>
+</section>
+<section id="inputs">
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
+<p>This node has the following inputs:</p>
+<ul class="simple">
+<li><p><strong>Field</strong>. The vector field to be modified. This input is mandatory.</p></li>
+</ul>
+</section>
+<section id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
+<p>This node has the following parameters:</p>
+<ul class="simple">
+<li><p><strong>Coordinates</strong>. Type of coordinate system to be used. Available options are:
+Cartesian, Cylindrical and Spherical coordinates. The default value is
+Cartesian.</p></li>
+<li><p><strong>X</strong> / <strong>Y</strong> / <strong>Z</strong>. These parameters are only available when using
+Cartesian coordinate system. Checked parameter means that vector field is
+allowed to act along X / Y / Z axis, coordpondingly.</p></li>
+<li><p><strong>Rho</strong> / <strong>Phi</strong> / <strong>Z</strong>. These parameters are only available when using
+Cylindrical coordinate system. Checked paramter means that vector field is
+allowed to act along corresponding coordinate.</p></li>
+<li><p><strong>Rho</strong> / <strong>Phi</strong> / <strong>Theta</strong>. These parameters are only available when using
+Spherical coordinate system. Checked parameter means that vecotr field is
+allowed to act along cooresponding coordinate.</p></li>
+</ul>
+<p>By default the vector field is allowed to act along all coordinates - i.e. the output vector field is the same as input one.</p>
+</section>
+<section id="outputs">
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
+<p>This node has the following outputs:</p>
+<ul class="simple">
+<li><p><strong>Field</strong>. Restricted vector field.</p></li>
+</ul>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../main.html">
+              <img class="logo" src="../../_static/title_big_b.svg" alt="Logo of Sverchok"/>
+            </a></p>
+  <div>
+    <h3><a href="../../main.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Vector Field Filter</a><ul>
+<li><a class="reference internal" href="#functionality">Functionality</a></li>
+<li><a class="reference internal" href="#inputs">Inputs</a></li>
+<li><a class="reference internal" href="#parameters">Parameters</a></li>
+<li><a class="reference internal" href="#outputs">Outputs</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="vector_field_eval.html"
+                          title="previous chapter">Evaluate Vector Field</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="vector_field_formula.html"
+                          title="next chapter">Vector Field Formula</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/nodes/field/vector_field_filter.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="vector_field_formula.html" title="Vector Field Formula"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="vector_field_eval.html" title="Evaluate Vector Field"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../main.html">Sverchok 1, 2, 0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../nodes.html" >Nodes</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="field_index.html" >Field</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Vector Field Filter</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2014...2025, sverchok team.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    </div>
+  </body>
+</html>

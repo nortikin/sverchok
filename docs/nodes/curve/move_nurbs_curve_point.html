@@ -1,207 +1,46 @@
-
-
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="../../">
-<head>
-  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Move NURBS Curve Point &mdash; Sverchok 1, 2, 0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  
-    <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
-      <script src="../../_static/documentation_options.js?v=773c2105"></script>
-      <script src="../../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script src="../../_static/js/theme.js"></script>
+    <title>Move NURBS Curve Point &#8212; Sverchok 1, 2, 0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/zerovm.css?v=bbc7d13e" />
+    <script src="../../_static/documentation_options.js?v=773c2105"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="icon" href="../../_static/sverchock_icon_b.ico"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Nearest Point on Curve" href="nearest_point.html" />
     <link rel="prev" title="Marching Squares on Surface" href="marching_squares_on_surface.html" /> 
-</head>
+  </head><body>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="nearest_point.html" title="Nearest Point on Curve"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="marching_squares_on_surface.html" title="Marching Squares on Surface"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../main.html">Sverchok 1, 2, 0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../nodes.html" >Nodes</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="curve_index.html" accesskey="U">Curves</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Move NURBS Curve Point</a></li> 
+      </ul>
+    </div>  
 
-<body class="wy-body-for-nav"> 
-  <div class="wy-grid-for-nav">
-    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-scroll">
-        <div class="wy-side-nav-search" >
-
-          
-          
-          <a href="../../main.html" class="icon icon-home">
-            Sverchok
-              <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
-          </a>
-<div role="search">
-  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
-    <input type="hidden" name="check_keywords" value="yes" />
-    <input type="hidden" name="area" value="default" />
-  </form>
-</div>
-        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../../introduction/introduction.html">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../installation/installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../user_interface/user_interface.html">User interface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../tree_evaluation_system.html">Node tree evaluation system</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../data_structure/data_structure_index.html">Data structure</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="../../nodes.html">Nodes</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="../generator/generator_index.html">Generators</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../generators_extended/generators_extended_index.html">Generators Extended</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="curve_index.html">Curves</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="adaptive_plot.html">Adaptive Plot Curve</a></li>
-<li class="toctree-l3"><a class="reference internal" href="adaptive_plot_nurbs.html">Adaptive Plot NURBS Curve</a></li>
-<li class="toctree-l3"><a class="reference internal" href="apply_field_to_curve.html">Apply Field to Curve</a></li>
-<li class="toctree-l3"><a class="reference internal" href="approximate_nurbs_curve.html">Approximate NURBS Curve</a></li>
-<li class="toctree-l3"><a class="reference internal" href="arc_3pt.html">Arc 3pt (Curve)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="arc_sed.html">Arc Start / End / Tangent</a></li>
-<li class="toctree-l3"><a class="reference internal" href="bezier_fit.html">Approximate Bezier Curve</a></li>
-<li class="toctree-l3"><a class="reference internal" href="bezier_spline.html">Bezier Spline Segment (Curve)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="biarc.html">Bi Arc</a></li>
-<li class="toctree-l3"><a class="reference internal" href="blend_curves.html">Blend Curves</a></li>
-<li class="toctree-l3"><a class="reference internal" href="cast_curve.html">Cast Curve</a></li>
-<li class="toctree-l3"><a class="reference internal" href="catenary_curve.html">Catenary Curve</a></li>
-<li class="toctree-l3"><a class="reference internal" href="catmull_rom.html">Catmull-Rom Spline</a></li>
-<li class="toctree-l3"><a class="reference internal" href="circlify.html">Circlify</a></li>
-<li class="toctree-l3"><a class="reference internal" href="concat_curves.html">Concatenate Curves</a></li>
-<li class="toctree-l3"><a class="reference internal" href="cubic_spline.html">Cubic Spline</a></li>
-<li class="toctree-l3"><a class="reference internal" href="curvature.html">Curve Curvature</a></li>
-<li class="toctree-l3"><a class="reference internal" href="curve_circle.html">Circle (Curve)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="curve_formula.html">Curve Formula</a></li>
-<li class="toctree-l3"><a class="reference internal" href="curve_frame.html">Curve Frame</a></li>
-<li class="toctree-l3"><a class="reference internal" href="curve_frame_on_surface.html">Curve Frame on Surface</a></li>
-<li class="toctree-l3"><a class="reference internal" href="curve_length.html">Curve Length</a></li>
-<li class="toctree-l3"><a class="reference internal" href="curve_lerp.html">Curve Lerp</a></li>
-<li class="toctree-l3"><a class="reference internal" href="curve_on_surface.html">Curve on Surface</a></li>
-<li class="toctree-l3"><a class="reference internal" href="curve_range.html">Curve Domain</a></li>
-<li class="toctree-l3"><a class="reference internal" href="curve_segment.html">Curve Segment</a></li>
-<li class="toctree-l3"><a class="reference internal" href="curve_to_nurbs.html">Curve to NURBS</a></li>
-<li class="toctree-l3"><a class="reference internal" href="deconstruct_curve.html">Deconstruct Curve</a></li>
-<li class="toctree-l3"><a class="reference internal" href="discontinuity.html">NURBS Curve Discontinuity</a></li>
-<li class="toctree-l3"><a class="reference internal" href="elevate_degree.html">Elevate Degree (NURBS Curve)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="ellipse_curve.html">Ellipse (Curve)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="endpoints.html">Curve Endpoints</a></li>
-<li class="toctree-l3"><a class="reference internal" href="eval_curve.html">Evaluate Curve</a></li>
-<li class="toctree-l3"><a class="reference internal" href="extend_curve.html">Extend Curve</a></li>
-<li class="toctree-l3"><a class="reference internal" href="extremes.html">Curve Extremes</a></li>
-<li class="toctree-l3"><a class="reference internal" href="fillet_curve.html">Fillet Curve</a></li>
-<li class="toctree-l3"><a class="reference internal" href="fillet_polyline.html">Fillet Polyline</a></li>
-<li class="toctree-l3"><a class="reference internal" href="flip_curve.html">Flip Curve</a></li>
-<li class="toctree-l3"><a class="reference internal" href="freecad_helix.html">Helix (FreeCAD)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="generate_knotvector.html">Generate Knotvector</a></li>
-<li class="toctree-l3"><a class="reference internal" href="insert_knot.html">Insert Knot (NURBS Curve)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="interpolate_frame.html">Interpolate Curve Frame</a></li>
-<li class="toctree-l3"><a class="reference internal" href="interpolate_nurbs_curve.html">Interpolate NURBS Curve</a></li>
-<li class="toctree-l3"><a class="reference internal" href="intersect_curve_plane.html">Intersect Curve with Plane</a></li>
-<li class="toctree-l3"><a class="reference internal" href="intersect_curves.html">Intersect NURBS Curves</a></li>
-<li class="toctree-l3"><a class="reference internal" href="iso_uv_curve.html">Iso U/V Curve</a></li>
-<li class="toctree-l3"><a class="reference internal" href="kinky_curve.html">Kinked Curve</a></li>
-<li class="toctree-l3"><a class="reference internal" href="length_parameter.html">Curve Length Parameter</a></li>
-<li class="toctree-l3"><a class="reference internal" href="length_rebuild.html">Naturally Parametrized Curve</a></li>
-<li class="toctree-l3"><a class="reference internal" href="line.html">Line (Curve)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="marching_squares.html">Marching Squares</a></li>
-<li class="toctree-l3"><a class="reference internal" href="marching_squares_on_surface.html">Marching Squares on Surface</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">Move NURBS Curve Point</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#inputs">Inputs</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#outputs">Outputs</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#examples-of-usage">Examples of Usage</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="nearest_point.html">Nearest Point on Curve</a></li>
-<li class="toctree-l3"><a class="reference internal" href="nurbs_curve.html">Build NURBS Curve</a></li>
-<li class="toctree-l3"><a class="reference internal" href="nurbs_curve_nodes.html">NURBS Curve Nodes</a></li>
-<li class="toctree-l3"><a class="reference internal" href="offset_mk2.html">Offset Curve</a></li>
-<li class="toctree-l3"><a class="reference internal" href="offset_on_surface.html">Offset Curve on Surface</a></li>
-<li class="toctree-l3"><a class="reference internal" href="ortho_project.html">Ortho Project on Curve</a></li>
-<li class="toctree-l3"><a class="reference internal" href="point_curve.html">Single-Point Curve</a></li>
-<li class="toctree-l3"><a class="reference internal" href="polyarc.html">Poly Arc</a></li>
-<li class="toctree-l3"><a class="reference internal" href="polyline.html">Polyline</a></li>
-<li class="toctree-l3"><a class="reference internal" href="prepare_curves_net.html">Prepare NURBS Curves Net</a></li>
-<li class="toctree-l3"><a class="reference internal" href="project_curve_surface.html">Project Curve to Surface (NURBS)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="rbf_curve.html">RBF Curve</a></li>
-<li class="toctree-l3"><a class="reference internal" href="reduce_degree.html">Reduce Degree (NURBS Curve)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="refine_nurbs_curve.html">Refine NURBS Curve</a></li>
-<li class="toctree-l3"><a class="reference internal" href="remove_excessive_knots.html">Remove Excessive Knots (NURBS Curve)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="remove_knot.html">Remove Knot (NURBS Curve)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="reparametrize.html">Reparametrize Curve</a></li>
-<li class="toctree-l3"><a class="reference internal" href="rounded_rectangle.html">Rounded Rectangle</a></li>
-<li class="toctree-l3"><a class="reference internal" href="snap_curves.html">Snap Curves</a></li>
-<li class="toctree-l3"><a class="reference internal" href="sort_curves.html">Sort Curves</a></li>
-<li class="toctree-l3"><a class="reference internal" href="split_curve.html">Split Curve</a></li>
-<li class="toctree-l3"><a class="reference internal" href="surface_boundary.html">Surface’s Boundary</a></li>
-<li class="toctree-l3"><a class="reference internal" href="tangent_curve.html">Tangents Curve</a></li>
-<li class="toctree-l3"><a class="reference internal" href="torsion.html">Curve Torsion</a></li>
-<li class="toctree-l3"><a class="reference internal" href="zero_twist_frame.html">Curve Zero-Twist Frame</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="../surface/surface_index.html">Surfaces</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../field/field_index.html">Fields</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../solid/solid_index.html">Solids</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../spatial/spatial_index.html">Spatial</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../transforms/transforms_index.html">Transforms</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../analyzer/analyzer_index.html">Analyzers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modifier_change/modifier_change_index.html">Modifier Change</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modifier_make/modifier_make_index.html">Modifier Make</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../CAD/CAD_index.html">CAD</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../number/number_index.html">Number</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../vector/vector_index.html">Vector</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../matrix/matrix_index.html">Matrix</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../quaternion/quaternion_index.html">Quaternion</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../color/color_index.html">Color</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../logic/logic_index.html">Logic</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../list_main/list_main_index.html">List Main</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../list_struct/list_struct_index.html">List Structure</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../list_masks/list_masks_index.html">List Masks</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../list_mutators/list_mutators_index.html">List Mutators</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../dictionary/dictionary_index.html">Dictionary</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../viz/viz_index.html">Viz</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../text/text_index.html">Text</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../script/script_index.html">Script</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../scene/scene_index.html">Scene</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../object_nodes/object_nodes_index.html">Object</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../layout/layout_index.html">Layout</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../network/network_index.html">Network</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../pulga_physics/pulga_physics_index.html">Pulga Physics</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../exchange/exchange_index.html">Exchange</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../svg/svg_index.html">SVG</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../../tutorials/tutorials.html">Tutorials</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../tutorials/celling.html">Celling design</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../contributing/contributing_to_sverchok.html">Contributing to sverchok</a></li>
-</ul>
-
-        </div>
-      </div>
-    </nav>
-
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
-          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../main.html">Sverchok</a>
-      </nav>
-
-      <div class="wy-nav-content">
-        <div class="rst-content">
-          <div role="navigation" aria-label="Page navigation">
-  <ul class="wy-breadcrumbs">
-      <li><a href="../../main.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="../../nodes.html">Nodes</a></li>
-          <li class="breadcrumb-item"><a href="curve_index.html">Curves</a></li>
-      <li class="breadcrumb-item active">Move NURBS Curve Point</li>
-      <li class="wy-breadcrumbs-aside">
-            <a href="../../_sources/nodes/curve/move_nurbs_curve_point.rst.txt" rel="nofollow"> View page source</a>
-      </li>
-  </ul>
-  <hr/>
-</div>
-          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
-           <div itemprop="articleBody">
-             
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
   <section id="move-nurbs-curve-point">
 <h1>Move NURBS Curve Point<a class="headerlink" href="#move-nurbs-curve-point" title="Link to this heading">¶</a></h1>
 <section id="functionality">
@@ -336,34 +175,81 @@ thus creating additional control points, and moving three control points.</p>
 </section>
 
 
-           </div>
+            <div class="clearer"></div>
           </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="marching_squares_on_surface.html" class="btn btn-neutral float-left" title="Marching Squares on Surface" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="nearest_point.html" class="btn btn-neutral float-right" title="Nearest Point on Curve" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-    </div>
-
-  <hr/>
-
-  <div role="contentinfo">
-    <p>&#169; Copyright 2014...2025, sverchok team.</p>
-  </div>
-
-  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    provided by <a href="https://readthedocs.org">Read the Docs</a>.
-   
-
-</footer>
         </div>
       </div>
-    </section>
-  </div>
-  <script>
-      jQuery(function () {
-          SphinxRtdTheme.Navigation.enable(true);
-      });
-  </script> 
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../main.html">
+              <img class="logo" src="../../_static/title_big_b.svg" alt="Logo of Sverchok"/>
+            </a></p>
+  <div>
+    <h3><a href="../../main.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Move NURBS Curve Point</a><ul>
+<li><a class="reference internal" href="#functionality">Functionality</a></li>
+<li><a class="reference internal" href="#inputs">Inputs</a></li>
+<li><a class="reference internal" href="#parameters">Parameters</a></li>
+<li><a class="reference internal" href="#outputs">Outputs</a></li>
+<li><a class="reference internal" href="#examples-of-usage">Examples of Usage</a></li>
+</ul>
+</li>
+</ul>
 
-</body>
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="marching_squares_on_surface.html"
+                          title="previous chapter">Marching Squares on Surface</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="nearest_point.html"
+                          title="next chapter">Nearest Point on Curve</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/nodes/curve/move_nurbs_curve_point.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="nearest_point.html" title="Nearest Point on Curve"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="marching_squares_on_surface.html" title="Marching Squares on Surface"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../main.html">Sverchok 1, 2, 0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../nodes.html" >Nodes</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="curve_index.html" >Curves</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Move NURBS Curve Point</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2014...2025, sverchok team.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    </div>
+  </body>
 </html>

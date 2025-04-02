@@ -1,171 +1,46 @@
-
-
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="../../">
-<head>
-  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Distance Point Line &mdash; Sverchok 1, 2, 0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  
-    <link rel="shortcut icon" href="../../_static/sverchock_icon_b.ico"/>
-      <script src="../../_static/documentation_options.js?v=773c2105"></script>
-      <script src="../../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script src="../../_static/js/theme.js"></script>
+    <title>Distance Point Line &#8212; Sverchok 1, 2, 0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/zerovm.css?v=bbc7d13e" />
+    <script src="../../_static/documentation_options.js?v=773c2105"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="icon" href="../../_static/sverchock_icon_b.ico"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Distance Point Plane" href="distance_point_plane.html" />
     <link rel="prev" title="Distance Line Line" href="distance_line_line.html" /> 
-</head>
+  </head><body>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="distance_point_plane.html" title="Distance Point Plane"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="distance_line_line.html" title="Distance Line Line"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../main.html">Sverchok 1, 2, 0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../nodes.html" >Nodes</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="analyzer_index.html" accesskey="U">Analyzers</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Distance Point Line</a></li> 
+      </ul>
+    </div>  
 
-<body class="wy-body-for-nav"> 
-  <div class="wy-grid-for-nav">
-    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-scroll">
-        <div class="wy-side-nav-search" >
-
-          
-          
-          <a href="../../main.html" class="icon icon-home">
-            Sverchok
-              <img src="../../_static/title_big_b.svg" class="logo" alt="Logo"/>
-          </a>
-<div role="search">
-  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
-    <input type="hidden" name="check_keywords" value="yes" />
-    <input type="hidden" name="area" value="default" />
-  </form>
-</div>
-        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../../introduction/introduction.html">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../installation/installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../user_interface/user_interface.html">User interface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../tree_evaluation_system.html">Node tree evaluation system</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../data_structure/data_structure_index.html">Data structure</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="../../nodes.html">Nodes</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="../generator/generator_index.html">Generators</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../generators_extended/generators_extended_index.html">Generators Extended</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/curve_index.html">Curves</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../surface/surface_index.html">Surfaces</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../field/field_index.html">Fields</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../solid/solid_index.html">Solids</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../spatial/spatial_index.html">Spatial</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../transforms/transforms_index.html">Transforms</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="analyzer_index.html">Analyzers</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="area.html">Area</a></li>
-<li class="toctree-l3"><a class="reference internal" href="bbox_aligned.html">Aligned Bounding Box (Alpha)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="bbox_mk3.html">Bounding Box</a></li>
-<li class="toctree-l3"><a class="reference internal" href="bvh_overlap_polys.html">Overlap Polygons</a></li>
-<li class="toctree-l3"><a class="reference internal" href="chess_selection.html">Chess Selection</a></li>
-<li class="toctree-l3"><a class="reference internal" href="circle_approx.html">Circle Fit</a></li>
-<li class="toctree-l3"><a class="reference internal" href="component_analyzer.html">Component Analyzer</a></li>
-<li class="toctree-l3"><a class="reference internal" href="deformation.html">Deformation</a></li>
-<li class="toctree-l3"><a class="reference internal" href="diameter.html">Diameter</a></li>
-<li class="toctree-l3"><a class="reference internal" href="distance_line_line.html">Distance Line Line</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">Distance Point Line</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#functionality">Functionality</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#inputs-parameters">Inputs / Parameters</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#advanced-parameters">Advanced Parameters</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#outputs">Outputs</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#example-of-usage">Example of usage</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="distance_point_plane.html">Distance Point Plane</a></li>
-<li class="toctree-l3"><a class="reference internal" href="distance_pp.html">Distance</a></li>
-<li class="toctree-l3"><a class="reference internal" href="edge_angles.html">Angles at the Edges</a></li>
-<li class="toctree-l3"><a class="reference internal" href="image_components.html">Image Decomposer</a></li>
-<li class="toctree-l3"><a class="reference internal" href="inscribed_circle.html">Inscribed Circle</a></li>
-<li class="toctree-l3"><a class="reference internal" href="intersect_circle_circle.html">Circle Intersection</a></li>
-<li class="toctree-l3"><a class="reference internal" href="intersect_line_sphere.html">Compass 3D</a></li>
-<li class="toctree-l3"><a class="reference internal" href="intersect_plane_plane.html">Plane Intersection</a></li>
-<li class="toctree-l3"><a class="reference internal" href="kd_tree_MK2.html">KDT Closest Verts</a></li>
-<li class="toctree-l3"><a class="reference internal" href="kd_tree_edges.html">KDT Closest Edges</a></li>
-<li class="toctree-l3"><a class="reference internal" href="kd_tree_path.html">KDT Closest Path</a></li>
-<li class="toctree-l3"><a class="reference internal" href="linear_approx.html">Linear Approximation</a></li>
-<li class="toctree-l3"><a class="reference internal" href="linked_verts.html">Linked Verts</a></li>
-<li class="toctree-l3"><a class="reference internal" href="mesh_filter.html">Mesh Filter</a></li>
-<li class="toctree-l3"><a class="reference internal" href="mesh_select_mk2.html">Select Mesh Elements</a></li>
-<li class="toctree-l3"><a class="reference internal" href="nearest_point_on_mesh.html">Nearest Point on Mesh</a></li>
-<li class="toctree-l3"><a class="reference internal" href="normals_mk2.html">Calculate Normals</a></li>
-<li class="toctree-l3"><a class="reference internal" href="object_insolation.html">Insolation</a></li>
-<li class="toctree-l3"><a class="reference internal" href="origins.html">Origins</a></li>
-<li class="toctree-l3"><a class="reference internal" href="path_length_2.html">Path Length</a></li>
-<li class="toctree-l3"><a class="reference internal" href="points_inside_mesh.html">Points Inside Mesh</a></li>
-<li class="toctree-l3"><a class="reference internal" href="poly_inscribed_circle.html">Polygon Inscribed Circle</a></li>
-<li class="toctree-l3"><a class="reference internal" href="project_point_to_line.html">Project Points to Line</a></li>
-<li class="toctree-l3"><a class="reference internal" href="proportional.html">Proportional Edit Falloff</a></li>
-<li class="toctree-l3"><a class="reference internal" href="raycaster_lite.html">Raycaster</a></li>
-<li class="toctree-l3"><a class="reference internal" href="select_similar.html">Select Similar</a></li>
-<li class="toctree-l3"><a class="reference internal" href="sphere_approx.html">Sphere Fit</a></li>
-<li class="toctree-l3"><a class="reference internal" href="steiner_ellipse.html">Steiner Ellipse</a></li>
-<li class="toctree-l3"><a class="reference internal" href="volume.html">Volume</a></li>
-<li class="toctree-l3"><a class="reference internal" href="wave_paint.html">Wave Painter</a></li>
-<li class="toctree-l3"><a class="reference internal" href="weighted_vector_sum.html">Center of Mass (Mesh) (Alpha)</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="../modifier_change/modifier_change_index.html">Modifier Change</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modifier_make/modifier_make_index.html">Modifier Make</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../CAD/CAD_index.html">CAD</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../number/number_index.html">Number</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../vector/vector_index.html">Vector</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../matrix/matrix_index.html">Matrix</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../quaternion/quaternion_index.html">Quaternion</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../color/color_index.html">Color</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../logic/logic_index.html">Logic</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../list_main/list_main_index.html">List Main</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../list_struct/list_struct_index.html">List Structure</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../list_masks/list_masks_index.html">List Masks</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../list_mutators/list_mutators_index.html">List Mutators</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../dictionary/dictionary_index.html">Dictionary</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../viz/viz_index.html">Viz</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../text/text_index.html">Text</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../script/script_index.html">Script</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../scene/scene_index.html">Scene</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../object_nodes/object_nodes_index.html">Object</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../layout/layout_index.html">Layout</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../network/network_index.html">Network</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../pulga_physics/pulga_physics_index.html">Pulga Physics</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../exchange/exchange_index.html">Exchange</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../svg/svg_index.html">SVG</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../../tutorials/tutorials.html">Tutorials</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../tutorials/celling.html">Celling design</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../contributing/contributing_to_sverchok.html">Contributing to sverchok</a></li>
-</ul>
-
-        </div>
-      </div>
-    </nav>
-
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
-          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../main.html">Sverchok</a>
-      </nav>
-
-      <div class="wy-nav-content">
-        <div class="rst-content">
-          <div role="navigation" aria-label="Page navigation">
-  <ul class="wy-breadcrumbs">
-      <li><a href="../../main.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="../../nodes.html">Nodes</a></li>
-          <li class="breadcrumb-item"><a href="analyzer_index.html">Analyzers</a></li>
-      <li class="breadcrumb-item active">Distance Point Line</li>
-      <li class="wy-breadcrumbs-aside">
-            <a href="../../_sources/nodes/analyzer/distance_point_line.rst.txt" rel="nofollow"> View page source</a>
-      </li>
-  </ul>
-  <hr/>
-</div>
-          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
-           <div itemprop="articleBody">
-             
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
   <section id="distance-point-line">
 <h1>Distance Point Line<a class="headerlink" href="#distance-point-line" title="Link to this heading">¶</a></h1>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/195555169-5c1b254b-27f8-48b4-9e9c-21c5056ca9e9.png"><img alt="https://user-images.githubusercontent.com/14288520/195555169-5c1b254b-27f8-48b4-9e9c-21c5056ca9e9.png" src="https://user-images.githubusercontent.com/14288520/195555169-5c1b254b-27f8-48b4-9e9c-21c5056ca9e9.png" />
@@ -302,34 +177,81 @@
 </section>
 
 
-           </div>
+            <div class="clearer"></div>
           </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="distance_line_line.html" class="btn btn-neutral float-left" title="Distance Line Line" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="distance_point_plane.html" class="btn btn-neutral float-right" title="Distance Point Plane" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-    </div>
-
-  <hr/>
-
-  <div role="contentinfo">
-    <p>&#169; Copyright 2014...2025, sverchok team.</p>
-  </div>
-
-  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    provided by <a href="https://readthedocs.org">Read the Docs</a>.
-   
-
-</footer>
         </div>
       </div>
-    </section>
-  </div>
-  <script>
-      jQuery(function () {
-          SphinxRtdTheme.Navigation.enable(true);
-      });
-  </script> 
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../main.html">
+              <img class="logo" src="../../_static/title_big_b.svg" alt="Logo of Sverchok"/>
+            </a></p>
+  <div>
+    <h3><a href="../../main.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Distance Point Line</a><ul>
+<li><a class="reference internal" href="#functionality">Functionality</a></li>
+<li><a class="reference internal" href="#inputs-parameters">Inputs / Parameters</a></li>
+<li><a class="reference internal" href="#advanced-parameters">Advanced Parameters</a></li>
+<li><a class="reference internal" href="#outputs">Outputs</a></li>
+<li><a class="reference internal" href="#example-of-usage">Example of usage</a></li>
+</ul>
+</li>
+</ul>
 
-</body>
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="distance_line_line.html"
+                          title="previous chapter">Distance Line Line</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="distance_point_plane.html"
+                          title="next chapter">Distance Point Plane</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/nodes/analyzer/distance_point_line.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="distance_point_plane.html" title="Distance Point Plane"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="distance_line_line.html" title="Distance Line Line"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../main.html">Sverchok 1, 2, 0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../nodes.html" >Nodes</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="analyzer_index.html" >Analyzers</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Distance Point Line</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2014...2025, sverchok team.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    </div>
+  </body>
 </html>

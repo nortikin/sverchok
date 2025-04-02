@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Taper Field &#8212; Sverchok 1, 2, 0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/zerovm.css?v=bbc7d13e" />
+    <script src="../../_static/documentation_options.js?v=773c2105"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="icon" href="../../_static/sverchock_icon_b.ico"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Twist / Whirld Field" href="twist_field.html" />
+    <link rel="prev" title="Distance From a Point" href="scalar_field_point.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="twist_field.html" title="Twist / Whirld Field"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="scalar_field_point.html" title="Distance From a Point"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../main.html">Sverchok 1, 2, 0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../nodes.html" >Nodes</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="field_index.html" accesskey="U">Field</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Taper Field</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="taper-field">
+<h1>Taper Field<a class="headerlink" href="#taper-field" title="Link to this heading">¶</a></h1>
+<section id="functionality">
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">¶</a></h2>
+<p>This node generates a Vector Field, which does Taper (conical) transformation
+of some region of space.</p>
+<p>Taper transformation requires some axis and a point on this axis, where all
+lines that were parallel to axis will intersect. We call that point Vertex.</p>
+</section>
+<section id="inputs">
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">¶</a></h2>
+<p>This node has the following inputs:</p>
+<ul class="simple">
+<li><p><strong>Point</strong>. A point on taper axis. This is used along with Vertex input to
+define taper axis. The default value is <code class="docutils literal notranslate"><span class="pre">(0,</span> <span class="pre">0,</span> <span class="pre">0)</span></code>.</p></li>
+<li><p><strong>Vertex</strong>. Taper vertex - the point where all lines which were parallel to
+taper axis should intersect. The default value is <code class="docutils literal notranslate"><span class="pre">(0,</span> <span class="pre">0,</span> <span class="pre">1)</span></code>.</p></li>
+<li><p><strong>MinZ</strong>, <strong>MaxZ</strong>. These inputs are only available when <strong>Use Min Z</strong> /
+<strong>Use Max Z</strong> parameters are checked. They define the range of space along
+taper axis, which is to be transformed. Z value of zero corresponds to the
+level where point defined in the <strong>Point</strong> input is. Z value of 1.0
+corresponds to the level where taper vertex is. The default values are
+<strong>MinZ</strong> = 0, <strong>MaxZ</strong> = 1.</p></li>
+</ul>
+</section>
+<section id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
+<p>This node has the following paramters:</p>
+<ul class="simple">
+<li><p><strong>Use Min Z</strong>, <strong>Use Max Z</strong>. Indicate whether it is required to restrict
+taper transformation to a region of space along taper axis. Unchecked by
+default, so by default the transformation is applied to whole space.</p></li>
+</ul>
+</section>
+<section id="outputs">
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
+<p>This node has the following outputs:</p>
+<ul class="simple">
+<li><p><strong>Field</strong>. The generated vector field.</p></li>
+</ul>
+</section>
+<section id="examples-of-usage">
+<h2>Examples of Usage<a class="headerlink" href="#examples-of-usage" title="Link to this heading">¶</a></h2>
+<p>Simple example:</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/7238097d-8f7c-4ed4-80f8-1d2cdfbc466c"><img alt="https://github.com/user-attachments/assets/7238097d-8f7c-4ed4-80f8-1d2cdfbc466c" src="https://github.com/user-attachments/assets/7238097d-8f7c-4ed4-80f8-1d2cdfbc466c" />
+</a>
+<p>Example where taper vertex is visible:</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/1cc1eb9d-7671-4ade-a63f-3edc9b52a5ff"><img alt="https://github.com/user-attachments/assets/1cc1eb9d-7671-4ade-a63f-3edc9b52a5ff" src="https://github.com/user-attachments/assets/1cc1eb9d-7671-4ade-a63f-3edc9b52a5ff" />
+</a>
+<p>Example of restricted taper transformation:</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/3cc36191-c5f2-49ca-9997-7a511b2790e4"><img alt="https://github.com/user-attachments/assets/3cc36191-c5f2-49ca-9997-7a511b2790e4" src="https://github.com/user-attachments/assets/3cc36191-c5f2-49ca-9997-7a511b2790e4" />
+</a>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../main.html">
+              <img class="logo" src="../../_static/title_big_b.svg" alt="Logo of Sverchok"/>
+            </a></p>
+  <div>
+    <h3><a href="../../main.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Taper Field</a><ul>
+<li><a class="reference internal" href="#functionality">Functionality</a></li>
+<li><a class="reference internal" href="#inputs">Inputs</a></li>
+<li><a class="reference internal" href="#parameters">Parameters</a></li>
+<li><a class="reference internal" href="#outputs">Outputs</a></li>
+<li><a class="reference internal" href="#examples-of-usage">Examples of Usage</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="scalar_field_point.html"
+                          title="previous chapter">Distance From a Point</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="twist_field.html"
+                          title="next chapter">Twist / Whirld Field</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/nodes/field/taper_field.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="twist_field.html" title="Twist / Whirld Field"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="scalar_field_point.html" title="Distance From a Point"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../main.html">Sverchok 1, 2, 0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../nodes.html" >Nodes</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="field_index.html" >Field</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Taper Field</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2014...2025, sverchok team.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    </div>
+  </body>
+</html>
