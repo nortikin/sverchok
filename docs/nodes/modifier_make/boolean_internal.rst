@@ -40,4 +40,3 @@ Alternatives
 CSG Boolean: https://nortikin.github.io/sverchok/docs/nodes/modifier_make/csg_booleanMK2.html
 You might be interested in the FreeCAD implementation discussed here. https://github.com/nortikin/sverchok/issues/3430
 
-.. |Internal Boolean demo|
