@@ -74,6 +74,7 @@ class SvTaperFieldNode(SverchCustomTreeNode, bpy.types.Node):
         self.inputs.new('SvStringsSocket', 'MaxZ').prop_name = 'max_z'
 
         self.outputs.new('SvVectorFieldSocket', "Field")
+        self.update_sockets(context)
 
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
