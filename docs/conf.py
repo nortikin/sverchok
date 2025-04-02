@@ -125,14 +125,14 @@ pygments_style = 'sphinx'
 
 # ------ Readthedocs -------------------------------------------
 
-import sphinx_rtd_theme
-html_theme = 'sphinx_rtd_theme'
-#import zerovm_sphinx_theme
-#html_theme = 'zerovm'
+#import sphinx_rtd_theme
+#html_theme = 'sphinx_rtd_theme'
+import alabaster
+html_theme = 'alabaster'
 
 # Add any paths that contain custom themes here, relative to this directory.
-html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
-#html_theme_path = [zerovm_sphinx_theme.theme_path]
+#html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
+html_theme_path = [alabaster.get_path()]
 
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
