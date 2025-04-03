@@ -1,46 +1,426 @@
+
 <!DOCTYPE html>
 
-<html lang="en" data-content_root="../../">
+
+<html lang="en" data-content_root="../../" >
+
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>An introduction and tutorial for the Scripted Nodes &#8212; Sverchok 1, 2, 0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-    <link rel="stylesheet" type="text/css" href="../../_static/basic.css?v=b08954a9" />
-    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=27fed22d" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
     <script src="../../_static/documentation_options.js?v=773c2105"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'old/nodes/scripted_intro';</script>
     <link rel="icon" href="../../_static/sverchock_icon_b.ico"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-   
-  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="1, 2, 0" />
+  </head>
   
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
 
   
   
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
 
-  </head><body>
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
   
 
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
+<a class="navbar-brand logo" href="../../main.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/title_big_b.svg" class="logo__image only-light" alt="Sverchok 1, 2, 0 documentation - Home"/>
+    <img src="../../_static/title_big_b.svg" class="logo__image only-dark pst-js-only" alt="Sverchok 1, 2, 0 documentation - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../introduction/introduction.html">
+    Introduction
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../installation/installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_interface/user_interface.html">
+    User interface
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../tree_evaluation_system.html">
+    Node tree evaluation system
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../data_structure/data_structure_index.html">
+    Data structure
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../nodes.html">
+    Nodes
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../tutorials/tutorials.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../tutorials/celling.html">
+    Celling design
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../contributing/contributing_to_sverchok.html">
+    Contributing to sverchok
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
           
 
-          <div class="body" role="main">
-            
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../introduction/introduction.html">
+    Introduction
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../installation/installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_interface/user_interface.html">
+    User interface
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../tree_evaluation_system.html">
+    Node tree evaluation system
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../data_structure/data_structure_index.html">
+    Data structure
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../nodes.html">
+    Nodes
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../tutorials/tutorials.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../tutorials/celling.html">
+    Celling design
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../contributing/contributing_to_sverchok.html">
+    Contributing to sverchok
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../main.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">An introduction and tutorial for the Scripted Nodes</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
   <section id="an-introduction-and-tutorial-for-the-scripted-nodes">
-<span id="scripted-tutorial"></span><h1>An introduction and tutorial for the Scripted Nodes<a class="headerlink" href="#an-introduction-and-tutorial-for-the-scripted-nodes" title="Link to this heading">¶</a></h1>
+<span id="scripted-tutorial"></span><h1>An introduction and tutorial for the Scripted Nodes<a class="headerlink" href="#an-introduction-and-tutorial-for-the-scripted-nodes" title="Link to this heading">#</a></h1>
 <p>&gt; Dealga Mcardle | 2014 | October</p>
 <p>In my opinion new users should avoid the Script Nodes until they understand a majority of the existing nodes and the Sverchok <cite>Eco-system</cite> as a concept. This suggestion applies to everyone, even competent coders.</p>
 <p>Script Nodes are great when you want to encapsulate a behaviour which may not be easy to achieve with existing nodes alone. They are my prefered way to either 1) prototype code, or 2) write custom nodes that are too specific to be submitted as regular nodes.</p>
 <p>At the moment Sverchok has 2 Scripted Node implementations: SN and SN2. Exactly how they differ from eachother will be shown later. Both offer <cite>practical shorthand</cite> ways to define what a node does, which sliders and sane defaults it might have, and what socket types can connect to it. These scripts have a minimal interface, are stored inside the <cite>.blend</cite> file as plain text python, and can be shared easily.</p>
 <p>If you’ve ever written code for a Blender addon or script, you will be familiar with registration of classes. Nodes normally also need to be registered so Blender can find them, but Script Nodes don’t because they are in essence a shell for your code – and the shell is already registered, all you have to do is write code to process input into output.</p>
 <section id="scripted-node-1-an-informal-introduction">
-<h2>Scripted Node 1 – an informal introduction<a class="headerlink" href="#scripted-node-1-an-informal-introduction" title="Link to this heading">¶</a></h2>
+<h2>Scripted Node 1 – an informal introduction<a class="headerlink" href="#scripted-node-1-an-informal-introduction" title="Link to this heading">#</a></h2>
 <p>Here is a classic ‘Hello World’ style example used to demonstrate graphics coding. It’s called a Lorenz Attractor.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">lorenz</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">verts</span><span class="p">):</span>
     <span class="n">add_vert</span> <span class="o">=</span> <span class="n">verts</span><span class="o">.</span><span class="n">append</span>
@@ -78,11 +458,11 @@
 <code class="docutils literal notranslate"><span class="pre">in_sockets</span></code> and <code class="docutils literal notranslate"><span class="pre">out_sockets</span></code>, two of the elements are strings (socket type and socket name), and the third element is the Python variable that we automatically bind to those sockets.</p>
 </section>
 <section id="brief-guided-explanation">
-<h2>Brief Guided Explanation<a class="headerlink" href="#brief-guided-explanation" title="Link to this heading">¶</a></h2>
+<h2>Brief Guided Explanation<a class="headerlink" href="#brief-guided-explanation" title="Link to this heading">#</a></h2>
 <p>You’ve probably got a fair idea already from the example script. SN1 has a few conventions which let you quickly define sockets and defaults. What follows are short remarks about the elements that make up these scripts, aimed at someone who is about to write their first script for SN1.</p>
 </section>
 <section id="sockets">
-<h2>Sockets<a class="headerlink" href="#sockets" title="Link to this heading">¶</a></h2>
+<h2>Sockets<a class="headerlink" href="#sockets" title="Link to this heading">#</a></h2>
 <p>Sverchok at present has 3 main socket types: SvVerticesSocket, SvStringsSocket and SvMatrixSocket. Script Nodes refer to these socket types with only their first letter in lowercase. ‘s’,’v’,’m’:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;s&#39;</span> <span class="n">to</span> <span class="n">hold</span><span class="p">:</span> <span class="n">floats</span><span class="p">,</span> <span class="n">ints</span><span class="p">,</span> <span class="n">edges</span><span class="p">,</span> <span class="n">faces</span><span class="p">,</span> <span class="n">strings</span>
 <span class="s1">&#39;v&#39;</span> <span class="n">to</span> <span class="n">hold</span><span class="p">:</span> <span class="n">vertices</span><span class="p">,</span> <span class="n">vectors</span><span class="p">,</span> <span class="mi">3</span><span class="o">-</span><span class="n">tuples</span>
@@ -91,20 +471,20 @@
 </div>
 </section>
 <section id="socket-names">
-<h2>Socket Names<a class="headerlink" href="#socket-names" title="Link to this heading">¶</a></h2>
+<h2>Socket Names<a class="headerlink" href="#socket-names" title="Link to this heading">#</a></h2>
 <p>Each socket has a name. Take a minute to think about a good descriptive name for each. Socket names can always be changed later, but my advice is to use clear names from the very beginning.</p>
 </section>
 <section id="variable-names">
-<h2>Variable names<a class="headerlink" href="#variable-names" title="Link to this heading">¶</a></h2>
+<h2>Variable names<a class="headerlink" href="#variable-names" title="Link to this heading">#</a></h2>
 <p>Variable names are used to expose the values of the associated socket to your script. If the socket is unconnected then the value of the variable will be taken from the specified default.</p>
 </section>
 <section id="node-function-sv-main">
-<h2>node function <cite>(sv_main)</cite><a class="headerlink" href="#node-function-sv-main" title="Link to this heading">¶</a></h2>
+<h2>node function <cite>(sv_main)</cite><a class="headerlink" href="#node-function-sv-main" title="Link to this heading">#</a></h2>
 <p>The main function for SN1 is <code class="docutils literal notranslate"><span class="pre">sv_main</span></code>, in the body of this function is where we declare socket types, socket names, and variable names for input and output sockets. These are declared in two arrays <code class="docutils literal notranslate"><span class="pre">in_sockets</span></code> and <code class="docutils literal notranslate"><span class="pre">out_sockets</span></code>.</p>
 <p>The argument list of <code class="docutils literal notranslate"><span class="pre">sv_main</span></code> is where you provide defaults values or the nestedness of an incoming datatype. (don’t worry if this makes no sense, read it again later).</p>
 </section>
 <section id="that-s-great-show-me">
-<h2>That’s great, show me!<a class="headerlink" href="#that-s-great-show-me" title="Link to this heading">¶</a></h2>
+<h2>That’s great, show me!<a class="headerlink" href="#that-s-great-show-me" title="Link to this heading">#</a></h2>
 <p>The easiest way to get started is to first load an existing script. Here are some steps:</p>
 <ul class="simple">
 <li><p>Go to <cite>Generators / Scripted Node</cite> and add it to the NodeView.</p></li>
@@ -117,7 +497,7 @@
 <p>That’s pretty much all there is to loading a script. All you do now is hook the output Verts to a Viewer Node and you’ll see a classic Lorenz Attractor point set.</p>
 </section>
 <section id="study-the-sv-main">
-<h2>Study the sv_main<a class="headerlink" href="#study-the-sv-main" title="Link to this heading">¶</a></h2>
+<h2>Study the sv_main<a class="headerlink" href="#study-the-sv-main" title="Link to this heading">#</a></h2>
 <p>If you look carefully in <code class="docutils literal notranslate"><span class="pre">sv_main</span></code> there’s not a lot to the whole process. <code class="docutils literal notranslate"><span class="pre">sv_main</span></code> has two <strong>required</strong> lists; <code class="docutils literal notranslate"><span class="pre">in_sockets</span></code> and <code class="docutils literal notranslate"><span class="pre">out_sockets</span></code>. sv_main also has a argument list which you must fill with defaults, here the only variable is N so the argument list was <code class="docutils literal notranslate"><span class="pre">sv_main(N=1000)</span></code>.</p>
 <p>The lorenz function takes 2 arguments:</p>
 <ul class="simple">
@@ -126,88 +506,119 @@
 </ul>
 <p>In this example the <code class="docutils literal notranslate"><span class="pre">verts</span></code> variable is also what will be sent to the output socket, because it says so in <code class="docutils literal notranslate"><span class="pre">out_sockets</span></code>. Notice that the lorenz function doesn’t return the verts variable. All the lorenz function does is fill that list with values. Just to be clear about this example. At the time <code class="docutils literal notranslate"><span class="pre">sv_main</span></code> ends, the content of <code class="docutils literal notranslate"><span class="pre">verts</span></code> is full, but before <code class="docutils literal notranslate"><span class="pre">lorenz()</span></code> is called, <code class="docutils literal notranslate"><span class="pre">verts</span></code> is an empty list.</p>
 <p>Here is the same lorenz attractor with more parameters exposed, see can you load it?
-<a class="reference external" href="https://github.com/nortikin/sverchok/blob/master/node_scripts/templates/zeffii/LorenzAttractor2.py">https://github.com/nortikin/sverchok/blob/master/node_scripts/templates/zeffii/LorenzAttractor2.py</a></p>
+<a class="github reference external" href="https://github.com/nortikin/sverchok/blob/master/node_scripts/templates/zeffii/LorenzAttractor2.py">nortikin/sverchok</a></p>
 </section>
 <section id="lastly">
-<h2>Lastly<a class="headerlink" href="#lastly" title="Link to this heading">¶</a></h2>
+<h2>Lastly<a class="headerlink" href="#lastly" title="Link to this heading">#</a></h2>
 <p>If none of this makes sense, spend time learning about Python and dig through the <code class="docutils literal notranslate"><span class="pre">node_scripts/templates</span></code> directory.</p>
 </section>
 </section>
 
 
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#scripted-node-1-an-informal-introduction">Scripted Node 1 – an informal introduction</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brief-guided-explanation">Brief Guided Explanation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sockets">Sockets</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#socket-names">Socket Names</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#variable-names">Variable names</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#node-function-sv-main">node function <cite>(sv_main)</cite></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#that-s-great-show-me">That’s great, show me!</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#study-the-sv-main">Study the sv_main</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#lastly">Lastly</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/old/nodes/scripted_intro.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
           </div>
-          
-        </div>
-      </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="Main">
-        <div class="sphinxsidebarwrapper">
-            <p class="logo"><a href="../../main.html">
-              <img class="logo" src="../../_static/title_big_b.svg" alt="Logo of Sverchok"/>
-            </a></p>
-<h1 class="logo"><a href="../../main.html">Sverchok</a></h1>
-
-
-
-
-
-
-
-
-
-<search id="searchbox" style="display: none" role="search">
-    <div class="searchformwrapper">
-    <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
-      <input type="submit" value="Go" />
-    </form>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
     </div>
-</search>
-<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../introduction/introduction.html">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../installation/installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../user_interface/user_interface.html">User interface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../tree_evaluation_system.html">Node tree evaluation system</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../data_structure/data_structure_index.html">Data structure</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../nodes.html">Nodes</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../tutorials/tutorials.html">Tutorials</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../tutorials/celling.html">Celling design</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../contributing/contributing_to_sverchok.html">Contributing to sverchok</a></li>
-</ul>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
 
-<div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="../../main.html">Documentation overview</a><ul>
-  </ul></li>
-</ul>
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2014...2025, sverchok team.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
 </div>
 
-
-
-
-
-
-
-
-        </div>
-      </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="footer">
-      &#169;2014...2025, sverchok team.
-      
-      |
-      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
-      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
-      
-      |
-      <a href="../../_sources/old/nodes/scripted_intro.rst.txt"
-          rel="nofollow">Page source</a>
-    </div>
-
-    
-
-    
+  </footer>
   </body>
 </html>

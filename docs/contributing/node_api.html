@@ -1,41 +1,439 @@
+
 <!DOCTYPE html>
 
-<html lang="en" data-content_root="../">
+
+<html lang="en" data-content_root="../" >
+
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>Node API &#8212; Sverchok 1, 2, 0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
-    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
-    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=27fed22d" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
     <script src="../_static/documentation_options.js?v=773c2105"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'contributing/node_api';</script>
     <link rel="icon" href="../_static/sverchock_icon_b.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Sverchok API Documentation" href="api_documentation.html" />
     <link rel="prev" title="Adding new Node" href="add_new_node.html" />
-   
-  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="1, 2, 0" />
+  </head>
   
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
 
   
   
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
 
-  </head><body>
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
   
 
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
+<a class="navbar-brand logo" href="../main.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/title_big_b.svg" class="logo__image only-light" alt="Sverchok 1, 2, 0 documentation - Home"/>
+    <img src="../_static/title_big_b.svg" class="logo__image only-dark pst-js-only" alt="Sverchok 1, 2, 0 documentation - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../introduction/introduction.html">
+    Introduction
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../installation/installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../user_interface/user_interface.html">
+    User interface
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../tree_evaluation_system.html">
+    Node tree evaluation system
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../data_structure/data_structure_index.html">
+    Data structure
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../nodes.html">
+    Nodes
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../tutorials/tutorials.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../tutorials/celling.html">
+    Celling design
+  </a>
+</li>
+
+
+<li class=" current active">
+  <a class="nav-link dropdown-item nav-internal" href="contributing_to_sverchok.html">
+    Contributing to sverchok
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
           
 
-          <div class="body" role="main">
-            
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../introduction/introduction.html">
+    Introduction
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../installation/installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../user_interface/user_interface.html">
+    User interface
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../tree_evaluation_system.html">
+    Node tree evaluation system
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../data_structure/data_structure_index.html">
+    Data structure
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../nodes.html">
+    Nodes
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../tutorials/tutorials.html">
+    Tutorials
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../tutorials/celling.html">
+    Celling design
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="contributing_to_sverchok.html">
+    Contributing to sverchok
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="contribute_small_things.html">Contributing small things</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contribute_general.html">General guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="add_new_node.html">Adding new Node</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Node API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_documentation.html">Sverchok API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testing.html">Testing</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../main.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="contributing_to_sverchok.html" class="nav-link">Contributing to sverchok</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Node API</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
   <section id="node-api">
-<h1>Node API<a class="headerlink" href="#node-api" title="Link to this heading">¶</a></h1>
+<h1>Node API<a class="headerlink" href="#node-api" title="Link to this heading">#</a></h1>
 <p>This page claims to define all aspects of node creation. A brief introduction
 to node creation is represented <a class="reference internal" href="add_new_node.html"><span class="doc">on this page</span></a>. Api
 documentation of base class of all nodes can be found
@@ -64,7 +462,7 @@ one of the available categories in the <code class="docutils literal notranslate
 </pre></div>
 </div>
 <section id="class-definition">
-<h2>Class Definition<a class="headerlink" href="#class-definition" title="Link to this heading">¶</a></h2>
+<h2>Class Definition<a class="headerlink" href="#class-definition" title="Link to this heading">#</a></h2>
 <p>To create a node in Sverchok means to create a node class. The naming convention for
 node classes is <code class="docutils literal notranslate"><span class="pre">SV</span> <span class="pre">+</span> <span class="pre">name</span> <span class="pre">of</span> <span class="pre">the</span> <span class="pre">node</span> <span class="pre">+</span> <span class="pre">Node</span></code></p>
 <p>Standard Mix-ins for all node classes are
@@ -111,7 +509,7 @@ and in upper case.</p>
 </div>
 </section>
 <section id="creating-node-custom-properties">
-<h2>Creating Node Custom Properties<a class="headerlink" href="#creating-node-custom-properties" title="Link to this heading">¶</a></h2>
+<h2>Creating Node Custom Properties<a class="headerlink" href="#creating-node-custom-properties" title="Link to this heading">#</a></h2>
 <p>Properties are created in the same way as other areas of Blender.
 <a class="reference external" href="https://docs.blender.org/api/current/bpy.props.html">Blender documentation</a></p>
 <p>After properties are added they can be used as node buttons or socket
@@ -149,7 +547,7 @@ lambda expression:
 </pre></div>
 </div>
 <section id="draft-properties">
-<h3>Draft Properties<a class="headerlink" href="#draft-properties" title="Link to this heading">¶</a></h3>
+<h3>Draft Properties<a class="headerlink" href="#draft-properties" title="Link to this heading">#</a></h3>
 <p>Nodes can have draft properties which will be used instead of normal ones in
 draft mode of a tree. Draft properties are defined in the same way as normal
 ones. Also the node should use <code class="docutils literal notranslate"><span class="pre">DraftMode</span></code> mix-in, define
@@ -171,7 +569,7 @@ return boolean value.</p>
 </div>
 </section>
 <section id="enum-properties">
-<h3>Enum Properties<a class="headerlink" href="#enum-properties" title="Link to this heading">¶</a></h3>
+<h3>Enum Properties<a class="headerlink" href="#enum-properties" title="Link to this heading">#</a></h3>
 <p>Enums are created in the same way as in other Blender UI parts. In case Enums
 are generated dynamically they always should be stored somewhere in Python
 memory. There are <a class="reference external" href="https://github.com/nortikin/sverchok/issues/4316">known cases</a> when Blender crashes during rendering when UI
@@ -188,7 +586,7 @@ function should be used. It expects the name of the file in upper case without
 extension and returns the index of the icon.</p>
 </section>
 <section id="dynamic-properties">
-<h3>Dynamic Properties<a class="headerlink" href="#dynamic-properties" title="Link to this heading">¶</a></h3>
+<h3>Dynamic Properties<a class="headerlink" href="#dynamic-properties" title="Link to this heading">#</a></h3>
 <p>There are several nodes which generate dynamic properties - List Levels and
 Switcher nodes. Dynamic properties are properties which are generated
 depending on the size of input data. The best way to generate dynamic properties
@@ -208,7 +606,7 @@ abstract method.</p>
 </section>
 </section>
 <section id="creating-node-buttons">
-<h2>Creating Node Buttons<a class="headerlink" href="#creating-node-buttons" title="Link to this heading">¶</a></h2>
+<h2>Creating Node Buttons<a class="headerlink" href="#creating-node-buttons" title="Link to this heading">#</a></h2>
 <p>There are 4 places where a node can show its properties:</p>
 <blockquote>
 <div><ol class="arabic simple">
@@ -260,7 +658,7 @@ argument as True.</p>
 override the <code class="docutils literal notranslate"><span class="pre">rclick_menu</span></code> method which expects <code class="docutils literal notranslate"><span class="pre">context</span></code> and <code class="docutils literal notranslate"><span class="pre">layout</span></code> arguments.</p>
 </section>
 <section id="node-sockets">
-<h2>Node Sockets<a class="headerlink" href="#node-sockets" title="Link to this heading">¶</a></h2>
+<h2>Node Sockets<a class="headerlink" href="#node-sockets" title="Link to this heading">#</a></h2>
 <p>Node sockets are created in <code class="docutils literal notranslate"><span class="pre">sv_init</span></code> method. <code class="docutils literal notranslate"><span class="pre">new</span></code> method of input and
 output collections of sockets should be used. It expects name of a socket type
 and name socket itself. These names are shown in UI and also usually are used
@@ -294,7 +692,7 @@ in <code class="docutils literal notranslate"><span class="pre">default_property
 </div>
 </div>
 <section id="dynamic-sockets">
-<h3>Dynamic Sockets<a class="headerlink" href="#dynamic-sockets" title="Link to this heading">¶</a></h3>
+<h3>Dynamic Sockets<a class="headerlink" href="#dynamic-sockets" title="Link to this heading">#</a></h3>
 <p>Dynamic sockets are shown only on certain conditions. There are 3 categories
 of them:</p>
 <blockquote>
@@ -351,7 +749,7 @@ to add a button to a node which would recreate sockets explicitly.</p>
 </div>
 </section>
 <section id="socket-properties">
-<h3>Socket Properties<a class="headerlink" href="#socket-properties" title="Link to this heading">¶</a></h3>
+<h3>Socket Properties<a class="headerlink" href="#socket-properties" title="Link to this heading">#</a></h3>
 <dl class="simple">
 <dt>label</dt><dd><p>Expects a string which is used instead of a socket name in UI.</p>
 </dd>
@@ -409,7 +807,7 @@ the socket value.</p>
 </dl>
 </section>
 <section id="socket-vectorization-properties">
-<h3>Socket Vectorization Properties<a class="headerlink" href="#socket-vectorization-properties" title="Link to this heading">¶</a></h3>
+<h3>Socket Vectorization Properties<a class="headerlink" href="#socket-vectorization-properties" title="Link to this heading">#</a></h3>
 <p>Vectorization system is on
 <a class="reference internal" href="#experimental-vectorization"><span class="std std-ref">experimental stage</span></a></p>
 <dl class="simple">
@@ -443,7 +841,7 @@ or [[1],[2]]. In case of more complex inputs no preprocessing will be made.</p><
 </section>
 </section>
 <section id="business-logic">
-<h2>Business logic<a class="headerlink" href="#business-logic" title="Link to this heading">¶</a></h2>
+<h2>Business logic<a class="headerlink" href="#business-logic" title="Link to this heading">#</a></h2>
 <p>The main work of the node is happening inside <code class="docutils literal notranslate"><span class="pre">process</span></code> method which does
 not expect any arguments.</p>
 <p>The whole process can be split into 3 steps:</p>
@@ -501,7 +899,7 @@ applied globally to all sockets but sometimes it can be useful to override
 them via the parameter (not single node do this currently though).</p>
 </div>
 <section id="data-vectorization">
-<h3>Data vectorization<a class="headerlink" href="#data-vectorization" title="Link to this heading">¶</a></h3>
+<h3>Data vectorization<a class="headerlink" href="#data-vectorization" title="Link to this heading">#</a></h3>
 <p>All nodes should be designed in a way that they can handle not only one object
 but multiple of them. That is called vectorization in Sverchok. For example if
 a node works with vertices of an object it should handle list of lists of
@@ -570,7 +968,7 @@ execution system to know how to match data.</p>
 </div>
 </section>
 <section id="data-structure">
-<h3>Data structure<a class="headerlink" href="#data-structure" title="Link to this heading">¶</a></h3>
+<h3>Data structure<a class="headerlink" href="#data-structure" title="Link to this heading">#</a></h3>
 <p>Sverchok can operate on vide variation of data structures. The most important
 one is mesh data structure. Sverchok uses <em>Face-vertex</em> representation of them.
 Representation is a simple list of vertices, and a set of edges and polygons
@@ -617,7 +1015,7 @@ they can be used efficiently.</p>
 </div>
 </section>
 <section id="bmesh-data-structure">
-<h3>BMesh data structure<a class="headerlink" href="#bmesh-data-structure" title="Link to this heading">¶</a></h3>
+<h3>BMesh data structure<a class="headerlink" href="#bmesh-data-structure" title="Link to this heading">#</a></h3>
 <p>For performing operations over geometry it’s possible to create you own
 algorithms. But also Blender has a library of some basic geometry operations.
 This library uses special BMesh data structure. It’s similar to Half-edge
@@ -625,25 +1023,25 @@ data structure. To convert data from Sverchok format to BMesh and vice versa
 there is <code class="docutils literal notranslate"><span class="pre">utils.sv_bmesh_utils</span></code> module.</p>
 </section>
 <section id="tests">
-<h3>Tests<a class="headerlink" href="#tests" title="Link to this heading">¶</a></h3>
+<h3>Tests<a class="headerlink" href="#tests" title="Link to this heading">#</a></h3>
 <p>Ideally nodes should go with some tests. But currently there is no framework
 for automation of tests creation. So it’s optional now. More about tests in the
 separate section <a class="reference internal" href="testing.html"><span class="doc">Testing</span></a>.</p>
 </section>
 <section id="performance">
-<h3>Performance<a class="headerlink" href="#performance" title="Link to this heading">¶</a></h3>
+<h3>Performance<a class="headerlink" href="#performance" title="Link to this heading">#</a></h3>
 <figure class="align-right" id="id1">
 <a class="reference internal image-reference" href="https://user-images.githubusercontent.com/28003269/167471557-e10fb5f4-af31-47a2-86f2-e826a253fd06.png"><img alt="https://user-images.githubusercontent.com/28003269/167471557-e10fb5f4-af31-47a2-86f2-e826a253fd06.png" src="https://user-images.githubusercontent.com/28003269/167471557-e10fb5f4-af31-47a2-86f2-e826a253fd06.png" style="width: 300px;" />
 </a>
 <figcaption>
-<p><span class="caption-text">Dot graph <a class="reference external" href="https://github.com/jrfonseca/gprof2dot">https://github.com/jrfonseca/gprof2dot</a></span><a class="headerlink" href="#id1" title="Link to this image">¶</a></p>
+<p><span class="caption-text">Dot graph <a class="github reference external" href="https://github.com/jrfonseca/gprof2dot">jrfonseca/gprof2dot</a></span><a class="headerlink" href="#id1" title="Link to this image">#</a></p>
 </figcaption>
 </figure>
 <figure class="align-right" id="id2">
 <a class="reference internal image-reference" href="https://user-images.githubusercontent.com/28003269/167472803-225b8fd9-4584-4eb5-b7e8-f0ce9695f604.png"><img alt="https://user-images.githubusercontent.com/28003269/167472803-225b8fd9-4584-4eb5-b7e8-f0ce9695f604.png" src="https://user-images.githubusercontent.com/28003269/167472803-225b8fd9-4584-4eb5-b7e8-f0ce9695f604.png" style="width: 300px;" />
 </a>
 <figcaption>
-<p><span class="caption-text">Icicle style <a class="reference external" href="https://github.com/jiffyclub/snakeviz">https://github.com/jiffyclub/snakeviz</a></span><a class="headerlink" href="#id2" title="Link to this image">¶</a></p>
+<p><span class="caption-text">Icicle style <a class="github reference external" href="https://github.com/jiffyclub/snakeviz">jiffyclub/snakeviz</a></span><a class="headerlink" href="#id2" title="Link to this image">#</a></p>
 </figcaption>
 </figure>
 <p>Performance of the nodes is very important and quite a big problem in Sverchok
@@ -660,12 +1058,12 @@ is standard output of cProfile Python module. Also the result can be saved in
 separate file which can be visualized with another tools.</p>
 </section>
 <section id="printing-logging">
-<h3>Printing / Logging<a class="headerlink" href="#printing-logging" title="Link to this heading">¶</a></h3>
+<h3>Printing / Logging<a class="headerlink" href="#printing-logging" title="Link to this heading">#</a></h3>
 <figure class="align-right" id="id3">
 <a class="reference internal image-reference" href="https://user-images.githubusercontent.com/28003269/180702647-c25d8b58-ed2d-4a7b-98ce-d6aaa594d475.png"><img alt="https://user-images.githubusercontent.com/28003269/180702647-c25d8b58-ed2d-4a7b-98ce-d6aaa594d475.png" src="https://user-images.githubusercontent.com/28003269/180702647-c25d8b58-ed2d-4a7b-98ce-d6aaa594d475.png" style="width: 400px;" />
 </a>
 <figcaption>
-<p><span class="caption-text">Logging level can be set in the add-on settings.</span><a class="headerlink" href="#id3" title="Link to this image">¶</a></p>
+<p><span class="caption-text">Logging level can be set in the add-on settings.</span><a class="headerlink" href="#id3" title="Link to this image">#</a></p>
 </figcaption>
 </figure>
 <p>Printing and profiling are very expensive operations. Also console can fastly
@@ -682,7 +1080,7 @@ make sure that you have appropriate logging level in the settings.</p>
 </section>
 </section>
 <section id="node-registration">
-<h2>Node Registration<a class="headerlink" href="#node-registration" title="Link to this heading">¶</a></h2>
+<h2>Node Registration<a class="headerlink" href="#node-registration" title="Link to this heading">#</a></h2>
 <p>After a node was created it should be registered to appear in Blender interface.
 It can be done in function with <code class="docutils literal notranslate"><span class="pre">register</span></code> name in the same module with node
 class. This function will be called whenever the add-on is enabled. For the
@@ -722,7 +1120,7 @@ unregister a node is possible in function with name <code class="docutils litera
 module with Node class.</p>
 </section>
 <section id="documentation">
-<h2>Documentation<a class="headerlink" href="#documentation" title="Link to this heading">¶</a></h2>
+<h2>Documentation<a class="headerlink" href="#documentation" title="Link to this heading">#</a></h2>
 <p>When new node is added it’s strongly recommended to add its documentation.
 Without it, in most cases, users will hardly able to use the node and also
 it can be difficult to distinguish a bug because the desired behaviour was not
@@ -738,7 +1136,7 @@ next address - <a class="reference external" href="http://nortikin.github.io/sve
 changes will be introduced in master on GitHub.</p>
 </section>
 <section id="animation">
-<h2>Animation<a class="headerlink" href="#animation" title="Link to this heading">¶</a></h2>
+<h2>Animation<a class="headerlink" href="#animation" title="Link to this heading">#</a></h2>
 <p>There are nodes which should be updated upon frame change. Usually they read
 some data from a Blender scene. To make a node to be updated every frame it’s
 enough to override <code class="docutils literal notranslate"><span class="pre">is_animation_dependent</span></code> node attribute with True value.</p>
@@ -750,7 +1148,7 @@ updates for the current node.</p>
 </div>
 </section>
 <section id="muting">
-<h2>Muting<a class="headerlink" href="#muting" title="Link to this heading">¶</a></h2>
+<h2>Muting<a class="headerlink" href="#muting" title="Link to this heading">#</a></h2>
 <p>Blender gives opportunity to temporary switch off any node in a tree. In this
 case its input data paths through the node without any modifications toward next
 nodes. Bas node class has default <code class="docutils literal notranslate"><span class="pre">sv_internal_links</span></code> property to determine
@@ -771,7 +1169,7 @@ which API does not give control of displaying internal links properly.</p>
 </div>
 </section>
 <section id="nodes-with-dependencies">
-<h2>Nodes With Dependencies<a class="headerlink" href="#nodes-with-dependencies" title="Link to this heading">¶</a></h2>
+<h2>Nodes With Dependencies<a class="headerlink" href="#nodes-with-dependencies" title="Link to this heading">#</a></h2>
 <p>Nodes can use some external library which can be installed manually by user from
 Extra Nodes tab in the add-on settings. When a node uses external library and
 it is not installed the node should add itself into a list of dummy nodes.
@@ -810,7 +1208,7 @@ except in some of its modes.</p>
 </div>
 </section>
 <section id="json-import-export">
-<h2>JSON Import / Export<a class="headerlink" href="#json-import-export" title="Link to this heading">¶</a></h2>
+<h2>JSON Import / Export<a class="headerlink" href="#json-import-export" title="Link to this heading">#</a></h2>
 <p>Sverchok has special format for sharing node trees and saving them into presets.
 In most cases nodes developers should not prepare their node to make them work
 with JSON import / export system. What is important to know:</p>
@@ -832,11 +1230,11 @@ previous JSON files.</p></li>
 </ul>
 </section>
 <section id="upgrade-node">
-<h2>Upgrade Node<a class="headerlink" href="#upgrade-node" title="Link to this heading">¶</a></h2>
+<h2>Upgrade Node<a class="headerlink" href="#upgrade-node" title="Link to this heading">#</a></h2>
 <p>It’s possible to improve existing nodes but it should be done carefully, without
 breaking existing layouts. It can be done in two ways:</p>
 <section id="improve-existing-node">
-<h3>Improve existing node<a class="headerlink" href="#improve-existing-node" title="Link to this heading">¶</a></h3>
+<h3>Improve existing node<a class="headerlink" href="#improve-existing-node" title="Link to this heading">#</a></h3>
 <p>First is when you add extra functionality to some node. It’s possible by adding
 extra buttons, sockets, modes. When you add something like this you should ensure
 that default behaviour will be unchanged.</p>
@@ -862,7 +1260,7 @@ by its index.</p>
 <p>All other changes should be done by creating new version of the node.</p>
 </section>
 <section id="create-new-node-version">
-<h3>Create new node version<a class="headerlink" href="#create-new-node-version" title="Link to this heading">¶</a></h3>
+<h3>Create new node version<a class="headerlink" href="#create-new-node-version" title="Link to this heading">#</a></h3>
 <p>If it’s needed to fix some existing behaviour or remove one the new version of
 a node should be introduced. It’s not necessary step when changes should be
 applied to changes which were made in not released version of Sverchok. In this
@@ -915,7 +1313,7 @@ work should be done with sockets it’s possible to implement in
 links creation.</p>
 </section>
 <section id="alpha-beta-node-state">
-<h3>Alpha/Beta Node State<a class="headerlink" href="#alpha-beta-node-state" title="Link to this heading">¶</a></h3>
+<h3>Alpha/Beta Node State<a class="headerlink" href="#alpha-beta-node-state" title="Link to this heading">#</a></h3>
 <p>When new node is created or existing version of a node is improved we usually
 would like to have some time to catch and fix bugs. It can be done the better
 the more people will test the node. Thus we have to merge changes into master.
@@ -936,83 +1334,154 @@ should lose the state when new Sverchok’s release is introduced.</p>
 </section>
 
 
-          </div>
-          
-        </div>
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="add_new_node.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Adding new Node</p>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="Main">
-        <div class="sphinxsidebarwrapper">
-            <p class="logo"><a href="../main.html">
-              <img class="logo" src="../_static/title_big_b.svg" alt="Logo of Sverchok"/>
-            </a></p>
-<h1 class="logo"><a href="../main.html">Sverchok</a></h1>
+    </a>
+    <a class="right-next"
+       href="api_documentation.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Sverchok API Documentation</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
 
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#class-definition">Class Definition</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#creating-node-custom-properties">Creating Node Custom Properties</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#draft-properties">Draft Properties</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#enum-properties">Enum Properties</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dynamic-properties">Dynamic Properties</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#creating-node-buttons">Creating Node Buttons</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#node-sockets">Node Sockets</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dynamic-sockets">Dynamic Sockets</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#socket-properties">Socket Properties</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#socket-vectorization-properties">Socket Vectorization Properties</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#business-logic">Business logic</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data-vectorization">Data vectorization</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data-structure">Data structure</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bmesh-data-structure">BMesh data structure</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tests">Tests</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#performance">Performance</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#printing-logging">Printing / Logging</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#node-registration">Node Registration</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#documentation">Documentation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#animation">Animation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#muting">Muting</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nodes-with-dependencies">Nodes With Dependencies</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#json-import-export">JSON Import / Export</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#upgrade-node">Upgrade Node</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#improve-existing-node">Improve existing node</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#create-new-node-version">Create new node version</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#alpha-beta-node-state">Alpha/Beta Node State</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
 
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/contributing/node_api.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
 
-
-
-
-
-
-<search id="searchbox" style="display: none" role="search">
-    <div class="searchformwrapper">
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
-      <input type="submit" value="Go" />
-    </form>
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
     </div>
-</search>
-<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
-<ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../introduction/introduction.html">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../installation/installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../user_interface/user_interface.html">User interface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tree_evaluation_system.html">Node tree evaluation system</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../data_structure/data_structure_index.html">Data structure</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../nodes.html">Nodes</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorials/tutorials.html">Tutorials</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorials/celling.html">Celling design</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="contributing_to_sverchok.html">Contributing to sverchok</a></li>
-</ul>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
 
-<div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="../main.html">Documentation overview</a><ul>
-  <li><a href="contributing_to_sverchok.html">Contributing to sverchok</a><ul>
-      <li>Previous: <a href="add_new_node.html" title="previous chapter">Adding new Node</a></li>
-      <li>Next: <a href="api_documentation.html" title="next chapter">Sverchok API Documentation</a></li>
-  </ul></li>
-  </ul></li>
-</ul>
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2014...2025, sverchok team.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
 </div>
 
-
-
-
-
-
-
-
-        </div>
-      </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="footer">
-      &#169;2014...2025, sverchok team.
-      
-      |
-      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
-      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
-      
-      |
-      <a href="../_sources/contributing/node_api.rst.txt"
-          rel="nofollow">Page source</a>
-    </div>
-
-    
-
-    
+  </footer>
   </body>
 </html>
