@@ -1,1 +1,4 @@
-/* This file intentionally left blank. */
+html[data-theme="light"], html[data-theme="dark"] {
+  --pst-font-size-base: 1rem !important;
+}
+

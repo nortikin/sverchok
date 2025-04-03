@@ -16,31 +16,31 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
-  <!--
-    this give us a css class that will be invisible only if js is disabled
-  -->
-  <noscript>
-    <style>
-      .pst-js-only { display: none !important; }
-
-    </style>
-  </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
-<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
 
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=337302ae" />
   
-  <!-- So that users can add custom icons -->
-  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
-<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../_static/documentation_options.js?v=773c2105"></script>
+    <script src="../../_static/documentation_options.js?v=80221c76"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'nodes/surface/surface_lerp';</script>
     <link rel="icon" href="../../_static/sverchock_icon_b.ico"/>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -49,7 +49,6 @@
     <link rel="prev" title="Insert Knot (NURBS Surface)" href="surface_insert_knot.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="1, 2, 0" />
   </head>
   
   
@@ -65,8 +64,19 @@
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
 
   
-  <dialog id="pst-search-dialog">
-    
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
 <form class="bd-search d-flex align-items-center"
       action="../../search.html"
       method="get">
@@ -74,15 +84,16 @@
   <input type="search"
          class="form-control"
          name="q"
-         placeholder="Search the docs ..."
-         aria-label="Search the docs ..."
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
          autocomplete="off"
          autocorrect="off"
          autocapitalize="off"
          spellcheck="false"/>
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
-</form>
-  </dialog>
+</form></div>
+  </div>
 
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
@@ -90,15 +101,27 @@
 
   
     <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
-<div class="bd-header__inner bd-page-width">
-  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
-    <span class="fa-solid fa-bars"></span>
-  </button>
+    </header>
   
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
   
-  <div class="col-lg-3 navbar-header-items__start">
+  <div class="sidebar-header-items sidebar-primary__section">
     
-      <div class="navbar-item">
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
 
   
     
@@ -116,994 +139,130 @@
     
     
     <img src="../../_static/title_big_b.svg" class="logo__image only-light" alt="Sverchok 1, 2, 0 documentation - Home"/>
-    <img src="../../_static/title_big_b.svg" class="logo__image only-dark pst-js-only" alt="Sverchok 1, 2, 0 documentation - Home"/>
+    <script>document.write(`<img src="../../_static/title_big_b.svg" class="logo__image only-dark" alt="Sverchok 1, 2, 0 documentation - Home"/>`);</script>
   
   
 </a></div>
-    
-  </div>
-  
-  <div class="col-lg-9 navbar-header-items">
-    
-    <div class="me-auto navbar-header-items__center">
-      
-        <div class="navbar-item">
-<nav>
-  <ul class="bd-navbar-elements navbar-nav">
-    
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../introduction/introduction.html">
-    Introduction
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../installation/installation.html">
-    Installation
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../user_interface/user_interface.html">
-    User interface
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../tree_evaluation_system.html">
-    Node tree evaluation system
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../data_structure/data_structure_index.html">
-    Data structure
-  </a>
-</li>
-
-            <li class="nav-item dropdown">
-                <button class="btn dropdown-toggle nav-item" type="button"
-                data-bs-toggle="dropdown" aria-expanded="false"
-                aria-controls="pst-nav-more-links">
-                    More
-                </button>
-                <ul id="pst-nav-more-links" class="dropdown-menu">
-                    
-<li class=" current active">
-  <a class="nav-link dropdown-item nav-internal" href="../../nodes.html">
-    Nodes
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../../tutorials/tutorials.html">
-    Tutorials
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../../tutorials/celling.html">
-    Celling design
-  </a>
-</li>
-
-
-<li class=" ">
-  <a class="nav-link dropdown-item nav-internal" href="../../contributing/contributing_to_sverchok.html">
-    Contributing to sverchok
-  </a>
-</li>
-
-                </ul>
-            </li>
-            
-  </ul>
-</nav></div>
-      
-    </div>
-    
-    
-    <div class="navbar-header-items__end">
-      
-        <div class="navbar-item navbar-persistent--container">
-          
-
-<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
- <i class="fa-solid fa-magnifying-glass"></i>
- <span class="search-button__default-text">Search</span>
- <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-</button>
-        </div>
-      
-      
-        <div class="navbar-item">
-
-<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
-  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
-  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
-  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
-</button></div>
-      
-    </div>
-    
-  </div>
-  
-  
-    <div class="navbar-persistent--mobile">
-
-<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
- <i class="fa-solid fa-magnifying-glass"></i>
- <span class="search-button__default-text">Search</span>
- <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-</button>
-    </div>
-  
-
-  
-    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
-      <span class="fa-solid fa-outdent"></span>
-    </button>
-  
-</div>
-
-    </header>
-  
-
-  <div class="bd-container">
-    <div class="bd-container__inner bd-page-width">
-      
-      
-      
-      <dialog id="pst-primary-sidebar-modal"></dialog>
-      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
-        
-
-  
-  <div class="sidebar-header-items sidebar-primary__section">
-    
-    
-      <div class="sidebar-header-items__center">
-        
-          
-          
-            <div class="navbar-item">
-<nav>
-  <ul class="bd-navbar-elements navbar-nav">
-    
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../introduction/introduction.html">
-    Introduction
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../installation/installation.html">
-    Installation
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../user_interface/user_interface.html">
-    User interface
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../tree_evaluation_system.html">
-    Node tree evaluation system
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../data_structure/data_structure_index.html">
-    Data structure
-  </a>
-</li>
-
-
-<li class="nav-item current active">
-  <a class="nav-link nav-internal" href="../../nodes.html">
-    Nodes
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../tutorials/tutorials.html">
-    Tutorials
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../tutorials/celling.html">
-    Celling design
-  </a>
-</li>
-
-
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../contributing/contributing_to_sverchok.html">
-    Contributing to sverchok
-  </a>
-</li>
-
-  </ul>
-</nav></div>
-          
-        
-      </div>
-    
-    
-    
-      <div class="sidebar-header-items__end">
-        
-          <div class="navbar-item">
-
-<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
-  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
-  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
-  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
-</button></div>
-        
-      </div>
-    
-  </div>
-  
-    <div class="sidebar-primary-items__start sidebar-primary__section">
         <div class="sidebar-primary-item">
-<nav class="bd-docs-nav bd-links"
-     aria-label="Section Navigation">
-  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
-  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
-<li class="toctree-l1 has-children"><a class="reference internal" href="../generator/generator_index.html">Generators</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../generator/basic_3pt_arc.html">3 Point Arc</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../generator/basic_spline.html">2 Point Spline</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../generator/box_mk2.html">Box</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../generator/bricks.html">Bricks Grid</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../generator/circle.html">Circle</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../generator/cricket.html">Cricket</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../generator/cylinder_mk2.html">Cylinder MK2</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../generator/formula_shape.html">Formula Shape</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../generator/icosphere.html">IcoSphere Node</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../generator/image.html">Image</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../generator/line_mk4.html">Line</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../generator/ngon.html">NGon</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../generator/plane_mk3.html">Plane</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../generator/quad_spline.html">Quadratic Spline</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../generator/random_vector_mk3.html">Random Vector</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../generator/segment.html">Segment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../generator/sphere.html">Sphere</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../generator/suzanne.html">Suzanne Node</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../generator/torus_mk2.html">Torus</a></li>
-</ul>
-</details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../generators_extended/generators_extended_index.html">Generators Extended</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../generators_extended/box_rounded.html">Rounded box</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../generators_extended/conic_section.html">Conic Sections</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../generators_extended/ellipse_mk3.html">Ellipse</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../generators_extended/hilbert.html">Hilbert 2D</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../generators_extended/hilbert3d.html">Hilbert 3D</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../generators_extended/hilbert_image.html">Hilbert Image</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../generators_extended/pentagon_tiler.html">Pentagon Tiler</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../generators_extended/polygon_grid.html">Polygon Grid</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../generators_extended/regular_solid.html">Regular Solid</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../generators_extended/ring_mk2.html">Ring</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../generators_extended/smooth_lines.html">Smooth Lines</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../generators_extended/spiral_mk2.html">Spiral</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../generators_extended/super_ellipsoid.html">Super Ellipsoid</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../generators_extended/torus_knot_mk2.html">Torus Knot</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../generators_extended/triangle.html">Triangle</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../generators_extended/wfc_texture.html">WFC Texture</a></li>
-</ul>
-</details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../curve/curve_index.html">Curves</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../curve/adaptive_plot.html">Adaptive Plot Curve</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/adaptive_plot_nurbs.html">Adaptive Plot NURBS Curve</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/apply_field_to_curve.html">Apply Field to Curve</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/approximate_nurbs_curve.html">Approximate NURBS Curve</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/arc_3pt.html">Arc 3pt (Curve)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/arc_sed.html">Arc Start / End / Tangent</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/bezier_fit.html">Approximate Bezier Curve</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/bezier_spline.html">Bezier Spline Segment (Curve)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/biarc.html">Bi Arc</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/blend_curves.html">Blend Curves</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/cast_curve.html">Cast Curve</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/catenary_curve.html">Catenary Curve</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/catmull_rom.html">Catmull-Rom Spline</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/circlify.html">Circlify</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/concat_curves.html">Concatenate Curves</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/cubic_spline.html">Cubic Spline</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/curvature.html">Curve Curvature</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/curve_circle.html">Circle (Curve)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/curve_formula.html">Curve Formula</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/curve_frame.html">Curve Frame</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/curve_frame_on_surface.html">Curve Frame on Surface</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/curve_length.html">Curve Length</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/curve_lerp.html">Curve Lerp</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/curve_on_surface.html">Curve on Surface</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/curve_range.html">Curve Domain</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/curve_segment.html">Curve Segment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/curve_to_nurbs.html">Curve to NURBS</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/deconstruct_curve.html">Deconstruct Curve</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/discontinuity.html">NURBS Curve Discontinuity</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/elevate_degree.html">Elevate Degree (NURBS Curve)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/ellipse_curve.html">Ellipse (Curve)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/endpoints.html">Curve Endpoints</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/eval_curve.html">Evaluate Curve</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/extend_curve.html">Extend Curve</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/extremes.html">Curve Extremes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/fillet_curve.html">Fillet Curve</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/fillet_polyline.html">Fillet Polyline</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/flip_curve.html">Flip Curve</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/freecad_helix.html">Helix (FreeCAD)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/generate_knotvector.html">Generate Knotvector</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/insert_knot.html">Insert Knot (NURBS Curve)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/interpolate_frame.html">Interpolate Curve Frame</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/interpolate_nurbs_curve.html">Interpolate NURBS Curve</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/intersect_curve_plane.html">Intersect Curve with Plane</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/intersect_curves.html">Intersect NURBS Curves</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/iso_uv_curve.html">Iso U/V Curve</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/kinky_curve.html">Kinked Curve</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/length_parameter.html">Curve Length Parameter</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/length_rebuild.html">Naturally Parametrized Curve</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/line.html">Line (Curve)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/marching_squares.html">Marching Squares</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/marching_squares_on_surface.html">Marching Squares on Surface</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/move_nurbs_curve_point.html">Move NURBS Curve Point</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/nearest_point.html">Nearest Point on Curve</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/nurbs_curve.html">Build NURBS Curve</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/nurbs_curve_nodes.html">NURBS Curve Nodes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/offset_mk2.html">Offset Curve</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/offset_on_surface.html">Offset Curve on Surface</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/ortho_project.html">Ortho Project on Curve</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/point_curve.html">Single-Point Curve</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/polyarc.html">Poly Arc</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/polyline.html">Polyline</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/prepare_curves_net.html">Prepare NURBS Curves Net</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/project_curve_surface.html">Project Curve to Surface (NURBS)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/rbf_curve.html">RBF Curve</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/reduce_degree.html">Reduce Degree (NURBS Curve)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/refine_nurbs_curve.html">Refine NURBS Curve</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/remove_excessive_knots.html">Remove Excessive Knots (NURBS Curve)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/remove_knot.html">Remove Knot (NURBS Curve)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/reparametrize.html">Reparametrize Curve</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/rounded_rectangle.html">Rounded Rectangle</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/snap_curves.html">Snap Curves</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/sort_curves.html">Sort Curves</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/split_curve.html">Split Curve</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/surface_boundary.html">Surface’s Boundary</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/tangent_curve.html">Tangents Curve</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/torsion.html">Curve Torsion</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../curve/zero_twist_frame.html">Curve Zero-Twist Frame</a></li>
-</ul>
-</details></li>
-<li class="toctree-l1 current active has-children"><a class="reference internal" href="surface_index.html">Surfaces</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="adaptive_tessellate.html">Adaptive Tessellate Surface</a></li>
-<li class="toctree-l2"><a class="reference internal" href="apply_field_to_surface.html">Apply Field to Surface</a></li>
-<li class="toctree-l2"><a class="reference internal" href="approximate_nurbs_surface.html">Approximate NURBS Surface</a></li>
-<li class="toctree-l2"><a class="reference internal" href="blend_surface.html">Blend Surfaces</a></li>
-<li class="toctree-l2"><a class="reference internal" href="coons_patch.html">Surface from Boundary Curves</a></li>
-<li class="toctree-l2"><a class="reference internal" href="curvatures.html">Surface Curvatures</a></li>
-<li class="toctree-l2"><a class="reference internal" href="deconstruct_surface.html">Deconstruct Surface</a></li>
-<li class="toctree-l2"><a class="reference internal" href="evaluate_surface.html">Evaluate Surface</a></li>
-<li class="toctree-l2"><a class="reference internal" href="extrude_curve.html">Extrude Curve Along Curve</a></li>
-<li class="toctree-l2"><a class="reference internal" href="extrude_point.html">Extrude to Point</a></li>
-<li class="toctree-l2"><a class="reference internal" href="extrude_vector.html">Extrude Curve Along Vector</a></li>
-<li class="toctree-l2"><a class="reference internal" href="flip.html">Flip Surface</a></li>
-<li class="toctree-l2"><a class="reference internal" href="gauss_curvature.html">Surface Gauss Curvature</a></li>
-<li class="toctree-l2"><a class="reference internal" href="gordon_surface.html">NURBS Surface from Curves Net</a></li>
-<li class="toctree-l2"><a class="reference internal" href="implicit_surface_raycast.html">Implicit Surface Raycast</a></li>
-<li class="toctree-l2"><a class="reference internal" href="interpolate_nurbs_surface.html">Interpolate NURBS Surface</a></li>
-<li class="toctree-l2"><a class="reference internal" href="interpolating_surface.html">Surface from Curves</a></li>
-<li class="toctree-l2"><a class="reference internal" href="intersect_curve_surface.html">Intersect Curve with Surface</a></li>
-<li class="toctree-l2"><a class="reference internal" href="marching_cubes.html">Marching Cubes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="min_surface_from_curve.html">Minimal Surface from Curve</a></li>
-<li class="toctree-l2"><a class="reference internal" href="minimal_surface.html">Minimal Surface</a></li>
-<li class="toctree-l2"><a class="reference internal" href="normals.html">Surface Frame</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nurbs_birail.html">NURBS Birail</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nurbs_loft.html">NURBS Loft</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nurbs_surface.html">Build NURBS surface</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nurbs_sweep.html">NURBS Sweep</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pipe.html">Pipe Surface Along Curve</a></li>
-<li class="toctree-l2"><a class="reference internal" href="plane.html">Plane (Surface)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="raycast.html">Raycast on Surface</a></li>
-<li class="toctree-l2"><a class="reference internal" href="revolution_surface.html">Revolution Surface</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ruled_surface.html">Ruled Surface</a></li>
-<li class="toctree-l2"><a class="reference internal" href="subdomain.html">Surface Subdomain</a></li>
-<li class="toctree-l2"><a class="reference internal" href="surface_bevel_curve.html">Bevel a Curve (Surface)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="surface_domain.html">Surface Domain</a></li>
-<li class="toctree-l2"><a class="reference internal" href="surface_elevate_degree.html">Elevate Degree (NURBS Surface)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="surface_extremes.html">Surface Extremes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="surface_formula.html">Surface Formula</a></li>
-<li class="toctree-l2"><a class="reference internal" href="surface_insert_knot.html">Insert Knot (NURBS Surface)</a></li>
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">Surface Lerp</a></li>
-<li class="toctree-l2"><a class="reference internal" href="surface_nearest_point.html">Nearest Point on Surface</a></li>
-<li class="toctree-l2"><a class="reference internal" href="surface_ortho_project.html">Orthogonal Project on Surface</a></li>
-<li class="toctree-l2"><a class="reference internal" href="surface_reduce_degree.html">Reduce Degree (NURBS Surface)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="surface_remove_excessive_knots.html">Remove Excessive Knots (NURBS Surface)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="surface_remove_knot.html">Remove Knot (NURBS Surface)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="surface_reparametrize.html">Reparametrize Surface</a></li>
-<li class="toctree-l2"><a class="reference internal" href="surface_sphere.html">Sphere (Surface)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="swap.html">Swap Surface U/V</a></li>
-<li class="toctree-l2"><a class="reference internal" href="taper_sweep.html">Taper Sweep Surface</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tessellate_trim.html">Tessellate &amp; Trim Surface</a></li>
-</ul>
-</details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../field/field_index.html">Fields</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../field/attractor_field_mk2.html">Attractor Field</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../field/compose_vector_field.html">Compose Vector Field</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../field/coordinate_scalar_field.html">Coordinate Scalar Field</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../field/curve_bend_field.html">Bend Along Curve Field</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../field/decompose_vector_field.html">Decompose Vector Field</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../field/differential_operations.html">Field Differential Operations</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../field/field_bend_along_surface_mk2.html">Bend Along Surface Field</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../field/frame_along_curve.html">Twist along Curve Field</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../field/image_field.html">Image Field</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../field/merge_scalar_fields.html">Join Scalar Fields</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../field/mesh_normal_field.html">Mesh Nearest Normal</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../field/mesh_surface_field.html">Mesh Smoothed Surface Field</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../field/minimal_sfield.html">RBF Scalar Field</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../field/minimal_vfield.html">RBF Vector Field</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../field/noise_vfield.html">Noise Vector Field</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../field/rotation_field.html">Rotation Field</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../field/scalar_field_curvature.html">Scalar Field Curvature</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../field/scalar_field_curve_map.html">Map Scalar Field by Curve</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../field/scalar_field_eval.html">Evaluate Scalar Field</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../field/scalar_field_formula.html">Scalar Field Formula</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../field/scalar_field_graph.html">Scalar Field Graph</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../field/scalar_field_math.html">Scalar Field Math</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../field/scalar_field_point.html">Distance From a Point</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../field/taper_field.html">Taper Field</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../field/twist_field.html">Twist / Whirld Field</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../field/vector_field_apply.html">Apply Vector Field</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../field/vector_field_eval.html">Evaluate Vector Field</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../field/vector_field_filter.html">Vector Field Filter</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../field/vector_field_formula.html">Vector Field Formula</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../field/vector_field_graph.html">Vector Field Graph</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../field/vector_field_lines.html">Vector Field Lines</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../field/vector_field_math.html">Vector Field Math</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../field/voronoi_field.html">Voronoi Field</a></li>
-</ul>
-</details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../solid/solid_index.html">Solids</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../solid/bound_box.html">Solid Bounding Box</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../solid/box_solid.html">Box (Solid)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../solid/center_of_mass.html">Center of Mass (Solid)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../solid/chamfer_solid.html">Chamfer Solid</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../solid/cone_solid.html">Cone (Solid)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../solid/cylinder_solid.html">Cylinder (Solid)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../solid/export_solid.html">Export Solid</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../solid/extrude_face.html">Extrude Face (Solid)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../solid/face_area.html">Solid Face Area</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../solid/fillet_solid.html">Fillet Solid</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../solid/general_fuse.html">Solid General Fuse</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../solid/hollow_solid.html">Hollow Solid</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../solid/import_solid.html">Import Solid</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../solid/is_closed.html">Is Solid Closed</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../solid/make_compound.html">Compound Solid</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../solid/mesh_to_solid.html">Mesh to Solid</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../solid/mirror_solid.html">Mirror Solid</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../solid/offset_solid.html">Offset Solid</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../solid/points_inside_solid.html">Points Inside Solid</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../solid/polygon_face.html">Polygon Face (Solid)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../solid/projection_trim_face.html">Face from Surface (Solid)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../solid/refine.html">Refine Solid</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../solid/revolve_face.html">Revolve Face (Solid)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../solid/ruled_solid.html">Solid from two Faces</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../solid/slice_solid.html">Slice Solid</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../solid/solid_area.html">Solid Area</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../solid/solid_boolean.html">Solid Boolean</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../solid/solid_distance.html">Solid Distance</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../solid/solid_edges.html">Solid Edges (Curves)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../solid/solid_faces.html">Solid Faces (Surfaces)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../solid/solid_from_faces.html">Solid from Faces</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../solid/solid_section.html">Solid Section</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../solid/solid_select.html">Select Solid Elements</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../solid/solid_to_mesh_mk2.html">Solid to Mesh</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../solid/solid_vertices.html">Solid Vertices</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../solid/solid_viewer.html">Solid Viewer</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../solid/solid_volume.html">Solid Volume</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../solid/solidify_face.html">Solidify Face (Solid)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../solid/sphere_solid.html">Sphere (Solid)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../solid/split_solid.html">Split Solid by Face</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../solid/sweep_face.html">Sweep Face (Solid)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../solid/torus_solid.html">Torus (Solid)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../solid/transform_solid.html">Transform Solid</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../solid/validate.html">Validate &amp; Fix Solid</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../solid/wire_face.html">Face from Curves (Solid)</a></li>
-</ul>
-</details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../spatial/spatial_index.html">Spatial</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../spatial/concave_hull.html">Concave Hull</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../spatial/convex_hull_mk2.html">Convex Hull</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../spatial/delaunay_2d.html">Delaunay 2D</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../spatial/delaunay_2d_cdt.html">Delaunay 2D Cdt</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../spatial/delaunay_3d_mk2.html">Delaunay 3D</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../spatial/field_random_probe.html">Field Random Probe</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../spatial/homogenous_vector_field.html">Vector P Field</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../spatial/lloyd2d.html">Lloyd 2D</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../spatial/lloyd3d.html">Lloyd 3D</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../spatial/lloyd_on_mesh.html">Lloyd on Mesh</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../spatial/lloyd_on_sphere.html">Lloyd on Sphere</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../spatial/lloyd_solid.html">Lloyd in Solid</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../spatial/lloyd_solid_face.html">Lloyd on Solid Face</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../spatial/mesh_clustering.html">Mesh clustering</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../spatial/populate_mesh_mk2.html">Populate Mesh</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../spatial/populate_solid.html">Populate Solid</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../spatial/populate_surface.html">Populate Surface</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../spatial/voronoi3d.html">Voronoi 3D</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../spatial/voronoi_2d.html">Voronoi 2D Node</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../spatial/voronoi_on_mesh.html">Voronoi on Mesh</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../spatial/voronoi_on_solid_mk2.html">Voronoi on Solid</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../spatial/voronoi_on_surface.html">Voronoi on Surface</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../spatial/voronoi_sphere.html">Voronoi Sphere</a></li>
-</ul>
-</details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../transforms/transforms_index.html">Transforms</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../transforms/align_mesh_by_mesh.html">Align Mesh by Mesh</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../transforms/apply.html">Matrix Apply (verts)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../transforms/barycentric_transform.html">Barycentric Transform</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../transforms/bend_along_path.html">Bend Object Along Path</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../transforms/bend_along_surface.html">Bend Object Along Surface</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../transforms/cast.html">Cast</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../transforms/deform.html">Simple Deformation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../transforms/formula_deform_mk2.html">Deform by Formula</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../transforms/mirror_mk2.html">Mirror</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../transforms/move_mk3.html">Move</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../transforms/noise_displace.html">Noise Displace</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../transforms/randomize.html">Randomize</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../transforms/rotate_mk3.html">Rotate</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../transforms/scale_mk3.html">Scale</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../transforms/symmetrize.html">Symmetrize Mesh</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../transforms/texture_displace_mk2.html">Texture Displace</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../transforms/transform_mesh.html">Transform mesh</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../transforms/transform_select.html">Transform Select</a></li>
-</ul>
-</details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../analyzer/analyzer_index.html">Analyzers</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../analyzer/area.html">Area</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../analyzer/bbox_aligned.html">Aligned Bounding Box (Alpha)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../analyzer/bbox_mk3.html">Bounding Box</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../analyzer/bvh_overlap_polys.html">Overlap Polygons</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../analyzer/chess_selection.html">Chess Selection</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../analyzer/circle_approx.html">Circle Fit</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../analyzer/component_analyzer.html">Component Analyzer</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../analyzer/deformation.html">Deformation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../analyzer/diameter.html">Diameter</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../analyzer/distance_line_line.html">Distance Line Line</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../analyzer/distance_point_line.html">Distance Point Line</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../analyzer/distance_point_plane.html">Distance Point Plane</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../analyzer/distance_pp.html">Distance</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../analyzer/edge_angles.html">Angles at the Edges</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../analyzer/image_components.html">Image Decomposer</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../analyzer/inscribed_circle.html">Inscribed Circle</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../analyzer/intersect_circle_circle.html">Circle Intersection</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../analyzer/intersect_line_sphere.html">Compass 3D</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../analyzer/intersect_plane_plane.html">Plane Intersection</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../analyzer/kd_tree_MK2.html">KDT Closest Verts</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../analyzer/kd_tree_edges.html">KDT Closest Edges</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../analyzer/kd_tree_path.html">KDT Closest Path</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../analyzer/linear_approx.html">Linear Approximation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../analyzer/linked_verts.html">Linked Verts</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../analyzer/mesh_filter.html">Mesh Filter</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../analyzer/mesh_select_mk2.html">Select Mesh Elements</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../analyzer/nearest_point_on_mesh.html">Nearest Point on Mesh</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../analyzer/normals_mk2.html">Calculate Normals</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../analyzer/object_insolation.html">Insolation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../analyzer/origins.html">Origins</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../analyzer/path_length_2.html">Path Length</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../analyzer/points_inside_mesh.html">Points Inside Mesh</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../analyzer/poly_inscribed_circle.html">Polygon Inscribed Circle</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../analyzer/project_point_to_line.html">Project Points to Line</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../analyzer/proportional.html">Proportional Edit Falloff</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../analyzer/raycaster_lite.html">Raycaster</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../analyzer/select_similar.html">Select Similar</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../analyzer/sphere_approx.html">Sphere Fit</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../analyzer/steiner_ellipse.html">Steiner Ellipse</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../analyzer/volume.html">Volume</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../analyzer/wave_paint.html">Wave Painter</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../analyzer/weighted_vector_sum.html">Center of Mass (Mesh) (Alpha)</a></li>
-</ul>
-</details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../modifier_change/modifier_change_index.html">Modifier Change</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../modifier_change/bevel.html">Bevel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modifier_change/delete_loose.html">Delete Loose</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modifier_change/dissolve_mesh_elements.html">Dissolve Mesh Elements</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modifier_change/edge_boom.html">Edge Boom</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modifier_change/edge_split.html">Split Edges</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modifier_change/edgenet_to_paths.html">Edgenet to Paths</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modifier_change/extrude_edges_mk2.html">Extrude Edges</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modifier_change/extrude_multi_alt.html">extrude multi alt</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modifier_change/extrude_region.html">Extrude Region</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modifier_change/extrude_separate.html">Extrude Separate Faces</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modifier_change/extrude_separate_lite.html">Extrude Separate Faces Lite</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modifier_change/flat_geometry.html">Flat Geometry</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modifier_change/flip_normals.html">Flip Normals</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modifier_change/follow_active_quads.html">Follow Active Quads</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modifier_change/holes_fill.html">Fill Holes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modifier_change/inset_faces.html">Inset Faces</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modifier_change/make_monotone.html">Make Monotone</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modifier_change/merge_by_distance.html">Merge by Distance</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modifier_change/mesh_clean.html">Mesh Clean</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modifier_change/mesh_join_mk2.html">Mesh Join</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modifier_change/mesh_separate.html">Separate Loose Parts</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modifier_change/objects_along_edge.html">Duplicate Objects Along Edge</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modifier_change/offset.html">Offset</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modifier_change/opensubdivision.html">Catmull-Clark Subdivision Node</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modifier_change/planar_edgenet_to_polygons.html">Planar Edgenet to Polygons</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modifier_change/planar_faces.html">Make Faces Planar</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modifier_change/poke.html">Poke Faces</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modifier_change/polygons_boom.html">Polygon Boom</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modifier_change/polygons_to_edges_mk2.html">Polygons to Edges</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modifier_change/quadriflow.html">Quadriflow</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modifier_change/recalc_normals.html">Recalculate Normals</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modifier_change/relax_mesh.html">Relax Mesh</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modifier_change/rigid_origami.html">Rigid Origami</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modifier_change/separate_parts_to_indexes.html">Separate Parts To Indexes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modifier_change/smooth.html">Smooth Vertices</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modifier_change/split_faces.html">Split Faces</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modifier_change/split_mesh_elements.html">Split Mesh Elements</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modifier_change/subdivide_mk2.html">Subdivide</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modifier_change/subdivide_to_quads.html">Subdivide to Quads</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modifier_change/triangulate.html">Triangulate Mesh</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modifier_change/vertices_mask.html">Mask Vertices</a></li>
-</ul>
-</details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../modifier_make/modifier_make_index.html">Modifier Make</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../modifier_make/adaptive_polygons_mk3.html">Adaptive Polygons Mk2</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modifier_make/bevel_curve.html">Bevel a Curve (Mesh)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modifier_make/bisect.html">Bisect</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modifier_make/boolean_internal.html">Internal Boolean</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modifier_make/clip_verts.html">Clip Vertices</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modifier_make/contour2D.html">Contour 2D</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modifier_make/csg_booleanMK2.html">CSG Boolean MK2</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modifier_make/cut_object_by_surface.html">Cut Object by Surface</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modifier_make/diamond_mesh.html">Diamond Mesh</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modifier_make/dual_mesh.html">Dual Mesh</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modifier_make/edges_adaptative.html">Adaptative Edges</a></li>
 
-<li class="toctree-l2"><a class="reference internal" href="../modifier_make/fractal_curve.html">Fractal Curve</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modifier_make/framework.html">Framework</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modifier_make/join_tris.html">Join Triangles</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modifier_make/lathe.html">Lathe</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modifier_make/matrix_tube.html">Matrix Tube</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modifier_make/offset_line.html">Offset Line</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modifier_make/pipe_tubes.html">Pipe</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modifier_make/solidify_mk2.html">Solidify</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modifier_make/sweep_modulator.html">Sweep Modulator</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modifier_make/unsubdivide.html">Unsubdivide node</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modifier_make/uv_connect.html">UV Connection</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modifier_make/wafel.html">Wafel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modifier_make/wireframe.html">Wireframe</a></li>
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../introduction/introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_interface/user_interface.html">User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tree_evaluation_system.html">Node tree evaluation system</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data_structure/data_structure_index.html">Data structure</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../../nodes.html">Nodes</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../generator/generator_index.html">Generators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generators_extended/generators_extended_index.html">Generators Extended</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../curve/curve_index.html">Curves</a></li>
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="surface_index.html">Surfaces</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="adaptive_tessellate.html">Adaptive Tessellate Surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apply_field_to_surface.html">Apply Field to Surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="approximate_nurbs_surface.html">Approximate NURBS Surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="blend_surface.html">Blend Surfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="coons_patch.html">Surface from Boundary Curves</a></li>
+<li class="toctree-l3"><a class="reference internal" href="curvatures.html">Surface Curvatures</a></li>
+<li class="toctree-l3"><a class="reference internal" href="deconstruct_surface.html">Deconstruct Surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="evaluate_surface.html">Evaluate Surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="extrude_curve.html">Extrude Curve Along Curve</a></li>
+<li class="toctree-l3"><a class="reference internal" href="extrude_point.html">Extrude to Point</a></li>
+<li class="toctree-l3"><a class="reference internal" href="extrude_vector.html">Extrude Curve Along Vector</a></li>
+<li class="toctree-l3"><a class="reference internal" href="flip.html">Flip Surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gauss_curvature.html">Surface Gauss Curvature</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gordon_surface.html">NURBS Surface from Curves Net</a></li>
+<li class="toctree-l3"><a class="reference internal" href="implicit_surface_raycast.html">Implicit Surface Raycast</a></li>
+<li class="toctree-l3"><a class="reference internal" href="interpolate_nurbs_surface.html">Interpolate NURBS Surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="interpolating_surface.html">Surface from Curves</a></li>
+<li class="toctree-l3"><a class="reference internal" href="intersect_curve_surface.html">Intersect Curve with Surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="marching_cubes.html">Marching Cubes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="min_surface_from_curve.html">Minimal Surface from Curve</a></li>
+<li class="toctree-l3"><a class="reference internal" href="minimal_surface.html">Minimal Surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="normals.html">Surface Frame</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nurbs_birail.html">NURBS Birail</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nurbs_loft.html">NURBS Loft</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nurbs_surface.html">Build NURBS surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nurbs_sweep.html">NURBS Sweep</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pipe.html">Pipe Surface Along Curve</a></li>
+<li class="toctree-l3"><a class="reference internal" href="plane.html">Plane (Surface)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="raycast.html">Raycast on Surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="revolution_surface.html">Revolution Surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ruled_surface.html">Ruled Surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="subdomain.html">Surface Subdomain</a></li>
+<li class="toctree-l3"><a class="reference internal" href="surface_bevel_curve.html">Bevel a Curve (Surface)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="surface_domain.html">Surface Domain</a></li>
+<li class="toctree-l3"><a class="reference internal" href="surface_elevate_degree.html">Elevate Degree (NURBS Surface)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="surface_extremes.html">Surface Extremes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="surface_formula.html">Surface Formula</a></li>
+<li class="toctree-l3"><a class="reference internal" href="surface_insert_knot.html">Insert Knot (NURBS Surface)</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">Surface Lerp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="surface_nearest_point.html">Nearest Point on Surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="surface_ortho_project.html">Orthogonal Project on Surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="surface_reduce_degree.html">Reduce Degree (NURBS Surface)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="surface_remove_excessive_knots.html">Remove Excessive Knots (NURBS Surface)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="surface_remove_knot.html">Remove Knot (NURBS Surface)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="surface_reparametrize.html">Reparametrize Surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="surface_sphere.html">Sphere (Surface)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="swap.html">Swap Surface U/V</a></li>
+<li class="toctree-l3"><a class="reference internal" href="taper_sweep.html">Taper Sweep Surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tessellate_trim.html">Tessellate &amp; Trim Surface</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../CAD/CAD_index.html">CAD</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../CAD/crop_mesh_2d.html">Crop Mesh 2D</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../CAD/edges_intersect_mk3.html">Intersect Edges</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../CAD/edges_to_faces_2d.html">Edges to Faces 2D</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../CAD/embed%20mesh.html">Embed Mesh</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../CAD/inset_special_mk2.html">Inset Special</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../CAD/merge_mesh_2d.html">Merge Mesh 2d</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../CAD/merge_mesh_2d_lite.html">Merge mesh 2D lite</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../CAD/straight_skeleton_2d_extrude.html">Straight Skeleton 2d Extrude (Alpha)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../CAD/straight_skeleton_2d_offset.html">Straight Skeleton 2d Offset (Alpha)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../field/field_index.html">Fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../solid/solid_index.html">Solids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spatial/spatial_index.html">Spatial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../transforms/transforms_index.html">Transforms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../analyzer/analyzer_index.html">Analyzers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modifier_change/modifier_change_index.html">Modifier Change</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modifier_make/modifier_make_index.html">Modifier Make</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../CAD/CAD_index.html">CAD</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../number/number_index.html">Number</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../vector/vector_index.html">Vector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../matrix/matrix_index.html">Matrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../quaternion/quaternion_index.html">Quaternion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../color/color_index.html">Color</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../logic/logic_index.html">Logic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_main/list_main_index.html">List Main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_struct/list_struct_index.html">List Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_masks/list_masks_index.html">List Masks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_mutators/list_mutators_index.html">List Mutators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../dictionary/dictionary_index.html">Dictionary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../viz/viz_index.html">Viz</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../text/text_index.html">Text</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../script/script_index.html">Script</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scene/scene_index.html">Scene</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../object_nodes/object_nodes_index.html">Object</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../layout/layout_index.html">Layout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../network/network_index.html">Network</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pulga_physics/pulga_physics_index.html">Pulga Physics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../exchange/exchange_index.html">Exchange</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../svg/svg_index.html">SVG</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../number/number_index.html">Number</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../number/curve_mapper.html">Curve Mapper</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../number/easing.html">Easing 0..1</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../number/exponential.html">Exponential Sequence</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../number/fibonacci.html">Fibonacci Sequence</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../number/float_to_int.html">Float to Integer</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../number/list_input.html">List Input</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../number/mix_inputs.html">Mix Inputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../number/mix_numbers.html">Mix Numbers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../number/number_range.html">Number Range</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../number/numbers.html">A Number</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../number/oscillator.html">Oscillator</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../number/random.html">Random</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../number/random_num_gen.html">Random Num Gen</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../number/range_map.html">Map Range</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../number/scalar_mk4.html">Scalar Math</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../number/smooth_numbers.html">Smooth Numbers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/celling.html">Celling design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing/contributing_to_sverchok.html">Contributing to sverchok</a></li>
 </ul>
-</details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../vector/vector_index.html">Vector</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../vector/attractor.html">Vectors Attraction</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../vector/axis_input_mk2.html">Vector X | Y | Z</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../vector/drop.html">Vector Drop</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../vector/fractal.html">Vector Fractal</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../vector/interpolation_mk3.html">Vector Interpolation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../vector/interpolation_stripes.html">Vector Interpolation Stripes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../vector/lerp.html">Vector Lerp</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../vector/math_mk3.html">Vector Math</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../vector/noise_mk3.html">Vector Noise</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../vector/quad_grid.html">Sort Quad Grid</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../vector/turbulence.html">Vector Turbulence</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../vector/variable_lacunarity.html">Variable Lacunarity</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../vector/vector_in.html">Vector In</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../vector/vector_out.html">Vector Out</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../vector/vector_polar_in.html">Vector Polar Input</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../vector/vector_polar_out.html">Vector Polar Output</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../vector/vector_rewire.html">Vector Rewire</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../vector/vertices_delete_doubles.html">Vector X Doubles</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../vector/vertices_sort.html">Vector Sort</a></li>
-</ul>
-</details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../matrix/matrix_index.html">Matrix</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../matrix/apply_and_join.html">Matrix Apply to Mesh</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../matrix/euler.html">Matrix Euler</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../matrix/input.html">Matrix Input</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../matrix/interpolation.html">Matrix Interpolation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../matrix/iterate.html">Iterate Matrix Transformation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../matrix/matrix_deform.html">Matrix Deform</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../matrix/matrix_in_mk4.html">Matrix In</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../matrix/matrix_math.html">Matrix Math</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../matrix/matrix_normal.html">Matrix Normal</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../matrix/matrix_out_mk2.html">Matrix Out</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../matrix/matrix_track_to.html">Matrix Track To</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../matrix/shear.html">Matrix Shear</a></li>
-</ul>
-</details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../quaternion/quaternion_index.html">Quaternion</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../quaternion/quaternion_in_mk2.html">Quaternion In</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../quaternion/quaternion_math.html">Quaternion Math</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../quaternion/quaternion_out_mk2.html">Quaternion Out</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../quaternion/rotation_difference.html">Rotation difference</a></li>
-</ul>
-</details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../color/color_index.html">Color</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../color/color_in_mk1.html">Color In</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../color/color_input.html">Color Input</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../color/color_mix.html">Color Mix</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../color/color_out_mk1.html">Color Out</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../color/color_ramp.html">Color Ramp</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../color/formula_color.html">Color by Formula</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../color/texture_evaluate_mk2.html">Texture Evaluate</a></li>
-</ul>
-</details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../logic/logic_index.html">Logic</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../logic/custom_switcher.html">Custom switcher</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../logic/evolver.html">Evolver</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../logic/genes_holder.html">Genes Holder</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../logic/input_switch_mod.html">Input Switch</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../logic/logic_node.html">Logic Functions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../logic/loop_in.html">Loop In</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../logic/loop_out.html">Loop Out</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../logic/neuro_elman.html">Neuro Elman 1 Layer</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../logic/range_switch.html">Range Switch</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../logic/switch_MK2.html">Switch</a></li>
-</ul>
-</details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../list_main/list_main_index.html">List Main</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../list_main/constant.html">Constant List</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../list_main/decompose.html">List Decompose</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../list_main/delete_levels.html">List Delete Levels</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../list_main/func.html">List Math</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../list_main/index.html">List Index</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../list_main/join.html">List Join</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../list_main/length.html">List Length</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../list_main/match.html">List Match</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../list_main/statistics.html">List Statistics</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../list_main/sum_mk2.html">List Summa</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../list_main/zip.html">List Zip</a></li>
-</ul>
-</details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../list_struct/list_struct_index.html">List Structure</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../list_struct/flip.html">List Flip</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../list_struct/item.html">List Item</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../list_struct/item_insert.html">List Item Insert</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../list_struct/levels.html">List Levels</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../list_struct/repeater.html">List Repeater</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../list_struct/reverse.html">List Reverse</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../list_struct/shift_mk2.html">List Shift</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../list_struct/shuffle.html">List Shuffle</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../list_struct/slice.html">List Slice</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../list_struct/slice_lite.html">List Slice Lite</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../list_struct/sort.html">List Sort</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../list_struct/split.html">List Split</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../list_struct/start_end.html">List First &amp; Last</a></li>
-</ul>
-</details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../list_masks/list_masks_index.html">List Masks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../list_masks/calc_mask.html">Calculate Mask</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../list_masks/index_to_mask.html">Index To Mask</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../list_masks/mask.html">List Mask (Out)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../list_masks/mask_convert.html">Mask Converter</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../list_masks/mask_join.html">List Mask Join (In)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../list_masks/mask_to_index.html">Mask To Index</a></li>
-</ul>
-</details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../list_mutators/list_mutators_index.html">List Mutators</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../list_mutators/combinatorics.html">Combinatorics</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../list_mutators/filter_empty_lists.html">Filter Empty Objects</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../list_mutators/find_closest.html">Find Closest Value</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../list_mutators/modifier.html">List Modifier</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../list_mutators/multi_cache.html">Multi Cache</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../list_mutators/polygon_sort.html">Polygon Sort</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../list_mutators/unique_items.html">Unique Items</a></li>
-</ul>
-</details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../dictionary/dictionary_index.html">Dictionary</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../dictionary/dictionary_in.html">Dictionary In</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../dictionary/dictionary_out.html">Dictionary Out</a></li>
-</ul>
-</details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../viz/viz_index.html">Viz</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../viz/console_node.html">Console Node</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../viz/dupli_instances_lite.html">Dupli Instancer Lite</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../viz/dupli_instances_mk5.html">Dupli Instancer</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../viz/empty_out.html">Empty out</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../viz/geo_nodes_viewer.html">Geo Nodes Viewer</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../viz/instancer.html">Obj instancer</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../viz/light_viewer.html">Light viewer</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../viz/mesh_viewer.html">Mesh Viewer</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../viz/polyline_viewer.html">Polyline Viewer</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../viz/vd_matrix.html">Matrix View</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../viz/viewer_2d.html">Viewer 2D</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../viz/viewer_bezier_curve.html">Bezier Curve Out</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../viz/viewer_curves.html">Curve Viewer</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../viz/viewer_draw_curve.html">Viewer Draw Curve</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../viz/viewer_draw_mk4.html">Viewer Draw</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../viz/viewer_draw_surface.html">Viewer Draw Surface</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../viz/viewer_gp.html">GreasePencil Viewer</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../viz/viewer_idx28.html">Viewer Index+</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../viz/viewer_metaball.html">Metaball Out</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../viz/viewer_nurbs_curve.html">NURBS Curve Out</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../viz/viewer_nurbs_surface.html">NURBS Surface Out</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../viz/viewer_skin.html">Skin Mesher</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../viz/viewer_texture.html">Texture Viewer</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../viz/viewer_texture_lite.html">Texture Viewer Lite</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../viz/viewer_typography.html">Typography Viewer</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../viz/viewer_waveform_output.html">Viewer Waveform</a></li>
-</ul>
-</details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../text/text_index.html">Text</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../text/datetime_strings.html">Datetime Strings</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../text/debug_print.html">Debug Print</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../text/gtext.html">GText</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../text/note.html">Note</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../text/shape.html">Data Shape</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../text/simple_text.html">Simple Text</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../text/stethoscope_v28.html">Stethoscope</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../text/string_tools.html">Strings Tools</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../text/text_in_mk2.html">Text In</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../text/text_out_mk2.html">Text Out</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../text/viewer_text_mk3.html">Viewer Text</a></li>
-</ul>
-</details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../script/script_index.html">Script</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../script/formula_interpolate.html">Formula Interpolate</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../script/formula_mk5.html">Formula Node Mk4</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../script/generative_art.html">Generative Art</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../script/mesh_eval.html">Mesh Expression Node</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../script/multi_exec.html">Exec Node Mod</a></li>
 
-<li class="toctree-l2"><a class="reference internal" href="../script/numexpr_node.html">Num Expression</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../script/profile_mk3.html">Profile Parametric Node</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../script/script1_lite.html">Script Node Lite</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../script/sn_functor_b.html">SN Functor B</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../script/topology_simple.html">Topology Simple</a></li>
-</ul>
-</details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../scene/scene_index.html">Scene</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../scene/FCurve_in.html">FCurve Input</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../scene/cache.html">Cache</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../scene/collection_picker_mk1.html">Collection Picker mk1</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../scene/curve_in.html">Curve Input</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../scene/frame_info_mk2.html">Frame Info</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../scene/get_objects_data.html">Get Objects Data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../scene/node_remote_mk2.html">Node Remote</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../scene/obj_remote_mk2.html">Object Remote (Control)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../scene/objects_in_lite.html">Objects in Lite</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../scene/particles_MK2.html">Particles MK2</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../scene/selection_grabber_lite.html">Selection Grabber Lite</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../scene/timer.html">Timer</a></li>
-</ul>
-</details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../object_nodes/object_nodes_index.html">Object</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../object_nodes/armature_analyzer.html">Armature Props</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../object_nodes/assign_materials.html">Assign Materials List</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../object_nodes/copy_modifiers.html">Copy Modifiers Node</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../object_nodes/get_asset_properties_mk2.html">Object ID Selector</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../object_nodes/getsetprop_mk2.html">Get Property / Set Property</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../object_nodes/lattice_analyzer.html">Lattice Props</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../object_nodes/material_index.html">Set Material Index</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../object_nodes/named_attribute.html">Named Attribute</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../object_nodes/points_from_uv_to_mesh.html">Find UV Coord on Surface</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../object_nodes/sample_uv_color.html">Sample UV Texture Color on Mesh</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../object_nodes/select_mesh_verts.html">Select Object Vertices</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../object_nodes/set_collection.html">Set Collection</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../object_nodes/set_custom_uv_map.html">Set Custom UV Map</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../object_nodes/set_loop_normals.html">Set Loop Normals</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../object_nodes/set_mesh_attribute.html">Set Mesh Attribute</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../object_nodes/weightsmk2.html">Vertex Group Weights</a></li>
-</ul>
-</details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../layout/layout_index.html">Layout</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../layout/converter.html">Socket Converter</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../layout/wifi_in.html">Wifi In &amp; Out</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../layout/wifi_out.html">Wifi In &amp; Out</a></li>
-</ul>
-</details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../network/network_index.html">Network</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../network/file_path.html">File Path</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../network/udp_client.html">UDP Client</a></li>
-</ul>
-</details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../pulga_physics/pulga_physics_index.html">Pulga Physics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../pulga_physics/pulga_align_force.html">Pulga Align Force</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../pulga_physics/pulga_angle_force.html">Pulga Angle Force</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../pulga_physics/pulga_attraction_force.html">Pulga Attraction Force</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../pulga_physics/pulga_attractors_force_mk2.html">Pulga Attractors Force</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../pulga_physics/pulga_boundaries_force.html">Pulga Boundaries Force</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../pulga_physics/pulga_collision_force.html">Pulga Collision Force</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../pulga_physics/pulga_drag_force.html">Pulga Drag Force</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../pulga_physics/pulga_fit_force.html">Pulga Fit Force</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../pulga_physics/pulga_inflate_force.html">Pulga Inflate Force</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../pulga_physics/pulga_obstacle_force.html">Pulga Obstacle Force</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../pulga_physics/pulga_physics_lite.html">Pulga Physics Lite</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../pulga_physics/pulga_physics_solver.html">Pulga Physics Solver</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../pulga_physics/pulga_pin_force.html">Pulga Pin Force</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../pulga_physics/pulga_random_force.html">Pulga Random Force</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../pulga_physics/pulga_springs_force.html">Pulga Springs Force</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../pulga_physics/pulga_timed_force.html">Pulga Timed Force</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../pulga_physics/pulga_vector_force.html">Pulga Vector Force</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../pulga_physics/pulga_vortex_force.html">Pulga Vortex Force</a></li>
-</ul>
-</details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../exchange/exchange_index.html">Exchange</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../exchange/FCStd_read.html">FCStd Read (Exchange)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../exchange/FCStd_read_mod.html">FCStd Read Mod (Exchange)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../exchange/FCStd_sketch.html">FCStd Sketch (Exchange)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../exchange/FCStd_spreadsheet.html">FCStd Spreadsheet (Exchange)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../exchange/FCStd_write.html">FCStd Write (Exchange)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../exchange/bezier_in.html">Bezier Input</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../exchange/export_rw3dm_json.html">NURBS to JSON</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../exchange/gcode_exporter.html">Export G-code</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../exchange/import_rw3dm_json.html">JSON to NURBS</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../exchange/nurbs_in.html">NURBS Input</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../exchange/receive_from_sorcar.html">Receive From Sorcar</a></li>
-</ul>
-</details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../svg/svg_index.html">SVG</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../svg/circle_svg.html">Circle SVG</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../svg/dimensions_svg_mk2.html">Dimensions SVG</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../svg/fill_stroke_mk2.html">Fill / Stroke SVG</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../svg/group_svg.html">Group SVG</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../svg/mesh_svg.html">Mesh SVG</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../svg/path_svg_mk2.html">Path SVG</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../svg/pattern_svg.html">Pattern SVG</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../svg/svg_document.html">SVG Document</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../svg/text_svg.html">Text SVG</a></li>
-</ul>
-</details></li>
-</ul>
-</div>
+    </div>
 </nav></div>
     </div>
   
   
   <div class="sidebar-primary-items__end sidebar-primary__section">
-      <div class="sidebar-primary-item">
-<div id="ethical-ad-placement"
-      class="flat"
-      data-ea-publisher="readthedocs"
-      data-ea-type="readthedocs-sidebar"
-      data-ea-manual="true">
-</div></div>
   </div>
+  
+  <div id="rtd-footer-container"></div>
 
 
       </div>
@@ -1111,6 +270,9 @@
       <main id="main-content" class="bd-main" role="main">
         
         
+
+<div class="sbt-scroll-pixel-helper"></div>
+
           <div class="bd-content">
             <div class="bd-article-container">
               
@@ -1119,34 +281,135 @@
   
     <div class="header-article-items__start">
       
-        <div class="header-article-item">
-
-<nav aria-label="Breadcrumb" class="d-print-none">
-  <ul class="bd-breadcrumbs">
-    
-    <li class="breadcrumb-item breadcrumb-home">
-      <a href="../../main.html" class="nav-link" aria-label="Home">
-        <i class="fa-solid fa-home"></i>
-      </a>
-    </li>
-    
-    <li class="breadcrumb-item"><a href="../../nodes.html" class="nav-link">Nodes</a></li>
-    
-    
-    <li class="breadcrumb-item"><a href="surface_index.html" class="nav-link">Surface</a></li>
-    
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Surface Lerp</span></li>
-  </ul>
-</nav>
-</div>
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
       
     </div>
   
   
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/nodes/surface/surface_lerp.rst" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.rst</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
 </div>
 </div>
               
               
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Surface Lerp</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functionality">Functionality</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs">Inputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#outputs">Outputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-of-usage">Example of usage</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
               
                 
 <div id="searchbox"></div>
@@ -1215,6 +478,7 @@ surfaces).</p></li>
 
                 </article>
               
+
               
               
               
@@ -1247,17 +511,14 @@ surfaces).</p></li>
             
             
               
-                <dialog id="pst-secondary-sidebar-modal"></dialog>
-                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
 
   <div class="sidebar-secondary-item">
-<div
-    id="pst-page-navigation-heading-2"
-    class="page-toc tocsection onthispage">
-    <i class="fa-solid fa-list"></i> On this page
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
   </div>
-  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+  <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functionality">Functionality</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs">Inputs</a></li>
@@ -1266,37 +527,24 @@ surfaces).</p></li>
 </ul>
   </nav></div>
 
-  <div class="sidebar-secondary-item">
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="../../_sources/nodes/surface/surface_lerp.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div></div>
-
 </div></div>
               
             
           </div>
           <footer class="bd-footer-content">
             
-          </footer>
-        
-      </main>
-    </div>
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Author name not set
+</p>
+
   </div>
   
-  <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
-<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
-
-  <footer class="bd-footer">
-<div class="bd-footer__inner bd-page-width">
-  
-    <div class="footer-items__start">
-      
-        <div class="footer-item">
+  <div class="footer-item">
+    
 
   <p class="copyright">
     
@@ -1304,32 +552,30 @@ surfaces).</p></li>
       <br/>
     
   </p>
-</div>
-      
-        <div class="footer-item">
 
-  <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
-    <br/>
-  </p>
-</div>
-      
-    </div>
+  </div>
   
+  <div class="footer-item">
+    
+  </div>
   
-  
-    <div class="footer-items__end">
-      
-        <div class="footer-item">
-<p class="theme-version">
-  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
-  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
-</p></div>
-      
-    </div>
+  <div class="footer-item">
+    
+  </div>
   
 </div>
+          </footer>
+        
 
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
   </footer>
   </body>
 </html>
