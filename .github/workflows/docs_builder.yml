@@ -15,7 +15,7 @@ jobs:
         run: pip install -U Sphinx
       
       - name: Install Theme
-        run: pip install sphinx-rtd-theme
+        run: pip install sphinx-rtd-theme pydata-sphinx-theme
         
       - name: Checkout master
         uses: actions/checkout@master

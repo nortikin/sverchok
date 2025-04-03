@@ -126,13 +126,15 @@ pygments_style = 'sphinx'
 # ------ Readthedocs -------------------------------------------
 
 #import sphinx_rtd_theme
-#html_theme = 'sphinx_rtd_theme'
-import alabaster
-html_theme = 'alabaster'
+import sphinx_readable_theme
+html_theme = 'pydata_sphinx_theme'
+#import alabaster
+#html_theme = 'renku'
 
 # Add any paths that contain custom themes here, relative to this directory.
 #html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
-html_theme_path = [alabaster.get_path()]
+#html_theme_path = [alabaster.get_path()]
+html_theme_path = [sphinx_readable_theme.get_html_theme_path()]
 
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
@@ -143,7 +145,7 @@ html_theme_path = [alabaster.get_path()]
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
-#html_theme_options = {}
+#html_theme_options = { "show_nav_level": 2 }
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
@@ -181,6 +183,12 @@ html_use_smartypants = True
 
 # Custom sidebar templates, maps document names to template names.
 #html_sidebars = {}
+html_sidebars = {
+        'main': ['globaltoc.html']
+    }
+#html_sidebars = {
+#        '**': ['globaltoc.html']
+#        }
 
 # Additional templates that should be rendered to pages, maps page names to
 # template names.
