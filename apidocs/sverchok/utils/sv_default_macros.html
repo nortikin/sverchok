@@ -140,7 +140,7 @@ el.replaceWith(d);
     return {
         &#39;display_name&#39;: description,
         &#39;file&#39;: &#39;macro&#39;,
-        &#39;ident&#39;: [macro_handler, term]}    </code></pre>
+        &#39;ident&#39;: [macro_handler, term]}</code></pre>
 </details>
 <div class="desc"></div>
 </dd>
@@ -237,7 +237,7 @@ el.replaceWith(d);
             vd_node = nodes.new(&#39;SvViewerDrawMk4&#39;)
             vd_node.location = obj_in_node.location.x + 180, obj_in_node.location.y
 
-            # this macro could detect specifically if the node found edges or faces or both... 
+            # this macro could detect specifically if the node found edges or faces or both...
             links.new(obj_in_node.outputs[0], vd_node.inputs[0])
             links.new(obj_in_node.outputs[2], vd_node.inputs[2])
             links.new(obj_in_node.outputs[8], vd_node.inputs[3])
@@ -246,7 +246,7 @@ el.replaceWith(d);
             objdata_macro_one(context, operator, term, nodes, links)
 
         elif term == &#34;3dcursor_to_vector_in&#34;:
-            
+
             MOUSE_X, MOUSE_Y = context.space_data.cursor_location
             cursor = context.scene.cursor.location
 
@@ -258,7 +258,7 @@ el.replaceWith(d);
 
             def flattened(matrix):
                 return list(matrix[0]) + list(matrix[1]) + list(matrix[2]) + list(matrix[3])
-            
+
             MOUSE_X, MOUSE_Y = context.space_data.cursor_location
             matrix = context.scene.cursor.matrix
 
@@ -374,7 +374,10 @@ el.replaceWith(d);
             bpy.ops.node.sv_load_archived_blend_url()
 
         elif term == &#39;blend 2 zip&#39;:
-            bpy.ops.node.blend_to_archive(archive_ext=&#34;zip&#34;)</code></pre>
+            bpy.ops.node.blend_to_archive(archive_ext=&#34;zip&#34;)
+
+        elif term == &#39;straighten&#39;:
+            streighten_macros(context, operator, term, nodes, links)</code></pre>
 </details>
 <div class="desc"></div>
 <h3>Static methods</h3>
