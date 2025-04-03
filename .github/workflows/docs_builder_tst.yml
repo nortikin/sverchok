@@ -13,7 +13,7 @@ jobs:
         run: pip install -U Sphinx==7.4.1
       
       - name: Install Theme
-        run: pip install sphinx-rtd-theme pydata-sphinx-theme
+        run: pip install sphinx-rtd-theme shpinx-book-theme
         
       - name: Checkout master
         uses: actions/checkout@master
