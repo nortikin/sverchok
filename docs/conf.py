@@ -126,7 +126,6 @@ pygments_style = 'sphinx'
 # ------ Readthedocs -------------------------------------------
 
 #import sphinx_rtd_theme
-import sphinx_readable_theme
 html_theme = 'pydata_sphinx_theme'
 #import alabaster
 #html_theme = 'renku'
