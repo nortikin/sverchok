@@ -133,7 +133,6 @@ html_theme = 'pydata_sphinx_theme'
 # Add any paths that contain custom themes here, relative to this directory.
 #html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 #html_theme_path = [alabaster.get_path()]
-html_theme_path = [sphinx_readable_theme.get_html_theme_path()]
 
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
