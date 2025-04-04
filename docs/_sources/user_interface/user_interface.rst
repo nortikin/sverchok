@@ -29,6 +29,7 @@ There are several ways to create nodes in Sverchok:
     Input socket menus <input_menus>
     Output socket menus <socket_menus>
     node_shields
+    preferences
     shortcuts
 
 

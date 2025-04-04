@@ -1,0 +1,623 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Preferences &#8212; Sverchok 1, 2, 0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=337302ae" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../_static/documentation_options.js?v=80221c76"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'user_interface/preferences';</script>
+    <link rel="icon" href="../_static/sverchock_icon_b.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Shortcuts" href="shortcuts.html" />
+    <link rel="prev" title="Node Shields" href="node_shields.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../main.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/title_big_b.svg" class="logo__image only-light" alt="Sverchok 1, 2, 0 documentation - Home"/>
+    <script>document.write(`<img src="../_static/title_big_b.svg" class="logo__image only-dark" alt="Sverchok 1, 2, 0 documentation - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../introduction/introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation/installation.html">Installation</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="user_interface.html">User interface</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="panels.html">All panels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="input_menus.html">Input socket menus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="socket_menus.html">Output socket menus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="node_shields.html">Node Shields</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Preferences</a></li>
+<li class="toctree-l2"><a class="reference internal" href="shortcuts.html">Shortcuts</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../tree_evaluation_system.html">Node tree evaluation system</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_structure/data_structure_index.html">Data structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../nodes.html">Nodes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/celling.html">Celling design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing/contributing_to_sverchok.html">Contributing to sverchok</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/user_interface/preferences.rst" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.rst</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Preferences</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#general">General</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#menu-presets">Menu Presets</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#export-to-gist">Export to Gist</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#other">Other</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#development">Development</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#logging">Logging</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#node-defaults">Node Defaults</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#extra-nodes">Extra Nodes</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#theme">Theme</a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="preferences">
+<h1>Preferences<a class="headerlink" href="#preferences" title="Link to this heading">#</a></h1>
+<p>Sverchok preferences are located in general Blender preferences dialog (Edit -&gt;
+Preferences). Select <strong>Add-ons</strong> tab in the left pane, and then unroll
+<strong>Sverchok</strong> roll (you can use the search bar in the top area of preferences
+dialog, if you have many add-ons).</p>
+<p>Sverchok preferences are organized into several tabs.</p>
+<section id="general">
+<h2>General<a class="headerlink" href="#general" title="Link to this heading">#</a></h2>
+<section id="menu-presets">
+<h3>Menu Presets<a class="headerlink" href="#menu-presets" title="Link to this heading">#</a></h3>
+<p>There are a lot of nodes in Sverchok, so the “Add Node” menu (Shift-A) is quite
+big. The structure of this menu can be discussed; different people suggested
+different variants over the time. Current default structure is what we had
+historically. However, one can customize it.</p>
+<p>Under <strong>General</strong> tab of Sverchok preferences, there are the following parameters:</p>
+<ul class="simple">
+<li><p><strong>Preset</strong>. Select a preset of menu structure to be used. The following options are available:</p>
+<ul>
+<li><p><strong>Default (index.yaml)</strong>. The default menu preset.</p></li>
+<li><p><strong>full_by_data_type.yaml (built-in)</strong>. Alternative menu structure, in which
+nodes are organized according to main type of data with which they are
+dealing: Mesh, Curves, Surfaces and so on. This variant uses more nested
+menu structures than the default one.</p></li>
+<li><p><strong>full_nortikin.yaml (built-in)</strong>. Another alternative menu structure, by Nortikin.</p></li>
+<li><p>Other options are available if you have custom menu presets. You can make a
+menu preset by copying one of <code class="docutils literal notranslate"><span class="pre">*.yaml</span></code> files from Sverchok distribution
+(see <code class="docutils literal notranslate"><span class="pre">menus/</span></code> directory), putting it into <code class="docutils literal notranslate"><span class="pre">datafiles/sverchok/menus</span></code>
+directory under your Blender settings directory (for example,
+<code class="docutils literal notranslate"><span class="pre">~/.config/blender/4.4/datafiles/sverchok/menus/</span></code> on Linux) and editing
+according to your wishes. Note that when nodes are added, removed or
+changed in Sverchok distribution, you will have to manually update your
+custom menu preset. On the other hand, in your custom preset you do not
+have to have all Sverchok nodes listed - only those which you are actually
+using; so your custom menu can be smaller and thus easier to use. If you
+think your preset is good, please consider contributing it into Sverchok
+distribution; then Sverchok developers will maintain it.</p></li>
+</ul>
+</li>
+<li><p><strong>Preset application mode</strong>. The following options are available:</p>
+<ul>
+<li><p><strong>Use preset file</strong>. Sverchok will directly use the selected preset file
+from Sverchok distribution. This is the default option.</p></li>
+<li><p><strong>Use local copy of preset file</strong>. Sverchok will create a copy of selected
+preset file in your <code class="docutils literal notranslate"><span class="pre">datafiles/sverchok/menus</span></code> directory and use that copy. You
+may edit that local copy manually if you wish. Note again that in such case
+you will have to manually update the preset file when nodes are added into
+Sverchok (or you can remove that edited file, so that Sverchok will
+overwrite it with a fresh copy from it’s distribution).</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="export-to-gist">
+<h3>Export to Gist<a class="headerlink" href="#export-to-gist" title="Link to this heading">#</a></h3>
+<p>Sverchok allows you to export your node tree setups to .json file, to be
+imported again. If you want, you may share it by use of any pastebin service,
+or by use of github’s gist service.</p>
+<p>To share your node trees, Sverchok has a function to automatically post
+exported json to gist.github.com service. This is a very nice and widely used
+feature, but since some time GitHub requires authentication for gist creation.
+Thus, to use this feature, you have to</p>
+<ul class="simple">
+<li><p>get GitHub account</p></li>
+<li><p>set up your GitHub account to enable automate gists creation</p></li>
+<li><p>set up Sverchok to tell it about your GitHub account.</p></li>
+</ul>
+<p>For more details, please visit <a class="reference external" href="https://github.com/nortikin/sverchok/wiki/Set-up-GitHub-account-for-exporting-node-trees-from-Sverchok">Wiki page</a>.</p>
+<p>This section contains the following parameters:</p>
+<ul class="simple">
+<li><p><strong>GitHub API token</strong>. The token to be used to access your GitHub accout to publish gists.</p></li>
+</ul>
+</section>
+<section id="other">
+<h3>Other<a class="headerlink" href="#other" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>Frame change handler</strong>. This defines the moment when exactly Sverchok node
+trees are re-evaluated when Blender frame is changed. The available options
+are:</p>
+<ul>
+<li><p><strong>Pre</strong> - re-evaluate node trees before frame change.</p></li>
+<li><p><strong>Post</strong> - re-evaluate node trees after frame change. This option is the default one.</p></li>
+<li><p><strong>None</strong> - do not automatically re-evaluate node trees on frame change.</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="development">
+<h3>Development<a class="headerlink" href="#development" title="Link to this heading">#</a></h3>
+<p>This section contains parameters which are useful if you want to develop or debug Sverchok.</p>
+<ul class="simple">
+<li><p><strong>Developer mode</strong>. If this parameter is checked, then there are some
+additional options available in Sverchok GUI, useful for Sverchok developers.
+Unchecked by default.</p></li>
+<li><p><strong>Ext Editor</strong>: a system command for Sverchok to use to launch text editor,
+when you press the <strong>Externally</strong> button under <strong>Edit Source</strong> in the node’s
+N panel. For example, <code class="docutils literal notranslate"><span class="pre">notepad</span></code> or <code class="docutils literal notranslate"><span class="pre">kate</span></code>. If you are not going to edit
+node sources, you do not have to fill this setting.</p></li>
+<li><p><strong>Src Directory</strong>. Path to Sverchok sources directory. If you are not going
+to edit node sources, you do not have to fill this setting.</p></li>
+</ul>
+</section>
+<section id="logging">
+<h3>Logging<a class="headerlink" href="#logging" title="Link to this heading">#</a></h3>
+<p>This section defines where Sverchok writes logs about what it does, and how
+complete should be those logs. Such logs are very useful when trying to locate
+errors in your node trees or in Sverchok itself.</p>
+<ul class="simple">
+<li><p><strong>Logging level</strong>. This defines which events are to be logged. The available options are:</p>
+<ul>
+<li><p><strong>Debug</strong>. Log all events, including debug messages.</p></li>
+<li><p><strong>Information</strong>. Log informational messages, warnings and errors, but do
+not write debug messages. This is the default option.</p></li>
+<li><p><strong>Warnings</strong>. Write only warnings and errors.</p></li>
+<li><p><strong>Errors</strong>. Write error messages only.</p></li>
+</ul>
+</li>
+<li><p><strong>Log to text buffer</strong>. If checked, Sverchok will write log into text buffer
+within current Blender file. The name of that buffer is specified in the
+<strong>Buffer name</strong> parameter (the default is <code class="docutils literal notranslate"><span class="pre">sverchok.log</span></code>).</p></li>
+<li><p><strong>Clear buffer at saving file</strong>. If checked, text buffer with log will be
+cleared when you are saving Blender file. Without that, the file may grow
+very big due to large amount of text in the log buffer. But you may clear
+that buffer manually if you want. Checked by default.</p></li>
+<li><p><strong>Log to file</strong>. If checked, Sverchok will write the log into file on disk.
+The path to log file is specified in the <strong>File Path</strong> parameter. By default,
+log file is located in your Blender settings directory, under
+<code class="docutils literal notranslate"><span class="pre">datafiles/sverchok/sverchok.log</span></code>. By default, logs are not written to file.</p></li>
+<li><p><strong>Log to console</strong>. If checked, log events will be written to Blender’s
+standard output (system console). Note that events about Sverchok
+initialization are always written to console. Checked by default.</p></li>
+</ul>
+</section>
+<section id="node-defaults">
+<h3>Node Defaults<a class="headerlink" href="#node-defaults" title="Link to this heading">#</a></h3>
+<p>This tab contains default settings for some specific nodes:</p>
+<ul class="simple">
+<li><p><strong>Stethoscope</strong> / <strong>scale</strong>. Scale of text which <strong>Stethoscope</strong> node writes in
+the node editor. The default value is 1.0.</p></li>
+<li><p><strong>Index Viewer</strong> / <strong>scale</strong>. Scale of text which <strong>Index Viewer</strong> node
+writes in 3D view. The default value is 1.0.</p></li>
+</ul>
+</section>
+<section id="extra-nodes">
+<h3>Extra Nodes<a class="headerlink" href="#extra-nodes" title="Link to this heading">#</a></h3>
+<p>Sverchok can use several external libraries, that provide some mathematical or
+other functions. We call such libraries “Dependencies”. When these libraries
+are available, you will be able to use much more nodes in Sverchok. If you do
+not need all these features, you can skip installation of dependencies, or
+install only some of them.</p>
+<p>One thing you will have to install anyway if you want to use these external
+libraries is <a class="reference external" href="https://pypi.org/project/pip/">pip</a>. All libraries are installed with it.</p>
+<p>You can find more information about dependencies on the <a class="reference external" href="https://github.com/nortikin/sverchok/wiki/Dependencies">Dependencies wiki page</a>.</p>
+<p>This tab contains a list of dependency libraries that can be used by Sverchok.
+For each library, it is indicated whether it is installed or not; there is a
+button to visit library’s website. For each package that can be installed by
+<strong>pip</strong>, there is <strong>Install with PIP</strong> button.</p>
+</section>
+<section id="theme">
+<h3>Theme<a class="headerlink" href="#theme" title="Link to this heading">#</a></h3>
+<p>This tab allows you to configure colors which are assigned to different types
+of nodes by default.</p>
+</section>
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="node_shields.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Node Shields</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="shortcuts.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Shortcuts</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#general">General</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#menu-presets">Menu Presets</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#export-to-gist">Export to Gist</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#other">Other</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#development">Development</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#logging">Logging</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#node-defaults">Node Defaults</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#extra-nodes">Extra Nodes</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#theme">Theme</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Author name not set
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2014...2025, sverchok team.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
