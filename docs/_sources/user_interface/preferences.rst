@@ -12,6 +12,9 @@ Sverchok preferences are organized into several tabs.
 General
 =======
 
+.. image:: https://github.com/user-attachments/assets/664e5b0e-4070-469d-8e04-67fd60157025
+  :target: https://github.com/user-attachments/assets/664e5b0e-4070-469d-8e04-67fd60157025
+
 Menu Presets
 ------------
 
@@ -133,7 +136,10 @@ errors in your node trees or in Sverchok itself.
   initialization are always written to console. Checked by default.
 
 Node Defaults
--------------
+=============
+
+.. image:: https://github.com/user-attachments/assets/736bb5a5-3a9e-4735-a282-219ea8947d48
+  :target: https://github.com/user-attachments/assets/736bb5a5-3a9e-4735-a282-219ea8947d48
 
 This tab contains default settings for some specific nodes:
 
@@ -143,7 +149,10 @@ This tab contains default settings for some specific nodes:
   writes in 3D view. The default value is 1.0.
 
 Extra Nodes
------------
+===========
+
+.. image:: https://github.com/user-attachments/assets/0d7f853d-4b8f-4e87-83c9-4f75f2e4c105
+  :target: https://github.com/user-attachments/assets/0d7f853d-4b8f-4e87-83c9-4f75f2e4c105
 
 Sverchok can use several external libraries, that provide some mathematical or
 other functions. We call such libraries "Dependencies". When these libraries
@@ -163,7 +172,10 @@ button to visit library's website. For each package that can be installed by
 **pip**, there is **Install with PIP** button.
 
 Theme
------
+=====
+
+.. image:: https://github.com/user-attachments/assets/0b05e780-6965-4c41-9d3b-8e6923e5285e
+  :target: https://github.com/user-attachments/assets/0b05e780-6965-4c41-9d3b-8e6923e5285e
 
 This tab allows you to configure colors which are assigned to different types
 of nodes by default.
