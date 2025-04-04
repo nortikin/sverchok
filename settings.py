@@ -315,7 +315,7 @@ class SverchokPreferences(AddonPreferences):
 
     frame_change_mode: EnumProperty(
         items=frame_change_modes,
-        name="Frame change",
+        name="Frame change handler",
         description="Select frame change handler",
         default="POST",
         update=set_frame_change)
@@ -479,9 +479,6 @@ class SverchokPreferences(AddonPreferences):
         else:
             menu_col.prop(self, 'menu_preset_usage', text='')
 
-        col1.prop(self, "external_editor", text="Ext Editor")
-        col1.prop(self, "real_sverchok_path", text="Src Directory")
-
         box = col1.box()
         box.label(text="Export to Gist")
         box.prop(self, "github_token")
@@ -489,14 +486,17 @@ class SverchokPreferences(AddonPreferences):
         box.label(text="For more information, visit " + "https://github.com/nortikin/sverchok/wiki/Set-up-GitHub-account-for-exporting-node-trees-from-Sverchok")
         box.operator("node.sv_github_api_token_help", text="Visit documentation page")
 
+        box = col1.box()
+        box.label(text="Other")
+        box.prop(self, "frame_change_mode", expand=False)
+
         col2 = col_split.split().column()
-        col2.label(text="Frame change handler:")
-        col2.row().prop(self, "frame_change_mode", expand=True)
-        col2.separator()
 
         col2box = col2.box()
-        col2box.label(text="Debug:")
+        col2box.label(text="Development:")
         col2box.prop(self, "developer_mode")
+        col2box.prop(self, "external_editor", text="Ext Editor")
+        col2box.prop(self, "real_sverchok_path", text="Src Directory")
 
         log_box = col2.box()
         log_box.label(text="Logging:")
