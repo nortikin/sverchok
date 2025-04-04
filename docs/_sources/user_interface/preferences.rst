@@ -12,8 +12,8 @@ Sverchok preferences are organized into several tabs.
 General
 =======
 
-.. image:: https://github.com/user-attachments/assets/664e5b0e-4070-469d-8e04-67fd60157025
-  :target: https://github.com/user-attachments/assets/664e5b0e-4070-469d-8e04-67fd60157025
+.. image:: https://github.com/user-attachments/assets/e1b1673c-cd08-410e-8e73-8dbc9a03fbdf
+  :target: https://github.com/user-attachments/assets/e1b1673c-cd08-410e-8e73-8dbc9a03fbdf
 
 Menu Presets
 ------------
