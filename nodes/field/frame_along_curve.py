@@ -1,8 +1,7 @@
 import numpy as np
 
 import bpy
-from mathutils import Quaternion
-from bpy.props import EnumProperty, IntProperty, FloatProperty
+from bpy.props import EnumProperty, IntProperty
 from mathutils import Matrix
 
 from sverchok.node_tree import SverchCustomTreeNode

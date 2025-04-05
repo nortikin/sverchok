@@ -125,25 +125,20 @@ pygments_style = 'sphinx'
 
 # ------ Readthedocs -------------------------------------------
 
-#import sphinx_rtd_theme
-#html_theme = 'sphinx_rtd_theme'
-import zerovm_sphinx_theme
-html_theme = 'zerovm'
+html_theme = 'sphinx_book_theme'
 
 # Add any paths that contain custom themes here, relative to this directory.
 #html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
-html_theme_path = [zerovm_sphinx_theme.theme_path]
 
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-#html_theme = 'default'
 #html_theme = "sphinx_rtd_theme"
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
-#html_theme_options = {}
+html_theme_options = { "collapse_navbar": True }
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
@@ -164,7 +159,8 @@ html_favicon = "../ui/logo/ico/sverchock_icon_b.ico"
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-# html_static_path = ['_static']
+html_static_path = ['_static']
+html_css_files = ["custom.css"]
 
 # Add any extra paths that contain custom files (such as robots.txt or
 # .htaccess) here, relative to this directory. These files are copied
@@ -180,7 +176,7 @@ html_favicon = "../ui/logo/ico/sverchock_icon_b.ico"
 html_use_smartypants = True
 
 # Custom sidebar templates, maps document names to template names.
-#html_sidebars = {}
+html_sidebars = {}
 
 # Additional templates that should be rendered to pages, maps page names to
 # template names.

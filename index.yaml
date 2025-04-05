@@ -224,6 +224,8 @@
     - SvExDecomposeVectorFieldNode
     - SvExScalarFieldPointNode
     - SvAttractorFieldNodeMk2
+    - SvTwistFieldNode
+    - SvTaperFieldNode
     - SvRotationFieldNode
     - SvExImageFieldNode
     - SvMeshSurfaceFieldNode
@@ -235,6 +237,7 @@
     - ---
     - SvExScalarFieldMathNode
     - SvExVectorFieldMathNode
+    - SvVectorFieldFilterNode
     - SvScalarFieldCurveMapNode
     - SvExFieldDiffOpsNode
     - SvScalarFieldCurvatureNode

@@ -13,7 +13,8 @@ from sverchok.utils.curve.splines import SvSplineCurve
 from sverchok.utils.curve.algorithms import SvCurveOnSurface, SvCurveLengthSolver
 from sverchok.utils.surface.algorithms import rotate_uv_vectors_on_surface
 from sverchok.utils.field.rbf import SvRbfVectorField
-from sverchok.utils.field.vector import SvBendAlongSurfaceField, SvVectorFieldComposition, SvPreserveCoordinateField
+from sverchok.utils.field.vector import SvBendAlongSurfaceField
+from sverchok.utils.field.vector_operations import SvVectorFieldComposition, SvPreserveCoordinateField
 from sverchok.utils.math import np_multiply_matrices_vectors, np_dot, np_vectors_angle
 from sverchok.utils.sv_logging import get_logger
 from sverchok.dependencies import scipy
@@ -421,7 +422,7 @@ class ExponentialMap:
         return make_rbf(self.orig_points, self.uv_points, **kwargs)
 
     def get_field(self, **kwargs):
-        bend = SvBendAlongSurfaceField(self.surface, axis=2, autoscale=True)
+        bend = SvBendAlongSurfaceField(self.surface, axis=2, autoscale=False)
         bend.u_bounds = self.surface.get_u_bounds()
         bend.v_bounds = self.surface.get_v_bounds()
         uv = self.get_uv_field(**kwargs)
