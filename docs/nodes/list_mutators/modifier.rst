@@ -46,7 +46,7 @@ Behaviour
 |                      |          |   output = [8,7,6,5,4,3,1,0]                                             |
 |                      |          |                                                                          |
 +----------------------+----------+--------------------------------------------------------------------------+
-| Normalize            | unary    | scales down the values in the list to the range ``-1.0 .. 1.0``          |
+| Normalize            | unary    | scales down the values in the list to the range ``0 .. 1.0``             |
 +----------------------+----------+--------------------------------------------------------------------------+
 | Accumulating Sum     | unary    | see ``itertools.accumulate`` ::                                          |
 |                      |          |                                                                          |
