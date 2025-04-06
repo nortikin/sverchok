@@ -232,7 +232,10 @@ class SvGeoNodesViewerNode(
         props = zip(*props) if props else fixed_iter([], obj_num, [])
 
         gn_tree = BlTree(self.gn_tree) if self.gn_tree else None
-        gn_inputs = gn_tree and {s.identifier: s for s in self.gn_tree.inputs[1:]}
+        if bpy.app.version>=(4,0,0):
+            gn_inputs = gn_tree and {s.from_socket.identifier: s.from_socket for s in [s.from_socket for s in self.gn_tree.links if s.from_node.type=='GROUP_INPUT'][1:]}
+        else:
+            gn_inputs = gn_tree and {s.identifier: s for s in self.gn_tree.inputs[1:]}
 
         if self.gn_tree is None:
             for obj in objs:
