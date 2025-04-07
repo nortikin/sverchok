@@ -71,9 +71,10 @@ def process_rst(path, args, pas):
             rst.write(output)
 
 def is_excluded(args, name):
-    for pattern in args.exclude:
-        if fnmatch.fnmatch(name, pattern):
-            return True
+    for item in name.split('/'):
+        for pattern in args.exclude:
+            if fnmatch.fnmatch(item, pattern):
+                return True
     return False
 
 def iterate_files(args):
