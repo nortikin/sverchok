@@ -21,6 +21,7 @@ class SvNurbsMaths(object):
     other curves.* and surfaces.* modules.
     """
     NATIVE = 'NATIVE'
+    NATIVE_BEZIER = 'NATIVE_BEZIER'
     GEOMDL = 'GEOMDL'
     FREECAD = 'FREECAD'
 

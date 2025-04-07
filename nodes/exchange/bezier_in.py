@@ -14,7 +14,8 @@ from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
 from sverchok.data_structure import updateNode, zip_long_repeat, split_by_count
 from sverchok.utils.curve.algorithms import concatenate_curves
 from sverchok.utils.curve.bezier import SvCubicBezierCurve
-
+from sverchok.utils.nurbs_common import SvNurbsMaths
+from sverchok.utils.curve.nurbs import SvNurbsCurve
 
 class SvBezierInCallbackOp(bpy.types.Operator, SvGenericNodeLocator):
 
@@ -65,6 +66,17 @@ class SvBezierInNode(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
         description = "If checked, join Bezier segments of the curve into a single Curve object; otherwise, output a separate Curve object for each segment",
         default = True,
         update = updateNode)
+
+    implementations = []
+    implementations.append(
+        (SvNurbsMaths.NATIVE, "Sverchok", "Sverchok built-in implementation", 0))
+    implementations.append(
+        (SvNurbsMaths.NATIVE_BEZIER, "Sverchok Bezier", "Sverchok built-in implementation with Bezier segments", 1))
+
+    implementation : EnumProperty(
+            name = "Implementation",
+            items=implementations,
+            update = updateNode)
 
     def sv_init(self, context):
         self.outputs.new('SvCurveSocket', 'Curves')
@@ -127,6 +139,7 @@ class SvBezierInNode(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
 
         self.wrapper_tracked_ui_draw_op(row, SvBezierInCallbackOp.bl_idname, text=op_text)
 
+        layout.prop(self, 'implementation', text='')
         layout.prop(self, 'sort', text='Sort', toggle=False)
         layout.prop(self, 'apply_matrix', toggle=False)
         layout.prop(self, 'concat_segments', toggle=False)
@@ -157,7 +170,9 @@ class SvBezierInNode(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
         if self.concat_segments:
             tilt_values = [p.tilt for p in spline.bezier_points]
             radius_values = [p.radius for p in spline.bezier_points]
-            return points, tilt_values, radius_values, concatenate_curves(segments)
+            curve = concatenate_curves(segments)
+            curve = SvNurbsCurve.to_nurbs(curve, implementation=self.implementation)
+            return points, tilt_values, radius_values, curve
         else:
             for p1, p2 in pairs:
                 tilt_values.append([p1.tilt, p2.tilt])

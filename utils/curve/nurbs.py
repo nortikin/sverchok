@@ -1548,6 +1548,18 @@ class SvNativeBSplineCurve(SvNativeNurbsCurve):
         self._concatenated = None
         self.__description__ = f"Native* NURBS (degree={degree}, pts={len(control_points)})"
 
+    @classmethod
+    def get_nurbs_implementation(cls):
+        return SvNurbsMaths.NATIVE_BEZIER
+
+    @classmethod
+    def build(cls, implementation, degree, knotvector, control_points, weights=None, normalize_knots=False):
+        knotvector = np.asarray(knotvector)
+        if sv_knotvector.is_clamped(knotvector, degree):
+            return SvNativeBSplineCurve(degree, knotvector, control_points, weights=weights, normalize_knots=normalize_knots)
+        else:
+            return SvNativeNurbsCurve(degree, knotvector, control_points, weights=weights, normalize_knots=normalize_knots)
+
     @property
     def bezier_bounds(self):
         if self._bezier_bounds is None:
@@ -1681,6 +1693,7 @@ class SvNativeBSplineCurve(SvNativeNurbsCurve):
 #             return c1, c2
 
 SvNurbsMaths.curve_classes[SvNurbsMaths.NATIVE] = SvNativeNurbsCurve
+SvNurbsMaths.curve_classes[SvNurbsMaths.NATIVE_BEZIER] = SvNativeBSplineCurve
 if geomdl is not None:
     SvNurbsMaths.curve_classes[SvNurbsMaths.GEOMDL] = SvGeomdlCurve
 
