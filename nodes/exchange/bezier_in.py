@@ -171,7 +171,8 @@ class SvBezierInNode(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
             tilt_values = [p.tilt for p in spline.bezier_points]
             radius_values = [p.radius for p in spline.bezier_points]
             curve = concatenate_curves(segments)
-            curve = SvNurbsCurve.to_nurbs(curve, implementation=self.implementation)
+            curve = curve.copy(implementation=self.implementation)
+            #curve = SvNurbsCurve.to_nurbs(curve, implementation=self.implementation)
             return points, tilt_values, radius_values, curve
         else:
             for p1, p2 in pairs:
