@@ -13,6 +13,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.nodes_mixins.show_3d_properties import Show3DProperties
 from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
 from sverchok.data_structure import updateNode, zip_long_repeat, split_by_count
+from sverchok.utils.nurbs_common import SvNurbsMaths
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.surface.nurbs import SvNurbsSurface
@@ -108,6 +109,8 @@ class SvExNurbsInNode(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
             (SvNurbsCurve.GEOMDL, "Geomdl", "Geomdl (NURBS-Python) package implementation", 0))
     implementations.append(
         (SvNurbsCurve.NATIVE, "Sverchok", "Sverchok built-in implementation", 1))
+    implementations.append(
+        (SvNurbsMaths.NATIVE_BEZIER, "Sverchok Bezier", "Sverchok built-in implementation with Bezier segments", 2))
 
     implementation : EnumProperty(
             name = "Implementation",
@@ -179,7 +182,8 @@ class SvExNurbsInNode(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
         surface_knotvector_u = knots_u
         surface_knotvector_v = knots_v
 
-        new_surf = SvNurbsSurface.build(self.implementation,
+        implementation = SvNurbsMaths.NATIVE if self.implementation == SvNurbsMaths.NATIVE_BEZIER else self.implementation
+        new_surf = SvNurbsSurface.build(implementation,
                         surface_degree_u, surface_degree_v,
                         surface_knotvector_u, surface_knotvector_v,
                         control_points, surface_weights,

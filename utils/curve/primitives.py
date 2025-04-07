@@ -80,9 +80,6 @@ class SvLine(SvCurve):
         result = np.tile(tangent[np.newaxis].T, len(ts)).T
         return result
 
-    def extrude_along_vector(self, vector):
-        return SvPlane(self.point, self.direction, vector)
-
     def make_revolution_surface(self, point, direction, v_min, v_max, global_origin):
         return self.to_nurbs().make_revolution_surface(point, direction, v_min, v_max, global_origin)
     
@@ -147,18 +144,6 @@ class SvLine(SvCurve):
 
     def extrude_along_vector(self, vector):
         return self.to_nurbs().extrude_along_vector(vector)
-
-    def make_revolution_surface(self, point, direction, v_min, v_max, global_origin):
-        return self.to_nurbs().make_revolution_surface(point, direction, v_min, v_max, global_origin)
-    
-    def make_ruled_surface(self, curve2, vmin, vmax):
-        return self.to_nurbs().make_ruled_surface(curve2, vmin, vmax)
-
-    def extrude_to_point(self, point):
-        return self.to_nurbs().extrude_to_point(point)
-
-    def lerp_to(self, curve2, coefficient):
-        return self.to_nurbs().lerp_to(curve2, coefficient)
 
 class SvPointCurve(SvCurve):
     __description__ = "Single-Point"

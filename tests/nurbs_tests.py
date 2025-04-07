@@ -1,6 +1,6 @@
 import numpy as np
 import unittest
-from math import pi
+from math import pi, sqrt
 
 from mathutils import Matrix
 
@@ -641,7 +641,7 @@ class OtherNurbsTests(SverchokTestCase):
         knotvector = sv_knotvector.generate(degree, 5)
         weights = [0.25, 1, 4.9, 2.35, 1]
         #weights = [1, 1, 1, 1, 1]
-        curve = SvNativeNurbsCurve(degree, knotvector, points, weights)
+        curve = SvNativeNurbsCurve.build(SvNurbsCurve.NATIVE, degree, knotvector, points, weights)
 
         curve1, curve2 = curve.split_at(0.501)
         #print("Kv1:", curve1.get_knotvector())
@@ -702,11 +702,30 @@ class OtherNurbsTests(SverchokTestCase):
                                   [0.8660254,  0.5, 0.0 ]])
         self.assert_numpy_arrays_equal(cpts, expected_cpts, precision=6)
 
+    def test_circle_nurbs_cpts(self):
+        circle = SvCircle(Matrix(), 1.0)
+        nurbs = circle.to_nurbs_full()
+
+        expected_cpts = np.array([[1, 0, 0],
+                                   [1, 1, 0],
+                                   [0, 1, 0],
+                                   [-1, 1, 0],
+                                   [-1, 0, 0],
+                                   [-1, -1, 0],
+                                   [0, -1, 0],
+                                   [1, -1, 0],
+                                   [1, 0, 0]])
+        sqrt22 = sqrt(2.0)/2.0
+        expected_weights = np.array([1, sqrt22, 1, sqrt22,
+                            1, sqrt22, 1, sqrt22, 1])
+        self.assert_numpy_arrays_equal(nurbs.get_control_points(), expected_cpts, precision=6)
+        self.assert_numpy_arrays_equal(nurbs.get_weights(), expected_weights, precision=6)
+
     def test_circle_2(self):
         circle = SvCircle(Matrix(), 1.0)
-        t_max = pi + 0.3
+        t_max = 3*pi/2
         circle.u_bounds = (0, t_max)
-        nurbs = circle.to_nurbs()
+        nurbs = circle.to_nurbs_full()
         ts = np.array([0, pi/2, pi, t_max])
         points = nurbs.evaluate_array(ts)
         expected_points = circle.evaluate_array(ts)

@@ -13,10 +13,10 @@ from copy import deepcopy
 import numpy as np
 from math import pi
 
-from sverchok.utils.curve.core import SvCurve, SvTaylorCurve, UnsupportedCurveTypeException, calc_taylor_nurbs_matrices
-from sverchok.utils.curve.bezier import SvBezierCurve
+from sverchok.utils.curve.core import SvCurve, SvTaylorCurve, SvConcatCurve, SvReparametrizedCurve, UnsupportedCurveTypeException, calc_taylor_nurbs_matrices
+from sverchok.utils.curve.bezier import SvBezierCurve, SvRationalBezierCurve, SvCubicBezierCurve
 from sverchok.utils.curve import knotvector as sv_knotvector
-from sverchok.utils.curve.primitives import SvPointCurve
+#from sverchok.utils.curve.primitives import SvPointCurve
 from sverchok.utils.curve.algorithms import unify_curves_degree
 from sverchok.utils.curve.nurbs_algorithms import unify_two_curves
 from sverchok.utils.curve.nurbs_solver_applications import interpolate_nurbs_curve
@@ -284,7 +284,8 @@ class SvNurbsCurve(SvCurve):
     def is_bezier(self):
         k = len(self.get_control_points())
         p = self.get_degree()
-        return p+1 == k
+        kv = self.get_knotvector()
+        return p+1 == k and sv_knotvector.is_clamped(kv, p)
 
     def is_rational(self, tolerance=1e-6):
         weights = self.get_weights()
@@ -690,7 +691,10 @@ class SvNurbsCurve(SvCurve):
             n = len(points)
             p = self.get_degree()
             raise UnsupportedCurveTypeException(f"Curve with {n} control points and {p}'th degree can not be converted into Bezier curve")
-        return SvBezierCurve.from_control_points(points)
+        if self.is_rational():
+            return SvRationalBezierCurve(points, self.get_weights())
+        else:
+            return SvBezierCurve.from_control_points(points)
 
     def to_bezier_segments(self, to_bezier_class=True):
         """
@@ -699,8 +703,6 @@ class SvNurbsCurve(SvCurve):
         Returns:
             If `to_bezier_class` is True, then a list of SvBezierCurve instances. Otherwise, a list of SvNurbsCurve instances.
         """
-        if to_bezier_class and self.is_rational():
-            raise UnsupportedCurveTypeException("Rational NURBS curve can not be converted into non-rational Bezier curves")
         if self.is_bezier():
             if to_bezier_class:
                 return [self.to_bezier()]
@@ -1132,6 +1134,10 @@ class SvGeomdlCurve(SvNurbsCurve):
 
         return result
 
+def all_equal(weights, tolerance=1e-6):
+    w, W = weights.min(), weights.max()
+    return (W - w) <= tolerance
+
 class SvNativeNurbsCurve(SvNurbsCurve):
     def __init__(self, degree, knotvector, control_points, weights=None, normalize_knots=False):
         self.control_points = np.array(control_points) # (k, 3)
@@ -1143,6 +1149,7 @@ class SvNativeNurbsCurve(SvNurbsCurve):
         self.knotvector = np.array(knotvector)
         if normalize_knots:
             self.knotvector = sv_knotvector.normalize(self.knotvector)
+        self._knot_multiplicities = None
         self.degree = degree
         self.basis = SvNurbsBasisFunctions(self.knotvector)
         self.tangent_delta = 0.001
@@ -1151,7 +1158,8 @@ class SvNativeNurbsCurve(SvNurbsCurve):
 
     @classmethod
     def build(cls, implementation, degree, knotvector, control_points, weights=None, normalize_knots=False):
-        return SvNativeNurbsCurve(degree, knotvector, control_points, weights, normalize_knots)
+        knotvector = np.asarray(knotvector)
+        return SvNativeNurbsCurve(degree, knotvector, control_points, weights=weights, normalize_knots=normalize_knots)
 
     @classmethod
     def interpolate(cls, degree, points, metric='DISTANCE', tknots=None, cyclic=False, logger=None):
@@ -1169,6 +1177,15 @@ class SvNativeNurbsCurve(SvNurbsCurve):
 
     def get_knotvector(self):
         return self.knotvector
+
+    @property
+    def knot_multiplicities(self):
+        if self._knot_multiplicities is None:
+            self._knot_multiplicities = dict(sv_knotvector.to_multiplicity(self.knotvector))
+        return self._knot_multiplicities
+
+    def get_knot_multiplicity(self, t):
+        return self.knot_multiplicities.get(t, 0)
 
     def get_degree(self):
         return self.degree
@@ -1317,7 +1334,7 @@ class SvNativeNurbsCurve(SvNurbsCurve):
         # "The NURBS book", 2nd edition, p.5.2, eq. 5.11
         N = len(self.control_points)
         u = self.get_knotvector()
-        s = sv_knotvector.find_multiplicity(u, u_bar)
+        s = self.get_knot_multiplicity(u_bar)
         p = self.get_degree()
 
         if u_bar < u[0] or u_bar > u[-1]:
@@ -1361,8 +1378,9 @@ class SvNativeNurbsCurve(SvNurbsCurve):
             N += 1
 
         control_points, weights = from_homogenous(np.array(control_points))
-        curve = SvNativeNurbsCurve(self.degree, new_knotvector,
-                    control_points, weights)
+        curve = self.copy(knotvector = new_knotvector, control_points = control_points, weights = weights)
+        curve._knot_multiplicities = self.knot_multiplicities.copy()
+        curve._knot_multiplicities[u_bar] = s + count
         return curve
 
     def remove_knot(self, u, count=1, target=None, tolerance=1e-6, if_possible=False, logger=None):
@@ -1522,8 +1540,160 @@ class SvNativeNurbsCurve(SvNurbsCurve):
             logger.debug(f"Removed knot t={u} for {removed_count} times")
         return curve
 
+class SvNativeBSplineCurve(SvNativeNurbsCurve):
+    def __init__(self, degree, knotvector, control_points, weights=None, normalize_knots=False):
+        SvNativeNurbsCurve.__init__(self, degree, knotvector, control_points, weights=weights, normalize_knots=normalize_knots)
+        self._bezier_segments = None
+        self._bezier_bounds = None
+        self._concatenated = None
+        self.__description__ = f"Native* NURBS (degree={degree}, pts={len(control_points)})"
+
+    @classmethod
+    def get_nurbs_implementation(cls):
+        return SvNurbsMaths.NATIVE_BEZIER
+
+    @classmethod
+    def build(cls, implementation, degree, knotvector, control_points, weights=None, normalize_knots=False):
+        knotvector = np.asarray(knotvector)
+        if sv_knotvector.is_clamped(knotvector, degree):
+            return SvNativeBSplineCurve(degree, knotvector, control_points, weights=weights, normalize_knots=normalize_knots)
+        else:
+            return SvNativeNurbsCurve(degree, knotvector, control_points, weights=weights, normalize_knots=normalize_knots)
+
+    @property
+    def bezier_bounds(self):
+        if self._bezier_bounds is None:
+            kv = self.get_knotvector()
+            knots = np.unique(kv)
+            self._bezier_bounds = list(knots[1:] - knots[:-1])
+        return self._bezier_bounds
+
+    @property
+    def bezier_segments(self):
+        if self._bezier_segments is None:
+            self._bezier_segments = self.to_bezier_segments(to_bezier_class=True)
+        return self._bezier_segments
+
+    @staticmethod
+    def calc_concatenated_curve(bezier_segments, bezier_bounds, total_u_bounds):
+        concat = SvConcatCurve([SvReparametrizedCurve(segment, 0, bound) for segment, bound in zip(bezier_segments, bezier_bounds)])
+        u_min, u_max = total_u_bounds
+        return SvReparametrizedCurve(concat, u_min, u_max)
+
+    @property
+    def concatenated(self):
+        if self._concatenated is None:
+            u_bounds = self.get_u_bounds()
+            self._concatenated = SvNativeBSplineCurve.calc_concatenated_curve(self.bezier_segments, self.bezier_bounds, u_bounds)
+        return self._concatenated
+
+    def evaluate(self, t):
+        return self.concatenated.evaluate(t)
+
+    def evaluate_array(self, ts):
+        return self.concatenated.evaluate_array(ts)
+
+    def tangent(self, t, tangent_delta=None):
+        return self.concatenated.tangent(t)
+
+    def tangent_array(self, ts, tangent_delta=None):
+        return self.concatenated.tangent_array(ts)
+
+    def second_derivative(self, t, tangent_delta=None):
+        return self.concatenated.second_derivative(t)
+
+    def second_derivative_array(self, ts, tangent_delta=None):
+        return self.concatenated.second_derivative_array(ts)
+
+    def third_derivative_array(self, ts, tangent_delta=None):
+        return self.concatenated.third_derivative_array(ts)
+
+    def derivatives_array(self, n, ts, tangent_delta=None):
+        return self.concatenated.derivatives_array(n, ts)
+
+#     def _to_generic(self):
+#         return SvNativeNurbsCurve(self.degree, self.knotvector, self.control_points)
+
+    def concatenate(self, curve2, tolerance=1e-6, remove_knots=False):
+        result = super().concatenate(curve2, tolerance=tolerance, remove_knots=remove_knots)
+        result = SvNativeBSplineCurve(result.get_degree(),
+                            result.get_knotvector(),
+                            result.get_control_points(),
+                            result.get_weights())
+
+        if isinstance(curve2, (SvBezierCurve, SvCubicBezierCurve)):
+            bezier_segments = self.bezier_segments + [curve2]
+            c2_u_min, c2_u_max = curve2.get_u_bounds()
+            bezier_bounds = self.bezier_bounds + [c2_u_max - c2_u_min]
+            u_bounds = result.get_u_bounds()
+            result._bezier_segments = bezier_segments
+            result._concatenated = SvNativeBSplineCurve.calc_concatenated_curve(bezier_segments, bezier_bounds, u_bounds)
+
+        return result
+
+    def split_at(self, t):
+        if self.is_bezier() and not self.is_rational():
+            kv = self.get_knotvector()
+            u_min, u_max = kv[0], kv[-1]
+            if t == u_min:
+                return None, self
+            elif t == u_max:
+                return self, None
+
+            degree = self.get_degree()
+            bezier = SvBezierCurve.from_control_points(self.get_control_points())
+            bezier_t = (t - u_min) / (u_max - u_min)
+            b1, b2 = bezier.split_at(bezier_t)
+            implementation = self.get_nurbs_implementation()
+            if b1 is None:
+                c1 = None
+            else:
+                c1 = SvNurbsCurve.build(implementation,
+                        degree, sv_knotvector.rescale(kv, u_min, t),
+                        b1.get_control_points())
+            if b2 is None:
+                c2 = None
+            else:
+                c2 = SvNurbsCurve.build(implementation,
+                        degree, sv_knotvector.rescale(kv, t, u_max),
+                        b2.get_control_points())
+            return c1, c2
+        else:
+            return super().split_at(t)
+
+#     def split_at(self, t):
+#         knots = np.unique(self.get_knotvector())
+#         index = knots.searchsorted(t, side='left') - 1
+#         #print(f"Split: T={t} => index {index} => knot {knots[index+1]}")
+#         if knots[index+1] == t:
+#             #print("call super")
+#             return super().split_at(t)
+#         else:
+#             nurbs = self._to_generic()
+#             t_min, t_max = self.get_u_bounds()
+#             t_less, t_greater = knots[index], knots[index+1]
+#             bezier_left, tmp_curve = nurbs.split_at(t_less)
+#             tmp_curve = tmp_curve._to_generic()
+#             t1 = (t_greater - t_less) / (t_max - t_less)
+#             bezier_to_split, bezier_right = tmp_curve.split_at(t1)
+#             bezier_to_split = bezier_to_split.to_bezier()
+#             t2 = (t - t_less) / (t_greater - t_less)
+#             b1, b2 = bezier_to_split.split_at(t2)
+#             b1 = b1.to_nurbs().reparametrize(0.0, t2)
+#             b2 = b2.to_nurbs().reparametrize(0.0, 1.0-t2)
+#             if bezier_left:
+#                 c1 = bezier_left.concatenate(b1)
+#             else:
+#                 c1 = b1
+#             if bezier_right:
+#                 c2 = b2.concatenate(bezier_right)
+#             else:
+#                 c2 = b2
+# 
+#             return c1, c2
 
 SvNurbsMaths.curve_classes[SvNurbsMaths.NATIVE] = SvNativeNurbsCurve
+SvNurbsMaths.curve_classes[SvNurbsMaths.NATIVE_BEZIER] = SvNativeBSplineCurve
 if geomdl is not None:
     SvNurbsMaths.curve_classes[SvNurbsMaths.GEOMDL] = SvGeomdlCurve
 
