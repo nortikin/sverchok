@@ -14,6 +14,8 @@ from os import walk
 from glob import fnmatch
 from logging import info, error
 import logging
+from concurrent.futures import ThreadPoolExecutor
+import argparse
 
 # example:
 # 124717678-6c0d0800-df16-11eb-83fa-b9f6d21c417a.png
@@ -24,8 +26,12 @@ URL_RE_NUM = re.compile(r'https://.*[\da-z]*-[\da-z]*-[\da-z]*-[\da-z]*-[\da-z]*
 
 logging.basicConfig(level = logging.INFO)
 
-def download_image(url):
-    dst = join("_build", "html", "_static", "images", basename(url))
+def download_image(args, url):
+
+    if args.target:
+        dst = join(args.target, basename(url))
+    else:
+        dst = join("_build", "html", "_static", "images", basename(url))
     if exists(dst):
         info("  Already was downloaded: %s", dst)
         return dst
@@ -38,7 +44,7 @@ def download_image(url):
             error("Can't download %s: %s", url, e)
             return url
 
-def process_rst(path,pas):
+def process_rst(path, args, pas):
     info("Processing: %s", path)
     output = ""
     with open(path, 'r') as rst:
@@ -48,25 +54,52 @@ def process_rst(path,pas):
                 urlsJ = URL_RE_JPG.findall(line)
                 urlsG = URL_RE_GIF.findall(line)
                 for url in (*urlsP,*urlsJ,*urlsG):
-                    dst = download_image(url)
-                    line = line.replace(url, relpath(dst, dirname(path)))
+                    dst = download_image(args, url)
+                    if args.edit:
+                        line = line.replace(url, relpath(dst, dirname(path)))
             elif pas == 2:
                 urlsN = URL_RE_NUM.findall(line)
                 for url in urlsN:
-                    dst = download_image(url)
-                    line = line.replace(url, relpath(dst, dirname(path)))
-            output = output + line
+                    dst = download_image(args, url)
+                    if args.edit:
+                        line = line.replace(url, relpath(dst, dirname(path)))
+            if args.edit:
+                output = output + line
 
-    with open(path, 'w') as rst:
-        rst.write(output)
+    if args.edit:
+        with open(path, 'w') as rst:
+            rst.write(output)
 
-def passing(pas=1):
-    for directory, subdirs, fnames in walk("."):
+def is_excluded(args, name):
+    for pattern in args.exclude:
+        if fnmatch.fnmatch(name, pattern):
+            return True
+    return False
+
+def iterate_files(args):
+    for directory, subdirs, fnames in walk(args.path):
+        if is_excluded(args, directory):
+            continue
         for fname in fnames:
+            if is_excluded(args, fname):
+                continue
             if fnmatch.fnmatch(fname, "*.rst"):
-                process_rst(join(directory, fname), pas)
+                yield join(directory, fname)
 
+def passing(args, pas=1):
+    with ThreadPoolExecutor(max_workers=args.threads) as executor:
+        for path in iterate_files(args):
+            executor.submit(process_rst, path, args, pas)
 
 if __name__ == '__main__':
-    passing(1)
-    passing(2)
+    parser = argparse.ArgumentParser(prog="Download Images")
+    parser.add_argument('-e', '--edit', action='store_true', help="Edit source text and replace image URLs with paths to downloaded images")
+    parser.add_argument('-j', '--threads', nargs='?', type=int, default=1, metavar="N", help="Download images in several threads")
+    parser.add_argument('-t', '--target', nargs='?', metavar="PATH", help="Path to target directory with images")
+    parser.add_argument('-E', '--exclude', action='append', help="Exclude file or directory name")
+    parser.add_argument('path', default=".", metavar="DIRECTORY", help="Path to directory with source texts")
+    args = parser.parse_args()
+    #print(args)
+
+    passing(args, 1)
+    passing(args, 2)
