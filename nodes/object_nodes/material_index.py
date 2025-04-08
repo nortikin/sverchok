@@ -88,23 +88,42 @@ class SvMaterialIndexNode(SverchCustomTreeNode, bpy.types.Node):
         self.update_all_faces(context)
 
     def set_material_indices(self, obj, faces, materials):
-        prev_material_index_layer = obj.data.polygon_layers_int.get("prev_material_index")
-        if prev_material_index_layer is None:
-            self.debug("Creating a layer")
-            prev_material_index_layer = obj.data.polygon_layers_int.new(name="prev_material_index")
-            prev_material_indices = np.full(len(obj.data.polygons), 0, dtype=int)
-            obj.data.polygons.foreach_get("material_index", prev_material_indices)
+        if bpy.app.version < (4,):
+            prev_material_index_layer = obj.data.polygon_layers_int.get("prev_material_index")
+            if prev_material_index_layer is None:
+                self.debug("Creating a layer")
+                prev_material_index_layer = obj.data.polygon_layers_int.new(name="prev_material_index")
+                prev_material_indices = np.full(len(obj.data.polygons), 0, dtype=int)
+                obj.data.polygons.foreach_get("material_index", prev_material_indices)
+                for face_index in range(len(obj.data.polygons)):
+                    prev_material_index_layer.data[face_index].value = prev_material_indices[face_index]
+            material_indices = np.full(len(obj.data.polygons), 0, dtype=int)
+            material_by_face = dict(zip(faces, materials))
             for face_index in range(len(obj.data.polygons)):
-                prev_material_index_layer.data[face_index].value = prev_material_indices[face_index]
+                material_index = material_by_face.get(face_index, None)
+                if material_index is None:
+                    material_index = prev_material_index_layer.data[face_index].value
+                material_indices[face_index] = material_index
+            obj.data.polygons.foreach_set("material_index", material_indices)
 
-        material_indices = np.full(len(obj.data.polygons), 0, dtype=int)
-        material_by_face = dict(zip(faces, materials))
-        for face_index in range(len(obj.data.polygons)):
-            material_index = material_by_face.get(face_index, None)
-            if material_index is None:
-                material_index = prev_material_index_layer.data[face_index].value
-            material_indices[face_index] = material_index
-        obj.data.polygons.foreach_set("material_index", material_indices)
+        else:
+            prev_material_index = obj.data.attributes.get("prev_material_index")
+            if prev_material_index is None:
+                self.debug("Creating a layer")
+                prev_material_index = obj.data.attributes.new(name="prev_material_index", type="INT", domain="FACE")
+                prev_material_indices = np.full(len(obj.data.polygons), 0, dtype=int)
+                obj.data.polygons.foreach_get("material_index", prev_material_indices)
+                for face_index in range(len(obj.data.polygons)):
+                    prev_material_index.data[face_index].value = prev_material_indices[face_index]
+            material_indices = np.full(len(obj.data.polygons), 0, dtype=int)
+            material_by_face = dict(zip(faces, materials))
+            for face_index in range(len(obj.data.polygons)):
+                material_index = material_by_face.get(face_index, None)
+                if material_index is None:
+                    material_index = prev_material_index.data[face_index].value
+                material_indices[face_index] = material_index
+            obj.data.polygons.foreach_set("material_index", material_indices)
+
 
     def process(self):
         objects = self.inputs['Object'].sv_get()
@@ -154,3 +173,4 @@ def unregister():
     for name in reversed(classes):
         bpy.utils.unregister_class(name)
 
+if __name__ == '__main__': register()
