@@ -140,6 +140,16 @@ class SvCurve(object):
         return tangents
 
     def second_derivative(self, t, tangent_delta = None):
+        """
+        Calculate second derivative vector at one point.
+
+        Args:
+            t: curve parameter value.
+            tangent_delta: delta value for derivative calculation.
+
+        Returns:
+            second derivative vector - np.array of shape (3,).
+        """
         h = self.get_tangent_delta(tangent_delta)
 
         v0 = self.evaluate(t-h)
@@ -148,6 +158,16 @@ class SvCurve(object):
         return (v2 - 2*v1 + v0) / (h * h)
 
     def second_derivative_array(self, ts, tangent_delta=None):
+        """
+        Calculate second derivative vectors at a series of points.
+
+        Args:
+            ts: curve parameter values - np.array of shape (n,).
+            tangent_delta: delta value for derivative calculation.
+
+        Returns:
+            second derivative vectors - np.array of shape (n,3).
+        """
         h = self.get_tangent_delta(tangent_delta)
         v0s = self.evaluate_array(ts-h)
         v1s = self.evaluate_array(ts)
@@ -155,9 +175,29 @@ class SvCurve(object):
         return (v2s - 2*v1s + v0s) / (h * h)
 
     def third_derivative(self, t, tangent_delta = None):
+        """
+        Calculate third derivative vector at one point.
+
+        Args:
+            t: curve parameter value.
+            tangent_delta: delta value for derivative calculation.
+
+        Returns:
+            third derivative vector - np.array of shape (3,).
+        """
         return self.third_derivative_array(np.array([t]), tangent_delta=tangent_delta)[0]
 
     def third_derivative_array(self, ts, tangent_delta=None):
+        """
+        Calculate third derivative vectors at a series of points.
+
+        Args:
+            ts: curve parameter values - np.array of shape (n,).
+            tangent_delta: delta value for derivative calculation.
+
+        Returns:
+            third derivative vectors - np.array of shape (n,3).
+        """
         h = self.get_tangent_delta(tangent_delta)
         v0s = self.evaluate_array(ts)
         v1s = self.evaluate_array(ts+h)
@@ -166,6 +206,17 @@ class SvCurve(object):
         return (- v0s + 3*v1s - 3*v2s + v3s) / (h * h * h)
 
     def derivatives_array(self, n, ts, tangent_delta=None):
+        """
+        Calculate curve derivatives, up to certain order, at a series of points.
+
+        Args:
+            n: order, up to which the derivatives are to be calculated. For example, n=2 means calculate first and second derivative. Most curve classes support only n = 1, 2 and 3.
+            ts: curve parameter values - np.array of shape (n,).
+            tangent_delta: delta value for derivative calculation.
+
+        Returns:
+            list of np.arrays, of shape (N,3) each. Numer of arrays is equal to `n'.
+        """
         h = self.get_tangent_delta(tangent_delta)
 
         result = []
@@ -290,7 +341,6 @@ class SvCurve(object):
         normals = []
         binormals = []
 
-        points = self.evaluate_array(ts)
         tangents = self.tangent_array(ts, tangent_delta=h)
         tangents /= np.linalg.norm(tangents, axis=1, keepdims=True)
 
@@ -311,6 +361,22 @@ class SvCurve(object):
         return matrices_np, normals, binormals
 
     def frame_by_plane_array(self, ts, plane_normal, tangent_delta=None):
+        """
+        Calculate an array of matrices so that:
+            * Z axis is aligned along curve tangent;
+            * X axis is orthogonal to Z, and, at the same time, lies in the plane defined by specified normal vector;
+            * Y axis is orthogonal to both X and Z.
+
+        Args:
+            ts: curve parameter values - np.array of shape (n,).
+            plane_normal: target plane normal vector - np.array of shape (3,).
+            tangent_delta: delta value for derivative calculation.
+
+        Returns: tuple:
+            * Calculated matrices - np.array of shape (n, 3, 3)
+            * Normal vectors - np.array of shape (n, 3)
+            * Binormal vectors - np.array of shape (n, 3).
+        """
         h = self.get_tangent_delta(tangent_delta)
         n = len(ts)
         tangents = self.tangent_array(ts, tangent_delta=h)
@@ -449,19 +515,32 @@ class SvCurve(object):
         raise Exception("not implemented!")
 
     def get_end_points(self):
+        """
+        Return start and end points of the curve.
+        """
         u_min, u_max = self.get_u_bounds()
         begin = self.evaluate(u_min)
         end = self.evaluate(u_max)
         return begin, end
 
     def is_closed(self, tolerance=1e-6):
+        """
+        Check if the curve is closed, within specified tolerance.
+        """
         begin, end = self.get_end_points()
         return np.linalg.norm(begin - end) < tolerance
 
     def is_polyline(self):
+        """
+        Check if the curve is a polyline, i.e. if it consists of several straight line segments.
+        """
         return False
 
     def get_polyline_vertices(self):
+        """
+        If this curve is a polyline, return vertices of that polyline.
+        If the curve is not a polyline, this method can raise an exception.
+        """
         raise Exception("Curve is not a polyline")
 
     def get_degree(self):
@@ -481,6 +560,13 @@ class SvCurve(object):
         #raise Exception("Curve of type type `{}' does not have control points".format(type(self)))
 
 class SvScalarFunctionCurve(SvCurve):
+    r"""
+    Curve defined by arbitrary function:
+
+    / x(t) = t
+    | y(t) = function(t)
+    \ z(t) = 0.
+    """
     __description__ = "Function"
 
     def __init__(self, function):
@@ -499,6 +585,9 @@ class SvScalarFunctionCurve(SvCurve):
         return np.vectorize(self.evaluate, signature='()->(3)')(ts)
 
 class SvConcatCurve(SvCurve):
+    """
+    A curve composed of several concatenated curves.
+    """
     def __init__(self, curves, scale_to_unit = False):
         self.curves = curves
         self.scale_to_unit = scale_to_unit
@@ -512,7 +601,7 @@ class SvConcatCurve(SvCurve):
             self.u_max = self.ranges.sum()
             self.min_bounds = np.insert(np.cumsum(self.ranges), 0, 0)
         self.tangent_delta = 0.001
-    
+
     def __repr__(self):
         return "+".join([str(curve) for curve in self.curves])
 
@@ -626,7 +715,7 @@ class SvFlipCurve(SvCurve):
         ts = M - ts + m
         return - self.curve.tangent_array(ts, tangent_delta=tangent_delta)
 
-    def second_derivative_array(self, ts, tangent_detla=None):
+    def second_derivative_array(self, ts, tangent_delta=None):
         m, M = self.curve.get_u_bounds()
         ts = M - ts + m
         return self.curve.second_derivative_array(ts, tangnet_delta=tangent_delta)
