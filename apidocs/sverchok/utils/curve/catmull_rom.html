@@ -572,15 +572,25 @@ See <a href="https://en.wikipedia.org/wiki/Centripetal_Catmull%E2%80%93Rom_splin
 <li><code><b><a title="sverchok.utils.curve.catmull_rom.SvUniformCatmullRomCurve" href="#sverchok.utils.curve.catmull_rom.SvUniformCatmullRomCurve">SvUniformCatmullRomCurve</a></b></code>:
 <ul class="hlist">
 <li><code><a title="sverchok.utils.curve.catmull_rom.SvUniformCatmullRomCurve.calc_length" href="core.html#sverchok.utils.curve.core.SvCurve.calc_length">calc_length</a></code></li>
+<li><code><a title="sverchok.utils.curve.catmull_rom.SvUniformCatmullRomCurve.derivatives_array" href="core.html#sverchok.utils.curve.core.SvCurve.derivatives_array">derivatives_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.catmull_rom.SvUniformCatmullRomCurve.evaluate" href="core.html#sverchok.utils.curve.core.SvCurve.evaluate">evaluate</a></code></li>
 <li><code><a title="sverchok.utils.curve.catmull_rom.SvUniformCatmullRomCurve.evaluate_array" href="core.html#sverchok.utils.curve.core.SvCurve.evaluate_array">evaluate_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.catmull_rom.SvUniformCatmullRomCurve.frame_array" href="core.html#sverchok.utils.curve.core.SvCurve.frame_array">frame_array</a></code></li>
+<li><code><a title="sverchok.utils.curve.catmull_rom.SvUniformCatmullRomCurve.frame_by_plane_array" href="core.html#sverchok.utils.curve.core.SvCurve.frame_by_plane_array">frame_by_plane_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.catmull_rom.SvUniformCatmullRomCurve.get_control_points" href="core.html#sverchok.utils.curve.core.SvCurve.get_control_points">get_control_points</a></code></li>
 <li><code><a title="sverchok.utils.curve.catmull_rom.SvUniformCatmullRomCurve.get_degree" href="core.html#sverchok.utils.curve.core.SvCurve.get_degree">get_degree</a></code></li>
+<li><code><a title="sverchok.utils.curve.catmull_rom.SvUniformCatmullRomCurve.get_end_points" href="core.html#sverchok.utils.curve.core.SvCurve.get_end_points">get_end_points</a></code></li>
+<li><code><a title="sverchok.utils.curve.catmull_rom.SvUniformCatmullRomCurve.get_polyline_vertices" href="core.html#sverchok.utils.curve.core.SvCurve.get_polyline_vertices">get_polyline_vertices</a></code></li>
 <li><code><a title="sverchok.utils.curve.catmull_rom.SvUniformCatmullRomCurve.get_tangent_delta" href="core.html#sverchok.utils.curve.core.SvCurve.get_tangent_delta">get_tangent_delta</a></code></li>
 <li><code><a title="sverchok.utils.curve.catmull_rom.SvUniformCatmullRomCurve.get_u_bounds" href="core.html#sverchok.utils.curve.core.SvCurve.get_u_bounds">get_u_bounds</a></code></li>
+<li><code><a title="sverchok.utils.curve.catmull_rom.SvUniformCatmullRomCurve.is_closed" href="core.html#sverchok.utils.curve.core.SvCurve.is_closed">is_closed</a></code></li>
+<li><code><a title="sverchok.utils.curve.catmull_rom.SvUniformCatmullRomCurve.is_polyline" href="core.html#sverchok.utils.curve.core.SvCurve.is_polyline">is_polyline</a></code></li>
+<li><code><a title="sverchok.utils.curve.catmull_rom.SvUniformCatmullRomCurve.second_derivative" href="core.html#sverchok.utils.curve.core.SvCurve.second_derivative">second_derivative</a></code></li>
+<li><code><a title="sverchok.utils.curve.catmull_rom.SvUniformCatmullRomCurve.second_derivative_array" href="core.html#sverchok.utils.curve.core.SvCurve.second_derivative_array">second_derivative_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.catmull_rom.SvUniformCatmullRomCurve.tangent" href="core.html#sverchok.utils.curve.core.SvCurve.tangent">tangent</a></code></li>
 <li><code><a title="sverchok.utils.curve.catmull_rom.SvUniformCatmullRomCurve.tangent_array" href="core.html#sverchok.utils.curve.core.SvCurve.tangent_array">tangent_array</a></code></li>
+<li><code><a title="sverchok.utils.curve.catmull_rom.SvUniformCatmullRomCurve.third_derivative" href="core.html#sverchok.utils.curve.core.SvCurve.third_derivative">third_derivative</a></code></li>
+<li><code><a title="sverchok.utils.curve.catmull_rom.SvUniformCatmullRomCurve.third_derivative_array" href="core.html#sverchok.utils.curve.core.SvCurve.third_derivative_array">third_derivative_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.catmull_rom.SvUniformCatmullRomCurve.zero_torsion_frame_array" href="core.html#sverchok.utils.curve.core.SvCurve.zero_torsion_frame_array">zero_torsion_frame_array</a></code></li>
 </ul>
 </li>
@@ -831,19 +841,6 @@ tension value for each segment.</p></div>
 </details>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.utils.curve.catmull_rom.SvUniformCatmullRomCurve.get_end_points"><code class="name flex">
-<span>def <span class="ident">get_end_points</span></span>(<span>self)</span>
-</code></dt>
-<dd>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def get_end_points(self):
-    return self.points[1], self.points[-2]</code></pre>
-</details>
-<div class="desc"></div>
-</dd>
 <dt id="sverchok.utils.curve.catmull_rom.SvUniformCatmullRomCurve.get_plane"><code class="name flex">
 <span>def <span class="ident">get_plane</span></span>(<span>self, tolerance=1e-06)</span>
 </code></dt>
@@ -1016,15 +1013,25 @@ tension value for each segment.</p></div>
 <li><code><b><a title="sverchok.utils.curve.core.SvCurve" href="core.html#sverchok.utils.curve.core.SvCurve">SvCurve</a></b></code>:
 <ul class="hlist">
 <li><code><a title="sverchok.utils.curve.core.SvCurve.calc_length" href="core.html#sverchok.utils.curve.core.SvCurve.calc_length">calc_length</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.derivatives_array" href="core.html#sverchok.utils.curve.core.SvCurve.derivatives_array">derivatives_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.evaluate" href="core.html#sverchok.utils.curve.core.SvCurve.evaluate">evaluate</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.evaluate_array" href="core.html#sverchok.utils.curve.core.SvCurve.evaluate_array">evaluate_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.frame_array" href="core.html#sverchok.utils.curve.core.SvCurve.frame_array">frame_array</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.frame_by_plane_array" href="core.html#sverchok.utils.curve.core.SvCurve.frame_by_plane_array">frame_by_plane_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_control_points" href="core.html#sverchok.utils.curve.core.SvCurve.get_control_points">get_control_points</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_degree" href="core.html#sverchok.utils.curve.core.SvCurve.get_degree">get_degree</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_end_points" href="core.html#sverchok.utils.curve.core.SvCurve.get_end_points">get_end_points</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_polyline_vertices" href="core.html#sverchok.utils.curve.core.SvCurve.get_polyline_vertices">get_polyline_vertices</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_tangent_delta" href="core.html#sverchok.utils.curve.core.SvCurve.get_tangent_delta">get_tangent_delta</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_u_bounds" href="core.html#sverchok.utils.curve.core.SvCurve.get_u_bounds">get_u_bounds</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.is_closed" href="core.html#sverchok.utils.curve.core.SvCurve.is_closed">is_closed</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.is_polyline" href="core.html#sverchok.utils.curve.core.SvCurve.is_polyline">is_polyline</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.second_derivative" href="core.html#sverchok.utils.curve.core.SvCurve.second_derivative">second_derivative</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.second_derivative_array" href="core.html#sverchok.utils.curve.core.SvCurve.second_derivative_array">second_derivative_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.tangent" href="core.html#sverchok.utils.curve.core.SvCurve.tangent">tangent</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.tangent_array" href="core.html#sverchok.utils.curve.core.SvCurve.tangent_array">tangent_array</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.third_derivative" href="core.html#sverchok.utils.curve.core.SvCurve.third_derivative">third_derivative</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.third_derivative_array" href="core.html#sverchok.utils.curve.core.SvCurve.third_derivative_array">third_derivative_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.zero_torsion_frame_array" href="core.html#sverchok.utils.curve.core.SvCurve.zero_torsion_frame_array">zero_torsion_frame_array</a></code></li>
 </ul>
 </li>
@@ -1070,7 +1077,6 @@ tension value for each segment.</p></div>
 <li><code><a title="sverchok.utils.curve.catmull_rom.SvUniformCatmullRomCurve.extrude_along_vector" href="#sverchok.utils.curve.catmull_rom.SvUniformCatmullRomCurve.extrude_along_vector">extrude_along_vector</a></code></li>
 <li><code><a title="sverchok.utils.curve.catmull_rom.SvUniformCatmullRomCurve.extrude_to_point" href="#sverchok.utils.curve.catmull_rom.SvUniformCatmullRomCurve.extrude_to_point">extrude_to_point</a></code></li>
 <li><code><a title="sverchok.utils.curve.catmull_rom.SvUniformCatmullRomCurve.get_bounding_box" href="#sverchok.utils.curve.catmull_rom.SvUniformCatmullRomCurve.get_bounding_box">get_bounding_box</a></code></li>
-<li><code><a title="sverchok.utils.curve.catmull_rom.SvUniformCatmullRomCurve.get_end_points" href="#sverchok.utils.curve.catmull_rom.SvUniformCatmullRomCurve.get_end_points">get_end_points</a></code></li>
 <li><code><a title="sverchok.utils.curve.catmull_rom.SvUniformCatmullRomCurve.get_plane" href="#sverchok.utils.curve.catmull_rom.SvUniformCatmullRomCurve.get_plane">get_plane</a></code></li>
 <li><code><a title="sverchok.utils.curve.catmull_rom.SvUniformCatmullRomCurve.is_line" href="#sverchok.utils.curve.catmull_rom.SvUniformCatmullRomCurve.is_line">is_line</a></code></li>
 <li><code><a title="sverchok.utils.curve.catmull_rom.SvUniformCatmullRomCurve.is_planar" href="#sverchok.utils.curve.catmull_rom.SvUniformCatmullRomCurve.is_planar">is_planar</a></code></li>

@@ -420,15 +420,25 @@ output: SvFreeCadNurbsCurve</p></div>
 <li><code><b><a title="sverchok.utils.curve.core.SvCurve" href="core.html#sverchok.utils.curve.core.SvCurve">SvCurve</a></b></code>:
 <ul class="hlist">
 <li><code><a title="sverchok.utils.curve.core.SvCurve.calc_length" href="core.html#sverchok.utils.curve.core.SvCurve.calc_length">calc_length</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.derivatives_array" href="core.html#sverchok.utils.curve.core.SvCurve.derivatives_array">derivatives_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.evaluate" href="core.html#sverchok.utils.curve.core.SvCurve.evaluate">evaluate</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.evaluate_array" href="core.html#sverchok.utils.curve.core.SvCurve.evaluate_array">evaluate_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.frame_array" href="core.html#sverchok.utils.curve.core.SvCurve.frame_array">frame_array</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.frame_by_plane_array" href="core.html#sverchok.utils.curve.core.SvCurve.frame_by_plane_array">frame_by_plane_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_control_points" href="core.html#sverchok.utils.curve.core.SvCurve.get_control_points">get_control_points</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_degree" href="core.html#sverchok.utils.curve.core.SvCurve.get_degree">get_degree</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_end_points" href="core.html#sverchok.utils.curve.core.SvCurve.get_end_points">get_end_points</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_polyline_vertices" href="core.html#sverchok.utils.curve.core.SvCurve.get_polyline_vertices">get_polyline_vertices</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_tangent_delta" href="core.html#sverchok.utils.curve.core.SvCurve.get_tangent_delta">get_tangent_delta</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_u_bounds" href="core.html#sverchok.utils.curve.core.SvCurve.get_u_bounds">get_u_bounds</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.is_closed" href="core.html#sverchok.utils.curve.core.SvCurve.is_closed">is_closed</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.is_polyline" href="core.html#sverchok.utils.curve.core.SvCurve.is_polyline">is_polyline</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.second_derivative" href="core.html#sverchok.utils.curve.core.SvCurve.second_derivative">second_derivative</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.second_derivative_array" href="core.html#sverchok.utils.curve.core.SvCurve.second_derivative_array">second_derivative_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.tangent" href="core.html#sverchok.utils.curve.core.SvCurve.tangent">tangent</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.tangent_array" href="core.html#sverchok.utils.curve.core.SvCurve.tangent_array">tangent_array</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.third_derivative" href="core.html#sverchok.utils.curve.core.SvCurve.third_derivative">third_derivative</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.third_derivative_array" href="core.html#sverchok.utils.curve.core.SvCurve.third_derivative_array">third_derivative_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.zero_torsion_frame_array" href="core.html#sverchok.utils.curve.core.SvCurve.zero_torsion_frame_array">zero_torsion_frame_array</a></code></li>
 </ul>
 </li>
@@ -649,33 +659,6 @@ output: SvFreeCadNurbsCurve</p></div>
 </dl>
 <h3>Methods</h3>
 <dl>
-<dt id="sverchok.utils.curve.freecad.SvFreeCadNurbsCurve.derivatives_array"><code class="name flex">
-<span>def <span class="ident">derivatives_array</span></span>(<span>self, n, ts, tangent_delta=None)</span>
-</code></dt>
-<dd>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def derivatives_array(self, n, ts, tangent_delta=None):
-    first_derivatives = []
-    second_derivatives = []
-    third_derivatives = []
-
-    for t in ts:
-        p, v1, v2, v3 = self.curve.getD3(t)
-        first_derivatives.append(self._convert(v1))
-        second_derivatives.append(self._convert(v2))
-        third_derivatives.append(self._convert(v3))
-
-    first_derivatives = np.array(first_derivatives)
-    second_derivatives = np.array(second_derivatives)
-    third_derivatives = np.array(third_derivatives)
-
-    return [first_derivatives, second_derivatives, third_derivatives][:n]</code></pre>
-</details>
-<div class="desc"></div>
-</dd>
 <dt id="sverchok.utils.curve.freecad.SvFreeCadNurbsCurve.insert_knot"><code class="name flex">
 <span>def <span class="ident">insert_knot</span></span>(<span>self, u, count=1, if_possible=False)</span>
 </code></dt>
@@ -688,19 +671,6 @@ output: SvFreeCadNurbsCurve</p></div>
     curve = SvFreeCadNurbsCurve(self.curve.copy(), self.ndim) # copy
     curve.curve.insertKnot(u, count)
     return curve</code></pre>
-</details>
-<div class="desc"></div>
-</dd>
-<dt id="sverchok.utils.curve.freecad.SvFreeCadNurbsCurve.is_closed"><code class="name flex">
-<span>def <span class="ident">is_closed</span></span>(<span>self, eps=None)</span>
-</code></dt>
-<dd>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def is_closed(self, eps=None):
-    return self.curve.isClosed()</code></pre>
 </details>
 <div class="desc"></div>
 </dd>
@@ -733,64 +703,6 @@ output: SvFreeCadNurbsCurve</p></div>
 </details>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.utils.curve.freecad.SvFreeCadNurbsCurve.second_derivative"><code class="name flex">
-<span>def <span class="ident">second_derivative</span></span>(<span>self, t, tangent_delta=None)</span>
-</code></dt>
-<dd>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def second_derivative(self, t, tangent_delta = None):
-    p, v1, v = self.curve.getD2(t)
-    if not isinstance(v, tuple):
-        v = self._convert(v)
-    return np.array(v)</code></pre>
-</details>
-<div class="desc"></div>
-</dd>
-<dt id="sverchok.utils.curve.freecad.SvFreeCadNurbsCurve.second_derivative_array"><code class="name flex">
-<span>def <span class="ident">second_derivative_array</span></span>(<span>self, ts, tangent_delta=None)</span>
-</code></dt>
-<dd>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def second_derivative_array(self, ts, tangent_delta=None):
-    return np.vectorize(self.second_derivative, signature=&#39;()-&gt;(3)&#39;)(ts)    </code></pre>
-</details>
-<div class="desc"></div>
-</dd>
-<dt id="sverchok.utils.curve.freecad.SvFreeCadNurbsCurve.third_derivative"><code class="name flex">
-<span>def <span class="ident">third_derivative</span></span>(<span>self, t, tangent_delta=None)</span>
-</code></dt>
-<dd>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def third_derivative(self, t, tangent_delta = None):
-    p, v1, v2, v = self.curve.getD3(t)
-    if not isinstance(v, tuple):
-        v = self._convert(v)
-    return np.array(v)</code></pre>
-</details>
-<div class="desc"></div>
-</dd>
-<dt id="sverchok.utils.curve.freecad.SvFreeCadNurbsCurve.third_derivative_array"><code class="name flex">
-<span>def <span class="ident">third_derivative_array</span></span>(<span>self, ts, tangent_delta=None)</span>
-</code></dt>
-<dd>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def third_derivative_array(self, ts, tangent_delta=None):
-    return np.vectorize(self.third_derivative, signature=&#39;()-&gt;(3)&#39;)(ts)    </code></pre>
-</details>
-<div class="desc"></div>
-</dd>
 <dt id="sverchok.utils.curve.freecad.SvFreeCadNurbsCurve.to_2d"><code class="name flex">
 <span>def <span class="ident">to_2d</span></span>(<span>self)</span>
 </code></dt>
@@ -813,23 +725,33 @@ output: SvFreeCadNurbsCurve</p></div>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.calc_length" href="core.html#sverchok.utils.curve.core.SvCurve.calc_length">calc_length</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.calc_linear_segment_knots" href="nurbs.html#sverchok.utils.curve.nurbs.SvNurbsCurve.calc_linear_segment_knots">calc_linear_segment_knots</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.cut_segment" href="nurbs.html#sverchok.utils.curve.nurbs.SvNurbsCurve.cut_segment">cut_segment</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.derivatives_array" href="core.html#sverchok.utils.curve.core.SvCurve.derivatives_array">derivatives_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.evaluate" href="core.html#sverchok.utils.curve.core.SvCurve.evaluate">evaluate</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.evaluate_array" href="core.html#sverchok.utils.curve.core.SvCurve.evaluate_array">evaluate_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.frame_array" href="core.html#sverchok.utils.curve.core.SvCurve.frame_array">frame_array</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.frame_by_plane_array" href="core.html#sverchok.utils.curve.core.SvCurve.frame_by_plane_array">frame_by_plane_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_control_points" href="core.html#sverchok.utils.curve.core.SvCurve.get_control_points">get_control_points</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_degree" href="core.html#sverchok.utils.curve.core.SvCurve.get_degree">get_degree</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_end_points" href="core.html#sverchok.utils.curve.core.SvCurve.get_end_points">get_end_points</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_homogenous_control_points" href="nurbs.html#sverchok.utils.curve.nurbs.SvNurbsCurve.get_homogenous_control_points">get_homogenous_control_points</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_knotvector" href="nurbs.html#sverchok.utils.curve.nurbs.SvNurbsCurve.get_knotvector">get_knotvector</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_min_continuity" href="nurbs.html#sverchok.utils.curve.nurbs.SvNurbsCurve.get_min_continuity">get_min_continuity</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_nurbs_implementation" href="nurbs.html#sverchok.utils.curve.nurbs.SvNurbsCurve.get_nurbs_implementation">get_nurbs_implementation</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_polyline_vertices" href="core.html#sverchok.utils.curve.core.SvCurve.get_polyline_vertices">get_polyline_vertices</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_tangent_delta" href="core.html#sverchok.utils.curve.core.SvCurve.get_tangent_delta">get_tangent_delta</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_u_bounds" href="core.html#sverchok.utils.curve.core.SvCurve.get_u_bounds">get_u_bounds</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_weights" href="nurbs.html#sverchok.utils.curve.nurbs.SvNurbsCurve.get_weights">get_weights</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.is_closed" href="core.html#sverchok.utils.curve.core.SvCurve.is_closed">is_closed</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.is_inside_sphere" href="nurbs.html#sverchok.utils.curve.nurbs.SvNurbsCurve.is_inside_sphere">is_inside_sphere</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.is_line" href="nurbs.html#sverchok.utils.curve.nurbs.SvNurbsCurve.is_line">is_line</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.is_polyline" href="core.html#sverchok.utils.curve.core.SvCurve.is_polyline">is_polyline</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.is_strongly_outside_sphere" href="nurbs.html#sverchok.utils.curve.nurbs.SvNurbsCurve.is_strongly_outside_sphere">is_strongly_outside_sphere</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.second_derivative" href="core.html#sverchok.utils.curve.core.SvCurve.second_derivative">second_derivative</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.second_derivative_array" href="core.html#sverchok.utils.curve.core.SvCurve.second_derivative_array">second_derivative_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.tangent" href="core.html#sverchok.utils.curve.core.SvCurve.tangent">tangent</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.tangent_array" href="core.html#sverchok.utils.curve.core.SvCurve.tangent_array">tangent_array</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.third_derivative" href="core.html#sverchok.utils.curve.core.SvCurve.third_derivative">third_derivative</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.third_derivative_array" href="core.html#sverchok.utils.curve.core.SvCurve.third_derivative_array">third_derivative_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.to_bezier" href="nurbs.html#sverchok.utils.curve.nurbs.SvNurbsCurve.to_bezier">to_bezier</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.to_bezier_segments" href="nurbs.html#sverchok.utils.curve.nurbs.SvNurbsCurve.to_bezier_segments">to_bezier_segments</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.to_nurbs" href="nurbs.html#sverchok.utils.curve.nurbs.SvNurbsCurve.to_nurbs">to_nurbs</a></code></li>
@@ -925,15 +847,25 @@ output: SvFreeCadNurbsCurve</p></div>
 <li><code><b><a title="sverchok.utils.curve.core.SvCurve" href="core.html#sverchok.utils.curve.core.SvCurve">SvCurve</a></b></code>:
 <ul class="hlist">
 <li><code><a title="sverchok.utils.curve.core.SvCurve.calc_length" href="core.html#sverchok.utils.curve.core.SvCurve.calc_length">calc_length</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.derivatives_array" href="core.html#sverchok.utils.curve.core.SvCurve.derivatives_array">derivatives_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.evaluate" href="core.html#sverchok.utils.curve.core.SvCurve.evaluate">evaluate</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.evaluate_array" href="core.html#sverchok.utils.curve.core.SvCurve.evaluate_array">evaluate_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.frame_array" href="core.html#sverchok.utils.curve.core.SvCurve.frame_array">frame_array</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.frame_by_plane_array" href="core.html#sverchok.utils.curve.core.SvCurve.frame_by_plane_array">frame_by_plane_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_control_points" href="core.html#sverchok.utils.curve.core.SvCurve.get_control_points">get_control_points</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_degree" href="core.html#sverchok.utils.curve.core.SvCurve.get_degree">get_degree</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_end_points" href="core.html#sverchok.utils.curve.core.SvCurve.get_end_points">get_end_points</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_polyline_vertices" href="core.html#sverchok.utils.curve.core.SvCurve.get_polyline_vertices">get_polyline_vertices</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_tangent_delta" href="core.html#sverchok.utils.curve.core.SvCurve.get_tangent_delta">get_tangent_delta</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_u_bounds" href="core.html#sverchok.utils.curve.core.SvCurve.get_u_bounds">get_u_bounds</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.is_closed" href="core.html#sverchok.utils.curve.core.SvCurve.is_closed">is_closed</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.is_polyline" href="core.html#sverchok.utils.curve.core.SvCurve.is_polyline">is_polyline</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.second_derivative" href="core.html#sverchok.utils.curve.core.SvCurve.second_derivative">second_derivative</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.second_derivative_array" href="core.html#sverchok.utils.curve.core.SvCurve.second_derivative_array">second_derivative_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.tangent" href="core.html#sverchok.utils.curve.core.SvCurve.tangent">tangent</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.tangent_array" href="core.html#sverchok.utils.curve.core.SvCurve.tangent_array">tangent_array</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.third_derivative" href="core.html#sverchok.utils.curve.core.SvCurve.third_derivative">third_derivative</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.third_derivative_array" href="core.html#sverchok.utils.curve.core.SvCurve.third_derivative_array">third_derivative_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.zero_torsion_frame_array" href="core.html#sverchok.utils.curve.core.SvCurve.zero_torsion_frame_array">zero_torsion_frame_array</a></code></li>
 </ul>
 </li>
@@ -977,19 +909,13 @@ output: SvFreeCadNurbsCurve</p></div>
 </li>
 <li>
 <h4><code><a title="sverchok.utils.curve.freecad.SvFreeCadNurbsCurve" href="#sverchok.utils.curve.freecad.SvFreeCadNurbsCurve">SvFreeCadNurbsCurve</a></code></h4>
-<ul class="">
+<ul class="two-column">
 <li><code><a title="sverchok.utils.curve.freecad.SvFreeCadNurbsCurve.build" href="#sverchok.utils.curve.freecad.SvFreeCadNurbsCurve.build">build</a></code></li>
 <li><code><a title="sverchok.utils.curve.freecad.SvFreeCadNurbsCurve.build_2d" href="#sverchok.utils.curve.freecad.SvFreeCadNurbsCurve.build_2d">build_2d</a></code></li>
-<li><code><a title="sverchok.utils.curve.freecad.SvFreeCadNurbsCurve.derivatives_array" href="#sverchok.utils.curve.freecad.SvFreeCadNurbsCurve.derivatives_array">derivatives_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.freecad.SvFreeCadNurbsCurve.from_any_nurbs" href="#sverchok.utils.curve.freecad.SvFreeCadNurbsCurve.from_any_nurbs">from_any_nurbs</a></code></li>
 <li><code><a title="sverchok.utils.curve.freecad.SvFreeCadNurbsCurve.insert_knot" href="#sverchok.utils.curve.freecad.SvFreeCadNurbsCurve.insert_knot">insert_knot</a></code></li>
 <li><code><a title="sverchok.utils.curve.freecad.SvFreeCadNurbsCurve.interpolate" href="#sverchok.utils.curve.freecad.SvFreeCadNurbsCurve.interpolate">interpolate</a></code></li>
-<li><code><a title="sverchok.utils.curve.freecad.SvFreeCadNurbsCurve.is_closed" href="#sverchok.utils.curve.freecad.SvFreeCadNurbsCurve.is_closed">is_closed</a></code></li>
 <li><code><a title="sverchok.utils.curve.freecad.SvFreeCadNurbsCurve.remove_knot" href="#sverchok.utils.curve.freecad.SvFreeCadNurbsCurve.remove_knot">remove_knot</a></code></li>
-<li><code><a title="sverchok.utils.curve.freecad.SvFreeCadNurbsCurve.second_derivative" href="#sverchok.utils.curve.freecad.SvFreeCadNurbsCurve.second_derivative">second_derivative</a></code></li>
-<li><code><a title="sverchok.utils.curve.freecad.SvFreeCadNurbsCurve.second_derivative_array" href="#sverchok.utils.curve.freecad.SvFreeCadNurbsCurve.second_derivative_array">second_derivative_array</a></code></li>
-<li><code><a title="sverchok.utils.curve.freecad.SvFreeCadNurbsCurve.third_derivative" href="#sverchok.utils.curve.freecad.SvFreeCadNurbsCurve.third_derivative">third_derivative</a></code></li>
-<li><code><a title="sverchok.utils.curve.freecad.SvFreeCadNurbsCurve.third_derivative_array" href="#sverchok.utils.curve.freecad.SvFreeCadNurbsCurve.third_derivative_array">third_derivative_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.freecad.SvFreeCadNurbsCurve.to_2d" href="#sverchok.utils.curve.freecad.SvFreeCadNurbsCurve.to_2d">to_2d</a></code></li>
 </ul>
 </li>

@@ -270,24 +270,6 @@ el.replaceWith(d);
 </dl>
 <h3>Methods</h3>
 <dl>
-<dt id="sverchok.utils.curve.nurbs.SvGeomdlCurve.derivatives_array"><code class="name flex">
-<span>def <span class="ident">derivatives_array</span></span>(<span>self, n, ts, tangent_delta=None)</span>
-</code></dt>
-<dd>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def derivatives_array(self, n, ts, tangent_delta=None):
-    def derivatives(t):
-        result = self.curve.derivatives(t, order=n)
-        return np.array(result[1:])
-    result = np.vectorize(derivatives, signature=&#39;()-&gt;(n,3)&#39;)(ts)
-    result = np.transpose(result, axes=(1, 0, 2))
-    return result</code></pre>
-</details>
-<div class="desc"></div>
-</dd>
 <dt id="sverchok.utils.curve.nurbs.SvGeomdlCurve.extrude_along_vector"><code class="name flex">
 <span>def <span class="ident">extrude_along_vector</span></span>(<span>self, vector)</span>
 </code></dt>
@@ -383,60 +365,6 @@ el.replaceWith(d);
 </details>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.utils.curve.nurbs.SvGeomdlCurve.second_derivative"><code class="name flex">
-<span>def <span class="ident">second_derivative</span></span>(<span>self, t, tangent_delta=None)</span>
-</code></dt>
-<dd>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def second_derivative(self, t, tangent_delta=None):
-    p, first, second = self.curve.derivatives(t, order=2)
-    return np.array(second)</code></pre>
-</details>
-<div class="desc"></div>
-</dd>
-<dt id="sverchok.utils.curve.nurbs.SvGeomdlCurve.second_derivative_array"><code class="name flex">
-<span>def <span class="ident">second_derivative_array</span></span>(<span>self, ts, tangent_delta=None)</span>
-</code></dt>
-<dd>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def second_derivative_array(self, ts, tangent_delta=None):
-    return np.vectorize(self.second_derivative, signature=&#39;()-&gt;(3)&#39;)(ts)</code></pre>
-</details>
-<div class="desc"></div>
-</dd>
-<dt id="sverchok.utils.curve.nurbs.SvGeomdlCurve.third_derivative"><code class="name flex">
-<span>def <span class="ident">third_derivative</span></span>(<span>self, t, tangent_delta=None)</span>
-</code></dt>
-<dd>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def third_derivative(self, t, tangent_delta=None):
-    p, first, second, third = self.curve.derivatives(t, order=3)
-    return np.array(third)</code></pre>
-</details>
-<div class="desc"></div>
-</dd>
-<dt id="sverchok.utils.curve.nurbs.SvGeomdlCurve.third_derivative_array"><code class="name flex">
-<span>def <span class="ident">third_derivative_array</span></span>(<span>self, ts, tangent_delta=None)</span>
-</code></dt>
-<dd>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def third_derivative_array(self, ts, tangent_delta=None):
-    return np.vectorize(self.third_derivative, signature=&#39;()-&gt;(3)&#39;)(ts)</code></pre>
-</details>
-<div class="desc"></div>
-</dd>
 </dl>
 <h3>Inherited members</h3>
 <ul class="hlist">
@@ -445,23 +373,33 @@ el.replaceWith(d);
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.calc_length" href="core.html#sverchok.utils.curve.core.SvCurve.calc_length">calc_length</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.calc_linear_segment_knots" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.calc_linear_segment_knots">calc_linear_segment_knots</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.cut_segment" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.cut_segment">cut_segment</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.derivatives_array" href="core.html#sverchok.utils.curve.core.SvCurve.derivatives_array">derivatives_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.evaluate" href="core.html#sverchok.utils.curve.core.SvCurve.evaluate">evaluate</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.evaluate_array" href="core.html#sverchok.utils.curve.core.SvCurve.evaluate_array">evaluate_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.frame_array" href="core.html#sverchok.utils.curve.core.SvCurve.frame_array">frame_array</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.frame_by_plane_array" href="core.html#sverchok.utils.curve.core.SvCurve.frame_by_plane_array">frame_by_plane_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_control_points" href="core.html#sverchok.utils.curve.core.SvCurve.get_control_points">get_control_points</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_degree" href="core.html#sverchok.utils.curve.core.SvCurve.get_degree">get_degree</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_end_points" href="core.html#sverchok.utils.curve.core.SvCurve.get_end_points">get_end_points</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_homogenous_control_points" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.get_homogenous_control_points">get_homogenous_control_points</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_knotvector" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.get_knotvector">get_knotvector</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_min_continuity" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.get_min_continuity">get_min_continuity</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_nurbs_implementation" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.get_nurbs_implementation">get_nurbs_implementation</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_polyline_vertices" href="core.html#sverchok.utils.curve.core.SvCurve.get_polyline_vertices">get_polyline_vertices</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_tangent_delta" href="core.html#sverchok.utils.curve.core.SvCurve.get_tangent_delta">get_tangent_delta</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_u_bounds" href="core.html#sverchok.utils.curve.core.SvCurve.get_u_bounds">get_u_bounds</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_weights" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.get_weights">get_weights</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.is_closed" href="core.html#sverchok.utils.curve.core.SvCurve.is_closed">is_closed</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.is_inside_sphere" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.is_inside_sphere">is_inside_sphere</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.is_line" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.is_line">is_line</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.is_polyline" href="core.html#sverchok.utils.curve.core.SvCurve.is_polyline">is_polyline</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.is_strongly_outside_sphere" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.is_strongly_outside_sphere">is_strongly_outside_sphere</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.second_derivative" href="core.html#sverchok.utils.curve.core.SvCurve.second_derivative">second_derivative</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.second_derivative_array" href="core.html#sverchok.utils.curve.core.SvCurve.second_derivative_array">second_derivative_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.tangent" href="core.html#sverchok.utils.curve.core.SvCurve.tangent">tangent</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.tangent_array" href="core.html#sverchok.utils.curve.core.SvCurve.tangent_array">tangent_array</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.third_derivative" href="core.html#sverchok.utils.curve.core.SvCurve.third_derivative">third_derivative</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.third_derivative_array" href="core.html#sverchok.utils.curve.core.SvCurve.third_derivative_array">third_derivative_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.to_bezier" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.to_bezier">to_bezier</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.to_bezier_segments" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.to_bezier_segments">to_bezier_segments</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.to_nurbs" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.to_nurbs">to_nurbs</a></code></li>
@@ -893,34 +831,6 @@ el.replaceWith(d);
 </dl>
 <h3>Methods</h3>
 <dl>
-<dt id="sverchok.utils.curve.nurbs.SvNativeNurbsCurve.derivatives_array"><code class="name flex">
-<span>def <span class="ident">derivatives_array</span></span>(<span>self, n, ts, tangent_delta=None)</span>
-</code></dt>
-<dd>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def derivatives_array(self, n, ts, tangent_delta=None):
-    result = []
-    if n &gt;= 1:
-        numerator, denominator = self.fraction(0, ts)
-        curve = numerator / denominator
-        numerator1, denominator1 = self.fraction(1, ts)
-        curve1 = (numerator1 - curve*denominator1) / denominator
-        result.append(curve1)
-    if n &gt;= 2:
-        numerator2, denominator2 = self.fraction(2, ts)
-        curve2 = (numerator2 - 2*curve1*denominator1 - curve*denominator2) / denominator
-        result.append(curve2)
-    if n &gt;= 3:
-        numerator3, denominator3 = self.fraction(3, ts)
-        curve3 = (numerator3 - 3*curve2*denominator1 - 3*curve1*denominator2 - curve*denominator3) / denominator
-        result.append(curve3)
-    return result</code></pre>
-</details>
-<div class="desc"></div>
-</dd>
 <dt id="sverchok.utils.curve.nurbs.SvNativeNurbsCurve.extrude_along_vector"><code class="name flex">
 <span>def <span class="ident">extrude_along_vector</span></span>(<span>self, vector)</span>
 </code></dt>
@@ -1233,64 +1143,6 @@ el.replaceWith(d);
 </details>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.utils.curve.nurbs.SvNativeNurbsCurve.second_derivative"><code class="name flex">
-<span>def <span class="ident">second_derivative</span></span>(<span>self, t, tangent_delta=None)</span>
-</code></dt>
-<dd>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def second_derivative(self, t, tangent_delta=None):
-    return self.second_derivative_array(np.array([t]))[0]</code></pre>
-</details>
-<div class="desc"></div>
-</dd>
-<dt id="sverchok.utils.curve.nurbs.SvNativeNurbsCurve.second_derivative_array"><code class="name flex">
-<span>def <span class="ident">second_derivative_array</span></span>(<span>self, ts, tangent_delta=None)</span>
-</code></dt>
-<dd>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def second_derivative_array(self, ts, tangent_delta=None):
-    # numerator&#39;&#39; = (curve * denominator)&#39;&#39; =
-    #  = curve&#39;&#39; * denominator + 2 * curve&#39; * denominator&#39; + curve * denominator&#39;&#39;
-    numerator, denominator = self.fraction(0, ts)
-    curve = numerator / denominator
-    numerator1, denominator1 = self.fraction(1, ts)
-    curve1 = (numerator1 - curve*denominator1) / denominator
-    numerator2, denominator2 = self.fraction(2, ts)
-    curve2 = (numerator2 - 2*curve1*denominator1 - curve*denominator2) / denominator
-    return curve2</code></pre>
-</details>
-<div class="desc"></div>
-</dd>
-<dt id="sverchok.utils.curve.nurbs.SvNativeNurbsCurve.third_derivative_array"><code class="name flex">
-<span>def <span class="ident">third_derivative_array</span></span>(<span>self, ts, tangent_delta=None)</span>
-</code></dt>
-<dd>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def third_derivative_array(self, ts, tangent_delta=None):
-    # numerator&#39;&#39;&#39; = (curve * denominator)&#39;&#39;&#39; = 
-    #  = curve&#39;&#39;&#39; * denominator + 3 * curve&#39;&#39; * denominator&#39; + 3 * curve&#39; * denominator&#39;&#39; + denominator&#39;&#39;&#39;
-    numerator, denominator = self.fraction(0, ts)
-    curve = numerator / denominator
-    numerator1, denominator1 = self.fraction(1, ts)
-    curve1 = (numerator1 - curve*denominator1) / denominator
-    numerator2, denominator2 = self.fraction(2, ts)
-    curve2 = (numerator2 - 2*curve1*denominator1 - curve*denominator2) / denominator
-    numerator3, denominator3 = self.fraction(3, ts)
-
-    curve3 = (numerator3 - 3*curve2*denominator1 - 3*curve1*denominator2 - curve*denominator3) / denominator
-    return curve3</code></pre>
-</details>
-<div class="desc"></div>
-</dd>
 </dl>
 <h3>Inherited members</h3>
 <ul class="hlist">
@@ -1299,23 +1151,33 @@ el.replaceWith(d);
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.calc_length" href="core.html#sverchok.utils.curve.core.SvCurve.calc_length">calc_length</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.calc_linear_segment_knots" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.calc_linear_segment_knots">calc_linear_segment_knots</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.cut_segment" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.cut_segment">cut_segment</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.derivatives_array" href="core.html#sverchok.utils.curve.core.SvCurve.derivatives_array">derivatives_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.evaluate" href="core.html#sverchok.utils.curve.core.SvCurve.evaluate">evaluate</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.evaluate_array" href="core.html#sverchok.utils.curve.core.SvCurve.evaluate_array">evaluate_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.frame_array" href="core.html#sverchok.utils.curve.core.SvCurve.frame_array">frame_array</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.frame_by_plane_array" href="core.html#sverchok.utils.curve.core.SvCurve.frame_by_plane_array">frame_by_plane_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_control_points" href="core.html#sverchok.utils.curve.core.SvCurve.get_control_points">get_control_points</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_degree" href="core.html#sverchok.utils.curve.core.SvCurve.get_degree">get_degree</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_end_points" href="core.html#sverchok.utils.curve.core.SvCurve.get_end_points">get_end_points</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_homogenous_control_points" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.get_homogenous_control_points">get_homogenous_control_points</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_knotvector" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.get_knotvector">get_knotvector</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_min_continuity" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.get_min_continuity">get_min_continuity</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_nurbs_implementation" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.get_nurbs_implementation">get_nurbs_implementation</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_polyline_vertices" href="core.html#sverchok.utils.curve.core.SvCurve.get_polyline_vertices">get_polyline_vertices</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_tangent_delta" href="core.html#sverchok.utils.curve.core.SvCurve.get_tangent_delta">get_tangent_delta</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_u_bounds" href="core.html#sverchok.utils.curve.core.SvCurve.get_u_bounds">get_u_bounds</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_weights" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.get_weights">get_weights</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.is_closed" href="core.html#sverchok.utils.curve.core.SvCurve.is_closed">is_closed</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.is_inside_sphere" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.is_inside_sphere">is_inside_sphere</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.is_line" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.is_line">is_line</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.is_polyline" href="core.html#sverchok.utils.curve.core.SvCurve.is_polyline">is_polyline</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.is_strongly_outside_sphere" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.is_strongly_outside_sphere">is_strongly_outside_sphere</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.second_derivative" href="core.html#sverchok.utils.curve.core.SvCurve.second_derivative">second_derivative</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.second_derivative_array" href="core.html#sverchok.utils.curve.core.SvCurve.second_derivative_array">second_derivative_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.tangent" href="core.html#sverchok.utils.curve.core.SvCurve.tangent">tangent</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.tangent_array" href="core.html#sverchok.utils.curve.core.SvCurve.tangent_array">tangent_array</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.third_derivative" href="core.html#sverchok.utils.curve.core.SvCurve.third_derivative">third_derivative</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.third_derivative_array" href="core.html#sverchok.utils.curve.core.SvCurve.third_derivative_array">third_derivative_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.to_bezier" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.to_bezier">to_bezier</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.to_bezier_segments" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.to_bezier_segments">to_bezier_segments</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.to_nurbs" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.to_nurbs">to_nurbs</a></code></li>
@@ -2746,26 +2608,6 @@ such a way that each segment is nearly a straight line segment.</p></div>
 </details>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.utils.curve.nurbs.SvNurbsCurve.get_end_points"><code class="name flex">
-<span>def <span class="ident">get_end_points</span></span>(<span>self)</span>
-</code></dt>
-<dd>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def get_end_points(self):
-    if sv_knotvector.is_clamped(self.get_knotvector(), self.get_degree()):
-        cpts = self.get_control_points()
-        return cpts[0], cpts[-1]
-    else:
-        u_min, u_max = self.get_u_bounds()
-        begin = self.evaluate(u_min)
-        end = self.evaluate(u_max)
-        return begin, end</code></pre>
-</details>
-<div class="desc"></div>
-</dd>
 <dt id="sverchok.utils.curve.nurbs.SvNurbsCurve.get_end_tangent"><code class="name flex">
 <span>def <span class="ident">get_end_tangent</span></span>(<span>self)</span>
 </code></dt>
@@ -2860,22 +2702,6 @@ such a way that each segment is nearly a straight line segment.</p></div>
 <pre><code class="python">def get_plane(self, tolerance=1e-6):
     cpts = self.get_control_points()
     return get_common_plane(cpts, tolerance)</code></pre>
-</details>
-<div class="desc"></div>
-</dd>
-<dt id="sverchok.utils.curve.nurbs.SvNurbsCurve.get_polyline_vertices"><code class="name flex">
-<span>def <span class="ident">get_polyline_vertices</span></span>(<span>self)</span>
-</code></dt>
-<dd>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def get_polyline_vertices(self):
-    segments = self.split_at_fracture_points()
-    points = [s.get_end_points()[0] for s in segments]
-    points.append(segments[-1].get_end_points()[1])
-    return np.array(points)</code></pre>
 </details>
 <div class="desc"></div>
 </dd>
@@ -3065,23 +2891,6 @@ inside the convex hull of it's control points.</p></div>
     if not sv_knotvector.is_clamped(self.get_knotvector(), self.get_degree()):
         return False
     return np.linalg.norm(cpts[-1] - cpts[0]) &lt; tolerance</code></pre>
-</details>
-<div class="desc"></div>
-</dd>
-<dt id="sverchok.utils.curve.nurbs.SvNurbsCurve.is_polyline"><code class="name flex">
-<span>def <span class="ident">is_polyline</span></span>(<span>self, tolerance=1e-06)</span>
-</code></dt>
-<dd>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def is_polyline(self, tolerance = 1e-6):
-    if self.get_degree() == 1:
-        return True
-
-    segments = self.split_at_fracture_points()
-    return all(s.is_line(tolerance) for s in segments)</code></pre>
 </details>
 <div class="desc"></div>
 </dd>
@@ -3662,15 +3471,25 @@ lie inside the sphere, or may not touch it at all.</p></div>
 <li><code><b><a title="sverchok.utils.curve.core.SvCurve" href="core.html#sverchok.utils.curve.core.SvCurve">SvCurve</a></b></code>:
 <ul class="hlist">
 <li><code><a title="sverchok.utils.curve.core.SvCurve.calc_length" href="core.html#sverchok.utils.curve.core.SvCurve.calc_length">calc_length</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.derivatives_array" href="core.html#sverchok.utils.curve.core.SvCurve.derivatives_array">derivatives_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.evaluate" href="core.html#sverchok.utils.curve.core.SvCurve.evaluate">evaluate</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.evaluate_array" href="core.html#sverchok.utils.curve.core.SvCurve.evaluate_array">evaluate_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.frame_array" href="core.html#sverchok.utils.curve.core.SvCurve.frame_array">frame_array</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.frame_by_plane_array" href="core.html#sverchok.utils.curve.core.SvCurve.frame_by_plane_array">frame_by_plane_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_control_points" href="core.html#sverchok.utils.curve.core.SvCurve.get_control_points">get_control_points</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_degree" href="core.html#sverchok.utils.curve.core.SvCurve.get_degree">get_degree</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_end_points" href="core.html#sverchok.utils.curve.core.SvCurve.get_end_points">get_end_points</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_polyline_vertices" href="core.html#sverchok.utils.curve.core.SvCurve.get_polyline_vertices">get_polyline_vertices</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_tangent_delta" href="core.html#sverchok.utils.curve.core.SvCurve.get_tangent_delta">get_tangent_delta</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_u_bounds" href="core.html#sverchok.utils.curve.core.SvCurve.get_u_bounds">get_u_bounds</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.is_closed" href="core.html#sverchok.utils.curve.core.SvCurve.is_closed">is_closed</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.is_polyline" href="core.html#sverchok.utils.curve.core.SvCurve.is_polyline">is_polyline</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.second_derivative" href="core.html#sverchok.utils.curve.core.SvCurve.second_derivative">second_derivative</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.second_derivative_array" href="core.html#sverchok.utils.curve.core.SvCurve.second_derivative_array">second_derivative_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.tangent" href="core.html#sverchok.utils.curve.core.SvCurve.tangent">tangent</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.tangent_array" href="core.html#sverchok.utils.curve.core.SvCurve.tangent_array">tangent_array</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.third_derivative" href="core.html#sverchok.utils.curve.core.SvCurve.third_derivative">third_derivative</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.third_derivative_array" href="core.html#sverchok.utils.curve.core.SvCurve.third_derivative_array">third_derivative_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.zero_torsion_frame_array" href="core.html#sverchok.utils.curve.core.SvCurve.zero_torsion_frame_array">zero_torsion_frame_array</a></code></li>
 </ul>
 </li>
@@ -3696,24 +3515,18 @@ lie inside the sphere, or may not touch it at all.</p></div>
 <ul class="">
 <li><code><a title="sverchok.utils.curve.nurbs.SvGeomdlCurve.build" href="#sverchok.utils.curve.nurbs.SvGeomdlCurve.build">build</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvGeomdlCurve.build_geomdl" href="#sverchok.utils.curve.nurbs.SvGeomdlCurve.build_geomdl">build_geomdl</a></code></li>
-<li><code><a title="sverchok.utils.curve.nurbs.SvGeomdlCurve.derivatives_array" href="#sverchok.utils.curve.nurbs.SvGeomdlCurve.derivatives_array">derivatives_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvGeomdlCurve.extrude_along_vector" href="#sverchok.utils.curve.nurbs.SvGeomdlCurve.extrude_along_vector">extrude_along_vector</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvGeomdlCurve.from_any_nurbs" href="#sverchok.utils.curve.nurbs.SvGeomdlCurve.from_any_nurbs">from_any_nurbs</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvGeomdlCurve.insert_knot" href="#sverchok.utils.curve.nurbs.SvGeomdlCurve.insert_knot">insert_knot</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvGeomdlCurve.interpolate" href="#sverchok.utils.curve.nurbs.SvGeomdlCurve.interpolate">interpolate</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvGeomdlCurve.is_rational" href="#sverchok.utils.curve.nurbs.SvGeomdlCurve.is_rational">is_rational</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvGeomdlCurve.remove_knot" href="#sverchok.utils.curve.nurbs.SvGeomdlCurve.remove_knot">remove_knot</a></code></li>
-<li><code><a title="sverchok.utils.curve.nurbs.SvGeomdlCurve.second_derivative" href="#sverchok.utils.curve.nurbs.SvGeomdlCurve.second_derivative">second_derivative</a></code></li>
-<li><code><a title="sverchok.utils.curve.nurbs.SvGeomdlCurve.second_derivative_array" href="#sverchok.utils.curve.nurbs.SvGeomdlCurve.second_derivative_array">second_derivative_array</a></code></li>
-<li><code><a title="sverchok.utils.curve.nurbs.SvGeomdlCurve.third_derivative" href="#sverchok.utils.curve.nurbs.SvGeomdlCurve.third_derivative">third_derivative</a></code></li>
-<li><code><a title="sverchok.utils.curve.nurbs.SvGeomdlCurve.third_derivative_array" href="#sverchok.utils.curve.nurbs.SvGeomdlCurve.third_derivative_array">third_derivative_array</a></code></li>
 </ul>
 </li>
 <li>
 <h4><code><a title="sverchok.utils.curve.nurbs.SvNativeNurbsCurve" href="#sverchok.utils.curve.nurbs.SvNativeNurbsCurve">SvNativeNurbsCurve</a></code></h4>
 <ul class="">
 <li><code><a title="sverchok.utils.curve.nurbs.SvNativeNurbsCurve.build" href="#sverchok.utils.curve.nurbs.SvNativeNurbsCurve.build">build</a></code></li>
-<li><code><a title="sverchok.utils.curve.nurbs.SvNativeNurbsCurve.derivatives_array" href="#sverchok.utils.curve.nurbs.SvNativeNurbsCurve.derivatives_array">derivatives_array</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNativeNurbsCurve.extrude_along_vector" href="#sverchok.utils.curve.nurbs.SvNativeNurbsCurve.extrude_along_vector">extrude_along_vector</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNativeNurbsCurve.fraction" href="#sverchok.utils.curve.nurbs.SvNativeNurbsCurve.fraction">fraction</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNativeNurbsCurve.fraction_single" href="#sverchok.utils.curve.nurbs.SvNativeNurbsCurve.fraction_single">fraction_single</a></code></li>
@@ -3721,9 +3534,6 @@ lie inside the sphere, or may not touch it at all.</p></div>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNativeNurbsCurve.interpolate" href="#sverchok.utils.curve.nurbs.SvNativeNurbsCurve.interpolate">interpolate</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNativeNurbsCurve.is_rational" href="#sverchok.utils.curve.nurbs.SvNativeNurbsCurve.is_rational">is_rational</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNativeNurbsCurve.remove_knot" href="#sverchok.utils.curve.nurbs.SvNativeNurbsCurve.remove_knot">remove_knot</a></code></li>
-<li><code><a title="sverchok.utils.curve.nurbs.SvNativeNurbsCurve.second_derivative" href="#sverchok.utils.curve.nurbs.SvNativeNurbsCurve.second_derivative">second_derivative</a></code></li>
-<li><code><a title="sverchok.utils.curve.nurbs.SvNativeNurbsCurve.second_derivative_array" href="#sverchok.utils.curve.nurbs.SvNativeNurbsCurve.second_derivative_array">second_derivative_array</a></code></li>
-<li><code><a title="sverchok.utils.curve.nurbs.SvNativeNurbsCurve.third_derivative_array" href="#sverchok.utils.curve.nurbs.SvNativeNurbsCurve.third_derivative_array">third_derivative_array</a></code></li>
 </ul>
 </li>
 <li>
@@ -3749,14 +3559,12 @@ lie inside the sphere, or may not touch it at all.</p></div>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.extrude_to_point" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.extrude_to_point">extrude_to_point</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_bounding_box" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.get_bounding_box">get_bounding_box</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_end_point" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.get_end_point">get_end_point</a></code></li>
-<li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_end_points" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.get_end_points">get_end_points</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_end_tangent" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.get_end_tangent">get_end_tangent</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_homogenous_control_points" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.get_homogenous_control_points">get_homogenous_control_points</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_knotvector" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.get_knotvector">get_knotvector</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_min_continuity" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.get_min_continuity">get_min_continuity</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_nurbs_implementation" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.get_nurbs_implementation">get_nurbs_implementation</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_plane" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.get_plane">get_plane</a></code></li>
-<li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_polyline_vertices" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.get_polyline_vertices">get_polyline_vertices</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_start_point" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.get_start_point">get_start_point</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_start_tangent" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.get_start_tangent">get_start_tangent</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_weights" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.get_weights">get_weights</a></code></li>
@@ -3767,7 +3575,6 @@ lie inside the sphere, or may not touch it at all.</p></div>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.is_line" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.is_line">is_line</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.is_planar" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.is_planar">is_planar</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.is_point" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.is_point">is_point</a></code></li>
-<li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.is_polyline" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.is_polyline">is_polyline</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.is_rational" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.is_rational">is_rational</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.is_strongly_outside_sphere" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.is_strongly_outside_sphere">is_strongly_outside_sphere</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.lerp_to" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.lerp_to">lerp_to</a></code></li>
