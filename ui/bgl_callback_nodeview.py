@@ -194,6 +194,13 @@ def draw_callback_px(n_id, data):
         drawing_func(bpy.context, args, (x, y))
         restore_opengl_defaults()
 
+def get_line_height(scale=1.0):
+    ui_scale = bpy.context.preferences.system.ui_scale
+    return int(18 * scale * ui_scale)
+
+def get_text_height(scale=1.0):
+    ui_scale = bpy.context.preferences.system.ui_scale
+    return int(15 * scale * ui_scale)
 
 def _draw_text_handler(tree_id, node_id, text: str, color=(1, 1, 1, 1), scale=1.0, align='RIGHT',
                        text_coordinates=None):
@@ -228,8 +235,8 @@ def _draw_text_handler(tree_id, node_id, text: str, color=(1, 1, 1, 1), scale=1.
     x, y = x * ui_scale, y * ui_scale
 
     # todo add scale from the preferences
-    text_height = int(15 * scale * ui_scale)
-    line_height = int(18 * scale * ui_scale)
+    text_height = get_text_height(scale)
+    line_height = get_line_height(scale)
     font_id = 0
     dpi = 72
 
@@ -261,8 +268,7 @@ def _get_text_location(node, text, scale, align='RIGHT') -> tuple[int, int]:
             max_sock_num = max(len([s for s in node.inputs if not s.hide]),
                                len([s for s in node.outputs if not s.hide]))
             gap += (max_sock_num * 0.3) * max_sock_num
-        ui_scale = bpy.context.preferences.system.ui_scale
-        line_height = int(18 * scale * ui_scale)
+        line_height = get_line_height(scale)
         n = len(text.split('\n'))
         x, y = int(x), int(y + (n-1)*line_height + gap)
     elif align == "DOWN":
