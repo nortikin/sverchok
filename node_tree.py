@@ -32,6 +32,7 @@ from contextlib import contextmanager
 from itertools import chain, cycle
 from pathlib import Path
 from typing import Iterable, final, Optional
+import textwrap
 
 import bpy
 from bpy.props import StringProperty, BoolProperty, EnumProperty
@@ -461,7 +462,7 @@ class UpdateNodes:
         if error is not None:
             color = no_data_color if isinstance(error, SvNoDataError) else exception_color
             self.set_temp_color(color)
-            sv_bgl.draw_text(self, str(error), error_pref + self.node_id, color, 1.3, "UP")
+            sv_bgl.draw_text(self, textwrap.fill(str(error)), error_pref + self.node_id, color, 1.3, "UP")
         else:
             sv_bgl.callback_disable(error_pref + self.node_id)
             self.set_temp_color()
