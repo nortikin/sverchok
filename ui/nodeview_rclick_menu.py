@@ -7,6 +7,7 @@
 
 
 import bpy
+from sverchok.core.update_system import ERROR_KEY
 import sverchok.ui.nodeview_space_menu as sm
 from sverchok.utils.sv_node_utils import frame_adjust
 from sverchok.ui.presets import node_supports_presets, apply_default_preset
@@ -236,7 +237,10 @@ class SvGenericDeligationOperator(bpy.types.Operator):
             add_connection(tree, bl_idname_new_node="SvIDXViewer28", offset=[180, 0])
         elif self.fn == 'stethoscope':
             add_connection(tree, bl_idname_new_node="SvStethoscopeNodeMK2", offset=[60, 0])
-
+        elif self.fn == 'copy_error':
+            message = tree.nodes.active.get(ERROR_KEY, None)
+            if message:
+                context.window_manager.clipboard = message
         return {'FINISHED'}
 
 class SvNodeviewRClickMenu(bpy.types.Menu):
@@ -262,6 +266,9 @@ class SvNodeviewRClickMenu(bpy.types.Menu):
         node = valid_active_node(nodes)
 
         if node:
+            if node.get(ERROR_KEY, None):
+                layout.operator("node.sv_deligate_operator", text="Copy error message").fn = "copy_error"
+                layout.separator()
             if hasattr(node, "rclick_menu"):
                 node.rclick_menu(context, layout)
                 layout.separator()
