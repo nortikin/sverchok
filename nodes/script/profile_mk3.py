@@ -390,9 +390,12 @@ class SvProfileImportOperator(bpy.types.Operator):
 
     def execute(self, context):
         txt = bpy.data.texts.load(self.filepath)
-        #context.node.filename = os.path.basename(txt.name)
-        context.node.file_pointer = txt
-        updateNode(context.node, context)
+        if hasattr(context, 'node'):
+            node = context.node
+        else:
+            node = context.active_node
+        node.file_pointer = txt
+        updateNode(node, context)
         return {'FINISHED'}
 
 #################################
