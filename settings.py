@@ -412,6 +412,9 @@ class SverchokPreferences(AddonPreferences):
     log_buffer_name: StringProperty(name = "Buffer name", default = "sverchok.log")
     log_file_name: StringProperty(name = "File path", default = join(datafiles, "sverchok.log"))
 
+    log_tracebacks: BoolProperty(name = "Log exception stacks",
+                                 description = "Write Python exception tracebacks to logs",
+                                 default = False)
 
     # updating sverchok
     dload_archive_name: StringProperty(name="archive name", default="master") # default = "master"
@@ -501,6 +504,8 @@ class SverchokPreferences(AddonPreferences):
         log_box = col2.box()
         log_box.label(text="Logging:")
         log_box.prop(self, "log_level")
+        if self.log_level != 'DEBUG':
+            log_box.prop(self, "log_tracebacks")
 
         buff_row = log_box.row()
         buff_row.prop(self, "log_to_buffer")

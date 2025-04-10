@@ -75,7 +75,7 @@ def add_node_error_location(record: logging.LogRecord):
     frame_info = inspect.getinnerframes(record.exc_info[-1])[-1]
     record.relative_path = Path(frame_info.filename).name
     record.lineno = frame_info.lineno
-    if not is_enabled_for('DEBUG'):  # show traceback only in DEBUG mode
+    if not is_log_traceback_enabled():
         record.exc_info = None
     return True
 
@@ -224,3 +224,8 @@ def is_enabled_for(log_level="DEBUG") -> bool:
     current_level = getattr(logging, addon.preferences.log_level)
     given_level = getattr(logging, log_level)
     return given_level >= current_level
+
+def is_log_traceback_enabled() -> bool:
+    addon = bpy.context.preferences.addons.get(sverchok.__name__)
+    return addon.preferences.log_tracebacks or is_enabled_for("DEBUG")
+
