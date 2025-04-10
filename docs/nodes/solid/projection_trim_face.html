@@ -462,6 +462,16 @@ adding a straight line segment to the list of curves. Unchecked by default.</p><
 the tolerance for checking if ends of curves coincide. Bigger values mean
 that ends of curves must coincide with better precision. The default value is
 8.</p></li>
+<li><p><strong>On no projection</strong>. This parameter is only available in the N panel. This
+defines what will be done in case when projection of the curve to the surface
+is empty. The available options are:</p>
+<ul>
+<li><p><strong>Raise exception</strong>. An exception will be raised, and the processing will
+stop. This is the default option.</p></li>
+<li><p><strong>Skip</strong>. The node will skip processing of this surface, but continue with
+other surfaces (if there are several surfaces provided).</p></li>
+</ul>
+</li>
 </ul>
 </section>
 <section id="outputs">
