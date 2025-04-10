@@ -128,7 +128,7 @@ el.replaceWith(d);
 <pre><code class="python">def get_exception_text(ex):
     if hasattr(ex, &#39;__description__&#39;):
         descr = ex.__description__
-    elif hasattr(ex, &#39;__doc__&#39;):
+    elif hasattr(ex, &#39;__doc__&#39;) and ex.__doc__ is not None:
         descr = ex.__doc__.split(&#39;\n&#39;)[0].strip()
     else:
         descr = type(ex).__name__
