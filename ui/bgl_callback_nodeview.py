@@ -21,6 +21,7 @@
 from __future__ import annotations  # this will fix backward compatibility with Python 3.8 and less
 
 from inspect import isfunction
+import textwrap
 
 import bpy
 import blf
@@ -63,7 +64,7 @@ def draw_text(node, text: str, draw_id=None, color=(1, 1, 1, 1), scale=1., align
         callback_disable(draw_id)
 
     color = color if len(color) == 4 else (*color, 1)
-    text_location = None if dynamic_location else _get_text_location(node, align)
+    text_location = None if dynamic_location else _get_text_location(node, text, scale, align)
     handle_pixel = SpaceNodeEditor.draw_handler_add(
         _draw_text_handler,
         (node.id_data.tree_id, node.node_id, text, color, scale, align, text_location),
@@ -193,6 +194,13 @@ def draw_callback_px(n_id, data):
         drawing_func(bpy.context, args, (x, y))
         restore_opengl_defaults()
 
+def get_line_height(scale=1.0):
+    ui_scale = bpy.context.preferences.system.ui_scale
+    return int(18 * scale * ui_scale)
+
+def get_text_height(scale=1.0):
+    ui_scale = bpy.context.preferences.system.ui_scale
+    return int(15 * scale * ui_scale)
 
 def _draw_text_handler(tree_id, node_id, text: str, color=(1, 1, 1, 1), scale=1.0, align='RIGHT',
                        text_coordinates=None):
@@ -216,7 +224,7 @@ def _draw_text_handler(tree_id, node_id, text: str, color=(1, 1, 1, 1), scale=1.
 
         # find node location
         node = next(n for n in editor.edit_tree.nodes if n.node_id == node_id)
-        (x, y), z = _get_text_location(node, align), 0
+        (x, y), z = _get_text_location(node, text, scale, align), 0
 
     # put static coordinates if there are a lot of nodes with text to draw (does not react on the node movements)
     else:
@@ -227,8 +235,8 @@ def _draw_text_handler(tree_id, node_id, text: str, color=(1, 1, 1, 1), scale=1.
     x, y = x * ui_scale, y * ui_scale
 
     # todo add scale from the preferences
-    text_height = int(15 * scale * ui_scale)
-    line_height = int(18 * scale * ui_scale)
+    text_height = get_text_height(scale)
+    line_height = get_line_height(scale)
     font_id = 0
     dpi = 72
 
@@ -241,7 +249,7 @@ def _draw_text_handler(tree_id, node_id, text: str, color=(1, 1, 1, 1), scale=1.
         y -= line_height
 
 
-def _get_text_location(node, align='RIGHT') -> tuple[int, int]:
+def _get_text_location(node, text, scale, align='RIGHT') -> tuple[int, int]:
     """Find location for a text nearby given node"""
     (x, y) = node.absolute_location
     gap = 10
@@ -260,7 +268,9 @@ def _get_text_location(node, align='RIGHT') -> tuple[int, int]:
             max_sock_num = max(len([s for s in node.inputs if not s.hide]),
                                len([s for s in node.outputs if not s.hide]))
             gap += (max_sock_num * 0.3) * max_sock_num
-        x, y = int(x), int(y + gap)
+        line_height = get_line_height(scale)
+        n = len(text.split('\n'))
+        x, y = int(x), int(y + (n-1)*line_height + gap)
     elif align == "DOWN":
         x, y = int(x), int(y - dy - gap)
     else:

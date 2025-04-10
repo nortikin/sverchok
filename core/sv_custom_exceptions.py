@@ -61,7 +61,6 @@ class SvNotFullyConnected(SvProcessingError):
 
 class ImplicitConversionProhibited(Exception):
     def __init__(self, socket, msg=None):
-        super().__init__()
         self.socket = socket
         self.node = socket.node
         self.from_socket_type = socket.other.bl_idname
@@ -71,11 +70,8 @@ class ImplicitConversionProhibited(Exception):
                   f" to socket type {self.to_socket_type} is not supported for" \
                   f" socket {socket.name} of node {socket.node.name}. Please" \
                   f" use explicit conversion nodes."
+        super().__init__(msg)
         self.message = msg
-
-    def __str__(self):
-        return self.message
-
 
 class DependencyError(Exception):
     """Raise when some library is not installed"""
