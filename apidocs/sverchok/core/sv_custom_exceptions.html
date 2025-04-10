@@ -95,7 +95,6 @@ el.replaceWith(d);
 </summary>
 <pre><code class="python">class ImplicitConversionProhibited(Exception):
     def __init__(self, socket, msg=None):
-        super().__init__()
         self.socket = socket
         self.node = socket.node
         self.from_socket_type = socket.other.bl_idname
@@ -105,10 +104,8 @@ el.replaceWith(d);
                   f&#34; to socket type {self.to_socket_type} is not supported for&#34; \
                   f&#34; socket {socket.name} of node {socket.node.name}. Please&#34; \
                   f&#34; use explicit conversion nodes.&#34;
-        self.message = msg
-
-    def __str__(self):
-        return self.message</code></pre>
+        super().__init__(msg)
+        self.message = msg</code></pre>
 </details>
 <div class="desc"><p>Common base class for all non-exit exceptions.</p></div>
 <h3>Ancestors</h3>
