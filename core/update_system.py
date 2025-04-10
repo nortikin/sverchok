@@ -681,7 +681,7 @@ class UpdateTree(SearchTree):
 def get_exception_text(ex):
     if hasattr(ex, '__description__'):
         descr = ex.__description__
-    elif hasattr(ex, '__doc__'):
+    elif hasattr(ex, '__doc__') and ex.__doc__ is not None:
         descr = ex.__doc__.split('\n')[0].strip()
     else:
         descr = type(ex).__name__
