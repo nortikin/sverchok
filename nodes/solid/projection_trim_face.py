@@ -10,9 +10,10 @@ import numpy as np
 import bpy
 from bpy.props import BoolProperty, EnumProperty, IntProperty
 
+from sverchok.core.sv_custom_exceptions import SvProcessingError
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import zip_long_repeat, ensure_nesting_level, updateNode
-from sverchok.utils.curve.core import SvCurve
+from sverchok.utils.curve.core import SvCurve, UnsupportedCurveTypeException
 from sverchok.utils.curve.primitives import SvLine
 from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.curve.freecad import SvFreeCadNurbsCurve, SvFreeCadCurve, SvSolidEdgeCurve
@@ -72,6 +73,18 @@ class SvProjectTrimFaceNode(SverchCustomTreeNode, bpy.types.Node):
             min = 1,
             update = updateNode)
 
+    no_projection_modes = [
+            ('ERROR', "Raise exception", "Raise exception", 0),
+            ('SKIP', "Skip", "Skip", 1)
+        ]
+
+    on_no_projection : EnumProperty(
+            name = "On no projection",
+            description = "What to do if projection is empty",
+            items = no_projection_modes,
+            default = 'ERROR',
+            update = updateNode)
+
     def sv_init(self, context):
         self.inputs.new('SvSurfaceSocket', "Surface")
         # Named it "Cut", to do not confuse with "Trim" curves, which are
@@ -96,19 +109,20 @@ class SvProjectTrimFaceNode(SverchCustomTreeNode, bpy.types.Node):
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
         layout.prop(self, 'accuracy')
+        layout.prop(self, 'on_no_projection')
 
     def cut(self, face_surface, sv_curves, point, vector):
         # face_surface : SvFreeCadNurbsSurface
         nurbs = [SvNurbsCurve.to_nurbs(curve) for curve in sv_curves]
         if any(c is None for c in nurbs):
-            raise Exception("One of curves is not a NURBS!")
+            raise UnsupportedCurveTypeException("One of curves is not a NURBS!")
         fc_nurbs_curves = [SvFreeCadNurbsCurve.from_any_nurbs(c) for c in nurbs]
         fc_nurbs = [c.curve for c in fc_nurbs_curves]
         if self.projection_type in {'PARALLEL', 'PERSPECTIVE', 'ORTHO'}:
             try:
                 fc_edges = [Part.Edge(c) for c in fc_nurbs]
             except Exception as e:
-                raise Exception(f"Can't build edges from {fc_nurbs}: {e}")
+                raise SvProcessingError(f"Can't build edges from {fc_nurbs}: {e}")
         fc_face = Part.Face(face_surface.surface)
 
         if self.projection_type == 'PARALLEL':
@@ -127,13 +141,16 @@ class SvProjectTrimFaceNode(SverchCustomTreeNode, bpy.types.Node):
 
         projections = sum(projections, [])
         if not projections:
-            words = f"along {vector}" if self.projection_type == 'PARALLEL' else f"from {point}"
-            raise Exception(f"Projection {words} of {sv_curves} onto {face_surface} is empty for some reason")
+            if self.on_no_projection == 'SKIP':
+                return [], [], None
+            else:
+                words = f"along {vector}" if self.projection_type == 'PARALLEL' else f"from {point}"
+                raise SvProcessingError(f"Projection {words} of {sv_curves} onto {face_surface} is empty for some reason")
         try:
             wire = Part.Wire(projections)
         except Exception as e:
             ps = [SvFreeCadNurbsCurve(p.Curve) for p in projections]
-            raise Exception(f"Can't make a valid Wire out of curves {sv_curves} projected onto {face_surface}:\n{e}\nProjections are: {ps}")
+            raise SvProcessingError(f"Can't make a valid Wire out of curves {sv_curves} projected onto {face_surface}:\n{e}\nProjections are: {ps}")
 
         cut_fc_face = Part.Face(face_surface.surface, wire)
         cut_face_surface = SvFreeCadNurbsSurface(face_surface.surface, face=cut_fc_face) 
@@ -199,9 +216,10 @@ class SvProjectTrimFaceNode(SverchCustomTreeNode, bpy.types.Node):
                     face = face_surface
                     trims = []
                     edges = []
-                new_faces.append(face)
-                new_trim.append(trims)
-                new_edges.append(edges)
+                if face is not None:
+                    new_faces.append(face)
+                    new_trim.append(trims)
+                    new_edges.append(edges)
 
             faces_out.append(new_faces)
             trim_out.append(new_trim)
