@@ -7,6 +7,7 @@
 
 
 class SvNoDataError(LookupError):
+    __description__ = "No data passed to socket"
     def __init__(self, socket=None, node=None, msg=None):
 
         self.extra_message = msg if msg else ""
@@ -40,14 +41,17 @@ class SvNoDataError(LookupError):
 
 
 class CancelError(Exception):
+    __description__ = "Aborted by user"
     """Aborting tree evaluation by user"""
 
 
 class SvProcessingError(Exception):
+    __description__ = "General processing error"
     pass
 
 
 class SvNotFullyConnected(SvProcessingError):
+    __description__ = "Not all required inputs are connected"
 
     def __init__(self, node, sockets):
         self.node = node
@@ -60,6 +64,7 @@ class SvNotFullyConnected(SvProcessingError):
 
 
 class ImplicitConversionProhibited(Exception):
+    __description__ = "Implicit sockets conversion is not supported"
     def __init__(self, socket, msg=None):
         self.socket = socket
         self.node = socket.node

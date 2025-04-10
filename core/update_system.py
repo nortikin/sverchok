@@ -5,11 +5,12 @@ from graphlib import TopologicalSorter
 from itertools import chain
 from time import perf_counter
 from typing import TYPE_CHECKING, Optional, Generator, Iterable
+import traceback
 
 from bpy.types import Node, NodeSocket, NodeTree, NodeLink
 import sverchok.core.events as ev
 import sverchok.core.tasks as ts
-from sverchok.core.sv_custom_exceptions import CancelError, SvNoDataError
+from sverchok.core.sv_custom_exceptions import CancelError, SvNoDataError, ImplicitConversionProhibited
 from sverchok.core.socket_conversions import conversions
 from sverchok.utils.profile import profile
 from sverchok.utils.sv_logging import node_error_logger
@@ -21,6 +22,7 @@ if TYPE_CHECKING:
 
 UPDATE_KEY = "US_is_updated"
 ERROR_KEY = "US_error"
+ERROR_STACK_KEY = "US_error_stack"
 TIME_KEY = "US_time"
 
 
@@ -676,6 +678,16 @@ class UpdateTree(SearchTree):
             _set_color(node, use_color)
             yield node, *args
 
+def get_exception_text(ex):
+    if hasattr(ex, '__description__'):
+        descr = ex.__description__
+    elif hasattr(ex, '__doc__'):
+        descr = ex.__doc__.split('\n')[0].strip()
+    else:
+        descr = type(ex).__name__
+    if not descr.endswith('.'):
+        descr = descr + ":"
+    return descr + " " + str(ex)
 
 class AddStatistic:
     """It caches errors during execution of process method of a node and saves
@@ -697,11 +709,13 @@ class AddStatistic:
         if exc_type is None:
             self._node[UPDATE_KEY] = True
             self._node[ERROR_KEY] = None
+            self._node[ERROR_STACK_KEY] = None
             self._node[TIME_KEY] = perf_counter() - self._start
         else:
             node_error_logger.error(exc_val, exc_info=True)
             self._node[UPDATE_KEY] = False
-            self._node[ERROR_KEY] = repr(exc_val)
+            self._node[ERROR_KEY] = get_exception_text(exc_val)
+            self._node[ERROR_STACK_KEY] = "".join(traceback.format_exception(exc_val))
 
         if self._supress and exc_type is not None:
             if issubclass(exc_type, CancelError):
@@ -726,7 +740,11 @@ def prepare_input_data(prev_socks: list[Optional[NodeSocket]],
             # cast data
             if ps.bl_idname != ns.bl_idname:
                 implicit_conversion = conversions[ns.default_conversion_name]
-                data = implicit_conversion.convert(ns, ps, data)
+                try:
+                    data = implicit_conversion.convert(ns, ps, data)
+                except ImplicitConversionProhibited as e:
+                    e.socket.links[0].is_valid = False
+                    raise
 
             ns.sv_set(data)
 
