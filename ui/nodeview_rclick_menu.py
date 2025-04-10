@@ -240,7 +240,6 @@ class SvGenericDeligationOperator(bpy.types.Operator):
         elif self.fn == 'copy_error':
             message = tree.nodes.active.get(ERROR_KEY, None)
             stack = tree.nodes.active.get(ERROR_STACK_KEY, "")
-            print("STACK:", tree.nodes.active, stack)
             if message:
                 message = message + "\n" + stack
                 context.window_manager.clipboard = message
