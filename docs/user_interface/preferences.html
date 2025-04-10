@@ -463,6 +463,11 @@ not write debug messages. This is the default option.</p></li>
 <li><p><strong>Errors</strong>. Write error messages only.</p></li>
 </ul>
 </li>
+<li><p><strong>Log exception stacks</strong>. If checked, then for each logged error Sverchok
+will also write it’s Python traceback flag into log. Such tracebacks can help
+Sverchok developers to understand the cause of error. Unchecked by default.
+This flag is not visible when <strong>Logging level</strong> is set to Debug, because with
+Debug level exception stacks are always logged.</p></li>
 <li><p><strong>Log to text buffer</strong>. If checked, Sverchok will write log into text buffer
 within current Blender file. The name of that buffer is specified in the
 <strong>Buffer name</strong> parameter (the default is <code class="docutils literal notranslate"><span class="pre">sverchok.log</span></code>).</p></li>
