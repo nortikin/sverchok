@@ -29,6 +29,7 @@ class ZeroCurvatureException(Exception):
         return f"Curve has zero curvature at some points: {self.ts}"
 
 class UnsupportedCurveTypeException(TypeError):
+    __description__ = "Unsupported curve type"
     pass
 
 ##################

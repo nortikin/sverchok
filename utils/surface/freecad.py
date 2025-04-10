@@ -220,6 +220,17 @@ class SvFreeCadNurbsSurface(SvNurbsSurface):
                     weights.tolist())
         return SvFreeCadNurbsSurface(surface)
 
+    def copy(self, implementation = None, degree_u=None, degree_v = None, knotvector_u = None, knotvector_v = None, control_points = None, weights = None):
+        surface = super().copy(implementation = implementation,
+                             degree_u = degree_u,
+                             degree_v = degree_v,
+                             knotvector_u = knotvector_u,
+                             knotvector_v = knotvector_v,
+                             control_points = control_points,
+                             weights = weights)
+        surface.face = self.face
+        return surface
+
     def __repr__(self):
         degree_u = self.surface.UDegree
         degree_v = self.surface.VDegree
@@ -333,6 +344,18 @@ class SvFreeCadNurbsSurface(SvNurbsSurface):
             else:
                 surface.surface.removeVKnot(idx+1, M, tolerance)
         return surface
+
+    def cut_slice(self, direction, p_min, p_max):
+        if direction == SvNurbsSurface.U:
+            u1, u2 = p_min, p_max
+            v1, v2 = self.get_v_bounds()
+        else:
+            u1, u2 = self.get_v_bounds()
+            v1, v2 = p_min, p_max
+        surf = self.surface.copy()
+        surf.segment(u1, u2, v1, v2)
+        result = SvFreeCadNurbsSurface(surf, self.face)
+        return result
 
 #     def to_nurbs(self, **kwargs):
 #         return self

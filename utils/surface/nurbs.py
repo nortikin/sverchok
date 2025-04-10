@@ -428,6 +428,38 @@ class SvNurbsSurface(SvSurface):
         result, _ = rest.split_at(direction, p_max)
         return result
 
+    def get_discontinuities_u(self, order):
+        p = self.get_degree_u()
+        knotvector = self.get_knotvector_u()
+        ms = sv_knotvector.to_multiplicity(knotvector)
+        return [t for t, s in ms if s == p - order + 1]
+
+    def get_discontinuities_v(self, order):
+        p = self.get_degree_v()
+        knotvector = self.get_knotvector_v()
+        ms = sv_knotvector.to_multiplicity(knotvector)
+        return [t for t, s in ms if s == p - order + 1]
+
+    def get_discontinuities(self, direction, order):
+        if direction == SvNurbsSurface.U:
+            return self.get_discontinuities_u(order)
+        else:
+            return self.get_discontinuities_v(order)
+
+    def cut_slices_by_discontinuity(self, direction, order):
+        ts = self.get_discontinuities(direction, order)
+        if len(ts) <= 1:
+            return [self]
+        print(f"Discontinuities in {direction}: {ts}")
+        return [self.cut_slice(direction, t1, t2) for t1, t2 in zip(ts, ts[1:])]
+
+    def cut_slices_by_discontinuity_uv(self, order, join=True):
+        slices_u = self.cut_slices_by_discontinuity(SvNurbsSurface.U, order)
+        slices = [sl.cut_slices_by_discontinuity(SvNurbsSurface.V, order) for sl in slices_u]
+        if join:
+            slices = sum(slices, [])
+        return slices
+
     def _concat_u(self, surface2, tolerance=1e-6):
         surface1 = self
         surface2 = SvNurbsSurface.get(surface2)
