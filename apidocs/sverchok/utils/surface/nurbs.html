@@ -2760,6 +2760,38 @@ def v_size(self):
         result, _ = rest.split_at(direction, p_max)
         return result
 
+    def get_discontinuities_u(self, order):
+        p = self.get_degree_u()
+        knotvector = self.get_knotvector_u()
+        ms = sv_knotvector.to_multiplicity(knotvector)
+        return [t for t, s in ms if s == p - order + 1]
+
+    def get_discontinuities_v(self, order):
+        p = self.get_degree_v()
+        knotvector = self.get_knotvector_v()
+        ms = sv_knotvector.to_multiplicity(knotvector)
+        return [t for t, s in ms if s == p - order + 1]
+
+    def get_discontinuities(self, direction, order):
+        if direction == SvNurbsSurface.U:
+            return self.get_discontinuities_u(order)
+        else:
+            return self.get_discontinuities_v(order)
+
+    def cut_slices_by_discontinuity(self, direction, order):
+        ts = self.get_discontinuities(direction, order)
+        if len(ts) &lt;= 1:
+            return [self]
+        print(f&#34;Discontinuities in {direction}: {ts}&#34;)
+        return [self.cut_slice(direction, t1, t2) for t1, t2 in zip(ts, ts[1:])]
+
+    def cut_slices_by_discontinuity_uv(self, order, join=True):
+        slices_u = self.cut_slices_by_discontinuity(SvNurbsSurface.U, order)
+        slices = [sl.cut_slices_by_discontinuity(SvNurbsSurface.V, order) for sl in slices_u]
+        if join:
+            slices = sum(slices, [])
+        return slices
+
     def _concat_u(self, surface2, tolerance=1e-6):
         surface1 = self
         surface2 = SvNurbsSurface.get(surface2)
@@ -3014,6 +3046,40 @@ def v_size(self):
 </details>
 <div class="desc"></div>
 </dd>
+<dt id="sverchok.utils.surface.nurbs.SvNurbsSurface.cut_slices_by_discontinuity"><code class="name flex">
+<span>def <span class="ident">cut_slices_by_discontinuity</span></span>(<span>self, direction, order)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def cut_slices_by_discontinuity(self, direction, order):
+    ts = self.get_discontinuities(direction, order)
+    if len(ts) &lt;= 1:
+        return [self]
+    print(f&#34;Discontinuities in {direction}: {ts}&#34;)
+    return [self.cut_slice(direction, t1, t2) for t1, t2 in zip(ts, ts[1:])]</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.surface.nurbs.SvNurbsSurface.cut_slices_by_discontinuity_uv"><code class="name flex">
+<span>def <span class="ident">cut_slices_by_discontinuity_uv</span></span>(<span>self, order, join=True)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def cut_slices_by_discontinuity_uv(self, order, join=True):
+    slices_u = self.cut_slices_by_discontinuity(SvNurbsSurface.U, order)
+    slices = [sl.cut_slices_by_discontinuity(SvNurbsSurface.V, order) for sl in slices_u]
+    if join:
+        slices = sum(slices, [])
+    return slices</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
 <dt id="sverchok.utils.surface.nurbs.SvNurbsSurface.cut_u"><code class="name flex">
 <span>def <span class="ident">cut_u</span></span>(<span>self, u)</span>
 </code></dt>
@@ -3210,6 +3276,54 @@ def v_size(self):
 </summary>
 <pre><code class="python">def get_degree_v(self):
     raise Exception(&#34;Not implemented!&#34;)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.surface.nurbs.SvNurbsSurface.get_discontinuities"><code class="name flex">
+<span>def <span class="ident">get_discontinuities</span></span>(<span>self, direction, order)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_discontinuities(self, direction, order):
+    if direction == SvNurbsSurface.U:
+        return self.get_discontinuities_u(order)
+    else:
+        return self.get_discontinuities_v(order)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.surface.nurbs.SvNurbsSurface.get_discontinuities_u"><code class="name flex">
+<span>def <span class="ident">get_discontinuities_u</span></span>(<span>self, order)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_discontinuities_u(self, order):
+    p = self.get_degree_u()
+    knotvector = self.get_knotvector_u()
+    ms = sv_knotvector.to_multiplicity(knotvector)
+    return [t for t, s in ms if s == p - order + 1]</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.surface.nurbs.SvNurbsSurface.get_discontinuities_v"><code class="name flex">
+<span>def <span class="ident">get_discontinuities_v</span></span>(<span>self, order)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_discontinuities_v(self, order):
+    p = self.get_degree_v()
+    knotvector = self.get_knotvector_v()
+    ms = sv_knotvector.to_multiplicity(knotvector)
+    return [t for t, s in ms if s == p - order + 1]</code></pre>
 </details>
 <div class="desc"></div>
 </dd>
@@ -3646,6 +3760,8 @@ def v_size(self):
 <li><code><a title="sverchok.utils.surface.nurbs.SvNurbsSurface.concatenate" href="#sverchok.utils.surface.nurbs.SvNurbsSurface.concatenate">concatenate</a></code></li>
 <li><code><a title="sverchok.utils.surface.nurbs.SvNurbsSurface.copy" href="#sverchok.utils.surface.nurbs.SvNurbsSurface.copy">copy</a></code></li>
 <li><code><a title="sverchok.utils.surface.nurbs.SvNurbsSurface.cut_slice" href="#sverchok.utils.surface.nurbs.SvNurbsSurface.cut_slice">cut_slice</a></code></li>
+<li><code><a title="sverchok.utils.surface.nurbs.SvNurbsSurface.cut_slices_by_discontinuity" href="#sverchok.utils.surface.nurbs.SvNurbsSurface.cut_slices_by_discontinuity">cut_slices_by_discontinuity</a></code></li>
+<li><code><a title="sverchok.utils.surface.nurbs.SvNurbsSurface.cut_slices_by_discontinuity_uv" href="#sverchok.utils.surface.nurbs.SvNurbsSurface.cut_slices_by_discontinuity_uv">cut_slices_by_discontinuity_uv</a></code></li>
 <li><code><a title="sverchok.utils.surface.nurbs.SvNurbsSurface.cut_u" href="#sverchok.utils.surface.nurbs.SvNurbsSurface.cut_u">cut_u</a></code></li>
 <li><code><a title="sverchok.utils.surface.nurbs.SvNurbsSurface.cut_v" href="#sverchok.utils.surface.nurbs.SvNurbsSurface.cut_v">cut_v</a></code></li>
 <li><code><a title="sverchok.utils.surface.nurbs.SvNurbsSurface.elevate_degree" href="#sverchok.utils.surface.nurbs.SvNurbsSurface.elevate_degree">elevate_degree</a></code></li>
@@ -3653,6 +3769,9 @@ def v_size(self):
 <li><code><a title="sverchok.utils.surface.nurbs.SvNurbsSurface.get_control_points" href="#sverchok.utils.surface.nurbs.SvNurbsSurface.get_control_points">get_control_points</a></code></li>
 <li><code><a title="sverchok.utils.surface.nurbs.SvNurbsSurface.get_degree_u" href="#sverchok.utils.surface.nurbs.SvNurbsSurface.get_degree_u">get_degree_u</a></code></li>
 <li><code><a title="sverchok.utils.surface.nurbs.SvNurbsSurface.get_degree_v" href="#sverchok.utils.surface.nurbs.SvNurbsSurface.get_degree_v">get_degree_v</a></code></li>
+<li><code><a title="sverchok.utils.surface.nurbs.SvNurbsSurface.get_discontinuities" href="#sverchok.utils.surface.nurbs.SvNurbsSurface.get_discontinuities">get_discontinuities</a></code></li>
+<li><code><a title="sverchok.utils.surface.nurbs.SvNurbsSurface.get_discontinuities_u" href="#sverchok.utils.surface.nurbs.SvNurbsSurface.get_discontinuities_u">get_discontinuities_u</a></code></li>
+<li><code><a title="sverchok.utils.surface.nurbs.SvNurbsSurface.get_discontinuities_v" href="#sverchok.utils.surface.nurbs.SvNurbsSurface.get_discontinuities_v">get_discontinuities_v</a></code></li>
 <li><code><a title="sverchok.utils.surface.nurbs.SvNurbsSurface.get_homogenous_control_points" href="#sverchok.utils.surface.nurbs.SvNurbsSurface.get_homogenous_control_points">get_homogenous_control_points</a></code></li>
 <li><code><a title="sverchok.utils.surface.nurbs.SvNurbsSurface.get_knotvector_u" href="#sverchok.utils.surface.nurbs.SvNurbsSurface.get_knotvector_u">get_knotvector_u</a></code></li>
 <li><code><a title="sverchok.utils.surface.nurbs.SvNurbsSurface.get_knotvector_v" href="#sverchok.utils.surface.nurbs.SvNurbsSurface.get_knotvector_v">get_knotvector_v</a></code></li>

@@ -244,6 +244,17 @@ output: SvFreeCadNurbsSurface</p></div>
                     weights.tolist())
         return SvFreeCadNurbsSurface(surface)
 
+    def copy(self, implementation = None, degree_u=None, degree_v = None, knotvector_u = None, knotvector_v = None, control_points = None, weights = None):
+        surface = super().copy(implementation = implementation,
+                             degree_u = degree_u,
+                             degree_v = degree_v,
+                             knotvector_u = knotvector_u,
+                             knotvector_v = knotvector_v,
+                             control_points = control_points,
+                             weights = weights)
+        surface.face = self.face
+        return surface
+
     def __repr__(self):
         degree_u = self.surface.UDegree
         degree_v = self.surface.VDegree
@@ -356,7 +367,19 @@ output: SvFreeCadNurbsSurface</p></div>
                 surface.surface.removeUKnot(idx+1, M, tolerance)
             else:
                 surface.surface.removeVKnot(idx+1, M, tolerance)
-        return surface</code></pre>
+        return surface
+
+    def cut_slice(self, direction, p_min, p_max):
+        if direction == SvNurbsSurface.U:
+            u1, u2 = p_min, p_max
+            v1, v2 = self.get_v_bounds()
+        else:
+            u1, u2 = self.get_v_bounds()
+            v1, v2 = p_min, p_max
+        surf = self.surface.copy()
+        surf.segment(u1, u2, v1, v2)
+        result = SvFreeCadNurbsSurface(surf, self.face)
+        return result</code></pre>
 </details>
 <div class="desc"><p>Base abstract class for all supported implementations of NURBS surfaces.</p></div>
 <h3>Ancestors</h3>
@@ -381,6 +404,49 @@ output: SvFreeCadNurbsSurface</p></div>
 </dl>
 <h3>Methods</h3>
 <dl>
+<dt id="sverchok.utils.surface.freecad.SvFreeCadNurbsSurface.copy"><code class="name flex">
+<span>def <span class="ident">copy</span></span>(<span>self,<br>implementation=None,<br>degree_u=None,<br>degree_v=None,<br>knotvector_u=None,<br>knotvector_v=None,<br>control_points=None,<br>weights=None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def copy(self, implementation = None, degree_u=None, degree_v = None, knotvector_u = None, knotvector_v = None, control_points = None, weights = None):
+    surface = super().copy(implementation = implementation,
+                         degree_u = degree_u,
+                         degree_v = degree_v,
+                         knotvector_u = knotvector_u,
+                         knotvector_v = knotvector_v,
+                         control_points = control_points,
+                         weights = weights)
+    surface.face = self.face
+    return surface</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.surface.freecad.SvFreeCadNurbsSurface.cut_slice"><code class="name flex">
+<span>def <span class="ident">cut_slice</span></span>(<span>self, direction, p_min, p_max)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def cut_slice(self, direction, p_min, p_max):
+    if direction == SvNurbsSurface.U:
+        u1, u2 = p_min, p_max
+        v1, v2 = self.get_v_bounds()
+    else:
+        u1, u2 = self.get_v_bounds()
+        v1, v2 = p_min, p_max
+    surf = self.surface.copy()
+    surf.segment(u1, u2, v1, v2)
+    result = SvFreeCadNurbsSurface(surf, self.face)
+    return result</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
 <dt id="sverchok.utils.surface.freecad.SvFreeCadNurbsSurface.evaluate"><code class="name flex">
 <span>def <span class="ident">evaluate</span></span>(<span>self, u, v)</span>
 </code></dt>
@@ -917,6 +983,8 @@ def v_size(self):
 <h4><code><a title="sverchok.utils.surface.freecad.SvFreeCadNurbsSurface" href="#sverchok.utils.surface.freecad.SvFreeCadNurbsSurface">SvFreeCadNurbsSurface</a></code></h4>
 <ul class="">
 <li><code><a title="sverchok.utils.surface.freecad.SvFreeCadNurbsSurface.build" href="#sverchok.utils.surface.freecad.SvFreeCadNurbsSurface.build">build</a></code></li>
+<li><code><a title="sverchok.utils.surface.freecad.SvFreeCadNurbsSurface.copy" href="#sverchok.utils.surface.freecad.SvFreeCadNurbsSurface.copy">copy</a></code></li>
+<li><code><a title="sverchok.utils.surface.freecad.SvFreeCadNurbsSurface.cut_slice" href="#sverchok.utils.surface.freecad.SvFreeCadNurbsSurface.cut_slice">cut_slice</a></code></li>
 <li><code><a title="sverchok.utils.surface.freecad.SvFreeCadNurbsSurface.evaluate" href="#sverchok.utils.surface.freecad.SvFreeCadNurbsSurface.evaluate">evaluate</a></code></li>
 <li><code><a title="sverchok.utils.surface.freecad.SvFreeCadNurbsSurface.evaluate_array" href="#sverchok.utils.surface.freecad.SvFreeCadNurbsSurface.evaluate_array">evaluate_array</a></code></li>
 <li><code><a title="sverchok.utils.surface.freecad.SvFreeCadNurbsSurface.get_degree_u" href="#sverchok.utils.surface.freecad.SvFreeCadNurbsSurface.get_degree_u">get_degree_u</a></code></li>
