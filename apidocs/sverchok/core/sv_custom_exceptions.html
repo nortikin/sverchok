@@ -56,9 +56,10 @@ el.replaceWith(d);
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class CancelError(Exception):
+    __description__ = &#34;Aborted by user&#34;
     &#34;&#34;&#34;Aborting tree evaluation by user&#34;&#34;&#34;</code></pre>
 </details>
-<div class="desc"><p>Aborting tree evaluation by user</p></div>
+<div class="desc"><p>Common base class for all non-exit exceptions.</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li>builtins.Exception</li>
@@ -94,6 +95,7 @@ el.replaceWith(d);
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class ImplicitConversionProhibited(Exception):
+    __description__ = &#34;Implicit sockets conversion is not supported&#34;
     def __init__(self, socket, msg=None):
         self.socket = socket
         self.node = socket.node
@@ -124,6 +126,7 @@ el.replaceWith(d);
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class SvNoDataError(LookupError):
+    __description__ = &#34;No data passed to socket&#34;
     def __init__(self, socket=None, node=None, msg=None):
 
         self.extra_message = msg if msg else &#34;&#34;
@@ -194,6 +197,7 @@ el.replaceWith(d);
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class SvNotFullyConnected(SvProcessingError):
+    __description__ = &#34;Not all required inputs are connected&#34;
 
     def __init__(self, node, sockets):
         self.node = node
@@ -222,6 +226,7 @@ el.replaceWith(d);
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class SvProcessingError(Exception):
+    __description__ = &#34;General processing error&#34;
     pass</code></pre>
 </details>
 <div class="desc"><p>Common base class for all non-exit exceptions.</p></div>

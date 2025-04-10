@@ -76,7 +76,7 @@ el.replaceWith(d);
     frame_info = inspect.getinnerframes(record.exc_info[-1])[-1]
     record.relative_path = Path(frame_info.filename).name
     record.lineno = frame_info.lineno
-    if not is_enabled_for(&#39;DEBUG&#39;):  # show traceback only in DEBUG mode
+    if not is_log_traceback_enabled():
         record.exc_info = None
     return True</code></pre>
 </details>
@@ -188,6 +188,20 @@ def fix_error_msg(msgs: Dict[Type[Exception], str]):
     return given_level &gt;= current_level</code></pre>
 </details>
 <div class="desc"><p>This check should be used for improving performance of calling disabled loggers</p></div>
+</dd>
+<dt id="sverchok.utils.sv_logging.is_log_traceback_enabled"><code class="name flex">
+<span>def <span class="ident">is_log_traceback_enabled</span></span>(<span>) ‑> bool</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def is_log_traceback_enabled() -&gt; bool:
+    addon = bpy.context.preferences.addons.get(sverchok.__name__)
+    return addon.preferences.log_tracebacks or is_enabled_for(&#34;DEBUG&#34;)</code></pre>
+</details>
+<div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.sv_logging.remove_console_handler"><code class="name flex">
 <span>def <span class="ident">remove_console_handler</span></span>(<span>)</span>
@@ -564,6 +578,7 @@ output to the stream.</p></div>
 <li><code><a title="sverchok.utils.sv_logging.fix_error_msg" href="#sverchok.utils.sv_logging.fix_error_msg">fix_error_msg</a></code></li>
 <li><code><a title="sverchok.utils.sv_logging.get_logger" href="#sverchok.utils.sv_logging.get_logger">get_logger</a></code></li>
 <li><code><a title="sverchok.utils.sv_logging.is_enabled_for" href="#sverchok.utils.sv_logging.is_enabled_for">is_enabled_for</a></code></li>
+<li><code><a title="sverchok.utils.sv_logging.is_log_traceback_enabled" href="#sverchok.utils.sv_logging.is_log_traceback_enabled">is_log_traceback_enabled</a></code></li>
 <li><code><a title="sverchok.utils.sv_logging.remove_console_handler" href="#sverchok.utils.sv_logging.remove_console_handler">remove_console_handler</a></code></li>
 </ul>
 </li>
