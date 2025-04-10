@@ -5,6 +5,7 @@ from graphlib import TopologicalSorter
 from itertools import chain
 from time import perf_counter
 from typing import TYPE_CHECKING, Optional, Generator, Iterable
+import traceback
 
 from bpy.types import Node, NodeSocket, NodeTree, NodeLink
 import sverchok.core.events as ev
@@ -21,6 +22,7 @@ if TYPE_CHECKING:
 
 UPDATE_KEY = "US_is_updated"
 ERROR_KEY = "US_error"
+ERROR_STACK_KEY = "US_error_stack"
 TIME_KEY = "US_time"
 
 
@@ -707,11 +709,13 @@ class AddStatistic:
         if exc_type is None:
             self._node[UPDATE_KEY] = True
             self._node[ERROR_KEY] = None
+            self._node[ERROR_STACK_KEY] = None
             self._node[TIME_KEY] = perf_counter() - self._start
         else:
             node_error_logger.error(exc_val, exc_info=True)
             self._node[UPDATE_KEY] = False
             self._node[ERROR_KEY] = get_exception_text(exc_val)
+            self._node[ERROR_STACK_KEY] = "".join(traceback.format_exception(exc_val))
 
         if self._supress and exc_type is not None:
             if issubclass(exc_type, CancelError):

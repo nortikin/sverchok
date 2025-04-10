@@ -7,7 +7,7 @@
 
 
 import bpy
-from sverchok.core.update_system import ERROR_KEY
+from sverchok.core.update_system import ERROR_KEY, ERROR_STACK_KEY
 import sverchok.ui.nodeview_space_menu as sm
 from sverchok.utils.sv_node_utils import frame_adjust
 from sverchok.ui.presets import node_supports_presets, apply_default_preset
@@ -239,7 +239,10 @@ class SvGenericDeligationOperator(bpy.types.Operator):
             add_connection(tree, bl_idname_new_node="SvStethoscopeNodeMK2", offset=[60, 0])
         elif self.fn == 'copy_error':
             message = tree.nodes.active.get(ERROR_KEY, None)
+            stack = tree.nodes.active.get(ERROR_STACK_KEY, "")
+            print("STACK:", tree.nodes.active, stack)
             if message:
+                message = message + "\n" + stack
                 context.window_manager.clipboard = message
         return {'FINISHED'}
 
