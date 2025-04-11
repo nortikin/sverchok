@@ -10,7 +10,7 @@ import numpy as np
 import bpy
 from bpy.props import BoolProperty, EnumProperty, IntProperty
 
-from sverchok.core.sv_custom_exceptions import SvProcessingError
+from sverchok.core.sv_custom_exceptions import SvExternalLibraryException, SvProcessingError
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import zip_long_repeat, ensure_nesting_level, updateNode
 from sverchok.utils.curve.core import SvCurve, UnsupportedCurveTypeException
@@ -150,7 +150,7 @@ class SvProjectTrimFaceNode(SverchCustomTreeNode, bpy.types.Node):
             wire = Part.Wire(projections)
         except Exception as e:
             ps = [SvFreeCadNurbsCurve(p.Curve) for p in projections]
-            raise SvProcessingError(f"Can't make a valid Wire out of curves {sv_curves} projected onto {face_surface}:\n{e}\nProjections are: {ps}")
+            raise SvExternalLibraryException(f"Can't make a valid Wire out of curves {sv_curves} projected onto {face_surface}:\n{e}\nProjections are: {ps}") from e
 
         cut_fc_face = Part.Face(face_surface.surface, wire)
         cut_face_surface = SvFreeCadNurbsSurface(face_surface.surface, face=cut_fc_face) 

@@ -10,6 +10,7 @@ from bpy.props import BoolProperty, EnumProperty, FloatVectorProperty, FloatProp
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import zip_long_repeat, ensure_nesting_level, updateNode, rotate_list
+from sverchok.core.sv_custom_exceptions import SvInvalidInputsException, SvInvalidResultException
 from sverchok.utils.surface.core import SvSurface
 from sverchok.utils.curve.freecad import get_edge_endpoints
 from sverchok.utils.surface.freecad import surface_to_freecad, is_solid_face_surface, SvFreeCadNurbsSurface
@@ -143,7 +144,7 @@ class SvRuledSolidNode(SverchCustomTreeNode, bpy.types.Node):
         n1 = len(edges1)
         n2 = len(edges2)
         if n1 != n2:
-            raise Exception(f"Faces have different number of edges: {n1} != {n2}")
+            raise SvInvalidInputsException(f"Faces have different number of edges: {n1} != {n2}")
 
         fc_sides = []
         sv_sides = []
@@ -167,7 +168,7 @@ class SvRuledSolidNode(SverchCustomTreeNode, bpy.types.Node):
             if not solid.fix(self.precision, self.precision, self.precision):
                 message = "Solid is not valid, and is not possible to fix"
                 if self.validate:
-                    raise Exception(message)
+                    raise SvInvalidResultException(message)
                 else:
                     self.error(message)
         return solid

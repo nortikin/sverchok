@@ -10,6 +10,7 @@ import numpy as np
 import bpy
 from bpy.props import BoolProperty, EnumProperty, FloatProperty
 
+from sverchok.core.sv_custom_exceptions import SvUnsupportedOptionException
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (zip_long_repeat, ensure_nesting_level, updateNode,
                                      get_data_nesting_level)
@@ -402,7 +403,7 @@ class SvSelectSolidNode(SverchCustomTreeNode, bpy.types.Node):
             elif self.criteria_type == 'SOLID_INSIDE':
                 vertex_mask = self._verts_by_solid_inside(topo, tool)
             else:
-                raise Exception("Unknown criteria for vertices")
+                raise SvUnsupportedOptionException("Unknown criteria for vertices")
             verts = [v for c, v in zip(vertex_mask, solid.Vertexes) if c]
             edge_mask = topo.get_edges_by_vertices_mask(verts, self.include_partial_other)
             face_mask = topo.get_faces_by_vertices_mask(verts, self.include_partial_other)
@@ -423,7 +424,7 @@ class SvSelectSolidNode(SverchCustomTreeNode, bpy.types.Node):
             elif self.criteria_type == 'SOLID_INSIDE':
                 edge_mask = self._edges_by_solid_inside(topo, tool)
             else:
-                raise Exception("Unknown criteria for edges")
+                raise SvUnsupportedOptionException("Unknown criteria for edges")
             edges = [e for c, e in zip(edge_mask, solid.Edges) if c]
             vertex_mask = topo.get_vertices_by_edges_mask(edges)
             face_mask = topo.get_faces_by_edges_mask(edges, self.include_partial_other)
@@ -453,7 +454,7 @@ class SvSelectSolidNode(SverchCustomTreeNode, bpy.types.Node):
             elif self.criteria_type == 'SOLID_INSIDE':
                 face_mask = self._faces_by_solid_inside(topo, tool)
             else:
-                raise Exception("Unknown criteria type for faces")
+                raise SvUnsupportedOptionException("Unknown criteria type for faces")
             faces = [f for c, f in zip(face_mask, solid.Faces) if c]
             vertex_mask = topo.get_vertices_by_faces_mask(faces)
             edge_mask = topo.get_edges_by_faces_mask(faces)

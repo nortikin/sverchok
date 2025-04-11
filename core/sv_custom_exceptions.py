@@ -49,6 +49,19 @@ class SvProcessingError(Exception):
     __description__ = "General processing error"
     pass
 
+class SvInvalidInputsException(SvProcessingError):
+    __description__ = """Invalid input"""
+    pass
+
+class SvInvalidResultException(SvProcessingError):
+    __description__ = """Invalid resulting object"""
+    pass
+
+class SvExternalLibraryException(SvProcessingError):
+    __description__ = "Exception in external library"
+
+class SvUnsupportedOptionException(SvProcessingError):
+    __description__ = "Unsupported option"
 
 class SvNotFullyConnected(SvProcessingError):
     __description__ = "Not all required inputs are connected"
