@@ -310,8 +310,12 @@ class BlTrees:
 class BlTree:
     def __init__(self, tree):
         self._tree = tree
-        self.inputs = {s.identifier: s for s in tree.inputs}
-        self.outputs = {s.identifier: s for s in tree.outputs}
+        if bpy.app.version>=(4,0,0):
+            self.inputs  = {s.from_socket.identifier: s.from_socket for s in tree.links if s.from_node.type=='GROUP_INPUT'}
+            self.outputs = {s.to_socket.identifier: s.to_socket for s in tree.links if s.to_node.type=='GROUP_OUTPUT'}
+        else:
+            self.inputs = {s.identifier: s for s in tree.inputs}
+            self.outputs = {s.identifier: s for s in tree.outputs}
 
         self.is_field = lru_cache(self._is_field)  # for performance
 
