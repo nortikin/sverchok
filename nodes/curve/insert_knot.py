@@ -10,7 +10,7 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level, repeat_last_for_length
-from sverchok.utils.curve import SvCurve
+from sverchok.utils.curve import SvCurve, UnsupportedCurveTypeException
 from sverchok.utils.curve.nurbs import SvNurbsCurve
 
 class SvCurveInsertKnotNode(SverchCustomTreeNode, bpy.types.Node):
@@ -71,7 +71,7 @@ class SvCurveInsertKnotNode(SverchCustomTreeNode, bpy.types.Node):
             for curve, knots, counts in zip_long_repeat(curves, knots_i, counts_i):
                 curve = SvNurbsCurve.to_nurbs(curve)
                 if curve is None:
-                    raise Exception("One of curves is not NURBS")
+                    raise UnsupportedCurveTypeException("One of curves is not NURBS")
                 for knot, count in zip_long_repeat(knots, counts):
                     curve = curve.insert_knot(knot, count, if_possible=self.if_possible)
                 new_curves.append(curve)
