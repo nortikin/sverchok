@@ -575,7 +575,7 @@ def ensure_nesting_level(data, target_level, data_types=SIMPLE_DATA_TYPES, input
     current_level = get_data_nesting_level(data, data_types)
     if current_level > target_level:
         if input_name is None:
-            raise TypeError("ensure_nesting_level: input data already has nesting level of {}. Required level was {}.".format(current_level, target_level))
+            raise TypeError("Input data already has nesting level of {}. Required level was {}.".format(current_level, target_level))
         else:
             raise TypeError("Input data in socket {} already has nesting level of {}. Required level was {}.".format(input_name, current_level, target_level))
     result = data
