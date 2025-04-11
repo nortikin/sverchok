@@ -2760,30 +2760,37 @@ def v_size(self):
         result, _ = rest.split_at(direction, p_max)
         return result
 
-    def get_discontinuities_u(self, order):
+    def get_discontinuities_u(self, order, include_endpoints=False):
         p = self.get_degree_u()
         knotvector = self.get_knotvector_u()
         ms = sv_knotvector.to_multiplicity(knotvector)
-        return [t for t, s in ms if s == p - order + 1]
+        result = [t for t, s in ms if s == p - order + 1]
+        if include_endpoints:
+            result = [knotvector[0]] + result + [knotvector[-1]]
+        return result
 
-    def get_discontinuities_v(self, order):
+    def get_discontinuities_v(self, order, include_endpoints=False):
         p = self.get_degree_v()
         knotvector = self.get_knotvector_v()
         ms = sv_knotvector.to_multiplicity(knotvector)
-        return [t for t, s in ms if s == p - order + 1]
+        result = [t for t, s in ms if s == p - order + 1]
+        if include_endpoints:
+            result = [knotvector[0]] + result + [knotvector[-1]]
+        return result
 
-    def get_discontinuities(self, direction, order):
+    def get_discontinuities(self, direction, order, include_endpoints=False):
         if direction == SvNurbsSurface.U:
-            return self.get_discontinuities_u(order)
+            return self.get_discontinuities_u(order, include_endpoints)
         else:
-            return self.get_discontinuities_v(order)
+            return self.get_discontinuities_v(order, include_endpoints)
 
     def cut_slices_by_discontinuity(self, direction, order):
-        ts = self.get_discontinuities(direction, order)
-        if len(ts) &lt;= 1:
+        ts = self.get_discontinuities(direction, order, include_endpoints=True)
+        if len(ts) &lt;= 2:
             return [self]
-        print(f&#34;Discontinuities in {direction}: {ts}&#34;)
-        return [self.cut_slice(direction, t1, t2) for t1, t2 in zip(ts, ts[1:])]
+        result = [self.cut_slice(direction, t1, t2) for t1, t2 in zip(ts, ts[1:])]
+        #print(f&#34;Discontinuities in {direction}: {ts} =&gt; {len(result)} slices&#34;)
+        return result
 
     def cut_slices_by_discontinuity_uv(self, order, join=True):
         slices_u = self.cut_slices_by_discontinuity(SvNurbsSurface.U, order)
@@ -3055,11 +3062,12 @@ def v_size(self):
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def cut_slices_by_discontinuity(self, direction, order):
-    ts = self.get_discontinuities(direction, order)
-    if len(ts) &lt;= 1:
+    ts = self.get_discontinuities(direction, order, include_endpoints=True)
+    if len(ts) &lt;= 2:
         return [self]
-    print(f&#34;Discontinuities in {direction}: {ts}&#34;)
-    return [self.cut_slice(direction, t1, t2) for t1, t2 in zip(ts, ts[1:])]</code></pre>
+    result = [self.cut_slice(direction, t1, t2) for t1, t2 in zip(ts, ts[1:])]
+    #print(f&#34;Discontinuities in {direction}: {ts} =&gt; {len(result)} slices&#34;)
+    return result</code></pre>
 </details>
 <div class="desc"></div>
 </dd>
@@ -3280,50 +3288,56 @@ def v_size(self):
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.surface.nurbs.SvNurbsSurface.get_discontinuities"><code class="name flex">
-<span>def <span class="ident">get_discontinuities</span></span>(<span>self, direction, order)</span>
+<span>def <span class="ident">get_discontinuities</span></span>(<span>self, direction, order, include_endpoints=False)</span>
 </code></dt>
 <dd>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def get_discontinuities(self, direction, order):
+<pre><code class="python">def get_discontinuities(self, direction, order, include_endpoints=False):
     if direction == SvNurbsSurface.U:
-        return self.get_discontinuities_u(order)
+        return self.get_discontinuities_u(order, include_endpoints)
     else:
-        return self.get_discontinuities_v(order)</code></pre>
+        return self.get_discontinuities_v(order, include_endpoints)</code></pre>
 </details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.surface.nurbs.SvNurbsSurface.get_discontinuities_u"><code class="name flex">
-<span>def <span class="ident">get_discontinuities_u</span></span>(<span>self, order)</span>
+<span>def <span class="ident">get_discontinuities_u</span></span>(<span>self, order, include_endpoints=False)</span>
 </code></dt>
 <dd>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def get_discontinuities_u(self, order):
+<pre><code class="python">def get_discontinuities_u(self, order, include_endpoints=False):
     p = self.get_degree_u()
     knotvector = self.get_knotvector_u()
     ms = sv_knotvector.to_multiplicity(knotvector)
-    return [t for t, s in ms if s == p - order + 1]</code></pre>
+    result = [t for t, s in ms if s == p - order + 1]
+    if include_endpoints:
+        result = [knotvector[0]] + result + [knotvector[-1]]
+    return result</code></pre>
 </details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.surface.nurbs.SvNurbsSurface.get_discontinuities_v"><code class="name flex">
-<span>def <span class="ident">get_discontinuities_v</span></span>(<span>self, order)</span>
+<span>def <span class="ident">get_discontinuities_v</span></span>(<span>self, order, include_endpoints=False)</span>
 </code></dt>
 <dd>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def get_discontinuities_v(self, order):
+<pre><code class="python">def get_discontinuities_v(self, order, include_endpoints=False):
     p = self.get_degree_v()
     knotvector = self.get_knotvector_v()
     ms = sv_knotvector.to_multiplicity(knotvector)
-    return [t for t, s in ms if s == p - order + 1]</code></pre>
+    result = [t for t, s in ms if s == p - order + 1]
+    if include_endpoints:
+        result = [knotvector[0]] + result + [knotvector[-1]]
+    return result</code></pre>
 </details>
 <div class="desc"></div>
 </dd>

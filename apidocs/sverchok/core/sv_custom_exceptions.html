@@ -116,6 +116,68 @@ el.replaceWith(d);
 <li>builtins.BaseException</li>
 </ul>
 </dd>
+<dt id="sverchok.core.sv_custom_exceptions.SvExternalLibraryException"><code class="flex name class">
+<span>class <span class="ident">SvExternalLibraryException</span></span>
+<span>(</span><span>*args, **kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvExternalLibraryException(SvProcessingError):
+    __description__ = &#34;Exception in external library&#34;</code></pre>
+</details>
+<div class="desc"><p>Common base class for all non-exit exceptions.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.core.sv_custom_exceptions.SvProcessingError" href="#sverchok.core.sv_custom_exceptions.SvProcessingError">SvProcessingError</a></li>
+<li>builtins.Exception</li>
+<li>builtins.BaseException</li>
+</ul>
+</dd>
+<dt id="sverchok.core.sv_custom_exceptions.SvInvalidInputsException"><code class="flex name class">
+<span>class <span class="ident">SvInvalidInputsException</span></span>
+<span>(</span><span>*args, **kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvInvalidInputsException(SvProcessingError):
+    __description__ = &#34;&#34;&#34;Invalid input&#34;&#34;&#34;
+    pass</code></pre>
+</details>
+<div class="desc"><p>Common base class for all non-exit exceptions.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.core.sv_custom_exceptions.SvProcessingError" href="#sverchok.core.sv_custom_exceptions.SvProcessingError">SvProcessingError</a></li>
+<li>builtins.Exception</li>
+<li>builtins.BaseException</li>
+</ul>
+</dd>
+<dt id="sverchok.core.sv_custom_exceptions.SvInvalidResultException"><code class="flex name class">
+<span>class <span class="ident">SvInvalidResultException</span></span>
+<span>(</span><span>*args, **kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvInvalidResultException(SvProcessingError):
+    __description__ = &#34;&#34;&#34;Invalid resulting object&#34;&#34;&#34;
+    pass</code></pre>
+</details>
+<div class="desc"><p>Common base class for all non-exit exceptions.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.core.sv_custom_exceptions.SvProcessingError" href="#sverchok.core.sv_custom_exceptions.SvProcessingError">SvProcessingError</a></li>
+<li>builtins.Exception</li>
+<li>builtins.BaseException</li>
+</ul>
+</dd>
 <dt id="sverchok.core.sv_custom_exceptions.SvNoDataError"><code class="flex name class">
 <span>class <span class="ident">SvNoDataError</span></span>
 <span>(</span><span>socket=None, node=None, msg=None)</span>
@@ -237,7 +299,31 @@ el.replaceWith(d);
 </ul>
 <h3>Subclasses</h3>
 <ul class="hlist">
+<li><a title="sverchok.core.sv_custom_exceptions.SvExternalLibraryException" href="#sverchok.core.sv_custom_exceptions.SvExternalLibraryException">SvExternalLibraryException</a></li>
+<li><a title="sverchok.core.sv_custom_exceptions.SvInvalidInputsException" href="#sverchok.core.sv_custom_exceptions.SvInvalidInputsException">SvInvalidInputsException</a></li>
+<li><a title="sverchok.core.sv_custom_exceptions.SvInvalidResultException" href="#sverchok.core.sv_custom_exceptions.SvInvalidResultException">SvInvalidResultException</a></li>
 <li><a title="sverchok.core.sv_custom_exceptions.SvNotFullyConnected" href="#sverchok.core.sv_custom_exceptions.SvNotFullyConnected">SvNotFullyConnected</a></li>
+<li><a title="sverchok.core.sv_custom_exceptions.SvUnsupportedOptionException" href="#sverchok.core.sv_custom_exceptions.SvUnsupportedOptionException">SvUnsupportedOptionException</a></li>
+</ul>
+</dd>
+<dt id="sverchok.core.sv_custom_exceptions.SvUnsupportedOptionException"><code class="flex name class">
+<span>class <span class="ident">SvUnsupportedOptionException</span></span>
+<span>(</span><span>*args, **kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvUnsupportedOptionException(SvProcessingError):
+    __description__ = &#34;Unsupported option&#34;</code></pre>
+</details>
+<div class="desc"><p>Common base class for all non-exit exceptions.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.core.sv_custom_exceptions.SvProcessingError" href="#sverchok.core.sv_custom_exceptions.SvProcessingError">SvProcessingError</a></li>
+<li>builtins.Exception</li>
+<li>builtins.BaseException</li>
 </ul>
 </dd>
 </dl>
@@ -265,6 +351,15 @@ el.replaceWith(d);
 <h4><code><a title="sverchok.core.sv_custom_exceptions.ImplicitConversionProhibited" href="#sverchok.core.sv_custom_exceptions.ImplicitConversionProhibited">ImplicitConversionProhibited</a></code></h4>
 </li>
 <li>
+<h4><code><a title="sverchok.core.sv_custom_exceptions.SvExternalLibraryException" href="#sverchok.core.sv_custom_exceptions.SvExternalLibraryException">SvExternalLibraryException</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sverchok.core.sv_custom_exceptions.SvInvalidInputsException" href="#sverchok.core.sv_custom_exceptions.SvInvalidInputsException">SvInvalidInputsException</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sverchok.core.sv_custom_exceptions.SvInvalidResultException" href="#sverchok.core.sv_custom_exceptions.SvInvalidResultException">SvInvalidResultException</a></code></h4>
+</li>
+<li>
 <h4><code><a title="sverchok.core.sv_custom_exceptions.SvNoDataError" href="#sverchok.core.sv_custom_exceptions.SvNoDataError">SvNoDataError</a></code></h4>
 <ul class="">
 <li><code><a title="sverchok.core.sv_custom_exceptions.SvNoDataError.get_message" href="#sverchok.core.sv_custom_exceptions.SvNoDataError.get_message">get_message</a></code></li>
@@ -275,6 +370,9 @@ el.replaceWith(d);
 </li>
 <li>
 <h4><code><a title="sverchok.core.sv_custom_exceptions.SvProcessingError" href="#sverchok.core.sv_custom_exceptions.SvProcessingError">SvProcessingError</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sverchok.core.sv_custom_exceptions.SvUnsupportedOptionException" href="#sverchok.core.sv_custom_exceptions.SvUnsupportedOptionException">SvUnsupportedOptionException</a></code></h4>
 </li>
 </ul>
 </li>
