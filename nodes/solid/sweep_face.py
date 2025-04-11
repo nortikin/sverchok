@@ -8,7 +8,7 @@
 import bpy
 from bpy.props import BoolProperty, EnumProperty, FloatVectorProperty, FloatProperty
 
-from sverchok.core.sv_custom_exceptions import SvInvalidInputsException, SvExternalLibraryException
+from sverchok.core.sv_custom_exceptions import SvInvalidInputException, SvExternalLibraryException
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import zip_long_repeat, ensure_nesting_level, updateNode
 from sverchok.utils.curve.core import SvCurve, UnsupportedCurveTypeException
@@ -71,7 +71,7 @@ class SvSweepSolidFaceNode(SverchCustomTreeNode, bpy.types.Node):
             self.warning("The profile face is not planar; FreeCAD probably will not be able to generate a Solid object")
         section = face.OuterWire
         if not section.isClosed():
-            raise SvInvalidInputsException("Face's outer wire is not closed")
+            raise SvInvalidInputException("Face's outer wire is not closed")
         api.add(section, self.move_face, self.rotate_face)
         if not api.isReady():
             raise SvExternalLibraryException("Unexpected: API object is not ready")

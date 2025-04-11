@@ -49,7 +49,7 @@ class SvProcessingError(Exception):
     __description__ = "General processing error"
     pass
 
-class SvInvalidInputsException(SvProcessingError):
+class SvInvalidInputException(SvProcessingError):
     __description__ = """Invalid input"""
     pass
 
