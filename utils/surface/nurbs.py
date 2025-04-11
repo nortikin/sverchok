@@ -428,30 +428,37 @@ class SvNurbsSurface(SvSurface):
         result, _ = rest.split_at(direction, p_max)
         return result
 
-    def get_discontinuities_u(self, order):
+    def get_discontinuities_u(self, order, include_endpoints=False):
         p = self.get_degree_u()
         knotvector = self.get_knotvector_u()
         ms = sv_knotvector.to_multiplicity(knotvector)
-        return [t for t, s in ms if s == p - order + 1]
+        result = [t for t, s in ms if s == p - order + 1]
+        if include_endpoints:
+            result = [knotvector[0]] + result + [knotvector[-1]]
+        return result
 
-    def get_discontinuities_v(self, order):
+    def get_discontinuities_v(self, order, include_endpoints=False):
         p = self.get_degree_v()
         knotvector = self.get_knotvector_v()
         ms = sv_knotvector.to_multiplicity(knotvector)
-        return [t for t, s in ms if s == p - order + 1]
+        result = [t for t, s in ms if s == p - order + 1]
+        if include_endpoints:
+            result = [knotvector[0]] + result + [knotvector[-1]]
+        return result
 
-    def get_discontinuities(self, direction, order):
+    def get_discontinuities(self, direction, order, include_endpoints=False):
         if direction == SvNurbsSurface.U:
-            return self.get_discontinuities_u(order)
+            return self.get_discontinuities_u(order, include_endpoints)
         else:
-            return self.get_discontinuities_v(order)
+            return self.get_discontinuities_v(order, include_endpoints)
 
     def cut_slices_by_discontinuity(self, direction, order):
-        ts = self.get_discontinuities(direction, order)
-        if len(ts) <= 1:
+        ts = self.get_discontinuities(direction, order, include_endpoints=True)
+        if len(ts) <= 2:
             return [self]
-        print(f"Discontinuities in {direction}: {ts}")
-        return [self.cut_slice(direction, t1, t2) for t1, t2 in zip(ts, ts[1:])]
+        result = [self.cut_slice(direction, t1, t2) for t1, t2 in zip(ts, ts[1:])]
+        #print(f"Discontinuities in {direction}: {ts} => {len(result)} slices")
+        return result
 
     def cut_slices_by_discontinuity_uv(self, order, join=True):
         slices_u = self.cut_slices_by_discontinuity(SvNurbsSurface.U, order)
