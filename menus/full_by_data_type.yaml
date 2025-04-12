@@ -16,6 +16,7 @@
     - Generate Mesh:
         - extra_menu: MeshPartialMenu  # to make the category available in another menu (1,2,3,4,5)
         - icon_name: OBJECT_DATAMODE  # icon name to show
+        - color_category: Generator
         - SvPlaneNodeMk3
         - SvBoxNodeMk2
         - SvCylinderNodeMK2
@@ -42,6 +43,7 @@
     - Generate Path:
         - extra_menu: MeshPartialMenu  # to make the category available in another menu (1,2,3,4,5)
         - icon_name: SV_POLYLINE
+        - color_category: Generator
         - SvLineNodeMK4  # bl_idname of a node
         - SvSegmentGenerator
         - SvNGonNode
@@ -235,6 +237,7 @@
     - extra_menu: AdvancedObjectsPartialMenu
     - Generate Curve:
         - icon_name: OUTLINER_OB_CURVE
+        - color_category: Generator
         - SvExLineCurveNode
         - SvCircleCurveMk2Node
         - SvEllipseCurveNodeMK2
@@ -260,10 +263,12 @@
         - SvPointCurveNode
     - Generate Bezier Curve:
         - icon_name: EVENT_B
+        - color_category: Generator
         - SvBezierSplineNode
         - SvExBezierCurveFitNode
     - Generate NURBS Curve:
         - icon_name: EVENT_N
+        - color_category: Generator
         - SvExNurbsCurveNode
         - SvApproxNurbsCurveMk3Node
         - SvExInterpolateNurbsCurveNodeMK2
@@ -341,6 +346,7 @@
     - extra_menu: AdvancedObjectsPartialMenu
     - Generate Surface:
         - icon_name: SURFACE_DATA
+        - color_category: Generator
         - SvExPlaneSurfaceNode
         - SvExSphereNode
         - SvExSurfaceFormulaNode
@@ -362,6 +368,7 @@
         - SvBlendSurfaceNodeMk2
     - Generate NURBS Surface:
         - icon_name: EVENT_N
+        - color_category: Generator
         - SvExNurbsSurfaceNode
         - SvExApproxNurbsSurfaceNodeMK2
         - SvExInterpolateNurbsSurfaceNodeMK2
@@ -411,6 +418,7 @@
     - extra_menu: AdvancedObjectsPartialMenu
     - Generate Field:
         - icon_name: OUTLINER_OB_FORCE_FIELD
+        - color_category: Generator
         - SvCoordScalarFieldNode
         - SvExScalarFieldFormulaNode
         - SvExVectorFieldFormulaNode
@@ -456,6 +464,7 @@
     - extra_menu: AdvancedObjectsPartialMenu
     - Generate Solid:
         - icon_name: MESH_CUBE
+        - color_category: Generator
         - SvBoxSolidNode
         - SvCylinderSolidNode
         - SvConeSolidNode

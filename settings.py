@@ -32,6 +32,11 @@ set_frame_change = None
 draw_extra_addons = None
 apply_theme, rebuild_color_cache, color_callback = [None] * 3
 
+def on_select_theme(self, context):
+    if color_callback is None:
+        return
+    color_callback(self, context)
+
 def get_params(prop_names_and_fallbacks, direct=False):
     """
     This function returns an object which you can use the . op on.
@@ -265,7 +270,7 @@ class SverchokPreferences(AddonPreferences):
         items=themes,
         name="Theme preset",
         description="Select a theme preset",
-        update=color_callback,
+        update=on_select_theme,
         default="default_theme")
 
     auto_apply_theme: BoolProperty(

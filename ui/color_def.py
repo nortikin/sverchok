@@ -100,12 +100,21 @@ def sv_colors_definition():
         sv_node_colors = default_theme
     sv_cats_node = {}
 
-    for cat in get_add_node_menu().walk_categories():
-        for elem in cat:
+    for category_path in get_add_node_menu().walk_categories_hierarchy():
+        color_category = None
+        for category in category_path:
+            if category.color_category:
+                color_category = category.color_category
+                break
+            if category.name in sv_node_colors:
+                color_category = category.name
+                break
+
+        for elem in category_path[0]:
             if not hasattr(elem, 'bl_idname'):
                 continue
             try:
-                sv_cats_node[elem.bl_idname] = sv_node_colors[cat.name]
+                sv_cats_node[elem.bl_idname] = sv_node_colors[color_category]
             except:
                 sv_cats_node[elem.bl_idname] = False
     return sv_cats_node
