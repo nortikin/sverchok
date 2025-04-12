@@ -316,7 +316,7 @@ el.replaceWith(d);
     def interpret(self, interpreter, variables):
         interpreter.assert_not_closed()
         if not interpreter.has_last_vertex:
-            sv_logger.info(&#34;X statement: no current point, do nothing&#34;)
+            interpreter.logger.warning(&#34;X statement: no current point, do nothing&#34;)
             return
 
         v0 = interpreter.vertices[0]
@@ -365,7 +365,7 @@ el.replaceWith(d);
 <pre><code class="python">def interpret(self, interpreter, variables):
     interpreter.assert_not_closed()
     if not interpreter.has_last_vertex:
-        sv_logger.info(&#34;X statement: no current point, do nothing&#34;)
+        interpreter.logger.warning(&#34;X statement: no current point, do nothing&#34;)
         return
 
     v0 = interpreter.vertices[0]
@@ -411,7 +411,11 @@ el.replaceWith(d);
     def interpret(self, interpreter, variables):
         interpreter.assert_not_closed()
         if not interpreter.has_last_vertex:
-            sv_logger.info(&#34;X statement: no current point, do nothing&#34;)
+            interpreter.logger.warning(&#34;X statement: no current point, do nothing&#34;)
+            return
+
+        if interpreter.close_first_index &gt;= len(interpreter.vertices):
+            interpreter.logger.warning(&#34;X statement: curve was not started&#34;)
             return
 
         v0 = interpreter.vertices[interpreter.close_first_index]
@@ -458,7 +462,11 @@ el.replaceWith(d);
 <pre><code class="python">def interpret(self, interpreter, variables):
     interpreter.assert_not_closed()
     if not interpreter.has_last_vertex:
-        sv_logger.info(&#34;X statement: no current point, do nothing&#34;)
+        interpreter.logger.warning(&#34;X statement: no current point, do nothing&#34;)
+        return
+
+    if interpreter.close_first_index &gt;= len(interpreter.vertices):
+        interpreter.logger.warning(&#34;X statement: curve was not started&#34;)
         return
 
     v0 = interpreter.vertices[interpreter.close_first_index]
@@ -816,7 +824,7 @@ el.replaceWith(d);
 
     def interpret(self, interpreter, variables):
         if self.name in interpreter.defaults:
-            raise Exception(&#34;Value for the `{}&#39; variable has been already assigned!&#34;.format(self.name))
+            raise SvProfileException(f&#34;Value for the `{self.name}&#39; variable has been already assigned!&#34;)
         if self.name not in interpreter.input_names:
             value = interpreter.eval_(self.value, variables)
             interpreter.defaults[self.name] = value</code></pre>
@@ -868,7 +876,7 @@ el.replaceWith(d);
 </summary>
 <pre><code class="python">def interpret(self, interpreter, variables):
     if self.name in interpreter.defaults:
-        raise Exception(&#34;Value for the `{}&#39; variable has been already assigned!&#34;.format(self.name))
+        raise SvProfileException(f&#34;Value for the `{self.name}&#39; variable has been already assigned!&#34;)
     if self.name not in interpreter.input_names:
         value = interpreter.eval_(self.value, variables)
         interpreter.defaults[self.name] = value</code></pre>
@@ -900,14 +908,15 @@ el.replaceWith(d);
         return isinstance(other, Expression) and self.string == other.string
 
     @classmethod
-    def from_string(cls, string):
+    def from_string(cls, string, logger=None):
         try:
             string = string[1:][:-1]
             expr = ast.parse(string, mode=&#39;eval&#39;)
             return Expression(expr, string)
         except Exception as e:
-            print(e)
-            print(string)
+            if logger is None:
+                logger = get_logger()
+            logger.warning(f&#34;Cannot parse expression «{string}»: {e}&#34;)
             return None
 
     def eval_(self, variables):
@@ -930,7 +939,7 @@ el.replaceWith(d);
 <h3>Static methods</h3>
 <dl>
 <dt id="sverchok.utils.modules.profile_mk3.interpreter.Expression.from_string"><code class="name flex">
-<span>def <span class="ident">from_string</span></span>(<span>string)</span>
+<span>def <span class="ident">from_string</span></span>(<span>string, logger=None)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -1026,7 +1035,7 @@ el.replaceWith(d);
             v1 = (x, y0)
             interpreter.position = v1
             verts = self._interpolate(v0, v1, num_segments)
-            # sv_logger.debug(&#34;V0 %s, v1 %s, N %s =&gt; %s&#34;, v0, v1, num_segments, verts)
+            #interpreter.logger.debug(&#34;V0 %s, v1 %s, N %s =&gt; %s&#34;, v0, v1, num_segments, verts)
             for vertex in verts[1:]:
                 v_index = interpreter.new_vertex(*vertex)
                 interpreter.new_edge(prev_index, v_index)
@@ -1092,7 +1101,7 @@ el.replaceWith(d);
         v1 = (x, y0)
         interpreter.position = v1
         verts = self._interpolate(v0, v1, num_segments)
-        # sv_logger.debug(&#34;V0 %s, v1 %s, N %s =&gt; %s&#34;, v0, v1, num_segments, verts)
+        #interpreter.logger.debug(&#34;V0 %s, v1 %s, N %s =&gt; %s&#34;, v0, v1, num_segments, verts)
         for vertex in verts[1:]:
             v_index = interpreter.new_vertex(*vertex)
             interpreter.new_edge(prev_index, v_index)
@@ -1312,7 +1321,7 @@ el.replaceWith(d);
 </dd>
 <dt id="sverchok.utils.modules.profile_mk3.interpreter.Interpreter"><code class="flex name class">
 <span>class <span class="ident">Interpreter</span></span>
-<span>(</span><span>node, input_names, curves_form=None, force_curves_form=False, z_axis='Z')</span>
+<span>(</span><span>node, input_names, curves_form=None, force_curves_form=False, z_axis='Z', logger=None)</span>
 </code></dt>
 <dd>
 <details class="source">
@@ -1324,7 +1333,7 @@ el.replaceWith(d);
     NURBS = &#39;NURBS&#39;
     BEZIER = &#39;BEZIER&#39;
 
-    def __init__(self, node, input_names, curves_form = None, force_curves_form = False, z_axis=&#39;Z&#39;):
+    def __init__(self, node, input_names, curves_form = None, force_curves_form = False, z_axis=&#39;Z&#39;, logger=None):
         self.position = (0, 0)
         self.next_vertex_index = 0
         self.segment_start_index = 0
@@ -1347,6 +1356,10 @@ el.replaceWith(d);
         self.curves_form = curves_form
         self.force_curves_form = force_curves_form
         self.z_axis = z_axis
+        if logger is None:
+            self.logger = get_logger()
+        else:
+            self.logger = logger
 
     def to3d(self, vertex):
         if self.z_axis == &#39;X&#39;:
@@ -1366,7 +1379,7 @@ el.replaceWith(d);
 
     def assert_not_closed(self):
         if self.closed:
-            raise Exception(&#34;Path was already closed, will not process any further directives!&#34;)
+            raise SvProfileException(&#34;Path was already closed, will not process any further directives!&#34;)
 
     def relative(self, x, y):
         x0, y0 = self.position
@@ -1401,14 +1414,14 @@ el.replaceWith(d);
                 curve = curve.to_nurbs()
             else:
                 if self.force_curves_form:
-                    raise Exception(f&#34;Cannot convert curve to NURBS: {statement}&#34;)
+                    raise SvProfileException(f&#34;Cannot convert curve to NURBS: {statement}&#34;)
         elif self.curves_form == Interpreter.BEZIER:
             if not isinstance(curve, (SvBezierCurve, SvCubicBezierCurve)):
                 if hasattr(curve, &#39;to_bezier&#39;):
                     curve = curve.to_bezier()
                 else:
                     if self.force_curves_form:
-                        raise Exception(&#34;Cannot convert curve to Bezier: {statement}&#34;)
+                        raise SvProfileException(f&#34;Cannot convert curve to Bezier: {statement}&#34;)
         self.curves.append(curve)
 
     def new_line_segment(self, v1, v2):
@@ -1453,7 +1466,7 @@ el.replaceWith(d);
         if not profile:
             return
         for statement in profile:
-            sv_logger.debug(&#34;Interpret: %s&#34;, statement)
+            self.logger.debug(&#34;Interpret: %s&#34;, statement)
             statement.interpret(self, variables)</code></pre>
 </details>
 <div class="desc"></div>
@@ -1480,7 +1493,7 @@ el.replaceWith(d);
 </summary>
 <pre><code class="python">def assert_not_closed(self):
     if self.closed:
-        raise Exception(&#34;Path was already closed, will not process any further directives!&#34;)</code></pre>
+        raise SvProfileException(&#34;Path was already closed, will not process any further directives!&#34;)</code></pre>
 </details>
 <div class="desc"></div>
 </dd>
@@ -1562,7 +1575,7 @@ el.replaceWith(d);
     if not profile:
         return
     for statement in profile:
-        sv_logger.debug(&#34;Interpret: %s&#34;, statement)
+        self.logger.debug(&#34;Interpret: %s&#34;, statement)
         statement.interpret(self, variables)</code></pre>
 </details>
 <div class="desc"></div>
@@ -1581,14 +1594,14 @@ el.replaceWith(d);
             curve = curve.to_nurbs()
         else:
             if self.force_curves_form:
-                raise Exception(f&#34;Cannot convert curve to NURBS: {statement}&#34;)
+                raise SvProfileException(f&#34;Cannot convert curve to NURBS: {statement}&#34;)
     elif self.curves_form == Interpreter.BEZIER:
         if not isinstance(curve, (SvBezierCurve, SvCubicBezierCurve)):
             if hasattr(curve, &#39;to_bezier&#39;):
                 curve = curve.to_bezier()
             else:
                 if self.force_curves_form:
-                    raise Exception(&#34;Cannot convert curve to Bezier: {statement}&#34;)
+                    raise SvProfileException(f&#34;Cannot convert curve to Bezier: {statement}&#34;)
     self.curves.append(curve)</code></pre>
 </details>
 <div class="desc"></div>
@@ -2764,6 +2777,25 @@ el.replaceWith(d);
 </dd>
 </dl>
 </dd>
+<dt id="sverchok.utils.modules.profile_mk3.interpreter.SvProfileException"><code class="flex name class">
+<span>class <span class="ident">SvProfileException</span></span>
+<span>(</span><span>*args, **kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SvProfileException(Exception):
+    __description__ = &#34;Error in profile definition&#34;</code></pre>
+</details>
+<div class="desc"><p>Common base class for all non-exit exceptions.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.Exception</li>
+<li>builtins.BaseException</li>
+</ul>
+</dd>
 <dt id="sverchok.utils.modules.profile_mk3.interpreter.Variable"><code class="flex name class">
 <span>class <span class="ident">Variable</span></span>
 <span>(</span><span>name)</span>
@@ -3149,6 +3181,9 @@ el.replaceWith(d);
 <li><code><a title="sverchok.utils.modules.profile_mk3.interpreter.Statement.get_optional_inputs" href="#sverchok.utils.modules.profile_mk3.interpreter.Statement.get_optional_inputs">get_optional_inputs</a></code></li>
 <li><code><a title="sverchok.utils.modules.profile_mk3.interpreter.Statement.get_variables" href="#sverchok.utils.modules.profile_mk3.interpreter.Statement.get_variables">get_variables</a></code></li>
 </ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.modules.profile_mk3.interpreter.SvProfileException" href="#sverchok.utils.modules.profile_mk3.interpreter.SvProfileException">SvProfileException</a></code></h4>
 </li>
 <li>
 <h4><code><a title="sverchok.utils.modules.profile_mk3.interpreter.Variable" href="#sverchok.utils.modules.profile_mk3.interpreter.Variable">Variable</a></code></h4>

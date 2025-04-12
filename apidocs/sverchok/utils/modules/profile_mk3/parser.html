@@ -327,7 +327,7 @@ el.replaceWith(d);
 </summary>
 <pre><code class="python">def parse_expr(src):
     for string, rest in parse_regexp(expr_regex)(src):
-        expr = Expression.from_string(string)
+        expr = Expression.from_string(string, logger=logger)
         if expr is not None:
             yield expr, rest</code></pre>
 </details>
@@ -428,7 +428,7 @@ el.replaceWith(d);
         cleaned = cleaned + &#34; &#34; + line
     
     profile = parse(parse_definition, cleaned)
-    sv_logger.debug(profile)
+    logger.debug(profile)
     return profile</code></pre>
 </details>
 <div class="desc"></div>

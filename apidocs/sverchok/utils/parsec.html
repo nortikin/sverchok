@@ -200,10 +200,10 @@ in BNF notation.</p></div>
     s = s.strip()
     match = list(func(s))
     if len(match) != 1:
-        raise ValueError(&#34;invalid syntax: &#34; + str(match))
+        raise SyntaxError(&#34;invalid syntax: &#34; + str(match))
     result, rest = match[0]
     if rest.strip():
-        raise ValueError(&#34;parsed: {}\nleftover: {}&#34;.format(result, rest))
+        raise SyntaxError(&#34;parsed: {}\nunparsed part: {}&#34;.format(result, rest))
     return result</code></pre>
 </details>
 <div class="desc"><p>Interface function: apply the parser to the string
