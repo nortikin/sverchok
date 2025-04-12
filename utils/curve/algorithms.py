@@ -9,6 +9,7 @@ import numpy as np
 import itertools
 
 from mathutils import Vector, Matrix
+from sverchok.core.sv_custom_exceptions import ArgumentError, InvalidStateError, SvInvalidInputException
 from sverchok.utils.curve.core import (
         SvCurve, ZeroCurvatureException,
         SvCurveSegment, SvReparametrizedCurve,
@@ -45,7 +46,7 @@ class SvCurveLengthSolver(object):
 
     def get_total_length(self):
         if self._reverse_spline is None:
-            raise Exception("You have to call solver.prepare() first")
+            raise InvalidStateError("You have to call solver.prepare() first")
         return self._length_params[-1]
 
     def _calc_tknots_fixed(self, resolution):
@@ -91,24 +92,24 @@ class SvCurveLengthSolver(object):
         elif mode == 'SPL':
             spline = CubicSpline(control_points, tknots = values, is_cyclic = False)
         else:
-            raise Exception("Unsupported mode; supported are LIN and SPL.")
+            raise ArgumentError("Unsupported mode; supported are LIN and SPL.")
         return spline
 
     def calc_length(self, t_min, t_max):
         if self._prime_spline is None:
-            raise Exception("You have to call solver.prepare() first")
+            raise InvalidStateError("You have to call solver.prepare() first")
         lengths = self._prime_spline.eval(np.array([t_min, t_max]))
         return lengths[1][1] - lengths[0][1]
 
     def calc_length_params(self, ts):
         if self._prime_spline is None:
-            raise Exception("You have to call solver.prepare() first")
+            raise InvalidStateError("You have to call solver.prepare() first")
         spline_verts = self._prime_spline.eval(ts)
         return spline_verts[:,1]
 
     def solve(self, input_lengths):
         if self._reverse_spline is None:
-            raise Exception("You have to call solver.prepare() first")
+            raise InvalidStateError("You have to call solver.prepare() first")
         spline_verts = self._reverse_spline.eval(input_lengths)
         return spline_verts[:,1]
 
@@ -235,7 +236,7 @@ class MathutilsRotationCalculator(object):
         elif algorithm == DIFF:
             rot = autorotate_diff(tangent, ax1)
         else:
-            raise Exception("Unsupported algorithm")
+            raise ArgumentError("Unsupported algorithm")
         rot = np.array(rot.to_3x3())
 
         return np.matmul(rot, scale_matrix)
@@ -269,7 +270,7 @@ class DifferentialRotationCalculator(object):
             matrices = self.normal_tracker.evaluate_array(ts)
             return matrices
         else:
-            raise Exception("Unsupported algorithm")
+            raise ArgumentError("Unsupported algorithm")
 
 class SvCurveFrameCalculator(object):
     def __init__(self, curve, algorithm, z_axis=2, resolution=50, normal=None):
@@ -301,7 +302,7 @@ class SvCurveFrameCalculator(object):
             matrices = np.vectorize(lambda t : self.get_matrix(t), signature='(3)->(3,3)')(tangents)
             return matrices
         else:
-            raise Exception("Unsupported algorithm")
+            raise ArgumentError("Unsupported algorithm")
 
 class SvDeformedByFieldCurve(SvCurve):
     def __init__(self, curve, field, coefficient=1.0):
@@ -454,7 +455,7 @@ class SvOffsetCurve(SvCurve):
                     algorithm=FRENET, resolution=50):
         self.curve = curve
         if algorithm == NORMAL_DIR and (offset_amount is None and offset_curve is None):
-            raise Exception("offset_amount or offset_curve is mandatory if algorithm is NORMAL_DIR")
+            raise ArgumentError("offset_amount or offset_curve is mandatory if algorithm is NORMAL_DIR")
         self.offset_amount = offset_amount
         self.offset_vector = offset_vector
         self.offset_curve = offset_curve
@@ -487,7 +488,7 @@ class SvOffsetCurve(SvCurve):
             matrices = np.vectorize(lambda t : self.get_matrix(t), signature='(3)->(3,3)')(tangents)
             return matrices
         else:
-            raise Exception("Unsupported algorithm")
+            raise ArgumentError("Unsupported algorithm")
 
     def get_offset(self, ts):
         u_min, u_max = self.curve.get_u_bounds()
@@ -560,7 +561,7 @@ class SvCurveOnSurface(SvCurve):
             us = xs
             vs = ys
         else:
-            raise Exception("Unsupported orientation axis")
+            raise ArgumentError("Unsupported orientation axis")
         return self.surface.evaluate_array(us, vs)
 
 class SvCurveOffsetOnSurface(SvCurve):
@@ -945,7 +946,7 @@ def concatenate_curves(curves, scale_to_unit=False, allow_generic=True):
         an instance of SvCurve.
     """
     if not curves:
-        raise Exception("List of curves must be not empty")
+        raise ArgumentError("List of curves must be not empty")
     if scale_to_unit:
         result = [reparametrize_curve(curves[0])]
     else:
@@ -991,7 +992,7 @@ def concatenate_curves(curves, scale_to_unit=False, allow_generic=True):
             return SvConcatCurve(result, scale_to_unit and not some_native)
         else:
             err_msg = "\n".join([str(e) for e in exceptions])
-            raise Exception(f"Could not join some curves natively. Result is: {result}.\nErrors were:\n{err_msg}")
+            raise SvInvalidInputException(f"Could not join some curves natively. Result is: {result}.\nErrors were:\n{err_msg}")
 
 class SvCurvesSortResult(object):
     """
