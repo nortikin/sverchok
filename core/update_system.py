@@ -13,7 +13,7 @@ import sverchok.core.tasks as ts
 from sverchok.core.sv_custom_exceptions import CancelError, SvNoDataError, ImplicitConversionProhibited
 from sverchok.core.socket_conversions import conversions
 from sverchok.utils.profile import profile
-from sverchok.utils.sv_logging import node_error_logger
+from sverchok.utils.sv_logging import node_error_logger, WarningHandler
 from sverchok.utils.tree_walk import bfs_walk
 
 if TYPE_CHECKING:
@@ -24,6 +24,7 @@ UPDATE_KEY = "US_is_updated"
 ERROR_KEY = "US_error"
 ERROR_STACK_KEY = "US_error_stack"
 TIME_KEY = "US_time"
+WARNING_KEY = "US_warning"
 
 
 def control_center(event):
@@ -701,11 +702,18 @@ class AddStatistic:
         self._node = node
         self._start = perf_counter()
         self._supress = supress
+        self._warnings_handler = None
 
     def __enter__(self):
+        self._warnings_handler = WarningHandler()
+        self._node.sv_logger.addHandler(self._warnings_handler)
+        self._node[WARNING_KEY] = ""
         return None
 
     def __exit__(self, exc_type, exc_val, exc_tb):
+        self._node[WARNING_KEY] = self._warnings_handler.get_warnings()
+        self._node.sv_logger.removeHandler(self._warnings_handler)
+        self._warnings_handler = None
         if exc_type is None:
             self._node[UPDATE_KEY] = True
             self._node[ERROR_KEY] = None
@@ -754,5 +762,6 @@ def update_ui(tree: NodeTree, times: Iterable[float] = None):
     :times: optional node timing in order of group_tree.nodes collection"""
     # probably this can be moved to tree.update_ui method
     errors = (n.get(ERROR_KEY, None) for n in tree.nodes)
+    warnings = (n.get(WARNING_KEY, None) for n in tree.nodes)
     times = times or (n.get(TIME_KEY, 0) for n in tree.nodes)
-    tree.update_ui(errors, times)
+    tree.update_ui(errors, warnings, times)

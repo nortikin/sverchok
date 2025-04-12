@@ -111,14 +111,14 @@ class SvNodeTreeCommon:
             finally:
                 del self['init_tree']
 
-    def update_ui(self, nodes_errors, update_time):
+    def update_ui(self, node_errors, node_warnings, update_time):
         """ The method get information about node statistic of last update from the handler to show in view space
         The method is usually called by main handler to reevaluate view of the nodes in the tree
         even if the tree is not in the Live update mode"""
         update_time = update_time if self.sv_show_time_nodes else cycle([None])
-        for node, error, update in zip(self.nodes, nodes_errors, update_time):
+        for node, error, warning, update in zip(self.nodes, node_errors, node_warnings, update_time):
             if hasattr(node, 'update_ui'):
-                node.update_ui(error, update)
+                node.update_ui(error=error, warning=warning, update_time=update)
 
 
 class SverchCustomTree(NodeTree, SvNodeTreeCommon):
@@ -449,7 +449,7 @@ class UpdateNodes:
 
         self.sv_update()
 
-    def update_ui(self, error=None, update_time=None):
+    def update_ui(self, error=None, warning=None, update_time=None):
         """This method is intended to use by update system to show node errors
         in the tree editors space and to show execution time"""
         sv_settings = bpy.context.preferences.addons[sverchok.__name__].preferences
@@ -457,6 +457,7 @@ class UpdateNodes:
         no_data_color = sv_settings.no_data_color
         error_pref = "error"
         update_pref = "update_time"
+        warning_pref = "warning"
 
         # update error colors
         if error is not None:
@@ -466,6 +467,12 @@ class UpdateNodes:
         else:
             sv_bgl.callback_disable(error_pref + self.node_id)
             self.set_temp_color()
+
+        if warning:
+            color = (1.0, 0.5, 0.0, 1.0)
+            sv_bgl.draw_text(self, textwrap.fill(str(warning)), warning_pref + self.node_id, color, 1, "DOWN")
+        else:
+            sv_bgl.callback_disable(warning_pref + self.node_id)
 
         # show update timing
         if update_time is not None:

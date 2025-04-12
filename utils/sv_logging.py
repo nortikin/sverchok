@@ -13,11 +13,12 @@ import sverchok
 
 if not sverchok.reload_event:  # otherwise it leeds to infinite recursion
     old_factory = logging.getLogRecordFactory()
+    logging.captureWarnings(True)
 
 
 def add_relative_path_factory(name, *args, **kwargs):
     record = old_factory(name, *args, **kwargs)
-    if name.startswith('sverchok'):
+    if name.startswith('sverchok') or name == "py.warnings":
         path = Path(record.pathname)
 
         # search root path of the add-on
@@ -39,6 +40,7 @@ if not sverchok.reload_event:  # otherwise it leeds to infinite recursion
 
 log_format = "%(asctime)s.%(msecs)03d [%(levelname)-5s] %(name)s %(relative_path)s:%(lineno)d - %(message)s"
 sv_logger = logging.getLogger('sverchok')  # root logger
+warnings_logger = logging.getLogger("py.warnings")
 
 # set any level whatever you desire,
 # it will be overridden by the add-on settings after the last one will be registered
@@ -67,6 +69,7 @@ class ColorFormatter(logging.Formatter):
 console_handler = logging.StreamHandler()
 console_handler.setFormatter(ColorFormatter(log_format, datefmt='%H:%M:%S'))
 sv_logger.addHandler(console_handler)
+warnings_logger.addHandler(console_handler)
 
 
 def add_node_error_location(record: logging.LogRecord):
@@ -82,6 +85,7 @@ def add_node_error_location(record: logging.LogRecord):
 
 node_error_logger = logging.getLogger('sverchok.node_error')
 node_error_logger.addFilter(add_node_error_location)
+#warnings_logger.addFilter(add_node_error_location)
 
 
 def add_file_handler(file_path):
@@ -91,6 +95,7 @@ def add_file_handler(file_path):
                                                    backupCount=3)
     handler.setFormatter(logging.Formatter(log_format, datefmt="%Y-%m-%d %H:%M:%S"))
     sv_logger.addHandler(handler)
+    warnings_logger.addHandler(handler)
 
 
 def remove_console_handler():
@@ -98,8 +103,10 @@ def remove_console_handler():
     logging.debug("Log output to console is disabled. Further messages will"
                   " be available only in text buffer and file (if configured).")
     sv_logger.removeHandler(console_handler)
+    warnings_logger.removeHandler(console_handler)
     # https://docs.python.org/3/howto/logging.html#configuring-logging-for-a-library
     sv_logger.addHandler(logging.NullHandler())
+    warnings_logger.addHandler(logging.NullHandler())
 
 
 @contextmanager
@@ -197,6 +204,7 @@ class TextBufferHandler(logging.Handler):
             handler = cls(prefs.log_buffer_name)
             handler.setFormatter(logging.Formatter(log_format, datefmt="%Y-%m-%d %H:%M:%S"))
             sv_logger.addHandler(handler)
+            warnings_logger.addHandler(handler)
 
     def __repr__(self):
         level = logging.getLevelName(self.level)
@@ -205,6 +213,28 @@ class TextBufferHandler(logging.Handler):
             name += ' '
         return '<%s %s(%s)>' % (self.__class__.__name__, name, level)
 
+class WarningHandler(logging.Handler):
+
+    def __init__(self):
+        super().__init__()
+        self._lines = []
+        format = "%(message)s"
+        self.setFormatter(logging.Formatter(format, datefmt="%Y-%m-%d %H:%M:%S"))
+
+    def emit(self, record):
+        if record.levelname != "WARNING":
+            return
+        try:
+            msg = self.format(record)
+            self._lines.append(msg)
+        except Exception:
+            self.handleErorr(record)
+
+    def clear(self):
+        self._lines.clear()
+
+    def get_warnings(self):
+        return "\n".join(self._lines)
 
 # Convenience functions
 

@@ -272,7 +272,8 @@ def _get_text_location(node, text, scale, align='RIGHT') -> tuple[int, int]:
         n = len(text.split('\n'))
         x, y = int(x), int(y + (n-1)*line_height + gap)
     elif align == "DOWN":
-        x, y = int(x), int(y - dy - gap)
+        line_height = get_line_height(scale)
+        x, y = int(x), int(y - dy - line_height)
     else:
         sv_logger.debug(f'Some node drawing text with unsupported align: {align}')
     return x, y
