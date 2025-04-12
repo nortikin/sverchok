@@ -61,7 +61,21 @@ grey = {
     "Generator": (0.1, 0.1, 0.1),
 }
 
+gruvbox_light = {
+    "Viz": (0.839, 0.365, 0.055),
+    "Text": (0.271, 0.522, 0.533),
+    "Scene": (0.596, 0.592, 0.102),
+    "Layout": (0.694, 0.384, 0.525),
+    "Generator": (0.408, 0.616, 0.416)
+}
 
+gruvbox_dark = {
+    "Viz": (0.686, 0.227, 0.012),
+    "Text": (0.027, 0.400, 0.471),
+    "Scene": (0.475, 0.455, 0.055),
+    "Layout": (0.561, 0.247, 0.443),
+    "Generator": (0.322, 0.482, 0.345)
+}
 
 #  self refers to the preferences, SverchokPreferences
 

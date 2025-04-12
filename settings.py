@@ -264,7 +264,9 @@ class SverchokPreferences(AddonPreferences):
     themes = [("default_theme", "Default", "Default"),
               ("nipon_blossom", "Nipon Blossom", "Nipon Blossom"),
               ("grey", "Grey", "Grey"),
-              ("darker", "Darker", "Darker")]
+              ("darker", "Darker", "Darker"),
+              ("gruvbox_light", "Gruvbox Light", "Gruvbox Light"),
+              ("gruvbox_dark", "Gruvbox Dark", "Gruvbox Dark")]
 
     sv_theme: EnumProperty(
         items=themes,
