@@ -1123,7 +1123,7 @@ vertices must be np.array of shape (n, 3).</p></div>
         return rxs[0], rys[0], rzs[0]
 
     def evaluate_grid(self, xs, ys, zs):
-        raise Exception(&#34;not implemented&#34;)
+        raise NotImplementedError(&#34;not implemented&#34;)
 
     def evaluate_array(self, points):
         xs = points[:,0]
@@ -1222,7 +1222,7 @@ vertices must be np.array of shape (n, 3).</p></div>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def evaluate_grid(self, xs, ys, zs):
-    raise Exception(&#34;not implemented&#34;)</code></pre>
+    raise NotImplementedError(&#34;not implemented&#34;)</code></pre>
 </details>
 <div class="desc"></div>
 </dd>

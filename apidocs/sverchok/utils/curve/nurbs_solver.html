@@ -143,7 +143,7 @@ instruct the solver that some goals are more important than others.
 
         if solver.src_curve is None:
             if self.relative:
-                raise Exception(&#34;Can not solve relative constraint without original curve&#34;)
+                raise InvalidStateError(&#34;Can not solve relative constraint without original curve&#34;)
             else:
                 src_points = None
         else:
@@ -246,7 +246,7 @@ def single(idx, vector, weight=None, relative=True):
 
     if solver.src_curve is None:
         if self.relative:
-            raise Exception(&#34;Can not solve relative constraint without original curve&#34;)
+            raise InvalidStateError(&#34;Can not solve relative constraint without original curve&#34;)
         else:
             src_points = None
     else:
@@ -312,7 +312,7 @@ def single(idx, vector, weight=None, relative=True):
     &#34;&#34;&#34;
     def __init__(self, us1, us2, weights = None, relative_u=False, relative=False):
         if len(us1) != len(us2):
-            raise Exception(&#34;Lengths of us1 and us2 must be equal&#34;)
+            raise ArgumentError(&#34;Lengths of us1 and us2 must be equal&#34;)
         self.us1 = np.asarray(us1)
         self.us2 = np.asarray(us2)
         self.relative_u = relative_u
@@ -378,7 +378,7 @@ def single(idx, vector, weight=None, relative=True):
 
         if self.relative:
             if solver.src_curve is None:
-                raise Exception(&#34;Can not solve relative constraint without original curve&#34;)
+                raise InvalidStateError(&#34;Can not solve relative constraint without original curve&#34;)
             else:
                 points1, points2 = self.calc_vectors(solver)
                 for pt_idx, (pt1, pt2) in enumerate(zip(points1, points2)):
@@ -514,7 +514,7 @@ def single(u1, u2, weight=None, relative_u=False, relative=False):
 
     if self.relative:
         if solver.src_curve is None:
-            raise Exception(&#34;Can not solve relative constraint without original curve&#34;)
+            raise InvalidStateError(&#34;Can not solve relative constraint without original curve&#34;)
         else:
             points1, points2 = self.calc_vectors(solver)
             for pt_idx, (pt1, pt2) in enumerate(zip(points1, points2)):
@@ -543,12 +543,12 @@ def single(u1, u2, weight=None, relative_u=False, relative=False):
         self.order = order
         self.us = np.asarray(us)
         if self.us.ndim != 1:
-            raise Exception(f&#34;T values array must be 1-dimensional, but got {self.us.shape}&#34;)
+            raise ArgumentError(f&#34;T values array must be 1-dimensional, but got {self.us.shape}&#34;)
         self.vectors = np.asarray(vectors)
         if self.vectors.ndim != 2:
-            raise Exception(f&#34;Vectors must be 2-dimensional, but got {self.vectors.shape}&#34;)
+            raise ArgumentError(f&#34;Vectors must be 2-dimensional, but got {self.vectors.shape}&#34;)
         if len(us) != len(self.vectors):
-            raise Exception(f&#34;Number of T values and number of points must be equal, but got #T = {len(us)}, #P = {len(self.vectors)}&#34;)
+            raise ArgumentError(f&#34;Number of T values and number of points must be equal, but got #T = {len(us)}, #P = {len(self.vectors)}&#34;)
         self.relative = relative
         if weights is None:
             self.weights = None
@@ -700,16 +700,16 @@ def single(order, u, tangent, weight=None, relative=False):
     Abstract class for curve goal.
     &#34;&#34;&#34;
     def copy(self):
-        raise Exception(&#34;Not implemented&#34;)
+        raise NotImplementedError(&#34;Not implemented&#34;)
 
     def add(self, other):
-        raise Exception(&#34;Not implemented&#34;)
+        raise NotImplementedError(&#34;Not implemented&#34;)
         
     def get_equations(self, solver):
-        raise Exception(&#34;Not implemented&#34;)
+        raise NotImplementedError(&#34;Not implemented&#34;)
 
     def get_n_defined_control_points(self):
-        raise Exception(&#34;Not implemented&#34;)</code></pre>
+        raise NotImplementedError(&#34;Not implemented&#34;)</code></pre>
 </details>
 <div class="desc"><p>Abstract class for curve goal.</p></div>
 <h3>Subclasses</h3>
@@ -729,7 +729,7 @@ def single(order, u, tangent, weight=None, relative=False):
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def add(self, other):
-    raise Exception(&#34;Not implemented&#34;)</code></pre>
+    raise NotImplementedError(&#34;Not implemented&#34;)</code></pre>
 </details>
 <div class="desc"></div>
 </dd>
@@ -742,7 +742,7 @@ def single(order, u, tangent, weight=None, relative=False):
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def copy(self):
-    raise Exception(&#34;Not implemented&#34;)</code></pre>
+    raise NotImplementedError(&#34;Not implemented&#34;)</code></pre>
 </details>
 <div class="desc"></div>
 </dd>
@@ -755,7 +755,7 @@ def single(order, u, tangent, weight=None, relative=False):
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def get_equations(self, solver):
-    raise Exception(&#34;Not implemented&#34;)</code></pre>
+    raise NotImplementedError(&#34;Not implemented&#34;)</code></pre>
 </details>
 <div class="desc"></div>
 </dd>
@@ -768,7 +768,7 @@ def single(order, u, tangent, weight=None, relative=False):
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def get_n_defined_control_points(self):
-    raise Exception(&#34;Not implemented&#34;)</code></pre>
+    raise NotImplementedError(&#34;Not implemented&#34;)</code></pre>
 </details>
 <div class="desc"></div>
 </dd>
@@ -791,12 +791,12 @@ def single(order, u, tangent, weight=None, relative=False):
     def __init__(self, us, points, weights = None, relative=False):
         self.us = np.asarray(us)
         if self.us.ndim != 1:
-            raise Exception(f&#34;T values array must be 1-dimensional, but got {self.us.shape}&#34;)
+            raise ArgumentError(f&#34;T values array must be 1-dimensional, but got {self.us.shape}&#34;)
         self.vectors = np.asarray(points)
         if self.vectors.ndim != 2:
-            raise Exception(f&#34;Points must be 2-dimensional, but got {self.vectors.shape}&#34;)
+            raise ArgumentError(f&#34;Points must be 2-dimensional, but got {self.vectors.shape}&#34;)
         if len(us) != len(self.vectors):
-            raise Exception(f&#34;Number of T values and number of points must be equal, but got #T = {len(us)}, #P = {len(self.vectors)}&#34;)
+            raise ArgumentError(f&#34;Number of T values and number of points must be equal, but got #T = {len(us)}, #P = {len(self.vectors)}&#34;)
         self.relative = relative
         if weights is None:
             self.weights = None
@@ -880,7 +880,7 @@ def single(order, u, tangent, weight=None, relative=False):
 
         if solver.src_curve is None:
             if self.relative:
-                raise Exception(&#34;Can not solve relative constraint without original curve&#34;)
+                raise InvalidStateError(&#34;Can not solve relative constraint without original curve&#34;)
             else:
                 src_points = None
         else:
@@ -1014,7 +1014,7 @@ def single(u, point, weight=None, relative=False):
 
     if solver.src_curve is None:
         if self.relative:
-            raise Exception(&#34;Can not solve relative constraint without original curve&#34;)
+            raise InvalidStateError(&#34;Can not solve relative constraint without original curve&#34;)
         else:
             src_points = None
     else:
@@ -1097,7 +1097,7 @@ def single(u, point, weight=None, relative=False):
     &#34;&#34;&#34;
     def __init__(self, us1, us2, weights = None, relative_u=False, relative=False):
         if len(us1) != len(us2):
-            raise Exception(&#34;Lengths of us1 and us2 must be equal&#34;)
+            raise ArgumentError(&#34;Lengths of us1 and us2 must be equal&#34;)
         self.us1 = np.asarray(us1)
         self.us2 = np.asarray(us2)
         self.relative_u = relative_u
@@ -1187,7 +1187,7 @@ def single(u, point, weight=None, relative=False):
 
         if self.relative:
             if solver.src_curve is None:
-                raise Exception(&#34;Can not solve relative constraint without original curve&#34;)
+                raise InvalidStateError(&#34;Can not solve relative constraint without original curve&#34;)
             else:
                 points1, points2 = self.calc_vectors(solver)
                 for pt_idx, (pt1, pt2) in enumerate(zip(points1, points2)):
@@ -1336,7 +1336,7 @@ def single(u1, u2, weight=None, relative_u=False, relative=False):
 
     if self.relative:
         if solver.src_curve is None:
-            raise Exception(&#34;Can not solve relative constraint without original curve&#34;)
+            raise InvalidStateError(&#34;Can not solve relative constraint without original curve&#34;)
         else:
             points1, points2 = self.calc_vectors(solver)
             for pt_idx, (pt1, pt2) in enumerate(zip(points1, points2)):
@@ -1409,9 +1409,9 @@ def single(u1, u2, weight=None, relative_u=False, relative=False):
     &#34;&#34;&#34;
     def __init__(self, degree=None, src_curve=None, ndim=3):
         if degree is None and src_curve is None:
-            raise Exception(&#34;Either degree or src_curve must be provided&#34;)
+            raise ArgumentError(&#34;Either degree or src_curve must be provided&#34;)
         elif degree is not None and src_curve is not None and src_curve.get_degree() != degree:
-            raise Exception(&#34;If src_curve is provided, then degree must not be provided&#34;)
+            raise ArgumentError(&#34;If src_curve is provided, then degree must not be provided&#34;)
         self.src_curve = src_curve
         if src_curve is not None and degree is None:
             self.degree = src_curve.get_degree()
@@ -1478,7 +1478,7 @@ def single(u1, u2, weight=None, relative_u=False, relative=False):
 
     def set_curve_weights(self, weights):
         if len(weights) != self.n_cpts:
-            raise Exception(&#34;Number of weights must be equal to the number of control points&#34;)
+            raise ArgumentError(&#34;Number of weights must be equal to the number of control points&#34;)
         self.curve_weights = np.asarray(weights)
 
     def set_curve_params(self, n_cpts, knotvector = None, weights = None):
@@ -1486,7 +1486,7 @@ def single(u1, u2, weight=None, relative_u=False, relative=False):
         if knotvector is not None:
             err = sv_knotvector.check(self.degree, knotvector, n_cpts)
             if err is not None:
-                raise Exception(err)
+                raise AlgorithmError(err)
             self.knotvector = np.asarray(knotvector)
         else:
             self.knotvector = sv_knotvector.generate(self.degree, n_cpts)
@@ -1534,9 +1534,9 @@ def single(u1, u2, weight=None, relative_u=False, relative=False):
 
     def _init(self):
         if self.n_cpts is None:
-            raise Exception(&#34;Number of control points is not specified; specify it in the constructor, in set_curve_params() call, or call guess_curve_params()&#34;)
+            raise InvalidStateError(&#34;Number of control points is not specified; specify it in the constructor, in set_curve_params() call, or call guess_curve_params()&#34;)
         if self.knotvector is None:
-            raise Exception(&#34;Knotvector is not specified; specify it in the constructor, in set_curve_params() call, or call guess_curve_params()&#34;)
+            raise InvalidStateError(&#34;Knotvector is not specified; specify it in the constructor, in set_curve_params() call, or call guess_curve_params()&#34;)
         ndim = self.ndim
         n = self.n_cpts
         p = self.degree
@@ -1582,25 +1582,25 @@ def single(u1, u2, weight=None, relative_u=False, relative=False):
             #logger.debug(f&#34;Solving well-determined system: #equations = {n_equations}, #unknonwns = {n_unknowns}&#34;)
             problem_type = SvNurbsCurveSolver.PROBLEM_WELLDETERMINED
             if problem_type not in problem_types:
-                raise Exception(&#34;The problem is well-determined&#34;)
+                raise AlgorithmError(&#34;The problem is well-determined&#34;)
             try:
                 A1 = np.linalg.inv(self.A)
                 X = (A1 @ self.B).T
             except np.linalg.LinAlgError as e:
                 logger.error(f&#34;Matrix: {self.A}&#34;)
-                raise Exception(f&#34;Can not solve: #equations = {n_equations}, #unknowns = {n_unknowns}: {e}&#34;) from e
+                raise AlgorithmError(f&#34;Can not solve: #equations = {n_equations}, #unknowns = {n_unknowns}: {e}&#34;) from e
         elif n_equations &lt; n_unknowns:
             #logger.debug(f&#34;Solving underdetermined system: #equations = {n_equations}, #unknonwns = {n_unknowns}&#34;)
             problem_type = SvNurbsCurveSolver.PROBLEM_UNDERDETERMINED
             if problem_type not in problem_types:
-                raise Exception(&#34;The problem is underdetermined&#34;)
+                raise AlgorithmError(&#34;The problem is underdetermined&#34;)
             A1 = np.linalg.pinv(self.A)
             X = (A1 @ self.B).T
         else: # n_equations &gt; n_unknowns
             #logger.debug(f&#34;Solving overdetermined system: #equations = {n_equations}, #unknonwns = {n_unknowns}&#34;)
             problem_type = SvNurbsCurveSolver.PROBLEM_OVERDETERMINED
             if problem_type not in problem_types:
-                raise Exception(&#34;The system is overdetermined&#34;)
+                raise AlgorithmError(&#34;The system is overdetermined&#34;)
             X, residues, rank, singval = np.linalg.lstsq(self.A, self.B)
             residue = residues.sum()
             
@@ -1783,7 +1783,7 @@ def curve_weights(self):
     if knotvector is not None:
         err = sv_knotvector.check(self.degree, knotvector, n_cpts)
         if err is not None:
-            raise Exception(err)
+            raise AlgorithmError(err)
         self.knotvector = np.asarray(knotvector)
     else:
         self.knotvector = sv_knotvector.generate(self.degree, n_cpts)
@@ -1801,7 +1801,7 @@ def curve_weights(self):
 </summary>
 <pre><code class="python">def set_curve_weights(self, weights):
     if len(weights) != self.n_cpts:
-        raise Exception(&#34;Number of weights must be equal to the number of control points&#34;)
+        raise ArgumentError(&#34;Number of weights must be equal to the number of control points&#34;)
     self.curve_weights = np.asarray(weights)</code></pre>
 </details>
 <div class="desc"></div>
@@ -1868,25 +1868,25 @@ def curve_weights(self):
         #logger.debug(f&#34;Solving well-determined system: #equations = {n_equations}, #unknonwns = {n_unknowns}&#34;)
         problem_type = SvNurbsCurveSolver.PROBLEM_WELLDETERMINED
         if problem_type not in problem_types:
-            raise Exception(&#34;The problem is well-determined&#34;)
+            raise AlgorithmError(&#34;The problem is well-determined&#34;)
         try:
             A1 = np.linalg.inv(self.A)
             X = (A1 @ self.B).T
         except np.linalg.LinAlgError as e:
             logger.error(f&#34;Matrix: {self.A}&#34;)
-            raise Exception(f&#34;Can not solve: #equations = {n_equations}, #unknowns = {n_unknowns}: {e}&#34;) from e
+            raise AlgorithmError(f&#34;Can not solve: #equations = {n_equations}, #unknowns = {n_unknowns}: {e}&#34;) from e
     elif n_equations &lt; n_unknowns:
         #logger.debug(f&#34;Solving underdetermined system: #equations = {n_equations}, #unknonwns = {n_unknowns}&#34;)
         problem_type = SvNurbsCurveSolver.PROBLEM_UNDERDETERMINED
         if problem_type not in problem_types:
-            raise Exception(&#34;The problem is underdetermined&#34;)
+            raise AlgorithmError(&#34;The problem is underdetermined&#34;)
         A1 = np.linalg.pinv(self.A)
         X = (A1 @ self.B).T
     else: # n_equations &gt; n_unknowns
         #logger.debug(f&#34;Solving overdetermined system: #equations = {n_equations}, #unknonwns = {n_unknowns}&#34;)
         problem_type = SvNurbsCurveSolver.PROBLEM_OVERDETERMINED
         if problem_type not in problem_types:
-            raise Exception(&#34;The system is overdetermined&#34;)
+            raise AlgorithmError(&#34;The system is overdetermined&#34;)
         X, residues, rank, singval = np.linalg.lstsq(self.A, self.B)
         residue = residues.sum()
         
@@ -1985,12 +1985,12 @@ def curve_weights(self):
     def __init__(self, us, tangents, weights = None, relative=False):
         self.us = np.asarray(us)
         if self.us.ndim != 1:
-            raise Exception(f&#34;T values array must be 1-dimensional, but got {self.us.shape}&#34;)
+            raise ArgumentError(f&#34;T values array must be 1-dimensional, but got {self.us.shape}&#34;)
         self.vectors = np.asarray(tangents)
         if self.vectors.ndim != 2:
-            raise Exception(f&#34;Points must be 2-dimensional, but got {self.vectors.shape}&#34;)
+            raise ArgumentError(f&#34;Points must be 2-dimensional, but got {self.vectors.shape}&#34;)
         if len(us) != len(self.vectors):
-            raise Exception(f&#34;Number of T values and number of points must be equal, but got #T = {len(us)}, #P = {len(self.vectors)}&#34;)
+            raise ArgumentError(f&#34;Number of T values and number of points must be equal, but got #T = {len(us)}, #P = {len(self.vectors)}&#34;)
         self.relative = relative
         if weights is None:
             self.weights = None

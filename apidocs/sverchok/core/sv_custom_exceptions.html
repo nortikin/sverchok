@@ -46,6 +46,50 @@ el.replaceWith(d);
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
+<dt id="sverchok.core.sv_custom_exceptions.AlgorithmError"><code class="flex name class">
+<span>class <span class="ident">AlgorithmError</span></span>
+<span>(</span><span>*args, **kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class AlgorithmError(Exception):
+    &#34;&#34;&#34;Raise when we are in a branch of algorithm that should never happen -
+    that indicates that there is a programming error&#34;&#34;&#34;
+    __description__ = &#34;Error in algorithm&#34;</code></pre>
+</details>
+<div class="desc"><p>Raise when we are in a branch of algorithm that should never happen -
+that indicates that there is a programming error</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.Exception</li>
+<li>builtins.BaseException</li>
+</ul>
+</dd>
+<dt id="sverchok.core.sv_custom_exceptions.ArgumentError"><code class="flex name class">
+<span>class <span class="ident">ArgumentError</span></span>
+<span>(</span><span>*args, **kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ArgumentError(Exception):
+    &#34;&#34;&#34;Raised when some method is passed with invalid combination
+    of arguments. This indicates a programming error.&#34;&#34;&#34;
+    __description__ = &#34;Invalid method arguments&#34;</code></pre>
+</details>
+<div class="desc"><p>Raised when some method is passed with invalid combination
+of arguments. This indicates a programming error.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.Exception</li>
+<li>builtins.BaseException</li>
+</ul>
+</dd>
 <dt id="sverchok.core.sv_custom_exceptions.CancelError"><code class="flex name class">
 <span>class <span class="ident">CancelError</span></span>
 <span>(</span><span>*args, **kwargs)</span>
@@ -76,9 +120,10 @@ el.replaceWith(d);
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class DependencyError(Exception):
-    &#34;&#34;&#34;Raise when some library is not installed&#34;&#34;&#34;</code></pre>
+    &#34;&#34;&#34;Raised when some library is not installed&#34;&#34;&#34;
+    __description__ = &#34;Unmet dependency&#34;</code></pre>
 </details>
-<div class="desc"><p>Raise when some library is not installed</p></div>
+<div class="desc"><p>Raised when some library is not installed</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li>builtins.Exception</li>
@@ -116,6 +161,30 @@ el.replaceWith(d);
 <li>builtins.BaseException</li>
 </ul>
 </dd>
+<dt id="sverchok.core.sv_custom_exceptions.InvalidStateError"><code class="flex name class">
+<span>class <span class="ident">InvalidStateError</span></span>
+<span>(</span><span>*args, **kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class InvalidStateError(Exception):
+    &#34;&#34;&#34;Raised when some programmatic object appears to be in
+    invalid state; for example, it was not initialized prior
+    to calling some method. This indicates a programming error.&#34;&#34;&#34;
+    __description__ = &#34;Erroneous object state&#34;</code></pre>
+</details>
+<div class="desc"><p>Raised when some programmatic object appears to be in
+invalid state; for example, it was not initialized prior
+to calling some method. This indicates a programming error.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.Exception</li>
+<li>builtins.BaseException</li>
+</ul>
+</dd>
 <dt id="sverchok.core.sv_custom_exceptions.SvExternalLibraryException"><code class="flex name class">
 <span>class <span class="ident">SvExternalLibraryException</span></span>
 <span>(</span><span>*args, **kwargs)</span>
@@ -126,9 +195,16 @@ el.replaceWith(d);
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class SvExternalLibraryException(SvProcessingError):
+    &#34;&#34;&#34;This exception class is either used to wrap other exceptions
+    raised by external libraries, or raised manually when Sverchok
+    code is able to detect that something went wrong in the external
+    library algorithm.&#34;&#34;&#34;
     __description__ = &#34;Exception in external library&#34;</code></pre>
 </details>
-<div class="desc"><p>Common base class for all non-exit exceptions.</p></div>
+<div class="desc"><p>This exception class is either used to wrap other exceptions
+raised by external libraries, or raised manually when Sverchok
+code is able to detect that something went wrong in the external
+library algorithm.</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="sverchok.core.sv_custom_exceptions.SvProcessingError" href="#sverchok.core.sv_custom_exceptions.SvProcessingError">SvProcessingError</a></li>
@@ -146,10 +222,13 @@ el.replaceWith(d);
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class SvInvalidInputException(SvProcessingError):
+    &#34;&#34;&#34;Something wrong in data provided by the user.
+    This indicates error of the user, not of the programmer.&#34;&#34;&#34;
     __description__ = &#34;&#34;&#34;Invalid input&#34;&#34;&#34;
     pass</code></pre>
 </details>
-<div class="desc"><p>Common base class for all non-exit exceptions.</p></div>
+<div class="desc"><p>Something wrong in data provided by the user.
+This indicates error of the user, not of the programmer.</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="sverchok.core.sv_custom_exceptions.SvProcessingError" href="#sverchok.core.sv_custom_exceptions.SvProcessingError">SvProcessingError</a></li>
@@ -167,10 +246,13 @@ el.replaceWith(d);
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class SvInvalidResultException(SvProcessingError):
+    &#34;&#34;&#34;Resulting object generated by the node appears to be invalid
+    in some sense.&#34;&#34;&#34;
     __description__ = &#34;&#34;&#34;Invalid resulting object&#34;&#34;&#34;
     pass</code></pre>
 </details>
-<div class="desc"><p>Common base class for all non-exit exceptions.</p></div>
+<div class="desc"><p>Resulting object generated by the node appears to be invalid
+in some sense.</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="sverchok.core.sv_custom_exceptions.SvProcessingError" href="#sverchok.core.sv_custom_exceptions.SvProcessingError">SvProcessingError</a></li>
@@ -188,6 +270,8 @@ el.replaceWith(d);
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class SvNoDataError(LookupError):
+    &#34;&#34;&#34;Raised when the node needs data from the socket, but there is no data.
+    In most cases, raised only by update system, not by node itself.&#34;&#34;&#34;
     __description__ = &#34;No data passed to socket&#34;
     def __init__(self, socket=None, node=None, msg=None):
 
@@ -220,7 +304,8 @@ el.replaceWith(d);
     def __format__(self, spec):
         return repr(self)</code></pre>
 </details>
-<div class="desc"><p>Base class for lookup errors.</p></div>
+<div class="desc"><p>Raised when the node needs data from the socket, but there is no data.
+In most cases, raised only by update system, not by node itself.</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li>builtins.LookupError</li>
@@ -270,7 +355,7 @@ el.replaceWith(d);
     def __str__(self):
         return self.message</code></pre>
 </details>
-<div class="desc"><p>Common base class for all non-exit exceptions.</p></div>
+<div class="desc"><p>Base exception class for most processing errors in nodes</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="sverchok.core.sv_custom_exceptions.SvProcessingError" href="#sverchok.core.sv_custom_exceptions.SvProcessingError">SvProcessingError</a></li>
@@ -288,10 +373,11 @@ el.replaceWith(d);
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class SvProcessingError(Exception):
+    &#34;&#34;&#34;Base exception class for most processing errors in nodes&#34;&#34;&#34;
     __description__ = &#34;General processing error&#34;
     pass</code></pre>
 </details>
-<div class="desc"><p>Common base class for all non-exit exceptions.</p></div>
+<div class="desc"><p>Base exception class for most processing errors in nodes</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li>builtins.Exception</li>
@@ -316,9 +402,16 @@ el.replaceWith(d);
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class SvUnsupportedOptionException(SvProcessingError):
+    &#34;&#34;&#34;Unsupported option or combination of options selected
+    by the user. This usually means that UI of the node is not
+    perfect, so the user was able to select some combination of
+    options which is not going to work.&#34;&#34;&#34;
     __description__ = &#34;Unsupported option&#34;</code></pre>
 </details>
-<div class="desc"><p>Common base class for all non-exit exceptions.</p></div>
+<div class="desc"><p>Unsupported option or combination of options selected
+by the user. This usually means that UI of the node is not
+perfect, so the user was able to select some combination of
+options which is not going to work.</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="sverchok.core.sv_custom_exceptions.SvProcessingError" href="#sverchok.core.sv_custom_exceptions.SvProcessingError">SvProcessingError</a></li>
@@ -342,6 +435,12 @@ el.replaceWith(d);
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
 <li>
+<h4><code><a title="sverchok.core.sv_custom_exceptions.AlgorithmError" href="#sverchok.core.sv_custom_exceptions.AlgorithmError">AlgorithmError</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sverchok.core.sv_custom_exceptions.ArgumentError" href="#sverchok.core.sv_custom_exceptions.ArgumentError">ArgumentError</a></code></h4>
+</li>
+<li>
 <h4><code><a title="sverchok.core.sv_custom_exceptions.CancelError" href="#sverchok.core.sv_custom_exceptions.CancelError">CancelError</a></code></h4>
 </li>
 <li>
@@ -349,6 +448,9 @@ el.replaceWith(d);
 </li>
 <li>
 <h4><code><a title="sverchok.core.sv_custom_exceptions.ImplicitConversionProhibited" href="#sverchok.core.sv_custom_exceptions.ImplicitConversionProhibited">ImplicitConversionProhibited</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sverchok.core.sv_custom_exceptions.InvalidStateError" href="#sverchok.core.sv_custom_exceptions.InvalidStateError">InvalidStateError</a></code></h4>
 </li>
 <li>
 <h4><code><a title="sverchok.core.sv_custom_exceptions.SvExternalLibraryException" href="#sverchok.core.sv_custom_exceptions.SvExternalLibraryException">SvExternalLibraryException</a></code></h4>

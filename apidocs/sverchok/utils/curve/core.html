@@ -347,7 +347,7 @@ R is diagonal matrix.</p>
         Returns:
             Curve point - np.array of shape (3,).
         &#34;&#34;&#34;
-        raise Exception(&#34;not implemented!&#34;)
+        raise NotImplementedError(&#34;not implemented!&#34;)
 
     def evaluate_array(self, ts):
         &#34;&#34;&#34;
@@ -359,7 +359,7 @@ R is diagonal matrix.</p>
         Returns:
             Curve points - np.array of shape (n,3).
         &#34;&#34;&#34;
-        raise Exception(&#34;not implemented!&#34;)
+        raise NotImplementedError(&#34;not implemented!&#34;)
 
     def get_tangent_delta(self, tangent_delta=None):
         &#34;&#34;&#34;
@@ -564,7 +564,7 @@ R is diagonal matrix.</p>
         elif order == 3:
             return self.third_derivative(t, tangent_delta=tangent_delta)
         else:
-            raise Exception(f&#34;Unsupported derivative order: {order}&#34;)
+            raise NotImplementedError(f&#34;Unsupported derivative order: {order}&#34;)
 
     def main_normal(self, t, normalize=True, tangent_delta=None):
         h = self.get_tangent_delta(tangent_delta)
@@ -741,7 +741,7 @@ R is diagonal matrix.</p>
                 * matrices - np.array of shape (n, 3, 3)
         &#34;&#34;&#34;
         if not hasattr(self, &#39;_torsion_integral&#39;):
-            raise Exception(&#34;pre_calc_torsion_integral() has to be called first&#34;)
+            raise InvalidStateError(&#34;pre_calc_torsion_integral() has to be called first&#34;)
 
         h = self.get_tangent_delta(tangent_delta)
         vectors = self.evaluate_array(ts)
@@ -802,7 +802,7 @@ R is diagonal matrix.</p>
         Returns:
             Tuple: minimum and maximum value of curve&#39;s parameter.
         &#34;&#34;&#34;
-        raise Exception(&#34;not implemented!&#34;)
+        raise NotImplementedError(&#34;not implemented!&#34;)
 
     def get_end_points(self):
         &#34;&#34;&#34;
@@ -831,13 +831,13 @@ R is diagonal matrix.</p>
         If this curve is a polyline, return vertices of that polyline.
         If the curve is not a polyline, this method can raise an exception.
         &#34;&#34;&#34;
-        raise Exception(&#34;Curve is not a polyline&#34;)
+        raise UnsupportedCurveTypeException(&#34;Curve is not a polyline&#34;)
 
     def get_degree(self):
         &#34;&#34;&#34;
         Get curve degree, if applicable.
         &#34;&#34;&#34;
-        raise Exception(&#34;`Get Degree&#39; method is not applicable to curve of type `{}&#39;&#34;.format(type(self)))
+        raise NotImplementedError(&#34;`Get Degree&#39; method is not applicable to curve of type `{}&#39;&#34;.format(type(self)))
 
     def get_control_points(self):
         &#34;&#34;&#34;
@@ -1130,7 +1130,7 @@ with polyline.</p></div>
     Returns:
         Curve point - np.array of shape (3,).
     &#34;&#34;&#34;
-    raise Exception(&#34;not implemented!&#34;)</code></pre>
+    raise NotImplementedError(&#34;not implemented!&#34;)</code></pre>
 </details>
 <div class="desc"><p>Evaluate the curve at one point.</p>
 <h2 id="args">Args</h2>
@@ -1159,7 +1159,7 @@ with polyline.</p></div>
     Returns:
         Curve points - np.array of shape (n,3).
     &#34;&#34;&#34;
-    raise Exception(&#34;not implemented!&#34;)</code></pre>
+    raise NotImplementedError(&#34;not implemented!&#34;)</code></pre>
 </details>
 <div class="desc"><p>Evaluate the curve at a series of points.</p>
 <h2 id="args">Args</h2>
@@ -1331,7 +1331,7 @@ algorithm will raise a general LinAlgError exception if it can't calculate the m
     &#34;&#34;&#34;
     Get curve degree, if applicable.
     &#34;&#34;&#34;
-    raise Exception(&#34;`Get Degree&#39; method is not applicable to curve of type `{}&#39;&#34;.format(type(self)))</code></pre>
+    raise NotImplementedError(&#34;`Get Degree&#39; method is not applicable to curve of type `{}&#39;&#34;.format(type(self)))</code></pre>
 </details>
 <div class="desc"><p>Get curve degree, if applicable.</p></div>
 </dd>
@@ -1367,7 +1367,7 @@ algorithm will raise a general LinAlgError exception if it can't calculate the m
     If this curve is a polyline, return vertices of that polyline.
     If the curve is not a polyline, this method can raise an exception.
     &#34;&#34;&#34;
-    raise Exception(&#34;Curve is not a polyline&#34;)</code></pre>
+    raise UnsupportedCurveTypeException(&#34;Curve is not a polyline&#34;)</code></pre>
 </details>
 <div class="desc"><p>If this curve is a polyline, return vertices of that polyline.
 If the curve is not a polyline, this method can raise an exception.</p></div>
@@ -1410,7 +1410,7 @@ If the curve is not a polyline, this method can raise an exception.</p></div>
     Returns:
         Tuple: minimum and maximum value of curve&#39;s parameter.
     &#34;&#34;&#34;
-    raise Exception(&#34;not implemented!&#34;)</code></pre>
+    raise NotImplementedError(&#34;not implemented!&#34;)</code></pre>
 </details>
 <div class="desc"><p>Obtain curve domain.</p>
 <h2 id="returns">Returns</h2>
@@ -1513,7 +1513,7 @@ If the curve is not a polyline, this method can raise an exception.</p></div>
     elif order == 3:
         return self.third_derivative(t, tangent_delta=tangent_delta)
     else:
-        raise Exception(f&#34;Unsupported derivative order: {order}&#34;)</code></pre>
+        raise NotImplementedError(f&#34;Unsupported derivative order: {order}&#34;)</code></pre>
 </details>
 <div class="desc"></div>
 </dd>
@@ -1844,7 +1844,7 @@ If the curve is not a polyline, this method can raise an exception.</p></div>
             * matrices - np.array of shape (n, 3, 3)
     &#34;&#34;&#34;
     if not hasattr(self, &#39;_torsion_integral&#39;):
-        raise Exception(&#34;pre_calc_torsion_integral() has to be called first&#34;)
+        raise InvalidStateError(&#34;pre_calc_torsion_integral() has to be called first&#34;)
 
     h = self.get_tangent_delta(tangent_delta)
     vectors = self.evaluate_array(ts)
@@ -2853,10 +2853,11 @@ def scale(self):
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class UnsupportedCurveTypeException(TypeError):
+    &#34;&#34;&#34;Raised when the algorithm can not work with type of curve provided by user.&#34;&#34;&#34;
     __description__ = &#34;Unsupported curve type&#34;
     pass</code></pre>
 </details>
-<div class="desc"><p>Inappropriate argument type.</p></div>
+<div class="desc"><p>Raised when the algorithm can not work with type of curve provided by user.</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li>builtins.TypeError</li>
@@ -2874,6 +2875,10 @@ def scale(self):
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class ZeroCurvatureException(Exception):
+    &#34;&#34;&#34;Raised when the code, which is not able to work with curve of zero curvature,
+    recieves such curve.&#34;&#34;&#34;
+    __description__ = &#34;Unexpected zero curvature&#34;
+
     def __init__(self, ts, mask=None):
         self.ts = ts
         self.mask = mask
@@ -2882,7 +2887,8 @@ def scale(self):
     def get_message(self):
         return f&#34;Curve has zero curvature at some points: {self.ts}&#34;</code></pre>
 </details>
-<div class="desc"><p>Common base class for all non-exit exceptions.</p></div>
+<div class="desc"><p>Raised when the code, which is not able to work with curve of zero curvature,
+recieves such curve.</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li>builtins.Exception</li>

@@ -70,15 +70,15 @@ el.replaceWith(d);
     &#34;&#34;&#34;
 
     if not u_curves or not v_curves:
-        raise Exception(&#34;U or V curves are not provided&#34;)
+        raise ArgumentError(&#34;U or V curves are not provided&#34;)
 
     if (u_knots is None) != (v_knots is None):
-        raise Exception(&#34;u_knots and v_knots must be either both provided or both omitted&#34;)
+        raise ArgumentError(&#34;u_knots and v_knots must be either both provided or both omitted&#34;)
 
     if any(c.is_rational() for c in u_curves):
-        raise Exception(&#34;Some of U-curves are rational. Rational curves are not supported for Gordon surface.&#34;)
+        raise SvInvalidInputException(&#34;Some of U-curves are rational. Rational curves are not supported for Gordon surface.&#34;)
     if any(c.is_rational() for c in v_curves):
-        raise Exception(&#34;Some of V-curves are rational. Rational curves are not supported for Gordon surface.&#34;)
+        raise SvInvalidInputException(&#34;Some of V-curves are rational. Rational curves are not supported for Gordon surface.&#34;)
 
     if logger is None:
         logger = get_logger()

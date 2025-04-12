@@ -678,7 +678,7 @@ ensure_min_nesting([[[17]]], 1) =&gt; [[[17]]]</p></div>
     current_level = get_data_nesting_level(data, data_types)
     if current_level &gt; target_level:
         if input_name is None:
-            raise TypeError(&#34;ensure_nesting_level: input data already has nesting level of {}. Required level was {}.&#34;.format(current_level, target_level))
+            raise TypeError(&#34;Input data already has nesting level of {}. Required level was {}.&#34;.format(current_level, target_level))
         else:
             raise TypeError(&#34;Input data in socket {} already has nesting level of {}. Required level was {}.&#34;.format(input_name, current_level, target_level))
     result = data

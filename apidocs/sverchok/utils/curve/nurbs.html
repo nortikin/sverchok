@@ -72,7 +72,7 @@ el.replaceWith(d);
         else:
             curve = BSpline.Curve(normalize_kv = normalize_knots)
         if degree == 0:
-            raise Exception(&#34;Zero degree!?&#34;)
+            raise AlgorithmError(&#34;Zero degree!?&#34;)
         curve.degree = degree
         if isinstance(control_points, np.ndarray):
             control_points = control_points.tolist()
@@ -96,7 +96,7 @@ el.replaceWith(d);
     @classmethod
     def interpolate(cls, degree, points, metric=&#39;DISTANCE&#39;, **kwargs):
         if metric not in {&#39;DISTANCE&#39;, &#39;CENTRIPETAL&#39;}:
-            raise Exception(f&#34;`{metric}` metric is not supported by interpolation routine of Geomdl library; supported are DISTANCE and CENTRIPETAL&#34;)
+            raise SvExternalLibraryException(f&#34;`{metric}` metric is not supported by interpolation routine of Geomdl library; supported are DISTANCE and CENTRIPETAL&#34;)
         centripetal = metric == &#39;CENTRIPETAL&#39;
         curve = fitting.interpolate_curve(points.tolist(), degree, centripetal=centripetal)
         return SvGeomdlCurve(curve)
@@ -212,7 +212,7 @@ el.replaceWith(d);
 
     def remove_knot(self, u, count=1, target=None, if_possible=False, tolerance=None):
         if (count is None) == (target is None):
-            raise Exception(&#34;Either count or target must be specified&#34;)
+            raise ArgumentError(&#34;Either count or target must be specified&#34;)
 
         knotvector = self.get_knotvector()
         orig_multiplicity = sv_knotvector.find_multiplicity(knotvector, u)
@@ -340,7 +340,7 @@ el.replaceWith(d);
 </summary>
 <pre><code class="python">def remove_knot(self, u, count=1, target=None, if_possible=False, tolerance=None):
     if (count is None) == (target is None):
-        raise Exception(&#34;Either count or target must be specified&#34;)
+        raise ArgumentError(&#34;Either count or target must be specified&#34;)
 
     knotvector = self.get_knotvector()
     orig_multiplicity = sv_knotvector.find_multiplicity(knotvector, u)
@@ -655,7 +655,7 @@ el.replaceWith(d);
         # Implementation adapted from Geomdl
 
         if (count is None) == (target is None):
-            raise Exception(&#34;Either count or target must be specified&#34;)
+            raise ArgumentError(&#34;Either count or target must be specified&#34;)
 
         orig_multiplicity = sv_knotvector.find_multiplicity(self.get_knotvector(), u)
 
@@ -988,7 +988,7 @@ el.replaceWith(d);
     # Implementation adapted from Geomdl
 
     if (count is None) == (target is None):
-        raise Exception(&#34;Either count or target must be specified&#34;)
+        raise ArgumentError(&#34;Either count or target must be specified&#34;)
 
     orig_multiplicity = sv_knotvector.find_multiplicity(self.get_knotvector(), u)
 
@@ -1407,10 +1407,10 @@ el.replaceWith(d);
         &#34;&#34;&#34;
         Return a string identifying the implementation of NURBS mathematics used by this curve.
         &#34;&#34;&#34;
-        raise Exception(&#34;NURBS implementation is not defined&#34;)
+        raise NotImplementedError(&#34;NURBS implementation is not defined&#34;)
 
     def get_control_points(self):
-        raise Exception(&#34;Not implemented!&#34;)
+        raise NotImplementedError(&#34;Not implemented!&#34;)
 
     def get_weights(self):
         &#34;&#34;&#34;
@@ -1419,7 +1419,7 @@ el.replaceWith(d);
         Returns:
             np.array of shape (k,)
         &#34;&#34;&#34;
-        raise Exception(&#34;Not implemented!&#34;)
+        raise NotImplementedError(&#34;Not implemented!&#34;)
 
     def get_homogenous_control_points(self):
         &#34;&#34;&#34;
@@ -1458,10 +1458,10 @@ el.replaceWith(d);
         Returns:
             np.array of shape (X,)
         &#34;&#34;&#34;
-        raise Exception(&#34;Not implemented!&#34;)
+        raise NotImplementedError(&#34;Not implemented!&#34;)
 
     def get_degree(self):
-        raise Exception(&#34;Not implemented!&#34;)
+        raise NotImplementedError(&#34;Not implemented!&#34;)
 
     def calc_greville_ts(self):
         n = len(self.get_control_points())
@@ -1475,12 +1475,12 @@ el.replaceWith(d);
         if delta is None and target is None:
             delta = 1
         if delta is not None and target is not None:
-            raise Exception(&#34;Of delta and target, only one parameter can be specified&#34;)
+            raise ArgumentError(&#34;Of delta and target, only one parameter can be specified&#34;)
         degree = self.get_degree()
         if delta is None:
             delta = target - degree
             if delta &lt; 0:
-                raise Exception(f&#34;Curve already has degree {degree}, which is greater than target {target}&#34;)
+                raise SvInvalidInputException(f&#34;Curve already has degree {degree}, which is greater than target {target}&#34;)
         if delta == 0:
             return self
 
@@ -1510,12 +1510,12 @@ el.replaceWith(d);
         if delta is None and target is None:
             delta = 1
         if delta is not None and target is not None:
-            raise Exception(&#34;Of delta and target, only one parameter can be specified&#34;)
+            raise ArgumentError(&#34;Of delta and target, only one parameter can be specified&#34;)
         orig_degree = self.get_degree()
         if delta is None:
             delta = orig_degree - target
             if delta &lt; 0:
-                raise Exception(f&#34;Curve already has degree {orig_degree}, which is greater than target {target}&#34;)
+                raise SvInvalidInputException(f&#34;Curve already has degree {orig_degree}, which is greater than target {target}&#34;)
         if delta == 0:
             return self
 
@@ -1638,10 +1638,10 @@ el.replaceWith(d);
         #print(f&#34;S: ctlpts1: {len(control_points_1)}, 2: {len(control_points_2)}&#34;)
         kv_error = sv_knotvector.check(curve.get_degree(), knotvector1, len(control_points_1))
         if kv_error is not None:
-            raise Exception(kv_error)
+            raise AlgorithmError(kv_error)
         kv_error = sv_knotvector.check(curve.get_degree(), knotvector2, len(control_points_2))
         if kv_error is not None:
-            raise Exception(kv_error)
+            raise AlgorithmError(kv_error)
 
         curve1 = (knotvector1, control_points_1, weights_1)
         curve2 = (knotvector2, control_points_2, weights_2)
@@ -1700,7 +1700,7 @@ el.replaceWith(d);
         if new_t_min &gt; t_min:
             _, params = curve._split_at(new_t_min)
             if params is None:
-                raise Exception(f&#34;Cut 1: {new_t_min} - {new_t_max} from {t_min} - {t_max}&#34;)
+                raise AlgorithmError(f&#34;Cut 1: {new_t_min} - {new_t_max} from {t_min} - {t_max}&#34;)
             knotvector, control_points, weights = params
             curve = SvNurbsCurve.build(implementation,
                         degree, knotvector,
@@ -1709,7 +1709,7 @@ el.replaceWith(d);
             if new_t_max &gt; new_t_min:
                 params, _ = curve._split_at(new_t_max)
                 if params is None:
-                    raise Exception(f&#34;Cut 2: {new_t_min} - {new_t_max} from {t_min} - {t_max}&#34;)
+                    raise AlgorithmError(f&#34;Cut 2: {new_t_min} - {new_t_max} from {t_min} - {t_max}&#34;)
                 knotvector, control_points, weights = params
                 curve = SvNurbsCurve.build(implementation,
                             degree, knotvector,
@@ -1876,7 +1876,7 @@ el.replaceWith(d);
     def bezier_to_taylor(self):
         # Refer to The NURBS Book, 2nd ed., p. 6.6
         if not self.is_bezier():
-            raise Exception(&#34;Non-Bezier NURBS curve cannot be converted to Taylor curve&#34;)
+            raise NotImplementedError(&#34;Non-Bezier NURBS curve cannot be converted to Taylor curve&#34;)
 
         p = self.get_degree()
         cpts = self.get_homogenous_control_points()
@@ -1902,7 +1902,7 @@ el.replaceWith(d);
 
     def to_knotvector(self, curve2):
         if curve2.get_degree() != self.get_degree():
-            raise Exception(&#34;Degrees of the curves are not equal&#34;)
+            raise ArgumentError(&#34;Degrees of the curves are not equal&#34;)
         curve = self
         new_kv = curve2.get_knotvector()
         curve = curve.reparametrize(new_kv[0], new_kv[-1])
@@ -1915,10 +1915,10 @@ el.replaceWith(d);
         return curve
 
     def insert_knot(self, u, count=1, if_possible=False):
-        raise Exception(&#34;Not implemented!&#34;)
+        raise NotImplementedError(&#34;Not implemented!&#34;)
 
     def remove_knot(self, u, count=1, target=None, tolerance=1e-6):
-        raise Exception(&#34;Not implemented!&#34;)
+        raise NotImplementedError(&#34;Not implemented!&#34;)
 
     def get_min_continuity(self):
         &#34;&#34;&#34;
@@ -1995,7 +1995,7 @@ el.replaceWith(d);
         # available at: https://hal.inria.fr/inria-00518359
 
         if not self.is_bezier():
-            raise Exception(&#34;this method is not applicable to non-Bezier curves&#34;)
+            raise ArgumentError(&#34;this method is not applicable to non-Bezier curves&#34;)
 
         square_coeffs = self.bezier_distance_coeffs(sphere_center)
         return (square_coeffs &gt;= sphere_radius**2).all()
@@ -2047,7 +2047,7 @@ el.replaceWith(d);
     def split_at_fracture_points(self, order=1, direction_only = True, or_worse = True, angle_tolerance = 1e-6, amplitude_tolerance=1e-6, return_details = False):
 
         if order not in {1,2,3}:
-            raise Exception(f&#34;Unsupported discontinuity order: {order}&#34;)
+            raise ArgumentError(f&#34;Unsupported discontinuity order: {order}&#34;)
 
         def is_fracture(segment1, segment2):
             if order == 1:
@@ -2238,7 +2238,7 @@ if this curve can not be converted to NURBS.</p></div>
     # available at: https://hal.inria.fr/inria-00518359
 
     if not self.is_bezier():
-        raise Exception(&#34;this method is not applicable to non-Bezier curves&#34;)
+        raise ArgumentError(&#34;this method is not applicable to non-Bezier curves&#34;)
 
     square_coeffs = self.bezier_distance_coeffs(sphere_center)
     return (square_coeffs &gt;= sphere_radius**2).all()</code></pre>
@@ -2256,7 +2256,7 @@ if this curve can not be converted to NURBS.</p></div>
 <pre><code class="python">def bezier_to_taylor(self):
     # Refer to The NURBS Book, 2nd ed., p. 6.6
     if not self.is_bezier():
-        raise Exception(&#34;Non-Bezier NURBS curve cannot be converted to Taylor curve&#34;)
+        raise NotImplementedError(&#34;Non-Bezier NURBS curve cannot be converted to Taylor curve&#34;)
 
     p = self.get_degree()
     cpts = self.get_homogenous_control_points()
@@ -2469,7 +2469,7 @@ such a way that each segment is nearly a straight line segment.</p></div>
     if new_t_min &gt; t_min:
         _, params = curve._split_at(new_t_min)
         if params is None:
-            raise Exception(f&#34;Cut 1: {new_t_min} - {new_t_max} from {t_min} - {t_max}&#34;)
+            raise AlgorithmError(f&#34;Cut 1: {new_t_min} - {new_t_max} from {t_min} - {t_max}&#34;)
         knotvector, control_points, weights = params
         curve = SvNurbsCurve.build(implementation,
                     degree, knotvector,
@@ -2478,7 +2478,7 @@ such a way that each segment is nearly a straight line segment.</p></div>
         if new_t_max &gt; new_t_min:
             params, _ = curve._split_at(new_t_max)
             if params is None:
-                raise Exception(f&#34;Cut 2: {new_t_min} - {new_t_max} from {t_min} - {t_max}&#34;)
+                raise AlgorithmError(f&#34;Cut 2: {new_t_min} - {new_t_max} from {t_min} - {t_max}&#34;)
             knotvector, control_points, weights = params
             curve = SvNurbsCurve.build(implementation,
                         degree, knotvector,
@@ -2508,12 +2508,12 @@ such a way that each segment is nearly a straight line segment.</p></div>
     if delta is None and target is None:
         delta = 1
     if delta is not None and target is not None:
-        raise Exception(&#34;Of delta and target, only one parameter can be specified&#34;)
+        raise ArgumentError(&#34;Of delta and target, only one parameter can be specified&#34;)
     degree = self.get_degree()
     if delta is None:
         delta = target - degree
         if delta &lt; 0:
-            raise Exception(f&#34;Curve already has degree {degree}, which is greater than target {target}&#34;)
+            raise SvInvalidInputException(f&#34;Curve already has degree {degree}, which is greater than target {target}&#34;)
     if delta == 0:
         return self
 
@@ -2661,7 +2661,7 @@ such a way that each segment is nearly a straight line segment.</p></div>
     Returns:
         np.array of shape (X,)
     &#34;&#34;&#34;
-    raise Exception(&#34;Not implemented!&#34;)</code></pre>
+    raise NotImplementedError(&#34;Not implemented!&#34;)</code></pre>
 </details>
 <div class="desc"><p>Get NURBS curve knotvector.</p>
 <h2 id="returns">Returns</h2>
@@ -2751,7 +2751,7 @@ such a way that each segment is nearly a straight line segment.</p></div>
     Returns:
         np.array of shape (k,)
     &#34;&#34;&#34;
-    raise Exception(&#34;Not implemented!&#34;)</code></pre>
+    raise NotImplementedError(&#34;Not implemented!&#34;)</code></pre>
 </details>
 <div class="desc"><p>Get NURBS curve weights.</p>
 <h2 id="returns">Returns</h2>
@@ -2783,7 +2783,7 @@ such a way that each segment is nearly a straight line segment.</p></div>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def insert_knot(self, u, count=1, if_possible=False):
-    raise Exception(&#34;Not implemented!&#34;)</code></pre>
+    raise NotImplementedError(&#34;Not implemented!&#34;)</code></pre>
 </details>
 <div class="desc"></div>
 </dd>
@@ -3041,12 +3041,12 @@ lie inside the sphere, or may not touch it at all.</p></div>
     if delta is None and target is None:
         delta = 1
     if delta is not None and target is not None:
-        raise Exception(&#34;Of delta and target, only one parameter can be specified&#34;)
+        raise ArgumentError(&#34;Of delta and target, only one parameter can be specified&#34;)
     orig_degree = self.get_degree()
     if delta is None:
         delta = orig_degree - target
         if delta &lt; 0:
-            raise Exception(f&#34;Curve already has degree {orig_degree}, which is greater than target {target}&#34;)
+            raise SvInvalidInputException(f&#34;Curve already has degree {orig_degree}, which is greater than target {target}&#34;)
     if delta == 0:
         return self
 
@@ -3129,7 +3129,7 @@ lie inside the sphere, or may not touch it at all.</p></div>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def remove_knot(self, u, count=1, target=None, tolerance=1e-6):
-    raise Exception(&#34;Not implemented!&#34;)</code></pre>
+    raise NotImplementedError(&#34;Not implemented!&#34;)</code></pre>
 </details>
 <div class="desc"></div>
 </dd>
@@ -3229,7 +3229,7 @@ lie inside the sphere, or may not touch it at all.</p></div>
 <pre><code class="python">def split_at_fracture_points(self, order=1, direction_only = True, or_worse = True, angle_tolerance = 1e-6, amplitude_tolerance=1e-6, return_details = False):
 
     if order not in {1,2,3}:
-        raise Exception(f&#34;Unsupported discontinuity order: {order}&#34;)
+        raise ArgumentError(f&#34;Unsupported discontinuity order: {order}&#34;)
 
     def is_fracture(segment1, segment2):
         if order == 1:
@@ -3393,7 +3393,7 @@ lie inside the sphere, or may not touch it at all.</p></div>
 </summary>
 <pre><code class="python">def to_knotvector(self, curve2):
     if curve2.get_degree() != self.get_degree():
-        raise Exception(&#34;Degrees of the curves are not equal&#34;)
+        raise ArgumentError(&#34;Degrees of the curves are not equal&#34;)
     curve = self
     new_kv = curve2.get_knotvector()
     curve = curve.reparametrize(new_kv[0], new_kv[-1])

@@ -614,7 +614,7 @@ Algorithmica 2, 153-174.
             r = []
             for i in range(len(sites)):
                 if i not in face_by_site:
-                    raise Exception(f&#34;Can&#39;t find a face for site #{i}&#34;)
+                    raise AlgorithmError(f&#34;Can&#39;t find a face for site #{i}&#34;)
                 face_idx = face_by_site[i]
                 face = new_faces[face_idx]
                 r.append(face)
@@ -655,13 +655,13 @@ Algorithmica 2, 153-174.
         elif mode == &#39;CIRCLE&#39;:
             return CircleBounds()
         else:
-            raise Exception(&#34;Unknown bounds type&#34;)
+            raise SvUnsupportedOptionException(&#34;Unknown bounds type&#34;)
 
     def __repr__(self):
         return f&#34;Bounds[C: {self.center}, R: {self.r_max}, X: {self.x_min} - {self.x_max}, Y: {self.y_min} - {self.y_max}]&#34;
 
     def restrict(self, point):
-        raise Exception(&#34;not implemented&#34;)
+        raise NotImplementedError(&#34;not implemented&#34;)
 
     def init_from_sites(self, sites):
         self.x_max = -BIG_FLOAT
@@ -731,7 +731,7 @@ Algorithmica 2, 153-174.
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def restrict(self, point):
-    raise Exception(&#34;not implemented&#34;)</code></pre>
+    raise NotImplementedError(&#34;not implemented&#34;)</code></pre>
 </details>
 <div class="desc"></div>
 </dd>
@@ -1499,7 +1499,7 @@ def circle(self):
         # get the slope of the line
         newedge.c = float(s1.x * dx + s1.y * dy + (dx*dx + dy*dy)*0.5)  
         if dx == 0 and dy == 0:
-            raise Exception(f&#34;Can&#39;t build an edge: two points are coinciding: {s1.sitenum}, {s2.sitenum}&#34;)
+            raise SvInvalidInputException(f&#34;Can&#39;t build an edge: two points are coinciding: {s1.sitenum}, {s2.sitenum}&#34;)
         if adx &gt; ady :
             # set formula of line, with x fixed to 1
             newedge.a = 1.0
@@ -1563,7 +1563,7 @@ def bisect(s1,s2):
     # get the slope of the line
     newedge.c = float(s1.x * dx + s1.y * dy + (dx*dx + dy*dy)*0.5)  
     if dx == 0 and dy == 0:
-        raise Exception(f&#34;Can&#39;t build an edge: two points are coinciding: {s1.sitenum}, {s2.sitenum}&#34;)
+        raise SvInvalidInputException(f&#34;Can&#39;t build an edge: two points are coinciding: {s1.sitenum}, {s2.sitenum}&#34;)
     if adx &gt; ady :
         # set formula of line, with x fixed to 1
         newedge.a = 1.0
@@ -2121,9 +2121,9 @@ def bisect(s1,s2):
 
     def new_vert(self, vert):
         if vert is None:
-            raise Exception(&#34;new_vert(None)&#34;)
+            raise ArgumentError(&#34;new_vert(None)&#34;)
         if vert[0] is None or vert[1] is None:
-            raise Exception(f&#34;new_vert({vert})&#34;)
+            raise ArgumentError(f&#34;new_vert({vert})&#34;)
         self.verts.append(vert)
         idx = self._next_vert
         self._next_vert += 1
@@ -2199,9 +2199,9 @@ def bisect(s1,s2):
 </summary>
 <pre><code class="python">def new_vert(self, vert):
     if vert is None:
-        raise Exception(&#34;new_vert(None)&#34;)
+        raise ArgumentError(&#34;new_vert(None)&#34;)
     if vert[0] is None or vert[1] is None:
-        raise Exception(f&#34;new_vert({vert})&#34;)
+        raise ArgumentError(f&#34;new_vert({vert})&#34;)
     self.verts.append(vert)
     idx = self._next_vert
     self._next_vert += 1

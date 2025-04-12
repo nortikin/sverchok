@@ -93,7 +93,7 @@ el.replaceWith(d);
     &#34;&#34;&#34;
 
     if u_mode == FIT and v_mode == FIT:
-        raise Exception(&#34;Automatic T values fitting can not be enabled for both directions&#34;)
+        raise SvUnsupportedOptionException(&#34;Automatic T values fitting can not be enabled for both directions&#34;)
 
     def prepare_t_by_count(curves, n):
         bounds = np.array([c.get_u_bounds() for c in curves])
@@ -111,7 +111,7 @@ el.replaceWith(d);
         elif mode == UNIFORM:
             t_values, target_pts = prepare_t_by_count(curves, n)
         else: # FIT
-            raise Exception(&#34;Can&#39;t fit T values for base curves&#34;)
+            raise SvUnsupportedOptionException(&#34;Can&#39;t fit T values for base curves&#34;)
         return t_values, target_pts
 
     def fit_t(primary_curves, primary_t_values, secondary_curves):

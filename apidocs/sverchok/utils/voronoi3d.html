@@ -1039,19 +1039,19 @@ el.replaceWith(d);
         elif kind == &#39;SPHERE&#39;:
             return SphereBounds(points, clipping)
         else:
-            raise Exception(&#34;Unsupported bounds type&#34;)
+            raise SvUnsupportedOptionException(&#34;Unsupported bounds type&#34;)
 
     def contains(self, point):
-        raise Exception(&#34;not implemented&#34;)
+        raise NotImplementedError(&#34;not implemented&#34;)
 
     def invert(self, point):
-        raise Exception(&#34;not implemented&#34;)
+        raise NotImplementedError(&#34;not implemented&#34;)
 
     def restrict(self, point):
-        raise Exception(&#34;not implemented&#34;)
+        raise NotImplementedError(&#34;not implemented&#34;)
 
     def make_mesh(self, diagram):
-        raise Exception(&#34;not implemented&#34;)</code></pre>
+        raise NotImplementedError(&#34;not implemented&#34;)</code></pre>
 </details>
 <div class="desc"></div>
 <h3>Subclasses</h3>
@@ -1076,7 +1076,7 @@ def new(kind, points, clipping):
     elif kind == &#39;SPHERE&#39;:
         return SphereBounds(points, clipping)
     else:
-        raise Exception(&#34;Unsupported bounds type&#34;)</code></pre>
+        raise SvUnsupportedOptionException(&#34;Unsupported bounds type&#34;)</code></pre>
 </details>
 <div class="desc"></div>
 </dd>
@@ -1092,7 +1092,7 @@ def new(kind, points, clipping):
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def contains(self, point):
-    raise Exception(&#34;not implemented&#34;)</code></pre>
+    raise NotImplementedError(&#34;not implemented&#34;)</code></pre>
 </details>
 <div class="desc"></div>
 </dd>
@@ -1105,7 +1105,7 @@ def new(kind, points, clipping):
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def invert(self, point):
-    raise Exception(&#34;not implemented&#34;)</code></pre>
+    raise NotImplementedError(&#34;not implemented&#34;)</code></pre>
 </details>
 <div class="desc"></div>
 </dd>
@@ -1118,7 +1118,7 @@ def new(kind, points, clipping):
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def make_mesh(self, diagram):
-    raise Exception(&#34;not implemented&#34;)</code></pre>
+    raise NotImplementedError(&#34;not implemented&#34;)</code></pre>
 </details>
 <div class="desc"></div>
 </dd>
@@ -1131,7 +1131,7 @@ def new(kind, points, clipping):
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def restrict(self, point):
-    raise Exception(&#34;not implemented&#34;)</code></pre>
+    raise NotImplementedError(&#34;not implemented&#34;)</code></pre>
 </details>
 <div class="desc"></div>
 </dd>
