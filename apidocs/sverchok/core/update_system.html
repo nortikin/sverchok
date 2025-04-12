@@ -225,12 +225,14 @@ put data into input given socket</p></div>
     def __enter__(self):
         self._warnings_handler = WarningHandler()
         self._node.sv_logger.addHandler(self._warnings_handler)
+        logging.getLogger(&#34;py.warnings&#34;).addHandler(self._warnings_handler)
         self._node[WARNING_KEY] = &#34;&#34;
         return None
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self._node[WARNING_KEY] = self._warnings_handler.get_warnings()
         self._node.sv_logger.removeHandler(self._warnings_handler)
+        logging.getLogger(&#34;py.warnings&#34;).removeHandler(self._warnings_handler)
         self._warnings_handler = None
         if exc_type is None:
             self._node[UPDATE_KEY] = True
