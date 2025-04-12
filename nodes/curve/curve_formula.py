@@ -8,7 +8,7 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, StringProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, zip_long_repeat,
                                      match_long_repeat, ensure_nesting_level)
-from sverchok.utils.modules.eval_formula import get_variables, sv_compile, safe_eval_compiled, check_eval_syntax
+from sverchok.utils.modules.eval_formula import get_variables, sv_compile, safe_eval_compiled
 from sverchok.utils.script_importhelper import safe_names_np
 from sverchok.utils.math import (
         from_cylindrical, from_spherical,
@@ -182,10 +182,6 @@ class SvCurveFormulaNode(SverchCustomTreeNode, bpy.types.Node):
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
             return
-
-        check_eval_syntax(self.formula1)
-        check_eval_syntax(self.formula2)
-        check_eval_syntax(self.formula3)
 
         t_min_s = self.inputs['TMin'].sv_get()
         t_max_s = self.inputs['TMax'].sv_get()

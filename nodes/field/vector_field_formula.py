@@ -237,9 +237,6 @@ class SvVectorFieldFormulaNode(SverchCustomTreeNode, bpy.types.Node):
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
             return
-        check_eval_syntax(self.formula1)
-        check_eval_syntax(self.formula2)
-        check_eval_syntax(self.formula3)
 
         fields_s = self.inputs['Field'].sv_get(default = [None])
 

@@ -118,11 +118,18 @@ def get_variables(string):
     string = string.strip()
     if not len(string):
         return set()
-    root = ast.parse(string, mode='eval')
-    visitor = VariableCollector()
-    visitor.visit(root)
-    result = visitor.variables
-    return result.difference(safe_names.keys())
+    try:
+        root = ast.parse(string, mode='eval')
+        visitor = VariableCollector()
+        visitor.visit(root)
+        result = visitor.variables
+        return result.difference(safe_names.keys())
+    except SyntaxError as e:
+        if e.offset == e.end_offset:
+            location = "location unknown"
+        else:
+            location = f"problematic fragment: «{string[e.offset-1 : e.end_offset]}»"
+        raise SyntaxError(f"Unparsed text: «{string}», {location}, problem: {e.msg}")
 
 def sv_compile(string):
     try:
