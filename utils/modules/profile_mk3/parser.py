@@ -19,8 +19,10 @@
 import re
 
 from sverchok.utils.parsec import *
-from sverchok.utils.sv_logging import sv_logger
+from sverchok.utils.sv_logging import get_logger
 from sverchok.utils.modules.profile_mk3.interpreter import *
+
+logger = get_logger()
 
 #########################################
 # DSL parsing
@@ -32,7 +34,7 @@ expr_regex = re.compile(r"({[^}]+})\s*", re.DOTALL)
 
 def parse_expr(src):
     for string, rest in parse_regexp(expr_regex)(src):
-        expr = Expression.from_string(string)
+        expr = Expression.from_string(string, logger=logger)
         if expr is not None:
             yield expr, rest
 
@@ -261,6 +263,6 @@ def parse_profile(src):
         cleaned = cleaned + " " + line
     
     profile = parse(parse_definition, cleaned)
-    sv_logger.debug(profile)
+    logger.debug(profile)
     return profile
 

@@ -667,7 +667,8 @@ class SvProfileNodeMK3(SverchCustomTreeNode, bpy.types.Node):
             curves_form = Interpreter.NURBS if self.nurbs_out else None
             interpreter = Interpreter(self, input_names,
                             curves_form=curves_form,
-                            z_axis=self.selected_axis)
+                            z_axis=self.selected_axis,
+                            logger = self.sv_logger)
             interpreter.interpret(profile, variables)
             verts = self.extend_out_verts(interpreter.vertices)
             result_vertices.append(verts)

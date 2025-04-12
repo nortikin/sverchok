@@ -218,9 +218,9 @@ def parse(func, s):
     s = s.strip()
     match = list(func(s))
     if len(match) != 1:
-        raise ValueError("invalid syntax: " + str(match))
+        raise SyntaxError("invalid syntax: " + str(match))
     result, rest = match[0]
     if rest.strip():
-        raise ValueError("parsed: {}\nleftover: {}".format(result, rest))
+        raise SyntaxError("parsed: {}\nunparsed part: {}".format(result, rest))
     return result
 

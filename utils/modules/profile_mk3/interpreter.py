@@ -23,7 +23,6 @@ import numpy as np
 from mathutils.geometry import interpolate_bezier
 from mathutils import Vector, Matrix
 
-from sverchok.utils.sv_logging import sv_logger
 from sverchok.utils.geom import interpolate_quadratic_bezier
 from sverchok.utils.sv_curve_utils import Arc
 from sverchok.utils.nurbs_common import SvNurbsMaths
@@ -31,6 +30,10 @@ from sverchok.utils.curve import SvCircle, SvLine, SvBezierCurve, SvCubicBezierC
 import sverchok.utils.curve.knotvector as sv_knotvector
 from sverchok.utils.curve.nurbs_solver import SvNurbsCurveControlPoints
 from sverchok.utils.curve.nurbs_solver_applications import prepare_solver_for_interpolation
+from sverchok.utils.sv_logging import get_logger, sv_logger
+
+class SvProfileException(Exception):
+    __description__ = "Error in profile definition"
 
 def make_functions_dict(*functions):
     return dict([(function.__name__, function) for function in functions])
@@ -73,14 +76,15 @@ class Expression(object):
         return isinstance(other, Expression) and self.string == other.string
 
     @classmethod
-    def from_string(cls, string):
+    def from_string(cls, string, logger=None):
         try:
             string = string[1:][:-1]
             expr = ast.parse(string, mode='eval')
             return Expression(expr, string)
         except Exception as e:
-            print(e)
-            print(string)
+            if logger is None:
+                logger = get_logger()
+            logger.warning(f"Cannot parse expression «{string}»: {e}")
             return None
 
     def eval_(self, variables):
@@ -338,7 +342,7 @@ class HorizontalLineTo(Statement):
             v1 = (x, y0)
             interpreter.position = v1
             verts = self._interpolate(v0, v1, num_segments)
-            # sv_logger.debug("V0 %s, v1 %s, N %s => %s", v0, v1, num_segments, verts)
+            #interpreter.logger.debug("V0 %s, v1 %s, N %s => %s", v0, v1, num_segments, verts)
             for vertex in verts[1:]:
                 v_index = interpreter.new_vertex(*vertex)
                 interpreter.new_edge(prev_index, v_index)
@@ -1029,7 +1033,7 @@ class CloseAll(Statement):
     def interpret(self, interpreter, variables):
         interpreter.assert_not_closed()
         if not interpreter.has_last_vertex:
-            sv_logger.info("X statement: no current point, do nothing")
+            interpreter.logger.warning("X statement: no current point, do nothing")
             return
 
         v0 = interpreter.vertices[0]
@@ -1063,7 +1067,11 @@ class ClosePath(Statement):
     def interpret(self, interpreter, variables):
         interpreter.assert_not_closed()
         if not interpreter.has_last_vertex:
-            sv_logger.info("X statement: no current point, do nothing")
+            interpreter.logger.warning("X statement: no current point, do nothing")
+            return
+
+        if interpreter.close_first_index >= len(interpreter.vertices):
+            interpreter.logger.warning("X statement: curve was not started")
             return
 
         v0 = interpreter.vertices[interpreter.close_first_index]
@@ -1100,7 +1108,7 @@ class Default(Statement):
 
     def interpret(self, interpreter, variables):
         if self.name in interpreter.defaults:
-            raise Exception("Value for the `{}' variable has been already assigned!".format(self.name))
+            raise SvProfileException(f"Value for the `{self.name}' variable has been already assigned!")
         if self.name not in interpreter.input_names:
             value = interpreter.eval_(self.value, variables)
             interpreter.defaults[self.name] = value
@@ -1133,7 +1141,7 @@ class Interpreter(object):
     NURBS = 'NURBS'
     BEZIER = 'BEZIER'
 
-    def __init__(self, node, input_names, curves_form = None, force_curves_form = False, z_axis='Z'):
+    def __init__(self, node, input_names, curves_form = None, force_curves_form = False, z_axis='Z', logger=None):
         self.position = (0, 0)
         self.next_vertex_index = 0
         self.segment_start_index = 0
@@ -1156,6 +1164,10 @@ class Interpreter(object):
         self.curves_form = curves_form
         self.force_curves_form = force_curves_form
         self.z_axis = z_axis
+        if logger is None:
+            self.logger = get_logger()
+        else:
+            self.logger = logger
 
     def to3d(self, vertex):
         if self.z_axis == 'X':
@@ -1175,7 +1187,7 @@ class Interpreter(object):
 
     def assert_not_closed(self):
         if self.closed:
-            raise Exception("Path was already closed, will not process any further directives!")
+            raise SvProfileException("Path was already closed, will not process any further directives!")
 
     def relative(self, x, y):
         x0, y0 = self.position
@@ -1210,14 +1222,14 @@ class Interpreter(object):
                 curve = curve.to_nurbs()
             else:
                 if self.force_curves_form:
-                    raise Exception(f"Cannot convert curve to NURBS: {statement}")
+                    raise SvProfileException(f"Cannot convert curve to NURBS: {statement}")
         elif self.curves_form == Interpreter.BEZIER:
             if not isinstance(curve, (SvBezierCurve, SvCubicBezierCurve)):
                 if hasattr(curve, 'to_bezier'):
                     curve = curve.to_bezier()
                 else:
                     if self.force_curves_form:
-                        raise Exception("Cannot convert curve to Bezier: {statement}")
+                        raise SvProfileException(f"Cannot convert curve to Bezier: {statement}")
         self.curves.append(curve)
 
     def new_line_segment(self, v1, v2):
@@ -1262,6 +1274,6 @@ class Interpreter(object):
         if not profile:
             return
         for statement in profile:
-            sv_logger.debug("Interpret: %s", statement)
+            self.logger.debug("Interpret: %s", statement)
             statement.interpret(self, variables)
 
