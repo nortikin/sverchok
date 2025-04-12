@@ -169,7 +169,7 @@ class SvInterpolatingSurface(SvSurface):
         for i, (u, v) in enumerate(zip(us, vs)):
             v_to_u[v].append(u)
             v_to_i[v].append(i)
-        v_to_i_flatten = np.hstack(np.array( list(v_to_i.values())).flatten())
+        v_to_i_flatten = np.concatenate(list(v_to_i.values()))
 
         list_spline_v = []
         list_spline_h = []
