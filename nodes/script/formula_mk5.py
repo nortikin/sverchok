@@ -18,7 +18,7 @@ from sverchok.data_structure import (updateNode,
                                      list_match_func, numpy_list_match_modes,
                                      enum_item_4)
 
-from sverchok.utils.modules.eval_formula import get_variables, safe_eval
+from sverchok.utils.modules.eval_formula import check_eval_syntax, get_variables, safe_eval
 from sverchok.utils.sv_itertools import recurse_f_level_control
 
 def transform_data(data, transform):
@@ -293,6 +293,9 @@ class SvFormulaNodeMk5(SverchCustomTreeNode, bpy.types.Node):
 
         if not self.outputs[0].is_linked:
             return
+
+        for formula in self.formulas():
+            check_eval_syntax(formula)
 
         # if the user specifies a variable, they must also link a value into that socket, this will prevent Exception
         self.ui_message = ""

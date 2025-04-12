@@ -6,7 +6,7 @@ from bpy.props import EnumProperty, BoolProperty, StringProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, match_long_repeat
-from sverchok.utils.modules.eval_formula import get_variables, sv_compile, safe_eval_compiled
+from sverchok.utils.modules.eval_formula import check_eval_syntax, get_variables, sv_compile, safe_eval_compiled
 from sverchok.utils.script_importhelper import safe_names_np
 from sverchok.utils.math import (
         to_cylindrical, to_spherical,
@@ -170,6 +170,7 @@ class SvScalarFieldFormulaNode(SverchCustomTreeNode, bpy.types.Node):
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
             return
+        check_eval_syntax(self.formula)
 
         fields_s = self.inputs['Field'].sv_get(default = [None])
 
