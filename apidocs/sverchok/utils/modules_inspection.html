@@ -67,8 +67,8 @@ el.replaceWith(d);
         relative_address = &#34;.&#34;.join(relative_path.parts)
         nest_module = sys.modules.get(relative_address, None)
         if nest_module is None:
+            #print(f&#39;Looks like module=&#34;{relative_address}&#34; was not imported&#39;)
             pass
-            # print(f&#39;Looks like module=&#34;{relative_address}&#34; was not imported&#39;)
         else:
             classes = inspect.getmembers(nest_module, inspect.isclass)
             for _, cls in classes:
