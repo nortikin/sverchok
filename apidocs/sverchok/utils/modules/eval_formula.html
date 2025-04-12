@@ -82,11 +82,18 @@ el.replaceWith(d);
     string = string.strip()
     if not len(string):
         return set()
-    root = ast.parse(string, mode=&#39;eval&#39;)
-    visitor = VariableCollector()
-    visitor.visit(root)
-    result = visitor.variables
-    return result.difference(safe_names.keys())</code></pre>
+    try:
+        root = ast.parse(string, mode=&#39;eval&#39;)
+        visitor = VariableCollector()
+        visitor.visit(root)
+        result = visitor.variables
+        return result.difference(safe_names.keys())
+    except SyntaxError as e:
+        if e.offset == e.end_offset:
+            location = &#34;location unknown&#34;
+        else:
+            location = f&#34;problematic fragment: «{string[e.offset-1 : e.end_offset]}»&#34;
+        raise SyntaxError(f&#34;Unparsed text: «{string}», {location}, problem: {e.msg}&#34;)</code></pre>
 </details>
 <div class="desc"><p>Get set of free variables used by formula</p></div>
 </dd>
