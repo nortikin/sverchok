@@ -44,6 +44,29 @@ el.replaceWith(d);
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
+<dt id="sverchok.utils.modules.eval_formula.check_eval_syntax"><code class="name flex">
+<span>def <span class="ident">check_eval_syntax</span></span>(<span>string)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def check_eval_syntax(string):
+    if not string:
+        return
+    string = string.strip()
+    try:
+        ast.parse(string, mode=&#39;eval&#39;)
+    except SyntaxError as e:
+        if e.offset == e.end_offset:
+            location = &#34;location unknown&#34;
+        else:
+            location = f&#34;problematic fragment: «{string[e.offset-1 : e.end_offset]}»&#34;
+        raise SyntaxError(f&#34;Unparsed text: «{string}», {location}, problem: {e.msg}&#34;)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
 <dt id="sverchok.utils.modules.eval_formula.get_variables"><code class="name flex">
 <span>def <span class="ident">get_variables</span></span>(<span>string)</span>
 </code></dt>
@@ -89,7 +112,7 @@ el.replaceWith(d);
         return eval(compile(root, &#34;&lt;expression&gt;&#34;, &#39;eval&#39;), env)
     except SyntaxError as e:
         logging.exception(e)
-        raise Exception(&#34;Invalid expression syntax: &#34; + str(e))</code></pre>
+        raise SyntaxError(&#34;Invalid expression syntax: &#34; + str(e))</code></pre>
 </details>
 <div class="desc"><p>Evaluate expression, allowing only functions known to be "safe"
 to be used.</p></div>
@@ -117,7 +140,7 @@ to be used.</p></div>
         return eval(compiled, env)
     except SyntaxError as e:
         sv_logging.exception(e)
-        raise Exception(&#34;Invalid expression syntax: &#34; + str(e))</code></pre>
+        raise SyntaxError(&#34;Invalid expression syntax: &#34; + str(e))</code></pre>
 </details>
 <div class="desc"><p>Evaluate expression, allowing only functions known to be "safe"
 to be used.</p></div>
@@ -136,7 +159,7 @@ to be used.</p></div>
         return compile(root, &#34;&lt;expression&gt;&#34;, &#39;eval&#39;)
     except SyntaxError as e:
         logging.exception(e)
-        raise Exception(&#34;Invalid expression syntax: &#34; + str(e))</code></pre>
+        raise SyntaxError(&#34;Invalid expression syntax: &#34; + str(e))</code></pre>
 </details>
 <div class="desc"></div>
 </dd>
@@ -386,6 +409,7 @@ are not supported yet). But it works for most cases.</p>
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
+<li><code><a title="sverchok.utils.modules.eval_formula.check_eval_syntax" href="#sverchok.utils.modules.eval_formula.check_eval_syntax">check_eval_syntax</a></code></li>
 <li><code><a title="sverchok.utils.modules.eval_formula.get_variables" href="#sverchok.utils.modules.eval_formula.get_variables">get_variables</a></code></li>
 <li><code><a title="sverchok.utils.modules.eval_formula.safe_eval" href="#sverchok.utils.modules.eval_formula.safe_eval">safe_eval</a></code></li>
 <li><code><a title="sverchok.utils.modules.eval_formula.safe_eval_compiled" href="#sverchok.utils.modules.eval_formula.safe_eval_compiled">safe_eval_compiled</a></code></li>
