@@ -27,6 +27,7 @@ import random
 from mathutils import Vector
 from mathutils.bvhtree import BVHTree
 
+from sverchok.core.sv_custom_exceptions import SvUnsupportedOptionException
 from sverchok.data_structure import repeat_last_for_length
 from sverchok.utils.sv_mesh_utils import mask_vertices, polygons_to_edges, point_inside_mesh
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh, bmesh_clip
@@ -815,19 +816,19 @@ class Bounds(object):
         elif kind == 'SPHERE':
             return SphereBounds(points, clipping)
         else:
-            raise Exception("Unsupported bounds type")
+            raise SvUnsupportedOptionException("Unsupported bounds type")
 
     def contains(self, point):
-        raise Exception("not implemented")
+        raise NotImplementedError("not implemented")
 
     def invert(self, point):
-        raise Exception("not implemented")
+        raise NotImplementedError("not implemented")
 
     def restrict(self, point):
-        raise Exception("not implemented")
+        raise NotImplementedError("not implemented")
 
     def make_mesh(self, diagram):
-        raise Exception("not implemented")
+        raise NotImplementedError("not implemented")
 
 class BoxBounds(Bounds):
     def __init__(self, points, clipping):

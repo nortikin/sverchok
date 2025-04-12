@@ -9,10 +9,11 @@ import numpy as np
 import bpy
 from bpy.props import EnumProperty, BoolProperty, IntProperty
 
+from sverchok.core.sv_custom_exceptions import SvInvalidInputException
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, repeat_last_for_length
 from sverchok.utils.math import supported_metrics
-from sverchok.utils.curve.core import SvCurve
+from sverchok.utils.curve.core import SvCurve, UnsupportedCurveTypeException
 from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.surface.gordon import gordon_surface
 
@@ -89,27 +90,27 @@ class SvGordonSurfaceNode(SverchCustomTreeNode, bpy.types.Node):
         for u_curves, v_curves, t1s, t2s, intersections in zip_long_repeat(u_curves_s, v_curves_s, t1_s, t2_s, intersections_s):
             u_curves = [SvNurbsCurve.to_nurbs(c) for c in u_curves]
             if any(c is None for c in u_curves):
-                raise Exception("Some of U curves are not NURBS!")
+                raise UnsupportedCurveTypeException("Some of U curves are not NURBS!")
             v_curves = [SvNurbsCurve.to_nurbs(c) for c in v_curves]
             if any(c is None for c in v_curves):
-                raise Exception("Some of V curves are not NURBS!")
+                raise UnsupportedCurveTypeException("Some of V curves are not NURBS!")
 
             if self.explicit_t_values:
                 if len(t1s) < len(u_curves):
                     t1s = repeat_last_for_length(t1s, len(u_curves))
                 elif len(t1s) > len(u_curves):
-                    raise Exception(f"Number of items in T1 input {len(t1s)} > number of U-curves {len(u_curves)}")
+                    raise SvInvalidInputException(f"Number of items in T1 input {len(t1s)} > number of U-curves {len(u_curves)}")
 
                 if len(t1s[0]) != len(v_curves):
-                    raise Exception(f"Length of items in T1 input {len(t1s[0])} != number of V-curves {len(v_curves)}")
+                    raise SvInvalidInputException(f"Length of items in T1 input {len(t1s[0])} != number of V-curves {len(v_curves)}")
 
                 if len(t2s) < len(v_curves):
                     t2s = repeat_last_for_length(t2s, len(v_curves))
                 elif len(t2s) > len(v_curves):
-                    raise Exception(f"Number of items in T2 input {len(t2s)} > number of V-curves {len(v_curves)}")
+                    raise SvInvalidInputException(f"Number of items in T2 input {len(t2s)} > number of V-curves {len(v_curves)}")
 
                 if len(t2s[0]) != len(u_curves):
-                    raise Exception(f"Length of items in T2 input {len(t2s[0])} != number of U-curves {len(u_curves)}")
+                    raise SvInvalidInputException(f"Length of items in T2 input {len(t2s[0])} != number of U-curves {len(u_curves)}")
 
             if self.explicit_t_values:
                 kwargs = {'u_knots': np.array(t1s), 'v_knots': np.array(t2s)}

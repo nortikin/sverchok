@@ -2,6 +2,7 @@
 import numpy as np
 from collections import defaultdict
 
+from sverchok.core.sv_custom_exceptions import ArgumentError, SvInvalidInputException, SvUnsupportedOptionException
 from sverchok.utils.geom import Spline
 from sverchok.utils.nurbs_common import (
         SvNurbsMaths, SvNurbsBasisFunctions,
@@ -59,7 +60,7 @@ class SvNurbsSurface(SvSurface):
 
     @classmethod
     def get_nurbs_implementation(cls):
-        raise Exception("NURBS implementation is not defined")
+        raise NotImplementedError("NURBS implementation is not defined")
 
     def copy(self, implementation = None, degree_u=None, degree_v = None, knotvector_u = None, knotvector_v = None, control_points = None, weights = None):
         if implementation is None:
@@ -83,43 +84,43 @@ class SvNurbsSurface(SvSurface):
                 control_points, weights)
 
     def insert_knot(self, direction, parameter, count=1, if_possible=False):
-        raise Exception("Not implemented!")
+        raise NotImplementedError("Not implemented!")
 
     def remove_knot(self, direction, parameter, count=1, tolerance=None, if_possible=False):
-        raise Exception("Not implemented!")
+        raise NotImplementedError("Not implemented!")
 
     def get_degree_u(self):
-        raise Exception("Not implemented!")
+        raise NotImplementedError("Not implemented!")
 
     def get_degree_v(self):
-        raise Exception("Not implemented!")
+        raise NotImplementedError("Not implemented!")
 
     def get_knotvector_u(self):
         """
         returns: np.array of shape (X,)
         """
-        raise Exception("Not implemented!")
+        raise NotImplementedError("Not implemented!")
 
     def get_knotvector_v(self):
         """
         returns: np.array of shape (X,)
         """
-        raise Exception("Not implemented!")
+        raise NotImplementedError("Not implemented!")
 
     def get_control_points(self):
         """
         returns: np.array of shape (n_u, n_v, 3)
         """
-        raise Exception("Not implemented!")
+        raise NotImplementedError("Not implemented!")
 
     def get_weights(self):
         """
         returns: np.array of shape (n_u, n_v)
         """
-        raise Exception("Not implemented!")
+        raise NotImplementedError("Not implemented!")
 
     def iso_curve(self, fixed_direction, param):
-        raise Exception("Not implemented")
+        raise NotImplementedError("Not implemented")
     
     def is_rational(self, tolerance=1e-4):
         weights = self.get_weights()
@@ -201,7 +202,7 @@ class SvNurbsSurface(SvSurface):
         if delta is None and target is None:
             delta = 1
         if delta is not None and target is not None:
-            raise Exception("Of delta and target, only one parameter can be specified")
+            raise ArgumentError("Of delta and target, only one parameter can be specified")
         if direction == SvNurbsSurface.U:
             degree = self.get_degree_u()
         else:
@@ -209,7 +210,7 @@ class SvNurbsSurface(SvSurface):
         if delta is None:
             delta = target - degree
             if delta < 0:
-                raise Exception(f"Surface already has degree {degree}, which is greater than target {target}")
+                raise SvInvalidInputException(f"Surface already has degree {degree}, which is greater than target {target}")
         if delta == 0:
             return self
 
@@ -271,7 +272,7 @@ class SvNurbsSurface(SvSurface):
         if delta is None and target is None:
             delta = 1
         if delta is not None and target is not None:
-            raise Exception("Of delta and target, only one parameter can be specified")
+            raise ArgumentError("Of delta and target, only one parameter can be specified")
         if direction == SvNurbsSurface.U:
             degree = self.get_degree_u()
         else:
@@ -279,7 +280,7 @@ class SvNurbsSurface(SvSurface):
         if delta is None:
             delta = degree - target
             if delta < 0:
-                raise Exception(f"Surface already has degree {degree}, which is less than target {target}")
+                raise SvInvalidInputException(f"Surface already has degree {degree}, which is less than target {target}")
         if delta == 0:
             return self
 
@@ -419,7 +420,7 @@ class SvNurbsSurface(SvSurface):
         elif direction == SvNurbsSurface.V:
             return self.cut_v(parameter)
         else:
-            raise Exception("Unsupported direction")
+            raise SvUnsupportedOptionException("Unsupported direction")
 
     def cut_slice(self, direction, p_min, p_max):
         _, rest = self.split_at(direction, p_min)
@@ -837,7 +838,7 @@ class SvNativeNurbsSurface(SvNurbsSurface):
             self.weights = np.array(weights)
             w_ku, w_kv = self.weights.shape
             if c_ku != w_ku or c_kv != w_kv:
-                raise Exception(f"Shape of control_points ({c_ku}, {c_kv}) does not match to shape of weights ({w_ku}, {w_kv})")
+                raise SvInvalidInputException(f"Shape of control_points ({c_ku}, {c_kv}) does not match to shape of weights ({w_ku}, {w_kv})")
         self.basis_u = SvNurbsBasisFunctions(knotvector_u)
         self.basis_v = SvNurbsBasisFunctions(knotvector_v)
         self.u_bounds = (self.knotvector_u.min(), self.knotvector_u.max())
@@ -938,7 +939,7 @@ class SvNativeNurbsSurface(SvNurbsSurface):
                     self.knotvector_u, fixed_u_knotvector,
                     new_points, new_weights)
         else:
-            raise Exception("Unsupported direction")
+            raise ArgumentError("Unsupported direction")
 
     def remove_knot(self, direction, parameter, count=1, if_possible=False, tolerance=1e-6):
         def get_common_count(curves):
@@ -1022,7 +1023,7 @@ class SvNativeNurbsSurface(SvNurbsSurface):
                     self.knotvector_u, fixed_u_knotvector,
                     new_points, new_weights)
         else:
-            raise Exception("Unsupported direction")
+            raise ArgumentError("Unsupported direction")
 
     def get_degree_u(self):
         return self.degree_u
@@ -1213,7 +1214,7 @@ def simple_loft(curves, degree_v = None, knots_u = 'UNIFY', knotvector_accuracy=
         * generated NURBS surface.
     """
     if knots_u not in {'UNIFY', 'AVERAGE'}:
-        raise Exception(f"Unsupported knots_u option: {knots_u}")
+        raise ArgumentError(f"Unsupported knots_u option: {knots_u}")
     if logger is None:
         logger = get_logger()
     curves = unify_curves_degree(curves)
@@ -1223,14 +1224,14 @@ def simple_loft(curves, degree_v = None, knots_u = 'UNIFY', knotvector_accuracy=
         kvs = [len(curve.get_control_points()) for curve in curves]
         max_kv, min_kv = max(kvs), min(kvs)
         if max_kv != min_kv:
-            raise Exception(f"U knotvector averaging is not applicable: Curves have different number of control points: {kvs}")
+            raise SvUnsupportedOptionException(f"U knotvector averaging is not applicable: Curves have different number of control points: {kvs}")
 
     degree_u = curves[0].get_degree()
     if degree_v is None:
         degree_v = degree_u
 
     if degree_v > len(curves):
-        raise Exception(f"V degree ({degree_v}) must be not greater than number of curves ({len(curves)}) minus 1")
+        raise SvUnsupportedOptionException(f"V degree ({degree_v}) must be not greater than number of curves ({len(curves)}) minus 1")
 
     src_points = [curve.get_homogenous_control_points() for curve in curves]
     #print("P", [p.shape for p in src_points])
@@ -1432,7 +1433,7 @@ def interpolate_nurbs_surface(degree_u, degree_v, points, metric='DISTANCE', ukn
     m = len(points[0])
 
     if (uknots is None) != (vknots is None):
-        raise Exception("uknots and vknots must be either both provided or both omitted")
+        raise ArgumentError("uknots and vknots must be either both provided or both omitted")
 
     if logger is None:
         logger = get_logger()
@@ -1481,9 +1482,9 @@ def nurbs_sweep_impl(path, profiles, ts, frame_calculator, knots_u = 'UNIFY', me
         * generated NURBS surface.
     """
     if len(profiles) != len(ts):
-        raise Exception(f"Number of profiles ({len(profiles)}) is not equal to number of T values ({len(ts)})")
+        raise ArgumentError(f"Number of profiles ({len(profiles)}) is not equal to number of T values ({len(ts)})")
     if len(ts) < 2:
-        raise Exception("At least 2 profiles are required")
+        raise ArgumentError("At least 2 profiles are required")
 
     path_points = path.evaluate_array(ts)
     frames = frame_calculator(ts)
@@ -1529,7 +1530,7 @@ def nurbs_sweep(path, profiles, ts, min_profiles, algorithm, knots_u = 'UNIFY', 
     n_profiles = len(profiles)
     have_ts = ts is not None and len(ts) > 0
     if have_ts and n_profiles != len(ts):
-        raise Exception(f"Number of profiles ({n_profiles}) is not equal to number of T values ({len(ts)})")
+        raise ArgumentError(f"Number of profiles ({n_profiles}) is not equal to number of T values ({len(ts)})")
 
     t_min, t_max = path.get_u_bounds()
     if not have_ts:
@@ -1608,9 +1609,9 @@ def nurbs_birail(path1, path2, profiles,
     have_ts1 = ts1 is not None and len(ts1) > 0
     have_ts2 = ts2 is not None and len(ts2) > 0
     if have_ts1 and n_profiles != len(ts1):
-        raise Exception(f"Number of profiles ({n_profiles}) is not equal to number of T values ({len(ts1)})")
+        raise ArgumentError(f"Number of profiles ({n_profiles}) is not equal to number of T values ({len(ts1)})")
     if have_ts2 and n_profiles != len(ts2):
-        raise Exception(f"Number of profiles ({n_profiles}) is not equal to number of T values ({len(ts2)})")
+        raise ArgumentError(f"Number of profiles ({n_profiles}) is not equal to number of T values ({len(ts2)})")
 
     if degree_v is None:
         degree_v = path1.get_degree()

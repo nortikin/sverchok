@@ -8,7 +8,7 @@
 import numpy as np
 
 from sverchok.utils.geom import LinearSpline, CubicSpline
-from sverchok.utils.curve.core import SvCurve
+from sverchok.utils.curve.core import SvCurve, UnsupportedCurveTypeException
 from sverchok.utils.curve.primitives import SvLine
 from sverchok.utils.curve.bezier import SvBezierCurve, SvCubicBezierCurve
 from sverchok.utils.curve import knotvector as sv_knotvector
@@ -119,5 +119,5 @@ class SvSplineCurve(SvCurve):
         if self.spline.get_degree() == 1:
             return self.spline.pts
         else:
-            raise Exception("Curve is not a polyline")
+            raise UnsupportedCurveTypeException("Curve is not a polyline")
 

@@ -40,7 +40,7 @@ class SvVectorField(object):
         return rxs[0], rys[0], rzs[0]
 
     def evaluate_grid(self, xs, ys, zs):
-        raise Exception("not implemented")
+        raise NotImplementedError("not implemented")
 
     def evaluate_array(self, points):
         xs = points[:,0]

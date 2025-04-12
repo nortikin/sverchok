@@ -23,6 +23,7 @@ from functools import reduce
 import bpy
 from bpy.props import IntProperty
 
+from sverchok.core.sv_custom_exceptions import SvInvalidInputException
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat, Matrix_generate, Vector_generate, Vector_degenerate
 
@@ -146,13 +147,13 @@ class SvIterateNode(SverchCustomTreeNode, bpy.types.Node):
 
             if edges_s[0]:
                 if len(edges_s) != len(vertices_s):
-                    raise Exception(
+                    raise SvInvalidInputException(
                         "Invalid number of edges: {} != {}".format(len(edges_s), len(vertices_s))
                     )
 
             if faces_s[0]:
                 if len(faces_s) != len(vertices_s):
-                    raise Exception(
+                    raise SvInvalidInputException(
                         "Invalid number of polygons: {} != {}".format(len(faces_s), len(vertices_s))
                     )
 

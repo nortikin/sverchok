@@ -13,6 +13,7 @@ import numpy as np
 
 from mathutils import Vector, Matrix
 
+from sverchok.core.sv_custom_exceptions import InvalidStateError
 from sverchok.utils.integrate import TrapezoidIntegral
 from sverchok.utils.sv_logging import sv_logger
 from sverchok.utils.math import binomial_array
@@ -20,6 +21,10 @@ from sverchok.utils.nurbs_common import SvNurbsMaths, from_homogenous
 from sverchok.utils.curve import knotvector as sv_knotvector
 
 class ZeroCurvatureException(Exception):
+    """Raised when the code, which is not able to work with curve of zero curvature,
+    recieves such curve."""
+    __description__ = "Unexpected zero curvature"
+
     def __init__(self, ts, mask=None):
         self.ts = ts
         self.mask = mask
@@ -29,6 +34,7 @@ class ZeroCurvatureException(Exception):
         return f"Curve has zero curvature at some points: {self.ts}"
 
 class UnsupportedCurveTypeException(TypeError):
+    """Raised when the algorithm can not work with type of curve provided by user."""
     __description__ = "Unsupported curve type"
     pass
 
@@ -58,7 +64,7 @@ class SvCurve(object):
         Returns:
             Curve point - np.array of shape (3,).
         """
-        raise Exception("not implemented!")
+        raise NotImplementedError("not implemented!")
 
     def evaluate_array(self, ts):
         """
@@ -70,7 +76,7 @@ class SvCurve(object):
         Returns:
             Curve points - np.array of shape (n,3).
         """
-        raise Exception("not implemented!")
+        raise NotImplementedError("not implemented!")
 
     def get_tangent_delta(self, tangent_delta=None):
         """
@@ -275,7 +281,7 @@ class SvCurve(object):
         elif order == 3:
             return self.third_derivative(t, tangent_delta=tangent_delta)
         else:
-            raise Exception(f"Unsupported derivative order: {order}")
+            raise NotImplementedError(f"Unsupported derivative order: {order}")
 
     def main_normal(self, t, normalize=True, tangent_delta=None):
         h = self.get_tangent_delta(tangent_delta)
@@ -452,7 +458,7 @@ class SvCurve(object):
                 * matrices - np.array of shape (n, 3, 3)
         """
         if not hasattr(self, '_torsion_integral'):
-            raise Exception("pre_calc_torsion_integral() has to be called first")
+            raise InvalidStateError("pre_calc_torsion_integral() has to be called first")
 
         h = self.get_tangent_delta(tangent_delta)
         vectors = self.evaluate_array(ts)
@@ -513,7 +519,7 @@ class SvCurve(object):
         Returns:
             Tuple: minimum and maximum value of curve's parameter.
         """
-        raise Exception("not implemented!")
+        raise NotImplementedError("not implemented!")
 
     def get_end_points(self):
         """
@@ -542,13 +548,13 @@ class SvCurve(object):
         If this curve is a polyline, return vertices of that polyline.
         If the curve is not a polyline, this method can raise an exception.
         """
-        raise Exception("Curve is not a polyline")
+        raise UnsupportedCurveTypeException("Curve is not a polyline")
 
     def get_degree(self):
         """
         Get curve degree, if applicable.
         """
-        raise Exception("`Get Degree' method is not applicable to curve of type `{}'".format(type(self)))
+        raise NotImplementedError("`Get Degree' method is not applicable to curve of type `{}'".format(type(self)))
 
     def get_control_points(self):
         """
