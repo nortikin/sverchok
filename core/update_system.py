@@ -6,6 +6,7 @@ from itertools import chain
 from time import perf_counter
 from typing import TYPE_CHECKING, Optional, Generator, Iterable
 import traceback
+import logging
 
 from bpy.types import Node, NodeSocket, NodeTree, NodeLink
 import sverchok.core.events as ev
@@ -707,12 +708,14 @@ class AddStatistic:
     def __enter__(self):
         self._warnings_handler = WarningHandler()
         self._node.sv_logger.addHandler(self._warnings_handler)
+        logging.getLogger("py.warnings").addHandler(self._warnings_handler)
         self._node[WARNING_KEY] = ""
         return None
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self._node[WARNING_KEY] = self._warnings_handler.get_warnings()
         self._node.sv_logger.removeHandler(self._warnings_handler)
+        logging.getLogger("py.warnings").removeHandler(self._warnings_handler)
         self._warnings_handler = None
         if exc_type is None:
             self._node[UPDATE_KEY] = True
