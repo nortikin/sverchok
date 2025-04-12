@@ -430,6 +430,18 @@ class BlSocket:
         'MATERIAL': 'SvMaterialSocket',
         'TEXTURE': 'SvTextureSocket',
         'IMAGE': 'SvImageSocket',
+
+        'NodeSocketVector': 'SvVerticesSocket',
+        'NodeSocketValue': 'SvStringsSocket',
+        'NodeSocketRgba': 'SvColorSocket',
+        'NodeSocketInt': 'SvStringsSocket',
+        'NodeSocketString': 'SvTextSocket',
+        'NodeSocketBoolean': 'SvStringsSocket',
+        'NodeSocketObject': 'SvObjectSocket',
+        'NodeSocketCollection': 'SvCollectionSocket',
+        'NodeSocketMaterial': 'SvMaterialSocket',
+        'NodeSocketTexture': 'SvTextureSocket',
+        'NodeSocketImage': 'SvImageSocket',
     }
 
     def __init__(self, socket):
@@ -439,9 +451,10 @@ class BlSocket:
         sv_sock.name = self._sock.name
 
         if sv_sock.bl_idname == 'SvStringsSocket':
-            if self._sock.type == 'VALUE':
+            attr_type_name = "type" if hasattr(self._sock, "type") else "socket_type"
+            if getattr(self._sock, attr_type_name) in {'VALUE', 'NodeSocketValue'}:
                 sv_sock.default_property_type = 'float'
-            elif self._sock.type in {'INT', 'BOOLEAN'}:
+            elif getattr(self._sock, attr_type_name) in {'NodeSocketInt', 'NodeSocketBoolean'}:
                 sv_sock.default_property_type = 'int'
             else:
                 return  # There is no default property for such type
@@ -483,7 +496,7 @@ class BlSocket:
 
     @property
     def sverchok_type(self):
-        if (sv_type := self._sv_types.get(self._sock.type)) is None:
+        if (sv_type := self._sv_types.get(self._sock.type if hasattr(self._sock, 'type') else self._sock.socket_type )) is None:
             return 'SvStringsSocket'
         return sv_type
 
