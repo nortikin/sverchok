@@ -690,14 +690,14 @@ self.wrapper_tracked_ui_draw_op(row, "node.view3d_align_from", icon='CURSOR', te
             finally:
                 del self[&#39;init_tree&#39;]
 
-    def update_ui(self, nodes_errors, update_time):
+    def update_ui(self, node_errors, node_warnings, update_time):
         &#34;&#34;&#34; The method get information about node statistic of last update from the handler to show in view space
         The method is usually called by main handler to reevaluate view of the nodes in the tree
         even if the tree is not in the Live update mode&#34;&#34;&#34;
         update_time = update_time if self.sv_show_time_nodes else cycle([None])
-        for node, error, update in zip(self.nodes, nodes_errors, update_time):
+        for node, error, warning, update in zip(self.nodes, node_errors, node_warnings, update_time):
             if hasattr(node, &#39;update_ui&#39;):
-                node.update_ui(error, update)</code></pre>
+                node.update_ui(error=error, warning=warning, update_time=update)</code></pre>
 </details>
 <div class="desc"><p>Common class for all Sverchok trees (regular trees and group ones)</p></div>
 <h3>Subclasses</h3>
@@ -707,11 +707,11 @@ self.wrapper_tracked_ui_draw_op(row, "node.view3d_align_from", icon='CURSOR', te
 </ul>
 <h3>Class variables</h3>
 <dl>
-<dt id="sverchok.node_tree.SvNodeTreeCommon.show_time_mode"><code class="name">var <span class="ident">show_time_mode</span> : <_PropertyDeferred, <built-in function EnumProperty>, {'items': [('Per node', 'Per node', ''), ('Cumulative', 'Cumulative', '')], 'options': set(), 'update': <function <a title="sverchok.node_tree.SvNodeTreeCommon" href="#sverchok.node_tree.SvNodeTreeCommon">SvNodeTreeCommon</a>.<lambda> at 0x7fdeacd09480>, 'description': 'Mode of showing node update timings', 'attr': 'show_time_mode'}></code></dt>
+<dt id="sverchok.node_tree.SvNodeTreeCommon.show_time_mode"><code class="name">var <span class="ident">show_time_mode</span> : <_PropertyDeferred, <built-in function EnumProperty>, {'items': [('Per node', 'Per node', ''), ('Cumulative', 'Cumulative', '')], 'options': set(), 'update': <function <a title="sverchok.node_tree.SvNodeTreeCommon" href="#sverchok.node_tree.SvNodeTreeCommon">SvNodeTreeCommon</a>.<lambda> at 0x7fdf9b939630>, 'description': 'Mode of showing node update timings', 'attr': 'show_time_mode'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="sverchok.node_tree.SvNodeTreeCommon.sv_show_time_nodes"><code class="name">var <span class="ident">sv_show_time_nodes</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Node times', 'default': False, 'options': set(), 'update': <function <a title="sverchok.node_tree.SvNodeTreeCommon" href="#sverchok.node_tree.SvNodeTreeCommon">SvNodeTreeCommon</a>.<lambda> at 0x7fdeacd093f0>, 'attr': 'sv_show_time_nodes'}></code></dt>
+<dt id="sverchok.node_tree.SvNodeTreeCommon.sv_show_time_nodes"><code class="name">var <span class="ident">sv_show_time_nodes</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Node times', 'default': False, 'options': set(), 'update': <function <a title="sverchok.node_tree.SvNodeTreeCommon" href="#sverchok.node_tree.SvNodeTreeCommon">SvNodeTreeCommon</a>.<lambda> at 0x7fdf9b9395a0>, 'attr': 'sv_show_time_nodes'}></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -801,21 +801,21 @@ x,y and dpi scale info.</p>
 <p>this is instead of calling <code>get_dpi_factor</code> on every redraw.</p></div>
 </dd>
 <dt id="sverchok.node_tree.SvNodeTreeCommon.update_ui"><code class="name flex">
-<span>def <span class="ident">update_ui</span></span>(<span>self, nodes_errors, update_time)</span>
+<span>def <span class="ident">update_ui</span></span>(<span>self, node_errors, node_warnings, update_time)</span>
 </code></dt>
 <dd>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def update_ui(self, nodes_errors, update_time):
+<pre><code class="python">def update_ui(self, node_errors, node_warnings, update_time):
     &#34;&#34;&#34; The method get information about node statistic of last update from the handler to show in view space
     The method is usually called by main handler to reevaluate view of the nodes in the tree
     even if the tree is not in the Live update mode&#34;&#34;&#34;
     update_time = update_time if self.sv_show_time_nodes else cycle([None])
-    for node, error, update in zip(self.nodes, nodes_errors, update_time):
+    for node, error, warning, update in zip(self.nodes, node_errors, node_warnings, update_time):
         if hasattr(node, &#39;update_ui&#39;):
-            node.update_ui(error, update)</code></pre>
+            node.update_ui(error=error, warning=warning, update_time=update)</code></pre>
 </details>
 <div class="desc"><p>The method get information about node statistic of last update from the handler to show in view space
 The method is usually called by main handler to reevaluate view of the nodes in the tree
@@ -995,11 +995,11 @@ even if the tree is not in the Live update mode</p></div>
 effect not all nodes but only those which have property
 <code><a title="sverchok.node_tree.UpdateNodes.is_animatable" href="#sverchok.node_tree.UpdateNodes.is_animatable">UpdateNodes.is_animatable</a></code> enabled.</p></div>
 </dd>
-<dt id="sverchok.node_tree.SverchCustomTree.sv_draft"><code class="name">var <span class="ident">sv_draft</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Draft', 'description': 'Draft (simplified processing) mode', 'default': False, 'update': <function <a title="sverchok.node_tree.SverchCustomTree.on_draft_mode_changed" href="#sverchok.node_tree.SverchCustomTree.on_draft_mode_changed">SverchCustomTree.on_draft_mode_changed()</a> at 0x7fdeacd09870>, 'options': set(), 'attr': 'sv_draft'}></code></dt>
+<dt id="sverchok.node_tree.SverchCustomTree.sv_draft"><code class="name">var <span class="ident">sv_draft</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Draft', 'description': 'Draft (simplified processing) mode', 'default': False, 'update': <function <a title="sverchok.node_tree.SverchCustomTree.on_draft_mode_changed" href="#sverchok.node_tree.SverchCustomTree.on_draft_mode_changed">SverchCustomTree.on_draft_mode_changed()</a> at 0x7fdf9b939a20>, 'options': set(), 'attr': 'sv_draft'}></code></dt>
 <dd>
 <div class="desc"><p>Draft mode replaces selected properties of certain nodes with smaller values to lighten cpu load.</p></div>
 </dd>
-<dt id="sverchok.node_tree.SverchCustomTree.sv_process"><code class="name">var <span class="ident">sv_process</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Process', 'default': True, 'description': 'Update upon tree and node property changes', 'update': <function <a title="sverchok.node_tree.SverchCustomTree" href="#sverchok.node_tree.SverchCustomTree">SverchCustomTree</a>.<lambda> at 0x7fdeacd09900>, 'options': set(), 'attr': 'sv_process'}></code></dt>
+<dt id="sverchok.node_tree.SverchCustomTree.sv_process"><code class="name">var <span class="ident">sv_process</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Process', 'default': True, 'description': 'Update upon tree and node property changes', 'update': <function <a title="sverchok.node_tree.SverchCustomTree" href="#sverchok.node_tree.SverchCustomTree">SverchCustomTree</a>.<lambda> at 0x7fdf9b939ab0>, 'options': set(), 'attr': 'sv_process'}></code></dt>
 <dd>
 <div class="desc"><p>If enabled it means that the tree will be evaluated upon changes in its
 topology, changes in node properties or scene changes made by user.
@@ -1020,7 +1020,7 @@ reevaluated upon changes in the scene. It will effect only nodes with
 <li>etc.</li>
 </ul></div>
 </dd>
-<dt id="sverchok.node_tree.SverchCustomTree.sv_show"><code class="name">var <span class="ident">sv_show</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Show', 'default': True, 'description': 'Show this layout', 'update': <function <a title="sverchok.node_tree.SverchCustomTree.turn_off_ng" href="#sverchok.node_tree.SverchCustomTree.turn_off_ng">SverchCustomTree.turn_off_ng()</a> at 0x7fdeacd097e0>, 'options': set(), 'attr': 'sv_show'}></code></dt>
+<dt id="sverchok.node_tree.SverchCustomTree.sv_show"><code class="name">var <span class="ident">sv_show</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Show', 'default': True, 'description': 'Show this layout', 'update': <function <a title="sverchok.node_tree.SverchCustomTree.turn_off_ng" href="#sverchok.node_tree.SverchCustomTree.turn_off_ng">SverchCustomTree.turn_off_ng()</a> at 0x7fdf9b939990>, 'options': set(), 'attr': 'sv_show'}></code></dt>
 <dd>
 <div class="desc"><p>See `SverchCustomTree.turn_off_ng</p></div>
 </dd>
@@ -2686,7 +2686,7 @@ This UI is displayed on a property panel of the tree editor.</p></div>
 
         self.sv_update()
 
-    def update_ui(self, error=None, update_time=None):
+    def update_ui(self, error=None, warning=None, update_time=None):
         &#34;&#34;&#34;This method is intended to use by update system to show node errors
         in the tree editors space and to show execution time&#34;&#34;&#34;
         sv_settings = bpy.context.preferences.addons[sverchok.__name__].preferences
@@ -2694,6 +2694,7 @@ This UI is displayed on a property panel of the tree editor.</p></div>
         no_data_color = sv_settings.no_data_color
         error_pref = &#34;error&#34;
         update_pref = &#34;update_time&#34;
+        warning_pref = &#34;warning&#34;
 
         # update error colors
         if error is not None:
@@ -2703,6 +2704,12 @@ This UI is displayed on a property panel of the tree editor.</p></div>
         else:
             sv_bgl.callback_disable(error_pref + self.node_id)
             self.set_temp_color()
+
+        if warning:
+            color = (1.0, 0.5, 0.0, 1.0)
+            sv_bgl.draw_text(self, textwrap.fill(str(warning)), warning_pref + self.node_id, color, 1, &#34;DOWN&#34;)
+        else:
+            sv_bgl.callback_disable(warning_pref + self.node_id)
 
         # show update timing
         if update_time is not None:
@@ -2727,7 +2734,7 @@ This UI is displayed on a property panel of the tree editor.</p></div>
 </ul>
 <h3>Class variables</h3>
 <dl>
-<dt id="sverchok.node_tree.UpdateNodes.is_animatable"><code class="name">var <span class="ident">is_animatable</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Animate Node', 'description': 'Update Node on frame change', 'default': True, 'update': <function <a title="sverchok.node_tree.UpdateNodes" href="#sverchok.node_tree.UpdateNodes">UpdateNodes</a>.<lambda> at 0x7fdeacd09e10>, 'attr': 'is_animatable'}></code></dt>
+<dt id="sverchok.node_tree.UpdateNodes.is_animatable"><code class="name">var <span class="ident">is_animatable</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Animate Node', 'description': 'Update Node on frame change', 'default': True, 'update': <function <a title="sverchok.node_tree.UpdateNodes" href="#sverchok.node_tree.UpdateNodes">UpdateNodes</a>.<lambda> at 0x7fdf9b939fc0>, 'attr': 'is_animatable'}></code></dt>
 <dd>
 <div class="desc"><p>A switch for user to make a node to update on frame changes in a scene.
 Use <code><a title="sverchok.node_tree.UpdateNodes.is_animation_dependent" href="#sverchok.node_tree.UpdateNodes.is_animation_dependent">UpdateNodes.is_animation_dependent</a></code> to display the option in node UI.</p></div>
@@ -2738,7 +2745,7 @@ Use <code><a title="sverchok.node_tree.UpdateNodes.is_animation_dependent" href=
 Also the node should use <code><a title="sverchok.node_tree.SverchCustomTreeNode.sv_draw_buttons" href="#sverchok.node_tree.SverchCustomTreeNode.sv_draw_buttons">SverchCustomTreeNode.sv_draw_buttons()</a></code>.</p>
 <p><img alt="image" src="https://user-images.githubusercontent.com/28003269/193507101-60a28c3f-50a1-4117-a66f-25b0b4e07e13.png"></p></div>
 </dd>
-<dt id="sverchok.node_tree.UpdateNodes.is_interactive"><code class="name">var <span class="ident">is_interactive</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'default': True, 'description': 'Update node upon changes in the scene', 'update': <function <a title="sverchok.node_tree.UpdateNodes.update_interactive_mode" href="#sverchok.node_tree.UpdateNodes.update_interactive_mode">UpdateNodes.update_interactive_mode()</a> at 0x7fdeacd09cf0>, 'name': 'Interactive', 'attr': 'is_interactive'}></code></dt>
+<dt id="sverchok.node_tree.UpdateNodes.is_interactive"><code class="name">var <span class="ident">is_interactive</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'default': True, 'description': 'Update node upon changes in the scene', 'update': <function <a title="sverchok.node_tree.UpdateNodes.update_interactive_mode" href="#sverchok.node_tree.UpdateNodes.update_interactive_mode">UpdateNodes.update_interactive_mode()</a> at 0x7fdf9b939ea0>, 'name': 'Interactive', 'attr': 'is_interactive'}></code></dt>
 <dd>
 <div class="desc"><p>When this option is on arbitrary changes in scene will update this node.
 Those changes can be:
@@ -2768,7 +2775,7 @@ should be used instead.</p>
 <pre><code class="language-text">⚠️ There is no sense to override this property
 </code></pre></div>
 </dd>
-<dt id="sverchok.node_tree.UpdateNodes.refresh"><code class="name">var <span class="ident">refresh</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Update Node', 'description': 'Update Node', 'update': <function <a title="sverchok.node_tree.UpdateNodes.refresh_node" href="#sverchok.node_tree.UpdateNodes.refresh_node">UpdateNodes.refresh_node()</a> at 0x7fdeacd09d80>, 'attr': 'refresh'}></code></dt>
+<dt id="sverchok.node_tree.UpdateNodes.refresh"><code class="name">var <span class="ident">refresh</span> : <_PropertyDeferred, <built-in function BoolProperty>, {'name': 'Update Node', 'description': 'Update Node', 'update': <function <a title="sverchok.node_tree.UpdateNodes.refresh_node" href="#sverchok.node_tree.UpdateNodes.refresh_node">UpdateNodes.refresh_node()</a> at 0x7fdf9b939f30>, 'attr': 'refresh'}></code></dt>
 <dd>
 <div class="desc"><p>See <code><a title="sverchok.node_tree.UpdateNodes.refresh_node" href="#sverchok.node_tree.UpdateNodes.refresh_node">UpdateNodes.refresh_node()</a></code>.</p>
 <p><img alt="image" src="https://user-images.githubusercontent.com/28003269/193505561-395ca65c-3354-4e23-b5f7-765b2d830e4b.png"></p>
@@ -3100,14 +3107,14 @@ module totally controls building of the tree.
 outdated nodes</p></div>
 </dd>
 <dt id="sverchok.node_tree.UpdateNodes.update_ui"><code class="name flex">
-<span>def <span class="ident">update_ui</span></span>(<span>self, error=None, update_time=None)</span>
+<span>def <span class="ident">update_ui</span></span>(<span>self, error=None, warning=None, update_time=None)</span>
 </code></dt>
 <dd>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def update_ui(self, error=None, update_time=None):
+<pre><code class="python">def update_ui(self, error=None, warning=None, update_time=None):
     &#34;&#34;&#34;This method is intended to use by update system to show node errors
     in the tree editors space and to show execution time&#34;&#34;&#34;
     sv_settings = bpy.context.preferences.addons[sverchok.__name__].preferences
@@ -3115,6 +3122,7 @@ outdated nodes</p></div>
     no_data_color = sv_settings.no_data_color
     error_pref = &#34;error&#34;
     update_pref = &#34;update_time&#34;
+    warning_pref = &#34;warning&#34;
 
     # update error colors
     if error is not None:
@@ -3124,6 +3132,12 @@ outdated nodes</p></div>
     else:
         sv_bgl.callback_disable(error_pref + self.node_id)
         self.set_temp_color()
+
+    if warning:
+        color = (1.0, 0.5, 0.0, 1.0)
+        sv_bgl.draw_text(self, textwrap.fill(str(warning)), warning_pref + self.node_id, color, 1, &#34;DOWN&#34;)
+    else:
+        sv_bgl.callback_disable(warning_pref + self.node_id)
 
     # show update timing
     if update_time is not None:

@@ -69,7 +69,7 @@ el.replaceWith(d);
         an instance of SvCurve.
     &#34;&#34;&#34;
     if not curves:
-        raise Exception(&#34;List of curves must be not empty&#34;)
+        raise ArgumentError(&#34;List of curves must be not empty&#34;)
     if scale_to_unit:
         result = [reparametrize_curve(curves[0])]
     else:
@@ -115,7 +115,7 @@ el.replaceWith(d);
             return SvConcatCurve(result, scale_to_unit and not some_native)
         else:
             err_msg = &#34;\n&#34;.join([str(e) for e in exceptions])
-            raise Exception(f&#34;Could not join some curves natively. Result is: {result}.\nErrors were:\n{err_msg}&#34;)</code></pre>
+            raise SvInvalidInputException(f&#34;Could not join some curves natively. Result is: {result}.\nErrors were:\n{err_msg}&#34;)</code></pre>
 </details>
 <div class="desc"><p>Concatenate a list of curves. When possible, use <code>concatenate</code> method of
 curves to make a "native" concatenation - for example, make one Nurbs out of
@@ -586,7 +586,7 @@ Can raise UnsupportedCurveTypeException if some degrees can not be elevated.</p>
             matrices = self.normal_tracker.evaluate_array(ts)
             return matrices
         else:
-            raise Exception(&#34;Unsupported algorithm&#34;)</code></pre>
+            raise ArgumentError(&#34;Unsupported algorithm&#34;)</code></pre>
 </details>
 <div class="desc"></div>
 <h3>Methods</h3>
@@ -618,7 +618,7 @@ Can raise UnsupportedCurveTypeException if some degrees can not be elevated.</p>
         matrices = self.normal_tracker.evaluate_array(ts)
         return matrices
     else:
-        raise Exception(&#34;Unsupported algorithm&#34;)</code></pre>
+        raise ArgumentError(&#34;Unsupported algorithm&#34;)</code></pre>
 </details>
 <div class="desc"></div>
 </dd>
@@ -676,7 +676,7 @@ Can raise UnsupportedCurveTypeException if some degrees can not be elevated.</p>
         elif algorithm == DIFF:
             rot = autorotate_diff(tangent, ax1)
         else:
-            raise Exception(&#34;Unsupported algorithm&#34;)
+            raise ArgumentError(&#34;Unsupported algorithm&#34;)
         rot = np.array(rot.to_3x3())
 
         return np.matmul(rot, scale_matrix)</code></pre>
@@ -959,7 +959,7 @@ Can raise UnsupportedCurveTypeException if some degrees can not be elevated.</p>
             matrices = np.vectorize(lambda t : self.get_matrix(t), signature=&#39;(3)-&gt;(3,3)&#39;)(tangents)
             return matrices
         else:
-            raise Exception(&#34;Unsupported algorithm&#34;)</code></pre>
+            raise ArgumentError(&#34;Unsupported algorithm&#34;)</code></pre>
 </details>
 <div class="desc"></div>
 <h3>Methods</h3>
@@ -987,7 +987,7 @@ Can raise UnsupportedCurveTypeException if some degrees can not be elevated.</p>
         matrices = np.vectorize(lambda t : self.get_matrix(t), signature=&#39;(3)-&gt;(3,3)&#39;)(tangents)
         return matrices
     else:
-        raise Exception(&#34;Unsupported algorithm&#34;)</code></pre>
+        raise ArgumentError(&#34;Unsupported algorithm&#34;)</code></pre>
 </details>
 <div class="desc"></div>
 </dd>
@@ -1032,7 +1032,7 @@ Can raise UnsupportedCurveTypeException if some degrees can not be elevated.</p>
 
     def get_total_length(self):
         if self._reverse_spline is None:
-            raise Exception(&#34;You have to call solver.prepare() first&#34;)
+            raise InvalidStateError(&#34;You have to call solver.prepare() first&#34;)
         return self._length_params[-1]
 
     def _calc_tknots_fixed(self, resolution):
@@ -1078,24 +1078,24 @@ Can raise UnsupportedCurveTypeException if some degrees can not be elevated.</p>
         elif mode == &#39;SPL&#39;:
             spline = CubicSpline(control_points, tknots = values, is_cyclic = False)
         else:
-            raise Exception(&#34;Unsupported mode; supported are LIN and SPL.&#34;)
+            raise ArgumentError(&#34;Unsupported mode; supported are LIN and SPL.&#34;)
         return spline
 
     def calc_length(self, t_min, t_max):
         if self._prime_spline is None:
-            raise Exception(&#34;You have to call solver.prepare() first&#34;)
+            raise InvalidStateError(&#34;You have to call solver.prepare() first&#34;)
         lengths = self._prime_spline.eval(np.array([t_min, t_max]))
         return lengths[1][1] - lengths[0][1]
 
     def calc_length_params(self, ts):
         if self._prime_spline is None:
-            raise Exception(&#34;You have to call solver.prepare() first&#34;)
+            raise InvalidStateError(&#34;You have to call solver.prepare() first&#34;)
         spline_verts = self._prime_spline.eval(ts)
         return spline_verts[:,1]
 
     def solve(self, input_lengths):
         if self._reverse_spline is None:
-            raise Exception(&#34;You have to call solver.prepare() first&#34;)
+            raise InvalidStateError(&#34;You have to call solver.prepare() first&#34;)
         spline_verts = self._reverse_spline.eval(input_lengths)
         return spline_verts[:,1]</code></pre>
 </details>
@@ -1116,7 +1116,7 @@ Can raise UnsupportedCurveTypeException if some degrees can not be elevated.</p>
 </summary>
 <pre><code class="python">def calc_length(self, t_min, t_max):
     if self._prime_spline is None:
-        raise Exception(&#34;You have to call solver.prepare() first&#34;)
+        raise InvalidStateError(&#34;You have to call solver.prepare() first&#34;)
     lengths = self._prime_spline.eval(np.array([t_min, t_max]))
     return lengths[1][1] - lengths[0][1]</code></pre>
 </details>
@@ -1132,7 +1132,7 @@ Can raise UnsupportedCurveTypeException if some degrees can not be elevated.</p>
 </summary>
 <pre><code class="python">def calc_length_params(self, ts):
     if self._prime_spline is None:
-        raise Exception(&#34;You have to call solver.prepare() first&#34;)
+        raise InvalidStateError(&#34;You have to call solver.prepare() first&#34;)
     spline_verts = self._prime_spline.eval(ts)
     return spline_verts[:,1]</code></pre>
 </details>
@@ -1164,7 +1164,7 @@ Can raise UnsupportedCurveTypeException if some degrees can not be elevated.</p>
 </summary>
 <pre><code class="python">def get_total_length(self):
     if self._reverse_spline is None:
-        raise Exception(&#34;You have to call solver.prepare() first&#34;)
+        raise InvalidStateError(&#34;You have to call solver.prepare() first&#34;)
     return self._length_params[-1]</code></pre>
 </details>
 <div class="desc"></div>
@@ -1199,7 +1199,7 @@ Can raise UnsupportedCurveTypeException if some degrees can not be elevated.</p>
 </summary>
 <pre><code class="python">def solve(self, input_lengths):
     if self._reverse_spline is None:
-        raise Exception(&#34;You have to call solver.prepare() first&#34;)
+        raise InvalidStateError(&#34;You have to call solver.prepare() first&#34;)
     spline_verts = self._reverse_spline.eval(input_lengths)
     return spline_verts[:,1]</code></pre>
 </details>
@@ -1537,7 +1537,7 @@ def build(curve1, curve2, coefficient):
             us = xs
             vs = ys
         else:
-            raise Exception(&#34;Unsupported orientation axis&#34;)
+            raise ArgumentError(&#34;Unsupported orientation axis&#34;)
         return self.surface.evaluate_array(us, vs)</code></pre>
 </details>
 <div class="desc"></div>
@@ -2400,7 +2400,7 @@ def take(surface, fixed_axis, value, flip=False):
                     algorithm=FRENET, resolution=50):
         self.curve = curve
         if algorithm == NORMAL_DIR and (offset_amount is None and offset_curve is None):
-            raise Exception(&#34;offset_amount or offset_curve is mandatory if algorithm is NORMAL_DIR&#34;)
+            raise ArgumentError(&#34;offset_amount or offset_curve is mandatory if algorithm is NORMAL_DIR&#34;)
         self.offset_amount = offset_amount
         self.offset_vector = offset_vector
         self.offset_curve = offset_curve
@@ -2433,7 +2433,7 @@ def take(surface, fixed_axis, value, flip=False):
             matrices = np.vectorize(lambda t : self.get_matrix(t), signature=&#39;(3)-&gt;(3,3)&#39;)(tangents)
             return matrices
         else:
-            raise Exception(&#34;Unsupported algorithm&#34;)
+            raise ArgumentError(&#34;Unsupported algorithm&#34;)
 
     def get_offset(self, ts):
         u_min, u_max = self.curve.get_u_bounds()
@@ -2511,7 +2511,7 @@ def take(surface, fixed_axis, value, flip=False):
         matrices = np.vectorize(lambda t : self.get_matrix(t), signature=&#39;(3)-&gt;(3,3)&#39;)(tangents)
         return matrices
     else:
-        raise Exception(&#34;Unsupported algorithm&#34;)</code></pre>
+        raise ArgumentError(&#34;Unsupported algorithm&#34;)</code></pre>
 </details>
 <div class="desc"></div>
 </dd>

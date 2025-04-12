@@ -84,7 +84,7 @@ el.replaceWith(d);
     * Coordinates of points in 3D space.
     &#34;&#34;&#34;
     if min_r != 0 and min_r_field is not None:
-        raise Exception(&#34;min_r and min_r_field can not be specified simultaneously&#34;)
+        raise ArgumentError(&#34;min_r and min_r_field can not be specified simultaneously&#34;)
 
     u_min, u_max = surface.get_u_min(), surface.get_u_max()
     v_min, v_max = surface.get_v_min(), surface.get_v_max()

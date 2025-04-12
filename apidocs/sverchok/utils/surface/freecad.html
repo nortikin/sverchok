@@ -45,14 +45,14 @@ el.replaceWith(d);
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
 <dt id="sverchok.utils.surface.freecad.curves_to_face"><code class="name flex">
-<span>def <span class="ident">curves_to_face</span></span>(<span>sv_curves, planar=True, force_nurbs=True, tolerance=None)</span>
+<span>def <span class="ident">curves_to_face</span></span>(<span>sv_curves, planar=True, force_nurbs=True, tolerance=None, logger=None)</span>
 </code></dt>
 <dd>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def curves_to_face(sv_curves, planar=True, force_nurbs=True, tolerance=None):
+<pre><code class="python">def curves_to_face(sv_curves, planar=True, force_nurbs=True, tolerance=None, logger=None):
     &#34;&#34;&#34;
     Make a Part.Face from a list of SvCurve.
     Curves must have NURBS representation, must form a closed loop, and it must
@@ -68,6 +68,8 @@ el.replaceWith(d);
     * SvSolidFaceSurface for face&#39;s surface;
         SvFreeCadNurbsSurface if force_nurbs == True.
     &#34;&#34;&#34;
+    if logger is None:
+        logger = get_logger()
     # Check
     sv_curves = sum([curve_to_freecad(curve) for curve in sv_curves], [])
     all_nurbs = all(isinstance(curve, SvFreeCadNurbsCurve) for curve in sv_curves)
@@ -85,11 +87,11 @@ el.replaceWith(d);
         #    wire.add(edge)
     except Exception as e:
         for edge in edges:
-            print(f&#34;Curve {edge.Curve}, endpoints: {get_edge_endpoints(edge)}&#34;)
-        raise Exception(f&#34;Can&#39;t build a Wire out of edges: {fc_curves}: {e}&#34;)
+            logger.error(f&#34;Curve {edge.Curve}, endpoints: {get_edge_endpoints(edge)}&#34;)
+        raise SvExternalLibraryException(f&#34;Can&#39;t build a Wire out of edges: {fc_curves}: {e}&#34;)
 
     if len(edges) != len(wire.Edges):
-        raise Exception(f&#34;Can&#39;t build a Wire out of edges: {fc_curves}: was able to add only {len(wire.Edges)} edges of {len(edges)}&#34;)
+        raise SvExternalLibraryException(f&#34;Can&#39;t build a Wire out of edges: {fc_curves}: was able to add only {len(wire.Edges)} edges of {len(edges)}&#34;)
 
     #wire.fix(0, 0, 0)
     #wire.fixTolerance(1e-5)
@@ -98,23 +100,23 @@ el.replaceWith(d);
         last_point = None
         distance = None
         for i, edge in enumerate(wire.Edges):
-            print(f&#34;Edge #{i}, Curve {edge.Curve}, endpoints: {get_edge_endpoints(edge)}&#34;)
+            logger.error(f&#34;Edge #{i}, Curve {edge.Curve}, endpoints: {get_edge_endpoints(edge)}&#34;)
             p1, p2 = get_edge_endpoints(edge)
             if last_point is not None:
                 distance = last_point.distanceToPoint(p1)
-                print(f&#34;#{i-1}-{i}: distance={distance}: ({last_point.x}, {last_point.y}, {last_point.z}) - ({p1.x}, {p1.y}, {p1.z})&#34;)
+                logger.error(f&#34;#{i-1}-{i}: distance={distance}: ({last_point.x}, {last_point.y}, {last_point.z}) - ({p1.x}, {p1.y}, {p1.z})&#34;)
             last_point = p2
         p1 = get_edge_endpoints(wire.Edges[-1])[1]
         p2 = get_edge_endpoints(wire.Edges[0])[0]
         distance = p1.distanceToPoint(p2)
-        print(f&#34;Last - first distance = {distance}&#34;)
-        raise Exception(f&#34;The wire is not closed: {sv_curves}&#34;)
+        logger.error(f&#34;Last - first distance = {distance}&#34;)
+        raise SvInvalidInputException(f&#34;The wire is not closed: {sv_curves}&#34;)
 
     if planar:
         try:
             fc_face = Part.Face(wire)
         except Exception as e:
-            raise Exception(f&#34;Can&#39;t create a Face from {sv_curves}: {e}\nProbably these curves are not all lying in the same plane?&#34;)
+            raise SvExternalLibraryException(f&#34;Can&#39;t create a Face from {sv_curves}: {e}\nProbably these curves are not all lying in the same plane?&#34;)
         surface = SvSolidFaceSurface(fc_face)
     else:
         fc_face = Part.makeFilledFace(edges)
@@ -176,7 +178,7 @@ SvFreeCadNurbsSurface if force_nurbs == True.</p></div>
     &#34;&#34;&#34;
     nurbs = SvNurbsSurface.get(sv_surface)
     if nurbs is None:
-        raise TypeError(f&#34;{sv_surface} is not a NURBS surface&#34;)
+        raise UnsupportedCurveTypeException(f&#34;{sv_surface} is not a NURBS surface&#34;)
     sv_fc_nurbs = SvNurbsMaths.build_surface(SvNurbsMaths.FREECAD,
                 nurbs.get_degree_u(),
                 nurbs.get_degree_v(),
@@ -333,7 +335,7 @@ output: SvFreeCadNurbsSurface</p></div>
         elif fixed_direction == &#39;V&#39;:
             fc_curve = self.surface.vIso(param)
         else:
-            raise Exception(&#34;Unsupported direction&#34;)
+            raise ArgumentError(&#34;Unsupported direction&#34;)
 
         return SvFreeCadNurbsCurve(fc_curve)
 
@@ -585,7 +587,7 @@ output: SvFreeCadNurbsSurface</p></div>
     elif fixed_direction == &#39;V&#39;:
         fc_curve = self.surface.vIso(param)
     else:
-        raise Exception(&#34;Unsupported direction&#34;)
+        raise ArgumentError(&#34;Unsupported direction&#34;)
 
     return SvFreeCadNurbsCurve(fc_curve)</code></pre>
 </details>

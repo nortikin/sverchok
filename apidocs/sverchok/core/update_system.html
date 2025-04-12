@@ -187,8 +187,9 @@ put data into input given socket</p></div>
     :times: optional node timing in order of group_tree.nodes collection&#34;&#34;&#34;
     # probably this can be moved to tree.update_ui method
     errors = (n.get(ERROR_KEY, None) for n in tree.nodes)
+    warnings = (n.get(WARNING_KEY, None) for n in tree.nodes)
     times = times or (n.get(TIME_KEY, 0) for n in tree.nodes)
-    tree.update_ui(errors, times)</code></pre>
+    tree.update_ui(errors, warnings, times)</code></pre>
 </details>
 <div class="desc"><p>Updates UI of the given tree
 :times: optional node timing in order of group_tree.nodes collection</p></div>
@@ -219,11 +220,18 @@ put data into input given socket</p></div>
         self._node = node
         self._start = perf_counter()
         self._supress = supress
+        self._warnings_handler = None
 
     def __enter__(self):
+        self._warnings_handler = WarningHandler()
+        self._node.sv_logger.addHandler(self._warnings_handler)
+        self._node[WARNING_KEY] = &#34;&#34;
         return None
 
     def __exit__(self, exc_type, exc_val, exc_tb):
+        self._node[WARNING_KEY] = self._warnings_handler.get_warnings()
+        self._node.sv_logger.removeHandler(self._warnings_handler)
+        self._warnings_handler = None
         if exc_type is None:
             self._node[UPDATE_KEY] = True
             self._node[ERROR_KEY] = None

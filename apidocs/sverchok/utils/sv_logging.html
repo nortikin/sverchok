@@ -58,7 +58,8 @@ el.replaceWith(d);
                                                    maxBytes=10 * 1024 * 1024,
                                                    backupCount=3)
     handler.setFormatter(logging.Formatter(log_format, datefmt=&#34;%Y-%m-%d %H:%M:%S&#34;))
-    sv_logger.addHandler(handler)</code></pre>
+    sv_logger.addHandler(handler)
+    warnings_logger.addHandler(handler)</code></pre>
 </details>
 <div class="desc"></div>
 </dd>
@@ -92,7 +93,7 @@ el.replaceWith(d);
 </summary>
 <pre><code class="python">def add_relative_path_factory(name, *args, **kwargs):
     record = old_factory(name, *args, **kwargs)
-    if name.startswith(&#39;sverchok&#39;):
+    if name.startswith(&#39;sverchok&#39;) or name == &#34;py.warnings&#34;:
         path = Path(record.pathname)
 
         # search root path of the add-on
@@ -216,8 +217,10 @@ def fix_error_msg(msgs: Dict[Type[Exception], str]):
     logging.debug(&#34;Log output to console is disabled. Further messages will&#34;
                   &#34; be available only in text buffer and file (if configured).&#34;)
     sv_logger.removeHandler(console_handler)
+    warnings_logger.removeHandler(console_handler)
     # https://docs.python.org/3/howto/logging.html#configuring-logging-for-a-library
-    sv_logger.addHandler(logging.NullHandler())</code></pre>
+    sv_logger.addHandler(logging.NullHandler())
+    warnings_logger.addHandler(logging.NullHandler())</code></pre>
 </details>
 <div class="desc"></div>
 </dd>
@@ -440,6 +443,7 @@ it is formatted using formatException() and appended to the message.</p></div>
             handler = cls(prefs.log_buffer_name)
             handler.setFormatter(logging.Formatter(log_format, datefmt=&#34;%Y-%m-%d %H:%M:%S&#34;))
             sv_logger.addHandler(handler)
+            warnings_logger.addHandler(handler)
 
     def __repr__(self):
         level = logging.getLevelName(self.level)
@@ -556,6 +560,100 @@ output to the stream.</p></div>
 </dd>
 </dl>
 </dd>
+<dt id="sverchok.utils.sv_logging.WarningHandler"><code class="flex name class">
+<span>class <span class="ident">WarningHandler</span></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class WarningHandler(logging.Handler):
+
+    def __init__(self):
+        super().__init__()
+        self._lines = []
+        format = &#34;%(message)s&#34;
+        self.setFormatter(logging.Formatter(format, datefmt=&#34;%Y-%m-%d %H:%M:%S&#34;))
+
+    def emit(self, record):
+        if record.levelname != &#34;WARNING&#34;:
+            return
+        try:
+            msg = self.format(record)
+            self._lines.append(msg)
+        except Exception:
+            self.handleErorr(record)
+
+    def clear(self):
+        self._lines.clear()
+
+    def get_warnings(self):
+        return &#34;\n&#34;.join(self._lines)</code></pre>
+</details>
+<div class="desc"><p>Handler instances dispatch logging events to specific destinations.</p>
+<p>The base handler class. Acts as a placeholder which defines the Handler
+interface. Handlers can optionally use Formatter instances to format
+records as desired. By default, no formatter is specified; in this case,
+the 'raw' message as determined by record.message is logged.</p>
+<p>Initializes the instance - basically setting the formatter to None
+and the filter list to empty.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>logging.Handler</li>
+<li>logging.Filterer</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.sv_logging.WarningHandler.clear"><code class="name flex">
+<span>def <span class="ident">clear</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def clear(self):
+    self._lines.clear()</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.sv_logging.WarningHandler.emit"><code class="name flex">
+<span>def <span class="ident">emit</span></span>(<span>self, record)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def emit(self, record):
+    if record.levelname != &#34;WARNING&#34;:
+        return
+    try:
+        msg = self.format(record)
+        self._lines.append(msg)
+    except Exception:
+        self.handleErorr(record)</code></pre>
+</details>
+<div class="desc"><p>Do whatever it takes to actually log the specified logging record.</p>
+<p>This version is intended to be implemented by subclasses and so
+raises a NotImplementedError.</p></div>
+</dd>
+<dt id="sverchok.utils.sv_logging.WarningHandler.get_warnings"><code class="name flex">
+<span>def <span class="ident">get_warnings</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_warnings(self):
+    return &#34;\n&#34;.join(self._lines)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
 </dl>
 </section>
 </article>
@@ -601,6 +699,14 @@ output to the stream.</p></div>
 <li><code><a title="sverchok.utils.sv_logging.TextBufferHandler.clear" href="#sverchok.utils.sv_logging.TextBufferHandler.clear">clear</a></code></li>
 <li><code><a title="sverchok.utils.sv_logging.TextBufferHandler.emit" href="#sverchok.utils.sv_logging.TextBufferHandler.emit">emit</a></code></li>
 <li><code><a title="sverchok.utils.sv_logging.TextBufferHandler.terminator" href="#sverchok.utils.sv_logging.TextBufferHandler.terminator">terminator</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sverchok.utils.sv_logging.WarningHandler" href="#sverchok.utils.sv_logging.WarningHandler">WarningHandler</a></code></h4>
+<ul class="">
+<li><code><a title="sverchok.utils.sv_logging.WarningHandler.clear" href="#sverchok.utils.sv_logging.WarningHandler.clear">clear</a></code></li>
+<li><code><a title="sverchok.utils.sv_logging.WarningHandler.emit" href="#sverchok.utils.sv_logging.WarningHandler.emit">emit</a></code></li>
+<li><code><a title="sverchok.utils.sv_logging.WarningHandler.get_warnings" href="#sverchok.utils.sv_logging.WarningHandler.get_warnings">get_warnings</a></code></li>
 </ul>
 </li>
 </ul>
