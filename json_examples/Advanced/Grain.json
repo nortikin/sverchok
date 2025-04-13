@@ -221,7 +221,7 @@
       "width": 140.0
     },
     "Bevel": {
-      "bl_idname": "SvBevelNode",
+      "bl_idname": "SvBevelNodeMK2",
       "custom_socket_props": {},
       "height": 100.0,
       "hide": false,
