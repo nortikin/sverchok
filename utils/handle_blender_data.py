@@ -431,6 +431,7 @@ class BlSocket:
         'TEXTURE': 'SvTextureSocket',
         'IMAGE': 'SvImageSocket',
 
+        # replaced in Blender 4.x:
         'NodeSocketVector': 'SvVerticesSocket',
         'NodeSocketValue': 'SvStringsSocket',
         'NodeSocketRgba': 'SvColorSocket',
@@ -451,10 +452,10 @@ class BlSocket:
         sv_sock.name = self._sock.name
 
         if sv_sock.bl_idname == 'SvStringsSocket':
-            attr_type_name = "type" if hasattr(self._sock, "type") else "socket_type"
-            if getattr(self._sock, attr_type_name) in {'VALUE', 'NodeSocketValue'}:
+            attr_type_name = "type" if hasattr(self._sock, "type") else "socket_type" # "type" for Blender <4.x, "socket_type" for Blender >= 4.x
+            if getattr(self._sock, attr_type_name) in {'VALUE', 'NodeSocketValue'}: # {'VALUE',} - Blender < 4.x, {'NodeSocketValue'} - Blender >=4.x
                 sv_sock.default_property_type = 'float'
-            elif getattr(self._sock, attr_type_name) in {'NodeSocketInt', 'NodeSocketBoolean'}:
+            elif getattr(self._sock, attr_type_name) in {'INT', 'BOOLEAN', 'NodeSocketInt', 'NodeSocketBoolean'}: # {'INT', 'BOOLEAN'} - Blender < 4.x, {'NodeSocketInt', 'NodeSocketBoolean'} - Blender >=4.x
                 sv_sock.default_property_type = 'int'
             else:
                 return  # There is no default property for such type
