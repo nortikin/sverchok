@@ -497,7 +497,9 @@ class BlSocket:
 
     @property
     def sverchok_type(self):
-        if (sv_type := self._sv_types.get(self._sock.type if hasattr(self._sock, 'type') else self._sock.socket_type )) is None:
+        attr_type_name = "type" if hasattr(self._sock, "type") else "socket_type" # "type" for Blender <4.x, "socket_type" for Blender >= 4.x
+        attr_value = getattr(self._sock, attr_type_name)
+        if (sv_type := self._sv_types.get(attr_value)) is None:
             return 'SvStringsSocket'
         return sv_type
 
