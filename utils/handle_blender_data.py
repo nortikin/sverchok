@@ -310,8 +310,12 @@ class BlTrees:
 class BlTree:
     def __init__(self, tree):
         self._tree = tree
-        self.inputs = {s.identifier: s for s in tree.inputs}
-        self.outputs = {s.identifier: s for s in tree.outputs}
+        if bpy.app.version>=(4,0,0):
+            self.inputs  = {s.from_socket.identifier: s.from_socket for s in tree.links if s.from_node.type=='GROUP_INPUT'}
+            self.outputs = {s.to_socket.identifier: s.to_socket for s in tree.links if s.to_node.type=='GROUP_OUTPUT'}
+        else:
+            self.inputs = {s.identifier: s for s in tree.inputs}
+            self.outputs = {s.identifier: s for s in tree.outputs}
 
         self.is_field = lru_cache(self._is_field)  # for performance
 
@@ -426,6 +430,19 @@ class BlSocket:
         'MATERIAL': 'SvMaterialSocket',
         'TEXTURE': 'SvTextureSocket',
         'IMAGE': 'SvImageSocket',
+
+        # replaced in Blender 4.x:
+        'NodeSocketVector': 'SvVerticesSocket',
+        'NodeSocketValue': 'SvStringsSocket',
+        'NodeSocketRgba': 'SvColorSocket',
+        'NodeSocketInt': 'SvStringsSocket',
+        'NodeSocketString': 'SvTextSocket',
+        'NodeSocketBoolean': 'SvStringsSocket',
+        'NodeSocketObject': 'SvObjectSocket',
+        'NodeSocketCollection': 'SvCollectionSocket',
+        'NodeSocketMaterial': 'SvMaterialSocket',
+        'NodeSocketTexture': 'SvTextureSocket',
+        'NodeSocketImage': 'SvImageSocket',
     }
 
     def __init__(self, socket):
@@ -435,9 +452,10 @@ class BlSocket:
         sv_sock.name = self._sock.name
 
         if sv_sock.bl_idname == 'SvStringsSocket':
-            if self._sock.type == 'VALUE':
+            attr_type_name = "type" if hasattr(self._sock, "type") else "socket_type" # "type" for Blender <4.x, "socket_type" for Blender >= 4.x
+            if getattr(self._sock, attr_type_name) in {'VALUE', 'NodeSocketValue'}: # {'VALUE',} - Blender < 4.x, {'NodeSocketValue'} - Blender >=4.x
                 sv_sock.default_property_type = 'float'
-            elif self._sock.type in {'INT', 'BOOLEAN'}:
+            elif getattr(self._sock, attr_type_name) in {'INT', 'BOOLEAN', 'NodeSocketInt', 'NodeSocketBoolean'}: # {'INT', 'BOOLEAN'} - Blender < 4.x, {'NodeSocketInt', 'NodeSocketBoolean'} - Blender >=4.x
                 sv_sock.default_property_type = 'int'
             else:
                 return  # There is no default property for such type
@@ -479,7 +497,7 @@ class BlSocket:
 
     @property
     def sverchok_type(self):
-        if (sv_type := self._sv_types.get(self._sock.type)) is None:
+        if (sv_type := self._sv_types.get(self._sock.type if hasattr(self._sock, 'type') else self._sock.socket_type )) is None:
             return 'SvStringsSocket'
         return sv_type
 
