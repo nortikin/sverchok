@@ -481,7 +481,7 @@
 - CAD:
     - icon_name: TOOL_SETTINGS
     - extra_menu: MeshPartialMenu
-    - SvBevelNode
+    - SvBevelNodeMK2
     - SvIntersectEdgesNodeMK3
     - SvOffsetNode
     - SvInsetSpecialMk2
