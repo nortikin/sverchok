@@ -135,11 +135,9 @@ def inset_special_np(vertices, faces, inset_rates, distances, ignores, make_inne
     if len(inset_pols) > 0:
         if variable_pols:
             lens = np.array([len(p) for p in inset_pols])
-            #lens = np_len(inset_pols)
             pol_types = np.unique(lens)
         else:
             lens = np.array([len(p) for p in inset_pols])
-            print("S", inset_pols.shape)
             pol_types = [inset_pols.shape[1]]
 
 
