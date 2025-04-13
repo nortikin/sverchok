@@ -992,21 +992,22 @@
           }
         },
         "properties": {
-          "offset_": 1.0,
-          "offsetType": "PERCENT"
+          "offset_amounts": 1.0,
+          "offset_mode": "PERCENT",
+          "select_elements_mode": "BOOLEAN"
         },
         "inputs": {
           "Vertices": {
             "bl_idname": "SvVerticesSocket",
-            "name": "Vertices"
+            "name": "vertices"
           },
           "Edges": {
             "bl_idname": "SvStringsSocket",
-            "name": "Edges"
+            "name": "edges"
           },
           "Polygons": {
             "bl_idname": "SvStringsSocket",
-            "name": "Polygons"
+            "name": "polygons"
           },
           "FaceData": {
             "bl_idname": "SvStringsSocket",
@@ -1016,29 +1017,29 @@
             "bl_idname": "SvStringsSocket",
             "name": "BevelFaceData"
           },
-          "BevelEdges": {
+          "Edges selected": {
             "bl_idname": "SvStringsSocket",
-            "name": "BevelEdges"
+            "name": "sub_elements_selected"
           },
-          "Offset": {
+          "Amount": {
             "bl_idname": "SvStringsSocket",
-            "name": "Offset",
+            "name": "offset_amounts",
             "properties": {
-              "prop_name": "offset_"
+              "prop_name": "offset_amounts"
             }
           },
           "Segments": {
             "bl_idname": "SvStringsSocket",
-            "name": "Segments",
+            "name": "bevel_segments",
             "properties": {
-              "prop_name": "segments_"
+              "prop_name": "bevel_segments"
             }
           },
           "Profile": {
             "bl_idname": "SvStringsSocket",
-            "name": "Profile",
+            "name": "bevel_profiles",
             "properties": {
-              "prop_name": "profile_"
+              "prop_name": "bevel_profiles"
             }
           },
           "Spread": {
@@ -1055,15 +1056,15 @@
         "outputs": {
           "Vertices": {
             "bl_idname": "SvVerticesSocket",
-            "name": "Vertices"
+            "name": "vertices"
           },
           "Edges": {
             "bl_idname": "SvStringsSocket",
-            "name": "Edges"
+            "name": "edges"
           },
           "Polygons": {
             "bl_idname": "SvStringsSocket",
-            "name": "Polygons"
+            "name": "polygons"
           },
           "FaceData": {
             "bl_idname": "SvStringsSocket",
@@ -1074,7 +1075,7 @@
             "name": "NewPolys"
           }
         },
-        "bl_idname": "SvBevelNode"
+        "bl_idname": "SvBevelNodeMK2"
       },
       "Viewer Draw": {
         "attributes": {
