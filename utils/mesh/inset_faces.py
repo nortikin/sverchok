@@ -49,7 +49,7 @@ def inset_special_np(vertices, faces, inset_rates, distances, ignores, make_inne
     if not any(np_faces_mask):
         return
 
-    np_faces = np_array(faces)
+    np_faces = np_array(faces, dtype=object)
     np_faces_id = np.arange(len(faces)) if output_old_face_id else []
     np_inset_rate = numpy_full_list(inset_rates, len(faces))
     if has_element(custom_normals):
