@@ -1446,7 +1446,9 @@ def properties(self) -&gt; List[BPYProperty]:
 
     @property
     def sverchok_type(self):
-        if (sv_type := self._sv_types.get(self._sock.type if hasattr(self._sock, &#39;type&#39;) else self._sock.socket_type )) is None:
+        attr_type_name = &#34;type&#34; if hasattr(self._sock, &#34;type&#34;) else &#34;socket_type&#34; # &#34;type&#34; for Blender &lt;4.x, &#34;socket_type&#34; for Blender &gt;= 4.x
+        attr_value = getattr(self._sock, attr_type_name)
+        if (sv_type := self._sv_types.get(attr_value)) is None:
             return &#39;SvStringsSocket&#39;
         return sv_type
 
@@ -1498,7 +1500,9 @@ def display_shape(self):
 </summary>
 <pre><code class="python">@property
 def sverchok_type(self):
-    if (sv_type := self._sv_types.get(self._sock.type if hasattr(self._sock, &#39;type&#39;) else self._sock.socket_type )) is None:
+    attr_type_name = &#34;type&#34; if hasattr(self._sock, &#34;type&#34;) else &#34;socket_type&#34; # &#34;type&#34; for Blender &lt;4.x, &#34;socket_type&#34; for Blender &gt;= 4.x
+    attr_value = getattr(self._sock, attr_type_name)
+    if (sv_type := self._sv_types.get(attr_value)) is None:
         return &#39;SvStringsSocket&#39;
     return sv_type</code></pre>
 </details>
