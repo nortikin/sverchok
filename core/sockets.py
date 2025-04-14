@@ -19,6 +19,7 @@
 import inspect
 import sys
 from typing import Set
+import math
 
 from mathutils import Matrix, Quaternion
 import bpy
@@ -34,7 +35,7 @@ from sverchok.data_structure import (
     enum_item_4,
     get_other_socket, replace_socket,
     SIMPLE_DATA_TYPES,
-    flatten_data, graft_data, map_at_level, wrap_data, unwrap_data)
+    flatten_data, graft_data, map_at_level, map_recursive, wrap_data, unwrap_data)
 
 from sverchok.settings import get_param
 
@@ -119,6 +120,73 @@ class SV_MT_SocketOptionsMenu(bpy.types.Menu):
         layout = self.layout
         if hasattr(context.socket, 'draw_menu_items'):
             context.socket.draw_menu_items(context, layout)
+
+class SvAnglesSocket():
+    DEGREES = 'DEGREES'
+    RADIANS = 'RADIANS'
+
+    angle_modes = [
+            (DEGREES, "Degrees", "Degrees", 0),
+            (RADIANS, "Radians", "Radians", 1)
+        ]
+
+    def update_degrees(self, context):
+        if self.skip_angles_mode_update:
+            return
+
+        try:
+            self.skip_angles_mode_update = True
+            if self.use_degrees:
+                self.use_radians = False
+        finally:
+            self.skip_angles_mode_update = False
+
+    def update_radians(self, context):
+        if self.skip_angles_mode_update:
+            return
+
+        try:
+            self.skip_angles_mode_update = True
+            if self.use_radians:
+                self.use_degrees = False
+        finally:
+            self.skip_angles_mode_update = False
+
+    skip_angles_mode_update : BoolProperty(default = False)
+    use_degrees : BoolProperty(name = "Degrees", default = False, update = update_degrees)
+    use_radians : BoolProperty(name = "Radians", default = True, update = update_radians)
+
+    angles_socket : BoolProperty(name = "Socket for angles", default = False)
+
+    internal_angles_unit : EnumProperty(
+                name = "Internal angles unit",
+                items = angle_modes,
+                default = RADIANS)
+
+    def process_angles(self, data):
+        if not self.angles_socket:
+            return data
+        if self.internal_angles_unit == SvAnglesSocket.DEGREES and self.use_degrees:
+            return data
+        if self.internal_angles_unit == SvAnglesSocket.RADIANS and self.use_radians:
+            return data
+        if self.internal_angles_unit == SvAnglesSocket.DEGREES and self.use_radians:
+            if not self.is_output:
+                return map_recursive(math.degrees, data)
+            else:
+                return map_recursive(math.radians, data)
+        if self.internal_angles_unit == SvAnglesSocket.RADIANS and self.use_degrees:
+            if not self.is_output:
+                return map_recursive(math.radians, data)
+            else:
+                return map_recursive(math.degrees, data)
+        return data
+
+    def draw_angle_options(self, context, layout):
+        if not self.angles_socket:
+            return
+        layout.prop(self, 'use_degrees')
+        layout.prop(self, 'use_radians')
 
 class SvSocketProcessing():
     """
@@ -290,6 +358,9 @@ class SvSocketProcessing():
             result = wrap_data(result)
         return result
 
+    def is_show_menu(self):
+        return self.is_output
+
     def has_simplify_modes(self, context):
         return self.can_flatten() or self.can_simplify()
 
@@ -298,7 +369,7 @@ class SvSocketProcessing():
 
     def draw_menu_button(self, context, layout, node, text):
         if hasattr(node.id_data, 'sv_show_socket_menus') and node.id_data.sv_show_socket_menus:
-            if (self.is_output or self.is_linked or not self.use_prop):
+            if (self.is_show_menu() or self.is_linked or not self.use_prop):
                 layout.menu('SV_MT_SocketOptionsMenu', text='', icon='TRIA_DOWN')
 
     def draw_menu_items(self, context, layout):
@@ -428,25 +499,29 @@ class SvSocketCommon(SvSocketProcessing):
         :param deepcopy: in most cases should be False for efficiency but not in cases if input data will be modified
         :return: data bound to the socket
         """
-        if self.is_output:
-            return sv_get_socket(self, False)
+        def _get():
+            if self.is_output:
+                return sv_get_socket(self, False)
 
-        if self.is_linked:
-            return sv_get_socket(self, deepcopy)
+            if self.is_linked:
+                return sv_get_socket(self, deepcopy)
 
-        prop_name = self.get_prop_name()
-        if prop_name:
-            prop = getattr(self.node, prop_name)
-            return format_bpy_property(prop)
+            prop_name = self.get_prop_name()
+            if prop_name:
+                prop = getattr(self.node, prop_name)
+                return format_bpy_property(prop)
 
-        if self.use_prop and hasattr(self, 'default_property') and self.default_property is not None:
-            default_property = self.default_property
-            return format_bpy_property(default_property)
+            if self.use_prop and hasattr(self, 'default_property') and self.default_property is not None:
+                default_property = self.default_property
+                return format_bpy_property(default_property)
 
-        if default is not ...:
-            return default
+            if default is not ...:
+                return default
+            raise SvNoDataError(self)
 
-        raise SvNoDataError(self)
+        result = _get()
+        result = self.preprocess_input(result)
+        return result
 
     def sv_set(self, data):
         """Set data, provide context in case the node can be evaluated several times in different context"""
@@ -522,6 +597,10 @@ class SvSocketCommon(SvSocketProcessing):
 
         menu_option = get_param('show_input_menus', 'QUICKLINK')
 
+        if not self.is_output:
+            if self.has_menu(context):
+                self.draw_menu_button(context, layout, node, text)
+
         # just handle custom draw..be it input or output.
         if self.custom_draw:
             # does the node have the draw function referred to by
@@ -564,8 +643,9 @@ class SvSocketCommon(SvSocketProcessing):
                     self.draw_link_input_menu(context, layout, node)
                 draw_label(self.label or text)
 
-        if self.has_menu(context):
-            self.draw_menu_button(context, layout, node, text)
+        if self.is_output:
+            if self.has_menu(context):
+                self.draw_menu_button(context, layout, node, text)
 
     # https://wiki.blender.org/wiki/Reference/Release_Notes/4.0/Python_API#Node_Groups
     if bpy.app.version >= (4, 0):
@@ -878,7 +958,7 @@ class SvSeparatorSocket(NodeSocket, SvSocketCommon):
         layout.label(text="——————")
 
 
-class SvStringsSocket(SocketDomain, NodeSocket, SvSocketCommon):
+class SvStringsSocket(SocketDomain, NodeSocket, SvSocketCommon, SvAnglesSocket):
     '''Generic, mostly numbers, socket type'''
     bl_idname = "SvStringsSocket"
     bl_label = "Strings Socket"
@@ -894,6 +974,10 @@ class SvStringsSocket(SocketDomain, NodeSocket, SvSocketCommon):
         flags = super().get_mode_flags()
         if self.use_graft_2:
             flags.append('G2')
+        if self.use_radians:
+            flags.append('RAD')
+        if self.use_degrees:
+            flags.append('DEG')
         return flags
 
     def get_prop_data(self):
@@ -905,6 +989,13 @@ class SvStringsSocket(SocketDomain, NodeSocket, SvSocketCommon):
                     "prop_index": self.prop_index}
         else:
             return {}
+
+    def is_show_menu(self):
+        return super().is_show_menu() or self.angles_socket
+
+    def has_menu(self,context):
+        r = super().has_menu(context) or self.angles_socket
+        return r
 
     quick_link_to_node: StringProperty()  # this can be overridden by socket instances
 
@@ -973,6 +1064,7 @@ class SvStringsSocket(SocketDomain, NodeSocket, SvSocketCommon):
                 row.operator(SvSwitchDefaultOp.bl_idname, icon=icon, text='')
 
     def draw_menu_items(self, context, layout):
+        self.draw_angle_options(context, layout)
         self.draw_simplify_modes(layout)
         if self.can_flatten_topology():
             layout.prop(self, 'use_flatten_topology')
@@ -1008,10 +1100,11 @@ class SvStringsSocket(SocketDomain, NodeSocket, SvSocketCommon):
 
     def preprocess_input(self, data):
         result = data
+        result = self.process_angles(result)
         if self.use_flatten:
-            result = self.do_flatten(data)
+            result = self.do_flatten(result)
         elif self.use_simplify:
-            result = self.do_simplify(data)
+            result = self.do_simplify(result)
         if self.use_graft:
             result = self.do_graft(result)
         elif not self.use_flatten and self.use_graft_2:
@@ -1024,6 +1117,7 @@ class SvStringsSocket(SocketDomain, NodeSocket, SvSocketCommon):
 
     def postprocess_output(self, data):
         result = data
+        result = self.process_angles(result)
 
         if self.use_flatten_topology:
             result = self.do_flat_topology(data)
