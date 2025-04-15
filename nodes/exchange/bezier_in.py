@@ -5,16 +5,23 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
+from collections import namedtuple
+import numpy as np
+import json
+
 import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, StringProperty
+from mathutils import Matrix, Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.nodes_mixins.show_3d_properties import Show3DProperties
 from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
-from sverchok.data_structure import updateNode, zip_long_repeat, split_by_count
+from sverchok.data_structure import updateNode, zip_long_repeat, split_by_count, numpy_full_list
 from sverchok.utils.curve.algorithms import concatenate_curves
 from sverchok.utils.curve.bezier import SvCubicBezierCurve
+from sverchok.utils.sv_obj_helper import SvObjHelper
 
+Objects = namedtuple('Objects', ['names', 'curves', 'matrices', 'controls', 'tilt', 'radius'])
 
 class SvBezierInCallbackOp(bpy.types.Operator, SvGenericNodeLocator):
 
@@ -26,10 +33,10 @@ class SvBezierInCallbackOp(bpy.types.Operator, SvGenericNodeLocator):
         """
         passes the operator's 'self' too to allow calling self.report()
         """
-        node.get_objects_from_scene(self)
+        node.remember_selected_objects(self)
 
 
-class SvBezierInNode(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
+class SvBezierInNode(Show3DProperties, SverchCustomTreeNode, bpy.types.Node, SvObjHelper):
     """
     Triggers: Input Bezier
     Tooltip: Get Bezier Curve objects from scene
@@ -73,7 +80,7 @@ class SvBezierInNode(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
         self.outputs.new('SvStringsSocket', 'Tilt')
         self.outputs.new('SvStringsSocket', 'Radius')
 
-    def get_objects_from_scene(self, ops):
+    def remember_selected_objects(self, ops):
         """
         Collect selected objects
         """
@@ -163,19 +170,12 @@ class SvBezierInNode(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
                 tilt_values.append([p1.tilt, p2.tilt])
                 radius_values.append([p1.radius, p2.radius])
             return points, tilt_values, radius_values, segments
-
-    def process(self):
-
-        if not self.object_names:
-            return
-
-        curves_out = []
-        matrices_out = []
-        controls_out = []
-        tilt_out = []
-        radius_out = []
+    
+    def get_objects(self):
+        objects = Objects([], [], [], [], [], [])
         for item in self.object_names:
             object_name = item.name
+            objects.names.append(object_name)
             obj = bpy.data.objects.get(object_name)
             if not obj:
                 continue
@@ -189,20 +189,97 @@ class SvBezierInNode(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
                     self.warning("%s: not supported spline type: %s", spline, spline.type)
                     continue
                 controls, tilt_values, radius_values, curve = self.get_curve(spline, matrix)
-                curves_out.append(curve)
-                controls_out.append(controls)
-                matrices_out.append(matrix)
-                tilt_out.append(tilt_values)
-                radius_out.append(radius_values)
+                objects.curves.append(curve)
+                objects.controls.append(controls)
+                objects.matrices.append(matrix)
+                objects.tilt.append(tilt_values)
+                objects.radius.append(radius_values)
+        return objects
 
-        self.outputs['Curves'].sv_set(curves_out)
-        self.outputs['ControlPoints'].sv_set(controls_out)
-        self.outputs['Matrices'].sv_set(matrices_out)
+    def process(self):
+
+        if not self.object_names:
+            return
+        
+        objects = self.get_objects()
+
+        self.outputs['Curves'].sv_set(objects.curves)
+        self.outputs['ControlPoints'].sv_set(objects.controls)
+        self.outputs['Matrices'].sv_set(objects.matrices)
         if 'Tilt' in self.outputs:
-            self.outputs['Tilt'].sv_set(tilt_out)
+            self.outputs['Tilt'].sv_set(objects.tilt)
         if 'Radius' in self.outputs:
-            self.outputs['Radius'].sv_set(radius_out)
+            self.outputs['Radius'].sv_set(objects.radius)
 
+    def objects_to_json(self, objects):
+        geom = []
+        for i, name in enumerate(objects.names):
+            item = {}
+            item['object_name'] = name
+            item['controls'] = objects.controls[i]
+            item['matrix'] = np.array(objects.matrices[i]).tolist()
+            item['tilt'] = objects.tilt[i]
+            item['radius'] = objects.radius[i]
+            geom.append(item)
+        return geom
+
+    def save_to_json(self, node_data: dict):
+        objects = self.get_objects()
+        node_data['geom'] = json.dumps(self.objects_to_json(objects))
+
+    def objects_from_json(self, geom):
+        objects = Objects([], [], [], [], [], [])
+        for item in geom:
+            objects.names.append(item['object_name'])
+            objects.controls.append(item['controls'])
+            objects.matrix.append(Matrix(item['matrix']))
+            objects.tilt.append(item['tilt'])
+            objects.radius.append(item['radius'])
+        return objects
+
+    def create_objects(self, geom):
+        for index, item in enumerate(geom):
+            object_name = item['object_name']
+            curve_data = bpy.data.curves.new(object_name, 'CURVE')
+            curve_data.dimensions = '3D'
+            curve_object = bpy.data.objects.get(object_name)
+            if not curve_object:
+                curve_object = self.create_object(object_name, index, curve_data)
+            curve_object.matrix_local = Matrix(item['matrix'])
+            curve_object.data.bevel_mode = 'ROUND'
+            curve_object.data.taper_object = None
+
+            control_points = item['controls']
+            spline = curve_object.data.splines.new(type='BEZIER')
+            spline.bezier_points.add(len(control_points))
+            first_point = start_point = spline.bezier_points[0]
+
+            for idx, segment in enumerate(control_points):
+                end_point = spline.bezier_points[idx+1]
+
+                start_point.co = Vector(segment[0])
+                start_point.handle_right = Vector(segment[1])
+
+                end_point.handle_left = Vector(segment[2])
+                end_point.co = Vector(segment[3])
+
+                start_point = end_point
+
+            first_point.handle_left = first_point.co
+            end_point.handle_right = end_point.co
+
+            radiuses = item['radius']
+            spline.bezier_points.foreach_set('radius', numpy_full_list(radiuses, len(spline.bezier_points)))
+            tilts = item['tilt']
+            spline.bezier_points.foreach_set('tilt', numpy_full_list(tilts, len(spline.bezier_points)))
+
+    def load_from_json(self, node_data: dict, import_version: float):
+        if 'geom' not in node_data:
+            return  # looks like a node was empty when it was imported
+        geom = json.loads(node_data['geom'])
+        if not geom:
+            return
+        self.create_objects(geom)
 
 def register():
     bpy.utils.register_class(SvBezierInCallbackOp)
