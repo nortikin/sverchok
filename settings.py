@@ -179,7 +179,7 @@ class SvSetFreeCadPath(bpy.types.Operator):
     bl_idname = "node.sv_set_freecad_path"
     bl_label = "Set FreeCAD path"
     bl_options = {'REGISTER', 'INTERNAL'}
-    FreeCAD_folder: bpy.props.StringProperty(name="FreeCAD python 3.7 folder")
+    FreeCAD_folder: bpy.props.StringProperty(name="FreeCAD Python directory")
     def execute(self, context):
         import sys
         import os
@@ -429,7 +429,7 @@ class SverchokPreferences(AddonPreferences):
     available_new_version: bpy.props.BoolProperty(default=False)
 
     FreeCAD_folder: StringProperty(
-            name="FreeCAD python 3.7 folder",
+            name="FreeCAD Python directory",
             description = "Path to FreeCAD Python API library files (FreeCAD.so on Linux and MacOS, FreeCAD.dll on Windows). On Linux the usual location is /usr/lib/freecad/lib, on Windows it can be something like E:\programs\conda-0.18.3\\bin"
         )
 
@@ -594,15 +594,19 @@ class SverchokPreferences(AddonPreferences):
             dependency = sv_dependencies['freecad']
             col = box.column(align=True)
             col.label(text=dependency.message, icon=get_icon(dependency.module))
+            message_on_layout(col, f"Note: Blender currently uses Python version {sys.version}. FreeCAD libraries should be compiled against the same Python version, otherwise compatibility issues are possible.")
             row = col.row(align=True)
             row.operator('wm.url_open', text="Visit package website").url = dependency.url
             if dependency.module is None:
                 tx = "Set path"
             else:
                 tx = "Reset path"
-            row.prop(self, 'FreeCAD_folder')
-            row.operator('node.sv_select_freecad_path', text="Browse...").directory = self.FreeCAD_folder
-            row.operator('node.sv_set_freecad_path', text=tx).FreeCAD_folder = self.FreeCAD_folder
+            split = row.split(factor=0.7)
+            dir_col = split.row()
+            dir_col.prop(self, 'FreeCAD_folder')
+            buttons_col = split.row()
+            buttons_col.operator('node.sv_select_freecad_path', text="Browse...").directory = self.FreeCAD_folder
+            buttons_col.operator('node.sv_set_freecad_path', text=tx).FreeCAD_folder = self.FreeCAD_folder
             return row
 
         message_on_layout(layout, """Sverchok can use several external libraries, that provide \
