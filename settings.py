@@ -5,6 +5,7 @@ from os.path import basename, join
 import subprocess
 from glob import glob
 import shutil
+import io
 
 import bpy
 from bpy.types import AddonPreferences
@@ -113,10 +114,17 @@ class SvExPipInstall(bpy.types.Operator):
 
     def execute(self, context):
         # https://github.com/robertguetzkow/blender-python-examples/tree/master/add_ons/install_dependencies
+        sv_logger = logging.getLogger('sverchok')
+
         environ_copy = dict(os.environ)
         environ_copy["PYTHONNOUSERSITE"] = "1"  # is set to disallow pip from checking the user site-packages
         cmd = [PYPATH, '-m', 'pip', 'install', '--upgrade'] + self.package.split(" ")
-        ok = subprocess.call(cmd, env=environ_copy) == 0
+        p = subprocess.Popen(cmd, env=environ_copy, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        for line in io.TextIOWrapper(p.stdout, encoding="utf-8"):
+            sv_logger.info(line)
+            self.report({'INFO'}, line)
+        #p.communicate()
+        ok = p.wait() == 0
         if ok:
             first_install = self.package in sv_dependencies and sv_dependencies[self.package] is None
             if first_install:
