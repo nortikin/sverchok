@@ -122,7 +122,6 @@ class SvExPipInstall(bpy.types.Operator):
         p = subprocess.Popen(cmd, env=environ_copy, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         for line in io.TextIOWrapper(p.stdout, encoding="utf-8"):
             sv_logger.info(line)
-            self.report({'INFO'}, line)
         #p.communicate()
         ok = p.wait() == 0
         if ok:
