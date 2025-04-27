@@ -75,9 +75,9 @@ class SvBevelNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
         updateNode(self, context)
 
     select_elements_modes = [
-            ('BOOLEAN', "Bool", "Mask elements by boolean"         , 'IMAGE_ALPHA'    , 0),
-            ('INDEXES', "Indexes", "Mask elements by indexes"         , 'LIGHTPROBE_GRID', 1),
-            ('GROUP_OF_INDEXES', "Groups", "group elements by indexes", 'LINENUMBERS_ON' , 2),
+            ('BOOLEAN'         , "Bool"   , "Mask elements by boolean" , 'IMAGE_ALPHA'    , 0),
+            ('INDEXES'         , "Indexes", "Mask elements by indexes" , 'LIGHTPROBE_GRID', 1),
+            ('GROUP_OF_INDEXES', "Groups" , "group elements by indexes", 'LINENUMBERS_ON' , 2), # Не помню, что хотел с этим сделать! Надо вспомнить!
         ]
     
     select_elements_mode : EnumProperty(
@@ -355,8 +355,11 @@ class SvBevelNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
 
             sub_elements_selected3_I = sub_elements_selected3[I]
             sub_elements_selected3I1 = []
-            # Убрать дибликаты в каждом списке
+            # Убрать дибликаты в каждом списке [[1,1,2,3],[4,4,5,5,5,6,7]] => [[1,2,3],[4,5,6,7]]
             for sub_elements in sub_elements_selected3_I:
+                if self.select_elements_mode=='BOOLEAN':
+                    # Перевести boolean селекторы в индексы:
+                    sub_elements = [i for i, sub_element in enumerate(sub_elements) if sub_element]
                 sub_elements_selected3I1.append( list(set(sub_elements)))
             source_elemets_indexes = [I for I in range(len(vertices if self.vertexOnly else edges))]
             # убрать дубликаты везде
@@ -373,7 +376,6 @@ class SvBevelNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
             if self.vertexOnly:
                 # Если обрабатывать надо вершины, то нужно перестроить порядок подэлементов так, чтобы 
                 # чтобы индексы подэлементов начинались с конца:
-                
                 
                 vertices_dict_indexes = dict()
                 sub_elements_selected3I3 = []
@@ -485,15 +487,12 @@ class SvBevelNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
 
             for IJ, sub_elements_selected in enumerate( sub_elements_selected3_I ):
 
-                if self.select_elements_mode=='BOOL':
-                    source_indexes_mask = sub_elements_selected
-                    pass
-                else:
-                    source_indexes_mask = [False]*len(vertices if self.vertexOnly else edges)
-                    for elem_index in sub_elements_selected:
-                        if 0<=elem_index<=len(source_indexes_mask)-1:
-                            source_indexes_mask[elem_index] = True
-                    pass
+                # Получить маску исходных индексов
+                source_indexes_mask = [False]*len(vertices if self.vertexOnly else edges)
+                for elem_index in sub_elements_selected:
+                    if 0<=elem_index<=len(source_indexes_mask)-1:
+                        source_indexes_mask[elem_index] = True
+                pass
 
                 # select elements by source indexes mask:
                 mask = []
@@ -540,7 +539,7 @@ class SvBevelNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
                             pass
                         pass
                     pass
-                            #mask.append(source_indexes_mask[bm_edge[source_edges_indexes_layer]]==True)
+                        #mask.append(source_indexes_mask[bm_edge[source_edges_indexes_layer]]==True)
                         # if source_indexes_mask[bm_edge[source_edges_indexes_layer]]==True:
                         #     source_verts_set = set([vert[source_verts_indexes_layer] for vert in bm_edge.verts])
                         #     if source_verts_set in source_edges_list_set:
