@@ -629,7 +629,7 @@ dependencies, or install only some of them.""")
         package_names = ["scipy", "geomdl", "skimage", "mcubes", "circlify", "cython", "numba", "pyOpenSubdiv", "numexpr", "ezdxf", "pyacvd", "pyQuadriFlow", "pySVCGAL", ]
         col = box.column(align=True)
         row = col.row(align=True)
-        row.operator('sverchok.install_or_update_dependencies_operator', text="Install or Update all packages (Update PIP FIRST)").serialized_items=";".join(package_names)
+        row.operator('sverchok.install_or_update_dependencies_operator', text="Install or Update all packages (Upgrade PIP FIRST)").serialized_items=";".join(package_names)
 
         row = draw_message(box, "pip")
         if pip is not None:

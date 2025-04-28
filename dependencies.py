@@ -235,16 +235,19 @@ class DI_OT_install_or_update_dependencies_operator(bpy.types.Operator):
     def execute(self, context):
         items = self.serialized_items.split(';')
         for item in items:
-            print(f"===>> Install Dependency: {item}")
-
             try:
                 dependency = sv_dependencies[item]
                 if dependency.module is None and dependency.pip_installable and pip is not None:
+                    print(f"===>> Install Dependency: {item}")
                     res = bpy.ops.node.sv_ex_pip_install(package = dependency.package)
                     #res = bpy.ops.node.sv_ex_pip_install('INVOKE_DEFAULT', package = dependency.package)
                 elif dependency.pip_installable and pip is not None:
+                    print(f"===>> Install Dependency: {item}")
                     res = bpy.ops.node.sv_ex_pip_install(package = dependency.package)
                     #res = bpy.ops.node.sv_ex_pip_install('INVOKE_DEFAULT', package = dependency.package)
+                else:
+                    print(f"===>> Skip Install Dependency: {item}")
+                    continue
                 print(f"{item} installed with result: {res}")
             except Exception as _ex:
                 pass
