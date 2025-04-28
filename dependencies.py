@@ -227,7 +227,7 @@ settings.get_icon = get_icon
 class DI_OT_install_or_update_dependencies_operator(bpy.types.Operator):
     bl_idname = "sverchok.install_or_update_dependencies_operator"
     bl_label = "Install or update Sverchok Dependencies operator"
-    bl_description = "Install or update installable dependencies. Not all dependencies are installable. Restart Blender after update or install dependencies."
+    bl_description = "Install or update installable dependencies. Not all dependencies are installable. Restart Blender after update or install dependencies.\nATTENTION: UPDATE PIP FIRST and restart Blender"
 
     #items: bpy.props.CollectionProperty(type=DependencyItemName)
     serialized_items: bpy.props.StringProperty()
@@ -241,10 +241,10 @@ class DI_OT_install_or_update_dependencies_operator(bpy.types.Operator):
                 dependency = sv_dependencies[item]
                 if dependency.module is None and dependency.pip_installable and pip is not None:
                     res = bpy.ops.node.sv_ex_pip_install(package = dependency.package)
-                    #row.operator('node.sv_ex_pip_install', text="Install with PIP").package = dependency.package
+                    #res = bpy.ops.node.sv_ex_pip_install('INVOKE_DEFAULT', package = dependency.package)
                 elif dependency.pip_installable and pip is not None:
                     res = bpy.ops.node.sv_ex_pip_install(package = dependency.package)
-                    #op = row.operator('node.sv_ex_pip_install', text="Upgrade with PIP").package = dependency.package
+                    #res = bpy.ops.node.sv_ex_pip_install('INVOKE_DEFAULT', package = dependency.package)
                 print(f"{item} installed with result: {res}")
             except Exception as _ex:
                 pass
