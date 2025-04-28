@@ -642,20 +642,6 @@ dependencies, or install only some of them.""")
 
         for k in package_names:
             draw_message(box, k)
-            pass
-        # draw_message(box, "scipy")
-        # draw_message(box, "geomdl")
-        # draw_message(box, "skimage")
-        # draw_message(box, "mcubes")
-        # draw_message(box, "circlify")
-        # draw_message(box, "cython")
-        # draw_message(box, "numba")
-        # draw_message(box, "pyOpenSubdiv")
-        # draw_message(box, "numexpr")
-        # draw_message(box, "ezdxf")
-        # draw_message(box, "pyacvd")
-        # draw_message(box, "pyQuadriFlow")
-        # draw_message(box, "pySVCGAL")
 
         draw_freecad_ops()
 
