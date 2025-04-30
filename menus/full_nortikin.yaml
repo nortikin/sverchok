@@ -22,6 +22,7 @@
         - extra_menu: MeshPartialMenu  # to make the category available in another menu (1,2,3,4,5)
         - GM PRIMITIVES:
             - icon_name: MESH_CUBE
+            - color_category: Generator
             - SvLineNodeMK4  # bl_idname of a node
             - SvSegmentGenerator
             - SvPlaneNodeMk3
@@ -42,6 +43,7 @@
         # this is a nested category
         - GM SCRIPTED:
             - icon_name: PLUGIN
+            - color_category: Generator
             - ImageNode
             - SvFormulaShapeNode
             - SvBoxRoundedNode
@@ -66,6 +68,7 @@
         - extra_menu: AdvancedObjectsPartialMenu
         - GC PRIMITIVES:
             - icon_name: MESH_CUBE
+            - color_category: Generator
             - SvExLineCurveNode
             - SvCircleCurveMk2Node
             - SvEllipseCurveNodeMK2
@@ -84,16 +87,19 @@
             - SvPointCurveNode
         - GC BEZIER:
             - icon_name: MESH_CUBE
+            - color_category: Generator
             - SvBezierSplineNode
             - SvExBezierCurveFitNode
         - GC NURBS:
             - icon_name: MESH_CUBE
+            - color_category: Generator
             - SvExNurbsCurveNode
             - SvApproxNurbsCurveMk3Node
             - SvExInterpolateNurbsCurveNodeMK2
             - SvCurveToNurbsNode
         - GC SCRIPTED:
             - icon_name: PLUGIN
+            - color_category: Generator
             - SvExCurveFormulaNode
             - SvExCubicSplineNode
             - SvCatmullRomSplineNode
@@ -103,6 +109,7 @@
     - G SURFACES:
         - icon_name: SURFACE_DATA
         - extra_menu: AdvancedObjectsPartialMenu
+        - color_category: Generator
         - SvExPlaneSurfaceNode
         - SvExSphereNode
         - SvExSurfaceFormulaNode
@@ -110,6 +117,7 @@
         - SvExMinimalSurfaceNode
         - SvExMinSurfaceFromCurveNode
         - GS NURBS:
+            - color_category: Generator
             - SvExNurbsSurfaceNode
             - SvExApproxNurbsSurfaceNodeMK2
             - SvExInterpolateNurbsSurfaceNodeMK2
@@ -121,6 +129,7 @@
     - G FIELDS:
         - icon_name: OUTLINER_OB_FORCE_FIELD
         - extra_menu: AdvancedObjectsPartialMenu
+        - color_category: Generator
         - SvCoordScalarFieldNode
         - SvExScalarFieldFormulaNode
         - SvExVectorFieldFormulaNode
@@ -141,12 +150,14 @@
     - G SOLIDS:
         - extra_menu: AdvancedObjectsPartialMenu
         - icon_name: MESH_CUBE
+        - color_category: Generator
         - SvBoxSolidNode
         - SvCylinderSolidNode
         - SvConeSolidNode
         - SvSphereSolidNode
         - SvToursSolidNode
         - GS FACE:
+            - color_category: Generator
             - SvSolidPolygonFaceNode
             - SvSolidWireFaceNode
             - SvProjectTrimFaceNode
@@ -582,6 +593,7 @@
     - icon_name: NLA
     - extra_menu: BasicDataPartialMenu
     - List generator:
+        - color_category: Layout
         - SvGenNumberRange
         - SvListInputNodeMK2
         - SvRndNumGen
@@ -589,10 +601,12 @@
         - SvNumpyArrayNode
         - RandomNode
     - List interact:
+        - color_category: Layout
         - ListJoinNode
         - ZipNode
         - ListMatchNode
     - List modify:
+        - color_category: Layout
         - ShiftNodeMK2
         - ListLevelsNode
         - ListRepeaterNode
@@ -606,6 +620,7 @@
         - SvListModifierNode
         - SvFixEmptyObjectsNode
     - List items/masks:
+        - color_category: Layout
         - ListFLNode
         - SvListItemNode
         - SvListItemInsertNode
@@ -619,6 +634,7 @@
         - SvCalcMaskNode
         - SvUniqueItemsNode
     - List math:
+        - color_category: Layout
         - ListFuncNode
         - SvListSortNode
         - ListLengthNode
@@ -628,6 +644,7 @@
         - SvCombinatoricsNode
     - Dictionary:
         - icon_name: OUTLINER_OB_FONT
+        - color_category: Layout
         - SvDictionaryIn
         - SvDictionaryOut
 
@@ -761,6 +778,7 @@
     - icon_name: RESTRICT_VIEW_OFF
     - extra_menu: ConnectionPartialMenu
     - V OpenGL:
+        - color_category: Viz
         - SvViewerDrawMk4
         - SvCurveViewerDrawNode
         - SvSurfaceViewerDrawNode
@@ -769,6 +787,7 @@
         - SvIDXViewer28
         - SvViewer2D
     - V Objects:
+        - color_category: Viz
         - SvMeshViewer
         - SvGeoNodesViewerNode
         - SvCurveViewerNodeV28
@@ -789,6 +808,7 @@
         - SvGreasePencilStrokes
         - SvEmptyOutNode
     - V Misc:
+        - color_category: Viz
         - SvTextureViewerNode
         - SvTextureViewerNodeLite
         - SvWaveformViewer
@@ -818,6 +838,7 @@
 - Text:
     - icon_name: TEXT
     - extra_menu: ConnectionPartialMenu
+    - color_category: Text
     - ViewerNodeTextMK3
     - SvDataShapeNode
     - SvStethoscopeNodeMK2
@@ -840,6 +861,7 @@
 - Scene:
     - icon_name: SCENE_DATA
     - extra_menu: ConnectionPartialMenu
+    - color_category: Scene
     - SvGetObjectsDataMK3
     - SvObjInLite
     - SvCurveInputNode
@@ -1013,6 +1035,20 @@
     - SvSvgGroupNode
     - SvSvgFillStrokeNodeMk2
     - SvSvgPatternNode
+
+################################################################################
+#################################### DXFs ######################################
+################################################################################
+
+- DXF:
+    - icon_name: SV_SVG
+    - extra_menu: ConnectionPartialMenu
+    - SvDxfImportNode
+    - SvDxfExportNode
+    - SvDxfLinDimsNode
+    - SvDxfHatchNode
+    - SvDxfLinesNode
+    - SvDxfPolygonsNode
 
 - ---
 
