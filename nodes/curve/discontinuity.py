@@ -11,7 +11,7 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level
-from sverchok.utils.curve.core import SvCurve
+from sverchok.utils.curve.core import SvCurve, UnsupportedCurveTypeException
 from sverchok.utils.curve.nurbs import SvNurbsCurve
 
 class SvCurveDiscontinuityNode(SverchCustomTreeNode, bpy.types.Node):
@@ -95,7 +95,7 @@ class SvCurveDiscontinuityNode(SverchCustomTreeNode, bpy.types.Node):
             for curve, order, angle_tolerance, amplitude_tolerance in zip_long_repeat(*params):
                 curve = SvNurbsCurve.to_nurbs(curve)
                 if curve is None:
-                    raise Exception("One of curves is not NURBS!")
+                    raise UnsupportedCurveTypeException("One of curves is not NURBS!")
                 ts, points, segments = curve.split_at_fracture_points(
                                         order = order,
                                         direction_only = self.direction_only,

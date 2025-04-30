@@ -9,6 +9,7 @@ from sverchok.utils.surface.data import *
 
 
 class UnsupportedSurfaceTypeException(TypeError):
+    __description__ = "Unsupported surface type"
     pass
 
 class SvSurface(object):

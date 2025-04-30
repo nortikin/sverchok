@@ -6,6 +6,8 @@
 # License-Filename: LICENSE
 
 import numpy as np
+
+from sverchok.core.sv_custom_exceptions import SvUnsupportedOptionException
 from sverchok.utils.curve.nurbs_solver_applications import adjust_curve_points
 from sverchok.utils.manifolds import nearest_point_on_curve
 
@@ -56,7 +58,7 @@ def prepare_curves_net(u_curves, v_curves,
     """
 
     if u_mode == FIT and v_mode == FIT:
-        raise Exception("Automatic T values fitting can not be enabled for both directions")
+        raise SvUnsupportedOptionException("Automatic T values fitting can not be enabled for both directions")
 
     def prepare_t_by_count(curves, n):
         bounds = np.array([c.get_u_bounds() for c in curves])
@@ -74,7 +76,7 @@ def prepare_curves_net(u_curves, v_curves,
         elif mode == UNIFORM:
             t_values, target_pts = prepare_t_by_count(curves, n)
         else: # FIT
-            raise Exception("Can't fit T values for base curves")
+            raise SvUnsupportedOptionException("Can't fit T values for base curves")
         return t_values, target_pts
 
     def fit_t(primary_curves, primary_t_values, secondary_curves):

@@ -120,6 +120,11 @@ errors in your node trees or in Sverchok itself.
   * **Warnings**. Write only warnings and errors.
   * **Errors**. Write error messages only.
 
+* **Log exception stacks**. If checked, then for each logged error Sverchok
+  will also write it's Python traceback flag into log. Such tracebacks can help
+  Sverchok developers to understand the cause of error. Unchecked by default.
+  This flag is not visible when **Logging level** is set to Debug, because with
+  Debug level exception stacks are always logged.
 * **Log to text buffer**. If checked, Sverchok will write log into text buffer
   within current Blender file. The name of that buffer is specified in the
   **Buffer name** parameter (the default is ``sverchok.log``).

@@ -29,14 +29,6 @@ from sverchok.ui.nodeview_space_menu import get_add_node_menu
 colors_cache = {}
 
 
-naming = {
-    "Viz": ('V ', 'Viz'),
-    "Text": ('T ', 'Text'),
-    "Scene": ('S ', 'Scene'),
-    "Layout": ('List', 'Dictionary', 'Layout'),
-    "Generator": ("G ", "GM ", "GS " ,"GC ", 'Generator'),
-}
-
 default_theme = {
     "Viz": (1, 0.589, 0.214),
     "Text": (0.5, 0.5, 1),
@@ -69,7 +61,21 @@ grey = {
     "Generator": (0.1, 0.1, 0.1),
 }
 
+gruvbox_light = {
+    "Viz": (0.839, 0.365, 0.055),
+    "Text": (0.271, 0.522, 0.533),
+    "Scene": (0.596, 0.592, 0.102),
+    "Layout": (0.694, 0.384, 0.525),
+    "Generator": (0.408, 0.616, 0.416)
+}
 
+gruvbox_dark = {
+    "Viz": (0.686, 0.227, 0.012),
+    "Text": (0.027, 0.400, 0.471),
+    "Scene": (0.475, 0.455, 0.055),
+    "Layout": (0.561, 0.247, 0.443),
+    "Generator": (0.322, 0.482, 0.345)
+}
 
 #  self refers to the preferences, SverchokPreferences
 
@@ -108,18 +114,21 @@ def sv_colors_definition():
         sv_node_colors = default_theme
     sv_cats_node = {}
 
-    for cat in get_add_node_menu().walk_categories():
-        for elem in cat:
+    for category_path in get_add_node_menu().walk_categories_hierarchy():
+        color_category = None
+        for category in category_path:
+            if category.color_category:
+                color_category = category.color_category
+                break
+            if category.name in sv_node_colors:
+                color_category = category.name
+                break
+
+        for elem in category_path[0]:
             if not hasattr(elem, 'bl_idname'):
                 continue
             try:
-                # cat.name может быть в ямле G ..., V ..., L ..., etc
-                # надо составить список замен и проходиться по каждому узлу
-                for k,v in naming.items():
-                    if cat.name.startswith(v):
-                        catname = k
-                        continue
-                sv_cats_node[elem.bl_idname] = sv_node_colors[catname]
+                sv_cats_node[elem.bl_idname] = sv_node_colors[color_category]
             except:
                 sv_cats_node[elem.bl_idname] = False
     return sv_cats_node

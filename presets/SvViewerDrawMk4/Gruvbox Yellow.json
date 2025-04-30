@@ -1,0 +1,99 @@
+{
+  "export_version": "1.0",
+  "node": {
+    "Viewer Draw.001": {
+      "attributes": {
+        "location": [
+          355.2704772949219,
+          -75.67135620117188
+        ],
+        "color": [
+          0.8389999866485596,
+          0.36500000953674316,
+          0.054999999701976776
+        ],
+        "use_custom_color": true
+      },
+      "properties": {
+        "edge_color": [
+          0.45640355348587036,
+          0.21585622429847717,
+          0.011612458154559135,
+          1.0
+        ],
+        "selected_draw_mode": "facet",
+        "vector_color": [
+          0.15592679381370544,
+          0.0761851966381073,
+          0.005605380982160568,
+          1.0
+        ],
+        "polygon_color": [
+          0.6795564293861389,
+          0.31855452060699463,
+          0.01520833931863308,
+          1.0
+        ]
+      },
+      "inputs": {
+        "Vertices": {
+          "bl_idname": "SvVerticesSocket",
+          "name": "Vertices",
+          "properties": {
+            "custom_draw": "draw_property_socket"
+          }
+        },
+        "Edges": {
+          "bl_idname": "SvStringsSocket",
+          "name": "Edges",
+          "properties": {
+            "custom_draw": "draw_property_socket"
+          }
+        },
+        "Polygons": {
+          "bl_idname": "SvStringsSocket",
+          "name": "Polygons"
+        },
+        "Matrix": {
+          "bl_idname": "SvMatrixSocket",
+          "name": "Matrix"
+        },
+        "Vector Color": {
+          "bl_idname": "SvColorSocket",
+          "name": "Vector Color",
+          "properties": {
+            "custom_draw": "draw_color_socket",
+            "prop_name": "vector_color"
+          }
+        },
+        "Edge Color": {
+          "bl_idname": "SvColorSocket",
+          "name": "Edge Color",
+          "properties": {
+            "custom_draw": "draw_color_socket",
+            "prop_name": "edge_color"
+          }
+        },
+        "Polygon Color": {
+          "bl_idname": "SvColorSocket",
+          "name": "Polygon Color",
+          "properties": {
+            "custom_draw": "draw_color_socket",
+            "prop_name": "polygon_color"
+          }
+        },
+        "attrs": {
+          "bl_idname": "SvStringsSocket",
+          "name": "attrs",
+          "attributes": {
+            "hide": true
+          },
+          "properties": {
+            "quick_link_to_node": "SvVDAttrsNodeMk2"
+          }
+        }
+      },
+      "bl_idname": "SvViewerDrawMk4"
+    }
+  }
+}

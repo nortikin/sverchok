@@ -1,0 +1,82 @@
+{
+  "export_version": "1.0",
+  "node": {
+    "Viewer Draw Surface": {
+      "attributes": {
+        "location": [
+          1057.9769287109375,
+          -81.06533813476562
+        ],
+        "color": [
+          1.0,
+          0.5889999866485596,
+          0.21400000154972076
+        ],
+        "use_custom_color": true
+      },
+      "properties": {
+        "control_net_color": [
+          0.13362351059913635,
+          0.21884611248970032,
+          0.18338029086589813,
+          1.0
+        ],
+        "control_points_color": [
+          0.031106580048799515,
+          0.04838539659976959,
+          0.041254669427871704,
+          1.0
+        ],
+        "control_points_size": 4,
+        "surface_color": [
+          0.22696420550346375,
+          0.3762625753879547,
+          0.31398889422416687,
+          1.0
+        ],
+        "resolution_u": 100,
+        "resolution_v": 100,
+        "draw_node_lines": true,
+        "node_lines_color": [
+          0.23807765543460846,
+          0.3953953683376312,
+          0.3298093378543854,
+          1.0
+        ],
+        "edges_color": [
+          0.15698494017124176,
+          0.25816455483436584,
+          0.21600934863090515,
+          1.0
+        ],
+        "verts_color": [
+          0.2678789794445038,
+          0.44552868604660034,
+          0.3714141547679901,
+          1.0
+        ]
+      },
+      "inputs": {
+        "Surface": {
+          "bl_idname": "SvSurfaceSocket",
+          "name": "Surface"
+        },
+        "ResolutionU": {
+          "bl_idname": "SvStringsSocket",
+          "name": "ResolutionU",
+          "properties": {
+            "prop_name": "resolution_u"
+          }
+        },
+        "ResolutionV": {
+          "bl_idname": "SvStringsSocket",
+          "name": "ResolutionV",
+          "properties": {
+            "prop_name": "resolution_v"
+          }
+        }
+      },
+      "bl_idname": "SvSurfaceViewerDrawNode"
+    }
+  }
+}

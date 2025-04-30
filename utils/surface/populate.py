@@ -10,8 +10,8 @@ import random
 
 from mathutils.kdtree import KDTree
 
+from sverchok.core.sv_custom_exceptions import ArgumentError
 from sverchok.utils.sv_logging import sv_logger
-
 
 def random_point(min_x, max_x, min_y, max_y):
     x = random.uniform(min_x, max_x)
@@ -79,7 +79,7 @@ def populate_surface(surface, field, count, threshold,
     * Coordinates of points in 3D space.
     """
     if min_r != 0 and min_r_field is not None:
-        raise Exception("min_r and min_r_field can not be specified simultaneously")
+        raise ArgumentError("min_r and min_r_field can not be specified simultaneously")
 
     u_min, u_max = surface.get_u_min(), surface.get_u_max()
     v_min, v_max = surface.get_v_min(), surface.get_v_max()

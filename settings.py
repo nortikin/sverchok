@@ -5,6 +5,7 @@ from os.path import basename, join
 import subprocess
 from glob import glob
 import shutil
+import io
 
 import bpy
 from bpy.types import AddonPreferences
@@ -32,6 +33,11 @@ set_frame_change = None
 draw_extra_addons = None
 apply_theme, rebuild_color_cache, color_callback = [None] * 3
 from sverchok.ui.color_def import color_callback
+
+def on_select_theme(self, context):
+    if color_callback is None:
+        return
+    color_callback(self, context)
 
 def get_params(prop_names_and_fallbacks, direct=False):
     """
@@ -109,10 +115,16 @@ class SvExPipInstall(bpy.types.Operator):
 
     def execute(self, context):
         # https://github.com/robertguetzkow/blender-python-examples/tree/master/add_ons/install_dependencies
+        sv_logger = logging.getLogger('sverchok')
+
         environ_copy = dict(os.environ)
         environ_copy["PYTHONNOUSERSITE"] = "1"  # is set to disallow pip from checking the user site-packages
         cmd = [PYPATH, '-m', 'pip', 'install', '--upgrade'] + self.package.split(" ")
-        ok = subprocess.call(cmd, env=environ_copy) == 0
+        p = subprocess.Popen(cmd, env=environ_copy, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        for line in io.TextIOWrapper(p.stdout, encoding="utf-8"):
+            sv_logger.info(line)
+        #p.communicate()
+        ok = p.wait() == 0
         if ok:
             first_install = self.package in sv_dependencies and sv_dependencies[self.package] is None
             if first_install:
@@ -175,7 +187,7 @@ class SvSetFreeCadPath(bpy.types.Operator):
     bl_idname = "node.sv_set_freecad_path"
     bl_label = "Set FreeCAD path"
     bl_options = {'REGISTER', 'INTERNAL'}
-    FreeCAD_folder: bpy.props.StringProperty(name="FreeCAD python 3.7 folder")
+    FreeCAD_folder: bpy.props.StringProperty(name="FreeCAD Python directory")
     def execute(self, context):
         import sys
         import os
@@ -260,13 +272,15 @@ class SverchokPreferences(AddonPreferences):
     themes = [("default_theme", "Default", "Default"),
               ("nipon_blossom", "Nipon Blossom", "Nipon Blossom"),
               ("grey", "Grey", "Grey"),
-              ("darker", "Darker", "Darker")]
+              ("darker", "Darker", "Darker"),
+              ("gruvbox_light", "Gruvbox Light", "Gruvbox Light"),
+              ("gruvbox_dark", "Gruvbox Dark", "Gruvbox Dark")]
 
     sv_theme: EnumProperty(
         items=themes,
         name="Theme preset",
         description="Select a theme preset",
-        update=color_callback,
+        update=on_select_theme,
         default="default_theme")
 
     auto_apply_theme: BoolProperty(
@@ -413,6 +427,9 @@ class SverchokPreferences(AddonPreferences):
     log_buffer_name: StringProperty(name = "Buffer name", default = "sverchok.log")
     log_file_name: StringProperty(name = "File path", default = join(datafiles, "sverchok.log"))
 
+    log_tracebacks: BoolProperty(name = "Log exception stacks",
+                                 description = "Write Python exception tracebacks to logs",
+                                 default = False)
 
     # updating sverchok
     dload_archive_name: StringProperty(name="archive name", default="master") # default = "master"
@@ -420,7 +437,7 @@ class SverchokPreferences(AddonPreferences):
     available_new_version: bpy.props.BoolProperty(default=False)
 
     FreeCAD_folder: StringProperty(
-            name="FreeCAD python 3.7 folder",
+            name="FreeCAD Python directory",
             description = "Path to FreeCAD Python API library files (FreeCAD.so on Linux and MacOS, FreeCAD.dll on Windows). On Linux the usual location is /usr/lib/freecad/lib, on Windows it can be something like E:\programs\conda-0.18.3\\bin"
         )
 
@@ -502,6 +519,8 @@ class SverchokPreferences(AddonPreferences):
         log_box = col2.box()
         log_box.label(text="Logging:")
         log_box.prop(self, "log_level")
+        if self.log_level != 'DEBUG':
+            log_box.prop(self, "log_tracebacks")
 
         buff_row = log_box.row()
         buff_row.prop(self, "log_to_buffer")
@@ -583,15 +602,19 @@ class SverchokPreferences(AddonPreferences):
             dependency = sv_dependencies['freecad']
             col = box.column(align=True)
             col.label(text=dependency.message, icon=get_icon(dependency.module))
+            message_on_layout(col, f"Note: Blender currently uses Python version {sys.version}. FreeCAD libraries should be compiled against the same Python version, otherwise compatibility issues are possible.")
             row = col.row(align=True)
             row.operator('wm.url_open', text="Visit package website").url = dependency.url
             if dependency.module is None:
                 tx = "Set path"
             else:
                 tx = "Reset path"
-            row.prop(self, 'FreeCAD_folder')
-            row.operator('node.sv_select_freecad_path', text="Browse...").directory = self.FreeCAD_folder
-            row.operator('node.sv_set_freecad_path', text=tx).FreeCAD_folder = self.FreeCAD_folder
+            split = row.split(factor=0.7)
+            dir_col = split.row()
+            dir_col.prop(self, 'FreeCAD_folder')
+            buttons_col = split.row()
+            buttons_col.operator('node.sv_select_freecad_path', text="Browse...").directory = self.FreeCAD_folder
+            buttons_col.operator('node.sv_set_freecad_path', text=tx).FreeCAD_folder = self.FreeCAD_folder
             return row
 
         message_on_layout(layout, """Sverchok can use several external libraries, that provide \

@@ -47,11 +47,11 @@ class SvExportSolidOperator(bpy.types.Operator, SvGenericNodeLocator):
             base_name = "sv_solid"
         for i, shape in enumerate(objects):
             #shape = map_recursive(to_solid, object, data_types=(PartModule.Shape, SvCurve, SvSurface))
-            sv_logger.debug("Exporting", shape)
+            sv_logger.debug("Exporting: %s", shape)
             if isinstance(shape, (list, tuple)):
                 shape = flatten_data(shape, data_types=(PartModule.Shape,))
             if isinstance(shape, (list,tuple)):
-                sv_logger.debug("Make compound:", shape)
+                sv_logger.debug("Make compound: %s", shape)
                 shape = PartModule.Compound(shape)
             file_path = folder_path + base_name + "_"  + "%05d" % i
 

@@ -104,17 +104,24 @@ class SvGeoNodesViewerNode(
                 self.inputs.remove(sv_s)
             self.process_node(context)
             return
+        
+        if bpy.app.version>=(4,0,0):
+            #gn_tree_inputs = [s.from_socket for s in self.gn_tree.links if s.from_node.type=='GROUP_INPUT']
+            gn_tree_inputs = [s for s in self.gn_tree.interface.items_tree if s.in_out=="INPUT"][1:]
+            # remove sockets which are not presented in the modifier
+            gn_socks = list({s.identifier: s for s in gn_tree_inputs}.keys())
+        else:
+            gn_tree_inputs = self.gn_tree.inputs[1:]
+            # remove sockets which are not presented in the modifier
+            gn_socks = {s.identifier for s in gn_tree_inputs}
 
-        # remove sockets which are not presented in the modifier
-        gn_socks = {s.identifier for s in self.gn_tree.inputs[1:]}
         for sv_s in self.inputs[3:]:
             if sv_s.identifier not in gn_socks:
                 self.inputs.remove(sv_s)
 
         # add new sockets
-        sv_socks = {s.identifier: i
-                    for i, s in enumerate(self.inputs[3:], start=3)}
-        for gn_s in self.gn_tree.inputs[1:]:
+        sv_socks = {s.identifier: i for i, s in enumerate(self.inputs[3:], start=3)}
+        for gn_s in gn_tree_inputs:
             if gn_s.identifier in sv_socks:
                 continue
             bl_s = BlSocket(gn_s)
@@ -122,7 +129,7 @@ class SvGeoNodesViewerNode(
             sv_socks[sv_s.identifier] = len(self.inputs)-1
 
         # fix existing sockets
-        for gn_s in self.gn_tree.inputs[1:]:
+        for gn_s in gn_tree_inputs:
             sv_s = self.inputs[sv_socks[gn_s.identifier]]
             bl_s = BlSocket(gn_s)
             if sv_s.bl_idname != (s_type := bl_s.sverchok_type):
@@ -132,7 +139,7 @@ class SvGeoNodesViewerNode(
                 sv_s.show_domain = True
 
         # fix socket positions
-        for new_pos, gn_s in enumerate(self.gn_tree.inputs[1:], start=3):
+        for new_pos, gn_s in enumerate(gn_tree_inputs, start=3):
             if current_pos := sv_socks.get(gn_s.identifier, 0):
                 self.inputs.move(current_pos, new_pos)
                 sv_socks = {s.identifier: i for i, s
@@ -229,10 +236,13 @@ class SvGeoNodesViewerNode(
 
         props = [s.sv_get(deepcopy=False, default=[]) for s in self.inputs[3:]]
         props = [fixed_iter(sock_data, obj_num, None) for sock_data in props]
-        props = zip(*props) if props else fixed_iter([], obj_num, [])
+        zip_props = zip(*props) if props else fixed_iter([], obj_num, [])
 
         gn_tree = BlTree(self.gn_tree) if self.gn_tree else None
-        gn_inputs = gn_tree and {s.identifier: s for s in self.gn_tree.inputs[1:]}
+        if bpy.app.version>=(4,0,0):
+            gn_inputs = gn_tree and {s.identifier: s for s in [s.from_socket for s in self.gn_tree.links if s.from_node.type=='GROUP_INPUT']}
+        else:
+            gn_inputs = gn_tree and {s.identifier: s for s in self.gn_tree.inputs[1:]}
 
         if self.gn_tree is None:
             for obj in objs:
@@ -240,7 +250,7 @@ class SvGeoNodesViewerNode(
                 if mod is not None:
                     mod.remove()
         else:
-            for obj, prop in zip(objs, props):
+            for obj, prop in zip(objs, zip_props, strict=False):
                 mod = self.get_modifier(obj)
                 if mod.node_group != self.gn_tree:
                     mod.node_group = self.gn_tree
@@ -251,6 +261,7 @@ class SvGeoNodesViewerNode(
                     domain = sv_s.domain if hasattr(sv_s, 'domain') else 'POINT'
                     mod.set_tree_data(gn_s.identifier, s_data, domain)
                 obj.data.update()
+        pass
 
     def get_modifier(self, obj, create=True) -> Optional[BlModifier]:
         """Whenever geometry tree updates its interface, the modifier clears

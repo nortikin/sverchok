@@ -113,6 +113,7 @@ from mathutils.geometry import intersect_line_line_2d
 from mathutils.bvhtree import BVHTree
 from mathutils.kdtree import KDTree
 
+from sverchok.core.sv_custom_exceptions import AlgorithmError, SvUnsupportedOptionException, SvInvalidInputException, ArgumentError
 from sverchok.utils.sv_logging import sv_logger
 from sverchok.utils.geom import center, LineEquation2D, CircleEquation2D
 from sverchok.utils.math import weighted_center
@@ -442,7 +443,7 @@ class Edge(object):
         # get the slope of the line
         newedge.c = float(s1.x * dx + s1.y * dy + (dx*dx + dy*dy)*0.5)  
         if dx == 0 and dy == 0:
-            raise Exception(f"Can't build an edge: two points are coinciding: {s1.sitenum}, {s2.sitenum}")
+            raise SvInvalidInputException(f"Can't build an edge: two points are coinciding: {s1.sitenum}, {s2.sitenum}")
         if adx > ady :
             # set formula of line, with x fixed to 1
             newedge.a = 1.0
@@ -878,13 +879,13 @@ class Bounds(object):
         elif mode == 'CIRCLE':
             return CircleBounds()
         else:
-            raise Exception("Unknown bounds type")
+            raise SvUnsupportedOptionException("Unknown bounds type")
 
     def __repr__(self):
         return f"Bounds[C: {self.center}, R: {self.r_max}, X: {self.x_min} - {self.x_max}, Y: {self.y_min} - {self.y_max}]"
 
     def restrict(self, point):
-        raise Exception("not implemented")
+        raise NotImplementedError("not implemented")
 
     def init_from_sites(self, sites):
         self.x_max = -BIG_FLOAT
@@ -920,9 +921,9 @@ class Mesh2D(object):
 
     def new_vert(self, vert):
         if vert is None:
-            raise Exception("new_vert(None)")
+            raise ArgumentError("new_vert(None)")
         if vert[0] is None or vert[1] is None:
-            raise Exception(f"new_vert({vert})")
+            raise ArgumentError(f"new_vert({vert})")
         self.verts.append(vert)
         idx = self._next_vert
         self._next_vert += 1
@@ -1268,7 +1269,7 @@ def voronoi_bounded(sites, bound_mode='BOX', clip=True, draw_bounds=True, draw_h
             r = []
             for i in range(len(sites)):
                 if i not in face_by_site:
-                    raise Exception(f"Can't find a face for site #{i}")
+                    raise AlgorithmError(f"Can't find a face for site #{i}")
                 face_idx = face_by_site[i]
                 face = new_faces[face_idx]
                 r.append(face)

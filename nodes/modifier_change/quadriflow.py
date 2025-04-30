@@ -22,6 +22,7 @@
 import bpy
 import bmesh
 from bpy.props import IntProperty, BoolProperty, EnumProperty
+from sverchok.core.sv_custom_exceptions import DependencyError
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat, flatten_data
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
@@ -160,7 +161,7 @@ class SvQuadriFlowNode(bpy.types.Node,SverchCustomTreeNode):
 
     def process(self):
         if not enable_module:
-            raise Exception("The dependent library is not installed (pyQuadriFlow).")
+            raise DependencyError("The dependent library is not installed (pyQuadriFlow).")
         
         outputs = self.outputs
         if not any( [o.is_linked for o in outputs]):

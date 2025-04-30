@@ -315,11 +315,14 @@ class SvNurbsBasisFunctions(object):
 
 
 class CantInsertKnotException(Exception):
+    __description__ = "Cannot insert knot"
     pass
 
 class CantRemoveKnotException(Exception):
+    __description__ = "Cannot remove knot"
     pass
 
 class CantReduceDegreeException(Exception):
+    __description__ = "Cannot reduce degree"
     pass
 

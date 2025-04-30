@@ -1,5 +1,6 @@
 import numpy as np
 
+from sverchok.core.sv_custom_exceptions import ArgumentError, SvInvalidInputException
 from sverchok.utils.curve.bezier import SvBezierCurve
 from sverchok.utils.curve.nurbs_algorithms import unify_curves
 from sverchok.utils.curve.algorithms import unify_curves_degree, SvCurveOnSurfaceCurvaturesCalculator
@@ -66,15 +67,15 @@ def gordon_surface(u_curves, v_curves, intersections, metric='POINTS', u_knots=N
     """
 
     if not u_curves or not v_curves:
-        raise Exception("U or V curves are not provided")
+        raise ArgumentError("U or V curves are not provided")
 
     if (u_knots is None) != (v_knots is None):
-        raise Exception("u_knots and v_knots must be either both provided or both omitted")
+        raise ArgumentError("u_knots and v_knots must be either both provided or both omitted")
 
     if any(c.is_rational() for c in u_curves):
-        raise Exception("Some of U-curves are rational. Rational curves are not supported for Gordon surface.")
+        raise SvInvalidInputException("Some of U-curves are rational. Rational curves are not supported for Gordon surface.")
     if any(c.is_rational() for c in v_curves):
-        raise Exception("Some of V-curves are rational. Rational curves are not supported for Gordon surface.")
+        raise SvInvalidInputException("Some of V-curves are rational. Rational curves are not supported for Gordon surface.")
 
     if logger is None:
         logger = get_logger()

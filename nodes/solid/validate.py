@@ -8,6 +8,7 @@
 import bpy
 from bpy.props import BoolProperty, FloatProperty, EnumProperty
 
+from sverchok.core.sv_custom_exceptions import SvInvalidInputException
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, map_unzip_recursirve
 from sverchok.dependencies import FreeCAD
@@ -51,7 +52,7 @@ class SvSolidValidateNode(SverchCustomTreeNode, bpy.types.Node):
             fixed = solid.copy()
             ok = fixed.fix(self.precision, self.precision, self.precision)
             if not ok:
-                raise Exception("The provided Solid is not valid and can not be fixed automatically")
+                raise SvInvalidInputException("The provided Solid is not valid and can not be fixed automatically")
         else:
             fixed = None
         return fixed, valid
