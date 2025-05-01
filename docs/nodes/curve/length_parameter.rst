@@ -100,6 +100,9 @@ This node has the following parameters:
 
   The default option is **Longer Segments**.
 
+* **Flat output**. If checked, the node will output single joined list of
+  vertices and T values for all input curves. Otherwise, a separate list of
+  vertices and T values will be output for each curve. Checked by default.
 * **Interpolation mode**. This defines the interpolation method used for
   calculating of points inside the segments in which the curve is split
   according to **Resolution** parameters. The available values are **Cubic**
