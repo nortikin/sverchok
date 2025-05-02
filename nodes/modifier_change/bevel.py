@@ -23,7 +23,7 @@ import bmesh.ops
 from sverchok.utils.nodes_mixins.sockets_config import ModifierNode
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, match_long_repeat, repeat_last_for_length, ensure_nesting_level
+from sverchok.data_structure import updateNode, match_long_repeat, repeat_last_for_length, ensure_nesting_level, get_data_nesting_level
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 
 
@@ -77,7 +77,7 @@ class SvBevelNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
     select_elements_modes = [
             ('BOOLEAN'         , "Bool"   , "Mask elements by boolean" , 'IMAGE_ALPHA'    , 0),
             ('INDEXES'         , "Indexes", "Mask elements by indexes" , 'LIGHTPROBE_GRID', 1),
-            ('GROUP_OF_INDEXES', "Groups" , "group elements by indexes", 'LINENUMBERS_ON' , 2), # Не помню, что хотел с этим сделать! Надо вспомнить!
+            #('GROUP_OF_INDEXES', "Groups" , "group elements by indexes", 'LINENUMBERS_ON' , 2), # Не помню, что хотел с этим сделать! Надо вспомнить!
         ]
     
     select_elements_mode : EnumProperty(
@@ -89,8 +89,8 @@ class SvBevelNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
     ) # type: ignore
 
     offset_amounts_modes = [
-        ('BEVEL_ALL_VERTICES', "All", "All vertices has one bevel", 'DECORATE'  , 0),
-        ('BEVEL_PER_VERTICES', "One", "Bevel per vertices"        , 'THREE_DOTS', 1),
+        ('BEVEL_ALL_VERTICES', "All", "All vertices of every object has one bevel", 'DECORATE'  , 0),
+        ('BEVEL_PER_VERTICES', "One", "Bevel per vertices in object"        , 'THREE_DOTS', 1),
     ]
 
     offset_amounts_mode : EnumProperty(
@@ -104,7 +104,7 @@ class SvBevelNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
 
     offset_amounts: FloatProperty(
         name='Amount',
-        description='Amount to offset beveled elemets (vertices or edges)',
+        description='Amount to offset beveled elements (vertices or edges)',
         default=0.0,
         min=0.0,
         update=updateNode
@@ -335,8 +335,18 @@ class SvBevelNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
         face_data_out = []
         result_bevel_faces = []
 
-        _sub_elements_selected   = self.inputs['sub_elements_selected'].sv_get(default=[[True]], deepcopy=False)
-        sub_elements_selected3   = ensure_nesting_level(_sub_elements_selected, 3)
+        _sub_elements_selected   = self.inputs['sub_elements_selected'].sv_get(default=[[]], deepcopy=False)
+        amounts_level = get_data_nesting_level(_sub_elements_selected)
+        if amounts_level>4:
+            raise Exception(f'Input level of Amounts has to be 3. Amount list has {amounts_level}')
+        else:
+            if amounts_level==4:
+                if len(_sub_elements_selected)==1:
+                    sub_elements_selected3 = _sub_elements_selected[0]
+                else:
+                    raise Exception(f'Input level of Amounts has to be 3')
+            else:
+                sub_elements_selected3   = ensure_nesting_level(_sub_elements_selected, 3)
         _offset_amounts   = self.inputs['offset_amounts'].sv_get(default=[[self.offset_amounts]], deepcopy=False)
         offset_amounts3   = ensure_nesting_level(_offset_amounts, 3)
         _bevel_segments   = self.inputs['bevel_segments'].sv_get(default=[[self.bevel_segments]], deepcopy=False)
@@ -353,15 +363,27 @@ class SvBevelNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
             if bevel_face_data and isinstance(bevel_face_data, (list, tuple)):
                 bevel_face_data = bevel_face_data[0]
 
-            sub_elements_selected3_I = sub_elements_selected3[I]
+            sub_elements_selected3_I = sub_elements_selected3[I] if I<=len(sub_elements_selected3)-1 else sub_elements_selected3[-1]
+            if self.offset_amounts_mode=='BEVEL_ALL_VERTICES':
+                join_sub_elements_selected3_I = []
+                for elem in sub_elements_selected3_I:
+                    join_sub_elements_selected3_I.extend(elem)
+                sub_elements_selected3_I = [join_sub_elements_selected3_I]
+                pass
             sub_elements_selected3I1 = []
             # Убрать дибликаты в каждом списке [[1,1,2,3],[4,4,5,5,5,6,7]] => [[1,2,3],[4,5,6,7]]
             for sub_elements in sub_elements_selected3_I:
-                if self.select_elements_mode=='BOOLEAN':
-                    # Перевести boolean селекторы в индексы:
-                    sub_elements = [i for i, sub_element in enumerate(sub_elements) if sub_element]
+                if len(sub_elements)==0:
+                    # Если список входных элементов пустой, то выбрать все элементы сразу
+                    if self.vertexOnly==True:
+                        sub_elements = list( range(len(vertices)) )
+                    else:
+                        sub_elements = list( range(len(edges)) )
+                elif self.select_elements_mode=='BOOLEAN':
+                    # Перевести boolean селекторы в индексы (если входной список не пустой):
+                    sub_elements = [IJ for IJ, sub_element in enumerate(sub_elements) if sub_element]
                 sub_elements_selected3I1.append( list(set(sub_elements)))
-            source_elemets_indexes = [I for I in range(len(vertices if self.vertexOnly else edges))]
+            source_elemets_indexes = [IJ for IJ in range(len(vertices if self.vertexOnly else edges))]
             # убрать дубликаты везде
             sub_elements_selected3I2 = []
             for sub_elements1 in sub_elements_selected3I1:
@@ -469,20 +491,36 @@ class SvBevelNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
             #     bm_edge[source_edges_indexes_layer] = source_edges_list_set.index(bm_edge_indexes_set)
             # bm.edges.ensure_lookup_table()
 
-            if I<=len(offset_amounts3)-1:
-                offset_amounts3_I = offset_amounts3[I]
-            else:
-                offset_amounts3_I = offset_amounts3[-1]
+            if self.offset_amounts_mode=='BEVEL_ALL_VERTICES':
+                if I<=len(offset_amounts3[0][0])-1:
+                    offset_amounts3_I = [[offset_amounts3[0][0][I]]]
+                else:
+                    offset_amounts3_I = [[offset_amounts3[0][0][-1]]]
 
-            if I<=len(bevel_segments3)-1:
-                bevel_segments3_I = bevel_segments3[I]
-            else:
-                bevel_segments3_I = bevel_segments3[-1]
+                if I<=len(bevel_segments3[0][0])-1:
+                    bevel_segments3_I = [[bevel_segments3[0][0][I]]]
+                else:
+                    bevel_segments3_I = [[bevel_segments3[0][0][-1]]]
 
-            if I<=len(bevel_profiles3)-1:
-                bevel_profiles3_I = bevel_profiles3[I]
+                if I<=len(bevel_profiles3[0][0])-1:
+                    bevel_profiles3_I = [[bevel_profiles3[0][0][I]]]
+                else:
+                    bevel_profiles3_I = [[bevel_profiles3[0][0][-1]]]
             else:
-                bevel_profiles3_I = bevel_profiles3[-1]
+                if I<=len(offset_amounts3[0])-1:
+                    offset_amounts3_I = [offset_amounts3[0][I]]
+                else:
+                    offset_amounts3_I = [offset_amounts3[0][-1]]
+
+                if I<=len(bevel_segments3[0])-1:
+                    bevel_segments3_I = [bevel_segments3[0][I]]
+                else:
+                    bevel_segments3_I = [bevel_segments3[0][-1]]
+
+                if I<=len(bevel_profiles3[0])-1:
+                    bevel_profiles3_I = [bevel_profiles3[0][I]]
+                else:
+                    bevel_profiles3_I = [bevel_profiles3[0][-1]]
 
 
             for IJ, sub_elements_selected in enumerate( sub_elements_selected3_I ):
