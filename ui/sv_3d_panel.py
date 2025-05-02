@@ -6,7 +6,29 @@
 # License-Filename: LICENSE
 
 
+
 import bpy
+from bpy.utils import previews
+import os
+import addon_utils #noqa
+
+
+def get_addon_root_dir():
+    path = ""
+    for mod in addon_utils.modules():
+        if mod.bl_info.get("name") == "Sverchok":
+            path = mod.__file__.replace("__init__.py", "")
+            break
+    return path
+
+plugin_icons = previews.new()
+
+# \sverchok-master\ui\logo\png
+plugin_icons.load(
+    name='sverchock_icon_b.png',
+    path=os.path.join(get_addon_root_dir(), "ui","logo","png","sverchock_icon_b.png"),
+    path_type='IMAGE'
+)
 
 
 class SV_PT_3DPanel(bpy.types.Panel):
@@ -18,10 +40,13 @@ class SV_PT_3DPanel(bpy.types.Panel):
     bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
-        col = self.layout.column()
+        row = self.layout.row()
+        row.template_icon(icon_value=plugin_icons['sverchock_icon_b.png'].icon_id, scale=2.2)
+        col = row.column()
         col.operator('node.sverchok_update_all', text='Update all trees')
         col.operator('node.sv_scan_properties', text='Scan for props')
 
+        col = self.layout.column()
         col_edit = col.column()
         col_edit.use_property_split = True
         col_edit.prop(context.scene.sv_ui_node_props, 'edit')

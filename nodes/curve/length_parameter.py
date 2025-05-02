@@ -20,6 +20,11 @@ class SvCurveLengthParameterMk2Node(DraftMode, SverchCustomTreeNode, bpy.types.N
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_CURVE_LENGTH_P'
 
+    flat_output: BoolProperty(
+        name = "Flat output",
+        default = True,
+        update = updateNode)
+
     resolution : IntProperty(
         name = 'Resolution',
         min = 1,
@@ -122,6 +127,7 @@ class SvCurveLengthParameterMk2Node(DraftMode, SverchCustomTreeNode, bpy.types.N
         if self.eval_mode == 'LENGTH':
             layout.label(text='Rounding:')
             layout.prop(self, 'rounding_mode', text='')
+        layout.prop(self, 'flat_output')
         layout.prop(self, 'specify_accuracy')
         if self.specify_accuracy:
             if self.id_data.sv_draft:
@@ -183,6 +189,8 @@ class SvCurveLengthParameterMk2Node(DraftMode, SverchCustomTreeNode, bpy.types.N
         ts_out = []
         verts_out = []
         for params in zip_long_repeat(curves_s, resolution_s, length_s, samples_s, segment_length_s):
+            new_ts = []
+            new_verts = []
             for curve, resolution, input_lengths, samples, segment_length in zip_long_repeat(*params):
 
                 mode = self.mode
@@ -210,10 +218,16 @@ class SvCurveLengthParameterMk2Node(DraftMode, SverchCustomTreeNode, bpy.types.N
 
                 ts = solver.solve(input_lengths)
 
-                ts_out.append(ts.tolist())
+                new_ts.append(ts.tolist())
                 if need_eval:
                     verts = curve.evaluate_array(ts).tolist()
-                    verts_out.append(verts)
+                    new_verts.append(verts)
+            if self.flat_output:
+                ts_out.extend(new_ts)
+                verts_out.extend(new_verts)
+            else:
+                ts_out.append(new_ts)
+                verts_out.append(new_verts)
 
         self.outputs['T'].sv_set(ts_out)
         self.outputs['Vertices'].sv_set(verts_out)
