@@ -281,7 +281,7 @@ class SvMeshData(bpy.types.PropertyGroup):
         Just update position of mesh vertices, order and number of given vertices should be the same as mesh
         numpy array with float32 type will be 10 times faster than any other input data
         """
-        verts = np.array(verts, dtype=np.float32)  # todo will be this fast if it is already array float 32?
+        verts = np.array(verts, dtype=np.float32)
         self.mesh.vertices.foreach_set('co', np.ravel(verts))
 
     def copy(self) -> bpy.types.Mesh:
