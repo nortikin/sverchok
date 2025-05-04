@@ -37,6 +37,7 @@ This node has the following inputs:
       [[9,7], [6,3,8],], - first object. [9,7] - indexes of first layer, [6,10] - indexes of second layer
 
       [[1],[7,3],] - second object. [1] - indexes of first layer, [7,3] - indexes of second layer
+      
     ]
 
     .. image:: https://github.com/user-attachments/assets/eab81c21-29ef-4766-af34-cc8102c4bccf
