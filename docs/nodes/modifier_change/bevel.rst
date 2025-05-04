@@ -1,25 +1,23 @@
 Bevel
 =====
 
-.. image:: https://user-images.githubusercontent.com/14288520/197881511-44a2a2d4-b5a1-496c-bdf4-9242d0fe7e89.png
-  :target: https://user-images.githubusercontent.com/14288520/197881511-44a2a2d4-b5a1-496c-bdf4-9242d0fe7e89.png
+.. image:: https://github.com/user-attachments/assets/90a21d18-8f0d-4f7a-9f4e-e0e1ec1db1e2
+  :target: https://github.com/user-attachments/assets/90a21d18-8f0d-4f7a-9f4e-e0e1ec1db1e2
 
 Functionality
 -------------
 
-This node applies Bevel operator to the input mesh. You can specify edges to be beveled.
+This node applies Bevel operator to the input mesh with multilevel. You can specify vertices or edges to be beveled.
 
-.. image:: https://user-images.githubusercontent.com/14288520/197888952-7b24fc4f-37a0-474d-bc4b-692c544a2447.png
-  :target: https://user-images.githubusercontent.com/14288520/197888952-7b24fc4f-37a0-474d-bc4b-692c544a2447.png
+.. image:: https://github.com/user-attachments/assets/8b8b053f-bb0d-44d0-a498-051b8cab96ed
+  :target: https://github.com/user-attachments/assets/8b8b053f-bb0d-44d0-a498-051b8cab96ed
 
 Inputs
 ------
 
 This node has the following inputs:
 
-- **Vertices**
-- **Edges**
-- **Polygons**
+- **Vertices**, **Edges**, **Polygons** - Source mesh to bevel.
 - **FaceData**. List containing an arbitrary data item for each face of input
   mesh. For example, this may be used to provide material indexes of input
   mesh faces. Optional input.
@@ -33,6 +31,20 @@ This node has the following inputs:
   a list of True/False (or 0/1) values indicating the selected vertices
   (`[[0,1,0,..]]`).  Otherwise it will expect a list of Edges
   (`[[2,6],[3,4]...]`).
+- **Masks elements mode** (boolean, indexes). - What a method you can use to select elements [[0,0,1,1,0],[1,0,0,0,0],...] or [[1,2], [6,3,8], ...]. You can set indexes as sublists for every object. Ex.:
+
+    [
+      [[9,7], [6,3,8],], - first object. [9,7] - indexes of first layer, [6,10] - indexes of second layer
+
+      [[1],[7,3],] - second object. [1] - indexes of first layer, [7,3] - indexes of second layer
+    ]
+
+    .. image:: https://github.com/user-attachments/assets/eab81c21-29ef-4766-af34-cc8102c4bccf
+      :target: https://github.com/user-attachments/assets/eab81c21-29ef-4766-af34-cc8102c4bccf
+
+    If edges or vertices selected are not connected then all vertices or edges will be beveled.
+
+- **Offset mode** One bevel for all vertices **per object** or use a number **per every layer** of **Masks elements mode**.
 - **Amount**. Amount to offset beveled edge.
 - **Segments**. Number of segments in bevel.
 - **Profile**. Profile shape.
@@ -193,30 +205,65 @@ See also:
 
 ---------
 
-You can work with multiple objects:
+You can work with multiple objects in per object mode (one bevel per whole object):
 
-.. image:: https://user-images.githubusercontent.com/14288520/198144631-e56529ea-e679-4b45-b0be-35dfad4358f4.png
-  :target: https://user-images.githubusercontent.com/14288520/198144631-e56529ea-e679-4b45-b0be-35dfad4358f4.png
+.. image:: https://github.com/user-attachments/assets/eec4dfb7-bc24-4a83-922c-364ce269b66c
+  :target: https://github.com/user-attachments/assets/eec4dfb7-bc24-4a83-922c-364ce269b66c
+
+bevel 1 for object 1, bevel 2 for object 2, bevel 3 for object 3, bevel 3 for object 4 (replay last value of bevel)
 
 * Generator-> :doc:`Box </nodes/generator/box_mk2>`
-* Number-> :doc:`Number Range </nodes/number/number_range>`
-* Vector-> :doc:`Vector In </nodes/vector/vector_in>`
+* Generator-> :doc:`Segment </nodes/generator/segment>`
+* Matrix-> :doc:`Matrix Apply to Mesh </nodes/matrix/apply_and_join>`
+* Number-> :doc:`List Input </nodes/number/list_input>`
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+
+---------
+
+Generate multiple bevel in one object:
+
+.. raw:: html
+
+    <video width="700" controls>
+        <source src="https://github.com/user-attachments/assets/a95dacfe-2150-441b-8496-1f42cb13afa1" type="video/mp4">
+    Your browser does not support the video tag.
+    </video>
+
+.. image:: https://github.com/user-attachments/assets/f38c0835-5514-4304-80a1-9648c203f2d4
+  :target: https://github.com/user-attachments/assets/f38c0835-5514-4304-80a1-9648c203f2d4
+
+* Number-> :doc:`List Input </nodes/number/list_input>`
+* Scene-> :doc:`Get Objects Data </nodes/scene/get_objects_data>`
+* Script-> :doc:`Formula </nodes/script/formula_mk5>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+* Viz-> :doc:`Viewer Index+ </nodes/viz/viewer_idx28>`
+
+Generate multiple bevel in one object v.2:
+
+.. raw:: html
+
+    <video width="700" controls>
+        <source src="https://github.com/user-attachments/assets/cfebf3c2-0e4f-47b9-9f35-7ab11bf4656b" type="video/mp4">
+    Your browser does not support the video tag.
+    </video>
+
+.. image:: https://github.com/user-attachments/assets/5d2873d4-5870-4ff7-818a-fc50184c7172
+  :target: https://github.com/user-attachments/assets/5d2873d4-5870-4ff7-818a-fc50184c7172
+
+* Number-> :doc:`List Input </nodes/number/list_input>`
+* Scene-> :doc:`Get Objects Data </nodes/scene/get_objects_data>`
+* Script-> :doc:`Formula </nodes/script/formula_mk5>`
+* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
+* Viz-> :doc:`Viewer Index+ </nodes/viz/viewer_idx28>`
 
 ---------
 
 Vertex mode and multiple radius:
 
-.. image:: https://user-images.githubusercontent.com/14288520/198154647-36db9675-c302-498c-ba80-f9405682de69.png
-  :target: https://user-images.githubusercontent.com/14288520/198154647-36db9675-c302-498c-ba80-f9405682de69.png
+.. image:: https://github.com/user-attachments/assets/b60b94e6-2f84-4484-80ed-de99243f49b2
+  :target: https://github.com/user-attachments/assets/b60b94e6-2f84-4484-80ed-de99243f49b2
 
-* Generator-> :doc:`Line </nodes/generator/line_mk4>`
-* Generator->Generators Extended-> :doc:`Triangle </nodes/generators_extended/triangle>`
-* Number-> :doc:`List Input </nodes/number/list_input>`
-* Number-> :doc:`Number Range </nodes/number/number_range>`
-* List->List Main-> :doc:`List Length </nodes/list_main/length>`
-* Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
-* Viz-> :doc:`Viewer Index+ </nodes/viz/viewer_idx28>`
+---------
 
 An example of "FaceData" sockets usage:
 

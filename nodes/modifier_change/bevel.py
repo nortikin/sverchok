@@ -152,14 +152,14 @@ class SvBevelNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
 
     clamp_overlap : BoolProperty(
         name = "Clamp Overlap",
-        description = "do not allow beveled edges/vertices to overlap each other",
+        description = "Do not allow beveled edges/vertices to overlap each other",
         default = False,
         update = updateNode
     ) # type: ignore
 
     loop_slide : BoolProperty(
         name = "Loop Slide",
-        description = "prefer to slide along edges to having even widths",
+        description = "Prefer to slide along edges to having even widths",
         default = True,
         update = updateNode
         ) # type: ignore
