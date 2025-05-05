@@ -334,8 +334,8 @@ class SvBevelNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
         for I, (vertices, edges, faces, face_data, bevel_face_data, spread) in enumerate( zip(*meshes) ):
             if face_data:
                 face_data_matched = repeat_last_for_length(face_data, len(faces))
-            if bevel_face_data and isinstance(bevel_face_data, (list, tuple)):
-                bevel_face_data = bevel_face_data[0]
+            # if bevel_face_data and isinstance(bevel_face_data, (list, tuple)):
+            #     bevel_face_data = bevel_face_data[0]
 
             sub_elements_selected3_I = sub_elements_selected3[I] if I<=len(sub_elements_selected3)-1 else sub_elements_selected3[-1]
             if self.offset_amounts_mode=='BEVEL_ALL_VERTICES':
@@ -410,6 +410,9 @@ class SvBevelNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
 
 
             bm = bmesh_from_pydata(vertices, edges, faces, markup_face_data=True, normal_update=True)
+            index_bevel_layer = bm.faces.layers.int.new('index_bevel_layer')
+            for I, face in enumerate(bm.faces):
+                face[index_bevel_layer] = 0
 
             # List of vertex indices for the current bmesh:
             bmesh_source_verts_indexes = [I for I in range(len(vertices))]
@@ -475,6 +478,7 @@ class SvBevelNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
                     bevel_profiles3_I = [bevel_profiles3[0][-1]]
 
             bevel_faces = []
+            # new_bevel_faces = []
             for IJ, sub_elements_selected in enumerate( sub_elements_selected3_I ):
 
                 # Get the mask of source indices:
@@ -559,7 +563,7 @@ class SvBevelNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
                     # if the "try" failed, we try the new form of bmesh.ops.bevel arguments..
                     affect_geom = 'VERTICES' if self.vertexOnly else 'EDGES'
 
-                    _bevel_faces = bmesh.ops.bevel(bm,
+                    bevel_data = bmesh.ops.bevel(bm,
                         geom=geom,
                         offset=bevel_offset,
                         offset_type=self.offset_mode,
@@ -573,54 +577,60 @@ class SvBevelNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
                         miter_inner = self.miter_inner,
                         miter_outer = self.miter_outer,
                         material=max_material_index
-                    )['faces']
+                    )
+                    _bevel_faces = bevel_data['faces']
                     bevel_faces.extend(_bevel_faces)
                     pass
-
                 except Exception as e:
                     self.exception(e)
-                # bm.verts.index_update()
-                # bm.edges.index_update()
-                # bm.verts.ensure_lookup_table()
-                # bm.edges.ensure_lookup_table()
+
+                bm.faces.ensure_lookup_table()
+                for bf in _bevel_faces:
+                    bm.faces[bf.index][index_bevel_layer] = IJ+1
+
                 pass
 
-            # BevelFaceData do not spread by layers for a while.
-            # TODO: it is possible if bevel_faces will as array if bevel_faces.extend(_bevel_faces) replace for bevel_faces.append(_bevel_faces), then refactor down code with bevel_faces as array.
-            new_bevel_faces = [[v.index for v in face.verts] for face in bevel_faces]
-            if not face_data:
-                verts, edges, faces = pydata_from_bmesh(bm)
-                verts_out.append(verts)
-                edges_out.append(edges)
-                faces_out.append(faces)
-                if bevel_face_data != []:
-                    new_face_data = []
-                    for face in faces:
-                        if set(face) in map(set, new_bevel_faces):
-                            new_face_data.append(bevel_face_data)
+            faces_bevel_layer = [face[index_bevel_layer] for face in bm.faces]
+            verts, edges, faces = pydata_from_bmesh(bm)
+            verts_out.append(verts)
+            edges_out.append(edges)
+            faces_out.append(faces)
+
+            if bevel_face_data:
+                len_bevel_face_data = len(bevel_face_data)
+            len_face_data = 0
+            if face_data:
+                len_face_data = len(face_data)
+            
+            new_bevel_faces=[]
+            face_data1_out = []
+            for IJK, fbl in enumerate(faces_bevel_layer):
+                if fbl==0:
+                    if face_data:
+                        if IJK<=len_face_data-1:
+                            face_data1_out.append(face_data[IJK])
                         else:
-                            new_face_data.append(None)
-                    face_data_out.append(new_face_data)
+                            face_data1_out.append(face_data[-1])
+                    else:
+                        face_data1_out.append(None)
+                    pass
                 else:
-                    face_data_out.append([])
-            else:
-                verts, edges, faces, new_face_data = pydata_from_bmesh(bm, face_data_matched)
-                verts_out.append(verts)
-                edges_out.append(edges)
-                faces_out.append(faces)
-                if bevel_face_data != []:
-                    new_face_data_m = []
-                    for data, face in zip(new_face_data, faces):
-                        if set(face) in map(set, new_bevel_faces):
-                            new_face_data_m.append(bevel_face_data)
+                    face_verts = [vert.index for vert in bm.faces[IJK].verts]
+                    new_bevel_faces.append(face_verts)
+                    if bevel_face_data:
+                        if fbl-1<=len_bevel_face_data-1:
+                            face_data1_out.append(bevel_face_data[fbl-1])
                         else:
-                            new_face_data_m.append(data)
-                    face_data_out.append(new_face_data_m)
-                else:
-                    face_data_out.append(new_face_data)
+                            face_data1_out.append(bevel_face_data[-1])
+                    else:
+                        face_data1_out.append(None)
+                    pass
+                pass
+            pass
 
             bm.free()
             result_bevel_faces.append(new_bevel_faces)
+            face_data_out.append(face_data1_out)
             pass
 
         self.outputs['vertices'].sv_set(verts_out)
