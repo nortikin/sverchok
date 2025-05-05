@@ -474,7 +474,7 @@ class SvBevelNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
                 else:
                     bevel_profiles3_I = [bevel_profiles3[0][-1]]
 
-
+            bevel_faces = []
             for IJ, sub_elements_selected in enumerate( sub_elements_selected3_I ):
 
                 # Get the mask of source indices:
@@ -536,7 +536,7 @@ class SvBevelNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
                 try:
                     # we try the most likely blender binary compatible version first (official builds)
 
-                    bevel_faces = bmesh.ops.bevel(bm,
+                    _bevel_faces = bmesh.ops.bevel(bm,
                         geom=geom,
                         offset=bevel_offset,
                         offset_type=self.offset_mode,
@@ -552,12 +552,14 @@ class SvBevelNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
                         # hnmode= (enum in ['NONE', 'FACE', 'ADJACENT', 'FIXED_NORMAL_SHADING'], default 'NONE')
                         material=max_material_index
                     )['faces']
+                    bevel_faces.extend(_bevel_faces)
+                    pass
                 except TypeError as e:
 
                     # if the "try" failed, we try the new form of bmesh.ops.bevel arguments..
                     affect_geom = 'VERTICES' if self.vertexOnly else 'EDGES'
 
-                    bevel_faces = bmesh.ops.bevel(bm,
+                    _bevel_faces = bmesh.ops.bevel(bm,
                         geom=geom,
                         offset=bevel_offset,
                         offset_type=self.offset_mode,
@@ -571,7 +573,9 @@ class SvBevelNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
                         miter_inner = self.miter_inner,
                         miter_outer = self.miter_outer,
                         material=max_material_index
-                )['faces']
+                    )['faces']
+                    bevel_faces.extend(_bevel_faces)
+                    pass
 
                 except Exception as e:
                     self.exception(e)
@@ -581,6 +585,8 @@ class SvBevelNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
                 # bm.edges.ensure_lookup_table()
                 pass
 
+            # BevelFaceData do not spread by layers for a while.
+            # TODO: it is possible if bevel_faces will as array if bevel_faces.extend(_bevel_faces) replace for bevel_faces.append(_bevel_faces), then refactor down code with bevel_faces as array.
             new_bevel_faces = [[v.index for v in face.verts] for face in bevel_faces]
             if not face_data:
                 verts, edges, faces = pydata_from_bmesh(bm)

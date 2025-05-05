@@ -24,7 +24,7 @@ This node has the following inputs:
 - **BevelFaceData**. Face data to be assigned to bevel faces. This input is
   expected to contain one item per input objects. If this input is not
   connected, then bevel faces will be assigned with face data from adjacent
-  faces.
+  faces. WARNING: It is not multibevel property!
 - **BevelEdges / VerticesMask**.  Edges or vertices to be beveled. If this
   input is not connected, then by default all will be beveled. This parameter
   changes when ``Vertex mode`` flag is modified.  On vertex mode it will expect
@@ -239,7 +239,9 @@ Generate multiple bevel in one object:
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 * Viz-> :doc:`Viewer Index+ </nodes/viz/viewer_idx28>`
 
-Generate multiple bevel in one object v.2:
+---------
+
+Generate bevel in several objects:
 
 .. raw:: html
 
