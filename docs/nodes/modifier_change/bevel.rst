@@ -12,6 +12,23 @@ This node applies Bevel operator to the input mesh with multilevel. You can spec
 .. image:: https://github.com/user-attachments/assets/8b8b053f-bb0d-44d0-a498-051b8cab96ed
   :target: https://github.com/user-attachments/assets/8b8b053f-bb0d-44d0-a498-051b8cab96ed
 
+As **multibevel**
+-----------------
+
+One can assign bevel size on every vertex separately:
+
+.. image:: https://github.com/user-attachments/assets/d88a0f2f-78a5-48cf-9ec1-0b82501cb794
+  :target: https://github.com/user-attachments/assets/d88a0f2f-78a5-48cf-9ec1-0b82501cb794
+
+.. raw:: html
+
+    <video width="700" controls>
+        <source src="https://github.com/user-attachments/assets/1d043328-31f5-4cc2-9f71-54a21535fa2d" type="video/mp4">
+    Your browser does not support the video tag.
+    </video>
+
+`BevelMK2.example.004.06.multibevel.blend.zip <https://github.com/user-attachments/files/20104204/BevelMK2.example.004.06.multibevel.blend.zip>`_
+
 Inputs
 ------
 
@@ -213,6 +230,15 @@ You can work with multiple objects in per object mode (one bevel per whole objec
 
 bevel 1 for object 1, bevel 2 for object 2, bevel 3 for object 3, bevel 3 for object 4 (replay last value of bevel)
 
+.. raw:: html
+
+    <video width="700" controls>
+        <source src="https://github.com/user-attachments/assets/fd21d13d-c4cd-4198-bd42-42f341a21e05" type="video/mp4">
+    Your browser does not support the video tag.
+    </video>
+
+`BevelMK2.example.004.Bevel.edges.per.objects.blend.zip <https://github.com/user-attachments/files/20106741/BevelMK2.example.004.Bevel.edges.per.objects.blend.zip>`_
+
 * Generator-> :doc:`Box </nodes/generator/box_mk2>`
 * Generator-> :doc:`Segment </nodes/generator/segment>`
 * Matrix-> :doc:`Matrix Apply to Mesh </nodes/matrix/apply_and_join>`
@@ -259,7 +285,7 @@ Generate bevel in several objects:
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 * Viz-> :doc:`Viewer Index+ </nodes/viz/viewer_idx28>`
 
-blend file: https://github.com/user-attachments/files/20048703/BevelMK2.example.003.multibevel.per.object.blend.zip
+blend file: `BevelMK2.example.003.multibevel.per.object.blend.zip <https://github.com/user-attachments/files/20048703/BevelMK2.example.003.multibevel.per.object.blend.zip>`_
 
 ---------
 
@@ -268,7 +294,7 @@ Vertex mode and multiple radius:
 .. image:: https://github.com/user-attachments/assets/b60b94e6-2f84-4484-80ed-de99243f49b2
   :target: https://github.com/user-attachments/assets/b60b94e6-2f84-4484-80ed-de99243f49b2
 
-blend file: https://github.com/user-attachments/files/20048755/BevelMK2.example.002.bevel.per.object.blend.zip
+blend file: `BevelMK2.example.002.bevel.per.object.blend.zip <https://github.com/user-attachments/files/20048755/BevelMK2.example.002.bevel.per.object.blend.zip>`_
 
 ---------
 

@@ -332,8 +332,8 @@ class SvBevelNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
         meshes = match_long_repeat(self.get_socket_data())
 
         for I, (vertices, edges, faces, face_data, bevel_face_data, spread) in enumerate( zip(*meshes) ):
-            if face_data:
-                face_data_matched = repeat_last_for_length(face_data, len(faces))
+            # if face_data:
+            #     face_data_matched = repeat_last_for_length(face_data, len(faces))
             # if bevel_face_data and isinstance(bevel_face_data, (list, tuple)):
             #     bevel_face_data = bevel_face_data[0]
 
@@ -411,7 +411,7 @@ class SvBevelNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
 
             bm = bmesh_from_pydata(vertices, edges, faces, markup_face_data=True, normal_update=True)
             index_bevel_layer = bm.faces.layers.int.new('index_bevel_layer')
-            for I, face in enumerate(bm.faces):
+            for face in bm.faces:
                 face[index_bevel_layer] = 0
 
             # List of vertex indices for the current bmesh:
@@ -425,9 +425,6 @@ class SvBevelNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
             verts_adjacent_material = dict()
             edges_adjacent_material = dict()
             
-            # Получить список смежных faces для каждой vert. Нормально работает только когда фигура замкнута
-            # Неудобные случаи - когда фигура разомкнута и не является объёмной, тогда некоторые точки
-            # могут иметь только одну смежную face и по одному индексу face невозможно точно определить точку.
             for vert in bm.verts:
                 vert_adjacent_faces_material = tuple(sorted(set((face.material_index for face in vert.link_faces))))
                 if len(vert_adjacent_faces_material)>0:
