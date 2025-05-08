@@ -247,7 +247,8 @@ bevel 1 for object 1, bevel 2 for object 2, bevel 3 for object 3, bevel 3 for ob
 
 ---------
 
-Generate multiple bevel in one object:
+Generate multiple bevel in one object
+-------------------------------------
 
 .. raw:: html
 
@@ -265,9 +266,12 @@ Generate multiple bevel in one object:
 * Viz-> :doc:`Viewer Draw </nodes/viz/viewer_draw_mk4>`
 * Viz-> :doc:`Viewer Index+ </nodes/viz/viewer_idx28>`
 
+`BevelMK2.example.005.multibevel.edges.blend.zip <https://github.com/user-attachments/files/20107471/BevelMK2.example.005.multibevel.edges.blend.zip>`_
+
 ---------
 
-Generate bevel in several objects:
+Generate bevel in several objects
+---------------------------------
 
 .. raw:: html
 
@@ -289,7 +293,8 @@ blend file: `BevelMK2.example.003.multibevel.per.object.blend.zip <https://githu
 
 ---------
 
-Vertex mode and multiple radius:
+Vertex mode and multiple radius
+-------------------------------
 
 .. image:: https://github.com/user-attachments/assets/b60b94e6-2f84-4484-80ed-de99243f49b2
   :target: https://github.com/user-attachments/assets/b60b94e6-2f84-4484-80ed-de99243f49b2
@@ -298,7 +303,8 @@ blend file: `BevelMK2.example.002.bevel.per.object.blend.zip <https://github.com
 
 ---------
 
-An example of "FaceData" sockets usage:
+An example of "FaceData" sockets usage
+--------------------------------------
 
 .. image:: https://user-images.githubusercontent.com/284644/70852164-0682a200-1ec0-11ea-8b65-75b0bced3659.png
   :target: https://user-images.githubusercontent.com/284644/70852164-0682a200-1ec0-11ea-8b65-75b0bced3659.png
