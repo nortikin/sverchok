@@ -131,7 +131,21 @@ whether the dependency is available or not.</p></div>
     if good_names:
         logger.info(&#34;Dependencies available: %s.&#34;, &#34;, &#34;.join(good_names))
     else:
-        logger.info(&#34;No dependencies are available.&#34;)</code></pre>
+        logger.info(&#34;No dependencies are available.&#34;)
+    bpy.utils.register_class(DI_OT_install_or_update_dependencies_operator)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.dependencies.unregister"><code class="name flex">
+<span>def <span class="ident">unregister</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def unregister():
+    bpy.utils.unregister_class(DI_OT_install_or_update_dependencies_operator)</code></pre>
 </details>
 <div class="desc"></div>
 </dd>
@@ -140,6 +154,110 @@ whether the dependency is available or not.</p></div>
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
+<dt id="sverchok.dependencies.DI_OT_install_or_update_dependencies_operator"><code class="flex name class">
+<span>class <span class="ident">DI_OT_install_or_update_dependencies_operator</span></span>
+<span>(</span><span>...)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class DI_OT_install_or_update_dependencies_operator(bpy.types.Operator):
+    bl_idname = &#34;sverchok.install_or_update_dependencies_operator&#34;
+    bl_label = &#34;Install or update Sverchok Dependencies operator&#34;
+    bl_description = &#34;Install or update installable dependencies. Not all dependencies are installable. Restart Blender after update or install dependencies.\nATTENTION: UPDATE PIP FIRST and restart Blender&#34;
+
+    #items: bpy.props.CollectionProperty(type=DependencyItemName)
+    serialized_items: bpy.props.StringProperty()
+
+    def execute(self, context):
+        items = self.serialized_items.split(&#39;;&#39;)
+        for item in items:
+            try:
+                dependency = sv_dependencies[item]
+                if dependency.module is None and dependency.pip_installable and pip is not None:
+                    print(f&#34;===&gt;&gt; Install Dependency: {item}&#34;)
+                    res = bpy.ops.node.sv_ex_pip_install(package = dependency.package)
+                    #res = bpy.ops.node.sv_ex_pip_install(&#39;INVOKE_DEFAULT&#39;, package = dependency.package)
+                elif dependency.pip_installable and pip is not None:
+                    print(f&#34;===&gt;&gt; Install Dependency: {item}&#34;)
+                    res = bpy.ops.node.sv_ex_pip_install(package = dependency.package)
+                    #res = bpy.ops.node.sv_ex_pip_install(&#39;INVOKE_DEFAULT&#39;, package = dependency.package)
+                else:
+                    print(f&#34;===&gt;&gt; Skip Install Dependency: {item}&#34;)
+                    continue
+                print(f&#34;{item} installed with result: {res}&#34;)
+            except Exception as _ex:
+                pass
+        self.report({&#39;INFO&#39;}, &#34;Please restart Blender to see effect of upgrade dependencies.&#34;)
+        return {&#39;FINISHED&#39;}</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>bpy_types.Operator</li>
+<li>builtins.bpy_struct</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sverchok.dependencies.DI_OT_install_or_update_dependencies_operator.bl_description"><code class="name">var <span class="ident">bl_description</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.dependencies.DI_OT_install_or_update_dependencies_operator.bl_idname"><code class="name">var <span class="ident">bl_idname</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.dependencies.DI_OT_install_or_update_dependencies_operator.bl_label"><code class="name">var <span class="ident">bl_label</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.dependencies.DI_OT_install_or_update_dependencies_operator.bl_rna"><code class="name">var <span class="ident">bl_rna</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.dependencies.DI_OT_install_or_update_dependencies_operator.serialized_items"><code class="name">var <span class="ident">serialized_items</span> : <_PropertyDeferred, <built-in function StringProperty>, {'attr': 'serialized_items'}></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.dependencies.DI_OT_install_or_update_dependencies_operator.execute"><code class="name flex">
+<span>def <span class="ident">execute</span></span>(<span>self, context)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def execute(self, context):
+    items = self.serialized_items.split(&#39;;&#39;)
+    for item in items:
+        try:
+            dependency = sv_dependencies[item]
+            if dependency.module is None and dependency.pip_installable and pip is not None:
+                print(f&#34;===&gt;&gt; Install Dependency: {item}&#34;)
+                res = bpy.ops.node.sv_ex_pip_install(package = dependency.package)
+                #res = bpy.ops.node.sv_ex_pip_install(&#39;INVOKE_DEFAULT&#39;, package = dependency.package)
+            elif dependency.pip_installable and pip is not None:
+                print(f&#34;===&gt;&gt; Install Dependency: {item}&#34;)
+                res = bpy.ops.node.sv_ex_pip_install(package = dependency.package)
+                #res = bpy.ops.node.sv_ex_pip_install(&#39;INVOKE_DEFAULT&#39;, package = dependency.package)
+            else:
+                print(f&#34;===&gt;&gt; Skip Install Dependency: {item}&#34;)
+                continue
+            print(f&#34;{item} installed with result: {res}&#34;)
+        except Exception as _ex:
+            pass
+    self.report({&#39;INFO&#39;}, &#34;Please restart Blender to see effect of upgrade dependencies.&#34;)
+    return {&#39;FINISHED&#39;}</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
 <dt id="sverchok.dependencies.SvDependency"><code class="flex name class">
 <span>class <span class="ident">SvDependency</span></span>
 <span>(</span><span>package, url, module=None)</span>
@@ -208,10 +326,22 @@ def message(self):
 <li><code><a title="sverchok.dependencies.draw_message" href="#sverchok.dependencies.draw_message">draw_message</a></code></li>
 <li><code><a title="sverchok.dependencies.get_icon" href="#sverchok.dependencies.get_icon">get_icon</a></code></li>
 <li><code><a title="sverchok.dependencies.register" href="#sverchok.dependencies.register">register</a></code></li>
+<li><code><a title="sverchok.dependencies.unregister" href="#sverchok.dependencies.unregister">unregister</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
+<li>
+<h4><code><a title="sverchok.dependencies.DI_OT_install_or_update_dependencies_operator" href="#sverchok.dependencies.DI_OT_install_or_update_dependencies_operator">DI_OT_install_or_update_dependencies_operator</a></code></h4>
+<ul class="two-column">
+<li><code><a title="sverchok.dependencies.DI_OT_install_or_update_dependencies_operator.bl_description" href="#sverchok.dependencies.DI_OT_install_or_update_dependencies_operator.bl_description">bl_description</a></code></li>
+<li><code><a title="sverchok.dependencies.DI_OT_install_or_update_dependencies_operator.bl_idname" href="#sverchok.dependencies.DI_OT_install_or_update_dependencies_operator.bl_idname">bl_idname</a></code></li>
+<li><code><a title="sverchok.dependencies.DI_OT_install_or_update_dependencies_operator.bl_label" href="#sverchok.dependencies.DI_OT_install_or_update_dependencies_operator.bl_label">bl_label</a></code></li>
+<li><code><a title="sverchok.dependencies.DI_OT_install_or_update_dependencies_operator.bl_rna" href="#sverchok.dependencies.DI_OT_install_or_update_dependencies_operator.bl_rna">bl_rna</a></code></li>
+<li><code><a title="sverchok.dependencies.DI_OT_install_or_update_dependencies_operator.execute" href="#sverchok.dependencies.DI_OT_install_or_update_dependencies_operator.execute">execute</a></code></li>
+<li><code><a title="sverchok.dependencies.DI_OT_install_or_update_dependencies_operator.serialized_items" href="#sverchok.dependencies.DI_OT_install_or_update_dependencies_operator.serialized_items">serialized_items</a></code></li>
+</ul>
+</li>
 <li>
 <h4><code><a title="sverchok.dependencies.SvDependency" href="#sverchok.dependencies.SvDependency">SvDependency</a></code></h4>
 <ul class="">
