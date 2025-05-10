@@ -63,7 +63,7 @@ class SvBevelNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
 
     select_elements_modes = [
             ('BOOLEAN'         , "Bool"   , "Mask elements by boolean" , 'IMAGE_ALPHA'    , 0),
-            ('INDEXES'         , "Indexes", "Mask elements by indexes" , 'LIGHTPROBE_GRID', 1),
+            ('INDEXES'         , "Indexes", "Mask elements by indexes" , 'LIGHTPROBE_GRID' if bpy.app.version< (4,1,0) else 'LIGHTPROBE_VOLUME', 1),
             #('GROUP_OF_INDEXES', "Groups" , "group elements by indexes", 'LINENUMBERS_ON' , 2), # Не помню, что хотел с этим сделать! Надо вспомнить!
         ]
     
