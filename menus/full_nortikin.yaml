@@ -531,7 +531,7 @@
     - C MESH:
         - icon_name: OBJECT_DATAMODE  # icon name to show
         - extra_menu: MeshPartialMenu
-        - SvBevelNode
+        - SvBevelNodeMK2
         - SvIntersectEdgesNodeMK3
         - SvOffsetNode
         - SvInsetSpecialMk2
