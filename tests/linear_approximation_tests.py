@@ -9,10 +9,10 @@ class PlaneTests(SverchokTestCase):
         p2 = (0, 1, 0)
         p3 = (0, 0, 1)
         plane = PlaneEquation.from_three_points(p1, p2, p3)
-        self.assertEquals(plane.a, 1)
-        self.assertEquals(plane.b, 1)
-        self.assertEquals(plane.c, 1)
-        self.assertEquals(plane.d, -1)
+        self.assertEqual(plane.a, 1)
+        self.assertEqual(plane.b, 1)
+        self.assertEqual(plane.c, 1)
+        self.assertEqual(plane.d, -1)
 
     def test_nearest_to_origin(self):
         p1 = (1, 0, 0)
@@ -49,7 +49,7 @@ class PlaneTests(SverchokTestCase):
         plane = PlaneEquation.from_coordinate_plane('XY')
         point = (1, 2, 3)
         distance = plane.distance_to_point(point)
-        self.assertEquals(distance, 3)
+        self.assertEqual(distance, 3)
 
     def test_distance_to_points(self):
         plane = PlaneEquation.from_coordinate_plane('XY')
@@ -95,7 +95,7 @@ class LineTests(SverchokTestCase):
     def test_distance_to_point(self):
         line = LineEquation.from_coordinate_axis('Z')
         point = (0, 2, 0)
-        self.assertEquals(line.distance_to_point(point), 2)
+        self.assertEqual(line.distance_to_point(point), 2)
 
 class LinearApproximationTests(SverchokTestCase):
     def test_approximate_line_1(self):
