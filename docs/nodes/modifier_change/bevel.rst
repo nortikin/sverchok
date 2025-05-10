@@ -181,10 +181,21 @@ This node has the following outputs:
   contains one item for each output mesh face.
 - **NewPolys** - only bevel faces.
 
+---------
+
 Examples of usage
 -----------------
 
-Beveled cube:
+Update node
+-----------
+
+.. image:: https://github.com/user-attachments/assets/774e8660-8e48-4603-8e90-9d2ed142cdab
+  :target: https://github.com/user-attachments/assets/774e8660-8e48-4603-8e90-9d2ed142cdab
+
+`Bevel.Example.006.blend.zip <https://github.com/user-attachments/files/20140784/Bevel.Example.006.blend.zip>`_
+
+Beveled cube
+------------
 
 .. image:: https://user-images.githubusercontent.com/14288520/198134853-c65d807f-586b-4d63-b42a-e830fa9ba7b0.png
   :target: https://user-images.githubusercontent.com/14288520/198134853-c65d807f-586b-4d63-b42a-e830fa9ba7b0.png
@@ -194,7 +205,8 @@ Beveled cube:
 
 ---------
 
-Only three edges of cube beveled:
+Only three edges of cube beveled
+--------------------------------
 
 .. image:: https://user-images.githubusercontent.com/14288520/198137479-17935dcc-d2f6-4a0f-8cef-f6a5cecb0e8a.png
   :target: https://user-images.githubusercontent.com/14288520/198137479-17935dcc-d2f6-4a0f-8cef-f6a5cecb0e8a.png
@@ -209,7 +221,8 @@ Only three edges of cube beveled:
 
 ---------
 
-Another sort of cage:
+Another sort of cage
+--------------------
 
 .. image:: https://user-images.githubusercontent.com/14288520/198138428-54d3a271-f363-4e6a-9f9b-277af95faa41.png
   :target: https://user-images.githubusercontent.com/14288520/198138428-54d3a271-f363-4e6a-9f9b-277af95faa41.png
