@@ -393,6 +393,7 @@ document.write(`
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functionality">Functionality</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#as-multibevel">As <strong>multibevel</strong></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs">Inputs</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameters">Parameters</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#profile">Profile</a></li>
@@ -401,6 +402,14 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#miter-type">Miter type</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#outputs">Outputs</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples-of-usage">Examples of usage</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#update-node">Update node</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#beveled-cube">Beveled cube</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#only-three-edges-of-cube-beveled">Only three edges of cube beveled</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#another-sort-of-cage">Another sort of cage</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#generate-multiple-bevel-in-one-object">Generate multiple bevel in one object</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#generate-bevel-in-several-objects">Generate bevel in several objects</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#vertex-mode-and-multiple-radius">Vertex mode and multiple radius</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#an-example-of-facedata-sockets-usage">An example of “FaceData” sockets usage</a></li>
 </ul>
             </nav>
         </div>
@@ -414,34 +423,56 @@ document.write(`
                   
   <section id="bevel">
 <h1>Bevel<a class="headerlink" href="#bevel" title="Link to this heading">#</a></h1>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197881511-44a2a2d4-b5a1-496c-bdf4-9242d0fe7e89.png"><img alt="https://user-images.githubusercontent.com/14288520/197881511-44a2a2d4-b5a1-496c-bdf4-9242d0fe7e89.png" src="https://user-images.githubusercontent.com/14288520/197881511-44a2a2d4-b5a1-496c-bdf4-9242d0fe7e89.png" />
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/90a21d18-8f0d-4f7a-9f4e-e0e1ec1db1e2"><img alt="https://github.com/user-attachments/assets/90a21d18-8f0d-4f7a-9f4e-e0e1ec1db1e2" src="https://github.com/user-attachments/assets/90a21d18-8f0d-4f7a-9f4e-e0e1ec1db1e2" />
 </a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">#</a></h2>
-<p>This node applies Bevel operator to the input mesh. You can specify edges to be beveled.</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/197888952-7b24fc4f-37a0-474d-bc4b-692c544a2447.png"><img alt="https://user-images.githubusercontent.com/14288520/197888952-7b24fc4f-37a0-474d-bc4b-692c544a2447.png" src="https://user-images.githubusercontent.com/14288520/197888952-7b24fc4f-37a0-474d-bc4b-692c544a2447.png" />
+<p>This node applies Bevel operator to the input mesh with multilevel. You can specify vertices or edges to be beveled.</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/8b8b053f-bb0d-44d0-a498-051b8cab96ed"><img alt="https://github.com/user-attachments/assets/8b8b053f-bb0d-44d0-a498-051b8cab96ed" src="https://github.com/user-attachments/assets/8b8b053f-bb0d-44d0-a498-051b8cab96ed" />
 </a>
+</section>
+<section id="as-multibevel">
+<h2>As <strong>multibevel</strong><a class="headerlink" href="#as-multibevel" title="Link to this heading">#</a></h2>
+<p>One can assign bevel size on every vertex separately:</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/d88a0f2f-78a5-48cf-9ec1-0b82501cb794"><img alt="https://github.com/user-attachments/assets/d88a0f2f-78a5-48cf-9ec1-0b82501cb794" src="https://github.com/user-attachments/assets/d88a0f2f-78a5-48cf-9ec1-0b82501cb794" />
+</a>
+<video width="700" controls>
+    <source src="https://github.com/user-attachments/assets/1d043328-31f5-4cc2-9f71-54a21535fa2d" type="video/mp4">
+Your browser does not support the video tag.
+</video><p><a class="reference external" href="https://github.com/user-attachments/files/20104204/BevelMK2.example.004.06.multibevel.blend.zip">BevelMK2.example.004.06.multibevel.blend.zip</a></p>
 </section>
 <section id="inputs">
 <h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">#</a></h2>
 <p>This node has the following inputs:</p>
-<ul class="simple">
-<li><p><strong>Vertices</strong></p></li>
-<li><p><strong>Edges</strong></p></li>
-<li><p><strong>Polygons</strong></p></li>
+<ul>
+<li><p><strong>Vertices</strong>, <strong>Edges</strong>, <strong>Polygons</strong> - Source mesh to bevel.</p></li>
 <li><p><strong>FaceData</strong>. List containing an arbitrary data item for each face of input
 mesh. For example, this may be used to provide material indexes of input
 mesh faces. Optional input.</p></li>
 <li><p><strong>BevelFaceData</strong>. Face data to be assigned to bevel faces. This input is
 expected to contain one item per input objects. If this input is not
 connected, then bevel faces will be assigned with face data from adjacent
-faces.</p></li>
+faces. It is a <strong>multibevel</strong> property!</p></li>
 <li><p><strong>BevelEdges / VerticesMask</strong>.  Edges or vertices to be beveled. If this
 input is not connected, then by default all will be beveled. This parameter
 changes when <code class="docutils literal notranslate"><span class="pre">Vertex</span> <span class="pre">mode</span></code> flag is modified.  On vertex mode it will expect
 a list of True/False (or 0/1) values indicating the selected vertices
 (<cite>[[0,1,0,..]]</cite>).  Otherwise it will expect a list of Edges
 (<cite>[[2,6],[3,4]…]</cite>).</p></li>
+<li><p><strong>Masks elements mode</strong> (boolean, indexes). - What a method you can use to select elements [[0,0,1,1,0],[1,0,0,0,0],…] or [[1,2], [6,3,8], …]. You can set indexes as sublists for every object. Ex.:</p>
+<blockquote>
+<div><dl>
+<dt>[</dt><dd><p>[[9,7], [6,3,8],], - first object. [9,7] - indexes of first layer, [6,10] - indexes of second layer</p>
+<p>[[1],[7,3],] - second object. [1] - indexes of first layer, [7,3] - indexes of second layer</p>
+</dd>
+</dl>
+<p>]</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/eab81c21-29ef-4766-af34-cc8102c4bccf"><img alt="https://github.com/user-attachments/assets/eab81c21-29ef-4766-af34-cc8102c4bccf" src="https://github.com/user-attachments/assets/eab81c21-29ef-4766-af34-cc8102c4bccf" />
+</a>
+<p>If edges or vertices selected are not connected then all vertices or edges will be beveled.</p>
+</div></blockquote>
+</li>
+<li><p><strong>Offset mode</strong> One bevel for all vertices <strong>per object</strong> or use a number <strong>per every layer</strong> of <strong>Masks elements mode</strong>.</p></li>
 <li><p><strong>Amount</strong>. Amount to offset beveled edge.</p></li>
 <li><p><strong>Segments</strong>. Number of segments in bevel.</p></li>
 <li><p><strong>Profile</strong>. Profile shape.</p></li>
@@ -599,17 +630,28 @@ contains one item for each output mesh face.</p></li>
 <li><p><strong>NewPolys</strong> - only bevel faces.</p></li>
 </ul>
 </section>
+<hr class="docutils" />
 <section id="examples-of-usage">
 <h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Link to this heading">#</a></h2>
-<p>Beveled cube:</p>
+</section>
+<section id="update-node">
+<h2>Update node<a class="headerlink" href="#update-node" title="Link to this heading">#</a></h2>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/774e8660-8e48-4603-8e90-9d2ed142cdab"><img alt="https://github.com/user-attachments/assets/774e8660-8e48-4603-8e90-9d2ed142cdab" src="https://github.com/user-attachments/assets/774e8660-8e48-4603-8e90-9d2ed142cdab" />
+</a>
+<p><a class="reference external" href="https://github.com/user-attachments/files/20140784/Bevel.Example.006.blend.zip">Bevel.Example.006.blend.zip</a></p>
+</section>
+<section id="beveled-cube">
+<h2>Beveled cube<a class="headerlink" href="#beveled-cube" title="Link to this heading">#</a></h2>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198134853-c65d807f-586b-4d63-b42a-e830fa9ba7b0.png"><img alt="https://user-images.githubusercontent.com/14288520/198134853-c65d807f-586b-4d63-b42a-e830fa9ba7b0.png" src="https://user-images.githubusercontent.com/14288520/198134853-c65d807f-586b-4d63-b42a-e830fa9ba7b0.png" />
 </a>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
 </ul>
+</section>
 <hr class="docutils" />
-<p>Only three edges of cube beveled:</p>
+<section id="only-three-edges-of-cube-beveled">
+<h2>Only three edges of cube beveled<a class="headerlink" href="#only-three-edges-of-cube-beveled" title="Link to this heading">#</a></h2>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198137479-17935dcc-d2f6-4a0f-8cef-f6a5cecb0e8a.png"><img alt="https://user-images.githubusercontent.com/14288520/198137479-17935dcc-d2f6-4a0f-8cef-f6a5cecb0e8a.png" src="https://user-images.githubusercontent.com/14288520/198137479-17935dcc-d2f6-4a0f-8cef-f6a5cecb0e8a.png" />
 </a>
 <ul class="simple">
@@ -621,8 +663,10 @@ contains one item for each output mesh face.</p></li>
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_idx28.html"><span class="doc">Viewer Index+</span></a></p></li>
 </ul>
+</section>
 <hr class="docutils" />
-<p>Another sort of cage:</p>
+<section id="another-sort-of-cage">
+<h2>Another sort of cage<a class="headerlink" href="#another-sort-of-cage" title="Link to this heading">#</a></h2>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198138428-54d3a271-f363-4e6a-9f9b-277af95faa41.png"><img alt="https://user-images.githubusercontent.com/14288520/198138428-54d3a271-f363-4e6a-9f9b-277af95faa41.png" src="https://user-images.githubusercontent.com/14288520/198138428-54d3a271-f363-4e6a-9f9b-277af95faa41.png" />
 </a>
 <ul class="simple">
@@ -634,29 +678,66 @@ contains one item for each output mesh face.</p></li>
 <li><p>CAD-&gt; <a class="reference internal" href="offset.html"><span class="doc">Offset</span></a> (Outpols)</p></li>
 </ul>
 <hr class="docutils" />
-<p>You can work with multiple objects:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198144631-e56529ea-e679-4b45-b0be-35dfad4358f4.png"><img alt="https://user-images.githubusercontent.com/14288520/198144631-e56529ea-e679-4b45-b0be-35dfad4358f4.png" src="https://user-images.githubusercontent.com/14288520/198144631-e56529ea-e679-4b45-b0be-35dfad4358f4.png" />
+<p>You can work with multiple objects in per object mode (one bevel per whole object):</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/eec4dfb7-bc24-4a83-922c-364ce269b66c"><img alt="https://github.com/user-attachments/assets/eec4dfb7-bc24-4a83-922c-364ce269b66c" src="https://github.com/user-attachments/assets/eec4dfb7-bc24-4a83-922c-364ce269b66c" />
 </a>
+<p>bevel 1 for object 1, bevel 2 for object 2, bevel 3 for object 3, bevel 3 for object 4 (replay last value of bevel)</p>
+<video width="700" controls>
+    <source src="https://github.com/user-attachments/assets/fd21d13d-c4cd-4198-bd42-42f341a21e05" type="video/mp4">
+Your browser does not support the video tag.
+</video><p><a class="reference external" href="https://github.com/user-attachments/files/20106741/BevelMK2.example.004.Bevel.edges.per.objects.blend.zip">BevelMK2.example.004.Bevel.edges.per.objects.blend.zip</a></p>
 <ul class="simple">
 <li><p>Generator-&gt; <a class="reference internal" href="../generator/box_mk2.html"><span class="doc">Box</span></a></p></li>
-<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
-<li><p>Vector-&gt; <a class="reference internal" href="../vector/vector_in.html"><span class="doc">Vector In</span></a></p></li>
+<li><p>Generator-&gt; <a class="reference internal" href="../generator/segment.html"><span class="doc">Segment</span></a></p></li>
+<li><p>Matrix-&gt; <a class="reference internal" href="../matrix/apply_and_join.html"><span class="doc">Matrix Apply to Mesh</span></a></p></li>
+<li><p>Number-&gt; <a class="reference internal" href="../number/list_input.html"><span class="doc">List Input</span></a></p></li>
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
 </ul>
+</section>
 <hr class="docutils" />
-<p>Vertex mode and multiple radius:</p>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/198154647-36db9675-c302-498c-ba80-f9405682de69.png"><img alt="https://user-images.githubusercontent.com/14288520/198154647-36db9675-c302-498c-ba80-f9405682de69.png" src="https://user-images.githubusercontent.com/14288520/198154647-36db9675-c302-498c-ba80-f9405682de69.png" />
+<section id="generate-multiple-bevel-in-one-object">
+<h2>Generate multiple bevel in one object<a class="headerlink" href="#generate-multiple-bevel-in-one-object" title="Link to this heading">#</a></h2>
+<video width="700" controls>
+    <source src="https://github.com/user-attachments/assets/a95dacfe-2150-441b-8496-1f42cb13afa1" type="video/mp4">
+Your browser does not support the video tag.
+</video><a class="reference external image-reference" href="https://github.com/user-attachments/assets/f38c0835-5514-4304-80a1-9648c203f2d4"><img alt="https://github.com/user-attachments/assets/f38c0835-5514-4304-80a1-9648c203f2d4" src="https://github.com/user-attachments/assets/f38c0835-5514-4304-80a1-9648c203f2d4" />
 </a>
 <ul class="simple">
-<li><p>Generator-&gt; <a class="reference internal" href="../generator/line_mk4.html"><span class="doc">Line</span></a></p></li>
-<li><p>Generator-&gt;Generators Extended-&gt; <a class="reference internal" href="../generators_extended/triangle.html"><span class="doc">Triangle</span></a></p></li>
 <li><p>Number-&gt; <a class="reference internal" href="../number/list_input.html"><span class="doc">List Input</span></a></p></li>
-<li><p>Number-&gt; <a class="reference internal" href="../number/number_range.html"><span class="doc">Number Range</span></a></p></li>
-<li><p>List-&gt;List Main-&gt; <a class="reference internal" href="../list_main/length.html"><span class="doc">List Length</span></a></p></li>
+<li><p>Scene-&gt; <a class="reference internal" href="../scene/get_objects_data.html"><span class="doc">Get Objects Data</span></a></p></li>
+<li><p>Script-&gt; <a class="reference internal" href="../script/formula_mk5.html"><span class="doc">Formula</span></a></p></li>
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
 <li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_idx28.html"><span class="doc">Viewer Index+</span></a></p></li>
 </ul>
-<p>An example of “FaceData” sockets usage:</p>
+<p><a class="reference external" href="https://github.com/user-attachments/files/20107471/BevelMK2.example.005.multibevel.edges.blend.zip">BevelMK2.example.005.multibevel.edges.blend.zip</a></p>
+</section>
+<hr class="docutils" />
+<section id="generate-bevel-in-several-objects">
+<h2>Generate bevel in several objects<a class="headerlink" href="#generate-bevel-in-several-objects" title="Link to this heading">#</a></h2>
+<video width="700" controls>
+    <source src="https://github.com/user-attachments/assets/cfebf3c2-0e4f-47b9-9f35-7ab11bf4656b" type="video/mp4">
+Your browser does not support the video tag.
+</video><a class="reference external image-reference" href="https://github.com/user-attachments/assets/5d2873d4-5870-4ff7-818a-fc50184c7172"><img alt="https://github.com/user-attachments/assets/5d2873d4-5870-4ff7-818a-fc50184c7172" src="https://github.com/user-attachments/assets/5d2873d4-5870-4ff7-818a-fc50184c7172" />
+</a>
+<ul class="simple">
+<li><p>Number-&gt; <a class="reference internal" href="../number/list_input.html"><span class="doc">List Input</span></a></p></li>
+<li><p>Scene-&gt; <a class="reference internal" href="../scene/get_objects_data.html"><span class="doc">Get Objects Data</span></a></p></li>
+<li><p>Script-&gt; <a class="reference internal" href="../script/formula_mk5.html"><span class="doc">Formula</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_draw_mk4.html"><span class="doc">Viewer Draw</span></a></p></li>
+<li><p>Viz-&gt; <a class="reference internal" href="../viz/viewer_idx28.html"><span class="doc">Viewer Index+</span></a></p></li>
+</ul>
+<p>blend file: <a class="reference external" href="https://github.com/user-attachments/files/20048703/BevelMK2.example.003.multibevel.per.object.blend.zip">BevelMK2.example.003.multibevel.per.object.blend.zip</a></p>
+</section>
+<hr class="docutils" />
+<section id="vertex-mode-and-multiple-radius">
+<h2>Vertex mode and multiple radius<a class="headerlink" href="#vertex-mode-and-multiple-radius" title="Link to this heading">#</a></h2>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/b60b94e6-2f84-4484-80ed-de99243f49b2"><img alt="https://github.com/user-attachments/assets/b60b94e6-2f84-4484-80ed-de99243f49b2" src="https://github.com/user-attachments/assets/b60b94e6-2f84-4484-80ed-de99243f49b2" />
+</a>
+<p>blend file: <a class="reference external" href="https://github.com/user-attachments/files/20048755/BevelMK2.example.002.bevel.per.object.blend.zip">BevelMK2.example.002.bevel.per.object.blend.zip</a></p>
+</section>
+<hr class="docutils" />
+<section id="an-example-of-facedata-sockets-usage">
+<h2>An example of “FaceData” sockets usage<a class="headerlink" href="#an-example-of-facedata-sockets-usage" title="Link to this heading">#</a></h2>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/284644/70852164-0682a200-1ec0-11ea-8b65-75b0bced3659.png"><img alt="https://user-images.githubusercontent.com/284644/70852164-0682a200-1ec0-11ea-8b65-75b0bced3659.png" src="https://user-images.githubusercontent.com/284644/70852164-0682a200-1ec0-11ea-8b65-75b0bced3659.png" />
 </a>
 </section>
@@ -708,6 +789,7 @@ contains one item for each output mesh face.</p></li>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functionality">Functionality</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#as-multibevel">As <strong>multibevel</strong></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs">Inputs</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameters">Parameters</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#profile">Profile</a></li>
@@ -716,6 +798,14 @@ contains one item for each output mesh face.</p></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#miter-type">Miter type</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#outputs">Outputs</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples-of-usage">Examples of usage</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#update-node">Update node</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#beveled-cube">Beveled cube</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#only-three-edges-of-cube-beveled">Only three edges of cube beveled</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#another-sort-of-cage">Another sort of cage</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#generate-multiple-bevel-in-one-object">Generate multiple bevel in one object</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#generate-bevel-in-several-objects">Generate bevel in several objects</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#vertex-mode-and-multiple-radius">Vertex mode and multiple radius</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#an-example-of-facedata-sockets-usage">An example of “FaceData” sockets usage</a></li>
 </ul>
   </nav></div>
 
