@@ -218,6 +218,8 @@ class SvOverwriteMenuFile(bpy.types.Operator):
         self.report({'INFO'}, f"Menu preset {preset_path} saved as {target_menu_file}. Please restart Blender to see effect.")
         return {'FINISHED'}
 
+import bpy
+
 class SverchokPreferences(AddonPreferences):
     import sverchok
     bl_idname = sverchok.__name__
@@ -624,6 +626,10 @@ dependencies, or install only some of them.""")
 
         box = layout.box()
         box.label(text="Dependencies:")
+        package_names = ["scipy", "geomdl", "skimage", "mcubes", "circlify", "cython", "numba", "pyOpenSubdiv", "numexpr", "ezdxf", "pyacvd", "pyQuadriFlow", "pySVCGAL", ]
+        col = box.column(align=True)
+        row = col.row(align=True)
+        row.operator('sverchok.install_or_update_dependencies_operator', text="Install or Update all packages (Upgrade PIP FIRST)").serialized_items=";".join(package_names)
 
         row = draw_message(box, "pip")
         if pip is not None:
@@ -634,19 +640,8 @@ dependencies, or install only some of them.""")
             else:
                 row.operator('wm.url_open', text="Installation instructions").url = "https://pip.pypa.io/en/stable/installing/"
 
-        draw_message(box, "scipy")
-        draw_message(box, "geomdl")
-        draw_message(box, "skimage")
-        draw_message(box, "mcubes")
-        draw_message(box, "circlify")
-        draw_message(box, "cython")
-        draw_message(box, "numba")
-        draw_message(box, "pyOpenSubdiv")
-        draw_message(box, "numexpr")
-        draw_message(box, "ezdxf")
-        draw_message(box, "pyacvd")
-        draw_message(box, "pyQuadriFlow")
-        draw_message(box, "pySVCGAL")
+        for k in package_names:
+            draw_message(box, k)
 
         draw_freecad_ops()
 
@@ -695,7 +690,6 @@ def register():
     bpy.utils.register_class(SvSetFreeCadPath)
     bpy.utils.register_class(SvSelectFreeCadPath)
     bpy.utils.register_class(SverchokPreferences)
-
 
 def unregister():
     bpy.utils.unregister_class(SverchokPreferences)
