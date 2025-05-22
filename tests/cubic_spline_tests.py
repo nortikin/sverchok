@@ -41,7 +41,7 @@ class CubicSplineTests(SverchokTestCase):
     def test_control_points_1(self):
         #index = np.array([0,1,2])
         points = self.spline.get_control_points()
-        self.assertEquals(points.shape, (3, 4, 3))
+        self.assertEqual(points.shape, (3, 4, 3))
         #print(points)
         for i in range(3):
             with self.subTest(segmentNum=i):
