@@ -810,7 +810,7 @@ not have a method with the specified name.</p></div>
         output socket output_name.
         &#34;&#34;&#34;
         data = self.get_output_data(output_name)
-        self.assertEquals(data, expected_data, message)
+        self.assertEqual(data, expected_data, message)
 
     def assert_output_data_equals_file(self, output_name, expected_data_file_name, message=None):
         &#34;&#34;&#34;
@@ -888,7 +888,7 @@ not have a method with the specified name.</p></div>
     output socket output_name.
     &#34;&#34;&#34;
     data = self.get_output_data(output_name)
-    self.assertEquals(data, expected_data, message)</code></pre>
+    self.assertEqual(data, expected_data, message)</code></pre>
 </details>
 <div class="desc"><p>Assert that tested node has written expected_data to
 output socket output_name.</p></div>
@@ -1229,7 +1229,7 @@ not have a method with the specified name.</p></div>
         &#34;&#34;&#34;
         actual_data = self.serialize_json(actual_json)
         expected_data = self.serialize_json(expected_json)
-        self.assertEquals(actual_data, expected_data)
+        self.assertEqual(actual_data, expected_data)
 
     def assert_json_equals_file(self, actual_json, expected_json_file_name):
         &#34;&#34;&#34;
@@ -1270,7 +1270,7 @@ not have a method with the specified name.</p></div>
         if not node2.inputs[node2_input_name].is_linked:
             raise AssertionError(&#34;Input `{}&#39; of node `{}&#39; is not linked to anything&#34;, node2_input_name, node2_name)
 
-        self.assertEquals(node1.outputs[node1_output_name].other, node2.inputs[node2_input_name])
+        self.assertEqual(node1.outputs[node1_output_name].other, node2.inputs[node2_input_name])
 
     def assert_nodes_are_equal(self, actual, reference):
         &#34;&#34;&#34;
@@ -1386,7 +1386,7 @@ not have a method with the specified name.</p></div>
             else:
                 l1 = len(item1)
                 l2 = len(item2)
-                self.assertEquals(l1, l2, format_message(f&#34;Size of data 1 at level {step} != size of data 2&#34;))
+                self.assertEqual(l1, l2, format_message(f&#34;Size of data 1 at level {step} != size of data 2&#34;))
                 for next_idx in range(len(item1[index])):
                     new_indicies = prev_indicies[:]
                     new_indicies.append(next_idx)
@@ -1400,7 +1400,7 @@ not have a method with the specified name.</p></div>
         # sv_logger.info(&#34;Data: %s&#34;, data)
         # sv_logger.info(&#34;Expected data: %s&#34;, expected_data)
         self.assert_sverchok_data_equal(data, expected_data, precision=precision)
-        #self.assertEquals(data, expected_data)
+        #self.assertEqual(data, expected_data)
     
     def assert_dicts_equal(self, first, second, precision=None):
         keys1 = set(first.keys())
@@ -1473,14 +1473,14 @@ not have a method with the specified name.</p></div>
 
     def subtest_assert_equals(self, value1, value2, message=None):
         &#34;&#34;&#34;
-        The same as assertEquals(), but within subtest.
+        The same as assertEqual(), but within subtest.
         Use this to do several assertions per test method,
         for case test execution not to be stopped at
         the first failure.
         &#34;&#34;&#34;
 
         with self.subTest():
-            self.assertEquals(value1, value2, message)</code></pre>
+            self.assertEqual(value1, value2, message)</code></pre>
 </details>
 <div class="desc"><p>Base class for Sverchok test cases.</p>
 <p>Create an instance of the class that will use the named test
@@ -1532,7 +1532,7 @@ not have a method with the specified name.</p></div>
     &#34;&#34;&#34;
     actual_data = self.serialize_json(actual_json)
     expected_data = self.serialize_json(expected_json)
-    self.assertEquals(actual_data, expected_data)</code></pre>
+    self.assertEqual(actual_data, expected_data)</code></pre>
 </details>
 <div class="desc"><p>Assert that two JSON objects are equal.
 Comparison is done by serializing both objects.</p></div>
@@ -1712,7 +1712,7 @@ This works only for simple nodes.</p></div>
     if not node2.inputs[node2_input_name].is_linked:
         raise AssertionError(&#34;Input `{}&#39; of node `{}&#39; is not linked to anything&#34;, node2_input_name, node2_name)
 
-    self.assertEquals(node1.outputs[node1_output_name].other, node2.inputs[node2_input_name])</code></pre>
+    self.assertEqual(node1.outputs[node1_output_name].other, node2.inputs[node2_input_name])</code></pre>
 </details>
 <div class="desc"><p>Assert that certain output of node1 is linked to certain input of node2.</p></div>
 </dd>
@@ -1870,7 +1870,7 @@ print("hello world")</p></div>
         else:
             l1 = len(item1)
             l2 = len(item2)
-            self.assertEquals(l1, l2, format_message(f&#34;Size of data 1 at level {step} != size of data 2&#34;))
+            self.assertEqual(l1, l2, format_message(f&#34;Size of data 1 at level {step} != size of data 2&#34;))
             for next_idx in range(len(item1[index])):
                 new_indicies = prev_indicies[:]
                 new_indicies.append(next_idx)
@@ -1896,7 +1896,7 @@ Floating-point numbers are compared with specified precision.</p></div>
     # sv_logger.info(&#34;Data: %s&#34;, data)
     # sv_logger.info(&#34;Expected data: %s&#34;, expected_data)
     self.assert_sverchok_data_equal(data, expected_data, precision=precision)
-    #self.assertEquals(data, expected_data)</code></pre>
+    #self.assertEqual(data, expected_data)</code></pre>
 </details>
 <div class="desc"></div>
 </dd>
@@ -2050,16 +2050,16 @@ Returns: Sverchok data (nested lists).</p></div>
 </summary>
 <pre><code class="python">def subtest_assert_equals(self, value1, value2, message=None):
     &#34;&#34;&#34;
-    The same as assertEquals(), but within subtest.
+    The same as assertEqual(), but within subtest.
     Use this to do several assertions per test method,
     for case test execution not to be stopped at
     the first failure.
     &#34;&#34;&#34;
 
     with self.subTest():
-        self.assertEquals(value1, value2, message)</code></pre>
+        self.assertEqual(value1, value2, message)</code></pre>
 </details>
-<div class="desc"><p>The same as assertEquals(), but within subtest.
+<div class="desc"><p>The same as assertEqual(), but within subtest.
 Use this to do several assertions per test method,
 for case test execution not to be stopped at
 the first failure.</p></div>
