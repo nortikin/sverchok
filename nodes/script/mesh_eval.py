@@ -212,7 +212,7 @@ class SvJsonFromMesh(bpy.types.Operator):
             layer_names = mesh.vertex_colors.keys()
             for color_layer in mesh.vertex_colors:
                 color_data = np.empty(loop_count * num_components, dtype=np.float32)
-                vertex_index = np.zeros(loop_count, dtype=int)
+                vertex_index = np.empty(loop_count, dtype="I")
                 mesh.loops.foreach_get("vertex_index", vertex_index)
                 color_layer.data.foreach_get("color", color_data)
                 color_data.shape = (loop_count, num_components)
