@@ -190,10 +190,9 @@ def ShowMessageBox(message = "", title = "Message Box", icon = 'INFO'):
 # Привести параметры и интерфейс в соответствии с CGAL
 class SvStraightSkeleton2DExtrude(ModifierLiteNode, SverchCustomTreeNode, bpy.types.Node):
     """
-    Triggers: Merge two 2d meshes
+    Triggers: 2D Extrude Straight Skeleton
 
-    Each mesh can have disjoint parts
-    Only X and Y coordinate takes in account
+    CGAL Straight Skeleton Extrude wrapper
     """
     bl_idname = 'SvStraightSkeleton2DExtrude'
     bl_label = 'Straight Skeleton 2D Extrude (Alpha)'
