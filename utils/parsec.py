@@ -205,7 +205,7 @@ def parse_string(src):
         string, rest = match.groups()
         yield string, rest
 
-def parse(func, s):
+def parse(func, s, check_full=True):
     """
     Interface function: apply the parser to the string
     and return parser's return value.
@@ -220,7 +220,7 @@ def parse(func, s):
     if len(match) != 1:
         raise SyntaxError("invalid syntax: " + str(match))
     result, rest = match[0]
-    if rest.strip():
+    if check_full and rest.strip():
         raise SyntaxError("parsed: {}\nunparsed part: {}".format(result, rest))
     return result
 

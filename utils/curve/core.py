@@ -38,6 +38,12 @@ class UnsupportedCurveTypeException(TypeError):
     __description__ = "Unsupported curve type"
     pass
 
+class CurveEndpointsNotMatchingException(UnsupportedCurveTypeException):
+    """Raised when during concatenation of two curves their corresponding
+    endpoints do not match"""
+    __description__ = "Curve endpoints do not match"
+    pass
+
 ##################
 #                #
 #  Curves        #

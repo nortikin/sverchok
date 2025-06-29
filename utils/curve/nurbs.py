@@ -14,7 +14,7 @@ import numpy as np
 from math import pi
 
 from sverchok.core.sv_custom_exceptions import AlgorithmError, SvExternalLibraryException, SvInvalidInputException, ArgumentError
-from sverchok.utils.curve.core import SvCurve, SvTaylorCurve, UnsupportedCurveTypeException, calc_taylor_nurbs_matrices
+from sverchok.utils.curve.core import SvCurve, SvTaylorCurve, UnsupportedCurveTypeException, CurveEndpointsNotMatchingException, calc_taylor_nurbs_matrices
 from sverchok.utils.curve.bezier import SvBezierCurve
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.primitives import SvPointCurve
@@ -117,7 +117,7 @@ class SvNurbsCurve(SvCurve):
                 pt2 = curve2.evaluate(c2_start)
             dpt = np.linalg.norm(pt1 - pt2)
             if dpt > tolerance:
-                raise UnsupportedCurveTypeException(f"Curve end points do not match: C1({c1_end}) = {pt1} != C2({c2_start}) = {pt2}, distance={dpt}")
+                raise CurveEndpointsNotMatchingException(f"C1({c1_end}) = {pt1} != C2({c2_start}) = {pt2}, distance={dpt}")
 
             #cp1 = curve1.get_control_points()[-1]
             #cp2 = curve2.get_control_points()[0]

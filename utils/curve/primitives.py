@@ -859,6 +859,7 @@ class SvEllipse(SvCurve):
         matrix.translation = Vector(self.get_center())
         circle = SvCircle(matrix = matrix @ scale, radius = radius,
                     center = self.get_center())
+        circle.u_bounds = self.u_bounds
         return circle.to_nurbs(implementation)
 
     def concatenate(self, curve2, tolerance=1e-6, remove_knots=False):
