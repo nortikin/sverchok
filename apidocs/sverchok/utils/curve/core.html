@@ -332,6 +332,7 @@ endpoints do not match</p></div>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_end_points" href="#sverchok.utils.curve.core.SvCurve.get_end_points">get_end_points</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_polyline_vertices" href="#sverchok.utils.curve.core.SvCurve.get_polyline_vertices">get_polyline_vertices</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_tangent_delta" href="#sverchok.utils.curve.core.SvCurve.get_tangent_delta">get_tangent_delta</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_tilt_pairs" href="#sverchok.utils.curve.core.SvCurve.get_tilt_pairs">get_tilt_pairs</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_u_bounds" href="#sverchok.utils.curve.core.SvCurve.get_u_bounds">get_u_bounds</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.is_closed" href="#sverchok.utils.curve.core.SvCurve.is_closed">is_closed</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.is_polyline" href="#sverchok.utils.curve.core.SvCurve.is_polyline">is_polyline</a></code></li>
@@ -872,7 +873,17 @@ endpoints do not match</p></div>
             np.array of shape (n, 3)
         &#34;&#34;&#34;
         return np.array([])
-        #raise Exception(&#34;Curve of type type `{}&#39; does not have control points&#34;.format(type(self)))</code></pre>
+        #raise Exception(&#34;Curve of type type `{}&#39; does not have control points&#34;.format(type(self)))
+
+    def get_tilt_pairs(self):
+        &#34;&#34;&#34;
+        Get points at which curve tilt is defined.
+
+        Returns:
+            list of (u, tilt) pairs, where u is curve parameter value, and `tilt&#39;
+            is tilt value.
+        &#34;&#34;&#34;
+        return []</code></pre>
 </details>
 <div class="desc"></div>
 <h3>Subclasses</h3>
@@ -1419,6 +1430,29 @@ If the curve is not a polyline, this method can raise an exception.</p></div>
     return h</code></pre>
 </details>
 <div class="desc"><p>Utility method to define delta for curve derivatives calculation.</p></div>
+</dd>
+<dt id="sverchok.utils.curve.core.SvCurve.get_tilt_pairs"><code class="name flex">
+<span>def <span class="ident">get_tilt_pairs</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_tilt_pairs(self):
+    &#34;&#34;&#34;
+    Get points at which curve tilt is defined.
+
+    Returns:
+        list of (u, tilt) pairs, where u is curve parameter value, and `tilt&#39;
+        is tilt value.
+    &#34;&#34;&#34;
+    return []</code></pre>
+</details>
+<div class="desc"><p>Get points at which curve tilt is defined.</p>
+<h2 id="returns">Returns</h2>
+<p>list of (u, tilt) pairs, where u is curve parameter value, and `tilt'
+is tilt value.</p></div>
 </dd>
 <dt id="sverchok.utils.curve.core.SvCurve.get_u_bounds"><code class="name flex">
 <span>def <span class="ident">get_u_bounds</span></span>(<span>self)</span>
@@ -1995,6 +2029,7 @@ If the curve is not a polyline, this method can raise an exception.</p></div>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_end_points" href="#sverchok.utils.curve.core.SvCurve.get_end_points">get_end_points</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_polyline_vertices" href="#sverchok.utils.curve.core.SvCurve.get_polyline_vertices">get_polyline_vertices</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_tangent_delta" href="#sverchok.utils.curve.core.SvCurve.get_tangent_delta">get_tangent_delta</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_tilt_pairs" href="#sverchok.utils.curve.core.SvCurve.get_tilt_pairs">get_tilt_pairs</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_u_bounds" href="#sverchok.utils.curve.core.SvCurve.get_u_bounds">get_u_bounds</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.is_closed" href="#sverchok.utils.curve.core.SvCurve.is_closed">is_closed</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.is_polyline" href="#sverchok.utils.curve.core.SvCurve.is_polyline">is_polyline</a></code></li>
@@ -2093,6 +2128,7 @@ If the curve is not a polyline, this method can raise an exception.</p></div>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_end_points" href="#sverchok.utils.curve.core.SvCurve.get_end_points">get_end_points</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_polyline_vertices" href="#sverchok.utils.curve.core.SvCurve.get_polyline_vertices">get_polyline_vertices</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_tangent_delta" href="#sverchok.utils.curve.core.SvCurve.get_tangent_delta">get_tangent_delta</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_tilt_pairs" href="#sverchok.utils.curve.core.SvCurve.get_tilt_pairs">get_tilt_pairs</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_u_bounds" href="#sverchok.utils.curve.core.SvCurve.get_u_bounds">get_u_bounds</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.is_closed" href="#sverchok.utils.curve.core.SvCurve.is_closed">is_closed</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.is_polyline" href="#sverchok.utils.curve.core.SvCurve.is_polyline">is_polyline</a></code></li>
@@ -2169,6 +2205,7 @@ If the curve is not a polyline, this method can raise an exception.</p></div>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_end_points" href="#sverchok.utils.curve.core.SvCurve.get_end_points">get_end_points</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_polyline_vertices" href="#sverchok.utils.curve.core.SvCurve.get_polyline_vertices">get_polyline_vertices</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_tangent_delta" href="#sverchok.utils.curve.core.SvCurve.get_tangent_delta">get_tangent_delta</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_tilt_pairs" href="#sverchok.utils.curve.core.SvCurve.get_tilt_pairs">get_tilt_pairs</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_u_bounds" href="#sverchok.utils.curve.core.SvCurve.get_u_bounds">get_u_bounds</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.is_closed" href="#sverchok.utils.curve.core.SvCurve.is_closed">is_closed</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.is_polyline" href="#sverchok.utils.curve.core.SvCurve.is_polyline">is_polyline</a></code></li>
@@ -2259,6 +2296,7 @@ If the curve is not a polyline, this method can raise an exception.</p></div>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_end_points" href="#sverchok.utils.curve.core.SvCurve.get_end_points">get_end_points</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_polyline_vertices" href="#sverchok.utils.curve.core.SvCurve.get_polyline_vertices">get_polyline_vertices</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_tangent_delta" href="#sverchok.utils.curve.core.SvCurve.get_tangent_delta">get_tangent_delta</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_tilt_pairs" href="#sverchok.utils.curve.core.SvCurve.get_tilt_pairs">get_tilt_pairs</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_u_bounds" href="#sverchok.utils.curve.core.SvCurve.get_u_bounds">get_u_bounds</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.is_closed" href="#sverchok.utils.curve.core.SvCurve.is_closed">is_closed</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.is_polyline" href="#sverchok.utils.curve.core.SvCurve.is_polyline">is_polyline</a></code></li>
@@ -2380,6 +2418,7 @@ def scale(self):
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_end_points" href="#sverchok.utils.curve.core.SvCurve.get_end_points">get_end_points</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_polyline_vertices" href="#sverchok.utils.curve.core.SvCurve.get_polyline_vertices">get_polyline_vertices</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_tangent_delta" href="#sverchok.utils.curve.core.SvCurve.get_tangent_delta">get_tangent_delta</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_tilt_pairs" href="#sverchok.utils.curve.core.SvCurve.get_tilt_pairs">get_tilt_pairs</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_u_bounds" href="#sverchok.utils.curve.core.SvCurve.get_u_bounds">get_u_bounds</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.is_closed" href="#sverchok.utils.curve.core.SvCurve.is_closed">is_closed</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.is_polyline" href="#sverchok.utils.curve.core.SvCurve.is_polyline">is_polyline</a></code></li>
@@ -2451,6 +2490,7 @@ def scale(self):
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_end_points" href="#sverchok.utils.curve.core.SvCurve.get_end_points">get_end_points</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_polyline_vertices" href="#sverchok.utils.curve.core.SvCurve.get_polyline_vertices">get_polyline_vertices</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_tangent_delta" href="#sverchok.utils.curve.core.SvCurve.get_tangent_delta">get_tangent_delta</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_tilt_pairs" href="#sverchok.utils.curve.core.SvCurve.get_tilt_pairs">get_tilt_pairs</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_u_bounds" href="#sverchok.utils.curve.core.SvCurve.get_u_bounds">get_u_bounds</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.is_closed" href="#sverchok.utils.curve.core.SvCurve.is_closed">is_closed</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.is_polyline" href="#sverchok.utils.curve.core.SvCurve.is_polyline">is_polyline</a></code></li>
@@ -2854,6 +2894,7 @@ def scale(self):
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_end_points" href="#sverchok.utils.curve.core.SvCurve.get_end_points">get_end_points</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_polyline_vertices" href="#sverchok.utils.curve.core.SvCurve.get_polyline_vertices">get_polyline_vertices</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_tangent_delta" href="#sverchok.utils.curve.core.SvCurve.get_tangent_delta">get_tangent_delta</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_tilt_pairs" href="#sverchok.utils.curve.core.SvCurve.get_tilt_pairs">get_tilt_pairs</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_u_bounds" href="#sverchok.utils.curve.core.SvCurve.get_u_bounds">get_u_bounds</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.is_closed" href="#sverchok.utils.curve.core.SvCurve.is_closed">is_closed</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.is_polyline" href="#sverchok.utils.curve.core.SvCurve.is_polyline">is_polyline</a></code></li>
@@ -2988,6 +3029,7 @@ recieves such curve.</p></div>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_end_points" href="#sverchok.utils.curve.core.SvCurve.get_end_points">get_end_points</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_polyline_vertices" href="#sverchok.utils.curve.core.SvCurve.get_polyline_vertices">get_polyline_vertices</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_tangent_delta" href="#sverchok.utils.curve.core.SvCurve.get_tangent_delta">get_tangent_delta</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_tilt_pairs" href="#sverchok.utils.curve.core.SvCurve.get_tilt_pairs">get_tilt_pairs</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_u_bounds" href="#sverchok.utils.curve.core.SvCurve.get_u_bounds">get_u_bounds</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.is_closed" href="#sverchok.utils.curve.core.SvCurve.is_closed">is_closed</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.is_polyline" href="#sverchok.utils.curve.core.SvCurve.is_polyline">is_polyline</a></code></li>

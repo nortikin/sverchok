@@ -64,6 +64,7 @@ el.replaceWith(d);
         self.tangent_delta = 0.001
         n = self.degree = len(points) - 1
         self.__description__ = &#34;Bezier[{}]&#34;.format(n)
+        self.tilt_pairs = []
 
     @classmethod
     def from_control_points(cls, points):
@@ -284,6 +285,9 @@ el.replaceWith(d);
 
     def get_end_points(self):
         return self.points[0], self.points[-1]
+
+    def get_tilt_pairs(self):
+        return self.tilt_pairs
 
     @classmethod
     def coefficient(cls, n, k, ts):
@@ -946,6 +950,7 @@ This is also called Hermite spline.</p>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_end_points" href="core.html#sverchok.utils.curve.core.SvCurve.get_end_points">get_end_points</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_polyline_vertices" href="core.html#sverchok.utils.curve.core.SvCurve.get_polyline_vertices">get_polyline_vertices</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_tangent_delta" href="core.html#sverchok.utils.curve.core.SvCurve.get_tangent_delta">get_tangent_delta</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_tilt_pairs" href="core.html#sverchok.utils.curve.core.SvCurve.get_tilt_pairs">get_tilt_pairs</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_u_bounds" href="core.html#sverchok.utils.curve.core.SvCurve.get_u_bounds">get_u_bounds</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.is_closed" href="core.html#sverchok.utils.curve.core.SvCurve.is_closed">is_closed</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.is_polyline" href="core.html#sverchok.utils.curve.core.SvCurve.is_polyline">is_polyline</a></code></li>
@@ -1107,6 +1112,7 @@ This is also called Hermite spline.</p>
         self.p2 = np.array(p2)
         self.p3 = np.array(p3)
         self.tangent_delta = 0.001
+        self.tilt_pairs = []
 
     @classmethod
     def from_four_points(cls, v0, v1, v2, v3):
@@ -1122,6 +1128,9 @@ This is also called Hermite spline.</p>
 
     def get_u_bounds(self):
         return (0.0, 1.0)
+
+    def get_tilt_pairs(self):
+        return self.tilt_pairs
 
     def evaluate(self, t):
         return self.evaluate_array(np.array([t]))[0]
@@ -1584,6 +1593,7 @@ This is also called Hermite spline.</p>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_end_points" href="core.html#sverchok.utils.curve.core.SvCurve.get_end_points">get_end_points</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_polyline_vertices" href="core.html#sverchok.utils.curve.core.SvCurve.get_polyline_vertices">get_polyline_vertices</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_tangent_delta" href="core.html#sverchok.utils.curve.core.SvCurve.get_tangent_delta">get_tangent_delta</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_tilt_pairs" href="core.html#sverchok.utils.curve.core.SvCurve.get_tilt_pairs">get_tilt_pairs</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_u_bounds" href="core.html#sverchok.utils.curve.core.SvCurve.get_u_bounds">get_u_bounds</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.is_closed" href="core.html#sverchok.utils.curve.core.SvCurve.is_closed">is_closed</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.is_polyline" href="core.html#sverchok.utils.curve.core.SvCurve.is_polyline">is_polyline</a></code></li>

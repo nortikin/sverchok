@@ -123,6 +123,23 @@ el.replaceWith(d);
         circle.u_bounds = self.u_bounds
         return circle
 
+    def mirror(self, axis):
+        m = np.eye(3)
+        m[axis,axis] = -1
+        m = Matrix(m).to_4x4()
+        circle = SvCircle(radius = self.radius,
+                        center = m @ self.center,
+                        normal = m @ self.normal,
+                        vectorx = m @ self.vectorx)
+        circle.u_bounds = self.u_bounds
+        return circle
+
+    def translate(self, vector):
+        #vector = np.asarray(vector)
+        circle = self.copy()
+        circle.center = vector + self.center
+        return circle
+
     def get_mu_matrix(self):
         m = Matrix(self.matrix).to_4x4()
         m.translation = Vector(self.center)
@@ -763,6 +780,27 @@ def calc_matrix(normal, vectorx):
 </details>
 <div class="desc"></div>
 </dd>
+<dt id="sverchok.utils.curve.primitives.SvCircle.mirror"><code class="name flex">
+<span>def <span class="ident">mirror</span></span>(<span>self, axis)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def mirror(self, axis):
+    m = np.eye(3)
+    m[axis,axis] = -1
+    m = Matrix(m).to_4x4()
+    circle = SvCircle(radius = self.radius,
+                    center = m @ self.center,
+                    normal = m @ self.normal,
+                    vectorx = m @ self.vectorx)
+    circle.u_bounds = self.u_bounds
+    return circle</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
 <dt id="sverchok.utils.curve.primitives.SvCircle.reverse"><code class="name flex">
 <span>def <span class="ident">reverse</span></span>(<span>self)</span>
 </code></dt>
@@ -1118,6 +1156,22 @@ parametrization.</dd>
 <h2 id="returns">Returns</h2>
 <p>an instance of SvNurbsCurve.</p></div>
 </dd>
+<dt id="sverchok.utils.curve.primitives.SvCircle.translate"><code class="name flex">
+<span>def <span class="ident">translate</span></span>(<span>self, vector)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def translate(self, vector):
+    #vector = np.asarray(vector)
+    circle = self.copy()
+    circle.center = vector + self.center
+    return circle</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
 </dl>
 <h3>Inherited members</h3>
 <ul class="hlist">
@@ -1134,6 +1188,7 @@ parametrization.</dd>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_end_points" href="core.html#sverchok.utils.curve.core.SvCurve.get_end_points">get_end_points</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_polyline_vertices" href="core.html#sverchok.utils.curve.core.SvCurve.get_polyline_vertices">get_polyline_vertices</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_tangent_delta" href="core.html#sverchok.utils.curve.core.SvCurve.get_tangent_delta">get_tangent_delta</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_tilt_pairs" href="core.html#sverchok.utils.curve.core.SvCurve.get_tilt_pairs">get_tilt_pairs</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_u_bounds" href="core.html#sverchok.utils.curve.core.SvCurve.get_u_bounds">get_u_bounds</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.is_closed" href="core.html#sverchok.utils.curve.core.SvCurve.is_closed">is_closed</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.is_polyline" href="core.html#sverchok.utils.curve.core.SvCurve.is_polyline">is_polyline</a></code></li>
@@ -1175,6 +1230,28 @@ parametrization.</dd>
         self.b = b
         self.u_bounds = (0, 2*pi)
         self.tangent_delta = 0.001
+
+    def mirror(self, axis):
+        m = np.eye(3)
+        m[axis,axis] = -1
+        mu = Matrix(m)#.to_4x4()
+        matrix = (mu @ Matrix(self.matrix)).to_4x4()
+        matrix.translation = m @ self.center
+        ellipse = SvEllipse(matrix,
+                            self.a, self.b,
+                            center_type = self.center_type)
+        ellipse.u_bounds = self.u_bounds
+        return ellipse
+
+    def translate(self, vector):
+        vector = np.asarray(vector)
+        mu = Matrix(self.matrix).to_4x4()
+        mu.translation = self.center + vector
+        ellipse = SvEllipse(mu,
+                            self.a, self.b,
+                            self.center_type)
+        ellipse.u_bounds = self.u_bounds
+        return ellipse
 
     def get_u_bounds(self):
         return self.u_bounds
@@ -1403,6 +1480,28 @@ def c(self):
 </details>
 <div class="desc"><p>Calculate ellipse center.</p></div>
 </dd>
+<dt id="sverchok.utils.curve.primitives.SvEllipse.mirror"><code class="name flex">
+<span>def <span class="ident">mirror</span></span>(<span>self, axis)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def mirror(self, axis):
+    m = np.eye(3)
+    m[axis,axis] = -1
+    mu = Matrix(m)#.to_4x4()
+    matrix = (mu @ Matrix(self.matrix)).to_4x4()
+    matrix.translation = m @ self.center
+    ellipse = SvEllipse(matrix,
+                        self.a, self.b,
+                        center_type = self.center_type)
+    ellipse.u_bounds = self.u_bounds
+    return ellipse</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
 <dt id="sverchok.utils.curve.primitives.SvEllipse.to_equation"><code class="name flex">
 <span>def <span class="ident">to_equation</span></span>(<span>self)</span>
 </code></dt>
@@ -1460,6 +1559,26 @@ def c(self):
 </details>
 <div class="desc"><p>Convert the ellipse to SvNurbsCurve.</p></div>
 </dd>
+<dt id="sverchok.utils.curve.primitives.SvEllipse.translate"><code class="name flex">
+<span>def <span class="ident">translate</span></span>(<span>self, vector)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def translate(self, vector):
+    vector = np.asarray(vector)
+    mu = Matrix(self.matrix).to_4x4()
+    mu.translation = self.center + vector
+    ellipse = SvEllipse(mu,
+                        self.a, self.b,
+                        self.center_type)
+    ellipse.u_bounds = self.u_bounds
+    return ellipse</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
 </dl>
 <h3>Inherited members</h3>
 <ul class="hlist">
@@ -1476,6 +1595,7 @@ def c(self):
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_end_points" href="core.html#sverchok.utils.curve.core.SvCurve.get_end_points">get_end_points</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_polyline_vertices" href="core.html#sverchok.utils.curve.core.SvCurve.get_polyline_vertices">get_polyline_vertices</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_tangent_delta" href="core.html#sverchok.utils.curve.core.SvCurve.get_tangent_delta">get_tangent_delta</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_tilt_pairs" href="core.html#sverchok.utils.curve.core.SvCurve.get_tilt_pairs">get_tilt_pairs</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_u_bounds" href="core.html#sverchok.utils.curve.core.SvCurve.get_u_bounds">get_u_bounds</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.is_closed" href="core.html#sverchok.utils.curve.core.SvCurve.is_closed">is_closed</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.is_polyline" href="core.html#sverchok.utils.curve.core.SvCurve.is_polyline">is_polyline</a></code></li>
@@ -1531,6 +1651,15 @@ def c(self):
         if u_bounds is None:
             u_bounds = self.u_bounds
         return SvLine(self.point, self.direction, u_bounds=u_bounds)
+
+    def mirror(self, axis):
+        m = np.eye(3)
+        m[axis,axis] = -1
+        return SvLine(m @ self.point, m @ self.direction, u_bounds = self.u_bounds)
+
+    def translate(self, vector):
+        vector = np.asarray(vector)
+        return SvLine(vector + self.point, self.direction, u_bounds = self.u_bounds)
 
     def get_degree(self):
         return 1
@@ -1753,6 +1882,21 @@ def c(self):
 </details>
 <div class="desc"></div>
 </dd>
+<dt id="sverchok.utils.curve.primitives.SvLine.mirror"><code class="name flex">
+<span>def <span class="ident">mirror</span></span>(<span>self, axis)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def mirror(self, axis):
+    m = np.eye(3)
+    m[axis,axis] = -1
+    return SvLine(m @ self.point, m @ self.direction, u_bounds = self.u_bounds)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
 <dt id="sverchok.utils.curve.primitives.SvLine.reparametrize"><code class="name flex">
 <span>def <span class="ident">reparametrize</span></span>(<span>self, new_t_min, new_t_max)</span>
 </code></dt>
@@ -1851,6 +1995,20 @@ def c(self):
 </details>
 <div class="desc"></div>
 </dd>
+<dt id="sverchok.utils.curve.primitives.SvLine.translate"><code class="name flex">
+<span>def <span class="ident">translate</span></span>(<span>self, vector)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def translate(self, vector):
+    vector = np.asarray(vector)
+    return SvLine(vector + self.point, self.direction, u_bounds = self.u_bounds)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
 </dl>
 <h3>Inherited members</h3>
 <ul class="hlist">
@@ -1867,6 +2025,7 @@ def c(self):
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_end_points" href="core.html#sverchok.utils.curve.core.SvCurve.get_end_points">get_end_points</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_polyline_vertices" href="core.html#sverchok.utils.curve.core.SvCurve.get_polyline_vertices">get_polyline_vertices</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_tangent_delta" href="core.html#sverchok.utils.curve.core.SvCurve.get_tangent_delta">get_tangent_delta</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_tilt_pairs" href="core.html#sverchok.utils.curve.core.SvCurve.get_tilt_pairs">get_tilt_pairs</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_u_bounds" href="core.html#sverchok.utils.curve.core.SvCurve.get_u_bounds">get_u_bounds</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.is_closed" href="core.html#sverchok.utils.curve.core.SvCurve.is_closed">is_closed</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.is_polyline" href="core.html#sverchok.utils.curve.core.SvCurve.is_polyline">is_polyline</a></code></li>
@@ -1895,6 +2054,15 @@ def c(self):
 
     def __init__(self, point):
         self.point = np.asarray(point)
+
+    def mirror(self, axis):
+        m = np.eye(3)
+        m[axis,axis] = -1
+        return SvPointCurve(m @ self.point)
+
+    def translate(self, vector):
+        vector = np.asarray(vector)
+        return SvPointCurve(vector + self.point)
 
     def evaluate(self, t):
         return self.point
@@ -1948,6 +2116,21 @@ def c(self):
 </summary>
 <pre><code class="python">def concatenate(self, curve2, *args):
     return curve2</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.curve.primitives.SvPointCurve.mirror"><code class="name flex">
+<span>def <span class="ident">mirror</span></span>(<span>self, axis)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def mirror(self, axis):
+    m = np.eye(3)
+    m[axis,axis] = -1
+    return SvPointCurve(m @ self.point)</code></pre>
 </details>
 <div class="desc"></div>
 </dd>
@@ -2006,6 +2189,20 @@ def c(self):
 </details>
 <div class="desc"></div>
 </dd>
+<dt id="sverchok.utils.curve.primitives.SvPointCurve.translate"><code class="name flex">
+<span>def <span class="ident">translate</span></span>(<span>self, vector)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def translate(self, vector):
+    vector = np.asarray(vector)
+    return SvPointCurve(vector + self.point)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
 </dl>
 <h3>Inherited members</h3>
 <ul class="hlist">
@@ -2022,6 +2219,7 @@ def c(self):
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_end_points" href="core.html#sverchok.utils.curve.core.SvCurve.get_end_points">get_end_points</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_polyline_vertices" href="core.html#sverchok.utils.curve.core.SvCurve.get_polyline_vertices">get_polyline_vertices</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_tangent_delta" href="core.html#sverchok.utils.curve.core.SvCurve.get_tangent_delta">get_tangent_delta</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_tilt_pairs" href="core.html#sverchok.utils.curve.core.SvCurve.get_tilt_pairs">get_tilt_pairs</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_u_bounds" href="core.html#sverchok.utils.curve.core.SvCurve.get_u_bounds">get_u_bounds</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.is_closed" href="core.html#sverchok.utils.curve.core.SvCurve.is_closed">is_closed</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.is_polyline" href="core.html#sverchok.utils.curve.core.SvCurve.is_polyline">is_polyline</a></code></li>
@@ -2071,12 +2269,14 @@ def c(self):
 <li><code><a title="sverchok.utils.curve.primitives.SvCircle.lerp_to" href="#sverchok.utils.curve.primitives.SvCircle.lerp_to">lerp_to</a></code></li>
 <li><code><a title="sverchok.utils.curve.primitives.SvCircle.make_revolution_surface" href="#sverchok.utils.curve.primitives.SvCircle.make_revolution_surface">make_revolution_surface</a></code></li>
 <li><code><a title="sverchok.utils.curve.primitives.SvCircle.make_ruled_surface" href="#sverchok.utils.curve.primitives.SvCircle.make_ruled_surface">make_ruled_surface</a></code></li>
+<li><code><a title="sverchok.utils.curve.primitives.SvCircle.mirror" href="#sverchok.utils.curve.primitives.SvCircle.mirror">mirror</a></code></li>
 <li><code><a title="sverchok.utils.curve.primitives.SvCircle.reverse" href="#sverchok.utils.curve.primitives.SvCircle.reverse">reverse</a></code></li>
 <li><code><a title="sverchok.utils.curve.primitives.SvCircle.set_normal" href="#sverchok.utils.curve.primitives.SvCircle.set_normal">set_normal</a></code></li>
 <li><code><a title="sverchok.utils.curve.primitives.SvCircle.to_nurbs" href="#sverchok.utils.curve.primitives.SvCircle.to_nurbs">to_nurbs</a></code></li>
 <li><code><a title="sverchok.utils.curve.primitives.SvCircle.to_nurbs_arc" href="#sverchok.utils.curve.primitives.SvCircle.to_nurbs_arc">to_nurbs_arc</a></code></li>
 <li><code><a title="sverchok.utils.curve.primitives.SvCircle.to_nurbs_full" href="#sverchok.utils.curve.primitives.SvCircle.to_nurbs_full">to_nurbs_full</a></code></li>
 <li><code><a title="sverchok.utils.curve.primitives.SvCircle.to_nurbs_quadric" href="#sverchok.utils.curve.primitives.SvCircle.to_nurbs_quadric">to_nurbs_quadric</a></code></li>
+<li><code><a title="sverchok.utils.curve.primitives.SvCircle.translate" href="#sverchok.utils.curve.primitives.SvCircle.translate">translate</a></code></li>
 </ul>
 </li>
 <li>
@@ -2090,8 +2290,10 @@ def c(self):
 <li><code><a title="sverchok.utils.curve.primitives.SvEllipse.focal_points" href="#sverchok.utils.curve.primitives.SvEllipse.focal_points">focal_points</a></code></li>
 <li><code><a title="sverchok.utils.curve.primitives.SvEllipse.from_equation" href="#sverchok.utils.curve.primitives.SvEllipse.from_equation">from_equation</a></code></li>
 <li><code><a title="sverchok.utils.curve.primitives.SvEllipse.get_center" href="#sverchok.utils.curve.primitives.SvEllipse.get_center">get_center</a></code></li>
+<li><code><a title="sverchok.utils.curve.primitives.SvEllipse.mirror" href="#sverchok.utils.curve.primitives.SvEllipse.mirror">mirror</a></code></li>
 <li><code><a title="sverchok.utils.curve.primitives.SvEllipse.to_equation" href="#sverchok.utils.curve.primitives.SvEllipse.to_equation">to_equation</a></code></li>
 <li><code><a title="sverchok.utils.curve.primitives.SvEllipse.to_nurbs" href="#sverchok.utils.curve.primitives.SvEllipse.to_nurbs">to_nurbs</a></code></li>
+<li><code><a title="sverchok.utils.curve.primitives.SvEllipse.translate" href="#sverchok.utils.curve.primitives.SvEllipse.translate">translate</a></code></li>
 </ul>
 </li>
 <li>
@@ -2105,22 +2307,26 @@ def c(self):
 <li><code><a title="sverchok.utils.curve.primitives.SvLine.lerp_to" href="#sverchok.utils.curve.primitives.SvLine.lerp_to">lerp_to</a></code></li>
 <li><code><a title="sverchok.utils.curve.primitives.SvLine.make_revolution_surface" href="#sverchok.utils.curve.primitives.SvLine.make_revolution_surface">make_revolution_surface</a></code></li>
 <li><code><a title="sverchok.utils.curve.primitives.SvLine.make_ruled_surface" href="#sverchok.utils.curve.primitives.SvLine.make_ruled_surface">make_ruled_surface</a></code></li>
+<li><code><a title="sverchok.utils.curve.primitives.SvLine.mirror" href="#sverchok.utils.curve.primitives.SvLine.mirror">mirror</a></code></li>
 <li><code><a title="sverchok.utils.curve.primitives.SvLine.reparametrize" href="#sverchok.utils.curve.primitives.SvLine.reparametrize">reparametrize</a></code></li>
 <li><code><a title="sverchok.utils.curve.primitives.SvLine.reverse" href="#sverchok.utils.curve.primitives.SvLine.reverse">reverse</a></code></li>
 <li><code><a title="sverchok.utils.curve.primitives.SvLine.split_at" href="#sverchok.utils.curve.primitives.SvLine.split_at">split_at</a></code></li>
 <li><code><a title="sverchok.utils.curve.primitives.SvLine.to_bezier" href="#sverchok.utils.curve.primitives.SvLine.to_bezier">to_bezier</a></code></li>
 <li><code><a title="sverchok.utils.curve.primitives.SvLine.to_bezier_segments" href="#sverchok.utils.curve.primitives.SvLine.to_bezier_segments">to_bezier_segments</a></code></li>
 <li><code><a title="sverchok.utils.curve.primitives.SvLine.to_nurbs" href="#sverchok.utils.curve.primitives.SvLine.to_nurbs">to_nurbs</a></code></li>
+<li><code><a title="sverchok.utils.curve.primitives.SvLine.translate" href="#sverchok.utils.curve.primitives.SvLine.translate">translate</a></code></li>
 </ul>
 </li>
 <li>
 <h4><code><a title="sverchok.utils.curve.primitives.SvPointCurve" href="#sverchok.utils.curve.primitives.SvPointCurve">SvPointCurve</a></code></h4>
-<ul class="">
+<ul class="two-column">
 <li><code><a title="sverchok.utils.curve.primitives.SvPointCurve.concatenate" href="#sverchok.utils.curve.primitives.SvPointCurve.concatenate">concatenate</a></code></li>
+<li><code><a title="sverchok.utils.curve.primitives.SvPointCurve.mirror" href="#sverchok.utils.curve.primitives.SvPointCurve.mirror">mirror</a></code></li>
 <li><code><a title="sverchok.utils.curve.primitives.SvPointCurve.reverse" href="#sverchok.utils.curve.primitives.SvPointCurve.reverse">reverse</a></code></li>
 <li><code><a title="sverchok.utils.curve.primitives.SvPointCurve.to_bezier" href="#sverchok.utils.curve.primitives.SvPointCurve.to_bezier">to_bezier</a></code></li>
 <li><code><a title="sverchok.utils.curve.primitives.SvPointCurve.to_bezier_segments" href="#sverchok.utils.curve.primitives.SvPointCurve.to_bezier_segments">to_bezier_segments</a></code></li>
 <li><code><a title="sverchok.utils.curve.primitives.SvPointCurve.to_nurbs" href="#sverchok.utils.curve.primitives.SvPointCurve.to_nurbs">to_nurbs</a></code></li>
+<li><code><a title="sverchok.utils.curve.primitives.SvPointCurve.translate" href="#sverchok.utils.curve.primitives.SvPointCurve.translate">translate</a></code></li>
 </ul>
 </li>
 </ul>

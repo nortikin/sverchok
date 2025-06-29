@@ -387,6 +387,7 @@ el.replaceWith(d);
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_nurbs_implementation" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.get_nurbs_implementation">get_nurbs_implementation</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_polyline_vertices" href="core.html#sverchok.utils.curve.core.SvCurve.get_polyline_vertices">get_polyline_vertices</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_tangent_delta" href="core.html#sverchok.utils.curve.core.SvCurve.get_tangent_delta">get_tangent_delta</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_tilt_pairs" href="core.html#sverchok.utils.curve.core.SvCurve.get_tilt_pairs">get_tilt_pairs</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_u_bounds" href="core.html#sverchok.utils.curve.core.SvCurve.get_u_bounds">get_u_bounds</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_weights" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.get_weights">get_weights</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.is_closed" href="core.html#sverchok.utils.curve.core.SvCurve.is_closed">is_closed</a></code></li>
@@ -1165,6 +1166,7 @@ el.replaceWith(d);
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_nurbs_implementation" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.get_nurbs_implementation">get_nurbs_implementation</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_polyline_vertices" href="core.html#sverchok.utils.curve.core.SvCurve.get_polyline_vertices">get_polyline_vertices</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_tangent_delta" href="core.html#sverchok.utils.curve.core.SvCurve.get_tangent_delta">get_tangent_delta</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_tilt_pairs" href="core.html#sverchok.utils.curve.core.SvCurve.get_tilt_pairs">get_tilt_pairs</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_u_bounds" href="core.html#sverchok.utils.curve.core.SvCurve.get_u_bounds">get_u_bounds</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.get_weights" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.get_weights">get_weights</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.is_closed" href="core.html#sverchok.utils.curve.core.SvCurve.is_closed">is_closed</a></code></li>
@@ -1247,6 +1249,12 @@ el.replaceWith(d);
         if not hasattr(self, &#39;_bounding_box&#39;) or self._bounding_box is None:
             self._bounding_box = bounding_box(self.get_control_points())
         return self._bounding_box
+
+    def get_tilt_pairs(self):
+        if hasattr(self, &#39;tilt_pairs&#39;):
+            return self.tilt_pairs
+        else:
+            return []
 
     def concatenate(self, curve2, tolerance=1e-6, remove_knots=False):
 
@@ -1956,6 +1964,14 @@ el.replaceWith(d);
                     self.get_knotvector(),
                     new_controls,
                     self.get_weights())
+
+    def mirror(self, axis):
+        m = np.eye(3)
+        m[axis,axis] = -1
+        return self.transform(m, None)
+
+    def translate(self, vector):
+        return self.transform(None, vector)
 
     def is_inside_sphere(self, sphere_center, sphere_radius):
         &#34;&#34;&#34;
@@ -3028,6 +3044,21 @@ lie inside the sphere, or may not touch it at all.</p></div>
 </details>
 <div class="desc"></div>
 </dd>
+<dt id="sverchok.utils.curve.nurbs.SvNurbsCurve.mirror"><code class="name flex">
+<span>def <span class="ident">mirror</span></span>(<span>self, axis)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def mirror(self, axis):
+    m = np.eye(3)
+    m[axis,axis] = -1
+    return self.transform(m, None)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
 <dt id="sverchok.utils.curve.nurbs.SvNurbsCurve.reduce_degree"><code class="name flex">
 <span>def <span class="ident">reduce_degree</span></span>(<span>self,<br>delta=None,<br>target=None,<br>tolerance=1e-06,<br>return_error=False,<br>if_possible=False,<br>logger=None)</span>
 </code></dt>
@@ -3465,6 +3496,19 @@ lie inside the sphere, or may not touch it at all.</p></div>
 <h2 id="returns">Returns</h2>
 <p>new NURBS curve of the same implementation.</p></div>
 </dd>
+<dt id="sverchok.utils.curve.nurbs.SvNurbsCurve.translate"><code class="name flex">
+<span>def <span class="ident">translate</span></span>(<span>self, vector)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def translate(self, vector):
+    return self.transform(None, vector)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
 </dl>
 <h3>Inherited members</h3>
 <ul class="hlist">
@@ -3481,6 +3525,7 @@ lie inside the sphere, or may not touch it at all.</p></div>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_end_points" href="core.html#sverchok.utils.curve.core.SvCurve.get_end_points">get_end_points</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_polyline_vertices" href="core.html#sverchok.utils.curve.core.SvCurve.get_polyline_vertices">get_polyline_vertices</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_tangent_delta" href="core.html#sverchok.utils.curve.core.SvCurve.get_tangent_delta">get_tangent_delta</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvCurve.get_tilt_pairs" href="core.html#sverchok.utils.curve.core.SvCurve.get_tilt_pairs">get_tilt_pairs</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.get_u_bounds" href="core.html#sverchok.utils.curve.core.SvCurve.get_u_bounds">get_u_bounds</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.is_closed" href="core.html#sverchok.utils.curve.core.SvCurve.is_closed">is_closed</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvCurve.is_polyline" href="core.html#sverchok.utils.curve.core.SvCurve.is_polyline">is_polyline</a></code></li>
@@ -3580,6 +3625,7 @@ lie inside the sphere, or may not touch it at all.</p></div>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.lerp_to" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.lerp_to">lerp_to</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.make_revolution_surface" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.make_revolution_surface">make_revolution_surface</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.make_ruled_surface" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.make_ruled_surface">make_ruled_surface</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.mirror" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.mirror">mirror</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.reduce_degree" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.reduce_degree">reduce_degree</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.remove_knot" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.remove_knot">remove_knot</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.reparametrize" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.reparametrize">reparametrize</a></code></li>
@@ -3593,6 +3639,7 @@ lie inside the sphere, or may not touch it at all.</p></div>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.to_nurbs" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.to_nurbs">to_nurbs</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.to_taylor_segments" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.to_taylor_segments">to_taylor_segments</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.transform" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.transform">transform</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs.SvNurbsCurve.translate" href="#sverchok.utils.curve.nurbs.SvNurbsCurve.translate">translate</a></code></li>
 </ul>
 </li>
 </ul>
