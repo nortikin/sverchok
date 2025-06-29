@@ -180,14 +180,14 @@ This corresponds to
 in BNF notation.</p></div>
 </dd>
 <dt id="sverchok.utils.parsec.parse"><code class="name flex">
-<span>def <span class="ident">parse</span></span>(<span>func, s)</span>
+<span>def <span class="ident">parse</span></span>(<span>func, s, check_full=True)</span>
 </code></dt>
 <dd>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def parse(func, s):
+<pre><code class="python">def parse(func, s, check_full=True):
     &#34;&#34;&#34;
     Interface function: apply the parser to the string
     and return parser&#39;s return value.
@@ -202,7 +202,7 @@ in BNF notation.</p></div>
     if len(match) != 1:
         raise SyntaxError(&#34;invalid syntax: &#34; + str(match))
     result, rest = match[0]
-    if rest.strip():
+    if check_full and rest.strip():
         raise SyntaxError(&#34;parsed: {}\nunparsed part: {}&#34;.format(result, rest))
     return result</code></pre>
 </details>

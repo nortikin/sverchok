@@ -45,14 +45,14 @@ el.replaceWith(d);
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
 <dt id="sverchok.utils.curve.algorithms.concatenate_curves"><code class="name flex">
-<span>def <span class="ident">concatenate_curves</span></span>(<span>curves, scale_to_unit=False, allow_generic=True)</span>
+<span>def <span class="ident">concatenate_curves</span></span>(<span>curves, scale_to_unit=False, allow_generic=True, allow_split=False)</span>
 </code></dt>
 <dd>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def concatenate_curves(curves, scale_to_unit=False, allow_generic=True):
+<pre><code class="python">def concatenate_curves(curves, scale_to_unit=False, allow_generic=True, allow_split=False):
     &#34;&#34;&#34;
     Concatenate a list of curves. When possible, use `concatenate` method of
     curves to make a &#34;native&#34; concatenation - for example, make one Nurbs out of
@@ -89,9 +89,10 @@ el.replaceWith(d);
                 some_native = True
                 ok = True
             except UnsupportedCurveTypeException as e:
-                exceptions.append(e)
+                if not allow_split or not isinstance(e, CurveEndpointsNotMatchingException):
+                    exceptions.append(e)
                 # &#34;concatenate&#34; method can&#39;t work with this type of curve
-                sv_logger.info(&#34;Can&#39;t natively join curve #%s (%s), will use generic method: %s&#34;, idx+1, curve, e)
+                sv_logger.info(&#34;Can&#39;t natively join curve #%s (%s) to %s, will use generic method: %s&#34;, idx+1, curve, result[-1], e)
                 # P.2: if some curves were already joined natively,
                 # then we have to rescale each of other curves separately
                 if some_native and scale_to_unit:
@@ -113,6 +114,8 @@ el.replaceWith(d);
             # if no successful joins were made, then we can rescale all curves
             # at once.
             return SvConcatCurve(result, scale_to_unit and not some_native)
+        elif allow_split:
+            return result
         else:
             err_msg = &#34;\n&#34;.join([str(e) for e in exceptions])
             raise SvInvalidInputException(f&#34;Could not join some curves natively. Result is: {result}.\nErrors were:\n{err_msg}&#34;)</code></pre>

@@ -177,6 +177,31 @@ R is diagonal matrix.</p>
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
+<dt id="sverchok.utils.curve.core.CurveEndpointsNotMatchingException"><code class="flex name class">
+<span>class <span class="ident">CurveEndpointsNotMatchingException</span></span>
+<span>(</span><span>*args, **kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class CurveEndpointsNotMatchingException(UnsupportedCurveTypeException):
+    &#34;&#34;&#34;Raised when during concatenation of two curves their corresponding
+    endpoints do not match&#34;&#34;&#34;
+    __description__ = &#34;Curve endpoints do not match&#34;
+    pass</code></pre>
+</details>
+<div class="desc"><p>Raised when during concatenation of two curves their corresponding
+endpoints do not match</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.curve.core.UnsupportedCurveTypeException" href="#sverchok.utils.curve.core.UnsupportedCurveTypeException">UnsupportedCurveTypeException</a></li>
+<li>builtins.TypeError</li>
+<li>builtins.Exception</li>
+<li>builtins.BaseException</li>
+</ul>
+</dd>
 <dt id="sverchok.utils.curve.core.SvConcatCurve"><code class="flex name class">
 <span>class <span class="ident">SvConcatCurve</span></span>
 <span>(</span><span>curves, scale_to_unit=False)</span>
@@ -2864,6 +2889,10 @@ def scale(self):
 <li>builtins.Exception</li>
 <li>builtins.BaseException</li>
 </ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="sverchok.utils.curve.core.CurveEndpointsNotMatchingException" href="#sverchok.utils.curve.core.CurveEndpointsNotMatchingException">CurveEndpointsNotMatchingException</a></li>
+</ul>
 </dd>
 <dt id="sverchok.utils.curve.core.ZeroCurvatureException"><code class="flex name class">
 <span>class <span class="ident">ZeroCurvatureException</span></span>
@@ -2931,6 +2960,9 @@ recieves such curve.</p></div>
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
+<li>
+<h4><code><a title="sverchok.utils.curve.core.CurveEndpointsNotMatchingException" href="#sverchok.utils.curve.core.CurveEndpointsNotMatchingException">CurveEndpointsNotMatchingException</a></code></h4>
+</li>
 <li>
 <h4><code><a title="sverchok.utils.curve.core.SvConcatCurve" href="#sverchok.utils.curve.core.SvConcatCurve">SvConcatCurve</a></code></h4>
 </li>

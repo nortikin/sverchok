@@ -1268,7 +1268,7 @@ el.replaceWith(d);
                 pt2 = curve2.evaluate(c2_start)
             dpt = np.linalg.norm(pt1 - pt2)
             if dpt &gt; tolerance:
-                raise UnsupportedCurveTypeException(f&#34;Curve end points do not match: C1({c1_end}) = {pt1} != C2({c2_start}) = {pt2}, distance={dpt}&#34;)
+                raise CurveEndpointsNotMatchingException(f&#34;C1({c1_end}) = {pt1} != C2({c2_start}) = {pt2}, distance={dpt}&#34;)
 
             #cp1 = curve1.get_control_points()[-1]
             #cp2 = curve2.get_control_points()[0]
@@ -2373,7 +2373,7 @@ such a way that each segment is nearly a straight line segment.</p></div>
             pt2 = curve2.evaluate(c2_start)
         dpt = np.linalg.norm(pt1 - pt2)
         if dpt &gt; tolerance:
-            raise UnsupportedCurveTypeException(f&#34;Curve end points do not match: C1({c1_end}) = {pt1} != C2({c2_start}) = {pt2}, distance={dpt}&#34;)
+            raise CurveEndpointsNotMatchingException(f&#34;C1({c1_end}) = {pt1} != C2({c2_start}) = {pt2}, distance={dpt}&#34;)
 
         #cp1 = curve1.get_control_points()[-1]
         #cp2 = curve2.get_control_points()[0]
