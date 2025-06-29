@@ -267,6 +267,16 @@ el.replaceWith(d);
             controls.append(control)
             #print(control)
         return SvBezierCurve(controls)
+
+    def mirror(self, axis):
+        m = np.eye(3)
+        m[axis,axis] = -1
+        controls = np.apply_along_axis(lambda p: m @ p, 1, self.points)
+        return SvBezierCurve(controls)
+
+    def translate(self, vector):
+        vector = np.asarray(vector)
+        return SvBezierCurve(vector + self.points)
     
     def is_line(self, tolerance=0.001):
         cpts = self.get_control_points()
@@ -866,6 +876,22 @@ This is also called Hermite spline.</p>
 </details>
 <div class="desc"></div>
 </dd>
+<dt id="sverchok.utils.curve.bezier.SvBezierCurve.mirror"><code class="name flex">
+<span>def <span class="ident">mirror</span></span>(<span>self, axis)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def mirror(self, axis):
+    m = np.eye(3)
+    m[axis,axis] = -1
+    controls = np.apply_along_axis(lambda p: m @ p, 1, self.points)
+    return SvBezierCurve(controls)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
 <dt id="sverchok.utils.curve.bezier.SvBezierCurve.reparametrize"><code class="name flex">
 <span>def <span class="ident">reparametrize</span></span>(<span>self, new_t_min, new_t_max)</span>
 </code></dt>
@@ -931,6 +957,20 @@ This is also called Hermite spline.</p>
     return SvNurbsMaths.build_curve(implementation,
             degree = self.degree, knotvector = knotvector,
             control_points = self.points)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.curve.bezier.SvBezierCurve.translate"><code class="name flex">
+<span>def <span class="ident">translate</span></span>(<span>self, vector)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def translate(self, vector):
+    vector = np.asarray(vector)
+    return SvBezierCurve(vector + self.points)</code></pre>
 </details>
 <div class="desc"></div>
 </dd>
@@ -1125,6 +1165,17 @@ This is also called Hermite spline.</p>
         p2 = (2*v0 - 9*v1 + 18*v2 - 5*v3)/6.0
 
         return SvCubicBezierCurve(v0, p1, p2, v3)
+
+    def mirror(self, axis):
+        m = np.eye(3)
+        m[axis,axis] = -1
+        controls = np.apply_along_axis(lambda p: m @ p, 1, self.get_control_points())
+        return SvCubicBezierCurve(*controls)
+
+    def translate(self, vector):
+        vector = np.asarray(vector)
+        controls = vector + self.get_control_points()
+        return SvCubicBezierCurve(*controls)
 
     def get_u_bounds(self):
         return (0.0, 1.0)
@@ -1508,6 +1559,22 @@ This is also called Hermite spline.</p>
 </details>
 <div class="desc"></div>
 </dd>
+<dt id="sverchok.utils.curve.bezier.SvCubicBezierCurve.mirror"><code class="name flex">
+<span>def <span class="ident">mirror</span></span>(<span>self, axis)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def mirror(self, axis):
+    m = np.eye(3)
+    m[axis,axis] = -1
+    controls = np.apply_along_axis(lambda p: m @ p, 1, self.get_control_points())
+    return SvCubicBezierCurve(*controls)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
 <dt id="sverchok.utils.curve.bezier.SvCubicBezierCurve.reparametrize"><code class="name flex">
 <span>def <span class="ident">reparametrize</span></span>(<span>self, new_t_min, new_t_max)</span>
 </code></dt>
@@ -1574,6 +1641,21 @@ This is also called Hermite spline.</p>
     return SvNurbsMaths.build_curve(implementation,
             degree = 3, knotvector = knotvector,
             control_points = control_points)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.curve.bezier.SvCubicBezierCurve.translate"><code class="name flex">
+<span>def <span class="ident">translate</span></span>(<span>self, vector)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def translate(self, vector):
+    vector = np.asarray(vector)
+    controls = vector + self.get_control_points()
+    return SvCubicBezierCurve(*controls)</code></pre>
 </details>
 <div class="desc"></div>
 </dd>
@@ -1650,11 +1732,13 @@ This is also called Hermite spline.</p>
 <li><code><a title="sverchok.utils.curve.bezier.SvBezierCurve.lerp_to" href="#sverchok.utils.curve.bezier.SvBezierCurve.lerp_to">lerp_to</a></code></li>
 <li><code><a title="sverchok.utils.curve.bezier.SvBezierCurve.make_revolution_surface" href="#sverchok.utils.curve.bezier.SvBezierCurve.make_revolution_surface">make_revolution_surface</a></code></li>
 <li><code><a title="sverchok.utils.curve.bezier.SvBezierCurve.make_ruled_surface" href="#sverchok.utils.curve.bezier.SvBezierCurve.make_ruled_surface">make_ruled_surface</a></code></li>
+<li><code><a title="sverchok.utils.curve.bezier.SvBezierCurve.mirror" href="#sverchok.utils.curve.bezier.SvBezierCurve.mirror">mirror</a></code></li>
 <li><code><a title="sverchok.utils.curve.bezier.SvBezierCurve.reparametrize" href="#sverchok.utils.curve.bezier.SvBezierCurve.reparametrize">reparametrize</a></code></li>
 <li><code><a title="sverchok.utils.curve.bezier.SvBezierCurve.reverse" href="#sverchok.utils.curve.bezier.SvBezierCurve.reverse">reverse</a></code></li>
 <li><code><a title="sverchok.utils.curve.bezier.SvBezierCurve.to_bezier" href="#sverchok.utils.curve.bezier.SvBezierCurve.to_bezier">to_bezier</a></code></li>
 <li><code><a title="sverchok.utils.curve.bezier.SvBezierCurve.to_bezier_segments" href="#sverchok.utils.curve.bezier.SvBezierCurve.to_bezier_segments">to_bezier_segments</a></code></li>
 <li><code><a title="sverchok.utils.curve.bezier.SvBezierCurve.to_nurbs" href="#sverchok.utils.curve.bezier.SvBezierCurve.to_nurbs">to_nurbs</a></code></li>
+<li><code><a title="sverchok.utils.curve.bezier.SvBezierCurve.translate" href="#sverchok.utils.curve.bezier.SvBezierCurve.translate">translate</a></code></li>
 </ul>
 </li>
 <li>
@@ -1681,11 +1765,13 @@ This is also called Hermite spline.</p>
 <li><code><a title="sverchok.utils.curve.bezier.SvCubicBezierCurve.lerp_to" href="#sverchok.utils.curve.bezier.SvCubicBezierCurve.lerp_to">lerp_to</a></code></li>
 <li><code><a title="sverchok.utils.curve.bezier.SvCubicBezierCurve.make_revolution_surface" href="#sverchok.utils.curve.bezier.SvCubicBezierCurve.make_revolution_surface">make_revolution_surface</a></code></li>
 <li><code><a title="sverchok.utils.curve.bezier.SvCubicBezierCurve.make_ruled_surface" href="#sverchok.utils.curve.bezier.SvCubicBezierCurve.make_ruled_surface">make_ruled_surface</a></code></li>
+<li><code><a title="sverchok.utils.curve.bezier.SvCubicBezierCurve.mirror" href="#sverchok.utils.curve.bezier.SvCubicBezierCurve.mirror">mirror</a></code></li>
 <li><code><a title="sverchok.utils.curve.bezier.SvCubicBezierCurve.reparametrize" href="#sverchok.utils.curve.bezier.SvCubicBezierCurve.reparametrize">reparametrize</a></code></li>
 <li><code><a title="sverchok.utils.curve.bezier.SvCubicBezierCurve.reverse" href="#sverchok.utils.curve.bezier.SvCubicBezierCurve.reverse">reverse</a></code></li>
 <li><code><a title="sverchok.utils.curve.bezier.SvCubicBezierCurve.to_bezier" href="#sverchok.utils.curve.bezier.SvCubicBezierCurve.to_bezier">to_bezier</a></code></li>
 <li><code><a title="sverchok.utils.curve.bezier.SvCubicBezierCurve.to_bezier_segments" href="#sverchok.utils.curve.bezier.SvCubicBezierCurve.to_bezier_segments">to_bezier_segments</a></code></li>
 <li><code><a title="sverchok.utils.curve.bezier.SvCubicBezierCurve.to_nurbs" href="#sverchok.utils.curve.bezier.SvCubicBezierCurve.to_nurbs">to_nurbs</a></code></li>
+<li><code><a title="sverchok.utils.curve.bezier.SvCubicBezierCurve.translate" href="#sverchok.utils.curve.bezier.SvCubicBezierCurve.translate">translate</a></code></li>
 </ul>
 </li>
 </ul>

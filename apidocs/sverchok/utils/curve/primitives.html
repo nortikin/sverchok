@@ -345,6 +345,8 @@ el.replaceWith(d);
             return arc1.concatenate(arc2)
 
         if t_min &lt; 0 or t_max &gt; 2*pi + epsilon:
+            #t_min = t_min % (2*pi)
+            #t_max = t_max % (2*pi)
             raise UnsupportedCurveTypeException(f&#34;Can&#39;t transform a circle arc out of 0-2pi bound ({t_min} - {t_max}) to NURBS&#34;)
 
         #print(f&#34;T {t_min},{t_max}, 2pi {2*pi}&#34;)
@@ -854,6 +856,8 @@ def calc_matrix(normal, vectorx):
         return arc1.concatenate(arc2)
 
     if t_min &lt; 0 or t_max &gt; 2*pi + epsilon:
+        #t_min = t_min % (2*pi)
+        #t_max = t_max % (2*pi)
         raise UnsupportedCurveTypeException(f&#34;Can&#39;t transform a circle arc out of 0-2pi bound ({t_min} - {t_max}) to NURBS&#34;)
 
     #print(f&#34;T {t_min},{t_max}, 2pi {2*pi}&#34;)

@@ -45,14 +45,14 @@ el.replaceWith(d);
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
 <dt id="sverchok.utils.curve.algorithms.concatenate_curves"><code class="name flex">
-<span>def <span class="ident">concatenate_curves</span></span>(<span>curves, scale_to_unit=False, allow_generic=True, allow_split=False)</span>
+<span>def <span class="ident">concatenate_curves</span></span>(<span>curves, scale_to_unit=False, allow_generic=True, allow_split=False, tolerance=1e-06)</span>
 </code></dt>
 <dd>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def concatenate_curves(curves, scale_to_unit=False, allow_generic=True, allow_split=False):
+<pre><code class="python">def concatenate_curves(curves, scale_to_unit=False, allow_generic=True, allow_split=False, tolerance=1e-6):
     &#34;&#34;&#34;
     Concatenate a list of curves. When possible, use `concatenate` method of
     curves to make a &#34;native&#34; concatenation - for example, make one Nurbs out of
@@ -83,9 +83,9 @@ el.replaceWith(d);
             try:
                 if scale_to_unit:
                     # P.1: try to join with rescaled curve
-                    new_curve = result[-1].concatenate(reparametrize_curve(curve))
+                    new_curve = result[-1].concatenate(reparametrize_curve(curve), tolerance=tolerance)
                 else:
-                    new_curve = result[-1].concatenate(curve)
+                    new_curve = result[-1].concatenate(curve, tolerance=tolerance)
                 some_native = True
                 ok = True
             except UnsupportedCurveTypeException as e:
