@@ -282,6 +282,16 @@ class SvBezierCurve(SvCurve, SvBezierSplitMixin):
             controls.append(control)
             #print(control)
         return SvBezierCurve(controls)
+
+    def mirror(self, axis):
+        m = np.eye(3)
+        m[axis,axis] = -1
+        controls = np.apply_along_axis(lambda p: m @ p, 1, self.points)
+        return SvBezierCurve(controls)
+
+    def translate(self, vector):
+        vector = np.asarray(vector)
+        return SvBezierCurve(vector + self.points)
     
     def is_line(self, tolerance=0.001):
         cpts = self.get_control_points()
@@ -524,6 +534,17 @@ class SvCubicBezierCurve(SvCurve, SvBezierSplitMixin):
         p2 = (2*v0 - 9*v1 + 18*v2 - 5*v3)/6.0
 
         return SvCubicBezierCurve(v0, p1, p2, v3)
+
+    def mirror(self, axis):
+        m = np.eye(3)
+        m[axis,axis] = -1
+        controls = np.apply_along_axis(lambda p: m @ p, 1, self.get_control_points())
+        return SvCubicBezierCurve(*controls)
+
+    def translate(self, vector):
+        vector = np.asarray(vector)
+        controls = vector + self.get_control_points()
+        return SvCubicBezierCurve(*controls)
 
     def get_u_bounds(self):
         return (0.0, 1.0)

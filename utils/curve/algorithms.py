@@ -930,7 +930,7 @@ def unify_curves_degree(curves):
     curves = [curve.elevate_degree(target=max_degree) for curve in curves]
     return curves
 
-def concatenate_curves(curves, scale_to_unit=False, allow_generic=True, allow_split=False):
+def concatenate_curves(curves, scale_to_unit=False, allow_generic=True, allow_split=False, tolerance=1e-6):
     """
     Concatenate a list of curves. When possible, use `concatenate` method of
     curves to make a "native" concatenation - for example, make one Nurbs out of
@@ -961,9 +961,9 @@ def concatenate_curves(curves, scale_to_unit=False, allow_generic=True, allow_sp
             try:
                 if scale_to_unit:
                     # P.1: try to join with rescaled curve
-                    new_curve = result[-1].concatenate(reparametrize_curve(curve))
+                    new_curve = result[-1].concatenate(reparametrize_curve(curve), tolerance=tolerance)
                 else:
-                    new_curve = result[-1].concatenate(curve)
+                    new_curve = result[-1].concatenate(curve, tolerance=tolerance)
                 some_native = True
                 ok = True
             except UnsupportedCurveTypeException as e:

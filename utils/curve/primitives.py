@@ -496,6 +496,8 @@ class SvCircle(SvCurve):
             return arc1.concatenate(arc2)
 
         if t_min < 0 or t_max > 2*pi + epsilon:
+            #t_min = t_min % (2*pi)
+            #t_max = t_max % (2*pi)
             raise UnsupportedCurveTypeException(f"Can't transform a circle arc out of 0-2pi bound ({t_min} - {t_max}) to NURBS")
 
         #print(f"T {t_min},{t_max}, 2pi {2*pi}")
