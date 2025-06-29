@@ -55,6 +55,15 @@ class SvLine(SvCurve):
             u_bounds = self.u_bounds
         return SvLine(self.point, self.direction, u_bounds=u_bounds)
 
+    def mirror(self, axis):
+        m = np.eye(3)
+        m[axis,axis] = -1
+        return SvLine(m @ self.point, m @ self.direction, u_bounds = self.u_bounds)
+
+    def translate(self, vector):
+        vector = np.asarray(vector)
+        return SvLine(vector + self.point, self.direction, u_bounds = self.u_bounds)
+
     def get_degree(self):
         return 1
 
@@ -166,6 +175,15 @@ class SvPointCurve(SvCurve):
     def __init__(self, point):
         self.point = np.asarray(point)
 
+    def mirror(self, axis):
+        m = np.eye(3)
+        m[axis,axis] = -1
+        return SvPointCurve(m @ self.point)
+
+    def translate(self, vector):
+        vector = np.asarray(vector)
+        return SvPointCurve(vector + self.point)
+
     def evaluate(self, t):
         return self.point
 
@@ -254,6 +272,23 @@ class SvCircle(SvCurve):
                     normal=self.normal,
                     vectorx=self.vectorx)
         circle.u_bounds = self.u_bounds
+        return circle
+
+    def mirror(self, axis):
+        m = np.eye(3)
+        m[axis,axis] = -1
+        m = Matrix(m).to_4x4()
+        circle = SvCircle(radius = self.radius,
+                        center = m @ self.center,
+                        normal = m @ self.normal,
+                        vectorx = m @ self.vectorx)
+        circle.u_bounds = self.u_bounds
+        return circle
+
+    def translate(self, vector):
+        #vector = np.asarray(vector)
+        circle = self.copy()
+        circle.center = vector + self.center
         return circle
 
     def get_mu_matrix(self):
@@ -744,6 +779,28 @@ class SvEllipse(SvCurve):
         self.b = b
         self.u_bounds = (0, 2*pi)
         self.tangent_delta = 0.001
+
+    def mirror(self, axis):
+        m = np.eye(3)
+        m[axis,axis] = -1
+        mu = Matrix(m)#.to_4x4()
+        matrix = (mu @ Matrix(self.matrix)).to_4x4()
+        matrix.translation = m @ self.center
+        ellipse = SvEllipse(matrix,
+                            self.a, self.b,
+                            center_type = self.center_type)
+        ellipse.u_bounds = self.u_bounds
+        return ellipse
+
+    def translate(self, vector):
+        vector = np.asarray(vector)
+        mu = Matrix(self.matrix).to_4x4()
+        mu.translation = self.center + vector
+        ellipse = SvEllipse(mu,
+                            self.a, self.b,
+                            self.center_type)
+        ellipse.u_bounds = self.u_bounds
+        return ellipse
 
     def get_u_bounds(self):
         return self.u_bounds

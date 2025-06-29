@@ -97,6 +97,12 @@ class SvNurbsCurve(SvCurve):
             self._bounding_box = bounding_box(self.get_control_points())
         return self._bounding_box
 
+    def get_tilt_pairs(self):
+        if hasattr(self, 'tilt_pairs'):
+            return self.tilt_pairs
+        else:
+            return []
+
     def concatenate(self, curve2, tolerance=1e-6, remove_knots=False):
 
         curve1 = self
@@ -805,6 +811,14 @@ class SvNurbsCurve(SvCurve):
                     self.get_knotvector(),
                     new_controls,
                     self.get_weights())
+
+    def mirror(self, axis):
+        m = np.eye(3)
+        m[axis,axis] = -1
+        return self.transform(m, None)
+
+    def translate(self, vector):
+        return self.transform(None, vector)
 
     def is_inside_sphere(self, sphere_center, sphere_radius):
         """

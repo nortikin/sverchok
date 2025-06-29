@@ -79,6 +79,7 @@ class SvBezierCurve(SvCurve, SvBezierSplitMixin):
         self.tangent_delta = 0.001
         n = self.degree = len(points) - 1
         self.__description__ = "Bezier[{}]".format(n)
+        self.tilt_pairs = []
 
     @classmethod
     def from_control_points(cls, points):
@@ -300,6 +301,9 @@ class SvBezierCurve(SvCurve, SvBezierSplitMixin):
     def get_end_points(self):
         return self.points[0], self.points[-1]
 
+    def get_tilt_pairs(self):
+        return self.tilt_pairs
+
     @classmethod
     def coefficient(cls, n, k, ts):
         C = binomial(n, k)
@@ -507,6 +511,7 @@ class SvCubicBezierCurve(SvCurve, SvBezierSplitMixin):
         self.p2 = np.array(p2)
         self.p3 = np.array(p3)
         self.tangent_delta = 0.001
+        self.tilt_pairs = []
 
     @classmethod
     def from_four_points(cls, v0, v1, v2, v3):
@@ -522,6 +527,9 @@ class SvCubicBezierCurve(SvCurve, SvBezierSplitMixin):
 
     def get_u_bounds(self):
         return (0.0, 1.0)
+
+    def get_tilt_pairs(self):
+        return self.tilt_pairs
 
     def evaluate(self, t):
         return self.evaluate_array(np.array([t]))[0]

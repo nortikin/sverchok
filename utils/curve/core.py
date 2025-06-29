@@ -572,6 +572,16 @@ class SvCurve(object):
         return np.array([])
         #raise Exception("Curve of type type `{}' does not have control points".format(type(self)))
 
+    def get_tilt_pairs(self):
+        """
+        Get points at which curve tilt is defined.
+
+        Returns:
+            list of (u, tilt) pairs, where u is curve parameter value, and `tilt'
+            is tilt value.
+        """
+        return []
+
 class SvScalarFunctionCurve(SvCurve):
     r"""
     Curve defined by arbitrary function:
