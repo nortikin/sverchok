@@ -190,8 +190,8 @@ class SvBezierInNode(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
                     continue
                 controls, tilt_values, radius_values, curve = self.get_curve(spline, matrix)
                 n = len(tilt_values)
-                tilt_ts = range(n)
-                curve.tilt_pairs = list(zip(tilt_ts, tilt_values))
+                #tilt_ts = range(n)
+                #curve.tilt_pairs = list(zip(tilt_ts, tilt_values))
                 curves_out.append(curve)
                 controls_out.append(controls)
                 matrices_out.append(matrix)
