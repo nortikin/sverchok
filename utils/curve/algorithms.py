@@ -1123,15 +1123,17 @@ def split_curve(curve, splits, rescale=False):
     """
     if hasattr(curve, 'split_at'):
         result = []
+        tail = None
         for split in splits:
             head, tail = curve.split_at(split)
             if rescale:
                 head = reparametrize_curve(head, 0, 1)
             result.append(head)
             curve = tail
-        if rescale:
-            tail = reparametrize_curve(tail, 0, 1)
-        result.append(tail)
+        if tail is not None:
+            if rescale:
+                tail = reparametrize_curve(tail, 0, 1)
+            result.append(tail)
         return result
     else:
         t_min, t_max = curve.get_u_bounds()
