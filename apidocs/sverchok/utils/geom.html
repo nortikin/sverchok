@@ -892,53 +892,29 @@ and calls for interpolate_bezier.</p></div>
     x3,y3,z3 = v3
     x4,y4,z4 = v4
 
-    #d1 = distance(v1, v2)
-    #d2 = distance(v3, v4)
-    #m = np.array([v2-v1, v3-v1, v4-v1])
-    #det_m = np.linalg.det(m)
-    #if abs(det_m) &gt; 1e-6:
-    #    print(f&#34;Det_m: {det_m}&#34;)
-    #    return None
-
-    line1 = LineEquation.from_two_points(v1, v2)
-    line2 = LineEquation.from_two_points(v3, v4)
-    dist = line1.distance_to_line(line2)
-    if dist &gt; tolerance:
-        #print(f&#34;Distance: {dist}&#34;)
+    if (max(x1, x2) &lt; min(x3, x4) or
+        max(y1, y2) &lt; min(y3, y4) or
+        max(z1, z2) &lt; min(z3, z4)):
+        #print(&#34;Bounding boxes do not intersect&#34;)
+        return None
+    if (max(x3, x4) &lt; min(x1, x2) or
+        max(y3, y4) &lt; min(y1, y2) or
+        max(z3, z4) &lt; min(z1, z2)):
+        #print(&#34;Bounding boxes do not intersect&#34;)
         return None
 
-    ds = line1.distance_to_points([v3, v4])
-    if ds[0] &lt; tolerance:
-        u = locate_linear(v1, v2, v3)
-        return u, 0.0, np.asarray(v3)
-    if ds[1] &lt; tolerance:
-        u = locate_linear(v1, v2, v4)
-        return u, 1.0, np.asarray(v4)
-
-    ds = line2.distance_to_points([v1, v2])
-    if ds[0] &lt; tolerance:
-        v = locate_linear(v3, v4, v1)
-        return 0.0, v, np.asarray(v1)
-    if ds[1] &lt; tolerance:
-        v = locate_linear(v3, v4, v2)
-        return 1.0, v, np.asarray(v2)
-
-    denom = np.linalg.det(np.array([
-            [x1-x2, x4-x3],
-            [y1-y2, y4-y3]
-        ]))
-
-    num1 = np.linalg.det(np.array([
-            [x4-x2, x4-x3],
-            [y4-y2, y4-y3]
-        ]))
-    num2 = np.linalg.det(np.array([
-            [x1-x2, x4-x2],
-            [y1-y2, y4-y2]
-        ]))
-
-    u = num1 / denom
-    v = num2 / denom
+    A = np.array([[x2-x1, x3-x4], [y2-y1, y3-y4], [z2-z1, z3-z4]])
+    B = np.array([[x3-x1], [y3-y1], [z3-z1]])
+    #print(&#34;A&#34;, A)
+    #print(&#34;B&#34;, B)
+    xs, res, rank, sing = np.linalg.lstsq(A, B, rcond=None)
+    u, v = xs[0][0], xs[1][0]
+    if len(res) == 0:
+        return SEGMENTS_PARALLEL
+    #if not res or res[0] &gt; tolerance:
+    #print(&#34;Res:&#34;, res, u, v)
+    #if res[0] &gt; tolerance:
+    #    return None
 
     et = endpoint_tolerance
     if not ((0.0-et &lt;= u &lt;= 1.0+et) and (0.0-et &lt;= v &lt;= 1.0+et)):
@@ -953,9 +929,9 @@ and calls for interpolate_bezier.</p></div>
 #     if v &gt; 0.0:
 #         v = 1.0
 
-    x = u*(x1-x2) + x2
-    y = u*(y1-y2) + y2
-    z = u*(z1-z2) + z2
+    x = u*(x2-x1) + x1
+    y = u*(y2-y1) + y1
+    z = u*(z2-z1) + z1
     pt = np.array([x,y,z])
 
     return u, v, pt</code></pre>
@@ -3235,7 +3211,7 @@ def f2(self):
 </dd>
 <dt id="sverchok.utils.geom.LineEquation"><code class="flex name class">
 <span>class <span class="ident">LineEquation</span></span>
-<span>(</span><span>a, b, c, point)</span>
+<span>(</span><span>a, b, c, point, epsilon=1e-08)</span>
 </code></dt>
 <dd>
 <details class="source">
@@ -3252,9 +3228,8 @@ def f2(self):
                A       B        C
     &#34;&#34;&#34;
 
-    def __init__(self, a, b, c, point):
-        epsilon = 1e-8
-        if a*a + b*b + c*c &lt; epsilon:
+    def __init__(self, a, b, c, point, epsilon=1e-8):
+        if a*a + b*b + c*c &lt; epsilon*epsilon:
             raise Exception(&#34;Direction is (nearly) zero: {}, {}, {}&#34;.format(a, b, c))
         self.a = a
         self.b = b
@@ -3267,7 +3242,7 @@ def f2(self):
         return eq
 
     @classmethod
-    def from_two_points(cls, p1, p2):
+    def from_two_points(cls, p1, p2, epsilon=1e-8):
         if p1 is None or p2 is None:
             raise TypeError(&#34;None was passed instead of one of points&#34;)
         if (mathutils.Vector(p1) - mathutils.Vector(p2)).length &lt; 1e-8:
@@ -3279,12 +3254,12 @@ def f2(self):
         b = y2 - y1
         c = z2 - z1
 
-        return LineEquation(a, b, c, p1)
+        return LineEquation(a, b, c, p1, epsilon=epsilon)
 
     @classmethod
-    def from_direction_and_point(cls, direction, point):
+    def from_direction_and_point(cls, direction, point, epsilon=1e-8):
         a, b, c = tuple(direction)
-        return LineEquation(a, b, c, point)
+        return LineEquation(a, b, c, point, epsilon=epsilon)
 
     @classmethod
     def from_coordinate_axis(cls, axis_name):
@@ -3449,13 +3424,13 @@ equation of a line:</p>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.geom.LineEquation.from_direction_and_point"><code class="name flex">
-<span>def <span class="ident">from_direction_and_point</span></span>(<span>direction, point)</span>
+<span>def <span class="ident">from_direction_and_point</span></span>(<span>direction, point, epsilon=1e-08)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.geom.LineEquation.from_two_points"><code class="name flex">
-<span>def <span class="ident">from_two_points</span></span>(<span>p1, p2)</span>
+<span>def <span class="ident">from_two_points</span></span>(<span>p1, p2, epsilon=1e-08)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>

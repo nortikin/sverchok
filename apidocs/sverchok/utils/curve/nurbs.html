@@ -1795,7 +1795,7 @@ el.replaceWith(d);
         direction = end - begin
         if np.linalg.norm(direction) &lt; tolerance:
             return True
-        line = LineEquation.from_direction_and_point(direction, begin).normalized()
+        line = LineEquation.from_direction_and_point(direction, begin, epsilon=tolerance).normalized()
         distances = line.distance_to_points(cpts)
         # Technically, this means that all control points lie
         # inside the cylinder, defined as &#34;distance from line &lt; tolerance&#34;;
@@ -2862,7 +2862,7 @@ such a way that each segment is nearly a straight line segment.</p></div>
     direction = end - begin
     if np.linalg.norm(direction) &lt; tolerance:
         return True
-    line = LineEquation.from_direction_and_point(direction, begin).normalized()
+    line = LineEquation.from_direction_and_point(direction, begin, epsilon=tolerance).normalized()
     distances = line.distance_to_points(cpts)
     # Technically, this means that all control points lie
     # inside the cylinder, defined as &#34;distance from line &lt; tolerance&#34;;

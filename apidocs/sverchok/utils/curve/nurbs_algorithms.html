@@ -154,15 +154,19 @@ el.replaceWith(d);
 
         THRESHOLD = 0.02
 
-        if curve1.is_line(numeric_precision) and curve2.is_line(numeric_precision):
+        if curve1.is_line(0.5*numeric_precision) and curve2.is_line(0.5*numeric_precision):
             logger.debug(&#34;Calling Lin() after %d iterations&#34;, i)
             r = _intersect_curves_line(curve1, curve2, numeric_precision, logger=logger)
-            if r:
+            if r is SEGMENTS_PARALLEL:
+                return []
+            elif r:
                 return r
 
         if bbox1.size() &lt; THRESHOLD and bbox2.size() &lt; THRESHOLD:
             logger.debug(&#34;Calling Eq() after %d iterations&#34;, i)
-            return _intersect_curves_equation(curve1, curve2, method=method, precision=numeric_precision, logger=logger)
+            eq_result = _intersect_curves_equation(curve1, curve2, method=method, precision=numeric_precision, logger=logger)
+            if eq_result is not NUMERIC_TOO_FAR:
+                return eq_result
 
         mid1 = (t1_min + t1_max) * 0.5
         mid2 = (t2_min + t2_max) * 0.5
@@ -176,8 +180,20 @@ el.replaceWith(d);
         r4 = _intersect(c12,c22, (mid1, t1_max), (mid2, t2_max), i+1)
 
         return r1 + r2 + r3 + r4
+
+    def _intersect_each(segments1, segments2):
+        result = []
+        for segment1 in segments1:
+            for segment2 in segments2:
+                #print(f&#34;Check {segment1.get_u_bounds()} x {segment2.get_u_bounds()}&#34;)
+                r = _intersect(segment1, segment2, segment1.get_u_bounds(), segment2.get_u_bounds())
+                result.extend(r)
+        return result
+
+    segments1 = curve1.to_bezier_segments(to_bezier_class=False)
+    segments2 = curve2.to_bezier_segments(to_bezier_class=False)
     
-    return _intersect(curve1, curve2, curve1.get_u_bounds(), curve2.get_u_bounds())</code></pre>
+    return _intersect_each(segments1, segments2)</code></pre>
 </details>
 <div class="desc"></div>
 </dd>
