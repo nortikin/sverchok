@@ -13,7 +13,7 @@ from mathutils import Vector
 import mathutils.geometry
 
 from sverchok.utils.math import distribute_int
-from sverchok.utils.geom import Spline, LineEquation, linear_approximation, intersect_segment_segment
+from sverchok.utils.geom import Spline, LineEquation, linear_approximation, intersect_segment_segment, SEGMENTS_PARALLEL
 from sverchok.utils.nurbs_common import SvNurbsBasisFunctions, SvNurbsMaths, from_homogenous, CantInsertKnotException
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.algorithms import unify_curves_degree, SvCurveLengthSolver, SvCurveFrameCalculator
@@ -249,14 +249,19 @@ def _intersect_curves_line(curve1, curve2, precision=0.001, logger=None):
 
     logger.debug(f"Call L: [{t1_min} - {t1_max}] x [{t2_min} - {t2_max}]")
     r = intersect_segment_segment(v1, v2, v3, v4, tolerance=precision, endpoint_tolerance=0.0)
-    if not r:
-        logger.debug(f"({v1} - {v2}) x ({v3} - {v4}): no intersection")
+    if r is SEGMENTS_PARALLEL:
+        return SEGMENTS_PARALLEL
+    elif not r:
+        #logger.debug(f"({v1} - {v2}) x ({v3} - {v4}): no intersection")
         return []
     else:
         u, v, pt = r
         t1 = (1-u)*t1_min + u*t1_max
         t2 = (1-v)*t2_min + v*t2_max
+        logger.debug(f"({v1} - {v2}) x ({v3} - {v4}) => {pt}")
         return [(t1, t2, pt)]
+
+NUMERIC_TOO_FAR = 'TOO_FAR'
 
 def _intersect_curves_equation(curve1, curve2, method='SLSQP', precision=0.001, logger=None):
     if logger is None:
@@ -268,8 +273,8 @@ def _intersect_curves_equation(curve1, curve2, method='SLSQP', precision=0.001, 
     def goal(ts):
         p1 = curve1.evaluate(ts[0])
         p2 = curve2.evaluate(ts[1])
-        r = (p2 - p1).max()
-        return r
+        dv = p2 - p1
+        return dv @ dv
         #return np.array([r, r])
 
     mid1 = (t1_min + t1_max) * 0.5
@@ -301,7 +306,7 @@ def _intersect_curves_equation(curve1, curve2, method='SLSQP', precision=0.001, 
             return [(t1, t2, pt)]
         else:
             logger.debug(f"numeric method found a point, but it's too far: [{t1_min} - {t1_max}] x [{t2_min} - {t2_max}]: {dist}")
-            return []
+            return NUMERIC_TOO_FAR
     else:
         logger.debug(f"numeric method fail: [{t1_min} - {t1_max}] x [{t2_min} - {t2_max}]: {res.message}")
         return []
@@ -372,15 +377,19 @@ def intersect_nurbs_curves(curve1, curve2, method='SLSQP', numeric_precision=0.0
 
         THRESHOLD = 0.02
 
-        if curve1.is_line(numeric_precision) and curve2.is_line(numeric_precision):
+        if curve1.is_line(0.5*numeric_precision) and curve2.is_line(0.5*numeric_precision):
             logger.debug("Calling Lin() after %d iterations", i)
             r = _intersect_curves_line(curve1, curve2, numeric_precision, logger=logger)
-            if r:
+            if r is SEGMENTS_PARALLEL:
+                return []
+            elif r:
                 return r
 
         if bbox1.size() < THRESHOLD and bbox2.size() < THRESHOLD:
             logger.debug("Calling Eq() after %d iterations", i)
-            return _intersect_curves_equation(curve1, curve2, method=method, precision=numeric_precision, logger=logger)
+            eq_result = _intersect_curves_equation(curve1, curve2, method=method, precision=numeric_precision, logger=logger)
+            if eq_result is not NUMERIC_TOO_FAR:
+                return eq_result
 
         mid1 = (t1_min + t1_max) * 0.5
         mid2 = (t2_min + t2_max) * 0.5
@@ -394,8 +403,20 @@ def intersect_nurbs_curves(curve1, curve2, method='SLSQP', numeric_precision=0.0
         r4 = _intersect(c12,c22, (mid1, t1_max), (mid2, t2_max), i+1)
 
         return r1 + r2 + r3 + r4
+
+    def _intersect_each(segments1, segments2):
+        result = []
+        for segment1 in segments1:
+            for segment2 in segments2:
+                #print(f"Check {segment1.get_u_bounds()} x {segment2.get_u_bounds()}")
+                r = _intersect(segment1, segment2, segment1.get_u_bounds(), segment2.get_u_bounds())
+                result.extend(r)
+        return result
+
+    segments1 = curve1.to_bezier_segments(to_bezier_class=False)
+    segments2 = curve2.to_bezier_segments(to_bezier_class=False)
     
-    return _intersect(curve1, curve2, curve1.get_u_bounds(), curve2.get_u_bounds())
+    return _intersect_each(segments1, segments2)
 
 def remove_excessive_knots(curve, tolerance=1e-6):
     kv = curve.get_knotvector()

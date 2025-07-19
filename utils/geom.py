@@ -1288,9 +1288,8 @@ class LineEquation(object):
                A       B        C
     """
 
-    def __init__(self, a, b, c, point):
-        epsilon = 1e-8
-        if a*a + b*b + c*c < epsilon:
+    def __init__(self, a, b, c, point, epsilon=1e-8):
+        if a*a + b*b + c*c < epsilon*epsilon:
             raise Exception("Direction is (nearly) zero: {}, {}, {}".format(a, b, c))
         self.a = a
         self.b = b
@@ -1303,7 +1302,7 @@ class LineEquation(object):
         return eq
 
     @classmethod
-    def from_two_points(cls, p1, p2):
+    def from_two_points(cls, p1, p2, epsilon=1e-8):
         if p1 is None or p2 is None:
             raise TypeError("None was passed instead of one of points")
         if (mathutils.Vector(p1) - mathutils.Vector(p2)).length < 1e-8:
@@ -1315,12 +1314,12 @@ class LineEquation(object):
         b = y2 - y1
         c = z2 - z1
 
-        return LineEquation(a, b, c, p1)
+        return LineEquation(a, b, c, p1, epsilon=epsilon)
 
     @classmethod
-    def from_direction_and_point(cls, direction, point):
+    def from_direction_and_point(cls, direction, point, epsilon=1e-8):
         a, b, c = tuple(direction)
-        return LineEquation(a, b, c, point)
+        return LineEquation(a, b, c, point, epsilon=epsilon)
 
     @classmethod
     def from_coordinate_axis(cls, axis_name):
@@ -1486,59 +1485,37 @@ def locate_linear(p1, p2, p):
     #print(f"L: {p1} - {p2}: {p} => {u}")
     return u
 
+SEGMENTS_PARALLEL = 'PARALLEL'
+
 def intersect_segment_segment(v1, v2, v3, v4, endpoint_tolerance=1e-3, tolerance=1e-3):
     x1,y1,z1 = v1
     x2,y2,z2 = v2
     x3,y3,z3 = v3
     x4,y4,z4 = v4
 
-    #d1 = distance(v1, v2)
-    #d2 = distance(v3, v4)
-    #m = np.array([v2-v1, v3-v1, v4-v1])
-    #det_m = np.linalg.det(m)
-    #if abs(det_m) > 1e-6:
-    #    print(f"Det_m: {det_m}")
-    #    return None
-
-    line1 = LineEquation.from_two_points(v1, v2)
-    line2 = LineEquation.from_two_points(v3, v4)
-    dist = line1.distance_to_line(line2)
-    if dist > tolerance:
-        #print(f"Distance: {dist}")
+    if (max(x1, x2) < min(x3, x4) or
+        max(y1, y2) < min(y3, y4) or
+        max(z1, z2) < min(z3, z4)):
+        #print("Bounding boxes do not intersect")
+        return None
+    if (max(x3, x4) < min(x1, x2) or
+        max(y3, y4) < min(y1, y2) or
+        max(z3, z4) < min(z1, z2)):
+        #print("Bounding boxes do not intersect")
         return None
 
-    ds = line1.distance_to_points([v3, v4])
-    if ds[0] < tolerance:
-        u = locate_linear(v1, v2, v3)
-        return u, 0.0, np.asarray(v3)
-    if ds[1] < tolerance:
-        u = locate_linear(v1, v2, v4)
-        return u, 1.0, np.asarray(v4)
-
-    ds = line2.distance_to_points([v1, v2])
-    if ds[0] < tolerance:
-        v = locate_linear(v3, v4, v1)
-        return 0.0, v, np.asarray(v1)
-    if ds[1] < tolerance:
-        v = locate_linear(v3, v4, v2)
-        return 1.0, v, np.asarray(v2)
-
-    denom = np.linalg.det(np.array([
-            [x1-x2, x4-x3],
-            [y1-y2, y4-y3]
-        ]))
-
-    num1 = np.linalg.det(np.array([
-            [x4-x2, x4-x3],
-            [y4-y2, y4-y3]
-        ]))
-    num2 = np.linalg.det(np.array([
-            [x1-x2, x4-x2],
-            [y1-y2, y4-y2]
-        ]))
-
-    u = num1 / denom
-    v = num2 / denom
+    A = np.array([[x2-x1, x3-x4], [y2-y1, y3-y4], [z2-z1, z3-z4]])
+    B = np.array([[x3-x1], [y3-y1], [z3-z1]])
+    #print("A", A)
+    #print("B", B)
+    xs, res, rank, sing = np.linalg.lstsq(A, B, rcond=None)
+    u, v = xs[0][0], xs[1][0]
+    if len(res) == 0:
+        return SEGMENTS_PARALLEL
+    #if not res or res[0] > tolerance:
+    #print("Res:", res, u, v)
+    #if res[0] > tolerance:
+    #    return None
 
     et = endpoint_tolerance
     if not ((0.0-et <= u <= 1.0+et) and (0.0-et <= v <= 1.0+et)):
@@ -1553,9 +1530,9 @@ def intersect_segment_segment(v1, v2, v3, v4, endpoint_tolerance=1e-3, tolerance
 #     if v > 0.0:
 #         v = 1.0
 
-    x = u*(x1-x2) + x2
-    y = u*(y1-y2) + y2
-    z = u*(z1-z2) + z2
+    x = u*(x2-x1) + x1
+    y = u*(y2-y1) + y1
+    z = u*(z2-z1) + z1
     pt = np.array([x,y,z])
 
     return u, v, pt

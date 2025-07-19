@@ -642,7 +642,7 @@ class SvNurbsCurve(SvCurve):
         direction = end - begin
         if np.linalg.norm(direction) < tolerance:
             return True
-        line = LineEquation.from_direction_and_point(direction, begin).normalized()
+        line = LineEquation.from_direction_and_point(direction, begin, epsilon=tolerance).normalized()
         distances = line.distance_to_points(cpts)
         # Technically, this means that all control points lie
         # inside the cylinder, defined as "distance from line < tolerance";
