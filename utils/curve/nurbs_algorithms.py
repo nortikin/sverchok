@@ -413,10 +413,21 @@ def intersect_nurbs_curves(curve1, curve2, method='SLSQP', numeric_precision=0.0
                 result.extend(r)
         return result
 
+    def cut_closed_segments(segments):
+        unclosed = []
+        for segment in segments:
+            if segment.is_closed(numeric_precision):
+                u1,u2 = segment.get_u_bounds()
+                mid = (u1+u2)*0.5
+                unclosed.extend(segment.split_at(mid))
+            else:
+                unclosed.append(segment)
+        return unclosed
+
     segments1 = curve1.to_bezier_segments(to_bezier_class=False)
     segments2 = curve2.to_bezier_segments(to_bezier_class=False)
     
-    return _intersect_each(segments1, segments2)
+    return _intersect_each(cut_closed_segments(segments1), cut_closed_segments(segments2))
 
 def remove_excessive_knots(curve, tolerance=1e-6):
     kv = curve.get_knotvector()
