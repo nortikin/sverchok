@@ -1,5 +1,6 @@
 
 import numpy as np
+from math import cbrt
 
 from mathutils import kdtree
 from mathutils.bvhtree import BVHTree
@@ -1145,17 +1146,10 @@ def intersect_curve_plane_equation(curve, plane, init_samples=10, tolerance=1e-3
     return solutions
 
 def intersect_curve_plane_nurbs(curve, plane, init_samples=10, tolerance=1e-3, maxiter=50):
-    u_min, u_max = curve.get_u_bounds()
-    u_range = np.linspace(u_min, u_max, num=init_samples)
-    init_points = curve.evaluate_array(u_range)
-
-    init_signs = plane.side_of_points(init_points)
-    good_ranges = []
-    for u1, u2, sign1, sign2 in zip(u_range, u_range[1:], init_signs, init_signs[1:]):
-        if sign1 * sign2 < 0:
-            good_ranges.append((u1, u2))
-    if not good_ranges:
-        return []
+    def cut_to_segments(curve):
+        u_min, u_max = curve.get_u_bounds()
+        u_range = np.linspace(u_min, u_max, num=init_samples)
+        return [curve.cut_segment(u1,u2) for u1, u2 in zip(u_range, u_range[1:])]
 
     def check_signs(segment):
         cpts = segment.get_control_points()
@@ -1194,37 +1188,95 @@ def intersect_curve_plane_nurbs(curve, plane, init_samples=10, tolerance=1e-3, m
         u1, u2 = segment.get_u_bounds()
         if u >= 0 and u <= 1.0:
             v = (1-u)*u1 + u*u2
-            return v, p
+            return v
         else:
             return None
 
-    def solve(segment, i=0):
-        if check_signs(segment):
-            if is_small(segment):
-                cpts = segment.get_control_points()
-                p1, p2 = cpts[0], cpts[-1]
-                p = 0.5*(p1 + p2)
-                u = middle(segment)
-                #print(f"I: small segment: {u} - {p}")
-                return [(u, p)]
-            elif segment.is_line(tolerance):
-                r = intersect_line(segment)
-                if r is None:
-                    return []
-                else:
-                    #print(f"I: linear: {r}")
-                    return [r]
-            else:
-                if i > maxiter:
-                    raise Exception("Maximum number of subdivision iterations reached")
-                s1, s2 = split(segment)
-                return solve(s1, i+1) + solve(s2, i+1)
-        else:
-            return []
+    plane_inv_matrix = np.linalg.inv(np.array(plane.get_matrix()))
+    is_rational = curve.is_rational()
 
-    segments = [curve.cut_segment(u1, u2) for u1, u2 in good_ranges]
+    normalized_plane = plane.normalized()
+    delta_z = normalized_plane.d
+
+    def get_taylor_coeffs(segment):
+        cpts = segment.get_control_points()
+        cpts = np.array([plane_inv_matrix @ pt for pt in cpts])
+        segment = segment.copy(control_points = cpts)
+        taylor = segment.bezier_to_taylor()
+        coeffs = taylor.get_coefficients()[:,2]
+        return coeffs
+
+    def solve_quadric(segment):
+        coeffs = get_taylor_coeffs(segment)
+        c,b,a = coeffs
+        c += delta_z
+        D = b*b - 4*a*c
+        if D < 0:
+            return []
+        else:
+            t_min, t_max = segment.get_u_bounds()
+            t1 = (-b + np.sqrt(D))/(2*a)
+            t2 = (-b - np.sqrt(D))/(2*a)
+            return [t for t in [t1,t2] if t_min <= t <= t_max]
+
+    def solve_cubic(segment):
+        t_min, t_max = segment.get_u_bounds()
+        coeffs = get_taylor_coeffs(segment)
+        print("C", coeffs)
+        d,c,b,a = coeffs
+        d += delta_z
+        p = (3*a*c - b*b) / (3*a*a)
+        q = (2*b**3 - 9*a*b*c + 27*a*a*d)/(27*a**3)
+        Q = (p/3)**3 + (q/2)**2
+        sqrt_Q = np.sqrt(Q, dtype=complex)
+        alpha = (-q/2 + sqrt_Q)**(1.0/3.0)
+        beta = (-q/2 - sqrt_Q)**(1.0/3.0)
+        sqrt32 = np.sqrt(3.0)/2.0
+        y1 = alpha + beta
+        y2 = -(alpha + beta)/2.0 + (alpha - beta)*sqrt32*1j
+        y3 = -(alpha + beta)/2.0 - (alpha - beta)*sqrt32*1j
+        ys = [y.real for y in [y1,y2,y3] if abs(y.imag) < 1e-6]
+        xs = [y - b/(3*a) for y in ys]
+        print(t_min, t_max, xs)
+        return [t for t in xs if t_min <= t <= t_max]
+
+    def solve(segment, i=0):
+        if is_small(segment):
+            cpts = segment.get_control_points()
+            p1, p2 = cpts[0], cpts[-1]
+            p = 0.5*(p1 + p2)
+            u = middle(segment)
+            #print(f"I: small segment: {u} - {p}")
+            return [u]
+        elif not is_rational and (segment.get_degree() == 1 or segment.is_line(tolerance)):
+            r = intersect_line(segment)
+            if r is None:
+                return []
+            else:
+                #print(f"I: linear: {r}")
+                return [r]
+        elif not is_rational and segment.get_degree() == 2:
+            return solve_quadric(segment)
+        elif not is_rational and segment.get_degree() == 3:
+            return solve_cubic(segment)
+        else:
+            if i > maxiter:
+                raise Exception("Maximum number of subdivision iterations reached")
+            s1, s2 = split(segment)
+            return solve(s1, i+1) + solve(s2, i+1)
+
+    if is_rational:
+        segments = cut_to_segments(curve)
+    else:
+        segments = curve.to_bezier_segments(to_bezier_class=False)
+
+    segments = [segment for segment in segments if check_signs(segment)]
     solutions = [solve(segment) for segment in segments]
-    return sum(solutions, [])
+    solutions = sum(solutions, [])
+    ts = np.array(solutions)
+    pts = curve.evaluate_array(ts)
+    return list(zip(ts, pts))
+
 
 def intersect_curve_plane(curve, plane, method = EQUATION, **kwargs):
     """

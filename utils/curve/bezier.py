@@ -81,6 +81,11 @@ class SvBezierCurve(SvCurve, SvBezierSplitMixin):
         self.__description__ = "Bezier[{}]".format(n)
         self.tilt_pairs = []
 
+    def copy(self, control_points = None):
+        if control_points is None:
+            control_points = self.points
+        return SvBezierCurve.from_control_points(control_points)
+
     @classmethod
     def from_control_points(cls, points):
         if len(points) == 4:
@@ -522,6 +527,12 @@ class SvCubicBezierCurve(SvCurve, SvBezierSplitMixin):
         self.p3 = np.array(p3)
         self.tangent_delta = 0.001
         self.tilt_pairs = []
+
+    def copy(self, control_points = None):
+        if control_points is None:
+            control_points = self.points
+        return SvBezierCurve.from_control_points(control_points)
+
 
     @classmethod
     def from_four_points(cls, v0, v1, v2, v3):
