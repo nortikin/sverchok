@@ -961,7 +961,6 @@ class SvLambdaCurve(SvCurve):
         return (points_h - points) / h
 
 class SvTaylorCurve(SvCurve):
-    __description__ = "Taylor"
 
     def __init__(self, start, derivatives, u_bounds=None):
         self.start = start
@@ -970,6 +969,7 @@ class SvTaylorCurve(SvCurve):
         if u_bounds is None:
             u_bounds = (0, 1.0)
         self.u_bounds = u_bounds
+        self.__description__ = f"Taylor (degree={self.get_degree()})"
 
     @classmethod
     def from_coefficients(cls, coefficients):
