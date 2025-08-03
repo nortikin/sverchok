@@ -35,20 +35,24 @@ class SvFourierCurve(SvCurve):
             else:
                 result += coeff * sin((j+1)*o*t)
         return result
+
+    @staticmethod
+    def basis_function(omega, i):
+        def function(ts):
+            j = i // 2
+            if i % 2 == 0:
+                cost = np.cos((j+1)*omega*ts)[np.newaxis].T
+                return cost
+            else:
+                sint = np.sin((j+1)*omega*ts)[np.newaxis].T
+                return sint
+        return function
     
     def evaluate_array(self, ts):
         n = len(ts)
         result = np.broadcast_to(self.start, (n,3))
-        o = self.omega
         for i, coeff in enumerate(self.coeffs):
-            j = i // 2
-            if i % 2 == 0:
-                cost = np.cos((j+1)*o*ts)[np.newaxis].T
-                result = result + coeff*cost
-            else:
-                sint = np.sin((j+1)*o*ts)[np.newaxis].T
-                result = result + coeff*sint
-                
+            result = result + coeff * SvFourierCurve.basis_function(self.omega, i)(ts)
         return result
 
     def tangent(self, t, tangent_delta=None):
@@ -93,8 +97,8 @@ class SvFourierCurve(SvCurve):
                 result = result + ((j+1)*o)**2 * coeff*sint
         return result
 
-    @classmethod
-    def approximate(cls, verts, degree, metric='DISTANCE'):
+    @staticmethod
+    def approximate_fit(verts, degree, metric='DISTANCE'):
 
         def init_guess(verts, n):
             return np.array([pi] + list(verts[0]) + [0,0,0]*2*n)
@@ -120,68 +124,32 @@ class SvFourierCurve(SvCurve):
         curve = SvFourierCurve(omega, points[0], points[1:])
         return curve
 
-    @classmethod
-    def interpolate(cls, verts, omega, metric='DISTANCE', is_cyclic=False):
-        ndim = 3
-
-        n_verts = len(verts)
-        verts = np.asarray(verts)
-        if is_cyclic:
-            verts = np.append(verts, verts[0][np.newaxis], axis=0)
-            n_verts += 1
-            n_equations = n_verts + 1
-        else:
-            n_equations = n_verts
-        
+    @staticmethod
+    def approximate_lstsq(verts, omega, degree, metric='DISTANCE'):
+        verts = np.array(verts)
+        n = len(verts)
+        degree = min(n, degree)
         tknots = Spline.create_knots(verts, metric=metric)
-        A = np.zeros((ndim*n_equations, ndim*n_equations))
-        
-        for equation_idx, t in enumerate(tknots):
-            for unknown_idx in range(n_equations):
-                i = (unknown_idx // 2) + 1
-                if unknown_idx % 2 == 0:
-                    coeff = cos(omega*i*t)
-                else:
-                    coeff = sin(omega*i*t)
-                row = ndim*equation_idx
-                col = ndim*unknown_idx
-                for d in range(ndim):
-                    A[row+d, col+d] = coeff
+        A = np.zeros((n, degree))
+        for i in range(degree):
+            A[:,i] = SvFourierCurve.basis_function(omega, i)(tknots)[:,0]
+        coeffs, residuals, rank, s = np.linalg.lstsq(A, verts)
+        curve = SvFourierCurve(omega, np.array([0.0, 0.0, 0.0]), coeffs)
+        return curve
 
-        if is_cyclic:
-            equation_idx = len(tknots)
-            for unknown_idx in range(n_equations):
-                i = (unknown_idx // 2) + 1
-                if unknown_idx % 2 == 0:
-                    coeff = -omega*i*sin(omega*i) # - 0
-                else:
-                    coeff = omega*i*cos(omega*i) - omega*i
-                row = ndim*equation_idx
-                col = ndim*unknown_idx
-                for d in range(ndim):
-                    A[row+d, col+d] = coeff
-        #print(A)
+    @staticmethod
+    def interpolate(verts, omega, metric='DISTANCE', is_cyclic=False):
+        verts = np.array(verts)
+        n = len(verts)
+        degree = n
+        tknots = Spline.create_knots(verts, metric=metric)
+        A = np.zeros((n, degree))
+        for i in range(degree):
+            A[:,i] = SvFourierCurve.basis_function(omega, i)(tknots)[:,0]
 
-        B = np.empty((ndim*n_equations,1))
-        for point_idx, point in enumerate(verts):
-            row = ndim*point_idx
-            B[row:row+ndim] = point[:,np.newaxis]
-        
-        if is_cyclic:
-            point_idx = len(verts)
-            row = ndim*point_idx
-            B[row:row+ndim] = np.array([[0,0,0]]).T
-
-        #print(B)
-
-        x = np.linalg.solve(A, B)
-        coeffs = []
-        for i in range(n_equations):
-            row = i*ndim
-            coeff = x[row:row+ndim,0].T
-            coeffs.append(coeff)
-        coeffs = np.array(coeffs)
-        #print(coeffs)
+        print(A)
+        print("DA", np.linalg.det(A))
+        coeffs = np.linalg.solve(A, verts)
         
         return SvFourierCurve(omega, np.array([0.0,0.0,0.0]), coeffs)
 
