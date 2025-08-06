@@ -26,6 +26,7 @@ from sverchok.utils.sv_node_utils import recursive_framed_location_finder
 from sverchok.utils.handle_blender_data import BlTrees, BlSockets
 from sverchok.node_tree import SvNodeTreeCommon, SverchCustomTreeNode
 
+import logging
 
 class SvGroupTree(SvNodeTreeCommon, bpy.types.NodeTree):
     """Separate tree class for sub trees"""
@@ -968,12 +969,23 @@ classes = [SvGroupTree, SvGroupTreeNode, AddGroupNode, AddGroupTree, EditGroupTr
 
 @extend_blender_class
 class NodeGroupOutput(BaseNode):  # todo copy node id problem
+    
+    @property
+    def sv_logger(self):
+        # todo inject node label into records?
+        return logging.getLogger('sverchok')
+    
     def process(self):
         return
 
 
 @extend_blender_class
-class NodeGroupInput(BaseNode):
+class NodeGroupInput(BaseNode, bpy.types.Node):
+    @property
+    def sv_logger(self):
+        # todo inject node label into records?
+        return logging.getLogger('sverchok')
+    
     def process(self):
         return
 
