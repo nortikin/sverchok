@@ -24,7 +24,7 @@ from sverchok.core.update_system import ERROR_KEY
 from sverchok.utils.tree_structure import Tree
 from sverchok.utils.sv_node_utils import recursive_framed_location_finder
 from sverchok.utils.handle_blender_data import BlTrees, BlSockets
-from sverchok.node_tree import SvNodeTreeCommon, SverchCustomTreeNode
+from sverchok.node_tree import NodeUtils, SvNodeTreeCommon, SverchCustomTreeNode
 
 import logging
 
@@ -968,36 +968,27 @@ classes = [SvGroupTree, SvGroupTreeNode, AddGroupNode, AddGroupTree, EditGroupTr
 
 
 @extend_blender_class
-class NodeGroupOutput(BaseNode):  # todo copy node id problem
-    
-    @property
-    def sv_logger(self):
-        # todo inject node label into records?
-        return logging.getLogger('sverchok')
+class NodeGroupOutput(NodeUtils, BaseNode):  # todo copy node id problem
+
+    def process(self):
+        return
+
+
+@extend_blender_class
+class NodeGroupInput(NodeUtils, BaseNode, bpy.types.Node):
     
     def process(self):
         return
 
 
 @extend_blender_class
-class NodeGroupInput(BaseNode, bpy.types.Node):
-    @property
-    def sv_logger(self):
-        # todo inject node label into records?
-        return logging.getLogger('sverchok')
-    
-    def process(self):
-        return
-
-
-@extend_blender_class
-class NodeReroute(BaseNode):
+class NodeReroute(NodeUtils, BaseNode):
     """Add sv logic"""
     # `copy` attribute can't be overridden for this class
 
 
 @extend_blender_class
-class NodeFrame(BaseNode):
+class NodeFrame(NodeUtils, BaseNode):
     # for API consistency, it's much simpler way then create extra conditions everywhere
     pass
 
