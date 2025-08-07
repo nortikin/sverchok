@@ -982,13 +982,13 @@ class NodeGroupInput(NodeUtils, BaseNode, bpy.types.Node):
 
 
 @extend_blender_class
-class NodeReroute(NodeUtils, BaseNode):
+class NodeReroute(BaseNode):
     """Add sv logic"""
     # `copy` attribute can't be overridden for this class
 
 
 @extend_blender_class
-class NodeFrame(NodeUtils, BaseNode):
+class NodeFrame(BaseNode):
     # for API consistency, it's much simpler way then create extra conditions everywhere
     pass
 
