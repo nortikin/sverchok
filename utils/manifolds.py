@@ -1,6 +1,5 @@
 
 import numpy as np
-from math import cbrt
 
 from mathutils import kdtree
 from mathutils.bvhtree import BVHTree
