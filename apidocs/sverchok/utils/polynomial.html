@@ -1,0 +1,762 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sverchok.utils.polynomial API documentation</title>
+<meta name="description" content="">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sverchok.utils.polynomial</code></h1>
+</header>
+<section id="section-intro">
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sverchok.utils.polynomial.chebyshev_T"><code class="name flex">
+<span>def <span class="ident">chebyshev_T</span></span>(<span>n, ndim=None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def chebyshev_T(n, ndim=None):
+    if n == 0:
+        return Polynomial.Constant(1.0, ndim=ndim)
+    elif n == 1:
+        return Polynomial.Monomial(ndim=ndim)
+    else:
+        tn1 = chebyshev_T(n-1, ndim=ndim)
+        tn2 = chebyshev_T(n-2, ndim=ndim)
+        return tn1 * Polynomial.Monomial(coefficient=2, ndim=ndim) - tn2</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.polynomial.chebyshev_T_interpolate"><code class="name flex">
+<span>def <span class="ident">chebyshev_T_interpolate</span></span>(<span>xs, ys, max_degree=None, tolerance=None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def chebyshev_T_interpolate(xs,ys, max_degree=None, tolerance=None):
+    return polynomial_interpolate(chebyshev_T, xs, ys, max_degree=max_degree, tolerance=tolerance)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.polynomial.chebyshev_nodes"><code class="name flex">
+<span>def <span class="ident">chebyshev_nodes</span></span>(<span>n)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def chebyshev_nodes(n):
+    ks = np.arange(1, n+1)
+    xs = (2*ks - 1)*pi/(2*n)
+    return np.cos(xs)[::-1]</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.polynomial.chebyshev_nodes_transform"><code class="name flex">
+<span>def <span class="ident">chebyshev_nodes_transform</span></span>(<span>tknots)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def chebyshev_nodes_transform(tknots):
+    t_min = tknots[0]
+    t_max = tknots[-1]
+    n = len(tknots)
+    ks = (n-1) * (tknots - t_min) / (t_max - t_min) + 1
+    xs = (2*ks - 1)*pi/(2*n)
+    return np.cos(xs)[::-1]</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.polynomial.lagrange_basis"><code class="name flex">
+<span>def <span class="ident">lagrange_basis</span></span>(<span>n, i, xs, ndim=None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def lagrange_basis(n, i, xs, ndim=None):
+    poly = Polynomial.Constant(1, ndim=ndim)
+    x = Polynomial.Monomial(ndim=ndim)
+    for j in range(n):
+        if i == j:
+            continue
+        p = (x - xs[j]) * (1.0/(xs[i] - xs[j]))
+        #print(f&#34;P[{i},{j}]: (x - {xs[j]}) / ({xs[i] - xs[j]})&#34;)
+        poly = poly * p
+    return poly</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.polynomial.legendre_P"><code class="name flex">
+<span>def <span class="ident">legendre_P</span></span>(<span>n, ndim=None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def legendre_P(n, ndim=None):
+    if n == 0:
+        return Polynomial.Constant(1.0, ndim=ndim)
+    elif n == 1:
+        return Polynomial.Monomial(ndim=ndim)
+    else:
+        pn1 = legendre_P(n-1, ndim=ndim)
+        pn2 = legendre_P(n-2, ndim=ndim)
+        poly = pn1 * Polynomial.Monomial(2*n-1, degree=1, ndim=ndim)
+        poly = poly - pn2*(n-1)
+        poly = poly * (1.0 / n)
+        return poly</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.polynomial.legendre_interpolate"><code class="name flex">
+<span>def <span class="ident">legendre_interpolate</span></span>(<span>xs, ys, max_degree=None, tolerance=None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def legendre_interpolate(xs,ys, max_degree=None, tolerance=None):
+    return polynomial_interpolate(legendre_P, xs, ys, max_degree=max_degree, tolerance=tolerance)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.polynomial.polynomial_interpolate"><code class="name flex">
+<span>def <span class="ident">polynomial_interpolate</span></span>(<span>basis, xs, ys, max_degree=None, tolerance=None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def polynomial_interpolate(basis, xs, ys, max_degree=None, tolerance=None):
+    n = len(xs)
+
+    if max_degree is None:
+        degree = n
+    else:
+        degree = min(max_degree, n)
+
+    if ys.ndim == 1:
+        ndim = None
+        A = np.zeros((n, degree))
+    else:
+        ndim = ys.shape[-1]
+        A = np.zeros((ndim, n, degree))
+
+    polys = [basis(i, ndim=ndim) for i in range(degree)]
+    for i in range(degree):
+        if ndim is None:
+            A[:,i] = polys[i].evaluate_array(xs)
+        else:
+            A[:,:,i] = polys[i].evaluate_array(xs).T
+    if degree == n:
+        ks = np.linalg.solve(A, ys.T).T
+    else:
+        if ndim is None:
+            ks, residuals, rank, s = np.linalg.lstsq(A, ys.T)
+        else:
+            ks, residuals, rank, s = np.linalg.lstsq(A[0], ys)
+
+    if tolerance is not None:
+        sums = np.cumsum(abs(ks[::-1]), axis=0)
+        sums = sums.max(axis=1)
+        k = sums.searchsorted(tolerance)
+        #print(&#34;Ks&#34;, ks, sums, k)
+        if k &gt; 0:
+            print(&#34;K delta:&#34;, abs(ks[-k:]).sum(axis=0), k)
+            ks = ks[:-k]
+
+    solution = Polynomial.Zero(ndim=ndim)
+    for i,k in enumerate(ks):
+        solution = solution + polys[i] * k
+    return solution</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sverchok.utils.polynomial.Polynomial"><code class="flex name class">
+<span>class <span class="ident">Polynomial</span></span>
+<span>(</span><span>coeffs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Polynomial:
+    def __init__(self, coeffs):
+        self.coeffs = np.asarray(coeffs, dtype=np.float64)
+
+    def __repr__(self):
+        def monomial(c,d):
+            if c == 0:
+                return &#34;&#34;
+            elif d == 0:
+                return str(c)
+            elif c == 1.0:
+                return &#34;x^&#34; + str(d)
+            else:
+                return f&#34;{c}*x^{d}&#34;
+        monomials = [monomial(c,i) for i,c in enumerate(self.coeffs)]
+        return &#34; + &#34;.join(reversed(monomials))
+
+    @staticmethod
+    def Constant(k, ndim=None):
+        if ndim is None:
+            shape = (1,)
+        else:
+            shape = (1,ndim)
+        coeffs = np.zeros(shape)
+        if len(shape) == 2:
+            coeffs[0,:] = k
+        elif len(shape) == 1:
+            coeffs[0] = k
+        else:
+            raise ValueError(f&#34;Unsupported shape: {shape}&#34;)
+        return Polynomial(coeffs)
+
+    @staticmethod
+    def Zero(ndim=None):
+        return Polynomial.Constant(0, ndim=ndim)
+
+    @staticmethod
+    def Monomial(coefficient=1.0, degree=1, ndim=None):
+        if ndim is None:
+            shape = (degree+1,)
+        else:
+            shape = (degree+1,ndim)
+        coeffs = np.zeros(shape)
+        if len(shape) == 1:
+            coeffs[degree] = coefficient
+        elif len(shape) == 2:
+            coeffs[degree,:] = coefficient
+        else:
+            raise ValueError(f&#34;Unsupported shape: {shape}&#34;)
+        return Polynomial(coeffs)
+
+    @staticmethod
+    def Binomial(k, c, degree=1, ndim=None):
+        if degree == 0:
+            return Polynomial.Constant(1, ndim=ndim)
+        elif degree == 1:
+            return Polynomial.Constant(c, ndim=ndim) + Polynomial.Monomial(k, ndim=ndim)
+        C = binomial_array(degree+1)
+        if ndim is None:
+            shape = (degree+1,)
+        else:
+            shape = (degree+1,ndim)
+        coeffs = np.zeros(shape)
+        if ndim is None:
+            coeffs[:] = C[degree,:]
+        else:
+            for i in range(coeffs.shape[-1]):
+                coeffs[:,i] = C[degree,:]
+        j = np.arange(degree+1)
+        if ndim is not None:
+            j = j[np.newaxis].T
+        #    k = np.full((1,ndim), k)
+        coeffs *= k ** j
+        coeffs *= c ** (degree - j)
+        return Polynomial(coeffs)
+
+    def get_degree(self):
+        return len(self.coeffs) - 1
+
+    def get_ndim(self):
+        if self.coeffs.ndim == 1:
+            return None
+        else:
+            return self.coeffs.shape[-1]
+
+    def evaluate(self, x):
+        n = len(self.coeffs)
+        ds = np.arange(n)
+        return (self.coeffs * x ** ds).sum()
+
+    def evaluate_array(self, xs):
+        n = len(self.coeffs)
+        ds = np.arange(n)
+        if self.get_ndim() is None:
+            xs = xs[np.newaxis].T
+            return (self.coeffs * xs ** ds).sum(axis=1)
+        else:
+            #print(&#34;X&#34;, xs, ds)
+            xs = xs[np.newaxis].T ** ds
+            xs = np.transpose(xs[np.newaxis], axes=(1,2,0))
+            #xs = xs[np.newaxis]
+            #coeffs = np.transpose(self.coeffs[np.newaxis], axes=(1,2,0))
+            coeffs = self.coeffs[np.newaxis]
+            #print(f&#34;X* {coeffs.shape} {xs.shape}&#34;)
+            xs = coeffs * xs
+            #print(&#34;Sum shape&#34;, xs.shape)
+            xs = xs.sum(axis=1)
+            #print(&#34;X shape&#34;, xs.shape)
+            return xs
+
+    def linear_substitute(self, k, c):
+        poly = Polynomial.Zero(ndim=self.get_ndim())
+        for i, a in enumerate(self.coeffs):
+            poly = poly + Polynomial.Binomial(k, c, degree=i, ndim=self.get_ndim()) * a
+        return poly
+
+    def scale(self, scalar):
+        if isinstance(scalar, (int, float, np.float64)):
+            return Polynomial(scalar * self.coeffs)
+        elif isinstance(scalar, np.ndarray) and scalar.ndim == 1:
+            coeffs = scalar[np.newaxis] * self.coeffs
+            return Polynomial(coeffs)
+        else:
+            raise TypeError(&#34;Unsupported argument types&#34;)
+
+    def negate(self):
+        return Polynomial(-1 * self.coeffs)
+
+    def add(self, other):
+        if isinstance(other, COEFF_TYPES):
+            other = Polynomial.Constant(other, ndim=self.get_ndim())
+        if self.coeffs.ndim != other.coeffs.ndim:
+            raise ValueError(f&#34;Incompatible polynomial shapes: {self.get_ndim()} vs {other.get_ndim()}&#34;)
+        n = max(len(self.coeffs), len(other.coeffs))
+        if self.coeffs.ndim == 1:
+            coeffs = np.zeros((n,))
+            coeffs[:len(self.coeffs)] += self.coeffs
+            coeffs[:len(other.coeffs)] += other.coeffs
+            return Polynomial(coeffs)
+        elif self.coeffs.ndim == 2:
+            shape = list(self.coeffs.shape)
+            shape[0] = n
+            coeffs = np.zeros(shape)
+            coeffs[:len(self.coeffs),:] += self.coeffs
+            coeffs[:len(other.coeffs),:] += other.coeffs
+            return Polynomial(coeffs)
+        else:
+            raise TypeError(&#34;Unsupported argument types&#34;)
+
+    def __add__(self, other):
+        return self.add(other)
+
+    def __sub__(self, other):
+        if isinstance(other, COEFF_TYPES):
+            other = Polynomial.Constant(other, ndim=self.get_ndim())
+        return self.add(other.negate())
+
+    def __mul__(self, other):
+        if isinstance(other, COEFF_TYPES):
+            return self.scale(other)
+        if other.get_degree() == 1:
+            n = len(self.coeffs)
+            shape = list(self.coeffs.shape)
+            shape[0] = n+1
+            coeffs = np.zeros(shape)
+            coeffs[1:] = self.coeffs
+            coeffs *= other.coeffs[1]
+            return Polynomial(coeffs) + Polynomial(other.coeffs[0] * self.coeffs)
+        raise ValueError(f&#34;Multiplication by arbitrary degree polynomial is not implemented yet: {self.coeffs.shape} x {other.coeffs.shape}&#34;)
+
+    def roughen(self, tolerance):
+        sums = np.cumsum(abs(self.coeffs[::-1]))
+        k = sums.searchsorted(tolerance)
+        n = len(self.coeffs)
+        return Polynomial(self.coeffs[:n-k])
+
+    def truncate(self, max_degree):
+        n = min(len(self.coeffs), max_degree+1)
+        return Polynomial(self.coeffs[:n])</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Static methods</h3>
+<dl>
+<dt id="sverchok.utils.polynomial.Polynomial.Binomial"><code class="name flex">
+<span>def <span class="ident">Binomial</span></span>(<span>k, c, degree=1, ndim=None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def Binomial(k, c, degree=1, ndim=None):
+    if degree == 0:
+        return Polynomial.Constant(1, ndim=ndim)
+    elif degree == 1:
+        return Polynomial.Constant(c, ndim=ndim) + Polynomial.Monomial(k, ndim=ndim)
+    C = binomial_array(degree+1)
+    if ndim is None:
+        shape = (degree+1,)
+    else:
+        shape = (degree+1,ndim)
+    coeffs = np.zeros(shape)
+    if ndim is None:
+        coeffs[:] = C[degree,:]
+    else:
+        for i in range(coeffs.shape[-1]):
+            coeffs[:,i] = C[degree,:]
+    j = np.arange(degree+1)
+    if ndim is not None:
+        j = j[np.newaxis].T
+    #    k = np.full((1,ndim), k)
+    coeffs *= k ** j
+    coeffs *= c ** (degree - j)
+    return Polynomial(coeffs)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.polynomial.Polynomial.Constant"><code class="name flex">
+<span>def <span class="ident">Constant</span></span>(<span>k, ndim=None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def Constant(k, ndim=None):
+    if ndim is None:
+        shape = (1,)
+    else:
+        shape = (1,ndim)
+    coeffs = np.zeros(shape)
+    if len(shape) == 2:
+        coeffs[0,:] = k
+    elif len(shape) == 1:
+        coeffs[0] = k
+    else:
+        raise ValueError(f&#34;Unsupported shape: {shape}&#34;)
+    return Polynomial(coeffs)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.polynomial.Polynomial.Monomial"><code class="name flex">
+<span>def <span class="ident">Monomial</span></span>(<span>coefficient=1.0, degree=1, ndim=None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def Monomial(coefficient=1.0, degree=1, ndim=None):
+    if ndim is None:
+        shape = (degree+1,)
+    else:
+        shape = (degree+1,ndim)
+    coeffs = np.zeros(shape)
+    if len(shape) == 1:
+        coeffs[degree] = coefficient
+    elif len(shape) == 2:
+        coeffs[degree,:] = coefficient
+    else:
+        raise ValueError(f&#34;Unsupported shape: {shape}&#34;)
+    return Polynomial(coeffs)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.polynomial.Polynomial.Zero"><code class="name flex">
+<span>def <span class="ident">Zero</span></span>(<span>ndim=None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def Zero(ndim=None):
+    return Polynomial.Constant(0, ndim=ndim)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sverchok.utils.polynomial.Polynomial.add"><code class="name flex">
+<span>def <span class="ident">add</span></span>(<span>self, other)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add(self, other):
+    if isinstance(other, COEFF_TYPES):
+        other = Polynomial.Constant(other, ndim=self.get_ndim())
+    if self.coeffs.ndim != other.coeffs.ndim:
+        raise ValueError(f&#34;Incompatible polynomial shapes: {self.get_ndim()} vs {other.get_ndim()}&#34;)
+    n = max(len(self.coeffs), len(other.coeffs))
+    if self.coeffs.ndim == 1:
+        coeffs = np.zeros((n,))
+        coeffs[:len(self.coeffs)] += self.coeffs
+        coeffs[:len(other.coeffs)] += other.coeffs
+        return Polynomial(coeffs)
+    elif self.coeffs.ndim == 2:
+        shape = list(self.coeffs.shape)
+        shape[0] = n
+        coeffs = np.zeros(shape)
+        coeffs[:len(self.coeffs),:] += self.coeffs
+        coeffs[:len(other.coeffs),:] += other.coeffs
+        return Polynomial(coeffs)
+    else:
+        raise TypeError(&#34;Unsupported argument types&#34;)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.polynomial.Polynomial.evaluate"><code class="name flex">
+<span>def <span class="ident">evaluate</span></span>(<span>self, x)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate(self, x):
+    n = len(self.coeffs)
+    ds = np.arange(n)
+    return (self.coeffs * x ** ds).sum()</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.polynomial.Polynomial.evaluate_array"><code class="name flex">
+<span>def <span class="ident">evaluate_array</span></span>(<span>self, xs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evaluate_array(self, xs):
+    n = len(self.coeffs)
+    ds = np.arange(n)
+    if self.get_ndim() is None:
+        xs = xs[np.newaxis].T
+        return (self.coeffs * xs ** ds).sum(axis=1)
+    else:
+        #print(&#34;X&#34;, xs, ds)
+        xs = xs[np.newaxis].T ** ds
+        xs = np.transpose(xs[np.newaxis], axes=(1,2,0))
+        #xs = xs[np.newaxis]
+        #coeffs = np.transpose(self.coeffs[np.newaxis], axes=(1,2,0))
+        coeffs = self.coeffs[np.newaxis]
+        #print(f&#34;X* {coeffs.shape} {xs.shape}&#34;)
+        xs = coeffs * xs
+        #print(&#34;Sum shape&#34;, xs.shape)
+        xs = xs.sum(axis=1)
+        #print(&#34;X shape&#34;, xs.shape)
+        return xs</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.polynomial.Polynomial.get_degree"><code class="name flex">
+<span>def <span class="ident">get_degree</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_degree(self):
+    return len(self.coeffs) - 1</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.polynomial.Polynomial.get_ndim"><code class="name flex">
+<span>def <span class="ident">get_ndim</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_ndim(self):
+    if self.coeffs.ndim == 1:
+        return None
+    else:
+        return self.coeffs.shape[-1]</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.polynomial.Polynomial.linear_substitute"><code class="name flex">
+<span>def <span class="ident">linear_substitute</span></span>(<span>self, k, c)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def linear_substitute(self, k, c):
+    poly = Polynomial.Zero(ndim=self.get_ndim())
+    for i, a in enumerate(self.coeffs):
+        poly = poly + Polynomial.Binomial(k, c, degree=i, ndim=self.get_ndim()) * a
+    return poly</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.polynomial.Polynomial.negate"><code class="name flex">
+<span>def <span class="ident">negate</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def negate(self):
+    return Polynomial(-1 * self.coeffs)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.polynomial.Polynomial.roughen"><code class="name flex">
+<span>def <span class="ident">roughen</span></span>(<span>self, tolerance)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def roughen(self, tolerance):
+    sums = np.cumsum(abs(self.coeffs[::-1]))
+    k = sums.searchsorted(tolerance)
+    n = len(self.coeffs)
+    return Polynomial(self.coeffs[:n-k])</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.polynomial.Polynomial.scale"><code class="name flex">
+<span>def <span class="ident">scale</span></span>(<span>self, scalar)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def scale(self, scalar):
+    if isinstance(scalar, (int, float, np.float64)):
+        return Polynomial(scalar * self.coeffs)
+    elif isinstance(scalar, np.ndarray) and scalar.ndim == 1:
+        coeffs = scalar[np.newaxis] * self.coeffs
+        return Polynomial(coeffs)
+    else:
+        raise TypeError(&#34;Unsupported argument types&#34;)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.polynomial.Polynomial.truncate"><code class="name flex">
+<span>def <span class="ident">truncate</span></span>(<span>self, max_degree)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def truncate(self, max_degree):
+    n = min(len(self.coeffs), max_degree+1)
+    return Polynomial(self.coeffs[:n])</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sverchok.utils" href="index.html">sverchok.utils</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sverchok.utils.polynomial.chebyshev_T" href="#sverchok.utils.polynomial.chebyshev_T">chebyshev_T</a></code></li>
+<li><code><a title="sverchok.utils.polynomial.chebyshev_T_interpolate" href="#sverchok.utils.polynomial.chebyshev_T_interpolate">chebyshev_T_interpolate</a></code></li>
+<li><code><a title="sverchok.utils.polynomial.chebyshev_nodes" href="#sverchok.utils.polynomial.chebyshev_nodes">chebyshev_nodes</a></code></li>
+<li><code><a title="sverchok.utils.polynomial.chebyshev_nodes_transform" href="#sverchok.utils.polynomial.chebyshev_nodes_transform">chebyshev_nodes_transform</a></code></li>
+<li><code><a title="sverchok.utils.polynomial.lagrange_basis" href="#sverchok.utils.polynomial.lagrange_basis">lagrange_basis</a></code></li>
+<li><code><a title="sverchok.utils.polynomial.legendre_P" href="#sverchok.utils.polynomial.legendre_P">legendre_P</a></code></li>
+<li><code><a title="sverchok.utils.polynomial.legendre_interpolate" href="#sverchok.utils.polynomial.legendre_interpolate">legendre_interpolate</a></code></li>
+<li><code><a title="sverchok.utils.polynomial.polynomial_interpolate" href="#sverchok.utils.polynomial.polynomial_interpolate">polynomial_interpolate</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sverchok.utils.polynomial.Polynomial" href="#sverchok.utils.polynomial.Polynomial">Polynomial</a></code></h4>
+<ul class="two-column">
+<li><code><a title="sverchok.utils.polynomial.Polynomial.Binomial" href="#sverchok.utils.polynomial.Polynomial.Binomial">Binomial</a></code></li>
+<li><code><a title="sverchok.utils.polynomial.Polynomial.Constant" href="#sverchok.utils.polynomial.Polynomial.Constant">Constant</a></code></li>
+<li><code><a title="sverchok.utils.polynomial.Polynomial.Monomial" href="#sverchok.utils.polynomial.Polynomial.Monomial">Monomial</a></code></li>
+<li><code><a title="sverchok.utils.polynomial.Polynomial.Zero" href="#sverchok.utils.polynomial.Polynomial.Zero">Zero</a></code></li>
+<li><code><a title="sverchok.utils.polynomial.Polynomial.add" href="#sverchok.utils.polynomial.Polynomial.add">add</a></code></li>
+<li><code><a title="sverchok.utils.polynomial.Polynomial.evaluate" href="#sverchok.utils.polynomial.Polynomial.evaluate">evaluate</a></code></li>
+<li><code><a title="sverchok.utils.polynomial.Polynomial.evaluate_array" href="#sverchok.utils.polynomial.Polynomial.evaluate_array">evaluate_array</a></code></li>
+<li><code><a title="sverchok.utils.polynomial.Polynomial.get_degree" href="#sverchok.utils.polynomial.Polynomial.get_degree">get_degree</a></code></li>
+<li><code><a title="sverchok.utils.polynomial.Polynomial.get_ndim" href="#sverchok.utils.polynomial.Polynomial.get_ndim">get_ndim</a></code></li>
+<li><code><a title="sverchok.utils.polynomial.Polynomial.linear_substitute" href="#sverchok.utils.polynomial.Polynomial.linear_substitute">linear_substitute</a></code></li>
+<li><code><a title="sverchok.utils.polynomial.Polynomial.negate" href="#sverchok.utils.polynomial.Polynomial.negate">negate</a></code></li>
+<li><code><a title="sverchok.utils.polynomial.Polynomial.roughen" href="#sverchok.utils.polynomial.Polynomial.roughen">roughen</a></code></li>
+<li><code><a title="sverchok.utils.polynomial.Polynomial.scale" href="#sverchok.utils.polynomial.Polynomial.scale">scale</a></code></li>
+<li><code><a title="sverchok.utils.polynomial.Polynomial.truncate" href="#sverchok.utils.polynomial.Polynomial.truncate">truncate</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

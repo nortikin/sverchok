@@ -2515,7 +2515,6 @@ def scale(self):
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class SvTaylorCurve(SvCurve):
-    __description__ = &#34;Taylor&#34;
 
     def __init__(self, start, derivatives, u_bounds=None):
         self.start = start
@@ -2524,6 +2523,7 @@ def scale(self):
         if u_bounds is None:
             u_bounds = (0, 1.0)
         self.u_bounds = u_bounds
+        self.__description__ = f&#34;Taylor (degree={self.get_degree()})&#34;
 
     @classmethod
     def from_coefficients(cls, coefficients):

@@ -75,20 +75,24 @@ el.replaceWith(d);
             else:
                 result += coeff * sin((j+1)*o*t)
         return result
+
+    @staticmethod
+    def basis_function(omega, i):
+        def function(ts):
+            j = i // 2
+            if i % 2 == 0:
+                cost = np.cos((j+1)*omega*ts)[np.newaxis].T
+                return cost
+            else:
+                sint = np.sin((j+1)*omega*ts)[np.newaxis].T
+                return sint
+        return function
     
     def evaluate_array(self, ts):
         n = len(ts)
         result = np.broadcast_to(self.start, (n,3))
-        o = self.omega
         for i, coeff in enumerate(self.coeffs):
-            j = i // 2
-            if i % 2 == 0:
-                cost = np.cos((j+1)*o*ts)[np.newaxis].T
-                result = result + coeff*cost
-            else:
-                sint = np.sin((j+1)*o*ts)[np.newaxis].T
-                result = result + coeff*sint
-                
+            result = result + coeff * SvFourierCurve.basis_function(self.omega, i)(ts)
         return result
 
     def tangent(self, t, tangent_delta=None):
@@ -133,8 +137,8 @@ el.replaceWith(d);
                 result = result + ((j+1)*o)**2 * coeff*sint
         return result
 
-    @classmethod
-    def approximate(cls, verts, degree, metric=&#39;DISTANCE&#39;):
+    @staticmethod
+    def approximate_fit(verts, degree, metric=&#39;DISTANCE&#39;):
 
         def init_guess(verts, n):
             return np.array([pi] + list(verts[0]) + [0,0,0]*2*n)
@@ -160,68 +164,32 @@ el.replaceWith(d);
         curve = SvFourierCurve(omega, points[0], points[1:])
         return curve
 
-    @classmethod
-    def interpolate(cls, verts, omega, metric=&#39;DISTANCE&#39;, is_cyclic=False):
-        ndim = 3
-
-        n_verts = len(verts)
-        verts = np.asarray(verts)
-        if is_cyclic:
-            verts = np.append(verts, verts[0][np.newaxis], axis=0)
-            n_verts += 1
-            n_equations = n_verts + 1
-        else:
-            n_equations = n_verts
-        
+    @staticmethod
+    def approximate_lstsq(verts, omega, degree, metric=&#39;DISTANCE&#39;):
+        verts = np.array(verts)
+        n = len(verts)
+        degree = min(n, degree)
         tknots = Spline.create_knots(verts, metric=metric)
-        A = np.zeros((ndim*n_equations, ndim*n_equations))
-        
-        for equation_idx, t in enumerate(tknots):
-            for unknown_idx in range(n_equations):
-                i = (unknown_idx // 2) + 1
-                if unknown_idx % 2 == 0:
-                    coeff = cos(omega*i*t)
-                else:
-                    coeff = sin(omega*i*t)
-                row = ndim*equation_idx
-                col = ndim*unknown_idx
-                for d in range(ndim):
-                    A[row+d, col+d] = coeff
+        A = np.zeros((n, degree))
+        for i in range(degree):
+            A[:,i] = SvFourierCurve.basis_function(omega, i)(tknots)[:,0]
+        coeffs, residuals, rank, s = np.linalg.lstsq(A, verts)
+        curve = SvFourierCurve(omega, np.array([0.0, 0.0, 0.0]), coeffs)
+        return curve
 
-        if is_cyclic:
-            equation_idx = len(tknots)
-            for unknown_idx in range(n_equations):
-                i = (unknown_idx // 2) + 1
-                if unknown_idx % 2 == 0:
-                    coeff = -omega*i*sin(omega*i) # - 0
-                else:
-                    coeff = omega*i*cos(omega*i) - omega*i
-                row = ndim*equation_idx
-                col = ndim*unknown_idx
-                for d in range(ndim):
-                    A[row+d, col+d] = coeff
-        #print(A)
+    @staticmethod
+    def interpolate(verts, omega, metric=&#39;DISTANCE&#39;, is_cyclic=False):
+        verts = np.array(verts)
+        n = len(verts)
+        degree = n
+        tknots = Spline.create_knots(verts, metric=metric)
+        A = np.zeros((n, degree))
+        for i in range(degree):
+            A[:,i] = SvFourierCurve.basis_function(omega, i)(tknots)[:,0]
 
-        B = np.empty((ndim*n_equations,1))
-        for point_idx, point in enumerate(verts):
-            row = ndim*point_idx
-            B[row:row+ndim] = point[:,np.newaxis]
-        
-        if is_cyclic:
-            point_idx = len(verts)
-            row = ndim*point_idx
-            B[row:row+ndim] = np.array([[0,0,0]]).T
-
-        #print(B)
-
-        x = np.linalg.solve(A, B)
-        coeffs = []
-        for i in range(n_equations):
-            row = i*ndim
-            coeff = x[row:row+ndim,0].T
-            coeffs.append(coeff)
-        coeffs = np.array(coeffs)
-        #print(coeffs)
+        print(A)
+        print(&#34;DA&#34;, np.linalg.det(A))
+        coeffs = np.linalg.solve(A, verts)
         
         return SvFourierCurve(omega, np.array([0.0,0.0,0.0]), coeffs)</code></pre>
 </details>
@@ -232,16 +200,112 @@ el.replaceWith(d);
 </ul>
 <h3>Static methods</h3>
 <dl>
-<dt id="sverchok.utils.curve.fourier.SvFourierCurve.approximate"><code class="name flex">
-<span>def <span class="ident">approximate</span></span>(<span>verts, degree, metric='DISTANCE')</span>
+<dt id="sverchok.utils.curve.fourier.SvFourierCurve.approximate_fit"><code class="name flex">
+<span>def <span class="ident">approximate_fit</span></span>(<span>verts, degree, metric='DISTANCE')</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def approximate_fit(verts, degree, metric=&#39;DISTANCE&#39;):
+
+    def init_guess(verts, n):
+        return np.array([pi] + list(verts[0]) + [0,0,0]*2*n)
+
+    def goal(ts, *xs):
+        n3 = len(xs)-1
+        n = n3 // 3
+        omega = xs[0]
+        points = np.array(xs[1:]).reshape((n,3))
+        curve = SvFourierCurve(omega, points[0], points[1:])
+        pts = curve.evaluate_array(ts)
+        return np.ravel(pts)
+
+    xdata = Spline.create_knots(verts, metric=metric)
+    ydata = np.ravel(verts)
+
+    p0 = init_guess(verts, degree)
+    popt, pcov = curve_fit(goal, xdata, ydata, p0)
+    n3 = len(popt)-1
+    ncoeffs = n3 // 3
+    omega = popt[0]
+    points = popt[1:].reshape((ncoeffs,3))
+    curve = SvFourierCurve(omega, points[0], points[1:])
+    return curve</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.curve.fourier.SvFourierCurve.approximate_lstsq"><code class="name flex">
+<span>def <span class="ident">approximate_lstsq</span></span>(<span>verts, omega, degree, metric='DISTANCE')</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def approximate_lstsq(verts, omega, degree, metric=&#39;DISTANCE&#39;):
+    verts = np.array(verts)
+    n = len(verts)
+    degree = min(n, degree)
+    tknots = Spline.create_knots(verts, metric=metric)
+    A = np.zeros((n, degree))
+    for i in range(degree):
+        A[:,i] = SvFourierCurve.basis_function(omega, i)(tknots)[:,0]
+    coeffs, residuals, rank, s = np.linalg.lstsq(A, verts)
+    curve = SvFourierCurve(omega, np.array([0.0, 0.0, 0.0]), coeffs)
+    return curve</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.curve.fourier.SvFourierCurve.basis_function"><code class="name flex">
+<span>def <span class="ident">basis_function</span></span>(<span>omega, i)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def basis_function(omega, i):
+    def function(ts):
+        j = i // 2
+        if i % 2 == 0:
+            cost = np.cos((j+1)*omega*ts)[np.newaxis].T
+            return cost
+        else:
+            sint = np.sin((j+1)*omega*ts)[np.newaxis].T
+            return sint
+    return function</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.fourier.SvFourierCurve.interpolate"><code class="name flex">
 <span>def <span class="ident">interpolate</span></span>(<span>verts, omega, metric='DISTANCE', is_cyclic=False)</span>
 </code></dt>
 <dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def interpolate(verts, omega, metric=&#39;DISTANCE&#39;, is_cyclic=False):
+    verts = np.array(verts)
+    n = len(verts)
+    degree = n
+    tknots = Spline.create_knots(verts, metric=metric)
+    A = np.zeros((n, degree))
+    for i in range(degree):
+        A[:,i] = SvFourierCurve.basis_function(omega, i)(tknots)[:,0]
+
+    print(A)
+    print(&#34;DA&#34;, np.linalg.det(A))
+    coeffs = np.linalg.solve(A, verts)
+    
+    return SvFourierCurve(omega, np.array([0.0,0.0,0.0]), coeffs)</code></pre>
+</details>
 <div class="desc"></div>
 </dd>
 </dl>
@@ -293,7 +357,9 @@ el.replaceWith(d);
 <li>
 <h4><code><a title="sverchok.utils.curve.fourier.SvFourierCurve" href="#sverchok.utils.curve.fourier.SvFourierCurve">SvFourierCurve</a></code></h4>
 <ul class="">
-<li><code><a title="sverchok.utils.curve.fourier.SvFourierCurve.approximate" href="#sverchok.utils.curve.fourier.SvFourierCurve.approximate">approximate</a></code></li>
+<li><code><a title="sverchok.utils.curve.fourier.SvFourierCurve.approximate_fit" href="#sverchok.utils.curve.fourier.SvFourierCurve.approximate_fit">approximate_fit</a></code></li>
+<li><code><a title="sverchok.utils.curve.fourier.SvFourierCurve.approximate_lstsq" href="#sverchok.utils.curve.fourier.SvFourierCurve.approximate_lstsq">approximate_lstsq</a></code></li>
+<li><code><a title="sverchok.utils.curve.fourier.SvFourierCurve.basis_function" href="#sverchok.utils.curve.fourier.SvFourierCurve.basis_function">basis_function</a></code></li>
 <li><code><a title="sverchok.utils.curve.fourier.SvFourierCurve.interpolate" href="#sverchok.utils.curve.fourier.SvFourierCurve.interpolate">interpolate</a></code></li>
 </ul>
 </li>

@@ -87,6 +87,27 @@ el.replaceWith(d);
 </details>
 <div class="desc"></div>
 </dd>
+<dt id="sverchok.utils.curve.nurbs_algorithms.cut_closed_segments"><code class="name flex">
+<span>def <span class="ident">cut_closed_segments</span></span>(<span>segments, tolerance=1e-06)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def cut_closed_segments(segments, tolerance=1e-6):
+    unclosed = []
+    for segment in segments:
+        if segment.is_closed(tolerance=tolerance):
+            u1,u2 = segment.get_u_bounds()
+            mid = (u1+u2)*0.5
+            unclosed.extend(segment.split_at(mid))
+        else:
+            unclosed.append(segment)
+    return unclosed</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
 <dt id="sverchok.utils.curve.nurbs_algorithms.interpolate_nurbs_curve"><code class="name flex">
 <span>def <span class="ident">interpolate_nurbs_curve</span></span>(<span>cls, degree, points, metric='DISTANCE', tknots=None, **kwargs)</span>
 </code></dt>
@@ -101,148 +122,24 @@ el.replaceWith(d);
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.nurbs_algorithms.intersect_nurbs_curves"><code class="name flex">
-<span>def <span class="ident">intersect_nurbs_curves</span></span>(<span>curve1, curve2, method='SLSQP', numeric_precision=0.001, logger=None)</span>
+<span>def <span class="ident">intersect_nurbs_curves</span></span>(<span>curve1,<br>curve2,<br>method='SLSQP',<br>numeric_method_threshold=0.02,<br>numeric_precision=0.001,<br>logger=None)</span>
 </code></dt>
 <dd>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def intersect_nurbs_curves(curve1, curve2, method=&#39;SLSQP&#39;, numeric_precision=0.001, logger=None):
+<pre><code class="python">def intersect_nurbs_curves(curve1, curve2, method=&#39;SLSQP&#39;, numeric_method_threshold = 0.02, numeric_precision=0.001, logger=None):
     if logger is None:
         logger = get_logger()
-
-    u1_min, u1_max = curve1.get_u_bounds()
-    u2_min, u2_max = curve2.get_u_bounds()
-
-    expected_subdivisions = 10
-
-    max_dt1 = (u1_max - u1_min) / expected_subdivisions
-    max_dt2 = (u2_max - u2_min) / expected_subdivisions
-
-    # Float precision problems workaround
-    bbox_tolerance = 1e-4
-
-    # &#34;Recursive bounding box&#34; algorithm:
-    # * if bounding boxes of two curves do not intersect, then curves do not intersect
-    # * Otherwise, split each curves in half, and check if bounding boxes of these halves intersect.
-    # * When this subdivision gives very small parts of curves, try to find intersections numerically.
-    #
-    # This implementation depends heavily on the fact that curves are NURBS. Because only NURBS curves
-    # give us a simple way to calculate bounding box of the curve: it&#39;s a bounding box of curve&#39;s
-    # control points.
-
-    def _intersect(curve1, curve2, c1_bounds, c2_bounds, i=0):
-        if curve1 is None or curve2 is None:
-            return []
-
-        t1_min, t1_max = c1_bounds
-        t2_min, t2_max = c2_bounds
-
-
-        bbox1 = curve1.get_bounding_box().increase(bbox_tolerance)
-        bbox2 = curve2.get_bounding_box().increase(bbox_tolerance)
-
-        #logger.debug(f&#34;check: [{t1_min} - {t1_max}] x [{t2_min} - {t2_max}], bbox1: {bbox1.size()}, bbox2: {bbox2.size()}&#34;)
-        if not bbox1.intersects(bbox2):
-            return []
-
-        r = _intersect_endpoints(curve1, curve2, numeric_precision)
-        if r:
-            logger.debug(&#34;Endpoint intersection after %d iterations; bbox1: %s, bbox2: %s&#34;, i, bbox1.size(), bbox2.size())
-            return [r]
-
-        THRESHOLD = 0.02
-
-        if curve1.is_line(0.5*numeric_precision) and curve2.is_line(0.5*numeric_precision):
-            logger.debug(&#34;Calling Lin() after %d iterations&#34;, i)
-            r = _intersect_curves_line(curve1, curve2, numeric_precision, logger=logger)
-            if r is SEGMENTS_PARALLEL:
-                return []
-            elif r:
-                return r
-
-        if bbox1.size() &lt; THRESHOLD and bbox2.size() &lt; THRESHOLD:
-            logger.debug(&#34;Calling Eq() after %d iterations&#34;, i)
-            eq_result = _intersect_curves_equation(curve1, curve2, method=method, precision=numeric_precision, logger=logger)
-            if eq_result is not NUMERIC_TOO_FAR:
-                return eq_result
-
-        mid1 = (t1_min + t1_max) * 0.5
-        mid2 = (t2_min + t2_max) * 0.5
-
-        c11,c12 = curve1.split_at(mid1)
-        c21,c22 = curve2.split_at(mid2)
-
-        r1 = _intersect(c11,c21, (t1_min, mid1), (t2_min, mid2), i+1)
-        r2 = _intersect(c11,c22, (t1_min, mid1), (mid2, t2_max), i+1)
-        r3 = _intersect(c12,c21, (mid1, t1_max), (t2_min, mid2), i+1)
-        r4 = _intersect(c12,c22, (mid1, t1_max), (mid2, t2_max), i+1)
-
-        return r1 + r2 + r3 + r4
-
-    def _intersect_each(segments1, segments2):
-        result = []
-        for segment1 in segments1:
-            for segment2 in segments2:
-                #print(f&#34;Check {segment1.get_u_bounds()} x {segment2.get_u_bounds()}&#34;)
-                r = _intersect(segment1, segment2, segment1.get_u_bounds(), segment2.get_u_bounds())
-                result.extend(r)
-        return result
-
-    def cut_closed_segments(segments):
-        unclosed = []
-        for segment in segments:
-            if segment.is_closed(numeric_precision):
-                u1,u2 = segment.get_u_bounds()
-                mid = (u1+u2)*0.5
-                unclosed.extend(segment.split_at(mid))
-            else:
-                unclosed.append(segment)
-        return unclosed
-
     segments1 = curve1.to_bezier_segments(to_bezier_class=False)
     segments2 = curve2.to_bezier_segments(to_bezier_class=False)
-    
-    return _intersect_each(cut_closed_segments(segments1), cut_closed_segments(segments2))</code></pre>
-</details>
-<div class="desc"></div>
-</dd>
-<dt id="sverchok.utils.curve.nurbs_algorithms.intersect_segment_segment_mu"><code class="name flex">
-<span>def <span class="ident">intersect_segment_segment_mu</span></span>(<span>v1, v2, v3, v4, tolerance=0.001)</span>
-</code></dt>
-<dd>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def intersect_segment_segment_mu(v1, v2, v3, v4, tolerance=1e-3):
-    r1, r2 = mathutils.geometry.intersect_line_line(v1, v2, v3, v4)
-    if (r1 - r2).length &lt; tolerance:
-        v = 0.5 * (r1 + r2)
-        v = np.array(v)
-        t1 = locate_p (v1, v2, v, tolerance)
-        t2 = locate_p (v3, v4, v, tolerance)
-        return t1, t2, v
-    return None</code></pre>
-</details>
-<div class="desc"></div>
-</dd>
-<dt id="sverchok.utils.curve.nurbs_algorithms.locate_p"><code class="name flex">
-<span>def <span class="ident">locate_p</span></span>(<span>p1, p2, p, tolerance=0.001)</span>
-</code></dt>
-<dd>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def locate_p(p1, p2, p, tolerance=1e-3):
-    if abs(p1[0] - p2[0]) &gt; tolerance:
-        return (p[0] - p1[0]) / (p2[0] - p1[0])
-    elif abs(p1[1] - p2[1]) &gt; tolerance:
-        return (p[1] - p1[1]) / (p2[1] - p1[1])
-    else:
-        return (p[2] - p1[2]) / (p2[2] - p1[2])</code></pre>
+    segments1 = cut_closed_segments(segments1, tolerance=numeric_precision)
+    segments2 = cut_closed_segments(segments2, tolerance=numeric_precision)
+    return _intersect_each_pair(segments1, segments2,
+                               method=method, numeric_method_threshold=numeric_method_threshold,
+                               numeric_precision=numeric_precision,
+                               logger=logger)</code></pre>
 </details>
 <div class="desc"></div>
 </dd>
@@ -905,6 +802,51 @@ the more precise the offset will be)
 </details>
 <div class="desc"></div>
 </dd>
+<dt id="sverchok.utils.curve.nurbs_algorithms.self_intersect_nurbs_curve"><code class="name flex">
+<span>def <span class="ident">self_intersect_nurbs_curve</span></span>(<span>curve,<br>method='SLSQP',<br>numeric_method_threshold=0.02,<br>numeric_precision=0.001,<br>logger=None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def self_intersect_nurbs_curve(curve, method=&#39;SLSQP&#39;, numeric_method_threshold = 0.02, numeric_precision=0.001, logger=None):
+    if logger is None:
+        logger = get_logger()
+
+    intersections = []
+    eps = 1e-8
+
+    def _check_segments(i, j, segment1, segment2):
+        res = _intersect_segments(segment1, segment2,
+                           method=method, numeric_method_threshold=numeric_method_threshold,
+                           numeric_precision=numeric_precision,
+                           logger=logger)
+        u_min, u_max = segment1.get_u_bounds()
+        v_min, v_max = segment2.get_u_bounds()
+        if j == i+1:
+            for t1, t2, pt in res:
+                if abs(t1 - u_max) &lt; eps and abs(t2 - v_min) &lt; eps:
+                    continue
+                print(f&#34;T1 {t1}, T2 {t2}, S1 {u_min} - {u_max}, S2 {v_min} - {v_max}&#34;)
+                intersections.append((t1, t2, pt))
+        else:
+            intersections.extend(res)
+
+    segments = curve.to_bezier_segments(to_bezier_class=False)
+    if len(segments) == 1:
+        t_min, t_max = curve.get_u_bounds()
+        mid = (t_min + t_max) * 0.5
+        segments = curve.split_at(mid)
+    for i, segment1 in enumerate(segments):
+        for j, segment2 in enumerate(segments):
+            if j &lt;= i:
+                continue
+            _check_segments(i, j, segment1, segment2)
+    return intersections</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
 <dt id="sverchok.utils.curve.nurbs_algorithms.unify_curves"><code class="name flex">
 <span>def <span class="ident">unify_curves</span></span>(<span>curves, method='UNIFY', accuracy=6)</span>
 </code></dt>
@@ -1297,10 +1239,9 @@ def unify_degrees(curves):
 <ul class="">
 <li><code><a title="sverchok.utils.curve.nurbs_algorithms.cast_nurbs_curve" href="#sverchok.utils.curve.nurbs_algorithms.cast_nurbs_curve">cast_nurbs_curve</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs_algorithms.concatenate_nurbs_curves" href="#sverchok.utils.curve.nurbs_algorithms.concatenate_nurbs_curves">concatenate_nurbs_curves</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs_algorithms.cut_closed_segments" href="#sverchok.utils.curve.nurbs_algorithms.cut_closed_segments">cut_closed_segments</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs_algorithms.interpolate_nurbs_curve" href="#sverchok.utils.curve.nurbs_algorithms.interpolate_nurbs_curve">interpolate_nurbs_curve</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs_algorithms.intersect_nurbs_curves" href="#sverchok.utils.curve.nurbs_algorithms.intersect_nurbs_curves">intersect_nurbs_curves</a></code></li>
-<li><code><a title="sverchok.utils.curve.nurbs_algorithms.intersect_segment_segment_mu" href="#sverchok.utils.curve.nurbs_algorithms.intersect_segment_segment_mu">intersect_segment_segment_mu</a></code></li>
-<li><code><a title="sverchok.utils.curve.nurbs_algorithms.locate_p" href="#sverchok.utils.curve.nurbs_algorithms.locate_p">locate_p</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs_algorithms.move_curve_point_by_adjusting_one_weight" href="#sverchok.utils.curve.nurbs_algorithms.move_curve_point_by_adjusting_one_weight">move_curve_point_by_adjusting_one_weight</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs_algorithms.move_curve_point_by_adjusting_two_weights" href="#sverchok.utils.curve.nurbs_algorithms.move_curve_point_by_adjusting_two_weights">move_curve_point_by_adjusting_two_weights</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs_algorithms.move_curve_point_by_inserting_knot" href="#sverchok.utils.curve.nurbs_algorithms.move_curve_point_by_inserting_knot">move_curve_point_by_inserting_knot</a></code></li>
@@ -1311,6 +1252,7 @@ def unify_degrees(curves):
 <li><code><a title="sverchok.utils.curve.nurbs_algorithms.offset_nurbs_curve" href="#sverchok.utils.curve.nurbs_algorithms.offset_nurbs_curve">offset_nurbs_curve</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs_algorithms.refine_curve" href="#sverchok.utils.curve.nurbs_algorithms.refine_curve">refine_curve</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs_algorithms.remove_excessive_knots" href="#sverchok.utils.curve.nurbs_algorithms.remove_excessive_knots">remove_excessive_knots</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs_algorithms.self_intersect_nurbs_curve" href="#sverchok.utils.curve.nurbs_algorithms.self_intersect_nurbs_curve">self_intersect_nurbs_curve</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs_algorithms.unify_curves" href="#sverchok.utils.curve.nurbs_algorithms.unify_curves">unify_curves</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs_algorithms.unify_degrees" href="#sverchok.utils.curve.nurbs_algorithms.unify_degrees">unify_degrees</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs_algorithms.unify_two_curves" href="#sverchok.utils.curve.nurbs_algorithms.unify_two_curves">unify_two_curves</a></code></li>
