@@ -713,7 +713,7 @@ class SvCircle(SvCurve):
 
     def to_nurbs_full(self, n=4, parametrization = 'SIMPLE', implementation = SvNurbsMaths.NATIVE):
         """
-        Convert fulll circle to a NURBS curve.
+        Convert full circle to a NURBS curve.
 
         Args:
             n: number of subdivisions, usually 3, 4 or 6.
