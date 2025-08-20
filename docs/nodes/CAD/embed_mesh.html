@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>CAD &#8212; Sverchok 1, 2, 0 documentation</title>
+    <title>Embed Mesh &#8212; Sverchok 1, 2, 0 documentation</title>
   
   
   
@@ -41,12 +41,12 @@
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'nodes/CAD/CAD_index';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'nodes/CAD/embed_mesh';</script>
     <link rel="icon" href="../../_static/sverchock_icon_b.ico"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Crop Mesh 2D" href="crop_mesh_2d.html" />
-    <link rel="prev" title="Wireframe" href="../modifier_make/wireframe.html" />
+    <link rel="next" title="Inset Special" href="inset_special_mk2.html" />
+    <link rel="prev" title="Edges to Faces 2D" href="edges_to_faces_2d.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -174,11 +174,11 @@
 <li class="toctree-l2"><a class="reference internal" href="../analyzer/analyzer_index.html">Analyzers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../modifier_change/modifier_change_index.html">Modifier Change</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../modifier_make/modifier_make_index.html">Modifier Make</a></li>
-<li class="toctree-l2 current active has-children"><a class="current reference internal" href="#">CAD</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="CAD_index.html">CAD</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="crop_mesh_2d.html">Crop Mesh 2D</a></li>
 <li class="toctree-l3"><a class="reference internal" href="edges_intersect_mk3.html">Intersect Edges</a></li>
 <li class="toctree-l3"><a class="reference internal" href="edges_to_faces_2d.html">Edges to Faces 2D</a></li>
-<li class="toctree-l3"><a class="reference internal" href="embed_mesh.html">Embed Mesh</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">Embed Mesh</a></li>
 <li class="toctree-l3"><a class="reference internal" href="inset_special_mk2.html">Inset Special</a></li>
 <li class="toctree-l3"><a class="reference internal" href="merge_mesh_2d.html">Merge Mesh 2d</a></li>
 <li class="toctree-l3"><a class="reference internal" href="merge_mesh_2d_lite.html">Merge mesh 2D lite</a></li>
@@ -266,7 +266,7 @@
       
       
       
-      <li><a href="../../_sources/nodes/CAD/CAD_index.rst" target="_blank"
+      <li><a href="../../_sources/nodes/CAD/embed_mesh.rst" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -337,7 +337,9 @@ document.write(`
   </button>
 `);
 </script>
-
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
 </div></div>
       
     </div>
@@ -348,11 +350,24 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>CAD</h1>
+    <h1>Embed Mesh</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
             
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functionality">Functionality</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs">Inputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#outputs">Outputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#modes">Modes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#n-panel">N panel</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a></li>
+</ul>
+            </nav>
         </div>
     </div>
 </div>
@@ -362,21 +377,51 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="cad">
-<h1>CAD<a class="headerlink" href="#cad" title="Link to this heading">#</a></h1>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="crop_mesh_2d.html">Crop Mesh 2D</a></li>
-<li class="toctree-l1"><a class="reference internal" href="edges_intersect_mk3.html">Intersect Edges</a></li>
-<li class="toctree-l1"><a class="reference internal" href="edges_to_faces_2d.html">Edges to Faces 2D</a></li>
-<li class="toctree-l1"><a class="reference internal" href="embed_mesh.html">Embed Mesh</a></li>
-<li class="toctree-l1"><a class="reference internal" href="inset_special_mk2.html">Inset Special</a></li>
-<li class="toctree-l1"><a class="reference internal" href="merge_mesh_2d.html">Merge Mesh 2d</a></li>
-<li class="toctree-l1"><a class="reference internal" href="merge_mesh_2d_lite.html">Merge mesh 2D lite</a></li>
-<li class="toctree-l1"><a class="reference internal" href="straight_skeleton_2d_extrude.html">Straight Skeleton 2d Extrude (Alpha)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="straight_skeleton_2d_offset.html">Straight Skeleton 2d Offset (Alpha)</a></li>
+  <section id="embed-mesh">
+<h1>Embed Mesh<a class="headerlink" href="#embed-mesh" title="Link to this heading">#</a></h1>
+<img alt="https://user-images.githubusercontent.com/74725748/204120088-03599881-59d5-4f6c-b7de-3b90b1f620cc.png" src="https://user-images.githubusercontent.com/74725748/204120088-03599881-59d5-4f6c-b7de-3b90b1f620cc.png" />
+<section id="functionality">
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">#</a></h2>
+<p>Embed mesh B on mesh A into mesh A, and in simple terms, you will get the structure of mesh B on mesh A</p>
+</section>
+<section id="inputs">
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>VertsA</strong> - vertices of mesh A</p></li>
+<li><p><strong>EdgesA</strong> - edges of mesh A</p></li>
+<li><p><strong>FacesA</strong> - faces of mesh A</p></li>
+<li><p><strong>VertsB</strong> - vertices of mesh B</p></li>
+<li><p><strong>EdgesB</strong> - edges of mesh B</p></li>
+<li><p><strong>FacesB</strong> - faces of mesh B</p></li>
+<li><p><strong>Index</strong>  - Specifies on which face of mesh A each point of mesh B is on</p></li>
 </ul>
-</div>
+</section>
+<section id="outputs">
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>Verts</strong> - vertices of new mesh</p></li>
+<li><p><strong>Edges</strong> - edges of new mesh</p></li>
+<li><p><strong>Faces</strong> - faces of new mesh</p></li>
+<li><p><strong>Index</strong> - Index of the B-edge structure of the mesh on the new mesh</p></li>
+</ul>
+</section>
+<section id="modes">
+<h2>Modes<a class="headerlink" href="#modes" title="Link to this heading">#</a></h2>
+<p>None</p>
+</section>
+<section id="n-panel">
+<h2>N panel<a class="headerlink" href="#n-panel" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>Epsilon</strong> - For nearness tests; number of figures after coma</p></li>
+</ul>
+</section>
+<section id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">#</a></h2>
+<p><strong>knife project(with raycaster node):</strong></p>
+<img alt="https://user-images.githubusercontent.com/74725748/204120874-005aa169-166a-466d-bd07-aa5e8a35ed77.png" src="https://user-images.githubusercontent.com/74725748/204120874-005aa169-166a-466d-bd07-aa5e8a35ed77.png" />
+<p><strong>mesh bool(with Nearest Point on Mesh):</strong></p>
+<img alt="https://user-images.githubusercontent.com/74725748/204191959-202a40ea-e7ab-4994-875f-c7160a4fdf6a.png" src="https://user-images.githubusercontent.com/74725748/204191959-202a40ea-e7ab-4994-875f-c7160a4fdf6a.png" />
+</section>
 </section>
 
 
@@ -391,20 +436,20 @@ document.write(`
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="../modifier_make/wireframe.html"
+       href="edges_to_faces_2d.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Wireframe</p>
+        <p class="prev-next-title">Edges to Faces 2D</p>
       </div>
     </a>
     <a class="right-next"
-       href="crop_mesh_2d.html"
+       href="inset_special_mk2.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Crop Mesh 2D</p>
+        <p class="prev-next-title">Inset Special</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -414,6 +459,26 @@ document.write(`
             </div>
             
             
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functionality">Functionality</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs">Inputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#outputs">Outputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#modes">Modes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#n-panel">N panel</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>
