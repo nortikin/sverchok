@@ -79,6 +79,12 @@ class SvBezierCurve(SvCurve, SvBezierSplitMixin):
         self.tangent_delta = 0.001
         n = self.degree = len(points) - 1
         self.__description__ = "Bezier[{}]".format(n)
+        self.tilt_pairs = []
+
+    def copy(self, control_points = None):
+        if control_points is None:
+            control_points = self.points
+        return SvBezierCurve.from_control_points(control_points)
 
     @classmethod
     def from_control_points(cls, points):
@@ -281,6 +287,16 @@ class SvBezierCurve(SvCurve, SvBezierSplitMixin):
             controls.append(control)
             #print(control)
         return SvBezierCurve(controls)
+
+    def mirror(self, axis):
+        m = np.eye(3)
+        m[axis,axis] = -1
+        controls = np.apply_along_axis(lambda p: m @ p, 1, self.points)
+        return SvBezierCurve(controls)
+
+    def translate(self, vector):
+        vector = np.asarray(vector)
+        return SvBezierCurve(vector + self.points)
     
     def is_line(self, tolerance=0.001):
         cpts = self.get_control_points()
@@ -299,6 +315,9 @@ class SvBezierCurve(SvCurve, SvBezierSplitMixin):
 
     def get_end_points(self):
         return self.points[0], self.points[-1]
+
+    def get_tilt_pairs(self):
+        return self.tilt_pairs
 
     @classmethod
     def coefficient(cls, n, k, ts):
@@ -507,6 +526,13 @@ class SvCubicBezierCurve(SvCurve, SvBezierSplitMixin):
         self.p2 = np.array(p2)
         self.p3 = np.array(p3)
         self.tangent_delta = 0.001
+        self.tilt_pairs = []
+
+    def copy(self, control_points = None):
+        if control_points is None:
+            control_points = self.points
+        return SvBezierCurve.from_control_points(control_points)
+
 
     @classmethod
     def from_four_points(cls, v0, v1, v2, v3):
@@ -520,8 +546,22 @@ class SvCubicBezierCurve(SvCurve, SvBezierSplitMixin):
 
         return SvCubicBezierCurve(v0, p1, p2, v3)
 
+    def mirror(self, axis):
+        m = np.eye(3)
+        m[axis,axis] = -1
+        controls = np.apply_along_axis(lambda p: m @ p, 1, self.get_control_points())
+        return SvCubicBezierCurve(*controls)
+
+    def translate(self, vector):
+        vector = np.asarray(vector)
+        controls = vector + self.get_control_points()
+        return SvCubicBezierCurve(*controls)
+
     def get_u_bounds(self):
         return (0.0, 1.0)
+
+    def get_tilt_pairs(self):
+        return self.tilt_pairs
 
     def evaluate(self, t):
         return self.evaluate_array(np.array([t]))[0]

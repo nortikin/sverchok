@@ -14,7 +14,8 @@ from sverchok.utils.curve.core import (
         SvCurve, ZeroCurvatureException,
         SvCurveSegment, SvReparametrizedCurve,
         SvFlipCurve, SvConcatCurve,
-        UnsupportedCurveTypeException
+        UnsupportedCurveTypeException,
+        CurveEndpointsNotMatchingException
     )
 from sverchok.utils.surface.core import UnsupportedSurfaceTypeException
 from sverchok.utils.geom import PlaneEquation, LineEquation, Spline, LinearSpline, CubicSpline
@@ -929,7 +930,7 @@ def unify_curves_degree(curves):
     curves = [curve.elevate_degree(target=max_degree) for curve in curves]
     return curves
 
-def concatenate_curves(curves, scale_to_unit=False, allow_generic=True):
+def concatenate_curves(curves, scale_to_unit=False, allow_generic=True, allow_split=False, tolerance=1e-6):
     """
     Concatenate a list of curves. When possible, use `concatenate` method of
     curves to make a "native" concatenation - for example, make one Nurbs out of
@@ -960,15 +961,16 @@ def concatenate_curves(curves, scale_to_unit=False, allow_generic=True):
             try:
                 if scale_to_unit:
                     # P.1: try to join with rescaled curve
-                    new_curve = result[-1].concatenate(reparametrize_curve(curve))
+                    new_curve = result[-1].concatenate(reparametrize_curve(curve), tolerance=tolerance)
                 else:
-                    new_curve = result[-1].concatenate(curve)
+                    new_curve = result[-1].concatenate(curve, tolerance=tolerance)
                 some_native = True
                 ok = True
             except UnsupportedCurveTypeException as e:
-                exceptions.append(e)
+                if not allow_split or not isinstance(e, CurveEndpointsNotMatchingException):
+                    exceptions.append(e)
                 # "concatenate" method can't work with this type of curve
-                sv_logger.info("Can't natively join curve #%s (%s), will use generic method: %s", idx+1, curve, e)
+                sv_logger.info("Can't natively join curve #%s (%s) to %s, will use generic method: %s", idx+1, curve, result[-1], e)
                 # P.2: if some curves were already joined natively,
                 # then we have to rescale each of other curves separately
                 if some_native and scale_to_unit:
@@ -990,6 +992,8 @@ def concatenate_curves(curves, scale_to_unit=False, allow_generic=True):
             # if no successful joins were made, then we can rescale all curves
             # at once.
             return SvConcatCurve(result, scale_to_unit and not some_native)
+        elif allow_split:
+            return result
         else:
             err_msg = "\n".join([str(e) for e in exceptions])
             raise SvInvalidInputException(f"Could not join some curves natively. Result is: {result}.\nErrors were:\n{err_msg}")
@@ -1119,15 +1123,17 @@ def split_curve(curve, splits, rescale=False):
     """
     if hasattr(curve, 'split_at'):
         result = []
+        tail = None
         for split in splits:
             head, tail = curve.split_at(split)
             if rescale:
                 head = reparametrize_curve(head, 0, 1)
             result.append(head)
             curve = tail
-        if rescale:
-            tail = reparametrize_curve(tail, 0, 1)
-        result.append(tail)
+        if tail is not None:
+            if rescale:
+                tail = reparametrize_curve(tail, 0, 1)
+            result.append(tail)
         return result
     else:
         t_min, t_max = curve.get_u_bounds()

@@ -38,6 +38,12 @@ class UnsupportedCurveTypeException(TypeError):
     __description__ = "Unsupported curve type"
     pass
 
+class CurveEndpointsNotMatchingException(UnsupportedCurveTypeException):
+    """Raised when during concatenation of two curves their corresponding
+    endpoints do not match"""
+    __description__ = "Curve endpoints do not match"
+    pass
+
 ##################
 #                #
 #  Curves        #
@@ -566,6 +572,16 @@ class SvCurve(object):
         return np.array([])
         #raise Exception("Curve of type type `{}' does not have control points".format(type(self)))
 
+    def get_tilt_pairs(self):
+        """
+        Get points at which curve tilt is defined.
+
+        Returns:
+            list of (u, tilt) pairs, where u is curve parameter value, and `tilt'
+            is tilt value.
+        """
+        return []
+
 class SvScalarFunctionCurve(SvCurve):
     r"""
     Curve defined by arbitrary function:
@@ -945,7 +961,6 @@ class SvLambdaCurve(SvCurve):
         return (points_h - points) / h
 
 class SvTaylorCurve(SvCurve):
-    __description__ = "Taylor"
 
     def __init__(self, start, derivatives, u_bounds=None):
         self.start = start
@@ -954,6 +969,7 @@ class SvTaylorCurve(SvCurve):
         if u_bounds is None:
             u_bounds = (0, 1.0)
         self.u_bounds = u_bounds
+        self.__description__ = f"Taylor (degree={self.get_degree()})"
 
     @classmethod
     def from_coefficients(cls, coefficients):

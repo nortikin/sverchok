@@ -531,7 +531,7 @@
     - C MESH:
         - icon_name: OBJECT_DATAMODE  # icon name to show
         - extra_menu: MeshPartialMenu
-        - SvBevelNode
+        - SvBevelNodeMK2
         - SvIntersectEdgesNodeMK3
         - SvOffsetNode
         - SvInsetSpecialMk2
@@ -1035,20 +1035,6 @@
     - SvSvgGroupNode
     - SvSvgFillStrokeNodeMk2
     - SvSvgPatternNode
-
-################################################################################
-#################################### DXFs ######################################
-################################################################################
-
-- DXF:
-    - icon_name: SV_SVG
-    - extra_menu: ConnectionPartialMenu
-    - SvDxfImportNode
-    - SvDxfExportNode
-    - SvDxfLinDimsNode
-    - SvDxfHatchNode
-    - SvDxfLinesNode
-    - SvDxfPolygonsNode
 
 - ---
 

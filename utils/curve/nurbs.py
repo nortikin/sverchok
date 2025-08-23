@@ -14,7 +14,7 @@ import numpy as np
 from math import pi
 
 from sverchok.core.sv_custom_exceptions import AlgorithmError, SvExternalLibraryException, SvInvalidInputException, ArgumentError
-from sverchok.utils.curve.core import SvCurve, SvTaylorCurve, UnsupportedCurveTypeException, calc_taylor_nurbs_matrices
+from sverchok.utils.curve.core import SvCurve, SvTaylorCurve, UnsupportedCurveTypeException, CurveEndpointsNotMatchingException, calc_taylor_nurbs_matrices
 from sverchok.utils.curve.bezier import SvBezierCurve
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.utils.curve.primitives import SvPointCurve
@@ -97,6 +97,12 @@ class SvNurbsCurve(SvCurve):
             self._bounding_box = bounding_box(self.get_control_points())
         return self._bounding_box
 
+    def get_tilt_pairs(self):
+        if hasattr(self, 'tilt_pairs'):
+            return self.tilt_pairs
+        else:
+            return []
+
     def concatenate(self, curve2, tolerance=1e-6, remove_knots=False):
 
         curve1 = self
@@ -117,7 +123,7 @@ class SvNurbsCurve(SvCurve):
                 pt2 = curve2.evaluate(c2_start)
             dpt = np.linalg.norm(pt1 - pt2)
             if dpt > tolerance:
-                raise UnsupportedCurveTypeException(f"Curve end points do not match: C1({c1_end}) = {pt1} != C2({c2_start}) = {pt2}, distance={dpt}")
+                raise CurveEndpointsNotMatchingException(f"C1({c1_end}) = {pt1} != C2({c2_start}) = {pt2}, distance={dpt}")
 
             #cp1 = curve1.get_control_points()[-1]
             #cp2 = curve2.get_control_points()[0]
@@ -636,7 +642,7 @@ class SvNurbsCurve(SvCurve):
         direction = end - begin
         if np.linalg.norm(direction) < tolerance:
             return True
-        line = LineEquation.from_direction_and_point(direction, begin).normalized()
+        line = LineEquation.from_direction_and_point(direction, begin, epsilon=tolerance).normalized()
         distances = line.distance_to_points(cpts)
         # Technically, this means that all control points lie
         # inside the cylinder, defined as "distance from line < tolerance";
@@ -805,6 +811,14 @@ class SvNurbsCurve(SvCurve):
                     self.get_knotvector(),
                     new_controls,
                     self.get_weights())
+
+    def mirror(self, axis):
+        m = np.eye(3)
+        m[axis,axis] = -1
+        return self.transform(m, None)
+
+    def translate(self, vector):
+        return self.transform(None, vector)
 
     def is_inside_sphere(self, sphere_center, sphere_radius):
         """

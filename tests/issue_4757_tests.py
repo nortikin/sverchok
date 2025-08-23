@@ -32,7 +32,7 @@ class ConcatenateTests(SverchokTestCase):
                 else:
                     curve = concatenate_curves([curve1, curve2, curve3, curve4])
 
-                self.assertEquals(len(curve.get_control_points()), 13)
+                self.assertEqual(len(curve.get_control_points()), 13)
 
         run_test(SvNurbsMaths.NATIVE, True)
         run_test(SvNurbsMaths.NATIVE, False)

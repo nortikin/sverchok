@@ -265,10 +265,9 @@ def ShowMessageBox(message = "", title = "Message Box", icon = 'INFO'):
 
 class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.types.Node):
     """
-    Triggers: Merge two 2d meshes
+    Triggers: 2D Offset Straight Skeleton
 
-    Each mesh can have disjoint parts
-    Only X and Y coordinate takes in account
+    CGAL Straight Skeleton Offset wrapper
     """
     bl_idname = 'SvStraightSkeleton2DOffset'
     bl_label = 'Straight Skeleton 2D Offset (Alpha)'

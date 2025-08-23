@@ -40,7 +40,7 @@ class SvFCStdSpreadsheetNode(SverchCustomTreeNode, bpy.types.Node):
     sv_dependencies = {'FreeCAD'}
 
     auto_update : BoolProperty(name="auto_update", default=True)
-    write_update : BoolProperty(name="read_update", default=True)
+    #write_update : BoolProperty(name="read_update", default=True)
     write_parameter : BoolProperty(name="write_parameter", default=False)
 
     selected_label : StringProperty(default='Spreadsheet')
@@ -181,12 +181,10 @@ class SvShowFcstdParNamesOp(bpy.types.Operator, SvGenericNodeLocator):
                 F.setActiveDocument(Fname)
 
                 for obj in F.ActiveDocument.Objects:
-
                     if obj.Label == node.selected_sheet:
                         props = obj.PropertiesList
                         for label in props:
-                            alias = obj.getCellFromAlias(label)
-                            if alias:
+                            if len(label) < 5 and obj.get(label):
                                 labels.append( (label, label, label) )
 
         except:
@@ -241,7 +239,7 @@ def WriteParameter(fc_file,spreadsheet,alias,par_write,write):
                         F.ActiveDocument.recompute()
                         F.getDocument(Fname).save()
                     
-                    cell_out = obj.get(cell)
+                    cell_out = obj.get(alias)
                     break
     
     except:
@@ -265,3 +263,6 @@ def unregister():
     bpy.utils.unregister_class(SvShowFcstdSpreadsheetsOp)
     bpy.utils.unregister_class(SvShowFcstdParNamesOp)
     bpy.utils.unregister_class(SvFCStdSpreadsheetOperator)
+
+if __name__ == '__main__':
+    register()

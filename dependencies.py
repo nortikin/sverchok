@@ -23,6 +23,7 @@ instead of actual module, so that one can execute another version of code:
 
 todo: Create dependencies.txt file and import modules from there
 """
+import bpy
 import logging
 
 import sverchok.settings as settings
@@ -223,7 +224,36 @@ settings.ensurepip = ensurepip
 settings.draw_message = draw_message
 settings.get_icon = get_icon
 
+class DI_OT_install_or_update_dependencies_operator(bpy.types.Operator):
+    bl_idname = "sverchok.install_or_update_dependencies_operator"
+    bl_label = "Install or update Sverchok Dependencies operator"
+    bl_description = "Install or update installable dependencies. Not all dependencies are installable. Restart Blender after update or install dependencies.\nATTENTION: UPDATE PIP FIRST and restart Blender"
 
+    #items: bpy.props.CollectionProperty(type=DependencyItemName)
+    serialized_items: bpy.props.StringProperty()
+
+    def execute(self, context):
+        items = self.serialized_items.split(';')
+        for item in items:
+            try:
+                dependency = sv_dependencies[item]
+                if dependency.module is None and dependency.pip_installable and pip is not None:
+                    print(f"===>> Install Dependency: {item}")
+                    res = bpy.ops.node.sv_ex_pip_install(package = dependency.package)
+                    #res = bpy.ops.node.sv_ex_pip_install('INVOKE_DEFAULT', package = dependency.package)
+                elif dependency.pip_installable and pip is not None:
+                    print(f"===>> Install Dependency: {item}")
+                    res = bpy.ops.node.sv_ex_pip_install(package = dependency.package)
+                    #res = bpy.ops.node.sv_ex_pip_install('INVOKE_DEFAULT', package = dependency.package)
+                else:
+                    print(f"===>> Skip Install Dependency: {item}")
+                    continue
+                print(f"{item} installed with result: {res}")
+            except Exception as _ex:
+                pass
+        self.report({'INFO'}, "Please restart Blender to see effect of upgrade dependencies.")
+        return {'FINISHED'}
+    
 def register():
     good_names = [d.package for d in sv_dependencies.values()
                   if d.module is not None and d.package is not None]
@@ -231,3 +261,7 @@ def register():
         logger.info("Dependencies available: %s.", ", ".join(good_names))
     else:
         logger.info("No dependencies are available.")
+    bpy.utils.register_class(DI_OT_install_or_update_dependencies_operator)
+
+def unregister():
+    bpy.utils.unregister_class(DI_OT_install_or_update_dependencies_operator)
