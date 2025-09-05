@@ -630,7 +630,11 @@ class NodeStruct(Struct):
         _set_optional(self._struct["attributes"], "label", node.label)
         _set_optional(self._struct["attributes"], "hide", node.hide)
         _set_optional(self._struct["attributes"], "use_custom_color", node.use_custom_color)
-        _set_optional(self._struct["attributes"], "color", node.color[:], node.use_custom_color)
+        if type(node.color) == int: # dxf nodes use int for colors
+            col = node.color
+        else:
+            col = node.color[:]
+        _set_optional(self._struct["attributes"], "color", col, node.use_custom_color)
         if node.parent:  # the node is inside of a frame node
             prop = BPYProperty(node, "parent")
             raw_struct = factories.prop("parent", self.logger).export(prop, factories, dependencies)
