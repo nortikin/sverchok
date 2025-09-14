@@ -17,17 +17,21 @@ class Polynomial:
         self.coeffs = np.asarray(coeffs, dtype=np.float64)
 
     def __repr__(self):
-        def monomial(c,d):
+        first = True
+        result = ""
+        for d, c in reversed(enumerate(self.coeffs)):
+            if not first:
+                result += " + "
+            first = False
             if c == 0:
-                return ""
+                continue
             elif d == 0:
-                return str(c)
+                result += str(c)
             elif c == 1.0:
-                return "x^" + str(d)
+                result += "x^" + str(d)
             else:
-                return f"{c}*x^{d}"
-        monomials = [monomial(c,i) for i,c in enumerate(self.coeffs)]
-        return " + ".join(reversed(monomials))
+                result += f"{c}*x^{d}"
+        return result
 
     @staticmethod
     def Constant(k, ndim=None):
