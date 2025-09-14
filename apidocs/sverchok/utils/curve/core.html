@@ -2549,6 +2549,11 @@ def scale(self):
 
         return coeffs
 
+    def derivative(self):
+        start = self.derivatives[0]
+        derivatives = self.derivatives[1:]
+        return SvTaylorCurve(start, derivatives, u_bounds=self.u_bounds)
+
     def evaluate(self, t):
         result = self.start
         denom = 1
@@ -2715,6 +2720,21 @@ def scale(self):
 </summary>
 <pre><code class="python">def concatenate(self, curve2, tolerance=1e-6, remove_knots=False):
     return self.to_nurbs().concatenate(curve2, tolerance=tolerance, remove_knots=remove_knots)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.curve.core.SvTaylorCurve.derivative"><code class="name flex">
+<span>def <span class="ident">derivative</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def derivative(self):
+    start = self.derivatives[0]
+    derivatives = self.derivatives[1:]
+    return SvTaylorCurve(start, derivatives, u_bounds=self.u_bounds)</code></pre>
 </details>
 <div class="desc"></div>
 </dd>
@@ -3075,6 +3095,7 @@ recieves such curve.</p></div>
 <h4><code><a title="sverchok.utils.curve.core.SvTaylorCurve" href="#sverchok.utils.curve.core.SvTaylorCurve">SvTaylorCurve</a></code></h4>
 <ul class="">
 <li><code><a title="sverchok.utils.curve.core.SvTaylorCurve.concatenate" href="#sverchok.utils.curve.core.SvTaylorCurve.concatenate">concatenate</a></code></li>
+<li><code><a title="sverchok.utils.curve.core.SvTaylorCurve.derivative" href="#sverchok.utils.curve.core.SvTaylorCurve.derivative">derivative</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvTaylorCurve.extrude_along_vector" href="#sverchok.utils.curve.core.SvTaylorCurve.extrude_along_vector">extrude_along_vector</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvTaylorCurve.extrude_to_point" href="#sverchok.utils.curve.core.SvTaylorCurve.extrude_to_point">extrude_to_point</a></code></li>
 <li><code><a title="sverchok.utils.curve.core.SvTaylorCurve.from_coefficients" href="#sverchok.utils.curve.core.SvTaylorCurve.from_coefficients">from_coefficients</a></code></li>

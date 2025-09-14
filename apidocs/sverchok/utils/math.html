@@ -669,6 +669,58 @@ Taken from fractions.py to override depreciation</p></div>
 </details>
 <div class="desc"></div>
 </dd>
+<dt id="sverchok.utils.math.solve_cubic"><code class="name flex">
+<span>def <span class="ident">solve_cubic</span></span>(<span>a, b, c, d, real_only=True)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def solve_cubic(a, b, c, d, real_only=True):
+    &#34;&#34;&#34;
+    Solve cubic equation of form a*x^3 + b*x^2 + c*x + d = 0.
+    &#34;&#34;&#34;
+    p = (3*a*c - b*b) / (3*a*a)
+    q = (2*b**3 - 9*a*b*c + 27*a*a*d)/(27*a**3)
+    Q = (p/3)**3 + (q/2)**2
+    sqrt_Q = csqrt(Q)
+    alpha = (-q/2 + sqrt_Q)**(1.0/3.0)
+    beta = (-q/2 - sqrt_Q)**(1.0/3.0)
+    sqrt32 = sqrt(3.0)/2.0
+    y1 = alpha + beta
+    y2 = -(alpha + beta)/2.0 + (alpha - beta)*sqrt32*1j
+    y3 = -(alpha + beta)/2.0 - (alpha - beta)*sqrt32*1j
+    xs = [y - b/(3*a) for y in [y1,y2,y3]]
+    if real_only:
+        xs = [x.real for x in xs if abs(x.imag) &lt; 1e-6]
+    return xs</code></pre>
+</details>
+<div class="desc"><p>Solve cubic equation of form a<em>x^3 + b</em>x^2 + c*x + d = 0.</p></div>
+</dd>
+<dt id="sverchok.utils.math.solve_quadratic"><code class="name flex">
+<span>def <span class="ident">solve_quadratic</span></span>(<span>a, b, c, real_only=True)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def solve_quadratic(a, b, c, real_only=True):
+    &#34;&#34;&#34;
+    Solve quadratic equation of form a*x^2 + b*x + c = 0.
+    &#34;&#34;&#34;
+    D = b*b - 4*a*c
+    if real_only and D &lt; 0:
+        return []
+    x1 = (-b - csqrt(D))/(2*a)
+    x2 = (-b + csqrt(D))/(2*a)
+    if real_only:
+        return [x1.real, x2.real]
+    return [x1, x2]</code></pre>
+</details>
+<div class="desc"><p>Solve quadratic equation of form a<em>x^2 + b</em>x + c = 0.</p></div>
+</dd>
 <dt id="sverchok.utils.math.sphere"><code class="name flex">
 <span>def <span class="ident">sphere</span></span>(<span>x)</span>
 </code></dt>
@@ -930,6 +982,8 @@ return list of vector coordinates in UVW basis.</p>
 <li><code><a title="sverchok.utils.math.sharp" href="#sverchok.utils.math.sharp">sharp</a></code></li>
 <li><code><a title="sverchok.utils.math.sign" href="#sverchok.utils.math.sign">sign</a></code></li>
 <li><code><a title="sverchok.utils.math.smooth" href="#sverchok.utils.math.smooth">smooth</a></code></li>
+<li><code><a title="sverchok.utils.math.solve_cubic" href="#sverchok.utils.math.solve_cubic">solve_cubic</a></code></li>
+<li><code><a title="sverchok.utils.math.solve_quadratic" href="#sverchok.utils.math.solve_quadratic">solve_quadratic</a></code></li>
 <li><code><a title="sverchok.utils.math.sphere" href="#sverchok.utils.math.sphere">sphere</a></code></li>
 <li><code><a title="sverchok.utils.math.sphere_np" href="#sverchok.utils.math.sphere_np">sphere_np</a></code></li>
 <li><code><a title="sverchok.utils.math.to_cylindrical" href="#sverchok.utils.math.to_cylindrical">to_cylindrical</a></code></li>

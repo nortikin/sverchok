@@ -239,17 +239,21 @@ el.replaceWith(d);
         self.coeffs = np.asarray(coeffs, dtype=np.float64)
 
     def __repr__(self):
-        def monomial(c,d):
+        first = True
+        result = &#34;&#34;
+        for d, c in reversed(enumerate(self.coeffs)):
+            if not first:
+                result += &#34; + &#34;
+            first = False
             if c == 0:
-                return &#34;&#34;
+                continue
             elif d == 0:
-                return str(c)
+                result += str(c)
             elif c == 1.0:
-                return &#34;x^&#34; + str(d)
+                result += &#34;x^&#34; + str(d)
             else:
-                return f&#34;{c}*x^{d}&#34;
-        monomials = [monomial(c,i) for i,c in enumerate(self.coeffs)]
-        return &#34; + &#34;.join(reversed(monomials))
+                result += f&#34;{c}*x^{d}&#34;
+        return result
 
     @staticmethod
     def Constant(k, ndim=None):

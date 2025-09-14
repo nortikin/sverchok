@@ -555,6 +555,63 @@ least squares problem.
 Both weighted and unweighted least squares problems are solved by use of Moore-Penrose
 pseudo-inverse matrix - numpy.linalg.pinv.</p></div>
 </dd>
+<dt id="sverchok.utils.curve.nurbs_algorithms.nurbs_curve_extremes"><code class="name flex">
+<span>def <span class="ident">nurbs_curve_extremes</span></span>(<span>curve, direction, sign=1, global_only=False)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def nurbs_curve_extremes(curve, direction, sign=1, global_only=False):
+    if curve.is_rational():
+        raise NotImplementedError(&#34;Rational curves are not supported (yet)&#34;)
+    degree = curve.get_degree()
+    direction = np.array(direction)
+    if degree &gt; 4:
+        raise UnsupportedCurveTypeException(f&#34;Curve degree of {degree} is not supported&#34;)
+    t_values = set()
+    for segment in curve.to_bezier_segments(to_bezier_class=False):
+        taylor = segment.bezier_to_taylor()
+        coeffs = taylor.derivative().get_coefficients()
+        poly_coeffs = coeffs[:,0] * direction[0] + coeffs[:,1] * direction[1] + coeffs[:,2] * direction[2]
+        t1, t2 = segment.get_u_bounds()
+        if degree == 1:
+            t_values.update([t1, t2])
+        elif degree == 2:
+            b, a = poly_coeffs
+            t = -b / a
+            if t1 &lt;= t &lt;= t2:
+                t_values.add(t)
+        elif degree == 3:
+            c, b, a = poly_coeffs
+            ts = solve_quadratic(a, b, c)
+            ts = [t for t in ts if t1 &lt;= t &lt;= t2]
+            t_values.update(ts)
+        elif degree == 4:
+            d, c, b, a = poly_coeffs
+            ts = solve_cubic(a, b, c, d)
+            ts = [t for t in ts if t1 &lt;= t &lt;= t2]
+            t_values.update(ts)
+    ts = np.array(list(sorted(t_values)))
+    second_derivs = curve.second_derivative_array(ts)
+    dots = (direction * second_derivs).sum(axis=1)
+    signs = np.sign(dots)
+    mask = -np.sign(sign) == signs
+    ts = ts[mask]
+    if global_only:
+        pts = curve.evaluate_array(ts)
+        dots = (direction * pts).sum(axis=1)
+        if sign &gt; 0:
+            idx = np.argmax(dots)
+        else:
+            idx = np.argmin(dots)
+        return np.array([ts[idx]])
+    else:
+        return ts</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
 <dt id="sverchok.utils.curve.nurbs_algorithms.nurbs_curve_matrix"><code class="name flex">
 <span>def <span class="ident">nurbs_curve_matrix</span></span>(<span>curve)</span>
 </code></dt>
@@ -1247,6 +1304,7 @@ def unify_degrees(curves):
 <li><code><a title="sverchok.utils.curve.nurbs_algorithms.move_curve_point_by_inserting_knot" href="#sverchok.utils.curve.nurbs_algorithms.move_curve_point_by_inserting_knot">move_curve_point_by_inserting_knot</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs_algorithms.move_curve_point_by_moving_control_point" href="#sverchok.utils.curve.nurbs_algorithms.move_curve_point_by_moving_control_point">move_curve_point_by_moving_control_point</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs_algorithms.move_curve_point_by_moving_control_points" href="#sverchok.utils.curve.nurbs_algorithms.move_curve_point_by_moving_control_points">move_curve_point_by_moving_control_points</a></code></li>
+<li><code><a title="sverchok.utils.curve.nurbs_algorithms.nurbs_curve_extremes" href="#sverchok.utils.curve.nurbs_algorithms.nurbs_curve_extremes">nurbs_curve_extremes</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs_algorithms.nurbs_curve_matrix" href="#sverchok.utils.curve.nurbs_algorithms.nurbs_curve_matrix">nurbs_curve_matrix</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs_algorithms.nurbs_curve_to_xoy" href="#sverchok.utils.curve.nurbs_algorithms.nurbs_curve_to_xoy">nurbs_curve_to_xoy</a></code></li>
 <li><code><a title="sverchok.utils.curve.nurbs_algorithms.offset_nurbs_curve" href="#sverchok.utils.curve.nurbs_algorithms.offset_nurbs_curve">offset_nurbs_curve</a></code></li>
