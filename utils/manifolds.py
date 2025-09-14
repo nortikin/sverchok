@@ -20,6 +20,8 @@ SKIP = 'skip'
 FAIL = 'fail'
 RETURN_NONE = 'none'
 
+module_logger = get_logger()
+
 class CurveProjectionResult(object):
     def __init__(self, us, points, source):
         self.us = us
@@ -101,7 +103,7 @@ def nearest_point_on_curve(src_points, curve, samples=10, precise=True, method='
     Find nearest point on any curve.
     """
     if logger is None:
-        logger = get_logger()
+        logger = module_logger
 
     t_min, t_max = curve.get_u_bounds()
 
@@ -877,14 +879,11 @@ def intersect_curve_surface(curve, surface, init_samples=10, raycast_samples=10,
             else:
                 return r[0]
         else:
-            ortho = ortho_project_curve(point, curve,
-                        subdomain = (t1, t2),
-                        init_samples = 2,
-                        on_fail = RETURN_NONE)
-            if ortho is None:
+            nearest = nearest_point_on_curve([point], curve.cut_segment(t1,t2), samples=2)
+            if not nearest:
                 return None
             else:
-                return ortho.nearest_u, ortho.nearest
+                return nearest[0]
 
     result = CurveSurfaceIntersections()
     for t1, t2, init_p1, init_p2 in good_ranges:
