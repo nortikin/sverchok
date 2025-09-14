@@ -212,6 +212,9 @@ class SvUniformCatmullRomCurve(SvCurve):
 
     def lerp_to(self, curve2, coefficient):
         return self.to_nurbs().lerp_to(curve2, coefficient)
+
+    def split_at(self, t):
+        return self.to_nurbs().split_at(t)
         
 class SvCatmullRomCurve(SvUniformCatmullRomCurve):
     """
@@ -419,6 +422,9 @@ class SvCatmullRomCurve(SvUniformCatmullRomCurve):
         tn = self.tknots[-1]
         tknots = (new_t_max - new_t_min) * (self.tknots - t0) / (tn - t0) + new_t_min
         return SvCatmullRomCurve(tknots, self.points)
+
+    def split_at(self, t):
+        return self.to_nurbs().split_at(t)
 
 def uniform_catmull_rom_bezier_segment(points, tension=1.0):
     v = np.asarray(points)
