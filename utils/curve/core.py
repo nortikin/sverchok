@@ -995,6 +995,11 @@ class SvTaylorCurve(SvCurve):
 
         return coeffs
 
+    def derivative(self):
+        start = self.derivatives[0]
+        derivatives = self.derivatives[1:]
+        return SvTaylorCurve(start, derivatives, u_bounds=self.u_bounds)
+
     def evaluate(self, t):
         result = self.start
         denom = 1
