@@ -12,7 +12,7 @@ import math
 from mathutils import Vector
 import mathutils.geometry
 
-from sverchok.utils.math import distribute_int
+from sverchok.utils.math import distribute_int, solve_quadratic, solve_cubic
 from sverchok.utils.geom import Spline, LineEquation, linear_approximation, intersect_segment_segment, SEGMENTS_PARALLEL
 from sverchok.utils.nurbs_common import SvNurbsBasisFunctions, SvNurbsMaths, from_homogenous, CantInsertKnotException
 from sverchok.utils.curve import knotvector as sv_knotvector
@@ -958,4 +958,52 @@ def wrap_nurbs_curve(curve, t_min, t_max, refinement_samples, function,
     cpts[wrap_idxs] = cpts[wrap_idxs] + wrap_vectors
     curve = curve.copy(control_points = cpts)
     return remove_excessive_knots(curve, tolerance)
+
+def nurbs_curve_extremes(curve, direction, sign=1, global_only=False):
+    if curve.is_rational():
+        raise NotImplementedError("Rational curves are not supported (yet)")
+    degree = curve.get_degree()
+    direction = np.array(direction)
+    if degree > 4:
+        raise UnsupportedCurveTypeException(f"Curve degree of {degree} is not supported")
+    t_values = set()
+    for segment in curve.to_bezier_segments(to_bezier_class=False):
+        taylor = segment.bezier_to_taylor()
+        coeffs = taylor.derivative().get_coefficients()
+        poly_coeffs = coeffs[:,0] * direction[0] + coeffs[:,1] * direction[1] + coeffs[:,2] * direction[2]
+        t1, t2 = segment.get_u_bounds()
+        if degree == 1:
+            t_values.update([t1, t2])
+        elif degree == 2:
+            b, a = poly_coeffs
+            t = -b / a
+            if t1 <= t <= t2:
+                t_values.add(t)
+        elif degree == 3:
+            c, b, a = poly_coeffs
+            ts = solve_quadratic(a, b, c)
+            ts = [t for t in ts if t1 <= t <= t2]
+            t_values.update(ts)
+        elif degree == 4:
+            d, c, b, a = poly_coeffs
+            ts = solve_cubic(a, b, c, d)
+            ts = [t for t in ts if t1 <= t <= t2]
+            t_values.update(ts)
+    ts = np.array(list(sorted(t_values)))
+    second_derivs = curve.second_derivative_array(ts)
+    dots = (direction * second_derivs).sum(axis=1)
+    signs = np.sign(dots)
+    mask = -np.sign(sign) == signs
+    ts = ts[mask]
+    if global_only:
+        pts = curve.evaluate_array(ts)
+        dots = (direction * pts).sum(axis=1)
+        if sign > 0:
+            idx = np.argmax(dots)
+        else:
+            idx = np.argmin(dots)
+        return np.array([ts[idx]])
+    else:
+        return ts
+
 
