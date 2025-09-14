@@ -475,6 +475,7 @@
         - SvExCurveCurvatureNode
         - SvExCurveTorsionNode
         - SvExCurveExtremesNode
+        - SvNurbsCurveExtremesNode
         - ---
         - SvNurbsCurveNodesNode
         - SvCurveDiscontinuityNode
