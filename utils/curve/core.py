@@ -854,10 +854,10 @@ class SvReparametrizeCurve(SvCurve):
         ts = m + ts*(M-m)
         return self.curve.third_derivative_array(ts, tangent_delta=tangent_delta)
 
-    def derivatives_array(self, ts, tangent_delta=None):
+    def derivatives_array(self, n, ts, tangent_delta=None):
         m, M = self.curve.get_u_bounds()
         ts = m + ts*(M-m)
-        return self.curve.derivatives_array(ts, tangent_delta=tangent_delta)
+        return self.curve.derivatives_array(n, ts, tangent_delta=tangent_delta)
 
 class SvCurveSegment(SvCurve):
     def __init__(self, curve, u_min, u_max, rescale=False):
@@ -921,11 +921,11 @@ class SvCurveSegment(SvCurve):
             ts = (M - m)*ts + m
         return self.curve.third_derivative_array(ts, tangent_delta=tangent_delta)
 
-    def derivatives_array(self, ts, tangent_delta=None):
+    def derivatives_array(self, n, ts, tangent_delta=None):
         if self.rescale:
             m,M = self.target_u_bounds
             ts = (M - m)*ts + m
-        return self.curve.derivatives_array(ts, tangent_delta=tangent_delta)
+        return self.curve.derivatives_array(n, ts, tangent_delta=tangent_delta)
 
 class SvLambdaCurve(SvCurve):
     __description__ = "Formula"
