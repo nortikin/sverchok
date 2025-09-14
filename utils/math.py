@@ -19,6 +19,7 @@
 import numpy as np
 import math
 from math import sin, cos, radians, degrees, sqrt, asin, acos, atan2
+from cmath import sqrt as csqrt
 
 xyz_axes = [
         ('X', "X", "X axis", 0),
@@ -451,4 +452,36 @@ def cartesian_product(*arrays):
     for i, a in enumerate(np.ix_(*arrays)):
         arr[...,i] = a
     return arr.reshape(-1, la)
+
+def solve_quadratic(a, b, c, real_only=True):
+    """
+    Solve quadratic equation of form a*x^2 + b*x + c = 0.
+    """
+    D = b*b - 4*a*c
+    if real_only and D < 0:
+        return []
+    x1 = (-b - csqrt(D))/(2*a)
+    x2 = (-b + csqrt(D))/(2*a)
+    if real_only:
+        return [x1.real, x2.real]
+    return [x1, x2]
+
+def solve_cubic(a, b, c, d, real_only=True):
+    """
+    Solve cubic equation of form a*x^3 + b*x^2 + c*x + d = 0.
+    """
+    p = (3*a*c - b*b) / (3*a*a)
+    q = (2*b**3 - 9*a*b*c + 27*a*a*d)/(27*a**3)
+    Q = (p/3)**3 + (q/2)**2
+    sqrt_Q = csqrt(Q)
+    alpha = (-q/2 + sqrt_Q)**(1.0/3.0)
+    beta = (-q/2 - sqrt_Q)**(1.0/3.0)
+    sqrt32 = sqrt(3.0)/2.0
+    y1 = alpha + beta
+    y2 = -(alpha + beta)/2.0 + (alpha - beta)*sqrt32*1j
+    y3 = -(alpha + beta)/2.0 - (alpha - beta)*sqrt32*1j
+    xs = [y - b/(3*a) for y in [y1,y2,y3]]
+    if real_only:
+        xs = [x.real for x in xs if abs(x.imag) < 1e-6]
+    return xs
 
