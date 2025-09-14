@@ -322,6 +322,7 @@
         - SvExCurveCurvatureNode
         - SvExCurveTorsionNode
         - SvExCurveExtremesNode
+        - SvNurbsCurveExtremesNode
         - SvExCurveZeroTwistFrameNode
         - SvExSlerpCurveFrameNode
         - SvCurveLengthParameterMk2Node
