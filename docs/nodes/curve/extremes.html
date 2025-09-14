@@ -222,6 +222,7 @@
 <li class="toctree-l3"><a class="reference internal" href="nearest_point.html">Nearest Point on Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="nurbs_curve.html">Build NURBS Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="nurbs_curve_nodes.html">NURBS Curve Nodes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nurbs_extremes.html">NURBS Curve Extremes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="offset_mk2.html">Offset Curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="offset_on_surface.html">Offset Curve on Surface</a></li>
 <li class="toctree-l3"><a class="reference internal" href="ortho_project.html">Ortho Project on Curve</a></li>
@@ -466,6 +467,9 @@ analytically (by writing down all formulas for your field and your curve), it
 will be much faster to calculate points by formulas. This node, in turn, is
 most useful when you do not know exact formulas for the curve and / or for the
 scalar field - for example, if they were defined by approximation.</p>
+<p>If your curve is a non-rational NURBS (or NURBS-like) curve of degree 1, 2, 3
+or 4, and you need to find extremes along some direction, you can use “NURBS
+Curve Extremes” node, which is several times faster.</p>
 <a class="reference external image-reference" href="https://github.com/nortikin/sverchok/assets/14288520/0066bb85-784f-40d3-a670-14283253b33b"><img alt="https://github.com/nortikin/sverchok/assets/14288520/0066bb85-784f-40d3-a670-14283253b33b" src="https://github.com/nortikin/sverchok/assets/14288520/0066bb85-784f-40d3-a670-14283253b33b" />
 </a>
 <ul class="simple">
