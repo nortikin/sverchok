@@ -4,7 +4,9 @@ from sverchok.core.sv_custom_exceptions import ArgumentError, SvInvalidInputExce
 from sverchok.utils.curve.bezier import SvBezierCurve
 from sverchok.utils.curve.nurbs_algorithms import unify_curves
 from sverchok.utils.curve.algorithms import unify_curves_degree, SvCurveOnSurfaceCurvaturesCalculator
-from sverchok.utils.curve.nurbs_solver_applications import interpolate_nurbs_curve_with_tangents, interpolate_nurbs_curve
+from sverchok.utils.curve.nurbs_solver_applications import interpolate_nurbs_curve_with_tangents, interpolate_nurbs_curve, curve_to_nurbs, CURVE_ARBITRARY
+from sverchok.utils.curve.splines import SvSplineCurve
+from sverchok.utils.curve.nurbs_algorithms import remove_excessive_knots
 from sverchok.utils.surface.nurbs import SvNurbsSurface, simple_loft, interpolate_nurbs_surface
 from sverchok.utils.surface.algorithms import unify_nurbs_surfaces
 from sverchok.utils.sv_logging import get_logger
@@ -49,6 +51,18 @@ def reparametrize_by_segments(curve, t_values, tolerance=1e-2):
     
     return result
 
+def reparametrize_nurbs(curve, t_values, samples=50, tolerance=1e-2):
+    degree = curve.get_degree()
+    t_min, t_max = curve.get_u_bounds()
+    dst_ts = [t_min] + t_values + [t_max]
+    src_ts = np.arange(len(dst_ts))
+    parametrization = SvSplineCurve.from_2d_points(np.array(dst_ts), np.array(src_ts))
+    new_curve = curve_to_nurbs(degree, curve, samples,
+                    method = CURVE_ARBITRARY,
+                    parametrization = parametrization)
+    return new_curve
+#return remove_excessive_knots(new_curve, tolerance)
+
 def gordon_surface(u_curves, v_curves, intersections, metric='POINTS', u_knots=None, v_knots=None, knotvector_accuracy=6, reparametrize_tolerance=1e-2, logger=None):
     """
     Generate a NURBS surface from a net of NURBS curves, by use of Gordon's algorithm.
@@ -85,8 +99,8 @@ def gordon_surface(u_curves, v_curves, intersections, metric='POINTS', u_knots=N
     if u_knots is not None:
         loft_u_kwargs = loft_v_kwargs = interpolate_kwargs = {'metric': 'POINTS'}
 
-        u_curves = [reparametrize_by_segments(c, knots, reparametrize_tolerance) for c, knots in zip(u_curves, u_knots)]
-        v_curves = [reparametrize_by_segments(c, knots, reparametrize_tolerance) for c, knots in zip(v_curves, v_knots)]
+        u_curves = [reparametrize_by_segments(c, knots, tolerance=reparametrize_tolerance) for c, knots in zip(u_curves, u_knots)]
+        v_curves = [reparametrize_by_segments(c, knots, tolerance=reparametrize_tolerance) for c, knots in zip(v_curves, v_knots)]
         #print("U", u_curves)
         #print("V", v_curves)
 
