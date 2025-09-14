@@ -358,7 +358,10 @@ and the second of initial points, to make a wrap.</p></div>
         t0 = self.tknots[0]
         tn = self.tknots[-1]
         tknots = (new_t_max - new_t_min) * (self.tknots - t0) / (tn - t0) + new_t_min
-        return SvCatmullRomCurve(tknots, self.points)</code></pre>
+        return SvCatmullRomCurve(tknots, self.points)
+
+    def split_at(self, t):
+        return self.to_nurbs().reparametrize(*self.get_u_bounds()).split_at(t)</code></pre>
 </details>
 <div class="desc"><p>Non-uniform Catmull-Rom cubic spline.
 See <a href="https://en.wikipedia.org/wiki/Centripetal_Catmull%E2%80%93Rom_spline">https://en.wikipedia.org/wiki/Centripetal_Catmull%E2%80%93Rom_spline</a></p></div>
@@ -545,6 +548,19 @@ See <a href="https://en.wikipedia.org/wiki/Centripetal_Catmull%E2%80%93Rom_splin
     tn = self.tknots[-1]
     tknots = tn + t0 - self.tknots[::-1]
     return SvCatmullRomCurve(tknots, points)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.curve.catmull_rom.SvCatmullRomCurve.split_at"><code class="name flex">
+<span>def <span class="ident">split_at</span></span>(<span>self, t)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def split_at(self, t):
+    return self.to_nurbs().reparametrize(*self.get_u_bounds()).split_at(t)</code></pre>
 </details>
 <div class="desc"></div>
 </dd>
@@ -764,7 +780,10 @@ See <a href="https://en.wikipedia.org/wiki/Centripetal_Catmull%E2%80%93Rom_splin
         return self.to_nurbs().extrude_to_point(point)
 
     def lerp_to(self, curve2, coefficient):
-        return self.to_nurbs().lerp_to(curve2, coefficient)</code></pre>
+        return self.to_nurbs().lerp_to(curve2, coefficient)
+
+    def split_at(self, t):
+        return self.to_nurbs().reparametrize(*self.get_u_bounds()).split_at(t)</code></pre>
 </details>
 <div class="desc"><p>Uniform Catmull-Rom spline, allowing to specify
 tension value for each segment.</p></div>
@@ -975,6 +994,19 @@ tension value for each segment.</p></div>
 </details>
 <div class="desc"></div>
 </dd>
+<dt id="sverchok.utils.curve.catmull_rom.SvUniformCatmullRomCurve.split_at"><code class="name flex">
+<span>def <span class="ident">split_at</span></span>(<span>self, t)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def split_at(self, t):
+    return self.to_nurbs().reparametrize(*self.get_u_bounds()).split_at(t)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
 <dt id="sverchok.utils.curve.catmull_rom.SvUniformCatmullRomCurve.to_bezier_segments"><code class="name flex">
 <span>def <span class="ident">to_bezier_segments</span></span>(<span>self)</span>
 </code></dt>
@@ -1068,6 +1100,7 @@ tension value for each segment.</p></div>
 <li><code><a title="sverchok.utils.curve.catmull_rom.SvCatmullRomCurve.get_bezier_control_points" href="#sverchok.utils.curve.catmull_rom.SvCatmullRomCurve.get_bezier_control_points">get_bezier_control_points</a></code></li>
 <li><code><a title="sverchok.utils.curve.catmull_rom.SvCatmullRomCurve.reparametrize" href="#sverchok.utils.curve.catmull_rom.SvCatmullRomCurve.reparametrize">reparametrize</a></code></li>
 <li><code><a title="sverchok.utils.curve.catmull_rom.SvCatmullRomCurve.reverse" href="#sverchok.utils.curve.catmull_rom.SvCatmullRomCurve.reverse">reverse</a></code></li>
+<li><code><a title="sverchok.utils.curve.catmull_rom.SvCatmullRomCurve.split_at" href="#sverchok.utils.curve.catmull_rom.SvCatmullRomCurve.split_at">split_at</a></code></li>
 <li><code><a title="sverchok.utils.curve.catmull_rom.SvCatmullRomCurve.to_bezier_segments" href="#sverchok.utils.curve.catmull_rom.SvCatmullRomCurve.to_bezier_segments">to_bezier_segments</a></code></li>
 </ul>
 </li>
@@ -1088,6 +1121,7 @@ tension value for each segment.</p></div>
 <li><code><a title="sverchok.utils.curve.catmull_rom.SvUniformCatmullRomCurve.make_ruled_surface" href="#sverchok.utils.curve.catmull_rom.SvUniformCatmullRomCurve.make_ruled_surface">make_ruled_surface</a></code></li>
 <li><code><a title="sverchok.utils.curve.catmull_rom.SvUniformCatmullRomCurve.reparametrize" href="#sverchok.utils.curve.catmull_rom.SvUniformCatmullRomCurve.reparametrize">reparametrize</a></code></li>
 <li><code><a title="sverchok.utils.curve.catmull_rom.SvUniformCatmullRomCurve.reverse" href="#sverchok.utils.curve.catmull_rom.SvUniformCatmullRomCurve.reverse">reverse</a></code></li>
+<li><code><a title="sverchok.utils.curve.catmull_rom.SvUniformCatmullRomCurve.split_at" href="#sverchok.utils.curve.catmull_rom.SvUniformCatmullRomCurve.split_at">split_at</a></code></li>
 <li><code><a title="sverchok.utils.curve.catmull_rom.SvUniformCatmullRomCurve.to_bezier_segments" href="#sverchok.utils.curve.catmull_rom.SvUniformCatmullRomCurve.to_bezier_segments">to_bezier_segments</a></code></li>
 <li><code><a title="sverchok.utils.curve.catmull_rom.SvUniformCatmullRomCurve.to_nurbs" href="#sverchok.utils.curve.catmull_rom.SvUniformCatmullRomCurve.to_nurbs">to_nurbs</a></code></li>
 </ul>
