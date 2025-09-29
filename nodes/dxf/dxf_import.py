@@ -15,6 +15,7 @@ from sverchok.dependencies import FreeCAD
 def dxf_geometry_loader(self, entity, curve_degree, resolution, lifehack, scale):
     ''' dxf_geometry_loader(entity) ВОЗВРАЩАЕТ вершины, рёбра, полигоны и кривые всей геометрии, что находит у сущности'''
     typ = entity.dxftype()
+    print('!!! type element:',typ)
     vers, edges, pols, VT, TT, curves_out, knots_out = [], [], [], [], [], [], []
 
     pointered = ['Arc','Circle','Ellipse']
@@ -24,7 +25,9 @@ def dxf_geometry_loader(self, entity, curve_degree, resolution, lifehack, scale)
         #radius = a.dxf.radius
         if typ == 'Arc':
             start  = int(entity.dxf.start_angle)
+            #print('start angle:', start)
             end    = int(entity.dxf.end_angle)
+            #print('end angle:', end)
             if start > end:
                 start1 = (360-start)
                 overall = start1+end
@@ -75,11 +78,13 @@ def dxf_geometry_loader(self, entity, curve_degree, resolution, lifehack, scale)
         # вариант от DeepSeek
         points = entity.get_points()  # Получаем вершины
         vertices = list(entity.vertices())
+        #resolution_arc = max(3,int(resolution*(overall/360)))
+        print('lwpolyline vertices:',vertices)
         for i, (x, y, _, _, bulge) in enumerate(points):
             # Добавляем точки сегмента (линия или дуга)
-            if bulge != 0:
+            if bulge !=0 and i<(len(vertices)-1):
                 segment_points = arc_points((x*scale,y*scale,0), (vertices[i+1][0]*scale,vertices[i+1][1]*scale,0), bulge, resolution)
-                edges_.extend([[len(vers_)+k-1,len(vers_)+k] for k in range(len(segment_points))])
+                edges_.extend([[len(vers_)+k+1,len(vers_)+k] for k in range(len(segment_points)-1)])
             else:
                 segment_points = [(x*scale,y*scale,0)]
                 if i != 0:
@@ -157,7 +162,7 @@ class SvDxfImportNode(SverchCustomTreeNode, bpy.types.Node):
     curve_degree: bpy.props.IntProperty(default=3, min=1, max=4,name='degree for nurbses',
         update=updateNode)
 
-    resolution: bpy.props.IntProperty(default=10, min=3, max=100,name='resolution for arcs',
+    resolution: bpy.props.IntProperty(default=10, min=3, max=500,name='resolution for arcs',
         update=updateNode)
 
     text_scale: bpy.props.FloatProperty(default=1.0,name='text_scale',
