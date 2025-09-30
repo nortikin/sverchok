@@ -34,7 +34,7 @@ vcol_options = [(k, k, '', i) for i, k in enumerate(["RGB", "RGBA"])]
 
 
 def set_vertices(loop_count, obj, index_socket, indices, input_colors, colors):
-    vertex_index = np.zeros(loop_count, dtype=int)
+    vertex_index = np.empty(loop_count, dtype="I")
     loops = obj.data.loops
     loops.foreach_get("vertex_index", vertex_index)
     if index_socket.is_linked:
@@ -53,8 +53,8 @@ def set_vertices(loop_count, obj, index_socket, indices, input_colors, colors):
                 colors[:] = np.array(input_colors)[vertex_index]
 
 def set_polygons(polygon_count, obj, index_socket, indices, input_colors, colors):
-    p_start = np.empty(polygon_count, dtype=int)
-    p_total = np.empty(polygon_count, dtype=int)
+    p_start = np.empty(polygon_count, dtype="I")
+    p_total = np.empty(polygon_count, dtype="I")
     obj.data.polygons.foreach_get("loop_start", p_start)
     obj.data.polygons.foreach_get("loop_total", p_total)
     if index_socket.is_linked:
