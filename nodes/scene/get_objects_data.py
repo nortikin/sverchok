@@ -608,24 +608,68 @@ class SvGetObjectsDataMK3(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
                         pols = [[i.index for i in p.verts] for p in bm.faces]
                     if o_vertices_select:
                         vertices_select1 = [v.select for v in bm.verts]
+
                     if o_vertices_crease:
-                        crease_layer = bm.verts.layers.crease.verify()
-                        vertices_crease1 = [v[crease_layer] for v in bm.verts]
+                        if hasattr(bm.verts.layers, 'crease'):
+                            # before blender 4.0
+                            crease_layer = bm.verts.layers.crease.verify()
+                            vertices_crease1 = [v[crease_layer] for v in bm.verts]
+                        elif hasattr(bm.verts.layers, 'float') and 'crease_vert' in bm.verts.layers.float:
+                            # after blender 4.0
+                            crease_vert_layer = bm.verts.layers.float.get('crease_vert')
+                            vertices_crease1 = [v[crease_vert_layer] for v in bm.verts]
+                        else:
+                            # if no layer then all creases are 0.0
+                            vertices_crease1 = [0.0 for v in bm.verts]
+
                     if o_vertices_bevel_weight:
-                        bevel_weight_layer = bm.verts.layers.bevel_weight.verify()
-                        vertices_bevel_weight1 = [v[bevel_weight_layer] for v in bm.verts]
+                        if hasattr(bm.verts.layers, 'bevel_weight'):
+                            # before blender 4.0
+                            bevel_weight_layer = bm.verts.layers.bevel_weight.verify()
+                            vertices_bevel_weight1 = [v[bevel_weight_layer] for v in bm.verts]
+                        elif hasattr(bm.verts.layers, 'float') and 'bevel_weight_vert' in bm.verts.layers.float:
+                            # after blender 4.0
+                            bevel_weight_vert_layer = bm.verts.layers.float.get('bevel_weight_vert')
+                            vertices_bevel_weight1 = [v[bevel_weight_vert_layer] for v in bm.verts]
+                        else:
+                            # if no layer then all bevels are 0.0
+                            vertices_bevel_weight1 = [0.0 for v in bm.verts]
+
                     if o_edges_select:
                         edges_select1 = [e.select for e in bm.edges]
                     if o_edges_seams:
                         edges_seams1 = [e.seam for e in bm.edges]
                     if o_edges_sharps:
                         edges_sharps1 = [not(e.smooth) for e in bm.edges]
+
                     if o_edges_crease:
-                        crease_layer = bm.edges.layers.crease.verify()
-                        edges_crease1 = [ e[crease_layer] for e in bm.edges ]
+                        if hasattr(bm.edges.layers, "crease"):
+                            # before blender 4.0
+                            crease_layer = bm.edges.layers.crease.verify()
+                            edges_crease1 = [ e[crease_layer] for e in bm.edges ]
+                        elif hasattr(bm.edges.layers, 'float') and 'crease_edge' in bm.edges.layers.float:
+                            # after blender 4.0
+                            cel = bm.edges.layers.float.get("crease_edge") # crease edge layer
+                            edges_crease1 = [e[cel] for e in bm.edges]
+                        else:
+                            # edges has no data for crease (not initalized)
+                            edges_crease1 = [0.0 for e in bm.edges]
+                        pass
+
                     if o_edges_bevel_weight:
-                        bevel_weight_layer = bm.edges.layers.bevel_weight.verify()
-                        edges_bevel_weight1 = [e[bevel_weight_layer] for e in bm.edges]
+                        if hasattr(bm.edges.layers, "bevel_weight"):
+                            # before blender 4.0
+                            bevel_weight_layer = bm.edges.layers.bevel_weight.verify()
+                            edges_bevel_weight1 = [e[bevel_weight_layer] for e in bm.edges]
+                        elif hasattr(bm.edges.layers, 'float') and 'bevel_weight_edge' in bm.edges.layers.float:
+                            # after blender 4.0
+                            bevel_weight_layer = bm.edges.layers.float.get("bevel_weight_edge") # crease edge layer
+                            edges_bevel_weight1 = [e[bevel_weight_layer] for e in bm.edges]
+                        else:
+                            # edges has no data for bevel (not initalized)
+                            edges_bevel_weight1 = [0.0 for e in bm.edges]
+                        pass
+
                     if o_polygon_selects:
                         polygon_selects1 = [f.select for f in bm.faces]
                     if o_polygon_smooth:
@@ -644,7 +688,8 @@ class SvGetObjectsDataMK3(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
                         polygon_normals = [ p.normal[:] for p in bm.faces ]
 
                     del bm
-                else:
+
+                else: # do in Object mode
 
                     # https://developer.blender.org/T99661
                     if obj.type == 'CURVE' and obj.mode == 'EDIT' and bpy.app.version[:2] == (3, 2):
@@ -665,21 +710,63 @@ class SvGetObjectsDataMK3(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
                         pols             = [list(p.vertices) for p in obj_data.polygons]
                     if o_vertices_select:
                         vertices_select1 = [v.select for v in obj_data.vertices]
+
                     if o_vertices_crease:
-                        creases = obj_data.vertex_creases[0]
-                        vertices_crease1 = [creases.data[i].value for i, v in enumerate(obj_data.vertices)]
+                        if hasattr(obj_data, 'vertex_creases') and (obj_data.vertex_creases is not None) and hasattr(obj_data.vertex_creases, '__len__') and len(obj_data.vertex_creases)>0:
+                            # it is very hard to identify creases in object mode in blender before 4.0
+                            creases = obj_data.vertex_creases[0]
+                            vertices_crease1 = [creases.data[i].value for i, v in enumerate(obj_data.vertices)]
+                        elif 'crease_vert' in obj_data.attributes:
+                            # get creases of vertices in Blender 4.x
+                            vertices_crease1 = [e.value for e in obj_data.attributes['crease_vert'].data]
+                        else:
+                            # if no data then all creases are 0.0
+                            vertices_crease1 = [0.0 for i in range( len(obj_data.vertices) )]
+                        pass
+
                     if o_vertices_bevel_weight:
-                        vertices_bevel_weight1 = [v.bevel_weight for v in obj_data.vertices]
+                        if 'bevel_weight_vert' in obj_data.attributes:
+                            # after Blender 4.0
+                            vertices_bevel_weight1 = [e.value for e in obj_data.attributes['bevel_weight_vert'].data]
+                        elif len(obj_data.vertices)>0 and hasattr(obj_data.vertices[0], 'bevel_weight'):
+                            # before Blender 4.0
+                            vertices_bevel_weight1 = [v.bevel_weight for v in obj_data.vertices]
+                        else:
+                            # vertices has no data in e (not initalized)
+                            vertices_bevel_weight1 = [0.0 for i in range( len(obj_data.vertices) )]
+                        pass
+
                     if o_edges_select:
                         edges_select1 = [e.select for e in obj_data.edges]
                     if o_edges_seams:
                         edges_seams1 = [e.use_seam for e in obj_data.edges]
                     if o_edges_sharps:
                         edges_sharps1 = [e.use_edge_sharp for e in obj_data.edges]
+
                     if o_edges_crease:
-                        edges_crease1 = [e.crease for e in obj_data.edges]
+                        if 'crease_edge' in obj_data.attributes:
+                            # after blender 4.0
+                            edges_crease1 = [e.value for e in obj_data.attributes['crease_edge'].data]
+                        elif len(obj_data.edges)>0 and hasattr(obj_data.edges[0], 'crease'):
+                            # before Blender 4.0
+                            edges_crease1 = [e.crease for e in obj_data.edges]
+                        else:
+                            # edges has no data in e (not initalized)
+                            edges_crease1 = [0.0 for e in obj_data.edges]
+                        pass
+                    
                     if o_edges_bevel_weight:
-                        edges_bevel_weight1 = [e.bevel_weight for e in obj_data.edges]
+                        if 'bevel_weight_edge' in obj_data.attributes:
+                            # after Blender 4.0
+                            edges_bevel_weight1 = [e.value for e in obj_data.attributes['bevel_weight_edge'].data]
+                        elif len(obj_data.edges)>0 and hasattr(obj_data.edges[0], 'bevel_weight'):
+                            # before Blender 4.0
+                            edges_bevel_weight1 = [e.bevel_weight for e in obj_data.edges]
+                        else:
+                            # edges has no data for bevel (not initalized)
+                            edges_bevel_weight1 = [0.0 for e in obj_data.edges]
+                        pass
+                            
                     if o_polygon_selects:
                         polygon_selects1 = [p.select for p in obj_data.polygons]
                     if o_polygon_smooth:
