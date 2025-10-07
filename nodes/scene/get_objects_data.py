@@ -601,7 +601,7 @@ class SvGetObjectsDataMK3(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
                     # verts, edgs, pols = pydata_from_bmesh(bm)
 
                     if o_vertices:
-                        verts = [ v.co[:] for v in bm.verts]  # v.co is a Vector()
+                        verts = [ (mtrx @ Vector(v.co[:])) for v in bm.verts]  # v.co is a Vector()
                     if o_edges:
                         edgs = [[e.verts[0].index, e.verts[1].index] for e in bm.edges]
                     if o_polygons:
