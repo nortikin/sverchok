@@ -7,39 +7,47 @@
 
 import numpy as np
 from collections import defaultdict
-import math
 
-from mathutils import Vector
-import mathutils.geometry
-
-from sverchok.utils.math import distribute_int, solve_quadratic, solve_cubic
-from sverchok.utils.geom import Spline, LineEquation, linear_approximation, intersect_segment_segment, SEGMENTS_PARALLEL
-from sverchok.utils.nurbs_common import SvNurbsBasisFunctions, SvNurbsMaths, from_homogenous, CantInsertKnotException
+from sverchok.utils.math import distribute_int, solve_quadratic, solve_cubic, FRENET
+from sverchok.utils.geom import (
+    LineEquation,
+    linear_approximation,
+    intersect_segment_segment,
+    SEGMENTS_PARALLEL,
+)
+from sverchok.utils.nurbs_common import (
+    SvNurbsBasisFunctions,
+    SvNurbsMaths,
+    CantInsertKnotException,
+)
+from sverchok.utils.curve.core import UnsupportedCurveTypeException
 from sverchok.utils.curve import knotvector as sv_knotvector
-from sverchok.utils.curve.algorithms import unify_curves_degree, SvCurveLengthSolver, SvCurveFrameCalculator
-from sverchok.utils.curve.bezier import SvBezierCurve, SvCubicBezierCurve
+from sverchok.utils.curve.algorithms import (
+    unify_curves_degree,
+    SvCurveLengthSolver,
+    SvCurveFrameCalculator,
+)
 from sverchok.utils.decorators import deprecated
 from sverchok.utils.sv_logging import get_logger
-from sverchok.utils.math import (
-    ZERO, FRENET, HOUSEHOLDER, TRACK, DIFF, TRACK_NORMAL,
-    NORMAL_DIR, NONE
-)
 from sverchok.dependencies import scipy
 
 if scipy is not None:
     import scipy.optimize
 
+
 def unify_two_curves(curve1, curve2):
     return unify_curves([curve1, curve2])
-    #curve1 = curve1.to_knotvector(curve2)
-    #curve2 = curve2.to_knotvector(curve1)
-    #return curve1, curve2
+    # curve1 = curve1.to_knotvector(curve2)
+    # curve2 = curve2.to_knotvector(curve1)
+    # return curve1, curve2
+
 
 @deprecated("Use sverchok.utils.curve.algorithms.unify_curves_degree")
 def unify_degrees(curves):
     max_degree = max(curve.get_degree() for curve in curves)
     curves = [curve.elevate_degree(target=max_degree) for curve in curves]
     return curves
+
 
 class KnotvectorDict(object):
     def __init__(self, accuracy):
@@ -49,7 +57,7 @@ class KnotvectorDict(object):
         self.skip_insertions = defaultdict(list)
 
     def tolerance(self):
-        return 10**(-self.accuracy)
+        return 10 ** (-self.accuracy)
 
     def update(self, curve_idx, knot, multiplicity):
         found_idx = None
@@ -57,7 +65,7 @@ class KnotvectorDict(object):
         for idx, (c, k, m) in enumerate(self.multiplicities):
             if curve_idx != c:
                 if abs(knot - k) < self.tolerance():
-                    #print(f"Found: #{curve_idx}: added {knot} ~= existing {k}")
+                    # print(f"Found: #{curve_idx}: added {knot} ~= existing {k}")
                     if (curve_idx, k) not in self.done_knots:
                         found_idx = idx
                         found_knot = k
@@ -90,8 +98,9 @@ class KnotvectorDict(object):
         keys = sorted(max_per_knot.keys())
         return [(key, max_per_knot[key]) for key in keys]
 
-def unify_curves(curves, method='UNIFY', accuracy=6):
-    tolerance = 10**(-accuracy)
+
+def unify_curves(curves, method="UNIFY", accuracy=6):
+    tolerance = 10 ** (-accuracy)
     curves = [curve.reparametrize(0.0, 1.0) for curve in curves]
     kvs = [curve.get_knotvector() for curve in curves]
     lens = [len(kv) for kv in kvs]
@@ -100,63 +109,73 @@ def unify_curves(curves, method='UNIFY', accuracy=6):
         if abs(diffs).max() < tolerance:
             return curves
 
-    if method == 'UNIFY':
+    if method == "UNIFY":
         dst_knots = KnotvectorDict(accuracy)
         for i, curve in enumerate(curves):
             m = sv_knotvector.to_multiplicity(curve.get_knotvector(), tolerance**2)
-            #print(f"Curve #{i}: degree={curve.get_degree()}, cpts={len(curve.get_control_points())}, {m}")
+            # print(f"Curve #{i}: degree={curve.get_degree()}, cpts={len(curve.get_control_points())}, {m}")
             for u, count in m:
                 dst_knots.update(i, u, count)
-        #print("Dst", dst_knots)
+        # print("Dst", dst_knots)
 
         result = []
-#     for i, curve1 in enumerate(curves):
-#         for j, curve2 in enumerate(curves):
-#             if i != j:
-#                 curve1 = curve1.to_knotvector(curve2)
-#         result.append(curve1)
+        #     for i, curve1 in enumerate(curves):
+        #         for j, curve2 in enumerate(curves):
+        #             if i != j:
+        #                 curve1 = curve1.to_knotvector(curve2)
+        #         result.append(curve1)
 
         for idx, curve in enumerate(curves):
             diffs = []
-            #kv = np.round(curve.get_knotvector(), accuracy)
-            #curve = curve.copy(knotvector = kv)
-            #print('next curve', curve.get_knotvector())
-            ms = dict(sv_knotvector.to_multiplicity(curve.get_knotvector(), tolerance**2))
+            # kv = np.round(curve.get_knotvector(), accuracy)
+            # curve = curve.copy(knotvector = kv)
+            # print('next curve', curve.get_knotvector())
+            ms = dict(
+                sv_knotvector.to_multiplicity(curve.get_knotvector(), tolerance**2)
+            )
             for dst_u, dst_multiplicity in dst_knots.items():
                 src_multiplicity = ms.get(dst_u, 0)
                 diff = dst_multiplicity - src_multiplicity
-                #print(f"C#{idx}: U = {dst_u}, was = {src_multiplicity}, need = {dst_multiplicity}, diff = {diff}")
+                # print(f"C#{idx}: U = {dst_u}, was = {src_multiplicity}, need = {dst_multiplicity}, diff = {diff}")
                 diffs.append((dst_u, diff))
-            #print(f"Src {ms}, dst {dst_knots} => diff {diffs}")
+            # print(f"Src {ms}, dst {dst_knots} => diff {diffs}")
 
             for u, diff in diffs:
                 if diff > 0:
                     curve = curve.insert_knot(u, diff)
-#                     if u in dst_knots.skip_insertions[idx]:
-#                         pass
-#                         print(f"C: skip insertion T = {u}")
-#                     else:
-#                         #kv = curve.get_knotvector()
-#                         print(f"C: Insert T = {u} x {diff}")
-#                         curve = curve.insert_knot(u, diff)
+            #                     if u in dst_knots.skip_insertions[idx]:
+            #                         pass
+            #                         print(f"C: skip insertion T = {u}")
+            #                     else:
+            #                         #kv = curve.get_knotvector()
+            #                         print(f"C: Insert T = {u} x {diff}")
+            #                         curve = curve.insert_knot(u, diff)
             result.append(curve)
-            
+
         return result
 
-    elif method == 'AVERAGE':
+    elif method == "AVERAGE":
         kvs = [len(curve.get_control_points()) for curve in curves]
         max_kv, min_kv = max(kvs), min(kvs)
         if max_kv != min_kv:
-            raise Exception(f"Knotvector averaging is not applicable: Curves have different number of control points: {kvs}")
+            raise Exception(
+                f"Knotvector averaging is not applicable: Curves have different number of control points: {kvs}"
+            )
 
         knotvectors = np.array([curve.get_knotvector() for curve in curves])
         knotvector_u = knotvectors.mean(axis=0)
 
-        result = [curve.copy(knotvector = knotvector_u) for curve in curves]
+        result = [curve.copy(knotvector=knotvector_u) for curve in curves]
         return result
 
-def interpolate_nurbs_curve(cls, degree, points, metric='DISTANCE', tknots=None, **kwargs):
-    return SvNurbsMaths.interpolate_curve(cls, degree, points, metric=metric, tknots=tknots, **kwargs)
+
+def interpolate_nurbs_curve(
+    cls, degree, points, metric="DISTANCE", tknots=None, **kwargs
+):
+    return SvNurbsMaths.interpolate_curve(
+        cls, degree, points, metric=metric, tknots=tknots, **kwargs
+    )
+
 
 def concatenate_nurbs_curves(curves, tolerance=1e-6):
     if not curves:
@@ -167,8 +186,9 @@ def concatenate_nurbs_curves(curves, tolerance=1e-6):
         try:
             result = result.concatenate(curve, tolerance=tolerance)
         except Exception as e:
-            raise Exception(f"Can't append curve #{i+1}: {e}")
+            raise Exception(f"Can't append curve #{i + 1}: {e}")
     return result
+
 
 def nurbs_curve_to_xoy(curve, target_normal=None):
     cpts = curve.get_control_points()
@@ -191,7 +211,8 @@ def nurbs_curve_to_xoy(curve, target_normal=None):
     matrix = np.linalg.inv(matrix)
     center = approx.center
     new_cpts = np.array([matrix @ (cpt - center) for cpt in cpts])
-    return curve.copy(control_points = new_cpts)
+    return curve.copy(control_points=new_cpts)
+
 
 def nurbs_curve_matrix(curve):
     cpts = curve.get_control_points()
@@ -208,9 +229,11 @@ def nurbs_curve_matrix(curve):
     matrix = np.stack((xx, yy, normal)).T
     return matrix
 
+
 def _get_curve_direction(curve):
     cpts = curve.get_control_points()
     return (cpts[0], cpts[-1])
+
 
 def _intersect_curves_line(curve1, curve2, precision=0.001, logger=None):
     if logger is None:
@@ -223,22 +246,28 @@ def _intersect_curves_line(curve1, curve2, precision=0.001, logger=None):
     v3, v4 = _get_curve_direction(curve2)
 
     logger.debug(f"Call L: [{t1_min} - {t1_max}] x [{t2_min} - {t2_max}]")
-    r = intersect_segment_segment(v1, v2, v3, v4, tolerance=precision, endpoint_tolerance=0.0)
+    r = intersect_segment_segment(
+        v1, v2, v3, v4, tolerance=precision, endpoint_tolerance=0.0
+    )
     if r is SEGMENTS_PARALLEL:
         return SEGMENTS_PARALLEL
     elif not r:
-        #logger.debug(f"({v1} - {v2}) x ({v3} - {v4}): no intersection")
+        # logger.debug(f"({v1} - {v2}) x ({v3} - {v4}): no intersection")
         return []
     else:
         u, v, pt = r
-        t1 = (1-u)*t1_min + u*t1_max
-        t2 = (1-v)*t2_min + v*t2_max
+        t1 = (1 - u) * t1_min + u * t1_max
+        t2 = (1 - v) * t2_min + v * t2_max
         logger.debug(f"({v1} - {v2}) x ({v3} - {v4}) => {pt}")
         return [(t1, t2, pt)]
 
-NUMERIC_TOO_FAR = 'TOO_FAR'
 
-def _intersect_curves_equation(curve1, curve2, method='SLSQP', precision=0.001, logger=None):
+NUMERIC_TOO_FAR = "TOO_FAR"
+
+
+def _intersect_curves_equation(
+    curve1, curve2, method="SLSQP", precision=0.001, logger=None
+):
     if logger is None:
         logger = get_logger()
 
@@ -250,24 +279,28 @@ def _intersect_curves_equation(curve1, curve2, method='SLSQP', precision=0.001, 
         p2 = curve2.evaluate(ts[1])
         dv = p2 - p1
         return dv @ dv
-        #return np.array([r, r])
+        # return np.array([r, r])
 
     mid1 = (t1_min + t1_max) * 0.5
     mid2 = (t2_min + t2_max) * 0.5
 
     x0 = np.array([mid1, mid2])
 
-#     def callback(ts, rs):
-#         logger.debug(f"=> {ts} => {rs}")
+    #     def callback(ts, rs):
+    #         logger.debug(f"=> {ts} => {rs}")
 
-    #logger.debug(f"Call R: [{t1_min} - {t1_max}] x [{t2_min} - {t2_max}]")
+    # logger.debug(f"Call R: [{t1_min} - {t1_max}] x [{t2_min} - {t2_max}]")
 
     # Find minimum distance between two curves with a numeric method.
     # If this minimum distance is small enough, we will say that curves
     # do intersect.
-    res = scipy.optimize.minimize(goal, x0, method=method,
-                bounds = [(t1_min, t1_max), (t2_min, t2_max)],
-                tol = 0.5 * precision)
+    res = scipy.optimize.minimize(
+        goal,
+        x0,
+        method=method,
+        bounds=[(t1_min, t1_max), (t2_min, t2_max)],
+        tol=0.5 * precision,
+    )
     if res.success:
         t1, t2 = tuple(res.x)
         t1 = np.clip(t1, t1_min, t1_max)
@@ -276,15 +309,20 @@ def _intersect_curves_equation(curve1, curve2, method='SLSQP', precision=0.001, 
         pt2 = curve2.evaluate(t2)
         dist = np.linalg.norm(pt2 - pt1)
         if dist < precision:
-            #logger.debug(f"Found: T1 {t1}, T2 {t2}, Pt1 {pt1}, Pt2 {pt2}")
+            # logger.debug(f"Found: T1 {t1}, T2 {t2}, Pt1 {pt1}, Pt2 {pt2}")
             pt = (pt1 + pt2) * 0.5
             return [(t1, t2, pt)]
         else:
-            logger.debug(f"numeric method found a point, but it's too far: [{t1_min} - {t1_max}] x [{t2_min} - {t2_max}]: {dist}")
+            logger.debug(
+                f"numeric method found a point, but it's too far: [{t1_min} - {t1_max}] x [{t2_min} - {t2_max}]: {dist}"
+            )
             return NUMERIC_TOO_FAR
     else:
-        logger.debug(f"numeric method fail: [{t1_min} - {t1_max}] x [{t2_min} - {t2_max}]: {res.message}")
+        logger.debug(
+            f"numeric method fail: [{t1_min} - {t1_max}] x [{t2_min} - {t2_max}]: {res.message}"
+        )
         return []
+
 
 def _intersect_endpoints(segment1, segment2, tolerance=0.001):
     cpts1 = segment1.get_control_points()
@@ -296,28 +334,37 @@ def _intersect_endpoints(segment1, segment2, tolerance=0.001):
     t2_min, t2_max = segment2.get_u_bounds()
 
     if np.linalg.norm(s1 - s2) < tolerance:
-        return t1_min, t2_min, 0.5*(s1+s2)
-    elif np.linalg.norm(e1 -  e2) < tolerance:
-        return t1_max, t2_max, 0.5*(e1+e2)
+        return t1_min, t2_min, 0.5 * (s1 + s2)
+    elif np.linalg.norm(e1 - e2) < tolerance:
+        return t1_max, t2_max, 0.5 * (e1 + e2)
     elif np.linalg.norm(s1 - e2) < tolerance:
-        return t1_min, t2_max, 0.5*(s1+e2)
+        return t1_min, t2_max, 0.5 * (s1 + e2)
     elif np.linalg.norm(e1 - s2) < tolerance:
-        return t1_max, t2_min, 0.5*(e1+s2)
+        return t1_max, t2_min, 0.5 * (e1 + s2)
     else:
         return None
+
 
 def cut_closed_segments(segments, tolerance=1e-6):
     unclosed = []
     for segment in segments:
         if segment.is_closed(tolerance=tolerance):
-            u1,u2 = segment.get_u_bounds()
-            mid = (u1+u2)*0.5
+            u1, u2 = segment.get_u_bounds()
+            mid = (u1 + u2) * 0.5
             unclosed.extend(segment.split_at(mid))
         else:
             unclosed.append(segment)
     return unclosed
 
-def _intersect_segments(segment1, segment2, method='SLSQP', numeric_method_threshold = 0.02, numeric_precision=0.001, logger=None):
+
+def _intersect_segments(
+    segment1,
+    segment2,
+    method="SLSQP",
+    numeric_method_threshold=0.02,
+    numeric_precision=0.001,
+    logger=None,
+):
     if logger is None:
         logger = get_logger()
 
@@ -340,73 +387,123 @@ def _intersect_segments(segment1, segment2, method='SLSQP', numeric_method_thres
         t1_min, t1_max = c1_bounds
         t2_min, t2_max = c2_bounds
 
-
         bbox1 = segment1.get_bounding_box().increase(bbox_tolerance)
         bbox2 = segment2.get_bounding_box().increase(bbox_tolerance)
 
-        #logger.debug(f"check: [{t1_min} - {t1_max}] x [{t2_min} - {t2_max}], bbox1: {bbox1.size()}, bbox2: {bbox2.size()}")
+        # logger.debug(f"check: [{t1_min} - {t1_max}] x [{t2_min} - {t2_max}], bbox1: {bbox1.size()}, bbox2: {bbox2.size()}")
         if not bbox1.intersects(bbox2):
             return []
 
         r = _intersect_endpoints(segment1, segment2, numeric_precision)
         if r:
-            logger.debug("Endpoint intersection after %d iterations; bbox1: %s, bbox2: %s", i, bbox1.size(), bbox2.size())
+            logger.debug(
+                "Endpoint intersection after %d iterations; bbox1: %s, bbox2: %s",
+                i,
+                bbox1.size(),
+                bbox2.size(),
+            )
             return [r]
 
-        if segment1.is_line(0.5*numeric_precision) and segment2.is_line(0.5*numeric_precision):
+        if segment1.is_line(0.5 * numeric_precision) and segment2.is_line(
+            0.5 * numeric_precision
+        ):
             logger.debug("Calling Lin() after %d iterations", i)
-            r = _intersect_curves_line(segment1, segment2, numeric_precision, logger=logger)
+            r = _intersect_curves_line(
+                segment1, segment2, numeric_precision, logger=logger
+            )
             if r is SEGMENTS_PARALLEL:
                 return []
             elif r:
                 return r
 
-        if bbox1.size() < numeric_method_threshold and bbox2.size() < numeric_method_threshold:
+        if (
+            bbox1.size() < numeric_method_threshold
+            and bbox2.size() < numeric_method_threshold
+        ):
             logger.debug("Calling Eq() after %d iterations", i)
-            eq_result = _intersect_curves_equation(segment1, segment2, method=method, precision=numeric_precision, logger=logger)
+            eq_result = _intersect_curves_equation(
+                segment1,
+                segment2,
+                method=method,
+                precision=numeric_precision,
+                logger=logger,
+            )
             if eq_result is not NUMERIC_TOO_FAR:
                 return eq_result
 
         mid1 = (t1_min + t1_max) * 0.5
         mid2 = (t2_min + t2_max) * 0.5
 
-        c11,c12 = segment1.split_at(mid1)
-        c21,c22 = segment2.split_at(mid2)
+        c11, c12 = segment1.split_at(mid1)
+        c21, c22 = segment2.split_at(mid2)
 
-        r1 = _intersect_recursively(c11,c21, (t1_min, mid1), (t2_min, mid2), i+1)
-        r2 = _intersect_recursively(c11,c22, (t1_min, mid1), (mid2, t2_max), i+1)
-        r3 = _intersect_recursively(c12,c21, (mid1, t1_max), (t2_min, mid2), i+1)
-        r4 = _intersect_recursively(c12,c22, (mid1, t1_max), (mid2, t2_max), i+1)
+        r1 = _intersect_recursively(c11, c21, (t1_min, mid1), (t2_min, mid2), i + 1)
+        r2 = _intersect_recursively(c11, c22, (t1_min, mid1), (mid2, t2_max), i + 1)
+        r3 = _intersect_recursively(c12, c21, (mid1, t1_max), (t2_min, mid2), i + 1)
+        r4 = _intersect_recursively(c12, c22, (mid1, t1_max), (mid2, t2_max), i + 1)
 
         return r1 + r2 + r3 + r4
 
-    return _intersect_recursively(segment1, segment2, segment1.get_u_bounds(), segment2.get_u_bounds())
+    return _intersect_recursively(
+        segment1, segment2, segment1.get_u_bounds(), segment2.get_u_bounds()
+    )
 
-def _intersect_each_pair(segments1, segments2, method='SLSQP', numeric_method_threshold = 0.02, numeric_precision=0.001, logger=None):
+
+def _intersect_each_pair(
+    segments1,
+    segments2,
+    method="SLSQP",
+    numeric_method_threshold=0.02,
+    numeric_precision=0.001,
+    logger=None,
+):
     result = []
     for segment1 in segments1:
         for segment2 in segments2:
-            #print(f"Check {segment1.get_u_bounds()} x {segment2.get_u_bounds()}")
-            r = _intersect_segments(segment1, segment2,
-                               method=method, numeric_method_threshold=numeric_method_threshold,
-                               numeric_precision=numeric_precision,
-                               logger=logger)
+            # print(f"Check {segment1.get_u_bounds()} x {segment2.get_u_bounds()}")
+            r = _intersect_segments(
+                segment1,
+                segment2,
+                method=method,
+                numeric_method_threshold=numeric_method_threshold,
+                numeric_precision=numeric_precision,
+                logger=logger,
+            )
             result.extend(r)
     return result
 
-def intersect_nurbs_curves(curve1, curve2, method='SLSQP', numeric_method_threshold = 0.02, numeric_precision=0.001, logger=None):
+
+def intersect_nurbs_curves(
+    curve1,
+    curve2,
+    method="SLSQP",
+    numeric_method_threshold=0.02,
+    numeric_precision=0.001,
+    logger=None,
+):
     if logger is None:
         logger = get_logger()
     segments1 = curve1.to_bezier_segments(to_bezier_class=False)
     segments2 = curve2.to_bezier_segments(to_bezier_class=False)
     segments1 = cut_closed_segments(segments1, tolerance=numeric_precision)
     segments2 = cut_closed_segments(segments2, tolerance=numeric_precision)
-    return _intersect_each_pair(segments1, segments2,
-                               method=method, numeric_method_threshold=numeric_method_threshold,
-                               numeric_precision=numeric_precision,
-                               logger=logger)
+    return _intersect_each_pair(
+        segments1,
+        segments2,
+        method=method,
+        numeric_method_threshold=numeric_method_threshold,
+        numeric_precision=numeric_precision,
+        logger=logger,
+    )
 
-def self_intersect_nurbs_curve(curve, method='SLSQP', numeric_method_threshold = 0.02, numeric_precision=0.001, logger=None):
+
+def self_intersect_nurbs_curve(
+    curve,
+    method="SLSQP",
+    numeric_method_threshold=0.02,
+    numeric_precision=0.001,
+    logger=None,
+):
     if logger is None:
         logger = get_logger()
 
@@ -414,13 +511,17 @@ def self_intersect_nurbs_curve(curve, method='SLSQP', numeric_method_threshold =
     eps = 1e-8
 
     def _check_segments(i, j, segment1, segment2):
-        res = _intersect_segments(segment1, segment2,
-                           method=method, numeric_method_threshold=numeric_method_threshold,
-                           numeric_precision=numeric_precision,
-                           logger=logger)
+        res = _intersect_segments(
+            segment1,
+            segment2,
+            method=method,
+            numeric_method_threshold=numeric_method_threshold,
+            numeric_precision=numeric_precision,
+            logger=logger,
+        )
         u_min, u_max = segment1.get_u_bounds()
         v_min, v_max = segment2.get_u_bounds()
-        if j == i+1:
+        if j == i + 1:
             for t1, t2, pt in res:
                 if abs(t1 - u_max) < eps and abs(t2 - v_min) < eps:
                     continue
@@ -440,18 +541,30 @@ def self_intersect_nurbs_curve(curve, method='SLSQP', numeric_method_threshold =
                 continue
             _check_segments(i, j, segment1, segment2)
     return intersections
-    
+
+
 def remove_excessive_knots(curve, tolerance=1e-6):
     kv = curve.get_knotvector()
     for u in sv_knotvector.get_internal_knots(kv):
-        curve = curve.remove_knot(u, count='ALL', if_possible=True, tolerance=tolerance)
+        curve = curve.remove_knot(u, count="ALL", if_possible=True, tolerance=tolerance)
     return curve
 
-REFINE_TRIVIAL = 'TRIVIAL'
-REFINE_DISTRIBUTE = 'DISTRIBUTE'
-REFINE_BISECT = 'BISECT'
 
-def refine_curve(curve, samples, t_min = None, t_max = None, algorithm=REFINE_DISTRIBUTE, refine_max=False, solver=None, output_new_knots = False):
+REFINE_TRIVIAL = "TRIVIAL"
+REFINE_DISTRIBUTE = "DISTRIBUTE"
+REFINE_BISECT = "BISECT"
+
+
+def refine_curve(
+    curve,
+    samples,
+    t_min=None,
+    t_max=None,
+    algorithm=REFINE_DISTRIBUTE,
+    refine_max=False,
+    solver=None,
+    output_new_knots=False,
+):
     if refine_max:
         degree = curve.get_degree()
         inserts_count = degree
@@ -475,17 +588,16 @@ def refine_curve(curve, samples, t_min = None, t_max = None, algorithm=REFINE_DI
         start_knots = np.concatenate((start_knots, [t_max]))
 
     if algorithm == REFINE_TRIVIAL:
-        new_knots = np.linspace(t_min, t_max, num=samples+1, endpoint=False)[1:]
+        new_knots = np.linspace(t_min, t_max, num=samples + 1, endpoint=False)[1:]
 
     elif algorithm == REFINE_DISTRIBUTE:
-
         if solver is not None:
             length_params = solver.calc_length_params(start_knots)
             sizes = length_params[1:] - length_params[:-1]
             new_knots = np.array([])
             counts = distribute_int(samples, sizes)
             for l1, l2, count in zip(length_params[1:], length_params[:-1], counts):
-                ls = np.linspace(l1, l2, num=count+2, endpoint=True)[1:-1]
+                ls = np.linspace(l1, l2, num=count + 2, endpoint=True)[1:-1]
                 ts = solver.solve(ls)
                 new_knots = np.concatenate((new_knots, ts))
         else:
@@ -493,7 +605,7 @@ def refine_curve(curve, samples, t_min = None, t_max = None, algorithm=REFINE_DI
             counts = distribute_int(samples, sizes)
             new_knots = np.array([])
             for t1, t2, count in zip(start_knots[1:], start_knots[:-1], counts):
-                ts = np.linspace(t1, t2, num=count+2, endpoint=True)[1:-1]
+                ts = np.linspace(t1, t2, num=count + 2, endpoint=True)[1:-1]
                 new_knots = np.concatenate((new_knots, ts))
 
     elif algorithm == REFINE_BISECT:
@@ -508,9 +620,9 @@ def refine_curve(curve, samples, t_min = None, t_max = None, algorithm=REFINE_DI
                 length_params = solver.calc_length_params(knots_np)
                 sizes = length_params[1:] - length_params[:-1]
                 i_max = sizes.argmax()
-                half_length = 0.5 * (length_params[i_max+1] + length_params[i_max])
+                half_length = 0.5 * (length_params[i_max + 1] + length_params[i_max])
                 half_t = solver.solve(np.array([half_length]))[0]
-                return iteration(knots | set([half_t]), remaining-1)
+                return iteration(knots | set([half_t]), remaining - 1)
 
             all_knots = set(list(start_knots))
             new_knots = np.asarray(list(iteration(all_knots, samples)))
@@ -525,8 +637,8 @@ def refine_curve(curve, samples, t_min = None, t_max = None, algorithm=REFINE_DI
                 knots_np.sort()
                 sizes = knots_np[1:] - knots_np[:-1]
                 i_max = sizes.argmax()
-                half_t = 0.5 * (knots_np[i_max+1] + knots_np[i_max])
-                return iteration(knots | set([half_t]), remaining-1)
+                half_t = 0.5 * (knots_np[i_max + 1] + knots_np[i_max])
+                return iteration(knots | set([half_t]), remaining - 1)
 
             all_knots = set(list(start_knots))
             new_knots = np.asarray(list(iteration(all_knots, samples)))
@@ -540,7 +652,7 @@ def refine_curve(curve, samples, t_min = None, t_max = None, algorithm=REFINE_DI
         new_knots = np.concatenate((new_knots, [t_max]))
     new_knots = np.unique(new_knots)
     new_knots.sort()
-    #print("New:", new_knots)
+    # print("New:", new_knots)
 
     for t in new_knots:
         if t in existing_knots:
@@ -555,6 +667,7 @@ def refine_curve(curve, samples, t_min = None, t_max = None, algorithm=REFINE_DI
     else:
         return curve
 
+
 class SvNurbsCurveLengthSolver(SvCurveLengthSolver):
     def __init__(self, curve):
         self.curve = curve
@@ -562,16 +675,15 @@ class SvNurbsCurveLengthSolver(SvCurveLengthSolver):
         self._prime_spline = None
 
     def _calc_tknots(self, resolution, tolerance):
-
         def middle(segment):
             u1, u2 = segment.get_u_bounds()
-            u = (u1+u2)*0.5
+            u = (u1 + u2) * 0.5
             return u
-        
+
         def split(segment):
             u = middle(segment)
             return segment.split_at(u)
-        
+
         def calc_tknots(segment):
             if segment.is_line(tolerance, use_length_tolerance=True):
                 u1, u2 = segment.get_u_bounds()
@@ -585,7 +697,9 @@ class SvNurbsCurveLengthSolver(SvCurveLengthSolver):
 
         t_min, t_max = self.curve.get_u_bounds()
         init_knots = np.linspace(t_min, t_max, num=resolution)
-        segments = [self.curve.cut_segment(u1, u2) for u1, u2 in zip(init_knots, init_knots[1:])]
+        segments = [
+            self.curve.cut_segment(u1, u2) for u1, u2 in zip(init_knots, init_knots[1:])
+        ]
 
         all_knots = set()
         for segment in segments:
@@ -603,21 +717,28 @@ class SvNurbsCurveLengthSolver(SvCurveLengthSolver):
         self._reverse_spline = self._make_spline(mode, tknots, self._length_params)
         self._prime_spline = self._make_spline(mode, self._length_params, tknots)
 
+
 def cast_nurbs_curve(curve, target, coeff=1.0):
-    if not hasattr(target, 'projection_of_points'):
+    if not hasattr(target, "projection_of_points"):
         raise TypeError("Target object does not support projection_of_points method")
 
     cpts = curve.get_control_points()
     target_cpts = target.projection_of_points(cpts)
 
-    result_cpts = (1-coeff) * cpts + coeff * target_cpts
+    result_cpts = (1 - coeff) * cpts + coeff * target_cpts
 
-    return curve.copy(control_points = result_cpts)
+    return curve.copy(control_points=result_cpts)
 
-def offset_nurbs_curve(curve, offset_vector,
-        src_ts,
-        algorithm = FRENET, algorithm_resolution = 50,
-        metric = 'DISTANCE', target_tolerance = 1e-4):
+
+def offset_nurbs_curve(
+    curve,
+    offset_vector,
+    src_ts,
+    algorithm=FRENET,
+    algorithm_resolution=50,
+    metric="DISTANCE",
+    target_tolerance=1e-4,
+):
     """
     Offset a NURBS curve to obtain another NURBS curve.
 
@@ -638,17 +759,21 @@ def offset_nurbs_curve(curve, offset_vector,
     """
     src_points = curve.evaluate_array(src_ts)
     n = len(src_ts)
-    calc = SvCurveFrameCalculator(curve, algorithm, resolution = algorithm_resolution)
+    calc = SvCurveFrameCalculator(curve, algorithm, resolution=algorithm_resolution)
     matrices = calc.get_matrices(src_ts)
     offset_vectors = np.tile(offset_vector[np.newaxis].T, n)
-    offset_vectors = (matrices @ offset_vectors)[:,:,0]
+    offset_vectors = (matrices @ offset_vectors)[:, :, 0]
     offset_points = src_points + offset_vectors
-    offset_curve = interpolate_nurbs_curve(curve.get_nurbs_implementation(),
-                    degree = curve.get_degree(), points = offset_points,
-                    #metric = None, tknots = src_ts)
-                    metric = metric)
-    offset_curve = remove_excessive_knots(offset_curve, tolerance = target_tolerance)
+    offset_curve = interpolate_nurbs_curve(
+        curve.get_nurbs_implementation(),
+        degree=curve.get_degree(),
+        points=offset_points,
+        # metric = None, tknots = src_ts)
+        metric=metric,
+    )
+    offset_curve = remove_excessive_knots(offset_curve, tolerance=target_tolerance)
     return offset_curve
+
 
 def move_curve_point_by_moving_control_point(curve, u_bar, k, vector, relative=True):
     """
@@ -676,12 +801,15 @@ def move_curve_point_by_moving_control_point(curve, u_bar, k, vector, relative=T
     distance = np.linalg.norm(vector)
     vector = vector / distance
     functions = SvNurbsBasisFunctions(curve.get_knotvector())
-    x = functions.fraction(k,p, weights)(np.array([u_bar]))[0]
+    x = functions.fraction(k, p, weights)(np.array([u_bar]))[0]
     if abs(x) < 1e-6:
-        raise Exception(f"Specified control point #{k} is too far from curve parameter U = {u_bar}")
+        raise Exception(
+            f"Specified control point #{k} is too far from curve parameter U = {u_bar}"
+        )
     alpha = distance / x
     cpts[k] = cpts[k] + alpha * vector
-    return curve.copy(control_points = cpts)
+    return curve.copy(control_points=cpts)
+
 
 def move_curve_point_by_adjusting_one_weight(curve, u_bar, k, distance):
     """
@@ -704,14 +832,17 @@ def move_curve_point_by_adjusting_one_weight(curve, u_bar, k, distance):
     pk = curve.get_control_points()[k]
     pkpt = np.linalg.norm(pt - pk)
     functions = SvNurbsBasisFunctions(curve.get_knotvector())
-    r = functions.fraction(k,p, weights)(np.array([u_bar]))[0]
+    r = functions.fraction(k, p, weights)(np.array([u_bar]))[0]
     denominator = r * (pkpt - distance)
     coeff = 1 + distance / denominator
     target_w = weights[k] * coeff
     weights[k] = target_w
-    return curve.copy(weights = weights)
+    return curve.copy(weights=weights)
 
-def move_curve_point_by_adjusting_two_weights(curve, u_bar, k, distance=None, scale=None):
+
+def move_curve_point_by_adjusting_two_weights(
+    curve, u_bar, k, distance=None, scale=None
+):
     """
     Adjust the given curve so that curve's point at parameter u_bar is moved towards
     (or away from) curve's control polygon leg P[k] - P[k+1].
@@ -740,11 +871,11 @@ def move_curve_point_by_adjusting_two_weights(curve, u_bar, k, distance=None, sc
     weights = curve.get_weights().copy()
 
     weights0 = weights.copy()
-    weights0[k] = weights0[k+1] = 0.0
-    R = curve.copy(weights = weights0).evaluate(u_bar)
+    weights0[k] = weights0[k + 1] = 0.0
+    R = curve.copy(weights=weights0).evaluate(u_bar)
 
     pk = cpts[k]
-    pk1 = cpts[k+1]
+    pk1 = cpts[k + 1]
     control_leg = LineEquation.from_two_points(pk, pk1)
     control_leg_len = np.linalg.norm(pk1 - pk)
 
@@ -786,7 +917,9 @@ def move_curve_point_by_adjusting_two_weights(curve, u_bar, k, distance=None, sc
 
     eps = 1e-6
     if abs(ak) < eps or abs(abk) < eps or abs(ak1) < eps or abs(abk1) < eps:
-        raise Exception(f"Specified control point #{k} is too far from curve parameter U = {u_bar}")
+        raise Exception(
+            f"Specified control point #{k} is too far from curve parameter U = {u_bar}"
+        )
 
     numerator = 1.0 - ak - ak1
     numerator_brave = 1.0 - abk - abk1
@@ -795,16 +928,20 @@ def move_curve_point_by_adjusting_two_weights(curve, u_bar, k, distance=None, sc
     beta_k1 = (numerator / ak1) / (numerator_brave / abk1)
 
     weights[k] = beta_k * weights[k]
-    weights[k+1] = beta_k1 * weights[k+1]
+    weights[k + 1] = beta_k1 * weights[k + 1]
 
-    new_curve = curve.copy(weights = weights)
+    new_curve = curve.copy(weights=weights)
     return new_curve
 
-WEIGHTS_NONE = 'NONE'
-WEIGHTS_EUCLIDIAN = 'EUCLIDIAN'
-TANGENT_PRESERVE = 'PRESERVE'
 
-def move_curve_point_by_moving_control_points(curve, u_bar, vector, weights_mode = WEIGHTS_NONE, tangent = None, relative=True):
+WEIGHTS_NONE = "NONE"
+WEIGHTS_EUCLIDIAN = "EUCLIDIAN"
+TANGENT_PRESERVE = "PRESERVE"
+
+
+def move_curve_point_by_moving_control_points(
+    curve, u_bar, vector, weights_mode=WEIGHTS_NONE, tangent=None, relative=True
+):
     """
     Adjust the given curve so that at parameter u_bar it goues through
     the point C[u_bar] + vector instead of C[u_bar].
@@ -842,7 +979,7 @@ def move_curve_point_by_moving_control_points(curve, u_bar, vector, weights_mode
 
     is also an underdetermined system of linear equations of coordinates of curve control
     points.
-    Now, if we substract (1) from (2), we will have a new underdetermined system of 
+    Now, if we substract (1) from (2), we will have a new underdetermined system of
     linear equations on *movements* of curve control points (i.e. on how should we move
     control points of C in order to obtain C1).
     This underdetermined system, obviously, will have infinite number of solutions (in
@@ -866,42 +1003,47 @@ def move_curve_point_by_moving_control_points(curve, u_bar, vector, weights_mode
     if weights_mode == WEIGHTS_EUCLIDIAN:
         pt0 = curve.evaluate(u_bar)
         pt1 = pt0 + vector
-        move_weights = [np.linalg.norm(pt1 - cpt[:3])**(-2) for cpt in cpts]
+        move_weights = [np.linalg.norm(pt1 - cpt[:3]) ** (-2) for cpt in cpts]
     else:
         move_weights = [1 for cpt in cpts]
     n = len(cpts)
     p = curve.get_degree()
     kv = curve.get_knotvector()
     basis = SvNurbsBasisFunctions(kv)
-    alphas = [basis.fraction(k,p, curve_weights)(np.array([u_bar]))[0] for k in range(n)]
+    alphas = [
+        basis.fraction(k, p, curve_weights)(np.array([u_bar]))[0] for k in range(n)
+    ]
     if tangent is None:
-        A = np.zeros((ndim,ndim*n))
+        A = np.zeros((ndim, ndim * n))
     else:
         if tangent == TANGENT_PRESERVE:
             tangent = curve.tangent(u_bar)
-        A = np.zeros((2*ndim,ndim*n))
-        ns = np.array([basis.derivative(k, p, 1)(np.array([u_bar]))[0] for k in range(n)])
-        numerator = ns * curve_weights#[np.newaxis].T
+        A = np.zeros((2 * ndim, ndim * n))
+        ns = np.array(
+            [basis.derivative(k, p, 1)(np.array([u_bar]))[0] for k in range(n)]
+        )
+        numerator = ns * curve_weights  # [np.newaxis].T
         denominator = curve_weights.sum()
         betas = numerator / denominator
     for i in range(n):
         for j in range(ndim):
-            A[j, ndim*i+j] = alphas[i] * move_weights[i]
+            A[j, ndim * i + j] = alphas[i] * move_weights[i]
             if tangent is not None:
-                A[ndim + j, ndim*i+j] = betas[i] * move_weights[i]
+                A[ndim + j, ndim * i + j] = betas[i] * move_weights[i]
     A1 = np.linalg.pinv(A)
     if tangent is None:
-        B = np.zeros((ndim,1))
-        B[0:3,0] = vector[np.newaxis]
+        B = np.zeros((ndim, 1))
+        B[0:3, 0] = vector[np.newaxis]
     else:
-        B = np.zeros((2*ndim,1))
-        B[0:3,0] = vector[np.newaxis]
-        #B[3:6,0] = tangent[np.newaxis]
+        B = np.zeros((2 * ndim, 1))
+        B[0:3, 0] = vector[np.newaxis]
+        # B[3:6,0] = tangent[np.newaxis]
     X = (A1 @ B).T
     W = np.diag(move_weights)
-    d_cpts = W @ X.reshape((n,ndim))
+    d_cpts = W @ X.reshape((n, ndim))
     cpts = cpts + d_cpts
-    return curve.copy(control_points = cpts)
+    return curve.copy(control_points=cpts)
+
 
 def move_curve_point_by_inserting_knot(curve, u_bar, vector, relative=True):
     """
@@ -920,26 +1062,38 @@ def move_curve_point_by_inserting_knot(curve, u_bar, vector, relative=True):
     if not relative:
         vector = vector - pt0
     p = curve.get_degree()
-    curve2 = curve.insert_knot(u_bar, p-1, if_possible=True)
+    curve2 = curve.insert_knot(u_bar, p - 1, if_possible=True)
     cpts = curve2.get_control_points().copy()
     n = len(cpts)
     k = np.linalg.norm(cpts - pt0, axis=1).argmin()
     cpts[k] += vector
     if k >= 1:
-        cpts[k-1] += vector
-    if k < n-1:
-        cpts[k+1] += vector
-    return curve2.copy(control_points = cpts)
+        cpts[k - 1] += vector
+    if k < n - 1:
+        cpts[k + 1] += vector
+    return curve2.copy(control_points=cpts)
 
-def wrap_nurbs_curve(curve, t_min, t_max, refinement_samples, function,
-        scale = 1.0,
-        direction = None,
-        refinement_algorithm = REFINE_TRIVIAL, refinement_solver = None,
-        tolerance = 1e-4):
-    curve = refine_curve(curve, refinement_samples,
-                t_min = t_min, t_max = t_max,
-                algorithm = refinement_algorithm,
-                solver = refinement_solver)
+
+def wrap_nurbs_curve(
+    curve,
+    t_min,
+    t_max,
+    refinement_samples,
+    function,
+    scale=1.0,
+    direction=None,
+    refinement_algorithm=REFINE_TRIVIAL,
+    refinement_solver=None,
+    tolerance=1e-4,
+):
+    curve = refine_curve(
+        curve,
+        refinement_samples,
+        t_min=t_min,
+        t_max=t_max,
+        algorithm=refinement_algorithm,
+        solver=refinement_solver,
+    )
     cpts = curve.get_control_points().copy()
     greville_ts = curve.calc_greville_ts()
     wrap_idxs = np.where(np.logical_and(greville_ts >= t_min, greville_ts <= t_max))
@@ -951,13 +1105,14 @@ def wrap_nurbs_curve(curve, t_min, t_max, refinement_samples, function,
     else:
         direction = np.asarray(direction)
         direction /= np.linalg.norm(direction)
-        wrap_dirs = direction[:np.newaxis].T
+        wrap_dirs = direction[: np.newaxis].T
     wrap_values = scale * function(normalized_ts)
-    #print("Wv", wrap_values)
+    # print("Wv", wrap_values)
     wrap_vectors = wrap_dirs * wrap_values[np.newaxis].T
     cpts[wrap_idxs] = cpts[wrap_idxs] + wrap_vectors
-    curve = curve.copy(control_points = cpts)
+    curve = curve.copy(control_points=cpts)
     return remove_excessive_knots(curve, tolerance)
+
 
 def nurbs_curve_extremes(curve, direction, sign=1, global_only=False):
     if curve.is_rational():
@@ -965,12 +1120,18 @@ def nurbs_curve_extremes(curve, direction, sign=1, global_only=False):
     degree = curve.get_degree()
     direction = np.array(direction)
     if degree > 4:
-        raise UnsupportedCurveTypeException(f"Curve degree of {degree} is not supported")
+        raise UnsupportedCurveTypeException(
+            f"Curve degree of {degree} is not supported"
+        )
     t_values = set()
     for segment in curve.to_bezier_segments(to_bezier_class=False):
         taylor = segment.bezier_to_taylor()
         coeffs = taylor.derivative().get_coefficients()
-        poly_coeffs = coeffs[:,0] * direction[0] + coeffs[:,1] * direction[1] + coeffs[:,2] * direction[2]
+        poly_coeffs = (
+            coeffs[:, 0] * direction[0]
+            + coeffs[:, 1] * direction[1]
+            + coeffs[:, 2] * direction[2]
+        )
         t1, t2 = segment.get_u_bounds()
         if degree == 1:
             t_values.update([t1, t2])
@@ -1005,5 +1166,3 @@ def nurbs_curve_extremes(curve, direction, sign=1, global_only=False):
         return np.array([ts[idx]])
     else:
         return ts
-
-
