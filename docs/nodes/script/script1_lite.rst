@@ -250,3 +250,41 @@ Please refer to the initial thread: https://github.com/nortikin/sverchok/issues/
 
 In the N panel of the node there is a drop-down menu allowing you to select one
 of example scripts which are distributed with Sverchok.
+
+.. image:: https://github.com/user-attachments/assets/cffb8740-441c-45a1-b56b-7ae98f0710aa
+  :target: https://github.com/user-attachments/assets/cffb8740-441c-45a1-b56b-7ae98f0710aa
+
+Lissjous Curves 3D
+------------------
+
+Custom script.
+
+.. code-block:: python
+
+    """
+    in N s d=20 n=2
+    in t s d=1.0 n=2
+    in k1 s d=1.0 n=2
+    in k2 s d=2.0 n=2
+    in k3 s d=3.0 n=2
+    out vertices_out v
+    out edges_out s
+    """
+
+    import math
+
+    verts = []
+    edges = []
+
+    N = abs(N)
+    for I in range(N + 1):
+        v = t / N * I
+        verts.append([math.sin(k1 * v), math.cos(k2 * v), math.sin(k3 * v)])
+        edges.append([I, I + 1])
+    edges.pop()
+
+    vertices_out = [verts]
+    edges_out = [edges]
+
+.. image:: https://github.com/user-attachments/assets/1962437e-2adc-4a38-a8ff-27beda69288d
+  :target: https://github.com/user-attachments/assets/1962437e-2adc-4a38-a8ff-27beda69288d
