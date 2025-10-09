@@ -122,7 +122,7 @@ class SvScriptNodeLiteTextImport(bpy.types.Operator):
 
     def execute(self, context):
         global dict_file_name_to_index
-        message = "error set node script. Select node 'Script Light'"
+        message = "Error set node script. Try select node 'Script Light'. If this is helpless then write issue."
         def draw(self, context):
             self.layout.label(text=message)
 

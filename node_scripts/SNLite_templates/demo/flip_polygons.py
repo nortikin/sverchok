@@ -7,8 +7,6 @@ out  pols_out   s
 import numpy as np
 from numpy import array as ar
 
-print("1234567")
-
 if pols:
     po = ar(pols)
     sha = np.shape(po)
