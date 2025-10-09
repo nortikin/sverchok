@@ -369,6 +369,7 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs-outputs">Inputs / Outputs</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameters">Parameters</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples-of-usage">Examples of usage</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#lissjous-curves-3d">Lissjous Curves 3D</a></li>
 </ul>
             </nav>
         </div>
@@ -664,6 +665,40 @@ unexpected, the node will gracefully fail.</p>
 <p>Please refer to the initial thread: <a class="github reference external" href="https://github.com/nortikin/sverchok/issues/942">nortikin/sverchok#942</a>.</p>
 <p>In the N panel of the node there is a drop-down menu allowing you to select one
 of example scripts which are distributed with Sverchok.</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/cffb8740-441c-45a1-b56b-7ae98f0710aa"><img alt="https://github.com/user-attachments/assets/cffb8740-441c-45a1-b56b-7ae98f0710aa" src="https://github.com/user-attachments/assets/cffb8740-441c-45a1-b56b-7ae98f0710aa" />
+</a>
+</section>
+<section id="lissjous-curves-3d">
+<h2>Lissjous Curves 3D<a class="headerlink" href="#lissjous-curves-3d" title="Link to this heading">#</a></h2>
+<p>Custom script.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">in N s d=20 n=2</span>
+<span class="sd">in t s d=1.0 n=2</span>
+<span class="sd">in k1 s d=1.0 n=2</span>
+<span class="sd">in k2 s d=2.0 n=2</span>
+<span class="sd">in k3 s d=3.0 n=2</span>
+<span class="sd">out vertices_out v</span>
+<span class="sd">out edges_out s</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">math</span>
+
+<span class="n">verts</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">edges</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="n">N</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">N</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">I</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="n">t</span> <span class="o">/</span> <span class="n">N</span> <span class="o">*</span> <span class="n">I</span>
+    <span class="n">verts</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">k1</span> <span class="o">*</span> <span class="n">v</span><span class="p">),</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">k2</span> <span class="o">*</span> <span class="n">v</span><span class="p">),</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">k3</span> <span class="o">*</span> <span class="n">v</span><span class="p">)])</span>
+    <span class="n">edges</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">I</span><span class="p">,</span> <span class="n">I</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span>
+<span class="n">edges</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+
+<span class="n">vertices_out</span> <span class="o">=</span> <span class="p">[</span><span class="n">verts</span><span class="p">]</span>
+<span class="n">edges_out</span> <span class="o">=</span> <span class="p">[</span><span class="n">edges</span><span class="p">]</span>
+</pre></div>
+</div>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/1962437e-2adc-4a38-a8ff-27beda69288d"><img alt="https://github.com/user-attachments/assets/1962437e-2adc-4a38-a8ff-27beda69288d" src="https://github.com/user-attachments/assets/1962437e-2adc-4a38-a8ff-27beda69288d" />
+</a>
 </section>
 </section>
 
@@ -719,6 +754,7 @@ of example scripts which are distributed with Sverchok.</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs-outputs">Inputs / Outputs</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameters">Parameters</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples-of-usage">Examples of usage</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#lissjous-curves-3d">Lissjous Curves 3D</a></li>
 </ul>
   </nav></div>
 
