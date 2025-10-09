@@ -25,7 +25,6 @@ import numpy as np
 
 import bpy
 from bpy.props import StringProperty, IntVectorProperty, FloatVectorProperty, BoolProperty
-
 from sverchok.utils.sv_update_utils import sv_get_local_path
 from sverchok.utils.snlite_importhelper import (
     UNPARSABLE, set_autocolor, parse_sockets, are_matched)
@@ -49,22 +48,44 @@ template_categories = ['demo', 'bpy_stuff', 'bmesh', 'utils', 'templates']
 
 class SNLITE_EXCEPTION(Exception): pass
 
+menu_file_part = 0
+menu_file_index = 0
+dict_file_name_to_index = dict()
+
+def display_file_name(file_path):
+    global menu_file_part
+    global menu_file_index
+    menu_file_index+=1
+    dict_file_name_to_index[file_path] = f'{menu_file_part}.{menu_file_index}.'
+    dfn = bpy.path.display_name(file_path)
+    dfn = f'{menu_file_part}.{menu_file_index}. {dfn}'
+    return dfn
+
+
 class SV_MT_ScriptNodeLitePyMenu(bpy.types.Menu):
     bl_label = "SNLite templates"
     bl_idname = "SV_MT_ScriptNodeLitePyMenu"
 
     def draw(self, context):
+        global menu_file_part
+        global menu_file_index
+        global dict_file_name_to_index
+        
         if context.active_node:
 
             node = context.active_node
             if (node.selected_mode == 'To_TextBlok'):
-                args = dict(operator='text.open', props_default={'internal': True})
+                args = dict(operator='text.open', props_default={'internal': True}, display_name=display_file_name,)
             else:
-                args = dict(operator='node.scriptlite_import')
+                args = dict(operator='node.scriptlite_import', display_name=display_file_name,)
 
-            for folder in template_categories:
+            menu_file_part=0
+            dict_file_name_to_index = dict()
+            for I, folder in enumerate(template_categories):
+                menu_file_part+=1
+                menu_file_index = 0
                 final_path = os.path.join(snlite_template_path, folder)
-                self.layout.label(text=folder)
+                self.layout.label(text=f"{menu_file_part}. {folder}")
                 self.path_menu(searchpaths=[final_path], **args)
                 self.layout.row().separator()
 
@@ -100,9 +121,32 @@ class SvScriptNodeLiteTextImport(bpy.types.Operator):
     filepath: StringProperty()
 
     def execute(self, context):
+        global dict_file_name_to_index
+        message = "Error set node script. Try select node 'Script Light'. If this is helpless then write issue."
+        def draw(self, context):
+            self.layout.label(text=message)
+
         txt = bpy.data.texts.load(self.filepath)
-        context.node.script_name = os.path.basename(txt.name)
-        context.node.load()
+        # get active node.
+        node = None
+        if hasattr(context, "node")==True and context.node is not None:
+            # blender 3.6.x
+            node = context.node
+        elif hasattr(context, "active_node")==True and context.active_node is not None:
+            # Blender 4.x
+            node = context.active_node
+
+        if node is not None:
+            if txt.filepath in dict_file_name_to_index:
+                node.menu_index = dict_file_name_to_index[txt.filepath]+' '
+                node.full_script_name = txt.filepath
+            else:
+                node.menu_index = ''
+            node.script_name = os.path.basename(txt.name)
+            node.load()
+        else:
+            bpy.context.window_manager.popup_menu(draw, title="Error", icon="INFO")
+            pass
         return {'FINISHED'}
 
 
@@ -165,7 +209,8 @@ class SvScriptNodeLite(SverchCustomTreeNode, bpy.types.Node):
         
         return list(zip(self.inputs[:], self.outputs[:]))
 
-
+    menu_index: StringProperty()
+    full_script_name: StringProperty()
     script_name: StringProperty()
     script_str: StringProperty()
     node_dict = {}
@@ -221,7 +266,7 @@ class SvScriptNodeLite(SverchCustomTreeNode, bpy.types.Node):
 
     def draw_label(self):
         if self.script_name:
-            return f"SN: {self.script_name}"
+            return f"SN: {self.menu_index}{self.script_name}"
         else:
             return self.bl_label
 
@@ -311,6 +356,7 @@ class SvScriptNodeLite(SverchCustomTreeNode, bpy.types.Node):
         return True
 
     def sv_init(self, context):
+        self.width = 220
         self.use_custom_color = False
 
     def load(self):
