@@ -101,13 +101,13 @@ class SvMatrixMathSuperNode(SverchCustomTreeNode, bpy.types.Node):
     Out: Matrix, (Basic: X, Y, Z)
     '''
     bl_idname = 'SvMatrixMathSuperNode'
-    bl_label = 'Matrix Math Super'
+    bl_label = 'Matrix Math Ext'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_MATRIX_MATH'
 
     def update_operation(self, context):
         #self.label = "Matrix " + self.operation.title()
-        self.label = "Matrix Super Node"
+        self.label = "Matrix Math Ext"
         self.update_sockets()
         updateNode(self, context)
 
