@@ -131,7 +131,7 @@ class LexMixin():
             #print("reusing")
             texture = self.texture_dict['texture_buffer'] 
 
-        drawing.init_image_from_texture(self, width, height, texname, texture, 'RGBA')
+        drawing.init_image_from_texture(width, height, texname, texture, 'RGBA')
 
 
     def get_font_texture(self):
