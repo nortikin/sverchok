@@ -254,8 +254,8 @@ of example scripts which are distributed with Sverchok.
 .. image:: https://github.com/user-attachments/assets/cffb8740-441c-45a1-b56b-7ae98f0710aa
   :target: https://github.com/user-attachments/assets/cffb8740-441c-45a1-b56b-7ae98f0710aa
 
-Lissjous Curves 3D
-------------------
+Lissajous Curves 3D
+-------------------
 
 Custom script.
 
