@@ -196,7 +196,7 @@ class SvStraightSkeleton2DExtrude(ModifierLiteNode, SverchCustomTreeNode, bpy.ty
     """
     bl_idname = 'SvStraightSkeleton2DExtrude'
     bl_label = 'Straight Skeleton 2D Extrude (Alpha)'
-    bl_icon = 'MOD_OUTLINE'
+    bl_icon = 'MOD_OUTLINE' if bpy.app.version >= (3, 4, 0) else 'MOD_SKIN'
 
     sv_dependencies = ['pySVCGAL', 'more_itertools']
 
