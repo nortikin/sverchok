@@ -94,6 +94,7 @@
         - SvFilletCurveNode
         - SvDeconstructCurveNode
         - SvNurbsCurveNodesNode
+        - SvNurbsCurveExtremesNode
         - ---
         - SvNurbsCurveMovePointNode
         - SvSnapCurvesNode

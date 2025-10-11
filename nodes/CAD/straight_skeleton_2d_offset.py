@@ -271,7 +271,7 @@ class SvStraightSkeleton2DOffset(ModifierLiteNode, SverchCustomTreeNode, bpy.typ
     """
     bl_idname = 'SvStraightSkeleton2DOffset'
     bl_label = 'Straight Skeleton 2D Offset (Alpha)'
-    bl_icon = 'MOD_OUTLINE'
+    bl_icon = 'MOD_OUTLINE' if bpy.app.version >= (3, 4, 0) else 'MOD_SKIN'
 
     sv_dependencies = ['pySVCGAL', 'more_itertools']
 
