@@ -35,6 +35,10 @@ def node_settings_pulldown(self, context):
                 "preferences.addon_show", icon="SETTINGS" #, text="Settings"
             ).module = __package__.split('.')[0]
         row.operator("switcher.console", icon="CONSOLE", text="")
+        if bpy.context.preferences.inputs.use_rotate_around_active==True:
+            row.operator("sv.orbit_around_selection", icon="PROP_CON",text="",)
+        else:
+            row.operator("sv.orbit_around_selection", icon="SNAP_NORMAL", text="")
 
 class SW_OT_Console(Operator):
     """Show/hide console"""
@@ -42,6 +46,22 @@ class SW_OT_Console(Operator):
     bl_idname = "switcher.console"
     def execute(self, context):
         bpy.ops.wm.console_toggle()
+        return {'FINISHED'}
+
+class SW_OT_Orbit_Around_Selection(Operator):
+    '''Orbit Around Selection'''
+    bl_label = "Edit->Preferences->Navigation->Orbit Around Selection"
+    bl_idname = "sv.orbit_around_selection"
+    @classmethod
+    def poll(self, context):
+        # Activate always
+        res = True
+        return res
+
+    def execute(self, context):
+        bpy.context.preferences.inputs.use_rotate_around_active = not(bpy.context.preferences.inputs.use_rotate_around_active)
+        if bpy.context.preferences.inputs.use_rotate_around_active:
+            bpy.context.preferences.inputs.use_mouse_depth_navigate = bpy.context.preferences.inputs.use_rotate_around_active
         return {'FINISHED'}
 
 class SV_MT_LayoutsExamples(bpy.types.Menu):
@@ -117,7 +137,7 @@ class SvNodeTreeImporterSilent(bpy.types.Operator):
         return {'FINISHED'}
 
 
-classes = [SW_OT_Console, SV_MT_LayoutsExamples, SvNodeTreeImporterSilent]
+classes = [SW_OT_Orbit_Around_Selection, SW_OT_Console, SV_MT_LayoutsExamples, SvNodeTreeImporterSilent]
 submenu_classes = []
 
 
