@@ -185,50 +185,6 @@ def view_3d_geom(context, args):
                 p_batch = batch_for_shader(config.p_shader, 'TRIS', {"pos": geom.p_vertices}, indices=geom.p_indices)
                 config.p_shader.bind()
                 config.p_shader.uniform_float("color", config.poly_color[0][0])
-                
-                # if bpy.app.version < (3, 5, 0):
-                #     p_batch = batch_for_shader(config.p_shader, 'TRIS', {"pos": geom.p_vertices}, indices=geom.p_indices)
-                #     config.p_shader.bind()
-                #     config.p_shader.uniform_float("color", config.poly_color[0][0])
-                # else:
-                #     #### Попытка использовать кастомный shader вместо стандартного, чтобы немного отодвинуть faces в глубину, но всё равно крася в итоге получаются рваные
-                #     FACE_VERT = """
-                #     in vec3 pos;
-                #     uniform mat4 modelViewMatrix;
-                #     uniform mat4 projectionMatrix;
-
-                #     void main() {
-                #         gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
-                #     }
-                #     """
-
-                #     FACE_FRAG = """
-                #     uniform vec4  color;
-                #     uniform float depthBias; // ~1e-4..5e-4  (аналог glPolygonOffset factor)
-                #     //uniform float minW;       // 1e-4 (стабилизация вдали)
-
-                #     out vec4 FragColor;
-
-                #     void main() {
-                #         FragColor = color;
-                #         float adaptive = depthBias * gl_FragCoord.w;
-                #         float z = gl_FragCoord.z + adaptive;
-                #         gl_FragDepth = clamp(z, 0.0, 1.0);
-                #     }
-                #     """
-                #     config.p_shader = gpu.types.GPUShader(FACE_VERT, FACE_FRAG)
-                #     p_batch = batch_for_shader(config.p_shader, 'TRIS', {"pos": geom.p_vertices}, indices=geom.p_indices)
-                #     gpu.state.face_culling_set('BACK')
-                #     gpu.state.depth_test_set('LESS_EQUAL')
-                #     gpu.state.depth_mask_set(True)
-                #     gpu.state.blend_set('NONE')
-                #     config.p_shader.bind()
-                #     config.p_shader.uniform_float("modelViewMatrix", gpu.matrix.get_model_view_matrix())
-                #     config.p_shader.uniform_float("projectionMatrix", gpu.matrix.get_projection_matrix())
-                #     config.p_shader.uniform_float("color", config.poly_color[0][0])
-                #     config.p_shader.uniform_float("depthBias", 3.0e-5)  # подстройте
-                #     p_batch.draw(config.p_shader)
-
                 pass
             else:
                 p_batch = batch_for_shader(config.p_shader, 'TRIS', {"pos": geom.p_vertices, "color": geom.p_vertex_colors}, indices=geom.p_indices)
@@ -271,13 +227,10 @@ def view_3d_geom(context, args):
                     in vec3 pos;
                     uniform mat4 modelViewMatrix;
                     uniform mat4 projectionMatrix;
-                    //uniform float depthBias;
 
                     void main()
                     {
                         vec4 v = modelViewMatrix * vec4(pos,1.0);
-                        //v.z -= depthBias;
-                        //v.z = clamp(v.z, 0.0, 1.0);
                         gl_Position = projectionMatrix * v;
                     }
                     """
@@ -311,122 +264,6 @@ def view_3d_geom(context, args):
                     config.e_shader.uniform_float("projectionMatrix", gpu.matrix.get_projection_matrix())
                     config.e_shader.uniform_float(       "depthBias", 3e-5)
                     e_batch.draw(config.e_shader)
-
-                    ################################################################################################
-                    ##### Попытка построить линии с помощью TRIS:
-                    # VERT_SRC = """
-                    # in vec3 P0;          // начало сегмента (мировые координаты)
-                    # in vec3 P1;          // конец сегмента   (мировые координаты)
-                    # in float side;       // -1 или +1: какая сторона утолщения
-                    # in float t;          // 0 для P0-вершин, 1 для P1-вершин
-
-                    # uniform mat4 modelViewMatrix;
-                    # uniform mat4 projectionMatrix;
-                    # uniform vec2 viewportSize;   // (width, height) в пикселях
-                    # uniform float linePx;        // толщина линии в пикселях (1.0)
-
-                    # out float vDepthBias;        // передадим во фрагментный
-
-                    # void main()
-                    # {
-                    #     // В clip-space
-                    #     vec4 c0 = projectionMatrix * modelViewMatrix * vec4(P0, 1.0);
-                    #     vec4 c1 = projectionMatrix * modelViewMatrix * vec4(P1, 1.0);
-
-                    #     // Интерполяция вдоль сегмента (до смещения)
-                    #     vec4 c  = mix(c0, c1, t);
-
-                    #     // Переводим оба конца в NDC (−1..1)
-                    #     vec2 ndc0 = c0.xy / c0.w;
-                    #     vec2 ndc1 = c1.xy / c1.w;
-
-                    #     // Направление по экрану и перпендикуляр (в NDC)
-                    #     vec2 dir  = normalize(ndc1 - ndc0 + 1e-12);
-                    #     vec2 perp = vec2(-dir.y, dir.x);
-
-                    #     // Смещение на ±0.5 px в NDC: px -> ndc = 2*px/viewport
-                    #     float px_to_ndc_x = 2.0 / viewportSize.x;
-                    #     float px_to_ndc_y = 2.0 / viewportSize.y;
-                    #     vec2  px_to_ndc   = vec2(px_to_ndc_x, px_to_ndc_y);
-
-                    #     vec2 offset_ndc = perp * side * (linePx * 0.5) * px_to_ndc;
-
-                    #     // Применяем смещение к текущей точке (в NDC) и возвращаемся в clip-space
-                    #     vec2 ndc = (c.xy / c.w) + offset_ndc;
-                    #     vec4 out_clip = vec4(ndc * c.w, c.z, c.w);
-                    #     gl_Position = out_clip;
-
-                    #     // Небольшой bias глубины (во фрагменте скорректируем ещё чуть-чуть)
-                    #     vDepthBias = 0.0; // можно оставить 0, основной сдвиг — во фрагменте
-                    # }
-                    # """
-
-                    # FRAG_SRC = """
-                    # uniform vec4 color;
-                    # uniform float depthBias;     // ~1e-5 .. 3e-5
-                    # out vec4 FragColor;
-
-                    # void main()
-                    # {
-                    #     FragColor = color;
-
-                    #     // Чуть подтянем глубину к камере, чтобы исключить z-fighting со «заливкой»
-                    #     float z = gl_FragCoord.z - depthBias;
-                    #     gl_FragDepth = clamp(z, 0.0, 1.0);
-                    # }
-                    # """
-
-                    # # ---------- ДАННЫЕ: из списка рёбер делаем «квады» ----------
-                    # def build_polyline_quads(verts, edges):
-                    #     """
-                    #     Для каждого ребра (i,j) создаём 4 вершины:
-                    #     (P0, side=-1, t=0), (P0, side=+1, t=0), (P1, side=+1, t=1), (P1, side=-1, t=1)
-                    #     и два треугольника (0,1,2) (0,2,3).
-                    #     """
-                    #     P0 = []
-                    #     P1 = []
-                    #     side = []
-                    #     t = []
-                    #     indices = []
-
-                    #     vidx = 0
-                    #     for (i, j) in edges:
-                    #         p0 = verts[i]
-                    #         p1 = verts[j]
-                    #         # 4 вершины квада
-                    #         P0.extend([p0, p0, p1, p1])
-                    #         P1.extend([p1, p1, p1, p1])
-                    #         side.extend([-1.0, +1.0, +1.0, -1.0])
-                    #         t.extend([0.0, 0.0, 1.0, 1.0])
-
-                    #         # два треугольника
-                    #         indices.append((vidx + 0, vidx + 1, vidx + 2))
-                    #         indices.append((vidx + 0, vidx + 2, vidx + 3))
-                    #         vidx += 4
-
-                    #     return P0, P1, side, t, indices
-
-                    # P0, P1, SIDE, T, IDX = build_polyline_quads(geom.e_vertices, geom.e_indices)
-
-                    # config.e_shader = gpu.types.GPUShader(VERT_SRC, FRAG_SRC)
-                    # e_batch = batch_for_shader(config.e_shader, 'TRIS', {"P0": P0, "P1": P1, "side": SIDE, "t": T}, indices=IDX)
-                    # gpu.state.depth_test_set('LESS_EQUAL')
-                    # gpu.state.depth_mask_set(False)
-                    # gpu.state.blend_set('ALPHA')
-                    # config.e_shader.bind()
-                    # config.e_shader.uniform_float( "modelViewMatrix", gpu.matrix.get_model_view_matrix())
-                    # config.e_shader.uniform_float("projectionMatrix", gpu.matrix.get_projection_matrix())
-
-                    # vx, vy, vw, vh = gpu.state.viewport_get()
-                    # config.e_shader.uniform_float("viewportSize", (float(vw), float(vh)))
-                    # config.e_shader.uniform_float("linePx", 1.0)          # толщина = 1 px
-                    # config.e_shader.uniform_float("depthBias", 1e-5)      # подстрой под сцену
-                    # config.e_shader.uniform_float("color", config.edge_color[0][0])
-
-                    # e_batch.draw(config.e_shader)
-
-                    ################################################################################################
-                    # Барицентричный метод:
 
                     pass
 
