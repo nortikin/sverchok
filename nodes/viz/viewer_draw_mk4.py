@@ -271,9 +271,56 @@ def view_3d_geom(context, args):
 
 
             else:
-                e_batch = batch_for_shader(config.e_shader, 'LINES', {"pos": geom.e_vertices, "color": geom.e_vertex_colors}, indices=geom.e_indices)
-                config.e_shader.bind()
-                e_batch.draw(config.e_shader)
+                if bpy.app.version < (3, 5, 0):
+                    e_batch = batch_for_shader(config.e_shader, 'LINES', {"pos": geom.e_vertices, "color": geom.e_vertex_colors}, indices=geom.e_indices)
+                    config.e_shader.bind()
+                    e_batch.draw(config.e_shader)
+                else:
+
+                    # ##### Попытка построить линии с помощью bias - не очень, на изломах всё равно часто встречаются разрывы, особенно когда линия близка к горизонтали или вертикали (но горизонтальные, вертикальные или явно диагональные рисуются хорошо)
+                    VERT_BIAS = """
+                    in vec3 pos;
+                    in vec4 color;
+                    uniform mat4 modelViewMatrix;
+                    uniform mat4 projectionMatrix;
+                    out vec4 vColor;
+
+                    void main()
+                    {
+                        vec4 v = modelViewMatrix * vec4(pos,1.0);
+                        gl_Position = projectionMatrix * v;
+                        vColor = color;
+                    }
+                    """
+                    FRAG_BIAS = """
+                    in vec4 vColor;
+                    //uniform vec4 color;
+                    uniform float depthBias;  // малое число ~1e-6..1e-4
+                    out vec4 FragColor;
+                    void main(){
+                        FragColor = vColor;
+                        float adaptive = depthBias * gl_FragCoord.w;
+                        float z = gl_FragCoord.z - adaptive;
+                        gl_FragDepth = clamp(z, 0.0, 1.0);
+                    }
+                    """
+                    shader_bias = gpu.types.GPUShader(VERT_BIAS, FRAG_BIAS)
+                    config.e_shader = shader_bias
+                    e_batch = batch_for_shader(config.e_shader, 'LINES', {"pos": geom.e_vertices, "color": geom.e_vertex_colors}, indices=geom.e_indices)
+                    gpu.state.face_culling_set('NONE')
+                    gpu.state.depth_test_set('LESS_EQUAL')
+                    gpu.state.depth_mask_set(False)
+                    gpu.state.blend_set('NONE')
+                    config.e_shader.bind()
+                    #config.e_shader.uniform_float(           "color", config.edge_color)
+                    config.e_shader.uniform_float( "modelViewMatrix", gpu.matrix.get_model_view_matrix())
+                    config.e_shader.uniform_float("projectionMatrix", gpu.matrix.get_projection_matrix())
+                    config.e_shader.uniform_float(       "depthBias", 3e-5)
+                    e_batch.draw(config.e_shader)
+
+                    pass
+
+                pass
 
         drawing.reset_line_width()
 
