@@ -49,7 +49,7 @@ class SW_OT_Console(Operator):
         return {'FINISHED'}
 
 class SW_OT_Orbit_Around_Selection(Operator):
-    '''Orbit Around Selection'''
+    '''Orbit Around Selection [On/Off]'''
     bl_label = "Edit->Preferences->Navigation->Orbit Around Selection"
     bl_idname = "sv.orbit_around_selection"
     @classmethod
