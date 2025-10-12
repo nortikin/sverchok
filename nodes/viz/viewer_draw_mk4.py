@@ -334,10 +334,14 @@ def view_3d_geom(context, args):
             drawing.set_point_size(config.point_size)
             if config.uniform_verts:
                 v_batch = batch_for_shader(config.v_shader, 'POINTS', {"pos": geom.v_vertices})
+                gpu.state.depth_test_set('LESS_EQUAL')
+                gpu.state.depth_mask_set(False)
                 config.v_shader.bind()
                 config.v_shader.uniform_float("color", config.vector_color[0][0])
             else:
                 v_batch = batch_for_shader(config.v_shader, 'POINTS', {"pos": geom.v_vertices, "color": geom.points_color})
+                gpu.state.depth_test_set('LESS_EQUAL')
+                gpu.state.depth_mask_set(False)
                 config.v_shader.bind()
 
             v_batch.draw(config.v_shader)
