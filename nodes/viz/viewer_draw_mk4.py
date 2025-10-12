@@ -181,13 +181,18 @@ def view_3d_geom(context, args):
             #else:
             #    config.p_shader.uniform_float("brightness", 0.5)
         else:
+            #gpu.state.depth_test_set('LESS_EQUAL')
             if config.uniform_pols:
                 p_batch = batch_for_shader(config.p_shader, 'TRIS', {"pos": geom.p_vertices}, indices=geom.p_indices)
+                gpu.state.face_culling_set('NONE')
+                gpu.state.depth_mask_set(True)
                 config.p_shader.bind()
                 config.p_shader.uniform_float("color", config.poly_color[0][0])
                 pass
             else:
                 p_batch = batch_for_shader(config.p_shader, 'TRIS', {"pos": geom.p_vertices, "color": geom.p_vertex_colors}, indices=geom.p_indices)
+                gpu.state.face_culling_set('NONE')
+                gpu.state.depth_mask_set(True)
                 config.p_shader.bind()
 
         p_batch.draw(config.p_shader)
@@ -254,7 +259,7 @@ def view_3d_geom(context, args):
                     shader_bias = gpu.types.GPUShader(VERT_BIAS, FRAG_BIAS)
                     config.e_shader = shader_bias
                     e_batch = batch_for_shader(config.e_shader, 'LINES', {"pos": geom.e_vertices}, indices=geom.e_indices)
-                    gpu.state.face_culling_set('NONE')
+                    #gpu.state.face_culling_set('NONE')
                     gpu.state.depth_test_set('LESS_EQUAL')
                     gpu.state.depth_mask_set(False)
                     gpu.state.blend_set('NONE')
