@@ -14,16 +14,15 @@ from sverchok.dependencies import FreeCAD
 
 def dxf_geometry_loader(self, entity, curve_degree, resolution, lifehack, scale):
     ''' dxf_geometry_loader(entity) ВОЗВРАЩАЕТ вершины, рёбра, полигоны и кривые всей геометрии, что находит у сущности'''
-    typ = entity.dxftype()
-    print('!!! type element:',typ)
+    typ = entity.dxftype().lower()
+    #print('!!! type element:',typ)
     vers, edges, pols, VT, TT, curves_out, knots_out = [], [], [], [], [], [], []
-
-    pointered = ['Arc','Circle','Ellipse']
+    pointered = ['arc','circle','ellipse']
     if typ in pointered:
         vers_ = []
         center = entity.dxf.center*scale
         #radius = a.dxf.radius
-        if typ == 'Arc':
+        if typ == 'arc':
             start  = int(entity.dxf.start_angle)
             #print('start angle:', start)
             end    = int(entity.dxf.end_angle)
@@ -40,9 +39,9 @@ def dxf_geometry_loader(self, entity, curve_degree, resolution, lifehack, scale)
                 overall = end-start1
                 resolution_arc = max(3,int(resolution*(overall/360))) # redefine resolution for partially angles
                 ran = [i/lifehack for i in range(lifehack*start,lifehack*end,max(1,int(lifehack*(end-start)/resolution_arc)))]
-        elif typ == 'CIRCLE':
+        elif typ == 'circle':
             ran = [i/lifehack for i in range(0,lifehack*360,max(1,int((lifehack*360)/resolution)))]
-        elif typ == 'ELLIPSE':
+        elif typ == 'ellipse':
             start  = entity.dxf.start_param
             end    = entity.dxf.end_param
             ran = [start + ((end-start)*i)/(lifehack*360) for i in range(0,lifehack*360,max(1,int(lifehack*360/resolution)))]
@@ -52,44 +51,62 @@ def dxf_geometry_loader(self, entity, curve_degree, resolution, lifehack, scale)
 
             vers.append(vers_)
             edges.append([[i,i+1] for i in range(len(vers_)-1)])
-            if typ == 'CIRCLE':
-                edges[-1].append([len(vers_)-1,0])
-            if typ == 'ELLIPSE' and (start <= 0.001 or end >= math.pi*4-0.001):
-                edges[-1].append([len(vers_)-1,0])
+        if typ == 'circle':
+            edges[-1].append([len(vers_)-1,0])
+        if typ == 'ellipse' and (start <= 0.001 or end >= math.pi*4-0.001):
+            edges[-1].append([len(vers_)-1,0])
 
-    if typ == 'POINT':
+    if typ == 'point':
+        mu = 0.2
         ver = [i*scale for i in entity.dxf.location.xyz]
         ver_ = [ ver,
-                [-scale+ver[0],-scale+ver[1],ver[2]],
-                [-scale+ver[0],scale+ver[1],ver[2]],
-                [scale+ver[0],scale+ver[1],ver[2]],
-                [scale+ver[0],-scale+ver[1],ver[2]],
+                [-scale*mu+ver[0],-scale*mu+ver[1],ver[2]],
+                [-scale*mu+ver[0],scale*mu+ver[1],ver[2]],
+                [scale*mu+ver[0],scale*mu+ver[1],ver[2]],
+                [scale*mu+ver[0],-scale*mu+ver[1],ver[2]],
                 ]
         vers.append(ver_)
         edges.append([[1,3],[2,4]])
 
-    if typ == 'LINE':
+    if typ == 'line':
         edges.append([[0,1]])
         vers.append([[i*scale for i in entity.dxf.start.xyz],[i*scale for i in entity.dxf.end.xyz]])
+    print(typ)
+    if typ in ["3dface", "solid","polymesh", "polyface", "polyline"]:
+        print('3Д попалась ========', entity.faces)
+    if 'dimension' in typ:
+        edges.append([[0,1]])
+        if entity.dxf.dimtype == 32:
+            mes = round(entity.dxf.defpoint2.distance(entity.dxf.defpoint3),5)
+            vers.append([[i*scale for i in entity.dxf.defpoint2.xyz],[i*scale for i in entity.dxf.defpoint3.xyz]])
+        else:
+            mes = round(entity.dxf.defpoint.distance(entity.dxf.defpoint4),5)
+            vers.append([[i*scale for i in entity.dxf.defpoint.xyz],[i*scale for i in entity.dxf.defpoint4.xyz]])
+        VT.append([[i*scale for i in entity.dxf.text_midpoint.xyz]])
+        TT.append([[mes]])
 
-    if typ == 'LWPOLYLINE':
+    if typ == 'lwpolyline':
         edges_ = []
         vers_ = []
         # вариант от DeepSeek
         points = entity.get_points()  # Получаем вершины
         vertices = list(entity.vertices())
         #resolution_arc = max(3,int(resolution*(overall/360)))
-        print('lwpolyline vertices:',vertices)
+        print('Lwpolyline')
         for i, (x, y, _, _, bulge) in enumerate(points):
             # Добавляем точки сегмента (линия или дуга)
+            print(bulge, i)
             if bulge !=0 and i<(len(vertices)-1):
                 segment_points = arc_points((x*scale,y*scale,0), (vertices[i+1][0]*scale,vertices[i+1][1]*scale,0), bulge, resolution)
                 edges_.extend([[len(vers_)+k+1,len(vers_)+k] for k in range(len(segment_points)-1)])
+                #print('!!! bulge ',bulge, 'index', i, len(vers_), 'points',len(points), len(vertices))
             else:
                 segment_points = [(x*scale,y*scale,0)]
-                if i != 0:
-                    edges_.append([len(vers_)-1,len(vers_)])
+                if i < len(vertices)-1:
+                    edges_.append([len(vers_)+1,len(vers_)])
             vers_.extend(segment_points)
+        if entity.is_closed:
+            edges_.append([len(vers_)-1,0])
         # вариант от DeepSeek
         vers.append(vers_)
         edges.append(edges_)
@@ -97,7 +114,7 @@ def dxf_geometry_loader(self, entity, curve_degree, resolution, lifehack, scale)
 
     # Splines as NURBS curves
     vers_ = []
-    if typ == 'SPLINE':
+    if typ == 'spline':
         #print('Блок', a.source_block_reference)
         control_points = entity.control_points
         n_total = len(control_points)
@@ -126,6 +143,12 @@ def dxf_geometry_loader(self, entity, curve_degree, resolution, lifehack, scale)
             new_curve.u_bounds = (u_min, u_max)
         curves_out.append(new_curve)
         knots_out.append(curve_knotvector)
+    #print('^$#^%^#$%',typ)
+    if typ == 'mtext' or typ == 'text':
+        #print([(k.dxf.insert, k.text) for k in i.entitydb.query('Mtext')])
+        VT.append([[i*scale for i in entity.dxf.insert.xyz]])
+        TT.append([[entity.text]])
+        #print(VT,TT)
     return vers, edges, pols, curves_out, knots_out, VT, TT
 
 
@@ -246,6 +269,9 @@ class SvDxfImportNode(SverchCustomTreeNode, bpy.types.Node):
                 if vers:
                     VA.extend(vers)
                     EA.extend(edges)
+                if VT_:
+                    VT.extend(VT_)
+                    TT.extend(TT_)
             elif entity.dxftype() in GEOMETRY_TYPES:
                 vers, edges, pols, curves, knots_out, VT_, TT_ = dxf_geometry_loader(self, entity, curve_degree, resolution, lifehack, scale)
                 if edges:
@@ -257,9 +283,6 @@ class SvDxfImportNode(SverchCustomTreeNode, bpy.types.Node):
                 if curves:
                     curves_out.extend(curves)
                     knots_out.extend(knots)
-                if VT_:
-                    VT.extend(VT_)
-                    TT.extend(TT_)
             elif entity.dxftype() in SERVICE_TYPES:
                 continue
 
@@ -362,6 +385,8 @@ entry.source_block_reference --> принадлежность к блоку
 '''
 # filter dimensions
 '''
+import ezdxf
+dxf = ezdxf.readfile('/home/ololo/Documents/BLENDER/SVERCHOK/Blends4.2/dxf/manual.dxf')
 for i in dxf.blocks:
     print([dir(k.dxf) for k in i.entitydb.query('Dimension')]) 15 размеров
 for i in dxf.blocks: print([k for k in i.query()]) выдаёт первым блоком все элементы чертежа, второй блок пустой, затем солиды и полилини
