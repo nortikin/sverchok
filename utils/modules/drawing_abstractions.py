@@ -51,7 +51,7 @@ if bpy.app.version >= (3, 5, 0):
         set_polygonmode_line = placeholder_function
 
         def set_polygonmode_fill(self):
-            gpu.state.face_culling_set("BACK")
+            gpu.state.face_culling_set("NONE")
             gpu.state.front_facing_set(False)
 
         set_line_width = gpu.state.line_width_set

@@ -181,18 +181,15 @@ def view_3d_geom(context, args):
             #else:
             #    config.p_shader.uniform_float("brightness", 0.5)
         else:
-            #gpu.state.depth_test_set('LESS_EQUAL')
             if config.uniform_pols:
                 p_batch = batch_for_shader(config.p_shader, 'TRIS', {"pos": geom.p_vertices}, indices=geom.p_indices)
-                gpu.state.face_culling_set('NONE')
-                gpu.state.depth_mask_set(True)
+                drawing.set_polygonmode_fill()
                 config.p_shader.bind()
                 config.p_shader.uniform_float("color", config.poly_color[0][0])
                 pass
             else:
                 p_batch = batch_for_shader(config.p_shader, 'TRIS', {"pos": geom.p_vertices, "color": geom.p_vertex_colors}, indices=geom.p_indices)
-                gpu.state.face_culling_set('NONE')
-                gpu.state.depth_mask_set(True)
+                drawing.set_polygonmode_fill()
                 config.p_shader.bind()
 
         p_batch.draw(config.p_shader)
@@ -227,7 +224,7 @@ def view_3d_geom(context, args):
                     e_batch.draw(config.e_shader)
                 else:
 
-                    # ##### Попытка построить линии с помощью bias - не очень, на изломах всё равно часто встречаются разрывы, особенно когда линия близка к горизонтали или вертикали (но горизонтальные, вертикальные или явно диагональные рисуются хорошо)
+                    ##### Try to build lines with bias - works norms. But there is an artifact when looking at the plane at a sharp angle: the back lines start to break up and are not very well drawn.
                     VERT_BIAS = """
                     in vec3 pos;
                     uniform mat4 modelViewMatrix;
@@ -245,12 +242,6 @@ def view_3d_geom(context, args):
                     out vec4 FragColor;
                     void main(){
                         FragColor = color;
-                        //float z = gl_FragCoord.z - depthBias;
-                        //float z = gl_FragCoord.z*(1 - depthBias);
-                        //float fdx = dFdx(gl_FragCoord.z);
-                        //float fdy = dFdy(gl_FragCoord.z);
-                        //float slope = sqrt(fdx*fdx + fdy*fdy);
-                        //slope = min( abs(fdx), abs(fdy) );
                         float adaptive = depthBias * gl_FragCoord.w; //*max(slope, 1.0);
                         float z = gl_FragCoord.z - adaptive;
                         gl_FragDepth = clamp(z, 0.0, 1.0);
@@ -259,10 +250,8 @@ def view_3d_geom(context, args):
                     shader_bias = gpu.types.GPUShader(VERT_BIAS, FRAG_BIAS)
                     config.e_shader = shader_bias
                     e_batch = batch_for_shader(config.e_shader, 'LINES', {"pos": geom.e_vertices}, indices=geom.e_indices)
-                    #gpu.state.face_culling_set('NONE')
-                    gpu.state.depth_test_set('LESS_EQUAL')
-                    gpu.state.depth_mask_set(False)
-                    gpu.state.blend_set('NONE')
+                    drawing.enable_depth_test()
+                    drawing.disable_blendmode()
                     config.e_shader.bind()
                     config.e_shader.uniform_float(           "color", config.edge_color[0][0])
                     config.e_shader.uniform_float( "modelViewMatrix", gpu.matrix.get_model_view_matrix())
@@ -282,7 +271,7 @@ def view_3d_geom(context, args):
                     e_batch.draw(config.e_shader)
                 else:
 
-                    # ##### Попытка построить линии с помощью bias - не очень, на изломах всё равно часто встречаются разрывы, особенно когда линия близка к горизонтали или вертикали (но горизонтальные, вертикальные или явно диагональные рисуются хорошо)
+                    ##### Try to build lines with bias - works norms. But there is an artifact when looking at the plane at a sharp angle: the back lines start to break up and are not very well drawn.
                     VERT_BIAS = """
                     in vec3 pos;
                     in vec4 color;
@@ -312,12 +301,9 @@ def view_3d_geom(context, args):
                     shader_bias = gpu.types.GPUShader(VERT_BIAS, FRAG_BIAS)
                     config.e_shader = shader_bias
                     e_batch = batch_for_shader(config.e_shader, 'LINES', {"pos": geom.e_vertices, "color": geom.e_vertex_colors}, indices=geom.e_indices)
-                    gpu.state.face_culling_set('NONE')
-                    gpu.state.depth_test_set('LESS_EQUAL')
-                    gpu.state.depth_mask_set(False)
-                    gpu.state.blend_set('NONE')
+                    drawing.enable_depth_test()
+                    drawing.disable_blendmode()
                     config.e_shader.bind()
-                    #config.e_shader.uniform_float(           "color", config.edge_color)
                     config.e_shader.uniform_float( "modelViewMatrix", gpu.matrix.get_model_view_matrix())
                     config.e_shader.uniform_float("projectionMatrix", gpu.matrix.get_projection_matrix())
                     config.e_shader.uniform_float(       "depthBias", 3e-5)
@@ -334,14 +320,12 @@ def view_3d_geom(context, args):
             drawing.set_point_size(config.point_size)
             if config.uniform_verts:
                 v_batch = batch_for_shader(config.v_shader, 'POINTS', {"pos": geom.v_vertices})
-                gpu.state.depth_test_set('LESS_EQUAL')
-                gpu.state.depth_mask_set(True)
+                drawing.enable_depth_test()
                 config.v_shader.bind()
                 config.v_shader.uniform_float("color", config.vector_color[0][0])
             else:
                 v_batch = batch_for_shader(config.v_shader, 'POINTS', {"pos": geom.v_vertices, "color": geom.points_color})
-                gpu.state.depth_test_set('LESS_EQUAL')
-                gpu.state.depth_mask_set(True)
+                drawing.enable_depth_test()
                 config.v_shader.bind()
 
             v_batch.draw(config.v_shader)
