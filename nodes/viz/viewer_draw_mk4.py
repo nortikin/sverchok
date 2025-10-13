@@ -216,6 +216,14 @@ def view_3d_geom(context, args):
             shader.uniform_float("m_color", geom.e_vertex_colors[0])
             batch.draw(shader)
         else:
+            depthBias = 3e-5
+            ctx  = bpy.context
+            space = getattr(ctx, "space_data", None)
+            if hasattr(space, "clip_start") and space.clip_start>=1e-6:
+                depthBias  = depthBias/(0.01/space.clip_start)
+                depthBias = max(depthBias, 1e-6)
+                depthBias = min(depthBias, 1e-4)
+
             if config.uniform_edges:
                 if bpy.app.version < (3, 5, 0):
                     e_batch = batch_for_shader(config.e_shader, 'LINES', {"pos": geom.e_vertices}, indices=geom.e_indices)
@@ -256,7 +264,7 @@ def view_3d_geom(context, args):
                     config.e_shader.uniform_float(           "color", config.edge_color[0][0])
                     config.e_shader.uniform_float( "modelViewMatrix", gpu.matrix.get_model_view_matrix())
                     config.e_shader.uniform_float("projectionMatrix", gpu.matrix.get_projection_matrix())
-                    config.e_shader.uniform_float(       "depthBias", 3e-5)
+                    config.e_shader.uniform_float(       "depthBias", depthBias)
                     e_batch.draw(config.e_shader)
 
                     pass
@@ -306,7 +314,7 @@ def view_3d_geom(context, args):
                     config.e_shader.bind()
                     config.e_shader.uniform_float( "modelViewMatrix", gpu.matrix.get_model_view_matrix())
                     config.e_shader.uniform_float("projectionMatrix", gpu.matrix.get_projection_matrix())
-                    config.e_shader.uniform_float(       "depthBias", 3e-5)
+                    config.e_shader.uniform_float(       "depthBias", depthBias)
                     e_batch.draw(config.e_shader)
 
                     pass
