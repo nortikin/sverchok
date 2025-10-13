@@ -10,6 +10,7 @@ from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.curve import knotvector as sv_knotvector
 from sverchok.dependencies import geomdl
 from sverchok.dependencies import FreeCAD
+from mathutils import Vector as V
 
 
 def dxf_geometry_loader(self, entity, curve_degree, resolution, lifehack, scale):
@@ -71,10 +72,19 @@ def dxf_geometry_loader(self, entity, curve_degree, resolution, lifehack, scale)
     if typ == 'line':
         edges.append([[0,1]])
         vers.append([[i*scale for i in entity.dxf.start.xyz],[i*scale for i in entity.dxf.end.xyz]])
+
     print(typ)
-    if typ in ["3dface", "solid","polymesh", "polyface", "polyline"]:
-        print('3Д попалась ========', entity.faces)
-    if 'dimension' in typ:
+    
+    if typ in ["polyline"]:
+        print('3Д попалась ========', entity.dxftype)
+        vers.append([[i*scale for i in vert.xyz] for vert in entity.points()])
+        pols.append([[i for i in range(len(vers[-1]))]])
+
+    if typ in ["3dface", "solid","polymesh", "polyface"]:
+        print('3Д попалась ========', entity.dxftype)
+
+    if typ in ['dimension',"arc-dimension", "diameter_dimension","radial_dimension"]:
+        print(entity.dxftype,entity.dxf.dimtype, dir(entity.dxf))
         edges.append([[0,1]])
         if entity.dxf.dimtype == 32:
             mes = round(entity.dxf.defpoint2.distance(entity.dxf.defpoint3),5)
@@ -82,7 +92,11 @@ def dxf_geometry_loader(self, entity, curve_degree, resolution, lifehack, scale)
         else:
             mes = round(entity.dxf.defpoint.distance(entity.dxf.defpoint4),5)
             vers.append([[i*scale for i in entity.dxf.defpoint.xyz],[i*scale for i in entity.dxf.defpoint4.xyz]])
-        VT.append([[i*scale for i in entity.dxf.text_midpoint.xyz]])
+        try:
+            mp = entity.dxf.text_midpoint.xyz
+        except:
+            mp = list((V(vers[-1][1]) + (V(vers[-1][0])-V(vers[-1][1]))/2).to_tuple())
+        VT.append([[i*scale for i in mp]])
         TT.append([[mes]])
 
     if typ == 'lwpolyline':
@@ -95,7 +109,7 @@ def dxf_geometry_loader(self, entity, curve_degree, resolution, lifehack, scale)
         print('Lwpolyline')
         for i, (x, y, _, _, bulge) in enumerate(points):
             # Добавляем точки сегмента (линия или дуга)
-            print(bulge, i)
+            #print(bulge, i)
             if bulge !=0 and i<(len(vertices)-1):
                 segment_points = arc_points((x*scale,y*scale,0), (vertices[i+1][0]*scale,vertices[i+1][1]*scale,0), bulge, resolution)
                 edges_.extend([[len(vers_)+k+1,len(vers_)+k] for k in range(len(segment_points)-1)])
@@ -144,11 +158,15 @@ def dxf_geometry_loader(self, entity, curve_degree, resolution, lifehack, scale)
         curves_out.append(new_curve)
         knots_out.append(curve_knotvector)
     #print('^$#^%^#$%',typ)
-    if typ == 'mtext' or typ == 'text':
+    if typ == 'mtext':
         #print([(k.dxf.insert, k.text) for k in i.entitydb.query('Mtext')])
         VT.append([[i*scale for i in entity.dxf.insert.xyz]])
         TT.append([[entity.text]])
         #print(VT,TT)
+    if typ == 'text':
+        #print( dir(entity.dxf) )
+        VT.append([[i*scale for i in entity.dxf.insert.xyz]])
+        TT.append([[entity.dxf.text]])
     return vers, edges, pols, curves_out, knots_out, VT, TT
 
 
@@ -245,7 +263,7 @@ class SvDxfImportNode(SverchCustomTreeNode, bpy.types.Node):
         # all_types = {e.dxftype() for e in doc.modelspace()} # все типы в файле, чтобы не тыкаться 
         # во имя отделения размеров и выносок!
         ANNOTATION_TYPES = [
-            "DIMENSION", "LEADER", "MLEADER", "ARC_DIMENSION",
+            "DIMENSION", "LEADER", "MLEADER",
             "TEXT", "MTEXT", "ARC_DIMENSION", "DIAMETER_DIMENSION",
             "RADIAL_DIMENSION", 
         ]
@@ -288,18 +306,18 @@ class SvDxfImportNode(SverchCustomTreeNode, bpy.types.Node):
 
         self.outputs['vers_e'].sv_set(VE)
         self.outputs['edgs'].sv_set(EE)
-        if pols:
-            self.outputs['vers_p'].sv_set(VP)
-            self.outputs['pols'].sv_set(PP)
-        if VA:
-            self.outputs['vers_annot'].sv_set(VA)
-            self.outputs['edgs_annot'].sv_set(EA)
-        if VT:
-            self.outputs['vers_text'].sv_set(VT)
-            self.outputs['text'].sv_set(TT)
-        if curves_out:
-            self.outputs['curves'].sv_set(curves_out)
-            self.outputs['knots'].sv_set(knots_out)
+        #if pols:
+        self.outputs['vers_p'].sv_set(VP)
+        self.outputs['pols'].sv_set(PP)
+        #if VA:
+        self.outputs['vers_annot'].sv_set(VA)
+        self.outputs['edgs_annot'].sv_set(EA)
+        #if VT:
+        self.outputs['vers_text'].sv_set(VT)
+        self.outputs['text'].sv_set(TT)
+        #if curves_out:
+        self.outputs['curves'].sv_set(curves_out)
+        self.outputs['knots'].sv_set(knots_out)
         # типы, которые не надо грузить:
         # DIMENSION	Линейный/угловой/радиальный размер LEADER	Выноска (обычная) MLEADER	Мультивыноска (современный стиль)
         # ARC_DIMENSION	Угловой размер дуги DIAMETER_DIMENSION	Размер диаметра RADIAL_DIMENSION	Радиальный размер
@@ -494,4 +512,37 @@ k.dxf: dimention.dxf
     'discard', 'dxf_default_value', 'dxfattribs', 'dxftype', 'export_dxf_attribs', 
     'extrusion', 'geometry', 'get', 'get_default', 'handle', 'hasattr', 'is_supported', 
     'layer', 'leader_length', 'line_spacing_style', 'linetype', 'lineweight', 'owner', 
-    'reset_handles', 'rewire', 'set', 'text_midpoint', 'text_rotation', 'unprotected_set', 'update']'''
+    'reset_handles', 'rewire', 'set', 'text_midpoint', 'text_rotation', 'unprotected_set', 'update']
+polyline:
+['ANY3D', 'BEZIER_SURFACE', 'CLOSED', 'CUBIC_BSPLINE', 'CURVE_FIT_VERTICES_ADDED', 'DEFAULT_ATTRIBS', 
+'DXFATTRIBS', 'DXFTYPE', 'GENERATE_LINETYPE_PATTERN', 'MESH_CLOSED_M_DIRECTION', 'MESH_CLOSED_N_DIRECTION', 
+'MIN_DXF_VERSION_FOR_EXPORT', 'NO_SMOOTH', 'POLYFACE', 'POLYLINE_3D', 'POLYMESH', 'QUADRATIC_BSPLINE', 
+'SPLINE_FIT_VERTICES_ADDED', '__annotations__', '__class__', '__delattr__', '__dict__', '__dir__', '__doc__', 
+'__eq__', '__format__', '__ge__', '__getattribute__', '__getitem__', '__getstate__', '__gt__', '__hash__', 
+'__init__', '__init_subclass__', '__le__', '__len__', '__lt__', '__module__', '__ne__', '__new__', 
+'__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__sizeof__', '__str__', '__subclasshook__', 
+'__weakref__', '_append_vertex', '_build_dxf_vertices', '_new_compound_entity', '_silent_kill', 
+'_sub_entities', 'add_sub_entities_to_entitydb', 'all_sub_entities', 'appdata', 'append_formatted_vertices', 
+'append_reactor_handle', 'append_vertex', 'append_vertices', 'audit', 'cast', 'close', 'copy', 'copy_data', 
+'copy_to_layout', 'del_dxf_attrib', 'del_source_block_reference', 'del_source_of_copy', 'destroy', 
+'discard_app_data', 'discard_empty_extension_dict', 'discard_extension_dict', 'discard_reactor_handle', 
+'discard_xdata', 'discard_xdata_list', 'doc', 'dxf', 'dxf_attrib_exists', 'dxfattribs', 'dxftype', 
+'explode', 'export_acdb_entity', 'export_base_class', 'export_dxf', 'export_entity', 'export_xdata', 
+'extension_dict', 'from_text', 'get_app_data', 'get_dxf_attrib', 'get_extension_dict', 'get_flag_state', 
+'get_hyperlink', 'get_layout', 'get_mode', 'get_reactors', 'get_vertex_flags', 'get_xdata', 'get_xdata_list', 
+'graphic_properties', 'has_app_data', 'has_arc', 'has_dxf_attrib', 'has_extension_dict', 'has_hyperlink', 
+'has_reactors', 'has_source_block_reference', 'has_width', 'has_xdata', 'has_xdata_list', 'insert_vertices', 
+'is_2d_polyline', 'is_3d_polyline', 'is_alive', 'is_bound', 'is_closed', 'is_copy', 'is_m_closed', 
+'is_n_closed', 'is_poly_face_mesh', 'is_polygon_mesh', 'is_post_transform_required', 'is_supported_dxf_attrib',
+'is_transparency_by_block', 'is_transparency_by_layer', 'is_virtual', 'link_entity', 'link_seqend', 'load',
+'load_dxf_attribs', 'load_tags', 'm_close', 'map_resources', 'move_to_layout', 'n_close', 'new', 
+'new_extension_dict', 'new_seqend', 'notify', 'ocs', 'on_layer_change', 'on_linetype_change', 
+'origin_of_copy', 'points', 'post_bind_hook', 'post_load_hook', 'post_new_hook', 'post_transform', 
+'preprocess_export', 'process_sub_entities', 'proxy_graphic', 'reactors', 'register_resources', 
+'remove_dependencies', 'replace_xdata_list', 'rgb', 'rotate_axis', 'rotate_x', 'rotate_y', 
+'rotate_z', 'scale', 'scale_uniform', 'seqend', 'set_app_data', 'set_dxf_attrib', 'set_flag_state', 
+'set_hyperlink', 'set_owner', 'set_reactors', 'set_source_block_reference', 'set_source_of_copy', 
+'set_xdata', 'set_xdata_list', 'setup_app_data', 'shallow_copy', 'source_block_reference', 
+'source_of_copy', 'take_ownership', 'transform', 'translate', 'transparency', 'unlink_from_layout', 
+'update_dxf_attribs', 'update_handle', 'uuid', 'vertices', 'virtual_entities', 'xdata']  
+'''
