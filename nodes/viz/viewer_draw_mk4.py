@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
-
+import math
 from itertools import cycle
 
 from mathutils import Vector, Matrix
@@ -219,8 +219,16 @@ def view_3d_geom(context, args):
             depthBias = 3e-5
             ctx  = bpy.context
             space = getattr(ctx, "space_data", None)
-            if hasattr(space, "clip_start") and space.clip_start>=1e-6:
-                depthBias  = depthBias/(0.01/space.clip_start)
+            if hasattr(space, "clip_start") and hasattr(space, "clip_end"): # and space.clip_start>=1e-6:
+                clip_start = space.clip_start
+                #clip_end   = space.clip_end
+                #ratio = max(1.0, clip_end / max(clip_start, 1e-12))
+                #ratio = clip_end / clip_start
+                #scale=1.0
+                #scale = min(math.log2(ratio), 12.0)
+                #scale = min(ratio ** 0.25, 10.0)
+                #depthBias  = depthBias * scale
+                depthBias  = depthBias/(0.01/clip_start)
                 depthBias = max(depthBias, 1e-6)
                 depthBias = min(depthBias, 1e-4)
 
@@ -250,7 +258,7 @@ def view_3d_geom(context, args):
                     out vec4 FragColor;
                     void main(){
                         FragColor = color;
-                        float adaptive = depthBias * gl_FragCoord.w; //*max(slope, 1.0);
+                        float adaptive = depthBias * gl_FragCoord.w;
                         float z = gl_FragCoord.z - adaptive;
                         gl_FragDepth = clamp(z, 0.0, 1.0);
                     }
