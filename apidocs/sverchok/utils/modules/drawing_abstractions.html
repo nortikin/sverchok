@@ -74,8 +74,8 @@ el.replaceWith(d);
 
     set_polygonmode_line = placeholder_function
 
-    def set_polygonmode_fill(self):
-        gpu.state.face_culling_set(&#34;BACK&#34;)
+    def set_polygonmode_fill(self, face_cull=&#39;NONE&#39;):
+        gpu.state.face_culling_set(face_cull)
         gpu.state.front_facing_set(False)
 
     set_line_width = gpu.state.line_width_set
@@ -339,15 +339,15 @@ el.replaceWith(d);
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.modules.drawing_abstractions.Drawing.set_polygonmode_fill"><code class="name flex">
-<span>def <span class="ident">set_polygonmode_fill</span></span>(<span>self)</span>
+<span>def <span class="ident">set_polygonmode_fill</span></span>(<span>self, face_cull='NONE')</span>
 </code></dt>
 <dd>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def set_polygonmode_fill(self):
-    gpu.state.face_culling_set(&#34;BACK&#34;)
+<pre><code class="python">def set_polygonmode_fill(self, face_cull=&#39;NONE&#39;):
+    gpu.state.face_culling_set(face_cull)
     gpu.state.front_facing_set(False)</code></pre>
 </details>
 <div class="desc"></div>
