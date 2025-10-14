@@ -679,7 +679,7 @@ class SvViewerDrawMk4(SverchCustomTreeNode, bpy.types.Node):
             ('FRONT', 'Front', 'front-facing facets can be culled', 'SNAP_FACE', 1),
             ( 'BACK',  'Back', 'back-facing facets can be culled', 'SELECT_SUBTRACT', 2),
         ],
-        description="none, front-facing or back-facing facets can be culled",
+        description="none, front-facing or back-facing facets can be culled. Viewport Only. No influence for render or bake of mesh.",
         default="NONE",
         update=updateNode
     )
