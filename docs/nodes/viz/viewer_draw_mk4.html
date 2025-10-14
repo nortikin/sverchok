@@ -379,6 +379,7 @@ document.write(`
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functionality">Functionality</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#shader-modes">Shader modes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#face-culling">Face Culling</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#features">Features</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs">Inputs</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a></li>
@@ -396,9 +397,9 @@ document.write(`
                   
   <section id="viewer-draw">
 <h1>Viewer Draw<a class="headerlink" href="#viewer-draw" title="Link to this heading">#</a></h1>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/189978461-92a31395-6702-4623-8904-952b96f4d8d3.png"><img alt="https://user-images.githubusercontent.com/14288520/189978461-92a31395-6702-4623-8904-952b96f4d8d3.png" src="https://user-images.githubusercontent.com/14288520/189978461-92a31395-6702-4623-8904-952b96f4d8d3.png" />
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/a2453dee-d147-4311-8e9d-263b523e864f"><img alt="https://github.com/user-attachments/assets/a2453dee-d147-4311-8e9d-263b523e864f" src="https://github.com/user-attachments/assets/a2453dee-d147-4311-8e9d-263b523e864f" />
 </a>
-<a class="reference external image-reference" href="https://user-images.githubusercontent.com/14288520/201473680-b993c305-99b4-4eea-8af4-93baf8a7329b.png"><img alt="https://user-images.githubusercontent.com/14288520/201473680-b993c305-99b4-4eea-8af4-93baf8a7329b.png" src="https://user-images.githubusercontent.com/14288520/201473680-b993c305-99b4-4eea-8af4-93baf8a7329b.png" />
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/2ec88406-8eea-4dc0-8a13-27068e89ec8f"><img alt="https://github.com/user-attachments/assets/2ec88406-8eea-4dc0-8a13-27068e89ec8f" src="https://github.com/user-attachments/assets/2ec88406-8eea-4dc0-8a13-27068e89ec8f" />
 </a>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">#</a></h2>
@@ -417,6 +418,17 @@ document.write(`
 <p>The same calculations are performed as in facetted mode, but instead of each face (triangle) being colored uniformly, each face’s vertices get a color associated with the vertex normal. This is as close as we will get to smooth shading, at low processing cost.</p>
 <p><strong>custom shader</strong></p>
 <p>If this interests you, you should read the node’s source code, and check out the development thread for examples. This is the more experimental part of the node and subject to changing eventually. At present this lets you load a VertexShader and FragmentShader from the bpy.data.texts block.</p>
+</section>
+<section id="face-culling">
+<h2>Face Culling<a class="headerlink" href="#face-culling" title="Link to this heading">#</a></h2>
+<p>Blender: <a class="reference external" href="https://docs.blender.org/api/current/gpu.state.html#gpu.state.face_culling_set">https://docs.blender.org/api/current/gpu.state.html#gpu.state.face_culling_set</a></p>
+<p>wiki: <a class="reference external" href="https://wikis.khronos.org/opengl/Face_Culling">https://wikis.khronos.org/opengl/Face_Culling</a></p>
+<p>Visible only for Blender 3.5 and more. Used only in Blender 3D Viewport. Has no influence for render or baking mesh, edges or vertices.</p>
+<p><strong>None</strong> - default. Show all faces</p>
+<p><strong>Front</strong> - hide front faces</p>
+<p><strong>Back</strong> - hide back faces</p>
+<a class="reference external image-reference" href="https://github.com/user-attachments/assets/a1315dea-5b22-4d24-b671-0810add0c005"><img alt="https://github.com/user-attachments/assets/a1315dea-5b22-4d24-b671-0810add0c005" src="https://github.com/user-attachments/assets/a1315dea-5b22-4d24-b671-0810add0c005" />
+</a>
 </section>
 <section id="features">
 <h2>Features<a class="headerlink" href="#features" title="Link to this heading">#</a></h2>
@@ -539,6 +551,7 @@ document.write(`
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functionality">Functionality</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#shader-modes">Shader modes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#face-culling">Face Culling</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#features">Features</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs">Inputs</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a></li>
