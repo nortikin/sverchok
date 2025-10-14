@@ -50,8 +50,8 @@ if bpy.app.version >= (3, 5, 0):
 
         set_polygonmode_line = placeholder_function
 
-        def set_polygonmode_fill(self):
-            gpu.state.face_culling_set("NONE")
+        def set_polygonmode_fill(self, face_cull='NONE'):
+            gpu.state.face_culling_set(face_cull)
             gpu.state.front_facing_set(False)
 
         set_line_width = gpu.state.line_width_set
@@ -87,7 +87,7 @@ else:
         blf_size = blf.size
 
         set_polygonmode_line = lambda self: bgl.glPolygonMode(bgl.GL_FRONT_AND_BACK, bgl.GL_LINE)
-        set_polygonmode_fill = lambda self: bgl.glPolygonMode(bgl.GL_FRONT_AND_BACK, bgl.GL_FILL)
+        set_polygonmode_fill = lambda self, face_cull='NONE' : bgl.glPolygonMode(bgl.GL_FRONT_AND_BACK, bgl.GL_FILL)
         set_line_width = bgl.glLineWidth
         reset_line_width = lambda self: bgl.glLineWidth(1)
         set_point_size = bgl.glPointSize
