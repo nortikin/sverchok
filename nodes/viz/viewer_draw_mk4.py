@@ -216,18 +216,11 @@ def view_3d_geom(context, args):
             shader.uniform_float("m_color", geom.e_vertex_colors[0])
             batch.draw(shader)
         else:
-            depthBias = 3e-5
+            depthBias = 3e-5 # ~1e-6..1e-4
             ctx  = bpy.context
             space = getattr(ctx, "space_data", None)
-            if hasattr(space, "clip_start") and hasattr(space, "clip_end"): # and space.clip_start>=1e-6:
+            if hasattr(space, "clip_start") and hasattr(space, "clip_end"):
                 clip_start = space.clip_start
-                #clip_end   = space.clip_end
-                #ratio = max(1.0, clip_end / max(clip_start, 1e-12))
-                #ratio = clip_end / clip_start
-                #scale=1.0
-                #scale = min(math.log2(ratio), 12.0)
-                #scale = min(ratio ** 0.25, 10.0)
-                #depthBias  = depthBias * scale
                 depthBias  = depthBias/(0.01/clip_start)
                 depthBias = max(depthBias, 1e-6)
                 depthBias = min(depthBias, 1e-4)
@@ -254,7 +247,7 @@ def view_3d_geom(context, args):
                     """
                     FRAG_BIAS = """
                     uniform vec4 color;
-                    uniform float depthBias;  // малое число ~1e-6..1e-4
+                    uniform float depthBias;  // ~1e-6..1e-4
                     out vec4 FragColor;
                     void main(){
                         FragColor = color;
@@ -304,8 +297,7 @@ def view_3d_geom(context, args):
                     """
                     FRAG_BIAS = """
                     in vec4 vColor;
-                    //uniform vec4 color;
-                    uniform float depthBias;  // малое число ~1e-6..1e-4
+                    uniform float depthBias;  // ~1e-6..1e-4
                     out vec4 FragColor;
                     void main(){
                         FragColor = vColor;
@@ -692,6 +684,7 @@ class SvViewerDrawMk4(SverchCustomTreeNode, bpy.types.Node):
 
     draw_gl_polygonoffset: BoolProperty(
         name="Draw gl polygon offset",
+        description="BGL parameter. Has no influence on Blender >= 3.5",
         default=False, update=updateNode)
 
     draw_gl_wireframe: BoolProperty(
