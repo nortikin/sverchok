@@ -1316,7 +1316,7 @@ el.replaceWith(d);
                 self.params[&#39;Pins&#39;] = self.params[&#39;Pins&#39;] == 1
                 self.params[&#39;unpinned&#39;] = np.invert(self.params[&#39;Pins&#39;])
             else:
-                self.params[&#39;unpinned&#39;] = np.ones(len(self.verts), dtype=np.bool)
+                self.params[&#39;unpinned&#39;] = np.ones(len(self.verts), dtype=np.bool_)
                 self.params[&#39;unpinned&#39;][self.params[&#39;Pins&#39;]] = False
 
         self.vel[self.params[&#39;Pins&#39;], :] = 0
@@ -1501,7 +1501,7 @@ el.replaceWith(d);
             self.params[&#39;Pins&#39;] = self.params[&#39;Pins&#39;] == 1
             self.params[&#39;unpinned&#39;] = np.invert(self.params[&#39;Pins&#39;])
         else:
-            self.params[&#39;unpinned&#39;] = np.ones(len(self.verts), dtype=np.bool)
+            self.params[&#39;unpinned&#39;] = np.ones(len(self.verts), dtype=np.bool_)
             self.params[&#39;unpinned&#39;][self.params[&#39;Pins&#39;]] = False
 
     self.vel[self.params[&#39;Pins&#39;], :] = 0
