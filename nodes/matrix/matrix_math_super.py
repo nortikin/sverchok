@@ -16,15 +16,20 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+from contextlib import contextmanager
 from functools import reduce
 import bpy
-from bpy.props import BoolProperty, EnumProperty
+from bpy.props import BoolProperty, EnumProperty, FloatProperty, IntProperty
 
 from mathutils import Matrix
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (updateNode, list_match_func, numpy_list_match_modes)
+from sverchok.ui.bgl_callback_3dview import callback_disable, callback_enable
+from sverchok.data_structure import (updateNode, list_match_func, numpy_list_match_modes, node_id)
 from sverchok.utils.sv_itertools import (recurse_f_level_control)
+from sverchok.utils.sv_batch_primitives import MatrixDraw28
+from sverchok.utils.sv_operator_mixins import SvGenericNodeLocator
+
 
 OPERATION_ITEMS = [
     ("MULTIPLY", "Multiply", "Multiply two matrices", 0),
@@ -37,6 +42,14 @@ PRE_POST_ITEMS = [
     ("PRE" , "Pre" , "Calculate A op B", "SORT_ASC", 0),
     ("POST", "Post", "Calculate B op A", "SORT_DESC", 1)
 ]
+
+def draw_matrix(context, args):
+    """ this takes one or more matrices packed into an iterable """
+    matrices, scale, grid = args
+
+    mdraw = MatrixDraw28()
+    for matrix in matrices:
+        mdraw.draw_matrix(matrix, grid=grid, scale=scale)
 
 id_mat = [Matrix.Identity(4)]
 ABC = tuple('ABCDEFGHIJKLMNOPQRSTUVWXYZ')
@@ -94,6 +107,146 @@ def general_op(mat_list, operation):
 
     return out_matrix_list
 
+@contextmanager
+def suspend_sv_update(node):
+    node.sv_update_lock = getattr(node, "sv_update_lock", 0) + 1
+    try:
+        yield
+    finally:
+        node.sv_update_lock -= 1
+
+class SvMatrixSocketAction(bpy.types.Operator, SvGenericNodeLocator):
+    '''Add Matrix to diagonal ones'''
+    bl_idname = "node.sverchok_sv_add_matrix_socket_above"
+    bl_label = "Add Matrix socket above"
+    bl_description = "Add Matrix socket above"
+
+    socket_label: bpy.props.StringProperty()
+    socket_action: bpy.props.EnumProperty(
+        name = "socket action",
+        description = "socket action",
+        items = [
+            ("ADD_ABOVE", "add above", "add above", 0),
+            ("REMOVE_CURRENT", "remove current", "remove current", 1),
+        ],
+        default = "ADD_ABOVE"
+    )
+    
+    def sv_execute(self, context, node):
+        # if hasattr(node, 'matrix_list_items')==True:
+        #     node.matrix_list_items[self.idx].MATRIX_UI = [1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1]
+        print( f"{self.socket_action}: {self.socket_label}")
+
+        if self.socket_action in ['ADD_ABOVE', 'REMOVE_CURRENT']:
+            pass
+        else:
+            print( f"{self.socket_action}: no action")
+            return
+        
+        with suspend_sv_update(node):
+            nodeTree = node.id_data
+            inputs = node.inputs
+            len_inputs = len(inputs)
+
+            if self.socket_action=='ADD_ABOVE':
+                # Проверить количество запасных индексов (хотя такой поход не очень, но это нужно иначе переделать систему индексов)
+                if len_inputs>=len(ABC):
+                    # Больше индексов нет
+                    return
+
+            # Определить кто подключен от текущего сокета и ниже и попутно удалить их:
+            reconnect_links = []
+            for I in range(len_inputs-1, -1, -1):
+                print(f"{I},", end='')
+                socket = inputs[I]
+                socket_name = socket.name
+                if len(socket.links)==0:
+                    reconnect_links.append(dict({"to_socket_name":socket_name}))
+                    pass
+                else:
+                    from_socket = socket.links[0].from_socket
+                    to_socket = socket.links[0].to_socket
+                    reconnect_links.append(dict({"to_socket_name":to_socket.name, "from_socket":from_socket, }))
+                
+                is_top_socket = False
+                if socket.label==self.socket_label:
+                    is_top_socket = True
+                if socket.is_linked==True:
+                    from_socket = socket.links[0].from_socket
+                    to_socket = socket.links[0].to_socket
+                    for link in list(nodeTree.links):
+                        if link.from_socket == from_socket and link.to_socket == to_socket:
+                            nodeTree.links.remove(link)
+                            break
+                    else:
+                        # Странно, что сокет не найден. Пока не знаю как обрабатывать
+                        pass
+                if socket_name in inputs:
+                    inputs.remove(inputs[socket_name])
+                if is_top_socket:
+                    break
+            
+            if self.socket_action=='ADD_ABOVE':
+                # Создать новые сокеты (на одного больше удалённых):
+                for I in range(len(node.inputs), len_inputs+1):
+                    name = ABC[I]  # pick the next letter A to Z
+                    inputs.new("SvMatrixSocket", name)
+                    inputs[name].label=name
+                    inputs[name].custom_draw = 'draw_in_matrix_socket'
+                name = ABC[len_inputs]
+                reconnect_links.insert(0, dict({"to_socket_name":name}))
+
+                # Переподключить сокеты на один ниже:
+                for I in range(1, len(reconnect_links)):
+                    if "from_socket" not in reconnect_links[I]:
+                        # Если в списке сокетов только метка, то его не надо подключать никуда
+                        continue
+                    from_socket = reconnect_links[I]["from_socket"]
+                    to_socket_name = reconnect_links[I-1]["to_socket_name"]
+                    nodeTree.links.new(from_socket, inputs[to_socket_name])
+            elif self.socket_action=='REMOVE_CURRENT':
+                # Если ниже удаляемого сокета не было больше никаких подключенных сокетов, то не выполнять переподключения,
+                # т.к. все пустые сокеты схлопнулись до предпоследнего сокета или до минимума из двух сокетов:
+                len_reconnect_links = len(reconnect_links)
+                link_exists = False
+                for I in range( len_reconnect_links-1 ):
+                    if "from_socket" in reconnect_links[I]:
+                        link_exists=True
+                        break
+                    pass
+                
+                if link_exists:
+                    # Если ниже удаляемого сокета были линки, то нужно пересоздать структуру с переподключением на 1 выше.
+                    # Создать новые сокеты (на одного меньше, кроме удаляемого):
+                    for I in range(len(node.inputs), len_inputs-1):
+                        name = ABC[I]  # pick the next letter A to Z
+                        inputs.new("SvMatrixSocket", name)
+                        inputs[name].label=name
+                        inputs[name].custom_draw = 'draw_in_matrix_socket'
+                    # Сокетов должно быть не меньше 2-х:
+                    while(len(inputs)<2):
+                        name = ABC[len(inputs)]  # pick the next letter A to Z
+                        inputs.new("SvMatrixSocket", name)
+                        inputs[name].label=name
+                        inputs[name].custom_draw = 'draw_in_matrix_socket'
+
+                    # Переподключить сокеты на один выше:
+                    for I in range( len_reconnect_links-1 ):
+                        if "from_socket" not in reconnect_links[I]:
+                            # Если в списке сокетов только метка, то его не надо подключать никуда
+                            continue
+                        from_socket = reconnect_links[I]["from_socket"]
+                        to_socket_name = reconnect_links[I+1]["to_socket_name"]
+                        nodeTree.links.new(from_socket, inputs[to_socket_name])
+                    # проверить, если последний сокет не пустой, то добавить пустой сокет
+                else:
+                    pass
+            else:
+                print( f"{self.socket_action}: no action")
+            pass
+        node.sv_update()
+        pass
+
 class SvMatrixMathSuperNode(SverchCustomTreeNode, bpy.types.Node):
     '''Math operation on matrices.
     In: Matrixes A, B
@@ -104,6 +257,25 @@ class SvMatrixMathSuperNode(SverchCustomTreeNode, bpy.types.Node):
     bl_label = 'Matrix Math Ext'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_MATRIX_MATH'
+
+    def wrapper_MatrixSocket_op(self, layout_element, operator_idname, idx, soket_action, **keywords):
+        """
+        this wrapper allows you to track the origin of a clicked operator, by automatically passing
+        the node_name and tree_name to the operator.
+
+        example usage:
+
+            row.separator()
+            self.wrapper_tracked_ui_draw_op(row, "node.view3d_align_from", icon='CURSOR', text='')
+
+        """
+        op = layout_element.operator(operator_idname, **keywords)
+        op.node_name = self.name
+        op.tree_name = self.id_data.name
+        op.socket_label = idx
+        op.socket_action = soket_action
+        return op
+
 
     def update_operation(self, context):
         #self.label = "Matrix " + self.operation.title()
@@ -136,6 +308,24 @@ class SvMatrixMathSuperNode(SverchCustomTreeNode, bpy.types.Node):
         description="Invert restult post filter",
         default=False, update=updateNode)
 
+    post_result_matrix_view: BoolProperty(
+        name="Show Matrix",
+        description="Show Result Matrix on the scene",
+        default=False, update=updateNode)
+    
+    post_result_matrix_scale_view: FloatProperty(
+        name="Matrix View Scale",
+        description="Matrix View Scale on the scene",
+        min=0.0,
+        default=1.0,
+        update=updateNode)
+
+    post_result_matrix_grid_view: BoolProperty(
+        name="Grid",
+        description="Matrix View Scale On/Off",
+        default=True,
+        update=updateNode)
+
     post_result_enabled: BoolProperty(
         name="Enabled",
         description="Do post operation on matrix",
@@ -161,36 +351,56 @@ class SvMatrixMathSuperNode(SverchCustomTreeNode, bpy.types.Node):
         description="Behavior on different list lengths",
         items=numpy_list_match_modes, default="REPEAT",
         update=updateNode)
-    
+
+    def draw_in_matrix_socket(self, socket, context, layout):
+        if socket.is_linked: 
+            socket_object_number = socket.objects_number
+        else:
+            socket_object_number = '-'
+
+        grid0 = layout.grid_flow(row_major=False, columns=3, align=True, even_columns=False)
+        if socket.is_linked==False:
+            grid0.operator('node.sv_quicklink_new_node_input', text="", icon="PLUGIN")
+        else:
+            self.wrapper_MatrixSocket_op(grid0, SvMatrixSocketAction.bl_idname, socket.label, 'ADD_ABOVE', text="", icon='EMPTY_SINGLE_ARROW', emboss =True)
+        grid0.label(text=f"{socket.label}. {socket_object_number}")
+        self.wrapper_MatrixSocket_op(grid0, SvMatrixSocketAction.bl_idname, socket.label, 'REMOVE_CURRENT', text="", icon='PANEL_CLOSE', emboss =True)
+
+        pass
+
     def draw_C_out_socket(self, socket, context, layout):
         #row1 = layout.row(align=True)
         grid0 = layout.grid_flow(row_major=False, columns=4)
         grid0.alignment = 'RIGHT'
         if socket.is_linked: 
-            socket_label = 0
+            socket_object_number = socket.objects_number
         else:
-            socket_label = '-'
+            socket_object_number = '-'
         #row1.label(text=f"")
 
-        grid0.prop(self, 'post_result_enabled', text='')
-        grid1 = grid0.grid_flow(row_major=False, columns=5, align=True)
-        #grid1.prop(self, 'result_invert_1', toggle=True, icon="IMAGE_ALPHA", icon_only=True)
-        grid1.prop(self, 'result_invert_1', text="Inv", toggle=True)
-        grid2 = grid1.grid_flow(row_major=False, columns=3, align=True)
-        grid1.enabled = self.post_result_enabled
+        # grid0.prop(self, 'post_result_enabled', text='')
+        # grid1 = grid0.grid_flow(row_major=False, columns=5, align=True)
+        # #grid1.prop(self, 'result_invert_1', toggle=True, icon="IMAGE_ALPHA", icon_only=True)
+        # grid1.prop(self, 'result_invert_1', text="Inv", toggle=True)
+        # grid2 = grid1.grid_flow(row_major=False, columns=3, align=True)
+        # grid1.enabled = self.post_result_enabled
 
-        grid2.prop(self, 'result_filter_t', toggle=True, text="", icon_only=True, icon="ORIENTATION_VIEW")
-        grid2.prop(self, 'result_filter_r', toggle=True, text="", icon_only=True, icon="PHYSICS")
-        grid2.prop(self, 'result_filter_s', toggle=True, text="", icon_only=True, icon="FULLSCREEN_ENTER")
-        grid1.prop(self, 'result_invert_2', text="Inv", toggle=True)
-        #grid1.prop(self, 'result_invert_2', toggle=True, icon="IMAGE_ALPHA", icon_only=True)
+        # grid2.prop(self, 'result_filter_t', toggle=True, text="", icon_only=True, icon="ORIENTATION_VIEW")
+        # grid2.prop(self, 'result_filter_r', toggle=True, text="", icon_only=True, icon="PHYSICS")
+        # grid2.prop(self, 'result_filter_s', toggle=True, text="", icon_only=True, icon="FULLSCREEN_ENTER")
+        # grid1.prop(self, 'result_invert_2', text="Inv", toggle=True)
+        # #grid1.prop(self, 'result_invert_2', toggle=True, icon="IMAGE_ALPHA", icon_only=True)
         grid0.prop(self, 'post_result_basis', toggle=True)
-        grid0.label(text=f"{socket.label}.{socket_label}") # Почему-то, если делать label под layout, то он выводится с минимальным приоритетом и занимает минимум места
+        grid0.label(text=f"{socket.label}.{socket_object_number}") # Почему-то, если делать label под layout, то он выводится с минимальным приоритетом и занимает минимум места
 
     def sv_init(self, context):
         self.width = 250
         self.inputs.new('SvMatrixSocket', "A")
         self.inputs.new('SvMatrixSocket', "B")
+        self.inputs["A"].label="A"
+        self.inputs["B"].label="B"
+        self.inputs["A"].custom_draw = 'draw_in_matrix_socket'
+        self.inputs["B"].custom_draw = 'draw_in_matrix_socket'
 
         self.outputs.new('SvMatrixSocket', "C")
         self.outputs.new('SvVerticesSocket', "X")
@@ -223,8 +433,28 @@ class SvMatrixMathSuperNode(SverchCustomTreeNode, bpy.types.Node):
 
     def draw_buttons(self, context, layout):
         #layout.prop(self, "operation", text="")
-        col = layout.row()
-        gf = col.grid_flow(row_major=False, columns=2, align=True)
+        row = layout.row()
+        grid0 = layout.grid_flow(row_major=False, columns=3, align=True)
+        grid0.prop(self, 'post_result_matrix_view', text='')
+        grid0.prop(self, 'post_result_matrix_scale_view', text='Scale')
+        grid0.prop(self, 'post_result_matrix_grid_view')
+
+        grid0 = layout.grid_flow(row_major=False, columns=4)
+        grid0.alignment = 'RIGHT'
+        grid0.prop(self, 'post_result_enabled', text='')
+        grid1 = grid0.grid_flow(row_major=False, columns=5, align=False)
+        grid1.prop(self, 'result_invert_1', text="Inv", toggle=True)
+        grid2 = grid1.grid_flow(row_major=False, columns=3, align=True)
+        grid1.enabled = self.post_result_enabled
+
+        grid2.prop(self, 'result_filter_t', toggle=True, text="", icon_only=True, icon="ORIENTATION_VIEW")
+        grid2.prop(self, 'result_filter_r', toggle=True, text="", icon_only=True, icon="PHYSICS")
+        grid2.prop(self, 'result_filter_s', toggle=True, text="", icon_only=True, icon="FULLSCREEN_ENTER")
+        grid1.prop(self, 'result_invert_2', text="Inv", toggle=True)
+
+
+        row = layout.row()
+        gf = row.grid_flow(row_major=False, columns=2, align=True)
         gf.alignment = 'LEFT'
         gf.prop(self, "prePost", expand=True)
 
@@ -257,20 +487,35 @@ class SvMatrixMathSuperNode(SverchCustomTreeNode, bpy.types.Node):
 
         return mat_out
 
+    sv_update_lock: IntProperty(
+        name="sv_update_lock",
+        description="sv_update_lock",
+        default=0,
+        options={'SKIP_SAVE'}
+    )
+
     def sv_update(self):
-        # add an empty last socket
-        inputs = self.inputs
-        if inputs[-1].links:
-            name = ABC[len(inputs)]  # pick the next letter A to Z
-            inputs.new("SvMatrixSocket", name)
-        else:  # last input disconnected ? => remove all but last unconnected extra inputs
-            while len(inputs) > 2 and not inputs[-2].links:
-                inputs.remove(inputs[-1])
+        if self.sv_update_lock==0:
+            # add an empty last socket
+            inputs = self.inputs
+            if inputs[-1].links:
+                name = ABC[len(inputs)]  # pick the next letter A to Z
+                inputs.new("SvMatrixSocket", name)
+                inputs[name].label=name
+                inputs[name].custom_draw = 'draw_in_matrix_socket'
+            else:  # last input disconnected ? => remove all but last unconnected extra inputs
+                while len(inputs) > 2 and not inputs[-2].links:
+                    inputs.remove(inputs[-1])
+        else:
+            pass
 
     def process(self):
         outputs = self.outputs
-        if not any(s.is_linked for s in outputs):
-            return
+        # if not any(s.is_linked for s in outputs):
+        #     return
+
+        n_id = node_id(self)
+        callback_disable(n_id)
 
         data_in = []  # collect the inputs from the connected sockets
         for s in filter(lambda s: s.is_linked, self.inputs):
@@ -310,12 +555,15 @@ class SvMatrixMathSuperNode(SverchCustomTreeNode, bpy.types.Node):
             outputs['X'].sv_set(x_list if wrap else [x_list])
             outputs['Y'].sv_set(y_list if wrap else [y_list])
             outputs['Z'].sv_set(z_list if wrap else [z_list])
+
+        if self.post_result_matrix_view and mat_list:
+            gl_instructions = {
+                'tree_name': self.id_data.name[:],
+                'custom_function': draw_matrix,
+                'args': (mat_list, self.post_result_matrix_scale_view, self.post_result_matrix_grid_view)}
+            callback_enable(n_id, gl_instructions)
             
         outputs['C'].sv_set(mat_list)
 
-def register():
-    bpy.utils.register_class(SvMatrixMathSuperNode)
-
-
-def unregister():
-    bpy.utils.unregister_class(SvMatrixMathSuperNode)
+classes = [SvMatrixSocketAction, SvMatrixMathSuperNode]
+register, unregister = bpy.utils.register_classes_factory(classes)
