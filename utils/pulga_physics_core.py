@@ -717,7 +717,7 @@ class PulgaSystem():
                 self.params['Pins'] = self.params['Pins'] == 1
                 self.params['unpinned'] = np.invert(self.params['Pins'])
             else:
-                self.params['unpinned'] = np.ones(len(self.verts), dtype=np.bool)
+                self.params['unpinned'] = np.ones(len(self.verts), dtype=np.bool_)
                 self.params['unpinned'][self.params['Pins']] = False
 
         self.vel[self.params['Pins'], :] = 0
