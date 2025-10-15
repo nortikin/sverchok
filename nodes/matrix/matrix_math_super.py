@@ -245,6 +245,7 @@ class SvMatrixSocketAction(bpy.types.Operator, SvGenericNodeLocator):
                 print( f"{self.socket_action}: no action")
             pass
         node.sv_update()
+        #node.process()
         pass
 
 class SvMatrixMathSuperNode(SverchCustomTreeNode, bpy.types.Node):
