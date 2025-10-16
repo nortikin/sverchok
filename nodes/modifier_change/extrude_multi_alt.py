@@ -272,10 +272,26 @@ class SvMultiExtrudeAlt(
 
     def process(self):
 
+        if not any([sock.is_linked for sock in self.outputs]):
+            return
+
+        if not all([sock.is_linked for sock in self.inputs if sock.name in ['verts', 'faces'] ]):
+            raise TypeError("Both sockets vertices and faces have to be connected")
+
         # bmesh operations
         verts = self.inputs['verts'].sv_get()
         faces = self.inputs['faces'].sv_get()
-        face_masks = self.inputs['face_masks'].sv_get()
+        if self.inputs['face_masks'].is_linked:
+            face_masks = self.inputs['face_masks'].sv_get()
+            if len(face_masks)>len(verts):
+                face_masks = face_masks[:len(verts)]
+            elif len(face_masks)<len(verts):
+                if len(face_masks)>0 and len(face_masks[-1])>0:
+                    face_masks.extend([ face_masks[-1]*(len(verts) - len(face_masks)) ])
+                else:
+                    raise TypeError("last elem in face masks socket are empty!")
+        else:
+            face_masks = [list(range(len(f))) for f in faces]
         out_verts, out_faces = [], []
 
         for _verts, _faces, _face_mask in zip(verts, faces, face_masks):
