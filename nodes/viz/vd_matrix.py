@@ -100,6 +100,9 @@ class SvMatrixViewer28(SverchCustomTreeNode, bpy.types.Node):
     bl_icon = 'EMPTY_AXIS'
     sv_icon = 'SV_MATRIX_VIEWER'
 
+    activate: BoolProperty(
+        name='Show', description='Activate drawing',
+        default=True, update=updateNode)
 
     color_start: FloatVectorProperty(subtype='COLOR', default=(1, 1, 1), min=0, max=1, size=3, update=updateNode)
     color_end: FloatVectorProperty(subtype='COLOR', default=(1, 0.02, 0.02), min=0, max=1, size=3, update=updateNode)
@@ -117,6 +120,8 @@ class SvMatrixViewer28(SverchCustomTreeNode, bpy.types.Node):
     def draw_buttons(self, context, layout):
         col = layout.column(align=True)
         row = col.row(align=True)
+        row.prop(self, "activate", text="", icon="HIDE_" + ("OFF" if self.activate else "ON"))
+        row.separator()
         row.prop(self, 'color_start', text='')
         row.prop(self, 'color_end', text='')
         row.prop(self, 'show_options', text='', icon='SETTINGS')
@@ -131,6 +136,11 @@ class SvMatrixViewer28(SverchCustomTreeNode, bpy.types.Node):
     def process(self):
         self.n_id = node_id(self)
         self.sv_free()
+
+        if not (self.id_data.sv_show and self.activate):
+            callback_disable(node_id(self))
+            return
+
 
         if self.inputs['Matrix'].is_linked:
             cdat = match_color_to_matrix(self)
