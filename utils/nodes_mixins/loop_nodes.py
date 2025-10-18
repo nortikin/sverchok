@@ -6,7 +6,11 @@
 # License-Filename: LICENSE
 from typing import Optional
 
-from bpy_types import NodeSocket
+import bpy
+if bpy.app.version[0] >= 5:
+    from bpy.types import NodeSocket
+else:
+    from bpy_types import NodeSocket
 from sverchok.core.update_system import SearchTree
 
 
