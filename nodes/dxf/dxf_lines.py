@@ -1,13 +1,6 @@
 import bpy
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, dataCorrect_np
-from sverchok.dependencies import ezdxf
-if ezdxf != None:
-    import ezdxf
-    from ezdxf.math import Vec3
-    from ezdxf import colors
-    from ezdxf import units
-    from ezdxf.tools.standards import setup_dimstyle
 from mathutils import Vector
 from sverchok.utils.dxf import LWdict, lineweights, linetypes
 
