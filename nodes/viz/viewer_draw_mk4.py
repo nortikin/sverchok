@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
-
+import math
 from itertools import cycle
 
 from mathutils import Vector, Matrix
@@ -183,10 +183,13 @@ def view_3d_geom(context, args):
         else:
             if config.uniform_pols:
                 p_batch = batch_for_shader(config.p_shader, 'TRIS', {"pos": geom.p_vertices}, indices=geom.p_indices)
+                drawing.set_polygonmode_fill(config.face_culling_set)
                 config.p_shader.bind()
                 config.p_shader.uniform_float("color", config.poly_color[0][0])
+                pass
             else:
                 p_batch = batch_for_shader(config.p_shader, 'TRIS', {"pos": geom.p_vertices, "color": geom.p_vertex_colors}, indices=geom.p_indices)
+                drawing.set_polygonmode_fill(config.face_culling_set)
                 config.p_shader.bind()
 
         p_batch.draw(config.p_shader)
@@ -195,7 +198,7 @@ def view_3d_geom(context, args):
             drawing.disable_polygon_offset_fill()
         if config.draw_gl_wireframe:
             # this is to reset the state of drawing to fill
-            drawing.set_polygonmode_fill()
+            drawing.set_polygonmode_fill(config.face_culling_set)
 
 
     if config.draw_edges:
@@ -213,15 +216,110 @@ def view_3d_geom(context, args):
             shader.uniform_float("m_color", geom.e_vertex_colors[0])
             batch.draw(shader)
         else:
+            depthBias = 3e-5 # ~1e-6..1e-4
+            ctx  = bpy.context
+            space = getattr(ctx, "space_data", None)
+            if hasattr(space, "clip_start") and hasattr(space, "clip_end"):
+                clip_start = space.clip_start
+                depthBias  = depthBias/(0.01/clip_start)
+                depthBias = max(depthBias, 1e-6)
+                depthBias = min(depthBias, 1e-4)
+
             if config.uniform_edges:
-                e_batch = batch_for_shader(config.e_shader, 'LINES', {"pos": geom.e_vertices}, indices=geom.e_indices)
-                config.e_shader.bind()
-                config.e_shader.uniform_float("color", config.edge_color[0][0])
-                e_batch.draw(config.e_shader)
+                if bpy.app.version < (3, 5, 0):
+                    e_batch = batch_for_shader(config.e_shader, 'LINES', {"pos": geom.e_vertices}, indices=geom.e_indices)
+                    config.e_shader.bind()
+                    config.e_shader.uniform_float("color", config.edge_color[0][0])
+                    e_batch.draw(config.e_shader)
+                else:
+
+                    ##### Try to build lines with bias - works norms. But there is an artifact when looking at the plane at a sharp angle: the back lines start to break up and are not very well drawn.
+                    VERT_BIAS = """
+                    in vec3 pos;
+                    uniform mat4 modelViewMatrix;
+                    uniform mat4 projectionMatrix;
+
+                    void main()
+                    {
+                        vec4 v = modelViewMatrix * vec4(pos,1.0);
+                        gl_Position = projectionMatrix * v;
+                    }
+                    """
+                    FRAG_BIAS = """
+                    uniform vec4 color;
+                    uniform float depthBias;  // ~1e-6..1e-4
+                    out vec4 FragColor;
+                    void main(){
+                        FragColor = color;
+                        float adaptive = depthBias * gl_FragCoord.w;
+                        float z = gl_FragCoord.z - adaptive;
+                        gl_FragDepth = clamp(z, 0.0, 1.0);
+                    }
+                    """
+                    shader_bias = gpu.types.GPUShader(VERT_BIAS, FRAG_BIAS)
+                    config.e_shader = shader_bias
+                    e_batch = batch_for_shader(config.e_shader, 'LINES', {"pos": geom.e_vertices}, indices=geom.e_indices)
+                    drawing.enable_depth_test()
+                    drawing.disable_blendmode()
+                    config.e_shader.bind()
+                    config.e_shader.uniform_float(           "color", config.edge_color[0][0])
+                    config.e_shader.uniform_float( "modelViewMatrix", gpu.matrix.get_model_view_matrix())
+                    config.e_shader.uniform_float("projectionMatrix", gpu.matrix.get_projection_matrix())
+                    config.e_shader.uniform_float(       "depthBias", depthBias)
+                    e_batch.draw(config.e_shader)
+
+                    pass
+
+                pass
+
+
             else:
-                e_batch = batch_for_shader(config.e_shader, 'LINES', {"pos": geom.e_vertices, "color": geom.e_vertex_colors}, indices=geom.e_indices)
-                config.e_shader.bind()
-                e_batch.draw(config.e_shader)
+                if bpy.app.version < (3, 5, 0):
+                    e_batch = batch_for_shader(config.e_shader, 'LINES', {"pos": geom.e_vertices, "color": geom.e_vertex_colors}, indices=geom.e_indices)
+                    config.e_shader.bind()
+                    e_batch.draw(config.e_shader)
+                else:
+
+                    ##### Try to build lines with bias - works norms. But there is an artifact when looking at the plane at a sharp angle: the back lines start to break up and are not very well drawn.
+                    VERT_BIAS = """
+                    in vec3 pos;
+                    in vec4 color;
+                    uniform mat4 modelViewMatrix;
+                    uniform mat4 projectionMatrix;
+                    out vec4 vColor;
+
+                    void main()
+                    {
+                        vec4 v = modelViewMatrix * vec4(pos,1.0);
+                        gl_Position = projectionMatrix * v;
+                        vColor = color;
+                    }
+                    """
+                    FRAG_BIAS = """
+                    in vec4 vColor;
+                    uniform float depthBias;  // ~1e-6..1e-4
+                    out vec4 FragColor;
+                    void main(){
+                        FragColor = vColor;
+                        float adaptive = depthBias * gl_FragCoord.w;
+                        float z = gl_FragCoord.z - adaptive;
+                        gl_FragDepth = clamp(z, 0.0, 1.0);
+                    }
+                    """
+                    shader_bias = gpu.types.GPUShader(VERT_BIAS, FRAG_BIAS)
+                    config.e_shader = shader_bias
+                    e_batch = batch_for_shader(config.e_shader, 'LINES', {"pos": geom.e_vertices, "color": geom.e_vertex_colors}, indices=geom.e_indices)
+                    drawing.enable_depth_test()
+                    drawing.disable_blendmode()
+                    config.e_shader.bind()
+                    config.e_shader.uniform_float( "modelViewMatrix", gpu.matrix.get_model_view_matrix())
+                    config.e_shader.uniform_float("projectionMatrix", gpu.matrix.get_projection_matrix())
+                    config.e_shader.uniform_float(       "depthBias", depthBias)
+                    e_batch.draw(config.e_shader)
+
+                    pass
+
+                pass
 
         drawing.reset_line_width()
 
@@ -230,10 +328,12 @@ def view_3d_geom(context, args):
             drawing.set_point_size(config.point_size)
             if config.uniform_verts:
                 v_batch = batch_for_shader(config.v_shader, 'POINTS', {"pos": geom.v_vertices})
+                drawing.enable_depth_test()
                 config.v_shader.bind()
                 config.v_shader.uniform_float("color", config.vector_color[0][0])
             else:
                 v_batch = batch_for_shader(config.v_shader, 'POINTS', {"pos": geom.v_vertices, "color": geom.points_color})
+                drawing.enable_depth_test()
                 config.v_shader.bind()
 
             v_batch.draw(config.v_shader)
@@ -573,6 +673,17 @@ class SvViewerDrawMk4(SverchCustomTreeNode, bpy.types.Node):
 
     node_dict = {}
 
+    face_culling_set: EnumProperty(
+        items=[
+            ( 'NONE',  'None', 'none facets can be culled', 'SNAP_VOLUME', 0),
+            ('FRONT', 'Front', 'front-facing facets can be culled', 'SNAP_FACE', 1),
+            ( 'BACK',  'Back', 'back-facing facets can be culled', 'SELECT_SUBTRACT', 2),
+        ],
+        description="none, front-facing or back-facing facets can be culled. Viewport Only. No influence for render or bake of mesh.",
+        default="NONE",
+        update=updateNode
+    )
+
     selected_draw_mode: EnumProperty(
         items=enum_item_5(["flat", "facet", "smooth", "fragment"], ['SNAP_VOLUME', 'ALIASED', 'ANTIALIASED', 'SCRIPTPLUGINS']),
         description="pick how the node will draw faces",
@@ -584,6 +695,7 @@ class SvViewerDrawMk4(SverchCustomTreeNode, bpy.types.Node):
 
     draw_gl_polygonoffset: BoolProperty(
         name="Draw gl polygon offset",
+        description="BGL parameter. Has no influence on Blender >= 3.5",
         default=False, update=updateNode)
 
     draw_gl_wireframe: BoolProperty(
@@ -718,6 +830,14 @@ class SvViewerDrawMk4(SverchCustomTreeNode, bpy.types.Node):
         if self.selected_draw_mode == 'fragment':
             layout.prop(self, "custom_shader_location", icon='TEXT', text='')
 
+        if bpy.app.version < (3, 5, 0):
+            # do not show this settings in Blender<3.5
+            pass
+        else:
+            row = layout.row(align=True)
+            row.label(text=' ')
+            row.prop(self, "face_culling_set", expand=True, text='')
+            pass
         row = layout.row(align=True)
         row.scale_y = 4.0 if self.prefs_over_sized_buttons else 1
         self.wrapper_tracked_ui_draw_op(row, SvObjBakeMK3.bl_idname, icon='OUTLINER_OB_MESH', text="B A K E")
@@ -953,6 +1073,7 @@ class SvViewerDrawMk4(SverchCustomTreeNode, bpy.types.Node):
 
             config.polygons = polygons
             config.matrix = matrix
+            config.face_culling_set = self.face_culling_set
             if not inputs['Edges'].is_linked and self.display_edges:
                 config.edges = polygons_to_edges_np(polygons, unique_edges=True)
 

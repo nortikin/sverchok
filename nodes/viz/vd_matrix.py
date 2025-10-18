@@ -13,10 +13,11 @@ from gpu_extras.batch import batch_for_shader
 from mathutils import Matrix, Vector, Color
 from bpy.props import FloatVectorProperty, StringProperty, BoolProperty, FloatProperty
 from bpy_extras.view3d_utils import location_3d_to_region_2d as loc3d2d
+import mathutils
 
 from sverchok.ui.bgl_callback_3dview import callback_disable, callback_enable
 from sverchok.utils.sv_batch_primitives import MatrixDraw28
-from sverchok.data_structure import node_id, updateNode
+from sverchok.data_structure import node_id, updateNode, ensure_nesting_level
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.modules.drawing_abstractions import drawing, shading_2d
 
@@ -27,9 +28,10 @@ else:
 
 def screen_v3d_batch_matrix(context, args):
     cdat, simple, plane, grid = args
-    for matrix, color in cdat:
-        mdraw = MatrixDraw28()
-        mdraw.draw_matrix(matrix, skip=simple, grid=grid)
+    for object in cdat:
+        for matrix, color in object:
+            mdraw = MatrixDraw28()
+            mdraw.draw_matrix(matrix, skip=simple, grid=grid)
 
 def screen_v3d_batch_matrix_overlay(context, args):
     region = context.region
@@ -48,18 +50,19 @@ def screen_v3d_batch_matrix_overlay(context, args):
     indices_shifted = []
     idx_offset = 0
     colors = []
-    for i, (matrix, color) in enumerate(cdat):
-        r, g, b = color
-        for x, y, z in coords:
-            vector3d = matrix @ Vector((x, y, z))
-            vector2d = loc3d2d(region, region3d, vector3d)
-            coords_transformed.append(vector2d)
-            colors.append((r, g, b, alpha))
+    for matrixes in cdat:
+        for i, (matrix, color) in enumerate(matrixes):
+            r, g, b = color
+            for x, y, z in coords:
+                vector3d = matrix @ Vector((x, y, z))
+                vector2d = loc3d2d(region, region3d, vector3d)
+                coords_transformed.append(vector2d)
+                colors.append((r, g, b, alpha))
 
-        for indices in indices_plane:
-            indices_shifted.append(tuple(idx+idx_offset for idx in indices))
+            for indices in indices_plane:
+                indices_shifted.append(tuple(idx+idx_offset for idx in indices))
 
-        idx_offset += 4
+            idx_offset += 4
 
     batch = batch_for_shader(
         smooth_2d_shader, 'TRIS', {"pos" : coords_transformed, "color": colors},
@@ -75,19 +78,48 @@ def match_color_to_matrix(node):
     vcol_start = Vector(node.color_start)
     vcol_end = Vector(node.color_end)
 
-    def element_iterated(matrix, theta, index):
-        return matrix, Color(vcol_start.lerp(vcol_end, index*theta))[:]
+    _Matrixes       = node.inputs['Matrix'].sv_get()
+    Matrixes2       = ensure_nesting_level(_Matrixes, 2)
 
-    data = node.inputs['Matrix'].sv_get()
-    data_out = []
-    get_mat_theta_idx = data_out.append
+    res = []
+    scale_matrix = mathutils.Matrix.Scale(node.scale, 4)
 
-    if len(data) > 0:
-        theta = 1 / len(data)
-        for idx, matrix in enumerate(data):
-            get_mat_theta_idx([matrix, theta, idx])
 
-    return [element_iterated(*values) for values in data_out]
+    if len(Matrixes2) > 0:
+        for data in Matrixes2:
+            data_out = []
+            res.append(data_out)
+            if len(data)>0:
+                get_mat_theta_idx = data_out.append
+                
+                theta = 1 / len(data)
+                for idx, matrix in enumerate(data):
+                    T, R, S = matrix.decompose()
+
+                    if node.result_filter_t:
+                        mat_t = Matrix().Identity(4)
+                    else:
+                        mat_t = Matrix().Translation(T)
+
+                    if node.result_filter_r:
+                        mat_r = Matrix().Identity(4)
+                    else:
+                        mat_r = R.to_matrix().to_4x4()
+
+                    if node.result_filter_s:
+                        mat_s = Matrix().Identity(4)
+                    else:
+                        mat_s = Matrix().Identity(4)
+                        mat_s[0][0] = S[0]
+                        mat_s[1][1] = S[1]
+                        mat_s[2][2] = S[2]
+
+                    matrix = mat_t @ mat_r @ mat_s
+                    get_mat_theta_idx( [matrix @ scale_matrix, Color(vcol_start.lerp(vcol_end, idx*theta))[:]])
+
+
+    #return [element_iterated(*values) for values in data_out]
+    return res
 
 
 class SvMatrixViewer28(SverchCustomTreeNode, bpy.types.Node):
@@ -100,6 +132,9 @@ class SvMatrixViewer28(SverchCustomTreeNode, bpy.types.Node):
     bl_icon = 'EMPTY_AXIS'
     sv_icon = 'SV_MATRIX_VIEWER'
 
+    activate: BoolProperty(
+        name='Show', description='Activate drawing',
+        default=True, update=updateNode)
 
     color_start: FloatVectorProperty(subtype='COLOR', default=(1, 1, 1), min=0, max=1, size=3, update=updateNode)
     color_end: FloatVectorProperty(subtype='COLOR', default=(1, 0.02, 0.02), min=0, max=1, size=3, update=updateNode)
@@ -109,6 +144,22 @@ class SvMatrixViewer28(SverchCustomTreeNode, bpy.types.Node):
     grid: BoolProperty(name='grid', update=updateNode, default=True)
     plane: BoolProperty(name='plane', update=updateNode, default=True)
     alpha: FloatProperty(name='alpha', update=updateNode, min=0.0, max=1.0, subtype='FACTOR', default=0.13)
+    scale: FloatProperty(name='scale factor', update=updateNode, min=0.0, default=1.0, description="View scale factor")
+    result_filter_t: BoolProperty(
+        name="Filter Translation",
+        description="Filter out the translation component of the matrix",
+        default=False, update=updateNode)
+
+    result_filter_r: BoolProperty(
+        name="Filter Rotation",
+        description="Filter out the rotation component of the matrix",
+        default=False, update=updateNode)
+
+    result_filter_s: BoolProperty(
+        name="Filter Scale",
+        description="Filter out the scale component of the matrix",
+        default=False, update=updateNode)
+
     show_options: BoolProperty(name='options', update=updateNode)
 
     def sv_init(self, context):
@@ -117,6 +168,8 @@ class SvMatrixViewer28(SverchCustomTreeNode, bpy.types.Node):
     def draw_buttons(self, context, layout):
         col = layout.column(align=True)
         row = col.row(align=True)
+        row.prop(self, "activate", text="", icon="HIDE_" + ("OFF" if self.activate else "ON"))
+        row.separator()
         row.prop(self, 'color_start', text='')
         row.prop(self, 'color_end', text='')
         row.prop(self, 'show_options', text='', icon='SETTINGS')
@@ -127,10 +180,22 @@ class SvMatrixViewer28(SverchCustomTreeNode, bpy.types.Node):
             row.prop(self, 'plane', toggle=True)
             row = col.row(align=True)
             row.prop(self, 'alpha')
+            row = col.row(align=True)
+            row.prop(self, 'scale')
+            row = col.row(align=True)
+            row.column().label(text="Filters:")
+            row.column().prop(self, 'result_filter_t', toggle=True, text="", icon_only=True, icon="ORIENTATION_VIEW")
+            row.column().prop(self, 'result_filter_r', toggle=True, text="", icon_only=True, icon="PHYSICS")
+            row.column().prop(self, 'result_filter_s', toggle=True, text="", icon_only=True, icon="FULLSCREEN_ENTER")
 
     def process(self):
         self.n_id = node_id(self)
         self.sv_free()
+
+        if not (self.id_data.sv_show and self.activate):
+            callback_disable(node_id(self))
+            return
+
 
         if self.inputs['Matrix'].is_linked:
             cdat = match_color_to_matrix(self)
