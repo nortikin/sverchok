@@ -1,0 +1,526 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>DXF Lines &#8212; Sverchok 1, 2, 0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=337302ae" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=80221c76"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'nodes/dxf/dxf_lines';</script>
+    <link rel="icon" href="../../_static/sverchock_icon_b.ico"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="DXF Polygons" href="dxf_pols.html" />
+    <link rel="prev" title="DXF Import" href="dxf_import.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../main.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/title_big_b.svg" class="logo__image only-light" alt="Sverchok 1, 2, 0 documentation - Home"/>
+    <script>document.write(`<img src="../../_static/title_big_b.svg" class="logo__image only-dark" alt="Sverchok 1, 2, 0 documentation - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../introduction/introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_interface/user_interface.html">User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tree_evaluation_system.html">Node tree evaluation system</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data_structure/data_structure_index.html">Data structure</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../../nodes.html">Nodes</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../generator/generator_index.html">Generators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generators_extended/generators_extended_index.html">Generators Extended</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../curve/curve_index.html">Curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../surface/surface_index.html">Surfaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../field/field_index.html">Fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../solid/solid_index.html">Solids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spatial/spatial_index.html">Spatial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../transforms/transforms_index.html">Transforms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../analyzer/analyzer_index.html">Analyzers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modifier_change/modifier_change_index.html">Modifier Change</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modifier_make/modifier_make_index.html">Modifier Make</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../CAD/CAD_index.html">CAD</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../number/number_index.html">Number</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../vector/vector_index.html">Vector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../matrix/matrix_index.html">Matrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../quaternion/quaternion_index.html">Quaternion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../color/color_index.html">Color</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../logic/logic_index.html">Logic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_main/list_main_index.html">List Main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_struct/list_struct_index.html">List Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_masks/list_masks_index.html">List Masks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_mutators/list_mutators_index.html">List Mutators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../dictionary/dictionary_index.html">Dictionary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../viz/viz_index.html">Viz</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../text/text_index.html">Text</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../script/script_index.html">Script</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scene/scene_index.html">Scene</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../object_nodes/object_nodes_index.html">Object</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../layout/layout_index.html">Layout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../network/network_index.html">Network</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pulga_physics/pulga_physics_index.html">Pulga Physics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../exchange/exchange_index.html">Exchange</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../svg/svg_index.html">SVG</a></li>
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="dxf_index.html">DXF</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="dxf_dims.html">DXF Linear Dimensions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dxf_export.html">DXF Export</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dxf_hatch.html">DXF Hatches</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dxf_import.html">DXF Import</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">DXF Lines</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dxf_pols.html">DXF Polygons</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/celling.html">Celling design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing/contributing_to_sverchok.html">Contributing to sverchok</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/nodes/dxf/dxf_lines.rst" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.rst</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>DXF Lines</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functionality">Functionality</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs">Inputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#options">Options</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#outputs">Outputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="dxf-lines">
+<h1>DXF Lines<a class="headerlink" href="#dxf-lines" title="Link to this heading">#</a></h1>
+<section id="functionality">
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">#</a></h2>
+<p>Creates DXF line objects from Sverchok geometry. Converts edges and vertices into DXF line entities.</p>
+</section>
+<section id="inputs">
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Vertices: Base vertices for lines</p></li>
+<li><p>Edges: Edge indices defining line segments</p></li>
+<li><p>Color: Line color (RGB or integer DXF color)</p></li>
+<li><p>Metadata: Additional metadata for lines</p></li>
+</ul>
+</section>
+<section id="options">
+<h2>Options<a class="headerlink" href="#options" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Line Type: DXF line type (CONTINUOUS, DASHED, etc.)</p></li>
+<li><p>Line Weight: Line thickness</p></li>
+<li><p>Color: DXF color index (-4 to 255, -4 = ignore)</p></li>
+</ul>
+</section>
+<section id="outputs">
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>DXF Objects: Line objects ready for export</p></li>
+</ul>
+</section>
+<section id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">#</a></h2>
+<p><em>Example of creating DXF lines from mesh edges node lauout</em></p>
+<img alt="https://github.com/user-attachments/assets/31b39074-2884-4504-be84-3e963a0bd4bb" src="https://github.com/user-attachments/assets/31b39074-2884-4504-be84-3e963a0bd4bb" />
+<p><em>Example of created DXF lines from mesh edges in librecad</em></p>
+<img alt="https://github.com/user-attachments/assets/ff02681a-2dbf-41ac-90d0-245a5585f48b" src="https://github.com/user-attachments/assets/ff02681a-2dbf-41ac-90d0-245a5585f48b" />
+<p><em>Default DXF linetypes</em></p>
+<img alt="https://github.com/user-attachments/assets/1fe1e785-04fc-441c-b267-514538a53388" src="https://github.com/user-attachments/assets/1fe1e785-04fc-441c-b267-514538a53388" />
+<p><em>Default DXF thicknesses</em></p>
+<img alt="https://github.com/user-attachments/assets/aa8cd5af-a423-4a6d-8e01-54f32e7831ad" src="https://github.com/user-attachments/assets/aa8cd5af-a423-4a6d-8e01-54f32e7831ad" />
+<p><em>Default DXF colors - use whether color in node or DXF index from table</em></p>
+<img alt="https://github.com/user-attachments/assets/390e21c3-3f23-4766-bde1-5cb555b980c4" src="https://github.com/user-attachments/assets/390e21c3-3f23-4766-bde1-5cb555b980c4" />
+<img alt="https://github.com/user-attachments/assets/951d31c1-a2ad-4309-912e-61d230509ee5" src="https://github.com/user-attachments/assets/951d31c1-a2ad-4309-912e-61d230509ee5" />
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="dxf_import.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">DXF Import</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="dxf_pols.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">DXF Polygons</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functionality">Functionality</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs">Inputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#options">Options</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#outputs">Outputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Author name not set
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2014...2025, sverchok team.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
