@@ -78,9 +78,122 @@ class SV_MT_LayoutsExamples(bpy.types.Menu):
         except Exception as err:
             return False
 
+
     def draw(self, context):
-        for path, category_name in example_categories_names():
-            self.layout.menu("SV_MT_PyMenu_" + category_name.replace(' ', '_'))
+        layout = self.layout
+        
+        # Search field всегда visible
+        row = layout.row()
+        row.prop(context.window_manager, "sv_examples_search_string", icon='VIEWZOOM', text="")
+        
+        search_string = context.window_manager.sv_examples_search_string.lower().strip()
+        
+        if search_string:
+            # Показать результаты поиска
+            found_files = self.search_examples(search_string)
+            if found_files:
+                categorized = self.categorize_files(found_files)
+                for category_name, files in categorized.items():
+                    if category_name:
+                        layout.label(text=category_name)
+                    for file_path, display_name in files:
+                        op = layout.operator("node.tree_importer_silent", text=display_name)
+                        op.filepath = file_path
+            else:
+                layout.label(text="No examples found")
+        else:
+            # Показать категории как раньше
+            for path, category_name in example_categories_names():
+                self.layout.menu("SV_MT_PyMenu_" + category_name.replace(' ', '_'))
+
+    def search_examples(self, search_string):
+        """Search through all example files"""
+        found_files = []
+        
+        # Search in main examples
+        examples_path = Path(sverchok.__file__).parent / 'json_examples'
+        found_files.extend(self.search_in_directory(examples_path, search_string))
+        
+        # Search in extra examples
+        for provider, path in extra_examples.items():
+            found_files.extend(self.search_in_directory(path, search_string))
+            
+        return found_files
+
+    def search_in_directory(self, directory_path, search_string):
+        """Search for files in a directory matching search string"""
+        found = []
+        directory = Path(directory_path)
+        
+        if not directory.exists():
+            return found
+            
+        for category_path in directory.iterdir():
+            if category_path.is_dir():
+                for file_path in category_path.glob("*.json"):
+                    # Search in filename without extension
+                    file_stem = file_path.stem.lower()
+                    category_name = category_path.name.lower()
+                    
+                    if (search_string in file_stem or 
+                        search_string in category_name or
+                        search_string in f"{category_name} {file_stem}"):
+                        
+                        # Create nice display name
+                        display_name = f"{file_path.stem} ({category_path.name})"
+                        found.append((str(file_path), display_name))
+                        
+        return found
+
+    def categorize_files(self, file_list):
+        """Categorize files by their parent directory"""
+        categories = {}
+        for file_path, display_name in file_list:
+            category = Path(file_path).parent.name
+            if category not in categories:
+                categories[category] = []
+            categories[category].append((file_path, display_name))
+        
+        # Sort categories and files within categories
+        for category in categories:
+            categories[category].sort(key=lambda x: x[1])
+            
+        return dict(sorted(categories.items()))
+
+    def draw_all_examples(self, layout):
+        """Draw all examples without categorization"""
+        all_files = []
+        
+        # Collect all files
+        examples_path = Path(sverchok.__file__).parent / 'json_examples'
+        all_files.extend(self.get_all_example_files(examples_path))
+        
+        for provider, path in extra_examples.items():
+            all_files.extend(self.get_all_example_files(path))
+        
+        # Sort alphabetically
+        all_files.sort(key=lambda x: x[1])
+        
+        # Draw all files
+        for file_path, display_name in all_files:
+            op = layout.operator("node.tree_importer_silent", text=display_name)
+            op.filepath = file_path
+
+    def get_all_example_files(self, directory_path):
+        """Get all example files from a directory"""
+        files = []
+        directory = Path(directory_path)
+        
+        if not directory.exists():
+            return files
+            
+        for category_path in directory.iterdir():
+            if category_path.is_dir():
+                for file_path in category_path.glob("*.json"):
+                    display_name = f"{file_path.stem} ({category_path.name})"
+                    files.append((str(file_path), display_name))
+                    
+        return files
 
 
 def make_submenu_classes(path, category_name):
@@ -137,12 +250,53 @@ class SvNodeTreeImporterSilent(bpy.types.Operator):
         return {'FINISHED'}
 
 
-classes = [SW_OT_Orbit_Around_Selection, SW_OT_Console, SV_MT_LayoutsExamples, SvNodeTreeImporterSilent]
-submenu_classes = []
+# Operators for search functionality
+class SV_OT_ToggleExamplesSearch(bpy.types.Operator):
+    """Toggle between search and categories view"""
+    bl_idname = "wm.sv_examples_toggle_search"
+    bl_label = "Toggle Examples Search"
+
+    def execute(self, context):
+        wm = context.window_manager
+        wm.sv_examples_show_search = not wm.sv_examples_show_search
+        if not wm.sv_examples_show_search:
+            wm.sv_examples_search_string = ""  # Clear search when switching to categories
+        return {'FINISHED'}
+
+
+class SV_OT_ClearExamplesSearch(bpy.types.Operator):
+    """Clear search string"""
+    bl_idname = "wm.sv_examples_clear_search"
+    bl_label = "Clear Examples Search"
+
+    def execute(self, context):
+        context.window_manager.sv_examples_search_string = ""
+        return {'FINISHED'}
+
+
+classes = [
+    SW_OT_Orbit_Around_Selection, 
+    SW_OT_Console, 
+    SV_MT_LayoutsExamples, 
+    SvNodeTreeImporterSilent,
+    SV_OT_ToggleExamplesSearch,
+    SV_OT_ClearExamplesSearch
+]
 
 
 def register():
     global submenu_classes
+    bpy.types.WindowManager.sv_examples_search_string = bpy.props.StringProperty(
+        name="Search Examples",
+        description="Search through Sverchok examples",
+        default=""
+    )
+
+    bpy.types.WindowManager.sv_examples_show_search = bpy.props.BoolProperty(
+        name="Show Search",
+        description="Show search field instead of categories",
+        default=False
+    )
     submenu_classes = [make_submenu_classes(path, category_name) for path, category_name in example_categories_names()]
     _ = [bpy.utils.register_class(cls) for cls in chain(classes, submenu_classes)]
     bpy.types.NODE_HT_header.append(node_examples_pulldown)
@@ -153,3 +307,5 @@ def unregister():
     bpy.types.NODE_HT_header.remove(node_settings_pulldown)
     bpy.types.NODE_HT_header.remove(node_examples_pulldown)
     _ = [bpy.utils.unregister_class(cls) for cls in reversed(list(chain(classes, submenu_classes)))]
+    del bpy.types.WindowManager.sv_examples_search_string
+    del bpy.types.WindowManager.sv_examples_show_search
