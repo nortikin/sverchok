@@ -335,7 +335,9 @@ document.write(`
   </button>
 `);
 </script>
-
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
 </div></div>
       
     </div>
@@ -351,6 +353,17 @@ document.write(`
     <div id="print-main-content">
         <div id="jb-print-toc">
             
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dxf-workflow">DXF Workflow</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#overview">Overview</a></li>
+</ul>
+</li>
+</ul>
+            </nav>
         </div>
     </div>
 </div>
@@ -362,6 +375,41 @@ document.write(`
                   
   <section id="dxf">
 <h1>DXF<a class="headerlink" href="#dxf" title="Link to this heading">#</a></h1>
+<section id="dxf-workflow">
+<h2>DXF Workflow<a class="headerlink" href="#dxf-workflow" title="Link to this heading">#</a></h2>
+<section id="overview">
+<h3>Overview<a class="headerlink" href="#overview" title="Link to this heading">#</a></h3>
+<p>The DXF nodes provide a complete workflow for importing and exporting DXF files in Sverchok:</p>
+<p><strong>Import Workflow:</strong>
+1. Use <strong>DXF Import</strong> node to load DXF files
+2. Filter layers as needed using the layer management system
+3. Use “Add Viewers” to quickly visualize different geometry types
+4. Process imported geometry through Sverchok nodes</p>
+<p><strong>Export Workflow:</strong>
+1. Create geometry using standard Sverchok nodes
+2. Convert to DXF objects using specialized DXF nodes:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><strong>DXF Lines</strong> for edge-based geometry</p></li>
+<li><p><strong>DXF Polygons</strong> for face-based geometry</p></li>
+<li><p><strong>DXF Hatches</strong> for patterned fills</p></li>
+<li><p><strong>DXF Linear Dimensions</strong> for measurements</p></li>
+</ul>
+</div></blockquote>
+<ol class="arabic simple" start="3">
+<li><p>Connect all DXF objects to <strong>DXF Export</strong> node</p></li>
+<li><p>Set export path and click “Export DXF”</p></li>
+</ol>
+<p><strong>Color System:</strong>
+- Use RGB colors for visual consistency
+- Or use DXF color indices (-4 to 255) for specific DXF color requirements
+- -4 = ignore (use default), -3 = by block, -2 = by layer</p>
+<p><strong>Line Types:</strong>
+Support for standard DXF line types including CONTINUOUS, DASHED, DOTTED, etc.</p>
+<p><strong>Compatibility:</strong>
+- Supports DXF R12 and later formats
+- Compatible with most CAD software including AutoCAD, LibreCAD, QCAD
+- Preserves layer information and entity properties</p>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="dxf_dims.html">DXF Linear Dimensions</a></li>
@@ -372,6 +420,8 @@ document.write(`
 <li class="toctree-l1"><a class="reference internal" href="dxf_pols.html">DXF Polygons</a></li>
 </ul>
 </div>
+</section>
+</section>
 </section>
 
 
@@ -409,6 +459,24 @@ document.write(`
             </div>
             
             
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dxf-workflow">DXF Workflow</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#overview">Overview</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>
