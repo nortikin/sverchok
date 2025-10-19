@@ -71,12 +71,10 @@ class SvDxfLinDimsNode(SverchCustomTreeNode, bpy.types.Node):
             layout.label(text=socket.name+ '. ' + str(socket.objects_number))
 
     def process(self):
-        if self.outputs['dxf'].is_linked:
+        if self.outputs['dxf'].is_linked and self.inputs['vertsA'].is_linked and self.inputs['vertsB'].is_linked:
             # All starts with dxf socket
-            if self.inputs['vertsA'].is_linked:
-                versa_ = self.inputs['vertsA'].sv_get()
-            if self.inputs['vertsB'].is_linked:
-                versb_ = self.inputs['vertsB'].sv_get()
+            versa_ = self.inputs['vertsA'].sv_get()
+            versb_ = self.inputs['vertsB'].sv_get()
             #if self.inputs['text'].is_linked:
             #    text_ = self.inputs['text'].sv_get()
             # color [[ (1,0,1) ]]

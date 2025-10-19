@@ -1,39 +1,36 @@
-DXF export
+DXF Export
 ==========
-
 
 Functionality
 -------------
-Gathering DXF objects and write to dxf file, that you can edit farthere in other applications
 
+This node exports Sverchok geometry to DXF format. It can export various geometry types including lines, polygons, text, and dimensions.
 
 Inputs
 ------
 
-- **Filepath** - Path to file to be writed
-- **dxf** - Sverchok inner DXF objects with own parameters to be exported
+- File Path: Destination path for the DXF file
+- DXF Objects: Geometry objects to export (from other DXF nodes)
 
+Options
+-------
+
+- Scale: Overall scale factor for exported geometry
+- Text Scale: Scale factor for text elements
+
+Operators
+---------
+
+- Export DXF: Main export button - writes geometry to DXF file
 
 Outputs
 -------
 
-None
-
-
-Parameters
-----------
-
-- **Export DXF** - Button to export sverchok dxf objects to dxf file
-- **scale** - overall scale of file
-- **text_scale** - global multiplyer for texts scales
-
-
-N panel
--------
-
-None
+- None (writes directly to file)
 
 Examples
 --------
 
-None
+*Example of exporting Sverchok geometry to DXF format*
+
+.. image:: https://github.com/user-attachments/assets/7fbe766d-7400-4097-b04c-0c83047b06a5

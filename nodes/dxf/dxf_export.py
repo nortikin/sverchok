@@ -108,15 +108,17 @@ class SvDxfExportNode(SverchCustomTreeNode, bpy.types.Node):
         if self.inputs['vleader'].is_linked:
             vleader_ = self.inputs['vleader'].sv_get()
             '''
-        if self.inputs['path'].is_linked:
-            fpath_ = self.inputs['path'].sv_get()
+        #if self.inputs['path'].is_linked:
+        fpath_ = self.inputs['path'].sv_get()
         if self.inputs['dxf'].is_linked:
             dxf_ = ensure_nesting_level(self.inputs['dxf'].sv_get(),2)
+        else:
+            return
 
         #scal_ = self.inputs['scal'].sv_get()[0][0]
         #t_scal_ = self.inputs['t_scal'].sv_get()[0][0]
         #export(vers_,edges_,pols_,Tvers_,Ttext_,fpath_,d1_,d2_,info,dim1_,dim2_,adim1_,scal_,vleader_,leader_,t_scal_,dxf_)
-        export(fpath_,dxf_,scal=self.scale,t_scal=self.text_scale)
+        export(fpath_,dxf_,scal=self.scale,t_scal=self.text_scale,info=info)
 
 
 

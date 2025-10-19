@@ -658,7 +658,7 @@ def angl(d1,d2):
 '''
 
 # export main definition
-def export(fp,dxf,scal=1.0,t_scal=1.0):
+def export(fp,dxf,scal=1.0,t_scal=1.0,info=''):
 
     DIM_TEXT_STYLE = ezdxf.options.default_dimension_text_style
     # Create a new DXF document.

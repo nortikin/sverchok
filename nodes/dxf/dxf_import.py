@@ -10,15 +10,21 @@ from sverchok.dependencies import geomdl, FreeCAD
 
 # Класс для хранения данных о слоях
 class SvDXFLayerCollection(bpy.types.PropertyGroup):
+    """Property group for storing DXF layer data"""
     name: bpy.props.StringProperty()
     enabled: bpy.props.BoolProperty(default=True)
 
 class SVDXF_UL_LayersList(bpy.types.UIList):
+    """UI list for displaying DXF layers"""
     def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
         layout.prop(item, "enabled", text="")
         layout.label(text=item.name, icon='LAYER_ACTIVE')
 
 class SvDxfImportNode(SverchCustomTreeNode, bpy.types.Node):
+    """
+    DXF Import node for Sverchok
+    Imports geometry from DXF files with layer filtering support
+    """
     bl_idname = 'SvDxfImportNode'
     bl_label = 'DXF Import'
     bl_icon = 'IMPORT'
@@ -70,6 +76,7 @@ class SvDxfImportNode(SverchCustomTreeNode, bpy.types.Node):
         update=updateNode)
 
     def sv_init(self, context):
+        """Initialize the node inputs and outputs"""
         self.width = 250
         self.inputs.new('SvFilePathSocket', 'path').prop_name = 'file_path'
 
@@ -85,6 +92,12 @@ class SvDxfImportNode(SverchCustomTreeNode, bpy.types.Node):
         self.outputs.new('SvStringsSocket', "knots")
 
     def draw_layers_list(self, layout):
+        """
+        Draw the layers list UI
+        
+        Args:
+            layout: Blender UILayout to draw in
+        """
         """Отрисовка списка слоёв"""
         if self.dxf_layers:
             # Вместо переключателя - информация о состоянии фильтра
@@ -98,10 +111,21 @@ class SvDxfImportNode(SverchCustomTreeNode, bpy.types.Node):
             layout.label(text='--No layers loaded--')
 
     def get_enabled_layers_count(self):
+        """
+        Get the number of enabled layers
+        
+        Returns:
+            int: Number of enabled layers
+        """
         """Получить количество включенных слоёв"""
         return len([layer for layer in self.dxf_layers if layer.enabled])
 
     def get_dxf_layers(self):
+        """
+        Load layers from DXF file and populate the layers list
+        
+        Reads the DXF file and extracts all available layers
+        """
         """Получение списка слоёв из DXF файла"""
         if not self.file_path:
             print("File path not specified")
@@ -131,6 +155,11 @@ class SvDxfImportNode(SverchCustomTreeNode, bpy.types.Node):
             print(f"Error reading DXF file: {str(e)}")
 
     def update_layers_filter(self):
+        """
+        Update layers filter and re-import DXF with current layer selection
+        
+        Applies the current layer selection and triggers DXF re-import
+        """
         """Обновить фильтр слоёв и переимпортировать DXF"""
         if not self.dxf_layers:
             print("No layers loaded to filter")
@@ -145,6 +174,7 @@ class SvDxfImportNode(SverchCustomTreeNode, bpy.types.Node):
             self.DXF_OPEN()
 
     def remove_layer(self):
+        """Remove the currently active layer from the layers list"""
         """Удаление активного слоя из списка"""
         if 0 <= self.active_layer_index < len(self.dxf_layers):
             self.dxf_layers.remove(self.active_layer_index)
@@ -152,17 +182,34 @@ class SvDxfImportNode(SverchCustomTreeNode, bpy.types.Node):
                 self.active_layer_index = max(0, len(self.dxf_layers) - 1)
 
     def clear_layers(self):
+        """Clear all layers from the layers list and disable filtering"""
         """Очистка всех слоёв"""
         self.dxf_layers.clear()
         self.layers_filter_enabled = False
 
     def get_enabled_layers(self):
+        """
+        Get list of enabled layer names
+        
+        Returns:
+            list or None: List of enabled layer names, or None if filtering is disabled
+        """
         """Получение списка включенных слоёв"""
         if not self.layers_filter_enabled:
             return None  # None означает использовать все слои
         return [layer.name for layer in self.dxf_layers if layer.enabled]
 
     def add_viewer_nodes(self):
+        """
+        Add 5 viewer nodes for different DXF data types
+        
+        Creates:
+        - Viewer Draw for lines (vers_e, edgs)
+        - Viewer Draw for polygons (vers_p, pols) 
+        - Viewer Draw for annotations (vers_annot, edgs_annot)
+        - Index Viewer for text (vers_text, text)
+        - Curve Viewer for curves (curves)
+        """
         """Добавление 5 узлов просмотра для разных типов данных"""
         loc = self.location
         tree = bpy.context.space_data.edit_tree
@@ -211,6 +258,13 @@ class SvDxfImportNode(SverchCustomTreeNode, bpy.types.Node):
         print("Added 5 viewer nodes for DXF import")
 
     def draw_buttons(self, context, layout):
+        """
+        Draw node buttons and UI elements
+        
+        Args:
+            context: Blender context
+            layout: Blender UILayout to draw in
+        """
         columna = layout.column(align=True)
         callback = 'node.sverchok_generic_callback_old'
         
@@ -266,10 +320,16 @@ class SvDxfImportNode(SverchCustomTreeNode, bpy.types.Node):
         self.draw_layers_list(layout)
 
     def process(self):
+        """Main processing function - called when node needs update"""
         if self.file_path:
             self.DXF_OPEN()
 
     def DXF_OPEN(self):
+        """
+        Import DXF file with current settings
+        
+        Reads DXF file, applies layer filtering, and outputs geometry data
+        """
         if not self.file_path:
             if self.inputs['path'].is_linked:
                 fp = self.inputs['path'].sv_get()[0][0]
@@ -303,10 +363,25 @@ class SvDxfImportNode(SverchCustomTreeNode, bpy.types.Node):
         self.outputs['knots'].sv_set(knots_out)
 
 class DXFImportOperator(bpy.types.Operator, SvGenericNodeLocator):
+    """
+    Operator for importing DXF files
+    
+    Triggers DXF import process with current node settings
+    """
     bl_idname = "node.dxf_import"
     bl_label = "Import DXF"
 
     def sv_execute(self, context, node):
+        """
+        Execute DXF import operation
+        
+        Args:
+            context: Blender context
+            node: Reference to the DXF import node
+            
+        Returns:
+            dict: Operation status {'FINISHED'} or {'CANCELLED'}
+        """
         if not node.file_path and node.inputs['path'].is_linked:
             file_path = node.inputs['path'].sv_get()[0][0]
             node.file_path = file_path

@@ -68,12 +68,10 @@ class SvDxfPolygonsNode(SverchCustomTreeNode, bpy.types.Node):
             layout.label(text=socket.name+ '. ' + str(socket.objects_number))
 
     def process(self):
-        if self.outputs['dxf'].is_linked:
+        if self.outputs['dxf'].is_linked and self.inputs['verts'].is_linked and self.inputs['pols'].is_linked:
             # All starts with dxf socket
-            if self.inputs['verts'].is_linked:
-                vers_ = self.inputs['verts'].sv_get()
-            if self.inputs['pols'].is_linked:
-                pols_ = self.inputs['pols'].sv_get()
+            vers_ = self.inputs['verts'].sv_get()
+            pols_ = self.inputs['pols'].sv_get()
             #if self.inputs['color'].is_linked:
             # color [[ (1,0,1) ]]
             if self.inputs['color'].is_linked:
