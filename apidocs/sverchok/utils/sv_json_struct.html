@@ -1204,7 +1204,11 @@ If a Blender file does not posses the material the empty material will be genera
         _set_optional(self._struct[&#34;attributes&#34;], &#34;label&#34;, node.label)
         _set_optional(self._struct[&#34;attributes&#34;], &#34;hide&#34;, node.hide)
         _set_optional(self._struct[&#34;attributes&#34;], &#34;use_custom_color&#34;, node.use_custom_color)
-        _set_optional(self._struct[&#34;attributes&#34;], &#34;color&#34;, node.color[:], node.use_custom_color)
+        if type(node.color) == int: # dxf nodes use int for colors
+            col = node.color
+        else:
+            col = node.color[:]
+        _set_optional(self._struct[&#34;attributes&#34;], &#34;color&#34;, col, node.use_custom_color)
         if node.parent:  # the node is inside of a frame node
             prop = BPYProperty(node, &#34;parent&#34;)
             raw_struct = factories.prop(&#34;parent&#34;, self.logger).export(prop, factories, dependencies)
@@ -1379,7 +1383,11 @@ The methods will get empty dictionary for storing advanced properties</p></div>
     _set_optional(self._struct[&#34;attributes&#34;], &#34;label&#34;, node.label)
     _set_optional(self._struct[&#34;attributes&#34;], &#34;hide&#34;, node.hide)
     _set_optional(self._struct[&#34;attributes&#34;], &#34;use_custom_color&#34;, node.use_custom_color)
-    _set_optional(self._struct[&#34;attributes&#34;], &#34;color&#34;, node.color[:], node.use_custom_color)
+    if type(node.color) == int: # dxf nodes use int for colors
+        col = node.color
+    else:
+        col = node.color[:]
+    _set_optional(self._struct[&#34;attributes&#34;], &#34;color&#34;, col, node.use_custom_color)
     if node.parent:  # the node is inside of a frame node
         prop = BPYProperty(node, &#34;parent&#34;)
         raw_struct = factories.prop(&#34;parent&#34;, self.logger).export(prop, factories, dependencies)

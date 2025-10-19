@@ -1,0 +1,801 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sverchok.utils.dxf API documentation</title>
+<meta name="description" content="">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sverchok.utils.dxf</code></h1>
+</header>
+<section id="section-intro">
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sverchok.utils.dxf.angular_dimensions_draw"><code class="name flex">
+<span>def <span class="ident">angular_dimensions_draw</span></span>(<span>ang, scal, ldims, msp, t_scal)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def angular_dimensions_draw(ang,scal,ldims,msp,t_scal):
+    from mathutils import Vector
+    #print(&#39;ANGULAR DIMS!!&#39;)
+    for a1,a2,a3 in zip(*ang):
+        for ang1,ang2,ang3 in zip(a1,a2,a3):
+            if scal != 1.0:
+                bas = list(Vector(ang1)*scal+((Vector(ang3)*scal-Vector(ang1)*scal)/2))
+                ang1_ = [i*scal for i in ang1]
+                ang2_ = [i*scal for i in ang2]
+                ang3_ = [i*scal for i in ang3]
+                dim = msp.add_angular_dim_3p(base=bas, center=ang2_, p1=ang1_, p2=ang3_, \
+                            override={&#34;dimtad&#34;: 1,&#34;dimtxt&#34;: t_scal}, \
+                            dimstyle=&#39;EZDXF1&#39;,dxfattribs={&#34;layer&#34;: ldims})
+            else:
+                bas = list(Vector(ang1)+((Vector(ang3)-Vector(ang1))/2))
+                dim = msp.add_angular_dim_3p(base=bas, center=ang2, p1=ang1, p2=ang3, \
+                            override={&#34;dimtad&#34;: 1,&#34;dimtxt&#34;: t_scal}, \
+                            dimstyle=&#39;EZDXF1&#39;,dxfattribs={&#34;layer&#34;: ldims})
+            #dim.render()</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.dxf.arc_points"><code class="name flex">
+<span>def <span class="ident">arc_points</span></span>(<span>start, end, bulge, num_points=3, resolution=50)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def arc_points(start, end, bulge, num_points=3, resolution=50): # вариант 1
+    &#34;&#34;&#34;Генерирует точки на дуге между start и end с заданным bulge.&#34;&#34;&#34;
+    if bulge == 0:
+        return [start, end]  # Линейный сегмент
+
+    # 1. Вычисляем параметры дуги
+    chord = math.dist(start, end)
+    sagitta = abs(bulge) * chord / 2
+    radius = (chord**2) / (8 * sagitta) + sagitta / 2
+
+    # 2. Находим центр дуги
+    angle_chord = math.atan2(end[1] - start[1], end[0] - start[0])
+    angle_apex = angle_chord + math.pi / 2 * (1 if bulge &gt; 0 else -1)
+    distance_apex = radius - sagitta if radius &gt; sagitta else sagitta - radius
+    center = (
+        (start[0] + end[0]) / 2 + distance_apex * math.cos(angle_apex),
+        (start[1] + end[1]) / 2 + distance_apex * math.sin(angle_apex),
+    )
+
+    # 3. Вычисляем начальный и конечный углы
+    start_angle = math.atan2(start[1] - center[1], start[0] - center[0])
+    end_angle = math.atan2(end[1] - center[1], end[0] - center[0])
+
+    # Корректируем углы для bulge (направление дуги)
+    if bulge &gt; 0 and end_angle &lt;= start_angle:
+        end_angle += 2 * math.pi
+    elif bulge &lt; 0 and start_angle &lt;= end_angle:
+        start_angle += 2 * math.pi
+
+    # 4. Генерируем точки с шагом 5° (минимум 3 точки)
+    total_angle = abs(end_angle - start_angle)
+    angle_step = int(360/resolution)
+    #print(angle_step)
+    step = math.radians(angle_step)  # Шаг 5°
+    steps = max(2, math.ceil(total_angle / step))  # Минимум 3 точки
+    delta_angle = (end_angle - start_angle) / steps
+
+    points = []
+    for i in range(steps + 1):
+        angle = start_angle + i * delta_angle
+        x = center[0] + radius * math.cos(angle)
+        y = center[1] + radius * math.sin(angle)
+        points.append((x, y, 0))
+
+    return points</code></pre>
+</details>
+<div class="desc"><p>Генерирует точки на дуге между start и end с заданным bulge.</p></div>
+</dd>
+<dt id="sverchok.utils.dxf.dimensions_draw"><code class="name flex">
+<span>def <span class="ident">dimensions_draw</span></span>(<span>points, scal, ldims, msp)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def dimensions_draw(points,scal,ldims,msp):
+    #print(&#39;LINEAR DIMS!!&#39;)
+    for points_ in points:
+        vers,col = points_.vers, points_.color
+        lw,lt = points_.lineweight, points_.linetype
+        v1,v2 = vers
+        t_scal = points_.text_scale
+        #print(&#39;LINEAR DIMS!!&#39;, t_scal)
+
+        dim = msp.add_aligned_dim(p1=v1,p2=v2,  #p1=[i*scal for i in v1[:2]], p2=[i*scal for i in v2[:2]],\
+            distance=0.5, dimstyle=&#39;EZDXF1&#39;,dxfattribs={&#34;layer&#34;: ldims},
+            override={&#34;dimtxt&#34;: t_scal}
+        )
+        #dim.render()</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.dxf.dxf_geometry_loader"><code class="name flex">
+<span>def <span class="ident">dxf_geometry_loader</span></span>(<span>self, entity, curve_degree, resolution, lifehack, scale)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def dxf_geometry_loader(self, entity, curve_degree, resolution, lifehack, scale):
+    &#39;&#39;&#39; dxf_geometry_loader(entity) ВОЗВРАЩАЕТ вершины, рёбра, полигоны и кривые всей геометрии, что находит у сущности&#39;&#39;&#39;
+    typ = entity.dxftype().lower()
+    #print(&#39;!!! type element:&#39;,typ)
+    vers, edges, pols, VT, TT, curves_out, knots_out = [], [], [], [], [], [], []
+    pointered = [&#39;arc&#39;,&#39;circle&#39;,&#39;ellipse&#39;]
+    if typ in pointered:
+        vers_ = []
+        center = entity.dxf.center*scale
+        #radius = a.dxf.radius
+        if typ == &#39;arc&#39;:
+            start  = int(entity.dxf.start_angle)
+            #print(&#39;start angle:&#39;, start)
+            end    = int(entity.dxf.end_angle)
+            #print(&#39;end angle:&#39;, end)
+            if start &gt; end:
+                start1 = (360-start)
+                overall = start1+end
+                resolution_arc = max(3,int(resolution*(overall/360))) # redefine resolution for partially angles
+                step = max(1,int((start1+end)/resolution_arc))
+                ran = [i/lifehack for i in range(lifehack*start,lifehack*360,lifehack*step)]
+                ran.extend([i/lifehack for i in range(0,lifehack*end,lifehack*step)])
+            else:
+                start1 = start
+                overall = end-start1
+                resolution_arc = max(3,int(resolution*(overall/360))) # redefine resolution for partially angles
+                ran = [i/lifehack for i in range(lifehack*start,lifehack*end,max(1,int(lifehack*(end-start)/resolution_arc)))]
+        elif typ == &#39;circle&#39;:
+            ran = [i/lifehack for i in range(0,lifehack*360,max(1,int((lifehack*360)/resolution)))]
+        elif typ == &#39;ellipse&#39;:
+            start  = entity.dxf.start_param
+            end    = entity.dxf.end_param
+            ran = [start + ((end-start)*i)/(lifehack*360) for i in range(0,lifehack*360,max(1,int(lifehack*360/resolution)))]
+        for i in entity.vertices(ran): # line 43 is 35 in make 24 in import
+            cen = entity.dxf.center.xyz #*scale
+            vers_.append([j*scale for j in i])
+
+        vers.append(vers_)
+        edges.append([[i,i+1] for i in range(len(vers_)-1)])
+        if typ == &#39;circle&#39;:
+            edges[-1].append([len(vers_)-1,0])
+        if typ == &#39;ellipse&#39; and (start &lt;= 0.001 or end &gt;= math.pi*4-0.001):
+            edges[-1].append([len(vers_)-1,0])
+
+    if typ == &#39;point&#39;:
+        mu = 0.2
+        ver = [i*scale for i in entity.dxf.location.xyz]
+        ver_ = [ ver,
+                [-scale*mu+ver[0],-scale*mu+ver[1],ver[2]],
+                [-scale*mu+ver[0],scale*mu+ver[1],ver[2]],
+                [scale*mu+ver[0],scale*mu+ver[1],ver[2]],
+                [scale*mu+ver[0],-scale*mu+ver[1],ver[2]],
+                ]
+        vers.append(ver_)
+        edges.append([[1,3],[2,4]])
+
+    if typ == &#39;line&#39;:
+        edges.append([[0,1]])
+        vers.append([[i*scale for i in entity.dxf.start.xyz],[i*scale for i in entity.dxf.end.xyz]])
+
+    #print(typ)
+    
+    if typ in [&#34;polyline&#34;]:
+        #print(&#39;Полилиния попалась ========&#39;, entity.dxftype)
+        vers.append([[i*scale for i in vert.xyz] for vert in entity.points()])
+        pols.append([[i for i in range(len(vers[-1]))]])
+
+    if typ in [&#34;3dface&#34;, &#34;solid&#34;,&#34;polymesh&#34;, &#34;polyface&#34;]:
+        print(&#39;3Д попалась ========&#39;, entity.dxftype)
+
+    if typ in [&#39;dimension&#39;,&#34;arc-dimension&#34;, &#34;diameter_dimension&#34;,&#34;radial_dimension&#34;]:
+        #print(entity.dxftype,entity.dxf.dimtype, dir(entity.dxf))
+        edges.append([[0,1]])
+        if entity.dxf.dimtype == 32:
+            mes = round(entity.dxf.defpoint2.distance(entity.dxf.defpoint3),5)
+            vers.append([[i*scale for i in entity.dxf.defpoint2.xyz],[i*scale for i in entity.dxf.defpoint3.xyz]])
+        else:
+            mes = round(entity.dxf.defpoint.distance(entity.dxf.defpoint4),5)
+            vers.append([[i*scale for i in entity.dxf.defpoint.xyz],[i*scale for i in entity.dxf.defpoint4.xyz]])
+        try:
+            mp = entity.dxf.text_midpoint.xyz
+        except:
+            mp = list((V(vers[-1][1]) + (V(vers[-1][0])-V(vers[-1][1]))/2).to_tuple())
+        VT.append([[i*scale for i in mp]])
+        TT.append([[mes]])
+
+    if typ == &#39;lwpolyline&#39;:
+        edges_ = []
+        vers_ = []
+        # вариант от DeepSeek
+        points = entity.get_points()  # Получаем вершины
+        vertices = list(entity.vertices())
+        #resolution_arc = max(3,int(resolution*(overall/360)))
+        #print(&#39;Lwpolyline&#39;)
+        for i, (x, y, _, _, bulge) in enumerate(points):
+            # Добавляем точки сегмента (линия или дуга)
+            #print(bulge, i)
+            if bulge !=0 and i&lt;(len(vertices)-1):
+                segment_points = arc_points((x*scale,y*scale,0), (vertices[i+1][0]*scale,vertices[i+1][1]*scale,0), bulge, resolution)
+                edges_.extend([[len(vers_)+k+1,len(vers_)+k] for k in range(len(segment_points)-1)])
+                #print(&#39;!!! bulge &#39;,bulge, &#39;index&#39;, i, len(vers_), &#39;points&#39;,len(points), len(vertices))
+            else:
+                segment_points = [(x*scale,y*scale,0)]
+                if i &lt; len(vertices)-1:
+                    edges_.append([len(vers_)+1,len(vers_)])
+            vers_.extend(segment_points)
+        if entity.is_closed:
+            edges_.append([len(vers_)-1,0])
+        # вариант от DeepSeek
+        vers.append(vers_)
+        edges.append(edges_)
+    #print(&#39;LWPL&#39;,vers_)
+
+    # Splines as NURBS curves
+    vers_ = []
+    if typ == &#39;spline&#39;:
+        #print(&#39;Блок&#39;, a.source_block_reference)
+        control_points = entity.control_points
+        n_total = len(control_points)
+        # Set knot vector
+        if entity.closed:
+            self.debug(&#34;N: %s, degree: %s&#34;, n_total, curve_degree)
+            knots = list(range(n_total + curve_degree + 1))
+        else:
+            knots = sv_knotvector.generate(curve_degree, n_total)
+
+        curve_weights = [1 for i in control_points]
+        self.debug(&#39;Auto knots: %s&#39;, knots)
+        curve_knotvector = knots
+
+        # Nurbs curve
+        new_curve = SvNurbsCurve.build(self.implementation, curve_degree, curve_knotvector, control_points, curve_weights, normalize_knots = True)
+
+        curve_knotvector = new_curve.get_knotvector().tolist()
+        if entity.closed:
+            u_min = curve_knotvector[degree]
+            u_max = curve_knotvector[-degree-1]
+            new_curve.u_bounds = u_min, u_max
+        else:
+            u_min = min(curve_knotvector)
+            u_max = max(curve_knotvector)
+            new_curve.u_bounds = (u_min, u_max)
+        curves_out.append(new_curve)
+        knots_out.append(curve_knotvector)
+    #print(&#39;^$#^%^#$%&#39;,typ)
+    if typ == &#39;mtext&#39;:
+        #print([(k.dxf.insert, k.text) for k in i.entitydb.query(&#39;Mtext&#39;)])
+        VT.append([[i*scale for i in entity.dxf.insert.xyz]])
+        TT.append([[entity.text]])
+        #print(VT,TT)
+    if typ == &#39;text&#39;:
+        #print( dir(entity.dxf) )
+        VT.append([[i*scale for i in entity.dxf.insert.xyz]])
+        TT.append([[entity.dxf.text]])
+    return vers, edges, pols, curves_out, knots_out, VT, TT</code></pre>
+</details>
+<div class="desc"><p>dxf_geometry_loader(entity) ВОЗВРАЩАЕТ вершины, рёбра, полигоны и кривые всей геометрии, что находит у сущности</p></div>
+</dd>
+<dt id="sverchok.utils.dxf.dxf_read"><code class="name flex">
+<span>def <span class="ident">dxf_read</span></span>(<span>node, fp, resolution, scale, curve_degree, layers=None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def dxf_read(node, fp, resolution, scale, curve_degree, layers=None):
+    curves_out = []
+    knots_out = []
+    VE, EE = [], []
+    VP, PP = [], []
+    VA, EA = [], []
+    VT, TT = [], []
+
+    dxf = ezdxf.readfile(fp)
+    lifehack = 500 # for increase range int values to reduce than to floats. Seems like optimal maybe 50-100
+    # all_types = {e.dxftype() for e in doc.modelspace()} # все типы в файле, чтобы не тыкаться 
+    # во имя отделения размеров и выносок!
+    ANNOTATION_TYPES = [
+        &#34;DIMENSION&#34;, &#34;LEADER&#34;, &#34;MLEADER&#34;,
+        &#34;TEXT&#34;, &#34;MTEXT&#34;, &#34;ARC_DIMENSION&#34;, &#34;DIAMETER_DIMENSION&#34;,
+        &#34;RADIAL_DIMENSION&#34;, 
+    ]
+    SERVICE_TYPES = [
+        &#34;ATTRIB&#34;, &#34;ATTDEF&#34;, &#34;HATCH&#34;, &#34;DIMENSION_STYLE&#34;,
+        &#34;VIEWPORT&#34;, &#34;IMAGE&#34;, &#34;XLINE&#34;, &#34;RAY&#34;, &#34;TABLE&#34;, &#34;TOLERANCE&#34;
+    ]
+    GEOMETRY_TYPES = [
+        &#34;LINE&#34;, &#34;CIRCLE&#34;, &#34;ARC&#34;, &#34;POLYLINE&#34;, &#34;LWPOLYLINE&#34;, &#34;SPLINE&#34;,
+        &#34;ELLIPSE&#34;, &#34;POINT&#34;, &#34;VERTEX&#34;, &#34;3DFACE&#34;, &#34;SOLID&#34;, &#34;3DFACE&#34;,
+        &#34;POLYMESH&#34;, &#34;POLYFACE&#34;
+    ]
+    #pure_geometry = []
+    #annotation_geometry = []
+    #servise_geometry = []
+    #dimension_handles = {dim.dxf.handle for dim in dxf.query(&#34;DIMENSION&#34;)}
+
+    for entity in dxf.modelspace():
+        if layers != None:
+            if not entity.dxf.layer in layers:
+                continue
+        if entity.dxftype() in ANNOTATION_TYPES:
+            vers, edges, pols, curves, knots, VT_, TT_ = dxf_geometry_loader(node, entity, curve_degree, resolution, lifehack, scale)
+            if vers:
+                VA.extend(vers)
+                EA.extend(edges)
+            if VT_:
+                VT.extend(VT_)
+                TT.extend(TT_)
+        elif entity.dxftype() in GEOMETRY_TYPES:
+            vers, edges, pols, curves, knots_out, VT_, TT_ = dxf_geometry_loader(node, entity, curve_degree, resolution, lifehack, scale)
+            if edges:
+                VE.extend(vers)
+                EE.extend(edges)
+            elif pols:
+                VP.extend(vers)
+                PP.extend(pols)
+            if curves:
+                curves_out.extend(curves)
+                knots_out.extend(knots)
+        elif entity.dxftype() in SERVICE_TYPES:
+            continue
+    return curves_out, knots_out, VE, EE, VP, PP, VA, EA, VT, TT</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.dxf.edges_draw"><code class="name flex">
+<span>def <span class="ident">edges_draw</span></span>(<span>points, scal, ledgs, msp)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def edges_draw(points,scal,ledgs,msp):
+    &#39;&#39;&#39; edges as simple lines &#39;&#39;&#39;
+    #print(&#39;EDGES!!&#39;)
+
+    for points_ in points:
+        vers,col = points_.vers, points_.color
+        lw,lt = points_.lineweight, points_.linetype
+        v1,v2 = vers
+        color_int = points_.color_int
+        if color_int &lt; 1:
+            col = tuple([int(i*255) for i in col[:3]])
+            col = ezdxf.colors.rgb2int(col)
+            ed = msp.add_line(v1,v2, dxfattribs={&#34;layer&#34;: ledgs,&#39;linetype&#39;: lt,&#39;lineweight&#39;: lw, &#39;true_color&#39;: col})
+        else:
+            ed = msp.add_line(v1,v2, dxfattribs={&#34;layer&#34;: ledgs,&#39;linetype&#39;: lt,&#39;lineweight&#39;: lw, &#39;color&#39;: color_int})</code></pre>
+</details>
+<div class="desc"><p>edges as simple lines</p></div>
+</dd>
+<dt id="sverchok.utils.dxf.export"><code class="name flex">
+<span>def <span class="ident">export</span></span>(<span>fp, dxf, scal=1.0, t_scal=1.0, info='')</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def export(fp,dxf,scal=1.0,t_scal=1.0,info=&#39;&#39;):
+
+    DIM_TEXT_STYLE = ezdxf.options.default_dimension_text_style
+    # Create a new DXF document.
+    doc = ezdxf.new(dxfversion=&#34;R2010&#34;,setup=True)
+    doc.units = units.M
+    # 25 строка
+    doc.header[&#39;$INSUNITS&#39;] = units.M
+    #create a new dimstyle
+    glo = scal  #scal*t_scal
+    hai = t_scal   #scal/glo
+    formt = f&#39;EZ_M_{glo}_H{hai}_MM&#39;
+    &#39;&#39;&#39;
+    Example: `fmt` = &#39;EZ_M_100_H25_CM&#39;
+    1. &#39;&lt;EZ&gt;_M_100_H25_CM&#39;: arbitrary prefix
+    2. &#39;EZ_&lt;M&gt;_100_H25_CM&#39;: defines the drawing unit, valid values are &#39;M&#39;, &#39;DM&#39;, &#39;CM&#39;, &#39;MM&#39;
+    3. &#39;EZ_M_&lt;100&gt;_H25_CM&#39;: defines the scale of the drawing, &#39;100&#39; is for 1:100
+    4. &#39;EZ_M_100_&lt;H25&gt;_CM&#39;: defines the text height in mm in paper space times 10, &#39;H25&#39; is 2.5mm
+    5. &#39;EZ_M_100_H25_&lt;CM&gt;&#39;: defines the units for the measurement text, valid values are &#39;M&#39;, &#39;DM&#39;, &#39;CM&#39;, &#39;MM&#39;
+    &#39;&#39;&#39;
+    setup_dimstyle(doc,
+                   name=&#39;EZDXF1&#39;,
+                   fmt=formt,
+                   blk=ezdxf.ARROWS.architectural_tick,#closed_filled,
+                   style=DIM_TEXT_STYLE,
+                   )
+
+    dimstyle = doc.dimstyles.get(&#39;EZDXF1&#39;)
+    #keep dim line with text        
+    #dimstyle.dxf.dimtmove=0
+    # multyleader
+    mleaderstyle = doc.mleader_styles.new(&#34;EZDXF2&#34;) #duplicate_entry(&#34;Standard&#34;,&#34;EZDXF2&#34;)
+    mleaderstyle.set_mtext_style(&#34;OpenSans&#34;)
+    mleaderstyle.dxf.char_height = t_scal*scal  # set the default char height of MTEXT
+    # Create new table entries (layers, linetypes, text styles, ...).
+    ltext = &#34;SVERCHOK_TEXT&#34;
+    lvers = &#34;SVERCHOK_VERS&#34;
+    ledgs = &#34;SVERCHOK_EDGES&#34;
+    #ledg1 = &#34;SVERCHOK_EDGES0.1&#34;
+    #ledg3 = &#34;SVERCHOK_EDGES0.3&#34;
+    #ledg6 = &#34;SVERCHOK_EDGES0.6&#34;
+    lpols = &#34;SVERCHOK_POLYGONS&#34;
+    ldims = &#34;SVERCHOK_DIMENTIONS&#34;
+    llidr = &#34;SVERCHOK_LEADERS&#34;
+    lhatc = &#34;SVERCHOK_HATCHES&#34;
+
+    doc.layers.add(ltext, color=colors.MAGENTA)
+    doc.layers.add(lvers, color=colors.CYAN)
+    doc.layers.add(ledgs, color=colors.YELLOW)
+    #doc.layers.add(ledg1, color=colors.BLUE, lineweight=9)
+    #doc.layers.add(ledg3, color=colors.GRAY, lineweight=30)
+    #doc.layers.add(ledg6, color=colors.LIGHT_GRAY, lineweight=60)
+    doc.layers.add(lpols, color=colors.WHITE)
+    doc.layers.add(ldims, color=colors.GREEN)
+    doc.layers.add(llidr, color=colors.CYAN)
+    doc.layers.add(lhatc, color=colors.WHITE)
+
+    # DXF entities (LINE, TEXT, ...) reside in a layout (modelspace, 
+    # paperspace layout or block definition).  
+    msp = doc.modelspace()
+    if info:
+        #print(&#39;INFO!!&#39;)
+        for d in info[0].items():
+            doc.header.custom_vars.append(d[0], d[1][&#39;Value&#39;])
+
+    APPID = &#34;Sverchok&#34;
+    doc.appids.add(APPID)
+    doc.header[&#34;$LWDISPLAY&#34;] = 1
+    # Add entities to a layout by factory methods: layout.add_...() 
+
+    for data in dxf:
+        #print(data)
+        #print(&#34;Тип данных DXF&#34;,data[0].__repr__())
+        if data[0].__repr__() == &#39;&lt;DXF Pols&gt;&#39;:
+            polygons_draw(data,scal,lpols,msp) #(p,v,d1,d2,scal,lpols,msp)
+        if data[0].__repr__() == &#39;&lt;DXF Lines&gt;&#39;:
+            edges_draw(data,scal,ledgs,msp)
+        if data[0].__repr__() == &#39;&lt;DXF Hatch&gt;&#39;:
+            hatches_draw(data,scal,lhatc,msp)
+        if data[0].__repr__() == &#39;&lt;DXF LinDims&gt;&#39;:
+            dimensions_draw(data,scal,ldims,msp)
+
+    &#39;&#39;&#39;
+    if e:
+        edges_draw(e,v,scal,ledgs,msp)#,ledg1,ledg3,ledg6)
+    elif p and d1:
+        polygondance_draw(p,v,d1,d2,scal,lpols,msp,APPID)
+    elif p:
+        polygons_draw(p,v,d1,d2,scal,lpols,msp)
+    elif v:
+        vertices_draw(v,scal,lvers,msp)
+    if tv and tt:
+        text_draw(tv,tt,scal,ltext,msp,t_scal)
+    if dim1 and dim2:
+        dimensions_draw(dim1,dim2,scal,ldims,msp,t_scal)
+    if angular:
+        angular_dimensions_draw(angular,scal,ldims,msp,t_scal)
+    if vl and ll:
+        leader_draw(ll,vl,scal,llidr,msp)
+    &#39;&#39;&#39;
+    # Save the DXF document.
+    doc.saveas(fp[0][0])</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.dxf.get_values"><code class="name flex">
+<span>def <span class="ident">get_values</span></span>(<span>diction)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_values(diction):
+    data = []
+    for d in diction.values():
+        for i in d.values():
+            data.append(i)
+    return data</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.dxf.hatches_draw"><code class="name flex">
+<span>def <span class="ident">hatches_draw</span></span>(<span>points, scal, lhatch, msp)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def hatches_draw(points, scal, lhatch, msp):
+    for points_ in points:
+        vers,col,patt,sc = points_.vers, points_.color,points_.pattern,points_.scale
+        color_int = points_.color_int
+        if color_int &lt; 1:
+            col = tuple([int(i*255) for i in col[:3]])
+            col = ezdxf.colors.rgb2int(col)
+        else:
+            col = color_int
+
+        ht = msp.add_hatch(color=col, dxfattribs={&#34;layer&#34;: lhatch})
+        ht.set_pattern_fill(patt, scale=sc)
+        ht.transparency = 0.5
+        path = ht.paths.add_polyline_path(
+            vers,
+            is_closed=True,
+            flags=ezdxf.const.BOUNDARY_PATH_EXTERNAL,
+        )</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.dxf.leader_draw"><code class="name flex">
+<span>def <span class="ident">leader_draw</span></span>(<span>leader, vleader, scal, llidr, msp)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def leader_draw(leader,vleader,scal,llidr,msp):
+    from ezdxf.math import Vec2
+    #from ezdxf.entities import mleader
+    #print(&#39;LEADERS!!&#39;)
+    for lvo1,lvo2,leadobj in zip(vleader[0],vleader[1],leader):
+        data = get_values(leadobj)
+        for lt,lv1,lv2 in zip(data,lvo1,lvo2):
+            #msp.add_leader([lv1,lv2], dimstyle=&#39;EZDXF1&#39;, dxfattribs={&#34;layer&#34;: llidr})
+            #print(lt,lv1,lv2)
+            ml_builder = msp.add_multileader_mtext(&#34;EZDXF2&#34;)
+            ml_builder.quick_leader(
+                lt,
+                target=Vec2(lv1)*scal,
+                segment1=Vec2(lv2)*scal-Vec2(lv1)*scal
+            #    connection_type=mleader.VerticalConnection.center_overline,
+            )#.render()
+            #ml_builder.text_attachment_point = 2
+            #Vec2.from_deg_angle(angle, 14),
+            #dxfattribs={&#34;layer&#34;: llidr}</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sverchok.utils.dxf.polygondance_draw"><code class="name flex">
+<span>def <span class="ident">polygondance_draw</span></span>(<span>p, v, d1, d2, scal, lpols, msp, APPID)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def polygondance_draw(p,v,d1,d2,scal,lpols,msp,APPID):
+    &#39;&#39;&#39; draw polygons if there is metadata d1 d2
+        needed triangulation for mesh represantation
+        with metadata vectorized for triangles &#39;&#39;&#39;
+
+    from sverchok.data_structure import match_long_repeat as mlr
+    from mathutils import Vector
+    #print(&#39;POLS!!&#39;)
+    mlr([p,d1])
+    for obp,obv,d in zip(p,v,d1):
+        #obv,q,obp = triangl(obv,[],obp)
+        mlr([obp,d])
+        for po,data in zip(obp,d):
+            points = []
+            for ver in po:
+                if type(obv[ver]) == Vector: vr = (scal*obv[ver]).to_tuple()
+                else: vr = tuple([i*scal for i in obv[ver]])
+                points.append(vr)
+            pl = msp.add_polyline3d(points, dxfattribs={&#34;layer&#34;: lpols},close=True)
+            pl.set_xdata(APPID, [(1000, str(d2[0][0])),(1000, str(data))])
+            #pf = msp.add_polyface()
+            #pf.append_vertices(points, dxfattribs={&#34;layer&#34;: lpols})
+            #pf.append_face(points, dxfattribs={&#34;layer&#34;: lpols})
+            #pf.set_xdata(APPID, [(1000, str(d2[0][0])),(1000, str(d[0]))])
+            #ent = ezdxf.entities.Mesh()
+            #for p in points:
+            #    ent.vertices.append(p)
+            #ppm = msp.add_entity(ent)
+            #ppm.append_vertices(points, dxfattribs={&#34;layer&#34;: lpols})
+            #ppm.set_xdata(APPID, [(1000, str(d2[0][0])),(1000, str(data))])</code></pre>
+</details>
+<div class="desc"><p>draw polygons if there is metadata d1 d2
+needed triangulation for mesh represantation
+with metadata vectorized for triangles</p></div>
+</dd>
+<dt id="sverchok.utils.dxf.polygons_draw"><code class="name flex">
+<span>def <span class="ident">polygons_draw</span></span>(<span>points, scal, lpols, msp)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def polygons_draw(points, scal, lpols, msp):#(p,v,d1,d2,scal,lpols,msp):
+    &#39;&#39;&#39; draw simple polyline polygon &#39;&#39;&#39;
+    #print(&#39;POLS!!&#39;)
+    for points_ in points:
+        vers,col = points_.vers, points_.color
+        lw,lt = points_.lineweight, points_.linetype
+        color_int = points_.color_int
+        if color_int &lt; 1:
+            col = tuple([int(i*255) for i in col[:3]])
+            #print(&#39;!!!&#39;,col)
+            col = ezdxf.colors.rgb2int(col)
+            pl = msp.add_polyline3d(points_.vers, dxfattribs={&#34;layer&#34;: lpols,&#39;linetype&#39;: lt,&#39;lineweight&#39;: lw, &#39;true_color&#39;: col}, close=True)
+        else:
+            pl = msp.add_polyline3d(points_.vers, dxfattribs={&#34;layer&#34;: lpols,&#39;linetype&#39;: lt,&#39;lineweight&#39;: lw, &#39;color&#39;: color_int}, close=True)
+        #pf = msp.add_polyface()
+        #pf.append_face(points, dxfattribs={&#34;layer&#34;: lpols})
+        #pm = msp.add_polymesh()
+        #pm.append_vertices(points, dxfattribs={&#34;layer&#34;: lpols})
+    &#39;&#39;&#39;
+    (1070, data),  # 16bit
+    (1040, 0.0), # float
+    (1071, 1_048_576),  # 32bit
+    # points and vectors
+    (1010, (10, 20, 30)),
+    (1011, (11, 21, 31)),
+    (1012, (12, 22, 32)),
+    (1013, (13, 23, 33)),
+    # scaled distances and factors
+    (1041, 10),
+    (1042, 10),
+    &#39;&#39;&#39;</code></pre>
+</details>
+<div class="desc"><p>draw simple polyline polygon</p></div>
+</dd>
+<dt id="sverchok.utils.dxf.text_draw"><code class="name flex">
+<span>def <span class="ident">text_draw</span></span>(<span>tv, tt, scal, ltext, msp, t_scal)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def text_draw(tv,tt,scal,ltext,msp,t_scal):
+    &#39;&#39;&#39; draw text &#39;&#39;&#39;
+    from ezdxf.enums import TextEntityAlignment
+    #print(&#39;TEXT!!&#39;)
+    for obtv, obtt in zip(tv,tt):
+        for tver, ttext in zip(obtv,obtt):
+            tver = [i*scal for i in tver]
+            msp.add_text(
+            ttext, height=scal*t_scal,#0.05,
+            dxfattribs={
+                &#34;layer&#34;: ltext,
+                &#34;style&#34;: &#34;OpenSans&#34;
+            }).set_placement(tver, align=TextEntityAlignment.CENTER)</code></pre>
+</details>
+<div class="desc"><p>draw text</p></div>
+</dd>
+<dt id="sverchok.utils.dxf.triangl"><code class="name flex">
+<span>def <span class="ident">triangl</span></span>(<span>vertices, edges, faces)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def triangl(vertices,edges,faces):
+    &#39;&#39;&#39; WIP
+        triangulation for mesh represantation
+        with metadata vectorized for triangles &#39;&#39;&#39;
+    from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
+    import bmesh
+    bm = bmesh_from_pydata(vertices, edges, faces, markup_face_data=True, normal_update=True)
+    res = bmesh.ops.triangulate(bm, faces=bm.faces, quad_method=&#34;BEAUTY&#34;, ngon_method=&#34;BEAUTY&#34;)
+    new_vertices, new_edges, new_faces = pydata_from_bmesh(res)
+    bm.free()
+    return  new_vertices, new_edges, new_faces</code></pre>
+</details>
+<div class="desc"><p>WIP
+triangulation for mesh represantation
+with metadata vectorized for triangles</p></div>
+</dd>
+<dt id="sverchok.utils.dxf.vertices_draw"><code class="name flex">
+<span>def <span class="ident">vertices_draw</span></span>(<span>v, scal, lvers, msp)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def vertices_draw(v,scal,lvers,msp):
+    &#39;&#39;&#39; vertices as points draw &#39;&#39;&#39;
+    #for x,y in [(0,10),(10,10),(10,0),(0,0)]:
+    #print(&#39;VERS!!&#39;)
+    for ob in v:
+        vers = []
+        for ver in ob:
+            #vers.append(ver)
+            msp.add_point([i*scal for i in ver], dxfattribs={&#34;layer&#34;: lvers})</code></pre>
+</details>
+<div class="desc"><p>vertices as points draw</p></div>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sverchok.utils" href="index.html">sverchok.utils</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sverchok.utils.dxf.angular_dimensions_draw" href="#sverchok.utils.dxf.angular_dimensions_draw">angular_dimensions_draw</a></code></li>
+<li><code><a title="sverchok.utils.dxf.arc_points" href="#sverchok.utils.dxf.arc_points">arc_points</a></code></li>
+<li><code><a title="sverchok.utils.dxf.dimensions_draw" href="#sverchok.utils.dxf.dimensions_draw">dimensions_draw</a></code></li>
+<li><code><a title="sverchok.utils.dxf.dxf_geometry_loader" href="#sverchok.utils.dxf.dxf_geometry_loader">dxf_geometry_loader</a></code></li>
+<li><code><a title="sverchok.utils.dxf.dxf_read" href="#sverchok.utils.dxf.dxf_read">dxf_read</a></code></li>
+<li><code><a title="sverchok.utils.dxf.edges_draw" href="#sverchok.utils.dxf.edges_draw">edges_draw</a></code></li>
+<li><code><a title="sverchok.utils.dxf.export" href="#sverchok.utils.dxf.export">export</a></code></li>
+<li><code><a title="sverchok.utils.dxf.get_values" href="#sverchok.utils.dxf.get_values">get_values</a></code></li>
+<li><code><a title="sverchok.utils.dxf.hatches_draw" href="#sverchok.utils.dxf.hatches_draw">hatches_draw</a></code></li>
+<li><code><a title="sverchok.utils.dxf.leader_draw" href="#sverchok.utils.dxf.leader_draw">leader_draw</a></code></li>
+<li><code><a title="sverchok.utils.dxf.polygondance_draw" href="#sverchok.utils.dxf.polygondance_draw">polygondance_draw</a></code></li>
+<li><code><a title="sverchok.utils.dxf.polygons_draw" href="#sverchok.utils.dxf.polygons_draw">polygons_draw</a></code></li>
+<li><code><a title="sverchok.utils.dxf.text_draw" href="#sverchok.utils.dxf.text_draw">text_draw</a></code></li>
+<li><code><a title="sverchok.utils.dxf.triangl" href="#sverchok.utils.dxf.triangl">triangl</a></code></li>
+<li><code><a title="sverchok.utils.dxf.vertices_draw" href="#sverchok.utils.dxf.vertices_draw">vertices_draw</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>
