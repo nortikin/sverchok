@@ -16,6 +16,7 @@ if ezdxf != None:
 #from sverchok.utils.nurbs_common import SvNurbsMaths
 from sverchok.utils.curve.nurbs import SvNurbsCurve
 from sverchok.utils.curve import knotvector as sv_knotvector
+from mathutils import Vector as V
 
 ######################################
 ######################################
