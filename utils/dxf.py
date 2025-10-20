@@ -34,12 +34,12 @@ def dxf_read(node, fp, resolution, scale, curve_degree, layers=None):
 
     dxf = ezdxf.readfile(fp)
     lifehack = 500 # for increase range int values to reduce than to floats. Seems like optimal maybe 50-100
-    # all_types = {e.dxftype() for e in doc.modelspace()} # все типы в файле, чтобы не тыкаться 
+    # all_types = {e.dxftype() for e in doc.modelspace()} # все типы в файле, чтобы не тыкаться
     # во имя отделения размеров и выносок!
     ANNOTATION_TYPES = [
         "DIMENSION", "LEADER", "MLEADER",
         "TEXT", "MTEXT", "ARC_DIMENSION", "DIAMETER_DIMENSION",
-        "RADIAL_DIMENSION", 
+        "RADIAL_DIMENSION",
     ]
     SERVICE_TYPES = [
         "ATTRIB", "ATTDEF", "HATCH", "DIMENSION_STYLE",
@@ -144,7 +144,7 @@ def dxf_geometry_loader(self, entity, curve_degree, resolution, lifehack, scale)
         vers.append([[i*scale for i in entity.dxf.start.xyz],[i*scale for i in entity.dxf.end.xyz]])
 
     #print(typ)
-    
+
     if typ in ["polyline"]:
         #print('Полилиния попалась ========', entity.dxftype)
         vers.append([[i*scale for i in vert.xyz] for vert in entity.points()])
@@ -172,30 +172,54 @@ def dxf_geometry_loader(self, entity, curve_degree, resolution, lifehack, scale)
     if typ == 'lwpolyline':
         edges_ = []
         vers_ = []
-        # вариант от DeepSeek
-        points = entity.get_points()  # Получаем вершины
+        points = list(entity.get_points())
         vertices = list(entity.vertices())
-        #resolution_arc = max(3,int(resolution*(overall/360)))
-        #print('Lwpolyline')
-        for i, (x, y, _, _, bulge) in enumerate(points):
-            # Добавляем точки сегмента (линия или дуга)
-            #print(bulge, i)
-            if bulge !=0 and i<(len(vertices)-1):
-                segment_points = arc_points((x*scale,y*scale,0), (vertices[i+1][0]*scale,vertices[i+1][1]*scale,0), bulge, resolution)
-                edges_.extend([[len(vers_)+k+1,len(vers_)+k] for k in range(len(segment_points)-1)])
-                #print('!!! bulge ',bulge, 'index', i, len(vers_), 'points',len(points), len(vertices))
-            else:
-                segment_points = [(x*scale,y*scale,0)]
-                if i < len(vertices)-1:
-                    edges_.append([len(vers_)+1,len(vers_)])
-            vers_.extend(segment_points)
-        if entity.is_closed:
-            edges_.append([len(vers_)-1,0])
-        # вариант от DeepSeek
+
+        for i, (x, y, start_width, end_width, bulge) in enumerate(points):
+            current_point = (x*scale, y*scale, 0)
+
+            # Добавляем текущую точку
+            if i == 0:
+                vers_.append(current_point)
+
+            # Обрабатываем сегмент между текущей и следующей точкой
+            if i < len(points) - 1:
+                next_point_data = points[i+1]
+                next_point = (next_point_data[0]*scale, next_point_data[1]*scale, 0)
+                next_bulge = next_point_data[4]
+
+                if bulge != 0:
+                    # Дуга с bulge-фактором
+                    segment_points = arc_points(current_point, next_point, bulge, resolution=resolution)
+                    # Пропускаем первую точку (она уже добавлена)
+                    vers_.extend(segment_points[1:])
+                    # Создаем рёбра для сегментов дуги
+                    start_idx = len(vers_) - len(segment_points) + 1
+                    edges_.extend([[j-1, j] for j in range(start_idx, len(vers_))])
+                else:
+                    # Линейный сегмент
+                    vers_.append(next_point)
+                    edges_.append([len(vers_)-2, len(vers_)-1])
+
+        # Замыкаем полилинию если нужно
+        if entity.closed:
+            edges_.append([len(vers_)-1, 0])
+            # Для замкнутой полилинии обрабатываем последний сегмент
+            if points and points[-1][4] != 0:  # Если последний сегмент - дуга
+                first_point = vers_[0]
+                last_point = vers_[-1]
+                last_bulge = points[-1][4]
+
+                segment_points = arc_points(last_point, first_point, last_bulge, resolution=resolution)
+                # Обновляем рёбра для последней дуги
+                if len(segment_points) > 2:
+                    start_idx = len(vers_) - 1
+                    vers_.extend(segment_points[1:-1])  # Пропускаем первую и последнюю точки
+                    edges_.extend([[j-1, j] for j in range(start_idx + 1, len(vers_))])
+                    edges_.append([len(vers_)-1, 0])
+
         vers.append(vers_)
         edges.append(edges_)
-    #print('LWPL',vers_)
-
     # Splines as NURBS curves
     vers_ = []
     if typ == 'spline':
@@ -239,49 +263,61 @@ def dxf_geometry_loader(self, entity, curve_degree, resolution, lifehack, scale)
         TT.append([[entity.dxf.text]])
     return vers, edges, pols, curves_out, knots_out, VT, TT
 
-def arc_points(start, end, bulge, num_points=3, resolution=50): # вариант 1
+def arc_points(start, end, bulge, num_points=3, resolution=50):
     """Генерирует точки на дуге между start и end с заданным bulge."""
     if bulge == 0:
         return [start, end]  # Линейный сегмент
 
-    # 1. Вычисляем параметры дуги
-    chord = math.dist(start, end)
-    sagitta = abs(bulge) * chord / 2
-    radius = (chord**2) / (8 * sagitta) + sagitta / 2
+    # Преобразуем точки в Vec3 для удобства вычислений
+    start_point = Vec3(start)
+    end_point = Vec3(end)
 
-    # 2. Находим центр дуги
-    angle_chord = math.atan2(end[1] - start[1], end[0] - start[0])
-    angle_apex = angle_chord + math.pi / 2 * (1 if bulge > 0 else -1)
-    distance_apex = radius - sagitta if radius > sagitta else sagitta - radius
-    center = (
-        (start[0] + end[0]) / 2 + distance_apex * math.cos(angle_apex),
-        (start[1] + end[1]) / 2 + distance_apex * math.sin(angle_apex),
-    )
+    # Вычисляем параметры дуги по формуле bulge
+    chord_vector = end_point - start_point
+    chord_length = chord_vector.magnitude
 
-    # 3. Вычисляем начальный и конечный углы
-    start_angle = math.atan2(start[1] - center[1], start[0] - center[0])
-    end_angle = math.atan2(end[1] - center[1], end[0] - center[0])
+    # Вычисляем высоту стрелки (sagitta)
+    sagitta = abs(bulge) * chord_length / 2
 
-    # Корректируем углы для bulge (направление дуги)
-    if bulge > 0 and end_angle <= start_angle:
-        end_angle += 2 * math.pi
-    elif bulge < 0 and start_angle <= end_angle:
-        start_angle += 2 * math.pi
+    # Радиус дуги
+    radius = (chord_length**2) / (8 * sagitta) + sagitta / 2
 
-    # 4. Генерируем точки с шагом 5° (минимум 3 точки)
+    # Вычисляем центр дуги
+    chord_mid = (start_point + end_point) / 2
+    perpendicular = chord_vector.orthogonal().normalize()
+
+    # Направление зависит от знака bulge
+    if bulge > 0:
+        center = chord_mid + perpendicular * (radius - sagitta)
+    else:
+        center = chord_mid - perpendicular * (radius - sagitta)
+
+    # Вычисляем начальный и конечный углы
+    start_angle = (start_point - center).angle
+    end_angle = (end_point - center).angle
+
+    # Корректируем углы для правильного направления
+    if bulge > 0:
+        # Положительный bulge - против часовой стрелки
+        if end_angle <= start_angle:
+            end_angle += 2 * math.pi
+    else:
+        # Отрицательный bulge - по часовой стрелке
+        if start_angle <= end_angle:
+            start_angle += 2 * math.pi
+
+    # Генерируем точки дуги
     total_angle = abs(end_angle - start_angle)
-    angle_step = int(360/resolution)
-    #print(angle_step)
-    step = math.radians(angle_step)  # Шаг 5°
-    steps = max(2, math.ceil(total_angle / step))  # Минимум 3 точки
-    delta_angle = (end_angle - start_angle) / steps
+    num_segments = max(2, int(total_angle * resolution / (2 * math.pi)))
 
     points = []
-    for i in range(steps + 1):
-        angle = start_angle + i * delta_angle
-        x = center[0] + radius * math.cos(angle)
-        y = center[1] + radius * math.sin(angle)
-        points.append((x, y, 0))
+    for i in range(num_segments + 1):
+        t = i / num_segments
+        angle = start_angle + t * (end_angle - start_angle)
+        x = center.x + radius * math.cos(angle)
+        y = center.y + radius * math.sin(angle)
+        z = start_point.z  # Сохраняем Z-координату
+        points.append((x, y, z))
 
     return points
 
@@ -687,7 +723,7 @@ def export(fp,dxf,scal=1.0,t_scal=1.0,info=''):
                    )
 
     dimstyle = doc.dimstyles.get('EZDXF1')
-    #keep dim line with text        
+    #keep dim line with text
     #dimstyle.dxf.dimtmove=0
     # multyleader
     mleaderstyle = doc.mleader_styles.new("EZDXF2") #duplicate_entry("Standard","EZDXF2")
@@ -716,8 +752,8 @@ def export(fp,dxf,scal=1.0,t_scal=1.0,info=''):
     doc.layers.add(llidr, color=colors.CYAN)
     doc.layers.add(lhatc, color=colors.WHITE)
 
-    # DXF entities (LINE, TEXT, ...) reside in a layout (modelspace, 
-    # paperspace layout or block definition).  
+    # DXF entities (LINE, TEXT, ...) reside in a layout (modelspace,
+    # paperspace layout or block definition).
     msp = doc.modelspace()
     if info:
         #print('INFO!!')
@@ -727,7 +763,7 @@ def export(fp,dxf,scal=1.0,t_scal=1.0,info=''):
     APPID = "Sverchok"
     doc.appids.add(APPID)
     doc.header["$LWDISPLAY"] = 1
-    # Add entities to a layout by factory methods: layout.add_...() 
+    # Add entities to a layout by factory methods: layout.add_...()
 
     for data in dxf:
         #print(data)
