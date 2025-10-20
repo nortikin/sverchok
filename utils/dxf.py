@@ -68,7 +68,7 @@ def dxf_read(node, fp, resolution, scale, curve_degree, layers=None):
                 VT.extend(VT_)
                 TT.extend(TT_)
         elif entity.dxftype() in GEOMETRY_TYPES:
-            vers, edges, pols, curves, knots_out, VT_, TT_ = dxf_geometry_loader(node, entity, curve_degree, resolution, lifehack, scale)
+            vers, edges, pols, curves, knots, VT_, TT_ = dxf_geometry_loader(node, entity, curve_degree, resolution, lifehack, scale)
             if edges:
                 VE.extend(vers)
                 EE.extend(edges)
