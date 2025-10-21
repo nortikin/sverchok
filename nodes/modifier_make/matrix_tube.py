@@ -218,7 +218,19 @@ class SvMatrixTubeNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
         name = "Invert",
         default = False,
         description="Invert mask of faces. Has no influence if socket is not connected (All faces are used)",
-        update = updateNode) # type: ignore
+        update = updateNode)
+    
+    profile_faces_top_cap : bpy.props.BoolProperty(
+        name = "Invert",
+        default = True,
+        description="Top caps",
+        update = updateNode)
+    
+    profile_faces_bottom_cap : bpy.props.BoolProperty(
+        name = "Top ",
+        default = True,
+        description="Bottom caps",
+        update = updateNode)
     
     def draw_profile_faces_indexes_in_socket(self, socket, context, layout):
         grid = layout.grid_flow(row_major=False, columns=3, align=True)
@@ -268,6 +280,37 @@ class SvMatrixTubeNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
         else:
             col.enabled = True
         pass
+    
+    def draw_profile_faces_top_cap_in_socket(self, socket, context, layout):
+        col = layout.row(align=True)
+
+        objects_number = f'. {socket.objects_number}' if hasattr(socket, "objects_number")==True else '-'
+        col.label(text=f"{socket.label} {objects_number}")
+        if self.profile_faces_top_cap:
+            col.column().prop(self, 'profile_faces_top_cap', text='on', expand=True)
+        else:
+            col.column().prop(self, 'profile_faces_top_cap', text='off',  expand=True)
+        col.enabled = True
+        if socket.is_linked:
+            col.enabled = False
+        pass
+    
+    def draw_profile_faces_bottom_cap_in_socket(self, socket, context, layout):
+        col = layout.row(align=True)
+
+        objects_number = f'. {socket.objects_number}' if hasattr(socket, "objects_number")==True else '-'
+        col.label(text=f"{socket.label} {objects_number}")
+        if self.profile_faces_bottom_cap:
+            col.column().prop(self, 'profile_faces_bottom_cap', text='on', expand=True)
+        else:
+            col.column().prop(self, 'profile_faces_bottom_cap', text='off',  expand=True)
+        col.enabled = True
+        if socket.is_linked:
+            col.enabled = False
+        pass
+
+    def draw_buttons(self, context, layout):
+        pass
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', "vertices")
@@ -277,6 +320,8 @@ class SvMatrixTubeNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
         self.inputs.new('SvMatrixSocket'  , "tube_compensation_matrixes")
         #self.inputs.new('SvStringsSocket' , "tube_idx_per_face")
         self.inputs.new('SvStringsSocket' , 'profile_faces_close_mode')
+        self.inputs.new('SvStringsSocket' , 'profile_faces_top_cap')
+        self.inputs.new('SvStringsSocket' , 'profile_faces_bottom_cap')
 
         self.inputs["vertices"].label = "Vertices"
         self.inputs['profile_faces_indexes'].label = 'Faces'
@@ -288,6 +333,10 @@ class SvMatrixTubeNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
         #self.inputs["tube_idx_per_face"].label = "Tube indexes per face"
         self.inputs['profile_faces_close_mode'].label = 'Profile Close mode'
         self.inputs['profile_faces_close_mode'].custom_draw = 'draw_profile_faces_close_mode_in_socket'
+        self.inputs['profile_faces_top_cap'].label = 'Top caps'
+        self.inputs['profile_faces_top_cap'].custom_draw = 'draw_profile_faces_top_cap_in_socket'
+        self.inputs['profile_faces_bottom_cap'].label = 'Bottom caps'
+        self.inputs['profile_faces_bottom_cap'].custom_draw = 'draw_profile_faces_bottom_cap_in_socket'
 
         self.outputs.new('SvVerticesSocket', "vertices")
         self.outputs.new('SvStringsSocket', "edges")
@@ -363,7 +412,7 @@ class SvMatrixTubeNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
         faces_out = []
         tests_out = []
         vID = 0
-
+        M_ress = []
         for I, ofaces in enumerate(oprofile_faces_indexes3):
             if len(overtices)<=I-1:
                 # Прекращать расчёт, если объектов вершин меньше, чем объектов faces
@@ -382,44 +431,59 @@ class SvMatrixTubeNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
 
                 tube_matrixes_of_object_J  = tube_matrixes_of_object[J] if J<=len(tube_matrixes_of_object)-1 else tube_matrixes_of_object[-1]
                 tube_compensator_matrixes_J  = tube_compensator_matrixes_of_object[J] if J<=len(tube_compensator_matrixes_of_object)-1 else tube_compensator_matrixes_of_object[-1]
-                tube_matrixes_J_compensated = [tube_compensator_matrixes_J @ m for m in tube_matrixes_of_object_J]
-                tube_matrixes_J_compensated_0 = tube_matrixes_J_compensated[0]
-                tube_matrixes_J_compensated_0_inverted = tube_matrixes_J_compensated_0.inverted()
-                T, tube_matrixes_J_compensated_0_R, S = tube_matrixes_J_compensated_0.decompose()
+                tube_matrixes_of_object_J = [tube_compensator_matrixes_J @ m for m in tube_matrixes_of_object_J]
+                T_compensator, _, S_compensator = tube_compensator_matrixes_J.decompose()
+                tube_matrixes_J_0 = tube_matrixes_of_object_J[0]
+                tube_matrixes_J_0 = tube_matrixes_J_0
+                tube_matrixes_J_0_inverted = tube_matrixes_J_0.inverted()
+                T, tube_matrixes_J_compensated_0_R, S = tube_matrixes_J_0.decompose() # align XY-axis of face origin with first tube matrix XY-axis and rotation
                 e = tube_matrixes_J_compensated_0_R.to_euler('XYZ')
                 # reset x,y rotation
                 e.x = e.y = 0.0
-                tube_matrixes_J_compensated_0_R_Z = e.to_quaternion().to_matrix().to_4x4()
+                tube_matrixes_J_compensated_0_R_Z = e.to_quaternion().to_matrix().to_4x4() 
+                #tube_matrixes_J_compensated_0_R_Z = Matrix.LocRotScale(T, e.to_quaternion(), S)
                 tube_matrixes_J_compensated_0_R_Z_inverted = tube_matrixes_J_compensated_0_R_Z.inverted()
-                tube_matrixes_J_0_initial_position = [tube_matrixes_J_compensated_0_inverted @ m for m in tube_matrixes_J_compensated]
+                tube_matrixes_J_0_initial_position = [tube_matrixes_J_0_inverted @ m for m in tube_matrixes_of_object_J]
                 tube_matrixes_J_0_initial_position = [tube_matrixes_J_compensated_0_R_Z @ m for m in tube_matrixes_J_0_initial_position]
+                #tube_matrixes_J_0_initial_position = [ (Matrix.Translation(T) @ m) for m in tube_matrixes_J_0_initial_position]
+                #tube_matrixes_J_0_initial_position = [tube_compensator_matrixes_J @ m for m in tube_matrixes_J_0_initial_position]
 
                 #faces_origins_J = faces_origins[J]
                 faces_matrixes_J = faces_matrixes[J]
-                faces_matrixes_J_inverted = faces_matrixes_J.inverted()
-                faces_matrixes_J_inverted_compensated_0_R_Z_inverted = tube_matrixes_J_compensated_0_R_Z_inverted @ faces_matrixes_J_inverted
-                verts_for_tube = [( faces_matrixes_J_inverted_compensated_0_R_Z_inverted @ Vector(co) ).to_tuple() for co in verts]
+                #faces_matrixes_J_inverted = Matrix.Translation(T_compensator).inverted() @ faces_matrixes_J.inverted()
+                verts_for_tube = verts
+                #faces_matrixes_J_inverted_compensated_0_R_Z_inverted = tube_matrixes_J_compensated_0_R_Z_inverted @ faces_matrixes_J_inverted
+                #verts_for_tube = [( faces_matrixes_J_inverted_compensated_0_R_Z_inverted @ Vector(co) ).to_tuple() for co in verts_for_tube]
                 N = len(verts_for_tube)
                 K = len(tube_matrixes_J_0_initial_position)
                 # 1) собираем все слои вершин
-                extruded_verts1 = []
-                for M in tube_matrixes_J_0_initial_position:
-                    for co in verts_for_tube:
-                        # Mathutils: 4x4 @ Vector((x,y,z)) учитывает трансляцию
-                        # extruded_verts1.append((M @ Vector(co)).to_tuple())
-                        extruded_verts1.append(((M) @ Vector(co)).to_tuple())
-                extruded_verts_restored = [( faces_matrixes_J @ Vector(co) ).to_tuple() for co in extruded_verts1]
-                extruded_verts.extend(extruded_verts_restored)
+                # extruded_verts1 = []
+                # for M in tube_matrixes_J_0_initial_position:
+                #     for co in verts_for_tube:
+                #         # Mathutils: 4x4 @ Vector((x,y,z)) учитывает трансляцию
+                #         extruded_verts1.append(((M) @ Vector(co)).to_tuple())
+                extruded_verts1 = verts_for_tube
+                #extruded_verts1 = [(M @ Vector(co)).to_tuple() for M in tube_matrixes_J_0_initial_position for co in extruded_verts1]
+                M_pre0 = Matrix.Translation(T_compensator) @ Matrix.Diagonal((S_compensator.x, S_compensator.y, S_compensator.z, 1))
+                M_pre = faces_matrixes_J @ M_pre0
+                M_post = tube_matrixes_J_compensated_0_R_Z_inverted @ (Matrix.Translation(T_compensator).inverted() @ faces_matrixes_J.inverted())
+                #extruded_verts1 = [ ( (M_pre @ M @ M_post) @ Vector(co)).to_tuple() for M in tube_matrixes_J_0_initial_position for co in extruded_verts1]
+                M_res = [(M_pre @ M @ M_post) for M in tube_matrixes_J_0_initial_position]
+                #extruded_verts1 = [ ( (M_pre @ M @ M_post) @ Vector(co)).to_tuple() for M in tube_matrixes_J_0_initial_position for co in extruded_verts1]
+                extruded_verts1 = [ ( M @ Vector(co)).to_tuple() for M in M_res for co in extruded_verts1]
+                #extruded_verts1 = [( ( faces_matrixes_J @ Matrix.Translation(T_compensator) ) @ Vector(co) ).to_tuple() for co in extruded_verts1]
+                extruded_verts.extend(extruded_verts1)
 
-                edges, faces = make_edges_and_faces(start_pos, K, N, False, True, (False, False, True), True, True)
+                edges, faces = make_edges_and_faces(start_pos, K, N, self.profile_faces_bottom_cap, self.profile_faces_top_cap, (False, False, True), True, True)
                 obj_edges.extend(edges)
                 obj_faces.extend(faces)
                 start_pos+=K*N
+                M_ress.append(M_res[0])
 
             verts_out.append(extruded_verts)
             edges_out.append(obj_edges)
             faces_out.append(obj_faces)
-            tests_out.append([faces_matrixes_J])
+            tests_out.append(M_ress)
         # end face
         # reversing list fixes face normal direction keeps mesh manifold
         #f = list(range(vID, vID-nring, -1))
