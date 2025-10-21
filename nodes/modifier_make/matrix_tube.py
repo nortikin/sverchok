@@ -357,7 +357,7 @@ class SvMatrixTubeNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
         faces_out.append(f)
         return verts_out, edges_out, faces_out
 
-    def make_tube(self, overtices, oprofile_faces_indexes3, tube_matrixes3, tube_compensation_matrixes2_input):
+    def make_tube(self, overtices, oprofile_faces_indexes3, tube_matrixes3, tube_compensator_matrixes2_input):
         verts_out = []
         edges_out = []
         faces_out = []
@@ -370,7 +370,7 @@ class SvMatrixTubeNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
                 break
             overts = overtices[I]
             tube_matrixes_of_object  = tube_matrixes3[I] if len(tube_matrixes3)<=I-1 else tube_matrixes3[-1]
-            tube_compensation_matrixes_of_object = tube_compensation_matrixes2_input[I] if len(tube_compensation_matrixes2_input)<=I-1 else tube_compensation_matrixes2_input[-1]
+            tube_compensator_matrixes_of_object = tube_compensator_matrixes2_input[I] if len(tube_compensator_matrixes2_input)<=I-1 else tube_compensator_matrixes2_input[-1]
 
             extruded_verts = []
             start_pos = 0
@@ -381,8 +381,8 @@ class SvMatrixTubeNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
                 verts = [overts[idx] for idx in face_indexes]
 
                 tube_matrixes_of_object_J  = tube_matrixes_of_object[J] if J<=len(tube_matrixes_of_object)-1 else tube_matrixes_of_object[-1]
-                tube_compensation_matrixes_J  = tube_compensation_matrixes_of_object[J] if J<=len(tube_compensation_matrixes_of_object)-1 else tube_compensation_matrixes_of_object[-1]
-                tube_matrixes_J_compensated = [tube_compensation_matrixes_J @ m for m in tube_matrixes_of_object_J]
+                tube_compensator_matrixes_J  = tube_compensator_matrixes_of_object[J] if J<=len(tube_compensator_matrixes_of_object)-1 else tube_compensator_matrixes_of_object[-1]
+                tube_matrixes_J_compensated = [tube_compensator_matrixes_J @ m for m in tube_matrixes_of_object_J]
                 tube_matrixes_J_compensated_0 = tube_matrixes_J_compensated[0]
                 tube_matrixes_J_compensated_0_inverted = tube_matrixes_J_compensated_0.inverted()
                 T, tube_matrixes_J_compensated_0_R, S = tube_matrixes_J_compensated_0.decompose()
