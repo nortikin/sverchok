@@ -749,12 +749,27 @@ class SocketStruct(Struct):
         _set_optional(self._struct["attributes"], 'hide', socket.hide)
         _set_optional(self._struct, "attributes", self._struct["attributes"])
 
-        for prop_name in socket.keys():
-            prop = BPYProperty(socket, prop_name)
-            if prop.is_valid and prop.is_to_save:
-                raw_struct = factories.prop(prop.name, self.logger).export(prop, factories, dependencies)
-                if raw_struct is not None:
-                    self._struct["properties"][prop.name] = raw_struct
+        # FIX: Проверка версии Blender для совместимости
+        if bpy.app.version < (4, 0):
+            # Для версий до 4.0 используем старый подход с keys()
+            for prop_name in socket.keys():
+                prop = BPYProperty(socket, prop_name)
+                if prop.is_valid and prop.is_to_save:
+                    raw_struct = factories.prop(prop.name, self.logger).export(prop, factories, dependencies)
+                    if raw_struct is not None:
+                        self._struct["properties"][prop.name] = raw_struct
+        else:
+            # Для Blender 4.0+ проверяем наличие свойств через hasattr и getattr
+            # Собираем все возможные свойства сокета
+            socket_props = ['default_value', 'hide_value', 'display_shape', 'enabled']
+            for prop_name in socket_props:
+                if hasattr(socket, prop_name):
+                    prop = BPYProperty(socket, prop_name)
+                    if prop.is_valid and prop.is_to_save:
+                        raw_struct = factories.prop(prop.name, self.logger).export(prop, factories, dependencies)
+                        if raw_struct is not None:
+                            self._struct["properties"][prop.name] = raw_struct
+        
         _set_optional(self._struct, "properties", self._struct["properties"])
 
         return self._struct
