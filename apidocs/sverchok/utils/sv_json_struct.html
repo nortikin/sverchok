@@ -1676,12 +1676,27 @@ Structure of the class can be just a value or usual dictionary (in case of a poi
         _set_optional(self._struct[&#34;attributes&#34;], &#39;hide&#39;, socket.hide)
         _set_optional(self._struct, &#34;attributes&#34;, self._struct[&#34;attributes&#34;])
 
-        for prop_name in socket.keys():
-            prop = BPYProperty(socket, prop_name)
-            if prop.is_valid and prop.is_to_save:
-                raw_struct = factories.prop(prop.name, self.logger).export(prop, factories, dependencies)
-                if raw_struct is not None:
-                    self._struct[&#34;properties&#34;][prop.name] = raw_struct
+        # FIX: Проверка версии Blender для совместимости
+        if bpy.app.version &lt; (4, 0):
+            # Для версий до 4.0 используем старый подход с keys()
+            for prop_name in socket.keys():
+                prop = BPYProperty(socket, prop_name)
+                if prop.is_valid and prop.is_to_save:
+                    raw_struct = factories.prop(prop.name, self.logger).export(prop, factories, dependencies)
+                    if raw_struct is not None:
+                        self._struct[&#34;properties&#34;][prop.name] = raw_struct
+        else:
+            # Для Blender 4.0+ проверяем наличие свойств через hasattr и getattr
+            # Собираем все возможные свойства сокета
+            socket_props = [&#39;default_value&#39;, &#39;hide_value&#39;, &#39;display_shape&#39;, &#39;enabled&#39;]
+            for prop_name in socket_props:
+                if hasattr(socket, prop_name):
+                    prop = BPYProperty(socket, prop_name)
+                    if prop.is_valid and prop.is_to_save:
+                        raw_struct = factories.prop(prop.name, self.logger).export(prop, factories, dependencies)
+                        if raw_struct is not None:
+                            self._struct[&#34;properties&#34;][prop.name] = raw_struct
+        
         _set_optional(self._struct, &#34;properties&#34;, self._struct[&#34;properties&#34;])
 
         return self._struct
@@ -1787,12 +1802,27 @@ Structure of the class can be just a value or usual dictionary (in case of a poi
     _set_optional(self._struct[&#34;attributes&#34;], &#39;hide&#39;, socket.hide)
     _set_optional(self._struct, &#34;attributes&#34;, self._struct[&#34;attributes&#34;])
 
-    for prop_name in socket.keys():
-        prop = BPYProperty(socket, prop_name)
-        if prop.is_valid and prop.is_to_save:
-            raw_struct = factories.prop(prop.name, self.logger).export(prop, factories, dependencies)
-            if raw_struct is not None:
-                self._struct[&#34;properties&#34;][prop.name] = raw_struct
+    # FIX: Проверка версии Blender для совместимости
+    if bpy.app.version &lt; (4, 0):
+        # Для версий до 4.0 используем старый подход с keys()
+        for prop_name in socket.keys():
+            prop = BPYProperty(socket, prop_name)
+            if prop.is_valid and prop.is_to_save:
+                raw_struct = factories.prop(prop.name, self.logger).export(prop, factories, dependencies)
+                if raw_struct is not None:
+                    self._struct[&#34;properties&#34;][prop.name] = raw_struct
+    else:
+        # Для Blender 4.0+ проверяем наличие свойств через hasattr и getattr
+        # Собираем все возможные свойства сокета
+        socket_props = [&#39;default_value&#39;, &#39;hide_value&#39;, &#39;display_shape&#39;, &#39;enabled&#39;]
+        for prop_name in socket_props:
+            if hasattr(socket, prop_name):
+                prop = BPYProperty(socket, prop_name)
+                if prop.is_valid and prop.is_to_save:
+                    raw_struct = factories.prop(prop.name, self.logger).export(prop, factories, dependencies)
+                    if raw_struct is not None:
+                        self._struct[&#34;properties&#34;][prop.name] = raw_struct
+    
     _set_optional(self._struct, &#34;properties&#34;, self._struct[&#34;properties&#34;])
 
     return self._struct</code></pre>
