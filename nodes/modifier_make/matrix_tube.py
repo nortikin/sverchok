@@ -203,18 +203,30 @@ class SvMatrixTubeNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
         update = updateNode
         )
     
-    profile_faces_id_to_extrude_modes = [
+    profile_faces_indexes_to_extrude_modes = [
         ('BOOLEANS', "Booleans", "Boolean values (0/1) as mask of Voronoi Sites per objects [[0,1,0,0,1,1],[1,1,0,0,1],...]. Has no influence if socket is not connected (All sites are used)", 0),
         ('INDEXES', "Indexes", "Indexes as mask of Voronoi Sites per objects [[1,2,0,4],[0,1,4,5,7],..]. Has no influence if socket is not connected (All sites are used)", 1),
     ]
-    profile_faces_id_to_extrude_mode : bpy.props.EnumProperty(
-        name = "Mask of shapes",
-        items = profile_faces_id_to_extrude_modes,
+    profile_faces_indexes_to_extrude_mode : bpy.props.EnumProperty(
+        name = "Indexes of faces",
+        description="What faces to extrude: boolean or indexes",
+        items = profile_faces_indexes_to_extrude_modes,
         default = 'BOOLEANS',
         update = updateNode
         )
     
-    profile_faces_id_to_extrude_inversion : bpy.props.BoolProperty(
+    target_faces_indexes_modes = [
+        ('BOOLEANS', "Booleans", "Boolean (0/1) what faces extruded", 0),
+        ('INDEXES', "Indexes", "Indexes of extruded faces", 1),
+    ]
+    target_faces_indexes_mode : bpy.props.EnumProperty(
+        name = "Faces indexes",
+        items = target_faces_indexes_modes,
+        default = 'BOOLEANS',
+        update = updateNode
+        )
+    
+    profile_faces_indexes_to_extrude_inversion : bpy.props.BoolProperty(
         name = "Invert",
         default = False,
         description="Invert mask of faces. Has no influence if socket is not connected (All faces are used)",
@@ -249,7 +261,7 @@ class SvMatrixTubeNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
             col.label(text=f"{socket.label} {socket_label}")
         pass
 
-    def draw_profile_faces_id_to_extrude_in_socket(self, socket, context, layout):
+    def draw_profile_faces_indexes_to_extrude_in_socket(self, socket, context, layout):
         grid = layout.grid_flow(row_major=True, columns=2)
         col2 = grid.column()
         col2_row1 = col2.row()
@@ -260,9 +272,9 @@ class SvMatrixTubeNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
             col2_row1.label(text=f"{socket.label}:")
         col2_row2 = col2.row()
         col2_row2.alignment='LEFT'
-        col2_row2.column(align=True).prop(self, "profile_faces_id_to_extrude_inversion")
+        col2_row2.column(align=True).prop(self, "profile_faces_indexes_to_extrude_inversion")
         col3 = grid.column()
-        col3.prop(self, "profile_faces_id_to_extrude_mode", expand=True)
+        col3.prop(self, "profile_faces_indexes_to_extrude_mode", expand=True)
 
         col2_row2.enabled = True
         col3.enabled = True
@@ -309,15 +321,27 @@ class SvMatrixTubeNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
             col.enabled = False
         pass
 
+    def draw_target_faces_indexes_mode_out_socket(self, socket, context, layout):
+        grid = layout.grid_flow(row_major=False, columns=3, align=True)
+        col = grid.row()
+        col.prop(self, 'target_faces_indexes_mode', expand=True, )
+        if socket.is_linked:  # linked INPUT or OUTPUT
+            layout.label(text=f"{socket.label}. {socket.objects_number or ''}")
+        else:
+            layout.label(text=f'{socket.label}')
+        pass
+    
+
+
     def draw_buttons(self, context, layout):
         pass
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', "vertices")
         self.inputs.new('SvStringsSocket' , 'profile_faces_indexes')
-        self.inputs.new('SvStringsSocket' , 'profile_faces_id_to_extrude')
+        self.inputs.new('SvStringsSocket' , 'profile_faces_indexes_to_extrude')
         self.inputs.new('SvMatrixSocket'  , "tube_matrixes")
-        self.inputs.new('SvMatrixSocket'  , "tube_compensation_matrixes")
+        self.inputs.new('SvMatrixSocket'  , "tube_adjustment_matrixes")
         #self.inputs.new('SvStringsSocket' , "tube_idx_per_face")
         self.inputs.new('SvStringsSocket' , 'profile_faces_close_mode')
         self.inputs.new('SvStringsSocket' , 'profile_faces_top_cap')
@@ -326,10 +350,10 @@ class SvMatrixTubeNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
         self.inputs["vertices"].label = "Vertices"
         self.inputs['profile_faces_indexes'].label = 'Faces'
         self.inputs['profile_faces_indexes'].custom_draw = 'draw_profile_faces_indexes_in_socket'
-        self.inputs['profile_faces_id_to_extrude'].label = "Faces ids"
-        self.inputs['profile_faces_id_to_extrude'].custom_draw = 'draw_profile_faces_id_to_extrude_in_socket'
+        self.inputs['profile_faces_indexes_to_extrude'].label = "Faces ids"
+        self.inputs['profile_faces_indexes_to_extrude'].custom_draw = 'draw_profile_faces_indexes_to_extrude_in_socket'
         self.inputs["tube_matrixes"].label = "Tube Matrixes"
-        self.inputs["tube_compensation_matrixes"].label = "Tube Compensation Matrixes"
+        self.inputs["tube_adjustment_matrixes"].label = "Adjustment Matrixes"
         #self.inputs["tube_idx_per_face"].label = "Tube indexes per face"
         self.inputs['profile_faces_close_mode'].label = 'Profile Close mode'
         self.inputs['profile_faces_close_mode'].custom_draw = 'draw_profile_faces_close_mode_in_socket'
@@ -341,11 +365,17 @@ class SvMatrixTubeNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
         self.outputs.new('SvVerticesSocket', "vertices")
         self.outputs.new('SvStringsSocket', "edges")
         self.outputs.new('SvStringsSocket', "faces")
+        self.outputs.new('SvStringsSocket', "result_faces_indexes")
+        self.outputs.new('SvMatrixSocket', "target_matrices")
         self.outputs.new('SvMatrixSocket', "tests")
 
         self.outputs["vertices"].label = "Vertices"
         self.outputs["edges"].label = "Edges"
         self.outputs["faces"].label = "Faces"
+        self.outputs["result_faces_indexes"].label = "Faces Indexes"
+        self.outputs['result_faces_indexes'].custom_draw = 'draw_target_faces_indexes_mode_out_socket'
+        self.outputs["target_matrices"].label = "Target Matrixes"
+        self.outputs["tests"].label = "tests output"
 
     @property
     def sv_internal_links(self):
@@ -361,17 +391,26 @@ class SvMatrixTubeNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
         vertices3              = ensure_nesting_level(_vertices, 3)
         _profile_faces_indexes = self.inputs['profile_faces_indexes'].sv_get(default=[[]], deepcopy=False)
         profile_faces_indexes3 = ensure_nesting_level(_profile_faces_indexes, 3)
+
+        profile_faces_indexes_to_extrude_is_linked = self.inputs['profile_faces_indexes_to_extrude'].is_linked
+        if profile_faces_indexes_to_extrude_is_linked:
+            _profile_faces_indexes_to_extrude = self.inputs['profile_faces_indexes_to_extrude'].sv_get(default=[[]], deepcopy=False)
+            profile_faces_indexes_to_extrude2 = ensure_nesting_level(_profile_faces_indexes_to_extrude, 2)
+        else:
+            profile_faces_indexes_to_extrude2 = None
+
         _tube_matrixes         = self.inputs['tube_matrixes'].sv_get(default=[[]], deepcopy=False)
         tube_matrixes3         = ensure_nesting_level(_tube_matrixes, 3)
-        _tube_compensation_matrixes = self.inputs['tube_compensation_matrixes'].sv_get(default=[[Matrix()]], deepcopy=False)
-        tube_compensation_matrixes2 = ensure_nesting_level(_tube_compensation_matrixes, 2)
+        _tube_adjustment_matrixes = self.inputs['tube_adjustment_matrixes'].sv_get(default=[[Matrix()]], deepcopy=False)
+        tube_adjustment_matrixes2 = ensure_nesting_level(_tube_adjustment_matrixes, 2)
 
         #vertices = Vector_generate(self.inputs['vertices'].sv_get())
         #matrixes = Matrix_generate(self.inputs['matrixes'].sv_get())
-        verts_out, edges_out, faces_out, tests_out = self.make_tube(vertices3, profile_faces_indexes3, tube_matrixes3, tube_compensation_matrixes2)
+        verts_out, edges_out, faces_out, target_matrices, tests_out = self.make_tube(vertices3, profile_faces_indexes3, self.profile_faces_indexes_to_extrude_mode, self.profile_faces_indexes_to_extrude_inversion, profile_faces_indexes_to_extrude2, self.target_faces_indexes_mode, tube_matrixes3, tube_adjustment_matrixes2)
         self.outputs['vertices'].sv_set(verts_out)
         self.outputs['edges'].sv_set(edges_out)
         self.outputs['faces'].sv_set(faces_out)
+        self.outputs['target_matrices'].sv_set(target_matrices)
         self.outputs['tests'].sv_set(tests_out)
 
     def make_tube_00(self, matrixes, vertices, profile_faces_indexes3):
@@ -406,33 +445,83 @@ class SvMatrixTubeNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
         faces_out.append(f)
         return verts_out, edges_out, faces_out
 
-    def make_tube(self, overtices, oprofile_faces_indexes3, tube_matrixes3, tube_compensator_matrixes2_input):
+    def make_tube(self, overtices, oprofile_faces_indexes3, profile_faces_indexes_to_extrude_mode, profile_faces_indexes_to_extrude_inversion, profile_faces_indexes_to_extrude2, target_faces_indexes_mode, tube_matrixes3, tube_adjustment_matrixes2_input):
         verts_out = []
         edges_out = []
         faces_out = []
         tests_out = []
         vID = 0
         M_ress = []
+        # Какие матрицы получаются в результате extrude (финальная матрица, чтобы от неё можно было бы что-то достроить на ней)
+        target_matrixes = []
+        target_object_matrixes = []
+        target_faces_indexes = []
         for I, ofaces in enumerate(oprofile_faces_indexes3):
             if len(overtices)<=I-1:
                 # Прекращать расчёт, если объектов вершин меньше, чем объектов faces
                 break
             overts = overtices[I]
             tube_matrixes_of_object  = tube_matrixes3[I] if len(tube_matrixes3)<=I-1 else tube_matrixes3[-1]
-            tube_compensator_matrixes_of_object = tube_compensator_matrixes2_input[I] if len(tube_compensator_matrixes2_input)<=I-1 else tube_compensator_matrixes2_input[-1]
+            tube_adjustment_matrixes_of_object = tube_adjustment_matrixes2_input[I] if len(tube_adjustment_matrixes2_input)<=I-1 else tube_adjustment_matrixes2_input[-1]
+            profile_faces_indexes_to_extrude2_I_len = len(ofaces)
+            if profile_faces_indexes_to_extrude2 is not None:
+                if profile_faces_indexes_to_extrude_mode=='BOOLEANS':
+                    # По умолчанию в режиме boolean все faces выключены, т.к. extrude должна быть явнаа
+                    # Определить этот список заранее, т.к. входной список может
+                    # оказатся короче и тогда часть значений может оказаться неинициализированной.
+                    # Если значений будет больше, то они будут проигнорированы
+                    profile_faces_indexes_to_extrude2_I = [False]*len(ofaces)
+                else:
+                    # По умолчанию в режиме indexes все faces считаются отключенными.
+                    # Определить этот список заранее, т.к. считается что при задании индексами
+                    # сначала все faces выключены, а индексы их включают.
+                    profile_faces_indexes_to_extrude2_I = [False]*len(ofaces)
+
+                # Применить параметры сокета на массив faces по умолчанию
+                for elem_I, elem in enumerate(profile_faces_indexes_to_extrude2[I]):
+                    if profile_faces_indexes_to_extrude_mode=='BOOLEANS':
+                        if elem_I<=profile_faces_indexes_to_extrude2_I_len-1:
+                            profile_faces_indexes_to_extrude2_I[elem_I] = elem
+                            pass
+                        else:
+                            break
+                    else:
+                        if elem<=profile_faces_indexes_to_extrude2_I_len-1:
+                            profile_faces_indexes_to_extrude2_I[elem] = True
+                            pass
+                if profile_faces_indexes_to_extrude_inversion==True:
+                    for elem_I, elem in enumerate(profile_faces_indexes_to_extrude2_I):
+                        profile_faces_indexes_to_extrude2_I[elem_I] = not(elem)
+            else:
+                # Если данных нет, то делать extrude на всех faces
+                profile_faces_indexes_to_extrude2_I = [True]*len(ofaces)
 
             extruded_verts = []
             start_pos = 0
             obj_edges = []
             obj_faces = []
+            target_faces_indexes_I = []
             faces_origins, faces_normals, faces_tangents, faces_matrixes = get_origin(overts, [], ofaces, "Faces")
             for J, face_indexes in enumerate(ofaces):
+                if target_faces_indexes_mode=='BOOLEANS':
+                    # Если результирующие индексы должны быть BOOLEAN, то собирать инфу об extude со всех индексов подряд
+                    target_faces_indexes_I.append(profile_faces_indexes_to_extrude2_I[J])
+                else: # INDEXES
+                    # Если результирующие индексы должны быть ЧИСЛАМИ, то собирать инфу только об индексах
+                    # на faces на которых реализовано extrude
+                    if profile_faces_indexes_to_extrude2_I[J]==True:
+                        target_faces_indexes_I.append(J)
+
+                if profile_faces_indexes_to_extrude2_I[J]==False:
+                    # Если extrude отменено, то, естественно, пропустить:
+                    continue
+
                 verts = [overts[idx] for idx in face_indexes]
 
                 tube_matrixes_of_object_J  = tube_matrixes_of_object[J] if J<=len(tube_matrixes_of_object)-1 else tube_matrixes_of_object[-1]
-                tube_compensator_matrixes_J  = tube_compensator_matrixes_of_object[J] if J<=len(tube_compensator_matrixes_of_object)-1 else tube_compensator_matrixes_of_object[-1]
-                tube_matrixes_of_object_J = [tube_compensator_matrixes_J @ m for m in tube_matrixes_of_object_J]
-                T_compensator, _, S_compensator = tube_compensator_matrixes_J.decompose()
+                tube_adjustment_matrixes_J  = tube_adjustment_matrixes_of_object[J] if J<=len(tube_adjustment_matrixes_of_object)-1 else tube_adjustment_matrixes_of_object[-1]
+                tube_matrixes_of_object_J = [tube_adjustment_matrixes_J @ m for m in tube_matrixes_of_object_J]
+                T_compensator, _, S_compensator = tube_adjustment_matrixes_J.decompose()
                 tube_matrixes_J_0 = tube_matrixes_of_object_J[0]
                 tube_matrixes_J_0 = tube_matrixes_J_0
                 tube_matrixes_J_0_inverted = tube_matrixes_J_0.inverted()
@@ -446,7 +535,7 @@ class SvMatrixTubeNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
                 tube_matrixes_J_0_initial_position = [tube_matrixes_J_0_inverted @ m for m in tube_matrixes_of_object_J]
                 tube_matrixes_J_0_initial_position = [tube_matrixes_J_compensated_0_R_Z @ m for m in tube_matrixes_J_0_initial_position]
                 #tube_matrixes_J_0_initial_position = [ (Matrix.Translation(T) @ m) for m in tube_matrixes_J_0_initial_position]
-                #tube_matrixes_J_0_initial_position = [tube_compensator_matrixes_J @ m for m in tube_matrixes_J_0_initial_position]
+                #tube_matrixes_J_0_initial_position = [tube_adjustment_matrixes_J @ m for m in tube_matrixes_J_0_initial_position]
 
                 #faces_origins_J = faces_origins[J]
                 faces_matrixes_J = faces_matrixes[J]
@@ -466,29 +555,35 @@ class SvMatrixTubeNodeMK2(ModifierNode, SverchCustomTreeNode, bpy.types.Node):
                 #extruded_verts1 = [(M @ Vector(co)).to_tuple() for M in tube_matrixes_J_0_initial_position for co in extruded_verts1]
                 M_pre0 = Matrix.Translation(T_compensator) @ Matrix.Diagonal((S_compensator.x, S_compensator.y, S_compensator.z, 1))
                 M_pre = faces_matrixes_J @ M_pre0
-                M_post = tube_matrixes_J_compensated_0_R_Z_inverted @ (Matrix.Translation(T_compensator).inverted() @ faces_matrixes_J.inverted())
+                M_post = tube_matrixes_J_compensated_0_R_Z_inverted @ Matrix.Diagonal((S_compensator.x, S_compensator.y, S_compensator.z, 1)) @ (Matrix.Translation(T_compensator).inverted() @ faces_matrixes_J.inverted())
                 #extruded_verts1 = [ ( (M_pre @ M @ M_post) @ Vector(co)).to_tuple() for M in tube_matrixes_J_0_initial_position for co in extruded_verts1]
                 M_res = [(M_pre @ M @ M_post) for M in tube_matrixes_J_0_initial_position]
                 #extruded_verts1 = [ ( (M_pre @ M @ M_post) @ Vector(co)).to_tuple() for M in tube_matrixes_J_0_initial_position for co in extruded_verts1]
                 extruded_verts1 = [ ( M @ Vector(co)).to_tuple() for M in M_res for co in extruded_verts1]
                 #extruded_verts1 = [( ( faces_matrixes_J @ Matrix.Translation(T_compensator) ) @ Vector(co) ).to_tuple() for co in extruded_verts1]
                 extruded_verts.extend(extruded_verts1)
+                #target_object_matrixes.append(M_res[0])
+                target_object_matrixes.append(M_res[-1] @ faces_matrixes_J)
 
                 edges, faces = make_edges_and_faces(start_pos, K, N, self.profile_faces_bottom_cap, self.profile_faces_top_cap, (False, False, True), True, True)
                 obj_edges.extend(edges)
                 obj_faces.extend(faces)
                 start_pos+=K*N
                 M_ress.append(M_res[0])
+                
+                pass
 
             verts_out.append(extruded_verts)
             edges_out.append(obj_edges)
             faces_out.append(obj_faces)
+            target_faces_indexes.append(target_faces_indexes_I)
+            target_matrixes.append( target_object_matrixes )
             tests_out.append(M_ress)
         # end face
         # reversing list fixes face normal direction keeps mesh manifold
         #f = list(range(vID, vID-nring, -1))
         #faces_out.append(f)
-        return verts_out, edges_out, faces_out, tests_out
+        return verts_out, edges_out, faces_out, target_matrixes, tests_out
 
 
 def register():
