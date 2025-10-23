@@ -225,7 +225,7 @@ class SvRndNumGen(SverchCustomTreeNode, bpy.types.Node):
         if self.unique:
             size = min(size, high + 1 - low)
         seed = max(seed, 0)
-        np.random.seed(seed)
+        np.random.seed(int(seed))
         low, high = sorted([low, high])
         population = np.arange(low, high + 1)
 
@@ -268,7 +268,7 @@ class SvRndNumGen(SverchCustomTreeNode, bpy.types.Node):
         args = [size, alpha, beta, t_in, low, high, 1]
         args = [args[i] for i in func[2]]
 
-        np.random.seed(seed)
+        np.random.seed(int(seed))
         result = func[1](*args)
 
         if func[3]:
