@@ -14,6 +14,7 @@ from mathutils.noise import random, seed_set
 import bpy
 from bpy.props import StringProperty, FloatProperty, IntProperty, EnumProperty, BoolProperty, FloatVectorProperty
 
+import struct
 import gpu
 from gpu_extras.batch import batch_for_shader
 
@@ -30,6 +31,21 @@ from sverchok.utils.modules.vertex_utils import np_vertex_normals
 from sverchok.utils.math import np_dot
 from sverchok.utils.sv_3dview_tools import Sv3DviewAlign
 from sverchok.utils.sv_obj_baker import SvObjBakeMK3
+
+def matrix_to_column_major_floats(matrix):
+    # Matrix in Blender are row-major but GLSL wants column-major
+    res = []
+    for col in range(4):
+        res.extend([matrix[row][col] for row in range(4)])
+    return res
+
+def matrix_to_list(matrix):
+    # Matrix in Blender are row-major but GLSL wants column-major
+    res = []
+    for row in range(4):
+        res.extend([matrix[row][col] for col in range(4)])
+    return res
+
 
 socket_dict = {
     'vector_color': ('display_verts', 'UV_VERTEXSEL', 'color_per_point', 'vector_random_colors', 'random_seed'),
@@ -234,38 +250,79 @@ def view_3d_geom(context, args):
                 else:
 
                     ##### Try to build lines with bias - works norms. But there is an artifact when looking at the plane at a sharp angle: the back lines start to break up and are not very well drawn.
-                    VERT_BIAS = """
-                    in vec3 pos;
-                    uniform mat4 modelViewMatrix;
-                    uniform mat4 projectionMatrix;
+                    EDGE_SHADER_VERT_SOURCE = """
+layout(location=0) out vec4 vColor;
+void main()
+{
+    vec4 v = buf.modelViewMatrix * vec4(pos,1.0);
+    gl_Position = buf.projectionMatrix * v;
+    vColor = buf.color;
+}
+                    """
+                    EDGE_SHADER_FRAG_SOURCE = """
+layout(location=0) out vec4 FragColor;
+void main(){
+    float adaptive = buf.depthBias * gl_FragCoord.w;
+    float z = gl_FragCoord.z - adaptive;
+    FragColor = buf.color;
+    gl_FragDepth = clamp(z, 0.0, 1.0);
+}
+                    """
+                    # shader_bias = gpu.types.GPUShader(VERT_BIAS, FRAG_BIAS)
+                    # config.e_shader = shader_bias
+                    # e_batch = batch_for_shader(config.e_shader, 'LINES', {"pos": geom.e_vertices}, indices=geom.e_indices)
+                    # drawing.enable_depth_test()
+                    # drawing.disable_blendmode()
+                    # config.e_shader.bind()
+                    # config.e_shader.uniform_float(           "color", config.edge_color[0][0])
+                    # config.e_shader.uniform_float( "modelViewMatrix", gpu.matrix.get_model_view_matrix())
+                    # config.e_shader.uniform_float("projectionMatrix", gpu.matrix.get_projection_matrix())
+                    # config.e_shader.uniform_float(       "depthBias", depthBias)
+                    # e_batch.draw(config.e_shader)
+                    
+                    shader_info = gpu.types.GPUShaderCreateInfo()
+                    shader_info.typedef_source("""
+struct BufferData {
+    mat4 modelViewMatrix;
+    mat4 projectionMatrix;
+    vec4 color;
+    float depthBias;  // ~1e-6..1e-4
+};
+""")
+                    # vert_out = gpu.types.GPUStageInterfaceInfo("my_interface")
+                    # vert_out.smooth('VEC4', "vColor")
 
-                    void main()
-                    {
-                        vec4 v = modelViewMatrix * vec4(pos,1.0);
-                        gl_Position = projectionMatrix * v;
-                    }
-                    """
-                    FRAG_BIAS = """
-                    uniform vec4 color;
-                    uniform float depthBias;  // ~1e-6..1e-4
-                    out vec4 FragColor;
-                    void main(){
-                        FragColor = color;
-                        float adaptive = depthBias * gl_FragCoord.w;
-                        float z = gl_FragCoord.z - adaptive;
-                        gl_FragDepth = clamp(z, 0.0, 1.0);
-                    }
-                    """
-                    shader_bias = gpu.types.GPUShader(VERT_BIAS, FRAG_BIAS)
+
+                    shader_info.vertex_source(EDGE_SHADER_VERT_SOURCE)
+                    shader_info.fragment_source(EDGE_SHADER_FRAG_SOURCE)
+                    shader_info.uniform_buf(0, "BufferData", "buf")
+                    shader_info.vertex_in(0, "VEC3", "pos")
+                    #shader_info.vertex_out(vert_out)
+                    #shader_info.fragment_out(0, "VEC4", "FragColor")
+                    #shader_info.vertex_in(1, "VEC4", "color")
+
+                    shader_bias = gpu.shader.create_from_info(shader_info)
+                    #del vert_out
+                    del shader_info
                     config.e_shader = shader_bias
                     e_batch = batch_for_shader(config.e_shader, 'LINES', {"pos": geom.e_vertices}, indices=geom.e_indices)
                     drawing.enable_depth_test()
                     drawing.disable_blendmode()
+                    #gpu.state.depth_mask_set(True)
                     config.e_shader.bind()
-                    config.e_shader.uniform_float(           "color", config.edge_color[0][0])
-                    config.e_shader.uniform_float( "modelViewMatrix", gpu.matrix.get_model_view_matrix())
-                    config.e_shader.uniform_float("projectionMatrix", gpu.matrix.get_projection_matrix())
-                    config.e_shader.uniform_float(       "depthBias", depthBias)
+
+                    uniform_data = matrix_to_column_major_floats(gpu.matrix.get_model_view_matrix()) + matrix_to_column_major_floats(gpu.matrix.get_projection_matrix()) + list(config.edge_color[0][0]) + [depthBias*1.0]+[0.0, 0.0, 0.0]
+                    len_uniform_data = len(uniform_data)
+                    data_bytes = struct.pack(f'{len_uniform_data}f', *uniform_data)
+                    uniform_buf = gpu.types.GPUUniformBuf(data_bytes)
+                    #config.e_shader.uniform_buffer_set("Buffer", uniform_buf)
+                    #uniform_buf.bind(0)
+                    config.e_shader.uniform_block("buf", uniform_buf)
+
+                    #config.e_shader.uniform_float(           "color", config.edge_color[0][0])
+                    #config.e_shader.uniform_float( "modelViewMatrix", gpu.matrix.get_model_view_matrix())
+                    #config.e_shader.uniform_float("projectionMatrix", gpu.matrix.get_projection_matrix())
+                    #config.e_shader.uniform_float(       "depthBias", depthBias)
                     e_batch.draw(config.e_shader)
 
                     pass
