@@ -83,17 +83,17 @@ default_geometry_shader = '''
 
 default_fragment_shader = '''
 
-    in VS_OUT
-    {
-        vec3 FaceNormal;
-    } fs_in;
+in VS_OUT
+{
+    vec3 FaceNormal;
+} fs_in;
 
-    out vec4 gl_FragColor;
+out vec4 fragColor;
 
-    void main()
-    {
-        gl_FragColor = vec4(fs_in.FaceNormal.xyz, 0.7);
-    }
+void main()
+{
+    fragColor = vec4(fs_in.FaceNormal.xyz, 0.7);
+}
 '''
 
 
@@ -216,112 +216,122 @@ def view_3d_geom(context, args):
             shader.uniform_float("m_color", geom.e_vertex_colors[0])
             batch.draw(shader)
         else:
-            depthBias = 3e-5 # ~1e-6..1e-4
-            ctx  = bpy.context
-            space = getattr(ctx, "space_data", None)
-            if hasattr(space, "clip_start") and hasattr(space, "clip_end"):
-                clip_start = space.clip_start
-                depthBias  = depthBias/(0.01/clip_start)
-                depthBias = max(depthBias, 1e-6)
-                depthBias = min(depthBias, 1e-4)
+            if bpy.app.version < (4, 5, 0):
+                depthBias = 3e-5 # ~1e-6..1e-4
+                ctx  = bpy.context
+                space = getattr(ctx, "space_data", None)
+                if hasattr(space, "clip_start") and hasattr(space, "clip_end"):
+                    clip_start = space.clip_start
+                    depthBias  = depthBias/(0.01/clip_start)
+                    depthBias = max(depthBias, 1e-6)
+                    depthBias = min(depthBias, 1e-4)
 
-            if config.uniform_edges:
-                if bpy.app.version < (3, 5, 0):
+                if config.uniform_edges:
+                    if bpy.app.version < (3, 5, 0):
+                        e_batch = batch_for_shader(config.e_shader, 'LINES', {"pos": geom.e_vertices}, indices=geom.e_indices)
+                        config.e_shader.bind()
+                        config.e_shader.uniform_float("color", config.edge_color[0][0])
+                        e_batch.draw(config.e_shader)
+                    elif bpy.app.version < (4, 5, 0):
+                        ##### Try to build lines with bias - works norms. But there is an artifact when looking at the plane at a sharp angle: the back lines start to break up and are not very well drawn.
+                        VERT_BIAS = """
+                        in vec3 pos;
+                        uniform mat4 modelViewMatrix;
+                        uniform mat4 projectionMatrix;
+
+                        void main()
+                        {
+                            vec4 v = modelViewMatrix * vec4(pos,1.0);
+                            gl_Position = projectionMatrix * v;
+                        }
+                        """
+                        FRAG_BIAS = """
+                        uniform vec4 color;
+                        uniform float depthBias;  // ~1e-6..1e-4
+                        out vec4 FragColor;
+                        void main(){
+                            FragColor = color;
+                            float adaptive = depthBias * gl_FragCoord.w;
+                            float z = gl_FragCoord.z - adaptive;
+                            gl_FragDepth = clamp(z, 0.0, 1.0);
+                        }
+                        """
+                        shader_bias = gpu.types.GPUShader(VERT_BIAS, FRAG_BIAS)
+                        config.e_shader = shader_bias
+                        e_batch = batch_for_shader(config.e_shader, 'LINES', {"pos": geom.e_vertices}, indices=geom.e_indices)
+                        drawing.enable_depth_test()
+                        drawing.disable_blendmode()
+                        config.e_shader.bind()
+                        config.e_shader.uniform_float(           "color", config.edge_color[0][0])
+                        config.e_shader.uniform_float( "modelViewMatrix", gpu.matrix.get_model_view_matrix())
+                        config.e_shader.uniform_float("projectionMatrix", gpu.matrix.get_projection_matrix())
+                        config.e_shader.uniform_float(       "depthBias", depthBias)
+                        e_batch.draw(config.e_shader)
+
+                        pass
+                    pass
+
+                else:
+                    if bpy.app.version < (3, 5, 0):
+                        e_batch = batch_for_shader(config.e_shader, 'LINES', {"pos": geom.e_vertices, "color": geom.e_vertex_colors}, indices=geom.e_indices)
+                        config.e_shader.bind()
+                        e_batch.draw(config.e_shader)
+                    elif bpy.app.version < (4, 5, 0):
+
+                        ##### Try to build lines with bias - works norms. But there is an artifact when looking at the plane at a sharp angle: the back lines start to break up and are not very well drawn.
+                        VERT_BIAS = """
+                        in vec3 pos;
+                        in vec4 color;
+                        uniform mat4 modelViewMatrix;
+                        uniform mat4 projectionMatrix;
+                        out vec4 vColor;
+
+                        void main()
+                        {
+                            vec4 v = modelViewMatrix * vec4(pos,1.0);
+                            gl_Position = projectionMatrix * v;
+                            vColor = color;
+                        }
+                        """
+                        FRAG_BIAS = """
+                        in vec4 vColor;
+                        uniform float depthBias;  // ~1e-6..1e-4
+                        out vec4 FragColor;
+                        void main(){
+                            FragColor = vColor;
+                            float adaptive = depthBias * gl_FragCoord.w;
+                            float z = gl_FragCoord.z - adaptive;
+                            gl_FragDepth = clamp(z, 0.0, 1.0);
+                        }
+                        """
+                        shader_bias = gpu.types.GPUShader(VERT_BIAS, FRAG_BIAS)
+                        config.e_shader = shader_bias
+                        e_batch = batch_for_shader(config.e_shader, 'LINES', {"pos": geom.e_vertices, "color": geom.e_vertex_colors}, indices=geom.e_indices)
+                        drawing.enable_depth_test()
+                        drawing.disable_blendmode()
+                        config.e_shader.bind()
+                        config.e_shader.uniform_float( "modelViewMatrix", gpu.matrix.get_model_view_matrix())
+                        config.e_shader.uniform_float("projectionMatrix", gpu.matrix.get_projection_matrix())
+                        config.e_shader.uniform_float(       "depthBias", depthBias)
+                        e_batch.draw(config.e_shader)
+
+                        pass
+
+                    pass
+
+            else: # from 4.5, 5.0 versions
+                # Упрощённая отрисовка линий для Blender 4.5+
+                if config.uniform_edges:
                     e_batch = batch_for_shader(config.e_shader, 'LINES', {"pos": geom.e_vertices}, indices=geom.e_indices)
                     config.e_shader.bind()
                     config.e_shader.uniform_float("color", config.edge_color[0][0])
                     e_batch.draw(config.e_shader)
                 else:
-
-                    ##### Try to build lines with bias - works norms. But there is an artifact when looking at the plane at a sharp angle: the back lines start to break up and are not very well drawn.
-                    VERT_BIAS = """
-                    in vec3 pos;
-                    uniform mat4 modelViewMatrix;
-                    uniform mat4 projectionMatrix;
-
-                    void main()
-                    {
-                        vec4 v = modelViewMatrix * vec4(pos,1.0);
-                        gl_Position = projectionMatrix * v;
-                    }
-                    """
-                    FRAG_BIAS = """
-                    uniform vec4 color;
-                    uniform float depthBias;  // ~1e-6..1e-4
-                    out vec4 FragColor;
-                    void main(){
-                        FragColor = color;
-                        float adaptive = depthBias * gl_FragCoord.w;
-                        float z = gl_FragCoord.z - adaptive;
-                        gl_FragDepth = clamp(z, 0.0, 1.0);
-                    }
-                    """
-                    shader_bias = gpu.types.GPUShader(VERT_BIAS, FRAG_BIAS)
-                    config.e_shader = shader_bias
-                    e_batch = batch_for_shader(config.e_shader, 'LINES', {"pos": geom.e_vertices}, indices=geom.e_indices)
-                    drawing.enable_depth_test()
-                    drawing.disable_blendmode()
-                    config.e_shader.bind()
-                    config.e_shader.uniform_float(           "color", config.edge_color[0][0])
-                    config.e_shader.uniform_float( "modelViewMatrix", gpu.matrix.get_model_view_matrix())
-                    config.e_shader.uniform_float("projectionMatrix", gpu.matrix.get_projection_matrix())
-                    config.e_shader.uniform_float(       "depthBias", depthBias)
-                    e_batch.draw(config.e_shader)
-
-                    pass
-
-                pass
-
-
-            else:
-                if bpy.app.version < (3, 5, 0):
                     e_batch = batch_for_shader(config.e_shader, 'LINES', {"pos": geom.e_vertices, "color": geom.e_vertex_colors}, indices=geom.e_indices)
                     config.e_shader.bind()
                     e_batch.draw(config.e_shader)
-                else:
 
-                    ##### Try to build lines with bias - works norms. But there is an artifact when looking at the plane at a sharp angle: the back lines start to break up and are not very well drawn.
-                    VERT_BIAS = """
-                    in vec3 pos;
-                    in vec4 color;
-                    uniform mat4 modelViewMatrix;
-                    uniform mat4 projectionMatrix;
-                    out vec4 vColor;
-
-                    void main()
-                    {
-                        vec4 v = modelViewMatrix * vec4(pos,1.0);
-                        gl_Position = projectionMatrix * v;
-                        vColor = color;
-                    }
-                    """
-                    FRAG_BIAS = """
-                    in vec4 vColor;
-                    uniform float depthBias;  // ~1e-6..1e-4
-                    out vec4 FragColor;
-                    void main(){
-                        FragColor = vColor;
-                        float adaptive = depthBias * gl_FragCoord.w;
-                        float z = gl_FragCoord.z - adaptive;
-                        gl_FragDepth = clamp(z, 0.0, 1.0);
-                    }
-                    """
-                    shader_bias = gpu.types.GPUShader(VERT_BIAS, FRAG_BIAS)
-                    config.e_shader = shader_bias
-                    e_batch = batch_for_shader(config.e_shader, 'LINES', {"pos": geom.e_vertices, "color": geom.e_vertex_colors}, indices=geom.e_indices)
-                    drawing.enable_depth_test()
-                    drawing.disable_blendmode()
-                    config.e_shader.bind()
-                    config.e_shader.uniform_float( "modelViewMatrix", gpu.matrix.get_model_view_matrix())
-                    config.e_shader.uniform_float("projectionMatrix", gpu.matrix.get_projection_matrix())
-                    config.e_shader.uniform_float(       "depthBias", depthBias)
-                    e_batch.draw(config.e_shader)
-
-                    pass
-
-                pass
-
-        drawing.reset_line_width()
+            drawing.reset_line_width()
 
     if config.draw_verts:
         if geom.v_vertices and (len(geom.v_vertices[0])==3):
