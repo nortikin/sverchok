@@ -242,13 +242,15 @@ class SvStethoscopeNodeMK2(SverchCustomTreeNode, bpy.types.Node, LexMixin, SvNod
                 # display the __repr__ version of the incoming data
                 processed_data = data
 
+            ui_scale = bpy.context.preferences.system.ui_scale
+
             draw_data = {
                 'tree_name': self.id_data.name[:],
                 'node_name': self.name[:],
                 'content': processed_data,
                 'location': get_xy_for_bgl_drawing,
                 'color': self.text_color[:],
-                'scale' : float(scale),
+                'scale' : float(scale*ui_scale),
                 'mode': self.selected_mode[:],
                 'font_id': int(self.font_id)
             }
