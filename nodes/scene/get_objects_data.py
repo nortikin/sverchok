@@ -587,7 +587,11 @@ class SvGetObjectsDataMK3(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
             if not obj:
                 continue
 
-            mtrx = obj.matrix_world
+            if self.apply_matrix==True:
+                mtrx = obj.matrix_world
+            else:
+                mtrx = Matrix()
+
             if obj.type in {'EMPTY', 'CAMERA', 'LAMP' }:
                 if o_matrices:
                     l_matrices.append(mtrx)
@@ -601,7 +605,7 @@ class SvGetObjectsDataMK3(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
                     # verts, edgs, pols = pydata_from_bmesh(bm)
 
                     if o_vertices:
-                        verts = [ (mtrx @ Vector(v.co[:])) for v in bm.verts]  # v.co is a Vector()
+                        verts = [ (mtrx @ Vector(v.co[:]))[:] for v in bm.verts]  # v.co is a Vector()
                     if o_edges:
                         edgs = [[e.verts[0].index, e.verts[1].index] for e in bm.edges]
                     if o_polygons:
@@ -703,7 +707,7 @@ class SvGetObjectsDataMK3(Show3DProperties, SverchCustomTreeNode, bpy.types.Node
                     T, R, S = mtrx.decompose()
 
                     if o_vertices:
-                        verts            = [ ((mtrx @ v.co) if self.apply_matrix else v.co)[:] for v in obj_data.vertices]  # v.co is a Vector()
+                        verts            = [ ((mtrx @ v.co)[:] if self.apply_matrix else v.co)[:] for v in obj_data.vertices]  # v.co is a Vector()
                     if o_edges:
                         edgs             = [[ e.vertices[0], e.vertices[1] ] for e in obj_data.edges]
                     if o_polygons:
