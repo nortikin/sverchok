@@ -69,12 +69,12 @@ Inputs
 
    *  **Wireframe** - Projecting pattern to shape:
 
-     - Dissolve node with SNL node gererate and get list of indices for edges. There is manual job nevertheless for indices ordering
+     - Dissolve node with SNL node generate and get list of indices for edges. There is manual job nevertheless for indices ordering
 
      |image8|
 
      - Working here is: 1. Bake 2. correct indices 3. reload
-     - Analyzing panels is analitic block to bugfixing shape
+     - Analyzing panels is analytic block to bugfixing shape
 
      |image9|
 
