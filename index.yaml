@@ -477,7 +477,7 @@
         - SvSolidifyNodeMk2
         - SvWireframeNode
         - SvPipeNode
-        - SvMatrixTubeNode
+        - SvMatrixTubeNodeMK2
 
 - CAD:
     - icon_name: TOOL_SETTINGS
