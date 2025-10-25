@@ -66,6 +66,13 @@ class SvBezierInNode(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
         default = True,
         update = updateNode)
 
+    join_objects : BoolProperty(
+        name = "Join", # FIXME: find better title
+        description = "If checked, output Blender's Bezier Spline objects in one flat list; otherwise, group Splines which lie inside one Blender object, into separate list",
+        default = True, # for compatibility
+        update = updateNode
+    )
+
     def sv_init(self, context):
         self.outputs.new('SvCurveSocket', 'Curves')
         self.outputs.new('SvVerticesSocket', 'ControlPoints')
@@ -129,7 +136,8 @@ class SvBezierInNode(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
 
         layout.prop(self, 'sort', text='Sort', toggle=False)
         layout.prop(self, 'apply_matrix', toggle=False)
-        layout.prop(self, 'concat_segments', toggle=False)
+        layout.prop(self, 'concat_segments', toggle=False) # TODO: hide into N panel
+        layout.prop(self, 'join_objects')
 
         self.draw_obj_names(layout)
 
@@ -184,6 +192,12 @@ class SvBezierInNode(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
             if obj.type != 'CURVE':
                 self.warning("%s: not supported object type: %s", object_name, obj.type)
                 continue
+
+            new_curves = []
+            new_matrices = []
+            new_controls = []
+            new_tilt = []
+            new_radius = []
             for spline in obj.data.splines:
                 if spline.type != 'BEZIER':
                     self.warning("%s: not supported spline type: %s", spline, spline.type)
@@ -192,11 +206,24 @@ class SvBezierInNode(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
                 n = len(tilt_values)
                 #tilt_ts = range(n)
                 #curve.tilt_pairs = list(zip(tilt_ts, tilt_values))
-                curves_out.append(curve)
-                controls_out.append(controls)
-                matrices_out.append(matrix)
-                tilt_out.append(tilt_values)
-                radius_out.append(radius_values)
+                new_curves.append(curve)
+                new_controls.append(controls)
+                new_matrices.append(matrix)
+                new_tilt.append(tilt_values)
+                new_radius.append(radius_values)
+
+            if self.join_objects:
+                curves_out.extend(new_curves)
+                controls_out.extend(new_controls)
+                matrices_out.extend(new_matrices)
+                tilt_out.extend(new_tilt)
+                radius_out.extend(new_radius)
+            else:
+                curves_out.append(new_curves)
+                controls_out.append(new_controls)
+                matrices_out.append(new_matrices)
+                tilt_out.append(new_tilt)
+                radius_out.append(new_radius)
 
         self.outputs['Curves'].sv_set(curves_out)
         self.outputs['ControlPoints'].sv_set(controls_out)
