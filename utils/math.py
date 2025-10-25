@@ -339,6 +339,10 @@ def np_dot(u, v, axis=1):
     '''convenience function to calculate dot vector between vector arrays'''
     return np.sum(u * v, axis=axis)
 
+def np_ambient_occlusion(arr, threshold=0.4):
+    ''' adding reverse light in back side of shadow for viewer draw, default threshold 0.4 '''
+    return np.where(arr < threshold, threshold+(threshold-arr), arr)
+
 def np_normalized_vectors(vecs):
     '''Returns new array with normalized vectors'''
     result = np.zeros(vecs.shape)
