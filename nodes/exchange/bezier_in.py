@@ -215,7 +215,45 @@ class SvBezierInViewAlignMK2(bpy.types.Operator, SvGenericNodeLocator):
                             #                     }
                             #                     bpy.ops.view3d.view_selected(use_all_regions=False)
         print("SvBezierInViewAlignMK2 FINISHED")
-        pass
+        return {'FINISHED'}
+
+class SvBezierInHighlightAllObjectsInSceneMK2(bpy.types.Operator, SvGenericNodeLocator):
+    '''Select and highlight object in 3D Viewport.'''
+    bl_idname = "node.sv_bezierin_highlight_all_objects_in_list_scene_mk2"
+    bl_label = "Highlight objects in scene"
+
+    fn_name: StringProperty(default='')
+
+    def invoke(self, context, event):
+        node = context.node
+        if node.active_obj_index>=0 and node.active_obj_index<=len(node.object_names)-1:
+            object_name = node.object_names[node.active_obj_index].name
+            if object_name in bpy.data.objects:
+                obj = bpy.data.objects[object_name]
+                obj_location = obj.location
+                context.scene.cursor.location = obj_location[:]
+
+                for area in bpy.context.screen.areas:
+                    if area.type == 'VIEW_3D':
+                        with context.temp_override(area = area , region = area.regions[-1]):
+                            #bpy.ops.view3d.view_center_cursor()
+                            for o in bpy.context.view_layer.objects:
+                                o.select_set(False)
+                            for object_name in node.object_names:
+                                if object_name.name in bpy.data.objects:
+                                    bpy.data.objects[object_name.name].select_set(True)
+                                pass
+                            bpy.context.view_layer.objects.active = obj
+                            if obj.select_get()==False:
+                                obj.select_set(True)
+                            pass
+                        pass
+                    pass
+                pass
+
+        #print(f"SvBezierInHighlightAllObjectsInSceneMK2 FINISHED")
+        return {'FINISHED'}
+
 
 
 class SvBezierInNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
@@ -383,6 +421,7 @@ class SvBezierInNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
             self.wrapper_tracked_ui_draw_op(col, SvBezierInAddObjectsFromSceneUpMK2.bl_idname, text='', icon='ADD')
             self.wrapper_tracked_ui_draw_op(col, SvBezierInMoveUpMK2.bl_idname, text='', icon='TRIA_UP')
             self.wrapper_tracked_ui_draw_op(col, SvBezierInMoveDownMK2.bl_idname, text='', icon='TRIA_DOWN')
+            self.wrapper_tracked_ui_draw_op(col, SvBezierInHighlightAllObjectsInSceneMK2.bl_idname, text='', icon='GROUP_VERTEX')
 
         else:
             layout.label(text='--None--')
@@ -420,9 +459,9 @@ class SvBezierInNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
 
     def get_curve(self, spline, matrix):
         segments = []
-        pairs = zip(spline.bezier_points, spline.bezier_points[1:])
+        pairs = list(zip(spline.bezier_points, spline.bezier_points[1:]))
         if spline.use_cyclic_u:
-            pairs = list(pairs) + [(spline.bezier_points[-1], spline.bezier_points[0])]
+            pairs = pairs + [(spline.bezier_points[-1], spline.bezier_points[0])]
         points = []
         for p1, p2 in pairs:
             c0 = p1.co
@@ -442,7 +481,7 @@ class SvBezierInNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
         if self.concat_segments:
             tilt_values = [p.tilt for p in spline.bezier_points]
             radius_values = [p.radius for p in spline.bezier_points]
-            return points, tilt_values, radius_values, [concatenate_curves(segments)], spline.use_cyclic_u
+            return points, tilt_values, radius_values, concatenate_curves(segments), spline.use_cyclic_u
         else:
             for p1, p2 in pairs:
                 tilt_values.append([p1.tilt, p2.tilt])
@@ -495,7 +534,7 @@ class SvBezierInNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
                 n = len(tilt_values)
                 #tilt_ts = range(n)
                 #curve.tilt_pairs = list(zip(tilt_ts, tilt_values))
-                spline_curves.extend(curve)
+                spline_curves.append(curve)
                 spline_use_cyclic_u.append(use_cyclic_u)
                 #spline_matrices.append(matrix)
                 spline_controls.append(controls)
@@ -533,5 +572,5 @@ class SvBezierInNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
         if 'Radius' in self.outputs:
             self.outputs['Radius'].sv_set(radius_out)
 
-classes = [SvBezierInItemRemoveMK2, SvBezierInItemSelectObjectMK2, SvBezierInViewAlignMK2, SvBIDataCollectionMK2, SVBI_UL_NamesListMK2, SvBezierInMoveUpMK2, SvBezierInMoveDownMK2, SvBezierInAddObjectsFromSceneUpMK2, SvBezierInClearObjectsFromListMK2, SvBezierInCallbackOpMK2, SvBezierInNodeMK2]
+classes = [SvBezierInItemRemoveMK2, SvBezierInItemSelectObjectMK2, SvBezierInViewAlignMK2, SvBIDataCollectionMK2, SVBI_UL_NamesListMK2, SvBezierInMoveUpMK2, SvBezierInMoveDownMK2, SvBezierInAddObjectsFromSceneUpMK2, SvBezierInClearObjectsFromListMK2, SvBezierInCallbackOpMK2, SvBezierInHighlightAllObjectsInSceneMK2, SvBezierInNodeMK2]
 register, unregister = bpy.utils.register_classes_factory(classes)
