@@ -443,7 +443,7 @@ def splitted_smooth_polygons_geom(polygon_indices, original_idx, v_path, cols, i
         col = cols[idx % cols_len]
         for c in pol:
             factor = light_factor[c]
-            colors.append(colors_adjustment(col, factor))
+            colors.append(colors_adjustment(col, factor, glossy=True))
 
         vertex_colors_extend(colors)
         pol_offset = idx_offset + total_p_verts
@@ -453,8 +453,12 @@ def splitted_smooth_polygons_geom(polygon_indices, original_idx, v_path, cols, i
 
     return p_vertices, vertex_colors, indices, total_p_verts
 
-def colors_adjustment(col, factor):
-    return [((col[0]*0.8+0.2) * factor)-col[0]*0.1, ((col[1]*0.8+0.2) * factor)-col[0]*0.1, ((col[2]*0.8+0.2) * factor)-col[0]*0.1, col[3]] # (col[2]*0.7+0.3) * factor
+def colors_adjustment(col, factor, glossy=False):
+    if not glossy:
+        return [((col[0]*0.8+0.2) * factor)-col[0]*0.1, ((col[1]*0.8+0.2) * factor)-col[0]*0.1, ((col[2]*0.8+0.2) * factor)-col[0]*0.1, col[3]] # (col[2]*0.7+0.3) * factor
+    else:
+        colval = [((col[0]*0.8+0.2) * factor)-col[0]*0.1, ((col[1]*0.8+0.2) * factor)-col[0]*0.1, ((col[2]*0.8+0.2) * factor)-col[0]*0.1]
+        return [i if i<0.8 else 1.5 for i in colval] + col[3]
 
 def face_light_factor(vecs, polygons, light):
     return (np_ambient_occlusion(np_dot(pols_normals(vecs, polygons, output_numpy=True), light)*0.5+0.5)).tolist()
@@ -698,10 +702,17 @@ class SvViewerDrawMk4(SverchCustomTreeNode, bpy.types.Node):
         update=updateNode
     )
 
-    selected_draw_mode: EnumProperty(
-        items=enum_item_5(["flat", "facet", "smooth", "fragment"], ['SNAP_VOLUME', 'ALIASED', 'ANTIALIASED', 'SCRIPTPLUGINS']),
-        description="pick how the node will draw faces",
-        default="flat", update=updateNode)
+
+    if bpy.app.version < (5, 0, 0):
+        selected_draw_mode: EnumProperty(
+            items=enum_item_5(["flat", "facet", "smooth", "fragment"], ['SNAP_VOLUME', 'ALIASED', 'ANTIALIASED', 'SCRIPTPLUGINS']),
+            description="pick how the node will draw faces",
+            default="facet", update=updateNode)
+    else:
+        selected_draw_mode: EnumProperty(
+            items=enum_item_5(["flat", "facet", "smooth"], ['SNAP_VOLUME', 'ALIASED', 'ANTIALIASED']),
+            description="pick how the node will draw faces",
+            default="facet", update=updateNode)
 
     activate: BoolProperty(
         name='Show', description='Activate drawing',
@@ -731,7 +742,7 @@ class SvViewerDrawMk4(SverchCustomTreeNode, bpy.types.Node):
         description='tessellate quads using geometry.tessellate_polygon, expect some speed impact')
 
     point_size: IntProperty(
-        min=1, default=4, name='Verts Size',
+        min=1, default=3, name='Verts Size',
         description='Point Size', update=updateNode)
 
     line_width: IntProperty(
@@ -777,7 +788,7 @@ class SvViewerDrawMk4(SverchCustomTreeNode, bpy.types.Node):
         description='Colorize edges using vertices color')
 
     edge_color: FloatVectorProperty(
-        update=updateNode, name='Edges Color', default=(1.0, .8, .35, 1.0),
+        update=updateNode, name='Edges Color', default=(0.9, 0.7, 0.25, 1.0),
         size=4, min=0.0, max=1.0, subtype='COLOR')
 
     display_edges: BoolProperty(
