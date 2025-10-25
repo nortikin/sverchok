@@ -27,7 +27,7 @@ from sverchok.utils.modules.drawing_abstractions import drawing, shading_3d
 from sverchok.utils.geom import multiply_vectors_deep
 from sverchok.utils.modules.polygon_utils import pols_normals
 from sverchok.utils.modules.vertex_utils import np_vertex_normals
-from sverchok.utils.math import np_dot
+from sverchok.utils.math import np_dot, np_ambient_occlusion
 from sverchok.utils.sv_3dview_tools import Sv3DviewAlign
 from sverchok.utils.sv_obj_baker import SvObjBakeMK3
 
@@ -65,7 +65,7 @@ default_geometry_shader = '''
         vec3 ab = gl_in[1].gl_Position.xyz - gl_in[0].gl_Position.xyz;
         vec3 ac = gl_in[2].gl_Position.xyz - gl_in[0].gl_Position.xyz;
         vec3 normal3 = normalize(cross(ab, ac));
-        vec4 normal4 = vec4(normal3, 1.0);
+        vec4 normal4 = vec4(normal3, 0.5);
         vs_out.FaceNormal = normal3;
         vec4 rescale = vec4(0.00003, 0.00003, 0.00003, 0.0);
         vec4 offset = vec4(normal4 * rescale);
@@ -362,12 +362,16 @@ def splitted_polygons_geom(polygon_indices, original_idx, v_path, cols, idx_offs
     vertex_colors_extend = vertex_colors.extend
     for pol, idx in zip(polygon_indices, original_idx):
         p_vertices_extend([v_path[c] for c in pol])
-        color = cols[idx % cols_len]
-        # vertex_colors.extend([cols[idx % cols_len] for c in pol])
-        vertex_colors_extend([color, color, color])
+        factor = light_factor[idx]
+
+        col = cols[idx % cols_len]
+        
+        col_pol = colors_adjustment(col, factor)
+        vertex_colors_extend([col_pol, col_pol, col_pol])
         pol_offset = idx_offset + total_p_verts
         indices_append([pol_offset, pol_offset + 1, pol_offset + 2])
         total_p_verts += 3
+
 
     return p_vertices, vertex_colors, indices, total_p_verts
 
@@ -385,13 +389,13 @@ def splitted_facet_polygons_geom(polygon_indices, original_idx, v_path, cols, id
         factor = light_factor[idx]
 
         col = cols[idx % cols_len]
-        col_pol = [col[0] * factor, col[1] * factor, col[2] * factor, col[3]]
-
+        
+        col_pol = colors_adjustment(col, factor)
         vertex_colors_extend([col_pol, col_pol, col_pol])
         pol_offset = idx_offset + total_p_verts
-
         indices_append([pol_offset, pol_offset + 1, pol_offset + 2])
         total_p_verts += 3
+
 
     return p_vertices, vertex_colors, indices, total_p_verts
 
@@ -413,7 +417,7 @@ def splitted_facet_polygons_geom_v_cols(polygon_indices, original_idx, v_path, c
 
         for c in pol:
             col = cols[c % cols_len]
-            colors.append([col[0] * factor, col[1] * factor, col[2] * factor, col[3]])
+            colors.append(colors_adjustment(col, factor))
 
         vertex_colors_extend(colors)
         pol_offset = idx_offset + total_p_verts
@@ -438,9 +442,8 @@ def splitted_smooth_polygons_geom(polygon_indices, original_idx, v_path, cols, i
         colors = []
         col = cols[idx % cols_len]
         for c in pol:
-
             factor = light_factor[c]
-            colors.append([col[0] * factor, col[1] * factor, col[2] * factor, col[3]])
+            colors.append(colors_adjustment(col, factor))
 
         vertex_colors_extend(colors)
         pol_offset = idx_offset + total_p_verts
@@ -450,13 +453,14 @@ def splitted_smooth_polygons_geom(polygon_indices, original_idx, v_path, cols, i
 
     return p_vertices, vertex_colors, indices, total_p_verts
 
-
+def colors_adjustment(col, factor):
+    return [((col[0]*0.8+0.2) * factor)-col[0]*0.1, ((col[1]*0.8+0.2) * factor)-col[0]*0.1, ((col[2]*0.8+0.2) * factor)-col[0]*0.1, col[3]] # (col[2]*0.7+0.3) * factor
 
 def face_light_factor(vecs, polygons, light):
-    return (np_dot(pols_normals(vecs, polygons, output_numpy=True), light)*0.5+0.5).tolist()
+    return (np_ambient_occlusion(np_dot(pols_normals(vecs, polygons, output_numpy=True), light)*0.5+0.5)).tolist()
 
 def vert_light_factor(vecs, polygons, light):
-    return (np_dot(np_vertex_normals(vecs, polygons, output_numpy=True), light)*0.5+0.5).tolist()
+    return np_ambient_occlusion((np_dot(np_vertex_normals(vecs, polygons, output_numpy=True), light)*0.5+0.5)).tolist()
 
 def polygons_geom(config, vecs, polygons, p_vertices, p_vertex_colors, p_indices, v_path, p_cols, idx_p_offset, points_colors):
     '''generates polygons geometry'''
@@ -773,7 +777,7 @@ class SvViewerDrawMk4(SverchCustomTreeNode, bpy.types.Node):
         description='Colorize edges using vertices color')
 
     edge_color: FloatVectorProperty(
-        update=updateNode, name='Edges Color', default=(.9, .9, .35, 1.0),
+        update=updateNode, name='Edges Color', default=(1.0, .8, .35, 1.0),
         size=4, min=0.0, max=1.0, subtype='COLOR')
 
     display_edges: BoolProperty(
