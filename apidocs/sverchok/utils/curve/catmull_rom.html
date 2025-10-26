@@ -724,7 +724,7 @@ See <a href="https://en.wikipedia.org/wiki/Centripetal_Catmull%E2%80%93Rom_splin
     def get_control_points(self):
         return self.to_nurbs().get_control_points()
 
-    def is_line(self):
+    def is_line(self, tolerance=1e-6):
         pts = self.points
         begin, end = pts[0], pts[-1]
         # direction from first to last point of the curve
@@ -875,14 +875,14 @@ tension value for each segment.</p></div>
 <div class="desc"></div>
 </dd>
 <dt id="sverchok.utils.curve.catmull_rom.SvUniformCatmullRomCurve.is_line"><code class="name flex">
-<span>def <span class="ident">is_line</span></span>(<span>self)</span>
+<span>def <span class="ident">is_line</span></span>(<span>self, tolerance=1e-06)</span>
 </code></dt>
 <dd>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def is_line(self):
+<pre><code class="python">def is_line(self, tolerance=1e-6):
     pts = self.points
     begin, end = pts[0], pts[-1]
     # direction from first to last point of the curve
