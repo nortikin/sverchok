@@ -7,6 +7,7 @@
 
 from math import pi, cos, sin
 from collections import defaultdict
+import numpy as np
 
 from mathutils import Matrix, Vector
 
@@ -1287,7 +1288,10 @@ def nurbs_revolution_surface(curve, origin, axis, v_min=0, v_max=2*pi, global_or
         else:
             circle = SvCircle.from_equation(eq)
             circle.u_bounds = (v_min, v_max)
-            nurbs_circle = circle.to_nurbs_full()
+            #nurbs_circle = circle.to_nurbs_full().cut_segment(v_min, v_max)
+            nurbs_circle = circle.to_nurbs()
+            circle_knotvector = nurbs_circle.get_knotvector()
+            circle_weights = nurbs_circle.get_weights()
             parallel_points = nurbs_circle.get_control_points()
         parallel_weights = circle_weights * my_weight
         control_points.append(parallel_points)
