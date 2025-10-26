@@ -155,7 +155,7 @@ class SvUniformCatmullRomCurve(SvCurve):
     def get_control_points(self):
         return self.to_nurbs().get_control_points()
 
-    def is_line(self):
+    def is_line(self, tolerance=1e-6):
         pts = self.points
         begin, end = pts[0], pts[-1]
         # direction from first to last point of the curve
