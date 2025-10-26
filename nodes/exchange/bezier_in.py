@@ -300,7 +300,7 @@ class SvBezierInNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
     def sv_init(self, context):
         self.outputs.new('SvCurveSocket', 'Curves')
         self.outputs.new('SvStringsSocket', 'use_cyclic_u').label='Cyclic U'
-        self.outputs.new('SvVerticesSocket', 'ControlPoints')
+        #self.outputs.new('SvVerticesSocket', 'ControlPoints')
         self.outputs.new('SvVerticesSocket', 'control_points_c0')
         self.outputs.new('SvVerticesSocket', 'control_points_c1')
         self.outputs.new('SvVerticesSocket', 'control_points_c2')
@@ -561,7 +561,7 @@ class SvBezierInNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
 
         self.outputs['Curves'].sv_set(curves_out)
         self.outputs['use_cyclic_u'].sv_set(use_cyclic_u_out)
-        self.outputs['ControlPoints'].sv_set(controls_out)
+        #self.outputs['ControlPoints'].sv_set(controls_out)
         self.outputs['control_points_c0'].sv_set(control_points_c0_out)
         self.outputs['control_points_c1'].sv_set(control_points_c1_out)
         self.outputs['control_points_c2'].sv_set(control_points_c2_out)
