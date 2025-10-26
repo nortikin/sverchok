@@ -152,7 +152,7 @@
     - SvExCrossCurveSurfaceNode
     - ---
     - SvAdaptivePlotCurveNode
-    - SvExEvalCurveNode
+    - SvExEvalCurveNodeMK2
 
 - Surfaces:
     - icon_name: SURFACE_DATA
