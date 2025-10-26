@@ -42,7 +42,7 @@ class SVBI_UL_NamesListMK2(bpy.types.UIList):
             splines = bpy.data.objects[item.name].data.splines
             if splines:
                 for spline in splines:
-                    chars.append(f"{len(spline.bezier_points)}{'c' if spline.use_cyclic_u else 'o'}")
+                    chars.append(f"{len(spline.bezier_points)-1+(1 if spline.use_cyclic_u else 0)}{'c' if spline.use_cyclic_u else 'o'}")
                     pass
             else:
                 chars=["[empty]"]
@@ -235,43 +235,66 @@ class SvBezierInViewAlignMK2(bpy.types.Operator, SvGenericNodeLocator):
         print("SvBezierInViewAlignMK2 FINISHED")
         return {'FINISHED'}
 
-class SvBezierInHighlightAllObjectsInSceneMK2(bpy.types.Operator, SvGenericNodeLocator):
-    '''Select and highlight object in 3D Viewport.'''
-    bl_idname = "node.sv_bezierin_highlight_all_objects_in_list_scene_mk2"
-    bl_label = "Highlight objects in scene"
+class SvBezierInHighlightProcessedObjectsInSceneMK2(bpy.types.Operator, SvGenericNodeLocator):
+    '''Select objects that marked as processed in this node. Use shift to append objects into a previous selected objects'''
+    bl_idname = "node.sv_bezierin_highlight_proc_objects_in_list_scene_mk2"
+    bl_label = "Highlight processed objects in scene"
 
     fn_name: StringProperty(default='')
 
     def invoke(self, context, event):
         node = context.node
-        if node.active_obj_index>=0 and node.active_obj_index<=len(node.object_names)-1:
-            object_name = node.object_names[node.active_obj_index].name
-            if object_name in bpy.data.objects:
-                obj = bpy.data.objects[object_name]
-                obj_location = obj.location
-                context.scene.cursor.location = obj_location[:]
-
-                for area in bpy.context.screen.areas:
-                    if area.type == 'VIEW_3D':
-                        with context.temp_override(area = area , region = area.regions[-1]):
-                            #bpy.ops.view3d.view_center_cursor()
-                            for o in bpy.context.view_layer.objects:
-                                o.select_set(False)
-                            for object_name in node.object_names:
-                                if object_name.name in bpy.data.objects:
-                                    bpy.data.objects[object_name.name].select_set(True)
-                                pass
-                            bpy.context.view_layer.objects.active = obj
-                            if obj.select_get()==False:
-                                obj.select_set(True)
-                            pass
+        for area in bpy.context.screen.areas:
+            if area.type == 'VIEW_3D':
+                with context.temp_override(area = area , region = area.regions[-1]):
+                    if event.shift==False:
+                        for o in bpy.context.view_layer.objects:
+                            o.select_set(False)
+                    for obj in node.object_names:
+                        if obj.exclude==False and obj.name in bpy.data.objects:
+                            bpy.data.objects[obj.name].select_set(True)
                         pass
+                    #bpy.context.view_layer.objects.active = obj
+                    # if obj.select_get()==False:
+                    #     obj.select_set(True)
                     pass
                 pass
+            pass
+        pass
 
         #print(f"SvBezierInHighlightAllObjectsInSceneMK2 FINISHED")
         return {'FINISHED'}
 
+
+class SvBezierInHighlightAllObjectsInSceneMK2(bpy.types.Operator, SvGenericNodeLocator):
+    '''Select objects that marked as processed in this node. Use shift to append objects into a previous selected objects'''
+    bl_idname = "node.sv_bezierin_highlight_all_objects_in_list_scene_mk2"
+    bl_label = "Highlight all objects in scene"
+
+    fn_name: StringProperty(default='')
+
+    def invoke(self, context, event):
+        node = context.node
+        for area in bpy.context.screen.areas:
+            if area.type == 'VIEW_3D':
+                with context.temp_override(area = area , region = area.regions[-1]):
+                    if event.shift==False:
+                        for o in bpy.context.view_layer.objects:
+                            o.select_set(False)
+                    for obj in node.object_names:
+                        if obj.name in bpy.data.objects:
+                            bpy.data.objects[obj.name].select_set(True)
+                        pass
+                    #bpy.context.view_layer.objects.active = obj
+                    # if obj.select_get()==False:
+                    #     obj.select_set(True)
+                    pass
+                pass
+            pass
+        pass
+
+        #print(f"SvBezierInHighlightAllObjectsInSceneMK2 FINISHED")
+        return {'FINISHED'}
 
 
 class SvBezierInNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
@@ -462,7 +485,8 @@ class SvBezierInNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
             self.wrapper_tracked_ui_draw_op(col, SvBezierInAddObjectsFromSceneUpMK2.bl_idname, text='', icon='ADD')
             self.wrapper_tracked_ui_draw_op(col, SvBezierInMoveUpMK2.bl_idname, text='', icon='TRIA_UP')
             self.wrapper_tracked_ui_draw_op(col, SvBezierInMoveDownMK2.bl_idname, text='', icon='TRIA_DOWN')
-            self.wrapper_tracked_ui_draw_op(col, SvBezierInHighlightAllObjectsInSceneMK2.bl_idname, text='', icon='GROUP_VERTEX')
+            self.wrapper_tracked_ui_draw_op(col, SvBezierInHighlightProcessedObjectsInSceneMK2.bl_idname, text='', icon='GROUP_VERTEX')
+            self.wrapper_tracked_ui_draw_op(col, SvBezierInHighlightAllObjectsInSceneMK2.bl_idname, text='', icon='OUTLINER_OB_POINTCLOUD')
 
         else:
             layout.label(text='--None--')
@@ -574,13 +598,8 @@ class SvBezierInNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
                         self.warning("%s: not supported spline type: %s", spline, spline.type)
                         continue
                     controls, tilt_values, radius_values, curve, use_cyclic_u = self.get_curve(spline, matrix)
-                    n = len(tilt_values)
-                    #tilt_ts = range(n)
-                    #curve.tilt_pairs = list(zip(tilt_ts, tilt_values))
                     splines_curves.append(curve)
                     splines_use_cyclic_u.append(use_cyclic_u)
-                    #spline_matrices.append(matrix)
-                    #splines_controls.append(controls)
                     spline_controls_c0  = []
                     spline_controls_c1  = []
                     spline_controls_c2  = []
@@ -595,8 +614,7 @@ class SvBezierInNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
                     splines_controls_c1.append(spline_controls_c1)
                     splines_controls_c2.append(spline_controls_c2)
                     splines_controls_c3.append(spline_controls_c3)
-
-                    splines_tilt.append(tilt_values)
+                    splines_tilt  .append(tilt_values)
                     splines_radius.append(radius_values)
                     pass
             else:
@@ -611,45 +629,76 @@ class SvBezierInNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
                 splines_radius.append([])
                 pass
 
-            if self.source_curves_join_mode=='KEEP':
-                curves_out.append(splines_curves)
-                use_cyclic_u_out.append(splines_use_cyclic_u)
-                matrices_out.append([matrix])
-                control_points_c0_out.append(splines_controls_c0)
-                control_points_c1_out.append(splines_controls_c1)
-                control_points_c2_out.append(splines_controls_c2)
-                control_points_c3_out.append(splines_controls_c3)
-                tilt_out.append(splines_tilt)
-                radius_out.append(splines_radius)
-                pass
-            elif self.source_curves_join_mode=='SEPARATE':
-
-                for I, spline in enumerate(splines_curves):
-                    splines_curves_I = splines_curves[I]
-                    if self.concat_segments==True:
-                        curves_out.append([splines_curves_I])
-                        use_cyclic_u_out.append([splines_use_cyclic_u[I]])
-                        matrices_out.append([matrix])
-                        control_points_c0_out.append([splines_controls_c0[I]])
-                        control_points_c1_out.append([splines_controls_c1[I]])
-                        control_points_c2_out.append([splines_controls_c2[I]])
-                        control_points_c3_out.append([splines_controls_c3[I]])
-                        tilt_out.append([splines_tilt[I]])
-                        radius_out.append([splines_radius[I]])
-                    else:
+            if self.concat_segments==True:
+                if self.source_curves_join_mode=='KEEP':
+                    curves_out           .append(splines_curves)
+                    use_cyclic_u_out     .append(splines_use_cyclic_u)
+                    matrices_out         .append([matrix])
+                    control_points_c0_out.append([co for lst in splines_controls_c0 for co in lst])
+                    control_points_c1_out.append([co for lst in splines_controls_c1 for co in lst])
+                    control_points_c2_out.append([co for lst in splines_controls_c2 for co in lst])
+                    control_points_c3_out.append([co for lst in splines_controls_c3 for co in lst])
+                    tilt_out             .append(splines_tilt)
+                    radius_out           .append(splines_radius)
+                    pass
+                else:
+                    for I, spline in enumerate(splines_curves):
+                        splines_curves_I = splines_curves[I]
+                        curves_out           .append([splines_curves_I])
+                        use_cyclic_u_out     .append([splines_use_cyclic_u[I]])
+                        matrices_out         .append([matrix])
+                        control_points_c0_out.append(splines_controls_c0[I])
+                        control_points_c1_out.append(splines_controls_c1[I])
+                        control_points_c2_out.append(splines_controls_c2[I])
+                        control_points_c3_out.append(splines_controls_c3[I])
+                        tilt_out             .append([splines_tilt[I]])
+                        radius_out           .append([splines_radius[I]])
+                        pass
+                    pass
+            else:
+                if self.source_curves_join_mode=='KEEP':
+                    curves_out           .append(splines_curves)
+                    use_cyclic_u_out     .append(splines_use_cyclic_u)
+                    matrices_out         .append([matrix])
+                    spline_c0 = []
+                    spline_c1 = []
+                    spline_c2 = []
+                    spline_c3 = []
+                    for I in range(len(splines_controls_c0)):
+                        splines_controls_c0_I = splines_controls_c0[I]
+                        splines_controls_c1_I = splines_controls_c1[I]
+                        splines_controls_c2_I = splines_controls_c2[I]
+                        splines_controls_c3_I = splines_controls_c3[I]
+                        spline_c0.append([co for controls in splines_controls_c0_I for co in controls])
+                        spline_c1.append([co for controls in splines_controls_c1_I for co in controls])
+                        spline_c2.append([co for controls in splines_controls_c2_I for co in controls])
+                        spline_c3.append([co for controls in splines_controls_c3_I for co in controls])
+                        pass
+                    control_points_c0_out.append(spline_c0)
+                    control_points_c1_out.append(spline_c1)
+                    control_points_c2_out.append(spline_c2)
+                    control_points_c3_out.append(spline_c3)
+                    # control_points_c0_out.append([co for lst in splines_controls_c0 for segment in lst for co in segment])
+                    # control_points_c1_out.append([co for lst in splines_controls_c1 for segment in lst for co in segment])
+                    # control_points_c2_out.append([co for lst in splines_controls_c2 for segment in lst for co in segment])
+                    # control_points_c3_out.append([co for lst in splines_controls_c3 for segment in lst for co in segment])
+                    tilt_out             .append(splines_tilt)
+                    radius_out           .append(splines_radius)
+                    pass
+                else:
+                    for I, spline in enumerate(splines_curves):
+                        splines_curves_I = splines_curves[I]
                         for IJ, segment in enumerate( splines_curves_I ):
-                            curves_out.append([segment])
-                            use_cyclic_u_out.append(False) # [splines_use_cyclic_u[I]]) потому что сегмент всегда разомкнут
-                            matrices_out.append([matrix])
+                            curves_out           .append([segment])
+                            use_cyclic_u_out     .append(False) # [splines_use_cyclic_u[I]]) потому что сегмент всегда разомкнут
+                            matrices_out         .append([matrix])
                             control_points_c0_out.append([splines_controls_c0[I][IJ][0]])
                             control_points_c1_out.append([splines_controls_c1[I][IJ][0]])
                             control_points_c2_out.append([splines_controls_c2[I][IJ][0]])
                             control_points_c3_out.append([splines_controls_c3[I][IJ][0]])
-                            tilt_out.append([splines_tilt[I]])
-                            radius_out.append([splines_radius[I]])
-                        pass
-                pass
-            else:
+                            tilt_out             .append([splines_tilt  [I][IJ]])
+                            radius_out           .append([splines_radius[I][IJ]])
+                    pass
                 pass
             pass
 
@@ -666,5 +715,5 @@ class SvBezierInNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
         if 'Radius' in self.outputs:
             self.outputs['Radius'].sv_set(radius_out)
 
-classes = [SvBezierInItemRemoveMK2, SvBezierInItemSelectObjectMK2, SvBezierInViewAlignMK2, SvBIDataCollectionMK2, SVBI_UL_NamesListMK2, SvBezierInMoveUpMK2, SvBezierInMoveDownMK2, SvBezierInAddObjectsFromSceneUpMK2, SvBezierInClearObjectsFromListMK2, SvBezierInCallbackOpMK2, SvBezierInHighlightAllObjectsInSceneMK2, SvBezierInNodeMK2]
+classes = [SvBezierInItemRemoveMK2, SvBezierInItemSelectObjectMK2, SvBezierInViewAlignMK2, SvBIDataCollectionMK2, SVBI_UL_NamesListMK2, SvBezierInMoveUpMK2, SvBezierInMoveDownMK2, SvBezierInAddObjectsFromSceneUpMK2, SvBezierInClearObjectsFromListMK2, SvBezierInCallbackOpMK2, SvBezierInHighlightProcessedObjectsInSceneMK2, SvBezierInHighlightAllObjectsInSceneMK2, SvBezierInNodeMK2]
 register, unregister = bpy.utils.register_classes_factory(classes)
