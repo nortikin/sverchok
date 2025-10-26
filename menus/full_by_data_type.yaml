@@ -317,7 +317,7 @@
         - SvExtendCurveNode
         - SvSplitCurveNode
         - SvExCurveLengthNode
-        - SvExCurveFrameNode
+        - SvExCurveFrameNodeMK2
         - SvCurveFrameOnSurfNode
         - SvExCurveCurvatureNode
         - SvExCurveTorsionNode

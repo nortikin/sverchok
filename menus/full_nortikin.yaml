@@ -489,7 +489,7 @@
         - SvExtendCurveNode
         - SvSplitCurveNode
         - SvExCurveLengthNode
-        - SvExCurveFrameNode
+        - SvExCurveFrameNodeMK2
         - SvCurveFrameOnSurfNode
         - SvExCurveZeroTwistFrameNode
         - SvCurveLengthParameterMk2Node

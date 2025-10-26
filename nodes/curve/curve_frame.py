@@ -8,12 +8,12 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
 from sverchok.utils.curve import SvCurve, ZeroCurvatureException
 
-class SvCurveFrameNode(SverchCustomTreeNode, bpy.types.Node):
+class SvCurveFrameNodeMK2(SverchCustomTreeNode, bpy.types.Node):
         """
         Triggers: Curve Frenet Frame
         Tooltip: Calculate (Frenet) frame matrix at any point of the curve
         """
-        bl_idname = 'SvExCurveFrameNode'
+        bl_idname = 'SvExCurveFrameNodeMK2'
         bl_label = 'Curve Frame'
         bl_icon = 'OUTLINER_OB_EMPTY'
         sv_icon = 'SV_CURVE_FRAME'
@@ -72,30 +72,30 @@ class SvCurveFrameNode(SverchCustomTreeNode, bpy.types.Node):
 
         def sv_init(self, context):
             self.inputs.new('SvCurveSocket'  , "Curve")
-            self.inputs.new('SvStringsSocket', "curve_point_radius")
-            self.inputs.new('SvStringsSocket', "curve_point_weight")
-            self.inputs.new('SvStringsSocket', "curve_point_tilt")
+            # self.inputs.new('SvStringsSocket', "curve_point_radius")
+            # self.inputs.new('SvStringsSocket', "curve_point_weight")
+            # self.inputs.new('SvStringsSocket', "curve_point_tilt")
             self.inputs.new('SvStringsSocket', "T")
             
             
-            self.inputs["curve_point_radius"].label     = 'Radiuses'
-            self.inputs["curve_point_radius"].prop_name = 'curve_point_radius'
-            self.inputs["curve_point_weight"].label     = 'Weights'
-            self.inputs["curve_point_weight"].prop_name = 'curve_point_weight'
-            self.inputs["curve_point_tilt"]  .label     = 'Tilts'
-            self.inputs["curve_point_tilt"]  .prop_name = 'curve_point_tilt'
+            # self.inputs["curve_point_radius"].label     = 'Radiuses'
+            # self.inputs["curve_point_radius"].prop_name = 'curve_point_radius'
+            # self.inputs["curve_point_weight"].label     = 'Weights'
+            # self.inputs["curve_point_weight"].prop_name = 'curve_point_weight'
+            # self.inputs["curve_point_tilt"]  .label     = 'Tilts'
+            # self.inputs["curve_point_tilt"]  .prop_name = 'curve_point_tilt'
             self.inputs["T"].prop_name = 't_value'
 
             self.outputs.new('SvMatrixSocket', 'Matrix')
             self.outputs.new('SvVerticesSocket', 'Normal')
             self.outputs.new('SvVerticesSocket', 'Binormal')
-            self.outputs.new('SvStringsSocket', "curve_point_radius")
-            self.outputs.new('SvStringsSocket', "curve_point_weight")
-            self.outputs.new('SvStringsSocket', "curve_point_tilt")
+            # self.outputs.new('SvStringsSocket', "curve_point_radius")
+            # self.outputs.new('SvStringsSocket', "curve_point_weight")
+            # self.outputs.new('SvStringsSocket', "curve_point_tilt")
 
-            self.outputs["curve_point_radius"].label     = 'Radiuses'
-            self.outputs["curve_point_weight"].label     = 'Weights'
-            self.outputs["curve_point_tilt"]  .label     = 'Tilts'
+            # self.outputs["curve_point_radius"].label     = 'Radiuses'
+            # self.outputs["curve_point_weight"].label     = 'Weights'
+            # self.outputs["curve_point_tilt"]  .label     = 'Tilts'
 
             pass
 
@@ -161,8 +161,8 @@ class SvCurveFrameNode(SverchCustomTreeNode, bpy.types.Node):
             self.outputs['Binormal'].sv_set(binormals_out)
 
 def register():
-    bpy.utils.register_class(SvCurveFrameNode)
+    bpy.utils.register_class(SvCurveFrameNodeMK2)
 
 def unregister():
-    bpy.utils.unregister_class(SvCurveFrameNode)
+    bpy.utils.unregister_class(SvCurveFrameNodeMK2)
 
