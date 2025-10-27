@@ -73,20 +73,51 @@ def screen_v3d_batch_matrix_overlay(context, args):
     batch.draw(smooth_2d_shader)
     drawing.disable_blendmode()
 
+def get_all_matrixes(obj, res):
+    if isinstance(obj, list):
+        if len(obj)>0:
+            if isinstance(obj[0], Matrix):
+                _res = []
+                for elem in obj:
+                    if isinstance(elem, Matrix):
+                        _res.append(elem)
+                    else:
+                        raise ValueError("Object has to be matrix! (1)")
+                    pass
+                res.append(_res)
+                pass
+            elif isinstance(obj[0], list):
+                for elem in obj:
+                    if isinstance(elem, list):
+                        get_all_matrixes(elem, res)
+                    else:
+                        raise ValueError("Object has to be list! (2)")
+                pass
+            pass
+        pass
+    elif isinstance(obj, Matrix):
+        res.append([obj])
+    else:
+        raise ValueError("Object has to be matrix or list! (3)")
+        pass
+    pass
 
 def match_color_to_matrix(node):
     vcol_start = Vector(node.color_start)
     vcol_end = Vector(node.color_end)
 
     _Matrixes       = node.inputs['Matrix'].sv_get()
-    Matrixes2       = ensure_nesting_level(_Matrixes, 2)
+    matr = []
+    get_all_matrixes(_Matrixes, matr)
+    # return matr
+    # Matrixes2       = ensure_nesting_level(_Matrixes, 2)
 
     res = []
     scale_matrix = mathutils.Matrix.Scale(node.scale, 4)
 
 
-    if len(Matrixes2) > 0:
-        for data in Matrixes2:
+    if len(matr) > 0:
+        for data in matr:
             data_out = []
             res.append(data_out)
             if len(data)>0:
