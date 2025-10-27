@@ -69,7 +69,10 @@ class SVBI_UL_NamesListMK2(bpy.types.UIList):
             exclude_icon='UNPINNED'
         else:
             exclude_icon='PINNED'
-        grid.prop(item, 'exclude', icon_only=True, icon=exclude_icon, emboss=False)
+        #grid.prop(item, 'exclude', icon_only=True, icon=exclude_icon, emboss=False)
+        op = grid.operator(SvBezierInItemEnablerMK2.bl_idname, icon=exclude_icon, text='', emboss=False)
+        op.fn_name = 'ENABLER'
+        op.idx = index
         pass
         op = grid.operator(SvBezierInItemRemoveMK2.bl_idname, icon='X', text='', emboss=False)
         op.fn_name = 'REMOVE'
@@ -115,7 +118,6 @@ class SvBezierInItemSelectObjectMK2(bpy.types.Operator):
             pass
         return {'FINISHED'}
 
-# Тестовый пример оператора с получением события event.
 class SvBezierInItemRemoveMK2(bpy.types.Operator):
     '''Remove object from list'''
     bl_idname = "node.sv_bezierin_item_remove_mk2"
@@ -129,6 +131,33 @@ class SvBezierInItemRemoveMK2(bpy.types.Operator):
         if self.idx <= len(context.node.object_names)-1:
             if self.fn_name == 'REMOVE':
                 context.node.object_names.remove(self.idx)
+                context.node.process_node(None)
+        return {'FINISHED'}
+
+class SvBezierInItemEnablerMK2(bpy.types.Operator):
+    '''Enable/Disable object to process.\nCtrl button to disable all objects first\nShift button to inverse list.'''
+    bl_idname = "node.sv_bezierin_item_enabler_mk2"
+    bl_label = "Processed"
+
+    fn_name: StringProperty(default='')
+    idx: IntProperty()
+
+    def invoke(self, context, event):
+        #node = context.node.object_names[self.idx]
+        if self.idx <= len(context.node.object_names)-1:
+            if self.fn_name == 'ENABLER':
+                if event.ctrl==True:
+                    for obj in context.node.object_names:
+                        obj.exclude = True
+                    context.node.object_names[self.idx].exclude = False
+                elif event.shift==True:
+                    for obj in context.node.object_names:
+                        obj.exclude = not(obj.exclude)
+                        pass
+                    pass
+                else:
+                    context.node.object_names[self.idx].exclude = not(context.node.object_names[self.idx].exclude)
+                    pass
                 context.node.process_node(None)
         return {'FINISHED'}
 
@@ -322,13 +351,13 @@ class SvBezierInNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
     active_obj_index: bpy.props.IntProperty() # type: ignore
 
     source_curves_join_modes = [
-            ('SEPARATE', "Separate", "Separate the object curves into individual curves", 'MOD_OFFSET', 0),
+            ('SPLIT', "Split", "Split/Separate the object curves into individual curves", 'MOD_OFFSET', 0),
             ('KEEP' , "Keep", "Keep curves as in source objects", 'SYNTAX_ON', 1),
             #('MERGE', "Merge", "Join all curves into a single object", 'STICKY_UVS_LOC', 2)
         ]
 
     source_curves_join_mode : EnumProperty(
-        name = "How process object curves",
+        name = "",
         items = source_curves_join_modes,
         default = 'KEEP',
         update = updateNode) # type: ignore
@@ -715,5 +744,5 @@ class SvBezierInNodeMK2(Show3DProperties, SverchCustomTreeNode, bpy.types.Node):
         if 'Radius' in self.outputs:
             self.outputs['Radius'].sv_set(radius_out)
 
-classes = [SvBezierInItemRemoveMK2, SvBezierInItemSelectObjectMK2, SvBezierInViewAlignMK2, SvBIDataCollectionMK2, SVBI_UL_NamesListMK2, SvBezierInMoveUpMK2, SvBezierInMoveDownMK2, SvBezierInAddObjectsFromSceneUpMK2, SvBezierInClearObjectsFromListMK2, SvBezierInCallbackOpMK2, SvBezierInHighlightProcessedObjectsInSceneMK2, SvBezierInHighlightAllObjectsInSceneMK2, SvBezierInNodeMK2]
+classes = [SvBezierInItemRemoveMK2, SvBezierInItemEnablerMK2, SvBezierInItemSelectObjectMK2, SvBezierInViewAlignMK2, SvBIDataCollectionMK2, SVBI_UL_NamesListMK2, SvBezierInMoveUpMK2, SvBezierInMoveDownMK2, SvBezierInAddObjectsFromSceneUpMK2, SvBezierInClearObjectsFromListMK2, SvBezierInCallbackOpMK2, SvBezierInHighlightProcessedObjectsInSceneMK2, SvBezierInHighlightAllObjectsInSceneMK2, SvBezierInNodeMK2]
 register, unregister = bpy.utils.register_classes_factory(classes)
