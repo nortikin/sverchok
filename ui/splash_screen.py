@@ -1,348 +1,340 @@
 import bpy
+from bpy.types import Operator
+import gpu
 import os
-from bpy.props import IntProperty, StringProperty, BoolProperty, PointerProperty
-from bpy.types import Operator, Panel
+from gpu_extras.batch import batch_for_shader
+
+# Global variables
+textures = []
+current_image_index = 0
+button_width = 50
+button_height = 20
+button_margin = 3
+close_button_width = 103
+
+# Shaders
+image_shader = gpu.shader.from_builtin('IMAGE')
+solid_shader = gpu.shader.from_builtin('UNIFORM_COLOR')
+
+def load_images_from_script_folder():
+    """Load all PNG images from the script folder"""
+    global textures
+
+    # Clear existing textures
+    textures.clear()
+
+    # Get script folder
+    script_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)),'splash_images')
+
+    # Find all PNG files
+    png_files = []
+    for file in os.listdir(script_folder):
+        if file.lower().endswith('.png'):
+            png_files.append(os.path.join(script_folder, file))
+
+    print(f"Found {len(png_files)} PNG files in {script_folder}")
+
+    # Load images and create textures
+    for img_file in png_files:
+        try:
+            img = bpy.data.images.load(img_file)
+            texture = gpu.texture.from_image(img)
+            textures.append(texture)
+            # Remove image from Blender data to avoid clutter
+            bpy.data.images.remove(img)
+            print(f"Loaded: {os.path.basename(img_file)}")
+        except Exception as e:
+            print(f"Error loading {img_file}: {e}")
+
+    return len(textures) > 0
+
+def draw_callback():
+    global current_image_index
+
+    # Get region dimensions
+    region = bpy.context.region
+    width = region.width
+    height = region.height
+
+    if not textures:
+        # Draw "No images" message
+        solid_shader.bind()
+        solid_shader.uniform_float("color", (1.0, 0.0, 0.0, 1.0))
+        message_vertices = (
+            (width/2 - 100, height/2 - 10),
+            (width/2 + 100, height/2 - 10),
+            (width/2 + 100, height/2 + 10),
+            (width/2 - 100, height/2 + 10)
+        )
+        message_batch = batch_for_shader(solid_shader, 'TRI_FAN', {"pos": message_vertices})
+        message_batch.draw(solid_shader)
+        return
+
+    # Calculate image dimensions (maintain aspect ratio)
+    tex = textures[current_image_index]
+    img_width = tex.width
+    img_height = tex.height
+
+    # Scale image to fit while maintaining aspect ratio
+    scale_factor = min(width * 0.7 / img_width, height * 0.7 / img_height)
+    display_width = img_width * scale_factor
+    display_height = img_height * scale_factor
+
+    # Image position (centered)
+    img_x = (width - display_width) / 2
+    img_y = (height - display_height) / 2 + 30  # Slightly raised to make space for buttons
+
+    # Draw image
+    vertices = (
+        (img_x, img_y),
+        (img_x + display_width, img_y),
+        (img_x + display_width, img_y + display_height),
+        (img_x, img_y + display_height)
+    )
+
+    indices = ((0, 1, 2), (0, 2, 3))
+
+    image_shader.bind()
+    image_shader.uniform_sampler("image", tex)
+
+    batch = batch_for_shader(image_shader, 'TRIS', {
+        "pos": vertices,
+        "texCoord": ((0, 0), (1, 0), (1, 1), (0, 1))
+    }, indices=indices)
+    batch.draw(image_shader)
+
+    # Draw buttons
+    button_y = 20
+
+    # Button positions
+    left_button_x = width / 2 - button_width - button_margin
+    right_button_x = width / 2 + button_margin
+    close_button_x = width / 2 - close_button_width / 2
+
+    # Left button
+    left_button_vertices = (
+        (left_button_x, button_y),
+        (left_button_x + button_width, button_y),
+        (left_button_x + button_width, button_y + button_height),
+        (left_button_x, button_y + button_height)
+    )
+
+    # Right button
+    right_button_vertices = (
+        (right_button_x, button_y),
+        (right_button_x + button_width, button_y),
+        (right_button_x + button_width, button_y + button_height),
+        (right_button_x, button_y + button_height)
+    )
+
+    # Close button (above navigation buttons)
+    close_button_y = button_y + button_height + button_margin
+    close_button_vertices = (
+        (close_button_x, close_button_y),
+        (close_button_x + close_button_width, close_button_y),
+        (close_button_x + close_button_width, close_button_y + button_height),
+        (close_button_x, close_button_y + button_height)
+    )
+
+    # Draw button backgrounds
+    solid_shader.bind()
+
+    # Navigation buttons - gray
+    solid_shader.uniform_float("color", (0.84, 0.91, 0.83, 0.65))
+    left_button_batch = batch_for_shader(solid_shader, 'TRI_FAN', {"pos": left_button_vertices})
+    right_button_batch = batch_for_shader(solid_shader, 'TRI_FAN', {"pos": right_button_vertices})
+    left_button_batch.draw(solid_shader)
+    right_button_batch.draw(solid_shader)
+
+    # Close button - red
+    solid_shader.uniform_float("color", (0.84, 0.91, 0.83, 0.65))
+    close_button_batch = batch_for_shader(solid_shader, 'TRI_FAN', {"pos": close_button_vertices})
+    close_button_batch.draw(solid_shader)
+
+    # Draw button borders
+    solid_shader.uniform_float("color", (0.84, 0.91, 0.83, 0.65))
+    left_border_batch = batch_for_shader(solid_shader, 'LINE_LOOP', {"pos": left_button_vertices})
+    right_border_batch = batch_for_shader(solid_shader, 'LINE_LOOP', {"pos": right_button_vertices})
+    close_border_batch = batch_for_shader(solid_shader, 'LINE_LOOP', {"pos": close_button_vertices})
+
+    left_border_batch.draw(solid_shader)
+    right_border_batch.draw(solid_shader)
+    close_border_batch.draw(solid_shader)
+
+    # Draw button symbols
+    solid_shader.uniform_float("color", (0.34, 0.5, 0.76, 1.0))
+
+    # Left arrow
+    left_arrow_vertices = (
+        (left_button_x + button_width, button_y),
+        (left_button_x + button_width, button_y + button_height),
+        (left_button_x, button_y + button_height * 0.5)
+    )
+
+    # Right arrow
+    right_arrow_vertices = (
+        (right_button_x, button_y),
+        (right_button_x, button_y + button_height),
+        (right_button_x + button_width, button_y + button_height * 0.5)
+    )
+
+    # Close "X" symbol
+    close_x_vertices1 = (
+        (close_button_x, close_button_y),
+        (close_button_x + close_button_width, close_button_y + button_height)
+    )
+    close_x_vertices2 = (
+        (close_button_x + close_button_width, close_button_y),
+        (close_button_x, close_button_y + button_height)
+    )
+
+    left_arrow_batch = batch_for_shader(solid_shader, 'TRIS', {"pos": left_arrow_vertices})
+    right_arrow_batch = batch_for_shader(solid_shader, 'TRIS', {"pos": right_arrow_vertices})
+    close_x_batch1 = batch_for_shader(solid_shader, 'LINES', {"pos": close_x_vertices1})
+    close_x_batch2 = batch_for_shader(solid_shader, 'LINES', {"pos": close_x_vertices2})
+
+    left_arrow_batch.draw(solid_shader)
+    right_arrow_batch.draw(solid_shader)
+    close_x_batch1.draw(solid_shader)
+    close_x_batch2.draw(solid_shader)
+
+    # Draw image counter
+    counter_y = close_button_y + button_height + 5
+    counter_x_start = width / 2 - close_button_width / 2
+    counter_y_start = counter_y
+    counter_text_bg_vertices = (
+        (counter_x_start, counter_y_start),
+        (counter_x_start + close_button_width, counter_y_start),
+        (counter_x_start + close_button_width, counter_y_start + button_height),
+        (counter_x_start, counter_y_start + button_height)
+    )
+
+    #solid_shader.uniform_float("color", (1.0, 1.0, 1.0, 1.0))
+    counter_border_batch = batch_for_shader(solid_shader, 'LINE_LOOP', {"pos": counter_text_bg_vertices})
+    counter_border_batch.draw(solid_shader)
+
+    # Draw counter numbers (simplified - using lines to represent digits)
+    # This is a very basic visualization. For real text you'd need blf module.
+
+    current_num = current_image_index
+    total_num = len(textures)
+    lineage = (
+        (counter_x_start + current_num*(close_button_width/total_num), counter_y_start),
+        (counter_x_start + (current_num+1)*(close_button_width/total_num), counter_y_start),
+        (counter_x_start + (current_num+1)*(close_button_width/total_num), counter_y_start + button_height),
+        (counter_x_start + current_num*(close_button_width/total_num), counter_y_start + button_height)
+    )
+    line_ = batch_for_shader(solid_shader, 'TRI_FAN', {"pos": lineage})
+    line_.draw(solid_shader)
+
+
+
+def check_button_click(mouse_x, mouse_y, context):
+    global current_image_index
+
+    if not textures:
+        return False
+
+    region = context.region
+    width = region.width
+
+    button_y = 20
+    close_button_y = button_y + button_height + 10
+
+    # Button positions
+    left_button_x = width / 2 - button_width - button_margin
+    right_button_x = width / 2 + button_margin
+    close_button_x = width / 2 - close_button_width / 2
+
+    # Check left button click
+    if (left_button_x <= mouse_x <= left_button_x + button_width and
+        button_y <= mouse_y <= button_y + button_height):
+        current_image_index = (current_image_index - 1) % len(textures)
+        return True
+
+    # Check right button click
+    if (right_button_x <= mouse_x <= right_button_x + button_width and
+        button_y <= mouse_y <= button_y + button_height):
+        current_image_index = (current_image_index + 1) % len(textures)
+        return True
+
+    # Check close button click
+    if (close_button_x <= mouse_x <= close_button_x + close_button_width and
+        close_button_y <= mouse_y <= close_button_y + button_height):
+        # Remove handlers and cancel operator
+        bpy.types.SpaceNodeEditor.draw_handler_remove(operator_instance._handle, 'WINDOW')
+        operator_instance._handle = None
+        context.area.tag_redraw()
+        return {'CANCELLED'}
+
+    return False
+
 
 class SV_OT_splash_screen_simple(Operator):
     """Splash Screen для Sverchok"""
     bl_idname = "sv.splash_screen_simple"
     bl_label = "Sverchok - Добро пожаловать!"
+    bl_description = "Displays help images on Sverchok addon"
     bl_options = {'REGISTER'}
 
-    current_index: IntProperty(default=0)
-    _image_files = []
-    _loaded_images = []
-    _textures = []
-    _initialized = False
+    _handle = None
 
-    def get_image_files(self):
-        """Получить список изображений"""
-        ui_dir = os.path.dirname(__file__)
-        splash_dir = os.path.join(ui_dir, "splash_images")
-
-        if not os.path.exists(splash_dir):
-            return []
-
-        image_files = []
-        supported_formats = {'.png', '.jpg', '.jpeg', '.bmp', '.tga'}
-
-        try:
-            for file in sorted(os.listdir(splash_dir)):
-                file_lower = file.lower()
-                if any(file_lower.endswith(fmt) for fmt in supported_formats):
-                    image_files.append(file)
-        except Exception as e:
-            print(f"Sverchok Splash Error: {e}")
-
-        return image_files
-
-    def get_image_size(self, image_path):
-        """Получить размер изображения"""
-        try:
-            img = bpy.data.images.load(image_path, check_existing=False)
-            width, height = img.size
-            bpy.data.images.remove(img)
-            return width, height
-        except:
-            return 800, 600  # Размер по умолчанию
-
-    def load_current_image(self):
-        """Загрузить текущее изображение и создать текстуру"""
-        if not self._image_files or self.current_index >= len(self._image_files):
-            return None
-
-        # Очищаем предыдущие данные
-        self.cleanup_images()
-
-        # Загружаем текущее изображение
-        current_file = self._image_files[self.current_index]
-        ui_dir = os.path.dirname(__file__)
-        image_path = os.path.join(ui_dir, "splash_images", current_file)
-
-        try:
-            # Загружаем изображение
-            img = bpy.data.images.load(image_path, check_existing=True)
-            img.name = f"sv_splash_img_{self.current_index}"
-            self._loaded_images.append(img)
-
-            # Создаем текстуру
-            texture_name = f"sv_splash_tex_{self.current_index}"
-            texture = bpy.data.textures.new(name=texture_name, type='IMAGE')
-            texture.image = img
-            texture.extension = 'CLIP'
-            self._textures.append(texture)
-
-            return texture
-        except Exception as e:
-            print(f"Sverchok Splash: Ошибка загрузки {current_file}: {e}")
-            return None
-
-    def invoke(self, context, event):
-        if not self._initialized:
-            self._image_files = self.get_image_files()
-            self._initialized = True
-
-        if not self._image_files:
-            self.report({'WARNING'}, "Нет изображений в папке splash_images")
+    def modal(self, context, event):
+        if event.type == 'LEFTMOUSE' and event.value == 'PRESS':
+            result = check_button_click(event.mouse_region_x, event.mouse_region_y, context)
+            if result is True:
+                context.area.tag_redraw()
+                return {'RUNNING_MODAL'}
+            elif result == {'CANCELLED'}:
+                return {'CANCELLED'}
+        elif event.type in {'RIGHTMOUSE', 'ESC'}:
+            self.remove_handlers(context)
             return {'CANCELLED'}
 
-        self.current_index = 0
+        return {'PASS_THROUGH'}
 
-        # Получаем размер первого изображения для настройки размера окна
-        current_file = self._image_files[self.current_index]
-        ui_dir = os.path.dirname(__file__)
-        image_path = os.path.join(ui_dir, "splash_images", current_file)
-        img_width, img_height = self.get_image_size(image_path)
+    def invoke(self, context, event):
+        global operator_instance
+        operator_instance = self
 
-        # Загружаем изображение
-        self.load_current_image()
+        # Load images from script folder
+        if not load_images_from_script_folder():
+            self.report({'WARNING'}, "No PNG images found in script folder")
+            return {'CANCELLED'}
 
-        # Настраиваем размер окна под изображение (добавляем место для UI)
-        width = max(img_width + 100, 1200)  # Максимальная ширина 1200
-        height = max(img_height + 200, 900)  # Максимальная высота 900
+        self.register_handlers(context)
+        context.window_manager.modal_handler_add(self)
 
-        return context.window_manager.invoke_popup(self, width=int(width))
+        self.report({'INFO'}, f"Loaded {len(textures)} images. Click arrows to navigate, X button or RMB/ESC to close.")
+        return {'RUNNING_MODAL'}
 
-    def draw(self, context):
-        layout = self.layout
+    def register_handlers(self, context):
+        if self._handle is None:
+            self._handle = bpy.types.SpaceNodeEditor.draw_handler_add(
+                draw_callback, (), 'WINDOW', 'POST_PIXEL'
+            )
+            context.area.tag_redraw()
 
-        # Заголовок
-        row = layout.row()
-        row.label(text="🎉 Добро пожаловать в Sverchok!", icon='NODETREE')
+    def remove_handlers(self, context):
+        if self._handle is not None:
+            bpy.types.SpaceNodeEditor.draw_handler_remove(self._handle, 'WINDOW')
+            self._handle = None
+            context.area.tag_redraw()
 
-        if not self._image_files:
-            box = layout.box()
-            box.label(text="📁 Изображения не найдены", icon='ERROR')
-            box.label(text="Создайте папку 'splash_images' здесь:")
-            ui_dir = os.path.dirname(__file__)
-            splash_dir = os.path.join(ui_dir, "splash_images")
-            box.label(text=splash_dir)
-            box.label(text="И добавьте PNG/JPG изображения")
-            return
-
-        # Информация о текущем слайде
-        current_file = self._image_files[self.current_index]
-        box = layout.box()
-        #col = box.column(align=True)
-        #col.label(text=f"📊 Слайд {self.current_index + 1} из {len(self._image_files)}")
-        #col.label(text=f"📄 {current_file}")
-
-        # Отображение изображения через template_preview
-        if self._textures:
-            current_texture = self._textures[0]
-            try:
-                # Создаем box для preview с адаптивным размером
-                preview_box = layout.box()
-
-                # Используем template_preview для отображения текстуры
-                preview_box.template_preview(
-                    current_texture,
-                    show_buttons=False,
-                    preview_id="splash_preview"
-                )
-
-            except Exception as e:
-                # Запасной вариант если template_preview не работает
-                error_box = layout.box()
-                error_box.scale_y = 6.0
-                error_box.alignment = 'CENTER'
-                error_box.label(text="❌ Ошибка отображения", icon='ERROR')
-                print(f"Preview error: {e}")
-        else:
-            box = layout.box()
-            box.scale_y = 6.0
-            box.alignment = 'CENTER'
-            box.label(text="❌ Не удалось загрузить изображение", icon='ERROR')
-
-        # Навигация
-        self.draw_navigation(layout)
-
-        # Кнопки поддержки
-        self.draw_support_buttons(layout)
-
-    def draw_navigation(self, layout):
-        """Нарисовать панель навигации"""
-        row = layout.row()
-        row.scale_y = 1.5
-
-        # Кнопка Назад
-        if self.current_index > 0:
-            op = row.operator("sv.splash_simple_previous", text="◀ Назад", icon='BACK')
-        else:
-            row.label(text="")
-
-        # Кнопка Закрыть
-        #row.operator("sv.splash_simple_close", text="✕ Закрыть", icon='X')
-
-        # Кнопка Далее
-        if self.current_index < len(self._image_files) - 1:
-            op = row.operator("sv.splash_simple_next", text="Далее ▶", icon='FORWARD')
-        else:
-            row.label(text="")
-
-    def draw_support_buttons(self, layout):
-        """Нарисовать кнопки поддержки"""
-        return
-        layout.separator()
-        layout.label(text="🔗 Ресурсы поддержки:", icon='URL')
-
-        flow = layout.grid_flow(row_major=True, columns=2, even_columns=True)
-
-        urls = [
-            ("🐙 GitHub", "https://github.com/nortikin/sverchok"),
-            ("📚 Документация", "https://sverchok.readthedocs.io/"),
-            ("💬 Форум", "https://blenderartists.org/c/addons/sverchok/"),
-            ("❤️ Patreon", "https://www.patreon.com/sverchok")
-        ]
-
-        for label, url in urls:
-            op = flow.operator("wm.url_open", text=label)
-            op.url = url
-
-    def execute(self, context):
-        return {'FINISHED'}
-
-    def cancel(self, context):
-        """Очистка при закрытии"""
-        self.cleanup_images()
-
-    def cleanup_images(self):
-        """Очистить загруженные изображения и текстуры"""
-        # Очищаем текстуры
-        for texture in self._textures:
-            try:
-                if texture and texture.name.startswith("sv_splash_tex_"):
-                    bpy.data.textures.remove(texture)
-            except:
-                pass
-        self._textures.clear()
-
-        # Очищаем изображения
-        for img in self._loaded_images:
-            try:
-                if img and img.name.startswith("sv_splash_img_"):
-                    bpy.data.images.remove(img)
-            except:
-                pass
-        self._loaded_images.clear()
-
-class SV_OT_splash_simple_next(Operator):
-    bl_idname = "sv.splash_simple_next"
-    bl_label = "Далее"
-    bl_description = "Следующее изображение"
-
-    def execute(self, context):
-        # Закрываем текущее окно и открываем новое со следующим изображением
-        bpy.ops.sv.splash_simple_close()
-
-        # Сохраняем индекс для следующего вызова
-        for window in context.window_manager.windows:
-            for area in window.screen.areas:
-                if area.type == 'PREFERENCES':
-                    for region in area.regions:
-                        if region.type == 'WINDOW':
-                            with context.temp_override(window=window, area=area, region=region):
-                                try:
-                                    if hasattr(context, 'active_operator') and context.active_operator:
-                                        op = context.active_operator
-                                        if op.bl_idname == 'sv.splash_screen_simple':
-                                            next_index = op.current_index + 1
-                                            if next_index < len(op._image_files):
-                                                # Вызываем новый splash screen с новым индексом
-                                                bpy.ops.sv.splash_screen_simple('INVOKE_DEFAULT')
-                                                # Обновляем индекс в новом операторе
-                                                new_op = getattr(context, 'active_operator', None)
-                                                if new_op and new_op.bl_idname == 'sv.splash_screen_simple':
-                                                    new_op.current_index = next_index
-                                                    new_op.load_current_image()
-                                                return {'FINISHED'}
-                                except Exception as e:
-                                    print(f"Splash next error: {e}")
-
-        # Если не нашли активный оператор, просто вызываем заново
-        bpy.ops.sv.splash_screen_simple('INVOKE_DEFAULT')
-        return {'FINISHED'}
-
-class SV_OT_splash_simple_previous(Operator):
-    bl_idname = "sv.splash_simple_previous"
-    bl_label = "Назад"
-    bl_description = "Предыдущее изображение"
-
-    def execute(self, context):
-        # Закрываем текущее окно и открываем новое с предыдущим изображением
-        bpy.ops.sv.splash_simple_close()
-
-        for window in context.window_manager.windows:
-            for area in window.screen.areas:
-                if area.type == 'PREFERENCES':
-                    for region in area.regions:
-                        if region.type == 'WINDOW':
-                            with context.temp_override(window=window, area=area, region=region):
-                                try:
-                                    if hasattr(context, 'active_operator') and context.active_operator:
-                                        op = context.active_operator
-                                        if op.bl_idname == 'sv.splash_screen_simple':
-                                            prev_index = op.current_index - 1
-                                            if prev_index >= 0:
-                                                # Вызываем новый splash screen с новым индексом
-                                                bpy.ops.sv.splash_screen_simple('INVOKE_DEFAULT')
-                                                # Обновляем индекс в новом операторе
-                                                new_op = getattr(context, 'active_operator', None)
-                                                if new_op and new_op.bl_idname == 'sv.splash_screen_simple':
-                                                    new_op.current_index = prev_index
-                                                    new_op.load_current_image()
-                                                return {'FINISHED'}
-                                except Exception as e:
-                                    print(f"Splash previous error: {e}")
-
-        # Если не нашли активный оператор, просто вызываем заново
-        bpy.ops.sv.splash_screen_simple('INVOKE_DEFAULT')
-        return {'FINISHED'}
-
-class SV_OT_splash_simple_close(Operator):
-    bl_idname = "sv.splash_simple_close"
-    bl_label = "Закрыть"
-    bl_description = "Закрыть splash screen"
-
-    def execute(self, context):
-        return {'FINISHED'}
-
-class NODE_PT_sverchok_splash_panel(Panel):
-    """Панель для Sverchok Splash Screen"""
-    bl_label = "Sverchok Splash"
-    bl_idname = "NODE_PT_sverchok_splash_panel"
-    bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'UI'
-    bl_category = "Sverchok"
-
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'SverchokTree'
-                if hasattr(context.space_data, 'tree_type') else False)
-
-    def draw(self, context):
-        layout = self.layout
-        layout.operator("sv.splash_screen_simple",
-                       text="Показать Splash Screen",
-                       icon='IMAGE_DATA')
+# Global reference to operator instance for button callbacks
+operator_instance = None
 
 def register():
-    """Регистрация всех классов"""
     bpy.utils.register_class(SV_OT_splash_screen_simple)
-    bpy.utils.register_class(SV_OT_splash_simple_next)
-    bpy.utils.register_class(SV_OT_splash_simple_previous)
-    bpy.utils.register_class(SV_OT_splash_simple_close)
-    bpy.utils.register_class(NODE_PT_sverchok_splash_panel)
-
-    print("Sverchok Splash Screen: успешно зарегистрирован")
 
 def unregister():
-    """Отмена регистрации"""
-    bpy.utils.unregister_class(NODE_PT_sverchok_splash_panel)
-    bpy.utils.unregister_class(SV_OT_splash_simple_close)
-    bpy.utils.unregister_class(SV_OT_splash_simple_previous)
-    bpy.utils.unregister_class(SV_OT_splash_simple_next)
     bpy.utils.unregister_class(SV_OT_splash_screen_simple)
 
+# Menu function to easily access the operator
+def menu_func(self, context):
+    self.layout.operator(SV_OT_splash_screen_simple.bl_idname)
+
+# Register and add to the node editor menu
 if __name__ == "__main__":
     register()
+    bpy.types.NODE_MT_editor_menus.append(menu_func)
