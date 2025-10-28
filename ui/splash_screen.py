@@ -51,8 +51,22 @@ def load_images_from_script_folder():
 def draw_callback():
     global current_image_index
 
-    # Get region dimensions
-    region = bpy.context.region
+    # Получаем контекст
+    context = bpy.context
+    area = context.area
+    if not area:
+        return
+
+    # Ищем регион WINDOW
+    region = None
+    for r in area.regions:
+        if r.type == 'WINDOW':
+            region = r
+            break
+
+    if not region:
+        return
+
     width = region.width
     height = region.height
 
@@ -235,7 +249,24 @@ def check_button_click(mouse_x, mouse_y, context):
     if not textures:
         return False
 
-    region = context.region
+    # Получаем регион через area, а не напрямую из context
+    area = context.area
+    if not area:
+        # Если area недоступен, закрываем сплеш-скрин
+        close_splash_screen(context)
+        return {'CANCELLED'}
+
+    region = None
+    for r in area.regions:
+        if r.type == 'WINDOW':
+            region = r
+            break
+
+    if not region:
+        # Если регион недоступен, закрываем сплеш-скрин
+        close_splash_screen(context)
+        return {'CANCELLED'}
+
     width = region.width
 
     button_y = 20
@@ -261,13 +292,18 @@ def check_button_click(mouse_x, mouse_y, context):
     # Check close button click
     if (close_button_x <= mouse_x <= close_button_x + close_button_width and
         close_button_y <= mouse_y <= close_button_y + button_height):
-        # Remove handlers and cancel operator
-        bpy.types.SpaceNodeEditor.draw_handler_remove(operator_instance._handle, 'WINDOW')
-        operator_instance._handle = None
-        context.area.tag_redraw()
+        close_splash_screen(context)
         return {'CANCELLED'}
 
     return False
+
+def close_splash_screen(context):
+    """Универсальная функция для закрытия сплеш-скрина"""
+    if operator_instance and operator_instance._handle is not None:
+        bpy.types.SpaceNodeEditor.draw_handler_remove(operator_instance._handle, 'WINDOW')
+        operator_instance._handle = None
+        if context.area:
+            context.area.tag_redraw()
 
 
 class SV_OT_splash_screen_simple(Operator):
@@ -280,10 +316,28 @@ class SV_OT_splash_screen_simple(Operator):
     _handle = None
 
     def modal(self, context, event):
+        # Проверяем, доступен ли регион
+        area = context.area
+        if not area:
+            self.remove_handlers(context)
+            return {'CANCELLED'}
+
+        region_available = False
+        for r in area.regions:
+            if r.type == 'WINDOW':
+                region_available = True
+                break
+
+        if not region_available:
+            self.remove_handlers(context)
+            return {'CANCELLED'}
+
         if event.type == 'LEFTMOUSE' and event.value == 'PRESS':
             result = check_button_click(event.mouse_region_x, event.mouse_region_y, context)
             if result is True:
-                context.area.tag_redraw()
+                # Проверяем area перед вызовом tag_redraw
+                if context.area:
+                    context.area.tag_redraw()
                 return {'RUNNING_MODAL'}
             elif result == {'CANCELLED'}:
                 return {'CANCELLED'}
@@ -319,7 +373,9 @@ class SV_OT_splash_screen_simple(Operator):
         if self._handle is not None:
             bpy.types.SpaceNodeEditor.draw_handler_remove(self._handle, 'WINDOW')
             self._handle = None
-            context.area.tag_redraw()
+            # Проверяем, что area доступен перед вызовом tag_redraw
+            if context.area:
+                context.area.tag_redraw()
 
 # Global reference to operator instance for button callbacks
 operator_instance = None
