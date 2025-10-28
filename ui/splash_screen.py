@@ -13,8 +13,21 @@ button_margin = 3
 close_button_width = 103
 
 # Shaders
-image_shader = gpu.shader.from_builtin('IMAGE')
+if bpy.app.version >= (5, 0, 0):
+    image_shader = gpu.shader.from_builtin('IMAGE_SCENE_LINEAR_TO_REC709_SRGB')
+else:
+    image_shader = gpu.shader.from_builtin('IMAGE')
 solid_shader = gpu.shader.from_builtin('UNIFORM_COLOR')
+
+
+# Добавьте настройку blending для прозрачности
+def enable_alpha_blending():
+    """Включает blending для прозрачности"""
+    gpu.state.blend_set('ALPHA')
+
+def disable_alpha_blending():
+    """Выключает blending"""
+    gpu.state.blend_set('NONE')
 
 def load_images_from_script_folder():
     """Load all PNG images from the script folder"""
@@ -24,7 +37,7 @@ def load_images_from_script_folder():
     textures.clear()
 
     # Get script folder
-    script_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)),'splash_images')
+    script_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'splash_images')
 
     # Find all PNG files
     png_files = []
@@ -38,6 +51,14 @@ def load_images_from_script_folder():
     for img_file in png_files:
         try:
             img = bpy.data.images.load(img_file)
+            # ДОБАВЛЕНО: Исправление цветов для Blender 5.0
+            if bpy.app.version >= (5, 0, 0):
+                # Для Blender 5.0+ указываем правильное цветовое пространство
+                if hasattr(img, 'colorspace_settings'):
+                    img.colorspace_settings.name = 'sRGB'
+                elif hasattr(img, 'color_space'):
+                    # Старый атрибут для обратной совместимости
+                    img.color_space = 'sRGB'
             texture = gpu.texture.from_image(img)
             textures.append(texture)
             # Remove image from Blender data to avoid clutter
@@ -108,6 +129,9 @@ def draw_callback():
 
     indices = ((0, 1, 2), (0, 2, 3))
 
+    # Включаем blending для прозрачности
+    enable_alpha_blending()
+
     image_shader.bind()
     image_shader.uniform_sampler("image", tex)
 
@@ -116,6 +140,9 @@ def draw_callback():
         "texCoord": ((0, 0), (1, 0), (1, 1), (0, 1))
     }, indices=indices)
     batch.draw(image_shader)
+
+    # Выключаем blending для остальных элементов (кнопок)
+    disable_alpha_blending()
 
     # Draw buttons
     button_y = 20
