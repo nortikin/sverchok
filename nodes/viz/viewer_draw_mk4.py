@@ -30,6 +30,7 @@ from sverchok.utils.modules.vertex_utils import np_vertex_normals
 from sverchok.utils.math import np_dot
 from sverchok.utils.sv_3dview_tools import Sv3DviewAlign
 from sverchok.utils.sv_obj_baker import SvObjBakeMK3
+from sverchok.utils.meshes import get_all_matrixes
 
 socket_dict = {
     'vector_color': ('display_verts', 'UV_VERTEXSEL', 'color_per_point', 'vector_random_colors', 'random_seed'),
@@ -150,10 +151,12 @@ def fill_points_colors(vectors_color, data, color_per_point, random_colors):
 def draw_matrix(context, args):
     """ this takes one or more matrices packed into an iterable """
     matrices, scale = args
+    mat_list2 = get_all_matrixes(matrices)
 
     mdraw = MatrixDraw28()
-    for matrix in matrices:
-        mdraw.draw_matrix(matrix, scale=scale)
+    for mat_list1 in mat_list2:
+        for matrix in mat_list1:
+            mdraw.draw_matrix(matrix, scale=scale)
 
 def view_3d_geom(context, args):
     """
@@ -790,7 +793,20 @@ class SvViewerDrawMk4(SverchCustomTreeNode, bpy.types.Node):
         update=updateNode, name='All Triangles', default=False,
         description='Enable if all the incoming faces are Tris (makes node faster)')
 
-    matrix_draw_scale: FloatProperty(default=1, min=0.0001, name="Drawing matrix scale", update=updateNode)
+    #matrix_draw_visible_if_vertices_connected: BoolProperty(default=False, name="Matrix draw visible", description="Matrix draw visible if vertices connected", update=updateNode)
+    matrix_draw_scale: FloatProperty(default=1, min=0.0001, name="Drawing matrix scale", description="Matrix scale to draw matrix", update=updateNode)
+
+    def draw_matrix_in_socket(self, socket, context, layout):
+        if socket.is_linked:  # linked INPUT or OUTPUT
+            layout.label(text=f"{socket.label or socket.identifier}. {socket.objects_number or ''}")
+        else:
+            layout.label(text=f'{socket.label or socket.identifier}')
+        # if self.matrix_draw_visible_if_vertices_connected==True:
+        #     layout.prop(self, 'matrix_draw_visible_if_vertices_connected', text='', icon='HIDE_OFF', emboss=False)
+        # else:
+        #     layout.prop(self, 'matrix_draw_visible_if_vertices_connected', text='', icon='HIDE_ON', emboss=False)
+        layout.prop(self, 'matrix_draw_scale', text='')
+        pass
 
     # dashed line props
     use_dashed: BoolProperty(name='Dashes Edges', update=updateNode)
@@ -853,6 +869,8 @@ class SvViewerDrawMk4(SverchCustomTreeNode, bpy.types.Node):
         self.wrapper_tracked_ui_draw_op(row, SvObjBakeMK3.bl_idname, icon='OUTLINER_OB_MESH', text="B A K E")
         row.separator()
         self.wrapper_tracked_ui_draw_op(row, Sv3DviewAlign.bl_idname, icon='CURSOR', text='')
+        row = layout.row(align=True)
+        row.prop(self, "matrix_draw_scale")
 
 
     def draw_buttons_ext(self, context, layout):
@@ -912,6 +930,8 @@ class SvViewerDrawMk4(SverchCustomTreeNode, bpy.types.Node):
 
         new_input('SvStringsSocket', 'attrs',
             quick_link_to_node="SvVDAttrsNodeMk2", hide=True)
+        
+        self.inputs['Matrix'].custom_draw = 'draw_matrix_in_socket'
 
 
     def migrate_from(self, old_node):

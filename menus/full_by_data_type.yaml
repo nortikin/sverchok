@@ -45,7 +45,7 @@
         - icon_name: SV_POLYLINE
         - color_category: Generator
         - SvLineNodeMK4  # bl_idname of a node
-        - SvSegmentGenerator
+        - SvSegmentGeneratorMK2
         - SvNGonNode
         - SvCircleNode
         - SvEllipseNodeMK3

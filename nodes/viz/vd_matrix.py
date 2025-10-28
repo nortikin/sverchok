@@ -20,6 +20,7 @@ from sverchok.utils.sv_batch_primitives import MatrixDraw28
 from sverchok.data_structure import node_id, updateNode, ensure_nesting_level
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.modules.drawing_abstractions import drawing, shading_2d
+from sverchok.utils.meshes import get_all_matrixes
 
 if not bpy.app.background:
     smooth_2d_shader = gpu.shader.from_builtin(shading_2d.SMOOTH_COLOR)
@@ -72,35 +73,6 @@ def screen_v3d_batch_matrix_overlay(context, args):
     drawing.enable_blendmode()
     batch.draw(smooth_2d_shader)
     drawing.disable_blendmode()
-
-def get_all_matrixes(obj, res):
-    if isinstance(obj, list):
-        if len(obj)>0:
-            if isinstance(obj[0], Matrix):
-                _res = []
-                for elem in obj:
-                    if isinstance(elem, Matrix):
-                        _res.append(elem)
-                    else:
-                        raise ValueError("Object has to be matrix! (1)")
-                    pass
-                res.append(_res)
-                pass
-            elif isinstance(obj[0], list):
-                for elem in obj:
-                    if isinstance(elem, list):
-                        get_all_matrixes(elem, res)
-                    else:
-                        raise ValueError("Object has to be list! (2)")
-                pass
-            pass
-        pass
-    elif isinstance(obj, Matrix):
-        res.append([obj])
-    else:
-        raise ValueError("Object has to be matrix or list! (3)")
-        pass
-    pass
 
 def match_color_to_matrix(node):
     vcol_start = Vector(node.color_start)

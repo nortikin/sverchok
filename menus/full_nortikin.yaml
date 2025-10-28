@@ -24,7 +24,7 @@
             - icon_name: MESH_CUBE
             - color_category: Generator
             - SvLineNodeMK4  # bl_idname of a node
-            - SvSegmentGenerator
+            - SvSegmentGeneratorMK2
             - SvPlaneNodeMk3
             - SvNGonNode
             - SvBoxNodeMk2

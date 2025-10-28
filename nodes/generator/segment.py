@@ -124,7 +124,7 @@ def iter_last(l):
     return chain(l, cycle([l[-1]]))
 
 
-class SvSegmentGenerator(SverchCustomTreeNode, bpy.types.Node):
+class SvSegmentGeneratorMK2(SverchCustomTreeNode, bpy.types.Node):
     """ Triggers: 2pt Line. [default]
     Cuts/Steps [Cuts]:
         Cuts - Number of steps
@@ -132,7 +132,7 @@ class SvSegmentGenerator(SverchCustomTreeNode, bpy.types.Node):
     A/B - Start/End Point (A)[[0,]], (B)[[.5,]] or List of Points (Verts)
     Num cuts - Subdivide edges [0]
     """
-    bl_idname = 'SvSegmentGenerator'
+    bl_idname = 'SvSegmentGeneratorMK2'
     bl_label = 'Segment'
     bl_icon = 'GRIP'
     sv_icon = 'SV_LINE'
@@ -153,6 +153,18 @@ class SvSegmentGenerator(SverchCustomTreeNode, bpy.types.Node):
     as_numpy: bpy.props.BoolProperty(name="Numpy output", description="Format of output data", update=updateNode)
     split: bpy.props.BoolProperty(name="Split to objects", description="Each object in separate object",
                                    update=updateNode, default=True)
+    results_join_modes = [
+            ('SPLIT', "Split", "Separate source meshes into individual meshes", 'SNAP_VERTEX', 0),
+            ('HOLD' , "Hold" , "Hold group as input meshes", 'SYNTAX_ON', 1),
+            ('JOIN' , "Join" , "Join all source meshes into a single mesh", 'STICKY_UVS_LOC', 2)
+        ]
+
+    results_join_mode : bpy.props.EnumProperty(
+        name = "Output mode",
+        items = results_join_modes,
+        default = 'HOLD',
+        update = updateNode) # type: ignore
+    
     list_match_global: bpy.props.EnumProperty(
         name="List Match Global",
         description="Behavior on different list lengths, multiple objects level",
@@ -163,6 +175,14 @@ class SvSegmentGenerator(SverchCustomTreeNode, bpy.types.Node):
         description="Behavior on different list lengths, object level",
         items=numpy_list_match_modes, default="REPEAT",
         update=updateNode)
+    
+    def draw_vertices_out_socket(self, socket, context, layout):
+        layout.prop(self, 'results_join_mode', text='')
+        if socket.is_linked:  # linked INPUT or OUTPUT
+            layout.label(text=f"{socket.label}. {socket.objects_number or ''}")
+        else:
+            layout.label(text=f'{socket.label}')
+        pass
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'split_mode', expand=True)
@@ -182,14 +202,24 @@ class SvSegmentGenerator(SverchCustomTreeNode, bpy.types.Node):
         layout.prop(self, 'as_numpy')
 
     def sv_init(self, context):
+        self.width=150
         self.inputs.new('SvVerticesSocket', 'A').prop_name = 'a'
         self.inputs.new('SvVerticesSocket', 'B').prop_name = 'b'
         self.inputs.new('SvStringsSocket', 'Cuts').prop_name = 'cuts_number'
         self.inputs.new('SvStringsSocket', 'Steps').hide = True
-        self.outputs.new('SvVerticesSocket', 'Verts')
-        self.outputs.new('SvStringsSocket', 'Edges')
+
+        self.outputs.new('SvVerticesSocket', 'vertices')
+        self.outputs.new('SvStringsSocket', 'edges')
+
+        self.outputs["vertices"].label = 'Vertices'
+        self.outputs["vertices"].custom_draw = 'draw_vertices_out_socket'
+        self.outputs["Edges"].label = 'Edges'
 
     def process(self):
+        
+        if not any([sock.is_linked for sock in self.outputs]):
+            return
+
         num_objects = max([len(sock.sv_get(deepcopy=False, default=[])) for sock in self.inputs])
         out = []
         list_match_f = iter_list_match_func[self.list_match_global]
@@ -207,9 +237,5 @@ class SvSegmentGenerator(SverchCustomTreeNode, bpy.types.Node):
         [sock.sv_set(data) for sock, data in zip(self.outputs, zip(*out))]
 
 
-def register():
-    bpy.utils.register_class(SvSegmentGenerator)
-
-
-def unregister():
-    bpy.utils.unregister_class(SvSegmentGenerator)
+classes = [SvSegmentGeneratorMK2,]
+register, unregister = bpy.utils.register_classes_factory(classes)

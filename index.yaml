@@ -15,7 +15,7 @@
     - icon_name: OBJECT_DATAMODE  # icon name to show
     - extra_menu: MeshPartialMenu  # to make the category available in another menu (1,2,3,4,5)
     - SvLineNodeMK4  # bl_idname of a node
-    - SvSegmentGenerator
+    - SvSegmentGeneratorMK2
     - SvPlaneNodeMk3
     - SvNGonNode
     - SvBoxNodeMk2
