@@ -44,6 +44,7 @@ def load_images_from_script_folder():
     for file in os.listdir(script_folder):
         if file.lower().endswith('.png'):
             png_files.append(os.path.join(script_folder, file))
+    png_files.sort()
 
     print(f"Found {len(png_files)} PNG files in {script_folder}")
 
