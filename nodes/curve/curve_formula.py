@@ -7,7 +7,7 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, StringProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, zip_long_repeat,
-                                     match_long_repeat, ensure_nesting_level)
+                                     match_long_repeat, ensure_nesting_level, get_data_nesting_level)
 from sverchok.utils.modules.eval_formula import get_variables, sv_compile, safe_eval_compiled
 from sverchok.utils.script_importhelper import safe_names_np
 from sverchok.utils.math import (
@@ -17,12 +17,12 @@ from sverchok.utils.math import (
     )
 from sverchok.utils.curve import SvLambdaCurve
 
-class SvCurveFormulaNode(SverchCustomTreeNode, bpy.types.Node):
+class SvCurveFormulaNodeMK2(SverchCustomTreeNode, bpy.types.Node):
     """
     Triggers: Curve Formula
     Tooltip: Generate curve by formula
     """
-    bl_idname = 'SvExCurveFormulaNode'
+    bl_idname = 'SvExCurveFormulaNodeMK2'
     bl_label = 'Curve Formula'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_CURVE_FORMULA'
@@ -183,41 +183,83 @@ class SvCurveFormulaNode(SverchCustomTreeNode, bpy.types.Node):
         if not any(socket.is_linked for socket in self.outputs):
             return
 
-        t_min_s = self.inputs['TMin'].sv_get()
-        t_max_s = self.inputs['TMax'].sv_get()
-        t_min_s = ensure_nesting_level(t_min_s, 2)
-        t_max_s = ensure_nesting_level(t_max_s, 2)
+        t_min_socket = self.inputs['TMin'].sv_get()
+        t_min_level = get_data_nesting_level(t_min_socket)
+        if t_min_level==2:
+            _t_min_s = ensure_nesting_level(t_min_socket, 2)
+            t_min_s3 = [[elem] for elem in _t_min_s]
+        elif t_min_level==3:
+            t_min_s3 = t_min_socket
+            pass
+        else:
+            raise ValueError("T Min socket has to be 2 or 3 level")
+            pass
+
+        t_max_socket = self.inputs['TMax'].sv_get()
+        t_max_level = get_data_nesting_level(t_max_socket)
+        if t_max_level==2:
+            _t_max_s = ensure_nesting_level(t_max_socket, 2)
+            t_max_s3 = [[elem] for elem in _t_max_s]
+        elif t_max_level==3:
+            t_max_s3 = t_max_socket
+            pass
+        else:
+            raise ValueError("T Max socket has to be 2 or 3 level")
+            pass
 
         var_names = self.get_variables()
         inputs = self.get_input()
-        input_values = [inputs.get(name, [[0]]) for name in var_names]
-        if var_names:
-            parameters = match_long_repeat([t_min_s, t_max_s] + input_values)
-        else:
-            parameters = [t_min_s, t_max_s]
+        _input_values = [inputs.get(name, [[0]]) for name in var_names]
+        input_values = []
+        for ival_socket in _input_values:
+            ival_level = get_data_nesting_level(ival_socket)
+            if ival_level==2:
+                _ival_socket = ensure_nesting_level(ival_socket, 2)
+                ival_s3 = [[elem] for elem in _ival_socket]
+            elif ival_level==3:
+                ival_s3 = ival_socket
+                pass
+            else:
+                raise ValueError(f"T Min socket has to be 2 or 3 level. {ival_level}")
+            pass
+            input_values.append(ival_s3)
 
         curves_out = []
-        for t_mins, t_maxs, *objects in zip(*parameters):
+        if var_names:
+            lvl1 = match_long_repeat([t_min_s3, t_max_s3] + input_values)
+        else:
+            lvl1 = [t_min_s, t_max_s]
+
+        for t_min_s, t_max_s, *vars in zip(*lvl1):
+            splines = []
             if var_names:
-                var_values_s = zip_long_repeat(t_mins, t_maxs, *objects)
+                parameters = [t_min_s, t_max_s, *vars]
             else:
-                var_values_s = zip_long_repeat(t_mins, t_maxs)
-            for t_min, t_max, *var_values in var_values_s:
-                variables = dict(zip(var_names, var_values))
-                function = self.make_function(variables)
-                if self.use_numpy_function:
-                    function_vector = self.make_function_vector(variables)
+                parameters = [t_min_s, t_max_s]
+            
+            for t_mins, t_maxs, *var_objects in zip_long_repeat(*parameters):
+                
+                if var_names:
+                    var_values_s = zip_long_repeat(t_mins, t_maxs, *var_objects)
                 else:
-                    function_vector = None
-                new_curve = SvLambdaCurve(function, function_vector)
-                new_curve.u_bounds = (t_min, t_max)
-                curves_out.append(new_curve)
+                    var_values_s = zip_long_repeat(t_mins, t_maxs)
+
+                for t_min, t_max, *var_values in var_values_s:
+                    variables = dict(zip(var_names, var_values))
+                    function = self.make_function(variables)
+                    if self.use_numpy_function:
+                        function_vector = self.make_function_vector(variables)
+                    else:
+                        function_vector = None
+                    new_curve = SvLambdaCurve(function, function_vector)
+                    new_curve.u_bounds = (t_min, t_max)
+                    splines.append(new_curve)
+                    pass
+                pass
+            
+            curves_out.append(splines)
         
         self.outputs['Curve'].sv_set(curves_out)
 
-def register():
-    bpy.utils.register_class(SvCurveFormulaNode)
-
-def unregister():
-    bpy.utils.unregister_class(SvCurveFormulaNode)
-
+classes = [SvCurveFormulaNodeMK2]
+register, unregister = bpy.utils.register_classes_factory(classes)

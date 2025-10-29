@@ -253,7 +253,7 @@
         - SvBiArcNode
         - SvPolyArcNode
         - ---
-        - SvExCurveFormulaNode
+        - SvExCurveFormulaNodeMK2
         - SvExCubicSplineNode
         - SvCatmullRomSplineNode
         - SvTangentsCurveNode
@@ -323,7 +323,7 @@
         - SvExCurveTorsionNode
         - SvExCurveExtremesNode
         - SvNurbsCurveExtremesNode
-        - SvExCurveZeroTwistFrameNode
+        - SvExCurveZeroTwistFrameNodeMK2
         - SvExSlerpCurveFrameNode
         - SvCurveLengthParameterMk2Node
         - SvExCrossCurvePlaneNode

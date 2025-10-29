@@ -76,7 +76,7 @@
         - SvPolyArcNode
         - ---
         - SvPointCurveNode
-    - SvExCurveFormulaNode
+    - SvExCurveFormulaNodeMK2
     - SvExCubicSplineNode
     - SvCatmullRomSplineNode
     - SvTangentsCurveNode
@@ -144,7 +144,7 @@
     - SvExCurveCurvatureNode
     - SvExCurveTorsionNode
     - SvExCurveExtremesNode
-    - SvExCurveZeroTwistFrameNode
+    - SvExCurveZeroTwistFrameNodeMK2
     - SvExSlerpCurveFrameNode
     - SvCurveLengthParameterMk2Node
     - SvLengthRebuildCurveNode

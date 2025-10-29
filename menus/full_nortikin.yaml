@@ -100,7 +100,7 @@
         - GC SCRIPTED:
             - icon_name: PLUGIN
             - color_category: Generator
-            - SvExCurveFormulaNode
+            - SvExCurveFormulaNodeMK2
             - SvExCubicSplineNode
             - SvCatmullRomSplineNode
             - SvTangentsCurveNode
@@ -491,7 +491,7 @@
         - SvExCurveLengthNode
         - SvExCurveFrameNodeMK2
         - SvCurveFrameOnSurfNode
-        - SvExCurveZeroTwistFrameNode
+        - SvExCurveZeroTwistFrameNodeMK2
         - SvCurveLengthParameterMk2Node
         - SvGenerateKnotvectorNode
     - A SURFACES:
