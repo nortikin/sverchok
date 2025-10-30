@@ -20,6 +20,7 @@ from contextlib import contextmanager
 from collections import defaultdict
 from functools import wraps
 from math import radians, ceil
+from collections.abc import Sequence
 import itertools
 import copy
 from itertools import zip_longest, chain, cycle, islice
@@ -1497,3 +1498,130 @@ def get_edge_loop(n):
     nn = n - 1
     update_edge_cache(nn) # make sure the edge cache is large enough
     return _edgeCache["main"][:nn] + [[nn, 0]]
+
+def dataTree(data, lvl=[], dt=None):
+    '''Вернуть структуру'''
+    if dt is None:
+        dt=dict()
+    if isinstance(data, Sequence) and not isinstance(data, (str, bytes)):
+        if len(data)>0:
+            data_0 = data[0]
+            type_0 = type(data_0)
+            if isinstance(data_0, Sequence) and not isinstance(data_0, (str, bytes)): # isinstance(data[0], Matrix):
+                # если наткнулись на список, то войти внутрь него и обработать:
+                for I, elem in enumerate(data):
+                    if isinstance(elem, type_0):
+                        dataTree(elem, lvl+[I], dt)
+                    else:
+                        raise ValueError(f"Object has to be a type {str(tuple(lvl+[I]))}[{I}]{type_0}! (2)")
+                pass
+            else:
+                # Если первый элемент списка - объект, то загрузить все элементы списка в DataTree
+                _res = []
+                for elem in data:
+                    if isinstance(elem, type_0):
+                        _res.append(elem)
+                    else:
+                        raise ValueError(f"Object has to be '{type_0}'! (1)")
+                    pass
+                dt[tuple(lvl)] = dict(data = _res)
+                pass
+            pass
+        pass
+    else:
+        dt[tuple(lvl)] = dict(data=[data])
+        pass
+    return dt
+
+def dataTreeAlign(dataTree):
+    # Пока предполагаем, что все улючи всегда на каждом уровне начинаются с 0,
+    # не прерываются при расчёте, и не повторяются (для dict это норм)
+    # Уровнять количество ключей и данных:
+    dataTreeAligned1 = dict()
+
+    # Выровнять длины ключей в каждом параметре:
+    for key1, value1 in dataTree.items():
+        for key2, value2 in dataTree.items():
+            if key1==key2:
+                continue
+            if key1 in dataTreeAligned1 or key2 in dataTreeAligned1:
+                continue
+
+            value1_keys = value1.keys()
+            value2_keys = value2.keys()
+            
+            _key1 = key1
+            _key2 = key2
+
+            value1_keys_0 = next(iter(value1_keys))
+            value2_keys_0 = next(iter(value2_keys))
+            len_value1_keys_0 = len(value1_keys_0)
+            len_value2_keys_0 = len(value2_keys_0)
+            len_dif = abs(len_value1_keys_0 - len_value2_keys_0)
+
+            if len_dif!=0:
+                # Выбрать объект с самым коротким количеством ключём и дописать ему недостающие ключи
+                if len_value1_keys_0 > len_value2_keys_0:
+                    _key1 = key2 # Самый короткий ключ
+                    _key2 = key1
+                # дописать недостающие ключи в словарь с самыми короткими ключами
+                dif_key = (0,)*len_dif
+                dict1 = dict()
+                for key, elem in dataTree[_key1].items():
+                    _key = key+dif_key
+                    #dict1[_key] = elem
+                    dict1[_key] = dict({ 'original_key':key, 'data':elem['data'], })
+                    pass
+                dataTreeAligned1[_key1] = dict1
+                pass
+            else:
+                dataTreeAligned1[key1] = dataTree[key1]
+                dataTreeAligned1[key2] = dataTree[key2]
+
+                dict1 = dict()
+                for key, elem in dataTree[key1].items():
+                    dict1[key] = dict({ 'original_key':key, 'data':elem['data'], })
+                dataTreeAligned1[key1] = dict1
+
+                dict2 = dict()
+                for key, elem in dataTree[key2].items():
+                    dict2[key] = dict({ 'original_key':key, 'data':elem['data'], })
+                dataTreeAligned1[key2] = dict2
+        pass
+    pass
+
+    # Сопоставить ключи в каждом параметре (чтобы у всех параметров были одинаковые ключи)
+    dataTreeAligned2 = dict()
+    for key1, value1 in dataTreeAligned1.items():
+        dataTreeAligned2[key1] = dict()
+        for key11, value11 in dataTreeAligned1[key1].items():
+            dataTreeAligned2[key1][key11] = { 'original_key':value11['original_key'], 'data':value11['data'][:], }
+
+    for key1, value1 in dataTreeAligned2.items():
+        
+        if key1 not in dataTreeAligned2:
+            dataTreeAligned2[key1] = dict()
+
+        for key2, value2 in dataTreeAligned2.items():
+            if key1==key2:
+                continue
+
+            value1_keys = list(value1.keys())
+            value1_keys.sort()
+            value2_keys = list(value2.keys())
+            value2_keys.sort()
+
+            key21_exists = None
+            for I, key11 in enumerate(value1_keys):
+                dataTreeAligned2[key1][key11] = dataTreeAligned2[key1][key11]
+                if I==0:
+                    key21_exists = key11
+                if key11 in dataTreeAligned2[key2]:
+                    key21_exists = key11
+                else:
+                    dataTreeAligned2[key2][key11] = dataTreeAligned2[key2][key21_exists]
+                pass
+            pass
+        pass
+    pass
+    return dataTreeAligned2
