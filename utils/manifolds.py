@@ -1153,6 +1153,7 @@ def intersect_curve_plane_nurbs(curve, plane, init_samples=10, tolerance=1e-3, m
         cpts = segment.get_control_points()
         signs = plane.side_of_points(cpts)
         all_one_side = (signs > 0).all() or (signs < 0).all()
+        #print(f"Check: cpts {cpts} => signs {signs} => result not {all_one_side}")
         return not all_one_side
 
     def middle(segment):
@@ -1217,26 +1218,36 @@ def intersect_curve_plane_nurbs(curve, plane, init_samples=10, tolerance=1e-3, m
             t2 = (-b - np.sqrt(D))/(2*a)
             return [t for t in [t1,t2] if t_min <= t <= t_max]
 
+    def real_cbrt(x):
+        if x.real < 0 and abs(x.imag) < 1e-10:
+            return - (-x.real)**(1.0/3.0) + 0j
+        else:
+            return x ** (1.0/3.0)
+
     def solve_cubic(segment):
         t_min, t_max = segment.get_u_bounds()
         coeffs = get_taylor_coeffs(segment)
-        print("C", coeffs)
         d,c,b,a = coeffs
         d += delta_z
         p = (3*a*c - b*b) / (3*a*a)
         q = (2*b**3 - 9*a*b*c + 27*a*a*d)/(27*a**3)
         Q = (p/3)**3 + (q/2)**2
         sqrt_Q = np.sqrt(Q, dtype=complex)
-        alpha = (-q/2 + sqrt_Q)**(1.0/3.0)
-        beta = (-q/2 - sqrt_Q)**(1.0/3.0)
+        alpha = real_cbrt(-q/2 + sqrt_Q)
+        beta = real_cbrt(-q/2 - sqrt_Q)
+        #print(f"Cubic coeffs: {[a,b,c,d]} => p {p}, q {q}, Q {Q}, alpha {alpha}, beta {beta}")
         sqrt32 = np.sqrt(3.0)/2.0
         y1 = alpha + beta
         y2 = -(alpha + beta)/2.0 + (alpha - beta)*sqrt32*1j
         y3 = -(alpha + beta)/2.0 - (alpha - beta)*sqrt32*1j
+        #print(f"Solve cubic: ys {[y1, y2, y3]}")
         ys = [y.real for y in [y1,y2,y3] if abs(y.imag) < 1e-6]
+        #print(f"Solve cubic: real ys {ys}")
         xs = [y - b/(3*a) for y in ys]
-        print(t_min, t_max, xs)
-        return [t for t in xs if t_min <= t <= t_max]
+        #print(t_min, t_max, xs)
+        solutions = [t for t in xs if t_min <= t <= t_max]
+        #print(f"Solve cubic: {xs}, range ({t_min} - {t_max})")
+        return solutions
 
     def solve(segment, i=0):
         if is_small(segment):
@@ -1270,6 +1281,7 @@ def intersect_curve_plane_nurbs(curve, plane, init_samples=10, tolerance=1e-3, m
 
     segments = [segment for segment in segments if check_signs(segment)]
     solutions = [solve(segment) for segment in segments]
+    #print(f"Intersect: segments {[s.get_control_points()[0] for s in segments]}")
     solutions = sum(solutions, [])
     ts = np.array(solutions)
     pts = curve.evaluate_array(ts)
